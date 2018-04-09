@@ -13,10 +13,19 @@ export class Categories extends radweb.Entity<number> {
     this.initColumns();
   }
 }
-export class Items extends radweb.Entity<string>{
-  id = new radweb.StringColumn({
 
-  });
+class Id extends radweb.StringColumn {
+  setToNewId() {
+    this.value = uuid();
+  }
+}
+class ItemId extends Id {
+
+}
+class HelperId extends Id { }
+
+export class Items extends radweb.Entity<string>{
+  id = new ItemId();
   quantity = new radweb.NumberColumn("יח'");
   item = new radweb.StringColumn('מה צריך');
   constructor() {
@@ -24,7 +33,7 @@ export class Items extends radweb.Entity<string>{
     this.initColumns();
     this.onSavingRow = () => {
       if (this.isNew())
-        this.id.value = uuid();
+        this.id.setToNewId();
     };
   }
 
@@ -32,11 +41,25 @@ export class Items extends radweb.Entity<string>{
 }
 
 export class ItemsPerHelper extends radweb.Entity<string>{
-  itemId = new radweb.StringColumn();
+  itemId = new ItemId();
   quantity = new radweb.NumberColumn();
-  
+
   constructor() {
     super(() => new ItemsPerHelper(), environment.dataSource, "ItemsPerHelper");
     this.initColumns(this.itemId);
+  }
+}
+export class Helpers extends radweb.Entity<string>{
+  id = new HelperId();
+  name = new radweb.StringColumn();
+  phone = new radweb.StringColumn();
+  email = new radweb.StringColumn();
+  constructor() {
+    super(() => new Helpers(), environment.dataSource, "Helpers");
+    this.initColumns();
+    this.onSavingRow = () => {
+      if (this.isNew())
+        this.id.setToNewId();
+    };
   }
 }

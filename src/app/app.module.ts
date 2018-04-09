@@ -10,13 +10,15 @@ import { MaterialModule } from './shared/material.module';
 import { ProjectsComponent } from './projects/projects.component';
 import { ProjectParticipantComponent } from './project-participant/project-participant.component';
 import { FormsModule } from '@angular/forms';
+import { HelpersComponent } from './helpers/helpers.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     ProjectsComponent,
-    ProjectParticipantComponent
+    ProjectParticipantComponent,
+    HelpersComponent
   ],
   imports: [
     BrowserModule,
