@@ -1,3 +1,23 @@
-<p>
-  projects works!
-</p>
+<mat-card class="example-card">
+  <mat-card-header>
+
+    <mat-card-title>
+      <h1>פסח 2018</h1>
+    </mat-card-title>
+    <mat-card-subtitle>לקראת החג אנחנו שוב אוספים מצרכים בכדי להכין משלוחי אוכל לנזקקים.</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+
+    <data-grid [settings]="items" [displayButtons]="false" [displayVCR]="false"></data-grid>
+  </mat-card-content>
+  <button mat-mini-fab color="primary" (click)="items.addNewRow()">
+    <mat-icon>add</mat-icon>
+  </button>
+  <button mat-mini-fab color="warn" (click)="deleteCurrentRow()">
+    <mat-icon>remove</mat-icon>
+  </button>
+  <button mat-mini-fab color="warn" (click)="saveAll()">
+    <mat-icon>save</mat-icon>
+  </button>
+</mat-card>

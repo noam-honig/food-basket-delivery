@@ -8,12 +8,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
 import { MaterialModule } from './shared/material.module';
 import { ProjectsComponent } from './projects/projects.component';
+import { ProjectParticipantComponent } from './project-participant/project-participant.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    ProjectsComponent
+    ProjectsComponent,
+    ProjectParticipantComponent
   ],
   imports: [
     BrowserModule,
