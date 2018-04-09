@@ -22,12 +22,12 @@ export class ProjectParticipantComponent implements OnInit {
     }
   }
   async saveAll() {
-    
+
     for (let i = 0; i < this.items.items.length; i++) {
       let item = this.items.items[i];
       let x = this.helperQuantity(this.items.items[i]);
       if (x != null) {
-        console.log(x.isNew(),x.quantity.value);
+        console.log(x.isNew(), x.quantity.value);
         if (!x.isNew() || x.quantity.value > 0)
           await x.save();
       }
