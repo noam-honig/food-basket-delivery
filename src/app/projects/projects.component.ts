@@ -27,7 +27,7 @@ export class ProjectsComponent {
         this.items.currentRow.delete();
   }
   async saveAll() {
-    console.log(this.items.items);
+    
     for (let i = 0; i < this.items.items.length; i++) {
       await this.items.items[i].save();
     }

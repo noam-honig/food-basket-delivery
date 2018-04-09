@@ -1,6 +1,7 @@
 import * as radweb from 'radweb';
 import { environment } from './../environments/environment';
 import * as uuid from 'uuid';
+import { CompoundIdColumn } from 'radweb';
 
 export class Categories extends radweb.Entity<number> {
   id = new radweb.NumberColumn({ dbName: 'CategoryID' });
@@ -26,6 +27,16 @@ export class Items extends radweb.Entity<string>{
         this.id.value = uuid();
     };
   }
+
+
+}
+
+export class ItemsPerHelper extends radweb.Entity<string>{
+  itemId = new radweb.StringColumn();
+  quantity = new radweb.NumberColumn();
   
-  
+  constructor() {
+    super(() => new ItemsPerHelper(), environment.dataSource, "ItemsPerHelper");
+    this.initColumns(this.itemId);
+  }
 }

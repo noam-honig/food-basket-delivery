@@ -9,6 +9,7 @@ import { HomeComponent } from './home/home.component';
 import { MaterialModule } from './shared/material.module';
 import { ProjectsComponent } from './projects/projects.component';
 import { ProjectParticipantComponent } from './project-participant/project-participant.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,7 @@ import { ProjectParticipantComponent } from './project-participant/project-parti
   ],
   imports: [
     BrowserModule,
-    
+    FormsModule,
     
     MaterialModule,
     BrowserAnimationsModule,
