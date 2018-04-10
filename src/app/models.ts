@@ -3,7 +3,7 @@ import { environment } from './../environments/environment';
 import * as uuid from 'uuid';
 import { CompoundIdColumn, DataProviderFactory, EntityOptions } from 'radweb';
 
-class IdEntity<idType extends Id> extends radweb.Entity<idType>
+class IdEntity<idType extends Id> extends radweb.Entity<string>
 {
   id: idType;
   constructor(id: idType, factory: () => IdEntity<idType>, source: DataProviderFactory, options?: EntityOptions | string) {

@@ -21,6 +21,9 @@
       <mat-tab label="מה צריך">
         <app-project-items #projectItems [projectId]="p.id.value"></app-project-items>
       </mat-tab>
+      <mat-tab label="מתנדבות">
+          <app-project-helpers [projectId]="p.id.value"></app-project-helpers>
+      </mat-tab>
     </mat-tab-group>
     <button mat-mini-fab color="warn" (click)="saveAll(projectItems)">
       <mat-icon>save</mat-icon>

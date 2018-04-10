@@ -1,5 +1,21 @@
-<button mat-raised-button color="primary" (click)="addOne()">
+<div class="myDiv">
+  <button mat-raised-button color="primary" (click)="addOne()">
     מתנדבת נוספת
   </button>
+  <mat-accordion>
+    <mat-expansion-panel *ngFor="let h of helpers.items">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h4>
+            {{getName(h)}}
+          </h4>
+        </mat-panel-title>
 
-  <select-popup [settings]="helpers"></select-popup>
+      </mat-expansion-panel-header>
+      <mat-tab-group>
+
+      </mat-tab-group>
+
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
