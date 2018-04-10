@@ -15,7 +15,7 @@ export class ProjectHelpersComponent implements OnInit {
   constructor(private dialog: SelectService) {
 
   }
-  @Input() projectId: string = "02acfe14-6704-469f-9ff6-b7c94ce48fc4";
+  @Input() projectId;
   ngOnInit() {
     this.helpers.getRecords();
   }
@@ -32,11 +32,11 @@ export class ProjectHelpersComponent implements OnInit {
   addOne() {
     this.dialog.showPopup(new Helpers(),
       h => {
-          this.helpers.addNewRow();
-          let newRow = this.helpers.items[this.helpers.items.length-1];
-          newRow.projectId.value = this.projectId;
-          newRow.helperId.value = h.id.value;
-          newRow.save();
+        this.helpers.addNewRow();
+        let newRow = this.helpers.items[this.helpers.items.length - 1];
+        newRow.projectId.value = this.projectId;
+        newRow.helperId.value = h.id.value;
+        newRow.save();
 
       },
       {
