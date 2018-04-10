@@ -12,6 +12,7 @@ import { ProjectParticipantComponent } from './project-participant/project-parti
 import { FormsModule } from '@angular/forms';
 import { HelpersComponent } from './helpers/helpers.component';
 import { ProjectItemsComponent } from './project-items/project-items.component';
+import { ProjectHelpersComponent } from './project-helpers/project-helpers.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { ProjectItemsComponent } from './project-items/project-items.component';
     ProjectsComponent,
     ProjectParticipantComponent,
     HelpersComponent,
-    ProjectItemsComponent
+    ProjectItemsComponent,
+    ProjectHelpersComponent
   ],
   imports: [
     BrowserModule,
