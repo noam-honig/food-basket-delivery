@@ -5,25 +5,25 @@
   <span>אמהות מחבקות אבן יהודה</span>
 </mat-toolbar>
 <mat-sidenav-container class="app-sidenav-container">
-<mat-sidenav #sidenav class="app-sidenav mat-elevation-z10" [opened]="!isScreenSmall()" [mode]="isScreenSmall()?'over':'side'">
-  
-  <mat-nav-list role="list">
-    <ng-container *ngFor="let m of router.config">
-      <mat-list-item *ngIf="m.path && m.path.indexOf(':')<0" routerLinkActive="active-route" >
-        <a matLine [routerLink]="m.path">{{m.path}}</a>
-      </mat-list-item>
-      
-    </ng-container>
-  </mat-nav-list>
+  <mat-sidenav #sidenav class="app-sidenav mat-elevation-z10" [opened]="!isScreenSmall()" [mode]="isScreenSmall()?'over':'side'">
 
-</mat-sidenav>
-<div class="app-sidenav-content ">
-  
+    <mat-nav-list role="list">
+      <ng-container *ngFor="let m of router.config">
+        <mat-list-item *ngIf="m.path && m.path.indexOf(':')<0" routerLinkActive="active-route">
+          <a matLine [routerLink]="m.path">{{m.path}}</a>
+        </mat-list-item>
 
-  <div class="wrapper">
-    <router-outlet></router-outlet>
+      </ng-container>
+    </mat-nav-list>
+
+  </mat-sidenav>
+  <div class="app-sidenav-content ">
+
+
+    <div class="wrapper">
+      <router-outlet></router-outlet>
+    </div>
+
   </div>
-
-</div>
 
 </mat-sidenav-container>

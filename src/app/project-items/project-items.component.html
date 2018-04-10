@@ -1,0 +1,12 @@
+<div class="myDiv">
+  <mat-card-content>
+
+    <data-grid [settings]="items" [displayButtons]="false" [displayVCR]="false"></data-grid>
+  </mat-card-content>
+  <button mat-mini-fab color="primary" (click)="items.addNewRow()">
+    <mat-icon>add</mat-icon>
+  </button>
+  <button mat-mini-fab color="warn" (click)="deleteCurrentRow()">
+    <mat-icon>remove</mat-icon>
+  </button>
+</div>

@@ -24,8 +24,12 @@ class ItemId extends Id {
 }
 class HelperId extends Id { }
 
+class ProjectId extends Id {
+
+}
 export class Items extends radweb.Entity<string>{
   id = new ItemId();
+  projectId = new ProjectId();
   quantity = new radweb.NumberColumn("יח'");
   item = new radweb.StringColumn('מה צריך');
   constructor() {
@@ -61,5 +65,18 @@ export class Helpers extends radweb.Entity<string>{
       if (this.isNew())
         this.id.setToNewId();
     };
+  }
+}
+export class Projects extends radweb.Entity<string>{
+  id = new ProjectId();
+  name = new radweb.StringColumn();
+  description = new radweb.StringColumn();
+  constructor() {
+    super(() => new Projects(), environment.dataSource, "projects");
+    this.initColumns();
+    this.onSavingRow = () => {
+      if (this.isNew()&&!this.id.value)
+        this.id.setToNewId();
+    }
   }
 }
