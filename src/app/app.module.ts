@@ -13,16 +13,19 @@ import { FormsModule } from '@angular/forms';
 import { HelpersComponent } from './helpers/helpers.component';
 import { ProjectItemsComponent } from './project-items/project-items.component';
 import { ProjectHelpersComponent } from './project-helpers/project-helpers.component';
+import { SelectPopupComponent } from './select-popup/select-popup.component';
+import { SelectService } from './select-popup/select-service';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     ProjectsComponent,
-    ProjectParticipantComponent,
+    ProjectParticipantComponent, 
     HelpersComponent,
     ProjectItemsComponent,
-    ProjectHelpersComponent
+    ProjectHelpersComponent,
+    SelectPopupComponent
   ],
   imports: [
     BrowserModule,
@@ -33,7 +36,8 @@ import { ProjectHelpersComponent } from './project-helpers/project-helpers.compo
     RadWebModule,
     AppRoutingModule
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [SelectService],
+  bootstrap: [AppComponent],
+  entryComponents:[SelectPopupComponent]
 })
 export class AppModule { }
