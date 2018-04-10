@@ -22,10 +22,10 @@
         <app-project-items #projectItems [projectId]="p.id.value"></app-project-items>
       </mat-tab>
       <mat-tab label="מתנדבות">
-          <app-project-helpers [projectId]="p.id.value"></app-project-helpers>
+          <app-project-helpers #projectHelpers [projectId]="p.id.value"></app-project-helpers>
       </mat-tab>
     </mat-tab-group>
-    <button mat-mini-fab color="warn" (click)="saveAll(projectItems)">
+    <button mat-mini-fab color="warn" (click)="saveAll(projectItems,projectHelpers)">
       <mat-icon>save</mat-icon>
     </button>
   </mat-expansion-panel>

@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridSettings } from 'radweb';
 import { Items, Projects } from '../models';
 import { ProjectItemsComponent } from '../project-items/project-items.component';
+import { ProjectHelpersComponent } from '../project-helpers/project-helpers.component';
 
 @Component({
   selector: 'app-projects',
@@ -17,9 +18,10 @@ export class ProjectsComponent implements OnInit {
   });
   
 
-  saveAll(projectsItems: ProjectItemsComponent) {
+  saveAll(projectsItems: ProjectItemsComponent,projectHelpers:ProjectHelpersComponent) {
     this.projects.currentRow.save();
     projectsItems.saveAll();
+    projectHelpers.saveAll();
   }
 
 }

@@ -1,9 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { GridSettings } from 'radweb';
 import { Helpers, ProjectHelpers } from '../models';
 import { MatDialog } from '@angular/material';
 
 import { SelectService } from '../select-popup/select-service';
+import { ProjectParticipantComponent } from '../project-participant/project-participant.component';
 
 @Component({
   selector: 'app-project-helpers',
@@ -36,11 +37,18 @@ export class ProjectHelpersComponent implements OnInit {
         let newRow = this.helpers.items[this.helpers.items.length - 1];
         newRow.projectId.value = this.projectId;
         newRow.helperId.value = h.id.value;
-        newRow.save();
+        
 
       },
       {
         columnSettings: h => [h.name, h.phone]
       });
+  }
+  @ViewChildren(ProjectParticipantComponent) participent: QueryList<ProjectParticipantComponent>;
+  async saveAll() {
+    var p = this.participent.map(x => x);
+    for (let i = 0; i < p.length; i++) {
+      await p[i].saveAll();
+    }
   }
 }
