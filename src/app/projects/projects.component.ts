@@ -15,7 +15,7 @@ export class ProjectsComponent implements OnInit {
   projects = new GridSettings(new Projects(), {
     onNewRow: p => p.id.setToNewId()
   });
-
+  
 
   saveAll(projectsItems: ProjectItemsComponent) {
     this.projects.currentRow.save();
