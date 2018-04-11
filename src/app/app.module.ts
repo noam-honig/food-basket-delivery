@@ -8,7 +8,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
 import { MaterialModule } from './shared/material.module';
 import { ProjectsComponent } from './projects/projects.component';
-import { ProjectParticipantComponent } from './project-participant/project-participant.component';
+import { HelperItemsInProjectComponent } from './helper-items-in-project/helper-items-in-project.component';
 import { FormsModule } from '@angular/forms';
 import { HelpersComponent } from './helpers/helpers.component';
 import { ProjectItemsComponent } from './project-items/project-items.component';
@@ -21,7 +21,7 @@ import { SelectService } from './select-popup/select-service';
     AppComponent,
     HomeComponent,
     ProjectsComponent,
-    ProjectParticipantComponent, 
+    HelperItemsInProjectComponent, 
     HelpersComponent,
     ProjectItemsComponent,
     ProjectHelpersComponent,

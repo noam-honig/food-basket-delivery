@@ -4,7 +4,8 @@ import { Helpers, ProjectHelpers, ItemsPerHelper } from '../models';
 import { MatDialog } from '@angular/material';
 
 import { SelectService } from '../select-popup/select-service';
-import { ProjectParticipantComponent } from '../project-participant/project-participant.component';
+import { HelperItemsInProjectComponent } from '../helper-items-in-project/helper-items-in-project.component';
+import { foreachSync } from '../shared/utils';
 
 @Component({
   selector: 'app-project-helpers',
@@ -37,27 +38,24 @@ export class ProjectHelpersComponent implements OnInit {
         let newRow = this.helpers.items[this.helpers.items.length - 1];
         newRow.projectId.value = this.projectId;
         newRow.helperId.value = h.id.value;
-
-
+        newRow.id.setToNewId();
       },
       {
         columnSettings: h => [h.name, h.phone]
       });
   }
-  @ViewChildren(ProjectParticipantComponent) participent: QueryList<ProjectParticipantComponent>;
+  @ViewChildren(HelperItemsInProjectComponent) itemsPerHelperComponent: QueryList<HelperItemsInProjectComponent>;
   async saveAll() {
-    var p = this.participent.map(x => x);
-    for (let i = 0; i < p.length; i++) {
-      await p[i].saveAll();
-    }
+    foreachSync(this.helpers.items, async h => h.save());
+    foreachSync(this.itemsPerHelperComponent.toArray(), async x => x.saveAll());
   }
+
   async deleteHelper(helper: ProjectHelpers) {
     let hi = new ItemsPerHelper();
     let items = await hi.source.find({ where: hi.projectHelperId.isEqualTo(helper.id) });
 
-    for (let i = 0; i < items.length; i++) {
-      await items[i].delete();
-    }
+    foreachSync(items, async item => item.delete());
+
     await helper.delete();
   }
 

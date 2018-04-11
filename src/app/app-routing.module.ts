@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { ProjectsComponent } from './projects/projects.component';
-import { ProjectParticipantComponent } from './project-participant/project-participant.component';
+
 import { HelpersComponent } from './helpers/helpers.component';
 import { ProjectHelpersComponent } from './project-helpers/project-helpers.component';
 
@@ -12,7 +12,7 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'projects', component: ProjectsComponent },
   { path: 'projects-helpers', component: ProjectHelpersComponent },
-  { path: 'project-participant', component: ProjectParticipantComponent },
+  
   { path: 'helpers', component: HelpersComponent },
   { path: '', redirectTo: '/home', pathMatch: 'full' }
 ];

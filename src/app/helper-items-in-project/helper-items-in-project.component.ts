@@ -1,13 +1,14 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GridSettings } from 'radweb';
 import { Items, ItemsPerHelper } from '../models';
+import { foreachSync } from '../shared/utils';
 
 @Component({
   selector: 'app-project-participant',
-  templateUrl: './project-participant.component.html',
-  styleUrls: ['./project-participant.component.scss']
+  templateUrl: './helper-items-in-project.component.html',
+  styleUrls: ['./helper-items-in-project.component.scss']
 })
-export class ProjectParticipantComponent implements OnInit {
+export class HelperItemsInProjectComponent implements OnInit {
 
   ngOnInit(): void {
     this.items.getRecords();
@@ -40,9 +41,4 @@ export class ProjectParticipantComponent implements OnInit {
 
   }
 
-}
-export async function foreachSync<T>(array: T[], action: (item: T) => Promise<void>) {
-  for (let i = 0; i < array.length; i++) {
-    await action(array[i]);
-  }
 }

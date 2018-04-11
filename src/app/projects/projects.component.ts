@@ -26,4 +26,8 @@ export class ProjectsComponent implements OnInit {
     projectHelpers.saveAll();
   }
 
+  delete(p:Projects){
+    
+  }
+
 }

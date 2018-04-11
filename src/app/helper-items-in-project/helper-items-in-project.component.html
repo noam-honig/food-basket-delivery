@@ -6,7 +6,10 @@
           מה צריך
         </th>
         <th>
-          חסר
+          יעד
+        </th>
+        <th>
+          נאסף 
         </th>
         <th>
           אני מביאה
@@ -15,15 +18,18 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of items.items">
+      <tr *ngFor="let item of items.items" [class.success]="item.quantity.value==helperQuantity(item).quantity.value">
         <td>
           {{item.item.value}}
         </td>
         <td>
           {{item.quantity.value}}
         </td>
+        <td>
+          {{helperQuantity(item).quantity.value}}
+        </td>
         <td class="quantityField">
-          <input type="number" class="form-control" [(ngModel)]="helperQuantity(item).quantity.value">
+          <input type="phone" class="form-control" [(ngModel)]="helperQuantity(item).quantity.value">
         </td>
 
       </tr>

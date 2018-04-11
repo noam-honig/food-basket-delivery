@@ -22,8 +22,11 @@
     </div>
     <app-project-items [class.hiddenTab]="1!=selectedTab" #projectItems [projectId]="p.id.value"></app-project-items>
     <app-project-helpers [class.hiddenTab]="2!=selectedTab" #projectHelpers [projectId]="p.id.value"></app-project-helpers>
-    <button mat-mini-fab color="warn" (click)="saveAll(projectItems,projectHelpers)">
+    <button mat-mini-fab color="primary" (click)="saveAll(projectItems,projectHelpers)">
       <mat-icon>save</mat-icon>
+    </button>
+    <button mat-mini-fab color="warn" (click)="delete(p)" >
+      <mat-icon>delete</mat-icon>
     </button>
   </mat-expansion-panel>
 </mat-accordion>

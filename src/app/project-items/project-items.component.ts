@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GridSettings } from 'radweb';
 import { Items } from '../models';
+import { foreachSync } from '../shared/utils';
 
 @Component({
   selector: 'app-project-items',
@@ -12,7 +13,7 @@ export class ProjectItemsComponent implements OnInit {
   constructor() { }
   @Input() projectId: string;
   ngOnInit() {
-    
+
   }
   items = new GridSettings(new Items(), {
     allowDelete: true,
@@ -36,9 +37,6 @@ export class ProjectItemsComponent implements OnInit {
         this.items.currentRow.delete();
   }
   async saveAll() {
-
-    for (let i = 0; i < this.items.items.length; i++) {
-      await this.items.items[i].save();
-    }
+    foreachSync(this.items.items, async item => item.save());
   }
 }
