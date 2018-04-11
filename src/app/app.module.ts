@@ -16,6 +16,7 @@ import { ProjectHelpersComponent } from './project-helpers/project-helpers.compo
 import { SelectPopupComponent } from './select-popup/select-popup.component';
 import { SelectService } from './select-popup/select-service';
 import { YesNoQuestionComponent } from './select-popup/yes-no-question/yes-no-question.component';
+import { ProjectItemHelpersComponent } from './project-item-helpers/project-item-helpers.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { YesNoQuestionComponent } from './select-popup/yes-no-question/yes-no-qu
     ProjectItemsComponent,
     ProjectHelpersComponent,
     SelectPopupComponent,
-    YesNoQuestionComponent
+    YesNoQuestionComponent,
+    ProjectItemHelpersComponent
   ],
   imports: [
     BrowserModule,

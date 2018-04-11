@@ -7,7 +7,7 @@ import { SelectService } from '../select-popup/select-service';
 @Component({
   selector: 'app-project-items',
   templateUrl: './project-items.component.html',
-  styleUrls: ['./project-items.component.css']
+  styleUrls: ['./project-items.component.scss']
 })
 export class ProjectItemsComponent implements OnInit {
 
@@ -17,15 +17,16 @@ export class ProjectItemsComponent implements OnInit {
     ) { }
   @Input() projectId: string;
   ngOnInit() {
-
+    this.items.getRecords();
   }
   items = new GridSettings(new Items(), {
     allowDelete: true,
     allowUpdate: true,
     allowInsert: true,
+    numOfColumnsInGrid: 0,
     columnSettings: items => [
-      { column: items.quantity, width: '60' },
-      items.item
+      items.item,
+      { column: items.quantity }
     ],
     get: {
       where: items => items.projectId.isEqualTo(this.projectId)
@@ -33,9 +34,9 @@ export class ProjectItemsComponent implements OnInit {
     onNewRow: items => items.projectId.value = this.projectId
 
   });
-  deleteCurrentRow() {
+  delete(item: Items) {
 
-    let item = this.items.currentRow;
+
     if (item)
       this.dialog.confirmDelete(item.item.value, () => {
         if (this.items.currentRow.isNew())
@@ -44,6 +45,11 @@ export class ProjectItemsComponent implements OnInit {
           this.items.currentRow.delete();
       });
   }
+
+  //tab implementation becaust mat tab sucks!!!!
+  selectedTab = 0;
+  tabs = ["פרטים", "מי מביאה?"];
+  //end tab implementation
   async saveAll() {
     foreachSync(this.items.items, async item => item.save());
   }

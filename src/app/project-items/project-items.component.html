@@ -1,12 +1,34 @@
 <div class="myDiv">
   <mat-card-content>
+    <mat-accordion>
+      <mat-expansion-panel *ngFor="let p of items.items" #myPanel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{p.item.value}}
+          </mat-panel-title>
+          <mat-panel-description>
+            30 / {{p.quantity.value}}
+          </mat-panel-description>
 
-    <data-grid [settings]="items" [displayButtons]="false" [displayVCR]="false"></data-grid>
+        </mat-expansion-panel-header>
+        <ng-container *ngFor="let t of tabs let i=index">
+          <button mat-button class="tab" [class.activeTab]="i==selectedTab" (click)="selectedTab=i">{{t}}</button>
+        </ng-container>
+        <div [class.hiddenTab]="0!=selectedTab">
+          <data-area [settings]="items"></data-area>
+          <button mat-mini-fab color="warn" (click)="delete(p)">
+            <mat-icon>remove</mat-icon>
+          </button>
+        </div>
+        <div [class.hiddenTab]="1!=selectedTab">
+          <app-project-item-helpers [itemId]="p.id.value"></app-project-item-helpers>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+
   </mat-card-content>
   <button mat-mini-fab color="primary" (click)="items.addNewRow()">
     <mat-icon>add</mat-icon>
   </button>
-  <button mat-mini-fab color="warn" (click)="deleteCurrentRow()">
-    <mat-icon>remove</mat-icon>
-  </button>
+
 </div>

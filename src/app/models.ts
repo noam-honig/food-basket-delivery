@@ -66,7 +66,7 @@ export class Items extends IdEntity<ItemId>{
 export class ItemsPerHelper extends radweb.Entity<string>{
   itemId = new ItemId();
   projectHelperId = new ProjectHelperId();
-  quantity = new radweb.NumberColumn();
+  quantity = new radweb.NumberColumn('כמות');
 
   constructor() {
     super(() => new ItemsPerHelper(), environment.dataSource, "ItemsPerHelper");
