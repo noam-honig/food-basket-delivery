@@ -3,6 +3,7 @@ import { GridSettings } from 'radweb';
 import { Items, Projects } from '../models';
 import { ProjectItemsComponent } from '../project-items/project-items.component';
 import { ProjectHelpersComponent } from '../project-helpers/project-helpers.component';
+import { SelectService } from '../select-popup/select-service';
 
 @Component({
   selector: 'app-projects',
@@ -10,6 +11,11 @@ import { ProjectHelpersComponent } from '../project-helpers/project-helpers.comp
   styleUrls: ['./projects.component.scss']
 })
 export class ProjectsComponent implements OnInit {
+
+  constructor(
+    private dialogs: SelectService
+  ) { }
+
   ngOnInit(): void {
     this.projects.getRecords();
   }
@@ -19,15 +25,17 @@ export class ProjectsComponent implements OnInit {
   //tab implementation becaust mat tab sucks!!!!
   tabs = ['תאור כללי', 'מה צריך', 'מתנדבות'];
   selectedTab = 0;
-//end tab implementation
-  saveAll(projectsItems: ProjectItemsComponent,projectHelpers:ProjectHelpersComponent) {
+  //end tab implementation
+  saveAll(projectsItems: ProjectItemsComponent, projectHelpers: ProjectHelpersComponent) {
     this.projects.currentRow.save();
     projectsItems.saveAll();
     projectHelpers.saveAll();
   }
 
-  delete(p:Projects){
-    
+  delete(p: Projects) {
+    this.dialogs.confirmDelete(p.name.value, () => {
+      p.delete();
+     });
   }
 
 }

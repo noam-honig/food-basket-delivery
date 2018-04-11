@@ -1,7 +1,9 @@
 import * as radweb from 'radweb';
 import { environment } from './../environments/environment';
 import * as uuid from 'uuid';
-import { CompoundIdColumn, DataProviderFactory, EntityOptions } from 'radweb';
+import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity } from 'radweb';
+import { foreachSync, foreachEntityItem } from './shared/utils';
+
 
 class IdEntity<idType extends Id> extends radweb.Entity<string>
 {
@@ -51,7 +53,13 @@ export class Items extends IdEntity<ItemId>{
     super(new ItemId(), () => new Items(), environment.dataSource, "items");
     this.initColumns();
   }
-
+  async delete() {
+    foreachEntityItem(
+      new ItemsPerHelper(),
+      hi => hi.itemId.isEqualTo(this.id),
+      item => item.delete());
+    return super.delete();
+  }
 
 }
 
@@ -84,8 +92,21 @@ export class ProjectHelpers extends IdEntity<ProjectHelperId>{
     super(new ProjectHelperId(), () => new ProjectHelpers(), environment.dataSource, 'ProjectHelpers');
     this.initColumns();
   }
-
+  async delete() {
+    foreachEntityItem(
+      new ItemsPerHelper(),
+      hi => hi.projectHelperId.isEqualTo(this.id),
+      item => item.delete());
+    return super.delete();
+  }
+  helper() {
+    return this.lookup(new Helpers(), this.helperId);
+  }
+  project() {
+    return this.lookupAsync(new Projects(), this.projectId);
+  }
 }
+
 
 export class Projects extends IdEntity<ProjectId>{
   name = new radweb.StringColumn();
@@ -93,5 +114,18 @@ export class Projects extends IdEntity<ProjectId>{
   constructor() {
     super(new ProjectId(), () => new Projects(), environment.dataSource, "projects");
     this.initColumns();
+  }
+  async delete() {
+    await foreachEntityItem(
+      new Items(),
+      hi => hi.projectId.isEqualTo(this.id),
+      item => item.delete());
+
+    await foreachEntityItem(
+      new ProjectHelpers(),
+      hi => hi.projectId.isEqualTo(this.id),
+      item => item.delete());
+
+    return super.delete();
   }
 }

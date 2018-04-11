@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { GridSettings } from 'radweb';
 import { Items } from '../models';
 import { foreachSync } from '../shared/utils';
+import { SelectService } from '../select-popup/select-service';
 
 @Component({
   selector: 'app-project-items',
@@ -10,7 +11,10 @@ import { foreachSync } from '../shared/utils';
 })
 export class ProjectItemsComponent implements OnInit {
 
-  constructor() { }
+  constructor
+    (
+    private dialog: SelectService
+    ) { }
   @Input() projectId: string;
   ngOnInit() {
 
@@ -30,11 +34,15 @@ export class ProjectItemsComponent implements OnInit {
 
   });
   deleteCurrentRow() {
-    if (this.items.currentRow)
-      if (this.items.currentRow.isNew())
-        this.items.currentRow.reset();
-      else
-        this.items.currentRow.delete();
+
+    let item = this.items.currentRow;
+    if (item)
+      this.dialog.confirmDelete(item.item.value, () => {
+        if (this.items.currentRow.isNew())
+          this.items.currentRow.reset();
+        else
+          this.items.currentRow.delete();
+      });
   }
   async saveAll() {
     foreachSync(this.items.items, async item => item.save());

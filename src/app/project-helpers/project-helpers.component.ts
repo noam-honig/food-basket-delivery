@@ -28,7 +28,7 @@ export class ProjectHelpersComponent implements OnInit {
     }
   });
   getName(h: ProjectHelpers) {
-    return h.lookup(new Helpers(), h.helperId).name.value;
+    return h.helper().name.value;
   }
 
   addOne() {
@@ -51,12 +51,13 @@ export class ProjectHelpersComponent implements OnInit {
   }
 
   async deleteHelper(helper: ProjectHelpers) {
-    let hi = new ItemsPerHelper();
-    let items = await hi.source.find({ where: hi.projectHelperId.isEqualTo(helper.id) });
 
-    foreachSync(items, async item => item.delete());
-
-    await helper.delete();
+    this.dialog.confirmDelete(helper.helper().name.value + " מפרוייקט " + (await helper.project()).name.value,
+      async () => {
+        if (helper.isNew())
+          helper.reset();
+        await helper.delete();
+      });
   }
 
 
