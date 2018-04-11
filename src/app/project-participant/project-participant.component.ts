@@ -30,15 +30,19 @@ export class ProjectParticipantComponent implements OnInit {
     }
   }
   async saveAll() {
-
-    for (let i = 0; i < this.items.items.length; i++) {
-      let item = this.items.items[i];
-      let x = this.helperQuantity(this.items.items[i]);
+    foreachSync(this.items.items, async item => {
+      let x = this.helperQuantity(item);
       if (x != null) {
-        
         if (!x.isNew() || x.quantity.value > 0)
           await x.save();
       }
-    }
+    });
+
+  }
+
+}
+export async function foreachSync<T>(array: T[], action: (item: T) => Promise<void>) {
+  for (let i = 0; i < array.length; i++) {
+    await action(array[i]);
   }
 }
