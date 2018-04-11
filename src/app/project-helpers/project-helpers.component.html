@@ -1,23 +1,19 @@
-<div class="myDiv">
-  <button mat-raised-button color="primary" (click)="addOne()">
-    מתנדבת נוספת
-  </button>
- 
+<div>
   <mat-accordion>
     <mat-expansion-panel *ngFor="let h of helpers.items">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <h4>
             {{getName(h)}}
-          </h4>
         </mat-panel-title>
 
       </mat-expansion-panel-header>
       <app-project-participant [projectHelperId]="h.id.value" [projectId]="projectId"></app-project-participant>
       <button mat-mini-fab color="warn" (click)="deleteHelper(h)">
-          <mat-icon>remove</mat-icon>
-        </button>
+        <mat-icon>remove</mat-icon>
+      </button>
     </mat-expansion-panel>
   </mat-accordion>
-  
+  <button mat-mini-fab color="primary" (click)="addOne()">
+    <mat-icon>add</mat-icon>
+  </button>
 </div>
