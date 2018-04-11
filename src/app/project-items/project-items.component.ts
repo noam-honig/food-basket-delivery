@@ -34,6 +34,7 @@ export class ProjectItemsComponent implements OnInit {
     onNewRow: items => items.projectId.value = this.projectId
 
   });
+  
   delete(item: Items) {
 
 

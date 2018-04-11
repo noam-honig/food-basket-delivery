@@ -15,7 +15,12 @@
           <button mat-button class="tab" [class.activeTab]="i==selectedTab" (click)="selectedTab=i">{{t}}</button>
         </ng-container>
         <div [class.hiddenTab]="0!=selectedTab">
-          <data-area [settings]="items"></data-area>
+          <mat-form-field class="full-width">
+            <input matInput placeholder="מה צריך" [(ngModel)]="p.item.value">
+          </mat-form-field>
+          <mat-form-field class="full-width">
+            <input matInput placeholder="כמה צריך" type="phone" [(ngModel)]="p.quantity.value">
+          </mat-form-field>
           <button mat-mini-fab color="warn" (click)="delete(p)">
             <mat-icon>remove</mat-icon>
           </button>
