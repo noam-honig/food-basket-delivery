@@ -5,21 +5,15 @@ import { Categories } from '../models';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
 
-  categories = new GridSettings(new Categories(),{
-    allowUpdate: true,
-    allowDelete: true,
-    allowInsert: true,
-    columnSettings:c=>[
-      c.id,c.categoryName,c.description
-    ]
-  });
   constructor() { }
 
   ngOnInit() {
   }
+  tabs = ['Tab1', 'Tab2', 'Tab3'];
+  selectedTab = 0;
 
 }

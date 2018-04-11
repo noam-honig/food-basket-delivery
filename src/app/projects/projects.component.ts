@@ -16,8 +16,10 @@ export class ProjectsComponent implements OnInit {
   projects = new GridSettings(new Projects(), {
     onNewRow: p => p.id.setToNewId()
   });
-  
-
+  //tab implementation becaust mat tab sucks!!!!
+  tabs = ['תאור כללי', 'מה צריך', 'מתנדבות'];
+  selectedTab = 0;
+//end tab implementation
   saveAll(projectsItems: ProjectItemsComponent,projectHelpers:ProjectHelpersComponent) {
     this.projects.currentRow.save();
     projectsItems.saveAll();

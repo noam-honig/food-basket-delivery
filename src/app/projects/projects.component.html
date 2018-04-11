@@ -11,20 +11,17 @@
       </mat-panel-title>
 
     </mat-expansion-panel-header>
-    <mat-tab-group>
-      <mat-tab label="תאור כללי">
-        <h1>
-          <input matInput placeholder="שם הפרוייקט" [(ngModel)]="p.name.value">
-        </h1>
-        <textarea class="form-control" rows=5 placeholder="תאור כללי" [(ngModel)]="p.description.value"></textarea>
-      </mat-tab>
-      <mat-tab label="מה צריך">
-        <app-project-items #projectItems [projectId]="p.id.value"></app-project-items>
-      </mat-tab>
-      <mat-tab label="מתנדבות">
-          <app-project-helpers #projectHelpers [projectId]="p.id.value"></app-project-helpers>
-      </mat-tab>
-    </mat-tab-group>
+    <ng-container *ngFor="let t of tabs let i=index">
+      <button mat-button class="tab" [class.activeTab]="i==selectedTab" (click)="selectedTab=i">{{t}}</button>
+    </ng-container>
+    <div *ngIf="selectedTab==0">
+      <h1>
+        <input matInput placeholder="שם הפרוייקט" [(ngModel)]="p.name.value">
+      </h1>
+      <textarea class="form-control" rows=5 placeholder="תאור כללי" [(ngModel)]="p.description.value"></textarea>
+    </div>
+    <app-project-items *ngIf="selectedTab==1" #projectItems [projectId]="p.id.value"></app-project-items>
+    <app-project-helpers *ngIf="selectedTab==2" #projectHelpers [projectId]="p.id.value"></app-project-helpers>
     <button mat-mini-fab color="warn" (click)="saveAll(projectItems,projectHelpers)">
       <mat-icon>save</mat-icon>
     </button>

@@ -1,9 +1,4 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to Radweb Starter Kit - supports ofline
-  </h1>
-</div>
-<div class="table-responsive">
-  <data-grid [settings]="categories"></data-grid>
-</div>
+<ng-container *ngFor="let t of tabs let i=index">
+    <button mat-button class="tab" [class.activeTab]="i==selectedTab" (click)="selectedTab=i">{{t}}</button>
+</ng-container>
+{{selectedTab}}
