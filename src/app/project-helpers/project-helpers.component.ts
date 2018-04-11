@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { Helpers, ProjectHelpers } from '../models';
+import { Helpers, ProjectHelpers, ItemsPerHelper } from '../models';
 import { MatDialog } from '@angular/material';
 
 import { SelectService } from '../select-popup/select-service';
@@ -37,7 +37,7 @@ export class ProjectHelpersComponent implements OnInit {
         let newRow = this.helpers.items[this.helpers.items.length - 1];
         newRow.projectId.value = this.projectId;
         newRow.helperId.value = h.id.value;
-        
+
 
       },
       {
@@ -51,4 +51,15 @@ export class ProjectHelpersComponent implements OnInit {
       await p[i].saveAll();
     }
   }
+  async deleteHelper(helper: ProjectHelpers) {
+    let hi = new ItemsPerHelper();
+    let items = await hi.source.find({ where: hi.projectHelperId.isEqualTo(helper.id) });
+
+    for (let i = 0; i < items.length; i++) {
+      await items[i].delete();
+    }
+    await helper.delete();
+  }
+
+
 }

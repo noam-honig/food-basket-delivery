@@ -14,7 +14,9 @@
 
       </mat-expansion-panel-header>
       <app-project-participant [projectHelperId]="h.id.value" [projectId]="projectId"></app-project-participant>
-
+      <button mat-mini-fab color="warn" (click)="deleteHelper(h)">
+          <mat-icon>remove</mat-icon>
+        </button>
     </mat-expansion-panel>
   </mat-accordion>
   
