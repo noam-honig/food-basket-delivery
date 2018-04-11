@@ -4,7 +4,7 @@ import { Helpers, ProjectHelpers, ItemsPerHelper } from '../models';
 import { MatDialog } from '@angular/material';
 
 import { SelectService } from '../select-popup/select-service';
-import { HelperItemsInProjectComponent } from '../helper-items-in-project/helper-items-in-project.component';
+import { ProjectHelperItemsComponent } from '../project-helper-items/project-helper-items.component';
 import { foreachSync } from '../shared/utils';
 
 @Component({
@@ -44,7 +44,7 @@ export class ProjectHelpersComponent implements OnInit {
         columnSettings: h => [h.name, h.phone]
       });
   }
-  @ViewChildren(HelperItemsInProjectComponent) itemsPerHelperComponent: QueryList<HelperItemsInProjectComponent>;
+  @ViewChildren(ProjectHelperItemsComponent) itemsPerHelperComponent: QueryList<ProjectHelperItemsComponent>;
   async saveAll() {
     foreachSync(this.helpers.items, async h => h.save());
     foreachSync(this.itemsPerHelperComponent.toArray(), async x => x.saveAll());

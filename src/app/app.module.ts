@@ -8,7 +8,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
 import { MaterialModule } from './shared/material.module';
 import { ProjectsComponent } from './projects/projects.component';
-import { HelperItemsInProjectComponent } from './helper-items-in-project/helper-items-in-project.component';
+import { ProjectHelperItemsComponent } from './project-helper-items/project-helper-items.component';
 import { FormsModule } from '@angular/forms';
 import { HelpersComponent } from './helpers/helpers.component';
 import { ProjectItemsComponent } from './project-items/project-items.component';
@@ -22,7 +22,7 @@ import { YesNoQuestionComponent } from './select-popup/yes-no-question/yes-no-qu
     AppComponent,
     HomeComponent,
     ProjectsComponent,
-    HelperItemsInProjectComponent, 
+    ProjectHelperItemsComponent, 
     HelpersComponent,
     ProjectItemsComponent,
     ProjectHelpersComponent,

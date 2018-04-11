@@ -5,10 +5,10 @@ import { foreachSync } from '../shared/utils';
 
 @Component({
   selector: 'app-project-participant',
-  templateUrl: './helper-items-in-project.component.html',
-  styleUrls: ['./helper-items-in-project.component.scss']
+  templateUrl: './project-helper-items.component.html',
+  styleUrls: ['./project-helper-items.component.scss']
 })
-export class HelperItemsInProjectComponent implements OnInit {
+export class ProjectHelperItemsComponent implements OnInit {
 
   ngOnInit(): void {
     this.items.getRecords();
