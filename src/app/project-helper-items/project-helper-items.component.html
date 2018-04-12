@@ -18,7 +18,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of items.items" [class.success]="item.quantity.value==helperQuantity(item).quantity.value">
+      <tr *ngFor="let item of items.items" [class.success]="item.quantity.value==helperQuantity(item).quantity.value" class="myRow">
         <td>
           {{item.item.value}}
         </td>
