@@ -26,7 +26,7 @@
           {{item.quantity.value}}
         </td>
         <td>
-          {{helperQuantity(item).quantity.value}}
+           {{getTotalSoFar(item)}}
         </td>
         <td class="quantityField">
           <input type="phone" class="form-control" [(ngModel)]="helperQuantity(item).quantity.value">

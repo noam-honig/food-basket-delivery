@@ -27,18 +27,36 @@ export class ProjectHelperItemsComponent implements OnInit {
         iph.itemId.isEqualTo(item.id).and(iph.projectHelperId.isEqualTo(this.projectHelperId)));
       r.itemId.value = item.id.value;
       r.projectHelperId.value = this.projectHelperId;
+      let x: any = r;
+      if (!r.wasChanged())
+        x.__origQuantity = r.quantity.value | 0;
       return r;
     }
   }
-  async saveAll() {
-    foreachSync(this.items.items, async item => {
-      let x = this.helperQuantity(item);
-      if (x != null) {
-        if (!x.isNew() || x.quantity.value > 0)
-          await x.save();
-      }
-    });
+  getTotalSoFar(item: Items) {
+    let r = item.totalSoFar() | 0;
+    let iph = this.helperQuantity(item);
+    let x: any = iph;
+    r -= x.__origQuantity | 0;
+    r += iph.quantity.value | 0;
+    return r;
+
+
 
   }
 
+  async saveAll() {
+    foreachSync(this.items.items, async item => {
+      let hq = this.helperQuantity(item);
+      if (hq != null) {
+        if (!hq.isNew()&&hq.wasChanged() || hq.quantity.value > 0) {
+          await hq.save();
+          let x: any = hq;
+          x.__origQuantity = hq.quantity.value | 0;
+          item.resetTotalSoFar();
+        }
+      }
+      
+    });
+  }
 }

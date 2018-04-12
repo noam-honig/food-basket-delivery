@@ -27,7 +27,8 @@ export class ProjectsComponent implements OnInit {
   selectedTab = 0;
   //end tab implementation
   saveAll(projectsItems: ProjectItemsComponent, projectHelpers: ProjectHelpersComponent) {
-    this.projects.currentRow.save();
+    if (this.projects.currentRow.wasChanged())
+      this.projects.currentRow.save();
     projectsItems.saveAll();
     projectHelpers.saveAll();
   }
@@ -35,7 +36,7 @@ export class ProjectsComponent implements OnInit {
   delete(p: Projects) {
     this.dialogs.confirmDelete(p.name.value, () => {
       p.delete();
-     });
+    });
   }
 
 }

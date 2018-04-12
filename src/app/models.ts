@@ -45,10 +45,11 @@ class ProjectId extends Id {
 }
 class ProjectHelperId extends Id { }
 export class Items extends IdEntity<ItemId>{
-
+  
   projectId = new ProjectId();
   quantity = new radweb.NumberColumn("יח'");
   item = new radweb.StringColumn('מה צריך');
+  
   constructor() {
     super(new ItemId(), () => new Items(), environment.dataSource, "items");
     this.initColumns();
@@ -60,17 +61,39 @@ export class Items extends IdEntity<ItemId>{
       item => item.delete());
     return super.delete();
   }
+  resetTotalSoFar(){
+    let x: any = this;
+    x.__totalSoFar = undefined;
+  }
+  totalSoFar() {
+    let x: any = this;
+    if (x.__totalSoFar)
+      return x.__totalSoFar == -1 ? 0 : x.__totalSoFar;
+    else {
+      x.__totalSoFar = -1;
+      foreachEntityItem(new ItemsPerHelper(), i => i.itemId.isEqualTo(this.id), async (i) => {
+        if (x.__totalSoFar == -1)
+          x.__totalSoFar = i.quantity.value;
+        else
+          x.__totalSoFar += i.quantity.value;
+      });
+      return 0;
+    }
 
+  }
 }
-
 export class ItemsPerHelper extends radweb.Entity<string>{
+  
   itemId = new ItemId();
   projectHelperId = new ProjectHelperId();
   quantity = new radweb.NumberColumn('כמות');
+  
+  
+  private id = new CompoundIdColumn(this,this.itemId,this.projectHelperId)
 
   constructor() {
     super(() => new ItemsPerHelper(), environment.dataSource, "ItemsPerHelper");
-    this.initColumns(this.itemId);
+    this.initColumns(this.id);
   }
 }
 export class Helpers extends IdEntity<HelperId>{

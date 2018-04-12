@@ -3,12 +3,18 @@
     <mat-accordion>
       <mat-expansion-panel *ngFor="let p of items.items" #myPanel>
         <mat-expansion-panel-header>
-          <mat-panel-title>
-            {{p.item.value}}
-          </mat-panel-title>
-          <mat-panel-description>
-            30 / {{p.quantity.value}}
-          </mat-panel-description>
+          <div class="myHeader">
+            <div>
+              <mat-panel-title>
+                {{p.item.value}}
+              </mat-panel-title>
+            </div>
+            <div>
+              <mat-panel-description>
+                  {{p.quantity.value}} / {{p.totalSoFar()}}
+              </mat-panel-description>
+            </div>
+          </div>
 
         </mat-expansion-panel-header>
         <ng-container *ngFor="let t of tabs let i=index">

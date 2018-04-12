@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { Items } from '../models';
-import { foreachSync } from '../shared/utils';
+import { Items, ItemsPerHelper } from '../models';
+import { foreachSync, foreachEntityItem } from '../shared/utils';
 import { SelectService } from '../select-popup/select-service';
 
 @Component({
@@ -34,10 +34,8 @@ export class ProjectItemsComponent implements OnInit {
     onNewRow: items => items.projectId.value = this.projectId
 
   });
-  
+
   delete(item: Items) {
-
-
     if (item)
       this.dialog.confirmDelete(item.item.value, () => {
         if (this.items.currentRow.isNew())
@@ -52,6 +50,10 @@ export class ProjectItemsComponent implements OnInit {
   tabs = ["פרטים", "מי מביאה?"];
   //end tab implementation
   async saveAll() {
-    foreachSync(this.items.items, async item => item.save());
+    foreachSync(this.items.items, async item => {
+      if (item.wasChanged())
+        item.save();
+    });
+    
   }
 }

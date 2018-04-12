@@ -46,8 +46,12 @@ export class ProjectHelpersComponent implements OnInit {
   }
   @ViewChildren(ProjectHelperItemsComponent) itemsPerHelperComponent: QueryList<ProjectHelperItemsComponent>;
   async saveAll() {
-    foreachSync(this.helpers.items, async h => h.save());
+    foreachSync(this.helpers.items, async h => {
+      if (h.wasChanged())
+        h.save();
+    });
     foreachSync(this.itemsPerHelperComponent.toArray(), async x => x.saveAll());
+    
   }
 
   async deleteHelper(helper: ProjectHelpers) {
