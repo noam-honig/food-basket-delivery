@@ -6,6 +6,10 @@ import { YesNoQuestionComponentData, YesNoQuestionComponent } from "./yes-no-que
 
 @Injectable()
 export class SelectService {
+    SaveError(err: string): any {
+        console.log(err);
+        this.YesNoQuestion(err,()=>{});
+    }
     constructor(private dialog: MatDialog) {
 
     }

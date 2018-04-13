@@ -1,0 +1,16 @@
+<h1>
+  כניסה למערכת
+</h1>
+
+<mat-form-field class="example-full-width">
+  <input matInput placeholder="משתמש" [(ngModel)]="user">
+</mat-form-field>
+
+<mat-form-field class="example-full-width">
+  <input matInput placeholder="סיסמה" [(ngModel)]="password" type="password">
+</mat-form-field>
+
+
+<button mat-raised-button color="primary" (click)="login()">
+  כניסה
+</button>

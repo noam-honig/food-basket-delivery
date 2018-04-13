@@ -12,10 +12,14 @@ export class HelpersComponent implements OnInit {
     allowDelete: true,
     allowInsert: true,
     allowUpdate: true,
+    numOfColumnsInGrid:3,
     columnSettings: helpers => [
       helpers.name,
       helpers.phone,
-      helpers.email
+      helpers.email,
+      helpers.address,
+      helpers.userName
+      
     ]
   });
   constructor() { }

@@ -18,6 +18,8 @@ import { SelectPopupComponent } from './select-popup/select-popup.component';
 import { SelectService } from './select-popup/select-service';
 import { YesNoQuestionComponent } from './select-popup/yes-no-question/yes-no-question.component';
 import { ProjectItemHelpersComponent } from './project-item-helpers/project-item-helpers.component';
+import { LoginComponent } from './users/login/login.component';
+import { RegisterComponent } from './users/register/register.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,9 @@ import { ProjectItemHelpersComponent } from './project-item-helpers/project-item
     ProjectHelpersComponent,
     SelectPopupComponent,
     YesNoQuestionComponent,
-    ProjectItemHelpersComponent
+    ProjectItemHelpersComponent,
+    LoginComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,

@@ -1,7 +1,7 @@
 import * as radweb from 'radweb';
 import { environment } from './../environments/environment';
 import * as uuid from 'uuid';
-import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity } from 'radweb';
+import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn } from 'radweb';
 import { foreachSync, foreachEntityItem } from './shared/utils';
 
 
@@ -45,11 +45,11 @@ class ProjectId extends Id {
 }
 class ProjectHelperId extends Id { }
 export class Items extends IdEntity<ItemId>{
-  
+
   projectId = new ProjectId();
   quantity = new radweb.NumberColumn("יח'");
   item = new radweb.StringColumn('מה צריך');
-  
+
   constructor() {
     super(new ItemId(), () => new Items(), environment.dataSource, "items");
     this.initColumns();
@@ -61,7 +61,7 @@ export class Items extends IdEntity<ItemId>{
       item => item.delete());
     return super.delete();
   }
-  resetTotalSoFar(){
+  resetTotalSoFar() {
     let x: any = this;
     x.__totalSoFar = undefined;
   }
@@ -83,13 +83,13 @@ export class Items extends IdEntity<ItemId>{
   }
 }
 export class ItemsPerHelper extends radweb.Entity<string>{
-  
+
   itemId = new ItemId();
   projectHelperId = new ProjectHelperId();
   quantity = new radweb.NumberColumn('כמות');
-  
-  
-  private id = new CompoundIdColumn(this,this.itemId,this.projectHelperId)
+
+
+  private id = new CompoundIdColumn(this, this.itemId, this.projectHelperId)
 
   constructor() {
     super(() => new ItemsPerHelper(), environment.dataSource, "ItemsPerHelper");
@@ -98,10 +98,15 @@ export class ItemsPerHelper extends radweb.Entity<string>{
 }
 export class Helpers extends IdEntity<HelperId>{
 
-  name = new radweb.StringColumn();
-  phone = new radweb.StringColumn();
-  email = new radweb.StringColumn();
-  constructor() {
+  name = new radweb.StringColumn("שם");
+  phone = new radweb.StringColumn("טלפון");
+  email = new radweb.StringColumn('דוא"ל');
+  address = new radweb.StringColumn("כתובת");
+  admin = new BoolColumn('מנהלת');
+  userName = new radweb.StringColumn("שם משתמשת");
+  password = new radweb.StringColumn({ caption: 'סיסמה', inputType: 'password' });
+      constructor() {
+
     super(new HelperId(), () => new Helpers(), environment.dataSource, "Helpers");
     this.initColumns();
   }
