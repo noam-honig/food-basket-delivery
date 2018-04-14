@@ -10,14 +10,14 @@
     <mat-nav-list role="list">
       <ng-container *ngFor="let m of router.config">
         <mat-list-item *ngIf="shouldDisplayRoute(m)" routerLinkActive="active-route">
-          <a matLine [routerLink]="m.path">{{routeName(m)}}</a> 
+          <a matLine [routerLink]="m.path" (click)="routeClicked()"  >{{routeName(m)}}</a>
         </mat-list-item>
-        
+
 
       </ng-container>
-      <mat-list-item  routerLinkActive="active-route" *ngIf="auth.auth.info.valid">
-          <a matLine (click)="signOut()">יציאה</a> 
-        </mat-list-item>
+      <mat-list-item *ngIf="auth.auth.info.valid">
+        <a matLine (click)="signOut()">יציאה</a>
+      </mat-list-item>
     </mat-nav-list>
 
   </mat-sidenav>

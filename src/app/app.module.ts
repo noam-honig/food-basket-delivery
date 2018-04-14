@@ -22,6 +22,7 @@ import { LoginComponent } from './users/login/login.component';
 import { RegisterComponent } from './users/register/register.component';
 import { AuthService } from './auth/auth-service';
 import { LoggedInGuard, AdminGuard, NotLoggedInGuard } from './auth/auth-guard';
+import { MyProjectsComponent } from './my-projects/my-projects.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { LoggedInGuard, AdminGuard, NotLoggedInGuard } from './auth/auth-guard';
     YesNoQuestionComponent,
     ProjectItemHelpersComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    MyProjectsComponent
   ],
   imports: [
     BrowserModule,

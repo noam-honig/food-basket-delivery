@@ -1,0 +1,23 @@
+<div class="myButtonRow">
+  <button mat-mini-fab color="primary" (click)="projects.getRecords()">
+    <mat-icon>refresh</mat-icon>
+  </button>
+</div>
+
+<mat-accordion>
+  <mat-expansion-panel *ngFor="let p of projects.items" #myPanel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h1>
+          {{p.name.value}}
+        </h1>
+      </mat-panel-title>
+      <mat-panel-description>
+        {{p.description.value}}
+      </mat-panel-description>
+
+    </mat-expansion-panel-header>
+    
+    <app-project-participant [projectId]="p.id.value" [projectHelperId]="getProjectHelper(p).id.value"></app-project-participant>
+  </mat-expansion-panel>
+</mat-accordion>

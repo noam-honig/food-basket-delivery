@@ -1,7 +1,8 @@
-import { Component, transition, NgZone, Injector } from '@angular/core';
+import { Component, transition, NgZone, Injector, ViewChild } from '@angular/core';
 import { Router, Route, CanActivate, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { AuthService } from './auth/auth-service';
 import { LoggedInGuard } from './auth/auth-guard';
+import { MatSidenav } from '@angular/material';
 
 
 @Component({
@@ -30,6 +31,7 @@ export class AppComponent {
   }
   signOut() {
     this.auth.auth.signout();
+    this.routeClicked();
   }
   shouldDisplayRoute(route: Route) {
     if (!(route.path && route.path.indexOf(':') < 0))
@@ -48,7 +50,13 @@ export class AppComponent {
     }
     return true;
   }
- 
+  @ViewChild('sidenav') sidenav: MatSidenav;
+  routeClicked() {
+    if (this.isScreenSmall())
+      this.sidenav.close();
+
+  }
+
 }
 
 class dummyRoute extends ActivatedRouteSnapshot {
