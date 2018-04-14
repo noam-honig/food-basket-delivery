@@ -10,7 +10,7 @@
     "start_old": "ts-node --project tsconfig.server.json src/app/server/server.ts",
     "start_dev": "concurrently \"ng serve\" \"npm run server:watch\"",
     "build": "ng build --prod",
-    "postinstall1": "npm run server:build&&npm run build",
+    "postinstall": "npm run server:build&&npm run build",
     "publish-to-heroku": "git push heroku master",
     "test": "ng test",
     "lint": "ng lint",
