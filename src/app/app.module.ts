@@ -21,14 +21,14 @@ import { ProjectItemHelpersComponent } from './project-item-helpers/project-item
 import { LoginComponent } from './users/login/login.component';
 import { RegisterComponent } from './users/register/register.component';
 import { AuthService } from './auth/auth-service';
-import { AuthGuard } from './auth/auth-guard';
+import { LoggedInGuard, AdminGuard, NotLoggedInGuard } from './auth/auth-guard';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     ProjectsComponent,
-    ProjectHelperItemsComponent, 
+    ProjectHelperItemsComponent,
     HelpersComponent,
     ProjectItemsComponent,
     ProjectHelpersComponent,
@@ -41,15 +41,22 @@ import { AuthGuard } from './auth/auth-guard';
   imports: [
     BrowserModule,
     FormsModule,
-    
+
     MaterialModule,
     BrowserAnimationsModule,
     RadWebModule,
     AppRoutingModule
-    
+
   ],
-  providers: [SelectService,AuthService,AuthGuard],
+  providers: [
+    SelectService,
+    AuthService,
+    LoggedInGuard,
+    AdminGuard,
+    NotLoggedInGuard
+  ],
+
   bootstrap: [AppComponent],
-  entryComponents:[SelectPopupComponent,YesNoQuestionComponent]
+  entryComponents: [SelectPopupComponent, YesNoQuestionComponent]
 })
 export class AppModule { }

@@ -6,14 +6,18 @@
 </mat-toolbar>
 <mat-sidenav-container class="app-sidenav-container">
   <mat-sidenav #sidenav class="app-sidenav mat-elevation-z10" [opened]="!isScreenSmall()" [mode]="isScreenSmall()?'over':'side'">
-    <h4 *ngIf="auth.auth.info">שלום {{auth.auth.info.name}}</h4>
+    <h4 *ngIf="auth.auth.info.valid">שלום {{auth.auth.info.name}}</h4>
     <mat-nav-list role="list">
       <ng-container *ngFor="let m of router.config">
-        <mat-list-item *ngIf="m.path && m.path.indexOf(':')<0" routerLinkActive="active-route">
-          <a matLine [routerLink]="m.path">{{m.path}}</a>
+        <mat-list-item *ngIf="shouldDisplayRoute(m)" routerLinkActive="active-route">
+          <a matLine [routerLink]="m.path">{{routeName(m)}}</a> 
         </mat-list-item>
+        
 
       </ng-container>
+      <mat-list-item  routerLinkActive="active-route" *ngIf="auth.auth.info.valid">
+          <a matLine (click)="signOut()">יציאה</a> 
+        </mat-list-item>
     </mat-nav-list>
 
   </mat-sidenav>
