@@ -1,16 +1,19 @@
-<h1>
-  כניסה למערכת
-</h1>
+<div class="myDiv">
+  <h1>
+    כניסה למערכת
+  </h1>
 
-<mat-form-field class="example-full-width">
-  <input matInput placeholder="משתמש" [(ngModel)]="user">
-</mat-form-field>
+  <mat-form-field class="example-full-width">
+    <input matInput placeholder="משתמש או טלפון" [(ngModel)]="user">
+  </mat-form-field>
 
-<mat-form-field class="example-full-width">
-  <input matInput placeholder="סיסמה" [(ngModel)]="password" type="password">
-</mat-form-field>
+  <mat-form-field class="example-full-width">
+    <input matInput placeholder="סיסמה" [(ngModel)]="password" type="password">
+  </mat-form-field>
 
+  <mat-checkbox [(ngModel)]="remember">זכור אותי במחשב זה</mat-checkbox>
 
-<button mat-raised-button color="primary" (click)="login()">
-  כניסה
-</button>
+  <button mat-raised-button color="primary" (click)="login()">
+    כניסה
+  </button>
+</div>

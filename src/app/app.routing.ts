@@ -8,11 +8,16 @@ import { HelpersComponent } from './helpers/helpers.component';
 import { ProjectHelpersComponent } from './project-helpers/project-helpers.component';
 import { LoginComponent } from './users/login/login.component';
 import { RegisterComponent } from './users/register/register.component';
+import { AuthGuard, routeCondition } from './auth/auth-guard';
 
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
-  { path: 'projects', component: ProjectsComponent },
+  {
+    path: 'projects', component: ProjectsComponent,
+    canActivate: [AuthGuard],
+    data: routeCondition(i => i.admin)
+  },
   { path: 'projects-helpers', component: ProjectHelpersComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },

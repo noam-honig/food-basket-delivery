@@ -12,17 +12,31 @@ export class HelpersComponent implements OnInit {
     allowDelete: true,
     allowInsert: true,
     allowUpdate: true,
-    numOfColumnsInGrid:3,
+    numOfColumnsInGrid: 2,
     columnSettings: helpers => [
       helpers.name,
       helpers.phone,
       helpers.email,
       helpers.address,
       helpers.userName
-      
     ]
   });
-  constructor() { }
+
+  /* workaround for checkbox not working*/
+  get admin() {
+    if (this.helpers.currentRow)
+      return this.helpers.currentRow.isAdmin.value;
+      return false;
+  }
+  set admin(value: any) {
+    
+    this.helpers.currentRow.isAdmin.value = value;
+    
+  }
+
+  
+  constructor() {
+  }
 
   ngOnInit() {
   }

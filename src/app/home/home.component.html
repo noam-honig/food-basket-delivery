@@ -1,4 +1,12 @@
-<ng-container *ngFor="let t of tabs let i=index">
-    <button mat-button class="tab" [class.activeTab]="i==selectedTab" (click)="selectedTab=i">{{t}}</button>
-</ng-container>
-{{selectedTab}}
+<div class="container myContainer">
+    <div class="col-md-4">
+        col md 4
+    </div>
+    <div class="col-md-8">
+        col md 8
+    </div>
+</div>
+<div class="myContainer">
+    <div class="col-md-4" >a</div>
+    <div>b</div>
+</div>

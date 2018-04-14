@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { AlertModule, TabsModule, BsDropdownModule, CollapseModule } from "ngx-bootstrap";
 import { AppComponent } from './app.component';
 import { RadWebModule } from 'radweb';
-import { AppRoutingModule } from './app-routing.module';
+import { AppRoutingModule } from './app.routing';
 import { HomeComponent } from './home/home.component';
 import { MaterialModule } from './shared/material.module';
 
@@ -20,6 +20,8 @@ import { YesNoQuestionComponent } from './select-popup/yes-no-question/yes-no-qu
 import { ProjectItemHelpersComponent } from './project-item-helpers/project-item-helpers.component';
 import { LoginComponent } from './users/login/login.component';
 import { RegisterComponent } from './users/register/register.component';
+import { AuthService } from './auth/auth-service';
+import { AuthGuard } from './auth/auth-guard';
 
 @NgModule({
   declarations: [
@@ -44,8 +46,9 @@ import { RegisterComponent } from './users/register/register.component';
     BrowserAnimationsModule,
     RadWebModule,
     AppRoutingModule
+    
   ],
-  providers: [SelectService],
+  providers: [SelectService,AuthService,AuthGuard],
   bootstrap: [AppComponent],
   entryComponents:[SelectPopupComponent,YesNoQuestionComponent]
 })

@@ -102,10 +102,17 @@ export class Helpers extends IdEntity<HelperId>{
   phone = new radweb.StringColumn("טלפון");
   email = new radweb.StringColumn('דוא"ל');
   address = new radweb.StringColumn("כתובת");
-  admin = new BoolColumn('מנהלת');
+  
   userName = new radweb.StringColumn("שם משתמשת");
   password = new radweb.StringColumn({ caption: 'סיסמה', inputType: 'password' });
-      constructor() {
+  
+  createDate = new radweb.DateTimeColumn({
+    caption: 'תאריך הוספה',
+    readonly: true
+  });
+  isAdmin = new BoolColumn('מנהלת');
+
+  constructor() {
 
     super(new HelperId(), () => new Helpers(), environment.dataSource, "Helpers");
     this.initColumns();
