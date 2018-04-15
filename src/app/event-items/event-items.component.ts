@@ -38,10 +38,10 @@ export class EventItemsComponent implements OnInit {
   delete(item: Items) {
     if (item)
       this.dialog.confirmDelete(item.item.value, () => {
-        if (this.items.currentRow.isNew())
-          this.items.currentRow.reset();
+        if (item.isNew())
+          item.reset();
         else
-          this.items.currentRow.delete();
+          item.delete();
       });
   }
 
