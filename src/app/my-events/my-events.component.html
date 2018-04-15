@@ -1,11 +1,11 @@
 <div class="myButtonRow">
-  <button mat-mini-fab color="primary" (click)="projects.getRecords()">
+  <button mat-mini-fab color="primary" (click)="events.getRecords()">
     <mat-icon>refresh</mat-icon>
   </button>
 </div>
 
 <mat-accordion>
-  <mat-expansion-panel *ngFor="let p of projects.items" #myPanel>
+  <mat-expansion-panel *ngFor="let p of events.items" #myPanel>
     <mat-expansion-panel-header>
       <mat-panel-title>
         <h1>
@@ -18,9 +18,9 @@
 
     </mat-expansion-panel-header>
 
-    <app-project-participant #projectItems [projectId]="p.id.value" [projectHelperId]="getProjectHelper(p).id.value"></app-project-participant>
+    <app-event-participant #eventItems [eventId]="p.id.value" [eventHelperId]="getEventHelper(p).id.value"></app-event-participant>
     <div class="button-area">
-      <button mat-mini-fab color="primary" (click)="saveAll(projectItems,p)">
+      <button mat-mini-fab color="primary" (click)="saveAll(eventItems,p)">
         <mat-icon>save</mat-icon>
       </button>
     </div>

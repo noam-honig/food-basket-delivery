@@ -2,23 +2,23 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { ProjectsComponent } from './projects/projects.component';
+import { EventsComponent } from './events/events.component';
 
 import { HelpersComponent } from './helpers/helpers.component';
-import { ProjectHelpersComponent } from './project-helpers/project-helpers.component';
+import { EventHelpersComponent } from './event-helpers/event-helpers.component';
 import { LoginComponent } from './users/login/login.component';
 import { RegisterComponent } from './users/register/register.component';
 import { LoggedInGuard, AdminGuard, NotLoggedInGuard } from './auth/auth-guard';
-import { MyProjectsComponent } from './my-projects/my-projects.component';
+import { MyEventsComponent } from './my-events/my-events.component';
 
 
 const routes: Routes = [
 
   {
-    path: 'projects', component: ProjectsComponent, canActivate: [AdminGuard], data: { name: 'אירועים' }
+    path: 'events', component: EventsComponent, canActivate: [AdminGuard], data: { name: 'אירועים' }
   },
   {
-    path: 'my-projects', component: MyProjectsComponent, canActivate: [LoggedInGuard], data: { name: 'אירועים שלי' }
+    path: 'my-events', component: MyEventsComponent, canActivate: [LoggedInGuard], data: { name: 'אירועים שלי' }
   },
 
   { path: 'login', component: LoginComponent, data: { name: 'כניסה' } },

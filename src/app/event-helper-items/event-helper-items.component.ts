@@ -4,29 +4,29 @@ import { Items, ItemsPerHelper } from '../models';
 import { foreachSync } from '../shared/utils';
 
 @Component({
-  selector: 'app-project-participant',
-  templateUrl: './project-helper-items.component.html',
-  styleUrls: ['./project-helper-items.component.scss']
+  selector: 'app-event-participant',
+  templateUrl: './event-helper-items.component.html',
+  styleUrls: ['./event-helper-items.component.scss']
 })
-export class ProjectHelperItemsComponent implements OnInit {
+export class EventHelperItemsComponent implements OnInit {
 
   ngOnInit(): void {
     this.items.getRecords();
   }
   items = new GridSettings(new Items(), {
     get: {
-      where: i => i.projectId.isEqualTo(this.projectId)
+      where: i => i.eventId.isEqualTo(this.eventId)
     }
   });
-  @Input() projectId: string;
-  @Input() projectHelperId: string;
+  @Input() eventId: string;
+  @Input() eventHelperId: string;
 
   helperQuantity(item: Items): ItemsPerHelper {
     if (item) {
       var r = item.lookup(new ItemsPerHelper(), iph =>
-        iph.itemId.isEqualTo(item.id).and(iph.projectHelperId.isEqualTo(this.projectHelperId)));
+        iph.itemId.isEqualTo(item.id).and(iph.eventHelperId.isEqualTo(this.eventHelperId)));
       r.itemId.value = item.id.value;
-      r.projectHelperId.value = this.projectHelperId;
+      r.eventHelperId.value = this.eventHelperId;
       let x: any = r;
       if (!r.wasChanged())
         x.__origQuantity = r.quantity.value | 0;

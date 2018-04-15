@@ -5,17 +5,17 @@ import { foreachSync, foreachEntityItem } from '../shared/utils';
 import { SelectService } from '../select-popup/select-service';
 
 @Component({
-  selector: 'app-project-items',
-  templateUrl: './project-items.component.html',
-  styleUrls: ['./project-items.component.scss']
+  selector: 'app-event-items',
+  templateUrl: './event-items.component.html',
+  styleUrls: ['./event-items.component.scss']
 })
-export class ProjectItemsComponent implements OnInit {
+export class EventItemsComponent implements OnInit {
 
   constructor
     (
     private dialog: SelectService
     ) { }
-  @Input() projectId: string;
+  @Input() eventId: string;
   ngOnInit() {
     this.items.getRecords();
   }
@@ -29,9 +29,9 @@ export class ProjectItemsComponent implements OnInit {
       { column: items.quantity }
     ],
     get: {
-      where: items => items.projectId.isEqualTo(this.projectId)
+      where: items => items.eventId.isEqualTo(this.eventId)
     },
-    onNewRow: items => items.projectId.value = this.projectId
+    onNewRow: items => items.eventId.value = this.eventId
 
   });
 

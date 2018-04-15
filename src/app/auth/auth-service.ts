@@ -30,9 +30,9 @@ export class AuthService {
         });
         if (ok) {
             if (this.auth.info.admin)
-                this.router.navigate(['/projects'])
+                this.router.navigate(['/events'])
             else
-                this.router.navigate(['/my-projects'])
+                this.router.navigate(['/my-events'])
         }
         else {
             this.dialog.Error("משתמשת לא נמצאה");

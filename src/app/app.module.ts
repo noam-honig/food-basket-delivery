@@ -8,38 +8,38 @@ import { AppRoutingModule } from './app.routing';
 import { HomeComponent } from './home/home.component';
 import { MaterialModule } from './shared/material.module';
 
-import { ProjectsComponent } from './projects/projects.component';
-import { ProjectHelperItemsComponent } from './project-helper-items/project-helper-items.component';
+import { EventsComponent } from './events/events.component';
+import { EventHelperItemsComponent } from './event-helper-items/event-helper-items.component';
 import { FormsModule } from '@angular/forms';
 import { HelpersComponent } from './helpers/helpers.component';
-import { ProjectItemsComponent } from './project-items/project-items.component';
-import { ProjectHelpersComponent } from './project-helpers/project-helpers.component';
+import { EventItemsComponent } from './event-items/event-items.component';
+import { EventHelpersComponent } from './event-helpers/event-helpers.component';
 import { SelectPopupComponent } from './select-popup/select-popup.component';
 import { SelectService } from './select-popup/select-service';
 import { YesNoQuestionComponent } from './select-popup/yes-no-question/yes-no-question.component';
-import { ProjectItemHelpersComponent } from './project-item-helpers/project-item-helpers.component';
+import { EventItemHelpersComponent } from './event-item-helpers/event-item-helpers.component';
 import { LoginComponent } from './users/login/login.component';
 import { RegisterComponent } from './users/register/register.component';
 import { AuthService } from './auth/auth-service';
 import { LoggedInGuard, AdminGuard, NotLoggedInGuard } from './auth/auth-guard';
-import { MyProjectsComponent } from './my-projects/my-projects.component';
+import { MyEventsComponent } from './my-events/my-events.component';
 import { InputAreaComponent } from './select-popup/input-area/input-area.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    ProjectsComponent,
-    ProjectHelperItemsComponent,
+    EventsComponent,
+    EventHelperItemsComponent,
     HelpersComponent,
-    ProjectItemsComponent,
-    ProjectHelpersComponent,
+    EventItemsComponent,
+    EventHelpersComponent,
     SelectPopupComponent,
     YesNoQuestionComponent,
-    ProjectItemHelpersComponent,
+    EventItemHelpersComponent,
     LoginComponent,
     RegisterComponent,
-    MyProjectsComponent,
+    MyEventsComponent,
     InputAreaComponent
   ],
   imports: [

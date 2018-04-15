@@ -1,33 +1,33 @@
 import { Component, OnInit, Input, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { Helpers, ProjectHelpers, ItemsPerHelper } from '../models';
+import { Helpers, EventHelpers, ItemsPerHelper } from '../models';
 import { MatDialog } from '@angular/material';
 
 import { SelectService } from '../select-popup/select-service';
-import { ProjectHelperItemsComponent } from '../project-helper-items/project-helper-items.component';
+import { EventHelperItemsComponent } from '../event-helper-items/event-helper-items.component';
 import { foreachSync } from '../shared/utils';
 
 @Component({
-  selector: 'app-project-helpers',
-  templateUrl: './project-helpers.component.html',
-  styleUrls: ['./project-helpers.component.scss']
+  selector: 'app-event-helpers',
+  templateUrl: './event-helpers.component.html',
+  styleUrls: ['./event-helpers.component.scss']
 })
-export class ProjectHelpersComponent implements OnInit {
+export class EventHelpersComponent implements OnInit {
 
   constructor(private dialog: SelectService) {
 
   }
-  @Input() projectId;
+  @Input() eventId;
   ngOnInit() {
     this.helpers.getRecords();
   }
-  helpers = new GridSettings(new ProjectHelpers(), {
+  helpers = new GridSettings(new EventHelpers(), {
     get: {
-      where: h => h.projectId.isEqualTo(this.projectId),
+      where: h => h.eventId.isEqualTo(this.eventId),
       limit: 1000
     }
   });
-  getName(h: ProjectHelpers) {
+  getName(h: EventHelpers) {
     return h.helper().name.value;
   }
 
@@ -36,7 +36,7 @@ export class ProjectHelpersComponent implements OnInit {
       h => {
         this.helpers.addNewRow();
         let newRow = this.helpers.items[this.helpers.items.length - 1];
-        newRow.projectId.value = this.projectId;
+        newRow.eventId.value = this.eventId;
         newRow.helperId.value = h.id.value;
         newRow.id.setToNewId();
       },
@@ -44,7 +44,7 @@ export class ProjectHelpersComponent implements OnInit {
         columnSettings: h => [h.name, h.phone]
       });
   }
-  @ViewChildren(ProjectHelperItemsComponent) itemsPerHelperComponent: QueryList<ProjectHelperItemsComponent>;
+  @ViewChildren(EventHelperItemsComponent) itemsPerHelperComponent: QueryList<EventHelperItemsComponent>;
   async saveAll() {
     foreachSync(this.helpers.items, async h => {
       if (h.wasChanged())
@@ -54,9 +54,9 @@ export class ProjectHelpersComponent implements OnInit {
     
   }
 
-  async deleteHelper(helper: ProjectHelpers) {
+  async deleteHelper(helper: EventHelpers) {
 
-    this.dialog.confirmDelete(helper.helper().name.value + " מפרוייקט " + (await helper.project()).name.value,
+    this.dialog.confirmDelete(helper.helper().name.value + " מאירוע " + (await helper.event()).name.value,
       async () => {
         if (helper.isNew())
           helper.reset();

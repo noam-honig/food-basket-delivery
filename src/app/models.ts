@@ -40,13 +40,13 @@ class ItemId extends Id {
 }
 class HelperId extends Id { }
 
-class ProjectId extends Id {
+class EventId extends Id {
 
 }
-class ProjectHelperId extends Id { }
+class EventHelperId extends Id { }
 export class Items extends IdEntity<ItemId>{
 
-  projectId = new ProjectId();
+  eventId = new EventId();
   quantity = new radweb.NumberColumn("יח'");
   item = new radweb.StringColumn('מה צריך');
 
@@ -85,11 +85,11 @@ export class Items extends IdEntity<ItemId>{
 export class ItemsPerHelper extends radweb.Entity<string>{
 
   itemId = new ItemId();
-  projectHelperId = new ProjectHelperId();
+  eventHelperId = new EventHelperId();
   quantity = new radweb.NumberColumn('כמות');
 
 
-  private id = new CompoundIdColumn(this, this.itemId, this.projectHelperId)
+  private id = new CompoundIdColumn(this, this.itemId, this.eventHelperId)
 
   constructor() {
     super(() => new ItemsPerHelper(), environment.dataSource, "ItemsPerHelper");
@@ -119,46 +119,46 @@ export class Helpers extends IdEntity<HelperId>{
   }
 }
 
-export class ProjectHelpers extends IdEntity<ProjectHelperId>{
+export class EventHelpers extends IdEntity<EventHelperId>{
 
   helperId = new HelperId();
-  projectId = new ProjectId();
+  eventId = new EventId();
   constructor() {
-    super(new ProjectHelperId(), () => new ProjectHelpers(), environment.dataSource, 'ProjectHelpers');
+    super(new EventHelperId(), () => new EventHelpers(), environment.dataSource, 'EventHelpers');
     this.initColumns();
   }
   async delete() {
     foreachEntityItem(
       new ItemsPerHelper(),
-      hi => hi.projectHelperId.isEqualTo(this.id),
+      hi => hi.eventHelperId.isEqualTo(this.id),
       item => item.delete());
     return super.delete();
   }
   helper() {
     return this.lookup(new Helpers(), this.helperId);
   }
-  project() {
-    return this.lookupAsync(new Projects(), this.projectId);
+  event() {
+    return this.lookupAsync(new Events(), this.eventId);
   }
 }
 
 
-export class Projects extends IdEntity<ProjectId>{
-  name = new radweb.StringColumn();
+export class Events extends IdEntity<EventId>{
+  name = new radweb.StringColumn('שם אירוע');
   description = new radweb.StringColumn();
   constructor() {
-    super(new ProjectId(), () => new Projects(), environment.dataSource, "projects");
+    super(new EventId(), () => new Events(), environment.dataSource, "events");
     this.initColumns();
   }
   async delete() {
     await foreachEntityItem(
       new Items(),
-      hi => hi.projectId.isEqualTo(this.id),
+      hi => hi.eventId.isEqualTo(this.id),
       item => item.delete());
 
     await foreachEntityItem(
-      new ProjectHelpers(),
-      hi => hi.projectId.isEqualTo(this.id),
+      new EventHelpers(),
+      hi => hi.eventId.isEqualTo(this.id),
       item => item.delete());
 
     return super.delete();
