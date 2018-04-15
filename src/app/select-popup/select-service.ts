@@ -7,6 +7,9 @@ import { InputAreaComponentData, InputAreaComponent } from "./input-area/input-a
 
 @Injectable()
 export class SelectService {
+    Info(info: string): any {
+        this.Error(info);
+    }
     Error(err: string): any {
 
         this.YesNoQuestion(err, () => { });

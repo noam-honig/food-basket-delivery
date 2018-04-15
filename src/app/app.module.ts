@@ -24,6 +24,7 @@ import { AuthService } from './auth/auth-service';
 import { LoggedInGuard, AdminGuard, NotLoggedInGuard } from './auth/auth-guard';
 import { MyEventsComponent } from './my-events/my-events.component';
 import { InputAreaComponent } from './select-popup/input-area/input-area.component';
+import { UpdateInfoComponent } from './users/update-info/update-info.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { InputAreaComponent } from './select-popup/input-area/input-area.compone
     LoginComponent,
     RegisterComponent,
     MyEventsComponent,
-    InputAreaComponent
+    InputAreaComponent,
+    UpdateInfoComponent
   ],
   imports: [
     BrowserModule,

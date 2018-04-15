@@ -10,6 +10,7 @@ import { LoginComponent } from './users/login/login.component';
 import { RegisterComponent } from './users/register/register.component';
 import { LoggedInGuard, AdminGuard, NotLoggedInGuard } from './auth/auth-guard';
 import { MyEventsComponent } from './my-events/my-events.component';
+import { UpdateInfoComponent } from './users/update-info/update-info.component';
 
 
 const routes: Routes = [
@@ -26,9 +27,10 @@ const routes: Routes = [
     component: HelpersComponent,
     data: { name: 'מתנדבות' }, canActivate: [AdminGuard]
   },
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: 'register', component: UpdateInfoComponent, data: { name: 'עדכני פרטים' }, canActivate: [LoggedInGuard] },
   { path: 'login', component: LoginComponent, data: { name: 'כניסה' } },
-  { path: 'register', component: RegisterComponent, data: { name: 'הרשמה' }, canActivate: [NotLoggedInGuard] }
+  { path: 'register', component: RegisterComponent, data: { name: 'הרשמה' }, canActivate: [NotLoggedInGuard] },
+  { path: '', redirectTo: '/login', pathMatch: 'full' }
 ];
 
 @NgModule({
