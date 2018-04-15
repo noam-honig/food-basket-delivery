@@ -99,13 +99,13 @@ export class ItemsPerHelper extends radweb.Entity<string>{
 export class Helpers extends IdEntity<HelperId>{
 
   name = new radweb.StringColumn("שם");
-  phone = new radweb.StringColumn({caption:"טלפון",inputType:'tel'});
+  phone = new radweb.StringColumn({ caption: "טלפון", inputType: 'tel' });
   email = new radweb.StringColumn('דוא"ל');
   address = new radweb.StringColumn("כתובת");
-  
+
   userName = new radweb.StringColumn("שם משתמשת");
   password = new radweb.StringColumn({ caption: 'סיסמה', inputType: 'password' });
-  
+
   createDate = new radweb.DateTimeColumn({
     caption: 'תאריך הוספה',
     readonly: true
@@ -116,6 +116,12 @@ export class Helpers extends IdEntity<HelperId>{
 
     super(new HelperId(), () => new Helpers(), environment.dataSource, "Helpers");
     this.initColumns();
+    let x = this.onSavingRow;
+    this.onSavingRow = () => {
+      if (this.isNew())
+        this.createDate.dateValue = new Date();
+      x();
+    };
   }
 }
 

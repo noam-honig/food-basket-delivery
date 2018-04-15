@@ -8,29 +8,58 @@ import { config } from 'dotenv';
 import { DataApi } from 'radweb/utils/server/DataApi';
 import * as path from 'path';
 import * as fs from 'fs';
+import { CompoundIdColumn } from 'radweb';
+import { SchemaBuilder } from './schema-build';
 config();
 
 let app = express();
 let port = process.env.PORT || 3000;
 
+let ssl = true;
+if (process.env.DISABLE_POSTGRES_SSL)
+    ssl = false;
+
 
 if (!process.env.DATABASE_URL) {
     console.log("No DATABASE_URL environment variable found, if you are developing locally, please add a '.env' with DATABASE_URL='postgres://*USERNAME*:*PASSWORD*@*HOST*:*PORT*/*DATABASE*'");
 }
-
-environment.dataSource = new PostgresDataProvider(new Pool({
+const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: true
-}));
+    ssl: ssl
+});
+environment.dataSource = new PostgresDataProvider(pool);
+
+var sb = new SchemaBuilder(pool);
+[
+    new models.Events(),
+    new models.EventHelpers(),
+    new models.Helpers(),
+    new models.Items(),
+    new models.ItemsPerHelper()
+].forEach(x => sb.CreateIfNotExist(x));
+
+
 
 let eb = new ExpressBridge(app);
 let dataApi = eb.addArea('/dataApi');
 
-dataApi.add(r => new DataApi(new models.Categories(), {
-    allowDelete: true,
-    allowInsert: true,
-    allowUpdate: true
-}));
+
+var sb = new SchemaBuilder(pool);
+[
+    new models.Events(),
+    new models.EventHelpers(),
+    new models.Helpers(),
+    new models.Items(),
+    new models.ItemsPerHelper()
+].forEach(x => {
+    dataApi.add(r => new DataApi(x, {
+        allowDelete: true,
+        allowInsert: true,
+        allowUpdate: true
+    }));
+});
+
+
 
 
 app.get('/cache.manifest', (req, res) => {
@@ -54,8 +83,11 @@ NETWORK:
 
     res.send(result);
 });
+
 app.use(express.static('dist'));
 app.use('/*', (req, res) => {
+    if (req.method=='OPTIONS')
+    res.send('');
     res.send(fs.readFileSync('dist/index.html').toString());
 });
 

@@ -52,9 +52,9 @@ export class RegisterComponent implements OnInit {
       if (!foundAdmin)
         this.helpers.currentRow.isAdmin.value = true;
 
-
-      await this.helpers._doSavingRow(this.helpers.currentRow);
-      this.auth.login(this.helpers.currentRow.phone.value, this.helpers.currentRow.password.value, false);
+      let userInfo = this.helpers.currentRow;
+      await this.helpers._doSavingRow(userInfo);
+      this.auth.login(userInfo.phone.value, userInfo.password.value, false);
     }
     catch (err) {
 
