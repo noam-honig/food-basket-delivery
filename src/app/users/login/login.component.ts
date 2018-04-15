@@ -3,6 +3,7 @@ import { foreachSync, foreachEntityItem } from '../../shared/utils';
 import { Helpers } from '../../models';
 import { SelectService } from '../../select-popup/select-service';
 import { AuthService } from '../../auth/auth-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +14,8 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private dialog: SelectService,
-    private auth: AuthService
+    private auth: AuthService,
+    private router:Router
   ) { }
   user: string;
   password: string;
@@ -21,16 +23,10 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
   }
   login() {
-    foreachEntityItem(new Helpers(), h => h.phone.isEqualTo(this.user), async h => {
-      this.auth.auth.info = {
-        helperId:h.id.value,
-        admin: h.isAdmin.value,
-        name: h.name.value,
-        authToken: 'stam token',
-        valid: true
-      };
-      if (this.remember)
-        this.auth.auth.rememberOnThisMachine();
-    });
+    this.auth.login(this.user,this.password,this.remember);
+    
+  }
+  register(){
+    this.router.navigate(['/register']);
   }
 }

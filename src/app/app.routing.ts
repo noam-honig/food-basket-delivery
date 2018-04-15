@@ -26,7 +26,7 @@ const routes: Routes = [
   {
     path: 'helpers',
     component: HelpersComponent,
-    data: { name: 'מתנדבות' }//,    canActivate: [AdminGuard]
+    data: { name: 'מתנדבות' }, canActivate: [AdminGuard]
   },
   { path: '', redirectTo: '/login', pathMatch: 'full' }
 ];

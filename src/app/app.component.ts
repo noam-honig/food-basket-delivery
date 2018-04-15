@@ -30,8 +30,9 @@ export class AppComponent {
     return name;
   }
   signOut() {
-    this.auth.auth.signout();
+    
     this.routeClicked();
+    this.auth.signout();
   }
   shouldDisplayRoute(route: Route) {
     if (!(route.path && route.path.indexOf(':') < 0))
