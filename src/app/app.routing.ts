@@ -21,14 +21,14 @@ const routes: Routes = [
     path: 'my-events', component: MyEventsComponent, canActivate: [LoggedInGuard], data: { name: 'אירועים שלי' }
   },
 
-  { path: 'login', component: LoginComponent, data: { name: 'כניסה' } },
-  { path: 'register', component: RegisterComponent, data: { name: 'הרשמה' }, canActivate: [NotLoggedInGuard] },
   {
     path: 'helpers',
     component: HelpersComponent,
     data: { name: 'מתנדבות' }, canActivate: [AdminGuard]
   },
-  { path: '', redirectTo: '/login', pathMatch: 'full' }
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent, data: { name: 'כניסה' } },
+  { path: 'register', component: RegisterComponent, data: { name: 'הרשמה' }, canActivate: [NotLoggedInGuard] }
 ];
 
 @NgModule({
