@@ -54,6 +54,18 @@ export class ProjectItemsComponent implements OnInit {
       if (item.wasChanged())
         item.save();
     });
-    
+
+  }
+  addNew() {
+    this.items.addNewRow();
+    let i = this.items.items[this.items.items.length - 1];
+    this.dialog.displayArea({
+      title: 'מוצר חדש',
+      settings: { columnSettings: () => [i.item, i.quantity] },
+      ok: () => { },
+      cancel: () => {
+        i.reset();
+      }
+    });
   }
 }

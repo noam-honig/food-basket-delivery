@@ -1,17 +1,21 @@
 import { Injectable } from "@angular/core";
 import { MatDialog } from "@angular/material";
-import { Entity, GridSettings, IDataSettings } from "radweb";
+import { Entity, GridSettings, IDataSettings, IDataAreaSettings } from "radweb";
 import { SelectPopupComponent, SelectComponentInfo } from "./select-popup.component";
 import { YesNoQuestionComponentData, YesNoQuestionComponent } from "./yes-no-question/yes-no-question.component";
+import { InputAreaComponentData, InputAreaComponent } from "./input-area/input-area.component";
 
 @Injectable()
 export class SelectService {
     Error(err: string): any {
-        
-        this.YesNoQuestion(err,()=>{});
+
+        this.YesNoQuestion(err, () => { });
     }
     constructor(private dialog: MatDialog) {
 
+    }
+    displayArea(settings: InputAreaComponentData) {
+        this.dialog.open(InputAreaComponent, { data: settings });
     }
 
     showPopup<T extends Entity<any>>(entity: T, selected: (selectedValue: T) => void, settings?: IDataSettings<T>) {

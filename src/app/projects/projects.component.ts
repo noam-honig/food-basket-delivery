@@ -32,7 +32,24 @@ export class ProjectsComponent implements OnInit {
     projectsItems.saveAll();
     projectHelpers.saveAll();
   }
+  addProject() {
 
+    this.projects.addNewRow();
+    let p = this.projects.items[this.projects.items.length - 1];
+    this.dialogs.displayArea({
+      title: 'אירוע חדש',
+      settings: {
+        columnSettings: () => [p.name]
+      },
+      ok: () => { 
+        p.save();
+      },
+      cancel: () => { 
+        
+        p.reset();
+      }
+    });
+  }
   delete(p: Projects) {
     this.dialogs.confirmDelete(p.name.value, () => {
       p.delete();

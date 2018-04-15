@@ -23,6 +23,7 @@ import { RegisterComponent } from './users/register/register.component';
 import { AuthService } from './auth/auth-service';
 import { LoggedInGuard, AdminGuard, NotLoggedInGuard } from './auth/auth-guard';
 import { MyProjectsComponent } from './my-projects/my-projects.component';
+import { InputAreaComponent } from './select-popup/input-area/input-area.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { MyProjectsComponent } from './my-projects/my-projects.component';
     ProjectItemHelpersComponent,
     LoginComponent,
     RegisterComponent,
-    MyProjectsComponent
+    MyProjectsComponent,
+    InputAreaComponent
   ],
   imports: [
     BrowserModule,
@@ -59,6 +61,9 @@ import { MyProjectsComponent } from './my-projects/my-projects.component';
   ],
 
   bootstrap: [AppComponent],
-  entryComponents: [SelectPopupComponent, YesNoQuestionComponent]
+  entryComponents: [
+    SelectPopupComponent,
+     YesNoQuestionComponent,
+    InputAreaComponent]
 })
 export class AppModule { }

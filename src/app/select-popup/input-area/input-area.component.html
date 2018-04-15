@@ -1,0 +1,18 @@
+<div dir="rtl">
+ <form (submit)="confirm()"> 
+    <h3 matDialogHeader>{{data.title}}</h3>
+    <data-area [settings]="area"> </data-area>
+    <mat-dialog-actions>
+
+      <button type="button" mat-raised-button color="warning" (click)="this.dialogRef.close()">
+        בטלי
+      </button>
+
+      <button type="submit" mat-raised-button color="primary" (click)="confirm()">
+        אשרי
+      </button>
+
+    </mat-dialog-actions>
+  </form>
+
+</div>
