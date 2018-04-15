@@ -99,7 +99,7 @@ export class ItemsPerHelper extends radweb.Entity<string>{
 export class Helpers extends IdEntity<HelperId>{
 
   name = new radweb.StringColumn("שם");
-  phone = new radweb.StringColumn("טלפון");
+  phone = new radweb.StringColumn({caption:"טלפון",inputType:'tel'});
   email = new radweb.StringColumn('דוא"ל');
   address = new radweb.StringColumn("כתובת");
   

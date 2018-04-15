@@ -17,7 +17,12 @@
       </mat-panel-description>
 
     </mat-expansion-panel-header>
-    
-    <app-project-participant [projectId]="p.id.value" [projectHelperId]="getProjectHelper(p).id.value"></app-project-participant>
+
+    <app-project-participant #projectItems [projectId]="p.id.value" [projectHelperId]="getProjectHelper(p).id.value"></app-project-participant>
+    <div class="button-area">
+      <button mat-mini-fab color="primary" (click)="saveAll(projectItems,p)">
+        <mat-icon>save</mat-icon>
+      </button>
+    </div>
   </mat-expansion-panel>
 </mat-accordion>

@@ -23,6 +23,7 @@ export class LoginComponent implements OnInit {
   login() {
     foreachEntityItem(new Helpers(), h => h.phone.isEqualTo(this.user), async h => {
       this.auth.auth.info = {
+        helperId:h.id.value,
         admin: h.isAdmin.value,
         name: h.name.value,
         authToken: 'stam token',
