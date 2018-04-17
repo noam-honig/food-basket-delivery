@@ -5,6 +5,9 @@ import { foreachEntityItem } from "../shared/utils";
 import { Helpers } from "../models";
 
 export class LoginAction extends ServerAction<LoginInfo, myAuthInfo>{
+    constructor(){
+        super('login');//required because of minification
+    }
     protected async execute(info: LoginInfo, req: DataApiRequest<myAuthInfo>): Promise<myAuthInfo> {
         let result: myAuthInfo = {
             valid: false
