@@ -14,7 +14,7 @@ export class LoggedInGuard implements CanActivate {
         if (this.auth.auth.info.valid)
             return true;
         this.router.navigate(['/login']);
-
+return false;
     }
 }
 @Injectable()

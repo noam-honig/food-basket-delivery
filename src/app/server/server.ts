@@ -10,6 +10,8 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { CompoundIdColumn } from 'radweb';
 import { SchemaBuilder } from './schema-build';
+import { LoginAction } from '../auth/loginAction';
+import { myAuthInfo } from '../auth/my-auth-info';
 config();
 
 
@@ -42,8 +44,10 @@ var sb = new SchemaBuilder(pool);
 
 
 
-let eb = new ExpressBridge(app);
+let eb = new ExpressBridge<myAuthInfo>(app);
 let dataApi = eb.addArea('/dataApi');
+let actions = eb.addArea('');
+actions.addAction(new LoginAction());
 
 
 var sb = new SchemaBuilder(pool);
