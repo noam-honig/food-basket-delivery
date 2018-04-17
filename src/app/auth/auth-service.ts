@@ -5,6 +5,7 @@ import { foreachEntityItem } from "../shared/utils";
 import { Helpers } from "../models";
 import { SelectService } from "../select-popup/select-service";
 import { Router } from "@angular/router";
+import { evilStatics } from "./evil-statics";
 
 
 @Injectable()
@@ -43,6 +44,6 @@ export class AuthService {
         this.auth.signout();
         this.router.navigate(['/login']);
       }
-    auth = new Authentication<myAuthInfo>();
+    auth = evilStatics.auth;
     
 }
