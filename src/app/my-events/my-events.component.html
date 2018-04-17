@@ -12,12 +12,10 @@
           {{p.name.value}}
         </h1>
       </mat-panel-title>
-      <mat-panel-description>
-        {{p.description.value}}
-      </mat-panel-description>
+      
 
     </mat-expansion-panel-header>
-
+<p>{{p.description.value}}</p>
     <app-event-participant #eventItems [eventId]="p.id.value" [eventHelperId]="getEventHelper(p).id.value"></app-event-participant>
     <div class="button-area">
       <button mat-mini-fab color="primary" (click)="saveAll(eventItems,p)">
