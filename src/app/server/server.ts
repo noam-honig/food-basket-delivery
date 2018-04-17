@@ -129,8 +129,4 @@ app.use('/*', (req, res) => {
     }
 });
 
-
-
-console.log('this code should never run in the browser');
-
 app.listen(port);
