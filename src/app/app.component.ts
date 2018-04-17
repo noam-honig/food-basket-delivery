@@ -30,12 +30,12 @@ export class AppComponent {
     return name;
   }
   signOut() {
-    
+
     this.routeClicked();
     this.auth.signout();
   }
   shouldDisplayRoute(route: Route) {
-    if (!(route.path && route.path.indexOf(':') < 0))
+    if (!(route.path && route.path.indexOf(':') < 0 && route.path.indexOf('**') < 0))
       return false;
     if (!route.canActivate)
       return true;

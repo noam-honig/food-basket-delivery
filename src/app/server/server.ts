@@ -12,6 +12,7 @@ import { CompoundIdColumn } from 'radweb';
 import { SchemaBuilder } from './schema-build';
 import { LoginAction } from '../auth/loginAction';
 import { myAuthInfo } from '../auth/my-auth-info';
+import { evilStatics } from '../auth/evil-statics';
 config();
 
 
@@ -45,8 +46,10 @@ var sb = new SchemaBuilder(pool);
 
 
 let eb = new ExpressBridge<myAuthInfo>(app);
+
 let dataApi = eb.addArea('/dataApi');
 let actions = eb.addArea('');
+evilStatics.auth.applyTo(eb,actions);
 actions.addAction(new LoginAction());
 
 

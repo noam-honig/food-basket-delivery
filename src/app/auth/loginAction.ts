@@ -9,6 +9,7 @@ export class LoginAction extends ServerAction<LoginInfo, myAuthInfo>{
         let result: myAuthInfo = {
             valid: false
         };
+        console.log(info.user);
         await foreachEntityItem(new Helpers(), h => h.phone.isEqualTo(info.user), async h => {
 
             result = {

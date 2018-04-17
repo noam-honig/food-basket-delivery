@@ -17,15 +17,18 @@ export class AuthService {
         private router: Router
     ) { }
     async login(user: string, password: string, remember: boolean) {
-        let ok = false;
-        this.auth.info = await new LoginAction().run({ user, password });
-        if (remember)
-            this.auth.rememberOnThisMachine();
-        if (ok) {
+        
+        this.auth.info = await new LoginAction().run({ user: user, password: password });
+        console.log(this.auth.info);
+
+        if (this.auth.info.valid) {
+            if (remember)
+                this.auth.rememberOnThisMachine();
             if (this.auth.info.admin)
                 this.router.navigate(['/events'])
             else
                 this.router.navigate(['/my-events'])
+
         }
         else {
             this.dialog.Error("משתמשת לא נמצאה");
