@@ -30,7 +30,7 @@ const routes: Routes = [
   { path: 'update-info', component: UpdateInfoComponent, data: { name: 'עדכני פרטים' }, canActivate: [LoggedInGuard] },
   { path: 'login', component: LoginComponent, data: { name: 'כניסה' } },
   { path: 'register', component: RegisterComponent, data: { name: 'הרשמה' }, canActivate: [NotLoggedInGuard] },
-  { path: '', redirectTo: '/login', pathMatch: 'full' }
+  { path: '', redirectTo: '/events', pathMatch: 'full' }
 ];
 
 @NgModule({

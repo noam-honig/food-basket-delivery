@@ -12,16 +12,18 @@ export class Authentication<T extends AuthInfo> {
 
     constructor() {
         if (typeof (Storage) !== 'undefined') {
-            let load = (what:string)=>{
-                if (what&&what!='undefined')
+            let load = (what: string) => {
+                if (what && what != 'undefined')
                     this._info = JSON.parse(what);
             };
             load(sessionStorage.getItem(authToken));
             if (!this._info)
                 load(localStorage.getItem(authToken));
+            if (!this._info)
+                this._info = this.emptyInfo();
         }
     }
-    private _info: T = this.emptyInfo();
+    private _info: T;
     emptyInfo() {
         return {
             authToken: '',
