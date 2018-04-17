@@ -1,7 +1,7 @@
 import { Component, transition, NgZone, Injector, ViewChild } from '@angular/core';
 import { Router, Route, CanActivate, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { AuthService } from './auth/auth-service';
-import { LoggedInGuard } from './auth/auth-guard';
+import { LoggedInGuard, dummyRoute } from './auth/auth-guard';
 import { MatSidenav } from '@angular/material';
 
 
@@ -60,10 +60,3 @@ export class AppComponent {
 
 }
 
-class dummyRoute extends ActivatedRouteSnapshot {
-  constructor() {
-    super();
-
-  }
-  routeConfig;
-}

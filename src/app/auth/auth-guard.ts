@@ -13,8 +13,9 @@ export class LoggedInGuard implements CanActivate {
     canActivate(route: ActivatedRouteSnapshot) {
         if (this.auth.auth.info.valid)
             return true;
-        this.router.navigate(['/login']);
-
+        if (!(route instanceof dummyRoute))
+            this.router.navigate(['/login']);
+        return false;
     }
 }
 @Injectable()
@@ -36,9 +37,19 @@ export class AdminGuard implements CanActivate {
     canActivate(route: ActivatedRouteSnapshot) {
         if (this.auth.auth.info.valid && this.auth.auth.info.admin)
             return true;
-        this.router.navigate(['/my-events']);
+        if (!(route instanceof dummyRoute))
+            this.router.navigate(['/my-events']);
+        return false;
 
     }
 }
 
 
+
+export class dummyRoute extends ActivatedRouteSnapshot {
+    constructor() {
+        super();
+
+    }
+    routeConfig;
+}
