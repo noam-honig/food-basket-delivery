@@ -4,6 +4,7 @@ import { AuthInfo } from './auth-info';
 import { Action } from "radweb";
 import { environment } from "../../environments/environment";
 import { SiteArea } from "radweb/utils/server/expressBridge";
+import * as atob from 'atob';
 
 
 const authToken = 'auth-token';
@@ -12,13 +13,21 @@ export class Authentication<T extends AuthInfo> {
 
     constructor() {
         if (typeof (Storage) !== 'undefined') {
-            let load = (what: string) => {
-                if (what && what != 'undefined')
-                    this._info = JSON.parse(what);
-            };
-            load(sessionStorage.getItem(authToken));
-            if (!this._info)
-                load(localStorage.getItem(authToken));
+            try {
+                let load = (what: string) => {
+                    if (what && what != 'undefined') {
+
+                        this._info = this.decodeInfo(what);
+                        
+                    }
+                };
+                load(sessionStorage.getItem(authToken));
+                if (!this._info)
+                    load(localStorage.getItem(authToken));
+            }
+            catch (err) {
+                console.log(err);
+            }
             if (!this._info)
                 this._info = this.emptyInfo();
         }
@@ -38,27 +47,41 @@ export class Authentication<T extends AuthInfo> {
         this._info = value;
         if (typeof (Storage) !== 'undefined')
             sessionStorage.setItem(authToken,
-                JSON.stringify(value)
+                this.encodeInfo()
             );
         this.__theInfo = Promise.resolve(this._info);
     }
     rememberOnThisMachine() {
         if (typeof (Storage) !== 'undefined')
             localStorage.setItem(authToken,
-                JSON.stringify(this.info)
+                this.encodeInfo()
             );
     }
     AddAuthInfoToRequest() {
         return (add: ((name: string, value: string) => void)) => {
             if (this.info)
-                add(authToken, this.info.authToken);
+                add(authToken, this.encodeInfo());
         }
+    }
+    private encodeInfo() {
+
+
+        return btoa(encodeURIComponent((JSON.stringify(this.info)).replace(/%([0-9A-F]{2})/g,
+            function toSolidBytes(match, p1) {
+                return String.fromCharCode(+('0x' + p1));
+            })));
+    }
+     
+    private decodeInfo(token: string): T {
+        return JSON.parse(decodeURIComponent( atob(token).split('').map(function (c) {
+            return c;
+        }).join('')));
     }
 
     applyTo(server: DataApiServer<T>, area: SiteArea<T>): void {
         server.addRequestProcessor(async req => {
             var h = req.getHeader(authToken);
-            console.log('validate token ', h);
+            
             if (this.validateToken)
                 req.authInfo = await this.validateToken(h);
             return true;
@@ -67,7 +90,12 @@ export class Authentication<T extends AuthInfo> {
         area.addAction(new GetCurrentSession(environment.serverUrl, undefined, this.AddAuthInfoToRequest()));
 
     }
-    validateToken: (token: string) => Promise<T>;
+    validateToken: (token: string) => Promise<T> = async (x) =>{
+        
+         let result =  this.decodeInfo(x);
+         
+         return result;
+        };
 
     private __theInfo: Promise<T>;
     async getAuthInfoAsync(): Promise<T> {

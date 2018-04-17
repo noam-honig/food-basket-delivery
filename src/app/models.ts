@@ -3,6 +3,7 @@ import { environment } from './../environments/environment';
 import * as uuid from 'uuid';
 import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn } from 'radweb';
 import { foreachSync, foreachEntityItem } from './shared/utils';
+import { evilStatics } from './auth/evil-statics';
 
 
 class IdEntity<idType extends Id> extends radweb.Entity<string>
@@ -25,7 +26,7 @@ export class Categories extends radweb.Entity<number> {
   description = new radweb.StringColumn();
 
   constructor() {
-    super(() => new Categories(), environment.dataSource, 'Categories');
+    super(() => new Categories(), evilStatics.dataSource, 'Categories');
     this.initColumns();
   }
 }
@@ -51,7 +52,7 @@ export class Items extends IdEntity<ItemId>{
   item = new radweb.StringColumn('מה צריך');
 
   constructor() {
-    super(new ItemId(), () => new Items(), environment.dataSource, "items");
+    super(new ItemId(), () => new Items(), evilStatics.dataSource, "items");
     this.initColumns();
   }
   async delete() {
@@ -92,7 +93,7 @@ export class ItemsPerHelper extends radweb.Entity<string>{
   private id = new CompoundIdColumn(this, this.itemId, this.eventHelperId)
 
   constructor() {
-    super(() => new ItemsPerHelper(), environment.dataSource, "ItemsPerHelper");
+    super(() => new ItemsPerHelper(), evilStatics.dataSource, "ItemsPerHelper");
     this.initColumns(this.id);
   }
 }
@@ -114,7 +115,7 @@ export class Helpers extends IdEntity<HelperId>{
 
   constructor() {
 
-    super(new HelperId(), () => new Helpers(), environment.dataSource, "Helpers");
+    super(new HelperId(), () => new Helpers(), evilStatics.openedDataApi, "Helpers");
     this.initColumns();
     let x = this.onSavingRow;
     this.onSavingRow = () => {
@@ -130,7 +131,7 @@ export class EventHelpers extends IdEntity<EventHelperId>{
   helperId = new HelperId();
   eventId = new EventId();
   constructor() {
-    super(new EventHelperId(), () => new EventHelpers(), environment.dataSource, 'EventHelpers');
+    super(new EventHelperId(), () => new EventHelpers(), evilStatics.dataSource, 'EventHelpers');
     this.initColumns();
   }
   async delete() {
@@ -153,7 +154,7 @@ export class Events extends IdEntity<EventId>{
   name = new radweb.StringColumn('שם אירוע');
   description = new radweb.StringColumn();
   constructor() {
-    super(new EventId(), () => new Events(), environment.dataSource, "events");
+    super(new EventId(), () => new Events(), evilStatics.dataSource, "events");
     this.initColumns();
   }
   async delete() {

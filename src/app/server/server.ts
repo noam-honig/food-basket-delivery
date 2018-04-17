@@ -5,7 +5,7 @@ import * as radweb from 'radweb';
 import { SQLServerDataProvider, ExpressBridge, PostgresDataProvider } from 'radweb/server';
 import { Pool } from 'pg';
 import { config } from 'dotenv';
-import { DataApi } from 'radweb/utils/server/DataApi';
+import { DataApi, DataApiSettings } from 'radweb/utils/server/DataApi';
 import * as path from 'path';
 import * as fs from 'fs';
 import { CompoundIdColumn } from 'radweb';
@@ -32,7 +32,8 @@ const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: ssl
 });
-environment.dataSource = new PostgresDataProvider(pool);
+evilStatics.dataSource = new PostgresDataProvider(pool);
+evilStatics.openedDataApi = new PostgresDataProvider(pool);
 
 var sb = new SchemaBuilder(pool);
 [
@@ -47,11 +48,33 @@ var sb = new SchemaBuilder(pool);
 
 let eb = new ExpressBridge<myAuthInfo>(app);
 
-let dataApi = eb.addArea('/dataApi');
+let openedData = eb.addArea('/openedDataApi');
+let dataApi = eb.addArea('/dataApi', async x => x.authInfo && x.authInfo.valid);
 let actions = eb.addArea('');
-evilStatics.auth.applyTo(eb,actions);
+evilStatics.auth.applyTo(eb, actions);
+
 actions.addAction(new LoginAction());
 
+
+
+
+openedData.add(r => {
+    var loggedIn = r.authInfo && r.authInfo.valid;
+    var settings: DataApiSettings<models.Helpers> = {
+        allowUpdate: loggedIn,
+        allowDelete: loggedIn,
+        allowInsert: true,
+        get: {}
+    };
+
+    if (!loggedIn) {
+        settings.get.where = h => h.id.isEqualTo("No User")
+    } else if (!r.authInfo.admin)
+        settings.get.where = h => h.id.isEqualTo(r.authInfo.helperId);
+
+
+    return new DataApi(new models.Helpers(), settings);
+});
 
 var sb = new SchemaBuilder(pool);
 [
@@ -95,13 +118,19 @@ NETWORK:
 
 app.use(express.static('dist'));
 app.use('/*', (req, res) => {
-    if (req.method=='OPTIONS')
-    res.send('');
-    res.send(fs.readFileSync('dist/index.html').toString());
+    if (req.method == 'OPTIONS')
+        res.send('');
+    else {
+        const index = 'dist/index.html';
+        if (fs.existsSync(index))
+            res.send(fs.readFileSync(index).toString());
+        else
+            res.send('No Result');
+    }
 });
 
 
 
-
+console.log('this code should never run in the browser');
 
 app.listen(port);
