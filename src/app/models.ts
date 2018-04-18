@@ -98,14 +98,15 @@ export class ItemsPerHelper extends radweb.Entity<string>{
   }
 }
 export class Helpers extends IdEntity<HelperId>{
-
+  public static emptyPassword='password';
   name = new radweb.StringColumn("שם");
   phone = new radweb.StringColumn({ caption: "טלפון", inputType: 'tel' });
   email = new radweb.StringColumn('דוא"ל');
   address = new radweb.StringColumn("כתובת");
 
   userName = new radweb.StringColumn("שם משתמשת");
-  password = new radweb.StringColumn({ caption: 'סיסמה', inputType: 'password' });
+  realStoredPassword = new radweb.StringColumn({ dbName: 'password' });
+  password = new radweb.StringColumn({ caption: 'סיסמה', inputType: 'password', virtualData: () => Helpers.emptyPassword });
 
   createDate = new radweb.DateTimeColumn({
     caption: 'תאריך הוספה',

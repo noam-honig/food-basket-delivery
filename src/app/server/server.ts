@@ -59,18 +59,31 @@ actions.addAction(new LoginAction());
 
 
 openedData.add(r => {
+
     var loggedIn = r.authInfo && r.authInfo.valid;
     var settings: DataApiSettings<models.Helpers> = {
         allowUpdate: loggedIn,
         allowDelete: loggedIn,
         allowInsert: true,
-        get: {}
+        get: {},
+        readonlyColumns: h => [h.createDate, h.id],
+        excludeColumns: h => [h.realStoredPassword],
+        onSavingRow: h => {
+            if (h.password.value&&h.password.value!=h.password.originalValue) { 
+                h.realStoredPassword.value = h.password.value;
+            }
+        }
     };
 
     if (!loggedIn) {
         settings.get.where = h => h.id.isEqualTo("No User")
-    } else if (!r.authInfo.admin)
+    } else if (!r.authInfo.admin) {
         settings.get.where = h => h.id.isEqualTo(r.authInfo.helperId);
+        settings.excludeColumns = h => [h.realStoredPassword, h.isAdmin];
+    }
+    else {
+
+    }
 
 
     return new DataApi(new models.Helpers(), settings);

@@ -46,18 +46,12 @@ export class RegisterComponent implements OnInit {
   }
   async register() {
     try {
-      let foundAdmin = false;
-      await foreachEntityItem(new Helpers(), h => h.isAdmin.isEqualTo(true), async h => { foundAdmin = true; });
-
-      if (!foundAdmin)
-        this.helpers.currentRow.isAdmin.value = true;
-
       let userInfo = this.helpers.currentRow;
       await this.helpers._doSavingRow(userInfo);
-      this.auth.login(userInfo.phone.value, userInfo.password.value, false);
+      this.auth.login(userInfo.phone.value, userInfo.realStoredPassword.value, false);
     }
     catch (err) {
-
+      console.log(err);
     }
 
   }

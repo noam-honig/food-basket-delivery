@@ -12,7 +12,7 @@ import { foreachEntityItem } from '../../shared/utils';
 })
 export class UpdateInfoComponent implements OnInit {
 
-  confirmPassword = new StringColumn({ caption: 'אישור סיסמה', inputType: 'password' });
+  confirmPassword = new StringColumn({ caption: 'אישור סיסמה', inputType: 'password', value: Helpers.emptyPassword });
   helpers = new GridSettings(new Helpers(), {
     numOfColumnsInGrid: 0,
     allowUpdate: true,
