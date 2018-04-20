@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { GridSettings } from 'radweb';
+import { GridSettings, SelectPopup } from 'radweb';
 import { Helpers } from '../models';
+import { SelectService } from '../select-popup/select-service';
 
 @Component({
   selector: 'app-helpers',
@@ -8,6 +9,7 @@ import { Helpers } from '../models';
   styleUrls: ['./helpers.component.css']
 })
 export class HelpersComponent implements OnInit {
+
   helpers = new GridSettings(new Helpers(), {
     allowDelete: true,
     allowInsert: true,
@@ -19,23 +21,24 @@ export class HelpersComponent implements OnInit {
       helpers.email,
       helpers.address,
       helpers.userName
-    ]
+    ],
+    confirmDelete: yes => this.dialog.confirmDelete(h.name, yes)
   });
 
   /* workaround for checkbox not working*/
   get admin() {
     if (this.helpers.currentRow)
       return this.helpers.currentRow.isAdmin.value;
-      return false;
+    return false;
   }
   set admin(value: any) {
-    
+
     this.helpers.currentRow.isAdmin.value = value;
-    
+
   }
 
-  
-  constructor() {
+
+  constructor(private dialog: SelectService) {
   }
 
   ngOnInit() {
