@@ -71,15 +71,23 @@ dataApi.add(r => {
     }
     return new DataApi(new models.EventHelpers(), settings)
 });
-var sb = new SchemaBuilder(pool);
+
 [
     new models.Events(),
+    new models.Items()
+].forEach(x => {
+    dataApi.add(r => new DataApi(x, {
+        allowDelete: r.authInfo && r.authInfo.admin,
+        allowInsert: r.authInfo && r.authInfo.admin,
+        allowUpdate: r.authInfo && r.authInfo.admin
+    }));
+});
+[
     new models.EventHelpers(),
-    new models.Items(),
     new models.ItemsPerHelper()
 ].forEach(x => {
     dataApi.add(r => new DataApi(x, {
-        allowDelete: true,
+        allowDelete: r.authInfo && r.authInfo.admin,
         allowInsert: true,
         allowUpdate: true
     }));
