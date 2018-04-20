@@ -48,6 +48,7 @@ export class UpdateInfoComponent implements OnInit {
     try {
       await this.helpers.items[0].save();
       this.dialog.Info("העדכון נשמר, תודה");
+      this.confirmPassword.value = Helpers.emptyPassword;
     }
     catch (err) {
 

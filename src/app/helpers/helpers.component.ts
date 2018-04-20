@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GridSettings, SelectPopup } from 'radweb';
 import { Helpers } from '../models';
 import { SelectService } from '../select-popup/select-service';
+import { ResetPasswordAction } from './reset-password';
 
 @Component({
   selector: 'app-helpers',
@@ -22,9 +23,9 @@ export class HelpersComponent implements OnInit {
       helpers.address,
       helpers.userName
     ],
-    confirmDelete: (h,yes) => this.dialog.confirmDelete(h.name.value, yes)
+    confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
   });
-/* */
+  /* */
   /* workaround for checkbox not working*/
   get admin() {
     if (this.helpers.currentRow)
@@ -36,7 +37,13 @@ export class HelpersComponent implements OnInit {
     this.helpers.currentRow.isAdmin.value = value;
 
   }
+  resetPassword() {
+    this.dialog.YesNoQuestion("האם את בטוחה שאת רוצה למחוק את הסיסמה של " + this.helpers.currentRow.name.value, async () => {
+      await new ResetPasswordAction().run({ helperId: this.helpers.currentRow.id.value });
+      this.dialog.Info("הסיסמה נמחקה");
+    });
 
+  }
 
   constructor(private dialog: SelectService) {
   }

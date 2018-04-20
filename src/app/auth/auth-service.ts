@@ -19,8 +19,6 @@ export class AuthService {
     async login(user: string, password: string, remember: boolean) {
         
         this.auth.info = await new LoginAction().run({ user: user, password: password });
-        console.log(this.auth.info);
-
         if (this.auth.info.valid) {
             if (remember)
                 this.auth.rememberOnThisMachine();

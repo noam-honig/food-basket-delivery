@@ -13,6 +13,8 @@ import { SchemaBuilder } from './schema-build';
 import { LoginAction } from '../auth/loginAction';
 import { myAuthInfo } from '../auth/my-auth-info';
 import { evilStatics } from '../auth/evil-statics';
+import * as passwordHash from 'password-hash';
+import { ResetPasswordAction } from '../helpers/reset-password';
 config();
 
 
@@ -50,10 +52,12 @@ let eb = new ExpressBridge<myAuthInfo>(app);
 
 let openedData = eb.addArea('/openedDataApi');
 let dataApi = eb.addArea('/dataApi', async x => x.authInfo && x.authInfo.valid);
-let actions = eb.addArea('');
-evilStatics.auth.applyTo(eb, actions);
+let openActions = eb.addArea('');
+let adminActions = eb.addArea('', async x => x.authInfo && x.authInfo.admin);
+evilStatics.auth.applyTo(eb, openActions);
 
-actions.addAction(new LoginAction());
+openActions.addAction(new LoginAction());
+adminActions.addAction(new ResetPasswordAction());
 
 openedData.add(r => {
 
@@ -66,8 +70,8 @@ openedData.add(r => {
         readonlyColumns: h => [h.createDate, h.id],
         excludeColumns: h => [h.realStoredPassword],
         onSavingRow: h => {
-            if (h.password.value && h.password.value != h.password.originalValue) {
-                h.realStoredPassword.value = h.password.value;
+            if (h.password.value && h.password.value != h.password.originalValue&&h.password.value!=models.Helpers.emptyPassword) {
+                h.realStoredPassword.value = passwordHash.generate(h.password.value);
             }
         }
     };
@@ -88,12 +92,12 @@ openedData.add(r => {
 
 dataApi.add(r => {
     var settings: DataApiSettings<models.EventHelpers> = {};
-    
-        if (!(r&&r.authInfo&& r.authInfo.admin) {
-            settings.get = {
-                where: eh => eh.helperId.isEqualTo(r.authInfo.helperId)
-            };
-        }
+
+    if (!(r && r.authInfo && r.authInfo.admin) {
+        settings.get = {
+            where: eh => eh.helperId.isEqualTo(r.authInfo.helperId)
+        };
+    }
     return new DataApi(new models.EventHelpers(), settings)
 });
 var sb = new SchemaBuilder(pool);
