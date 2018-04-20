@@ -55,9 +55,6 @@ evilStatics.auth.applyTo(eb, actions);
 
 actions.addAction(new LoginAction());
 
-
-
-
 openedData.add(r => {
 
     var loggedIn = r.authInfo && r.authInfo.valid;
@@ -69,7 +66,7 @@ openedData.add(r => {
         readonlyColumns: h => [h.createDate, h.id],
         excludeColumns: h => [h.realStoredPassword],
         onSavingRow: h => {
-            if (h.password.value&&h.password.value!=h.password.originalValue) { 
+            if (h.password.value && h.password.value != h.password.originalValue) {
                 h.realStoredPassword.value = h.password.value;
             }
         }
@@ -89,11 +86,20 @@ openedData.add(r => {
     return new DataApi(new models.Helpers(), settings);
 });
 
+dataApi.add(r => {
+    var settings: DataApiSettings<models.EventHelpers> = {};
+    
+        if (!(r&&r.authInfo&& r.authInfo.admin) {
+            settings.get = {
+                where: eh => eh.helperId.isEqualTo(r.authInfo.helperId)
+            };
+        }
+    return new DataApi(new models.EventHelpers(), settings)
+});
 var sb = new SchemaBuilder(pool);
 [
     new models.Events(),
     new models.EventHelpers(),
-    new models.Helpers(),
     new models.Items(),
     new models.ItemsPerHelper()
 ].forEach(x => {
