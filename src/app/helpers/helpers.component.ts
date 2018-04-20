@@ -22,9 +22,9 @@ export class HelpersComponent implements OnInit {
       helpers.address,
       helpers.userName
     ],
-    confirmDelete: yes => this.dialog.confirmDelete(h.name, yes)
+    confirmDelete: (h,yes) => this.dialog.confirmDelete(h.name.value, yes)
   });
-
+/* */
   /* workaround for checkbox not working*/
   get admin() {
     if (this.helpers.currentRow)
