@@ -13,8 +13,8 @@ import { SchemaBuilder } from './schema-build';
 import { LoginAction } from '../auth/loginAction';
 import { myAuthInfo } from '../auth/my-auth-info';
 import { evilStatics } from '../auth/evil-statics';
-import * as passwordHash from 'password-hash';
 import { ResetPasswordAction } from '../helpers/reset-password';
+import { helpersDataApi } from './helpers-dataapi';
 config();
 
 
@@ -59,41 +59,12 @@ evilStatics.auth.applyTo(eb, openActions);
 openActions.addAction(new LoginAction());
 adminActions.addAction(new ResetPasswordAction());
 
-openedData.add(r => {
-
-    var loggedIn = r.authInfo && r.authInfo.valid;
-    var settings: DataApiSettings<models.Helpers> = {
-        allowUpdate: loggedIn,
-        allowDelete: loggedIn,
-        allowInsert: true,
-        get: {},
-        readonlyColumns: h => [h.createDate, h.id],
-        excludeColumns: h => [h.realStoredPassword],
-        onSavingRow: h => {
-            if (h.password.value && h.password.value != h.password.originalValue&&h.password.value!=models.Helpers.emptyPassword) {
-                h.realStoredPassword.value = passwordHash.generate(h.password.value);
-            }
-        }
-    };
-
-    if (!loggedIn) {
-        settings.get.where = h => h.id.isEqualTo("No User")
-    } else if (!r.authInfo.admin) {
-        settings.get.where = h => h.id.isEqualTo(r.authInfo.helperId);
-        settings.excludeColumns = h => [h.realStoredPassword, h.isAdmin];
-    }
-    else {
-
-    }
-
-
-    return new DataApi(new models.Helpers(), settings);
-});
+openedData.add(r => helpersDataApi(r));
 
 dataApi.add(r => {
     var settings: DataApiSettings<models.EventHelpers> = {};
 
-    if (!(r && r.authInfo && r.authInfo.admin) {
+    if (!(r && r.authInfo && r.authInfo.admin)) {
         settings.get = {
             where: eh => eh.helperId.isEqualTo(r.authInfo.helperId)
         };
