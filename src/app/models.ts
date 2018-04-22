@@ -50,6 +50,17 @@ export class Items extends IdEntity<ItemId>{
   eventId = new EventId();
   quantity = new radweb.NumberColumn("יח'");
   item = new radweb.StringColumn('מה צריך');
+  totalSoFar = new radweb.NumberColumn({
+    caption: 'נאסף',
+    virtualData: async () => {
+      let total = 0;
+      await foreachEntityItem(new ItemsPerHelper(), i => i.itemId.isEqualTo(this.id), async (i) => {
+
+        total += i.quantity.value;
+      });
+      return total;
+    }
+  });
 
   constructor() {
     super(new ItemId(), () => new Items(), evilStatics.dataSource, "items");
@@ -62,26 +73,7 @@ export class Items extends IdEntity<ItemId>{
       item => item.delete());
     return super.delete();
   }
-  resetTotalSoFar() {
-    let x: any = this;
-    x.__totalSoFar = undefined;
-  }
-  totalSoFar() {
-    let x: any = this;
-    if (x.__totalSoFar)
-      return x.__totalSoFar == -1 ? 0 : x.__totalSoFar;
-    else {
-      x.__totalSoFar = -1;
-      foreachEntityItem(new ItemsPerHelper(), i => i.itemId.isEqualTo(this.id), async (i) => {
-        if (x.__totalSoFar == -1)
-          x.__totalSoFar = i.quantity.value;
-        else
-          x.__totalSoFar += i.quantity.value;
-      });
-      return 0;
-    }
 
-  }
 }
 export class ItemsPerHelper extends radweb.Entity<string>{
 
@@ -102,9 +94,9 @@ export class Helpers extends IdEntity<HelperId>{
   name = new radweb.StringColumn({
     caption: "שם",
     onValidate: v => {
-      if (!v.value || v.value.length<3)
+      if (!v.value || v.value.length < 3)
         this.name.error = 'השם קצר מידי';
-     }
+    }
   });
   phone = new radweb.StringColumn({ caption: "טלפון", inputType: 'tel' });
   email = new radweb.StringColumn('דוא"ל');

@@ -62,7 +62,11 @@ adminActions.addAction(new ResetPasswordAction());
 openedData.add(r => helpersDataApi(r));
 
 dataApi.add(r => {
-    var settings: DataApiSettings<models.EventHelpers> = {};
+    var settings: DataApiSettings<models.EventHelpers> = {
+        allowDelete: !r.authInfo || r.authInfo.admin,
+        allowInsert: true,
+        allowUpdate: true
+    };
 
     if (!(r && r.authInfo && r.authInfo.admin)) {
         settings.get = {
@@ -77,21 +81,19 @@ dataApi.add(r => {
     new models.Items()
 ].forEach(x => {
     dataApi.add(r => new DataApi(x, {
-        allowDelete: r.authInfo && r.authInfo.admin,
-        allowInsert: r.authInfo && r.authInfo.admin,
-        allowUpdate: r.authInfo && r.authInfo.admin
+        allowDelete: !r.authInfo || r.authInfo.admin,
+        allowInsert: !r.authInfo || r.authInfo.admin,
+        allowUpdate: !r.authInfo || r.authInfo.admin
     }));
 });
-[
-    new models.EventHelpers(),
-    new models.ItemsPerHelper()
-].forEach(x => {
-    dataApi.add(r => new DataApi(x, {
-        allowDelete: r.authInfo && r.authInfo.admin,
-        allowInsert: true,
-        allowUpdate: true
-    }));
-});
+
+
+dataApi.add(r => new DataApi(new models.ItemsPerHelper(), {
+    allowDelete: !r.authInfo || r.authInfo.admin,
+    allowInsert: true,
+    allowUpdate: true
+}));
+
 
 
 

@@ -34,10 +34,9 @@ export class EventHelperItemsComponent implements OnInit {
     }
   }
   getTotalSoFar(item: Items) {
-    let r = item.totalSoFar() | 0;
+    let r = item.totalSoFar.value | 0;
     let iph = this.helperQuantity(item);
-    let x: any = iph;
-    r -= x.__origQuantity | 0;
+    r -= iph.quantity.originalValue | 0;
     r += iph.quantity.value | 0;
     return r;
 
@@ -46,17 +45,16 @@ export class EventHelperItemsComponent implements OnInit {
   }
 
   async saveAll() {
-    foreachSync(this.items.items, async item => {
+    await foreachSync(this.items.items, async item => {
       let hq = this.helperQuantity(item);
       if (hq != null) {
-        if (!hq.isNew()&&hq.wasChanged() || hq.quantity.value > 0) {
+        if (!hq.isNew() && hq.wasChanged() || hq.quantity.value > 0) {
           await hq.save();
-          let x: any = hq;
-          x.__origQuantity = hq.quantity.value | 0;
-          item.resetTotalSoFar();
         }
       }
-      
     });
+    
+    this.items.getRecords();
+   
   }
 }
