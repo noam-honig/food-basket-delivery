@@ -6,7 +6,7 @@
 </mat-toolbar>
 <mat-sidenav-container class="app-sidenav-container">
   <mat-sidenav #sidenav class="app-sidenav mat-elevation-z10" [opened]="!isScreenSmall()" [mode]="isScreenSmall()?'over':'side'">
-    <h4 *ngIf="auth.auth.info.valid">שלום {{auth.auth.info.name}}</h4>
+    <h4 *ngIf="auth.auth.info">שלום {{auth.auth.info.name}}</h4>
     <mat-nav-list role="list">
       <ng-container *ngFor="let m of router.config">
         <mat-list-item *ngIf="shouldDisplayRoute(m)" routerLinkActive="active-route">
@@ -15,7 +15,7 @@
 
 
       </ng-container>
-      <mat-list-item *ngIf="auth.auth.info.valid">
+      <mat-list-item *ngIf="auth.auth.info">
         <a matLine (click)="signOut()">יציאה</a>
       </mat-list-item>
     </mat-nav-list>

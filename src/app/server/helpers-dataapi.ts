@@ -8,7 +8,7 @@ import { Column, Entity } from "radweb";
 
 export function helpersDataApi(r: DataApiRequest<myAuthInfo>) {
 
-    var loggedIn = r.authInfo && r.authInfo.valid;
+    var loggedIn = r.authInfo !=undefined;
     var settings: DataApiSettings<Helpers> = {
         allowUpdate: loggedIn,
         allowDelete: loggedIn,

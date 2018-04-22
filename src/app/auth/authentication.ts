@@ -1,24 +1,28 @@
 import { DataApiRequest, DataApiServer } from "radweb/utils/dataInterfaces";
 
-import { AuthInfo } from './auth-info';
+import { LoginResponse } from './auth-info';
 import { Action } from "radweb";
 import { environment } from "../../environments/environment";
 import { SiteArea } from "radweb/utils/server/expressBridge";
 import * as atob from 'atob';
+import * as jwt from 'jsonwebtoken';
+import { myAuthInfo } from "./my-auth-info";
+
 
 
 const authToken = 'auth-token';
 
-export class Authentication<T extends AuthInfo> {
+export class Authentication<T> {
 
     constructor() {
+        this.setEmptyInfo();
         if (typeof (Storage) !== 'undefined') {
             try {
                 let load = (what: string) => {
                     if (what && what != 'undefined') {
 
-                        this._info = this.decodeInfo(what);
-                        
+                        this.setToken(what);
+
                     }
                 };
                 load(sessionStorage.getItem(authToken));
@@ -28,60 +32,60 @@ export class Authentication<T extends AuthInfo> {
             catch (err) {
                 console.log(err);
             }
-            if (!this._info)
-                this._info = this.emptyInfo();
         }
     }
-    private _info: T;
-    emptyInfo() {
-        return {
-            authToken: '',
-            valid: false
-        } as T;
+    loggedIn(info: LoginResponse, remember: boolean) {
+        if (info.valid) {
+            this.setToken(info.authToken);
+            if (typeof (Storage) !== 'undefined') {
+                sessionStorage.setItem(authToken, this._token);
+                if (remember)
+                    localStorage.setItem(authToken, this._token);
+            }
+        }
+        else {
+            this.setEmptyInfo();
+        }
     }
-    signout() {
-        this.info = this.emptyInfo();
-    }
-    get info() { return this._info; }
-    set info(value: T) {
-        this._info = value;
-        if (typeof (Storage) !== 'undefined')
-            sessionStorage.setItem(authToken,
-                this.encodeInfo()
-            );
+    private setToken(token: string) {
+        this.valid = true;
+        this._token = token;
+        this._info = jwt.decode(this._token) as T;
         this.__theInfo = Promise.resolve(this._info);
     }
-    rememberOnThisMachine() {
+    setEmptyInfo() {
+        this.valid = false;
+        this._token = '';
+        this._info = undefined;
         if (typeof (Storage) !== 'undefined')
-            localStorage.setItem(authToken,
-                this.encodeInfo()
-            );
+            sessionStorage.setItem(authToken, undefined);
     }
+    private _token: string;
+    valid: boolean;
+    private _info: T;
+
+    signout() {
+        this.setEmptyInfo();
+    }
+    get info() {
+        if (!this.valid)
+            return undefined;
+        return this._info;
+    }
+
+
     AddAuthInfoToRequest() {
         return (add: ((name: string, value: string) => void)) => {
             if (this.info)
-                add(authToken, this.encodeInfo());
+                add(authToken, this._token);
         }
     }
-    private encodeInfo() {
 
-
-        return btoa(encodeURIComponent((JSON.stringify(this.info)).replace(/%([0-9A-F]{2})/g,
-            function toSolidBytes(match, p1) {
-                return String.fromCharCode(+('0x' + p1));
-            })));
-    }
-     
-    private decodeInfo(token: string): T {
-        return JSON.parse(decodeURIComponent( atob(token).split('').map(function (c) {
-            return c;
-        }).join('')));
-    }
 
     applyTo(server: DataApiServer<T>, area: SiteArea<T>): void {
         server.addRequestProcessor(async req => {
             var h = req.getHeader(authToken);
-            
+
             if (this.validateToken)
                 req.authInfo = await this.validateToken(h);
             return true;
@@ -90,19 +94,21 @@ export class Authentication<T extends AuthInfo> {
         area.addAction(new GetCurrentSession(environment.serverUrl, undefined, this.AddAuthInfoToRequest()));
 
     }
-    validateToken: (token: string) => Promise<T> = async (x) =>{
-        
-         let result =  this.decodeInfo(x);
-         
-         return result;
-        };
+    validateToken: (token: string) => Promise<T> = async (x) => {
+        let result: T;
+        try {
+            result = jwt.verify(x,"shhhhhh") as T;
+        } catch{ }
+
+        return result;
+    };
 
     private __theInfo: Promise<T>;
     async getAuthInfoAsync(): Promise<T> {
         if (!this.__theInfo) {
 
             this.__theInfo = new GetCurrentSession(environment.serverUrl, undefined, this.AddAuthInfoToRequest()).run(undefined).then(x => {
-                this.info = x as T;
+                this._info = x as T;
                 return this.info;
             });
         }
@@ -112,7 +118,7 @@ export class Authentication<T extends AuthInfo> {
 
 
 }
-export class GetCurrentSession<T extends AuthInfo> extends Action<any, T, T>{
+export class GetCurrentSession<T extends myAuthInfo> extends Action<any, T, T>{
 
     protected async execute(info: any, context: DataApiRequest<T>): Promise<T> {
         return context.authInfo;

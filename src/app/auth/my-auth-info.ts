@@ -1,6 +1,6 @@
-import { AuthInfo } from "./auth-info";
+import { LoginResponse } from "./auth-info";
 
-export interface myAuthInfo extends AuthInfo {
+export interface myAuthInfo  {
     name?: string;
     helperId?: string;
     admin?: boolean;

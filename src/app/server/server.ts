@@ -51,7 +51,7 @@ var sb = new SchemaBuilder(pool);
 let eb = new ExpressBridge<myAuthInfo>(app);
 
 let openedData = eb.addArea('/openedDataApi');
-let dataApi = eb.addArea('/dataApi', async x => x.authInfo && x.authInfo.valid);
+let dataApi = eb.addArea('/dataApi', async x => x.authInfo!=undefined);
 let openActions = eb.addArea('');
 let adminActions = eb.addArea('', async x => x.authInfo && x.authInfo.admin);
 evilStatics.auth.applyTo(eb, openActions);

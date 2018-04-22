@@ -17,11 +17,9 @@ export class AuthService {
         private router: Router
     ) { }
     async login(user: string, password: string, remember: boolean) {
-        
-        this.auth.info = await new LoginAction().run({ user: user, password: password });
-        if (this.auth.info.valid) {
-            if (remember)
-                this.auth.rememberOnThisMachine();
+
+        this.auth.loggedIn(await new LoginAction().run({ user: user, password: password }), remember);
+        if (this.auth.valid) {
             if (this.auth.info.admin)
                 this.router.navigate(['/events'])
             else
