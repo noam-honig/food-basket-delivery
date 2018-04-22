@@ -58,7 +58,7 @@ export class Authentication<T> {
         this._token = '';
         this._info = undefined;
         if (typeof (Storage) !== 'undefined')
-            sessionStorage.setItem(authToken, undefined);
+            sessionStorage.removeItem(authToken);
     }
     private _token: string;
     valid: boolean;
@@ -97,11 +97,15 @@ export class Authentication<T> {
     validateToken: (token: string) => Promise<T> = async (x) => {
         let result: T;
         try {
-            result = jwt.verify(x,"shhhhhh") as T;
+            result = jwt.verify(x, this.tokenSignKey) as T;
         } catch{ }
 
         return result;
     };
+    createTokenFor(item: T) {
+        return jwt.sign(item, this.tokenSignKey);
+    }
+    tokenSignKey;
 
     private __theInfo: Promise<T>;
     async getAuthInfoAsync(): Promise<T> {

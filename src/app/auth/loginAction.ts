@@ -6,6 +6,7 @@ import { Helpers } from "../models";
 import * as passwordHash from 'password-hash';
 import * as jwt from 'jsonwebtoken';
 import { LoginResponse } from "./auth-info";
+import { evilStatics } from "./evil-statics";
 
 export class LoginAction extends ServerAction<LoginInfo, LoginResponse>{
     constructor() {
@@ -34,7 +35,7 @@ export class LoginAction extends ServerAction<LoginInfo, LoginResponse>{
         if (result) {
             return {
                 valid: true,
-                authToken: jwt.sign(result, "shhhhhh")
+                authToken: evilStatics.auth.createTokenFor(result)
             };
         }
 

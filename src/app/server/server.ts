@@ -54,6 +54,8 @@ let openedData = eb.addArea('/openedDataApi');
 let dataApi = eb.addArea('/dataApi', async x => x.authInfo!=undefined);
 let openActions = eb.addArea('');
 let adminActions = eb.addArea('', async x => x.authInfo && x.authInfo.admin);
+evilStatics.auth.tokenSignKey = process.env.TOKEN_SIGN_KEY;
+
 evilStatics.auth.applyTo(eb, openActions);
 
 openActions.addAction(new LoginAction());
