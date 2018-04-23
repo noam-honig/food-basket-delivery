@@ -48,24 +48,27 @@ export class Authentication<T> {
         }
     }
     private setToken(token: string) {
-        this._info = jwt.decode(this._token) as T;
-        this.valid = true;
-        this._token = token;
-        this.__theInfo = Promise.resolve(this._info);
+        this._info = jwt.decode(token) as T;
+        if (this._info) {
+            this.valid = true;
+            this._token = token;
+            this.__theInfo = Promise.resolve(this._info);
+        }
     }
     setEmptyInfo() {
         this.valid = false;
         this._token = '';
         this._info = undefined;
-        if (typeof (Storage) !== 'undefined')
-            sessionStorage.removeItem(authToken);
+
     }
     private _token: string;
-    valid: boolean;
+    valid: boolean = false;
     private _info: T;
 
     signout() {
         this.setEmptyInfo();
+        if (typeof (Storage) !== 'undefined')
+            sessionStorage.removeItem(authToken);
     }
     get info() {
         if (!this.valid)
