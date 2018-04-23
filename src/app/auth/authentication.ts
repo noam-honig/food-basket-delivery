@@ -48,9 +48,9 @@ export class Authentication<T> {
         }
     }
     private setToken(token: string) {
+        this._info = jwt.decode(this._token) as T;
         this.valid = true;
         this._token = token;
-        this._info = jwt.decode(this._token) as T;
         this.__theInfo = Promise.resolve(this._info);
     }
     setEmptyInfo() {
