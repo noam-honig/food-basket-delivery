@@ -48,7 +48,7 @@ export class RegisterComponent implements OnInit {
     try {
       let userInfo = this.helpers.currentRow;
       await this.helpers._doSavingRow(userInfo);
-      this.auth.login(userInfo.phone.value, userInfo.realStoredPassword.value, false);
+      this.auth.login(userInfo.phone.value, this.confirmPassword.value, false);
     }
     catch (err) {
       console.log(err);
