@@ -22,16 +22,7 @@ export class LoginAction extends ServerAction<LoginInfo, LoginResponse>{
                     name: h.name.value
                 };
         });
-        if (!result)
-            await foreachEntityItem(new Helpers(), h => h.userName.isEqualTo(info.user), async h => {
-                if (!h.realStoredPassword.value || passwordHash.verify(info.password, h.realStoredPassword.value))
-                    result = {
-                        helperId: h.id.value,
-                        admin: h.isAdmin.value,
-                        name: h.name.value
-
-                    };
-            });
+       
         if (result) {
             return {
                 valid: true,

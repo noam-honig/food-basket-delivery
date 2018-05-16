@@ -19,9 +19,9 @@ export class HelpersComponent implements OnInit {
     columnSettings: helpers => [
       helpers.name,
       helpers.phone,
-      helpers.email,
-      helpers.address,
-      helpers.userName
+      //helpers.email,
+      //helpers.address,
+      //helpers.userName
     ],
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
   });
