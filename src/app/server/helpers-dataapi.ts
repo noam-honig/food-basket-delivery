@@ -22,13 +22,8 @@ export function helpersDataApi(r: DataApiRequest<myAuthInfo>) {
             }
             
             await duplicateValue(h,h.phone);
-            await duplicateValue(h,h.userName);
-            
-            if (h.userName.value != h.userName.originalValue) {
-                await foreachEntityItem(new Helpers(), he => he.userName.isEqualTo(h.userName.value), async he => {
-                    h.userName.error = 'מספר טלפון זה כבר מעודכן למשתמש אחר';
-                })
-            }
+         //   await duplicateValue(h,h.userName);
+           
 
         },
         validate: async h => {

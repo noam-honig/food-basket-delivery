@@ -99,10 +99,10 @@ export class Helpers extends IdEntity<HelperId>{
     }
   });
   phone = new radweb.StringColumn({ caption: "טלפון", inputType: 'tel' });
-  email = new radweb.StringColumn('דוא"ל');
-  address = new radweb.StringColumn("כתובת");
+  //email = new radweb.StringColumn('דוא"ל');
+  //address = new radweb.StringColumn("כתובת");
 
-  userName = new radweb.StringColumn("שם משתמשת");
+  //userName = new radweb.StringColumn("שם משתמשת");
   realStoredPassword = new radweb.StringColumn({ dbName: 'password' });
   password = new radweb.StringColumn({ caption: 'סיסמה', inputType: 'password', virtualData: () => Helpers.emptyPassword });
 

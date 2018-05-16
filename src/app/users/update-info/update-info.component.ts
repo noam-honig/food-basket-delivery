@@ -20,11 +20,11 @@ export class UpdateInfoComponent implements OnInit {
     columnSettings: h => [
       h.name,
       h.phone,
-      h.userName,
+      //h.userName,
       h.password,
       { column: this.confirmPassword },
-      h.email,
-      h.address
+      //h.email,
+      //h.address
     ],
     onValidate: h => {
       if (h)

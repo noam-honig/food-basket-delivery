@@ -20,11 +20,8 @@ export class RegisterComponent implements OnInit {
     columnSettings: h => [
       h.name,
       h.phone,
-      h.userName,
       h.password,
       { column: this.confirmPassword },
-      h.email,
-      h.address
     ],
     onValidate: h => {
       if (h)
