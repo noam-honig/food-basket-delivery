@@ -25,6 +25,7 @@ import { LoggedInGuard, AdminGuard, NotLoggedInGuard } from './auth/auth-guard';
 import { MyEventsComponent } from './my-events/my-events.component';
 import { InputAreaComponent } from './select-popup/input-area/input-area.component';
 import { UpdateInfoComponent } from './users/update-info/update-info.component';
+import { FamiliesComponent } from './families/families.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { UpdateInfoComponent } from './users/update-info/update-info.component';
     RegisterComponent,
     MyEventsComponent,
     InputAreaComponent,
-    UpdateInfoComponent
+    UpdateInfoComponent,
+    FamiliesComponent
   ],
   imports: [
     BrowserModule,

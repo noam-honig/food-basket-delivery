@@ -15,6 +15,7 @@ import { myAuthInfo } from '../auth/my-auth-info';
 import { evilStatics } from '../auth/evil-statics';
 import { ResetPasswordAction } from '../helpers/reset-password';
 import { helpersDataApi } from './helpers-dataapi';
+import { FamiliesComponent } from '../families/families.component';
 config();
 
 
@@ -43,15 +44,17 @@ var sb = new SchemaBuilder(pool);
     new models.EventHelpers(),
     new models.Helpers(),
     new models.Items(),
-    new models.ItemsPerHelper()
+    new models.ItemsPerHelper(),
+    new models.Families()
 ].forEach(x => sb.CreateIfNotExist(x));
+
 
 
 
 let eb = new ExpressBridge<myAuthInfo>(app);
 
 let openedData = eb.addArea('/openedDataApi');
-let dataApi = eb.addArea('/dataApi', async x => x.authInfo!=undefined);
+let dataApi = eb.addArea('/dataApi', async x => x.authInfo != undefined);
 let openActions = eb.addArea('');
 let adminActions = eb.addArea('', async x => x.authInfo && x.authInfo.admin);
 evilStatics.auth.tokenSignKey = process.env.TOKEN_SIGN_KEY;
@@ -65,7 +68,7 @@ openedData.add(r => helpersDataApi(r));
 
 dataApi.add(r => {
     var settings: DataApiSettings<models.EventHelpers> = {
-        allowDelete: !r.authInfo || r.authInfo.admin,
+        allowDelete: r.authInfo && r.authInfo.admin,
         allowInsert: true,
         allowUpdate: true
     };
@@ -80,13 +83,24 @@ dataApi.add(r => {
 
 [
     new models.Events(),
-    new models.Items()
+    new models.Items(),
 ].forEach(x => {
     dataApi.add(r => new DataApi(x, {
-        allowDelete: !r.authInfo || r.authInfo.admin,
-        allowInsert: !r.authInfo || r.authInfo.admin,
-        allowUpdate: !r.authInfo || r.authInfo.admin
+        allowDelete: r.authInfo && r.authInfo.admin,
+        allowInsert: r.authInfo && r.authInfo.admin,
+        allowUpdate: r.authInfo && r.authInfo.admin
     }));
+});
+dataApi.add(r => {
+    var settings: DataApiSettings<models.Families> = {
+        allowDelete: r.authInfo && r.authInfo.admin,
+        allowInsert: r.authInfo && r.authInfo.admin,
+        allowUpdate: r.authInfo && r.authInfo.admin
+    };
+
+    
+    return new DataApi(new models.Families(), settings)
+
 });
 
 

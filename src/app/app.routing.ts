@@ -11,6 +11,7 @@ import { RegisterComponent } from './users/register/register.component';
 import { LoggedInGuard, AdminGuard, NotLoggedInGuard } from './auth/auth-guard';
 import { MyEventsComponent } from './my-events/my-events.component';
 import { UpdateInfoComponent } from './users/update-info/update-info.component';
+import { FamiliesComponent } from './families/families.component';
 
 
 const routes: Routes = [
@@ -26,6 +27,11 @@ const routes: Routes = [
     path: 'helpers',
     component: HelpersComponent,
     data: { name: 'מתנדבות' }, canActivate: [AdminGuard]
+  },
+  {
+    path: 'families',
+    component: FamiliesComponent,
+    data: { name: 'משפחות' }, canActivate: [AdminGuard]
   },
   { path: 'update-info', component: UpdateInfoComponent, data: { name: 'עדכני פרטים' }, canActivate: [LoggedInGuard] },
   { path: 'login', component: LoginComponent, data: { name: 'כניסה' } },

@@ -41,9 +41,8 @@ class ItemId extends Id {
 }
 class HelperId extends Id { }
 
-class EventId extends Id {
-
-}
+class EventId extends Id { }
+class FamilyId extends Id { }
 class EventHelperId extends Id { }
 export class Items extends IdEntity<ItemId>{
 
@@ -125,6 +124,36 @@ export class Helpers extends IdEntity<HelperId>{
   }
 }
 
+export class Families extends IdEntity<FamilyId>{
+
+  name = new radweb.StringColumn({
+    caption: "שם",
+    onValidate: v => {
+      if (!v.value || v.value.length < 3)
+        this.name.error = 'השם קצר מידי';
+    }
+  });
+  phone = new radweb.StringColumn({ caption: "טלפון", inputType: 'tel' });
+
+  address = new radweb.StringColumn("כתובת");
+  courier = new HelperId("מוביל");
+  createDate = new radweb.DateTimeColumn({
+    caption: 'תאריך הוספה',
+    readonly: true
+  });
+
+  constructor() {
+
+    super(new FamilyId(), () => new Families(), evilStatics.dataSource, "Families");
+    this.initColumns();
+    let x = this.onSavingRow;
+    this.onSavingRow = () => {
+      if (this.isNew())
+        this.createDate.dateValue = new Date();
+      x();
+    };
+  }
+}
 export class EventHelpers extends IdEntity<EventHelperId>{
 
   helperId = new HelperId();
