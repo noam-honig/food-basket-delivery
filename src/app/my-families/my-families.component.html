@@ -1,0 +1,29 @@
+<mat-accordion>
+  <mat-expansion-panel *ngFor="let f of families.items" #myPanel>
+    <mat-expansion-panel-header>
+      <div>
+        <mat-panel-title>
+          {{f.name.value}}
+        </mat-panel-title>
+      </div>
+      <div>
+        <mat-panel-description>
+          {{f.address.value}}
+        </mat-panel-description>
+      </div>
+
+    </mat-expansion-panel-header>
+    <div class="button-area">
+      <a href="tel:{{f.phone.value}}">
+        <button mat-mini-fab color="primary">
+          <mat-icon>call</mat-icon>
+        </button>
+      </a>
+      <a href ="https://www.google.com/maps/search/?api=1&query={{f.address.value}}">
+      <button mat-mini-fab color="primary">
+        <mat-icon>map</mat-icon>
+      </button>
+      </a>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>

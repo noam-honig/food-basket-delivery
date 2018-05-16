@@ -12,6 +12,7 @@ import { LoggedInGuard, AdminGuard, NotLoggedInGuard } from './auth/auth-guard';
 import { MyEventsComponent } from './my-events/my-events.component';
 import { UpdateInfoComponent } from './users/update-info/update-info.component';
 import { FamiliesComponent } from './families/families.component';
+import { MyFamiliesComponent } from './my-families/my-families.component';
 
 
 const routes: Routes = [
@@ -32,6 +33,9 @@ const routes: Routes = [
     path: 'families',
     component: FamiliesComponent,
     data: { name: 'משפחות' }, canActivate: [AdminGuard]
+  },
+  {
+    path: 'my-families', component: MyFamiliesComponent, canActivate: [LoggedInGuard], data: { name: 'משפחות שלי' }
   },
   { path: 'update-info', component: UpdateInfoComponent, data: { name: 'עדכני פרטים' }, canActivate: [LoggedInGuard] },
   { path: 'login', component: LoginComponent, data: { name: 'כניסה' } },

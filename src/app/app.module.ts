@@ -26,6 +26,7 @@ import { MyEventsComponent } from './my-events/my-events.component';
 import { InputAreaComponent } from './select-popup/input-area/input-area.component';
 import { UpdateInfoComponent } from './users/update-info/update-info.component';
 import { FamiliesComponent } from './families/families.component';
+import { MyFamiliesComponent } from './my-families/my-families.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { FamiliesComponent } from './families/families.component';
     MyEventsComponent,
     InputAreaComponent,
     UpdateInfoComponent,
-    FamiliesComponent
+    FamiliesComponent,
+    MyFamiliesComponent
   ],
   imports: [
     BrowserModule,
