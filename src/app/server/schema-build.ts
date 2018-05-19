@@ -45,8 +45,6 @@ export class SchemaBuilder {
                 await this.pool.query(
                     `alter table ${e.__getDbName()} add column ${this.addColumnSqlSyntax(c(e))}`);
             }
-            else
-                console.log('exists');
         }
         catch (err) {
             console.log(err);

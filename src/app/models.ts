@@ -1,10 +1,10 @@
 import * as radweb from 'radweb';
 import { environment } from './../environments/environment';
 import * as uuid from 'uuid';
-import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn } from 'radweb';
+import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn, UrlBuilder } from 'radweb';
 import { foreachSync, foreachEntityItem } from './shared/utils';
 import { evilStatics } from './auth/evil-statics';
-
+import { GetGeoInformation, GeocodeInformation } from './shared/googleApiHelpers';
 
 class IdEntity<idType extends Id> extends radweb.Entity<string>
 {
@@ -142,15 +142,19 @@ export class Families extends IdEntity<FamilyId>{
     readonly: true
   });
   addressApiResult = new radweb.StringColumn();
+  getGeocodeInformation() {
+    return GeocodeInformation.fromString(this.addressApiResult.value);
+  }
   constructor() {
 
     super(new FamilyId(), () => new Families(), evilStatics.dataSource, "Families");
     this.initColumns();
     let x = this.onSavingRow;
-    this.onSavingRow = () => {
+    this.onSavingRow = async () => {
       if (this.isNew())
         this.createDate.dateValue = new Date();
-      x();
+
+      await x();
     };
   }
 }

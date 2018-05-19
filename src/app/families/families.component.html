@@ -1,1 +1,5 @@
 <data-grid [settings]="families"></data-grid>
+<h1>OK: {{getLocation().ok()}}</h1>
+
+
+<pre style="direction:ltr">{{families.currentRow? families.currentRow.addressApiResult.value:''}}</pre>

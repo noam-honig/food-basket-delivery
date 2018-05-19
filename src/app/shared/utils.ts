@@ -1,5 +1,5 @@
 import { Entity } from "radweb";
-import { FilterBase } from "radweb/utils/dataInterfaces1";
+import { FilterBase, EntitySourceFindOptions } from "radweb/utils/dataInterfaces1";
 
 export async function foreachSync<T>(array: T[], action: (item: T) => Promise<void>) {
   for (let i = 0; i < array.length; i++) {
@@ -7,6 +7,10 @@ export async function foreachSync<T>(array: T[], action: (item: T) => Promise<vo
   }
 }
 export async function foreachEntityItem<T extends Entity<any>>(entity: T, where: (entity: T) => FilterBase, what?: (entity: T) => Promise<void>) {
-  let items = await entity.source.find({ where: where(entity) });
+  let options: EntitySourceFindOptions = {};
+  if (where) {
+    options.where = where(entity);
+  }
+  let items = await entity.source.find(options);
   return foreachSync(items, async item => await what(item));
 }

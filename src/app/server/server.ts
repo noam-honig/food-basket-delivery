@@ -17,6 +17,7 @@ import { ResetPasswordAction } from '../helpers/reset-password';
 import { helpersDataApi } from './helpers-dataapi';
 import { FamiliesComponent } from '../families/families.component';
 import { DoIt } from './doSomething';
+import { GetGeoInformation } from '../shared/googleApiHelpers';
 config();
 
 
@@ -98,7 +99,12 @@ dataApi.add(r => {
     var settings: DataApiSettings<models.Families> = {
         allowDelete: r.authInfo && r.authInfo.admin,
         allowInsert: r.authInfo && r.authInfo.admin,
-        allowUpdate: r.authInfo && r.authInfo.admin
+        allowUpdate: r.authInfo && r.authInfo.admin,
+        onSavingRow: async r => {
+            if (r.address.value != r.address.originalValue || !r.getGeocodeInformation().ok()) {
+                r.addressApiResult.value = (await GetGeoInformation(r.address.value)).saveToString();
+            }
+        }
     };
 
 

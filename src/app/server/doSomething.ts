@@ -1,10 +1,28 @@
 import { Families } from "../models";
 import { readFileSync, readFile } from "fs";
+import { UrlBuilder } from "radweb";
+import * as fetch from 'node-fetch';
+import { GetGeoInformation } from "../shared/googleApiHelpers";
+import { foreachEntityItem } from "../shared/utils";
 
 export async function DoIt() {
+    try {
+     //   getGeolocationInfo();
+    }
+    catch (err) {
+        console.log(err);
+    }
 
-    
+}
+async function getGeolocationInfo() {
+    let families = new Families();
+    foreachEntityItem(new Families(), undefined, async f => {
+        if (!f.getGeocodeInformation().ok()) {
+            f.addressApiResult.value = (await GetGeoInformation(f.address.value)).saveToString();
+            await f.save();
+        }
 
+    });
 }
 
 async function updateAddress() {
