@@ -141,7 +141,7 @@ export class Families extends IdEntity<FamilyId>{
     caption: 'תאריך הוספה',
     readonly: true
   });
-
+  addressApiResult = new radweb.StringColumn();
   constructor() {
 
     super(new FamilyId(), () => new Families(), evilStatics.dataSource, "Families");

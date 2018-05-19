@@ -16,6 +16,7 @@ import { evilStatics } from '../auth/evil-statics';
 import { ResetPasswordAction } from '../helpers/reset-password';
 import { helpersDataApi } from './helpers-dataapi';
 import { FamiliesComponent } from '../families/families.component';
+import { DoIt } from './doSomething';
 config();
 
 
@@ -48,7 +49,9 @@ var sb = new SchemaBuilder(pool);
     new models.Families()
 ].forEach(x => sb.CreateIfNotExist(x));
 
+sb.addColumnIfNotExist(new models.Families(), f => f.addressApiResult);
 
+DoIt();
 
 
 let eb = new ExpressBridge<myAuthInfo>(app);
@@ -98,7 +101,7 @@ dataApi.add(r => {
         allowUpdate: r.authInfo && r.authInfo.admin
     };
 
-    
+
     return new DataApi(new models.Families(), settings)
 
 });
