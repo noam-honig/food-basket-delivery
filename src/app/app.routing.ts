@@ -17,18 +17,8 @@ import { MyFamiliesComponent } from './my-families/my-families.component';
 
 const routes: Routes = [
 
-  {
-    path: 'events', component: EventsComponent, canActivate: [AdminGuard], data: { name: 'אירועים' }
-  },
-  {
-    path: 'my-events', component: MyEventsComponent, canActivate: [LoggedInGuard], data: { name: 'אירועים שלי' }
-  },
 
-  {
-    path: 'helpers',
-    component: HelpersComponent,
-    data: { name: 'מתנדבות' }, canActivate: [AdminGuard]
-  },
+
   {
     path: 'families',
     component: FamiliesComponent,
@@ -37,11 +27,22 @@ const routes: Routes = [
   {
     path: 'my-families', component: MyFamiliesComponent, canActivate: [LoggedInGuard], data: { name: 'משפחות שלי' }
   },
+  {
+    path: 'helpers',
+    component: HelpersComponent,
+    data: { name: 'מתנדבות' }, canActivate: [AdminGuard]
+  },
+  {
+    path: 'events', component: EventsComponent, canActivate: [AdminGuard], data: { name: 'אירועים' }
+  },
+  {
+    path: 'my-events', component: MyEventsComponent, canActivate: [LoggedInGuard], data: { name: 'אירועים שלי' }
+  },
   { path: 'update-info', component: UpdateInfoComponent, data: { name: 'עדכני פרטים' }, canActivate: [LoggedInGuard] },
   { path: 'login', component: LoginComponent, data: { name: 'כניסה' } },
   { path: 'register', component: RegisterComponent, data: { name: 'הרשמה' }, canActivate: [NotLoggedInGuard] },
-  { path: '', redirectTo: '/events', pathMatch: 'full' },
-  { path: '**', redirectTo: '/events', pathMatch: 'full' }
+  { path: '', redirectTo: '/families', pathMatch: 'full' },
+  { path: '**', redirectTo: '/families', pathMatch: 'full' }
 ];
 
 @NgModule({
