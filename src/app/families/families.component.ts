@@ -35,14 +35,18 @@ export class FamiliesComponent implements OnInit {
         caption: 'ok',
         getValue: f => f.getGeocodeInformation().ok()
       }
-    ]
+    ],
+    onEnterRow: f => {
+      if (this.map)
+        this.map.panTo(f.getGeocodeInformation().location());
+    }
   });
   constructor(private dialog: SelectService) { }
   test() {
 
     var mapProp: google.maps.MapOptions = {
       center: new google.maps.LatLng(32.3215, 34.8532),
-      zoom: 2,
+      zoom: 13,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
 
     };
@@ -52,11 +56,11 @@ export class FamiliesComponent implements OnInit {
       let info = new google.maps.InfoWindow({
         content: `<h4>${f.name.value}</h4>${f.address.value}`
       });
-      google.maps.event.addListener(marker,'click',()=>{
-        info.open(this.map,marker);
+      google.maps.event.addListener(marker, 'click', () => {
+        info.open(this.map, marker);
       });
     });
-    
+
     this.mapDivDisplay = 'box';
 
 
