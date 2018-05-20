@@ -9,6 +9,8 @@ import { AuthService } from '../auth/auth-service';
   styleUrls: ['./my-families.component.scss']
 })
 export class MyFamiliesComponent implements OnInit {
+
+
   families = new GridSettings(new Families(), {
     get: {
       where: f => f.courier.isEqualTo(this.auth.auth.info.helperId),

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GridSettings } from 'radweb';
 import { Families, Helpers } from '../models';
 import { SelectService } from '../select-popup/select-service';
-import { GeocodeInformation } from '../shared/googleApiHelpers';
+import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 
 @Component({
   selector: 'app-families',
@@ -10,6 +10,10 @@ import { GeocodeInformation } from '../shared/googleApiHelpers';
   styleUrls: ['./families.component.scss']
 })
 export class FamiliesComponent implements OnInit {
+
+  lat: number = 32.3215;
+  lng: number = 34.8532;
+
 
   families = new GridSettings(new Families(), {
     allowDelete: true,
@@ -35,7 +39,10 @@ export class FamiliesComponent implements OnInit {
     ]
   });
   constructor(private dialog: SelectService) { }
-
+test(){
+  console.log(this.getLocation());
+  console.log(this.getLocation())
+}
   ngOnInit() {
   }
   getLocation() {

@@ -53,7 +53,7 @@ import { MyFamiliesComponent } from './my-families/my-families.component';
     BrowserModule,
     FormsModule,
     AgmCoreModule.forRoot({
-      apiKey: 'YOUR_KEY'
+      apiKey: 'AIzaSyDNdyWkWtBzRf8UP6MDmcIv-AqwcjuW2QY'
     }),
     MaterialModule,
     BrowserAnimationsModule,

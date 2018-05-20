@@ -27,6 +27,11 @@ export class GeocodeInformation {
     ok() {
         return this.info.status == "OK";
     }
+    location() {
+        if (!this.ok())
+            return {};
+        return this.info.results[0].geometry.location;
+    }
 }
 
 export interface AddressComponent {

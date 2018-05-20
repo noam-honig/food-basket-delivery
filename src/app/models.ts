@@ -142,8 +142,13 @@ export class Families extends IdEntity<FamilyId>{
     readonly: true
   });
   addressApiResult = new radweb.StringColumn();
+  private _lastString: string;
+  private _lastGeo: GeocodeInformation;
   getGeocodeInformation() {
-    return GeocodeInformation.fromString(this.addressApiResult.value);
+    if (this._lastString == this.addressApiResult.value)
+      return this._lastGeo;
+      this._lastString = this.addressApiResult.value;
+    return this._lastGeo =  GeocodeInformation.fromString(this.addressApiResult.value);
   }
   constructor() {
 

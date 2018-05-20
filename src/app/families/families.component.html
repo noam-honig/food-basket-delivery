@@ -1,5 +1,16 @@
+<agm-map [latitude]="lat" [longitude]="lng" [zoom]=13 [fullscreenControl]="true" *ngIf="families.currentRow">
+
+    <agm-marker *ngFor="let f of families.items"
+     [latitude]="f.getGeocodeInformation().location().lat" 
+     [longitude]="f.getGeocodeInformation().location().lng">
+        <agm-info-window><br/>{{f.name.value}}</agm-info-window>
+    </agm-marker>
+</agm-map>
+
+
 <data-grid [settings]="families"></data-grid>
 <h1>OK: {{getLocation().ok()}}</h1>
 
+<button (click)="test()">test</button>
 
 <pre style="direction:ltr">{{families.currentRow? families.currentRow.addressApiResult.value:''}}</pre>
