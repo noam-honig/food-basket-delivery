@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridSettings } from 'radweb';
 import { Families, Helpers } from '../models';
 import { SelectService } from '../select-popup/select-service';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
+import { } from '@types/googlemaps';
 
 @Component({
   selector: 'app-families',
@@ -11,15 +12,13 @@ import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelper
 })
 export class FamiliesComponent implements OnInit {
 
-  lat: number = 32.3215;
-  lng: number = 34.8532;
 
 
   families = new GridSettings(new Families(), {
     allowDelete: true,
     allowUpdate: true,
     allowInsert: true,
-    get:{limit:1000},
+    get: { limit: 1000 },
     columnSettings: f => [
       f.name,
       f.phone,
@@ -33,17 +32,33 @@ export class FamiliesComponent implements OnInit {
 
       },
       {
-        caption:'ok',
-        getValue:f=>f.getGeocodeInformation().ok()
+        caption: 'ok',
+        getValue: f => f.getGeocodeInformation().ok()
       }
     ]
   });
   constructor(private dialog: SelectService) { }
-test(){
-  console.log(this.getLocation());
-  console.log(this.getLocation())
-}
+  test() {
+    
+    var mapProp: google.maps.MapOptions = {
+      center: new google.maps.LatLng(32.3215, 34.8532),
+      zoom: 13,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      
+    };
+    this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
+    this.families.items.forEach(f=>{
+      let marker = new google.maps.Marker({map:this.map,position:f.getGeocodeInformation().location()})
+    });
+    this.mapDivDisplay = 'box';
+    
+    
+  }
+  mapDivDisplay:string='none';
+  @ViewChild('gmap') gmapElement: any;
+  map: google.maps.Map;
   ngOnInit() {
+   
   }
   getLocation() {
     if (this.families.currentRow) {

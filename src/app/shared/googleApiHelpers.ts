@@ -27,9 +27,9 @@ export class GeocodeInformation {
     ok() {
         return this.info.status == "OK";
     }
-    location() {
+    location():Location {
         if (!this.ok())
-            return {};
+            return undefined;
         return this.info.results[0].geometry.location;
     }
 }
