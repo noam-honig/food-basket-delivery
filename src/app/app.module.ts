@@ -7,6 +7,7 @@ import { RadWebModule } from 'radweb';
 import { AppRoutingModule } from './app.routing';
 import { HomeComponent } from './home/home.component';
 import { MaterialModule } from './shared/material.module';
+import { AgmCoreModule } from '@agm/core';
 
 import { EventsComponent } from './events/events.component';
 import { EventHelperItemsComponent } from './event-helper-items/event-helper-items.component';
@@ -51,7 +52,9 @@ import { MyFamiliesComponent } from './my-families/my-families.component';
   imports: [
     BrowserModule,
     FormsModule,
-
+    AgmCoreModule.forRoot({
+      apiKey: 'YOUR_KEY'
+    }),
     MaterialModule,
     BrowserAnimationsModule,
     RadWebModule,
