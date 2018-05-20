@@ -39,26 +39,33 @@ export class FamiliesComponent implements OnInit {
   });
   constructor(private dialog: SelectService) { }
   test() {
-    
+
     var mapProp: google.maps.MapOptions = {
       center: new google.maps.LatLng(32.3215, 34.8532),
-      zoom: 13,
+      zoom: 2,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
-      
+
     };
     this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
-    this.families.items.forEach(f=>{
-      let marker = new google.maps.Marker({map:this.map,position:f.getGeocodeInformation().location()})
+    this.families.items.forEach(f => {
+      let marker = new google.maps.Marker({ map: this.map, position: f.getGeocodeInformation().location() });
+      let info = new google.maps.InfoWindow({
+        content: `<h4>${f.name.value}</h4>${f.address.value}`
+      });
+      google.maps.event.addListener(marker,'click',()=>{
+        info.open(this.map,marker);
+      });
     });
+    
     this.mapDivDisplay = 'box';
-    
-    
+
+
   }
-  mapDivDisplay:string='none';
+  mapDivDisplay: string = 'none';
   @ViewChild('gmap') gmapElement: any;
   map: google.maps.Map;
   ngOnInit() {
-   
+
   }
   getLocation() {
     if (this.families.currentRow) {
