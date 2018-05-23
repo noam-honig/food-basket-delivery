@@ -13,6 +13,7 @@ import { MyEventsComponent } from './my-events/my-events.component';
 import { UpdateInfoComponent } from './users/update-info/update-info.component';
 import { FamiliesComponent } from './families/families.component';
 import { MyFamiliesComponent } from './my-families/my-families.component';
+import { AsignFamilyComponent } from './asign-family/asign-family.component';
 
 
 const routes: Routes = [
@@ -26,6 +27,9 @@ const routes: Routes = [
   },
   {
     path: 'my-families', component: MyFamiliesComponent, canActivate: [LoggedInGuard], data: { name: 'משפחות שלי' }
+  },
+  {
+    path: 'assign-families', component: AsignFamilyComponent, canActivate: [LoggedInGuard], data: { name: 'שיוך משפחות' }
   },
   {
     path: 'helpers',
@@ -42,7 +46,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent, data: { name: 'כניסה' } },
   { path: 'register', component: RegisterComponent, data: { name: 'הרשמה' }, canActivate: [NotLoggedInGuard] },
   { path: '', redirectTo: '/families', pathMatch: 'full' },
-  { path: '**', redirectTo: '/families', pathMatch: 'full' }
+  { path: '**', redirectTo: '/familiesP', pathMatch: 'full' }
 ];
 
 @NgModule({

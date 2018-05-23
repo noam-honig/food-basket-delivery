@@ -42,6 +42,9 @@ export class FamiliesComponent implements OnInit {
     }
   });
   constructor(private dialog: SelectService) { }
+  showInfo(){
+    console.log(this.getLocation());
+  }
   test() {
 
     var mapProp: google.maps.MapOptions = {
@@ -53,10 +56,12 @@ export class FamiliesComponent implements OnInit {
     this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
     this.families.items.forEach(f => {
       let marker = new google.maps.Marker({ map: this.map, position: f.getGeocodeInformation().location() });
-      let info = new google.maps.InfoWindow({
-        content: `<h4>${f.name.value}</h4>${f.address.value}`
-      });
+      let info: google.maps.InfoWindow;
       google.maps.event.addListener(marker, 'click', () => {
+        if (!info)
+          info =  new google.maps.InfoWindow({
+            content: `<h4>${f.name.value}</h4>${f.address.value}`
+          });
         info.open(this.map, marker);
       });
     });

@@ -28,6 +28,7 @@ import { InputAreaComponent } from './select-popup/input-area/input-area.compone
 import { UpdateInfoComponent } from './users/update-info/update-info.component';
 import { FamiliesComponent } from './families/families.component';
 import { MyFamiliesComponent } from './my-families/my-families.component';
+import { AsignFamilyComponent } from './asign-family/asign-family.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { MyFamiliesComponent } from './my-families/my-families.component';
     InputAreaComponent,
     UpdateInfoComponent,
     FamiliesComponent,
-    MyFamiliesComponent
+    MyFamiliesComponent,
+    AsignFamilyComponent
   ],
   imports: [
     BrowserModule,

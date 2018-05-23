@@ -1,3 +1,69 @@
+<h1>משפחות לחלוקה</h1>
+<mat-accordion>
+  <mat-expansion-panel *ngFor="let f of families.items" #myPanel>
+    <mat-expansion-panel-header>
+      <div>
+        <mat-panel-title>
+          {{f.name.value}}
+        </mat-panel-title>
+      </div>
+      <div>
+        <mat-panel-description>
+          {{f.address.value}}
+        </mat-panel-description>
+      </div>
+
+    </mat-expansion-panel-header>
+    <div>
+      <h4 style="display:inline">סוג משלוח</h4> - ארגז רגיל
+      <br/>
+      <strong style="color:red">שים לב! </strong> להשאיר את הארגז מחוץ לבית ליד הפחים
+
+      <h4>כתובת</h4>
+      <div>
+        <button mat-mini-fab style="margin-left:10px;vertical-align: top">
+          Waze
+        </button>
+        <div style="display:inline-block">
+          {{f.address.value}}
+          <br/> קומה 3 דירה 5
+          <br/> כניסה אחורית מאוחרי הפחים
+        </div>
+      </div>
+
+      <h4>טלפונים</h4>
+      <div>
+        <button mat-mini-fab style="margin-left:10px;vertical-align: middle">
+          <mat-icon>call</mat-icon>
+        </button>
+        <div style="display:inline-block">
+          <a href="tel:0507330590"> {{f.phone.value}} </a> הערת טלפון (שלומית האחות)
+
+        </div>
+
+      </div>
+      <div style="margin-top:5px">
+        <button mat-mini-fab style="margin-left:10px;vertical-align: middle">
+          <mat-icon>call</mat-icon>
+        </button>
+        <div style="display:inline-block">
+          <a href="tel:0507330590"> 050-7330590 </a> הערת טלפון (שלומית האחות)
+
+        </div>
+
+      </div>
+
+    </div>
+    <div class="button-area">
+      <button mat-raised-button style="width:70%;margin-bottom: 10px" color="primary">מסרתי את החבילה בהצלחה</button>
+      <br/>
+      <button mat-raised-button style="width:70%;color:red;font-weight: 400">נתקלתי בבעיה במסירה</button>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>
+
+<h1>משפחות שחולקו</h1>
+
 
 <mat-accordion>
   <mat-expansion-panel *ngFor="let f of families.items" #myPanel>
@@ -14,17 +80,78 @@
       </div>
 
     </mat-expansion-panel-header>
+    <div>
+
+      <h4>כתובת</h4>
+      <div>
+        <button mat-mini-fab style="margin-left:10px;vertical-align: top">
+          WAZE
+        </button>
+        <div style="display:inline-block">
+          {{f.address.value}}
+          <br/> קומה 3 דירה 5
+          <br/> כניסה אחורית מאוחרי הפחים
+        </div>
+      </div>
+      <h4>הערות</h4>
+      <textarea placeholder="אנא כתוב לנו משהו על המשפחה או מה שבא לך"></textarea>
+    </div>
+    <div class="button-area">
+      <a href="">לחצתי בטעות, החזר למשפחות לחלוקה</a>
+      
+
+
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>
+<h1>משפחות שנתקלתי בבעיה</h1>
+
+
+<mat-accordion>
+  <mat-expansion-panel *ngFor="let f of families.items" #myPanel>
+    <mat-expansion-panel-header>
+      <div>
+        <mat-panel-title>
+          {{f.name.value}}
+        </mat-panel-title>
+      </div>
+      <div>
+        <mat-panel-description>
+          {{f.address.value}}
+        </mat-panel-description>
+      </div>
+
+    </mat-expansion-panel-header>
+    <div>
+
+      <h4>כתובת</h4>
+      <div>
+        <button mat-mini-fab style="margin-left:10px;vertical-align: top">
+          WAZE
+        </button>
+        <div style="display:inline-block">
+          {{f.address.value}}
+          <br/> קומה 3 דירה 5
+          <br/> כניסה אחורית מאוחרי הפחים
+        </div>
+      </div>
+      
+    </div>
     <div class="button-area">
       <a href="tel:{{f.phone.value}}">
         <button mat-mini-fab color="primary">
           <mat-icon>call</mat-icon>
         </button>
       </a>
-      <a href ="https://www.google.com/maps/search/?api=1&query={{f.address.value}}">
-      <button mat-mini-fab color="primary">
-        <mat-icon>map</mat-icon>
-      </button>
+      <a href="https://www.google.com/maps/search/?api=1&query={{f.address.value}}">
+        <button mat-mini-fab color="primary">
+          <mat-icon>map</mat-icon>
+        </button>
       </a>
     </div>
   </mat-expansion-panel>
 </mat-accordion>
+
+נתקלת בבעייה בחלוקה,
+<br/>התקשר לאמהות מחבקות
+<a href="tel:0507330591">0507-330591</a>
