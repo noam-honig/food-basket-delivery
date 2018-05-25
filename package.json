@@ -18,7 +18,7 @@
     "ngrok": "ngrok http 3000 --host-header localhost",
     "server:build": "tsc -p tsconfig.server.json",
     "server:execute": "node dist-server/src/app/server/server.js",
-    "preserver:debug":"npm run server:build",
+    "preserver:debug": "npm run server:build",
     "server:debug": "node --inspect --debug-brk dist-server/src/app/server/server.js",
     "server:start": "npm run server:build && npm run server:execute",
     "server:watch": "concurrently \"tsc -P tsconfig.server.json -w\" \"nodemon dist-server/src/app/server/server.js --ignore /appData --ignore /dist\""
@@ -60,7 +60,7 @@
     "password-hash": "^1.2.2",
     "path": "^0.12.7",
     "pg": "^7.4.1",
-    "radweb": "^1.1.24",
+    "radweb": "^1.1.25",
     "rxjs": "^5.5.6",
     "uuid": "^3.2.1",
     "web-animations-js": "^2.3.1",

@@ -36,7 +36,7 @@ async function updateAddress() {
 
 async function updatePhone() {
     (await new Families().source.find({})).forEach(f => {
-        f.phone.value = '0507330590';
+        f.phone1.value = '0507330590'; 
         f.save();
     });
 }

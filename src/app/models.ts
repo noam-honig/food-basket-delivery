@@ -27,7 +27,7 @@ class Id extends radweb.StringColumn {
   }
 }
 
-class changeDate extends radweb.DateColumn {
+class changeDate extends radweb.DateTimeColumn {
   constructor(caption: string) {
     super({
       caption: caption,
@@ -257,7 +257,7 @@ export class Families extends IdEntity<FamilyId>{
   });
   familyMembers = new radweb.NumberColumn('מספר נפשות');
   language = new LanguageColumn();
-  basketType = new BasketId();
+  basketType = new BasketId('סוג סל');
   familySource = new FamilySourceId('מקור משפחה');
   internalComment = new radweb.StringColumn('הערה פנימית - לא תופיע למשנע');
 
@@ -267,8 +267,9 @@ export class Families extends IdEntity<FamilyId>{
   appartment = new radweb.StringColumn('דירה');
   addressNotes = new radweb.StringColumn('הערות כתובת');
   addressApiResult = new radweb.StringColumn();
+  addressComment = new radweb.StringColumn('הערת כתובת');
 
-  phone1 = new radweb.StringColumn({ caption: "טלפון 1", inputType: 'tel' });
+  phone1 = new radweb.StringColumn({ caption: "טלפון 1", inputType: 'tel',dbName:'phone' });
   phone1Description = new radweb.StringColumn('תאור טלפון 1');
   phone2 = new radweb.StringColumn({ caption: "טלפון 2", inputType: 'tel' });
   phone2Description = new radweb.StringColumn('תאור טלפון 2');

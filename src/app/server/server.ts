@@ -50,7 +50,7 @@ var sb = new SchemaBuilder(pool);
     new models.Families()
 ].forEach(x => sb.CreateIfNotExist(x));
 
-sb.addColumnIfNotExist(new models.Families(), f => f.addressApiResult);
+sb.verifyAllColumns(new models.Families());
 
 DoIt();
 

@@ -19,23 +19,52 @@ export class FamiliesComponent implements OnInit {
     allowUpdate: true,
     allowInsert: true,
     get: { limit: 1000 },
-    columnSettings: f => [
-      f.name,
-      f.phone,
-      f.address,
+    columnSettings: families => [
+      
+      families.name,
+      families.familyMembers,
+      families.language,
+      families.basketType,
+      families.familySource,
+      families.internalComment,
+      families.address,
+      families.floor,
+      families.appartment,
+      families.addressNotes,
+      families.addressApiResult,
+      families.addressComment,
+      families.phone1,
+      families.phone1Description,
+      families.phone2,
+      families.phone2Description,
+      families.callStatus,
+      families.callTime,
+      families.callHelper,
+      families.callComments,
       {
-        column: f.courier,
+        column: families.courier,
         getValue: f => f.lookup(new Helpers(), f.courier).name,
         click: f => this.dialog.showPopup(new Helpers(), s => f.courier.value = s.id.value, {
           columnSettings: h => [h.name, h.phone]
         })
 
       },
-      {
-        caption: 'ok',
-        getValue: f => f.getGeocodeInformation().ok()
-      }
+      families.courierAssingTime,
+      families.courierAssignUser,
+      families.deliverStatus,
+      families.deliveryStatusDate,
+      families.deliveryStatusUser,
+      families.deliveryComments,
+      families.createDate,
+      families.createUser
     ],
+  /*  columnSettings: f => [
+      f.name,
+      f.phone1,
+      f.address,
+      
+    
+    ],*/
     onEnterRow: f => {
       if (this.map)
         this.map.panTo(f.getGeocodeInformation().location());

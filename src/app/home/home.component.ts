@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { Categories } from '../models';
+
 
 @Component({
   selector: 'app-home',

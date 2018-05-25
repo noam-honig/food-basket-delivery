@@ -41,14 +41,19 @@ export class SchemaBuilder {
         WHERE table_name=$1 and column_name=$2`,
                     [e.__getDbName().toLocaleLowerCase(),
                     c(e).__getDbName().toLocaleLowerCase()])).rowCount == 0) {
-
-                await this.pool.query(
-                    `alter table ${e.__getDbName()} add column ${this.addColumnSqlSyntax(c(e))}`);
+                let sql = `alter table ${e.__getDbName()} add column ${this.addColumnSqlSyntax(c(e))}`;
+                console.log(sql);
+                await this.pool.query(sql);
             }
         }
         catch (err) {
             console.log(err);
         }
+    }
+    async verifyAllColumns<T extends Entity<any>>(e: T) {
+        e.__iterateColumns().forEach(column => {
+            this.addColumnIfNotExist(e, () => column);
+        });
     }
 
     constructor(private pool: Pool) {
