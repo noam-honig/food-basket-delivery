@@ -20,30 +20,159 @@ class IdEntity<idType extends Id> extends radweb.Entity<string>
 }
 
 
-export class Categories extends radweb.Entity<number> {
-  id = new radweb.NumberColumn({ dbName: 'CategoryID' });
-  categoryName = new radweb.StringColumn();
-  description = new radweb.StringColumn();
-
-  constructor() {
-    super(() => new Categories(), evilStatics.dataSource, 'Categories');
-    this.initColumns();
-  }
-}
 
 class Id extends radweb.StringColumn {
   setToNewId() {
     this.value = uuid();
   }
 }
+
+class changeDate extends radweb.DateColumn {
+  constructor(caption: string) {
+    super({
+      caption: caption,
+      readonly: true
+    });
+  }
+}
 class ItemId extends Id {
 
 }
 class HelperId extends Id { }
+class HelperIdReadonly extends Id {
+  constructor(caption: string) {
+    super({
+      caption: caption,
+      readonly: true
+    });
+  }
+}
+class BasketId extends Id { }
+class FamilySourceId extends Id { }
+
 
 class EventId extends Id { }
 class FamilyId extends Id { }
 class EventHelperId extends Id { }
+
+
+
+export class CallStatusColumn extends radweb.NumberColumn {
+  get statusValue() {
+    return CallStatus.byCode(this.value);
+  }
+  set statusValue(val: CallStatus) {
+    this.value = val.code;
+  }
+  get displayValue() {
+    if (this.statusValue)
+      return this.statusValue.toString();
+    return '';
+  }
+
+}
+
+export class CallStatus {
+  static NotYet: CallStatus = new CallStatus(0, 'עדיין לא');
+  static Success: CallStatus = new CallStatus(10, 'בוצעה שיחה');
+  static Failed: CallStatus = new CallStatus(20, 'לא הצלנו להשיג');
+  constructor(public code: number,
+    private name: string) {
+
+  }
+  toString() {
+    return this.name;
+  }
+  static byCode(code: number): CallStatus {
+    for (let member in CallStatus) {
+      let s = CallStatus[member] as CallStatus;
+      if (s && s.code == code)
+        return s;
+    }
+    return undefined;
+  }
+}
+
+export class LanguageColumn extends radweb.NumberColumn {
+  constructor() {
+    super('שפה');
+  }
+  get languageValue() {
+    return CallStatus.byCode(this.value);
+  }
+  set languageValue(val: CallStatus) {
+    this.value = val.code;
+  }
+  get displayValue() {
+    if (this.languageValue)
+      return this.languageValue.toString();
+    return '';
+  }
+
+}
+
+export class Language {
+  static Hebrew = new Language(0, 'עברית');
+  static Russian = new Language(10, 'רוסית');
+  static Amharit = new Language(20, 'אמהרית');
+  constructor(public code: number,
+    private name: string) {
+
+  }
+  toString() {
+    return this.name;
+  }
+  static byCode(code: number): CallStatus {
+    for (let member in CallStatus) {
+      let s = CallStatus[member] as CallStatus;
+      if (s && s.code == code)
+        return s;
+    }
+    return undefined;
+  }
+}
+
+
+export class DeliveryStatusColumn extends radweb.NumberColumn {
+  get statusValue() {
+    return CallStatus.byCode(this.value);
+  }
+  set statusValue(val: CallStatus) {
+    this.value = val.code;
+  }
+  get displayValue() {
+    if (this.statusValue)
+      return this.statusValue.toString();
+    return '';
+  }
+
+}
+
+export class DeliveryStatus {
+  static NotYet: DeliveryStatus = new DeliveryStatus(0, 'טרם שוייך');
+  static Assigned: DeliveryStatus = new DeliveryStatus(1, 'שוייכה למשנע');
+  static Success: DeliveryStatus = new DeliveryStatus(11, 'נמסר בהצלחה');
+  static FailedBadAddress: DeliveryStatus = new DeliveryStatus(21, 'לא נמסר, בעייה בכתובת');
+  static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, 'לא נמסר, לא היו בבית');
+  static FailedOther: DeliveryStatus = new DeliveryStatus(25, 'לא נמסר, אחר');
+  static Frozen: DeliveryStatus = new DeliveryStatus(90, 'מוקפא');
+  constructor(public code: number,
+    private name: string) {
+
+  }
+  toString() {
+    return this.name;
+  }
+  static byCode(code: number): CallStatus {
+    for (let member in CallStatus) {
+      let s = CallStatus[member] as CallStatus;
+      if (s && s.code == code)
+        return s;
+    }
+    return undefined;
+  }
+}
+
 export class Items extends IdEntity<ItemId>{
 
   eventId = new EventId();
@@ -98,17 +227,10 @@ export class Helpers extends IdEntity<HelperId>{
     }
   });
   phone = new radweb.StringColumn({ caption: "טלפון", inputType: 'tel' });
-  //email = new radweb.StringColumn('דוא"ל');
-  //address = new radweb.StringColumn("כתובת");
-
-  //userName = new radweb.StringColumn("שם משתמשת");
   realStoredPassword = new radweb.StringColumn({ dbName: 'password' });
   password = new radweb.StringColumn({ caption: 'סיסמה', inputType: 'password', virtualData: () => Helpers.emptyPassword });
 
-  createDate = new radweb.DateTimeColumn({
-    caption: 'תאריך הוספה',
-    readonly: true
-  });
+  createDate = new changeDate('תאריך הוספה');
   isAdmin = new BoolColumn('מנהלת');
 
   constructor() {
@@ -133,22 +255,60 @@ export class Families extends IdEntity<FamilyId>{
         this.name.error = 'השם קצר מידי';
     }
   });
-  phone = new radweb.StringColumn({ caption: "טלפון", inputType: 'tel' });
+  familyMembers = new radweb.NumberColumn('מספר נפשות');
+  language = new LanguageColumn();
+  basketType = new BasketId();
+  familySource = new FamilySourceId('מקור משפחה');
+  internalComment = new radweb.StringColumn('הערה פנימית - לא תופיע למשנע');
+
 
   address = new radweb.StringColumn("כתובת");
-  courier = new HelperId("מוביל");
-  createDate = new radweb.DateTimeColumn({
-    caption: 'תאריך הוספה',
-    readonly: true
-  });
+  floor = new radweb.NumberColumn('קומה');
+  appartment = new radweb.StringColumn('דירה');
+  addressNotes = new radweb.StringColumn('הערות כתובת');
   addressApiResult = new radweb.StringColumn();
+
+  phone1 = new radweb.StringColumn({ caption: "טלפון 1", inputType: 'tel' });
+  phone1Description = new radweb.StringColumn('תאור טלפון 1');
+  phone2 = new radweb.StringColumn({ caption: "טלפון 2", inputType: 'tel' });
+  phone2Description = new radweb.StringColumn('תאור טלפון 2');
+
+
+
+  callStatus = new CallStatusColumn('סטטוס שיחה');
+  callTime = new changeDate('מועד שיחה');
+  callHelper = new HelperIdReadonly('מי ביצעה את השיחה');
+  callComments = new radweb.StringColumn('הערות שיחה');
+
+
+  courier = new HelperId("משנע");
+  courierAssingTime = new changeDate('תאריך שיוך למשנע');
+  courierAssignUser = new HelperIdReadonly('מי שייכה למשנע');
+
+  deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
+  deliveryStatusDate = new changeDate('תאריך סטטוס שינוע');
+  deliveryStatusUser = new HelperIdReadonly('מי עדכן את סטטוס המשלוח');
+  deliveryComments = new radweb.StringColumn('הערות משלוח');
+
+
+
+  createDate = new changeDate('תאריך הוספה');
+  createUser = new HelperIdReadonly('משתמש מוסיף');
+
+
+  
+
+
+
+
+
   private _lastString: string;
   private _lastGeo: GeocodeInformation;
   getGeocodeInformation() {
     if (this._lastString == this.addressApiResult.value)
       return this._lastGeo;
-      this._lastString = this.addressApiResult.value;
-    return this._lastGeo =  GeocodeInformation.fromString(this.addressApiResult.value);
+    this._lastString = this.addressApiResult.value;
+    return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
   }
   constructor() {
 
@@ -206,5 +366,27 @@ export class Events extends IdEntity<EventId>{
       item => item.delete());
 
     return super.delete();
+  }
+}
+
+export class BasketType extends IdEntity<BasketId>{
+
+  name = new radweb.StringColumn({ caption: "שם" });
+  constructor() {
+
+    super(new BasketId(), () => new BasketType(), evilStatics.dataSource, "BasketType");
+    this.initColumns();
+  }
+}
+
+export class FamiltySources extends IdEntity<FamilySourceId>{
+
+  name = new radweb.StringColumn({ caption: "שם" });
+  contactPerson = new radweb.StringColumn({ caption: "איש קשר" });
+  phone = new radweb.StringColumn('טלפון');
+  constructor() {
+
+    super(new FamilySourceId(), () => new FamiltySources(), evilStatics.dataSource, "FamilySources");
+    this.initColumns();
   }
 }

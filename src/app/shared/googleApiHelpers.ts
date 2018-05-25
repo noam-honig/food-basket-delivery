@@ -22,7 +22,12 @@ export class GeocodeInformation {
         return JSON.stringify(this.info);
     }
     static fromString(s: string) {
+        try{
         return new GeocodeInformation(JSON.parse(s));
+        }
+        catch{
+            return new GeocodeInformation();
+        }
     }
     ok() {
         return this.info.status == "OK";
