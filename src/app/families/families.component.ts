@@ -19,6 +19,7 @@ export class FamiliesComponent implements OnInit {
     allowUpdate: true,
     allowInsert: true,
     get: { limit: 1000 },
+    hideDataArea:true,
     columnSettings: families => [
       
       families.name,
