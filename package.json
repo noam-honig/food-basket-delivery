@@ -18,6 +18,8 @@
     "ngrok": "ngrok http 3000 --host-header localhost",
     "server:build": "tsc -p tsconfig.server.json",
     "server:execute": "node dist-server/src/app/server/server.js",
+    "preserver:debug":"npm run server:build",
+    "server:debug": "node --inspect dist-server/src/app/server/server.js",
     "server:start": "npm run server:build && npm run server:execute",
     "server:watch": "concurrently \"tsc -P tsconfig.server.json -w\" \"nodemon dist-server/src/app/server/server.js --ignore /appData --ignore /dist\""
   },
