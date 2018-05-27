@@ -42,12 +42,12 @@ const routes: Routes = [
     component: ManageComponent,
     data: { name: 'ניהול' }, canActivate: [AdminGuard]
   },
-  {
+  /*{
     path: 'events', component: EventsComponent, canActivate: [AdminGuard], data: { name: 'אירועים' }
   },
   {
     path: 'my-events', component: MyEventsComponent, canActivate: [LoggedInGuard], data: { name: 'אירועים שלי' }
-  },
+  },*/
   { path: 'update-info', component: UpdateInfoComponent, data: { name: 'עדכני פרטים' }, canActivate: [LoggedInGuard] },
   { path: 'login', component: LoginComponent, data: { name: 'כניסה' } },
   { path: 'register', component: RegisterComponent, data: { name: 'הרשמה' }, canActivate: [NotLoggedInGuard] },
