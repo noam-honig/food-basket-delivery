@@ -15,39 +15,56 @@
 
     </mat-expansion-panel-header>
     <div>
-      <h4 style="display:inline">סוג משלוח</h4> - ארגז רגיל
-      <br/>
-      <strong style="color:red">שים לב! </strong> להשאיר את הארגז מחוץ לבית ליד הפחים
-
+      <h4 style="display:inline">סוג משלוח</h4> - {{f.basketType.displayValue}}
+      <ng-container *ngIf="f.deliveryComments.value">
+        <br/>
+        <strong style="color:red">שים לב! </strong> {{f.deliveryComments.value}}
+      </ng-container>
       <h4>כתובת</h4>
       <div>
-        <button mat-mini-fab style="margin-left:10px;vertical-align: top">
-          Waze
-        </button>
+        <a href="https://waze.com/ul?q={{f.address.value}}">
+          <button mat-mini-fab style="margin-left:10px;vertical-align: top">
+            Waze
+          </button>
+        </a>
         <div style="display:inline-block">
           {{f.address.value}}
-          <br/> קומה 3 דירה 5
-          <br/> כניסה אחורית מאוחרי הפחים
+          <ng-container *ngIf="f.floor.value||f.appartment.value">
+            <br/>
+          </ng-container>
+          <ng-container *ngIf="f.floor.value">
+            קומה {{f.floor.value}}
+          </ng-container>
+          <ng-container *ngIf="f.appartment.value">
+            דירה {{f.appartment.value}}
+          </ng-container>
+          <ng-container *ngIf="f.addressComment.value">
+            <br/> {{f.addressComment.value}}
+          </ng-container>
         </div>
       </div>
 
       <h4>טלפונים</h4>
       <div>
         <button mat-mini-fab style="margin-left:10px;vertical-align: middle">
-          <mat-icon>call</mat-icon>
+          <a href="tel:{{f.phone1.value}}">
+            <mat-icon>call</mat-icon>
+          </a>
         </button>
         <div style="display:inline-block">
-          <a href="tel:0507330590"> {{f.phone1.value}} </a> הערת טלפון (שלומית האחות)
+          <a href="tel:{{f.phone1.value}}"> {{f.phone1.displayValue}}</a> {{f.phone1Description.value}}
 
         </div>
 
       </div>
-      <div style="margin-top:5px">
+      <div style="margin-top:5px" *ngIf="f.phone2.value">
         <button mat-mini-fab style="margin-left:10px;vertical-align: middle">
-          <mat-icon>call</mat-icon>
+          <a href="tel:{{f.phone2.value}}">
+            <mat-icon>call</mat-icon>
+          </a>
         </button>
         <div style="display:inline-block">
-          <a href="tel:0507330590"> 050-7330590 </a> הערת טלפון (שלומית האחות)
+          <a href="tel:{{f.phone2.value}}"> {{f.phone2.displayValue}}</a> {{f.phone2Description.value}}
 
         </div>
 
@@ -98,7 +115,7 @@
     </div>
     <div class="button-area">
       <a href="">לחצתי בטעות, החזר למשפחות לחלוקה</a>
-      
+
 
 
     </div>
@@ -135,7 +152,7 @@
           <br/> כניסה אחורית מאוחרי הפחים
         </div>
       </div>
-      
+
     </div>
     <div class="button-area">
       <a href="tel:{{f.phone1.value}}">

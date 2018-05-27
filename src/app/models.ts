@@ -233,9 +233,8 @@ export class Families extends IdEntity<FamilyId>{
   address = new radweb.StringColumn("כתובת");
   floor = new radweb.NumberColumn('קומה');
   appartment = new radweb.StringColumn('דירה');
-  addressNotes = new radweb.StringColumn('הערות כתובת');
-  addressApiResult = new radweb.StringColumn();
   addressComment = new radweb.StringColumn('הערת כתובת');
+  addressApiResult = new radweb.StringColumn();
 
   phone1 = new radweb.StringColumn({ caption: "טלפון 1", inputType: 'tel', dbName: 'phone' });
   phone1Description = new radweb.StringColumn('תאור טלפון 1');
@@ -303,6 +302,8 @@ export class Families extends IdEntity<FamilyId>{
     logChanged(this.courier, this.courierAssingTime, this.courierAssignUser);
     logChanged(this.callStatus, this.callTime, this.callHelper);
     logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser);
+    if (this.courier.value != this.courier.originalValue && this.deliverStatus.listValue == DeliveryStatus.NotYet)
+      this.deliverStatus.listValue = DeliveryStatus.Assigned;
 
   }
 }

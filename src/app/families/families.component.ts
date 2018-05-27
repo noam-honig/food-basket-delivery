@@ -18,7 +18,7 @@ export class FamiliesComponent implements OnInit {
     allowDelete: true,
     allowUpdate: true,
     allowInsert: true,
-    get: { limit: 1000 },
+    get: { limit: 1000 ,orderBy:f=>f.name},
     hideDataArea: true,
     columnSettings: families => [
 
@@ -42,9 +42,8 @@ export class FamiliesComponent implements OnInit {
       families.address,
       families.floor,
       families.appartment,
-      families.addressNotes,
-      families.addressApiResult,
       families.addressComment,
+      
       families.phone1,
       families.phone1Description,
       families.phone2,
