@@ -64,5 +64,18 @@ th {
     float: right;
     }
 }
+.pull-right {
+    float: left !important;
+  }
+  .pull-left {
+    float: right !important;
+  }
+  .glyphicon-chevron-left:before {
+      content: "\e080";
+}
+.glyphicon-chevron-right:before {
+    content: "\e079";
+  }
+//end rtl stuff
   
   // end fix right to left problem in data area
