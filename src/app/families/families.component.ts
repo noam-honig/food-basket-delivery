@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { Families, Helpers } from '../models';
+import { Families, Helpers, CallStatus } from '../models';
 import { SelectService } from '../select-popup/select-service';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 import { } from '@types/googlemaps';
@@ -19,12 +19,17 @@ export class FamiliesComponent implements OnInit {
     allowUpdate: true,
     allowInsert: true,
     get: { limit: 1000 },
-    hideDataArea:true,
+    hideDataArea: true,
     columnSettings: families => [
-      
+
       families.name,
       families.familyMembers,
-      families.language,
+      {
+        column: families.language,
+        dropDown:{
+          items:families.language.getOptions() 
+        }
+      },
       families.basketType,
       families.familySource,
       families.internalComment,
@@ -38,14 +43,20 @@ export class FamiliesComponent implements OnInit {
       families.phone1Description,
       families.phone2,
       families.phone2Description,
-      families.callStatus,
+      
+      {
+        column: families.callStatus,
+        dropDown:{
+          items:families.callStatus.getOptions() 
+        }
+      },
       families.callTime,
       families.callHelper,
       families.callComments,
       {
         column: families.courier,
         getValue: f => f.courier.lookup(new Helpers()).name,
-        hideDataOnInput:true,
+        hideDataOnInput: true,
         click: f => this.dialog.showPopup(new Helpers(), s => f.courier.value = s.id.value, {
           columnSettings: h => [h.name, h.phone]
         })
@@ -53,27 +64,33 @@ export class FamiliesComponent implements OnInit {
       },
       families.courierAssingTime,
       families.courierAssignUser,
-      families.deliverStatus,
+      
+      {
+        column: families.deliverStatus,
+        dropDown:{
+          items:families.deliverStatus.getOptions() 
+        }
+      },
       families.deliveryStatusDate,
       families.deliveryStatusUser,
       families.deliveryComments,
       families.createDate,
       families.createUser
     ],
-  /*  columnSettings: f => [
-      f.name,
-      f.phone1,
-      f.address,
+    /*  columnSettings: f => [
+        f.name,
+        f.phone1,
+        f.address,
+        
       
-    
-    ],*/
+      ],*/
     onEnterRow: f => {
       if (this.map)
         this.map.panTo(f.getGeocodeInformation().location());
     }
   });
   constructor(private dialog: SelectService) { }
-  showInfo(){
+  showInfo() {
     console.log(this.getLocation());
   }
   test() {
@@ -90,7 +107,7 @@ export class FamiliesComponent implements OnInit {
       let info: google.maps.InfoWindow;
       google.maps.event.addListener(marker, 'click', () => {
         if (!info)
-          info =  new google.maps.InfoWindow({
+          info = new google.maps.InfoWindow({
             content: `<h4>${f.name.value}</h4>${f.address.value}`
           });
         info.open(this.map, marker);

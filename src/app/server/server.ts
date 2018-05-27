@@ -2,14 +2,14 @@ import { environment } from './../../environments/environment';
 import * as models from './../models';
 import * as express from 'express';
 import * as radweb from 'radweb';
-import { SQLServerDataProvider, ExpressBridge, PostgresDataProvider } from 'radweb/server';
+import { SQLServerDataProvider, ExpressBridge, PostgresDataProvider, PostgrestSchemaBuilder } from 'radweb/server';
 import { Pool } from 'pg';
 import { config } from 'dotenv';
 import { DataApi, DataApiSettings } from 'radweb/utils/server/DataApi';
 import * as path from 'path';
 import * as fs from 'fs';
 import { CompoundIdColumn } from 'radweb';
-import { SchemaBuilder } from './schema-build';
+
 import { LoginAction } from '../auth/loginAction';
 import { myAuthInfo } from '../auth/my-auth-info';
 import { evilStatics } from '../auth/evil-statics';
@@ -40,7 +40,7 @@ const pool = new Pool({
 evilStatics.dataSource = new PostgresDataProvider(pool);
 evilStatics.openedDataApi = new PostgresDataProvider(pool);
 
-var sb = new SchemaBuilder(pool);
+var sb = new PostgrestSchemaBuilder(pool);
 [
     new models.Events(),
     new models.EventHelpers(),
@@ -100,10 +100,9 @@ dataApi.add(r => {
         allowDelete: r.authInfo && r.authInfo.admin,
         allowInsert: r.authInfo && r.authInfo.admin,
         allowUpdate: r.authInfo && r.authInfo.admin,
-        onSavingRow: async r => {
-            if (r.address.value != r.address.originalValue || !r.getGeocodeInformation().ok()) {
-                r.addressApiResult.value = (await GetGeoInformation(r.address.value)).saveToString();
-            }
+        onSavingRow: async family => {
+            await family.doSaveStuff(r.authInfo);
+            
         }
     };
 

@@ -1,10 +1,12 @@
 import * as radweb from 'radweb';
 import { environment } from './../environments/environment';
 import * as uuid from 'uuid';
-import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn, UrlBuilder } from 'radweb';
+import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn, UrlBuilder, DateTimeColumn, Column, DropDownItem, NumberColumn, ClosedListColumn } from 'radweb';
 import { foreachSync, foreachEntityItem } from './shared/utils';
 import { evilStatics } from './auth/evil-statics';
 import { GetGeoInformation, GeocodeInformation } from './shared/googleApiHelpers';
+import { myAuthInfo } from './auth/my-auth-info';
+import { DataColumnSettings } from 'radweb/utils/dataInterfaces1';
 
 class IdEntity<idType extends Id> extends radweb.Entity<string>
 {
@@ -46,6 +48,9 @@ class HelperIdReadonly extends Id {
       readonly: true
     });
   }
+  get displayValue() {
+    return this.lookup(new Helpers()).name.value;
+  }
 }
 class BasketId extends Id { }
 class FamilySourceId extends Id { }
@@ -57,18 +62,11 @@ class EventHelperId extends Id { }
 
 
 
-export class CallStatusColumn extends radweb.NumberColumn {
-  get statusValue() {
-    return CallStatus.byCode(this.value);
+export class CallStatusColumn extends radweb.ClosedListColumn<CallStatus> {
+  constructor(settingsOrCaption?: DataColumnSettings<number, NumberColumn> | string) {
+    super(CallStatus,settingsOrCaption);
   }
-  set statusValue(val: CallStatus) {
-    this.value = val.code;
-  }
-  get displayValue() {
-    if (this.statusValue)
-      return this.statusValue.toString();
-    return '';
-  }
+
 
 }
 
@@ -76,38 +74,20 @@ export class CallStatus {
   static NotYet: CallStatus = new CallStatus(0, 'עדיין לא');
   static Success: CallStatus = new CallStatus(10, 'בוצעה שיחה');
   static Failed: CallStatus = new CallStatus(20, 'לא הצלנו להשיג');
-  constructor(public code: number,
-    private name: string) {
+  constructor(public id: number,
+    private caption: string) {
 
   }
   toString() {
-    return this.name;
+    return this.caption;
   }
-  static byCode(code: number): CallStatus {
-    for (let member in CallStatus) {
-      let s = CallStatus[member] as CallStatus;
-      if (s && s.code == code)
-        return s;
-    }
-    return undefined;
-  }
-}
+ }
 
-export class LanguageColumn extends radweb.NumberColumn {
+export class LanguageColumn extends ClosedListColumn<Language> {
   constructor() {
-    super('שפה');
+    super(Language,"שפה");
   }
-  get languageValue() {
-    return CallStatus.byCode(this.value);
-  }
-  set languageValue(val: CallStatus) {
-    this.value = val.code;
-  }
-  get displayValue() {
-    if (this.languageValue)
-      return this.languageValue.toString();
-    return '';
-  }
+
 
 }
 
@@ -115,35 +95,20 @@ export class Language {
   static Hebrew = new Language(0, 'עברית');
   static Russian = new Language(10, 'רוסית');
   static Amharit = new Language(20, 'אמהרית');
-  constructor(public code: number,
-    private name: string) {
+  constructor(public id: number,
+    private caption: string) {
 
   }
   toString() {
-    return this.name;
+    return this.caption;
   }
-  static byCode(code: number): CallStatus {
-    for (let member in CallStatus) {
-      let s = CallStatus[member] as CallStatus;
-      if (s && s.code == code)
-        return s;
-    }
-    return undefined;
-  }
+ 
 }
 
 
-export class DeliveryStatusColumn extends radweb.NumberColumn {
-  get statusValue() {
-    return CallStatus.byCode(this.value);
-  }
-  set statusValue(val: CallStatus) {
-    this.value = val.code;
-  }
-  get displayValue() {
-    if (this.statusValue)
-      return this.statusValue.toString();
-    return '';
+export class DeliveryStatusColumn extends radweb.ClosedListColumn<DeliveryStatus> {
+  constructor(settingsOrCaption?: DataColumnSettings<number, NumberColumn> | string) {
+    super(DeliveryStatus,settingsOrCaption);
   }
 
 }
@@ -156,21 +121,15 @@ export class DeliveryStatus {
   static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, 'לא נמסר, לא היו בבית');
   static FailedOther: DeliveryStatus = new DeliveryStatus(25, 'לא נמסר, אחר');
   static Frozen: DeliveryStatus = new DeliveryStatus(90, 'מוקפא');
-  constructor(public code: number,
+  constructor(public id: number,
     private name: string) {
 
   }
   toString() {
     return this.name;
   }
-  static byCode(code: number): CallStatus {
-    for (let member in CallStatus) {
-      let s = CallStatus[member] as CallStatus;
-      if (s && s.code == code)
-        return s;
-    }
-    return undefined;
-  }
+  
+
 }
 
 export class Items extends IdEntity<ItemId>{
@@ -248,6 +207,7 @@ export class Helpers extends IdEntity<HelperId>{
 
 export class Families extends IdEntity<FamilyId>{
 
+
   name = new radweb.StringColumn({
     caption: "שם",
     onValidate: v => {
@@ -269,7 +229,7 @@ export class Families extends IdEntity<FamilyId>{
   addressApiResult = new radweb.StringColumn();
   addressComment = new radweb.StringColumn('הערת כתובת');
 
-  phone1 = new radweb.StringColumn({ caption: "טלפון 1", inputType: 'tel',dbName:'phone' });
+  phone1 = new radweb.StringColumn({ caption: "טלפון 1", inputType: 'tel', dbName: 'phone' });
   phone1Description = new radweb.StringColumn('תאור טלפון 1');
   phone2 = new radweb.StringColumn({ caption: "טלפון 2", inputType: 'tel' });
   phone2Description = new radweb.StringColumn('תאור טלפון 2');
@@ -297,7 +257,7 @@ export class Families extends IdEntity<FamilyId>{
   createUser = new HelperIdReadonly('משתמש מוסיף');
 
 
-  
+
 
 
 
@@ -315,13 +275,27 @@ export class Families extends IdEntity<FamilyId>{
 
     super(new FamilyId(), () => new Families(), evilStatics.dataSource, "Families");
     this.initColumns();
-    let x = this.onSavingRow;
-    this.onSavingRow = async () => {
-      if (this.isNew())
-        this.createDate.dateValue = new Date();
+  }
 
-      await x();
-    };
+  async doSaveStuff(authInfo: myAuthInfo) {
+    if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
+      this.addressApiResult.value = (await GetGeoInformation(this.address.value)).saveToString();
+    }
+    let logChanged = (col: Column<any>, dateCol: DateTimeColumn, user: HelperId) => {
+      if (col.value != col.originalValue) {
+        dateCol.dateValue = new Date();
+        user.value = authInfo.helperId;
+      }
+    }
+    if (this.isNew()) {
+      this.createDate.dateValue = new Date();
+      this.createUser.value = authInfo.helperId;
+    }
+
+    logChanged(this.courier, this.courierAssingTime, this.courierAssignUser);
+    logChanged(this.callStatus, this.callTime, this.callHelper);
+    logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser);
+
   }
 }
 export class EventHelpers extends IdEntity<EventHelperId>{

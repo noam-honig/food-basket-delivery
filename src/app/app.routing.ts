@@ -14,6 +14,7 @@ import { UpdateInfoComponent } from './users/update-info/update-info.component';
 import { FamiliesComponent } from './families/families.component';
 import { MyFamiliesComponent } from './my-families/my-families.component';
 import { AsignFamilyComponent } from './asign-family/asign-family.component';
+import { ManageComponent } from './manage/manage.component';
 
 
 const routes: Routes = [
@@ -35,6 +36,11 @@ const routes: Routes = [
     path: 'helpers',
     component: HelpersComponent,
     data: { name: 'מתנדבות' }, canActivate: [AdminGuard]
+  },
+  {
+    path: 'manage',
+    component: ManageComponent,
+    data: { name: 'ניהול' }, canActivate: [AdminGuard]
   },
   {
     path: 'events', component: EventsComponent, canActivate: [AdminGuard], data: { name: 'אירועים' }

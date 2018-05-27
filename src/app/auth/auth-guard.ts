@@ -38,7 +38,7 @@ export class AdminGuard implements CanActivate {
         if (this.auth.auth.valid && this.auth.auth.info.admin)
             return true;
         if (!(route instanceof dummyRoute))
-            this.router.navigate(['/my-events']);
+            this.router.navigate(['/my-families']);
         return false;
 
     }
