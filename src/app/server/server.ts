@@ -47,7 +47,9 @@ var sb = new PostgrestSchemaBuilder(pool);
     new models.Helpers(),
     new models.Items(),
     new models.ItemsPerHelper(),
-    new models.Families()
+    new models.Families(),
+    new models.BasketType(),
+    new models.FamilySources()
 ].forEach(x => sb.CreateIfNotExist(x));
 
 sb.verifyAllColumns(new models.Families());
@@ -88,6 +90,8 @@ dataApi.add(r => {
 [
     new models.Events(),
     new models.Items(),
+    new models.BasketType(),
+    new models.FamilySources
 ].forEach(x => {
     dataApi.add(r => new DataApi(x, {
         allowDelete: r.authInfo && r.authInfo.admin,

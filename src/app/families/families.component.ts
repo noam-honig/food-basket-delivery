@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { Families, Helpers, CallStatus } from '../models';
+import { Families, Helpers, CallStatus, BasketType, FamilySources } from '../models';
 import { SelectService } from '../select-popup/select-service';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 import { } from '@types/googlemaps';
@@ -26,12 +26,18 @@ export class FamiliesComponent implements OnInit {
       families.familyMembers,
       {
         column: families.language,
-        dropDown:{
-          items:families.language.getOptions() 
+        dropDown: {
+          items: families.language.getOptions()
         }
       },
-      families.basketType,
-      families.familySource,
+      {
+        column: families.basketType,
+        dropDown: { source: new BasketType() }
+      },
+      {
+        column: families.familySource,
+        dropDown:{source:new FamilySources()}
+      },
       families.internalComment,
       families.address,
       families.floor,
@@ -43,11 +49,11 @@ export class FamiliesComponent implements OnInit {
       families.phone1Description,
       families.phone2,
       families.phone2Description,
-      
+
       {
         column: families.callStatus,
-        dropDown:{
-          items:families.callStatus.getOptions() 
+        dropDown: {
+          items: families.callStatus.getOptions()
         }
       },
       families.callTime,
@@ -64,11 +70,11 @@ export class FamiliesComponent implements OnInit {
       },
       families.courierAssingTime,
       families.courierAssignUser,
-      
+
       {
         column: families.deliverStatus,
-        dropDown:{
-          items:families.deliverStatus.getOptions() 
+        dropDown: {
+          items: families.deliverStatus.getOptions()
         }
       },
       families.deliveryStatusDate,

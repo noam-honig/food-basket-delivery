@@ -52,8 +52,16 @@ class HelperIdReadonly extends Id {
     return this.lookup(new Helpers()).name.value;
   }
 }
-class BasketId extends Id { }
-class FamilySourceId extends Id { }
+class BasketId extends Id {
+  get displayValue() {
+    return this.lookup(new BasketType()).name.value;
+  }
+}
+class FamilySourceId extends Id {
+  get displayValue() {
+    return this.lookup(new FamilySources()).name.value;
+  }
+}
 
 
 class EventId extends Id { }
@@ -64,7 +72,7 @@ class EventHelperId extends Id { }
 
 export class CallStatusColumn extends radweb.ClosedListColumn<CallStatus> {
   constructor(settingsOrCaption?: DataColumnSettings<number, NumberColumn> | string) {
-    super(CallStatus,settingsOrCaption);
+    super(CallStatus, settingsOrCaption);
   }
 
 
@@ -81,11 +89,11 @@ export class CallStatus {
   toString() {
     return this.caption;
   }
- }
+}
 
 export class LanguageColumn extends ClosedListColumn<Language> {
   constructor() {
-    super(Language,"שפה");
+    super(Language, "שפה");
   }
 
 
@@ -102,13 +110,13 @@ export class Language {
   toString() {
     return this.caption;
   }
- 
+
 }
 
 
 export class DeliveryStatusColumn extends radweb.ClosedListColumn<DeliveryStatus> {
   constructor(settingsOrCaption?: DataColumnSettings<number, NumberColumn> | string) {
-    super(DeliveryStatus,settingsOrCaption);
+    super(DeliveryStatus, settingsOrCaption);
   }
 
 }
@@ -128,7 +136,7 @@ export class DeliveryStatus {
   toString() {
     return this.name;
   }
-  
+
 
 }
 
@@ -354,14 +362,14 @@ export class BasketType extends IdEntity<BasketId>{
   }
 }
 
-export class FamiltySources extends IdEntity<FamilySourceId>{
+export class FamilySources extends IdEntity<FamilySourceId>{
 
   name = new radweb.StringColumn({ caption: "שם" });
   contactPerson = new radweb.StringColumn({ caption: "איש קשר" });
   phone = new radweb.StringColumn('טלפון');
   constructor() {
 
-    super(new FamilySourceId(), () => new FamiltySources(), evilStatics.dataSource, "FamilySources");
+    super(new FamilySourceId(), () => new FamilySources(), evilStatics.dataSource, "FamilySources");
     this.initColumns();
   }
 }
