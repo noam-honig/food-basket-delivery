@@ -1,6 +1,6 @@
 import { ServerAction } from "./server-action";
 import { myAuthInfo } from "./my-auth-info";
-import { DataApiRequest } from "radweb/utils/dataInterfaces";
+import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 import { foreachEntityItem } from "../shared/utils";
 import { Helpers } from "../models";
 import * as passwordHash from 'password-hash';

@@ -1,4 +1,4 @@
-import { DataApiRequest } from "radweb/utils/dataInterfaces";
+import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { DataApiSettings, DataApi } from "radweb/utils/server/DataApi";
 import { Helpers } from "../models";

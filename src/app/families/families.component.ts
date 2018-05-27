@@ -44,7 +44,8 @@ export class FamiliesComponent implements OnInit {
       families.callComments,
       {
         column: families.courier,
-        getValue: f => f.lookup(new Helpers(), f.courier).name,
+        getValue: f => f.courier.lookup(new Helpers()).name,
+        hideDataOnInput:true,
         click: f => this.dialog.showPopup(new Helpers(), s => f.courier.value = s.id.value, {
           columnSettings: h => [h.name, h.phone]
         })
