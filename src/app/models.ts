@@ -93,7 +93,7 @@ export class CallStatus {
 
 export class LanguageColumn extends ClosedListColumn<Language> {
   constructor() {
-    super(Language, "שפה");
+    super(Language, "שפה ראשית");
   }
 
 
@@ -226,14 +226,15 @@ export class Families extends IdEntity<FamilyId>{
   familyMembers = new radweb.NumberColumn('מספר נפשות');
   language = new LanguageColumn();
   basketType = new BasketId('סוג סל');
-  familySource = new FamilySourceId('מקור משפחה');
+  familySource = new FamilySourceId('גורם מפנה');
   internalComment = new radweb.StringColumn('הערה פנימית - לא תופיע למשנע');
-
-
+  
+  
   address = new radweb.StringColumn("כתובת");
   floor = new radweb.NumberColumn('קומה');
   appartment = new radweb.StringColumn('דירה');
   addressComment = new radweb.StringColumn('הערת כתובת');
+  deliveryComments = new radweb.StringColumn('הערות למשנע');
   addressApiResult = new radweb.StringColumn();
 
   phone1 = new radweb.StringColumn({ caption: "טלפון 1", inputType: 'tel', dbName: 'phone' });
@@ -256,7 +257,7 @@ export class Families extends IdEntity<FamilyId>{
   deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
   deliveryStatusDate = new changeDate('תאריך סטטוס שינוע');
   deliveryStatusUser = new HelperIdReadonly('מי עדכן את סטטוס המשלוח');
-  deliveryComments = new radweb.StringColumn('הערות משלוח');
+  courierComments = new radweb.StringColumn('הערות מסירה');
 
 
 

@@ -48,7 +48,8 @@ export class FamiliesComponent implements OnInit {
       families.phone1Description,
       families.phone2,
       families.phone2Description,
-
+      families.deliveryComments,
+      
       {
         column: families.callStatus,
         dropDown: {
@@ -69,6 +70,7 @@ export class FamiliesComponent implements OnInit {
       },
       families.courierAssingTime,
       families.courierAssignUser,
+      families.courierComments,
 
       {
         column: families.deliverStatus,
@@ -78,7 +80,7 @@ export class FamiliesComponent implements OnInit {
       },
       families.deliveryStatusDate,
       families.deliveryStatusUser,
-      families.deliveryComments,
+      
       families.createDate,
       families.createUser
     ],
