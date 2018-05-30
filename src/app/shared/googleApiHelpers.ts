@@ -25,7 +25,7 @@ export class GeocodeInformation {
         try{
         return new GeocodeInformation(JSON.parse(s));
         }
-        catch{
+        catch(err){
             return new GeocodeInformation();
         }
     }

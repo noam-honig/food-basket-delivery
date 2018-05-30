@@ -18,7 +18,7 @@ export class FamiliesComponent implements OnInit {
     allowDelete: true,
     allowUpdate: true,
     allowInsert: true,
-    get: { limit: 1000 ,orderBy:f=>f.name},
+    get: { limit: 1000, orderBy: f => f.name },
     hideDataArea: true,
     columnSettings: families => [
 
@@ -36,20 +36,69 @@ export class FamiliesComponent implements OnInit {
       },
       {
         column: families.familySource,
-        dropDown:{source:new FamilySources()}
+        dropDown: { source: new FamilySources() }
+      },
+    ],
+
+    onEnterRow: f => {
+      if (this.map)
+        this.map.panTo(f.getGeocodeInformation().location());
+    },
+    rowButtons: [
+      {
+        name: 'עדכני',
+        click: f => this.gridView = !this.gridView
+
+
+      }
+    ]
+  });
+  familiesInfo = this.families.addArea({
+    columnSettings: families => [
+      families.name,
+      families.familyMembers,
+      {
+        column: families.language,
+        dropDown: {
+          items: families.language.getOptions()
+        }
+      },
+      {
+        column: families.basketType,
+        dropDown: { source: new BasketType() }
+      },
+      {
+        column: families.familySource,
+        dropDown: { source: new FamilySources() }
       },
       families.internalComment,
+      families.deliveryComments,
+      families.createDate,
+      families.createUser
+    
+
+
+     
+    ],
+  });
+  familiesAddress = this.families.addArea({
+    columnSettings:families=>[
       families.address,
       families.floor,
       families.appartment,
       families.addressComment,
-      
+    ]
+  });
+  phones = this.families.addArea({
+    columnSettings:families=>[
       families.phone1,
       families.phone1Description,
       families.phone2,
-      families.phone2Description,
-      families.deliveryComments,
-      
+      families.phone2Description
+    ]
+  });
+  callInfo = this.families.addArea({
+    columnSettings:families=>[
       {
         column: families.callStatus,
         dropDown: {
@@ -59,6 +108,10 @@ export class FamiliesComponent implements OnInit {
       families.callTime,
       families.callHelper,
       families.callComments,
+    ]
+  })
+  deliverInfo = this.families.addArea({
+    columnSettings:families=>[
       {
         column: families.courier,
         getValue: f => f.courier.lookup(new Helpers()).name,
@@ -80,22 +133,9 @@ export class FamiliesComponent implements OnInit {
       },
       families.deliveryStatusDate,
       families.deliveryStatusUser,
-      
-      families.createDate,
-      families.createUser
-    ],
-    /*  columnSettings: f => [
-        f.name,
-        f.phone1,
-        f.address,
-        
-      
-      ],*/
-    onEnterRow: f => {
-      if (this.map)
-        this.map.panTo(f.getGeocodeInformation().location());
-    }
+    ]
   });
+  gridView = true;
   constructor(private dialog: SelectService) { }
   showInfo() {
     console.log(this.getLocation());
@@ -135,9 +175,11 @@ export class FamiliesComponent implements OnInit {
     if (this.families.currentRow) {
       try {
         return this.families.currentRow.getGeocodeInformation();
-      } catch{ }
+      } catch(err){ }
     }
     return new GeocodeInformation();
   }
+  
+  
 
 }

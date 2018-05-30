@@ -228,8 +228,8 @@ export class Families extends IdEntity<FamilyId>{
   basketType = new BasketId('סוג סל');
   familySource = new FamilySourceId('גורם מפנה');
   internalComment = new radweb.StringColumn('הערה פנימית - לא תופיע למשנע');
-  
-  
+
+
   address = new radweb.StringColumn("כתובת");
   floor = new radweb.NumberColumn('קומה');
   appartment = new radweb.StringColumn('דירה');
@@ -275,7 +275,7 @@ export class Families extends IdEntity<FamilyId>{
   private _lastGeo: GeocodeInformation;
   getGeocodeInformation() {
     if (this._lastString == this.addressApiResult.value)
-      return this._lastGeo;
+      return this._lastGeo ? this._lastGeo : new GeocodeInformation();
     this._lastString = this.addressApiResult.value;
     return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
   }

@@ -101,7 +101,7 @@ export class Authentication<T> {
         let result: T;
         try {
             result = jwt.verify(x, this.tokenSignKey) as T;
-        } catch{ }
+        } catch(err){ }
 
         return result;
     };
