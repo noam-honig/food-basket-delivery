@@ -1,4 +1,7 @@
 <div #gmap style="width:100%;height:400px;" [style.display]="map!=undefined?'block':'none'"></div>
+
+<input [(ngModel)]="wazeLink">
+<a href="{{wazeLink}}">Test {{wazeLink}}</a>
 <button (click)="test()">Show map</button>
 <button (click)="showInfo()">info</button>
 

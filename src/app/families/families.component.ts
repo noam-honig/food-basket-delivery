@@ -12,7 +12,7 @@ import { } from '@types/googlemaps';
 })
 export class FamiliesComponent implements OnInit {
 
-
+  wazeLink:string='https://waze.com/ul?q=66%20Acacia%20Avenue';
 
   families = new GridSettings(new Families(), {
     allowDelete: true,
