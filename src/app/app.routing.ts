@@ -22,9 +22,9 @@ const routes: Routes = [
 
 
   {
-    path: 'families',
+    path: FamiliesComponent.route,
     component: FamiliesComponent,
-    data: { name: 'משפחות' }, canActivate: [AdminGuard]
+    data: { name: FamiliesComponent.caption }, canActivate: [AdminGuard]
   },
   {
     path: 'my-families', component: MyFamiliesComponent, canActivate: [LoggedInGuard], data: { name: 'משפחות שלי' }

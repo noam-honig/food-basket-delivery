@@ -21,9 +21,9 @@ export class AuthService {
         this.auth.loggedIn(await new LoginAction().run({ user: user, password: password }), remember);
         if (this.auth.valid) {
             if (this.auth.info.admin)
-                this.router.navigate(['/events'])
+                this.router.navigate(['/families'])
             else
-                this.router.navigate(['/my-events'])
+                this.router.navigate(['/my-families'])
 
         }
         else {

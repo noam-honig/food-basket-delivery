@@ -180,6 +180,8 @@ export class FamiliesComponent implements OnInit {
     return new GeocodeInformation();
   }
   
+  static route='families';
+  static caption='משפחות';
   
 
 }
