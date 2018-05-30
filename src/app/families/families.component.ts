@@ -123,8 +123,7 @@ export class FamiliesComponent implements OnInit {
       },
       families.courierAssingTime,
       families.courierAssignUser,
-      families.courierComments,
-
+      
       {
         column: families.deliverStatus,
         dropDown: {
@@ -133,6 +132,7 @@ export class FamiliesComponent implements OnInit {
       },
       families.deliveryStatusDate,
       families.deliveryStatusUser,
+      families.courierComments,
     ]
   });
   gridView = true;

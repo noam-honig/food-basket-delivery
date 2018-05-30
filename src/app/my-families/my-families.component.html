@@ -1,6 +1,7 @@
 <h1>משפחות לחלוקה</h1>
+
 <mat-accordion>
-  <mat-expansion-panel *ngFor="let f of families.items" #myPanel>
+  <mat-expansion-panel *ngFor="let f of toDeliver" #myPanel>
     <mat-expansion-panel-header>
       <div>
         <mat-panel-title>
@@ -14,160 +15,65 @@
       </div>
 
     </mat-expansion-panel-header>
-    <div>
-      <h4 style="display:inline">סוג משלוח</h4> - {{f.basketType.displayValue}}
-      <ng-container *ngIf="f.deliveryComments.value">
-        <br/>
-        <strong style="color:red">שים לב! </strong> {{f.deliveryComments.value}}
-      </ng-container>
-      <h4>כתובת</h4>
-      <div>
-        <a href="https://waze.com/ul?q={{f.address.value}}">
-          <button mat-mini-fab style="margin-left:10px;vertical-align: top">
-            Waze
-          </button>
-        </a>
-        <div style="display:inline-block">
-          {{f.address.value}}
-          <ng-container *ngIf="f.floor.value||f.appartment.value">
-            <br/>
-          </ng-container>
-          <ng-container *ngIf="f.floor.value">
-            קומה {{f.floor.value}}
-          </ng-container>
-          <ng-container *ngIf="f.appartment.value">
-            דירה {{f.appartment.value}}
-          </ng-container>
-          <ng-container *ngIf="f.addressComment.value">
-            <br/> {{f.addressComment.value}}
-          </ng-container>
-        </div>
-      </div>
-
-      <h4>טלפונים</h4>
-      <div>
-        <button mat-mini-fab style="margin-left:10px;vertical-align: middle">
-          <a href="tel:{{f.phone1.value}}">
-            <mat-icon>call</mat-icon>
-          </a>
-        </button>
-        <div style="display:inline-block">
-          <a href="tel:{{f.phone1.value}}"> {{f.phone1.displayValue}}</a> {{f.phone1Description.value}}
-
-        </div>
-
-      </div>
-      <div style="margin-top:5px" *ngIf="f.phone2.value">
-        <button mat-mini-fab style="margin-left:10px;vertical-align: middle">
-          <a href="tel:{{f.phone2.value}}">
-            <mat-icon>call</mat-icon>
-          </a>
-        </button>
-        <div style="display:inline-block">
-          <a href="tel:{{f.phone2.value}}"> {{f.phone2.displayValue}}</a> {{f.phone2Description.value}}
-
-        </div>
-
-      </div>
-
-    </div>
-    <div class="button-area">
-      <button mat-raised-button style="width:70%;margin-bottom: 10px" color="primary">מסרתי את החבילה בהצלחה</button>
+    <app-family-info [f]="f">
+      <button mat-raised-button class="myButton" color="primary" (click)="deliveredToFamily(f)">מסרתי את החבילה בהצלחה</button>
       <br/>
-      <button mat-raised-button style="width:70%;color:red;font-weight: 400">נתקלתי בבעיה במסירה</button>
-    </div>
+      <button mat-raised-button class="myButton badButton" (click)="couldntDeliverToFamily(f)" >נתקלתי בבעיה במסירה</button>
+    </app-family-info>
   </mat-expansion-panel>
 </mat-accordion>
-
-<h1>משפחות שחולקו</h1>
-
-
-<mat-accordion>
-  <mat-expansion-panel *ngFor="let f of families.items" #myPanel>
-    <mat-expansion-panel-header>
-      <div>
-        <mat-panel-title>
-          {{f.name.value}}
-        </mat-panel-title>
-      </div>
-      <div>
-        <mat-panel-description>
-          {{f.address.value}}
-        </mat-panel-description>
-      </div>
-
-    </mat-expansion-panel-header>
-    <div>
-
-      <h4>כתובת</h4>
-      <div>
-        <button mat-mini-fab style="margin-left:10px;vertical-align: top">
-          WAZE
-        </button>
-        <div style="display:inline-block">
-          {{f.address.value}}
-          <br/> קומה 3 דירה 5
-          <br/> כניסה אחורית מאוחרי הפחים
+<div *ngIf="delivered.length>0">
+  <h1>משפחות שחולקו</h1>
+  <mat-accordion>
+    <mat-expansion-panel *ngFor="let f of delivered" #myPanel>
+      <mat-expansion-panel-header>
+        <div>
+          <mat-panel-title>
+            {{f.name.value}}
+          </mat-panel-title>
         </div>
-      </div>
-      <h4>הערות</h4>
-      <textarea placeholder="אנא כתוב לנו משהו על המשפחה או מה שבא לך"></textarea>
-    </div>
-    <div class="button-area">
-      <a href="">לחצתי בטעות, החזר למשפחות לחלוקה</a>
-
-
-
-    </div>
-  </mat-expansion-panel>
-</mat-accordion>
-<h1>משפחות שנתקלתי בבעיה</h1>
-
-
-<mat-accordion>
-  <mat-expansion-panel *ngFor="let f of families.items" #myPanel>
-    <mat-expansion-panel-header>
-      <div>
-        <mat-panel-title>
-          {{f.name.value}}
-        </mat-panel-title>
-      </div>
-      <div>
-        <mat-panel-description>
-          {{f.address.value}}
-        </mat-panel-description>
-      </div>
-
-    </mat-expansion-panel-header>
-    <div>
-
-      <h4>כתובת</h4>
-      <div>
-        <button mat-mini-fab style="margin-left:10px;vertical-align: top">
-          WAZE
-        </button>
-        <div style="display:inline-block">
-          {{f.address.value}}
-          <br/> קומה 3 דירה 5
-          <br/> כניסה אחורית מאוחרי הפחים
+        <div>
+          <mat-panel-description>
+            {{f.address.value}}
+          </mat-panel-description>
         </div>
-      </div>
 
-    </div>
-    <div class="button-area">
-      <a href="tel:{{f.phone1.value}}">
-        <button mat-mini-fab color="primary">
-          <mat-icon>call</mat-icon>
-        </button>
-      </a>
-      <a href="https://www.google.com/maps/search/?api=1&query={{f.address.value}}">
-        <button mat-mini-fab color="primary">
-          <mat-icon>map</mat-icon>
-        </button>
-      </a>
-    </div>
-  </mat-expansion-panel>
-</mat-accordion>
+      </mat-expansion-panel-header>
+      <app-family-info [f]="f">
+        <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
+        <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות לחלוקה</button>
+      </app-family-info>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
+<div *ngIf="problem.length>0">
+  <h1>משפחות שנתקלתי בבעיה</h1>
+  <mat-accordion>
+    <mat-expansion-panel *ngFor="let f of problem" #myPanel>
+      <mat-expansion-panel-header>
+        <div>
+          <mat-panel-title>
+            {{f.name.value}}
+          </mat-panel-title>
+        </div>
+        <div>
+          <mat-panel-description>
+            {{f.address.value}}
+          </mat-panel-description>
+        </div>
+
+      </mat-expansion-panel-header>
+      <app-family-info [f]="f">
+          <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
+          <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות לחלוקה</button>
+      </app-family-info>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
+<div>
+
+</div>
+
 
 נתקלת בבעייה בחלוקה,
 <br/>התקשר לאמהות מחבקות

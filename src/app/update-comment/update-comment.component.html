@@ -1,0 +1,28 @@
+<div dir="rtl">
+
+  <h3 matDialogHeader>תודה</h3>
+  <div [class.hide]="!data.showFailStatus">
+    מה לא הסתדר?
+    <mat-button-toggle-group #group="matButtonToggleGroup" [value]="defaultFailStatus.id">
+      <mat-button-toggle *ngFor="let f of failOptions" value="{{f.id}}">
+        {{f.toString()}}
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+  <mat-dialog-content>
+    נשמח אם תכתוב לנו הערה על מה שראית והיה
+    <textarea class="form-control" rows="3" [(ngModel)]="data.comment"></textarea>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+
+
+    <button mat-raised-button color="warning" (click)="cancel()">
+      בטל
+    </button>
+    <button mat-raised-button color="primary" (click)="confirm(group.value)">
+      אשר
+    </button>
+  </mat-dialog-actions>
+
+
+</div>

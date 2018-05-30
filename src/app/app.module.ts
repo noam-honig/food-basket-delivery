@@ -30,6 +30,8 @@ import { FamiliesComponent } from './families/families.component';
 import { MyFamiliesComponent } from './my-families/my-families.component';
 import { AsignFamilyComponent } from './asign-family/asign-family.component';
 import { ManageComponent } from './manage/manage.component';
+import { FamilyInfoComponent } from './family-info/family-info.component';
+import { UpdateCommentComponent } from './update-comment/update-comment.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +53,9 @@ import { ManageComponent } from './manage/manage.component';
     FamiliesComponent,
     MyFamiliesComponent,
     AsignFamilyComponent,
-    ManageComponent
+    ManageComponent,
+    FamilyInfoComponent,
+    UpdateCommentComponent
   ],
   imports: [
     BrowserModule,
@@ -75,6 +79,7 @@ import { ManageComponent } from './manage/manage.component';
   entryComponents: [
     SelectPopupComponent,
      YesNoQuestionComponent,
-    InputAreaComponent]
+    InputAreaComponent,
+    UpdateCommentComponent]
 })
 export class AppModule { }
