@@ -13,7 +13,21 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class FamiliesComponent implements OnInit {
 
+  test() {
+    this.download("xx.csv","noam,honig");
+  }
+  download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
 
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+  }
 
   families = new GridSettings(new Families(), {
     allowDelete: true,
@@ -132,8 +146,8 @@ export class FamiliesComponent implements OnInit {
   });
   gridView = true;
   constructor(private dialog: SelectService, private san: DomSanitizer) { }
-  
- 
+
+
   ngOnInit() {
 
   }
