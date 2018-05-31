@@ -80,7 +80,7 @@ import { SelectHelperComponent } from './select-helper/select-helper.component';
   ],
 
   bootstrap: [AppComponent],
-  entryComponents: [
+  entryComponents: [SelectHelperComponent,
     SelectPopupComponent,
      YesNoQuestionComponent,
     InputAreaComponent,
