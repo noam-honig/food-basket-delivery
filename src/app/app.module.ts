@@ -33,6 +33,7 @@ import { ManageComponent } from './manage/manage.component';
 import { FamilyInfoComponent } from './family-info/family-info.component';
 import { UpdateCommentComponent } from './update-comment/update-comment.component';
 import { FixAddressComponent } from './fix-address/fix-address.component';
+import { SelectHelperComponent } from './select-helper/select-helper.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import { FixAddressComponent } from './fix-address/fix-address.component';
     ManageComponent,
     FamilyInfoComponent,
     UpdateCommentComponent,
-    FixAddressComponent
+    FixAddressComponent,
+    SelectHelperComponent
   ],
   imports: [
     BrowserModule,

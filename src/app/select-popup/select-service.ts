@@ -5,6 +5,8 @@ import { SelectPopupComponent, SelectComponentInfo } from "./select-popup.compon
 import { YesNoQuestionComponentData, YesNoQuestionComponent } from "./yes-no-question/yes-no-question.component";
 import { InputAreaComponentData, InputAreaComponent } from "./input-area/input-area.component";
 import { UpdateCommentComponent, UpdateCommentComponentData } from "../update-comment/update-comment.component";
+import { SelectHelperInfo, SelectHelperComponent } from "../select-helper/select-helper.component";
+import { Helpers } from "../models";
 
 @Injectable()
 export class SelectService {
@@ -45,6 +47,12 @@ export class SelectService {
     }
     confirmDelete(of: string, onOk: () => void) {
         this.YesNoQuestion("האם את בטוחה שאת מעוניית למחוק את " + of + "?", onOk);
+    }
+    selectHelper(ok: (selectedValue: Helpers) => void) {
+        let data: SelectHelperInfo = { onSelect: ok };
+        this.dialog.open(SelectHelperComponent, {
+            data
+        });
     }
 
 

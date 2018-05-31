@@ -46,7 +46,7 @@ export class FamiliesComponent implements OnInit {
     XLSX.writeFile(wb, 'משפחות.xlsx');
     return;
   }
-  
+
   families = new GridSettings(new Families(), {
     allowDelete: true,
     allowUpdate: true,
@@ -143,9 +143,7 @@ export class FamiliesComponent implements OnInit {
         column: families.courier,
         getValue: f => f.courier.lookup(new Helpers()).name,
         hideDataOnInput: true,
-        click: f => this.dialog.showPopup(new Helpers(), s => f.courier.value = s.id.value, {
-          columnSettings: h => [h.name, h.phone]
-        })
+        click: f => this.dialog.selectHelper(s => f.courier.value = s.id.value)
 
       },
       families.courierAssingTime,
