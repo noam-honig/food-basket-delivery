@@ -15,16 +15,23 @@ import { FamiliesComponent } from './families/families.component';
 import { MyFamiliesComponent } from './my-families/my-families.component';
 import { AsignFamilyComponent } from './asign-family/asign-family.component';
 import { ManageComponent } from './manage/manage.component';
+import { FixAddressComponent } from './fix-address/fix-address.component';
 
 
 const routes: Routes = [
 
-
+  
 
   {
+
     path: FamiliesComponent.route,
     component: FamiliesComponent,
     data: { name: FamiliesComponent.caption }, canActivate: [AdminGuard]
+  },
+  {
+    path: 'addresses',
+    component: FixAddressComponent,
+    data: { name: 'טיוב כתובות' }, canActivate: [AdminGuard]
   },
   {
     path: 'my-families', component: MyFamiliesComponent, canActivate: [LoggedInGuard], data: { name: 'משפחות שלי' }

@@ -32,6 +32,7 @@ import { AsignFamilyComponent } from './asign-family/asign-family.component';
 import { ManageComponent } from './manage/manage.component';
 import { FamilyInfoComponent } from './family-info/family-info.component';
 import { UpdateCommentComponent } from './update-comment/update-comment.component';
+import { FixAddressComponent } from './fix-address/fix-address.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { UpdateCommentComponent } from './update-comment/update-comment.componen
     AsignFamilyComponent,
     ManageComponent,
     FamilyInfoComponent,
-    UpdateCommentComponent
+    UpdateCommentComponent,
+    FixAddressComponent
   ],
   imports: [
     BrowserModule,

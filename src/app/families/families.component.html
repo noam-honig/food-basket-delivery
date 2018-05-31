@@ -1,19 +1,12 @@
-<div #gmap style="width:100%;height:400px;" [style.display]="map!=undefined?'block':'none'"></div>
-
-<input [(ngModel)]="wazeLink">
-<a href="{{wazeLink}}">Test {{wazeLink}}</a>
-<button (click)="test()">Show map</button>
-<button (click)="showInfo()">info</button>
-
 <div class="table-responsive" [class.hide]="!gridView">
     <data-grid [settings]="families"></data-grid>
 </div>
-<div [class.hide]="gridView" >
+<div [class.hide]="gridView">
     <button (click)="gridView = !gridView">חזרה לרשימה</button>
-    <button *ngIf="families.currentRow" (click)="families.currentRow.save()" [disabled]= "!families.currentRow.wasChanged()"  >שמור</button>
+    <button *ngIf="families.currentRow" (click)="families.currentRow.save()" [disabled]="!families.currentRow.wasChanged()">שמור</button>
     <button (click)="families.nextRow()">הבא</button>
     <button (click)="families.previousRow()">קודם</button>
-    
+
     <button (click)="families.addNewRow()">הוסף</button>
     <mat-card>
         <h1>פרטי משפחה</h1>

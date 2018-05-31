@@ -1,9 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Sanitizer } from '@angular/core';
 import { GridSettings } from 'radweb';
 import { Families, Helpers, CallStatus, BasketType, FamilySources } from '../models';
 import { SelectService } from '../select-popup/select-service';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 import { } from '@types/googlemaps';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-families',
@@ -12,7 +13,7 @@ import { } from '@types/googlemaps';
 })
 export class FamiliesComponent implements OnInit {
 
-  wazeLink:string='https://waze.com/ul?q=66%20Acacia%20Avenue';
+
 
   families = new GridSettings(new Families(), {
     allowDelete: true,
@@ -23,6 +24,7 @@ export class FamiliesComponent implements OnInit {
     columnSettings: families => [
 
       families.name,
+
       families.familyMembers,
       {
         column: families.language,
@@ -39,17 +41,10 @@ export class FamiliesComponent implements OnInit {
         dropDown: { source: new FamilySources() }
       },
     ],
-
-    onEnterRow: f => {
-      if (this.map)
-        this.map.panTo(f.getGeocodeInformation().location());
-    },
     rowButtons: [
       {
         name: 'עדכני',
         click: f => this.gridView = !this.gridView
-
-
       }
     ]
   });
@@ -75,14 +70,14 @@ export class FamiliesComponent implements OnInit {
       families.deliveryComments,
       families.createDate,
       families.createUser
-    
 
 
-     
+
+
     ],
   });
   familiesAddress = this.families.addArea({
-    columnSettings:families=>[
+    columnSettings: families => [
       families.address,
       families.floor,
       families.appartment,
@@ -90,7 +85,7 @@ export class FamiliesComponent implements OnInit {
     ]
   });
   phones = this.families.addArea({
-    columnSettings:families=>[
+    columnSettings: families => [
       families.phone1,
       families.phone1Description,
       families.phone2,
@@ -98,7 +93,7 @@ export class FamiliesComponent implements OnInit {
     ]
   });
   callInfo = this.families.addArea({
-    columnSettings:families=>[
+    columnSettings: families => [
       {
         column: families.callStatus,
         dropDown: {
@@ -111,7 +106,7 @@ export class FamiliesComponent implements OnInit {
     ]
   })
   deliverInfo = this.families.addArea({
-    columnSettings:families=>[
+    columnSettings: families => [
       {
         column: families.courier,
         getValue: f => f.courier.lookup(new Helpers()).name,
@@ -123,7 +118,7 @@ export class FamiliesComponent implements OnInit {
       },
       families.courierAssingTime,
       families.courierAssignUser,
-      
+
       {
         column: families.deliverStatus,
         dropDown: {
@@ -136,52 +131,16 @@ export class FamiliesComponent implements OnInit {
     ]
   });
   gridView = true;
-  constructor(private dialog: SelectService) { }
-  showInfo() {
-    console.log(this.getLocation());
-  }
-  test() {
-
-    var mapProp: google.maps.MapOptions = {
-      center: new google.maps.LatLng(32.3215, 34.8532),
-      zoom: 13,
-      mapTypeId: google.maps.MapTypeId.ROADMAP,
-
-    };
-    this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
-    this.families.items.forEach(f => {
-      let marker = new google.maps.Marker({ map: this.map, position: f.getGeocodeInformation().location() });
-      let info: google.maps.InfoWindow;
-      google.maps.event.addListener(marker, 'click', () => {
-        if (!info)
-          info = new google.maps.InfoWindow({
-            content: `<h4>${f.name.value}</h4>${f.address.value}`
-          });
-        info.open(this.map, marker);
-      });
-    });
-
-    this.mapDivDisplay = 'box';
-
-
-  }
-  mapDivDisplay: string = 'none';
-  @ViewChild('gmap') gmapElement: any;
-  map: google.maps.Map;
+  constructor(private dialog: SelectService, private san: DomSanitizer) { }
+  
+ 
   ngOnInit() {
 
   }
-  getLocation() {
-    if (this.families.currentRow) {
-      try {
-        return this.families.currentRow.getGeocodeInformation();
-      } catch(err){ }
-    }
-    return new GeocodeInformation();
-  }
-  
-  static route='families';
-  static caption='משפחות';
-  
+
+
+  static route = 'families';
+  static caption = 'משפחות';
+
 
 }
