@@ -1,6 +1,7 @@
-<button (click)="test()" >test</button>
+
 <div class="table-responsive" [class.hide]="!gridView">
     <data-grid [settings]="families"></data-grid>
+    <button (click)="saveToExcel()" >יצוא לאקסל</button>
 </div>
 <div [class.hide]="gridView">
     <button (click)="gridView = !gridView">חזרה לרשימה</button>

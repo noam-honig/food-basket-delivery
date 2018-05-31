@@ -5,6 +5,7 @@ import { SelectService } from '../select-popup/select-service';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 import { } from '@types/googlemaps';
 import { DomSanitizer } from '@angular/platform-browser';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-families',
@@ -13,22 +14,39 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class FamiliesComponent implements OnInit {
 
-  test() {
-    this.download("xx.csv","noam,honig");
+  saveToExcel() {
+
+
+    let wb = XLSX.utils.book_new();
+    let data = [];
+    let title = [];
+    let doneTitle = false;
+    this.families.items.forEach(f => {
+      let row = [];
+
+      f.__iterateColumns().forEach(c => {
+        if (!doneTitle) {
+          title.push(c.caption);
+        }
+        let v = c.displayValue;
+        if (v == undefined)
+          v = '';
+        v = v.toString();
+        row.push(v);
+      });
+      if (!doneTitle) {
+        data.push(title);
+        doneTitle = true;
+      }
+      data.push(row);
+
+    });
+    let ws = XLSX.utils.aoa_to_sheet(data);
+    XLSX.utils.book_append_sheet(wb, ws, 'test');
+    XLSX.writeFile(wb, 'משפחות.xlsx');
+    return;
   }
-  download(filename, text) {
-    var element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-    element.setAttribute('download', filename);
-
-    element.style.display = 'none';
-    document.body.appendChild(element);
-
-    element.click();
-
-    document.body.removeChild(element);
-  }
-
+  
   families = new GridSettings(new Families(), {
     allowDelete: true,
     allowUpdate: true,
