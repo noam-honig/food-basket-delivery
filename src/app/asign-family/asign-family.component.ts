@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { Families, Language, Helpers } from '../models';
+import { Families, Language, Helpers, DeliveryStatus } from '../models';
 import { AuthService } from '../auth/auth-service';
 import { SelectService } from '../select-popup/select-service';
 import { AddBoxAction } from './add-box-action';
+import { UserFamiliesList } from '../my-families/user-families';
 
 @Component({
   selector: 'app-asign-family',
@@ -11,18 +12,23 @@ import { AddBoxAction } from './add-box-action';
   styleUrls: ['./asign-family.component.scss']
 })
 export class AsignFamilyComponent implements OnInit {
-  async searchPhone() {
-    let h = new Helpers();
-    let r = await h.source.find({ where: h.phone.isEqualTo(this.phone) });
-    if (r.length > 0) {
-      this.name = r[0].name.value;
-      this.id = r[0].id.value;
-    } else {
-      this.name = undefined;
-      this.id = undefined;
-    }
 
+
+  async searchPhone() {
+    if (this.phone.length == 10) {
+      let h = new Helpers();
+      let r = await h.source.find({ where: h.phone.isEqualTo(this.phone) });
+      if (r.length > 0) {
+        this.name = r[0].name.value;
+        this.id = r[0].id.value;
+      } else {
+        this.name = undefined;
+        this.id = undefined;
+      }
+      this.familyLists.initForHelper(this.id);
+    }
   }
+  familyLists = new UserFamiliesList();
   filterLangulage = -1;
   langulages: Language[] = [
     Language.Hebrew,
@@ -38,6 +44,13 @@ export class AsignFamilyComponent implements OnInit {
       this.name = h.name.value;
     });
   }
+  async cancelAssign(f:Families){
+    f.courier.value = undefined;
+    f.deliverStatus.listValue = DeliveryStatus.NotYet;
+    await f.save();
+    this.familyLists.remove(f);
+
+  }
   families = new GridSettings(new Families(), {
     get: {
       where: f => f.courier.isEqualTo(this.auth.auth.info.helperId),
@@ -49,13 +62,15 @@ export class AsignFamilyComponent implements OnInit {
   ngOnInit() {
     this.families.getRecords();
   }
-  async assignItem(){
+  async assignItem() {
     let x = await new AddBoxAction().run({
-      phone:this.phone,
-      name:this.name,
-      helperId:this.id
+      phone: this.phone,
+      name: this.name,
+      helperId: this.id
     });
     this.id = x.helperId;
+    this.familyLists.initForHelper(this.id);
+
     console.log(x);
   }
 

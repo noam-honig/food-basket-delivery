@@ -1,26 +1,26 @@
 <h1>משפחות לחלוקה</h1>
 <mat-accordion>
-  <app-family-info [f]="f" *ngFor="let f of toDeliver">
+  <app-family-info [f]="f" *ngFor="let f of familyLists.toDeliver">
     <button mat-raised-button class="myButton" color="primary" (click)="deliveredToFamily(f)">מסרתי את החבילה בהצלחה</button>
     <br/>
     <button mat-raised-button class="myButton badButton" (click)="couldntDeliverToFamily(f)">נתקלתי בבעיה במסירה</button>
   </app-family-info>
 </mat-accordion>
-<div *ngIf="delivered.length>0">
+<div *ngIf="familyLists.delivered.length>0">
   <h1>משפחות שחולקו</h1>
   <mat-accordion>
-    <app-family-info [f]="f" *ngFor="let f of delivered">
+    <app-family-info [f]="f" *ngFor="let f of familyLists.delivered">
       <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
       <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות לחלוקה</button>
     </app-family-info>
 
   </mat-accordion>
 </div>
-<div *ngIf="problem.length>0">
+<div *ngIf="familyLists.problem.length>0">
   <h1>משפחות שנתקלתי בבעיה</h1>
   <mat-accordion>
 
-    <app-family-info [f]="f" *ngFor="let f of problem">
+    <app-family-info [f]="f" *ngFor="let f of familyLists.problem">
       <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
       <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות לחלוקה</button>
     </app-family-info>
