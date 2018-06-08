@@ -1,77 +1,31 @@
 <h1>משפחות לחלוקה</h1>
-
 <mat-accordion>
-  <mat-expansion-panel *ngFor="let f of toDeliver" #myPanel>
-    <mat-expansion-panel-header>
-      <div>
-        <mat-panel-title>
-          {{f.name.value}}
-        </mat-panel-title>
-      </div>
-      <div>
-        <mat-panel-description>
-          {{f.address.value}}
-        </mat-panel-description>
-      </div>
-
-    </mat-expansion-panel-header>
-    <app-family-info [f]="f">
-      <button mat-raised-button class="myButton" color="primary" (click)="deliveredToFamily(f)">מסרתי את החבילה בהצלחה</button>
-      <br/>
-      <button mat-raised-button class="myButton badButton" (click)="couldntDeliverToFamily(f)" >נתקלתי בבעיה במסירה</button>
-    </app-family-info>
-  </mat-expansion-panel>
+  <app-family-info [f]="f" *ngFor="let f of toDeliver">
+    <button mat-raised-button class="myButton" color="primary" (click)="deliveredToFamily(f)">מסרתי את החבילה בהצלחה</button>
+    <br/>
+    <button mat-raised-button class="myButton badButton" (click)="couldntDeliverToFamily(f)">נתקלתי בבעיה במסירה</button>
+  </app-family-info>
 </mat-accordion>
 <div *ngIf="delivered.length>0">
   <h1>משפחות שחולקו</h1>
   <mat-accordion>
-    <mat-expansion-panel *ngFor="let f of delivered" #myPanel>
-      <mat-expansion-panel-header>
-        <div>
-          <mat-panel-title>
-            {{f.name.value}}
-          </mat-panel-title>
-        </div>
-        <div>
-          <mat-panel-description>
-            {{f.address.value}}
-          </mat-panel-description>
-        </div>
+    <app-family-info [f]="f" *ngFor="let f of delivered">
+      <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
+      <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות לחלוקה</button>
+    </app-family-info>
 
-      </mat-expansion-panel-header>
-      <app-family-info [f]="f">
-        <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
-        <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות לחלוקה</button>
-      </app-family-info>
-    </mat-expansion-panel>
   </mat-accordion>
 </div>
 <div *ngIf="problem.length>0">
   <h1>משפחות שנתקלתי בבעיה</h1>
   <mat-accordion>
-    <mat-expansion-panel *ngFor="let f of problem" #myPanel>
-      <mat-expansion-panel-header>
-        <div>
-          <mat-panel-title>
-            {{f.name.value}}
-          </mat-panel-title>
-        </div>
-        <div>
-          <mat-panel-description>
-            {{f.address.value}}
-          </mat-panel-description>
-        </div>
 
-      </mat-expansion-panel-header>
-      <app-family-info [f]="f">
-          <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
-          <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות לחלוקה</button>
-      </app-family-info>
-    </mat-expansion-panel>
+    <app-family-info [f]="f" *ngFor="let f of problem">
+      <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
+      <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות לחלוקה</button>
+    </app-family-info>
+
   </mat-accordion>
-</div>
-<div>
-
 </div>
 
 

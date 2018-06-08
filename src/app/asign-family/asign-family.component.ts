@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { Families, Language } from '../models';
+import { Families, Language, Helpers } from '../models';
 import { AuthService } from '../auth/auth-service';
 import { SelectService } from '../select-popup/select-service';
+import { AddBoxAction } from './add-box-action';
 
 @Component({
   selector: 'app-asign-family',
@@ -10,15 +11,27 @@ import { SelectService } from '../select-popup/select-service';
   styleUrls: ['./asign-family.component.scss']
 })
 export class AsignFamilyComponent implements OnInit {
+  async searchPhone() {
+    let h = new Helpers();
+    let r = await h.source.find({ where: h.phone.isEqualTo(this.phone) });
+    if (r.length > 0) {
+      this.name = r[0].name.value;
+      this.id = r[0].id.value;
+    } else {
+      this.name = undefined;
+      this.id = undefined;
+    }
 
+  }
   filterLangulage = -1;
-  langulages: Language[]= [
+  langulages: Language[] = [
     Language.Hebrew,
     Language.Amharit,
     Language.Russian
   ];
   phone: string;
   name: string;
+  id: string;
   findHelper() {
     this.dialog.selectHelper(h => {
       this.phone = h.phone.value;
@@ -35,6 +48,15 @@ export class AsignFamilyComponent implements OnInit {
 
   ngOnInit() {
     this.families.getRecords();
+  }
+  async assignItem(){
+    let x = await new AddBoxAction().run({
+      phone:this.phone,
+      name:this.name,
+      helperId:this.id
+    });
+    this.id = x.helperId;
+    console.log(x);
   }
 
 

@@ -18,6 +18,7 @@ import { helpersDataApi } from './helpers-dataapi';
 import { FamiliesComponent } from '../families/families.component';
 import { DoIt } from './doSomething';
 import { GetGeoInformation } from '../shared/googleApiHelpers';
+import { AddBoxAction } from '../asign-family/add-box-action';
 config();
 
 
@@ -69,6 +70,8 @@ evilStatics.auth.applyTo(eb, openActions);
 
 openActions.addAction(new LoginAction());
 adminActions.addAction(new ResetPasswordAction());
+adminActions.addAction(new AddBoxAction());
+
 
 openedData.add(r => helpersDataApi(r));
 

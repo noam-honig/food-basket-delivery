@@ -4,7 +4,7 @@
   </h1>
 
   <mat-form-field class="full-width">
-    <input matInput placeholder="טלפון" type="tel" [(ngModel)]="phone">
+    <input matInput placeholder="טלפון" type="tel" [(ngModel)]="phone" (input)="searchPhone()">
     <mat-icon matSuffix (click)="findHelper()">search</mat-icon>
   </mat-form-field>
   <mat-form-field class="full-width">
@@ -19,7 +19,7 @@
   </mat-button-toggle-group>
 
   <div>
-    <button matButton>הוסף ארגז רגיל</button>
+    <button (click)="assignItem()" >הוסף ארגז רגיל</button>
     <button>הוסף ארגז גדול</button>
   </div>
   <h1> משפחות ששוייכו</h1>
