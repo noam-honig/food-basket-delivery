@@ -1,15 +1,16 @@
 <div dir="rtl">
   <mat-card>
     <div class="fullSize">
-      <form (submit)="selectFirst()" >
-        <h3 matDialogHeader>חיפוש</h3>
+      
+      <form (submit)="selectFirst()">
+
         <mat-form-field class="full-width">
           <input matInput [(ngModel)]="searchString" (input)="doFilter()" placeholder="חפשי שם או טלפון" [ngModelOptions]="{standalone: true}">
         </mat-form-field>
         <mat-nav-list role="list">
           <mat-list-item *ngFor="let h of filteredHelpers" (click)="select(h)">
 
-            <div style="min-width:150px;"> {{h.name.value}}</div>
+            <div style="min-width:100px;"> {{h.name.value}}</div>
 
             {{h.phone.value}}
             <mat-divider></mat-divider>
