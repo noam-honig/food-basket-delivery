@@ -22,7 +22,9 @@
     </mat-button-toggle-group>
 
     <div>
-      <button (click)="assignItem()" *ngFor="let b of baskets">הוסף ארגז {{b.name}} - {{b.unassignedFamilies}}</button>
+      <ng-container *ngFor="let b of baskets">
+      <button mat-raised-button color="primary" class="myButton" (click)="assignItem(b)" *ngIf="b.unassignedFamilies">הוסף ארגז {{b.name}} - {{b.unassignedFamilies}}</button>
+    </ng-container>
 
     </div>
     <span *ngIf="familyLists.toDeliver.length>0">

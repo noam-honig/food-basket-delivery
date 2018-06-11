@@ -9,7 +9,10 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
         super('add-box');//required because of minification
     }
     protected async execute(info: AddBoxInfo, req: DataApiRequest<myAuthInfo>): Promise<AddBoxResponse> {
-        let result: myAuthInfo;
+        let result = {
+            helperId: info.helperId,
+            ok: false
+        }
 
         let h = new Helpers();
         if (!info.helperId) {
@@ -24,16 +27,15 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
 
         {
             let f = new Families();
-            let r = await f.source.find({ where: f.deliverStatus.isEqualTo(DeliveryStatus.NotYetAssigned.id) });
+            let r = await f.source.find({ where: f.deliverStatus.isEqualTo(DeliveryStatus.NotYetAssigned.id).and(f.basketType.isEqualTo(info.basketType)) });
             if (r.length > 0) {
                 r[0].deliverStatus.listValue = DeliveryStatus.Assigned;
                 r[0].courier.value = info.helperId;
                 await r[0].save();
+                result.ok = true;
             }
         }
-        return {
-            helperId:info.helperId
-        }
+        return result;
 
 
     }
@@ -41,10 +43,12 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
 
 export interface AddBoxInfo {
     name: string;
+    basketType: string;
     phone: string;
     helperId?: string;
 }
 export interface AddBoxResponse {
     helperId?: string;
+    ok: boolean;
 
 }

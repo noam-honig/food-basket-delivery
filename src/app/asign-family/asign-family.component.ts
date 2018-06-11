@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { Families, Language, Helpers, DeliveryStatus } from '../models';
+import { Families, Language, Helpers, DeliveryStatus, BasketType } from '../models';
 import { AuthService } from '../auth/auth-service';
 import { SelectService } from '../select-popup/select-service';
 import { AddBoxAction } from './add-box-action';
@@ -37,7 +37,7 @@ export class AsignFamilyComponent implements OnInit {
     SendSmsAction.generateMessage(this.id, (p, m) => this.smsMessage = m);
     this.familyLists.initForHelper(this.id);
     new GetBasketStatusAction().run({}).then(r => {
-    this.baskets = r.baskets;
+      this.baskets = r.baskets;
       console.log(r);
     });
 
@@ -75,7 +75,7 @@ export class AsignFamilyComponent implements OnInit {
     f.courier.value = undefined;
     f.deliverStatus.listValue = DeliveryStatus.NotYetAssigned;
     await f.save();
-    this.familyLists.remove(f);
+    this.refreshList();
 
   }
 
@@ -84,14 +84,21 @@ export class AsignFamilyComponent implements OnInit {
   ngOnInit() {
 
   }
-  async assignItem() {
+  async assignItem(basket: BasketInfo) {
     let x = await new AddBoxAction().run({
       phone: this.phone,
       name: this.name,
-      helperId: this.id
+      basketType: basket.id,
+      helperId: this.id,
     });
+    if (x.ok) {
+      basket.unassignedFamilies--;
+      this.familyLists.initForHelper(this.id);
+    }
+    else {
+      this.refreshList();
+    }
     this.id = x.helperId;
-    this.familyLists.initForHelper(this.id);
 
     console.log(x);
   }
