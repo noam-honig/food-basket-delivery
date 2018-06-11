@@ -14,7 +14,7 @@ export class MyFamiliesComponent implements OnInit {
 
   familyLists = new UserFamiliesList();
 
-  constructor(private auth: AuthService, private dialog: SelectService) { }
+  constructor(public auth: AuthService, private dialog: SelectService) { }
   async ngOnInit() {
     await this.familyLists.initForHelper(this.auth.auth.info.helperId);
   }
