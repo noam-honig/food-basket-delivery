@@ -269,7 +269,7 @@ export class Families extends IdEntity<FamilyId>{
 
 
   openWaze() {
-    window.open('https://waze.com/ul?ll=' + this.getGeocodeInformation().getlonglat() + '&navigate=yes', '_blank');
+    window.open('https://waze.com/ul?ll=' + this.getGeocodeInformation().getlonglat()+"&q="+encodeURI(this.address.value) + '&navigate=yes', '_blank');
   }
   openGoogleMaps() {
     window.open('https://www.google.com/maps/search/?api=1&query=' + this.address.value, '_blank');
