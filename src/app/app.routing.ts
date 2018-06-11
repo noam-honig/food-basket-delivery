@@ -16,6 +16,7 @@ import { MyFamiliesComponent } from './my-families/my-families.component';
 import { AsignFamilyComponent } from './asign-family/asign-family.component';
 import { ManageComponent } from './manage/manage.component';
 import { FixAddressComponent } from './fix-address/fix-address.component';
+import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component';
 
 
 const routes: Routes = [
@@ -37,7 +38,7 @@ const routes: Routes = [
     path: 'my-families', component: MyFamiliesComponent, canActivate: [LoggedInGuard], data: { name: 'משפחות שלי' }
   },
   {
-    path: 'assign-families', component: AsignFamilyComponent, canActivate: [LoggedInGuard], data: { name: 'שיוך משפחות' }
+    path: 'assign-families', component: AsignFamilyComponent, canActivate: [AdminGuard], data: { name: 'שיוך משפחות' }
   },
   {
     path: 'helpers',
@@ -48,6 +49,10 @@ const routes: Routes = [
     path: 'manage',
     component: ManageComponent,
     data: { name: 'ניהול' }, canActivate: [AdminGuard]
+  },
+  {
+    path:'x/:id',
+    component:LoginFromSmsComponent
   },
   /*{
     path: 'events', component: EventsComponent, canActivate: [AdminGuard], data: { name: 'אירועים' }

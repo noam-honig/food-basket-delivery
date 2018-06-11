@@ -1,47 +1,100 @@
 <div class="myDiv">
-  <h1>
+
+  <h4>
     פרטי משנע
-  </h1>
+  </h4>
+
 
   <mat-form-field class="full-width">
-    <input matInput placeholder="טלפון" type="tel" [(ngModel)]="phone" (input)="searchPhone()">
+    <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
+    <input matInput placeholder="טלפון" type="tel" [(ngModel)]="phone" (input)="searchPhone()" class="largeInput">
     <mat-icon matSuffix (click)="findHelper()">search</mat-icon>
   </mat-form-field>
   <mat-form-field class="full-width">
-    <input matInput placeholder="שם" [(ngModel)]="name">
+    <input matInput placeholder="שם" [(ngModel)]="name" class="largeInput">
   </mat-form-field>
 
-  סינון שפה
-  <mat-button-toggle-group #group="matButtonToggleGroup" [value]="filterLangulage">
-    <mat-button-toggle *ngFor="let f of langulages" value="{{f.id}}">
-      {{f.toString()}}
-    </mat-button-toggle>
-  </mat-button-toggle-group>
+  <span *ngIf="name">
+    סינון שפה
+    <mat-button-toggle-group #group="matButtonToggleGroup" [value]="filterLangulage">
+      <mat-button-toggle *ngFor="let f of langulages" value="{{f.id}}">
+        {{f.toString()}}
+      </mat-button-toggle>
+    </mat-button-toggle-group>
 
-  <div>
-    <button (click)="assignItem()">הוסף ארגז רגיל</button>
-    <button>הוסף ארגז גדול</button>
-  </div>
-  <h1>משפחות לחלוקה</h1>
-  <mat-accordion>
-    <app-family-info [f]="f" *ngFor="let f of familyLists.toDeliver">
-        <button mat-raised-button class="myButton badButton" (click)="cancelAssign(f)">בטלי שיוך</button> 
-    </app-family-info>
-  </mat-accordion>
-  <div *ngIf="familyLists.delivered.length>0">
-    <h1>משפחות שחולקו</h1>
+    <div>
+      <button (click)="assignItem()">הוסף ארגז רגיל</button>
+      <button>הוסף ארגז גדול</button>
+    </div>
+    <span *ngIf="familyLists.toDeliver.length>0">
+    <h4>משפחות לחלוקה - {{familyLists.toDeliver.length}}</h4>
     <mat-accordion>
-      <app-family-info [f]="f" *ngFor="let f of familyLists.delivered">
-      </app-family-info>
-
+      <mat-expansion-panel #myPanel *ngFor="let f of familyLists.toDeliver">
+        <mat-expansion-panel-header>
+          <div>
+            <mat-panel-title>
+              {{f.name.value}}
+            </mat-panel-title>
+          </div>
+          <div>
+            <mat-panel-description>
+              {{f.address.value}}
+            </mat-panel-description>
+          </div>
+        </mat-expansion-panel-header>
+        <app-family-info [f]="f">
+          <button mat-raised-button class="myButton badButton" (click)="cancelAssign(f)">בטלי שיוך</button>
+        </app-family-info>
+      </mat-expansion-panel>
     </mat-accordion>
-  </div>
-  <div *ngIf="familyLists.problem.length>0">
-    <h1>משפחות שנתקלתי בבעיה</h1>
-    <mat-accordion>
+    <button mat-raised-button class="myButton" color="primary" (click)="sendSms()">שלחי הודעת SMS מהשרת</button>
+    <button mat-raised-button class="myButton" color="primary" (click)="sendSmsFromPhone()">שלחי הודעת SMS מהטלפון</button>
+    
+  </span>
+    <div *ngIf="familyLists.delivered.length>0">
+      <h1>משפחות שחולקו - {{familyLists.delivered.length}}</h1>
+      <mat-accordion>
+        <mat-expansion-panel #myPanel *ngFor="let f of familyLists.delivered">
+          <mat-expansion-panel-header>
+            <div>
+              <mat-panel-title>
+                {{f.name.value}}
+              </mat-panel-title>
+            </div>
+            <div>
+              <mat-panel-description>
+                {{f.address.value}}
+              </mat-panel-description>
+            </div>
+          </mat-expansion-panel-header>
+          <app-family-info [f]="f">
+            <button mat-raised-button class="myButton badButton" (click)="cancelAssign(f)">בטלי שיוך</button>
+          </app-family-info>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+    <div *ngIf="familyLists.problem.length>0">
+      <h4>משפחות שנתקלתי בבעיה - {{familyLists.problem.length}}</h4>
+      <mat-accordion>
 
-      <app-family-info [f]="f" *ngFor="let f of familyLists.problem">
-      </app-family-info>
+        <mat-expansion-panel #myPanel *ngFor="let f of familyLists.problem">
+          <mat-expansion-panel-header>
+            <div>
+              <mat-panel-title>
+                {{f.name.value}}
+              </mat-panel-title>
+            </div>
+            <div>
+              <mat-panel-description>
+                {{f.address.value}}
+              </mat-panel-description>
+            </div>
+          </mat-expansion-panel-header>
 
-    </mat-accordion>
-  </div>
+          <app-family-info [f]="f">
+            <button mat-raised-button class="myButton badButton" (click)="cancelAssign(f)">בטלי שיוך</button>
+          </app-family-info>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </span>

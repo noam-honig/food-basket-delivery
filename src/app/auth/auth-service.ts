@@ -7,11 +7,18 @@ import { SelectService } from "../select-popup/select-service";
 import { Router } from "@angular/router";
 import { evilStatics } from "./evil-statics";
 import { LoginAction } from "./loginAction";
+import { LoginFromSmsAction } from "../login-from-sms/login-from-sms-action";
 
 
 @Injectable()
 export class AuthService {
 
+    async loginFromSms(key: string) {
+        this.auth.loggedIn(await new LoginFromSmsAction().run({ key: key }), false);
+        if (this.auth.valid) {
+            this.router.navigate(['/my-families']);
+        }
+    }
     constructor(
         private dialog: SelectService,
         private router: Router

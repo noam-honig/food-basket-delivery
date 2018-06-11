@@ -19,6 +19,8 @@ import { FamiliesComponent } from '../families/families.component';
 import { DoIt } from './doSomething';
 import { GetGeoInformation } from '../shared/googleApiHelpers';
 import { AddBoxAction } from '../asign-family/add-box-action';
+import { SendSmsAction } from '../asign-family/send-sms-action';
+import { LoginFromSmsAction } from '../login-from-sms/login-from-sms-action';
 config();
 
 
@@ -69,8 +71,10 @@ evilStatics.auth.tokenSignKey = process.env.TOKEN_SIGN_KEY;
 evilStatics.auth.applyTo(eb, openActions);
 
 openActions.addAction(new LoginAction());
+openActions.addAction(new LoginFromSmsAction());
 adminActions.addAction(new ResetPasswordAction());
 adminActions.addAction(new AddBoxAction());
+adminActions.addAction(new SendSmsAction());
 
 
 openedData.add(r => helpersDataApi(r));
@@ -103,13 +107,23 @@ dataApi.add(r => {
     }));
 });
 dataApi.add(r => {
+
+
+
     var settings: DataApiSettings<models.Families> = {
         allowDelete: r.authInfo && r.authInfo.admin,
         allowInsert: r.authInfo && r.authInfo.admin,
-        allowUpdate: r.authInfo && r.authInfo.admin,
+        allowUpdate: r.authInfo?true:false ,
+        readonlyColumns: f => {
+            if (r.authInfo) {
+                if (r.authInfo.admin)
+                    return [];
+                return f.__iterateColumns().filter(c => { c == f.courierComments, c == f.deliverStatus });
+            }
+        },
         onSavingRow: async family => {
             await family.doSaveStuff(r.authInfo);
-            
+
         }
     };
 

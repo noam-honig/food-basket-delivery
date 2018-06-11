@@ -34,6 +34,7 @@ import { FamilyInfoComponent } from './family-info/family-info.component';
 import { UpdateCommentComponent } from './update-comment/update-comment.component';
 import { FixAddressComponent } from './fix-address/fix-address.component';
 import { SelectHelperComponent } from './select-helper/select-helper.component';
+import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component';
 
 @NgModule({
   declarations: [
@@ -59,7 +60,8 @@ import { SelectHelperComponent } from './select-helper/select-helper.component';
     FamilyInfoComponent,
     UpdateCommentComponent,
     FixAddressComponent,
-    SelectHelperComponent
+    SelectHelperComponent,
+    LoginFromSmsComponent
   ],
   imports: [
     BrowserModule,

@@ -32,4 +32,10 @@ export class UserFamiliesList {
         this.allFamilies.splice(this.allFamilies.indexOf(f), 1);
         this.initFamilies();
     }
+    clear(){
+        this.allFamilies = [];
+        this.delivered = [];
+        this.problem = [];
+        this.toDeliver = [];
+    }
 }

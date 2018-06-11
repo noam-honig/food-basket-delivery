@@ -4,10 +4,12 @@ import { UrlBuilder } from "radweb";
 import * as fetch from 'node-fetch';
 import { GetGeoInformation } from "../shared/googleApiHelpers";
 import { foreachEntityItem } from "../shared/utils";
+import { SendSmsUtils } from "../asign-family/send-sms-action";
+
 
 export async function DoIt() {
     try {
-     //   getGeolocationInfo();
+//        new SendSmsUtils().sendSms('0507330590', 'test2');
     }
     catch (err) {
         console.log(err);
@@ -36,7 +38,7 @@ async function updateAddress() {
 
 async function updatePhone() {
     (await new Families().source.find({})).forEach(f => {
-        f.phone1.value = '0507330590'; 
+        f.phone1.value = '0507330590';
         f.save();
     });
 }

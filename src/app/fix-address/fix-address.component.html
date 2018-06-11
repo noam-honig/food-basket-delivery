@@ -15,8 +15,8 @@
   <mat-card *ngIf="families.currentRow">
     <h1>כתובת</h1>
     <data-area [settings]="familiesAddress"></data-area>
-    <a href="https://waze.com/ul?ll={{ getlonglat()}}&navigate=yes" target="_blank">פתחי WAZE</a> |
-    <a href="https://www.google.com/maps/search/?api=1&query={{families.currentRow.address.value}}" target="_blank">פתחי גוגל </a>
+    <a (click)="families.currentRow.openWaze()" target="_blank">פתחי WAZE</a> |
+    <a (click)="families.currentRow.openGoogleMaps()" target="_blank">פתחי גוגל </a>
     <div class="row">
       <div class="col-sm-12">
         <h3>לפי כתובת</h3>

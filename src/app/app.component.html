@@ -1,16 +1,10 @@
-<mat-toolbar color="primary">
-  <button mat-button class="sidenav-toggle" (click)="sidenav.toggle()">
-    <mat-icon>menu</mat-icon>
-  </button>
-  <span>אמהות מחבקות אבן יהודה</span>
-</mat-toolbar>
 <mat-sidenav-container class="app-sidenav-container">
   <mat-sidenav #sidenav class="app-sidenav mat-elevation-z10" [opened]="!isScreenSmall()" [mode]="isScreenSmall()?'over':'side'">
     <h4 *ngIf="auth.auth.info">שלום {{auth.auth.info.name}}</h4>
     <mat-nav-list role="list">
       <ng-container *ngFor="let m of router.config">
         <mat-list-item *ngIf="shouldDisplayRoute(m)" routerLinkActive="active-route">
-          <a matLine [routerLink]="m.path" (click)="routeClicked()"  >{{routeName(m)}}</a>
+          <a matLine [routerLink]="m.path" (click)="routeClicked()">{{routeName(m)}}</a>
         </mat-list-item>
 
 
@@ -21,6 +15,13 @@
     </mat-nav-list>
 
   </mat-sidenav>
+  <mat-toolbar color="primary">
+    <button mat-button class="sidenav-toggle" (click)="sidenav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span>אמהות מחבקות אבן יהודה</span>
+  </mat-toolbar>
+
   <div class="app-sidenav-content ">
 
 

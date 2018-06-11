@@ -22,20 +22,23 @@ export class GeocodeInformation {
         return JSON.stringify(this.info);
     }
     static fromString(s: string) {
-        try{
-        return new GeocodeInformation(JSON.parse(s));
+        try {
+            return new GeocodeInformation(JSON.parse(s));
         }
-        catch(err){
+        catch (err) {
             return new GeocodeInformation();
         }
     }
     ok() {
         return this.info.status == "OK";
     }
-    location():Location {
+    location(): Location {
         if (!this.ok())
             return undefined;
         return this.info.results[0].geometry.location;
+    }
+    getlonglat() {
+        return this.location().lat + ',' + this.location().lng;
     }
 }
 

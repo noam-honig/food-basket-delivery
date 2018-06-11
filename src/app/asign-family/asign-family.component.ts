@@ -5,6 +5,8 @@ import { AuthService } from '../auth/auth-service';
 import { SelectService } from '../select-popup/select-service';
 import { AddBoxAction } from './add-box-action';
 import { UserFamiliesList } from '../my-families/user-families';
+import { SendSmsAction } from './send-sms-action';
+
 
 @Component({
   selector: 'app-asign-family',
@@ -15,22 +17,28 @@ export class AsignFamilyComponent implements OnInit {
 
 
   async searchPhone() {
+    this.name = undefined;
+    this.id = undefined;
     if (this.phone.length == 10) {
       let h = new Helpers();
       let r = await h.source.find({ where: h.phone.isEqualTo(this.phone) });
       if (r.length > 0) {
         this.name = r[0].name.value;
         this.id = r[0].id.value;
+        this.refreshList();
       } else {
-        this.name = undefined;
-        this.id = undefined;
+
       }
-      this.familyLists.initForHelper(this.id);
     }
+  }
+  refreshList() {
+    SendSmsAction.generateMessage(this.id, (p, m) => this.smsMessage = m);
+    this.familyLists.initForHelper(this.id);
   }
   familyLists = new UserFamiliesList();
   filterLangulage = -1;
   langulages: Language[] = [
+    new Language(-1, 'הכל'),
     Language.Hebrew,
     Language.Amharit,
     Language.Russian
@@ -38,29 +46,36 @@ export class AsignFamilyComponent implements OnInit {
   phone: string;
   name: string;
   id: string;
+  clearHelper() {
+    this.phone = undefined;
+    this.name = undefined;
+    this.id = undefined;
+    this.clearList();
+  }
+  clearList() {
+    this.familyLists.clear();
+  }
   findHelper() {
     this.dialog.selectHelper(h => {
       this.phone = h.phone.value;
       this.name = h.name.value;
+      this.id = h.id.value;
+      
+      this.refreshList();
     });
   }
-  async cancelAssign(f:Families){
+  async cancelAssign(f: Families) {
     f.courier.value = undefined;
     f.deliverStatus.listValue = DeliveryStatus.NotYet;
     await f.save();
     this.familyLists.remove(f);
 
   }
-  families = new GridSettings(new Families(), {
-    get: {
-      where: f => f.courier.isEqualTo(this.auth.auth.info.helperId),
-      limit: 9999
-    }
-  });
+
   constructor(private auth: AuthService, private dialog: SelectService) { }
 
   ngOnInit() {
-    this.families.getRecords();
+
   }
   async assignItem() {
     let x = await new AddBoxAction().run({
@@ -72,6 +87,17 @@ export class AsignFamilyComponent implements OnInit {
     this.familyLists.initForHelper(this.id);
 
     console.log(x);
+  }
+  sendSms() {
+    new SendSmsAction().run({ helperId: this.id });
+  }
+  showSms() {
+    SendSmsAction.generateMessage(this.id, (p, m) =>
+      this.dialog.Info(m));
+  }
+  smsMessage: string;
+  async sendSmsFromPhone() {
+      window.open('sms:' + this.phone + ';?&body=' + encodeURI(this.smsMessage), '_blank');
   }
 
 
