@@ -22,34 +22,34 @@
     </mat-button-toggle-group>
 
     <div>
-      <button (click)="assignItem()">הוסף ארגז רגיל</button>
-      <button>הוסף ארגז גדול</button>
+      <button (click)="assignItem()" *ngFor="let b of baskets">הוסף ארגז {{b.name}} - {{b.unassignedFamilies}}</button>
+
     </div>
     <span *ngIf="familyLists.toDeliver.length>0">
-    <h4>משפחות לחלוקה - {{familyLists.toDeliver.length}}</h4>
-    <mat-accordion>
-      <mat-expansion-panel #myPanel *ngFor="let f of familyLists.toDeliver">
-        <mat-expansion-panel-header>
-          <div>
-            <mat-panel-title>
-              {{f.name.value}}
-            </mat-panel-title>
-          </div>
-          <div>
-            <mat-panel-description>
-              {{f.address.value}}
-            </mat-panel-description>
-          </div>
-        </mat-expansion-panel-header>
-        <app-family-info [f]="f">
-          <button mat-raised-button class="myButton badButton" (click)="cancelAssign(f)">בטלי שיוך</button>
-        </app-family-info>
-      </mat-expansion-panel>
-    </mat-accordion>
-    <button mat-raised-button class="myButton" color="primary" (click)="sendSms()">שלחי הודעת SMS מהשרת</button>
-    <button mat-raised-button class="myButton" color="primary" (click)="sendSmsFromPhone()">שלחי הודעת SMS מהטלפון</button>
-    
-  </span>
+      <h4>משפחות לחלוקה - {{familyLists.toDeliver.length}}</h4>
+      <mat-accordion>
+        <mat-expansion-panel #myPanel *ngFor="let f of familyLists.toDeliver">
+          <mat-expansion-panel-header>
+            <div>
+              <mat-panel-title>
+                {{f.name.value}}
+              </mat-panel-title>
+            </div>
+            <div>
+              <mat-panel-description>
+                {{f.address.value}}
+              </mat-panel-description>
+            </div>
+          </mat-expansion-panel-header>
+          <app-family-info [f]="f">
+            <button mat-raised-button class="myButton badButton" (click)="cancelAssign(f)">בטלי שיוך</button>
+          </app-family-info>
+        </mat-expansion-panel>
+      </mat-accordion>
+      <button mat-raised-button class="myButton" color="primary" (click)="sendSms()">שלחי הודעת SMS מהשרת</button>
+      <button mat-raised-button class="myButton" color="primary" (click)="sendSmsFromPhone()">שלחי הודעת SMS מהטלפון</button>
+
+    </span>
     <div *ngIf="familyLists.delivered.length>0">
       <h1>משפחות שחולקו - {{familyLists.delivered.length}}</h1>
       <mat-accordion>

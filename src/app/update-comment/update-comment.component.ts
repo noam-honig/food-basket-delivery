@@ -15,12 +15,19 @@ export class UpdateCommentComponent implements OnInit {
   ) {
 
   }
-  failOptions:DeliveryStatus[] = [
+  failOptions: DeliveryStatus[] = [
     DeliveryStatus.FailedBadAddress,
     DeliveryStatus.FailedNotHome,
     DeliveryStatus.FailedOther
   ];
   defaultFailStatus = DeliveryStatus.FailedBadAddress;
+  getStatusName(s: DeliveryStatus) {
+    let r = s.toString();
+    if (r.startsWith('לא נמסר, '))
+      r = r.substring(9);
+      
+    return r;
+  }
 
   ngOnInit() {
   }

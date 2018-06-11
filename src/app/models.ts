@@ -122,7 +122,7 @@ export class DeliveryStatusColumn extends radweb.ClosedListColumn<DeliveryStatus
 }
 
 export class DeliveryStatus {
-  static NotYet: DeliveryStatus = new DeliveryStatus(0, 'טרם שוייך');
+  static NotYetAssigned: DeliveryStatus = new DeliveryStatus(0, 'טרם שוייך');
   static Assigned: DeliveryStatus = new DeliveryStatus(1, 'שוייכה למשנע');
   static Success: DeliveryStatus = new DeliveryStatus(11, 'נמסר בהצלחה');
   static FailedBadAddress: DeliveryStatus = new DeliveryStatus(21, 'לא נמסר, בעייה בכתובת');
@@ -308,7 +308,7 @@ export class Families extends IdEntity<FamilyId>{
     logChanged(this.courier, this.courierAssingTime, this.courierAssignUser);
     logChanged(this.callStatus, this.callTime, this.callHelper);
     logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser);
-    if (this.courier.value != this.courier.originalValue && this.deliverStatus.listValue == DeliveryStatus.NotYet)
+    if (this.courier.value != this.courier.originalValue && this.deliverStatus.listValue == DeliveryStatus.NotYetAssigned)
       this.deliverStatus.listValue = DeliveryStatus.Assigned;
 
   }

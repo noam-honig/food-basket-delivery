@@ -5,7 +5,7 @@
     מה לא הסתדר?
     <mat-button-toggle-group #group="matButtonToggleGroup" [value]="defaultFailStatus.id">
       <mat-button-toggle *ngFor="let f of failOptions" value="{{f.id}}">
-        {{f.toString()}}
+        {{getStatusName(f)}}
       </mat-button-toggle>
     </mat-button-toggle-group>
   </div>

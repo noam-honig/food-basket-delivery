@@ -21,6 +21,7 @@ import { GetGeoInformation } from '../shared/googleApiHelpers';
 import { AddBoxAction } from '../asign-family/add-box-action';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { LoginFromSmsAction } from '../login-from-sms/login-from-sms-action';
+import { GetBasketStatusAction } from '../asign-family/get-basket-status-action';
 config();
 
 
@@ -75,6 +76,7 @@ openActions.addAction(new LoginFromSmsAction());
 adminActions.addAction(new ResetPasswordAction());
 adminActions.addAction(new AddBoxAction());
 adminActions.addAction(new SendSmsAction());
+adminActions.addAction(new GetBasketStatusAction());
 
 
 openedData.add(r => helpersDataApi(r));

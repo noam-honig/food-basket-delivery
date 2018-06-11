@@ -24,7 +24,7 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
 
         {
             let f = new Families();
-            let r = await f.source.find({ where: f.deliverStatus.isEqualTo(DeliveryStatus.NotYet.id) });
+            let r = await f.source.find({ where: f.deliverStatus.isEqualTo(DeliveryStatus.NotYetAssigned.id) });
             if (r.length > 0) {
                 r[0].deliverStatus.listValue = DeliveryStatus.Assigned;
                 r[0].courier.value = info.helperId;

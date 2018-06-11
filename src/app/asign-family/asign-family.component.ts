@@ -6,6 +6,7 @@ import { SelectService } from '../select-popup/select-service';
 import { AddBoxAction } from './add-box-action';
 import { UserFamiliesList } from '../my-families/user-families';
 import { SendSmsAction } from './send-sms-action';
+import { GetBasketStatusAction, BasketInfo } from './get-basket-status-action';
 
 
 @Component({
@@ -31,9 +32,15 @@ export class AsignFamilyComponent implements OnInit {
       }
     }
   }
+  baskets: BasketInfo[];
   refreshList() {
     SendSmsAction.generateMessage(this.id, (p, m) => this.smsMessage = m);
     this.familyLists.initForHelper(this.id);
+    new GetBasketStatusAction().run({}).then(r => {
+    this.baskets = r.baskets;
+      console.log(r);
+    });
+
   }
   familyLists = new UserFamiliesList();
   filterLangulage = -1;
@@ -60,13 +67,13 @@ export class AsignFamilyComponent implements OnInit {
       this.phone = h.phone.value;
       this.name = h.name.value;
       this.id = h.id.value;
-      
+
       this.refreshList();
     });
   }
   async cancelAssign(f: Families) {
     f.courier.value = undefined;
-    f.deliverStatus.listValue = DeliveryStatus.NotYet;
+    f.deliverStatus.listValue = DeliveryStatus.NotYetAssigned;
     await f.save();
     this.familyLists.remove(f);
 
@@ -97,7 +104,7 @@ export class AsignFamilyComponent implements OnInit {
   }
   smsMessage: string;
   async sendSmsFromPhone() {
-      window.open('sms:' + this.phone + ';?&body=' + encodeURI(this.smsMessage), '_blank');
+    window.open('sms:' + this.phone + ';?&body=' + encodeURI(this.smsMessage), '_blank');
   }
 
 
