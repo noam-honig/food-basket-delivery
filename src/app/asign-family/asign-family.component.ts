@@ -84,12 +84,14 @@ export class AsignFamilyComponent implements OnInit {
   ngOnInit() {
 
   }
-  async assignItem(basket: BasketInfo) {
+  async assignItem(basket: BasketInfo,filterLangulage:number) {
+    console.log(filterLangulage);
     let x = await new AddBoxAction().run({
       phone: this.phone,
       name: this.name,
       basketType: basket.id,
       helperId: this.id,
+      language:filterLangulage
     });
     if (x.ok) {
       basket.unassignedFamilies--;
@@ -97,6 +99,7 @@ export class AsignFamilyComponent implements OnInit {
     }
     else {
       this.refreshList();
+      this.dialog.Info("לא נמצאה משפחה מתאימה");
     }
     this.id = x.helperId;
 

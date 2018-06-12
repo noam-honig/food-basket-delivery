@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "gc": "ng generate component --spec false",
-    "ng-serve": "ng serve",
+    "ng-serve": "ng serve --host 10.0.0.6",
     "start": "npm run server:execute",
     "start_old": "ts-node --project tsconfig.server.json src/app/server/server.ts",
     "start_dev": "concurrently \"ng serve\" \"npm run server:watch\"",
@@ -61,7 +61,7 @@
     "password-hash": "^1.2.2",
     "path": "^0.12.7",
     "pg": "^7.4.1",
-    "radweb": "^1.1.36",
+    "radweb": "^1.1.38",
     "rxjs": "^5.5.6",
     "uuid": "^3.2.1",
     "web-animations-js": "^2.3.1",
