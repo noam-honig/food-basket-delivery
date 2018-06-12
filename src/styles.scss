@@ -119,3 +119,10 @@ th {
     color:red !important;
     font-weight: 400 !important;
     }
+// solution for the table responsive rtl bug in IOS
+    .table-responsive {
+        direction: ltr;
+      }
+      .table-responsive   table {
+        direction: rtl;
+      }

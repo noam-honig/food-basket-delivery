@@ -3,7 +3,7 @@ import { GridSettings } from 'radweb';
 import { Families, Helpers, CallStatus, BasketType, FamilySources } from '../models';
 import { SelectService } from '../select-popup/select-service';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
-import { } from '@types/googlemaps';
+
 import { DomSanitizer } from '@angular/platform-browser';
 import * as XLSX from 'xlsx';
 
@@ -55,22 +55,31 @@ export class FamiliesComponent implements OnInit {
     hideDataArea: true,
     columnSettings: families => [
 
-      families.name,
+      {
+        column: families.name,
+        width: '150'
+      },
 
-      families.familyMembers,
+      {
+        column: families.familyMembers,
+        width: '50'
+      },
       {
         column: families.language,
         dropDown: {
           items: families.language.getOptions()
-        }
+        },
+        width: '100'
       },
       {
         column: families.basketType,
-        dropDown: { source: new BasketType() }
+        dropDown: { source: new BasketType() },
+        width: '100'
       },
       {
         column: families.familySource,
-        dropDown: { source: new FamilySources() }
+        dropDown: { source: new FamilySources() },
+        width: '100'
       },
     ],
     rowButtons: [
