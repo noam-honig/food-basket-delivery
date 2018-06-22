@@ -1,14 +1,19 @@
 import { Families } from "../models";
 import { readFileSync, readFile } from "fs";
-import { UrlBuilder } from "radweb";
+import { UrlBuilder, ColumnHashSet } from "radweb";
 import * as fetch from 'node-fetch';
 import { GetGeoInformation } from "../shared/googleApiHelpers";
 import { foreachEntityItem } from "../shared/utils";
 import { SendSmsUtils } from "../asign-family/send-sms-action";
+import { serverInit } from "./serverInit";
 
+serverInit();
 
 export async function DoIt() {
     try {
+     
+        
+
         console.log('123');
 //        new SendSmsUtils().sendSms('0507330590', 'test2');
     }
@@ -18,6 +23,8 @@ export async function DoIt() {
 
 }
 DoIt();
+
+
 async function getGeolocationInfo() {
     let families = new Families();
     foreachEntityItem(new Families(), undefined, async f => {
@@ -56,4 +63,17 @@ function UpdateAllFamiliyNames() {
         });
 
     });
+}
+async function imprortFamiliesFromJson(){
+    let r = readFileSync(`c:\\temp\\hugmoms.json`);
+    var rows = JSON.parse(r.toString());
+    for (let i=0;i<rows.length;i++){
+        let f = new Families();
+        let c = new ColumnHashSet();
+        f.__fromPojo(rows[i],c);
+        let families =await  f.source.find({where:f.id.isEqualTo(f.id.value)});
+        if (families.length==0){
+            await f.save();
+        }
+    }
 }

@@ -2,9 +2,7 @@ import { environment } from './../../environments/environment';
 import * as models from './../models';
 import * as express from 'express';
 import * as radweb from 'radweb';
-import { SQLServerDataProvider, ExpressBridge, PostgresDataProvider, PostgrestSchemaBuilder } from 'radweb/server';
-import { Pool } from 'pg';
-import { config } from 'dotenv';
+import {  ExpressBridge } from 'radweb/server';
 import { DataApi, DataApiSettings } from 'radweb/utils/server/DataApi';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -15,48 +13,18 @@ import { myAuthInfo } from '../auth/my-auth-info';
 import { evilStatics } from '../auth/evil-statics';
 import { ResetPasswordAction } from '../helpers/reset-password';
 import { helpersDataApi } from './helpers-dataapi';
-import { FamiliesComponent } from '../families/families.component';
-import { DoIt } from './doSomething';
-import { GetGeoInformation } from '../shared/googleApiHelpers';
+
 import { AddBoxAction } from '../asign-family/add-box-action';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { LoginFromSmsAction } from '../login-from-sms/login-from-sms-action';
 import { GetBasketStatusAction } from '../asign-family/get-basket-status-action';
-config();
+import { serverInit } from './serverInit';
 
+serverInit();
 
 
 let app = express();
 let port = process.env.PORT || 3000;
-
-let ssl = true;
-if (process.env.DISABLE_POSTGRES_SSL)
-    ssl = false;
-
-
-if (!process.env.DATABASE_URL) {
-    console.log("No DATABASE_URL environment variable found, if you are developing locally, please add a '.env' with DATABASE_URL='postgres://*USERNAME*:*PASSWORD*@*HOST*:*PORT*/*DATABASE*'");
-}
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: ssl
-});
-evilStatics.dataSource = new PostgresDataProvider(pool);
-evilStatics.openedDataApi = new PostgresDataProvider(pool);
-
-var sb = new PostgrestSchemaBuilder(pool);
-[
-    new models.Events(),
-    new models.EventHelpers(),
-    new models.Helpers(),
-    new models.Items(),
-    new models.ItemsPerHelper(),
-    new models.Families(),
-    new models.BasketType(),
-    new models.FamilySources()
-].forEach(x => sb.CreateIfNotExist(x));
-
-sb.verifyAllColumns(new models.Families());
 
 
 
