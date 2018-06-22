@@ -9,6 +9,7 @@ import { SendSmsUtils } from "../asign-family/send-sms-action";
 
 export async function DoIt() {
     try {
+        console.log('123');
 //        new SendSmsUtils().sendSms('0507330590', 'test2');
     }
     catch (err) {
@@ -16,6 +17,7 @@ export async function DoIt() {
     }
 
 }
+DoIt();
 async function getGeolocationInfo() {
     let families = new Families();
     foreachEntityItem(new Families(), undefined, async f => {

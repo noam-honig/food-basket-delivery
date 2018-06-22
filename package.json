@@ -20,6 +20,8 @@
     "server:execute": "node dist-server/src/app/server/server.js",
     "preserver:debug": "npm run server:build",
     "server:debug": "node --inspect --debug-brk dist-server/src/app/server/server.js",
+    "preRunSomething": "npm run server:build",
+    "RunSomething": "node --inspect --debug-brk dist-server/src/app/server/doSomething.js",
     "server:start": "npm run server:build && npm run server:execute",
     "server:watch": "concurrently \"tsc -P tsconfig.server.json -w\" \"nodemon dist-server/src/app/server/server.js --ignore /appData --ignore /dist\""
   },

@@ -58,7 +58,7 @@ var sb = new PostgrestSchemaBuilder(pool);
 
 sb.verifyAllColumns(new models.Families());
 
-DoIt();
+
 
 
 let eb = new ExpressBridge<myAuthInfo>(app);
