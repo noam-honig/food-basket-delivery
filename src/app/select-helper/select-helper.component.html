@@ -6,6 +6,7 @@
 
         <mat-form-field class="full-width">
           <input matInput [(ngModel)]="searchString" (input)="doFilter()" placeholder="חפשי שם או טלפון" [ngModelOptions]="{standalone: true}">
+          <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
         </mat-form-field>
         <mat-nav-list role="list">
           <mat-list-item *ngFor="let h of filteredHelpers" (click)="select(h)">

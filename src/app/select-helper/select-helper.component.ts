@@ -20,7 +20,9 @@ export class SelectHelperComponent implements OnInit {
   ) {
 
   }
-
+  clearHelper(){
+    this.select(new Helpers());
+  }
   async ngOnInit() {
     let h = new Helpers();
     this.allHelpers = await h.source.find({ orderBy: [h.name], limit: 1000 });
