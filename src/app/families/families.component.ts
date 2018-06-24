@@ -172,7 +172,7 @@ export class FamiliesComponent implements OnInit {
       {
         caption: 'טלפון משנע',
         getValue: f => f.lookup(new Helpers(), f.courier).phone.value
-      }
+      },
       families.courierAssingTime,
       families.courierAssignUser,
       families.deliverStatus.getColumn(),
