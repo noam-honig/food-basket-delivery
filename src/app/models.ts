@@ -41,7 +41,10 @@ class changeDate extends radweb.DateTimeColumn {
 class ItemId extends Id {
 
 }
-class HelperId extends Id {
+export interface HasAsyncGetTheValue {
+  getTheValue(): Promise<string>;
+}
+class HelperId extends Id implements HasAsyncGetTheValue {
 
   getColumn(dialog: SelectServiceInterface): ColumnSetting<Families> {
     return {
@@ -50,9 +53,15 @@ class HelperId extends Id {
       hideDataOnInput: true,
       click: f => dialog.selectHelper(s => f.courier.value = s.id.value),
       readonly: this.readonly,
-      width:'200'
+      width: '200'
 
     }
+  }
+  async getTheValue() {
+    let r = await this.lookupAsync(new Helpers());
+    if (r.name.value)
+      return r.name.value + ' ' + r.phone.value;
+    return '';
   }
 }
 class HelperIdReadonly extends HelperId {
@@ -66,14 +75,26 @@ class HelperIdReadonly extends HelperId {
     return this.lookup(new Helpers()).name.value;
   }
 }
-class BasketId extends Id {
+class BasketId extends Id implements HasAsyncGetTheValue {
   get displayValue() {
     return this.lookup(new BasketType()).name.value;
   }
+  async getTheValue() {
+    let r = await this.lookupAsync(new BasketType());
+    if (r.name.value)
+      return r.name.value;
+    return '';
+  }
 }
-class FamilySourceId extends Id {
+class FamilySourceId extends Id implements HasAsyncGetTheValue {
   get displayValue() {
     return this.lookup(new FamilySources()).name.value;
+  }
+  async getTheValue() {
+    let r = await this.lookupAsync(new FamilySources());
+    if (r.name.value)
+      return r.name.value;
+    return '';
   }
 }
 
@@ -138,7 +159,7 @@ export class DeliveryStatusColumn extends radweb.ClosedListColumn<DeliveryStatus
       dropDown: {
         items: this.getOptions()
       },
-      width:'150'
+      width: '150'
     };
   }
 

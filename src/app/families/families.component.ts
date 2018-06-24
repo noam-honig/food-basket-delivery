@@ -1,12 +1,13 @@
 import { Component, OnInit, ViewChild, Sanitizer } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { Families, Helpers, CallStatus, BasketType, FamilySources, DeliveryStatus } from '../models';
+import { Families, Helpers, CallStatus, BasketType, FamilySources, DeliveryStatus, HasAsyncGetTheValue } from '../models';
 import { SelectService } from '../select-popup/select-service';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 
 import { DomSanitizer } from '@angular/platform-browser';
 import * as XLSX from 'xlsx';
 import { FilterBase } from 'radweb/utils/dataInterfaces1';
+import { foreachEntityItem, foreachSync } from '../shared/utils';
 
 @Component({
   selector: 'app-families',
@@ -28,33 +29,40 @@ export class FamiliesComponent implements OnInit {
     });
   }
   limit: 10;
-  saveToExcel() {
+  async saveToExcel() {
 
 
     let wb = XLSX.utils.book_new();
     let data = [];
     let title = [];
     let doneTitle = false;
-    this.families.items.forEach(f => {
-      let row = [];
+    await foreachSync(await new Families().source.find({ limit: 10000 })
+      , async  f => {
+        let row = [];
 
-      f.__iterateColumns().forEach(c => {
+        await foreachSync( f.__iterateColumns(),async c => {
+          if (!doneTitle) {
+            title.push(c.caption);
+          }
+          let v = c.displayValue;
+          if (v == undefined)
+            v = '';
+
+          let getv: HasAsyncGetTheValue = <any>c as HasAsyncGetTheValue;
+          if (getv && getv.getTheValue) {
+            v = await getv.getTheValue();
+          }
+
+          v = v.toString();
+          row.push(v);
+        });
         if (!doneTitle) {
-          title.push(c.caption);
+          data.push(title);
+          doneTitle = true;
         }
-        let v = c.displayValue;
-        if (v == undefined)
-          v = '';
-        v = v.toString();
-        row.push(v);
-      });
-      if (!doneTitle) {
-        data.push(title);
-        doneTitle = true;
-      }
-      data.push(row);
+        data.push(row);
 
-    });
+      });
     let ws = XLSX.utils.aoa_to_sheet(data);
     XLSX.utils.book_append_sheet(wb, ws, 'test');
     XLSX.writeFile(wb, 'משפחות.xlsx');
