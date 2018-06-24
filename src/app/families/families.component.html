@@ -1,4 +1,9 @@
-
+<h4>
+    משפחות {{families.totalRows}}
+</h4>
+<h5 *ngFor="let s of statistics">
+   <a (click)="filterBy(s)"> {{s.name}} - {{s.count()}}</a>
+</h5>
 <div class="table-respons1ive" [class.hide]="!gridView">
     <data-grid [settings]="families"></data-grid>
     <button (click)="saveToExcel()" >יצוא לאקסל</button>

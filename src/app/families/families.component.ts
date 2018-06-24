@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild, Sanitizer } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { Families, Helpers, CallStatus, BasketType, FamilySources } from '../models';
+import { Families, Helpers, CallStatus, BasketType, FamilySources, DeliveryStatus } from '../models';
 import { SelectService } from '../select-popup/select-service';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 
 import { DomSanitizer } from '@angular/platform-browser';
 import * as XLSX from 'xlsx';
+import { FilterBase } from 'radweb/utils/dataInterfaces1';
 
 @Component({
   selector: 'app-families',
@@ -14,6 +15,18 @@ import * as XLSX from 'xlsx';
 })
 export class FamiliesComponent implements OnInit {
 
+  statistics: FaimilyStatistics[] = [
+    new FaimilyStatistics('הכל', f => undefined),
+    new FaimilyStatistics('טרם שוייכו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo(''))),
+    new FaimilyStatistics('שוייכו וטרם נמסרו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.IsDifferentFrom(''))),
+    new FaimilyStatistics('נמסרו', f => f.deliverStatus.isEqualTo(DeliveryStatus.Success.id))
+  ];
+  filterBy(s:FaimilyStatistics){
+    this.families.get({
+      where:s.rule,
+      limit:1000
+    });
+  }
   saveToExcel() {
 
 
@@ -48,12 +61,15 @@ export class FamiliesComponent implements OnInit {
   }
 
   families = new GridSettings(new Families(), {
-    
+
     allowUpdate: true,
     allowInsert: true,
-    numOfColumnsInGrid:10,
+    numOfColumnsInGrid: 10,
+
+
     get: { limit: 1000, orderBy: f => f.name },
     hideDataArea: true,
+    knowTotalRows: true,
     columnSettings: families => [
 
       {
@@ -172,5 +188,25 @@ export class FamiliesComponent implements OnInit {
   static route = 'families';
   static caption = 'משפחות';
 
+
+}
+class FaimilyStatistics {
+  constructor(public name: string, public rule: (f: Families) => FilterBase) {
+
+  }
+  private _count = -2;
+  count() {
+    switch (this._count) {
+      case -2:
+        this._count = -1;
+        let f = new Families();
+        f.source.count(this.rule(f)).then(c => this._count = c);
+        return '';
+      case -1:
+        return '';
+      default:
+        return this._count;
+    }
+  }
 
 }
