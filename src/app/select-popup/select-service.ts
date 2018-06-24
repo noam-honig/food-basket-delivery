@@ -7,9 +7,10 @@ import { InputAreaComponentData, InputAreaComponent } from "./input-area/input-a
 import { UpdateCommentComponent, UpdateCommentComponentData } from "../update-comment/update-comment.component";
 import { SelectHelperInfo, SelectHelperComponent } from "../select-helper/select-helper.component";
 import { Helpers } from "../models";
+import { SelectServiceInterface } from "./select-service-interface";
 
 @Injectable()
-export class SelectService {
+export class SelectService implements SelectServiceInterface{
     Info(info: string): any {
         this.Error(info);
     }

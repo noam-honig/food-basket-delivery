@@ -1,12 +1,13 @@
 import * as radweb from 'radweb';
 import { environment } from './../environments/environment';
 import * as uuid from 'uuid';
-import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn, UrlBuilder, DateTimeColumn, Column, DropDownItem, NumberColumn, ClosedListColumn } from 'radweb';
+import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn, UrlBuilder, DateTimeColumn, Column, DropDownItem, NumberColumn, ClosedListColumn, ColumnSetting } from 'radweb';
 import { foreachSync, foreachEntityItem } from './shared/utils';
 import { evilStatics } from './auth/evil-statics';
 import { GetGeoInformation, GeocodeInformation } from './shared/googleApiHelpers';
 import { myAuthInfo } from './auth/my-auth-info';
 import { DataColumnSettings } from 'radweb/utils/dataInterfaces1';
+import { SelectServiceInterface } from './select-popup/select-service-interface';
 
 class IdEntity<idType extends Id> extends radweb.Entity<string>
 {
@@ -40,8 +41,21 @@ class changeDate extends radweb.DateTimeColumn {
 class ItemId extends Id {
 
 }
-class HelperId extends Id { }
-class HelperIdReadonly extends Id {
+class HelperId extends Id {
+
+  getColumn(dialog: SelectServiceInterface): ColumnSetting<Families> {
+    return {
+      column: this,
+      getValue: f => f.courier.lookup(new Helpers()).name,
+      hideDataOnInput: true,
+      click: f => dialog.selectHelper(s => f.courier.value = s.id.value),
+      readonly: this.readonly,
+      width:'200'
+
+    }
+  }
+}
+class HelperIdReadonly extends HelperId {
   constructor(caption: string) {
     super({
       caption: caption,
@@ -117,6 +131,15 @@ export class Language {
 export class DeliveryStatusColumn extends radweb.ClosedListColumn<DeliveryStatus> {
   constructor(settingsOrCaption?: DataColumnSettings<number, NumberColumn> | string) {
     super(DeliveryStatus, settingsOrCaption);
+  }
+  getColumn() {
+    return {
+      column: this,
+      dropDown: {
+        items: this.getOptions()
+      },
+      width:'150'
+    };
   }
 
 }
@@ -269,7 +292,7 @@ export class Families extends IdEntity<FamilyId>{
 
 
   openWaze() {
-    window.open('https://waze.com/ul?ll=' + this.getGeocodeInformation().getlonglat()+"&q="+encodeURI(this.address.value) + '&navigate=yes', '_blank');
+    window.open('https://waze.com/ul?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + '&navigate=yes', '_blank');
   }
   openGoogleMaps() {
     window.open('https://www.google.com/maps/search/?api=1&query=' + this.address.value, '_blank');

@@ -48,9 +48,10 @@ export class FamiliesComponent implements OnInit {
   }
 
   families = new GridSettings(new Families(), {
-    allowDelete: true,
+    
     allowUpdate: true,
     allowInsert: true,
+    numOfColumnsInGrid:10,
     get: { limit: 1000, orderBy: f => f.name },
     hideDataArea: true,
     columnSettings: families => [
@@ -79,8 +80,10 @@ export class FamiliesComponent implements OnInit {
       {
         column: families.familySource,
         dropDown: { source: new FamilySources() },
-        width: '100'
+        width: '150'
       },
+      families.courier.getColumn(this.dialog),
+      families.deliverStatus.getColumn()
     ],
     rowButtons: [
       {
@@ -148,22 +151,10 @@ export class FamiliesComponent implements OnInit {
   })
   deliverInfo = this.families.addArea({
     columnSettings: families => [
-      {
-        column: families.courier,
-        getValue: f => f.courier.lookup(new Helpers()).name,
-        hideDataOnInput: true,
-        click: f => this.dialog.selectHelper(s => f.courier.value = s.id.value)
-
-      },
+      families.courier.getColumn(this.dialog),
       families.courierAssingTime,
       families.courierAssignUser,
-
-      {
-        column: families.deliverStatus,
-        dropDown: {
-          items: families.deliverStatus.getOptions()
-        }
-      },
+      families.deliverStatus.getColumn(),
       families.deliveryStatusDate,
       families.deliveryStatusUser,
       families.courierComments,
