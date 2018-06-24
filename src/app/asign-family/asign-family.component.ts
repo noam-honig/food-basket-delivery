@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridSettings } from 'radweb';
 import { Families, Language, Helpers, DeliveryStatus, BasketType } from '../models';
 import { AuthService } from '../auth/auth-service';
@@ -7,6 +7,7 @@ import { AddBoxAction } from './add-box-action';
 import { UserFamiliesList } from '../my-families/user-families';
 import { SendSmsAction } from './send-sms-action';
 import { GetBasketStatusAction, BasketInfo } from './get-basket-status-action';
+import { MapComponent } from '../map/map.component';
 
 
 @Component({
@@ -35,7 +36,10 @@ export class AsignFamilyComponent implements OnInit {
   baskets: BasketInfo[];
   refreshList() {
     SendSmsAction.generateMessage(this.id, (p, m) => this.smsMessage = m);
-    this.familyLists.initForHelper(this.id);
+    this.familyLists.initForHelper(this.id).then(() => {
+      this.map.test(this.familyLists.allFamilies);
+      this.map.mapVisible = this.familyLists.allFamilies.length>0;
+    });
     new GetBasketStatusAction().run({}).then(r => {
       this.baskets = r.baskets;
       console.log(r);
@@ -58,9 +62,11 @@ export class AsignFamilyComponent implements OnInit {
     this.name = undefined;
     this.id = undefined;
     this.clearList();
+    
   }
   clearList() {
     this.familyLists.clear();
+    this.map.test([]);
   }
   findHelper() {
     this.dialog.selectHelper(h => {
@@ -73,7 +79,7 @@ export class AsignFamilyComponent implements OnInit {
   }
   async cancelAssign(f: Families) {
     f.courier.value = '';
-    
+
     await f.save();
     this.refreshList();
 
@@ -84,19 +90,20 @@ export class AsignFamilyComponent implements OnInit {
   ngOnInit() {
 
   }
-  async assignItem(basket: BasketInfo,filterLangulage:number) {
+  async assignItem(basket: BasketInfo, filterLangulage: number) {
     console.log(filterLangulage);
     let x = await new AddBoxAction().run({
       phone: this.phone,
       name: this.name,
       basketType: basket.id,
       helperId: this.id,
-      language:filterLangulage
+      language: filterLangulage
     });
     if (x.ok) {
       basket.unassignedFamilies--;
       this.id = x.helperId;
-      this.familyLists.initForHelper(this.id);
+      this.refreshList();
+      
     }
     else {
       this.refreshList();
@@ -106,6 +113,7 @@ export class AsignFamilyComponent implements OnInit {
 
     console.log(x);
   }
+  
   sendSms() {
     new SendSmsAction().run({ helperId: this.id });
   }
@@ -118,5 +126,5 @@ export class AsignFamilyComponent implements OnInit {
     window.open('sms:' + this.phone + ';?&body=' + encodeURI(this.smsMessage), '_blank');
   }
 
-
+  @ViewChild("map") map: MapComponent;
 }

@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridSettings } from 'radweb';
 import { Families, DeliveryStatus } from '../models';
 import { AuthService } from '../auth/auth-service';
 import { SelectService } from '../select-popup/select-service';
 import { UserFamiliesList } from './user-families';
+import { MapComponent } from '../map/map.component';
 
 @Component({
   selector: 'app-my-families',
@@ -17,6 +18,7 @@ export class MyFamiliesComponent implements OnInit {
   constructor(public auth: AuthService, private dialog: SelectService) { }
   async ngOnInit() {
     await this.familyLists.initForHelper(this.auth.auth.info.helperId);
+    this.map.test(this.familyLists.allFamilies);
   }
 
   async deliveredToFamily(f: Families) {
@@ -27,7 +29,7 @@ export class MyFamiliesComponent implements OnInit {
         f.courierComments.value = comment;
         try {
           await f.save();
-          this.familyLists.initFamilies();
+          this.initFamilies();
 
         }
         catch (err) {
@@ -37,6 +39,10 @@ export class MyFamiliesComponent implements OnInit {
       cancel: () => { }
     });
 
+  }
+  initFamilies(){
+    this.familyLists.initFamilies();
+    this.map.test(this.familyLists.allFamilies);
   }
   async couldntDeliverToFamily(f: Families) {
     this.dialog.displayComment({
@@ -48,7 +54,8 @@ export class MyFamiliesComponent implements OnInit {
         f.courierComments.value = comment;
         try {
           await f.save();
-          this.familyLists.initFamilies();
+          this.initFamilies();
+          
 
         }
         catch (err) {
@@ -74,12 +81,11 @@ export class MyFamiliesComponent implements OnInit {
     f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
     try {
       await f.save();
-      this.familyLists.initFamilies();
-
+      this.initFamilies();
     }
     catch (err) {
       this.dialog.Error(err);
     }
   }
-
+  @ViewChild("map") map: MapComponent;
 }

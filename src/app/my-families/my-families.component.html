@@ -1,4 +1,5 @@
 <h3>שלום {{auth.auth.info.name}}</h3>
+
 <h4>משפחות לחלוקה - {{familyLists.toDeliver.length}}</h4>
 <mat-accordion>
   <mat-expansion-panel #myPanel *ngFor="let f of familyLists.toDeliver">
@@ -21,6 +22,9 @@
     </app-family-info>
   </mat-expansion-panel>
 </mat-accordion>
+
+<app-map #map></app-map>
+
 <div *ngIf="familyLists.delivered.length>0">
   <h4>משפחות שחולקו - {{familyLists.delivered.length}}</h4>
   <mat-accordion>

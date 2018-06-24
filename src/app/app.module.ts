@@ -35,6 +35,7 @@ import { UpdateCommentComponent } from './update-comment/update-comment.componen
 import { FixAddressComponent } from './fix-address/fix-address.component';
 import { SelectHelperComponent } from './select-helper/select-helper.component';
 import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component';
+import { MapComponent } from './map/map.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component
     UpdateCommentComponent,
     FixAddressComponent,
     SelectHelperComponent,
-    LoginFromSmsComponent
+    LoginFromSmsComponent,
+    MapComponent
   ],
   imports: [
     BrowserModule,

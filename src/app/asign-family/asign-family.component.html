@@ -23,8 +23,8 @@
 
     <div>
       <ng-container *ngFor="let b of baskets">
-      <button mat-raised-button color="primary" class="myButton" (click)="assignItem(b,group.value)" *ngIf="b.unassignedFamilies">הוסף ארגז {{b.name}} - {{b.unassignedFamilies}}</button>
-    </ng-container>
+        <button mat-raised-button color="primary" class="myButton" (click)="assignItem(b,group.value)" *ngIf="b.unassignedFamilies">הוסף ארגז {{b.name}} - {{b.unassignedFamilies}}</button>
+      </ng-container>
 
     </div>
     <span *ngIf="familyLists.toDeliver.length>0">
@@ -52,8 +52,9 @@
       <button mat-raised-button class="myButton" color="primary" (click)="sendSmsFromPhone()">שלחי הודעת SMS מהטלפון</button>
 
     </span>
+    
     <div *ngIf="familyLists.delivered.length>0">
-      <h1>משפחות שחולקו - {{familyLists.delivered.length}}</h1>
+      <h4>משפחות שחולקו - {{familyLists.delivered.length}}</h4>
       <mat-accordion>
         <mat-expansion-panel #myPanel *ngFor="let f of familyLists.delivered">
           <mat-expansion-panel-header>
@@ -99,3 +100,4 @@
       </mat-accordion>
     </div>
   </span>
+  <app-map #map></app-map>
