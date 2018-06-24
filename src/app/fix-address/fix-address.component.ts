@@ -3,7 +3,7 @@ import { GridSettings } from 'radweb';
 import { Families, Helpers, CallStatus, BasketType, FamilySources } from '../models';
 import { SelectService } from '../select-popup/select-service';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
-
+import { } from '@types/googlemaps';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
