@@ -24,9 +24,10 @@ export class FamiliesComponent implements OnInit {
   filterBy(s:FaimilyStatistics){
     this.families.get({
       where:s.rule,
-      limit:1000
+      limit:this.limit
     });
   }
+  limit:10;
   saveToExcel() {
 
 
@@ -67,7 +68,7 @@ export class FamiliesComponent implements OnInit {
     numOfColumnsInGrid: 10,
 
 
-    get: { limit: 1000, orderBy: f => f.name },
+    get: { limit: this.limit, orderBy: f => f.name },
     hideDataArea: true,
     knowTotalRows: true,
     columnSettings: families => [

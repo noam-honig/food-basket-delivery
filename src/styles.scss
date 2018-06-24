@@ -93,12 +93,7 @@ th {
     float: right;
     }
 }
-.pull-right {
-    float: left !important;
-  }
-  .pull-left {
-    float: right !important;
-  }
+
   .glyphicon-chevron-left:before {
       content: "\e080";
 }
@@ -120,9 +115,9 @@ th {
     font-weight: 400 !important;
     }
 // solution for the table responsive rtl bug in IOS
-    .table-responsive {
-        direction: ltr;
-      }
-      .table-responsive   table {
-        direction: rtl;
-      }
+.table-responsive {
+    direction: ltr;
+  }
+  .table-responsive   table {
+    direction: rtl;
+  }
