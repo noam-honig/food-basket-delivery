@@ -21,13 +21,13 @@ export class FamiliesComponent implements OnInit {
     new FaimilyStatistics('שוייכו וטרם נמסרו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.IsDifferentFrom(''))),
     new FaimilyStatistics('נמסרו', f => f.deliverStatus.isEqualTo(DeliveryStatus.Success.id))
   ];
-  filterBy(s:FaimilyStatistics){
+  filterBy(s: FaimilyStatistics) {
     this.families.get({
-      where:s.rule,
-      limit:this.limit
+      where: s.rule,
+      limit: this.limit
     });
   }
-  limit:10;
+  limit: 10;
   saveToExcel() {
 
 
@@ -169,6 +169,10 @@ export class FamiliesComponent implements OnInit {
   deliverInfo = this.families.addArea({
     columnSettings: families => [
       families.courier.getColumn(this.dialog),
+      {
+        caption: 'טלפון משנע',
+        getValue: f => f.lookup(new Helpers(), f.courier).phone.value
+      }
       families.courierAssingTime,
       families.courierAssignUser,
       families.deliverStatus.getColumn(),

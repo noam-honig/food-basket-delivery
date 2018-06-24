@@ -2,47 +2,103 @@
     משפחות {{families.totalRows}}
 </h4>
 <h5 *ngFor="let s of statistics">
-   <a (click)="filterBy(s)"> {{s.name}} - {{s.count()}}</a>
+    <a (click)="filterBy(s)"> {{s.name}} - {{s.count()}}</a>
 </h5>
 
 <div class="table-responsive" [class.hide]="!gridView">
     <data-grid [settings]="families"></data-grid>
-    
+    <button (click)="saveToExcel()">יצוא לאקסל</button>
 </div>
-<button (click)="saveToExcel()" >יצוא לאקסל</button>
-<div [class.hide]="gridView">
+
+<div [class.hide]="gridView" *ngIf="families.currentRow">
     <button (click)="gridView = !gridView">חזרה לרשימה</button>
     <button *ngIf="families.currentRow" (click)="families.currentRow.save()" [disabled]="!families.currentRow.wasChanged()">שמור</button>
     <button (click)="families.nextRow()">הבא</button>
     <button (click)="families.previousRow()">קודם</button>
 
     <button (click)="families.addNewRow()">הוסף</button>
-    <mat-card>
-        <h1>פרטי משפחה</h1>
+    <mat-accordion>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <div>
+                    <mat-panel-title>
+                        פרטי משפחה
+                    </mat-panel-title>
+                </div>
+                <div>
+                    <mat-panel-description>
+                        {{families.currentRow.name.value}}
+                    </mat-panel-description>
+                </div>
+            </mat-expansion-panel-header>
+            <data-area [settings]="familiesInfo"></data-area>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <div>
+                    <mat-panel-title>
+                        כתובת
+                    </mat-panel-title>
+                </div>
+                <div>
+                    <mat-panel-description>
+                        {{families.currentRow.address.value}}
+                    </mat-panel-description>
+                </div>
 
-        <data-area [settings]="familiesInfo"></data-area>
-    </mat-card>
-    <mat-card>
-        <h1>כתובת</h1>
+            </mat-expansion-panel-header>
+            <a (click)="families.currentRow.openWaze()" target="_blank">פתחי WAZE</a> |
+            <a (click)="families.currentRow.openGoogleMaps()" target="_blank">פתחי גוגל </a>
+            <data-area [settings]="familiesAddress"></data-area>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <div>
+                    <mat-panel-title>
+                        טלפונים
+                    </mat-panel-title>
+                </div>
+                <div>
+                    <mat-panel-description>
+                        {{families.currentRow.phone1.value}}
+                    </mat-panel-description>
+                </div>
 
-        <data-area [settings]="familiesAddress"></data-area>
-    </mat-card>
-    <mat-card>
+            </mat-expansion-panel-header>
+            <data-area [settings]="phones"></data-area>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <div>
+                    <mat-panel-title>
+                        פרטי משלוח
+                    </mat-panel-title>
+                </div>
+                <div>
+                    <mat-panel-description>
+                        {{families.currentRow.deliverStatus.displayValue}}
+                    </mat-panel-description>
+                </div>
 
-        <h1>טלפונים</h1>
+            </mat-expansion-panel-header>
+            <data-area [settings]="deliverInfo"></data-area>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <div>
+                    <mat-panel-title>
+                        פרטי שיחה
+                    </mat-panel-title>
+                </div>
+                <div>
+                    <mat-panel-description>
+                        {{families.currentRow.callStatus.displayValue}}
+                    </mat-panel-description>
+                </div>
 
-        <data-area [settings]="phones"></data-area>
-    </mat-card>
-    <mat-card>
+            </mat-expansion-panel-header>
+            <data-area [settings]="callInfo"></data-area>
+        </mat-expansion-panel>
 
-        <h1>פרטי שיחה</h1>
-
-        <data-area [settings]="callInfo"></data-area>
-    </mat-card>
-    <mat-card>
-
-        <h1>פרטי משלוח</h1>
-
-        <data-area [settings]="deliverInfo"></data-area>
-    </mat-card>
+    </mat-accordion>
 </div>

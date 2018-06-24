@@ -29,11 +29,7 @@ const routes: Routes = [
     component: FamiliesComponent,
     data: { name: FamiliesComponent.caption }, canActivate: [AdminGuard]
   },
-  {
-    path: 'addresses',
-    component: FixAddressComponent,
-    data: { name: 'טיוב כתובות' }, canActivate: [AdminGuard]
-  },
+
   {
     path: 'my-families', component: MyFamiliesComponent, canActivate: [LoggedInGuard], data: { name: 'משפחות שלי' }
   },
@@ -45,10 +41,16 @@ const routes: Routes = [
     component: HelpersComponent,
     data: { name: 'מתנדבות' }, canActivate: [AdminGuard]
   },
+  
   {
     path: 'manage',
     component: ManageComponent,
     data: { name: 'ניהול' }, canActivate: [AdminGuard]
+  },
+  {
+    path: 'addresses',
+    component: FixAddressComponent,
+    data: { name: 'טיוב כתובות' }, canActivate: [AdminGuard]
   },
   {
     path:'x/:id',
