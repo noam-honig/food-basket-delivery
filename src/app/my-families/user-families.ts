@@ -15,7 +15,7 @@ export class UserFamiliesList {
         this.initFamilies();
     }
     initFamilies() {
-        this.toDeliver = this.allFamilies.filter(f => f.deliverStatus.listValue == DeliveryStatus.Assigned);
+        this.toDeliver = this.allFamilies.filter(f => f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery);
         this.delivered = this.allFamilies.filter(f => f.deliverStatus.listValue == DeliveryStatus.Success);
         this.problem = this.allFamilies.filter(f => {
             switch (f.deliverStatus.listValue) {

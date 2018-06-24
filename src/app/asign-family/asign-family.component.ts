@@ -28,7 +28,7 @@ export class AsignFamilyComponent implements OnInit {
         this.id = r[0].id.value;
         this.refreshList();
       } else {
-
+        this.refreshList();
       }
     }
   }
@@ -72,8 +72,8 @@ export class AsignFamilyComponent implements OnInit {
     });
   }
   async cancelAssign(f: Families) {
-    f.courier.value = undefined;
-    f.deliverStatus.listValue = DeliveryStatus.NotYetAssigned;
+    f.courier.value = '';
+    
     await f.save();
     this.refreshList();
 
@@ -95,6 +95,7 @@ export class AsignFamilyComponent implements OnInit {
     });
     if (x.ok) {
       basket.unassignedFamilies--;
+      this.id = x.helperId;
       this.familyLists.initForHelper(this.id);
     }
     else {

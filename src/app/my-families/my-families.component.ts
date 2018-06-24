@@ -71,7 +71,7 @@ export class MyFamiliesComponent implements OnInit {
     });
   }
   async returnToDeliver(f: Families) {
-    f.deliverStatus.listValue = DeliveryStatus.Assigned;
+    f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
     try {
       await f.save();
       this.familyLists.initFamilies();

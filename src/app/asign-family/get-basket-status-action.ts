@@ -15,7 +15,7 @@ export class GetBasketStatusAction extends ServerAction<GetBasketStatusActionInf
         };
         let hash: any = {};
         let f = new Families();
-        let r = await f.source.find({ where: f.deliverStatus.isEqualTo(DeliveryStatus.NotYetAssigned.id) });
+        let r = await f.source.find({ where: f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('')) });
         r.forEach(cf => {
             let bi = hash[cf.basketType.value];
             if (!bi) {

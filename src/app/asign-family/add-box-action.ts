@@ -21,19 +21,18 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
                 h.phone.value = info.phone;
                 h.name.value = info.name;
                 await h.save();
-                info.helperId = h.id.value;
+                result.helperId = h.id.value;
             }
         }
 
         {
             let f = new Families();
-            let where = f.deliverStatus.isEqualTo(DeliveryStatus.NotYetAssigned.id).and(f.basketType.isEqualTo(info.basketType));
+            let where = f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.basketType.isEqualTo(info.basketType)));
             if (info.language > -1)
                 where = where.and(f.language.isEqualTo(info.language));
             let r = await f.source.find({ where });
             if (r.length > 0) {
-                r[0].deliverStatus.listValue = DeliveryStatus.Assigned;
-                r[0].courier.value = info.helperId;
+                r[0].courier.value = result.helperId;
                 await r[0].save();
                 result.ok = true;
             }
