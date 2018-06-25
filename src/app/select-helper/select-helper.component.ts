@@ -21,7 +21,9 @@ export class SelectHelperComponent implements OnInit {
 
   }
   clearHelper(){
-    this.select(new Helpers());
+    let h =new Helpers();
+    h.id.value = '';
+    this.select(h);
   }
   async ngOnInit() {
     let h = new Helpers();
