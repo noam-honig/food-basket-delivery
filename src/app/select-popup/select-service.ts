@@ -26,9 +26,7 @@ export class SelectService implements SelectServiceInterface {
     constructor(private dialog: MatDialog) {
         wrapFetch.wrap = () => {
             if (this.numOfWaits == 0) {
-                setTimeout(() => {
-                    this.waitRef = this.dialog.open(WaitComponent, { disableClose: true });
-                }, 10);
+                this.waitRef = this.dialog.open(WaitComponent, { disableClose: true });
             }
             this.numOfWaits++;
 

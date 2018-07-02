@@ -27,7 +27,12 @@ serverInit();
 let app = express();
 let port = process.env.PORT || 3000;
 
-
+let x = [3096.4541738001158
+    , 52.04865024999742
+    , 401.776607569792
+    , 52.106350100041446];
+x = x.sort();
+console.log(x);
 
 
 let eb = new ExpressBridge<myAuthInfo>(app);
@@ -39,11 +44,12 @@ let adminActions = eb.addArea('', async x => x.authInfo && x.authInfo.admin);
 evilStatics.auth.tokenSignKey = process.env.TOKEN_SIGN_KEY;
 eb.addRequestProcessor(req => {
     var apikey = process.env.HOSTEDGRAPHITE_APIKEY;
-
-    var socket = net.createConnection(2003, "carbon.hostedgraphite.com", function () {
-        socket.write(apikey + ".request.count 1\n");
-        socket.end();
-    });
+    try {
+        var socket = net.createConnection(2003, "carbon.hostedgraphite.com", function () {
+            socket.write(apikey + ".request.count 1\n");
+            socket.end();
+        });
+    } catch{ }
     return true;
 });
 evilStatics.auth.applyTo(eb, openActions);
