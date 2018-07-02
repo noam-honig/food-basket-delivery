@@ -41,7 +41,7 @@ eb.addRequestProcessor(req => {
     var apikey = process.env.HOSTEDGRAPHITE_APIKEY;
 
     var socket = net.createConnection(2003, "carbon.hostedgraphite.com", function () {
-        socket.write(apikey + ".request.time 1444\n");
+        socket.write(apikey + ".request.count 1\n");
         socket.end();
     });
     return true;
