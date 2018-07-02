@@ -8,6 +8,7 @@ import { UpdateCommentComponent, UpdateCommentComponentData } from "../update-co
 import { SelectHelperInfo, SelectHelperComponent } from "../select-helper/select-helper.component";
 import { Helpers } from "../models";
 import { SelectServiceInterface } from "./select-service-interface";
+import { WaitComponent } from "../wait/wait.component";
 
 @Injectable()
 export class SelectService implements SelectServiceInterface{
@@ -54,6 +55,14 @@ export class SelectService implements SelectServiceInterface{
         this.dialog.open(SelectHelperComponent, {
             data
         });
+    }
+    wait(){
+        let ref = this.dialog.open(WaitComponent,{disableClose:true});
+        setTimeout(() => {
+            ref.close();
+        }, 3000);
+        
+        
     }
 
 
