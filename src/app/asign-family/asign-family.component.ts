@@ -34,18 +34,17 @@ export class AsignFamilyComponent implements OnInit {
     }
   }
   baskets: BasketInfo[];
-  refreshList() {
-    SendSmsAction.generateMessage(this.id, (p, m) => this.smsMessage = m);
-    this.familyLists.initForHelper(this.id).then(() => {
-      this.map.test(this.familyLists.allFamilies);
-      if (this.map.mapVisible )
-        this.map.mapVisible = this.familyLists.allFamilies.length>0;
-    });
-    new GetBasketStatusAction().run({}).then(r => {
-      this.baskets = r.baskets;
-      console.log(r);
-    });
+  async refreshList() {
 
+    
+      SendSmsAction.generateMessage(this.id, (p, m) => this.smsMessage = m);
+      this.familyLists.initForHelper(this.id).then(() => {
+        this.map.test(this.familyLists.allFamilies);
+        if (this.map.mapVisible)
+          this.map.mapVisible = this.familyLists.allFamilies.length > 0;
+      });
+      this.baskets = (await new GetBasketStatusAction().run({})).baskets;
+    
   }
   familyLists = new UserFamiliesList();
   filterLangulage = -1;
@@ -63,7 +62,7 @@ export class AsignFamilyComponent implements OnInit {
     this.name = undefined;
     this.id = undefined;
     this.clearList();
-    
+
   }
   clearList() {
     this.familyLists.clear();
@@ -93,29 +92,29 @@ export class AsignFamilyComponent implements OnInit {
 
   }
   async assignItem(basket: BasketInfo, filterLangulage: number) {
-    console.log(filterLangulage);
-    let x = await new AddBoxAction().run({
-      phone: this.phone,
-      name: this.name,
-      basketType: basket.id,
-      helperId: this.id,
-      language: filterLangulage
-    });
-    if (x.ok) {
-      basket.unassignedFamilies--;
-      this.id = x.helperId;
-      this.refreshList();
-      
-    }
-    else {
-      this.refreshList();
-      this.dialog.Info("לא נמצאה משפחה מתאימה");
-    }
-    this.id = x.helperId;
+    
+      let x = await new AddBoxAction().run({
+        phone: this.phone,
+        name: this.name,
+        basketType: basket.id,
+        helperId: this.id,
+        language: filterLangulage
+      });
+      if (x.ok) {
+        basket.unassignedFamilies--;
+        this.id = x.helperId;
+        await this.refreshList();
 
-    console.log(x);
+      }
+      else {
+        this.refreshList();
+        this.dialog.Info("לא נמצאה משפחה מתאימה");
+      }
+      this.id = x.helperId;
+
+    
   }
-  
+
   sendSms() {
     new SendSmsAction().run({ helperId: this.id });
   }

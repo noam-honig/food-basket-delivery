@@ -21,7 +21,7 @@ import { GetBasketStatusAction } from '../asign-family/get-basket-status-action'
 import { serverInit } from './serverInit';
 
 serverInit();
-
+;
 
 let app = express();
 let port = process.env.PORT || 3000;

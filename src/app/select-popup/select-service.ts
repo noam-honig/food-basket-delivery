@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { MatDialog } from "@angular/material";
+import { MatDialog, MatDialogRef } from "@angular/material";
 import { Entity, GridSettings, IDataSettings, IDataAreaSettings } from "radweb";
 import { SelectPopupComponent, SelectComponentInfo } from "./select-popup.component";
 import { YesNoQuestionComponentData, YesNoQuestionComponent } from "./yes-no-question/yes-no-question.component";
@@ -9,9 +9,11 @@ import { SelectHelperInfo, SelectHelperComponent } from "../select-helper/select
 import { Helpers } from "../models";
 import { SelectServiceInterface } from "./select-service-interface";
 import { WaitComponent } from "../wait/wait.component";
+import { wrapFetch } from "radweb/utils/restDataProvider";
+
 
 @Injectable()
-export class SelectService implements SelectServiceInterface{
+export class SelectService implements SelectServiceInterface {
     Info(info: string): any {
         this.Error(info);
     }
@@ -19,8 +21,20 @@ export class SelectService implements SelectServiceInterface{
 
         this.YesNoQuestion(err, () => { });
     }
+    private numOfWaits = 0;
+    private waitRef: MatDialogRef<any>;
     constructor(private dialog: MatDialog) {
+        wrapFetch.wrap = () => {
+            if (this.numOfWaits == 0)
+                this.waitRef = this.dialog.open(WaitComponent, { disableClose: true });
+            this.numOfWaits++;
 
+            return () => {
+                this.numOfWaits--;
+                if (this.numOfWaits==0)
+                this.waitRef.close();
+            };
+        };
     }
     displayArea(settings: InputAreaComponentData) {
         this.dialog.open(InputAreaComponent, { data: settings });
@@ -56,13 +70,15 @@ export class SelectService implements SelectServiceInterface{
             data
         });
     }
-    wait(){
-        let ref = this.dialog.open(WaitComponent,{disableClose:true});
-        setTimeout(() => {
+    async wait<T>(what: () => T) {
+        let ref = this.dialog.open(WaitComponent, { disableClose: true });
+        try {
+            let r = await what();
+            return r;
+        }
+        finally {
             ref.close();
-        }, 3000);
-        
-        
+        }
     }
 
 
