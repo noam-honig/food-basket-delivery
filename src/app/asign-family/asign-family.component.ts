@@ -38,7 +38,8 @@ export class AsignFamilyComponent implements OnInit {
     SendSmsAction.generateMessage(this.id, (p, m) => this.smsMessage = m);
     this.familyLists.initForHelper(this.id).then(() => {
       this.map.test(this.familyLists.allFamilies);
-      this.map.mapVisible = this.familyLists.allFamilies.length>0;
+      if (this.map.mapVisible )
+        this.map.mapVisible = this.familyLists.allFamilies.length>0;
     });
     new GetBasketStatusAction().run({}).then(r => {
       this.baskets = r.baskets;
@@ -67,6 +68,7 @@ export class AsignFamilyComponent implements OnInit {
   clearList() {
     this.familyLists.clear();
     this.map.test([]);
+    this.map.mapVisible = false;
   }
   findHelper() {
     this.dialog.selectHelper(h => {

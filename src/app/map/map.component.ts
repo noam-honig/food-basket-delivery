@@ -13,7 +13,7 @@ export class MapComponent implements OnInit {
 
   ngOnInit() {
   }
-  mapVisible = true;
+  mapVisible = false;
 
   mapInit = false;
   markers: google.maps.Marker[] = [];
