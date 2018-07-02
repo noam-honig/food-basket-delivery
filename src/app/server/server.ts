@@ -2,7 +2,7 @@ import { environment } from './../../environments/environment';
 import * as models from './../models';
 import * as express from 'express';
 import * as radweb from 'radweb';
-import {  ExpressBridge } from 'radweb/server';
+import { ExpressBridge } from 'radweb/server';
 import { DataApi, DataApiSettings } from 'radweb/utils/server/DataApi';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -19,6 +19,7 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 import { LoginFromSmsAction } from '../login-from-sms/login-from-sms-action';
 import { GetBasketStatusAction } from '../asign-family/get-basket-status-action';
 import { serverInit } from './serverInit';
+import * as net from 'net';
 
 serverInit();
 ;
@@ -36,7 +37,15 @@ let dataApi = eb.addArea('/dataApi', async x => x.authInfo != undefined);
 let openActions = eb.addArea('');
 let adminActions = eb.addArea('', async x => x.authInfo && x.authInfo.admin);
 evilStatics.auth.tokenSignKey = process.env.TOKEN_SIGN_KEY;
+eb.addRequestProcessor(req => {
+    var apikey = process.env.HOSTEDGRAPHITE_APIKEY;
 
+    var socket = net.createConnection(2003, "carbon.hostedgraphite.com", function () {
+        socket.write(apikey + ".request.time 1444\n");
+        socket.end();
+    });
+    return true;
+});
 evilStatics.auth.applyTo(eb, openActions);
 
 openActions.addAction(new LoginAction());
@@ -83,7 +92,7 @@ dataApi.add(r => {
     var settings: DataApiSettings<models.Families> = {
         allowDelete: r.authInfo && r.authInfo.admin,
         allowInsert: r.authInfo && r.authInfo.admin,
-        allowUpdate: r.authInfo?true:false ,
+        allowUpdate: r.authInfo ? true : false,
         readonlyColumns: f => {
             if (r.authInfo) {
                 if (r.authInfo.admin)
