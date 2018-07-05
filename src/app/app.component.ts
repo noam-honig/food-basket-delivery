@@ -3,6 +3,7 @@ import { Router, Route, CanActivate, ActivatedRoute, ActivatedRouteSnapshot } fr
 import { AuthService } from './auth/auth-service';
 import { LoggedInGuard, dummyRoute } from './auth/auth-guard';
 import { MatSidenav } from '@angular/material';
+import { SelectService } from './select-popup/select-service';
 
 
 @Component({
@@ -13,27 +14,26 @@ import { MatSidenav } from '@angular/material';
 })
 export class AppComponent {
 
-  private mediaMatcher: MediaQueryList = matchMedia(`(max-width: 720px)`);
-  constructor(zone: NgZone,
+
+  constructor(
     public auth: AuthService,
     public router: Router,
-    private injector: Injector) {
-    this.mediaMatcher.addListener(mql => zone.run(() => this.mediaMatcher = mql));
-    if (!window.location.hostname.toLocaleLowerCase().startsWith('hmey')){
+    private injector: Injector,
+    public dialog: SelectService) {
+
+    if (!window.location.hostname.toLocaleLowerCase().startsWith('hmey')) {
       this.toolbarColor = 'accent';
       this.toolbarText = 'הדגמת אתר אמהות מחבקות';
     }
   }
-  isScreenSmall() {
-    return this.mediaMatcher.matches;
-  }
+
   routeName(route: Route) {
     let name = route.path;
     if (route.data && route.data.name)
       name = route.data.name;
     return name;
   }
-  toolbarColor='accent';
+  toolbarColor = 'accent';
   toolbarText = 'אמהות מחבקות אבן יהודה והסביבה';
   signOut() {
 
@@ -59,7 +59,7 @@ export class AppComponent {
   }
   @ViewChild('sidenav') sidenav: MatSidenav;
   routeClicked() {
-    if (this.isScreenSmall())
+    if (this.dialog.isScreenSmall())
       this.sidenav.close();
 
   }

@@ -40,7 +40,7 @@ export class FamiliesComponent implements OnInit {
       , async  f => {
         let row = [];
 
-        await foreachSync( f.__iterateColumns(),async c => {
+        await foreachSync(f.__iterateColumns(), async c => {
           if (!doneTitle) {
             title.push(c.caption);
           }
@@ -102,17 +102,14 @@ export class FamiliesComponent implements OnInit {
         dropDown: { source: new BasketType() },
         width: '100'
       },
-      {
-        column: families.familySource,
-        dropDown: { source: new FamilySources() },
-        width: '150'
-      },
+    
       families.courier.getColumn(this.dialog),
       families.deliverStatus.getColumn()
     ],
     rowButtons: [
       {
-        name: 'עדכני',
+        name: '',
+        cssClass: 'btn glyphicon glyphicon-pencil'
         click: f => this.gridView = !this.gridView
       }
     ]
@@ -190,7 +187,10 @@ export class FamiliesComponent implements OnInit {
     ]
   });
   gridView = true;
-  constructor(private dialog: SelectService, private san: DomSanitizer) { }
+  constructor(private dialog: SelectService, private san: DomSanitizer) {
+    if (dialog.isScreenSmall())
+      this.gridView = false;
+  }
 
 
   ngOnInit() {
