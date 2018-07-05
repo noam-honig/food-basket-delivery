@@ -120,7 +120,7 @@ export class FamiliesComponent implements OnInit {
     rowButtons: [
       {
         name: '',
-        cssClass: 'btn glyphicon glyphicon-pencil'
+        cssClass: 'btn glyphicon glyphicon-pencil',
         click: f => this.gridView = !this.gridView
       }
     ]
