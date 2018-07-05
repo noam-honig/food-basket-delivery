@@ -15,10 +15,12 @@
         </mat-panel-description>
       </div>
     </mat-expansion-panel-header>
-    <app-family-info [f]="f">
+    <app-family-info [f]="f" [showHelp]="true" >
       <button mat-raised-button class="myButton" color="primary" (click)="deliveredToFamily(f)">מסרתי את החבילה בהצלחה</button>
       <br/>
       <button mat-raised-button class="myButton badButton" (click)="couldntDeliverToFamily(f)">נתקלתי בבעיה במסירה</button>
+      
+      
     </app-family-info>
   </mat-expansion-panel>
 </mat-accordion>
@@ -41,7 +43,7 @@
           </mat-panel-description>
         </div>
       </mat-expansion-panel-header>
-      <app-family-info [f]="f">
+      <app-family-info [f]="f" [showHelp]="true">
         <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
         <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות לחלוקה</button>
       </app-family-info>
@@ -65,15 +67,10 @@
         </div>
       </mat-expansion-panel-header>
 
-      <app-family-info [f]="f">
+      <app-family-info [f]="f" [showHelp]="true">
         <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
         <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות לחלוקה</button>
       </app-family-info>
     </mat-expansion-panel>
   </mat-accordion>
 </div>
-
-
-נתקלת בבעייה בחלוקה,
-<br/>התקשר לאמהות מחבקות
-<a href="tel:0507330591">0507-330591</a>

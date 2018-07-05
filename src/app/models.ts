@@ -295,8 +295,17 @@ export class Families extends IdEntity<FamilyId>{
 
 
   courier = new HelperId("משנע");
-  courierAssingTime = new changeDate('תאריך שיוך למשנע');
   courierAssignUser = new HelperIdReadonly('מי שייכה למשנע');
+  courierAssignUserName = new radweb.StringColumn({
+    caption: 'שם שיוך למשנע',
+    virtualData: async () => (await this.lookupAsync(new Helpers(), this.courierAssignUser)).name.value
+  });
+  courierAssignUserPhone = new radweb.StringColumn({
+    caption: 'שם שיוך למשנע',
+    virtualData: async () => (await this.lookupAsync(new Helpers(), this.courierAssignUser)).phone.value
+  });
+  courierAssingTime = new changeDate('תאריך שיוך למשנע');
+
 
   deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
   deliveryStatusDate = new changeDate('תאריך סטטוס שינוע');

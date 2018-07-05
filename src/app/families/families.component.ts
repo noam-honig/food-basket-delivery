@@ -137,8 +137,8 @@ export class FamiliesComponent implements OnInit {
       },
       families.internalComment,
       families.deliveryComments,
-      families.createDate,
-      families.createUser
+      families.createUser,
+      families.createDate
 
 
 
@@ -169,8 +169,8 @@ export class FamiliesComponent implements OnInit {
           items: families.callStatus.getOptions()
         }
       },
-      families.callTime,
       families.callHelper,
+      families.callTime,
       families.callComments,
     ]
   })
@@ -181,11 +181,11 @@ export class FamiliesComponent implements OnInit {
         caption: 'טלפון משנע',
         getValue: f => f.lookup(new Helpers(), f.courier).phone.value
       },
-      families.courierAssingTime,
       families.courierAssignUser,
+      families.courierAssingTime,
       families.deliverStatus.getColumn(),
-      families.deliveryStatusDate,
       families.deliveryStatusUser,
+      families.deliveryStatusDate,
       families.courierComments,
     ]
   });
