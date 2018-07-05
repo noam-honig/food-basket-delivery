@@ -19,6 +19,10 @@ export class AppComponent {
     public router: Router,
     private injector: Injector) {
     this.mediaMatcher.addListener(mql => zone.run(() => this.mediaMatcher = mql));
+    if (!window.location.hostname.toLocaleLowerCase().startsWith('hmey')){
+      this.toolbarColor = 'accent';
+      this.toolbarText = 'הדגמת אתר אמהות מחבקות';
+    }
   }
   isScreenSmall() {
     return this.mediaMatcher.matches;
@@ -29,6 +33,8 @@ export class AppComponent {
       name = route.data.name;
     return name;
   }
+  toolbarColor='accent';
+  toolbarText = 'אמהות מחבקות אבן יהודה והסביבה';
   signOut() {
 
     this.routeClicked();
