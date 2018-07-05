@@ -27,9 +27,25 @@ export class SelectService implements SelectServiceInterface {
     isScreenSmall() {
         return this.mediaMatcher.matches;
     }
+
+
+    async donotWait<t>(what: () => Promise<t>): Promise<t> {
+        this.disableWait = true;
+        try {
+            return (await what());
+        }
+        finally {
+            this.disableWait = false;
+        }
+
+    }
+    private disableWait = false;
     constructor(private dialog: MatDialog, zone: NgZone) {
         this.mediaMatcher.addListener(mql => zone.run(() => this.mediaMatcher = mql));
+
         wrapFetch.wrap = () => {
+            if (this.disableWait)
+                return () => { };
             if (this.numOfWaits == 0) {
                 this.waitRef = this.dialog.open(WaitComponent, { disableClose: true });
             }

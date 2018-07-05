@@ -28,6 +28,17 @@ export class FamiliesComponent implements OnInit {
       limit: this.limit
     });
   }
+  searchString = '';
+  async doSearch() {
+    if (this.families.currentRow && this.families.currentRow.wasChanged())
+      return;
+    this.dialog.donotWait(() =>
+      this.families.get({ where: f => f.name.isContains(this.searchString), orderBy: f => f.name }));
+  }
+  clearSearch() {
+    this.searchString = '';
+    this.doSearch();
+  }
   limit: 10;
   async saveToExcel() {
 
@@ -102,7 +113,7 @@ export class FamiliesComponent implements OnInit {
         dropDown: { source: new BasketType() },
         width: '100'
       },
-    
+
       families.courier.getColumn(this.dialog),
       families.deliverStatus.getColumn()
     ],
