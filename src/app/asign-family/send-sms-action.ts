@@ -11,10 +11,14 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
     }
     protected async execute(info: SendSmsInfo, req: DataApiRequest<myAuthInfo>): Promise<SendSmsResponse> {
         let result: myAuthInfo;
-        console.log(req.getHeader('origin'));
+        
+        let currentUser = new Helpers();
+        console.log(info.helperId);
+        let y  = await (currentUser.source.find({where:currentUser.id.isEqualTo(info.helperId)}));
+        console.log(y);
         await SendSmsAction.generateMessage(info.helperId, req.getHeader('origin'), (phone, message) => {
-            //console.log(message);
-             new SendSmsUtils().sendSms(phone,  message);
+            
+             new SendSmsUtils().sendSms(phone,y[0].phone.value,  message);
         });
 
         return {};
@@ -67,7 +71,7 @@ export class SendSmsUtils {
     accid = process.env.SMS_ACCID;
 
 
-    async sendSms(phone: string, text: string) {
+    async sendSms(phone: string,from:string, text: string) {
         var t = new Date();
         var date = t.getFullYear() + '/' + (t.getMonth() + 1) + '/' + t.getDate() + ' ' + t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds();
         //console.log("date is :" + date);
@@ -82,7 +86,7 @@ export class SendSmsUtils {
             '<accid>' + this.accid + '</accid>' +
             '<sysPW>' + 'itnewslettrSMS' + '</sysPW>' +
             '<t>' + date + '</t>' +
-            '<txtUserCellular>0521234567</txtUserCellular>' +
+            '<txtUserCellular>'+from+'</txtUserCellular>' +
             '<destination>' + phone + '</destination>' +
             '<txtSMSmessage>' + text + '</txtSMSmessage>' +
             '<dteToDeliver></dteToDeliver>' +
