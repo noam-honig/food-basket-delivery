@@ -6,9 +6,7 @@
         {
             "type": "npm",
             "script": "server:watch",
-            "problemMatcher": [
-                
-            ],
+            "problemMatcher": [],
             "isBackground": true
         },
         {
@@ -33,6 +31,13 @@
                 "$tsc-watch"
             ],
             "isBackground": true
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-heroku-test",
+            "problemMatcher": [
+                "$tsc"
+            ]
         }
     ]
 }
