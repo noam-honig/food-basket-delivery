@@ -11,19 +11,39 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
     }
     protected async execute(info: SendSmsInfo, req: DataApiRequest<myAuthInfo>): Promise<SendSmsResponse> {
         let result: myAuthInfo;
-
-        await SendSmsAction.generateMessage(info.helperId, (phone, message) => {
-            new SendSmsUtils().sendSms(phone, message);
+        console.log(req.getHeader('origin'));
+        await SendSmsAction.generateMessage(info.helperId, req.getHeader('origin'), (phone, message) => {
+            //console.log(message);
+             new SendSmsUtils().sendSms(phone,  message);
         });
 
         return {};
 
     }
-    static async  generateMessage(id: string, then: (phone: string, message: string) => void) {
+    static makeid() {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for (var i = 0; i < 5; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+        return text;
+    }
+
+
+    static async  generateMessage(id: string, origin: string, then: (phone: string, message: string) => void) {
         let h = new Helpers();
+        if (!origin) {
+            throw 'Couldnt determine origin for sms';
+        }
         let r = await h.source.find({ where: h.id.isEqualTo(id) });
         if (r.length > 0) {
-            then(r[0].phone.value, 'שלום ' + r[0].name.value + ' אנא לחץ על https://hugmoms.herokuapp.com/x/' + r[0].id.value);
+            if (!r[0].shortUrlKey.value) {
+                r[0].shortUrlKey.value = SendSmsAction.makeid();
+                await r[0].save();
+            }
+            let message = 'שלום ' + r[0].name.value + ' אנא לחץ על ' + origin + '/x/' + r[0].shortUrlKey.value;
+            then(r[0].phone.value, message);
 
         }
 

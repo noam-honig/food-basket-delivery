@@ -17,7 +17,7 @@ export class LoginFromSmsAction extends ServerAction<LoginFromSmsInfo, LoginResp
     }
     protected async execute(info: LoginFromSmsInfo, req: DataApiRequest<myAuthInfo>): Promise<LoginResponse> {
         let result: myAuthInfo;
-        await foreachEntityItem(new Helpers(), h => h.id.isEqualTo(info.key), async h => {
+        await foreachEntityItem(new Helpers(), h => h.shortUrlKey.isEqualTo(info.key), async h => {
             result = {
                 helperId: h.id.value,
                 admin: false,

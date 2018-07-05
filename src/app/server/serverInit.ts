@@ -34,6 +34,7 @@ export function serverInit() {
     ].forEach(x => sb.CreateIfNotExist(x));
 
     sb.verifyAllColumns(new models.Families());
+    sb.verifyAllColumns(new models.Helpers());
 
 
 }

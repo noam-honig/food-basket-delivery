@@ -37,7 +37,7 @@ export class AsignFamilyComponent implements OnInit {
   async refreshList() {
 
     
-      SendSmsAction.generateMessage(this.id, (p, m) => this.smsMessage = m);
+      
       this.familyLists.initForHelper(this.id).then(() => {
         this.map.test(this.familyLists.allFamilies);
         if (this.map.mapVisible)
@@ -118,14 +118,7 @@ export class AsignFamilyComponent implements OnInit {
   sendSms() {
     new SendSmsAction().run({ helperId: this.id });
   }
-  showSms() {
-    SendSmsAction.generateMessage(this.id, (p, m) =>
-      this.dialog.Info(m));
-  }
-  smsMessage: string;
-  async sendSmsFromPhone() {
-    window.open('sms:' + this.phone + ';?&body=' + encodeURI(this.smsMessage), '_blank');
-  }
+
 
   @ViewChild("map") map: MapComponent;
 }

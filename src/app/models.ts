@@ -242,6 +242,7 @@ export class Helpers extends IdEntity<HelperId>{
 
   createDate = new changeDate('תאריך הוספה');
   isAdmin = new BoolColumn('מנהלת');
+  shortUrlKey = new radweb.StringColumn();
 
   constructor() {
 
