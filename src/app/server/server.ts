@@ -1,6 +1,7 @@
 import { environment } from './../../environments/environment';
 import * as models from './../models';
 import * as express from 'express';
+import * as compression from 'compression';
 import * as radweb from 'radweb';
 import { ExpressBridge } from 'radweb/server';
 import { DataApi, DataApiSettings } from 'radweb/utils/server/DataApi';
@@ -25,6 +26,7 @@ serverInit();
 ;
 
 let app = express();
+app.use(compression());
 let port = process.env.PORT || 3000;
 
 
