@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
 import { config } from 'dotenv';
-import {  PostgresDataProvider, PostgrestSchemaBuilder } from 'radweb/server';
+import { PostgresDataProvider, PostgrestSchemaBuilder } from 'radweb/server';
 import { evilStatics } from '../auth/evil-statics';
 import * as models from './../models';
 
@@ -35,6 +35,15 @@ export function serverInit() {
 
     sb.verifyAllColumns(new models.Families());
     sb.verifyAllColumns(new models.Helpers());
+    let h = new models.BasketType();
+    h.source.find({ where: h.id.isEqualTo('') }).then(x => {
+        if (x.length == 0) {
+            h.setEmptyIdForNewRow();
+            h.name.value='רגיל';
+            h.save();
+            
+        }
+    });
 
 
 }

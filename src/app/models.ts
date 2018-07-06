@@ -16,9 +16,14 @@ class IdEntity<idType extends Id> extends radweb.Entity<string>
     super(factory, source, options);
     this.id = id;
     this.onSavingRow = () => {
-      if (this.isNew() && !this.id.value)
+      if (this.isNew() && !this.id.value && !this.disableNewId)
         this.id.setToNewId();
     }
+  }
+  private disableNewId = false;
+  setEmptyIdForNewRow() {
+    this.id.value = '';
+    this.disableNewId = true;
   }
 }
 

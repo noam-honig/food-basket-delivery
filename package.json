@@ -66,7 +66,7 @@
     "password-hash": "^1.2.2",
     "path": "^0.12.7",
     "pg": "^7.4.1",
-    "radweb": "^1.1.47",
+    "radweb": "^1.1.48",
     "rxjs": "^5.5.6",
     "uuid": "^3.2.1",
     "web-animations-js": "^2.3.1",

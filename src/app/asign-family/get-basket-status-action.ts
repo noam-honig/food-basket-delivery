@@ -31,11 +31,7 @@ export class GetBasketStatusAction extends ServerAction<GetBasketStatusActionInf
         });
         await foreachSync(result.baskets,
             async b => {
-                if (b.id) {
-                    b.name = (await f.lookupAsync(new BasketType(), bt => bt.id.isEqualTo(b.id))).name.value;
-                }
-                else
-                    b.name = "סל לא הוגדר";
+                b.name = (await f.lookupAsync(new BasketType(), bt => bt.id.isEqualTo(b.id))).name.value;
             });
         return result;
 
