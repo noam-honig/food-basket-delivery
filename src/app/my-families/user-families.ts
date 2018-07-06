@@ -3,17 +3,25 @@ import { GridSettings } from 'radweb';
 import { Families, DeliveryStatus } from '../models';
 import { AuthService } from '../auth/auth-service';
 import { SelectService } from '../select-popup/select-service';
+import { MapComponent } from '../map/map.component';
 
 export class UserFamiliesList {
+    map: MapComponent;
+    setMap(map: MapComponent): any {
+        this.map = map;
+    }
     toDeliver: Families[] = [];
     delivered: Families[] = [];
     problem: Families[] = [];
     allFamilies: Families[] = [];
+    helperId:string;
     async initForHelper(helperId: string) {
+        this.helperId = helperId;
         var f = new Families();
         this.allFamilies = await f.source.find({ where: f.courier.isEqualTo(helperId) });
         this.initFamilies();
     }
+    
     initFamilies() {
         this.toDeliver = this.allFamilies.filter(f => f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery);
         this.delivered = this.allFamilies.filter(f => f.deliverStatus.listValue == DeliveryStatus.Success);
@@ -27,12 +35,14 @@ export class UserFamiliesList {
             return false;
 
         });
+        if (this.map)
+            this.map.test(this.allFamilies);
     }
     remove(f: Families) {
         this.allFamilies.splice(this.allFamilies.indexOf(f), 1);
         this.initFamilies();
     }
-    clear(){
+    clear() {
         this.allFamilies = [];
         this.delivered = [];
         this.problem = [];

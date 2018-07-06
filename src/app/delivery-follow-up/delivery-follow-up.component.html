@@ -16,24 +16,9 @@
           </mat-panel-description>
         </div>
       </mat-expansion-panel-header>
-      <mat-accordion>
-        <mat-expansion-panel #myPanel *ngFor="let f of familyLists.toDeliver">
-          <mat-expansion-panel-header>
-            <div>
-              <mat-panel-title>
-                {{f.name.value}}
-              </mat-panel-title>
-            </div>
-            <div>
-              <mat-panel-description>
-                {{f.address.value}}
-              </mat-panel-description>
-            </div>
-          </mat-expansion-panel-header>
-          <app-family-info [f]="f" [showHelp]="true">
-          </app-family-info>
-        </mat-expansion-panel>
-      </mat-accordion>
+      <div class="wideAccordion">
+      <app-helper-families [familyLists]="familyLists" [partOfAssign]="true"  ></app-helper-families>
+    </div>
     </mat-expansion-panel>
   </mat-accordion>
 

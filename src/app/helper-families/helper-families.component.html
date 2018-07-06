@@ -1,0 +1,79 @@
+<h4>משפחות לחלוקה - {{familyLists.toDeliver.length}}</h4>
+<mat-accordion>
+  <mat-expansion-panel #myPanel *ngFor="let f of familyLists.toDeliver">
+    <mat-expansion-panel-header>
+      <div>
+        <mat-panel-title>
+          {{f.name.value}}
+        </mat-panel-title>
+      </div>
+      <div>
+        <mat-panel-description>
+          {{f.address.value}}
+        </mat-panel-description>
+      </div>
+    </mat-expansion-panel-header>
+    <app-family-info [f]="f" [showHelp]="true" >
+        
+      <button mat-raised-button class="myButton" color="primary" (click)="deliveredToFamily(f)">מסרתי את החבילה בהצלחה</button>
+      <br/>
+      <button mat-raised-button class="myButton badButton" (click)="couldntDeliverToFamily(f)">נתקלתי בבעיה במסירה</button>
+      <button *ngIf="partOfAssign" mat-raised-button class="myButton badButton" (click)="cancelAssign(f)">בטלי שיוך</button>
+      
+      
+    </app-family-info>
+  </mat-expansion-panel>
+</mat-accordion>
+<button *ngIf="partOfAssign" mat-raised-button class="myButton" color="primary" (click)="sendSms()">שלחי הודעת SMS</button>
+<app-map #map></app-map>
+
+
+<div *ngIf="familyLists.problem.length>0">
+  <h4>משפחות שנתקלתי בבעיה - {{familyLists.problem.length}}</h4>
+  <mat-accordion>
+    <mat-expansion-panel #myPanel *ngFor="let f of familyLists.problem">
+      <mat-expansion-panel-header>
+        <div>
+          <mat-panel-title>
+            {{f.name.value}}
+          </mat-panel-title>
+        </div>
+        <div>
+          <mat-panel-description>
+            {{f.address.value}}
+          </mat-panel-description>
+        </div>
+      </mat-expansion-panel-header>
+
+      <app-family-info [f]="f" [showHelp]="true">
+        <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
+        <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות לחלוקה</button>
+        <button *ngIf="partOfAssign" mat-raised-button class="myButton badButton" (click)="cancelAssign(f)">בטלי שיוך</button>
+      </app-family-info>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
+
+<div *ngIf="familyLists.delivered.length>0">
+    <h4>משפחות שחולקו - {{familyLists.delivered.length}}</h4>
+    <mat-accordion>
+      <mat-expansion-panel #myPanel *ngFor="let f of familyLists.delivered">
+        <mat-expansion-panel-header>
+          <div>
+            <mat-panel-title>
+              {{f.name.value}}
+            </mat-panel-title>
+          </div>
+          <div>
+            <mat-panel-description>
+              {{f.address.value}}
+            </mat-panel-description>
+          </div>
+        </mat-expansion-panel-header>
+        <app-family-info [f]="f" [showHelp]="true">
+          <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
+          <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות לחלוקה</button>
+        </app-family-info>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>

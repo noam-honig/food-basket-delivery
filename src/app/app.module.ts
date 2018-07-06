@@ -38,6 +38,7 @@ import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component
 import { MapComponent } from './map/map.component';
 import { WaitComponent } from './wait/wait.component';
 import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-up.component';
+import { HelperFamiliesComponent } from './helper-families/helper-families.component';
 
 @NgModule({
   declarations: [
@@ -67,7 +68,8 @@ import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-
     LoginFromSmsComponent,
     MapComponent,
     WaitComponent,
-    DeliveryFollowUpComponent
+    DeliveryFollowUpComponent,
+    HelperFamiliesComponent
   ],
   imports: [
     BrowserModule,

@@ -35,16 +35,8 @@ export class AsignFamilyComponent implements OnInit {
   }
   baskets: BasketInfo[];
   async refreshList() {
-
-    
-      
-      this.familyLists.initForHelper(this.id).then(() => {
-        this.map.test(this.familyLists.allFamilies);
-        if (this.map.mapVisible)
-          this.map.mapVisible = this.familyLists.allFamilies.length > 0;
-      });
-      this.baskets = (await new GetBasketStatusAction().run({})).baskets;
-    
+    this.familyLists.initForHelper(this.id);
+    this.baskets = (await new GetBasketStatusAction().run({})).baskets;
   }
   familyLists = new UserFamiliesList();
   filterLangulage = -1;
@@ -66,8 +58,6 @@ export class AsignFamilyComponent implements OnInit {
   }
   clearList() {
     this.familyLists.clear();
-    this.map.test([]);
-    this.map.mapVisible = false;
   }
   findHelper() {
     this.dialog.selectHelper(h => {
@@ -78,13 +68,7 @@ export class AsignFamilyComponent implements OnInit {
       this.refreshList();
     });
   }
-  async cancelAssign(f: Families) {
-    f.courier.value = '';
 
-    await f.save();
-    this.refreshList();
-
-  }
 
   constructor(private auth: AuthService, private dialog: SelectService) { }
 
@@ -92,33 +76,27 @@ export class AsignFamilyComponent implements OnInit {
 
   }
   async assignItem(basket: BasketInfo, filterLangulage: number) {
-    
-      let x = await new AddBoxAction().run({
-        phone: this.phone,
-        name: this.name,
-        basketType: basket.id,
-        helperId: this.id,
-        language: filterLangulage
-      });
-      if (x.ok) {
-        basket.unassignedFamilies--;
-        this.id = x.helperId;
-        await this.refreshList();
 
-      }
-      else {
-        this.refreshList();
-        this.dialog.Info("לא נמצאה משפחה מתאימה");
-      }
+    let x = await new AddBoxAction().run({
+      phone: this.phone,
+      name: this.name,
+      basketType: basket.id,
+      helperId: this.id,
+      language: filterLangulage
+    });
+    if (x.ok) {
+      basket.unassignedFamilies--;
       this.id = x.helperId;
+      await this.refreshList();
 
-    
+    }
+    else {
+      this.refreshList();
+      this.dialog.Info("לא נמצאה משפחה מתאימה");
+    }
+    this.id = x.helperId;
+
+
   }
 
-  sendSms() {
-    new SendSmsAction().run({ helperId: this.id });
-  }
-
-
-  @ViewChild("map") map: MapComponent;
 }
