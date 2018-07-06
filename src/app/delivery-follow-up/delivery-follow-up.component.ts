@@ -34,7 +34,7 @@ export class DeliveryFollowUpComponent implements OnInit {
       return '';
     if (!now)
       now = new Date();
-    let sameDay = (x: Date, y: Date){
+    let sameDay = (x: Date, y: Date)=>{
       return x.getFullYear() == y.getFullYear() && x.getMonth() == y.getMonth() && x.getDate() == y.getDate()
     }
     let diffInMinues = Math.ceil((now.valueOf() - d.valueOf()) / 60000);
