@@ -1,7 +1,7 @@
 import * as radweb from 'radweb';
 import { environment } from './../environments/environment';
 import * as uuid from 'uuid';
-import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn, UrlBuilder, DateTimeColumn, Column, DropDownItem, NumberColumn, ClosedListColumn, ColumnSetting } from 'radweb';
+import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn, UrlBuilder, Column, DropDownItem, NumberColumn, ClosedListColumn, ColumnSetting } from 'radweb';
 import { foreachSync, foreachEntityItem } from './shared/utils';
 import { evilStatics } from './auth/evil-statics';
 import { GetGeoInformation, GeocodeInformation } from './shared/googleApiHelpers';
@@ -29,15 +29,80 @@ class Id extends radweb.StringColumn {
     this.value = uuid();
   }
 }
+class DateTimeColumn extends radweb.DateTimeColumn {
+  constructor(settingsOrCaption?: DataColumnSettings<string, DateTimeColumn> | string) {
+    super(settingsOrCaption);
+  }
+  relativeDateName(d?: Date, now?: Date) {
+    if (!d)
+      d = this.dateValue;
+    if (!d)
+      return '';
+    if (!now)
+      now = new Date();
+    let sameDay = (x: Date, y: Date) => {
+      return x.getFullYear() == y.getFullYear() && x.getMonth() == y.getMonth() && x.getDate() == y.getDate()
+    }
+    let diffInMinues = Math.ceil((now.valueOf() - d.valueOf()) / 60000);
+    if (diffInMinues <= 1)
+      return 'לפני דקה';
+    if (diffInMinues < 60) {
 
-class changeDate extends radweb.DateTimeColumn {
+      return 'לפני ' + diffInMinues + ' דקות';
+    }
+    if (diffInMinues < 60 * 10 || sameDay(d, now)) {
+      let hours = Math.floor(diffInMinues / 60);
+      let min = diffInMinues % 60;
+      if (min > 50) {
+        hours += 1;
+        min = 0;
+      }
+      let r;
+      switch (hours) {
+        case 1:
+          r = 'שעה';
+          break
+        case 2:
+          r = "שעתיים";
+          break;
+        default:
+          r = hours + ' שעות';
+      }
+
+      if (min > 35)
+        r += ' ושלושת רבעי';
+      else if (min > 22) {
+        r += ' וחצי';
+      }
+      else if (min > 7) {
+        r += ' ורבע ';
+      }
+      return 'לפני ' + r;
+
+    }
+    if (sameDay(d, new Date(now.valueOf() - 86400 * 1000))) {
+      return 'אתמול';
+    }
+    if (sameDay(d, new Date(now.valueOf() - 86400 * 1000 * 2))) {
+      return 'שלשום';
+    }
+    else {
+      return 'ב' + d.toLocaleDateString();
+    }
+  }
+}
+class changeDate extends DateTimeColumn {
   constructor(caption: string) {
     super({
       caption: caption,
       readonly: true
     });
   }
+
 }
+
+
+
 class ItemId extends Id {
 
 }
@@ -49,13 +114,16 @@ class HelperId extends Id implements HasAsyncGetTheValue {
   getColumn(dialog: SelectServiceInterface): ColumnSetting<Families> {
     return {
       column: this,
-      getValue: f => f.courier.lookup(new Helpers()).name,
+      getValue: this.getValue,
       hideDataOnInput: true,
       click: f => dialog.selectHelper(s => f.courier.value = s.id.value),
       readonly: this.readonly,
       width: '200'
 
     }
+  }
+  getValue(f: Families) {
+    return f.courier.lookup(new Helpers()).name.value;
   }
   async getTheValue() {
     let r = await this.lookupAsync(new Helpers());
@@ -317,6 +385,22 @@ export class Families extends IdEntity<FamilyId>{
   deliveryStatusUser = new HelperIdReadonly('מי עדכן את סטטוס המשלוח');
   courierComments = new radweb.StringColumn('הערות מסירה');
 
+  getDeliveryDescription() {
+    switch (this.deliverStatus.listValue) {
+      case DeliveryStatus.ReadyForDelivery:
+        if (this.courier.value) {
+          return this.courier.getValue(this) + ' יצא ' + this.courierAssingTime.relativeDateName();
+        }
+        break;
+      case DeliveryStatus.Success:
+      case DeliveryStatus.FailedBadAddress:
+      case DeliveryStatus.FailedNotHome:
+      case DeliveryStatus.FailedOther:
+        return this.deliverStatus.displayValue + ' ' + this.deliveryStatusDate.relativeDateName();
+
+    }
+    return this.deliverStatus.displayValue;
+  }
 
 
   createDate = new changeDate('תאריך הוספה');
@@ -347,7 +431,10 @@ export class Families extends IdEntity<FamilyId>{
     super(new FamilyId(), () => new Families(), evilStatics.dataSource, "Families");
     this.initColumns();
   }
-
+  async doSave(authInfo: myAuthInfo) {
+    await this.doSaveStuff(authInfo);
+    await this.save();
+  }
   async doSaveStuff(authInfo: myAuthInfo) {
     if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
       this.addressApiResult.value = (await GetGeoInformation(this.address.value)).saveToString();
@@ -418,7 +505,7 @@ let fromFamiliesWhereId = (h: Helpers) => buildSql(' from ', f
 export class HelpersAndStats extends Helpers {
   deliveriesInProgress = new NumberColumn({
     dbReadOnly: true,
-    caption:'משפחות מחכות',
+    caption: 'משפחות מחכות',
     dbName: buildSql('(select count(*) ', fromFamiliesWhereId(this), ')')
   });
   firstDeliveryInProgressDate = new DateTimeColumn({
@@ -427,7 +514,7 @@ export class HelpersAndStats extends Helpers {
   })
     ;
   constructor() {
-    super(() => new HelpersAndStats(), "helpersAndStats",evilStatics.dataSource);
+    super(() => new HelpersAndStats(), "helpersAndStats", evilStatics.dataSource);
     this.initColumns();
   }
 }

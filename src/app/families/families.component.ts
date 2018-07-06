@@ -114,8 +114,10 @@ export class FamiliesComponent implements OnInit {
         width: '100'
       },
 
-      families.courier.getColumn(this.dialog),
-      families.deliverStatus.getColumn()
+      {
+        caption: 'שינוע',
+        getValue: f => f.getDeliveryDescription()
+      }
     ],
     rowButtons: [
       {

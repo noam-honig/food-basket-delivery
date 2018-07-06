@@ -42,7 +42,7 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
                     let position = Math.trunc(Math.random() * r.length);
                     let family = r[position];
                     family.courier.value = result.helperId;
-                    await family.save();
+                    await family.doSave(req.authInfo);
                     result.ok = true;
                 }
                 else {
@@ -79,7 +79,8 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
 
                     r[0].courier.value = result.helperId;
 
-                    await r[0].save();
+                    await r[0].doSave(req.authInfo);
+
                     result.ok = true;
                 }
 

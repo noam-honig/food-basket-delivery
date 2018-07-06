@@ -15,10 +15,10 @@
     </mat-expansion-panel-header>
     <app-family-info [f]="f" [showHelp]="true" >
         
+      <button *ngIf="partOfAssign" mat-raised-button class="myButton badButton" (click)="cancelAssign(f)">בטלי שיוך</button>
       <button mat-raised-button class="myButton" color="primary" (click)="deliveredToFamily(f)">מסרתי את החבילה בהצלחה</button>
       <br/>
       <button mat-raised-button class="myButton badButton" (click)="couldntDeliverToFamily(f)">נתקלתי בבעיה במסירה</button>
-      <button *ngIf="partOfAssign" mat-raised-button class="myButton badButton" (click)="cancelAssign(f)">בטלי שיוך</button>
       
       
     </app-family-info>
