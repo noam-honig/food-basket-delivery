@@ -1,5 +1,5 @@
 <h3>
-  מתנדבים</h3>
+  מתנדבים בדרך</h3>
 <mat-button-toggle-group #group="matButtonToggleGroup" (valueChange)="changeToggle(group.value)" [value]="showAll">
   <mat-button-toggle value="false" selected>מתעכבים</mat-button-toggle>
   <mat-button-toggle value="true">כולם</mat-button-toggle>
@@ -18,7 +18,9 @@
         </mat-panel-description>
       </div>
     </mat-expansion-panel-header>
+    
     <div class="wideAccordion">
+        <a href="tel:{{c.phone.value}}"> <button mat-button>התקשרי ל{{c.name.value}} {{c.phone.value}} </button></a>
       <app-helper-families [familyLists]="familyLists" [partOfAssign]="true"></app-helper-families>
     </div>
   </mat-expansion-panel>
