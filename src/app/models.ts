@@ -244,9 +244,13 @@ export class Helpers extends IdEntity<HelperId>{
   isAdmin = new BoolColumn('מנהלת');
   shortUrlKey = new radweb.StringColumn();
 
-  constructor() {
+  constructor(factory?: () => Helpers, name?: string, source?: DataProviderFactory) {
 
-    super(new HelperId(), () => new Helpers(), evilStatics.openedDataApi, "Helpers");
+    super(new HelperId(), factory ? factory : () => new Helpers(), source ? source : evilStatics.openedDataApi, {
+      name: name ? name : "Helpers",
+      dbName: "Helpers"
+
+    });
     this.initColumns();
     let x = this.onSavingRow;
     this.onSavingRow = () => {
@@ -256,6 +260,7 @@ export class Helpers extends IdEntity<HelperId>{
     };
   }
 }
+
 
 export class Families extends IdEntity<FamilyId>{
 
@@ -386,6 +391,46 @@ export class EventHelpers extends IdEntity<EventHelperId>{
   }
 }
 
+function getItemSql(e: any) {
+  let v = e;
+  if (e instanceof Entity)
+    v = e.__getDbName();
+  if (e instanceof Column)
+    v = e.__getDbName();
+  if (e instanceof Array) {
+    v = e.map(x => getItemSql(x)).join(', ');
+  }
+  return v;
+}
+function buildSql(...args: any[]): string {
+  let result = '';
+  args.forEach(e => {
+
+    result += getItemSql(e);
+  });
+  return result;
+}
+let f = new Families();
+let fromFamiliesWhereId = (h: Helpers) => buildSql(' from ', f
+  , ' where ', f.courier, ' = ', h, '.', h.id, ' and ', f.deliverStatus, ' = ', DeliveryStatus.ReadyForDelivery.id)
+
+
+export class HelpersAndStats extends Helpers {
+  deliveriesInProgress = new NumberColumn({
+    dbReadOnly: true,
+    caption:'משפחות מחכות',
+    dbName: buildSql('(select count(*) ', fromFamiliesWhereId(this), ')')
+  });
+  firstDeliveryInProgressDate = new DateTimeColumn({
+    dbReadOnly: true,
+    dbName: buildSql('(select min(', f.courierAssingTime, ') ', fromFamiliesWhereId(this), ')')
+  })
+    ;
+  constructor() {
+    super(() => new HelpersAndStats(), "helpersAndStats",evilStatics.dataSource);
+    this.initColumns();
+  }
+}
 
 export class Events extends IdEntity<EventId>{
   name = new radweb.StringColumn('שם אירוע');

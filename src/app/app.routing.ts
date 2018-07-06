@@ -17,6 +17,7 @@ import { AsignFamilyComponent } from './asign-family/asign-family.component';
 import { ManageComponent } from './manage/manage.component';
 import { FixAddressComponent } from './fix-address/fix-address.component';
 import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component';
+import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-up.component';
 
 
 const routes: Routes = [
@@ -35,6 +36,9 @@ const routes: Routes = [
   },
   {
     path: 'assign-families', component: AsignFamilyComponent, canActivate: [AdminGuard], data: { name: 'שיוך משפחות' }
+  },
+  {
+    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [AdminGuard], data: { name: 'מעקב משלוחים' }
   },
   {
     path: 'helpers',

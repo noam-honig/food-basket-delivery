@@ -1,0 +1,44 @@
+
+<mat-card>
+  <h3>מתנדבים</h3>
+
+  <mat-accordion>
+    <mat-expansion-panel #myPanel *ngFor="let c of couriers.items" (opened)="selectCourier(c)">
+      <mat-expansion-panel-header>
+        <div>
+          <mat-panel-title>
+            {{c.name.value}}
+          </mat-panel-title>
+        </div>
+        <div>
+          <mat-panel-description>
+            בדרך {{c.deliveriesInProgress.value}},  יצא {{relativeDate(c.firstDeliveryInProgressDate.dateValue)}}
+          </mat-panel-description>
+        </div>
+      </mat-expansion-panel-header>
+      <mat-accordion>
+        <mat-expansion-panel #myPanel *ngFor="let f of familyLists.toDeliver">
+          <mat-expansion-panel-header>
+            <div>
+              <mat-panel-title>
+                {{f.name.value}}
+              </mat-panel-title>
+            </div>
+            <div>
+              <mat-panel-description>
+                {{f.address.value}}
+              </mat-panel-description>
+            </div>
+          </mat-expansion-panel-header>
+          <app-family-info [f]="f" [showHelp]="true">
+          </app-family-info>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+
+
+  <data-grid [settings]="couriers"></data-grid>
+
+</mat-card>

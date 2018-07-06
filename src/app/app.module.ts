@@ -37,6 +37,7 @@ import { SelectHelperComponent } from './select-helper/select-helper.component';
 import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component';
 import { MapComponent } from './map/map.component';
 import { WaitComponent } from './wait/wait.component';
+import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-up.component';
 
 @NgModule({
   declarations: [
@@ -65,7 +66,8 @@ import { WaitComponent } from './wait/wait.component';
     SelectHelperComponent,
     LoginFromSmsComponent,
     MapComponent,
-    WaitComponent
+    WaitComponent,
+    DeliveryFollowUpComponent
   ],
   imports: [
     BrowserModule,

@@ -1,13 +1,9 @@
-import { environment } from './../../environments/environment';
 import * as models from './../models';
 import * as express from 'express';
 import * as compression from 'compression';
-import * as radweb from 'radweb';
 import { ExpressBridge } from 'radweb/server';
 import { DataApi, DataApiSettings } from 'radweb/utils/server/DataApi';
-import * as path from 'path';
 import * as fs from 'fs';
-import { CompoundIdColumn } from 'radweb';
 
 import { LoginAction } from '../auth/loginAction';
 import { myAuthInfo } from '../auth/my-auth-info';
@@ -21,9 +17,10 @@ import { LoginFromSmsAction } from '../login-from-sms/login-from-sms-action';
 import { GetBasketStatusAction } from '../asign-family/get-basket-status-action';
 import { serverInit } from './serverInit';
 import * as net from 'net';
+import { Entity, Column } from 'radweb';
 
 serverInit();
-;
+
 
 let app = express();
 app.use(compression());
@@ -88,9 +85,6 @@ dataApi.add(r => {
     }));
 });
 dataApi.add(r => {
-
-
-
     var settings: DataApiSettings<models.Families> = {
         allowDelete: r.authInfo && r.authInfo.admin,
         allowInsert: r.authInfo && r.authInfo.admin,
@@ -110,7 +104,11 @@ dataApi.add(r => {
 
 
     return new DataApi(new models.Families(), settings)
-
+});
+dataApi.add(r => {
+    return new DataApi(new models.HelpersAndStats(), {
+        excludeColumns: h => [h.isAdmin, h.password, h.realStoredPassword, h.shortUrlKey,h.createDate]
+    });
 });
 
 
