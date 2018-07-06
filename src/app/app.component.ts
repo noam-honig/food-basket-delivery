@@ -33,7 +33,7 @@ export class AppComponent {
       name = route.data.name;
     return name;
   }
-  toolbarColor = 'accent';
+  toolbarColor = 'primary';
   toolbarText = 'אמהות מחבקות אבן יהודה והסביבה';
   signOut() {
 

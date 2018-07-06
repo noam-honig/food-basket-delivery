@@ -38,6 +38,13 @@
             "problemMatcher": [
                 "$tsc"
             ]
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-hmey",
+            "problemMatcher": [
+                "$tsc"
+            ]
         }
     ]
 }
