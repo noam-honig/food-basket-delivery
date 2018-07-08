@@ -360,6 +360,7 @@ export class Families extends IdEntity<FamilyId>{
   addressComment = new radweb.StringColumn('הערת כתובת');
   deliveryComments = new radweb.StringColumn('הערות למשנע');
   addressApiResult = new radweb.StringColumn();
+  city = new radweb.StringColumn({ caption: "עיר", readonly: true });
 
   phone1 = new radweb.StringColumn({ caption: "טלפון 1", inputType: 'tel', dbName: 'phone' });
   phone1Description = new radweb.StringColumn('תאור טלפון 1');
@@ -444,7 +445,12 @@ export class Families extends IdEntity<FamilyId>{
   }
   async doSaveStuff(authInfo: myAuthInfo) {
     if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
-      this.addressApiResult.value = (await GetGeoInformation(this.address.value)).saveToString();
+      let geo = await GetGeoInformation(this.address.value);
+      this.addressApiResult.value = geo.saveToString();
+      this.city.value = '';
+      if (geo.ok()) {
+        this.city.value = geo.getCity();
+      }
     }
     let logChanged = (col: Column<any>, dateCol: DateTimeColumn, user: HelperId) => {
       if (col.value != col.originalValue) {

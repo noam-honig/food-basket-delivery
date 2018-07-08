@@ -3,8 +3,9 @@ import { config } from 'dotenv';
 import { PostgresDataProvider, PostgrestSchemaBuilder } from 'radweb/server';
 import { evilStatics } from '../auth/evil-statics';
 import * as models from './../models';
+import { foreachSync } from '../shared/utils';
 
-export function serverInit() {
+export async function serverInit() {
     config();
     let ssl = true;
     if (process.env.DISABLE_POSTGRES_SSL)
@@ -39,11 +40,19 @@ export function serverInit() {
     h.source.find({ where: h.id.isEqualTo('') }).then(x => {
         if (x.length == 0) {
             h.setEmptyIdForNewRow();
-            h.name.value='רגיל';
+            h.name.value = 'רגיל';
             h.save();
-            
         }
     });
+
+    let f = new models.Families();
+    await foreachSync(await f.source.find({ where: f.city.isEqualTo('') }), async ff => {
+        ff.city.value = ff.getGeocodeInformation().getCity()
+        await ff.save();
+    });
+
+
+
 
 
 }

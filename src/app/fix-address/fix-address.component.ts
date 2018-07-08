@@ -22,6 +22,7 @@ export class FixAddressComponent implements OnInit {
 
       families.name,
       families.address,
+      families.city,
       {
         caption: 'כתובת גוגל',
         getValue: f => {
@@ -64,9 +65,11 @@ export class FixAddressComponent implements OnInit {
           return f.getGeocodeInformation().info.results[0].formatted_address;
         }
       },
+      families.city,
       families.addressComment,
       families.floor,
       families.appartment,
+
     ]
   });
   constructor(private dialog: SelectService, private san: DomSanitizer) { }

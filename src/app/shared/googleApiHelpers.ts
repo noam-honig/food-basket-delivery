@@ -40,6 +40,15 @@ export class GeocodeInformation {
     getlonglat() {
         return this.location().lat + ',' + this.location().lng;
     }
+    getCity() {
+        let r = 'לא ידוע';
+        if (this.ok())
+            this.info.results[0].address_components.forEach(x => {
+                if (x.types[0] == "locality")
+                    r = x.long_name;
+            });
+        return r;
+    }
 }
 
 export interface AddressComponent {
