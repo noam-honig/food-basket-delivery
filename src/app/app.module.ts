@@ -39,6 +39,8 @@ import { MapComponent } from './map/map.component';
 import { WaitComponent } from './wait/wait.component';
 import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-up.component';
 import { HelperFamiliesComponent } from './helper-families/helper-families.component';
+import { SelectFamilyComponent } from './select-family/select-family.component';
+import { BusyService } from './select-popup/busy-service';
 
 @NgModule({
   declarations: [
@@ -69,7 +71,8 @@ import { HelperFamiliesComponent } from './helper-families/helper-families.compo
     MapComponent,
     WaitComponent,
     DeliveryFollowUpComponent,
-    HelperFamiliesComponent
+    HelperFamiliesComponent,
+    SelectFamilyComponent
   ],
   imports: [
     BrowserModule,
@@ -83,6 +86,7 @@ import { HelperFamiliesComponent } from './helper-families/helper-families.compo
   ],
   providers: [
     SelectService,
+    BusyService,
     AuthService,
     LoggedInGuard,
     AdminGuard,
@@ -91,6 +95,7 @@ import { HelperFamiliesComponent } from './helper-families/helper-families.compo
 
   bootstrap: [AppComponent],
   entryComponents: [SelectHelperComponent,
+    SelectFamilyComponent,
     SelectPopupComponent,
      YesNoQuestionComponent,
     InputAreaComponent,

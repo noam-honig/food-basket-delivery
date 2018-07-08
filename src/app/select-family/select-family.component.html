@@ -1,0 +1,29 @@
+<div dir="rtl"> 
+    <mat-card>
+      <div class="fullSize">
+        
+        <form (submit)="selectFirst()">
+  
+          <mat-form-field class="full-width">
+            <input matInput [(ngModel)]="searchString" (input)="doFilter()" placeholder="חפשי שם" [ngModelOptions]="{standalone: true}">
+            <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
+          </mat-form-field>
+          <mat-nav-list role="list">
+            <mat-list-item *ngFor="let f of families.items" (click)="select(f)">
+                <mat-panel-title>
+               {{f.name.value}}
+               </mat-panel-title>
+               <mat-panel-description *ngIf="f.internalComment.value">
+                  , {{f.internalComment.value}}
+               </mat-panel-description>
+  
+              
+              <mat-divider></mat-divider>
+            </mat-list-item>
+          </mat-nav-list>
+        </form>
+      </div>
+    </mat-card>
+  <button mat-raised-button color="primary" (click)="moreFamilies()">עוד משפחות</button>
+  
+  </div>

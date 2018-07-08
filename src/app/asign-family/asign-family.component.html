@@ -13,7 +13,7 @@
     <input matInput placeholder="שם" [(ngModel)]="name" class="largeInput">
   </mat-form-field>
 
-  
+
   <span *ngIf="name">
     סינון שפה
     <mat-button-toggle-group #group="matButtonToggleGroup" (valueChange)="langChange(group.value)" [value]="filterLangulage">
@@ -21,14 +21,14 @@
         {{f.toString()}}
       </mat-button-toggle>
     </mat-button-toggle-group>
-    <br>
-    סינון עיר
+    <br> סינון עיר
     <select class="form-control" #city (change)="selectCity(city.value)" [(ngModel)]="filterCity">
-        <option value="">כל הערים</option>
-        <option *ngFor="let c of cities" value="{{c.name}}">{{c.name}} - {{c.unassignedFamilies}}</option>
-    
-      </select>
+      <option value="">כל הערים</option>
+      <option *ngFor="let c of cities" value="{{c.name}}">{{c.name}} - {{c.unassignedFamilies}}</option>
+
+    </select>
     <div>
+      <button mat-raised-button (click)="addSpecial()">משפחות מיוחדות</button>
       <ng-container *ngFor="let b of baskets">
         <button mat-raised-button color="primary" class="myButton" (click)="assignItem(b,group.value)" *ngIf="b.unassignedFamilies">הוסף ארגז {{b.name}} - {{b.unassignedFamilies}}</button>
       </ng-container>

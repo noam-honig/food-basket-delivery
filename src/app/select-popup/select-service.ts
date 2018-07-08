@@ -6,10 +6,12 @@ import { YesNoQuestionComponentData, YesNoQuestionComponent } from "./yes-no-que
 import { InputAreaComponentData, InputAreaComponent } from "./input-area/input-area.component";
 import { UpdateCommentComponent, UpdateCommentComponentData } from "../update-comment/update-comment.component";
 import { SelectHelperInfo, SelectHelperComponent } from "../select-helper/select-helper.component";
-import { Helpers } from "../models";
+import { Helpers, Families } from "../models";
 import { SelectServiceInterface } from "./select-service-interface";
 import { WaitComponent } from "../wait/wait.component";
 import { wrapFetch } from "radweb/utils/restDataProvider";
+import { SelectFamilyInfo, SelectFamilyComponent } from "../select-family/select-family.component";
+import { BusyService } from "./busy-service";
 
 
 @Injectable()
@@ -22,41 +24,19 @@ export class SelectService implements SelectServiceInterface {
         this.YesNoQuestion(err, () => { });
     }
     private mediaMatcher: MediaQueryList = matchMedia(`(max-width: 720px)`);
-    private numOfWaits = 0;
-    private waitRef: MatDialogRef<any>;
+    
+    
     isScreenSmall() {
         return this.mediaMatcher.matches;
     }
 
 
-    async donotWait<t>(what: () => Promise<t>): Promise<t> {
-        this.disableWait = true;
-        try {
-            return (await what());
-        }
-        finally {
-            this.disableWait = false;
-        }
-
-    }
-    private disableWait = false;
-    constructor(private dialog: MatDialog, zone: NgZone) {
+    
+    
+    constructor(private dialog: MatDialog, zone: NgZone,busy:BusyService) {
         this.mediaMatcher.addListener(mql => zone.run(() => this.mediaMatcher = mql));
 
-        wrapFetch.wrap = () => {
-            if (this.disableWait)
-                return () => { };
-            if (this.numOfWaits == 0) {
-                this.waitRef = this.dialog.open(WaitComponent, { disableClose: true });
-            }
-            this.numOfWaits++;
-
-            return () => {
-                this.numOfWaits--;
-                if (this.numOfWaits == 0)
-                    this.waitRef.close();
-            };
-        };
+      
     }
     displayArea(settings: InputAreaComponentData) {
         this.dialog.open(InputAreaComponent, { data: settings });
@@ -92,16 +72,12 @@ export class SelectService implements SelectServiceInterface {
             data
         });
     }
-    async wait<T>(what: () => T) {
-        let ref = this.dialog.open(WaitComponent, { disableClose: true });
-        try {
-            let r = await what();
-            return r;
-        }
-        finally {
-            ref.close();
-        }
+    selectFamily(data:SelectFamilyInfo) {
+        
+        this.dialog.open(SelectFamilyComponent, {
+            data:data
+        });
     }
-
+    
 
 }

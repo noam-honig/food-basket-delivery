@@ -46,6 +46,14 @@ export class AsignFamilyComponent implements OnInit {
   assignmentCanceled() {
     this.refreshBaskets();
   }
+  addSpecial() {
+    this.dialog.selectFamily({
+      where: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id),
+      onSelect: f => {
+        alert(f.name.value);
+      }
+    })
+  }
   async refreshBaskets() {
     let r = (await new GetBasketStatusAction().run({
       filterLanguage: this.filterLangulage,

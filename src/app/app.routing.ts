@@ -18,12 +18,17 @@ import { ManageComponent } from './manage/manage.component';
 import { FixAddressComponent } from './fix-address/fix-address.component';
 import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component';
 import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-up.component';
+import { SelectFamilyComponent } from './select-family/select-family.component';
 
 
 const routes: Routes = [
 
-  
 
+  {
+    path: 'test',
+    component: SelectFamilyComponent,
+    data:{name:'test'}
+  },
   {
 
     path: FamiliesComponent.route,
@@ -45,7 +50,7 @@ const routes: Routes = [
     component: HelpersComponent,
     data: { name: 'מתנדבות' }, canActivate: [AdminGuard]
   },
-  
+
   {
     path: 'manage',
     component: ManageComponent,
@@ -57,8 +62,8 @@ const routes: Routes = [
     data: { name: 'טיוב כתובות' }, canActivate: [AdminGuard]
   },
   {
-    path:'x/:id',
-    component:LoginFromSmsComponent
+    path: 'x/:id',
+    component: LoginFromSmsComponent
   },
   /*{
     path: 'events', component: EventsComponent, canActivate: [AdminGuard], data: { name: 'אירועים' }
@@ -76,7 +81,7 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule, RouterModule.forRoot(routes
-    //  ,{enableTracing:true}
+      //  ,{enableTracing:true}
     )
   ],
   declarations: [],

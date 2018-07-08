@@ -8,6 +8,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import * as XLSX from 'xlsx';
 import { FilterBase } from 'radweb/utils/dataInterfaces1';
 import { foreachEntityItem, foreachSync } from '../shared/utils';
+import { BusyService } from '../select-popup/busy-service';
 
 @Component({
   selector: 'app-families',
@@ -32,7 +33,7 @@ export class FamiliesComponent implements OnInit {
   async doSearch() {
     if (this.families.currentRow && this.families.currentRow.wasChanged())
       return;
-    this.dialog.donotWait(() =>
+    this.busy.donotWait(() =>
       this.families.get({ where: f => f.name.isContains(this.searchString), orderBy: f => f.name }));
   }
   clearSearch() {
@@ -200,7 +201,7 @@ export class FamiliesComponent implements OnInit {
     ]
   });
   gridView = true;
-  constructor(private dialog: SelectService, private san: DomSanitizer) {
+  constructor(private dialog: SelectService, private san: DomSanitizer,private busy:BusyService) {
     if (dialog.isScreenSmall())
       this.gridView = false;
   }
