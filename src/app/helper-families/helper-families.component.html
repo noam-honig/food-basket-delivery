@@ -38,6 +38,10 @@
 <button mat-raised-button class="myButton" *ngIf="partOfReview&&familyLists.helperOptional">
   <a href="tel:{{familyLists.helperOptional.phone.value}}"> התקשרי ל{{familyLists.helperOptional.name.value}} {{familyLists.helperOptional.phone.value}} </a>
 </button>
+סה"כ
+<ul>
+  <li *ngFor="let b of familyLists.totals">{{b.name()}} - {{b.count}}</li>
+</ul>
 <app-map #map></app-map>
 
 

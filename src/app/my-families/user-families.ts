@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { Families, DeliveryStatus, Helpers } from '../models';
+import { Families, DeliveryStatus, Helpers, BasketType } from '../models';
 import { AuthService } from '../auth/auth-service';
 import { SelectService } from '../select-popup/select-service';
 import { MapComponent } from '../map/map.component';
@@ -42,7 +42,26 @@ export class UserFamiliesList {
         });
         if (this.map)
             this.map.test(this.allFamilies);
+        let hash: any = {};
+        this.totals = [];
+        this.allFamilies.forEach(ff => {
+            if (ff.deliverStatus.listValue != DeliveryStatus.Success) {
+                let x: basketStats = hash[ff.basketType.value];
+                if (!x) {
+                    hash[ff.basketType.value] = this.totals[this.totals.push({
+                        name: () => ff.lookup(new BasketType(), ff.basketType).name.value,
+                        count: 1
+                    })-1];
+                }
+                else {
+                    x.count++;
+                }
+            }
+            console.log(hash);
+        });
+
     }
+    totals: basketStats[];
     remove(f: Families) {
         this.allFamilies.splice(this.allFamilies.indexOf(f), 1);
         this.initFamilies();
@@ -53,4 +72,8 @@ export class UserFamiliesList {
         this.problem = [];
         this.toDeliver = [];
     }
+}
+export interface basketStats {
+    name: () => string;
+    count: number;
 }
