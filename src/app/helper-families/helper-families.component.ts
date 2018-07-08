@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';
 import { DeliveryStatus, Families } from '../models';
@@ -17,6 +17,7 @@ export class HelperFamiliesComponent implements OnInit {
   @Input() familyLists: UserFamiliesList;
   @Input() partOfAssign = false;
   @Input() partOfReview = false;
+   @Output() assignmentCanceled = new EventEmitter<void>();
   ngOnInit() {
     this.familyLists.setMap(this.map);
   }
@@ -25,6 +26,7 @@ export class HelperFamiliesComponent implements OnInit {
 
     await f.save();
     this.familyLists.reload();
+    this.assignmentCanceled.emit();
 
   }
   async deliveredToFamily(f: Families) {

@@ -6,7 +6,7 @@ import { SelectService } from '../select-popup/select-service';
 import { AddBoxAction } from './add-box-action';
 import { UserFamiliesList } from '../my-families/user-families';
 import { SendSmsAction } from './send-sms-action';
-import { GetBasketStatusAction, BasketInfo } from './get-basket-status-action';
+import { GetBasketStatusAction, BasketInfo, CityInfo } from './get-basket-status-action';
 import { MapComponent } from '../map/map.component';
 
 
@@ -29,14 +29,37 @@ export class AsignFamilyComponent implements OnInit {
         this.id = r[0].id.value;
         this.refreshList();
       } else {
-        this.refreshList();
+        this.refreshBaskets();
       }
     }
   }
+  filterCity = '';
+  selectCity(value: string) {
+    this.refreshBaskets();
+  }
+  langChange(lang: string) {
+    if (this.filterLangulage != +lang) {
+      this.filterLangulage = +lang;
+      this.refreshList();
+    }
+  }
+  assignmentCanceled() {
+    this.refreshBaskets();
+  }
+  async refreshBaskets() {
+    let r = (await new GetBasketStatusAction().run({
+      filterLanguage: this.filterLangulage,
+      filterCity: this.filterCity
+    }))
+    this.baskets = r.baskets;
+    this.cities = r.cities;
+  }
   baskets: BasketInfo[];
+  cities: CityInfo[];
   async refreshList() {
+    this.refreshBaskets();
     this.familyLists.initForHelper(this.id);
-    this.baskets = (await new GetBasketStatusAction().run({})).baskets;
+
   }
   familyLists = new UserFamiliesList();
   filterLangulage = -1;
