@@ -46,10 +46,12 @@ export async function serverInit() {
     });
 
     let f = new models.Families();
+    console.log('fix city start');
     await foreachSync(await f.source.find({ where: f.city.isEqualTo('') }), async ff => {
         ff.city.value = ff.getGeocodeInformation().getCity();
         await ff.save();
     });
+    console.log('fix city done');
 
 
 
