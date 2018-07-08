@@ -12,7 +12,6 @@ export class ManageComponent implements OnInit {
 
   basketType = new GridSettings(new BasketType(), {
     columnSettings: x => [
-      x.id,
       x.name
     ],
     allowUpdate: true,
