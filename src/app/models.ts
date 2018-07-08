@@ -313,7 +313,9 @@ export class Helpers extends IdEntity<HelperId>{
   realStoredPassword = new radweb.StringColumn({ dbName: 'password' });
   password = new radweb.StringColumn({ caption: 'סיסמה', inputType: 'password', virtualData: () => Helpers.emptyPassword });
 
-  createDate = new changeDate('תאריך הוספה');
+  createDate = new changeDate('מועד הוספה');
+  smsDate = new changeDate('מועד משלוח SMS');
+  reminderSmsDate = new changeDate('מועד משלוח תזכורת SMS');
   isAdmin = new BoolColumn('מנהלת');
   shortUrlKey = new radweb.StringColumn();
 
@@ -382,11 +384,11 @@ export class Families extends IdEntity<FamilyId>{
     caption: 'שם שיוך למשנע',
     virtualData: async () => (await this.lookupAsync(new Helpers(), this.courierAssignUser)).phone.value
   });
-  courierAssingTime = new changeDate('תאריך שיוך למשנע');
+  courierAssingTime = new changeDate('מועד שיוך למשנע');
 
 
   deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
-  deliveryStatusDate = new changeDate('תאריך סטטוס שינוע');
+  deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
   deliveryStatusUser = new HelperIdReadonly('מי עדכן את סטטוס המשלוח');
   courierComments = new radweb.StringColumn('הערות מסירה');
 
@@ -408,7 +410,7 @@ export class Families extends IdEntity<FamilyId>{
   }
 
 
-  createDate = new changeDate('תאריך הוספה');
+  createDate = new changeDate('מועד הוספה');
   createUser = new HelperIdReadonly('משתמש מוסיף');
 
 

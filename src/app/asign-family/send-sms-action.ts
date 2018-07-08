@@ -11,14 +11,14 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
     }
     protected async execute(info: SendSmsInfo, req: DataApiRequest<myAuthInfo>): Promise<SendSmsResponse> {
         let result: myAuthInfo;
-        
+
         let currentUser = new Helpers();
         console.log(info.helperId);
-        let y  = await (currentUser.source.find({where:currentUser.id.isEqualTo(info.helperId)}));
+        let y = await (currentUser.source.find({ where: currentUser.id.isEqualTo(info.helperId) }));
         console.log(y);
-        await SendSmsAction.generateMessage(info.helperId, req.getHeader('origin'), (phone, message) => {
-            
-             new SendSmsUtils().sendSms(phone,y[0].phone.value,  message);
+        await SendSmsAction.generateMessage(info.helperId, req.getHeader('origin'), info.reminder, (phone, message) => {
+
+            new SendSmsUtils().sendSms(phone, y[0].phone.value, message);
         });
 
         return {};
@@ -35,7 +35,7 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
     }
 
 
-    static async  generateMessage(id: string, origin: string, then: (phone: string, message: string) => void) {
+    static async  generateMessage(id: string, origin: string, reminder: Boolean, then: (phone: string, message: string) => void) {
         let h = new Helpers();
         if (!origin) {
             throw 'Couldnt determine origin for sms';
@@ -46,8 +46,18 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
                 r[0].shortUrlKey.value = SendSmsAction.makeid();
                 await r[0].save();
             }
-            let message = 'שלום ' + r[0].name.value + ' אנא לחץ על ' + origin + '/x/' + r[0].shortUrlKey.value;
+            let message = 'שלום ' + r[0].name.value;
+            if (reminder) {
+                message += " טרם נרשם במערכת שבוצעה החלוקה, אנא עדכן אותנו אם יש צורך בעזרה או עדכן שהמשלוח הגיע ליעדו"
+                r[0].reminderSmsDate.dateValue = new Date();
+            }
+            else {
+                r[0].smsDate.dateValue = new Date();
+            }
+            message += ' אנא לחץ על ' + origin + '/x/' + r[0].shortUrlKey.value;
             then(r[0].phone.value, message);
+            await r[0].save();
+
 
         }
 
@@ -59,6 +69,7 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
 export interface SendSmsInfo {
 
     helperId: string;
+    reminder: Boolean;
 }
 export interface SendSmsResponse {
 
@@ -71,7 +82,7 @@ export class SendSmsUtils {
     accid = process.env.SMS_ACCID;
 
 
-    async sendSms(phone: string,from:string, text: string) {
+    async sendSms(phone: string, from: string, text: string) {
         var t = new Date();
         var date = t.getFullYear() + '/' + (t.getMonth() + 1) + '/' + t.getDate() + ' ' + t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds();
         //console.log("date is :" + date);
@@ -86,7 +97,7 @@ export class SendSmsUtils {
             '<accid>' + this.accid + '</accid>' +
             '<sysPW>' + 'itnewslettrSMS' + '</sysPW>' +
             '<t>' + date + '</t>' +
-            '<txtUserCellular>'+from+'</txtUserCellular>' +
+            '<txtUserCellular>' + from + '</txtUserCellular>' +
             '<destination>' + phone + '</destination>' +
             '<txtSMSmessage>' + text + '</txtSMSmessage>' +
             '<dteToDeliver></dteToDeliver>' +

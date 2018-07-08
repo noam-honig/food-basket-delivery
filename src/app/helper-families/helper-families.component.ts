@@ -15,7 +15,8 @@ export class HelperFamiliesComponent implements OnInit {
 
   constructor(public auth: AuthService, private dialog: SelectService) { }
   @Input() familyLists: UserFamiliesList;
-  @Input() partOfAssign=false;
+  @Input() partOfAssign = false;
+  @Input() partOfReview = false;
   ngOnInit() {
     this.familyLists.setMap(this.map);
   }
@@ -23,7 +24,7 @@ export class HelperFamiliesComponent implements OnInit {
     f.courier.value = '';
 
     await f.save();
-    this.familyLists.initForHelper(this.familyLists.helperId);
+    this.familyLists.reload();
 
   }
   async deliveredToFamily(f: Families) {
@@ -71,8 +72,9 @@ export class HelperFamiliesComponent implements OnInit {
 
     });
   }
-  sendSms() {
-    new SendSmsAction().run({ helperId: this.familyLists.helperId });
+  sendSms(reminder: Boolean) {
+    new SendSmsAction().run({ helperId: this.familyLists.helperId, reminder: reminder });
+    this.familyLists.helperOptional.reminderSmsDate.dateValue = new Date();
   }
   updateComment(f: Families) {
     this.dialog.displayComment({

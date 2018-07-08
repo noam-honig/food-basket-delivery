@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { Families, DeliveryStatus } from '../models';
+import { Families, DeliveryStatus, Helpers } from '../models';
 import { AuthService } from '../auth/auth-service';
 import { SelectService } from '../select-popup/select-service';
 import { MapComponent } from '../map/map.component';
@@ -14,14 +14,19 @@ export class UserFamiliesList {
     delivered: Families[] = [];
     problem: Families[] = [];
     allFamilies: Families[] = [];
-    helperId:string;
-    async initForHelper(helperId: string) {
+    helperId: string;
+    helperOptional: Helpers;
+    async initForHelper(helperId: string, helperOptional?: Helpers) {
+        this.helperOptional = helperOptional;
         this.helperId = helperId;
+        this.reload();
+    }
+    async reload() {
         var f = new Families();
-        this.allFamilies = await f.source.find({ where: f.courier.isEqualTo(helperId) });
+        this.allFamilies = await f.source.find({ where: f.courier.isEqualTo(this.helperId) });
         this.initFamilies();
     }
-    
+
     initFamilies() {
         this.toDeliver = this.allFamilies.filter(f => f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery);
         this.delivered = this.allFamilies.filter(f => f.deliverStatus.listValue == DeliveryStatus.Success);

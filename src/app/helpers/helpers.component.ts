@@ -19,6 +19,7 @@ export class HelpersComponent implements OnInit {
     columnSettings: helpers => [
       helpers.name,
       helpers.phone,
+      helpers.reminderSmsDate
       //helpers.email,
       //helpers.address,
       //helpers.userName
