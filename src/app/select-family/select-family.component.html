@@ -10,10 +10,10 @@
         </mat-form-field>
         <mat-nav-list role="list">
           <mat-list-item *ngFor="let f of families.items" (click)="select(f)">
-            <mat-panel-title>
+            <mat-panel-title mat-line>
               {{f.name.value}}
             </mat-panel-title>
-            <mat-panel-description *ngIf="f.internalComment.value">
+            <mat-panel-description  mat-line *ngIf="f.internalComment.value">
               , {{f.internalComment.value}}
             </mat-panel-description>
 
