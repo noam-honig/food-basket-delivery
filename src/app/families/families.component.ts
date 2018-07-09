@@ -148,6 +148,7 @@ export class FamiliesComponent implements OnInit {
       },
       families.internalComment,
       families.deliveryComments,
+      families.special.getColumn(),
       families.createUser,
       families.createDate
 
@@ -201,7 +202,7 @@ export class FamiliesComponent implements OnInit {
     ]
   });
   gridView = true;
-  constructor(private dialog: SelectService, private san: DomSanitizer,private busy:BusyService) {
+  constructor(private dialog: SelectService, private san: DomSanitizer, private busy: BusyService) {
     if (dialog.isScreenSmall())
       this.gridView = false;
   }

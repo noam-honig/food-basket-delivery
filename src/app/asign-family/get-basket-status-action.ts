@@ -1,7 +1,7 @@
 import { ServerAction } from "../auth/server-action";
 import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 import { myAuthInfo } from "../auth/my-auth-info";
-import { Families, DeliveryStatus, Helpers, BasketType } from "../models";
+import { Families, DeliveryStatus, Helpers, BasketType, YesNo } from "../models";
 import { foreachSync } from "../shared/utils";
 
 
@@ -12,7 +12,8 @@ export class GetBasketStatusAction extends ServerAction<GetBasketStatusActionInf
     protected async execute(info: GetBasketStatusActionInfo, req: DataApiRequest<myAuthInfo>): Promise<GetBasketStatusActionResponse> {
         let result = {
             baskets: [],
-            cities: []
+            cities: [],
+            special: 0
         };
         let basketHash: any = {};
         let cityHash: any = {};
@@ -21,16 +22,21 @@ export class GetBasketStatusAction extends ServerAction<GetBasketStatusActionInf
         r.forEach(cf => {
             if (info.filterLanguage == -1 || info.filterLanguage == cf.language.value) {
                 if (!info.filterCity || info.filterCity == cf.city.value) {
-                    let bi = basketHash[cf.basketType.value];
-                    if (!bi) {
-                        bi = {
-                            id: cf.basketType.value,
-                            unassignedFamilies: 0
-                        };
-                        basketHash[cf.basketType.value] = bi;
-                        result.baskets.push(bi);
+                    if (cf.special.listValue == YesNo.No) {
+                        let bi = basketHash[cf.basketType.value];
+                        if (!bi) {
+                            bi = {
+                                id: cf.basketType.value,
+                                unassignedFamilies: 0
+                            };
+                            basketHash[cf.basketType.value] = bi;
+                            result.baskets.push(bi);
+                        }
+                        bi.unassignedFamilies++;
                     }
-                    bi.unassignedFamilies++;
+                    else {
+                        result.special++;
+                    }
                 }
 
                 let ci: CityInfo = cityHash[cf.city.value];
@@ -66,6 +72,7 @@ export interface GetBasketStatusActionInfo {
 export interface GetBasketStatusActionResponse {
     baskets: BasketInfo[];
     cities: CityInfo[];
+    special: number;
 }
 export interface BasketInfo {
     name: string;

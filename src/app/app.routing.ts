@@ -22,13 +22,7 @@ import { SelectFamilyComponent } from './select-family/select-family.component';
 
 
 const routes: Routes = [
-
-
-  {
-    path: 'test',
-    component: SelectFamilyComponent,
-    data:{name:'test'}
-  },
+  
   {
 
     path: FamiliesComponent.route,

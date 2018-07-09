@@ -221,6 +221,32 @@ export class Language {
 
 }
 
+export class YesNoColumn extends ClosedListColumn<YesNo>{
+  constructor(caption: string) {
+    super(YesNo, caption);
+  }
+  getColumn() {
+    return {
+      column: this,
+      dropDown: {
+        items: this.getOptions()
+      },
+      width: '100'
+    };
+  }
+}
+export class YesNo {
+  static Yes = new YesNo(1, 'כן');
+  static No = new YesNo(0, 'לא');
+  constructor(public id: number,
+    private caption: string) {
+
+  }
+  toString() {
+    return this.caption;
+  }
+}
+
 
 export class DeliveryStatusColumn extends radweb.ClosedListColumn<DeliveryStatus> {
   constructor(settingsOrCaption?: DataColumnSettings<number, NumberColumn> | string) {
@@ -351,6 +377,7 @@ export class Families extends IdEntity<FamilyId>{
   language = new LanguageColumn();
   basketType = new BasketId('סוג סל');
   familySource = new FamilySourceId('גורם מפנה');
+  special = new YesNoColumn('שיוך מיוחד');
   internalComment = new radweb.StringColumn('הערה פנימית - לא תופיע למשנע');
 
 

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { Families, Language, Helpers, DeliveryStatus, BasketType } from '../models';
+import { Families, Language, Helpers, DeliveryStatus, BasketType, YesNo } from '../models';
 import { AuthService } from '../auth/auth-service';
 import { SelectService } from '../select-popup/select-service';
 import { AddBoxAction } from './add-box-action';
@@ -46,14 +46,7 @@ export class AsignFamilyComponent implements OnInit {
   assignmentCanceled() {
     this.refreshBaskets();
   }
-  addSpecial() {
-    this.dialog.selectFamily({
-      where: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id),
-      onSelect: f => {
-        alert(f.name.value);
-      }
-    })
-  }
+
   async refreshBaskets() {
     let r = (await new GetBasketStatusAction().run({
       filterLanguage: this.filterLangulage,
@@ -61,9 +54,11 @@ export class AsignFamilyComponent implements OnInit {
     }))
     this.baskets = r.baskets;
     this.cities = r.cities;
+    this.specialFamilies = r.special;
   }
   baskets: BasketInfo[];
   cities: CityInfo[];
+  specialFamilies=0;
   async refreshList() {
     this.refreshBaskets();
     this.familyLists.initForHelper(this.id);
@@ -128,6 +123,17 @@ export class AsignFamilyComponent implements OnInit {
     this.id = x.helperId;
 
 
+  }
+  addSpecial() {
+    this.dialog.selectFamily({
+      where: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
+        f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes.id))),
+      onSelect: async f => {
+        f.courier.value = this.id;
+        await f.save();
+        this.refreshList();
+      }
+    })
   }
 
 }
