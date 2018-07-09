@@ -23,7 +23,7 @@ export class UserFamiliesList {
     }
     async reload() {
         var f = new Families();
-        this.allFamilies = await f.source.find({ where: f.courier.isEqualTo(this.helperId) });
+        this.allFamilies = await f.source.find({ where: f.courier.isEqualTo(this.helperId), orderBy: f.name });
         this.initFamilies();
     }
 
@@ -51,7 +51,7 @@ export class UserFamiliesList {
                     hash[ff.basketType.value] = this.totals[this.totals.push({
                         name: () => ff.lookup(new BasketType(), ff.basketType).name.value,
                         count: 1
-                    })-1];
+                    }) - 1];
                 }
                 else {
                     x.count++;

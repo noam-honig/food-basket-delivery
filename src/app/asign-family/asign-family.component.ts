@@ -34,14 +34,11 @@ export class AsignFamilyComponent implements OnInit {
     }
   }
   filterCity = '';
-  selectCity(value: string) {
+  selectCity() {
     this.refreshBaskets();
   }
-  langChange(lang: string) {
-    if (this.filterLangulage != +lang) {
-      this.filterLangulage = +lang;
-      this.refreshList();
-    }
+  langChange() {
+    this.refreshBaskets();
   }
   assignmentCanceled() {
     this.refreshBaskets();
@@ -58,7 +55,7 @@ export class AsignFamilyComponent implements OnInit {
   }
   baskets: BasketInfo[];
   cities: CityInfo[];
-  specialFamilies=0;
+  specialFamilies = 0;
   async refreshList() {
     this.refreshBaskets();
     this.familyLists.initForHelper(this.id);
@@ -67,7 +64,7 @@ export class AsignFamilyComponent implements OnInit {
   familyLists = new UserFamiliesList();
   filterLangulage = -1;
   langulages: Language[] = [
-    new Language(-1, 'הכל'),
+    new Language(-1, 'כל השפות'),
     Language.Hebrew,
     Language.Amharit,
     Language.Russian
@@ -99,16 +96,18 @@ export class AsignFamilyComponent implements OnInit {
   constructor(private auth: AuthService, private dialog: SelectService) { }
 
   ngOnInit() {
-
+    this.phone = '0507330590';
+    this.searchPhone();
   }
-  async assignItem(basket: BasketInfo, filterLangulage: number) {
+  async assignItem(basket: BasketInfo) {
 
     let x = await new AddBoxAction().run({
       phone: this.phone,
       name: this.name,
       basketType: basket.id,
       helperId: this.id,
-      language: filterLangulage
+      language: this.filterLangulage,
+      city:this.filterCity
     });
     if (x.ok) {
       basket.unassignedFamilies--;

@@ -3,9 +3,72 @@
     flex-direction: column;
 }
 .largeInput{
-    font-size:36px;
+    font-size:24px;
 }
 .no-baskets{
     color:red;
     text-align: center;
+}
+.help{
+    font-size:20px;
+    text-align: center;
+    margin-top:30px;
+}
+.sal-button{
+    width:45%;
+    margin:5px;
+}
+input{
+    font-size:20px;
+}
+.line-container{
+    width:100%;
+    display:flex;
+    align-items: center;
+    flex-direction: row;
+    vertical-align:middle;
+    margin-bottom: 5px;
+    
+}
+.line-container:focus-within{
+    outline-width: 1;
+    
+    border-color: #66afe9;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);   
+}
+
+.line-container > div >input{
+    border-width:0px;
+    width:100%;
+    outline:0;
+    padding: 0;
+}
+.same-line{
+    background-color:gainsboro;
+    flex:auto;
+}
+.input-same-line{
+    width:auto;
+    flex:auto;
+    background-color:yellow;
+    border-width:0;
+    
+}
+.same-line input{
+}
+h4{
+margin-bottom:2px;
+margin-top:3px;
+}
+h5{
+    margin-bottom:2px;
+    margin-top:5px;
+    margin-right:2px;
+    }
+select{
+    display:inline-block;
+    width:48%;
+    margin-top:5px;
 }

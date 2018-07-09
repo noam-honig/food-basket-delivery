@@ -36,6 +36,9 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
             let where = f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.basketType.isEqualTo(info.basketType)));
             if (info.language > -1)
                 where = where.and(f.language.isEqualTo(info.language));
+            if (info.city) {
+                where = where.and(f.city.isEqualTo(info.city));
+            }
             let r = await f.source.find({ where });
             if (r.length > 0) {
                 if (existingFamilies.length == 0) {
@@ -99,6 +102,7 @@ export interface AddBoxInfo {
     phone: string;
     language: number;
     helperId?: string;
+    city: string;
 }
 export interface AddBoxResponse {
     helperId?: string;

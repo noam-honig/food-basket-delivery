@@ -163,6 +163,7 @@ export class FamiliesComponent implements OnInit {
       families.floor,
       families.appartment,
       families.addressComment,
+      families.city
     ]
   });
   phones = this.families.addArea({

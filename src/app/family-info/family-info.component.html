@@ -1,5 +1,5 @@
 <div>
-  <h4 style="display:inline">סוג משלוח</h4> - {{f.basketType.displayValue}}
+  <h4 style="display:inline">סל</h4> - {{f.basketType.displayValue}}
   <ng-container *ngIf="f.deliveryComments.value">
     <br/>
     <strong style="color:red">שים לב! </strong> {{f.deliveryComments.value}}
@@ -32,7 +32,7 @@
     </a>
   </div>
 
-  <h4>טלפונים</h4>
+  <h4>טלפונים:</h4>
   <div>
     <a href="tel:{{f.phone1.value}}">
       <button mat-mini-fab style="margin-left:10px;vertical-align: middle">
