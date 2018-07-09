@@ -59,6 +59,7 @@ export class GetBasketStatusAction extends ServerAction<GetBasketStatusActionInf
             async b => {
                 b.name = (await f.lookupAsync(new BasketType(), bt => bt.id.isEqualTo(b.id))).name.value;
             });
+        result.baskets.sort((a,b)=>b.unassignedFamilies-a.unassignedFamilies);
         return result;
 
 

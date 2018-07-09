@@ -17,8 +17,9 @@ export class MapComponent implements OnInit {
 
   mapInit = false;
   markers: google.maps.Marker[] = [];
+  hasFamilies=false;
   test(families: Families[]) {
-    console.log(families);
+    this.hasFamilies = families.length>0;
     var mapProp: google.maps.MapOptions = {
       center: new google.maps.LatLng(32.3215, 34.8532),
       zoom: 13,

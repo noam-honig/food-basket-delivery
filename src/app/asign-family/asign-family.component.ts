@@ -53,8 +53,8 @@ export class AsignFamilyComponent implements OnInit {
     this.cities = r.cities;
     this.specialFamilies = r.special;
   }
-  baskets: BasketInfo[];
-  cities: CityInfo[];
+  baskets: BasketInfo[]=[];
+  cities: CityInfo[]=[];
   specialFamilies = 0;
   async refreshList() {
     this.refreshBaskets();
@@ -96,8 +96,8 @@ export class AsignFamilyComponent implements OnInit {
   constructor(private auth: AuthService, private dialog: SelectService) { }
 
   ngOnInit() {
-    this.phone = '0507330590';
-    this.searchPhone();
+ //   this.phone = '0507330590';
+  //  this.searchPhone();
   }
   async assignItem(basket: BasketInfo) {
 

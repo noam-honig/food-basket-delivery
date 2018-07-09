@@ -45,7 +45,7 @@ export class SelectFamilyComponent implements OnInit {
 
   }
   clearHelper() {
-    close();
+    this.dialogRef.close();
   }
   select(f: Families) {
     this.data.onSelect(f);

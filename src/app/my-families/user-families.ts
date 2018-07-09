@@ -61,7 +61,7 @@ export class UserFamiliesList {
         });
 
     }
-    totals: basketStats[];
+    totals: basketStats[]=[];
     remove(f: Families) {
         this.allFamilies.splice(this.allFamilies.indexOf(f), 1);
         this.initFamilies();
