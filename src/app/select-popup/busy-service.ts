@@ -16,23 +16,44 @@ export class BusyService {
         }
 
     }
+    private id = 0;
     private numOfWaits = 0;
     private disableWait = false;
+    log(id: number, what: string) {
+      //  console.log(what + ' id:' + this.id + ' w:' + this.numOfWaits);
+    }
     constructor(private dialog: MatDialog) {
-        
+
 
         wrapFetch.wrap = () => {
+            let id = this.id++;
             if (this.disableWait)
                 return () => { };
+            this.log(id, 'start busy ');
             if (this.numOfWaits == 0) {
-                this.waitRef = this.dialog.open(WaitComponent, { disableClose: true });
+
+                setTimeout(() => {
+                    
+                    if (this.numOfWaits > 0&&!this.waitRef){
+                        this.log(id, 'actual start busy ');
+                        this.waitRef = this.dialog.open(WaitComponent, { disableClose: true });
+                    }
+                }, 2);
+
             }
             this.numOfWaits++;
 
             return () => {
                 this.numOfWaits--;
-                if (this.numOfWaits == 0)
-                    this.waitRef.close();
+                this.log(id, 'close busy ');
+                if (this.numOfWaits == 0) {
+                    this.log(id, 'close top busy ');
+                    if (this.waitRef) {
+                        this.log(id, 'actual close top busy ');
+                        this.waitRef.close();
+                        this.waitRef = undefined;
+                    }
+                }
             };
         };
     }

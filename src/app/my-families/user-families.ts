@@ -23,7 +23,7 @@ export class UserFamiliesList {
     }
     async reload() {
         var f = new Families();
-        this.allFamilies = await f.source.find({ where: f.courier.isEqualTo(this.helperId), orderBy: f.name });
+        this.allFamilies = await f.source.find({ where: f.courier.isEqualTo(this.helperId), orderBy: f.name ,limit:1000});
         this.initFamilies();
     }
 
@@ -57,7 +57,7 @@ export class UserFamiliesList {
                     x.count++;
                 }
             }
-            console.log(hash);
+
         });
 
     }
