@@ -2,7 +2,7 @@ import { Component, transition, NgZone, Injector, ViewChild } from '@angular/cor
 import { Router, Route, CanActivate, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { AuthService } from './auth/auth-service';
 import { LoggedInGuard, dummyRoute } from './auth/auth-guard';
-import { MatSidenav } from '@angular/material';
+import { MatSidenav, MAT_AUTOCOMPLETE_VALUE_ACCESSOR } from '@angular/material';
 import { SelectService } from './select-popup/select-service';
 
 
@@ -18,6 +18,7 @@ export class AppComponent {
   constructor(
     public auth: AuthService,
     public router: Router,
+    public activeRoute: ActivatedRoute,
     private injector: Injector,
     public dialog: SelectService) {
 
@@ -25,6 +26,7 @@ export class AppComponent {
       this.toolbarColor = 'accent';
       this.toolbarText = 'הדגמת אתר אמהות מחבקות';
     }
+
   }
 
   routeName(route: Route) {
@@ -32,6 +34,11 @@ export class AppComponent {
     if (route.data && route.data.name)
       name = route.data.name;
     return name;
+  }
+  currentTitle() {
+    if (this.activeRoute && this.activeRoute.snapshot && this.activeRoute.firstChild && this.activeRoute.firstChild.data && this.activeRoute.snapshot.firstChild.data.name)
+      return this.activeRoute.snapshot.firstChild.data.name;;
+    return this.toolbarText;
   }
   toolbarColor = 'primary';
   toolbarText = 'אמהות מחבקות אבן יהודה והסביבה';
@@ -62,6 +69,9 @@ export class AppComponent {
     if (this.dialog.isScreenSmall())
       this.sidenav.close();
 
+  }
+  test() {
+    console.log(this.activeRoute);
   }
 
 }
