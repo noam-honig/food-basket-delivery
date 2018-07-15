@@ -13,9 +13,9 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
         let result: myAuthInfo;
 
         let currentUser = new Helpers();
-        console.log(info.helperId);
+        console.log(req.authInfo.helperId);
         let y = await (currentUser.source.find({ where: currentUser.id.isEqualTo(info.helperId) }));
-        console.log(y);
+        
         await SendSmsAction.generateMessage(info.helperId, req.getHeader('origin'), info.reminder, (phone, message) => {
 
             new SendSmsUtils().sendSms(phone, y[0].phone.value, message);
