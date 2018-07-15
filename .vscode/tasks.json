@@ -24,14 +24,7 @@
                 "$tsc"
             ]
         },
-        {
-            "type": "npm",
-            "script": "publish-to-heroku",
-            "problemMatcher": [
-                "$tsc-watch"
-            ],
-            "isBackground": true
-        },
+        
         {
             "type": "npm",
             "script": "publish-to-heroku-test",
