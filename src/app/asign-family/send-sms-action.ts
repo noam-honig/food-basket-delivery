@@ -14,7 +14,7 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
 
         let currentUser = new Helpers();
         console.log(req.authInfo.helperId);
-        let y = await (currentUser.source.find({ where: currentUser.id.isEqualTo(info.helperId) }));
+        let y = await (currentUser.source.find({ where: currentUser.id.isEqualTo(req.authInfo.helperId) }));
         
         await SendSmsAction.generateMessage(info.helperId, req.getHeader('origin'), info.reminder, (phone, message) => {
 
@@ -83,6 +83,10 @@ export class SendSmsUtils {
 
 
     async sendSms(phone: string, from: string, text: string) {
+        console.log('from',from);
+        console.log('phone',phone);
+        console.log('text',text);
+        
         var t = new Date();
         var date = t.getFullYear() + '/' + (t.getMonth() + 1) + '/' + t.getDate() + ' ' + t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds();
         //console.log("date is :" + date);
