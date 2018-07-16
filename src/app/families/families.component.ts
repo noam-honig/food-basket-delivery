@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Sanitizer } from '@angular/core';
-import { GridSettings } from 'radweb';
+import { GridSettings, ColumnSetting } from 'radweb';
 import { Families, Helpers, CallStatus, BasketType, FamilySources, DeliveryStatus, HasAsyncGetTheValue } from '../models';
 import { SelectService } from '../select-popup/select-service';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
@@ -81,11 +81,12 @@ export class FamiliesComponent implements OnInit {
     return;
   }
 
+
   families = new GridSettings(new Families(), {
 
     allowUpdate: true,
     allowInsert: true,
-    numOfColumnsInGrid: 10,
+    numOfColumnsInGrid: 5,
 
 
     get: { limit: this.limit, orderBy: f => f.name },
@@ -118,7 +119,38 @@ export class FamiliesComponent implements OnInit {
       {
         caption: 'שינוע',
         getValue: f => f.getDeliveryDescription()
-      }
+      }, {
+        column: families.familySource,
+        dropDown: { source: new FamilySources() }
+      },
+      families.internalComment,
+      families.deliveryComments,
+      families.special.getColumn(),
+      families.createUser,
+      families.createDate,
+      families.address,
+      families.floor,
+      families.appartment,
+      families.addressComment,
+      families.city,
+      families.phone1,
+      families.phone1Description,
+      families.phone2,
+      families.phone2Description,
+      families.callHelper,
+      families.callTime,
+      families.callComments,
+      families.courier.getColumn(this.dialog),
+      {
+        caption: 'טלפון משנע',
+        getValue: f => f.lookup(new Helpers(), f.courier).phone.value
+      },
+      families.courierAssignUser,
+      families.courierAssingTime,
+      families.deliverStatus.getColumn(),
+      families.deliveryStatusUser,
+      families.deliveryStatusDate,
+      families.courierComments,
     ],
     rowButtons: [
       {
