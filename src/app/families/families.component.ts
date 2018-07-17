@@ -137,9 +137,6 @@ export class FamiliesComponent implements OnInit {
       families.phone1Description,
       families.phone2,
       families.phone2Description,
-      families.callHelper,
-      families.callTime,
-      families.callComments,
       families.courier.getColumn(this.dialog),
       {
         caption: 'טלפון משנע',
@@ -151,6 +148,9 @@ export class FamiliesComponent implements OnInit {
       families.deliveryStatusUser,
       families.deliveryStatusDate,
       families.courierComments,
+      families.callHelper,
+      families.callTime,
+      families.callComments,
     ],
     rowButtons: [
       {
