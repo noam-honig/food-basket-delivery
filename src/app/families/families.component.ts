@@ -21,8 +21,9 @@ export class FamiliesComponent implements OnInit {
     new FaimilyStatistics('הכל', f => undefined),
     new FaimilyStatistics('טרם שוייכו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo(''))),
     new FaimilyStatistics('שוייכו וטרם נמסרו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.IsDifferentFrom(''))),
-    new FaimilyStatistics('נמסרו', f => f.deliverStatus.isEqualTo(DeliveryStatus.Success.id))
-    new FaimilyStatistics('ללא קפואים', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.Frozen.id))
+    new FaimilyStatistics('נמסרו', f => f.deliverStatus.isEqualTo(DeliveryStatus.Success.id)),
+    new FaimilyStatistics('ללא קפואים', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.Frozen.id)),
+    new FaimilyStatistics('קפואים', f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen.id))
   ];
   filterBy(s: FaimilyStatistics) {
     this.families.get({
