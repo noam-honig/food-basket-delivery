@@ -40,7 +40,7 @@
       </button>
     </a>
     <div style="display:inline-block">
-      <a href="tel:{{f.phone1.value}}">{{f.phone1.displayValue}}</a> {{f.phone1Description.value}}
+      <a href="tel:{{f.phone1.value}}">{{f.phone1.displayValue}}</a>, {{f.phone1Description.value?f.phone1Description.value:f.name.value}}
 
     </div>
 
@@ -52,7 +52,7 @@
       </button>
     </a>
     <div style="display:inline-block">
-      <a href="tel:{{f.phone2.value}}">{{f.phone2.displayValue}}</a> {{f.phone2Description.value}}
+      <a href="tel:{{f.phone2.value}}">{{f.phone2.displayValue}}</a>, {{f.phone2Description.value?f.phone2Description.value:f.name.value}}
 
     </div>
 
