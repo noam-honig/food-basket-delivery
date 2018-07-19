@@ -36,7 +36,7 @@ export class FamiliesComponent implements OnInit {
     if (this.families.currentRow && this.families.currentRow.wasChanged())
       return;
     this.busy.donotWait(() =>
-      this.families.get({ where: f => f.name.isContains(this.searchString), orderBy: f => f.name }));
+      this.families.get({ where: f => f.name.isContains(this.searchString), orderBy: f => f.name,limit:200 }));
   }
   clearSearch() {
     this.searchString = '';
