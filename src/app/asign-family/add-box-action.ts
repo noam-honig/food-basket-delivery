@@ -1,7 +1,7 @@
 import { ServerAction } from "../auth/server-action";
 import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 import { myAuthInfo } from "../auth/my-auth-info";
-import { Families, DeliveryStatus, Helpers } from "../models";
+import { Families, DeliveryStatus, Helpers, YesNo } from "../models";
 import { Location } from '../shared/googleApiHelpers';
 
 
@@ -33,7 +33,11 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
         let existingFamilies = await f.source.find({ where: f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id)) });
 
         {
-            let where = f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.basketType.isEqualTo(info.basketType)));
+            let where = f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
+                f.courier.isEqualTo('').and(
+                    f.basketType.isEqualTo(info.basketType).and(
+                        f.special.IsDifferentFrom(YesNo.Yes.id)
+                )));
             if (info.language > -1)
                 where = where.and(f.language.isEqualTo(info.language));
             if (info.city) {
