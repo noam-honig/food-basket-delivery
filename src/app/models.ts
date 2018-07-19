@@ -387,11 +387,11 @@ export class Families extends IdEntity<FamilyId>{
   addressComment = new radweb.StringColumn('הערת כתובת');
   deliveryComments = new radweb.StringColumn('הערות למשנע');
   addressApiResult = new radweb.StringColumn();
-  city = new radweb.StringColumn({ caption: "עיר", readonly: true });
+  city = new radweb.StringColumn({ caption: "עיר כפי שגוגל הביל", readonly: true });
 
   phone1 = new radweb.StringColumn({ caption: "טלפון 1", inputType: 'tel', dbName: 'phone' });
   phone1Description = new radweb.StringColumn('תאור טלפון 1');
-  phone2 = new radweb.StringColumn({ caption: "טלפון 2", inputType: 'tel' });
+  phone2 = new radweb.StringColumn({ caption: "טלפון 2", inputType: 'tel'});
   phone2Description = new radweb.StringColumn('תאור טלפון 2');
 
 
@@ -462,7 +462,6 @@ export class Families extends IdEntity<FamilyId>{
     return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
   }
   constructor() {
-
     super(new FamilyId(), () => new Families(), evilStatics.dataSource, "Families");
     this.initColumns();
   }

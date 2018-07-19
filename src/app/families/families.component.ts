@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, Sanitizer } from '@angular/core';
 import { GridSettings, ColumnSetting } from 'radweb';
-import { Families, Helpers, CallStatus, BasketType, FamilySources, DeliveryStatus, HasAsyncGetTheValue } from '../models';
+import { Families, Helpers, CallStatus, BasketType, FamilySources, DeliveryStatus, HasAsyncGetTheValue, Language, YesNo } from '../models';
 import { SelectService } from '../select-popup/select-service';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 
@@ -67,7 +67,7 @@ export class FamiliesComponent implements OnInit {
 
           let getv: HasAsyncGetTheValue = <any>c as HasAsyncGetTheValue;
           if (getv && getv.getTheValue) {
-            v = await getv.getTheValue();
+            v = await getv.getTheValue(); 
           }
 
           v = v.toString();
@@ -92,6 +92,15 @@ export class FamiliesComponent implements OnInit {
     allowUpdate: true,
     allowInsert: true,
     numOfColumnsInGrid: 5,
+    onEnterRow:f=>{
+      if (f.isNew()){
+        f.basketType.value = '';
+        f.language.listValue = Language.Hebrew;
+        f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
+        f.callStatus.listValue = CallStatus.NotYet;
+        f.special.listValue = YesNo.No;
+      }
+    },
 
 
     get: { limit: this.limit, orderBy: f => f.name },
