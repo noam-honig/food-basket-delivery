@@ -16,7 +16,7 @@ import { BusyService } from '../select-popup/busy-service';
   styleUrls: ['./families.component.scss']
 })
 export class FamiliesComponent implements OnInit {
-
+  limit= 100;
   statistics: FaimilyStatistics[] = [
     new FaimilyStatistics('הכל', f => undefined),
     new FaimilyStatistics('טרם שוייכו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo(''))),
@@ -28,7 +28,10 @@ export class FamiliesComponent implements OnInit {
   filterBy(s: FaimilyStatistics) {
     this.families.get({
       where: s.rule,
-      limit: this.limit
+      limit: this.limit,
+      orderBy:f=>[f.name]
+      
+
     });
   }
   searchString = '';
@@ -36,13 +39,13 @@ export class FamiliesComponent implements OnInit {
     if (this.families.currentRow && this.families.currentRow.wasChanged())
       return;
     this.busy.donotWait(() =>
-      this.families.get({ where: f => f.name.isContains(this.searchString), orderBy: f => f.name,limit:200 }));
+      this.families.get({ where: f => f.name.isContains(this.searchString), orderBy: f => f.name,limit:this.limit }));
   }
   clearSearch() {
     this.searchString = '';
     this.doSearch();
   }
-  limit: 10;
+  
   async saveToExcel() {
 
 
