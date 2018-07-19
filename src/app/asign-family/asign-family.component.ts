@@ -29,7 +29,7 @@ export class AsignFamilyComponent implements OnInit {
         this.id = r[0].id.value;
         this.refreshList();
       } else {
-        this.refreshBaskets();
+        this.refreshList();
       }
     }
   }
