@@ -11,27 +11,11 @@
   </div>
   <input class="form-control" placeholder="שם המשנע" [(ngModel)]="name">
 
-  <!--
-  <mat-form-field class="full-width">
-    <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
-    <input matInput placeholder="טלפון" type="tel" [(ngModel)]="phone" (input)="searchPhone()" class="largeInput">
-    
-  </mat-form-field>
-  <mat-form-field class="full-width">
-    <input matInput placeholder="שם" [(ngModel)]="name" class="largeInput">
-  </mat-form-field>
--->
   <span *ngIf="!name" class="help">אנא הזיני את הטלפון של המשנע ושמו, ואז תוכלי לבחור שפה, עיר ואילו סלים לשייך</span>
   <span *ngIf="name">
     <h4>
       פרטי השינוע
     </h4>
-    <!--<mat-button-toggle-group #group="matButtonToggleGroup" (valueChange)="langChange(group.value)" [value]="filterLangulage">
-      <mat-button-toggle *ngFor="let f of langulages" value="{{f.id}}">
-        {{f.toString()}}
-      </mat-button-toggle>
-    </mat-button-toggle-group>-->
-
     <div>
       <select class="form-control" #lang (change)="langChange()" [(ngModel)]="filterLangulage">
         <option *ngFor="let l of langulages" value="{{l.id}}">{{l.toString()}}</option>

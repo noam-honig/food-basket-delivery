@@ -17,7 +17,6 @@ import { LoginFromSmsAction } from '../login-from-sms/login-from-sms-action';
 import { GetBasketStatusAction } from '../asign-family/get-basket-status-action';
 import { serverInit } from './serverInit';
 import * as net from 'net';
-import { Entity, Column } from 'radweb';
 
 serverInit();
 
