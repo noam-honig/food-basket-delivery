@@ -19,6 +19,7 @@ import { FixAddressComponent } from './fix-address/fix-address.component';
 import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component';
 import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-up.component';
 import { SelectFamilyComponent } from './select-family/select-family.component';
+import { StamTestComponent } from './stam-test/stam-test.component';
 
 
 const routes: Routes = [
@@ -58,6 +59,10 @@ const routes: Routes = [
   {
     path: 'x/:id',
     component: LoginFromSmsComponent
+  },
+  {
+    path:'stam-test',
+    component:StamTestComponent
   },
   /*{
     path: 'events', component: EventsComponent, canActivate: [AdminGuard], data: { name: 'אירועים' }
