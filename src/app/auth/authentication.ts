@@ -67,8 +67,10 @@ export class Authentication<T> {
 
     signout() {
         this.setEmptyInfo();
-        if (typeof (Storage) !== 'undefined')
+        if (typeof (Storage) !== 'undefined'){
             sessionStorage.removeItem(authToken);
+            localStorage.removeItem(authToken);
+        }
     }
     get info() {
         if (!this.valid)
