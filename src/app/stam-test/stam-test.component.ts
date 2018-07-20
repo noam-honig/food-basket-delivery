@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { Families } from '../models';
+import { Families, Helpers, HelpersAndStats } from '../models';
 
 @Component({
   selector: 'app-stam-test',
@@ -8,7 +8,7 @@ import { Families } from '../models';
   styleUrls: ['./stam-test.component.scss']
 })
 export class StamTestComponent implements OnInit {
-  settings = new GridSettings(new Families(),{
+  settings = new GridSettings(new HelpersAndStats(),{
     allowDelete:true,
     allowInsert:true,
     allowUpdate:true

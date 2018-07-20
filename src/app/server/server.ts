@@ -32,6 +32,7 @@ let eb = new ExpressBridge<myAuthInfo>(app);
 
 let openedData = eb.addArea('/openedDataApi');
 let dataApi = eb.addArea('/dataApi', async x => x.authInfo != undefined);
+let adminApi = eb.addArea('/dataApi', async x => x.authInfo && x.authInfo.admin});
 let openActions = eb.addArea('');
 let adminActions = eb.addArea('', async x => x.authInfo && x.authInfo.admin);
 evilStatics.auth.tokenSignKey = process.env.TOKEN_SIGN_KEY;
@@ -57,26 +58,9 @@ adminActions.addAction(new GetBasketStatusAction());
 
 openedData.add(r => helpersDataApi(r));
 
-dataApi.add(r => {
-    var settings: DataApiSettings<models.EventHelpers> = {
-        allowDelete: r.authInfo && r.authInfo.admin,
-        allowInsert: true,
-        allowUpdate: true
-    };
-
-    if (!(r && r.authInfo && r.authInfo.admin)) {
-        settings.get = {
-            where: eh => eh.helperId.isEqualTo(r.authInfo.helperId)
-        };
-    }
-    return new DataApi(new models.EventHelpers(), settings)
-});
-
 [
-    new models.Events(),
-    new models.Items(),
     new models.BasketType(),
-    new models.FamilySources
+    new models.FamilySources()
 ].forEach(x => {
     dataApi.add(r => new DataApi(x, {
         allowDelete: r.authInfo && r.authInfo.admin,
@@ -116,20 +100,11 @@ dataApi.add(r => {
 
     return new DataApi(new models.Families(), settings)
 });
-dataApi.add(r => {
+adminApi.add(r => {
     return new DataApi(new models.HelpersAndStats(), {
         excludeColumns: h => [h.isAdmin, h.password, h.realStoredPassword, h.shortUrlKey, h.createDate]
     });
 });
-
-
-dataApi.add(r => new DataApi(new models.ItemsPerHelper(), {
-    allowDelete: !r.authInfo || r.authInfo.admin,
-    allowInsert: true,
-    allowUpdate: true
-}));
-
-
 
 
 
