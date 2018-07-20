@@ -23,18 +23,7 @@ export class FixAddressComponent implements OnInit {
       families.name,
       families.address,
       families.city,
-      {
-        caption: 'כתובת גוגל',
-        getValue: f => {
-          let result = '';
-          let g = f.getGeocodeInformation();
-          if (!g.ok())
-            return '!!! NOT OK!!!';
-          if (g.info.results.length != 1)
-            return "more results;"
-          return f.getGeocodeInformation().info.results[0].formatted_address;
-        }
-      },
+      families.addressByGoogle(),
 
     ],
 

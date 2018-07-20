@@ -147,6 +147,7 @@ export class FamiliesComponent implements OnInit {
       families.appartment,
       families.addressComment,
       families.city,
+      families.addressByGoogle(),
       families.phone1,
       families.phone1Description,
       families.phone2,

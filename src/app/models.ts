@@ -1,7 +1,7 @@
 import * as radweb from 'radweb';
 import { environment } from './../environments/environment';
 import * as uuid from 'uuid';
-import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn, UrlBuilder, Column, DropDownItem, NumberColumn, ClosedListColumn, ColumnSetting } from 'radweb';
+import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn,  Column,  NumberColumn, ClosedListColumn, ColumnSetting } from 'radweb';
 import { foreachSync, foreachEntityItem } from './shared/utils';
 import { evilStatics } from './auth/evil-statics';
 import { GetGeoInformation, GeocodeInformation } from './shared/googleApiHelpers';
@@ -387,11 +387,11 @@ export class Families extends IdEntity<FamilyId>{
   addressComment = new radweb.StringColumn('הערת כתובת');
   deliveryComments = new radweb.StringColumn('הערות למשנע');
   addressApiResult = new radweb.StringColumn();
-  city = new radweb.StringColumn({ caption: "עיר כפי שגוגל הביל", readonly: true });
+  city = new radweb.StringColumn({ caption: "עיר כפי שגוגל הבין", readonly: true });
 
   phone1 = new radweb.StringColumn({ caption: "טלפון 1", inputType: 'tel', dbName: 'phone' });
   phone1Description = new radweb.StringColumn('תאור טלפון 1');
-  phone2 = new radweb.StringColumn({ caption: "טלפון 2", inputType: 'tel'});
+  phone2 = new radweb.StringColumn({ caption: "טלפון 2", inputType: 'tel' });
   phone2Description = new radweb.StringColumn('תאור טלפון 2');
 
 
@@ -419,7 +419,19 @@ export class Families extends IdEntity<FamilyId>{
   deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
   deliveryStatusUser = new HelperIdReadonly('מי עדכן את סטטוס המשלוח');
   courierComments = new radweb.StringColumn('הערות מסירה');
-
+  addressByGoogle() {
+    let r: ColumnSetting<Families> = {
+      caption: 'כתובת כפי שגוגל הבין',
+      getValue: f => {
+        let result = '';
+        let g = f.getGeocodeInformation();
+        if (!g.ok())
+          return '!!! NOT OK!!!';
+        return f.getGeocodeInformation().info.results[0].formatted_address;
+      }
+    }
+    return r;
+  }
   getDeliveryDescription() {
     switch (this.deliverStatus.listValue) {
       case DeliveryStatus.ReadyForDelivery:

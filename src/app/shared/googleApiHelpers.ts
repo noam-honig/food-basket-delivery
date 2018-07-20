@@ -3,6 +3,8 @@ import { UrlBuilder } from "radweb";
 
 export async function GetGeoInformation(address: string) {
 
+    if (!address || address == '')
+        return new GeocodeInformation();
     let u = new UrlBuilder('https://maps.googleapis.com/maps/api/geocode/json');
     u.addObject({
         key: process.env.GOOGLE_GECODE_API_KEY,
