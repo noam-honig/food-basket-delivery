@@ -98,7 +98,13 @@ dataApi.add(r => {
         },
         onSavingRow: async family => {
             await family.doSaveStuff(r.authInfo);
-
+        },
+        get: {
+            where: f => {
+                if (r.authInfo && !r.authInfo.admin)
+                    return f.courier.isEqualTo(r.authInfo.helperId);
+                return undefined;
+            }
         }
     };
 
@@ -107,7 +113,7 @@ dataApi.add(r => {
 });
 dataApi.add(r => {
     return new DataApi(new models.HelpersAndStats(), {
-        excludeColumns: h => [h.isAdmin, h.password, h.realStoredPassword, h.shortUrlKey,h.createDate]
+        excludeColumns: h => [h.isAdmin, h.password, h.realStoredPassword, h.shortUrlKey, h.createDate]
     });
 });
 
