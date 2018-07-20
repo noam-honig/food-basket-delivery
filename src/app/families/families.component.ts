@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Sanitizer } from '@angular/core';
-import { GridSettings, ColumnSetting } from 'radweb';
+import { GridSettings, ColumnSetting, ColumnHashSet } from 'radweb';
 import { Families, Helpers, CallStatus, BasketType, FamilySources, DeliveryStatus, HasAsyncGetTheValue, Language, YesNo } from '../models';
 import { SelectService } from '../select-popup/select-service';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
@@ -16,7 +16,7 @@ import { BusyService } from '../select-popup/busy-service';
   styleUrls: ['./families.component.scss']
 })
 export class FamiliesComponent implements OnInit {
-  limit= 100;
+  limit = 100;
   statistics: FaimilyStatistics[] = [
     new FaimilyStatistics('הכל', f => undefined),
     new FaimilyStatistics('טרם שוייכו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo(''))),
@@ -29,8 +29,8 @@ export class FamiliesComponent implements OnInit {
     this.families.get({
       where: s.rule,
       limit: this.limit,
-      orderBy:f=>[f.name]
-      
+      orderBy: f => [f.name]
+
 
     });
   }
@@ -39,13 +39,13 @@ export class FamiliesComponent implements OnInit {
     if (this.families.currentRow && this.families.currentRow.wasChanged())
       return;
     this.busy.donotWait(() =>
-      this.families.get({ where: f => f.name.isContains(this.searchString), orderBy: f => f.name,limit:this.limit }));
+      this.families.get({ where: f => f.name.isContains(this.searchString), orderBy: f => f.name, limit: this.limit }));
   }
   clearSearch() {
     this.searchString = '';
     this.doSearch();
   }
-  
+
   async saveToExcel() {
 
 
@@ -58,20 +58,24 @@ export class FamiliesComponent implements OnInit {
         let row = [];
 
         await foreachSync(f.__iterateColumns(), async c => {
-          if (!doneTitle) {
-            title.push(c.caption);
-          }
-          let v = c.displayValue;
-          if (v == undefined)
-            v = '';
+          try {
+            if (!doneTitle) {
+              title.push(c.caption);
+            }
+            let v = c.displayValue;
+            if (v == undefined)
+              v = '';
 
-          let getv: HasAsyncGetTheValue = <any>c as HasAsyncGetTheValue;
-          if (getv && getv.getTheValue) {
-            v = await getv.getTheValue(); 
-          }
+            let getv: HasAsyncGetTheValue = <any>c as HasAsyncGetTheValue;
+            if (getv && getv.getTheValue) {
+              v = await getv.getTheValue();
+            }
 
-          v = v.toString();
-          row.push(v);
+            v = v.toString();
+            row.push(v);
+          } catch (err) {
+            console.error(err, c.jsonName, f.__toPojo(new ColumnHashSet()));
+          }
         });
         if (!doneTitle) {
           data.push(title);
@@ -92,8 +96,8 @@ export class FamiliesComponent implements OnInit {
     allowUpdate: true,
     allowInsert: true,
     numOfColumnsInGrid: 5,
-    onEnterRow:f=>{
-      if (f.isNew()){
+    onEnterRow: f => {
+      if (f.isNew()) {
         f.basketType.value = '';
         f.language.listValue = Language.Hebrew;
         f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;

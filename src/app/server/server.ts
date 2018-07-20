@@ -31,7 +31,7 @@ let eb = new ExpressBridge<myAuthInfo>(app);
 
 let openedData = eb.addArea('/openedDataApi');
 let dataApi = eb.addArea('/dataApi', async x => x.authInfo != undefined);
-let adminApi = eb.addArea('/dataApi', async x => x.authInfo && x.authInfo.admin});
+let adminApi = eb.addArea('/dataApi', async x => x.authInfo && x.authInfo.admin);
 let openActions = eb.addArea('');
 let adminActions = eb.addArea('', async x => x.authInfo && x.authInfo.admin);
 evilStatics.auth.tokenSignKey = process.env.TOKEN_SIGN_KEY;
