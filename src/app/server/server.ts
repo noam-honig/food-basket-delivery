@@ -93,8 +93,13 @@ dataApi.add(r => {
             if (r.authInfo) {
                 if (r.authInfo.admin)
                     return [];
-                return f.__iterateColumns().filter(c => { c == f.courierComments, c == f.deliverStatus });
+                return f.__iterateColumns().filter(c => c != f.courierComments && c != f.deliverStatus);
             }
+        },
+        excludeColumns: f => {
+            if (r.authInfo && r.authInfo.admin)
+                return [];
+            return [f.internalComment, f.callComments, f.callHelper, f.callStatus, f.callTime, f.createDate, f.createUser, f.familySource, f.familyMembers, f.special];
         },
         onSavingRow: async family => {
             await family.doSaveStuff(r.authInfo);
