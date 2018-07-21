@@ -56,6 +56,7 @@ adminActions.addAction(new GetBasketStatusAction());
 
 
 openedData.add(r => helpersDataApi(r));
+openedData.add(r => new DataApi(new models.NewsUpdate()));
 
 [
     new models.BasketType(),

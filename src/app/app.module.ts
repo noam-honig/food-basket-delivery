@@ -42,6 +42,7 @@ import { HelperFamiliesComponent } from './helper-families/helper-families.compo
 import { SelectFamilyComponent } from './select-family/select-family.component';
 import { BusyService } from './select-popup/busy-service';
 import { StamTestComponent } from './stam-test/stam-test.component';
+import { NewsComponent } from './news/news.component';
 
 @NgModule({
   declarations: [
@@ -74,7 +75,8 @@ import { StamTestComponent } from './stam-test/stam-test.component';
     DeliveryFollowUpComponent,
     HelperFamiliesComponent,
     SelectFamilyComponent,
-    StamTestComponent
+    StamTestComponent,
+    NewsComponent
   ],
   imports: [
     BrowserModule,

@@ -1,7 +1,7 @@
 import * as radweb from 'radweb';
 import { environment } from './../environments/environment';
 import * as uuid from 'uuid';
-import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn, Column, NumberColumn, ClosedListColumn, ColumnSetting } from 'radweb';
+import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn, Column, NumberColumn, ClosedListColumn, ColumnSetting, StringColumn } from 'radweb';
 import { foreachSync, foreachEntityItem } from './shared/utils';
 import { evilStatics } from './auth/evil-statics';
 import { GetGeoInformation, GeocodeInformation } from './shared/googleApiHelpers';
@@ -99,7 +99,7 @@ class DateTimeColumn extends radweb.DateTimeColumn {
     if (t.length == 1)
       t = '0' + t;
 
-    return r += ' ' + d.getHours() + ':' + t;
+    return r += ' ב' + d.getHours() + ':' + t;
   }
 
 }
@@ -126,7 +126,7 @@ class HelperId extends Id implements HasAsyncGetTheValue {
   getColumn(dialog: SelectServiceInterface): ColumnSetting<Families> {
     return {
       column: this,
-      getValue: this.getValue,
+      getValue:f=> this.getValue(),
       hideDataOnInput: true,
       click: f => dialog.selectHelper(s => f.courier.value = s.id.value),
       readonly: this.readonly,
@@ -134,8 +134,8 @@ class HelperId extends Id implements HasAsyncGetTheValue {
 
     }
   }
-  getValue(f: Families) {
-    return f.courier.lookup(new Helpers()).name.value;
+  getValue() {
+    return this.lookup(new Helpers()).name.value;
   }
   async getTheValue() {
     let r = await this.lookupAsync(new Helpers());
@@ -443,7 +443,7 @@ export class Families extends IdEntity<FamilyId>{
     switch (this.deliverStatus.listValue) {
       case DeliveryStatus.ReadyForDelivery:
         if (this.courier.value) {
-          return this.courier.getValue(this) + ' יצא ' + this.courierAssingTime.relativeDateName();
+          return this.courier.getValue() + ' יצא ' + this.courierAssingTime.relativeDateName();
         }
         break;
       case DeliveryStatus.Success:
@@ -452,8 +452,8 @@ export class Families extends IdEntity<FamilyId>{
       case DeliveryStatus.FailedOther:
         let duration = '';
         if (this.courierAssingTime.value && this.deliveryStatusDate.value)
-          duration = ' תוך '+ new Date(this.deliveryStatusDate.dateValue.valueOf() - this.courierAssingTime.dateValue.valueOf()).getMinutes().toString()+" דק'";
-        return this.deliverStatus.displayValue+' על ידי '+this.courier.getValue(this) + ' ' + this.deliveryStatusDate.relativeDateName() + duration;
+          duration = ' תוך ' + new Date(this.deliveryStatusDate.dateValue.valueOf() - this.courierAssingTime.dateValue.valueOf()).getMinutes().toString() + " דק'";
+        return this.deliverStatus.displayValue + ' על ידי ' + this.courier.getValue() + ' ' + this.deliveryStatusDate.relativeDateName() + duration;
 
     }
     return this.deliverStatus.displayValue;
@@ -576,6 +576,28 @@ export class HelpersAndStats extends Helpers {
     ;
   constructor() {
     super(() => new HelpersAndStats(), "helpersAndStats", evilStatics.dataSource);
+    this.initColumns();
+  }
+}
+export class NewsUpdate extends Entity<string>{
+  id = new StringColumn();
+  name = new StringColumn();
+  courier = new HelperId("משנע");
+  courierAssingTime = new changeDate('מועד שיוך למשנע');
+  courierAssignUser = new HelperIdReadonly('מי שייכה למשנע');
+  deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
+  deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
+  deliveryStatusUser = new HelperIdReadonly('מי עדכן את סטטוס המשלוח');
+  updateTime = new changeDate('מועד העדכון');
+  updateUser = new HelperIdReadonly('מי עדכן');
+  updateType = new NumberColumn();
+  constructor() {
+    super(() => new NewsUpdate(), evilStatics.openedDataApi, {
+      caption:'חדשות',
+      name:'news',
+      dbName:buildSql("(select ",[f.id,f.name,f.courier,f.deliverStatus,f.deliveryStatusDate,f.courierAssingTime,f.courierAssignUser,f.deliveryStatusUser],", ",f.deliveryStatusDate," updateTime, ",f.deliveryStatusUser," updateUser, 1 updateType from ",f," where ",f.deliveryStatusDate, " is not null ",
+      "union select ",[f.id,f.name,f.courier,f.deliverStatus,f.deliveryStatusDate,f.courierAssingTime,f.courierAssignUser,f.deliveryStatusUser],", ",f.courierAssingTime," updateTime, ",f.courierAssignUser," updateUser, 2 updateType from ",f," where ",f.courierAssingTime, " is not null",") x")
+    });
     this.initColumns();
   }
 }

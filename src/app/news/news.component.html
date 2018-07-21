@@ -1,0 +1,8 @@
+<button mat-mini-fab style="margin-bottom:5px"(click)="refresh()">
+  <mat-icon>refresh</mat-icon>
+
+</button>
+<mat-card *ngFor="let n of news">
+  {{describe(n)}}
+  <br/> {{n.updateTime.relativeDateName()}}, עודכן על ידי {{n.updateUser.getValue()}}
+</mat-card>
