@@ -450,7 +450,10 @@ export class Families extends IdEntity<FamilyId>{
       case DeliveryStatus.FailedBadAddress:
       case DeliveryStatus.FailedNotHome:
       case DeliveryStatus.FailedOther:
-        return this.deliverStatus.displayValue + ' ' + this.deliveryStatusDate.relativeDateName();
+        let duration = '';
+        if (this.courierAssingTime.value && this.deliveryStatusDate.value)
+          duration = ' תוך '+ new Date(this.deliveryStatusDate.dateValue.valueOf() - this.courierAssingTime.dateValue.valueOf()).getMinutes().toString()+" דק'";
+        return this.deliverStatus.displayValue+' על ידי '+this.courier.getValue(this) + ' ' + this.deliveryStatusDate.relativeDateName() + duration;
 
     }
     return this.deliverStatus.displayValue;
