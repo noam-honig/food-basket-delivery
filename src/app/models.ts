@@ -85,16 +85,23 @@ class DateTimeColumn extends radweb.DateTimeColumn {
       return 'לפני ' + r;
 
     }
+    let r = ''
     if (sameDay(d, new Date(now.valueOf() - 86400 * 1000))) {
-      return 'אתמול';
+      r = 'אתמול';
     }
-    if (sameDay(d, new Date(now.valueOf() - 86400 * 1000 * 2))) {
-      return 'שלשום';
+    else if (sameDay(d, new Date(now.valueOf() - 86400 * 1000 * 2))) {
+      r = 'שלשום';
     }
     else {
-      return 'ב' + d.toLocaleDateString();
+      r = 'ב' + d.toLocaleDateString();
     }
+    let t = d.getMinutes().toString();
+    if (t.length == 1)
+      t = '0' + t;
+
+    return r += ' ' + d.getHours() + ':' + t;
   }
+
 }
 class changeDate extends DateTimeColumn {
   constructor(caption: string) {
