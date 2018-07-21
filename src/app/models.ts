@@ -1,7 +1,7 @@
 import * as radweb from 'radweb';
 import { environment } from './../environments/environment';
 import * as uuid from 'uuid';
-import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn,  Column,  NumberColumn, ClosedListColumn, ColumnSetting } from 'radweb';
+import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn, Column, NumberColumn, ClosedListColumn, ColumnSetting } from 'radweb';
 import { foreachSync, foreachEntityItem } from './shared/utils';
 import { evilStatics } from './auth/evil-statics';
 import { GetGeoInformation, GeocodeInformation } from './shared/googleApiHelpers';
@@ -132,7 +132,7 @@ class HelperId extends Id implements HasAsyncGetTheValue {
   }
   async getTheValue() {
     let r = await this.lookupAsync(new Helpers());
-    if (r.name.value)
+    if (r && r.name && r.name.value && r.phone)
       return r.name.value + ' ' + r.phone.value;
     return '';
   }
@@ -154,7 +154,7 @@ class BasketId extends Id implements HasAsyncGetTheValue {
   }
   async getTheValue() {
     let r = await this.lookupAsync(new BasketType());
-    if (r.name.value)
+    if (r && r.name && r.name.value)
       return r.name.value;
     return '';
   }
@@ -165,7 +165,7 @@ class FamilySourceId extends Id implements HasAsyncGetTheValue {
   }
   async getTheValue() {
     let r = await this.lookupAsync(new FamilySources());
-    if (r.name.value)
+    if (r && r.name && r.name.value)
       return r.name.value;
     return '';
   }

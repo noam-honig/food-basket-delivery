@@ -53,7 +53,7 @@ export class FamiliesComponent implements OnInit {
     let data = [];
     let title = [];
     let doneTitle = false;
-    await foreachSync(await new Families().source.find({ limit: 10000 })
+    await foreachSync(await new Families().source.find({ limit: 5 })
       , async  f => {
         let row = [];
 
@@ -74,6 +74,7 @@ export class FamiliesComponent implements OnInit {
             v = v.toString();
             row.push(v);
           } catch (err) {
+            row.push(err);
             console.error(err, c.jsonName, f.__toPojo(new ColumnHashSet()));
           }
         });
