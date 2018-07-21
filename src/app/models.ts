@@ -592,7 +592,7 @@ export class NewsUpdate extends Entity<string>{
   updateUser = new HelperIdReadonly('מי עדכן');
   updateType = new NumberColumn();
   constructor() {
-    super(() => new NewsUpdate(), evilStatics.openedDataApi, {
+    super(() => new NewsUpdate(), evilStatics.dataSource, {
       caption:'חדשות',
       name:'news',
       dbName:buildSql("(select ",[f.id,f.name,f.courier,f.deliverStatus,f.deliveryStatusDate,f.courierAssingTime,f.courierAssignUser,f.deliveryStatusUser],", ",f.deliveryStatusDate," updateTime, ",f.deliveryStatusUser," updateUser, 1 updateType from ",f," where ",f.deliveryStatusDate, " is not null ",
