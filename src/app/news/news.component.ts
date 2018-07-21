@@ -40,9 +40,6 @@ export class NewsComponent implements OnInit {
           return 'משפחת ' + n.name.value + ' שוייכה ל' + n.courier.getValue() ;
         else
           return "בוטל השיוך למשפחת " + n.name.value ;
-
-        return '2';
-
     }
     return n.deliverStatus.displayValue;
   }
