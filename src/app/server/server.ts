@@ -1,5 +1,6 @@
 import * as models from './../models';
 import * as express from 'express';
+import * as secure from 'express-force-https';
 import * as compression from 'compression';
 import { ExpressBridge } from 'radweb/server';
 import { DataApi, DataApiSettings } from 'radweb/utils/server/DataApi';
@@ -23,9 +24,9 @@ serverInit();
 
 let app = express();
 app.use(compression());
+if (!process.env.DISABLE_HTTPS)
+    app.use(secure);
 let port = process.env.PORT || 3000;
-
-
 
 let eb = new ExpressBridge<myAuthInfo>(app);
 
