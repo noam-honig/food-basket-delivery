@@ -23,7 +23,7 @@ export class AuthService {
         private dialog: SelectService,
         private router: Router
     ) { }
-    async login(user: string, password: string, remember: boolean) {
+    async login(user: string, password: string, remember: boolean,fail:()=>void) {
 
         this.auth.loggedIn(await new LoginAction().run({ user: user, password: password }), remember);
         if (this.auth.valid) {
@@ -34,7 +34,8 @@ export class AuthService {
 
         }
         else {
-            this.dialog.Error("משתמשת לא נמצאה");
+            this.dialog.Error("משתמשת לא נמצאה או סיסמה שגויה");
+            fail();
         }
 
     }

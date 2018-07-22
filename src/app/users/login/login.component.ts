@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private dialog: SelectService,
     private auth: AuthService,
-    private router:Router
+    private router: Router
   ) { }
   user: string;
   password: string;
@@ -23,10 +23,10 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
   }
   login() {
-    this.auth.login(this.user,this.password,this.remember);
-    
+    this.auth.login(this.user, this.password, this.remember, () => this.password = '');
+
   }
-  register(){
+  register() {
     this.router.navigate(['/register']);
   }
 }
