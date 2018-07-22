@@ -3,11 +3,9 @@
   <h3 matDialogHeader>תודה</h3>
   <div [class.hide]="!data.showFailStatus">
     מה לא הסתדר?
-    <mat-button-toggle-group #group="matButtonToggleGroup" [value]="defaultFailStatus.id">
-      <mat-button-toggle *ngFor="let f of failOptions" value="{{f.id}}">
-        {{getStatusName(f)}}
-      </mat-button-toggle>
-    </mat-button-toggle-group>
+    <select [(ngModel)]="defaultFailStatus" class="form-control">
+      <option *ngFor="let f of failOptions" [ngValue]="f" >{{getStatusName(f)}}</option>
+    </select>
   </div>
   <mat-dialog-content>
     נשמח אם תכתוב לנו הערה על מה שראית והיה
@@ -19,7 +17,7 @@
     <button mat-raised-button color="warning" (click)="cancel()">
       בטל
     </button>
-    <button mat-raised-button color="primary" (click)="confirm(group.value)">
+    <button mat-raised-button color="primary" (click)="confirm()">
       אשר
     </button>
   </mat-dialog-actions>

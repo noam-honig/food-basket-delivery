@@ -39,10 +39,10 @@ export class UpdateCommentComponent implements OnInit {
 
   }
   ok = false;
-  confirm(failStatusId) {
+  confirm() {
     this.ok = true;
     this.dialogRef.close();
-    this.data.ok(this.data.comment, failStatusId);
+    this.data.ok(this.data.comment, this.defaultFailStatus.id);
     return false;
   }
 
