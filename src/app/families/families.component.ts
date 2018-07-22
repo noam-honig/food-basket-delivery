@@ -53,7 +53,7 @@ export class FamiliesComponent implements OnInit {
     let data = [];
     let title = [];
     let doneTitle = false;
-    await foreachSync(await new Families().source.find({ limit: 5 })
+    await foreachSync(await new Families().source.find({ limit: 5000 })
       , async  f => {
         let row = [];
 

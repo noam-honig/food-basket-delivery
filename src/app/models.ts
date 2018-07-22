@@ -140,7 +140,7 @@ class HelperId extends Id implements HasAsyncGetTheValue {
     return this.lookup(new Helpers()).name.value;
   }
   async getTheValue() {
-    let r = await this.lookupAsync(new Helpers());
+    let r = await this.lookupAsync(new Helpers(),this);
     if (r && r.name && r.name.value && r.phone)
       return r.name.value + ' ' + r.phone.value;
     return '';
