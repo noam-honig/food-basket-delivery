@@ -53,6 +53,7 @@
     "body-parser": "^1.18.2",
     "bootstrap3": "^3.3.5",
     "compression": "^1.7.2",
+    "copy-to-clipboard": "^3.0.8",
     "core-js": "^2.4.1",
     "dotenv": "^5.0.1",
     "express": "^4.16.2",

@@ -6,7 +6,9 @@
   </ng-container>
   <h4>כתובת</h4>
   <div>
-    <span (click)="f.openWaze()"><img src="http://lh3.googleusercontent.com/l4O7eQ94iRq2pPqIVKapZQvMdtYYXwT-jB1384pbxUKWJkyQ8rw85YtN-rrjoCqJ2El3=w40"></span>
+    <span (click)="f.openWaze()">
+      <img src="http://lh3.googleusercontent.com/l4O7eQ94iRq2pPqIVKapZQvMdtYYXwT-jB1384pbxUKWJkyQ8rw85YtN-rrjoCqJ2El3=w40">
+    </span>
 
     <div style="display:inline-block">
       {{f.address.value}}
@@ -23,9 +25,9 @@
         <br/> {{f.addressComment.value}}
       </ng-container>
     </div>
-    <a (click)="f.openGoogleMaps()" style="float:left">
-      מפה
-    </a>
+    <div style="float:left;text-align: left">
+      <a (click)="f.openGoogleMaps()" >מפה</a><br/><a (click)="copyAddress(f)" >העתק כתובת</a>
+    </div>
   </div>
 
   <h4>טלפונים:</h4>
@@ -58,8 +60,8 @@
 <div class="button-area">
   <ng-content></ng-content>
   <div class="help" *ngIf="showHelp">
-  צריך עזרה? התקשר ל {{f.courierAssignUserName.value}}
-  <a href="tel:{{f.courierAssignUserPhone.value}}">{{f.courierAssignUserPhone.value}} </a> או
-  <a (click)="SendHelpSms()">שלח הודעת SMS</a>
-</div>
+    צריך עזרה? התקשר ל {{f.courierAssignUserName.value}}
+    <a href="tel:{{f.courierAssignUserPhone.value}}">{{f.courierAssignUserPhone.value}} </a> או
+    <a (click)="SendHelpSms()">שלח הודעת SMS</a>
+  </div>
 </div>

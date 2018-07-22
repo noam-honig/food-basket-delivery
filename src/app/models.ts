@@ -9,6 +9,8 @@ import { myAuthInfo } from './auth/my-auth-info';
 import { DataColumnSettings } from 'radweb/utils/dataInterfaces1';
 import { SelectServiceInterface } from './select-popup/select-service-interface';
 
+import { SelectService } from './select-popup/select-service';
+
 class IdEntity<idType extends Id> extends radweb.Entity<string>
 {
   id: idType;
@@ -126,7 +128,7 @@ class HelperId extends Id implements HasAsyncGetTheValue {
   getColumn(dialog: SelectServiceInterface): ColumnSetting<Families> {
     return {
       column: this,
-      getValue:f=> this.getValue(),
+      getValue: f => this.getValue(),
       hideDataOnInput: true,
       click: f => dialog.selectHelper(s => f.courier.value = s.id.value),
       readonly: this.readonly,
@@ -474,6 +476,7 @@ export class Families extends IdEntity<FamilyId>{
   openGoogleMaps() {
     window.open('https://www.google.com/maps/search/?api=1&query=' + this.address.value, '_blank');
   }
+  
 
 
   private _lastString: string;
@@ -594,10 +597,10 @@ export class NewsUpdate extends Entity<string>{
   updateType = new NumberColumn();
   constructor() {
     super(() => new NewsUpdate(), evilStatics.dataSource, {
-      caption:'חדשות',
-      name:'news',
-      dbName:buildSql("(select ",[f.id,f.name,f.courier,f.deliverStatus,f.deliveryStatusDate,f.courierAssingTime,f.courierAssignUser,f.deliveryStatusUser],", ",f.deliveryStatusDate," updateTime, ",f.deliveryStatusUser," updateUser, 1 updateType from ",f," where ",f.deliveryStatusDate, " is not null ",
-      "union select ",[f.id,f.name,f.courier,f.deliverStatus,f.deliveryStatusDate,f.courierAssingTime,f.courierAssignUser,f.deliveryStatusUser],", ",f.courierAssingTime," updateTime, ",f.courierAssignUser," updateUser, 2 updateType from ",f," where ",f.courierAssingTime, " is not null",") x")
+      caption: 'חדשות',
+      name: 'news',
+      dbName: buildSql("(select ", [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser], ", ", f.deliveryStatusDate, " updateTime, ", f.deliveryStatusUser, " updateUser, 1 updateType from ", f, " where ", f.deliveryStatusDate, " is not null ",
+        "union select ", [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser], ", ", f.courierAssingTime, " updateTime, ", f.courierAssignUser, " updateUser, 2 updateType from ", f, " where ", f.courierAssingTime, " is not null", ") x")
     });
     this.initColumns();
   }

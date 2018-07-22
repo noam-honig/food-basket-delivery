@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from "@angular/core";
-import { MatDialog, MatDialogRef } from "@angular/material";
+import { MatDialog, MatDialogRef, MatSnackBar } from "@angular/material";
 import { Entity, GridSettings, IDataSettings, IDataAreaSettings } from "radweb";
 import { SelectPopupComponent, SelectComponentInfo } from "./select-popup.component";
 import { YesNoQuestionComponentData, YesNoQuestionComponent } from "./yes-no-question/yes-no-question.component";
@@ -17,26 +17,26 @@ import { BusyService } from "./busy-service";
 @Injectable()
 export class SelectService implements SelectServiceInterface {
     Info(info: string): any {
-        this.Error(info);
+        this.snackBar.open(info,"סגור", { duration: 2000 });
     }
     Error(err: string): any {
 
         this.YesNoQuestion(err, () => { });
     }
     private mediaMatcher: MediaQueryList = matchMedia(`(max-width: 720px)`);
-    
-    
+
+
     isScreenSmall() {
         return this.mediaMatcher.matches;
     }
 
 
-    
-    
-    constructor(private dialog: MatDialog, zone: NgZone,busy:BusyService) {
+
+
+    constructor(private dialog: MatDialog, zone: NgZone, busy: BusyService, private snackBar: MatSnackBar) {
         this.mediaMatcher.addListener(mql => zone.run(() => this.mediaMatcher = mql));
 
-      
+
     }
     displayArea(settings: InputAreaComponentData) {
         this.dialog.open(InputAreaComponent, { data: settings });
@@ -72,12 +72,12 @@ export class SelectService implements SelectServiceInterface {
             data
         });
     }
-    selectFamily(data:SelectFamilyInfo) {
-        
+    selectFamily(data: SelectFamilyInfo) {
+
         this.dialog.open(SelectFamilyComponent, {
-            data:data
+            data: data
         });
     }
-    
+
 
 }
