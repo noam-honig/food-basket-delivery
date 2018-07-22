@@ -1,23 +1,24 @@
 import { Injectable, NgZone } from "@angular/core";
-import { MatDialog, MatDialogRef, MatSnackBar } from "@angular/material";
-import { Entity, GridSettings, IDataSettings, IDataAreaSettings } from "radweb";
+import { MatDialog, MatSnackBar } from "@angular/material";
+import { Entity, IDataSettings } from "radweb";
 import { SelectPopupComponent, SelectComponentInfo } from "./select-popup.component";
 import { YesNoQuestionComponentData, YesNoQuestionComponent } from "./yes-no-question/yes-no-question.component";
 import { InputAreaComponentData, InputAreaComponent } from "./input-area/input-area.component";
 import { UpdateCommentComponent, UpdateCommentComponentData } from "../update-comment/update-comment.component";
 import { SelectHelperInfo, SelectHelperComponent } from "../select-helper/select-helper.component";
-import { Helpers, Families } from "../models";
+import { Helpers } from "../models";
 import { SelectServiceInterface } from "./select-service-interface";
-import { WaitComponent } from "../wait/wait.component";
-import { wrapFetch } from "radweb/utils/restDataProvider";
 import { SelectFamilyInfo, SelectFamilyComponent } from "../select-family/select-family.component";
 import { BusyService } from "./busy-service";
+import { environment } from "../../environments/environment";
+import { ServerEventAuthorizeAction } from "../server/server-event-authorize-action";
+const EventSource: any = window['EventSource'];
 
 
 @Injectable()
 export class SelectService implements SelectServiceInterface {
     Info(info: string): any {
-        this.snackBar.open(info,"סגור", { duration: 2000 });
+        this.snackBar.open(info, "סגור", { duration: 4000 });
     }
     Error(err: string): any {
 
@@ -33,11 +34,34 @@ export class SelectService implements SelectServiceInterface {
 
 
 
-    constructor(private dialog: MatDialog, zone: NgZone, busy: BusyService, private snackBar: MatSnackBar) {
+    constructor(private dialog: MatDialog, private zone: NgZone, busy: BusyService, private snackBar: MatSnackBar) {
         this.mediaMatcher.addListener(mql => zone.run(() => this.mediaMatcher = mql));
 
 
     }
+    eventSource: any;/*EventSource*/
+    refreshEventListener(enable: boolean) {
+        if (this.eventSource) {
+            this.eventSource.close();
+            this.eventSource = undefined;
+        }
+        if (enable && typeof (EventSource) !== "undefined") {
+            var source = new EventSource(environment.serverUrl + 'stream', { withCredentials: true });
+            this.eventSource = source;
+            source.onmessage = e => {
+                
+                this.zone.run(() => {
+
+                    this.Info(e.data.toString() + ' ');
+                });
+            };
+            source.addEventListener("authenticate", function (e) {
+                
+                new ServerEventAuthorizeAction().run({ key: (<any>e).data.toString() });
+            });
+        }
+    }
+
     displayArea(settings: InputAreaComponentData) {
         this.dialog.open(InputAreaComponent, { data: settings });
     }

@@ -26,8 +26,12 @@ export class AppComponent {
       this.toolbarColor = 'accent';
       this.toolbarText = 'הדגמת אתר אמהות מחבקות';
     }
+    
+    auth.auth.tokenInfoChanged = ()=>dialog.refreshEventListener(this.auth.auth.info&&this.auth.auth.info.admin);
+    auth.auth.tokenInfoChanged();
 
   }
+
 
   routeName(route: Route) {
     let name = route.path;

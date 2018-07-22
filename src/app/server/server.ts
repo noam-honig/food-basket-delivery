@@ -17,13 +17,58 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 import { LoginFromSmsAction } from '../login-from-sms/login-from-sms-action';
 import { GetBasketStatusAction } from '../asign-family/get-basket-status-action';
 import { serverInit } from './serverInit';
-import * as net from 'net';
+import { ServerEventAuthorizeAction } from './server-event-authorize-action';
 
 serverInit();
 
 
 let app = express();
+let connection: express.Response[] = [];
+let tempConnections: any = {};
+ServerEventAuthorizeAction.authorize = key => {
+    let x = tempConnections[key];
+    if (x)
+        x();
+};
+
+let send = x => {
+    connection.forEach(y => y.write("data:" + x + "\n\n"));
+};
+models.Families.SendMessageToBrowsers = x => send(x);
+app.get('/send/:id', (req, res) => {
+    send(req.params.id);
+    res.send(req.params.id + ' ' + connection.length);
+
+
+});
+app.get('/stream', (req, res) => {
+
+    res.writeHead(200, {
+        "Access-Control-Allow-Origin": req.header('origin') ? req.header('origin') : '',
+        "Access-Control-Allow-Credentials": "true",
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive'
+    });
+    let key = new Date().toISOString();
+
+    tempConnections[key] = () => {
+        connection.push(res);
+        tempConnections[key] = undefined;
+        console.log('authorize ' + key);
+    };
+    res.write("event:authenticate\ndata:" + key + "\n\n");
+    req.on("close", () => {
+        tempConnections[key] = undefined;
+        let i = connection.indexOf(res);
+        if (i >= 0)
+            connection.splice(i, 1);
+    });
+
+});
+
 app.use(compression());
+
 if (!process.env.DISABLE_HTTPS)
     app.use(secure);
 let port = process.env.PORT || 3000;
@@ -35,17 +80,9 @@ let dataApi = eb.addArea('/dataApi', async x => x.authInfo != undefined);
 let adminApi = eb.addArea('/dataApi', async x => x.authInfo && x.authInfo.admin);
 let openActions = eb.addArea('');
 let adminActions = eb.addArea('', async x => x.authInfo && x.authInfo.admin);
+
 evilStatics.auth.tokenSignKey = process.env.TOKEN_SIGN_KEY;
-eb.addRequestProcessor(req => {
-    var apikey = process.env.HOSTEDGRAPHITE_APIKEY;
-    try {
-        var socket = net.createConnection(2003, "carbon.hostedgraphite.com", function () {
-            socket.write(apikey + ".request.count 1\n");
-            socket.end();
-        });
-    } catch{ }
-    return true;
-});
+
 evilStatics.auth.applyTo(eb, openActions);
 
 openActions.addAction(new LoginAction());
@@ -54,6 +91,8 @@ adminActions.addAction(new ResetPasswordAction());
 adminActions.addAction(new AddBoxAction());
 adminActions.addAction(new SendSmsAction());
 adminActions.addAction(new GetBasketStatusAction());
+adminActions.addAction(new ServerEventAuthorizeAction());
+"";
 
 
 openedData.add(r => helpersDataApi(r));
@@ -112,26 +151,27 @@ adminApi.add(r => {
 app.get('/cache.manifest', (req, res) => {
     let result =
         `CACHE MANIFEST
-CACHE:
-/
-/home
-`;
+    CACHE:
+    /
+    /home
+    `;
     fs.readdirSync('dist').forEach(x => {
         result += `/${x}
-`;
+        `;
 
     });
     result += `
-FALLBACK:
-/ /
-
-NETWORK:
-/dataApi/`
+    FALLBACK:
+    / /
+    
+    NETWORK:
+    /dataApi/`
 
     res.send(result);
 });
 
 app.use(express.static('dist'));
+
 app.use('/*', (req, res) => {
     if (req.method == 'OPTIONS')
         res.send('');
@@ -143,5 +183,4 @@ app.use('/*', (req, res) => {
             res.send('No Result');
     }
 });
-
 app.listen(port);

@@ -54,20 +54,25 @@ export class Authentication<T> {
             this._token = token;
             this.__theInfo = Promise.resolve(this._info);
         }
+        if (this.tokenInfoChanged)
+            this.tokenInfoChanged();
     }
     setEmptyInfo() {
         this.valid = false;
         this._token = '';
         this._info = undefined;
+        if (this.tokenInfoChanged)
+            this.tokenInfoChanged();
 
     }
+    tokenInfoChanged: () => void;
     private _token: string;
     valid: boolean = false;
     private _info: T;
 
     signout() {
         this.setEmptyInfo();
-        if (typeof (Storage) !== 'undefined'){
+        if (typeof (Storage) !== 'undefined') {
             sessionStorage.removeItem(authToken);
             localStorage.removeItem(authToken);
         }
@@ -102,13 +107,13 @@ export class Authentication<T> {
     validateToken: (token: string) => Promise<T> = async (x) => {
         let result: T;
         try {
-            result = jwt.verify(x, this.tokenSignKey) as T;
-        } catch(err){ }
+            result = <T><any>jwt.verify(x, this.tokenSignKey);
+        } catch (err) { }
 
         return result;
     };
     createTokenFor(item: T) {
-        return jwt.sign(item, this.tokenSignKey);
+        return jwt.sign(<any>item, this.tokenSignKey);
     }
     tokenSignKey;
 

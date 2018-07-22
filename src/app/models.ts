@@ -1,5 +1,4 @@
 import * as radweb from 'radweb';
-import { environment } from './../environments/environment';
 import * as uuid from 'uuid';
 import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn, Column, NumberColumn, ClosedListColumn, ColumnSetting, StringColumn } from 'radweb';
 import { foreachSync, foreachEntityItem } from './shared/utils';
@@ -9,7 +8,7 @@ import { myAuthInfo } from './auth/my-auth-info';
 import { DataColumnSettings } from 'radweb/utils/dataInterfaces1';
 import { SelectServiceInterface } from './select-popup/select-service-interface';
 
-import { SelectService } from './select-popup/select-service';
+
 
 class IdEntity<idType extends Id> extends radweb.Entity<string>
 {
@@ -105,7 +104,7 @@ class DateTimeColumn extends radweb.DateTimeColumn {
   }
 
 }
-class changeDate extends DateTimeColumn {
+export class changeDate extends DateTimeColumn {
   constructor(caption: string) {
     super({
       caption: caption,
@@ -123,7 +122,7 @@ class ItemId extends Id {
 export interface HasAsyncGetTheValue {
   getTheValue(): Promise<string>;
 }
-class HelperId extends Id implements HasAsyncGetTheValue {
+export class HelperId extends Id implements HasAsyncGetTheValue {
 
   getColumn(dialog: SelectServiceInterface): ColumnSetting<Families> {
     return {
@@ -139,8 +138,14 @@ class HelperId extends Id implements HasAsyncGetTheValue {
   getValue() {
     return this.lookup(new Helpers()).name.value;
   }
+  async getTheName() {
+    let r = await this.lookupAsync(new Helpers(), this);
+    if (r && r.name && r.name.value)
+      return r.name.value;
+    return '';
+  }
   async getTheValue() {
-    let r = await this.lookupAsync(new Helpers(),this);
+    let r = await this.lookupAsync(new Helpers(), this);
     if (r && r.name && r.name.value && r.phone)
       return r.name.value + ' ' + r.phone.value;
     return '';
@@ -476,7 +481,7 @@ export class Families extends IdEntity<FamilyId>{
   openGoogleMaps() {
     window.open('https://www.google.com/maps/search/?api=1&query=' + this.address.value, '_blank');
   }
-  
+
 
 
   private _lastString: string;
@@ -504,10 +509,11 @@ export class Families extends IdEntity<FamilyId>{
         this.city.value = geo.getCity();
       }
     }
-    let logChanged = (col: Column<any>, dateCol: DateTimeColumn, user: HelperId) => {
+    let logChanged = (col: Column<any>, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) => {
       if (col.value != col.originalValue) {
         dateCol.dateValue = new Date();
         user.value = authInfo.helperId;
+        wasChanged();
       }
     }
     if (this.isNew()) {
@@ -515,10 +521,11 @@ export class Families extends IdEntity<FamilyId>{
       this.createUser.value = authInfo.helperId;
     }
 
-    logChanged(this.courier, this.courierAssingTime, this.courierAssignUser);
-    logChanged(this.callStatus, this.callTime, this.callHelper);
-    logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser);
+    logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(NewsUpdate.GetUpdateMessage(this, 2, await this.courier.getTheName())));//should be after succesfull save
+    logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
+    logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(NewsUpdate.GetUpdateMessage(this, 1, await this.courier.getTheName()))); //should be after succesfull save
   }
+  static SendMessageToBrowsers = (s: string) => { };
 }
 export class EventHelpers extends IdEntity<EventHelperId>{
 
@@ -604,8 +611,42 @@ export class NewsUpdate extends Entity<string>{
     });
     this.initColumns();
   }
-}
+  describe() {
+    return NewsUpdate.GetUpdateMessage(this, this.updateType.value, this.courier.getValue());
+  }
+  static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string) {
+    switch (updateType) {
+      case 1:
+        switch (n.deliverStatus.listValue) {
+          case DeliveryStatus.ReadyForDelivery:
+            break;
+          case DeliveryStatus.Success:
+          case DeliveryStatus.FailedBadAddress:
+          case DeliveryStatus.FailedNotHome:
+          case DeliveryStatus.FailedOther:
+            let duration = '';
+            if (n.courierAssingTime.value && n.deliveryStatusDate.value)
+              duration = ' תוך ' + new Date(n.deliveryStatusDate.dateValue.valueOf() - n.courierAssingTime.dateValue.valueOf()).getMinutes().toString() + " דק'";
+            return n.deliverStatus.displayValue + ' למשפחת ' + n.name.value + ' על ידי ' + courierName + duration;
 
+        }
+        return 'משפחת ' + n.name.value + ' עודכנה ל' + n.deliverStatus.displayValue;
+      case 2:
+        if (n.courier.value)
+          return 'משפחת ' + n.name.value + ' שוייכה ל' + courierName;
+        else
+          return "בוטל השיוך למשפחת " + n.name.value;
+    }
+    return n.deliverStatus.displayValue;
+  }
+}
+interface FamilyUpdateInfo {
+  name: StringColumn,
+  courier: HelperId,
+  deliverStatus: DeliveryStatusColumn,
+  courierAssingTime: changeDate,
+  deliveryStatusDate: changeDate
+}
 export class Events extends IdEntity<EventId>{
   name = new radweb.StringColumn('שם אירוע');
   description = new radweb.StringColumn();
