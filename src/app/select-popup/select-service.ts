@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from "@angular/core";
+import { Injectable, NgZone, Output, EventEmitter } from "@angular/core";
 import { MatDialog, MatSnackBar } from "@angular/material";
 import { Entity, IDataSettings } from "radweb";
 import { SelectPopupComponent, SelectComponentInfo } from "./select-popup.component";
@@ -12,6 +12,10 @@ import { SelectFamilyInfo, SelectFamilyComponent } from "../select-family/select
 import { BusyService } from "./busy-service";
 import { environment } from "../../environments/environment";
 import { ServerEventAuthorizeAction } from "../server/server-event-authorize-action";
+import { Subject } from "rxjs/Subject";
+import { Observable } from "rxjs/Observable";
+import { BehaviorSubject } from "rxjs/BehaviorSubject";
+
 const EventSource: any = window['EventSource'];
 
 
@@ -31,13 +35,13 @@ export class SelectService implements SelectServiceInterface {
         return this.mediaMatcher.matches;
     }
 
-
+    newsUpdate = new Subject<string>();
 
 
     constructor(private dialog: MatDialog, private zone: NgZone, busy: BusyService, private snackBar: MatSnackBar) {
         this.mediaMatcher.addListener(mql => zone.run(() => this.mediaMatcher = mql));
 
-
+        
     }
     eventSource: any;/*EventSource*/
     refreshEventListener(enable: boolean) {
@@ -53,14 +57,14 @@ export class SelectService implements SelectServiceInterface {
                 source.onmessage = e => {
 
                     this.zone.run(() => {
-
+                        this.newsUpdate.next(e.data.toString());
                         this.Info(e.data.toString() + ' ');
                     });
                 };
                 source.addEventListener("authenticate", async function (e) {
-                    
+
                     await new ServerEventAuthorizeAction().run({ key: (<any>e).data.toString() });
-                    
+
                 });
             });
         }

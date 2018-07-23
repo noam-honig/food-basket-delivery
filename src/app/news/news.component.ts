@@ -1,15 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NewsUpdate, DeliveryStatus, DeliveryStatusColumn, changeDate, HelperId } from '../models';
 import { StringColumn } from 'radweb';
+import { SelectService } from '../select-popup/select-service';
 
 @Component({
   selector: 'app-news',
   templateUrl: './news.component.html',
   styleUrls: ['./news.component.scss']
 })
-export class NewsComponent implements OnInit {
+export class NewsComponent implements OnInit, OnDestroy {
 
-  constructor() { }
+  onDestroy = () => { };
+  constructor(dialog: SelectService) {
+    let y = dialog.newsUpdate.subscribe(() => {
+      this.refresh();
+    });
+    this.onDestroy = () => {
+      y.unsubscribe();
+    };
+
+  }
+  ngOnDestroy(): void {
+    this.onDestroy();
+  }
   news: NewsUpdate[] = [];
   async ngOnInit() {
     this.refresh();
@@ -44,6 +57,6 @@ export class NewsComponent implements OnInit {
     }
     return n.deliverStatus.displayValue;
   }
-  
+
 
 }
