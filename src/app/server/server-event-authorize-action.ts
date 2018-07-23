@@ -7,14 +7,16 @@ export interface inArgs {
 }
 
 
-export class ServerEventAuthorizeAction extends ServerAction<inArgs, string>{
+export class ServerEventAuthorizeAction extends ServerAction<inArgs, any>{
     constructor() {
         super('ServerEventAuthorizeAction');//required because of minification
     }
 
-    protected async execute(info: inArgs, req: DataApiRequest<myAuthInfo>): Promise<string> {
+    protected async execute(info: inArgs, req: DataApiRequest<myAuthInfo>): Promise<any> {
+        console.log('start authenticate on server');
         ServerEventAuthorizeAction.authorize(info.key);
-        return 'ok';
+        console.log('end authenticate on server');
+        return {};
     }
     static authorize: (key: string) => void = (key: string) => { };
 }

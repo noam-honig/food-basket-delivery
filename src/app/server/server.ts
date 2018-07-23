@@ -18,54 +18,19 @@ import { LoginFromSmsAction } from '../login-from-sms/login-from-sms-action';
 import { GetBasketStatusAction } from '../asign-family/get-basket-status-action';
 import { serverInit } from './serverInit';
 import { ServerEventAuthorizeAction } from './server-event-authorize-action';
+import { ServerEvents } from './server-events';
+import * as morgan from 'morgan';
 
 serverInit();
 
 
 let app = express();
-let connection: express.Response[] = [];
-let tempConnections: any = {};
-ServerEventAuthorizeAction.authorize = key => {
-    let x = tempConnections[key];
-    if (x)
-        x();
-};
+//app.use(morgan('tiny')); 'logging';
+if (!process.env.DISABLE_SERVER_EVENTS) {
+    let serverEvents = new ServerEvents(app);
+    models.Families.SendMessageToBrowsers = x => serverEvents.SendMessage(x);
+}
 
-let send = x => {
-    connection.forEach(y => y.write("data:" + x + "\n\n"));
-};
-models.Families.SendMessageToBrowsers = x => send(x);
-app.get('/send/:id', (req, res) => {
-    send(req.params.id);
-    res.send(req.params.id + ' ' + connection.length);
-
-
-});
-app.get('/stream', (req, res) => {
-
-    res.writeHead(200, {
-        "Access-Control-Allow-Origin": req.header('origin') ? req.header('origin') : '',
-        "Access-Control-Allow-Credentials": "true",
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive'
-    });
-    let key = new Date().toISOString();
-
-    tempConnections[key] = () => {
-        connection.push(res);
-        tempConnections[key] = undefined;
-        console.log('authorize ' + key);
-    };
-    res.write("event:authenticate\ndata:" + key + "\n\n");
-    req.on("close", () => {
-        tempConnections[key] = undefined;
-        let i = connection.indexOf(res);
-        if (i >= 0)
-            connection.splice(i, 1);
-    });
-
-});
 
 app.use(compression());
 

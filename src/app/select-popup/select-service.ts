@@ -46,18 +46,22 @@ export class SelectService implements SelectServiceInterface {
             this.eventSource = undefined;
         }
         if (enable && typeof (EventSource) !== "undefined") {
-            var source = new EventSource(environment.serverUrl + 'stream', { withCredentials: true });
-            this.eventSource = source;
-            source.onmessage = e => {
-                
-                this.zone.run(() => {
+            this.zone.run(() => {
+                var source = new EventSource(environment.serverUrl + 'stream', { withCredentials: true });
 
-                    this.Info(e.data.toString() + ' ');
+                this.eventSource = source;
+                source.onmessage = e => {
+
+                    this.zone.run(() => {
+
+                        this.Info(e.data.toString() + ' ');
+                    });
+                };
+                source.addEventListener("authenticate", async function (e) {
+                    
+                    await new ServerEventAuthorizeAction().run({ key: (<any>e).data.toString() });
+                    
                 });
-            };
-            source.addEventListener("authenticate", function (e) {
-                
-                new ServerEventAuthorizeAction().run({ key: (<any>e).data.toString() });
             });
         }
     }
