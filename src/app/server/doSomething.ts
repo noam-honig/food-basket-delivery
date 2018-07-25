@@ -65,7 +65,7 @@ async function ImportFromExcel(){
                 await f.doSaveStuff({});
                 await f.save();
             }
-            else if (f.address.value == 'השילוח 16 חולון')
+            else if (f.address.value == 'טטט')
                 found = true;
         }
         catch (err) {
