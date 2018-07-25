@@ -13,6 +13,7 @@
     "postinstall": "npm run server:build&&npm run build",
     "publish-to-heroku-test": "git push heroku master -f",
     "publish-to-hmey": "git push hmey master -f",
+    "publish-to-m-h": "git push m-h master -f",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",

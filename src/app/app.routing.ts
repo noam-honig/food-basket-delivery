@@ -27,17 +27,15 @@ const routes: Routes = [
   },
 
   {
-    path: 'my-families', component: MyFamiliesComponent, canActivate: [LoggedInGuard], data: { name: 'משפחות שלי' }
-  },
-  {
     path: 'assign-families', component: AsignFamilyComponent, canActivate: [AdminGuard], data: { name: 'שיוך משפחות' }
   },
   {
     path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [AdminGuard], data: { name: 'מעקב משלוחים' }
   },
   {
-    path:'news',component:NewsComponent, canActivate:[AdminGuard],data:{name:'חדשות'}
+    path: 'news', component: NewsComponent, canActivate: [AdminGuard], data: { name: 'חדשות' }
   },
+  
   {
     path: 'helpers',
     component: HelpersComponent,
@@ -47,7 +45,7 @@ const routes: Routes = [
   {
     path: 'manage',
     component: ManageComponent,
-    data: { name: 'ניהול' }, canActivate: [AdminGuard]
+    data: { name: 'הגדרות מערכת' }, canActivate: [AdminGuard]
   },
   {
     path: 'addresses',
@@ -59,8 +57,10 @@ const routes: Routes = [
     component: LoginFromSmsComponent
   },
   //{ path: 'stam-test', component: StamTestComponent },
-  
-  { path: 'update-info', component: UpdateInfoComponent, data: { name: 'עדכני פרטים' }, canActivate: [LoggedInGuard] },
+  {
+    path: 'my-families', component: MyFamiliesComponent, canActivate: [LoggedInGuard], data: { name: 'משפחות שלי' }
+  },
+  { path: 'update-info', component: UpdateInfoComponent, data: { name: 'הגדרות אישיות' }, canActivate: [LoggedInGuard] },
   { path: 'login', component: LoginComponent, data: { name: 'כניסה' } },
   { path: 'register', component: RegisterComponent, data: { name: 'הרשמה' }, canActivate: [NotLoggedInGuard] },
   { path: '', redirectTo: '/families', pathMatch: 'full' },

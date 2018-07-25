@@ -37,10 +37,10 @@ export class SelectService implements SelectServiceInterface {
 
     newsUpdate = new Subject<string>();
 
-
-    constructor(private dialog: MatDialog, private zone: NgZone, busy: BusyService, private snackBar: MatSnackBar) {
+    
+    constructor(private dialog: MatDialog, private zone: NgZone,private busy: BusyService, private snackBar: MatSnackBar) {
         this.mediaMatcher.addListener(mql => zone.run(() => this.mediaMatcher = mql));
-
+        
         
     }
     eventSource: any;/*EventSource*/
@@ -61,9 +61,9 @@ export class SelectService implements SelectServiceInterface {
                         this.Info(e.data.toString() + ' ');
                     });
                 };
+                let x = this;
                 source.addEventListener("authenticate", async function (e) {
-
-                    await new ServerEventAuthorizeAction().run({ key: (<any>e).data.toString() });
+                    await x.busy.donotWait(async ()=> await new ServerEventAuthorizeAction().run({ key: (<any>e).data.toString() }));
 
                 });
             });
