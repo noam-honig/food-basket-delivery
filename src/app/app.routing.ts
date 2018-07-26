@@ -62,7 +62,7 @@ const routes: Routes = [
     path: 'x/:id',
     component: LoginFromSmsComponent
   },
-  { path: 'stam-test', component: StamTestComponent },
+  /*{ path: 'stam-test', component: StamTestComponent },*/
   {
     path: 'my-families', component: MyFamiliesComponent, canActivate: [LoggedInGuard], data: { name: 'משפחות שלי' }
   },

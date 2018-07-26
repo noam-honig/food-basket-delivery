@@ -23,7 +23,7 @@ export class UserFamiliesList {
     }
     async reload() {
         var f = new Families();
-        this.allFamilies = await f.source.find({ where: f.courier.isEqualTo(this.helperId), orderBy: f.name ,limit:1000});
+        this.allFamilies = await f.source.find({ where: f.courier.isEqualTo(this.helperId), orderBy: f.address ,limit:1000});
         this.initFamilies();
     }
 
