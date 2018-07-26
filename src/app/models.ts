@@ -539,7 +539,8 @@ export class DeliveryEvents extends IdEntity<DeliveryEventId>{
   families = new NumberColumn({
     dbReadOnly: true,
     caption: 'משפחות',
-    dbName: buildSql('(select count(*) from ', fde, ' where ', fde.deliveryEvent, '=', this, '.id', ' and ', fde.deliverStatus, '<>', DeliveryStatus.NotInEvent.id, ')'),
+    dbName: buildSql('case when ', 'isActiveEvent', ' then ', '(select count(*) from ', f, ' where ', f.deliverStatus, '<>', DeliveryStatus.NotInEvent.id,
+      ') else (select count(*) from ', fde, ' where ', fde.deliveryEvent, '=', this, '.id', ' and ', fde.deliverStatus, '<>', DeliveryStatus.NotInEvent.id, ') end'),
     readonly: true
   });
 
@@ -555,7 +556,7 @@ export class DeliveryEvents extends IdEntity<DeliveryEventId>{
     this.initColumns();
   }
 }
-
+let f = new Families();
 export class FamilyDeliveryEvents extends IdEntity<FamilyDelveryEventId>{
   deliveryEvent = new DeliveryEventId();
   family = new FamilyId();
@@ -660,7 +661,7 @@ function buildSql(...args: any[]): string {
   });
   return result;
 }
-let f = new Families();
+
 let fromFamiliesWhereId = (h: Helpers) => buildSql(' from ', f
   , ' where ', f.courier, ' = ', h, '.', h.id, ' and ', f.deliverStatus, ' = ', DeliveryStatus.ReadyForDelivery.id)
 
