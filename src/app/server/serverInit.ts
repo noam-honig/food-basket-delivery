@@ -22,8 +22,9 @@ export async function serverInit() {
     evilStatics.dataSource = new PostgresDataProvider(pool);
     evilStatics.openedDataApi = new PostgresDataProvider(pool);
 
+    
     var sb = new PostgrestSchemaBuilder(pool);
-    [
+    foreachSync([
         new models.Events(),
         new models.EventHelpers(),
         new models.Helpers(),
@@ -34,12 +35,12 @@ export async function serverInit() {
         new models.FamilySources(),
         new models.DeliveryEvents(),
         new models.FamilyDeliveryEvents()
-    ].forEach(x => sb.CreateIfNotExist(x));
+    ],async x =>await sb.CreateIfNotExist(x));
 
-    sb.verifyAllColumns(new models.Families());
-    sb.verifyAllColumns(new models.Helpers());
+    await sb.verifyAllColumns(new models.Families());
+    await sb.verifyAllColumns(new models.Helpers());
     let h = new models.BasketType();
-    h.source.find({ where: h.id.isEqualTo('') }).then(x => {
+    await h.source.find({ where: h.id.isEqualTo('') }).then(x => {
         if (x.length == 0) {
             h.setEmptyIdForNewRow();
             h.name.value = 'רגיל';
