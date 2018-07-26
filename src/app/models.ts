@@ -127,9 +127,9 @@ export class HelperId extends Id implements HasAsyncGetTheValue {
   getColumn(dialog: SelectServiceInterface): ColumnSetting<Families> {
     return {
       column: this,
-      getValue: f => this.getValue(),
+      getValue: f => f.courier.getValue(),
       hideDataOnInput: true,
-      click: f => dialog.selectHelper(s => f.courier.value = s.id.value),
+      click: f => dialog.selectHelper(s => f.__getColumn(this).value = s.id.value),
       readonly: this.readonly,
       width: '200'
 
@@ -459,7 +459,7 @@ export class Families extends IdEntity<FamilyId>{
       case DeliveryStatus.FailedOther:
         let duration = '';
         if (this.courierAssingTime.value && this.deliveryStatusDate.value)
-          duration = ' תוך ' + Math.round((this.deliveryStatusDate.dateValue.valueOf() - this.courierAssingTime.dateValue.valueOf())/60000) + " דק'";
+          duration = ' תוך ' + Math.round((this.deliveryStatusDate.dateValue.valueOf() - this.courierAssingTime.dateValue.valueOf()) / 60000) + " דק'";
         return this.deliverStatus.displayValue + ' על ידי ' + this.courier.getValue() + ' ' + this.deliveryStatusDate.relativeDateName() + duration;
 
     }
@@ -626,7 +626,7 @@ export class NewsUpdate extends Entity<string>{
           case DeliveryStatus.FailedOther:
             let duration = '';
             if (n.courierAssingTime.value && n.deliveryStatusDate.value)
-              duration = ' תוך ' + Math.round((n.deliveryStatusDate.dateValue.valueOf() - n.courierAssingTime.dateValue.valueOf())/60000) + " דק'";
+              duration = ' תוך ' + Math.round((n.deliveryStatusDate.dateValue.valueOf() - n.courierAssingTime.dateValue.valueOf()) / 60000) + " דק'";
             return n.deliverStatus.displayValue + ' למשפחת ' + n.name.value + ' על ידי ' + courierName + duration;
 
         }
