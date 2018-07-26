@@ -1,6 +1,6 @@
 import * as radweb from 'radweb';
 import * as uuid from 'uuid';
-import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn, Column, NumberColumn, ClosedListColumn, ColumnSetting, StringColumn } from 'radweb';
+import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn, Column, NumberColumn, ClosedListColumn, ColumnSetting, StringColumn, DateColumn } from 'radweb';
 import { foreachSync, foreachEntityItem } from './shared/utils';
 import { evilStatics } from './auth/evil-statics';
 import { GetGeoInformation, GeocodeInformation } from './shared/googleApiHelpers';
@@ -187,6 +187,8 @@ class FamilySourceId extends Id implements HasAsyncGetTheValue {
 
 
 class EventId extends Id { }
+class DeliveryEventId extends Id { }
+class FamilyDelveryEventId extends Id { }
 class FamilyId extends Id { }
 class EventHelperId extends Id { }
 
@@ -285,6 +287,7 @@ export class DeliveryStatus {
   static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, 'לא נמסר, לא היו בבית');
   static FailedOther: DeliveryStatus = new DeliveryStatus(25, 'לא נמסר, אחר');
   static Frozen: DeliveryStatus = new DeliveryStatus(90, 'מוקפא');
+  static NotInEvent: DeliveryStatus = new DeliveryStatus(95, 'לא באירוע');
   constructor(public id: number,
     private name: string) {
 
@@ -492,8 +495,8 @@ export class Families extends IdEntity<FamilyId>{
     this._lastString = this.addressApiResult.value;
     return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
   }
-  constructor() {
-    super(new FamilyId(), () => new Families(), evilStatics.dataSource, "Families");
+  constructor( source?: DataProviderFactory) {
+    super(new FamilyId(), () => new Families(source),source?source: evilStatics.dataSource, "Families");
     this.initColumns();
   }
   async doSave(authInfo: myAuthInfo) {
@@ -527,6 +530,52 @@ export class Families extends IdEntity<FamilyId>{
   }
   static SendMessageToBrowsers = (s: string) => { };
 }
+export class DeliveryEvents extends IdEntity<DeliveryEventId>{
+  name = new StringColumn('שם');
+  deliveryDate = new DateTimeColumn('תאריך החלוקה');
+  isActiveEvent = new BoolColumn();
+  createDate = new changeDate('מועד הוספה');
+  createUser = new HelperIdReadonly('משתמש מוסיף');
+
+  async doSaveStuff(authInfo: myAuthInfo) {
+    if (this.isNew()) {
+      this.createDate.dateValue = new Date();
+      this.createUser.value = authInfo.helperId;
+    }
+  }
+  constructor(source?: DataProviderFactory) {
+    super(new DeliveryEventId(), () => new DeliveryEvents(source), source ? source : evilStatics.dataSource, 'DeliveryEvents');
+    this.initColumns();
+  }
+}
+
+export class FamilyDeliveryEvents extends IdEntity<FamilyDelveryEventId>{
+  deliveryEvent = new DeliveryEventId();
+  family = new FamilyId();
+  basketType = new BasketId('סוג סל');
+  callStatus = new CallStatusColumn('סטטוס שיחה');
+  callTime = new changeDate('מועד שיחה');
+  callHelper = new HelperIdReadonly('מי ביצעה את השיחה');
+  callComments = new radweb.StringColumn('הערות שיחה');
+
+
+  courier = new HelperId("משנע");
+  courierAssignUser = new HelperIdReadonly('מי שייכה למשנע');
+  courierAssingTime = new changeDate('מועד שיוך למשנע');
+
+
+  deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
+  deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
+  deliveryStatusUser = new HelperIdReadonly('מי עדכן את סטטוס המשלוח');
+  courierComments = new radweb.StringColumn('הערות מסירה');
+
+  constructor( source?: DataProviderFactory) {
+    super(new FamilyDelveryEventId(), () => new FamilyDeliveryEvents(source),source?source: evilStatics.dataSource, 'FamilyDeliveryEvents');
+    this.initColumns();
+  }
+}
+
+
 export class EventHelpers extends IdEntity<EventHelperId>{
 
   helperId = new HelperId();

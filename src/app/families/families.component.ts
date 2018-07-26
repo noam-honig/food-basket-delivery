@@ -18,11 +18,14 @@ import { BusyService } from '../select-popup/busy-service';
 export class FamiliesComponent implements OnInit {
   limit = 100;
   statistics: FaimilyStatistics[] = [
-    new FaimilyStatistics('הכל', f => undefined),
+    new FaimilyStatistics('כל המשפחות', f => undefined),
+    new FaimilyStatistics('באירוע הנוכחי', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id)),
+    new FaimilyStatistics('לא באירוע הנוכחי', f => f.deliverStatus.isEqualTo(DeliveryStatus.NotInEvent.id)),
     new FaimilyStatistics('טרם שוייכו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo(''))),
     new FaimilyStatistics('שוייכו וטרם נמסרו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.IsDifferentFrom(''))),
     new FaimilyStatistics('נמסרו', f => f.deliverStatus.isEqualTo(DeliveryStatus.Success.id)),
-    new FaimilyStatistics('ללא קפואים', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.Frozen.id)),
+    new FaimilyStatistics('בעיות מסירה', f => f.deliverStatus.IsGreaterOrEqualTo(DeliveryStatus.FailedBadAddress.id).and(f.deliverStatus.IsLessOrEqualTo(DeliveryStatus.FailedOther.id))),
+    new FaimilyStatistics('ללא קפואים', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.Frozen.id).and(f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id))),
     new FaimilyStatistics('קפואים', f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen.id))
   ];
   filterBy(s: FaimilyStatistics) {
@@ -53,8 +56,8 @@ export class FamiliesComponent implements OnInit {
     let data = [];
     let title = [];
     let doneTitle = false;
-    let f= new Families();
-    await foreachSync(await f.source.find({ limit: 5000,orderBy:[f.name] })
+    let f = new Families();
+    await foreachSync(await f.source.find({ limit: 5000, orderBy: [f.name] })
       , async  f => {
         let row = [];
 
@@ -256,7 +259,7 @@ export class FamiliesComponent implements OnInit {
     ]
   });
   gridView = true;
-  constructor(private dialog: SelectService, private san: DomSanitizer, private busy: BusyService) {
+  constructor(private dialog: SelectService, private san: DomSanitizer,public busy: BusyService) {
     if (dialog.isScreenSmall())
       this.gridView = false;
   }
@@ -277,12 +280,12 @@ class FaimilyStatistics {
 
   }
   private _count = -2;
-  count() {
+   count(busy: BusyService) {
     switch (this._count) {
       case -2:
         this._count = -1;
         let f = new Families();
-        f.source.count(this.rule(f)).then(c => this._count = c);
+        busy.donotWait(async () => f.source.count(this.rule(f)).then(c => this._count = c));
         return '';
       case -1:
         return '';

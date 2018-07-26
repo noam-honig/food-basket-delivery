@@ -31,7 +31,9 @@ export async function serverInit() {
         new models.ItemsPerHelper(),
         new models.Families(),
         new models.BasketType(),
-        new models.FamilySources()
+        new models.FamilySources(),
+        new models.DeliveryEvents(),
+        new models.FamilyDeliveryEvents()
     ].forEach(x => sb.CreateIfNotExist(x));
 
     sb.verifyAllColumns(new models.Families());
@@ -51,6 +53,13 @@ export async function serverInit() {
         ff.city.value = ff.getGeocodeInformation().getCity();
         await ff.save();
     });
+    let de = new models.DeliveryEvents();
+    if (await de.source.count() == 0) {
+        de.name.value = 'אירוע החלוקה הראשון';
+        de.isActiveEvent.value = true;
+        de.deliveryDate.dateValue = new Date();
+        await de.save();
+    }
     console.log('fix city done');
 
 

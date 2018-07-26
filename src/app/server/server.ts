@@ -20,6 +20,7 @@ import { serverInit } from './serverInit';
 import { ServerEventAuthorizeAction } from './server-event-authorize-action';
 import { ServerEvents } from './server-events';
 import * as morgan from 'morgan';
+import { SetDeliveryActiveAction } from '../delivery-events/set-delivery-active-action';
 
 serverInit();
 
@@ -57,7 +58,8 @@ adminActions.addAction(new AddBoxAction());
 adminActions.addAction(new SendSmsAction());
 adminActions.addAction(new GetBasketStatusAction());
 adminActions.addAction(new ServerEventAuthorizeAction());
-"";
+adminActions.addAction(new SetDeliveryActiveAction());
+
 
 
 openedData.add(r => helpersDataApi(r));
@@ -110,6 +112,12 @@ adminApi.add(r => {
         excludeColumns: h => [h.isAdmin, h.password, h.realStoredPassword, h.shortUrlKey, h.createDate]
     });
 });
+adminApi.add(r => new DataApi(new models.DeliveryEvents(), {
+    readonlyColumns: de => [de.isActiveEvent],
+    onSavingRow: async de => await de.doSaveStuff(r.authInfo),
+    allowUpdate: true,
+    allowInsert: true
+}));
 
 
 

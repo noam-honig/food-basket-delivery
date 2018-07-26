@@ -2,7 +2,7 @@
     משפחות {{families.totalRows}}
 </h4>
 <h5 *ngFor="let s of statistics">
-    <a (click)="filterBy(s)"> {{s.name}} - {{s.count()}}</a>
+    <a (click)="filterBy(s)"> {{s.name}} - {{s.count(busy)}}</a>
 </h5>
 <mat-form-field class="full-width">
     <input matInput [(ngModel)]="searchString" (input)="doSearch()" placeholder="חיפוש משפחה" [ngModelOptions]="{standalone: true}">
@@ -10,11 +10,11 @@
 </mat-form-field>
 <br>
 <mat-card [class.hide]="!gridView">
-<div class="table-responsive" >
+    <div class="table-responsive">
         <button (click)="saveToExcel()">יצוא לאקסל</button>
-    <data-grid [settings]="families"></data-grid>
-    
-</div>
+        <data-grid [settings]="families"></data-grid>
+
+    </div>
 </mat-card>
 <button (click)="families.previousRow()" [disabled]="families.currentRow&& families.currentRow.wasChanged()||!families.previousRowAllowed()"
     [class.hide]="gridView" class="btn glyphicon glyphicon-chevron-left ng-star-inserted"></button>
