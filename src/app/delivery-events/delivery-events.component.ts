@@ -3,6 +3,8 @@ import { MatGridAvatarCssMatStyler } from '../../../node_modules/@angular/materi
 import { GridSettings } from '../../../node_modules/radweb';
 import { DeliveryEvents } from '../models';
 import { SetDeliveryActiveAction } from './set-delivery-active-action';
+import { CopyFamiliesToActiveEventAction } from './copy-families-to-active-event-action';
+import { SelectService } from '../select-popup/select-service';
 
 @Component({
   selector: 'app-delivery-events',
@@ -19,7 +21,7 @@ export class DeliveryEventsComponent implements OnInit {
       e.families,
       {
         caption: 'סטטוס',
-        getValue: e => e.isActiveEvent.value ? "פעיל" : "ארכיון"
+        getValue: e => e.isActiveEvent.value ? "נוכחי" : "ארכיון"
       }
     ],
     get: {
@@ -30,7 +32,7 @@ export class DeliveryEventsComponent implements OnInit {
     },
     rowButtons: [
       {
-        name: 'קבע כפעיל',
+        name: 'קבע כנוכחי',
         visible: e => !e.isActiveEvent.value && !e.isNew(),
         click: async e => {
           try {
@@ -41,10 +43,25 @@ export class DeliveryEventsComponent implements OnInit {
             alert(err);
           }
         }
+      },
+      {
+        name: 'העתק משפחות לאירוע נוכחי',
+        visible: e => !e.isActiveEvent.value && !e.isNew(),
+        click: async e => {
+          try {
+            this.dialog.YesNoQuestion("פעולה זו תעתיק את כל המשפחות שהשתתפו באירוע \"" + e.name.value + "\" לאירוע הנוכחי. האם להמשיך?", async () => {
+              await new CopyFamiliesToActiveEventAction().run({ fromDeliveryEvent: e.id.value });
+              this.deliveryEvents.getRecords();
+            });
+
+          } catch (err) {
+            alert(err);
+          }
+        }
       }
     ]
   });
-  constructor() { }
+  constructor(private dialog: SelectService) { }
 
   ngOnInit() {
   }
