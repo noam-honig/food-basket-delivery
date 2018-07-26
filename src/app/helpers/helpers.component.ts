@@ -16,6 +16,9 @@ export class HelpersComponent implements OnInit {
     allowInsert: true,
     allowUpdate: true,
     numOfColumnsInGrid: 2,
+    get: {
+      orderBy: h => [h.name]
+    },
     columnSettings: helpers => [
       helpers.name,
       helpers.phone,
