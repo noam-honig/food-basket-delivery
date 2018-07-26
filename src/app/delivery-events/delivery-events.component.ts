@@ -16,6 +16,7 @@ export class DeliveryEventsComponent implements OnInit {
     columnSettings: e => [
       e.name,
       e.deliveryDate,
+      e.families,
       {
         caption: 'סטטוס',
         getValue: e => e.isActiveEvent.value ? "פעיל" : "ארכיון"

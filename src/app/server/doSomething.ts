@@ -1,6 +1,6 @@
 import { Families } from "../models";
 import { readFileSync, readFile } from "fs";
-import { ColumnHashSet } from "radweb";
+import { ColumnHashSet, DateColumn } from "radweb";
 
 import { GetGeoInformation } from "../shared/googleApiHelpers";
 import { foreachEntityItem, foreachSync } from "../shared/utils";
@@ -13,7 +13,9 @@ serverInit();
 export async function DoIt() {
     try {
 
-
+        let dc = new DateColumn();
+        dc.value = '1976-06-16';
+        console.log(dc.dateValue);
 
 
         console.log('123');

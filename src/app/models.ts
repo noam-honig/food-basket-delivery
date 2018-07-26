@@ -532,12 +532,19 @@ export class Families extends IdEntity<FamilyId>{
 }
 export class DeliveryEvents extends IdEntity<DeliveryEventId>{
   name = new StringColumn('שם');
-  deliveryDate = new DateTimeColumn('תאריך החלוקה');
+  deliveryDate = new DateColumn('תאריך החלוקה');
   isActiveEvent = new BoolColumn();
   createDate = new changeDate('מועד הוספה');
   createUser = new HelperIdReadonly('משתמש מוסיף');
+  families = new NumberColumn({
+    dbReadOnly: true,
+    caption: 'משפחות',
+    dbName: buildSql('(select count(*) from ', fde, ' where ', fde.deliveryEvent, '=', this, '.id', ' and ', fde.deliverStatus, '<>', DeliveryStatus.NotInEvent.id, ')'),
+    readonly: true
+  });
 
   async doSaveStuff(authInfo: myAuthInfo) {
+    console.log(this.deliveryDate.value, this.deliveryDate.dateValue, this.deliveryDate.displayValue);
     if (this.isNew()) {
       this.createDate.dateValue = new Date();
       this.createUser.value = authInfo.helperId;
@@ -581,7 +588,7 @@ export class FamilyDeliveryEventsView extends IdEntity<FamilyDelveryEventId>{
   family = new FamilyId();
   basketType = new BasketId('סוג סל');
   eventName = new StringColumn('שם אירוע');
-  
+
   deliveryDate = new DateTimeColumn('תאריך החלוקה');
 
   courier = new HelperId("משנע");
@@ -598,10 +605,10 @@ export class FamilyDeliveryEventsView extends IdEntity<FamilyDelveryEventId>{
       dbName: buildSql(
         '(select ', fde, '.', fde.id, ', ', [fde.family, fde.basketType, fde.courier, fde.courierAssingTime, fde.deliverStatus, fde.deliveryStatusDate, fde.courierComments, de.deliveryDate],
         ', ', de, '.', de.name, ' eventName',
-        
+
         ' from ', fde,
         ' inner join ', de, ' on ', de, '.', de.id, '=', fde.deliveryEvent,
-        
+
         ' where ', de.isActiveEvent, '=false',
 
         ') as x')

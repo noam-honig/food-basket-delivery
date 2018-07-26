@@ -22,7 +22,7 @@ export async function serverInit() {
     evilStatics.dataSource = new PostgresDataProvider(pool);
     evilStatics.openedDataApi = new PostgresDataProvider(pool);
 
-    
+
     var sb = new PostgrestSchemaBuilder(pool);
     foreachSync([
         new models.Events(),
@@ -35,10 +35,11 @@ export async function serverInit() {
         new models.FamilySources(),
         new models.DeliveryEvents(),
         new models.FamilyDeliveryEvents()
-    ],async x =>await sb.CreateIfNotExist(x));
+    ], async x => await sb.CreateIfNotExist(x));
 
     await sb.verifyAllColumns(new models.Families());
     await sb.verifyAllColumns(new models.Helpers());
+    await sb.verifyAllColumns(new models.DeliveryEvents());
     let h = new models.BasketType();
     await h.source.find({ where: h.id.isEqualTo('') }).then(x => {
         if (x.length == 0) {
