@@ -25,6 +25,8 @@ export class FamiliesComponent implements OnInit {
     new FaimilyStatistics('שוייכו וטרם נמסרו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.IsDifferentFrom(''))),
     new FaimilyStatistics('נמסרו', f => f.deliverStatus.isEqualTo(DeliveryStatus.Success.id)),
     new FaimilyStatistics('בעיות מסירה', f => f.deliverStatus.IsGreaterOrEqualTo(DeliveryStatus.FailedBadAddress.id).and(f.deliverStatus.IsLessOrEqualTo(DeliveryStatus.FailedOther.id))),
+    new FaimilyStatistics('משפחות עם הערות משנע', f => f.courierComments.IsDifferentFrom('')),
+    new FaimilyStatistics('משפחות עם הערות טלפנית', f => f.callComments.IsDifferentFrom('')),
     new FaimilyStatistics('ללא קפואים', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.Frozen.id).and(f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id))),
     new FaimilyStatistics('קפואים', f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen.id))
   ];
