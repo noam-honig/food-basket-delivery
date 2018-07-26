@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GridSettings, SelectPopup } from 'radweb';
-import { Helpers } from '../models';
+import { Helpers, FamilyDeliveryEventsView, Families } from '../models';
 import { SelectService } from '../select-popup/select-service';
 import { ResetPasswordAction } from './reset-password';
 
@@ -19,12 +19,28 @@ export class HelpersComponent implements OnInit {
     columnSettings: helpers => [
       helpers.name,
       helpers.phone,
-      helpers.reminderSmsDate
-      //helpers.email,
-      //helpers.address,
-      //helpers.userName
+
     ],
-    confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
+    confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes),
+    onEnterRow: h => this.previousEvents.getRecords()
+
+  });
+  previousEvents = new GridSettings(new FamilyDeliveryEventsView(), {
+    get: {
+      where: e => e.courier.isEqualTo(this.helpers.currentRow ? this.helpers.currentRow.id.value : '-1'),
+      orderBy: e => [{ column: e.deliveryDate, descending: true }]
+    },
+    columnSettings: x => [
+
+      x.eventName,
+      {
+        column: x.family,
+        caption: 'משפחה',
+        getValue: x => x.lookup(new Families(), x.family).name.value
+      },
+      x.deliverStatus
+
+    ]
   });
   /* */
   /* workaround for checkbox not working*/

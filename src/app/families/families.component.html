@@ -97,6 +97,7 @@
             </mat-expansion-panel-header>
             <data-area [settings]="deliverInfo"></data-area>
         </mat-expansion-panel>
+
         <mat-expansion-panel>
             <mat-expansion-panel-header>
                 <div>
@@ -113,7 +114,27 @@
             </mat-expansion-panel-header>
             <data-area [settings]="callInfo"></data-area>
         </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <div>
+                    <mat-panel-title>
+                        אירועים קודמים
+                    </mat-panel-title>
+                </div>
+                <div>
+                    <mat-panel-description>
+                        <span *ngIf="previousDeliveryEvents.length==0">אין</span>
+                        <span *ngIf="previousDeliveryEvents.length>0">{{previousDeliveryEvents[0].eventName.value}}, {{previousDeliveryEvents[0].courier.getValue()}}</span>
+                    </mat-panel-description>
+                </div>
 
+            </mat-expansion-panel-header>
+            <ul>
+                <li *ngFor="let d of previousDeliveryEvents">
+                    {{d.eventName.value}}, {{d.deliverStatus.displayValue}}
+                </li>
+            </ul>
+        </mat-expansion-panel>
     </mat-accordion>
     <button *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="families.currentRow.save()" [disabled]="!families.currentRow.wasChanged()"
         class="btn glyphicon glyphicon-ok btn-success"></button>

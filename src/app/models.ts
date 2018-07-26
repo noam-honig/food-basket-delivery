@@ -495,8 +495,8 @@ export class Families extends IdEntity<FamilyId>{
     this._lastString = this.addressApiResult.value;
     return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
   }
-  constructor( source?: DataProviderFactory) {
-    super(new FamilyId(), () => new Families(source),source?source: evilStatics.dataSource, "Families");
+  constructor(source?: DataProviderFactory) {
+    super(new FamilyId(), () => new Families(source), source ? source : evilStatics.dataSource, "Families");
     this.initColumns();
   }
   async doSave(authInfo: myAuthInfo) {
@@ -569,8 +569,43 @@ export class FamilyDeliveryEvents extends IdEntity<FamilyDelveryEventId>{
   deliveryStatusUser = new HelperIdReadonly('מי עדכן את סטטוס המשלוח');
   courierComments = new radweb.StringColumn('הערות מסירה');
 
-  constructor( source?: DataProviderFactory) {
-    super(new FamilyDelveryEventId(), () => new FamilyDeliveryEvents(source),source?source: evilStatics.dataSource, 'FamilyDeliveryEvents');
+  constructor(source?: DataProviderFactory) {
+    super(new FamilyDelveryEventId(), () => new FamilyDeliveryEvents(source), source ? source : evilStatics.dataSource, 'FamilyDeliveryEvents');
+    this.initColumns();
+  }
+}
+let fde = new FamilyDeliveryEvents();
+var de = new DeliveryEvents();
+
+export class FamilyDeliveryEventsView extends IdEntity<FamilyDelveryEventId>{
+  family = new FamilyId();
+  basketType = new BasketId('סוג סל');
+  eventName = new StringColumn('שם אירוע');
+  
+  deliveryDate = new DateTimeColumn('תאריך החלוקה');
+
+  courier = new HelperId("משנע");
+  courierAssingTime = new changeDate('מועד שיוך למשנע');
+
+
+  deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
+  deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
+  courierComments = new radweb.StringColumn('הערות מסירה');
+
+  constructor(source?: DataProviderFactory) {
+    super(new FamilyDelveryEventId(), () => new FamilyDeliveryEventsView(source), source ? source : evilStatics.dataSource, {
+      name: 'FamilyDeliveryEventsView',
+      dbName: buildSql(
+        '(select ', fde, '.', fde.id, ', ', [fde.family, fde.basketType, fde.courier, fde.courierAssingTime, fde.deliverStatus, fde.deliveryStatusDate, fde.courierComments, de.deliveryDate],
+        ', ', de, '.', de.name, ' eventName',
+        
+        ' from ', fde,
+        ' inner join ', de, ' on ', de, '.', de.id, '=', fde.deliveryEvent,
+        
+        ' where ', de.isActiveEvent, '=false',
+
+        ') as x')
+    });
     this.initColumns();
   }
 }

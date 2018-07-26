@@ -112,6 +112,9 @@ adminApi.add(r => {
         excludeColumns: h => [h.isAdmin, h.password, h.realStoredPassword, h.shortUrlKey, h.createDate]
     });
 });
+adminApi.add(r => {
+    return new DataApi(new models.FamilyDeliveryEventsView(), {});
+});
 adminApi.add(r => new DataApi(new models.DeliveryEvents(), {
     readonlyColumns: de => [de.isActiveEvent],
     onSavingRow: async de => await de.doSaveStuff(r.authInfo),

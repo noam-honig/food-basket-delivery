@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, Sanitizer } from '@angular/core';
 import { GridSettings, ColumnSetting, ColumnHashSet } from 'radweb';
-import { Families, Helpers, CallStatus, BasketType, FamilySources, DeliveryStatus, HasAsyncGetTheValue, Language, YesNo } from '../models';
+import { Families, Helpers, CallStatus, BasketType, FamilySources, DeliveryStatus, HasAsyncGetTheValue, Language, YesNo, FamilyDeliveryEventsView } from '../models';
 import { SelectService } from '../select-popup/select-service';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 
@@ -95,19 +95,22 @@ export class FamiliesComponent implements OnInit {
     return;
   }
 
-
+  previousDeliveryEvents: FamilyDeliveryEventsView[] = [];
   families = new GridSettings(new Families(), {
 
     allowUpdate: true,
     allowInsert: true,
     numOfColumnsInGrid: 5,
-    onEnterRow: f => {
+    onEnterRow: async f => {
       if (f.isNew()) {
         f.basketType.value = '';
         f.language.listValue = Language.Hebrew;
         f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
         f.callStatus.listValue = CallStatus.NotYet;
         f.special.listValue = YesNo.No;
+      } else {
+        let p = new FamilyDeliveryEventsView();
+        this.previousDeliveryEvents = await p.source.find({ where: p.family.isEqualTo(f.id), orderBy: [{ column: p.deliveryDate, descending: true }] });
       }
     },
 
@@ -259,7 +262,7 @@ export class FamiliesComponent implements OnInit {
     ]
   });
   gridView = true;
-  constructor(private dialog: SelectService, private san: DomSanitizer,public busy: BusyService) {
+  constructor(private dialog: SelectService, private san: DomSanitizer, public busy: BusyService) {
     if (dialog.isScreenSmall())
       this.gridView = false;
   }
@@ -280,7 +283,7 @@ class FaimilyStatistics {
 
   }
   private _count = -2;
-   count(busy: BusyService) {
+  count(busy: BusyService) {
     switch (this._count) {
       case -2:
         this._count = -1;
