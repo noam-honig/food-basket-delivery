@@ -2,7 +2,7 @@ import { ServerAction } from "../auth/server-action";
 import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { Families, DeliveryStatus, Helpers, YesNo } from "../models";
-import { Location } from '../shared/googleApiHelpers';
+import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
 
 
 export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
@@ -37,7 +37,7 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
                 f.courier.isEqualTo('').and(
                     f.basketType.isEqualTo(info.basketType).and(
                         f.special.IsDifferentFrom(YesNo.Yes.id)
-                )));
+                    )));
             if (info.language > -1)
                 where = where.and(f.language.isEqualTo(info.language));
             if (info.city) {
@@ -53,15 +53,13 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
                     result.ok = true;
                 }
                 else {
-                    let getDistanceBetweenPoints = (x: Location, center: Location) => {
-                        return Math.abs(((x.lat - center.lat) * (x.lat - center.lat)) + Math.abs((x.lng - center.lng) * (x.lng - center.lng))) * 10000000
-                    }
+
                     let getDistance = (x: Location) => {
                         let r = -1;
                         existingFamilies.forEach(ef => {
                             let loc = ef.getGeocodeInformation().location();
                             if (loc) {
-                                let dis = getDistanceBetweenPoints(x, loc);
+                                let dis = GeocodeInformation.GetDistanceBetweenPoints(x, loc);
                                 if (r == -1 || dis < r)
                                     r = dis;
                             }

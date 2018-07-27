@@ -112,7 +112,8 @@ export class FamiliesComponent implements OnInit {
         f.special.listValue = YesNo.No;
       } else {
         let p = new FamilyDeliveryEventsView();
-        this.previousDeliveryEvents = await p.source.find({ where: p.family.isEqualTo(f.id), orderBy: [{ column: p.deliveryDate, descending: true }] });
+        await this.busy.donotWait(async () =>
+          this.previousDeliveryEvents = await p.source.find({ where: p.family.isEqualTo(f.id), orderBy: [{ column: p.deliveryDate, descending: true }] }));
       }
     },
 

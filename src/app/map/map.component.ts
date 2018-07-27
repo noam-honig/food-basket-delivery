@@ -17,9 +17,9 @@ export class MapComponent implements OnInit {
 
   mapInit = false;
   markers: google.maps.Marker[] = [];
-  hasFamilies=false;
+  hasFamilies = false;
   test(families: Families[]) {
-    this.hasFamilies = families.length>0;
+    this.hasFamilies = families.length > 0;
     var mapProp: google.maps.MapOptions = {
       center: new google.maps.LatLng(32.3215, 34.8532),
       zoom: 13,
@@ -32,9 +32,14 @@ export class MapComponent implements OnInit {
     }
     this.markers.forEach(m => m.setMap(null));
     this.markers = [];
+    let i = 0;
     families.forEach(f => {
       let marker = new google.maps.Marker({ map: this.map, position: f.getGeocodeInformation().location() });
       switch (f.deliverStatus.listValue) {
+        case DeliveryStatus.ReadyForDelivery:
+          i++;
+          marker.setIcon('/assets/map-markers/number_' + i + '.png');
+          break;
         case DeliveryStatus.Success:
           marker.setIcon('https://maps.google.com/mapfiles/ms/micons/green-dot.png');
           break;
@@ -43,6 +48,7 @@ export class MapComponent implements OnInit {
         case DeliveryStatus.FailedOther:
           marker.setIcon('https://maps.google.com/mapfiles/ms/micons/red-pushpin.png');
           break;
+
       }
 
 

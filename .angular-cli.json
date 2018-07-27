@@ -9,6 +9,7 @@
       "outDir": "dist",
       "assets": [
         "assets",
+        "assets/map-markers",
         "favicon.ico"
       ],
       "index": "index.html",

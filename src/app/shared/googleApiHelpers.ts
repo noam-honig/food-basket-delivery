@@ -51,6 +51,9 @@ export class GeocodeInformation {
             });
         return r;
     }
+    static GetDistanceBetweenPoints(x: Location, center: Location) {
+        return Math.abs(((x.lat - center.lat) * (x.lat - center.lat)) + Math.abs((x.lng - center.lng) * (x.lng - center.lng))) * 10000000
+    }
 }
 
 export interface AddressComponent {
