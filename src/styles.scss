@@ -159,3 +159,9 @@ th {
   .active td{
         background-color: lightblue !important;
   }
+  @media print{
+      .no-print{
+          display:none!important;
+          visibility: none!important;
+      }
+  }

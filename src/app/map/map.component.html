@@ -1,4 +1,4 @@
 
-    <button class="map-button" mat-raised-button *ngIf="hasFamilies" (click)="mapVisible = !mapVisible">מפה</button>
+    <button class="map-button" mat-raised-button *ngIf="hasFamilies" (click)="show()">מפה</button>
 <br/>
 <div #gmap style="width:100%;height:400px;" [style.display]="mapVisible?'block':'none'"></div>

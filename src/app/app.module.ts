@@ -44,6 +44,7 @@ import { BusyService } from './select-popup/busy-service';
 import { StamTestComponent } from './stam-test/stam-test.component';
 import { NewsComponent } from './news/news.component';
 import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
+import { PrintHelperFamiliesComponent } from './print-helper-families/print-helper-families.component';
 
 @NgModule({
   declarations: [
@@ -78,7 +79,8 @@ import { DeliveryEventsComponent } from './delivery-events/delivery-events.compo
     SelectFamilyComponent,
     StamTestComponent,
     NewsComponent,
-    DeliveryEventsComponent
+    DeliveryEventsComponent,
+    PrintHelperFamiliesComponent
   ],
   imports: [
     BrowserModule,

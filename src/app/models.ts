@@ -7,6 +7,7 @@ import { GetGeoInformation, GeocodeInformation } from './shared/googleApiHelpers
 import { myAuthInfo } from './auth/my-auth-info';
 import { DataColumnSettings } from 'radweb/utils/dataInterfaces1';
 import { SelectServiceInterface } from './select-popup/select-service-interface';
+import { SendSmsAction } from './asign-family/send-sms-action';
 
 
 
@@ -374,9 +375,26 @@ export class Helpers extends IdEntity<HelperId>{
     this.onSavingRow = () => {
       if (this.isNew())
         this.createDate.dateValue = new Date();
+      this.veryUrlKeyAndReturnTrueIfSaveRequired();
       x();
     };
   }
+  veryUrlKeyAndReturnTrueIfSaveRequired() {
+    if (!this.shortUrlKey.value) {
+      this.shortUrlKey.value = this.makeid();
+      return true;
+    }
+    return false;
+  }
+   makeid() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i = 0; i < 5; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
 }
 
 

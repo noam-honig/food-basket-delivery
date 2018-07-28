@@ -1,10 +1,11 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';
-import { DeliveryStatus, Families } from '../models';
+import { DeliveryStatus, Families, Helpers } from '../models';
 import { AuthService } from '../auth/auth-service';
 import { SelectService } from '../select-popup/select-service';
 import { SendSmsAction } from '../asign-family/send-sms-action';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-helper-families',
@@ -13,11 +14,11 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 })
 export class HelperFamiliesComponent implements OnInit {
 
-  constructor(public auth: AuthService, private dialog: SelectService) { }
+  constructor(public auth: AuthService, private dialog: SelectService, private router: Router) { }
   @Input() familyLists: UserFamiliesList;
   @Input() partOfAssign = false;
   @Input() partOfReview = false;
-   @Output() assignmentCanceled = new EventEmitter<void>();
+  @Output() assignmentCanceled = new EventEmitter<void>();
   ngOnInit() {
     this.familyLists.setMap(this.map);
   }
@@ -76,7 +77,19 @@ export class HelperFamiliesComponent implements OnInit {
   }
   sendSms(reminder: Boolean) {
     new SendSmsAction().run({ helperId: this.familyLists.helperId, reminder: reminder });
-    this.familyLists.helperOptional.reminderSmsDate.dateValue = new Date();
+    if (reminder)
+      this.familyLists.helperOptional.reminderSmsDate.dateValue = new Date();
+  }
+  async print() {
+    let h = new Helpers();
+    await h.source.find({ where: h.id.isEqualTo(this.familyLists.helperId) }).then(async r => {
+      if (r.length > 0) {
+        if (r[0].veryUrlKeyAndReturnTrueIfSaveRequired())
+          await r[0].save();
+      }
+      this.router.navigate(['/print-helper-families/'+ r[0].shortUrlKey.value ]);
+
+    });
   }
   updateComment(f: Families) {
     this.dialog.displayComment({

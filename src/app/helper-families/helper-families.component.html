@@ -24,8 +24,12 @@
     </app-family-info>
   </mat-expansion-panel>
 </mat-accordion>
-<button *ngIf="partOfAssign&&!partOfReview&&familyLists.toDeliver.length" mat-raised-button class="myButton" color="primary"
-  (click)="sendSms(false)">שלחי הודעת SMS עם קישור</button>
+<div class="sendSmsButtonLine">
+  <button *ngIf="partOfAssign&&!partOfReview&&familyLists.toDeliver.length" mat-raised-button color="primary" (click)="sendSms(false)">שלחי הודעת SMS עם קישור</button>
+  <button mat-raised-button color="primary" *ngIf="partOfAssign&&!partOfReview&&familyLists.toDeliver.length">
+    <mat-icon (click)="print()">print</mat-icon>
+  </button>
+</div>
 <button *ngIf="partOfReview" mat-raised-button class="myButton" color="primary" (click)="sendSms(true)">
 
   <span *ngIf="familyLists&&familyLists.helperOptional&&familyLists.helperOptional.reminderSmsDate.value; else elseContent">תזכורת נשלחה {{familyLists.helperOptional.reminderSmsDate.relativeDateName()}} שלח שוב

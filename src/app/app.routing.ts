@@ -17,6 +17,7 @@ import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-
 import { NewsComponent } from './news/news.component';
 import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
 import { StamTestComponent } from './stam-test/stam-test.component';
+import { PrintHelperFamiliesComponent } from './print-helper-families/print-helper-families.component';
 
 
 const routes: Routes = [
@@ -63,6 +64,7 @@ const routes: Routes = [
     component: LoginFromSmsComponent
   },
   /*{ path: 'stam-test', component: StamTestComponent },*/
+  { path: 'print-helper-families/:id', component: PrintHelperFamiliesComponent },
   {
     path: 'my-families', component: MyFamiliesComponent, canActivate: [LoggedInGuard], data: { name: 'משפחות שלי' }
   },
@@ -70,13 +72,13 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent, data: { name: 'כניסה' } },
   { path: 'register', component: RegisterComponent, data: { name: 'הרשמה' }, canActivate: [NotLoggedInGuard] },
   { path: '', redirectTo: '/families', pathMatch: 'full' },
-  { path: '**', redirectTo: '/familiesP', pathMatch: 'full' }
+  { path: '**', redirectTo: '/families', pathMatch: 'full' }
 ];
 
 @NgModule({
   imports: [
     CommonModule, RouterModule.forRoot(routes
-      //  ,{enableTracing:true}
+       // ,{enableTracing:true}
     )
   ],
   declarations: [],

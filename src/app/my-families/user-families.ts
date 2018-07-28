@@ -20,7 +20,7 @@ export class UserFamiliesList {
     async initForHelper(helperId: string, helperOptional?: Helpers) {
         this.helperOptional = helperOptional;
         this.helperId = helperId;
-        this.reload();
+        await this.reload();
     }
     async reload() {
         var f = new Families();

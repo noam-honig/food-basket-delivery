@@ -20,12 +20,14 @@ export class AsignFamilyComponent implements OnInit {
 
   async searchPhone() {
     this.name = undefined;
+    this.shortUrl = undefined;
     this.id = undefined;
     if (this.phone.length == 10) {
       let h = new Helpers();
       let r = await h.source.find({ where: h.phone.isEqualTo(this.phone) });
       if (r.length > 0) {
         this.name = r[0].name.value;
+        this.shortUrl = r[0].shortUrlKey.value;
         this.id = r[0].id.value;
         this.refreshList();
       } else {
@@ -53,8 +55,8 @@ export class AsignFamilyComponent implements OnInit {
     this.cities = r.cities;
     this.specialFamilies = r.special;
   }
-  baskets: BasketInfo[]=[];
-  cities: CityInfo[]=[];
+  baskets: BasketInfo[] = [];
+  cities: CityInfo[] = [];
   specialFamilies = 0;
   async refreshList() {
     this.refreshBaskets();
@@ -71,10 +73,12 @@ export class AsignFamilyComponent implements OnInit {
   ];
   phone: string;
   name: string;
+  shortUrl: string;
   id: string;
   clearHelper() {
     this.phone = undefined;
     this.name = undefined;
+    this.shortUrl = undefined;
     this.id = undefined;
     this.clearList();
 
@@ -86,6 +90,7 @@ export class AsignFamilyComponent implements OnInit {
     this.dialog.selectHelper(h => {
       this.phone = h.phone.value;
       this.name = h.name.value;
+      this.shortUrl = h.shortUrlKey.value;
       this.id = h.id.value;
 
       this.refreshList();
@@ -96,8 +101,8 @@ export class AsignFamilyComponent implements OnInit {
   constructor(private auth: AuthService, private dialog: SelectService) { }
 
   ngOnInit() {
- //   this.phone = '0507330590';
-  //  this.searchPhone();
+    this.phone = '0507330590';
+    this.searchPhone();
   }
   async assignItem(basket: BasketInfo) {
 
@@ -107,7 +112,7 @@ export class AsignFamilyComponent implements OnInit {
       basketType: basket.id,
       helperId: this.id,
       language: this.filterLangulage,
-      city:this.filterCity
+      city: this.filterCity
     });
     if (x.ok) {
       basket.unassignedFamilies--;

@@ -15,7 +15,7 @@ export function helpersDataApi(r: DataApiRequest<myAuthInfo>) {
         allowInsert: true,
         get: {},
         readonlyColumns: h => [h.createDate, h.id],
-        excludeColumns: h => [h.realStoredPassword, h.shortUrlKey],
+        excludeColumns: h => [h.realStoredPassword],
         onSavingRow: async h => {
             if (h.password.value && h.password.value != h.password.originalValue && h.password.value != Helpers.emptyPassword) {
                 h.realStoredPassword.value = passwordHash.generate(h.password.value);

@@ -1,9 +1,9 @@
 <mat-sidenav-container class="app-sidenav-container">
-  <mat-sidenav #sidenav class="app-sidenav mat-elevation-z10" [opened]="!dialog.isScreenSmall()" [mode]="dialog.isScreenSmall()?'over':'side'">
-      <div style="width:100%;text-align: center">
-          <img src="https://scontent.fhfa2-1.fna.fbcdn.net/v/t1.0-1/p200x200/31944116_1037647396374514_9107210286942650368_n.jpg?_nc_cat=0&oh=339e94eebb275283e368ebdec21241ae&oe=5BE7E9AC"
-          />
-        </div>
+  <mat-sidenav #sidenav class="app-sidenav mat-elevation-z10 no-print" [opened]="!dialog.isScreenSmall()" [mode]="dialog.isScreenSmall()?'over':'side'">
+    <div style="width:100%;text-align: center">
+      <img src="https://scontent.fhfa2-1.fna.fbcdn.net/v/t1.0-1/p200x200/31944116_1037647396374514_9107210286942650368_n.jpg?_nc_cat=0&oh=339e94eebb275283e368ebdec21241ae&oe=5BE7E9AC"
+      />
+    </div>
     <h4 *ngIf="auth.auth.info">שלום {{auth.auth.info.name}}</h4>
     <mat-nav-list role="list">
       <ng-container *ngFor="let m of router.config">
@@ -19,12 +19,12 @@
     </mat-nav-list>
 
   </mat-sidenav>
-  <mat-toolbar color="{{toolbarColor}}">
+  <mat-toolbar color="{{toolbarColor}}" class="no-print">
     <button mat-button class="sidenav-toggle" (click)="sidenav.toggle()">
       <mat-icon>menu</mat-icon>
     </button>
     <span>{{currentTitle()}}</span>
-    
+
   </mat-toolbar>
 
   <div class="app-sidenav-content ">

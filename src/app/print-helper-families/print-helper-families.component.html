@@ -1,0 +1,54 @@
+<h2 *ngIf="helper">שלום {{helper.name.value}}, אלו המשפחות לחלוקתך - ({{familyLists.toDeliver.length}})</h2>
+<div class="families-container">
+  <div class="family" *ngFor="let f of familyLists.toDeliver;let i=index">
+    <h3>{{i+1}}. {{f.name.value}} </h3>
+    <h4 style="display:inline">סל</h4> - {{f.basketType.displayValue}}
+    <ng-container *ngIf="f.deliveryComments.value">
+      <br/>
+      <strong style="color:red">שים לב! </strong> {{f.deliveryComments.value}}
+    </ng-container>
+    <h4>כתובת</h4>
+    <div>
+      <div style="display:inline-block">
+        {{f.address.value}}
+        <ng-container *ngIf="f.floor.value||f.appartment.value">
+          <br/>
+        </ng-container>
+        <ng-container *ngIf="f.floor.value">
+          קומה {{f.floor.value}}
+        </ng-container>
+        <ng-container *ngIf="f.appartment.value">
+          דירה {{f.appartment.value}}
+        </ng-container>
+        <ng-container *ngIf="f.addressComment.value">
+          <br/> {{f.addressComment.value}}
+        </ng-container>
+      </div>
+
+    </div>
+
+    <h4>טלפונים:</h4>
+    <div>
+
+      <div style="display:inline-block">
+        {{f.phone1.displayValue}}, {{f.phone1Description.value?f.phone1Description.value:f.name.value}}
+
+      </div>
+
+    </div>
+    <div style="margin-top:5px" *ngIf="f.phone2.value">
+
+      <div style="display:inline-block">
+        {{f.phone2.displayValue}}, {{f.phone2Description.value?f.phone2Description.value:f.name.value}}
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="help" *ngIf="familyLists.toDeliver.length>0">
+  <h5>
+  צריך עזרה? התקשר ל{{familyLists.toDeliver[0].courierAssignUserName.value}} {{familyLists.toDeliver[0].courierAssignUserPhone.displayValue}}
+</h5>
+</div>
+<app-map #map></app-map>

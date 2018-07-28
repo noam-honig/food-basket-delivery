@@ -11,9 +11,10 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
     }
 
     protected async execute(info: AddBoxInfo, req: DataApiRequest<myAuthInfo>): Promise<AddBoxResponse> {
-        let result = {
+        let result:AddBoxResponse = {
             helperId: info.helperId,
-            ok: false
+            ok: false,
+            shortUrl:undefined
         }
 
         let h = new Helpers();
@@ -24,6 +25,8 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
                 h.name.value = info.name;
                 await h.save();
                 result.helperId = h.id.value;
+                result.shortUrl = h.shortUrlKey.value;
+                
             }
         }
         let f = new Families();
@@ -107,7 +110,8 @@ export interface AddBoxInfo {
     city: string;
 }
 export interface AddBoxResponse {
-    helperId?: string;
+    helperId: string;
+    shortUrl:string;
     ok: boolean;
 
 }

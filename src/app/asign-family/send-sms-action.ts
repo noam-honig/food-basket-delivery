@@ -24,15 +24,7 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
         return {};
 
     }
-    static makeid() {
-        var text = "";
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-        for (var i = 0; i < 5; i++)
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-        return text;
-    }
+    
 
 
     static async  generateMessage(id: string, origin: string, reminder: Boolean, then: (phone: string, message: string) => void) {
@@ -42,8 +34,7 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
         }
         let r = await h.source.find({ where: h.id.isEqualTo(id) });
         if (r.length > 0) {
-            if (!r[0].shortUrlKey.value) {
-                r[0].shortUrlKey.value = SendSmsAction.makeid();
+            if (r[0].veryUrlKeyAndReturnTrueIfSaveRequired()) {
                 await r[0].save();
             }
             let message = 'שלום ' + r[0].name.value;

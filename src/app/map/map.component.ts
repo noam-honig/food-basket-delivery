@@ -13,18 +13,27 @@ export class MapComponent implements OnInit {
 
   ngOnInit() {
   }
+  show() {
+    this.mapVisible = !this.mapVisible;
+    if (this.mapVisible) {
+      setTimeout(() => {
+        this.map.fitBounds(this.bounds);
+
+      }, 5);
+    }
+  }
   mapVisible = false;
 
   mapInit = false;
   markers: google.maps.Marker[] = [];
   hasFamilies = false;
+  bounds: google.maps.LatLngBounds;
   test(families: Families[]) {
     this.hasFamilies = families.length > 0;
     var mapProp: google.maps.MapOptions = {
       center: new google.maps.LatLng(32.3215, 34.8532),
       zoom: 13,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
-
     };
     if (!this.mapInit) {
       this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
@@ -33,8 +42,15 @@ export class MapComponent implements OnInit {
     this.markers.forEach(m => m.setMap(null));
     this.markers = [];
     let i = 0;
+    this.bounds = new google.maps.LatLngBounds();
     families.forEach(f => {
-      let marker = new google.maps.Marker({ map: this.map, position: f.getGeocodeInformation().location() });
+      let marker = new google.maps.Marker({
+        map: this.map, position: f.getGeocodeInformation().location()
+      });
+
+      this.bounds.extend(marker.getPosition());
+      marker.setLabel(f.name.value + " - " + f.address.value+'....');
+      
       switch (f.deliverStatus.listValue) {
         case DeliveryStatus.ReadyForDelivery:
           i++;
@@ -49,20 +65,20 @@ export class MapComponent implements OnInit {
           marker.setIcon('https://maps.google.com/mapfiles/ms/micons/red-pushpin.png');
           break;
 
-      }
 
 
-      let info: google.maps.InfoWindow;
-      this.markers.push(marker);
 
-      google.maps.event.addListener(marker, 'click', () => {
-        if (!info)
-          info = new google.maps.InfoWindow({
-            content: `<h4>${f.name.value}</h4>${f.address.value}`
+          let info: google.maps.InfoWindow;
+          this.markers.push(marker);
+
+          google.maps.event.addListener(marker, 'click', () => {
+            if (!info)
+              info = new google.maps.InfoWindow({
+                content: `<h4>${f.name.value}</h4>${f.address.value}`
+              });
+            info.open(this.map, marker);
           });
-        info.open(this.map, marker);
       });
-    });
 
 
 
