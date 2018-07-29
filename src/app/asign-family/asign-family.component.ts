@@ -8,6 +8,7 @@ import { UserFamiliesList } from '../my-families/user-families';
 import { SendSmsAction } from './send-sms-action';
 import { GetBasketStatusAction, BasketInfo, CityInfo } from './get-basket-status-action';
 import { MapComponent } from '../map/map.component';
+import { environment } from '../../environments/environment';
 
 
 @Component({
@@ -60,7 +61,7 @@ export class AsignFamilyComponent implements OnInit {
   specialFamilies = 0;
   async refreshList() {
     this.refreshBaskets();
-    this.familyLists.initForHelper(this.id,this.name);
+    this.familyLists.initForHelper(this.id, this.name);
 
   }
   familyLists = new UserFamiliesList();
@@ -101,8 +102,10 @@ export class AsignFamilyComponent implements OnInit {
   constructor(private auth: AuthService, private dialog: SelectService) { }
 
   ngOnInit() {
-    this.phone = '0507330590';
-    this.searchPhone();
+    if (!environment.production) {
+      this.phone = '0507330590';
+      this.searchPhone();
+    }
   }
   async assignItem(basket: BasketInfo) {
 

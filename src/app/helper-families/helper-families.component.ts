@@ -80,17 +80,7 @@ export class HelperFamiliesComponent implements OnInit {
     if (reminder)
       this.familyLists.helperOptional.reminderSmsDate.dateValue = new Date();
   }
-  async print() {
-    let h = new Helpers();
-    await h.source.find({ where: h.id.isEqualTo(this.familyLists.helperId) }).then(async r => {
-      if (r.length > 0) {
-        if (r[0].veryUrlKeyAndReturnTrueIfSaveRequired())
-          await r[0].save();
-      }
-      this.router.navigate(['/print-helper-families/'+ r[0].shortUrlKey.value ]);
-
-    });
-  }
+  
   updateComment(f: Families) {
     this.dialog.displayComment({
       comment: f.courierComments.value,
