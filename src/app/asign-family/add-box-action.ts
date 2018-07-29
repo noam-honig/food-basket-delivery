@@ -53,6 +53,7 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
                 where = where.and(f.city.isEqualTo(info.city));
             }
             let r = await f.source.find({ where });
+
             if (r.length > 0) {
                 if (existingFamilies.length == 0) {
                     let position = Math.trunc(Math.random() * r.length);
@@ -78,46 +79,41 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
 
                     }
                     console.time('sort');
-
-                    r = r.sort((a, b) => {
-                        let locA = a.getGeocodeInformation().location();
-                        let locB = b.getGeocodeInformation().location();
-                        if (!locA)
-                            if (locB)
-                                return -2;
-                            else return 0;
-                        if (!locB)
-                            return 1;
-                        let aVal = getDistance(locA);
-                        let bVal = getDistance(locB);
-                        return aVal - bVal;
-                    });
+                    let f = r[0];
+                    let dist = getDistance(f.getGeocodeInformation().location());
+                    for (let i = 1; i < r.length; i++) {
+                        let myDist = getDistance(r[i].getGeocodeInformation().location());
+                        if (myDist < dist) {
+                            dist = myDist;
+                            f = r[i]
+                        }
+                    }
                     console.timeEnd('sort');
-                    r[0].courier.value = result.helperId;
+                    f.courier.value = result.helperId;
 
-                    await r[0].doSave(req.authInfo);
-                    existingFamilies.push(r[0]);
+                    await f.doSave(req.authInfo);
+                    existingFamilies.push(f);
                     result.ok = true;
                 }
 
-
             }
+
+
+            console.time('optimize');
+            await AddBoxAction.optimizeRoute(existingFamilies);
+            console.timeEnd('optimize');
+            existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
+            let exc = new ColumnHashSet()
+            exc.add(...f.excludeColumns(req.authInfo));
+
+            await foreachSync(existingFamilies, async f => { result.families.push(await f.__toPojo(exc)); });
+            result.basketInfo = await GetBasketStatusAction.getTheBaskts({
+                filterCity: info.city,
+                filterLanguage: info.language
+            });
+            return result;
+
         }
-        console.time('optimize');
-        await AddBoxAction.optimizeRoute(existingFamilies);
-        console.timeEnd('optimize');
-        existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
-        let exc = new ColumnHashSet()
-        exc.add(...f.excludeColumns(req.authInfo));
-
-        await foreachSync(existingFamilies, async f => { result.families.push(await f.__toPojo(exc)); });
-        result.basketInfo = await GetBasketStatusAction.getTheBaskts({
-            filterCity: info.city,
-            filterLanguage: info.language
-        });
-        return result;
-
-
     }
     static async optimizeRoute(families: Families[]) {
 
