@@ -60,7 +60,7 @@ export class AsignFamilyComponent implements OnInit {
   specialFamilies = 0;
   async refreshList() {
     this.refreshBaskets();
-    this.familyLists.initForHelper(this.id);
+    this.familyLists.initForHelper(this.id,this.name);
 
   }
   familyLists = new UserFamiliesList();

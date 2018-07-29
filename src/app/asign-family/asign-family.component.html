@@ -1,22 +1,22 @@
 <div class="myDiv">
-  <h4>
+  <h4 class="no-print">
     פרטי המשנע
   </h4>
-  <div class="line-container form-control">
+  <div class="line-container form-control no-print">
     <div class="input-same-line">
-      <input  placeholder="מספר הטלפון של המשנע" [(ngModel)]="phone" (input)="searchPhone()" type="tel">
+      <input placeholder="מספר הטלפון של המשנע" [(ngModel)]="phone" (input)="searchPhone()" type="tel">
     </div>
     <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
     <mat-icon matSuffix (click)="findHelper()">search</mat-icon>
   </div>
-  <input class="form-control" placeholder="שם המשנע" [(ngModel)]="name">
+  <input class="form-control no-print" placeholder="שם המשנע" [(ngModel)]="name">
 
-  <span *ngIf="!name" class="help">אנא הזיני את הטלפון של המשנע ושמו, ואז תוכלי לבחור שפה, עיר ואילו סלים לשייך</span>
+  <span *ngIf="!name" class="help no-print">אנא הזיני את הטלפון של המשנע ושמו, ואז תוכלי לבחור שפה, עיר ואילו סלים לשייך</span>
   <span *ngIf="name">
-    <h4>
+    <h4 class="no-print">
       פרטי השינוע
     </h4>
-    <div>
+    <div class="no-print">
       <select class="form-control" #lang (change)="langChange()" [(ngModel)]="filterLangulage">
         <option *ngFor="let l of langulages" value="{{l.id}}">{{l.toString()}}</option>
 
@@ -27,7 +27,7 @@
 
       </select>
     </div>
-    <div>
+    <div class="no-print">
       <h5>סוג הסל</h5>
       <button mat-raised-button color="primary" class="sal-button" (click)="addSpecial()" *ngIf="specialFamilies">משפחות מיוחדות - {{specialFamilies}}</button>
       <ng-container *ngFor="let b of baskets">
@@ -36,3 +36,5 @@
       <h4 class="no-baskets" *ngIf="!baskets.length">לא נמצאו סלים מתאימים</h4>
     </div>
     <app-helper-families [familyLists]="familyLists" [partOfAssign]="true" (assignmentCanceled)="assignmentCanceled()"></app-helper-families>
+  </span>
+</div>

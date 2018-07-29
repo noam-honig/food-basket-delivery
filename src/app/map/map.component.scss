@@ -1,0 +1,13 @@
+.map{
+display: block;
+}
+.map-hidden{
+    visibility: collapse;
+    display:contents;
+}
+@media print{
+    .map-hidden{
+        visibility:visible;
+        display: block;
+}
+}

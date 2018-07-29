@@ -17,7 +17,6 @@ import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-
 import { NewsComponent } from './news/news.component';
 import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
 import { StamTestComponent } from './stam-test/stam-test.component';
-import { PrintHelperFamiliesComponent } from './print-helper-families/print-helper-families.component';
 
 
 const routes: Routes = [
@@ -64,7 +63,6 @@ const routes: Routes = [
     component: LoginFromSmsComponent
   },
   /*{ path: 'stam-test', component: StamTestComponent },*/
-  { path: 'print-helper-families/:id', component: PrintHelperFamiliesComponent },
   {
     path: 'my-families', component: MyFamiliesComponent, canActivate: [LoggedInGuard], data: { name: 'משפחות שלי' }
   },

@@ -1,7 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-import { AlertModule, TabsModule, BsDropdownModule, CollapseModule } from "ngx-bootstrap";
 import { AppComponent } from './app.component';
 import { RadWebModule } from 'radweb';
 import { AppRoutingModule } from './app.routing';
@@ -44,7 +43,6 @@ import { BusyService } from './select-popup/busy-service';
 import { StamTestComponent } from './stam-test/stam-test.component';
 import { NewsComponent } from './news/news.component';
 import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
-import { PrintHelperFamiliesComponent } from './print-helper-families/print-helper-families.component';
 
 @NgModule({
   declarations: [
@@ -80,7 +78,6 @@ import { PrintHelperFamiliesComponent } from './print-helper-families/print-help
     StamTestComponent,
     NewsComponent,
     DeliveryEventsComponent,
-    PrintHelperFamiliesComponent
   ],
   imports: [
     BrowserModule,

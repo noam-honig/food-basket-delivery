@@ -1,10 +1,10 @@
-<h4>משפחות לחלוקה - {{familyLists.toDeliver.length}}</h4>
-<mat-accordion>
-  <mat-expansion-panel #myPanel *ngFor="let f of familyLists.toDeliver">
+<h4 class="no-print">משפחות לחלוקה - {{familyLists.toDeliver.length}}</h4>
+<mat-accordion class="no-print">
+  <mat-expansion-panel #myPanel *ngFor="let f of familyLists.toDeliver;let i=index">
     <mat-expansion-panel-header>
       <div>
         <mat-panel-title>
-          {{f.name.value}}
+          {{i+1}}. {{f.name.value}}
         </mat-panel-title>
       </div>
       <div>
@@ -24,13 +24,13 @@
     </app-family-info>
   </mat-expansion-panel>
 </mat-accordion>
-<div class="sendSmsButtonLine">
+<div class="sendSmsButtonLine no-print">
   <button *ngIf="partOfAssign&&!partOfReview&&familyLists.toDeliver.length" mat-raised-button color="primary" (click)="sendSms(false)">שלחי הודעת SMS עם קישור</button>
   <button mat-raised-button color="primary" *ngIf="partOfAssign&&!partOfReview&&familyLists.toDeliver.length">
     <mat-icon (click)="print()">print</mat-icon>
   </button>
 </div>
-<button *ngIf="partOfReview" mat-raised-button class="myButton" color="primary" (click)="sendSms(true)">
+<button *ngIf="partOfReview" mat-raised-button class="myButton no-print" color="primary" (click)="sendSms(true)">
 
   <span *ngIf="familyLists&&familyLists.helperOptional&&familyLists.helperOptional.reminderSmsDate.value; else elseContent">תזכורת נשלחה {{familyLists.helperOptional.reminderSmsDate.relativeDateName()}} שלח שוב
 
@@ -40,9 +40,64 @@
     <span>שלחי SMS לתזכורת</span>
   </ng-template>
 </button>
-<button mat-raised-button class="myButton" *ngIf="partOfReview&&familyLists.helperOptional">
+<button mat-raised-button class="myButton no-print" *ngIf="partOfReview&&familyLists.helperOptional">
   <a href="tel:{{familyLists.helperOptional.phone.value}}"> התקשרי ל{{familyLists.helperOptional.name.value}} {{familyLists.helperOptional.phone.value}} </a>
 </button>
+<div class="print-only">
+  <h2 *ngIf="familyLists.helperId">שלום {{familyLists.helperName}}, אלו המשפחות לחלוקתך - ({{familyLists.toDeliver.length}})</h2>
+  <div class="families-container">
+    <div class="family" *ngFor="let f of familyLists.toDeliver;let i=index">
+      <h3>{{i+1}}. {{f.name.value}} </h3>
+      <h4 style="display:inline">סל</h4> - {{f.basketType.displayValue}}
+      <ng-container *ngIf="f.deliveryComments.value">
+        <br/>
+        <strong style="color:red">שים לב! </strong> {{f.deliveryComments.value}}
+      </ng-container>
+      <h4>כתובת</h4>
+      <div>
+        <div style="display:inline-block">
+          {{f.address.value}}
+          <ng-container *ngIf="f.floor.value||f.appartment.value">
+            <br/>
+          </ng-container>
+          <ng-container *ngIf="f.floor.value">
+            קומה {{f.floor.value}}
+          </ng-container>
+          <ng-container *ngIf="f.appartment.value">
+            דירה {{f.appartment.value}}
+          </ng-container>
+          <ng-container *ngIf="f.addressComment.value">
+            <br/> {{f.addressComment.value}}
+          </ng-container>
+        </div>
+
+      </div>
+
+      <h4>טלפונים:</h4>
+      <div>
+
+        <div style="display:inline-block">
+          {{f.phone1.displayValue}}, {{f.phone1Description.value?f.phone1Description.value:f.name.value}}
+
+        </div>
+
+      </div>
+      <div style="margin-top:5px" *ngIf="f.phone2.value">
+
+        <div style="display:inline-block">
+          {{f.phone2.displayValue}}, {{f.phone2Description.value?f.phone2Description.value:f.name.value}}
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="help" *ngIf="familyLists.toDeliver.length>0">
+    <h5>
+      צריך עזרה? התקשר ל{{familyLists.toDeliver[0].courierAssignUserName.value}} {{familyLists.toDeliver[0].courierAssignUserPhone.displayValue}}
+    </h5>
+  </div>
+</div>
 <div *ngIf="familyLists.totals.length">
   <h4 class="total-title">סה"כ לחלוקה</h4>
   <ul>
@@ -53,7 +108,7 @@
 
 
 
-<div *ngIf="familyLists.problem.length>0">
+<div *ngIf="familyLists.problem.length>0" class="no-print">
   <h4>משפחות שנתקלתי בבעיה - {{familyLists.problem.length}}</h4>
   <mat-accordion>
     <mat-expansion-panel #myPanel *ngFor="let f of familyLists.problem">
@@ -79,7 +134,7 @@
   </mat-accordion>
 </div>
 
-<div *ngIf="familyLists.delivered.length>0">
+<div *ngIf="familyLists.delivered.length>0" class="no-print">
   <h4>משפחות שחולקו - {{familyLists.delivered.length}}</h4>
   <mat-accordion>
     <mat-expansion-panel #myPanel *ngFor="let f of familyLists.delivered">

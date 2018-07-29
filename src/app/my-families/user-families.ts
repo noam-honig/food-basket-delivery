@@ -16,10 +16,12 @@ export class UserFamiliesList {
     problem: Families[] = [];
     allFamilies: Families[] = [];
     helperId: string;
+    helperName:string;
     helperOptional: Helpers;
-    async initForHelper(helperId: string, helperOptional?: Helpers) {
+    async initForHelper(helperId: string,name:string, helperOptional?: Helpers) {
         this.helperOptional = helperOptional;
         this.helperId = helperId;
+        this.helperName = name;
         await this.reload();
     }
     async reload() {

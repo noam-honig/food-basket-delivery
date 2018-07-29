@@ -165,3 +165,9 @@ th {
           visibility: none!important;
       }
   }
+  @media not print{
+      .print-only{
+        display:none!important;
+        visibility: none!important;
+      }
+  }

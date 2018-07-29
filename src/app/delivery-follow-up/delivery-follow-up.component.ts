@@ -12,7 +12,7 @@ export class DeliveryFollowUpComponent implements OnInit {
 
   familyLists = new UserFamiliesList();
   selectCourier(c: Helpers) {
-    this.familyLists.initForHelper(c.id.value, c);
+    this.familyLists.initForHelper(c.id.value,c.name.value, c);
 
   }
   showAll = 'false';

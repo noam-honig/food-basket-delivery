@@ -17,10 +17,21 @@ export class MapComponent implements OnInit {
     this.mapVisible = !this.mapVisible;
     if (this.mapVisible) {
       setTimeout(() => {
-        this.map.fitBounds(this.bounds);
-
-      }, 5);
+        this.fitBounds();
+      }, 50);
     }
+
+  }
+  center = new google.maps.LatLng(32.3215, 34.8532)
+  fitBounds() {
+    if (this.bounds.isEmpty()) {
+      this.map.setCenter(this.center);
+    } else {
+      this.map.fitBounds(this.bounds);
+
+    }
+    if (this.map.getZoom() > 18)
+      this.map.setZoom(18);
   }
   mapVisible = false;
 
@@ -31,7 +42,7 @@ export class MapComponent implements OnInit {
   test(families: Families[]) {
     this.hasFamilies = families.length > 0;
     var mapProp: google.maps.MapOptions = {
-      center: new google.maps.LatLng(32.3215, 34.8532),
+      center: this.center,
       zoom: 13,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
     };
@@ -43,14 +54,18 @@ export class MapComponent implements OnInit {
     this.markers = [];
     let i = 0;
     this.bounds = new google.maps.LatLngBounds();
+    let secondaryBounds = new google.maps.LatLngBounds();
     families.forEach(f => {
       let marker = new google.maps.Marker({
         map: this.map, position: f.getGeocodeInformation().location()
       });
+      if (f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery)
+        this.bounds.extend(marker.getPosition());
+      else
+        secondaryBounds.extend(marker.getPosition());
 
-      this.bounds.extend(marker.getPosition());
-      marker.setLabel(f.name.value + " - " + f.address.value+'....');
-      
+      marker.setLabel(f.name.value + " - " + f.address.value + '....');
+
       switch (f.deliverStatus.listValue) {
         case DeliveryStatus.ReadyForDelivery:
           i++;
@@ -64,25 +79,23 @@ export class MapComponent implements OnInit {
         case DeliveryStatus.FailedOther:
           marker.setIcon('https://maps.google.com/mapfiles/ms/micons/red-pushpin.png');
           break;
+      }
+      let info: google.maps.InfoWindow;
+      this.markers.push(marker);
 
-
-
-
-          let info: google.maps.InfoWindow;
-          this.markers.push(marker);
-
-          google.maps.event.addListener(marker, 'click', () => {
-            if (!info)
-              info = new google.maps.InfoWindow({
-                content: `<h4>${f.name.value}</h4>${f.address.value}`
-              });
-            info.open(this.map, marker);
+      google.maps.event.addListener(marker, 'click', () => {
+        if (!info)
+          info = new google.maps.InfoWindow({
+            content: `<h4>${f.name.value}</h4>${f.address.value}`
           });
+        info.open(this.map, marker);
       });
-
-
-
-
+    });
+    if (this.bounds.isEmpty())
+      this.bounds = secondaryBounds;
+    if (this.map && this.bounds && this.mapVisible) {
+      this.fitBounds();
+    }
 
   }
 
