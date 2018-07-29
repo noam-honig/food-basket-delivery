@@ -32,7 +32,7 @@ export class UserFamiliesList {
 
 
     initFamilies() {
-        if (false) {
+        if (1+1==0) {
             let temp = this.allFamilies;
             this.allFamilies = [];
             this.toDeliver = [];
