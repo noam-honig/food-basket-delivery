@@ -386,15 +386,15 @@ export class Helpers extends IdEntity<HelperId>{
     }
     return false;
   }
-   makeid() {
+  makeid() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     for (var i = 0; i < 5; i++)
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
 
     return text;
-}
+  }
 }
 
 
@@ -492,7 +492,11 @@ export class Families extends IdEntity<FamilyId>{
   createDate = new changeDate('מועד הוספה');
   createUser = new HelperIdReadonly('משתמש מוסיף');
 
-
+  excludeColumns(info: myAuthInfo) {
+    if (info && info.admin)
+      return [];
+    return [f.internalComment, f.callComments, f.callHelper, f.callStatus, f.callTime, f.createDate, f.createUser, f.familySource, f.familyMembers, f.special];
+  }
 
 
 

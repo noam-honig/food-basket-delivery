@@ -90,9 +90,7 @@ dataApi.add(r => {
             }
         },
         excludeColumns: f => {
-            if (r.authInfo && r.authInfo.admin)
-                return [];
-            return [f.internalComment, f.callComments, f.callHelper, f.callStatus, f.callTime, f.createDate, f.createUser, f.familySource, f.familyMembers, f.special];
+            return f.excludeColumns(r.authInfo);
         },
         onSavingRow: async family => {
             await family.doSaveStuff(r.authInfo);

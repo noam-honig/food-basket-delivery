@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { GridSettings } from 'radweb';
+import { GridSettings, ColumnHashSet } from 'radweb';
 import { Families, Language, Helpers, DeliveryStatus, BasketType, YesNo } from '../models';
 import { AuthService } from '../auth/auth-service';
 import { SelectService } from '../select-popup/select-service';
@@ -103,8 +103,8 @@ export class AsignFamilyComponent implements OnInit {
 
   ngOnInit() {
     if (!environment.production) {
-      //this.phone = '0507330590';
-      //this.searchPhone();
+      this.phone = '0507330590';
+      this.searchPhone();
     }
   }
   async assignItem(basket: BasketInfo) {
@@ -120,8 +120,10 @@ export class AsignFamilyComponent implements OnInit {
     if (x.ok) {
       basket.unassignedFamilies--;
       this.id = x.helperId;
-      await this.refreshList();
-
+      this.familyLists.initForFamilies(this.id, this.name, x.families);
+      this.baskets = x.basketInfo.baskets;
+      this.cities = x.basketInfo.cities;
+      this.specialFamilies = x.basketInfo.special;
     }
     else {
       this.refreshList();

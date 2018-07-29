@@ -10,6 +10,10 @@ export class GetBasketStatusAction extends ServerAction<GetBasketStatusActionInf
         super('GetBasketStatusAction');//required because of minification
     }
     protected async execute(info: GetBasketStatusActionInfo, req: DataApiRequest<myAuthInfo>): Promise<GetBasketStatusActionResponse> {
+        return await GetBasketStatusAction.getTheBaskts(info);
+    }
+
+    static async getTheBaskts(info: GetBasketStatusActionInfo) {
         let result = {
             baskets: [],
             cities: [],
@@ -38,7 +42,6 @@ export class GetBasketStatusAction extends ServerAction<GetBasketStatusActionInf
                         result.special++;
                     }
                 }
-
                 let ci: CityInfo = cityHash[cf.city.value];
                 if (!ci) {
                     ci = {
@@ -53,16 +56,12 @@ export class GetBasketStatusAction extends ServerAction<GetBasketStatusActionInf
         });
         if (info.filterCity && !cityHash[info.filterCity]) {
             result.cities.push({ name: info.filterCity, unassignedFamilies: 0 });
-
         }
-        await foreachSync(result.baskets,
-            async b => {
-                b.name = (await f.lookupAsync(new BasketType(), bt => bt.id.isEqualTo(b.id))).name.value;
-            });
-        result.baskets.sort((a,b)=>b.unassignedFamilies-a.unassignedFamilies);
+        await foreachSync(result.baskets, async (b) => {
+            b.name = (await f.lookupAsync(new BasketType(), bt => bt.id.isEqualTo(b.id))).name.value;
+        });
+        result.baskets.sort((a, b) => b.unassignedFamilies - a.unassignedFamilies);
         return result;
-
-
     }
 }
 

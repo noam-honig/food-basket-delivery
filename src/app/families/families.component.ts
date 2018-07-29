@@ -9,6 +9,7 @@ import * as XLSX from 'xlsx';
 import { FilterBase } from 'radweb/utils/dataInterfaces1';
 import { foreachEntityItem, foreachSync } from '../shared/utils';
 import { BusyService } from '../select-popup/busy-service';
+import { async } from '../../../node_modules/@types/q';
 
 @Component({
   selector: 'app-families',
@@ -187,6 +188,16 @@ export class FamiliesComponent implements OnInit {
         name: '',
         cssClass: 'btn glyphicon glyphicon-pencil',
         click: f => this.gridView = !this.gridView
+      },
+      {
+        cssClass: 'btn glyphicon glyphicon-check',
+        visible: f => f.deliverStatus.listValue == DeliveryStatus.NotInEvent,
+        click: async f => {
+          await this.busy.donotWait(async () => {
+            f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
+            await f.save();
+          });
+        }
       }
     ]
   });

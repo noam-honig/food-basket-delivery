@@ -24,15 +24,21 @@ export class UserFamiliesList {
         this.helperName = name;
         await this.reload();
     }
+    async initForFamilies(helperId: string, name: string, familiesPocoArray: any[]) {
+        this.helperId = helperId;
+        this.helperName = this.helperName;
+        this.allFamilies = familiesPocoArray.map(x => this.families.source.fromPojo(x));
+        this.initFamilies();
+    }
+    families = new Families();
     async reload() {
-        var f = new Families();
-        this.allFamilies = await f.source.find({ where: f.courier.isEqualTo(this.helperId), orderBy: [f.routeOrder, f.address], limit: 1000 });
+        this.allFamilies = await this.families.source.find({ where: this.families.courier.isEqualTo(this.helperId), orderBy: [this.families.routeOrder, this.families.address], limit: 1000 });
         this.initFamilies();
     }
 
 
     initFamilies() {
-        if (1+1==0) {
+        if (1 + 1 == 0) {
             let temp = this.allFamilies;
             this.allFamilies = [];
             this.toDeliver = [];

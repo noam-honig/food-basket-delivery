@@ -4,8 +4,9 @@ import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { Families, DeliveryStatus, Helpers, YesNo } from "../models";
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
-import { UrlBuilder } from "radweb";
+import { UrlBuilder, ColumnHashSet } from "radweb";
 import { foreachSync } from '../shared/utils';
+import { BasketInfo, GetBasketStatusActionResponse, GetBasketStatusAction } from './get-basket-status-action';
 
 
 export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
@@ -17,8 +18,9 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
         let result: AddBoxResponse = {
             helperId: info.helperId,
             ok: false,
-            shortUrl: undefined
-            
+            shortUrl: undefined,
+            families: [],
+            basketInfo: undefined
         }
 
         let h = new Helpers();
@@ -75,6 +77,7 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
                         return r;
 
                     }
+                    console.time('sort');
 
                     r = r.sort((a, b) => {
                         let locA = a.getGeocodeInformation().location();
@@ -89,7 +92,7 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
                         let bVal = getDistance(locB);
                         return aVal - bVal;
                     });
-
+                    console.timeEnd('sort');
                     r[0].courier.value = result.helperId;
 
                     await r[0].doSave(req.authInfo);
@@ -100,28 +103,40 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
 
             }
         }
-         await AddBoxAction.optimizeRoute(existingFamilies);
+        console.time('optimize');
+        await AddBoxAction.optimizeRoute(existingFamilies);
+        console.timeEnd('optimize');
+        existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
+        let exc = new ColumnHashSet()
+        exc.add(...f.excludeColumns(req.authInfo));
+
+        await foreachSync(existingFamilies, async f => { result.families.push(await f.__toPojo(exc)); });
+        result.basketInfo = await GetBasketStatusAction.getTheBaskts({
+            filterCity: info.city,
+            filterLanguage: info.language
+        });
         return result;
 
 
     }
     static async optimizeRoute(families: Families[]) {
 
-
+        if (families.length <= 1)
+            return;
         let r = await getRouteInfo(families, true);
         if (r.status == 'OK' && r.routes && r.routes.length > 0 && r.routes[0].waypoint_order) {
             let i = 1;
-            
+
             await foreachSync(r.routes[0].waypoint_order, async (p: number) => {
                 let f = families[p];
                 if (f.routeOrder.value != i) {
                     f.routeOrder.value = i;
-                    await f.save();
+                    f.save();
                 }
                 i++;
             });
 
-            if (1+1==0) {
+            if (1 + 1 == 0) {
                 let temp = families;
                 let sorted = [];
 
@@ -177,7 +192,8 @@ export interface AddBoxInfo {
 export interface AddBoxResponse {
     helperId: string;
     shortUrl: string;
-    
+    families: Families[];
+    basketInfo: GetBasketStatusActionResponse
     ok: boolean;
 
 }
@@ -196,7 +212,7 @@ async function getRouteInfo(families: Families[], optimize: boolean) {
         language: 'he',
         key: process.env.GOOGLE_GECODE_API_KEY
     });
-    
+
     let r = await (await fetch.default(u.url)).json();
     return r;
 }
