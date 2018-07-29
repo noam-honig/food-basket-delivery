@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, NgZone } from '@angular/core';
 import { Families, DeliveryStatus } from '../models';
 import { } from '@types/googlemaps';
 
@@ -9,19 +9,23 @@ import { } from '@types/googlemaps';
 })
 export class MapComponent implements OnInit {
 
-  constructor() { }
+  constructor() {
+    this.mediaMatcher.addListener((mql) => {
+      if (mql.matches) {
+        let x = this.gmapElement.nativeElement.offsetWidth;
+        console.log(this.map.getBounds(), this.bounds, x, this.gmapElement.nativeElement.offsetWidth);
+          this.fitBounds();
+        
 
+      }
+    });
+  }
+  private mediaMatcher: MediaQueryList = matchMedia('print');
   ngOnInit() {
-  }
-  show() {
-    this.mapVisible = !this.mapVisible;
-    if (this.mapVisible) {
-      setTimeout(() => {
-        this.fitBounds();
-      }, 50);
-    }
 
   }
+  
+  stam = '';
   center = new google.maps.LatLng(32.3215, 34.8532)
   fitBounds() {
     if (this.bounds.isEmpty()) {
@@ -33,8 +37,7 @@ export class MapComponent implements OnInit {
     if (this.map.getZoom() > 18)
       this.map.setZoom(18);
   }
-  mapVisible = false;
-
+  
   mapInit = false;
   markers: google.maps.Marker[] = [];
   hasFamilies = false;
@@ -93,7 +96,7 @@ export class MapComponent implements OnInit {
     });
     if (this.bounds.isEmpty())
       this.bounds = secondaryBounds;
-    if (this.map && this.bounds && this.mapVisible) {
+    if (this.map && this.bounds ) {
       this.fitBounds();
     }
 
