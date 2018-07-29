@@ -6,6 +6,7 @@ import { RadWebModule } from 'radweb';
 import { AppRoutingModule } from './app.routing';
 import { HomeComponent } from './home/home.component';
 import { MaterialModule } from './shared/material.module';
+import { ChartsModule } from 'ng2-charts';
 
 
 import { EventsComponent } from './events/events.component';
@@ -82,11 +83,12 @@ import { DeliveryEventsComponent } from './delivery-events/delivery-events.compo
   imports: [
     BrowserModule,
     FormsModule,
-    
+
     MaterialModule,
     BrowserAnimationsModule,
     RadWebModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ChartsModule
 
   ],
   providers: [
@@ -102,8 +104,8 @@ import { DeliveryEventsComponent } from './delivery-events/delivery-events.compo
   entryComponents: [SelectHelperComponent,
     SelectFamilyComponent,
     SelectPopupComponent,
-     YesNoQuestionComponent,
+    YesNoQuestionComponent,
     InputAreaComponent,
-    UpdateCommentComponent,WaitComponent]
+    UpdateCommentComponent, WaitComponent]
 })
 export class AppModule { }

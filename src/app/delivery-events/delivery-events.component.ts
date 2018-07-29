@@ -16,7 +16,10 @@ export class DeliveryEventsComponent implements OnInit {
     allowUpdate: true,
     allowInsert: true,
     columnSettings: e => [
-      e.name,
+      {
+        column: e.name,
+        width: '100'
+      },
       e.deliveryDate,
       e.families,
       {

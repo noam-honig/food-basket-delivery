@@ -10,6 +10,8 @@ import { FilterBase } from 'radweb/utils/dataInterfaces1';
 import { foreachEntityItem, foreachSync } from '../shared/utils';
 import { BusyService } from '../select-popup/busy-service';
 import { async } from '../../../node_modules/@types/q';
+import * as chart from 'chart.js';
+import { Stats, FaimilyStatistics } from './stats-action';
 
 @Component({
   selector: 'app-families',
@@ -18,19 +20,7 @@ import { async } from '../../../node_modules/@types/q';
 })
 export class FamiliesComponent implements OnInit {
   limit = 100;
-  statistics: FaimilyStatistics[] = [
-    new FaimilyStatistics('כל המשפחות', f => undefined),
-    new FaimilyStatistics('באירוע הנוכחי', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id)),
-    new FaimilyStatistics('לא באירוע הנוכחי', f => f.deliverStatus.isEqualTo(DeliveryStatus.NotInEvent.id)),
-    new FaimilyStatistics('טרם שוייכו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo(''))),
-    new FaimilyStatistics('שוייכו וטרם נמסרו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.IsDifferentFrom(''))),
-    new FaimilyStatistics('נמסרו', f => f.deliverStatus.isEqualTo(DeliveryStatus.Success.id)),
-    new FaimilyStatistics('בעיות מסירה', f => f.deliverStatus.IsGreaterOrEqualTo(DeliveryStatus.FailedBadAddress.id).and(f.deliverStatus.IsLessOrEqualTo(DeliveryStatus.FailedOther.id))),
-    new FaimilyStatistics('משפחות עם הערות משנע', f => f.courierComments.IsDifferentFrom('')),
-    new FaimilyStatistics('משפחות עם הערות טלפנית', f => f.callComments.IsDifferentFrom('')),
-    new FaimilyStatistics('ללא קפואים', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.Frozen.id).and(f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id))),
-    new FaimilyStatistics('קפואים', f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen.id))
-  ];
+
   filterBy(s: FaimilyStatistics) {
     this.families.get({
       where: s.rule,
@@ -40,6 +30,29 @@ export class FamiliesComponent implements OnInit {
 
     });
   }
+  public pieChartLabels: string[] = ['מוכנים ', 'בדרך', 'הגיעו', 'תקלות'];
+  public pieChartData: number[] =[0,0,0,0];
+  public colors: Array<any> = [
+    {
+      backgroundColor: [
+
+        '#FDE098'//yello
+        , '#84C5F1'//blue
+        , '#91D7D7'//green
+        , '#FD9FB3'//red
+      ]
+
+    }];
+
+  public pieChartType: string = 'pie';
+
+  options: chart.ChartOptions = {
+    responsive:true,
+    maintainAspectRatio:false,
+    legend: {
+      position: 'right'
+    },
+  };
   searchString = '';
   async doSearch() {
     if (this.families.currentRow && this.families.currentRow.wasChanged())
@@ -47,11 +60,12 @@ export class FamiliesComponent implements OnInit {
     this.busy.donotWait(() =>
       this.families.get({ where: f => f.name.isContains(this.searchString), orderBy: f => f.name, limit: this.limit }));
   }
+
   clearSearch() {
     this.searchString = '';
     this.doSearch();
   }
-
+  stats = new Stats();
   async saveToExcel() {
 
 
@@ -277,12 +291,34 @@ export class FamiliesComponent implements OnInit {
   });
   gridView = true;
   constructor(private dialog: SelectService, private san: DomSanitizer, public busy: BusyService) {
+    let y = dialog.newsUpdate.subscribe(() => {
+      this.refreshStats();
+    });
+    this.onDestroy = () => {
+      y.unsubscribe();
+    };
     if (dialog.isScreenSmall())
       this.gridView = false;
   }
+  onDestroy = () => { };
 
+  ngOnDestroy(): void {
+    this.onDestroy();
+  }
+  refreshStats() {
+    this.stats.getData().then(() => {
+      this.pieChartData = [
+        this.stats.ready.value,
+        this.stats.onTheWay.value,
+        this.stats.delivered.value,
+        this.stats.problem.value]
+    });
+  }
 
   ngOnInit() {
+
+    this.refreshStats();
+
 
   }
 
@@ -292,23 +328,6 @@ export class FamiliesComponent implements OnInit {
 
 
 }
-class FaimilyStatistics {
-  constructor(public name: string, public rule: (f: Families) => FilterBase) {
 
-  }
-  private _count = -2;
-  count(busy: BusyService) {
-    switch (this._count) {
-      case -2:
-        this._count = -1;
-        let f = new Families();
-        busy.donotWait(async () => f.source.count(this.rule(f)).then(c => this._count = c));
-        return '';
-      case -1:
-        return '';
-      default:
-        return this._count;
-    }
-  }
 
-}
+

@@ -1,8 +1,19 @@
 <h4>
     משפחות {{families.totalRows}}
 </h4>
-<h5 *ngFor="let s of statistics">
-    <a (click)="filterBy(s)"> {{s.name}} - {{s.count(busy)}}</a>
+<div>
+<div style="display: block;width:177px;">
+        <canvas baseChart 
+                [data]="pieChartData"
+                [labels]="pieChartLabels"
+                [chartType]="pieChartType"
+                [options]="options"
+                [colors]="colors"
+             ></canvas>
+      </div>
+    </div>
+<h5 *ngFor="let s of stats.statistics">
+    <a (click)="filterBy(s)"> {{s.name}} - {{s.value}}</a>
 </h5>
 <mat-form-field class="full-width">
     <input matInput [(ngModel)]="searchString" (input)="doSearch()" placeholder="חיפוש משפחה" [ngModelOptions]="{standalone: true}">

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HelpersAndStats, Helpers } from '../models';
 import { GridSettings, DateTimeColumn } from 'radweb';
 import { UserFamiliesList } from '../my-families/user-families';
+import * as chart from 'chart.js';
 
 @Component({
   selector: 'app-delivery-follow-up',
@@ -10,9 +11,30 @@ import { UserFamiliesList } from '../my-families/user-families';
 })
 export class DeliveryFollowUpComponent implements OnInit {
 
+  public pieChartLabels: string[] = ['מוכנים ', 'בדרך', 'הגיעו', 'תקלות'];
+  public pieChartData: number[] = [300, 500, 100, 450];
+  public colors: Array<any> = [
+    {
+      backgroundColor: [
+
+         '#FDE098'//yello
+        , '#84C5F1'//blue
+        , '#91D7D7'//green
+        , '#FD9FB3'//red
+      ]
+
+    }];
+
+  public pieChartType: string = 'pie';
+
+  options: chart.ChartOptions = {
+    legend: {
+      position: 'right'
+    },
+  };
   familyLists = new UserFamiliesList();
   selectCourier(c: Helpers) {
-    this.familyLists.initForHelper(c.id.value,c.name.value, c);
+    this.familyLists.initForHelper(c.id.value, c.name.value, c);
 
   }
   showAll = 'false';

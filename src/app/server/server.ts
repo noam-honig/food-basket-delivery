@@ -22,6 +22,7 @@ import { ServerEvents } from './server-events';
 import * as morgan from 'morgan';
 import { SetDeliveryActiveAction } from '../delivery-events/set-delivery-active-action';
 import { CopyFamiliesToActiveEventAction } from '../delivery-events/copy-families-to-active-event-action';
+import { StatsAction } from '../families/stats-action';
 
 serverInit();
 
@@ -61,6 +62,7 @@ adminActions.addAction(new GetBasketStatusAction());
 adminActions.addAction(new ServerEventAuthorizeAction());
 adminActions.addAction(new SetDeliveryActiveAction());
 adminActions.addAction(new CopyFamiliesToActiveEventAction());
+adminActions.addAction(new StatsAction());
 
 
 
