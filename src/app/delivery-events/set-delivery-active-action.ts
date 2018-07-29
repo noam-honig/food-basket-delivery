@@ -46,7 +46,8 @@ export class SetDeliveryActiveAction extends ServerAction<InArgs, OutArgs>{
                         f.deliverStatus,
                         f.deliveryStatusDate,
                         f.deliveryStatusUser,
-                        f.courierComments];
+                        f.courierComments,
+                        f.routeOrder];
 
                     {
                         let currentFamilyEvent = new FamilyDeliveryEvents();
@@ -80,6 +81,7 @@ export class SetDeliveryActiveAction extends ServerAction<InArgs, OutArgs>{
                         f.deliveryStatusDate.value = '';
                         f.deliveryStatusUser.value = '';
                         f.courierComments.value = '';
+                        f.routeOrder.value = 0;
                         let newFamilyEvent = new FamilyDeliveryEvents();
                         await newFamilyEvent.source.find({
                             where: newFamilyEvent.family.isEqualTo(f.id).and(

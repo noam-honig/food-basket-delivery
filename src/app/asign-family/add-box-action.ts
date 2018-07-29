@@ -1,8 +1,11 @@
+import * as fetch from 'node-fetch';
 import { ServerAction } from "../auth/server-action";
 import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { Families, DeliveryStatus, Helpers, YesNo } from "../models";
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
+import { UrlBuilder } from "radweb";
+import { foreachSync } from '../shared/utils';
 
 
 export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
@@ -11,10 +14,11 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
     }
 
     protected async execute(info: AddBoxInfo, req: DataApiRequest<myAuthInfo>): Promise<AddBoxResponse> {
-        let result:AddBoxResponse = {
+        let result: AddBoxResponse = {
             helperId: info.helperId,
             ok: false,
-            shortUrl:undefined
+            shortUrl: undefined
+            
         }
 
         let h = new Helpers();
@@ -26,7 +30,7 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
                 await h.save();
                 result.helperId = h.id.value;
                 result.shortUrl = h.shortUrlKey.value;
-                
+
             }
         }
         let f = new Families();
@@ -54,6 +58,7 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
                     family.courier.value = result.helperId;
                     await family.doSave(req.authInfo);
                     result.ok = true;
+                    existingFamilies.push(family);
                 }
                 else {
 
@@ -88,19 +93,79 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
                     r[0].courier.value = result.helperId;
 
                     await r[0].doSave(req.authInfo);
-
+                    existingFamilies.push(r[0]);
                     result.ok = true;
                 }
 
 
             }
         }
+         await AddBoxAction.optimizeRoute(existingFamilies);
         return result;
 
 
     }
+    static async optimizeRoute(families: Families[]) {
+
+
+        let r = await getRouteInfo(families, true);
+        if (r.status == 'OK' && r.routes && r.routes.length > 0 && r.routes[0].waypoint_order) {
+            let i = 1;
+            
+            await foreachSync(r.routes[0].waypoint_order, async (p: number) => {
+                let f = families[p];
+                if (f.routeOrder.value != i) {
+                    f.routeOrder.value = i;
+                    await f.save();
+                }
+                i++;
+            });
+
+            if (false) {
+                let temp = families;
+                let sorted = [];
+
+                let lastLoc: Location = {
+                    lat: 32.2280236,
+                    lng: 34.8807046
+                };
+                let total = temp.length;
+                for (let i = 0; i < total; i++) {
+                    let closest = temp[0];
+                    let closestIndex = 0;
+                    let closestDist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, closest.getGeocodeInformation().location());
+                    for (let j = 0; j < temp.length; j++) {
+                        let dist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, temp[j].getGeocodeInformation().location());
+                        if (dist < closestDist) {
+                            closestIndex = j;
+                            closestDist = dist;
+                            closest = temp[j];
+                        }
+                    }
+                    lastLoc = closest.getGeocodeInformation().location();
+                    sorted.push(temp.splice(closestIndex, 1)[0]);
+
+                }
+                let r2 = await getRouteInfo(sorted, false);
+                console.log(getInfo(r), getInfo(r2));
+            }
+            return r.routes[0].overview_polyline.points;
+
+        }
+    }
 }
 
+function getInfo(r: any) {
+    let dist = 0;
+    let duration = 0;
+    r.routes[0].legs.forEach(e => {
+        dist += e.distance.value;
+        duration += e.duration.value;
+    });
+    return {
+        dist, duration
+    }
+}
 export interface AddBoxInfo {
     name: string;
     basketType: string;
@@ -111,7 +176,27 @@ export interface AddBoxInfo {
 }
 export interface AddBoxResponse {
     helperId: string;
-    shortUrl:string;
+    shortUrl: string;
+    
     ok: boolean;
 
+}
+
+async function getRouteInfo(families: Families[], optimize: boolean) {
+    let u = new UrlBuilder('https://maps.googleapis.com/maps/api/directions/json');
+    let startAndEnd = 'שנהב 4 אבן יהודה';
+    let waypoints = 'optimize:' + (optimize ? 'true' : 'false');
+    families.forEach(f => {
+        waypoints += '|' + f.getGeocodeInformation().getlonglat();
+    });
+    u.addObject({
+        origin: startAndEnd,
+        destination: startAndEnd,
+        waypoints: waypoints,
+        language: 'he',
+        key: process.env.GOOGLE_GECODE_API_KEY
+    });
+    
+    let r = await (await fetch.default(u.url)).json();
+    return r;
 }

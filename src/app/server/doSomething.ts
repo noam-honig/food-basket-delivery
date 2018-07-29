@@ -1,4 +1,4 @@
-import { Families } from "../models";
+import { Families, DeliveryStatus } from "../models";
 import { readFileSync, readFile } from "fs";
 import { ColumnHashSet, DateColumn } from "radweb";
 
@@ -7,16 +7,18 @@ import { foreachEntityItem, foreachSync } from "../shared/utils";
 
 import { serverInit } from "./serverInit";
 import * as XLSX from 'xlsx';
+import { AddBoxAction } from "../asign-family/add-box-action";
 
 serverInit();
 
 export async function DoIt() {
     try {
 
-        let dc = new DateColumn();
-        dc.value = '1976-06-16';
-        console.log(dc.dateValue);
-
+        let f = new Families();
+        let rows = await f.source.find({
+            where: f.courier.isEqualTo('907b247b-dcdb-4e0a-8c54-e9a19cc95eb3').and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id))
+        })
+        await AddBoxAction.optimizeRoute(rows);
 
         console.log('123');
         //        new SendSmsUtils().sendSms('0507330590', 'test2');
@@ -39,8 +41,8 @@ async function getGeolocationInfo() {
 
     });
 }
-async function ImportFromExcel(){
-    
+async function ImportFromExcel() {
+
     let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\xxx.xlsx");
     let s = wb.Sheets[wb.SheetNames[1]];
     let o = XLSX.utils.sheet_to_json(s);

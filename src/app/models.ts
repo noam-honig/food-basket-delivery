@@ -453,6 +453,7 @@ export class Families extends IdEntity<FamilyId>{
   deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
   deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
   deliveryStatusUser = new HelperIdReadonly('מי עדכן את סטטוס המשלוח');
+  routeOrder = new NumberColumn();
   courierComments = new radweb.StringColumn('הערות מסירה');
   addressByGoogle() {
     let r: ColumnSetting<Families> = {
@@ -593,6 +594,7 @@ export class FamilyDeliveryEvents extends IdEntity<FamilyDelveryEventId>{
   deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
   deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
   deliveryStatusUser = new HelperIdReadonly('מי עדכן את סטטוס המשלוח');
+  routeOrder = new NumberColumn();
   courierComments = new radweb.StringColumn('הערות מסירה');
 
   constructor(source?: DataProviderFactory) {

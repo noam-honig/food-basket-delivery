@@ -40,6 +40,7 @@ export async function serverInit() {
     await sb.verifyAllColumns(new models.Families());
     await sb.verifyAllColumns(new models.Helpers());
     await sb.verifyAllColumns(new models.DeliveryEvents());
+    await sb.verifyAllColumns(new models.FamilyDeliveryEvents());
     let h = new models.BasketType();
     await h.source.find({ where: h.id.isEqualTo('') }).then(x => {
         if (x.length == 0) {

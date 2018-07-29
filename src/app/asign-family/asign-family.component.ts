@@ -103,8 +103,8 @@ export class AsignFamilyComponent implements OnInit {
 
   ngOnInit() {
     if (!environment.production) {
-      this.phone = '0507330590';
-      this.searchPhone();
+      //this.phone = '0507330590';
+      //this.searchPhone();
     }
   }
   async assignItem(basket: BasketInfo) {

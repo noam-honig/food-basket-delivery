@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { GridSettings } from 'radweb';
+import { GridSettings, UrlBuilder } from 'radweb';
 import { Families, DeliveryStatus, Helpers, BasketType } from '../models';
 import { AuthService } from '../auth/auth-service';
 import { SelectService } from '../select-popup/select-service';
@@ -16,9 +16,9 @@ export class UserFamiliesList {
     problem: Families[] = [];
     allFamilies: Families[] = [];
     helperId: string;
-    helperName:string;
+    helperName: string;
     helperOptional: Helpers;
-    async initForHelper(helperId: string,name:string, helperOptional?: Helpers) {
+    async initForHelper(helperId: string, name: string, helperOptional?: Helpers) {
         this.helperOptional = helperOptional;
         this.helperId = helperId;
         this.helperName = name;
@@ -26,34 +26,37 @@ export class UserFamiliesList {
     }
     async reload() {
         var f = new Families();
-        this.allFamilies = await f.source.find({ where: f.courier.isEqualTo(this.helperId), orderBy: f.address, limit: 1000 });
+        this.allFamilies = await f.source.find({ where: f.courier.isEqualTo(this.helperId), orderBy: [f.routeOrder, f.address], limit: 1000 });
         this.initFamilies();
     }
 
-    initFamilies() {
-        let temp = this.allFamilies;
-        this.allFamilies = [];
-        this.toDeliver = [];
-        let lastLoc: Location = {
-            lat: 32.2280236,
-            lng: 34.8807046
-        };
-        let total = temp.length;
-        for (let i = 0; i < total; i++) {
-            let closest = temp[0];
-            let closestIndex = 0;
-            let closestDist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, closest.getGeocodeInformation().location());
-            for (let j = 0; j < temp.length; j++) {
-                let dist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, temp[j].getGeocodeInformation().location());
-                if (dist < closestDist) {
-                    closestIndex = j;
-                    closestDist = dist;
-                    closest = temp[j];
-                }
-            }
-            lastLoc = closest.getGeocodeInformation().location();
-            this.allFamilies.push(temp.splice(closestIndex, 1)[0]);
 
+    initFamilies() {
+        if (false) {
+            let temp = this.allFamilies;
+            this.allFamilies = [];
+            this.toDeliver = [];
+            let lastLoc: Location = {
+                lat: 32.2280236,
+                lng: 34.8807046
+            };
+            let total = temp.length;
+            for (let i = 0; i < total; i++) {
+                let closest = temp[0];
+                let closestIndex = 0;
+                let closestDist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, closest.getGeocodeInformation().location());
+                for (let j = 0; j < temp.length; j++) {
+                    let dist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, temp[j].getGeocodeInformation().location());
+                    if (dist < closestDist) {
+                        closestIndex = j;
+                        closestDist = dist;
+                        closest = temp[j];
+                    }
+                }
+                lastLoc = closest.getGeocodeInformation().location();
+                this.allFamilies.push(temp.splice(closestIndex, 1)[0]);
+
+            }
         }
         this.toDeliver = this.allFamilies.filter(f => f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery);
         this.delivered = this.allFamilies.filter(f => f.deliverStatus.listValue == DeliveryStatus.Success);

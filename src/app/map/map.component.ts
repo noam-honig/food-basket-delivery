@@ -94,6 +94,8 @@ export class MapComponent implements OnInit {
         info.open(this.map, marker);
       });
     });
+    
+    
     if (this.bounds.isEmpty())
       this.bounds = secondaryBounds;
     if (this.map && this.bounds ) {
