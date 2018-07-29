@@ -78,7 +78,7 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
                         return r;
 
                     }
-                    console.time('sort');
+                    
                     let f = r[0];
                     let dist = getDistance(f.getGeocodeInformation().location());
                     for (let i = 1; i < r.length; i++) {
@@ -88,7 +88,6 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
                             f = r[i]
                         }
                     }
-                    console.timeEnd('sort');
                     f.courier.value = result.helperId;
 
                     await f.doSave(req.authInfo);
@@ -97,11 +96,7 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
                 }
 
             }
-
-
-            console.time('optimize');
             await AddBoxAction.optimizeRoute(existingFamilies);
-            console.timeEnd('optimize');
             existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
             let exc = new ColumnHashSet()
             exc.add(...f.excludeColumns(req.authInfo));
