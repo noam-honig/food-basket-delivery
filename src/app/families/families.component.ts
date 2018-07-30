@@ -153,7 +153,7 @@ export class FamiliesComponent implements OnInit {
         let result: FilterBase = undefined;
         let addFilter = (filter: FilterBase) => {
           if (result)
-          result = new AndFilter(result,filter);
+            result = new AndFilter(result, filter);
           else result = filter;
         }
 
@@ -404,9 +404,9 @@ export class FamiliesComponent implements OnInit {
   }
   refreshStats() {
 
-    this.stats.getData().then(() => {
+    this.busy.donotWait(async () => this.stats.getData().then(() => {
       this.updateChart();
-    });
+    }));
   }
   @ViewChild('myTab') myTab: MatTabGroup;
 
