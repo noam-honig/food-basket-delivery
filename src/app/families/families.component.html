@@ -8,19 +8,21 @@
             (chartClick)="chartClicked($event)"></canvas>
     </div>
 </div>
-
+<h4 *ngIf="currentStatFilter">{{currentStatFilter.name}} - </h4>
 <mat-form-field class="full-width">
     <input matInput [(ngModel)]="searchString" (input)="doSearch()" placeholder="חיפוש משפחה" [ngModelOptions]="{standalone: true}">
     <mat-icon matSuffix (click)="clearSearch()">clear</mat-icon>
 </mat-form-field>
-<strong *ngIf="currentStatFilter">{{currentStatFilter.name}} - </strong>
+
 <strong>{{families.totalRows}}</strong>
 <br>
 <mat-card [class.hide]="!gridView">
     <div class="table-responsive">
 
         <data-grid [settings]="families"></data-grid>
+     
         <button (click)="saveToExcel()">יצוא לאקסל</button>
+        
     </div>
 </mat-card>
 <button (click)="families.previousRow()" [disabled]="families.currentRow&& families.currentRow.wasChanged()||!families.previousRowAllowed()"

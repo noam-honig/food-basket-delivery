@@ -357,17 +357,7 @@ export class FamiliesComponent implements OnInit {
         this.stats.frozen
       ]
     },
-    {
-      name: 'חמ"ל',
-      rule: f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id),
-      stats: [
-        this.stats.phoneReady,
-        this.stats.phoneAssigned,
-        this.stats.phoneOk,
-        this.stats.phoneFailed
-      ]
-    }
-    ,
+    
     {
       name: 'הערות',
       rule: f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id),
@@ -382,6 +372,16 @@ export class FamiliesComponent implements OnInit {
       stats: [
         this.stats.currentEvent,
         this.stats.notInEvent
+      ]
+    },
+    {
+      name: 'טלפניות',
+      rule: f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id),
+      stats: [
+        this.stats.phoneReady,
+        this.stats.phoneAssigned,
+        this.stats.phoneOk,
+        this.stats.phoneFailed
       ]
     }
 
