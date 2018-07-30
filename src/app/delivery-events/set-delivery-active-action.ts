@@ -22,6 +22,7 @@ export class SetDeliveryActiveAction extends ServerAction<InArgs, OutArgs>{
     constructor() {
         super('SetDeliveryActiveAction');//required because of minification
     }
+    static SendMessageToBrowsers = (s: string) => { };
     protected async execute(info: InArgs, req: DataApiRequest<myAuthInfo>): Promise<OutArgs> {
         await (<PostgresDataProvider>evilStatics.dataSource).doInTransaction(async ds => {
 
@@ -98,9 +99,11 @@ export class SetDeliveryActiveAction extends ServerAction<InArgs, OutArgs>{
                     }
 
 
-                    f.save();
+                    await f.save();
                 });
+            SetDeliveryActiveAction.SendMessageToBrowsers('הוחלף אירוע פעיל ל' + newEvent.name.value);
         });
+
         return {};
 
     }

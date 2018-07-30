@@ -32,6 +32,7 @@ let app = express();
 if (!process.env.DISABLE_SERVER_EVENTS) {
     let serverEvents = new ServerEvents(app);
     models.Families.SendMessageToBrowsers = x => serverEvents.SendMessage(x);
+    SetDeliveryActiveAction.SendMessageToBrowsers=x=>serverEvents.SendMessage(x);
 }
 
 
