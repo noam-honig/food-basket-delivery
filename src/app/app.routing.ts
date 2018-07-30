@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes,RouteReuseStrategy  } from '@angular/router';
 
 import { HelpersComponent } from './helpers/helpers.component';
 import { LoginComponent } from './users/login/login.component';
@@ -17,6 +17,8 @@ import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-
 import { NewsComponent } from './news/news.component';
 import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
 import { StamTestComponent } from './stam-test/stam-test.component';
+import {CustomReuseStrategy} from './custom-reuse-controller-router-strategy'
+
 
 
 const routes: Routes = [
@@ -80,6 +82,7 @@ const routes: Routes = [
     )
   ],
   declarations: [],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }]
 })
 export class AppRoutingModule { } 
