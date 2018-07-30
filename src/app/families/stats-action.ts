@@ -6,7 +6,7 @@ import * as fetch from 'node-fetch';
 import { foreachSync } from "../shared/utils";
 import { evilStatics } from "../auth/evil-statics";
 import { PostgresDataProvider } from "../../../node_modules/radweb/server";
-import { Column } from "../../../node_modules/radweb";
+import { Column, Filter } from "../../../node_modules/radweb";
 
 
 export interface InArgs {
@@ -18,22 +18,34 @@ export interface OutArgs {
 }
 
 export class Stats {
-    ready = new FaimilyStatistics('טרם שוייכו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('')));
-    onTheWay = new FaimilyStatistics('שוייכו וטרם נמסרו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.IsDifferentFrom('')));
-    delivered = new FaimilyStatistics('נמסרו', f => f.deliverStatus.isEqualTo(DeliveryStatus.Success.id));
-    problem = new FaimilyStatistics('בעיות מסירה', f => f.deliverStatus.IsGreaterOrEqualTo(DeliveryStatus.FailedBadAddress.id).and(f.deliverStatus.IsLessOrEqualTo(DeliveryStatus.FailedOther.id)));
+    ready = new FaimilyStatistics('מוכנות', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('')));
+    onTheWay = new FaimilyStatistics('בדרך', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.IsDifferentFrom('')));
+    delivered = new FaimilyStatistics('הגיעו', f => f.deliverStatus.isEqualTo(DeliveryStatus.Success.id));
+    problem = new FaimilyStatistics('בעיות', f => f.deliverStatus.IsGreaterOrEqualTo(DeliveryStatus.FailedBadAddress.id).and(f.deliverStatus.IsLessOrEqualTo(DeliveryStatus.FailedOther.id)));
+    currentEvent = new FaimilyStatistics('באירוע', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id));
+    notInEvent = new FaimilyStatistics('לא באירוע', f => f.deliverStatus.isEqualTo(DeliveryStatus.NotInEvent.id));
+    frozen = new FaimilyStatistics('קפואים', f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen.id));
+    deliveryComments = new FaimilyStatistics('הערות משנע', f => f.courierComments.IsDifferentFrom(''));
+    phoneComments = new FaimilyStatistics('הערות טלפנית', f => f.callComments.IsDifferentFrom(''));
+    phoneReady = new FaimilyStatistics('ממתינה לשיחה', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.callStatus.isEqualTo(CallStatus.NotYet.id).and(f.callHelper.isEqualTo(''))));
+    phoneAssigned = new FaimilyStatistics('משוייכת לטלפנית', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.callStatus.isEqualTo(CallStatus.NotYet.id).and(f.callHelper.IsDifferentFrom(''))));
+    phoneOk = new FaimilyStatistics('בוצעה שיחה', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.callStatus.isEqualTo(CallStatus.Success.id)));
+    phoneFailed = new FaimilyStatistics('לא השגנו', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.callStatus.isEqualTo(CallStatus.Failed.id)));
     statistics: FaimilyStatistics[] = [
         new FaimilyStatistics('כל המשפחות', f => undefined),
-        new FaimilyStatistics('באירוע הנוכחי', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id)),
-        new FaimilyStatistics('לא באירוע הנוכחי', f => f.deliverStatus.isEqualTo(DeliveryStatus.NotInEvent.id)),
+        this.currentEvent,
+        this.notInEvent,
         this.ready,
         this.onTheWay,
         this.delivered,
         this.problem,
-        new FaimilyStatistics('משפחות עם הערות משנע', f => f.courierComments.IsDifferentFrom('')),
-        new FaimilyStatistics('משפחות עם הערות טלפנית', f => f.callComments.IsDifferentFrom('')),
-        new FaimilyStatistics('ללא קפואים', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.Frozen.id).and(f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id))),
-        new FaimilyStatistics('קפואים', f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen.id))
+        this.frozen,
+        this.deliveryComments,
+        this.phoneComments,
+        this.phoneReady,
+        this.phoneAssigned,
+        this.phoneOk,
+        this.phoneFailed
     ];
     async getData() {
         let r = await new StatsAction().run({});

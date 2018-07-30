@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Sanitizer } from '@angular/core';
-import { GridSettings, ColumnSetting, ColumnHashSet } from 'radweb';
+import { GridSettings, ColumnSetting, ColumnHashSet, Filter, AndFilter } from 'radweb';
 import { Families, Helpers, CallStatus, BasketType, FamilySources, DeliveryStatus, HasAsyncGetTheValue, Language, YesNo, FamilyDeliveryEventsView } from '../models';
 import { SelectService } from '../select-popup/select-service';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
@@ -12,6 +12,7 @@ import { BusyService } from '../select-popup/busy-service';
 import { async } from '../../../node_modules/@types/q';
 import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics } from './stats-action';
+import { MatTabGroup } from '../../../node_modules/@angular/material';
 
 @Component({
   selector: 'app-families',
@@ -19,7 +20,7 @@ import { Stats, FaimilyStatistics } from './stats-action';
   styleUrls: ['./families.component.scss']
 })
 export class FamiliesComponent implements OnInit {
-  limit = 100;
+  limit = 10;
 
   filterBy(s: FaimilyStatistics) {
     this.families.get({
@@ -30,8 +31,8 @@ export class FamiliesComponent implements OnInit {
 
     });
   }
-  public pieChartLabels: string[] = ['מוכנים ', 'בדרך', 'הגיעו', 'תקלות'];
-  public pieChartData: number[] =[0,0,0,0];
+  public pieChartLabels: string[] = [];
+  public pieChartData: number[] = [];
   public colors: Array<any> = [
     {
       backgroundColor: [
@@ -45,20 +46,32 @@ export class FamiliesComponent implements OnInit {
     }];
 
   public pieChartType: string = 'pie';
+  currentStatFilter: FaimilyStatistics = undefined;
 
   options: chart.ChartOptions = {
-    responsive:true,
-    maintainAspectRatio:false,
+    responsive: true,
+    maintainAspectRatio: false,
     legend: {
-      position: 'right'
+      position: 'right',
+      onClick: (event: MouseEvent, legendItem: any) => {
+        this.currentStatFilter = this.statTabs[this.myTab.selectedIndex].stats[legendItem.index];
+        this.families.getRecords();
+        return false;
+      }
     },
   };
+  public chartClicked(e: any): void {
+    if (e.active && e.active.length > 0) {
+      this.currentStatFilter = this.statTabs[this.myTab.selectedIndex].stats[e.active[0]._index];
+      this.families.getRecords();
+    }
+  }
   searchString = '';
   async doSearch() {
     if (this.families.currentRow && this.families.currentRow.wasChanged())
       return;
-    this.busy.donotWait(() =>
-      this.families.get({ where: f => f.name.isContains(this.searchString), orderBy: f => f.name, limit: this.limit }));
+    this.busy.donotWait(async () =>
+      await this.families.getRecords());
   }
 
   clearSearch() {
@@ -133,7 +146,34 @@ export class FamiliesComponent implements OnInit {
     },
 
 
-    get: { limit: this.limit, orderBy: f => f.name },
+    get: {
+      limit: this.limit,
+      where: f => {
+        let index = 0;
+        let result: FilterBase = undefined;
+        let addFilter = (filter: FilterBase) => {
+          if (result)
+          result = new AndFilter(result,filter);
+          else result = filter;
+        }
+
+        if (this.currentStatFilter) {
+          addFilter(this.currentStatFilter.rule(f));
+        } else {
+          if (this.myTab)
+            index = this.myTab.selectedIndex;
+          if (index < 0 || index == undefined)
+            index = 0;
+
+          addFilter(this.statTabs[index].rule(f));
+        }
+        if (this.searchString) {
+          addFilter(f.name.isContains(this.searchString));
+        }
+        return result;
+      }
+      , orderBy: f => f.name
+    },
     hideDataArea: true,
     knowTotalRows: true,
     columnSettings: families => [
@@ -305,15 +345,70 @@ export class FamiliesComponent implements OnInit {
   ngOnDestroy(): void {
     this.onDestroy();
   }
-  refreshStats() {
-    this.stats.getData().then(() => {
-      this.pieChartData = [
-        this.stats.ready.value,
-        this.stats.onTheWay.value,
-        this.stats.delivered.value,
-        this.stats.problem.value]
+  statTabs: statsOnTab[] = [
+    {
+      name: 'באירוע',
+      rule: f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id),
+      stats: [
+        this.stats.ready,
+        this.stats.onTheWay,
+        this.stats.delivered,
+        this.stats.problem,
+        this.stats.frozen
+      ]
+    },
+    {
+      name: 'חמ"ל',
+      rule: f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id),
+      stats: [
+        this.stats.phoneReady,
+        this.stats.phoneAssigned,
+        this.stats.phoneOk,
+        this.stats.phoneFailed
+      ]
+    }
+    ,
+    {
+      name: 'הערות',
+      rule: f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id),
+      stats: [
+        this.stats.deliveryComments,
+        this.stats.phoneComments
+      ]
+    },
+    {
+      rule: f => undefined,
+      name: 'כל המשפחות',
+      stats: [
+        this.stats.currentEvent,
+        this.stats.notInEvent
+      ]
+    }
+
+  ]
+  tabChanged() {
+    this.currentStatFilter = undefined;
+    this.families.getRecords();
+    this.updateChart();
+  }
+
+  updateChart() {
+    this.pieChartData = [];
+    this.pieChartLabels.splice(0);
+    let stats = this.statTabs[this.myTab.selectedIndex].stats;
+
+    stats.forEach(s => {
+      this.pieChartLabels.push(s.name + ' ' + s.value);
+      this.pieChartData.push(s.value);
     });
   }
+  refreshStats() {
+
+    this.stats.getData().then(() => {
+      this.updateChart();
+    });
+  }
+  @ViewChild('myTab') myTab: MatTabGroup;
 
   ngOnInit() {
 
@@ -321,12 +416,23 @@ export class FamiliesComponent implements OnInit {
 
 
   }
+  statTotal(t: statsOnTab) {
+    let r = 0;
+    t.stats.forEach(x => r += +x.value);
+    return r;
+  }
 
 
   static route = 'families';
   static caption = 'משפחות';
 
 
+}
+
+interface statsOnTab {
+  name: string,
+  stats: FaimilyStatistics[],
+  rule: (f: Families) => Filter
 }
 
 
