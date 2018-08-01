@@ -28,7 +28,7 @@
       </select>
     </div>
     <div class="no-print">
-      <h5>סוג הסל</h5>
+      <h5>סלים שנותרו</h5>
       <button mat-raised-button color="primary" class="sal-button" (click)="addSpecial()" *ngIf="specialFamilies">משפחות מיוחדות - {{specialFamilies}}</button>
       <ng-container *ngFor="let b of baskets">
         <button mat-raised-button color="primary" class="sal-button" (click)="assignItem(b)" *ngIf="b.unassignedFamilies">{{b.name}} - {{b.unassignedFamilies}}</button>
