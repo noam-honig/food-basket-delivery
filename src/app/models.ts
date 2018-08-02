@@ -193,6 +193,34 @@ class FamilyDelveryEventId extends Id { }
 class FamilyId extends Id { }
 class EventHelperId extends Id { }
 
+export class EventStatusColumn extends radweb.ClosedListColumn<EventStatus> {
+  constructor(settingsOrCaption?: DataColumnSettings<number, NumberColumn> | string) {
+    super(EventStatus, settingsOrCaption);
+  }
+  getColumn() {
+    return {
+      column: this,
+      dropDown: {
+        items: this.getOptions()
+      },
+      width: '150'
+    };
+  }
+
+}
+
+export class EventStatus {
+  static Prepare: EventStatus = new EventStatus(0, 'בהכנה');
+  static Active: EventStatus = new EventStatus(10, 'פעיל');
+  static Done: EventStatus = new EventStatus(20, 'הסתיים');
+  constructor(public id: number,
+    private caption: string) {
+
+  }
+  toString() {
+    return this.caption;
+  }
+}
 
 
 export class CallStatusColumn extends radweb.ClosedListColumn<CallStatus> {
@@ -558,6 +586,7 @@ export class DeliveryEvents extends IdEntity<DeliveryEventId>{
   deliveryDate = new DateColumn('תאריך החלוקה');
   isActiveEvent = new BoolColumn();
   createDate = new changeDate('מועד הוספה');
+  eventStatus = new EventStatusColumn('סטטוס');
   createUser = new HelperIdReadonly('משתמש מוסיף');
   families = new NumberColumn({
     dbReadOnly: true,

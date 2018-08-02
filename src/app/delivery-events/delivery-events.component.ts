@@ -22,9 +22,10 @@ export class DeliveryEventsComponent implements OnInit {
       },
       e.deliveryDate,
       e.families,
+      e.eventStatus.getColumn(),
       {
-        caption: 'סטטוס',
-        getValue: e => e.isActiveEvent.value ? "נוכחי" : "ארכיון"
+        caption: 'מצב צבירה',
+        getValue: e => e.isActiveEvent.value ? "בעבודה" : "לא מוצג"
       }
     ],
     get: {
@@ -35,7 +36,7 @@ export class DeliveryEventsComponent implements OnInit {
     },
     rowButtons: [
       {
-        name: 'קבע כנוכחי',
+        name: 'קבע כאירוע בעבודה',
         visible: e => !e.isActiveEvent.value && !e.isNew(),
         click: async e => {
           try {
@@ -48,7 +49,7 @@ export class DeliveryEventsComponent implements OnInit {
         }
       },
       {
-        name: 'העתק משפחות לאירוע נוכחי',
+        name: 'העתק משפחות לאירוע מוצג',
         visible: e => !e.isActiveEvent.value && !e.isNew(),
         click: async e => {
           try {
