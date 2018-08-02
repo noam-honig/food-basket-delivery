@@ -13,6 +13,7 @@ import { async } from '../../../node_modules/@types/q';
 import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics } from './stats-action';
 import { MatTabGroup } from '../../../node_modules/@angular/material';
+import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt } from '../custom-reuse-controller-router-strategy';
 
 @Component({
   selector: 'app-families',
@@ -331,6 +332,7 @@ export class FamiliesComponent implements OnInit {
   });
   gridView = true;
   constructor(private dialog: SelectService, private san: DomSanitizer, public busy: BusyService) {
+    console.log('families component');
     let y = dialog.newsUpdate.subscribe(() => {
       this.refreshStats();
     });
@@ -357,7 +359,7 @@ export class FamiliesComponent implements OnInit {
         this.stats.frozen
       ]
     },
-    
+
     {
       name: 'הערות',
       rule: f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id),
@@ -425,6 +427,11 @@ export class FamiliesComponent implements OnInit {
 
   static route = 'families';
   static caption = 'משפחות';
+  
+  [reuseComponentOnNavigationAndCallMeWhenNavigatingToIt]() {
+    this.families.getRecords();
+    this.refreshStats();
+  }
 
 
 }

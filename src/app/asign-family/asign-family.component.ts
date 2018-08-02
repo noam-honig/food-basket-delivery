@@ -99,7 +99,9 @@ export class AsignFamilyComponent implements OnInit {
   }
 
 
-  constructor(private auth: AuthService, private dialog: SelectService) { }
+  constructor(private auth: AuthService, private dialog: SelectService) {
+    console.log('assign families constructor');
+   }
 
   ngOnInit() {
     if (!environment.production) {
