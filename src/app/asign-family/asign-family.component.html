@@ -12,7 +12,7 @@
   <input class="form-control no-print" placeholder="שם המשנע" [(ngModel)]="name">
 
   <span *ngIf="!name" class="help no-print">אנא הזיני את הטלפון של המשנע ושמו, ואז תוכלי לבחור שפה, עיר ואילו סלים לשייך</span>
-  <span *ngIf="name">
+  <span *ngIf="name&&name.length>=2">
     <h4 class="no-print">
       פרטי השינוע
     </h4>

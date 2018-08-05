@@ -432,7 +432,7 @@ export class Families extends IdEntity<FamilyId>{
   name = new radweb.StringColumn({
     caption: "שם",
     onValidate: v => {
-      if (!v.value || v.value.length < 3)
+      if (!v.value || v.value.length < 2)
         this.name.error = 'השם קצר מידי';
     }
   });
