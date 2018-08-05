@@ -312,7 +312,7 @@ export class DeliveryStatusColumn extends radweb.ClosedListColumn<DeliveryStatus
 export class DeliveryStatus {
   static ReadyForDelivery: DeliveryStatus = new DeliveryStatus(0, 'מוכן למשלוח');
   static Success: DeliveryStatus = new DeliveryStatus(11, 'נמסר בהצלחה');
-  static FailedBadAddress: DeliveryStatus = new DeliveryStatus(21, 'לא נמסר, בעייה בכתובת');
+  static FailedBadAddress: DeliveryStatus = new DeliveryStatus(21, 'לא נמסר, בעיה בכתובת');
   static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, 'לא נמסר, לא היו בבית');
   static FailedOther: DeliveryStatus = new DeliveryStatus(25, 'לא נמסר, אחר');
   static Frozen: DeliveryStatus = new DeliveryStatus(90, 'מוקפא');
