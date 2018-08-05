@@ -36,13 +36,7 @@ export class FamiliesComponent implements OnInit {
   public pieChartData: number[] = [];
   public colors: Array<any> = [
     {
-      backgroundColor: [
-
-        '#FDE098'//yello
-        , '#84C5F1'//blue
-        , '#91D7D7'//green
-        , '#FD9FB3'//red
-      ]
+      backgroundColor: []
 
     }];
 
@@ -353,6 +347,7 @@ export class FamiliesComponent implements OnInit {
       rule: f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id),
       stats: [
         this.stats.ready,
+        this.stats.special,
         this.stats.onTheWay,
         this.stats.delivered,
         this.stats.problem,
@@ -397,11 +392,15 @@ export class FamiliesComponent implements OnInit {
   updateChart() {
     this.pieChartData = [];
     this.pieChartLabels.splice(0);
+    this.colors[0].backgroundColor.splice(0);
     let stats = this.statTabs[this.myTab.selectedIndex].stats;
 
     stats.forEach(s => {
-      this.pieChartLabels.push(s.name + ' ' + s.value);
-      this.pieChartData.push(s.value);
+      if (s.value > 0) {
+        this.pieChartLabels.push(s.name + ' ' + s.value);
+        this.pieChartData.push(s.value);
+        this.colors[0].backgroundColor.push(s.color);
+      }
     });
   }
   refreshStats() {
@@ -427,7 +426,7 @@ export class FamiliesComponent implements OnInit {
 
   static route = 'families';
   static caption = 'משפחות';
-  
+
   [reuseComponentOnNavigationAndCallMeWhenNavigatingToIt]() {
     this.families.getRecords();
     this.refreshStats();
