@@ -51,6 +51,8 @@ export class UpdateCommentComponent implements OnInit {
 
 export interface UpdateCommentComponentData {
   showFailStatus?: boolean,
+  assignerName:string,
+  assignerPhone:string,
 
   comment: string,
   ok: (comment: string, failStatusId: number) => void,

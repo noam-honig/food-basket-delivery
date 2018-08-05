@@ -33,6 +33,8 @@ export class HelperFamiliesComponent implements OnInit {
   async deliveredToFamily(f: Families) {
     this.dialog.displayComment({
       comment: f.courierComments.value,
+      assignerName: f.courierAssignUserName.value,
+      assignerPhone: f.courierAssignUserPhone.value,
       ok: async (comment) => {
         f.deliverStatus.listValue = DeliveryStatus.Success;
         f.courierComments.value = comment;
@@ -57,6 +59,8 @@ export class HelperFamiliesComponent implements OnInit {
     this.dialog.displayComment({
       comment: f.courierComments.value,
       showFailStatus: true,
+      assignerName: f.courierAssignUserName.value,
+      assignerPhone: f.courierAssignUserPhone.value,
 
       ok: async (comment, status) => {
         f.deliverStatus.value = status;
@@ -80,10 +84,12 @@ export class HelperFamiliesComponent implements OnInit {
     if (reminder)
       this.familyLists.helperOptional.reminderSmsDate.dateValue = new Date();
   }
-  
+
   updateComment(f: Families) {
     this.dialog.displayComment({
       comment: f.courierComments.value,
+      assignerName: f.courierAssignUserName.value,
+      assignerPhone: f.courierAssignUserPhone.value,
       ok: async comment => {
         f.courierComments.value = comment;
         await f.save();
