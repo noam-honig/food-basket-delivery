@@ -20,9 +20,9 @@
     <div class="table-responsive">
 
         <data-grid [settings]="families"></data-grid>
-     
+
         <button (click)="saveToExcel()">יצוא לאקסל</button>
-        
+
     </div>
 </mat-card>
 <button (click)="families.previousRow()" [disabled]="families.currentRow&& families.currentRow.wasChanged()||!families.previousRowAllowed()"
@@ -30,8 +30,10 @@
 <button (click)="families.nextRow()" [class.hide]="gridView" [disabled]="families.currentRow&&families.currentRow.wasChanged()"
     class="btn glyphicon glyphicon-chevron-right"></button>
 <button (click)="gridView = !gridView" [class.hide]="gridView" class="btn glyphicon glyphicon-list-alt" title="חזרה לרשימה"></button>
+<button class="btn glyphicon glyphicon glyphicon-filter" (click)="dataFilter.userFilterButton()"></button>
 <button (click)="families.addNewRow()" [class.hide]="gridView" [disabled]="families.currentRow&&families.currentRow.wasChanged()"
     class="btn btn-primary glyphicon glyphicon-plus"></button>
+<Data-Filter [settings]="families" #dataFilter></Data-Filter>
 
 <div [class.hide]="gridView" *ngIf="families.currentRow">
 
@@ -156,6 +158,7 @@
     <button (click)="families.nextRow()" [class.hide]="gridView" [disabled]="families.currentRow&&families.currentRow.wasChanged()"
         class="btn glyphicon glyphicon-chevron-right"></button>
     <button (click)="gridView = !gridView" [class.hide]="gridView" class="btn glyphicon glyphicon-list-alt"></button>
+    <button class="btn glyphicon glyphicon glyphicon-filter" (click)="dataFilter.userFilterButton()"></button>
     <button (click)="families.addNewRow()" [class.hide]="gridView" [disabled]="families.currentRow&&families.currentRow.wasChanged()"
         class="btn btn-primary glyphicon glyphicon-plus"></button>
 </div>
