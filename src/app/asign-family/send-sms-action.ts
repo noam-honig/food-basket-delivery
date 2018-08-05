@@ -15,8 +15,8 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
         let currentUser = new Helpers();
         console.log(req.authInfo.helperId);
         let y = await (currentUser.source.find({ where: currentUser.id.isEqualTo(req.authInfo.helperId) }));
-        
-        await SendSmsAction.generateMessage(info.helperId, req.getHeader('origin'), info.reminder, (phone, message) => {
+
+        await SendSmsAction.generateMessage(info.helperId, req.getHeader('origin'), info.reminder, req.authInfo.name, (phone, message) => {
 
             new SendSmsUtils().sendSms(phone, y[0].phone.value, message);
         });
@@ -24,10 +24,10 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
         return {};
 
     }
-    
 
 
-    static async  generateMessage(id: string, origin: string, reminder: Boolean, then: (phone: string, message: string) => void) {
+
+    static async  generateMessage(id: string, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string) => void) {
         let h = new Helpers();
         if (!origin) {
             throw 'Couldnt determine origin for sms';
@@ -40,12 +40,14 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
             let message = 'שלום ' + r[0].name.value;
             if (reminder) {
                 message += " טרם נרשם במערכת שבוצעה החלוקה, אנא עדכן אותנו אם יש צורך בעזרה או עדכן שהמשלוח הגיע ליעדו"
+                message += ' אנא לחץ על ' + origin + '/x/' + r[0].shortUrlKey.value;
                 r[0].reminderSmsDate.dateValue = new Date();
             }
             else {
                 r[0].smsDate.dateValue = new Date();
+                message += ', לחלוקת חבילות אימהות מחבקות אבן יהודה והסביבה לחץ על: ' + origin + '/x/' + r[0].shortUrlKey.value;
+                message += '\nתודה ' + senderName;
             }
-            message += ' אנא לחץ על ' + origin + '/x/' + r[0].shortUrlKey.value;
             then(r[0].phone.value, message);
             await r[0].save();
 
@@ -74,10 +76,10 @@ export class SendSmsUtils {
 
 
     async sendSms(phone: string, from: string, text: string) {
-        console.log('from',from);
-        console.log('phone',phone);
-        console.log('text',text);
-        
+        console.log('from', from);
+        console.log('phone', phone);
+        console.log('text', text);
+
         var t = new Date();
         var date = t.getFullYear() + '/' + (t.getMonth() + 1) + '/' + t.getDate() + ' ' + t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds();
         //console.log("date is :" + date);
