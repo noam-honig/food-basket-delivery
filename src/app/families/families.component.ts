@@ -34,6 +34,7 @@ export class FamiliesComponent implements OnInit {
   }
   public pieChartLabels: string[] = [];
   public pieChartData: number[] = [];
+  pieChartStatObjects  :FaimilyStatistics[]=[];
   public colors: Array<any> = [
     {
       backgroundColor: []
@@ -49,7 +50,7 @@ export class FamiliesComponent implements OnInit {
     legend: {
       position: 'right',
       onClick: (event: MouseEvent, legendItem: any) => {
-        this.currentStatFilter = this.statTabs[this.myTab.selectedIndex].stats[legendItem.index];
+        this.currentStatFilter = this.pieChartStatObjects[legendItem.index];
         this.families.getRecords();
         return false;
       }
@@ -57,7 +58,7 @@ export class FamiliesComponent implements OnInit {
   };
   public chartClicked(e: any): void {
     if (e.active && e.active.length > 0) {
-      this.currentStatFilter = this.statTabs[this.myTab.selectedIndex].stats[e.active[0]._index];
+      this.currentStatFilter = this.pieChartStatObjects[e.active[0]._index];
       this.families.getRecords();
     }
   }
@@ -391,6 +392,7 @@ export class FamiliesComponent implements OnInit {
 
   updateChart() {
     this.pieChartData = [];
+    this.pieChartStatObjects = [];
     this.pieChartLabels.splice(0);
     this.colors[0].backgroundColor.splice(0);
     let stats = this.statTabs[this.myTab.selectedIndex].stats;
@@ -400,6 +402,7 @@ export class FamiliesComponent implements OnInit {
         this.pieChartLabels.push(s.name + ' ' + s.value);
         this.pieChartData.push(s.value);
         this.colors[0].backgroundColor.push(s.color);
+        this.pieChartStatObjects.push(s);
       }
     });
   }
