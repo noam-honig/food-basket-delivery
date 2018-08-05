@@ -1,13 +1,9 @@
 <div dir="rtl">
 
   <h3 matDialogHeader>תודה</h3>
-  <a href="tel:{{data.assignerPhone}}">
-    <button [class.hide]="!data.showFailStatus" mat-raised-button color="primary" style="width:100%">
-      <mat-icon>phone</mat-icon> חייג ל{{data.assignerName}} לקבלת עזרה
-    </button>
-  </a>
+  
   <div [class.hide]="!data.showFailStatus">
-    <br> מה לא הסתדר?
+     מה לא הסתדר?
   </div>
   <div [class.hide]="!data.showFailStatus">
     <mat-radio-group class="example-radio-group" [(ngModel)]="defaultFailStatus" class="radio-button">
@@ -22,6 +18,11 @@
     נשמח אם תכתוב לנו הערה על מה שראית והיה
     <textarea class="form-control" rows="3" [(ngModel)]="data.comment"></textarea>
   </mat-dialog-content>
+  <a href="tel:{{data.assignerPhone}}">
+      <button [class.hide]="!data.showFailStatus" mat-raised-button color="primary" style="width:100%">
+        <mat-icon>phone</mat-icon> חייג ל{{data.assignerName}} לקבלת עזרה
+      </button>
+    </a>
   <mat-dialog-actions>
 
 

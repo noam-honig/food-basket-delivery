@@ -41,6 +41,7 @@ export class Stats {
     phoneFailed = new FaimilyStatistics('לא השגנו', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.callStatus.isEqualTo(CallStatus.Failed.id)),colors.red);
     statistics: FaimilyStatistics[] = [
         this.currentEvent,
+        this.special,
         this.notInEvent,
         this.ready,
         this.onTheWay,
