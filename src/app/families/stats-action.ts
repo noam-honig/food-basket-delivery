@@ -25,7 +25,7 @@ export const colors={
     ,gray:'gray'
 };
 export class Stats {
-    ready = new FaimilyStatistics('טרם שוייכו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.special.IsDifferentFrom(YesNo.No.id))),colors.yellow);
+    ready = new FaimilyStatistics('טרם שוייכו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.special.IsDifferentFrom(YesNo.Yes.id))),colors.yellow);
     special = new FaimilyStatistics('מיוחדים שטרם שוייכו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes.id))),colors.orange);
     onTheWay = new FaimilyStatistics('בדרך', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.IsDifferentFrom('')),colors.blue);
     delivered = new FaimilyStatistics('הגיעו', f => f.deliverStatus.isEqualTo(DeliveryStatus.Success.id),colors.green);

@@ -14,6 +14,7 @@
     "publish-to-heroku-test": "git push heroku master -f",
     "publish-to-hmey": "git push hmey master -f",
     "publish-to-m-h": "git push m-h master -f",
+    "copy-db":"heroku pg:copy hugmoms::DATABASE_URL hugmoms2::DATABASE_URL -a hugmoms2",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
