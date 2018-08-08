@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BasketType, FamilySources, ApplicationSettings, ApplicationImages } from '../models';
 import { GridSettings } from 'radweb';
 import { SelectService } from '../select-popup/select-service';
+import { AuthService } from '../auth/auth-service';
 
 @Component({
   selector: 'app-manage',
@@ -9,6 +10,7 @@ import { SelectService } from '../select-popup/select-service';
   styleUrls: ['./manage.component.scss']
 })
 export class ManageComponent implements OnInit {
+  
 
   basketType = new GridSettings(new BasketType(), {
     columnSettings: x => [
@@ -34,6 +36,12 @@ export class ManageComponent implements OnInit {
     allowUpdate: true,
     columnSettings: s => [
       s.organisationName,
+      {
+        column: s.smsText,
+        click: s =>
+         alert(s.smsText.value.replace('!משנע!', 'שם המשנע הנחמד').replace('!שולח!', this.auth.auth.info.name).replace('!ארגון!', s.organisationName.value).replace('!אתר!', window.location.origin+'/x/zxcvdf'))
+      },
+
       s.logoUrl
 
 
@@ -42,14 +50,14 @@ export class ManageComponent implements OnInit {
   });
   images = new GridSettings(new ApplicationImages(), {
     numOfColumnsInGrid: 0,
-    allowUpdate:true,
+    allowUpdate: true,
     columnSettings: i => [
       i.base64Icon,
       i.base64PhoneHomeImage
 
     ]
   });
-  constructor(private dialog: SelectService) { }
+  constructor(private dialog: SelectService,private auth:AuthService) { }
 
   ngOnInit() {
     this.settings.getRecords();

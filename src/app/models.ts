@@ -838,6 +838,7 @@ export class FamilySources extends IdEntity<FamilySourceId>{
 export class ApplicationSettings extends Entity<number>{
   id = new radweb.NumberColumn();
   organisationName = new radweb.StringColumn('שם הארגון');
+  smsText = new radweb.StringColumn('תוכן הודעת SMS');
   logoUrl = new radweb.StringColumn('לוגו URL');
   
   constructor() {

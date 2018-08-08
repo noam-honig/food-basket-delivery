@@ -37,24 +37,32 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
             if (r[0].veryUrlKeyAndReturnTrueIfSaveRequired()) {
                 await r[0].save();
             }
-            let message = 'שלום ' + r[0].name.value;
+            let message = '';
             if (reminder) {
+                message = 'שלום ' + r[0].name.value;
                 message += " טרם נרשם במערכת שבוצעה החלוקה, אנא עדכן אותנו אם יש צורך בעזרה או עדכן שהמשלוח הגיע ליעדו"
                 message += ' אנא לחץ על ' + origin + '/x/' + r[0].shortUrlKey.value;
                 r[0].reminderSmsDate.dateValue = new Date();
             }
             else {
-                r[0].smsDate.dateValue = new Date();
-                message += ', לחלוקת חבילות '+(await ApplicationSettings.getAsync()).organisationName.value+' לחץ על: ' + origin + '/x/' + r[0].shortUrlKey.value;
-                message += '\nתודה ' + senderName;
+                let settings = await ApplicationSettings.getAsync();
+                message = settings.smsText.value;
+                if (!message || message.trim().length == 0) {
+                    message = 'שלום !משנע! לחלוקת חבילות !ארגון! לחץ על: !אתר! תודה !שולח!';
+
+                }
+
+                message = SendSmsAction.getMessage(message, settings.organisationName.value, r[0].name.value, senderName, origin + '/x/' + r[0].shortUrlKey.value);
+
             }
             then(r[0].phone.value, message);
             await r[0].save();
 
 
         }
-
-
+    }
+    static getMessage(template: string, orgName: string, courier: string, sender: string, url: string) {
+        return template.replace('!משנע!', courier).replace('!שולח!', sender).replace('!ארגון!', orgName).replace('!אתר!', url)
 
     }
 }
