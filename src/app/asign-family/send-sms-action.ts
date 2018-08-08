@@ -1,7 +1,7 @@
 import { ServerAction } from "../auth/server-action";
 import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 import { myAuthInfo } from "../auth/my-auth-info";
-import { Families, DeliveryStatus, Helpers } from "../models";
+import { Families, DeliveryStatus, Helpers, ApplicationSettings } from "../models";
 import * as fetch from 'node-fetch';
 
 
@@ -45,7 +45,7 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
             }
             else {
                 r[0].smsDate.dateValue = new Date();
-                message += ', לחלוקת חבילות אימהות מחבקות אבן יהודה והסביבה לחץ על: ' + origin + '/x/' + r[0].shortUrlKey.value;
+                message += ', לחלוקת חבילות '+(await ApplicationSettings.getAsync()).organisationName.value+' לחץ על: ' + origin + '/x/' + r[0].shortUrlKey.value;
                 message += '\nתודה ' + senderName;
             }
             then(r[0].phone.value, message);

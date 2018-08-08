@@ -162,7 +162,7 @@ app.use('/*', async (req, res) => {
     else {
         const index = 'dist/index.html';
         if (fs.existsSync(index)) {
-            res.send(fs.readFileSync(index).toString().replace('!TITLE!', (await models.ApplicationSettings.get()).organisationName.value));
+            res.send(fs.readFileSync(index).toString().replace('!TITLE!', (await models.ApplicationSettings.getAsync()).organisationName.value));
         }
         else
             res.send('No Result');

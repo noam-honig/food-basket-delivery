@@ -842,7 +842,15 @@ export class ApplicationSettings extends Entity<number>{
     super(() => new ApplicationSettings(), evilStatics.dataSource, 'ApplicationSettings')
     this.initColumns(this.id);
   }
-  static async get(): Promise<ApplicationSettings> {
+  private static _settings: ApplicationSettings;
+  static get() {
+    if (!this._settings) {
+      this._settings = new ApplicationSettings();
+      this._settings.source.find({}).then(s => this._settings = s[0]);
+    }
+    return this._settings;
+  }
+  static async getAsync(): Promise<ApplicationSettings> {
     let a = new ApplicationSettings();
     return (await a.source.find({}))[0];
   }
