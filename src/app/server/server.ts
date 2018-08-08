@@ -24,6 +24,7 @@ import { SetDeliveryActiveAction } from '../delivery-events/set-delivery-active-
 import { CopyFamiliesToActiveEventAction } from '../delivery-events/copy-families-to-active-event-action';
 import { StatsAction } from '../families/stats-action';
 
+
 serverInit();
 
 
@@ -121,6 +122,11 @@ adminApi.add(r => {
     });
 });
 adminApi.add(r => {
+    return new DataApi(new models.ApplicationImages(), {
+        allowUpdate: true,
+    });
+});
+adminApi.add(r => {
     return new DataApi(new models.FamilyDeliveryEventsView(), {});
 });
 adminApi.add(r => new DataApi(new models.DeliveryEvents(), {
@@ -153,19 +159,68 @@ app.get('/cache.manifest', (req, res) => {
 
     res.send(result);
 });
+app.use('/assets/apple-touch-icon.png', async (req, res) => {
+    let imageBase = (await models.ApplicationImages.getAsync()).base64PhoneHomeImage.value;
+    res.contentType('png');
+    if (imageBase) {
+        try {
+            res.send(Buffer.from(imageBase, 'base64'));
+            return;
+        }
+        catch{
+        }
+    }
+    try {
+        res.send(fs.readFileSync('dist/assets/apple-touch-icon.png'));
+    } catch (err){
+        res.statusCode = 404;
+        res.send(err);
+    }
+});
+app.use('/favicon.ico', async (req, res) => {
+    res.contentType('ico');
+    let imageBase = (await models.ApplicationImages.getAsync()).base64Icon.value;
+    if (imageBase) {
+        try {
+            res.send(Buffer.from(imageBase, 'base64'));
+            return;
+        }
+        catch{ }
+    }
+    try {
+        res.send(fs.readFileSync('dist/favicon.ico'));
+    }
+    catch(err){
+        res.statusCode = 404;
+        res.send(err);
+    }
+});
+async function sendIndex(res: express.Response) {
+    const index = 'dist/index.html';
+    if (fs.existsSync(index)) {
+        let x = (await models.ApplicationSettings.getAsync()).organisationName.value;
 
+        res.send(fs.readFileSync(index).toString().replace('!TITLE!', x));
+    }
+    else
+        res.send('No Result');
+}
+
+app.get('', (req, res) => {
+
+    sendIndex(res);
+});
+app.get('/index.html', (req, res) => {
+
+    sendIndex(res);
+});
 app.use(express.static('dist'));
 
 app.use('/*', async (req, res) => {
     if (req.method == 'OPTIONS')
         res.send('');
     else {
-        const index = 'dist/index.html';
-        if (fs.existsSync(index)) {
-            res.send(fs.readFileSync(index).toString().replace('!TITLE!', (await models.ApplicationSettings.getAsync()).organisationName.value));
-        }
-        else
-            res.send('No Result');
+        await sendIndex(res);
     }
 });
 app.listen(port);

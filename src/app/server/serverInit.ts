@@ -35,13 +35,16 @@ export async function serverInit() {
         new models.FamilySources(),
         new models.DeliveryEvents(),
         new models.FamilyDeliveryEvents(),
-        new models.ApplicationSettings()
+        new models.ApplicationSettings(),
+        new models.ApplicationImages()
     ], async x => await sb.CreateIfNotExist(x));
 
     await sb.verifyAllColumns(new models.Families());
     await sb.verifyAllColumns(new models.Helpers());
     await sb.verifyAllColumns(new models.DeliveryEvents());
     await sb.verifyAllColumns(new models.FamilyDeliveryEvents());
+    await sb.verifyAllColumns(new models.ApplicationSettings());
+    await sb.verifyAllColumns(new models.ApplicationImages());
     let h = new models.BasketType();
     await h.source.find({ where: h.id.isEqualTo('') }).then(x => {
         if (x.length == 0) {
@@ -50,6 +53,7 @@ export async function serverInit() {
             h.save();
         }
     });
+    
 
     let f = new models.Families();
     console.log('fix city start');
@@ -66,10 +70,19 @@ export async function serverInit() {
     }
 
     let settings = new models.ApplicationSettings();
-    if (await settings.source.count() == 0) {
+    if ((await settings.source.count()) == 0) {
         settings.id.value = 1;
         settings.organisationName.value = 'שם הארגון שלי';
+        settings.logoUrl.value = '/apple-touch-icon.png';
         await settings.save();
+    }
+    let images = new models.ApplicationImages();
+    if ((await images.source.count())==0)
+    {
+        images.id.value = 1;
+        
+        await images.save();
+
     }
     console.log('fix city done');
 

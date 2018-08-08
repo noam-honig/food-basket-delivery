@@ -1,7 +1,7 @@
 <mat-sidenav-container class="app-sidenav-container">
   <mat-sidenav #sidenav class="app-sidenav mat-elevation-z10 no-print" [opened]="!dialog.isScreenSmall()" [mode]="dialog.isScreenSmall()?'over':'side'">
     <div style="width:100%;text-align: center">
-      <img src="https://scontent.fhfa2-1.fna.fbcdn.net/v/t1.0-1/p200x200/31944116_1037647396374514_9107210286942650368_n.jpg?_nc_cat=0&oh=339e94eebb275283e368ebdec21241ae&oe=5BE7E9AC"
+      <img src="{{getLogo()}}"
       />
     </div>
     <h4 *ngIf="auth.auth.info">שלום {{auth.auth.info.name}}</h4>

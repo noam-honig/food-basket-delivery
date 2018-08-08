@@ -1,10 +1,12 @@
 <mat-card>
-    <button *ngIf="settings.currentRow &&settings.currentRow.wasChanged()" (click)="settings.currentRow.save()" [disabled]="!families.currentRow.wasChanged()"
+    <h1>הגדרות כלליות</h1>
+    <button *ngIf="settings.currentRow &&settings.currentRow.wasChanged()" (click)="settings.currentRow.save()" [disabled]="!settings.currentRow.wasChanged()"
         class="btn glyphicon glyphicon-ok btn-success"></button>
     <button *ngIf="settings.currentRow &&settings.currentRow.wasChanged()" (click)="settings.currentRow.reset();settings.setCurrentRow(settings.items[0]);"
-        [disabled]="!families.currentRow.wasChanged()" class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
+        [disabled]="!settings.currentRow.wasChanged()" class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
     <data-area [settings]="settings"></data-area>
 </mat-card>
+
 <mat-card>
     <h1>סוגי סלים</h1>
     <data-grid [settings]="basketType"></data-grid>
@@ -12,4 +14,14 @@
 <mat-card>
     <h1>מקורות משפחה</h1>
     <data-grid [settings]="sources"></data-grid>
+</mat-card>
+<mat-card>
+    <h1>Icons</h1>
+    <button *ngIf="images.currentRow &&images.currentRow.wasChanged()" (click)="images.currentRow.save()" [disabled]="!images.currentRow.wasChanged()"
+        class="btn glyphicon glyphicon-ok btn-success"></button>
+    <button *ngIf="images.currentRow &&images.currentRow.wasChanged()" (click)="images.currentRow.reset();images.setCurrentRow(images.items[0]);"
+        [disabled]="!images.currentRow.wasChanged()" class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
+    <data-area [settings]="images"></data-area>
+    כלי ליצירת Base64: 
+    <a href="https://www.browserling.com/tools/file-to-base64">File to Base64</a>
 </mat-card>

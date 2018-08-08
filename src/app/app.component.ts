@@ -40,6 +40,9 @@ export class AppComponent {
       name = route.data.name;
     return name;
   }
+  getLogo(){
+    return ApplicationSettings.get().logoUrl.value;
+  }
   currentTitle() {
     if (this.activeRoute && this.activeRoute.snapshot && this.activeRoute.firstChild && this.activeRoute.firstChild.data && this.activeRoute.snapshot.firstChild.data.name)
       return this.activeRoute.snapshot.firstChild.data.name;;

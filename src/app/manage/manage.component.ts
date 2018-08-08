@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BasketType, FamilySources, ApplicationSettings } from '../models';
+import { BasketType, FamilySources, ApplicationSettings, ApplicationImages } from '../models';
 import { GridSettings } from 'radweb';
 import { SelectService } from '../select-popup/select-service';
 
@@ -31,16 +31,29 @@ export class ManageComponent implements OnInit {
   });
   settings = new GridSettings(new ApplicationSettings(), {
     numOfColumnsInGrid: 0,
-    allowUpdate : true,
+    allowUpdate: true,
     columnSettings: s => [
-      s.organisationName
+      s.organisationName,
+      s.logoUrl
+
+
     ]
 
+  });
+  images = new GridSettings(new ApplicationImages(), {
+    numOfColumnsInGrid: 0,
+    allowUpdate:true,
+    columnSettings: i => [
+      i.base64Icon,
+      i.base64PhoneHomeImage
+
+    ]
   });
   constructor(private dialog: SelectService) { }
 
   ngOnInit() {
     this.settings.getRecords();
+    this.images.getRecords();
   }
 
 }
