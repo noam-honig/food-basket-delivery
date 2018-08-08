@@ -34,7 +34,8 @@ export async function serverInit() {
         new models.BasketType(),
         new models.FamilySources(),
         new models.DeliveryEvents(),
-        new models.FamilyDeliveryEvents()
+        new models.FamilyDeliveryEvents(),
+        new models.ApplicationSettings()
     ], async x => await sb.CreateIfNotExist(x));
 
     await sb.verifyAllColumns(new models.Families());
@@ -62,6 +63,13 @@ export async function serverInit() {
         de.isActiveEvent.value = true;
         de.deliveryDate.dateValue = new Date();
         await de.save();
+    }
+
+    let settings = new models.ApplicationSettings();
+    if (await settings.source.count() == 0) {
+        settings.id.value = 1;
+        settings.organisationName.value = 'שם הארגון שלי';
+        await settings.save();
     }
     console.log('fix city done');
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BasketType, FamilySources } from '../models';
+import { BasketType, FamilySources, ApplicationSettings } from '../models';
 import { GridSettings } from 'radweb';
 import { SelectService } from '../select-popup/select-service';
 
@@ -29,9 +29,18 @@ export class ManageComponent implements OnInit {
     allowDelete: true,
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
   });
+  settings = new GridSettings(new ApplicationSettings(), {
+    numOfColumnsInGrid: 0,
+    allowUpdate : true,
+    columnSettings: s => [
+      s.organisationName
+    ]
+
+  });
   constructor(private dialog: SelectService) { }
 
   ngOnInit() {
+    this.settings.getRecords();
   }
 
 }

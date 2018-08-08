@@ -835,3 +835,15 @@ export class FamilySources extends IdEntity<FamilySourceId>{
     this.initColumns();
   }
 }
+export class ApplicationSettings extends Entity<number>{
+  id = new radweb.NumberColumn();
+  organisationName = new radweb.StringColumn('שם הארגון');
+  constructor() {
+    super(() => new ApplicationSettings(), evilStatics.dataSource, 'ApplicationSettings')
+    this.initColumns(this.id);
+  }
+  static async get(): Promise<ApplicationSettings> {
+    let a = new ApplicationSettings();
+    return (await a.source.find({}))[0];
+  }
+}

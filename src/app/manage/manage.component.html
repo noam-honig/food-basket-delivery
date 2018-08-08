@@ -1,4 +1,11 @@
 <mat-card>
+    <button *ngIf="settings.currentRow &&settings.currentRow.wasChanged()" (click)="settings.currentRow.save()" [disabled]="!families.currentRow.wasChanged()"
+        class="btn glyphicon glyphicon-ok btn-success"></button>
+    <button *ngIf="settings.currentRow &&settings.currentRow.wasChanged()" (click)="settings.currentRow.reset();settings.setCurrentRow(settings.items[0]);"
+        [disabled]="!families.currentRow.wasChanged()" class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
+    <data-area [settings]="settings"></data-area>
+</mat-card>
+<mat-card>
     <h1>סוגי סלים</h1>
     <data-grid [settings]="basketType"></data-grid>
 </mat-card>

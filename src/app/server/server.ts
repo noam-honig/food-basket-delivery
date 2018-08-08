@@ -32,7 +32,7 @@ let app = express();
 if (!process.env.DISABLE_SERVER_EVENTS) {
     let serverEvents = new ServerEvents(app);
     models.Families.SendMessageToBrowsers = x => serverEvents.SendMessage(x);
-    SetDeliveryActiveAction.SendMessageToBrowsers=x=>serverEvents.SendMessage(x);
+    SetDeliveryActiveAction.SendMessageToBrowsers = x => serverEvents.SendMessage(x);
 }
 
 
@@ -116,6 +116,11 @@ adminApi.add(r => {
     });
 });
 adminApi.add(r => {
+    return new DataApi(new models.ApplicationSettings(), {
+        allowUpdate: true,
+    });
+});
+adminApi.add(r => {
     return new DataApi(new models.FamilyDeliveryEventsView(), {});
 });
 adminApi.add(r => new DataApi(new models.DeliveryEvents(), {
@@ -151,13 +156,14 @@ app.get('/cache.manifest', (req, res) => {
 
 app.use(express.static('dist'));
 
-app.use('/*', (req, res) => {
+app.use('/*', async (req, res) => {
     if (req.method == 'OPTIONS')
         res.send('');
     else {
         const index = 'dist/index.html';
-        if (fs.existsSync(index))
-            res.send(fs.readFileSync(index).toString());
+        if (fs.existsSync(index)) {
+            res.send(fs.readFileSync(index).toString().replace('!TITLE!', (await models.ApplicationSettings.get()).organisationName.value));
+        }
         else
             res.send('No Result');
     }
