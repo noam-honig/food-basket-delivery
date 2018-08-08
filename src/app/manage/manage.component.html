@@ -1,10 +1,32 @@
-<mat-card>
+<mat-card *ngIf="settings.currentRow">
     <h1>הגדרות כלליות</h1>
     <button *ngIf="settings.currentRow &&settings.currentRow.wasChanged()" (click)="settings.currentRow.save()" [disabled]="!settings.currentRow.wasChanged()"
         class="btn glyphicon glyphicon-ok btn-success"></button>
     <button *ngIf="settings.currentRow &&settings.currentRow.wasChanged()" (click)="settings.currentRow.reset();settings.setCurrentRow(settings.items[0]);"
         [disabled]="!settings.currentRow.wasChanged()" class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
     <data-area [settings]="settings"></data-area>
+    <div class="form-horizontal">
+    <div class="form-group">
+        <div class="col-sm-4">
+            <!--bindings={
+"ng-reflect-ng-if": "true"
+}-->
+            <label class="control-label ng-star-inserted">{{settings.currentRow.smsText.caption}}</label>
+        </div>
+        <div class="col-sm-8">
+            <textarea [(ngModel)]="settings.currentRow.smsText.value" class="form-control"></textarea>
+            <br/>
+            <ul>
+            <li>!משנע! - יוחלף בשם המשנע</li>
+            <li>!שולח! - יוחלף בשם השולח</li>
+            <li>!ארגון! - יוחלף בשם הארגון</li>
+            <li>!אתר! - יוחלף בכתובת האתר</li>
+        </ul>
+        <h4>הודעה לדוגמא</h4>
+            <pre>{{testSms()}}</pre>
+        </div>
+    </div>
+</div>
 </mat-card>
 
 <mat-card>
@@ -22,6 +44,6 @@
     <button *ngIf="images.currentRow &&images.currentRow.wasChanged()" (click)="images.currentRow.reset();images.setCurrentRow(images.items[0]);"
         [disabled]="!images.currentRow.wasChanged()" class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
     <data-area [settings]="images"></data-area>
-    כלי ליצירת Base64: 
+    כלי ליצירת Base64:
     <a href="https://www.browserling.com/tools/file-to-base64">File to Base64</a>
 </mat-card>

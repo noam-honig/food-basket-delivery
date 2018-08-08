@@ -3,6 +3,7 @@ import { BasketType, FamilySources, ApplicationSettings, ApplicationImages } fro
 import { GridSettings } from 'radweb';
 import { SelectService } from '../select-popup/select-service';
 import { AuthService } from '../auth/auth-service';
+import { SendSmsAction } from '../asign-family/send-sms-action';
 
 @Component({
   selector: 'app-manage',
@@ -36,18 +37,15 @@ export class ManageComponent implements OnInit {
     allowUpdate: true,
     columnSettings: s => [
       s.organisationName,
-      {
-        column: s.smsText,
-        click: s =>
-         alert(s.smsText.value.replace('!משנע!', 'שם המשנע הנחמד').replace('!שולח!', this.auth.auth.info.name).replace('!ארגון!', s.organisationName.value).replace('!אתר!', window.location.origin+'/x/zxcvdf'))
-      },
-
       s.logoUrl
 
 
     ]
 
   });
+  testSms(){
+    return SendSmsAction.getMessage(this.settings.currentRow.smsText.value,this.settings.currentRow.organisationName.value,'ישראל ישראלי',this.auth.auth.info.name,window.location.origin+'/x/zxcvdf');
+  }
   images = new GridSettings(new ApplicationImages(), {
     numOfColumnsInGrid: 0,
     allowUpdate: true,

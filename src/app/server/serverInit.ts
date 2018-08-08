@@ -73,7 +73,8 @@ export async function serverInit() {
     if ((await settings.source.count()) == 0) {
         settings.id.value = 1;
         settings.organisationName.value = 'שם הארגון שלי';
-        settings.logoUrl.value = '/apple-touch-icon.png';
+        settings.logoUrl.value = '/assets/apple-touch-icon.png';
+        settings.smsText.value = 'שלום !משנע!\n לחלוקת חבילות !ארגון! לחץ על: !אתר! \nתודה !שולח!';
         await settings.save();
     }
     let images = new models.ApplicationImages();
