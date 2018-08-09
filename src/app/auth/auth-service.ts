@@ -23,14 +23,22 @@ export class AuthService {
         private dialog: SelectService,
         private router: Router
     ) { }
-    async login(user: string, password: string, remember: boolean,fail:()=>void) {
+    async login(user: string, password: string, remember: boolean, fail: () => void) {
 
-        this.auth.loggedIn(await new LoginAction().run({ user: user, password: password }), remember);
+        let loginResponse = await new LoginAction().run({ user: user, password: password });
+        this.auth.loggedIn(loginResponse, remember);
         if (this.auth.valid) {
-            if (this.auth.info.admin)
-                this.router.navigate(['/families'])
-            else
-                this.router.navigate(['/my-families'])
+            if (loginResponse.requirePassword) {
+                this.dialog.YesNoQuestion('שלום '+this.auth.info.name+'את מוגדרת כמנהלת אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועברת למסך עדכון פרטים לעדכון סיסמה. לאחר עדכון הסיסמה, אנא כנסי מחדש',()=>{
+                    this.router.navigate(['/update-info'])
+                });
+            }
+            else {
+                if (this.auth.info.admin)
+                    this.router.navigate(['/families'])
+                else
+                    this.router.navigate(['/my-families'])
+            }
 
         }
         else {

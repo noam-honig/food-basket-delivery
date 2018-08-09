@@ -14,23 +14,32 @@ export class LoginAction extends ServerAction<LoginInfo, LoginResponse>{
     }
     protected async execute(info: LoginInfo, req: DataApiRequest<myAuthInfo>): Promise<LoginResponse> {
         let result: myAuthInfo;
+        let requirePassword = false;
         await foreachEntityItem(new Helpers(), h => h.phone.isEqualTo(info.user), async h => {
-            if (!h.realStoredPassword.value || passwordHash.verify(info.password, h.realStoredPassword.value))
+            if (!h.realStoredPassword.value || passwordHash.verify(info.password, h.realStoredPassword.value)) {
                 result = {
                     helperId: h.id.value,
                     admin: h.isAdmin.value,
                     name: h.name.value
                 };
+                if (result.admin && h.realStoredPassword.value.length == 0) {
+                    result.admin = false;
+                    requirePassword = true;
+                    
+
+                }
+            }
         });
-       
+
         if (result) {
             return {
                 valid: true,
-                authToken: evilStatics.auth.createTokenFor(result)
+                authToken: evilStatics.auth.createTokenFor(result),
+                requirePassword
             };
         }
 
-        return { valid: false };
+        return { valid: false, requirePassword: false };
 
     }
 }

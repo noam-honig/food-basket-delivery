@@ -28,11 +28,12 @@ export class LoginFromSmsAction extends ServerAction<LoginFromSmsInfo, LoginResp
         if (result) {
             return {
                 valid: true,
-                authToken: evilStatics.auth.createTokenFor(result)
+                authToken: evilStatics.auth.createTokenFor(result),
+                requirePassword:false
             };
         }
 
-        return { valid: false };
+        return { valid: false,requirePassword:false };
 
     }
 }
