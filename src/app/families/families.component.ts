@@ -327,7 +327,7 @@ export class FamiliesComponent implements OnInit {
   });
   gridView = true;
   constructor(private dialog: SelectService, private san: DomSanitizer, public busy: BusyService) {
-    console.log('families component');
+    
     let y = dialog.newsUpdate.subscribe(() => {
       this.refreshStats();
     });

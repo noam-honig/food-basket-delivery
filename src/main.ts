@@ -8,9 +8,7 @@ import 'hammerjs';
 if (environment.production) {
   enableProdMode();
 }
-else {
-  environment.serverUrl = window.location.protocol + '//' + window.location.hostname + ':3000/';
-}
+
 
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.log(err));
