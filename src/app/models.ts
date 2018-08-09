@@ -383,7 +383,7 @@ export class Helpers extends IdEntity<HelperId>{
   });
   phone = new radweb.StringColumn({ caption: "טלפון", inputType: 'tel' });
   realStoredPassword = new radweb.StringColumn({ dbName: 'password' });
-  password = new radweb.StringColumn({ caption: 'סיסמה', inputType: 'password', virtualData: () => Helpers.emptyPassword });
+  password = new radweb.StringColumn({ caption: 'סיסמה', inputType: 'password', virtualData: () => this.realStoredPassword.value? Helpers.emptyPassword:'' });
 
   createDate = new changeDate('מועד הוספה');
   smsDate = new changeDate('מועד משלוח SMS');

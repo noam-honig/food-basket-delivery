@@ -26,12 +26,7 @@ export class UpdateInfoComponent implements OnInit {
       //h.email,
       //h.address
     ],
-    onValidate: h => {
-      if (h)
-        if (h.password.value != this.confirmPassword.value) {
-          h.password.error = "הסיסמה אינה תואמת את אישור הסיסמה";
-        }
-    }
+
   });
 
 
@@ -42,13 +37,27 @@ export class UpdateInfoComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.helpers.getRecords();
+    this.helpers.getRecords().then(() => {
+      if (!this.helpers.currentRow.password.value)
+        this.confirmPassword.value = '';
+    });
   }
   async register() {
     try {
-      await this.helpers.items[0].save();
-      this.dialog.Info("העדכון נשמר, תודה");
-      this.confirmPassword.value = Helpers.emptyPassword;
+      let passwordChanged = this.helpers.currentRow.password.value != this.helpers.currentRow.password.originalValue;
+      let thePassword = this.helpers.currentRow.password.value;
+      if (this.helpers.currentRow.password.value != this.confirmPassword.value) {
+        this.dialog.Error('הסיסמה אינה תואמת את אישור הסיסמה');
+      }
+      else {
+
+        await this.helpers.items[0].save();
+        this.dialog.Info("העדכון נשמר, תודה");
+        this.confirmPassword.value = this.helpers.currentRow.password.value ? Helpers.emptyPassword : '';
+        if (passwordChanged) {
+          this.auth.login(this.helpers.currentRow.phone.value, thePassword, false, () => { });
+        }
+      }
     }
     catch (err) {
 

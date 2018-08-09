@@ -29,7 +29,7 @@ export class AuthService {
         this.auth.loggedIn(loginResponse, remember);
         if (this.auth.valid) {
             if (loginResponse.requirePassword) {
-                this.dialog.YesNoQuestion('שלום '+this.auth.info.name+'את מוגדרת כמנהלת אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועברת למסך עדכון פרטים לעדכון סיסמה. לאחר עדכון הסיסמה, אנא כנסי מחדש',()=>{
+                this.dialog.YesNoQuestion('שלום '+this.auth.info.name+'את מוגדרת כמנהלת אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועברת למסך עדכון פרטים לעדכון סיסמה.',()=>{
                     this.router.navigate(['/update-info'])
                 });
             }
