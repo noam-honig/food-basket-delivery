@@ -5,7 +5,8 @@
   "scripts": {
     "ng": "ng",
     "gc": "ng generate component --spec false",
-    "ng-serve": "ng serve --host 10.0.0.6",
+    "ng-serve": "ng serve",
+    "ng-serve-noam-ip-10.0.0.6": "ng serve --host 10.0.0.6",
     "start": "npm run server:execute",
     "start_old": "ts-node --project tsconfig.server.json src/app/server/server.ts",
     "start_dev": "concurrently \"ng serve\" \"npm run server:watch\"",
