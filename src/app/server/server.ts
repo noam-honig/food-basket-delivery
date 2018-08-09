@@ -25,203 +25,204 @@ import { CopyFamiliesToActiveEventAction } from '../delivery-events/copy-familie
 import { StatsAction } from '../families/stats-action';
 
 
-serverInit();
+serverInit().then(() => {
 
 
-let app = express();
-//app.use(morgan('tiny')); 'logging';
-if (!process.env.DISABLE_SERVER_EVENTS) {
-    let serverEvents = new ServerEvents(app);
-    models.Families.SendMessageToBrowsers = x => serverEvents.SendMessage(x);
-    SetDeliveryActiveAction.SendMessageToBrowsers = x => serverEvents.SendMessage(x);
-}
+    let app = express();
+    //app.use(morgan('tiny')); 'logging';
+    if (!process.env.DISABLE_SERVER_EVENTS) {
+        let serverEvents = new ServerEvents(app);
+        models.Families.SendMessageToBrowsers = x => serverEvents.SendMessage(x);
+        SetDeliveryActiveAction.SendMessageToBrowsers = x => serverEvents.SendMessage(x);
+    }
 
 
-app.use(compression());
+    app.use(compression());
 
-if (!process.env.DISABLE_HTTPS)
-    app.use(secure);
-let port = process.env.PORT || 3000;
+    if (!process.env.DISABLE_HTTPS)
+        app.use(secure);
+    let port = process.env.PORT || 3000;
 
-let eb = new ExpressBridge<myAuthInfo>(app);
+    let eb = new ExpressBridge<myAuthInfo>(app);
 
-let openedData = eb.addArea('/openedDataApi');
-let dataApi = eb.addArea('/dataApi', async x => x.authInfo != undefined);
-let adminApi = eb.addArea('/dataApi', async x => x.authInfo && x.authInfo.admin);
-let openActions = eb.addArea('');
-let adminActions = eb.addArea('', async x => x.authInfo && x.authInfo.admin);
+    let openedData = eb.addArea('/openedDataApi');
+    let dataApi = eb.addArea('/dataApi', async x => x.authInfo != undefined);
+    let adminApi = eb.addArea('/dataApi', async x => x.authInfo && x.authInfo.admin);
+    let openActions = eb.addArea('');
+    let adminActions = eb.addArea('', async x => x.authInfo && x.authInfo.admin);
 
-evilStatics.auth.tokenSignKey = process.env.TOKEN_SIGN_KEY;
+    evilStatics.auth.tokenSignKey = process.env.TOKEN_SIGN_KEY;
 
-evilStatics.auth.applyTo(eb, openActions);
+    evilStatics.auth.applyTo(eb, openActions);
 
-openActions.addAction(new LoginAction());
-openActions.addAction(new LoginFromSmsAction());
-adminActions.addAction(new ResetPasswordAction());
-adminActions.addAction(new AddBoxAction());
-adminActions.addAction(new SendSmsAction());
-adminActions.addAction(new GetBasketStatusAction());
-adminActions.addAction(new ServerEventAuthorizeAction());
-adminActions.addAction(new SetDeliveryActiveAction());
-adminActions.addAction(new CopyFamiliesToActiveEventAction());
-adminActions.addAction(new StatsAction());
+    openActions.addAction(new LoginAction());
+    openActions.addAction(new LoginFromSmsAction());
+    adminActions.addAction(new ResetPasswordAction());
+    adminActions.addAction(new AddBoxAction());
+    adminActions.addAction(new SendSmsAction());
+    adminActions.addAction(new GetBasketStatusAction());
+    adminActions.addAction(new ServerEventAuthorizeAction());
+    adminActions.addAction(new SetDeliveryActiveAction());
+    adminActions.addAction(new CopyFamiliesToActiveEventAction());
+    adminActions.addAction(new StatsAction());
 
 
 
-openedData.add(r => helpersDataApi(r));
-dataApi.add(r => new DataApi(new models.NewsUpdate()));
+    openedData.add(r => helpersDataApi(r));
+    dataApi.add(r => new DataApi(new models.NewsUpdate()));
 
-[
-    new models.BasketType(),
-    new models.FamilySources()
-].forEach(x => {
-    dataApi.add(r => new DataApi(x, {
-        allowDelete: r.authInfo && r.authInfo.admin,
-        allowInsert: r.authInfo && r.authInfo.admin,
-        allowUpdate: r.authInfo && r.authInfo.admin
+    [
+        new models.BasketType(),
+        new models.FamilySources()
+    ].forEach(x => {
+        dataApi.add(r => new DataApi(x, {
+            allowDelete: r.authInfo && r.authInfo.admin,
+            allowInsert: r.authInfo && r.authInfo.admin,
+            allowUpdate: r.authInfo && r.authInfo.admin
+        }));
+    });
+    dataApi.add(r => {
+        var settings: DataApiSettings<models.Families> = {
+            allowDelete: r.authInfo && r.authInfo.admin,
+            allowInsert: r.authInfo && r.authInfo.admin,
+            allowUpdate: r.authInfo ? true : false,
+            readonlyColumns: f => {
+                if (r.authInfo) {
+                    if (r.authInfo.admin)
+                        return [];
+                    return f.__iterateColumns().filter(c => c != f.courierComments && c != f.deliverStatus);
+                }
+            },
+            excludeColumns: f => {
+                return f.excludeColumns(r.authInfo);
+            },
+            onSavingRow: async family => {
+                await family.doSaveStuff(r.authInfo);
+            },
+            get: {
+                where: f => {
+                    if (r.authInfo && !r.authInfo.admin)
+                        return f.courier.isEqualTo(r.authInfo.helperId);
+                    return undefined;
+                }
+            }
+        };
+
+
+        return new DataApi(new models.Families(), settings)
+    });
+    adminApi.add(r => {
+        return new DataApi(new models.HelpersAndStats(), {
+            excludeColumns: h => [h.isAdmin, h.password, h.realStoredPassword, h.shortUrlKey, h.createDate]
+        });
+    });
+    adminApi.add(r => {
+        return new DataApi(new models.ApplicationSettings(), {
+            allowUpdate: true,
+            onSavingRow: async as => await as.doSaveStuff()
+        });
+    });
+    adminApi.add(r => {
+        return new DataApi(new models.ApplicationImages(), {
+            allowUpdate: true,
+        });
+    });
+    adminApi.add(r => {
+        return new DataApi(new models.FamilyDeliveryEventsView(), {});
+    });
+    adminApi.add(r => new DataApi(new models.DeliveryEvents(), {
+        readonlyColumns: de => [de.isActiveEvent],
+        onSavingRow: async de => await de.doSaveStuff(r.authInfo),
+        allowUpdate: true,
+        allowInsert: true
     }));
-});
-dataApi.add(r => {
-    var settings: DataApiSettings<models.Families> = {
-        allowDelete: r.authInfo && r.authInfo.admin,
-        allowInsert: r.authInfo && r.authInfo.admin,
-        allowUpdate: r.authInfo ? true : false,
-        readonlyColumns: f => {
-            if (r.authInfo) {
-                if (r.authInfo.admin)
-                    return [];
-                return f.__iterateColumns().filter(c => c != f.courierComments && c != f.deliverStatus);
-            }
-        },
-        excludeColumns: f => {
-            return f.excludeColumns(r.authInfo);
-        },
-        onSavingRow: async family => {
-            await family.doSaveStuff(r.authInfo);
-        },
-        get: {
-            where: f => {
-                if (r.authInfo && !r.authInfo.admin)
-                    return f.courier.isEqualTo(r.authInfo.helperId);
-                return undefined;
-            }
-        }
-    };
-
-
-    return new DataApi(new models.Families(), settings)
-});
-adminApi.add(r => {
-    return new DataApi(new models.HelpersAndStats(), {
-        excludeColumns: h => [h.isAdmin, h.password, h.realStoredPassword, h.shortUrlKey, h.createDate]
-    });
-});
-adminApi.add(r => {
-    return new DataApi(new models.ApplicationSettings(), {
-        allowUpdate: true,
-        onSavingRow:async as=> await as.doSaveStuff()
-    });
-});
-adminApi.add(r => {
-    return new DataApi(new models.ApplicationImages(), {
-        allowUpdate: true,
-    });
-});
-adminApi.add(r => {
-    return new DataApi(new models.FamilyDeliveryEventsView(), {});
-});
-adminApi.add(r => new DataApi(new models.DeliveryEvents(), {
-    readonlyColumns: de => [de.isActiveEvent],
-    onSavingRow: async de => await de.doSaveStuff(r.authInfo),
-    allowUpdate: true,
-    allowInsert: true
-}));
 
 
 
-app.get('/cache.manifest', (req, res) => {
-    let result =
-        `CACHE MANIFEST
+    app.get('/cache.manifest', (req, res) => {
+        let result =
+            `CACHE MANIFEST
     CACHE:
     /
     /home
     `;
-    fs.readdirSync('dist').forEach(x => {
-        result += `/${x}
+        fs.readdirSync('dist').forEach(x => {
+            result += `/${x}
         `;
 
-    });
-    result += `
+        });
+        result += `
     FALLBACK:
     / /
     
     NETWORK:
     /dataApi/`
 
-    res.send(result);
-});
-app.use('/assets/apple-touch-icon.png', async (req, res) => {
-    let imageBase = (await models.ApplicationImages.getAsync()).base64PhoneHomeImage.value;
-    res.contentType('png');
-    if (imageBase) {
+        res.send(result);
+    });
+    app.use('/assets/apple-touch-icon.png', async (req, res) => {
+        let imageBase = (await models.ApplicationImages.getAsync()).base64PhoneHomeImage.value;
+        res.contentType('png');
+        if (imageBase) {
+            try {
+                res.send(Buffer.from(imageBase, 'base64'));
+                return;
+            }
+            catch{
+            }
+        }
         try {
-            res.send(Buffer.from(imageBase, 'base64'));
-            return;
+            res.send(fs.readFileSync('dist/assets/apple-touch-icon.png'));
+        } catch (err) {
+            res.statusCode = 404;
+            res.send(err);
         }
-        catch{
+    });
+    app.use('/favicon.ico', async (req, res) => {
+        res.contentType('ico');
+        let imageBase = (await models.ApplicationImages.getAsync()).base64Icon.value;
+        if (imageBase) {
+            try {
+                res.send(Buffer.from(imageBase, 'base64'));
+                return;
+            }
+            catch{ }
         }
-    }
-    try {
-        res.send(fs.readFileSync('dist/assets/apple-touch-icon.png'));
-    } catch (err){
-        res.statusCode = 404;
-        res.send(err);
-    }
-});
-app.use('/favicon.ico', async (req, res) => {
-    res.contentType('ico');
-    let imageBase = (await models.ApplicationImages.getAsync()).base64Icon.value;
-    if (imageBase) {
         try {
-            res.send(Buffer.from(imageBase, 'base64'));
-            return;
+            res.send(fs.readFileSync('dist/favicon.ico'));
         }
-        catch{ }
+        catch (err) {
+            res.statusCode = 404;
+            res.send(err);
+        }
+    });
+    async function sendIndex(res: express.Response) {
+        const index = 'dist/index.html';
+        if (fs.existsSync(index)) {
+            let x = (await models.ApplicationSettings.getAsync()).organisationName.value;
+
+            res.send(fs.readFileSync(index).toString().replace('!TITLE!', x));
+        }
+        else
+            res.send('No Result');
     }
-    try {
-        res.send(fs.readFileSync('dist/favicon.ico'));
-    }
-    catch(err){
-        res.statusCode = 404;
-        res.send(err);
-    }
+
+    app.get('', (req, res) => {
+
+        sendIndex(res);
+    });
+    app.get('/index.html', (req, res) => {
+
+        sendIndex(res);
+    });
+    app.use(express.static('dist'));
+
+    app.use('/*', async (req, res) => {
+        if (req.method == 'OPTIONS')
+            res.send('');
+        else {
+            await sendIndex(res);
+        }
+    });
+    app.listen(port);
 });
-async function sendIndex(res: express.Response) {
-    const index = 'dist/index.html';
-    if (fs.existsSync(index)) {
-        let x = (await models.ApplicationSettings.getAsync()).organisationName.value;
-
-        res.send(fs.readFileSync(index).toString().replace('!TITLE!', x));
-    }
-    else
-        res.send('No Result');
-}
-
-app.get('', (req, res) => {
-
-    sendIndex(res);
-});
-app.get('/index.html', (req, res) => {
-
-    sendIndex(res);
-});
-app.use(express.static('dist'));
-
-app.use('/*', async (req, res) => {
-    if (req.method == 'OPTIONS')
-        res.send('');
-    else {
-        await sendIndex(res);
-    }
-});
-app.listen(port);

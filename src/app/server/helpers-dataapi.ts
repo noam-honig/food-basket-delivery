@@ -20,6 +20,8 @@ export function helpersDataApi(r: DataApiRequest<myAuthInfo>) {
             if (h.password.value && h.password.value != h.password.originalValue && h.password.value != Helpers.emptyPassword) {
                 h.realStoredPassword.value = passwordHash.generate(h.password.value);
             }
+            if ((await h.source.count())==0)
+                h.isAdmin.value = true;
 
             await duplicateValue(h, h.phone);
             //   await duplicateValue(h,h.userName);

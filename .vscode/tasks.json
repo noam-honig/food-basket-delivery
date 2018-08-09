@@ -59,6 +59,13 @@
                 "$tsc-watch"
             ],
             "isBackground": true
+        },
+        {
+            "type": "npm",
+            "script": "server:start",
+            "problemMatcher": [
+                "$tsc"
+            ]
         }
     ]
 }
