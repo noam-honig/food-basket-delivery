@@ -855,7 +855,7 @@ export class ApplicationSettings extends Entity<number>{
     }}
 
   constructor() {
-    super(() => new ApplicationSettings(), evilStatics.dataSource, 'ApplicationSettings')
+    super(() => new ApplicationSettings(), evilStatics.openedDataApi, 'ApplicationSettings')
     this.initColumns(this.id);
   }
   private static _settings: ApplicationSettings;

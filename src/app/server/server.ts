@@ -116,9 +116,9 @@ serverInit().then(() => {
             excludeColumns: h => [h.isAdmin, h.password, h.realStoredPassword, h.shortUrlKey, h.createDate]
         });
     });
-    adminApi.add(r => {
+    openedData.add(r => {
         return new DataApi(new models.ApplicationSettings(), {
-            allowUpdate: true,
+            allowUpdate: r.authInfo&&r.authInfo.admin,
             onSavingRow: async as => await as.doSaveStuff()
         });
     });
