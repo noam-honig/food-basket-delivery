@@ -2,7 +2,7 @@ import * as fetch from 'node-fetch';
 import { ServerAction } from "../auth/server-action";
 import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 import { myAuthInfo } from "../auth/my-auth-info";
-import { Families, DeliveryStatus, Helpers, YesNo } from "../models";
+import { Families, DeliveryStatus, Helpers, YesNo, ApplicationSettings } from "../models";
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
 import { UrlBuilder, ColumnHashSet } from "radweb";
 import { foreachSync } from '../shared/utils';
@@ -78,7 +78,7 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
                         return r;
 
                     }
-                    
+
                     let f = r[0];
                     let dist = getDistance(f.getGeocodeInformation().location());
                     for (let i = 1; i < r.length; i++) {
@@ -191,7 +191,8 @@ export interface AddBoxResponse {
 
 async function getRouteInfo(families: Families[], optimize: boolean) {
     let u = new UrlBuilder('https://maps.googleapis.com/maps/api/directions/json');
-    let startAndEnd = 'שנהב 4 אבן יהודה';
+
+    let startAndEnd = (await ApplicationSettings.getAsync()).getGeocodeInformation().getlonglat();
     let waypoints = 'optimize:' + (optimize ? 'true' : 'false');
     families.forEach(f => {
         waypoints += '|' + f.getGeocodeInformation().getlonglat();

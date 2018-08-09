@@ -11,7 +11,7 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
   styleUrls: ['./manage.component.scss']
 })
 export class ManageComponent implements OnInit {
-  
+
 
   basketType = new GridSettings(new BasketType(), {
     columnSettings: x => [
@@ -37,14 +37,19 @@ export class ManageComponent implements OnInit {
     allowUpdate: true,
     columnSettings: s => [
       s.organisationName,
-      s.logoUrl
+      s.logoUrl,
+      s.address,
+      {
+        caption: 'כתובת כפי שגוגל הבין',
+        getValue: s => s.getGeocodeInformation().getAddress()
+      }
 
 
     ]
 
   });
-  testSms(){
-    return SendSmsAction.getMessage(this.settings.currentRow.smsText.value,this.settings.currentRow.organisationName.value,'ישראל ישראלי',this.auth.auth.info.name,window.location.origin+'/x/zxcvdf');
+  testSms() {
+    return SendSmsAction.getMessage(this.settings.currentRow.smsText.value, this.settings.currentRow.organisationName.value, 'ישראל ישראלי', this.auth.auth.info.name, window.location.origin + '/x/zxcvdf');
   }
   images = new GridSettings(new ApplicationImages(), {
     numOfColumnsInGrid: 0,
@@ -55,7 +60,7 @@ export class ManageComponent implements OnInit {
 
     ]
   });
-  constructor(private dialog: SelectService,private auth:AuthService) { }
+  constructor(private dialog: SelectService, private auth: AuthService) { }
 
   ngOnInit() {
     this.settings.getRecords();

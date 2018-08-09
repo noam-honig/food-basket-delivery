@@ -20,6 +20,11 @@ export class GeocodeInformation {
         if (!this.info)
             this.info = { results: [], status: 'none' };
     }
+    getAddress() {
+        if (!this.ok())
+            return '!!! NOT OK!!!';
+        return this.info.results[0].formatted_address;
+    }
     public saveToString() {
         return JSON.stringify(this.info);
     }

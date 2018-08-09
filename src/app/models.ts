@@ -486,13 +486,9 @@ export class Families extends IdEntity<FamilyId>{
   addressByGoogle() {
     let r: ColumnSetting<Families> = {
       caption: 'כתובת כפי שגוגל הבין',
-      getValue: f => {
-        let result = '';
-        let g = f.getGeocodeInformation();
-        if (!g.ok())
-          return '!!! NOT OK!!!';
-        return f.getGeocodeInformation().info.results[0].formatted_address;
-      }
+      getValue: f =>  f.getGeocodeInformation().getAddress()
+        
+      
     }
     return r;
   }
@@ -840,7 +836,24 @@ export class ApplicationSettings extends Entity<number>{
   organisationName = new radweb.StringColumn('שם הארגון');
   smsText = new radweb.StringColumn('תוכן הודעת SMS');
   logoUrl = new radweb.StringColumn('לוגו URL');
-  
+  address = new radweb.StringColumn("כתובת מרכז השילוח");
+  addressApiResult = new radweb.StringColumn();
+  private _lastString: string;
+  private _lastGeo: GeocodeInformation;
+  getGeocodeInformation() {
+    if (this._lastString == this.addressApiResult.value)
+      return this._lastGeo ? this._lastGeo : new GeocodeInformation();
+    this._lastString = this.addressApiResult.value;
+    return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
+  }
+  async doSaveStuff() {
+    if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
+      let geo = await GetGeoInformation(this.address.value);
+      this.addressApiResult.value = geo.saveToString();
+      if (geo.ok()) {
+      }
+    }}
+
   constructor() {
     super(() => new ApplicationSettings(), evilStatics.dataSource, 'ApplicationSettings')
     this.initColumns(this.id);

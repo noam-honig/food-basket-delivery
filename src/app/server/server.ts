@@ -119,6 +119,7 @@ adminApi.add(r => {
 adminApi.add(r => {
     return new DataApi(new models.ApplicationSettings(), {
         allowUpdate: true,
+        onSavingRow:async as=> await as.doSaveStuff()
     });
 });
 adminApi.add(r => {
