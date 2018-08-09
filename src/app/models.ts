@@ -445,7 +445,7 @@ export class Families extends IdEntity<FamilyId>{
 
 
   address = new radweb.StringColumn("כתובת");
-  floor = new radweb.NumberColumn('קומה');
+  floor = new radweb.StringColumn('קומה');
   appartment = new radweb.StringColumn('דירה');
   addressComment = new radweb.StringColumn('הערת כתובת');
   deliveryComments = new radweb.StringColumn('הערות למשנע');
