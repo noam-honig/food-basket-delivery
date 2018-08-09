@@ -371,7 +371,7 @@ export class FamiliesComponent implements OnInit {
         this.stats.currentEvent,
         this.stats.notInEvent
       ]
-    },
+    }/*,
     {
       name: 'טלפניות',
       rule: f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id),
@@ -381,7 +381,7 @@ export class FamiliesComponent implements OnInit {
         this.stats.phoneOk,
         this.stats.phoneFailed
       ]
-    }
+    }*/
 
   ]
   tabChanged() {
