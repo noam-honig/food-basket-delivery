@@ -21,6 +21,7 @@ export class HelperFamiliesComponent implements OnInit {
   @Output() assignmentCanceled = new EventEmitter<void>();
   ngOnInit() {
     this.familyLists.setMap(this.map);
+    
   }
   async cancelAssign(f: Families) {
     f.courier.value = '';

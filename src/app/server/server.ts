@@ -23,6 +23,7 @@ import * as morgan from 'morgan';
 import { SetDeliveryActiveAction } from '../delivery-events/set-delivery-active-action';
 import { CopyFamiliesToActiveEventAction } from '../delivery-events/copy-families-to-active-event-action';
 import { StatsAction } from '../families/stats-action';
+import { DeliveryStatsAction } from '../delivery-follow-up/delivery-stats';
 
 
 serverInit().then(() => {
@@ -65,6 +66,7 @@ serverInit().then(() => {
     adminActions.addAction(new SetDeliveryActiveAction());
     adminActions.addAction(new CopyFamiliesToActiveEventAction());
     adminActions.addAction(new StatsAction());
+    adminActions.addAction(new DeliveryStatsAction());
 
 
 

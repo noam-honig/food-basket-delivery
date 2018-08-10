@@ -383,7 +383,7 @@ export class Helpers extends IdEntity<HelperId>{
   });
   phone = new radweb.StringColumn({ caption: "טלפון", inputType: 'tel' });
   realStoredPassword = new radweb.StringColumn({ dbName: 'password' });
-  password = new radweb.StringColumn({ caption: 'סיסמה', inputType: 'password', virtualData: () => this.realStoredPassword.value? Helpers.emptyPassword:'' });
+  password = new radweb.StringColumn({ caption: 'סיסמה', inputType: 'password', virtualData: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
 
   createDate = new changeDate('מועד הוספה');
   smsDate = new changeDate('מועד משלוח SMS');
@@ -486,9 +486,9 @@ export class Families extends IdEntity<FamilyId>{
   addressByGoogle() {
     let r: ColumnSetting<Families> = {
       caption: 'כתובת כפי שגוגל הבין',
-      getValue: f =>  f.getGeocodeInformation().getAddress()
-        
-      
+      getValue: f => f.getGeocodeInformation().getAddress()
+
+
     }
     return r;
   }
@@ -710,20 +710,37 @@ function buildSql(...args: any[]): string {
   });
   return result;
 }
+let fromFamilies = (h: Helpers) => buildSql(' from ', f
+  , ' where ', f.courier, ' = ', h, '.', h.id);
 
-let fromFamiliesWhereId = (h: Helpers) => buildSql(' from ', f
-  , ' where ', f.courier, ' = ', h, '.', h.id, ' and ', f.deliverStatus, ' = ', DeliveryStatus.ReadyForDelivery.id)
+let fromFamiliesWithCourierAndStatus = (h: Helpers, s: DeliveryStatus) => buildSql(fromFamilies(h), ' and ', f.deliverStatus, ' = ', s.id);
+
+let fromFamiliesWithCourierAndReady = (h: Helpers) => fromFamiliesWithCourierAndStatus(h, DeliveryStatus.ReadyForDelivery);
 
 
 export class HelpersAndStats extends Helpers {
   deliveriesInProgress = new NumberColumn({
     dbReadOnly: true,
     caption: 'משפחות מחכות',
-    dbName: buildSql('(select count(*) ', fromFamiliesWhereId(this), ')')
+    dbName: buildSql('(select count(*) ', fromFamiliesWithCourierAndReady(this), ')')
+  });
+  allFamilies = new NumberColumn({
+    dbReadOnly: true,
+    caption: 'משפחות',
+    dbName: buildSql('(select count(*) ', fromFamilies(this), ')')
+  });
+  deliveriesWithProblems = new NumberColumn({
+    dbReadOnly: true,
+    caption: 'משפחות עם בעיות',
+    dbName: buildSql('(select count(*) ', buildSql(fromFamilies(this), ' and ', f.deliverStatus, ' in (', [
+      DeliveryStatus.FailedBadAddress.id,
+      DeliveryStatus.FailedNotHome.id,
+      DeliveryStatus.FailedOther.id
+    ], ')'), ')')
   });
   firstDeliveryInProgressDate = new DateTimeColumn({
     dbReadOnly: true,
-    dbName: buildSql('(select min(', f.courierAssingTime, ') ', fromFamiliesWhereId(this), ')')
+    dbName: buildSql('(select min(', f.courierAssingTime, ') ', fromFamiliesWithCourierAndReady(this), ')')
   })
     ;
   constructor() {
@@ -852,7 +869,8 @@ export class ApplicationSettings extends Entity<number>{
       this.addressApiResult.value = geo.saveToString();
       if (geo.ok()) {
       }
-    }}
+    }
+  }
 
   constructor() {
     super(() => new ApplicationSettings(), evilStatics.openedDataApi, 'ApplicationSettings')
@@ -873,7 +891,7 @@ export class ApplicationSettings extends Entity<number>{
 }
 export class ApplicationImages extends Entity<number>{
   id = new radweb.NumberColumn();
-  
+
   base64Icon = new radweb.StringColumn("איקון דף base64");
   base64PhoneHomeImage = new radweb.StringColumn("איקון דף הבית בטלפון base64");
   constructor() {

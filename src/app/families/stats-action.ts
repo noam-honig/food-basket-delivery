@@ -20,7 +20,7 @@ export const colors={
     yellow:'#FDE098'//yello
     ,orange: '#FAC090'//orange
     ,blue: '#84C5F1'//blue
-    ,green: '#dff0d8'//green
+    ,green: '#91D7D7'//green
     ,red: '#FD9FB3'//red
     ,gray:'gray'
 };

@@ -1,10 +1,16 @@
-<h3>
-  מתנדבים בדרך</h3>
+<button mat-mini-fab style="margin-bottom:5px" (click)="refresh()">
+  <mat-icon>refresh</mat-icon>
 
-<mat-button-toggle-group #group="matButtonToggleGroup" (valueChange)="changeToggle(group.value)" [value]="showAll">
-  <mat-button-toggle value="false" selected>מתעכבים</mat-button-toggle>
-  <mat-button-toggle value="true">כולם</mat-button-toggle>
-</mat-button-toggle-group>
+</button>
+<div>
+  <div style="display: block;width:350px;">
+    <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType" [options]="options" [colors]="colors"
+      (chartClick)="chartClicked($event)"></canvas>
+  </div>
+</div>
+<h4 *ngIf="currentStatFilter">{{currentStatFilter.name}} - {{currentStatFilter.value}}</h4>
+<a *ngIf="currentStatFilter" (click)="clearFilter()">הצג הכל</a>
+<h4 *ngIf="!currentStatFilter">כולם - {{couriers.items.length}}</h4>
 <mat-accordion>
   <mat-expansion-panel #myPanel *ngFor="let c of couriers.items" (opened)="selectCourier(c)">
     <mat-expansion-panel-header>
@@ -19,7 +25,7 @@
         </mat-panel-description>
       </div>
     </mat-expansion-panel-header>
-    
+
     <div class="wideAccordion">
       <app-helper-families [familyLists]="familyLists" [partOfAssign]="true" [partOfReview]="true"></app-helper-families>
     </div>

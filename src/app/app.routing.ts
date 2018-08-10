@@ -34,7 +34,7 @@ const routes: Routes = [
     path: 'assign-families', component: AsignFamilyComponent, canActivate: [AdminGuard], data: { name: 'שיוך משפחות' }
   },
   {
-    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [AdminGuard], data: { name: 'מעקב משלוחים' }
+    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [AdminGuard], data: { name: 'מעקב משנעים' }
   },
   {
     path: 'news', component: NewsComponent, canActivate: [AdminGuard], data: { name: 'חדשות' }

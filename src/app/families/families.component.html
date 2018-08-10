@@ -9,7 +9,7 @@
             (chartClick)="chartClicked($event)"></canvas>
     </div>
 </div>
-<h4 *ngIf="currentStatFilter">{{currentStatFilter.name}} - </h4>
+<h4 *ngIf="currentStatFilter">{{currentStatFilter.name}}:</h4>
 <mat-form-field class="full-width">
     <input matInput [(ngModel)]="searchString" (input)="doSearch()" placeholder="חיפוש משפחה" [ngModelOptions]="{standalone: true}">
     <mat-icon matSuffix (click)="clearSearch()">clear</mat-icon>
