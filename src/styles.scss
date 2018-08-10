@@ -156,9 +156,7 @@ th {
   .mat-snack-bar-container{
       direction: rtl;
   }
-  .active td{
-        background-color: lightblue !important;
-  }
+ 
   @media print{
       .no-print{
           display:none!important;
@@ -170,4 +168,22 @@ th {
         display:none!important;
         visibility: none!important;
       }
+  }
+ 
+  .deliveredOk{
+      background-color: #dff0d8 !important;
+  }
+  .deliveredOk>td{
+    background-color: #dff0d8 !important;
+}
+.deliveredProblem>td{
+    background-color: #f2dede !important;
+}
+  .active  {
+    border:solid;
+    border-color: #66afe9;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
+    
   }

@@ -34,7 +34,7 @@ export class FamiliesComponent implements OnInit {
   }
   public pieChartLabels: string[] = [];
   public pieChartData: number[] = [];
-  pieChartStatObjects  :FaimilyStatistics[]=[];
+  pieChartStatObjects: FaimilyStatistics[] = [];
   public colors: Array<any> = [
     {
       backgroundColor: []
@@ -126,6 +126,18 @@ export class FamiliesComponent implements OnInit {
 
     allowUpdate: true,
     allowInsert: true,
+    rowCssClass: f => {
+      switch (f.deliverStatus.listValue) {
+        case DeliveryStatus.Success:
+          return 'deliveredOk';
+        case DeliveryStatus.FailedBadAddress:
+        case DeliveryStatus.FailedNotHome:
+        case DeliveryStatus.FailedOther:
+          return 'deliveredProblem';
+        default:
+          return '';
+      }
+    },
     numOfColumnsInGrid: 5,
     onEnterRow: async f => {
       if (f.isNew()) {
@@ -135,7 +147,7 @@ export class FamiliesComponent implements OnInit {
         f.callStatus.listValue = CallStatus.NotYet;
         f.special.listValue = YesNo.No;
       } else {
-        
+
         await this.busy.donotWait(async () =>
           this.previousDeliveryEvents = await this.familyDeliveryEventsView.source.find({ where: this.familyDeliveryEventsView.family.isEqualTo(f.id), orderBy: [{ column: this.familyDeliveryEventsView.deliveryDate, descending: true }] }));
       }
@@ -327,7 +339,7 @@ export class FamiliesComponent implements OnInit {
   });
   gridView = true;
   constructor(private dialog: SelectService, private san: DomSanitizer, public busy: BusyService) {
-    
+
     let y = dialog.newsUpdate.subscribe(() => {
       this.refreshStats();
     });
