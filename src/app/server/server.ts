@@ -115,7 +115,7 @@ serverInit().then(() => {
     });
     adminApi.add(r => {
         return new DataApi(new models.HelpersAndStats(), {
-            excludeColumns: h => [h.isAdmin, h.password, h.realStoredPassword, h.shortUrlKey, h.createDate]
+            
         });
     });
     openedData.add(r => {

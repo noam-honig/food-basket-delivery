@@ -1,11 +1,13 @@
 import { Pool } from 'pg';
 import { config } from 'dotenv';
-import { PostgresDataProvider, PostgrestSchemaBuilder } from 'radweb/server';
+import { PostgresDataProvider, PostgrestSchemaBuilder, ActualSQLServerDataProvider } from 'radweb/server';
+
 import { evilStatics } from '../auth/evil-statics';
 import * as models from './../models';
 import { foreachSync } from '../shared/utils';
 
 export async function serverInit() {
+    //ActualSQLServerDataProvider.LogToConsole = true;
     config();
     let ssl = true;
     if (process.env.DISABLE_POSTGRES_SSL)
@@ -53,7 +55,7 @@ export async function serverInit() {
             h.save();
         }
     });
-    
+
 
     let f = new models.Families();
     console.log('fix city start');
@@ -78,10 +80,9 @@ export async function serverInit() {
         await settings.save();
     }
     let images = new models.ApplicationImages();
-    if ((await images.source.count())==0)
-    {
+    if ((await images.source.count()) == 0) {
         images.id.value = 1;
-        
+
         await images.save();
 
     }

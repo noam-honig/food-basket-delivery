@@ -710,41 +710,71 @@ function buildSql(...args: any[]): string {
   });
   return result;
 }
-let fromFamilies = (h: Helpers) => buildSql(' from ', f
+
+
+
+let h = new Helpers();
+let fromFamilies = () => buildSql(' from ', f
   , ' where ', f.courier, ' = ', h, '.', h.id);
 
-let fromFamiliesWithCourierAndStatus = (h: Helpers, s: DeliveryStatus) => buildSql(fromFamilies(h), ' and ', f.deliverStatus, ' = ', s.id);
+let fromFamiliesWithCourierAndStatus = (s: DeliveryStatus) => buildSql(fromFamilies(), ' and ', f.deliverStatus, ' = ', s.id);
 
-let fromFamiliesWithCourierAndReady = (h: Helpers) => fromFamiliesWithCourierAndStatus(h, DeliveryStatus.ReadyForDelivery);
+let fromFamiliesWithCourierAndReady = () => fromFamiliesWithCourierAndStatus(DeliveryStatus.ReadyForDelivery);
 
-
-export class HelpersAndStats extends Helpers {
+function log(s: string) {
+  console.log(s);
+  return s;
+}
+export class HelpersAndStats extends IdEntity<HelperId> {
+  name = new radweb.StringColumn({
+    caption: "שם",
+    onValidate: v => {
+      if (!v.value || v.value.length < 3)
+        this.name.error = 'השם קצר מידי';
+    }
+  });
+  phone = new radweb.StringColumn({ caption: "טלפון", inputType: 'tel' });
+  smsDate = new changeDate('מועד משלוח SMS');
+  reminderSmsDate = new changeDate('מועד משלוח תזכורת SMS');
   deliveriesInProgress = new NumberColumn({
     dbReadOnly: true,
-    caption: 'משפחות מחכות',
-    dbName: buildSql('(select count(*) ', fromFamiliesWithCourierAndReady(this), ')')
+    caption: 'משפחות מחכות'
+    
   });
   allFamilies = new NumberColumn({
     dbReadOnly: true,
-    caption: 'משפחות',
-    dbName: buildSql('(select count(*) ', fromFamilies(this), ')')
+    caption: 'משפחות'
+    
   });
   deliveriesWithProblems = new NumberColumn({
     dbReadOnly: true,
-    caption: 'משפחות עם בעיות',
-    dbName: buildSql('(select count(*) ', buildSql(fromFamilies(this), ' and ', f.deliverStatus, ' in (', [
-      DeliveryStatus.FailedBadAddress.id,
-      DeliveryStatus.FailedNotHome.id,
-      DeliveryStatus.FailedOther.id
-    ], ')'), ')')
+    caption: 'משפחות עם בעיות'
+    
   });
   firstDeliveryInProgressDate = new DateTimeColumn({
-    dbReadOnly: true,
-    dbName: buildSql('(select min(', f.courierAssingTime, ') ', fromFamiliesWithCourierAndReady(this), ')')
-  })
-    ;
+    dbReadOnly: true
+    
+  });
   constructor() {
-    super(() => new HelpersAndStats(), "helpersAndStats", evilStatics.dataSource);
+    super(new HelperId(), () => new HelpersAndStats(), evilStatics.dataSource, {
+      name: "helpersAndStats",
+      dbName: buildSql('(select ', [
+        h.id,
+        h.name,
+        h.phone,
+        h.smsDate,
+        h.reminderSmsDate,
+        buildSql('(select count(*) ', fromFamiliesWithCourierAndReady(), ') deliveriesInProgress'),
+        buildSql('(select count(*) ', fromFamilies(), ') allFamilies'),
+        buildSql('(select count(*) ', buildSql(fromFamilies(), ' and ', f.deliverStatus, ' in (', [
+          DeliveryStatus.FailedBadAddress.id,
+          DeliveryStatus.FailedNotHome.id,
+          DeliveryStatus.FailedOther.id
+        ], ')'), ') deliveriesWithProblems'),
+        buildSql('(select min(', f.courierAssingTime, ') ', fromFamiliesWithCourierAndReady(), ') firstDeliveryInProgressDate')
+
+      ], ' from ', h, ') x')
+    });
     this.initColumns();
   }
 }

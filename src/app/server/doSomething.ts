@@ -1,4 +1,4 @@
-import { Families, DeliveryStatus } from "../models";
+import { Families, DeliveryStatus, HelpersAndStats } from "../models";
 import { readFileSync, readFile } from "fs";
 import { ColumnHashSet, DateColumn } from "radweb";
 
@@ -14,14 +14,8 @@ serverInit();
 export async function DoIt() {
     try {
 
-        let f = new Families();
-        let rows = await f.source.find({
-            where: f.courier.isEqualTo('907b247b-dcdb-4e0a-8c54-e9a19cc95eb3').and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id))
-        })
-        await AddBoxAction.optimizeRoute(rows);
-
-        console.log('123');
-        //        new SendSmsUtils().sendSms('0507330590', 'test2');
+       let hs = new HelpersAndStats();
+       let cols = hs.__iterateColumns();
     }
     catch (err) {
         console.log(err);
