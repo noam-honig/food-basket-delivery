@@ -7,151 +7,23 @@ import { GetGeoInformation, GeocodeInformation } from './shared/googleApiHelpers
 import { myAuthInfo } from './auth/my-auth-info';
 import { DataColumnSettings } from 'radweb/utils/dataInterfaces1';
 import { SelectServiceInterface } from './select-popup/select-service-interface';
+import { Helpers, HelperId } from './helpers/helpers';
+import { IdEntity, changeDate, Id, HasAsyncGetTheValue, DateTimeColumn } from './model-shared/types';
 import { SendSmsAction } from './asign-family/send-sms-action';
 
 
 
-class IdEntity<idType extends Id> extends radweb.Entity<string>
-{
-  id: idType;
-  constructor(id: idType, factory: () => IdEntity<idType>, source: DataProviderFactory, options?: EntityOptions | string) {
-    super(factory, source, options);
-    this.id = id;
-    this.onSavingRow = () => {
-      if (this.isNew() && !this.id.value && !this.disableNewId)
-        this.id.setToNewId();
-    }
-  }
-  private disableNewId = false;
-  setEmptyIdForNewRow() {
-    this.id.value = '';
-    this.disableNewId = true;
-  }
-}
 
 
 
-class Id extends radweb.StringColumn {
-  setToNewId() {
-    this.value = uuid();
-  }
-}
-class DateTimeColumn extends radweb.DateTimeColumn {
-  constructor(settingsOrCaption?: DataColumnSettings<string, DateTimeColumn> | string) {
-    super(settingsOrCaption);
-  }
-  relativeDateName(d?: Date, now?: Date) {
-    if (!d)
-      d = this.dateValue;
-    if (!d)
-      return '';
-    if (!now)
-      now = new Date();
-    let sameDay = (x: Date, y: Date) => {
-      return x.getFullYear() == y.getFullYear() && x.getMonth() == y.getMonth() && x.getDate() == y.getDate()
-    }
-    let diffInMinues = Math.ceil((now.valueOf() - d.valueOf()) / 60000);
-    if (diffInMinues <= 1)
-      return 'לפני דקה';
-    if (diffInMinues < 60) {
 
-      return 'לפני ' + diffInMinues + ' דקות';
-    }
-    if (diffInMinues < 60 * 10 || sameDay(d, now)) {
-      let hours = Math.floor(diffInMinues / 60);
-      let min = diffInMinues % 60;
-      if (min > 50) {
-        hours += 1;
-        min = 0;
-      }
-      let r;
-      switch (hours) {
-        case 1:
-          r = 'שעה';
-          break
-        case 2:
-          r = "שעתיים";
-          break;
-        default:
-          r = hours + ' שעות';
-      }
-
-      if (min > 35)
-        r += ' ושלושת רבעי';
-      else if (min > 22) {
-        r += ' וחצי';
-      }
-      else if (min > 7) {
-        r += ' ורבע ';
-      }
-      return 'לפני ' + r;
-
-    }
-    let r = ''
-    if (sameDay(d, new Date(now.valueOf() - 86400 * 1000))) {
-      r = 'אתמול';
-    }
-    else if (sameDay(d, new Date(now.valueOf() - 86400 * 1000 * 2))) {
-      r = 'שלשום';
-    }
-    else {
-      r = 'ב' + d.toLocaleDateString();
-    }
-    let t = d.getMinutes().toString();
-    if (t.length == 1)
-      t = '0' + t;
-
-    return r += ' ב' + d.getHours() + ':' + t;
-  }
-
-}
-export class changeDate extends DateTimeColumn {
-  constructor(caption: string) {
-    super({
-      caption: caption,
-      readonly: true
-    });
-  }
-
-}
 
 
 
 class ItemId extends Id {
 
 }
-export interface HasAsyncGetTheValue {
-  getTheValue(): Promise<string>;
-}
-export class HelperId extends Id implements HasAsyncGetTheValue {
 
-  getColumn(dialog: SelectServiceInterface): ColumnSetting<Families> {
-    return {
-      column: this,
-      getValue: f => f.courier.getValue(),
-      hideDataOnInput: true,
-      click: f => dialog.selectHelper(s => f.__getColumn(this).value = s.id.value),
-      readonly: this.readonly,
-      width: '200'
-
-    }
-  }
-  getValue() {
-    return this.lookup(new Helpers()).name.value;
-  }
-  async getTheName() {
-    let r = await this.lookupAsync(new Helpers(), this);
-    if (r && r.name && r.name.value)
-      return r.name.value;
-    return '';
-  }
-  async getTheValue() {
-    let r = await this.lookupAsync(new Helpers(), this);
-    if (r && r.name && r.name.value && r.phone)
-      return r.name.value + ' ' + r.phone.value;
-    return '';
-  }
-}
 class HelperIdReadonly extends HelperId {
   constructor(caption: string) {
     super({
@@ -372,58 +244,7 @@ export class ItemsPerHelper extends radweb.Entity<string>{
     this.initColumns(this.id);
   }
 }
-export class Helpers extends IdEntity<HelperId>{
-  public static emptyPassword = 'password';
-  name = new radweb.StringColumn({
-    caption: "שם",
-    onValidate: v => {
-      if (!v.value || v.value.length < 3)
-        this.name.error = 'השם קצר מידי';
-    }
-  });
-  phone = new radweb.StringColumn({ caption: "טלפון", inputType: 'tel' });
-  realStoredPassword = new radweb.StringColumn({ dbName: 'password' });
-  password = new radweb.StringColumn({ caption: 'סיסמה', inputType: 'password', virtualData: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
 
-  createDate = new changeDate('מועד הוספה');
-  smsDate = new changeDate('מועד משלוח SMS');
-  reminderSmsDate = new changeDate('מועד משלוח תזכורת SMS');
-  isAdmin = new BoolColumn('מנהלת');
-  shortUrlKey = new radweb.StringColumn();
-
-  constructor(factory?: () => Helpers, name?: string, source?: DataProviderFactory) {
-
-    super(new HelperId(), factory ? factory : () => new Helpers(), source ? source : evilStatics.openedDataApi, {
-      name: name ? name : "Helpers",
-      dbName: "Helpers"
-
-    });
-    this.initColumns();
-    let x = this.onSavingRow;
-    this.onSavingRow = () => {
-      if (this.isNew())
-        this.createDate.dateValue = new Date();
-      this.veryUrlKeyAndReturnTrueIfSaveRequired();
-      x();
-    };
-  }
-  veryUrlKeyAndReturnTrueIfSaveRequired() {
-    if (!this.shortUrlKey.value) {
-      this.shortUrlKey.value = this.makeid();
-      return true;
-    }
-    return false;
-  }
-  makeid() {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for (var i = 0; i < 5; i++)
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-    return text;
-  }
-}
 
 
 export class Families extends IdEntity<FamilyId>{
@@ -739,21 +560,21 @@ export class HelpersAndStats extends IdEntity<HelperId> {
   deliveriesInProgress = new NumberColumn({
     dbReadOnly: true,
     caption: 'משפחות מחכות'
-    
+
   });
   allFamilies = new NumberColumn({
     dbReadOnly: true,
     caption: 'משפחות'
-    
+
   });
   deliveriesWithProblems = new NumberColumn({
     dbReadOnly: true,
     caption: 'משפחות עם בעיות'
-    
+
   });
   firstDeliveryInProgressDate = new DateTimeColumn({
     dbReadOnly: true
-    
+
   });
   constructor() {
     super(new HelperId(), () => new HelpersAndStats(), evilStatics.dataSource, {

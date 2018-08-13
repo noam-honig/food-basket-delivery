@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { GridSettings, Entity, IDataSettings } from 'radweb';
-import { Helpers } from '../models';
+
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({

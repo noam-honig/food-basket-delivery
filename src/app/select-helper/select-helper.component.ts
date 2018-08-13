@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { Helpers } from '../models';
+
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Helpers } from '../helpers/helpers';
 
 @Component({
   selector: 'app-select-helper',

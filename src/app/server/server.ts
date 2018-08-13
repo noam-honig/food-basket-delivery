@@ -10,7 +10,7 @@ import { LoginAction } from '../auth/loginAction';
 import { myAuthInfo } from '../auth/my-auth-info';
 import { evilStatics } from '../auth/evil-statics';
 import { ResetPasswordAction } from '../helpers/reset-password';
-import { helpersDataApi } from './helpers-dataapi';
+
 
 import { AddBoxAction } from '../asign-family/add-box-action';
 import { SendSmsAction } from '../asign-family/send-sms-action';
@@ -24,6 +24,7 @@ import { SetDeliveryActiveAction } from '../delivery-events/set-delivery-active-
 import { CopyFamiliesToActiveEventAction } from '../delivery-events/copy-families-to-active-event-action';
 import { StatsAction } from '../families/stats-action';
 import { DeliveryStatsAction } from '../delivery-follow-up/delivery-stats';
+import {  Helpers } from '../helpers/helpers';
 
 
 serverInit().then(() => {
@@ -70,7 +71,7 @@ serverInit().then(() => {
 
 
 
-    openedData.add(r => helpersDataApi(r));
+    openedData.add(r => new Helpers().helpersDataApi(r));
     dataApi.add(r => new DataApi(new models.NewsUpdate()));
 
     [

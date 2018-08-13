@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GridSettings, UrlBuilder } from 'radweb';
-import { Families, DeliveryStatus, Helpers, BasketType } from '../models';
+import { Families, DeliveryStatus,  BasketType } from '../models';
+import { Helpers } from '../helpers/helpers';
 import { AuthService } from '../auth/auth-service';
 import { SelectService } from '../select-popup/select-service';
 import { MapComponent } from '../map/map.component';

@@ -1,7 +1,7 @@
 import { ServerAction } from "../auth/server-action";
 import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 import { myAuthInfo } from "../auth/my-auth-info";
-import { Families, DeliveryStatus, Helpers, DeliveryEvents, FamilyDeliveryEvents, CallStatus } from "../models";
+import { Families, DeliveryStatus,  DeliveryEvents, FamilyDeliveryEvents, CallStatus } from "../models";
 import * as fetch from 'node-fetch';
 import { foreachSync } from "../shared/utils";
 import { evilStatics } from "../auth/evil-statics";
@@ -34,7 +34,7 @@ export class CopyFamiliesToActiveEventAction extends ServerAction<InArgs, OutArg
                 async de => {
                     let f = new Families();
                     await f.source.find({ where: f.id.isEqualTo(de.family) }).then(async f => {
-                        f[0].deliverStatus.value = de.deliverStatus.value;
+                        f[0].deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
                         f[0].basketType.value = de.basketType.value;
                         await f[0].doSave(req.authInfo);
                     });

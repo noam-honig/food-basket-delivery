@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { Helpers, EventHelpers, ItemsPerHelper } from '../models';
+import {  EventHelpers, ItemsPerHelper } from '../models';
+import { Helpers } from '../helpers/helpers';
 import { MatDialog } from '@angular/material';
 
 import { SelectService } from '../select-popup/select-service';

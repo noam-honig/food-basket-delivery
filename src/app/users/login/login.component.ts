@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { foreachSync, foreachEntityItem } from '../../shared/utils';
-import { Helpers, ApplicationSettings } from '../../models';
+import {  ApplicationSettings } from '../../models';
 import { SelectService } from '../../select-popup/select-service';
 import { AuthService } from '../../auth/auth-service';
 import { Router } from '@angular/router';

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { StringColumn, GridSettings } from 'radweb';
-import { Helpers } from '../../models';
+import { Helpers } from '../../helpers/helpers';
 import { SelectService } from '../../select-popup/select-service';
 import { AuthService } from '../../auth/auth-service';
 import { foreachEntityItem } from '../../shared/utils';

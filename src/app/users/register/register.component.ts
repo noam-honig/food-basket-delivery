@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Helpers } from '../../models';
+import { Helpers } from '../../helpers/helpers';
 import { DataAreaSettings, StringColumn, GridSettings } from 'radweb';
 import { SelectService } from '../../select-popup/select-service';
 import { AuthService } from '../../auth/auth-service';

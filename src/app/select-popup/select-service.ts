@@ -6,7 +6,7 @@ import { YesNoQuestionComponentData, YesNoQuestionComponent } from "./yes-no-que
 import { InputAreaComponentData, InputAreaComponent } from "./input-area/input-area.component";
 import { UpdateCommentComponent, UpdateCommentComponentData } from "../update-comment/update-comment.component";
 import { SelectHelperInfo, SelectHelperComponent } from "../select-helper/select-helper.component";
-import { Helpers } from "../models";
+import { Helpers } from '../helpers/helpers';
 import { SelectServiceInterface } from "./select-service-interface";
 import { SelectFamilyInfo, SelectFamilyComponent } from "../select-family/select-family.component";
 import { BusyService } from "./busy-service";

@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Authentication } from "./authentication";
 import { myAuthInfo } from "./my-auth-info";
 import { foreachEntityItem } from "../shared/utils";
-import { Helpers } from "../models";
+
 import { SelectService } from "../select-popup/select-service";
 import { Router } from "@angular/router";
 import { evilStatics } from "./evil-statics";

@@ -2,7 +2,7 @@ import { ServerAction } from "./server-action";
 import { myAuthInfo } from "./my-auth-info";
 import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 import { foreachEntityItem } from "../shared/utils";
-import { Helpers } from "../models";
+import { Helpers } from '../helpers/helpers';
 import * as passwordHash from 'password-hash';
 import * as jwt from 'jsonwebtoken';
 import { LoginResponse } from "./auth-info";

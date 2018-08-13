@@ -1,4 +1,5 @@
 import { Pool } from 'pg';
+import { Helpers } from '../helpers/helpers';
 import { config } from 'dotenv';
 import { PostgresDataProvider, PostgrestSchemaBuilder, ActualSQLServerDataProvider } from 'radweb/server';
 
@@ -29,7 +30,7 @@ export async function serverInit() {
     foreachSync([
         new models.Events(),
         new models.EventHelpers(),
-        new models.Helpers(),
+        new Helpers(),
         new models.Items(),
         new models.ItemsPerHelper(),
         new models.Families(),
@@ -42,7 +43,7 @@ export async function serverInit() {
     ], async x => await sb.CreateIfNotExist(x));
 
     await sb.verifyAllColumns(new models.Families());
-    await sb.verifyAllColumns(new models.Helpers());
+    await sb.verifyAllColumns(new Helpers());
     await sb.verifyAllColumns(new models.DeliveryEvents());
     await sb.verifyAllColumns(new models.FamilyDeliveryEvents());
     await sb.verifyAllColumns(new models.ApplicationSettings());

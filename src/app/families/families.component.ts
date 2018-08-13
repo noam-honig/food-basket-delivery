@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, Sanitizer } from '@angular/core';
 import { GridSettings, ColumnSetting, ColumnHashSet, Filter, AndFilter } from 'radweb';
-import { Families, Helpers, CallStatus, BasketType, FamilySources, DeliveryStatus, HasAsyncGetTheValue, Language, YesNo, FamilyDeliveryEventsView } from '../models';
+import { Families,  CallStatus, BasketType, FamilySources, DeliveryStatus,  Language, YesNo, FamilyDeliveryEventsView } from '../models';
 import { SelectService } from '../select-popup/select-service';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 
@@ -14,6 +14,8 @@ import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics } from './stats-action';
 import { MatTabGroup } from '../../../node_modules/@angular/material';
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt } from '../custom-reuse-controller-router-strategy';
+import { HasAsyncGetTheValue } from '../model-shared/types';
+import { Helpers } from '../helpers/helpers';
 
 @Component({
   selector: 'app-families',
