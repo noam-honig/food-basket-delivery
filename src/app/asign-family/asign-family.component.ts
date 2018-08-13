@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridSettings, ColumnHashSet } from 'radweb';
-import { Families, Language,  DeliveryStatus, YesNo } from '../families/families';
+import { Families, DeliveryStatus } from '../families/families';
+import { YesNo } from "../families/YesNo";
+import { Language } from "../families/Language";
 import { BasketType } from "../families/BasketType";
 import { Helpers } from '../helpers/helpers';
 import { AuthService } from '../auth/auth-service';

@@ -1,3 +1,7 @@
+import { YesNo, YesNoColumn } from "./YesNo";
+
+import { Language, LanguageColumn } from "./Language";
+
 import { FamilySources, FamilySourceId } from "./FamilySources";
 
 import { BasketId } from "./BasketType";
@@ -163,55 +167,9 @@ export class Families extends IdEntity<FamilyId>{
   }
   export class FamilyId extends Id { }
 
-  export class LanguageColumn extends ClosedListColumn<Language> {
-    constructor() {
-      super(Language, "שפה ראשית");
-    }
+
   
-  
-  }
-  
-  export class Language {
-    static Hebrew = new Language(0, 'עברית');
-    static Russian = new Language(10, 'רוסית');
-    static Amharit = new Language(20, 'אמהרית');
-    constructor(public id: number,
-      private caption: string) {
-  
-    }
-    toString() {
-      return this.caption;
-    }
-  
-  }
-  
-  
-  export class YesNoColumn extends ClosedListColumn<YesNo>{
-    constructor(caption: string) {
-      super(YesNo, caption);
-    }
-    getColumn() {
-      return {
-        column: this,
-        dropDown: {
-          items: this.getOptions()
-        },
-        width: '100'
-      };
-    }
-  }
-  export class YesNo {
-    static Yes = new YesNo(1, 'כן');
-    static No = new YesNo(0, 'לא');
-    constructor(public id: number,
-      private caption: string) {
-  
-    }
-    toString() {
-      return this.caption;
-    }
-  }
-  
+
   export class CallStatusColumn extends ClosedListColumn<CallStatus> {
     constructor(settingsOrCaption?: DataColumnSettings<number, NumberColumn> | string) {
       super(CallStatus, settingsOrCaption);

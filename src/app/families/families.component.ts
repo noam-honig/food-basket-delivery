@@ -1,7 +1,9 @@
 import { Component, OnInit, ViewChild, Sanitizer } from '@angular/core';
 import { GridSettings, ColumnSetting, ColumnHashSet, Filter, AndFilter } from 'radweb';
 import { FamilyDeliveryEventsView } from '../models';
-import { Families,  CallStatus, DeliveryStatus,  Language, YesNo} from '../families/families';
+import { Families,  CallStatus, DeliveryStatus} from '../families/families';
+import { YesNo } from "../families/YesNo";
+import { Language } from "../families/Language";
 import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
 import { SelectService } from '../select-popup/select-service';

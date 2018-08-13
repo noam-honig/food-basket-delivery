@@ -1,7 +1,8 @@
 import { ServerAction } from "../auth/server-action";
 import { DataApiRequest, FilterBase } from "radweb/utils/dataInterfaces1";
 import { myAuthInfo } from "../auth/my-auth-info";
-import { Families, DeliveryStatus, CallStatus, YesNo } from "../families/families";
+import { Families, DeliveryStatus, CallStatus } from "../families/families";
+import { YesNo } from "../families/YesNo";
 import * as fetch from 'node-fetch';
 import { foreachSync } from "../shared/utils";
 import { evilStatics } from "../auth/evil-statics";
