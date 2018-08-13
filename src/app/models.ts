@@ -1,3 +1,5 @@
+import { EventStatus, EventStatusColumn } from './delivery-events/EventStatus';
+
 import * as radweb from 'radweb';
 import * as uuid from 'uuid';
 import { Families, FamilyId } from './families/families';
@@ -14,6 +16,7 @@ import { Helpers, HelperId, HelperIdReadonly } from './helpers/helpers';
 import { IdEntity, changeDate, Id, HasAsyncGetTheValue, DateTimeColumn, buildSql } from './model-shared/types';
 import { SendSmsAction } from './asign-family/send-sms-action';
 import { CallStatusColumn } from './families/CallStatus';
+import { DeliveryEventId, DeliveryEvents } from './delivery-events/delivery-events';
 
 
 
@@ -31,44 +34,10 @@ class ItemId extends Id {
 
 
 class EventId extends Id { }
-class DeliveryEventId extends Id { }
+
 class FamilyDelveryEventId extends Id { }
 
 class EventHelperId extends Id { }
-
-export class EventStatusColumn extends radweb.ClosedListColumn<EventStatus> {
-  constructor(settingsOrCaption?: DataColumnSettings<number, NumberColumn> | string) {
-    super(EventStatus, settingsOrCaption);
-  }
-  getColumn() {
-    return {
-      column: this,
-      dropDown: {
-        items: this.getOptions()
-      },
-      width: '150'
-    };
-  }
-
-}
-
-export class EventStatus {
-  static Prepare: EventStatus = new EventStatus(0, 'בהכנה');
-  static Active: EventStatus = new EventStatus(10, 'פעיל');
-  static Done: EventStatus = new EventStatus(20, 'הסתיים');
-  constructor(public id: number,
-    private caption: string) {
-
-  }
-  toString() {
-    return this.caption;
-  }
-}
-
-
-
-
-
 
 
 
@@ -117,33 +86,7 @@ export class ItemsPerHelper extends radweb.Entity<string>{
   }
 }
 
-export class DeliveryEvents extends IdEntity<DeliveryEventId>{
-  name = new StringColumn('שם');
-  deliveryDate = new DateColumn('תאריך החלוקה');
-  isActiveEvent = new BoolColumn();
-  createDate = new changeDate('מועד הוספה');
-  eventStatus = new EventStatusColumn('סטטוס');
-  createUser = new HelperIdReadonly('משתמש מוסיף');
-  families = new NumberColumn({
-    dbReadOnly: true,
-    caption: 'משפחות',
-    dbName: buildSql('case when ', 'isActiveEvent', ' then ', '(select count(*) from ', f, ' where ', f.deliverStatus, '<>', DeliveryStatus.NotInEvent.id,
-      ') else (select count(*) from ', fde, ' where ', fde.deliveryEvent, '=', this, '.id', ' and ', fde.deliverStatus, '<>', DeliveryStatus.NotInEvent.id, ') end'),
-    readonly: true
-  });
 
-  async doSaveStuff(authInfo: myAuthInfo) {
-    console.log(this.deliveryDate.value, this.deliveryDate.dateValue, this.deliveryDate.displayValue);
-    if (this.isNew()) {
-      this.createDate.dateValue = new Date();
-      this.createUser.value = authInfo.helperId;
-    }
-  }
-  constructor(source?: DataProviderFactory) {
-    super(new DeliveryEventId(), () => new DeliveryEvents(source), source ? source : evilStatics.dataSource, 'DeliveryEvents');
-    this.initColumns();
-  }
-}
 let f = new Families();
 export class FamilyDeliveryEvents extends IdEntity<FamilyDelveryEventId>{
   deliveryEvent = new DeliveryEventId();

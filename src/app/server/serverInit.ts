@@ -11,6 +11,7 @@ import { Families } from '../families/families';
 import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { DeliveryEvents } from '../delivery-events/delivery-events';
 
 export async function serverInit() {
     //ActualSQLServerDataProvider.LogToConsole = true;
@@ -41,7 +42,7 @@ export async function serverInit() {
         new Families(),
         new BasketType(),
         new FamilySources(),
-        new models.DeliveryEvents(),
+        new DeliveryEvents(),
         new models.FamilyDeliveryEvents(),
         new ApplicationSettings(),
         new ApplicationImages.ApplicationImages()
@@ -49,7 +50,7 @@ export async function serverInit() {
 
     await sb.verifyAllColumns(new Families());
     await sb.verifyAllColumns(new Helpers());
-    await sb.verifyAllColumns(new models.DeliveryEvents());
+    await sb.verifyAllColumns(new DeliveryEvents());
     await sb.verifyAllColumns(new models.FamilyDeliveryEvents());
     await sb.verifyAllColumns(new ApplicationSettings());
     await sb.verifyAllColumns(new ApplicationImages.ApplicationImages());
@@ -69,7 +70,7 @@ export async function serverInit() {
         ff.city.value = ff.getGeocodeInformation().getCity();
         await ff.save();
     });
-    let de = new models.DeliveryEvents();
+    let de = new DeliveryEvents();
     if (await de.source.count() == 0) {
         de.name.value = 'אירוע החלוקה הראשון';
         de.isActiveEvent.value = true;

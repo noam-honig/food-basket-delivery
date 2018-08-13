@@ -31,6 +31,7 @@ import { NewsUpdate } from "../news/NewsUpdate";
 import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { DeliveryEvents } from '../delivery-events/delivery-events';
 
 
 serverInit().then(() => {
@@ -139,7 +140,7 @@ serverInit().then(() => {
     adminApi.add(r => {
         return new DataApi(new models.FamilyDeliveryEventsView(), {});
     });
-    adminApi.add(r => new DataApi(new models.DeliveryEvents(), {
+    adminApi.add(r => new DataApi(new DeliveryEvents(), {
         readonlyColumns: de => [de.isActiveEvent],
         onSavingRow: async de => await de.doSaveStuff(r.authInfo),
         allowUpdate: true,

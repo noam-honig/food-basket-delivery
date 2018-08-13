@@ -1,7 +1,7 @@
 import { ServerAction } from "../auth/server-action";
 import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 import { myAuthInfo } from "../auth/my-auth-info";
-import { DeliveryEvents, FamilyDeliveryEvents } from "../models";
+import {  FamilyDeliveryEvents } from "../models";
 import * as fetch from 'node-fetch';
 import { foreachSync } from "../shared/utils";
 import { evilStatics } from "../auth/evil-statics";
@@ -10,6 +10,7 @@ import { Column } from "radweb";
 import { Families } from "../families/families";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { CallStatus } from "../families/CallStatus";
+import { DeliveryEvents } from "./delivery-events";
 
 
 export interface InArgs {
