@@ -1,5 +1,5 @@
 import { Entity, StringColumn, NumberColumn } from 'radweb';
-import { evilStatics } from './auth/evil-statics';
+import { evilStatics } from '../auth/evil-statics';
 
 export class ApplicationImages extends Entity<number> {
   id = new NumberColumn();

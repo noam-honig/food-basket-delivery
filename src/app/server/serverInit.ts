@@ -5,11 +5,12 @@ import { PostgresDataProvider, PostgrestSchemaBuilder, ActualSQLServerDataProvid
 
 import { evilStatics } from '../auth/evil-statics';
 import * as models from '../models';
-import * as ApplicationImages from "../ApplicationImages";
+import * as ApplicationImages from "../manage/ApplicationImages";
 import { foreachSync } from '../shared/utils';
 import { Families } from '../families/families';
 import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 export async function serverInit() {
     //ActualSQLServerDataProvider.LogToConsole = true;
@@ -42,7 +43,7 @@ export async function serverInit() {
         new FamilySources(),
         new models.DeliveryEvents(),
         new models.FamilyDeliveryEvents(),
-        new models.ApplicationSettings(),
+        new ApplicationSettings(),
         new ApplicationImages.ApplicationImages()
     ], async x => await sb.CreateIfNotExist(x));
 
@@ -50,7 +51,7 @@ export async function serverInit() {
     await sb.verifyAllColumns(new Helpers());
     await sb.verifyAllColumns(new models.DeliveryEvents());
     await sb.verifyAllColumns(new models.FamilyDeliveryEvents());
-    await sb.verifyAllColumns(new models.ApplicationSettings());
+    await sb.verifyAllColumns(new ApplicationSettings());
     await sb.verifyAllColumns(new ApplicationImages.ApplicationImages());
     let h = new BasketType();
     await h.source.find({ where: h.id.isEqualTo('') }).then(x => {
@@ -76,7 +77,7 @@ export async function serverInit() {
         await de.save();
     }
 
-    let settings = new models.ApplicationSettings();
+    let settings = new ApplicationSettings();
     if ((await settings.source.count()) == 0) {
         settings.id.value = 1;
         settings.organisationName.value = 'שם הארגון שלי';

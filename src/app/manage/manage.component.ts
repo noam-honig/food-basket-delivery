@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {  ApplicationSettings } from '../models';
-import { ApplicationImages } from "../ApplicationImages";
+import { ApplicationImages } from "./ApplicationImages";
 import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
 import { GridSettings } from 'radweb';

@@ -1,5 +1,5 @@
 import * as models from '../models';
-import * as ApplicationImages from "../ApplicationImages";
+import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
 import * as secure from 'express-force-https';
 import * as compression from 'compression';
@@ -30,6 +30,7 @@ import { Families } from '../families/families';
 import { NewsUpdate } from "../news/NewsUpdate";
 import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 
 serverInit().then(() => {
@@ -125,7 +126,7 @@ serverInit().then(() => {
         });
     });
     openedData.add(r => {
-        return new DataApi(new models.ApplicationSettings(), {
+        return new DataApi(new ApplicationSettings(), {
             allowUpdate: r.authInfo&&r.authInfo.admin,
             onSavingRow: async as => await as.doSaveStuff()
         });
@@ -207,7 +208,7 @@ serverInit().then(() => {
     async function sendIndex(res: express.Response) {
         const index = 'dist/index.html';
         if (fs.existsSync(index)) {
-            let x = (await models.ApplicationSettings.getAsync()).organisationName.value;
+            let x = (await ApplicationSettings.getAsync()).organisationName.value;
 
             res.send(fs.readFileSync(index).toString().replace('!TITLE!', x));
         }
