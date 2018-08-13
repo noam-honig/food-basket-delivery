@@ -4,7 +4,8 @@ import { AuthService } from './auth/auth-service';
 import { LoggedInGuard, dummyRoute } from './auth/auth-guard';
 import { MatSidenav, MAT_AUTOCOMPLETE_VALUE_ACCESSOR } from '@angular/material';
 import { SelectService } from './select-popup/select-service';
-import { ApplicationSettings } from './models';
+import { ApplicationSettings } from './manage/ApplicationSettings';
+
 
 
 @Component({

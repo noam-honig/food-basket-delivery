@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { HelpersAndStats } from '../models';
+import { HelpersAndStats } from "./HelpersAndStats";
 import { GridSettings, DateTimeColumn, AndFilter } from 'radweb';
 import { UserFamiliesList } from '../my-families/user-families';
 import * as chart from 'chart.js';

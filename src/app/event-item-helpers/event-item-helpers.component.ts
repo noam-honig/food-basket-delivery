@@ -1,7 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GridSettings } from 'radweb';
 
-import { ItemsPerHelper, EventHelpers } from '../models';
+
+import { ItemsPerHelper } from "./ItemsPerHelper";
+import { EventHelpers } from '../events/Events';
 
 @Component({
   selector: 'app-event-item-helpers',

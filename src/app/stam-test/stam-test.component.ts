@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GridSettings } from 'radweb';
-import {  FamilyDeliveryEventsView } from '../models';
+import { FamilyDeliveryEventsView } from "../families/FamilyDeliveryEventsView";
 
 @Component({
   selector: 'app-stam-test',

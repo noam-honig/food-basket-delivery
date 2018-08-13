@@ -1,10 +1,12 @@
-import { IdEntity, Id, changeDate, buildSql } from "../model-shared/types";
-import { StringColumn, DateColumn, BoolColumn, NumberColumn, DataProviderFactory } from "../../../node_modules/radweb";
+import { DeliveryEventId } from "./DeliveryEventId";
+
+import { IdEntity, changeDate, buildSql } from "../model-shared/types";
+import { StringColumn, DateColumn, BoolColumn, NumberColumn, DataProviderFactory } from "radweb";
 import { EventStatusColumn } from "./EventStatus";
 import { HelperIdReadonly } from "../helpers/helpers";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { evilStatics } from "../auth/evil-statics";
-import { FamilyDeliveryEvents } from "../models";
+import { FamilyDeliveryEvents } from "./FamilyDeliveryEvents";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Families } from "../families/families";
 
@@ -38,4 +40,3 @@ export class DeliveryEvents extends IdEntity<DeliveryEventId>{
       this.initColumns();
     }
   }
-  export class DeliveryEventId extends Id { }

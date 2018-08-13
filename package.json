@@ -21,6 +21,7 @@
     "e2e": "ng e2e",
     "ngrok": "ngrok http 3000 --host-header localhost",
     "server:build": "tsc -p tsconfig.server.json",
+    "typeScript:build": "tsc -p tsconfig.json",
     "server:execute": "node dist-server/src/app/server/server.js",
     "preserver:debug": "npm run server:build",
     "server:debug": "node --inspect --debug-brk dist-server/src/app/server/server.js",

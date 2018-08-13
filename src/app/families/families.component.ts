@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridSettings, ColumnSetting, ColumnHashSet, Filter, AndFilter } from 'radweb';
-import { FamilyDeliveryEventsView } from '../models';
+import { FamilyDeliveryEventsView } from "./FamilyDeliveryEventsView";
 import { Families} from './families';
 import { DeliveryStatus } from "./DeliveryStatus";
 import { CallStatus } from "./CallStatus";
@@ -12,7 +12,7 @@ import { SelectService } from '../select-popup/select-service';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 
 import { DomSanitizer } from '@angular/platform-browser';
-import * as XLSX from 'xlsx/types';
+import * as XLSX from 'xlsx';
 import { FilterBase } from 'radweb/utils/dataInterfaces1';
 import { foreachEntityItem, foreachSync } from '../shared/utils';
 import { BusyService } from '../select-popup/busy-service';

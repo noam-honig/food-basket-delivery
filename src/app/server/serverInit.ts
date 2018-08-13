@@ -4,14 +4,19 @@ import { config } from 'dotenv';
 import { PostgresDataProvider, PostgrestSchemaBuilder, ActualSQLServerDataProvider } from 'radweb/server';
 
 import { evilStatics } from '../auth/evil-statics';
-import * as models from '../models';
-import * as ApplicationImages from "../manage/ApplicationImages";
+
+
+
 import { foreachSync } from '../shared/utils';
 import { Families } from '../families/families';
 import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DeliveryEvents } from '../delivery-events/delivery-events';
+import { EventHelpers, Events, Items } from '../events/Events';
+import { ItemsPerHelper } from '../event-item-helpers/ItemsPerHelper';
+import { FamilyDeliveryEvents } from '../delivery-events/FamilyDeliveryEvents';
+import { ApplicationImages } from '../manage/ApplicationImages';
 
 export async function serverInit() {
     //ActualSQLServerDataProvider.LogToConsole = true;
@@ -34,26 +39,26 @@ export async function serverInit() {
 
     var sb = new PostgrestSchemaBuilder(pool);
     foreachSync([
-        new models.Events(),
-        new models.EventHelpers(),
+        new Events(),
+        new EventHelpers(),
         new Helpers(),
-        new models.Items(),
-        new models.ItemsPerHelper(),
+        new Items(),
+        new ItemsPerHelper(),
         new Families(),
         new BasketType(),
         new FamilySources(),
         new DeliveryEvents(),
-        new models.FamilyDeliveryEvents(),
+        new FamilyDeliveryEvents(),
         new ApplicationSettings(),
-        new ApplicationImages.ApplicationImages()
+        new ApplicationImages()
     ], async x => await sb.CreateIfNotExist(x));
 
     await sb.verifyAllColumns(new Families());
     await sb.verifyAllColumns(new Helpers());
     await sb.verifyAllColumns(new DeliveryEvents());
-    await sb.verifyAllColumns(new models.FamilyDeliveryEvents());
+    await sb.verifyAllColumns(new FamilyDeliveryEvents());
     await sb.verifyAllColumns(new ApplicationSettings());
-    await sb.verifyAllColumns(new ApplicationImages.ApplicationImages());
+    await sb.verifyAllColumns(new ApplicationImages());
     let h = new BasketType();
     await h.source.find({ where: h.id.isEqualTo('') }).then(x => {
         if (x.length == 0) {
@@ -86,7 +91,7 @@ export async function serverInit() {
         settings.smsText.value = 'שלום !משנע!\n לחלוקת חבילות !ארגון! לחץ על: !אתר! \nתודה !שולח!';
         await settings.save();
     }
-    let images = new ApplicationImages.ApplicationImages();
+    let images = new ApplicationImages();
     if ((await images.source.count()) == 0) {
         images.id.value = 1;
 

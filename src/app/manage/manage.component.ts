@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {  ApplicationSettings } from '../models';
+
 import { ApplicationImages } from "./ApplicationImages";
 import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
@@ -7,6 +7,7 @@ import { GridSettings } from 'radweb';
 import { SelectService } from '../select-popup/select-service';
 import { AuthService } from '../auth/auth-service';
 import { SendSmsAction } from '../asign-family/send-sms-action';
+import { ApplicationSettings } from './ApplicationSettings';
 
 @Component({
   selector: 'app-manage',

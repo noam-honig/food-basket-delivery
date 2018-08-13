@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { Items, Events } from '../models';
+import { Events } from "./Events";
+
 import { EventItemsComponent } from '../event-items/event-items.component';
 import { EventHelpersComponent } from '../event-helpers/event-helpers.component';
 import { SelectService } from '../select-popup/select-service';

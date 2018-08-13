@@ -1,7 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { Items, ItemsPerHelper } from '../models';
+import { ItemsPerHelper } from "../event-item-helpers/ItemsPerHelper";
+
 import { foreachSync } from '../shared/utils';
+import { Items } from '../events/Events';
 
 @Component({
   selector: 'app-event-participant',

@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { MatGridAvatarCssMatStyler } from '@angular/material';
 import { GridSettings } from 'radweb';
-import { DeliveryEvents } from '../models';
+
 import { SetDeliveryActiveAction } from './set-delivery-active-action';
 import { CopyFamiliesToActiveEventAction } from './copy-families-to-active-event-action';
 import { SelectService } from '../select-popup/select-service';
+import { DeliveryEvents } from './delivery-events';
 
 @Component({
   selector: 'app-delivery-events',

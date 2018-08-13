@@ -1,4 +1,6 @@
-import * as models from '../models';
+
+import * as HelpersAndStats from "../delivery-follow-up/HelpersAndStats";
+import * as FamilyDeliveryEventsView from "../families/FamilyDeliveryEventsView";
 import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
 import * as secure from 'express-force-https';
@@ -122,7 +124,7 @@ serverInit().then(() => {
         return new DataApi(new Families(), settings)
     });
     adminApi.add(r => {
-        return new DataApi(new models.HelpersAndStats(), {
+        return new DataApi(new HelpersAndStats.HelpersAndStats(), {
             
         });
     });
@@ -138,7 +140,7 @@ serverInit().then(() => {
         });
     });
     adminApi.add(r => {
-        return new DataApi(new models.FamilyDeliveryEventsView(), {});
+        return new DataApi(new FamilyDeliveryEventsView.FamilyDeliveryEventsView(), {});
     });
     adminApi.add(r => new DataApi(new DeliveryEvents(), {
         readonlyColumns: de => [de.isActiveEvent],
