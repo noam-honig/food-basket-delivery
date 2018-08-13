@@ -6,7 +6,8 @@ import { PostgresDataProvider, PostgrestSchemaBuilder, ActualSQLServerDataProvid
 import { evilStatics } from '../auth/evil-statics';
 import * as models from './../models';
 import { foreachSync } from '../shared/utils';
-import { Families, BasketType, FamilySources } from '../families/families';
+import { Families, FamilySources } from '../families/families';
+import { BasketType } from "../families/BasketType";
 
 export async function serverInit() {
     //ActualSQLServerDataProvider.LogToConsole = true;

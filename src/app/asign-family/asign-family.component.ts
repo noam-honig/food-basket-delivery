@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridSettings, ColumnHashSet } from 'radweb';
-import { Families, Language,  DeliveryStatus, BasketType, YesNo } from '../families/families';
+import { Families, Language,  DeliveryStatus, YesNo } from '../families/families';
+import { BasketType } from "../families/BasketType";
 import { Helpers } from '../helpers/helpers';
 import { AuthService } from '../auth/auth-service';
 import { SelectService } from '../select-popup/select-service';

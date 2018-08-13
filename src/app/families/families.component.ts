@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild, Sanitizer } from '@angular/core';
 import { GridSettings, ColumnSetting, ColumnHashSet, Filter, AndFilter } from 'radweb';
 import { FamilyDeliveryEventsView } from '../models';
-import { Families,  CallStatus, BasketType, FamilySources, DeliveryStatus,  Language, YesNo} from '../families/families';
+import { Families,  CallStatus, FamilySources, DeliveryStatus,  Language, YesNo} from '../families/families';
+import { BasketType } from "../families/BasketType";
 import { SelectService } from '../select-popup/select-service';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 

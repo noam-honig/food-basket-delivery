@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {  ApplicationSettings, ApplicationImages } from '../models';
-import {BasketType, FamilySources} from '../families/families';
+import {FamilySources} from '../families/families';
+import { BasketType } from "../families/BasketType";
 import { GridSettings } from 'radweb';
 import { SelectService } from '../select-popup/select-service';
 import { AuthService } from '../auth/auth-service';

@@ -1,3 +1,5 @@
+import { BasketId } from "./BasketType";
+
 import { IdEntity, Id, changeDate, DateTimeColumn, HasAsyncGetTheValue, buildSql } from "../model-shared/types";
 import { StringColumn, NumberColumn, ClosedListColumn, ColumnSetting, Column, Entity } from "radweb";
 import { DataColumnSettings, DataProviderFactory } from "radweb/utils/dataInterfaces1";
@@ -180,17 +182,6 @@ export class Families extends IdEntity<FamilyId>{
     }
   
   }
-  export class BasketId extends Id implements HasAsyncGetTheValue {
-    get displayValue() {
-      return this.lookup(new BasketType()).name.value;
-    }
-    async getTheValue() {
-      let r = await this.lookupAsync(new BasketType());
-      if (r && r.name && r.name.value)
-        return r.name.value;
-      return '';
-    }
-  }
   class FamilySourceId extends Id implements HasAsyncGetTheValue {
     get displayValue() {
       return this.lookup(new FamilySources()).name.value;
@@ -284,16 +275,6 @@ export class Families extends IdEntity<FamilyId>{
   
   
   }
-  export class BasketType extends IdEntity<BasketId>{
-
-    name = new StringColumn({ caption: "שם" });
-    constructor() {
-  
-      super(new BasketId(), () => new BasketType(), evilStatics.dataSource, "BasketType");
-      this.initColumns();
-    }
-  }
-  
   export class FamilySources extends IdEntity<FamilySourceId>{
   
     name = new StringColumn({ caption: "שם" });
