@@ -1,4 +1,5 @@
 import * as models from '../models';
+import * as ApplicationImages from "../ApplicationImages";
 import * as express from 'express';
 import * as secure from 'express-force-https';
 import * as compression from 'compression';
@@ -130,7 +131,7 @@ serverInit().then(() => {
         });
     });
     adminApi.add(r => {
-        return new DataApi(new models.ApplicationImages(), {
+        return new DataApi(new ApplicationImages.ApplicationImages(), {
             allowUpdate: true,
         });
     });
@@ -168,7 +169,7 @@ serverInit().then(() => {
         res.send(result);
     });
     app.use('/assets/apple-touch-icon.png', async (req, res) => {
-        let imageBase = (await models.ApplicationImages.getAsync()).base64PhoneHomeImage.value;
+        let imageBase = (await ApplicationImages.ApplicationImages.getAsync()).base64PhoneHomeImage.value;
         res.contentType('png');
         if (imageBase) {
             try {
@@ -187,7 +188,7 @@ serverInit().then(() => {
     });
     app.use('/favicon.ico', async (req, res) => {
         res.contentType('ico');
-        let imageBase = (await models.ApplicationImages.getAsync()).base64Icon.value;
+        let imageBase = (await ApplicationImages.ApplicationImages.getAsync()).base64Icon.value;
         if (imageBase) {
             try {
                 res.send(Buffer.from(imageBase, 'base64'));

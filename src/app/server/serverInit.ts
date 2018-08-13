@@ -5,6 +5,7 @@ import { PostgresDataProvider, PostgrestSchemaBuilder, ActualSQLServerDataProvid
 
 import { evilStatics } from '../auth/evil-statics';
 import * as models from '../models';
+import * as ApplicationImages from "../ApplicationImages";
 import { foreachSync } from '../shared/utils';
 import { Families } from '../families/families';
 import { FamilySources } from "../families/FamilySources";
@@ -42,7 +43,7 @@ export async function serverInit() {
         new models.DeliveryEvents(),
         new models.FamilyDeliveryEvents(),
         new models.ApplicationSettings(),
-        new models.ApplicationImages()
+        new ApplicationImages.ApplicationImages()
     ], async x => await sb.CreateIfNotExist(x));
 
     await sb.verifyAllColumns(new Families());
@@ -50,7 +51,7 @@ export async function serverInit() {
     await sb.verifyAllColumns(new models.DeliveryEvents());
     await sb.verifyAllColumns(new models.FamilyDeliveryEvents());
     await sb.verifyAllColumns(new models.ApplicationSettings());
-    await sb.verifyAllColumns(new models.ApplicationImages());
+    await sb.verifyAllColumns(new ApplicationImages.ApplicationImages());
     let h = new BasketType();
     await h.source.find({ where: h.id.isEqualTo('') }).then(x => {
         if (x.length == 0) {
@@ -83,7 +84,7 @@ export async function serverInit() {
         settings.smsText.value = 'שלום !משנע!\n לחלוקת חבילות !ארגון! לחץ על: !אתר! \nתודה !שולח!';
         await settings.save();
     }
-    let images = new models.ApplicationImages();
+    let images = new ApplicationImages.ApplicationImages();
     if ((await images.source.count()) == 0) {
         images.id.value = 1;
 
