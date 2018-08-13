@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, NgZone } from '@angular/core';
-import { Families, DeliveryStatus } from '../models';
+import { Families, DeliveryStatus } from '../families/families';
 import { } from '@types/googlemaps';
 
 @Component({

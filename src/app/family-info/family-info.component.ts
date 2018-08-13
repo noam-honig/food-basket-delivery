@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Families } from '../models';
+import { Families } from '../families/families';
 import { AuthService } from '../auth/auth-service';
 import * as copy from 'copy-to-clipboard';
 import { SelectService } from '../select-popup/select-service';

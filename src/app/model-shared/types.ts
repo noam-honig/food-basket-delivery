@@ -118,3 +118,22 @@ export   class Id extends radweb.StringColumn {
     }
 
 }
+function getItemSql(e: any) {
+  let v = e;
+  if (e instanceof Entity)
+    v = e.__getDbName();
+  if (e instanceof Column)
+    v = e.__getDbName();
+  if (e instanceof Array) {
+    v = e.map(x => getItemSql(x)).join(', ');
+  }
+  return v;
+}
+export function buildSql(...args: any[]): string {
+  let result = '';
+  args.forEach(e => {
+
+    result += getItemSql(e);
+  });
+  return result;
+}

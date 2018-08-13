@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, Sanitizer } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { Families,  CallStatus, BasketType, FamilySources } from '../models';
+import { Families } from '../families/families';
 import { SelectService } from '../select-popup/select-service';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 import { } from '@types/googlemaps';

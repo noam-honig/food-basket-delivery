@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { GridSettings, Filter } from 'radweb';
-import { Families } from '../models';
+import { Families } from '../families/families';
 import { BusyService } from '../select-popup/busy-service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { FilterBase } from 'radweb/utils/dataInterfaces1';

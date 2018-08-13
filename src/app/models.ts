@@ -1,5 +1,6 @@
 import * as radweb from 'radweb';
 import * as uuid from 'uuid';
+import { Families, FamilyId, DeliveryStatus, BasketId, CallStatusColumn, DeliveryStatusColumn, } from './families/families';
 import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn, Column, NumberColumn, ClosedListColumn, ColumnSetting, StringColumn, DateColumn } from 'radweb';
 import { foreachSync, foreachEntityItem } from './shared/utils';
 import { evilStatics } from './auth/evil-statics';
@@ -7,8 +8,8 @@ import { GetGeoInformation, GeocodeInformation } from './shared/googleApiHelpers
 import { myAuthInfo } from './auth/my-auth-info';
 import { DataColumnSettings } from 'radweb/utils/dataInterfaces1';
 import { SelectServiceInterface } from './select-popup/select-service-interface';
-import { Helpers, HelperId } from './helpers/helpers';
-import { IdEntity, changeDate, Id, HasAsyncGetTheValue, DateTimeColumn } from './model-shared/types';
+import { Helpers, HelperId, HelperIdReadonly } from './helpers/helpers';
+import { IdEntity, changeDate, Id, HasAsyncGetTheValue, DateTimeColumn, buildSql } from './model-shared/types';
 import { SendSmsAction } from './asign-family/send-sms-action';
 
 
@@ -24,45 +25,12 @@ class ItemId extends Id {
 
 }
 
-class HelperIdReadonly extends HelperId {
-  constructor(caption: string) {
-    super({
-      caption: caption,
-      readonly: true
-    });
-  }
-  get displayValue() {
-    return this.lookup(new Helpers()).name.value;
-  }
-}
-class BasketId extends Id implements HasAsyncGetTheValue {
-  get displayValue() {
-    return this.lookup(new BasketType()).name.value;
-  }
-  async getTheValue() {
-    let r = await this.lookupAsync(new BasketType());
-    if (r && r.name && r.name.value)
-      return r.name.value;
-    return '';
-  }
-}
-class FamilySourceId extends Id implements HasAsyncGetTheValue {
-  get displayValue() {
-    return this.lookup(new FamilySources()).name.value;
-  }
-  async getTheValue() {
-    let r = await this.lookupAsync(new FamilySources());
-    if (r && r.name && r.name.value)
-      return r.name.value;
-    return '';
-  }
-}
 
 
 class EventId extends Id { }
 class DeliveryEventId extends Id { }
 class FamilyDelveryEventId extends Id { }
-class FamilyId extends Id { }
+
 class EventHelperId extends Id { }
 
 export class EventStatusColumn extends radweb.ClosedListColumn<EventStatus> {
@@ -95,110 +63,11 @@ export class EventStatus {
 }
 
 
-export class CallStatusColumn extends radweb.ClosedListColumn<CallStatus> {
-  constructor(settingsOrCaption?: DataColumnSettings<number, NumberColumn> | string) {
-    super(CallStatus, settingsOrCaption);
-  }
 
 
-}
-
-export class CallStatus {
-  static NotYet: CallStatus = new CallStatus(0, 'עדיין לא');
-  static Success: CallStatus = new CallStatus(10, 'בוצעה שיחה');
-  static Failed: CallStatus = new CallStatus(20, 'לא הצלנו להשיג');
-  constructor(public id: number,
-    private caption: string) {
-
-  }
-  toString() {
-    return this.caption;
-  }
-}
-
-export class LanguageColumn extends ClosedListColumn<Language> {
-  constructor() {
-    super(Language, "שפה ראשית");
-  }
 
 
-}
 
-export class Language {
-  static Hebrew = new Language(0, 'עברית');
-  static Russian = new Language(10, 'רוסית');
-  static Amharit = new Language(20, 'אמהרית');
-  constructor(public id: number,
-    private caption: string) {
-
-  }
-  toString() {
-    return this.caption;
-  }
-
-}
-
-export class YesNoColumn extends ClosedListColumn<YesNo>{
-  constructor(caption: string) {
-    super(YesNo, caption);
-  }
-  getColumn() {
-    return {
-      column: this,
-      dropDown: {
-        items: this.getOptions()
-      },
-      width: '100'
-    };
-  }
-}
-export class YesNo {
-  static Yes = new YesNo(1, 'כן');
-  static No = new YesNo(0, 'לא');
-  constructor(public id: number,
-    private caption: string) {
-
-  }
-  toString() {
-    return this.caption;
-  }
-}
-
-
-export class DeliveryStatusColumn extends radweb.ClosedListColumn<DeliveryStatus> {
-  constructor(settingsOrCaption?: DataColumnSettings<number, NumberColumn> | string) {
-    super(DeliveryStatus, settingsOrCaption);
-  }
-  getColumn() {
-    return {
-      column: this,
-      dropDown: {
-        items: this.getOptions()
-      },
-      width: '150'
-    };
-  }
-
-}
-
-export class DeliveryStatus {
-  static ReadyForDelivery: DeliveryStatus = new DeliveryStatus(0, 'מוכן למשלוח');
-  static Success: DeliveryStatus = new DeliveryStatus(11, 'נמסר בהצלחה');
-  static FailedBadAddress: DeliveryStatus = new DeliveryStatus(21, 'לא נמסר, בעיה בכתובת');
-  static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, 'לא נמסר, לא היו בבית');
-  static FailedOther: DeliveryStatus = new DeliveryStatus(25, 'לא נמסר, אחר');
-  static Frozen: DeliveryStatus = new DeliveryStatus(90, 'מוקפא');
-  static NotInEvent: DeliveryStatus = new DeliveryStatus(95, 'לא באירוע');
-  constructor(public id: number,
-    private name: string) {
-
-  }
-  toString() {
-    return this.name;
-  }
-
-
-}
 
 export class Items extends IdEntity<ItemId>{
 
@@ -245,159 +114,6 @@ export class ItemsPerHelper extends radweb.Entity<string>{
   }
 }
 
-
-
-export class Families extends IdEntity<FamilyId>{
-
-
-  name = new radweb.StringColumn({
-    caption: "שם",
-    onValidate: v => {
-      if (!v.value || v.value.length < 2)
-        this.name.error = 'השם קצר מידי';
-    }
-  });
-  familyMembers = new radweb.NumberColumn('מספר נפשות');
-  language = new LanguageColumn();
-  basketType = new BasketId('סוג סל');
-  familySource = new FamilySourceId('גורם מפנה');
-  special = new YesNoColumn('שיוך מיוחד');
-  internalComment = new radweb.StringColumn('הערה פנימית - לא תופיע למשנע');
-
-
-  address = new radweb.StringColumn("כתובת");
-  floor = new radweb.StringColumn('קומה');
-  appartment = new radweb.StringColumn('דירה');
-  addressComment = new radweb.StringColumn('הערת כתובת');
-  deliveryComments = new radweb.StringColumn('הערות למשנע');
-  addressApiResult = new radweb.StringColumn();
-  city = new radweb.StringColumn({ caption: "עיר כפי שגוגל הבין", readonly: true });
-
-  phone1 = new radweb.StringColumn({ caption: "טלפון 1", inputType: 'tel', dbName: 'phone' });
-  phone1Description = new radweb.StringColumn('תאור טלפון 1');
-  phone2 = new radweb.StringColumn({ caption: "טלפון 2", inputType: 'tel' });
-  phone2Description = new radweb.StringColumn('תאור טלפון 2');
-
-
-
-  callStatus = new CallStatusColumn('סטטוס שיחה');
-  callTime = new changeDate('מועד שיחה');
-  callHelper = new HelperIdReadonly('מי ביצעה את השיחה');
-  callComments = new radweb.StringColumn('הערות שיחה');
-
-
-  courier = new HelperId("משנע");
-  courierAssignUser = new HelperIdReadonly('מי שייכה למשנע');
-  courierAssignUserName = new radweb.StringColumn({
-    caption: 'שם שיוך למשנע',
-    virtualData: async () => (await this.lookupAsync(new Helpers(), this.courierAssignUser)).name.value
-  });
-  courierAssignUserPhone = new radweb.StringColumn({
-    caption: 'שם שיוך למשנע',
-    virtualData: async () => (await this.lookupAsync(new Helpers(), this.courierAssignUser)).phone.value
-  });
-  courierAssingTime = new changeDate('מועד שיוך למשנע');
-
-
-  deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
-  deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
-  deliveryStatusUser = new HelperIdReadonly('מי עדכן את סטטוס המשלוח');
-  routeOrder = new NumberColumn();
-  courierComments = new radweb.StringColumn('הערות מסירה');
-  addressByGoogle() {
-    let r: ColumnSetting<Families> = {
-      caption: 'כתובת כפי שגוגל הבין',
-      getValue: f => f.getGeocodeInformation().getAddress()
-
-
-    }
-    return r;
-  }
-  getDeliveryDescription() {
-    switch (this.deliverStatus.listValue) {
-      case DeliveryStatus.ReadyForDelivery:
-        if (this.courier.value) {
-          return this.courier.getValue() + ' יצא ' + this.courierAssingTime.relativeDateName();
-        }
-        break;
-      case DeliveryStatus.Success:
-      case DeliveryStatus.FailedBadAddress:
-      case DeliveryStatus.FailedNotHome:
-      case DeliveryStatus.FailedOther:
-        let duration = '';
-        if (this.courierAssingTime.value && this.deliveryStatusDate.value)
-          duration = ' תוך ' + Math.round((this.deliveryStatusDate.dateValue.valueOf() - this.courierAssingTime.dateValue.valueOf()) / 60000) + " דק'";
-        return this.deliverStatus.displayValue + ' על ידי ' + this.courier.getValue() + ' ' + this.deliveryStatusDate.relativeDateName() + duration;
-
-    }
-    return this.deliverStatus.displayValue;
-  }
-
-
-  createDate = new changeDate('מועד הוספה');
-  createUser = new HelperIdReadonly('משתמש מוסיף');
-
-  excludeColumns(info: myAuthInfo) {
-    if (info && info.admin)
-      return [];
-    return [f.internalComment, f.callComments, f.callHelper, f.callStatus, f.callTime, f.createDate, f.createUser, f.familySource, f.familyMembers, f.special];
-  }
-
-
-
-  openWaze() {
-    //window.open('https://waze.com/ul?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + '&navigate=yes', '_blank');
-    window.open('waze://?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + '&navigate=yes');
-  }
-  openGoogleMaps() {
-    window.open('https://www.google.com/maps/search/?api=1&query=' + this.address.value, '_blank');
-  }
-
-
-
-  private _lastString: string;
-  private _lastGeo: GeocodeInformation;
-  getGeocodeInformation() {
-    if (this._lastString == this.addressApiResult.value)
-      return this._lastGeo ? this._lastGeo : new GeocodeInformation();
-    this._lastString = this.addressApiResult.value;
-    return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
-  }
-  constructor(source?: DataProviderFactory) {
-    super(new FamilyId(), () => new Families(source), source ? source : evilStatics.dataSource, "Families");
-    this.initColumns();
-  }
-  async doSave(authInfo: myAuthInfo) {
-    await this.doSaveStuff(authInfo);
-    await this.save();
-  }
-  async doSaveStuff(authInfo: myAuthInfo) {
-    if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
-      let geo = await GetGeoInformation(this.address.value);
-      this.addressApiResult.value = geo.saveToString();
-      this.city.value = '';
-      if (geo.ok()) {
-        this.city.value = geo.getCity();
-      }
-    }
-    let logChanged = (col: Column<any>, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) => {
-      if (col.value != col.originalValue) {
-        dateCol.dateValue = new Date();
-        user.value = authInfo.helperId;
-        wasChanged();
-      }
-    }
-    if (this.isNew()) {
-      this.createDate.dateValue = new Date();
-      this.createUser.value = authInfo.helperId;
-    }
-
-    logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(NewsUpdate.GetUpdateMessage(this, 2, await this.courier.getTheName())));//should be after succesfull save
-    logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
-    logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(NewsUpdate.GetUpdateMessage(this, 1, await this.courier.getTheName()))); //should be after succesfull save
-  }
-  static SendMessageToBrowsers = (s: string) => { };
-}
 export class DeliveryEvents extends IdEntity<DeliveryEventId>{
   name = new StringColumn('שם');
   deliveryDate = new DateColumn('תאריך החלוקה');
@@ -512,31 +228,13 @@ export class EventHelpers extends IdEntity<EventHelperId>{
   }
 }
 
-function getItemSql(e: any) {
-  let v = e;
-  if (e instanceof Entity)
-    v = e.__getDbName();
-  if (e instanceof Column)
-    v = e.__getDbName();
-  if (e instanceof Array) {
-    v = e.map(x => getItemSql(x)).join(', ');
-  }
-  return v;
-}
-function buildSql(...args: any[]): string {
-  let result = '';
-  args.forEach(e => {
 
-    result += getItemSql(e);
-  });
-  return result;
-}
 
 
 
 let h = new Helpers();
-let fromFamilies = () => buildSql(' from ', f
-  , ' where ', f.courier, ' = ', h, '.', h.id);
+let fromFamilies = () => buildSql(' from ', f,
+        ' where ', f.courier, ' = ', h, '.', h.id);
 
 let fromFamiliesWithCourierAndStatus = (s: DeliveryStatus) => buildSql(fromFamilies(), ' and ', f.deliverStatus, ' = ', s.id);
 
@@ -599,63 +297,8 @@ export class HelpersAndStats extends IdEntity<HelperId> {
     this.initColumns();
   }
 }
-export class NewsUpdate extends Entity<string>{
-  id = new StringColumn();
-  name = new StringColumn();
-  courier = new HelperId("משנע");
-  courierAssingTime = new changeDate('מועד שיוך למשנע');
-  courierAssignUser = new HelperIdReadonly('מי שייכה למשנע');
-  deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
-  deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
-  deliveryStatusUser = new HelperIdReadonly('מי עדכן את סטטוס המשלוח');
-  updateTime = new changeDate('מועד העדכון');
-  updateUser = new HelperIdReadonly('מי עדכן');
-  updateType = new NumberColumn();
-  constructor() {
-    super(() => new NewsUpdate(), evilStatics.dataSource, {
-      caption: 'חדשות',
-      name: 'news',
-      dbName: buildSql("(select ", [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser], ", ", f.deliveryStatusDate, " updateTime, ", f.deliveryStatusUser, " updateUser, 1 updateType from ", f, " where ", f.deliveryStatusDate, " is not null ",
-        "union select ", [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser], ", ", f.courierAssingTime, " updateTime, ", f.courierAssignUser, " updateUser, 2 updateType from ", f, " where ", f.courierAssingTime, " is not null", ") x")
-    });
-    this.initColumns();
-  }
-  describe() {
-    return NewsUpdate.GetUpdateMessage(this, this.updateType.value, this.courier.getValue());
-  }
-  static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string) {
-    switch (updateType) {
-      case 1:
-        switch (n.deliverStatus.listValue) {
-          case DeliveryStatus.ReadyForDelivery:
-            break;
-          case DeliveryStatus.Success:
-          case DeliveryStatus.FailedBadAddress:
-          case DeliveryStatus.FailedNotHome:
-          case DeliveryStatus.FailedOther:
-            let duration = '';
-            if (n.courierAssingTime.value && n.deliveryStatusDate.value)
-              duration = ' תוך ' + Math.round((n.deliveryStatusDate.dateValue.valueOf() - n.courierAssingTime.dateValue.valueOf()) / 60000) + " דק'";
-            return n.deliverStatus.displayValue + ' למשפחת ' + n.name.value + ' על ידי ' + courierName + duration;
 
-        }
-        return 'משפחת ' + n.name.value + ' עודכנה ל' + n.deliverStatus.displayValue;
-      case 2:
-        if (n.courier.value)
-          return 'משפחת ' + n.name.value + ' שוייכה ל' + courierName;
-        else
-          return "בוטל השיוך למשפחת " + n.name.value;
-    }
-    return n.deliverStatus.displayValue;
-  }
-}
-interface FamilyUpdateInfo {
-  name: StringColumn,
-  courier: HelperId,
-  deliverStatus: DeliveryStatusColumn,
-  courierAssingTime: changeDate,
-  deliveryStatusDate: changeDate
-}
+
 export class Events extends IdEntity<EventId>{
   name = new radweb.StringColumn('שם אירוע');
   description = new radweb.StringColumn();
@@ -678,27 +321,7 @@ export class Events extends IdEntity<EventId>{
   }
 }
 
-export class BasketType extends IdEntity<BasketId>{
 
-  name = new radweb.StringColumn({ caption: "שם" });
-  constructor() {
-
-    super(new BasketId(), () => new BasketType(), evilStatics.dataSource, "BasketType");
-    this.initColumns();
-  }
-}
-
-export class FamilySources extends IdEntity<FamilySourceId>{
-
-  name = new radweb.StringColumn({ caption: "שם" });
-  contactPerson = new radweb.StringColumn({ caption: "איש קשר" });
-  phone = new radweb.StringColumn('טלפון');
-  constructor() {
-
-    super(new FamilySourceId(), () => new FamilySources(), evilStatics.dataSource, "FamilySources");
-    this.initColumns();
-  }
-}
 export class ApplicationSettings extends Entity<number>{
   id = new radweb.NumberColumn();
   organisationName = new radweb.StringColumn('שם הארגון');
@@ -708,36 +331,36 @@ export class ApplicationSettings extends Entity<number>{
   addressApiResult = new radweb.StringColumn();
   private _lastString: string;
   private _lastGeo: GeocodeInformation;
-  getGeocodeInformation() {
-    if (this._lastString == this.addressApiResult.value)
-      return this._lastGeo ? this._lastGeo : new GeocodeInformation();
-    this._lastString = this.addressApiResult.value;
-    return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
-  }
-  async doSaveStuff() {
-    if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
-      let geo = await GetGeoInformation(this.address.value);
-      this.addressApiResult.value = geo.saveToString();
-      if (geo.ok()) {
+    getGeocodeInformation() {
+      if (this._lastString == this.addressApiResult.value)
+        return this._lastGeo ? this._lastGeo : new GeocodeInformation();
+      this._lastString = this.addressApiResult.value;
+      return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
+    }
+    async doSaveStuff() {
+      if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
+        let geo = await GetGeoInformation(this.address.value);
+        this.addressApiResult.value = geo.saveToString();
+        if (geo.ok()) {
+        }
       }
     }
-  }
 
-  constructor() {
-    super(() => new ApplicationSettings(), evilStatics.openedDataApi, 'ApplicationSettings')
-    this.initColumns(this.id);
-  }
+    constructor() {
+      super(() => new ApplicationSettings(), evilStatics.openedDataApi, 'ApplicationSettings')
+      this.initColumns(this.id);
+    }
   private static _settings: ApplicationSettings;
   static get() {
-    if (!this._settings) {
-      this._settings = new ApplicationSettings();
-      this._settings.source.find({}).then(s => this._settings = s[0]);
+      if (!this._settings) {
+        this._settings = new ApplicationSettings();
+        this._settings.source.find({}).then(s => this._settings = s[0]);
+      }
+      return this._settings;
     }
-    return this._settings;
-  }
-  static async getAsync(): Promise<ApplicationSettings> {
-    let a = new ApplicationSettings();
-    return (await a.source.find({}))[0];
+  static async getAsync(): Promise < ApplicationSettings > {
+      let a = new ApplicationSettings();
+      return(await a.source.find({}))[0];
   }
 }
 export class ApplicationImages extends Entity<number>{

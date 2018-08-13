@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { Families, DeliveryStatus } from '../models';
+
 import { AuthService } from '../auth/auth-service';
 import { SelectService } from '../select-popup/select-service';
 import { UserFamiliesList } from './user-families';

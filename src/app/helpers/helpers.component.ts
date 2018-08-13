@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { GridSettings, SelectPopup } from 'radweb';
-import {  FamilyDeliveryEventsView, Families } from '../models';
+import {  FamilyDeliveryEventsView } from '../models';
+
 import { Helpers } from '../helpers/helpers';
 import { SelectService } from '../select-popup/select-service';
 import { ResetPasswordAction } from './reset-password';
+import { Families } from '../families/families';
 
 @Component({
   selector: 'app-helpers',

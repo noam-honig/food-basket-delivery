@@ -1,7 +1,7 @@
 import { ServerAction } from "../auth/server-action";
 import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 import { myAuthInfo } from "../auth/my-auth-info";
-import { Families, DeliveryStatus,  BasketType, YesNo } from "../models";
+import { Families, DeliveryStatus,  BasketType, YesNo } from '../families/families';
 import { foreachSync } from "../shared/utils";
 
 

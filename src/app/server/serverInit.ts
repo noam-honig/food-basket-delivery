@@ -6,6 +6,7 @@ import { PostgresDataProvider, PostgrestSchemaBuilder, ActualSQLServerDataProvid
 import { evilStatics } from '../auth/evil-statics';
 import * as models from './../models';
 import { foreachSync } from '../shared/utils';
+import { Families, BasketType, FamilySources } from '../families/families';
 
 export async function serverInit() {
     //ActualSQLServerDataProvider.LogToConsole = true;
@@ -33,22 +34,22 @@ export async function serverInit() {
         new Helpers(),
         new models.Items(),
         new models.ItemsPerHelper(),
-        new models.Families(),
-        new models.BasketType(),
-        new models.FamilySources(),
+        new Families(),
+        new BasketType(),
+        new FamilySources(),
         new models.DeliveryEvents(),
         new models.FamilyDeliveryEvents(),
         new models.ApplicationSettings(),
         new models.ApplicationImages()
     ], async x => await sb.CreateIfNotExist(x));
 
-    await sb.verifyAllColumns(new models.Families());
+    await sb.verifyAllColumns(new Families());
     await sb.verifyAllColumns(new Helpers());
     await sb.verifyAllColumns(new models.DeliveryEvents());
     await sb.verifyAllColumns(new models.FamilyDeliveryEvents());
     await sb.verifyAllColumns(new models.ApplicationSettings());
     await sb.verifyAllColumns(new models.ApplicationImages());
-    let h = new models.BasketType();
+    let h = new BasketType();
     await h.source.find({ where: h.id.isEqualTo('') }).then(x => {
         if (x.length == 0) {
             h.setEmptyIdForNewRow();
@@ -58,7 +59,7 @@ export async function serverInit() {
     });
 
 
-    let f = new models.Families();
+    let f = new Families();
     console.log('fix city start');
     await foreachSync(await f.source.find({ where: f.city.isEqualTo('') }), async ff => {
         ff.city.value = ff.getGeocodeInformation().getCity();

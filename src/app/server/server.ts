@@ -25,6 +25,7 @@ import { CopyFamiliesToActiveEventAction } from '../delivery-events/copy-familie
 import { StatsAction } from '../families/stats-action';
 import { DeliveryStatsAction } from '../delivery-follow-up/delivery-stats';
 import {  Helpers } from '../helpers/helpers';
+import { Families, NewsUpdate, BasketType, FamilySources } from '../families/families';
 
 
 serverInit().then(() => {
@@ -34,7 +35,7 @@ serverInit().then(() => {
     //app.use(morgan('tiny')); 'logging';
     if (!process.env.DISABLE_SERVER_EVENTS) {
         let serverEvents = new ServerEvents(app);
-        models.Families.SendMessageToBrowsers = x => serverEvents.SendMessage(x);
+        Families.SendMessageToBrowsers = x => serverEvents.SendMessage(x);
         SetDeliveryActiveAction.SendMessageToBrowsers = x => serverEvents.SendMessage(x);
     }
 
@@ -72,11 +73,11 @@ serverInit().then(() => {
 
 
     openedData.add(r => new Helpers().helpersDataApi(r));
-    dataApi.add(r => new DataApi(new models.NewsUpdate()));
+    dataApi.add(r => new DataApi(new NewsUpdate()));
 
     [
-        new models.BasketType(),
-        new models.FamilySources()
+        new BasketType(),
+        new FamilySources()
     ].forEach(x => {
         dataApi.add(r => new DataApi(x, {
             allowDelete: r.authInfo && r.authInfo.admin,
@@ -85,7 +86,7 @@ serverInit().then(() => {
         }));
     });
     dataApi.add(r => {
-        var settings: DataApiSettings<models.Families> = {
+        var settings: DataApiSettings<Families> = {
             allowDelete: r.authInfo && r.authInfo.admin,
             allowInsert: r.authInfo && r.authInfo.admin,
             allowUpdate: r.authInfo ? true : false,
@@ -112,7 +113,7 @@ serverInit().then(() => {
         };
 
 
-        return new DataApi(new models.Families(), settings)
+        return new DataApi(new Families(), settings)
     });
     adminApi.add(r => {
         return new DataApi(new models.HelpersAndStats(), {

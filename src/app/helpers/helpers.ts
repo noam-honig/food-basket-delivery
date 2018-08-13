@@ -128,4 +128,15 @@ export class HelperId extends Id implements HasAsyncGetTheValue {
     }
 }
 
-
+export class HelperIdReadonly extends HelperId {
+    constructor(caption: string) {
+      super({
+        caption: caption,
+        readonly: true
+      });
+    }
+    get displayValue() {
+      return this.lookup(new Helpers()).name.value;
+    }
+  }
+  

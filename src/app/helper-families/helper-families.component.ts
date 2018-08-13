@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';
-import { DeliveryStatus, Families } from '../models';
+import { DeliveryStatus, Families } from '../families/families';
 import { AuthService } from '../auth/auth-service';
 import { SelectService } from '../select-popup/select-service';
 import { SendSmsAction } from '../asign-family/send-sms-action';
