@@ -1,3 +1,5 @@
+import { FamilySources, FamilySourceId } from "./FamilySources";
+
 import { BasketId } from "./BasketType";
 
 import { IdEntity, Id, changeDate, DateTimeColumn, HasAsyncGetTheValue, buildSql } from "../model-shared/types";
@@ -182,17 +184,6 @@ export class Families extends IdEntity<FamilyId>{
     }
   
   }
-  class FamilySourceId extends Id implements HasAsyncGetTheValue {
-    get displayValue() {
-      return this.lookup(new FamilySources()).name.value;
-    }
-    async getTheValue() {
-      let r = await this.lookupAsync(new FamilySources());
-      if (r && r.name && r.name.value)
-        return r.name.value;
-      return '';
-    }
-  }
   
   
   export class YesNoColumn extends ClosedListColumn<YesNo>{
@@ -275,18 +266,6 @@ export class Families extends IdEntity<FamilyId>{
   
   
   }
-  export class FamilySources extends IdEntity<FamilySourceId>{
-  
-    name = new StringColumn({ caption: "שם" });
-    contactPerson = new StringColumn({ caption: "איש קשר" });
-    phone = new StringColumn('טלפון');
-    constructor() {
-  
-      super(new FamilySourceId(), () => new FamilySources(), evilStatics.dataSource, "FamilySources");
-      this.initColumns();
-    }
-  }
-  
   let f = new Families();
   export class NewsUpdate extends Entity<string>{
     id = new StringColumn();

@@ -25,7 +25,8 @@ import { CopyFamiliesToActiveEventAction } from '../delivery-events/copy-familie
 import { StatsAction } from '../families/stats-action';
 import { DeliveryStatsAction } from '../delivery-follow-up/delivery-stats';
 import {  Helpers } from '../helpers/helpers';
-import { Families, NewsUpdate, FamilySources } from '../families/families';
+import { Families, NewsUpdate } from '../families/families';
+import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
 
 
