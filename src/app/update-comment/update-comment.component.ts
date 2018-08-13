@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { DeliveryStatus } from '../families/families';
+import { DeliveryStatus } from "../families/DeliveryStatus";
 
 @Component({
   selector: 'app-update-comment',

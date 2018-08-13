@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NewsUpdate, DeliveryStatus } from '../families/families';
+import { NewsUpdate } from "./NewsUpdate";
+import { DeliveryStatus } from "../families/DeliveryStatus";
 import { StringColumn } from 'radweb';
 import { SelectService } from '../select-popup/select-service';
 

@@ -1,4 +1,4 @@
-import * as models from './../models';
+import * as models from '../models';
 import * as express from 'express';
 import * as secure from 'express-force-https';
 import * as compression from 'compression';
@@ -25,7 +25,8 @@ import { CopyFamiliesToActiveEventAction } from '../delivery-events/copy-familie
 import { StatsAction } from '../families/stats-action';
 import { DeliveryStatsAction } from '../delivery-follow-up/delivery-stats';
 import {  Helpers } from '../helpers/helpers';
-import { Families, NewsUpdate } from '../families/families';
+import { Families } from '../families/families';
+import { NewsUpdate } from "../news/NewsUpdate";
 import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
 

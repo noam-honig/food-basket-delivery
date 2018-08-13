@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { MatGridAvatarCssMatStyler } from '../../../node_modules/@angular/material';
-import { GridSettings } from '../../../node_modules/radweb';
+import { MatGridAvatarCssMatStyler } from '@angular/material';
+import { GridSettings } from 'radweb';
 import { DeliveryEvents } from '../models';
 import { SetDeliveryActiveAction } from './set-delivery-active-action';
 import { CopyFamiliesToActiveEventAction } from './copy-families-to-active-event-action';

@@ -1,14 +1,12 @@
-import { YesNo, YesNoColumn } from "./YesNo";
-
-import { Language, LanguageColumn } from "./Language";
-
-import { FamilySources, FamilySourceId } from "./FamilySources";
-
+import { DeliveryStatus, DeliveryStatusColumn } from "./DeliveryStatus";
+import { CallStatusColumn } from "./CallStatus";
+import { YesNoColumn } from "./YesNo";
+import { LanguageColumn } from "./Language";
+import { FamilySourceId } from "./FamilySources";
 import { BasketId } from "./BasketType";
-
-import { IdEntity, Id, changeDate, DateTimeColumn, HasAsyncGetTheValue, buildSql } from "../model-shared/types";
-import { StringColumn, NumberColumn, ClosedListColumn, ColumnSetting, Column, Entity } from "radweb";
-import { DataColumnSettings, DataProviderFactory } from "radweb/utils/dataInterfaces1";
+import { IdEntity, Id, changeDate, DateTimeColumn } from "../model-shared/types";
+import { StringColumn, NumberColumn, ColumnSetting, Column } from "radweb";
+import {  DataProviderFactory } from "radweb/utils/dataInterfaces1";
 import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
@@ -113,7 +111,7 @@ export class Families extends IdEntity<FamilyId>{
   
   
     openWaze() {
-      //window.open('https://waze.com/ul?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + '&navigate=yes', '_blank');
+      //window.open('https://waze.com/ul?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + 'export &navigate=yes', '_blank');
       window.open('waze://?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + '&navigate=yes');
     }
     openGoogleMaps() {
@@ -159,96 +157,11 @@ export class Families extends IdEntity<FamilyId>{
         this.createUser.value = authInfo.helperId;
       }
   
-      logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(NewsUpdate.GetUpdateMessage(this, 2, await this.courier.getTheName())));//should be after succesfull save
+      logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName())));//should be after succesfull save
       logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
-      logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(NewsUpdate.GetUpdateMessage(this, 1, await this.courier.getTheName()))); //should be after succesfull save
+      logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()))); //should be after succesfull save
     }
     static SendMessageToBrowsers = (s: string) => { };
-  }
-  export class FamilyId extends Id { }
-
-
-  
-
-  export class CallStatusColumn extends ClosedListColumn<CallStatus> {
-    constructor(settingsOrCaption?: DataColumnSettings<number, NumberColumn> | string) {
-      super(CallStatus, settingsOrCaption);
-    }
-  
-  
-  }
-  
-  export class CallStatus {
-    static NotYet: CallStatus = new CallStatus(0, 'עדיין לא');
-    static Success: CallStatus = new CallStatus(10, 'בוצעה שיחה');
-    static Failed: CallStatus = new CallStatus(20, 'לא הצלנו להשיג');
-    constructor(public id: number,
-      private caption: string) {
-  
-    }
-    toString() {
-      return this.caption;
-    }
-  }
-  export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
-    constructor(settingsOrCaption?: DataColumnSettings<number, NumberColumn> | string) {
-      super(DeliveryStatus, settingsOrCaption);
-    }
-    getColumn() {
-      return {
-        column: this,
-        dropDown: {
-          items: this.getOptions()
-        },
-        width: '150'
-      };
-    }
-  
-  }
-  
-  export class DeliveryStatus {
-    static ReadyForDelivery: DeliveryStatus = new DeliveryStatus(0, 'מוכן למשלוח');
-    static Success: DeliveryStatus = new DeliveryStatus(11, 'נמסר בהצלחה');
-    static FailedBadAddress: DeliveryStatus = new DeliveryStatus(21, 'לא נמסר, בעיה בכתובת');
-    static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, 'לא נמסר, לא היו בבית');
-    static FailedOther: DeliveryStatus = new DeliveryStatus(25, 'לא נמסר, אחר');
-    static Frozen: DeliveryStatus = new DeliveryStatus(90, 'מוקפא');
-    static NotInEvent: DeliveryStatus = new DeliveryStatus(95, 'לא באירוע');
-    constructor(public id: number,
-      private name: string) {
-  
-    }
-    toString() {
-      return this.name;
-    }
-  
-  
-  }
-  let f = new Families();
-  export class NewsUpdate extends Entity<string>{
-    id = new StringColumn();
-    name = new StringColumn();
-    courier = new HelperId("משנע");
-    courierAssingTime = new changeDate('מועד שיוך למשנע');
-    courierAssignUser = new HelperIdReadonly('מי שייכה למשנע');
-    deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
-    deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
-    deliveryStatusUser = new HelperIdReadonly('מי עדכן את סטטוס המשלוח');
-    updateTime = new changeDate('מועד העדכון');
-    updateUser = new HelperIdReadonly('מי עדכן');
-    updateType = new NumberColumn();
-    constructor() {
-      super(() => new NewsUpdate(), evilStatics.dataSource, {
-        caption: 'חדשות',
-        name: 'news',
-        dbName: buildSql("(select ", [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser], ", ", f.deliveryStatusDate, " updateTime, ", f.deliveryStatusUser, " updateUser, 1 updateType from ", f, " where ", f.deliveryStatusDate, " is not null ",
-          "union select ", [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser], ", ", f.courierAssingTime, " updateTime, ", f.courierAssignUser, " updateUser, 2 updateType from ", f, " where ", f.courierAssingTime, " is not null", ") x")
-      });
-      this.initColumns();
-    }
-    describe() {
-      return NewsUpdate.GetUpdateMessage(this, this.updateType.value, this.courier.getValue());
-    }
     static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string) {
       switch (updateType) {
         case 1:
@@ -263,7 +176,6 @@ export class Families extends IdEntity<FamilyId>{
               if (n.courierAssingTime.value && n.deliveryStatusDate.value)
                 duration = ' תוך ' + Math.round((n.deliveryStatusDate.dateValue.valueOf() - n.courierAssingTime.dateValue.valueOf()) / 60000) + " דק'";
               return n.deliverStatus.displayValue + ' למשפחת ' + n.name.value + ' על ידי ' + courierName + duration;
-  
           }
           return 'משפחת ' + n.name.value + ' עודכנה ל' + n.deliverStatus.displayValue;
         case 2:
@@ -275,10 +187,20 @@ export class Families extends IdEntity<FamilyId>{
       return n.deliverStatus.displayValue;
     }
   }
-  interface FamilyUpdateInfo {
+  export class FamilyId extends Id { }
+
+
+  
+
+
+  
+
+  
+  
+  export interface FamilyUpdateInfo {
     name: StringColumn,
     courier: HelperId,
     deliverStatus: DeliveryStatusColumn,
     courierAssingTime: changeDate,
     deliveryStatusDate: changeDate
-  }
+  } 

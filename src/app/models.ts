@@ -1,6 +1,7 @@
 import * as radweb from 'radweb';
 import * as uuid from 'uuid';
-import { Families, FamilyId, DeliveryStatus, CallStatusColumn, DeliveryStatusColumn, } from './families/families';
+import { Families, FamilyId } from './families/families';
+import { DeliveryStatus, DeliveryStatusColumn } from "./families/DeliveryStatus";
 import { BasketId } from "./families/BasketType";
 import { CompoundIdColumn, DataProviderFactory, EntityOptions, Entity, BoolColumn, Column, NumberColumn, ClosedListColumn, ColumnSetting, StringColumn, DateColumn } from 'radweb';
 import { foreachSync, foreachEntityItem } from './shared/utils';
@@ -12,6 +13,7 @@ import { SelectServiceInterface } from './select-popup/select-service-interface'
 import { Helpers, HelperId, HelperIdReadonly } from './helpers/helpers';
 import { IdEntity, changeDate, Id, HasAsyncGetTheValue, DateTimeColumn, buildSql } from './model-shared/types';
 import { SendSmsAction } from './asign-family/send-sms-action';
+import { CallStatusColumn } from './families/CallStatus';
 
 
 

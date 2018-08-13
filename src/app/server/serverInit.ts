@@ -4,7 +4,7 @@ import { config } from 'dotenv';
 import { PostgresDataProvider, PostgrestSchemaBuilder, ActualSQLServerDataProvider } from 'radweb/server';
 
 import { evilStatics } from '../auth/evil-statics';
-import * as models from './../models';
+import * as models from '../models';
 import { foreachSync } from '../shared/utils';
 import { Families } from '../families/families';
 import { FamilySources } from "../families/FamilySources";

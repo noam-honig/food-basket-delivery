@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GridSettings, UrlBuilder } from 'radweb';
-import { Families, DeliveryStatus } from '../families/families';
+import { Families } from '../families/families';
+import { DeliveryStatus } from "../families/DeliveryStatus";
 import { BasketType } from "../families/BasketType";
 import { Helpers } from '../helpers/helpers';
 import { AuthService } from '../auth/auth-service';

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GridSettings, SelectPopup } from 'radweb';
 import {  FamilyDeliveryEventsView } from '../models';
 
-import { Helpers } from '../helpers/helpers';
+import { Helpers } from './helpers';
 import { SelectService } from '../select-popup/select-service';
 import { ResetPasswordAction } from './reset-password';
 import { Families } from '../families/families';

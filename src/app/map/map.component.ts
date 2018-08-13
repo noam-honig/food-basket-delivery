@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, NgZone } from '@angular/core';
-import { Families, DeliveryStatus } from '../families/families';
-import { } from '@types/googlemaps';
+import { Families } from '../families/families';
+import { DeliveryStatus } from "../families/DeliveryStatus";
+import { } from 'googlemaps';
 
 @Component({
   selector: 'app-map',

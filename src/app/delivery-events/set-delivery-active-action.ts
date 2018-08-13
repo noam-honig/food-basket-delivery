@@ -5,9 +5,11 @@ import { DeliveryEvents, FamilyDeliveryEvents } from "../models";
 import * as fetch from 'node-fetch';
 import { foreachSync } from "../shared/utils";
 import { evilStatics } from "../auth/evil-statics";
-import { PostgresDataProvider } from "../../../node_modules/radweb/server";
-import { Column } from "../../../node_modules/radweb";
-import { Families, CallStatus, DeliveryStatus } from "../families/families";
+import { PostgresDataProvider } from "radweb/server";
+import { Column } from "radweb";
+import { Families } from "../families/families";
+import { DeliveryStatus } from "../families/DeliveryStatus";
+import { CallStatus } from "../families/CallStatus";
 
 
 export interface InArgs {
