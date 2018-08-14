@@ -5,6 +5,7 @@ import { SelectService } from '../../select-popup/select-service';
 import { AuthService } from '../../auth/auth-service';
 import { Router, Route } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
+import { evilStatics } from '../../auth/evil-statics';
 
 @Component({
   selector: 'app-login',
@@ -31,6 +32,6 @@ export class LoginComponent implements OnInit {
 
   }
   register() {
-    this.router.navigate(['/register']);
+    this.router.navigate([evilStatics.routes.register]);
   }
 }

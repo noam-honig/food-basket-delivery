@@ -4,6 +4,7 @@ import { CanActivate, ActivatedRouteSnapshot, Route, Router } from '@angular/rou
 import { myAuthInfo } from './my-auth-info';
 import { Authentication } from './authentication';
 import { AuthService } from './auth-service';
+import { evilStatics } from './evil-statics';
 
 @Injectable()
 export class LoggedInGuard implements CanActivate {
@@ -14,7 +15,7 @@ export class LoggedInGuard implements CanActivate {
         if (this.auth.auth.valid)
             return true;
         if (!(route instanceof dummyRoute))
-            this.router.navigate(['/login']);
+            this.router.navigate([evilStatics.routes.login]);
         return false;
     }
 }
@@ -38,7 +39,7 @@ export class AdminGuard implements CanActivate {
         if (this.auth.auth.valid && this.auth.auth.info.admin)
             return true;
         if (!(route instanceof dummyRoute))
-            this.router.navigate(['/my-families']);
+            this.router.navigate([evilStatics.routes.myFamilies]);
         return false;
 
     }

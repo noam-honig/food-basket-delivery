@@ -18,6 +18,8 @@ import { NewsComponent } from './news/news.component';
 import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
 import { StamTestComponent } from './stam-test/stam-test.component';
 import { CustomReuseStrategy } from './custom-reuse-controller-router-strategy'
+import { evilStatics } from './auth/evil-statics';
+
 
 
 
@@ -39,6 +41,12 @@ const routes: Routes = [
   { path: '', redirectTo: '/families', pathMatch: 'full' },
   { path: '**', redirectTo: '/families', pathMatch: 'full' }
 ];
+
+evilStatics.routes.families = '/' + FamiliesComponent.route.path;
+evilStatics.routes.login = '/' + LoginComponent.route.path;
+evilStatics.routes.myFamilies = '/' + MyFamiliesComponent.route.path;
+evilStatics.routes.register = '/' + RegisterComponent.route.path;
+evilStatics.routes.updateInfo = '/' + UpdateInfoComponent.route.path;
 
 @NgModule({
   imports: [

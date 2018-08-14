@@ -45,6 +45,8 @@ import { StamTestComponent } from './stam-test/stam-test.component';
 import { NewsComponent } from './news/news.component';
 import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
 
+
+
 @NgModule({
   declarations: [
     AppComponent,
