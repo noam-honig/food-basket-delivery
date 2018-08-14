@@ -1,7 +1,7 @@
 import { Pool } from 'pg';
 import { Helpers } from '../helpers/helpers';
 import { config } from 'dotenv';
-import { PostgresDataProvider, PostgrestSchemaBuilder, ActualSQLServerDataProvider } from 'radweb/server';
+import { PostgresDataProvider, PostgrestSchemaBuilder } from 'radweb/server';
 
 import { evilStatics } from '../auth/evil-statics';
 
@@ -17,9 +17,12 @@ import { EventHelpers, Events, Items } from '../events/Events';
 import { ItemsPerHelper } from '../event-item-helpers/ItemsPerHelper';
 import { FamilyDeliveryEvents } from '../delivery-events/FamilyDeliveryEvents';
 import { ApplicationImages } from '../manage/ApplicationImages';
+import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
+import { NewsUpdate } from '../news/NewsUpdate';
+import { FamilyDeliveryEventsView } from '../families/FamilyDeliveryEventsView';
 
 
-export var allEntities = [
+export var allEntities =()=> [
     new Events(),
     new EventHelpers(),
     new Helpers(),
@@ -31,11 +34,14 @@ export var allEntities = [
     new DeliveryEvents(),
     new FamilyDeliveryEvents(),
     new ApplicationSettings(),
-    new ApplicationImages()
+    new ApplicationImages(),
+    new HelpersAndStats(),
+    new NewsUpdate(),
+    new FamilyDeliveryEventsView()
 ];
 
 export async function serverInit() {
-    
+
     config();
     let ssl = true;
     if (process.env.DISABLE_POSTGRES_SSL)
@@ -50,16 +56,18 @@ export async function serverInit() {
         ssl: ssl
     });
     evilStatics.dataSource = new PostgresDataProvider(pool);
-    evilStatics.openedDataApi = new PostgresDataProvider(pool);
+
 
 
     var sb = new PostgrestSchemaBuilder(pool);
-    foreachSync(allEntities, async x => {
-        await sb.CreateIfNotExist(x);
-        await sb.verifyAllColumns(x);
+    foreachSync(allEntities(), async x => {
+        if (x.__getDbName().toLowerCase().indexOf('from ') < 0) {
+            await sb.CreateIfNotExist(x);
+            await sb.verifyAllColumns(x);
+        }
     });
 
-  
+
     let h = new BasketType();
     await h.source.find({ where: h.id.isEqualTo('') }).then(x => {
         if (x.length == 0) {

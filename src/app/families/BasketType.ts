@@ -3,9 +3,13 @@ import { IdEntity } from "../model-shared/types";
 import { StringColumn } from "radweb";
 import { evilStatics } from "../auth/evil-statics";
 import { Id, HasAsyncGetTheValue } from "../model-shared/types";
+import { entityWithApi, entityApiSettings, LoggedInCanViewButOnlyAdminUpdatesInsertsAndDeletes } from "../server/api-interfaces";
 
 
-export class BasketType extends IdEntity<BasketId> {
+export class BasketType extends IdEntity<BasketId> implements entityWithApi {
+  getDataApiSettings(): entityApiSettings {
+    return LoggedInCanViewButOnlyAdminUpdatesInsertsAndDeletes;
+  }
   name = new StringColumn({ caption: "שם" });
   constructor() {
     super(new BasketId(), () => new BasketType(), evilStatics.dataSource, "BasketType");

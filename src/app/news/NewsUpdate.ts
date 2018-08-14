@@ -4,10 +4,12 @@ import { StringColumn, NumberColumn, Entity } from "radweb";
 import { HelperIdReadonly, HelperId } from "../helpers/helpers";
 import { evilStatics } from "../auth/evil-statics";
 import { Families, FamilyUpdateInfo } from "../families/families";
+import { entityWithApi, entityApiSettings } from "../server/api-interfaces";
 
 
 export let f = new Families();
-export class NewsUpdate extends Entity<string> {
+export class NewsUpdate extends Entity<string> implements entityWithApi {
+
   id = new StringColumn();
   name = new StringColumn();
   courier = new HelperId("משנע");
@@ -30,5 +32,7 @@ export class NewsUpdate extends Entity<string> {
   describe() {
     return Families.GetUpdateMessage(this, this.updateType.value, this.courier.getValue());
   }
-
+  getDataApiSettings(): entityApiSettings {
+    return {}
+  }
 }

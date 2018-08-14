@@ -19,7 +19,7 @@ import { AddBoxAction } from '../asign-family/add-box-action';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { LoginFromSmsAction } from '../login-from-sms/login-from-sms-action';
 import { GetBasketStatusAction } from '../asign-family/get-basket-status-action';
-import { serverInit } from './serverInit';
+import { serverInit, allEntities } from './serverInit';
 import { ServerEventAuthorizeAction } from './server-event-authorize-action';
 import { ServerEvents } from './server-events';
 import * as morgan from 'morgan';
@@ -35,7 +35,8 @@ import { BasketType } from "../families/BasketType";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DeliveryEvents } from '../delivery-events/delivery-events';
 import { Entity } from "radweb";
-import { entityWithApi } from "./api-interfaces";
+import { entityWithApi, ApiAccess } from "./api-interfaces";
+import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 
 
 serverInit().then(async () => {
@@ -58,109 +59,59 @@ serverInit().then(async () => {
 
     let eb = new ExpressBridge<myAuthInfo>(app);
 
-    let openedData = eb.addArea('/openedDataApi');
-    let dataApi = eb.addArea('/dataApi', async x => x.authInfo != undefined);
-    let adminApi = eb.addArea('/dataApi', async x => x.authInfo && x.authInfo.admin);
-    let openActions = eb.addArea('');
-    let adminActions = eb.addArea('', async x => x.authInfo && x.authInfo.admin);
+    let allUsersAlsoNotLoggedIn = eb.addArea('/api');
+    let loggedInApi = eb.addArea('/api', async x => x.authInfo != undefined);
+    let adminApi = eb.addArea('/api', async x => x.authInfo && x.authInfo.admin);
 
     evilStatics.auth.tokenSignKey = process.env.TOKEN_SIGN_KEY;
 
-    evilStatics.auth.applyTo(eb, openActions);
+    evilStatics.auth.applyTo(eb, allUsersAlsoNotLoggedIn);
 
-    openActions.addAction(new LoginAction());
-    openActions.addAction(new LoginFromSmsAction());
-    adminActions.addAction(new ResetPasswordAction());
-    adminActions.addAction(new AddBoxAction());
-    adminActions.addAction(new SendSmsAction());
-    adminActions.addAction(new GetBasketStatusAction());
-    adminActions.addAction(new ServerEventAuthorizeAction());
-    adminActions.addAction(new SetDeliveryActiveAction());
-    adminActions.addAction(new CopyFamiliesToActiveEventAction());
-    adminActions.addAction(new StatsAction());
-    adminActions.addAction(new DeliveryStatsAction());
+    [
+        new LoginAction(),
+        new LoginFromSmsAction()
+    ].forEach(a => allUsersAlsoNotLoggedIn.addAction(a));
+
+    [
+        new ResetPasswordAction(),
+        new AddBoxAction(),
+        new SendSmsAction(),
+        new GetBasketStatusAction(),
+        new ServerEventAuthorizeAction(),
+        new SetDeliveryActiveAction(),
+        new CopyFamiliesToActiveEventAction(),
+        new StatsAction(),
+        new DeliveryStatsAction(),
+    ].forEach(a => adminApi.addAction(a));
 
 
-    let addEntity = (e: Entity<any>) => {
+
+    //add Api Entries
+    allEntities().forEach(e => {
         let x = <entityWithApi><any>e;
         if (x && x.getDataApiSettings) {
             let settings = x.getDataApiSettings();
-            if (settings.allowOpenApi)
-                openedData.add(r => settings.createDataApi(r));
-            else
-                adminApi.add(r => settings.createDataApi(r));
-        }
-    };
-    addEntity(new Helpers());
 
-    
-    dataApi.add(r => new DataApi(new NewsUpdate()));
-
-    [
-        new BasketType(),
-        new FamilySources()
-    ].forEach(x => {
-        dataApi.add(r => new DataApi(x, {
-            allowDelete: r.authInfo && r.authInfo.admin,
-            allowInsert: r.authInfo && r.authInfo.admin,
-            allowUpdate: r.authInfo && r.authInfo.admin
-        }));
-    });
-    dataApi.add(r => {
-        var settings: DataApiSettings<Families> = {
-            allowDelete: r.authInfo && r.authInfo.admin,
-            allowInsert: r.authInfo && r.authInfo.admin,
-            allowUpdate: r.authInfo ? true : false,
-            readonlyColumns: f => {
-                if (r.authInfo) {
-                    if (r.authInfo.admin)
-                        return [];
-                    return f.__iterateColumns().filter(c => c != f.courierComments && c != f.deliverStatus);
-                }
-            },
-            excludeColumns: f => {
-                return f.excludeColumns(r.authInfo);
-            },
-            onSavingRow: async family => {
-                await family.doSaveStuff(r.authInfo);
-            },
-            get: {
-                where: f => {
-                    if (r.authInfo && !r.authInfo.admin)
-                        return f.courier.isEqualTo(r.authInfo.helperId);
-                    return undefined;
-                }
+            let createApi: (r: DataApiRequest<myAuthInfo>) => DataApi<any> = r => new DataApi(e);
+            if (settings.apiSettings) {
+                createApi = r => new DataApi(e, settings.apiSettings(r.authInfo));
             }
-        };
 
+            switch (settings.apiAccess) {
+                case ApiAccess.all:
+                    allUsersAlsoNotLoggedIn.add(r => createApi(r));
+                    break;
+                case ApiAccess.loggedIn:
+                    loggedInApi.add(r => createApi(r));
+                    break;
+                case ApiAccess.AdminOnly:
+                default:
+                    adminApi.add(r => createApi(r));
+                    break;
+            }
+        }
+    });
 
-        return new DataApi(new Families(), settings)
-    });
-    adminApi.add(r => {
-        return new DataApi(new HelpersAndStats.HelpersAndStats(), {
-
-        });
-    });
-    openedData.add(r => {
-        return new DataApi(new ApplicationSettings(), {
-            allowUpdate: r.authInfo && r.authInfo.admin,
-            onSavingRow: async as => await as.doSaveStuff()
-        });
-    });
-    adminApi.add(r => {
-        return new DataApi(new ApplicationImages.ApplicationImages(), {
-            allowUpdate: true,
-        });
-    });
-    adminApi.add(r => {
-        return new DataApi(new FamilyDeliveryEventsView.FamilyDeliveryEventsView(), {});
-    });
-    adminApi.add(r => new DataApi(new DeliveryEvents(), {
-        readonlyColumns: de => [de.isActiveEvent],
-        onSavingRow: async de => await de.doSaveStuff(r.authInfo),
-        allowUpdate: true,
-        allowInsert: true
-    }));
 
 
 

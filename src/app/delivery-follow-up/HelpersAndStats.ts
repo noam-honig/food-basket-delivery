@@ -4,6 +4,7 @@ import { evilStatics } from '../auth/evil-statics';
 import { HelperId, Helpers } from '../helpers/helpers';
 import { IdEntity, changeDate, DateTimeColumn, buildSql } from '../model-shared/types';
 import { Families } from "../families/families";
+import { entityApiSettings, entityWithApi } from "../server/api-interfaces";
 
 
 
@@ -21,7 +22,10 @@ function log(s: string) {
     return s;
 }
 
-export class HelpersAndStats extends IdEntity<HelperId> {
+export class HelpersAndStats extends IdEntity<HelperId> implements entityWithApi {
+    getDataApiSettings(): entityApiSettings {
+        return {};
+    }
     name = new StringColumn({
         caption: "שם",
         onValidate: v => {

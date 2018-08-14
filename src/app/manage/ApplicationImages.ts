@@ -1,7 +1,8 @@
 import { Entity, StringColumn, NumberColumn } from 'radweb';
 import { evilStatics } from '../auth/evil-statics';
+import { entityApiSettings, entityWithApi } from "../server/api-interfaces";
 
-export class ApplicationImages extends Entity<number> {
+export class ApplicationImages extends Entity<number> implements entityWithApi {
   id = new NumberColumn();
   base64Icon = new StringColumn("איקון דף base64");
   base64PhoneHomeImage = new StringColumn("איקון דף הבית בטלפון base64");
@@ -20,5 +21,14 @@ export class ApplicationImages extends Entity<number> {
   static async getAsync(): Promise<ApplicationImages> {
     let a = new ApplicationImages();
     return (await a.source.find({}))[0];
+  }
+  getDataApiSettings(): entityApiSettings {
+    return {
+      apiSettings: authInfo => {
+        return {
+          allowUpdate: true,
+        }
+      }
+    }
   }
 }

@@ -16,7 +16,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
         this.handlers[route.routeConfig.path] = handle;
         if (handle) {
             handle[this.reloadKey] = true;
-            console.log('store ');
+            
         }
     }
 
@@ -37,7 +37,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
                 if (m) {
                     if (result[this.reloadKey]) {
                         result.componentRef.instance[reuseComponentOnNavigationAndCallMeWhenNavigatingToIt]();
-                        console.log('refresh on retrieve');
+                        
                         result[this.reloadKey] = false;
                     }
                 }

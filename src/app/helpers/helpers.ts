@@ -7,7 +7,7 @@ import { DataApiRequest } from 'radweb/utils/dataInterfaces1';
 import { myAuthInfo } from '../auth/my-auth-info';
 import { DataApiSettings, DataApi } from 'radweb/utils/server/DataApi';
 import * as passwordHash from 'password-hash';
-import { entityWithApi, entityApiSettings } from '../server/api-interfaces';
+import { entityWithApi, entityApiSettings, ApiAccess } from '../server/api-interfaces';
 
 
 export class Helpers extends IdEntity<HelperId> implements entityWithApi {
@@ -32,7 +32,7 @@ export class Helpers extends IdEntity<HelperId> implements entityWithApi {
 
     constructor(factory?: () => Helpers, name?: string, source?: DataProviderFactory) {
 
-        super(new HelperId(), factory ? factory : () => new Helpers(), source ? source : evilStatics.openedDataApi, {
+        super(new HelperId(), factory ? factory : () => new Helpers(), source ? source : evilStatics.dataSource, {
             name: name ? name : "Helpers",
             dbName: "Helpers"
 
@@ -64,10 +64,10 @@ export class Helpers extends IdEntity<HelperId> implements entityWithApi {
     }
     getDataApiSettings(): entityApiSettings {
         return {
-            allowOpenApi: true,
-            createDataApi: r => {
-                var loggedIn = r.authInfo != undefined;
-                var settings: DataApiSettings<Helpers> = {
+            apiAccess: ApiAccess.all,
+            apiSettings: authInfo => {
+                var loggedIn = authInfo != undefined;
+                var settings: DataApiSettings<this> = {
                     allowUpdate: loggedIn,
                     allowDelete: loggedIn,
                     allowInsert: true,
@@ -88,11 +88,11 @@ export class Helpers extends IdEntity<HelperId> implements entityWithApi {
 
                 if (!loggedIn) {
                     settings.get.where = h => h.id.isEqualTo("No User")
-                } else if (!r.authInfo.admin) {
-                    settings.get.where = h => h.id.isEqualTo(r.authInfo.helperId);
+                } else if (!authInfo.admin) {
+                    settings.get.where = h => h.id.isEqualTo(authInfo.helperId);
                     settings.excludeColumns = h => [h.realStoredPassword, h.isAdmin, h.shortUrlKey];
                 }
-                return new DataApi(new Helpers(), settings);
+                return  settings;
             }
         };
     }
