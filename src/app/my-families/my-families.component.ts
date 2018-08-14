@@ -5,6 +5,8 @@ import { AuthService } from '../auth/auth-service';
 import { SelectService } from '../select-popup/select-service';
 import { UserFamiliesList } from './user-families';
 import { MapComponent } from '../map/map.component';
+import { Route } from '@angular/router';
+import { LoggedInGuard } from '../auth/auth-guard';
 
 @Component({
   selector: 'app-my-families',
@@ -13,12 +15,15 @@ import { MapComponent } from '../map/map.component';
 })
 export class MyFamiliesComponent implements OnInit {
 
+  static route: Route = {
+    path: 'my-families', component: MyFamiliesComponent, canActivate: [LoggedInGuard], data: { name: 'משפחות שלי' }
+  };
   familyLists = new UserFamiliesList();
 
   constructor(public auth: AuthService, private dialog: SelectService) { }
   async ngOnInit() {
-    await this.familyLists.initForHelper(this.auth.auth.info.helperId,this.auth.auth.info.name);
-    
+    await this.familyLists.initForHelper(this.auth.auth.info.helperId, this.auth.auth.info.name);
+
   }
 
 

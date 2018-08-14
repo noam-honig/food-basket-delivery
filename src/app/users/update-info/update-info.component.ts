@@ -4,6 +4,8 @@ import { Helpers } from '../../helpers/helpers';
 import { SelectService } from '../../select-popup/select-service';
 import { AuthService } from '../../auth/auth-service';
 import { foreachEntityItem } from '../../shared/utils';
+import { LoggedInGuard } from '../../auth/auth-guard';
+import { Route } from '@angular/router';
 
 @Component({
   selector: 'app-update-info',
@@ -12,6 +14,8 @@ import { foreachEntityItem } from '../../shared/utils';
 })
 export class UpdateInfoComponent implements OnInit {
 
+  static route: Route = { path: 'update-info', component: UpdateInfoComponent, data: { name: 'הגדרות אישיות' }, canActivate: [LoggedInGuard] };
+  
   confirmPassword = new StringColumn({ caption: 'אישור סיסמה', inputType: 'password', value: Helpers.emptyPassword });
   helpers = new GridSettings(new Helpers(), {
     numOfColumnsInGrid: 0,

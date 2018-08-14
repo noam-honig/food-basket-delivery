@@ -1,10 +1,11 @@
 import { Component, transition, NgZone, Injector, ViewChild } from '@angular/core';
 import { Router, Route, CanActivate, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { AuthService } from './auth/auth-service';
-import { LoggedInGuard, dummyRoute } from './auth/auth-guard';
+import { LoggedInGuard, dummyRoute, AdminGuard } from './auth/auth-guard';
 import { MatSidenav, MAT_AUTOCOMPLETE_VALUE_ACCESSOR } from '@angular/material';
 import { SelectService } from './select-popup/select-service';
 import { ApplicationSettings } from './manage/ApplicationSettings';
+import { FamiliesComponent } from './families/families.component';
 
 
 
@@ -23,13 +24,18 @@ export class AppComponent {
     public activeRoute: ActivatedRoute,
     private injector: Injector,
     public dialog: SelectService) {
+    /*this.router.config.unshift({
+      path: FamiliesComponent.route,
+      component: FamiliesComponent,
+      data: { name: FamiliesComponent.caption }, canActivate: [AdminGuard]
+    });*/
 
     if (!window.location.hostname.toLocaleLowerCase().startsWith('hmey')) {
       this.toolbarColor = 'accent';
-      
+
     }
-    
-    auth.auth.tokenInfoChanged = ()=>dialog.refreshEventListener(this.auth.auth.info&&this.auth.auth.info.admin);
+
+    auth.auth.tokenInfoChanged = () => dialog.refreshEventListener(this.auth.auth.info && this.auth.auth.info.admin);
     auth.auth.tokenInfoChanged();
 
   }
@@ -41,7 +47,7 @@ export class AppComponent {
       name = route.data.name;
     return name;
   }
-  getLogo(){
+  getLogo() {
     return ApplicationSettings.get().logoUrl.value;
   }
   currentTitle() {
@@ -50,7 +56,7 @@ export class AppComponent {
     return ApplicationSettings.get().organisationName.value;
   }
   toolbarColor = 'primary';
-  
+
   signOut() {
 
     this.routeClicked();

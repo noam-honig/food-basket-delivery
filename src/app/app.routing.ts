@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Routes,RouteReuseStrategy  } from '@angular/router';
+import { RouterModule, Routes, RouteReuseStrategy } from '@angular/router';
 
 import { HelpersComponent } from './helpers/helpers.component';
 import { LoginComponent } from './users/login/login.component';
@@ -17,60 +17,25 @@ import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-
 import { NewsComponent } from './news/news.component';
 import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
 import { StamTestComponent } from './stam-test/stam-test.component';
-import {CustomReuseStrategy} from './custom-reuse-controller-router-strategy'
+import { CustomReuseStrategy } from './custom-reuse-controller-router-strategy'
 
 
 
 const routes: Routes = [
-
-  {
-
-    path: FamiliesComponent.route,
-    component: FamiliesComponent,
-    data: { name: FamiliesComponent.caption }, canActivate: [AdminGuard]
-  },
-
-  {
-    path: 'assign-families', component: AsignFamilyComponent, canActivate: [AdminGuard], data: { name: 'שיוך משפחות' }
-  },
-  {
-    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [AdminGuard], data: { name: 'מעקב משנעים' }
-  },
-  {
-    path: 'news', component: NewsComponent, canActivate: [AdminGuard], data: { name: 'חדשות' }
-  },
-  
-  {
-    path: 'helpers',
-    component: HelpersComponent,
-    data: { name: 'מתנדבות' }, canActivate: [AdminGuard]
-  },
-  {
-    path: 'delivery-events',
-    component: DeliveryEventsComponent,
-    data: { name: 'אירועי חלוקה' }, canActivate: [AdminGuard]
-  },
-  {
-    path: 'manage',
-    component: ManageComponent,
-    data: { name: 'הגדרות מערכת' }, canActivate: [AdminGuard]
-  },
-  {
-    path: 'addresses',
-    component: FixAddressComponent,
-    data: { name: 'טיוב כתובות' }, canActivate: [AdminGuard]
-  },
-  {
-    path: 'x/:id',
-    component: LoginFromSmsComponent
-  },
+  FamiliesComponent.route,
+  AsignFamilyComponent.route,
+  DeliveryFollowUpComponent.route,
+  NewsComponent.route,
+  HelpersComponent.route,
+  DeliveryEventsComponent.route,
+  ManageComponent.route,
+  FixAddressComponent.route,
+  LoginFromSmsComponent.route,
   /*{ path: 'stam-test', component: StamTestComponent },*/
-  {
-    path: 'my-families', component: MyFamiliesComponent, canActivate: [LoggedInGuard], data: { name: 'משפחות שלי' }
-  },
-  { path: 'update-info', component: UpdateInfoComponent, data: { name: 'הגדרות אישיות' }, canActivate: [LoggedInGuard] },
-  { path: 'login', component: LoginComponent, data: { name: 'כניסה' } },
-  { path: 'register', component: RegisterComponent, data: { name: 'הרשמה' }, canActivate: [NotLoggedInGuard] },
+  MyFamiliesComponent.route,
+  UpdateInfoComponent.route,
+  LoginComponent.route,
+  RegisterComponent.route,
   { path: '', redirectTo: '/families', pathMatch: 'full' },
   { path: '**', redirectTo: '/families', pathMatch: 'full' }
 ];
@@ -78,7 +43,7 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule, RouterModule.forRoot(routes
-       // ,{enableTracing:true}
+      // ,{enableTracing:true}
     )
   ],
   declarations: [],

@@ -14,6 +14,8 @@ import { SendSmsAction } from './send-sms-action';
 import { GetBasketStatusAction, BasketInfo, CityInfo } from './get-basket-status-action';
 import { MapComponent } from '../map/map.component';
 import { environment } from '../../environments/environment';
+import { Route } from '@angular/router';
+import { AdminGuard } from '../auth/auth-guard';
 
 
 @Component({
@@ -22,7 +24,9 @@ import { environment } from '../../environments/environment';
   styleUrls: ['./asign-family.component.scss']
 })
 export class AsignFamilyComponent implements OnInit {
-
+  static route: Route = {
+    path: 'assign-families', component: AsignFamilyComponent, canActivate: [AdminGuard], data: { name: 'שיוך משפחות' }
+  };
 
   async searchPhone() {
     this.name = undefined;
@@ -105,8 +109,8 @@ export class AsignFamilyComponent implements OnInit {
 
 
   constructor(private auth: AuthService, private dialog: SelectService) {
-    
-   }
+
+  }
 
   ngOnInit() {
     if (!environment.production) {

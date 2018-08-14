@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridSettings, ColumnSetting, ColumnHashSet, Filter, AndFilter } from 'radweb';
 import { FamilyDeliveryEventsView } from "./FamilyDeliveryEventsView";
-import { Families} from './families';
+import { Families } from './families';
 import { DeliveryStatus } from "./DeliveryStatus";
 import { CallStatus } from "./CallStatus";
 import { YesNo } from "./YesNo";
@@ -23,6 +23,8 @@ import { MatTabGroup } from '@angular/material';
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt } from '../custom-reuse-controller-router-strategy';
 import { HasAsyncGetTheValue } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
+import { Route } from '@angular/router';
+import { AdminGuard } from '../auth/auth-guard';
 
 @Component({
   selector: 'app-families',
@@ -30,6 +32,7 @@ import { Helpers } from '../helpers/helpers';
   styleUrls: ['./families.component.scss']
 })
 export class FamiliesComponent implements OnInit {
+
   limit = 10;
 
   filterBy(s: FaimilyStatistics) {
@@ -447,15 +450,16 @@ export class FamiliesComponent implements OnInit {
     return r;
   }
 
-
-  static route = 'families';
-  static caption = 'משפחות';
-
   [reuseComponentOnNavigationAndCallMeWhenNavigatingToIt]() {
     this.families.getRecords();
     this.refreshStats();
   }
 
+  static route: Route = {
+    path: 'families',
+    component: FamiliesComponent,
+    data: { name: 'משפחות' }, canActivate: [AdminGuard]
+  }
 
 }
 

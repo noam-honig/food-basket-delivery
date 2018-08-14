@@ -7,6 +7,8 @@ import { DeliveryStatistic, DeliveryStats } from './delivery-stats';
 import { BusyService } from '../select-popup/busy-service';
 import { FilterBase } from 'radweb/utils/dataInterfaces1';
 import { Helpers } from '../helpers/helpers';
+import { Route } from '@angular/router';
+import { AdminGuard } from '../auth/auth-guard';
 
 @Component({
   selector: 'app-delivery-follow-up',
@@ -14,7 +16,9 @@ import { Helpers } from '../helpers/helpers';
   styleUrls: ['./delivery-follow-up.component.scss']
 })
 export class DeliveryFollowUpComponent implements OnInit {
-
+  static route: Route = {
+    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [AdminGuard], data: { name: 'מעקב משנעים' }
+  }
 
   familyLists = new UserFamiliesList();
   selectCourier(c: Helpers) {

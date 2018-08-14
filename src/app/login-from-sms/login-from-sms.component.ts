@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, Route } from '@angular/router';
 import { LoginFromSmsAction } from './login-from-sms-action';
 import { AuthService } from '../auth/auth-service';
 
@@ -9,11 +9,14 @@ import { AuthService } from '../auth/auth-service';
   styleUrls: ['./login-from-sms.component.scss']
 })
 export class LoginFromSmsComponent implements OnInit {
-
+  static route: Route = {
+    path: 'x/:id',
+    component: LoginFromSmsComponent
+  };
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private authServer:AuthService
+    private authServer: AuthService
   ) { }
 
   ngOnInit() {
@@ -23,7 +26,7 @@ export class LoginFromSmsComponent implements OnInit {
       console.log(id);
 
       this.authServer.loginFromSms(id);
-      
+
     });
   }
 

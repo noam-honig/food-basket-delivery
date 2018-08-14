@@ -6,6 +6,8 @@ import { Helpers } from './helpers';
 import { SelectService } from '../select-popup/select-service';
 import { ResetPasswordAction } from './reset-password';
 import { Families } from '../families/families';
+import { Route } from '@angular/router';
+import { AdminGuard } from '../auth/auth-guard';
 
 @Component({
   selector: 'app-helpers',
@@ -13,6 +15,11 @@ import { Families } from '../families/families';
   styleUrls: ['./helpers.component.css']
 })
 export class HelpersComponent implements OnInit {
+  static route: Route = {
+    path: 'helpers',
+    component: HelpersComponent,
+    data: { name: 'מתנדבות' }, canActivate: [AdminGuard]
+  };
 
   helpers = new GridSettings(new Helpers(), {
     allowDelete: true,

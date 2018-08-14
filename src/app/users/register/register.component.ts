@@ -4,6 +4,8 @@ import { DataAreaSettings, StringColumn, GridSettings } from 'radweb';
 import { SelectService } from '../../select-popup/select-service';
 import { AuthService } from '../../auth/auth-service';
 import { foreachEntityItem } from '../../shared/utils';
+import { NotLoggedInGuard } from '../../auth/auth-guard';
+import { Route } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -12,6 +14,7 @@ import { foreachEntityItem } from '../../shared/utils';
 })
 export class RegisterComponent implements OnInit {
 
+  static route: Route = { path: 'register', component: RegisterComponent, data: { name: 'הרשמה' }, canActivate: [NotLoggedInGuard] };
 
   confirmPassword = new StringColumn({ caption: 'אישור סיסמה', inputType: 'password' });
   helpers = new GridSettings(new Helpers(), {
@@ -45,7 +48,7 @@ export class RegisterComponent implements OnInit {
     try {
       let userInfo = this.helpers.currentRow;
       await this.helpers._doSavingRow(userInfo);
-      this.auth.login(userInfo.phone.value, this.confirmPassword.value, false,()=>{});
+      this.auth.login(userInfo.phone.value, this.confirmPassword.value, false, () => { });
     }
     catch (err) {
       console.log(err);
