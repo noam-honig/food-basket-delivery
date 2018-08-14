@@ -18,8 +18,24 @@ import { ItemsPerHelper } from '../event-item-helpers/ItemsPerHelper';
 import { FamilyDeliveryEvents } from '../delivery-events/FamilyDeliveryEvents';
 import { ApplicationImages } from '../manage/ApplicationImages';
 
+
+export var allEntities = [
+    new Events(),
+    new EventHelpers(),
+    new Helpers(),
+    new Items(),
+    new ItemsPerHelper(),
+    new Families(),
+    new BasketType(),
+    new FamilySources(),
+    new DeliveryEvents(),
+    new FamilyDeliveryEvents(),
+    new ApplicationSettings(),
+    new ApplicationImages()
+];
+
 export async function serverInit() {
-    //ActualSQLServerDataProvider.LogToConsole = true;
+    
     config();
     let ssl = true;
     if (process.env.DISABLE_POSTGRES_SSL)
@@ -38,27 +54,12 @@ export async function serverInit() {
 
 
     var sb = new PostgrestSchemaBuilder(pool);
-    foreachSync([
-        new Events(),
-        new EventHelpers(),
-        new Helpers(),
-        new Items(),
-        new ItemsPerHelper(),
-        new Families(),
-        new BasketType(),
-        new FamilySources(),
-        new DeliveryEvents(),
-        new FamilyDeliveryEvents(),
-        new ApplicationSettings(),
-        new ApplicationImages()
-    ], async x => await sb.CreateIfNotExist(x));
+    foreachSync(allEntities, async x => {
+        await sb.CreateIfNotExist(x);
+        await sb.verifyAllColumns(x);
+    });
 
-    await sb.verifyAllColumns(new Families());
-    await sb.verifyAllColumns(new Helpers());
-    await sb.verifyAllColumns(new DeliveryEvents());
-    await sb.verifyAllColumns(new FamilyDeliveryEvents());
-    await sb.verifyAllColumns(new ApplicationSettings());
-    await sb.verifyAllColumns(new ApplicationImages());
+  
     let h = new BasketType();
     await h.source.find({ where: h.id.isEqualTo('') }).then(x => {
         if (x.length == 0) {

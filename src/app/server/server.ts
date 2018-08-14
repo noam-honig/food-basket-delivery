@@ -27,16 +27,18 @@ import { SetDeliveryActiveAction } from '../delivery-events/set-delivery-active-
 import { CopyFamiliesToActiveEventAction } from '../delivery-events/copy-families-to-active-event-action';
 import { StatsAction } from '../families/stats-action';
 import { DeliveryStatsAction } from '../delivery-follow-up/delivery-stats';
-import {  Helpers } from '../helpers/helpers';
+import { Helpers } from '../helpers/helpers';
 import { Families } from '../families/families';
 import { NewsUpdate } from "../news/NewsUpdate";
 import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DeliveryEvents } from '../delivery-events/delivery-events';
+import { Entity } from "radweb";
+import { entityWithApi } from "./api-interfaces";
 
 
-serverInit().then(() => {
+serverInit().then(async () => {
 
 
     let app = express();
@@ -79,8 +81,19 @@ serverInit().then(() => {
     adminActions.addAction(new DeliveryStatsAction());
 
 
+    let addEntity = (e: Entity<any>) => {
+        let x = <entityWithApi><any>e;
+        if (x && x.getDataApiSettings) {
+            let settings = x.getDataApiSettings();
+            if (settings.allowOpenApi)
+                openedData.add(r => settings.createDataApi(r));
+            else
+                adminApi.add(r => settings.createDataApi(r));
+        }
+    };
+    addEntity(new Helpers());
 
-    openedData.add(r => new Helpers().helpersDataApi(r));
+    
     dataApi.add(r => new DataApi(new NewsUpdate()));
 
     [
@@ -125,12 +138,12 @@ serverInit().then(() => {
     });
     adminApi.add(r => {
         return new DataApi(new HelpersAndStats.HelpersAndStats(), {
-            
+
         });
     });
     openedData.add(r => {
         return new DataApi(new ApplicationSettings(), {
-            allowUpdate: r.authInfo&&r.authInfo.admin,
+            allowUpdate: r.authInfo && r.authInfo.admin,
             onSavingRow: async as => await as.doSaveStuff()
         });
     });

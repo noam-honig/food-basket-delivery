@@ -7,9 +7,11 @@ import { DataApiRequest } from 'radweb/utils/dataInterfaces1';
 import { myAuthInfo } from '../auth/my-auth-info';
 import { DataApiSettings, DataApi } from 'radweb/utils/server/DataApi';
 import * as passwordHash from 'password-hash';
+import { entityWithApi, entityApiSettings } from '../server/api-interfaces';
 
 
-export class Helpers extends IdEntity<HelperId>{
+export class Helpers extends IdEntity<HelperId> implements entityWithApi {
+
     public static emptyPassword = 'password';
     name = new radweb.StringColumn({
         caption: "שם",
@@ -60,38 +62,40 @@ export class Helpers extends IdEntity<HelperId>{
 
         return text;
     }
-    helpersDataApi(r: DataApiRequest<myAuthInfo>) {
-        var loggedIn = r.authInfo != undefined;
-        var settings: DataApiSettings<Helpers> = {
-            allowUpdate: loggedIn,
-            allowDelete: loggedIn,
-            allowInsert: true,
-            get: {},
-            readonlyColumns: h => [h.createDate, h.id],
-            excludeColumns: h => [h.realStoredPassword],
-            onSavingRow: async h => {
-                if (h.password.value && h.password.value != h.password.originalValue && h.password.value != Helpers.emptyPassword) {
-                    h.realStoredPassword.value = passwordHash.generate(h.password.value);
-                }
-                if ((await h.source.count())==0)
-                    h.isAdmin.value = true;
-    
-                await checkForDuplicateValue(h, h.phone);
-            },
-    
-        };
-    
-        if (!loggedIn) {
-            settings.get.where = h => h.id.isEqualTo("No User")
-        } else if (!r.authInfo.admin) {
-            settings.get.where = h => h.id.isEqualTo(r.authInfo.helperId);
-            settings.excludeColumns = h => [h.realStoredPassword, h.isAdmin, h.shortUrlKey];
-        }
-        return new DataApi(new Helpers(), settings);
-    }
-    
-    
+    getDataApiSettings(): entityApiSettings {
+        return {
+            allowOpenApi: true,
+            createDataApi: r => {
+                var loggedIn = r.authInfo != undefined;
+                var settings: DataApiSettings<Helpers> = {
+                    allowUpdate: loggedIn,
+                    allowDelete: loggedIn,
+                    allowInsert: true,
+                    get: {},
+                    readonlyColumns: h => [h.createDate, h.id],
+                    excludeColumns: h => [h.realStoredPassword],
+                    onSavingRow: async h => {
+                        if (h.password.value && h.password.value != h.password.originalValue && h.password.value != Helpers.emptyPassword) {
+                            h.realStoredPassword.value = passwordHash.generate(h.password.value);
+                        }
+                        if ((await h.source.count()) == 0)
+                            h.isAdmin.value = true;
 
+                        await checkForDuplicateValue(h, h.phone);
+                    },
+
+                };
+
+                if (!loggedIn) {
+                    settings.get.where = h => h.id.isEqualTo("No User")
+                } else if (!r.authInfo.admin) {
+                    settings.get.where = h => h.id.isEqualTo(r.authInfo.helperId);
+                    settings.excludeColumns = h => [h.realStoredPassword, h.isAdmin, h.shortUrlKey];
+                }
+                return new DataApi(new Helpers(), settings);
+            }
+        };
+    }
 }
 
 
@@ -130,13 +134,13 @@ export class HelperId extends Id implements HasAsyncGetTheValue {
 
 export class HelperIdReadonly extends HelperId {
     constructor(caption: string) {
-      super({
-        caption: caption,
-        readonly: true
-      });
+        super({
+            caption: caption,
+            readonly: true
+        });
     }
     get displayValue() {
-      return this.lookup(new Helpers()).name.value;
+        return this.lookup(new Helpers()).name.value;
     }
-  }
-  
+}
+
