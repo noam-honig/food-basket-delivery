@@ -60,7 +60,7 @@ export async function serverInit() {
 
 
     var sb = new PostgrestSchemaBuilder(pool);
-    foreachSync(allEntities(), async x => {
+    await foreachSync(allEntities(), async x => {
         if (x.__getDbName().toLowerCase().indexOf('from ') < 0) {
             await sb.CreateIfNotExist(x);
             await sb.verifyAllColumns(x);
