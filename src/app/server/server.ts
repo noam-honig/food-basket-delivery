@@ -8,16 +8,9 @@ import * as compression from 'compression';
 import { ExpressBridge } from 'radweb/server';
 import { DataApi, DataApiSettings } from 'radweb/utils/server/DataApi';
 import * as fs from 'fs';
-
-
 import { myAuthInfo } from '../auth/my-auth-info';
 import { evilStatics } from '../auth/evil-statics';
-import { ResetPasswordAction } from '../helpers/reset-password';
-
-
 import { AddBoxAction } from '../asign-family/add-box-action';
-
-
 import { GetBasketStatusAction } from '../asign-family/get-basket-status-action';
 import { serverInit, allEntities } from './serverInit';
 import { ServerEventAuthorizeAction } from './server-event-authorize-action';
@@ -42,6 +35,7 @@ import { serverActionField, myServerAction } from "../auth/server-action";
 import { FamiliesComponent } from "../families/families.component";
 import { SiteArea } from "radweb/utils/server/expressBridge";
 import { AuthService } from "../auth/auth-service";
+import { HelpersComponent } from "../helpers/helpers.component";
 
 
 
@@ -89,11 +83,13 @@ serverInit().then(async () => {
         addAction(allUsersAlsoNotLoggedIn, a);
 
     });
-   
+
     [
-        new ResetPasswordAction(),
+        HelpersComponent.resetPassword
+    ].forEach(a => addAction(adminApi, a));
+    [
         new AddBoxAction(),
-        
+
         new GetBasketStatusAction(),
         new ServerEventAuthorizeAction(),
         new SetDeliveryActiveAction(),

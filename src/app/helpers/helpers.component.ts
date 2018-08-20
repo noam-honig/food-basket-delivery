@@ -4,10 +4,11 @@ import { FamilyDeliveryEventsView } from "../families/FamilyDeliveryEventsView";
 
 import { Helpers } from './helpers';
 import { SelectService } from '../select-popup/select-service';
-import { ResetPasswordAction } from './reset-password';
 import { Families } from '../families/families';
 import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
+import { foreachEntityItem } from '../shared/utils';
+import { RunOnServer } from '../auth/server-action';
 
 @Component({
   selector: 'app-helpers',
@@ -69,10 +70,17 @@ export class HelpersComponent implements OnInit {
   }
   resetPassword() {
     this.dialog.YesNoQuestion("האם את בטוחה שאת רוצה למחוק את הסיסמה של " + this.helpers.currentRow.name.value, async () => {
-      await new ResetPasswordAction().run({ helperId: this.helpers.currentRow.id.value });
+      await HelpersComponent.resetPassword(this.helpers.currentRow.id.value);
       this.dialog.Info("הסיסמה נמחקה");
     });
 
+  }
+  @RunOnServer
+  static async resetPassword(helperId: string) {
+    await foreachEntityItem(new Helpers(), h => h.id.isEqualTo(helperId), async h => {
+      h.realStoredPassword.value = '';
+      await h.save();
+    });
   }
 
   constructor(private dialog: SelectService) {
