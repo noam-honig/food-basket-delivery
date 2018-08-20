@@ -39,6 +39,7 @@ import { entityWithApi, ApiAccess } from "./api-interfaces";
 import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 
 import { serverActionField, myServerAction } from "../auth/server-action";
+import { FamiliesComponent } from "../families/families.component";
 
 
 
@@ -71,7 +72,7 @@ serverInit().then(async () => {
 
     evilStatics.auth.applyTo(eb, allUsersAlsoNotLoggedIn);
     [
-        Helpers.testIt
+        FamiliesComponent.testIt
     ].forEach(a => {
         let x = <myServerAction>a[serverActionField];
         if (!x) {

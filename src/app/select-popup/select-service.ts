@@ -16,7 +16,7 @@ import { Subject } from "rxjs/Subject";
 import { Observable } from "rxjs/Observable";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
-const EventSource: any = window['EventSource'];
+
 
 
 @Injectable()
@@ -37,11 +37,11 @@ export class SelectService implements SelectServiceInterface {
 
     newsUpdate = new Subject<string>();
 
-    
-    constructor(private dialog: MatDialog, private zone: NgZone,private busy: BusyService, private snackBar: MatSnackBar) {
+
+    constructor(private dialog: MatDialog, private zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar) {
         this.mediaMatcher.addListener(mql => zone.run(() => this.mediaMatcher = mql));
-        
-        
+
+
     }
     eventSource: any;/*EventSource*/
     refreshEventListener(enable: boolean) {
@@ -49,24 +49,27 @@ export class SelectService implements SelectServiceInterface {
             this.eventSource.close();
             this.eventSource = undefined;
         }
-        if (enable && typeof (EventSource) !== "undefined") {
-            this.zone.run(() => {
-                var source = new EventSource(environment.serverUrl + 'stream', { withCredentials: true });
+        if (typeof (window) !== 'undefined') {
+            let EventSource: any = window['EventSource'];
+            if (enable && typeof (EventSource) !== "undefined") {
+                this.zone.run(() => {
+                    var source = new EventSource(environment.serverUrl + 'stream', { withCredentials: true });
 
-                this.eventSource = source;
-                source.onmessage = e => {
+                    this.eventSource = source;
+                    source.onmessage = e => {
 
-                    this.zone.run(() => {
-                        this.newsUpdate.next(e.data.toString());
-                        this.Info(e.data.toString() + ' ');
+                        this.zone.run(() => {
+                            this.newsUpdate.next(e.data.toString());
+                            this.Info(e.data.toString() + ' ');
+                        });
+                    };
+                    let x = this;
+                    source.addEventListener("authenticate", async function (e) {
+                        await x.busy.donotWait(async () => await new ServerEventAuthorizeAction().run({ key: (<any>e).data.toString() }));
+
                     });
-                };
-                let x = this;
-                source.addEventListener("authenticate", async function (e) {
-                    await x.busy.donotWait(async ()=> await new ServerEventAuthorizeAction().run({ key: (<any>e).data.toString() }));
-
                 });
-            });
+            }
         }
     }
 

@@ -97,11 +97,7 @@ export class Helpers extends IdEntity<HelperId> implements entityWithApi {
             }
         };
     }
-    @RunOnServer
-    static async testIt(name: string, id: Number) {
-        console.log("i'm running on the server ",name,id);
-        return 7;
-    }
+
 }
 
 
