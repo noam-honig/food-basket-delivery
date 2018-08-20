@@ -1,9 +1,9 @@
 <div>
   <h4 style="display:inline">סל</h4> - {{f.basketType.displayValue}}
-  <ng-container *ngIf="f.deliveryComments.value">
-    <br/>
+  <div *ngIf="f.deliveryComments.value">
+    <mat-icon color="primary" style="vertical-align: middle">comment</mat-icon>
     <strong style="color:red">שים לב! </strong> {{f.deliveryComments.value}}
-  </ng-container>
+  </div>
   <h4>כתובת</h4>
   <div>
     <span (click)="f.openWaze()">

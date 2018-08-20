@@ -23,3 +23,4 @@ export class FamilyInfoComponent implements OnInit {
     this.dialog.Info("הכתובת "+f.address.value+" הועתקה בהצלחה");
   }
 }
+ 
