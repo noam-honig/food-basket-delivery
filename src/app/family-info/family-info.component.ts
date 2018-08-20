@@ -3,6 +3,7 @@ import { Families } from '../families/families';
 import { AuthService } from '../auth/auth-service';
 import * as copy from 'copy-to-clipboard';
 import { SelectService } from '../select-popup/select-service';
+import { DeliveryStatus } from '../families/DeliveryStatus';
 @Component({
   selector: 'app-family-info',
   templateUrl: './family-info.component.html',
@@ -21,6 +22,9 @@ export class FamilyInfoComponent implements OnInit {
   copyAddress(f:Families) {
     copy(f.address.value);
     this.dialog.Info("הכתובת "+f.address.value+" הועתקה בהצלחה");
+  }
+  showStatus(){
+    return this.f.deliverStatus.listValue!= DeliveryStatus.ReadyForDelivery;
   }
 }
  

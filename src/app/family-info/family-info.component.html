@@ -1,4 +1,10 @@
 <div>
+  <div *ngIf="showStatus()">
+    <h4>{{f.deliverStatus.displayValue}}</h4>
+  <div *ngIf="f.courierComments.value"><h5 style="display:inline">הערת משנע</h5> - {{f.courierComments.value}}</div>
+    <br>
+    <br>
+  </div>
   <h4 style="display:inline">סל</h4> - {{f.basketType.displayValue}}
   <div *ngIf="f.deliveryComments.value">
     <mat-icon color="primary" style="vertical-align: middle">comment</mat-icon>
