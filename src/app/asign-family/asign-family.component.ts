@@ -55,6 +55,11 @@ export class AsignFamilyComponent implements OnInit {
   assignmentCanceled() {
     this.refreshBaskets();
   }
+  smsSent() {
+    this.dialog.Info("הודעת SMS נשלחה ל" + this.name);
+    this.phone = '';
+    this.name = '';
+  }
 
   async refreshBaskets() {
     let r = (await new GetBasketStatusAction().run({
