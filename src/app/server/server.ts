@@ -83,7 +83,6 @@ serverInit().then(async () => {
 
     evilStatics.auth.applyTo(eb, allUsersAlsoNotLoggedIn);
     [
-        FamiliesComponent.testIt,
         AuthService.login
     ].forEach(a => {
         addAction(allUsersAlsoNotLoggedIn, a);

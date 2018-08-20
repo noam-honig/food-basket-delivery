@@ -366,13 +366,8 @@ export class FamiliesComponent implements OnInit {
       this.gridView = false;
   }
   async doTest(){
-    console.log(await FamiliesComponent.testIt('noam',1));
   }
-  @RunOnServer
-  static async testIt(name: string, id: Number) {
-      console.log("i'm running on the server,really I am ",name,id);
-      return 7;
-  }
+  
   onDestroy = () => { };
 
   ngOnDestroy(): void {

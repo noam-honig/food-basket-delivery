@@ -40,17 +40,7 @@ export function RunOnServer(target, key: string, descriptor: any) {
 
 
     descriptor.value = async function (...args: any[]) {
-
-
-        var a = args.map(a => JSON.stringify(a)).join();
-
-        // note usage of originalMethod here
-        //var result = originalMethod.apply(this, args);
         var result = await serverAction.run({ args });
-
-        var r = JSON.stringify(result);
-
-        console.log(`Call: ${key}(${a}) => ${r}`);
         return result.data;
     }
     descriptor.value[serverActionField] = serverAction;
