@@ -70,18 +70,16 @@ serverInit().then(async () => {
     evilStatics.auth.tokenSignKey = process.env.TOKEN_SIGN_KEY;
 
     evilStatics.auth.applyTo(eb, allUsersAlsoNotLoggedIn);
- /*   [
+    [
         Helpers.testIt
     ].forEach(a => {
-        console.log((<any>a).stamTest);
         let x = <myServerAction>a[serverActionField];
         if (!x) {
-            console.log("Failed to find server action", a);
-        } else {
-            console.log('registering ', a, x);
-            allUsersAlsoNotLoggedIn.addAction(x);
+            throw 'failed to set server action, did you forget the RunOnServerDecorator?';
         }
-    });*/
+        allUsersAlsoNotLoggedIn.addAction(x);
+
+    });
     [
         new LoginAction(),
         new LoginFromSmsAction()

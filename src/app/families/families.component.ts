@@ -354,7 +354,7 @@ export class FamiliesComponent implements OnInit {
   gridView = true;
  
   constructor(private dialog: SelectService, private san: DomSanitizer, public busy: BusyService) {
-    
+    this.doTest();
     
     let y = dialog.newsUpdate.subscribe(() => {
       this.refreshStats();
@@ -364,6 +364,9 @@ export class FamiliesComponent implements OnInit {
     };
     if (dialog.isScreenSmall())
       this.gridView = false;
+  }
+  async doTest(){
+    console.log(await Helpers.testIt('noam',1));
   }
   onDestroy = () => { };
 
