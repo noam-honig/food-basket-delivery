@@ -9,7 +9,7 @@ import { ExpressBridge } from 'radweb/server';
 import { DataApi, DataApiSettings } from 'radweb/utils/server/DataApi';
 import * as fs from 'fs';
 
-import { LoginAction } from '../auth/loginAction';
+
 import { myAuthInfo } from '../auth/my-auth-info';
 import { evilStatics } from '../auth/evil-statics';
 import { ResetPasswordAction } from '../helpers/reset-password';
@@ -41,6 +41,7 @@ import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 import { serverActionField, myServerAction } from "../auth/server-action";
 import { FamiliesComponent } from "../families/families.component";
 import { SiteArea } from "radweb/utils/server/expressBridge";
+import { AuthService } from "../auth/auth-service";
 
 
 
@@ -82,13 +83,14 @@ serverInit().then(async () => {
 
     evilStatics.auth.applyTo(eb, allUsersAlsoNotLoggedIn);
     [
-        FamiliesComponent.testIt
+        FamiliesComponent.testIt,
+        AuthService.login
     ].forEach(a => {
         addAction(allUsersAlsoNotLoggedIn, a);
 
     });
     [
-        new LoginAction(),
+        
         new LoginFromSmsAction()
     ].forEach(a => allUsersAlsoNotLoggedIn.addAction(a));
 

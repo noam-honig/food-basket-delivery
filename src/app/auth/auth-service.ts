@@ -6,8 +6,10 @@ import { foreachEntityItem } from "../shared/utils";
 import { SelectService } from "../select-popup/select-service";
 import { Router, Route } from "@angular/router";
 import { evilStatics } from "./evil-statics";
-import { LoginAction } from "./loginAction";
 import { LoginFromSmsAction } from "../login-from-sms/login-from-sms-action";
+import { Helpers } from "../helpers/helpers";
+import * as passwordHash from 'password-hash';
+import { RunOnServer } from "./server-action";
 
 
 @Injectable()
@@ -26,7 +28,7 @@ export class AuthService {
 
     async login(user: string, password: string, remember: boolean, fail: () => void) {
 
-        let loginResponse = await new LoginAction().run({ user: user, password: password });
+        let loginResponse = await AuthService.login(user,password);
         this.auth.loggedIn(loginResponse, remember);
         if (this.auth.valid) {
             if (loginResponse.requirePassword) {
@@ -46,7 +48,32 @@ export class AuthService {
             this.dialog.Error("משתמשת לא נמצאה או סיסמה שגויה");
             fail();
         }
-
+    }
+    @RunOnServer
+    static async login(user: string, password: string) {
+        let result: myAuthInfo;
+        let requirePassword = false;
+        await foreachEntityItem(new Helpers(), h => h.phone.isEqualTo(user), async h => {
+            if (!h.realStoredPassword.value || passwordHash.verify(password, h.realStoredPassword.value)) {
+                result = {
+                    helperId: h.id.value,
+                    admin: h.isAdmin.value,
+                    name: h.name.value
+                };
+                if (result.admin && h.realStoredPassword.value.length == 0) {
+                    result.admin = false;
+                    requirePassword = true;
+                }
+            }
+        });
+        if (result) {
+            return {
+                valid: true,
+                authToken: evilStatics.auth.createTokenFor(result),
+                requirePassword
+            };
+        }
+        return { valid: false, requirePassword: false };
     }
     signout(): any {
         this.auth.signout();
