@@ -10,7 +10,6 @@ import { DataApi, DataApiSettings } from 'radweb/utils/server/DataApi';
 import * as fs from 'fs';
 import { myAuthInfo } from '../auth/my-auth-info';
 import { evilStatics } from '../auth/evil-statics';
-import { AddBoxAction } from '../asign-family/add-box-action';
 import { GetBasketStatusAction } from '../asign-family/get-basket-status-action';
 import { serverInit, allEntities } from './serverInit';
 import { ServerEventAuthorizeAction } from './server-event-authorize-action';
@@ -36,6 +35,7 @@ import { FamiliesComponent } from "../families/families.component";
 import { SiteArea } from "radweb/utils/server/expressBridge";
 import { AuthService } from "../auth/auth-service";
 import { HelpersComponent } from "../helpers/helpers.component";
+import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 
 
 
@@ -85,11 +85,11 @@ serverInit().then(async () => {
     });
 
     [
-        HelpersComponent.resetPassword
+        HelpersComponent.resetPassword,
+        AsignFamilyComponent.AddBox
+
     ].forEach(a => addAction(adminApi, a));
     [
-        new AddBoxAction(),
-
         new GetBasketStatusAction(),
         new ServerEventAuthorizeAction(),
         new SetDeliveryActiveAction(),
