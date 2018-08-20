@@ -40,6 +40,7 @@ import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 
 import { serverActionField, myServerAction } from "../auth/server-action";
 import { FamiliesComponent } from "../families/families.component";
+import { SiteArea } from "radweb/utils/server/expressBridge";
 
 
 
@@ -70,15 +71,20 @@ serverInit().then(async () => {
 
     evilStatics.auth.tokenSignKey = process.env.TOKEN_SIGN_KEY;
 
-    evilStatics.auth.applyTo(eb, allUsersAlsoNotLoggedIn);
-    [
-        FamiliesComponent.testIt
-    ].forEach(a => {
+    var addAction = (area: SiteArea<myAuthInfo>, a: any) => {
         let x = <myServerAction>a[serverActionField];
         if (!x) {
             throw 'failed to set server action, did you forget the RunOnServerDecorator?';
         }
-        allUsersAlsoNotLoggedIn.addAction(x);
+        area.addAction(x);
+    };
+
+
+    evilStatics.auth.applyTo(eb, allUsersAlsoNotLoggedIn);
+    [
+        FamiliesComponent.testIt
+    ].forEach(a => {
+        addAction(allUsersAlsoNotLoggedIn, a);
 
     });
     [
