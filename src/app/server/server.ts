@@ -38,6 +38,10 @@ import { Entity } from "radweb";
 import { entityWithApi, ApiAccess } from "./api-interfaces";
 import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 
+import { serverActionField, myServerAction } from "../auth/server-action";
+
+
+
 
 serverInit().then(async () => {
 
@@ -66,7 +70,18 @@ serverInit().then(async () => {
     evilStatics.auth.tokenSignKey = process.env.TOKEN_SIGN_KEY;
 
     evilStatics.auth.applyTo(eb, allUsersAlsoNotLoggedIn);
-
+ /*   [
+        Helpers.testIt
+    ].forEach(a => {
+        console.log((<any>a).stamTest);
+        let x = <myServerAction>a[serverActionField];
+        if (!x) {
+            console.log("Failed to find server action", a);
+        } else {
+            console.log('registering ', a, x);
+            allUsersAlsoNotLoggedIn.addAction(x);
+        }
+    });*/
     [
         new LoginAction(),
         new LoginFromSmsAction()
@@ -144,7 +159,7 @@ serverInit().then(async () => {
                 res.send(Buffer.from(imageBase, 'base64'));
                 return;
             }
-            catch{
+            catch (err) {
             }
         }
         try {
@@ -162,7 +177,7 @@ serverInit().then(async () => {
                 res.send(Buffer.from(imageBase, 'base64'));
                 return;
             }
-            catch{ }
+            catch (err) { }
         }
         try {
             res.send(fs.readFileSync('dist/favicon.ico'));

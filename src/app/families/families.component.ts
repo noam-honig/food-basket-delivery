@@ -25,6 +25,8 @@ import { HasAsyncGetTheValue } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
+import { RunOnServer } from '../auth/server-action';
+
 
 @Component({
   selector: 'app-families',
@@ -350,8 +352,10 @@ export class FamiliesComponent implements OnInit {
     ]
   });
   gridView = true;
+ 
   constructor(private dialog: SelectService, private san: DomSanitizer, public busy: BusyService) {
-
+    
+    
     let y = dialog.newsUpdate.subscribe(() => {
       this.refreshStats();
     });

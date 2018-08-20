@@ -8,6 +8,7 @@ import { myAuthInfo } from '../auth/my-auth-info';
 import { DataApiSettings, DataApi } from 'radweb/utils/server/DataApi';
 import * as passwordHash from 'password-hash';
 import { entityWithApi, entityApiSettings, ApiAccess } from '../server/api-interfaces';
+import { RunOnServer } from '../auth/server-action';
 
 
 export class Helpers extends IdEntity<HelperId> implements entityWithApi {
@@ -92,9 +93,14 @@ export class Helpers extends IdEntity<HelperId> implements entityWithApi {
                     settings.get.where = h => h.id.isEqualTo(authInfo.helperId);
                     settings.excludeColumns = h => [h.realStoredPassword, h.isAdmin, h.shortUrlKey];
                 }
-                return  settings;
+                return settings;
             }
         };
+    }
+    
+    static async testIt(name: string, id: Number) {
+        console.log("i'm running on the server ",name,id);
+        return 7;
     }
 }
 
