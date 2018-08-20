@@ -16,8 +16,8 @@ import { ResetPasswordAction } from '../helpers/reset-password';
 
 
 import { AddBoxAction } from '../asign-family/add-box-action';
-import { SendSmsAction } from '../asign-family/send-sms-action';
-import { LoginFromSmsAction } from '../login-from-sms/login-from-sms-action';
+
+
 import { GetBasketStatusAction } from '../asign-family/get-basket-status-action';
 import { serverInit, allEntities } from './serverInit';
 import { ServerEventAuthorizeAction } from './server-event-authorize-action';
@@ -83,20 +83,17 @@ serverInit().then(async () => {
 
     evilStatics.auth.applyTo(eb, allUsersAlsoNotLoggedIn);
     [
-        AuthService.login
+        AuthService.login,
+        AuthService.loginFromSms
     ].forEach(a => {
         addAction(allUsersAlsoNotLoggedIn, a);
 
     });
-    [
-        
-        new LoginFromSmsAction()
-    ].forEach(a => allUsersAlsoNotLoggedIn.addAction(a));
-
+   
     [
         new ResetPasswordAction(),
         new AddBoxAction(),
-        new SendSmsAction(),
+        
         new GetBasketStatusAction(),
         new ServerEventAuthorizeAction(),
         new SetDeliveryActiveAction(),

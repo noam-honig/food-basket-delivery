@@ -6,7 +6,6 @@ import { foreachEntityItem } from "../shared/utils";
 import { SelectService } from "../select-popup/select-service";
 import { Router, Route } from "@angular/router";
 import { evilStatics } from "./evil-statics";
-import { LoginFromSmsAction } from "../login-from-sms/login-from-sms-action";
 import { Helpers } from "../helpers/helpers";
 import * as passwordHash from 'password-hash';
 import { RunOnServer } from "./server-action";
@@ -16,10 +15,29 @@ import { RunOnServer } from "./server-action";
 export class AuthService {
 
     async loginFromSms(key: string) {
-        this.auth.loggedIn(await new LoginFromSmsAction().run({ key: key }), false);
+        this.auth.loggedIn(await AuthService.loginFromSms(key), false);
         if (this.auth.valid) {
             this.router.navigate([evilStatics.routes.myFamilies]);
         }
+    }
+    @RunOnServer
+    static async loginFromSms(key: string) {
+        let result: myAuthInfo;
+        await foreachEntityItem(new Helpers(), h => h.shortUrlKey.isEqualTo(key), async h => {
+            result = {
+                helperId: h.id.value,
+                admin: false,
+                name: h.name.value
+            };
+        });
+        if (result) {
+            return {
+                valid: true,
+                authToken: evilStatics.auth.createTokenFor(result),
+                requirePassword: false
+            };
+        }
+        return { valid: false, requirePassword: false };
     }
     constructor(
         private dialog: SelectService,
@@ -28,7 +46,7 @@ export class AuthService {
 
     async login(user: string, password: string, remember: boolean, fail: () => void) {
 
-        let loginResponse = await AuthService.login(user,password);
+        let loginResponse = await AuthService.login(user, password);
         this.auth.loggedIn(loginResponse, remember);
         if (this.auth.valid) {
             if (loginResponse.requirePassword) {
