@@ -1,4 +1,4 @@
-import { ServerAction } from "../auth/server-action";
+import { ServerAction, ServerContext } from "../auth/server-action";
 import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { FamilyDeliveryEvents } from "./FamilyDeliveryEvents";
@@ -37,7 +37,7 @@ export class SetDeliveryActiveAction extends ServerAction<InArgs, OutArgs>{
             let newEvent = (await currentEvent.source.find({ where: currentEvent.id.isEqualTo(info.newDeliveryEventId) }))[0];
             newEvent.isActiveEvent.value = true;
             await newEvent.save();
-            await foreachSync(await new Families(ds).source.find({}),
+            await foreachSync(await new Families(new ServerContext(req.authInfo), ds).source.find({}),
                 async f => {
                     let cols: Column<any>[] = [
                         f.basketType,

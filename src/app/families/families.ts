@@ -13,6 +13,7 @@ import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelper
 import { evilStatics } from "../auth/evil-statics";
 import { entityWithApi, entityApiSettings, ApiAccess } from "../server/api-interfaces";
 import { DataApiSettings } from "radweb/utils/server/DataApi";
+import { EntityProvider, Context } from "../shared/entity-provider";
 
 export class Families extends IdEntity<FamilyId> implements entityWithApi {
   getDataApiSettings(): entityApiSettings {
@@ -82,26 +83,27 @@ export class Families extends IdEntity<FamilyId> implements entityWithApi {
 
   callStatus = new CallStatusColumn('סטטוס שיחה');
   callTime = new changeDate('מועד שיחה');
-  callHelper = new HelperIdReadonly('מי ביצעה את השיחה');
+  callHelper = new HelperIdReadonly(this.context, 'מי ביצעה את השיחה');
   callComments = new StringColumn('הערות שיחה');
 
 
-  courier = new HelperId("משנע");
-  courierAssignUser = new HelperIdReadonly('מי שייכה למשנע');
+  courier = new HelperId(this.context, "משנע");
+  courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
+
   courierAssignUserName = new StringColumn({
     caption: 'שם שיוך למשנע',
-    virtualData: async () => (await this.lookupAsync(new Helpers(), this.courierAssignUser)).name.value
+    virtualData: async () => (await this.context.entityProvider.lookupAsync(Helpers, this.courierAssignUser)).name.value
   });
   courierAssignUserPhone = new StringColumn({
-    caption: 'שם שיוך למשנע',
-    virtualData: async () => (await this.lookupAsync(new Helpers(), this.courierAssignUser)).phone.value
+    caption: 'טלפון שיוך למשנע',
+    virtualData: async () => (await this.context.entityProvider.lookupAsync(Helpers, this.courierAssignUser)).phone.value
   });
   courierAssingTime = new changeDate('מועד שיוך למשנע');
 
 
   deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
   deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
-  deliveryStatusUser = new HelperIdReadonly('מי עדכן את סטטוס המשלוח');
+  deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
   routeOrder = new NumberColumn();
   courierComments = new StringColumn('הערות מסירה');
   addressByGoogle() {
@@ -135,7 +137,7 @@ export class Families extends IdEntity<FamilyId> implements entityWithApi {
 
 
   createDate = new changeDate('מועד הוספה');
-  createUser = new HelperIdReadonly('משתמש מוסיף');
+  createUser = new HelperIdReadonly(this.context, 'משתמש מוסיף');
 
   excludeColumns(info: myAuthInfo) {
     if (info && info.admin)
@@ -163,8 +165,9 @@ export class Families extends IdEntity<FamilyId> implements entityWithApi {
     this._lastString = this.addressApiResult.value;
     return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
   }
-  constructor(source?: DataProviderFactory) {
-    super(new FamilyId(), () => new Families(source), source ? source : evilStatics.dataSource, "Families");
+
+  constructor(private context: Context, source?: DataProviderFactory) {
+    super(new FamilyId(), () => new Families(context, source), source ? source : evilStatics.dataSource, "Families");
     this.initColumns();
   }
   async doSave(authInfo: myAuthInfo) {

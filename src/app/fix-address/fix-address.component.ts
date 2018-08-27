@@ -7,6 +7,7 @@ import { } from 'googlemaps';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
+import { Context } from '../shared/entity-provider';
 
 @Component({
   selector: 'app-fix-address',
@@ -23,7 +24,7 @@ export class FixAddressComponent implements OnInit {
 
   gridView = true;
 
-  families = new GridSettings(new Families(), {
+  families = new GridSettings(new Families(this.context), {
     allowUpdate: true,
     get: { limit: 1000, orderBy: f => f.name },
     hideDataArea: true,
@@ -70,7 +71,7 @@ export class FixAddressComponent implements OnInit {
 
     ]
   });
-  constructor(private dialog: SelectService, private san: DomSanitizer) { }
+  constructor(private context:Context, private san: DomSanitizer) { }
   showInfo() {
     console.log(this.getLocation());
   }

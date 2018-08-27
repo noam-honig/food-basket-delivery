@@ -28,7 +28,7 @@ export var allEntities =()=> [
     new Helpers(),
     new Items(),
     new ItemsPerHelper(),
-    new Families(),
+    new Families(undefined),
     new BasketType(),
     new FamilySources(),
     new DeliveryEvents(),
@@ -78,7 +78,7 @@ export async function serverInit() {
     });
 
 
-    let f = new Families();
+    let f = new Families(undefined);
     console.log('fix city start');
     await foreachSync(await f.source.find({ where: f.city.isEqualTo('') }), async ff => {
         ff.city.value = ff.getGeocodeInformation().getCity();

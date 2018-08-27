@@ -1,4 +1,4 @@
-import { ServerAction } from "../auth/server-action";
+import { ServerAction, ServerContext } from "../auth/server-action";
 import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { Families } from '../families/families';
@@ -6,6 +6,7 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
 import { BasketType } from "../families/BasketType";
 import { foreachSync } from "../shared/utils";
+import { Context } from "../shared/entity-provider";
 
 
 
@@ -14,10 +15,10 @@ export class GetBasketStatusAction extends ServerAction<GetBasketStatusActionInf
         super('GetBasketStatusAction');//required because of minification
     }
     protected async execute(info: GetBasketStatusActionInfo, req: DataApiRequest<myAuthInfo>): Promise<GetBasketStatusActionResponse> {
-        return await GetBasketStatusAction.getTheBaskts(info);
+        return await GetBasketStatusAction.getTheBaskts(info, new ServerContext(req.authInfo));
     }
 
-    static async getTheBaskts(info: GetBasketStatusActionInfo) {
+    static async getTheBaskts(info: GetBasketStatusActionInfo, context: Context) {
         let result = {
             baskets: [],
             cities: [],
@@ -25,7 +26,7 @@ export class GetBasketStatusAction extends ServerAction<GetBasketStatusActionInf
         };
         let basketHash: any = {};
         let cityHash: any = {};
-        let f = new Families();
+        let f = new Families(context);
         let r = await f.source.find({ where: f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('')) });
         r.forEach(cf => {
             if (info.filterLanguage == -1 || info.filterLanguage == cf.language.value) {

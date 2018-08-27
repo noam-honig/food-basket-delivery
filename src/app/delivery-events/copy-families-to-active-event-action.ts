@@ -1,4 +1,4 @@
-import { ServerAction } from "../auth/server-action";
+import { ServerAction, ServerContext } from "../auth/server-action";
 import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { FamilyDeliveryEvents } from "./FamilyDeliveryEvents";
@@ -35,7 +35,7 @@ export class CopyFamiliesToActiveEventAction extends ServerAction<InArgs, OutArg
                     .and(fde.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id))
             }),
                 async de => {
-                    let f = new Families();
+                    let f = new Families(new ServerContext(req.authInfo));
                     await f.source.find({ where: f.id.isEqualTo(de.family) }).then(async f => {
                         f[0].deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
                         f[0].basketType.value = de.basketType.value;

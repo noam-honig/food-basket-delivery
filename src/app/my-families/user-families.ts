@@ -8,12 +8,14 @@ import { AuthService } from '../auth/auth-service';
 import { SelectService } from '../select-popup/select-service';
 import { MapComponent } from '../map/map.component';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
+import { Context } from '../shared/entity-provider';
 
 export class UserFamiliesList {
     map: MapComponent;
     setMap(map: MapComponent): any {
         this.map = map;
     }
+    constructor(private context:Context){}
     toDeliver: Families[] = [];
     delivered: Families[] = [];
     problem: Families[] = [];
@@ -33,7 +35,7 @@ export class UserFamiliesList {
         this.allFamilies = familiesPocoArray.map(x => this.families.source.fromPojo(x));
         this.initFamilies();
     }
-    families = new Families();
+    families = new Families(this.context);
     async reload() {
         this.allFamilies = await this.families.source.find({ where: this.families.courier.isEqualTo(this.helperId), orderBy: [this.families.routeOrder, this.families.address], limit: 1000 });
         this.initFamilies();

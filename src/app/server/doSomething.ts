@@ -26,8 +26,8 @@ DoIt();
 
 
 async function getGeolocationInfo() {
-    let families = new Families();
-    foreachEntityItem(new Families(), undefined, async f => {
+    let families = new Families(undefined);
+    foreachEntityItem(new Families(undefined), undefined, async f => {
         if (!f.getGeocodeInformation().ok()) {
             f.addressApiResult.value = (await GetGeoInformation(f.address.value)).saveToString();
             await f.save();
@@ -44,7 +44,7 @@ async function ImportFromExcel() {
     await foreachSync(o, async r => {
         try {
 
-            let f = new Families();
+            let f = new Families(undefined);
             let get = x => {
                 if (!r[x])
                     return '';
@@ -75,7 +75,7 @@ async function ImportFromExcel() {
 }
 
 async function updateAddress() {
-    (await new Families().source.find({})).forEach(f => {
+    (await new Families(undefined).source.find({})).forEach(f => {
         if (f.address.value.indexOf('נתניה') < 0) {
             f.address.value = f.address.value.trim() + ' נתניה';
             f.save();
@@ -84,7 +84,7 @@ async function updateAddress() {
 }
 
 async function updatePhone() {
-    (await new Families().source.find({})).forEach(f => {
+    (await new Families(undefined).source.find({})).forEach(f => {
         f.phone1.value = '0507330590';
         f.save();
     });
@@ -92,7 +92,7 @@ async function updatePhone() {
 function UpdateAllFamiliyNames() {
     readFile(`c:\\temp\\famiilies.txt`, (err, data) => {
         let names = data.toString().split('\r\n');
-        new Families().source.find({}).then(async families => {
+        new Families(undefined).source.find({}).then(async families => {
             for (let i = 0; i < families.length; i++) {
                 families[i].name.value = names[i];
                 await families[i].save();
@@ -106,7 +106,7 @@ async function imprortFamiliesFromJson() {
     let r = readFileSync(`c:\\temp\\hugmoms.json`);
     var rows = JSON.parse(r.toString());
     for (let i = 0; i < rows.length; i++) {
-        let f = new Families();
+        let f = new Families(undefined);
         let c = new ColumnHashSet();
         f.__fromPojo(rows[i], c);
         let families = await f.source.find({ where: f.id.isEqualTo(f.id.value) });

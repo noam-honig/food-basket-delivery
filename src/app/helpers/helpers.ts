@@ -1,14 +1,15 @@
 import * as radweb from 'radweb';
-import { BoolColumn, DataProviderFactory, ColumnSetting, Entity } from "radweb";
+import { BoolColumn, DataProviderFactory, ColumnSetting, Entity, StringColumn } from "radweb";
 import { evilStatics } from "../auth/evil-statics";
 import { IdEntity, changeDate, Id, HasAsyncGetTheValue, checkForDuplicateValue } from '../model-shared/types';
 import { SelectServiceInterface } from '../select-popup/select-service-interface';
-import { DataApiRequest } from 'radweb/utils/dataInterfaces1';
+import { DataApiRequest, DataColumnSettings } from 'radweb/utils/dataInterfaces1';
 import { myAuthInfo } from '../auth/my-auth-info';
 import { DataApiSettings, DataApi } from 'radweb/utils/server/DataApi';
 import * as passwordHash from 'password-hash';
 import { entityWithApi, entityApiSettings, ApiAccess } from '../server/api-interfaces';
 import { RunOnServer } from '../auth/server-action';
+import { EntityProvider, Context } from '../shared/entity-provider';
 
 
 export class Helpers extends IdEntity<HelperId> implements entityWithApi {
@@ -31,9 +32,9 @@ export class Helpers extends IdEntity<HelperId> implements entityWithApi {
     isAdmin = new BoolColumn('מנהלת');
     shortUrlKey = new radweb.StringColumn();
 
-    constructor(factory?: () => Helpers, name?: string, source?: DataProviderFactory) {
+    constructor(context:Context, factory?: () => Helpers, name?: string, source?: DataProviderFactory) {
 
-        super(new HelperId(), factory ? factory : () => new Helpers(), source ? source : evilStatics.dataSource, {
+        super(new HelperId(context), factory ? factory : () => new Helpers(context), source ? source : evilStatics.dataSource, {
             name: name ? name : "Helpers",
             dbName: "Helpers"
 
@@ -106,28 +107,32 @@ export class Helpers extends IdEntity<HelperId> implements entityWithApi {
 
 export class HelperId extends Id implements HasAsyncGetTheValue {
 
+    constructor(private context: Context, settingsOrCaption?: DataColumnSettings<string, StringColumn> | string) {
+        super(settingsOrCaption);
+    }
     getColumn(dialog: SelectServiceInterface): ColumnSetting<Entity<any>> {
         return {
             column: this,
             getValue: f => (<HelperId>f.__getColumn(this)).getValue(),
             hideDataOnInput: true,
-            click: f => dialog.selectHelper(s => f.__getColumn(this).value = s.id.value),
+            click: f => dialog.selectHelper(s => f.__getColumn(this).value = (s ? s.id.value : '')),
             readonly: this.readonly,
             width: '200'
 
         }
     }
+    
     getValue() {
-        return this.lookup(new Helpers()).name.value;
+        return this.context.entityProvider.lookup(Helpers, this).name.value;
     }
     async getTheName() {
-        let r = await this.lookupAsync(new Helpers(), this);
+        let r = await this.context.entityProvider.lookupAsync(Helpers, this);
         if (r && r.name && r.name.value)
             return r.name.value;
         return '';
     }
     async getTheValue() {
-        let r = await this.lookupAsync(new Helpers(), this);
+        let r = await this.context.entityProvider.lookupAsync(Helpers, this);
         if (r && r.name && r.name.value && r.phone)
             return r.name.value + ' ' + r.phone.value;
         return '';
@@ -135,14 +140,15 @@ export class HelperId extends Id implements HasAsyncGetTheValue {
 }
 
 export class HelperIdReadonly extends HelperId {
-    constructor(caption: string) {
-        super({
+    constructor(private myContext:Context,caption: string) {
+        super(myContext,{
             caption: caption,
             readonly: true
         });
     }
+    
     get displayValue() {
-        return this.lookup(new Helpers()).name.value;
+        return this.myContext.entityProvider.lookup(Helpers, this).name.value;
     }
 }
 

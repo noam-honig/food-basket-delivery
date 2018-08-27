@@ -9,6 +9,9 @@ import { evilStatics } from "./evil-statics";
 import { Helpers } from "../helpers/helpers";
 import * as passwordHash from 'password-hash';
 import { RunOnServer } from "./server-action";
+import { EntityProvider, Context } from "../shared/entity-provider";
+import { EPERM } from "constants";
+import { LoginResponse } from "./auth-info";
 
 
 @Injectable()
@@ -21,23 +24,20 @@ export class AuthService {
         }
     }
     @RunOnServer
-    static async loginFromSms(key: string) {
-        let result: myAuthInfo;
-        await foreachEntityItem(new Helpers(), h => h.shortUrlKey.isEqualTo(key), async h => {
-            result = {
-                helperId: h.id.value,
-                admin: false,
-                name: h.name.value
-            };
-        });
-        if (result) {
+    static async loginFromSms(key: string, context?: Context) {
+
+        let h = await context.entityProvider.for(Helpers).findFirst(h => h.shortUrlKey.isEqualTo(key));
+        if (h)
             return {
                 valid: true,
-                authToken: evilStatics.auth.createTokenFor(result),
+                authToken: evilStatics.auth.createTokenFor({
+                    helperId: h.id.value,
+                    admin: false,
+                    name: h.name.value
+                }),
                 requirePassword: false
-            };
-        }
-        return { valid: false, requirePassword: false };
+            } as LoginResponse
+        return { valid: false, requirePassword: false } as LoginResponse;
     }
     constructor(
         private dialog: SelectService,
@@ -68,10 +68,11 @@ export class AuthService {
         }
     }
     @RunOnServer
-    static async login(user: string, password: string) {
+    static async login(user: string, password: string, context?: Context) {
         let result: myAuthInfo;
         let requirePassword = false;
-        await foreachEntityItem(new Helpers(), h => h.phone.isEqualTo(user), async h => {
+
+        await context.entityProvider.for(Helpers).foreach(h => h.phone.isEqualTo(user), async h => {
             if (!h.realStoredPassword.value || passwordHash.verify(password, h.realStoredPassword.value)) {
                 result = {
                     helperId: h.id.value,

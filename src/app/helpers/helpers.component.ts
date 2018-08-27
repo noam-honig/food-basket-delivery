@@ -9,6 +9,7 @@ import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
 import { foreachEntityItem } from '../shared/utils';
 import { RunOnServer } from '../auth/server-action';
+import { EntityProvider, Context } from '../shared/entity-provider';
 
 @Component({
   selector: 'app-helpers',
@@ -16,13 +17,15 @@ import { RunOnServer } from '../auth/server-action';
   styleUrls: ['./helpers.component.css']
 })
 export class HelpersComponent implements OnInit {
+  constructor(private dialog: SelectService,private context:Context) {
+  }
   static route: Route = {
     path: 'helpers',
     component: HelpersComponent,
     data: { name: 'מתנדבות' }, canActivate: [AdminGuard]
   };
 
-  helpers = new GridSettings(new Helpers(), {
+  helpers = this.context.entityProvider.for(Helpers).gridSettings({
     allowDelete: true,
     allowInsert: true,
     allowUpdate: true,
@@ -50,7 +53,7 @@ export class HelpersComponent implements OnInit {
       {
         column: x.family,
         caption: 'משפחה',
-        getValue: x => x.lookup(new Families(), x.family).name.value
+        getValue: x => x.lookup(new Families(this.context), x.family).name.value
       },
       x.deliverStatus
 
@@ -76,15 +79,15 @@ export class HelpersComponent implements OnInit {
 
   }
   @RunOnServer
-  static async resetPassword(helperId: string) {
-    await foreachEntityItem(new Helpers(), h => h.id.isEqualTo(helperId), async h => {
+  static async resetPassword(helperId: string,context?:Context) {
+    
+    await context.entityProvider.for(Helpers).foreach(h => h.id.isEqualTo(helperId), async h => {
       h.realStoredPassword.value = '';
       await h.save();
     });
   }
 
-  constructor(private dialog: SelectService) {
-  }
+
 
   ngOnInit() {
   }

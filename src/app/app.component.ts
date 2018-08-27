@@ -86,7 +86,7 @@ export class AppComponent {
 
   }
   test() {
-    console.log(this.activeRoute);
+    
   }
 
 }

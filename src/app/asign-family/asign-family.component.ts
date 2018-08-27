@@ -22,6 +22,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import * as fetch from 'node-fetch';
 import { myAuthInfo } from '../auth/my-auth-info';
 import { RunOnServer } from '../auth/server-action';
+import { EntityProvider, Context } from '../shared/entity-provider';
 
 
 @Component({
@@ -39,12 +40,13 @@ export class AsignFamilyComponent implements OnInit {
     this.shortUrl = undefined;
     this.id = undefined;
     if (this.phone.length == 10) {
-      let h = new Helpers();
-      let r = await h.source.find({ where: h.phone.isEqualTo(this.phone) });
-      if (r.length > 0) {
-        this.name = r[0].name.value;
-        this.shortUrl = r[0].shortUrlKey.value;
-        this.id = r[0].id.value;
+
+
+      let helper = await this.context.entityProvider.for(Helpers).findFirst(h => h.phone.isEqualTo(this.phone));
+      if (helper) {
+        this.name = helper.name.value;
+        this.shortUrl = helper.shortUrlKey.value;
+        this.id = helper.id.value;
         this.refreshList();
       } else {
         this.refreshList();
@@ -109,17 +111,24 @@ export class AsignFamilyComponent implements OnInit {
   }
   findHelper() {
     this.dialog.selectHelper(h => {
-      this.phone = h.phone.value;
-      this.name = h.name.value;
-      this.shortUrl = h.shortUrlKey.value;
-      this.id = h.id.value;
-
+      if (h) {
+        this.phone = h.phone.value;
+        this.name = h.name.value;
+        this.shortUrl = h.shortUrlKey.value;
+        this.id = h.id.value;
+      }
+      else {
+        this.phone = '';
+        this.name = '';
+        this.shortUrl = '';
+        this.id = '';
+      }
       this.refreshList();
     });
   }
 
 
-  constructor(private auth: AuthService, private dialog: SelectService) {
+  constructor(private auth: AuthService, private dialog: SelectService, private context: Context) {
 
   }
 
@@ -138,7 +147,7 @@ export class AsignFamilyComponent implements OnInit {
       helperId: this.id,
       language: this.filterLangulage,
       city: this.filterCity
-    }, this.auth.auth.info);
+    });
     if (x.ok) {
       basket.unassignedFamilies--;
       this.id = x.helperId;
@@ -156,7 +165,8 @@ export class AsignFamilyComponent implements OnInit {
 
   }
   @RunOnServer
-  static async AddBox(info: AddBoxInfo, authInfo: myAuthInfo) {
+  static async AddBox(info: AddBoxInfo,  context?: Context) {
+    
     let result: AddBoxResponse = {
       helperId: info.helperId,
       ok: false,
@@ -165,19 +175,18 @@ export class AsignFamilyComponent implements OnInit {
       basketInfo: undefined
     }
 
-    let h = new Helpers();
     if (!info.helperId) {
-      let r = await h.source.find({ where: h.phone.isEqualTo(info.phone) });
-      if (r.length == 0) {
+      let r = await context.entityProvider.for(Helpers).findFirst(h => h.phone.isEqualTo(info.phone));
+      if (!r) {
+        let h = context.entityProvider.for(Helpers).create();
         h.phone.value = info.phone;
         h.name.value = info.name;
         await h.save();
         result.helperId = h.id.value;
         result.shortUrl = h.shortUrlKey.value;
-
       }
     }
-    let f = new Families();
+    let f = new Families(context);
 
 
 
@@ -201,7 +210,7 @@ export class AsignFamilyComponent implements OnInit {
           let position = Math.trunc(Math.random() * r.length);
           let family = r[position];
           family.courier.value = result.helperId;
-          await family.doSave(authInfo);
+          await family.doSave(context.info);
           result.ok = true;
           existingFamilies.push(family);
         }
@@ -232,7 +241,7 @@ export class AsignFamilyComponent implements OnInit {
           }
           f.courier.value = result.helperId;
 
-          await f.doSave(authInfo);
+          await f.doSave(context.info);
           existingFamilies.push(f);
           result.ok = true;
         }
@@ -241,7 +250,7 @@ export class AsignFamilyComponent implements OnInit {
       await AsignFamilyComponent.optimizeRoute(existingFamilies);
       existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
       let exc = new ColumnHashSet()
-      exc.add(...f.excludeColumns(authInfo));
+      exc.add(...f.excludeColumns(context.info));
 
       await foreachSync(existingFamilies, async f => { result.families.push(await f.__toPojo(exc)); });
       result.basketInfo = await GetBasketStatusAction.getTheBaskts({
@@ -268,35 +277,6 @@ export class AsignFamilyComponent implements OnInit {
         }
         i++;
       });
-
-      if (1 + 1 == 0) {
-        let temp = families;
-        let sorted = [];
-
-        let lastLoc: Location = {
-          lat: 32.2280236,
-          lng: 34.8807046
-        };
-        let total = temp.length;
-        for (let i = 0; i < total; i++) {
-          let closest = temp[0];
-          let closestIndex = 0;
-          let closestDist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, closest.getGeocodeInformation().location());
-          for (let j = 0; j < temp.length; j++) {
-            let dist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, temp[j].getGeocodeInformation().location());
-            if (dist < closestDist) {
-              closestIndex = j;
-              closestDist = dist;
-              closest = temp[j];
-            }
-          }
-          lastLoc = closest.getGeocodeInformation().location();
-          sorted.push(temp.splice(closestIndex, 1)[0]);
-
-        }
-        let r2 = await getRouteInfo(sorted, false);
-        console.log(getInfo(r), getInfo(r2));
-      }
       return r.routes[0].overview_polyline.points;
 
     }

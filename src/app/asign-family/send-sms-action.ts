@@ -1,9 +1,11 @@
-import { ServerAction } from "../auth/server-action";
+import { ServerAction, ServerContext } from "../auth/server-action";
 import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Helpers } from '../helpers/helpers';
 import * as fetch from 'node-fetch';
+import { DataSource } from "@angular/cdk/table";
+import { EntityProvider } from "../shared/entity-provider";
 
 
 export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
@@ -12,14 +14,14 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
     }
     protected async execute(info: SendSmsInfo, req: DataApiRequest<myAuthInfo>): Promise<SendSmsResponse> {
         let result: myAuthInfo;
+        let context  =new ServerContext(req.authInfo);
 
-        let currentUser = new Helpers();
         console.log(req.authInfo.helperId);
-        let y = await (currentUser.source.find({ where: currentUser.id.isEqualTo(req.authInfo.helperId) }));
+        let currentUser = await (context.entityProvider.for(Helpers).findFirst(h => h.id.isEqualTo(req.authInfo.helperId)));
 
-        await SendSmsAction.generateMessage(info.helperId, req.getHeader('origin'), info.reminder, req.authInfo.name, (phone, message) => {
+        await SendSmsAction.generateMessage(context.entityProvider, info.helperId, req.getHeader('origin'), info.reminder, req.authInfo.name, (phone, message) => {
 
-            new SendSmsUtils().sendSms(phone, y[0].phone.value, message);
+            new SendSmsUtils().sendSms(phone, currentUser.phone.value, message);
         });
 
         return {};
@@ -28,22 +30,22 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
 
 
 
-    static async  generateMessage(id: string, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string) => void) {
-        let h = new Helpers();
+    static async  generateMessage(ds: EntityProvider, id: string, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string) => void) {
+
         if (!origin) {
             throw 'Couldnt determine origin for sms';
         }
-        let r = await h.source.find({ where: h.id.isEqualTo(id) });
-        if (r.length > 0) {
-            if (r[0].veryUrlKeyAndReturnTrueIfSaveRequired()) {
-                await r[0].save();
+        let helper = await ds.for(Helpers).findFirst(h => h.id.isEqualTo(id));
+        if (helper) {
+            if (helper.veryUrlKeyAndReturnTrueIfSaveRequired()) {
+                await helper.save();
             }
             let message = '';
             if (reminder) {
-                message = 'שלום ' + r[0].name.value;
+                message = 'שלום ' + helper.name.value;
                 message += " טרם נרשם במערכת שבוצעה החלוקה, אנא עדכן אותנו אם יש צורך בעזרה או עדכן שהמשלוח הגיע ליעדו"
-                message += ' אנא לחץ על ' + origin + '/x/' + r[0].shortUrlKey.value;
-                r[0].reminderSmsDate.dateValue = new Date();
+                message += ' אנא לחץ על ' + origin + '/x/' + helper.shortUrlKey.value;
+                helper.reminderSmsDate.dateValue = new Date();
             }
             else {
                 let settings = await ApplicationSettings.getAsync();
@@ -53,11 +55,11 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
 
                 }
 
-                message = SendSmsAction.getMessage(message, settings.organisationName.value, r[0].name.value, senderName, origin + '/x/' + r[0].shortUrlKey.value);
+                message = SendSmsAction.getMessage(message, settings.organisationName.value, helper.name.value, senderName, origin + '/x/' + helper.shortUrlKey.value);
 
             }
-            then(r[0].phone.value, message);
-            await r[0].save();
+            then(helper.phone.value, message);
+            await helper.save();
 
 
         }

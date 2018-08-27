@@ -8,7 +8,7 @@ import { entityApiSettings, entityWithApi } from "../server/api-interfaces";
 
 
 
-let f = new Families();
+let f = new Families(undefined);
 let h = new Helpers();
 let fromFamilies = () => buildSql(' from ', f,
     ' where ', f.courier, ' = ', h, '.', h.id);

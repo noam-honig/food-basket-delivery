@@ -15,6 +15,7 @@ import { ServerEventAuthorizeAction } from "../server/server-event-authorize-act
 import { Subject } from "rxjs/Subject";
 import { Observable } from "rxjs/Observable";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
+import { EntityProvider } from "../shared/entity-provider";
 
 
 
@@ -24,6 +25,7 @@ export class SelectService implements SelectServiceInterface {
     Info(info: string): any {
         this.snackBar.open(info, "סגור", { duration: 4000 });
     }
+    
     Error(err: string): any {
 
         this.YesNoQuestion(err, () => { });
@@ -80,11 +82,11 @@ export class SelectService implements SelectServiceInterface {
         this.dialog.open(UpdateCommentComponent, { data: settings });
     }
 
-    showPopup<T extends Entity<any>>(entity: T, selected: (selectedValue: T) => void, settings?: IDataSettings<T>) {
+    showPopup<T extends Entity<any>>(entityType:  { new(): T; }, selected: (selectedValue: T) => void, settings?: IDataSettings<T>) {
 
         let data: SelectComponentInfo<T> = {
             onSelect: selected,
-            entity: entity,
+            entity: entityType,
             settings: settings
         };
         let ref = this.dialog.open(SelectPopupComponent, {

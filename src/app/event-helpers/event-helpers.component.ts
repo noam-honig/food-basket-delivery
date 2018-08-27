@@ -35,7 +35,7 @@ export class EventHelpersComponent implements OnInit {
   }
 
   addOne() {
-    this.dialog.showPopup(new Helpers(),
+    this.dialog.showPopup(Helpers,
       h => {
         this.helpers.addNewRow();
         let newRow = this.helpers.items[this.helpers.items.length - 1];

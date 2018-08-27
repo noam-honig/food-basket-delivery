@@ -26,6 +26,7 @@ import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
 import { RunOnServer } from '../auth/server-action';
+import { Context } from '../shared/entity-provider';
 
 
 @Component({
@@ -36,7 +37,18 @@ import { RunOnServer } from '../auth/server-action';
 export class FamiliesComponent implements OnInit {
 
   limit = 10;
+  constructor(private dialog: SelectService, private san: DomSanitizer, public busy: BusyService,private context:Context) {
+    this.doTest();
 
+    let y = dialog.newsUpdate.subscribe(() => {
+      this.refreshStats();
+    });
+    this.onDestroy = () => {
+      y.unsubscribe();
+    };
+    if (dialog.isScreenSmall())
+      this.gridView = false;
+  }
   filterBy(s: FaimilyStatistics) {
     this.families.get({
       where: s.rule,
@@ -96,7 +108,7 @@ export class FamiliesComponent implements OnInit {
     let data = [];
     let title = [];
     let doneTitle = false;
-    let f = new Families();
+    let f = new Families(this.context);
     await foreachSync(await f.source.find({ limit: 5000, orderBy: [f.name] })
       , async  f => {
         let row = [];
@@ -136,7 +148,7 @@ export class FamiliesComponent implements OnInit {
   }
   familyDeliveryEventsView = new FamilyDeliveryEventsView();
   previousDeliveryEvents: FamilyDeliveryEventsView[] = [];
-  families = new GridSettings(new Families(), {
+  families =  new GridSettings(new Families(this.context), {
 
     allowUpdate: true,
     allowInsert: true,
@@ -247,7 +259,7 @@ export class FamiliesComponent implements OnInit {
       families.courier.getColumn(this.dialog),
       {
         caption: 'טלפון משנע',
-        getValue: f => f.lookup(new Helpers(), f.courier).phone.value
+        getValue: f => this.context.entityProvider.lookup(Helpers, f.courier).phone.value
       },
       families.courierAssignUser,
       families.courierAssingTime,
@@ -341,7 +353,7 @@ export class FamiliesComponent implements OnInit {
       families.courier.getColumn(this.dialog),
       {
         caption: 'טלפון משנע',
-        getValue: f => f.lookup(new Helpers(), f.courier).phone.value
+        getValue: f => this.context.entityProvider.lookup(Helpers, f.courier).phone.value
       },
       families.courierAssignUser,
       families.courierAssingTime,
@@ -352,22 +364,11 @@ export class FamiliesComponent implements OnInit {
     ]
   });
   gridView = true;
- 
-  constructor(private dialog: SelectService, private san: DomSanitizer, public busy: BusyService) {
-    this.doTest();
-    
-    let y = dialog.newsUpdate.subscribe(() => {
-      this.refreshStats();
-    });
-    this.onDestroy = () => {
-      y.unsubscribe();
-    };
-    if (dialog.isScreenSmall())
-      this.gridView = false;
+
+
+  async doTest() {
   }
-  async doTest(){
-  }
-  
+
   onDestroy = () => { };
 
   ngOnDestroy(): void {

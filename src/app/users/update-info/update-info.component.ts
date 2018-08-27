@@ -6,6 +6,7 @@ import { AuthService } from '../../auth/auth-service';
 import { foreachEntityItem } from '../../shared/utils';
 import { LoggedInGuard } from '../../auth/auth-guard';
 import { Route } from '@angular/router';
+import { Context } from '../../shared/entity-provider';
 
 @Component({
   selector: 'app-update-info',
@@ -13,11 +14,16 @@ import { Route } from '@angular/router';
   styleUrls: ['./update-info.component.scss']
 })
 export class UpdateInfoComponent implements OnInit {
+  constructor(private dialog: SelectService,
+    private auth: AuthService,
+    private context: Context) {
 
+
+  }
   static route: Route = { path: 'update-info', component: UpdateInfoComponent, data: { name: 'הגדרות אישיות' }, canActivate: [LoggedInGuard] };
-  
+
   confirmPassword = new StringColumn({ caption: 'אישור סיסמה', inputType: 'password', value: Helpers.emptyPassword });
-  helpers = new GridSettings(new Helpers(), {
+  helpers = this.context.entityProvider.for(Helpers).gridSettings({
     numOfColumnsInGrid: 0,
     allowUpdate: true,
     get: { where: h => h.id.isEqualTo(this.auth.auth.info.helperId) },
@@ -34,11 +40,7 @@ export class UpdateInfoComponent implements OnInit {
   });
 
 
-  constructor(private dialog: SelectService,
-    private auth: AuthService) {
 
-
-  }
 
   ngOnInit() {
     this.helpers.getRecords().then(() => {

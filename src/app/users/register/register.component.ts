@@ -6,6 +6,7 @@ import { AuthService } from '../../auth/auth-service';
 import { foreachEntityItem } from '../../shared/utils';
 import { NotLoggedInGuard } from '../../auth/auth-guard';
 import { Route } from '@angular/router';
+import { Context } from '../../shared/entity-provider';
 
 @Component({
   selector: 'app-register',
@@ -13,11 +14,14 @@ import { Route } from '@angular/router';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
+  constructor(private auth: AuthService,private context:Context) {
 
+
+  }
   static route: Route = { path: 'register', component: RegisterComponent, data: { name: 'הרשמה' }, canActivate: [NotLoggedInGuard] };
 
   confirmPassword = new StringColumn({ caption: 'אישור סיסמה', inputType: 'password' });
-  helpers = new GridSettings(new Helpers(), {
+  helpers = this.context.entityProvider.for(Helpers).gridSettings({
     numOfColumnsInGrid: 0,
     allowUpdate: true,
     columnSettings: h => [
@@ -35,11 +39,7 @@ export class RegisterComponent implements OnInit {
   });
 
 
-  constructor(private dialog: SelectService,
-    private auth: AuthService) {
 
-
-  }
 
   ngOnInit() {
     this.helpers.addNewRow();

@@ -4,6 +4,7 @@ import { Families } from '../families/families';
 import { BusyService } from '../select-popup/busy-service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { FilterBase } from 'radweb/utils/dataInterfaces1';
+import { Context } from '../shared/entity-provider';
 
 
 @Component({
@@ -14,9 +15,9 @@ import { FilterBase } from 'radweb/utils/dataInterfaces1';
 export class SelectFamilyComponent implements OnInit {
 
   constructor(private busy: BusyService, private dialogRef: MatDialogRef<SelectFamilyComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: SelectFamilyInfo) { }
+    @Inject(MAT_DIALOG_DATA) private data: SelectFamilyInfo,private context:Context) { }
   searchString: string = '';
-  families = new GridSettings(new Families(), { knowTotalRows: true });
+  families = new GridSettings(new Families(this.context), { knowTotalRows: true });
   pageSize = 7;
   selectFirst() {
     if (this.families.items.length > 0)

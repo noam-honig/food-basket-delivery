@@ -7,7 +7,7 @@ import { Families, FamilyUpdateInfo } from "../families/families";
 import { entityWithApi, entityApiSettings } from "../server/api-interfaces";
 
 
-export let f = new Families();
+export let f = new Families(undefined);
 export class NewsUpdate extends Entity<string> implements entityWithApi {
 
   id = new StringColumn();

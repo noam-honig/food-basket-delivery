@@ -1,4 +1,4 @@
-import { ServerAction } from "../auth/server-action";
+import { ServerAction, ServerContext } from "../auth/server-action";
 import { DataApiRequest, FilterBase } from "radweb/utils/dataInterfaces1";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { Families } from "./families";
@@ -12,6 +12,7 @@ import { PostgresDataProvider } from "radweb/server";
 import { Column, Filter } from "radweb";
 import { BasketInfo } from "../asign-family/get-basket-status-action";
 import { BasketType } from "./BasketType";
+import { Context } from "../shared/entity-provider";
 
 
 export interface InArgs {
@@ -76,9 +77,9 @@ export class StatsAction extends ServerAction<InArgs, OutArgs>{
 
         let result = { data: {}, baskets: [] };
         let stats = new Stats();
-        await Promise.all(stats.statistics.map(x => x.saveTo(result.data)));
+        await Promise.all(stats.statistics.map(x => x.saveTo(result.data,new ServerContext(req.authInfo))));
         let b = new BasketType();
-        let f = new Families();
+        let f = new Families(new ServerContext(req.authInfo));
         let baskets = await b.source.find({});
         await foreachSync(baskets, async  b => {
             result.baskets.push({
@@ -106,8 +107,8 @@ export class FaimilyStatistics {
     }
 
     value = 0;
-    async saveTo(data: any) {
-        let f = new Families();
+    async saveTo(data: any,context:Context) {
+        let f = new Families(context);
         data[this.name] = await f.source.count(this.rule(f)).then(c => this.value = c);
     }
     async loadFrom(data: any) {
