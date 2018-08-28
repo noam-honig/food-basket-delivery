@@ -38,7 +38,7 @@ export class SetDeliveryActiveAction extends ServerAction<InArgs, OutArgs>{
             let newEvent = (await currentEvent.source.find({ where: currentEvent.id.isEqualTo(info.newDeliveryEventId) }))[0];
             newEvent.isActiveEvent.value = true;
             await newEvent.save();
-            await foreachSync(await new Families(new ServerContext(req.authInfo), ds).source.find({}),
+            await foreachSync(await new Families(context, ds).source.find({}),
                 async f => {
                     let cols: Column<any>[] = [
                         f.basketType,
@@ -56,7 +56,7 @@ export class SetDeliveryActiveAction extends ServerAction<InArgs, OutArgs>{
                         f.routeOrder];
 
                     {
-                        let currentFamilyEvent = new FamilyDeliveryEvents(context);
+                        let currentFamilyEvent = new FamilyDeliveryEvents(context,ds);
                         await currentFamilyEvent.source.find({
                             where: currentFamilyEvent.family.isEqualTo(f.id).and(
                                 currentFamilyEvent.deliveryEvent.isEqualTo(currentEvent.id))
