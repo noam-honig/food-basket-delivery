@@ -13,7 +13,7 @@ import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelper
 import { evilStatics } from "../auth/evil-statics";
 import { entityWithApi, entityApiSettings, ApiAccess } from "../server/api-interfaces";
 import { DataApiSettings } from "radweb/utils/server/DataApi";
-import {  Context } from "../shared/context";
+import { Context } from "../shared/context";
 
 export class Families extends IdEntity<FamilyId> implements entityWithApi {
   getDataApiSettings(): entityApiSettings {
@@ -60,8 +60,8 @@ export class Families extends IdEntity<FamilyId> implements entityWithApi {
   });
   familyMembers = new NumberColumn('מספר נפשות');
   language = new LanguageColumn();
-  basketType = new BasketId(this.context,'סוג סל');
-  familySource = new FamilySourceId('גורם מפנה');
+  basketType = new BasketId(this.context, 'סוג סל');
+  familySource = new FamilySourceId(this.context, 'גורם מפנה');
   special = new YesNoColumn('שיוך מיוחד');
   internalComment = new StringColumn('הערה פנימית - לא תופיע למשנע');
 
@@ -167,7 +167,7 @@ export class Families extends IdEntity<FamilyId> implements entityWithApi {
   }
 
   constructor(private context: Context) {
-    super(new FamilyId(),  Families, "Families");
+    super(new FamilyId(), Families, "Families");
     this.initColumns();
   }
   async doSave(authInfo: myAuthInfo) {
