@@ -15,9 +15,9 @@ import { Context } from '../shared/context';
 export class SelectFamilyComponent implements OnInit {
 
   constructor(private busy: BusyService, private dialogRef: MatDialogRef<SelectFamilyComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: SelectFamilyInfo,private context:Context) { }
+    @Inject(MAT_DIALOG_DATA) private data: SelectFamilyInfo, private context: Context) { }
   searchString: string = '';
-  families = new GridSettings(new Families(this.context), { knowTotalRows: true });
+  families = this.context.for(Families).gridSettings({ knowTotalRows: true });
   pageSize = 7;
   selectFirst() {
     if (this.families.items.length > 0)
@@ -32,10 +32,10 @@ export class SelectFamilyComponent implements OnInit {
     await this.families.get({
       where: f => {
         let r = f.name.isContains(this.searchString);
-        if (this.data.where){
+        if (this.data.where) {
           let x = this.data.where(f);
           if (x)
-          return r.and(x);
+            return r.and(x);
         }
         return r;
       },

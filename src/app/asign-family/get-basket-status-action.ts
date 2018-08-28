@@ -26,8 +26,8 @@ export class GetBasketStatusAction extends ServerAction<GetBasketStatusActionInf
         };
         let basketHash: any = {};
         let cityHash: any = {};
-        let f = new Families(context);
-        let r = await f.source.find({ where: f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('')) });
+
+        let r = await context.for(Families).find({ where: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('')) });
         r.forEach(cf => {
             if (info.filterLanguage == -1 || info.filterLanguage == cf.language.value) {
                 if (!info.filterCity || info.filterCity == cf.city.value) {
@@ -63,7 +63,7 @@ export class GetBasketStatusAction extends ServerAction<GetBasketStatusActionInf
             result.cities.push({ name: info.filterCity, unassignedFamilies: 0 });
         }
         await foreachSync(result.baskets, async (b) => {
-            b.name = (await f.lookupAsync(new BasketType(), bt => bt.id.isEqualTo(b.id))).name.value;
+            b.name = (await context.for(BasketType).lookupAsync(bt => bt.id.isEqualTo(b.id))).name.value;
         });
         result.baskets.sort((a, b) => b.unassignedFamilies - a.unassignedFamilies);
         return result;

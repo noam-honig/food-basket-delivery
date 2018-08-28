@@ -55,8 +55,8 @@ export class DeliveryStatistic {
 
     value = 0;
     async saveTo(data: any, context:Context) {
-        let f = new HelpersAndStats(context);
-        data[this.name] = await f.source.count(this.rule(f)).then(c => this.value = c);
+        
+        data[this.name] = await context.for(HelpersAndStats).count(f=>this.rule(f)).then(c => this.value = c);
     }
     async loadFrom(data: any) {
         this.value = data[this.name];

@@ -9,7 +9,7 @@ import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
 import { foreachEntityItem } from '../shared/utils';
 import { RunOnServer } from '../auth/server-action';
-import {  Context } from '../shared/context';
+import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-helpers',
@@ -17,7 +17,7 @@ import {  Context } from '../shared/context';
   styleUrls: ['./helpers.component.css']
 })
 export class HelpersComponent implements OnInit {
-  constructor(private dialog: SelectService,private context:Context) {
+  constructor(private dialog: SelectService, private context: Context) {
   }
   static route: Route = {
     path: 'helpers',
@@ -42,7 +42,7 @@ export class HelpersComponent implements OnInit {
     onEnterRow: h => this.previousEvents.getRecords()
 
   });
-  previousEvents = new GridSettings(new FamilyDeliveryEventsView(this.context), {
+  previousEvents = this.context.for(FamilyDeliveryEventsView).gridSettings({
     get: {
       where: e => e.courier.isEqualTo(this.helpers.currentRow ? this.helpers.currentRow.id.value : '-1'),
       orderBy: e => [{ column: e.deliveryDate, descending: true }]
@@ -53,7 +53,7 @@ export class HelpersComponent implements OnInit {
       {
         column: x.family,
         caption: 'משפחה',
-        getValue: x => x.lookup(new Families(this.context), x.family).name.value
+        getValue: x => this.context.for(Families).lookup(x.family).name.value
       },
       x.deliverStatus
 
@@ -79,8 +79,8 @@ export class HelpersComponent implements OnInit {
 
   }
   @RunOnServer
-  static async resetPassword(helperId: string,context?:Context) {
-    
+  static async resetPassword(helperId: string, context?: Context) {
+
     await context.for(Helpers).foreach(h => h.id.isEqualTo(helperId), async h => {
       h.realStoredPassword.value = '';
       await h.save();

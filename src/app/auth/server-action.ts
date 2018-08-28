@@ -44,13 +44,19 @@ export class myServerAction extends ServerAction<inArgs, result>
             }
         }
 
+        try {
+            return {
 
-        return {
 
 
+                data: await this.originalMethod(info.args)
+            };
+        }
 
-            data: await this.originalMethod(info.args)
-        };
+        catch (err) {
+            console.log(err);
+            throw err
+        }
     }
 
 }

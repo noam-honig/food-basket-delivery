@@ -60,7 +60,7 @@ export class Families extends IdEntity<FamilyId> implements entityWithApi {
   });
   familyMembers = new NumberColumn('מספר נפשות');
   language = new LanguageColumn();
-  basketType = new BasketId('סוג סל');
+  basketType = new BasketId(this.context,'סוג סל');
   familySource = new FamilySourceId('גורם מפנה');
   special = new YesNoColumn('שיוך מיוחד');
   internalComment = new StringColumn('הערה פנימית - לא תופיע למשנע');
@@ -166,8 +166,8 @@ export class Families extends IdEntity<FamilyId> implements entityWithApi {
     return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
   }
 
-  constructor(private context: Context, source?: DataProviderFactory) {
-    super(new FamilyId(), () => new Families(context, source), source ? source : evilStatics.dataSource, "Families");
+  constructor(private context: Context) {
+    super(new FamilyId(),  Families, "Families");
     this.initColumns();
   }
   async doSave(authInfo: myAuthInfo) {

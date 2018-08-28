@@ -15,7 +15,7 @@ export class UserFamiliesList {
     setMap(map: MapComponent): any {
         this.map = map;
     }
-    constructor(private context:Context){}
+    constructor(private context: Context) { }
     toDeliver: Families[] = [];
     delivered: Families[] = [];
     problem: Families[] = [];
@@ -32,12 +32,12 @@ export class UserFamiliesList {
     async initForFamilies(helperId: string, name: string, familiesPocoArray: any[]) {
         this.helperId = helperId;
         this.helperName = this.helperName;
-        this.allFamilies = familiesPocoArray.map(x => this.families.source.fromPojo(x));
+        this.allFamilies = familiesPocoArray.map(x => this.context.for(Families).create().source.fromPojo(x));
         this.initFamilies();
     }
-    families = new Families(this.context);
+
     async reload() {
-        this.allFamilies = await this.families.source.find({ where: this.families.courier.isEqualTo(this.helperId), orderBy: [this.families.routeOrder, this.families.address], limit: 1000 });
+        this.allFamilies = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(this.helperId), orderBy: f => [f.routeOrder, f.address], limit: 1000 });
         this.initFamilies();
     }
 
@@ -90,7 +90,7 @@ export class UserFamiliesList {
                 let x: basketStats = hash[ff.basketType.value];
                 if (!x) {
                     hash[ff.basketType.value] = this.totals[this.totals.push({
-                        name: () => ff.lookup(new BasketType(), ff.basketType).name.value,
+                        name: () => this.context.for(BasketType).lookup(ff.basketType).name.value,
                         count: 1
                     }) - 1];
                 }

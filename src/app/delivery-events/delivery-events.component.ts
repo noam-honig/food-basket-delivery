@@ -26,7 +26,7 @@ export class DeliveryEventsComponent implements OnInit {
     data: { name: 'אירועי חלוקה' }, canActivate: [AdminGuard]
   };
 
-  deliveryEvents = new GridSettings(new DeliveryEvents(this.context), {
+  deliveryEvents =this.context.for(DeliveryEvents).gridSettings( {
     allowUpdate: true,
     allowInsert: true,
     columnSettings: e => [

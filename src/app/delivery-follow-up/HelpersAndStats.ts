@@ -52,8 +52,8 @@ export class HelpersAndStats extends IdEntity<HelperId> implements entityWithApi
     firstDeliveryInProgressDate = new DateTimeColumn({
         dbReadOnly: true
     });
-    constructor(private context:Context) {
-        super(new HelperId(context), () => new HelpersAndStats(context), evilStatics.dataSource, {
+    constructor(context: Context) {
+        super(new HelperId(context), HelpersAndStats, {
             name: "helpersAndStats",
             dbName: buildSql('(select ', [
                 h.id,

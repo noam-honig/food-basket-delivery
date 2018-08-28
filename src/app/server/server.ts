@@ -29,6 +29,7 @@ import { AuthService } from "../auth/auth-service";
 import { HelpersComponent } from "../helpers/helpers.component";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 import { DeliveryEventsComponent } from "../delivery-events/delivery-events.component";
+import { SendSmsAction } from "../asign-family/send-sms-action";
 
 
 
@@ -86,6 +87,7 @@ serverInit().then(async () => {
     [
         new GetBasketStatusAction(),
         new ServerEventAuthorizeAction(),
+        new SendSmsAction(),
         new StatsAction(),
         new DeliveryStatsAction(),
     ].forEach(a => adminApi.addAction(a));
@@ -143,7 +145,8 @@ serverInit().then(async () => {
         res.send(result);
     });
     app.use('/assets/apple-touch-icon.png', async (req, res) => {
-        let imageBase = (await ApplicationImages.ApplicationImages.getAsync()).base64PhoneHomeImage.value;
+        
+        let imageBase = (await ApplicationImages.ApplicationImages.getAsync(new ServerContext({}))).base64PhoneHomeImage.value;
         res.contentType('png');
         if (imageBase) {
             try {
@@ -162,7 +165,7 @@ serverInit().then(async () => {
     });
     app.use('/favicon.ico', async (req, res) => {
         res.contentType('ico');
-        let imageBase = (await ApplicationImages.ApplicationImages.getAsync()).base64Icon.value;
+        let imageBase = (await ApplicationImages.ApplicationImages.getAsync(new ServerContext({}))).base64Icon.value;
         if (imageBase) {
             try {
                 res.send(Buffer.from(imageBase, 'base64'));
@@ -181,7 +184,7 @@ serverInit().then(async () => {
     async function sendIndex(res: express.Response) {
         const index = 'dist/index.html';
         if (fs.existsSync(index)) {
-            let x = (await ApplicationSettings.getAsync()).organisationName.value;
+            let x = (await ApplicationSettings.getAsync(new ServerContext({}))).organisationName.value;
 
             res.send(fs.readFileSync(index).toString().replace('!TITLE!', x));
         }

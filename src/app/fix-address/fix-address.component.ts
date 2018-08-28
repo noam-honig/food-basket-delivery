@@ -15,7 +15,7 @@ import { Context } from '../shared/context';
   styleUrls: ['./fix-address.component.scss']
 })
 export class FixAddressComponent implements OnInit {
-
+  constructor(private context:Context, private san: DomSanitizer) { }
   static route:Route = {
     path: 'addresses',
     component: FixAddressComponent,
@@ -24,7 +24,7 @@ export class FixAddressComponent implements OnInit {
 
   gridView = true;
 
-  families = new GridSettings(new Families(this.context), {
+  families =this.context.for(Families).gridSettings( {
     allowUpdate: true,
     get: { limit: 1000, orderBy: f => f.name },
     hideDataArea: true,
@@ -71,7 +71,7 @@ export class FixAddressComponent implements OnInit {
 
     ]
   });
-  constructor(private context:Context, private san: DomSanitizer) { }
+  
   showInfo() {
     console.log(this.getLocation());
   }

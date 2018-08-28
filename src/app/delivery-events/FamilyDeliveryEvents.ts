@@ -12,21 +12,21 @@ import { Context } from '../shared/context';
 export class FamilyDeliveryEvents extends IdEntity<FamilyDelveryEventId> {
   deliveryEvent = new DeliveryEventId();
   family = new FamilyId();
-  basketType = new BasketId('סוג סל');
+  basketType = new BasketId(this.context,'סוג סל');
   callStatus = new CallStatusColumn('סטטוס שיחה');
   callTime = new changeDate('מועד שיחה');
-  callHelper = new HelperIdReadonly(this.context,'מי ביצעה את השיחה');
+  callHelper = new HelperIdReadonly(this.context, 'מי ביצעה את השיחה');
   callComments = new StringColumn('הערות שיחה');
-  courier = new HelperId(this.context,"משנע");
-  courierAssignUser = new HelperIdReadonly(this.context,'מי שייכה למשנע');
+  courier = new HelperId(this.context, "משנע");
+  courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
   courierAssingTime = new changeDate('מועד שיוך למשנע');
   deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
   deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
-  deliveryStatusUser = new HelperIdReadonly(this.context,'מי עדכן את סטטוס המשלוח');
+  deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
   routeOrder = new NumberColumn();
   courierComments = new StringColumn('הערות מסירה');
-  constructor(private context:Context, source?: DataProviderFactory) {
-    super(new FamilyDelveryEventId(), () => new FamilyDeliveryEvents(context,source), source ? source : evilStatics.dataSource, 'FamilyDeliveryEvents');
+  constructor(private context: Context) {
+    super(new FamilyDelveryEventId(), FamilyDeliveryEvents, 'FamilyDeliveryEvents');
     this.initColumns();
   }
 }

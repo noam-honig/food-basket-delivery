@@ -6,6 +6,7 @@ import { AuthService } from '../../auth/auth-service';
 import { Router, Route } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 import { evilStatics } from '../../auth/evil-statics';
+import { Context } from '../../shared/context';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +18,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private dialog: SelectService,
     private auth: AuthService,
-    private router: Router
+    private router: Router,
+    private context:Context
   ) { }
   user: string;
   password: string;
@@ -25,7 +27,7 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
   }
   getLogo() {
-    return ApplicationSettings.get().logoUrl.value;
+    return ApplicationSettings.get(this.context).logoUrl.value;
   }
   login() {
     this.auth.login(this.user, this.password, this.remember, () => this.password = '');

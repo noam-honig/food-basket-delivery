@@ -15,16 +15,19 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
     }
     protected async execute(info: SendSmsInfo, req: DataApiRequest<myAuthInfo>): Promise<SendSmsResponse> {
         let result: myAuthInfo;
-        let context  =new ServerContext(req.authInfo);
+        let context = new ServerContext(req.authInfo);
+        try {
+            console.log(req.authInfo.helperId);
+            let currentUser = await (context.for(Helpers).findFirst(h => h.id.isEqualTo(req.authInfo.helperId)));
 
-        console.log(req.authInfo.helperId);
-        let currentUser = await (context.for(Helpers).findFirst(h => h.id.isEqualTo(req.authInfo.helperId)));
+            await SendSmsAction.generateMessage(context, info.helperId, req.getHeader('origin'), info.reminder, req.authInfo.name, (phone, message) => {
 
-        await SendSmsAction.generateMessage(context, info.helperId, req.getHeader('origin'), info.reminder, req.authInfo.name, (phone, message) => {
-
-            new SendSmsUtils().sendSms(phone, currentUser.phone.value, message);
-        });
-
+                new SendSmsUtils().sendSms(phone, currentUser.phone.value, message);
+            });
+        }
+        catch (err) {
+            console.log(err);
+        }
         return {};
 
     }
@@ -49,7 +52,7 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
                 helper.reminderSmsDate.dateValue = new Date();
             }
             else {
-                let settings = await ApplicationSettings.getAsync();
+                let settings = await ApplicationSettings.getAsync(ds);
                 message = settings.smsText.value;
                 if (!message || message.trim().length == 0) {
                     message = 'שלום !משנע! לחלוקת חבילות !ארגון! לחץ על: !אתר! תודה !שולח!';

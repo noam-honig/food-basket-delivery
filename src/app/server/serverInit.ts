@@ -72,14 +72,13 @@ export async function serverInit() {
     });
 
 
-    let h = new BasketType();
-    await h.source.find({ where: h.id.isEqualTo('') }).then(x => {
-        if (x.length == 0) {
-            h.setEmptyIdForNewRow();
-            h.name.value = 'רגיל';
-            h.save();
-        }
-    });
+    if ((await context.for(BasketType).count() == 0)) {
+        let h = context.for(BasketType).create();
+        h.setEmptyIdForNewRow();
+        h.name.value = 'רגיל';
+        await h.save();
+    }
+
 
 
 
@@ -88,16 +87,18 @@ export async function serverInit() {
         ff.city.value = ff.getGeocodeInformation().getCity();
         await ff.save();
     });
-    let de = new DeliveryEvents(undefined);
-    if (await de.source.count() == 0) {
+
+    if ((await context.for(DeliveryEvents).count()) == 0) {
+        let de = context.for(DeliveryEvents).create();
         de.name.value = 'אירוע החלוקה הראשון';
         de.isActiveEvent.value = true;
         de.deliveryDate.dateValue = new Date();
         await de.save();
     }
 
-    let settings = new ApplicationSettings();
-    if ((await settings.source.count()) == 0) {
+
+    if ((await context.for(ApplicationSettings).count()) == 0) {
+        let settings = context.for(ApplicationSettings).create();
         settings.id.value = 1;
         settings.organisationName.value = 'שם הארגון שלי';
         settings.logoUrl.value = '/assets/apple-touch-icon.png';

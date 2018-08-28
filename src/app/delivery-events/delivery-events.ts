@@ -40,7 +40,7 @@ export class DeliveryEvents extends IdEntity<DeliveryEventId> implements entityW
     }
   }
   constructor(private context:Context) {
-    super(new DeliveryEventId(), () => new DeliveryEvents(context),  evilStatics.dataSource, 'DeliveryEvents');
+    super(new DeliveryEventId(), DeliveryEvents, 'DeliveryEvents');
     this.initColumns();
   }
   getDataApiSettings(): entityApiSettings {

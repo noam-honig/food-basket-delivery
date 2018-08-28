@@ -3,8 +3,9 @@ import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelper
 import { evilStatics } from "../auth/evil-statics";
 import { entityApiSettings, LoggedInCanViewButOnlyAdminUpdatesInsertsAndDeletes, entityWithApi, ApiAccess } from "../server/api-interfaces";
 import { DataApiSettings } from "radweb/utils/server/DataApi";
+import { ContextEntity,  Context } from "../shared/context";
 
-export class ApplicationSettings extends Entity<number> implements entityWithApi {
+export class ApplicationSettings extends ContextEntity<number> implements entityWithApi {
 
   id = new NumberColumn();
   organisationName = new StringColumn('שם הארגון');
@@ -23,20 +24,19 @@ export class ApplicationSettings extends Entity<number> implements entityWithApi
 
 
   constructor() {
-    super(() => new ApplicationSettings(), evilStatics.dataSource, 'ApplicationSettings')
+    super( ApplicationSettings, 'ApplicationSettings')
     this.initColumns(this.id);
   }
   private static _settings: ApplicationSettings;
-  static get() {
+  static get(context: Context) {
     if (!this._settings) {
-      this._settings = new ApplicationSettings();
-      this._settings.source.find({}).then(s => this._settings = s[0]);
+      this._settings = context.for(ApplicationSettings).create();
+      context.for(ApplicationSettings).findFirst().then(s => this._settings = s);
     }
     return this._settings;
   }
-  static async getAsync(): Promise<ApplicationSettings> {
-    let a = new ApplicationSettings();
-    return (await a.source.find({}))[0];
+  static async getAsync(context: Context): Promise<ApplicationSettings> {
+    return (await context.for(ApplicationSettings).findFirst());
   }
   getDataApiSettings(): entityApiSettings {
     return {

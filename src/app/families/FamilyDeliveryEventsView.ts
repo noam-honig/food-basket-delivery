@@ -18,7 +18,7 @@ var de = new DeliveryEvents(undefined);
 export class FamilyDeliveryEventsView extends IdEntity<FamilyDelveryEventId> implements entityWithApi {
 
   family = new FamilyId();
-  basketType = new BasketId('סוג סל');
+  basketType = new BasketId(this.context,'סוג סל');
   eventName = new StringColumn('שם אירוע');
   deliveryDate = new DateTimeColumn('תאריך החלוקה');
   courier = new HelperId(this.context,"משנע");
@@ -27,7 +27,7 @@ export class FamilyDeliveryEventsView extends IdEntity<FamilyDelveryEventId> imp
   deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
   courierComments = new StringColumn('הערות מסירה');
   constructor(private context:Context, source?: DataProviderFactory) {
-    super(new FamilyDelveryEventId(), () => new FamilyDeliveryEventsView(context,source), source ? source : evilStatics.dataSource, {
+    super(new FamilyDelveryEventId(),  FamilyDeliveryEventsView, {
       name: 'FamilyDeliveryEventsView',
       dbName: buildSql('(select ', fde, '.', fde.id, ', ', [fde.family, fde.basketType, fde.courier, fde.courierAssingTime, fde.deliverStatus, fde.deliveryStatusDate, fde.courierComments, de.deliveryDate], ', ', de, '.', de.name, ' eventName', ' from ', fde, ' inner join ', de, ' on ', de, '.', de.id, '=', fde.deliveryEvent, ' where ', de.isActiveEvent, '=false', ') as x')
     });

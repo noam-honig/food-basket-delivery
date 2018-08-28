@@ -74,29 +74,34 @@ export class StatsAction extends ServerAction<InArgs, OutArgs>{
         super('StatsAction');//required because of minification
     }
     protected async execute(info: InArgs, req: DataApiRequest<myAuthInfo>): Promise<OutArgs> {
+        try {
+            let context = new ServerContext(req.authInfo);
+            let result = { data: {}, baskets: [] };
+            let stats = new Stats();
+            await Promise.all(stats.statistics.map(x => x.saveTo(result.data, context)));
 
-        let result = { data: {}, baskets: [] };
-        let stats = new Stats();
-        await Promise.all(stats.statistics.map(x => x.saveTo(result.data,new ServerContext(req.authInfo))));
-        let b = new BasketType();
-        let f = new Families(new ServerContext(req.authInfo));
-        let baskets = await b.source.find({});
-        await foreachSync(baskets, async  b => {
-            result.baskets.push({
-                id: b.id.value,
-                name: b.name.value,
-                unassignedFamilies: await f.source.count(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
-                    f.basketType.isEqualTo(b.id).and(
-                        f.courier.isEqualTo('')
-                    )
-                ))
+
+
+            await context.for(BasketType).foreach(undefined, async  b => {
+                result.baskets.push({
+                    id: b.id.value,
+                    name: b.name.value,
+                    unassignedFamilies: await context.for(Families).count(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
+                        f.basketType.isEqualTo(b.id).and(
+                            f.courier.isEqualTo('')
+                        )
+                    ))
+                });
             });
-        });
-        result.baskets = result.baskets.filter(b => b.unassignedFamilies > 0);
-        result.baskets.sort((a,b)=>b.unassignedFamilies-a.unassignedFamilies);
-        return result;
+            result.baskets = result.baskets.filter(b => b.unassignedFamilies > 0);
+            result.baskets.sort((a, b) => b.unassignedFamilies - a.unassignedFamilies);
+            return result;
 
-
+        }
+        catch (err) {
+            console.log(err);
+            throw err;
+        }
     }
 
 }
@@ -107,9 +112,9 @@ export class FaimilyStatistics {
     }
 
     value = 0;
-    async saveTo(data: any,context:Context) {
-        let f = new Families(context);
-        data[this.name] = await f.source.count(this.rule(f)).then(c => this.value = c);
+    async saveTo(data: any, context: Context) {
+        
+        data[this.name] = await  context.for(Families).count(f=>this.rule(f)).then(c => this.value = c);
     }
     async loadFrom(data: any) {
         this.value = data[this.name];

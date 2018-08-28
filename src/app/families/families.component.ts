@@ -27,6 +27,7 @@ import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
 import { RunOnServer } from '../auth/server-action';
 import { Context } from '../shared/context';
+import { DeliveryEvents } from '../delivery-events/delivery-events';
 
 
 @Component({
@@ -37,7 +38,7 @@ import { Context } from '../shared/context';
 export class FamiliesComponent implements OnInit {
 
   limit = 10;
-  constructor(private dialog: SelectService, private san: DomSanitizer, public busy: BusyService,private context:Context) {
+  constructor(private dialog: SelectService, private san: DomSanitizer, public busy: BusyService, private context: Context) {
     this.doTest();
 
     let y = dialog.newsUpdate.subscribe(() => {
@@ -108,8 +109,8 @@ export class FamiliesComponent implements OnInit {
     let data = [];
     let title = [];
     let doneTitle = false;
-    let f = new Families(this.context);
-    await foreachSync(await f.source.find({ limit: 5000, orderBy: [f.name] })
+
+    await foreachSync(await this.context.for(Families).find({ limit: 5000, orderBy: f => [f.name] })
       , async  f => {
         let row = [];
 
@@ -146,9 +147,9 @@ export class FamiliesComponent implements OnInit {
     XLSX.writeFile(wb, 'משפחות.xlsx');
     return;
   }
-  familyDeliveryEventsView = new FamilyDeliveryEventsView(this.context);
+
   previousDeliveryEvents: FamilyDeliveryEventsView[] = [];
-  families =  new GridSettings(new Families(this.context), {
+  families = this.context.for(Families).gridSettings({
 
     allowUpdate: true,
     allowInsert: true,
@@ -175,7 +176,7 @@ export class FamiliesComponent implements OnInit {
       } else {
 
         await this.busy.donotWait(async () =>
-          this.previousDeliveryEvents = await this.familyDeliveryEventsView.source.find({ where: this.familyDeliveryEventsView.family.isEqualTo(f.id), orderBy: [{ column: this.familyDeliveryEventsView.deliveryDate, descending: true }] }));
+          this.previousDeliveryEvents = await this.context.for(FamilyDeliveryEventsView).find({ where: f => f.family.isEqualTo(f.id), orderBy: f => [{ column: f.deliveryDate, descending: true }] }));
       }
     },
 
@@ -230,7 +231,7 @@ export class FamiliesComponent implements OnInit {
       },
       {
         column: families.basketType,
-        dropDown: { source: new BasketType() },
+        dropDown: { source: this.context.for(BasketType).create() },
         width: '100'
       },
 
@@ -239,7 +240,7 @@ export class FamiliesComponent implements OnInit {
         getValue: f => f.getDeliveryDescription()
       }, {
         column: families.familySource,
-        dropDown: { source: new FamilySources() }
+        dropDown: { source: this.context.for(FamilySources).create() }
       },
       families.internalComment,
       families.deliveryComments,
@@ -259,7 +260,7 @@ export class FamiliesComponent implements OnInit {
       families.courier.getColumn(this.dialog),
       {
         caption: 'טלפון משנע',
-        getValue: f => this.context.for(Helpers).lookup( f.courier).phone.value
+        getValue: f => this.context.for(Helpers).lookup(f.courier).phone.value
       },
       families.courierAssignUser,
       families.courierAssingTime,
@@ -301,11 +302,11 @@ export class FamiliesComponent implements OnInit {
       },
       {
         column: families.basketType,
-        dropDown: { source: new BasketType() }
+        dropDown: { source: this.context.for(BasketType).create() }
       },
       {
         column: families.familySource,
-        dropDown: { source: new FamilySources() }
+        dropDown: { source: this.context.for(FamilySources).create() }
       },
       families.internalComment,
       families.deliveryComments,
@@ -353,7 +354,7 @@ export class FamiliesComponent implements OnInit {
       families.courier.getColumn(this.dialog),
       {
         caption: 'טלפון משנע',
-        getValue: f => this.context.for(Helpers).lookup( f.courier).phone.value
+        getValue: f => this.context.for(Helpers).lookup(f.courier).phone.value
       },
       families.courierAssignUser,
       families.courierAssingTime,

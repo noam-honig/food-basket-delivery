@@ -22,7 +22,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import * as fetch from 'node-fetch';
 import { myAuthInfo } from '../auth/my-auth-info';
 import { RunOnServer } from '../auth/server-action';
-import {  Context } from '../shared/context';
+import { Context } from '../shared/context';
 
 
 @Component({
@@ -165,8 +165,8 @@ export class AsignFamilyComponent implements OnInit {
 
   }
   @RunOnServer
-  static async AddBox(info: AddBoxInfo,  context?: Context) {
-    
+  static async AddBox(info: AddBoxInfo, context?: Context) {
+
     let result: AddBoxResponse = {
       helperId: info.helperId,
       ok: false,
@@ -186,24 +186,27 @@ export class AsignFamilyComponent implements OnInit {
         result.shortUrl = h.shortUrlKey.value;
       }
     }
-    let f = new Families(context);
 
-
-
-    let existingFamilies = await f.source.find({ where: f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id)) });
+    let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id)) });
 
     {
-      let where = f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
-        f.courier.isEqualTo('').and(
-          f.basketType.isEqualTo(info.basketType).and(
-            f.special.IsDifferentFrom(YesNo.Yes.id)
-          )));
-      if (info.language > -1)
-        where = where.and(f.language.isEqualTo(info.language));
-      if (info.city) {
-        where = where.and(f.city.isEqualTo(info.city));
-      }
-      let r = await f.source.find({ where });
+
+      let r = await context.for(Families).find({
+        where: f => {
+          let where = f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
+            f.courier.isEqualTo('').and(
+              f.basketType.isEqualTo(info.basketType).and(
+                f.special.IsDifferentFrom(YesNo.Yes.id)
+              )));
+          if (info.language > -1)
+            where = where.and(f.language.isEqualTo(info.language));
+          if (info.city) {
+            where = where.and(f.city.isEqualTo(info.city));
+          }
+          return where;
+
+        }
+      });
 
       if (r.length > 0) {
         if (existingFamilies.length == 0) {
@@ -247,25 +250,25 @@ export class AsignFamilyComponent implements OnInit {
         }
 
       }
-      await AsignFamilyComponent.optimizeRoute(existingFamilies);
+      await AsignFamilyComponent.optimizeRoute(existingFamilies, context);
       existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
       let exc = new ColumnHashSet()
-      exc.add(...f.excludeColumns(context.info));
+      exc.add(...context.for(Families).create().excludeColumns(context.info));
 
       await foreachSync(existingFamilies, async f => { result.families.push(await f.__toPojo(exc)); });
       result.basketInfo = await GetBasketStatusAction.getTheBaskts({
         filterCity: info.city,
         filterLanguage: info.language
-      },context);
+      }, context);
       return result;
 
     }
   }
-  static async optimizeRoute(families: Families[]) {
+  static async optimizeRoute(families: Families[], context: Context) {
 
     if (families.length <= 1)
       return;
-    let r = await getRouteInfo(families, true);
+    let r = await getRouteInfo(families, true, context);
     if (r.status == 'OK' && r.routes && r.routes.length > 0 && r.routes[0].waypoint_order) {
       let i = 1;
 
@@ -322,10 +325,10 @@ function getInfo(r: any) {
     dist, duration
   }
 }
-async function getRouteInfo(families: Families[], optimize: boolean) {
+async function getRouteInfo(families: Families[], optimize: boolean, context: Context) {
   let u = new UrlBuilder('https://maps.googleapis.com/maps/api/directions/json');
 
-  let startAndEnd = (await ApplicationSettings.getAsync()).getGeocodeInformation().getlonglat();
+  let startAndEnd = (await ApplicationSettings.getAsync(context)).getGeocodeInformation().getlonglat();
   let waypoints = 'optimize:' + (optimize ? 'true' : 'false');
   families.forEach(f => {
     waypoints += '|' + f.getGeocodeInformation().getlonglat();

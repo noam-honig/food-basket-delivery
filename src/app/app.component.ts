@@ -6,6 +6,7 @@ import { MatSidenav, MAT_AUTOCOMPLETE_VALUE_ACCESSOR } from '@angular/material';
 import { SelectService } from './select-popup/select-service';
 import { ApplicationSettings } from './manage/ApplicationSettings';
 import { FamiliesComponent } from './families/families.component';
+import { Context } from './shared/context';
 
 
 
@@ -23,7 +24,8 @@ export class AppComponent {
     public router: Router,
     public activeRoute: ActivatedRoute,
     private injector: Injector,
-    public dialog: SelectService) {
+    public dialog: SelectService,
+    private context:Context) {
     /*this.router.config.unshift({
       path: FamiliesComponent.route,
       component: FamiliesComponent,
@@ -48,12 +50,12 @@ export class AppComponent {
     return name;
   }
   getLogo() {
-    return ApplicationSettings.get().logoUrl.value;
+    return ApplicationSettings.get(this.context).logoUrl.value;
   }
   currentTitle() {
     if (this.activeRoute && this.activeRoute.snapshot && this.activeRoute.firstChild && this.activeRoute.firstChild.data && this.activeRoute.snapshot.firstChild.data.name)
       return this.activeRoute.snapshot.firstChild.data.name;;
-    return ApplicationSettings.get().organisationName.value;
+    return ApplicationSettings.get(this.context).organisationName.value;
   }
   toolbarColor = 'primary';
 

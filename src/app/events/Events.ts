@@ -14,7 +14,7 @@ export class Events extends IdEntity<EventId> {
   name = new StringColumn('שם אירוע');
   description = new StringColumn();
   constructor(private context: Context) {
-    super(new EventId(), () => new Events(context), evilStatics.dataSource, "events");
+    super(new EventId(), Events, "events");
     this.initColumns();
   }
   async delete() {
@@ -30,7 +30,7 @@ export class EventHelpers extends IdEntity<EventHelperId> {
   helperId = new HelperId(this.context);
   eventId = new EventId();
   constructor(private context: Context) {
-    super(new EventHelperId(), () => new EventHelpers(this.context), evilStatics.dataSource, 'EventHelpers');
+    super(new EventHelperId(), EventHelpers, 'EventHelpers');
     this.initColumns();
   }
   async delete() {
@@ -61,7 +61,7 @@ export class Items extends IdEntity<ItemId> {
     }
   });
   constructor() {
-    super(new ItemId(), () => new Items(), evilStatics.dataSource, "items");
+    super(new ItemId(), Items, "items");
     this.initColumns();
   }
   async delete() {

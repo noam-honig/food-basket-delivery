@@ -94,7 +94,7 @@ export class DeliveryFollowUpComponent implements OnInit {
     }));
   }
   constructor(private busy: BusyService,private context:Context) { }
-  couriers = new GridSettings(new HelpersAndStats(this.context), {
+  couriers =this.context.for(HelpersAndStats).gridSettings( {
 
     columnSettings: h => [
       h.name, h.phone, h.deliveriesInProgress, h.firstDeliveryInProgressDate

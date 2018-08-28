@@ -32,13 +32,9 @@ export class Helpers extends IdEntity<HelperId> implements entityWithApi {
     isAdmin = new BoolColumn('מנהלת');
     shortUrlKey = new radweb.StringColumn();
 
-    constructor(context: Context, factory?: () => Helpers, name?: string, source?: DataProviderFactory) {
+    constructor(context: Context) {
 
-        super(new HelperId(context), factory ? factory : () => new Helpers(context), source ? source : evilStatics.dataSource, {
-            name: name ? name : "Helpers",
-            dbName: "Helpers"
-
-        });
+        super(new HelperId(context) ,Helpers, "Helpers");
         this.initColumns();
         let x = this.onSavingRow;
         this.onSavingRow = () => {
@@ -48,6 +44,7 @@ export class Helpers extends IdEntity<HelperId> implements entityWithApi {
             x();
         };
     }
+    ;
     veryUrlKeyAndReturnTrueIfSaveRequired() {
         if (!this.shortUrlKey.value) {
             this.shortUrlKey.value = this.makeid();
