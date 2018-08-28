@@ -11,6 +11,7 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Families } from "../families/families";
 import { entityApiSettings, LoggedInCanViewButOnlyAdminUpdatesInsertsAndDeletes, entityWithApi } from "../server/api-interfaces";
 import { DataApiSettings } from "radweb/utils/server/DataApi";
+import { Context } from "../shared/entity-provider";
 
 let fde = new FamilyDeliveryEvents();
 let f = new Families(undefined);
@@ -22,7 +23,7 @@ export class DeliveryEvents extends IdEntity<DeliveryEventId> implements entityW
   isActiveEvent = new BoolColumn();
   createDate = new changeDate('מועד הוספה');
   eventStatus = new EventStatusColumn('סטטוס');
-  createUser = new HelperIdReadonly('משתמש מוסיף');
+  createUser = new HelperIdReadonly(this.context,'משתמש מוסיף');
   families = new NumberColumn({
     dbReadOnly: true,
     caption: 'משפחות',
@@ -38,8 +39,8 @@ export class DeliveryEvents extends IdEntity<DeliveryEventId> implements entityW
       this.createUser.value = authInfo.helperId;
     }
   }
-  constructor(source?: DataProviderFactory) {
-    super(new DeliveryEventId(), () => new DeliveryEvents(source), source ? source : evilStatics.dataSource, 'DeliveryEvents');
+  constructor(private context:Context,source?: DataProviderFactory) {
+    super(new DeliveryEventId(), () => new DeliveryEvents(context,source), source ? source : evilStatics.dataSource, 'DeliveryEvents');
     this.initColumns();
   }
   getDataApiSettings(): entityApiSettings {

@@ -20,25 +20,28 @@ import { ApplicationImages } from '../manage/ApplicationImages';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 import { NewsUpdate } from '../news/NewsUpdate';
 import { FamilyDeliveryEventsView } from '../families/FamilyDeliveryEventsView';
+import { Entity } from 'radweb';
 
 
-export var allEntities =()=> [
-    new Events(),
-    new EventHelpers(),
-    new Helpers(),
-    new Items(),
-    new ItemsPerHelper(),
-    new Families(undefined),
-    new BasketType(),
-    new FamilySources(),
-    new DeliveryEvents(),
-    new FamilyDeliveryEvents(),
-    new ApplicationSettings(),
-    new ApplicationImages(),
-    new HelpersAndStats(),
-    new NewsUpdate(),
-    new FamilyDeliveryEventsView()
-];
+export var allEntities:{ new(...args: any[]): Entity<any>; }[]   =
+     [
+        Events,
+        EventHelpers,
+        Helpers,
+        Items,
+        ItemsPerHelper,
+        Families,
+        BasketType,
+        FamilySources,
+        DeliveryEvents,
+        FamilyDeliveryEvents,
+        ApplicationSettings,
+        ApplicationImages,
+        HelpersAndStats,
+        NewsUpdate,
+        FamilyDeliveryEventsView
+    ]
+;
 
 export async function serverInit() {
 
@@ -60,7 +63,7 @@ export async function serverInit() {
 
 
     var sb = new PostgrestSchemaBuilder(pool);
-    await foreachSync(allEntities(), async x => {
+    await foreachSync(allEntities.map(x=>new x()), async x => {
         if (x.__getDbName().toLowerCase().indexOf('from ') < 0) {
             await sb.CreateIfNotExist(x);
             await sb.verifyAllColumns(x);

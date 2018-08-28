@@ -30,7 +30,7 @@ import { Entity } from "radweb";
 import { entityWithApi, ApiAccess } from "./api-interfaces";
 import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 
-import { serverActionField, myServerAction } from "../auth/server-action";
+import { serverActionField, myServerAction, ServerContext } from "../auth/server-action";
 import { FamiliesComponent } from "../families/families.component";
 import { SiteArea } from "radweb/utils/server/expressBridge";
 import { AuthService } from "../auth/auth-service";
@@ -101,14 +101,14 @@ serverInit().then(async () => {
 
 
     //add Api Entries
-    allEntities().forEach(e => {
-        let x = <entityWithApi><any>e;
+    allEntities.forEach(e => {
+        let x = <entityWithApi><any>new e();
         if (x && x.getDataApiSettings) {
             let settings = x.getDataApiSettings();
-
-            let createApi: (r: DataApiRequest<myAuthInfo>) => DataApi<any> = r => new DataApi(e);
+            
+            let createApi: (r: DataApiRequest<myAuthInfo>) => DataApi<any> = r => new DataApi(new e(new ServerContext(r.authInfo)));
             if (settings.apiSettings) {
-                createApi = r => new DataApi(e, settings.apiSettings(r.authInfo));
+                createApi = r => new DataApi(new e(new ServerContext(r.authInfo)), settings.apiSettings(r.authInfo));
             }
 
             switch (settings.apiAccess) {
