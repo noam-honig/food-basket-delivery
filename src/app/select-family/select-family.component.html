@@ -8,22 +8,23 @@
           <input matInput [(ngModel)]="searchString" (input)="doFilter()" placeholder="חפשי שם" [ngModelOptions]="{standalone: true}">
           <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
         </mat-form-field>
-        <mat-nav-list role="list">
-          <mat-list-item *ngFor="let f of families.items" (click)="select(f)">
-            <mat-panel-title mat-line>
-              {{f.name.value}}
-            </mat-panel-title>
-            <mat-panel-description  mat-line *ngIf="f.internalComment.value">
-              , {{f.internalComment.value}}
-            </mat-panel-description>
+        <div>
+          <div *ngFor="let f of families.items" (click)="select(f)">
+            <div>
+              <h4>{{f.name.value}}</h4>
+            </div>
+            <h5 style="display: inline-block"> סל</h5> - {{f.basketType.displayValue}}
+            <div *ngIf="f.internalComment.value"><h5 style="display: inline-block"> הערה פנימית</h5>- {{f.internalComment.value}}</div>
+            <div *ngIf="f.deliveryComments.value"><h5 style="display: inline-block"> הערה למשנע</h5>- {{f.deliveryComments.value}}</div>
+            <hr/>
+          </div>
+        </div>
 
-
-            <mat-divider></mat-divider>
-          </mat-list-item>
-        </mat-nav-list>
       </form>
-      <button mat-raised-button color="primary" (click)="moreFamilies()" *ngIf=" families.items.length!=families.totalRows">עוד משפחות</button>
-      </div>
-    </mat-card>
-  
-  </div>
+      <button mat-raised-button color="primary" (click)="moreFamilies()" *ngIf=" families.items.length!=families.totalRows">עוד
+        משפחות
+      </button>
+    </div>
+  </mat-card>
+
+</div>
