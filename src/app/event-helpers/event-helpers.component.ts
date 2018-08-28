@@ -9,6 +9,7 @@ import { SelectService } from '../select-popup/select-service';
 import { EventHelperItemsComponent } from '../event-helper-items/event-helper-items.component';
 import { foreachSync } from '../shared/utils';
 import { EventHelpers } from '../events/Events';
+import { Context } from '../shared/entity-provider';
 
 @Component({
   selector: 'app-event-helpers',
@@ -17,14 +18,14 @@ import { EventHelpers } from '../events/Events';
 })
 export class EventHelpersComponent implements OnInit {
 
-  constructor(private dialog: SelectService) {
+  constructor(private dialog: SelectService,private context:Context) {
 
   }
   @Input() eventId;
   ngOnInit() {
     this.helpers.getRecords();
   }
-  helpers = new GridSettings(new EventHelpers(), {
+  helpers = new GridSettings(new EventHelpers(this.context), {
     get: {
       where: h => h.eventId.isEqualTo(this.eventId),
       limit: 1000

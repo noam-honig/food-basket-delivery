@@ -13,7 +13,7 @@ import { entityApiSettings, LoggedInCanViewButOnlyAdminUpdatesInsertsAndDeletes,
 import { DataApiSettings } from "radweb/utils/server/DataApi";
 import { Context } from "../shared/entity-provider";
 
-let fde = new FamilyDeliveryEvents();
+let fde = new FamilyDeliveryEvents(undefined);
 let f = new Families(undefined);
 
 export class DeliveryEvents extends IdEntity<DeliveryEventId> implements entityWithApi {

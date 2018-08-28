@@ -86,7 +86,7 @@ export class AsignFamilyComponent implements OnInit {
     this.familyLists.initForHelper(this.id, this.name);
 
   }
-  familyLists = new UserFamiliesList();
+  familyLists = new UserFamiliesList(this.context);
   filterLangulage = -1;
   langulages: Language[] = [
     new Language(-1, 'כל השפות'),
@@ -256,7 +256,7 @@ export class AsignFamilyComponent implements OnInit {
       result.basketInfo = await GetBasketStatusAction.getTheBaskts({
         filterCity: info.city,
         filterLanguage: info.language
-      });
+      },context);
       return result;
 
     }

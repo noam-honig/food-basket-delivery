@@ -8,6 +8,7 @@ import { SelectService } from '../select-popup/select-service';
 import { DeliveryEvents } from './delivery-events';
 import { AdminGuard } from '../auth/auth-guard';
 import { Route } from '@angular/router';
+import { Context } from '../shared/entity-provider';
 
 @Component({
   selector: 'app-delivery-events',
@@ -22,7 +23,7 @@ export class DeliveryEventsComponent implements OnInit {
     data: { name: 'אירועי חלוקה' }, canActivate: [AdminGuard]
   };
 
-  deliveryEvents = new GridSettings(new DeliveryEvents(), {
+  deliveryEvents = new GridSettings(new DeliveryEvents(this.context), {
     allowUpdate: true,
     allowInsert: true,
     columnSettings: e => [
@@ -75,7 +76,7 @@ export class DeliveryEventsComponent implements OnInit {
       }
     ]
   });
-  constructor(private dialog: SelectService) { }
+  constructor(private dialog: SelectService,private context:Context) { }
 
   ngOnInit() {
   }

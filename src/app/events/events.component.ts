@@ -5,6 +5,7 @@ import { Events } from "./Events";
 import { EventItemsComponent } from '../event-items/event-items.component';
 import { EventHelpersComponent } from '../event-helpers/event-helpers.component';
 import { SelectService } from '../select-popup/select-service';
+import { Context } from '../shared/entity-provider';
 
 @Component({
   selector: 'app-events',
@@ -15,12 +16,13 @@ export class EventsComponent implements OnInit {
 
   constructor(
     private dialogs: SelectService
+    ,private context:Context
   ) { }
 
   ngOnInit(): void {
     this.events.getRecords();
   }
-  events = new GridSettings(new Events(), {
+  events = new GridSettings(new Events(this.context), {
     onNewRow: p => p.id.setToNewId()
   });
   //tab implementation becaust mat tab sucks!!!!

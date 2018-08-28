@@ -42,7 +42,7 @@ export class HelpersComponent implements OnInit {
     onEnterRow: h => this.previousEvents.getRecords()
 
   });
-  previousEvents = new GridSettings(new FamilyDeliveryEventsView(), {
+  previousEvents = new GridSettings(new FamilyDeliveryEventsView(this.context), {
     get: {
       where: e => e.courier.isEqualTo(this.helpers.currentRow ? this.helpers.currentRow.id.value : '-1'),
       orderBy: e => [{ column: e.deliveryDate, descending: true }]

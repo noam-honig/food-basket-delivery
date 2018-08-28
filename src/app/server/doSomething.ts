@@ -14,7 +14,7 @@ serverInit();
 export async function DoIt() {
     try {
 
-       let hs = new HelpersAndStats();
+       let hs = new HelpersAndStats(undefined);
        let cols = hs.__iterateColumns();
     }
     catch (err) {

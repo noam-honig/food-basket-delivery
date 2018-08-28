@@ -9,6 +9,7 @@ import { FilterBase } from 'radweb/utils/dataInterfaces1';
 import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
+import { Context } from '../shared/entity-provider';
 
 @Component({
   selector: 'app-delivery-follow-up',
@@ -20,7 +21,7 @@ export class DeliveryFollowUpComponent implements OnInit {
     path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [AdminGuard], data: { name: 'מעקב משנעים' }
   }
 
-  familyLists = new UserFamiliesList();
+  familyLists = new UserFamiliesList(this.context);
   selectCourier(c: Helpers) {
     this.familyLists.initForHelper(c.id.value, c.name.value, c);
 
@@ -92,8 +93,8 @@ export class DeliveryFollowUpComponent implements OnInit {
       this.updateChart();
     }));
   }
-  constructor(private busy: BusyService) { }
-  couriers = new GridSettings(new HelpersAndStats(), {
+  constructor(private busy: BusyService,private context:Context) { }
+  couriers = new GridSettings(new HelpersAndStats(this.context), {
 
     columnSettings: h => [
       h.name, h.phone, h.deliveriesInProgress, h.firstDeliveryInProgressDate

@@ -26,10 +26,11 @@ export class CopyFamiliesToActiveEventAction extends ServerAction<InArgs, OutArg
         super('CopyFamiliesToActiveEventAction');//required because of minification
     }
     protected async execute(info: InArgs, req: DataApiRequest<myAuthInfo>): Promise<OutArgs> {
+        let context = new ServerContext(req.authInfo);
         await (<PostgresDataProvider>evilStatics.dataSource).doInTransaction(async ds => {
-            let currentEvent = new DeliveryEvents(ds);
+            let currentEvent = new DeliveryEvents(context,ds);
             currentEvent = (await currentEvent.source.find({ where: currentEvent.isActiveEvent.isEqualTo(true) }))[0];
-            let fde = new FamilyDeliveryEvents();
+            let fde = new FamilyDeliveryEvents(context);
             await foreachSync(await fde.source.find({
                 where: fde.deliveryEvent.isEqualTo(info.fromDeliveryEvent)
                     .and(fde.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id))

@@ -146,7 +146,7 @@ export class FamiliesComponent implements OnInit {
     XLSX.writeFile(wb, 'משפחות.xlsx');
     return;
   }
-  familyDeliveryEventsView = new FamilyDeliveryEventsView();
+  familyDeliveryEventsView = new FamilyDeliveryEventsView(this.context);
   previousDeliveryEvents: FamilyDeliveryEventsView[] = [];
   families =  new GridSettings(new Families(this.context), {
 

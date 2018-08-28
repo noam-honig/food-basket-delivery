@@ -82,7 +82,7 @@ export class SelectService implements SelectServiceInterface {
         this.dialog.open(UpdateCommentComponent, { data: settings });
     }
 
-    showPopup<T extends Entity<any>>(entityType:  { new(): T; }, selected: (selectedValue: T) => void, settings?: IDataSettings<T>) {
+    showPopup<T extends Entity<any>>(entityType:  { new(...args:any[]): T; }, selected: (selectedValue: T) => void, settings?: IDataSettings<T>) {
 
         let data: SelectComponentInfo<T> = {
             onSelect: selected,

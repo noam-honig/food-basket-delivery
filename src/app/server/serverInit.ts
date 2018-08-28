@@ -87,7 +87,7 @@ export async function serverInit() {
         ff.city.value = ff.getGeocodeInformation().getCity();
         await ff.save();
     });
-    let de = new DeliveryEvents();
+    let de = new DeliveryEvents(undefined);
     if (await de.source.count() == 0) {
         de.name.value = 'אירוע החלוקה הראשון';
         de.isActiveEvent.value = true;

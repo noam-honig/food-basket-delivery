@@ -1,9 +1,10 @@
-import { ServerAction } from "../auth/server-action";
+import { ServerAction, ServerContext } from "../auth/server-action";
 import { DataApiRequest, FilterBase } from "radweb/utils/dataInterfaces1";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { HelpersAndStats } from "./HelpersAndStats";
 import { colors } from "../families/stats-action";
 import { DateTimeColumn } from "radweb";
+import { Context } from "../shared/entity-provider";
 
 
 export interface InArgs {
@@ -39,7 +40,7 @@ export class DeliveryStatsAction extends ServerAction<InArgs, OutArgs>{
 
         let result = { data: {} };
         let stats = new DeliveryStats();
-        await Promise.all(stats.statistics.map(x => x.saveTo(result.data)));
+        await Promise.all(stats.statistics.map(x => x.saveTo(result.data,new ServerContext(req.authInfo))));
         return result;
 
 
@@ -53,8 +54,8 @@ export class DeliveryStatistic {
     }
 
     value = 0;
-    async saveTo(data: any) {
-        let f = new HelpersAndStats();
+    async saveTo(data: any, context:Context) {
+        let f = new HelpersAndStats(context);
         data[this.name] = await f.source.count(this.rule(f)).then(c => this.value = c);
     }
     async loadFrom(data: any) {

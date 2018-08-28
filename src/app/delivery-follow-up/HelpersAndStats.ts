@@ -5,11 +5,12 @@ import { HelperId, Helpers } from '../helpers/helpers';
 import { IdEntity, changeDate, DateTimeColumn, buildSql } from '../model-shared/types';
 import { Families } from "../families/families";
 import { entityApiSettings, entityWithApi } from "../server/api-interfaces";
+import { Context } from "../shared/entity-provider";
 
 
 
 let f = new Families(undefined);
-let h = new Helpers();
+let h = new Helpers(undefined);
 let fromFamilies = () => buildSql(' from ', f,
     ' where ', f.courier, ' = ', h, '.', h.id);
 
@@ -51,8 +52,8 @@ export class HelpersAndStats extends IdEntity<HelperId> implements entityWithApi
     firstDeliveryInProgressDate = new DateTimeColumn({
         dbReadOnly: true
     });
-    constructor() {
-        super(new HelperId(), () => new HelpersAndStats(), evilStatics.dataSource, {
+    constructor(private context:Context) {
+        super(new HelperId(context), () => new HelpersAndStats(context), evilStatics.dataSource, {
             name: "helpersAndStats",
             dbName: buildSql('(select ', [
                 h.id,

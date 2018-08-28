@@ -42,7 +42,7 @@ export class EventHelpers extends IdEntity<EventHelperId> {
     return this.context.entityProvider.lookup(Helpers, this.helperId);
   }
   event() {
-    return this.lookupAsync(new Events(), this.eventId);
+    return this.lookupAsync(new Events(this.context), this.eventId);
   }
 }
 

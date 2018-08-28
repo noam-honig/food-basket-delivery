@@ -5,6 +5,7 @@ import { StringColumn } from 'radweb';
 import { SelectService } from '../select-popup/select-service';
 import { AdminGuard } from '../auth/auth-guard';
 import { Route } from '@angular/router';
+import { Context } from '../shared/entity-provider';
 
 @Component({
   selector: 'app-news',
@@ -15,8 +16,9 @@ export class NewsComponent implements OnInit, OnDestroy {
   static route:Route = {
     path: 'news', component: NewsComponent, canActivate: [AdminGuard], data: { name: 'חדשות' }
   };
+
   onDestroy = () => { };
-  constructor(dialog: SelectService) {
+  constructor(dialog: SelectService,private context:Context) {
     let y = dialog.newsUpdate.subscribe(() => {
       this.refresh();
     });
@@ -32,7 +34,7 @@ export class NewsComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.refresh();
   }
-  newsEntity = new NewsUpdate();
+  newsEntity = new NewsUpdate(this.context);
   async refresh() {
 
     this.news = await this.newsEntity.source.find({ orderBy: [{ column: this.newsEntity.updateTime, descending: true }], limit: 1000 });
