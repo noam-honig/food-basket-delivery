@@ -57,9 +57,7 @@ export function RunOnServer(target, key: string, descriptor: any) {
 
     var originalMethod = descriptor.value;
     var types = Reflect.getMetadata("design:paramtypes", target, key);
-    console.log(types);
-    var s = types.map(a => a.name).join();
-//    console.log(`${key} param types: ${s}`);
+
 
     let serverAction = new myServerAction(key, types, args => originalMethod.apply(undefined, args));
 
