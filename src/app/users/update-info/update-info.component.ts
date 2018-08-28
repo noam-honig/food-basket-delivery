@@ -23,7 +23,7 @@ export class UpdateInfoComponent implements OnInit {
   static route: Route = { path: 'update-info', component: UpdateInfoComponent, data: { name: 'הגדרות אישיות' }, canActivate: [LoggedInGuard] };
 
   confirmPassword = new StringColumn({ caption: 'אישור סיסמה', inputType: 'password', value: Helpers.emptyPassword });
-  helpers = this.context.entityProvider.for(Helpers).gridSettings({
+  helpers = this.context.for(Helpers).gridSettings({
     numOfColumnsInGrid: 0,
     allowUpdate: true,
     get: { where: h => h.id.isEqualTo(this.auth.auth.info.helperId) },

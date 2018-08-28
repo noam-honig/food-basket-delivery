@@ -22,7 +22,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import * as fetch from 'node-fetch';
 import { myAuthInfo } from '../auth/my-auth-info';
 import { RunOnServer } from '../auth/server-action';
-import { EntityProvider, Context } from '../shared/entity-provider';
+import {  Context } from '../shared/entity-provider';
 
 
 @Component({
@@ -42,7 +42,7 @@ export class AsignFamilyComponent implements OnInit {
     if (this.phone.length == 10) {
 
 
-      let helper = await this.context.entityProvider.for(Helpers).findFirst(h => h.phone.isEqualTo(this.phone));
+      let helper = await this.context.for(Helpers).findFirst(h => h.phone.isEqualTo(this.phone));
       if (helper) {
         this.name = helper.name.value;
         this.shortUrl = helper.shortUrlKey.value;
@@ -176,9 +176,9 @@ export class AsignFamilyComponent implements OnInit {
     }
 
     if (!info.helperId) {
-      let r = await context.entityProvider.for(Helpers).findFirst(h => h.phone.isEqualTo(info.phone));
+      let r = await context.for(Helpers).findFirst(h => h.phone.isEqualTo(info.phone));
       if (!r) {
-        let h = context.entityProvider.for(Helpers).create();
+        let h = context.for(Helpers).create();
         h.phone.value = info.phone;
         h.name.value = info.name;
         await h.save();

@@ -8,12 +8,12 @@ import { EventHelperId } from '../event-helpers/EventHelperId';
 import { HelperId, Helpers } from '../helpers/helpers';
 import { ItemsPerHelper } from '../event-item-helpers/ItemsPerHelper';
 import { ItemId } from './ItemId';
-import { EntityProvider, Context } from '../shared/entity-provider';
+import { Context } from '../shared/entity-provider';
 
 export class Events extends IdEntity<EventId> {
   name = new StringColumn('שם אירוע');
   description = new StringColumn();
-  constructor(private context:Context) {
+  constructor(private context: Context) {
     super(new EventId(), () => new Events(context), evilStatics.dataSource, "events");
     this.initColumns();
   }
@@ -29,7 +29,7 @@ export class EventId extends Id { }
 export class EventHelpers extends IdEntity<EventHelperId> {
   helperId = new HelperId(this.context);
   eventId = new EventId();
-  constructor(private context:Context) {
+  constructor(private context: Context) {
     super(new EventHelperId(), () => new EventHelpers(this.context), evilStatics.dataSource, 'EventHelpers');
     this.initColumns();
   }
@@ -37,9 +37,9 @@ export class EventHelpers extends IdEntity<EventHelperId> {
     foreachEntityItem(new ItemsPerHelper(), hi => hi.eventHelperId.isEqualTo(this.id), item => item.delete());
     return super.delete();
   }
-  
+
   helper() {
-    return this.context.entityProvider.lookup(Helpers, this.helperId);
+    return this.context.for(Helpers).lookup(this.helperId);
   }
   event() {
     return this.lookupAsync(new Events(this.context), this.eventId);

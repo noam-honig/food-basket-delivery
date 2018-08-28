@@ -9,7 +9,7 @@ import { DataApiSettings, DataApi } from 'radweb/utils/server/DataApi';
 import * as passwordHash from 'password-hash';
 import { entityWithApi, entityApiSettings, ApiAccess } from '../server/api-interfaces';
 import { RunOnServer } from '../auth/server-action';
-import { EntityProvider, Context } from '../shared/entity-provider';
+import {  Context } from '../shared/entity-provider';
 
 
 export class Helpers extends IdEntity<HelperId> implements entityWithApi {
@@ -32,7 +32,7 @@ export class Helpers extends IdEntity<HelperId> implements entityWithApi {
     isAdmin = new BoolColumn('מנהלת');
     shortUrlKey = new radweb.StringColumn();
 
-    constructor(context:Context, factory?: () => Helpers, name?: string, source?: DataProviderFactory) {
+    constructor(context: Context, factory?: () => Helpers, name?: string, source?: DataProviderFactory) {
 
         super(new HelperId(context), factory ? factory : () => new Helpers(context), source ? source : evilStatics.dataSource, {
             name: name ? name : "Helpers",
@@ -121,18 +121,18 @@ export class HelperId extends Id implements HasAsyncGetTheValue {
 
         }
     }
-    
+
     getValue() {
-        return this.context.entityProvider.lookup(Helpers, this).name.value;
+        return this.context.for(Helpers).lookup( this).name.value;
     }
     async getTheName() {
-        let r = await this.context.entityProvider.lookupAsync(Helpers, this);
+        let r = await this.context.for(Helpers).lookupAsync(this);
         if (r && r.name && r.name.value)
             return r.name.value;
         return '';
     }
     async getTheValue() {
-        let r = await this.context.entityProvider.lookupAsync(Helpers, this);
+        let r = await this.context.for(Helpers).lookupAsync(this);
         if (r && r.name && r.name.value && r.phone)
             return r.name.value + ' ' + r.phone.value;
         return '';
@@ -140,15 +140,15 @@ export class HelperId extends Id implements HasAsyncGetTheValue {
 }
 
 export class HelperIdReadonly extends HelperId {
-    constructor(private myContext:Context,caption: string) {
-        super(myContext,{
+    constructor(private myContext: Context, caption: string) {
+        super(myContext, {
             caption: caption,
             readonly: true
         });
     }
-    
+
     get displayValue() {
-        return this.myContext.entityProvider.lookup(Helpers, this).name.value;
+        return this.myContext.for(Helpers).lookup( this).name.value;
     }
 }
 

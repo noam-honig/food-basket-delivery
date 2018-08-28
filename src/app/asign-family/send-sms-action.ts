@@ -5,7 +5,8 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Helpers } from '../helpers/helpers';
 import * as fetch from 'node-fetch';
 import { DataSource } from "@angular/cdk/table";
-import { EntityProvider } from "../shared/entity-provider";
+import { Context } from "../shared/entity-provider";
+
 
 
 export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
@@ -17,9 +18,9 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
         let context  =new ServerContext(req.authInfo);
 
         console.log(req.authInfo.helperId);
-        let currentUser = await (context.entityProvider.for(Helpers).findFirst(h => h.id.isEqualTo(req.authInfo.helperId)));
+        let currentUser = await (context.for(Helpers).findFirst(h => h.id.isEqualTo(req.authInfo.helperId)));
 
-        await SendSmsAction.generateMessage(context.entityProvider, info.helperId, req.getHeader('origin'), info.reminder, req.authInfo.name, (phone, message) => {
+        await SendSmsAction.generateMessage(context, info.helperId, req.getHeader('origin'), info.reminder, req.authInfo.name, (phone, message) => {
 
             new SendSmsUtils().sendSms(phone, currentUser.phone.value, message);
         });
@@ -30,7 +31,7 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
 
 
 
-    static async  generateMessage(ds: EntityProvider, id: string, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string) => void) {
+    static async  generateMessage(ds: Context, id: string, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string) => void) {
 
         if (!origin) {
             throw 'Couldnt determine origin for sms';

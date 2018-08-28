@@ -2,7 +2,7 @@ import { Action } from "radweb";
 import { myAuthInfo } from "./my-auth-info";
 import { environment } from "../../environments/environment";
 import { evilStatics } from "./evil-statics";
-import { DataApiRequest } from "radweb/utils/dataInterfaces1";
+import { DataApiRequest, DataProviderFactory } from "radweb/utils/dataInterfaces1";
 import 'reflect-metadata';
 import { Context } from "../shared/entity-provider";
 
@@ -19,10 +19,13 @@ interface result {
     data: any;
 }
 
-export class ServerContext extends Context{
-    constructor(info?:myAuthInfo){
+export class ServerContext extends Context {
+    constructor(info: myAuthInfo, dataProvider?: DataProviderFactory) {
         super();
-        this._getInfo = ()=>info;
+        this._getInfo = () => info;
+        if (dataProvider)
+            this._dataSource = dataProvider;
+
     }
 }
 export class myServerAction extends ServerAction<inArgs, result>

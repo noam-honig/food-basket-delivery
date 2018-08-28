@@ -259,7 +259,7 @@ export class FamiliesComponent implements OnInit {
       families.courier.getColumn(this.dialog),
       {
         caption: 'טלפון משנע',
-        getValue: f => this.context.entityProvider.lookup(Helpers, f.courier).phone.value
+        getValue: f => this.context.for(Helpers).lookup( f.courier).phone.value
       },
       families.courierAssignUser,
       families.courierAssingTime,
@@ -353,7 +353,7 @@ export class FamiliesComponent implements OnInit {
       families.courier.getColumn(this.dialog),
       {
         caption: 'טלפון משנע',
-        getValue: f => this.context.entityProvider.lookup(Helpers, f.courier).phone.value
+        getValue: f => this.context.for(Helpers).lookup( f.courier).phone.value
       },
       families.courierAssignUser,
       families.courierAssingTime,

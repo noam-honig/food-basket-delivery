@@ -28,10 +28,11 @@ export class SetDeliveryActiveAction extends ServerAction<InArgs, OutArgs>{
     }
     static SendMessageToBrowsers = (s: string) => { };
     protected async execute(info: InArgs, req: DataApiRequest<myAuthInfo>): Promise<OutArgs> {
-        let context = new ServerContext(req.authInfo);
-        await (<PostgresDataProvider>evilStatics.dataSource).doInTransaction(async ds => {
 
-            let currentEvent = new DeliveryEvents(context,ds);
+        await (<PostgresDataProvider>evilStatics.dataSource).doInTransaction(async ds => {
+            let context = new ServerContext(req.authInfo, ds);
+            let currentEvent = new DeliveryEvents(context);
+            currentEvent.setSource(ds);
             currentEvent = (await currentEvent.source.find({ where: currentEvent.isActiveEvent.isEqualTo(true) }))[0];
             currentEvent.isActiveEvent.value = false;
             await currentEvent.save();
@@ -56,7 +57,7 @@ export class SetDeliveryActiveAction extends ServerAction<InArgs, OutArgs>{
                         f.routeOrder];
 
                     {
-                        let currentFamilyEvent = new FamilyDeliveryEvents(context,ds);
+                        let currentFamilyEvent = new FamilyDeliveryEvents(context, ds);
                         await currentFamilyEvent.source.find({
                             where: currentFamilyEvent.family.isEqualTo(f.id).and(
                                 currentFamilyEvent.deliveryEvent.isEqualTo(currentEvent.id))
@@ -102,7 +103,7 @@ export class SetDeliveryActiveAction extends ServerAction<InArgs, OutArgs>{
 
 
                     }
-
+                    throw 'err';
 
                     await f.save();
                 });

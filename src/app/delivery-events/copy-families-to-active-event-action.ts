@@ -28,7 +28,8 @@ export class CopyFamiliesToActiveEventAction extends ServerAction<InArgs, OutArg
     protected async execute(info: InArgs, req: DataApiRequest<myAuthInfo>): Promise<OutArgs> {
         let context = new ServerContext(req.authInfo);
         await (<PostgresDataProvider>evilStatics.dataSource).doInTransaction(async ds => {
-            let currentEvent = new DeliveryEvents(context,ds);
+            let currentEvent = new DeliveryEvents(context);
+            currentEvent.setSource(ds);
             currentEvent = (await currentEvent.source.find({ where: currentEvent.isActiveEvent.isEqualTo(true) }))[0];
             let fde = new FamilyDeliveryEvents(context);
             await foreachSync(await fde.source.find({
@@ -36,7 +37,7 @@ export class CopyFamiliesToActiveEventAction extends ServerAction<InArgs, OutArg
                     .and(fde.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id))
             }),
                 async de => {
-                    let f = new Families(new ServerContext(req.authInfo));
+                    let f = new Families(new ServerContext(req.authInfo),ds);
                     await f.source.find({ where: f.id.isEqualTo(de.family) }).then(async f => {
                         f[0].deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
                         f[0].basketType.value = de.basketType.value;

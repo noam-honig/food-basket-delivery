@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { GridSettings, Entity, IDataSettings } from 'radweb';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { EntityProvider, Context } from '../shared/entity-provider';
+import {  Context } from '../shared/entity-provider';
 
 @Component({
   selector: 'app-select-popup',
@@ -18,7 +18,7 @@ export class SelectPopupComponent implements OnInit {
     private context:Context
 
   ) {
-    this.helpers = this.context.entityProvider.for(data.entity).gridSettings(data.settings);
+    this.helpers = this.context.for(data.entity).gridSettings(data.settings);
   }
 
   ngOnInit() {

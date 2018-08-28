@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Helpers } from '../helpers/helpers';
-import { EntityProvider, Context } from '../shared/entity-provider';
+import {  Context } from '../shared/entity-provider';
 
 @Component({
   selector: 'app-select-helper',
@@ -29,7 +29,7 @@ export class SelectHelperComponent implements OnInit {
   
   async ngOnInit() {
 
-    this.allHelpers = await this.context.entityProvider.for(Helpers).find({ orderBy: h => [h.name], limit: 1000 });
+    this.allHelpers = await this.context.for(Helpers).find({ orderBy: h => [h.name], limit: 1000 });
     this.filteredHelpers = this.allHelpers;
   }
   doFilter() {

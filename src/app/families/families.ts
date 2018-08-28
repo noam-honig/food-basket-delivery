@@ -13,7 +13,7 @@ import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelper
 import { evilStatics } from "../auth/evil-statics";
 import { entityWithApi, entityApiSettings, ApiAccess } from "../server/api-interfaces";
 import { DataApiSettings } from "radweb/utils/server/DataApi";
-import { EntityProvider, Context } from "../shared/entity-provider";
+import {  Context } from "../shared/entity-provider";
 
 export class Families extends IdEntity<FamilyId> implements entityWithApi {
   getDataApiSettings(): entityApiSettings {
@@ -92,11 +92,11 @@ export class Families extends IdEntity<FamilyId> implements entityWithApi {
 
   courierAssignUserName = new StringColumn({
     caption: 'שם שיוך למשנע',
-    virtualData: async () => (await this.context.entityProvider.lookupAsync(Helpers, this.courierAssignUser)).name.value
+    virtualData: async () => (await this.context.for(Helpers).lookupAsync(this.courierAssignUser)).name.value
   });
   courierAssignUserPhone = new StringColumn({
     caption: 'טלפון שיוך למשנע',
-    virtualData: async () => (await this.context.entityProvider.lookupAsync(Helpers, this.courierAssignUser)).phone.value
+    virtualData: async () => (await this.context.for(Helpers).lookupAsync(this.courierAssignUser)).phone.value
   });
   courierAssingTime = new changeDate('מועד שיוך למשנע');
 

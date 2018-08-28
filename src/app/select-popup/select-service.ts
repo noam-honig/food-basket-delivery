@@ -15,7 +15,7 @@ import { ServerEventAuthorizeAction } from "../server/server-event-authorize-act
 import { Subject } from "rxjs/Subject";
 import { Observable } from "rxjs/Observable";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
-import { EntityProvider } from "../shared/entity-provider";
+
 
 
 

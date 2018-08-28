@@ -9,7 +9,7 @@ import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
 import { foreachEntityItem } from '../shared/utils';
 import { RunOnServer } from '../auth/server-action';
-import { EntityProvider, Context } from '../shared/entity-provider';
+import {  Context } from '../shared/entity-provider';
 
 @Component({
   selector: 'app-helpers',
@@ -25,7 +25,7 @@ export class HelpersComponent implements OnInit {
     data: { name: 'מתנדבות' }, canActivate: [AdminGuard]
   };
 
-  helpers = this.context.entityProvider.for(Helpers).gridSettings({
+  helpers = this.context.for(Helpers).gridSettings({
     allowDelete: true,
     allowInsert: true,
     allowUpdate: true,
@@ -81,7 +81,7 @@ export class HelpersComponent implements OnInit {
   @RunOnServer
   static async resetPassword(helperId: string,context?:Context) {
     
-    await context.entityProvider.for(Helpers).foreach(h => h.id.isEqualTo(helperId), async h => {
+    await context.for(Helpers).foreach(h => h.id.isEqualTo(helperId), async h => {
       h.realStoredPassword.value = '';
       await h.save();
     });

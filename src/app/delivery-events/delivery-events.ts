@@ -39,8 +39,8 @@ export class DeliveryEvents extends IdEntity<DeliveryEventId> implements entityW
       this.createUser.value = authInfo.helperId;
     }
   }
-  constructor(private context:Context,source?: DataProviderFactory) {
-    super(new DeliveryEventId(), () => new DeliveryEvents(context,source), source ? source : evilStatics.dataSource, 'DeliveryEvents');
+  constructor(private context:Context) {
+    super(new DeliveryEventId(), () => new DeliveryEvents(context),  evilStatics.dataSource, 'DeliveryEvents');
     this.initColumns();
   }
   getDataApiSettings(): entityApiSettings {

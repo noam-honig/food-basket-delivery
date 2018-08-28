@@ -5,40 +5,28 @@ import { evilStatics } from "../auth/evil-statics";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { Injectable } from "@angular/core";
 
-export class EntityProvider {
-    constructor() {
-
-    }
-    private get<T>(c: { new(): T; }): T {
-        return new c();
-    }
-    private _context: Context;
-    setContext(c: Context) {
-        this._context = c;
-    }
-    public for<T extends Entity<any>>(c: { new(...args: any[]): T; }) {
-        return new SpecificEntityHelper<T>(new c(this._context));
-    }
-    private _lookupCache = new stamEntity();
-    lookupAsync<lookupIdType, T extends Entity<lookupIdType>>(lookupEntity: { new(...args: any[]): T; }, filter: Column<lookupIdType> | ((entityType: T) => FilterBase)): Promise<T> {
-        return this._lookupCache.lookupAsync(new lookupEntity(this._context), filter);
-    }
-    lookup<lookupIdType, T extends Entity<lookupIdType>>(lookupEntity: { new(...args: any[]): T; }, filter: Column<lookupIdType> | ((entityType: T) => FilterBase)): T {
-        return this._lookupCache.lookup(new lookupEntity(this._context), filter);
-    }
-
-}
 @Injectable()
 export class Context {
-    entityProvider = new EntityProvider();
+    
     protected _getInfo = () => evilStatics.auth.info;
+    protected _dataSource = evilStatics.dataSource;
     constructor() {
-        this.entityProvider.setContext(this);
+        
     }
 
     get info(): myAuthInfo {
         return this._getInfo();
     }
+    private _context: Context;
+    setContext(c: Context) {
+        this._context = c;
+    }
+    public for<lookupIdType, T extends Entity<lookupIdType>>(c: { new(...args: any[]): T; }) {
+        let e = new c(this._context);
+        e.setSource(this._dataSource);
+        return new SpecificEntityHelper<lookupIdType,T>(e, this._lookupCache);
+    }
+    private _lookupCache = new stamEntity();
 }
 
 class stamEntity extends Entity<number> {
@@ -49,11 +37,16 @@ class stamEntity extends Entity<number> {
         this.initColumns();
     }
 }
-export class SpecificEntityHelper<T extends Entity<any>> {
-    constructor(private entity: T) {
+export class SpecificEntityHelper<lookupIdType, T extends Entity<lookupIdType>> {
+    constructor(private entity: T, private _lookupCache: Entity<any>) {
 
     }
-
+    lookupAsync(filter: Column<lookupIdType> | ((entityType: T) => FilterBase)): Promise<T> {
+        return this._lookupCache.lookupAsync(this.entity, filter);
+    }
+    lookup(filter: Column<lookupIdType> | ((entityType: T) => FilterBase)): T {
+        return this._lookupCache.lookup(this.entity, filter);
+    }
     async foreach(where: (entity: T) => FilterBase, what?: (entity: T) => Promise<void>) {
 
         let options: EntitySourceFindOptions = {};

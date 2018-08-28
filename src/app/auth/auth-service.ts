@@ -9,7 +9,7 @@ import { evilStatics } from "./evil-statics";
 import { Helpers } from "../helpers/helpers";
 import * as passwordHash from 'password-hash';
 import { RunOnServer } from "./server-action";
-import { EntityProvider, Context } from "../shared/entity-provider";
+import {  Context } from "../shared/entity-provider";
 import { EPERM } from "constants";
 import { LoginResponse } from "./auth-info";
 
@@ -26,7 +26,7 @@ export class AuthService {
     @RunOnServer
     static async loginFromSms(key: string, context?: Context) {
 
-        let h = await context.entityProvider.for(Helpers).findFirst(h => h.shortUrlKey.isEqualTo(key));
+        let h = await context.for(Helpers).findFirst(h => h.shortUrlKey.isEqualTo(key));
         if (h)
             return {
                 valid: true,
@@ -72,7 +72,7 @@ export class AuthService {
         let result: myAuthInfo;
         let requirePassword = false;
 
-        await context.entityProvider.for(Helpers).foreach(h => h.phone.isEqualTo(user), async h => {
+        await context.for(Helpers).foreach(h => h.phone.isEqualTo(user), async h => {
             if (!h.realStoredPassword.value || passwordHash.verify(password, h.realStoredPassword.value)) {
                 result = {
                     helperId: h.id.value,
