@@ -21,10 +21,11 @@ import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 import { NewsUpdate } from '../news/NewsUpdate';
 import { FamilyDeliveryEventsView } from '../families/FamilyDeliveryEventsView';
 import { Entity } from 'radweb';
+import { ServerContext } from '../auth/server-action';
 
 
-export var allEntities:{ new(...args: any[]): Entity<any>; }[]   =
-     [
+export var allEntities: { new(...args: any[]): Entity<any>; }[] =
+    [
         Events,
         EventHelpers,
         Helpers,
@@ -41,7 +42,7 @@ export var allEntities:{ new(...args: any[]): Entity<any>; }[]   =
         NewsUpdate,
         FamilyDeliveryEventsView
     ]
-;
+    ;
 
 export async function serverInit() {
 
@@ -61,9 +62,9 @@ export async function serverInit() {
     evilStatics.dataSource = new PostgresDataProvider(pool);
 
 
-
+    let context = new ServerContext({});
     var sb = new PostgrestSchemaBuilder(pool);
-    await foreachSync(allEntities.map(x=>new x()), async x => {
+    await foreachSync(allEntities.map(x => new x()), async x => {
         if (x.__getDbName().toLowerCase().indexOf('from ') < 0) {
             await sb.CreateIfNotExist(x);
             await sb.verifyAllColumns(x);
@@ -81,9 +82,9 @@ export async function serverInit() {
     });
 
 
-    let f = new Families(undefined);
+
     console.log('fix city start');
-    await foreachSync(await f.source.find({ where: f.city.isEqualTo('') }), async ff => {
+    await context.for(Families).foreach(f => f.city.isEqualTo(''), async ff => {
         ff.city.value = ff.getGeocodeInformation().getCity();
         await ff.save();
     });
@@ -103,12 +104,12 @@ export async function serverInit() {
         settings.smsText.value = 'שלום !משנע!\n לחלוקת חבילות !ארגון! לחץ על: !אתר! \nתודה !שולח!';
         await settings.save();
     }
-    let images = new ApplicationImages();
-    if ((await images.source.count()) == 0) {
+
+    let images = await context.for(ApplicationImages).findFirst(ap => ap.id.isEqualTo(1));
+    if (!images) {
+        images = context.for(ApplicationImages).create();
         images.id.value = 1;
-
         await images.save();
-
     }
     console.log('fix city done');
 

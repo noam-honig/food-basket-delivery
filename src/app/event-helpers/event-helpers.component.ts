@@ -9,7 +9,7 @@ import { SelectService } from '../select-popup/select-service';
 import { EventHelperItemsComponent } from '../event-helper-items/event-helper-items.component';
 import { foreachSync } from '../shared/utils';
 import { EventHelpers } from '../events/Events';
-import { Context } from '../shared/entity-provider';
+import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-event-helpers',

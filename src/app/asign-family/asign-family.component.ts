@@ -22,7 +22,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import * as fetch from 'node-fetch';
 import { myAuthInfo } from '../auth/my-auth-info';
 import { RunOnServer } from '../auth/server-action';
-import {  Context } from '../shared/entity-provider';
+import {  Context } from '../shared/context';
 
 
 @Component({

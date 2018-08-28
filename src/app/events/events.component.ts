@@ -5,7 +5,7 @@ import { Events } from "./Events";
 import { EventItemsComponent } from '../event-items/event-items.component';
 import { EventHelpersComponent } from '../event-helpers/event-helpers.component';
 import { SelectService } from '../select-popup/select-service';
-import { Context } from '../shared/entity-provider';
+import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-events',

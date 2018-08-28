@@ -7,7 +7,7 @@ import { UserFamiliesList } from './user-families';
 import { MapComponent } from '../map/map.component';
 import { Route } from '@angular/router';
 import { LoggedInGuard } from '../auth/auth-guard';
-import { Context } from '../shared/entity-provider';
+import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-my-families',

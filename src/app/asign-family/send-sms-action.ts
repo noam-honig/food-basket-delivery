@@ -5,7 +5,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Helpers } from '../helpers/helpers';
 import * as fetch from 'node-fetch';
 import { DataSource } from "@angular/cdk/table";
-import { Context } from "../shared/entity-provider";
+import { Context } from "../shared/context";
 
 
 

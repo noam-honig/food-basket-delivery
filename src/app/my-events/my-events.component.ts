@@ -4,7 +4,7 @@ import { Events, EventHelpers } from "../events/Events";
 
 import { AuthService } from '../auth/auth-service';
 import { EventHelperItemsComponent } from '../event-helper-items/event-helper-items.component';
-import { Context } from '../shared/entity-provider';
+import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-my-events',

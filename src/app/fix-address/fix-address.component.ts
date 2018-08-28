@@ -7,7 +7,7 @@ import { } from 'googlemaps';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
-import { Context } from '../shared/entity-provider';
+import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-fix-address',

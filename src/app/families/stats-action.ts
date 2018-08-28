@@ -12,7 +12,7 @@ import { PostgresDataProvider } from "radweb/server";
 import { Column, Filter } from "radweb";
 import { BasketInfo } from "../asign-family/get-basket-status-action";
 import { BasketType } from "./BasketType";
-import { Context } from "../shared/entity-provider";
+import { Context } from "../shared/context";
 
 
 export interface InArgs {

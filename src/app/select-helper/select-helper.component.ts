@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Helpers } from '../helpers/helpers';
-import {  Context } from '../shared/entity-provider';
+import {  Context } from '../shared/context';
 
 @Component({
   selector: 'app-select-helper',

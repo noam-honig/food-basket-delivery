@@ -4,7 +4,7 @@ import { myAuthInfo } from "../auth/my-auth-info";
 import { HelpersAndStats } from "./HelpersAndStats";
 import { colors } from "../families/stats-action";
 import { DateTimeColumn } from "radweb";
-import { Context } from "../shared/entity-provider";
+import { Context } from "../shared/context";
 
 
 export interface InArgs {

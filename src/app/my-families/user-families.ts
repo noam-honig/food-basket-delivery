@@ -8,7 +8,7 @@ import { AuthService } from '../auth/auth-service';
 import { SelectService } from '../select-popup/select-service';
 import { MapComponent } from '../map/map.component';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
-import { Context } from '../shared/entity-provider';
+import { Context } from '../shared/context';
 
 export class UserFamiliesList {
     map: MapComponent;

@@ -7,7 +7,7 @@ import { HelperId, HelperIdReadonly } from '../helpers/helpers';
 import { IdEntity, changeDate, Id } from '../model-shared/types';
 import { CallStatusColumn } from '../families/CallStatus';
 import { DeliveryEventId } from "./DeliveryEventId";
-import { Context } from '../shared/entity-provider';
+import { Context } from '../shared/context';
 
 export class FamilyDeliveryEvents extends IdEntity<FamilyDelveryEventId> {
   deliveryEvent = new DeliveryEventId();

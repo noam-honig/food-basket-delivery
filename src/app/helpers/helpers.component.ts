@@ -9,7 +9,7 @@ import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
 import { foreachEntityItem } from '../shared/utils';
 import { RunOnServer } from '../auth/server-action';
-import {  Context } from '../shared/entity-provider';
+import {  Context } from '../shared/context';
 
 @Component({
   selector: 'app-helpers',

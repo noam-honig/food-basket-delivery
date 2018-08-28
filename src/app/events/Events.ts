@@ -8,7 +8,7 @@ import { EventHelperId } from '../event-helpers/EventHelperId';
 import { HelperId, Helpers } from '../helpers/helpers';
 import { ItemsPerHelper } from '../event-item-helpers/ItemsPerHelper';
 import { ItemId } from './ItemId';
-import { Context } from '../shared/entity-provider';
+import { Context } from '../shared/context';
 
 export class Events extends IdEntity<EventId> {
   name = new StringColumn('שם אירוע');

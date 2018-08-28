@@ -6,7 +6,7 @@ import { AuthService } from '../../auth/auth-service';
 import { foreachEntityItem } from '../../shared/utils';
 import { LoggedInGuard } from '../../auth/auth-guard';
 import { Route } from '@angular/router';
-import { Context } from '../../shared/entity-provider';
+import { Context } from '../../shared/context';
 
 @Component({
   selector: 'app-update-info',

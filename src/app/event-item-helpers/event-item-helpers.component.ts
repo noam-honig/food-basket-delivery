@@ -4,7 +4,7 @@ import { GridSettings } from 'radweb';
 
 import { ItemsPerHelper } from "./ItemsPerHelper";
 import { EventHelpers } from '../events/Events';
-import { Context } from '../shared/entity-provider';
+import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-event-item-helpers',

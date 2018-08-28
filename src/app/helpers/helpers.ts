@@ -9,7 +9,7 @@ import { DataApiSettings, DataApi } from 'radweb/utils/server/DataApi';
 import * as passwordHash from 'password-hash';
 import { entityWithApi, entityApiSettings, ApiAccess } from '../server/api-interfaces';
 import { RunOnServer } from '../auth/server-action';
-import {  Context } from '../shared/entity-provider';
+import {  Context } from '../shared/context';
 
 
 export class Helpers extends IdEntity<HelperId> implements entityWithApi {

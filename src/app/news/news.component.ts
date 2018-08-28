@@ -5,7 +5,7 @@ import { StringColumn } from 'radweb';
 import { SelectService } from '../select-popup/select-service';
 import { AdminGuard } from '../auth/auth-guard';
 import { Route } from '@angular/router';
-import { Context } from '../shared/entity-provider';
+import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-news',

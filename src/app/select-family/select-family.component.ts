@@ -4,7 +4,7 @@ import { Families } from '../families/families';
 import { BusyService } from '../select-popup/busy-service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { FilterBase } from 'radweb/utils/dataInterfaces1';
-import { Context } from '../shared/entity-provider';
+import { Context } from '../shared/context';
 
 
 @Component({

@@ -5,7 +5,7 @@ import { HelperId, Helpers } from '../helpers/helpers';
 import { IdEntity, changeDate, DateTimeColumn, buildSql } from '../model-shared/types';
 import { Families } from "../families/families";
 import { entityApiSettings, entityWithApi } from "../server/api-interfaces";
-import { Context } from "../shared/entity-provider";
+import { Context } from "../shared/context";
 
 
 

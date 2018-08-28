@@ -14,32 +14,25 @@ import { GetBasketStatusAction } from '../asign-family/get-basket-status-action'
 import { serverInit, allEntities } from './serverInit';
 import { ServerEventAuthorizeAction } from './server-event-authorize-action';
 import { ServerEvents } from './server-events';
-import * as morgan from 'morgan';
-import { SetDeliveryActiveAction } from '../delivery-events/set-delivery-active-action';
-import { CopyFamiliesToActiveEventAction } from '../delivery-events/copy-families-to-active-event-action';
+
+
 import { StatsAction } from '../families/stats-action';
 import { DeliveryStatsAction } from '../delivery-follow-up/delivery-stats';
-import { Helpers } from '../helpers/helpers';
 import { Families } from '../families/families';
-import { NewsUpdate } from "../news/NewsUpdate";
-import { FamilySources } from "../families/FamilySources";
-import { BasketType } from "../families/BasketType";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { DeliveryEvents } from '../delivery-events/delivery-events';
-import { Entity } from "radweb";
 import { entityWithApi, ApiAccess } from "./api-interfaces";
 import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 
 import { serverActionField, myServerAction, ServerContext } from "../auth/server-action";
-import { FamiliesComponent } from "../families/families.component";
 import { SiteArea } from "radweb/utils/server/expressBridge";
 import { AuthService } from "../auth/auth-service";
 import { HelpersComponent } from "../helpers/helpers.component";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
+import { DeliveryEventsComponent } from "../delivery-events/delivery-events.component";
 
 
 
-
+;
 serverInit().then(async () => {
 
 
@@ -48,7 +41,6 @@ serverInit().then(async () => {
     if (!process.env.DISABLE_SERVER_EVENTS) {
         let serverEvents = new ServerEvents(app);
         Families.SendMessageToBrowsers = x => serverEvents.SendMessage(x);
-        SetDeliveryActiveAction.SendMessageToBrowsers = x => serverEvents.SendMessage(x);
     }
 
 
@@ -86,14 +78,14 @@ serverInit().then(async () => {
 
     [
         HelpersComponent.resetPassword,
-        AsignFamilyComponent.AddBox
+        AsignFamilyComponent.AddBox,
+        DeliveryEventsComponent.setDeliveryActive,
+        DeliveryEventsComponent.copyFamiliesToActiveEvent
 
     ].forEach(a => addAction(adminApi, a));
     [
         new GetBasketStatusAction(),
         new ServerEventAuthorizeAction(),
-        new SetDeliveryActiveAction(),
-        new CopyFamiliesToActiveEventAction(),
         new StatsAction(),
         new DeliveryStatsAction(),
     ].forEach(a => adminApi.addAction(a));
@@ -106,9 +98,9 @@ serverInit().then(async () => {
         if (x && x.getDataApiSettings) {
             let settings = x.getDataApiSettings();
             
-            let createApi: (r: DataApiRequest<myAuthInfo>) => DataApi<any> = r => new DataApi(new e(new ServerContext(r.authInfo)));
+            let createApi: (r: DataApiRequest<myAuthInfo>) => DataApi<any> = r => new DataApi(new ServerContext(r.authInfo).create(e));
             if (settings.apiSettings) {
-                createApi = r => new DataApi(new e(new ServerContext(r.authInfo)), settings.apiSettings(r.authInfo));
+                createApi = r => new DataApi(new ServerContext(r.authInfo).create(e), settings.apiSettings(r.authInfo));
             }
 
             switch (settings.apiAccess) {

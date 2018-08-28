@@ -9,7 +9,7 @@ import { evilStatics } from "./evil-statics";
 import { Helpers } from "../helpers/helpers";
 import * as passwordHash from 'password-hash';
 import { RunOnServer } from "./server-action";
-import {  Context } from "../shared/entity-provider";
+import {  Context } from "../shared/context";
 import { EPERM } from "constants";
 import { LoginResponse } from "./auth-info";
 

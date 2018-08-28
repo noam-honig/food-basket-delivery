@@ -1,13 +1,14 @@
 import { Entity, StringColumn, NumberColumn } from 'radweb';
 import { evilStatics } from '../auth/evil-statics';
 import { entityApiSettings, entityWithApi } from "../server/api-interfaces";
+import { ContextEntity } from '../shared/context';
 
-export class ApplicationImages extends Entity<number> implements entityWithApi {
+export class ApplicationImages extends ContextEntity<number> implements entityWithApi {
   id = new NumberColumn();
   base64Icon = new StringColumn("איקון דף base64");
   base64PhoneHomeImage = new StringColumn("איקון דף הבית בטלפון base64");
   constructor() {
-    super(() => new ApplicationImages(), evilStatics.dataSource, 'ApplicationImages');
+    super(ApplicationImages, 'ApplicationImages');
     this.initColumns(this.id);
   }
   private static _settings: ApplicationImages;

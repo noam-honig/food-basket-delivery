@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GridSettings } from 'radweb';
 import { FamilyDeliveryEventsView } from "../families/FamilyDeliveryEventsView";
-import { Context } from '../shared/entity-provider';
+import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-stam-test',

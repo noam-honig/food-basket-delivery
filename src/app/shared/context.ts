@@ -1,5 +1,5 @@
-import { Entity, IDataSettings, GridSettings, Column, NumberColumn, DataList } from "radweb";
-import { EntitySourceFindOptions, FilterBase, FindOptionsPerEntity } from "radweb/utils/dataInterfaces1";
+import { Entity, IDataSettings, GridSettings, Column, NumberColumn, DataList, EntityOptions } from "radweb";
+import { EntitySourceFindOptions, FilterBase, FindOptionsPerEntity, DataProviderFactory } from "radweb/utils/dataInterfaces1";
 import { foreachSync } from "./utils";
 import { evilStatics } from "../auth/evil-statics";
 import { myAuthInfo } from "../auth/my-auth-info";
@@ -7,26 +7,43 @@ import { Injectable } from "@angular/core";
 
 @Injectable()
 export class Context {
-    
+
     protected _getInfo = () => evilStatics.auth.info;
     protected _dataSource = evilStatics.dataSource;
     constructor() {
-        
+
     }
 
     get info(): myAuthInfo {
         return this._getInfo();
     }
-    private _context: Context;
-    setContext(c: Context) {
-        this._context = c;
+ 
+    public create<lookupIdType, T extends Entity<lookupIdType>>(c: { new(...args: any[]): T; }) {
+        let e = new c(this);
+        e.setSource(this._dataSource);
+        if (e instanceof ContextEntity) {
+            e._setContext(this);
+        }
+        return e;
     }
     public for<lookupIdType, T extends Entity<lookupIdType>>(c: { new(...args: any[]): T; }) {
-        let e = new c(this._context);
-        e.setSource(this._dataSource);
-        return new SpecificEntityHelper<lookupIdType,T>(e, this._lookupCache);
+        return new SpecificEntityHelper<lookupIdType, T>(this.create(c), this._lookupCache);
     }
     private _lookupCache = new stamEntity();
+}
+
+export class ContextEntity<idType> extends Entity<idType>{
+    constructor(entityType: { new(...args: any[]): Entity<idType>; }, options?: EntityOptions | string) {
+        super(() => {
+            if (!this.context)
+                throw 'context was not set for ';
+            return this.context.create(entityType);
+        }, evilStatics.dataSource, options);
+    }
+    private context: Context;
+    _setContext(context: Context) {
+        this.context = context;
+    }
 }
 
 class stamEntity extends Entity<number> {

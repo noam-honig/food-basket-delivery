@@ -26,7 +26,7 @@ import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
 import { RunOnServer } from '../auth/server-action';
-import { Context } from '../shared/entity-provider';
+import { Context } from '../shared/context';
 
 
 @Component({

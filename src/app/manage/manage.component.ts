@@ -10,6 +10,7 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings } from './ApplicationSettings';
 import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
+import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-manage',
@@ -22,6 +23,7 @@ export class ManageComponent implements OnInit {
     component: ManageComponent,
     data: { name: 'הגדרות מערכת' }, canActivate: [AdminGuard]
   }
+  constructor(private dialog: SelectService, private auth: AuthService, private context: Context) { }
 
   basketType = new GridSettings(new BasketType(), {
     columnSettings: x => [
@@ -61,7 +63,7 @@ export class ManageComponent implements OnInit {
   testSms() {
     return SendSmsAction.getMessage(this.settings.currentRow.smsText.value, this.settings.currentRow.organisationName.value, 'ישראל ישראלי', this.auth.auth.info.name, window.location.origin + '/x/zxcvdf');
   }
-  images = new GridSettings(new ApplicationImages(), {
+  images = this.context.for(ApplicationImages).gridSettings({
     numOfColumnsInGrid: 0,
     allowUpdate: true,
     columnSettings: i => [
@@ -70,7 +72,7 @@ export class ManageComponent implements OnInit {
 
     ]
   });
-  constructor(private dialog: SelectService, private auth: AuthService) { }
+
 
   ngOnInit() {
     this.settings.getRecords();

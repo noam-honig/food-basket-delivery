@@ -13,7 +13,7 @@ import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelper
 import { evilStatics } from "../auth/evil-statics";
 import { entityWithApi, entityApiSettings, ApiAccess } from "../server/api-interfaces";
 import { DataApiSettings } from "radweb/utils/server/DataApi";
-import {  Context } from "../shared/entity-provider";
+import {  Context } from "../shared/context";
 
 export class Families extends IdEntity<FamilyId> implements entityWithApi {
   getDataApiSettings(): entityApiSettings {

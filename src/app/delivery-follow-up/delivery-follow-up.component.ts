@@ -9,7 +9,7 @@ import { FilterBase } from 'radweb/utils/dataInterfaces1';
 import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
-import { Context } from '../shared/entity-provider';
+import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-delivery-follow-up',

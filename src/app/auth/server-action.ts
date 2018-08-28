@@ -4,7 +4,7 @@ import { environment } from "../../environments/environment";
 import { evilStatics } from "./evil-statics";
 import { DataApiRequest, DataProviderFactory } from "radweb/utils/dataInterfaces1";
 import 'reflect-metadata';
-import { Context } from "../shared/entity-provider";
+import { Context } from "../shared/context";
 
 export abstract class ServerAction<inParam, outParam> extends Action<inParam, outParam, myAuthInfo>{
     constructor(url?: string) {
