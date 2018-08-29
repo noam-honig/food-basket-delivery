@@ -4,13 +4,13 @@ import { evilStatics } from '../auth/evil-statics';
 import { HelperId, Helpers } from '../helpers/helpers';
 import { IdEntity, changeDate, DateTimeColumn, buildSql } from '../model-shared/types';
 import { Families } from "../families/families";
-import { entityApiSettings, entityWithApi } from "../server/api-interfaces";
-import { Context } from "../shared/context";
+import {  ApiAccess } from "../server/api-interfaces";
+import { Context, ServerContext } from "../shared/context";
 
 
 
-let f = new Families(undefined);
-let h = new Helpers(undefined);
+let f = new Families(new ServerContext({}));
+let h = new Helpers(new ServerContext({}));
 let fromFamilies = () => buildSql(' from ', f,
     ' where ', f.courier, ' = ', h, '.', h.id);
 
@@ -23,10 +23,7 @@ function log(s: string) {
     return s;
 }
 
-export class HelpersAndStats extends IdEntity<HelperId> implements entityWithApi {
-    getDataApiSettings(): entityApiSettings {
-        return {};
-    }
+export class HelpersAndStats extends IdEntity<HelperId> {
     name = new StringColumn({
         caption: "שם",
         onValidate: v => {
@@ -55,6 +52,7 @@ export class HelpersAndStats extends IdEntity<HelperId> implements entityWithApi
     constructor(context: Context) {
         super(new HelperId(context), HelpersAndStats, {
             name: "helpersAndStats",
+            apiAccess:ApiAccess.AdminOnly,
             dbName: buildSql('(select ', [
                 h.id,
                 h.name,

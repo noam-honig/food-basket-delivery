@@ -1,11 +1,9 @@
-import { Entity, StringColumn, NumberColumn } from "radweb";
+import { StringColumn, NumberColumn } from "radweb";
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
-import { evilStatics } from "../auth/evil-statics";
-import { entityApiSettings, LoggedInCanViewButOnlyAdminUpdatesInsertsAndDeletes, entityWithApi, ApiAccess } from "../server/api-interfaces";
-import { DataApiSettings } from "radweb/utils/server/DataApi";
-import { ContextEntity,  Context } from "../shared/context";
+import { ApiAccess } from "../server/api-interfaces";
+import { ContextEntity, Context } from "../shared/context";
 
-export class ApplicationSettings extends ContextEntity<number> implements entityWithApi {
+export class ApplicationSettings extends ContextEntity<number>  {
 
   id = new NumberColumn();
   organisationName = new StringColumn('שם הארגון');
@@ -23,37 +21,31 @@ export class ApplicationSettings extends ContextEntity<number> implements entity
   }
 
 
-  constructor() {
-    super( ApplicationSettings, 'ApplicationSettings')
+  constructor(context: Context) {
+    super(ApplicationSettings, {
+      name: 'ApplicationSettings',
+      apiAccess: ApiAccess.all,
+      allowApiUpdate: context.isAdmin(),
+      onSavingRow: async () => {
+        if (context.onServer) {
+          if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
+            let geo = await GetGeoInformation(this.address.value);
+            this.addressApiResult.value = geo.saveToString();
+            if (geo.ok()) {
+            }
+          }
+        }
+      }
+    })
     this.initColumns(this.id);
   }
-  private static _settings: ApplicationSettings;
+
   static get(context: Context) {
-    if (!this._settings) {
-      this._settings = context.for(ApplicationSettings).create();
-      context.for(ApplicationSettings).findFirst().then(s => this._settings = s);
-    }
-    return this._settings;
+    return context.for(ApplicationSettings).lookup(app => app.id.isEqualTo(1));
+
   }
   static async getAsync(context: Context): Promise<ApplicationSettings> {
     return (await context.for(ApplicationSettings).findFirst());
   }
-  getDataApiSettings(): entityApiSettings {
-    return {
-      apiAccess: ApiAccess.all,
-      apiSettings: authInfo => {
-        return {
-          allowUpdate: authInfo && authInfo.admin,
-          onSavingRow: async as => {
-            if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
-              let geo = await GetGeoInformation(this.address.value);
-              this.addressApiResult.value = geo.saveToString();
-              if (geo.ok()) {
-              }
-            }
-          }
-        } as DataApiSettings<ApplicationSettings>
-      }
-    }
-  }
+
 }

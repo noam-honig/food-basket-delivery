@@ -21,7 +21,8 @@ import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 import { NewsUpdate } from '../news/NewsUpdate';
 import { FamilyDeliveryEventsView } from '../families/FamilyDeliveryEventsView';
 import { Entity } from 'radweb';
-import { ServerContext } from '../auth/server-action';
+import { ServerContext } from '../shared/context';
+
 
 
 export var allEntities: { new(...args: any[]): Entity<any>; }[] =
@@ -64,7 +65,7 @@ export async function serverInit() {
 
     let context = new ServerContext({});
     var sb = new PostgrestSchemaBuilder(pool);
-    await foreachSync(allEntities.map(x => new x()), async x => {
+    await foreachSync(allEntities.map(x => context.for(x).create()), async x => {
         if (x.__getDbName().toLowerCase().indexOf('from ') < 0) {
             await sb.CreateIfNotExist(x);
             await sb.verifyAllColumns(x);

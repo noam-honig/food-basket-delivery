@@ -4,52 +4,41 @@ import { YesNoColumn } from "./YesNo";
 import { LanguageColumn } from "./Language";
 import { FamilySourceId } from "./FamilySources";
 import { BasketId } from "./BasketType";
-import { IdEntity, Id, changeDate, DateTimeColumn } from "../model-shared/types";
-import { StringColumn, NumberColumn, ColumnSetting, Column } from "radweb";
+import { NumberColumn, StringColumn, IdEntity, Id, changeDate, DateTimeColumn } from "../model-shared/types";
+import { ColumnSetting, Column } from "radweb";
 import { DataProviderFactory } from "radweb/utils/dataInterfaces1";
 import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
 import { evilStatics } from "../auth/evil-statics";
-import { entityWithApi, entityApiSettings, ApiAccess } from "../server/api-interfaces";
+import { entityApiSettings, ApiAccess } from "../server/api-interfaces";
 import { DataApiSettings } from "radweb/utils/server/DataApi";
 import { Context } from "../shared/context";
 
-export class Families extends IdEntity<FamilyId> implements entityWithApi {
-  getDataApiSettings(): entityApiSettings {
-    return {
-      apiAccess: ApiAccess.loggedIn,
-      apiSettings: authInfo => {
-        return {
-          allowDelete: authInfo && authInfo.admin,
-          allowInsert: authInfo && authInfo.admin,
-          allowUpdate: authInfo ? true : false,
-          readonlyColumns: f => {
-            if (authInfo) {
-              if (authInfo.admin)
-                return [];
-              return f.__iterateColumns().filter(c => c != f.courierComments && c != f.deliverStatus);
-            }
-          },
-          excludeColumns: f => {
-            return f.excludeColumns(authInfo);
-          },
-          onSavingRow: async family => {
-            await family.doSaveStuff(authInfo);
-          },
-          get: {
-            where: f => {
-              if (authInfo && !authInfo.admin)
-                return f.courier.isEqualTo(authInfo.helperId);
-              return undefined;
-            }
-          }
-        } as DataApiSettings<this>;
+export class Families extends IdEntity<FamilyId>  {
+  constructor(private context: Context) {
+    super(new FamilyId(), Families,
+      {
+        name: "Families",
+        apiAccess: ApiAccess.loggedIn,
+        allowApiUpdate: context.isLoggedIn(),
+        allowApiDelete: context.isAdmin(),
+        allowApiInsert: context.isAdmin(),
+        apiDataFilter: () => {
+          if (!context.isAdmin())
+            return this.courier.isEqualTo(context.info.helperId);
+        },
+        onSavingRow: async () => {
+          if (this.context.onServer)
+            await this.doSaveStuff(this.context.info);
+        }
 
-      }
-    };
+      });
+    this.initColumns();
+    if (!context.isAdmin())
+      this.__iterateColumns().forEach(c => c.readonly = c != this.courierComments && c != this.deliverStatus);
   }
-
+ 
 
   name = new StringColumn({
     caption: "שם",
@@ -58,12 +47,12 @@ export class Families extends IdEntity<FamilyId> implements entityWithApi {
         this.name.error = 'השם קצר מידי';
     }
   });
-  familyMembers = new NumberColumn('מספר נפשות');
+  familyMembers = new NumberColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'מספר נפשות' });
   language = new LanguageColumn();
   basketType = new BasketId(this.context, 'סוג סל');
-  familySource = new FamilySourceId(this.context, 'גורם מפנה');
-  special = new YesNoColumn('שיוך מיוחד');
-  internalComment = new StringColumn('הערה פנימית - לא תופיע למשנע');
+  familySource = new FamilySourceId(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'גורם מפנה' });
+  special = new YesNoColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'שיוך מיוחד' });
+  internalComment = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'הערה פנימית - לא תופיע למשנע' });
 
 
   address = new StringColumn("כתובת");
@@ -81,10 +70,10 @@ export class Families extends IdEntity<FamilyId> implements entityWithApi {
 
 
 
-  callStatus = new CallStatusColumn('סטטוס שיחה');
-  callTime = new changeDate('מועד שיחה');
-  callHelper = new HelperIdReadonly(this.context, 'מי ביצעה את השיחה');
-  callComments = new StringColumn('הערות שיחה');
+  callStatus = new CallStatusColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'סטטוס שיחה' });
+  callTime = new changeDate({ excludeFromApi: !this.context.isAdmin(), caption: 'מועד שיחה' });
+  callHelper = new HelperIdReadonly(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'מי ביצעה את השיחה' });
+  callComments = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'הערות שיחה' });
 
 
   courier = new HelperId(this.context, "משנע");
@@ -136,8 +125,8 @@ export class Families extends IdEntity<FamilyId> implements entityWithApi {
   }
 
 
-  createDate = new changeDate('מועד הוספה');
-  createUser = new HelperIdReadonly(this.context, 'משתמש מוסיף');
+  createDate = new changeDate({ excludeFromApi: !this.context.isAdmin(), caption: 'מועד הוספה' });
+  createUser = new HelperIdReadonly(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'משתמש מוסיף' });
 
   excludeColumns(info: myAuthInfo) {
     if (info && info.admin)
@@ -166,10 +155,7 @@ export class Families extends IdEntity<FamilyId> implements entityWithApi {
     return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
   }
 
-  constructor(private context: Context) {
-    super(new FamilyId(), Families, "Families");
-    this.initColumns();
-  }
+
   async doSave(authInfo: myAuthInfo) {
     await this.doSaveStuff(authInfo);
     await this.save();

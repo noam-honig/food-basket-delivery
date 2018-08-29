@@ -1,17 +1,29 @@
 import { Entity, IDataSettings, GridSettings, Column, NumberColumn, DataList, EntityOptions } from "radweb";
-import { EntitySourceFindOptions, FilterBase, FindOptionsPerEntity, DataProviderFactory } from "radweb/utils/dataInterfaces1";
+import { EntitySourceFindOptions, FilterBase, FindOptionsPerEntity, DataProviderFactory, DataColumnSettings } from "radweb/utils/dataInterfaces1";
 import { foreachSync } from "./utils";
 import { evilStatics } from "../auth/evil-statics";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { Injectable } from "@angular/core";
+import { ApiAccess, entityApiSettings } from "../server/api-interfaces";
+
 
 @Injectable()
 export class Context {
+    isAdmin() {
+        return this.info && this.info.admin;
+    }
+    isLoggedIn() {
+        return !!this.info;
+    }
 
     protected _getInfo = () => evilStatics.auth.info;
     protected _dataSource = evilStatics.dataSource;
     constructor() {
 
+    }
+    protected _onServer = false;
+    get onServer(): boolean {
+        return this._onServer;
     }
 
     get info(): myAuthInfo {
@@ -31,25 +43,124 @@ export class Context {
     }
     private _lookupCache = new stamEntity();
 }
+export class ServerContext extends Context {
+    constructor(info: myAuthInfo, dataProvider?: DataProviderFactory) {
+        super();
+        this._getInfo = () => info;
+        if (dataProvider)
+            this._dataSource = dataProvider;
+        this._onServer = true;
+
+    }
+}
+
+function buildEntityOptions(o: ContextEntityOptions | string): EntityOptions | string {
+    if (typeof (o) == 'string')
+        return o;
+    return {
+        name: o.name,
+        caption: o.caption,
+        dbName: o.dbName,
+        onSavingRow: o.onSavingRow,
+    }
+}
 
 export class ContextEntity<idType> extends Entity<idType>{
     _noContextErrorWithStack: Error;
-    constructor(entityType: { new(...args: any[]): Entity<idType>; }, options?: EntityOptions | string) {
+    constructor(private entityType: { new(...args: any[]): Entity<idType>; }, private contextEntityOptions?: ContextEntityOptions | string) {
         super(() => {
             if (!this.__context) {
 
                 throw this._noContextErrorWithStack;
             }
             return this.__context.create(entityType);
-        }, evilStatics.dataSource, options);
+        }, evilStatics.dataSource, buildEntityOptions(contextEntityOptions));
         this._noContextErrorWithStack = new Error('context was not set for' + this.constructor.name);
     }
     private __context: Context;
     _setContext(context: Context) {
         this.__context = context;
     }
-}
+    _getEntityApiSettings(): entityApiSettings {
+        let options = {} as ContextEntityOptions;
+        if (typeof (this.contextEntityOptions) == "string")
+            return options;
+        options = this.contextEntityOptions;
+        return {
+            apiAccess: options.apiAccess,
 
+            apiSettings: r => {
+                let context = new ServerContext(r);
+                let x = context.for(this.entityType).create() as ContextEntity<any>;
+                if (typeof (x.contextEntityOptions) == "string") {
+                    return {}
+                }
+                else {
+                    options = x.contextEntityOptions;
+                    if (options.apiReadOnly != undefined) {
+                        console.log('applying readonly rules ' + this.__getName());
+                        if (options.apiReadOnly) {
+                            options.allowApiUpdate = false;
+                            options.allowApiDelete = false;
+                            options.allowApiInsert = false;
+                        }
+                        else {
+                            if (options.allowApiUpdate == undefined)
+                                options.allowApiUpdate = true;
+                            if (options.allowApiDelete == undefined)
+                                options.allowApiDelete = true;
+                            if (options.allowApiInsert == undefined)
+                                options.allowApiInsert = true;
+                        }
+
+                    }
+                    return {
+                        allowUpdate: options.allowApiUpdate,
+                        allowDelete: options.allowApiDelete,
+                        allowInsert: options.allowApiInsert,
+                        excludeColumns: x => {
+                            let r = this.__iterateColumns().filter(c => {
+                                let y = <hasMoreDataColumnSettings><any>c;
+                                if (y && y.__getMoreDataColumnSettings) {
+
+                                    if (y.__getMoreDataColumnSettings()&&y.__getMoreDataColumnSettings().excludeFromApi)
+                                        return true;
+                                }
+                                return false;
+                            });
+                            return r;
+                        },
+                        readonlyColumns: x => {
+                            return this.__iterateColumns().filter(c => c.readonly);
+                        },
+                        get: {
+                            where: x => options.apiDataFilter ? options.apiDataFilter() : undefined
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+}
+export interface hasMoreDataColumnSettings {
+    __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any>;
+}
+export interface MoreDataColumnSettings<type, colType> extends DataColumnSettings<type, colType> {
+    excludeFromApi?: boolean;
+}
+export interface ContextEntityOptions {
+    name: string;//required
+    dbName?: string;
+    caption?: string;
+    apiAccess: ApiAccess; //required
+    allowApiUpdate?: boolean;
+    allowApiDelete?: boolean;
+    allowApiInsert?: boolean;
+    apiDataFilter?: () => FilterBase;
+    apiReadOnly?: boolean;
+    onSavingRow?: () => Promise<any>;
+}
 class stamEntity extends Entity<number> {
 
     id = new NumberColumn();
@@ -86,7 +197,7 @@ export class SpecificEntityHelper<lookupIdType, T extends Entity<lookupIdType>> 
         return await dl.get(options);
     }
     async findFirst(where?: (entity: T) => FilterBase) {
-        let r = await this.entity.source.find({ where:where? where(this.entity) :undefined});
+        let r = await this.entity.source.find({ where: where ? where(this.entity) : undefined });
         if (r.length == 0)
             return undefined;
         return r[0];

@@ -38,6 +38,7 @@ const routes: Routes = [
   UpdateInfoComponent.route,
   LoginComponent.route,
   RegisterComponent.route,
+  { path: 'stam', component: StamTestComponent },
   { path: '', redirectTo: '/families', pathMatch: 'full' },
   { path: '**', redirectTo: '/families', pathMatch: 'full' }
 ];

@@ -1,5 +1,6 @@
 import { ClosedListColumn, NumberColumn } from "radweb";
 import { DataColumnSettings } from "radweb/utils/dataInterfaces1";
+import { MoreDataColumnSettings } from "../shared/context";
 
 export class CallStatus {
   static NotYet: CallStatus = new CallStatus(0, 'עדיין לא');
@@ -12,7 +13,7 @@ export class CallStatus {
   }
 }
 export class CallStatusColumn extends ClosedListColumn<CallStatus> {
-    constructor(settingsOrCaption?: DataColumnSettings<number, NumberColumn> | string) {
+    constructor(settingsOrCaption?: MoreDataColumnSettings<number, NumberColumn> | string) {
       super(CallStatus, settingsOrCaption);
     }
   

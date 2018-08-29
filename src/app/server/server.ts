@@ -20,16 +20,17 @@ import { StatsAction } from '../families/stats-action';
 import { DeliveryStatsAction } from '../delivery-follow-up/delivery-stats';
 import { Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { entityWithApi, ApiAccess } from "./api-interfaces";
+import {  ApiAccess, entityApiSettings } from "./api-interfaces";
 import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 
-import { serverActionField, myServerAction, ServerContext } from "../auth/server-action";
+import { serverActionField, myServerAction } from "../auth/server-action";
 import { SiteArea } from "radweb/utils/server/expressBridge";
 import { AuthService } from "../auth/auth-service";
 import { HelpersComponent } from "../helpers/helpers.component";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 import { DeliveryEventsComponent } from "../delivery-events/delivery-events.component";
 import { SendSmsAction } from "../asign-family/send-sms-action";
+import { ContextEntity, ServerContext } from "../shared/context";
 
 
 
@@ -96,10 +97,14 @@ serverInit().then(async () => {
 
     //add Api Entries
     allEntities.forEach(e => {
-        let x = <entityWithApi><any>new e();
-        if (x && x.getDataApiSettings) {
-            let settings = x.getDataApiSettings();
-            
+        let x = <any>new ServerContext(undefined).for(e).create();
+        
+        let settings: entityApiSettings
+        if (x instanceof ContextEntity){
+            settings = x._getEntityApiSettings();
+        }
+        
+        if (settings) {
             let createApi: (r: DataApiRequest<myAuthInfo>) => DataApi<any> = r => new DataApi(new ServerContext(r.authInfo).create(e));
             if (settings.apiSettings) {
                 createApi = r => new DataApi(new ServerContext(r.authInfo).create(e), settings.apiSettings(r.authInfo));
@@ -118,6 +123,7 @@ serverInit().then(async () => {
                     break;
             }
         }
+
     });
 
 
@@ -145,7 +151,7 @@ serverInit().then(async () => {
         res.send(result);
     });
     app.use('/assets/apple-touch-icon.png', async (req, res) => {
-        
+
         let imageBase = (await ApplicationImages.ApplicationImages.getAsync(new ServerContext({}))).base64PhoneHomeImage.value;
         res.contentType('png');
         if (imageBase) {

@@ -1,14 +1,16 @@
 import * as uuid from 'uuid';
 import * as radweb from 'radweb';
-import { BoolColumn, DataProviderFactory, EntityOptions, Entity, Column } from "radweb";
+import { DataProviderFactory, EntityOptions, Entity, Column } from "radweb";
 import { DataColumnSettings } from 'radweb/utils/dataInterfaces1';
-import { ContextEntity } from '../shared/context';
+import { ContextEntity, ContextEntityOptions, MoreDataColumnSettings, hasMoreDataColumnSettings } from '../shared/context';
+import { BrowserPlatformLocation } from '@angular/platform-browser/src/browser/location/browser_platform_location';
 export class IdEntity<idType extends Id> extends ContextEntity<string>
 {
   id: idType;
-  constructor( id: idType, entityType: { new(...args: any[]): Entity<string>; }, options?: EntityOptions | string) {
+  constructor(id: idType, entityType: { new(...args: any[]): Entity<string>; }, options?: ContextEntityOptions | string) {
     super(entityType, options);
     this.id = id;
+    id.readonly = true;
     this.onSavingRow = () => {
       if (this.isNew() && !this.id.value && !this.disableNewId)
         this.id.setToNewId();
@@ -22,17 +24,46 @@ export class IdEntity<idType extends Id> extends ContextEntity<string>
 }
 
 
-export class Id extends radweb.StringColumn {
-  setToNewId() {
-    this.value = uuid();
-  }
-}
+
 
 export interface HasAsyncGetTheValue {
   getTheValue(): Promise<string>;
 }
-export class DateTimeColumn extends radweb.DateTimeColumn {
-  constructor(settingsOrCaption?: DataColumnSettings<string, DateTimeColumn> | string) {
+export class StringColumn extends radweb.StringColumn  implements hasMoreDataColumnSettings {
+  __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
+    return this.settingsOrCaption as MoreDataColumnSettings<any,any>;
+  }
+  constructor(private settingsOrCaption?: MoreDataColumnSettings<string, StringColumn> | string) {
+    super(settingsOrCaption);
+  }
+}
+export class NumberColumn extends radweb.NumberColumn  implements hasMoreDataColumnSettings {
+  __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
+    return this.settingsOrCaption as MoreDataColumnSettings<any,any>;
+  }
+  constructor(private settingsOrCaption?: MoreDataColumnSettings<number, NumberColumn> | string) {
+    super(settingsOrCaption);
+  }
+}
+export class Id extends StringColumn {
+  setToNewId() {
+    this.value = uuid();
+  }
+}
+export class BoolColumn extends radweb.BoolColumn  implements hasMoreDataColumnSettings {
+  __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
+    return this.settingsOrCaption as MoreDataColumnSettings<any,any>;
+  }
+  constructor(private settingsOrCaption?: MoreDataColumnSettings<boolean, BoolColumn> | string) {
+    super(settingsOrCaption);
+  }
+}
+
+export class DateTimeColumn extends radweb.DateTimeColumn implements hasMoreDataColumnSettings {
+  __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
+    return this.settingsOrCaption as MoreDataColumnSettings<any,any>;
+  }
+  constructor(private settingsOrCaption?: MoreDataColumnSettings<string, DateTimeColumn> | string) {
     super(settingsOrCaption);
   }
   relativeDateName(d?: Date, now?: Date) {
@@ -100,12 +131,21 @@ export class DateTimeColumn extends radweb.DateTimeColumn {
   }
 
 }
-export class changeDate extends DateTimeColumn {
-  constructor(caption: string) {
-    super({
-      caption: caption,
-      readonly: true
-    });
+export function updateSettings<type, colType>(original: MoreDataColumnSettings<type, colType> | string, addValues: (x: MoreDataColumnSettings<type, colType>) => void) {
+  let result: MoreDataColumnSettings<type, colType> = {};
+  if (typeof (original) == "string")
+    result.caption = original;
+  else
+    result = original;
+  addValues(result);
+  return result;
+}
+export class changeDate extends DateTimeColumn implements hasMoreDataColumnSettings {
+  __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
+    return this.optionsOrCaption as MoreDataColumnSettings<any,any>;
+  }
+  constructor(private optionsOrCaption: MoreDataColumnSettings<string, DateTimeColumn> | string) {
+    super(updateSettings(optionsOrCaption, x => x.readonly = true));
   }
 
 }

@@ -13,12 +13,12 @@ import { Context } from '../shared/context';
   styleUrls: ['./news.component.scss']
 })
 export class NewsComponent implements OnInit, OnDestroy {
-  static route:Route = {
+  static route: Route = {
     path: 'news', component: NewsComponent, canActivate: [AdminGuard], data: { name: 'חדשות' }
   };
 
   onDestroy = () => { };
-  constructor(dialog: SelectService,private context:Context) {
+  constructor(dialog: SelectService, private context: Context) {
     let y = dialog.newsUpdate.subscribe(() => {
       this.refresh();
     });
@@ -34,10 +34,10 @@ export class NewsComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.refresh();
   }
-  newsEntity = new NewsUpdate(this.context);
+
   async refresh() {
 
-    this.news = await this.newsEntity.source.find({ orderBy: [{ column: this.newsEntity.updateTime, descending: true }], limit: 1000 });
+    this.news = await this.context.for(NewsUpdate).find({ orderBy: n => [{ column: n.updateTime, descending: true }], limit: 1000 });
   }
   icon(n: NewsUpdate) {
 

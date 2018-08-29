@@ -1,35 +1,24 @@
-import { Entity, StringColumn, NumberColumn } from 'radweb';
-import { evilStatics } from '../auth/evil-statics';
-import { entityApiSettings, entityWithApi } from "../server/api-interfaces";
+import { StringColumn, NumberColumn } from 'radweb';
 import { ContextEntity, Context } from '../shared/context';
+import { ApiAccess } from '../server/api-interfaces';
 
-export class ApplicationImages extends ContextEntity<number> implements entityWithApi {
+export class ApplicationImages extends ContextEntity<number>  {
   id = new NumberColumn();
   base64Icon = new StringColumn("איקון דף base64");
   base64PhoneHomeImage = new StringColumn("איקון דף הבית בטלפון base64");
   constructor() {
-    super( ApplicationImages, 'ApplicationImages');
+    super(ApplicationImages, {
+      apiAccess: ApiAccess.AdminOnly,
+      name: 'ApplicationImages',
+      allowApiUpdate: true
+    });
     this.initColumns(this.id);
   }
-  private static _settings: ApplicationImages;
+
   static get(context: Context) {
-    if (!this._settings) {
-      this._settings = context.create(ApplicationImages);
-      context.for(ApplicationImages).findFirst(undefined).then(s => this._settings = s);
-    }
-    return this._settings;
+    context.for(ApplicationImages).lookup(app => app.id.isEqualTo(1));
   }
   static async getAsync(context: Context): Promise<ApplicationImages> {
-
-    return (await context.for(ApplicationImages).findFirst(undefined));
-  }
-  getDataApiSettings(): entityApiSettings {
-    return {
-      apiSettings: authInfo => {
-        return {
-          allowUpdate: true,
-        }
-      }
-    }
+    return context.for(ApplicationImages).findFirst(undefined);
   }
 }

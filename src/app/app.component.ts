@@ -25,7 +25,7 @@ export class AppComponent {
     public activeRoute: ActivatedRoute,
     private injector: Injector,
     public dialog: SelectService,
-    private context:Context) {
+    private context: Context) {
     /*this.router.config.unshift({
       path: FamiliesComponent.route,
       component: FamiliesComponent,
@@ -88,7 +88,7 @@ export class AppComponent {
 
   }
   test() {
-    
+
   }
 
 }

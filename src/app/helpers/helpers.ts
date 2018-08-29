@@ -1,19 +1,50 @@
 import * as radweb from 'radweb';
-import { BoolColumn, DataProviderFactory, ColumnSetting, Entity, StringColumn } from "radweb";
+import { DataProviderFactory, ColumnSetting, Entity } from "radweb";
 import { evilStatics } from "../auth/evil-statics";
-import { IdEntity, changeDate, Id, HasAsyncGetTheValue, checkForDuplicateValue } from '../model-shared/types';
+import { IdEntity, changeDate, Id, HasAsyncGetTheValue, checkForDuplicateValue, StringColumn, BoolColumn, updateSettings } from '../model-shared/types';
 import { SelectServiceInterface } from '../select-popup/select-service-interface';
 import { DataApiRequest, DataColumnSettings } from 'radweb/utils/dataInterfaces1';
 import { myAuthInfo } from '../auth/my-auth-info';
 import { DataApiSettings, DataApi } from 'radweb/utils/server/DataApi';
 import * as passwordHash from 'password-hash';
-import { entityWithApi, entityApiSettings, ApiAccess } from '../server/api-interfaces';
+import {  ApiAccess } from '../server/api-interfaces';
 import { RunOnServer } from '../auth/server-action';
-import {  Context } from '../shared/context';
+import { Context, MoreDataColumnSettings } from '../shared/context';
 
 
-export class Helpers extends IdEntity<HelperId> implements entityWithApi {
+export class Helpers extends IdEntity<HelperId>  {
+    constructor(private context: Context) {
 
+        super(new HelperId(context), Helpers, {
+            apiAccess: ApiAccess.all,
+            name: "Helpers",
+            allowApiDelete: context.isLoggedIn(),
+            allowApiUpdate: context.isLoggedIn(),
+            allowApiInsert: true,
+            onSavingRow: async () => {
+                if (context.onServer) {
+                    if (this.password.value && this.password.value != this.password.originalValue && this.password.value != Helpers.emptyPassword) {
+                        this.realStoredPassword.value = passwordHash.generate(this.password.value);
+                    }
+                    if ((await context.for(Helpers).count()) == 0)
+                        this.isAdmin.value = true;
+
+                    await checkForDuplicateValue(this, this.phone);
+                    if (this.isNew())
+                        this.createDate.dateValue = new Date();
+                    this.veryUrlKeyAndReturnTrueIfSaveRequired();
+                }
+            },
+            apiDataFilter: () => {
+                if (!context.isLoggedIn())
+                    return this.id.isEqualTo("No User");
+                else if (!context.isAdmin())
+                    return this.id.isEqualTo(this.context.info.helperId);
+            }
+        });
+        this.initColumns();
+    }
+    ;
     public static emptyPassword = 'password';
     name = new radweb.StringColumn({
         caption: "שם",
@@ -23,28 +54,23 @@ export class Helpers extends IdEntity<HelperId> implements entityWithApi {
         }
     });
     phone = new radweb.StringColumn({ caption: "טלפון", inputType: 'tel' });
-    realStoredPassword = new radweb.StringColumn({ dbName: 'password' });
+    realStoredPassword = new StringColumn({
+        dbName: 'password',
+        excludeFromApi: true
+    });
     password = new radweb.StringColumn({ caption: 'סיסמה', inputType: 'password', virtualData: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
 
-    createDate = new changeDate('מועד הוספה');
+    createDate = new changeDate({ caption: 'מועד הוספה' });
     smsDate = new changeDate('מועד משלוח SMS');
     reminderSmsDate = new changeDate('מועד משלוח תזכורת SMS');
-    isAdmin = new BoolColumn('מנהלת');
-    shortUrlKey = new radweb.StringColumn();
+    isAdmin = new BoolColumn({
+        caption: 'מנהלת',
+        readonly: !this.context.isAdmin(),
+        excludeFromApi: !this.context.isAdmin()
+    });
+    shortUrlKey = new StringColumn({ excludeFromApi: !this.context.isAdmin() });
 
-    constructor(context: Context) {
 
-        super(new HelperId(context) ,Helpers, "Helpers");
-        this.initColumns();
-        let x = this.onSavingRow;
-        this.onSavingRow = () => {
-            if (this.isNew())
-                this.createDate.dateValue = new Date();
-            this.veryUrlKeyAndReturnTrueIfSaveRequired();
-            x();
-        };
-    }
-    ;
     veryUrlKeyAndReturnTrueIfSaveRequired() {
         if (!this.shortUrlKey.value) {
             this.shortUrlKey.value = this.makeid();
@@ -61,41 +87,6 @@ export class Helpers extends IdEntity<HelperId> implements entityWithApi {
 
         return text;
     }
-    getDataApiSettings(): entityApiSettings {
-        return {
-            apiAccess: ApiAccess.all,
-            apiSettings: authInfo => {
-                var loggedIn = authInfo != undefined;
-                var settings: DataApiSettings<this> = {
-                    allowUpdate: loggedIn,
-                    allowDelete: loggedIn,
-                    allowInsert: true,
-                    get: {},
-                    readonlyColumns: h => [h.createDate, h.id],
-                    excludeColumns: h => [h.realStoredPassword],
-                    onSavingRow: async h => {
-                        if (h.password.value && h.password.value != h.password.originalValue && h.password.value != Helpers.emptyPassword) {
-                            h.realStoredPassword.value = passwordHash.generate(h.password.value);
-                        }
-                        if ((await h.source.count()) == 0)
-                            h.isAdmin.value = true;
-
-                        await checkForDuplicateValue(h, h.phone);
-                    },
-
-                };
-
-                if (!loggedIn) {
-                    settings.get.where = h => h.id.isEqualTo("No User")
-                } else if (!authInfo.admin) {
-                    settings.get.where = h => h.id.isEqualTo(authInfo.helperId);
-                    settings.excludeColumns = h => [h.realStoredPassword, h.isAdmin, h.shortUrlKey];
-                }
-                return settings;
-            }
-        };
-    }
-
 }
 
 
@@ -120,7 +111,7 @@ export class HelperId extends Id implements HasAsyncGetTheValue {
     }
 
     getValue() {
-        return this.context.for(Helpers).lookup( this).name.value;
+        return this.context.for(Helpers).lookup(this).name.value;
     }
     async getTheName() {
         let r = await this.context.for(Helpers).lookupAsync(this);
@@ -137,15 +128,12 @@ export class HelperId extends Id implements HasAsyncGetTheValue {
 }
 
 export class HelperIdReadonly extends HelperId {
-    constructor(private myContext: Context, caption: string) {
-        super(myContext, {
-            caption: caption,
-            readonly: true
-        });
+    constructor(private myContext: Context, caption: MoreDataColumnSettings<string, HelperId> | string) {
+        super(myContext, updateSettings(caption, x => x.readonly = true));
     }
 
     get displayValue() {
-        return this.myContext.for(Helpers).lookup( this).name.value;
+        return this.myContext.for(Helpers).lookup(this).name.value;
     }
 }
 

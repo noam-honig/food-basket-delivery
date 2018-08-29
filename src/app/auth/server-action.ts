@@ -4,7 +4,7 @@ import { environment } from "../../environments/environment";
 import { evilStatics } from "./evil-statics";
 import { DataApiRequest, DataProviderFactory } from "radweb/utils/dataInterfaces1";
 import 'reflect-metadata';
-import { Context } from "../shared/context";
+import { Context, ServerContext } from "../shared/context";
 
 export abstract class ServerAction<inParam, outParam> extends Action<inParam, outParam, myAuthInfo>{
     constructor(url?: string) {
@@ -19,15 +19,7 @@ interface result {
     data: any;
 }
 
-export class ServerContext extends Context {
-    constructor(info: myAuthInfo, dataProvider?: DataProviderFactory) {
-        super();
-        this._getInfo = () => info;
-        if (dataProvider)
-            this._dataSource = dataProvider;
 
-    }
-}
 export class myServerAction extends ServerAction<inArgs, result>
 {
     constructor(name: string, private types: any[], private originalMethod: (args: any[]) => any) {

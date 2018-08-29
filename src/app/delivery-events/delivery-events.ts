@@ -9,21 +9,21 @@ import { evilStatics } from "../auth/evil-statics";
 import { FamilyDeliveryEvents } from "./FamilyDeliveryEvents";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Families } from "../families/families";
-import { entityApiSettings, LoggedInCanViewButOnlyAdminUpdatesInsertsAndDeletes, entityWithApi } from "../server/api-interfaces";
+import { entityApiSettings, ApiAccess } from "../server/api-interfaces";
 import { DataApiSettings } from "radweb/utils/server/DataApi";
-import { Context } from "../shared/context";
+import { Context, ServerContext } from "../shared/context";
 
-let fde = new FamilyDeliveryEvents(undefined);
-let f = new Families(undefined);
+let fde = new FamilyDeliveryEvents(new ServerContext(undefined));
+let f = new Families(new ServerContext(undefined));
 
-export class DeliveryEvents extends IdEntity<DeliveryEventId> implements entityWithApi {
+export class DeliveryEvents extends IdEntity<DeliveryEventId>  {
 
   name = new StringColumn('שם');
   deliveryDate = new DateColumn('תאריך החלוקה');
   isActiveEvent = new BoolColumn();
   createDate = new changeDate('מועד הוספה');
   eventStatus = new EventStatusColumn('סטטוס');
-  createUser = new HelperIdReadonly(this.context,'משתמש מוסיף');
+  createUser = new HelperIdReadonly(this.context, 'משתמש מוסיף');
   families = new NumberColumn({
     dbReadOnly: true,
     caption: 'משפחות',
@@ -39,20 +39,14 @@ export class DeliveryEvents extends IdEntity<DeliveryEventId> implements entityW
       this.createUser.value = authInfo.helperId;
     }
   }
-  constructor(private context:Context) {
-    super(new DeliveryEventId(), DeliveryEvents, 'DeliveryEvents');
+  constructor(private context: Context) {
+    super(new DeliveryEventId(), DeliveryEvents, {
+      name: 'DeliveryEvents',
+      apiAccess: ApiAccess.AdminOnly,
+      allowApiUpdate: true,
+      allowApiInsert: true,
+      onSavingRow: () => this.doSaveStuff(this.context.info)
+    });
     this.initColumns();
-  }
-  getDataApiSettings(): entityApiSettings {
-    return {
-      apiSettings: info => {
-        return {
-          readonlyColumns: de => [de.isActiveEvent],
-          onSavingRow: async de => await de.doSaveStuff(info),
-          allowupdate: true,
-          allowInsert: true
-        } as DataApiSettings<this>;
-      }
-    }
   }
 }
