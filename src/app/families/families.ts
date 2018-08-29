@@ -6,13 +6,9 @@ import { FamilySourceId } from "./FamilySources";
 import { BasketId } from "./BasketType";
 import { NumberColumn, StringColumn, IdEntity, Id, changeDate, DateTimeColumn } from "../model-shared/types";
 import { ColumnSetting, Column } from "radweb";
-import { DataProviderFactory } from "radweb/utils/dataInterfaces1";
 import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
-import { evilStatics } from "../auth/evil-statics";
-import { entityApiSettings, ApiAccess } from "../server/api-interfaces";
-import { DataApiSettings } from "radweb/utils/server/DataApi";
 import { Context } from "../shared/context";
 
 export class Families extends IdEntity<FamilyId>  {
@@ -20,7 +16,7 @@ export class Families extends IdEntity<FamilyId>  {
     super(new FamilyId(), Families,
       {
         name: "Families",
-        apiAccess: ApiAccess.loggedIn,
+        allowApiRead: context.isLoggedIn(),
         allowApiUpdate: context.isLoggedIn(),
         allowApiDelete: context.isAdmin(),
         allowApiInsert: context.isAdmin(),
@@ -29,7 +25,7 @@ export class Families extends IdEntity<FamilyId>  {
             return this.courier.isEqualTo(context.info.helperId);
         },
         onSavingRow: async () => {
-          
+
           if (this.context.onServer) {
 
             if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {

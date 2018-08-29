@@ -1,6 +1,5 @@
 import { IdEntity, HasAsyncGetTheValue, Id } from "../model-shared/types";
 import { StringColumn } from "radweb";
-import {  ApiAccess } from "../server/api-interfaces";
 import { Context, MoreDataColumnSettings } from "../shared/context";
 
 export class FamilySources extends IdEntity<FamilySourceId>  {
@@ -10,7 +9,7 @@ export class FamilySources extends IdEntity<FamilySourceId>  {
   constructor(context: Context) {
     super(new FamilySourceId(context), FamilySources, {
       name: "FamilySources",
-      apiAccess: ApiAccess.loggedIn,
+      allowApiRead: context.isLoggedIn(),
       apiReadOnly: !context.isAdmin()
     });
     this.initColumns();

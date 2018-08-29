@@ -6,7 +6,6 @@ import { HelperIdReadonly } from "../helpers/helpers";
 import { FamilyDeliveryEvents } from "./FamilyDeliveryEvents";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Families } from "../families/families";
-import { ApiAccess } from "../server/api-interfaces";
 import { Context, ServerContext } from "../shared/context";
 
 let fde = new FamilyDeliveryEvents(new ServerContext(undefined));
@@ -31,9 +30,9 @@ export class DeliveryEvents extends IdEntity<DeliveryEventId>  {
   constructor(private context: Context) {
     super(new DeliveryEventId(), DeliveryEvents, {
       name: 'DeliveryEvents',
-      apiAccess: ApiAccess.AdminOnly,
-      allowApiUpdate: true,
-      allowApiInsert: true,
+      allowApiRead: context.isAdmin(),
+      allowApiUpdate: context.isAdmin(),
+      allowApiInsert: context.isAdmin(),
       onSavingRow: async () => {
         if (context.onServer)
           if (this.isNew()) {

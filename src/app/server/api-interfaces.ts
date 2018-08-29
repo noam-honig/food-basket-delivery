@@ -5,12 +5,6 @@ import { Entity } from "radweb";
 
 
 export interface entityApiSettings {
-    apiAccess?: ApiAccess;
     apiSettings?: (auth: myAuthInfo) => DataApiSettings<Entity<any>>;
 }
-export enum ApiAccess {
-    all,
-    loggedIn,
-    AdminOnly,
-    none
-}
+

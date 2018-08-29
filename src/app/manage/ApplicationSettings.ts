@@ -1,6 +1,5 @@
 import { StringColumn, NumberColumn } from "radweb";
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
-import { ApiAccess } from "../server/api-interfaces";
 import { ContextEntity, Context } from "../shared/context";
 
 export class ApplicationSettings extends ContextEntity<number>  {
@@ -24,7 +23,7 @@ export class ApplicationSettings extends ContextEntity<number>  {
   constructor(context: Context) {
     super(ApplicationSettings, {
       name: 'ApplicationSettings',
-      apiAccess: ApiAccess.all,
+      allowApiRead: true,
       allowApiUpdate: context.isAdmin(),
       onSavingRow: async () => {
         if (context.onServer) {

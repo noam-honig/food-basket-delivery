@@ -2,13 +2,11 @@ import { FamilyDelveryEventId, FamilyDeliveryEvents } from '../delivery-events/F
 import { FamilyId } from './families';
 import { DeliveryStatusColumn } from "./DeliveryStatus";
 import { BasketId } from "./BasketType";
-import { DataProviderFactory, StringColumn } from 'radweb';
-import { evilStatics } from '../auth/evil-statics';
+import { StringColumn } from 'radweb';
 import { HelperId } from '../helpers/helpers';
 import { IdEntity, changeDate, DateTimeColumn, buildSql } from '../model-shared/types';
 import { DeliveryEvents } from '../delivery-events/delivery-events';
 import { Context, ServerContext } from '../shared/context';
-import { ApiAccess } from '../server/api-interfaces';
 
 
 let fde = new FamilyDeliveryEvents(new ServerContext({}));
@@ -29,7 +27,7 @@ export class FamilyDeliveryEventsView extends IdEntity<FamilyDelveryEventId>  {
   constructor(private context: Context) {
     super(new FamilyDelveryEventId(), FamilyDeliveryEventsView, {
       name: 'FamilyDeliveryEventsView',
-      apiAccess: ApiAccess.AdminOnly,
+      allowApiRead: context.isAdmin(),
       dbName: buildSql('(select ', fde, '.', fde.id, ', ', [fde.family, fde.basketType, fde.courier, fde.courierAssingTime, fde.deliverStatus, fde.deliveryStatusDate, fde.courierComments, de.deliveryDate], ', ', de, '.', de.name, ' eventName', ' from ', fde, ' inner join ', de, ' on ', de, '.', de.id, '=', fde.deliveryEvent, ' where ', de.isActiveEvent, '=false', ') as x')
     });
     this.initColumns();

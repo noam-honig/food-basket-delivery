@@ -1,14 +1,9 @@
 import * as radweb from 'radweb';
-import { DataProviderFactory, ColumnSetting, Entity } from "radweb";
-import { evilStatics } from "../auth/evil-statics";
+import { ColumnSetting, Entity } from "radweb";
 import { IdEntity, changeDate, Id, HasAsyncGetTheValue, checkForDuplicateValue, StringColumn, BoolColumn, updateSettings } from '../model-shared/types';
 import { SelectServiceInterface } from '../select-popup/select-service-interface';
-import { DataApiRequest, DataColumnSettings } from 'radweb/utils/dataInterfaces1';
-import { myAuthInfo } from '../auth/my-auth-info';
-import { DataApiSettings, DataApi } from 'radweb/utils/server/DataApi';
+import { DataColumnSettings } from 'radweb/utils/dataInterfaces1';
 import * as passwordHash from 'password-hash';
-import {  ApiAccess } from '../server/api-interfaces';
-import { RunOnServer } from '../auth/server-action';
 import { Context, MoreDataColumnSettings } from '../shared/context';
 
 
@@ -16,8 +11,8 @@ export class Helpers extends IdEntity<HelperId>  {
     constructor(private context: Context) {
 
         super(new HelperId(context), Helpers, {
-            apiAccess: ApiAccess.all,
             name: "Helpers",
+            allowApiRead: true,
             allowApiDelete: context.isLoggedIn(),
             allowApiUpdate: context.isLoggedIn(),
             allowApiInsert: true,

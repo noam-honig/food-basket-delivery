@@ -1,16 +1,15 @@
 import { StringColumn, NumberColumn } from 'radweb';
 import { ContextEntity, Context } from '../shared/context';
-import { ApiAccess } from '../server/api-interfaces';
 
 export class ApplicationImages extends ContextEntity<number>  {
   id = new NumberColumn();
   base64Icon = new StringColumn("איקון דף base64");
   base64PhoneHomeImage = new StringColumn("איקון דף הבית בטלפון base64");
-  constructor() {
+  constructor(context:Context) {
     super(ApplicationImages, {
-      apiAccess: ApiAccess.AdminOnly,
       name: 'ApplicationImages',
-      allowApiUpdate: true
+      allowApiRead: context.isAdmin(),
+      allowApiUpdate: context.isAdmin()
     });
     this.initColumns(this.id);
   }

@@ -1,12 +1,10 @@
 import { DeliveryStatusColumn } from "../families/DeliveryStatus";
 import { changeDate, buildSql, StringColumn } from "../model-shared/types";
-import { NumberColumn, Entity } from "radweb";
+import { NumberColumn } from "radweb";
 import { HelperIdReadonly, HelperId } from "../helpers/helpers";
-
 import { Families, FamilyUpdateInfo } from "../families/families";
-
 import { Context, ContextEntity, ServerContext } from "../shared/context";
-import { ApiAccess } from "../server/api-interfaces";
+
 
 
 export let f = new Families(new ServerContext({}));
@@ -25,7 +23,7 @@ export class NewsUpdate extends ContextEntity<string> implements FamilyUpdateInf
   updateType = new NumberColumn();
   constructor(private context: Context) {
     super(NewsUpdate, {
-      apiAccess: ApiAccess.AdminOnly,
+      allowApiRead: context.isAdmin(),
       caption: 'חדשות',
       name: 'news',
       dbName: buildSql("(select ", [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser], ", ", f.deliveryStatusDate, " updateTime, ", f.deliveryStatusUser, " updateUser, 1 updateType from ", f, " where ", f.deliveryStatusDate, " is not null ", "union select ", [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser], ", ", f.courierAssingTime, " updateTime, ", f.courierAssignUser, " updateUser, 2 updateType from ", f, " where ", f.courierAssingTime, " is not null", ") x")

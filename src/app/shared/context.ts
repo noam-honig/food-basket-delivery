@@ -4,7 +4,7 @@ import { foreachSync } from "./utils";
 import { evilStatics } from "../auth/evil-statics";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { Injectable } from "@angular/core";
-import { ApiAccess, entityApiSettings } from "../server/api-interfaces";
+import {  entityApiSettings } from "../server/api-interfaces";
 
 
 @Injectable()
@@ -84,11 +84,9 @@ export class ContextEntity<idType> extends Entity<idType>{
     _getEntityApiSettings(): entityApiSettings {
         let options = {} as ContextEntityOptions;
         if (typeof (this.contextEntityOptions) == "string")
-            return options;
+            return {};
         options = this.contextEntityOptions;
         return {
-            apiAccess: options.apiAccess,
-
             apiSettings: r => {
                 let context = new ServerContext(r);
                 let x = context.for(this.entityType).create() as ContextEntity<any>;
@@ -115,6 +113,7 @@ export class ContextEntity<idType> extends Entity<idType>{
 
                     }
                     return {
+                        allowRead:options.allowApiRead,
                         allowUpdate: options.allowApiUpdate,
                         allowDelete: options.allowApiDelete,
                         allowInsert: options.allowApiInsert,
@@ -155,7 +154,7 @@ export interface ContextEntityOptions {
     name: string;//required
     dbName?: string;
     caption?: string;
-    apiAccess: ApiAccess; //required
+    allowApiRead?:boolean;
     allowApiUpdate?: boolean;
     allowApiDelete?: boolean;
     allowApiInsert?: boolean;

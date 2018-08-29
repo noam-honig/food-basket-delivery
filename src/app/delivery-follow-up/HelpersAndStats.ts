@@ -4,7 +4,7 @@ import { evilStatics } from '../auth/evil-statics';
 import { HelperId, Helpers } from '../helpers/helpers';
 import { IdEntity, changeDate, DateTimeColumn, buildSql } from '../model-shared/types';
 import { Families } from "../families/families";
-import {  ApiAccess } from "../server/api-interfaces";
+
 import { Context, ServerContext } from "../shared/context";
 
 
@@ -52,7 +52,7 @@ export class HelpersAndStats extends IdEntity<HelperId> {
     constructor(context: Context) {
         super(new HelperId(context), HelpersAndStats, {
             name: "helpersAndStats",
-            apiAccess:ApiAccess.AdminOnly,
+            apiReadOnly: context.isAdmin(),
             dbName: buildSql('(select ', [
                 h.id,
                 h.name,

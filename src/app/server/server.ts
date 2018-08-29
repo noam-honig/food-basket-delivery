@@ -20,7 +20,7 @@ import { StatsAction } from '../families/stats-action';
 import { DeliveryStatsAction } from '../delivery-follow-up/delivery-stats';
 import { Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import {  ApiAccess, entityApiSettings } from "./api-interfaces";
+import { entityApiSettings } from "./api-interfaces";
 import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 
 import { serverActionField, myServerAction } from "../auth/server-action";
@@ -98,30 +98,18 @@ serverInit().then(async () => {
     //add Api Entries
     allEntities.forEach(e => {
         let x = <any>new ServerContext(undefined).for(e).create();
-        
+
         let settings: entityApiSettings
-        if (x instanceof ContextEntity){
+        if (x instanceof ContextEntity) {
             settings = x._getEntityApiSettings();
         }
-        
+
         if (settings) {
             let createApi: (r: DataApiRequest<myAuthInfo>) => DataApi<any> = r => new DataApi(new ServerContext(r.authInfo).create(e));
             if (settings.apiSettings) {
                 createApi = r => new DataApi(new ServerContext(r.authInfo).create(e), settings.apiSettings(r.authInfo));
             }
-
-            switch (settings.apiAccess) {
-                case ApiAccess.all:
-                    allUsersAlsoNotLoggedIn.add(r => createApi(r));
-                    break;
-                case ApiAccess.loggedIn:
-                    loggedInApi.add(r => createApi(r));
-                    break;
-                case ApiAccess.AdminOnly:
-                default:
-                    adminApi.add(r => createApi(r));
-                    break;
-            }
+            allUsersAlsoNotLoggedIn.add(r => createApi(r));
         }
 
     });
