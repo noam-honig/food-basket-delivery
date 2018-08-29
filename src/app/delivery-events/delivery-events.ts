@@ -1,16 +1,12 @@
 import { DeliveryEventId } from "./DeliveryEventId";
-
 import { IdEntity, changeDate, buildSql } from "../model-shared/types";
-import { StringColumn, DateColumn, BoolColumn, NumberColumn, DataProviderFactory } from "radweb";
+import { StringColumn, DateColumn, BoolColumn, NumberColumn } from "radweb";
 import { EventStatusColumn } from "./EventStatus";
 import { HelperIdReadonly } from "../helpers/helpers";
-import { myAuthInfo } from "../auth/my-auth-info";
-import { evilStatics } from "../auth/evil-statics";
 import { FamilyDeliveryEvents } from "./FamilyDeliveryEvents";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Families } from "../families/families";
-import { entityApiSettings, ApiAccess } from "../server/api-interfaces";
-import { DataApiSettings } from "radweb/utils/server/DataApi";
+import { ApiAccess } from "../server/api-interfaces";
 import { Context, ServerContext } from "../shared/context";
 
 let fde = new FamilyDeliveryEvents(new ServerContext(undefined));
@@ -32,20 +28,20 @@ export class DeliveryEvents extends IdEntity<DeliveryEventId>  {
     readonly: true
   });
 
-  async doSaveStuff(authInfo: myAuthInfo) {
-    console.log(this.deliveryDate.value, this.deliveryDate.dateValue, this.deliveryDate.displayValue);
-    if (this.isNew()) {
-      this.createDate.dateValue = new Date();
-      this.createUser.value = authInfo.helperId;
-    }
-  }
   constructor(private context: Context) {
     super(new DeliveryEventId(), DeliveryEvents, {
       name: 'DeliveryEvents',
       apiAccess: ApiAccess.AdminOnly,
       allowApiUpdate: true,
       allowApiInsert: true,
-      onSavingRow: () => this.doSaveStuff(this.context.info)
+      onSavingRow: async () => {
+        if (context.onServer)
+          if (this.isNew()) {
+
+            this.createDate.dateValue = new Date();
+            this.createUser.value = context.info.helperId;
+          }
+      }
     });
     this.initColumns();
   }
