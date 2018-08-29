@@ -1,11 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-
 import { ApplicationImages } from "./ApplicationImages";
 import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
-import { GridSettings } from 'radweb';
 import { SelectService } from '../select-popup/select-service';
-import { AuthService } from '../auth/auth-service';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings } from './ApplicationSettings';
 import { Route } from '@angular/router';
@@ -23,7 +20,7 @@ export class ManageComponent implements OnInit {
     component: ManageComponent,
     data: { name: 'הגדרות מערכת' }, canActivate: [AdminGuard]
   }
-  constructor(private dialog: SelectService, private auth: AuthService, private context: Context) { }
+  constructor(private dialog: SelectService, private context: Context) { }
 
   basketType = this.context.for(BasketType).gridSettings({
     columnSettings: x => [
@@ -61,7 +58,7 @@ export class ManageComponent implements OnInit {
 
   });
   testSms() {
-    return SendSmsAction.getMessage(this.settings.currentRow.smsText.value, this.settings.currentRow.organisationName.value, 'ישראל ישראלי', this.auth.auth.info.name, window.location.origin + '/x/zxcvdf');
+    return SendSmsAction.getMessage(this.settings.currentRow.smsText.value, this.settings.currentRow.organisationName.value, 'ישראל ישראלי', this.context.info.name, window.location.origin + '/x/zxcvdf');
   }
   images = this.context.for(ApplicationImages).gridSettings({
     numOfColumnsInGrid: 0,

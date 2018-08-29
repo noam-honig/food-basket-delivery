@@ -1,10 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridSettings } from 'radweb';
 
-import { AuthService } from '../auth/auth-service';
-import { SelectService } from '../select-popup/select-service';
 import { UserFamiliesList } from './user-families';
-import { MapComponent } from '../map/map.component';
 import { Route } from '@angular/router';
 import { LoggedInGuard } from '../auth/auth-guard';
 import { Context } from '../shared/context';
@@ -21,9 +18,9 @@ export class MyFamiliesComponent implements OnInit {
   };
   familyLists = new UserFamiliesList(this.context);
 
-  constructor(public auth: AuthService, private context:Context) { }
+  constructor(public context:Context) { }
   async ngOnInit() {
-    await this.familyLists.initForHelper(this.auth.auth.info.helperId, this.auth.auth.info.name);
+    await this.familyLists.initForHelper(this.context.info.helperId, this.context.info.name);
 
   }
 

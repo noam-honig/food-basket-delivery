@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { RadWebModule } from 'radweb';
 import { AppRoutingModule } from './app.routing';
-import { HomeComponent } from './home/home.component';
+
 import { MaterialModule } from './shared/material.module';
 import { ChartsModule } from 'ng2-charts';
 
@@ -51,7 +51,6 @@ import { Context } from './shared/context';
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
     EventsComponent,
     EventHelperItemsComponent,
     HelpersComponent,

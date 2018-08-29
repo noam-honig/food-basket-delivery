@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Helpers } from '../../helpers/helpers';
-import { DataAreaSettings, StringColumn, GridSettings } from 'radweb';
-import { SelectService } from '../../select-popup/select-service';
+import {  StringColumn } from 'radweb';
 import { AuthService } from '../../auth/auth-service';
-import { foreachEntityItem } from '../../shared/utils';
 import { NotLoggedInGuard } from '../../auth/auth-guard';
 import { Route } from '@angular/router';
 import { Context } from '../../shared/context';

@@ -1,7 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { GridSettings } from 'radweb';
 import { Events } from "./Events";
-
 import { EventItemsComponent } from '../event-items/event-items.component';
 import { EventHelpersComponent } from '../event-helpers/event-helpers.component';
 import { SelectService } from '../select-popup/select-service';
@@ -16,7 +15,7 @@ export class EventsComponent implements OnInit {
 
   constructor(
     private dialogs: SelectService
-    ,private context:Context
+    , private context: Context
   ) { }
 
   ngOnInit(): void {
@@ -44,11 +43,11 @@ export class EventsComponent implements OnInit {
       settings: {
         columnSettings: () => [p.name]
       },
-      ok: () => { 
+      ok: () => {
         p.save();
       },
-      cancel: () => { 
-        
+      cancel: () => {
+
         p.reset();
       }
     });

@@ -1,26 +1,21 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
-import { GridSettings, ColumnHashSet, UrlBuilder } from 'radweb';
+import {  ColumnHashSet, UrlBuilder } from 'radweb';
 import { Families } from '../families/families';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
 import { Language } from "../families/Language";
-import { BasketType } from "../families/BasketType";
 import { Helpers } from '../helpers/helpers';
-import { AuthService } from '../auth/auth-service';
 import { SelectService } from '../select-popup/select-service';
 
 import { UserFamiliesList } from '../my-families/user-families';
-import { SendSmsAction } from './send-sms-action';
 import { GetBasketStatusAction, BasketInfo, CityInfo, GetBasketStatusActionResponse } from './get-basket-status-action';
-import { MapComponent } from '../map/map.component';
 import { environment } from '../../environments/environment';
 import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
 import { foreachSync } from '../shared/utils';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import * as fetch from 'node-fetch';
-import { myAuthInfo } from '../auth/my-auth-info';
 import { RunOnServer } from '../auth/server-action';
 import { Context } from '../shared/context';
 
@@ -128,7 +123,7 @@ export class AsignFamilyComponent implements OnInit {
   }
 
 
-  constructor(private auth: AuthService, private dialog: SelectService, private context: Context) {
+  constructor( private dialog: SelectService, private context: Context) {
 
   }
 

@@ -1,9 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Families } from '../families/families';
-import { AuthService } from '../auth/auth-service';
 import * as copy from 'copy-to-clipboard';
 import { SelectService } from '../select-popup/select-service';
 import { DeliveryStatus } from '../families/DeliveryStatus';
+import { Context } from '../shared/context';
 @Component({
   selector: 'app-family-info',
   templateUrl: './family-info.component.html',
@@ -11,13 +11,13 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 })
 export class FamilyInfoComponent implements OnInit {
 
-  constructor(private auth:AuthService,private dialog:SelectService) { }
+  constructor(private dialog:SelectService,private context:Context) { }
   @Input() f: Families;
   @Input() showHelp = false;
   ngOnInit() {
   }
   async SendHelpSms() {
-    window.open('sms:' + this.f.courierAssignUserPhone.value + ';?&body=' + encodeURI(`הי ${this.f.courierAssignUserName.value}  זה ${this.auth.auth.info.name}, נתקלתי בבעיה אצל משפחת ${this.f.name.value}`), '_blank');
+    window.open('sms:' + this.f.courierAssignUserPhone.value + ';?&body=' + encodeURI(`הי ${this.f.courierAssignUserName.value}  זה ${this.context.info.name}, נתקלתי בבעיה אצל משפחת ${this.f.name.value}`), '_blank');
   }
   copyAddress(f:Families) {
     copy(f.address.value);

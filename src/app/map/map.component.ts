@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, NgZone } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Families } from '../families/families';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { } from 'googlemaps';
