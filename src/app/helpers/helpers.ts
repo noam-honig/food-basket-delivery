@@ -39,7 +39,6 @@ export class Helpers extends IdEntity<HelperId>  {
         });
         this.initColumns();
     }
-    ;
     public static emptyPassword = 'password';
     name = new radweb.StringColumn({
         caption: "שם",
@@ -64,8 +63,6 @@ export class Helpers extends IdEntity<HelperId>  {
         excludeFromApi: !this.context.isAdmin()
     });
     shortUrlKey = new StringColumn({ excludeFromApi: !this.context.isAdmin() });
-
-
     veryUrlKeyAndReturnTrueIfSaveRequired() {
         if (!this.shortUrlKey.value) {
             this.shortUrlKey.value = this.makeid();
@@ -79,14 +76,9 @@ export class Helpers extends IdEntity<HelperId>  {
 
         for (var i = 0; i < 5; i++)
             text += possible.charAt(Math.floor(Math.random() * possible.length));
-
         return text;
     }
 }
-
-
-
-
 
 export class HelperId extends Id implements HasAsyncGetTheValue {
 
@@ -131,4 +123,3 @@ export class HelperIdReadonly extends HelperId {
         return this.myContext.for(Helpers).lookup(this).name.value;
     }
 }
-

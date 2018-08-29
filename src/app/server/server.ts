@@ -1,4 +1,3 @@
-
 import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
 import * as secure from 'express-force-https';
@@ -25,9 +24,6 @@ import { DeliveryEventsComponent } from "../delivery-events/delivery-events.comp
 import { SendSmsAction } from "../asign-family/send-sms-action";
 import { ContextEntity, ServerContext } from "../shared/context";
 
-
-
-;
 serverInit().then(async () => {
 
 
@@ -48,7 +44,6 @@ serverInit().then(async () => {
     let eb = new ExpressBridge<myAuthInfo>(app);
 
     let allUsersAlsoNotLoggedIn = eb.addArea('/api');
-    let loggedInApi = eb.addArea('/api', async x => x.authInfo != undefined);
     let adminApi = eb.addArea('/api', async x => x.authInfo && x.authInfo.admin);
 
     evilStatics.auth.tokenSignKey = process.env.TOKEN_SIGN_KEY;

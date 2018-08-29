@@ -52,7 +52,7 @@ export class HelpersAndStats extends IdEntity<HelperId> {
     constructor(context: Context) {
         super(new HelperId(context), HelpersAndStats, {
             name: "helpersAndStats",
-            apiReadOnly: context.isAdmin(),
+            allowApiRead: context.isAdmin(),
             dbName: buildSql('(select ', [
                 h.id,
                 h.name,

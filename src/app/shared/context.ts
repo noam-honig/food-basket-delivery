@@ -82,7 +82,7 @@ export class ContextEntity<idType> extends Entity<idType>{
         this.__context = context;
     }
     _getEntityApiSettings(r: myAuthInfo): DataApiSettings<any> {
-        
+
         let context = new ServerContext(r);
         let x = context.for(this.entityType).create() as ContextEntity<any>;
         if (typeof (x.contextEntityOptions) == "string") {
@@ -90,22 +90,10 @@ export class ContextEntity<idType> extends Entity<idType>{
         }
         else {
             let options = x.contextEntityOptions;
-            if (options.apiReadOnly != undefined) {
-                console.log('applying readonly rules ' + this.__getName());
-                if (options.apiReadOnly) {
-                    options.allowApiUpdate = false;
-                    options.allowApiDelete = false;
-                    options.allowApiInsert = false;
-                }
-                else {
-                    if (options.allowApiUpdate == undefined)
-                        options.allowApiUpdate = true;
-                    if (options.allowApiDelete == undefined)
-                        options.allowApiDelete = true;
-                    if (options.allowApiInsert == undefined)
-                        options.allowApiInsert = true;
-                }
-
+            if (options.allowApiCRUD) {
+                options.allowApiDelete = true;
+                options.allowApiInsert = true;
+                options.allowApiUpdate = true;
             }
             return {
                 allowRead: options.allowApiRead,
@@ -150,8 +138,9 @@ export interface ContextEntityOptions {
     allowApiUpdate?: boolean;
     allowApiDelete?: boolean;
     allowApiInsert?: boolean;
+    allowApiCRUD?: boolean;
     apiDataFilter?: () => FilterBase;
-    apiReadOnly?: boolean;
+
     onSavingRow?: () => Promise<any>;
 }
 class stamEntity extends Entity<number> {

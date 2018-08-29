@@ -14,7 +14,7 @@ export class BasketType extends IdEntity<BasketId>  {
     super(new BasketId(context), BasketType, {
       name: "BasketType",
       allowApiRead: context.isLoggedIn(),
-      apiReadOnly: !context.isAdmin
+      allowApiCRUD: context.isAdmin()
     });
     this.initColumns();
   }

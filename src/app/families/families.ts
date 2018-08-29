@@ -29,7 +29,6 @@ export class Families extends IdEntity<FamilyId>  {
           if (this.context.onServer) {
 
             if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
-              console.log('updating geo location');
               let geo = await GetGeoInformation(this.address.value);
               this.addressApiResult.value = geo.saveToString();
               this.city.value = '';
@@ -37,16 +36,16 @@ export class Families extends IdEntity<FamilyId>  {
                 this.city.value = geo.getCity();
               }
             }
+            if (this.isNew()) {
+              this.createDate.dateValue = new Date();
+              this.createUser.value = context.info.helperId;
+            }
             let logChanged = (col: Column<any>, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) => {
               if (col.value != col.originalValue) {
                 dateCol.dateValue = new Date();
                 user.value = context.info.helperId;
                 wasChanged();
               }
-            }
-            if (this.isNew()) {
-              this.createDate.dateValue = new Date();
-              this.createUser.value = context.info.helperId;
             }
 
             logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName())));//should be after succesfull save

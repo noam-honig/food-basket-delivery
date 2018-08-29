@@ -1,16 +1,16 @@
-import { IdEntity, HasAsyncGetTheValue, Id } from "../model-shared/types";
-import { StringColumn } from "radweb";
+import { IdEntity, HasAsyncGetTheValue, Id, StringColumn } from "../model-shared/types";
+
 import { Context, MoreDataColumnSettings } from "../shared/context";
 
 export class FamilySources extends IdEntity<FamilySourceId>  {
   name = new StringColumn({ caption: "שם" });
-  contactPerson = new StringColumn({ caption: "איש קשר" });
-  phone = new StringColumn('טלפון');
-  constructor(context: Context) {
+  contactPerson = new StringColumn({ caption: "איש קשר", excludeFromApi: !this.context.isAdmin() });
+  phone = new StringColumn({ caption: 'טלפון', excludeFromApi: !this.context.isAdmin() });
+  constructor(private context: Context) {
     super(new FamilySourceId(context), FamilySources, {
       name: "FamilySources",
       allowApiRead: context.isLoggedIn(),
-      apiReadOnly: !context.isAdmin()
+      allowApiCRUD: context.isAdmin()
     });
     this.initColumns();
   }
