@@ -29,8 +29,34 @@ export class Families extends IdEntity<FamilyId>  {
             return this.courier.isEqualTo(context.info.helperId);
         },
         onSavingRow: async () => {
-          if (this.context.onServer)
-            await this.doSaveStuff(this.context.info);
+          
+          if (this.context.onServer) {
+
+            if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
+              console.log('updating geo location');
+              let geo = await GetGeoInformation(this.address.value);
+              this.addressApiResult.value = geo.saveToString();
+              this.city.value = '';
+              if (geo.ok()) {
+                this.city.value = geo.getCity();
+              }
+            }
+            let logChanged = (col: Column<any>, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) => {
+              if (col.value != col.originalValue) {
+                dateCol.dateValue = new Date();
+                user.value = context.info.helperId;
+                wasChanged();
+              }
+            }
+            if (this.isNew()) {
+              this.createDate.dateValue = new Date();
+              this.createUser.value = context.info.helperId;
+            }
+
+            logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName())));//should be after succesfull save
+            logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
+            logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()))); //should be after succesfull save
+          }
         }
 
       });
@@ -38,7 +64,7 @@ export class Families extends IdEntity<FamilyId>  {
     if (!context.isAdmin())
       this.__iterateColumns().forEach(c => c.readonly = c != this.courierComments && c != this.deliverStatus);
   }
- 
+
 
   name = new StringColumn({
     caption: "שם",
@@ -155,36 +181,6 @@ export class Families extends IdEntity<FamilyId>  {
     return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
   }
 
-
-  async doSave(authInfo: myAuthInfo) {
-    await this.doSaveStuff(authInfo);
-    await this.save();
-  }
-  async doSaveStuff(authInfo: myAuthInfo) {
-    if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
-      let geo = await GetGeoInformation(this.address.value);
-      this.addressApiResult.value = geo.saveToString();
-      this.city.value = '';
-      if (geo.ok()) {
-        this.city.value = geo.getCity();
-      }
-    }
-    let logChanged = (col: Column<any>, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) => {
-      if (col.value != col.originalValue) {
-        dateCol.dateValue = new Date();
-        user.value = authInfo.helperId;
-        wasChanged();
-      }
-    }
-    if (this.isNew()) {
-      this.createDate.dateValue = new Date();
-      this.createUser.value = authInfo.helperId;
-    }
-
-    logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName())));//should be after succesfull save
-    logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
-    logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()))); //should be after succesfull save
-  }
   static SendMessageToBrowsers = (s: string) => { };
   static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string) {
     switch (updateType) {

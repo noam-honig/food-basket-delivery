@@ -26,7 +26,7 @@ export class FamilyDeliveryEventsView extends IdEntity<FamilyDelveryEventId>  {
   deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
   deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
   courierComments = new StringColumn('הערות מסירה');
-  constructor(private context: Context, source?: DataProviderFactory) {
+  constructor(private context: Context) {
     super(new FamilyDelveryEventId(), FamilyDeliveryEventsView, {
       name: 'FamilyDeliveryEventsView',
       apiAccess: ApiAccess.AdminOnly,

@@ -6,7 +6,7 @@ import { AdminGuard } from '../auth/auth-guard';
 import { Route } from '@angular/router';
 import { Context, ServerContext } from '../shared/context';
 import { PostgresDataProvider } from 'radweb/server';
-import {  RunOnServer } from '../auth/server-action';
+import { RunOnServer } from '../auth/server-action';
 import { evilStatics } from '../auth/evil-statics';
 import { Families } from '../families/families';
 import { FamilyDeliveryEvents } from './FamilyDeliveryEvents';
@@ -26,7 +26,7 @@ export class DeliveryEventsComponent implements OnInit {
     data: { name: 'אירועי חלוקה' }, canActivate: [AdminGuard]
   };
 
-  deliveryEvents =this.context.for(DeliveryEvents).gridSettings( {
+  deliveryEvents = this.context.for(DeliveryEvents).gridSettings({
     allowUpdate: true,
     allowInsert: true,
     columnSettings: e => [
@@ -167,7 +167,7 @@ export class DeliveryEventsComponent implements OnInit {
           if (f) {
             f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
             f.basketType.value = de.basketType.value;
-            await f.doSave(context.info);
+            await f.save();
           }
         });
     });

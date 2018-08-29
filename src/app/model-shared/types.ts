@@ -11,9 +11,11 @@ export class IdEntity<idType extends Id> extends ContextEntity<string>
     super(entityType, options);
     this.id = id;
     id.readonly = true;
+    let x = this.onSavingRow;
     this.onSavingRow = () => {
       if (this.isNew() && !this.id.value && !this.disableNewId)
         this.id.setToNewId();
+      return x();
     }
   }
   private disableNewId = false;
@@ -29,17 +31,17 @@ export class IdEntity<idType extends Id> extends ContextEntity<string>
 export interface HasAsyncGetTheValue {
   getTheValue(): Promise<string>;
 }
-export class StringColumn extends radweb.StringColumn  implements hasMoreDataColumnSettings {
+export class StringColumn extends radweb.StringColumn implements hasMoreDataColumnSettings {
   __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
-    return this.settingsOrCaption as MoreDataColumnSettings<any,any>;
+    return this.settingsOrCaption as MoreDataColumnSettings<any, any>;
   }
   constructor(private settingsOrCaption?: MoreDataColumnSettings<string, StringColumn> | string) {
     super(settingsOrCaption);
   }
 }
-export class NumberColumn extends radweb.NumberColumn  implements hasMoreDataColumnSettings {
+export class NumberColumn extends radweb.NumberColumn implements hasMoreDataColumnSettings {
   __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
-    return this.settingsOrCaption as MoreDataColumnSettings<any,any>;
+    return this.settingsOrCaption as MoreDataColumnSettings<any, any>;
   }
   constructor(private settingsOrCaption?: MoreDataColumnSettings<number, NumberColumn> | string) {
     super(settingsOrCaption);
@@ -50,9 +52,9 @@ export class Id extends StringColumn {
     this.value = uuid();
   }
 }
-export class BoolColumn extends radweb.BoolColumn  implements hasMoreDataColumnSettings {
+export class BoolColumn extends radweb.BoolColumn implements hasMoreDataColumnSettings {
   __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
-    return this.settingsOrCaption as MoreDataColumnSettings<any,any>;
+    return this.settingsOrCaption as MoreDataColumnSettings<any, any>;
   }
   constructor(private settingsOrCaption?: MoreDataColumnSettings<boolean, BoolColumn> | string) {
     super(settingsOrCaption);
@@ -61,7 +63,7 @@ export class BoolColumn extends radweb.BoolColumn  implements hasMoreDataColumnS
 
 export class DateTimeColumn extends radweb.DateTimeColumn implements hasMoreDataColumnSettings {
   __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
-    return this.settingsOrCaption as MoreDataColumnSettings<any,any>;
+    return this.settingsOrCaption as MoreDataColumnSettings<any, any>;
   }
   constructor(private settingsOrCaption?: MoreDataColumnSettings<string, DateTimeColumn> | string) {
     super(settingsOrCaption);
@@ -142,7 +144,7 @@ export function updateSettings<type, colType>(original: MoreDataColumnSettings<t
 }
 export class changeDate extends DateTimeColumn implements hasMoreDataColumnSettings {
   __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
-    return this.optionsOrCaption as MoreDataColumnSettings<any,any>;
+    return this.optionsOrCaption as MoreDataColumnSettings<any, any>;
   }
   constructor(private optionsOrCaption: MoreDataColumnSettings<string, DateTimeColumn> | string) {
     super(updateSettings(optionsOrCaption, x => x.readonly = true));

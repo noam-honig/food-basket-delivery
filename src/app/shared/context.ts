@@ -119,7 +119,7 @@ export class ContextEntity<idType> extends Entity<idType>{
                         allowDelete: options.allowApiDelete,
                         allowInsert: options.allowApiInsert,
                         excludeColumns: x => {
-                            let r = this.__iterateColumns().filter(c => {
+                            let r = x.__iterateColumns().filter(c => {
                                 let y = <hasMoreDataColumnSettings><any>c;
                                 if (y && y.__getMoreDataColumnSettings) {
 
@@ -131,7 +131,9 @@ export class ContextEntity<idType> extends Entity<idType>{
                             return r;
                         },
                         readonlyColumns: x => {
-                            return this.__iterateColumns().filter(c => c.readonly);
+                            let r= x.__iterateColumns().filter(c => c.readonly);
+                            
+                            return r;
                         },
                         get: {
                             where: x => options.apiDataFilter ? options.apiDataFilter() : undefined

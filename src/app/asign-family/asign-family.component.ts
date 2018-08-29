@@ -213,7 +213,7 @@ export class AsignFamilyComponent implements OnInit {
           let position = Math.trunc(Math.random() * r.length);
           let family = r[position];
           family.courier.value = result.helperId;
-          await family.doSave(context.info);
+          await family.save();
           result.ok = true;
           existingFamilies.push(family);
         }
@@ -244,7 +244,7 @@ export class AsignFamilyComponent implements OnInit {
           }
           f.courier.value = result.helperId;
 
-          await f.doSave(context.info);
+          await f.save();
           existingFamilies.push(f);
           result.ok = true;
         }

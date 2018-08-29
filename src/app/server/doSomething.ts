@@ -60,7 +60,6 @@ async function ImportFromExcel() {
             f.phone1.value = r["טלפון"];
             f.addressComment.value = r["הערות"];
             if (found) {
-                await f.doSaveStuff({});
                 await f.save();
             }
             else if (f.address.value == 'טטט')
