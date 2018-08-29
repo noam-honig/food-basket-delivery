@@ -13,7 +13,7 @@
             "type": "npm",
             "script": "ng-serve",
             "problemMatcher": [
-                "$tsc-watch"
+                
             ],
             "isBackground": true
         },
