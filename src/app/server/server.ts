@@ -1,12 +1,10 @@
 
-import * as HelpersAndStats from "../delivery-follow-up/HelpersAndStats";
-import * as FamilyDeliveryEventsView from "../families/FamilyDeliveryEventsView";
 import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
 import * as secure from 'express-force-https';
 import * as compression from 'compression';
 import { ExpressBridge } from 'radweb/server';
-import { DataApi, DataApiSettings } from 'radweb/utils/server/DataApi';
+import { DataApi } from 'radweb/utils/server/DataApi';
 import * as fs from 'fs';
 import { myAuthInfo } from '../auth/my-auth-info';
 import { evilStatics } from '../auth/evil-statics';
@@ -14,15 +12,10 @@ import { GetBasketStatusAction } from '../asign-family/get-basket-status-action'
 import { serverInit, allEntities } from './serverInit';
 import { ServerEventAuthorizeAction } from './server-event-authorize-action';
 import { ServerEvents } from './server-events';
-
-
 import { StatsAction } from '../families/stats-action';
 import { DeliveryStatsAction } from '../delivery-follow-up/delivery-stats';
 import { Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { entityApiSettings } from "./api-interfaces";
-import { DataApiRequest } from "radweb/utils/dataInterfaces1";
-
 import { serverActionField, myServerAction } from "../auth/server-action";
 import { SiteArea } from "radweb/utils/server/expressBridge";
 import { AuthService } from "../auth/auth-service";
@@ -97,20 +90,13 @@ serverInit().then(async () => {
 
     //add Api Entries
     allEntities.forEach(e => {
-        let x = <any>new ServerContext(undefined).for(e).create();
-
-        let settings: entityApiSettings
+        let x = new ServerContext(undefined).for(e).create();
         if (x instanceof ContextEntity) {
-            settings = x._getEntityApiSettings();
+            let j = x;
+            allUsersAlsoNotLoggedIn.add(r =>
+                new DataApi(new ServerContext(r.authInfo).create(e), j._getEntityApiSettings(r.authInfo)));
         }
 
-        if (settings) {
-            let createApi: (r: DataApiRequest<myAuthInfo>) => DataApi<any> = r => new DataApi(new ServerContext(r.authInfo).create(e));
-            if (settings.apiSettings) {
-                createApi = r => new DataApi(new ServerContext(r.authInfo).create(e), settings.apiSettings(r.authInfo));
-            }
-            allUsersAlsoNotLoggedIn.add(r => createApi(r));
-        }
 
     });
 

@@ -4,7 +4,7 @@ import { foreachSync } from "./utils";
 import { evilStatics } from "../auth/evil-statics";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { Injectable } from "@angular/core";
-import {  entityApiSettings } from "../server/api-interfaces";
+import { DataApiSettings } from "radweb/utils/server/DataApi";
 
 
 @Injectable()
@@ -81,65 +81,57 @@ export class ContextEntity<idType> extends Entity<idType>{
     _setContext(context: Context) {
         this.__context = context;
     }
-    _getEntityApiSettings(): entityApiSettings {
-        let options = {} as ContextEntityOptions;
-        if (typeof (this.contextEntityOptions) == "string")
-            return {};
-        options = this.contextEntityOptions;
-        return {
-            apiSettings: r => {
-                let context = new ServerContext(r);
-                let x = context.for(this.entityType).create() as ContextEntity<any>;
-                if (typeof (x.contextEntityOptions) == "string") {
-                    return {}
+    _getEntityApiSettings(r: myAuthInfo): DataApiSettings<any> {
+        
+        let context = new ServerContext(r);
+        let x = context.for(this.entityType).create() as ContextEntity<any>;
+        if (typeof (x.contextEntityOptions) == "string") {
+            return {}
+        }
+        else {
+            let options = x.contextEntityOptions;
+            if (options.apiReadOnly != undefined) {
+                console.log('applying readonly rules ' + this.__getName());
+                if (options.apiReadOnly) {
+                    options.allowApiUpdate = false;
+                    options.allowApiDelete = false;
+                    options.allowApiInsert = false;
                 }
                 else {
-                    options = x.contextEntityOptions;
-                    if (options.apiReadOnly != undefined) {
-                        console.log('applying readonly rules ' + this.__getName());
-                        if (options.apiReadOnly) {
-                            options.allowApiUpdate = false;
-                            options.allowApiDelete = false;
-                            options.allowApiInsert = false;
-                        }
-                        else {
-                            if (options.allowApiUpdate == undefined)
-                                options.allowApiUpdate = true;
-                            if (options.allowApiDelete == undefined)
-                                options.allowApiDelete = true;
-                            if (options.allowApiInsert == undefined)
-                                options.allowApiInsert = true;
-                        }
-
-                    }
-                    return {
-                        allowRead:options.allowApiRead,
-                        allowUpdate: options.allowApiUpdate,
-                        allowDelete: options.allowApiDelete,
-                        allowInsert: options.allowApiInsert,
-                        excludeColumns: x => {
-                            let r = x.__iterateColumns().filter(c => {
-                                let y = <hasMoreDataColumnSettings><any>c;
-                                if (y && y.__getMoreDataColumnSettings) {
-
-                                    if (y.__getMoreDataColumnSettings()&&y.__getMoreDataColumnSettings().excludeFromApi)
-                                        return true;
-                                }
-                                return false;
-                            });
-                            return r;
-                        },
-                        readonlyColumns: x => {
-                            let r= x.__iterateColumns().filter(c => c.readonly);
-                            
-                            return r;
-                        },
-                        get: {
-                            where: x => options.apiDataFilter ? options.apiDataFilter() : undefined
-                        }
-                    }
+                    if (options.allowApiUpdate == undefined)
+                        options.allowApiUpdate = true;
+                    if (options.allowApiDelete == undefined)
+                        options.allowApiDelete = true;
+                    if (options.allowApiInsert == undefined)
+                        options.allowApiInsert = true;
                 }
 
+            }
+            return {
+                allowRead: options.allowApiRead,
+                allowUpdate: options.allowApiUpdate,
+                allowDelete: options.allowApiDelete,
+                allowInsert: options.allowApiInsert,
+                excludeColumns: x => {
+                    let r = x.__iterateColumns().filter(c => {
+                        let y = <hasMoreDataColumnSettings><any>c;
+                        if (y && y.__getMoreDataColumnSettings) {
+
+                            if (y.__getMoreDataColumnSettings() && y.__getMoreDataColumnSettings().excludeFromApi)
+                                return true;
+                        }
+                        return false;
+                    });
+                    return r;
+                },
+                readonlyColumns: x => {
+                    let r = x.__iterateColumns().filter(c => c.readonly);
+
+                    return r;
+                },
+                get: {
+                    where: x => options.apiDataFilter ? options.apiDataFilter() : undefined
+                }
             }
         }
     }
@@ -154,7 +146,7 @@ export interface ContextEntityOptions {
     name: string;//required
     dbName?: string;
     caption?: string;
-    allowApiRead?:boolean;
+    allowApiRead?: boolean;
     allowApiUpdate?: boolean;
     allowApiDelete?: boolean;
     allowApiInsert?: boolean;
