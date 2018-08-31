@@ -45,9 +45,9 @@ export class ApplicationSettings extends Entity<number> implements entityWithApi
         return {
           allowUpdate: authInfo && authInfo.admin,
           onSavingRow: async as => {
-            if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
-              let geo = await GetGeoInformation(this.address.value);
-              this.addressApiResult.value = geo.saveToString();
+            if (as.address.value != as.address.originalValue || !as.getGeocodeInformation().ok()) {
+              let geo = await GetGeoInformation(as.address.value);
+              as.addressApiResult.value = geo.saveToString();
               if (geo.ok()) {
               }
             }
