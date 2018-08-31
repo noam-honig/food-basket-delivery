@@ -1,4 +1,3 @@
-
 <mat-tab-group #myTab (selectChange)="tabChanged()" [selectedIndex]="0">
     <mat-tab *ngFor="let t of statTabs" label="{{t.name}} - {{statTotal(t)}}"> </mat-tab>
 
@@ -34,7 +33,7 @@
 <button [class.hide]="gridView" class="btn glyphicon glyphicon glyphicon-filter" (click)="dataFilter.userFilterButton()"></button>
 <button (click)="families.addNewRow()" [class.hide]="gridView" [disabled]="families.currentRow&&families.currentRow.wasChanged()"
     class="btn btn-primary glyphicon glyphicon-plus"></button>
-<Data-Filter [settings]="families"  #dataFilter></Data-Filter>
+<Data-Filter [settings]="families" #dataFilter></Data-Filter>
 
 <div [class.hide]="gridView" *ngIf="families.currentRow">
 
@@ -63,6 +62,9 @@
             <mat-expansion-panel-header>
                 <div>
                     <mat-panel-title>
+                        <mat-icon class="badAddressIcon" *ngIf="families.currentRow.getGeocodeInformation().partialMatch()">
+                            warning
+                        </mat-icon>
                         כתובת
                     </mat-panel-title>
                 </div>
@@ -73,6 +75,8 @@
                 </div>
 
             </mat-expansion-panel-header>
+            <div class="badAddressTitle addressProblem" *ngIf="families.currentRow.getGeocodeInformation().partialMatch()">שים לב, כתובת
+                לא מדוייקת</div>
             <a (click)="families.currentRow.openWaze()" target="_blank">פתחי WAZE</a> |
             <a (click)="families.currentRow.openGoogleMaps()" target="_blank">פתחי גוגל </a>
             <data-area [settings]="familiesAddress"></data-area>
@@ -110,7 +114,7 @@
             <data-area [settings]="deliverInfo"></data-area>
         </mat-expansion-panel>
 
-     <!--   <mat-expansion-panel>
+        <!--   <mat-expansion-panel>
             <mat-expansion-panel-header>
                 <div>
                     <mat-panel-title>

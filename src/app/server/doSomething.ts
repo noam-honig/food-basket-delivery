@@ -6,7 +6,7 @@ import { GetGeoInformation } from "../shared/googleApiHelpers";
 import { foreachEntityItem, foreachSync } from "../shared/utils";
 
 import { serverInit } from "./serverInit";
-import * as XLSX from 'xlsx/types';
+import * as XLSX from 'xlsx';
 import { AddBoxAction } from "../asign-family/add-box-action";
 import { Families } from "../families/families";
 
@@ -15,8 +15,13 @@ serverInit();
 export async function DoIt() {
     try {
 
-       let hs = new HelpersAndStats();
-       let cols = hs.__iterateColumns();
+        let f = new Families();
+        let r = await f.source.find({ where: f.iDinExcel.isEqualTo("X") });
+        r.forEach(ff => { 
+            console.log(ff.address.value);
+            let g = ff.getGeocodeInformation();
+            let s = g.ok();
+        });
     }
     catch (err) {
         console.log(err);

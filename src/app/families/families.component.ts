@@ -233,7 +233,14 @@ export class FamiliesComponent implements OnInit {
       families.special.getColumn(),
       families.createUser,
       families.createDate,
-      families.address,
+      {
+        column: families.address,
+        cssClass: f => {
+          if (f.getGeocodeInformation().partialMatch())
+            return 'addressProblem';
+          return '';
+        }
+      },
       families.floor,
       families.appartment,
       families.addressComment,
@@ -312,7 +319,9 @@ export class FamiliesComponent implements OnInit {
       families.floor,
       families.appartment,
       families.addressComment,
+      families.addressByGoogle(),
       families.city
+
     ]
   });
   phones = this.families.addArea({
