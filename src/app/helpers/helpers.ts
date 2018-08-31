@@ -92,7 +92,7 @@ export class Helpers extends IdEntity<HelperId> implements entityWithApi {
                     settings.get.where = h => h.id.isEqualTo(authInfo.helperId);
                     settings.excludeColumns = h => [h.realStoredPassword, h.isAdmin, h.shortUrlKey];
                 }
-                return  settings;
+                return settings;
             }
         };
     }
@@ -117,6 +117,9 @@ export class HelperId extends Id implements HasAsyncGetTheValue {
     }
     getValue() {
         return this.lookup(new Helpers()).name.value;
+    }
+    getPhone() {
+        return this.lookup(new Helpers()).phone.value;
     }
     async getTheName() {
         let r = await this.lookupAsync(new Helpers(), this);

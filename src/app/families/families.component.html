@@ -75,8 +75,12 @@
                 </div>
 
             </mat-expansion-panel-header>
-            <div class="badAddressTitle addressProblem" *ngIf="families.currentRow.getGeocodeInformation().partialMatch()">שים לב, כתובת
-                לא מדוייקת</div>
+            <div class="addressProblem" *ngIf="families.currentRow.getGeocodeInformation().partialMatch()"><span class="badAddressTitle">שים
+                    לב, כתובת לא מדוייקת</span>
+                גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת. יש להשוות בין השדה "כתובת" לשדה "כתובת כפי שגוגל הבין".
+                <br>אפשר להעזר בקישור "פתחי גוגל" כדי לחפש את הכתובת הנכונה ולעדכן.
+                <br> כתובת לא מדוייקת עלולה להוביל המשנע למקום לא נכון בוייז.
+            </div>
             <a (click)="families.currentRow.openWaze()" target="_blank">פתחי WAZE</a> |
             <a (click)="families.currentRow.openGoogleMaps()" target="_blank">פתחי גוגל </a>
             <data-area [settings]="familiesAddress"></data-area>
@@ -95,6 +99,15 @@
                 </div>
 
             </mat-expansion-panel-header>
+            <a href="tel:{{families.currentRow.phone1.value}}" *ngIf="families.currentRow.phone1.value">
+
+                חייג לטלפון 1
+            </a> |
+            <a href="tel:{{families.currentRow.phone2.value}}" *ngIf="families.currentRow.phone2.value">
+
+                חייג לטלפון 2
+
+            </a>
             <data-area [settings]="phones"></data-area>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -111,7 +124,13 @@
                 </div>
 
             </mat-expansion-panel-header>
+            <a href="tel:{{families.currentRow.courier.getPhone()}}" *ngIf="families.currentRow.courier.value">
+                חייג למשנע {{families.currentRow.courier.getValue()}} בטלפון {{families.currentRow.courier.getPhone()}}
+                <br>
+                <br>
+            </a>
             <data-area [settings]="deliverInfo"></data-area>
+
         </mat-expansion-panel>
 
         <!--   <mat-expansion-panel>
