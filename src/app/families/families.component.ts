@@ -228,6 +228,7 @@ export class FamiliesComponent implements OnInit {
         dropDown: { source: new FamilySources() }
       },
       families.internalComment,
+      families.iDinExcel,
       families.deliveryComments,
       families.special.getColumn(),
       families.createUser,
@@ -294,6 +295,7 @@ export class FamiliesComponent implements OnInit {
         dropDown: { source: new FamilySources() }
       },
       families.internalComment,
+      families.iDinExcel,
       families.deliveryComments,
       families.special.getColumn(),
       families.createUser,

@@ -62,6 +62,7 @@ export class Families extends IdEntity<FamilyId> implements entityWithApi {
   basketType = new BasketId('סוג סל');
   familySource = new FamilySourceId('גורם מפנה');
   special = new YesNoColumn('שיוך מיוחד');
+  iDinExcel = new StringColumn('מזהה באקסל');
   internalComment = new StringColumn('הערה פנימית - לא תופיע למשנע');
 
 
