@@ -4,9 +4,10 @@ import { MapComponent } from '../map/map.component';
 import { Families } from '../families/families';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { AuthService } from '../auth/auth-service';
-import { SelectService } from '../select-popup/select-service';
+import { DialogService } from '../select-popup/dialog';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { Router } from '@angular/router';
+import { SelectService } from '../select-popup/select-service';
 
 @Component({
   selector: 'app-helper-families',
@@ -15,7 +16,7 @@ import { Router } from '@angular/router';
 })
 export class HelperFamiliesComponent implements OnInit {
 
-  constructor(public auth: AuthService, private dialog: SelectService, private router: Router) { }
+  constructor(public auth: AuthService, private dialog: DialogService, private router: Router,private selectService:SelectService) { }
   @Input() familyLists: UserFamiliesList;
   @Input() partOfAssign = false;
   @Input() partOfReview = false;
@@ -26,15 +27,11 @@ export class HelperFamiliesComponent implements OnInit {
     
   }
   async cancelAssign(f: Families) {
-    f.courier.value = '';
-
-    await f.save();
     this.familyLists.reload();
     this.assignmentCanceled.emit();
-
   }
   async deliveredToFamily(f: Families) {
-    this.dialog.displayComment({
+    this.selectService.displayComment({
       comment: f.courierComments.value,
       assignerName: f.courierAssignUserName.value,
       assignerPhone: f.courierAssignUserPhone.value,
@@ -59,7 +56,7 @@ export class HelperFamiliesComponent implements OnInit {
 
   }
   async couldntDeliverToFamily(f: Families) {
-    this.dialog.displayComment({
+    this.selectService.displayComment({
       comment: f.courierComments.value,
       showFailStatus: true,
       assignerName: f.courierAssignUserName.value,
@@ -90,7 +87,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
   updateComment(f: Families) {
-    this.dialog.displayComment({
+    this.selectService.displayComment({
       comment: f.courierComments.value,
       assignerName: f.courierAssignUserName.value,
       assignerPhone: f.courierAssignUserPhone.value,

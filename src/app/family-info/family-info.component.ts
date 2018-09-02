@@ -1,8 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Families } from '../families/families';
 import { AuthService } from '../auth/auth-service';
 import * as copy from 'copy-to-clipboard';
-import { SelectService } from '../select-popup/select-service';
+import { DialogService } from '../select-popup/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 @Component({
   selector: 'app-family-info',
@@ -11,13 +11,23 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 })
 export class FamilyInfoComponent implements OnInit {
 
-  constructor(private auth:AuthService,private dialog:SelectService) { }
+  constructor(private auth:AuthService,private dialog:DialogService) { }
   @Input() f: Families;
   @Input() showHelp = false;
   ngOnInit() {
   }
+  @Input() partOfAssign:Boolean;
+  @Output() assignmentCanceled = new EventEmitter<void>();
   async SendHelpSms() {
     window.open('sms:' + this.f.courierAssignUserPhone.value + ';?&body=' + encodeURI(`הי ${this.f.courierAssignUserName.value}  זה ${this.auth.auth.info.name}, נתקלתי בבעיה אצל משפחת ${this.f.name.value}`), '_blank');
+  }
+  async cancelAssign(f: Families) {
+    f.courier.value = '';
+
+    await f.save();
+    
+    this.assignmentCanceled.emit();
+
   }
   copyAddress(f:Families) {
     copy(f.address.value);

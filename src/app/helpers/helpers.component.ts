@@ -3,7 +3,7 @@ import { GridSettings, SelectPopup } from 'radweb';
 import { FamilyDeliveryEventsView } from "../families/FamilyDeliveryEventsView";
 
 import { Helpers } from './helpers';
-import { SelectService } from '../select-popup/select-service';
+import { DialogService } from '../select-popup/dialog';
 import { ResetPasswordAction } from './reset-password';
 import { Families } from '../families/families';
 import { Route } from '@angular/router';
@@ -75,7 +75,7 @@ export class HelpersComponent implements OnInit {
 
   }
 
-  constructor(private dialog: SelectService) {
+  constructor(private dialog: DialogService) {
   }
 
   ngOnInit() {

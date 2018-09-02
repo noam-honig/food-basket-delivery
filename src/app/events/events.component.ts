@@ -4,7 +4,7 @@ import { Events } from "./Events";
 
 import { EventItemsComponent } from '../event-items/event-items.component';
 import { EventHelpersComponent } from '../event-helpers/event-helpers.component';
-import { SelectService } from '../select-popup/select-service';
+import { DialogService } from '../select-popup/dialog';
 
 @Component({
   selector: 'app-events',
@@ -14,7 +14,7 @@ import { SelectService } from '../select-popup/select-service';
 export class EventsComponent implements OnInit {
 
   constructor(
-    private dialogs: SelectService
+    private dialogs: DialogService
   ) { }
 
   ngOnInit(): void {

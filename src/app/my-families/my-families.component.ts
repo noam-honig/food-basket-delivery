@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridSettings } from 'radweb';
 
 import { AuthService } from '../auth/auth-service';
-import { SelectService } from '../select-popup/select-service';
+import { DialogService } from '../select-popup/dialog';
 import { UserFamiliesList } from './user-families';
 import { MapComponent } from '../map/map.component';
 import { Route } from '@angular/router';
@@ -20,7 +20,7 @@ export class MyFamiliesComponent implements OnInit {
   };
   familyLists = new UserFamiliesList();
 
-  constructor(public auth: AuthService, private dialog: SelectService) { }
+  constructor(public auth: AuthService, private dialog: DialogService) { }
   async ngOnInit() {
     await this.familyLists.initForHelper(this.auth.auth.info.helperId, this.auth.auth.info.name);
 

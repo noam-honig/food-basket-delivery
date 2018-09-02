@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { StringColumn, GridSettings } from 'radweb';
 import { Helpers } from '../../helpers/helpers';
-import { SelectService } from '../../select-popup/select-service';
+import { DialogService } from '../../select-popup/dialog';
 import { AuthService } from '../../auth/auth-service';
 import { foreachEntityItem } from '../../shared/utils';
 import { LoggedInGuard } from '../../auth/auth-guard';
@@ -34,7 +34,7 @@ export class UpdateInfoComponent implements OnInit {
   });
 
 
-  constructor(private dialog: SelectService,
+  constructor(private dialog: DialogService,
     private auth: AuthService) {
 
 

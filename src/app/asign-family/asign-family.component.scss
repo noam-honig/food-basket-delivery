@@ -56,8 +56,7 @@ input{
     border-width:0;
     
 }
-.same-line input{
-}
+
 h4{
 margin-bottom:2px;
 margin-top:3px;
@@ -71,4 +70,13 @@ select{
     display:inline-block;
     width:48%;
     margin-top:5px;
+}
+.numOfBasketsDiv{
+    display:flex;
+    margin-top:10px;
+    justify-content:space-between;
+}
+
+.numOfBasketsDiv>div{
+    width:250px;
 }

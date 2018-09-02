@@ -4,7 +4,7 @@ import { ApplicationImages } from "./ApplicationImages";
 import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
 import { GridSettings } from 'radweb';
-import { SelectService } from '../select-popup/select-service';
+import { DialogService } from '../select-popup/dialog';
 import { AuthService } from '../auth/auth-service';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings } from './ApplicationSettings';
@@ -70,7 +70,7 @@ export class ManageComponent implements OnInit {
 
     ]
   });
-  constructor(private dialog: SelectService, private auth: AuthService) { }
+  constructor(private dialog: DialogService, private auth: AuthService) { }
 
   ngOnInit() {
     this.settings.getRecords();

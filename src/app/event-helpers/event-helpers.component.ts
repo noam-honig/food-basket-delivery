@@ -5,7 +5,7 @@ import { ItemsPerHelper } from "../event-item-helpers/ItemsPerHelper";
 import { Helpers } from '../helpers/helpers';
 import { MatDialog } from '@angular/material';
 
-import { SelectService } from '../select-popup/select-service';
+import { DialogService } from '../select-popup/dialog';
 import { EventHelperItemsComponent } from '../event-helper-items/event-helper-items.component';
 import { foreachSync } from '../shared/utils';
 import { EventHelpers } from '../events/Events';
@@ -17,7 +17,7 @@ import { EventHelpers } from '../events/Events';
 })
 export class EventHelpersComponent implements OnInit {
 
-  constructor(private dialog: SelectService) {
+  constructor(private dialog: DialogService) {
 
   }
   @Input() eventId;

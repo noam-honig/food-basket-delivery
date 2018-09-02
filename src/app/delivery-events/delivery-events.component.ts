@@ -4,7 +4,7 @@ import { GridSettings } from 'radweb';
 
 import { SetDeliveryActiveAction } from './set-delivery-active-action';
 import { CopyFamiliesToActiveEventAction } from './copy-families-to-active-event-action';
-import { SelectService } from '../select-popup/select-service';
+import { DialogService } from '../select-popup/dialog';
 import { DeliveryEvents } from './delivery-events';
 import { AdminGuard } from '../auth/auth-guard';
 import { Route } from '@angular/router';
@@ -75,7 +75,7 @@ export class DeliveryEventsComponent implements OnInit {
       }
     ]
   });
-  constructor(private dialog: SelectService) { }
+  constructor(private dialog: DialogService) { }
 
   ngOnInit() {
   }

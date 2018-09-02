@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Helpers } from '../../helpers/helpers';
 import { DataAreaSettings, StringColumn, GridSettings } from 'radweb';
-import { SelectService } from '../../select-popup/select-service';
+import { DialogService } from '../../select-popup/dialog';
 import { AuthService } from '../../auth/auth-service';
 import { foreachEntityItem } from '../../shared/utils';
 import { NotLoggedInGuard } from '../../auth/auth-guard';
@@ -35,7 +35,7 @@ export class RegisterComponent implements OnInit {
   });
 
 
-  constructor(private dialog: SelectService,
+  constructor(private dialog: DialogService,
     private auth: AuthService) {
 
 

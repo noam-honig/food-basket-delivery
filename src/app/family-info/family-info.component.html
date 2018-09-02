@@ -5,6 +5,7 @@
     <br>
     <br>
   </div>
+  <button *ngIf="partOfAssign" mat-raised-button class="myButton badButton cancelAssignButton" (click)="cancelAssign(f)">בטלי שיוך</button>
   <h4 style="display:inline">סל</h4> - {{f.basketType.displayValue}}
   <div *ngIf="f.deliveryComments.value">
     <mat-icon color="primary" style="vertical-align: middle">comment</mat-icon>

@@ -16,7 +16,7 @@ import { HelpersComponent } from './helpers/helpers.component';
 import { EventItemsComponent } from './event-items/event-items.component';
 import { EventHelpersComponent } from './event-helpers/event-helpers.component';
 import { SelectPopupComponent } from './select-popup/select-popup.component';
-import { SelectService } from './select-popup/select-service';
+import { DialogService } from './select-popup/dialog';
 import { YesNoQuestionComponent } from './select-popup/yes-no-question/yes-no-question.component';
 import { EventItemHelpersComponent } from './event-item-helpers/event-item-helpers.component';
 import { LoginComponent } from './users/login/login.component';
@@ -44,6 +44,8 @@ import { BusyService } from './select-popup/busy-service';
 import { StamTestComponent } from './stam-test/stam-test.component';
 import { NewsComponent } from './news/news.component';
 import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
+
+import { SelectService } from './select-popup/select-service';
 
 
 
@@ -81,6 +83,7 @@ import { DeliveryEventsComponent } from './delivery-events/delivery-events.compo
     StamTestComponent,
     NewsComponent,
     DeliveryEventsComponent,
+    
   ],
   imports: [
     BrowserModule,
@@ -94,6 +97,7 @@ import { DeliveryEventsComponent } from './delivery-events/delivery-events.compo
 
   ],
   providers: [
+    DialogService,
     SelectService,
     BusyService,
     AuthService,
@@ -108,6 +112,7 @@ import { DeliveryEventsComponent } from './delivery-events/delivery-events.compo
     SelectPopupComponent,
     YesNoQuestionComponent,
     InputAreaComponent,
+    
     UpdateCommentComponent, WaitComponent]
 })
 export class AppModule { }

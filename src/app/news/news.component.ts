@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NewsUpdate } from "./NewsUpdate";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { StringColumn } from 'radweb';
-import { SelectService } from '../select-popup/select-service';
+import { DialogService } from '../select-popup/dialog';
 import { AdminGuard } from '../auth/auth-guard';
 import { Route } from '@angular/router';
 
@@ -16,7 +16,7 @@ export class NewsComponent implements OnInit, OnDestroy {
     path: 'news', component: NewsComponent, canActivate: [AdminGuard], data: { name: 'חדשות' }
   };
   onDestroy = () => { };
-  constructor(dialog: SelectService) {
+  constructor(dialog: DialogService) {
     let y = dialog.newsUpdate.subscribe(() => {
       this.refresh();
     });

@@ -8,7 +8,7 @@ import { YesNo } from "./YesNo";
 import { Language } from "./Language";
 import { FamilySources } from "./FamilySources";
 import { BasketType } from "./BasketType";
-import { SelectService } from '../select-popup/select-service';
+import { DialogService } from '../select-popup/dialog';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 
 import { DomSanitizer } from '@angular/platform-browser';
@@ -25,6 +25,7 @@ import { HasAsyncGetTheValue } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
+import { SelectService } from '../select-popup/select-service';
 
 @Component({
   selector: 'app-families',
@@ -250,7 +251,7 @@ export class FamiliesComponent implements OnInit {
       families.phone1Description,
       families.phone2,
       families.phone2Description,
-      families.courier.getColumn(this.dialog),
+      families.courier.getColumn(this.selectService),
       {
         caption: 'טלפון משנע',
         getValue: f => f.lookup(new Helpers(), f.courier).phone.value
@@ -347,7 +348,7 @@ export class FamiliesComponent implements OnInit {
   })
   deliverInfo = this.families.addArea({
     columnSettings: families => [
-      families.courier.getColumn(this.dialog),
+      families.courier.getColumn(this.selectService),
       {
         caption: 'טלפון משנע',
         getValue: f => f.lookup(new Helpers(), f.courier).phone.value
@@ -361,7 +362,7 @@ export class FamiliesComponent implements OnInit {
     ]
   });
   gridView = true;
-  constructor(private dialog: SelectService, private san: DomSanitizer, public busy: BusyService) {
+  constructor(private dialog: DialogService,private selectService:SelectService, private san: DomSanitizer, public busy: BusyService) {
 
     let y = dialog.newsUpdate.subscribe(() => {
       this.refreshStats();

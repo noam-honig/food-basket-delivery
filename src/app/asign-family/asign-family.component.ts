@@ -7,7 +7,7 @@ import { Language } from "../families/Language";
 import { BasketType } from "../families/BasketType";
 import { Helpers } from '../helpers/helpers';
 import { AuthService } from '../auth/auth-service';
-import { SelectService } from '../select-popup/select-service';
+import { DialogService } from '../select-popup/dialog';
 import { AddBoxAction } from './add-box-action';
 import { UserFamiliesList } from '../my-families/user-families';
 import { SendSmsAction } from './send-sms-action';
@@ -16,6 +16,7 @@ import { MapComponent } from '../map/map.component';
 import { environment } from '../../environments/environment';
 import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
+import { SelectService } from '../select-popup/select-service';
 
 
 @Component({
@@ -39,9 +40,9 @@ export class AsignFamilyComponent implements OnInit {
         this.name = r[0].name.value;
         this.shortUrl = r[0].shortUrlKey.value;
         this.id = r[0].id.value;
-        this.refreshList();
+        await this.refreshList();
       } else {
-        this.refreshList();
+        await this.refreshList();
       }
     }
   }
@@ -60,6 +61,7 @@ export class AsignFamilyComponent implements OnInit {
     this.phone = '';
     this.name = '';
   }
+  
 
   async refreshBaskets() {
     let r = (await new GetBasketStatusAction().run({
@@ -74,7 +76,7 @@ export class AsignFamilyComponent implements OnInit {
   cities: CityInfo[] = [];
   specialFamilies = 0;
   async refreshList() {
-    this.refreshBaskets();
+    await this.refreshBaskets();
     this.familyLists.initForHelper(this.id, this.name);
 
   }
@@ -95,6 +97,7 @@ export class AsignFamilyComponent implements OnInit {
     this.name = undefined;
     this.shortUrl = undefined;
     this.id = undefined;
+    this.numOfBaskets = 1;
     this.clearList();
 
   }
@@ -102,7 +105,7 @@ export class AsignFamilyComponent implements OnInit {
     this.familyLists.clear();
   }
   findHelper() {
-    this.dialog.selectHelper(h => {
+    this.selectService.selectHelper(h => {
       this.phone = h.phone.value;
       this.name = h.name.value;
       this.shortUrl = h.shortUrlKey.value;
@@ -113,15 +116,23 @@ export class AsignFamilyComponent implements OnInit {
   }
 
 
-  constructor(private auth: AuthService, private dialog: SelectService) {
+  constructor(private selectService: SelectService, private dialog: DialogService) {
 
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     if (!environment.production) {
       this.phone = '0507330590';
-      this.searchPhone();
+      await this.searchPhone();
+
     }
+  }
+  numOfBaskets: number = 1;
+  add(what: number) {
+  this.numOfBaskets += what;
+    if (this.numOfBaskets < 1)
+      this.numOfBaskets = 1;
+
   }
   async assignItem(basket: BasketInfo) {
 
@@ -131,10 +142,11 @@ export class AsignFamilyComponent implements OnInit {
       basketType: basket.id,
       helperId: this.id,
       language: this.filterLangulage,
-      city: this.filterCity
+      city: this.filterCity,
+      numOfBaskets: this.numOfBaskets
     });
-    if (x.ok) {
-      basket.unassignedFamilies--;
+    if (x.addedBoxes) {
+      basket.unassignedFamilies -= x.addedBoxes;
       this.id = x.helperId;
       this.familyLists.initForFamilies(this.id, this.name, x.families);
       this.baskets = x.basketInfo.baskets;
@@ -150,7 +162,7 @@ export class AsignFamilyComponent implements OnInit {
 
   }
   addSpecial() {
-    this.dialog.selectFamily({
+    this.selectService.selectFamily({
       where: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
         f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes.id))),
       onSelect: async f => {
