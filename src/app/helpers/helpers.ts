@@ -1,5 +1,6 @@
 import * as radweb from 'radweb';
 import { BoolColumn, DataProviderFactory, ColumnSetting, Entity } from "radweb";
+import { testing } from 'radweb/utils/utils';
 import { evilStatics } from "../auth/evil-statics";
 import { IdEntity, changeDate, Id, HasAsyncGetTheValue, checkForDuplicateValue } from '../model-shared/types';
 import { SelectServiceInterface } from '../select-popup/select-service-interface';
@@ -116,10 +117,18 @@ export class HelperId extends Id implements HasAsyncGetTheValue {
         }
     }
     getValue() {
-        return this.lookup(new Helpers()).name.value;
+        return this.lookup(new Helpers(), this).name.value;
     }
     getPhone() {
-        return this.lookup(new Helpers()).phone.value;
+        let h = new Helpers();
+        
+        let x = this.lookup(h, this);
+       /* console.log(testing);
+        console.log(h.__getName());
+        console.log(h);
+        console.log(this);
+        console.log(x);*/
+        return x.phone.value;
     }
     async getTheName() {
         let r = await this.lookupAsync(new Helpers(), this);
