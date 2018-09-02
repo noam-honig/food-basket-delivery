@@ -124,7 +124,7 @@ export class AsignFamilyComponent implements OnInit {
     if (!environment.production) {
       this.phone = '0507330590';
       await this.searchPhone();
-      
+   //   this.selectService.updateFamiliy({ f: this.familyLists.allFamilies[0]});
 
     }
   }
