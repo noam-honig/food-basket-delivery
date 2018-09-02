@@ -46,6 +46,8 @@ import { NewsComponent } from './news/news.component';
 import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
 
 import { SelectService } from './select-popup/select-service';
+import { UpdateFamilyDialogComponent } from './update-family-dialog/update-family-dialog.component';
+import { UpdateFamilyComponent } from './update-family/update-family.component';
 
 
 
@@ -83,6 +85,8 @@ import { SelectService } from './select-popup/select-service';
     StamTestComponent,
     NewsComponent,
     DeliveryEventsComponent,
+    UpdateFamilyDialogComponent,
+    UpdateFamilyComponent,
     
   ],
   imports: [
@@ -112,7 +116,7 @@ import { SelectService } from './select-popup/select-service';
     SelectPopupComponent,
     YesNoQuestionComponent,
     InputAreaComponent,
-    
+    UpdateFamilyDialogComponent,
     UpdateCommentComponent, WaitComponent]
 })
 export class AppModule { }

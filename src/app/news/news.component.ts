@@ -5,6 +5,8 @@ import { StringColumn } from 'radweb';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard } from '../auth/auth-guard';
 import { Route } from '@angular/router';
+import { SelectService } from '../select-popup/select-service';
+import { Families } from '../families/families';
 
 @Component({
   selector: 'app-news',
@@ -12,11 +14,11 @@ import { Route } from '@angular/router';
   styleUrls: ['./news.component.scss']
 })
 export class NewsComponent implements OnInit, OnDestroy {
-  static route:Route = {
+  static route: Route = {
     path: 'news', component: NewsComponent, canActivate: [AdminGuard], data: { name: 'חדשות' }
   };
   onDestroy = () => { };
-  constructor(dialog: DialogService) {
+  constructor(dialog: DialogService, private selectService: SelectService) {
     let y = dialog.newsUpdate.subscribe(() => {
       this.refresh();
     });
@@ -24,6 +26,11 @@ export class NewsComponent implements OnInit, OnDestroy {
       y.unsubscribe();
     };
 
+  }
+  async updateFamily(n: NewsUpdate) {
+    let fam = new Families();
+    let f = await fam.source.find({ where: fam.id.isEqualTo(n.id) });
+    this.selectService.updateFamiliy({ f: f[0] });
   }
   ngOnDestroy(): void {
     this.onDestroy();
@@ -35,7 +42,7 @@ export class NewsComponent implements OnInit, OnDestroy {
   newsEntity = new NewsUpdate();
   async refresh() {
 
-    this.news = await this.newsEntity.source.find({ orderBy: [{ column: this.newsEntity.updateTime, descending: true }], limit: 1000 });
+    this.news = await this.newsEntity.source.find({ orderBy: [{ column: this.newsEntity.updateTime, descending: true }], limit: 50 });
   }
   icon(n: NewsUpdate) {
 

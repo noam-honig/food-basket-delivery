@@ -4,6 +4,7 @@ import { AuthService } from '../auth/auth-service';
 import * as copy from 'copy-to-clipboard';
 import { DialogService } from '../select-popup/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
+import { SelectService } from '../select-popup/select-service';
 @Component({
   selector: 'app-family-info',
   templateUrl: './family-info.component.html',
@@ -11,12 +12,12 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 })
 export class FamilyInfoComponent implements OnInit {
 
-  constructor(private auth:AuthService,private dialog:DialogService) { }
+  constructor(private auth: AuthService, private dialog: DialogService, private selectService: SelectService) { }
   @Input() f: Families;
   @Input() showHelp = false;
   ngOnInit() {
   }
-  @Input() partOfAssign:Boolean;
+  @Input() partOfAssign: Boolean;
   @Output() assignmentCanceled = new EventEmitter<void>();
   async SendHelpSms() {
     window.open('sms:' + this.f.courierAssignUserPhone.value + ';?&body=' + encodeURI(`הי ${this.f.courierAssignUserName.value}  זה ${this.auth.auth.info.name}, נתקלתי בבעיה אצל משפחת ${this.f.name.value}`), '_blank');
@@ -25,16 +26,18 @@ export class FamilyInfoComponent implements OnInit {
     f.courier.value = '';
 
     await f.save();
-    
+
     this.assignmentCanceled.emit();
 
   }
-  copyAddress(f:Families) {
-    copy(f.address.value);
-    this.dialog.Info("הכתובת "+f.address.value+" הועתקה בהצלחה");
+  udpateInfo(f: Families) {
+    this.selectService.updateFamiliy({ f: f });
   }
-  showStatus(){
-    return this.f.deliverStatus.listValue!= DeliveryStatus.ReadyForDelivery;
+  copyAddress(f: Families) {
+    copy(f.address.value);
+    this.dialog.Info("הכתובת " + f.address.value + " הועתקה בהצלחה");
+  }
+  showStatus() {
+    return this.f.deliverStatus.listValue != DeliveryStatus.ReadyForDelivery;
   }
 }
- 

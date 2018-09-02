@@ -134,7 +134,7 @@ export class FamiliesComponent implements OnInit {
     return;
   }
   familyDeliveryEventsView = new FamilyDeliveryEventsView();
-  previousDeliveryEvents: FamilyDeliveryEventsView[] = [];
+  
   families = new GridSettings(new Families(), {
 
     allowUpdate: true,
@@ -161,8 +161,7 @@ export class FamiliesComponent implements OnInit {
         f.special.listValue = YesNo.No;
       } else {
 
-        await this.busy.donotWait(async () =>
-          this.previousDeliveryEvents = await this.familyDeliveryEventsView.source.find({ where: this.familyDeliveryEventsView.family.isEqualTo(f.id), orderBy: [{ column: this.familyDeliveryEventsView.deliveryDate, descending: true }] }));
+        
       }
     },
 

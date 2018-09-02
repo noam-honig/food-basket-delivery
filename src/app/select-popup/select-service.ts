@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from "@angular/core";
-import { MatDialog } from "@angular/material";
+import { MatDialog,MatDialogConfig } from "@angular/material";
 import { SelectHelperInfo, SelectHelperComponent } from "../select-helper/select-helper.component";
 import { Helpers } from '../helpers/helpers';
 import { SelectServiceInterface } from "./select-service-interface";
@@ -7,6 +7,8 @@ import { SelectFamilyInfo, SelectFamilyComponent } from "../select-family/select
 import { BusyService } from "./busy-service";
 
 import { UpdateCommentComponentData, UpdateCommentComponent } from "../update-comment/update-comment.component";
+import { UpdateFamilyDialogComponent, UpdateFamilyInfo } from "../update-family-dialog/update-family-dialog.component";
+import { Families } from "../families/families";
 
 const EventSource: any = window['EventSource'];
 
@@ -17,7 +19,7 @@ export class SelectService implements SelectServiceInterface {
     constructor(private dialog: MatDialog, private zone: NgZone, private busy: BusyService) {
 
     }
-   
+
     selectHelper(ok: (selectedValue: Helpers) => void) {
         let data: SelectHelperInfo = { onSelect: ok };
         this.dialog.open(SelectHelperComponent, {
@@ -32,6 +34,13 @@ export class SelectService implements SelectServiceInterface {
         this.dialog.open(SelectFamilyComponent, {
             data: data
         });
+    }
+    updateFamiliy(data: UpdateFamilyInfo) {
+        console.log(data);
+        let x = new MatDialogConfig();
+        x.data = data;
+        x.minWidth=350;
+        this.dialog.open(UpdateFamilyDialogComponent,x);
     }
 
 }

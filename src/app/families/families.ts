@@ -133,6 +133,23 @@ export class Families extends IdEntity<FamilyId> implements entityWithApi {
     }
     return this.deliverStatus.displayValue;
   }
+  getShortDeliveryDescription() {
+    switch (this.deliverStatus.listValue) {
+      case DeliveryStatus.ReadyForDelivery:
+        if (this.courier.value) {
+          return this.courier.getValue() + ' יצא ' + this.courierAssingTime.relativeDateName();
+        }
+        break;
+      case DeliveryStatus.Success:
+      case DeliveryStatus.FailedBadAddress:
+      case DeliveryStatus.FailedNotHome:
+      case DeliveryStatus.FailedOther:
+        
+        return this.deliverStatus.displayValue ;
+
+    }
+    return this.deliverStatus.displayValue;
+  }
 
 
   createDate = new changeDate('מועד הוספה');

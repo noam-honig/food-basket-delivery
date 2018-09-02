@@ -61,7 +61,7 @@ export class AsignFamilyComponent implements OnInit {
     this.phone = '';
     this.name = '';
   }
-  
+
 
   async refreshBaskets() {
     let r = (await new GetBasketStatusAction().run({
@@ -77,7 +77,7 @@ export class AsignFamilyComponent implements OnInit {
   specialFamilies = 0;
   async refreshList() {
     await this.refreshBaskets();
-    this.familyLists.initForHelper(this.id, this.name);
+    await this.familyLists.initForHelper(this.id, this.name);
 
   }
   familyLists = new UserFamiliesList();
@@ -124,12 +124,13 @@ export class AsignFamilyComponent implements OnInit {
     if (!environment.production) {
       this.phone = '0507330590';
       await this.searchPhone();
+      
 
     }
   }
   numOfBaskets: number = 1;
   add(what: number) {
-  this.numOfBaskets += what;
+    this.numOfBaskets += what;
     if (this.numOfBaskets < 1)
       this.numOfBaskets = 1;
 
