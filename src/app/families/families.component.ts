@@ -483,6 +483,9 @@ export class FamiliesComponent implements OnInit {
   }
 
   [reuseComponentOnNavigationAndCallMeWhenNavigatingToIt]() {
+    this.refresh();
+  }
+  refresh(){
     this.families.getRecords();
     this.refreshStats();
   }

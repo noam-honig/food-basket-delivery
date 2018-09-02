@@ -1,3 +1,6 @@
+<button mat-mini-fab style="margin-bottom:5px" (click)="refresh()">
+    <mat-icon>refresh</mat-icon>
+</button>
 <mat-tab-group #myTab (selectChange)="tabChanged()" [selectedIndex]="0">
     <mat-tab *ngFor="let t of statTabs" label="{{t.name}} - {{statTotal(t)}}"> </mat-tab>
 
