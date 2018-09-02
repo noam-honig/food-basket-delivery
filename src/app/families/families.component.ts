@@ -196,6 +196,9 @@ export class FamiliesComponent implements OnInit {
     },
     hideDataArea: true,
     knowTotalRows: true,
+    allowDelete: true,
+
+    confirmDelete: (h, yes) => this.dialog.confirmDelete('משפחת '+h.name.value, yes),
     columnSettings: families => [
 
       {
