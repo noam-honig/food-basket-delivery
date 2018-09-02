@@ -40,6 +40,8 @@ export class GeocodeInformation {
         return this.info.status == "OK";
     }
     partialMatch() {
+        if (this.info.results.length<1)
+        return false;
         if (this.info.results[0].partial_match)
             return true;
         if (this.info.results[0].types[0] != "street_address")
