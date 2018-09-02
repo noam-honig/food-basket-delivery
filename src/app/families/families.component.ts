@@ -134,7 +134,7 @@ export class FamiliesComponent implements OnInit {
     return;
   }
   familyDeliveryEventsView = new FamilyDeliveryEventsView();
-  
+
   families = new GridSettings(new Families(), {
 
     allowUpdate: true,
@@ -151,7 +151,7 @@ export class FamiliesComponent implements OnInit {
           return '';
       }
     },
-    numOfColumnsInGrid: 5,
+    numOfColumnsInGrid: 4,
     onEnterRow: async f => {
       if (f.isNew()) {
         f.basketType.value = '';
@@ -161,7 +161,7 @@ export class FamiliesComponent implements OnInit {
         f.special.listValue = YesNo.No;
       } else {
 
-        
+
       }
     },
 
@@ -200,29 +200,35 @@ export class FamiliesComponent implements OnInit {
 
       {
         column: families.name,
-        width: '150'
-      },
-
-      {
-        column: families.familyMembers,
-        width: '50'
+        width: '200'
       },
       {
-        column: families.language,
-        dropDown: {
-          items: families.language.getOptions()
-        },
-        width: '100'
+        column: families.address,
+        cssClass: f => {
+          if (f.getGeocodeInformation().partialMatch())
+            return 'addressProblem';
+          return '';
+        }
       },
       {
         column: families.basketType,
         dropDown: { source: new BasketType() },
         width: '100'
       },
-
       {
         caption: 'שינוע',
-        getValue: f => f.getDeliveryDescription()
+        getValue: f => f.getDeliveryDescription(),
+        width: '200'
+      }, {
+        column: families.familyMembers,
+
+      },
+      {
+        column: families.language,
+        dropDown: {
+          items: families.language.getOptions()
+        },
+
       }, {
         column: families.familySource,
         dropDown: { source: new FamilySources() }
@@ -233,14 +239,7 @@ export class FamiliesComponent implements OnInit {
       families.special.getColumn(),
       families.createUser,
       families.createDate,
-      {
-        column: families.address,
-        cssClass: f => {
-          if (f.getGeocodeInformation().partialMatch())
-            return 'addressProblem';
-          return '';
-        }
-      },
+
       families.floor,
       families.appartment,
       families.addressComment,
@@ -361,7 +360,7 @@ export class FamiliesComponent implements OnInit {
     ]
   });
   gridView = true;
-  constructor(private dialog: DialogService,private selectService:SelectService, private san: DomSanitizer, public busy: BusyService) {
+  constructor(private dialog: DialogService, private selectService: SelectService, private san: DomSanitizer, public busy: BusyService) {
 
     let y = dialog.newsUpdate.subscribe(() => {
       this.refreshStats();
@@ -485,7 +484,7 @@ export class FamiliesComponent implements OnInit {
   [reuseComponentOnNavigationAndCallMeWhenNavigatingToIt]() {
     this.refresh();
   }
-  refresh(){
+  refresh() {
     this.families.getRecords();
     this.refreshStats();
   }
