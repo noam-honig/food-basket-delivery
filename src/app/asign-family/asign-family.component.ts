@@ -19,6 +19,7 @@ import { RunOnServer } from '../auth/server-action';
 import { Context } from '../shared/context';
 import { SelectService } from '../select-popup/select-service';
 import { BasketType } from '../families/BasketType';
+import { Routable } from '../shared/routing-helper';
 
 
 @Component({
@@ -26,12 +27,17 @@ import { BasketType } from '../families/BasketType';
   templateUrl: './asign-family.component.html',
   styleUrls: ['./asign-family.component.scss']
 })
+@Routable({
+  path: 'assign-families',
+  canActivate: [AdminGuard],
+  caption: 'שיוך משפחות'
+})
 export class AsignFamilyComponent implements OnInit {
-  static route: Route = {
-    path: 'assign-families', component: AsignFamilyComponent, canActivate: [AdminGuard], data: { name: 'שיוך משפחות' }
-  };
+    static route: Route = {
+      path: 'assign-families', component: AsignFamilyComponent, canActivate: [AdminGuard], data: { name: 'שיוך משפחות' }
+    };
 
-  async searchPhone() {
+    async searchPhone() {
     this.name = undefined;
     this.shortUrl = undefined;
     this.id = undefined;
@@ -67,7 +73,7 @@ export class AsignFamilyComponent implements OnInit {
 
 
   async refreshBaskets() {
-    let r = (await  AsignFamilyComponent.getBasketStatus({
+    let r = (await AsignFamilyComponent.getBasketStatus({
       filterLanguage: this.filterLangulage,
       filterCity: this.filterCity
     }))

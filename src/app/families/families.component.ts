@@ -26,15 +26,22 @@ import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
 import { Context } from '../shared/context';
+import { Routable, componentRoutingInfo } from '../shared/routing-helper';
+
 @Component({
   selector: 'app-families',
   templateUrl: './families.component.html',
   styleUrls: ['./families.component.scss']
 })
+@Routable({
+  path: 'families',
+  caption: 'משפחות',
+  canActivate: [AdminGuard]
+})
 export class FamiliesComponent implements OnInit {
 
   limit = 10;
-  constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context,private selectService:SelectService) {
+  constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context, private selectService: SelectService) {
     this.doTest();
 
     let y = dialog.newsUpdate.subscribe(() => {
@@ -207,7 +214,7 @@ export class FamiliesComponent implements OnInit {
     knowTotalRows: true,
     allowDelete: true,
 
-    confirmDelete: (h, yes) => this.dialog.confirmDelete('משפחת '+h.name.value, yes),
+    confirmDelete: (h, yes) => this.dialog.confirmDelete('משפחת ' + h.name.value, yes),
     columnSettings: families => [
 
       {
@@ -508,6 +515,3 @@ interface statsOnTab {
   stats: FaimilyStatistics[],
   rule: (f: Families) => FilterBase
 }
-
-
-
