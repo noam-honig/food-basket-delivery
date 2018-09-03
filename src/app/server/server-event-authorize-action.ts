@@ -1,4 +1,4 @@
-import { ServerAction, RunOnServer } from "../auth/server-action";
+import {  RunOnServer } from "../auth/server-action";
 
 export class ServerEventAuthorizeAction {
 
