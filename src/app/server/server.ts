@@ -62,7 +62,6 @@ serverInit().then(async () => {
     });
 
     [
-        new ServerEventAuthorizeAction(),
         new SendSmsAction(),
         new StatsAction(),
         new DeliveryStatsAction(),

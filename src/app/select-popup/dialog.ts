@@ -10,7 +10,7 @@ import { ServerEventAuthorizeAction } from "../server/server-event-authorize-act
 import { Subject } from "rxjs/Subject";
 
 @Injectable()
-export class DialogService  {
+export class DialogService {
     Info(info: string): any {
         this.snackBar.open(info, "סגור", { duration: 4000 });
     }
@@ -54,7 +54,7 @@ export class DialogService  {
                     };
                     let x = this;
                     source.addEventListener("authenticate", async function (e) {
-                        await x.busy.donotWait(async () => await new ServerEventAuthorizeAction().run({ key: (<any>e).data.toString() }));
+                        await x.busy.donotWait(async () => await ServerEventAuthorizeAction.DoAthorize((<any>e).data.toString()));
 
                     });
                 });
@@ -64,7 +64,7 @@ export class DialogService  {
     displayArea(settings: InputAreaComponentData) {
         this.dialog.open(InputAreaComponent, { data: settings });
     }
-    showPopup<T extends Entity<any>>(entityType:  { new(...args:any[]): T; }, selected: (selectedValue: T) => void, settings?: IDataSettings<T>) {
+    showPopup<T extends Entity<any>>(entityType: { new(...args: any[]): T; }, selected: (selectedValue: T) => void, settings?: IDataSettings<T>) {
 
         let data: SelectComponentInfo<T> = {
             onSelect: selected,

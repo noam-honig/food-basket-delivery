@@ -1,21 +1,12 @@
-import { ServerAction } from "../auth/server-action";
-import { DataApiRequest } from "radweb/utils/dataInterfaces1";
-import { myAuthInfo } from "../auth/my-auth-info";
+import { ServerAction, RunOnServer } from "../auth/server-action";
 
-export interface inArgs {
-    key: string;
-}
+export class ServerEventAuthorizeAction {
 
-
-export class ServerEventAuthorizeAction extends ServerAction<inArgs, any>{
-    constructor() {
-        super('ServerEventAuthorizeAction');//required because of minification
+    @RunOnServer({ allowed: c => c.isAdmin() })
+    static DoAthorize(key: string) {
+        ServerEventAuthorizeAction.authorize(key);
     }
 
-    protected async execute(info: inArgs, req: DataApiRequest<myAuthInfo>): Promise<any> {
-        ServerEventAuthorizeAction.authorize(info.key);
-        return {};
-    }
     static authorize: (key: string) => void = (key: string) => { };
 }
 
