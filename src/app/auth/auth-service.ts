@@ -9,7 +9,7 @@ import { evilStatics } from "./evil-statics";
 import { Helpers } from "../helpers/helpers";
 import * as passwordHash from 'password-hash';
 import { RunOnServer } from "./server-action";
-import {  Context } from "../shared/context";
+import { Context } from "../shared/context";
 import { EPERM } from "constants";
 import { LoginResponse } from "./auth-info";
 
@@ -23,7 +23,7 @@ export class AuthService {
             this.router.navigate([evilStatics.routes.myFamilies]);
         }
     }
-    @RunOnServer
+    @RunOnServer({ allowed: () => true })
     static async loginFromSms(key: string, context?: Context) {
 
         let h = await context.for(Helpers).findFirst(h => h.shortUrlKey.isEqualTo(key));
@@ -67,7 +67,7 @@ export class AuthService {
             fail();
         }
     }
-    @RunOnServer
+    @RunOnServer({ allowed: () => true })
     static async login(user: string, password: string, context?: Context) {
         let result: myAuthInfo;
         let requirePassword = false;

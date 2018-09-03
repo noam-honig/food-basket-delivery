@@ -172,7 +172,7 @@ export class AsignFamilyComponent implements OnInit {
 
 
   }
-  @RunOnServer
+  @RunOnServer({ allowed: c => c.isAdmin() })
   static async AddBox(info: AddBoxInfo, context?: Context) {
 
     let result: AddBoxResponse = {
@@ -257,7 +257,7 @@ export class AsignFamilyComponent implements OnInit {
         }
 
       }
-      
+
     }
     await AsignFamilyComponent.optimizeRoute(existingFamilies, context);
     existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);

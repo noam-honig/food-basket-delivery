@@ -60,14 +60,14 @@ serverInit().then(async () => {
     evilStatics.auth.applyTo(eb, allUsersAlsoNotLoggedIn);
     [
         AuthService.login,
-        AuthService.loginFromSms
+        AuthService.loginFromSms,
+        HelpersComponent.resetPassword
     ].forEach(a => {
         addAction(allUsersAlsoNotLoggedIn, a);
 
     });
 
     [
-        HelpersComponent.resetPassword,
         AsignFamilyComponent.AddBox,
         DeliveryEventsComponent.setDeliveryActive,
         DeliveryEventsComponent.copyFamiliesToActiveEvent

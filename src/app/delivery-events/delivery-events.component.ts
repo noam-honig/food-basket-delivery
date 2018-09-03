@@ -80,7 +80,7 @@ export class DeliveryEventsComponent implements OnInit {
       }
     ]
   });
-  @RunOnServer
+  @RunOnServer({ allowed: c => c.isAdmin() })
   static async setDeliveryActive(newDeliveryEventId: string, cont?: Context) {
     await (<PostgresDataProvider>evilStatics.dataSource).doInTransaction(async ds => {
       let context = new ServerContext(cont.info, ds);
@@ -156,7 +156,7 @@ export class DeliveryEventsComponent implements OnInit {
     });
 
   }
-  @RunOnServer
+  @RunOnServer({ allowed: c => c.isAdmin() })
   static async copyFamiliesToActiveEvent(fromDeliveryEvent: string, c?: Context) {
     await (<PostgresDataProvider>evilStatics.dataSource).doInTransaction(async ds => {
       let context = new ServerContext(c.info, ds);
@@ -174,7 +174,7 @@ export class DeliveryEventsComponent implements OnInit {
     });
   }
   constructor(private dialog: DialogService, private context: Context) { }
-  
+
 
   ngOnInit() {
   }

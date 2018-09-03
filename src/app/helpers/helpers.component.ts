@@ -21,7 +21,7 @@ export class HelpersComponent implements OnInit {
   static route: Route = {
     path: 'helpers',
     component: HelpersComponent,
-    data: { name: 'מתנדבות' }, canActivate: [AdminGuard]
+    data: { name: 'מתנדבות' }//, canActivate: [AdminGuard]
   };
 
   helpers = this.context.for(Helpers).gridSettings({
@@ -77,7 +77,7 @@ export class HelpersComponent implements OnInit {
     });
 
   }
-  @RunOnServer
+  @RunOnServer({ allowed: c => c.isAdmin() })
   static async resetPassword(helperId: string, context?: Context) {
 
     await context.for(Helpers).foreach(h => h.id.isEqualTo(helperId), async h => {
