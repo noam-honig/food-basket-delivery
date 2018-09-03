@@ -23,7 +23,9 @@ export class myServerAction extends Action<inArgs, result,myAuthInfo>
     protected async execute(info: inArgs, req: DataApiRequest<myAuthInfo>): Promise<result> {
         let result = { data: {} };
         await (<PostgresDataProvider>evilStatics.dataSource).doInTransaction(async ds => {
-            let context = new ServerContext(req, ds);
+            let context = new ServerContext();
+            context.setReq(req);
+            context.setDataProvider(ds);
             if (!this.options.allowed(context))
                 throw 'not allowed';
             for (let i = 0; i < this.types.length; i++) {

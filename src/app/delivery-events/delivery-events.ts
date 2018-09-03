@@ -8,8 +8,8 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Families } from "../families/families";
 import { Context, ServerContext } from "../shared/context";
 
-let fde = new FamilyDeliveryEvents(new ServerContext(undefined));
-let f = new Families(new ServerContext(undefined));
+let fde = new FamilyDeliveryEvents(new ServerContext());
+let f = new Families(new ServerContext());
 
 export class DeliveryEvents extends IdEntity<DeliveryEventId>  {
 

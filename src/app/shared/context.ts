@@ -15,7 +15,7 @@ export class Context {
     isLoggedIn() {
         return !!this.info;
     }
-    
+
 
     protected _getInfo = () => evilStatics.auth.info;
     protected _dataSource = evilStatics.dataSource;
@@ -45,16 +45,21 @@ export class Context {
     private _lookupCache = new stamEntity();
 }
 export class ServerContext extends Context {
-    constructor(private req?: DataApiRequest<myAuthInfo>, dataProvider?: DataProviderFactory) {
+    constructor() {
         super();
-        if (req)
-            this._getInfo = () => req.authInfo;
-        if (dataProvider)
-            this._dataSource = dataProvider;
         this._onServer = true;
 
     }
-    getOrigin(){
+    private req: DataApiRequest<myAuthInfo>;
+
+    setReq(req: DataApiRequest<myAuthInfo>) {
+        this.req = req;
+        this._getInfo = () => req.authInfo;
+    }
+    setDataProvider(dataProvider: DataProviderFactory) {
+        this._dataSource = dataProvider;
+    }
+    getOrigin() {
         return this.req.getHeader('origin')
     }
 }
@@ -88,7 +93,7 @@ export class ContextEntity<idType> extends Entity<idType>{
     }
     _getEntityApiSettings(r: Context): DataApiSettings<any> {
 
-        
+
         let x = r.for(this.entityType).create() as ContextEntity<any>;
         if (typeof (x.contextEntityOptions) == "string") {
             return {}

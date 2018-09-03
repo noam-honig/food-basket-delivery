@@ -56,11 +56,12 @@ serverInit().then(async () => {
 
     //add Api Entries
     allEntities.forEach(e => {
-        let x = new ServerContext(undefined).for(e).create();
+        let x = new ServerContext().for(e).create();
         if (x instanceof ContextEntity) {
             let j = x;
             allUsersAlsoNotLoggedIn.add(r => {
-                let c = new ServerContext(r);
+                let c = new ServerContext();
+                c.setReq(r);
                 return new DataApi(c.create(e), j._getEntityApiSettings(c));
             });
         }
