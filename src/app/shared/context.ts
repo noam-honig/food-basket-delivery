@@ -1,5 +1,5 @@
 import { Entity, IDataSettings, GridSettings, Column, NumberColumn, DataList, EntityOptions } from "radweb";
-import { EntitySourceFindOptions, FilterBase, FindOptionsPerEntity, DataProviderFactory, DataColumnSettings } from "radweb/utils/dataInterfaces1";
+import { EntitySourceFindOptions, FilterBase, FindOptionsPerEntity, DataProviderFactory, DataColumnSettings, DataApiRequest } from "radweb/utils/dataInterfaces1";
 import { foreachSync } from "./utils";
 import { evilStatics } from "../auth/evil-statics";
 import { myAuthInfo } from "../auth/my-auth-info";
@@ -15,6 +15,7 @@ export class Context {
     isLoggedIn() {
         return !!this.info;
     }
+    
 
     protected _getInfo = () => evilStatics.auth.info;
     protected _dataSource = evilStatics.dataSource;
@@ -44,13 +45,17 @@ export class Context {
     private _lookupCache = new stamEntity();
 }
 export class ServerContext extends Context {
-    constructor(info: myAuthInfo, dataProvider?: DataProviderFactory) {
+    constructor(private req?: DataApiRequest<myAuthInfo>, dataProvider?: DataProviderFactory) {
         super();
-        this._getInfo = () => info;
+        if (req)
+            this._getInfo = () => req.authInfo;
         if (dataProvider)
             this._dataSource = dataProvider;
         this._onServer = true;
 
+    }
+    getOrigin(){
+        return this.req.getHeader('origin')
     }
 }
 
@@ -81,10 +86,10 @@ export class ContextEntity<idType> extends Entity<idType>{
     _setContext(context: Context) {
         this.__context = context;
     }
-    _getEntityApiSettings(r: myAuthInfo): DataApiSettings<any> {
+    _getEntityApiSettings(r: Context): DataApiSettings<any> {
 
-        let context = new ServerContext(r);
-        let x = context.for(this.entityType).create() as ContextEntity<any>;
+        
+        let x = r.for(this.entityType).create() as ContextEntity<any>;
         if (typeof (x.contextEntityOptions) == "string") {
             return {}
         }

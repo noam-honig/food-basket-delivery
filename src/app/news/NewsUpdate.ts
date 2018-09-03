@@ -7,7 +7,7 @@ import { Context, ContextEntity, ServerContext } from "../shared/context";
 
 
 
-export let f = new Families(new ServerContext({}));
+export let f = new Families(new ServerContext());
 export class NewsUpdate extends ContextEntity<string> implements FamilyUpdateInfo {
 
   id = new StringColumn();

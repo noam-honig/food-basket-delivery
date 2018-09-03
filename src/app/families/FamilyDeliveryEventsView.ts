@@ -9,8 +9,8 @@ import { DeliveryEvents } from '../delivery-events/delivery-events';
 import { Context, ServerContext } from '../shared/context';
 
 
-let fde = new FamilyDeliveryEvents(new ServerContext({}));
-var de = new DeliveryEvents(new ServerContext({}));
+let fde = new FamilyDeliveryEvents(new ServerContext());
+var de = new DeliveryEvents(new ServerContext());
 
 
 export class FamilyDeliveryEventsView extends IdEntity<FamilyDelveryEventId>  {

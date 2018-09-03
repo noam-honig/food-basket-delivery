@@ -40,7 +40,7 @@ export class DeliveryStatsAction extends ServerAction<InArgs, OutArgs>{
 
         let result = { data: {} };
         let stats = new DeliveryStats();
-        await Promise.all(stats.statistics.map(x => x.saveTo(result.data,new ServerContext(req.authInfo))));
+        await Promise.all(stats.statistics.map(x => x.saveTo(result.data,new ServerContext(req))));
         return result;
 
 

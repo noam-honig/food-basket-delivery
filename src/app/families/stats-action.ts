@@ -76,7 +76,7 @@ export class StatsAction extends ServerAction<InArgs, OutArgs>{
     }
     protected async execute(info: InArgs, req: DataApiRequest<myAuthInfo>): Promise<OutArgs> {
         try {
-            let context = new ServerContext(req.authInfo);
+            let context = new ServerContext(req);
             let result = { data: {}, baskets: [] };
             let stats = new Stats();
             await Promise.all(stats.statistics.map(x => x.saveTo(result.data, context)));

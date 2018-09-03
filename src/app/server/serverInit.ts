@@ -63,7 +63,7 @@ export async function serverInit() {
     evilStatics.dataSource = new PostgresDataProvider(pool);
 
 
-    let context = new ServerContext({});
+    let context = new ServerContext();
     var sb = new PostgrestSchemaBuilder(pool);
     await foreachSync(allEntities.map(x => context.for(x).create()), async x => {
         if (x.__getDbName().toLowerCase().indexOf('from ') < 0) {

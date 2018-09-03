@@ -1,6 +1,5 @@
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { NumberColumn, StringColumn } from 'radweb';
-import { evilStatics } from '../auth/evil-statics';
 import { HelperId, Helpers } from '../helpers/helpers';
 import { IdEntity, changeDate, DateTimeColumn, buildSql } from '../model-shared/types';
 import { Families } from "../families/families";
@@ -9,8 +8,8 @@ import { Context, ServerContext } from "../shared/context";
 
 
 
-let f = new Families(new ServerContext({}));
-let h = new Helpers(new ServerContext({}));
+let f = new Families(new ServerContext());
+let h = new Helpers(new ServerContext());
 let fromFamilies = () => buildSql(' from ', f,
     ' where ', f.courier, ' = ', h, '.', h.id);
 

@@ -5,6 +5,7 @@ import { evilStatics } from "./evil-statics";
 import { DataApiRequest, DataProviderFactory } from "radweb/utils/dataInterfaces1";
 import 'reflect-metadata';
 import { Context, ServerContext } from "../shared/context";
+import { PostgresDataProvider } from "radweb/server";
 
 export abstract class ServerAction<inParam, outParam> extends Action<inParam, outParam, myAuthInfo>{
     constructor(url?: string) {
@@ -26,29 +27,32 @@ export class myServerAction extends ServerAction<inArgs, result>
         super(name);
     }
     protected async execute(info: inArgs, req: DataApiRequest<myAuthInfo>): Promise<result> {
-        let context = new ServerContext(req.authInfo);
-        if (!this.options.allowed(context))
-            throw 'not allowed';
-        for (let i = 0; i < this.types.length; i++) {
-            if (info.args.length < i) {
-                info.args.push(undefined);
+        let result = { data: {} };
+        await (<PostgresDataProvider>evilStatics.dataSource).doInTransaction(async ds => {
+            let context = new ServerContext(req, ds);
+            if (!this.options.allowed(context))
+                throw 'not allowed';
+            for (let i = 0; i < this.types.length; i++) {
+                if (info.args.length < i) {
+                    info.args.push(undefined);
+                }
+                if (this.types[i] == Context || this.types[i] == ServerContext) {
+
+                    info.args[i] = context;
+                }
             }
-            if (this.types[i] == Context) {
 
-                info.args[i] = context;
+            try {
+                result.data = await this.originalMethod(info.args);
+
             }
-        }
 
-        try {
-            return {
-                data: await this.originalMethod(info.args)
-            };
-        }
-
-        catch (err) {
-            console.log(err);
-            throw err
-        }
+            catch (err) {
+                console.log(err);
+                throw err
+            }
+        });
+        return result;
     }
 
 }

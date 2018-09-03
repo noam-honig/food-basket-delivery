@@ -62,7 +62,6 @@ serverInit().then(async () => {
     });
 
     [
-        new SendSmsAction(),
         new StatsAction(),
         new DeliveryStatsAction(),
     ].forEach(a => adminApi.addAction(a));
@@ -74,8 +73,10 @@ serverInit().then(async () => {
         let x = new ServerContext(undefined).for(e).create();
         if (x instanceof ContextEntity) {
             let j = x;
-            allUsersAlsoNotLoggedIn.add(r =>
-                new DataApi(new ServerContext(r.authInfo).create(e), j._getEntityApiSettings(r.authInfo)));
+            allUsersAlsoNotLoggedIn.add(r => {
+                let c = new ServerContext(r);
+                return new DataApi(c.create(e), j._getEntityApiSettings(c));
+            });
         }
 
 
@@ -107,7 +108,7 @@ serverInit().then(async () => {
     });
     app.use('/assets/apple-touch-icon.png', async (req, res) => {
 
-        let imageBase = (await ApplicationImages.ApplicationImages.getAsync(new ServerContext({}))).base64PhoneHomeImage.value;
+        let imageBase = (await ApplicationImages.ApplicationImages.getAsync(new ServerContext())).base64PhoneHomeImage.value;
         res.contentType('png');
         if (imageBase) {
             try {
@@ -126,7 +127,7 @@ serverInit().then(async () => {
     });
     app.use('/favicon.ico', async (req, res) => {
         res.contentType('ico');
-        let imageBase = (await ApplicationImages.ApplicationImages.getAsync(new ServerContext({}))).base64Icon.value;
+        let imageBase = (await ApplicationImages.ApplicationImages.getAsync(new ServerContext())).base64Icon.value;
         if (imageBase) {
             try {
                 res.send(Buffer.from(imageBase, 'base64'));
@@ -145,7 +146,7 @@ serverInit().then(async () => {
     async function sendIndex(res: express.Response) {
         const index = 'dist/index.html';
         if (fs.existsSync(index)) {
-            let x = (await ApplicationSettings.getAsync(new ServerContext({}))).organisationName.value;
+            let x = (await ApplicationSettings.getAsync(new ServerContext())).organisationName.value;
 
             res.send(fs.readFileSync(index).toString().replace('!TITLE!', x));
         }

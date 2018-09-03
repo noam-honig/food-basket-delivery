@@ -1,26 +1,20 @@
-import { ServerAction } from "../auth/server-action";
-import { DataApiRequest } from "radweb/utils/dataInterfaces1";
-import { myAuthInfo } from "../auth/my-auth-info";
+import { RunOnServer } from "../auth/server-action";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Helpers } from '../helpers/helpers';
 import * as fetch from 'node-fetch';
-import { DataSource } from "@angular/cdk/table";
 import { Context, ServerContext } from "../shared/context";
 
 
 
-export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
-    constructor() {
-        super('send-sms');//required because of minification
-    }
-    protected async execute(info: SendSmsInfo, req: DataApiRequest<myAuthInfo>): Promise<SendSmsResponse> {
-        let result: myAuthInfo;
-        let context = new ServerContext(req.authInfo);
-        try {
-            console.log(req.authInfo.helperId);
-            let currentUser = await (context.for(Helpers).findFirst(h => h.id.isEqualTo(req.authInfo.helperId)));
+export class SendSmsAction {
+    @RunOnServer({ allowed: c => c.isAdmin() })
+    static async SendSms(helperId: string, reminder: Boolean, context?: ServerContext) {
 
-            await SendSmsAction.generateMessage(context, info.helperId, req.getHeader('origin'), info.reminder, req.authInfo.name, (phone, message) => {
+        try {
+
+            let currentUser = await (context.for(Helpers).findFirst(h => h.id.isEqualTo(context.info.helperId)));
+
+            await SendSmsAction.generateMessage(context, helperId, context.getOrigin(), reminder, context.info.name, (phone, message) => {
 
                 new SendSmsUtils().sendSms(phone, currentUser.phone.value, message);
             });
@@ -28,8 +22,6 @@ export class SendSmsAction extends ServerAction<SendSmsInfo, SendSmsResponse>{
         catch (err) {
             console.log(err);
         }
-        return {};
-
     }
 
 
@@ -84,7 +76,7 @@ export interface SendSmsResponse {
 
 }
 
-export class SendSmsUtils {
+class SendSmsUtils {
     un = process.env.SMS_UN;
     pw = process.env.SMS_PW;
     accid = process.env.SMS_ACCID;
