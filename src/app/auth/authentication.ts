@@ -4,7 +4,6 @@ import { LoginResponse } from './auth-info';
 import { Action } from "radweb";
 import { environment } from "../../environments/environment";
 import { SiteArea } from "radweb/utils/server/expressBridge";
-import * as atob from 'atob';
 import * as jwt from 'jsonwebtoken';
 import { myAuthInfo } from "./my-auth-info";
 
