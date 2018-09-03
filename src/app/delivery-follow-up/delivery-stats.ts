@@ -1,10 +1,10 @@
-import { ServerAction } from "../auth/server-action";
-import { DataApiRequest, FilterBase } from "radweb/utils/dataInterfaces1";
-import { myAuthInfo } from "../auth/my-auth-info";
+import { RunOnServer } from "../auth/server-action";
+import { FilterBase } from "radweb/utils/dataInterfaces1";
+
 import { HelpersAndStats } from "./HelpersAndStats";
 import { colors } from "../families/stats-action";
 import { DateTimeColumn } from "radweb";
-import { Context, ServerContext } from "../shared/context";
+import { Context } from "../shared/context";
 
 
 export interface InArgs {
@@ -19,33 +19,30 @@ export class DeliveryStats {
     late = new DeliveryStatistic('מתעכבים', f => f.deliveriesInProgress.IsGreaterOrEqualTo(1).and(f.firstDeliveryInProgressDate.IsLessOrEqualTo(DateTimeColumn.dateToString(new Date(new Date().valueOf() - 3600000 * 1.5)))), colors.yellow);
     delivered = new DeliveryStatistic('סיימו', f => f.deliveriesInProgress.isEqualTo(0).and(f.deliveriesWithProblems.isEqualTo(0)).and(f.allFamilies.IsGreaterOrEqualTo(1)), colors.green);
     problem = new DeliveryStatistic('בעיות', f => f.deliveriesWithProblems.IsGreaterOrEqualTo(1), colors.red);
-    statistics: DeliveryStatistic[] = [
-        this.onTheWay,
-        this.late,
-        this.delivered,
-        this.problem,
 
-    ];
     async getData() {
-        let r = await new DeliveryStatsAction().run({});
-        this.statistics.forEach(x => x.loadFrom(r.data));
+        let r = await DeliveryStats.getTheStats();
+        for (let s in this) {
+            let x: any = this[s];
+            if (x instanceof DeliveryStatistic) {
+                x.loadFrom(r.data);
+            }
+        }
     }
-}
-
-export class DeliveryStatsAction extends ServerAction<InArgs, OutArgs>{
-    constructor() {
-        super('DeliveryStatsAction');//required because of minification
-    }
-    protected async execute(info: InArgs, req: DataApiRequest<myAuthInfo>): Promise<OutArgs> {
-
+    @RunOnServer({ allowed: c => c.isAdmin() })
+    static async getTheStats(context?: Context) {
         let result = { data: {} };
         let stats = new DeliveryStats();
-        await Promise.all(stats.statistics.map(x => x.saveTo(result.data,new ServerContext(req))));
+        let pending = [];
+        for (let s in stats) {
+            let x = stats[s];
+            if (x instanceof DeliveryStatistic) {
+                pending.push(x.saveTo(result.data, context));
+            }
+        }
+        await Promise.all(pending);
         return result;
-
-
     }
-
 }
 
 export class DeliveryStatistic {
@@ -54,9 +51,9 @@ export class DeliveryStatistic {
     }
 
     value = 0;
-    async saveTo(data: any, context:Context) {
-        
-        data[this.name] = await context.for(HelpersAndStats).count(f=>this.rule(f)).then(c => this.value = c);
+    async saveTo(data: any, context: Context) {
+
+        data[this.name] = await context.for(HelpersAndStats).count(f => this.rule(f)).then(c => this.value = c);
     }
     async loadFrom(data: any) {
         this.value = data[this.name];

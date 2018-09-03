@@ -2,16 +2,10 @@ import { Action } from "radweb";
 import { myAuthInfo } from "./my-auth-info";
 import { environment } from "../../environments/environment";
 import { evilStatics } from "./evil-statics";
-import { DataApiRequest, DataProviderFactory } from "radweb/utils/dataInterfaces1";
+import { DataApiRequest } from "radweb/utils/dataInterfaces1";
 import 'reflect-metadata';
 import { Context, ServerContext } from "../shared/context";
 import { PostgresDataProvider } from "radweb/server";
-
-export abstract class ServerAction<inParam, outParam> extends Action<inParam, outParam, myAuthInfo>{
-    constructor(url?: string) {
-        super(environment.serverUrl + 'api/', url, evilStatics.auth.AddAuthInfoToRequest());
-    }
-}
 
 interface inArgs {
     args: any[];
@@ -21,10 +15,10 @@ interface result {
 }
 
 
-export class myServerAction extends ServerAction<inArgs, result>
+export class myServerAction extends Action<inArgs, result,myAuthInfo>
 {
     constructor(name: string, private types: any[], private options: RunOnServerOptions, private originalMethod: (args: any[]) => any) {
-        super(name);
+        super(environment.serverUrl + 'api/', name, evilStatics.auth.AddAuthInfoToRequest());
     }
     protected async execute(info: inArgs, req: DataApiRequest<myAuthInfo>): Promise<result> {
         let result = { data: {} };

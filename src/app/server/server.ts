@@ -7,26 +7,20 @@ import { DataApi } from 'radweb/utils/server/DataApi';
 import * as fs from 'fs';
 import { myAuthInfo } from '../auth/my-auth-info';
 import { evilStatics } from '../auth/evil-statics';
-
 import { serverInit, allEntities } from './serverInit';
-import { ServerEventAuthorizeAction } from './server-event-authorize-action';
 import { ServerEvents } from './server-events';
-import { StatsAction } from '../families/stats-action';
-import { DeliveryStatsAction } from '../delivery-follow-up/delivery-stats';
 import { Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { serverActionField, myServerAction, actionInfo } from "../auth/server-action";
 import { SiteArea } from "radweb/utils/server/expressBridge";
 import "../helpers/helpers.component";
 import '../app.module';
-import { SendSmsAction } from "../asign-family/send-sms-action";
 import { ContextEntity, ServerContext } from "../shared/context";
 
 serverInit().then(async () => {
 
 
     let app = express();
-    //app.use(morgan('tiny')); 'logging';
     if (!process.env.DISABLE_SERVER_EVENTS) {
         let serverEvents = new ServerEvents(app);
         Families.SendMessageToBrowsers = x => serverEvents.SendMessage(x);
@@ -42,8 +36,7 @@ serverInit().then(async () => {
     let eb = new ExpressBridge<myAuthInfo>(app);
 
     let allUsersAlsoNotLoggedIn = eb.addArea('/api');
-    let adminApi = eb.addArea('/api', async x => x.authInfo && x.authInfo.admin);
-
+    
     evilStatics.auth.tokenSignKey = process.env.TOKEN_SIGN_KEY;
 
     var addAction = (area: SiteArea<myAuthInfo>, a: any) => {
@@ -60,13 +53,6 @@ serverInit().then(async () => {
     actionInfo.allActions.forEach(a => {
         addAction(allUsersAlsoNotLoggedIn, a);
     });
-
-    [
-        new StatsAction(),
-        new DeliveryStatsAction(),
-    ].forEach(a => adminApi.addAction(a));
-
-
 
     //add Api Entries
     allEntities.forEach(e => {
