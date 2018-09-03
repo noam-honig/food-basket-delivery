@@ -8,6 +8,7 @@ import { ApplicationSettings } from './ApplicationSettings';
 import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
 import { Context } from '../shared/context';
+import { DialogService } from '../select-popup/dialog';
 
 @Component({
   selector: 'app-manage',
@@ -20,7 +21,7 @@ export class ManageComponent implements OnInit {
     component: ManageComponent,
     data: { name: 'הגדרות מערכת' }, canActivate: [AdminGuard]
   }
-  constructor(private dialog: SelectService, private context: Context) { }
+  constructor(private dialog: DialogService, private context: Context) { }
 
   basketType = this.context.for(BasketType).gridSettings({
     columnSettings: x => [
@@ -69,7 +70,6 @@ export class ManageComponent implements OnInit {
 
     ]
   });
-
 
   ngOnInit() {
     this.settings.getRecords();

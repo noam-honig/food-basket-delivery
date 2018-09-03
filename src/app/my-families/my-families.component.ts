@@ -1,6 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { GridSettings } from 'radweb';
-
 import { UserFamiliesList } from './user-families';
 import { Route } from '@angular/router';
 import { LoggedInGuard } from '../auth/auth-guard';

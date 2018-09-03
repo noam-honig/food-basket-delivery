@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Sanitizer } from '@angular/core';
 import { GridSettings } from 'radweb';
 import { Families } from '../families/families';
-import { SelectService } from '../select-popup/select-service';
+import { DialogService } from '../select-popup/dialog';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 import { } from 'googlemaps';
 import { DomSanitizer } from '@angular/platform-browser';

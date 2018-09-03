@@ -3,7 +3,7 @@ import { Router, Route, CanActivate, ActivatedRoute, ActivatedRouteSnapshot } fr
 import { AuthService } from './auth/auth-service';
 import { LoggedInGuard, dummyRoute, AdminGuard } from './auth/auth-guard';
 import { MatSidenav, MAT_AUTOCOMPLETE_VALUE_ACCESSOR } from '@angular/material';
-import { SelectService } from './select-popup/select-service';
+import { DialogService } from './select-popup/dialog';
 import { ApplicationSettings } from './manage/ApplicationSettings';
 import { FamiliesComponent } from './families/families.component';
 import { Context } from './shared/context';
@@ -24,8 +24,8 @@ export class AppComponent {
     public router: Router,
     public activeRoute: ActivatedRoute,
     private injector: Injector,
-    public dialog: SelectService,
-    private context: Context) {
+    public dialog: DialogService,
+    private context:Context) {
     /*this.router.config.unshift({
       path: FamiliesComponent.route,
       component: FamiliesComponent,

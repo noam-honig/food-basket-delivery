@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { GridSettings, Column } from 'radweb';
+import { Column } from 'radweb';
 import { SelectService } from '../select-popup/select-service';
 import { DeliveryEvents } from './delivery-events';
 import { AdminGuard } from '../auth/auth-guard';
@@ -12,6 +12,7 @@ import { Families } from '../families/families';
 import { FamilyDeliveryEvents } from './FamilyDeliveryEvents';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { CallStatus } from '../families/CallStatus';
+import { DialogService } from '../select-popup/dialog';
 
 @Component({
   selector: 'app-delivery-events',
@@ -172,7 +173,8 @@ export class DeliveryEventsComponent implements OnInit {
         });
     });
   }
-  constructor(private dialog: SelectService, private context: Context) { }
+  constructor(private dialog: DialogService, private context: Context) { }
+  
 
   ngOnInit() {
   }

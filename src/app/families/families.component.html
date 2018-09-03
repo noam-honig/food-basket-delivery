@@ -1,4 +1,6 @@
-
+<button mat-mini-fab style="margin-bottom:5px" (click)="refresh()">
+    <mat-icon>refresh</mat-icon>
+</button>
 <mat-tab-group #myTab (selectChange)="tabChanged()" [selectedIndex]="0">
     <mat-tab *ngFor="let t of statTabs" label="{{t.name}} - {{statTotal(t)}}"> </mat-tab>
 
@@ -34,120 +36,17 @@
 <button [class.hide]="gridView" class="btn glyphicon glyphicon glyphicon-filter" (click)="dataFilter.userFilterButton()"></button>
 <button (click)="families.addNewRow()" [class.hide]="gridView" [disabled]="families.currentRow&&families.currentRow.wasChanged()"
     class="btn btn-primary glyphicon glyphicon-plus"></button>
-<Data-Filter [settings]="families"  #dataFilter></Data-Filter>
+<Data-Filter [settings]="families" #dataFilter></Data-Filter>
 
 <div [class.hide]="gridView" *ngIf="families.currentRow">
+        
 
     <button *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="families.currentRow.save()" [disabled]="!families.currentRow.wasChanged()"
         class="btn glyphicon glyphicon-ok btn-success"></button>
     <button *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="families.currentRow.reset();families.setCurrentRow(families.items[0]);"
         [disabled]="!families.currentRow.wasChanged()" class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
+        <app-update-family [families]="families"></app-update-family>
 
-    <mat-accordion>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <div>
-                    <mat-panel-title>
-                        פרטי משפחה
-                    </mat-panel-title>
-                </div>
-                <div>
-                    <mat-panel-description>
-                        {{families.currentRow.name.value}}
-                    </mat-panel-description>
-                </div>
-            </mat-expansion-panel-header>
-            <data-area [settings]="familiesInfo"></data-area>
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <div>
-                    <mat-panel-title>
-                        כתובת
-                    </mat-panel-title>
-                </div>
-                <div>
-                    <mat-panel-description>
-                        {{families.currentRow.address.value}}
-                    </mat-panel-description>
-                </div>
-
-            </mat-expansion-panel-header>
-            <a (click)="families.currentRow.openWaze()" target="_blank">פתחי WAZE</a> |
-            <a (click)="families.currentRow.openGoogleMaps()" target="_blank">פתחי גוגל </a>
-            <data-area [settings]="familiesAddress"></data-area>
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <div>
-                    <mat-panel-title>
-                        טלפונים
-                    </mat-panel-title>
-                </div>
-                <div>
-                    <mat-panel-description>
-                        {{families.currentRow.phone1.value}}
-                    </mat-panel-description>
-                </div>
-
-            </mat-expansion-panel-header>
-            <data-area [settings]="phones"></data-area>
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <div>
-                    <mat-panel-title>
-                        פרטי משלוח
-                    </mat-panel-title>
-                </div>
-                <div>
-                    <mat-panel-description>
-                        {{families.currentRow.getDeliveryDescription()}}
-                    </mat-panel-description>
-                </div>
-
-            </mat-expansion-panel-header>
-            <data-area [settings]="deliverInfo"></data-area>
-        </mat-expansion-panel>
-
-     <!--   <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <div>
-                    <mat-panel-title>
-                        פרטי שיחה
-                    </mat-panel-title>
-                </div>
-                <div>
-                    <mat-panel-description>
-                        {{families.currentRow.callStatus.displayValue}}
-                    </mat-panel-description>
-                </div>
-
-            </mat-expansion-panel-header>
-            <data-area [settings]="callInfo"></data-area>
-        </mat-expansion-panel>-->
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <div>
-                    <mat-panel-title>
-                        אירועים קודמים
-                    </mat-panel-title>
-                </div>
-                <div>
-                    <mat-panel-description>
-                        <span *ngIf="previousDeliveryEvents.length==0">אין</span>
-                        <span *ngIf="previousDeliveryEvents.length>0">{{previousDeliveryEvents[0].eventName.value}}, {{previousDeliveryEvents[0].courier.getValue()}}</span>
-                    </mat-panel-description>
-                </div>
-
-            </mat-expansion-panel-header>
-            <ul>
-                <li *ngFor="let d of previousDeliveryEvents">
-                    {{d.eventName.value}}, {{d.deliverStatus.displayValue}}
-                </li>
-            </ul>
-        </mat-expansion-panel>
-    </mat-accordion>
     <button *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="families.currentRow.save()" [disabled]="!families.currentRow.wasChanged()"
         class="btn glyphicon glyphicon-ok btn-success"></button>
     <button *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="families.currentRow.reset();families.setCurrentRow(families.items[0]);"

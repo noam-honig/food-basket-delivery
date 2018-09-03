@@ -8,6 +8,7 @@ import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
 import { RunOnServer } from '../auth/server-action';
 import { Context } from '../shared/context';
+import { DialogService } from '../select-popup/dialog';
 
 @Component({
   selector: 'app-helpers',
@@ -15,7 +16,7 @@ import { Context } from '../shared/context';
   styleUrls: ['./helpers.component.css']
 })
 export class HelpersComponent implements OnInit {
-  constructor(private dialog: SelectService, private context: Context) {
+  constructor(private dialog: DialogService, private context: Context) {
   }
   static route: Route = {
     path: 'helpers',

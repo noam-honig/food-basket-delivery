@@ -100,6 +100,9 @@ export class HelperId extends Id implements HasAsyncGetTheValue {
     getValue() {
         return this.context.for(Helpers).lookup(this).name.value;
     }
+    getPhone() {
+        return this.context.for(Helpers).lookup(this).phone.value;
+    }
     async getTheName() {
         let r = await this.context.for(Helpers).lookupAsync(this);
         if (r && r.name && r.name.value)

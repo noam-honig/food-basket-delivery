@@ -6,7 +6,8 @@ import { GetGeoInformation } from "../shared/googleApiHelpers";
 import { foreachEntityItem, foreachSync } from "../shared/utils";
 
 import { serverInit } from "./serverInit";
-import * as XLSX from 'xlsx/types';
+import * as XLSX from 'xlsx';
+
 import { Families } from "../families/families";
 
 serverInit();

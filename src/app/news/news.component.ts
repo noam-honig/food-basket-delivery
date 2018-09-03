@@ -1,10 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NewsUpdate } from "./NewsUpdate";
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { SelectService } from '../select-popup/select-service';
+import { Context } from '../shared/context';
+import { DialogService } from '../select-popup/dialog';
 import { AdminGuard } from '../auth/auth-guard';
 import { Route } from '@angular/router';
-import { Context } from '../shared/context';
+import { SelectService } from '../select-popup/select-service';
+import { Families } from '../families/families';
 
 @Component({
   selector: 'app-news',
@@ -17,7 +19,7 @@ export class NewsComponent implements OnInit, OnDestroy {
   };
 
   onDestroy = () => { };
-  constructor(dialog: SelectService, private context: Context) {
+  constructor(dialog: DialogService,private selectService: SelectService, private context: Context) {
     let y = dialog.newsUpdate.subscribe(() => {
       this.refresh();
     });
@@ -25,6 +27,11 @@ export class NewsComponent implements OnInit, OnDestroy {
       y.unsubscribe();
     };
 
+  }
+  async updateFamily(n: NewsUpdate) {
+
+    let f = await this.context.for(Families).findFirst(fam => fam.id.isEqualTo(n.id));
+    this.selectService.updateFamiliy({ f: f });
   }
   ngOnDestroy(): void {
     this.onDestroy();
@@ -36,7 +43,7 @@ export class NewsComponent implements OnInit, OnDestroy {
 
   async refresh() {
 
-    this.news = await this.context.for(NewsUpdate).find({ orderBy: n => [{ column: n.updateTime, descending: true }], limit: 1000 });
+    this.news = await this.context.for(NewsUpdate).find({ orderBy: n => [{ column: n.updateTime, descending: true }], limit: 50 });
   }
   icon(n: NewsUpdate) {
 

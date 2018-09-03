@@ -1,0 +1,91 @@
+<mat-accordion *ngIf="familiesInfo">
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <div>
+                <mat-panel-title>
+                    משפחה
+                </mat-panel-title>
+            </div>
+            <div>
+                <mat-panel-description>
+                    {{families.currentRow.name.value}}
+                </mat-panel-description>
+            </div>
+        </mat-expansion-panel-header>
+        <data-area [settings]="familiesInfo"></data-area>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <div>
+                <mat-panel-title>
+                    <mat-icon class="badAddressIcon" *ngIf="families.currentRow.getGeocodeInformation().partialMatch()">
+                        warning
+                    </mat-icon>
+                    כתובת
+                </mat-panel-title>
+            </div>
+            <div>
+                <mat-panel-description>
+                    {{families.currentRow.address.value}}
+                </mat-panel-description>
+            </div>
+
+        </mat-expansion-panel-header>
+        <div class="addressProblem" *ngIf="families.currentRow.getGeocodeInformation().partialMatch()"><span class="badAddressTitle">שים
+                לב, כתובת לא מדוייקת</span>
+            גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת. יש להשוות בין השדה "כתובת" לשדה "כתובת כפי שגוגל הבין".
+            <br>אפשר להעזר בקישור "פתחי גוגל" כדי לחפש את הכתובת הנכונה ולעדכן.
+            <br> כתובת לא מדוייקת עלולה להוביל המשנע למקום לא נכון בוייז.
+        </div>
+        <a (click)="families.currentRow.openWaze()" target="_blank">פתחי WAZE</a> |
+        <a (click)="families.currentRow.openGoogleMaps()" target="_blank">פתחי גוגל </a>
+        <data-area [settings]="familiesAddress"></data-area>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <div>
+                <mat-panel-title>
+                    טלפונים
+                </mat-panel-title>
+            </div>
+            <div>
+                <mat-panel-description>
+                    {{families.currentRow.phone1.value}}
+                </mat-panel-description>
+            </div>
+
+        </mat-expansion-panel-header>
+        <a href="tel:{{families.currentRow.phone1.value}}" *ngIf="families.currentRow.phone1.value">
+
+            חייג לטלפון 1
+        </a> |
+        <a href="tel:{{families.currentRow.phone2.value}}" *ngIf="families.currentRow.phone2.value">
+
+            חייג לטלפון 2
+
+        </a>
+        <data-area [settings]="phones"></data-area>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <div>
+                <mat-panel-title>
+                    פרטי משלוח
+                </mat-panel-title>
+            </div>
+            <div>
+                <mat-panel-description>
+                    {{families.currentRow.getShortDeliveryDescription()}}
+                </mat-panel-description>
+            </div>
+
+        </mat-expansion-panel-header>
+        <a href="tel:{{families.currentRow.courier.getPhone()}}" *ngIf="families.currentRow.courier.value">
+            חייג למשנע {{families.currentRow.courier.getValue()}} בטלפון {{families.currentRow.courier.getPhone()}}
+            <br>
+            <br>
+        </a>
+        <data-area [settings]="deliverInfo"></data-area>
+
+    </mat-expansion-panel>
+</mat-accordion>

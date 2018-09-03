@@ -43,6 +43,15 @@ export class GeocodeInformation {
     ok() {
         return this.info.status == "OK";
     }
+    partialMatch() {
+        if (this.info.results.length<1)
+        return false;
+        if (this.info.results[0].partial_match)
+            return true;
+        if (this.info.results[0].types[0] != "street_address")
+            return true;
+        return false;
+    }
     location(): Location {
         if (!this.ok())
             return undefined;

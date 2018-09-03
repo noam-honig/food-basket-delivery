@@ -16,7 +16,7 @@ import { HelpersComponent } from './helpers/helpers.component';
 import { EventItemsComponent } from './event-items/event-items.component';
 import { EventHelpersComponent } from './event-helpers/event-helpers.component';
 import { SelectPopupComponent } from './select-popup/select-popup.component';
-import { SelectService } from './select-popup/select-service';
+import { DialogService } from './select-popup/dialog';
 import { YesNoQuestionComponent } from './select-popup/yes-no-question/yes-no-question.component';
 import { EventItemHelpersComponent } from './event-item-helpers/event-item-helpers.component';
 import { LoginComponent } from './users/login/login.component';
@@ -45,6 +45,10 @@ import { StamTestComponent } from './stam-test/stam-test.component';
 import { NewsComponent } from './news/news.component';
 import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
 import { Context } from './shared/context';
+
+import { SelectService } from './select-popup/select-service';
+import { UpdateFamilyDialogComponent } from './update-family-dialog/update-family-dialog.component';
+import { UpdateFamilyComponent } from './update-family/update-family.component';
 
 
 
@@ -81,6 +85,9 @@ import { Context } from './shared/context';
     StamTestComponent,
     NewsComponent,
     DeliveryEventsComponent,
+    UpdateFamilyDialogComponent,
+    UpdateFamilyComponent,
+    
   ],
   imports: [
     BrowserModule,
@@ -94,6 +101,7 @@ import { Context } from './shared/context';
 
   ],
   providers: [
+    DialogService,
     SelectService,
     BusyService,
     AuthService,
@@ -109,6 +117,7 @@ import { Context } from './shared/context';
     SelectPopupComponent,
     YesNoQuestionComponent,
     InputAreaComponent,
+    UpdateFamilyDialogComponent,
     UpdateCommentComponent, WaitComponent]
 })
 export class AppModule { }

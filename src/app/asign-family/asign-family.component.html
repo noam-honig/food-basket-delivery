@@ -19,7 +19,6 @@
     <div class="no-print">
       <select class="form-control" #lang (change)="langChange()" [(ngModel)]="filterLangulage">
         <option *ngFor="let l of langulages" value="{{l.id}}">{{l.toString()}}</option>
-
       </select>
       <select class="form-control" #city (change)="selectCity()" [(ngModel)]="filterCity">
         <option value="">כל הערים</option>
@@ -27,11 +26,31 @@
 
       </select>
     </div>
+
+    <div class="no-print numOfBasketsDiv" >
+      <h4 for="numOfBaskets">
+      מספר משפחות
+      </h4>
+      
+      <div class="input-group ">
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="button" (click)="add(1)">+</button>
+        </span>
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="button" (click)="add(-1)">-</button>
+        </span>
+        <input type="text" class="form-control" type="number" id="numOfBaskets" [(ngModel)]="numOfBaskets">
+      </div>
+    </div>
+
+
     <div class="no-print">
       <h5>סלים שנותרו</h5>
-      <button mat-raised-button color="primary" class="sal-button" (click)="addSpecial()" *ngIf="specialFamilies">משפחות מיוחדות - {{specialFamilies}}</button>
+      <button mat-raised-button color="primary" class="sal-button" (click)="addSpecial()" *ngIf="specialFamilies">משפחות
+        מיוחדות - {{specialFamilies}}</button>
       <ng-container *ngFor="let b of baskets">
-        <button mat-raised-button color="primary" class="sal-button" (click)="assignItem(b)" *ngIf="b.unassignedFamilies">{{b.name}} - {{b.unassignedFamilies}}</button>
+        <button mat-raised-button color="primary" class="sal-button" (click)="assignItem(b)" *ngIf="b.unassignedFamilies">{{b.name}}
+          - {{b.unassignedFamilies}}</button>
       </ng-container>
       <h4 class="no-baskets" *ngIf="!baskets.length">לא נמצאו סלים מתאימים</h4>
     </div>

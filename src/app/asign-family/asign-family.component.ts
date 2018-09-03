@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
-import {  ColumnHashSet, UrlBuilder } from 'radweb';
+import { ColumnHashSet, UrlBuilder } from 'radweb';
 import { Families } from '../families/families';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
 import { Language } from "../families/Language";
 import { Helpers } from '../helpers/helpers';
-import { SelectService } from '../select-popup/select-service';
-
+import { DialogService } from '../select-popup/dialog';
 import { UserFamiliesList } from '../my-families/user-families';
 import { GetBasketStatusAction, BasketInfo, CityInfo, GetBasketStatusActionResponse } from './get-basket-status-action';
 import { environment } from '../../environments/environment';
@@ -18,6 +17,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import * as fetch from 'node-fetch';
 import { RunOnServer } from '../auth/server-action';
 import { Context } from '../shared/context';
+import { SelectService } from '../select-popup/select-service';
 
 
 @Component({
@@ -42,9 +42,9 @@ export class AsignFamilyComponent implements OnInit {
         this.name = helper.name.value;
         this.shortUrl = helper.shortUrlKey.value;
         this.id = helper.id.value;
-        this.refreshList();
+        await this.refreshList();
       } else {
-        this.refreshList();
+        await this.refreshList();
       }
     }
   }
@@ -64,6 +64,7 @@ export class AsignFamilyComponent implements OnInit {
     this.name = '';
   }
 
+
   async refreshBaskets() {
     let r = (await new GetBasketStatusAction().run({
       filterLanguage: this.filterLangulage,
@@ -77,8 +78,8 @@ export class AsignFamilyComponent implements OnInit {
   cities: CityInfo[] = [];
   specialFamilies = 0;
   async refreshList() {
-    this.refreshBaskets();
-    this.familyLists.initForHelper(this.id, this.name);
+    await this.refreshBaskets();
+    await this.familyLists.initForHelper(this.id, this.name);
 
   }
   familyLists = new UserFamiliesList(this.context);
@@ -98,6 +99,7 @@ export class AsignFamilyComponent implements OnInit {
     this.name = undefined;
     this.shortUrl = undefined;
     this.id = undefined;
+    this.numOfBaskets = 1;
     this.clearList();
 
   }
@@ -105,7 +107,7 @@ export class AsignFamilyComponent implements OnInit {
     this.familyLists.clear();
   }
   findHelper() {
-    this.dialog.selectHelper(h => {
+    this.selectService.selectHelper(h => {
       if (h) {
         this.phone = h.phone.value;
         this.name = h.name.value;
@@ -123,15 +125,25 @@ export class AsignFamilyComponent implements OnInit {
   }
 
 
-  constructor( private dialog: SelectService, private context: Context) {
+
+  constructor(private selectService: SelectService, private dialog: DialogService, private context: Context) {
 
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     if (!environment.production) {
       this.phone = '0507330590';
-      this.searchPhone();
+      await this.searchPhone();
+      //   this.selectService.updateFamiliy({ f: this.familyLists.allFamilies[0]});
+
     }
+  }
+  numOfBaskets: number = 1;
+  add(what: number) {
+    this.numOfBaskets += what;
+    if (this.numOfBaskets < 1)
+      this.numOfBaskets = 1;
+
   }
   async assignItem(basket: BasketInfo) {
 
@@ -141,10 +153,11 @@ export class AsignFamilyComponent implements OnInit {
       basketType: basket.id,
       helperId: this.id,
       language: this.filterLangulage,
-      city: this.filterCity
+      city: this.filterCity,
+      numOfBaskets: this.numOfBaskets
     });
-    if (x.ok) {
-      basket.unassignedFamilies--;
+    if (x.addedBoxes) {
+      basket.unassignedFamilies -= x.addedBoxes;
       this.id = x.helperId;
       this.familyLists.initForFamilies(this.id, this.name, x.families);
       this.baskets = x.basketInfo.baskets;
@@ -164,7 +177,7 @@ export class AsignFamilyComponent implements OnInit {
 
     let result: AddBoxResponse = {
       helperId: info.helperId,
-      ok: false,
+      addedBoxes: 0,
       shortUrl: undefined,
       families: [],
       basketInfo: undefined
@@ -183,10 +196,9 @@ export class AsignFamilyComponent implements OnInit {
     }
 
     let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id)) });
+    for (let i = 0; i < info.numOfBaskets; i++) {
 
-    {
-
-      let r = await context.for(Families).find({
+      let waitingFamilies = await context.for(Families).find({
         where: f => {
           let where = f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
             f.courier.isEqualTo('').and(
@@ -203,13 +215,13 @@ export class AsignFamilyComponent implements OnInit {
         }
       });
 
-      if (r.length > 0) {
+      if (waitingFamilies.length > 0) {
         if (existingFamilies.length == 0) {
-          let position = Math.trunc(Math.random() * r.length);
-          let family = r[position];
+          let position = Math.trunc(Math.random() * waitingFamilies.length);
+          let family = waitingFamilies[position];
           family.courier.value = result.helperId;
           await family.save();
-          result.ok = true;
+          result.addedBoxes++;
           existingFamilies.push(family);
         }
         else {
@@ -228,36 +240,36 @@ export class AsignFamilyComponent implements OnInit {
 
           }
 
-          let f = r[0];
+          let f = waitingFamilies[0];
           let dist = getDistance(f.getGeocodeInformation().location());
-          for (let i = 1; i < r.length; i++) {
-            let myDist = getDistance(r[i].getGeocodeInformation().location());
+          for (let i = 1; i < waitingFamilies.length; i++) {
+            let myDist = getDistance(waitingFamilies[i].getGeocodeInformation().location());
             if (myDist < dist) {
               dist = myDist;
-              f = r[i]
+              f = waitingFamilies[i]
             }
           }
           f.courier.value = result.helperId;
 
           await f.save();
           existingFamilies.push(f);
-          result.ok = true;
+          result.addedBoxes++;
         }
 
       }
-      await AsignFamilyComponent.optimizeRoute(existingFamilies, context);
-      existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
-      let exc = new ColumnHashSet()
-      exc.add(...context.for(Families).create().excludeColumns(context.info));
-
-      await foreachSync(existingFamilies, async f => { result.families.push(await f.__toPojo(exc)); });
-      result.basketInfo = await GetBasketStatusAction.getTheBaskts({
-        filterCity: info.city,
-        filterLanguage: info.language
-      }, context);
-      return result;
-
+      
     }
+    await AsignFamilyComponent.optimizeRoute(existingFamilies, context);
+    existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
+    let exc = new ColumnHashSet()
+    exc.add(...context.for(Families).create().excludeColumns(context.info));
+
+    await foreachSync(existingFamilies, async f => { result.families.push(await f.__toPojo(exc)); });
+    result.basketInfo = await GetBasketStatusAction.getTheBaskts({
+      filterCity: info.city,
+      filterLanguage: info.language
+    }, context);
+    return result;
   }
   static async optimizeRoute(families: Families[], context: Context) {
 
@@ -280,7 +292,7 @@ export class AsignFamilyComponent implements OnInit {
     }
   }
   addSpecial() {
-    this.dialog.selectFamily({
+    this.selectService.selectFamily({
       where: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
         f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes.id))),
       onSelect: async f => {
@@ -299,13 +311,14 @@ export interface AddBoxInfo {
   language: number;
   helperId?: string;
   city: string;
+  numOfBaskets: number;
 }
 export interface AddBoxResponse {
   helperId: string;
   shortUrl: string;
   families: Families[];
   basketInfo: GetBasketStatusActionResponse
-  ok: boolean;
+  addedBoxes: number;
 
 }
 

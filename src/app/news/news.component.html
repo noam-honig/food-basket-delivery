@@ -8,6 +8,7 @@
     <div mat-card-avatar class="example-header-image"> <mat-icon>{{icon(n)}}</mat-icon></div>
     
     <mat-card-title> {{n.describe()}}</mat-card-title>
-    <mat-card-subtitle>{{n.updateTime.relativeDateName()}}, עודכן על ידי {{n.updateUser.getValue()}}</mat-card-subtitle>
+    <mat-card-subtitle>{{n.updateTime.relativeDateName()}}, עודכן על ידי {{n.updateUser.getValue()}} <br><a (click)="updateFamily(n)">עדכן פרטי משפחה</a></mat-card-subtitle>
+
   </mat-card-header>
 </mat-card>

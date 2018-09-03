@@ -3,8 +3,8 @@ import { GridSettings } from 'radweb';
 import { Events } from "./Events";
 import { EventItemsComponent } from '../event-items/event-items.component';
 import { EventHelpersComponent } from '../event-helpers/event-helpers.component';
-import { SelectService } from '../select-popup/select-service';
 import { Context } from '../shared/context';
+import { DialogService } from '../select-popup/dialog';
 
 @Component({
   selector: 'app-events',
@@ -14,8 +14,9 @@ import { Context } from '../shared/context';
 export class EventsComponent implements OnInit {
 
   constructor(
-    private dialogs: SelectService
-    , private context: Context
+    
+    private context: Context,
+    private dialogs: DialogService
   ) { }
 
   ngOnInit(): void {

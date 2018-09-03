@@ -3,7 +3,7 @@ import { GridSettings } from 'radweb';
 import { ItemsPerHelper } from "../event-item-helpers/ItemsPerHelper";
 
 import { foreachSync, foreachEntityItem } from '../shared/utils';
-import { SelectService } from '../select-popup/select-service';
+import { DialogService } from '../select-popup/dialog';
 import { Items } from '../events/Events';
 
 @Component({
@@ -15,7 +15,7 @@ export class EventItemsComponent implements OnInit {
 
   constructor
     (
-    private dialog: SelectService
+    private dialog: DialogService
     ) { }
   @Input() eventId: string;
   ngOnInit() {

@@ -3,7 +3,7 @@ import { Authentication } from "./authentication";
 import { myAuthInfo } from "./my-auth-info";
 import { foreachEntityItem } from "../shared/utils";
 
-import { SelectService } from "../select-popup/select-service";
+import { DialogService } from "../select-popup/dialog";
 import { Router, Route } from "@angular/router";
 import { evilStatics } from "./evil-statics";
 import { Helpers } from "../helpers/helpers";
@@ -40,7 +40,7 @@ export class AuthService {
         return { valid: false, requirePassword: false } as LoginResponse;
     }
     constructor(
-        private dialog: SelectService,
+        private dialog: DialogService,
         private router: Router
     ) { }
 

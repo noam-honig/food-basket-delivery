@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { foreachSync, foreachEntityItem } from '../../shared/utils';
 
-import { SelectService } from '../../select-popup/select-service';
+import { DialogService } from '../../select-popup/dialog';
 import { AuthService } from '../../auth/auth-service';
 import { Router, Route } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
@@ -16,7 +16,7 @@ import { Context } from '../../shared/context';
 export class LoginComponent implements OnInit {
   static route: Route = { path: 'login', component: LoginComponent, data: { name: 'כניסה' } };
   constructor(
-    private dialog: SelectService,
+    private dialog: DialogService,
     private auth: AuthService,
     private router: Router,
     private context:Context
