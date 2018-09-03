@@ -55,24 +55,28 @@ export class myServerAction extends ServerAction<inArgs, result>
 export interface RunOnServerOptions {
     allowed: (context: Context) => boolean;
 }
-export const allActions = [];
+export const actionInfo = {
+    allActions: [],
+    runningOnServer: false
+}
 export function RunOnServer(options: RunOnServerOptions) {
     return (target, key: string, descriptor: any) => {
 
         var originalMethod = descriptor.value;
         var types = Reflect.getMetadata("design:paramtypes", target, key);
-        
+
 
         let serverAction = new myServerAction(key, types, options, args => originalMethod.apply(undefined, args));
 
 
 
         descriptor.value = async function (...args: any[]) {
-
-            var result = await serverAction.run({ args });
-            return result.data;
+            if (!actionInfo.runningOnServer)
+                return (await serverAction.run({ args })).data;
+            else
+                return (await originalMethod.apply(undefined, args));
         }
-        allActions.push(descriptor.value);
+        actionInfo.allActions.push(descriptor.value);
         descriptor.value[serverActionField] = serverAction;
 
 

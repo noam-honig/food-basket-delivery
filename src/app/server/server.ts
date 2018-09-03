@@ -15,9 +15,9 @@ import { StatsAction } from '../families/stats-action';
 import { DeliveryStatsAction } from '../delivery-follow-up/delivery-stats';
 import { Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { serverActionField, myServerAction, allActions } from "../auth/server-action";
+import { serverActionField, myServerAction, actionInfo } from "../auth/server-action";
 import { SiteArea } from "radweb/utils/server/expressBridge";
-import  "../helpers/helpers.component";
+import "../helpers/helpers.component";
 import '../app.module';
 import { SendSmsAction } from "../asign-family/send-sms-action";
 import { ContextEntity, ServerContext } from "../shared/context";
@@ -54,12 +54,13 @@ serverInit().then(async () => {
         area.addAction(x);
     };
 
-    console.log(allActions);
+
+    actionInfo.runningOnServer = true;
     evilStatics.auth.applyTo(eb, allUsersAlsoNotLoggedIn);
-    allActions.forEach(a => {
+    actionInfo.allActions.forEach(a => {
         addAction(allUsersAlsoNotLoggedIn, a);
     });
-    
+
     [
         new ServerEventAuthorizeAction(),
         new SendSmsAction(),

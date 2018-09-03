@@ -174,9 +174,6 @@ export class AsignFamilyComponent implements OnInit {
   }
   @RunOnServer({ allowed: c => c.isAdmin() })
   static async getBasketStatus(info: GetBasketStatusActionInfo, context?: Context) {
-    return await AsignFamilyComponent.getTheBaskts(info, context);
-  }
-  static async getTheBaskts(info: GetBasketStatusActionInfo, context: Context) {
     let result = {
       baskets: [],
       cities: [],
@@ -320,7 +317,7 @@ export class AsignFamilyComponent implements OnInit {
     exc.add(...context.for(Families).create().excludeColumns(context.info));
 
     await foreachSync(existingFamilies, async f => { result.families.push(await f.__toPojo(exc)); });
-    result.basketInfo = await AsignFamilyComponent.getTheBaskts({
+    result.basketInfo = await AsignFamilyComponent.getBasketStatus({
       filterCity: info.city,
       filterLanguage: info.language
     }, context);
