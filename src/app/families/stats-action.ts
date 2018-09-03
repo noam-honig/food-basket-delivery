@@ -10,9 +10,10 @@ import { foreachSync } from "../shared/utils";
 import { evilStatics } from "../auth/evil-statics";
 import { PostgresDataProvider } from "radweb/server";
 import { Column, Filter } from "radweb";
-import { BasketInfo } from "../asign-family/get-basket-status-action";
+
 import { BasketType } from "./BasketType";
 import { Context, ServerContext } from "../shared/context";
+import { BasketInfo } from "../asign-family/asign-family.component";
 
 
 export interface InArgs {

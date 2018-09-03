@@ -8,7 +8,7 @@ import { Language } from "../families/Language";
 import { Helpers } from '../helpers/helpers';
 import { DialogService } from '../select-popup/dialog';
 import { UserFamiliesList } from '../my-families/user-families';
-import { GetBasketStatusAction, BasketInfo, CityInfo, GetBasketStatusActionResponse } from './get-basket-status-action';
+
 import { environment } from '../../environments/environment';
 import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
@@ -18,6 +18,7 @@ import * as fetch from 'node-fetch';
 import { RunOnServer } from '../auth/server-action';
 import { Context } from '../shared/context';
 import { SelectService } from '../select-popup/select-service';
+import { BasketType } from '../families/BasketType';
 
 
 @Component({
@@ -66,7 +67,7 @@ export class AsignFamilyComponent implements OnInit {
 
 
   async refreshBaskets() {
-    let r = (await new GetBasketStatusAction().run({
+    let r = (await  AsignFamilyComponent.getBasketStatus({
       filterLanguage: this.filterLangulage,
       filterCity: this.filterCity
     }))
@@ -157,7 +158,6 @@ export class AsignFamilyComponent implements OnInit {
       numOfBaskets: this.numOfBaskets
     });
     if (x.addedBoxes) {
-      basket.unassignedFamilies -= x.addedBoxes;
       this.id = x.helperId;
       this.familyLists.initForFamilies(this.id, this.name, x.families);
       this.baskets = x.basketInfo.baskets;
@@ -172,6 +172,61 @@ export class AsignFamilyComponent implements OnInit {
 
 
   }
+  @RunOnServer({ allowed: c => c.isAdmin() })
+  static async getBasketStatus(info: GetBasketStatusActionInfo, context?: Context) {
+    return await AsignFamilyComponent.getTheBaskts(info, context);
+  }
+  static async getTheBaskts(info: GetBasketStatusActionInfo, context: Context) {
+    let result = {
+      baskets: [],
+      cities: [],
+      special: 0
+    };
+    let basketHash: any = {};
+    let cityHash: any = {};
+
+    let r = await context.for(Families).find({ where: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('')) });
+    r.forEach(cf => {
+      if (info.filterLanguage == -1 || info.filterLanguage == cf.language.value) {
+        if (!info.filterCity || info.filterCity == cf.city.value) {
+          if (cf.special.listValue == YesNo.No) {
+            let bi = basketHash[cf.basketType.value];
+            if (!bi) {
+              bi = {
+                id: cf.basketType.value,
+                unassignedFamilies: 0
+              };
+              basketHash[cf.basketType.value] = bi;
+              result.baskets.push(bi);
+            }
+            bi.unassignedFamilies++;
+          }
+          else {
+            result.special++;
+          }
+        }
+        let ci: CityInfo = cityHash[cf.city.value];
+        if (!ci) {
+          ci = {
+            name: cf.city.value,
+            unassignedFamilies: 0
+          };
+          cityHash[cf.city.value] = ci;
+          result.cities.push(ci);
+        }
+        ci.unassignedFamilies++;
+      }
+    });
+    if (info.filterCity && !cityHash[info.filterCity]) {
+      result.cities.push({ name: info.filterCity, unassignedFamilies: 0 });
+    }
+    await foreachSync(result.baskets, async (b) => {
+      b.name = (await context.for(BasketType).lookupAsync(bt => bt.id.isEqualTo(b.id))).name.value;
+    });
+    result.baskets.sort((a, b) => b.unassignedFamilies - a.unassignedFamilies);
+    return result;
+  }
+
   @RunOnServer({ allowed: c => c.isAdmin() })
   static async AddBox(info: AddBoxInfo, context?: Context) {
 
@@ -265,7 +320,7 @@ export class AsignFamilyComponent implements OnInit {
     exc.add(...context.for(Families).create().excludeColumns(context.info));
 
     await foreachSync(existingFamilies, async f => { result.families.push(await f.__toPojo(exc)); });
-    result.basketInfo = await GetBasketStatusAction.getTheBaskts({
+    result.basketInfo = await AsignFamilyComponent.getTheBaskts({
       filterCity: info.city,
       filterLanguage: info.language
     }, context);
@@ -351,4 +406,23 @@ async function getRouteInfo(families: Families[], optimize: boolean, context: Co
 
   let r = await (await fetch.default(u.url)).json();
   return r;
+}
+export interface GetBasketStatusActionInfo {
+  filterLanguage: number;
+  filterCity: string;
+}
+export interface GetBasketStatusActionResponse {
+  baskets: BasketInfo[];
+  cities: CityInfo[];
+  special: number;
+}
+export interface BasketInfo {
+  name: string;
+  id: string;
+  unassignedFamilies: number;
+
+}
+export interface CityInfo {
+  name: string;
+  unassignedFamilies: number;
 }

@@ -1,16 +1,12 @@
 import { Injectable } from "@angular/core";
-import { Authentication } from "./authentication";
 import { myAuthInfo } from "./my-auth-info";
-import { foreachEntityItem } from "../shared/utils";
-
 import { DialogService } from "../select-popup/dialog";
-import { Router, Route } from "@angular/router";
+import { Router } from "@angular/router";
 import { evilStatics } from "./evil-statics";
 import { Helpers } from "../helpers/helpers";
 import * as passwordHash from 'password-hash';
 import { RunOnServer } from "./server-action";
 import { Context } from "../shared/context";
-import { EPERM } from "constants";
 import { LoginResponse } from "./auth-info";
 
 

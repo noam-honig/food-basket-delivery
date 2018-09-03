@@ -55,12 +55,13 @@ export class myServerAction extends ServerAction<inArgs, result>
 export interface RunOnServerOptions {
     allowed: (context: Context) => boolean;
 }
+export const allActions = [];
 export function RunOnServer(options: RunOnServerOptions) {
     return (target, key: string, descriptor: any) => {
 
         var originalMethod = descriptor.value;
         var types = Reflect.getMetadata("design:paramtypes", target, key);
-
+        
 
         let serverAction = new myServerAction(key, types, options, args => originalMethod.apply(undefined, args));
 
@@ -71,6 +72,7 @@ export function RunOnServer(options: RunOnServerOptions) {
             var result = await serverAction.run({ args });
             return result.data;
         }
+        allActions.push(descriptor.value);
         descriptor.value[serverActionField] = serverAction;
 
 

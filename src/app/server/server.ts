@@ -7,7 +7,7 @@ import { DataApi } from 'radweb/utils/server/DataApi';
 import * as fs from 'fs';
 import { myAuthInfo } from '../auth/my-auth-info';
 import { evilStatics } from '../auth/evil-statics';
-import { GetBasketStatusAction } from '../asign-family/get-basket-status-action';
+
 import { serverInit, allEntities } from './serverInit';
 import { ServerEventAuthorizeAction } from './server-event-authorize-action';
 import { ServerEvents } from './server-events';
@@ -15,12 +15,10 @@ import { StatsAction } from '../families/stats-action';
 import { DeliveryStatsAction } from '../delivery-follow-up/delivery-stats';
 import { Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { serverActionField, myServerAction } from "../auth/server-action";
+import { serverActionField, myServerAction, allActions } from "../auth/server-action";
 import { SiteArea } from "radweb/utils/server/expressBridge";
-import { AuthService } from "../auth/auth-service";
-import { HelpersComponent } from "../helpers/helpers.component";
-import { AsignFamilyComponent } from "../asign-family/asign-family.component";
-import { DeliveryEventsComponent } from "../delivery-events/delivery-events.component";
+import  "../helpers/helpers.component";
+import '../app.module';
 import { SendSmsAction } from "../asign-family/send-sms-action";
 import { ContextEntity, ServerContext } from "../shared/context";
 
@@ -56,25 +54,13 @@ serverInit().then(async () => {
         area.addAction(x);
     };
 
-
+    console.log(allActions);
     evilStatics.auth.applyTo(eb, allUsersAlsoNotLoggedIn);
-    [
-        AuthService.login,
-        AuthService.loginFromSms,
-        HelpersComponent.resetPassword
-    ].forEach(a => {
+    allActions.forEach(a => {
         addAction(allUsersAlsoNotLoggedIn, a);
-
     });
-
+    
     [
-        AsignFamilyComponent.AddBox,
-        DeliveryEventsComponent.setDeliveryActive,
-        DeliveryEventsComponent.copyFamiliesToActiveEvent
-
-    ].forEach(a => addAction(adminApi, a));
-    [
-        new GetBasketStatusAction(),
         new ServerEventAuthorizeAction(),
         new SendSmsAction(),
         new StatsAction(),
