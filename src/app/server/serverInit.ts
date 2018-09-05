@@ -13,37 +13,11 @@ import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DeliveryEvents } from '../delivery-events/delivery-events';
-import { EventHelpers, Events, Items } from '../events/Events';
-import { ItemsPerHelper } from '../event-item-helpers/ItemsPerHelper';
-import { FamilyDeliveryEvents } from '../delivery-events/FamilyDeliveryEvents';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
-import { NewsUpdate } from '../news/NewsUpdate';
-import { FamilyDeliveryEventsView } from '../families/FamilyDeliveryEventsView';
-import { Entity } from 'radweb';
-import { ServerContext } from '../shared/context';
+import { ServerContext, allEntities } from '../shared/context';
+import '../app.module';
 
 
-
-export var allEntities: { new(...args: any[]): Entity<any>; }[] =
-    [
-        Events,
-        EventHelpers,
-        Helpers,
-        Items,
-        ItemsPerHelper,
-        Families,
-        BasketType,
-        FamilySources,
-        DeliveryEvents,
-        FamilyDeliveryEvents,
-        ApplicationSettings,
-        ApplicationImages,
-        HelpersAndStats,
-        NewsUpdate,
-        FamilyDeliveryEventsView
-    ]
-    ;
 
 export async function serverInit() {
 

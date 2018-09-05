@@ -1,13 +1,13 @@
 import { IdEntity, HasAsyncGetTheValue, Id, StringColumn } from "../model-shared/types";
 
-import { Context, MoreDataColumnSettings } from "../shared/context";
-
+import { Context, MoreDataColumnSettings, EntityClass } from "../shared/context";
+@EntityClass
 export class FamilySources extends IdEntity<FamilySourceId>  {
   name = new StringColumn({ caption: "שם" });
   contactPerson = new StringColumn({ caption: "איש קשר", excludeFromApi: !this.context.isAdmin() });
   phone = new StringColumn({ caption: 'טלפון', excludeFromApi: !this.context.isAdmin() });
   constructor(private context: Context) {
-    super(new FamilySourceId(context), FamilySources, {
+    super(new FamilySourceId(context), {
       name: "FamilySources",
       allowApiRead: context.isLoggedIn(),
       allowApiCRUD: context.isAdmin()

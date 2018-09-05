@@ -4,13 +4,13 @@ import { IdEntity, changeDate, Id, HasAsyncGetTheValue, checkForDuplicateValue, 
 import { SelectServiceInterface } from '../select-popup/select-service-interface';
 import { DataColumnSettings } from 'radweb/utils/dataInterfaces1';
 import * as passwordHash from 'password-hash';
-import { Context, MoreDataColumnSettings } from '../shared/context';
+import { Context, MoreDataColumnSettings, EntityClass } from '../shared/context';
 
-
+@EntityClass
 export class Helpers extends IdEntity<HelperId>  {
     constructor(private context: Context) {
 
-        super(new HelperId(context), Helpers, {
+        super(new HelperId(context), {
             name: "Helpers",
             allowApiRead: true,
             allowApiDelete: context.isLoggedIn(),

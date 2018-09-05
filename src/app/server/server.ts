@@ -7,7 +7,7 @@ import { DataApi } from 'radweb/utils/server/DataApi';
 import * as fs from 'fs';
 import { myAuthInfo } from '../auth/my-auth-info';
 import { evilStatics } from '../auth/evil-statics';
-import { serverInit, allEntities } from './serverInit';
+import { serverInit } from './serverInit';
 import { ServerEvents } from './server-events';
 import { Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -15,7 +15,7 @@ import { serverActionField, myServerAction, actionInfo } from "../auth/server-ac
 import { SiteArea } from "radweb/utils/server/expressBridge";
 import "../helpers/helpers.component";
 import '../app.module';
-import { ContextEntity, ServerContext } from "../shared/context";
+import { ContextEntity, ServerContext, allEntities } from "../shared/context";
 
 serverInit().then(async () => {
 
@@ -65,8 +65,6 @@ serverInit().then(async () => {
                 return new DataApi(c.create(e), j._getEntityApiSettings(c));
             });
         }
-
-
     });
 
 

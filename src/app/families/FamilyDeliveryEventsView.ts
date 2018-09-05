@@ -6,13 +6,13 @@ import { StringColumn } from 'radweb';
 import { HelperId } from '../helpers/helpers';
 import { IdEntity, changeDate, DateTimeColumn, buildSql } from '../model-shared/types';
 import { DeliveryEvents } from '../delivery-events/delivery-events';
-import { Context, ServerContext } from '../shared/context';
+import { Context, ServerContext, EntityClass } from '../shared/context';
 
 
 let fde = new FamilyDeliveryEvents(new ServerContext());
 var de = new DeliveryEvents(new ServerContext());
 
-
+@EntityClass
 export class FamilyDeliveryEventsView extends IdEntity<FamilyDelveryEventId>  {
 
   family = new FamilyId();
@@ -25,9 +25,9 @@ export class FamilyDeliveryEventsView extends IdEntity<FamilyDelveryEventId>  {
   deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
   courierComments = new StringColumn('הערות מסירה');
   constructor(private context: Context) {
-    super(new FamilyDelveryEventId(), FamilyDeliveryEventsView, {
+    super(new FamilyDelveryEventId(), {
       name: 'FamilyDeliveryEventsView',
-      allowApiRead:true,// context.isAdmin(),
+      allowApiRead: true,// context.isAdmin(),
       dbName: buildSql('(select ', fde, '.', fde.id, ', ', [fde.family, fde.basketType, fde.courier, fde.courierAssingTime, fde.deliverStatus, fde.deliveryStatusDate, fde.courierComments, de.deliveryDate], ', ', de, '.', de.name, ' eventName', ' from ', fde, ' inner join ', de, ' on ', de, '.', de.id, '=', fde.deliveryEvent, ' where ', de.isActiveEvent, '=false', ') as x')
     });
     this.initColumns();

@@ -1,18 +1,17 @@
 import { FamilyId } from '../families/families';
 import { DeliveryStatusColumn } from "../families/DeliveryStatus";
 import { BasketId } from "../families/BasketType";
-import { DataProviderFactory, NumberColumn, StringColumn } from 'radweb';
-import { evilStatics } from '../auth/evil-statics';
+import { NumberColumn, StringColumn } from 'radweb';
 import { HelperId, HelperIdReadonly } from '../helpers/helpers';
 import { IdEntity, changeDate, Id } from '../model-shared/types';
 import { CallStatusColumn } from '../families/CallStatus';
 import { DeliveryEventId } from "./DeliveryEventId";
-import { Context } from '../shared/context';
-
+import { Context, EntityClass } from '../shared/context';
+@EntityClass
 export class FamilyDeliveryEvents extends IdEntity<FamilyDelveryEventId> {
   deliveryEvent = new DeliveryEventId();
   family = new FamilyId();
-  basketType = new BasketId(this.context,'סוג סל');
+  basketType = new BasketId(this.context, 'סוג סל');
   callStatus = new CallStatusColumn('סטטוס שיחה');
   callTime = new changeDate('מועד שיחה');
   callHelper = new HelperIdReadonly(this.context, 'מי ביצעה את השיחה');
@@ -26,7 +25,7 @@ export class FamilyDeliveryEvents extends IdEntity<FamilyDelveryEventId> {
   routeOrder = new NumberColumn();
   courierComments = new StringColumn('הערות מסירה');
   constructor(private context: Context) {
-    super(new FamilyDelveryEventId(), FamilyDeliveryEvents, 'FamilyDeliveryEvents');
+    super(new FamilyDelveryEventId(), 'FamilyDeliveryEvents');
     this.initColumns();
   }
 }

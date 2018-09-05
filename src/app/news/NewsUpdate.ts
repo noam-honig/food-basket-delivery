@@ -3,11 +3,12 @@ import { changeDate, buildSql, StringColumn } from "../model-shared/types";
 import { NumberColumn } from "radweb";
 import { HelperIdReadonly, HelperId } from "../helpers/helpers";
 import { Families, FamilyUpdateInfo } from "../families/families";
-import { Context, ContextEntity, ServerContext } from "../shared/context";
+import { Context, ContextEntity, ServerContext, EntityClass } from "../shared/context";
 
 
 
 export let f = new Families(new ServerContext());
+@EntityClass
 export class NewsUpdate extends ContextEntity<string> implements FamilyUpdateInfo {
 
   id = new StringColumn();
@@ -23,7 +24,7 @@ export class NewsUpdate extends ContextEntity<string> implements FamilyUpdateInf
   courierComments = new StringColumn('הערות מסירה');
   updateType = new NumberColumn();
   constructor(private context: Context) {
-    super(NewsUpdate, {
+    super({
       allowApiRead: context.isAdmin(),
       caption: 'חדשות',
       name: 'news',

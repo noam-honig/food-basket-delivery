@@ -5,6 +5,7 @@ import { evilStatics } from "../auth/evil-statics";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { Injectable } from "@angular/core";
 import { DataApiSettings } from "radweb/utils/server/DataApi";
+import { supportsPassiveEventListeners } from "@angular/cdk/platform";
 
 
 @Injectable()
@@ -77,19 +78,28 @@ function buildEntityOptions(o: ContextEntityOptions | string): EntityOptions | s
 
 export class ContextEntity<idType> extends Entity<idType>{
     _noContextErrorWithStack: Error;
-    constructor(private entityType: { new(...args: any[]): Entity<idType>; }, private contextEntityOptions?: ContextEntityOptions | string) {
+    constructor(private contextEntityOptions?: ContextEntityOptions | string) {
         super(() => {
             if (!this.__context) {
 
                 throw this._noContextErrorWithStack;
             }
-            return this.__context.create(entityType);
+            if (!this.entityType) {
+                throw this._noContextErrorWithStack;
+            }
+            return this.__context.create(this.entityType);
         }, evilStatics.dataSource, buildEntityOptions(contextEntityOptions));
-        this._noContextErrorWithStack = new Error('context was not set for' + this.constructor.name);
+        this._noContextErrorWithStack = new Error('@EntityClass not used or context was not set for' + this.constructor.name);
     }
     private __context: Context;
     _setContext(context: Context) {
         this.__context = context;
+    }
+    private entityType: EntityType;
+    _setFactoryClassAndDoInitColumns(entityType: EntityType) {
+        this.entityType = entityType;
+      //  this.initColumns((<any>this).id);
+
     }
     _getExcludedColumns(x: Entity<any>) {
         let r = x.__iterateColumns().filter(c => {
@@ -201,7 +211,7 @@ export class SpecificEntityHelper<lookupIdType, T extends Entity<lookupIdType>> 
         let exc = new ColumnHashSet();
         if (this.entity instanceof ContextEntity)
             exc.add(...this.entity._getExcludedColumns(this.entity));
-        
+
         return Promise.all(items.map(f => f.__toPojo(exc)));
     }
     create() {
@@ -211,3 +221,43 @@ export class SpecificEntityHelper<lookupIdType, T extends Entity<lookupIdType>> 
         return new GridSettings(this.entity, settings);
     }
 }
+export interface EntityType {
+    new(...args: any[]): Entity<any>;
+}
+export const allEntities = [];
+export function EntityClass(theEntityClass: EntityType) {
+
+    var original = theEntityClass;
+
+    // a utility function to generate instances of a class
+    function construct(constructor, args) {
+        var c: any = function () {
+            return constructor.apply(this, args);
+        }
+        c.prototype = constructor.prototype;
+        return new c();
+    }
+    let newEntityType: any;
+    // the new constructor behaviour
+    var f: any = function (...args) {
+
+        let r = construct(original, args);
+        if (r instanceof ContextEntity) {
+            r._setFactoryClassAndDoInitColumns(newEntityType);
+
+        }
+        return r;
+    }
+    newEntityType = f;
+
+    // copy prototype so intanceof operator still works
+    f.prototype = original.prototype;
+    // copy static methods
+    for (let x in original) {
+        f[x] = original[x];
+    }
+    allEntities.push(f);
+    // return new constructor (will override original)
+    return f;
+}
+

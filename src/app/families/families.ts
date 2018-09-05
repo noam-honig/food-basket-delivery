@@ -9,11 +9,12 @@ import { ColumnSetting, Column } from "radweb";
 import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
-import { Context } from "../shared/context";
+import { Context, EntityClass } from "../shared/context";
 
+@EntityClass
 export class Families extends IdEntity<FamilyId>  {
   constructor(private context: Context) {
-    super(new FamilyId(), Families,
+    super(new FamilyId(),
       {
         name: "Families",
         allowApiRead: context.isLoggedIn(),
@@ -73,7 +74,7 @@ export class Families extends IdEntity<FamilyId>  {
   basketType = new BasketId(this.context, 'סוג סל');
   familySource = new FamilySourceId(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'גורם מפנה' });
   special = new YesNoColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'שיוך מיוחד' });
-  iDinExcel = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption:'מזהה באקסל'});
+  iDinExcel = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'מזהה באקסל' });
   internalComment = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'הערה פנימית - לא תופיע למשנע' });
 
 
@@ -156,8 +157,8 @@ export class Families extends IdEntity<FamilyId>  {
       case DeliveryStatus.FailedBadAddress:
       case DeliveryStatus.FailedNotHome:
       case DeliveryStatus.FailedOther:
-        
-        return this.deliverStatus.displayValue ;
+
+        return this.deliverStatus.displayValue;
 
     }
     return this.deliverStatus.displayValue;

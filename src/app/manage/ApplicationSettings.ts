@@ -1,7 +1,7 @@
 import { StringColumn, NumberColumn } from "radweb";
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
-import { ContextEntity, Context } from "../shared/context";
-
+import { ContextEntity, Context, EntityClass } from "../shared/context";
+@EntityClass
 export class ApplicationSettings extends ContextEntity<number>  {
 
   id = new NumberColumn();
@@ -21,7 +21,7 @@ export class ApplicationSettings extends ContextEntity<number>  {
 
 
   constructor(context: Context) {
-    super(ApplicationSettings, {
+    super( {
       name: 'ApplicationSettings',
       allowApiRead: true,
       allowApiUpdate: context.isAdmin(),

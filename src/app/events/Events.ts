@@ -8,13 +8,14 @@ import { EventHelperId } from '../event-helpers/EventHelperId';
 import { HelperId, Helpers } from '../helpers/helpers';
 import { ItemsPerHelper } from '../event-item-helpers/ItemsPerHelper';
 import { ItemId } from './ItemId';
-import { Context } from '../shared/context';
+import { Context, EntityClass } from '../shared/context';
 
+@EntityClass
 export class Events extends IdEntity<EventId> {
   name = new StringColumn('שם אירוע');
   description = new StringColumn();
   constructor(private context: Context) {
-    super(new EventId(), Events, "events");
+    super(new EventId(), "events");
     this.initColumns();
   }
   async delete() {
@@ -26,11 +27,12 @@ export class Events extends IdEntity<EventId> {
 
 export class EventId extends Id { }
 
+@EntityClass
 export class EventHelpers extends IdEntity<EventHelperId> {
   helperId = new HelperId(this.context);
   eventId = new EventId();
   constructor(private context: Context) {
-    super(new EventHelperId(), EventHelpers, 'EventHelpers');
+    super(new EventHelperId(), 'EventHelpers');
     this.initColumns();
   }
   async delete() {
@@ -45,7 +47,7 @@ export class EventHelpers extends IdEntity<EventHelperId> {
     return this.lookupAsync(new Events(this.context), this.eventId);
   }
 }
-
+@EntityClass
 export class Items extends IdEntity<ItemId> {
   eventId = new EventId();
   quantity = new NumberColumn("יח'");
@@ -61,7 +63,7 @@ export class Items extends IdEntity<ItemId> {
     }
   });
   constructor() {
-    super(new ItemId(), Items, "items");
+    super(new ItemId(), "items");
     this.initColumns();
   }
   async delete() {

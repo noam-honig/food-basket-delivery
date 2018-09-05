@@ -7,8 +7,8 @@ import { BrowserPlatformLocation } from '@angular/platform-browser/src/browser/l
 export class IdEntity<idType extends Id> extends ContextEntity<string>
 {
   id: idType;
-  constructor(id: idType, entityType: { new(...args: any[]): Entity<string>; }, options?: ContextEntityOptions | string) {
-    super(entityType, options);
+  constructor(id: idType, options?: ContextEntityOptions | string) {
+    super(options);
     this.id = id;
     id.readonly = true;
     let x = this.onSavingRow;

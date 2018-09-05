@@ -6,11 +6,11 @@ import { HelperIdReadonly } from "../helpers/helpers";
 import { FamilyDeliveryEvents } from "./FamilyDeliveryEvents";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Families } from "../families/families";
-import { Context, ServerContext } from "../shared/context";
+import { Context, ServerContext, EntityClass } from "../shared/context";
 
 let fde = new FamilyDeliveryEvents(new ServerContext());
 let f = new Families(new ServerContext());
-
+@EntityClass
 export class DeliveryEvents extends IdEntity<DeliveryEventId>  {
 
   name = new StringColumn('שם');
@@ -28,7 +28,7 @@ export class DeliveryEvents extends IdEntity<DeliveryEventId>  {
   });
 
   constructor(private context: Context) {
-    super(new DeliveryEventId(), DeliveryEvents, {
+    super(new DeliveryEventId(), {
       name: 'DeliveryEvents',
       allowApiRead: context.isAdmin(),
       allowApiUpdate: context.isAdmin(),

@@ -4,7 +4,7 @@ import { HelperId, Helpers } from '../helpers/helpers';
 import { IdEntity, changeDate, DateTimeColumn, buildSql } from '../model-shared/types';
 import { Families } from "../families/families";
 
-import { Context, ServerContext } from "../shared/context";
+import { Context, ServerContext, EntityClass } from "../shared/context";
 
 
 
@@ -21,7 +21,7 @@ function log(s: string) {
     console.log(s);
     return s;
 }
-
+@EntityClass
 export class HelpersAndStats extends IdEntity<HelperId> {
     name = new StringColumn({
         caption: "שם",
@@ -49,7 +49,7 @@ export class HelpersAndStats extends IdEntity<HelperId> {
         dbReadOnly: true
     });
     constructor(context: Context) {
-        super(new HelperId(context), HelpersAndStats, {
+        super(new HelperId(context), {
             name: "helpersAndStats",
             allowApiRead: context.isAdmin(),
             dbName: buildSql('(select ', [

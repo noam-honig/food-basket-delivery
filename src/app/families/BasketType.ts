@@ -3,15 +3,15 @@ import { IdEntity } from "../model-shared/types";
 import { StringColumn } from "radweb";
 import { evilStatics } from "../auth/evil-statics";
 import { Id, HasAsyncGetTheValue } from "../model-shared/types";
-import { Context } from "../shared/context";
+import { Context, EntityClass } from "../shared/context";
 import { DataColumnSettings } from "radweb/utils/dataInterfaces1";
 
-
+@EntityClass
 export class BasketType extends IdEntity<BasketId>  {
 
   name = new StringColumn({ caption: "שם" });
   constructor(context: Context) {
-    super(new BasketId(context), BasketType, {
+    super(new BasketId(context), {
       name: "BasketType",
       allowApiRead: context.isLoggedIn(),
       allowApiCRUD: context.isAdmin()
