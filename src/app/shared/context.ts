@@ -88,6 +88,7 @@ export class ContextEntity<idType> extends Entity<idType>{
                 throw this._noContextErrorWithStack;
             }
             return this.__context.create(this.entityType);
+            
         }, evilStatics.dataSource, buildEntityOptions(contextEntityOptions));
         this._noContextErrorWithStack = new Error('@EntityClass not used or context was not set for' + this.constructor.name);
     }
