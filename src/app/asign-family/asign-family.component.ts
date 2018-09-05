@@ -33,11 +33,11 @@ import { Routable } from '../shared/routing-helper';
   caption: 'שיוך משפחות'
 })
 export class AsignFamilyComponent implements OnInit {
-    static route: Route = {
-      path: 'assign-families', component: AsignFamilyComponent, canActivate: [AdminGuard], data: { name: 'שיוך משפחות' }
-    };
+  static route: Route = {
+    path: 'assign-families', component: AsignFamilyComponent, canActivate: [AdminGuard], data: { name: 'שיוך משפחות' }
+  };
 
-    async searchPhone() {
+  async searchPhone() {
     this.name = undefined;
     this.shortUrl = undefined;
     this.id = undefined;
@@ -319,10 +319,7 @@ export class AsignFamilyComponent implements OnInit {
     }
     await AsignFamilyComponent.optimizeRoute(existingFamilies, context);
     existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
-    let exc = new ColumnHashSet()
-    exc.add(...context.for(Families).create().excludeColumns(context.info));
-
-    await foreachSync(existingFamilies, async f => { result.families.push(await f.__toPojo(exc)); });
+    result.families = await context.for(Families).toPojoArray(existingFamilies);
     result.basketInfo = await AsignFamilyComponent.getBasketStatus({
       filterCity: info.city,
       filterLanguage: info.language
@@ -374,7 +371,7 @@ export interface AddBoxInfo {
 export interface AddBoxResponse {
   helperId: string;
   shortUrl: string;
-  families: Families[];
+  families: any[];
   basketInfo: GetBasketStatusActionResponse
   addedBoxes: number;
 

@@ -1,4 +1,4 @@
-import { Entity, IDataSettings, GridSettings, Column, NumberColumn, DataList, EntityOptions } from "radweb";
+import { Entity, IDataSettings, GridSettings, Column, NumberColumn, DataList, EntityOptions, ColumnHashSet } from "radweb";
 import { EntitySourceFindOptions, FilterBase, FindOptionsPerEntity, DataProviderFactory, DataColumnSettings, DataApiRequest } from "radweb/utils/dataInterfaces1";
 import { foreachSync } from "./utils";
 import { evilStatics } from "../auth/evil-statics";
@@ -91,6 +91,18 @@ export class ContextEntity<idType> extends Entity<idType>{
     _setContext(context: Context) {
         this.__context = context;
     }
+    _getExcludedColumns(x: Entity<any>) {
+        let r = x.__iterateColumns().filter(c => {
+            let y = <hasMoreDataColumnSettings><any>c;
+            if (y && y.__getMoreDataColumnSettings) {
+
+                if (y.__getMoreDataColumnSettings() && y.__getMoreDataColumnSettings().excludeFromApi)
+                    return true;
+            }
+            return false;
+        });
+        return r;
+    }
     _getEntityApiSettings(r: Context): DataApiSettings<any> {
 
 
@@ -110,18 +122,9 @@ export class ContextEntity<idType> extends Entity<idType>{
                 allowUpdate: options.allowApiUpdate,
                 allowDelete: options.allowApiDelete,
                 allowInsert: options.allowApiInsert,
-                excludeColumns: x => {
-                    let r = x.__iterateColumns().filter(c => {
-                        let y = <hasMoreDataColumnSettings><any>c;
-                        if (y && y.__getMoreDataColumnSettings) {
-
-                            if (y.__getMoreDataColumnSettings() && y.__getMoreDataColumnSettings().excludeFromApi)
-                                return true;
-                        }
-                        return false;
-                    });
-                    return r;
-                },
+                excludeColumns: x =>
+                    this._getExcludedColumns(x)
+                ,
                 readonlyColumns: x => {
                     let r = x.__iterateColumns().filter(c => c.readonly);
 
@@ -193,6 +196,13 @@ export class SpecificEntityHelper<lookupIdType, T extends Entity<lookupIdType>> 
         if (r.length == 0)
             return undefined;
         return r[0];
+    }
+    toPojoArray(items: T[]) {
+        let exc = new ColumnHashSet();
+        if (this.entity instanceof ContextEntity)
+            exc.add(...this.entity._getExcludedColumns(this.entity));
+        
+        return Promise.all(items.map(f => f.__toPojo(exc)));
     }
     create() {
         return this.entity.source.createNewItem();
