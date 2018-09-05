@@ -9,8 +9,7 @@ import { DeliveryEvents } from '../delivery-events/delivery-events';
 import { Context, ServerContext, EntityClass } from '../shared/context';
 
 
-let fde = new FamilyDeliveryEvents(new ServerContext());
-var de = new DeliveryEvents(new ServerContext());
+
 
 @EntityClass
 export class FamilyDeliveryEventsView extends IdEntity<FamilyDelveryEventId>  {
@@ -28,7 +27,11 @@ export class FamilyDeliveryEventsView extends IdEntity<FamilyDelveryEventId>  {
     super(new FamilyDelveryEventId(), {
       name: 'FamilyDeliveryEventsView',
       allowApiRead: true,// context.isAdmin(),
-      dbName: buildSql('(select ', fde, '.', fde.id, ', ', [fde.family, fde.basketType, fde.courier, fde.courierAssingTime, fde.deliverStatus, fde.deliveryStatusDate, fde.courierComments, de.deliveryDate], ', ', de, '.', de.name, ' eventName', ' from ', fde, ' inner join ', de, ' on ', de, '.', de.id, '=', fde.deliveryEvent, ' where ', de.isActiveEvent, '=false', ') as x')
+      dbName: () => {
+        let fde = new FamilyDeliveryEvents(new ServerContext());
+        var de = new DeliveryEvents(new ServerContext());
+        return buildSql('(select ', fde, '.', fde.id, ', ', [fde.family, fde.basketType, fde.courier, fde.courierAssingTime, fde.deliverStatus, fde.deliveryStatusDate, fde.courierComments, de.deliveryDate], ', ', de, '.', de.name, ' eventName', ' from ', fde, ' inner join ', de, ' on ', de, '.', de.id, '=', fde.deliveryEvent, ' where ', de.isActiveEvent, '=false', ') as x');
+      }
     });
   }
 

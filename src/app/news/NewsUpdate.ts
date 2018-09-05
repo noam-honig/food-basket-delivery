@@ -6,8 +6,6 @@ import { Families, FamilyUpdateInfo } from "../families/families";
 import { Context, ContextEntity, ServerContext, EntityClass } from "../shared/context";
 
 
-
-export let f = new Families(new ServerContext());
 @EntityClass
 export class NewsUpdate extends ContextEntity<string> implements FamilyUpdateInfo {
 
@@ -28,7 +26,10 @@ export class NewsUpdate extends ContextEntity<string> implements FamilyUpdateInf
       allowApiRead: context.isAdmin(),
       caption: 'חדשות',
       name: 'news',
-      dbName: buildSql("(select ", [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser, f.courierComments], ", ", f.deliveryStatusDate, " updateTime, ", f.deliveryStatusUser, " updateUser, 1 updateType from ", f, " where ", f.deliveryStatusDate, " is not null ", "union select ", [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser, f.courierComments], ", ", f.courierAssingTime, " updateTime, ", f.courierAssignUser, " updateUser, 2 updateType from ", f, " where ", f.courierAssingTime, " is not null", ") x")
+      dbName: () => {
+        let f = new Families(new ServerContext());
+        return buildSql("(select ", [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser, f.courierComments], ", ", f.deliveryStatusDate, " updateTime, ", f.deliveryStatusUser, " updateUser, 1 updateType from ", f, " where ", f.deliveryStatusDate, " is not null ", "union select ", [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser, f.courierComments], ", ", f.courierAssingTime, " updateTime, ", f.courierAssignUser, " updateUser, 2 updateType from ", f, " where ", f.courierAssingTime, " is not null", ") x");
+      }
     });
   }
   describe() {
