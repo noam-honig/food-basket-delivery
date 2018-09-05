@@ -30,7 +30,6 @@ export class FamilyDeliveryEventsView extends IdEntity<FamilyDelveryEventId>  {
       allowApiRead: true,// context.isAdmin(),
       dbName: buildSql('(select ', fde, '.', fde.id, ', ', [fde.family, fde.basketType, fde.courier, fde.courierAssingTime, fde.deliverStatus, fde.deliveryStatusDate, fde.courierComments, de.deliveryDate], ', ', de, '.', de.name, ' eventName', ' from ', fde, ' inner join ', de, ' on ', de, '.', de.id, '=', fde.deliveryEvent, ' where ', de.isActiveEvent, '=false', ') as x')
     });
-    this.initColumns();
   }
 
 }

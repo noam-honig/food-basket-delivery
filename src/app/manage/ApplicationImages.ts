@@ -11,7 +11,6 @@ export class ApplicationImages extends ContextEntity<number>  {
       allowApiRead: context.isAdmin(),
       allowApiUpdate: context.isAdmin()
     });
-    this.initColumns(this.id);
   }
 
   static get(context: Context) {

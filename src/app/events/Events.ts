@@ -16,7 +16,6 @@ export class Events extends IdEntity<EventId> {
   description = new StringColumn();
   constructor(private context: Context) {
     super(new EventId(), "events");
-    this.initColumns();
   }
   async delete() {
     await foreachEntityItem(new Items(), hi => hi.eventId.isEqualTo(this.id), item => item.delete());
@@ -33,7 +32,6 @@ export class EventHelpers extends IdEntity<EventHelperId> {
   eventId = new EventId();
   constructor(private context: Context) {
     super(new EventHelperId(), 'EventHelpers');
-    this.initColumns();
   }
   async delete() {
     foreachEntityItem(new ItemsPerHelper(), hi => hi.eventHelperId.isEqualTo(this.id), item => item.delete());
@@ -64,7 +62,6 @@ export class Items extends IdEntity<ItemId> {
   });
   constructor() {
     super(new ItemId(), "items");
-    this.initColumns();
   }
   async delete() {
     foreachEntityItem(new ItemsPerHelper(), hi => hi.itemId.isEqualTo(this.id), item => item.delete());

@@ -12,7 +12,6 @@ export class FamilySources extends IdEntity<FamilySourceId>  {
       allowApiRead: context.isLoggedIn(),
       allowApiCRUD: context.isAdmin()
     });
-    this.initColumns();
   }
 }
 export class FamilySourceId extends Id implements HasAsyncGetTheValue {

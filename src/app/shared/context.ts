@@ -98,7 +98,7 @@ export class ContextEntity<idType> extends Entity<idType>{
     private entityType: EntityType;
     _setFactoryClassAndDoInitColumns(entityType: EntityType) {
         this.entityType = entityType;
-      //  this.initColumns((<any>this).id);
+        this.initColumns((<any>this).id);
 
     }
     _getExcludedColumns(x: Entity<any>) {

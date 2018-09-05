@@ -42,6 +42,5 @@ export class DeliveryEvents extends IdEntity<DeliveryEventId>  {
           }
       }
     });
-    this.initColumns();
   }
 }

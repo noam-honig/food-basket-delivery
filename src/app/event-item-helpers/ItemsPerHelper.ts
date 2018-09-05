@@ -13,6 +13,5 @@ export class ItemsPerHelper extends Entity<string> {
   private id = new CompoundIdColumn(this, this.itemId, this.eventHelperId);
   constructor() {
     super(() => new ItemsPerHelper(), evilStatics.dataSource, "ItemsPerHelper");
-    this.initColumns(this.id);
   }
 }

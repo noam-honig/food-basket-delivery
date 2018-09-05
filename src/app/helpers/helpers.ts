@@ -37,7 +37,6 @@ export class Helpers extends IdEntity<HelperId>  {
                     return this.id.isEqualTo(this.context.info.helperId);
             }
         });
-        this.initColumns();
     }
     public static emptyPassword = 'password';
     name = new radweb.StringColumn({

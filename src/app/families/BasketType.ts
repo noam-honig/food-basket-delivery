@@ -16,7 +16,6 @@ export class BasketType extends IdEntity<BasketId>  {
       allowApiRead: context.isLoggedIn(),
       allowApiCRUD: context.isAdmin()
     });
-    this.initColumns();
   }
 }
 export class BasketId extends Id implements HasAsyncGetTheValue {

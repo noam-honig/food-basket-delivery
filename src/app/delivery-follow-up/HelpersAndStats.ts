@@ -68,6 +68,5 @@ export class HelpersAndStats extends IdEntity<HelperId> {
                 buildSql('(select min(', f.courierAssingTime, ') ', fromFamiliesWithCourierAndReady(), ') firstDeliveryInProgressDate')
             ], ' from ', h, ') x')
         });
-        this.initColumns();
     }
 }

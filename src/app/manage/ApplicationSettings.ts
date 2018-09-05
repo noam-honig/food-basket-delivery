@@ -36,7 +36,6 @@ export class ApplicationSettings extends ContextEntity<number>  {
         }
       }
     })
-    this.initColumns(this.id);
   }
 
   static get(context: Context) {
