@@ -55,7 +55,7 @@ export async function serverInit() {
     if (process.env.HEROKU_POSTGRESQL_GREEN_URL)
         dbUrl = process.env.HEROKU_POSTGRESQL_GREEN_URL;
     const pool = new Pool({
-        connectionString: process.env.DATABASE_URL,
+        connectionString: dbUrl,
         ssl: ssl
     });
     evilStatics.dataSource = new PostgresDataProvider(pool);
