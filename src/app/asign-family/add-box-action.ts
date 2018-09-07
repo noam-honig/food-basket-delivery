@@ -20,102 +20,107 @@ export class AddBoxAction extends ServerAction<AddBoxInfo, AddBoxResponse>{
     }
 
     protected async execute(info: AddBoxInfo, req: DataApiRequest<myAuthInfo>): Promise<AddBoxResponse> {
-        let result: AddBoxResponse = {
-            helperId: info.helperId,
-            addedBoxes: 0,
-            shortUrl: undefined,
-            families: [],
-            basketInfo: undefined
-        }
-
-        let h = new Helpers();
-        if (!info.helperId) {
-            let r = await h.source.find({ where: h.phone.isEqualTo(info.phone) });
-            if (r.length == 0) {
-                h.phone.value = info.phone;
-                h.name.value = info.name;
-                await h.save();
-                result.helperId = h.id.value;
-                result.shortUrl = h.shortUrlKey.value;
-
+        try {
+            let result: AddBoxResponse = {
+                helperId: info.helperId,
+                addedBoxes: 0,
+                shortUrl: undefined,
+                families: [],
+                basketInfo: undefined
             }
-        }
-        let f = new Families();
 
+            let h = new Helpers();
+            if (!info.helperId) {
+                let r = await h.source.find({ where: h.phone.isEqualTo(info.phone) });
+                if (r.length == 0) {
+                    h.phone.value = info.phone;
+                    h.name.value = info.name;
+                    await h.save();
+                    result.helperId = h.id.value;
+                    result.shortUrl = h.shortUrlKey.value;
 
-
-        let existingFamilies = await f.source.find({ where: f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id)) });
-        {
-            for (let i = 0; i < info.numOfBaskets; i++) {
-
-                let where = f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
-                    f.courier.isEqualTo('').and(
-                        f.basketType.isEqualTo(info.basketType).and(
-                            f.special.IsDifferentFrom(YesNo.Yes.id)
-                        )));
-                if (info.language > -1)
-                    where = where.and(f.language.isEqualTo(info.language));
-                if (info.city) {
-                    where = where.and(f.city.isEqualTo(info.city));
                 }
-                let r = await f.source.find({ where });
+            }
+            let f = new Families();
 
-                if (r.length > 0) {
-                    if (existingFamilies.length == 0) {
-                        let position = Math.trunc(Math.random() * r.length);
-                        let family = r[position];
-                        family.courier.value = result.helperId;
-                        await family.doSave(req.authInfo);
-                        result.addedBoxes ++;
-                        existingFamilies.push(family);
+
+
+            let existingFamilies = await f.source.find({ where: f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id)) });
+            {
+                for (let i = 0; i < info.numOfBaskets; i++) {
+
+                    let where = f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
+                        f.courier.isEqualTo('').and(
+                            f.basketType.isEqualTo(info.basketType).and(
+                                f.special.IsDifferentFrom(YesNo.Yes.id)
+                            )));
+                    if (info.language > -1)
+                        where = where.and(f.language.isEqualTo(info.language));
+                    if (info.city) {
+                        where = where.and(f.city.isEqualTo(info.city));
                     }
-                    else {
+                    let r = await f.source.find({ where });
 
-                        let getDistance = (x: Location) => {
-                            let r = -1;
-                            existingFamilies.forEach(ef => {
-                                let loc = ef.getGeocodeInformation().location();
-                                if (loc) {
-                                    let dis = GeocodeInformation.GetDistanceBetweenPoints(x, loc);
-                                    if (r == -1 || dis < r)
-                                        r = dis;
-                                }
-                            });
-                            return r;
-
+                    if (r.length > 0) {
+                        if (existingFamilies.length == 0) {
+                            let position = Math.trunc(Math.random() * r.length);
+                            let family = r[position];
+                            family.courier.value = result.helperId;
+                            await family.doSave(req.authInfo);
+                            result.addedBoxes++;
+                            existingFamilies.push(family);
                         }
+                        else {
 
-                        let f = r[0];
-                        let dist = getDistance(f.getGeocodeInformation().location());
-                        for (let i = 1; i < r.length; i++) {
-                            let myDist = getDistance(r[i].getGeocodeInformation().location());
-                            if (myDist < dist) {
-                                dist = myDist;
-                                f = r[i]
+                            let getDistance = (x: Location) => {
+                                let r = -1;
+                                existingFamilies.forEach(ef => {
+                                    let loc = ef.getGeocodeInformation().location();
+                                    if (loc) {
+                                        let dis = GeocodeInformation.GetDistanceBetweenPoints(x, loc);
+                                        if (r == -1 || dis < r)
+                                            r = dis;
+                                    }
+                                });
+                                return r;
+
                             }
+
+                            let f = r[0];
+                            let dist = getDistance(f.getGeocodeInformation().location());
+                            for (let i = 1; i < r.length; i++) {
+                                let myDist = getDistance(r[i].getGeocodeInformation().location());
+                                if (myDist < dist) {
+                                    dist = myDist;
+                                    f = r[i]
+                                }
+                            }
+                            f.courier.value = result.helperId;
+
+                            await f.doSave(req.authInfo);
+                            existingFamilies.push(f);
+                            result.addedBoxes++;
                         }
-                        f.courier.value = result.helperId;
 
-                        await f.doSave(req.authInfo);
-                        existingFamilies.push(f);
-                        result.addedBoxes++;
                     }
-
                 }
+                await AddBoxAction.optimizeRoute(existingFamilies);
+                existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
+                let exc = new ColumnHashSet()
+                exc.add(...f.excludeColumns(req.authInfo));
+
+                await foreachSync(existingFamilies, async f => { result.families.push(await f.__toPojo(exc)); });
+                result.basketInfo = await GetBasketStatusAction.getTheBaskts({
+                    filterCity: info.city,
+                    filterLanguage: info.language
+                });
+                return result;
             }
-            await AddBoxAction.optimizeRoute(existingFamilies);
-            existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
-            let exc = new ColumnHashSet()
-            exc.add(...f.excludeColumns(req.authInfo));
-
-            await foreachSync(existingFamilies, async f => { result.families.push(await f.__toPojo(exc)); });
-            result.basketInfo = await GetBasketStatusAction.getTheBaskts({
-                filterCity: info.city,
-                filterLanguage: info.language
-            });
-            return result;
-
         }
+        catch (err) {
+            console.log(err);
+        }
+
     }
     static async optimizeRoute(families: Families[]) {
 
