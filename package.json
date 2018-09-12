@@ -29,7 +29,8 @@
     "RunSomething": "node --inspect --debug-brk dist-server/src/app/server/doSomething.js",
     "server:start": "npm run server:build && npm run server:execute",
     "server:watch": "concurrently \"tsc -P tsconfig.server.json -w\" \"nodemon dist-server/src/app/server/server.js --ignore /appData --ignore /dist\"",
-    "test-ang-compile": "ngc"
+    "test-ang-compile": "ngc",
+    "analyze":"ng build --prod --stats-json && webpack-bundle-analyzer dist/stats.json"
   },
   "private": true,
   "dependencies": {
@@ -111,6 +112,7 @@
     "protractor": "^5.4.0",
     "ts-node": "^4.1.0",
     "tslint": "~5.9.1",
-    "typescript": "~2.5.3"
+    "typescript": "~2.5.3",
+    "webpack-bundle-analyzer": "^3.0.1"
   }
 }
