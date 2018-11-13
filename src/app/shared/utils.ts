@@ -1,5 +1,5 @@
 import { Entity } from "radweb";
-import { FilterBase, EntitySourceFindOptions } from "radweb/utils/dataInterfaces1";
+import { FilterBase, EntitySourceFindOptions } from "radweb";
 
 export async function foreachSync<T>(array: T[], action: (item: T) => Promise<void>) {
   for (let i = 0; i < array.length; i++) {

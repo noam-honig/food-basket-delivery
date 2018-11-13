@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { GridSettings } from 'radweb';
 import { Events, EventHelpers } from "../events/Events";
-
-import { AuthService } from '../auth/auth-service';
 import { EventHelperItemsComponent } from '../event-helper-items/event-helper-items.component';
+import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-my-events',
@@ -12,23 +11,23 @@ import { EventHelperItemsComponent } from '../event-helper-items/event-helper-it
 })
 export class MyEventsComponent implements OnInit {
 
-  events = new GridSettings(new Events(), {
+  events = new GridSettings(new Events(this.context), {
     onNewRow: p => p.id.setToNewId()
   });
 
-  constructor(private auth: AuthService) { }
+  constructor(private context:Context) { }
 
   ngOnInit() {
     this.events.getRecords();
   }
   getEventHelper(p: Events) {
-    let ph = p.lookup(new EventHelpers(), ph => ph.helperId.isEqualTo(this.auth.auth.info.helperId).and(ph.eventId.isEqualTo(p.id.value)));
+    let ph = p.lookup(new EventHelpers(this.context), ph => ph.helperId.isEqualTo(this.context.info.helperId).and(ph.eventId.isEqualTo(p.id.value)));
     if (ph.isNew()) {
       if (!ph.id.value) {
         ph.id.setToNewId();
       }
       ph.eventId.value = p.id.value;
-      ph.helperId.value = this.auth.auth.info.helperId;
+      ph.helperId.value = this.context.info.helperId;
     }
     return ph;
   }

@@ -8,10 +8,6 @@ import { BusyService } from "./busy-service";
 
 import { UpdateCommentComponentData, UpdateCommentComponent } from "../update-comment/update-comment.component";
 import { UpdateFamilyDialogComponent, UpdateFamilyInfo } from "../update-family-dialog/update-family-dialog.component";
-import { Families } from "../families/families";
-
-const EventSource: any = window['EventSource'];
-
 
 @Injectable()
 export class SelectService implements SelectServiceInterface {

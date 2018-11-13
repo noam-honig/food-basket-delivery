@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Families } from '../families/families';
-import { AuthService } from '../auth/auth-service';
 import * as copy from 'copy-to-clipboard';
 import { DialogService } from '../select-popup/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
+import { Context } from '../shared/context';
 import { SelectService } from '../select-popup/select-service';
 @Component({
   selector: 'app-family-info',
@@ -12,7 +12,7 @@ import { SelectService } from '../select-popup/select-service';
 })
 export class FamilyInfoComponent implements OnInit {
 
-  constructor(private auth: AuthService, private dialog: DialogService, private selectService: SelectService) { }
+  constructor(private dialog:DialogService,private context:Context,private selectService:SelectService) { }
   @Input() f: Families;
   @Input() showHelp = false;
   ngOnInit() {
@@ -20,7 +20,7 @@ export class FamilyInfoComponent implements OnInit {
   @Input() partOfAssign: Boolean;
   @Output() assignmentCanceled = new EventEmitter<void>();
   async SendHelpSms() {
-    window.open('sms:' + this.f.courierAssignUserPhone.value + ';?&body=' + encodeURI(`הי ${this.f.courierAssignUserName.value}  זה ${this.auth.auth.info.name}, נתקלתי בבעיה אצל משפחת ${this.f.name.value}`), '_blank');
+    window.open('sms:' + this.f.courierAssignUserPhone.value + ';?&body=' + encodeURI(`הי ${this.f.courierAssignUserName.value}  זה ${this.context.info.name}, נתקלתי בבעיה אצל משפחת ${this.f.name.value}`), '_blank');
   }
   async cancelAssign(f: Families) {
     f.courier.value = '';

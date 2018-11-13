@@ -1,7 +1,7 @@
 import { Pool } from 'pg';
 import { Helpers } from '../helpers/helpers';
 import { config } from 'dotenv';
-import { PostgresDataProvider, PostgrestSchemaBuilder } from 'radweb/server';
+import { PostgresDataProvider, PostgrestSchemaBuilder } from 'radweb-server-postgres';
 
 import { evilStatics } from '../auth/evil-statics';
 
@@ -13,32 +13,11 @@ import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DeliveryEvents } from '../delivery-events/delivery-events';
-import { EventHelpers, Events, Items } from '../events/Events';
-import { ItemsPerHelper } from '../event-item-helpers/ItemsPerHelper';
-import { FamilyDeliveryEvents } from '../delivery-events/FamilyDeliveryEvents';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
-import { NewsUpdate } from '../news/NewsUpdate';
-import { FamilyDeliveryEventsView } from '../families/FamilyDeliveryEventsView';
+import { ServerContext, allEntities } from '../shared/context';
+import '../app.module';
 
 
-export var allEntities = () => [
-    new Events(),
-    new EventHelpers(),
-    new Helpers(),
-    new Items(),
-    new ItemsPerHelper(),
-    new Families(),
-    new BasketType(),
-    new FamilySources(),
-    new DeliveryEvents(),
-    new FamilyDeliveryEvents(),
-    new ApplicationSettings(),
-    new ApplicationImages(),
-    new HelpersAndStats(),
-    new NewsUpdate(),
-    new FamilyDeliveryEventsView()
-];
 
 export async function serverInit() {
 
@@ -61,9 +40,9 @@ export async function serverInit() {
     evilStatics.dataSource = new PostgresDataProvider(pool);
 
 
-
+    let context = new ServerContext();
     var sb = new PostgrestSchemaBuilder(pool);
-    await foreachSync(allEntities(), async x => {
+    await foreachSync(allEntities.map(x => context.for(x).create()), async x => {
         if (x.__getDbName().toLowerCase().indexOf('from ') < 0) {
             await sb.CreateIfNotExist(x);
             await sb.verifyAllColumns(x);
@@ -71,44 +50,45 @@ export async function serverInit() {
     });
 
 
-    let h = new BasketType();
-    await h.source.find({ where: h.id.isEqualTo('') }).then(x => {
-        if (x.length == 0) {
-            h.setEmptyIdForNewRow();
-            h.name.value = 'רגיל';
-            h.save();
-        }
-    });
+    if ((await context.for(BasketType).count() == 0)) {
+        let h = context.for(BasketType).create();
+        h.setEmptyIdForNewRow();
+        h.name.value = 'רגיל';
+        await h.save();
+    }
 
 
-    let f = new Families();
+
+
     console.log('fix city start');
-    await foreachSync(await f.source.find({ where: f.city.isEqualTo('') }), async ff => {
+    await context.for(Families).foreach(f => f.city.isEqualTo(''), async ff => {
         ff.city.value = ff.getGeocodeInformation().getCity();
         await ff.save();
     });
-    let de = new DeliveryEvents();
-    if (await de.source.count() == 0) {
+
+    if ((await context.for(DeliveryEvents).count()) == 0) {
+        let de = context.for(DeliveryEvents).create();
         de.name.value = 'אירוע החלוקה הראשון';
         de.isActiveEvent.value = true;
         de.deliveryDate.dateValue = new Date();
         await de.save();
     }
 
-    let settings = new ApplicationSettings();
-    if ((await settings.source.count()) == 0) {
+
+    if ((await context.for(ApplicationSettings).count()) == 0) {
+        let settings = context.for(ApplicationSettings).create();
         settings.id.value = 1;
         settings.organisationName.value = 'שם הארגון שלי';
         settings.logoUrl.value = '/assets/apple-touch-icon.png';
         settings.smsText.value = 'שלום !משנע!\n לחלוקת חבילות !ארגון! לחץ על: !אתר! \nתודה !שולח!';
         await settings.save();
     }
-    let images = new ApplicationImages();
-    if ((await images.source.count()) == 0) {
+
+    let images = await context.for(ApplicationImages).findFirst(ap => ap.id.isEqualTo(1));
+    if (!images) {
+        images = context.for(ApplicationImages).create();
         images.id.value = 1;
-
         await images.save();
-
     }
     console.log('fix city done');
 

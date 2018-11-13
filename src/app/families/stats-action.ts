@@ -1,22 +1,13 @@
-import { ServerAction } from "../auth/server-action";
-import { DataApiRequest, FilterBase } from "radweb/utils/dataInterfaces1";
-import { myAuthInfo } from "../auth/my-auth-info";
+import { RunOnServer } from "../auth/server-action";
+import { FilterBase } from "radweb";
 import { Families } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
 import { CallStatus } from "./CallStatus";
 import { YesNo } from "./YesNo";
-import * as fetch from 'node-fetch';
-import { foreachSync } from "../shared/utils";
-import { evilStatics } from "../auth/evil-statics";
-import { PostgresDataProvider } from "radweb/server";
-import { Column, Filter } from "radweb";
-import { BasketInfo } from "../asign-family/get-basket-status-action";
 import { BasketType } from "./BasketType";
+import { Context } from "../shared/context";
+import { BasketInfo } from "../asign-family/asign-family.component";
 
-
-export interface InArgs {
-
-}
 export interface OutArgs {
     data: any;
     baskets: BasketInfo[];
@@ -45,60 +36,51 @@ export class Stats {
     phoneAssigned = new FaimilyStatistics('משוייכת לטלפנית', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.callStatus.isEqualTo(CallStatus.NotYet.id).and(f.callHelper.IsDifferentFrom(''))), colors.blue);
     phoneOk = new FaimilyStatistics('בוצעה שיחה', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.callStatus.isEqualTo(CallStatus.Success.id)), colors.green);
     phoneFailed = new FaimilyStatistics('לא השגנו', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.callStatus.isEqualTo(CallStatus.Failed.id)), colors.red);
-    statistics: FaimilyStatistics[] = [
-        this.currentEvent,
-        this.special,
-        this.notInEvent,
-        this.ready,
-        this.onTheWay,
-        this.delivered,
-        this.problem,
-        this.frozen,
-        this.deliveryComments,
-        this.phoneComments,
-        this.phoneReady,
-        this.phoneAssigned,
-        this.phoneOk,
-        this.phoneFailed
-    ];
+
     async getData() {
-        let r = await new StatsAction().run({});
-        this.statistics.forEach(x => x.loadFrom(r.data));
+        let r = await Stats.getDataFromServer();
+        for (let s in this) {
+            let x:any = this[s];
+            if (x instanceof FaimilyStatistics) {
+                x.loadFrom(r.data);
+            }
+        }
         return r.baskets;
     }
-}
-
-export class StatsAction extends ServerAction<InArgs, OutArgs>{
-    constructor() {
-        super('StatsAction');//required because of minification
-    }
-    protected async execute(info: InArgs, req: DataApiRequest<myAuthInfo>): Promise<OutArgs> {
-
+    @RunOnServer({ allowed: c => c.isAdmin() })
+    static async getDataFromServer(context?: Context) {
         let result = { data: {}, baskets: [] };
         let stats = new Stats();
-        await Promise.all(stats.statistics.map(x => x.saveTo(result.data)));
-        let b = new BasketType();
-        let f = new Families();
-        let baskets = await b.source.find({});
-        await foreachSync(baskets, async  b => {
+        let pendingStats = [];
+        for (let s in stats) {
+            let x = stats[s];
+            if (x instanceof FaimilyStatistics) {
+                pendingStats.push(x.saveTo(result.data, context));
+            }
+        }
+
+
+
+
+        pendingStats.push(context.for(BasketType).foreach(undefined, async  b => {
             result.baskets.push({
                 id: b.id.value,
                 name: b.name.value,
-                unassignedFamilies: await f.source.count(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
+                unassignedFamilies: await context.for(Families).count(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
                     f.basketType.isEqualTo(b.id).and(
                         f.courier.isEqualTo('')
                     )
                 ))
             });
-        });
+        }));
+        await Promise.all(pendingStats);
         result.baskets = result.baskets.filter(b => b.unassignedFamilies > 0);
-        result.baskets.sort((a,b)=>b.unassignedFamilies-a.unassignedFamilies);
+        result.baskets.sort((a, b) => b.unassignedFamilies - a.unassignedFamilies);
         return result;
-
-
     }
-
 }
+
+
 
 export class FaimilyStatistics {
     constructor(public name: string, public rule: (f: Families) => FilterBase, public color: string) {
@@ -106,9 +88,9 @@ export class FaimilyStatistics {
     }
 
     value = 0;
-    async saveTo(data: any) {
-        let f = new Families();
-        data[this.name] = await f.source.count(this.rule(f)).then(c => this.value = c);
+    async saveTo(data: any, context: Context) {
+
+        data[this.name] = await context.for(Families).count(f => this.rule(f)).then(c => this.value = c);
     }
     async loadFrom(data: any) {
         this.value = data[this.name];

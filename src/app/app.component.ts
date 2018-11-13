@@ -1,4 +1,4 @@
-import { Component, transition, NgZone, Injector, ViewChild } from '@angular/core';
+import { Component,  NgZone, Injector, ViewChild } from '@angular/core';
 import { Router, Route, CanActivate, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { AuthService } from './auth/auth-service';
 import { LoggedInGuard, dummyRoute, AdminGuard } from './auth/auth-guard';
@@ -6,6 +6,7 @@ import { MatSidenav, MAT_AUTOCOMPLETE_VALUE_ACCESSOR } from '@angular/material';
 import { DialogService } from './select-popup/dialog';
 import { ApplicationSettings } from './manage/ApplicationSettings';
 import { FamiliesComponent } from './families/families.component';
+import { Context } from './shared/context';
 
 
 
@@ -23,7 +24,8 @@ export class AppComponent {
     public router: Router,
     public activeRoute: ActivatedRoute,
     private injector: Injector,
-    public dialog: DialogService) {
+    public dialog: DialogService,
+    private context:Context) {
     /*this.router.config.unshift({
       path: FamiliesComponent.route,
       component: FamiliesComponent,
@@ -48,12 +50,12 @@ export class AppComponent {
     return name;
   }
   getLogo() {
-    return ApplicationSettings.get().logoUrl.value;
+    return ApplicationSettings.get(this.context).logoUrl.value;
   }
   currentTitle() {
     if (this.activeRoute && this.activeRoute.snapshot && this.activeRoute.firstChild && this.activeRoute.firstChild.data && this.activeRoute.snapshot.firstChild.data.name)
       return this.activeRoute.snapshot.firstChild.data.name;;
-    return ApplicationSettings.get().organisationName.value;
+    return ApplicationSettings.get(this.context).organisationName.value;
   }
   toolbarColor = 'primary';
 
@@ -86,8 +88,7 @@ export class AppComponent {
 
   }
   test() {
-    console.log(this.activeRoute);
+
   }
 
 }
-

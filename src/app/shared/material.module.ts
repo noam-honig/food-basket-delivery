@@ -34,11 +34,11 @@ import {
     MatTooltipModule
 } from '@angular/material';
 
-import { CdkTableModule } from '@angular/cdk/table';
+//import { CdkTableModule } from '@angular/cdk/table';
 
 @NgModule({
     imports: [
-        CdkTableModule,
+  //      CdkTableModule,
         MatAutocompleteModule,
         MatButtonModule,
         MatButtonToggleModule,
@@ -73,7 +73,7 @@ import { CdkTableModule } from '@angular/cdk/table';
         MatTooltipModule
     ],
     exports: [
-        CdkTableModule,
+//        CdkTableModule,
         MatAutocompleteModule,
         MatButtonModule,
         MatButtonToggleModule,

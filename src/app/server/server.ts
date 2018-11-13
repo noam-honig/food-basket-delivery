@@ -1,52 +1,31 @@
-
-import * as HelpersAndStats from "../delivery-follow-up/HelpersAndStats";
-import * as FamilyDeliveryEventsView from "../families/FamilyDeliveryEventsView";
 import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
 import * as secure from 'express-force-https';
 import * as compression from 'compression';
-import { ExpressBridge } from 'radweb/server';
-import { DataApi, DataApiSettings } from 'radweb/utils/server/DataApi';
+import { ExpressBridge } from 'radweb-server';
+import { DataApi } from 'radweb';
 import * as fs from 'fs';
-
-import { LoginAction } from '../auth/loginAction';
 import { myAuthInfo } from '../auth/my-auth-info';
 import { evilStatics } from '../auth/evil-statics';
-import { ResetPasswordAction } from '../helpers/reset-password';
-
-
-import { AddBoxAction } from '../asign-family/add-box-action';
-import { SendSmsAction } from '../asign-family/send-sms-action';
-import { LoginFromSmsAction } from '../login-from-sms/login-from-sms-action';
-import { GetBasketStatusAction } from '../asign-family/get-basket-status-action';
-import { serverInit, allEntities } from './serverInit';
-import { ServerEventAuthorizeAction } from './server-event-authorize-action';
+import { serverInit } from './serverInit';
 import { ServerEvents } from './server-events';
-import { SetDeliveryActiveAction } from '../delivery-events/set-delivery-active-action';
-import { CopyFamiliesToActiveEventAction } from '../delivery-events/copy-families-to-active-event-action';
-import { StatsAction } from '../families/stats-action';
-import { DeliveryStatsAction } from '../delivery-follow-up/delivery-stats';
-import { Helpers } from '../helpers/helpers';
 import { Families } from '../families/families';
-import { NewsUpdate } from "../news/NewsUpdate";
-import { FamilySources } from "../families/FamilySources";
-import { BasketType } from "../families/BasketType";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { DeliveryEvents } from '../delivery-events/delivery-events';
-import { Entity } from "radweb";
-import { entityWithApi, ApiAccess } from "./api-interfaces";
-import { DataApiRequest } from "radweb/utils/dataInterfaces1";
-
+import { serverActionField, myServerAction, actionInfo } from "../auth/server-action";
+import { SiteArea } from "radweb-server";
+import "../helpers/helpers.component";
+import '../app.module';
+import { ContextEntity, ServerContext, allEntities } from "../shared/context";
+import * as jwt from 'jsonwebtoken';
+import * as passwordHash from 'password-hash';
 
 serverInit().then(async () => {
 
 
     let app = express();
-    //app.use(morgan('tiny')); 'logging';
     if (!process.env.DISABLE_SERVER_EVENTS) {
         let serverEvents = new ServerEvents(app);
         Families.SendMessageToBrowsers = x => serverEvents.SendMessage(x);
-        SetDeliveryActiveAction.SendMessageToBrowsers = x => serverEvents.SendMessage(x);
     }
 
 
@@ -59,55 +38,43 @@ serverInit().then(async () => {
     let eb = new ExpressBridge<myAuthInfo>(app);
 
     let allUsersAlsoNotLoggedIn = eb.addArea('/api');
-    let loggedInApi = eb.addArea('/api', async x => x.authInfo != undefined);
-    let adminApi = eb.addArea('/api', async x => x.authInfo && x.authInfo.admin);
 
     evilStatics.auth.tokenSignKey = process.env.TOKEN_SIGN_KEY;
 
-    evilStatics.auth.applyTo(eb, allUsersAlsoNotLoggedIn);
-
-    [
-        new LoginAction(),
-        new LoginFromSmsAction()
-    ].forEach(a => allUsersAlsoNotLoggedIn.addAction(a));
-
-    [
-        new ResetPasswordAction(),
-        new AddBoxAction(),
-        new SendSmsAction(),
-        new GetBasketStatusAction(),
-        new ServerEventAuthorizeAction(),
-        new SetDeliveryActiveAction(),
-        new CopyFamiliesToActiveEventAction(),
-        new StatsAction(),
-        new DeliveryStatsAction(),
-    ].forEach(a => adminApi.addAction(a));
+    var addAction = (area: SiteArea<myAuthInfo>, a: any) => {
+        let x = <myServerAction>a[serverActionField];
+        if (!x) {
+            throw 'failed to set server action, did you forget the RunOnServerDecorator?';
+        }
+        area.addAction(x);
+    };
 
 
+    actionInfo.runningOnServer = true;
+    evilStatics.auth.applyTo(eb, allUsersAlsoNotLoggedIn, {
+        verify: (t, k) => jwt.verify(t, k),
+        sign: (i, k) => jwt.sign(i, k),
+        decode: t => jwt.decode(t)
+    });
+    evilStatics.passwordHelper = {
+        generateHash: p => passwordHash.generate(p),
+        verify: (p, h) => passwordHash.verify(p, h)
+    }
+
+    actionInfo.allActions.forEach(a => {
+        addAction(allUsersAlsoNotLoggedIn, a);
+    });
 
     //add Api Entries
-    allEntities().forEach(e => {
-        let x = <entityWithApi><any>e;
-        if (x && x.getDataApiSettings) {
-            let settings = x.getDataApiSettings();
-
-            let createApi: (r: DataApiRequest<myAuthInfo>) => DataApi<any> = r => new DataApi(e);
-            if (settings.apiSettings) {
-                createApi = r => new DataApi(e, settings.apiSettings(r.authInfo));
-            }
-
-            switch (settings.apiAccess) {
-                case ApiAccess.all:
-                    allUsersAlsoNotLoggedIn.add(r => createApi(r));
-                    break;
-                case ApiAccess.loggedIn:
-                    loggedInApi.add(r => createApi(r));
-                    break;
-                case ApiAccess.AdminOnly:
-                default:
-                    adminApi.add(r => createApi(r));
-                    break;
-            }
+    allEntities.forEach(e => {
+        let x = new ServerContext().for(e).create();
+        if (x instanceof ContextEntity) {
+            let j = x;
+            allUsersAlsoNotLoggedIn.add(r => {
+                let c = new ServerContext();
+                c.setReq(r);
+                return new DataApi(c.create(e), j._getEntityApiSettings(c));
+            });
         }
     });
 
@@ -136,14 +103,15 @@ serverInit().then(async () => {
         res.send(result);
     });
     app.use('/assets/apple-touch-icon.png', async (req, res) => {
-        let imageBase = (await ApplicationImages.ApplicationImages.getAsync()).base64PhoneHomeImage.value;
+
+        let imageBase = (await ApplicationImages.ApplicationImages.getAsync(new ServerContext())).base64PhoneHomeImage.value;
         res.contentType('png');
         if (imageBase) {
             try {
                 res.send(Buffer.from(imageBase, 'base64'));
                 return;
             }
-            catch{
+            catch (err) {
             }
         }
         try {
@@ -155,13 +123,13 @@ serverInit().then(async () => {
     });
     app.use('/favicon.ico', async (req, res) => {
         res.contentType('ico');
-        let imageBase = (await ApplicationImages.ApplicationImages.getAsync()).base64Icon.value;
+        let imageBase = (await ApplicationImages.ApplicationImages.getAsync(new ServerContext())).base64Icon.value;
         if (imageBase) {
             try {
                 res.send(Buffer.from(imageBase, 'base64'));
                 return;
             }
-            catch{ }
+            catch (err) { }
         }
         try {
             res.send(fs.readFileSync('dist/favicon.ico'));
@@ -173,13 +141,15 @@ serverInit().then(async () => {
     });
     async function sendIndex(res: express.Response) {
         const index = 'dist/index.html';
+
         if (fs.existsSync(index)) {
-            let x = (await ApplicationSettings.getAsync()).organisationName.value;
+            let x = (await ApplicationSettings.getAsync(new ServerContext())).organisationName.value;
 
             res.send(fs.readFileSync(index).toString().replace('!TITLE!', x));
         }
-        else
-            res.send('No Result');
+        else {
+            res.send('No Result' + fs.realpathSync(index));
+        }
     }
 
     app.get('', (req, res) => {

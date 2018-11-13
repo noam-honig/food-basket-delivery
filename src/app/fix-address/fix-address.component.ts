@@ -1,12 +1,14 @@
+/// <reference types="@types/googlemaps" />
 import { Component, OnInit, ViewChild, Sanitizer } from '@angular/core';
 import { GridSettings } from 'radweb';
 import { Families } from '../families/families';
 import { DialogService } from '../select-popup/dialog';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
-import { } from 'googlemaps';
+
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
+import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-fix-address',
@@ -14,7 +16,7 @@ import { AdminGuard } from '../auth/auth-guard';
   styleUrls: ['./fix-address.component.scss']
 })
 export class FixAddressComponent implements OnInit {
-
+  constructor(private context:Context, private san: DomSanitizer) { }
   static route:Route = {
     path: 'addresses',
     component: FixAddressComponent,
@@ -23,7 +25,7 @@ export class FixAddressComponent implements OnInit {
 
   gridView = true;
 
-  families = new GridSettings(new Families(), {
+  families =this.context.for(Families).gridSettings( {
     allowUpdate: true,
     get: { limit: 1000, orderBy: f => f.name },
     hideDataArea: true,
@@ -70,7 +72,7 @@ export class FixAddressComponent implements OnInit {
 
     ]
   });
-  constructor(private dialog: DialogService, private san: DomSanitizer) { }
+  
   showInfo() {
     console.log(this.getLocation());
   }

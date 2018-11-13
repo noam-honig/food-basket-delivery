@@ -2,6 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Helpers } from '../helpers/helpers';
+import {  Context } from '../shared/context';
 
 @Component({
   selector: 'app-select-helper',
@@ -16,19 +17,19 @@ export class SelectHelperComponent implements OnInit {
   filteredHelpers: Helpers[] = [];
   constructor(
     private dialogRef: MatDialogRef<SelectHelperComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: SelectHelperInfo
+    @Inject(MAT_DIALOG_DATA) private data: SelectHelperInfo,
+    private context:Context
 
   ) {
 
   }
-  clearHelper(){
-    let h =new Helpers();
-    h.id.value = '';
-    this.select(h);
+  clearHelper() {
+    this.select(undefined);
   }
+  
   async ngOnInit() {
-    let h = new Helpers();
-    this.allHelpers = await h.source.find({ orderBy: [h.name], limit: 1000 });
+
+    this.allHelpers = await this.context.for(Helpers).find({ orderBy: h => [h.name], limit: 1000 });
     this.filteredHelpers = this.allHelpers;
   }
   doFilter() {

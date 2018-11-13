@@ -1,10 +1,12 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
+
+import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { RadWebModule } from 'radweb';
-import { AppRoutingModule } from './app.routing';
-import { HomeComponent } from './home/home.component';
+import { RadWebModule } from 'radweb'; 
+
+
 import { MaterialModule } from './shared/material.module';
 import { ChartsModule } from 'ng2-charts';
 
@@ -44,6 +46,7 @@ import { BusyService } from './select-popup/busy-service';
 import { StamTestComponent } from './stam-test/stam-test.component';
 import { NewsComponent } from './news/news.component';
 import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
+import { Context } from './shared/context';
 
 import { SelectService } from './select-popup/select-service';
 import { UpdateFamilyDialogComponent } from './update-family-dialog/update-family-dialog.component';
@@ -54,7 +57,6 @@ import { UpdateFamilyComponent } from './update-family/update-family.component';
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
     EventsComponent,
     EventHelperItemsComponent,
     HelpersComponent,
@@ -107,7 +109,8 @@ import { UpdateFamilyComponent } from './update-family/update-family.component';
     AuthService,
     LoggedInGuard,
     AdminGuard,
-    NotLoggedInGuard
+    NotLoggedInGuard,
+    Context
   ],
 
   bootstrap: [AppComponent],

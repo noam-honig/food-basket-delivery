@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, Route } from '@angular/router';
-import { LoginFromSmsAction } from './login-from-sms-action';
+
 import { AuthService } from '../auth/auth-service';
 
 @Component({

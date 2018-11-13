@@ -1,19 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { GridSettings, UrlBuilder } from 'radweb';
 import { Families } from '../families/families';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { BasketType } from "../families/BasketType";
 import { Helpers } from '../helpers/helpers';
-import { AuthService } from '../auth/auth-service';
-import { DialogService } from '../select-popup/dialog';
 import { MapComponent } from '../map/map.component';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
+import { Context } from '../shared/context';
 
 export class UserFamiliesList {
     map: MapComponent;
     setMap(map: MapComponent): any {
         this.map = map;
     }
+    constructor(private context: Context) { }
     toDeliver: Families[] = [];
     delivered: Families[] = [];
     problem: Families[] = [];
@@ -30,12 +28,12 @@ export class UserFamiliesList {
     async initForFamilies(helperId: string, name: string, familiesPocoArray: any[]) {
         this.helperId = helperId;
         this.helperName = this.helperName;
-        this.allFamilies = familiesPocoArray.map(x => this.families.source.fromPojo(x));
+        this.allFamilies = familiesPocoArray.map(x => this.context.for(Families).create().source.fromPojo(x));
         this.initFamilies();
     }
-    families = new Families();
+
     async reload() {
-        this.allFamilies = await this.families.source.find({ where: this.families.courier.isEqualTo(this.helperId), orderBy: [this.families.routeOrder, this.families.address], limit: 1000 });
+        this.allFamilies = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(this.helperId), orderBy: f => [f.routeOrder, f.address], limit: 1000 });
         this.initFamilies();
     }
 
@@ -88,7 +86,7 @@ export class UserFamiliesList {
                 let x: basketStats = hash[ff.basketType.value];
                 if (!x) {
                     hash[ff.basketType.value] = this.totals[this.totals.push({
-                        name: () => ff.lookup(new BasketType(), ff.basketType).name.value,
+                        name: () => this.context.for(BasketType).lookup(ff.basketType).name.value,
                         count: 1
                     }) - 1];
                 }

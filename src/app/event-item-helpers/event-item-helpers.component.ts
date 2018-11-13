@@ -4,6 +4,7 @@ import { GridSettings } from 'radweb';
 
 import { ItemsPerHelper } from "./ItemsPerHelper";
 import { EventHelpers } from '../events/Events';
+import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-event-item-helpers',
@@ -13,11 +14,11 @@ import { EventHelpers } from '../events/Events';
 export class EventItemHelpersComponent implements OnInit {
 
   @Input() itemId = '';
-  constructor() { }
-  items = new GridSettings(new ItemsPerHelper(), {
+  constructor(private context:Context) { }
+  items = new GridSettings<ItemsPerHelper>(new ItemsPerHelper(), {
     columnSettings: i => [
       {
-        getValue: i => i.lookup(new EventHelpers(), i.eventHelperId).helper().name.value,
+        getValue: i => i.lookup(new EventHelpers(this.context), i.eventHelperId).helper().name.value,
         caption: 'מתנדב/ת'
       },
       i.quantity

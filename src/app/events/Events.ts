@@ -3,47 +3,49 @@
 import { foreachEntityItem } from '../shared/utils';
 import { evilStatics } from '../auth/evil-statics';
 import { IdEntity, Id } from '../model-shared/types';
-import { StringColumn, NumberColumn } from 'radweb';
+import { StringColumn, NumberColumn, Entity } from 'radweb';
 import { EventHelperId } from '../event-helpers/EventHelperId';
 import { HelperId, Helpers } from '../helpers/helpers';
 import { ItemsPerHelper } from '../event-item-helpers/ItemsPerHelper';
 import { ItemId } from './ItemId';
+import { Context, EntityClass } from '../shared/context';
 
+@EntityClass
 export class Events extends IdEntity<EventId> {
   name = new StringColumn('שם אירוע');
   description = new StringColumn();
-  constructor() {
-    super(new EventId(), () => new Events(), evilStatics.dataSource, "events");
-    this.initColumns();
+  constructor(private context: Context) {
+    super(new EventId(), "events");
   }
   async delete() {
     await foreachEntityItem(new Items(), hi => hi.eventId.isEqualTo(this.id), item => item.delete());
-    await foreachEntityItem(new EventHelpers(), hi => hi.eventId.isEqualTo(this.id), item => item.delete());
+    await foreachEntityItem(new EventHelpers(this.context), hi => hi.eventId.isEqualTo(this.id), item => item.delete());
     return super.delete();
   }
 }
 
 export class EventId extends Id { }
 
+@EntityClass
 export class EventHelpers extends IdEntity<EventHelperId> {
-  helperId = new HelperId();
+  helperId = new HelperId(this.context);
   eventId = new EventId();
-  constructor() {
-    super(new EventHelperId(), () => new EventHelpers(), evilStatics.dataSource, 'EventHelpers');
-    this.initColumns();
+  constructor(private context: Context) {
+    super(new EventHelperId(), 'EventHelpers');
   }
   async delete() {
     foreachEntityItem(new ItemsPerHelper(), hi => hi.eventHelperId.isEqualTo(this.id), item => item.delete());
     return super.delete();
   }
+
   helper() {
-    return this.lookup(new Helpers(), this.helperId);
+    return this.context.for(Helpers).lookup(this.helperId);
   }
   event() {
-    return this.lookupAsync(new Events(), this.eventId);
+    return this.lookupAsync(new Events(this.context), this.eventId);
   }
 }
-
+@EntityClass
 export class Items extends IdEntity<ItemId> {
   eventId = new EventId();
   quantity = new NumberColumn("יח'");
@@ -59,8 +61,7 @@ export class Items extends IdEntity<ItemId> {
     }
   });
   constructor() {
-    super(new ItemId(), () => new Items(), evilStatics.dataSource, "items");
-    this.initColumns();
+    super(new ItemId(), "items");
   }
   async delete() {
     foreachEntityItem(new ItemsPerHelper(), hi => hi.itemId.isEqualTo(this.id), item => item.delete());

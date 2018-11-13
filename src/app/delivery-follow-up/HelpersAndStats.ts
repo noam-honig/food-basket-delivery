@@ -1,31 +1,20 @@
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { NumberColumn, StringColumn } from 'radweb';
-import { evilStatics } from '../auth/evil-statics';
 import { HelperId, Helpers } from '../helpers/helpers';
 import { IdEntity, changeDate, DateTimeColumn, buildSql } from '../model-shared/types';
 import { Families } from "../families/families";
-import { entityApiSettings, entityWithApi } from "../server/api-interfaces";
+
+import { Context, ServerContext, EntityClass } from "../shared/context";
 
 
 
-let f = new Families();
-let h = new Helpers();
-let fromFamilies = () => buildSql(' from ', f,
-    ' where ', f.courier, ' = ', h, '.', h.id);
-
-let fromFamiliesWithCourierAndStatus = (s: DeliveryStatus) => buildSql(fromFamilies(), ' and ', f.deliverStatus, ' = ', s.id);
-
-let fromFamiliesWithCourierAndReady = () => fromFamiliesWithCourierAndStatus(DeliveryStatus.ReadyForDelivery);
 
 function log(s: string) {
     console.log(s);
     return s;
 }
-
-export class HelpersAndStats extends IdEntity<HelperId> implements entityWithApi {
-    getDataApiSettings(): entityApiSettings {
-        return {};
-    }
+@EntityClass
+export class HelpersAndStats extends IdEntity<HelperId> {
     name = new StringColumn({
         caption: "שם",
         onValidate: v => {
@@ -51,25 +40,36 @@ export class HelpersAndStats extends IdEntity<HelperId> implements entityWithApi
     firstDeliveryInProgressDate = new DateTimeColumn({
         dbReadOnly: true
     });
-    constructor() {
-        super(new HelperId(), () => new HelpersAndStats(), evilStatics.dataSource, {
+    constructor(context: Context) {
+        super(new HelperId(context), {
             name: "helpersAndStats",
-            dbName: buildSql('(select ', [
-                h.id,
-                h.name,
-                h.phone,
-                h.smsDate,
-                h.reminderSmsDate,
-                buildSql('(select count(*) ', fromFamiliesWithCourierAndReady(), ') deliveriesInProgress'),
-                buildSql('(select count(*) ', fromFamilies(), ') allFamilies'),
-                buildSql('(select count(*) ', buildSql(fromFamilies(), ' and ', f.deliverStatus, ' in (', [
-                    DeliveryStatus.FailedBadAddress.id,
-                    DeliveryStatus.FailedNotHome.id,
-                    DeliveryStatus.FailedOther.id
-                ], ')'), ') deliveriesWithProblems'),
-                buildSql('(select min(', f.courierAssingTime, ') ', fromFamiliesWithCourierAndReady(), ') firstDeliveryInProgressDate')
-            ], ' from ', h, ') x')
+            allowApiRead: context.isAdmin(),
+            dbName: () => {
+                let f = new Families(new ServerContext());
+                let h = new Helpers(new ServerContext());
+                let fromFamilies = () => buildSql(' from ', f,
+                    ' where ', f.courier, ' = ', h, '.', h.id);
+
+                let fromFamiliesWithCourierAndStatus = (s: DeliveryStatus) => buildSql(fromFamilies(), ' and ', f.deliverStatus, ' = ', s.id);
+
+                let fromFamiliesWithCourierAndReady = () => fromFamiliesWithCourierAndStatus(DeliveryStatus.ReadyForDelivery);
+
+                return buildSql('(select ', [
+                    h.id,
+                    h.name,
+                    h.phone,
+                    h.smsDate,
+                    h.reminderSmsDate,
+                    buildSql('(select count(*) ', fromFamiliesWithCourierAndReady(), ') deliveriesInProgress'),
+                    buildSql('(select count(*) ', fromFamilies(), ') allFamilies'),
+                    buildSql('(select count(*) ', buildSql(fromFamilies(), ' and ', f.deliverStatus, ' in (', [
+                        DeliveryStatus.FailedBadAddress.id,
+                        DeliveryStatus.FailedNotHome.id,
+                        DeliveryStatus.FailedOther.id
+                    ], ')'), ') deliveriesWithProblems'),
+                    buildSql('(select min(', f.courierAssingTime, ') ', fromFamiliesWithCourierAndReady(), ') firstDeliveryInProgressDate')
+                ], ' from ', h, ') x');
+            }
         });
-        this.initColumns();
     }
 }

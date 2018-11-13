@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { GridSettings, ColumnSetting, ColumnHashSet, Filter, AndFilter } from 'radweb';
+import { ColumnHashSet, AndFilter } from 'radweb';
 import { FamilyDeliveryEventsView } from "./FamilyDeliveryEventsView";
 import { Families } from './families';
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -8,15 +8,15 @@ import { YesNo } from "./YesNo";
 import { Language } from "./Language";
 import { FamilySources } from "./FamilySources";
 import { BasketType } from "./BasketType";
+import { SelectService } from '../select-popup/select-service';
 import { DialogService } from '../select-popup/dialog';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 
 import { DomSanitizer } from '@angular/platform-browser';
 import * as XLSX from 'xlsx';
-import { FilterBase } from 'radweb/utils/dataInterfaces1';
-import { foreachEntityItem, foreachSync } from '../shared/utils';
+import { FilterBase } from 'radweb';
+import { foreachSync } from '../shared/utils';
 import { BusyService } from '../select-popup/busy-service';
-import { async } from 'q';
 import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
 import { MatTabGroup } from '@angular/material';
@@ -25,17 +25,34 @@ import { HasAsyncGetTheValue } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
-import { SelectService } from '../select-popup/select-service';
+import { Context } from '../shared/context';
+import { Routable, componentRoutingInfo } from '../shared/routing-helper';
 
 @Component({
   selector: 'app-families',
   templateUrl: './families.component.html',
   styleUrls: ['./families.component.scss']
 })
+@Routable({
+  path: 'families',
+  caption: 'משפחות',
+  canActivate: [AdminGuard]
+})
 export class FamiliesComponent implements OnInit {
 
   limit = 10;
+  constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context, private selectService: SelectService) {
+    this.doTest();
 
+    let y = dialog.newsUpdate.subscribe(() => {
+      this.refreshStats();
+    });
+    this.onDestroy = () => {
+      y.unsubscribe();
+    };
+    if (dialog.isScreenSmall())
+      this.gridView = false;
+  }
   filterBy(s: FaimilyStatistics) {
     this.families.get({
       where: s.rule,
@@ -95,8 +112,8 @@ export class FamiliesComponent implements OnInit {
     let data = [];
     let title = [];
     let doneTitle = false;
-    let f = new Families();
-    await foreachSync(await f.source.find({ limit: 5000, orderBy: [f.name] })
+
+    await foreachSync(await this.context.for(Families).find({ limit: 5000, orderBy: f => [f.name] })
       , async  f => {
         let row = [];
 
@@ -133,9 +150,9 @@ export class FamiliesComponent implements OnInit {
     XLSX.writeFile(wb, 'משפחות.xlsx');
     return;
   }
-  familyDeliveryEventsView = new FamilyDeliveryEventsView();
 
-  families = new GridSettings(new Families(), {
+  previousDeliveryEvents: FamilyDeliveryEventsView[] = [];
+  families = this.context.for(Families).gridSettings({
 
     allowUpdate: true,
     allowInsert: true,
@@ -160,7 +177,6 @@ export class FamiliesComponent implements OnInit {
         f.callStatus.listValue = CallStatus.NotYet;
         f.special.listValue = YesNo.No;
       } else {
-
 
       }
     },
@@ -198,7 +214,7 @@ export class FamiliesComponent implements OnInit {
     knowTotalRows: true,
     allowDelete: true,
 
-    confirmDelete: (h, yes) => this.dialog.confirmDelete('משפחת '+h.name.value, yes),
+    confirmDelete: (h, yes) => this.dialog.confirmDelete('משפחת ' + h.name.value, yes),
     columnSettings: families => [
 
       {
@@ -215,7 +231,7 @@ export class FamiliesComponent implements OnInit {
       },
       {
         column: families.basketType,
-        dropDown: { source: new BasketType() },
+        dropDown: { source: this.context.for(BasketType).create() },
         width: '100'
       },
       {
@@ -234,7 +250,7 @@ export class FamiliesComponent implements OnInit {
 
       }, {
         column: families.familySource,
-        dropDown: { source: new FamilySources() }
+        dropDown: { source: this.context.for(FamilySources).create() }
       },
       families.internalComment,
       families.iDinExcel,
@@ -255,7 +271,7 @@ export class FamiliesComponent implements OnInit {
       families.courier.getColumn(this.selectService),
       {
         caption: 'טלפון משנע',
-        getValue: f => f.lookup(new Helpers(), f.courier).phone.value
+        getValue: f => this.context.for(Helpers).lookup(f.courier).phone.value
       },
       families.courierAssignUser,
       families.courierAssingTime,
@@ -297,11 +313,11 @@ export class FamiliesComponent implements OnInit {
       },
       {
         column: families.basketType,
-        dropDown: { source: new BasketType() }
+        dropDown: { source: this.context.for(BasketType).create() }
       },
       {
         column: families.familySource,
-        dropDown: { source: new FamilySources() }
+        dropDown: { source: this.context.for(FamilySources).create() }
       },
       families.internalComment,
       families.iDinExcel,
@@ -352,7 +368,7 @@ export class FamiliesComponent implements OnInit {
       families.courier.getColumn(this.selectService),
       {
         caption: 'טלפון משנע',
-        getValue: f => f.lookup(new Helpers(), f.courier).phone.value
+        getValue: f => this.context.for(Helpers).lookup(f.courier).phone.value
       },
       families.courierAssignUser,
       families.courierAssingTime,
@@ -363,17 +379,11 @@ export class FamiliesComponent implements OnInit {
     ]
   });
   gridView = true;
-  constructor(private dialog: DialogService, private selectService: SelectService, private san: DomSanitizer, public busy: BusyService) {
 
-    let y = dialog.newsUpdate.subscribe(() => {
-      this.refreshStats();
-    });
-    this.onDestroy = () => {
-      y.unsubscribe();
-    };
-    if (dialog.isScreenSmall())
-      this.gridView = false;
+
+  async doTest() {
   }
+
   onDestroy = () => { };
 
   ngOnDestroy(): void {
@@ -505,6 +515,3 @@ interface statsOnTab {
   stats: FaimilyStatistics[],
   rule: (f: Families) => FilterBase
 }
-
-
-

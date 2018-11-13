@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Routes, RouteReuseStrategy } from '@angular/router';
+import { RouterModule, Routes, RouteReuseStrategy, RouteConfigLoadStart } from '@angular/router';
 
 import { HelpersComponent } from './helpers/helpers.component';
 import { LoginComponent } from './users/login/login.component';
@@ -19,11 +19,11 @@ import { DeliveryEventsComponent } from './delivery-events/delivery-events.compo
 import { StamTestComponent } from './stam-test/stam-test.component';
 import { CustomReuseStrategy } from './custom-reuse-controller-router-strategy'
 import { evilStatics } from './auth/evil-statics';
+import { routingInfo, componentRoutingInfo } from './shared/routing-helper';
 
 
 
-
-const routes: Routes = [
+const routes: Routes =[
   FamiliesComponent.route,
   AsignFamilyComponent.route,
   DeliveryFollowUpComponent.route,
@@ -38,6 +38,7 @@ const routes: Routes = [
   UpdateInfoComponent.route,
   LoginComponent.route,
   RegisterComponent.route,
+  { path: 'stam', component: StamTestComponent },
   { path: '', redirectTo: '/families', pathMatch: 'full' },
   { path: '**', redirectTo: '/families', pathMatch: 'full' }
 ];
@@ -47,11 +48,10 @@ evilStatics.routes.login = '/' + LoginComponent.route.path;
 evilStatics.routes.myFamilies = '/' + MyFamiliesComponent.route.path;
 evilStatics.routes.register = '/' + RegisterComponent.route.path;
 evilStatics.routes.updateInfo = '/' + UpdateInfoComponent.route.path;
-
 @NgModule({
   imports: [
     CommonModule, RouterModule.forRoot(routes
-      // ,{enableTracing:true}
+   //    ,{enableTracing:true}
     )
   ],
   declarations: [],

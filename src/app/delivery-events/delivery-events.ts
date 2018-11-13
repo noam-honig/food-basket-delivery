@@ -1,28 +1,24 @@
 import { DeliveryEventId } from "./DeliveryEventId";
-
 import { IdEntity, changeDate, buildSql } from "../model-shared/types";
-import { StringColumn, DateColumn, BoolColumn, NumberColumn, DataProviderFactory } from "radweb";
+import { StringColumn, DateColumn, BoolColumn, NumberColumn } from "radweb";
 import { EventStatusColumn } from "./EventStatus";
 import { HelperIdReadonly } from "../helpers/helpers";
-import { myAuthInfo } from "../auth/my-auth-info";
-import { evilStatics } from "../auth/evil-statics";
 import { FamilyDeliveryEvents } from "./FamilyDeliveryEvents";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Families } from "../families/families";
-import { entityApiSettings, LoggedInCanViewButOnlyAdminUpdatesInsertsAndDeletes, entityWithApi } from "../server/api-interfaces";
-import { DataApiSettings } from "radweb/utils/server/DataApi";
+import { Context, ServerContext, EntityClass } from "../shared/context";
 
-let fde = new FamilyDeliveryEvents();
-let f = new Families();
-
-export class DeliveryEvents extends IdEntity<DeliveryEventId> implements entityWithApi {
+let fde = new FamilyDeliveryEvents(new ServerContext());
+let f = new Families(new ServerContext());
+@EntityClass
+export class DeliveryEvents extends IdEntity<DeliveryEventId>  {
 
   name = new StringColumn('שם');
   deliveryDate = new DateColumn('תאריך החלוקה');
   isActiveEvent = new BoolColumn();
   createDate = new changeDate('מועד הוספה');
   eventStatus = new EventStatusColumn('סטטוס');
-  createUser = new HelperIdReadonly('משתמש מוסיף');
+  createUser = new HelperIdReadonly(this.context, 'משתמש מוסיף');
   families = new NumberColumn({
     dbReadOnly: true,
     caption: 'משפחות',
@@ -31,27 +27,20 @@ export class DeliveryEvents extends IdEntity<DeliveryEventId> implements entityW
     readonly: true
   });
 
-  async doSaveStuff(authInfo: myAuthInfo) {
-    console.log(this.deliveryDate.value, this.deliveryDate.dateValue, this.deliveryDate.displayValue);
-    if (this.isNew()) {
-      this.createDate.dateValue = new Date();
-      this.createUser.value = authInfo.helperId;
-    }
-  }
-  constructor(source?: DataProviderFactory) {
-    super(new DeliveryEventId(), () => new DeliveryEvents(source), source ? source : evilStatics.dataSource, 'DeliveryEvents');
-    this.initColumns();
-  }
-  getDataApiSettings(): entityApiSettings {
-    return {
-      apiSettings: info => {
-        return {
-          readonlyColumns: de => [de.isActiveEvent],
-          onSavingRow: async de => await de.doSaveStuff(info),
-          allowupdate: true,
-          allowInsert: true
-        } as DataApiSettings<this>;
+  constructor(private context: Context) {
+    super(new DeliveryEventId(), {
+      name: 'DeliveryEvents',
+      allowApiRead: context.isAdmin(),
+      allowApiUpdate: context.isAdmin(),
+      allowApiInsert: context.isAdmin(),
+      onSavingRow: async () => {
+        if (context.onServer)
+          if (this.isNew()) {
+
+            this.createDate.dateValue = new Date();
+            this.createUser.value = context.info.helperId;
+          }
       }
-    }
+    });
   }
 }

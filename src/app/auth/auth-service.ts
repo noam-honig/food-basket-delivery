@@ -1,23 +1,39 @@
 import { Injectable } from "@angular/core";
-import { Authentication } from "./authentication";
 import { myAuthInfo } from "./my-auth-info";
-import { foreachEntityItem } from "../shared/utils";
-
 import { DialogService } from "../select-popup/dialog";
-import { Router, Route } from "@angular/router";
+import { Router } from "@angular/router";
 import { evilStatics } from "./evil-statics";
-import { LoginAction } from "./loginAction";
-import { LoginFromSmsAction } from "../login-from-sms/login-from-sms-action";
+import { Helpers } from "../helpers/helpers";
+
+import { RunOnServer } from "./server-action";
+import { Context } from "../shared/context";
+import { LoginResponse } from "./auth-info";
 
 
 @Injectable()
 export class AuthService {
 
     async loginFromSms(key: string) {
-        this.auth.loggedIn(await new LoginFromSmsAction().run({ key: key }), false);
+        this.auth.loggedIn(await AuthService.loginFromSms(key), false);
         if (this.auth.valid) {
             this.router.navigate([evilStatics.routes.myFamilies]);
         }
+    }
+    @RunOnServer({ allowed: () => true })
+    static async loginFromSms(key: string, context?: Context) {
+
+        let h = await context.for(Helpers).findFirst(h => h.shortUrlKey.isEqualTo(key));
+        if (h)
+            return {
+                valid: true,
+                authToken: evilStatics.auth.createTokenFor({
+                    helperId: h.id.value,
+                    admin: false,
+                    name: h.name.value
+                }),
+                requirePassword: false
+            } as LoginResponse
+        return { valid: false, requirePassword: false } as LoginResponse;
     }
     constructor(
         private dialog: DialogService,
@@ -26,7 +42,7 @@ export class AuthService {
 
     async login(user: string, password: string, remember: boolean, fail: () => void) {
 
-        let loginResponse = await new LoginAction().run({ user: user, password: password });
+        let loginResponse = await AuthService.login(user, password);
         this.auth.loggedIn(loginResponse, remember);
         if (this.auth.valid) {
             if (loginResponse.requirePassword) {
@@ -46,7 +62,33 @@ export class AuthService {
             this.dialog.Error("משתמשת לא נמצאה או סיסמה שגויה");
             fail();
         }
+    }
+    @RunOnServer({ allowed: () => true })
+    static async login(user: string, password: string, context?: Context) {
+        let result: myAuthInfo;
+        let requirePassword = false;
 
+        await context.for(Helpers).foreach(h => h.phone.isEqualTo(user), async h => {
+            if (!h.realStoredPassword.value || evilStatics.passwordHelper.verify(password, h.realStoredPassword.value)) {
+                result = {
+                    helperId: h.id.value,
+                    admin: h.isAdmin.value,
+                    name: h.name.value
+                };
+                if (result.admin && h.realStoredPassword.value.length == 0) {
+                    result.admin = false;
+                    requirePassword = true;
+                }
+            }
+        });
+        if (result) {
+            return {
+                valid: true,
+                authToken: evilStatics.auth.createTokenFor(result),
+                requirePassword
+            };
+        }
+        return { valid: false, requirePassword: false };
     }
     signout(): any {
         this.auth.signout();

@@ -16,7 +16,7 @@ import { SelectService } from '../select-popup/select-service';
 })
 export class HelperFamiliesComponent implements OnInit {
 
-  constructor(public auth: AuthService, private dialog: DialogService, private router: Router,private selectService:SelectService) { }
+  constructor(public auth: AuthService, private dialog: DialogService, private router: Router, private selectService: SelectService) { }
   @Input() familyLists: UserFamiliesList;
   @Input() partOfAssign = false;
   @Input() partOfReview = false;
@@ -24,7 +24,7 @@ export class HelperFamiliesComponent implements OnInit {
   @Output() assignSmsSent = new EventEmitter<void>();
   ngOnInit() {
     this.familyLists.setMap(this.map);
-    
+
   }
   async cancelAssign(f: Families) {
     this.familyLists.reload();
@@ -80,7 +80,7 @@ export class HelperFamiliesComponent implements OnInit {
     });
   }
   async sendSms(reminder: Boolean) {
-    await new SendSmsAction().run({ helperId: this.familyLists.helperId, reminder: reminder });
+    await SendSmsAction.SendSms(this.familyLists.helperId, reminder);
     this.assignSmsSent.emit();
     if (reminder)
       this.familyLists.helperOptional.reminderSmsDate.dateValue = new Date();

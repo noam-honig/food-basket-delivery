@@ -1,13 +1,12 @@
-import { DataApiRequest, DataApiServer } from "radweb/utils/dataInterfaces1";
+import { DataApiRequest, DataApiServer } from "radweb";
 
 import { LoginResponse } from './auth-info';
 import { Action } from "radweb";
 import { environment } from "../../environments/environment";
-import { SiteArea } from "radweb/utils/server/expressBridge";
-import * as atob from 'atob';
-import * as jwt from 'jsonwebtoken';
+import { SiteArea } from "radweb-server";
+//import * as jwt from 'jsonwebtoken';
 import { myAuthInfo } from "./my-auth-info";
-
+//import { JwtHelperService } from '@auth0/angular-jwt';
 
 
 const authToken = 'auth-token';
@@ -16,6 +15,10 @@ export class Authentication<T> {
 
     constructor() {
         this.setEmptyInfo();
+      
+    }
+    initForBrowser(jwt: JsonWebTokenHelper){
+        this.jwt = jwt;
         if (typeof (Storage) !== 'undefined') {
             try {
                 let load = (what: string) => {
@@ -48,7 +51,7 @@ export class Authentication<T> {
         }
     }
     private setToken(token: string) {
-        this._info = jwt.decode(token) as T;
+        this._info = this.jwt.decode(token) as T;// new JwtHelperService().decodeToken(token) as T;//  jwt.decode(token) as T;
         if (this._info) {
             this.valid = true;
             this._token = token;
@@ -92,7 +95,8 @@ export class Authentication<T> {
     }
 
 
-    applyTo(server: DataApiServer<T>, area: SiteArea<T>): void {
+    applyTo(server: DataApiServer<T>, area: SiteArea<T>,jwt:JsonWebTokenHelper): void {
+        this.jwt = jwt;
         server.addRequestProcessor(async req => {
             var h = req.getHeader(authToken);
 
@@ -104,16 +108,17 @@ export class Authentication<T> {
         area.addAction(new GetCurrentSession(environment.serverUrl, undefined, this.AddAuthInfoToRequest()));
 
     }
+    jwt:JsonWebTokenHelper;
     validateToken: (token: string) => Promise<T> = async (x) => {
         let result: T;
         try {
-            result = <T><any>jwt.verify(x, this.tokenSignKey);
+            result = <T><any>this.jwt.verify(x, this.tokenSignKey);
         } catch (err) { }
 
         return result;
     };
     createTokenFor(item: T) {
-        return jwt.sign(<any>item, this.tokenSignKey);
+        return this.jwt.sign(<any>item, this.tokenSignKey);
     }
     tokenSignKey;
 
@@ -131,6 +136,11 @@ export class Authentication<T> {
 
 
 
+}
+export interface JsonWebTokenHelper{
+    decode(token: string): any;
+    verify(token:string,key:string):any;
+    sign(item:any,key:string):string;
 }
 export class GetCurrentSession<T extends myAuthInfo> extends Action<any, T, T>{
 

@@ -1,5 +1,5 @@
 import { ClosedListColumn, NumberColumn } from "radweb";
-import { DataColumnSettings } from "radweb/utils/dataInterfaces1";
+import { DataColumnSettings } from "radweb";
 
 export class DeliveryStatus {
   static ReadyForDelivery: DeliveryStatus = new DeliveryStatus(0, 'מוכן למשלוח');
