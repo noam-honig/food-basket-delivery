@@ -24,8 +24,7 @@
     "preRunSomething": "npm run server:build",
     "RunSomething": "node --inspect --debug-brk dist-server/src/app/server/doSomething.js",
     "server-watch": "ts-node-dev --respawn --project tsconfig.server.json  src/app/server/server.ts",
-    
-    "server-build-and-run":"npm run server:build && npm run server:execute"
+    "server-build-and-run": "npm run server:build && npm run server:execute"
   },
   "private": true,
   "dependencies": {
@@ -63,6 +62,7 @@
     "radweb": "^2.0.2",
     "radweb-server": "0.0.1",
     "radweb-server-postgres": "0.0.1",
+    "reflect-metadata": "^0.1.12",
     "rxjs": "~6.3.3",
     "uuid": "^3.3.2",
     "web-animations-js": "^2.3.1",
