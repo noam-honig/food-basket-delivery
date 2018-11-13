@@ -11,6 +11,7 @@
     "server:build": "tsc -p tsconfig.server.json",
     "postinstall": "npm run server:build&&npm run build",
     "publish-to-heroku-test": "git push heroku master -f",
+    "publish-to-heroku-test-dev-branch": "git push heroku dive-into-dependency-injection -f",
     "publish-to-hmey": "git push hmey master -f",
     "publish-to-m-h": "git push m-h master -f",
     "copy-db": "heroku pg:copy hugmoms::DATABASE_URL hugmoms2::DATABASE_URL -a hugmoms2",
