@@ -2,9 +2,10 @@ import * as radweb from 'radweb';
 import { ColumnSetting, Entity } from "radweb";
 import { IdEntity, changeDate, Id, HasAsyncGetTheValue, checkForDuplicateValue, StringColumn, BoolColumn, updateSettings } from '../model-shared/types';
 import { SelectServiceInterface } from '../select-popup/select-service-interface';
-import { DataColumnSettings } from 'radweb/utils/dataInterfaces1';
-import * as passwordHash from 'password-hash';
+import { DataColumnSettings } from 'radweb';
+
 import { Context, MoreDataColumnSettings, EntityClass } from '../shared/context';
+import { evilStatics } from '../auth/evil-statics';
 
 @EntityClass
 export class Helpers extends IdEntity<HelperId>  {
@@ -19,7 +20,7 @@ export class Helpers extends IdEntity<HelperId>  {
             onSavingRow: async () => {
                 if (context.onServer) {
                     if (this.password.value && this.password.value != this.password.originalValue && this.password.value != Helpers.emptyPassword) {
-                        this.realStoredPassword.value = passwordHash.generate(this.password.value);
+                        this.realStoredPassword.value = evilStatics.passwordHelper.generateHash(this.password.value);
                     }
                     if ((await context.for(Helpers).count()) == 0)
                         this.isAdmin.value = true;

@@ -7,7 +7,8 @@ import { InputAreaComponentData, InputAreaComponent } from "./input-area/input-a
 import { BusyService } from "./busy-service";
 import { environment } from "../../environments/environment";
 import { ServerEventAuthorizeAction } from "../server/server-event-authorize-action";
-import { Subject } from "rxjs/Subject";
+import { Subject } from "rxjs";
+
 
 @Injectable()
 export class DialogService {
@@ -29,7 +30,7 @@ export class DialogService {
 
 
     constructor(private dialog: MatDialog, private zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar) {
-        this.mediaMatcher.addListener(mql => zone.run(() => this.mediaMatcher = mql));
+        this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString() ));
 
 
     }

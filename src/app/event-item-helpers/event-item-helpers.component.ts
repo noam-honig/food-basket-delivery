@@ -15,7 +15,7 @@ export class EventItemHelpersComponent implements OnInit {
 
   @Input() itemId = '';
   constructor(private context:Context) { }
-  items = new GridSettings(new ItemsPerHelper(), {
+  items = new GridSettings<ItemsPerHelper>(new ItemsPerHelper(), {
     columnSettings: i => [
       {
         getValue: i => i.lookup(new EventHelpers(this.context), i.eventHelperId).helper().name.value,

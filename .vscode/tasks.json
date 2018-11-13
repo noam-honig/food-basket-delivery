@@ -12,9 +12,7 @@
         {
             "type": "npm",
             "script": "ng-serve",
-            "problemMatcher": [
-                
-            ],
+            "problemMatcher": [],
             "isBackground": true
         },
         {
@@ -73,6 +71,26 @@
             "problemMatcher": [
                 "$tsc"
             ]
+        },
+        {
+            "type": "npm",
+            "script": "server-watch",
+            "problemMatcher": [
+                "$tsc-watch"
+            ],
+            "isBackground": true
+        },
+        {
+            "type": "npm",
+            "script": "server-build-and-run",
+            "problemMatcher": [
+                "$tsc"
+            ]
+        },
+        {
+            "type": "npm",
+            "script": "server:execute",
+            "problemMatcher": []
         }
     ]
 }

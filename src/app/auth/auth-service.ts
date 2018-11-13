@@ -4,7 +4,7 @@ import { DialogService } from "../select-popup/dialog";
 import { Router } from "@angular/router";
 import { evilStatics } from "./evil-statics";
 import { Helpers } from "../helpers/helpers";
-import * as passwordHash from 'password-hash';
+
 import { RunOnServer } from "./server-action";
 import { Context } from "../shared/context";
 import { LoginResponse } from "./auth-info";
@@ -69,7 +69,7 @@ export class AuthService {
         let requirePassword = false;
 
         await context.for(Helpers).foreach(h => h.phone.isEqualTo(user), async h => {
-            if (!h.realStoredPassword.value || passwordHash.verify(password, h.realStoredPassword.value)) {
+            if (!h.realStoredPassword.value || evilStatics.passwordHelper.verify(password, h.realStoredPassword.value)) {
                 result = {
                     helperId: h.id.value,
                     admin: h.isAdmin.value,

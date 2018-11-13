@@ -3,7 +3,7 @@ import { GridSettings, Filter } from 'radweb';
 import { Families } from '../families/families';
 import { BusyService } from '../select-popup/busy-service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { FilterBase } from 'radweb/utils/dataInterfaces1';
+import { FilterBase } from 'radweb';
 import { Context } from '../shared/context';
 
 

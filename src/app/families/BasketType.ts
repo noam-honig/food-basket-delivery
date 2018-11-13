@@ -4,7 +4,7 @@ import { StringColumn } from "radweb";
 import { evilStatics } from "../auth/evil-statics";
 import { Id, HasAsyncGetTheValue } from "../model-shared/types";
 import { Context, EntityClass } from "../shared/context";
-import { DataColumnSettings } from "radweb/utils/dataInterfaces1";
+import { DataColumnSettings } from "radweb";
 
 @EntityClass
 export class BasketType extends IdEntity<BasketId>  {

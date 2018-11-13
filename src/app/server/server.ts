@@ -2,8 +2,8 @@ import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
 import * as secure from 'express-force-https';
 import * as compression from 'compression';
-import { ExpressBridge } from 'radweb/server';
-import { DataApi } from 'radweb/utils/server/DataApi';
+import { ExpressBridge } from 'radweb-server';
+import { DataApi } from 'radweb';
 import * as fs from 'fs';
 import { myAuthInfo } from '../auth/my-auth-info';
 import { evilStatics } from '../auth/evil-statics';
@@ -12,10 +12,12 @@ import { ServerEvents } from './server-events';
 import { Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { serverActionField, myServerAction, actionInfo } from "../auth/server-action";
-import { SiteArea } from "radweb/utils/server/expressBridge";
+import { SiteArea } from "radweb-server";
 import "../helpers/helpers.component";
 import '../app.module';
 import { ContextEntity, ServerContext, allEntities } from "../shared/context";
+import * as jwt from 'jsonwebtoken';
+import * as passwordHash from 'password-hash';
 
 serverInit().then(async () => {
 
@@ -36,7 +38,7 @@ serverInit().then(async () => {
     let eb = new ExpressBridge<myAuthInfo>(app);
 
     let allUsersAlsoNotLoggedIn = eb.addArea('/api');
-    
+
     evilStatics.auth.tokenSignKey = process.env.TOKEN_SIGN_KEY;
 
     var addAction = (area: SiteArea<myAuthInfo>, a: any) => {
@@ -49,7 +51,16 @@ serverInit().then(async () => {
 
 
     actionInfo.runningOnServer = true;
-    evilStatics.auth.applyTo(eb, allUsersAlsoNotLoggedIn);
+    evilStatics.auth.applyTo(eb, allUsersAlsoNotLoggedIn, {
+        verify: (t, k) => jwt.verify(t, k),
+        sign: (i, k) => jwt.sign(i, k),
+        decode: t => jwt.decode(t)
+    });
+    evilStatics.passwordHelper = {
+        generateHash: p => passwordHash.generate(p),
+        verify: (p, h) => passwordHash.verify(p, h)
+    }
+
     actionInfo.allActions.forEach(a => {
         addAction(allUsersAlsoNotLoggedIn, a);
     });
@@ -130,13 +141,15 @@ serverInit().then(async () => {
     });
     async function sendIndex(res: express.Response) {
         const index = 'dist/index.html';
+
         if (fs.existsSync(index)) {
             let x = (await ApplicationSettings.getAsync(new ServerContext())).organisationName.value;
 
             res.send(fs.readFileSync(index).toString().replace('!TITLE!', x));
         }
-        else
-            res.send('No Result');
+        else {
+            res.send('No Result' + fs.realpathSync(index));
+        }
     }
 
     app.get('', (req, res) => {

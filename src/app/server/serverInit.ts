@@ -1,7 +1,7 @@
 import { Pool } from 'pg';
 import { Helpers } from '../helpers/helpers';
 import { config } from 'dotenv';
-import { PostgresDataProvider, PostgrestSchemaBuilder } from 'radweb/server';
+import { PostgresDataProvider, PostgrestSchemaBuilder } from 'radweb-server-postgres';
 
 import { evilStatics } from '../auth/evil-statics';
 

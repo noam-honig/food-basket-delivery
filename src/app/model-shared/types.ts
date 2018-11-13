@@ -1,7 +1,7 @@
 import * as uuid from 'uuid';
 import * as radweb from 'radweb';
 import { DataProviderFactory, EntityOptions, Entity, Column } from "radweb";
-import { DataColumnSettings } from 'radweb/utils/dataInterfaces1';
+
 import { ContextEntity, ContextEntityOptions, MoreDataColumnSettings, hasMoreDataColumnSettings } from '../shared/context';
 import { BrowserPlatformLocation } from '@angular/platform-browser/src/browser/location/browser_platform_location';
 export class IdEntity<idType extends Id> extends ContextEntity<string>

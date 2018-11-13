@@ -1,5 +1,5 @@
 import { ClosedListColumn, NumberColumn } from "radweb";
-import { DataColumnSettings } from "radweb/utils/dataInterfaces1";
+import { DataColumnSettings } from "radweb";
 import { MoreDataColumnSettings } from "../shared/context";
 
 export class CallStatus {

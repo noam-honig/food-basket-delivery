@@ -1,4 +1,4 @@
-import { Component, transition, NgZone, Injector, ViewChild } from '@angular/core';
+import { Component,  NgZone, Injector, ViewChild } from '@angular/core';
 import { Router, Route, CanActivate, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { AuthService } from './auth/auth-service';
 import { LoggedInGuard, dummyRoute, AdminGuard } from './auth/auth-guard';
@@ -92,4 +92,3 @@ export class AppComponent {
   }
 
 }
-

@@ -14,7 +14,7 @@ import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelper
 
 import { DomSanitizer } from '@angular/platform-browser';
 import * as XLSX from 'xlsx';
-import { FilterBase } from 'radweb/utils/dataInterfaces1';
+import { FilterBase } from 'radweb';
 import { foreachSync } from '../shared/utils';
 import { BusyService } from '../select-popup/busy-service';
 import * as chart from 'chart.js';

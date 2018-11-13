@@ -1,5 +1,5 @@
 import { RunOnServer } from "../auth/server-action";
-import { FilterBase } from "radweb/utils/dataInterfaces1";
+import { FilterBase } from "radweb";
 import { Families } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
 import { CallStatus } from "./CallStatus";

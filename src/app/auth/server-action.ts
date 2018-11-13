@@ -2,10 +2,10 @@ import { Action } from "radweb";
 import { myAuthInfo } from "./my-auth-info";
 import { environment } from "../../environments/environment";
 import { evilStatics } from "./evil-statics";
-import { DataApiRequest } from "radweb/utils/dataInterfaces1";
+import { DataApiRequest } from "radweb";
 import 'reflect-metadata';
 import { Context, ServerContext } from "../shared/context";
-import { PostgresDataProvider } from "radweb/server";
+import { PostgresDataProvider } from "radweb-server-postgres";
 
 interface inArgs {
     args: any[];

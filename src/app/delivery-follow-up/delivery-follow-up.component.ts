@@ -5,7 +5,7 @@ import { UserFamiliesList } from '../my-families/user-families';
 import * as chart from 'chart.js';
 import { DeliveryStatistic, DeliveryStats } from './delivery-stats';
 import { BusyService } from '../select-popup/busy-service';
-import { FilterBase } from 'radweb/utils/dataInterfaces1';
+import { FilterBase } from 'radweb';
 import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';

@@ -1,5 +1,5 @@
 import { RunOnServer } from "../auth/server-action";
-import { FilterBase } from "radweb/utils/dataInterfaces1";
+import { FilterBase } from "radweb";
 
 import { HelpersAndStats } from "./HelpersAndStats";
 import { colors } from "../families/stats-action";

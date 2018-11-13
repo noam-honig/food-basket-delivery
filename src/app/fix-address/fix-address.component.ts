@@ -1,9 +1,10 @@
+/// <reference types="@types/googlemaps" />
 import { Component, OnInit, ViewChild, Sanitizer } from '@angular/core';
 import { GridSettings } from 'radweb';
 import { Families } from '../families/families';
 import { DialogService } from '../select-popup/dialog';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
-import { } from 'googlemaps';
+
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';

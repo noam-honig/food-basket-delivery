@@ -1,7 +1,8 @@
+/// <reference types="@types/googlemaps" />
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Families } from '../families/families';
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { } from 'googlemaps';
+//import 'googlemaps';
 
 @Component({
   selector: 'app-map',

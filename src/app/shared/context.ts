@@ -1,11 +1,11 @@
 import { Entity, IDataSettings, GridSettings, Column, NumberColumn, DataList, EntityOptions, ColumnHashSet } from "radweb";
-import { EntitySourceFindOptions, FilterBase, FindOptionsPerEntity, DataProviderFactory, DataColumnSettings, DataApiRequest } from "radweb/utils/dataInterfaces1";
+import { EntitySourceFindOptions, FilterBase, FindOptionsPerEntity, DataProviderFactory, DataColumnSettings, DataApiRequest } from "radweb";
 import { foreachSync } from "./utils";
 import { evilStatics } from "../auth/evil-statics";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { Injectable } from "@angular/core";
-import { DataApiSettings } from "radweb/utils/server/DataApi";
-import { supportsPassiveEventListeners } from "@angular/cdk/platform";
+import { DataApiSettings } from "radweb";
+
 
 
 @Injectable()
