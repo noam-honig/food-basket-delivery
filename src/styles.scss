@@ -191,3 +191,8 @@ th {
   .thin-dialog-container{
       padding:10px;
   }
+
+//fix stupid ios bug with texts
+  input,text-area{
+    transform:translate3d(0px,0px,0px);
+  }
