@@ -40,8 +40,14 @@ export class Context {
         }
         return e;
     }
+    cache: any = {};
     public for<lookupIdType, T extends Entity<lookupIdType>>(c: { new(...args: any[]): T; }) {
-        return new SpecificEntityHelper<lookupIdType, T>(this.create(c), this._lookupCache);
+
+        let classType = c as any;
+
+        if (this.cache[classType.__key])
+            return this.cache[classType.__key] as SpecificEntityHelper<lookupIdType, T>;
+        return this.cache[classType.__key] = new SpecificEntityHelper<lookupIdType, T>(this.create(c), this._lookupCache);
     }
     private _lookupCache = new stamEntity();
 }
@@ -71,7 +77,7 @@ function buildEntityOptions(o: ContextEntityOptions | string): EntityOptions | s
     return {
         name: o.name,
         caption: o.caption,
-        dbName: o.dbName?o.dbName():undefined,
+        dbName: o.dbName ? o.dbName() : undefined,
         onSavingRow: o.onSavingRow,
     }
 }
@@ -88,7 +94,7 @@ export class ContextEntity<idType> extends Entity<idType>{
                 throw this._noContextErrorWithStack;
             }
             return this.__context.create(this.entityType);
-            
+
         }, evilStatics.dataSource, buildEntityOptions(contextEntityOptions));
         this._noContextErrorWithStack = new Error('@EntityClass not used or context was not set for' + this.constructor.name);
     }
@@ -156,7 +162,7 @@ export interface MoreDataColumnSettings<type, colType> extends DataColumnSetting
 }
 export interface ContextEntityOptions {
     name: string;//required
-    dbName?:()=> string;
+    dbName?: () => string;
     caption?: string;
     allowApiRead?: boolean;
     allowApiUpdate?: boolean;
@@ -258,6 +264,7 @@ export function EntityClass(theEntityClass: EntityType) {
         f[x] = original[x];
     }
     allEntities.push(f);
+    f.__key = original.name + allEntities.indexOf(f);
     // return new constructor (will override original)
     return f;
 }

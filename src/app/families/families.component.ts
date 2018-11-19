@@ -117,7 +117,7 @@ export class FamiliesComponent implements OnInit {
       , async  f => {
         let row = [];
 
-        await foreachSync(f.__iterateColumns(), async c => {
+        await foreachSync(f.__iterateColumns(), async c => { 
           try {
             if (!doneTitle) {
               title.push(c.caption);
