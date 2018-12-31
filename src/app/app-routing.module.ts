@@ -20,6 +20,7 @@ import { StamTestComponent } from './stam-test/stam-test.component';
 import { CustomReuseStrategy } from './custom-reuse-controller-router-strategy'
 import { evilStatics } from './auth/evil-statics';
 import { routingInfo, componentRoutingInfo } from './shared/routing-helper';
+import { ProductsComponent } from './products/products.component';
 
 
 
@@ -33,6 +34,7 @@ const routes: Routes =[
   ManageComponent.route,
   FixAddressComponent.route,
   LoginFromSmsComponent.route,
+  ProductsComponent.route,
   /*{ path: 'stam-test', component: StamTestComponent },*/
   MyFamiliesComponent.route,
   UpdateInfoComponent.route,

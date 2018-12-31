@@ -51,6 +51,7 @@ import { Context } from './shared/context';
 import { SelectService } from './select-popup/select-service';
 import { UpdateFamilyDialogComponent } from './update-family-dialog/update-family-dialog.component';
 import { UpdateFamilyComponent } from './update-family/update-family.component';
+import { ProductsComponent } from './products/products.component';
 
 
 
@@ -89,6 +90,7 @@ import { UpdateFamilyComponent } from './update-family/update-family.component';
     DeliveryEventsComponent,
     UpdateFamilyDialogComponent,
     UpdateFamilyComponent,
+    ProductsComponent,
     
   ],
   imports: [
