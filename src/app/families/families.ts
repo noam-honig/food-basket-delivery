@@ -11,6 +11,7 @@ import { myAuthInfo } from "../auth/my-auth-info";
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
 import { Context, EntityClass } from "../shared/context";
 
+
 @EntityClass
 export class Families extends IdEntity<FamilyId>  {
   constructor(private context: Context) {

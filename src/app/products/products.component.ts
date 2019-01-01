@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
 
 import { AdminGuard } from '../auth/auth-guard';
+import { Context } from '../shared/context';
+import { Products } from './products';
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',
@@ -9,8 +11,18 @@ import { AdminGuard } from '../auth/auth-guard';
 })
 export class ProductsComponent implements OnInit {
 
-  constructor() { }
-
+  constructor(private context: Context) { }
+  products = this.context.for(Products).gridSettings({
+    allowUpdate: true,
+    allowInsert: true,
+    columnSettings: p => [
+      p.name,p.missing, p.order
+    ],
+    get: {
+      orderBy: p => [p.order, p.name],
+      limit:50
+    }
+  });
   ngOnInit() {
   }
   static route: Route = {

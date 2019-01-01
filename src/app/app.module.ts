@@ -52,6 +52,9 @@ import { SelectService } from './select-popup/select-service';
 import { UpdateFamilyDialogComponent } from './update-family-dialog/update-family-dialog.component';
 import { UpdateFamilyComponent } from './update-family/update-family.component';
 import { ProductsComponent } from './products/products.component';
+import { WeeklyFamiliesComponent } from './weekly-families/weekly-families.component';
+import { WeeklyFamiliesDeliveriesComponent } from './weekly-families-deliveries/weekly-families-deliveries.component';
+import { WeeklyDeliveryProductsRequestComponent } from './weekly-delivery-products-request/weekly-delivery-products-request.component';
 
 
 
@@ -91,6 +94,9 @@ import { ProductsComponent } from './products/products.component';
     UpdateFamilyDialogComponent,
     UpdateFamilyComponent,
     ProductsComponent,
+    WeeklyFamiliesComponent,
+    WeeklyFamiliesDeliveriesComponent,
+    WeeklyDeliveryProductsRequestComponent,
     
   ],
   imports: [

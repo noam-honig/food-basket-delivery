@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, Route, Router } from '@angular/router';
 
-import { myAuthInfo } from './my-auth-info';
-import { Authentication } from './authentication';
 import { AuthService } from './auth-service';
 import { evilStatics } from './evil-statics';
 

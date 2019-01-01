@@ -21,10 +21,13 @@ import { CustomReuseStrategy } from './custom-reuse-controller-router-strategy'
 import { evilStatics } from './auth/evil-statics';
 import { routingInfo, componentRoutingInfo } from './shared/routing-helper';
 import { ProductsComponent } from './products/products.component';
+import { WeeklyFamiliesComponent } from './weekly-families/weekly-families.component';
+import { WeeklyDeliveryProductsRequestComponent } from './weekly-delivery-products-request/weekly-delivery-products-request.component';
 
 
 
-const routes: Routes =[
+const routes: Routes = [
+  WeeklyDeliveryProductsRequestComponent.route,
   FamiliesComponent.route,
   AsignFamilyComponent.route,
   DeliveryFollowUpComponent.route,
@@ -35,6 +38,7 @@ const routes: Routes =[
   FixAddressComponent.route,
   LoginFromSmsComponent.route,
   ProductsComponent.route,
+  WeeklyFamiliesComponent.route,
   /*{ path: 'stam-test', component: StamTestComponent },*/
   MyFamiliesComponent.route,
   UpdateInfoComponent.route,
@@ -53,7 +57,7 @@ evilStatics.routes.updateInfo = '/' + UpdateInfoComponent.route.path;
 @NgModule({
   imports: [
     CommonModule, RouterModule.forRoot(routes
-   //    ,{enableTracing:true}
+      //    ,{enableTracing:true}
     )
   ],
   declarations: [],

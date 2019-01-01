@@ -1,0 +1,12 @@
+<mat-list>
+  <mat-list-item *ngFor="let p of products">
+    <div class="quantity-input">
+      <button class="btn btn-sm btn-success glyphicon glyphicon-plus" type="button" (click)="add(1)"></button>
+      <input type="tel" class="form-control numeric-value" [(ngModel)]="quantity">
+      <button class="btn btn-sm btn-danger glyphicon glyphicon-minus" type="button" (click)="add(-1)"></button>
+    </div>
+
+    {{p.name.value}}
+  </mat-list-item>
+
+</mat-list> 
