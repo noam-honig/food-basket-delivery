@@ -21,13 +21,20 @@
         <mat-list>
           <ng-container *ngFor="let p of products">
             <mat-list-item *ngIf="displayProduct(p,d)">
-              <div class="quantity-input">
+              <div class="quantity-input" *ngIf="displayRequestQuantity(d)">
                 <button class="btn btn-sm btn-success glyphicon glyphicon-plus" type="button" (click)="add(p,d,1)"></button>
                 <input type="tel" class="form-control numeric-value" [(ngModel)]="quantity(p,d).requestQuanity.value"
                   (change)="quantity(p,d).save()">
                 <button class="btn btn-sm btn-danger glyphicon glyphicon-minus" [attr.disabled]="quantity(p,d).requestQuanity.value<=0?'':null"
                   type="button" (click)="add(p,d,-1)"></button>
               </div>
+              <span *ngIf="!displayRequestQuantity(d)">
+                  <mat-checkbox [checked]="quantity(p,d).Quantity.value>0"(change)="checkBoxChecked(p,d,$event)" ></mat-checkbox>
+                  <input type="tel" class="form-control numeric-value quantity-textbox" [(ngModel)]="quantity(p,d).Quantity.value"
+                  (change)="quantity(p,d).save()">
+
+                {{quantity(p,d).requestQuanity.value+' '}}
+              </span> 
               {{p.name.value}}
             </mat-list-item>
           </ng-container>

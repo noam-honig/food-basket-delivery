@@ -9,6 +9,7 @@ import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliver
 import { Products } from '../products/products';
 import { ItemId } from '../events/ItemId';
 import { DialogService } from '../select-popup/dialog';
+import { MatCheckboxChange } from '@angular/material';
 @Component({
   selector: 'app-my-weekly-families',
   templateUrl: './my-weekly-families.component.html',
@@ -74,10 +75,24 @@ export class MyWeeklyFamiliesComponent implements OnInit {
       return true;
     return this.quantity(p, d).requestQuanity.value > 0;
   }
+  displayRequestQuantity(d: WeeklyFamilyDeliveries) {
+    return d.status.listValue == WeeklyFamilyDeliveryStatus.Prepare;
+  }
 
   totalItems(d: WeeklyFamilyDeliveries) {
     let x = 0;
     this.products.forEach(p => x += this.quantity(p, d).requestQuanity.value);
     return x;
+  }
+  checkBoxChecked(p: Products, d: WeeklyFamilyDeliveries, e: MatCheckboxChange) {
+    var q = this.quantity(p, d);
+    if (e.checked) {
+      q.Quantity.value = q.requestQuanity.value;
+    }
+    else{
+      q.Quantity.value = 0;
+    }
+    q.save();
+
   }
 }
