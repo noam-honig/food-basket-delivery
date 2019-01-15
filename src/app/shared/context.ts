@@ -193,7 +193,7 @@ export class SpecificEntityHelper<lookupIdType, T extends Entity<lookupIdType>> 
     }
     async count(where?: (entity: T) => FilterBase) {
         let dl = new DataList(this.entity);
-        return dl.count(where);
+        return await dl.count(where);
     }
     async foreach(where: (entity: T) => FilterBase, what?: (entity: T) => Promise<void>) {
 

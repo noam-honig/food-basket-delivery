@@ -55,6 +55,7 @@ import { ProductsComponent } from './products/products.component';
 import { WeeklyFamiliesComponent } from './weekly-families/weekly-families.component';
 import { WeeklyFamiliesDeliveriesComponent } from './weekly-families-deliveries/weekly-families-deliveries.component';
 import { WeeklyDeliveryProductsRequestComponent } from './weekly-delivery-products-request/weekly-delivery-products-request.component';
+import { MyWeeklyFamiliesComponent } from './my-weekly-families/my-weekly-families.component';
 
 
 
@@ -97,6 +98,7 @@ import { WeeklyDeliveryProductsRequestComponent } from './weekly-delivery-produc
     WeeklyFamiliesComponent,
     WeeklyFamiliesDeliveriesComponent,
     WeeklyDeliveryProductsRequestComponent,
+    MyWeeklyFamiliesComponent,
     
   ],
   imports: [

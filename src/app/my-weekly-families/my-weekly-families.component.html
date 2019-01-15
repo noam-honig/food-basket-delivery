@@ -1,0 +1,41 @@
+<mat-accordion>
+  <mat-expansion-panel *ngFor="let f of families" (opened)="selectFamiliy(f)">
+    <mat-expansion-panel-header>
+      משפחת {{f.name.value}}
+    </mat-expansion-panel-header>
+    <button (click)="preparePackage()">חבילה חדשה</button>
+    <mat-accordion *ngIf="f==currentFamilly">
+      <mat-expansion-panel *ngFor="let d of deliveries">
+        <mat-expansion-panel-header>
+          {{d.ordnial.value}} - {{d.status.displayValue}}, {{totalItems(d)}} פריטים
+        </mat-expansion-panel-header>
+
+
+
+        <div class="top-bar" #myDiv>
+          <button *ngIf="totalItems(d)>0">מוכנה לאריזה</button>
+
+
+
+
+        </div>
+        <mat-list>
+          <mat-list-item *ngFor="let p of products">
+            <div class="quantity-input">
+              <button class="btn btn-sm btn-success glyphicon glyphicon-plus" type="button" (click)="add(p,d,1)"></button>
+              <input type="tel" class="form-control numeric-value" [(ngModel)]="quantity(p,d).requestQuanity.value"
+                (change)="quantity(p,d).save()">
+              <button class="btn btn-sm btn-danger glyphicon glyphicon-minus" [attr.disabled]="quantity(p,d).requestQuanity.value<=0?'':null"
+                type="button" (click)="add(p,d,-1)"></button>
+            </div>
+
+            {{p.name.value}}
+          </mat-list-item>
+
+        </mat-list>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </mat-expansion-panel>
+
+
+</mat-accordion>

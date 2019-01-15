@@ -17,11 +17,7 @@ export class WeeklyDeliveryProductsRequestComponent implements OnInit {
     this.products = await this.context.for(Products).find();
   }
   products: Products[];
-  static route: Route = {
-    path: 'WeeklyDeliveryProductsRequestComponent',
-    component: WeeklyDeliveryProductsRequestComponent,
-    data: { name: 'מוצרים לאריזה' }, canActivate: [AdminGuard]
-  }
+
   quantity=0;
   add(amount:number){
     this.quantity=+this.quantity+amount;

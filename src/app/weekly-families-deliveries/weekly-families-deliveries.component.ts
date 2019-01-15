@@ -3,6 +3,7 @@ import { Id, IdEntity, NumberColumn } from '../model-shared/types';
 import { ProductId } from '../products/products';
 import { WeeklyFamilyId } from '../weekly-families/weekly-families';
 import { ClosedListColumn } from 'radweb';
+import { EntityClass, Context } from '../shared/context';
 
 
 @Component({
@@ -18,14 +19,23 @@ export class WeeklyFamiliesDeliveriesComponent implements OnInit {
   }
 
 }
-
+@EntityClass
 export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
 {
 
-  constructor() {
+  constructor(context: Context) {
     super(new ProductId(), {
       name: 'WeeklyFamilyDeliveries',
-      allowApiCRUD: true
+      allowApiCRUD: true,
+      onSavingRow: async () => {
+        if (this.isNew()) {
+          this.status.listValue = WeeklyFamilyDeliveryStatus.Prepare;
+          this.ordnial.value = +(await context.for(WeeklyFamilyDeliveries).count(wfd => wfd.familyId.isEqualTo(this.familyId.value))) + 1;
+
+
+        }
+      },
+
     })
   }
   familyId = new WeeklyFamilyId();
@@ -34,6 +44,7 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
 }
 
 
+@EntityClass
 export class WeeklyFamilyDeliveryProducts extends IdEntity<Id>{
 
   constructor() {
@@ -44,7 +55,7 @@ export class WeeklyFamilyDeliveryProducts extends IdEntity<Id>{
   }
   delivery = new WeeklyFamilyDeliveryId();
   product = new ProductId();
-  requestQuanity = new NumberColumn('כמות מבוקשת');
+  requestQuanity = new NumberColumn({ caption: 'כמות מבוקשת', value: 0 });
   Quantity = new NumberColumn('כמות בפועל');
 }
 
@@ -80,4 +91,5 @@ export class WeeklyFamilyDeliveryStatusColumn extends ClosedListColumn<WeeklyFam
   constructor() {
     super(WeeklyFamilyDeliveryStatus, { caption: 'סטטוס שילוח' });
   }
+
 }

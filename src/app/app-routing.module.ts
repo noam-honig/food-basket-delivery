@@ -23,11 +23,12 @@ import { routingInfo, componentRoutingInfo } from './shared/routing-helper';
 import { ProductsComponent } from './products/products.component';
 import { WeeklyFamiliesComponent } from './weekly-families/weekly-families.component';
 import { WeeklyDeliveryProductsRequestComponent } from './weekly-delivery-products-request/weekly-delivery-products-request.component';
+import { MyWeeklyFamiliesComponent } from './my-weekly-families/my-weekly-families.component';
 
 
 
 const routes: Routes = [
-  WeeklyDeliveryProductsRequestComponent.route,
+  MyWeeklyFamiliesComponent.route,
   FamiliesComponent.route,
   AsignFamilyComponent.route,
   DeliveryFollowUpComponent.route,
