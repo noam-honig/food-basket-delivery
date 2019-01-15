@@ -1,6 +1,7 @@
 .quantity-input{
     display:flex;
-    margin:5px 0 0 5px;
+    margin: 0 0 0 5px;
+    align-items: center;
 }
 .quantity-input>input{
     flex-basis: 50px;
@@ -9,7 +10,4 @@
 .top-bar{
     position: sticky;
     top:0px;
-}
-.quantity-textbox{
-    width:50px;
 }

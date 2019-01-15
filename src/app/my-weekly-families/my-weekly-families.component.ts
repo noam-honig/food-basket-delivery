@@ -6,7 +6,7 @@ import { WeeklyFamilies } from '../weekly-families/weekly-families';
 import { Context } from '../shared/context';
 
 import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts } from '../weekly-families-deliveries/weekly-families-deliveries.component';
-import { Products } from '../products/products';
+import { Products, ProductId } from '../products/products';
 import { ItemId } from '../events/ItemId';
 import { DialogService } from '../select-popup/dialog';
 import { MatCheckboxChange } from '@angular/material';
@@ -31,14 +31,38 @@ export class MyWeeklyFamiliesComponent implements OnInit {
   families: WeeklyFamilies[];
   currentFamilly: WeeklyFamilies;
   async selectFamiliy(f: WeeklyFamilies) {
-    this.currentFamilly = f;
+    this.currentFamilly = null;
     this.deliveries = await this.context.for(WeeklyFamilyDeliveries).find({
       where: wfd => wfd.familyId.isEqualTo(f.id),
       orderBy: wfd => [{ column: wfd.ordnial, descending: true }]
     });
+
+    this.weeklyFamilyDeliveryProductsCache = {};
+    for (let d of this.deliveries) {
+      this.weeklyFamilyDeliveryProductsCache[d.id.value] = {};
+      let xx = await this.context.for(WeeklyFamilyDeliveryProducts).find({ where: wfdp => wfdp.delivery.isEqualTo(d.id) });
+      for (let x of xx)
+        this.weeklyFamilyDeliveryProductsCache[x.delivery.value][x.product.value] = x;
+    };
+    this.currentFamilly = f;
   }
+  loading = false;
+  weeklyFamilyDeliveryProductsCache: { [deliveryId: string]: { [productId: string]: WeeklyFamilyDeliveryProducts } } = {};
+
   quantity(p: Products, d: WeeklyFamilyDeliveries) {
-    const r = this.context.for(WeeklyFamilyDeliveryProducts).lookup(wfdp => wfdp.product.isEqualTo(p.id).and(wfdp.delivery.isEqualTo(d.id)));
+    var r: WeeklyFamilyDeliveryProducts;
+
+    let r1 = this.weeklyFamilyDeliveryProductsCache[d.id.value];
+    if (!r1) {
+      this.weeklyFamilyDeliveryProductsCache[d.id.value] = {};
+    }
+    r = r1[p.id.value];
+
+    if (!r) {
+      r1[p.id.value] = this.context.for(WeeklyFamilyDeliveryProducts).create();
+      r = r1[p.id.value];
+    }
+    //    const r = this.context.for(WeeklyFamilyDeliveryProducts).lookup(wfdp => wfdp.product.isEqualTo(p.id).and(wfdp.delivery.isEqualTo(d.id)));
     if (r.isNew()) {
       if (!r.requestQuanity.value)
         r.requestQuanity.value = 0;
@@ -89,7 +113,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
     if (e.checked) {
       q.Quantity.value = q.requestQuanity.value;
     }
-    else{
+    else {
       q.Quantity.value = 0;
     }
     q.save();

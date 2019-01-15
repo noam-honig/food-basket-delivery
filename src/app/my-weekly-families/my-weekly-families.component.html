@@ -21,20 +21,23 @@
         <mat-list>
           <ng-container *ngFor="let p of products">
             <mat-list-item *ngIf="displayProduct(p,d)">
-              <div class="quantity-input" *ngIf="displayRequestQuantity(d)">
+              <div class="quantity-input" style="align-items: center" *ngIf="displayRequestQuantity(d)">
                 <button class="btn btn-sm btn-success glyphicon glyphicon-plus" type="button" (click)="add(p,d,1)"></button>
                 <input type="tel" class="form-control numeric-value" [(ngModel)]="quantity(p,d).requestQuanity.value"
                   (change)="quantity(p,d).save()">
                 <button class="btn btn-sm btn-danger glyphicon glyphicon-minus" [attr.disabled]="quantity(p,d).requestQuanity.value<=0?'':null"
                   type="button" (click)="add(p,d,-1)"></button>
               </div>
-              <span *ngIf="!displayRequestQuantity(d)">
+              <div style="display: flex; align-items: center" *ngIf="!displayRequestQuantity(d)">
                   <mat-checkbox [checked]="quantity(p,d).Quantity.value>0"(change)="checkBoxChecked(p,d,$event)" ></mat-checkbox>
-                  <input type="tel" class="form-control numeric-value quantity-textbox" [(ngModel)]="quantity(p,d).Quantity.value"
+                  <input type="tel" class="form-control numeric-value" style="width: 50px" [(ngModel)]="quantity(p,d).Quantity.value"
                   (change)="quantity(p,d).save()">
-
+                <span style="margin-left:5px;margin-right: 5px">
                 {{quantity(p,d).requestQuanity.value+' '}}
-              </span> 
+                
+              </span>
+              </div> 
+              
               {{p.name.value}}
             </mat-list-item>
           </ng-container>
