@@ -16,7 +16,7 @@ import { DialogService } from '../select-popup/dialog';
 })
 export class MyWeeklyFamiliesComponent implements OnInit {
 
-  constructor(private context: Context,private dialog:DialogService) {
+  constructor(private context: Context, private dialog: DialogService) {
 
 
   }
@@ -54,7 +54,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
       q.save();
     }
   }
-  
+
   products: Products[];
   static route: Route = {
     path: 'my-weekly-families',
@@ -69,10 +69,12 @@ export class MyWeeklyFamiliesComponent implements OnInit {
     await wfd.save();
     this.deliveries.splice(0, 0, wfd);
   }
-  async changeStatus(d: WeeklyFamilyDeliveries, status: WeeklyFamilyDeliveryStatus) {
-    d.status.listValue = status;
-    await d.save();
+  displayProduct(p: Products, d: WeeklyFamilyDeliveries) {
+    if (d.status.listValue == WeeklyFamilyDeliveryStatus.Prepare)
+      return true;
+    return this.quantity(p, d).requestQuanity.value > 0;
   }
+
   totalItems(d: WeeklyFamilyDeliveries) {
     let x = 0;
     this.products.forEach(p => x += this.quantity(p, d).requestQuanity.value);

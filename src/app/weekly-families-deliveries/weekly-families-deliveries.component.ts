@@ -31,13 +31,25 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
         if (this.isNew()) {
           this.status.listValue = WeeklyFamilyDeliveryStatus.Prepare;
           this.ordnial.value = +(await context.for(WeeklyFamilyDeliveries).count(wfd => wfd.familyId.isEqualTo(this.familyId.value))) + 1;
-
-
         }
       },
 
     })
   }
+
+  changeStatusToReadyToPack(){
+    this.changeStatus(WeeklyFamilyDeliveryStatus.Pack);
+  }
+  changeToPrelare()
+  {
+    this.changeStatus( WeeklyFamilyDeliveryStatus.Prepare);
+
+  }
+  changeStatus(s: WeeklyFamilyDeliveryStatus) {
+    this.status.listValue = s;
+    this.save();
+  }
+
   familyId = new WeeklyFamilyId();
   status = new WeeklyFamilyDeliveryStatusColumn();
   ordnial = new NumberColumn('סידורי');

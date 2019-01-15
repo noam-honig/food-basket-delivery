@@ -13,24 +13,24 @@
 
 
         <div class="top-bar" #myDiv>
-          <button *ngIf="totalItems(d)>0">מוכנה לאריזה</button>
-
-
+          <button *ngIf="totalItems(d)>0" (click)="d.changeStatusToReadyToPack()">מוכנה לאריזה</button>
+          <button *ngIf="totalItems(d)>0" (click)="d.changeToPrelare()">החזר להכנה</button>
 
 
         </div>
         <mat-list>
-          <mat-list-item *ngFor="let p of products">
-            <div class="quantity-input">
-              <button class="btn btn-sm btn-success glyphicon glyphicon-plus" type="button" (click)="add(p,d,1)"></button>
-              <input type="tel" class="form-control numeric-value" [(ngModel)]="quantity(p,d).requestQuanity.value"
-                (change)="quantity(p,d).save()">
-              <button class="btn btn-sm btn-danger glyphicon glyphicon-minus" [attr.disabled]="quantity(p,d).requestQuanity.value<=0?'':null"
-                type="button" (click)="add(p,d,-1)"></button>
-            </div>
-
-            {{p.name.value}}
-          </mat-list-item>
+          <ng-container *ngFor="let p of products">
+            <mat-list-item *ngIf="displayProduct(p,d)">
+              <div class="quantity-input">
+                <button class="btn btn-sm btn-success glyphicon glyphicon-plus" type="button" (click)="add(p,d,1)"></button>
+                <input type="tel" class="form-control numeric-value" [(ngModel)]="quantity(p,d).requestQuanity.value"
+                  (change)="quantity(p,d).save()">
+                <button class="btn btn-sm btn-danger glyphicon glyphicon-minus" [attr.disabled]="quantity(p,d).requestQuanity.value<=0?'':null"
+                  type="button" (click)="add(p,d,-1)"></button>
+              </div>
+              {{p.name.value}}
+            </mat-list-item>
+          </ng-container>
 
         </mat-list>
       </mat-expansion-panel>
