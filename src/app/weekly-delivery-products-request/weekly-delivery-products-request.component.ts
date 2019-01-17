@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
 import { AdminGuard } from '../auth/auth-guard';
 import { Context } from '../shared/context';
-import { Products } from '../products/products';
+import { Products } from '../weekly-families-deliveries/weekly-families-deliveries.component';
 
 @Component({
   selector: 'app-weekly-delivery-products-request',

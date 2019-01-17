@@ -1,0 +1,38 @@
+import { Component, OnInit } from '@angular/core';
+import { Route } from '@angular/router';
+import { AdminGuard } from '../auth/auth-guard';
+import { Context } from '../shared/context';
+import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts } from '../weekly-families-deliveries/weekly-families-deliveries.component';
+import { WeeklyFamilies } from '../weekly-families/weekly-families';
+
+@Component({
+  selector: 'app-weekly-packer-by-family',
+  templateUrl: './weekly-packer-by-family.component.html',
+  styleUrls: ['./weekly-packer-by-family.component.scss']
+})
+export class WeeklyPackerByFamilyComponent implements OnInit {
+  deliveryProducts: WeeklyFamilyDeliveryProducts[] = [];
+
+  constructor(private context:Context) { }
+  deliveries:WeeklyFamilyDeliveries[]=[];
+
+  async ngOnInit() {
+    this.deliveries = await this.context.for(WeeklyFamilyDeliveries).find(
+      {where: d => d.status.isEqualTo(WeeklyFamilyDeliveryStatus.Pack.id)});
+  }
+  static route: Route = {
+    path: 'weekly-packer-by-family',
+    component: WeeklyPackerByFamilyComponent,
+    data: { name: 'אריזה לפי חבילות' }, canActivate: [AdminGuard]
+  }
+
+   getDeliveryName(d : WeeklyFamilyDeliveries)
+  {
+    return this.context.for(WeeklyFamilies).lookup(f => f.id.isEqualTo(d.familyId)).codeName.value;
+  }
+
+    async showDelivery(d:WeeklyFamilyDeliveries)
+  {
+    this.deliveryProducts = await this.context.for(WeeklyFamilyDeliveryProducts).find({where: x => x.delivery.isEqualTo(d.id)});
+  }
+}

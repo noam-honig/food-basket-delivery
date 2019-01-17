@@ -3,7 +3,7 @@ import { Route } from '@angular/router';
 
 import { AdminGuard } from '../auth/auth-guard';
 import { Context } from '../shared/context';
-import { Products } from './products';
+import { Products } from '../weekly-families-deliveries/weekly-families-deliveries.component';
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',

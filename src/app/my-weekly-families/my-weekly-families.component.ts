@@ -5,8 +5,7 @@ import { AdminGuard } from '../auth/auth-guard';
 import { WeeklyFamilies } from '../weekly-families/weekly-families';
 import { Context } from '../shared/context';
 
-import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts } from '../weekly-families-deliveries/weekly-families-deliveries.component';
-import { Products, ProductId } from '../products/products';
+import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts, Products } from '../weekly-families-deliveries/weekly-families-deliveries.component';
 import { ItemId } from '../events/ItemId';
 import { DialogService } from '../select-popup/dialog';
 import { MatCheckboxChange } from '@angular/material';
@@ -107,16 +106,5 @@ export class MyWeeklyFamiliesComponent implements OnInit {
     let x = 0;
     this.products.forEach(p => x += this.quantity(p, d).requestQuanity.value);
     return x;
-  }
-  checkBoxChecked(p: Products, d: WeeklyFamilyDeliveries, e: MatCheckboxChange) {
-    var q = this.quantity(p, d);
-    if (e.checked) {
-      q.Quantity.value = q.requestQuanity.value;
-    }
-    else {
-      q.Quantity.value = 0;
-    }
-    q.save();
-
   }
 }

@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Id, IdEntity, NumberColumn } from '../model-shared/types';
-import { ProductId } from '../products/products';
+import { Id, IdEntity, NumberColumn, buildSql } from '../model-shared/types';
 import { WeeklyFamilyId } from '../weekly-families/weekly-families';
-import { ClosedListColumn } from 'radweb';
-import { EntityClass, Context } from '../shared/context';
+import { ClosedListColumn, StringColumn, BoolColumn } from 'radweb';
+import { EntityClass, Context, ServerContext } from '../shared/context';
 
 
 @Component({
@@ -24,7 +23,7 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
 {
 
   constructor(context: Context) {
-    super(new ProductId(), {
+    super(new ProductId(context), {
       name: 'WeeklyFamilyDeliveries',
       allowApiCRUD: true,
       onSavingRow: async () => {
@@ -59,14 +58,14 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
 @EntityClass
 export class WeeklyFamilyDeliveryProducts extends IdEntity<Id>{
 
-  constructor() {
+  constructor(private context: Context) {
     super(new Id(), {
       name: 'WeeklyFamilyDeliveryProducts',
       allowApiCRUD: true
     })
   }
   delivery = new WeeklyFamilyDeliveryId();
-  product = new ProductId();
+  product = new ProductId(this.context);
   requestQuanity = new NumberColumn({ caption: 'כמות מבוקשת', value: 0 });
   Quantity = new NumberColumn('כמות בפועל');
 }
@@ -105,3 +104,36 @@ export class WeeklyFamilyDeliveryStatusColumn extends ClosedListColumn<WeeklyFam
   }
 
 }
+
+
+export class ProductId extends Id {
+  constructor(private context: Context){
+      super()
+  }
+  getName(){
+      return this.context.for(Products).lookup(this).name.value;
+  }
+}
+let wfdp = new WeeklyFamilyDeliveryProducts(new ServerContext());
+let wfd = new WeeklyFamilyDeliveries(new ServerContext());
+@EntityClass
+export class Products extends IdEntity<ProductId>{
+    name = new StringColumn({ caption: 'שם' });
+    order = new NumberColumn({ caption: 'סדר', value: 50, dbName: 'ord2' });
+    missing = new BoolColumn({ caption: 'חסר' });
+    constructor(private context: Context) {
+        super(new ProductId(context), {
+            name: 'products',
+            allowApiCRUD: true,
+        });
+    }
+
+    quantityToPack = new NumberColumn({
+        dbReadOnly: true,
+        caption: 'כמות לאריזה',
+        dbName: buildSql('(select sum (', wfdp.requestQuanity,') from ',wfdp,' inner join ',wfd,' on ',wfdp.delivery,' = ',wfd,'.',wfd.id ,
+            ' where ',wfd.status, '=', WeeklyFamilyDeliveryStatus.Pack.id,' and ', wfdp.product,' = ','Products','.', 'id', ')'),
+        readonly: true
+      });
+}
+

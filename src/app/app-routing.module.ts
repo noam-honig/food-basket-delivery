@@ -24,10 +24,14 @@ import { ProductsComponent } from './products/products.component';
 import { WeeklyFamiliesComponent } from './weekly-families/weekly-families.component';
 import { WeeklyDeliveryProductsRequestComponent } from './weekly-delivery-products-request/weekly-delivery-products-request.component';
 import { MyWeeklyFamiliesComponent } from './my-weekly-families/my-weekly-families.component';
+import { WeeklyPackerByFamilyComponent } from './weekly-packer-by-family/weekly-packer-by-family.component';
+import { WeeklyPackerByProductComponent } from './weekly-packer-by-product/weekly-packer-by-product.component';
 
 
 
 const routes: Routes = [
+  WeeklyPackerByProductComponent.route,
+  WeeklyPackerByFamilyComponent.route,
   MyWeeklyFamiliesComponent.route,
   FamiliesComponent.route,
   AsignFamilyComponent.route,
@@ -49,7 +53,7 @@ const routes: Routes = [
   { path: '', redirectTo: '/families', pathMatch: 'full' },
   { path: '**', redirectTo: '/families', pathMatch: 'full' }
 ];
-
+ 
 evilStatics.routes.families = '/' + FamiliesComponent.route.path;
 evilStatics.routes.login = '/' + LoginComponent.route.path;
 evilStatics.routes.myFamilies = '/' + MyFamiliesComponent.route.path;

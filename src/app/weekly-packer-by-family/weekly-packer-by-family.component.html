@@ -1,0 +1,18 @@
+<mat-accordion>
+    <mat-expansion-panel *ngFor="let d of deliveries" (opened)="showDelivery(d)">
+      <mat-expansion-panel-header>
+        חבילה {{getDeliveryName(d)}} 
+      </mat-expansion-panel-header>
+
+      <mat-list>
+            <mat-list-item *ngFor="let dp of deliveryProducts">
+              <app-product-quantity-in-delivery [d]="dp"></app-product-quantity-in-delivery>
+              {{dp.product.getName()}}
+            </mat-list-item>
+        </mat-list>
+
+
+    </mat-expansion-panel>
+  
+  
+  </mat-accordion>

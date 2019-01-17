@@ -28,6 +28,7 @@
                 <button class="btn btn-sm btn-danger glyphicon glyphicon-minus" [attr.disabled]="quantity(p,d).requestQuanity.value<=0?'':null"
                   type="button" (click)="add(p,d,-1)"></button>
               </div>
+              <app-product-quantity-in-delivery [d]="quantity(p,d)" *ngIf="!displayRequestQuantity(d)" ></app-product-quantity-in-delivery>
               <div style="display: flex; align-items: center" *ngIf="!displayRequestQuantity(d)">
                   <mat-checkbox [checked]="quantity(p,d).Quantity.value>0"(change)="checkBoxChecked(p,d,$event)" ></mat-checkbox>
                   <input type="tel" class="form-control numeric-value" style="width: 50px" [(ngModel)]="quantity(p,d).Quantity.value"
