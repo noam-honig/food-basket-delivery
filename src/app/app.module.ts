@@ -24,7 +24,7 @@ import { EventItemHelpersComponent } from './event-item-helpers/event-item-helpe
 import { LoginComponent } from './users/login/login.component';
 import { RegisterComponent } from './users/register/register.component';
 import { AuthService } from './auth/auth-service';
-import { LoggedInGuard, AdminGuard, NotLoggedInGuard } from './auth/auth-guard';
+import { LoggedInGuard, AdminGuard, NotLoggedInGuard, PackerGuard, WeeklyFamilyVoulenteerGuard, WeeklyFamilyAdminGuard, HelperGuard } from './auth/auth-guard';
 import { MyEventsComponent } from './my-events/my-events.component';
 import { InputAreaComponent } from './select-popup/input-area/input-area.component';
 import { UpdateInfoComponent } from './users/update-info/update-info.component';
@@ -126,6 +126,10 @@ import { WeeklyPackerByProductComponent } from './weekly-packer-by-product/weekl
     LoggedInGuard,
     AdminGuard,
     NotLoggedInGuard,
+    PackerGuard,
+    WeeklyFamilyAdminGuard,
+    WeeklyFamilyVoulenteerGuard,
+    HelperGuard,
     Context
   ],
 

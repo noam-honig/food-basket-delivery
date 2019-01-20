@@ -16,12 +16,12 @@ import { DialogService } from '../select-popup/dialog';
   styleUrls: ['./helpers.component.css']
 })
 export class HelpersComponent implements OnInit {
-  constructor(private dialog: DialogService, private context: Context) {
+  constructor(private dialog: DialogService, public context: Context) {
   }
   static route: Route = {
     path: 'helpers',
     component: HelpersComponent,
-    data: { name: 'מתנדבות' }//, canActivate: [AdminGuard]
+    data: { name: 'מתנדבות' }, canActivate: [AdminGuard]
   };
 
   helpers = this.context.for(Helpers).gridSettings({
@@ -58,18 +58,7 @@ export class HelpersComponent implements OnInit {
 
     ]
   });
-  /* */
-  /* workaround for checkbox not working*/
-  get admin() {
-    if (this.helpers.currentRow)
-      return this.helpers.currentRow.isAdmin.value;
-    return false;
-  }
-  set admin(value: any) {
 
-    this.helpers.currentRow.isAdmin.value = value;
-
-  }
   resetPassword() {
     this.dialog.YesNoQuestion("האם את בטוחה שאת רוצה למחוק את הסיסמה של " + this.helpers.currentRow.name.value, async () => {
       await HelpersComponent.resetPassword(this.helpers.currentRow.id.value);

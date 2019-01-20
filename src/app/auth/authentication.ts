@@ -105,7 +105,7 @@ export class Authentication<T> {
             return true;
         })
         server.addAllowedHeader(authToken);
-        area.addAction(new GetCurrentSession(environment.serverUrl, undefined, this.AddAuthInfoToRequest()));
+        area.addAction(new GetCurrentSession(environment.serverUrl,undefined, this.AddAuthInfoToRequest()));
 
     }
     jwt:JsonWebTokenHelper;

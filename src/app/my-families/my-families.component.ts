@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UserFamiliesList } from './user-families';
 import { Route } from '@angular/router';
-import { LoggedInGuard } from '../auth/auth-guard';
+import { WeeklyFamilyVoulenteerGuard, HelperGuard } from '../auth/auth-guard';
 import { Context } from '../shared/context';
 
 @Component({
@@ -12,7 +12,7 @@ import { Context } from '../shared/context';
 export class MyFamiliesComponent implements OnInit {
 
   static route: Route = {
-    path: 'my-families', component: MyFamiliesComponent, canActivate: [LoggedInGuard], data: { name: 'משפחות שלי' }
+    path: 'my-families', component: MyFamiliesComponent, canActivate: [HelperGuard], data: { name: 'משפחות שלי' }
   };
   familyLists = new UserFamiliesList(this.context);
 

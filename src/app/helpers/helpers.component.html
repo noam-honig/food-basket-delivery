@@ -1,7 +1,28 @@
 <mat-card>
   <data-grid [settings]="helpers"></data-grid>
-  <div class="col-md-12">
-    <mat-checkbox [(ngModel)]="admin"> מנהלת</mat-checkbox>
+  <div class="col-md-12" *ngIf="helpers.currentRow">
+    <div *ngIf="context.info.superAdmin">
+      <mat-checkbox [(ngModel)]="helpers.currentRow.superAdmin.value">{{helpers.currentRow.superAdmin.caption}}</mat-checkbox>
+    </div>
+    <div *ngIf="context.info.deliveryAdmin">
+      <div>
+        <mat-checkbox [(ngModel)]="helpers.currentRow.deliveryAdmin.value">{{helpers.currentRow.deliveryAdmin.caption}}</mat-checkbox>
+      </div>
+      <div>
+        <mat-checkbox [(ngModel)]="helpers.currentRow.deliveryVolunteer.value">{{helpers.currentRow.deliveryVolunteer.caption}}</mat-checkbox>
+      </div>
+    </div>
+    <div *ngIf="context.info.weeklyFamilyAdmin">
+      <div>
+        <mat-checkbox [(ngModel)]="helpers.currentRow.weeklyFamilyAdmin.value">{{helpers.currentRow.weeklyFamilyAdmin.caption}}</mat-checkbox>
+      </div>
+      <div>
+        <mat-checkbox [(ngModel)]="helpers.currentRow.weeklyFamilyVolunteer.value">{{helpers.currentRow.weeklyFamilyVolunteer.caption}}</mat-checkbox>
+      </div>
+      <div>
+        <mat-checkbox [(ngModel)]="helpers.currentRow.weeklyFamilyPacker.value">{{helpers.currentRow.weeklyFamilyPacker.caption}}</mat-checkbox>
+      </div>
+    </div>
   </div>
   <button mat-raised-button color="warn" (click)="resetPassword()" *ngIf="helpers.currentRow">
     אתחלי סיסמה ל{{helpers.currentRow.name.value}}

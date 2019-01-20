@@ -1,7 +1,7 @@
 import { Component,  NgZone, Injector, ViewChild } from '@angular/core';
 import { Router, Route, CanActivate, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { AuthService } from './auth/auth-service';
-import { LoggedInGuard, dummyRoute, AdminGuard } from './auth/auth-guard';
+import { dummyRoute } from './auth/auth-guard';
 import { MatSidenav, MAT_AUTOCOMPLETE_VALUE_ACCESSOR } from '@angular/material';
 import { DialogService } from './select-popup/dialog';
 import { ApplicationSettings } from './manage/ApplicationSettings';
@@ -37,7 +37,7 @@ export class AppComponent {
 
     }
 
-    auth.auth.tokenInfoChanged = () => dialog.refreshEventListener(this.auth.auth.info && this.auth.auth.info.admin);
+    auth.auth.tokenInfoChanged = () => dialog.refreshEventListener(this.auth.auth.info && this.auth.auth.info.deliveryAdmin);
     auth.auth.tokenInfoChanged();
 
   }

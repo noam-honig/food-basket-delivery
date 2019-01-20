@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Route } from '@angular/router';
 
-import { AdminGuard } from '../auth/auth-guard';
-import { WeeklyFamilies } from '../weekly-families/weekly-families';
+import { AdminGuard, WeeklyFamilyVoulenteerGuard } from '../auth/auth-guard';
+import { WeeklyFullFamilyInfo } from '../weekly-families/weekly-families';
 import { Context } from '../shared/context';
 
 import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts, Products } from '../weekly-families-deliveries/weekly-families-deliveries.component';
@@ -23,13 +23,13 @@ export class MyWeeklyFamiliesComponent implements OnInit {
   @ViewChild('myDiv') myDiv: any;
   async ngOnInit() {
     this.products = await this.context.for(Products).find();
-    this.families = await this.context.for(WeeklyFamilies).find({
+    this.families = await this.context.for(WeeklyFullFamilyInfo).find({
       //  where: f => f.assignedHelper.isEqualTo(this.context.info.helperId)
     });
   }
-  families: WeeklyFamilies[];
-  currentFamilly: WeeklyFamilies;
-  async selectFamiliy(f: WeeklyFamilies) {
+  families: WeeklyFullFamilyInfo[];
+  currentFamilly: WeeklyFullFamilyInfo;
+  async selectFamiliy(f: WeeklyFullFamilyInfo) {
     this.currentFamilly = null;
     this.deliveries = await this.context.for(WeeklyFamilyDeliveries).find({
       where: wfd => wfd.familyId.isEqualTo(f.id),
@@ -83,7 +83,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
   static route: Route = {
     path: 'my-weekly-families',
     component: MyWeeklyFamiliesComponent,
-    data: { name: 'משפחות שבועיות שלי' }, canActivate: [AdminGuard]
+    data: { name: 'משפחות שבועיות שלי' }, canActivate: [WeeklyFamilyVoulenteerGuard]
   }
   deliveries: WeeklyFamilyDeliveries[];
   async preparePackage() {

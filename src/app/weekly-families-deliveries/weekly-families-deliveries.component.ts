@@ -136,4 +136,3 @@ export class Products extends IdEntity<ProductId>{
         readonly: true
       });
 }
-

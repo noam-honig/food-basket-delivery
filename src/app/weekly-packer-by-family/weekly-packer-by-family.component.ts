@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
-import { AdminGuard } from '../auth/auth-guard';
+import { AdminGuard, PackerGuard } from '../auth/auth-guard';
 import { Context } from '../shared/context';
 import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts } from '../weekly-families-deliveries/weekly-families-deliveries.component';
 import { WeeklyFamilies } from '../weekly-families/weekly-families';
@@ -23,7 +23,7 @@ export class WeeklyPackerByFamilyComponent implements OnInit {
   static route: Route = {
     path: 'weekly-packer-by-family',
     component: WeeklyPackerByFamilyComponent,
-    data: { name: 'אריזה לפי חבילות' }, canActivate: [AdminGuard]
+    data: { name: 'אריזה לפי חבילות' }, canActivate: [PackerGuard]
   }
 
    getDeliveryName(d : WeeklyFamilyDeliveries)

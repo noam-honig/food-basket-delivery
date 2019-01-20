@@ -170,7 +170,7 @@ export class Families extends IdEntity<FamilyId>  {
   createUser = new HelperIdReadonly(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'משתמש מוסיף' });
 
   excludeColumns(info: myAuthInfo) {
-    if (info && info.admin)
+    if (info && info.deliveryAdmin)
       return [];
     return [this.internalComment, this.callComments, this.callHelper, this.callStatus, this.callTime, this.createDate, this.createUser, this.familySource, this.familyMembers, this.special];
   }

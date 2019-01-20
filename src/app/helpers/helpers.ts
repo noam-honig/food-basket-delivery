@@ -23,7 +23,7 @@ export class Helpers extends IdEntity<HelperId>  {
                         this.realStoredPassword.value = evilStatics.passwordHelper.generateHash(this.password.value);
                     }
                     if ((await context.for(Helpers).count()) == 0)
-                        this.isAdmin.value = true;
+                        this.deliveryAdmin.value = true;
 
                     await checkForDuplicateValue(this, this.phone);
                     if (this.isNew())
@@ -57,11 +57,24 @@ export class Helpers extends IdEntity<HelperId>  {
     createDate = new changeDate({ caption: 'מועד הוספה' });
     smsDate = new changeDate('מועד משלוח SMS');
     reminderSmsDate = new changeDate('מועד משלוח תזכורת SMS');
-    isAdmin = new BoolColumn({
+    deliveryAdmin = new BoolColumn({
         caption: 'מנהלת',
         readonly: !this.context.isAdmin(),
-        excludeFromApi: !this.context.isAdmin()
+        excludeFromApi: !this.context.isAdmin(),
+        dbName: 'isAdmin'
     });
+
+    superAdmin = new BoolColumn({
+    });
+    weeklyFamilyAdmin = new BoolColumn({
+    });
+    weeklyFamilyPacker = new BoolColumn({
+    });
+    deliveryVolunteer = new BoolColumn({
+    });
+    weeklyFamilyVolunteer = new BoolColumn({
+    });
+
     shortUrlKey = new StringColumn({ excludeFromApi: !this.context.isAdmin() });
     veryUrlKeyAndReturnTrueIfSaveRequired() {
         if (!this.shortUrlKey.value) {

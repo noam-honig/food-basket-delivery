@@ -1,22 +1,46 @@
 import { IdEntity, Id, StringColumn } from "../model-shared/types";
-import { EntityClass, Context } from "../shared/context";
+import { EntityClass, Context, ContextEntityOptions } from "../shared/context";
 import { HelperId } from "../helpers/helpers";
+
 
 
 @EntityClass
 export class WeeklyFamilies extends IdEntity<WeeklyFamilyId>{
-    
-    constructor(private context:Context) {
-        super(new WeeklyFamilyId(), {
+
+    constructor(protected context: Context, options?: ContextEntityOptions) {
+        super(new WeeklyFamilyId(), options ? options : {
             name: 'weeklyFamilies',
-            allowApiCRUD: true
+            allowApiCRUD: false
+
         });
     }
-    name = new StringColumn({ caption: 'שם' });
+
     codeName = new StringColumn({ caption: 'שם קוד' });
-    assignedHelper = new HelperId(this.context,{caption:'אחראית'});
+    assignedHelper = new HelperId(this.context, { caption: 'אחראית' });
 }
 
+
+@EntityClass
+export class WeeklyFullFamilyInfo extends WeeklyFamilies {
+    name = new StringColumn({ caption: 'שם' });
+    constructor(context: Context) {
+        super(context, {
+            name: 'weeklyFullFamilies',
+            dbName: () => 'weeklyFamilies',
+            allowApiRead:  context.info.weeklyFamilyVolunteer,
+            allowApiUpdate: context.info.weeklyFamilyVolunteer,
+            allowApiDelete: false,
+            allowApiInsert: context.info.weeklyFamilyAdmin,
+            apiDataFilter: () => {
+                if (context.info.weeklyFamilyAdmin)
+                    return undefined;
+                return this.assignedHelper.isEqualTo(context.info.helperId)
+            }
+        });
+    }
+
+    
+}
 
 
 export class WeeklyFamilyId extends Id {

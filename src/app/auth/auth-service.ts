@@ -16,7 +16,7 @@ export class AuthService {
     async loginFromSms(key: string) {
         this.auth.loggedIn(await AuthService.loginFromSms(key), false);
         if (this.auth.valid) {
-            this.router.navigate([evilStatics.routes.myFamilies]);
+            this.router.navigate([evilStatics.routes.updateInfo]);
         }
     }
     @RunOnServer({ allowed: () => true })
@@ -27,8 +27,9 @@ export class AuthService {
             return {
                 valid: true,
                 authToken: evilStatics.auth.createTokenFor({
+                    loggedIn: true,
                     helperId: h.id.value,
-                    admin: false,
+                    deliveryAdmin: false,
                     name: h.name.value
                 }),
                 requirePassword: false
@@ -51,7 +52,7 @@ export class AuthService {
                 });
             }
             else {
-                if (this.auth.info.admin)
+                if (this.auth.info.deliveryAdmin)
                     this.router.navigate([evilStatics.routes.families])
                 else
                     this.router.navigate([evilStatics.routes.myFamilies])
@@ -71,12 +72,18 @@ export class AuthService {
         await context.for(Helpers).foreach(h => h.phone.isEqualTo(user), async h => {
             if (!h.realStoredPassword.value || evilStatics.passwordHelper.verify(password, h.realStoredPassword.value)) {
                 result = {
+                    loggedIn: true,
                     helperId: h.id.value,
-                    admin: h.isAdmin.value,
+                    superAdmin: h.superAdmin.value,
+                    deliveryAdmin: h.deliveryAdmin.value || h.superAdmin.value,
+                    weeklyFamilyVolunteer: h.weeklyFamilyVolunteer.value || h.weeklyFamilyAdmin.value || h.superAdmin.value,
+                    weeklyFamilyPacker: h.weeklyFamilyPacker.value || h.weeklyFamilyAdmin.value || h.superAdmin.value,
+                    weeklyFamilyAdmin: h.weeklyFamilyAdmin.value || h.superAdmin.value,
+                    deliveryVolunteer: h.deliveryVolunteer.value || h.deliveryAdmin.value || h.superAdmin.value,
                     name: h.name.value
                 };
-                if (result.admin && h.realStoredPassword.value.length == 0) {
-                    result.admin = false;
+                if (result.deliveryAdmin && h.realStoredPassword.value.length == 0) {
+                    result.deliveryAdmin = false;
                     requirePassword = true;
                 }
             }

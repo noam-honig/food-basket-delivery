@@ -34,15 +34,70 @@ export class AdminGuard implements CanActivate {
     constructor(private auth: AuthService, private router: Router) {
     }
     canActivate(route: ActivatedRouteSnapshot) {
-        if (this.auth.auth.valid && this.auth.auth.info.admin)
+        if (this.auth.auth.valid && this.auth.auth.info.deliveryAdmin)
             return true;
         if (!(route instanceof dummyRoute))
-            this.router.navigate([evilStatics.routes.myFamilies]);
+            this.router.navigate([evilStatics.routes.updateInfo]);
+        return false;
+ 
+    }
+}
+@Injectable()
+export class WeeklyFamilyAdminGuard implements CanActivate {
+    constructor(private auth: AuthService, private router: Router) {
+    } 
+    canActivate(route: ActivatedRouteSnapshot) {
+        if (this.auth.auth.valid && this.auth.auth.info.weeklyFamilyAdmin)
+            return true;
+        if (!(route instanceof dummyRoute))
+            this.router.navigate([evilStatics.routes.updateInfo]);
         return false;
 
     }
 }
 
+@Injectable()
+export class WeeklyFamilyVoulenteerGuard implements CanActivate {
+    constructor(private auth: AuthService, private router: Router) {
+    }
+    canActivate(route: ActivatedRouteSnapshot) {
+        if (this.auth.auth.valid && this.auth.auth.info.weeklyFamilyVolunteer)
+            return true;
+        if (!(route instanceof dummyRoute))
+            this.router.navigate([evilStatics.routes.updateInfo]);
+        return false;
+
+    }
+}
+
+
+@Injectable()
+export class PackerGuard implements CanActivate {
+    constructor(private auth: AuthService, private router: Router) {
+    }
+    canActivate(route: ActivatedRouteSnapshot) {
+        if (this.auth.auth.valid && this.auth.auth.info.weeklyFamilyPacker)
+            return true;
+        if (!(route instanceof dummyRoute))
+            this.router.navigate([evilStatics.routes.updateInfo]);
+        return false;
+
+    }
+}
+
+@Injectable()
+export class HelperGuard implements CanActivate {
+    constructor(private auth: AuthService, private router: Router) {
+    }
+    canActivate(route: ActivatedRouteSnapshot) {
+        if (this.auth.auth.valid && this.auth.auth.info.deliveryVolunteer)
+            return true;
+        if (!(route instanceof dummyRoute))
+            this.router.navigate([evilStatics.routes.updateInfo]);
+        return false;
+
+    }
+}
 
 
 export class dummyRoute extends ActivatedRouteSnapshot {
