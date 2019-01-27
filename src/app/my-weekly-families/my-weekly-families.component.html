@@ -29,15 +29,7 @@
                   type="button" (click)="add(p,d,-1)"></button>
               </div>
               <app-product-quantity-in-delivery [d]="quantity(p,d)" *ngIf="!displayRequestQuantity(d)" ></app-product-quantity-in-delivery>
-              <div style="display: flex; align-items: center" *ngIf="!displayRequestQuantity(d)">
-                  <mat-checkbox [checked]="quantity(p,d).Quantity.value>0"(change)="checkBoxChecked(p,d,$event)" ></mat-checkbox>
-                  <input type="tel" class="form-control numeric-value" style="width: 50px" [(ngModel)]="quantity(p,d).Quantity.value"
-                  (change)="quantity(p,d).save()">
-                <span style="margin-left:5px;margin-right: 5px">
-                {{quantity(p,d).requestQuanity.value+' '}}
-                
-              </span>
-              </div> 
+             
               
               {{p.name.value}}
             </mat-list-item>

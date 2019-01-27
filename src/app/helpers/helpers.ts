@@ -1,5 +1,5 @@
 import * as radweb from 'radweb';
-import { ColumnSetting, Entity } from "radweb";
+import { ColumnSetting, Entity, FilterBase } from "radweb";
 import { IdEntity, changeDate, Id, HasAsyncGetTheValue, checkForDuplicateValue, StringColumn, BoolColumn, updateSettings } from '../model-shared/types';
 import { SelectServiceInterface } from '../select-popup/select-service-interface';
 import { DataColumnSettings } from 'radweb';
@@ -103,12 +103,12 @@ export class HelperId extends Id implements HasAsyncGetTheValue {
     constructor(private context: Context, settingsOrCaption?: DataColumnSettings<string, StringColumn> | string) {
         super(settingsOrCaption);
     }
-    getColumn(dialog: SelectServiceInterface): ColumnSetting<Entity<any>> {
+    getColumn(dialog: SelectServiceInterface, filter?: (helper: Helpers) => FilterBase): ColumnSetting<Entity<any>> {
         return {
             column: this,
             getValue: f => (<HelperId>f.__getColumn(this)).getValue(),
             hideDataOnInput: true,
-            click: f => dialog.selectHelper(s => f.__getColumn(this).value = (s ? s.id.value : '')),
+            click: f => dialog.selectHelper(s => f.__getColumn(this).value = (s ? s.id.value : ''), filter),
             readonly: this.readonly,
             width: '200'
 

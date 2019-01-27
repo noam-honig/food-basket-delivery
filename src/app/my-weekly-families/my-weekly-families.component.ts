@@ -24,7 +24,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
   async ngOnInit() {
     this.products = await this.context.for(Products).find();
     this.families = await this.context.for(WeeklyFullFamilyInfo).find({
-      //  where: f => f.assignedHelper.isEqualTo(this.context.info.helperId)
+        where: f => f.assignedHelper.isEqualTo(this.context.info.helperId)
     });
   }
   families: WeeklyFullFamilyInfo[];
