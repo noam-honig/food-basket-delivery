@@ -36,14 +36,7 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
     })
   }
 
-  changeStatusToReadyToPack(){
-    this.changeStatus(WeeklyFamilyDeliveryStatus.Pack);
-  }
-  changeToPrelare()
-  {
-    this.changeStatus( WeeklyFamilyDeliveryStatus.Prepare);
 
-  }
   changeStatus(s: WeeklyFamilyDeliveryStatus) {
     this.status.listValue = s;
     this.save();
@@ -85,17 +78,65 @@ export class WeeklyFamilyDeliveryId extends Id {
 
 export class WeeklyFamilyDeliveryStatus {
 
-  static Prepare = new WeeklyFamilyDeliveryStatus(10, "הכנה");
-  static Pack = new WeeklyFamilyDeliveryStatus(20, "אריזה");
+  static Prepare = new WeeklyFamilyDeliveryStatus(10, "הכנה","אנא בחרי את המוצרים לסל ובסיום לחצי על \"סל מוכן לאריזה\"");
+  static Pack = new WeeklyFamilyDeliveryStatus(20, "אריזה","אנא סמן אילו מוצרים נארזו ובסיום לחץ על \"מוכן לאיסוף\"");
   static Ready = new WeeklyFamilyDeliveryStatus(30, "מוכן לאיסוף");
   static OnRoute = new WeeklyFamilyDeliveryStatus(40, "נאסף");
   static Delivered = new WeeklyFamilyDeliveryStatus(50, "נמסר");
-  constructor(public id: number, private name: string) {
+  next: StatusButtonInfo;
+  prev: StatusButtonInfo;
+  constructor(public id: number, private name: string,private helpText?:string) {
 
   }
   toString() {
     return this.name;
   }
+
+}
+WeeklyFamilyDeliveryStatus.Prepare.next = {
+  name: 'סל מוכן לאריזה',
+  status: WeeklyFamilyDeliveryStatus.Pack,
+  disabled:h=>!h.hasRequestItems()
+};
+WeeklyFamilyDeliveryStatus.Pack.prev = {
+  name: 'החזר סל להכנה',
+  status: WeeklyFamilyDeliveryStatus.Prepare
+};
+WeeklyFamilyDeliveryStatus.Pack.next = {
+  name: 'מוכן לאיסוף',
+  status: WeeklyFamilyDeliveryStatus.Ready
+};
+WeeklyFamilyDeliveryStatus.Ready.prev = {
+  name: 'החזר לאריזה',
+  status: WeeklyFamilyDeliveryStatus.Pack
+};
+WeeklyFamilyDeliveryStatus.Ready.next = {
+  name: 'נאסף',
+  status: WeeklyFamilyDeliveryStatus.OnRoute
+};
+WeeklyFamilyDeliveryStatus.OnRoute.prev = {
+  name: 'החזר למוכן לאיסוף',
+  status: WeeklyFamilyDeliveryStatus.Ready
+};
+WeeklyFamilyDeliveryStatus.OnRoute.next = {
+  name: 'נמסר',
+  status: WeeklyFamilyDeliveryStatus.Delivered
+};
+WeeklyFamilyDeliveryStatus.Delivered.prev = {
+  name: 'החזר לנאסף',
+  status: WeeklyFamilyDeliveryStatus.OnRoute
+};
+
+
+
+export interface StatusButtonInfo {
+  status: WeeklyFamilyDeliveryStatus,
+  name: string,
+  disabled?: (h:StatusButtonEnabledHelper) => boolean
+
+}
+export interface StatusButtonEnabledHelper {
+  hasRequestItems:()=>boolean;
 }
 
 export class WeeklyFamilyDeliveryStatusColumn extends ClosedListColumn<WeeklyFamilyDeliveryStatus>{
@@ -107,32 +148,32 @@ export class WeeklyFamilyDeliveryStatusColumn extends ClosedListColumn<WeeklyFam
 
 
 export class ProductId extends Id {
-  constructor(private context: Context){
-      super()
+  constructor(private context: Context) {
+    super()
   }
-  getName(){
-      return this.context.for(Products).lookup(this).name.value;
+  getName() {
+    return this.context.for(Products).lookup(this).name.value;
   }
 }
 let wfdp = new WeeklyFamilyDeliveryProducts(new ServerContext());
 let wfd = new WeeklyFamilyDeliveries(new ServerContext());
 @EntityClass
 export class Products extends IdEntity<ProductId>{
-    name = new StringColumn({ caption: 'שם' });
-    order = new NumberColumn({ caption: 'סדר', value: 50, dbName: 'ord2' });
-    missing = new BoolColumn({ caption: 'חסר' });
-    constructor(private context: Context) {
-        super(new ProductId(context), {
-            name: 'products',
-            allowApiCRUD: true,
-        });
-    }
+  name = new StringColumn({ caption: 'שם' });
+  order = new NumberColumn({ caption: 'סדר', value: 50, dbName: 'ord2' });
+  missing = new BoolColumn({ caption: 'חסר' });
+  constructor(private context: Context) {
+    super(new ProductId(context), {
+      name: 'products',
+      allowApiCRUD: true,
+    });
+  }
 
-    quantityToPack = new NumberColumn({
-        dbReadOnly: true,
-        caption: 'כמות לאריזה',
-        dbName: buildSql('(select sum (', wfdp.requestQuanity,') from ',wfdp,' inner join ',wfd,' on ',wfdp.delivery,' = ',wfd,'.',wfd.id ,
-            ' where ',wfd.status, '=', WeeklyFamilyDeliveryStatus.Pack.id,' and ', wfdp.product,' = ','Products','.', 'id', ')'),
-        readonly: true
-      });
+  quantityToPack = new NumberColumn({
+    dbReadOnly: true,
+    caption: 'כמות לאריזה',
+    dbName: buildSql('(select sum (', wfdp.requestQuanity, ') from ', wfdp, ' inner join ', wfd, ' on ', wfdp.delivery, ' = ', wfd, '.', wfd.id,
+      ' where ', wfd.status, '=', WeeklyFamilyDeliveryStatus.Pack.id, ' and ', wfdp.product, ' = ', 'Products', '.', 'id', ')'),
+    readonly: true
+  });
 }

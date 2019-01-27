@@ -24,7 +24,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
   async ngOnInit() {
     this.products = await this.context.for(Products).find();
     this.families = await this.context.for(WeeklyFullFamilyInfo).find({
-        where: f => f.assignedHelper.isEqualTo(this.context.info.helperId)
+      where: f => f.assignedHelper.isEqualTo(this.context.info.helperId)
     });
   }
   families: WeeklyFullFamilyInfo[];
@@ -107,4 +107,13 @@ export class MyWeeklyFamiliesComponent implements OnInit {
     this.products.forEach(p => x += this.quantity(p, d).requestQuanity.value);
     return x;
   }
+  nextDisabled(d: WeeklyFamilyDeliveries) {
+    if (!d.status.listValue.next.disabled)
+      return false;
+    return d.status.listValue.next.disabled({
+      hasRequestItems: () => this.totalItems(d) > 0
+    });
+
+  }
+  
 }
