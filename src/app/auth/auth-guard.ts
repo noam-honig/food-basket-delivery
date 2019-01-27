@@ -30,11 +30,25 @@ export class NotLoggedInGuard implements CanActivate {
 
 
 @Injectable()
-export class AdminGuard implements CanActivate {
+export class HolidayDeliveryAdmin implements CanActivate {
     constructor(private auth: AuthService, private router: Router) {
     }
     canActivate(route: ActivatedRouteSnapshot) {
         if (this.auth.auth.valid && this.auth.auth.info.deliveryAdmin)
+            return true;
+        if (!(route instanceof dummyRoute))
+            this.router.navigate([evilStatics.routes.updateInfo]);
+        return false;
+ 
+    }
+}
+
+@Injectable()
+export class AnyAdmin implements CanActivate {
+    constructor(private auth: AuthService, private router: Router) {
+    }
+    canActivate(route: ActivatedRouteSnapshot) {
+        if (this.auth.auth.valid && (this.auth.auth.info.deliveryAdmin||this.auth.auth.info.weeklyFamilyAdmin))
             return true;
         if (!(route instanceof dummyRoute))
             this.router.navigate([evilStatics.routes.updateInfo]);

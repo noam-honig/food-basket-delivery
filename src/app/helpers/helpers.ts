@@ -34,7 +34,7 @@ export class Helpers extends IdEntity<HelperId>  {
             apiDataFilter: () => {
                 if (!context.isLoggedIn())
                     return this.id.isEqualTo("No User");
-                else if (!context.isAdmin())
+                else if (!(context.info.deliveryAdmin || context.info.weeklyFamilyAdmin))
                     return this.id.isEqualTo(this.context.info.helperId);
             }
         });
@@ -58,21 +58,26 @@ export class Helpers extends IdEntity<HelperId>  {
     smsDate = new changeDate('מועד משלוח SMS');
     reminderSmsDate = new changeDate('מועד משלוח תזכורת SMS');
     deliveryAdmin = new BoolColumn({
-        caption: 'מנהלת',
+        caption: 'מנהלת משלוח חגים',
         readonly: !this.context.isAdmin(),
         excludeFromApi: !this.context.isAdmin(),
         dbName: 'isAdmin'
     });
 
     superAdmin = new BoolColumn({
+        caption: 'סופר מנהל'
     });
     weeklyFamilyAdmin = new BoolColumn({
+        caption: 'מנהלת משלוחים שבועיים'
     });
     weeklyFamilyPacker = new BoolColumn({
+        caption: 'אורזת משלוחים שבועיים'
     });
     deliveryVolunteer = new BoolColumn({
+        caption: 'מתנדב משלוח חגים'
     });
     weeklyFamilyVolunteer = new BoolColumn({
+        caption: 'מתנדבת משלוחים שבועיים'
     });
 
     shortUrlKey = new StringColumn({ excludeFromApi: !this.context.isAdmin() });

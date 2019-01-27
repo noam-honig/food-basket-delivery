@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Column } from 'radweb';
 import { DeliveryEvents } from './delivery-events';
-import { AdminGuard } from '../auth/auth-guard';
+import { HolidayDeliveryAdmin } from '../auth/auth-guard';
 import { Route } from '@angular/router';
 import { Context } from '../shared/context';
 import { RunOnServer } from '../auth/server-action';
@@ -21,7 +21,7 @@ export class DeliveryEventsComponent implements OnInit {
   static route: Route = {
     path: 'delivery-events',
     component: DeliveryEventsComponent,
-    data: { name: 'אירועי חלוקה' }, canActivate: [AdminGuard]
+    data: { name: 'אירועי חלוקה' }, canActivate: [HolidayDeliveryAdmin]
   };
 
   deliveryEvents = this.context.for(DeliveryEvents).gridSettings({

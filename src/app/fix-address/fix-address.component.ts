@@ -7,7 +7,7 @@ import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelper
 
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
-import { AdminGuard } from '../auth/auth-guard';
+import { HolidayDeliveryAdmin } from '../auth/auth-guard';
 import { Context } from '../shared/context';
 
 @Component({
@@ -20,7 +20,7 @@ export class FixAddressComponent implements OnInit {
   static route:Route = {
     path: 'addresses',
     component: FixAddressComponent,
-    data: { name: 'טיוב כתובות' }, canActivate: [AdminGuard]
+    data: { name: 'טיוב כתובות' }, canActivate: [HolidayDeliveryAdmin]
   };
 
   gridView = true;

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Route } from '@angular/router';
 
-import { AdminGuard, WeeklyFamilyVoulenteerGuard } from '../auth/auth-guard';
+import { HolidayDeliveryAdmin, WeeklyFamilyVoulenteerGuard } from '../auth/auth-guard';
 import { WeeklyFullFamilyInfo } from '../weekly-families/weekly-families';
 import { Context } from '../shared/context';
 

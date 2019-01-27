@@ -8,7 +8,7 @@ import { BusyService } from '../select-popup/busy-service';
 import { FilterBase } from 'radweb';
 import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
-import { AdminGuard } from '../auth/auth-guard';
+import { HolidayDeliveryAdmin } from '../auth/auth-guard';
 import { Context } from '../shared/context';
 
 @Component({
@@ -18,7 +18,7 @@ import { Context } from '../shared/context';
 })
 export class DeliveryFollowUpComponent implements OnInit {
   static route: Route = {
-    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [AdminGuard], data: { name: 'מעקב משנעים' }
+    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'מעקב משנעים' }
   }
 
   familyLists = new UserFamiliesList(this.context);

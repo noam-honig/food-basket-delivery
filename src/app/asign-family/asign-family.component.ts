@@ -11,7 +11,7 @@ import { UserFamiliesList } from '../my-families/user-families';
 
 import { environment } from '../../environments/environment';
 import { Route } from '@angular/router';
-import { AdminGuard } from '../auth/auth-guard';
+import { HolidayDeliveryAdmin } from '../auth/auth-guard';
 import { foreachSync } from '../shared/utils';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import * as fetch from 'node-fetch';
@@ -29,12 +29,12 @@ import { Routable } from '../shared/routing-helper';
 })
 @Routable({
   path: 'assign-families',
-  canActivate: [AdminGuard],
+  canActivate: [HolidayDeliveryAdmin],
   caption: 'שיוך משפחות'
 })
 export class AsignFamilyComponent implements OnInit {
   static route: Route = {
-    path: 'assign-families', component: AsignFamilyComponent, canActivate: [AdminGuard], data: { name: 'שיוך משפחות' }
+    path: 'assign-families', component: AsignFamilyComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'שיוך משפחות' }
   };
 
   async searchPhone() {

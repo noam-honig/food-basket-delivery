@@ -24,7 +24,7 @@ import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt } from '../custom
 import { HasAsyncGetTheValue } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
-import { AdminGuard } from '../auth/auth-guard';
+import { HolidayDeliveryAdmin } from '../auth/auth-guard';
 import { Context } from '../shared/context';
 import { Routable, componentRoutingInfo } from '../shared/routing-helper';
 
@@ -36,7 +36,7 @@ import { Routable, componentRoutingInfo } from '../shared/routing-helper';
 @Routable({
   path: 'families',
   caption: 'משפחות',
-  canActivate: [AdminGuard]
+  canActivate: [HolidayDeliveryAdmin]
 })
 export class FamiliesComponent implements OnInit {
 
@@ -505,7 +505,7 @@ export class FamiliesComponent implements OnInit {
   static route: Route = {
     path: 'families',
     component: FamiliesComponent,
-    data: { name: 'משפחות' }, canActivate: [AdminGuard]
+    data: { name: 'משפחות' }, canActivate: [HolidayDeliveryAdmin]
   }
 
 }

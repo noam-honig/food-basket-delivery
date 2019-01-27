@@ -3,7 +3,7 @@ import { NewsUpdate } from "./NewsUpdate";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Context } from '../shared/context';
 import { DialogService } from '../select-popup/dialog';
-import { AdminGuard } from '../auth/auth-guard';
+import { HolidayDeliveryAdmin } from '../auth/auth-guard';
 import { Route } from '@angular/router';
 import { SelectService } from '../select-popup/select-service';
 import { Families } from '../families/families';
@@ -15,7 +15,7 @@ import { Families } from '../families/families';
 })
 export class NewsComponent implements OnInit, OnDestroy {
   static route: Route = {
-    path: 'news', component: NewsComponent, canActivate: [AdminGuard], data: { name: 'חדשות' }
+    path: 'news', component: NewsComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'חדשות' }
   };
 
   onDestroy = () => { };

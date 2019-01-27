@@ -5,7 +5,7 @@ import { Helpers } from './helpers';
 import { SelectService } from '../select-popup/select-service';
 import { Families } from '../families/families';
 import { Route } from '@angular/router';
-import { AdminGuard } from '../auth/auth-guard';
+import { HolidayDeliveryAdmin, AnyAdmin } from '../auth/auth-guard';
 import { RunOnServer } from '../auth/server-action';
 import { Context } from '../shared/context';
 import { DialogService } from '../select-popup/dialog';
@@ -21,7 +21,7 @@ export class HelpersComponent implements OnInit {
   static route: Route = {
     path: 'helpers',
     component: HelpersComponent,
-    data: { name: 'מתנדבות' }, canActivate: [AdminGuard]
+    data: { name: 'מתנדבות' }, canActivate: [AnyAdmin]
   };
 
   helpers = this.context.for(Helpers).gridSettings({

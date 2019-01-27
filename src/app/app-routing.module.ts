@@ -5,7 +5,7 @@ import { RouterModule, Routes, RouteReuseStrategy, RouteConfigLoadStart } from '
 import { HelpersComponent } from './helpers/helpers.component';
 import { LoginComponent } from './users/login/login.component';
 import { RegisterComponent } from './users/register/register.component';
-import { LoggedInGuard, AdminGuard, NotLoggedInGuard } from './auth/auth-guard';
+import { LoggedInGuard, HolidayDeliveryAdmin, NotLoggedInGuard } from './auth/auth-guard';
 import { UpdateInfoComponent } from './users/update-info/update-info.component';
 import { FamiliesComponent } from './families/families.component';
 import { MyFamiliesComponent } from './my-families/my-families.component';

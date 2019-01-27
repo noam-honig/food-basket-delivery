@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
-import { AdminGuard, PackerGuard } from '../auth/auth-guard';
+import { HolidayDeliveryAdmin, PackerGuard } from '../auth/auth-guard';
 import { Context } from '../shared/context';
 import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts } from '../weekly-families-deliveries/weekly-families-deliveries.component';
 import { WeeklyFamilies } from '../weekly-families/weekly-families';
