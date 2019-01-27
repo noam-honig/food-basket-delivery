@@ -104,7 +104,7 @@ export class HelperGuard implements CanActivate {
     constructor(private auth: AuthService, private router: Router) {
     }
     canActivate(route: ActivatedRouteSnapshot) {
-        if (this.auth.auth.valid && this.auth.auth.info.deliveryVolunteer)
+        if (this.auth.auth.valid && (this.auth.auth.info.deliveryVolunteer||true))
             return true;
         if (!(route instanceof dummyRoute))
             this.router.navigate([evilStatics.routes.updateInfo]);
