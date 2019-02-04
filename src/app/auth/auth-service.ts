@@ -16,7 +16,7 @@ export class AuthService {
     async loginFromSms(key: string) {
         this.auth.loggedIn(await AuthService.loginFromSms(key), false);
         if (this.auth.valid) {
-            this.router.navigate([evilStatics.routes.updateInfo]);
+            this.router.navigate([evilStatics.routes.myFamilies]);
         }
     }
     @RunOnServer({ allowed: () => true })
