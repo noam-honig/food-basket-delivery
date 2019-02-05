@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Id, IdEntity, NumberColumn, buildSql } from '../model-shared/types';
+import { Id, IdEntity, NumberColumn, buildSql, changeDate, DateTimeColumn } from '../model-shared/types';
 import { WeeklyFamilyId } from '../weekly-families/weekly-families';
 import { ClosedListColumn, StringColumn, BoolColumn } from 'radweb';
 import { EntityClass, Context, ServerContext } from '../shared/context';
@@ -38,13 +38,18 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
 
 
   changeStatus(s: WeeklyFamilyDeliveryStatus) {
+    if (this.status.listValue == WeeklyFamilyDeliveryStatus.Delivered)
+      this.deliveredOn.value = '';
     this.status.listValue = s;
+    if (this.status.listValue == WeeklyFamilyDeliveryStatus.Delivered)
+      this.deliveredOn.dateValue = new Date();
     this.save();
   }
 
   familyId = new WeeklyFamilyId();
   status = new WeeklyFamilyDeliveryStatusColumn();
   ordnial = new NumberColumn('סידורי');
+  deliveredOn = new DateTimeColumn('תאריך מסירה');
 }
 
 
@@ -78,14 +83,14 @@ export class WeeklyFamilyDeliveryId extends Id {
 
 export class WeeklyFamilyDeliveryStatus {
 
-  static Prepare = new WeeklyFamilyDeliveryStatus(10, "הכנה","אנא בחרי את המוצרים לסל ובסיום לחצי על \"סל מוכן לאריזה\"");
-  static Pack = new WeeklyFamilyDeliveryStatus(20, "אריזה","אנא סמן אילו מוצרים נארזו ובסיום לחץ על \"מוכן לאיסוף\"");
+  static Prepare = new WeeklyFamilyDeliveryStatus(10, "הכנה", "אנא בחרי את המוצרים לסל ובסיום לחצי על \"סל מוכן לאריזה\"");
+  static Pack = new WeeklyFamilyDeliveryStatus(20, "אריזה", "אנא סמן אילו מוצרים נארזו ובסיום לחץ על \"מוכן לאיסוף\"");
   static Ready = new WeeklyFamilyDeliveryStatus(30, "מוכן לאיסוף");
   static OnRoute = new WeeklyFamilyDeliveryStatus(40, "נאסף");
   static Delivered = new WeeklyFamilyDeliveryStatus(50, "נמסר");
   next: StatusButtonInfo;
   prev: StatusButtonInfo;
-  constructor(public id: number, private name: string,private helpText?:string) {
+  constructor(public id: number, private name: string, private helpText?: string) {
 
   }
   toString() {
@@ -96,7 +101,7 @@ export class WeeklyFamilyDeliveryStatus {
 WeeklyFamilyDeliveryStatus.Prepare.next = {
   name: 'סל מוכן לאריזה',
   status: WeeklyFamilyDeliveryStatus.Pack,
-  disabled:h=>!h.hasRequestItems()
+  disabled: h => !h.hasRequestItems()
 };
 WeeklyFamilyDeliveryStatus.Pack.prev = {
   name: 'החזר סל להכנה',
@@ -132,11 +137,11 @@ WeeklyFamilyDeliveryStatus.Delivered.prev = {
 export interface StatusButtonInfo {
   status: WeeklyFamilyDeliveryStatus,
   name: string,
-  disabled?: (h:StatusButtonEnabledHelper) => boolean
+  disabled?: (h: StatusButtonEnabledHelper) => boolean
 
 }
 export interface StatusButtonEnabledHelper {
-  hasRequestItems:()=>boolean;
+  hasRequestItems: () => boolean;
 }
 
 export class WeeklyFamilyDeliveryStatusColumn extends ClosedListColumn<WeeklyFamilyDeliveryStatus>{

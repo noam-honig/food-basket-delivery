@@ -59,6 +59,7 @@ import { MyWeeklyFamiliesComponent } from './my-weekly-families/my-weekly-famili
 import { WeeklyPackerByFamilyComponent } from './weekly-packer-by-family/weekly-packer-by-family.component';
 import { ProductQuantityInDeliveryComponent } from './product-quantity-in-delivery/product-quantity-in-delivery.component';
 import { WeeklyPackerByProductComponent } from './weekly-packer-by-product/weekly-packer-by-product.component';
+import { WeeklyDeliveryUpdateComponent } from './weekly-delivery-update/weekly-delivery-update.component';
 
 
 
@@ -105,6 +106,7 @@ import { WeeklyPackerByProductComponent } from './weekly-packer-by-product/weekl
     WeeklyPackerByFamilyComponent,
     ProductQuantityInDeliveryComponent,
     WeeklyPackerByProductComponent,
+    WeeklyDeliveryUpdateComponent,
     
   ],
   imports: [

@@ -7,7 +7,7 @@
     <mat-accordion *ngIf="f==currentFamilly">
       <mat-expansion-panel *ngFor="let d of deliveries">
         <mat-expansion-panel-header>
-          {{d.ordnial.value}} - {{d.status.displayValue}}, {{totalItems(d)}} פריטים
+          {{d.ordnial.value}} - {{d.status.displayValue}}, {{totalItems(d)}} פריטים {{d.deliveredOn.relativeDateName()}}
         </mat-expansion-panel-header>
 
 
@@ -34,8 +34,10 @@
               </div>
               <app-product-quantity-in-delivery [d]="quantity(p,d)" *ngIf="!displayRequestQuantity(d)"></app-product-quantity-in-delivery>
 
-
-              {{p.name.value}}
+              <div>
+                <div>{{p.name.value}}</div>
+                <div class="last-delivered">(אף פעם)</div>
+              </div>
             </mat-list-item>
           </ng-container>
 
