@@ -9,12 +9,16 @@ import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliver
 import { ItemId } from '../events/ItemId';
 import { DialogService } from '../select-popup/dialog';
 import { MatCheckboxChange } from '@angular/material';
+import { DateTimeColumn } from '../model-shared/types';
 @Component({
   selector: 'app-my-weekly-families',
   templateUrl: './my-weekly-families.component.html',
   styleUrls: ['./my-weekly-families.component.scss']
 })
 export class MyWeeklyFamiliesComponent implements OnInit {
+
+
+
 
   constructor(private context: Context, private dialog: DialogService) {
 
@@ -115,5 +119,14 @@ export class MyWeeklyFamiliesComponent implements OnInit {
     });
 
   }
+  isDelivered(d: WeeklyFamilyDeliveries) {
+    return d.status.listValue == WeeklyFamilyDeliveryStatus.Delivered;
+  }
+  saveIfNeeded(d: WeeklyFamilyDeliveries) {
+    if(d.wasChanged())
+      d.save();
+
   
+  }
+
 }

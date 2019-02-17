@@ -1,3 +1,11 @@
+נמסר בתאריך
+
+
+
+
+
+
+
 <mat-accordion>
   <mat-expansion-panel *ngFor="let f of families" (opened)="selectFamiliy(f)">
     <mat-expansion-panel-header>
@@ -15,24 +23,44 @@
         <div class="top-bar" #myDiv>
           <button mat-raised-button color="primary" *ngIf="d.status.listValue.next" [disabled]="nextDisabled(d)"
             (click)="d.changeStatus(d.status.listValue.next.status)">{{d.status.listValue.next.name}}</button>
-          <button mat-raised-button *ngIf="d.status.listValue.prev" (click)="d.changeStatus(d.status.listValue.prev.status)">{{d.status.listValue.prev.name}}</button>
+          <button mat-raised-button *ngIf="d.status.listValue.prev"
+            (click)="d.changeStatus(d.status.listValue.prev.status)">{{d.status.listValue.prev.name}}</button>
         </div>
         <div>
           {{d.status.listValue.helpText}}
         </div>
 
+        <div *ngIf="isDelivered(d)">
+          נמסר בתאריך
+          <div class="date-time-line">
+            <div>
+
+            </div>
+            <div>
+              <input type="date" class="form-control" [value]="d.deliveredOn.getStringForInputDate()"
+                (change)="d.deliveredOn.dateInputChangeEvent($event)" (blur)="saveIfNeeded(d)" >
+            </div>
+            <div>
+              <input type="time" class="form-control" [value]="d.deliveredOn.getStringForInputTime()"
+                (change)="d.deliveredOn.timeInputChangeEvent($event)"(blur)="saveIfNeeded(d)" >
+            </div>
+          </div>
+        </div>
 
         <mat-list>
           <ng-container *ngFor="let p of products">
             <mat-list-item *ngIf="displayProduct(p,d)">
               <div class="quantity-input" style="align-items: center" *ngIf="displayRequestQuantity(d)">
-                <button class="btn btn-sm btn-success glyphicon glyphicon-plus" type="button" (click)="add(p,d,1)"></button>
+                <button class="btn btn-sm btn-success glyphicon glyphicon-plus" type="button"
+                  (click)="add(p,d,1)"></button>
                 <input type="tel" class="form-control numeric-value" [(ngModel)]="quantity(p,d).requestQuanity.value"
                   (change)="quantity(p,d).save()">
-                <button class="btn btn-sm btn-danger glyphicon glyphicon-minus" [attr.disabled]="quantity(p,d).requestQuanity.value<=0?'':null"
-                  type="button" (click)="add(p,d,-1)"></button>
+                <button class="btn btn-sm btn-danger glyphicon glyphicon-minus"
+                  [attr.disabled]="quantity(p,d).requestQuanity.value<=0?'':null" type="button"
+                  (click)="add(p,d,-1)"></button>
               </div>
-              <app-product-quantity-in-delivery [d]="quantity(p,d)" *ngIf="!displayRequestQuantity(d)"></app-product-quantity-in-delivery>
+              <app-product-quantity-in-delivery [d]="quantity(p,d)" *ngIf="!displayRequestQuantity(d)">
+              </app-product-quantity-in-delivery>
 
               <div>
                 <div>{{p.name.value}}</div>
@@ -42,6 +70,7 @@
           </ng-container>
 
         </mat-list>
+
       </mat-expansion-panel>
     </mat-accordion>
   </mat-expansion-panel>

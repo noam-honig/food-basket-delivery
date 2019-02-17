@@ -68,6 +68,50 @@ export class DateTimeColumn extends radweb.DateTimeColumn implements hasMoreData
   constructor(private settingsOrCaption?: MoreDataColumnSettings<string, DateTimeColumn> | string) {
     super(settingsOrCaption);
   }
+  getStringForInputTime() {
+    if (!this.value)
+      return '';
+    return this.padZero(this.dateValue.getHours()) + ':' + this.padZero(this.dateValue.getMinutes());
+  }
+  getStringForInputDate() {
+    if (!this.value)
+    return '';
+    
+    return this.value.substring(0,10);
+    return this.padZero(this.dateValue.getHours()) + ':' + this.padZero(this.dateValue.getMinutes());
+  }
+  padZero(v: number) {
+    var result = '';
+    if (v < 10)
+      result = '0';
+    result += v;
+    return result;
+  }
+  timeInputChangeEvent(e: any) {
+    var hour = 0;
+    var minutes = 0;
+    var timeString: string = e.target.value;
+    if (timeString.length >= 5) {
+      hour = +timeString.substring(0, 2);
+      minutes = +timeString.substring(3, 5);
+
+    }
+
+    this.dateValue = new Date(this.dateValue.getFullYear(), this.dateValue.getMonth(), this.dateValue.getDate(), hour, minutes);
+
+  }
+  dateInputChangeEvent(e: any) {
+    var newDate: Date = e.target.valueAsDate;
+    var hours = 0;
+    var minutes = 0;
+    if (this.dateValue) {
+      hours = this.dateValue.getHours();
+      minutes = this.dateValue.getMinutes();
+
+    }
+    this.dateValue = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate(), hours, minutes);
+
+  }
   relativeDateName(d?: Date, now?: Date) {
     if (!d)
       d = this.dateValue;
