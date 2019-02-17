@@ -11,10 +11,10 @@ import { DataApiSettings } from "radweb";
 @Injectable()
 export class Context {
     isAdmin() {
-        return  this.info.deliveryAdmin;
+        return this.info && this.info.deliveryAdmin;
     }
     isLoggedIn() {
-        return this.info.loggedIn;
+        return this.info && this.info.loggedIn;
     }
 
 
@@ -55,14 +55,14 @@ export class ServerContext extends Context {
     constructor() {
         super();
         this._onServer = true;
-        this._getInfo=()=><myAuthInfo>{loggedIn:false} ;
+        this._getInfo = () => <myAuthInfo>{ loggedIn: false };
 
     }
     private req: DataApiRequest<myAuthInfo>;
 
     setReq(req: DataApiRequest<myAuthInfo>) {
         this.req = req;
-        this._getInfo = () => req.authInfo?req.authInfo:<myAuthInfo>{loggedIn:false};
+        this._getInfo = () => req.authInfo ? req.authInfo : <myAuthInfo>{ loggedIn: false };
     }
     setDataProvider(dataProvider: DataProviderFactory) {
         this._dataSource = dataProvider;
