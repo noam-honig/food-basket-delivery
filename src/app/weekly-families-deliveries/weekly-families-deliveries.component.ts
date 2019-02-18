@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Id, IdEntity, NumberColumn, buildSql, changeDate, DateTimeColumn } from '../model-shared/types';
 import { WeeklyFamilyId } from '../weekly-families/weekly-families';
-import { ClosedListColumn, StringColumn, BoolColumn } from 'radweb';
-import { EntityClass, Context, ServerContext } from '../shared/context';
+import { ClosedListColumn, StringColumn, BoolColumn, Entity, CompoundIdColumn, Column } from 'radweb';
+import { EntityClass, Context, ServerContext, ContextEntity } from '../shared/context';
 
 
 @Component({
@@ -69,7 +69,50 @@ export class WeeklyFamilyDeliveryProducts extends IdEntity<Id>{
 }
 
 
+@EntityClass
+export class WeeklyFamilyDelivryProductStats extends ContextEntity<string> {
+  delivery = new WeeklyFamilyDeliveryId();
+  product = new ProductId(this.context);
+  productName = new StringColumn({ caption: 'שם' });
+  productOrder = new NumberColumn({ caption: 'סדר', value: 50 });
+  familyId = new WeeklyFamilyId();
+  status = new WeeklyFamilyDeliveryStatusColumn();
+  ordnial = new NumberColumn('סידורי');
+  deliveredOn = new DateTimeColumn('תאריך מסירה');
+  requestQuanity = new NumberColumn({ caption: 'כמות מבוקשת', value: 0 });
+  Quantity = new NumberColumn('כמות בפועל');
+  lastDeliveryOfProduct = new DateTimeColumn('תאריך מסירה קודם');
+  lastDelveryQuantity = new NumberColumn('כמות בפעם הקודמת');
 
+  constructor(private context: Context) {
+    super({
+      name: 'WeeklyFamilyDelivryProductStats',
+      dbName: () => {
+        var myd = new WeeklyFamilyDeliveries(context);
+        var myp = new Products(context);
+        var mydp = new WeeklyFamilyDeliveryProducts(context);
+        var innerSelectToGetLastDelivery = (alias: string, col: Column<any>, caption: string) => {
+          return buildSql(',(select ', alias, '.', col,
+            ' from ', myd, ' d left  join ', mydp, ' p on d.', myd.id, ' = p.', mydp.delivery, ' where myD.', myd.familyId, ' = d.', myd.familyId, ' and myd.', myd.ordnial, ' > d.', myd.ordnial,
+            ' and p.', mydp.product, ' = myp.', myp.id, ' and p.', mydp.Quantity, ' >0 and d.', myd.status, ' = ', WeeklyFamilyDeliveryStatus.Delivered.id, ' limit 1) ', caption);
+
+        };
+
+        var result = buildSql('(select myd.', myd.id, ' ', 'delivery', ',myd.', myd.familyId, ' ,myd.', myd.status, ',myd.', myd.ordnial, ',myd.', myd.deliveredOn, ',myp.', myp.id, ' ', 'product',
+          ' ,myp.', myp.name, ' ', 'productName', ',myp.', myp.order, ' ', 'productOrder', ',mydp.', mydp.requestQuanity, ',mydp.', mydp.Quantity,
+          innerSelectToGetLastDelivery('d', myd.deliveredOn, 'lastDeliveryOfProduct'),
+          innerSelectToGetLastDelivery('p', mydp.Quantity, 'lastDelveryQuantity'),
+          ' from ', myd, ' myd cross join ', myp, ' myp left outer join ', mydp, ' mydp on myd.', myd.id, ' = mydp.', mydp.delivery, ' and myp.', myp.id, ' = mydp.', mydp.product,') as result');
+        
+        return result;
+      },
+      allowApiCRUD: false,
+
+    });
+    this.initColumns(new CompoundIdColumn(this, this.delivery, this.product));
+
+  }
+}
 
 
 
