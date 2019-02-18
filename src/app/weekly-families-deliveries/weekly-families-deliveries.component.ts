@@ -90,7 +90,7 @@ export class WeeklyFamilyDeliveryStatus {
   static Delivered = new WeeklyFamilyDeliveryStatus(50, "נמסר");
   next: StatusButtonInfo;
   prev: StatusButtonInfo;
-  constructor(public id: number, private name: string, private helpText?: string) {
+  constructor(public id: number, private name: string, public helpText?: string) {
 
   }
   toString() {
