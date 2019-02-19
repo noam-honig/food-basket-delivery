@@ -113,7 +113,7 @@ export class WeeklyFamilyDeliveryProductStats extends ContextEntity<string> {
 
   }
   async saveQuantities() {
-    var r = await this.context.for(WeeklyFamilyDeliveryProducts).lookupAsync(dp => dp.product.isEqualTo(this.product).and(dp.delivery.isEqualTo(this.deliveredOn)));
+    var r = await this.context.for(WeeklyFamilyDeliveryProducts).lookupAsync(dp => dp.product.isEqualTo(this.product).and(dp.delivery.isEqualTo(this.delivery)));
     if (r.isNew()) {
       if (!r.requestQuanity.value)
         r.requestQuanity.value = 0;

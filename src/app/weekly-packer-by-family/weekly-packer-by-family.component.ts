@@ -13,12 +13,12 @@ import { WeeklyFamilies } from '../weekly-families/weekly-families';
 export class WeeklyPackerByFamilyComponent implements OnInit {
   deliveryProducts: WeeklyFamilyDeliveryProductStats[] = [];
 
-  constructor(private context:Context) { }
-  deliveries:WeeklyFamilyDeliveries[]=[];
+  constructor(private context: Context) { }
+  deliveries: WeeklyFamilyDeliveries[] = [];
 
   async ngOnInit() {
     this.deliveries = await this.context.for(WeeklyFamilyDeliveries).find(
-      {where: d => d.status.isEqualTo(WeeklyFamilyDeliveryStatus.Pack.id)});
+      { where: d => d.status.isEqualTo(WeeklyFamilyDeliveryStatus.Pack.id) });
   }
   static route: Route = {
     path: 'weekly-packer-by-family',
@@ -26,13 +26,15 @@ export class WeeklyPackerByFamilyComponent implements OnInit {
     data: { name: 'אריזה לפי חבילות' }, canActivate: [PackerGuard]
   }
 
-   getDeliveryName(d : WeeklyFamilyDeliveries)
-  {
+  getDeliveryName(d: WeeklyFamilyDeliveries) {
     return this.context.for(WeeklyFamilies).lookup(f => f.id.isEqualTo(d.familyId)).codeName.value;
   }
 
-    async showDelivery(d:WeeklyFamilyDeliveries)
-  {
-    this.deliveryProducts = await this.context.for(WeeklyFamilyDeliveryProductStats).find({where: x => x.delivery.isEqualTo(d.id).and(x.requestQuanity.IsGreaterOrEqualTo(1))});
+  async showDelivery(d: WeeklyFamilyDeliveries) {
+    this.deliveryProducts = await this.context.for(WeeklyFamilyDeliveryProductStats).find(
+      {
+        where: x => x.delivery.isEqualTo(d.id).and(x.requestQuanity.IsGreaterOrEqualTo(1)),
+        orderBy: dp => [dp.productOrder, dp.productName]
+      });
   }
 }
