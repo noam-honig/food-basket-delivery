@@ -10,6 +10,7 @@ import { ItemId } from '../events/ItemId';
 import { DialogService } from '../select-popup/dialog';
 import { MatCheckboxChange } from '@angular/material';
 import { DateTimeColumn } from '../model-shared/types';
+import { diPublic } from '@angular/core/src/render3/di';
 @Component({
   selector: 'app-my-weekly-families',
   templateUrl: './my-weekly-families.component.html',
@@ -47,7 +48,8 @@ export class MyWeeklyFamiliesComponent implements OnInit {
   async selectDelivery(d: WeeklyFamilyDeliveries) {
     this.currentDelivery = d;
     this.deliveryProducts = await this.context.for(WeeklyFamilyDeliveryProductStats).find({
-      where: dp => dp.delivery.isEqualTo(d.id)
+      where: dp => dp.delivery.isEqualTo(d.id),
+      orderBy:dp=>[dp.productOrder,dp.productName]
     });
   }
   loading = false;
