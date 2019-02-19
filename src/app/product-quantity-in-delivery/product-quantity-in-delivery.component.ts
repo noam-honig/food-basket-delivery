@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { WeeklyFamilyDeliveryProducts } from '../weekly-families-deliveries/weekly-families-deliveries.component';
+import { WeeklyFamilyDeliveryProducts, WeeklyFamilyDeliveryProductStats  } from '../weekly-families-deliveries/weekly-families-deliveries.component';
 import { MatCheckboxChange } from '@angular/material';
 
 @Component({
@@ -10,7 +10,7 @@ import { MatCheckboxChange } from '@angular/material';
 export class ProductQuantityInDeliveryComponent implements OnInit {
 
   constructor() { }
-  @Input() d:WeeklyFamilyDeliveryProducts;
+  @Input() d:WeeklyFamilyDeliveryProductStats;
   ngOnInit() {
   }
 
@@ -22,7 +22,7 @@ export class ProductQuantityInDeliveryComponent implements OnInit {
     else {
       q.Quantity.value = 0;
     }
-    q.save();
+    q.saveQuantities();
 
   }
 

@@ -70,7 +70,7 @@ export class WeeklyFamilyDeliveryProducts extends IdEntity<Id>{
 
 
 @EntityClass
-export class WeeklyFamilyDelivryProductStats extends ContextEntity<string> {
+export class WeeklyFamilyDeliveryProductStats extends ContextEntity<string> {
   delivery = new WeeklyFamilyDeliveryId();
   product = new ProductId(this.context);
   productName = new StringColumn({ caption: 'שם' });
@@ -111,6 +111,18 @@ export class WeeklyFamilyDelivryProductStats extends ContextEntity<string> {
     });
     this.initColumns(new CompoundIdColumn(this, this.delivery, this.product));
 
+  }
+  async saveQuantities() {
+    var r = await this.context.for(WeeklyFamilyDeliveryProducts).lookupAsync(dp => dp.product.isEqualTo(this.product).and(dp.delivery.isEqualTo(this.deliveredOn)));
+    if (r.isNew()) {
+      if (!r.requestQuanity.value)
+        r.requestQuanity.value = 0;
+      r.delivery.value = this.delivery.value;
+      r.product.value = this.product.value;
+    }
+    r.Quantity.value = this.Quantity.value;
+    r.requestQuanity.value = this.requestQuanity.value;
+    await r.save();
   }
 }
 

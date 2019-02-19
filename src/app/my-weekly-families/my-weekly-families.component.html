@@ -13,9 +13,9 @@
     </mat-expansion-panel-header>
     <button (click)="preparePackage()">חבילה חדשה</button>
     <mat-accordion *ngIf="f==currentFamilly">
-      <mat-expansion-panel *ngFor="let d of deliveries">
+      <mat-expansion-panel *ngFor="let d of deliveries" (opened)="selectDelivery(d)">
         <mat-expansion-panel-header>
-          {{d.ordnial.value}} - {{d.status.displayValue}}, {{totalItems(d)}} פריטים {{d.deliveredOn.relativeDateName()}}
+          {{d.ordnial.value}} - {{d.status.displayValue}} {{d.deliveredOn.relativeDateName()}}
         </mat-expansion-panel-header>
 
 
@@ -27,7 +27,7 @@
             (click)="d.changeStatus(d.status.listValue.prev.status)">{{d.status.listValue.prev.name}}</button>
         </div>
         <div>
-          {{d.status.listValue.helpText }} 
+          {{d.status.listValue.helpText }}
         </div>
 
         <div *ngIf="isDelivered(d)">
@@ -38,33 +38,35 @@
             </div>
             <div>
               <input type="date" class="form-control" [value]="d.deliveredOn.getStringForInputDate()"
-                (change)="d.deliveredOn.dateInputChangeEvent($event)" (blur)="saveIfNeeded(d)" >
+                (change)="d.deliveredOn.dateInputChangeEvent($event)" (blur)="saveIfNeeded(d)">
             </div>
             <div>
               <input type="time" class="form-control" [value]="d.deliveredOn.getStringForInputTime()"
-                (change)="d.deliveredOn.timeInputChangeEvent($event)"(blur)="saveIfNeeded(d)" >
+                (change)="d.deliveredOn.timeInputChangeEvent($event)" (blur)="saveIfNeeded(d)">
             </div>
           </div>
         </div>
 
-        <mat-list>
-          <ng-container *ngFor="let p of products">
-            <mat-list-item *ngIf="displayProduct(p,d)">
+        <mat-list *ngIf="d==currentDelivery">
+          <ng-container *ngFor="let p of deliveryProducts">
+            <mat-list-item *ngIf="displayProduct(p)">
               <div class="quantity-input" style="align-items: center" *ngIf="displayRequestQuantity(d)">
                 <button class="btn btn-sm btn-success glyphicon glyphicon-plus" type="button"
                   (click)="add(p,d,1)"></button>
-                <input type="tel" class="form-control numeric-value" [(ngModel)]="quantity(p,d).requestQuanity.value"
-                  (change)="quantity(p,d).save()">
+                <input type="tel" class="form-control numeric-value" [(ngModel)]="p.requestQuanity.value"
+                  (change)="p.saveQuantities()">
                 <button class="btn btn-sm btn-danger glyphicon glyphicon-minus"
-                  [attr.disabled]="quantity(p,d).requestQuanity.value<=0?'':null" type="button"
+                  [attr.disabled]="p.requestQuanity.value<=0?'':null" type="button"
                   (click)="add(p,d,-1)"></button>
               </div>
-              <app-product-quantity-in-delivery [d]="quantity(p,d)" *ngIf="!displayRequestQuantity(d)">
+              <app-product-quantity-in-delivery [d]="p" *ngIf="!displayRequestQuantity(d)">
               </app-product-quantity-in-delivery>
 
               <div>
-                <div>{{p.name.value}}</div>
-                <div class="last-delivered">(אף פעם)</div>
+                <div>{{p.productName.value}}</div>
+                <div class="last-delivered" *ngIf="p.lastDelveryQuantity.value"> ({{p.lastDelveryQuantity.value}}
+                  {{p.lastDeliveryOfProduct.relativeDateName()}})</div>
+                <div class="last-delivered" *ngIf="!p.lastDelveryQuantity.value"> (אף פעם)</div>
               </div>
             </mat-list-item>
           </ng-container>
