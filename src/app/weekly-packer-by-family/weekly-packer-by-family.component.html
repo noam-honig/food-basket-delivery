@@ -7,7 +7,7 @@
       <mat-list>
             <mat-list-item *ngFor="let dp of deliveryProducts">
               <app-product-quantity-in-delivery [d]="dp"></app-product-quantity-in-delivery>
-              {{dp.product.getName()}}
+              {{dp.productName.value}}
             </mat-list-item>
         </mat-list>
 

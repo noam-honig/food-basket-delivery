@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Context } from '../shared/context';
 import { HolidayDeliveryAdmin, PackerGuard } from '../auth/auth-guard';
 import { Route } from '@angular/router';
-import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts, Products } from '../weekly-families-deliveries/weekly-families-deliveries.component';
+import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts, Products, WeeklyFamilyDeliveryProductStats } from '../weekly-families-deliveries/weekly-families-deliveries.component';
+import { Families } from '../families/families';
+import { WeeklyFamilies } from '../weekly-families/weekly-families';
 
 @Component({
   selector: 'app-weekly-packer-by-product',
@@ -22,15 +24,14 @@ export class WeeklyPackerByProductComponent implements OnInit {
 
 
   async ngOnInit() {
-    this.products = await this.context.for(Products).find({where: x => x.quantityToPack.IsGreaterThan(0)});
+    this.products = await this.context.for(Products).find({ where: x => x.quantityToPack.IsGreaterThan(0) });
   }
 
-  deliveryProducts: WeeklyFamilyDeliveryProducts[]=[]
-  async showProduct(p:Products)
-  {
-    let deliveries = await this.context.for(WeeklyFamilyDeliveries).find({where: x => x.status.isEqualTo(WeeklyFamilyDeliveryStatus.Pack.id)});
-    this.deliveryProducts = [];
-    for (let d of deliveries)
-      this.deliveryProducts.push(await this.context.for(WeeklyFamilyDeliveryProducts).lookupAsync(x => x.delivery.isEqualTo(d.id).and(x.product.isEqualTo(p.id))));
+  deliveryProducts: WeeklyFamilyDeliveryProductStats[] = []
+  async showProduct(p: Products) {
+    this.deliveryProducts = await this.context.for(WeeklyFamilyDeliveryProductStats).find({ where: x => x.product.isEqualTo(p.id) });
+  }
+  getFamilyCode(p: WeeklyFamilyDeliveryProductStats) {
+    return this.context.for(WeeklyFamilies).lookup(x => x.id.isEqualTo(p.familyId)).codeName.value;
   }
 }

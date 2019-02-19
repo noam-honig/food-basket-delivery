@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
 import { HolidayDeliveryAdmin, PackerGuard } from '../auth/auth-guard';
 import { Context } from '../shared/context';
-import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts } from '../weekly-families-deliveries/weekly-families-deliveries.component';
+import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts, WeeklyFamilyDeliveryProductStats } from '../weekly-families-deliveries/weekly-families-deliveries.component';
 import { WeeklyFamilies } from '../weekly-families/weekly-families';
 
 @Component({
@@ -11,7 +11,7 @@ import { WeeklyFamilies } from '../weekly-families/weekly-families';
   styleUrls: ['./weekly-packer-by-family.component.scss']
 })
 export class WeeklyPackerByFamilyComponent implements OnInit {
-  deliveryProducts: WeeklyFamilyDeliveryProducts[] = [];
+  deliveryProducts: WeeklyFamilyDeliveryProductStats[] = [];
 
   constructor(private context:Context) { }
   deliveries:WeeklyFamilyDeliveries[]=[];
@@ -33,6 +33,6 @@ export class WeeklyPackerByFamilyComponent implements OnInit {
 
     async showDelivery(d:WeeklyFamilyDeliveries)
   {
-    this.deliveryProducts = await this.context.for(WeeklyFamilyDeliveryProducts).find({where: x => x.delivery.isEqualTo(d.id)});
+    this.deliveryProducts = await this.context.for(WeeklyFamilyDeliveryProductStats).find({where: x => x.delivery.isEqualTo(d.id).and(x.requestQuanity.IsGreaterOrEqualTo(1))});
   }
 }
