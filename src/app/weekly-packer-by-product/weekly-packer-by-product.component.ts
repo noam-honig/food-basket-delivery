@@ -29,7 +29,11 @@ export class WeeklyPackerByProductComponent implements OnInit {
 
   deliveryProducts: WeeklyFamilyDeliveryProductStats[] = []
   async showProduct(p: Products) {
-    this.deliveryProducts = await this.context.for(WeeklyFamilyDeliveryProductStats).find({ where: x => x.product.isEqualTo(p.id) });
+    this.deliveryProducts = await this.context.for(WeeklyFamilyDeliveryProductStats).find({
+      where: x => x.product.isEqualTo(p.id).and(
+        x.status.isEqualTo(WeeklyFamilyDeliveryStatus.Pack.id)).and(
+          x.requestQuanity.IsGreaterThan(0))
+    });
   }
   getFamilyCode(p: WeeklyFamilyDeliveryProductStats) {
     return this.context.for(WeeklyFamilies).lookup(x => x.id.isEqualTo(p.familyId)).codeName.value;
