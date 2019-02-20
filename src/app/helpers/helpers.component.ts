@@ -30,7 +30,8 @@ export class HelpersComponent implements OnInit {
     allowUpdate: true,
     numOfColumnsInGrid: 2,
     get: {
-      orderBy: h => [h.name]
+      orderBy: h => [h.name],
+      limit:100
     },
     columnSettings: helpers => [
       helpers.name,

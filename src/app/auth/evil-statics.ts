@@ -22,7 +22,9 @@ export const evilStatics = {
         myFamilies: '',
         updateInfo: '',
         login: '',
-        register: ''
+        register: '',
+        myWeeklyFamilies:'',
+        weeklyFamiliesPack:''
     },
 
 }

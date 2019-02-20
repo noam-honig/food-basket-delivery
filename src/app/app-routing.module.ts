@@ -30,9 +30,9 @@ import { WeeklyPackerByProductComponent } from './weekly-packer-by-product/weekl
 
 
 const routes: Routes = [
-  WeeklyPackerByProductComponent.route,
-  WeeklyPackerByFamilyComponent.route,
   MyWeeklyFamiliesComponent.route,
+  WeeklyPackerByFamilyComponent.route,
+  WeeklyPackerByProductComponent.route,
   FamiliesComponent.route,
   AsignFamilyComponent.route,
   DeliveryFollowUpComponent.route,
@@ -59,6 +59,8 @@ evilStatics.routes.login = '/' + LoginComponent.route.path;
 evilStatics.routes.myFamilies = '/' + MyFamiliesComponent.route.path;
 evilStatics.routes.register = '/' + RegisterComponent.route.path;
 evilStatics.routes.updateInfo = '/' + UpdateInfoComponent.route.path;
+evilStatics.routes.myWeeklyFamilies = '/' + MyWeeklyFamiliesComponent.route.path;
+evilStatics.routes.weeklyFamiliesPack = '/' + WeeklyPackerByFamilyComponent.route.path;
 @NgModule({
   imports: [
     CommonModule, RouterModule.forRoot(routes
