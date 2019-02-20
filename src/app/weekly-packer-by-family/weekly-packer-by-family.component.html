@@ -1,18 +1,20 @@
 <mat-accordion>
-    <mat-expansion-panel *ngFor="let d of deliveries" (opened)="showDelivery(d)">
-      <mat-expansion-panel-header>
-        חבילה {{getDeliveryName(d)}} 
-      </mat-expansion-panel-header>
+  <mat-expansion-panel *ngFor="let d of deliveries" (opened)="showDelivery(d)">
+    <mat-expansion-panel-header>
+      חבילה {{getDeliveryName(d)}} , {{d.status.displayValue}}
+    </mat-expansion-panel-header>
+    <button mat-raised-button color="primary" *ngIf="showReadyToPickup()" [disabled]="readyToPickupDisabled()"
+      (click)="clickReadyToPickup()">מוכן לאיסוף</button>
+    <button mat-raised-button *ngIf="showReturnToPack()" (click)="clickReturnToPack()">החזר לאריזה</button>
+    <mat-list *ngIf="d==currentDelivery">
+      <mat-list-item *ngFor="let dp of deliveryProducts">
+        <app-product-quantity-in-delivery [d]="dp"></app-product-quantity-in-delivery>
+        {{dp.productName.value}}
+      </mat-list-item>
+    </mat-list>
+ 
 
-      <mat-list>
-            <mat-list-item *ngFor="let dp of deliveryProducts">
-              <app-product-quantity-in-delivery [d]="dp"></app-product-quantity-in-delivery>
-              {{dp.productName.value}}
-            </mat-list-item>
-        </mat-list>
+  </mat-expansion-panel>
 
 
-    </mat-expansion-panel>
-  
-  
-  </mat-accordion>
+</mat-accordion>
