@@ -78,7 +78,7 @@ function buildEntityOptions(o: ContextEntityOptions | string): EntityOptions | s
     return {
         name: o.name,
         caption: o.caption,
-        dbName: o.dbName ? o.dbName() : undefined,
+        dbName: o.dbName ,
         onSavingRow: o.onSavingRow,
     }
 }
@@ -163,7 +163,7 @@ export interface MoreDataColumnSettings<type, colType> extends DataColumnSetting
 }
 export interface ContextEntityOptions {
     name: string;//required
-    dbName?: () => string;
+    dbName?: string|(() => string);
     caption?: string;
     allowApiRead?: boolean;
     allowApiUpdate?: boolean;

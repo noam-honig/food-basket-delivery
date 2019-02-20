@@ -59,7 +59,7 @@
     "password-hash": "^1.2.2",
     "path": "^0.12.7",
     "pg": "^7.6.1",
-    "radweb": "^2.0.3",
+    "radweb": "^2.0.5",
     "radweb-server": "0.0.1",
     "radweb-server-postgres": "0.0.1",
     "reflect-metadata": "^0.1.12",

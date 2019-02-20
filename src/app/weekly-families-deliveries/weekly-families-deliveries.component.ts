@@ -93,7 +93,7 @@ export class WeeklyFamilyDeliveryProductStats extends ContextEntity<string> {
         var myd = new WeeklyFamilyDeliveries(context);
         var myp = new Products(context);
         var mydp = new WeeklyFamilyDeliveryProducts(context);
-        var innerSelectToGetLastDelivery = (alias: string, col: Column<any>, caption: string) => {
+        var innerSelectToGetLastDelivery = (alias: string, col: Column<any>, caption: Column<any>) => {
           return buildSql(',(select ', alias, '.', col,
             ' from ', myd, ' d left  join ', mydp, ' p on d.', myd.id, ' = p.', mydp.delivery, ' where myD.', myd.familyId, ' = d.', myd.familyId, ' and myd.', myd.ordnial, ' > d.', myd.ordnial,
             ' and p.', mydp.product, ' = myp.', myp.id, ' and p.', mydp.Quantity, ' >0 and d.', myd.status, ' = ', WeeklyFamilyDeliveryStatus.Delivered.id, ' limit 1) ', caption);
@@ -102,8 +102,8 @@ export class WeeklyFamilyDeliveryProductStats extends ContextEntity<string> {
 
         var result = buildSql('(select myd.', myd.id, ' ', 'delivery', ',myd.', myd.familyId, ' ,myd.', myd.status, ',myd.', myd.ordnial, ',myd.', myd.deliveredOn, ',myp.', myp.id, ' ', 'product',
           ' ,myp.', myp.name, ' ', 'productName', ',myp.', myp.order, ' ', 'productOrder', ',mydp.', mydp.requestQuanity, ',mydp.', mydp.Quantity,
-          innerSelectToGetLastDelivery('d', myd.deliveredOn, 'lastDeliveryOfProduct'),
-          innerSelectToGetLastDelivery('p', mydp.Quantity, 'lastDelveryQuantity'),
+          innerSelectToGetLastDelivery('d', myd.deliveredOn, this.lastDeliveryOfProduct),
+          innerSelectToGetLastDelivery('p', mydp.Quantity, this.lastDelveryQuantity),
           ' from ', myd, ' myd cross join ', myp, ' myp left outer join ', mydp, ' mydp on myd.', myd.id, ' = mydp.', mydp.delivery, ' and myp.', myp.id, ' = mydp.', mydp.product, ') as result');
 
         return result;
