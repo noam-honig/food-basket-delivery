@@ -25,7 +25,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
 
 
   }
-  @ViewChild('myDiv') myDiv: any;
+
   async ngOnInit() {
 
     this.families = await this.context.for(WeeklyFullFamilyInfo).find({
@@ -49,12 +49,18 @@ export class MyWeeklyFamiliesComponent implements OnInit {
     this.currentDelivery = d;
     this.deliveryProducts = await this.context.for(WeeklyFamilyDeliveryProductStats).find({
       where: dp => dp.delivery.isEqualTo(d.id),
-      orderBy:dp=>[dp.productOrder,dp.productName]
+      orderBy: dp => [dp.productOrder, dp.productName]
     });
+  }
+  statusText(d: WeeklyFamilyDeliveries) {
+    var x = d.status.displayValue;
+    if (d.status.listValue == WeeklyFamilyDeliveryStatus.Delivered)
+      x += ' ' + d.deliveredOn.relativeDateName();
+    return x;
   }
   loading = false;
   deliveryProducts: WeeklyFamilyDeliveryProductStats[] = []
-  
+
 
 
   add(p: WeeklyFamilyDeliveryProductStats, d: WeeklyFamilyDeliveries, i: number) {
