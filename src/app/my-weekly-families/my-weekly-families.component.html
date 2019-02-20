@@ -49,7 +49,7 @@
                 <button class="btn btn-sm btn-success glyphicon glyphicon-plus" type="button"
                   (click)="add(p,d,1)"></button>
                 <input type="tel" class="form-control numeric-value" [(ngModel)]="p.requestQuanity.value"
-                  (change)="p.saveQuantities()">
+                  (change)="p.saveQuantities(busy)">
                 <button class="btn btn-sm btn-danger glyphicon glyphicon-minus"
                   [attr.disabled]="p.requestQuanity.value<=0?'':null" type="button" (click)="add(p,d,-1)"></button>
               </div>

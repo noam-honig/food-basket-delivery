@@ -12,6 +12,7 @@ import { MatCheckboxChange } from '@angular/material';
 import { DateTimeColumn } from '../model-shared/types';
 import { diPublic } from '@angular/core/src/render3/di';
 import { platform } from 'os';
+import { BusyService } from '../select-popup/busy-service';
 @Component({
   selector: 'app-my-weekly-families',
   templateUrl: './my-weekly-families.component.html',
@@ -22,7 +23,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
 
 
 
-  constructor(private context: Context, private dialog: DialogService) {
+  constructor(private context: Context, private dialog: DialogService,public busy:BusyService) {
 
 
   }
@@ -80,7 +81,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
     var newValue = +(p.requestQuanity.value) + i;
     if (newValue >= 0) {
       p.requestQuanity.value = newValue;
-      p.saveQuantities();
+      p.saveQuantities(this.busy);
     }
   }
 

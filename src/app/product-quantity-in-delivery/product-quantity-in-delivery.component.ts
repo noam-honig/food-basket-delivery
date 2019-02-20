@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { WeeklyFamilyDeliveryProducts, WeeklyFamilyDeliveryProductStats  } from '../weekly-families-deliveries/weekly-families-deliveries.component';
+import { WeeklyFamilyDeliveryProducts, WeeklyFamilyDeliveryProductStats } from '../weekly-families-deliveries/weekly-families-deliveries.component';
 import { MatCheckboxChange } from '@angular/material';
+import { BusyService } from '../select-popup/busy-service';
 
 @Component({
   selector: 'app-product-quantity-in-delivery',
@@ -9,8 +10,8 @@ import { MatCheckboxChange } from '@angular/material';
 })
 export class ProductQuantityInDeliveryComponent implements OnInit {
 
-  constructor() { }
-  @Input() d:WeeklyFamilyDeliveryProductStats;
+  constructor(public busyService: BusyService) { }
+  @Input() d: WeeklyFamilyDeliveryProductStats;
   ngOnInit() {
   }
 
@@ -22,7 +23,7 @@ export class ProductQuantityInDeliveryComponent implements OnInit {
     else {
       q.Quantity.value = 0;
     }
-    q.saveQuantities();
+    q.saveQuantities(this.busyService);
 
   }
 

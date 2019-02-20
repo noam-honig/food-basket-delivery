@@ -3,6 +3,7 @@ import { Id, IdEntity, NumberColumn, buildSql, changeDate, DateTimeColumn } from
 import { WeeklyFamilyId } from '../weekly-families/weekly-families';
 import { ClosedListColumn, StringColumn, BoolColumn, Entity, CompoundIdColumn, Column } from 'radweb';
 import { EntityClass, Context, ServerContext, ContextEntity } from '../shared/context';
+import { BusyService } from '../select-popup/busy-service';
 
 
 @Component({
@@ -103,8 +104,8 @@ export class WeeklyFamilyDeliveryProductStats extends ContextEntity<string> {
           ' ,myp.', myp.name, ' ', 'productName', ',myp.', myp.order, ' ', 'productOrder', ',mydp.', mydp.requestQuanity, ',mydp.', mydp.Quantity,
           innerSelectToGetLastDelivery('d', myd.deliveredOn, 'lastDeliveryOfProduct'),
           innerSelectToGetLastDelivery('p', mydp.Quantity, 'lastDelveryQuantity'),
-          ' from ', myd, ' myd cross join ', myp, ' myp left outer join ', mydp, ' mydp on myd.', myd.id, ' = mydp.', mydp.delivery, ' and myp.', myp.id, ' = mydp.', mydp.product,') as result');
-        
+          ' from ', myd, ' myd cross join ', myp, ' myp left outer join ', mydp, ' mydp on myd.', myd.id, ' = mydp.', mydp.delivery, ' and myp.', myp.id, ' = mydp.', mydp.product, ') as result');
+
         return result;
       },
       allowApiCRUD: false,
@@ -114,17 +115,23 @@ export class WeeklyFamilyDeliveryProductStats extends ContextEntity<string> {
     this.initColumns(new CompoundIdColumn(this, this.delivery, this.product));
 
   }
-  async saveQuantities() {
-    var r = await this.context.for(WeeklyFamilyDeliveryProducts).lookupAsync(dp => dp.product.isEqualTo(this.product).and(dp.delivery.isEqualTo(this.delivery)));
-    if (r.isNew()) {
-      if (!r.requestQuanity.value)
-        r.requestQuanity.value = 0;
-      r.delivery.value = this.delivery.value;
-      r.product.value = this.product.value;
-    }
-    r.Quantity.value = this.Quantity.value;
-    r.requestQuanity.value = this.requestQuanity.value;
-    await r.save();
+  private saving = Promise.resolve();
+  async saveQuantities(busy: BusyService) {
+
+    this.saving = this.saving.then(async () => {
+      await busy.donotWait(async () => {
+        var r = await this.context.for(WeeklyFamilyDeliveryProducts).lookupAsync(dp => dp.product.isEqualTo(this.product).and(dp.delivery.isEqualTo(this.delivery)));
+        if (r.isNew()) {
+          if (!r.requestQuanity.value)
+            r.requestQuanity.value = 0;
+          r.delivery.value = this.delivery.value;
+          r.product.value = this.product.value;
+        }
+        r.Quantity.value = this.Quantity.value;
+        r.requestQuanity.value = this.requestQuanity.value;
+        await r.save();
+      });
+    });
   }
 }
 
