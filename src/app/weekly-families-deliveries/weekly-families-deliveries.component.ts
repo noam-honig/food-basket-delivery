@@ -33,7 +33,8 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
         }
       },
 
-    })
+    });
+    this.deliveredOn.dontShowTimeForOlderDates = true;
   }
 
 
@@ -109,6 +110,7 @@ export class WeeklyFamilyDeliveryProductStats extends ContextEntity<string> {
       allowApiCRUD: false,
 
     });
+    this.lastDeliveryOfProduct.dontShowTimeForOlderDates = true;
     this.initColumns(new CompoundIdColumn(this, this.delivery, this.product));
 
   }

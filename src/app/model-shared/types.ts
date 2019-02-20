@@ -68,6 +68,7 @@ export class DateTimeColumn extends radweb.DateTimeColumn implements hasMoreData
   constructor(private settingsOrCaption?: MoreDataColumnSettings<string, DateTimeColumn> | string) {
     super(settingsOrCaption);
   }
+  dontShowTimeForOlderDates = false;
   getStringForInputTime() {
     if (!this.value)
       return '';
@@ -75,9 +76,9 @@ export class DateTimeColumn extends radweb.DateTimeColumn implements hasMoreData
   }
   getStringForInputDate() {
     if (!this.value)
-    return '';
-    
-    return this.value.substring(0,10);
+      return '';
+
+    return this.value.substring(0, 10);
     return this.padZero(this.dateValue.getHours()) + ':' + this.padZero(this.dateValue.getMinutes());
   }
   padZero(v: number) {
@@ -167,12 +168,13 @@ export class DateTimeColumn extends radweb.DateTimeColumn implements hasMoreData
       r = 'שלשום';
     }
     else {
-      r = 'ב' + d.toLocaleDateString();
+      r = 'לפני ' + (Math.trunc(now.valueOf() / (86400 * 1000)) - Math.trunc(d.valueOf() / (86400 * 1000))) + ' ימים';
     }
     let t = d.getMinutes().toString();
     if (t.length == 1)
       t = '0' + t;
-
+    if (this.dontShowTimeForOlderDates)
+      return r;
     return r += ' ב' + d.getHours() + ':' + t;
   }
 

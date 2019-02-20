@@ -3,7 +3,7 @@
     <mat-expansion-panel-header>
       משפחת {{f.name.value}}
     </mat-expansion-panel-header>
-    <button (click)="preparePackage()">חבילה חדשה</button>
+    <button mat-raised-button color="primary" *ngIf="showNew()" (click)="preparePackage()">משלוח חדש</button>
     <mat-accordion *ngIf="f==currentFamilly">
       <mat-expansion-panel *ngFor="let d of deliveries" (opened)="selectDelivery(d)">
         <mat-expansion-panel-header>
@@ -17,6 +17,9 @@
             (click)="d.changeStatus(d.status.listValue.next.status)">{{d.status.listValue.next.name}}</button>
           <button mat-raised-button *ngIf="d.status.listValue.prev"
             (click)="d.changeStatus(d.status.listValue.prev.status)">{{d.status.listValue.prev.name}}</button>
+            <button mat-raised-button *ngIf="allowDelete(d)"
+            (click)="deleteDelivery(d)">מחק משלוח</button>
+            
         </div>
         <div>
           {{d.status.listValue.helpText }}
