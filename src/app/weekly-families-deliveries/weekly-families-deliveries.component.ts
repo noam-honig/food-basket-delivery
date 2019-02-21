@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Id, IdEntity, NumberColumn, buildSql, changeDate, DateTimeColumn } from '../model-shared/types';
+import { Id, IdEntity, NumberColumn, buildSql, changeDate, DateTimeColumn, SqlBuilder } from '../model-shared/types';
 import { WeeklyFamilyId } from '../weekly-families/weekly-families';
 import { ClosedListColumn, StringColumn, BoolColumn, Entity, CompoundIdColumn, Column } from 'radweb';
 import { EntityClass, Context, ServerContext, ContextEntity } from '../shared/context';
@@ -91,21 +91,49 @@ export class WeeklyFamilyDeliveryProductStats extends ContextEntity<string> {
       name: 'WeeklyFamilyDelivryProductStats',
       dbName: () => {
         var myd = new WeeklyFamilyDeliveries(context);
+        var d = new WeeklyFamilyDeliveries(context);
         var myp = new Products(context);
+        var p = new WeeklyFamilyDeliveryProducts(context);
         var mydp = new WeeklyFamilyDeliveryProducts(context);
+        var sql = new SqlBuilder();
+        sql.addEntity(myd, 'myd');
+        sql.addEntity(d, "d");
+        sql.addEntity(myp, 'myp');
+        sql.addEntity(p, 'p');
+        sql.addEntity(mydp, 'mydp');
+
+
         var innerSelectToGetLastDelivery = (alias: string, col: Column<any>, caption: Column<any>) => {
-          return buildSql(',(select ', alias, '.', col,
-            ' from ', myd, ' d left  join ', mydp, ' p on d.', myd.id, ' = p.', mydp.delivery, ' where myD.', myd.familyId, ' = d.', myd.familyId, ' and myd.', myd.ordnial, ' > d.', myd.ordnial,
-            ' and p.', mydp.product, ' = myp.', myp.id, ' and p.', mydp.Quantity, ' >0 and d.', myd.status, ' = ', WeeklyFamilyDeliveryStatus.Delivered.id, ' limit 1) ', caption);
+          
+          return sql.build('(select ', col,
+            ' from ', d, ' d left  join ', p, ' p on ', d.id, ' = ', p.delivery,
+            ' where ', sql.and(
+              sql.eq(myd.familyId, d.familyId),
+              sql.gt(myd.ordnial, d.ordnial),
+              sql.eq(p.product, myp.id),
+              sql.gt(p.Quantity, 0),
+              sql.eq(d.status, WeeklyFamilyDeliveryStatus.Delivered.id))
+            , ' limit 1) ', caption);
 
         };
 
-        var result = buildSql('(select myd.', myd.id, ' ', 'delivery', ',myd.', myd.familyId, ' ,myd.', myd.status, ',myd.', myd.ordnial, ',myd.', myd.deliveredOn, ',myp.', myp.id, ' ', 'product',
-          ' ,myp.', myp.name, ' ', 'productName', ',myp.', myp.order, ' ', 'productOrder', ',mydp.', mydp.requestQuanity, ',mydp.', mydp.Quantity,
-          innerSelectToGetLastDelivery('d', myd.deliveredOn, this.lastDeliveryOfProduct),
-          innerSelectToGetLastDelivery('p', mydp.Quantity, this.lastDelveryQuantity),
-          ' from ', myd, ' myd cross join ', myp, ' myp left outer join ', mydp, ' mydp on myd.', myd.id, ' = mydp.', mydp.delivery, ' and myp.', myp.id, ' = mydp.', mydp.product, ') as result');
-
+        var result = sql.build('(select ', [
+          sql.columnWithAlias(myd.id, this.delivery),
+          myd.familyId,
+          myd.status,
+          myd.ordnial,
+          myd.deliveredOn,
+          sql.columnWithAlias(myp.id, this.product),
+          sql.columnWithAlias(myp.name, this.productName),
+          sql.columnWithAlias(myp.order, this.productOrder),
+          mydp.requestQuanity,
+          mydp.Quantity,
+          innerSelectToGetLastDelivery('d', d.deliveredOn, this.lastDeliveryOfProduct),
+          innerSelectToGetLastDelivery('p', p.Quantity, this.lastDelveryQuantity)
+        ],
+          ' from ', myd, ' myd cross join ', myp, ' myp left outer join ', mydp, ' mydp on ',
+          sql.and(sql.eq(myd.id, mydp.delivery), sql.eq(myp.id, mydp.product)), ') as result');
+        console.log(result);
         return result;
       },
       allowApiCRUD: false,

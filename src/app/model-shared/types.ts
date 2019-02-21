@@ -1,6 +1,6 @@
 import * as uuid from 'uuid';
 import * as radweb from 'radweb';
-import { DataProviderFactory, EntityOptions, Entity, Column } from "radweb";
+import { DataProviderFactory, EntityOptions, Entity, Column, Filter, FilterBase } from "radweb";
 
 import { ContextEntity, ContextEntityOptions, MoreDataColumnSettings, hasMoreDataColumnSettings } from '../shared/context';
 import { BrowserPlatformLocation } from '@angular/platform-browser/src/browser/location/browser_platform_location';
@@ -225,4 +225,68 @@ export function buildSql(...args: any[]): string {
     result += getItemSql(e);
   });
   return result;
+}
+export class SqlBuilder {
+  private dict = new Map<Column<any>, string>();
+  addEntity(e: Entity<any>, alias?: string) {
+    if (alias)
+      e.__iterateColumns().forEach(c => {
+        this.dict.set(c, alias + '.' + c.__getDbName());
+      });
+  }
+  columnWithAlias(a: any, b: any) {
+    return this.build(a, ' ', b);
+  }
+  build(...args: any[]): string {
+    let result = '';
+    args.forEach(e => {
+
+      result += this.getItemSql(e);
+    });
+    return result;
+  }
+
+  getItemSql(e: any) {
+    if (this.dict.has(e))
+      return this.dict.get(e);
+    let v = e;
+    if (e instanceof Entity)
+      v = e.__getDbName();
+    if (e instanceof Column)
+      v = e.__getDbName();
+    if (e instanceof Array) {
+      v = e.map(x => this.getItemSql(x)).join(', ');
+    }
+    return v;
+  }
+  eq<T>(a: Column<T>, b: T | Column<T>) {
+    return this.build(a, ' = ', b);
+  }
+
+
+  gt<T>(a: Column<T>, b: T | Column<T>) {
+    return this.build(a, ' > ', b);
+  }
+  and(...args: any[]): string {
+    return args.map(x => this.getItemSql(x)).join(' and ');
+  }
+  query(builder: QueryBuilder) {
+
+  }
+}
+export interface QueryBuilder {
+  select: any[];
+  from: (h: ((e: Entity<any>) => FromHelper)) => any;
+  where: any[];
+}
+export class FromHelper {
+  innerJoin(e: Entity<any>, on: any[]): FromHelper {
+    return new FromHelper();
+  }
+  leftOuterJon(e: Entity<any>, on: any[]): FromHelper {
+    return new FromHelper();
+  }
+  crossJoin(e: Entity<any>): FromHelper {
+    return new FromHelper();
+  }
 }
