@@ -3,7 +3,6 @@
     // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
-        
         {
             "type": "npm",
             "script": "ng-serve",
@@ -59,8 +58,6 @@
                 "group": "groupA"
             }
         },
-        
-       
         {
             "type": "npm",
             "script": "server-watch",
@@ -83,6 +80,14 @@
             "type": "npm",
             "script": "server:execute",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "server:build-watch",
+            "problemMatcher": [
+                "$tsc-watch"
+            ],
+            "isBackground": true
         }
     ]
 }

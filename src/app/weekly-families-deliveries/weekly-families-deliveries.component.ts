@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Id, IdEntity, NumberColumn, buildSql, changeDate, DateTimeColumn, SqlBuilder } from '../model-shared/types';
+import { Id, IdEntity, NumberColumn, buildSql, changeDate, DateTimeColumn, SqlBuilder, QueryBuilder } from '../model-shared/types';
 import { WeeklyFamilyId } from '../weekly-families/weekly-families';
 import { ClosedListColumn, StringColumn, BoolColumn, Entity, CompoundIdColumn, Column } from 'radweb';
 import { EntityClass, Context, ServerContext, ContextEntity } from '../shared/context';
@@ -90,49 +90,62 @@ export class WeeklyFamilyDeliveryProductStats extends ContextEntity<string> {
     super({
       name: 'WeeklyFamilyDelivryProductStats',
       dbName: () => {
-        var myd = new WeeklyFamilyDeliveries(context);
-        var d = new WeeklyFamilyDeliveries(context);
-        var myp = new Products(context);
-        var p = new WeeklyFamilyDeliveryProducts(context);
-        var mydp = new WeeklyFamilyDeliveryProducts(context);
+        var deliveries = new WeeklyFamilyDeliveries(context);
+        var innerSelectDeliveries = new WeeklyFamilyDeliveries(context);
+        var products = new Products(context);
+        var innerSelectDeliveryProducts = new WeeklyFamilyDeliveryProducts(context);
+        var deliveryProducts = new WeeklyFamilyDeliveryProducts(context);
         var sql = new SqlBuilder();
-        sql.addEntity(myd, 'myd');
-        sql.addEntity(d, "d");
-        sql.addEntity(myp, 'myp');
-        sql.addEntity(p, 'p');
-        sql.addEntity(mydp, 'mydp');
 
 
-        var innerSelectToGetLastDelivery = (alias: string, col: Column<any>, caption: Column<any>) => {
-          
-          return sql.build('(select ', col,
-            ' from ', d, ' d left  join ', p, ' p on ', d.id, ' = ', p.delivery,
-            ' where ', sql.and(
-              sql.eq(myd.familyId, d.familyId),
-              sql.gt(myd.ordnial, d.ordnial),
-              sql.eq(p.product, myp.id),
-              sql.gt(p.Quantity, 0),
-              sql.eq(d.status, WeeklyFamilyDeliveryStatus.Delivered.id))
-            , ' limit 1) ', caption);
+
+        var getFromLastDelivery = (col: Column<any>) => {
+          return {
+            select: () => [col],
+            from: innerSelectDeliveries,
+            innerJoin: () => [{
+              to: innerSelectDeliveryProducts,
+              on: () => [
+                sql.eq(innerSelectDeliveries.id,
+                  innerSelectDeliveryProducts.delivery)
+              ]
+            }],
+            where: () => [
+              sql.eq(deliveries.familyId, innerSelectDeliveries.familyId),
+              sql.gt(deliveries.ordnial, innerSelectDeliveries.ordnial),
+              sql.eq(innerSelectDeliveryProducts.product, products.id),
+              sql.gt(innerSelectDeliveryProducts.Quantity, 0),
+              sql.eq(innerSelectDeliveries.status, WeeklyFamilyDeliveryStatus.Delivered.id)
+            ],
+            orderBy: [{ column: innerSelectDeliveries.ordnial, descending: true }]
+          } as QueryBuilder;
 
         };
-
-        var result = sql.build('(select ', [
-          sql.columnWithAlias(myd.id, this.delivery),
-          myd.familyId,
-          myd.status,
-          myd.ordnial,
-          myd.deliveredOn,
-          sql.columnWithAlias(myp.id, this.product),
-          sql.columnWithAlias(myp.name, this.productName),
-          sql.columnWithAlias(myp.order, this.productOrder),
-          mydp.requestQuanity,
-          mydp.Quantity,
-          innerSelectToGetLastDelivery('d', d.deliveredOn, this.lastDeliveryOfProduct),
-          innerSelectToGetLastDelivery('p', p.Quantity, this.lastDelveryQuantity)
-        ],
-          ' from ', myd, ' myd cross join ', myp, ' myp left outer join ', mydp, ' mydp on ',
-          sql.and(sql.eq(myd.id, mydp.delivery), sql.eq(myp.id, mydp.product)), ') as result');
+        var result = sql.query({
+          select: () => [
+            sql.columnWithAlias(deliveries.id, this.delivery),
+            deliveries.familyId,
+            deliveries.status,
+            deliveries.ordnial,
+            deliveries.deliveredOn,
+            sql.columnWithAlias(products.id, this.product),
+            sql.columnWithAlias(products.name, this.productName),
+            sql.columnWithAlias(products.order, this.productOrder),
+            deliveryProducts.requestQuanity,
+            deliveryProducts.Quantity,
+            sql.innerSelect(getFromLastDelivery(innerSelectDeliveries.deliveredOn), this.lastDeliveryOfProduct),
+            sql.innerSelect(getFromLastDelivery(innerSelectDeliveryProducts.Quantity), this.lastDelveryQuantity)
+          ],
+          from: deliveries,
+          crossJoin: () => [products],
+          outerJoin: () => [{
+            to: deliveryProducts,
+            on: () => [
+              sql.eq(deliveries.id, deliveryProducts.delivery),
+              sql.eq(products.id, deliveryProducts.product)]
+          }]
+        });
+        result = '(' + result + ') as result';
         console.log(result);
         return result;
       },

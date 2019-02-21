@@ -1,9 +1,10 @@
 import * as uuid from 'uuid';
 import * as radweb from 'radweb';
-import { DataProviderFactory, EntityOptions, Entity, Column, Filter, FilterBase } from "radweb";
+import { DataProviderFactory, EntityOptions, Entity, Column, Filter, FilterBase, SortSegment } from "radweb";
 
 import { ContextEntity, ContextEntityOptions, MoreDataColumnSettings, hasMoreDataColumnSettings } from '../shared/context';
 import { BrowserPlatformLocation } from '@angular/platform-browser/src/browser/location/browser_platform_location';
+import { query } from '@angular/animations';
 export class IdEntity<idType extends Id> extends ContextEntity<string>
 {
   id: idType;
@@ -228,11 +229,19 @@ export function buildSql(...args: any[]): string {
 }
 export class SqlBuilder {
   private dict = new Map<Column<any>, string>();
+
+
+  private entites = new Map<Entity<any>, string>();
+
+
+
   addEntity(e: Entity<any>, alias?: string) {
-    if (alias)
+    if (alias) {
       e.__iterateColumns().forEach(c => {
         this.dict.set(c, alias + '.' + c.__getDbName());
       });
+      this.entites.set(e, alias);
+    }
   }
   columnWithAlias(a: any, b: any) {
     return this.build(a, ' ', b);
@@ -270,23 +279,76 @@ export class SqlBuilder {
   and(...args: any[]): string {
     return args.map(x => this.getItemSql(x)).join(' and ');
   }
-  query(builder: QueryBuilder) {
+  private last = 1;
+  getEntityAlias(e: Entity<any>) {
+    let result = this.entites.get(e);
+    if (result)
+      return result;
+    result = 'e' + this.last++;
+    this.addEntity(e, result);
+    return result;
 
+
+
+  }
+  query(query: QueryBuilder) {
+    
+    let from = [];
+    from.push(' from ');
+    from.push(query.from, ' ', this.getEntityAlias(query.from));
+    if (query.crossJoin) {
+      query.crossJoin().forEach(j => {
+        from.push(' cross join ', j, ' ', this.getEntityAlias(j));
+      });
+    }
+    if (query.innerJoin) {
+      query.innerJoin().forEach(j => {
+        let alias = this.getEntityAlias(j.to);
+        from.push(' left join ', j.to, ' ', alias, ' on ', this.and(...j.on()));
+      });
+    }
+    if (query.outerJoin) {
+      query.outerJoin().forEach(j => {
+        let alias = this.getEntityAlias(j.to);
+        from.push(' left outer join ', j.to, ' ', alias, ' on ', this.and(...j.on()));
+      });
+    }
+    let result = [];
+    result.push('select ');
+    result.push(query.select());
+    result.push(...from);
+    if (query.where) {
+      result.push(' where ', this.and(...query.where()));
+    }
+    if (query.orderBy) {
+      result.push(' order by ', query.orderBy.map(x => {
+        var f = x as SortSegment;
+        if (f && f.column) {
+          return this.build(f.column, ' ', f.descending ? 'desc' : '')
+        }
+        else return x;
+
+      }));
+    }
+    return this.build(...result);
+
+
+
+  }
+  innerSelect(builder: QueryBuilder, col: Column<any>) {
+    return this.build('(', this.query(builder), ' limit 1) ', col);
   }
 }
 export interface QueryBuilder {
-  select: any[];
-  from: (h: ((e: Entity<any>) => FromHelper)) => any;
-  where: any[];
+  select:()=> any[];
+  from: Entity<any>;
+  crossJoin?:()=> Entity<any>[];
+  innerJoin?:()=> JoinInfo[];
+  outerJoin?:()=> JoinInfo[];
+  where?:()=> any[];
+  orderBy?: (Column<any> | SortSegment)[];
 }
-export class FromHelper {
-  innerJoin(e: Entity<any>, on: any[]): FromHelper {
-    return new FromHelper();
-  }
-  leftOuterJon(e: Entity<any>, on: any[]): FromHelper {
-    return new FromHelper();
-  }
-  crossJoin(e: Entity<any>): FromHelper {
-    return new FromHelper();
-  }
-}
+export interface JoinInfo {
+  to: Entity<any>;
+  on:()=> any[];
+} 

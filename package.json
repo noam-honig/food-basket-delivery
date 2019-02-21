@@ -9,6 +9,7 @@
     "start": "npm run server:execute",
     "build": "ng build --prod",
     "server:build": "tsc -p tsconfig.server.json",
+    "server:build-watch": "tsc -p tsconfig.server.json --watch",
     "postinstall": "npm run server:build&&npm run build",
     "publish-to-heroku-test": "git push heroku master -f",
     "publish-to-heroku-test-dev-branch": "git push heroku dive-into-dependency-injection -f",
