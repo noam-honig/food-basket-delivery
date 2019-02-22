@@ -4,6 +4,7 @@ import { AppComponent } from './app.component';
 import { Products, WeeklyFamilyDeliveryProducts } from './weekly-families-deliveries/weekly-families-deliveries.component';
 import { ServerContext } from './shared/context';
 import { SqlBuilder, QueryBuilder } from './model-shared/types';
+import { WebDriverProxy } from 'blocking-proxy/built/lib/webdriver_proxy';
 
 describe('AppComponent', () => {
   var p = new Products(context);
@@ -52,5 +53,19 @@ describe('AppComponent', () => {
       from: p,
       orderBy: [p.id, { column: p.name, descending: true }]
     }, 'select p.id from products p order by p.id, p.name desc');
+  });
+  it("column dbname can reference root entity", () => {
+    let sql = new SqlBuilder();
+    expect(sql.columnSum(p, pd.Quantity, {
+      from: pd,
+      where: () => [sql.eq(pd.product, p.id)]
+
+    })).toBe('(select sum(e1.Quantity) from WeeklyFamilyDeliveryProducts e1 where e1.product = products.id)');
+  });
+  it("case ", () => {
+    expect(sql.case([
+      { when: ['1=1', '2=2'], then: '3' },
+      { when: ['3=3'], then: '4' }
+    ], 9)).toBe("case when 1=1 and 2=2 then 3 when 3=3 then 4 else 9 end");
   });
 });

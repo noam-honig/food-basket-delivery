@@ -1,7 +1,7 @@
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { NumberColumn, StringColumn } from 'radweb';
 import { HelperId, Helpers } from '../helpers/helpers';
-import { IdEntity, changeDate, DateTimeColumn, buildSql } from '../model-shared/types';
+import { IdEntity, changeDate, DateTimeColumn, buildSql, SqlBuilder } from '../model-shared/types';
 import { Families } from "../families/families";
 
 import { Context, ServerContext, EntityClass } from "../shared/context";
@@ -45,30 +45,37 @@ export class HelpersAndStats extends IdEntity<HelperId> {
             name: "helpersAndStats",
             allowApiRead: context.isAdmin(),
             dbName: () => {
-                let f = new Families(new ServerContext());
-                let h = new Helpers(new ServerContext());
-                let fromFamilies = () => buildSql(' from ', f,
-                    ' where ', f.courier, ' = ', h, '.', h.id);
+                let f = new Families(context);
+                let h = new Helpers(context);
+                var sql = new SqlBuilder();
 
-                let fromFamiliesWithCourierAndStatus = (s: DeliveryStatus) => buildSql(fromFamilies(), ' and ', f.deliverStatus, ' = ', s.id);
+                let helperFamilies = (where: () => any[]) => {
+                    return {
+                        from: f,
+                        where: () => [sql.eq(f.courier, h.id), ...where()]
+                    }
+                }
+                return sql.entityDbName({
+                    select: () => [
+                        h.id,
+                        h.name,
+                        h.phone,
+                        h.smsDate,
+                        h.reminderSmsDate,
+                        sql.count(helperFamilies(() => [sql.eq(f.deliverStatus, DeliveryStatus.ReadyForDelivery.id)]), this.deliveriesInProgress),
+                        sql.count(helperFamilies(() => []), this.allFamilies),
+                        sql.count(helperFamilies(() => [sql.in(f.deliverStatus,
+                            DeliveryStatus.FailedBadAddress.id,
+                            DeliveryStatus.FailedNotHome.id,
+                            DeliveryStatus.FailedOther.id)]),
+                            this.deliveriesWithProblems),
+                        sql.min(f.courierAssingTime,
+                            helperFamilies(() =>
+                                [sql.eq(f.deliverStatus, DeliveryStatus.ReadyForDelivery.id)]), this.firstDeliveryInProgressDate)
 
-                let fromFamiliesWithCourierAndReady = () => fromFamiliesWithCourierAndStatus(DeliveryStatus.ReadyForDelivery);
-
-                return buildSql('(select ', [
-                    h.id,
-                    h.name,
-                    h.phone,
-                    h.smsDate,
-                    h.reminderSmsDate,
-                    buildSql('(select count(*) ', fromFamiliesWithCourierAndReady(), ') deliveriesInProgress'),
-                    buildSql('(select count(*) ', fromFamilies(), ') allFamilies'),
-                    buildSql('(select count(*) ', buildSql(fromFamilies(), ' and ', f.deliverStatus, ' in (', [
-                        DeliveryStatus.FailedBadAddress.id,
-                        DeliveryStatus.FailedNotHome.id,
-                        DeliveryStatus.FailedOther.id
-                    ], ')'), ') deliveriesWithProblems'),
-                    buildSql('(select min(', f.courierAssingTime, ') ', fromFamiliesWithCourierAndReady(), ') firstDeliveryInProgressDate')
-                ], ' from ', h, ') x');
+                    ],
+                    from: h
+                });
             }
         });
     }

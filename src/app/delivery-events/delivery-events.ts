@@ -1,5 +1,5 @@
 import { DeliveryEventId } from "./DeliveryEventId";
-import { IdEntity, changeDate, buildSql } from "../model-shared/types";
+import { IdEntity, changeDate, buildSql, SqlBuilder } from "../model-shared/types";
 import { StringColumn, DateColumn, BoolColumn, NumberColumn } from "radweb";
 import { EventStatusColumn } from "./EventStatus";
 import { HelperIdReadonly } from "../helpers/helpers";
@@ -8,8 +8,6 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Families } from "../families/families";
 import { Context, ServerContext, EntityClass } from "../shared/context";
 
-let fde = new FamilyDeliveryEvents(new ServerContext());
-let f = new Families(new ServerContext());
 @EntityClass
 export class DeliveryEvents extends IdEntity<DeliveryEventId>  {
 
@@ -22,8 +20,26 @@ export class DeliveryEvents extends IdEntity<DeliveryEventId>  {
   families = new NumberColumn({
     dbReadOnly: true,
     caption: 'משפחות',
-    dbName: buildSql('case when ', 'isActiveEvent', ' then ', '(select count(*) from ', f, ' where ', f.deliverStatus, '<>', DeliveryStatus.NotInEvent.id,
-      ') else (select count(*) from ', fde, ' where ', fde.deliveryEvent, '=', this, '.id', ' and ', fde.deliverStatus, '<>', DeliveryStatus.NotInEvent.id, ') end'),
+    dbName: () => {
+      let fde = new FamilyDeliveryEvents(new ServerContext());
+let f = new Families(new ServerContext());
+
+      let sql = new SqlBuilder();
+      return sql.case([
+        {
+          when: [this.isActiveEvent],
+          then: sql.columnCount(this, {
+            from: f,
+            where: () => [sql.ne(f.deliverStatus, DeliveryStatus.NotInEvent.id)]
+          })
+        }],
+        sql.columnCount(this, {
+          from: fde,
+          where: () => [sql.eq(fde.deliveryEvent, this.id),
+          sql.ne(fde.deliverStatus, DeliveryStatus.NotInEvent.id)]
+
+        }));
+    },
     readonly: true
   });
 

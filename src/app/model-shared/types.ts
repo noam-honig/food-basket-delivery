@@ -238,7 +238,7 @@ export class SqlBuilder {
   addEntity(e: Entity<any>, alias?: string) {
     if (alias) {
       e.__iterateColumns().forEach(c => {
-        this.dict.set(c, alias + '.' + c.__getDbName());
+        this.dict.set(c, alias);
       });
       this.entites.set(e, alias);
     }
@@ -257,7 +257,7 @@ export class SqlBuilder {
 
   getItemSql(e: any) {
     if (this.dict.has(e))
-      return this.dict.get(e);
+      return this.dict.get(e) + '.' + e.__getDbName();
     let v = e;
     if (e instanceof Entity)
       v = e.__getDbName();
@@ -270,6 +270,9 @@ export class SqlBuilder {
   }
   eq<T>(a: Column<T>, b: T | Column<T>) {
     return this.build(a, ' = ', b);
+  }
+  ne<T>(a: Column<T>, b: T | Column<T>) {
+    return this.build(a, ' <> ', b);
   }
 
 
@@ -291,8 +294,55 @@ export class SqlBuilder {
 
 
   }
+  columnSum(rootEntity: Entity<any>, col: Column<Number>, query: FromAndWhere) {
+    return this.columnDbName(rootEntity, {
+      select: () => [this.build("sum(", col, ")")],
+      from: query.from,
+      innerJoin: query.innerJoin,
+      outerJoin: query.outerJoin,
+      crossJoin: query.crossJoin,
+      where: query.where
+    });
+  }
+  columnCount(rootEntity: Entity<any>, query: FromAndWhere) {
+    return this.columnDbName(rootEntity, {
+      select: () => [this.build("count(*)")],
+      from: query.from,
+      innerJoin: query.innerJoin,
+      outerJoin: query.outerJoin,
+      crossJoin: query.crossJoin,
+      where: query.where
+    });
+  }
+  count(query: FromAndWhere, mappedColumn: Column<number>) {
+    return this.build("(", this.query({
+      select: () => [this.build("count(*)")],
+      from: query.from,
+      innerJoin: query.innerJoin,
+      outerJoin: query.outerJoin,
+      crossJoin: query.crossJoin,
+      where: query.where
+    }), ") ", mappedColumn);
+  }
+  min(col: Column<any>, query: FromAndWhere, mappedColumn: Column<any>) {
+    return this.build('(', this.query({
+      select: () => [this.build("min(", col, ")")],
+      from: query.from,
+      innerJoin: query.innerJoin,
+      outerJoin: query.outerJoin,
+      crossJoin: query.crossJoin,
+      where: query.where
+    }), ") ", mappedColumn);
+  }
+  columnDbName(rootEntity: Entity<any>, query: QueryBuilder) {
+    this.addEntity(rootEntity, rootEntity.__getDbName());
+    return '(' + this.query(query) + ')';
+  }
   entityDbName(query: QueryBuilder) {
     return '(' + this.query(query) + ') result';
+  }
+  in(col: Column<any>, ...values: any[]) {
+    return this.build(col, ' in (', values, ')');
   }
   query(query: QueryBuilder) {
 
@@ -338,6 +388,22 @@ export class SqlBuilder {
 
 
   }
+  case(args: CaseWhenItemHelper[], else_: any) {
+    let result = [];
+    result.push('case');
+    args.forEach(x => {
+      result.push(' when ');
+      result.push(this.and(...x.when));
+      result.push(' then ');
+      result.push(x.then);
+    });
+    result.push(' else ');
+    result.push(else_);
+    result.push(' end');
+    return this.build(...result);
+
+  }
+
   innerSelect(builder: QueryBuilder, col: Column<any>) {
     return this.build('(', this.query(builder), ' limit 1) ', col);
   }
@@ -351,7 +417,19 @@ export interface QueryBuilder {
   where?: () => any[];
   orderBy?: (Column<any> | SortSegment)[];
 }
+export interface FromAndWhere {
+  from: Entity<any>;
+  crossJoin?: () => Entity<any>[];
+  innerJoin?: () => JoinInfo[];
+  outerJoin?: () => JoinInfo[];
+  where?: () => any[];
+}
 export interface JoinInfo {
   to: Entity<any>;
   on: () => any[];
-} 
+}
+
+export interface CaseWhenItemHelper {
+  when: any[];
+  then: any;
+}

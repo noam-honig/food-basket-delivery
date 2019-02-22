@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Id, IdEntity, NumberColumn, buildSql, changeDate, DateTimeColumn, SqlBuilder, QueryBuilder } from '../model-shared/types';
+import { Id, IdEntity, NumberColumn,  changeDate, DateTimeColumn, SqlBuilder, QueryBuilder } from '../model-shared/types';
 import { WeeklyFamilyId } from '../weekly-families/weekly-families';
 import { ClosedListColumn, StringColumn, BoolColumn, Entity, CompoundIdColumn, Column } from 'radweb';
 import { EntityClass, Context, ServerContext, ContextEntity } from '../shared/context';
@@ -263,8 +263,6 @@ export class ProductId extends Id {
     return this.context.for(Products).lookup(this).name.value;
   }
 }
-let wfdp = new WeeklyFamilyDeliveryProducts(new ServerContext());
-let wfd = new WeeklyFamilyDeliveries(new ServerContext());
 @EntityClass
 export class Products extends IdEntity<ProductId>{
   name = new StringColumn({ caption: 'שם' });
@@ -280,8 +278,22 @@ export class Products extends IdEntity<ProductId>{
   quantityToPack = new NumberColumn({
     dbReadOnly: true,
     caption: 'כמות לאריזה',
-    dbName: buildSql('(select sum (', wfdp.requestQuanity, ') from ', wfdp, ' inner join ', wfd, ' on ', wfdp.delivery, ' = ', wfd, '.', wfd.id,
-      ' where ', wfd.status, '=', WeeklyFamilyDeliveryStatus.Pack.id, ' and ', wfdp.product, ' = ', 'Products', '.', 'id', ')'),
+    dbName: () => {
+      let sql = new SqlBuilder();
+      let wfdp = new WeeklyFamilyDeliveryProducts(new ServerContext());
+      let wfd = new WeeklyFamilyDeliveries(new ServerContext());
+      return sql.columnSum(this, wfdp.requestQuanity, {
+        from: wfdp,
+        innerJoin: () => [{
+          to: wfd,
+          on: () => [sql.eq(wfdp.delivery, wfd.id)]
+        }],
+        where: () => [
+          sql.eq(wfd.status, WeeklyFamilyDeliveryStatus.Pack.id),
+          sql.eq(wfdp.product, this.id)]
+      });
+
+    },
     readonly: true
   });
 }
