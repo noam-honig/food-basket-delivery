@@ -4,7 +4,7 @@ import { DeliveryStatusColumn } from "./DeliveryStatus";
 import { BasketId } from "./BasketType";
 import { StringColumn } from 'radweb';
 import { HelperId } from '../helpers/helpers';
-import { IdEntity, changeDate, DateTimeColumn, buildSql } from '../model-shared/types';
+import { IdEntity, changeDate, DateTimeColumn,  SqlBuilder } from '../model-shared/types';
 import { DeliveryEvents } from '../delivery-events/delivery-events';
 import { Context, ServerContext, EntityClass } from '../shared/context';
 
@@ -26,11 +26,18 @@ export class FamilyDeliveryEventsView extends IdEntity<FamilyDelveryEventId>  {
   constructor(private context: Context) {
     super(new FamilyDelveryEventId(), {
       name: 'FamilyDeliveryEventsView',
-      allowApiRead: true,// context.isAdmin(),
+      allowApiRead: context.isAdmin(),
       dbName: () => {
         let fde = new FamilyDeliveryEvents(new ServerContext());
         var de = new DeliveryEvents(new ServerContext());
-        return buildSql('(select ', fde, '.', fde.id, ', ', [fde.family, fde.basketType, fde.courier, fde.courierAssingTime, fde.deliverStatus, fde.deliveryStatusDate, fde.courierComments, de.deliveryDate], ', ', de, '.', de.name, ' eventName', ' from ', fde, ' inner join ', de, ' on ', de, '.', de.id, '=', fde.deliveryEvent, ' where ', de.isActiveEvent, '=false', ') as x');
+        let sql = new SqlBuilder();
+        return sql.entityDbName({
+          select: () => [fde.id, fde.family, fde.basketType, fde.courier, fde.courierAssingTime, fde.deliverStatus, fde.deliveryStatusDate, fde.courierComments, de.deliveryDate,
+          sql.columnWithAlias(de.name, this.eventName)],
+          from: fde,
+          innerJoin: () => [{ to: de, on: () => [sql.eq(de.id, fde.deliveryEvent)] }],
+          where: () => [sql.eq(de.isActiveEvent, false)]
+        });
       }
     });
   }

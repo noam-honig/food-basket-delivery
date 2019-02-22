@@ -1,5 +1,5 @@
 import { DeliveryStatusColumn } from "../families/DeliveryStatus";
-import { changeDate, buildSql, StringColumn } from "../model-shared/types";
+import { changeDate, StringColumn, SqlBuilder } from "../model-shared/types";
 import { NumberColumn } from "radweb";
 import { HelperIdReadonly, HelperId } from "../helpers/helpers";
 import { Families, FamilyUpdateInfo } from "../families/families";
@@ -27,8 +27,25 @@ export class NewsUpdate extends ContextEntity<string> implements FamilyUpdateInf
       caption: 'חדשות',
       name: 'news',
       dbName: () => {
-        let f = new Families(new ServerContext());
-        return buildSql("(select ", [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser, f.courierComments], ", ", f.deliveryStatusDate, " updateTime, ", f.deliveryStatusUser, " updateUser, 1 updateType from ", f, " where ", f.deliveryStatusDate, " is not null ", "union select ", [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser, f.courierComments], ", ", f.courierAssingTime, " updateTime, ", f.courierAssignUser, " updateUser, 2 updateType from ", f, " where ", f.courierAssingTime, " is not null", ") x");
+        let f = new Families(context);
+        var sql = new SqlBuilder();
+        let cols = [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser, f.courierComments];
+        return sql.entityDbNameUnion({
+          select: () => [...cols, 
+            sql.columnWithAlias(f.deliveryStatusDate, this.updateTime), 
+            sql.columnWithAlias(f.deliveryStatusUser, this.updateUser), 
+            sql.columnWithAlias(1, this.updateType)],
+          from: f,
+          where:()=>[sql.notNull(f.deliveryStatusDate)]
+        },{
+          select: () => [...cols, 
+            sql.columnWithAlias(f.courierAssingTime, this.updateTime),
+            sql.columnWithAlias(f.courierAssignUser, this.updateUser), 
+             sql.columnWithAlias(2, this.updateType)],
+          from: f,
+          where:()=>[sql.notNull(f.courierAssingTime)]
+        })
+        
       }
     });
   }

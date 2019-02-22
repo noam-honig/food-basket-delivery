@@ -1,5 +1,5 @@
 import { DeliveryEventId } from "./DeliveryEventId";
-import { IdEntity, changeDate, buildSql, SqlBuilder } from "../model-shared/types";
+import { IdEntity, changeDate,  SqlBuilder } from "../model-shared/types";
 import { StringColumn, DateColumn, BoolColumn, NumberColumn } from "radweb";
 import { EventStatusColumn } from "./EventStatus";
 import { HelperIdReadonly } from "../helpers/helpers";

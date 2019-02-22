@@ -208,25 +208,7 @@ export async function checkForDuplicateValue(row: Entity<any>, column: Column<an
   }
 
 }
-function getItemSql(e: any) {
-  let v = e;
-  if (e instanceof Entity)
-    v = e.__getDbName();
-  if (e instanceof Column)
-    v = e.__getDbName();
-  if (e instanceof Array) {
-    v = e.map(x => getItemSql(x)).join(', ');
-  }
-  return v;
-}
-export function buildSql(...args: any[]): string {
-  let result = '';
-  args.forEach(e => {
 
-    result += getItemSql(e);
-  });
-  return result;
-}
 export class SqlBuilder {
   private dict = new Map<Column<any>, string>();
 
@@ -273,6 +255,9 @@ export class SqlBuilder {
   }
   ne<T>(a: Column<T>, b: T | Column<T>) {
     return this.build(a, ' <> ', b);
+  }
+  notNull(col:Column<any>){
+      return this.build(col, ' is not null');
   }
 
 
@@ -340,6 +325,9 @@ export class SqlBuilder {
   }
   entityDbName(query: QueryBuilder) {
     return '(' + this.query(query) + ') result';
+  }
+  entityDbNameUnion(query1: QueryBuilder,query2:QueryBuilder) {
+    return '(' + this.query(query1)+' union '+this.query(query2) + ') result';
   }
   in(col: Column<any>, ...values: any[]) {
     return this.build(col, ' in (', values, ')');
