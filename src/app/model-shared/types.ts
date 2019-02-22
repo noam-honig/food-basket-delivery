@@ -291,8 +291,11 @@ export class SqlBuilder {
 
 
   }
+  entityDbName(query: QueryBuilder) {
+    return '(' + this.query(query) + ') result';
+  }
   query(query: QueryBuilder) {
-    
+
     let from = [];
     from.push(' from ');
     from.push(query.from, ' ', this.getEntityAlias(query.from));
@@ -340,15 +343,15 @@ export class SqlBuilder {
   }
 }
 export interface QueryBuilder {
-  select:()=> any[];
+  select: () => any[];
   from: Entity<any>;
-  crossJoin?:()=> Entity<any>[];
-  innerJoin?:()=> JoinInfo[];
-  outerJoin?:()=> JoinInfo[];
-  where?:()=> any[];
+  crossJoin?: () => Entity<any>[];
+  innerJoin?: () => JoinInfo[];
+  outerJoin?: () => JoinInfo[];
+  where?: () => any[];
   orderBy?: (Column<any> | SortSegment)[];
 }
 export interface JoinInfo {
   to: Entity<any>;
-  on:()=> any[];
+  on: () => any[];
 } 

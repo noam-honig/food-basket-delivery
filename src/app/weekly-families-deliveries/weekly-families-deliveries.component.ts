@@ -121,7 +121,7 @@ export class WeeklyFamilyDeliveryProductStats extends ContextEntity<string> {
           } as QueryBuilder;
 
         };
-        var result = sql.query({
+        return sql.entityDbName({
           select: () => [
             sql.columnWithAlias(deliveries.id, this.delivery),
             deliveries.familyId,
@@ -145,9 +145,7 @@ export class WeeklyFamilyDeliveryProductStats extends ContextEntity<string> {
               sql.eq(products.id, deliveryProducts.product)]
           }]
         });
-        result = '(' + result + ') as result';
-        console.log(result);
-        return result;
+
       },
       allowApiCRUD: false,
 
