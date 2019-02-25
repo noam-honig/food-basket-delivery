@@ -12,6 +12,7 @@
     "server:build-watch": "tsc -p tsconfig.server.json --watch",
     "postinstall": "npm run server:build&&npm run build",
     "publish-to-heroku-test": "git push heroku master -f",
+    "publish-to-salmichal-test": "git push salmichal master -f",
     "publish-to-heroku-test-dev-branch": "git push heroku dive-into-dependency-injection -f",
     "publish-to-hmey": "git push hmey master -f",
     "publish-to-m-h": "git push m-h master -f",
