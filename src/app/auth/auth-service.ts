@@ -86,7 +86,7 @@ export class AuthService {
                     deliveryVolunteer: h.deliveryVolunteer.value || h.deliveryAdmin.value || h.superAdmin.value,
                     name: h.name.value
                 };
-                if (result.deliveryAdmin && h.realStoredPassword.value.length == 0) {
+                if ((result.deliveryAdmin||result.superAdmin||result.weeklyFamilyPacker||result.weeklyFamilyVolunteer||result.weeklyFamilyAdmin) && h.realStoredPassword.value.length == 0) {
                     result.deliveryAdmin = false;
                     requirePassword = true;
                 }

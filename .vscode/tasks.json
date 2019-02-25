@@ -79,7 +79,10 @@
         {
             "type": "npm",
             "script": "server:execute",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "presentation": {
+                "group": "groupA"
+            }
         },
         {
             "type": "npm",
@@ -87,6 +90,9 @@
             "problemMatcher": [
                 "$tsc-watch"
             ],
+            "presentation": {
+                "group": "groupA"
+            },
             "isBackground": true
         }
     ]
