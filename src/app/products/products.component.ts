@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
 
-import { HolidayDeliveryAdmin } from '../auth/auth-guard';
+import { HolidayDeliveryAdmin, WeeklyFamilyAdminGuard } from '../auth/auth-guard';
 import { Context } from '../shared/context';
 import { Products } from '../weekly-families-deliveries/weekly-families-deliveries.component';
 @Component({
@@ -28,6 +28,6 @@ export class ProductsComponent implements OnInit {
   static route: Route = {
     path: 'products',
     component: ProductsComponent,
-    data: { name: 'מוצרים' }, canActivate: [HolidayDeliveryAdmin]
+    data: { name: 'מוצרים' }, canActivate: [WeeklyFamilyAdminGuard]
   }
 }

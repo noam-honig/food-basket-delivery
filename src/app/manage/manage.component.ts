@@ -6,7 +6,7 @@ import { SelectService } from '../select-popup/select-service';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings } from './ApplicationSettings';
 import { Route } from '@angular/router';
-import { HolidayDeliveryAdmin } from '../auth/auth-guard';
+import { AnyAdmin } from '../auth/auth-guard';
 import { Context } from '../shared/context';
 import { DialogService } from '../select-popup/dialog';
 
@@ -19,7 +19,7 @@ export class ManageComponent implements OnInit {
   static route: Route = {
     path: 'manage',
     component: ManageComponent,
-    data: { name: 'הגדרות מערכת' }, canActivate: [HolidayDeliveryAdmin]
+    data: { name: 'הגדרות מערכת' }, canActivate: [AnyAdmin]
   }
   constructor(private dialog: DialogService, private context: Context) { }
 
