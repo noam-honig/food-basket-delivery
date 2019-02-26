@@ -18,12 +18,14 @@ export class ProductsComponent implements OnInit {
     columnSettings: p => [
       p.name,{column: p.order,width:'90'}
     ],
+    knowTotalRows:true,
     get: {
       orderBy: p => [p.order, p.name],
       limit:50
     }
   });
   ngOnInit() {
+    
   }
   static route: Route = {
     path: 'products',

@@ -22,6 +22,7 @@ export class WeeklyFamiliesComponent implements OnInit {
     allowUpdate: true,
     allowDelete: true,
     allowInsert: true,
+    knowTotalRows:true,
     columnSettings: f => [
       f.name,
       f.assignedHelper.getColumn(this.selectService, h => h.weeklyFamilyVolunteer.isEqualTo(true)),
