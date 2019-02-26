@@ -267,7 +267,7 @@ export class ProductId extends Id {
 export class Products extends IdEntity<ProductId>{
   name = new StringColumn({ caption: 'שם' });
   order = new NumberColumn({ caption: 'סדר', value: 50, dbName: 'ord2' });
-  missing = new BoolColumn({ caption: 'חסר' });
+  
   constructor(private context: Context) {
     super(new ProductId(context), {
       name: 'products',

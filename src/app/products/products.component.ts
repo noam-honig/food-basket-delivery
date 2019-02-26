@@ -16,7 +16,7 @@ export class ProductsComponent implements OnInit {
     allowUpdate: true,
     allowInsert: true,
     columnSettings: p => [
-      p.name,p.missing, p.order
+      p.name,{column: p.order,width:'90'}
     ],
     get: {
       orderBy: p => [p.order, p.name],
