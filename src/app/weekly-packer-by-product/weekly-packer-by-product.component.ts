@@ -24,7 +24,7 @@ export class WeeklyPackerByProductComponent implements OnInit {
 
 
   async ngOnInit() {
-    this.products = await this.context.for(Products).find({ where: x => x.quantityToPack.IsGreaterThan(0) });
+    this.products = await this.context.for(Products).find({ where: x => x.quantityToPack.IsGreaterThan(0),orderBy:p=>[p.order,p.name] });
   }
 
   deliveryProducts: WeeklyFamilyDeliveryProductStats[] = []
