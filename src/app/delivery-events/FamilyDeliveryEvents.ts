@@ -25,7 +25,10 @@ export class FamilyDeliveryEvents extends IdEntity<FamilyDelveryEventId> {
   routeOrder = new NumberColumn();
   courierComments = new StringColumn('הערות מסירה');
   constructor(private context: Context) {
-    super(new FamilyDelveryEventId(), 'FamilyDeliveryEvents');
+    super(new FamilyDelveryEventId(), {
+      name: 'FamilyDeliveryEvents',
+      allowApiRead: !!context.info.deliveryAdmin
+    });
   }
 }
 export class FamilyDelveryEventId extends Id { }

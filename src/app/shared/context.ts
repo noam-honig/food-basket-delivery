@@ -11,10 +11,10 @@ import { DataApiSettings } from "radweb";
 @Injectable()
 export class Context {
     isAdmin() {
-        return this.info && this.info.deliveryAdmin;
+        return !!this.info && !!this.info.deliveryAdmin;
     }
     isLoggedIn() {
-        return this.info && this.info.loggedIn;
+        return !!this.info && !!this.info.loggedIn;
     }
 
 

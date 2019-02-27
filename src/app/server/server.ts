@@ -64,7 +64,7 @@ serverInit().then(async () => {
     actionInfo.allActions.forEach(a => {
         addAction(allUsersAlsoNotLoggedIn, a);
     });
-
+    let errors = '';
     //add Api Entries
     allEntities.forEach(e => {
         let x = new ServerContext().for(e).create();
@@ -73,10 +73,16 @@ serverInit().then(async () => {
             allUsersAlsoNotLoggedIn.add(r => {
                 let c = new ServerContext();
                 c.setReq(r);
-                return new DataApi(c.create(e), j._getEntityApiSettings(c));
+                let y = j._getEntityApiSettings(c);
+                if (y.allowRead === undefined)
+                    errors += '\r\n' + j.__getName()
+                return new DataApi(c.create(e), y);
             });
         }
     });
+    if (errors.length > 0) {
+        console.log('Security not set for:' + errors);
+    }
 
 
 

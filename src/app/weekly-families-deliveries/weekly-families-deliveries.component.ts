@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Id, IdEntity, NumberColumn,  changeDate, DateTimeColumn, SqlBuilder, QueryBuilder } from '../model-shared/types';
+import { Id, IdEntity, NumberColumn, changeDate, DateTimeColumn, SqlBuilder, QueryBuilder } from '../model-shared/types';
 import { WeeklyFamilyId } from '../weekly-families/weekly-families';
 import { ClosedListColumn, StringColumn, BoolColumn, Entity, CompoundIdColumn, Column } from 'radweb';
 import { EntityClass, Context, ServerContext, ContextEntity } from '../shared/context';
@@ -89,6 +89,7 @@ export class WeeklyFamilyDeliveryProductStats extends ContextEntity<string> {
   constructor(private context: Context) {
     super({
       name: 'WeeklyFamilyDelivryProductStats',
+      allowApiRead: context.info.weeklyFamilyAdmin || context.info.weeklyFamilyVolunteer || context.info.weeklyFamilyPacker,
       dbName: () => {
         var deliveries = new WeeklyFamilyDeliveries(context);
         var innerSelectDeliveries = new WeeklyFamilyDeliveries(context);
@@ -267,11 +268,13 @@ export class ProductId extends Id {
 export class Products extends IdEntity<ProductId>{
   name = new StringColumn({ caption: 'שם' });
   order = new NumberColumn({ caption: 'סדר', value: 50, dbName: 'ord2' });
-  
+
   constructor(private context: Context) {
     super(new ProductId(context), {
       name: 'products',
-      allowApiCRUD: true,
+      allowApiCRUD: context.info.weeklyFamilyAdmin || context.info.weeklyFamilyVolunteer,
+      allowApiRead: context.info.weeklyFamilyAdmin || context.info.weeklyFamilyPacker || context.info.weeklyFamilyVolunteer,
+
     });
   }
 
