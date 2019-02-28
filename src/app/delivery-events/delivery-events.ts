@@ -49,6 +49,7 @@ let f = new Families(new ServerContext());
       allowApiRead: context.isAdmin(),
       allowApiUpdate: context.isAdmin(),
       allowApiInsert: context.isAdmin(),
+      allowApiDelete:context.isAdmin(),
       onSavingRow: async () => {
         if (context.onServer)
           if (this.isNew()) {

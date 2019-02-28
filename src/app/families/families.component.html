@@ -29,9 +29,9 @@
     
 </mat-card>
 <button (click)="families.previousRow()" [disabled]="families.currentRow&& families.currentRow.wasChanged()||!families.previousRowAllowed()"
-    [class.hide]="gridView" class="btn glyphicon glyphicon-chevron-left ng-star-inserted"></button>
+    [class.hide]="gridView" class="btn glyphicon glyphicon-chevron-right ng-star-inserted"></button>
 <button (click)="families.nextRow()" [class.hide]="gridView" [disabled]="families.currentRow&&families.currentRow.wasChanged()"
-    class="btn glyphicon glyphicon-chevron-right"></button>
+    class="btn glyphicon glyphicon-chevron-left"></button>
 <button (click)="gridView = !gridView" [class.hide]="gridView" class="btn glyphicon glyphicon-list-alt" title="חזרה לרשימה"></button>
 <button [class.hide]="gridView" class="btn glyphicon glyphicon glyphicon-filter" (click)="dataFilter.userFilterButton()"></button>
 <button (click)="families.addNewRow()" [class.hide]="gridView" [disabled]="families.currentRow&&families.currentRow.wasChanged()"

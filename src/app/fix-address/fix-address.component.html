@@ -2,9 +2,9 @@
 <button (click)="test()">Show map</button>
 <button (click)="showInfo()">dev info</button>
 
-<div class="table-responsive" [class.hide]="!gridView">
-  <data-grid [settings]="families"></data-grid>
-</div>
+
+  <data-grid2 [settings]="families"></data-grid2>
+
 <div [class.hide]="gridView">
   <button (click)="gridView = !gridView">חזרה לרשימה</button>
   <button *ngIf="families.currentRow" (click)="families.currentRow.save()" [disabled]="!families.currentRow.wasChanged()">שמור</button>

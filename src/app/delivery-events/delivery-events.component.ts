@@ -27,6 +27,7 @@ export class DeliveryEventsComponent implements OnInit {
   deliveryEvents = this.context.for(DeliveryEvents).gridSettings({
     allowUpdate: true,
     allowInsert: true,
+    allowDelete: true,
     columnSettings: e => [
       {
         column: e.name,
@@ -37,14 +38,14 @@ export class DeliveryEventsComponent implements OnInit {
         width: '175'
       },
       {
-        column:e.families,
-        width:'75'
+        column: e.families,
+        width: '75'
       },
       e.eventStatus.getColumn(),
       {
         caption: 'מצב צבירה',
         getValue: e => e.isActiveEvent.value ? "בעבודה" : "לא מוצג",
-        width:'150'
+        width: '150'
       }
     ],
     get: {
