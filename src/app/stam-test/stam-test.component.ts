@@ -3,6 +3,7 @@ import { GridSettings } from 'radweb';
 import { FamilyDeliveryEventsView } from "../families/FamilyDeliveryEventsView";
 import { Context } from '../shared/context';
 import { Helpers } from '../helpers/helpers';
+import { WeeklyFamilies } from '../weekly-families/weekly-families';
 
 @Component({
   selector: 'app-stam-test',
@@ -12,10 +13,13 @@ import { Helpers } from '../helpers/helpers';
 export class StamTestComponent implements OnInit {
 
   constructor(private context: Context) { }
-  settings = this.context.for(Helpers).gridSettings({
+  settings = this.context.for(WeeklyFamilies).gridSettings({
     allowDelete: true,
     allowInsert: true,
-    allowUpdate: true
+    allowUpdate: true,
+    get:{
+      limit:50
+    }
   });
   ngOnInit() {
   }

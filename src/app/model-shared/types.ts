@@ -210,6 +210,9 @@ export async function checkForDuplicateValue(row: Entity<any>, column: Column<an
 }
 
 export class SqlBuilder {
+  str(val: string): string | radweb.Column<string> {
+    return '\'' + val.replace('\'', '\'\'') + '\'';
+  }
   private dict = new Map<Column<any>, string>();
 
 
@@ -256,8 +259,8 @@ export class SqlBuilder {
   ne<T>(a: Column<T>, b: T | Column<T>) {
     return this.build(a, ' <> ', b);
   }
-  notNull(col:Column<any>){
-      return this.build(col, ' is not null');
+  notNull(col: Column<any>) {
+    return this.build(col, ' is not null');
   }
 
 
@@ -326,8 +329,8 @@ export class SqlBuilder {
   entityDbName(query: QueryBuilder) {
     return '(' + this.query(query) + ') result';
   }
-  entityDbNameUnion(query1: QueryBuilder,query2:QueryBuilder) {
-    return '(' + this.query(query1)+' union '+this.query(query2) + ') result';
+  entityDbNameUnion(query1: QueryBuilder, query2: QueryBuilder) {
+    return '(' + this.query(query1) + ' union ' + this.query(query2) + ') result';
   }
   in(col: Column<any>, ...values: any[]) {
     return this.build(col, ' in (', values, ')');
@@ -377,6 +380,8 @@ export class SqlBuilder {
 
   }
   case(args: CaseWhenItemHelper[], else_: any) {
+    if (args.length==0)
+      return else_;
     let result = [];
     result.push('case');
     args.forEach(x => {

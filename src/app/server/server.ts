@@ -2,7 +2,7 @@ import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
 import * as secure from 'express-force-https';
 import * as compression from 'compression';
-import { ExpressBridge } from 'radweb-server';
+import { ExpressBridge, ActualSQLServerDataProvider } from 'radweb-server';
 import { DataApi } from 'radweb';
 import * as fs from 'fs';
 import { myAuthInfo } from '../auth/my-auth-info';
@@ -21,13 +21,15 @@ import * as passwordHash from 'password-hash';
 
 serverInit().then(async () => {
 
-
+ 
     let app = express();
     if (!process.env.DISABLE_SERVER_EVENTS) {
         let serverEvents = new ServerEvents(app);
         Families.SendMessageToBrowsers = x => serverEvents.SendMessage(x);
     }
-
+    if (process.env.logSqls){
+           ActualSQLServerDataProvider.LogToConsole = true;
+    }
 
     app.use(compression());
 
