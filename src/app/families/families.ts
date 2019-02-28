@@ -4,12 +4,14 @@ import { YesNoColumn } from "./YesNo";
 import { LanguageColumn } from "./Language";
 import { FamilySourceId } from "./FamilySources";
 import { BasketId } from "./BasketType";
-import { NumberColumn, StringColumn, IdEntity, Id, changeDate, DateTimeColumn } from "../model-shared/types";
+import { NumberColumn, StringColumn, IdEntity, Id, changeDate, DateTimeColumn, SqlBuilder } from "../model-shared/types";
 import { ColumnSetting, Column } from "radweb";
 import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
 import { Context, EntityClass } from "../shared/context";
+import { DeliveryEvents } from "../delivery-events/delivery-events";
+import { FamilyDelveryEventId, FamilyDeliveryEvents } from "../delivery-events/FamilyDeliveryEvents";
 
 
 @EntityClass
@@ -121,6 +123,50 @@ export class Families extends IdEntity<FamilyId>  {
   deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
   routeOrder = new NumberColumn();
   courierComments = new StringColumn('הערות מסירה');
+
+  private dbNameFromLastDelivery(col: (fde: FamilyDeliveryEvents) => Column<any>, alias: string) {
+    let de = new DeliveryEvents(this.context);
+    let fde = new FamilyDeliveryEvents(this.context);
+    let sql = new SqlBuilder();
+    return sql.columnInnerSelect(this, {
+      select: () => [sql.columnWithAlias(col(fde), alias)],
+      from: de,
+      outerJoin: () => [{ to: fde, on: () => [sql.eq(fde.deliveryEvent, de.id)] }],
+      where: () => [sql.eq(fde.family, this.id), sql.ne(de.isActiveEvent, true)],
+      orderBy: [{ column: de.deliveryDate, descending: true }]
+    });
+  }
+
+  previousDeliveryStatus = new DeliveryStatusColumn({
+    caption: 'סטטוס שינוע קודם',
+    dbReadOnly: true,
+    dbName: () => {
+      return this.dbNameFromLastDelivery(fde => fde.deliverStatus, "prevStatus");
+    }
+  });
+  previousDeliveryComment = new StringColumn({
+    caption: 'הערת שינוע קודם',
+    dbReadOnly: true,
+    dbName: () => {
+      return this.dbNameFromLastDelivery(fde => fde.courierComments, "prevComment");
+    }
+  });
+  getPreviousDeliveryColumn() {
+    return {
+      caption: 'שינוע קודם',
+      getValue: f => {
+        let r = f.previousDeliveryStatus.displayValue;
+        if (f.previousDeliveryComment.value) {
+          r += ': ' + f.previousDeliveryComment.value
+        }
+        return r;
+      },
+      cssClass: f => f.previousDeliveryStatus.getCss()
+
+
+    } as ColumnSetting<Families>;
+  }
+
   addressByGoogle() {
     let r: ColumnSetting<Families> = {
       caption: 'כתובת כפי שגוגל הבין',

@@ -16,17 +16,29 @@ export class DeliveryStatus {
   }
 }
 export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
-    constructor(settingsOrCaption?: DataColumnSettings<number, NumberColumn> | string) {
-      super(DeliveryStatus, settingsOrCaption);
-    }
-    getColumn() {
-      return {
-        column: this,
-        dropDown: {
-          items: this.getOptions()
-        },
-        width: '150'
-      };
-    }
-  
+  constructor(settingsOrCaption?: DataColumnSettings<number, NumberColumn> | string) {
+    super(DeliveryStatus, settingsOrCaption);
   }
+  getColumn() {
+    return {
+      column: this,
+      dropDown: {
+        items: this.getOptions()
+      },
+      width: '150'
+    };
+  }
+  getCss() {
+    switch (this.listValue) {
+      case DeliveryStatus.Success:
+        return 'deliveredOk';
+      case DeliveryStatus.FailedBadAddress:
+      case DeliveryStatus.FailedNotHome:
+      case DeliveryStatus.FailedOther:
+        return 'deliveredProblem';
+      default:
+        return '';
+    }
+  }
+
+}

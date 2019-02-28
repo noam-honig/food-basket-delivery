@@ -71,19 +71,7 @@ export class UpdateFamilyComponent implements OnInit {
         families.phone2Description
       ]
     });
-    this.callInfo = this.families.addArea({
-      columnSettings: families => [
-        {
-          column: families.callStatus,
-          dropDown: {
-            items: families.callStatus.getOptions()
-          }
-        },
-        families.callHelper,
-        families.callTime,
-        families.callComments,
-      ]
-    })
+ 
     this.deliverInfo = this.families.addArea({
       columnSettings: families => [
         families.courier.getColumn(this.selectService),
@@ -97,6 +85,7 @@ export class UpdateFamilyComponent implements OnInit {
         families.deliveryStatusUser,
         families.deliveryStatusDate,
         families.courierComments,
+        families.getPreviousDeliveryColumn()
       ]
     });
   }

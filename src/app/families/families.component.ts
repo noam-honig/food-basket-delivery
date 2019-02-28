@@ -156,18 +156,7 @@ export class FamiliesComponent implements OnInit {
 
     allowUpdate: true,
     allowInsert: true,
-    rowCssClass: f => {
-      switch (f.deliverStatus.listValue) {
-        case DeliveryStatus.Success:
-          return 'deliveredOk';
-        case DeliveryStatus.FailedBadAddress:
-        case DeliveryStatus.FailedNotHome:
-        case DeliveryStatus.FailedOther:
-          return 'deliveredProblem';
-        default:
-          return '';
-      }
-    },
+    rowCssClass: f => f.deliverStatus.getCss(),
     numOfColumnsInGrid: 4,
     onEnterRow: async f => {
       if (f.isNew()) {
@@ -238,7 +227,9 @@ export class FamiliesComponent implements OnInit {
         caption: 'שינוע',
         getValue: f => f.getDeliveryDescription(),
         width: '200'
-      }, {
+      },
+      
+       {
         column: families.familyMembers,
 
       },
@@ -278,7 +269,9 @@ export class FamiliesComponent implements OnInit {
       families.deliverStatus.getColumn(),
       families.deliveryStatusUser,
       families.deliveryStatusDate,
-      families.courierComments
+      families.courierComments,
+      families.getPreviousDeliveryColumn(),
+      
     ],
     rowButtons: [
       {
@@ -298,83 +291,7 @@ export class FamiliesComponent implements OnInit {
       }
     ]
   });
-  familiesInfo = this.families.addArea({
-    columnSettings: families => [
-      families.name,
-      families.familyMembers,
-      {
-        column: families.language,
-        dropDown: {
-          items: families.language.getOptions()
-        }
-      },
-      {
-        column: families.basketType,
-        dropDown: { source: this.context.for(BasketType).create() }
-      },
-      {
-        column: families.familySource,
-        dropDown: { source: this.context.for(FamilySources).create() }
-      },
-      families.internalComment,
-      families.iDinExcel,
-      families.deliveryComments,
-      families.special.getColumn(),
-      families.createUser,
-      families.createDate
-
-
-
-
-    ],
-  });
-  familiesAddress = this.families.addArea({
-    columnSettings: families => [
-      families.address,
-      families.floor,
-      families.appartment,
-      families.addressComment,
-      families.addressByGoogle(),
-      families.city
-
-    ]
-  });
-  phones = this.families.addArea({
-    columnSettings: families => [
-      families.phone1,
-      families.phone1Description,
-      families.phone2,
-      families.phone2Description
-    ]
-  });
-  callInfo = this.families.addArea({
-    columnSettings: families => [
-      {
-        column: families.callStatus,
-        dropDown: {
-          items: families.callStatus.getOptions()
-        }
-      },
-      families.callHelper,
-      families.callTime,
-      families.callComments,
-    ]
-  })
-  deliverInfo = this.families.addArea({
-    columnSettings: families => [
-      families.courier.getColumn(this.selectService),
-      {
-        caption: 'טלפון משנע',
-        getValue: f => this.context.for(Helpers).lookup(f.courier).phone.value
-      },
-      families.courierAssignUser,
-      families.courierAssingTime,
-      families.deliverStatus.getColumn(),
-      families.deliveryStatusUser,
-      families.deliveryStatusDate,
-      families.courierComments,
-    ]
-  });
+ 
   gridView = true;
 
 
@@ -411,7 +328,7 @@ export class FamiliesComponent implements OnInit {
     ,
     {
       name: 'הערות',
-      rule: f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id),
+      rule: f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.courierComments.IsDifferentFrom('')),
       stats: [
         this.stats.deliveryComments,
         this.stats.phoneComments
@@ -424,18 +341,7 @@ export class FamiliesComponent implements OnInit {
         this.stats.currentEvent,
         this.stats.notInEvent
       ]
-    }/*,
-    {
-      name: 'טלפניות',
-      rule: f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id),
-      stats: [
-        this.stats.phoneReady,
-        this.stats.phoneAssigned,
-        this.stats.phoneOk,
-        this.stats.phoneFailed
-      ]
-    }*/
-
+    }
   ]
   tabChanged() {
     this.currentStatFilter = undefined;

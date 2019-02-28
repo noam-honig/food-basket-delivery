@@ -28,6 +28,7 @@ export class DeliveryEventsComponent implements OnInit {
     allowUpdate: true,
     allowInsert: true,
     allowDelete: true,
+    confirmDelete: (h, yes) => this.dialog.confirmDelete('אירוע משלוח ' + h.name.value, yes),
     columnSettings: e => [
       {
         column: e.name,
@@ -41,7 +42,7 @@ export class DeliveryEventsComponent implements OnInit {
         column: e.families,
         width: '75'
       },
-      e.eventStatus.getColumn(),
+      
       {
         caption: 'מצב צבירה',
         getValue: e => e.isActiveEvent.value ? "בעבודה" : "לא מוצג",

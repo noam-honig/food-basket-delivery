@@ -302,6 +302,10 @@ export class SqlBuilder {
       where: query.where
     });
   }
+  columnInnerSelect(rootEntity: Entity<any>,query: QueryBuilder) {
+    this.addEntity(rootEntity, rootEntity.__getDbName());
+    return '(' + this.query(query) + ' limit 1)';
+  }
   count(query: FromAndWhere, mappedColumn: Column<number>) {
     return this.build("(", this.query({
       select: () => [this.build("count(*)")],
