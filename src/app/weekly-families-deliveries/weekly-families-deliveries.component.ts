@@ -26,7 +26,7 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
   constructor(context: Context) {
     super(new ProductId(context), {
       name: 'WeeklyFamilyDeliveries',
-      allowApiRead: !!context.info.weeklyFamilyVolunteer||context.info.weeklyFamilyPacker ,
+      allowApiRead: !!context.info.weeklyFamilyVolunteer||!!context.info.weeklyFamilyPacker ,
       allowApiCRUD: !!context.info.weeklyFamilyVolunteer||context.info.weeklyFamilyPacker ,
       onSavingRow: async () => {
         if (this.isNew()) {
