@@ -10,7 +10,8 @@ export class WeeklyFamilies extends IdEntity<WeeklyFamilyId>{
     constructor(protected context: Context, options?: ContextEntityOptions) {
         super(new WeeklyFamilyId(), options ? options : {
             name: 'weeklyFamilies',
-            allowApiCRUD: false
+            allowApiCRUD: false,
+            allowApiRead: !!context.info.weeklyFamilyAdmin || !!context.info.weeklyFamilyPacker || !!context.info.weeklyFamilyVolunteer
 
         });
     }
@@ -27,8 +28,8 @@ export class WeeklyFullFamilyInfo extends WeeklyFamilies {
         super(context, {
             name: 'weeklyFullFamilies',
             dbName: () => 'weeklyFamilies',
-            allowApiRead:  context.info.weeklyFamilyVolunteer,
-            allowApiUpdate: context.info.weeklyFamilyVolunteer,
+            allowApiRead: !!context.info.weeklyFamilyVolunteer,
+            allowApiUpdate: context.info.weeklyFamilyAdmin,
             allowApiDelete: false,
             allowApiInsert: context.info.weeklyFamilyAdmin,
             apiDataFilter: () => {
@@ -39,7 +40,7 @@ export class WeeklyFullFamilyInfo extends WeeklyFamilies {
         });
     }
 
-    
+
 }
 
 

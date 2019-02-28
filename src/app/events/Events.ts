@@ -15,10 +15,10 @@ export class Events extends IdEntity<EventId> {
   name = new StringColumn('שם אירוע');
   description = new StringColumn();
   constructor(private context: Context) {
-    super(new EventId(), "events");
+    super(new EventId(), { name: "events", allowApiRead: !!context.info.superAdmin });
   }
   async delete() {
-    await foreachEntityItem(new Items(), hi => hi.eventId.isEqualTo(this.id), item => item.delete());
+    await foreachEntityItem(new Items(this.context), hi => hi.eventId.isEqualTo(this.id), item => item.delete());
     await foreachEntityItem(new EventHelpers(this.context), hi => hi.eventId.isEqualTo(this.id), item => item.delete());
     return super.delete();
   }
@@ -31,7 +31,7 @@ export class EventHelpers extends IdEntity<EventHelperId> {
   helperId = new HelperId(this.context);
   eventId = new EventId();
   constructor(private context: Context) {
-    super(new EventHelperId(), 'EventHelpers');
+    super(new EventHelperId(), { name: 'EventHelpers', allowApiRead: !!context.info.superAdmin });
   }
   async delete() {
     foreachEntityItem(new ItemsPerHelper(), hi => hi.eventHelperId.isEqualTo(this.id), item => item.delete());
@@ -60,8 +60,8 @@ export class Items extends IdEntity<ItemId> {
       return total;
     }
   });
-  constructor() {
-    super(new ItemId(), "items");
+  constructor(context: Context) {
+    super(new ItemId(), { name: "items", allowApiRead: !!context.info.superAdmin });
   }
   async delete() {
     foreachEntityItem(new ItemsPerHelper(), hi => hi.itemId.isEqualTo(this.id), item => item.delete());

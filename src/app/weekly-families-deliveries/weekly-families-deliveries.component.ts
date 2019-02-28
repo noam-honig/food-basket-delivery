@@ -26,7 +26,8 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
   constructor(context: Context) {
     super(new ProductId(context), {
       name: 'WeeklyFamilyDeliveries',
-      allowApiCRUD: true,
+      allowApiRead: !!context.info.weeklyFamilyVolunteer ,
+      allowApiCRUD: context.info.weeklyFamilyVolunteer,
       onSavingRow: async () => {
         if (this.isNew()) {
           this.status.listValue = WeeklyFamilyDeliveryStatus.Prepare;
@@ -59,9 +60,11 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
 export class WeeklyFamilyDeliveryProducts extends IdEntity<Id>{
 
   constructor(private context: Context) {
+    
     super(new Id(), {
       name: 'WeeklyFamilyDeliveryProducts',
-      allowApiCRUD: true
+      allowApiRead:!!context.info.weeklyFamilyPacker||!!context.info.weeklyFamilyAdmin||!!context.info.weeklyFamilyVolunteer,
+      allowApiCRUD: context.info.weeklyFamilyPacker||context.info.weeklyFamilyAdmin||context.info.weeklyFamilyVolunteer
     })
   }
   delivery = new WeeklyFamilyDeliveryId();
@@ -89,7 +92,7 @@ export class WeeklyFamilyDeliveryProductStats extends ContextEntity<string> {
   constructor(private context: Context) {
     super({
       name: 'WeeklyFamilyDelivryProductStats',
-      allowApiRead: context.info.weeklyFamilyAdmin || context.info.weeklyFamilyVolunteer || context.info.weeklyFamilyPacker,
+      allowApiRead: !!context.info.weeklyFamilyAdmin || !!context.info.weeklyFamilyVolunteer || !!context.info.weeklyFamilyPacker,
       dbName: () => {
         var deliveries = new WeeklyFamilyDeliveries(context);
         var innerSelectDeliveries = new WeeklyFamilyDeliveries(context);
@@ -273,7 +276,7 @@ export class Products extends IdEntity<ProductId>{
     super(new ProductId(context), {
       name: 'products',
       allowApiCRUD: context.info.weeklyFamilyAdmin || context.info.weeklyFamilyVolunteer,
-      allowApiRead: context.info.weeklyFamilyAdmin || context.info.weeklyFamilyPacker || context.info.weeklyFamilyVolunteer,
+      allowApiRead: !!context.info.weeklyFamilyAdmin || !!context.info.weeklyFamilyPacker || !!context.info.weeklyFamilyVolunteer,
 
     });
   }
