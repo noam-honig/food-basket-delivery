@@ -49,10 +49,11 @@ export class Families extends IdEntity<FamilyId>  {
                 wasChanged();
               }
             }
-
-            logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName())));//should be after succesfull save
-            logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
-            logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()))); //should be after succesfull save
+            if (!this.disableChangeLogging) {
+              logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName())));//should be after succesfull save
+              logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
+              logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()))); //should be after succesfull save
+            }
           }
         }
 
@@ -61,6 +62,7 @@ export class Families extends IdEntity<FamilyId>  {
     if (!context.isAdmin())
       this.__iterateColumns().forEach(c => c.readonly = c != this.courierComments && c != this.deliverStatus);
   }
+  disableChangeLogging = false;
 
 
   name = new StringColumn({

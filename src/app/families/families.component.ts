@@ -278,10 +278,7 @@ export class FamiliesComponent implements OnInit {
       families.deliverStatus.getColumn(),
       families.deliveryStatusUser,
       families.deliveryStatusDate,
-      families.courierComments,
-      families.callHelper,
-      families.callTime,
-      families.callComments,
+      families.courierComments
     ],
     rowButtons: [
       {

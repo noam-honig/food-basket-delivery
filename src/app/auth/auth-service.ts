@@ -79,11 +79,11 @@ export class AuthService {
                     loggedIn: true,
                     helperId: h.id.value,
                     superAdmin: h.superAdmin.value,
-                    deliveryAdmin: h.deliveryAdmin.value || h.superAdmin.value,
-                    weeklyFamilyVolunteer: h.weeklyFamilyVolunteer.value || h.weeklyFamilyAdmin.value || h.superAdmin.value,
-                    weeklyFamilyPacker: h.weeklyFamilyPacker.value || h.weeklyFamilyAdmin.value || h.superAdmin.value,
-                    weeklyFamilyAdmin: h.weeklyFamilyAdmin.value || h.superAdmin.value,
-                    deliveryVolunteer: h.deliveryVolunteer.value || h.deliveryAdmin.value || h.superAdmin.value,
+                    deliveryAdmin: h.deliveryAdmin.value ,
+                    weeklyFamilyVolunteer: h.weeklyFamilyVolunteer.value || h.weeklyFamilyAdmin.value ,
+                    weeklyFamilyPacker: h.weeklyFamilyPacker.value || h.weeklyFamilyAdmin.value ,
+                    weeklyFamilyAdmin: h.weeklyFamilyAdmin.value ,
+                    deliveryVolunteer: h.deliveryVolunteer.value || h.deliveryAdmin.value ,
                     name: h.name.value
                 };
                 if ((result.deliveryAdmin||result.superAdmin||result.weeklyFamilyPacker||result.weeklyFamilyVolunteer||result.weeklyFamilyAdmin) && h.realStoredPassword.value.length == 0) {

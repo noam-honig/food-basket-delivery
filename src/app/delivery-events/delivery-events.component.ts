@@ -142,6 +142,7 @@ export class DeliveryEventsComponent implements OnInit {
               f.__getColumn(c).value = newFamilyEvent.__getColumn(c).value;
             });
         }
+        f.disableChangeLogging = true;
         await f.save();
       });
     Families.SendMessageToBrowsers('הוחלף אירוע פעיל ל' + newEvent.name.value);
