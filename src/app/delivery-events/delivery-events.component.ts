@@ -30,14 +30,21 @@ export class DeliveryEventsComponent implements OnInit {
     columnSettings: e => [
       {
         column: e.name,
-        width: '100'
+        width: '200'
       },
-      e.deliveryDate,
-      e.families,
+      {
+        column: e.deliveryDate,
+        width: '175'
+      },
+      {
+        column:e.families,
+        width:'75'
+      },
       e.eventStatus.getColumn(),
       {
         caption: 'מצב צבירה',
-        getValue: e => e.isActiveEvent.value ? "בעבודה" : "לא מוצג"
+        getValue: e => e.isActiveEvent.value ? "בעבודה" : "לא מוצג",
+        width:'150'
       }
     ],
     get: {
