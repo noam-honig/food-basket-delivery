@@ -52,7 +52,7 @@ export class AsignFamilyComponent implements OnInit {
         this.id = helper.id.value;
         await this.refreshList();
       } else {
-        
+
         await this.refreshList();
       }
     }
@@ -294,7 +294,7 @@ export class AsignFamilyComponent implements OnInit {
               let loc = ef.getGeocodeInformation().location();
               if (loc) {
                 let dis = GeocodeInformation.GetDistanceBetweenPoints(x, loc);
-                if ( dis < r)
+                if (dis < r)
                   r = dis;
               }
             });
@@ -355,6 +355,17 @@ export class AsignFamilyComponent implements OnInit {
       where: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
         f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes.id))),
       onSelect: async f => {
+        if (!this.id) {
+          let helper = await this.context.for(Helpers).lookupAsync(h => h.phone.isEqualTo(this.phone));
+          if (helper.isNew()) {
+            helper.phone.value = this.phone;
+            helper.name.value = this.name;
+            await helper.save();
+          }
+          this.name = helper.name.value;
+          this.shortUrl = helper.shortUrlKey.value;
+          this.id = helper.id.value;
+        }
         f.courier.value = this.id;
         await f.save();
         this.refreshList();
