@@ -21,7 +21,6 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "server:execute": "node dist-server/src/app/server/server.js",
-    "preserver:debug": "npm run server:build",
     "server:debug": "node --inspect --debug-brk dist-server/src/app/server/server.js",
     "preRunSomething": "npm run server:build",
     "RunSomething": "node --inspect --debug-brk dist-server/src/app/server/doSomething.js",

@@ -285,12 +285,14 @@ export class AsignFamilyComponent implements OnInit {
         else {
 
           let getDistance = (x: Location) => {
-            let r = -1;
+            let r = 1000000;
+            if (!x)
+              return r;
             existingFamilies.forEach(ef => {
               let loc = ef.getGeocodeInformation().location();
               if (loc) {
                 let dis = GeocodeInformation.GetDistanceBetweenPoints(x, loc);
-                if (r == -1 || dis < r)
+                if ( dis < r)
                   r = dis;
               }
             });
@@ -394,7 +396,8 @@ async function getRouteInfo(families: Families[], optimize: boolean, context: Co
   let startAndEnd = (await ApplicationSettings.getAsync(context)).getGeocodeInformation().getlonglat();
   let waypoints = 'optimize:' + (optimize ? 'true' : 'false');
   families.forEach(f => {
-    waypoints += '|' + f.getGeocodeInformation().getlonglat();
+    if (f.getGeocodeInformation().location())
+      waypoints += '|' + f.getGeocodeInformation().getlonglat();
   });
   u.addObject({
     origin: startAndEnd,
