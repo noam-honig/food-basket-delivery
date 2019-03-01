@@ -19,14 +19,17 @@
   </div>
   <h4>כתובת</h4>
   <div>
-    <span (click)="f.openWaze()">
-      <img src="https://lh3.googleusercontent.com/l4O7eQ94iRq2pPqIVKapZQvMdtYYXwT-jB1384pbxUKWJkyQ8rw85YtN-rrjoCqJ2El3=w40">
+    <span (click)="openWaze(f)">
+      <img
+        src="https://lh3.googleusercontent.com/l4O7eQ94iRq2pPqIVKapZQvMdtYYXwT-jB1384pbxUKWJkyQ8rw85YtN-rrjoCqJ2El3=w40">
     </span>
-    <a (click)="f.openWaze()">
+    <a (click)="openWaze(f)">
+
       <div style="display:inline-block">
+
         {{f.address.value}}
         <ng-container *ngIf="f.floor.value||f.appartment.value">
-          <br/>
+          <br />
         </ng-container>
         <ng-container *ngIf="f.floor.value">
           קומה {{f.floor.value}}
@@ -35,15 +38,23 @@
           דירה {{f.appartment.value}}
         </ng-container>
         <ng-container *ngIf="f.addressComment.value">
-          <br/> {{f.addressComment.value}}
+          <br /> {{f.addressComment.value}}
         </ng-container>
+      
+
       </div>
     </a>
     <div style="float:left;text-align: left">
       <a (click)="f.openGoogleMaps()">מפה</a>
-      <br/>
+      <br />
       <a (click)="copyAddress(f)">העתק כתובת</a>
     </div>
+    <ng-container *ngIf="f.getGeocodeInformation().partialMatch()">
+        <br/>
+        <mat-icon style="margin-right:5px"  color="primary">warning
+        </mat-icon>
+        שימו לב, כתובת לא מדוייקת!
+      </ng-container>
   </div>
 
   <h4>טלפונים:</h4>
@@ -54,7 +65,8 @@
       </button>
     </a>
     <div style="display:inline-block">
-      <a href="tel:{{f.phone1.value}}">{{f.phone1.displayValue}}</a>, {{f.phone1Description.value?f.phone1Description.value:f.name.value}}
+      <a href="tel:{{f.phone1.value}}">{{f.phone1.displayValue}}</a>,
+      {{f.phone1Description.value?f.phone1Description.value:f.name.value}}
 
     </div>
 
@@ -66,7 +78,8 @@
       </button>
     </a>
     <div style="display:inline-block">
-      <a href="tel:{{f.phone2.value}}">{{f.phone2.displayValue}}</a>, {{f.phone2Description.value?f.phone2Description.value:f.name.value}}
+      <a href="tel:{{f.phone2.value}}">{{f.phone2.displayValue}}</a>,
+      {{f.phone2Description.value?f.phone2Description.value:f.name.value}}
 
     </div>
 

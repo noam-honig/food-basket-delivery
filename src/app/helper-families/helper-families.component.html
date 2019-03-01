@@ -9,6 +9,9 @@
           <div style="margin-right:5px" *ngIf="f.deliveryComments.value">
             <mat-icon color="primary">comment</mat-icon>
           </div>
+          <div style="margin-right:5px" *ngIf="f.getGeocodeInformation().partialMatch()">
+            <mat-icon color="primary">warning</mat-icon>
+          </div>
         </mat-panel-title>
       </div>
       <div>

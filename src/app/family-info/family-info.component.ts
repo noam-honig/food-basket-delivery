@@ -12,7 +12,7 @@ import { SelectService } from '../select-popup/select-service';
 })
 export class FamilyInfoComponent implements OnInit {
 
-  constructor(private dialog:DialogService,private context:Context,private selectService:SelectService) { }
+  constructor(private dialog: DialogService, private context: Context, private selectService: SelectService) { }
   @Input() f: Families;
   @Input() showHelp = false;
   ngOnInit() {
@@ -28,6 +28,17 @@ export class FamilyInfoComponent implements OnInit {
     await f.save();
 
     this.assignmentCanceled.emit();
+
+  }
+  openWaze(f: Families) {
+    if (f.getGeocodeInformation().partialMatch()) {
+      this.dialog.YesNoQuestion("הכתובת אינה מדוייקת. בדקו בגוגל או התקשרו למשפחה. נשמח אם תעדכנו את הכתובת שמצאתם בהערות. האם לפתוח וייז?", () => {
+        f.openWaze();
+      });
+    }
+    else
+      f.openWaze();
+
 
   }
   udpateInfo(f: Families) {
