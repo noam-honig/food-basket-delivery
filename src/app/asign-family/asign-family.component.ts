@@ -41,6 +41,7 @@ export class AsignFamilyComponent implements OnInit {
     this.name = undefined;
     this.shortUrl = undefined;
     this.id = undefined;
+    this.clearList();
     if (this.phone.length == 10) {
 
 
@@ -51,6 +52,7 @@ export class AsignFamilyComponent implements OnInit {
         this.id = helper.id.value;
         await this.refreshList();
       } else {
+        
         await this.refreshList();
       }
     }
