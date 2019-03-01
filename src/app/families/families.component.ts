@@ -330,8 +330,7 @@ export class FamiliesComponent implements OnInit {
       name: 'הערות',
       rule: f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.courierComments.IsDifferentFrom('')),
       stats: [
-        this.stats.deliveryComments,
-        this.stats.phoneComments
+        this.stats.deliveryComments
       ]
     },
     {
