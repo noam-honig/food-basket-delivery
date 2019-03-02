@@ -11,7 +11,8 @@
   </div>
   <input class="form-control no-print" placeholder="שם המשנע" [(ngModel)]="name">
 
-  <span *ngIf="!name" class="help no-print">אנא הזיני את הטלפון של המשנע ושמו, ואז תוכלי לבחור שפה, עיר ואילו סלים לשייך</span>
+  <span *ngIf="!name" class="help no-print">אנא הזיני את הטלפון של המשנע ושמו, ואז תוכלי לבחור שפה, עיר ואילו סלים
+    לשייך</span>
   <span *ngIf="name&&name.length>=2">
     <h4 class="no-print">
       פרטי השינוע
@@ -27,11 +28,11 @@
       </select>
     </div>
 
-    <div class="no-print numOfBasketsDiv" >
+    <div class="no-print numOfBasketsDiv">
       <h4 for="numOfBaskets">
-      מספר משפחות
+        מספר משפחות
       </h4>
-      
+
       <div class="input-group ">
         <span class="input-group-btn">
           <button class="btn btn-default" type="button" (click)="add(1)">+</button>
@@ -42,6 +43,9 @@
         <input type="text" class="form-control" type="number" id="numOfBaskets" [(ngModel)]="numOfBaskets">
       </div>
     </div>
+    <div class="no-print" *ngIf="repeatFamilies" > 
+      <mat-checkbox [(ngModel)]="preferRepeatFamilies">עדיפות למשפחות חוזרות ({{repeatFamilies}})</mat-checkbox>
+    </div>
 
 
     <div class="no-print">
@@ -49,11 +53,13 @@
       <button mat-raised-button color="primary" class="sal-button" (click)="addSpecial()" *ngIf="specialFamilies">משפחות
         מיוחדות - {{specialFamilies}}</button>
       <ng-container *ngFor="let b of baskets">
-        <button mat-raised-button color="primary" class="sal-button" (click)="assignItem(b)" *ngIf="b.unassignedFamilies">{{b.name}}
+        <button mat-raised-button color="primary" class="sal-button" (click)="assignItem(b)"
+          *ngIf="b.unassignedFamilies">{{b.name}}
           - {{b.unassignedFamilies}}</button>
       </ng-container>
       <h4 class="no-baskets" *ngIf="!baskets.length">לא נמצאו סלים מתאימים</h4>
     </div>
-    <app-helper-families [familyLists]="familyLists" [partOfAssign]="true" (assignmentCanceled)="assignmentCanceled()" (assignSmsSent)="smsSent()"></app-helper-families>
+    <app-helper-families [familyLists]="familyLists" [partOfAssign]="true" (assignmentCanceled)="assignmentCanceled()"
+      (assignSmsSent)="smsSent()"></app-helper-families>
   </span>
 </div>

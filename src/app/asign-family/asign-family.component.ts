@@ -41,6 +41,7 @@ export class AsignFamilyComponent implements OnInit {
     this.name = undefined;
     this.shortUrl = undefined;
     this.id = undefined;
+    this.preferRepeatFamilies = true;
     this.clearList();
     if (this.phone.length == 10) {
 
@@ -77,15 +78,20 @@ export class AsignFamilyComponent implements OnInit {
   async refreshBaskets() {
     let r = (await AsignFamilyComponent.getBasketStatus({
       filterLanguage: this.filterLangulage,
-      filterCity: this.filterCity
+      filterCity: this.filterCity,
+      helperId: this.id
     }))
     this.baskets = r.baskets;
     this.cities = r.cities;
     this.specialFamilies = r.special;
+    this.repeatFamilies = r.repeatFamilies;
   }
+
   baskets: BasketInfo[] = [];
   cities: CityInfo[] = [];
   specialFamilies = 0;
+  repeatFamilies = 0;
+  preferRepeatFamilies = true;
   async refreshList() {
     await this.refreshBaskets();
     await this.familyLists.initForHelper(this.id, this.name);
@@ -163,7 +169,8 @@ export class AsignFamilyComponent implements OnInit {
       helperId: this.id,
       language: this.filterLangulage,
       city: this.filterCity,
-      numOfBaskets: this.numOfBaskets
+      numOfBaskets: this.numOfBaskets,
+      preferRepeatFamilies: this.preferRepeatFamilies && this.repeatFamilies > 0
     });
     if (x.addedBoxes) {
       this.id = x.helperId;
@@ -171,6 +178,7 @@ export class AsignFamilyComponent implements OnInit {
       this.baskets = x.basketInfo.baskets;
       this.cities = x.basketInfo.cities;
       this.specialFamilies = x.basketInfo.special;
+      this.repeatFamilies = x.basketInfo.repeatFamilies;
     }
     else {
       this.refreshList();
@@ -181,11 +189,12 @@ export class AsignFamilyComponent implements OnInit {
 
   }
   @RunOnServer({ allowed: c => c.isAdmin() })
-  static async getBasketStatus(info: GetBasketStatusActionInfo, context?: Context) {
+  static async getBasketStatus(info: GetBasketStatusActionInfo, context?: Context): Promise<GetBasketStatusActionResponse> {
     let result = {
       baskets: [],
       cities: [],
-      special: 0
+      special: 0,
+      repeatFamilies: 0
     };
     let basketHash: any = {};
     let cityHash: any = {};
@@ -209,6 +218,8 @@ export class AsignFamilyComponent implements OnInit {
           else {
             result.special++;
           }
+          if (info.helperId && cf.previousCourier.value == info.helperId)
+            result.repeatFamilies++;
         }
         let ci: CityInfo = cityHash[cf.city.value];
         if (!ci) {
@@ -258,22 +269,30 @@ export class AsignFamilyComponent implements OnInit {
     let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id)) });
     for (let i = 0; i < info.numOfBaskets; i++) {
 
-      let waitingFamilies = await context.for(Families).find({
-        where: f => {
-          let where = f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
-            f.courier.isEqualTo('').and(
-              f.basketType.isEqualTo(info.basketType).and(
-                f.special.IsDifferentFrom(YesNo.Yes.id)
-              )));
-          if (info.language > -1)
-            where = where.and(f.language.isEqualTo(info.language));
-          if (info.city) {
-            where = where.and(f.city.isEqualTo(info.city));
+      let getFamilies = async () => {
+        return await context.for(Families).find({
+          where: f => {
+            let where = f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
+              f.courier.isEqualTo('').and(
+                f.basketType.isEqualTo(info.basketType).and(
+                  f.special.IsDifferentFrom(YesNo.Yes.id)
+                )));
+            if (info.language > -1)
+              where = where.and(f.language.isEqualTo(info.language));
+            if (info.city) {
+              where = where.and(f.city.isEqualTo(info.city));
+            }
+            if (info.preferRepeatFamilies)
+              where = where.and(f.previousCourier.isEqualTo(info.helperId));
+            return where;
           }
-          return where;
-
-        }
-      });
+        });
+      }
+      let waitingFamilies = await getFamilies();
+      if (info.preferRepeatFamilies && waitingFamilies.length == 0) {
+        info.preferRepeatFamilies = false;
+        waitingFamilies = await getFamilies();
+      }
 
       if (waitingFamilies.length > 0) {
         if (existingFamilies.length == 0) {
@@ -326,7 +345,8 @@ export class AsignFamilyComponent implements OnInit {
     result.families = await context.for(Families).toPojoArray(existingFamilies);
     result.basketInfo = await AsignFamilyComponent.getBasketStatus({
       filterCity: info.city,
-      filterLanguage: info.language
+      filterLanguage: info.language,
+      helperId: info.helperId
     }, context);
     return result;
   }
@@ -382,6 +402,7 @@ export interface AddBoxInfo {
   helperId?: string;
   city: string;
   numOfBaskets: number;
+  preferRepeatFamilies: boolean;
 }
 export interface AddBoxResponse {
   helperId: string;
@@ -426,11 +447,13 @@ async function getRouteInfo(families: Families[], optimize: boolean, context: Co
 export interface GetBasketStatusActionInfo {
   filterLanguage: number;
   filterCity: string;
+  helperId: string;
 }
 export interface GetBasketStatusActionResponse {
   baskets: BasketInfo[];
   cities: CityInfo[];
   special: number;
+  repeatFamilies: number;
 }
 export interface BasketInfo {
   name: string;
