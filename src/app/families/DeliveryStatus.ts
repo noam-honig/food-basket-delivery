@@ -28,6 +28,9 @@ export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
       width: '150'
     };
   }
+  isProblem() {
+    return this.IsGreaterOrEqualTo(DeliveryStatus.FailedBadAddress.id).and(this.IsLessOrEqualTo(DeliveryStatus.FailedOther.id));
+  }
   getCss() {
     switch (this.listValue) {
       case DeliveryStatus.Success:

@@ -7,6 +7,7 @@ import { HolidayDeliveryAdmin } from '../auth/auth-guard';
 import { Route } from '@angular/router';
 import { SelectService } from '../select-popup/select-service';
 import { Families } from '../families/families';
+import { FilterBase } from 'radweb';
 
 @Component({
   selector: 'app-news',
@@ -17,9 +18,22 @@ export class NewsComponent implements OnInit, OnDestroy {
   static route: Route = {
     path: 'news', component: NewsComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'חדשות' }
   };
-
+  filters: NewsFilter[] = [{
+    name: 'כל החדשות'
+  }, {
+    name: 'בעיות',
+    where:f=>f.deliverStatus.isProblem()
+  }, {
+    name: 'הערות',
+    where:f=>f.courierComments.IsDifferentFrom('')
+  }];
+  currentFilter: NewsFilter = this.filters[0];
+  filterChange(){
+    console.log(this.currentFilter.name);
+    this.refresh();
+  }
   onDestroy = () => { };
-  constructor(dialog: DialogService,private selectService: SelectService, private context: Context) {
+  constructor(dialog: DialogService, private selectService: SelectService, private context: Context) {
     let y = dialog.newsUpdate.subscribe(() => {
       this.refresh();
     });
@@ -42,8 +56,8 @@ export class NewsComponent implements OnInit, OnDestroy {
   }
 
   async refresh() {
-
-    this.news = await this.context.for(NewsUpdate).find({ orderBy: n => [{ column: n.updateTime, descending: true }], limit: 50 });
+    
+    this.news = await this.context.for(NewsUpdate).find({where:this.currentFilter.where,  orderBy: n => [{ column: n.updateTime, descending: true }], limit: 50 });
   }
   icon(n: NewsUpdate) {
 
@@ -72,4 +86,8 @@ export class NewsComponent implements OnInit, OnDestroy {
   }
 
 
+}
+interface NewsFilter {
+  name: string;
+  where?: (rowType: NewsUpdate) => FilterBase;
 }

@@ -1,7 +1,9 @@
 <button mat-mini-fab style="margin-bottom:5px" (click)="refresh()">
   <mat-icon>refresh</mat-icon>
-
 </button>
+<select class="form-control" [(ngModel)]="currentFilter" (change)="filterChange()" >
+    <option *ngFor="let l of filters"  [ngValue]="l" >{{l.name}}</option>
+  </select>
 <mat-card *ngFor="let n of news">
   <mat-card-header>
 
