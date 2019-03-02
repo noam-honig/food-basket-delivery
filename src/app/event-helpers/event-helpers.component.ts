@@ -1,14 +1,12 @@
 import { Component, OnInit, Input, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { GridSettings } from 'radweb';
-
-import { ItemsPerHelper } from "../event-item-helpers/ItemsPerHelper";
 import { Helpers } from '../helpers/helpers';
-import { MatDialog } from '@angular/material';
 
 import { DialogService } from '../select-popup/dialog';
 import { EventHelperItemsComponent } from '../event-helper-items/event-helper-items.component';
 import { foreachSync } from '../shared/utils';
 import { EventHelpers } from '../events/Events';
+import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-event-helpers',
@@ -17,14 +15,14 @@ import { EventHelpers } from '../events/Events';
 })
 export class EventHelpersComponent implements OnInit {
 
-  constructor(private dialog: DialogService) {
+  constructor(private dialog: DialogService,private context:Context) {
 
   }
   @Input() eventId;
   ngOnInit() {
     this.helpers.getRecords();
   }
-  helpers = new GridSettings(new EventHelpers(), {
+  helpers = new GridSettings(new EventHelpers(this.context), {
     get: {
       where: h => h.eventId.isEqualTo(this.eventId),
       limit: 1000
@@ -35,7 +33,7 @@ export class EventHelpersComponent implements OnInit {
   }
 
   addOne() {
-    this.dialog.showPopup(new Helpers(),
+    this.dialog.showPopup(Helpers,
       h => {
         this.helpers.addNewRow();
         let newRow = this.helpers.items[this.helpers.items.length - 1];

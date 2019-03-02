@@ -2,37 +2,44 @@ import { FamilyDelveryEventId, FamilyDeliveryEvents } from '../delivery-events/F
 import { FamilyId } from './families';
 import { DeliveryStatusColumn } from "./DeliveryStatus";
 import { BasketId } from "./BasketType";
-import { DataProviderFactory, StringColumn } from 'radweb';
-import { evilStatics } from '../auth/evil-statics';
+import { StringColumn } from 'radweb';
 import { HelperId } from '../helpers/helpers';
-import { IdEntity, changeDate, DateTimeColumn, buildSql } from '../model-shared/types';
+import { IdEntity, changeDate, DateTimeColumn,  SqlBuilder } from '../model-shared/types';
 import { DeliveryEvents } from '../delivery-events/delivery-events';
-import { entityApiSettings, LoggedInCanViewButOnlyAdminUpdatesInsertsAndDeletes, entityWithApi } from "../server/api-interfaces";
+import { Context, ServerContext, EntityClass } from '../shared/context';
 
 
-let fde = new FamilyDeliveryEvents();
-var de = new DeliveryEvents();
 
 
-export class FamilyDeliveryEventsView extends IdEntity<FamilyDelveryEventId> implements entityWithApi {
+@EntityClass
+export class FamilyDeliveryEventsView extends IdEntity<FamilyDelveryEventId>  {
 
   family = new FamilyId();
-  basketType = new BasketId('סוג סל');
+  basketType = new BasketId(this.context, 'סוג סל');
   eventName = new StringColumn('שם אירוע');
   deliveryDate = new DateTimeColumn('תאריך החלוקה');
-  courier = new HelperId("משנע");
+  courier = new HelperId(this.context, "משנע");
   courierAssingTime = new changeDate('מועד שיוך למשנע');
   deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
   deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
   courierComments = new StringColumn('הערות מסירה');
-  constructor(source?: DataProviderFactory) {
-    super(new FamilyDelveryEventId(), () => new FamilyDeliveryEventsView(source), source ? source : evilStatics.dataSource, {
+  constructor(private context: Context) {
+    super(new FamilyDelveryEventId(), {
       name: 'FamilyDeliveryEventsView',
-      dbName: buildSql('(select ', fde, '.', fde.id, ', ', [fde.family, fde.basketType, fde.courier, fde.courierAssingTime, fde.deliverStatus, fde.deliveryStatusDate, fde.courierComments, de.deliveryDate], ', ', de, '.', de.name, ' eventName', ' from ', fde, ' inner join ', de, ' on ', de, '.', de.id, '=', fde.deliveryEvent, ' where ', de.isActiveEvent, '=false', ') as x')
+      allowApiRead: context.isAdmin(),
+      dbName: () => {
+        let fde = new FamilyDeliveryEvents(new ServerContext());
+        var de = new DeliveryEvents(new ServerContext());
+        let sql = new SqlBuilder();
+        return sql.entityDbName({
+          select: () => [fde.id, fde.family, fde.basketType, fde.courier, fde.courierAssingTime, fde.deliverStatus, fde.deliveryStatusDate, fde.courierComments, de.deliveryDate,
+          sql.columnWithAlias(de.name, this.eventName)],
+          from: fde,
+          innerJoin: () => [{ to: de, on: () => [sql.eq(de.id, fde.deliveryEvent)] }],
+          where: () => [sql.eq(de.isActiveEvent, false)]
+        });
+      }
     });
-    this.initColumns();
   }
-  getDataApiSettings(): entityApiSettings {
-    return {};
-  }
+
 }

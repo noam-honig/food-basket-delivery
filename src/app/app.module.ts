@@ -1,10 +1,12 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
+
+import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { RadWebModule } from 'radweb';
-import { AppRoutingModule } from './app.routing';
-import { HomeComponent } from './home/home.component';
+import { RadWebModule } from 'radweb'; 
+
+
 import { MaterialModule } from './shared/material.module';
 import { ChartsModule } from 'ng2-charts';
 
@@ -22,7 +24,7 @@ import { EventItemHelpersComponent } from './event-item-helpers/event-item-helpe
 import { LoginComponent } from './users/login/login.component';
 import { RegisterComponent } from './users/register/register.component';
 import { AuthService } from './auth/auth-service';
-import { LoggedInGuard, AdminGuard, NotLoggedInGuard } from './auth/auth-guard';
+import { LoggedInGuard, HolidayDeliveryAdmin, NotLoggedInGuard, PackerGuard, WeeklyFamilyVoulenteerGuard, WeeklyFamilyAdminGuard, HelperGuard, AnyAdmin } from './auth/auth-guard';
 import { MyEventsComponent } from './my-events/my-events.component';
 import { InputAreaComponent } from './select-popup/input-area/input-area.component';
 import { UpdateInfoComponent } from './users/update-info/update-info.component';
@@ -44,17 +46,26 @@ import { BusyService } from './select-popup/busy-service';
 import { StamTestComponent } from './stam-test/stam-test.component';
 import { NewsComponent } from './news/news.component';
 import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
+import { Context } from './shared/context';
 
 import { SelectService } from './select-popup/select-service';
 import { UpdateFamilyDialogComponent } from './update-family-dialog/update-family-dialog.component';
 import { UpdateFamilyComponent } from './update-family/update-family.component';
+import { ProductsComponent } from './products/products.component';
+import { WeeklyFamiliesComponent } from './weekly-families/weekly-families.component';
+import { WeeklyFamiliesDeliveriesComponent } from './weekly-families-deliveries/weekly-families-deliveries.component';
+import { WeeklyDeliveryProductsRequestComponent } from './weekly-delivery-products-request/weekly-delivery-products-request.component';
+import { MyWeeklyFamiliesComponent } from './my-weekly-families/my-weekly-families.component';
+import { WeeklyPackerByFamilyComponent } from './weekly-packer-by-family/weekly-packer-by-family.component';
+import { ProductQuantityInDeliveryComponent } from './product-quantity-in-delivery/product-quantity-in-delivery.component';
+import { WeeklyPackerByProductComponent } from './weekly-packer-by-product/weekly-packer-by-product.component';
+import { WeeklyDeliveryUpdateComponent } from './weekly-delivery-update/weekly-delivery-update.component';
 
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
     EventsComponent,
     EventHelperItemsComponent,
     HelpersComponent,
@@ -87,6 +98,15 @@ import { UpdateFamilyComponent } from './update-family/update-family.component';
     DeliveryEventsComponent,
     UpdateFamilyDialogComponent,
     UpdateFamilyComponent,
+    ProductsComponent,
+    WeeklyFamiliesComponent,
+    WeeklyFamiliesDeliveriesComponent,
+    WeeklyDeliveryProductsRequestComponent,
+    MyWeeklyFamiliesComponent,
+    WeeklyPackerByFamilyComponent,
+    ProductQuantityInDeliveryComponent,
+    WeeklyPackerByProductComponent,
+    WeeklyDeliveryUpdateComponent,
     
   ],
   imports: [
@@ -106,8 +126,14 @@ import { UpdateFamilyComponent } from './update-family/update-family.component';
     BusyService,
     AuthService,
     LoggedInGuard,
-    AdminGuard,
-    NotLoggedInGuard
+    HolidayDeliveryAdmin,
+    NotLoggedInGuard,
+    PackerGuard,
+    WeeklyFamilyAdminGuard,
+    WeeklyFamilyVoulenteerGuard,
+    HelperGuard,
+    AnyAdmin,
+    Context
   ],
 
   bootstrap: [AppComponent],

@@ -1,13 +1,15 @@
 <button mat-mini-fab style="margin-bottom:5px" (click)="refresh()">
   <mat-icon>refresh</mat-icon>
-
 </button>
+<select class="form-control" [(ngModel)]="currentFilter" (change)="filterChange()" >
+    <option *ngFor="let l of filters"  [ngValue]="l" >{{l.name}}</option>
+  </select>
 <mat-card *ngFor="let n of news">
   <mat-card-header>
 
     <div mat-card-avatar class="example-header-image"> <mat-icon>{{icon(n)}}</mat-icon></div>
     
-    <mat-card-title> {{n.describe()}}</mat-card-title>
+    <mat-card-title class="newsHeader"> {{n.describe()}}</mat-card-title>
     <mat-card-subtitle>{{n.updateTime.relativeDateName()}}, עודכן על ידי {{n.updateUser.getValue()}} <br><a (click)="updateFamily(n)">עדכן פרטי משפחה</a></mat-card-subtitle>
 
   </mat-card-header>

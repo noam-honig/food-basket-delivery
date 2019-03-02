@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Helpers } from '../../helpers/helpers';
-import { DataAreaSettings, StringColumn, GridSettings } from 'radweb';
-import { DialogService } from '../../select-popup/dialog';
+import {  StringColumn } from 'radweb';
 import { AuthService } from '../../auth/auth-service';
-import { foreachEntityItem } from '../../shared/utils';
 import { NotLoggedInGuard } from '../../auth/auth-guard';
 import { Route } from '@angular/router';
+import { Context } from '../../shared/context';
 
 @Component({
   selector: 'app-register',
@@ -13,11 +12,14 @@ import { Route } from '@angular/router';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
+  constructor(private auth: AuthService,private context:Context) {
 
+
+  }
   static route: Route = { path: 'register', component: RegisterComponent, data: { name: 'הרשמה' }, canActivate: [NotLoggedInGuard] };
 
   confirmPassword = new StringColumn({ caption: 'אישור סיסמה', inputType: 'password' });
-  helpers = new GridSettings(new Helpers(), {
+  helpers = this.context.for(Helpers).gridSettings({
     numOfColumnsInGrid: 0,
     allowUpdate: true,
     columnSettings: h => [
@@ -35,11 +37,7 @@ export class RegisterComponent implements OnInit {
   });
 
 
-  constructor(private dialog: DialogService,
-    private auth: AuthService) {
 
-
-  }
 
   ngOnInit() {
     this.helpers.addNewRow();

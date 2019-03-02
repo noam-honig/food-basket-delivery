@@ -4,6 +4,7 @@ import { ItemsPerHelper } from "../event-item-helpers/ItemsPerHelper";
 
 import { foreachSync } from '../shared/utils';
 import { Items } from '../events/Events';
+import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-event-participant',
@@ -12,10 +13,11 @@ import { Items } from '../events/Events';
 })
 export class EventHelperItemsComponent implements OnInit {
 
+  constructor(private context:Context){}
   ngOnInit(): void {
     this.items.getRecords();
   }
-  items = new GridSettings(new Items(), {
+  items = new GridSettings(new Items(this.context), {
     get: {
       where: i => i.eventId.isEqualTo(this.eventId)
     }

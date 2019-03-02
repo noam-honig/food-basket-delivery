@@ -2,6 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Families } from '../families/families';
 import { GridSettings } from 'radweb';
+import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-update-family-dialog',
@@ -12,7 +13,8 @@ export class UpdateFamilyDialogComponent implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<UpdateFamilyDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: UpdateFamilyInfo
+    @Inject(MAT_DIALOG_DATA) public data: UpdateFamilyInfo,
+    private context:Context
 
   ) {
 
@@ -30,7 +32,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
 
   ngOnInit() {
   }
-  families = new GridSettings(new Families(), { allowUpdate: true });
+  families =this.context.for(Families).gridSettings({ allowUpdate: true });
 
 }
 

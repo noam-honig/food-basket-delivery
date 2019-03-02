@@ -7,13 +7,11 @@ import { InputAreaComponentData, InputAreaComponent } from "./input-area/input-a
 import { BusyService } from "./busy-service";
 import { environment } from "../../environments/environment";
 import { ServerEventAuthorizeAction } from "../server/server-event-authorize-action";
-import { Subject } from "rxjs/Subject";
-
-const EventSource: any = window['EventSource'];
+import { Subject } from "rxjs";
 
 
 @Injectable()
-export class DialogService  {
+export class DialogService {
     Info(info: string): any {
         this.snackBar.open(info, "סגור", { duration: 4000 });
     }
@@ -32,44 +30,46 @@ export class DialogService  {
 
 
     constructor(private dialog: MatDialog, private zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar) {
-        this.mediaMatcher.addListener(mql => zone.run(() => this.mediaMatcher = mql));
+        this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString() ));
 
 
     }
     eventSource: any;/*EventSource*/
     refreshEventListener(enable: boolean) {
-        if (this.eventSource) {
-            this.eventSource.close();
-            this.eventSource = undefined;
-        }
-        if (enable && typeof (EventSource) !== "undefined") {
-            this.zone.run(() => {
-                var source = new EventSource(environment.serverUrl + 'stream', { withCredentials: true });
+        if (typeof (window) !== 'undefined') {
+            let EventSource: any = window['EventSource'];
+            if (enable && typeof (EventSource) !== "undefined") {
+                this.zone.run(() => {
+                    var source = new EventSource(environment.serverUrl + 'stream', { withCredentials: true });
+                    if (this.eventSource) {
+                        this.eventSource.close();
+                        this.eventSource = undefined;
+                    }
+                    this.eventSource = source;
+                    source.onmessage = e => {
 
-                this.eventSource = source;
-                source.onmessage = e => {
+                        this.zone.run(() => {
+                            this.newsUpdate.next(e.data.toString());
+                            this.Info(e.data.toString() + ' ');
+                        });
+                    };
+                    let x = this;
+                    source.addEventListener("authenticate", async function (e) {
+                        await x.busy.donotWait(async () => await ServerEventAuthorizeAction.DoAthorize((<any>e).data.toString()));
 
-                    this.zone.run(() => {
-                        this.newsUpdate.next(e.data.toString());
-                        this.Info(e.data.toString() + ' ');
                     });
-                };
-                let x = this;
-                source.addEventListener("authenticate", async function (e) {
-                    await x.busy.donotWait(async () => await new ServerEventAuthorizeAction().run({ key: (<any>e).data.toString() }));
-
                 });
-            });
+            }
         }
     }
     displayArea(settings: InputAreaComponentData) {
         this.dialog.open(InputAreaComponent, { data: settings });
     }
-    showPopup<T extends Entity<any>>(entity: T, selected: (selectedValue: T) => void, settings?: IDataSettings<T>) {
+    showPopup<T extends Entity<any>>(entityType: { new(...args: any[]): T; }, selected: (selectedValue: T) => void, settings?: IDataSettings<T>) {
 
         let data: SelectComponentInfo<T> = {
             onSelect: selected,
-            entity: entity,
+            entity: entityType,
             settings: settings
         };
         let ref = this.dialog.open(SelectPopupComponent, {

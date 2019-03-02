@@ -1,0 +1,20 @@
+.quantity-input{
+    display:flex;
+    margin: 0 0 0 5px;
+    align-items: center;
+}
+.quantity-input>input{
+    flex-basis: 50px;
+    width:50px;
+}
+.top-bar{
+    position: sticky;
+    top:0px;
+}
+.last-delivered{
+    font-size:12px;
+}
+.date-time-line{
+    display:flex;
+
+}

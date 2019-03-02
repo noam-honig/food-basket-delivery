@@ -1,9 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { GridSettings } from 'radweb';
 import { Events } from "./Events";
-
 import { EventItemsComponent } from '../event-items/event-items.component';
 import { EventHelpersComponent } from '../event-helpers/event-helpers.component';
+import { Context } from '../shared/context';
 import { DialogService } from '../select-popup/dialog';
 
 @Component({
@@ -14,13 +14,15 @@ import { DialogService } from '../select-popup/dialog';
 export class EventsComponent implements OnInit {
 
   constructor(
+    
+    private context: Context,
     private dialogs: DialogService
   ) { }
 
   ngOnInit(): void {
     this.events.getRecords();
   }
-  events = new GridSettings(new Events(), {
+  events = new GridSettings(new Events(this.context), {
     onNewRow: p => p.id.setToNewId()
   });
   //tab implementation becaust mat tab sucks!!!!
@@ -42,11 +44,11 @@ export class EventsComponent implements OnInit {
       settings: {
         columnSettings: () => [p.name]
       },
-      ok: () => { 
+      ok: () => {
         p.save();
       },
-      cancel: () => { 
-        
+      cancel: () => {
+
         p.reset();
       }
     });

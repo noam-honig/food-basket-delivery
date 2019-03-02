@@ -5,17 +5,12 @@
     "tasks": [
         {
             "type": "npm",
-            "script": "server:watch",
-            "problemMatcher": [],
-            "isBackground": true
-        },
-        {
-            "type": "npm",
             "script": "ng-serve",
-            "problemMatcher": [
-                "$tsc-watch"
-            ],
-            "isBackground": true
+            "problemMatcher": [],
+            "isBackground": true,
+            "presentation": {
+                "group": "groupA"
+            }
         },
         {
             "type": "npm",
@@ -58,21 +53,47 @@
             "problemMatcher": [
                 "$tsc-watch"
             ],
+            "isBackground": true,
+            "presentation": {
+                "group": "groupA"
+            }
+        },
+        {
+            "type": "npm",
+            "script": "server-watch",
+            "problemMatcher": [
+                "$tsc-watch"
+            ],
             "isBackground": true
         },
         {
             "type": "npm",
-            "script": "server:start",
+            "script": "server-build-and-run",
             "problemMatcher": [
                 "$tsc"
-            ]
+            ],
+            "presentation": {
+                "group": "groupA"
+            }
         },
         {
             "type": "npm",
-            "script": "typeScript:build",
+            "script": "server:execute",
+            "problemMatcher": [],
+            "presentation": {
+                "group": "groupA"
+            }
+        },
+        {
+            "type": "npm",
+            "script": "server:build-watch",
             "problemMatcher": [
-                "$tsc"
-            ]
+                "$tsc-watch"
+            ],
+            "presentation": {
+                "group": "groupA"
+            },
+            "isBackground": true
         }
     ]
 }

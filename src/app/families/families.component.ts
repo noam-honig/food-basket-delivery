@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { GridSettings, ColumnSetting, ColumnHashSet, Filter, AndFilter } from 'radweb';
+import { ColumnHashSet, AndFilter } from 'radweb';
 import { FamilyDeliveryEventsView } from "./FamilyDeliveryEventsView";
 import { Families } from './families';
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -8,15 +8,15 @@ import { YesNo } from "./YesNo";
 import { Language } from "./Language";
 import { FamilySources } from "./FamilySources";
 import { BasketType } from "./BasketType";
+import { SelectService } from '../select-popup/select-service';
 import { DialogService } from '../select-popup/dialog';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 
 import { DomSanitizer } from '@angular/platform-browser';
 import * as XLSX from 'xlsx';
-import { FilterBase } from 'radweb/utils/dataInterfaces1';
-import { foreachEntityItem, foreachSync } from '../shared/utils';
+import { FilterBase } from 'radweb';
+import { foreachSync } from '../shared/utils';
 import { BusyService } from '../select-popup/busy-service';
-import { async } from 'q';
 import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
 import { MatTabGroup } from '@angular/material';
@@ -24,18 +24,35 @@ import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt } from '../custom
 import { HasAsyncGetTheValue } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
-import { AdminGuard } from '../auth/auth-guard';
-import { SelectService } from '../select-popup/select-service';
+import { HolidayDeliveryAdmin } from '../auth/auth-guard';
+import { Context } from '../shared/context';
+import { Routable, componentRoutingInfo } from '../shared/routing-helper';
 
 @Component({
   selector: 'app-families',
   templateUrl: './families.component.html',
   styleUrls: ['./families.component.scss']
 })
+@Routable({
+  path: 'families',
+  caption: 'משפחות',
+  canActivate: [HolidayDeliveryAdmin]
+})
 export class FamiliesComponent implements OnInit {
 
   limit = 10;
+  constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context, private selectService: SelectService) {
+    this.doTest();
 
+    let y = dialog.newsUpdate.subscribe(() => {
+      this.refreshStats();
+    });
+    this.onDestroy = () => {
+      y.unsubscribe();
+    };
+    if (dialog.isScreenSmall())
+      this.gridView = false;
+  }
   filterBy(s: FaimilyStatistics) {
     this.families.get({
       where: s.rule,
@@ -95,12 +112,12 @@ export class FamiliesComponent implements OnInit {
     let data = [];
     let title = [];
     let doneTitle = false;
-    let f = new Families();
-    await foreachSync(await f.source.find({ limit: 5000, orderBy: [f.name] })
+
+    await foreachSync(await this.context.for(Families).find({ limit: 5000, orderBy: f => [f.name] })
       , async  f => {
         let row = [];
 
-        await foreachSync(f.__iterateColumns(), async c => {
+        await foreachSync(f.__iterateColumns(), async c => { 
           try {
             if (!doneTitle) {
               title.push(c.caption);
@@ -133,24 +150,13 @@ export class FamiliesComponent implements OnInit {
     XLSX.writeFile(wb, 'משפחות.xlsx');
     return;
   }
-  familyDeliveryEventsView = new FamilyDeliveryEventsView();
 
-  families = new GridSettings(new Families(), {
+  previousDeliveryEvents: FamilyDeliveryEventsView[] = [];
+  families = this.context.for(Families).gridSettings({
 
     allowUpdate: true,
     allowInsert: true,
-    rowCssClass: f => {
-      switch (f.deliverStatus.listValue) {
-        case DeliveryStatus.Success:
-          return 'deliveredOk';
-        case DeliveryStatus.FailedBadAddress:
-        case DeliveryStatus.FailedNotHome:
-        case DeliveryStatus.FailedOther:
-          return 'deliveredProblem';
-        default:
-          return '';
-      }
-    },
+    rowCssClass: f => f.deliverStatus.getCss(),
     numOfColumnsInGrid: 4,
     onEnterRow: async f => {
       if (f.isNew()) {
@@ -160,7 +166,6 @@ export class FamiliesComponent implements OnInit {
         f.callStatus.listValue = CallStatus.NotYet;
         f.special.listValue = YesNo.No;
       } else {
-
 
       }
     },
@@ -198,7 +203,7 @@ export class FamiliesComponent implements OnInit {
     knowTotalRows: true,
     allowDelete: true,
 
-    confirmDelete: (h, yes) => this.dialog.confirmDelete('משפחת '+h.name.value, yes),
+    confirmDelete: (h, yes) => this.dialog.confirmDelete('משפחת ' + h.name.value, yes),
     columnSettings: families => [
 
       {
@@ -215,14 +220,16 @@ export class FamiliesComponent implements OnInit {
       },
       {
         column: families.basketType,
-        dropDown: { source: new BasketType() },
+        dropDown: { source: this.context.for(BasketType).create() },
         width: '100'
       },
       {
         caption: 'שינוע',
         getValue: f => f.getDeliveryDescription(),
         width: '200'
-      }, {
+      },
+      
+       {
         column: families.familyMembers,
 
       },
@@ -234,7 +241,7 @@ export class FamiliesComponent implements OnInit {
 
       }, {
         column: families.familySource,
-        dropDown: { source: new FamilySources() }
+        dropDown: { source: this.context.for(FamilySources).create() }
       },
       families.internalComment,
       families.iDinExcel,
@@ -255,7 +262,7 @@ export class FamiliesComponent implements OnInit {
       families.courier.getColumn(this.selectService),
       {
         caption: 'טלפון משנע',
-        getValue: f => f.lookup(new Helpers(), f.courier).phone.value
+        getValue: f => this.context.for(Helpers).lookup(f.courier).phone.value
       },
       families.courierAssignUser,
       families.courierAssingTime,
@@ -263,9 +270,8 @@ export class FamiliesComponent implements OnInit {
       families.deliveryStatusUser,
       families.deliveryStatusDate,
       families.courierComments,
-      families.callHelper,
-      families.callTime,
-      families.callComments,
+      families.getPreviousDeliveryColumn(),
+      
     ],
     rowButtons: [
       {
@@ -285,95 +291,13 @@ export class FamiliesComponent implements OnInit {
       }
     ]
   });
-  familiesInfo = this.families.addArea({
-    columnSettings: families => [
-      families.name,
-      families.familyMembers,
-      {
-        column: families.language,
-        dropDown: {
-          items: families.language.getOptions()
-        }
-      },
-      {
-        column: families.basketType,
-        dropDown: { source: new BasketType() }
-      },
-      {
-        column: families.familySource,
-        dropDown: { source: new FamilySources() }
-      },
-      families.internalComment,
-      families.iDinExcel,
-      families.deliveryComments,
-      families.special.getColumn(),
-      families.createUser,
-      families.createDate
-
-
-
-
-    ],
-  });
-  familiesAddress = this.families.addArea({
-    columnSettings: families => [
-      families.address,
-      families.floor,
-      families.appartment,
-      families.addressComment,
-      families.addressByGoogle(),
-      families.city
-
-    ]
-  });
-  phones = this.families.addArea({
-    columnSettings: families => [
-      families.phone1,
-      families.phone1Description,
-      families.phone2,
-      families.phone2Description
-    ]
-  });
-  callInfo = this.families.addArea({
-    columnSettings: families => [
-      {
-        column: families.callStatus,
-        dropDown: {
-          items: families.callStatus.getOptions()
-        }
-      },
-      families.callHelper,
-      families.callTime,
-      families.callComments,
-    ]
-  })
-  deliverInfo = this.families.addArea({
-    columnSettings: families => [
-      families.courier.getColumn(this.selectService),
-      {
-        caption: 'טלפון משנע',
-        getValue: f => f.lookup(new Helpers(), f.courier).phone.value
-      },
-      families.courierAssignUser,
-      families.courierAssingTime,
-      families.deliverStatus.getColumn(),
-      families.deliveryStatusUser,
-      families.deliveryStatusDate,
-      families.courierComments,
-    ]
-  });
+ 
   gridView = true;
-  constructor(private dialog: DialogService, private selectService: SelectService, private san: DomSanitizer, public busy: BusyService) {
 
-    let y = dialog.newsUpdate.subscribe(() => {
-      this.refreshStats();
-    });
-    this.onDestroy = () => {
-      y.unsubscribe();
-    };
-    if (dialog.isScreenSmall())
-      this.gridView = false;
+
+  async doTest() {
   }
+
   onDestroy = () => { };
 
   ngOnDestroy(): void {
@@ -381,6 +305,14 @@ export class FamiliesComponent implements OnInit {
   }
   basketStats: statsOnTab = {
     name: 'טרם שויכו לפי סלים',
+    rule: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('')),
+    stats: [
+      this.stats.ready,
+      this.stats.special
+    ]
+  };
+  cityStats: statsOnTab = {
+    name: 'טרם שויכו לפי ערים',
     rule: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('')),
     stats: [
       this.stats.ready,
@@ -400,14 +332,14 @@ export class FamiliesComponent implements OnInit {
         this.stats.frozen
       ]
     },
-    this.basketStats
-    ,
+    this.basketStats,
+    this.cityStats,
+    
     {
       name: 'הערות',
-      rule: f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id),
+      rule: f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.courierComments.IsDifferentFrom('')),
       stats: [
-        this.stats.deliveryComments,
-        this.stats.phoneComments
+        this.stats.deliveryComments
       ]
     },
     {
@@ -417,18 +349,7 @@ export class FamiliesComponent implements OnInit {
         this.stats.currentEvent,
         this.stats.notInEvent
       ]
-    }/*,
-    {
-      name: 'טלפניות',
-      rule: f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id),
-      stats: [
-        this.stats.phoneReady,
-        this.stats.phoneAssigned,
-        this.stats.phoneOk,
-        this.stats.phoneFailed
-      ]
-    }*/
-
+    }
   ]
   tabChanged() {
     this.currentStatFilter = undefined;
@@ -450,20 +371,32 @@ export class FamiliesComponent implements OnInit {
         if (s.color != undefined)
           this.colors[0].backgroundColor.push(s.color);
         this.pieChartStatObjects.push(s);
+        
       }
     });
+    if (this.pieChartData.length==0){
+      this.pieChartData.push(0);
+      this.pieChartLabels.push('ריק');
+    }
     if (this.colors[0].backgroundColor.length == 0) {
       this.colors[0].backgroundColor.push(colors.green, colors.blue, colors.yellow, colors.red, colors.orange, colors.gray);
     }
   }
   refreshStats() {
 
-    this.busy.donotWait(async () => this.stats.getData().then(baskets => {
+    this.busy.donotWait(async () => this.stats.getData().then(st => {
       this.basketStats.stats.splice(0);
-      baskets.forEach(b => {
+      this.cityStats.stats.splice(0);
+      st.baskets.forEach(b => {
         let fs = new FaimilyStatistics(b.name, f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.basketType.isEqualTo(b.id))), undefined);
         fs.value = b.unassignedFamilies;
         this.basketStats.stats.push(fs);
+
+      });
+      st.cities.forEach(b => {
+        let fs = new FaimilyStatistics(b.name, f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.city.isEqualTo(b.name))), undefined);
+        fs.value = b.count;
+        this.cityStats.stats.push(fs);
 
       });
 
@@ -495,7 +428,7 @@ export class FamiliesComponent implements OnInit {
   static route: Route = {
     path: 'families',
     component: FamiliesComponent,
-    data: { name: 'משפחות' }, canActivate: [AdminGuard]
+    data: { name: 'משפחות' }, canActivate: [HolidayDeliveryAdmin]
   }
 
 }
@@ -505,6 +438,3 @@ interface statsOnTab {
   stats: FaimilyStatistics[],
   rule: (f: Families) => FilterBase
 }
-
-
-

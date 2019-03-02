@@ -8,10 +8,7 @@ import { BusyService } from "./busy-service";
 
 import { UpdateCommentComponentData, UpdateCommentComponent } from "../update-comment/update-comment.component";
 import { UpdateFamilyDialogComponent, UpdateFamilyInfo } from "../update-family-dialog/update-family-dialog.component";
-import { Families } from "../families/families";
-
-const EventSource: any = window['EventSource'];
-
+import { FilterBase } from "radweb";
 
 @Injectable()
 export class SelectService implements SelectServiceInterface {
@@ -20,8 +17,8 @@ export class SelectService implements SelectServiceInterface {
 
     }
 
-    selectHelper(ok: (selectedValue: Helpers) => void) {
-        let data: SelectHelperInfo = { onSelect: ok };
+    selectHelper(ok: (selectedValue: Helpers) => void,filter?:(helper:Helpers)=>FilterBase) {
+        let data: SelectHelperInfo = { onSelect: ok ,filter:filter };
         this.dialog.open(SelectHelperComponent, {
             data
         });

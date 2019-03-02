@@ -5,10 +5,11 @@ import { UserFamiliesList } from '../my-families/user-families';
 import * as chart from 'chart.js';
 import { DeliveryStatistic, DeliveryStats } from './delivery-stats';
 import { BusyService } from '../select-popup/busy-service';
-import { FilterBase } from 'radweb/utils/dataInterfaces1';
+import { FilterBase } from 'radweb';
 import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
-import { AdminGuard } from '../auth/auth-guard';
+import { HolidayDeliveryAdmin } from '../auth/auth-guard';
+import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-delivery-follow-up',
@@ -17,11 +18,13 @@ import { AdminGuard } from '../auth/auth-guard';
 })
 export class DeliveryFollowUpComponent implements OnInit {
   static route: Route = {
-    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [AdminGuard], data: { name: 'מעקב משנעים' }
+    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'מעקב משנעים' }
   }
 
-  familyLists = new UserFamiliesList();
+  familyLists = new UserFamiliesList(this.context);
+  currentlHelper:Helpers;
   selectCourier(c: Helpers) {
+    this.currentlHelper = c;
     this.familyLists.initForHelper(c.id.value, c.name.value, c);
 
   }
@@ -92,8 +95,8 @@ export class DeliveryFollowUpComponent implements OnInit {
       this.updateChart();
     }));
   }
-  constructor(private busy: BusyService) { }
-  couriers = new GridSettings(new HelpersAndStats(), {
+  constructor(private busy: BusyService,private context:Context) { }
+  couriers =this.context.for(HelpersAndStats).gridSettings( {
 
     columnSettings: h => [
       h.name, h.phone, h.deliveriesInProgress, h.firstDeliveryInProgressDate

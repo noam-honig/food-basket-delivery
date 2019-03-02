@@ -2,6 +2,9 @@ import { Component, OnInit, Inject } from '@angular/core';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Helpers } from '../helpers/helpers';
+import { Context } from '../shared/context';
+import { FilterBase, FindOptionsPerEntity } from 'radweb';
+import { FlexibleConnectedPositionStrategy } from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-select-helper',
@@ -16,19 +19,25 @@ export class SelectHelperComponent implements OnInit {
   filteredHelpers: Helpers[] = [];
   constructor(
     private dialogRef: MatDialogRef<SelectHelperComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: SelectHelperInfo
+    @Inject(MAT_DIALOG_DATA) private data: SelectHelperInfo,
+    private context: Context
 
   ) {
 
   }
-  clearHelper(){
-    let h =new Helpers();
-    h.id.value = '';
-    this.select(h);
+  clearHelper() {
+    this.select(undefined);
   }
+
   async ngOnInit() {
-    let h = new Helpers();
-    this.allHelpers = await h.source.find({ orderBy: [h.name], limit: 1000 });
+
+    var findOptions = {
+      orderBy: h => [h.name], limit: 1000
+    } as FindOptionsPerEntity<Helpers>;
+    if (this.data.filter) {
+      findOptions.where = h => this.data.filter(h);
+    }
+    this.allHelpers = await this.context.for(Helpers).find(findOptions);
     this.filteredHelpers = this.allHelpers;
   }
   doFilter() {
@@ -55,5 +64,6 @@ export class SelectHelperComponent implements OnInit {
 export interface SelectHelperInfo {
 
   onSelect: (selectedValue: Helpers) => void,
+  filter?: (helper: Helpers) => FilterBase
 
 }

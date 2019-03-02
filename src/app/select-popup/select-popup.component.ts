@@ -2,6 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { GridSettings, Entity, IDataSettings } from 'radweb';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import {  Context } from '../shared/context';
 
 @Component({
   selector: 'app-select-popup',
@@ -10,12 +11,14 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 })
 export class SelectPopupComponent implements OnInit {
 
+  
   constructor(
     private dialogRef: MatDialogRef<SelectPopupComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: SelectComponentInfo<any>
+    @Inject(MAT_DIALOG_DATA) private data: SelectComponentInfo<any>,
+    private context:Context
 
   ) {
-    this.helpers = new GridSettings(data.entity, data.settings);
+    this.helpers = this.context.for(data.entity).gridSettings(data.settings);
   }
 
   ngOnInit() {
@@ -32,7 +35,7 @@ export class SelectPopupComponent implements OnInit {
 }
 
 export interface SelectComponentInfo<T extends Entity<any>> {
-  entity: T,
+  entity: { new(): T; },
   onSelect: (selectedValue: T) => void,
   settings?: IDataSettings<T>
 }

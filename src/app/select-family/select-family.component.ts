@@ -3,7 +3,8 @@ import { GridSettings, Filter } from 'radweb';
 import { Families } from '../families/families';
 import { BusyService } from '../select-popup/busy-service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { FilterBase } from 'radweb/utils/dataInterfaces1';
+import { FilterBase } from 'radweb';
+import { Context } from '../shared/context';
 
 
 @Component({
@@ -14,9 +15,9 @@ import { FilterBase } from 'radweb/utils/dataInterfaces1';
 export class SelectFamilyComponent implements OnInit {
 
   constructor(private busy: BusyService, private dialogRef: MatDialogRef<SelectFamilyComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: SelectFamilyInfo) { }
+    @Inject(MAT_DIALOG_DATA) private data: SelectFamilyInfo, private context: Context) { }
   searchString: string = '';
-  families = new GridSettings(new Families(), { knowTotalRows: true });
+  families = this.context.for(Families).gridSettings({ knowTotalRows: true });
   pageSize = 7;
   selectFirst() {
     if (this.families.items.length > 0)
@@ -31,10 +32,10 @@ export class SelectFamilyComponent implements OnInit {
     await this.families.get({
       where: f => {
         let r = f.name.isContains(this.searchString);
-        if (this.data.where){
+        if (this.data.where) {
           let x = this.data.where(f);
           if (x)
-          return r.and(x);
+            return r.and(x);
         }
         return r;
       },

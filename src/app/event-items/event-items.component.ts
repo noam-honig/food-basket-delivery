@@ -5,6 +5,7 @@ import { ItemsPerHelper } from "../event-item-helpers/ItemsPerHelper";
 import { foreachSync, foreachEntityItem } from '../shared/utils';
 import { DialogService } from '../select-popup/dialog';
 import { Items } from '../events/Events';
+import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-event-items',
@@ -15,13 +16,13 @@ export class EventItemsComponent implements OnInit {
 
   constructor
     (
-    private dialog: DialogService
+    private dialog: DialogService,private context:Context
     ) { }
   @Input() eventId: string;
   ngOnInit() {
     this.items.getRecords();
   }
-  items = new GridSettings(new Items(), {
+  items = new GridSettings(new Items(this.context), {
     allowDelete: true,
     allowUpdate: true,
     allowInsert: true,

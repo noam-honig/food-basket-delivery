@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, Route, Router } from '@angular/router';
 
-import { myAuthInfo } from './my-auth-info';
-import { Authentication } from './authentication';
 import { AuthService } from './auth-service';
 import { evilStatics } from './evil-statics';
 
@@ -32,19 +30,88 @@ export class NotLoggedInGuard implements CanActivate {
 
 
 @Injectable()
-export class AdminGuard implements CanActivate {
+export class HolidayDeliveryAdmin implements CanActivate {
     constructor(private auth: AuthService, private router: Router) {
     }
     canActivate(route: ActivatedRouteSnapshot) {
-        if (this.auth.auth.valid && this.auth.auth.info.admin)
+        if (this.auth.auth.valid && this.auth.auth.info.deliveryAdmin)
             return true;
         if (!(route instanceof dummyRoute))
-            this.router.navigate([evilStatics.routes.myFamilies]);
+            this.router.navigate([evilStatics.routes.updateInfo]);
+        return false;
+ 
+    }
+}
+
+@Injectable()
+export class AnyAdmin implements CanActivate {
+    constructor(private auth: AuthService, private router: Router) {
+    }
+    canActivate(route: ActivatedRouteSnapshot) {
+        if (this.auth.auth.valid && (this.auth.auth.info.deliveryAdmin||this.auth.auth.info.weeklyFamilyAdmin))
+            return true;
+        if (!(route instanceof dummyRoute))
+            this.router.navigate([evilStatics.routes.updateInfo]);
+        return false;
+ 
+    }
+}
+@Injectable()
+export class WeeklyFamilyAdminGuard implements CanActivate {
+    constructor(private auth: AuthService, private router: Router) {
+    } 
+    canActivate(route: ActivatedRouteSnapshot) {
+        if (this.auth.auth.valid && this.auth.auth.info.weeklyFamilyAdmin)
+            return true;
+        if (!(route instanceof dummyRoute))
+            this.router.navigate([evilStatics.routes.updateInfo]);
         return false;
 
     }
 }
 
+@Injectable()
+export class WeeklyFamilyVoulenteerGuard implements CanActivate {
+    constructor(private auth: AuthService, private router: Router) {
+    }
+    canActivate(route: ActivatedRouteSnapshot) {
+        if (this.auth.auth.valid && this.auth.auth.info.weeklyFamilyVolunteer)
+            return true;
+        if (!(route instanceof dummyRoute))
+            this.router.navigate([evilStatics.routes.updateInfo]);
+        return false;
+
+    }
+}
+
+
+@Injectable()
+export class PackerGuard implements CanActivate {
+    constructor(private auth: AuthService, private router: Router) {
+    }
+    canActivate(route: ActivatedRouteSnapshot) {
+        if (this.auth.auth.valid && this.auth.auth.info.weeklyFamilyPacker)
+            return true;
+        if (!(route instanceof dummyRoute))
+            this.router.navigate([evilStatics.routes.updateInfo]);
+        return false;
+
+    }
+}
+
+@Injectable()
+export class HelperGuard implements CanActivate {
+    constructor(private auth: AuthService, private router: Router) {
+    }
+    canActivate(route: ActivatedRouteSnapshot) {
+        if (this.auth.auth.valid && (this.auth.auth.info.deliveryVolunteer||true))
+            return true;
+        if (!(route instanceof dummyRoute))
+            this.router.navigate([evilStatics.routes.updateInfo]);
+        return false;
+
+    }
+}
 
 
 export class dummyRoute extends ActivatedRouteSnapshot {
