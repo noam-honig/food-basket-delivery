@@ -13,9 +13,14 @@
     <button *ngIf="partOfAssign" mat-raised-button class=" " (click)=" udpateInfo(f)">עדכן פרטי משפחה</button>
   </div>
   <h4 style="display:inline">סל</h4> - {{f.basketType.displayValue}}
+
   <div *ngIf="f.deliveryComments.value">
     <mat-icon color="primary" style="vertical-align: middle">comment</mat-icon>
     <strong style="color:red">שים לב! </strong> {{f.deliveryComments.value}}
+  </div>
+  <div *ngIf="f.courierBeenHereBefore()">
+    <mat-icon color="green">repeat</mat-icon>
+    הייתם אצל המשפחה הזו גם פעם קודמת
   </div>
   <h4>כתובת</h4>
   <div>
@@ -25,7 +30,7 @@
     </span>
     <a (click)="openWaze(f)">
 
-      <div style="display:inline-block">
+      <div style="display:inline-block;margin-right:5px">
 
         {{f.address.value}}
         <ng-container *ngIf="f.floor.value||f.appartment.value">
@@ -40,7 +45,7 @@
         <ng-container *ngIf="f.addressComment.value">
           <br /> {{f.addressComment.value}}
         </ng-container>
-      
+
 
       </div>
     </a>
@@ -50,11 +55,11 @@
       <a (click)="copyAddress(f)">העתק כתובת</a>
     </div>
     <ng-container *ngIf="f.getGeocodeInformation().partialMatch()">
-        <br/>
-        <mat-icon style="margin-right:5px"  color="primary">warning
-        </mat-icon>
-        שימו לב, כתובת לא מדוייקת!
-      </ng-container>
+      <br />
+      <mat-icon style="margin-right:5px" color="primary">warning
+      </mat-icon>
+      שימו לב, כתובת לא מדוייקת!
+    </ng-container>
   </div>
 
   <h4>טלפונים:</h4>

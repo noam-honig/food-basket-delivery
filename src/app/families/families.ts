@@ -151,6 +151,16 @@ export class Families extends IdEntity<FamilyId>  {
       return this.dbNameFromLastDelivery(fde => fde.courierComments, "prevComment");
     }
   });
+  previousCourier = new HelperIdReadonly( this.context, {
+    caption: 'משנע  קודם',
+    dbReadOnly: true,
+    dbName: () => {
+      return this.dbNameFromLastDelivery(fde => fde.courier, "prevCourier");
+    }
+  });
+  courierBeenHereBefore(){
+    return this.previousCourier.value==this.courier.value;
+  }
   getPreviousDeliveryColumn() {
     return {
       caption: 'שינוע קודם',
