@@ -311,6 +311,14 @@ export class FamiliesComponent implements OnInit {
       this.stats.special
     ]
   };
+  cityStats: statsOnTab = {
+    name: 'טרם שויכו לפי ערים',
+    rule: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('')),
+    stats: [
+      this.stats.ready,
+      this.stats.special
+    ]
+  };
   statTabs: statsOnTab[] = [
     {
       name: 'באירוע',
@@ -324,8 +332,9 @@ export class FamiliesComponent implements OnInit {
         this.stats.frozen
       ]
     },
-    this.basketStats
-    ,
+    this.basketStats,
+    this.cityStats,
+    
     {
       name: 'הערות',
       rule: f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.courierComments.IsDifferentFrom('')),
@@ -362,20 +371,32 @@ export class FamiliesComponent implements OnInit {
         if (s.color != undefined)
           this.colors[0].backgroundColor.push(s.color);
         this.pieChartStatObjects.push(s);
+        
       }
     });
+    if (this.pieChartData.length==0){
+      this.pieChartData.push(0);
+      this.pieChartLabels.push('ריק');
+    }
     if (this.colors[0].backgroundColor.length == 0) {
       this.colors[0].backgroundColor.push(colors.green, colors.blue, colors.yellow, colors.red, colors.orange, colors.gray);
     }
   }
   refreshStats() {
 
-    this.busy.donotWait(async () => this.stats.getData().then(baskets => {
+    this.busy.donotWait(async () => this.stats.getData().then(st => {
       this.basketStats.stats.splice(0);
-      baskets.forEach(b => {
+      this.cityStats.stats.splice(0);
+      st.baskets.forEach(b => {
         let fs = new FaimilyStatistics(b.name, f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.basketType.isEqualTo(b.id))), undefined);
         fs.value = b.unassignedFamilies;
         this.basketStats.stats.push(fs);
+
+      });
+      st.cities.forEach(b => {
+        let fs = new FaimilyStatistics(b.name, f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.city.isEqualTo(b.name))), undefined);
+        fs.value = b.count;
+        this.cityStats.stats.push(fs);
 
       });
 
