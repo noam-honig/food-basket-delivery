@@ -23,7 +23,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
 
 
 
-  constructor(private context: Context, private dialog: DialogService,public busy:BusyService) {
+  constructor(private context: Context, private dialog: DialogService, public busy: BusyService) {
 
 
   }
@@ -53,6 +53,9 @@ export class MyWeeklyFamiliesComponent implements OnInit {
       where: dp => dp.delivery.isEqualTo(d.id),
       orderBy: dp => [dp.productOrder, dp.productName]
     });
+
+    this.searchString = '';
+    this.showAllProducts = false;
   }
   statusText(d: WeeklyFamilyDeliveries) {
     var x = d.status.displayValue;
@@ -72,6 +75,33 @@ export class MyWeeklyFamiliesComponent implements OnInit {
   }
   loading = false;
   deliveryProducts: WeeklyFamilyDeliveryProductStats[] = []
+
+  searchString: string = '';
+  lastFilter: string = '';
+  showAllProducts = false;
+  shouldShowShowAllProductsCheckbox() {
+
+    return this.currentDelivery&& this.currentDelivery.status.listValue != WeeklyFamilyDeliveryStatus.Prepare && this.searchString == '';
+  }
+  clearSearch() {
+    this.searchString = '';
+
+  }
+  async addProduct() {
+    let p = this.context.for(Products).create();
+    p.name.value = this.searchString;
+    p.order.value = 50;
+    await p.save();
+    let dp = new WeeklyFamilyDeliveryProductStats(this.context);
+    dp.product.value = p.id.value;
+    dp.productName.value = p.name.value;
+    dp.delivery.value = this.currentDelivery.id.value;
+    dp.requestQuanity.value = 1;
+    this.deliveryProducts.splice(0, 0, dp);
+
+    await dp.saveQuantities(this.busy);
+    this.clearSearch();
+  }
 
 
 
@@ -127,7 +157,13 @@ export class MyWeeklyFamiliesComponent implements OnInit {
 
   }
   displayProduct(p: WeeklyFamilyDeliveryProductStats) {
+    if (this.searchString)
+      return p.productName.value.indexOf(this.searchString) >= 0;
+
     if (this.currentDelivery.status.listValue == WeeklyFamilyDeliveryStatus.Prepare)
+      return true;
+
+    if (this.showAllProducts)
       return true;
     return p.requestQuanity.value > 0;
   }

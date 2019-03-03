@@ -19,6 +19,8 @@ export class ProductQuantityInDeliveryComponent implements OnInit {
     var q = this.d;
     if (e.checked) {
       q.Quantity.value = q.requestQuanity.value;
+      if (!q.Quantity.value)
+        q.Quantity.value = 1;
     }
     else {
       q.Quantity.value = 0;

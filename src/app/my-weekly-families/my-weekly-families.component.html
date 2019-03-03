@@ -17,14 +17,14 @@
             (click)="d.changeStatus(d.status.listValue.next.status)">{{d.status.listValue.next.name}}</button>
           <button mat-raised-button *ngIf="d.status.listValue.prev"
             (click)="d.changeStatus(d.status.listValue.prev.status)">{{d.status.listValue.prev.name}}</button>
-            <button mat-raised-button *ngIf="allowDelete(d)"
-            (click)="deleteDelivery(d)">מחק משלוח</button>
-            
+          <button mat-raised-button *ngIf="allowDelete(d)" (click)="deleteDelivery(d)">מחק משלוח</button>
+
         </div>
+
         <div>
           {{d.status.listValue.helpText }}
         </div>
-
+        
         <div *ngIf="isDelivered(d)">
           נמסר בתאריך
           <div class="date-time-line">
@@ -41,10 +41,15 @@
             </div>
           </div>
         </div>
-
-        <mat-list *ngIf="d==currentDelivery">
+        <mat-form-field class="full-width">
+            <input matInput [(ngModel)]="searchString" placeholder="חפשי שם מוצר"
+              [ngModelOptions]="{standalone: true}">
+            <mat-icon matSuffix (click)="clearSearch()">clear</mat-icon>
+          </mat-form-field>
+          <mat-checkbox [(ngModel)]="showAllProducts" *ngIf="shouldShowShowAllProductsCheckbox()">הצג את כל המוצרים</mat-checkbox>
+        <mat-list *ngIf="d==currentDelivery wideList">
           <ng-container *ngFor="let p of deliveryProducts">
-            <mat-list-item *ngIf="displayProduct(p)">
+            <mat-list-item class="wideList" *ngIf="displayProduct(p)">
               <div class="quantity-input" style="align-items: center" *ngIf="displayRequestQuantity(d)">
                 <button class="btn btn-sm btn-success glyphicon glyphicon-plus" type="button"
                   (click)="add(p,d,1)"></button>
@@ -66,7 +71,8 @@
           </ng-container>
 
         </mat-list>
-
+        <button mat-raised-button color="primary" *ngIf="deliveryProducts.length==0" (click)="addProduct()"
+            >הוסף את המוצר "{{searchString}}"</button>
       </mat-expansion-panel>
     </mat-accordion>
   </mat-expansion-panel>

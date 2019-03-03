@@ -166,6 +166,7 @@ th {
       }
   }
  
+
   .deliveredOk{
       background-color: #dff0d8 !important;
   }
@@ -203,4 +204,16 @@ th {
   }
   .mat-expansion-panel-body {
     padding:0 8px 16px !important;
+  }
+  .wideList>mat-list-item >div{
+    
+    
+  }
+  
+  .wideList{
+    
+    .mat-list-item-content{
+    
+      padding:0px!important;
+    }
   }
