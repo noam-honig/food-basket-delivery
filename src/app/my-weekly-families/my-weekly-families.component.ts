@@ -81,7 +81,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
   showAllProducts = false;
   shouldShowShowAllProductsCheckbox() {
 
-    return this.currentDelivery&& this.currentDelivery.status.listValue != WeeklyFamilyDeliveryStatus.Prepare && this.searchString == '';
+    return this.currentDelivery && this.currentDelivery.status.listValue != WeeklyFamilyDeliveryStatus.Prepare && this.searchString == '';
   }
   clearSearch() {
     this.searchString = '';
@@ -155,6 +155,9 @@ export class MyWeeklyFamiliesComponent implements OnInit {
     }
 
 
+  }
+  noSuchProduct() {
+    return this.searchString && !this.deliveryProducts.find(p => p.productName.value.indexOf(this.searchString) >= 0);
   }
   displayProduct(p: WeeklyFamilyDeliveryProductStats) {
     if (this.searchString)

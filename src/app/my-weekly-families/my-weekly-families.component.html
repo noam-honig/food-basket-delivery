@@ -71,7 +71,7 @@
           </ng-container>
 
         </mat-list>
-        <button mat-raised-button color="primary" *ngIf="deliveryProducts.length==0" (click)="addProduct()"
+        <button mat-raised-button color="primary" *ngIf="noSuchProduct()" (click)="addProduct()"
             >הוסף את המוצר "{{searchString}}"</button>
       </mat-expansion-panel>
     </mat-accordion>
