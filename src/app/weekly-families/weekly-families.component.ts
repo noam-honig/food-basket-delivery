@@ -26,7 +26,9 @@ export class WeeklyFamiliesComponent implements OnInit {
     columnSettings: f => [
       f.name,
       f.assignedHelper.getColumn(this.selectService, h => h.weeklyFamilyVolunteer.isEqualTo(true)),
-      f.codeName
+      f.codeName,
+      f.packingComment
+
     ],
     get: {
       limit: 100,

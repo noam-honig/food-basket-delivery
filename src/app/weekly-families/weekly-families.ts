@@ -23,6 +23,7 @@ export class WeeklyFamilies extends IdEntity<WeeklyFamilyId>{
     }
 
     codeName = new StringColumn({ caption: 'שם קוד' });
+    packingComment = new StringColumn('הערה לאריזה');
     assignedHelper = new HelperId(this.context, { caption: 'אחראית' });
     deliveriesInPacking = new NumberColumn({
         caption: 'משלוחים באריזה',

@@ -29,9 +29,11 @@ export class WeeklyPackerByFamilyComponent implements OnInit {
     data: { name: 'אריזה לפי חבילות' }, canActivate: [PackerGuard]
   }
   deliveryList = new WeeklyFamilyDeliveryList(this.context,this.busy);
+
+  
   getDeliveryName(d: WeeklyFamilyDeliveries) {
-    let f = this.context.for(WeeklyFamilies).lookup(f => f.id.isEqualTo(d.familyId));
-    return f.assignedHelper.getValue() +' - ' +f.codeName.value;
+    
+    return d.getFamily().assignedHelper.getValue() +' - ' +d.getFamily().codeName.value;
     
   }
   currentDelivery: WeeklyFamilyDeliveries;

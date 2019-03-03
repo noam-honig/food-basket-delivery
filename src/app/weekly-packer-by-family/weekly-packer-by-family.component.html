@@ -3,6 +3,9 @@
     <mat-expansion-panel-header>
       {{getDeliveryName(d)}} , {{d.status.displayValue}}
     </mat-expansion-panel-header>
+    <div *ngIf="d.getFamily().packingComment.value">
+      {{d.getFamily().packingComment.value}}
+    </div>
     <button mat-raised-button color="primary" *ngIf="showReadyToPickup()" [disabled]="readyToPickupDisabled()"
       (click)="clickReadyToPickup()">מוכן לאיסוף</button>
     <button mat-raised-button *ngIf="showReturnToPack()" (click)="clickReturnToPack()">החזר לאריזה</button>

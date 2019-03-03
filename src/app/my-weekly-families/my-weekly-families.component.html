@@ -3,6 +3,9 @@
     <mat-expansion-panel-header>
       משפחת {{f.name.value}}
     </mat-expansion-panel-header>
+    <div *ngIf="f.packingComment.value">
+      {{f.packingComment.value}}
+    </div>
     <button mat-raised-button color="primary" *ngIf="showNew()" (click)="preparePackage()">משלוח חדש</button>
     <mat-accordion *ngIf="f==currentFamilly">
       <mat-expansion-panel *ngFor="let d of deliveries" (opened)="deliveryList. selectDelivery(d)">
@@ -24,6 +27,7 @@
         <div>
           {{d.status.listValue.helpText }}
         </div>
+        
 
         <div *ngIf="isDelivered(d)">
           נמסר בתאריך
