@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Id, IdEntity, NumberColumn, changeDate, DateTimeColumn, SqlBuilder, QueryBuilder } from '../model-shared/types';
-import { WeeklyFamilyId } from '../weekly-families/weekly-families';
+import { WeeklyFamilyId, WeeklyFamilies } from '../weekly-families/weekly-families';
 import { ClosedListColumn, StringColumn, BoolColumn, Entity, CompoundIdColumn, Column } from 'radweb';
 import { EntityClass, Context, ServerContext, ContextEntity } from '../shared/context';
 import { BusyService } from '../select-popup/busy-service';
@@ -23,11 +23,11 @@ export class WeeklyFamiliesDeliveriesComponent implements OnInit {
 export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
 {
 
-  constructor(context: Context) {
+  constructor(private context: Context) {
     super(new ProductId(context), {
       name: 'WeeklyFamilyDeliveries',
-      allowApiRead: !!context.info.weeklyFamilyVolunteer||!!context.info.weeklyFamilyPacker ,
-      allowApiCRUD: !!context.info.weeklyFamilyVolunteer||context.info.weeklyFamilyPacker ,
+      allowApiRead: !!context.info.weeklyFamilyVolunteer || !!context.info.weeklyFamilyPacker,
+      allowApiCRUD: !!context.info.weeklyFamilyVolunteer || context.info.weeklyFamilyPacker,
       onSavingRow: async () => {
         if (this.isNew()) {
           this.status.listValue = WeeklyFamilyDeliveryStatus.Prepare;
@@ -48,7 +48,7 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
       this.deliveredOn.dateValue = new Date();
     this.save();
   }
-
+  getFamily() { return this.context.for(WeeklyFamilies).lookup(f => f.id.isEqualTo(this.familyId)); }
   familyId = new WeeklyFamilyId();
   status = new WeeklyFamilyDeliveryStatusColumn();
   ordnial = new NumberColumn('סידורי');
@@ -60,11 +60,11 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
 export class WeeklyFamilyDeliveryProducts extends IdEntity<Id>{
 
   constructor(private context: Context) {
-    
+
     super(new Id(), {
       name: 'WeeklyFamilyDeliveryProducts',
-      allowApiRead:!!context.info.weeklyFamilyPacker||!!context.info.weeklyFamilyAdmin||!!context.info.weeklyFamilyVolunteer,
-      allowApiCRUD: context.info.weeklyFamilyPacker||context.info.weeklyFamilyAdmin||context.info.weeklyFamilyVolunteer
+      allowApiRead: !!context.info.weeklyFamilyPacker || !!context.info.weeklyFamilyAdmin || !!context.info.weeklyFamilyVolunteer,
+      allowApiCRUD: context.info.weeklyFamilyPacker || context.info.weeklyFamilyAdmin || context.info.weeklyFamilyVolunteer
     })
   }
   delivery = new WeeklyFamilyDeliveryId();

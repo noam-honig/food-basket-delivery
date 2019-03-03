@@ -2,7 +2,7 @@
     <mat-checkbox [checked]="d.Quantity.value>0"(change)="checkBoxChecked($event)" ></mat-checkbox>
     <input type="tel" class="form-control numeric-value" style="width: 50px" [(ngModel)]="d.Quantity.value"
     (change)="d.save()">
-  <span style="margin-left:5px;margin-right: 5px">
+  <span style="margin-left:5px;margin-right: 5px"*ngIf="d.requestQuanity.value">
   {{d.requestQuanity.value+' '}}
   
 </span>

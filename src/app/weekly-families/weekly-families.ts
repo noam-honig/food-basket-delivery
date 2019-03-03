@@ -1,4 +1,4 @@
-import { IdEntity, Id, StringColumn, BoolColumn, SqlBuilder, NumberColumn } from "../model-shared/types";
+import { IdEntity, Id, StringColumn, BoolColumn, SqlBuilder, NumberColumn, DateTimeColumn } from "../model-shared/types";
 import { EntityClass, Context, ContextEntityOptions } from "../shared/context";
 import { HelperId } from "../helpers/helpers";
 import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatusColumn, WeeklyFamilyDeliveryStatus } from "../weekly-families-deliveries/weekly-families-deliveries.component";
@@ -23,10 +23,27 @@ export class WeeklyFamilies extends IdEntity<WeeklyFamilyId>{
     }
 
     codeName = new StringColumn({ caption: 'שם קוד' });
+    packingComment = new StringColumn('הערה לאריזה');
     assignedHelper = new HelperId(this.context, { caption: 'אחראית' });
+    lastDelivery = new DateTimeColumn(
+        {
+            caption: 'משלוח אחרון',
+            readonly: true,
+            dbName: () => {
+                let wfd = new WeeklyFamilyDeliveries(this.context);
+                let sql = new SqlBuilder();
+                return sql.columnInnerSelect(this, {
+                    select: () => [wfd.deliveredOn],
+                    from: wfd,
+                    where: () => [sql.eq(wfd.familyId, this.id), sql.eq(wfd.status, WeeklyFamilyDeliveryStatus.Delivered.id)],
+                    orderBy: [{ column: wfd.deliveredOn, descending: true }]
+                });
+
+            }
+        })
     deliveriesInPacking = new NumberColumn({
         caption: 'משלוחים באריזה',
-        dbReadOnly:true,
+        dbReadOnly: true,
         dbName: () => {
             let d = new WeeklyFamilyDeliveries(this.context);
             let sql = new SqlBuilder();
@@ -55,11 +72,11 @@ export class WeeklyFamilies extends IdEntity<WeeklyFamilyId>{
             }
             let r = sql.case(
                 conditions
-            , '0');
-            
+                , '0');
+
             return r;
         }
-    }); 
+    });
 }
 
 

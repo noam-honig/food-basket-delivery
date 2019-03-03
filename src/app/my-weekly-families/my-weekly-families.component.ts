@@ -13,19 +13,14 @@ import { DateTimeColumn } from '../model-shared/types';
 import { diPublic } from '@angular/core/src/render3/di';
 import { platform } from 'os';
 import { BusyService } from '../select-popup/busy-service';
+import {WeeklyFamilyDeliveryList} from '../weekly-family-delivery-product-list/weekly-family-delivery-product-list.component';
 @Component({
   selector: 'app-my-weekly-families',
   templateUrl: './my-weekly-families.component.html',
   styleUrls: ['./my-weekly-families.component.scss']
 })
 export class MyWeeklyFamiliesComponent implements OnInit {
-
-
-
-
-  constructor(private context: Context, private dialog: DialogService,public busy:BusyService) {
-
-
+  constructor(private context: Context, private dialog: DialogService, public busy: BusyService) {
   }
 
   async ngOnInit() {
@@ -46,14 +41,9 @@ export class MyWeeklyFamiliesComponent implements OnInit {
 
     this.currentFamilly = f;
   }
-  currentDelivery: WeeklyFamilyDeliveries;
-  async selectDelivery(d: WeeklyFamilyDeliveries) {
-    this.currentDelivery = d;
-    this.deliveryProducts = await this.context.for(WeeklyFamilyDeliveryProductStats).find({
-      where: dp => dp.delivery.isEqualTo(d.id),
-      orderBy: dp => [dp.productOrder, dp.productName]
-    });
-  }
+
+
+  deliveryList = new WeeklyFamilyDeliveryList(this.context, this.busy);
   statusText(d: WeeklyFamilyDeliveries) {
     var x = d.status.displayValue;
     if (d.status.listValue == WeeklyFamilyDeliveryStatus.Delivered)
@@ -71,19 +61,9 @@ export class MyWeeklyFamiliesComponent implements OnInit {
     });
   }
   loading = false;
-  deliveryProducts: WeeklyFamilyDeliveryProductStats[] = []
 
 
 
-  add(p: WeeklyFamilyDeliveryProductStats, d: WeeklyFamilyDeliveries, i: number) {
-
-
-    var newValue = +(p.requestQuanity.value) + i;
-    if (newValue >= 0) {
-      p.requestQuanity.value = newValue;
-      p.saveQuantities(this.busy);
-    }
-  }
 
 
 
@@ -126,26 +106,13 @@ export class MyWeeklyFamiliesComponent implements OnInit {
 
 
   }
-  displayProduct(p: WeeklyFamilyDeliveryProductStats) {
-    if (this.currentDelivery.status.listValue == WeeklyFamilyDeliveryStatus.Prepare)
-      return true;
-    return p.requestQuanity.value > 0;
-  }
-  displayRequestQuantity(d: WeeklyFamilyDeliveries) {
-    return d.status.listValue == WeeklyFamilyDeliveryStatus.Prepare;
-  }
 
-  totalItems(d: WeeklyFamilyDeliveries) {
-    let x = 0;
-    this.deliveryProducts.forEach(p => x += p.requestQuanity.value);
-    return x;
-
-  }
+  
   nextDisabled(d: WeeklyFamilyDeliveries) {
     if (!d.status.listValue.next.disabled)
       return false;
     return d.status.listValue.next.disabled({
-      hasRequestItems: () => this.totalItems(d) > 0
+      hasRequestItems: () => this.deliveryList.totalItems(d) > 0
     });
 
   }
