@@ -304,7 +304,7 @@ export class FamiliesComponent implements OnInit {
     this.onDestroy();
   }
   basketStats: statsOnTab = {
-    name: 'טרם שויכו לפי סלים',
+    name: 'נותרו לפי סלים',
     rule: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('')),
     stats: [
       this.stats.ready,
@@ -312,7 +312,7 @@ export class FamiliesComponent implements OnInit {
     ]
   };
   cityStats: statsOnTab = {
-    name: 'טרם שויכו לפי ערים',
+    name: 'נותרו לפי ערים',
     rule: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('')),
     stats: [
       this.stats.ready,
@@ -332,8 +332,8 @@ export class FamiliesComponent implements OnInit {
         this.stats.frozen
       ]
     },
-    this.basketStats,
     this.cityStats,
+    this.basketStats,
     
     {
       name: 'הערות',
