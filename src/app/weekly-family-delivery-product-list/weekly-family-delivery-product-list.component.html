@@ -1,0 +1,31 @@
+<mat-form-field class="full-width">
+  <input matInput [(ngModel)]="list.searchString" placeholder="חפשי שם מוצר" [ngModelOptions]="{standalone: true}">
+  <mat-icon matSuffix (click)="list.clearSearch()">clear</mat-icon>
+</mat-form-field>
+<mat-checkbox [(ngModel)]="list.showAllProducts" *ngIf="list.shouldShowShowAllProductsCheckbox()">הצג את כל המוצרים
+</mat-checkbox>
+<mat-list>
+  <ng-container *ngFor="let p of list.deliveryProducts">
+    <mat-list-item class="wideList" *ngIf="list.displayProduct(p)">
+      <div class="quantity-input" style="align-items: center" *ngIf="list.displayRequestQuantity()">
+        <button class="btn btn-sm btn-success glyphicon glyphicon-plus" type="button" (click)="list.add(p,1)"></button>
+        <input type="tel" class="form-control numeric-value" [(ngModel)]="p.requestQuanity.value"
+          (change)="p.saveQuantities(list.busy)">
+        <button class="btn btn-sm btn-danger glyphicon glyphicon-minus"
+          [attr.disabled]="p.requestQuanity.value<=0?'':null" type="button" (click)="list.add(p,-1)"></button>
+      </div>
+      <app-product-quantity-in-delivery [d]="p" *ngIf="!list.displayRequestQuantity()">
+      </app-product-quantity-in-delivery>
+
+      <div>
+        <div>{{p.productName.value}}</div>
+        <div class="last-delivered" *ngIf="p.lastDelveryQuantity.value"> ({{p.lastDelveryQuantity.value}}
+          {{p.lastDeliveryOfProduct.relativeDateName()}})</div>
+        <div class="last-delivered" *ngIf="!p.lastDelveryQuantity.value"> (אף פעם)</div>
+      </div>
+    </mat-list-item>
+  </ng-container>
+
+</mat-list>
+<button mat-raised-button color="primary" *ngIf="list.noSuchProduct()" (click)="list.addProduct()">הוסף את המוצר
+  "{{list.searchString}}"</button>

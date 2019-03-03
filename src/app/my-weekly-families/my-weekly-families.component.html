@@ -5,7 +5,7 @@
     </mat-expansion-panel-header>
     <button mat-raised-button color="primary" *ngIf="showNew()" (click)="preparePackage()">משלוח חדש</button>
     <mat-accordion *ngIf="f==currentFamilly">
-      <mat-expansion-panel *ngFor="let d of deliveries" (opened)="selectDelivery(d)">
+      <mat-expansion-panel *ngFor="let d of deliveries" (opened)="deliveryList. selectDelivery(d)">
         <mat-expansion-panel-header>
           {{d.ordnial.value}} - {{statusText(d)}}
         </mat-expansion-panel-header>
@@ -24,7 +24,7 @@
         <div>
           {{d.status.listValue.helpText }}
         </div>
-        
+
         <div *ngIf="isDelivered(d)">
           נמסר בתאריך
           <div class="date-time-line">
@@ -41,38 +41,9 @@
             </div>
           </div>
         </div>
-        <mat-form-field class="full-width">
-            <input matInput [(ngModel)]="searchString" placeholder="חפשי שם מוצר"
-              [ngModelOptions]="{standalone: true}">
-            <mat-icon matSuffix (click)="clearSearch()">clear</mat-icon>
-          </mat-form-field>
-          <mat-checkbox [(ngModel)]="showAllProducts" *ngIf="shouldShowShowAllProductsCheckbox()">הצג את כל המוצרים</mat-checkbox>
-        <mat-list *ngIf="d==currentDelivery wideList">
-          <ng-container *ngFor="let p of deliveryProducts">
-            <mat-list-item class="wideList" *ngIf="displayProduct(p)">
-              <div class="quantity-input" style="align-items: center" *ngIf="displayRequestQuantity(d)">
-                <button class="btn btn-sm btn-success glyphicon glyphicon-plus" type="button"
-                  (click)="add(p,d,1)"></button>
-                <input type="tel" class="form-control numeric-value" [(ngModel)]="p.requestQuanity.value"
-                  (change)="p.saveQuantities(busy)">
-                <button class="btn btn-sm btn-danger glyphicon glyphicon-minus"
-                  [attr.disabled]="p.requestQuanity.value<=0?'':null" type="button" (click)="add(p,d,-1)"></button>
-              </div>
-              <app-product-quantity-in-delivery [d]="p" *ngIf="!displayRequestQuantity(d)">
-              </app-product-quantity-in-delivery>
+        <app-weekly-family-delivery-product-list *ngIf="d==deliveryList.currentDelivery" [list]="deliveryList">
 
-              <div>
-                <div>{{p.productName.value}}</div>
-                <div class="last-delivered" *ngIf="p.lastDelveryQuantity.value"> ({{p.lastDelveryQuantity.value}}
-                  {{p.lastDeliveryOfProduct.relativeDateName()}})</div>
-                <div class="last-delivered" *ngIf="!p.lastDelveryQuantity.value"> (אף פעם)</div>
-              </div>
-            </mat-list-item>
-          </ng-container>
-
-        </mat-list>
-        <button mat-raised-button color="primary" *ngIf="noSuchProduct()" (click)="addProduct()"
-            >הוסף את המוצר "{{searchString}}"</button>
+        </app-weekly-family-delivery-product-list>
       </mat-expansion-panel>
     </mat-accordion>
   </mat-expansion-panel>

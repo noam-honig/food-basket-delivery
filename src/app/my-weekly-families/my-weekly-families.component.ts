@@ -13,19 +13,14 @@ import { DateTimeColumn } from '../model-shared/types';
 import { diPublic } from '@angular/core/src/render3/di';
 import { platform } from 'os';
 import { BusyService } from '../select-popup/busy-service';
+import {WeeklyFamilyDeliveryList} from '../weekly-family-delivery-product-list/weekly-family-delivery-product-list.component';
 @Component({
   selector: 'app-my-weekly-families',
   templateUrl: './my-weekly-families.component.html',
   styleUrls: ['./my-weekly-families.component.scss']
 })
 export class MyWeeklyFamiliesComponent implements OnInit {
-
-
-
-
   constructor(private context: Context, private dialog: DialogService, public busy: BusyService) {
-
-
   }
 
   async ngOnInit() {
@@ -46,17 +41,9 @@ export class MyWeeklyFamiliesComponent implements OnInit {
 
     this.currentFamilly = f;
   }
-  currentDelivery: WeeklyFamilyDeliveries;
-  async selectDelivery(d: WeeklyFamilyDeliveries) {
-    this.currentDelivery = d;
-    this.deliveryProducts = await this.context.for(WeeklyFamilyDeliveryProductStats).find({
-      where: dp => dp.delivery.isEqualTo(d.id),
-      orderBy: dp => [dp.productOrder, dp.productName]
-    });
 
-    this.searchString = '';
-    this.showAllProducts = false;
-  }
+
+  deliveryList = new WeeklyFamilyDeliveryList(this.context, this.busy);
   statusText(d: WeeklyFamilyDeliveries) {
     var x = d.status.displayValue;
     if (d.status.listValue == WeeklyFamilyDeliveryStatus.Delivered)
@@ -74,46 +61,9 @@ export class MyWeeklyFamiliesComponent implements OnInit {
     });
   }
   loading = false;
-  deliveryProducts: WeeklyFamilyDeliveryProductStats[] = []
-
-  searchString: string = '';
-  lastFilter: string = '';
-  showAllProducts = false;
-  shouldShowShowAllProductsCheckbox() {
-
-    return this.currentDelivery && this.currentDelivery.status.listValue != WeeklyFamilyDeliveryStatus.Prepare && this.searchString == '';
-  }
-  clearSearch() {
-    this.searchString = '';
-
-  }
-  async addProduct() {
-    let p = this.context.for(Products).create();
-    p.name.value = this.searchString;
-    p.order.value = 50;
-    await p.save();
-    let dp = new WeeklyFamilyDeliveryProductStats(this.context);
-    dp.product.value = p.id.value;
-    dp.productName.value = p.name.value;
-    dp.delivery.value = this.currentDelivery.id.value;
-    dp.requestQuanity.value = 1;
-    this.deliveryProducts.splice(0, 0, dp);
-
-    await dp.saveQuantities(this.busy);
-    this.clearSearch();
-  }
 
 
 
-  add(p: WeeklyFamilyDeliveryProductStats, d: WeeklyFamilyDeliveries, i: number) {
-
-
-    var newValue = +(p.requestQuanity.value) + i;
-    if (newValue >= 0) {
-      p.requestQuanity.value = newValue;
-      p.saveQuantities(this.busy);
-    }
-  }
 
 
 
@@ -156,35 +106,13 @@ export class MyWeeklyFamiliesComponent implements OnInit {
 
 
   }
-  noSuchProduct() {
-    return this.searchString && !this.deliveryProducts.find(p => p.productName.value.indexOf(this.searchString) >= 0);
-  }
-  displayProduct(p: WeeklyFamilyDeliveryProductStats) {
-    if (this.searchString)
-      return p.productName.value.indexOf(this.searchString) >= 0;
 
-    if (this.currentDelivery.status.listValue == WeeklyFamilyDeliveryStatus.Prepare)
-      return true;
-
-    if (this.showAllProducts)
-      return true;
-    return p.requestQuanity.value > 0;
-  }
-  displayRequestQuantity(d: WeeklyFamilyDeliveries) {
-    return d.status.listValue == WeeklyFamilyDeliveryStatus.Prepare;
-  }
-
-  totalItems(d: WeeklyFamilyDeliveries) {
-    let x = 0;
-    this.deliveryProducts.forEach(p => x += p.requestQuanity.value);
-    return x;
-
-  }
+  
   nextDisabled(d: WeeklyFamilyDeliveries) {
     if (!d.status.listValue.next.disabled)
       return false;
     return d.status.listValue.next.disabled({
-      hasRequestItems: () => this.totalItems(d) > 0
+      hasRequestItems: () => this.deliveryList.totalItems(d) > 0
     });
 
   }
