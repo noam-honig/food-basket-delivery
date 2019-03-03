@@ -12,7 +12,7 @@
         <mat-checkbox [(ngModel)]="helpers.currentRow.deliveryVolunteer.value">{{helpers.currentRow.deliveryVolunteer.caption}}</mat-checkbox>
       </div>
     </div>
-    <div *ngIf="context.info.weeklyFamilyAdmin">
+    <div *ngIf="context.info.weeklyFamilyAdmin||context.info.superAdmin">
       <div>
         <mat-checkbox [(ngModel)]="helpers.currentRow.weeklyFamilyAdmin.value">{{helpers.currentRow.weeklyFamilyAdmin.caption}}</mat-checkbox>
       </div>
@@ -27,7 +27,7 @@
   <button mat-raised-button color="warn" (click)="resetPassword()" *ngIf="helpers.currentRow">
     אתחלי סיסמה ל{{helpers.currentRow.name.value}}
   </button>
-  <div *ngIf="helpers.currentRow&&helpers.currentRow.deliveryVolunteer.value">
+  <div *ngIf="helpers.currentRow&&context.info.deliveryAdmin">
     <h4> אירועים קודמים ל{{helpers.currentRow.name.value}}</h4>
     <data-grid [settings]="previousEvents"></data-grid>
   </div>
