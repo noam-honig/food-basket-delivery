@@ -22,17 +22,21 @@ export class WeeklyFamiliesComponent implements OnInit {
     allowUpdate: true,
     allowDelete: true,
     allowInsert: true,
-    knowTotalRows:true,
+    knowTotalRows: true,
     columnSettings: f => [
       f.name,
+      {
+        column: f.lastDelivery,
+        getValue: x => x.lastDelivery.relativeDateName()
+      },
       f.assignedHelper.getColumn(this.selectService, h => h.weeklyFamilyVolunteer.isEqualTo(true)),
-      f.codeName,
-      f.packingComment
+      f.packingComment,
+      f.codeName
 
     ],
     get: {
       limit: 100,
-      orderBy:f=>[f.name]
+      orderBy: f => [f.name]
     }
 
   });
