@@ -4,6 +4,8 @@ import { HolidayDeliveryAdmin, PackerGuard } from '../auth/auth-guard';
 import { Context } from '../shared/context';
 import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts, WeeklyFamilyDeliveryProductStats } from '../weekly-families-deliveries/weekly-families-deliveries.component';
 import { WeeklyFamilies } from '../weekly-families/weekly-families';
+import { WeeklyFamilyDeliveryList } from '../weekly-family-delivery-product-list/weekly-family-delivery-product-list.component';
+import { BusyService } from '../select-popup/busy-service';
 
 @Component({
   selector: 'app-weekly-packer-by-family',
@@ -13,7 +15,7 @@ import { WeeklyFamilies } from '../weekly-families/weekly-families';
 export class WeeklyPackerByFamilyComponent implements OnInit {
   deliveryProducts: WeeklyFamilyDeliveryProductStats[] = [];
 
-  constructor(private context: Context) { }
+  constructor(private context: Context,private busy:BusyService) { }
   deliveries: WeeklyFamilyDeliveries[] = [];
 
   async ngOnInit() {
@@ -26,9 +28,11 @@ export class WeeklyPackerByFamilyComponent implements OnInit {
     component: WeeklyPackerByFamilyComponent,
     data: { name: 'אריזה לפי חבילות' }, canActivate: [PackerGuard]
   }
-
+  deliveryList = new WeeklyFamilyDeliveryList(this.context,this.busy);
   getDeliveryName(d: WeeklyFamilyDeliveries) {
-    return this.context.for(WeeklyFamilies).lookup(f => f.id.isEqualTo(d.familyId)).codeName.value;
+    let f = this.context.for(WeeklyFamilies).lookup(f => f.id.isEqualTo(d.familyId));
+    return f.assignedHelper.getValue() +' - ' +f.codeName.value;
+    
   }
   currentDelivery: WeeklyFamilyDeliveries;
   async showDelivery(d: WeeklyFamilyDeliveries) {
