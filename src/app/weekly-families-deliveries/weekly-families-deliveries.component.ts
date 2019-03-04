@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Id, IdEntity, NumberColumn, changeDate, DateTimeColumn, SqlBuilder, QueryBuilder } from '../model-shared/types';
 import { WeeklyFamilyId, WeeklyFamilies } from '../weekly-families/weekly-families';
-import { ClosedListColumn, StringColumn, BoolColumn, Entity, CompoundIdColumn, Column } from 'radweb';
+import { ClosedListColumn, StringColumn, BoolColumn, Entity, CompoundIdColumn, Column, DataColumnSettings } from 'radweb';
 import { EntityClass, Context, ServerContext, ContextEntity } from '../shared/context';
 import { BusyService } from '../select-popup/busy-service';
+import { HelperId } from '../helpers/helpers';
 
 
 @Component({
@@ -44,8 +45,10 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
     if (this.status.listValue == WeeklyFamilyDeliveryStatus.Delivered)
       this.deliveredOn.value = '';
     this.status.listValue = s;
-    if (this.status.listValue == WeeklyFamilyDeliveryStatus.Delivered)
+    if (this.status.listValue == WeeklyFamilyDeliveryStatus.Delivered){
       this.deliveredOn.dateValue = new Date();
+      this.deliveredBy.value = this.context.info.helperId;
+    }
     this.save();
   }
   getFamily() { return this.context.for(WeeklyFamilies).lookup(f => f.id.isEqualTo(this.familyId)); }
@@ -53,6 +56,7 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
   status = new WeeklyFamilyDeliveryStatusColumn();
   ordnial = new NumberColumn('סידורי');
   deliveredOn = new DateTimeColumn('תאריך מסירה');
+  deliveredBy = new HelperId(this.context,{caption:'נמסר על ידי'});
 }
 
 
@@ -252,8 +256,8 @@ export interface StatusButtonEnabledHelper {
 }
 
 export class WeeklyFamilyDeliveryStatusColumn extends ClosedListColumn<WeeklyFamilyDeliveryStatus>{
-  constructor() {
-    super(WeeklyFamilyDeliveryStatus, { caption: 'סטטוס שילוח' });
+  constructor(settings?:DataColumnSettings<number, NumberColumn>) {
+    super(WeeklyFamilyDeliveryStatus, settings?settings: { caption: 'סטטוס שילוח' });
   }
 
 }

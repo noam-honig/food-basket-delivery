@@ -106,9 +106,9 @@ export class HelperId extends Id implements HasAsyncGetTheValue {
     getColumn(dialog: SelectServiceInterface, filter?: (helper: Helpers) => FilterBase): ColumnSetting<Entity<any>> {
         return {
             column: this,
-            getValue: f => (<HelperId>f.__getColumn(this)).getValue(),
+            getValue: f => (f ? (<HelperId>(f).__getColumn(this)) : this).getValue(),
             hideDataOnInput: true,
-            click: f => dialog.selectHelper(s => f.__getColumn(this).value = (s ? s.id.value : ''), filter),
+            click: f => dialog.selectHelper(s => (f?f.__getColumn(this):this).value = (s ? s.id.value : ''), filter),
             readonly: this.readonly,
             width: '200'
 

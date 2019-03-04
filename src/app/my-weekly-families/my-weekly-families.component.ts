@@ -2,25 +2,47 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Route } from '@angular/router';
 
 import { HolidayDeliveryAdmin, WeeklyFamilyVoulenteerGuard } from '../auth/auth-guard';
-import { WeeklyFullFamilyInfo } from '../weekly-families/weekly-families';
+import { WeeklyFullFamilyInfo, WeeklyFamilies } from '../weekly-families/weekly-families';
 import { Context } from '../shared/context';
 
 import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts, Products, WeeklyFamilyDeliveryProductStats } from '../weekly-families-deliveries/weekly-families-deliveries.component';
-import { ItemId } from '../events/ItemId';
 import { DialogService } from '../select-popup/dialog';
-import { MatCheckboxChange } from '@angular/material';
-import { DateTimeColumn } from '../model-shared/types';
-import { diPublic } from '@angular/core/src/render3/di';
-import { platform } from 'os';
 import { BusyService } from '../select-popup/busy-service';
-import {WeeklyFamilyDeliveryList} from '../weekly-family-delivery-product-list/weekly-family-delivery-product-list.component';
+import { WeeklyFamilyDeliveryList } from '../weekly-family-delivery-product-list/weekly-family-delivery-product-list.component';
+import { DataAreaSettings } from 'radweb';
+import { SelectService } from '../select-popup/select-service';
+
 @Component({
   selector: 'app-my-weekly-families',
   templateUrl: './my-weekly-families.component.html',
   styleUrls: ['./my-weekly-families.component.scss']
 })
 export class MyWeeklyFamiliesComponent implements OnInit {
-  constructor(private context: Context, private dialog: DialogService, public busy: BusyService) {
+  constructor(private context: Context, private dialog: DialogService, public busy: BusyService, private selectService: SelectService) {
+  }
+  lastStatus(f: WeeklyFullFamilyInfo) {
+    let r = f.lastDeliveryStatus.displayValue;
+
+    if (f.lastDeliveryStatus.listValue == WeeklyFamilyDeliveryStatus.Delivered)
+      r += ' ' + f.lastDelivery.relativeDateName();
+    return r;
+
+  }
+  updateFamily(f: WeeklyFullFamilyInfo) {
+
+    this.dialog.displayArea({
+      title: 'עדכון פרטי משפחה',
+      settings: {
+        columnSettings: () => [
+          f.name,
+          f.assignedHelper.getColumn(this.selectService, h => h.weeklyFamilyVolunteer.isEqualTo(true)),
+          f.packingComment,
+          f.codeName
+        ]
+      },
+      ok: () => { },
+      cancel: () => { },
+    });
   }
 
   async ngOnInit() {
@@ -107,7 +129,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
 
   }
 
-  
+
   nextDisabled(d: WeeklyFamilyDeliveries) {
     if (!d.status.listValue.next.disabled)
       return false;

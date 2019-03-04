@@ -36,11 +36,27 @@ export class WeeklyFamilies extends IdEntity<WeeklyFamilyId>{
                     select: () => [wfd.deliveredOn],
                     from: wfd,
                     where: () => [sql.eq(wfd.familyId, this.id), sql.eq(wfd.status, WeeklyFamilyDeliveryStatus.Delivered.id)],
-                    orderBy: [{ column: wfd.deliveredOn, descending: true }]
+                    orderBy: [{ column: wfd.ordnial, descending: true }]
                 });
 
             }
-        })
+        });
+        lastDeliveryStatus = new WeeklyFamilyDeliveryStatusColumn(
+            {
+                caption: 'סטטוס אחרון',
+                readonly: true,
+                dbName: () => {
+                    let wfd = new WeeklyFamilyDeliveries(this.context);
+                    let sql = new SqlBuilder();
+                    return sql.columnInnerSelect(this, {
+                        select: () => [wfd.status],
+                        from: wfd,
+                        where: () => [sql.eq(wfd.familyId, this.id)],
+                        orderBy: [{ column: wfd.ordnial, descending: true }]
+                    });
+    
+                }
+            });
     deliveriesInPacking = new NumberColumn({
         caption: 'משלוחים באריזה',
         dbReadOnly: true,
