@@ -31,7 +31,7 @@ export class WeeklyFamilies extends IdEntity<WeeklyFamilyId>{
     lastDelivery = new DateTimeColumn(
         {
             caption: 'משלוח אחרון',
-            readonly: true,
+            dbReadOnly: true,
             dbName: () => {
                 let wfd = new WeeklyFamilyDeliveries(this.context);
                 let sql = new SqlBuilder();
@@ -47,7 +47,7 @@ export class WeeklyFamilies extends IdEntity<WeeklyFamilyId>{
         lastDeliveryStatus = new WeeklyFamilyDeliveryStatusColumn(
             {
                 caption: 'סטטוס אחרון',
-                readonly: true,
+                dbReadOnly: true,
                 dbName: () => {
                     let wfd = new WeeklyFamilyDeliveries(this.context);
                     let sql = new SqlBuilder();
