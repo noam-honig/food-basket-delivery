@@ -5,7 +5,7 @@ import { HolidayDeliveryAdmin, WeeklyFamilyVoulenteerGuard } from '../auth/auth-
 import { WeeklyFullFamilyInfo, WeeklyFamilies } from '../weekly-families/weekly-families';
 import { Context } from '../shared/context';
 
-import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts, Products, WeeklyFamilyDeliveryProductStats } from '../weekly-families-deliveries/weekly-families-deliveries.component';
+import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts, Products, WeeklyFamilyDeliveryProductStats } from '../weekly-families-deliveries/weekly-families-deliveries';
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from '../select-popup/busy-service';
 import { WeeklyFamilyDeliveryList } from '../weekly-family-delivery-product-list/weekly-family-delivery-product-list.component';

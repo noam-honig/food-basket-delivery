@@ -22,7 +22,7 @@ import { evilStatics } from './auth/evil-statics';
 import { routingInfo, componentRoutingInfo } from './shared/routing-helper';
 import { ProductsComponent } from './products/products.component';
 
-import { WeeklyDeliveryProductsRequestComponent } from './weekly-delivery-products-request/weekly-delivery-products-request.component';
+
 import { MyWeeklyFamiliesComponent } from './my-weekly-families/my-weekly-families.component';
 import { WeeklyPackerByFamilyComponent } from './weekly-packer-by-family/weekly-packer-by-family.component';
 import { WeeklyPackerByProductComponent } from './weekly-packer-by-product/weekly-packer-by-product.component';

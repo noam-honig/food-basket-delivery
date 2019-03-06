@@ -52,14 +52,11 @@ import { SelectService } from './select-popup/select-service';
 import { UpdateFamilyDialogComponent } from './update-family-dialog/update-family-dialog.component';
 import { UpdateFamilyComponent } from './update-family/update-family.component';
 import { ProductsComponent } from './products/products.component';
-
-import { WeeklyFamiliesDeliveriesComponent } from './weekly-families-deliveries/weekly-families-deliveries.component';
-import { WeeklyDeliveryProductsRequestComponent } from './weekly-delivery-products-request/weekly-delivery-products-request.component';
 import { MyWeeklyFamiliesComponent } from './my-weekly-families/my-weekly-families.component';
 import { WeeklyPackerByFamilyComponent } from './weekly-packer-by-family/weekly-packer-by-family.component';
 import { ProductQuantityInDeliveryComponent } from './product-quantity-in-delivery/product-quantity-in-delivery.component';
 import { WeeklyPackerByProductComponent } from './weekly-packer-by-product/weekly-packer-by-product.component';
-import { WeeklyDeliveryUpdateComponent } from './weekly-delivery-update/weekly-delivery-update.component';
+
 import { WeeklyFamilyDeliveryProductListComponent } from './weekly-family-delivery-product-list/weekly-family-delivery-product-list.component';
 
 
@@ -101,13 +98,10 @@ import { WeeklyFamilyDeliveryProductListComponent } from './weekly-family-delive
     UpdateFamilyComponent,
     ProductsComponent,
     
-    WeeklyFamiliesDeliveriesComponent,
-    WeeklyDeliveryProductsRequestComponent,
     MyWeeklyFamiliesComponent,
     WeeklyPackerByFamilyComponent,
     ProductQuantityInDeliveryComponent,
     WeeklyPackerByProductComponent,
-    WeeklyDeliveryUpdateComponent,
     WeeklyFamilyDeliveryProductListComponent,
     
   ],

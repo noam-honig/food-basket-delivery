@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { WeeklyFamilyDeliveryProductStats, WeeklyFamilyDeliveries, Products, WeeklyFamilyDeliveryStatus } from '../weekly-families-deliveries/weekly-families-deliveries.component';
+import { WeeklyFamilyDeliveryProductStats, WeeklyFamilyDeliveries, Products, WeeklyFamilyDeliveryStatus } from '../weekly-families-deliveries/weekly-families-deliveries';
 import { BusyService } from '../select-popup/busy-service';
 import { Context } from '../shared/context';
 

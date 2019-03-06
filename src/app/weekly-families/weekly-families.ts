@@ -1,7 +1,7 @@
 import { IdEntity, Id, StringColumn, BoolColumn, SqlBuilder, NumberColumn, DateTimeColumn } from "../model-shared/types";
 import { EntityClass, Context, ContextEntityOptions } from "../shared/context";
 import { HelperId } from "../helpers/helpers";
-import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatusColumn, WeeklyFamilyDeliveryStatus } from "../weekly-families-deliveries/weekly-families-deliveries.component";
+import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatusColumn, WeeklyFamilyDeliveryStatus } from "../weekly-families-deliveries/weekly-families-deliveries";
 
 
 

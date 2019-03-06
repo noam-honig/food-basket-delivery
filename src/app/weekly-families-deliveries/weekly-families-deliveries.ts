@@ -6,20 +6,6 @@ import { EntityClass, Context, ServerContext, ContextEntity } from '../shared/co
 import { BusyService } from '../select-popup/busy-service';
 import { HelperId } from '../helpers/helpers';
 
-
-@Component({
-  selector: 'app-weekly-families-deliveries',
-  templateUrl: './weekly-families-deliveries.component.html',
-  styleUrls: ['./weekly-families-deliveries.component.scss']
-})
-export class WeeklyFamiliesDeliveriesComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
-}
 @EntityClass
 export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
 {

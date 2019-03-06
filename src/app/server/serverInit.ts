@@ -16,7 +16,7 @@ import { DeliveryEvents } from '../delivery-events/delivery-events';
 import { ApplicationImages } from '../manage/ApplicationImages';
 import { ServerContext, allEntities } from '../shared/context';
 import '../app.module';
-import { WeeklyFamilyDeliveries } from '../weekly-families-deliveries/weekly-families-deliveries.component';
+import { WeeklyFamilyDeliveries } from '../weekly-families-deliveries/weekly-families-deliveries';
 import { WeeklyFamilies } from '../weekly-families/weekly-families';
 
 

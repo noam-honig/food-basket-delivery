@@ -1,7 +1,7 @@
 import { TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
-import { Products, WeeklyFamilyDeliveryProducts } from './weekly-families-deliveries/weekly-families-deliveries.component';
+import { Products, WeeklyFamilyDeliveryProducts } from './weekly-families-deliveries/weekly-families-deliveries';
 import { ServerContext } from './shared/context';
 import { SqlBuilder, QueryBuilder } from './model-shared/types';
 import { WebDriverProxy } from 'blocking-proxy/built/lib/webdriver_proxy';
