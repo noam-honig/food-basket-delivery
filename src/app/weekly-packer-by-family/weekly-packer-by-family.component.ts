@@ -13,7 +13,7 @@ import { BusyService } from '../select-popup/busy-service';
   styleUrls: ['./weekly-packer-by-family.component.scss']
 })
 export class WeeklyPackerByFamilyComponent implements OnInit {
-  deliveryProducts: WeeklyFamilyDeliveryProductStats[] = [];
+  
 
   constructor(private context: Context,private busy:BusyService) { }
   deliveries: WeeklyFamilyDeliveries[] = [];
@@ -36,30 +36,23 @@ export class WeeklyPackerByFamilyComponent implements OnInit {
     return d.getFamily().codeName.value;
     
   }
-  currentDelivery: WeeklyFamilyDeliveries;
-  async showDelivery(d: WeeklyFamilyDeliveries) {
-    this.currentDelivery = d;
-    this.deliveryProducts = await this.context.for(WeeklyFamilyDeliveryProductStats).find(
-      {
-        where: x => x.delivery.isEqualTo(d.id).and(x.requestQuanity.IsGreaterOrEqualTo(1)),
-        orderBy: dp => [dp.productOrder, dp.productName]
-      });
-  }
+  
+
   showReadyToPickup() {
-    return this.currentDelivery && this.currentDelivery.status.listValue == WeeklyFamilyDeliveryStatus.Pack;
+    return this.deliveryList.currentDelivery && this.deliveryList.currentDelivery.status.listValue == WeeklyFamilyDeliveryStatus.Pack;
   }
   showReturnToPack() {
-    return this.currentDelivery && this.currentDelivery.status.listValue == WeeklyFamilyDeliveryStatus.Ready;
+    return this.deliveryList.currentDelivery && this.deliveryList.currentDelivery.status.listValue == WeeklyFamilyDeliveryStatus.Ready;
 
   }
   readyToPickupDisabled() {
-    let hasQ = this.deliveryProducts.find(x => x.Quantity.value > 0);
+    let hasQ = this.deliveryList.deliveryProducts.find(x => x.Quantity.value > 0);
     return !hasQ;
   }
   clickReturnToPack() {
-    this.currentDelivery.changeStatus(WeeklyFamilyDeliveryStatus.Pack);
+    this.deliveryList.currentDelivery.changeStatus(WeeklyFamilyDeliveryStatus.Pack);
   }
   clickReadyToPickup() {
-    this.currentDelivery.changeStatus(WeeklyFamilyDeliveryStatus.Ready);
+    this.deliveryList.currentDelivery.changeStatus(WeeklyFamilyDeliveryStatus.Ready);
   }
 }
