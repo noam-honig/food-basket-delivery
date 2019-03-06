@@ -1,18 +1,24 @@
-.quantity-input{
+.family-buttons{
+    
     display:flex;
-    margin: 0 0 0 5px;
-    align-items: center;
+    justify-content: space-between;
 }
-.quantity-input>input{
-    flex-basis: 50px;
-    width:50px;
-}
+
 .top-bar{
-    position: sticky;
-    top:0px;
+    display:flex;
+    justify-content: space-between;
+}
+.family-title{
+    display:flex;
+    justify-content: space-between;
+    width:100%;
+    margin-left:10px;
 }
 
 .date-time-line{
     display:flex;
 
+}
+.last-delivered{
+    font-size:12px;
 }

@@ -16,6 +16,8 @@ import { DeliveryEvents } from '../delivery-events/delivery-events';
 import { ApplicationImages } from '../manage/ApplicationImages';
 import { ServerContext, allEntities } from '../shared/context';
 import '../app.module';
+import { WeeklyFamilyDeliveries } from '../weekly-families-deliveries/weekly-families-deliveries.component';
+import { WeeklyFamilies } from '../weekly-families/weekly-families';
 
 
 
@@ -56,7 +58,12 @@ export async function serverInit() {
         h.name.value = 'רגיל';
         await h.save();
     }
+    await foreachSync(await context.for(WeeklyFamilyDeliveries).find({ where: d => d.assignedHelper.isEqualTo('') }),async d=>{
+        let f =await  context.for(WeeklyFamilies).lookupAsync(f=>f.id.isEqualTo(d.familyId));
+        d.assignedHelper.value = f.assignedHelper.value;
+        await d.save();
 
+    })
 
 
 

@@ -9,7 +9,7 @@ import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliver
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from '../select-popup/busy-service';
 import { WeeklyFamilyDeliveryList } from '../weekly-family-delivery-product-list/weekly-family-delivery-product-list.component';
-import { DataAreaSettings } from 'radweb';
+import { DataAreaSettings, ColumnSetting, DateColumn } from 'radweb';
 import { SelectService } from '../select-popup/select-service';
 
 @Component({
@@ -18,7 +18,7 @@ import { SelectService } from '../select-popup/select-service';
   styleUrls: ['./my-weekly-families.component.scss']
 })
 export class MyWeeklyFamiliesComponent implements OnInit {
-  constructor(private context: Context, private dialog: DialogService, public busy: BusyService, private selectService: SelectService) {
+  constructor(public context: Context, private dialog: DialogService, public busy: BusyService, private selectService: SelectService) {
   }
   lastStatus(f: WeeklyFullFamilyInfo) {
     let r = f.lastDeliveryStatus.displayValue;
@@ -28,6 +28,49 @@ export class MyWeeklyFamiliesComponent implements OnInit {
     return r;
 
   }
+  onlyMyFamilies = true;
+  searchString = '';
+  clearSearch() {
+    this.searchString = '';
+  }
+  showFamily(f: WeeklyFullFamilyInfo) {
+    if (this.onlyMyFamilies && f.assignedHelper.value != this.context.info.helperId)
+      return false;
+    if (this.searchString)
+      return f.name.value.indexOf(this.searchString) >= 0 || f.codeName.value.indexOf(this.searchString) >= 0
+    return true;
+  }
+  deleteFamily(f: WeeklyFullFamilyInfo) {
+    this.dialog.confirmDelete('משפחת ' + f.name.value, async () => {
+      await f.delete();
+       this.families.splice(this.families.indexOf(f), 1);
+    });
+  }
+  newFamily() {
+    let f = this.context.for(WeeklyFullFamilyInfo).create();
+    f.assignedHelper.value = this.context.info.helperId;
+    this.dialog.displayArea({
+      title: 'משפחה חדשה',
+      settings: {
+        columnSettings: () => [
+          f.name,
+          f.codeName,
+          f.assignedHelper.getColumn(this.selectService, h => h.weeklyFamilyVolunteer.isEqualTo(true)),
+          f.packingComment,
+        ]
+      },
+      ok: async () => {
+        await f.save();
+        this.families = [f,...this.families];
+      },
+      cancel: () => {
+
+      },
+    });
+  }
+  countFamilies() {
+    return this.families.filter(f => this.showFamily(f)).length;
+  }
   updateFamily(f: WeeklyFullFamilyInfo) {
 
     this.dialog.displayArea({
@@ -35,21 +78,50 @@ export class MyWeeklyFamiliesComponent implements OnInit {
       settings: {
         columnSettings: () => [
           f.name,
+          f.codeName,
           f.assignedHelper.getColumn(this.selectService, h => h.weeklyFamilyVolunteer.isEqualTo(true)),
           f.packingComment,
-          f.codeName
         ]
       },
-      ok: () => { },
-      cancel: () => { },
+      ok: async () => {
+        await f.save();
+      },
+      cancel: () => {
+        f.reset();
+      },
+    });
+  }
+  updateDelivery(d: WeeklyFamilyDeliveries) {
+
+    let dc = new DateColumn('נמסר בתאריך');
+    dc.dateValue = d.deliveredOn.dateValue;
+    let cols: ColumnSetting<any>[] = [d.assignedHelper.getColumn(this.selectService, h => h.weeklyFamilyVolunteer.isEqualTo(true))];
+    if (d.status.listValue == WeeklyFamilyDeliveryStatus.Delivered) {
+      cols.push(dc),
+        cols.push(d.deliveredBy.getColumn(this.selectService, h => h.weeklyFamilyVolunteer.isEqualTo(true)));
+    }
+    this.dialog.displayArea({
+      title: 'עדכון פרטי משלוח',
+      settings: {
+        columnSettings: () => [...cols
+        ]
+      },
+      ok: () => {
+        if (d.deliveredOn.getStringForInputDate() != dc.value) {
+          d.deliveredOn.dateValue = new Date(dc.dateValue.getFullYear(), dc.dateValue.getMonth(), dc.dateValue.getDate(), d.deliveredOn.dateValue.getHours(), d.deliveredOn.dateValue.getMinutes());
+        }
+
+        d.save();
+      },
+      cancel: () => {
+        d.reset();
+      },
     });
   }
 
   async ngOnInit() {
 
-    this.families = await this.context.for(WeeklyFullFamilyInfo).find({
-      where: f => f.assignedHelper.isEqualTo(this.context.info.helperId)
-    });
+    this.families = await this.context.for(WeeklyFullFamilyInfo).find({ orderBy: f => f.name ,limit:1000});
   }
   families: WeeklyFullFamilyInfo[];
   currentFamilly: WeeklyFullFamilyInfo;
@@ -92,7 +164,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
   static route: Route = {
     path: 'my-weekly-families',
     component: MyWeeklyFamiliesComponent,
-    data: { name: 'משפחות שבועיות שלי' }, canActivate: [WeeklyFamilyVoulenteerGuard]
+    data: { name: 'משפחות שבועיות' }, canActivate: [WeeklyFamilyVoulenteerGuard]
   }
   deliveries: WeeklyFamilyDeliveries[] = [];
   showNew() {
@@ -108,6 +180,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
     const f = this.currentFamilly;
     var wfd = this.context.for(WeeklyFamilyDeliveries).create();
     wfd.familyId.value = f.id.value;
+    wfd.assignedHelper.value = f.assignedHelper.value;
     await wfd.save();
     this.deliveries.splice(0, 0, wfd);
     if (this.deliveries.length > 1) {

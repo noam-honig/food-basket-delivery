@@ -57,6 +57,7 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
   ordnial = new NumberColumn('סידורי');
   deliveredOn = new DateTimeColumn('תאריך מסירה');
   deliveredBy = new HelperId(this.context,{caption:'נמסר על ידי'});
+  assignedHelper = new HelperId(this.context,{caption:'אחראית מסירה'});
 }
 
 

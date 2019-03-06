@@ -21,7 +21,7 @@ import { CustomReuseStrategy } from './custom-reuse-controller-router-strategy'
 import { evilStatics } from './auth/evil-statics';
 import { routingInfo, componentRoutingInfo } from './shared/routing-helper';
 import { ProductsComponent } from './products/products.component';
-import { WeeklyFamiliesComponent } from './weekly-families/weekly-families.component';
+
 import { WeeklyDeliveryProductsRequestComponent } from './weekly-delivery-products-request/weekly-delivery-products-request.component';
 import { MyWeeklyFamiliesComponent } from './my-weekly-families/my-weekly-families.component';
 import { WeeklyPackerByFamilyComponent } from './weekly-packer-by-family/weekly-packer-by-family.component';
@@ -43,7 +43,7 @@ const routes: Routes = [
   FixAddressComponent.route,
   LoginFromSmsComponent.route,
   ProductsComponent.route,
-  WeeklyFamiliesComponent.route,
+  
   //{ path: 'stam-test', component: StamTestComponent },
   MyFamiliesComponent.route,
   UpdateInfoComponent.route,

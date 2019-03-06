@@ -13,13 +13,16 @@ export class WeeklyFamilies extends IdEntity<WeeklyFamilyId>{
             name: 'weeklyFamilies',
             allowApiCRUD: false,
             allowApiRead: !!context.info.weeklyFamilyAdmin || !!context.info.weeklyFamilyPacker || !!context.info.weeklyFamilyVolunteer,
+            
             apiDataFilter: () => {
                 if (context.info.weeklyFamilyAdmin)
                     return undefined;
                 return this.okToSeeIt.isEqualTo(1);
             }
 
+
         });
+        this.lastDelivery.dontShowTimeForOlderDates = true;
     }
 
     codeName = new StringColumn({ caption: 'שם קוד' });
@@ -105,7 +108,7 @@ export class WeeklyFullFamilyInfo extends WeeklyFamilies {
             dbName: () => 'weeklyFamilies',
             allowApiRead: !!context.info.weeklyFamilyVolunteer,
             allowApiUpdate: context.info.weeklyFamilyAdmin,
-            allowApiDelete: false,
+            allowApiDelete: context.info.weeklyFamilyAdmin,
             allowApiInsert: context.info.weeklyFamilyAdmin,
             apiDataFilter: () => {
                 if (context.info.weeklyFamilyAdmin)

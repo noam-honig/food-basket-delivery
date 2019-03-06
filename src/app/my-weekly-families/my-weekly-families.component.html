@@ -1,57 +1,79 @@
 <mat-accordion>
-  <mat-expansion-panel *ngFor="let f of families" (opened)="selectFamiliy(f)">
-    <mat-expansion-panel-header>
-      משפחת {{f.name.value}} ({{f.codeName.value}}) {{lastStatus(f)}}
-    </mat-expansion-panel-header>
-    <div *ngIf="f.packingComment.value">
-      {{f.packingComment.value}}
+  <div class="top-bar">
+    <div>
+      <mat-form-field class="full-width">
+        <input matInput [(ngModel)]="searchString" placeholder="חפשי משפחה" [ngModelOptions]="{standalone: true}">
+        <mat-icon matSuffix (click)="clearSearch()">clear</mat-icon>
+      </mat-form-field>
+      {{countFamilies()}} משפחות
+      <br>
+      <mat-checkbox [(ngModel)]="onlyMyFamilies" *ngIf="context.info.weeklyFamilyAdmin">רק משפחות שלי
+      </mat-checkbox>
     </div>
-    <button mat-raised-button color="primary" *ngIf="showNew()" (click)="preparePackage()">משלוח חדש</button>
-    <button mat-mini-fab color="primary" (click)="updateFamily(f)" ><mat-icon>create</mat-icon></button>
-    <mat-accordion *ngIf="f==currentFamilly">
-      <mat-expansion-panel *ngFor="let d of deliveries" (opened)="deliveryList. selectDelivery(d)">
-        <mat-expansion-panel-header>
-          {{statusText(d)}}
-        </mat-expansion-panel-header>
-
-
-
-        <div class="top-bar" #myDiv>
-          <button mat-raised-button color="primary" *ngIf="d.status.listValue.next" [disabled]="nextDisabled(d)"
-            (click)="d.changeStatus(d.status.listValue.next.status)">{{d.status.listValue.next.name}}</button>
-          <button mat-raised-button *ngIf="d.status.listValue.prev"
-            (click)="d.changeStatus(d.status.listValue.prev.status)">{{d.status.listValue.prev.name}}</button>
-          <button mat-raised-button *ngIf="allowDelete(d)" (click)="deleteDelivery(d)">מחק משלוח</button>
-
-        </div>
-
-        <div>
-          {{d.status.listValue.helpText }}
-        </div>
-        
-
-        <div *ngIf="isDelivered(d)">
-          נמסר בתאריך
-          <div class="date-time-line">
-            <div>
-
-            </div>
-            <div>
-              <input type="date" class="form-control" [value]="d.deliveredOn.getStringForInputDate()"
-                (change)="d.deliveredOn.dateInputChangeEvent($event)" (blur)="saveIfNeeded(d)">
-            </div>
-            <div>
-              <input type="time" class="form-control" [value]="d.deliveredOn.getStringForInputTime()"
-                (change)="d.deliveredOn.timeInputChangeEvent($event)" (blur)="saveIfNeeded(d)">
-            </div>
+    <div> <button mat-mini-fab color="primary" *ngIf="context.info.weeklyFamilyAdmin" (click)="newFamily()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+  </div>
+  <ng-container *ngFor="let f of families">
+    <mat-expansion-panel *ngIf="showFamily(f)" (opened)="selectFamiliy(f)">
+      <mat-expansion-panel-header>
+        <div class="family-title">
+          <div>
+            {{f.name.value}} ({{f.codeName.value}})<div class="last-delivered"> {{lastStatus(f)}}</div>
           </div>
+          <div *ngIf="context.info.weeklyFamilyAdmin">
+            {{f.assignedHelper.getValue()}}
+          </div>
+
         </div>
-        <app-weekly-family-delivery-product-list *ngIf="d==deliveryList.currentDelivery" [list]="deliveryList">
+      </mat-expansion-panel-header>
 
-        </app-weekly-family-delivery-product-list>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </mat-expansion-panel>
+      <div class="family-buttons">
+        <div>
+          <button mat-raised-button color="primary" *ngIf="showNew()" (click)="preparePackage()">משלוח חדש</button>
+        </div>
+        <div>
+          <button mat-mini-fab color="primary" (click)="deleteFamily(f)" *ngIf="context.info.weeklyFamilyAdmin">
+            <mat-icon>delete</mat-icon>
+          </button>
+          <button mat-mini-fab color="primary" (click)="updateFamily(f)" *ngIf="context.info.weeklyFamilyAdmin">
+            <mat-icon>create</mat-icon>
+          </button>
+        </div>
+      </div>
+      <div *ngIf="f.packingComment.value">
+        {{f.packingComment.value}}
+      </div>
+      <mat-accordion *ngIf="f==currentFamilly">
+        <mat-expansion-panel *ngFor="let d of deliveries" (opened)="deliveryList. selectDelivery(d)">
+          <mat-expansion-panel-header>
+            {{statusText(d)}}
+          </mat-expansion-panel-header>
 
 
+
+          <div class="top-bar" #myDiv>
+            <button mat-raised-button color="primary" *ngIf="d.status.listValue.next" [disabled]="nextDisabled(d)"
+              (click)="d.changeStatus(d.status.listValue.next.status)">{{d.status.listValue.next.name}}</button>
+            <button mat-raised-button *ngIf="d.status.listValue.prev"
+              (click)="d.changeStatus(d.status.listValue.prev.status)">{{d.status.listValue.prev.name}}</button>
+            <button mat-raised-button *ngIf="allowDelete(d)" (click)="deleteDelivery(d)">מחק משלוח</button>
+            <button mat-mini-fab color="accent" (click)="updateDelivery(d)"
+              *ngIf="context.info.weeklyFamilyAdmin||context.info.helperId==d.assignedHelper.value||context.info.helperId==f.assignedHelper.value">
+              <mat-icon>create</mat-icon>
+            </button>
+          </div>
+          <div>
+            {{d.status.listValue.helpText }}
+          </div>
+
+          <app-weekly-family-delivery-product-list *ngIf="d==deliveryList.currentDelivery" [list]="deliveryList">
+
+          </app-weekly-family-delivery-product-list>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-expansion-panel>
+
+  </ng-container>
 </mat-accordion>
