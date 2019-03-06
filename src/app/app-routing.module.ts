@@ -26,11 +26,13 @@ import { ProductsComponent } from './products/products.component';
 import { MyWeeklyFamiliesComponent } from './my-weekly-families/my-weekly-families.component';
 import { WeeklyPackerByFamilyComponent } from './weekly-packer-by-family/weekly-packer-by-family.component';
 import { WeeklyPackerByProductComponent } from './weekly-packer-by-product/weekly-packer-by-product.component';
+import { MyWeeklyFamilyDeliveriesComponent } from './my-weekly-family-deliveries/my-weekly-family-deliveries.component';
 
 
 
 const routes: Routes = [
   MyWeeklyFamiliesComponent.route,
+  MyWeeklyFamilyDeliveriesComponent.route,
   WeeklyPackerByFamilyComponent.route,
   WeeklyPackerByProductComponent.route,
   FamiliesComponent.route,
@@ -43,7 +45,7 @@ const routes: Routes = [
   FixAddressComponent.route,
   LoginFromSmsComponent.route,
   ProductsComponent.route,
-  
+
   //{ path: 'stam-test', component: StamTestComponent },
   MyFamiliesComponent.route,
   UpdateInfoComponent.route,
@@ -53,7 +55,7 @@ const routes: Routes = [
   { path: '', redirectTo: '/families', pathMatch: 'full' },
   { path: '**', redirectTo: '/families', pathMatch: 'full' }
 ];
- 
+
 evilStatics.routes.families = '/' + FamiliesComponent.route.path;
 evilStatics.routes.login = '/' + LoginComponent.route.path;
 evilStatics.routes.myFamilies = '/' + MyFamiliesComponent.route.path;

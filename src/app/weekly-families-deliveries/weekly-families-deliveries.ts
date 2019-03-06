@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Id, IdEntity, NumberColumn, changeDate, DateTimeColumn, SqlBuilder, QueryBuilder } from '../model-shared/types';
-import { WeeklyFamilyId, WeeklyFamilies } from '../weekly-families/weekly-families';
+import { WeeklyFamilyId, WeeklyFamilies, WeeklyFullFamilyInfo } from '../weekly-families/weekly-families';
 import { ClosedListColumn, StringColumn, BoolColumn, Entity, CompoundIdColumn, Column, DataColumnSettings } from 'radweb';
 import { EntityClass, Context, ServerContext, ContextEntity } from '../shared/context';
 import { BusyService } from '../select-popup/busy-service';
@@ -25,25 +25,31 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
     });
     this.deliveredOn.dontShowTimeForOlderDates = true;
   }
+  currentUserAllowedToUpdate() {
 
+    if (this.context.info.weeklyFamilyAdmin || this.context.info.helperId == this.assignedHelper.value)
+      return true;
+
+    return this.getFamily().assignedHelper.value == this.context.info.helperId;
+  }
 
   changeStatus(s: WeeklyFamilyDeliveryStatus) {
     if (this.status.listValue == WeeklyFamilyDeliveryStatus.Delivered)
       this.deliveredOn.value = '';
     this.status.listValue = s;
-    if (this.status.listValue == WeeklyFamilyDeliveryStatus.Delivered){
+    if (this.status.listValue == WeeklyFamilyDeliveryStatus.Delivered) {
       this.deliveredOn.dateValue = new Date();
       this.deliveredBy.value = this.context.info.helperId;
     }
     this.save();
   }
-  getFamily() { return this.context.for(WeeklyFamilies).lookup(f => f.id.isEqualTo(this.familyId)); }
+  getFamily() { return this.context.for(WeeklyFullFamilyInfo).lookup(f => f.id.isEqualTo(this.familyId)); }
   familyId = new WeeklyFamilyId();
   status = new WeeklyFamilyDeliveryStatusColumn();
   ordnial = new NumberColumn('סידורי');
   deliveredOn = new DateTimeColumn('תאריך מסירה');
-  deliveredBy = new HelperId(this.context,{caption:'נמסר על ידי'});
-  assignedHelper = new HelperId(this.context,{caption:'אחראית מסירה'});
+  deliveredBy = new HelperId(this.context, { caption: 'נמסר על ידי' });
+  assignedHelper = new HelperId(this.context, { caption: 'אחראית מסירה' });
 }
 
 
@@ -243,8 +249,8 @@ export interface StatusButtonEnabledHelper {
 }
 
 export class WeeklyFamilyDeliveryStatusColumn extends ClosedListColumn<WeeklyFamilyDeliveryStatus>{
-  constructor(settings?:DataColumnSettings<number, NumberColumn>) {
-    super(WeeklyFamilyDeliveryStatus, settings?settings: { caption: 'סטטוס שילוח' });
+  constructor(settings?: DataColumnSettings<number, NumberColumn>) {
+    super(WeeklyFamilyDeliveryStatus, settings ? settings : { caption: 'סטטוס שילוח' });
   }
 
 }

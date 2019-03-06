@@ -50,24 +50,6 @@
           <mat-expansion-panel-header>
             {{statusText(d)}}
           </mat-expansion-panel-header>
-
-
-
-          <div class="top-bar" #myDiv>
-            <button mat-raised-button color="primary" *ngIf="d.status.listValue.next" [disabled]="nextDisabled(d)"
-              (click)="d.changeStatus(d.status.listValue.next.status)">{{d.status.listValue.next.name}}</button>
-            <button mat-raised-button *ngIf="d.status.listValue.prev"
-              (click)="d.changeStatus(d.status.listValue.prev.status)">{{d.status.listValue.prev.name}}</button>
-            <button mat-raised-button *ngIf="allowDelete(d)" (click)="deleteDelivery(d)">מחק משלוח</button>
-            <button mat-mini-fab color="accent" (click)="updateDelivery(d)"
-              *ngIf="context.info.weeklyFamilyAdmin||context.info.helperId==d.assignedHelper.value||context.info.helperId==f.assignedHelper.value">
-              <mat-icon>create</mat-icon>
-            </button>
-          </div>
-          <div>
-            {{d.status.listValue.helpText }}
-          </div>
-
           <app-weekly-family-delivery-product-list *ngIf="d==deliveryList.currentDelivery" [list]="deliveryList">
 
           </app-weekly-family-delivery-product-list>
