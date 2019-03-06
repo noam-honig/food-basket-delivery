@@ -7,11 +7,11 @@
     </h4>
     <mat-accordion>
       <ng-container *ngFor="let d of s.deliveries">
-        <mat-expansion-panel  *ngIf="showDelivery(d)" (opened)="deliveryList.selectDelivery(d)">
+        <mat-expansion-panel *ngIf="showDelivery(d)" (opened)="deliveryList.selectDelivery(d)">
           <mat-expansion-panel-header>
             <div class="family-title">
               <div>
-                {{d.getFamily().name.value}} ({{d.getFamily().codeName.value}}) 
+                {{d.getFamily().name.value}} ({{d.getFamily().codeName.value}})
               </div>
               <div *ngIf="context.info.weeklyFamilyAdmin||packing">
                 {{d.assignedHelper.getValue()}}
