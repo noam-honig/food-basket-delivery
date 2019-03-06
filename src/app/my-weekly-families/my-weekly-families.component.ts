@@ -69,6 +69,8 @@ export class MyWeeklyFamiliesComponent implements OnInit {
     });
   }
   countFamilies() {
+    if (!this.families)
+    return 0;
     return this.families.filter(f => this.showFamily(f)).length;
   }
   updateFamily(f: WeeklyFullFamilyInfo) {

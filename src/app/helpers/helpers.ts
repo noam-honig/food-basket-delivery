@@ -34,7 +34,7 @@ export class Helpers extends IdEntity<HelperId>  {
             apiDataFilter: () => {
                 if (!context.isLoggedIn())
                     return this.id.isEqualTo("No User");
-                else if (!(context.info.deliveryAdmin || context.info.weeklyFamilyAdmin))
+                else if (!(context.info.deliveryAdmin || context.info.weeklyFamilyAdmin || context.info.weeklyFamilyPacker || context.info.weeklyFamilyVolunteer))
                     return this.id.isEqualTo(this.context.info.helperId);
             }
         });
@@ -108,7 +108,7 @@ export class HelperId extends Id implements HasAsyncGetTheValue {
             column: this,
             getValue: f => (f ? (<HelperId>(f).__getColumn(this)) : this).getValue(),
             hideDataOnInput: true,
-            click: f => dialog.selectHelper(s => (f?f.__getColumn(this):this).value = (s ? s.id.value : ''), filter),
+            click: f => dialog.selectHelper(s => (f ? f.__getColumn(this) : this).value = (s ? s.id.value : ''), filter),
             readonly: this.readonly,
             width: '200'
 

@@ -33,7 +33,7 @@ export class WeeklyPackerByFamilyComponent implements OnInit {
   
   getDeliveryName(d: WeeklyFamilyDeliveries) {
     
-    return d.getFamily().assignedHelper.getValue() +' - ' +d.getFamily().codeName.value;
+    return d.getFamily().codeName.value;
     
   }
   currentDelivery: WeeklyFamilyDeliveries;
