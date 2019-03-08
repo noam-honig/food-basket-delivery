@@ -35,6 +35,7 @@ export class MyWeeklyFamilyDeliveriesComponent implements OnInit {
         { status: WeeklyFamilyDeliveryStatus.Delivered, deliveries: [] }];
     }
     this.deliveries = await this.context.for(WeeklyFamilyDeliveries).find({
+      limit: 1000,
       where: d => (this.packing
         ? d.status.IsGreaterOrEqualTo(WeeklyFamilyDeliveryStatus.Pack.id).and(d.status.IsLessOrEqualTo(WeeklyFamilyDeliveryStatus.Ready.id))
         : d.status.IsDifferentFrom(WeeklyFamilyDeliveryStatus.Delivered.id))
@@ -66,7 +67,7 @@ export class MyWeeklyFamilyDeliveriesComponent implements OnInit {
 
 
   showDelivery(d: WeeklyFamilyDeliveries) {
-    if (this.packing==true)
+    if (this.packing == true)
       return true;
     if (this.onlyMyFamilies && d.assignedHelper.value != this.context.info.helperId)
       return false;

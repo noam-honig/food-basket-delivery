@@ -104,6 +104,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
   async selectFamiliy(f: WeeklyFullFamilyInfo) {
     this.currentFamilly = null;
     this.deliveries = await this.context.for(WeeklyFamilyDeliveries).find({
+      limit:1000,
       where: wfd => wfd.familyId.isEqualTo(f.id),
       orderBy: wfd => [{ column: wfd.ordnial, descending: true }]
     });
@@ -155,6 +156,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
     if (this.deliveries.length > 1) {
       this.dialog.YesNoQuestion('האם להעתיק את המוצרים מהמשלוח האחרון ' + this.deliveries[1].deliveredOn.relativeDateName() + '?', async () => {
         (await this.context.for(WeeklyFamilyDeliveryProducts).find({
+          limit:1000,
           where: p => p.delivery.isEqualTo(this.deliveries[1].id).and(
             p.requestQuanity.IsGreaterOrEqualTo(1))
         })).forEach(async p => {

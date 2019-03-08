@@ -38,7 +38,8 @@ export class WeeklyFamilyDeliveryList {
     this.currentDelivery = d;
     this.deliveryProducts = await this.context.for(WeeklyFamilyDeliveryProductStats).find({
       where: dp => dp.delivery.isEqualTo(d.id),
-      orderBy: dp => [dp.productOrder, dp.productName]
+      orderBy: dp => [dp.productOrder, dp.productName],
+      limit:1000
     });
 
     this.searchString = '';
