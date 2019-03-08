@@ -23,7 +23,7 @@ export class Helpers extends IdEntity<HelperId>  {
                         this.realStoredPassword.value = evilStatics.passwordHelper.generateHash(this.password.value);
                     }
                     if ((await context.for(Helpers).count()) == 0)
-                        this.deliveryAdmin.value = true;
+                        this.superAdmin.value = true;
 
                     await checkForDuplicateValue(this, this.phone);
                     if (this.isNew())
