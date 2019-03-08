@@ -39,7 +39,7 @@ export class WeeklyFamilyDeliveryList {
     this.deliveryProducts = await this.context.for(WeeklyFamilyDeliveryProductStats).find({
       where: dp => dp.delivery.isEqualTo(d.id),
       orderBy: dp => [dp.productOrder, dp.productName],
-      limit:1000
+      limit: 1000
     });
 
     this.searchString = '';
@@ -93,7 +93,10 @@ export class WeeklyFamilyDeliveryList {
     dp.product.value = p.id.value;
     dp.productName.value = p.name.value;
     dp.delivery.value = this.currentDelivery.id.value;
-    dp.requestQuanity.value = 1;
+    if (this.currentDelivery.status.listValue == WeeklyFamilyDeliveryStatus.Prepare)
+      dp.requestQuanity.value = 1;
+    else
+      dp.Quantity.value = 1;
     this.deliveryProducts.splice(0, 0, dp);
 
     await dp.saveQuantities(this.busy);
