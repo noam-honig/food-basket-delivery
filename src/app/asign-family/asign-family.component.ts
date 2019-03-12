@@ -41,6 +41,7 @@ export class AsignFamilyComponent implements OnInit {
     this.name = undefined;
     this.shortUrl = undefined;
     this.id = undefined;
+    this.familyLists.routeStats = undefined;
     this.preferRepeatFamilies = true;
     this.clearList();
     if (this.phone.length == 10) {
@@ -51,6 +52,8 @@ export class AsignFamilyComponent implements OnInit {
         this.name = helper.name.value;
         this.shortUrl = helper.shortUrlKey.value;
         this.id = helper.id.value;
+        this.familyLists.routeStats = helper.getRouteStats();
+        
         await this.refreshList();
       } else {
 
@@ -65,8 +68,11 @@ export class AsignFamilyComponent implements OnInit {
   langChange() {
     this.refreshBaskets();
   }
-  assignmentCanceled() {
+  async assignmentCanceled() {
     this.refreshBaskets();
+    AsignFamilyComponent.RefreshRoute(this.id).then(r => {
+      this.familyLists.routeStats = r;
+    });
   }
   smsSent() {
     this.dialog.Info("הודעת SMS נשלחה ל" + this.name);
@@ -91,6 +97,7 @@ export class AsignFamilyComponent implements OnInit {
   cities: CityInfo[] = [];
   specialFamilies = 0;
   repeatFamilies = 0;
+  
   preferRepeatFamilies = true;
   async refreshList() {
     await this.refreshBaskets();
@@ -114,6 +121,8 @@ export class AsignFamilyComponent implements OnInit {
     this.name = undefined;
     this.shortUrl = undefined;
     this.id = undefined;
+    this.familyLists.routeStats = undefined;
+
     this.numOfBaskets = 1;
     this.clearList();
 
@@ -128,6 +137,8 @@ export class AsignFamilyComponent implements OnInit {
         this.name = h.name.value;
         this.shortUrl = h.shortUrlKey.value;
         this.id = h.id.value;
+        this.familyLists.routeStats=h.getRouteStats();
+        
       }
       else {
         this.phone = '';
@@ -179,14 +190,13 @@ export class AsignFamilyComponent implements OnInit {
       this.cities = x.basketInfo.cities;
       this.specialFamilies = x.basketInfo.special;
       this.repeatFamilies = x.basketInfo.repeatFamilies;
+      this.familyLists.routeStats = x.routeStats;
     }
     else {
       this.refreshList();
       this.dialog.Info("לא נמצאה משפחה מתאימה");
     }
     this.id = x.helperId;
-
-
   }
   @RunOnServer({ allowed: c => c.isAdmin() })
   static async getBasketStatus(info: GetBasketStatusActionInfo, context?: Context): Promise<GetBasketStatusActionResponse> {
@@ -242,6 +252,12 @@ export class AsignFamilyComponent implements OnInit {
     result.baskets.sort((a, b) => b.unassignedFamilies - a.unassignedFamilies);
     return result;
   }
+  @RunOnServer({ allowed: c => c.isAdmin() })
+  static async RefreshRoute(helperId: string, context?: Context) {
+    let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id)) });
+    let h =await  context.for(Helpers).findFirst(h=>h.id.isEqualTo(helperId));
+    return await AsignFamilyComponent.optimizeRoute(h,existingFamilies, context);
+  }
 
   @RunOnServer({ allowed: c => c.isAdmin() })
   static async AddBox(info: AddBoxInfo, context?: Context) {
@@ -251,16 +267,19 @@ export class AsignFamilyComponent implements OnInit {
       addedBoxes: 0,
       shortUrl: undefined,
       families: [],
-      basketInfo: undefined
-    }
+      basketInfo: undefined,
+      routeStats: undefined
 
+    }
+    let r = await context.for(Helpers).findFirst(h => h.phone.isEqualTo(info.phone));
     if (!info.helperId) {
-      let r = await context.for(Helpers).findFirst(h => h.phone.isEqualTo(info.phone));
+      
       if (!r) {
         let h = context.for(Helpers).create();
         h.phone.value = info.phone;
         h.name.value = info.name;
         await h.save();
+        r=h;
         result.helperId = h.id.value;
         result.shortUrl = h.shortUrlKey.value;
       }
@@ -340,7 +359,7 @@ export class AsignFamilyComponent implements OnInit {
       }
 
     }
-    await AsignFamilyComponent.optimizeRoute(existingFamilies, context);
+    result.routeStats = await AsignFamilyComponent.optimizeRoute(r,existingFamilies, context);
     existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
     result.families = await context.for(Families).toPojoArray(existingFamilies);
     result.basketInfo = await AsignFamilyComponent.getBasketStatus({
@@ -350,10 +369,15 @@ export class AsignFamilyComponent implements OnInit {
     }, context);
     return result;
   }
-  static async optimizeRoute(families: Families[], context: Context) {
 
-    if (families.length <= 1)
+  static async optimizeRoute(helper: Helpers, families: Families[], context: Context) {
+
+    if (families.length < 1)
       return;
+    let result = {
+      totalKm: 0,
+      totalTime: 0
+    } as routeStats;
     let r = await getRouteInfo(families, true, context);
     if (r.status == 'OK' && r.routes && r.routes.length > 0 && r.routes[0].waypoint_order) {
       let i = 1;
@@ -366,9 +390,20 @@ export class AsignFamilyComponent implements OnInit {
         }
         i++;
       });
-      return r.routes[0].overview_polyline.points;
+      for (let i = 0; i < r.routes[0].legs.length - 1; i++) {
+        let l = r.routes[0].legs[i];
+        result.totalKm += l.distance.value;
+        result.totalTime += l.duration.value;
+      }
+      result.totalKm = Math.round(result.totalKm / 1000);
+      result.totalTime = Math.round(result.totalTime / 60);
+      helper.totalKm.value = result.totalKm;
+      helper.totalTime.value = result.totalTime;
+      helper.save();
 
     }
+    return result;
+
   }
   addSpecial() {
     this.selectService.selectFamily({
@@ -403,6 +438,7 @@ export interface AddBoxInfo {
   city: string;
   numOfBaskets: number;
   preferRepeatFamilies: boolean;
+
 }
 export interface AddBoxResponse {
   helperId: string;
@@ -410,7 +446,13 @@ export interface AddBoxResponse {
   families: any[];
   basketInfo: GetBasketStatusActionResponse
   addedBoxes: number;
+  routeStats: routeStats;
 
+
+}
+export interface routeStats {
+  totalKm: number;
+  totalTime: number;
 }
 
 function getInfo(r: any) {

@@ -5,6 +5,7 @@ import { Helpers } from '../helpers/helpers';
 import { MapComponent } from '../map/map.component';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
 import { Context } from '../shared/context';
+import { routeStats } from '../asign-family/asign-family.component';
 
 export class UserFamiliesList {
     map: MapComponent;
@@ -19,10 +20,13 @@ export class UserFamiliesList {
     helperId: string;
     helperName: string;
     helperOptional: Helpers;
+    routeStats: routeStats;
     async initForHelper(helperId: string, name: string, helperOptional?: Helpers) {
         this.helperOptional = helperOptional;
         this.helperId = helperId;
         this.helperName = name;
+        if (helperOptional)
+            this.routeStats = helperOptional.getRouteStats();
         await this.reload();
     }
     async initForFamilies(helperId: string, name: string, familiesPocoArray: any[]) {

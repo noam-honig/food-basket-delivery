@@ -1,14 +1,21 @@
 import * as radweb from 'radweb';
-import { ColumnSetting, Entity, FilterBase } from "radweb";
+import { ColumnSetting, Entity, FilterBase, NumberColumn } from "radweb";
 import { IdEntity, changeDate, Id, HasAsyncGetTheValue, checkForDuplicateValue, StringColumn, BoolColumn, updateSettings } from '../model-shared/types';
 import { SelectServiceInterface } from '../select-popup/select-service-interface';
 import { DataColumnSettings } from 'radweb';
 
 import { Context, MoreDataColumnSettings, EntityClass } from '../shared/context';
 import { evilStatics } from '../auth/evil-statics';
+import { routeStats } from '../asign-family/asign-family.component';
 
 @EntityClass
 export class Helpers extends IdEntity<HelperId>  {
+  getRouteStats(): routeStats {
+    return {
+        totalKm:this.totalKm.value,
+        totalTime:this.totalTime.value
+    }
+  }
     constructor(private context: Context) {
 
         super(new HelperId(context), {
@@ -63,6 +70,8 @@ export class Helpers extends IdEntity<HelperId>  {
         excludeFromApi: !this.context.isAdmin(),
         dbName: 'isAdmin'
     });
+    totalKm = new NumberColumn();
+    totalTime = new NumberColumn();
 
     superAdmin = new BoolColumn({
         caption: 'סופר מנהל'

@@ -58,7 +58,7 @@
           - {{b.unassignedFamilies}}</button>
       </ng-container>
       <h4 class="no-baskets" *ngIf="!baskets.length">לא נמצאו סלים מתאימים</h4>
-    </div>
+    </div>  
     <app-helper-families [familyLists]="familyLists" [partOfAssign]="true" (assignmentCanceled)="assignmentCanceled()"
       (assignSmsSent)="smsSent()"></app-helper-families>
   </span>
