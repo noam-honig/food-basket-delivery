@@ -56,7 +56,7 @@ describe('AppComponent', () => {
   });
   it("column dbname can reference root entity", () => {
     let sql = new SqlBuilder();
-    expect(sql.columnSum(p, pd.Quantity, {
+    expect(sql.columnSumInnerSelect(p, pd.Quantity, {
       from: pd,
       where: () => [sql.eq(pd.product, p.id)]
 

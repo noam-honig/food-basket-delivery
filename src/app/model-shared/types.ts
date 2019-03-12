@@ -282,7 +282,7 @@ export class SqlBuilder {
 
 
   }
-  columnSum(rootEntity: Entity<any>, col: Column<Number>, query: FromAndWhere) {
+  columnSumInnerSelect(rootEntity: Entity<any>, col: Column<Number>, query: FromAndWhere) {
     return this.columnDbName(rootEntity, {
       select: () => [this.build("sum(", col, ")")],
       from: query.from,
@@ -302,11 +302,11 @@ export class SqlBuilder {
       where: query.where
     });
   }
-  columnInnerSelect(rootEntity: Entity<any>,query: QueryBuilder) {
+  columnInnerSelect(rootEntity: Entity<any>, query: QueryBuilder) {
     this.addEntity(rootEntity, rootEntity.__getDbName());
     return '(' + this.query(query) + ' limit 1)';
   }
-  count(query: FromAndWhere, mappedColumn: Column<number>) {
+  countInnerSelect(query: FromAndWhere, mappedColumn: Column<number>) {
     return this.build("(", this.query({
       select: () => [this.build("count(*)")],
       from: query.from,
@@ -315,6 +315,9 @@ export class SqlBuilder {
       crossJoin: query.crossJoin,
       where: query.where
     }), ") ", mappedColumn);
+  }
+  countDistinct(col: Column<any>, mappedColumn: Column<number>) {
+    return this.build("count (distinct ",col,") " ,mappedColumn)
   }
   min(col: Column<any>, query: FromAndWhere, mappedColumn: Column<any>) {
     return this.build('(', this.query({
@@ -384,7 +387,7 @@ export class SqlBuilder {
 
   }
   case(args: CaseWhenItemHelper[], else_: any) {
-    if (args.length==0)
+    if (args.length == 0)
       return else_;
     let result = [];
     result.push('case');

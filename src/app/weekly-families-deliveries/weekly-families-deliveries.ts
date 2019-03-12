@@ -174,6 +174,42 @@ export class WeeklyFamilyDeliveryProductStats extends ContextEntity<string> {
     });
   }
 }
+@EntityClass
+export class WeeklyDeliveryStats extends ContextEntity<number>
+{
+  families = new NumberColumn();
+  deliveries = new NumberColumn();
+  products = new NumberColumn();
+  constructor(context: Context) {
+    super({
+      name: "WeeklyDeliveryStats",
+      allowApiRead: !!context.info.weeklyFamilyAdmin || !!context.info.weeklyFamilyVolunteer || !!context.info.weeklyFamilyPacker,
+      dbName: () => {
+        let f = new WeeklyFamilies(context);
+        let d = new WeeklyFamilyDeliveries(context);
+        let p = new WeeklyFamilyDeliveryProducts(context);
+        let sql = new SqlBuilder();
+        return sql.entityDbName({
+          select: () => [
+            sql.countDistinct(f.id, this.families),
+            sql.countDistinct(d.id, this.deliveries),
+            sql.build('sum (', p.Quantity, ') ', this.products)
+          ],
+          from: p,
+          innerJoin: () => [
+            { to: d, on: () => [sql.eq(d.id, p.delivery)] },
+            { to: f, on: () => [sql.eq(d.familyId, f.id)] }
+          ],
+          where: () => [
+            sql.eq(d.status, WeeklyFamilyDeliveryStatus.Delivered.id)
+          ]
+
+        });
+      }
+    })
+    this.initColumns(this.deliveries);
+  }
+}
 
 
 
@@ -285,7 +321,7 @@ export class Products extends IdEntity<ProductId>{
       let sql = new SqlBuilder();
       let wfdp = new WeeklyFamilyDeliveryProducts(new ServerContext());
       let wfd = new WeeklyFamilyDeliveries(new ServerContext());
-      return sql.columnSum(this, wfdp.requestQuanity, {
+      return sql.columnSumInnerSelect(this, wfdp.requestQuanity, {
         from: wfdp,
         innerJoin: () => [{
           to: wfd,

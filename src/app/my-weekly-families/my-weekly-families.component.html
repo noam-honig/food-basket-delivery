@@ -1,4 +1,7 @@
 <mat-accordion>
+  <div *ngIf="stats">
+    עד כה נמסרו {{stats.products.value}} מוצרים ב {{stats.deliveries.value}} משלוחים ל {{stats.families.value}} משפחות
+  </div>
   <div class="top-bar">
     <div>
       <mat-form-field class="full-width">

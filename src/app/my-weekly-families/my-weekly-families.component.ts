@@ -5,12 +5,13 @@ import { HolidayDeliveryAdmin, WeeklyFamilyVoulenteerGuard } from '../auth/auth-
 import { WeeklyFullFamilyInfo, WeeklyFamilies } from '../weekly-families/weekly-families';
 import { Context } from '../shared/context';
 
-import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts, Products, WeeklyFamilyDeliveryProductStats } from '../weekly-families-deliveries/weekly-families-deliveries';
+import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts, Products, WeeklyFamilyDeliveryProductStats, WeeklyDeliveryStats } from '../weekly-families-deliveries/weekly-families-deliveries';
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from '../select-popup/busy-service';
 import { WeeklyFamilyDeliveryList } from '../weekly-family-delivery-product-list/weekly-family-delivery-product-list.component';
 import { DataAreaSettings, ColumnSetting, DateColumn } from 'radweb';
 import { SelectService } from '../select-popup/select-service';
+import { RunOnServer } from '../auth/server-action';
 
 @Component({
   selector: 'app-my-weekly-families',
@@ -33,6 +34,9 @@ export class MyWeeklyFamiliesComponent implements OnInit {
   clearSearch() {
     this.searchString = '';
   }
+
+
+
   showFamily(f: WeeklyFullFamilyInfo) {
     if (this.onlyMyFamilies && f.assignedHelper.value != this.context.info.helperId)
       return false;
@@ -94,17 +98,18 @@ export class MyWeeklyFamiliesComponent implements OnInit {
     });
   }
 
-
+  stats: WeeklyDeliveryStats;
   async ngOnInit() {
 
     this.families = await this.context.for(WeeklyFullFamilyInfo).find({ orderBy: f => f.name, limit: 1000 });
+    this.stats = await this.context.for(WeeklyDeliveryStats).findFirst();
   }
   families: WeeklyFullFamilyInfo[];
   currentFamilly: WeeklyFullFamilyInfo;
   async selectFamiliy(f: WeeklyFullFamilyInfo) {
     this.currentFamilly = null;
     this.deliveries = await this.context.for(WeeklyFamilyDeliveries).find({
-      limit:1000,
+      limit: 1000,
       where: wfd => wfd.familyId.isEqualTo(f.id),
       orderBy: wfd => [{ column: wfd.ordnial, descending: true }]
     });
@@ -116,7 +121,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
 
   deliveryList = new WeeklyFamilyDeliveryList(this.context, this.busy, this.selectService, this.dialog, d => {
     this.deliveries.splice(this.deliveries.indexOf(d), 1);
-  },()=>{});
+  }, () => { });
   statusText(d: WeeklyFamilyDeliveries) {
     var x = d.status.displayValue;
     if (d.status.listValue == WeeklyFamilyDeliveryStatus.Delivered)
@@ -156,7 +161,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
     if (this.deliveries.length > 1) {
       this.dialog.YesNoQuestion('האם להעתיק את המוצרים מהמשלוח האחרון ' + this.deliveries[1].deliveredOn.relativeDateName() + '?', async () => {
         (await this.context.for(WeeklyFamilyDeliveryProducts).find({
-          limit:1000,
+          limit: 1000,
           where: p => p.delivery.isEqualTo(this.deliveries[1].id).and(
             p.requestQuanity.IsGreaterOrEqualTo(1))
         })).forEach(async p => {
