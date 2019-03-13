@@ -134,8 +134,9 @@ export class Families extends IdEntity<FamilyId>  {
       outerJoin: () => [{ to: fde, on: () => [sql.eq(fde.deliveryEvent, de.id)] }],
       where: () => [sql.eq(fde.family, this.id),
       sql.ne(de.isActiveEvent, true),
-      sql.not(sql.in(fde.deliverStatus, DeliveryStatus.NotInEvent.id, DeliveryStatus.ReadyForDelivery.id)),
-    ],
+      sql.not(sql.in(fde.deliverStatus, DeliveryStatus.NotInEvent.id)),
+      sql.ne(fde.courier,"''")
+      ],
       orderBy: [{ column: de.deliveryDate, descending: true }]
     });
   }
