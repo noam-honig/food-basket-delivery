@@ -10,12 +10,7 @@ import { routeStats } from '../asign-family/asign-family.component';
 
 @EntityClass
 export class Helpers extends IdEntity<HelperId>  {
-  getRouteStats(): routeStats {
-    return {
-        totalKm:this.totalKm.value,
-        totalTime:this.totalTime.value
-    }
-  }
+  
     constructor(private context: Context) {
 
         super(new HelperId(context), {
@@ -72,6 +67,12 @@ export class Helpers extends IdEntity<HelperId>  {
     });
     totalKm = new NumberColumn();
     totalTime = new NumberColumn();
+    getRouteStats(): routeStats {
+        return {
+            totalKm:this.totalKm.value,
+            totalTime:this.totalTime.value
+        }
+      }
 
     superAdmin = new BoolColumn({
         caption: 'סופר מנהל'
@@ -105,6 +106,7 @@ export class Helpers extends IdEntity<HelperId>  {
             text += possible.charAt(Math.floor(Math.random() * possible.length));
         return text;
     }
+ 
 }
 
 export class HelperId extends Id implements HasAsyncGetTheValue {

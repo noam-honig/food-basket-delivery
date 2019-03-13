@@ -22,10 +22,10 @@ export class DeliveryFollowUpComponent implements OnInit {
   }
 
   familyLists = new UserFamiliesList(this.context);
-  currentlHelper:Helpers;
-  selectCourier(c: Helpers) {
+  currentlHelper:HelpersAndStats;
+  async selectCourier(c: HelpersAndStats) {
     this.currentlHelper = c;
-    this.familyLists.initForHelper(c.id.value, c.name.value, c);
+    this.familyLists.initForHelper(c.id.value, c.name.value, await this.context.for(Helpers).findFirst(h=>h.id.isEqualTo(c.id)));
 
   }
 

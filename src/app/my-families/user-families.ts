@@ -22,16 +22,19 @@ export class UserFamiliesList {
     helperOptional: Helpers;
     routeStats: routeStats;
     async initForHelper(helperId: string, name: string, helperOptional?: Helpers) {
+        
         this.helperOptional = helperOptional;
         this.helperId = helperId;
         this.helperName = name;
-        if (helperOptional)
+        if (helperOptional){
             this.routeStats = helperOptional.getRouteStats();
+        }
         await this.reload();
+      
     }
     async initForFamilies(helperId: string, name: string, familiesPocoArray: any[]) {
         this.helperId = helperId;
-        this.helperName = this.helperName;
+        this.helperName = name;
         this.allFamilies = familiesPocoArray.map(x => this.context.for(Families).create().source.fromPojo(x));
         this.initFamilies();
     }
