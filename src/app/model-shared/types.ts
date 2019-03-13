@@ -210,6 +210,7 @@ export async function checkForDuplicateValue(row: Entity<any>, column: Column<an
 }
 
 export class SqlBuilder {
+
   str(val: string): string | radweb.Column<string> {
     return '\'' + val.replace('\'', '\'\'') + '\'';
   }
@@ -317,7 +318,7 @@ export class SqlBuilder {
     }), ") ", mappedColumn);
   }
   countDistinct(col: Column<any>, mappedColumn: Column<number>) {
-    return this.build("count (distinct ",col,") " ,mappedColumn)
+    return this.build("count (distinct ", col, ") ", mappedColumn)
   }
   min(col: Column<any>, query: FromAndWhere, mappedColumn: Column<any>) {
     return this.build('(', this.query({
@@ -341,6 +342,9 @@ export class SqlBuilder {
   }
   in(col: Column<any>, ...values: any[]) {
     return this.build(col, ' in (', values, ')');
+  }
+  not(arg0: string): any {
+    return this.build(' not (', arg0, ')');
   }
   query(query: QueryBuilder) {
 
