@@ -1,10 +1,15 @@
 import { RouteReuseStrategy, DetachedRouteHandle, ActivatedRouteSnapshot } from "@angular/router";
+import { Context } from "./shared/context";
+import { Injectable } from "@angular/core";
 
+@Injectable()
 // This impl. bases upon one that can be found in the router's test cases.
 export class CustomReuseStrategy implements RouteReuseStrategy {
 
     handlers: { [key: string]: DetachedRouteHandle } = {};
-
+    constructor(
+        private context: Context
+    ) { }
     shouldDetach(route: ActivatedRouteSnapshot): boolean {
         let x = (<any>route.component).prototype[reuseComponentOnNavigationAndCallMeWhenNavigatingToIt];
         console.debug('CustomReuseStrategy:shouldDetach', this.getRouteInfo(route), this.handlers);
@@ -16,11 +21,12 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
         this.handlers[route.routeConfig.path] = handle;
         if (handle) {
             handle[this.reloadKey] = true;
-            
+
         }
     }
 
     shouldAttach(route: ActivatedRouteSnapshot): boolean {
+        this.context.clearAllCache();
         let result = !!route.routeConfig && !!this.handlers[route.routeConfig.path];
         console.debug('CustomReuseStrategy:shouldAttach', this.getRouteInfo(route), result, this.handlers);
         return result;
@@ -37,7 +43,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
                 if (m) {
                     if (result[this.reloadKey]) {
                         result.componentRef.instance[reuseComponentOnNavigationAndCallMeWhenNavigatingToIt]();
-                        
+
                         result[this.reloadKey] = false;
                     }
                 }

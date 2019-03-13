@@ -1,6 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DeliveryStatus } from "../families/DeliveryStatus";
+import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-update-comment',
@@ -11,6 +13,7 @@ export class UpdateCommentComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<UpdateCommentComponent>,
+    private context: Context,
     @Inject(MAT_DIALOG_DATA) public data: UpdateCommentComponentData
   ) {
 
@@ -25,7 +28,7 @@ export class UpdateCommentComponent implements OnInit {
     let r = s.toString();
     if (r.startsWith('לא נמסר, '))
       r = r.substring(9);
-      
+
     return r;
   }
 
@@ -46,13 +49,19 @@ export class UpdateCommentComponent implements OnInit {
     return false;
   }
 
+  helpText() {
+    let s = ApplicationSettings.get(this.context);
+    if (this.data.showFailStatus)
+      return s.commentForProblem.value;
+    else return s.commentForSuccessDelivery.value;
 
+  }
 }
 
 export interface UpdateCommentComponentData {
   showFailStatus?: boolean,
-  assignerName:string,
-  assignerPhone:string,
+  assignerName: string,
+  assignerPhone: string,
 
   comment: string,
   ok: (comment: string, failStatusId: number) => void,

@@ -17,7 +17,7 @@ export class DialogService {
     }
     Error(err: string): any {
 
-        this.YesNoQuestion(err, () => { });
+        this.YesNoQuestion(err);
     }
     private mediaMatcher: MediaQueryList = matchMedia(`(max-width: 720px)`);
 
@@ -76,7 +76,7 @@ export class DialogService {
             data
         });
     }
-    YesNoQuestion(question: string, onYes: () => void) {
+    YesNoQuestion(question: string, onYes?: () => void) {
         let data: YesNoQuestionComponentData = {
             question: question,
             onYes: onYes

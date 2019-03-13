@@ -9,6 +9,9 @@ export class ApplicationSettings extends ContextEntity<number>  {
   smsText = new StringColumn('תוכן הודעת SMS');
   logoUrl = new StringColumn('לוגו URL');
   address = new StringColumn("כתובת מרכז השילוח");
+  commentForSuccessDelivery = new StringColumn('הודעה למשנע כאשר נמסר בהצלחה');
+  commentForProblem = new StringColumn('הודעה למשנע כאשר יש בעיה');
+  messageForDoneDelivery = new StringColumn('הודעה למשנע כאשר סיים את כל המשפחות');
   addressApiResult = new StringColumn();
   private _lastString: string;
   private _lastGeo: GeocodeInformation;

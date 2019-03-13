@@ -58,8 +58,8 @@ export async function serverInit() {
         h.name.value = 'רגיל';
         await h.save();
     }
-    await foreachSync(await context.for(WeeklyFamilyDeliveries).find({ where: d => d.assignedHelper.isEqualTo('') }),async d=>{
-        let f =await  context.for(WeeklyFamilies).lookupAsync(f=>f.id.isEqualTo(d.familyId));
+    await foreachSync(await context.for(WeeklyFamilyDeliveries).find({ where: d => d.assignedHelper.isEqualTo('') }), async d => {
+        let f = await context.for(WeeklyFamilies).lookupAsync(f => f.id.isEqualTo(d.familyId));
         d.assignedHelper.value = f.assignedHelper.value;
         await d.save();
 
@@ -82,14 +82,23 @@ export async function serverInit() {
     }
 
 
-    if ((await context.for(ApplicationSettings).count()) == 0) {
-        let settings = context.for(ApplicationSettings).create();
+
+    let settings = await context.for(ApplicationSettings).lookupAsync(s => s.id.isEqualTo(1));
+    if (settings.isNew()) {
         settings.id.value = 1;
         settings.organisationName.value = 'שם הארגון שלי';
         settings.logoUrl.value = '/assets/apple-touch-icon.png';
         settings.smsText.value = 'שלום !משנע!\n לחלוקת חבילות !ארגון! לחץ על: !אתר! \nתודה !שולח!';
-        await settings.save();
     }
+    if (!settings.commentForSuccessDelivery.value)
+        settings.commentForSuccessDelivery.value = 'נשמח אם תכתוב לנו הערה על מה שראית והיה';
+    if (!settings.commentForProblem.value)
+        settings.commentForProblem.value = 'נשמח אם תכתוב לנו הערה על מה שראית והיה';
+    if (!settings.messageForDoneDelivery.value) {
+        settings.messageForDoneDelivery.value = 'תודה על כל העזרה, נשמח אם תתנדבו שוב';
+    }
+    await settings.save();
+
 
     let images = await context.for(ApplicationImages).findFirst(ap => ap.id.isEqualTo(1));
     if (!images) {

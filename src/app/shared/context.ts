@@ -10,6 +10,10 @@ import { DataApiSettings } from "radweb";
 
 @Injectable()
 export class Context {
+    clearAllCache(): any {
+        this.cache = {};
+        this._lookupCache = new stamEntity();
+    }
     isAdmin() {
         return !!this.info && !!this.info.deliveryAdmin;
     }
@@ -49,6 +53,7 @@ export class Context {
             return this.cache[classType.__key] as SpecificEntityHelper<lookupIdType, T>;
         return this.cache[classType.__key] = new SpecificEntityHelper<lookupIdType, T>(this.create(c), this._lookupCache);
     }
+
     private _lookupCache = new stamEntity();
 }
 export class ServerContext extends Context {
@@ -78,7 +83,7 @@ function buildEntityOptions(o: ContextEntityOptions | string): EntityOptions | s
     return {
         name: o.name,
         caption: o.caption,
-        dbName: o.dbName ,
+        dbName: o.dbName,
         onSavingRow: o.onSavingRow,
     }
 }
@@ -163,7 +168,7 @@ export interface MoreDataColumnSettings<type, colType> extends DataColumnSetting
 }
 export interface ContextEntityOptions {
     name: string;//required
-    dbName?: string|(() => string);
+    dbName?: string | (() => string);
     caption?: string;
     allowApiRead?: boolean;
     allowApiUpdate?: boolean;

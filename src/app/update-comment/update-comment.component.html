@@ -15,7 +15,7 @@
   </div>
 
   <mat-dialog-content>
-    נשמח אם תכתוב לנו הערה על מה שראית והיה
+  {{helpText()}}
     <textarea class="form-control" rows="3" [(ngModel)]="data.comment"></textarea>
   </mat-dialog-content>
 

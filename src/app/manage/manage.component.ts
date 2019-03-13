@@ -32,7 +32,7 @@ export class ManageComponent implements OnInit {
     allowDelete: true,
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
   });
-  sources =this.context.for(FamilySources).gridSettings( {
+  sources = this.context.for(FamilySources).gridSettings({
     columnSettings: s => [
       s.name,
       s.phone,
@@ -47,12 +47,15 @@ export class ManageComponent implements OnInit {
     allowUpdate: true,
     columnSettings: s => [
       s.organisationName,
-      s.logoUrl,
       s.address,
       {
         caption: 'כתובת כפי שגוגל הבין',
         getValue: s => s.getGeocodeInformation().getAddress()
-      }
+      },
+      s.logoUrl,
+      s.commentForSuccessDelivery,
+      s.commentForProblem,
+      s.messageForDoneDelivery
 
 
     ]
