@@ -8,15 +8,21 @@ import { foreachEntityItem, foreachSync } from "../shared/utils";
 import { serverInit } from "./serverInit";
 import * as XLSX from 'xlsx';
 
-import { Families } from "../families/families";
+import { Families, FamiliesSmall } from "../families/families";
+import { ServerContext } from "../shared/context";
 
 serverInit();
 
 export async function DoIt() {
     try {
 
-       let hs = new HelpersAndStats(undefined);
-       let cols = hs.__iterateColumns();
+       /* var sc = new ServerContext();
+        console.time('find');
+        var f = await sc.for(Families).find({});
+        console.timeEnd('find');
+        console.log(f.length);*/
+
+     //   await ImportFromExcel();
     }
     catch (err) {
         console.log(err);
@@ -38,36 +44,43 @@ async function getGeolocationInfo() {
 }
 async function ImportFromExcel() {
 
-    let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\xxx.xlsx");
-    let s = wb.Sheets[wb.SheetNames[1]];
+    let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\בתי מרקחת 2017 610415.xlsx");
+    let s = wb.Sheets[wb.SheetNames[0]];
     let o = XLSX.utils.sheet_to_json(s);
+    let context = new ServerContext();
     let found = true;
+    let i=0;
     await foreachSync(o, async r => {
         try {
 
-            let f = new Families(undefined);
+            let f = context.for(Families).create();
             let get = x => {
                 if (!r[x])
                     return '';
                 return r[x];
             };
-            f.appartment.value = r["דירה"];
-            f.address.value = (get("כתובת") + ' ' + get("מספר").trim() + ' ' + get("עיר"));
-            f.familyMembers.value = +r["מס' נפשות"];
-            f.name.value = (get("שם משפחה") + " " + get("שם פרטי")).trim();
+            //    f.appartment.value = r["דירה"];
+            f.address.value = (get("address") + ' ' + get("city").trim());
+            //   f.familyMembers.value = +r["מס' נפשות"];
+            //   f.name.value = (get("שם משפחה") + " " + get("שם פרטי")).trim();
+            f.name.value = get("STOR_NAME");
+            f.iDinExcel.value = get("CODE");
             if (!f.name.value) {
                 f.name.value = '!ללא שם ';
             }
-            f.phone1.value = r["טלפון"];
-            f.addressComment.value = r["הערות"];
-            if (found) {
+            
+            f.phone1.value = r["phone"];
+            await f.save();
+            console.log(i++,r);
+         //   f.addressComment.value = r["הערות"];
+            /*if (found) {
                 await f.save();
             }
             else if (f.address.value == 'טטט')
-                found = true;
+                found = true;*/
         }
         catch (err) {
-            console.log(err, o);
+            console.log(err, r);
         }
 
     });

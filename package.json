@@ -21,7 +21,6 @@
     "e2e": "ng e2e",
     "server:execute": "node dist-server/src/app/server/server.js",
     "server:debug": "node --inspect --debug-brk dist-server/src/app/server/server.js",
-    "preRunSomething": "npm run server:build",
     "RunSomething": "node --inspect --debug-brk dist-server/src/app/server/doSomething.js",
     "server-watch": "ts-node-dev --respawn --project tsconfig.server.json  src/app/server/server.ts",
     "server-build-and-run": "npm run server:build && npm run server:execute"

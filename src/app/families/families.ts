@@ -16,6 +16,7 @@ import { FamilyDelveryEventId, FamilyDeliveryEvents } from "../delivery-events/F
 
 @EntityClass
 export class Families extends IdEntity<FamilyId>  {
+  
   constructor(private context: Context) {
     super(new FamilyId(),
       {
@@ -125,6 +126,7 @@ export class Families extends IdEntity<FamilyId>  {
   courierComments = new StringColumn('הערות מסירה');
 
   private dbNameFromLastDelivery(col: (fde: FamilyDeliveryEvents) => Column<any>, alias: string) {
+    
     let de = new DeliveryEvents(this.context);
     let fde = new FamilyDeliveryEvents(this.context);
     let sql = new SqlBuilder();
@@ -135,7 +137,7 @@ export class Families extends IdEntity<FamilyId>  {
       where: () => [sql.eq(fde.family, this.id),
       sql.ne(de.isActiveEvent, true),
       sql.not(sql.in(fde.deliverStatus, DeliveryStatus.NotInEvent.id)),
-      sql.ne(fde.courier,"''")
+      sql.ne(fde.courier, "''")
       ],
       orderBy: [{ column: de.deliveryDate, descending: true }]
     });
@@ -288,7 +290,30 @@ export class FamilyId extends Id { }
 
 
 
+@EntityClass
+export class FamiliesSmall extends IdEntity<FamilyId>  {
+  constructor(private context: Context) {
+    super(new FamilyId(),
+      {
+        name: "FamiliesSmall",
+        allowApiRead: false,
+        allowApiUpdate: false,
+        allowApiDelete: false,
+        allowApiInsert: false,
+        dbName: () => {
+          let f = context.for(Families);
+          return f.create().__getDbName();
+        }
 
+
+      });
+    this.initColumns();
+
+  }
+
+
+
+}
 
 
 

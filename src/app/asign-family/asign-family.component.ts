@@ -261,7 +261,8 @@ export class AsignFamilyComponent implements OnInit {
 
   @RunOnServer({ allowed: c => c.isAdmin() })
   static async AddBox(info: AddBoxInfo, context?: Context) {
-
+    console.time('addBox');
+    console.time('midBox');
     let result: AddBoxResponse = {
       helperId: info.helperId,
       addedBoxes: 0,
@@ -284,8 +285,9 @@ export class AsignFamilyComponent implements OnInit {
         result.shortUrl = h.shortUrlKey.value;
       }
     }
-
+    console.time('existingFamilies');
     let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id)) });
+    console.timeEnd('existingFamilies');
     for (let i = 0; i < info.numOfBaskets; i++) {
 
       let getFamilies = async () => {
@@ -307,11 +309,13 @@ export class AsignFamilyComponent implements OnInit {
           }
         });
       }
+      console.time('getFamilies');
       let waitingFamilies = await getFamilies();
       if (info.preferRepeatFamilies && waitingFamilies.length == 0) {
         info.preferRepeatFamilies = false;
         waitingFamilies = await getFamilies();
       }
+      console.timeEnd('getFamilies');
 
       if (waitingFamilies.length > 0) {
         if (existingFamilies.length == 0) {
@@ -339,7 +343,7 @@ export class AsignFamilyComponent implements OnInit {
             return r;
 
           }
-
+          console.time('findClosest');
           let f = waitingFamilies[0];
           let dist = getDistance(f.getGeocodeInformation().location());
           for (let i = 1; i < waitingFamilies.length; i++) {
@@ -349,6 +353,7 @@ export class AsignFamilyComponent implements OnInit {
               f = waitingFamilies[i]
             }
           }
+          console.timeEnd('findClosest');
           f.courier.value = result.helperId;
 
           await f.save();
@@ -359,14 +364,20 @@ export class AsignFamilyComponent implements OnInit {
       }
 
     }
+    console.time('optimizeRoute');
     result.routeStats = await AsignFamilyComponent.optimizeRoute(r,existingFamilies, context);
+    console.timeEnd('optimizeRoute');
     existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
     result.families = await context.for(Families).toPojoArray(existingFamilies);
+    console.time('getBasketStatus');
     result.basketInfo = await AsignFamilyComponent.getBasketStatus({
       filterCity: info.city,
       filterLanguage: info.language,
       helperId: info.helperId
     }, context);
+    console.timeEnd('getBasketStatus');
+    console.timeEnd('addBox');
+    console.timeEnd('midBox');
     return result;
   }
 

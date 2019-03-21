@@ -18,6 +18,7 @@ import { ServerContext, allEntities } from '../shared/context';
 import '../app.module';
 import { WeeklyFamilyDeliveries } from '../weekly-families-deliveries/weekly-families-deliveries';
 import { WeeklyFamilies } from '../weekly-families/weekly-families';
+import { ActualSQLServerDataProvider } from 'radweb-server';
 
 
 
@@ -35,6 +36,9 @@ export async function serverInit() {
     let dbUrl = process.env.DATABASE_URL;
     if (process.env.HEROKU_POSTGRESQL_GREEN_URL)
         dbUrl = process.env.HEROKU_POSTGRESQL_GREEN_URL;
+    if (process.env.logSqls) {
+        ActualSQLServerDataProvider.LogToConsole = true;
+    }
     const pool = new Pool({
         connectionString: dbUrl,
         ssl: ssl
@@ -67,12 +71,12 @@ export async function serverInit() {
 
 
 
-    console.log('fix city start');
+/*
     await context.for(Families).foreach(f => f.city.isEqualTo(''), async ff => {
         ff.city.value = ff.getGeocodeInformation().getCity();
         await ff.save();
     });
-
+*/
     if ((await context.for(DeliveryEvents).count()) == 0) {
         let de = context.for(DeliveryEvents).create();
         de.name.value = 'אירוע החלוקה הראשון';
@@ -106,7 +110,7 @@ export async function serverInit() {
         images.id.value = 1;
         await images.save();
     }
-    console.log('fix city done');
+
 
 
 
