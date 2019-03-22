@@ -13,6 +13,8 @@ export class Context {
     clearAllCache(): any {
         this.cache = {};
         this._lookupCache = new stamEntity();
+        //note that this is problematic - since all the values of rows that are used are turned temporarally to empty.
+        //this caused the logo to flicker - so i cached it specifically - but this sucks :)
     }
     isAdmin() {
         return !!this.info && !!this.info.deliveryAdmin;
