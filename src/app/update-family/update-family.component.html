@@ -31,7 +31,7 @@
             </div>
 
         </mat-expansion-panel-header>
-        <div class="addressProblem" *ngIf="families.currentRow.getGeocodeInformation().partialMatch()"><span class="badAddressTitle">שים
+        <div class="addressProblem" *ngIf="families.currentRow.getGeocodeInformation().partialMatch()&&!families.currentRow.isNew()"><span class="badAddressTitle">שים
                 לב, כתובת לא מדוייקת</span>
             גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת. יש להשוות בין השדה "כתובת" לשדה "כתובת כפי שגוגל הבין".
             <br>אפשר להעזר בקישור "פתחי גוגל" כדי לחפש את הכתובת הנכונה ולעדכן.

@@ -26,7 +26,7 @@ export class GeocodeInformation {
     }
     getAddress() {
         if (!this.ok())
-            return '!!! NOT OK!!!';
+            return 'יש לעדכן כתובת ולשמור את הרשומה.';
         let r = this.info.results[0].formatted_address;
         let i = r.lastIndexOf(', ישראל');
         if (i > 0)
