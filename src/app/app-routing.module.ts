@@ -27,6 +27,7 @@ import { MyWeeklyFamiliesComponent } from './my-weekly-families/my-weekly-famili
 import { WeeklyPackerByFamilyComponent } from './weekly-packer-by-family/weekly-packer-by-family.component';
 import { WeeklyPackerByProductComponent } from './weekly-packer-by-product/weekly-packer-by-product.component';
 import { MyWeeklyFamilyDeliveriesComponent } from './my-weekly-family-deliveries/my-weekly-family-deliveries.component';
+import { AddressProblemComponent } from './address-problem/address-problem.component';
 
 
 
@@ -35,10 +36,11 @@ const routes: Routes = [
   FamiliesComponent.route,
   NewsComponent.route,
   DeliveryFollowUpComponent.route,
+  AddressProblemComponent.route,
   HelpersComponent.route,
   DeliveryEventsComponent.route,
   ManageComponent.route,
-  FixAddressComponent.route,
+  
   MyWeeklyFamiliesComponent.route,
   MyWeeklyFamilyDeliveriesComponent.route,
   WeeklyPackerByFamilyComponent.route,

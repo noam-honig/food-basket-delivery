@@ -1,4 +1,4 @@
-import { Entity, IDataSettings, GridSettings, Column, NumberColumn, DataList, EntityOptions, ColumnHashSet } from "radweb";
+import { Entity, IDataSettings, GridSettings, Column, NumberColumn, DataList, EntityOptions, ColumnHashSet, NumberColumnSettings } from "radweb";
 import { EntitySourceFindOptions, FilterBase, FindOptionsPerEntity, DataProviderFactory, DataColumnSettings, DataApiRequest } from "radweb";
 import { foreachSync } from "./utils";
 import { evilStatics } from "../auth/evil-statics";
@@ -165,6 +165,9 @@ export interface hasMoreDataColumnSettings {
 }
 export interface MoreDataColumnSettings<type, colType> extends DataColumnSettings<type, colType> {
     excludeFromApi?: boolean;
+}
+export interface MoreDataNumberColumnSettings extends MoreDataColumnSettings<number, NumberColumn>, NumberColumnSettings {
+    
 }
 export interface ContextEntityOptions {
     name: string;//required

@@ -4,7 +4,7 @@ import { YesNoColumn } from "./YesNo";
 import { LanguageColumn } from "./Language";
 import { FamilySourceId } from "./FamilySources";
 import { BasketId } from "./BasketType";
-import { NumberColumn, StringColumn, IdEntity, Id, changeDate, DateTimeColumn, SqlBuilder } from "../model-shared/types";
+import { NumberColumn, StringColumn, IdEntity, Id, changeDate, DateTimeColumn, SqlBuilder, BoolColumn } from "../model-shared/types";
 import { ColumnSetting, Column } from "radweb";
 import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
 import { myAuthInfo } from "../auth/my-auth-info";
@@ -12,11 +12,12 @@ import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelper
 import { Context, EntityClass } from "../shared/context";
 import { DeliveryEvents } from "../delivery-events/delivery-events";
 import { FamilyDelveryEventId, FamilyDeliveryEvents } from "../delivery-events/FamilyDeliveryEvents";
+import { Input } from "@angular/core";
 
 
 @EntityClass
 export class Families extends IdEntity<FamilyId>  {
-
+  
   constructor(private context: Context) {
     super(new FamilyId(),
       {
@@ -40,6 +41,10 @@ export class Families extends IdEntity<FamilyId>  {
               if (geo.ok()) {
                 this.city.value = geo.getCity();
               }
+              this.addressOk.value = !geo.partialMatch();
+              this.addressLongitude.value = geo.location().lng;
+              this.addressLatitude.value = geo.location().lat;
+
             }
             if (this.isNew()) {
               this.createDate.dateValue = new Date();
@@ -125,6 +130,10 @@ export class Families extends IdEntity<FamilyId>  {
   routeOrder = new NumberColumn();
   courierComments = new StringColumn('הערות מסירה');
 
+  addressLongitude = new NumberColumn({decimalDigits:8});
+  addressLatitude = new NumberColumn({decimalDigits:8});
+  addressOk = new BoolColumn({caption:'כתובת תקינה',readonly:true});
+  
   readyFilter(city?: string, language?: number) {
     let where = this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
       this.courier.isEqualTo(''));
@@ -238,8 +247,7 @@ export class Families extends IdEntity<FamilyId>  {
     }
     return this.deliverStatus.displayValue;
   }
-
-
+  
   createDate = new changeDate({ excludeFromApi: !this.context.isAdmin(), caption: 'מועד הוספה' });
   createUser = new HelperIdReadonly(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'משתמש מוסיף' });
 

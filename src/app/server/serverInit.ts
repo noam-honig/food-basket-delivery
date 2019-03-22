@@ -67,16 +67,21 @@ export async function serverInit() {
         d.assignedHelper.value = f.assignedHelper.value;
         await d.save();
 
-    })
+    });
 
 
 
-/*
-    await context.for(Families).foreach(f => f.city.isEqualTo(''), async ff => {
+
+
+    await context.for(Families).foreach(f => f.addressLongitude.isEqualTo(0), async ff => {
+        let g = ff.getGeocodeInformation();
+        ff.addressOk.value = !g.partialMatch();
+        ff.addressLongitude.value = g.location().lng;
+        ff.addressLatitude.value = g.location().lat;
         ff.city.value = ff.getGeocodeInformation().getCity();
         await ff.save();
     });
-*/
+
     if ((await context.for(DeliveryEvents).count()) == 0) {
         let de = context.for(DeliveryEvents).create();
         de.name.value = 'אירוע החלוקה הראשון';

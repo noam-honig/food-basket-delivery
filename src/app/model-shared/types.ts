@@ -2,7 +2,7 @@ import * as uuid from 'uuid';
 import * as radweb from 'radweb';
 import { DataProviderFactory, EntityOptions, Entity, Column, Filter, FilterBase, SortSegment } from "radweb";
 
-import { ContextEntity, ContextEntityOptions, MoreDataColumnSettings, hasMoreDataColumnSettings } from '../shared/context';
+import { ContextEntity, ContextEntityOptions, MoreDataColumnSettings, hasMoreDataColumnSettings, MoreDataNumberColumnSettings } from '../shared/context';
 import { BrowserPlatformLocation } from '@angular/platform-browser/src/browser/location/browser_platform_location';
 import { query } from '@angular/animations';
 export class IdEntity<idType extends Id> extends ContextEntity<string>
@@ -44,7 +44,7 @@ export class NumberColumn extends radweb.NumberColumn implements hasMoreDataColu
   __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
     return this.settingsOrCaption as MoreDataColumnSettings<any, any>;
   }
-  constructor(private settingsOrCaption?: MoreDataColumnSettings<number, NumberColumn> | string) {
+  constructor(private settingsOrCaption?: MoreDataNumberColumnSettings | string) {
     super(settingsOrCaption);
   }
 }

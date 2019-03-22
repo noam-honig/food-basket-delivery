@@ -1,11 +1,12 @@
 <button mat-mini-fab style="margin-bottom:5px" (click)="refresh()">
     <mat-icon>refresh</mat-icon>
 </button>
-<mat-tab-group #myTab (selectedTabChange)="tabChanged()" [selectedIndex]="0">
+<mat-tab-group #myTab (selectedTabChange)="tabChanged()" [selectedIndex]="0" *ngIf="!problemOnly">
     <mat-tab *ngFor="let t of statTabs" label="{{t.name}} - {{statTotal(t)}}"> </mat-tab>
 
 </mat-tab-group>
-<div>
+<br *ngIf="problemOnly"/>
+<div *ngIf="!problemOnly">
     <div style="display: block;width:350px;">
         <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType" [options]="options" [colors]="colors"
             (chartClick)="chartClicked($event)"></canvas>

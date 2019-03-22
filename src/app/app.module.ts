@@ -59,6 +59,7 @@ import { WeeklyPackerByProductComponent } from './weekly-packer-by-product/weekl
 
 import { WeeklyFamilyDeliveryProductListComponent } from './weekly-family-delivery-product-list/weekly-family-delivery-product-list.component';
 import { MyWeeklyFamilyDeliveriesComponent } from './my-weekly-family-deliveries/my-weekly-family-deliveries.component';
+import { AddressProblemComponent } from './address-problem/address-problem.component';
 
 
 
@@ -105,6 +106,7 @@ import { MyWeeklyFamilyDeliveriesComponent } from './my-weekly-family-deliveries
     WeeklyPackerByProductComponent,
     WeeklyFamilyDeliveryProductListComponent,
     MyWeeklyFamilyDeliveriesComponent,
+    AddressProblemComponent,
     
   ],
   imports: [

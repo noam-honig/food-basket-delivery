@@ -18,7 +18,7 @@ import { Context } from '../shared/context';
 })
 export class DeliveryFollowUpComponent implements OnInit {
   static route: Route = {
-    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'מעקב משנעים',seperator:true }
+    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'מעקב משנעים' }
   }
 
   familyLists = new UserFamiliesList(this.context);
