@@ -1,4 +1,4 @@
-import { Component,  NgZone, Injector, ViewChild } from '@angular/core';
+import { Component, NgZone, Injector, ViewChild } from '@angular/core';
 import { Router, Route, CanActivate, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { AuthService } from './auth/auth-service';
 import { dummyRoute } from './auth/auth-guard';
@@ -25,7 +25,7 @@ export class AppComponent {
     public activeRoute: ActivatedRoute,
     private injector: Injector,
     public dialog: DialogService,
-    private context:Context) {
+    private context: Context) {
     /*this.router.config.unshift({
       path: FamiliesComponent.route,
       component: FamiliesComponent,
@@ -42,7 +42,11 @@ export class AppComponent {
 
   }
 
-
+  showSeperator(route: Route) {
+    if (route.data && route.data.seperator)
+      return true;
+    return false;
+  }
   routeName(route: Route) {
     let name = route.path;
     if (route.data && route.data.name)

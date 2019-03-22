@@ -94,6 +94,11 @@
                 "group": "groupA"
             },
             "isBackground": true
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-merkaz-mazon",
+            "problemMatcher": []
         }
     ]
 }

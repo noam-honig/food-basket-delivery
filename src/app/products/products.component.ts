@@ -30,6 +30,6 @@ export class ProductsComponent implements OnInit {
   static route: Route = {
     path: 'products',
     component: ProductsComponent,
-    data: { name: 'מוצרים' }, canActivate: [WeeklyFamilyAdminGuard]
+    data: { name: 'מוצרים' ,seperator:true}, canActivate: [WeeklyFamilyAdminGuard]
   }
 }

@@ -31,20 +31,20 @@ import { MyWeeklyFamilyDeliveriesComponent } from './my-weekly-family-deliveries
 
 
 const routes: Routes = [
-  MyWeeklyFamiliesComponent.route,
-  MyWeeklyFamilyDeliveriesComponent.route,
-  WeeklyPackerByFamilyComponent.route,
-  WeeklyPackerByProductComponent.route,
-  FamiliesComponent.route,
   AsignFamilyComponent.route,
-  DeliveryFollowUpComponent.route,
+  FamiliesComponent.route,
   NewsComponent.route,
+  DeliveryFollowUpComponent.route,
   HelpersComponent.route,
   DeliveryEventsComponent.route,
   ManageComponent.route,
   FixAddressComponent.route,
-  LoginFromSmsComponent.route,
+  MyWeeklyFamiliesComponent.route,
+  MyWeeklyFamilyDeliveriesComponent.route,
+  WeeklyPackerByFamilyComponent.route,
+  WeeklyPackerByProductComponent.route,
   ProductsComponent.route,
+  LoginFromSmsComponent.route,
 
   //{ path: 'stam-test', component: StamTestComponent },
   MyFamiliesComponent.route,

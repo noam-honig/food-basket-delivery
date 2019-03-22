@@ -20,7 +20,7 @@ export class FixAddressComponent implements OnInit {
   static route:Route = {
     path: 'addresses',
     component: FixAddressComponent,
-    data: { name: 'טיוב כתובות' }, canActivate: [HolidayDeliveryAdmin]
+    data: { name: 'טיוב כתובות',seperator:true }, canActivate: [HolidayDeliveryAdmin]
   };
 
   gridView = true;

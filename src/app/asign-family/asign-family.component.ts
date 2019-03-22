@@ -35,7 +35,7 @@ import { CitiesStats } from '../families/stats-action';
 })
 export class AsignFamilyComponent implements OnInit {
   static route: Route = {
-    path: 'assign-families', component: AsignFamilyComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'שיוך משפחות' }
+    path: 'assign-families', component: AsignFamilyComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'שיוך משפחות',seperator:true }
   };
 
   async searchPhone() {

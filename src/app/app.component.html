@@ -10,6 +10,7 @@
         <mat-list-item *ngIf="shouldDisplayRoute(m)" routerLinkActive="active-route">
           <a matLine [routerLink]="m.path" (click)="routeClicked()">{{routeName(m)}}</a>
         </mat-list-item>
+        <mat-divider *ngIf="showSeperator(m)" ></mat-divider>
 
 
       </ng-container>
