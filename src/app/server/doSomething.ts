@@ -9,20 +9,19 @@ import { serverInit } from "./serverInit";
 import * as XLSX from 'xlsx';
 
 import { Families, FamiliesSmall } from "../families/families";
-import { ServerContext } from "../shared/context";
+import { ServerContext, Context } from "../shared/context";
+import { Helpers } from "../helpers/helpers";
 
 serverInit();
 
 export async function DoIt() {
     try {
 
-       /* var sc = new ServerContext();
-        console.time('find');
-        var f = await sc.for(Families).find({});
-        console.timeEnd('find');
-        console.log(f.length);*/
+        let f = await new ServerContext().for(Helpers).count();
 
-     //   await ImportFromExcel();
+        ImportFromExcel();
+
+        //   await ImportFromExcel();
     }
     catch (err) {
         console.log(err);
@@ -44,46 +43,67 @@ async function getGeolocationInfo() {
 }
 async function ImportFromExcel() {
 
-    let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\בתי מרקחת 2017 610415.xlsx");
+    let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\מרץ 2.xls");
     let s = wb.Sheets[wb.SheetNames[0]];
     let o = XLSX.utils.sheet_to_json(s);
     let context = new ServerContext();
     let found = true;
-    let i=0;
+    let i = 0;
     await foreachSync(o, async r => {
         try {
 
-            let f = context.for(Families).create();
             let get = x => {
                 if (!r[x])
                     return '';
                 return r[x];
             };
-            //    f.appartment.value = r["דירה"];
-            f.address.value = (get("address") + ' ' + get("city").trim());
-            //   f.familyMembers.value = +r["מס' נפשות"];
-            //   f.name.value = (get("שם משפחה") + " " + get("שם פרטי")).trim();
-            f.name.value = get("STOR_NAME");
-            f.iDinExcel.value = get("CODE");
-            if (!f.name.value) {
-                f.name.value = '!ללא שם ';
-            }
-            
-            f.phone1.value = r["phone"];
-            await f.save();
-            console.log(i++,r);
-         //   f.addressComment.value = r["הערות"];
-            /*if (found) {
-                await f.save();
-            }
-            else if (f.address.value == 'טטט')
-                found = true;*/
+        //  await  readMerkazMazonFamily(context, r, get);
         }
         catch (err) {
             console.log(err, r);
         }
 
     });
+
+}
+async function readHelperFromExcel(context: ServerContext, o: any, get: (key: string) => string) {
+
+    let h = context.for(Helpers).create();
+    h.phone.value = get('טלפון 1').replace(/\D/g, '');
+    h.name.value = get('איש קשר');
+    if (h.phone.value && h.phone.value.startsWith('05') && h.name.value.trim().length > 2) {
+        await h.save();
+    }
+
+}
+async function readMerkazMazonFamily(context: ServerContext, o: any, get: (key: string) => string) {
+    let f = context.for(Families).create();
+    f.phone1.value = get('טלפון');
+    f.phone2.value = get('טלפון נייד');
+    f.iDinExcel.value = get('ת"ז');
+    f.floor.value = get('קומה');
+    f.appartment.value = get('דירה');
+    let knisa = get('כניסה');
+    if (knisa) {
+        f.addressComment.value = 'כניסה ' + knisa;
+    }
+    f.address.value = get('כתובת') + ' ' + get('בית')+' '+get('עיר');
+    f.name.value = get('איש קשר');
+    f.familyMembers.value = +get('מס נפשות');
+    let helperName = get('מתנדב קבוע');
+    if (helperName){
+        let h = await context.for(Helpers).lookupAsync(h=>h.name.isEqualTo(helperName));
+        if (h.isNew()){
+            f.internalComment.value = 'מתנדב לא נמצא בקליטה - '+helperName;
+        }
+        else{
+            f.courier.value = h.id.value;
+        }
+    }
+    f.deliveryComments.value = get('הערות');
+    await f.save();
+
+
 
 }
 

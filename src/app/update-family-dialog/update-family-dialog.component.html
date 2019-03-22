@@ -2,7 +2,9 @@
 
     <h3 mat-dialog-header>עדכן פרטי משפחה</h3>
     <div mat-dialog-content>
-        <app-update-family [families]="families"></app-update-family>
+        <div class="dialog-content-fixer">
+            <app-update-family [families]="families"></app-update-family>
+        </div>
     </div>
     <mat-dialog-actions>
         <button mat-raised-button color="warning" (click)="cancel()">

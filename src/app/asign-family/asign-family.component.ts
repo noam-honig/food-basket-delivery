@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
-import { ColumnHashSet, UrlBuilder } from 'radweb';
+import { ColumnHashSet, UrlBuilder, FilterBase } from 'radweb';
 import { Families } from '../families/families';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
@@ -20,6 +20,7 @@ import { Context } from '../shared/context';
 import { SelectService } from '../select-popup/select-service';
 import { BasketType } from '../families/BasketType';
 import { Routable } from '../shared/routing-helper';
+import { CitiesStats } from '../families/stats-action';
 
 
 @Component({
@@ -53,7 +54,7 @@ export class AsignFamilyComponent implements OnInit {
         this.shortUrl = helper.shortUrlKey.value;
         this.id = helper.id.value;
         this.familyLists.routeStats = helper.getRouteStats();
-        
+
         await this.refreshList();
       } else {
 
@@ -97,7 +98,7 @@ export class AsignFamilyComponent implements OnInit {
   cities: CityInfo[] = [];
   specialFamilies = 0;
   repeatFamilies = 0;
-  
+
   preferRepeatFamilies = true;
   async refreshList() {
     await this.refreshBaskets();
@@ -137,8 +138,8 @@ export class AsignFamilyComponent implements OnInit {
         this.name = h.name.value;
         this.shortUrl = h.shortUrlKey.value;
         this.id = h.id.value;
-        this.familyLists.routeStats=h.getRouteStats();
-        
+        this.familyLists.routeStats = h.getRouteStats();
+
       }
       else {
         this.phone = '';
@@ -198,8 +199,10 @@ export class AsignFamilyComponent implements OnInit {
     }
     this.id = x.helperId;
   }
+
   @RunOnServer({ allowed: c => c.isAdmin() })
   static async getBasketStatus(info: GetBasketStatusActionInfo, context?: Context): Promise<GetBasketStatusActionResponse> {
+    console.time('getBasketStatus');
     let result = {
       baskets: [],
       cities: [],
@@ -209,60 +212,63 @@ export class AsignFamilyComponent implements OnInit {
     let basketHash: any = {};
     let cityHash: any = {};
 
-    let r = await context.for(Families).find({ where: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('')) });
-    r.forEach(cf => {
-      if (info.filterLanguage == -1 || info.filterLanguage == cf.language.value) {
-        if (!info.filterCity || info.filterCity == cf.city.value) {
-          if (cf.special.listValue == YesNo.No) {
-            let bi = basketHash[cf.basketType.value];
-            if (!bi) {
-              bi = {
-                id: cf.basketType.value,
-                unassignedFamilies: 0
-              };
-              basketHash[cf.basketType.value] = bi;
-              result.baskets.push(bi);
-            }
-            bi.unassignedFamilies++;
-          }
-          else {
-            result.special++;
-          }
-          if (info.helperId && cf.previousCourier.value == info.helperId)
-            result.repeatFamilies++;
+    let countFamilies = (additionalWhere?: (f: Families) => FilterBase) => {
+      return context.for(Families).count(f => {
+        let where = f.readyFilter(info.filterCity, info.filterLanguage);
+        if (additionalWhere) {
+          where = where.and(additionalWhere(f));
         }
-        let ci: CityInfo = cityHash[cf.city.value];
-        if (!ci) {
-          ci = {
-            name: cf.city.value,
-            unassignedFamilies: 0
-          };
-          cityHash[cf.city.value] = ci;
-          result.cities.push(ci);
-        }
-        ci.unassignedFamilies++;
+        return where;
+      });
+    };
+
+    result.special = await countFamilies(f => f.special.isEqualTo(YesNo.Yes.id));
+
+    result.repeatFamilies = await countFamilies(f =>
+      f.previousCourier.isEqualTo(info.helperId)
+    );
+
+    for (let c of await context.for(CitiesStats).find({
+      orderBy: ff => [{ column: ff.families, descending: true }]
+    })) {
+      var ci = {
+        name: c.city.value,
+        unassignedFamilies: c.families.value
+      };
+      if (info.filterLanguage == -1) {
+        result.cities.push(ci);
       }
-    });
-    if (info.filterCity && !cityHash[info.filterCity]) {
-      result.cities.push({ name: info.filterCity, unassignedFamilies: 0 });
+      else {
+        ci.unassignedFamilies = await countFamilies(f => f.city.isEqualTo(c.city.value));
+        if (ci.unassignedFamilies > 0)
+          result.cities.push(ci);
+      }
     }
-    await foreachSync(result.baskets, async (b) => {
-      b.name = (await context.for(BasketType).lookupAsync(bt => bt.id.isEqualTo(b.id))).name.value;
-    });
+    for (let b of await context.for(BasketType).find({})) {
+      let bi = {
+        id: b.id.value,
+        name: b.name.value,
+        unassignedFamilies: await countFamilies(f => f.basketType.isEqualTo(b.id.value))
+      };
+      if (bi.unassignedFamilies > 0)
+        result.baskets.push(bi);
+    }
     result.baskets.sort((a, b) => b.unassignedFamilies - a.unassignedFamilies);
+    result.cities.sort((a, b) => b.unassignedFamilies - a.unassignedFamilies);
+    console.timeEnd('getBasketStatus');
     return result;
   }
   @RunOnServer({ allowed: c => c.isAdmin() })
   static async RefreshRoute(helperId: string, context?: Context) {
     let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id)) });
-    let h =await  context.for(Helpers).findFirst(h=>h.id.isEqualTo(helperId));
-    return await AsignFamilyComponent.optimizeRoute(h,existingFamilies, context);
+    let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
+    return await AsignFamilyComponent.optimizeRoute(h, existingFamilies, context);
   }
 
   @RunOnServer({ allowed: c => c.isAdmin() })
   static async AddBox(info: AddBoxInfo, context?: Context) {
     console.time('addBox');
-    console.time('midBox');
+
     let result: AddBoxResponse = {
       helperId: info.helperId,
       addedBoxes: 0,
@@ -274,13 +280,13 @@ export class AsignFamilyComponent implements OnInit {
     }
     let r = await context.for(Helpers).findFirst(h => h.phone.isEqualTo(info.phone));
     if (!info.helperId) {
-      
+
       if (!r) {
         let h = context.for(Helpers).create();
         h.phone.value = info.phone;
         h.name.value = info.name;
         await h.save();
-        r=h;
+        r = h;
         result.helperId = h.id.value;
         result.shortUrl = h.shortUrlKey.value;
       }
@@ -293,16 +299,11 @@ export class AsignFamilyComponent implements OnInit {
       let getFamilies = async () => {
         return await context.for(Families).find({
           where: f => {
-            let where = f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
-              f.courier.isEqualTo('').and(
-                f.basketType.isEqualTo(info.basketType).and(
-                  f.special.IsDifferentFrom(YesNo.Yes.id)
-                )));
-            if (info.language > -1)
-              where = where.and(f.language.isEqualTo(info.language));
-            if (info.city) {
-              where = where.and(f.city.isEqualTo(info.city));
-            }
+            let where = f.readyFilter(info.city, info.language).and(
+              f.basketType.isEqualTo(info.basketType).and(
+                f.special.IsDifferentFrom(YesNo.Yes.id)
+              ));
+
             if (info.preferRepeatFamilies)
               where = where.and(f.previousCourier.isEqualTo(info.helperId));
             return where;
@@ -365,19 +366,18 @@ export class AsignFamilyComponent implements OnInit {
 
     }
     console.time('optimizeRoute');
-    result.routeStats = await AsignFamilyComponent.optimizeRoute(r,existingFamilies, context);
+    result.routeStats = await AsignFamilyComponent.optimizeRoute(r, existingFamilies, context);
     console.timeEnd('optimizeRoute');
     existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
     result.families = await context.for(Families).toPojoArray(existingFamilies);
-    console.time('getBasketStatus');
+
     result.basketInfo = await AsignFamilyComponent.getBasketStatus({
       filterCity: info.city,
       filterLanguage: info.language,
       helperId: info.helperId
     }, context);
-    console.timeEnd('getBasketStatus');
+
     console.timeEnd('addBox');
-    console.timeEnd('midBox');
     return result;
   }
 

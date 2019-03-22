@@ -16,7 +16,7 @@ import { FamilyDelveryEventId, FamilyDeliveryEvents } from "../delivery-events/F
 
 @EntityClass
 export class Families extends IdEntity<FamilyId>  {
-  
+
   constructor(private context: Context) {
     super(new FamilyId(),
       {
@@ -125,8 +125,18 @@ export class Families extends IdEntity<FamilyId>  {
   routeOrder = new NumberColumn();
   courierComments = new StringColumn('הערות מסירה');
 
+  readyFilter(city?: string, language?: number) {
+    let where = this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
+      this.courier.isEqualTo(''));
+    if (language > -1)
+      where = where.and(this.language.isEqualTo(language));
+    if (city) {
+      where = where.and(this.city.isEqualTo(city));
+    }
+    return where;
+  }
   private dbNameFromLastDelivery(col: (fde: FamilyDeliveryEvents) => Column<any>, alias: string) {
-    
+
     let de = new DeliveryEvents(this.context);
     let fde = new FamilyDeliveryEvents(this.context);
     let sql = new SqlBuilder();
