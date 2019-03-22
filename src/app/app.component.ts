@@ -53,8 +53,13 @@ export class AppComponent {
       name = route.data.name;
     return name;
   }
+  prevLogoUrl = '';
   getLogo() {
-    return ApplicationSettings.get(this.context).logoUrl.value;
+    let result =  ApplicationSettings.get(this.context).logoUrl.value;
+    if (result){
+      this.prevLogoUrl = result;
+    }
+    return this.prevLogoUrl;
   }
   currentTitle() {
     if (this.activeRoute && this.activeRoute.snapshot && this.activeRoute.firstChild && this.activeRoute.firstChild.data && this.activeRoute.snapshot.firstChild.data.name)
