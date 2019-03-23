@@ -2,18 +2,19 @@ import { FamilyDelveryEventId, FamilyDeliveryEvents } from '../delivery-events/F
 import { FamilyId } from './families';
 import { DeliveryStatusColumn } from "./DeliveryStatus";
 import { BasketId } from "./BasketType";
-import { StringColumn } from 'radweb';
+import { StringColumn, CompoundIdColumn } from 'radweb';
 import { HelperId } from '../helpers/helpers';
 import { IdEntity, changeDate, DateTimeColumn,  SqlBuilder } from '../model-shared/types';
 import { DeliveryEvents } from '../delivery-events/delivery-events';
-import { Context, ServerContext, EntityClass } from '../shared/context';
+import { Context, ServerContext, EntityClass, ContextEntity } from '../shared/context';
+import { DeliveryEventId } from '../delivery-events/DeliveryEventId';
 
 
 
 
 @EntityClass
-export class FamilyDeliveryEventsView extends IdEntity<FamilyDelveryEventId>  {
-
+export class FamilyDeliveryEventsView extends ContextEntity<string>  {
+  deliveryEvent = new DeliveryEventId();
   family = new FamilyId();
   basketType = new BasketId(this.context, 'סוג סל');
   eventName = new StringColumn('שם אירוע');
@@ -24,7 +25,7 @@ export class FamilyDeliveryEventsView extends IdEntity<FamilyDelveryEventId>  {
   deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
   courierComments = new StringColumn('הערות מסירה');
   constructor(private context: Context) {
-    super(new FamilyDelveryEventId(), {
+    super( {
       name: 'FamilyDeliveryEventsView',
       allowApiRead: context.isAdmin(),
       dbName: () => {
@@ -32,7 +33,7 @@ export class FamilyDeliveryEventsView extends IdEntity<FamilyDelveryEventId>  {
         var de = new DeliveryEvents(new ServerContext());
         let sql = new SqlBuilder();
         return sql.entityDbName({
-          select: () => [fde.id, fde.family, fde.basketType, fde.courier, fde.courierAssingTime, fde.deliverStatus, fde.deliveryStatusDate, fde.courierComments, de.deliveryDate,
+          select: () => [fde.deliveryEvent, fde.family, fde.basketType, fde.courier, fde.courierAssingTime, fde.deliverStatus, fde.deliveryStatusDate, fde.courierComments, de.deliveryDate,
           sql.columnWithAlias(de.name, this.eventName)],
           from: fde,
           innerJoin: () => [{ to: de, on: () => [sql.eq(de.id, fde.deliveryEvent)] }],
@@ -40,6 +41,7 @@ export class FamilyDeliveryEventsView extends IdEntity<FamilyDelveryEventId>  {
         });
       }
     });
+    this.initColumns(new CompoundIdColumn( this ,this.family,this.deliveryEvent));
   }
 
 }

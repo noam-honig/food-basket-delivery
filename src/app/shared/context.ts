@@ -8,6 +8,7 @@ import { DataApiSettings } from "radweb";
 
 
 
+
 @Injectable()
 export class Context {
     clearAllCache(): any {
@@ -77,6 +78,9 @@ export class ServerContext extends Context {
     getOrigin() {
         return this.req.getHeader('origin')
     }
+}
+export abstract class DirectSQL {
+    abstract execute(sql:string);
 }
 
 function buildEntityOptions(o: ContextEntityOptions | string): EntityOptions | string {
@@ -169,7 +173,7 @@ export interface MoreDataColumnSettings<type, colType> extends DataColumnSetting
     excludeFromApi?: boolean;
 }
 export interface MoreDataNumberColumnSettings extends MoreDataColumnSettings<number, NumberColumn>, NumberColumnSettings {
-    
+
 }
 export interface ContextEntityOptions {
     name: string;//required

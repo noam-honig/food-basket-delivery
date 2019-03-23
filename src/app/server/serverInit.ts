@@ -19,6 +19,9 @@ import '../app.module';
 import { WeeklyFamilyDeliveries } from '../weekly-families-deliveries/weekly-families-deliveries';
 import { WeeklyFamilies } from '../weekly-families/weekly-families';
 import { ActualSQLServerDataProvider } from 'radweb-server';
+import { ActualDirectSQL } from '../auth/server-action';
+import { FamilyDeliveryEvents } from '../delivery-events/FamilyDeliveryEvents';
+import { SqlBuilder } from '../model-shared/types';
 
 
 
@@ -38,6 +41,7 @@ export async function serverInit() {
         dbUrl = process.env.HEROKU_POSTGRESQL_GREEN_URL;
     if (process.env.logSqls) {
         ActualSQLServerDataProvider.LogToConsole = true;
+        ActualDirectSQL.log = true;
     }
     const pool = new Pool({
         connectionString: dbUrl,
@@ -54,6 +58,18 @@ export async function serverInit() {
             await sb.verifyAllColumns(x);
         }
     });
+    let sql = new SqlBuilder();
+    let fde = new FamilyDeliveryEvents(context);
+
+
+    // remove unique constraint on id column if exists
+
+    var r = await pool.query(sql.build('ALTER TABLE ', fde, ' DROP CONSTRAINT IF EXISTS familydeliveryevents_pkey'));
+
+
+    //create index if required
+    await pool.query(sql.build('create index if not exists fde_1 on ', fde, ' (', [fde.family, fde.deliverStatus, fde.courier], ')'));
+
 
 
     if ((await context.for(BasketType).count() == 0)) {

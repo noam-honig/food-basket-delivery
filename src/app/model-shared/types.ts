@@ -202,7 +202,7 @@ export class changeDate extends DateTimeColumn implements hasMoreDataColumnSetti
 export async function checkForDuplicateValue(row: Entity<any>, column: Column<any>, message?: string) {
   if (row.isNew() || column.value != column.originalValue) {
     let rows = await row.source.find({ where: column.isEqualTo(column.value) });
-    
+
     if (rows.length > 0)
       column.error = message || 'כבר קיים במערכת';
   }
@@ -346,6 +346,40 @@ export class SqlBuilder {
   not(arg0: string): any {
     return this.build(' not (', arg0, ')');
   }
+  delete(e: Entity<any>, ...where: string[]) {
+    return this.build('delete from ', e, ' where ', this.and(...where));
+  }
+  update(e: Entity<any>, info: UpdateInfo) {
+    let result = [];
+    result.push('update ', e, ' ', this.getEntityAlias(e), ' set ');
+
+    let from: string;
+    if (info.from) {
+      from = this.build(' from ', info.from, ' ', this.getEntityAlias(info.from));
+    }
+    result.push(info.set().map(a => this.build(this.build(a[0].__getDbName(), ' = ', a[1]))));
+    if (from)
+      result.push(from);
+
+    if (info.where) {
+      result.push(' where ')
+      result.push(this.and(...info.where()));
+    }
+    return this.build(...result);
+  }
+  insert(info: InsertInfo) {
+    let result = [];
+    result.push('insert into ', info.into, ' ');
+
+    result.push('(', info.set().map(a => a[0].__getDbName()), ') ');
+    result.push(this.query({
+      select: () => info.set().map(a => a[1]),
+      from: info.from,
+      where: info.where
+    }));
+
+    return this.build(...result);
+  }
   query(query: QueryBuilder) {
 
     let from = [];
@@ -426,6 +460,17 @@ export interface FromAndWhere {
   crossJoin?: () => Entity<any>[];
   innerJoin?: () => JoinInfo[];
   outerJoin?: () => JoinInfo[];
+  where?: () => any[];
+}
+export interface UpdateInfo {
+  set: () => [Column<any>, any][],
+  where?: () => any[];
+  from?: Entity<any>;
+}
+export interface InsertInfo {
+  into: Entity<any>;
+  set: () => [Column<any>, any][];
+  from: Entity<any>;
   where?: () => any[];
 }
 export interface JoinInfo {

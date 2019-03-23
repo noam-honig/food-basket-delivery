@@ -7,6 +7,7 @@ import { SqlBuilder, QueryBuilder } from './model-shared/types';
 import { WebDriverProxy } from 'blocking-proxy/built/lib/webdriver_proxy';
 
 describe('AppComponent', () => {
+  var context = new ServerContext();
   var p = new Products(context);
   var pd = new WeeklyFamilyDeliveryProducts(context);
   var sql = new SqlBuilder();
@@ -14,7 +15,6 @@ describe('AppComponent', () => {
   var q = (query: QueryBuilder, expectresult: String) => {
     expect(sql.query(query)).toBe(expectresult);
   };
-  var context = new ServerContext();
   it('basics work', () => {
     expect(sql.build(p.id)).toBe('p.id');
   });
@@ -67,5 +67,33 @@ describe('AppComponent', () => {
       { when: ['1=1', '2=2'], then: '3' },
       { when: ['3=3'], then: '4' }
     ], 9)).toBe("case when 1=1 and 2=2 then 3 when 3=3 then 4 else 9 end");
+  });
+  it('delete 2', () => {
+    let p = new Products(context);
+    expect(sql.delete(p, sql.eq(p.order, 5), sql.eq(p.order, 6))).toBe('delete from products where ord2 = 5 and ord2 = 6');
+  });
+  it('update ', () => {
+    expect(sql.update(p, {
+      set:()=> [[p.id, "'123'"], [p.name, "'noam'"]],
+      where: () => [sql.eq(p.order, 5), sql.eq(p.order, 6)]
+    })).toBe("update products p set id = '123', name = 'noam' where p.ord2 = 5 and p.ord2 = 6");
+  });
+  it('update 2 ', () => {
+    let pd = new WeeklyFamilyDeliveryProducts(context);
+    expect(sql.update(p, {
+      set: ()=>[[p.id, pd.product], [p.name, "'noam'"]],
+      from: pd,
+      where: () => [sql.eq(p.order, 5), sql.eq(p.order, pd.requestQuanity)]
+    })).toBe("update products p set id = e2.product, name = 'noam' from WeeklyFamilyDeliveryProducts e2 where p.ord2 = 5 and p.ord2 = e2.requestQuanity");
+  });
+  it('insert ', () => {
+    sql = new SqlBuilder();
+
+    expect(sql.insert({
+      into: p,
+      set:()=> [[p.id, pd.product], [p.name, "'noam'"]],
+      from: pd,
+      where: () => [sql.eq(pd.requestQuanity, 5)]
+    })).toBe("insert into products (id, name) select e1.product, 'noam' from WeeklyFamilyDeliveryProducts e1 where e1.requestQuanity = 5");
   });
 });
