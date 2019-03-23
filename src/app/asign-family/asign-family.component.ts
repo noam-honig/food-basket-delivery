@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
-import { ColumnHashSet, UrlBuilder, FilterBase } from 'radweb';
+import { ColumnHashSet, UrlBuilder, FilterBase, NumberColumn } from 'radweb';
 import { Families } from '../families/families';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
@@ -91,7 +91,7 @@ export class AsignFamilyComponent implements OnInit {
     this.baskets = r.baskets;
     this.cities = r.cities;
     this.specialFamilies = r.special;
-    this.repeatFamilies = r.repeatFamilies;
+    this.repeatFamilies = +r.repeatFamilies;
   }
 
   baskets: BasketInfo[] = [];
@@ -190,7 +190,7 @@ export class AsignFamilyComponent implements OnInit {
       this.baskets = x.basketInfo.baskets;
       this.cities = x.basketInfo.cities;
       this.specialFamilies = x.basketInfo.special;
-      this.repeatFamilies = x.basketInfo.repeatFamilies;
+      this.repeatFamilies = +x.basketInfo.repeatFamilies;
       this.familyLists.routeStats = x.routeStats;
     }
     else {
@@ -307,7 +307,7 @@ export class AsignFamilyComponent implements OnInit {
             if (info.preferRepeatFamilies)
               where = where.and(f.previousCourier.isEqualTo(info.helperId));
             return where;
-          }
+              }
         });
       }
       console.time('getFamilies');
