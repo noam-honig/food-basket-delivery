@@ -1,4 +1,5 @@
 /// <reference types="@types/googlemaps" />
+import * as chart from 'chart.js';
 import { Component, OnInit, ViewChild, Sanitizer, OnDestroy } from '@angular/core';
 import { GridSettings } from 'radweb';
 import { Families } from '../families/families';
@@ -13,6 +14,8 @@ import { RunOnServer } from '../auth/server-action';
 import { SqlBuilder } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { SelectService } from '../select-popup/select-service';
+import { SWITCH_INJECTOR_FACTORY__POST_R3__ } from '@angular/core/src/di/injector';
+import { colors } from '../families/stats-action';
 
 @Component({
   selector: 'app-fix-address',
@@ -37,7 +40,7 @@ export class FixAddressComponent implements OnInit, OnDestroy {
   static route: Route = {
     path: 'addresses',
     component: FixAddressComponent,
-    data: { name: 'מפת הפצה', seperator: true }, canActivate: [HolidayDeliveryAdmin]
+    data: { name: 'מפת הפצה' }, canActivate: [HolidayDeliveryAdmin]
   };
 
   gridView = true;
@@ -70,9 +73,18 @@ export class FixAddressComponent implements OnInit, OnDestroy {
 
 
   }
+  ready = new statusClass('טרם שויכו', 'https://maps.google.com/mapfiles/ms/micons/yellow-dot.png', colors.yellow);
+  onTheWay = new statusClass('בדרך', 'https://maps.google.com/mapfiles/ms/micons/ltblue-dot.png', colors.blue);
+  problem = new statusClass('בעיות', 'https://maps.google.com/mapfiles/ms/micons/red-pushpin.png', colors.red);
+  success = new statusClass('הגיעו', 'https://maps.google.com/mapfiles/ms/micons/green-dot.png', colors.green);
+  statuses = [this.ready, this.onTheWay, this.success, this.problem];
+  selectedStatus: statusClass;
   async refreshFamilies() {
     console.time('load families');
     let families = await FixAddressComponent.GetFamiliesLocations();
+    this.statuses.forEach(element => {
+      element.value = 0;
+    });
     console.timeEnd('load families');
 
     console.time('load markers');
@@ -100,40 +112,47 @@ export class FixAddressComponent implements OnInit, OnDestroy {
           }
           family = await this.context.for(Families).findFirst(fam => fam.id.isEqualTo(f.id));
           this.selectService.updateFamiliy({ f: family });
-
-
         });
       }
-      if (f.status != familyOnMap.prevStatus || f.courier != familyOnMap.prevCourier) {
-        switch (f.status) {
-          case DeliveryStatus.ReadyForDelivery.id:
-            if (f.courier)
-              familyOnMap.marker.setIcon('https://maps.google.com/mapfiles/ms/micons/ltblue-dot.png');
-            else
-              familyOnMap.marker.setIcon('https://maps.google.com/mapfiles/ms/micons/yellow-dot.png');
-            break;
-          case DeliveryStatus.Success.id:
-            familyOnMap.marker.setIcon('https://maps.google.com/mapfiles/ms/micons/green-dot.png');
-            break;
-          case DeliveryStatus.FailedBadAddress.id:
-          case DeliveryStatus.FailedNotHome.id:
-          case DeliveryStatus.FailedOther.id:
-            familyOnMap.marker.setIcon('https://maps.google.com/mapfiles/ms/micons/red-pushpin.png');
-            break;
-        }
-        if (!isnew){
+
+      let status: statusClass;
+      switch (f.status) {
+        case DeliveryStatus.ReadyForDelivery.id:
+          if (f.courier)
+            status = this.onTheWay;
+          else
+            status = this.ready;
+          break;
+        case DeliveryStatus.Success.id:
+          status = this.success;
+          break;
+        case DeliveryStatus.FailedBadAddress.id:
+        case DeliveryStatus.FailedNotHome.id:
+        case DeliveryStatus.FailedOther.id:
+          status = this.problem;
+          break;
+      }
+      if (status)
+        status.value++;
+
+      if (status != familyOnMap.prevStatus || f.courier != familyOnMap.prevCourier) {
+        familyOnMap.marker.setIcon(status.icon);
+
+        if (!isnew) {
           familyOnMap.marker.setAnimation(google.maps.Animation.DROP);
           setTimeout(() => {
             familyOnMap.marker.setAnimation(null);
           }, 1000);
         }
-        familyOnMap.prevStatus = f.status;
+        familyOnMap.prevStatus = status;
         familyOnMap.prevCourier = f.courier;
       }
+      familyOnMap.marker.setVisible(!this.selectedStatus || this.selectedStatus == status);
 
       this.bounds.extend(familyOnMap.marker.getPosition());
 
     });
+    this.updateChart();
     console.timeEnd('load markers');
   }
   @RunOnServer({ allowed: c => c.isAdmin() })
@@ -167,7 +186,49 @@ export class FixAddressComponent implements OnInit, OnDestroy {
 
     this.test();
   }
+  options: chart.ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    legend: {
+      position: 'right',
+      onClick: (event: MouseEvent, legendItem: any) => {
+        this.selectedStatus = this.statuses[legendItem.index];
+        this.refreshFamilies();
+        return false;
+      }
+    },
+  };
+  public chartClicked(e: any): void {
+    if (e.active && e.active.length > 0) {
+      this.selectedStatus = this.statuses[e.active[0]._index];
+      this.refreshFamilies();
+    }
+  }
+  updateChart() {
+    this.pieChartData = [];
+    this.pieChartLabels.splice(0);
+    this.colors[0].backgroundColor.splice(0);
 
+
+    this.statuses.forEach(s => {
+
+      this.pieChartLabels.push(s.name + ' ' + s.value);
+      this.pieChartData.push(s.value);
+      this.colors[0].backgroundColor.push(s.color);
+
+    });
+  }
+  
+  public pieChartLabels: string[] = [];
+  public pieChartData: number[] = [];
+
+  public colors: Array<any> = [
+    {
+      backgroundColor: []
+
+    }];
+
+  public pieChartType: string = 'pie';
 
 
 }
@@ -180,7 +241,15 @@ interface familyQueryResult {
 }
 interface infoOnMap {
   marker: google.maps.Marker;
-  prevStatus: number;
+  prevStatus: statusClass;
   prevCourier: string;
 
 }
+
+class statusClass {
+  constructor(public name: string, public icon: string, public color: string) {
+
+  }
+  value = 0;
+}
+
