@@ -36,6 +36,7 @@ const routes: Routes = [
   FamiliesComponent.route,
   NewsComponent.route,
   DeliveryFollowUpComponent.route,
+  FixAddressComponent.route,
   AddressProblemComponent.route,
   HelpersComponent.route,
   DeliveryEventsComponent.route,
@@ -53,6 +54,7 @@ const routes: Routes = [
   UpdateInfoComponent.route,
   LoginComponent.route,
   RegisterComponent.route,
+  
   //{ path: 'stam', component: StamTestComponent },
   { path: '', redirectTo: '/families', pathMatch: 'full' },
   { path: '**', redirectTo: '/families', pathMatch: 'full' }

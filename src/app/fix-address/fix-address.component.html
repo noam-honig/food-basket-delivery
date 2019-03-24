@@ -1,30 +1,4 @@
-<div #gmap style="width:100%;height:400px;" [style.display]="mapVisible?'block':'none'"></div>
-<button (click)="test()">Show map</button>
-<button (click)="showInfo()">dev info</button>
-
-
-  <data-grid2 [settings]="families"></data-grid2>
-
-<div [class.hide]="gridView">
-  <button (click)="gridView = !gridView">חזרה לרשימה</button>
-  <button *ngIf="families.currentRow" (click)="families.currentRow.save()" [disabled]="!families.currentRow.wasChanged()">שמור</button>
-  <button (click)="families.nextRow()">הבא</button>
-  <button (click)="families.previousRow()">קודם</button>
-
-
-  <mat-card *ngIf="families.currentRow">
-    <h1>כתובת</h1>
-    <data-area [settings]="familiesAddress"></data-area>
-    <a (click)="families.currentRow.openWaze()" target="_blank">פתחי WAZE</a> |
-    <a (click)="families.currentRow.openGoogleMaps()" target="_blank">פתחי גוגל </a>
-    <div class="row">
-      <div class="col-sm-12">
-        <h3>לפי כתובת</h3>
-        <iframe [src]="getFrameSrc()" width="100%" height="250" frameborder="0" style="border:0" allowfullscreen *ngIf="families.currentRow"></iframe>
-        <h3>לפי קווי רוחב ואורך</h3>
-        <iframe [src]="getGeoFrameSrc()" width="100%" height="250" frameborder="0" style="border:0" allowfullscreen *ngIf="families.currentRow"></iframe>
-      </div>
-    </div>
-  </mat-card>
-
-</div>
+<div #gmap style="width:100%;height:400px;"></div>
+<button mat-mini-fab style="margin-bottom:5px" (click)="refreshFamilies()">
+  <mat-icon>refresh</mat-icon>
+</button>
