@@ -121,8 +121,12 @@ export class FixAddressComponent implements OnInit, OnDestroy {
             familyOnMap.marker.setIcon('https://maps.google.com/mapfiles/ms/micons/red-pushpin.png');
             break;
         }
-        if (!isnew)
+        if (!isnew){
           familyOnMap.marker.setAnimation(google.maps.Animation.DROP);
+          setTimeout(() => {
+            familyOnMap.marker.setAnimation(null);
+          }, 1000);
+        }
         familyOnMap.prevStatus = f.status;
         familyOnMap.prevCourier = f.courier;
       }
