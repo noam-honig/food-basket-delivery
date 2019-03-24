@@ -19,6 +19,16 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {
         console.debug('CustomReuseStrategy:store', this.getRouteInfo(route), handle, this.handlers);
         this.handlers[route.routeConfig.path] = handle;
+        let result: any;
+        result = handle;
+        if (result && result.componentRef && result.componentRef.instance) {
+            let m = result.componentRef.instance[leaveComponent];
+            if (m) {
+                
+                    result.componentRef.instance[leaveComponent]();
+                
+            }
+        }
         if (handle) {
             handle[this.reloadKey] = true;
 
@@ -69,3 +79,4 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     }
 }
 export const reuseComponentOnNavigationAndCallMeWhenNavigatingToIt = Symbol('reuseComponentOnNavigationAndCallMeWhenNavigatingToIt');
+export const leaveComponent = Symbol('leaveComponent');

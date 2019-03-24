@@ -20,7 +20,7 @@ import { BusyService } from '../select-popup/busy-service';
 import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
 import { MatTabGroup } from '@angular/material';
-import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt } from '../custom-reuse-controller-router-strategy';
+import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
 import { HasAsyncGetTheValue } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
@@ -220,7 +220,7 @@ export class FamiliesComponent implements OnInit {
         },
         this.familyAddressColumn = {
           column: families.address,
-          width:'250',
+          width: '250',
           cssClass: f => {
             if (f.getGeocodeInformation().partialMatch())
               return 'addressProblem';
@@ -292,9 +292,9 @@ export class FamiliesComponent implements OnInit {
       },
       {
         name: 'חפש כתובת בגוגל',
-        cssClass:'btn btn-success',
+        cssClass: 'btn btn-success',
         click: f => f.openGoogleMaps(),
-        visible:f=>this.problemOnly
+        visible: f => this.problemOnly
       },
       {
         cssClass: 'btn glyphicon glyphicon-check',
@@ -400,6 +400,8 @@ export class FamiliesComponent implements OnInit {
     }
   }
   refreshStats() {
+    if (this.suspend)
+      return;
     if (!this.problemOnly)
       this.busy.donotWait(async () => this.stats.getData().then(st => {
         this.basketStats.stats.splice(0);
@@ -436,9 +438,9 @@ export class FamiliesComponent implements OnInit {
       for (let index = 0; index < problemColumns.length; index++) {
         const item = problemColumns[index];
         let origIndex = cols.items.indexOf(item);
-        cols.moveCol(item, -origIndex+index);  
+        cols.moveCol(item, -origIndex + index);
       }
-      
+
       //  debugger;
     }
 
@@ -451,7 +453,14 @@ export class FamiliesComponent implements OnInit {
   }
 
   [reuseComponentOnNavigationAndCallMeWhenNavigatingToIt]() {
+    this.suspend = false;
+    console.log('resume');
     this.refresh();
+  }
+  suspend = false;
+  [leaveComponent]() {
+    console.log('suspend');
+    this.suspend = true;
   }
   refresh() {
     this.families.getRecords();

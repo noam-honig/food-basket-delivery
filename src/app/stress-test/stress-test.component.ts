@@ -49,6 +49,7 @@ export class StressTestComponent implements OnInit {
       name = 'עוזר ' + phoneNumber;
     }
     else {
+      helperId = h.id.value;
       name = h.name.value;
       let families = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(helperId) });
       count = families.length;
