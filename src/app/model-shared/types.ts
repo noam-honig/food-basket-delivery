@@ -1,10 +1,11 @@
 import * as uuid from 'uuid';
 import * as radweb from 'radweb';
-import { DataProviderFactory, EntityOptions, Entity, Column, Filter, FilterBase, SortSegment } from "radweb";
+import { DataProviderFactory, EntityOptions, Entity, Column, Filter, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, SQLCommand, SQLQueryResult } from "radweb";
 
 import { ContextEntity, ContextEntityOptions, MoreDataColumnSettings, hasMoreDataColumnSettings, MoreDataNumberColumnSettings } from '../shared/context';
 import { BrowserPlatformLocation } from '@angular/platform-browser/src/browser/location/browser_platform_location';
 import { query } from '@angular/animations';
+
 export class IdEntity<idType extends Id> extends ContextEntity<string>
 {
   id: idType;
@@ -211,7 +212,7 @@ export async function checkForDuplicateValue(row: Entity<any>, column: Column<an
 
 export class SqlBuilder {
 
-  str(val: string): string | radweb.Column<string> {
+  str(val: string): string {
     return '\'' + val.replace('\'', '\'\'') + '\'';
   }
   private dict = new Map<Column<any>, string>();
@@ -249,6 +250,14 @@ export class SqlBuilder {
       v = e.__getDbName();
     if (e instanceof Column)
       v = e.__getDbName();
+
+    let f = e as FilterBase;
+    if (f && f.__applyToConsumer) {
+
+      let bridge = new FilterConsumerBridgeToSqlRequest(new myDummySQLCommand());
+      f.__applyToConsumer(bridge);
+      return bridge.where.substring(' where '.length);
+    }
     if (e instanceof Array) {
       v = e.map(x => this.getItemSql(x)).join(', ');
     }
@@ -445,6 +454,18 @@ export class SqlBuilder {
   innerSelect(builder: QueryBuilder, col: Column<any>) {
     return this.build('(', this.query(builder), ' limit 1) ', col);
   }
+}
+class myDummySQLCommand implements SQLCommand {
+  addParameterToCommandAndReturnParameterName(col: radweb.Column<any>, val: any): string {
+    if (typeof (val) == "string") {
+      return new SqlBuilder().str(val);
+    }
+    return val.toString();
+  } query(sql: string): Promise<SQLQueryResult> {
+    throw new Error("Method not implemented.");
+  }
+
+
 }
 export interface QueryBuilder {
   select: () => any[];

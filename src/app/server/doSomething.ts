@@ -8,7 +8,7 @@ import { foreachEntityItem, foreachSync } from "../shared/utils";
 import { serverInit } from "./serverInit";
 import * as XLSX from 'xlsx';
 
-import { Families, FamiliesSmall } from "../families/families";
+import { Families } from "../families/families";
 import { ServerContext, Context } from "../shared/context";
 import { Helpers } from "../helpers/helpers";
 

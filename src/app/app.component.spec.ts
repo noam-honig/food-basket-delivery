@@ -74,14 +74,14 @@ describe('AppComponent', () => {
   });
   it('update ', () => {
     expect(sql.update(p, {
-      set:()=> [[p.id, "'123'"], [p.name, "'noam'"]],
+      set: () => [[p.id, "'123'"], [p.name, "'noam'"]],
       where: () => [sql.eq(p.order, 5), sql.eq(p.order, 6)]
     })).toBe("update products p set id = '123', name = 'noam' where p.ord2 = 5 and p.ord2 = 6");
   });
   it('update 2 ', () => {
     let pd = new WeeklyFamilyDeliveryProducts(context);
     expect(sql.update(p, {
-      set: ()=>[[p.id, pd.product], [p.name, "'noam'"]],
+      set: () => [[p.id, pd.product], [p.name, "'noam'"]],
       from: pd,
       where: () => [sql.eq(p.order, 5), sql.eq(p.order, pd.requestQuanity)]
     })).toBe("update products p set id = e2.product, name = 'noam' from WeeklyFamilyDeliveryProducts e2 where p.ord2 = 5 and p.ord2 = e2.requestQuanity");
@@ -91,9 +91,12 @@ describe('AppComponent', () => {
 
     expect(sql.insert({
       into: p,
-      set:()=> [[p.id, pd.product], [p.name, "'noam'"]],
+      set: () => [[p.id, pd.product], [p.name, "'noam'"]],
       from: pd,
       where: () => [sql.eq(pd.requestQuanity, 5)]
     })).toBe("insert into products (id, name) select e1.product, 'noam' from WeeklyFamilyDeliveryProducts e1 where e1.requestQuanity = 5");
+  });
+  it('filter ', () => {
+        expect (sql.build(p.order.isEqualTo(3).and(p.order.isEqualTo(5)))).toBe('ord2 = 3 and ord2 = 5');
   });
 });

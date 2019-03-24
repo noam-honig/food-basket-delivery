@@ -308,35 +308,6 @@ export class FamilyId extends Id { }
 
 
 
-@EntityClass
-export class FamiliesSmall extends IdEntity<FamilyId>  {
-  constructor(private context: Context) {
-    super(new FamilyId(),
-      {
-        name: "FamiliesSmall",
-        allowApiRead: false,
-        allowApiUpdate: false,
-        allowApiDelete: false,
-        allowApiInsert: false,
-        dbName: () => {
-          let f = context.for(Families);
-          return f.create().__getDbName();
-        }
-
-
-      });
-    this.initColumns();
-
-  }
-
-
-
-}
-
-
-
-
-
 export interface FamilyUpdateInfo {
   name: StringColumn,
   courier: HelperId,

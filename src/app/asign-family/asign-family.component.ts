@@ -16,11 +16,13 @@ import { foreachSync } from '../shared/utils';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import * as fetch from 'node-fetch';
 import { RunOnServer } from '../auth/server-action';
-import { Context } from '../shared/context';
+import { Context, DirectSQL } from '../shared/context';
 import { SelectService } from '../select-popup/select-service';
 import { BasketType } from '../families/BasketType';
 import { Routable } from '../shared/routing-helper';
 import { CitiesStats } from '../families/stats-action';
+import { SqlBuilder } from '../model-shared/types';
+import { BusyService } from '../select-popup/busy-service';
 
 
 @Component({
@@ -35,7 +37,7 @@ import { CitiesStats } from '../families/stats-action';
 })
 export class AsignFamilyComponent implements OnInit {
   static route: Route = {
-    path: 'assign-families', component: AsignFamilyComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'שיוך משפחות',seperator:true }
+    path: 'assign-families', component: AsignFamilyComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'שיוך משפחות', seperator: true }
   };
 
   async searchPhone() {
@@ -71,6 +73,7 @@ export class AsignFamilyComponent implements OnInit {
   }
   async assignmentCanceled() {
     this.refreshBaskets();
+
     AsignFamilyComponent.RefreshRoute(this.id).then(r => {
       this.familyLists.routeStats = r;
     });
@@ -153,7 +156,7 @@ export class AsignFamilyComponent implements OnInit {
 
 
 
-  constructor(private selectService: SelectService, private dialog: DialogService, private context: Context) {
+  constructor(private selectService: SelectService, private dialog: DialogService, private context: Context, private busy: BusyService) {
 
   }
 
@@ -172,32 +175,37 @@ export class AsignFamilyComponent implements OnInit {
       this.numOfBaskets = 1;
 
   }
+  lastAssign = Promise.resolve();
   async assignItem(basket: BasketInfo) {
 
-    let x = await AsignFamilyComponent.AddBox({
-      phone: this.phone,
-      name: this.name,
-      basketType: basket.id,
-      helperId: this.id,
-      language: this.filterLangulage,
-      city: this.filterCity,
-      numOfBaskets: this.numOfBaskets,
-      preferRepeatFamilies: this.preferRepeatFamilies && this.repeatFamilies > 0
+    this.lastAssign = this.lastAssign.then(async () => {
+      await this.busy.donotWait(async () => {
+        let x = await AsignFamilyComponent.AddBox({
+          phone: this.phone,
+          name: this.name,
+          basketType: basket.id,
+          helperId: this.id,
+          language: this.filterLangulage,
+          city: this.filterCity,
+          numOfBaskets: this.numOfBaskets,
+          preferRepeatFamilies: this.preferRepeatFamilies && this.repeatFamilies > 0
+        });
+        if (x.addedBoxes) {
+          this.id = x.helperId;
+          this.familyLists.initForFamilies(this.id, this.name, x.families);
+          this.baskets = x.basketInfo.baskets;
+          this.cities = x.basketInfo.cities;
+          this.specialFamilies = x.basketInfo.special;
+          this.repeatFamilies = +x.basketInfo.repeatFamilies;
+          this.familyLists.routeStats = x.routeStats;
+        }
+        else {
+          this.refreshList();
+          this.dialog.Info("לא נמצאה משפחה מתאימה");
+        }
+        this.id = x.helperId;
+      });
     });
-    if (x.addedBoxes) {
-      this.id = x.helperId;
-      this.familyLists.initForFamilies(this.id, this.name, x.families);
-      this.baskets = x.basketInfo.baskets;
-      this.cities = x.basketInfo.cities;
-      this.specialFamilies = x.basketInfo.special;
-      this.repeatFamilies = +x.basketInfo.repeatFamilies;
-      this.familyLists.routeStats = x.routeStats;
-    }
-    else {
-      this.refreshList();
-      this.dialog.Info("לא נמצאה משפחה מתאימה");
-    }
-    this.id = x.helperId;
   }
 
   @RunOnServer({ allowed: c => c.isAdmin() })
@@ -209,9 +217,6 @@ export class AsignFamilyComponent implements OnInit {
       special: 0,
       repeatFamilies: 0
     };
-    let basketHash: any = {};
-    let cityHash: any = {};
-
     let countFamilies = (additionalWhere?: (f: Families) => FilterBase) => {
       return context.for(Families).count(f => {
         let where = f.readyFilter(info.filterCity, info.filterLanguage);
@@ -266,7 +271,7 @@ export class AsignFamilyComponent implements OnInit {
   }
 
   @RunOnServer({ allowed: c => c.isAdmin() })
-  static async AddBox(info: AddBoxInfo, context?: Context) {
+  static async AddBox(info: AddBoxInfo, context?: Context, directSql?: DirectSQL) {
     console.time('addBox');
 
     let result: AddBoxResponse = {
@@ -297,8 +302,13 @@ export class AsignFamilyComponent implements OnInit {
     for (let i = 0; i < info.numOfBaskets; i++) {
 
       let getFamilies = async () => {
-        return await context.for(Families).find({
-          where: f => {
+
+        let f = new Families(context);
+        let sql = new SqlBuilder();
+        let r = (await directSql.execute(sql.query({
+          select: () => [f.id, f.addressLatitude, f.addressLongitude],
+          from: f,
+          where: () => {
             let where = f.readyFilter(info.city, info.language).and(
               f.basketType.isEqualTo(info.basketType).and(
                 f.special.IsDifferentFrom(YesNo.Yes.id)
@@ -306,9 +316,20 @@ export class AsignFamilyComponent implements OnInit {
 
             if (info.preferRepeatFamilies)
               where = where.and(f.previousCourier.isEqualTo(info.helperId));
-            return where;
-              }
-        });
+            return [where];
+          }
+        })));
+
+        return r.rows.map(x => {
+          return {
+            id: x[r.fields[0].name],
+            addressLatitude: +x[r.fields[1].name],
+            addressLongitude: +x[r.fields[2].name]
+          } as familyQueryResult;
+
+        }) as familyQueryResult[];
+
+
       }
       console.time('getFamilies');
       let waitingFamilies = await getFamilies();
@@ -321,7 +342,7 @@ export class AsignFamilyComponent implements OnInit {
       if (waitingFamilies.length > 0) {
         if (existingFamilies.length == 0) {
           let position = Math.trunc(Math.random() * waitingFamilies.length);
-          let family = waitingFamilies[position];
+          let family = await context.for(Families).findFirst(f => f.id.isEqualTo(waitingFamilies[position].id));
           family.courier.value = result.helperId;
           await family.save();
           result.addedBoxes++;
@@ -345,16 +366,21 @@ export class AsignFamilyComponent implements OnInit {
 
           }
           console.time('findClosest');
-          let f = waitingFamilies[0];
-          let dist = getDistance(f.getGeocodeInformation().location());
+          let smallFamily = waitingFamilies[0];
+          let dist = getDistance({
+            lat: smallFamily.addressLatitude,
+            lng: smallFamily.addressLongitude
+          });
           for (let i = 1; i < waitingFamilies.length; i++) {
-            let myDist = getDistance(waitingFamilies[i].getGeocodeInformation().location());
+            let f = waitingFamilies[i];
+            let myDist = getDistance({ lng: f.addressLongitude, lat: f.addressLatitude });
             if (myDist < dist) {
               dist = myDist;
-              f = waitingFamilies[i]
+              smallFamily = waitingFamilies[i]
             }
           }
           console.timeEnd('findClosest');
+          let f = await context.for(Families).findFirst(f => f.id.isEqualTo(smallFamily.id));
           f.courier.value = result.helperId;
 
           await f.save();
@@ -460,6 +486,11 @@ export interface AddBoxResponse {
   routeStats: routeStats;
 
 
+}
+interface familyQueryResult {
+  id: string;
+  addressLatitude: number;
+  addressLongitude: number;
 }
 export interface routeStats {
   totalKm: number;
