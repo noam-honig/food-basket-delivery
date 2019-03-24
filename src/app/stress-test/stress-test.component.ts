@@ -73,7 +73,8 @@ export class StressTestComponent implements OnInit {
       });
       helperId = addBox.helperId;
       count = addBox.families.length;
-      
+      if (!addBox.addedBoxes)
+        return;
 
       let route = await AsignFamilyComponent.RefreshRoute(helperId);
       this.families++;
