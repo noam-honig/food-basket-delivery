@@ -205,6 +205,8 @@ export class AsignFamilyComponent implements OnInit {
           this.id = x.helperId;
           this.familyLists.initForFamilies(this.id, this.name, x.families);
           basket.unassignedFamilies--;
+          if (this.preferRepeatFamilies&&this.repeatFamilies>0)
+            this.repeatFamilies--;
           this.doRefreshRoute();
         }
         else {
@@ -313,6 +315,7 @@ export class AsignFamilyComponent implements OnInit {
 
         let f = new Families(context);
         let sql = new SqlBuilder();
+        sql.addEntity(f,'Families');
         let r = (await directSql.execute(sql.query({
           select: () => [f.id, f.addressLatitude, f.addressLongitude],
           from: f,
