@@ -28,6 +28,7 @@ import { WeeklyPackerByFamilyComponent } from './weekly-packer-by-family/weekly-
 import { WeeklyPackerByProductComponent } from './weekly-packer-by-product/weekly-packer-by-product.component';
 import { MyWeeklyFamilyDeliveriesComponent } from './my-weekly-family-deliveries/my-weekly-family-deliveries.component';
 import { AddressProblemComponent } from './address-problem/address-problem.component';
+import { StressTestComponent } from './stress-test/stress-test.component';
 
 
 
@@ -49,7 +50,7 @@ const routes: Routes = [
   ProductsComponent.route,
   LoginFromSmsComponent.route,
 
-  //{ path: 'stam-test', component: StamTestComponent },
+  { path: 'stam-test', component: StressTestComponent },
   MyFamiliesComponent.route,
   UpdateInfoComponent.route,
   LoginComponent.route,
