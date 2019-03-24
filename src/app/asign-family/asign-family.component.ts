@@ -72,11 +72,22 @@ export class AsignFamilyComponent implements OnInit {
     this.refreshBaskets();
   }
   async assignmentCanceled() {
-    this.refreshBaskets();
+    this.lastRefreshRoute = this.lastRefreshRoute.then(
+      async () => await this.busy.donotWait(
+        async () => 
+    await this.refreshBaskets()));
+    this.doRefreshRoute();
 
-    AsignFamilyComponent.RefreshRoute(this.id).then(r => {
-      this.familyLists.routeStats = r;
-    });
+  }
+
+  lastRefreshRoute = Promise.resolve();
+  doRefreshRoute() {
+    this.lastRefreshRoute = this.lastRefreshRoute.then(
+      async () => await this.busy.donotWait(
+        async () => await AsignFamilyComponent.RefreshRoute(this.id).then(r => {
+          this.familyLists.routeStats = r;
+        })));
+
   }
   smsSent() {
     this.dialog.Info("הודעת SMS נשלחה ל" + this.name);
@@ -193,11 +204,8 @@ export class AsignFamilyComponent implements OnInit {
         if (x.addedBoxes) {
           this.id = x.helperId;
           this.familyLists.initForFamilies(this.id, this.name, x.families);
-          this.baskets = x.basketInfo.baskets;
-          this.cities = x.basketInfo.cities;
-          this.specialFamilies = x.basketInfo.special;
-          this.repeatFamilies = +x.basketInfo.repeatFamilies;
-          this.familyLists.routeStats = x.routeStats;
+          basket.unassignedFamilies--;
+          this.doRefreshRoute();
         }
         else {
           this.refreshList();
@@ -392,16 +400,16 @@ export class AsignFamilyComponent implements OnInit {
 
     }
     console.time('optimizeRoute');
-    result.routeStats = await AsignFamilyComponent.optimizeRoute(r, existingFamilies, context);
+    //result.routeStats = await AsignFamilyComponent.optimizeRoute(r, existingFamilies, context);
     console.timeEnd('optimizeRoute');
     existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
     result.families = await context.for(Families).toPojoArray(existingFamilies);
 
-    result.basketInfo = await AsignFamilyComponent.getBasketStatus({
+    /*result.basketInfo = await AsignFamilyComponent.getBasketStatus({
       filterCity: info.city,
       filterLanguage: info.language,
       helperId: info.helperId
-    }, context);
+    }, context);*/
 
     console.timeEnd('addBox');
     return result;
