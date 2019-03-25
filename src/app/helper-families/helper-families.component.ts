@@ -29,6 +29,7 @@ export class HelperFamiliesComponent implements OnInit {
 
   }
   async cancelAssign(f: Families) {
+    this.dialog.analytics('Cancel Assign');
     this.familyLists.reload();
     this.assignmentCanceled.emit();
   }
@@ -43,6 +44,7 @@ export class HelperFamiliesComponent implements OnInit {
         f.courierComments.value = comment;
         try {
           await f.save();
+          this.dialog.analytics('delivered');
           this.initFamilies();
           if (this.familyLists.toDeliver.length == 0) {
             this.dialog.YesNoQuestion(this.allDoneMessage());
@@ -76,6 +78,7 @@ export class HelperFamiliesComponent implements OnInit {
         f.courierComments.value = comment;
         try {
           await f.save();
+          this.dialog.analytics('Problem');
           this.initFamilies();
 
 
@@ -89,6 +92,7 @@ export class HelperFamiliesComponent implements OnInit {
     });
   }
   async sendSms(reminder: Boolean) {
+    this.dialog.analytics('Send SMS '+(reminder?'reminder':''));
     await SendSmsAction.SendSms(this.familyLists.helperId, reminder);
     this.assignSmsSent.emit();
     if (reminder)
@@ -103,6 +107,7 @@ export class HelperFamiliesComponent implements OnInit {
       ok: async comment => {
         f.courierComments.value = comment;
         await f.save();
+        this.dialog.analytics('Update Comment');
       }
       ,
       cancel: () => { }
@@ -112,6 +117,7 @@ export class HelperFamiliesComponent implements OnInit {
     f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
     try {
       await f.save();
+      this.dialog.analytics('Return to Deliver');
       this.initFamilies();
     }
     catch (err) {

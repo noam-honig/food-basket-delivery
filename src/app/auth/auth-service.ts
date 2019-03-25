@@ -16,6 +16,7 @@ export class AuthService {
     async loginFromSms(key: string) {
         this.auth.loggedIn(await AuthService.loginFromSms(key), false);
         if (this.auth.valid) {
+            this.dialog.analytics('login from sms');
             this.router.navigate([evilStatics.routes.myFamilies]);
         }
     }
@@ -23,7 +24,7 @@ export class AuthService {
     static async loginFromSms(key: string, context?: Context) {
 
         let h = await context.for(Helpers).findFirst(h => h.shortUrlKey.isEqualTo(key));
-        if (h)
+        if (h){
             return {
                 valid: true,
                 authToken: evilStatics.auth.createTokenFor({
@@ -34,6 +35,7 @@ export class AuthService {
                 }),
                 requirePassword: false
             } as LoginResponse
+        }
         return { valid: false, requirePassword: false } as LoginResponse;
     }
     constructor(
@@ -46,6 +48,7 @@ export class AuthService {
         let loginResponse = await AuthService.login(user, password);
         this.auth.loggedIn(loginResponse, remember);
         if (this.auth.valid) {
+            this.dialog.analytics('login '+(this.auth.info.deliveryAdmin?'delivery admin':''));
             if (loginResponse.requirePassword) {
                 this.dialog.YesNoQuestion('שלום ' + this.auth.info.name + ' את מוגדרת כמנהלת אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועברת למסך עדכון פרטים לעדכון סיסמה.', () => {
                     this.router.navigate([evilStatics.routes.updateInfo])

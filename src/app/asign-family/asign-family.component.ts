@@ -74,8 +74,8 @@ export class AsignFamilyComponent implements OnInit {
   async assignmentCanceled() {
     this.lastRefreshRoute = this.lastRefreshRoute.then(
       async () => await this.busy.donotWait(
-        async () => 
-    await this.refreshBaskets()));
+        async () =>
+          await this.refreshBaskets()));
     this.doRefreshRoute();
 
   }
@@ -205,9 +205,16 @@ export class AsignFamilyComponent implements OnInit {
           this.id = x.helperId;
           this.familyLists.initForFamilies(this.id, this.name, x.families);
           basket.unassignedFamilies--;
-          if (this.preferRepeatFamilies&&this.repeatFamilies>0)
+          if (this.preferRepeatFamilies && this.repeatFamilies > 0)
             this.repeatFamilies--;
           this.doRefreshRoute();
+          this.dialog.analytics('Assign Family');
+          if (this.filterLangulage != -1)
+            this.dialog.analytics('assign family-language');
+          if (this.filterCity)
+            this.dialog.analytics('assign family-city');
+          if (this.numOfBaskets)
+            this.dialog.analytics('assign family boxes='+this.numOfBaskets);
         }
         else {
           this.refreshList();
@@ -315,7 +322,7 @@ export class AsignFamilyComponent implements OnInit {
 
         let f = new Families(context);
         let sql = new SqlBuilder();
-        sql.addEntity(f,'Families');
+        sql.addEntity(f, 'Families');
         let r = (await directSql.execute(sql.query({
           select: () => [f.id, f.addressLatitude, f.addressLongitude],
           from: f,
@@ -470,6 +477,7 @@ export class AsignFamilyComponent implements OnInit {
           this.id = helper.id.value;
         }
         f.courier.value = this.id;
+        this.dialog.analytics('assign family special');
         await f.save();
         this.refreshList();
       }
