@@ -7,10 +7,11 @@ import { DataColumnSettings } from 'radweb';
 import { Context, MoreDataColumnSettings, EntityClass } from '../shared/context';
 import { evilStatics } from '../auth/evil-statics';
 import { routeStats } from '../asign-family/asign-family.component';
+import { helpers } from 'chart.js';
 
 @EntityClass
 export class Helpers extends IdEntity<HelperId>  {
-  
+
     constructor(private context: Context) {
 
         super(new HelperId(context), {
@@ -69,10 +70,10 @@ export class Helpers extends IdEntity<HelperId>  {
     totalTime = new NumberColumn();
     getRouteStats(): routeStats {
         return {
-            totalKm:this.totalKm.value,
-            totalTime:this.totalTime.value
+            totalKm: this.totalKm.value,
+            totalTime: this.totalTime.value
         }
-      }
+    }
 
     superAdmin = new BoolColumn({
         caption: 'סופר מנהל'
@@ -106,7 +107,18 @@ export class Helpers extends IdEntity<HelperId>  {
             text += possible.charAt(Math.floor(Math.random() * possible.length));
         return text;
     }
- 
+    static recentHelpers: Helpers[] = [];
+    static addToRecent(h: Helpers) {
+        if (!h)
+            return;
+        if (h.isNew())
+            return;
+        let index = Helpers.recentHelpers.findIndex(x=>x.id.value==h.id.value);
+        if (index >= 0)
+            Helpers.recentHelpers.splice(index, 1);
+        Helpers.recentHelpers.splice(0, 0, h);
+    }
+
 }
 
 export class HelperId extends Id implements HasAsyncGetTheValue {

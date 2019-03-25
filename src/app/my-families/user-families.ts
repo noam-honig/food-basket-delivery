@@ -22,15 +22,15 @@ export class UserFamiliesList {
     helperOptional: Helpers;
     routeStats: routeStats;
     async initForHelper(helperId: string, name: string, helperOptional?: Helpers) {
-        
+
         this.helperOptional = helperOptional;
         this.helperId = helperId;
         this.helperName = name;
-        if (helperOptional){
+        if (helperOptional) {
             this.routeStats = helperOptional.getRouteStats();
         }
         await this.reload();
-      
+
     }
     async initForFamilies(helperId: string, name: string, familiesPocoArray: any[]) {
         this.helperId = helperId;
@@ -40,7 +40,10 @@ export class UserFamiliesList {
     }
 
     async reload() {
-        this.allFamilies = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(this.helperId), orderBy: f => [f.routeOrder, f.address], limit: 1000 });
+        if (this.helperId)
+            this.allFamilies = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(this.helperId), orderBy: f => [f.routeOrder, f.address], limit: 1000 });
+        else
+            this.allFamilies = [];
         this.initFamilies();
     }
 

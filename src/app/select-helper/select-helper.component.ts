@@ -5,6 +5,7 @@ import { Helpers } from '../helpers/helpers';
 import { Context } from '../shared/context';
 import { FilterBase, FindOptionsPerEntity } from 'radweb';
 import { FlexibleConnectedPositionStrategy } from '@angular/cdk/overlay';
+import { BusyService } from '../select-popup/busy-service';
 
 @Component({
   selector: 'app-select-helper',
@@ -13,14 +14,15 @@ import { FlexibleConnectedPositionStrategy } from '@angular/cdk/overlay';
 })
 export class SelectHelperComponent implements OnInit {
 
-  searchString: string;
-  lastFilter: string;
-  allHelpers: Helpers[] = [];
+  searchString: string = '';
+  lastFilter: string = undefined;
+
   filteredHelpers: Helpers[] = [];
   constructor(
     private dialogRef: MatDialogRef<SelectHelperComponent>,
     @Inject(MAT_DIALOG_DATA) private data: SelectHelperInfo,
-    private context: Context
+    private context: Context,
+    private busy: BusyService
 
   ) {
 
@@ -28,26 +30,47 @@ export class SelectHelperComponent implements OnInit {
   clearHelper() {
     this.select(undefined);
   }
+  
 
+  findOptions = {
+    orderBy: h => [h.name], limit: 25
+  } as FindOptionsPerEntity<Helpers>;
   async ngOnInit() {
 
-    var findOptions = {
-      orderBy: h => [h.name], limit: 1000
-    } as FindOptionsPerEntity<Helpers>;
-    if (this.data.filter) {
-      findOptions.where = h => this.data.filter(h);
+
+    this.findOptions.where = h => {
+      let r = h.name.isContains(this.searchString);
+      if (this.data.filter) {
+        return r.and(this.data.filter(h));
+      }
+      return r;
+    };
+
+    if (Helpers.recentHelpers.length == 0)
+      this.getHelpers();
+    else {
+      this.filteredHelpers = [...Helpers.recentHelpers];
+      this.showingRecentHelpers = true;
     }
-    this.allHelpers = await this.context.for(Helpers).find(findOptions);
-    this.filteredHelpers = this.allHelpers;
+
+  }
+  showingRecentHelpers = false;
+  moreHelpers() {
+    this.findOptions.limit *= 2;
+    this.getHelpers();
+  }
+  async getHelpers() {
+    
+    await this.busy.donotWait(async () =>{
+      this.filteredHelpers = await this.context.for(Helpers).find(this.findOptions);
+      this.showingRecentHelpers = false;
+    });
+    
   }
   doFilter() {
-    if (this.searchString != this.lastFilter) {
-      this.lastFilter = this.searchString;
-      if (this.searchString.trim() == '')
-        this.filteredHelpers = this.allHelpers;
-      else {
-        this.filteredHelpers = this.allHelpers.filter(f => f.name.value.indexOf(this.searchString) >= 0 || f.phone.value.indexOf(this.searchString) >= 0);
-      }
+    if (this.searchString.trim() != this.lastFilter) {
+      this.lastFilter = this.searchString.trim();
+      this.getHelpers();
     }
 
   }
@@ -57,6 +80,8 @@ export class SelectHelperComponent implements OnInit {
   }
   select(h: Helpers) {
     this.data.onSelect(h);
+    if (h&&!h.isNew())
+      Helpers.addToRecent(h);
     this.dialogRef.close();
   }
 

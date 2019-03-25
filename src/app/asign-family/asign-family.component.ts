@@ -56,6 +56,7 @@ export class AsignFamilyComponent implements OnInit {
         this.shortUrl = helper.shortUrlKey.value;
         this.id = helper.id.value;
         this.familyLists.routeStats = helper.getRouteStats();
+        Helpers.addToRecent(helper);
 
         await this.refreshList();
       } else {
@@ -204,6 +205,10 @@ export class AsignFamilyComponent implements OnInit {
           preferRepeatFamilies: this.preferRepeatFamilies && this.repeatFamilies > 0
         });
         if (x.addedBoxes) {
+          if (!this.id) {
+            this.context.for(Helpers).findFirst(h => h.id.isContains(x.helperId)).then(x => Helpers.addToRecent(x));
+
+          }
           this.id = x.helperId;
           this.familyLists.initForFamilies(this.id, this.name, x.families);
           basket.unassignedFamilies--;
@@ -476,6 +481,7 @@ export class AsignFamilyComponent implements OnInit {
             helper.phone.value = this.phone;
             helper.name.value = this.name;
             await helper.save();
+            Helpers.addToRecent(helper);
           }
           this.name = helper.name.value;
           this.shortUrl = helper.shortUrlKey.value;
@@ -500,7 +506,7 @@ export class AsignFamilyComponent implements OnInit {
             });
 
         }
-        else 
+        else
           ok();
 
 
