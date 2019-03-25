@@ -50,7 +50,7 @@ const routes: Routes = [
   ProductsComponent.route,
   LoginFromSmsComponent.route,
 
-  { path: 'stam-test', component: StressTestComponent },
+  //{ path: 'stam-test', component: StressTestComponent },
   MyFamiliesComponent.route,
   UpdateInfoComponent.route,
   LoginComponent.route,
