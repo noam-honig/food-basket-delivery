@@ -8,6 +8,7 @@ import { BusyService } from "./busy-service";
 import { environment } from "../../environments/environment";
 import { ServerEventAuthorizeAction } from "../server/server-event-authorize-action";
 import { Subject } from "rxjs";
+import { myThrottle } from "../model-shared/types";
 
 
 @Injectable()
@@ -26,7 +27,9 @@ export class DialogService {
         return this.mediaMatcher.matches;
     }
 
-    newsUpdate = new Subject<string>();
+    refreshStatusStats = new Subject();
+    
+    statusRefreshThrottle = new myThrottle(1000);
 
 
     constructor(private dialog: MatDialog, private zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar) {
@@ -49,7 +52,7 @@ export class DialogService {
                     source.onmessage = e => {
 
                         this.zone.run(() => {
-                            this.newsUpdate.next(e.data.toString());
+                            this.statusRefreshThrottle.do(()=>this.refreshStatusStats.next());
                             this.Info(e.data.toString() + ' ');
                         });
                     };

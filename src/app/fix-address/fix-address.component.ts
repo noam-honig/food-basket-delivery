@@ -26,7 +26,7 @@ import { BusyService } from '../select-popup/busy-service';
 export class FixAddressComponent implements OnInit, OnDestroy {
   constructor(private context: Context, private dialog: DialogService, private selectService: SelectService, busy: BusyService) {
 
-    let y = dialog.newsUpdate.subscribe(() => {
+    let y = dialog.refreshStatusStats.subscribe(() => {
       busy.donotWait(async () => {
         await this.refreshFamilies();
       });

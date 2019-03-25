@@ -48,7 +48,7 @@ export class FamiliesComponent implements OnInit {
   constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context, private selectService: SelectService) {
     this.doTest();
 
-    let y = dialog.newsUpdate.subscribe(() => {
+    let y = dialog.refreshStatusStats.subscribe(() => {
       this.refreshStats();
     });
     this.onDestroy = () => {

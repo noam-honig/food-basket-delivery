@@ -35,7 +35,7 @@ export class NewsComponent implements OnInit, OnDestroy {
   }
   onDestroy = () => { };
   constructor(dialog: DialogService, private selectService: SelectService, private context: Context, private busy: BusyService) {
-    let y = dialog.newsUpdate.subscribe(() => {
+    let y = dialog.refreshStatusStats.subscribe(() => {
       this.refresh();
     });
     this.onDestroy = () => {

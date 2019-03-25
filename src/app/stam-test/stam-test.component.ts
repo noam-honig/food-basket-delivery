@@ -4,6 +4,7 @@ import { FamilyDeliveryEventsView } from "../families/FamilyDeliveryEventsView";
 import { Context } from '../shared/context';
 import { Helpers } from '../helpers/helpers';
 import { WeeklyFamilies } from '../weekly-families/weekly-families';
+import { myThrottle } from '../model-shared/types';
 
 @Component({
   selector: 'app-stam-test',
@@ -13,14 +14,21 @@ import { WeeklyFamilies } from '../weekly-families/weekly-families';
 export class StamTestComponent implements OnInit {
 
   constructor(private context: Context) { }
-  settings = this.context.for(WeeklyFamilies).gridSettings({
-    allowDelete: true,
-    allowInsert: true,
-    allowUpdate: true,
-    get:{
-      limit:50
-    }
-  });
+  time: string;
+  times = 0;
+  clicks = 0;
+  test() {
+    this.clicks++;
+    this.t.do(() => {
+      this.doSomething(new Date().toLocaleTimeString());
+    });
+  }
+  t = new myThrottle(5000);
+  doSomething(what: string) {
+    this.times++;
+    this.time = what;
+    console.log('doing something');
+  }
   ngOnInit() {
   }
 
