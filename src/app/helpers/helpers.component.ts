@@ -21,7 +21,7 @@ export class HelpersComponent implements OnInit {
   static route: Route = {
     path: 'helpers',
     component: HelpersComponent,
-    data: { name: 'מתנדבות' }, canActivate: [AnyAdmin]
+    data: { name: 'מתנדבים' }, canActivate: [AnyAdmin]
   };
 
   helpers = this.context.for(Helpers).gridSettings({

@@ -252,7 +252,10 @@ export class FamiliesComponent implements OnInit {
           column: families.familySource,
           dropDown: { source: this.context.for(FamilySources).create() }
         },
-        families.internalComment,
+        {
+          column: families.internalComment,
+          width: '300'
+        },
         families.iDinExcel,
         families.deliveryComments,
         families.special.getColumn(),
