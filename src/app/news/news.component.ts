@@ -8,6 +8,7 @@ import { Route } from '@angular/router';
 import { SelectService } from '../select-popup/select-service';
 import { Families } from '../families/families';
 import { FilterBase } from 'radweb';
+import { BusyService } from '../select-popup/busy-service';
 
 @Component({
   selector: 'app-news',
@@ -22,18 +23,18 @@ export class NewsComponent implements OnInit, OnDestroy {
     name: 'כל החדשות'
   }, {
     name: 'בעיות',
-    where:f=>f.deliverStatus.isProblem()
+    where: f => f.deliverStatus.isProblem()
   }, {
     name: 'הערות',
-    where:f=>f.courierComments.IsDifferentFrom('')
+    where: f => f.courierComments.IsDifferentFrom('')
   }];
   currentFilter: NewsFilter = this.filters[0];
-  filterChange(){
+  filterChange() {
     console.log(this.currentFilter.name);
     this.refresh();
   }
   onDestroy = () => { };
-  constructor(dialog: DialogService, private selectService: SelectService, private context: Context) {
+  constructor(dialog: DialogService, private selectService: SelectService, private context: Context, private busy: BusyService) {
     let y = dialog.newsUpdate.subscribe(() => {
       this.refresh();
     });
@@ -56,8 +57,10 @@ export class NewsComponent implements OnInit, OnDestroy {
   }
 
   async refresh() {
-    
-    this.news = await this.context.for(NewsUpdate).find({where:this.currentFilter.where,  orderBy: n => [{ column: n.updateTime, descending: true }], limit: 50 });
+
+    this.busy.donotWait(async () => {
+      this.news = await this.context.for(NewsUpdate).find({ where: this.currentFilter.where, orderBy: n => [{ column: n.updateTime, descending: true }], limit: 50 });
+    });
   }
   icon(n: NewsUpdate) {
 

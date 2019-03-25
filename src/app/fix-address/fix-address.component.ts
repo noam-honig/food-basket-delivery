@@ -16,6 +16,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { SelectService } from '../select-popup/select-service';
 import { SWITCH_INJECTOR_FACTORY__POST_R3__ } from '@angular/core/src/di/injector';
 import { colors } from '../families/stats-action';
+import { BusyService } from '../select-popup/busy-service';
 
 @Component({
   selector: 'app-fix-address',
@@ -23,10 +24,12 @@ import { colors } from '../families/stats-action';
   styleUrls: ['./fix-address.component.scss']
 })
 export class FixAddressComponent implements OnInit, OnDestroy {
-  constructor(private context: Context, private dialog: DialogService, private selectService: SelectService) {
+  constructor(private context: Context, private dialog: DialogService, private selectService: SelectService, busy: BusyService) {
 
     let y = dialog.newsUpdate.subscribe(() => {
-      this.refreshFamilies();
+      busy.donotWait(async () => {
+        await this.refreshFamilies();
+      });
     });
     this.onDestroy = () => {
       y.unsubscribe();
@@ -218,7 +221,7 @@ export class FixAddressComponent implements OnInit, OnDestroy {
 
     });
   }
-  
+
   public pieChartLabels: string[] = [];
   public pieChartData: number[] = [];
 
