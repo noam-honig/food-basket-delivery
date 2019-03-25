@@ -104,7 +104,7 @@ export class AsignFamilyComponent implements OnInit {
     }))
     this.baskets = r.baskets;
     this.cities = r.cities;
-    this.specialFamilies = r.special;
+    this.specialFamilies = +r.special;
     this.repeatFamilies = +r.repeatFamilies;
   }
 
@@ -115,7 +115,9 @@ export class AsignFamilyComponent implements OnInit {
 
   preferRepeatFamilies = true;
   async refreshList() {
-    await this.refreshBaskets();
+    this.busy.donotWait(async () => {
+      await this.refreshBaskets();
+    });
     await this.familyLists.initForHelper(this.id, this.name);
 
   }
@@ -214,7 +216,7 @@ export class AsignFamilyComponent implements OnInit {
           if (this.filterCity)
             this.dialog.analytics('assign family-city');
           if (this.numOfBaskets)
-            this.dialog.analytics('assign family boxes='+this.numOfBaskets);
+            this.dialog.analytics('assign family boxes=' + this.numOfBaskets);
         }
         else {
           this.refreshList();
@@ -461,9 +463,12 @@ export class AsignFamilyComponent implements OnInit {
 
   }
   addSpecial() {
+    this.addFamily(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
+      f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes.id))), 'special');
+  }
+  addFamily(filter: (f: Families) => FilterBase, analyticsName: string) {
     this.selectService.selectFamily({
-      where: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
-        f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes.id))),
+      where: f => filter(f),
       onSelect: async f => {
         if (!this.id) {
           let helper = await this.context.for(Helpers).lookupAsync(h => h.phone.isEqualTo(this.phone));
@@ -476,15 +481,38 @@ export class AsignFamilyComponent implements OnInit {
           this.shortUrl = helper.shortUrlKey.value;
           this.id = helper.id.value;
         }
-        f.courier.value = this.id;
-        this.dialog.analytics('assign family special');
-        await f.save();
-        this.refreshList();
+
+        let ok = async () => {
+          f.courier.value = this.id;
+          f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
+          this.dialog.analytics('assign family special');
+          await f.save();
+          this.refreshList();
+          this.doRefreshRoute();
+        };
+
+        if (f.courier.value) {
+          let c = await f.courier.getTheName();
+          this.dialog.YesNoQuestion('משפחת ' +
+            f.name.value + ' כבר משוייכת ל' + c + ' בסטטוס ' +
+            f.deliverStatus.displayValue + '. האם לשייך אותו למשנע ' + this.name + '?', () => {
+              ok();
+            });
+
+        }
+        else 
+          ok();
+
+
+
       }
     })
   }
-
+  addSpecific() {
+    this.addFamily(f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id), 'specific');
+  }
 }
+
 export interface AddBoxInfo {
   name: string;
   basketType: string;

@@ -1,10 +1,11 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core';
 import { GridSettings, Filter } from 'radweb';
 import { Families } from '../families/families';
 import { BusyService } from '../select-popup/busy-service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { FilterBase } from 'radweb';
 import { Context } from '../shared/context';
+import { DeliveryStatus } from '../families/DeliveryStatus';
 
 
 @Component({
@@ -13,7 +14,7 @@ import { Context } from '../shared/context';
   styleUrls: ['./select-family.component.scss']
 })
 export class SelectFamilyComponent implements OnInit {
-
+  @ViewChild("search") search: ElementRef;
   constructor(private busy: BusyService, private dialogRef: MatDialogRef<SelectFamilyComponent>,
     @Inject(MAT_DIALOG_DATA) private data: SelectFamilyInfo, private context: Context) { }
   searchString: string = '';
@@ -52,8 +53,20 @@ export class SelectFamilyComponent implements OnInit {
     this.data.onSelect(f);
     this.dialogRef.close();
   }
-  ngOnInit() {
-    this.getRows();
+  showStatus(f: Families) {
+    if (f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery) {
+      if (f.courier.value) {
+        return 'משוייך למשנע';
+      } else {
+        return '';
+      }
+    }
+    return f.deliverStatus.displayValue;
+  }
+  async ngOnInit() {
+    this.busy.donotWait(async () =>
+      await this.getRows());
+    this.search.nativeElement.focus();
   }
   moreFamilies() {
     this.pageSize += 7;
