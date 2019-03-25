@@ -144,6 +144,7 @@ export class DeliveryEventsComponent implements OnInit {
       into: fde,
       from: f,
       set: () => [[fde.deliveryEvent, sql.str(currentEvent.id.value)], [fde.family, f.id], ...columns.map(c => <[Column<any>, any]>[c.familyColumn, c.deliveryColumn])],
+      where:()=>[f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id)]
     }));
 
     // clear families data
