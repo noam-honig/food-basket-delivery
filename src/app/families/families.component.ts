@@ -273,6 +273,7 @@ export class FamiliesComponent implements OnInit {
         families.phone2,
         families.phone2Description,
         families.courier.getColumn(this.selectService),
+        families.fixedCourier.getColumn(this.selectService),
         {
           caption: 'טלפון משנע',
           getValue: f => this.context.for(Helpers).lookup(f.courier).phone.value

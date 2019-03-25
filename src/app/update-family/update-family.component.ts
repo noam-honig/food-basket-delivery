@@ -74,6 +74,7 @@ export class UpdateFamilyComponent implements OnInit {
  
     this.deliverInfo = this.families.addArea({
       columnSettings: families => [
+        families.fixedCourier.getColumn(this.selectService),
         families.courier.getColumn(this.selectService),
         {
           caption: 'טלפון משנע',

@@ -17,7 +17,7 @@ import { Input } from "@angular/core";
 
 @EntityClass
 export class Families extends IdEntity<FamilyId>  {
-  
+
   constructor(private context: Context) {
     super(new FamilyId(),
       {
@@ -33,7 +33,9 @@ export class Families extends IdEntity<FamilyId>  {
         onSavingRow: async () => {
 
           if (this.context.onServer) {
-
+            if (this.fixedCourier.value && !this.courier.value && this.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery) {
+                this.courier.value = this.fixedCourier.value;
+            }
             if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
               let geo = await GetGeoInformation(this.address.value);
               this.addressApiResult.value = geo.saveToString();
@@ -110,7 +112,8 @@ export class Families extends IdEntity<FamilyId>  {
   callComments = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'הערות שיחה' });
 
 
-  courier = new HelperId(this.context, "משנע");
+  courier = new HelperId(this.context, "משנע באירוע");
+  fixedCourier = new HelperId(this.context, "משנע קבוע");
   courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
 
   courierAssignUserName = new StringColumn({
@@ -130,10 +133,10 @@ export class Families extends IdEntity<FamilyId>  {
   routeOrder = new NumberColumn();
   courierComments = new StringColumn('הערות מסירה');
 
-  addressLongitude = new NumberColumn({decimalDigits:8});
-  addressLatitude = new NumberColumn({decimalDigits:8});
-  addressOk = new BoolColumn({caption:'כתובת תקינה',readonly:true});
-  
+  addressLongitude = new NumberColumn({ decimalDigits: 8 });
+  addressLatitude = new NumberColumn({ decimalDigits: 8 });
+  addressOk = new BoolColumn({ caption: 'כתובת תקינה', readonly: true });
+
   readyFilter(city?: string, language?: number) {
     let where = this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
       this.courier.isEqualTo(''));
@@ -247,7 +250,7 @@ export class Families extends IdEntity<FamilyId>  {
     }
     return this.deliverStatus.displayValue;
   }
-  
+
   createDate = new changeDate({ excludeFromApi: !this.context.isAdmin(), caption: 'מועד הוספה' });
   createUser = new HelperIdReadonly(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'משתמש מוסיף' });
 

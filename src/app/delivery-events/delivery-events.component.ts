@@ -128,6 +128,9 @@ export class DeliveryEventsComponent implements OnInit {
           case f.routeOrder:
             emptyValue = '0';
             break;
+          case f.courier:
+            emptyValue = sql.build(f.fixedCourier);
+            break;
         }
         if (c instanceof DateTimeColumn) {
           emptyValue = 'null';
@@ -144,7 +147,7 @@ export class DeliveryEventsComponent implements OnInit {
       into: fde,
       from: f,
       set: () => [[fde.deliveryEvent, sql.str(currentEvent.id.value)], [fde.family, f.id], ...columns.map(c => <[Column<any>, any]>[c.familyColumn, c.deliveryColumn])],
-      where:()=>[f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id)]
+      where: () => [f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id)]
     }));
 
     // clear families data
