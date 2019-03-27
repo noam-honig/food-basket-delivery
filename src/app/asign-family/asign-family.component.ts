@@ -258,7 +258,7 @@ export class AsignFamilyComponent implements OnInit {
     );
 
     for (let c of await context.for(CitiesStats).find({
-      orderBy: ff => [{ column: ff.families, descending: true }]
+      orderBy: ff => [{ column: ff.city }]
     })) {
       var ci = {
         name: c.city.value,
@@ -283,7 +283,7 @@ export class AsignFamilyComponent implements OnInit {
         result.baskets.push(bi);
     }
     result.baskets.sort((a, b) => b.unassignedFamilies - a.unassignedFamilies);
-    result.cities.sort((a, b) => b.unassignedFamilies - a.unassignedFamilies);
+    
     console.timeEnd('getBasketStatus');
     return result;
   }
@@ -491,7 +491,7 @@ export class AsignFamilyComponent implements OnInit {
         let ok = async () => {
           f.courier.value = this.id;
           f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
-          this.dialog.analytics('assign family special');
+          this.dialog.analytics(analyticsName);
           await f.save();
           this.refreshList();
           this.doRefreshRoute();
@@ -515,7 +515,7 @@ export class AsignFamilyComponent implements OnInit {
     })
   }
   addSpecific() {
-    this.addFamily(f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id), 'specific');
+    this.addFamily(f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.city.isEqualTo(this.filterCity)), 'specific');
   }
 }
 
