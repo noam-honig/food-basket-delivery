@@ -82,6 +82,7 @@ export class Families extends IdEntity<FamilyId>  {
         this.name.error = 'השם קצר מידי';
     }
   });
+  tz = new StringColumn({caption:'מספר זהות',excludeFromApi: !this.context.isAdmin()});
   familyMembers = new NumberColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'מספר נפשות' });
   language = new LanguageColumn();
   basketType = new BasketId(this.context, 'סוג סל');

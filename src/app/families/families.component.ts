@@ -237,11 +237,12 @@ export class FamiliesComponent implements OnInit {
           getValue: f => f.getDeliveryDescription(),
           width: '200'
         },
-
+        
         {
           column: families.familyMembers,
 
         },
+        
         {
           column: families.language,
           dropDown: {
@@ -256,6 +257,7 @@ export class FamiliesComponent implements OnInit {
           column: families.internalComment,
           width: '300'
         },
+        families.tz,
         families.iDinExcel,
         families.deliveryComments,
         families.special.getColumn(),

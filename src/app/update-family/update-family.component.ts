@@ -42,6 +42,7 @@ export class UpdateFamilyComponent implements OnInit {
         },
         families.internalComment,
         families.iDinExcel,
+        families.tz,
         families.deliveryComments,
         families.special.getColumn(),
         families.createUser,
