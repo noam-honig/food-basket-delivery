@@ -28,6 +28,7 @@ h3{
     margin-top:5px;
 }
 .printTable{
+    -webkit-print-color-adjust: exact;
     width:100%;
     th,td{
         text-align: right;
