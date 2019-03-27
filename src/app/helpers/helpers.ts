@@ -25,8 +25,10 @@ export class Helpers extends IdEntity<HelperId>  {
                     if (this.password.value && this.password.value != this.password.originalValue && this.password.value != Helpers.emptyPassword) {
                         this.realStoredPassword.value = evilStatics.passwordHelper.generateHash(this.password.value);
                     }
-                    if ((await context.for(Helpers).count()) == 0)
+                    if ((await context.for(Helpers).count()) == 0){
                         this.superAdmin.value = true;
+                        this.deliveryAdmin.value = true;
+                    }
 
                     await checkForDuplicateValue(this, this.phone);
                     if (this.isNew())
