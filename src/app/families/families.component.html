@@ -1,8 +1,8 @@
 <button mat-mini-fab style="margin-bottom:5px" (click)="refresh()">
     <mat-icon>refresh</mat-icon>
 </button>
-<mat-tab-group #myTab (selectedTabChange)="tabChanged()" [selectedIndex]="0" *ngIf="!problemOnly">
-    <mat-tab *ngFor="let t of statTabs" label="{{t.name}} - {{statTotal(t)}}"> </mat-tab>
+<mat-tab-group #myTab (selectedTabChange)="tabChanged()"  [selectedIndex]="0" *ngIf="!problemOnly">
+    <mat-tab *ngFor="let t of statTabs" label="{{t.name}} - {{statTotal(t)}}" > </mat-tab>
 
 </mat-tab-group>
 <br *ngIf="problemOnly"/>
@@ -12,7 +12,10 @@
             (chartClick)="chartClicked($event)"></canvas>
     </div>
 </div>
-<h4 *ngIf="currentStatFilter">{{currentStatFilter.name}}:</h4>
+<h4 *ngIf="currentStatFilter">{{currentStatFilter.name}}: </h4>
+
+<a *ngIf="currentStatFilter" (click)="clearStat()">הצג הכל</a>
+<br>
 <mat-form-field class="full-width">
     <input matInput [(ngModel)]="searchString" (input)="doSearch()" placeholder="חיפוש משפחה" [ngModelOptions]="{standalone: true}">
     <mat-icon matSuffix (click)="clearSearch()">clear</mat-icon>

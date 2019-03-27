@@ -379,6 +379,11 @@ export class FamiliesComponent implements OnInit {
     this.families.getRecords();
     this.updateChart();
   }
+  clearStat(){
+    this.currentStatFilter = undefined;
+    this.families.getRecords();
+    
+  }
 
   updateChart() {
     this.pieChartData = [];
