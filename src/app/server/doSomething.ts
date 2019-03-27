@@ -27,7 +27,7 @@ export async function DoIt() {
 
         //   ImportFromExcelBasedOnLetters();
 
-        await ImportFromExcel();
+   //     await ImportFromExcel();
     }
     catch (err) {
         console.log(err);
