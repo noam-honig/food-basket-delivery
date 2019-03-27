@@ -57,11 +57,11 @@ const routes: Routes = [
   RegisterComponent.route,
   
   //{ path: 'stam', component: StamTestComponent },
-  { path: '', redirectTo: '/families', pathMatch: 'full' },
-  { path: '**', redirectTo: '/families', pathMatch: 'full' }
+  { path: '', redirectTo: '/assign-families', pathMatch: 'full' },
+  { path: '**', redirectTo: '/assign-families', pathMatch: 'full' }
 ];
 
-evilStatics.routes.families = '/' + FamiliesComponent.route.path;
+evilStatics.routes.assignFamilies = '/' + AsignFamilyComponent.route.path;
 evilStatics.routes.login = '/' + LoginComponent.route.path;
 evilStatics.routes.myFamilies = '/' + MyFamiliesComponent.route.path;
 evilStatics.routes.register = '/' + RegisterComponent.route.path;

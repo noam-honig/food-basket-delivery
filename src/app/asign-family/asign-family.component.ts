@@ -469,7 +469,7 @@ export class AsignFamilyComponent implements OnInit {
   }
   addSpecial() {
     this.addFamily(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
-      f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes.id))), 'special');
+      f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes.id).and(f.city.isEqualTo(this.filterCity)))), 'special');
   }
   addFamily(filter: (f: Families) => FilterBase, analyticsName: string) {
     this.selectService.selectFamily({

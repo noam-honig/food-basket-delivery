@@ -56,7 +56,7 @@ export class AuthService {
             }
             else {
                 if (this.auth.info.deliveryAdmin)
-                    this.router.navigate([evilStatics.routes.families])
+                    this.router.navigate([evilStatics.routes.assignFamilies])
                 else if (this.auth.info.weeklyFamilyVolunteer)
                     this.router.navigate([evilStatics.routes.myWeeklyFamilies]);
                 else if (this.auth.info.weeklyFamilyPacker)
