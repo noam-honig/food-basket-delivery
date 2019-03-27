@@ -283,7 +283,7 @@ export class AsignFamilyComponent implements OnInit {
         result.baskets.push(bi);
     }
     result.baskets.sort((a, b) => b.unassignedFamilies - a.unassignedFamilies);
-    
+
     console.timeEnd('getBasketStatus');
     return result;
   }
@@ -469,11 +469,15 @@ export class AsignFamilyComponent implements OnInit {
   }
   addSpecial() {
     this.addFamily(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
-      f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes.id).and(f.city.isEqualTo(this.filterCity)))), 'special');
+      f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes.id))), 'special');
   }
   addFamily(filter: (f: Families) => FilterBase, analyticsName: string) {
     this.selectService.selectFamily({
-      where: f => filter(f),
+      where: f => {
+        if (this.filterCity)
+          return f.city.isEqualTo(this.filterCity).and(filter(f));
+        return filter(f);
+      },
       onSelect: async f => {
         if (!this.id) {
           let helper = await this.context.for(Helpers).lookupAsync(h => h.phone.isEqualTo(this.phone));
@@ -515,7 +519,7 @@ export class AsignFamilyComponent implements OnInit {
     })
   }
   addSpecific() {
-    this.addFamily(f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.city.isEqualTo(this.filterCity)), 'specific');
+    this.addFamily(f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id), 'specific');
   }
 }
 
