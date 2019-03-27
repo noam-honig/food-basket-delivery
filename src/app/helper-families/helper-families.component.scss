@@ -27,3 +27,16 @@
 h3{
     margin-top:5px;
 }
+.printTable{
+    width:100%;
+    th,td{
+        text-align: right;
+        border:1px solid #ddd!important;
+        padding:8px !important;
+    }
+    tr:nth-child(even){
+        background-color:rgba(0,0,0,.05) !important;
+    }
+   
+    
+}

@@ -4,7 +4,7 @@ import { YesNoColumn } from "./YesNo";
 import { LanguageColumn } from "./Language";
 import { FamilySourceId } from "./FamilySources";
 import { BasketId } from "./BasketType";
-import { NumberColumn, StringColumn, IdEntity, Id, changeDate, DateTimeColumn, SqlBuilder, BoolColumn } from "../model-shared/types";
+import { NumberColumn, StringColumn, IdEntity, Id, changeDate, DateTimeColumn, SqlBuilder, BoolColumn, PhoneColumn } from "../model-shared/types";
 import { ColumnSetting, Column } from "radweb";
 import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
 import { myAuthInfo } from "../auth/my-auth-info";
@@ -100,9 +100,9 @@ export class Families extends IdEntity<FamilyId>  {
   addressApiResult = new StringColumn();
   city = new StringColumn({ caption: "עיר כפי שגוגל הבין", readonly: true });
 
-  phone1 = new StringColumn({ caption: "טלפון 1", inputType: 'tel', dbName: 'phone' });
+  phone1 = new PhoneColumn({ caption: "טלפון 1", inputType: 'tel', dbName: 'phone' });
   phone1Description = new StringColumn('תאור טלפון 1');
-  phone2 = new StringColumn({ caption: "טלפון 2", inputType: 'tel' });
+  phone2 = new PhoneColumn({ caption: "טלפון 2", inputType: 'tel' });
   phone2Description = new StringColumn('תאור טלפון 2');
 
 

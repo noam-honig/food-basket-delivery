@@ -5,6 +5,7 @@ import { DataProviderFactory, EntityOptions, Entity, Column, Filter, FilterBase,
 import { ContextEntity, ContextEntityOptions, MoreDataColumnSettings, hasMoreDataColumnSettings, MoreDataNumberColumnSettings } from '../shared/context';
 import { BrowserPlatformLocation } from '@angular/platform-browser/src/browser/location/browser_platform_location';
 import { query } from '@angular/animations';
+import { ValueConverter } from '@angular/compiler/src/render3/view/template';
 
 export class IdEntity<idType extends Id> extends ContextEntity<string>
 {
@@ -39,6 +40,25 @@ export class StringColumn extends radweb.StringColumn implements hasMoreDataColu
   }
   constructor(private settingsOrCaption?: MoreDataColumnSettings<string, StringColumn> | string) {
     super(settingsOrCaption);
+  }
+}
+export class PhoneColumn extends radweb.StringColumn implements hasMoreDataColumnSettings {
+  __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
+    return this.settingsOrCaption as MoreDataColumnSettings<any, any>;
+  }
+  constructor(private settingsOrCaption?: MoreDataColumnSettings<string, StringColumn> | string) {
+    super(settingsOrCaption);
+  }
+  get displayValue() {
+
+
+    let x = this.value.replace(/\D/g, '');
+    if (x.length < 9 || x.length > 10)
+      return this.value;
+    x =x.substring(0, x.length - 4) +'-'+   x.substring(x.length - 4, x.length);
+
+    x =x.substring(0, x.length - 8) +'-'+   x.substring(x.length - 8, x.length);
+    return x;
   }
 }
 export class NumberColumn extends radweb.NumberColumn implements hasMoreDataColumnSettings {
