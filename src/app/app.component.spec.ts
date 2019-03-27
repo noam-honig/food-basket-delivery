@@ -5,6 +5,7 @@ import { Products, WeeklyFamilyDeliveryProducts } from './weekly-families-delive
 import { ServerContext } from './shared/context';
 import { SqlBuilder, QueryBuilder } from './model-shared/types';
 import { WebDriverProxy } from 'blocking-proxy/built/lib/webdriver_proxy';
+import { parseAddress } from './families/families';
 
 describe('AppComponent', () => {
   var context = new ServerContext();
@@ -97,6 +98,15 @@ describe('AppComponent', () => {
     })).toBe("insert into products (id, name) select e1.product, 'noam' from WeeklyFamilyDeliveryProducts e1 where e1.requestQuanity = 5");
   });
   it('filter ', () => {
-        expect (sql.build(p.order.isEqualTo(3).and(p.order.isEqualTo(5)))).toBe('ord2 = 3 and ord2 = 5');
+    expect(sql.build(p.order.isEqualTo(3).and(p.order.isEqualTo(5)))).toBe('ord2 = 3 and ord2 = 5');
+  });
+  it('parse address', () => {
+    let r = parseAddress("שנהב 4 דירה 76 קומה 19 כניסה א'");
+    expect(r.address).toBe('שנהב 4');
+    expect(r.dira).toBe('76');
+    expect(r.floor).toBe('19');
+    expect(r.knisa).toBe("א'"); 
   });
 });
+
+

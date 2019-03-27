@@ -320,3 +320,44 @@ export interface FamilyUpdateInfo {
   deliveryStatusDate: changeDate,
   courierComments: StringColumn
 } 
+
+export function parseAddress(s: string) {
+  let r = {
+
+  } as parseAddressResult;
+
+
+  let extractSomething = (what: string)=>{
+    let i = s.indexOf(what);
+    if (i >= 0) {
+      let value = '';
+      let index = 0;
+      for ( index = i + what.length; index < s.length; index++) {
+        const element = s[index];
+        if (element != ' ') {
+          value += element;
+        }
+        else if (value) {
+          
+          break;
+        }
+      }
+      let after = s.substring(index + 1, 1000);
+      s = s.substring(0, i) + after;
+      return value.trim();
+    }
+  }
+  r.dira = extractSomething('דירה');
+  r.floor = extractSomething('קומה');
+  r.knisa = extractSomething('כניסה');
+
+
+  r.address = s.trim();
+  return r;
+}
+export interface parseAddressResult {
+  address: string;
+  dira?: string;
+  floor?: string;
+  knisa?:string;
+}

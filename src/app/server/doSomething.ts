@@ -8,9 +8,11 @@ import { foreachEntityItem, foreachSync } from "../shared/utils";
 import { serverInit } from "./serverInit";
 import * as XLSX from 'xlsx';
 
-import { Families } from "../families/families";
+import { Families, parseAddress } from "../families/families";
 import { ServerContext, Context } from "../shared/context";
 import { Helpers } from "../helpers/helpers";
+import { debug } from "util";
+import { FamilySources } from "../families/FamilySources";
 
 serverInit();
 
@@ -19,7 +21,7 @@ export async function DoIt() {
 
         let f = await new ServerContext().for(Helpers).count();
 
-        ImportFromExcel();
+        ImportFromExcelBasedOnLetters();
 
         //   await ImportFromExcel();
     }
@@ -43,27 +45,82 @@ async function getGeolocationInfo() {
 }
 async function ImportFromExcel() {
 
-    let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\מרץ 2.xls");
-    let s = wb.Sheets[wb.SheetNames[0]];
-    let o = XLSX.utils.sheet_to_json(s);
+    let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\רשימת משפחות תחילת עבודה.xlsx");
+    for (let sheetIndex = 12; sheetIndex < 70; sheetIndex++) {
+        const element = wb.SheetNames[sheetIndex];
+        let s = wb.Sheets[element];
+        let o = XLSX.utils.sheet_to_json(s);
+        let context = new ServerContext();
+        let found = true;
+        let i = 0;
+        await foreachSync(o, async r => {
+            try {
+
+                let get = x => {
+                    if (!r[x])
+                        return '';
+                    return r[x];
+                };
+                //await ReadNRUNFamilies(context, r, element, ++i, get);
+            }
+            catch (err) {
+                console.log(err, r);
+            }
+
+        });
+    }
+
+
+}
+async function ImportFromExcelBasedOnLetters() {
+
+    let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\רשימת משפחות תחילת עבודה.xlsx");
     let context = new ServerContext();
-    let found = true;
-    let i = 0;
-    await foreachSync(o, async r => {
-        try {
+    for (let sheetIndex = 12; sheetIndex < 70; sheetIndex++) {
+        const element = wb.SheetNames[sheetIndex];
+        let s = wb.Sheets[element];
+        let sRef = s["!ref"];
+        let rows = +sRef.substring(sRef.indexOf(':') + 2, 10).replace(/\D/g, '');
+        if (!rows) {
+            debugger;
+        }
 
+        for (let row = 1; row < rows; row++) {
             let get = x => {
-                if (!r[x])
+                let val = s[x + row];
+                if (!val)
                     return '';
-                return r[x];
+                return val.w;
             };
-        //  await  readMerkazMazonFamily(context, r, get);
-        }
-        catch (err) {
-            console.log(err, r);
+            let b = get('B');
+            let f = get('F');
+            if (b && b != "שם מלא" && f && f != 'כתובת'&&get('A')!="ת.ז "&&b!='ת.ז')
+                await ReadNRUNFamilies(context, element, row, get);
+
         }
 
-    });
+        let o = XLSX.utils.sheet_to_json(s);
+
+
+        let found = true;
+        let i = 0;
+        await foreachSync(o, async r => {
+            try {
+
+                let get = x => {
+                    if (!r[x])
+                        return '';
+                    return r[x];
+                };
+                // await ReadNRUNFamilies(context, r, element, ++i, get);
+            }
+            catch (err) {
+                console.log(err, r);
+            }
+
+        });
+    }
+
 
 }
 async function readHelperFromExcel(context: ServerContext, o: any, get: (key: string) => string) {
@@ -76,27 +133,62 @@ async function readHelperFromExcel(context: ServerContext, o: any, get: (key: st
     }
 
 }
+function onlyDigits(s: string) {
+    return s.replace(/\D/g, '');
+}
+async function ReadNRUNFamilies(context: ServerContext, tabName: string, rowInExcel: number, get: (key: string) => string) {
+    let excelId =  tabName + ' ' + (rowInExcel.toString().padStart(3, '0'));
+    let f = await context.for(Families).lookupAsync(f=>f.iDinExcel.isEqualTo(excelId));;
+    f.iDinExcel.value =excelId;
+    f.tz.value = get("A");
+    f.name.value = get('B');
+    f.familyMembers.value = (+ onlyDigits(get("C")));
+    f.phone1.value = get('D');
+    let referrer = get("E");
+    if (referrer) {
+        let mafne = await context.for(FamilySources).lookupAsync(s => s.name.isEqualTo(referrer));
+        if (mafne.isNew()) {
+            mafne.name.value = referrer;
+            await mafne.save();
+        }
+        f.familySource.value = mafne.id.value;
+    }
+
+    let address = parseAddress(get('F'));
+    f.address.value = address.address + ' ' + get('H');
+    f.floor.value = address.floor;
+    f.appartment.value = address.dira;
+    if (address.knisa)
+        f.addressComment.value = 'כניסה '+address.knisa;
+    f.deliveryComments.value = get('I');
+    if (get('J')!='1')
+        f.internalComment.value = 'מספר סלים '+get('J');
+
+      await f.save();
+
+}
 async function readMerkazMazonFamily(context: ServerContext, o: any, get: (key: string) => string) {
     let f = context.for(Families).create();
     f.phone1.value = get('טלפון');
     f.phone2.value = get('טלפון נייד');
     f.iDinExcel.value = get('ת"ז');
+    
     f.floor.value = get('קומה');
     f.appartment.value = get('דירה');
     let knisa = get('כניסה');
     if (knisa) {
         f.addressComment.value = 'כניסה ' + knisa;
     }
-    f.address.value = get('כתובת') + ' ' + get('בית')+' '+get('עיר');
+    f.address.value = get('כתובת') + ' ' + get('בית') + ' ' + get('עיר');
     f.name.value = get('איש קשר');
     f.familyMembers.value = +get('מס נפשות');
     let helperName = get('מתנדב קבוע');
-    if (helperName){
-        let h = await context.for(Helpers).lookupAsync(h=>h.name.isEqualTo(helperName));
-        if (h.isNew()){
-            f.internalComment.value = 'מתנדב לא נמצא בקליטה - '+helperName;
+    if (helperName) {
+        let h = await context.for(Helpers).lookupAsync(h => h.name.isEqualTo(helperName));
+        if (h.isNew()) {
+            f.internalComment.value = 'מתנדב לא נמצא בקליטה - ' + helperName;
         }
-        else{
+        else {
             f.courier.value = h.id.value;
         }
     }
