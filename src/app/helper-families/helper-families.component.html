@@ -119,10 +119,10 @@
   </table>
   
 
-  <div class="help" *ngIf="familyLists.toDeliver.length>0">
+  <div class="help" *ngIf=" familyLists.toDeliver.length>0">
     <h5>
-      צריך עזרה? התקשר ל{{familyLists.toDeliver[0].courierAssignUserName.value}}
-      {{familyLists.toDeliver[0].courierAssignUserPhone.displayValue}}
+      צריך עזרה? התקשר ל{{familyLists.toDeliver[0].courierHelpName()}}
+      {{familyLists.toDeliver[0].courierHelpPhone()}}
     </h5>
   </div>
 </div>

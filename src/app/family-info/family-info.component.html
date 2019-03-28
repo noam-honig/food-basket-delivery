@@ -94,8 +94,8 @@
 <div class="button-area">
   <ng-content></ng-content>
   <div class="help" *ngIf="showHelp">
-    צריך עזרה? התקשר ל{{f.courierAssignUserName.value}}
-    <a href="tel:{{f.courierAssignUserPhone.value}}">{{f.courierAssignUserPhone.value}} </a> או
+    צריך עזרה? התקשר ל{{f.courierHelpName()}}
+    <a href="tel:{{f.courierHelpPhone()}}">{{f.courierHelpPhone()}} </a> או
     <a (click)="SendHelpSms()">שלח הודעת SMS</a>
   </div>
 </div>

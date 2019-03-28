@@ -13,6 +13,7 @@ import { Context, EntityClass } from "../shared/context";
 import { DeliveryEvents } from "../delivery-events/delivery-events";
 import { FamilyDelveryEventId, FamilyDeliveryEvents } from "../delivery-events/FamilyDeliveryEvents";
 import { Input } from "@angular/core";
+import { ApplicationSettings } from "../manage/ApplicationSettings";
 
 
 @EntityClass
@@ -34,7 +35,7 @@ export class Families extends IdEntity<FamilyId>  {
 
           if (this.context.onServer) {
             if (this.fixedCourier.value && !this.courier.value && this.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery) {
-                this.courier.value = this.fixedCourier.value;
+              this.courier.value = this.fixedCourier.value;
             }
             if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
               let geo = await GetGeoInformation(this.address.value);
@@ -82,7 +83,7 @@ export class Families extends IdEntity<FamilyId>  {
         this.name.error = 'השם קצר מידי';
     }
   });
-  tz = new StringColumn({caption:'מספר זהות',excludeFromApi: !this.context.isAdmin()});
+  tz = new StringColumn({ caption: 'מספר זהות', excludeFromApi: !this.context.isAdmin() });
   familyMembers = new NumberColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'מספר נפשות' });
   language = new LanguageColumn();
   basketType = new BasketId(this.context, 'סוג סל');
@@ -121,10 +122,22 @@ export class Families extends IdEntity<FamilyId>  {
     caption: 'שם שיוך למשנע',
     virtualData: async () => (await this.context.for(Helpers).lookupAsync(this.courierAssignUser)).name.value
   });
-  courierAssignUserPhone = new StringColumn({
+  courierAssignUserPhone = new PhoneColumn({
     caption: 'טלפון שיוך למשנע',
     virtualData: async () => (await this.context.for(Helpers).lookupAsync(this.courierAssignUser)).phone.value
   });
+
+  courierHelpName() {
+    if (ApplicationSettings.get(this.context).helpText.value)
+      return ApplicationSettings.get(this.context).helpText.value;
+    return this.courierAssignUser.displayValue;
+  }
+  courierHelpPhone() {
+    if (ApplicationSettings.get(this.context).helpText.value)
+    return ApplicationSettings.get(this.context).helpPhone.displayValue;
+  return this.courierAssignUserPhone.displayValue;
+  }
+
   courierAssingTime = new changeDate('מועד שיוך למשנע');
 
 
@@ -319,7 +332,7 @@ export interface FamilyUpdateInfo {
   courierAssingTime: changeDate,
   deliveryStatusDate: changeDate,
   courierComments: StringColumn
-} 
+}
 
 export function parseAddress(s: string) {
   let r = {
@@ -327,18 +340,18 @@ export function parseAddress(s: string) {
   } as parseAddressResult;
 
 
-  let extractSomething = (what: string)=>{
+  let extractSomething = (what: string) => {
     let i = s.indexOf(what);
     if (i >= 0) {
       let value = '';
       let index = 0;
-      for ( index = i + what.length; index < s.length; index++) {
+      for (index = i + what.length; index < s.length; index++) {
         const element = s[index];
         if (element != ' ') {
           value += element;
         }
         else if (value) {
-          
+
           break;
         }
       }
@@ -359,5 +372,5 @@ export interface parseAddressResult {
   address: string;
   dira?: string;
   floor?: string;
-  knisa?:string;
+  knisa?: string;
 }

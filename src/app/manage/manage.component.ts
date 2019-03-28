@@ -41,7 +41,7 @@ export class ManageComponent implements OnInit {
     allowInsert: true,
     allowDelete: true,
     get: {
-      limit:25,
+      limit: 25,
       orderBy: f => [f.name]
     },
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
@@ -59,6 +59,17 @@ export class ManageComponent implements OnInit {
       s.logoUrl,
       s.commentForSuccessDelivery,
       s.commentForProblem,
+      s.helpText,
+      s.helpPhone,
+      {
+        caption:'',
+        getValue: s => {
+            if (!s.helpText.value){
+              return 'מכיוון שלא הוגדר שם בשדה '+s.helpText.caption+', למשנע יוצג השם של מי ששייך אותו והטלפון שלו ';
+            }
+            return '';
+        }
+      },
       s.messageForDoneDelivery
 
 
