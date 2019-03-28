@@ -227,32 +227,26 @@ export class FamiliesComponent implements OnInit {
             return '';
           }
         },
-        {
-          column: families.basketType,
-          dropDown: { source: this.context.for(BasketType).create() },
-          width: '100'
-        },
+        families.basketType.getColumn()
+        ,
         {
           caption: 'שינוע',
           getValue: f => f.getDeliveryDescription(),
           width: '200'
         },
-        
+
         {
           column: families.familyMembers,
 
         },
-        
+
         {
           column: families.language,
           dropDown: {
             items: families.language.getOptions()
           },
 
-        }, {
-          column: families.familySource,
-          dropDown: { source: this.context.for(FamilySources).create() }
-        },
+        },families.familySource.getColumn(),
         {
           column: families.internalComment,
           width: '300'
@@ -379,10 +373,10 @@ export class FamiliesComponent implements OnInit {
     this.families.getRecords();
     this.updateChart();
   }
-  clearStat(){
+  clearStat() {
     this.currentStatFilter = undefined;
     this.families.getRecords();
-    
+
   }
 
   updateChart() {

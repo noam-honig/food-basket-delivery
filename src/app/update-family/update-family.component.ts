@@ -32,14 +32,8 @@ export class UpdateFamilyComponent implements OnInit {
             items: families.language.getOptions()
           }
         },
-        {
-          column: families.basketType,
-          dropDown: { source: this.context.for(BasketType).create() }
-        },
-        {
-          column: families.familySource,
-          dropDown: { source: this.context.for(FamilySources).create() }
-        },
+        families.basketType.getColumn(),
+        families.familySource.getColumn(),
         families.internalComment,
         families.iDinExcel,
         families.tz,
@@ -72,7 +66,7 @@ export class UpdateFamilyComponent implements OnInit {
         families.phone2Description
       ]
     });
- 
+
     this.deliverInfo = this.families.addArea({
       columnSettings: families => [
         families.fixedCourier.getColumn(this.selectService),

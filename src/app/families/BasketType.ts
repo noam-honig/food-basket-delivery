@@ -31,4 +31,17 @@ export class BasketId extends Id implements HasAsyncGetTheValue {
       return r.name.value;
     return '';
   }
+  getColumn()
+  {
+    return {
+      column: this,
+      dropDown: {
+        source: this.context.for(BasketType).create(),
+        orderBy: (f: BasketType) => {
+          return [{ column: f.name }];
+        },
+        width: '100'
+      },
+    };
+  }
 }

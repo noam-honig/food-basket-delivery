@@ -40,6 +40,10 @@ export class ManageComponent implements OnInit {
     ], allowUpdate: true,
     allowInsert: true,
     allowDelete: true,
+    get: {
+      limit:25,
+      orderBy: f => [f.name]
+    },
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
   });
   settings = this.context.for(ApplicationSettings).gridSettings({
