@@ -48,15 +48,20 @@ export class GeocodeInformation {
         return this.info.status == "OK";
     }
     partialMatch() {
-        if (!this.ok())
-            return true;
-        if (this.info.results.length < 1)
-            return false;
-        if (this.info.results[0].partial_match)
-            return true;
-        if (this.info.results[0].types[0] != "street_address"&&this.info.results[0].types[0] != "subpremise"&&this.info.results[0].types[0] != "premise")
+        if (this.whyProblem())
             return true;
         return false;
+    }
+    whyProblem() {
+        if (!this.ok())
+            return "not ok";
+        if (this.info.results.length < 1)
+            return "no results";
+        if (this.info.results[0].partial_match)
+            return "partial_match";
+        if (this.info.results[0].types[0] != "street_address" && this.info.results[0].types[0] != "subpremise" && this.info.results[0].types[0] != "premise")
+            return this.info.results[0].types.join(',');
+        return undefined;
     }
     location(): Location {
         if (!this.ok())

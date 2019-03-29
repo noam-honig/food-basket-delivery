@@ -246,7 +246,7 @@ export class FamiliesComponent implements OnInit {
             items: families.language.getOptions()
           },
 
-        },families.familySource.getColumn(),
+        }, families.familySource.getColumn(),
         {
           column: families.internalComment,
           width: '300'
@@ -264,6 +264,10 @@ export class FamiliesComponent implements OnInit {
         this.addressCommentColumn = { column: families.addressComment },
         families.city,
         this.addressByGoogleColumn = families.addressByGoogle(),
+        {
+          caption: 'מה הבעיה של גוגל',
+          getValue: f => f.getGeocodeInformation().whyProblem()
+        },
         families.phone1,
         families.phone1Description,
         families.phone2,
@@ -459,12 +463,12 @@ export class FamiliesComponent implements OnInit {
 
   [reuseComponentOnNavigationAndCallMeWhenNavigatingToIt]() {
     this.suspend = false;
-    
+
     this.refresh();
   }
   suspend = false;
   [leaveComponent]() {
-    
+
     this.suspend = true;
   }
   refresh() {
