@@ -166,7 +166,7 @@ export class DeliveryEventsComponent implements OnInit {
     ));
 
     Families.SendMessageToBrowsers('הוחלף אירוע פעיל ל' + newEvent.name.value);
-    console.timeEnd('setdelivery event');
+    
   }
   @RunOnServer({ allowed: c => c.isAdmin() })
   static async copyFamiliesToActiveEvent(fromDeliveryEvent: string, context?: Context) {

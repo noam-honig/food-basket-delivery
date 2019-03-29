@@ -12,12 +12,12 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     ) { }
     shouldDetach(route: ActivatedRouteSnapshot): boolean {
         let x = (<any>route.component).prototype[reuseComponentOnNavigationAndCallMeWhenNavigatingToIt];
-        console.debug('CustomReuseStrategy:shouldDetach', this.getRouteInfo(route), this.handlers);
+        //console.debug('CustomReuseStrategy:shouldDetach', this.getRouteInfo(route), this.handlers);
         return !!x;
     }
     reloadKey = '$reload';
     store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {
-        console.debug('CustomReuseStrategy:store', this.getRouteInfo(route), handle, this.handlers);
+      //  console.debug('CustomReuseStrategy:store', this.getRouteInfo(route), handle, this.handlers);
         this.handlers[route.routeConfig.path] = handle;
         let result: any;
         result = handle;
@@ -38,7 +38,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     shouldAttach(route: ActivatedRouteSnapshot): boolean {
         this.context.clearAllCache();
         let result = !!route.routeConfig && !!this.handlers[route.routeConfig.path];
-        console.debug('CustomReuseStrategy:shouldAttach', this.getRouteInfo(route), result, this.handlers);
+      //  console.debug('CustomReuseStrategy:shouldAttach', this.getRouteInfo(route), result, this.handlers);
         return result;
     }
 
@@ -61,13 +61,13 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
 
 
         }
-        console.debug('CustomReuseStrategy:retrieve', this.getRouteInfo(route), result, this.handlers);
+    //    console.debug('CustomReuseStrategy:retrieve', this.getRouteInfo(route), result, this.handlers);
         return result;
     }
 
     shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {
         let result = future.routeConfig === curr.routeConfig;
-        console.debug('CustomReuseStrategy:shouldReuseRoute', this.getRouteInfo(future), this.getRouteInfo(curr), result, this.handlers);
+      //  console.debug('CustomReuseStrategy:shouldReuseRoute', this.getRouteInfo(future), this.getRouteInfo(curr), result, this.handlers);
         return result;
     }
     getRouteInfo(route: ActivatedRouteSnapshot) {

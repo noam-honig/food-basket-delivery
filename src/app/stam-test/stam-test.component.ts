@@ -27,7 +27,7 @@ export class StamTestComponent implements OnInit {
   doSomething(what: string) {
     this.times++;
     this.time = what;
-    console.log('doing something');
+    
   }
   ngOnInit() {
   }

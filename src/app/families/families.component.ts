@@ -459,12 +459,12 @@ export class FamiliesComponent implements OnInit {
 
   [reuseComponentOnNavigationAndCallMeWhenNavigatingToIt]() {
     this.suspend = false;
-    console.log('resume');
+    
     this.refresh();
   }
   suspend = false;
   [leaveComponent]() {
-    console.log('suspend');
+    
     this.suspend = true;
   }
   refresh() {

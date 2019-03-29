@@ -20,7 +20,7 @@ export class SendSmsAction {
             });
         }
         catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 
@@ -83,13 +83,9 @@ class SendSmsUtils {
 
 
     async sendSms(phone: string, from: string, text: string) {
-        console.log('from', from);
-        console.log('phone', phone);
-        console.log('text', text);
 
         var t = new Date();
         var date = t.getFullYear() + '/' + (t.getMonth() + 1) + '/' + t.getDate() + ' ' + t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds();
-        //console.log("date is :" + date);
 
         var data =
             '<?xml version="1.0" encoding="utf-8"?>' +
@@ -109,7 +105,7 @@ class SendSmsUtils {
             '</sendSmsToRecipients>' +
             '</soap12:Body>' +
             '</soap12:Envelope>';
-        console.log(data);
+        console.log('sms request',data);
 
 
         try {
@@ -121,11 +117,11 @@ class SendSmsUtils {
                 headers: h,
                 body: data
             });
-            console.log(r, await r.text());
+            console.log('sms response',r, await r.text());
 
         }
         catch (err) {
-            console.log('sms error ', err);
+            console.error('sms error ', err);
         }
 
 

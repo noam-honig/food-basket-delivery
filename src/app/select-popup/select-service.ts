@@ -33,7 +33,7 @@ export class SelectService implements SelectServiceInterface {
         });
     }
     updateFamiliy(data: UpdateFamilyInfo) {
-        console.log(data);
+        
         let x = new MatDialogConfig();
         x.data = data;
         x.minWidth=350;

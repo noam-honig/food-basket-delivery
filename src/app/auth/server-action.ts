@@ -59,7 +59,7 @@ export class myServerAction extends Action<inArgs, result, myAuthInfo>
             }
 
             catch (err) {
-                console.log(err);
+                console.error(err);
                 throw err
             }
         });

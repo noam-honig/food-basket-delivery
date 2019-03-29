@@ -23,7 +23,7 @@ export class LoginFromSmsComponent implements OnInit {
     this.route.paramMap.subscribe(async x => {
 
       var id = x.get('id');
-      console.log(id);
+      
 
       this.authServer.loginFromSms(id);
 

@@ -49,7 +49,7 @@ export class RegisterComponent implements OnInit {
       this.auth.login(userInfo.phone.value, this.confirmPassword.value, false, () => { });
     }
     catch (err) {
-      console.log(err);
+      console.error(err);
     }
 
   }

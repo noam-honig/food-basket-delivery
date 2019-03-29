@@ -30,7 +30,7 @@ export class NewsComponent implements OnInit, OnDestroy {
   }];
   currentFilter: NewsFilter = this.filters[0];
   filterChange() {
-    console.log(this.currentFilter.name);
+   
     this.refresh();
   }
   onDestroy = () => { };

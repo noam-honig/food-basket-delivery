@@ -16,7 +16,7 @@ export class MapComponent implements OnInit {
     this.mediaMatcher.addListener((mql) => {
       if (mql.matches) {
         let x = this.gmapElement.nativeElement.offsetWidth;
-        console.log(this.map.getBounds(), this.bounds, x, this.gmapElement.nativeElement.offsetWidth);
+       // console.log(this.map.getBounds(), this.bounds, x, this.gmapElement.nativeElement.offsetWidth);
         this.fitBounds();
 
 

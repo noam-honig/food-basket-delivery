@@ -23,14 +23,14 @@ export async function DoIt() {
         let context = new ServerContext();
         let f = await context.for(Helpers).count();
         let name = (await ApplicationSettings.getAsync(context)).organisationName.value;
-        console.log(name);
+        
 
         ImportFromExcelBasedOnLetters();
 
         //     await ImportFromExcel();
     }
     catch (err) {
-        console.log(err);
+        console.error(err);
     }
 
 }
@@ -69,7 +69,7 @@ async function ImportFromExcel() {
 
             }
             catch (err) {
-                console.log(err, r);
+                console.error(err, r);
             }
 
         });
@@ -123,7 +123,7 @@ async function ImportFromExcelBasedOnLetters() {
                 // await ReadNRUNFamilies(context, r, element, ++i, get);
             }
             catch (err) {
-                console.log(err, r);
+                console.error(err, r);
             }
 
         });
@@ -267,19 +267,7 @@ async function updatePhone() {
         f.save();
     });
 }
-function UpdateAllFamiliyNames() {
-    readFile(`c:\\temp\\famiilies.txt`, (err, data) => {
-        let names = data.toString().split('\r\n');
-        new Families(undefined).source.find({}).then(async families => {
-            for (let i = 0; i < families.length; i++) {
-                families[i].name.value = names[i];
-                await families[i].save();
-                console.log(i + families[i].name.value);
-            }
-        });
 
-    });
-}
 async function imprortFamiliesFromJson() {
     let r = readFileSync(`c:\\temp\\hugmoms.json`);
     var rows = JSON.parse(r.toString());

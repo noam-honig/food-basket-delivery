@@ -26,7 +26,7 @@ export class StressTestComponent implements OnInit {
     this.families = 0;
     for (let index = 0; index < this.times; index++) {
       let x:number = +this.phone;
-      console.log(x);
+      
       x++;
       this.phone = '0'+ x;
       await this.testPhone(this.phone);

@@ -83,14 +83,11 @@ export class FixAddressComponent implements OnInit, OnDestroy {
   statuses = [this.ready, this.onTheWay, this.success, this.problem];
   selectedStatus: statusClass;
   async refreshFamilies() {
-    console.time('load families');
     let families = await FixAddressComponent.GetFamiliesLocations();
     this.statuses.forEach(element => {
       element.value = 0;
     });
-    console.timeEnd('load families');
 
-    console.time('load markers');
     families.forEach(f => {
 
       let familyOnMap = this.dict.get(f.id);
@@ -156,7 +153,6 @@ export class FixAddressComponent implements OnInit, OnDestroy {
 
     });
     this.updateChart();
-    console.timeEnd('load markers');
   }
   @RunOnServer({ allowed: c => c.isAdmin() })
   static async GetFamiliesLocations(context?: Context, directSql?: DirectSQL) {

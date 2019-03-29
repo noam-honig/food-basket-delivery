@@ -34,7 +34,7 @@ export async function serverInit() {
 
 
     if (!process.env.DATABASE_URL) {
-        console.log("No DATABASE_URL environment variable found, if you are developing locally, please add a '.env' with DATABASE_URL='postgres://*USERNAME*:*PASSWORD*@*HOST*:*PORT*/*DATABASE*'");
+        console.error("No DATABASE_URL environment variable found, if you are developing locally, please add a '.env' with DATABASE_URL='postgres://*USERNAME*:*PASSWORD*@*HOST*:*PORT*/*DATABASE*'");
     }
     let dbUrl = process.env.DATABASE_URL;
     if (process.env.HEROKU_POSTGRESQL_GREEN_URL)
