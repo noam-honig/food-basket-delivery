@@ -25,9 +25,9 @@ export async function DoIt() {
         let name = (await ApplicationSettings.getAsync(context)).organisationName.value;
         console.log(name);
 
-        //   ImportFromExcelBasedOnLetters();
+        ImportFromExcelBasedOnLetters();
 
-   //     await ImportFromExcel();
+        //     await ImportFromExcel();
     }
     catch (err) {
         console.log(err);
@@ -66,7 +66,7 @@ async function ImportFromExcel() {
                     return r[x];
                 };
                 await readMerkazMazonFamily(context, r, get);
-                
+
             }
             catch (err) {
                 console.log(err, r);
@@ -83,7 +83,7 @@ async function ImportFromExcelBasedOnLetters() {
     let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\רשימת משפחות תחילת עבודה.xlsx");
     let context = new ServerContext();
     for (let sheetIndex = 12; sheetIndex < 70; sheetIndex++) {
-        const element = wb.SheetNames[sheetIndex];
+        const element: string = wb.SheetNames[sheetIndex];
         let s = wb.Sheets[element];
         let sRef = s["!ref"];
         let rows = +sRef.substring(sRef.indexOf(':') + 2, 10).replace(/\D/g, '');
@@ -100,8 +100,10 @@ async function ImportFromExcelBasedOnLetters() {
             };
             let b = get('B');
             let f = get('F');
+
             if (b && b != "שם מלא" && f && f != 'כתובת' && get('A') != "ת.ז " && b != 'ת.ז')
                 await ReadNRUNFamilies(context, element, row, get);
+
 
         }
 
@@ -150,7 +152,7 @@ async function ReadNRUNFamilies(context: ServerContext, tabName: string, rowInEx
     f.name.value = get('B');
     f.familyMembers.value = (+ onlyDigits(get("C")));
     f.phone1.value = get('D');
-    let referrer = get("E");
+    let referrer = get("E").trim();
     if (referrer) {
         let mafne = await context.for(FamilySources).lookupAsync(s => s.name.isEqualTo(referrer));
         if (mafne.isNew()) {
@@ -169,15 +171,16 @@ async function ReadNRUNFamilies(context: ServerContext, tabName: string, rowInEx
     f.deliveryComments.value = get('I');
     if (get('J') != '1')
         f.internalComment.value = 'מספר סלים ' + get('J');
-
+    if (f.isNew())
+        console.log(excelId);
     //await f.save();
 
 }
 async function readMerkazMazonFamily(context: ServerContext, o: any, get: (key: string) => string) {
 
-    let taz = get('ת"ז');
-    let phone = get('טלפון');
-    let phone2 = get('טלפון נייד');
+    let taz = get('ת"ז').trim();
+    let phone = get('טלפון').trim();
+    let phone2 = get('טלפון נייד').trim();
     if (!taz && !phone && !phone2) {
         console.error('אין תעודת זהות וטלפון - לא קולט', o);
         return;
@@ -191,7 +194,7 @@ async function readMerkazMazonFamily(context: ServerContext, o: any, get: (key: 
             return f.phone2.isEqualTo(phone2);
 
     });
-    let sal = get('ביקור בית');
+    let sal = get('ביקור בית').trim();
     if (sal && sal.trim() == "כן") {
         let bask = await context.for(BasketType).lookupAsync(b => b.name.isEqualTo('סל לקשיש'));
         if (bask.isNew()) {
@@ -200,7 +203,7 @@ async function readMerkazMazonFamily(context: ServerContext, o: any, get: (key: 
         }
         f.basketType.value = bask.id.value;
     }
-    let machlaka = get('מחלקה');
+    let machlaka = get('מחלקה').trim();
     if (machlaka) {
         let fs = await context.for(FamilySources).lookupAsync(f => f.name.isEqualTo(machlaka));
         if (fs.isNew()) {
@@ -209,14 +212,14 @@ async function readMerkazMazonFamily(context: ServerContext, o: any, get: (key: 
         }
         f.familySource.value = fs.id.value;
     }
-    let helperName = get('מתנדב קבוע');
+    let helperName = get('מתנדב קבוע').trim();
     if (helperName) {
         let h = await context.for(Helpers).lookupAsync(h => h.name.isEqualTo(helperName));
         if (h.isNew()) {
             f.internalComment.value = helperName;
         }
         else {
-            f.courier.value = h.id.value;
+            // f.courier.value = h.id.value;
             f.fixedCourier.value = h.id.value;
         }
     }
@@ -236,14 +239,14 @@ async function readMerkazMazonFamily(context: ServerContext, o: any, get: (key: 
         f.address.value = get('כתובת') + ' ' + get('בית') + ' ' + get('עיר');
         f.name.value = get('איש קשר');
         f.familyMembers.value = +get('מס נפשות');
-      
+
         f.deliveryComments.value = get('הערות');
     }
     else {
         match++;
         console.log('match ', o.__rowNum__, o);
     }
-      await f.save();
+    await f.save();
 
 
 

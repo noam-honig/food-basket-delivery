@@ -2,6 +2,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Families } from '../families/families';
 import { DeliveryStatus } from "../families/DeliveryStatus";
+
 //import 'googlemaps';
 
 @Component({
@@ -16,8 +17,8 @@ export class MapComponent implements OnInit {
       if (mql.matches) {
         let x = this.gmapElement.nativeElement.offsetWidth;
         console.log(this.map.getBounds(), this.bounds, x, this.gmapElement.nativeElement.offsetWidth);
-          this.fitBounds();
-        
+        this.fitBounds();
+
 
       }
     });
@@ -26,7 +27,7 @@ export class MapComponent implements OnInit {
   ngOnInit() {
 
   }
-  
+
   stam = '';
   center = new google.maps.LatLng(32.3215, 34.8532)
   fitBounds() {
@@ -36,10 +37,13 @@ export class MapComponent implements OnInit {
       this.map.fitBounds(this.bounds);
 
     }
-    if (this.map.getZoom() > 18)
-      this.map.setZoom(18);
+
+    setTimeout(() => {
+      if (this.map.getZoom() > 17)
+        this.map.setZoom(17);
+    }, 300);
   }
-  
+
   mapInit = false;
   markers: google.maps.Marker[] = [];
   hasFamilies = false;
@@ -96,11 +100,11 @@ export class MapComponent implements OnInit {
         info.open(this.map, marker);
       });
     });
-    
-    
+
+
     if (this.bounds.isEmpty())
       this.bounds = secondaryBounds;
-    if (this.map && this.bounds ) {
+    if (this.map && this.bounds) {
       this.fitBounds();
     }
 
