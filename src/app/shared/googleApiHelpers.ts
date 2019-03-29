@@ -54,7 +54,7 @@ export class GeocodeInformation {
             return false;
         if (this.info.results[0].partial_match)
             return true;
-        if (this.info.results[0].types[0] != "street_address")
+        if (this.info.results[0].types[0] != "street_address"&&this.info.results[0].types[0] != "subpremise"&&this.info.results[0].types[0] != "premise")
             return true;
         return false;
     }
