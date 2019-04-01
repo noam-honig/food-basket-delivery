@@ -84,17 +84,20 @@ export class FamiliesComponent implements OnInit {
     legend: {
       position: 'right',
       onClick: (event: MouseEvent, legendItem: any) => {
-        this.currentStatFilter = this.pieChartStatObjects[legendItem.index];
-        this.families.getRecords();
+        this.setCurrentStat(this.pieChartStatObjects[legendItem.index]);
         return false;
       }
     },
   };
   public chartClicked(e: any): void {
     if (e.active && e.active.length > 0) {
-      this.currentStatFilter = this.pieChartStatObjects[e.active[0]._index];
-      this.families.getRecords();
+      this.setCurrentStat(this.pieChartStatObjects[e.active[0]._index]);
+
     }
+  }
+  setCurrentStat(s: FaimilyStatistics) {
+    this.currentStatFilter = s;
+    this.families.getRecords();
   }
   searchString = '';
   async doSearch() {
@@ -330,7 +333,8 @@ export class FamiliesComponent implements OnInit {
     stats: [
       this.stats.ready,
       this.stats.special
-    ]
+    ],
+    moreStats: []
   };
   cityStats: statsOnTab = {
     name: 'נותרו לפי ערים',
@@ -338,7 +342,8 @@ export class FamiliesComponent implements OnInit {
     stats: [
       this.stats.ready,
       this.stats.special
-    ]
+    ],
+    moreStats: []
   };
   statTabs: statsOnTab[] = [
     {
@@ -351,7 +356,8 @@ export class FamiliesComponent implements OnInit {
         this.stats.delivered,
         this.stats.problem,
         this.stats.frozen
-      ]
+      ],
+      moreStats: []
     },
     this.cityStats,
     this.basketStats,
@@ -361,7 +367,8 @@ export class FamiliesComponent implements OnInit {
       rule: f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.courierComments.IsDifferentFrom('')),
       stats: [
         this.stats.deliveryComments
-      ]
+      ],
+      moreStats: []
     },
     {
       rule: f => undefined,
@@ -369,7 +376,8 @@ export class FamiliesComponent implements OnInit {
       stats: [
         this.stats.currentEvent,
         this.stats.notInEvent
-      ]
+      ],
+      moreStats: []
     }
   ]
   tabChanged() {
@@ -382,13 +390,14 @@ export class FamiliesComponent implements OnInit {
     this.families.getRecords();
 
   }
-
+  currentTabStats: statsOnTab = { name: '', stats: [], moreStats: [], rule: undefined };
   updateChart() {
     this.pieChartData = [];
     this.pieChartStatObjects = [];
     this.pieChartLabels.splice(0);
     this.colors[0].backgroundColor.splice(0);
-    let stats = this.statTabs[this.myTab.selectedIndex].stats;
+    this.currentTabStats = this.statTabs[this.myTab.selectedIndex];
+    let stats = this.currentTabStats.stats;
 
     stats.forEach(s => {
       if (s.value > 0) {
@@ -415,18 +424,53 @@ export class FamiliesComponent implements OnInit {
       this.busy.donotWait(async () => this.stats.getData().then(st => {
         this.basketStats.stats.splice(0);
         this.cityStats.stats.splice(0);
+        this.cityStats.moreStats.splice(0);
         st.baskets.forEach(b => {
           let fs = new FaimilyStatistics(b.name, f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.basketType.isEqualTo(b.id))), undefined);
           fs.value = b.unassignedFamilies;
           this.basketStats.stats.push(fs);
 
         });
+        let i = 0;
+        let lastFs: FaimilyStatistics;
+        let firstCities = [];
         st.cities.forEach(b => {
           let fs = new FaimilyStatistics(b.name, f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.city.isEqualTo(b.name))), undefined);
-          fs.value = b.count;
-          this.cityStats.stats.push(fs);
+          fs.value = +b.count;
+
+          i++;
+
+          if (i <= 6) {
+            this.cityStats.stats.push(fs);
+            firstCities.push(b.name);
+          }
+          if (i > 6) {
+            if (!lastFs) {
+              let x = this.cityStats.stats.pop();
+              firstCities.pop();
+              lastFs = new FaimilyStatistics('כל השאר', f => {
+                let r = f.readyFilter().and(f.city.IsDifferentFrom(firstCities[0]));
+                for (let index = 1; index < firstCities.length; index++) {
+                  r = r.and(f.city.IsDifferentFrom(firstCities[index]));
+                }
+                return r;
+
+              }, undefined);
+              this.cityStats.moreStats.push(x);
+              lastFs.value = x.value;
+              this.cityStats.stats.push(lastFs);
+            }
+
+          }
+          if (i > 6) {
+            lastFs.value += fs.value;
+            this.cityStats.moreStats.push(fs);
+          }
+
+
 
         });
+        this.cityStats.moreStats.sort((a, b) => a.name.localeCompare(b.name));
 
         this.updateChart();
       }));
@@ -487,5 +531,6 @@ export class FamiliesComponent implements OnInit {
 interface statsOnTab {
   name: string,
   stats: FaimilyStatistics[],
+  moreStats: FaimilyStatistics[],
   rule: (f: Families) => FilterBase
 }

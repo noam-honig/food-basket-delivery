@@ -99,7 +99,7 @@ export class Families extends IdEntity<FamilyId>  {
   addressComment = new StringColumn('הערת כתובת');
   deliveryComments = new StringColumn('הערות למשנע');
   addressApiResult = new StringColumn();
-  city = new StringColumn({ caption: "עיר כפי שגוגל הבין", readonly: true });
+  city = new StringColumn({ caption: "עיר (מתעדכן אוטומטית)" });
 
   phone1 = new PhoneColumn({ caption: "טלפון 1", inputType: 'tel', dbName: 'phone' });
   phone1Description = new StringColumn('תאור טלפון 1');

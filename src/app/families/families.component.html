@@ -12,6 +12,7 @@
             (chartClick)="chartClicked($event)"></canvas>
     </div>
 </div>
+<a *ngFor="let s of currentTabStats.moreStats" (click)="setCurrentStat(s)">{{s.name }} - {{s.value}}, </a>
 <h4 *ngIf="currentStatFilter">{{currentStatFilter.name}}: </h4>
 
 <a *ngIf="currentStatFilter" (click)="clearStat()">הצג הכל</a>
