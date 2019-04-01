@@ -213,7 +213,9 @@ async function readMerkazMazonFamily(context: ServerContext, o: any, get: (key: 
         }
         f.familySource.value = fs.id.value;
     }
-
+    if (o.__rowNum__>183&&o.__rowNum__<187){
+        debugger;
+    }
 
     if (f.isNew()) {
         let helperName = get('מתנדב קבוע').trim();

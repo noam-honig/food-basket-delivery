@@ -225,7 +225,7 @@ export class FamiliesComponent implements OnInit {
           column: families.address,
           width: '250',
           cssClass: f => {
-            if (f.getGeocodeInformation().partialMatch())
+            if (!f.addressOk.value)
               return 'addressProblem';
             return '';
           }
@@ -234,6 +234,11 @@ export class FamiliesComponent implements OnInit {
         ,
         {
           caption: 'שינוע',
+          column: families.deliverStatus,
+          readonly: true,
+          dropDown: {
+            items: families.deliverStatus.getOptions()
+          },
           getValue: f => f.getDeliveryDescription(),
           width: '200'
         },

@@ -134,8 +134,8 @@ export class Families extends IdEntity<FamilyId>  {
   }
   courierHelpPhone() {
     if (ApplicationSettings.get(this.context).helpText.value)
-    return ApplicationSettings.get(this.context).helpPhone.displayValue;
-  return this.courierAssignUserPhone.displayValue;
+      return ApplicationSettings.get(this.context).helpPhone.displayValue;
+    return this.courierAssignUserPhone.displayValue;
   }
 
   courierAssingTime = new changeDate('מועד שיוך למשנע');
@@ -149,7 +149,7 @@ export class Families extends IdEntity<FamilyId>  {
 
   addressLongitude = new NumberColumn({ decimalDigits: 8 });
   addressLatitude = new NumberColumn({ decimalDigits: 8 });
-  addressOk = new BoolColumn({ caption: 'כתובת תקינה', readonly: true });
+  addressOk = new BoolColumn({ caption: 'כתובת תקינה' });
 
   readyFilter(city?: string, language?: number) {
     let where = this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
@@ -206,6 +206,11 @@ export class Families extends IdEntity<FamilyId>  {
   getPreviousDeliveryColumn() {
     return {
       caption: 'שינוע קודם',
+      readonly: true,
+      column: this.previousDeliveryStatus,
+      dropDown: {
+        items: this.previousDeliveryStatus.getOptions()
+      },
       getValue: f => {
         let r = f.previousDeliveryStatus.displayValue;
         if (f.previousDeliveryComment.value) {

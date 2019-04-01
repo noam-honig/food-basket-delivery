@@ -31,7 +31,7 @@ export class FamilyInfoComponent implements OnInit {
 
   }
   openWaze(f: Families) {
-    if (f.getGeocodeInformation().partialMatch()) {
+    if (!f.addressOk.value) {
       this.dialog.YesNoQuestion("הכתובת אינה מדוייקת. בדקו בגוגל או התקשרו למשפחה. נשמח אם תעדכנו את הכתובת שמצאתם בהערות. האם לפתוח וייז?", () => {
         f.openWaze();
       });
