@@ -26,19 +26,19 @@ export class UpdateFamilyComponent implements OnInit {
       columnSettings: families => [
         families.name,
         families.familyMembers,
-        {
-          column: families.language,
-          dropDown: {
-            items: families.language.getOptions()
-          }
-        },
         families.basketType.getColumn(),
-        families.familySource.getColumn(),
-        families.internalComment,
-        families.iDinExcel,
-        families.tz,
-        families.deliveryComments,
         families.special.getColumn(),
+        families.internalComment,
+        families.deliveryComments,
+        families.familySource.getColumn(),
+        families.tz,
+          {
+            column: families.language,
+            dropDown: {
+              items: families.language.getOptions()
+            }
+          },
+        families.iDinExcel,
         families.createUser,
         families.createDate
 
@@ -54,7 +54,8 @@ export class UpdateFamilyComponent implements OnInit {
         families.appartment,
         families.addressComment,
         families.addressByGoogle(),
-        families.city
+        families.city,
+        families.addressOk
 
       ]
     });
@@ -69,19 +70,19 @@ export class UpdateFamilyComponent implements OnInit {
 
     this.deliverInfo = this.families.addArea({
       columnSettings: families => [
-        families.fixedCourier.getColumn(this.selectService),
+        families.deliverStatus.getColumn(),
         families.courier.getColumn(this.selectService),
+        families.courierComments,
         {
           caption: 'טלפון משנע',
           getValue: f => f.courier.getPhone()
         },
+        families.getPreviousDeliveryColumn(),
         families.courierAssignUser,
         families.courierAssingTime,
-        families.deliverStatus.getColumn(),
         families.deliveryStatusUser,
         families.deliveryStatusDate,
-        families.courierComments,
-        families.getPreviousDeliveryColumn()
+        families.fixedCourier.getColumn(this.selectService)
       ]
     });
   }
