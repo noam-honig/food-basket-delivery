@@ -117,6 +117,8 @@ export async function serverInit() {
     }
     if (!settings.commentForSuccessDelivery.value)
         settings.commentForSuccessDelivery.value = 'נשמח אם תכתוב לנו הערה על מה שראית והיה';
+        if (!settings.commentForSuccessLeft.value)
+        settings.commentForSuccessLeft.value = 'אנא פרט היכן השארת את הסל';
     if (!settings.commentForProblem.value)
         settings.commentForProblem.value = 'נשמח אם תכתוב לנו הערה על מה שראית והיה';
     if (!settings.messageForDoneDelivery.value) {

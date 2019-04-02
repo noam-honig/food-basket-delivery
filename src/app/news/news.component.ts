@@ -71,6 +71,7 @@ export class NewsComponent implements OnInit, OnDestroy {
 
             break;
           case DeliveryStatus.Success:
+          case DeliveryStatus.SuccessLeftThere:
             return 'check';
           case DeliveryStatus.FailedBadAddress:
           case DeliveryStatus.FailedNotHome:

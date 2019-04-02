@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Context } from '../shared/context';
+import { Column } from 'radweb';
 
 @Component({
   selector: 'app-update-comment',
@@ -51,10 +52,7 @@ export class UpdateCommentComponent implements OnInit {
 
   helpText() {
     let s = ApplicationSettings.get(this.context);
-    if (this.data.showFailStatus)
-      return s.commentForProblem.value;
-    else return s.commentForSuccessDelivery.value;
-
+    return this.data.helpText(s).value;
   }
 }
 
@@ -62,6 +60,7 @@ export interface UpdateCommentComponentData {
   showFailStatus?: boolean,
   assignerName: string,
   assignerPhone: string,
+  helpText: (s: ApplicationSettings) => Column<any>
 
   comment: string,
   ok: (comment: string, failStatusId: number) => void,

@@ -81,6 +81,7 @@ export class MapComponent implements OnInit {
           marker.setIcon('/assets/map-markers/number_' + i + '.png');
           break;
         case DeliveryStatus.Success:
+        case DeliveryStatus.SuccessLeftThere:
           marker.setIcon('https://maps.google.com/mapfiles/ms/micons/green-dot.png');
           break;
         case DeliveryStatus.FailedBadAddress:

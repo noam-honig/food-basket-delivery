@@ -26,7 +26,7 @@ export class Stats {
     ready = new FaimilyStatistics('טרם שוייכו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.special.IsDifferentFrom(YesNo.Yes.id))), colors.yellow);
     special = new FaimilyStatistics('מיוחדים שטרם שוייכו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes.id))), colors.orange);
     onTheWay = new FaimilyStatistics('בדרך', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.IsDifferentFrom('')), colors.blue);
-    delivered = new FaimilyStatistics('הגיעו', f => f.deliverStatus.isEqualTo(DeliveryStatus.Success.id), colors.green);
+    delivered = new FaimilyStatistics('הגיעו', f => f.deliverStatus.IsGreaterOrEqualTo(DeliveryStatus.Success.id).and(f.deliverStatus.IsLessOrEqualTo(DeliveryStatus.SuccessLeftThere.id)), colors.green);
     problem = new FaimilyStatistics('בעיות', f => f.deliverStatus.isProblem(), colors.red);
     currentEvent = new FaimilyStatistics('באירוע', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id), colors.green);
     notInEvent = new FaimilyStatistics('לא באירוע', f => f.deliverStatus.isEqualTo(DeliveryStatus.NotInEvent.id), colors.blue);

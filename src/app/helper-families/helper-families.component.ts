@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { SelectService } from '../select-popup/select-service';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Context } from '../shared/context';
+import { Column } from 'radweb';
 
 @Component({
   selector: 'app-helper-families',
@@ -35,12 +36,19 @@ export class HelperFamiliesComponent implements OnInit {
   }
   allDoneMessage() { return ApplicationSettings.get(this.context).messageForDoneDelivery.value; };
   async deliveredToFamily(f: Families) {
+    this.deliveredToFamilyOk(f,DeliveryStatus.Success,s=>s.commentForSuccessDelivery);
+  }
+  async leftThere(f: Families) {
+    this.deliveredToFamilyOk(f,DeliveryStatus.SuccessLeftThere,s=>s.commentForSuccessLeft);
+  }
+  async deliveredToFamilyOk(f: Families, status: DeliveryStatus, helpText: (s: ApplicationSettings) => Column<any>) {
     this.selectService.displayComment({
       comment: f.courierComments.value,
       assignerName: f.courierHelpName(),
       assignerPhone: f.courierHelpPhone(),
+      helpText,
       ok: async (comment) => {
-        f.deliverStatus.listValue = DeliveryStatus.Success;
+        f.deliverStatus.listValue = status;
         f.courierComments.value = comment;
         try {
           await f.save();
@@ -72,6 +80,7 @@ export class HelperFamiliesComponent implements OnInit {
       showFailStatus: true,
       assignerName: f.courierHelpName(),
       assignerPhone: f.courierHelpPhone(),
+      helpText: s => s.commentForProblem,
 
       ok: async (comment, status) => {
         f.deliverStatus.value = status;
@@ -92,7 +101,7 @@ export class HelperFamiliesComponent implements OnInit {
     });
   }
   async sendSms(reminder: Boolean) {
-    this.dialog.analytics('Send SMS '+(reminder?'reminder':''));
+    this.dialog.analytics('Send SMS ' + (reminder ? 'reminder' : ''));
     await SendSmsAction.SendSms(this.familyLists.helperId, reminder);
     this.assignSmsSent.emit();
     if (reminder)
@@ -104,6 +113,7 @@ export class HelperFamiliesComponent implements OnInit {
       comment: f.courierComments.value,
       assignerName: f.courierHelpName(),
       assignerPhone: f.courierHelpPhone(),
+      helpText: s => s.commentForSuccessDelivery,
       ok: async comment => {
         f.courierComments.value = comment;
         await f.save();

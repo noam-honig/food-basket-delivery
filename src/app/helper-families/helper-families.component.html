@@ -35,8 +35,10 @@
       <button mat-raised-button class="myButton" color="primary" (click)="deliveredToFamily(f)">מסרתי את החבילה
         בהצלחה</button>
       <br />
-      <button mat-raised-button class="myButton badButton" (click)="couldntDeliverToFamily(f)">נתקלתי בבעיה
-        במסירה</button>
+      <button mat-raised-button class="myButton" (click)="leftThere(f)">השארתי ליד הבית
+        </button>
+      <br />
+      <button mat-raised-button class="myButton badButton" (click)="couldntDeliverToFamily(f)">לא מסרתי</button>
 
 
     </app-family-info>

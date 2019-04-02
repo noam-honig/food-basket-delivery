@@ -58,6 +58,7 @@ export class ManageComponent implements OnInit {
       },
       s.logoUrl,
       s.commentForSuccessDelivery,
+      s.commentForSuccessLeft,
       s.commentForProblem,
       s.helpText,
       s.helpPhone,

@@ -11,6 +11,7 @@ export class ApplicationSettings extends ContextEntity<number>  {
   logoUrl = new StringColumn('לוגו URL');
   address = new StringColumn("כתובת מרכז השילוח");
   commentForSuccessDelivery = new StringColumn('הודעה למשנע כאשר נמסר בהצלחה');
+  commentForSuccessLeft = new StringColumn('הודעה למשנע כאשר הושאר ליד הבית');
   commentForProblem = new StringColumn('הודעה למשנע כאשר יש בעיה');
   messageForDoneDelivery = new StringColumn('הודעה למשנע כאשר סיים את כל המשפחות');
   helpText = new StringColumn('למי המשנע מתקשר כשיש לו בעיה');

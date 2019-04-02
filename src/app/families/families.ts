@@ -241,6 +241,7 @@ export class Families extends IdEntity<FamilyId>  {
         }
         break;
       case DeliveryStatus.Success:
+      case DeliveryStatus.SuccessLeftThere:
       case DeliveryStatus.FailedBadAddress:
       case DeliveryStatus.FailedNotHome:
       case DeliveryStatus.FailedOther:
@@ -260,6 +261,7 @@ export class Families extends IdEntity<FamilyId>  {
         }
         break;
       case DeliveryStatus.Success:
+      case DeliveryStatus.SuccessLeftThere:
       case DeliveryStatus.FailedBadAddress:
       case DeliveryStatus.FailedNotHome:
       case DeliveryStatus.FailedOther:
@@ -308,6 +310,7 @@ export class Families extends IdEntity<FamilyId>  {
           case DeliveryStatus.ReadyForDelivery:
             break;
           case DeliveryStatus.Success:
+          case DeliveryStatus.SuccessLeftThere:
           case DeliveryStatus.FailedBadAddress:
           case DeliveryStatus.FailedNotHome:
           case DeliveryStatus.FailedOther:
