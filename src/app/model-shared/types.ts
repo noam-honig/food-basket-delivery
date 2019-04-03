@@ -51,13 +51,14 @@ export class PhoneColumn extends radweb.StringColumn implements hasMoreDataColum
   }
   get displayValue() {
 
-
+    if (!this.value)
+      return this.value;
     let x = this.value.replace(/\D/g, '');
     if (x.length < 9 || x.length > 10)
       return this.value;
-    x =x.substring(0, x.length - 4) +'-'+   x.substring(x.length - 4, x.length);
+    x = x.substring(0, x.length - 4) + '-' + x.substring(x.length - 4, x.length);
 
-    x =x.substring(0, x.length - 8) +'-'+   x.substring(x.length - 8, x.length);
+    x = x.substring(0, x.length - 8) + '-' + x.substring(x.length - 8, x.length);
     return x;
   }
 }
