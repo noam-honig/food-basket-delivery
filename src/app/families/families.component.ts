@@ -150,51 +150,56 @@ export class FamiliesComponent implements OnInit {
           let colPrefix = '';
           let colName = 'A';
           let colIndex = 0;
+
+          let addColumn = (caption: string, v: string, t: XLSX.ExcelDataType, hidden?: boolean) => {
+
+            if (rowNum == 2) {
+              ws[colPrefix + colName + "1"] = { v: caption };
+              ws["!cols"].push({
+                wch: caption.length,
+                hidden: hidden
+              });
+            }
+
+            ws[colPrefix + colName + (rowNum.toString())] = {
+              v: v, t: t
+            };
+            maxChar = colPrefix + colName;
+            {
+              let i = colName.charCodeAt(0);
+              i++;
+              colName = String.fromCharCode(i);
+              if (colName > 'Z') {
+                colName = 'A';
+                colPrefix = 'A';
+              }
+            }
+            let len = v.length;
+            let col = ws["!cols"][colIndex++];
+            if (len > col.wch) {
+              col.wch = len;
+            }
+          };
+
           await foreachSync(f.__iterateColumns(), async c => {
             try {
 
-              if (rowNum == 2) {
-                ws[colPrefix + colName + "1"] = { v: c.caption };
-                ws["!cols"].push({
-                  wch: c.caption.length,
-                  hidden: f.id == c || f.addressApiResult == c
-                });
-              }
-              let val = {} as XLSX.CellObject;
-              ws[colPrefix + colName + (rowNum.toString())] = val;
-              maxChar = colPrefix + colName;
-              {
-                let i = colName.charCodeAt(0);
-                i++;
-                colName = String.fromCharCode(i);
-                if (colName > 'Z') {
-                  colName = 'A';
-                  colPrefix = 'A';
-                }
-              }
               let v = c.displayValue;
               if (v == undefined)
                 v = '';
-
               let getv: HasAsyncGetTheValue = <any>c as HasAsyncGetTheValue;
               if (getv && getv.getTheValue) {
                 v = await getv.getTheValue();
               }
-
-              v = v.toString();
-              let len = v.length;
-
-              if (len > 50)
-                len = 50;
-              if (c instanceof DateTimeColumn) {
-                val.t= "d";
-                v  =c.value;
-                len = 10;
+              
+              if (c instanceof DateTimeColumn){
+                addColumn('תאריך '+c.caption, c.getStringForInputDate() , "d", false);
+                addColumn('שעת '+c.caption,c.dateValue.getHours().toString() , "n", false);
+                addColumn('מלא '+c.caption,c.value , "s", true);
               }
-              val.v = v;
-              let col = ws["!cols"][colIndex++];
-              if (col.wch < len)
-                col.wch = len;
+              else
+                addColumn(c.caption, v.toString(), "s", c == f.id || c == f.addressApiResult)
+
 
             } catch (err) {
 
@@ -209,8 +214,8 @@ export class FamiliesComponent implements OnInit {
     this.families.page = x;
     this.families.getRecords();
     ws["!ref"] = "A1:" + maxChar + rowNum;
-    ws["!autofilter"]={ref:ws["!ref"]};
-    
+    ws["!autofilter"] = { ref: ws["!ref"] };
+
 
     XLSX.utils.book_append_sheet(wb, ws, 'test');
     XLSX.writeFile(wb, 'משפחות.xlsx');
