@@ -15,8 +15,8 @@ export interface OutArgs {
 
 }
 export class DeliveryStats {
-    onTheWay = new DeliveryStatistic('בדרך', f => f.deliveriesInProgress.IsGreaterOrEqualTo(1).and(f.firstDeliveryInProgressDate.IsGreaterThan(DateTimeColumn.dateToString(new Date(new Date().valueOf() - 3600000 * 1.5)))), colors.blue);
-    late = new DeliveryStatistic('מתעכבים', f => f.deliveriesInProgress.IsGreaterOrEqualTo(1).and(f.firstDeliveryInProgressDate.IsLessOrEqualTo(DateTimeColumn.dateToString(new Date(new Date().valueOf() - 3600000 * 1.5)))), colors.yellow);
+    onTheWay = new DeliveryStatistic('בדרך', f => f.deliveriesInProgress.IsGreaterOrEqualTo(1).and(f.lastAsignTime.IsGreaterThan(DateTimeColumn.dateToString(new Date(new Date().valueOf() - 3600000 * 1.5)))), colors.blue);
+    late = new DeliveryStatistic('מתעכבים', f => f.deliveriesInProgress.IsGreaterOrEqualTo(1).and(f.lastAsignTime.IsLessOrEqualTo(DateTimeColumn.dateToString(new Date(new Date().valueOf() - 3600000 * 1.5)))), colors.yellow);
     delivered = new DeliveryStatistic('סיימו', f => f.deliveriesInProgress.isEqualTo(0).and(f.deliveriesWithProblems.isEqualTo(0)).and(f.allFamilies.IsGreaterOrEqualTo(1)), colors.green);
     problem = new DeliveryStatistic('בעיות', f => f.deliveriesWithProblems.IsGreaterOrEqualTo(1), colors.red);
 

@@ -28,7 +28,10 @@ export class DeliveryFollowUpComponent implements OnInit {
     this.familyLists.initForHelper(c.id.value, c.name.value, await this.context.for(Helpers).findFirst(h=>h.id.isEqualTo(c.id)));
 
   }
-
+  searchString:string;
+  showHelper(h:HelpersAndStats){
+    return (!this.searchString||h.name.value.indexOf(this.searchString)>=0);
+  }
   public pieChartLabels: string[] = [];
   public pieChartData: number[] = [];
   pieChartStatObjects: DeliveryStatistic[] = [];
@@ -99,7 +102,7 @@ export class DeliveryFollowUpComponent implements OnInit {
   couriers =this.context.for(HelpersAndStats).gridSettings( {
 
     columnSettings: h => [
-      h.name, h.phone, h.deliveriesInProgress, h.firstDeliveryInProgressDate
+      h.name, h.phone, h.deliveriesInProgress, h.lastAsignTime
     ],
     get: {
       where: h => {
@@ -119,7 +122,7 @@ export class DeliveryFollowUpComponent implements OnInit {
 
         return result;
       },
-      orderBy: h => h.firstDeliveryInProgressDate,
+      orderBy: h => h.lastAsignTime,
       limit: 1000
     }
   });
