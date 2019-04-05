@@ -193,8 +193,8 @@ export class FamiliesComponent implements OnInit {
               }
               
               if (c instanceof DateTimeColumn){
-                addColumn('תאריך '+c.caption, c.getStringForInputDate() , "d", false);
-                addColumn('שעת '+c.caption,c.dateValue.getHours().toString() , "n", false);
+                addColumn('תאריך '+c.caption,c.dateValue? c.getStringForInputDate():undefined , "d", false);
+                addColumn('שעת '+c.caption,c.dateValue? c.dateValue.getHours().toString():undefined , "n", false);
                 addColumn('מלא '+c.caption,c.value , "s", true);
               }
               else
