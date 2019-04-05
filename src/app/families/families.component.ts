@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
-import { ColumnHashSet, AndFilter, ColumnSetting } from 'radweb';
+import { ColumnHashSet, AndFilter, ColumnSetting, DateColumn } from 'radweb';
 import { FamilyDeliveryEventsView } from "./FamilyDeliveryEventsView";
 import { Families } from './families';
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -21,7 +21,7 @@ import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
 import { MatTabGroup } from '@angular/material';
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
-import { HasAsyncGetTheValue } from '../model-shared/types';
+import { HasAsyncGetTheValue, DateTimeColumn } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
 import { HolidayDeliveryAdmin } from '../auth/auth-guard';
@@ -116,43 +116,102 @@ export class FamiliesComponent implements OnInit {
 
 
     let wb = XLSX.utils.book_new();
-    let data = [];
-    let title = [];
-    let doneTitle = false;
+    wb.Workbook = { Views: [{ RTL: true }] };
+    let ws = {
 
-    await foreachSync(await this.context.for(Families).find({ limit: 5000, orderBy: f => [f.name] })
-      , async  f => {
-        let row = [];
+    } as XLSX.WorkSheet;
+    var dc = new DateTimeColumn();
+    dc.dateValue = new Date();
+    ws["A1"] = {
+      v: dc.displayValue,
+      t: "d",
+      w: "dd/mm/yyyy HH:MM"
 
-        await foreachSync(f.__iterateColumns(), async c => {
-          try {
-            if (!doneTitle) {
-              title.push(c.caption);
+    } as XLSX.CellObject;
+    ws["A2"] = {
+      f: "year(A1)"
+
+    } as XLSX.CellObject;
+    ws["!cols"] = [];
+
+
+
+
+    let x = this.families.page;
+    let rowNum = 2;
+    let maxChar = 'A';
+
+
+    this.families.page = 1;
+    await this.families.getRecords();
+    while (this.families.items.length > 0) {
+      await foreachSync(this.families.items
+        , async  f => {
+          let colPrefix = '';
+          let colName = 'A';
+          let colIndex = 0;
+          await foreachSync(f.__iterateColumns(), async c => {
+            try {
+
+              if (rowNum == 2) {
+                ws[colPrefix + colName + "1"] = { v: c.caption };
+                ws["!cols"].push({
+                  wch: c.caption.length,
+                  hidden: f.id == c || f.addressApiResult == c
+                });
+              }
+              let val = {} as XLSX.CellObject;
+              ws[colPrefix + colName + (rowNum.toString())] = val;
+              maxChar = colPrefix + colName;
+              {
+                let i = colName.charCodeAt(0);
+                i++;
+                colName = String.fromCharCode(i);
+                if (colName > 'Z') {
+                  colName = 'A';
+                  colPrefix = 'A';
+                }
+              }
+              let v = c.displayValue;
+              if (v == undefined)
+                v = '';
+
+              let getv: HasAsyncGetTheValue = <any>c as HasAsyncGetTheValue;
+              if (getv && getv.getTheValue) {
+                v = await getv.getTheValue();
+              }
+
+              v = v.toString();
+              let len = v.length;
+
+              if (len > 50)
+                len = 50;
+              if (c instanceof DateTimeColumn) {
+                val.t= "d";
+                v  =c.value;
+                len = 10;
+              }
+              val.v = v;
+              let col = ws["!cols"][colIndex++];
+              if (col.wch < len)
+                col.wch = len;
+
+            } catch (err) {
+
+              console.error(err, c.jsonName, f.__toPojo(new ColumnHashSet()));
             }
-            let v = c.displayValue;
-            if (v == undefined)
-              v = '';
+          });
+          rowNum++;
 
-            let getv: HasAsyncGetTheValue = <any>c as HasAsyncGetTheValue;
-            if (getv && getv.getTheValue) {
-              v = await getv.getTheValue();
-            }
-
-            v = v.toString();
-            row.push(v);
-          } catch (err) {
-            row.push(err);
-            console.error(err, c.jsonName, f.__toPojo(new ColumnHashSet()));
-          }
         });
-        if (!doneTitle) {
-          data.push(title);
-          doneTitle = true;
-        }
-        data.push(row);
+      await this.families.nextPage();
+    }
+    this.families.page = x;
+    this.families.getRecords();
+    ws["!ref"] = "A1:" + maxChar + rowNum;
+    ws["!autofilter"]={ref:ws["!ref"]};
+    
 
-      });
-    let ws = XLSX.utils.aoa_to_sheet(data);
     XLSX.utils.book_append_sheet(wb, ws, 'test');
     XLSX.writeFile(wb, 'משפחות.xlsx');
     return;
@@ -170,7 +229,7 @@ export class FamiliesComponent implements OnInit {
         f.basketType.value = '';
         f.language.listValue = Language.Hebrew;
         f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
-        f.callStatus.listValue = CallStatus.NotYet;
+        //f.callStatus.listValue = CallStatus.NotYet;
         f.special.listValue = YesNo.No;
       } else {
 

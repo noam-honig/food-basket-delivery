@@ -11,7 +11,7 @@ import * as XLSX from 'xlsx';
 import { Families, parseAddress } from "../families/families";
 import { ServerContext, Context } from "../shared/context";
 import { Helpers } from "../helpers/helpers";
-import { debug } from "util";
+import { debug, isString } from "util";
 import { FamilySources } from "../families/FamilySources";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { BasketType } from "../families/BasketType";
@@ -50,7 +50,7 @@ async function getGeolocationInfo() {
 }
 async function ImportFromExcel() {
 
-    let wb = XLSX.readFile("C:\\users\\Yoni\\Downloads\\MAZON.xls");
+    let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\פסח 2.xls");
     for (let sheetIndex = 0; sheetIndex < 1; sheetIndex++) {
         const element = wb.SheetNames[sheetIndex];
         let s = wb.Sheets[element];
@@ -66,7 +66,7 @@ async function ImportFromExcel() {
                         return '';
                     return r[x];
                 };
-                await readMerkazMazonFamily(context, r, get, element);
+                await readMerkazMazonFamily2(context, r, get, '4_5_2019 ' + element);
 
             }
             catch (err) {
@@ -117,9 +117,12 @@ async function ImportFromExcelBasedOnLetters() {
             try {
 
                 let get = x => {
-                    if (!r[x])
+                    let result = r[x];
+                    if (!result)
                         return '';
-                    return r[x];
+                    if (isString(result))
+                        result = result.trim();
+                    return result;
                 };
                 // await ReadNRUNFamilies(context, r, element, ++i, get);
             }
@@ -213,7 +216,7 @@ async function readMerkazMazonFamily(context: ServerContext, o: any, get: (key: 
         }
         f.familySource.value = fs.id.value;
     }
-    if (o.__rowNum__>183&&o.__rowNum__<187){
+    if (o.__rowNum__ > 183 && o.__rowNum__ < 187) {
         debugger;
     }
 
@@ -242,7 +245,7 @@ async function readMerkazMazonFamily(context: ServerContext, o: any, get: (key: 
         }
         let moreComments = get('סימני זיהוי נוספים לבית ');
         if (moreComments)
-            f.addressComment.value+=' '+moreComments;
+            f.addressComment.value += ' ' + moreComments;
         f.address.value = get('רחוב') + ' ' + get('בית') + ' תל אביב';
         f.name.value = get('שם מלא');
         f.familyMembers.value = +get("מס' נפשות");
@@ -252,7 +255,7 @@ async function readMerkazMazonFamily(context: ServerContext, o: any, get: (key: 
     }
     else {
         match++;
-    //    console.log('match ', o.__rowNum__, o);
+        //    console.log('match ', o.__rowNum__, o);
     }
 
 
@@ -264,7 +267,8 @@ async function readMerkazMazonFamily2(context: ServerContext, o: any, get: (key:
     let taz = get('ת"ז').trim();
     let phone = get('טלפון').trim();
     let phone2 = get('טלפון נייד').trim();
-    if (!taz && !phone && !phone2) {
+    let name = get('איש קשר');
+    if (!taz && !phone && !phone2 && !name) {
         console.error('אין תעודת זהות וטלפון - לא קולט', idInExcel, o);
         return;
     }
@@ -273,8 +277,10 @@ async function readMerkazMazonFamily2(context: ServerContext, o: any, get: (key:
             return f.tz.isEqualTo(taz);
         else if (phone)
             return f.phone1.isEqualTo(phone);
-        else
+        else if (phone2)
             return f.phone2.isEqualTo(phone2);
+        else
+            return f.name.isEqualTo(name);
 
     });
     let sal = get('ביקור בית').trim();
@@ -295,7 +301,7 @@ async function readMerkazMazonFamily2(context: ServerContext, o: any, get: (key:
         }
         f.familySource.value = fs.id.value;
     }
-    if (o.__rowNum__>183&&o.__rowNum__<187){
+    if (o.__rowNum__ > 183 && o.__rowNum__ < 187) {
         debugger;
     }
 
@@ -323,15 +329,15 @@ async function readMerkazMazonFamily2(context: ServerContext, o: any, get: (key:
             f.addressComment.value = 'כניסה ' + knisa;
         }
         f.address.value = get('כתובת') + ' ' + get('בית') + ' ' + get('עיר');
-        f.name.value = get('איש קשר');
+        f.name.value = name;
         f.familyMembers.value = +get('מס נפשות');
 
         f.deliveryComments.value = get('הערות');
-    //    await f.save();
+        await f.save();
     }
     else {
         match++;
-    //    console.log('match ', o.__rowNum__, o);
+        //    console.log('match ', o.__rowNum__, o);
     }
 
 

@@ -200,6 +200,11 @@ export class DateTimeColumn extends radweb.DateTimeColumn implements hasMoreData
       return r;
     return r += ' ב' + d.getHours() + ':' + t;
   }
+  get displayValue() {
+    if (this.dateValue)
+      return this.dateValue.toLocaleString("he-il");
+    return '';
+  }
 
 }
 export function updateSettings<type, colType>(original: MoreDataColumnSettings<type, colType> | string, addValues: (x: MoreDataColumnSettings<type, colType>) => void) {

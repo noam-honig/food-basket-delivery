@@ -105,10 +105,10 @@ export class DeliveryEventsComponent implements OnInit {
 
     [
       f.basketType,
-      f.callComments,
+      /*f.callComments,
       f.callHelper,
       f.callStatus,
-      f.callTime,
+      f.callTime,*/
       f.courier,
       f.courierAssignUser,
       f.courierAssingTime,
@@ -119,9 +119,9 @@ export class DeliveryEventsComponent implements OnInit {
       f.routeOrder].forEach((c: Column<any>) => {
         let emptyValue = "''";
         switch (c) {
-          case f.callStatus:
+          /*case f.callStatus:
             emptyValue = CallStatus.NotYet.id.toString();
-            break;
+            break;*/
           case f.deliverStatus:
             emptyValue = DeliveryStatus.NotInEvent.id.toString();
             break;

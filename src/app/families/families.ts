@@ -62,7 +62,7 @@ export class Families extends IdEntity<FamilyId>  {
             }
             if (!this.disableChangeLogging) {
               logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName())));//should be after succesfull save
-              logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
+              //logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
               logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()))); //should be after succesfull save
             }
           }
@@ -96,10 +96,10 @@ export class Families extends IdEntity<FamilyId>  {
   address = new StringColumn("כתובת");
   floor = new StringColumn('קומה');
   appartment = new StringColumn('דירה');
+  city = new StringColumn({ caption: "עיר (מתעדכן אוטומטית)" });
   addressComment = new StringColumn('הערת כתובת');
   deliveryComments = new StringColumn('הערות למשנע');
   addressApiResult = new StringColumn();
-  city = new StringColumn({ caption: "עיר (מתעדכן אוטומטית)" });
 
   phone1 = new PhoneColumn({ caption: "טלפון 1", inputType: 'tel', dbName: 'phone' });
   phone1Description = new StringColumn('תאור טלפון 1');
@@ -108,13 +108,15 @@ export class Families extends IdEntity<FamilyId>  {
 
 
 
-  callStatus = new CallStatusColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'סטטוס שיחה' });
-  callTime = new changeDate({ excludeFromApi: !this.context.isAdmin(), caption: 'מועד שיחה' });
-  callHelper = new HelperIdReadonly(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'מי ביצעה את השיחה' });
-  callComments = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'הערות שיחה' });
+  //callStatus = new CallStatusColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'סטטוס שיחה' });
+  //callTime = new changeDate({ excludeFromApi: !this.context.isAdmin(), caption: 'מועד שיחה' });
+  //callHelper = new HelperIdReadonly(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'מי ביצעה את השיחה' });
+  //callComments = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'הערות שיחה' });
 
-
+  deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
   courier = new HelperId(this.context, "משנע באירוע");
+  courierComments = new StringColumn('הערות מסירה');
+  deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
   fixedCourier = new HelperId(this.context, "משנע קבוע");
   courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
 
@@ -141,11 +143,33 @@ export class Families extends IdEntity<FamilyId>  {
   courierAssingTime = new changeDate('מועד שיוך למשנע');
 
 
-  deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
-  deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
+  
+  
   deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
+  
   routeOrder = new NumberColumn();
-  courierComments = new StringColumn('הערות מסירה');
+  previousDeliveryStatus = new DeliveryStatusColumn({
+    caption: 'סטטוס שינוע קודם',
+    dbReadOnly: true,
+    dbName: () => {
+      return this.dbNameFromLastDelivery(fde => fde.deliverStatus, "prevStatus");
+    }
+  });
+  previousDeliveryComment = new StringColumn({
+    caption: 'הערת שינוע קודם',
+    dbReadOnly: true,
+    dbName: () => {
+      return this.dbNameFromLastDelivery(fde => fde.courierComments, "prevComment");
+    }
+  });
+  previousCourier = new HelperIdReadonly(this.context, {
+    caption: 'משנע  קודם',
+    dbReadOnly: true,
+    dbName: () => {
+      return this.dbNameFromLastDelivery(fde => fde.courier, "prevCourier");
+    }
+  });
+  
 
   addressLongitude = new NumberColumn({ decimalDigits: 8 });
   addressLatitude = new NumberColumn({ decimalDigits: 8 });
@@ -179,27 +203,7 @@ export class Families extends IdEntity<FamilyId>  {
     });
   }
 
-  previousDeliveryStatus = new DeliveryStatusColumn({
-    caption: 'סטטוס שינוע קודם',
-    dbReadOnly: true,
-    dbName: () => {
-      return this.dbNameFromLastDelivery(fde => fde.deliverStatus, "prevStatus");
-    }
-  });
-  previousDeliveryComment = new StringColumn({
-    caption: 'הערת שינוע קודם',
-    dbReadOnly: true,
-    dbName: () => {
-      return this.dbNameFromLastDelivery(fde => fde.courierComments, "prevComment");
-    }
-  });
-  previousCourier = new HelperIdReadonly(this.context, {
-    caption: 'משנע  קודם',
-    dbReadOnly: true,
-    dbName: () => {
-      return this.dbNameFromLastDelivery(fde => fde.courier, "prevCourier");
-    }
-  });
+
   courierBeenHereBefore() {
     return this.previousCourier.value == this.courier.value;
   }
@@ -275,11 +279,6 @@ export class Families extends IdEntity<FamilyId>  {
   createDate = new changeDate({ excludeFromApi: !this.context.isAdmin(), caption: 'מועד הוספה' });
   createUser = new HelperIdReadonly(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'משתמש מוסיף' });
 
-  excludeColumns(info: myAuthInfo) {
-    if (info && info.deliveryAdmin)
-      return [];
-    return [this.internalComment, this.callComments, this.callHelper, this.callStatus, this.callTime, this.createDate, this.createUser, this.familySource, this.familyMembers, this.special];
-  }
 
 
 
