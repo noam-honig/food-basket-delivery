@@ -26,7 +26,8 @@ export async function DoIt() {
         let name = (await ApplicationSettings.getAsync(context)).organisationName.value;
         console.log(name);
 
-        ImportFromExcel();
+        // ImportFromExcel();
+        await ImportFromExcelBasedOnLetters();
 
         //     await ImportFromExcel();
     }
@@ -81,9 +82,9 @@ async function ImportFromExcel() {
 }
 async function ImportFromExcelBasedOnLetters() {
 
-    let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\רשימת משפחות תחילת עבודה.xlsx");
+    let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\רשימה לנועם.xlsx");
     let context = new ServerContext();
-    for (let sheetIndex = 12; sheetIndex < 70; sheetIndex++) {
+    for (let sheetIndex = 0; sheetIndex < 1; sheetIndex++) {
         const element: string = wb.SheetNames[sheetIndex];
         let s = wb.Sheets[element];
         let sRef = s["!ref"];
@@ -99,11 +100,8 @@ async function ImportFromExcelBasedOnLetters() {
                     return '';
                 return val.w;
             };
-            let b = get('B');
-            let f = get('F');
 
-            if (b && b != "שם מלא" && f && f != 'כתובת' && get('A') != "ת.ז " && b != 'ת.ז')
-                await ReadNRUNFamilies(context, element, row, get);
+            await ReadHMEYFamilies(context, element, row, get);
 
 
         }
@@ -148,7 +146,35 @@ async function readHelperFromExcel(context: ServerContext, o: any, get: (key: st
 function onlyDigits(s: string) {
     return s.replace(/\D/g, '');
 }
+async function ReadHMEYFamilies(context: ServerContext, tabName: string, rowInExcel: number, get: (key: string) => string) {
+    let idInExcel = get('A');
+    if (+idInExcel < 1)
+        return;
+    let f = context.for(Families).create();
+    f.iDinExcel.value = '2019-04-14/'+idInExcel;
+    f.name.value = get('B');
+    f.internalComment.value = get('C');
+    if (get('D') == '2')
+        f.basketType.value = "78d67fff-4e11-42d3-a5b0-52ebc3619f0e";
+    let address = parseAddress(get('F'));
+    f.address.value = address.address;
+    f.appartment.value = address.dira;
+    f.floor.value = address.floor;
+    if (address.knisa)
+    {
+        f.deliveryComments.value = 'כניסה '   +address.knisa;
+    }
+    f.phone1.value = get('G');
+    f.toString();
+ //  await f.save();
+
+}
 async function ReadNRUNFamilies(context: ServerContext, tabName: string, rowInExcel: number, get: (key: string) => string) {
+    let b = get('B');
+    let ff = get('F');
+
+    if (!(b && b != "שם מלא" && ff && ff != 'כתובת' && get('A') != "ת.ז " && b != 'ת.ז'))
+        return;
     let excelId = tabName + ' ' + (rowInExcel.toString().padStart(3, '0'));
     let f = await context.for(Families).lookupAsync(f => f.iDinExcel.isEqualTo(excelId));;
     f.iDinExcel.value = excelId;
