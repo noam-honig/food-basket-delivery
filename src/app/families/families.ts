@@ -34,7 +34,7 @@ export class Families extends IdEntity<FamilyId>  {
         onSavingRow: async () => {
 
           if (this.context.onServer) {
-            if (this.fixedCourier.value && !this.courier.value && this.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery) {
+            if (this.fixedCourier.value &&!this.fixedCourier.originalValue && !this.courier.value && this.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery) {
               this.courier.value = this.fixedCourier.value;
             }
             if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
