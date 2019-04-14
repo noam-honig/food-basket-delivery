@@ -275,6 +275,7 @@ export class Families extends IdEntity<FamilyId>  {
     }
     return this.deliverStatus.displayValue;
   }
+ 
 
   createDate = new changeDate({ excludeFromApi: !this.context.isAdmin(), caption: 'מועד הוספה' });
   createUser = new HelperIdReadonly(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'משתמש מוסיף' });
