@@ -69,7 +69,7 @@ export class HelpersAndStats extends IdEntity<HelperId> {
                             DeliveryStatus.FailedNotHome.id,
                             DeliveryStatus.FailedOther.id)]),
                             this.deliveriesWithProblems),
-                        sql.min(f.courierAssingTime,
+                        sql.max(f.courierAssingTime,
                             helperFamilies(() =>
                                 [sql.not(sql.in(f.deliverStatus, DeliveryStatus.Frozen.id,DeliveryStatus.NotInEvent.id))]), this.lastAsignTime)
 

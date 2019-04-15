@@ -365,6 +365,16 @@ export class SqlBuilder {
       where: query.where
     }), ") ", mappedColumn);
   }
+  max(col: Column<any>, query: FromAndWhere, mappedColumn: Column<any>) {
+    return this.build('(', this.query({
+      select: () => [this.build("max(", col, ")")],
+      from: query.from,
+      innerJoin: query.innerJoin,
+      outerJoin: query.outerJoin,
+      crossJoin: query.crossJoin,
+      where: query.where
+    }), ") ", mappedColumn);
+  }
   columnDbName(rootEntity: Entity<any>, query: QueryBuilder) {
     this.addEntity(rootEntity, rootEntity.__getDbName());
     return '(' + this.query(query) + ')';

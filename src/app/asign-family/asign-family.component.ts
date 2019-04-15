@@ -254,7 +254,7 @@ export class AsignFamilyComponent implements OnInit {
     result.special = await countFamilies(f => f.special.isEqualTo(YesNo.Yes.id));
 
     result.repeatFamilies = await countFamilies(f =>
-      f.previousCourier.isEqualTo(info.helperId)
+      f.previousCourier.isEqualTo(info.helperId).and(f.special.isEqualTo(YesNo.No.id))
     );
 
     for (let c of await context.for(CitiesStats).find({
@@ -277,7 +277,7 @@ export class AsignFamilyComponent implements OnInit {
       let bi = {
         id: b.id.value,
         name: b.name.value,
-        unassignedFamilies: await countFamilies(f => f.basketType.isEqualTo(b.id.value))
+        unassignedFamilies: await countFamilies(f => f.basketType.isEqualTo(b.id.value).and(f.special.isEqualTo(YesNo.No.id)))
       };
       if (bi.unassignedFamilies > 0)
         result.baskets.push(bi);

@@ -149,8 +149,8 @@ export class FixAddressComponent implements OnInit, OnDestroy {
         familyOnMap.prevCourier = f.courier;
       }
       familyOnMap.marker.setVisible(!this.selectedStatus || this.selectedStatus == status);
-
-      this.bounds.extend(familyOnMap.marker.getPosition());
+      if (familyOnMap.marker.getPosition().lat()>0)
+        this.bounds.extend(familyOnMap.marker.getPosition());
 
     });
     this.updateChart();
