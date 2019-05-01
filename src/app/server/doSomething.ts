@@ -16,20 +16,23 @@ import { FamilySources } from "../families/FamilySources";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { BasketType } from "../families/BasketType";
 import { DeliveryStatus } from "../families/DeliveryStatus";
+import { DeliveryStats } from "../delivery-follow-up/delivery-stats";
 
 serverInit();
 let match = 0;
 export async function DoIt() {
     try {
+
+
         let context = new ServerContext();
         let f = await context.for(Helpers).count();
         let name = (await ApplicationSettings.getAsync(context)).organisationName.value;
         console.log(name);
 
-        // ImportFromExcel();
-        await ImportFromExcelBasedOnLetters();
+        
+        
 
-        //     await ImportFromExcel();
+             await ImportFromExcel();
     }
     catch (err) {
         console.error(err);
@@ -51,7 +54,7 @@ async function getGeolocationInfo() {
 }
 async function ImportFromExcel() {
 
-    let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\פסח 2.xls");
+    let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\אפריל חלוקה שנייה.xls");
     for (let sheetIndex = 0; sheetIndex < 1; sheetIndex++) {
         const element = wb.SheetNames[sheetIndex];
         let s = wb.Sheets[element];
@@ -67,7 +70,7 @@ async function ImportFromExcel() {
                         return '';
                     return r[x];
                 };
-                await readMerkazMazonFamily2(context, r, get, '4_5_2019 ' + element);
+                await readMerkazMazonFamily2(context, r, get, '4_18_2019 ' + element);
 
             }
             catch (err) {
@@ -309,29 +312,28 @@ async function readMerkazMazonFamily2(context: ServerContext, o: any, get: (key:
             return f.name.isEqualTo(name);
 
     });
-    let sal = get('ביקור בית').trim();
-    if (sal && sal.trim() == "כן" && (f.isNew() || f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery)) {
-        let bask = await context.for(BasketType).lookupAsync(b => b.name.isEqualTo('סל לקשיש'));
-        if (bask.isNew()) {
-            bask.name.value = 'סל לקשיש';
-            await bask.save();
-        }
-        f.basketType.value = bask.id.value;
-    }
-    let machlaka = get('מחלקה').trim();
-    if (machlaka) {
-        let fs = await context.for(FamilySources).lookupAsync(f => f.name.isEqualTo(machlaka));
-        if (fs.isNew()) {
-            fs.name.value = machlaka;
-            await fs.save();
-        }
-        f.familySource.value = fs.id.value;
-    }
-    if (o.__rowNum__ > 183 && o.__rowNum__ < 187) {
-        debugger;
-    }
+   
+  
 
     if (f.isNew()) {
+        let sal = get('ביקור בית').trim();
+        if (sal && sal.trim() == "כן" && (f.isNew() || f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery)) {
+            let bask = await context.for(BasketType).lookupAsync(b => b.name.isEqualTo('סל לקשיש'));
+            if (bask.isNew()) {
+                bask.name.value = 'סל לקשיש';
+                await bask.save();
+            }
+            f.basketType.value = bask.id.value;
+        }
+        let machlaka = get('מחלקה').trim();
+        if (machlaka) {
+            let fs = await context.for(FamilySources).lookupAsync(f => f.name.isEqualTo(machlaka));
+            if (fs.isNew()) {
+                fs.name.value = machlaka;
+                await fs.save();
+            }
+            f.familySource.value = fs.id.value;
+        }
         let helperName = get('מתנדב קבוע').trim();
         if (helperName) {
             let h = await context.for(Helpers).lookupAsync(h => h.name.isEqualTo(helperName));
@@ -359,10 +361,14 @@ async function readMerkazMazonFamily2(context: ServerContext, o: any, get: (key:
         f.familyMembers.value = +get('מס נפשות');
 
         f.deliveryComments.value = get('הערות');
-        await f.save();
+      //  await f.save();
     }
     else {
         match++;
+        f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
+        f.courier.value = f.fixedCourier.value;
+        f.courierComments.value = '';
+     //  await f.save();
         //    console.log('match ', o.__rowNum__, o);
     }
 
