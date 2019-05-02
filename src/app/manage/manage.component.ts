@@ -25,7 +25,8 @@ export class ManageComponent implements OnInit {
 
   basketType = this.context.for(BasketType).gridSettings({
     columnSettings: x => [
-      x.name
+      x.name,
+      x.blocked
     ],
     allowUpdate: true,
     allowInsert: true,

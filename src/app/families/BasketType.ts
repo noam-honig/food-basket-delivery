@@ -1,5 +1,5 @@
 
-import { IdEntity } from "../model-shared/types";
+import { IdEntity, BoolColumn } from "../model-shared/types";
 import { StringColumn } from "radweb";
 import { evilStatics } from "../auth/evil-statics";
 import { Id, HasAsyncGetTheValue } from "../model-shared/types";
@@ -10,6 +10,7 @@ import { DataColumnSettings } from "radweb";
 export class BasketType extends IdEntity<BasketId>  {
 
   name = new StringColumn({ caption: "שם" });
+  blocked = new BoolColumn({caption:'חסום לחלוקה'});
   constructor(context: Context) {
     super(new BasketId(context), {
       name: "BasketType",

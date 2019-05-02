@@ -407,7 +407,7 @@ export class FamiliesComponent implements OnInit {
   };
   cityStats: statsOnTab = {
     name: 'נותרו לפי ערים',
-    rule: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('')),
+    rule: f => f.readyFilter(),
     stats: [
       this.stats.ready,
       this.stats.special
@@ -421,6 +421,7 @@ export class FamiliesComponent implements OnInit {
       stats: [
         this.stats.ready,
         this.stats.special,
+        this.stats.blocked,
         this.stats.onTheWay,
         this.stats.delivered,
         this.stats.problem,
@@ -504,7 +505,7 @@ export class FamiliesComponent implements OnInit {
         let lastFs: FaimilyStatistics;
         let firstCities = [];
         st.cities.forEach(b => {
-          let fs = new FaimilyStatistics(b.name, f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.city.isEqualTo(b.name))), undefined);
+          let fs = new FaimilyStatistics(b.name, f => f.readyFilter().and(f.city.isEqualTo(b.name)), undefined);
           fs.value = +b.count;
 
           i++;

@@ -3,7 +3,7 @@ import { CallStatusColumn } from "./CallStatus";
 import { YesNoColumn } from "./YesNo";
 import { LanguageColumn } from "./Language";
 import { FamilySourceId } from "./FamilySources";
-import { BasketId } from "./BasketType";
+import { BasketId, BasketType } from "./BasketType";
 import { NumberColumn, StringColumn, IdEntity, Id, changeDate, DateTimeColumn, SqlBuilder, BoolColumn, PhoneColumn } from "../model-shared/types";
 import { ColumnSetting, Column } from "radweb";
 import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
@@ -34,7 +34,7 @@ export class Families extends IdEntity<FamilyId>  {
         onSavingRow: async () => {
 
           if (this.context.onServer) {
-            if (this.fixedCourier.value &&!this.fixedCourier.originalValue && !this.courier.value && this.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery) {
+            if (this.fixedCourier.value && !this.fixedCourier.originalValue && !this.courier.value && this.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery) {
               this.courier.value = this.fixedCourier.value;
             }
             if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
@@ -143,10 +143,24 @@ export class Families extends IdEntity<FamilyId>  {
   courierAssingTime = new changeDate('מועד שיוך למשנע');
 
 
-  
-  
+
+
   deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
-  
+  blockedBasket = new BoolColumn({
+    caption: 'סל חסום',
+    dbReadOnly: true,
+    dbName: () => {
+      let b = new BasketType(this.context);
+
+      let sql = new SqlBuilder();
+      return sql.columnInnerSelect(this, {
+        select: () => [sql.columnWithAlias(b.blocked, "blockedBasket")],
+        from: b,
+        where: () => [sql.eq(b.id, this.basketType),
+        ]
+      });
+    }
+  });
   routeOrder = new NumberColumn();
   previousDeliveryStatus = new DeliveryStatusColumn({
     caption: 'סטטוס שינוע קודם',
@@ -169,7 +183,7 @@ export class Families extends IdEntity<FamilyId>  {
       return this.dbNameFromLastDelivery(fde => fde.courier, "prevCourier");
     }
   });
-  
+
 
   addressLongitude = new NumberColumn({ decimalDigits: 8 });
   addressLatitude = new NumberColumn({ decimalDigits: 8 });
@@ -177,7 +191,7 @@ export class Families extends IdEntity<FamilyId>  {
 
   readyFilter(city?: string, language?: number) {
     let where = this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
-      this.courier.isEqualTo(''));
+      this.courier.isEqualTo('')).and(this.blockedBasket.isEqualTo(false));
     if (language > -1)
       where = where.and(this.language.isEqualTo(language));
     if (city) {
@@ -275,7 +289,7 @@ export class Families extends IdEntity<FamilyId>  {
     }
     return this.deliverStatus.displayValue;
   }
- 
+
 
   createDate = new changeDate({ excludeFromApi: !this.context.isAdmin(), caption: 'מועד הוספה' });
   createUser = new HelperIdReadonly(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'משתמש מוסיף' });

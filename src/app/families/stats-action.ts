@@ -23,20 +23,23 @@ export const colors = {
     , gray: 'gray'
 };
 export class Stats {
-    ready = new FaimilyStatistics('טרם שוייכו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.special.IsDifferentFrom(YesNo.Yes.id))), colors.yellow);
-    special = new FaimilyStatistics('מיוחדים שטרם שוייכו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes.id))), colors.orange);
+    ready = new FaimilyStatistics('טרם שוייכו',
+        f => f.readyFilter().and(
+            f.special.IsDifferentFrom(YesNo.Yes.id))
+        , colors.yellow);
+    special = new FaimilyStatistics('מיוחדים שטרם שוייכו',
+        f => f.readyFilter().and(
+            f.special.isEqualTo(YesNo.Yes.id))
+        , colors.orange);
     onTheWay = new FaimilyStatistics('בדרך', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.IsDifferentFrom('')), colors.blue);
     delivered = new FaimilyStatistics('הגיעו', f => f.deliverStatus.IsGreaterOrEqualTo(DeliveryStatus.Success.id).and(f.deliverStatus.IsLessOrEqualTo(DeliveryStatus.SuccessLeftThere.id)), colors.green);
     problem = new FaimilyStatistics('בעיות', f => f.deliverStatus.isProblem(), colors.red);
     currentEvent = new FaimilyStatistics('באירוע', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id), colors.green);
     notInEvent = new FaimilyStatistics('לא באירוע', f => f.deliverStatus.isEqualTo(DeliveryStatus.NotInEvent.id), colors.blue);
     frozen = new FaimilyStatistics('קפואים', f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen.id), colors.gray);
+    blocked = new FaimilyStatistics('סל חסום', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.blockedBasket.isEqualTo(true))), colors.gray);
     deliveryComments = new FaimilyStatistics('הערות משנע', f => f.courierComments.IsDifferentFrom(''), colors.yellow);
-    //  phoneComments = new FaimilyStatistics('הערות טלפנית', f => f.callComments.IsDifferentFrom(''), colors.orange);
-    //    phoneReady = new FaimilyStatistics('ממתינה לשיחה', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.callStatus.isEqualTo(CallStatus.NotYet.id).and(f.callHelper.isEqualTo(''))), colors.yellow);
-    //phoneAssigned = new FaimilyStatistics('משוייכת לטלפנית', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.callStatus.isEqualTo(CallStatus.NotYet.id).and(f.callHelper.IsDifferentFrom(''))), colors.blue);
-    //phoneOk = new FaimilyStatistics('בוצעה שיחה', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.callStatus.isEqualTo(CallStatus.Success.id)), colors.green);
-    //phoneFailed = new FaimilyStatistics('לא השגנו', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.callStatus.isEqualTo(CallStatus.Failed.id)), colors.red);
+    
 
     async getData() {
         let r = await Stats.getDataFromServer();
@@ -78,12 +81,12 @@ export class Stats {
             context.for(CitiesStats).find({
                 orderBy: f => [{ column: f.families, descending: true }]
             }).then(cities => {
-            result.cities = cities.map(x => {
-                return {
-                    name: x.city.value,
-                    count: x.families.value
-                }
-            });
+                result.cities = cities.map(x => {
+                    return {
+                        name: x.city.value,
+                        count: x.families.value
+                    }
+                });
             })
         );
         await Promise.all(pendingStats);
@@ -103,11 +106,13 @@ export class CitiesStats extends ContextEntity<string> {
             dbName: () => {
                 let f = new Families(context);
                 let sql = new SqlBuilder();
+                sql.addEntity(f,'Families');
                 return sql.build('(', sql.query({
                     select: () => [f.city, sql.columnWithAlias("count(*)", this.families)],
                     from: f,
                     where: () => [sql.eq(f.deliverStatus, DeliveryStatus.ReadyForDelivery.id),
-                    sql.eq(f.courier, '\'\'')]
+                    sql.eq(f.courier, '\'\''),
+                f.blockedBasket.__getDbName() +' = false']
                 }), ' group by ', f.city, ') as result')
             }
         });
