@@ -3,6 +3,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Helpers } from '../helpers/helpers';
 import * as fetch from 'node-fetch';
 import { Context, ServerContext } from "../shared/context";
+import { send } from "q";
 
 
 
@@ -12,11 +13,11 @@ export class SendSmsAction {
 
         try {
 
-            let currentUser = await (context.for(Helpers).findFirst(h => h.id.isEqualTo(context.info.helperId)));
+            
 
-            await SendSmsAction.generateMessage(context, helperId, context.getOrigin(), reminder, context.info.name, (phone, message) => {
+            await SendSmsAction.generateMessage(context, helperId, context.getOrigin(), reminder, context.info.name, (phone, message,sender) => {
 
-                new SendSmsUtils().sendSms(phone, currentUser.phone.value, message);
+                new SendSmsUtils().sendSms(phone, sender, message);
             });
         }
         catch (err) {
@@ -26,7 +27,7 @@ export class SendSmsAction {
 
 
 
-    static async  generateMessage(ds: Context, id: string, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string) => void) {
+    static async  generateMessage(ds: Context, id: string, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string,sender:string) => void) {
 
         if (!origin) {
             throw 'Couldnt determine origin for sms';
@@ -37,6 +38,7 @@ export class SendSmsAction {
                 await helper.save();
             }
             let message = '';
+            let settings = await ApplicationSettings.getAsync(ds);
             if (reminder) {
                 message = 'שלום ' + helper.name.value;
                 message += " טרם נרשם במערכת שבוצעה החלוקה, אנא עדכן אותנו אם יש צורך בעזרה או עדכן שהמשלוח הגיע ליעדו"
@@ -44,7 +46,7 @@ export class SendSmsAction {
                 helper.reminderSmsDate.dateValue = new Date();
             }
             else {
-                let settings = await ApplicationSettings.getAsync(ds);
+                
                 message = settings.smsText.value;
                 if (!message || message.trim().length == 0) {
                     message = 'שלום !משנע! לחלוקת חבילות !ארגון! לחץ על: !אתר! תודה !שולח!';
@@ -54,7 +56,13 @@ export class SendSmsAction {
                 message = SendSmsAction.getMessage(message, settings.organisationName.value, helper.name.value, senderName, origin + '/x/' + helper.shortUrlKey.value);
 
             }
-            then(helper.phone.value, message);
+            let sender = settings.helpPhone.value;
+            if (!sender||send.length<3){
+                let currentUser = await (ds.for(Helpers).findFirst(h => h.id.isEqualTo(ds.info.helperId)));
+                sender = currentUser.phone.value;
+            }
+
+            then(helper.phone.value, message,sender);
             await helper.save();
 
 
