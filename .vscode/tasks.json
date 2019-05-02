@@ -104,6 +104,11 @@
             "type": "npm",
             "script": "publish-to-nrun",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-yadl",
+            "problemMatcher": []
         }
     ]
 }
