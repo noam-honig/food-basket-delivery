@@ -189,6 +189,11 @@ export class AsignFamilyComponent implements OnInit {
       this.numOfBaskets = 1;
 
   }
+  countAllFamilies() {
+    let r = 0;
+    this.baskets.forEach(b => r += +b.unassignedFamilies);
+    return r;
+  }
   lastAssign = Promise.resolve();
   async assignItem(basket: BasketInfo) {
 
@@ -197,7 +202,7 @@ export class AsignFamilyComponent implements OnInit {
         let x = await AsignFamilyComponent.AddBox({
           phone: this.phone,
           name: this.name,
-          basketType: basket.id,
+          basketType: basket ? basket.id : undefined,
           helperId: this.id,
           language: this.filterLangulage,
           city: this.filterCity,
@@ -211,16 +216,21 @@ export class AsignFamilyComponent implements OnInit {
           }
           this.id = x.helperId;
           this.familyLists.initForFamilies(this.id, this.name, x.families);
-          basket.unassignedFamilies--;
+          if (basket)
+            basket.unassignedFamilies--;
+          else
+            this.refreshBaskets();
           if (this.preferRepeatFamilies && this.repeatFamilies > 0)
             this.repeatFamilies--;
           this.doRefreshRoute();
           this.dialog.analytics('Assign Family');
+          if (!this.baskets)
+            this.dialog.analytics('Assign any Family (no box)');
           if (this.filterLangulage != -1)
             this.dialog.analytics('assign family-language');
           if (this.filterCity)
             this.dialog.analytics('assign family-city');
-          if (this.numOfBaskets)
+          if (this.numOfBaskets > 1)
             this.dialog.analytics('assign family boxes=' + this.numOfBaskets);
         }
         else {
@@ -335,12 +345,14 @@ export class AsignFamilyComponent implements OnInit {
           from: f,
           where: () => {
             let where = f.readyFilter(info.city, info.language).and(
-              f.basketType.isEqualTo(info.basketType).and(
-                f.special.IsDifferentFrom(YesNo.Yes.id)
-              ));
+              f.special.IsDifferentFrom(YesNo.Yes.id)
+            );
 
             if (info.preferRepeatFamilies)
               where = where.and(f.previousCourier.isEqualTo(info.helperId));
+            if (info.basketType)
+              where = where.and(
+                f.basketType.isEqualTo(info.basketType));
             return [where];
           }
         })));
