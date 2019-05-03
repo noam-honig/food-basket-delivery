@@ -18,7 +18,7 @@ export class Context {
         //this caused the logo to flicker - so i cached it specifically - but this sucks :)
     }
     isAdmin() {
-        return !!this.info && !!this.info.deliveryAdmin;
+        return !!this.info && (!!this.info.deliveryAdmin||!!this.info.weeklyFamilyAdmin||!!this.info.superAdmin);
     }
     isLoggedIn() {
         return !!this.info && !!this.info.loggedIn;
