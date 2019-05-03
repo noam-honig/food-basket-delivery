@@ -26,6 +26,17 @@ export class WeeklyFamilyDeliveryList {
     private removeDelivery: (d: WeeklyFamilyDeliveries) => void, private onStatusChange: () => void) {
 
   }
+  markAll() {
+    for (const products of this.deliveryProducts) {
+      if (products.Quantity.value == 0 && products.requestQuanity.value > 0) {
+        products.Quantity.value = products.requestQuanity.value;
+        products.saveQuantities(this.busy);
+      }
+    }
+  }
+  showMarkAll() {
+    return this.currentDelivery.status.listValue != WeeklyFamilyDeliveryStatus.Prepare;
+  }
   canUpdateDelivery() {
     return this.currentDelivery.currentUserAllowedToUpdate();
   }
@@ -45,6 +56,7 @@ export class WeeklyFamilyDeliveryList {
     this.searchString = '';
     this.showAllProducts = false;
   }
+  
   async changeStatus(s: WeeklyFamilyDeliveryStatus) {
     await this.currentDelivery.changeStatus(s);
     this.onStatusChange();

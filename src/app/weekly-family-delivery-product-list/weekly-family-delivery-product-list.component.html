@@ -19,6 +19,8 @@
   </mat-form-field>
   <mat-checkbox [(ngModel)]="list.showAllProducts" *ngIf="list.shouldShowShowAllProductsCheckbox()">הצג את כל המוצרים
   </mat-checkbox>
+  <br>
+  <button mat-raised-button (click)="list.markAll()" *ngIf="list.showMarkAll()">סמן הכל</button>
   <mat-list>
     <ng-container *ngFor="let p of list.deliveryProducts">
       <mat-list-item class="wideList" *ngIf="list.displayProduct(p)">
