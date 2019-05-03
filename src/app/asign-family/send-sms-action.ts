@@ -3,7 +3,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Helpers } from '../helpers/helpers';
 import * as fetch from 'node-fetch';
 import { Context, ServerContext } from "../shared/context";
-import { send } from "q";
+
 
 
 
@@ -57,7 +57,7 @@ export class SendSmsAction {
 
             }
             let sender = settings.helpPhone.value;
-            if (!sender||send.length<3){
+            if (!sender||sender.length<3){
                 let currentUser = await (ds.for(Helpers).findFirst(h => h.id.isEqualTo(ds.info.helperId)));
                 sender = currentUser.phone.value;
             }
