@@ -32,6 +32,28 @@ export class UserFamiliesList {
         await this.reload();
 
     }
+    getLeftFamiliesDescription() {
+
+
+        let boxes = 0;
+        for (const iterator of this.toDeliver) {
+            boxes += this.context.for(BasketType).lookup(iterator.basketType).boxes.value;
+        }
+        if (this.toDeliver.length == 0)
+            return '';
+        let r = '';
+        if (this.toDeliver.length == 1) {
+            r = 'נותרה משפחה אחת לחלוקה';
+        }
+        else
+            r = 'נותרו ' + this.toDeliver.length + ' משפחות לחלוקה';
+
+
+        if (boxes > this.toDeliver.length)
+            r += ' (' + boxes + ' ארגזים)';
+        return r;
+
+    }
     async initForFamilies(helperId: string, name: string, familiesPocoArray: any[]) {
         this.helperId = helperId;
         this.helperName = name;
@@ -76,7 +98,7 @@ export class UserFamiliesList {
             }
         }
         this.toDeliver = this.allFamilies.filter(f => f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery);
-        this.delivered = this.allFamilies.filter(f => f.deliverStatus.listValue == DeliveryStatus.Success||f.deliverStatus.listValue == DeliveryStatus.SuccessLeftThere);
+        this.delivered = this.allFamilies.filter(f => f.deliverStatus.listValue == DeliveryStatus.Success || f.deliverStatus.listValue == DeliveryStatus.SuccessLeftThere);
         this.problem = this.allFamilies.filter(f => {
             switch (f.deliverStatus.listValue) {
                 case DeliveryStatus.FailedBadAddress:
@@ -92,7 +114,7 @@ export class UserFamiliesList {
         let hash: any = {};
         this.totals = [];
         this.allFamilies.forEach(ff => {
-            if (ff.deliverStatus.listValue != DeliveryStatus.Success&&ff.deliverStatus.listValue != DeliveryStatus.SuccessLeftThere) {
+            if (ff.deliverStatus.listValue != DeliveryStatus.Success && ff.deliverStatus.listValue != DeliveryStatus.SuccessLeftThere) {
                 let x: basketStats = hash[ff.basketType.value];
                 if (!x) {
                     hash[ff.basketType.value] = this.totals[this.totals.push({

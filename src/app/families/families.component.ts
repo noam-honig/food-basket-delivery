@@ -191,11 +191,11 @@ export class FamiliesComponent implements OnInit {
               if (getv && getv.getTheValue) {
                 v = await getv.getTheValue();
               }
-              
-              if (c instanceof DateTimeColumn){
-                addColumn('תאריך '+c.caption,c.dateValue? c.getStringForInputDate():undefined , "d", false);
-                addColumn('שעת '+c.caption,c.dateValue? c.dateValue.getHours().toString():undefined , "n", false);
-                addColumn('מלא '+c.caption,c.value , "s", true);
+
+              if (c instanceof DateTimeColumn) {
+                addColumn('תאריך ' + c.caption, c.dateValue ? c.getStringForInputDate() : undefined, "d", false);
+                addColumn('שעת ' + c.caption, c.dateValue ? c.dateValue.getHours().toString() : undefined, "n", false);
+                addColumn('מלא ' + c.caption, c.value, "s", true);
               }
               else
                 addColumn(c.caption, v.toString(), "s", c == f.id || c == f.addressApiResult)
@@ -487,6 +487,9 @@ export class FamiliesComponent implements OnInit {
       this.colors[0].backgroundColor.push(colors.green, colors.blue, colors.yellow, colors.red, colors.orange, colors.gray);
     }
   }
+  totalBoxes = 0;
+  blockedBoxes = 0;
+
   refreshStats() {
     if (this.suspend)
       return;
@@ -495,10 +498,16 @@ export class FamiliesComponent implements OnInit {
         this.basketStats.stats.splice(0);
         this.cityStats.stats.splice(0);
         this.cityStats.moreStats.splice(0);
+        this.totalBoxes = 0;
+        this.blockedBoxes = 0;
         st.baskets.forEach(b => {
           let fs = new FaimilyStatistics(b.name, f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.basketType.isEqualTo(b.id))), undefined);
           fs.value = b.unassignedFamilies;
           this.basketStats.stats.push(fs);
+          if (b.blocked) {
+            this.blockedBoxes += +b.boxes * +b.unassignedFamilies;
+          } else
+            this.totalBoxes += +b.boxes * +b.unassignedFamilies;
 
         });
         let i = 0;
@@ -544,6 +553,16 @@ export class FamiliesComponent implements OnInit {
 
         this.updateChart();
       }));
+  }
+  showTotalBoxes() {
+    if (this.currentTabStats == this.basketStats) {
+      let r = 'סה"כ ארגזים: ' + this.totalBoxes;
+      if (this.blockedBoxes > 0) {
+        r += ', סה"כ סלים חסומים: ' + this.blockedBoxes;
+      }
+      return r;
+    }
+    return undefined;
   }
   @ViewChild('myTab') myTab: MatTabGroup;
 

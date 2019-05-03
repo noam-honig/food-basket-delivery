@@ -39,7 +39,7 @@ export class Stats {
     frozen = new FaimilyStatistics('קפואים', f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen.id), colors.gray);
     blocked = new FaimilyStatistics('סל חסום', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.blockedBasket.isEqualTo(true))), colors.gray);
     deliveryComments = new FaimilyStatistics('הערות משנע', f => f.courierComments.IsDifferentFrom(''), colors.yellow);
-    
+
 
     async getData() {
         let r = await Stats.getDataFromServer();
@@ -70,6 +70,8 @@ export class Stats {
             result.baskets.push({
                 id: b.id.value,
                 name: b.name.value,
+                boxes: b.boxes.value,
+                blocked: b.blocked.value,
                 unassignedFamilies: await context.for(Families).count(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
                     f.basketType.isEqualTo(b.id).and(
                         f.courier.isEqualTo('')
@@ -106,13 +108,13 @@ export class CitiesStats extends ContextEntity<string> {
             dbName: () => {
                 let f = new Families(context);
                 let sql = new SqlBuilder();
-                sql.addEntity(f,'Families');
+                sql.addEntity(f, 'Families');
                 return sql.build('(', sql.query({
                     select: () => [f.city, sql.columnWithAlias("count(*)", this.families)],
                     from: f,
                     where: () => [sql.eq(f.deliverStatus, DeliveryStatus.ReadyForDelivery.id),
                     sql.eq(f.courier, '\'\''),
-                f.blockedBasket.__getDbName() +' = false']
+                    f.blockedBasket.__getDbName() + ' = false']
                 }), ' group by ', f.city, ') as result')
             }
         });

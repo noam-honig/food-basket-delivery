@@ -76,6 +76,7 @@ export async function serverInit() {
         let h = context.for(BasketType).create();
         h.setEmptyIdForNewRow();
         h.name.value = 'רגיל';
+        h.boxes.value = 1;
         await h.save();
     }
     await foreachSync(await context.for(WeeklyFamilyDeliveries).find({ where: d => d.assignedHelper.isEqualTo('') }), async d => {

@@ -1,5 +1,5 @@
 
-import { IdEntity, BoolColumn } from "../model-shared/types";
+import { IdEntity, BoolColumn, NumberColumn } from "../model-shared/types";
 import { StringColumn } from "radweb";
 import { evilStatics } from "../auth/evil-statics";
 import { Id, HasAsyncGetTheValue } from "../model-shared/types";
@@ -10,12 +10,17 @@ import { DataColumnSettings } from "radweb";
 export class BasketType extends IdEntity<BasketId>  {
 
   name = new StringColumn({ caption: "שם" });
-  blocked = new BoolColumn({caption:'חסום לחלוקה'});
+  blocked = new BoolColumn({ caption: 'חסום לחלוקה' });
+  boxes = new NumberColumn({ caption: 'ארגזים', value: 1 });
   constructor(context: Context) {
     super(new BasketId(context), {
       name: "BasketType",
       allowApiRead: context.isLoggedIn(),
-      allowApiCRUD: context.isAdmin()
+      allowApiCRUD: context.isAdmin(),
+      onSavingRow: async () => {
+        if (this.boxes.value < 1)
+          this.boxes.value = 1;
+      }
     });
   }
 }
@@ -32,8 +37,7 @@ export class BasketId extends Id implements HasAsyncGetTheValue {
       return r.name.value;
     return '';
   }
-  getColumn()
-  {
+  getColumn() {
     return {
       column: this,
       dropDown: {

@@ -26,8 +26,13 @@ export class ManageComponent implements OnInit {
   basketType = this.context.for(BasketType).gridSettings({
     columnSettings: x => [
       x.name,
+      {
+        column: x.boxes,
+        width: '100px'
+      },
       x.blocked
     ],
+    onNewRow: b => b.boxes.value = 1,
     allowUpdate: true,
     allowInsert: true,
     allowDelete: true,
@@ -64,12 +69,12 @@ export class ManageComponent implements OnInit {
       s.helpText,
       s.helpPhone,
       {
-        caption:'',
+        caption: '',
         getValue: s => {
-            if (!s.helpText.value){
-              return 'מכיוון שלא הוגדר שם בשדה '+s.helpText.caption+', למשנע יוצג השם של מי ששייך אותו והטלפון שלו ';
-            }
-            return '';
+          if (!s.helpText.value) {
+            return 'מכיוון שלא הוגדר שם בשדה ' + s.helpText.caption + ', למשנע יוצג השם של מי ששייך אותו והטלפון שלו ';
+          }
+          return '';
         }
       },
       s.messageForDoneDelivery

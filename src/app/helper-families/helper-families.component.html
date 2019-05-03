@@ -1,5 +1,6 @@
 <h4 class="no-print" *ngIf="showLeftFamilies()">
-  משפחות לחלוקה, נותרו {{familyLists.toDeliver.length}}</h4>
+    {{familyLists.getLeftFamiliesDescription()}}
+</h4>
 <div *ngIf="familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies()" class="no-print">
   סה"כ זמן נסיעה מוערך {{familyLists.routeStats.totalTime}} דקות, {{familyLists.routeStats.totalKm}} ק"מ
 </div>
@@ -8,7 +9,7 @@
 </h4>
 <mat-accordion class="no-print">
   <mat-expansion-panel #myPanel *ngFor="let f of familyLists.toDeliver;let i=index">
-    <mat-expansion-panel-header>
+    <mat-expansion-panel-header >
       <div>
         <mat-panel-title>
           {{i+1}}. {{f.name.value}}
