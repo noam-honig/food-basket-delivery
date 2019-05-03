@@ -26,7 +26,7 @@ export class NewsComponent implements OnInit, OnDestroy {
     where: f => f.deliverStatus.isProblem()
   }, {
     name: 'הערות',
-    where: f => f.courierComments.IsDifferentFrom('')
+    where: f => f.courierComments.IsDifferentFrom('').and(f.updateType.isEqualTo(1))
   }];
   currentFilter: NewsFilter = this.filters[0];
   filterChange() {
