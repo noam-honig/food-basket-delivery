@@ -61,6 +61,7 @@ import { WeeklyFamilyDeliveryProductListComponent } from './weekly-family-delive
 import { MyWeeklyFamilyDeliveriesComponent } from './my-weekly-family-deliveries/my-weekly-family-deliveries.component';
 import { AddressProblemComponent } from './address-problem/address-problem.component';
 import { StressTestComponent } from './stress-test/stress-test.component';
+import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 
 
 
@@ -109,6 +110,7 @@ import { StressTestComponent } from './stress-test/stress-test.component';
     MyWeeklyFamilyDeliveriesComponent,
     AddressProblemComponent,
     StressTestComponent,
+    SelfPickupComponent,
     
   ],
   imports: [

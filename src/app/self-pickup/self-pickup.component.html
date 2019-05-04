@@ -1,0 +1,44 @@
+<mat-form-field class="full-width">
+  <input matInput [(ngModel)]="searchString" (input)="doFilter()" placeholder="חפשי שם" #search
+    [ngModelOptions]="{standalone: true}">
+  <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
+</mat-form-field>
+<mat-checkbox [(ngModel)]="showAllFamilies" (change)="doFilter()" >הצג את כל המשפחות
+  </mat-checkbox>
+<mat-accordion class="no-print">
+  <mat-expansion-panel #myPanel *ngFor="let f of families.items;let i=index">
+    <mat-expansion-panel-header  class="mat-expansion-panel-header {{f.deliverStatus.getCss()}}">
+      <div>
+        <mat-panel-title >
+          {{i+1}}. {{f.name.value}}
+          <div style="margin-right:3px" *ngIf="f.deliveryComments.value">
+            <mat-icon color="primary">comment</mat-icon>
+          </div>
+        </mat-panel-title>
+      </div>
+      <div>
+        <mat-panel-description>
+          {{f.address.value}}
+        </mat-panel-description>
+      </div>
+    </mat-expansion-panel-header>
+    <app-family-info [partOfAssign]="true" [f]="f">
+
+      <!--
+        <button mat-raised-button class="myButton" color="primary" (click)="deliveredToFamily(f)">מסרתי את החבילה
+          בהצלחה</button>
+        <br />
+        <button mat-raised-button class="myButton" (click)="leftThere(f)">השארתי ליד הבית
+          </button>
+        <br />
+        <button mat-raised-button class="myButton badButton" (click)="couldntDeliverToFamily(f)">לא מסרתי</button>
+  -->
+
+    </app-family-info>
+  </mat-expansion-panel>
+</mat-accordion>
+<br>
+<button mat-raised-button color="primary" (click)="moreFamilies()"
+  *ngIf=" families.items.length!=families.totalRows">עוד
+  משפחות
+</button>

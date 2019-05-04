@@ -82,6 +82,7 @@ export class MapComponent implements OnInit {
           break;
         case DeliveryStatus.Success:
         case DeliveryStatus.SuccessLeftThere:
+        case DeliveryStatus.SuccessPickedUp:
           marker.setIcon('https://maps.google.com/mapfiles/ms/micons/green-dot.png');
           break;
         case DeliveryStatus.FailedBadAddress:

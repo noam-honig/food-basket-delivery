@@ -22,6 +22,9 @@ export class FamilyInfoComponent implements OnInit {
   async SendHelpSms() {
     window.open('sms:' + this.f.courierHelpPhone() + ';?&body=' + encodeURI(`הי ${this.f.courierHelpName()}  זה ${this.context.info.name}, נתקלתי בבעיה אצל משפחת ${this.f.name.value}`), '_blank');
   }
+  showCancelAssign(f: Families) {
+    return this.partOfAssign&& f.courier.value != '' && f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery;
+  }
   async cancelAssign(f: Families) {
     f.courier.value = '';
 

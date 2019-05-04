@@ -25,13 +25,14 @@ export class UpdateFamilyComponent implements OnInit {
     this.familiesInfo = this.families.addArea({
       columnSettings: families => [
         families.name,
-        families.familyMembers,
         families.basketType.getColumn(),
+        families.deliverStatus.getColumn(),
         families.special.getColumn(),
         families.internalComment,
         families.deliveryComments,
         families.familySource.getColumn(),
         families.tz,
+        families.familyMembers,
           {
             column: families.language,
             dropDown: {

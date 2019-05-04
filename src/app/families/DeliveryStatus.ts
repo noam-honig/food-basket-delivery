@@ -3,7 +3,9 @@ import { DataColumnSettings } from "radweb";
 
 export class DeliveryStatus {
   static ReadyForDelivery: DeliveryStatus = new DeliveryStatus(0, 'מוכן למשלוח');
+  static SelfPickup: DeliveryStatus = new DeliveryStatus(2, 'באים לקחת');
   static Success: DeliveryStatus = new DeliveryStatus(11, 'נמסר בהצלחה');
+  static SuccessPickedUp: DeliveryStatus = new DeliveryStatus(13, 'לקחו בעצמם');
   static SuccessLeftThere: DeliveryStatus = new DeliveryStatus(19, 'הושאר ליד הבית');
   static FailedBadAddress: DeliveryStatus = new DeliveryStatus(21, 'לא נמסר, בעיה בכתובת');
   static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, 'לא נמסר, לא היו בבית');
@@ -36,6 +38,7 @@ export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
     switch (this.listValue) {
       case DeliveryStatus.Success:
       case DeliveryStatus.SuccessLeftThere:
+      case DeliveryStatus.SuccessPickedUp:
         return 'deliveredOk';
       case DeliveryStatus.FailedBadAddress:
       case DeliveryStatus.FailedNotHome:

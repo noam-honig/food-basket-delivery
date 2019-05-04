@@ -37,7 +37,7 @@ import { BusyService } from '../select-popup/busy-service';
 })
 export class AsignFamilyComponent implements OnInit {
   static route: Route = {
-    path: 'assign-families', component: AsignFamilyComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'שיוך משפחות', seperator: true }
+    path: 'assign-families', component: AsignFamilyComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'שיוך משפחות' }
   };
 
   async searchPhone() {

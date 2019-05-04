@@ -29,11 +29,13 @@ import { WeeklyPackerByProductComponent } from './weekly-packer-by-product/weekl
 import { MyWeeklyFamilyDeliveriesComponent } from './my-weekly-family-deliveries/my-weekly-family-deliveries.component';
 import { AddressProblemComponent } from './address-problem/address-problem.component';
 import { StressTestComponent } from './stress-test/stress-test.component';
+import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 
 
 
 const routes: Routes = [
   AsignFamilyComponent.route,
+  SelfPickupComponent.route,
   FamiliesComponent.route,
   NewsComponent.route,
   DeliveryFollowUpComponent.route,
