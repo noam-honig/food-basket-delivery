@@ -436,11 +436,13 @@ export class FamiliesComponent implements OnInit {
       stats: [
         this.stats.ready,
         this.stats.special,
+        this.stats.selfPickup,
+        this.stats.frozen,
         this.stats.blocked,
         this.stats.onTheWay,
         this.stats.delivered,
-        this.stats.problem,
-        this.stats.frozen
+        this.stats.problem
+        
       ],
       moreStats: []
     },
@@ -534,11 +536,11 @@ export class FamiliesComponent implements OnInit {
 
           i++;
 
-          if (i <= 6) {
+          if (i <= 8) {
             this.cityStats.stats.push(fs);
             firstCities.push(b.name);
           }
-          if (i > 6) {
+          if (i > 8) {
             if (!lastFs) {
               let x = this.cityStats.stats.pop();
               firstCities.pop();
@@ -556,7 +558,7 @@ export class FamiliesComponent implements OnInit {
             }
 
           }
-          if (i > 6) {
+          if (i > 8) {
             lastFs.value += fs.value;
             this.cityStats.moreStats.push(fs);
           }
@@ -573,7 +575,7 @@ export class FamiliesComponent implements OnInit {
     if (this.currentTabStats == this.basketStats) {
       let r = 'סה"כ ארגזים: ' + this.totalBoxes;
       if (this.blockedBoxes > 0) {
-        r += ', סה"כ סלים חסומים: ' + this.blockedBoxes;
+        r += ', סה"כ ארגזים חסומים: ' + this.blockedBoxes;
       }
       return r;
     }

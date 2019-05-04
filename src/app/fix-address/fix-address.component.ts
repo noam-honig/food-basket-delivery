@@ -123,6 +123,8 @@ export class FixAddressComponent implements OnInit, OnDestroy {
           else
             status = this.ready;
           break;
+        case DeliveryStatus.SelfPickup.id:
+          status = this.ready;
         case DeliveryStatus.Success.id:
         case DeliveryStatus.SuccessLeftThere.id:
         case DeliveryStatus.SuccessPickedUp.id:
@@ -150,7 +152,7 @@ export class FixAddressComponent implements OnInit, OnDestroy {
         familyOnMap.prevCourier = f.courier;
       }
       familyOnMap.marker.setVisible(!this.selectedStatus || this.selectedStatus == status);
-      if (familyOnMap.marker.getPosition().lat()>0)
+      if (familyOnMap.marker.getPosition().lat() > 0)
         this.bounds.extend(familyOnMap.marker.getPosition());
 
     });
@@ -159,12 +161,14 @@ export class FixAddressComponent implements OnInit, OnDestroy {
   @RunOnServer({ allowed: c => c.isAdmin() })
   static async GetFamiliesLocations(context?: Context, directSql?: DirectSQL) {
     let f = new Families(context);
+    
     let sql = new SqlBuilder();
+    sql.addEntity(f,"Families");
     let r = (await directSql.execute(sql.query({
       select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier],
       from: f,
       where: () => {
-        let where = f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.deliverStatus.IsDifferentFrom(DeliveryStatus.Frozen.id));
+        let where = f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.deliverStatus.IsDifferentFrom(DeliveryStatus.Frozen.id)).and(f.blockedBasket.isEqualTo(false));
         return [where];
       }
     })));

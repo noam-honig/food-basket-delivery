@@ -4,10 +4,8 @@
     {{f.deliveryStatusDate.displayValue}}
     <div *ngIf="f.courierComments.value">
       <h5 style="display:inline">הערת משנע</h5> - {{f.courierComments.value}}
-      <br>
       
     </div>
-    <br>
   </div>
   <div>
       <button mat-raised-button class="cancelAssignButton" color="primary" *ngIf="showFamilyPickedUp(f)" (click)="familiyPickedUp(f)" >אספו את החבילה</button>

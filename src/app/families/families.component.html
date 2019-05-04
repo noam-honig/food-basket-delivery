@@ -7,7 +7,7 @@
 </mat-tab-group>
 <br *ngIf="problemOnly"/>
 <div *ngIf="!problemOnly">
-    <div style="display: block;width:350px;">
+    <div style="display: block;width:350px;height:188px;">
         <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType" [options]="options" [colors]="colors"
             (chartClick)="chartClicked($event)"></canvas>
     </div>

@@ -27,10 +27,12 @@ export class Stats {
         f => f.readyFilter().and(
             f.special.IsDifferentFrom(YesNo.Yes.id))
         , colors.yellow);
+    selfPickup = new FaimilyStatistics('באים לקחת', f => f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup.id), colors.orange);
     special = new FaimilyStatistics('מיוחדים שטרם שוייכו',
         f => f.readyFilter().and(
             f.special.isEqualTo(YesNo.Yes.id))
         , colors.orange);
+
     onTheWay = new FaimilyStatistics('בדרך', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.IsDifferentFrom('')), colors.blue);
     delivered = new FaimilyStatistics('הגיעו', f => f.deliverStatus.IsGreaterOrEqualTo(DeliveryStatus.Success.id).and(f.deliverStatus.IsLessOrEqualTo(DeliveryStatus.SuccessLeftThere.id)), colors.green);
     problem = new FaimilyStatistics('בעיות', f => f.deliverStatus.isProblem(), colors.red);
