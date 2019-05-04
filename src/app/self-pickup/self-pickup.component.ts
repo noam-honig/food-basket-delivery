@@ -45,7 +45,8 @@ export class SelfPickupComponent implements OnInit {
 
   }
   clearHelper() {
-
+      this.searchString='';
+      this.doFilter();
   }
 
   showStatus(f: Families) {

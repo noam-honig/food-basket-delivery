@@ -66,6 +66,21 @@ export class FamiliesComponent implements OnInit {
 
     });
   }
+  changedRowsCount() {
+    let r = 0;
+    this.families.items.forEach(f => {
+      if (f.wasChanged())
+
+        r++;
+    });
+    return r;
+  }
+  async saveAll() {
+    this.families.items.forEach(f => {
+      if (f.wasChanged())
+        f.save();
+    });
+  }
   public pieChartLabels: string[] = [];
   public pieChartData: number[] = [];
   pieChartStatObjects: FaimilyStatistics[] = [];

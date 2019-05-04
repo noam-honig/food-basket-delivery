@@ -1,13 +1,16 @@
 <div>
   <div *ngIf="showStatus()" >
     <h4>{{f.deliverStatus.displayValue}}</h4>
+    {{f.deliveryStatusDate.displayValue}}
     <div *ngIf="f.courierComments.value">
       <h5 style="display:inline">הערת משנע</h5> - {{f.courierComments.value}}
+      <br>
+      
     </div>
-    
+    <br>
   </div>
   <div>
-      <button mat-raised-button class="cancelAssignButton" color="primary" >אספו את החבילה</button>
+      <button mat-raised-button class="cancelAssignButton" color="primary" *ngIf="showFamilyPickedUp(f)" (click)="familiyPickedUp(f)" >אספו את החבילה</button>
     <button *ngIf="showCancelAssign(f)" mat-raised-button class=" badButton cancelAssignButton" (click)="cancelAssign(f)" >בטל
       שיוך</button>
     <button *ngIf="partOfAssign" mat-raised-button class="cancelAssignButton" (click)=" udpateInfo(f)">עדכן פרטי משפחה</button>
