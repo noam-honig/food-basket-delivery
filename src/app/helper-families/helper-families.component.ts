@@ -29,17 +29,29 @@ export class HelperFamiliesComponent implements OnInit {
     this.familyLists.setMap(this.map);
 
   }
-  async cancelAssign(f: Families) {
+  async cancelAssign() {
     this.dialog.analytics('Cancel Assign');
     this.familyLists.reload();
     this.assignmentCanceled.emit();
   }
+  cancelAll() {
+    this.dialog.YesNoQuestion("האם אתה בטוח שאתה רוצה לבטל שיוך ל" + this.familyLists.toDeliver.length + " משפחות?", async () => {
+      this.dialog.analytics('cancel all');
+      for (const f of this.familyLists.toDeliver) {
+        f.courier.value = '';
+        await f.save();
+      }
+      this.cancelAssign();
+
+    });
+    
+  }
   allDoneMessage() { return ApplicationSettings.get(this.context).messageForDoneDelivery.value; };
   async deliveredToFamily(f: Families) {
-    this.deliveredToFamilyOk(f,DeliveryStatus.Success,s=>s.commentForSuccessDelivery);
+    this.deliveredToFamilyOk(f, DeliveryStatus.Success, s => s.commentForSuccessDelivery);
   }
   async leftThere(f: Families) {
-    this.deliveredToFamilyOk(f,DeliveryStatus.SuccessLeftThere,s=>s.commentForSuccessLeft);
+    this.deliveredToFamilyOk(f, DeliveryStatus.SuccessLeftThere, s => s.commentForSuccessLeft);
   }
   async deliveredToFamilyOk(f: Families, status: DeliveryStatus, helpText: (s: ApplicationSettings) => Column<any>) {
     this.selectService.displayComment({
