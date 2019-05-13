@@ -192,4 +192,4 @@
   </mat-accordion>
 </div>
 <app-map #map [class.hidden]="partOfReview"></app-map>
-<button mat-raised-button class="no-print myButton badButton" (click)="cancelAll()" *ngIf="familyLists.toDeliver.length>1">בטל את כל המשפחות המשוייכות
+<button mat-raised-button class="no-print myButton badButton" (click)="cancelAll()" *ngIf="familyLists.toDeliver.length>1 && partOfAssign">בטל את כל המשפחות המשוייכות
