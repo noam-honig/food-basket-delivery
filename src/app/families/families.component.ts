@@ -210,7 +210,7 @@ export class FamiliesComponent implements OnInit {
               if (c instanceof DateTimeColumn) {
                 addColumn('תאריך ' + c.caption, c.dateValue ? c.getStringForInputDate() : undefined, "d", false);
                 addColumn('שעת ' + c.caption, c.dateValue ? c.dateValue.getHours().toString() : undefined, "n", false);
-                addColumn('מלא ' + c.caption, c.value, "s", true);
+                addColumn('מלא ' + c.caption, c.displayValue, "s", true);
               }
               else
                 addColumn(c.caption, v.toString(), "s", c == f.id || c == f.addressApiResult)
