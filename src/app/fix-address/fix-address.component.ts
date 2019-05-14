@@ -125,6 +125,7 @@ export class FixAddressComponent implements OnInit, OnDestroy {
           break;
         case DeliveryStatus.SelfPickup.id:
           status = this.ready;
+          break;
         case DeliveryStatus.Success.id:
         case DeliveryStatus.SuccessLeftThere.id:
         case DeliveryStatus.SuccessPickedUp.id:

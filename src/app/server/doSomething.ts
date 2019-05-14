@@ -32,7 +32,7 @@ export async function DoIt() {
         
         
 
-             await ImportFromExcel();
+          //   await ImportFromExcel();
     }
     catch (err) {
         console.error(err);
@@ -54,7 +54,7 @@ async function getGeolocationInfo() {
 }
 async function ImportFromExcel() {
 
-    let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\אפריל חלוקה שנייה.xls");
+    let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\מאי.xls");
     for (let sheetIndex = 0; sheetIndex < 1; sheetIndex++) {
         const element = wb.SheetNames[sheetIndex];
         let s = wb.Sheets[element];
@@ -70,7 +70,7 @@ async function ImportFromExcel() {
                         return '';
                     return r[x];
                 };
-                await readMerkazMazonFamily2(context, r, get, '4_18_2019 ' + element);
+                await readMerkazMazonFamily2(context, r, get, '5_05_2019 ' + element);
 
             }
             catch (err) {
@@ -362,13 +362,66 @@ async function readMerkazMazonFamily2(context: ServerContext, o: any, get: (key:
 
         f.deliveryComments.value = get('הערות');
       //  await f.save();
+    }  if (f.isNew()) {
+        let sal = get('ביקור בית').trim();
+        if (sal && sal.trim() == "כן" && (f.isNew() || f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery)) {
+            let bask = await context.for(BasketType).lookupAsync(b => b.name.isEqualTo('סל לקשיש'));
+            if (bask.isNew()) {
+                bask.name.value = 'סל לקשיש';
+                await bask.save();
+            }
+            f.basketType.value = bask.id.value;
+        }
+        let machlaka = get('מחלקה').trim();
+        if (machlaka) {
+            let fs = await context.for(FamilySources).lookupAsync(f => f.name.isEqualTo(machlaka));
+            if (fs.isNew()) {
+                fs.name.value = machlaka;
+                await fs.save();
+            }
+            f.familySource.value = fs.id.value;
+        }
+        let helperName = get('מתנדב קבוע').trim();
+        if (helperName) {
+            let h = await context.for(Helpers).lookupAsync(h => h.name.isEqualTo(helperName));
+            if (h.isNew()) {
+                f.internalComment.value = helperName;
+            }
+            else {
+                // f.courier.value = h.id.value;
+                f.fixedCourier.value = h.id.value;
+            }
+        }
+        f.phone1.value = get('טלפון');
+        f.phone2.value = get('טלפון נייד');
+        f.iDinExcel.value = idInExcel;
+        f.tz.value = taz;
+
+        f.floor.value = get('קומה');
+        f.appartment.value = get('דירה');
+        let knisa = get('כניסה');
+        if (knisa) {
+            f.addressComment.value = 'כניסה ' + knisa;
+        }
+        f.address.value = get('כתובת') + ' ' + get('בית') + ' ' + get('עיר');
+        f.name.value = name;
+        f.familyMembers.value = +get('מס נפשות');
+
+        f.deliveryComments.value = get('הערות');
+        ''.toString();
+      //  await f.save();
     }
     else {
         match++;
+        if (f.deliverStatus.listValue==DeliveryStatus.ReadyForDelivery&&f.courier.value!='')
+        {
+         ''.toString();   
+        }
         f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
         f.courier.value = f.fixedCourier.value;
         f.courierComments.value = '';
-     //  await f.save();
+        ''.toString();
+       await f.save();
         //    console.log('match ', o.__rowNum__, o);
     }
 
