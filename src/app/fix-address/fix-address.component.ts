@@ -77,10 +77,11 @@ export class FixAddressComponent implements OnInit, OnDestroy {
 
   }
   ready = new statusClass('טרם שויכו', 'https://maps.google.com/mapfiles/ms/micons/yellow-dot.png', colors.yellow);
+  selfPickup = new statusClass('באים לקחת', 'https://maps.google.com/mapfiles/ms/micons/orange-dot.png', colors.orange);
   onTheWay = new statusClass('בדרך', 'https://maps.google.com/mapfiles/ms/micons/ltblue-dot.png', colors.blue);
   problem = new statusClass('בעיות', 'https://maps.google.com/mapfiles/ms/micons/red-pushpin.png', colors.red);
   success = new statusClass('הגיעו', 'https://maps.google.com/mapfiles/ms/micons/green-dot.png', colors.green);
-  statuses = [this.ready, this.onTheWay, this.success, this.problem];
+  statuses = [this.ready,this.selfPickup, this.onTheWay, this.success, this.problem];
   selectedStatus: statusClass;
   async refreshFamilies() {
     let families = await FixAddressComponent.GetFamiliesLocations();
@@ -124,7 +125,7 @@ export class FixAddressComponent implements OnInit, OnDestroy {
             status = this.ready;
           break;
         case DeliveryStatus.SelfPickup.id:
-          status = this.ready;
+          status = this.selfPickup;
           break;
         case DeliveryStatus.Success.id:
         case DeliveryStatus.SuccessLeftThere.id:
