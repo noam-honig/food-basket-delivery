@@ -110,8 +110,8 @@
 
         </mat-expansion-panel-header>
         <ul>
-            <li *ngFor="let fd of familyDeliveries">
-                {{fd.getShortDescription()}}
+            <li *ngFor="let fd of familyDeliveries" (click)="deliveryInfo(fd)">
+                 {{fd.getShortDescription()}}
                 
 
             </li>

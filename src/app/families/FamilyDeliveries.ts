@@ -11,10 +11,10 @@ export class FamilyDeliveries extends IdEntity<Id>  {
     basketType = new BasketId(this.context, 'סוג סל');
 
 
-    deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
-    courier = new HelperId(this.context, "משנע באירוע");
+    deliverStatus = new DeliveryStatusColumn('סטטוס');
+    courier = new HelperId(this.context, "משנע");
     courierComments = new StringColumn('הערות מסירה');
-    deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
+    deliveryStatusDate = new changeDate('מתי');
     courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
     courierAssingTime = new changeDate('מועד שיוך למשנע');
     deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
@@ -36,15 +36,17 @@ export class FamilyDeliveries extends IdEntity<Id>  {
     constructor(private context: Context) {
         super(new Id(), {
             name: 'FamilyDeliveries',
-            allowApiRead: context.isAdmin()
+            allowApiRead: context.isAdmin(),
+            allowApiDelete: context.isAdmin()
         });
     }
     getShortDescription() {
-        let r = this.deliveryStatusDate.relativeDateName();
+        let r = this.deliverStatus.displayValue + " " + this.deliveryStatusDate.relativeDateName();
         if (this.courierComments.value) {
             r += ": " + this.courierComments.value;
         }
-        r += ' ע"י ' + this.courier.getValue();
+        if (this.courier.value)
+            r += ' ע"י ' + this.courier.getValue();
         return r;
     }
 

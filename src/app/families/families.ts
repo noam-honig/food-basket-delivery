@@ -38,7 +38,7 @@ export class Families extends IdEntity<FamilyId>  {
         onSavingRow: async () => {
 
           if (this.context.onServer) {
-            if (DeliveryStatus.IsAResultStatus(this.deliverStatus.originalValue) && !DeliveryStatus.IsAResultStatus(this.deliverStatus.value)) {
+            if (!this.correntAnErrorInStatus.value&& DeliveryStatus.IsAResultStatus(this.deliverStatus.originalValue) && !DeliveryStatus.IsAResultStatus(this.deliverStatus.value)) {
               var fd = this.context.for(FamilyDeliveries).create();
               fd.family.value = this.id.value;
               fd.basketType.value = this.basketType.originalValue;
@@ -149,6 +149,7 @@ export class Families extends IdEntity<FamilyId>  {
   //callComments = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'הערות שיחה' });
 
   deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
+  correntAnErrorInStatus = new BoolColumn({ virtualData: () => false });
   courier = new HelperId(this.context, "משנע באירוע");
   courierComments = new StringColumn('הערות מסירה');
   deliveryStatusDate = new changeDate('מועד סטטוס שינוע');

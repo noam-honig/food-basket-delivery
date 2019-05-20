@@ -21,7 +21,7 @@ export class InputAreaComponent implements OnInit {
   ngOnInit() {
   }
   cancel() {
-    if (!this.ok)
+    if (!this.ok&&this.data.cancel)
       this.data.cancel();
 
   }
@@ -32,6 +32,12 @@ export class InputAreaComponent implements OnInit {
     this.data.ok();
     return false;
   }
+  buttonClick(b: button,e:MouseEvent) {
+    e.preventDefault();
+    b.click(() => {
+      this.dialogRef.close();
+    });
+  }
 
 
 }
@@ -40,5 +46,10 @@ export interface InputAreaComponentData {
   title: string,
   settings: IDataAreaSettings<any>,
   ok: () => void,
-  cancel: () => void
+  cancel?: () => void,
+  buttons?: button[]
+}
+export interface button {
+  text: string,
+  click: ((close: () => void) => void);
 }

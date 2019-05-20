@@ -44,7 +44,7 @@ export class HelperFamiliesComponent implements OnInit {
       this.cancelAssign();
 
     });
-    
+
   }
   allDoneMessage() { return ApplicationSettings.get(this.context).messageForDoneDelivery.value; };
   async deliveredToFamily(f: Families) {
@@ -137,6 +137,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
   async returnToDeliver(f: Families) {
     f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
+    f.correntAnErrorInStatus.value = true;
     try {
       await f.save();
       this.dialog.analytics('Return to Deliver');
