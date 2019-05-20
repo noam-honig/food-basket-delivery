@@ -27,6 +27,8 @@ import { Route } from '@angular/router';
 import { HolidayDeliveryAdmin } from '../auth/auth-guard';
 import { Context } from '../shared/context';
 import { Routable, componentRoutingInfo } from '../shared/routing-helper';
+import { FamilyDeliveries } from './FamilyDeliveries';
+import { UpdateFamilyComponent } from '../update-family/update-family.component';
 
 @Component({
   selector: 'app-families',
@@ -238,6 +240,11 @@ export class FamiliesComponent implements OnInit {
   }
 
   previousDeliveryEvents: FamilyDeliveryEventsView[] = [];
+  currentFamilyDeliveries: FamilyDeliveries[] = [];
+  async saveCurrentFamilies() {
+    await this.families.currentRow.save();
+    this.currentFamilyDeliveries = await this.families.currentRow.getDeliveries();
+  }
   families = this.context.for(Families).gridSettings({
 
     allowUpdate: true,
@@ -249,12 +256,15 @@ export class FamiliesComponent implements OnInit {
         f.basketType.value = '';
         f.language.listValue = Language.Hebrew;
         f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
-        //f.callStatus.listValue = CallStatus.NotYet;
         f.special.listValue = YesNo.No;
+        this.currentFamilyDeliveries = [];
       } else {
-
+        if (!this.gridView) {
+          this.currentFamilyDeliveries = await this.families.currentRow.getDeliveries();
+        }
       }
     },
+
 
 
     get: {
@@ -379,7 +389,12 @@ export class FamiliesComponent implements OnInit {
       {
         name: '',
         cssClass: 'btn glyphicon glyphicon-pencil',
-        click: f => this.gridView = !this.gridView
+        click: async f => {
+          this.gridView = !this.gridView;
+          if (!this.gridView) {
+            this.currentFamilyDeliveries = await f.getDeliveries()
+          }
+        }
       },
       {
         name: 'חפש כתובת בגוגל',
@@ -442,7 +457,7 @@ export class FamiliesComponent implements OnInit {
         this.stats.onTheWay,
         this.stats.delivered,
         this.stats.problem
-        
+
       ],
       moreStats: []
     },
@@ -582,7 +597,7 @@ export class FamiliesComponent implements OnInit {
     return undefined;
   }
   @ViewChild('myTab') myTab: MatTabGroup;
-
+  @ViewChild('familyInfo') familyInfo: UpdateFamilyComponent;
   ngOnInit() {
 
     this.refreshStats();

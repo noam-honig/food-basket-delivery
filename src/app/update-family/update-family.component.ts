@@ -6,6 +6,7 @@ import { SelectService } from '../select-popup/select-service';
 import { BasketType } from '../families/BasketType';
 import { FamilySources } from '../families/FamilySources';
 import { Context } from '../shared/context';
+import { FamilyDeliveries } from '../families/FamilyDeliveries';
 
 @Component({
   selector: 'app-update-family',
@@ -13,9 +14,10 @@ import { Context } from '../shared/context';
   styleUrls: ['./update-family.component.scss']
 })
 export class UpdateFamilyComponent implements OnInit {
-
   constructor(private selectService: SelectService, private context: Context) { }
   @Input() families: GridSettings<Families>;
+  @Input() familyDeliveries: FamilyDeliveries[];
+  
   familiesInfo: DataAreaSettings<Families>;
   familiesAddress: DataAreaSettings<Families>;
   phones: DataAreaSettings<Families>;
@@ -33,12 +35,12 @@ export class UpdateFamilyComponent implements OnInit {
         families.familySource.getColumn(),
         families.tz,
         families.familyMembers,
-          {
-            column: families.language,
-            dropDown: {
-              items: families.language.getOptions()
-            }
-          },
+        {
+          column: families.language,
+          dropDown: {
+            items: families.language.getOptions()
+          }
+        },
         families.iDinExcel,
         families.createUser,
         families.createDate
@@ -86,6 +88,9 @@ export class UpdateFamilyComponent implements OnInit {
         families.fixedCourier.getColumn(this.selectService)
       ]
     });
+  }
+  deliveryInfo(fd:FamilyDeliveries) {
+      
   }
 
 

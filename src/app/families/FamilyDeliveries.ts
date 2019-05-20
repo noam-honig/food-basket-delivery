@@ -1,0 +1,52 @@
+import { IdEntity, Id, StringColumn, PhoneColumn, changeDate, NumberColumn } from "../model-shared/types";
+import { EntityClass, Context } from "../shared/context";
+import { BasketId } from "./BasketType";
+import { FamilyId } from "./families";
+import { DeliveryStatusColumn } from "./DeliveryStatus";
+import { HelperId, HelperIdReadonly } from "../helpers/helpers";
+
+@EntityClass
+export class FamilyDeliveries extends IdEntity<Id>  {
+    family = new FamilyId();
+    basketType = new BasketId(this.context, 'סוג סל');
+
+
+    deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
+    courier = new HelperId(this.context, "משנע באירוע");
+    courierComments = new StringColumn('הערות מסירה');
+    deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
+    courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
+    courierAssingTime = new changeDate('מועד שיוך למשנע');
+    deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
+
+
+    archive_address = new StringColumn("כתובת");
+    archive_floor = new StringColumn('קומה');
+    archive_appartment = new StringColumn('דירה');
+    archive_city = new StringColumn({ caption: "עיר (מתעדכן אוטומטית)" });
+    archive_addressComment = new StringColumn('הערת כתובת');
+    archive_deliveryComments = new StringColumn('הערות למשנע');
+    archive_phone1 = new PhoneColumn({ caption: "טלפון 1", inputType: 'tel', dbName: 'phone' });
+    archive_phone1Description = new StringColumn('תאור טלפון 1');
+    archive_phone2 = new PhoneColumn({ caption: "טלפון 2", inputType: 'tel' });
+    archive_phone2Description = new StringColumn('תאור טלפון 2');
+    archive_addressLongitude = new NumberColumn({ decimalDigits: 8 });
+    archive_addressLatitude = new NumberColumn({ decimalDigits: 8 });
+
+    constructor(private context: Context) {
+        super(new Id(), {
+            name: 'FamilyDeliveries',
+            allowApiRead: context.isAdmin()
+        });
+    }
+    getShortDescription() {
+        let r = this.deliveryStatusDate.relativeDateName();
+        if (this.courierComments.value) {
+            r += ": " + this.courierComments.value;
+        }
+        r += ' ע"י ' + this.courier.getValue();
+        return r;
+    }
+
+
+}

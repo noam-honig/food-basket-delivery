@@ -48,13 +48,13 @@
 <div [class.hide]="gridView" *ngIf="families.currentRow">
         
 
-    <button *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="families.currentRow.save()" [disabled]="!families.currentRow.wasChanged()"
+    <button *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="saveCurrentFamilies()" [disabled]="!families.currentRow.wasChanged()"
         class="btn glyphicon glyphicon-ok btn-success"></button>
     <button *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="families.currentRow.reset();families.setCurrentRow(families.items[0]);"
         [disabled]="!families.currentRow.wasChanged()" class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
-        <app-update-family [families]="families"></app-update-family>
+        <app-update-family #familyInfo [families]="families" [familyDeliveries]="currentFamilyDeliveries"></app-update-family>
 
-    <button *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="families.currentRow.save()" [disabled]="!families.currentRow.wasChanged()"
+    <button *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="saveCurrentFamilies()" [disabled]="!families.currentRow.wasChanged()"
         class="btn glyphicon glyphicon-ok btn-success"></button>
     <button *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="families.currentRow.reset();families.setCurrentRow(families.items[0]);"
         [disabled]="!families.currentRow.wasChanged()" class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>

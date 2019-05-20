@@ -1,4 +1,5 @@
 <br>
+
 <div class="{{families.currentRow.deliverStatus.getCss()}}">
     <strong>{{families.currentRow.deliverStatus.displayValue}}: </strong> {{families.currentRow.courierComments.value}}
 </div>
@@ -35,7 +36,9 @@
             </div>
 
         </mat-expansion-panel-header>
-        <div class="addressProblem" *ngIf="families.currentRow.getGeocodeInformation().partialMatch()&&!families.currentRow.isNew()"><span class="badAddressTitle">שים
+        <div class="addressProblem"
+            *ngIf="families.currentRow.getGeocodeInformation().partialMatch()&&!families.currentRow.isNew()"><span
+                class="badAddressTitle">שים
                 לב, כתובת לא מדוייקת</span>
             גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת. יש להשוות בין השדה "כתובת" לשדה "כתובת כפי שגוגל הבין".
             <br>אפשר להעזר בקישור "פתחי גוגל" כדי לחפש את הכתובת הנכונה ולעדכן.
@@ -90,6 +93,29 @@
             <br>
         </a>
         <data-area [settings]="deliverInfo"></data-area>
+
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <div>
+                <mat-panel-title>
+                    היסטוריה
+                </mat-panel-title>
+            </div>
+            <div>
+                <mat-panel-description>
+
+                </mat-panel-description>
+            </div>
+
+        </mat-expansion-panel-header>
+        <ul>
+            <li *ngFor="let fd of familyDeliveries">
+                {{fd.getShortDescription()}}
+                
+
+            </li>
+        </ul>
 
     </mat-expansion-panel>
 </mat-accordion>

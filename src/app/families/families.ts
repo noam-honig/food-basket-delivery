@@ -14,10 +14,14 @@ import { DeliveryEvents } from "../delivery-events/delivery-events";
 import { FamilyDelveryEventId, FamilyDeliveryEvents } from "../delivery-events/FamilyDeliveryEvents";
 import { Input } from "@angular/core";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
+import { FamilyDeliveries } from "./FamilyDeliveries";
 
 
 @EntityClass
 export class Families extends IdEntity<FamilyId>  {
+  getDeliveries() {
+    return this.context.for(FamilyDeliveries).find({ where: d => d.family.isEqualTo(this.id), orderBy: d => [{ column: d.deliveryStatusDate, descending: true }] });
+  }
 
   constructor(private context: Context) {
     super(new FamilyId(),
@@ -34,6 +38,37 @@ export class Families extends IdEntity<FamilyId>  {
         onSavingRow: async () => {
 
           if (this.context.onServer) {
+            if (DeliveryStatus.IsAResultStatus(this.deliverStatus.originalValue) && !DeliveryStatus.IsAResultStatus(this.deliverStatus.value)) {
+              var fd = this.context.for(FamilyDeliveries).create();
+              fd.family.value = this.id.value;
+              fd.basketType.value = this.basketType.originalValue;
+              fd.deliverStatus.value = this.deliverStatus.originalValue;
+              fd.courier.value = this.courier.originalValue;
+              fd.courierComments.value = this.courierComments.originalValue;
+              fd.deliveryStatusDate.value = this.deliveryStatusDate.originalValue;
+              fd.courierAssignUser.value = this.courierAssignUser.originalValue;
+              fd.courierAssingTime.value = this.courierAssingTime.originalValue;
+              fd.archive_address.value = this.address.originalValue;
+              fd.archive_floor.value = this.floor.originalValue;
+              fd.archive_appartment.value = this.appartment.originalValue;
+              fd.archive_city.value = this.city.originalValue;
+              fd.archive_addressComment.value = this.addressComment.originalValue;
+              fd.archive_deliveryComments.value = this.deliveryComments.originalValue;
+              fd.archive_phone1.value = this.phone1.originalValue;
+              fd.archive_phone1Description.value = this.phone1Description.originalValue;
+              fd.archive_phone2.value = this.phone2.originalValue;
+              fd.archive_phone2Description.value = this.phone2Description.originalValue;
+              fd.archive_addressLongitude.value = this.addressLongitude.originalValue;
+              fd.archive_addressLatitude.value = this.addressLatitude.originalValue;
+              await fd.save();
+              if (this.courier.value == this.courier.originalValue) {
+                this.courier.value == this.fixedCourier.value;
+              }
+              if (this.courierComments.value == this.courierComments.originalValue)
+                this.courierComments.value = '';
+            }
+
+
             if (this.fixedCourier.value && !this.fixedCourier.originalValue && !this.courier.value && this.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery) {
               this.courier.value = this.fixedCourier.value;
             }
@@ -323,7 +358,7 @@ export class Families extends IdEntity<FamilyId>  {
             let duration = '';
             if (n.courierAssingTime.value && n.deliveryStatusDate.value)
               duration = ' תוך ' + Math.round((n.deliveryStatusDate.dateValue.valueOf() - n.courierAssingTime.dateValue.valueOf()) / 60000) + " דק'";
-            return n.deliverStatus.displayValue + (n.courierComments.value ? ", " + n.courierComments.value + " - " : '') + ' למשפחת ' + n.name.value + ' על ידי ' + courierName + duration+"!";
+            return n.deliverStatus.displayValue + (n.courierComments.value ? ", " + n.courierComments.value + " - " : '') + ' למשפחת ' + n.name.value + ' על ידי ' + courierName + duration + "!";
         }
         return 'משפחת ' + n.name.value + ' עודכנה ל' + n.deliverStatus.displayValue;
       case 2:

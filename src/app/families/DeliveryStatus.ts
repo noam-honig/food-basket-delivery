@@ -2,6 +2,18 @@ import { ClosedListColumn, NumberColumn } from "radweb";
 import { DataColumnSettings } from "radweb";
 
 export class DeliveryStatus {
+  static IsAResultStatus(value: number) {
+    switch (value) {
+      case this.Success.id:
+      case this.SuccessPickedUp.id:
+      case this.SuccessLeftThere.id:
+      case this.FailedBadAddress.id:
+      case this.FailedNotHome.id:
+      case this.FailedOther.id:
+        return true;
+    }
+    return false;
+  }
   static ReadyForDelivery: DeliveryStatus = new DeliveryStatus(0, 'מוכן למשלוח');
   static SelfPickup: DeliveryStatus = new DeliveryStatus(2, 'באים לקחת');
   static Success: DeliveryStatus = new DeliveryStatus(11, 'נמסר בהצלחה');
