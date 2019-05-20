@@ -62,7 +62,7 @@ export class Families extends IdEntity<FamilyId>  {
               fd.archive_addressLatitude.value = this.addressLatitude.originalValue;
               await fd.save();
               if (this.courier.value == this.courier.originalValue) {
-                this.courier.value == this.fixedCourier.value;
+                this.courier.value = this.fixedCourier.value;
               }
               if (this.courierComments.value == this.courierComments.originalValue)
                 this.courierComments.value = '';
