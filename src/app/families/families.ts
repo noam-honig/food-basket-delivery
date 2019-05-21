@@ -106,7 +106,7 @@ export class Families extends IdEntity<FamilyId>  {
       });
     this.initColumns();
     if (!context.isAdmin())
-      this.__iterateColumns().forEach(c => c.readonly = c != this.courierComments && c != this.deliverStatus);
+      this.__iterateColumns().forEach(c => c.readonly = c != this.courierComments && c != this.deliverStatus&&c!=this.correntAnErrorInStatus);
   }
   disableChangeLogging = false;
 
