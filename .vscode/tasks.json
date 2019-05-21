@@ -109,6 +109,11 @@
             "type": "npm",
             "script": "publish-to-yadl",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "gc",
+            "problemMatcher": []
         }
     ]
 }

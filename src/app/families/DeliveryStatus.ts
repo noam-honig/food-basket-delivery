@@ -24,6 +24,7 @@ export class DeliveryStatus {
   static FailedOther: DeliveryStatus = new DeliveryStatus(25, 'לא נמסר, אחר');
   static Frozen: DeliveryStatus = new DeliveryStatus(90, 'מוקפא');
   static NotInEvent: DeliveryStatus = new DeliveryStatus(95, 'לא באירוע');
+  static RemovedFromList: DeliveryStatus = new DeliveryStatus(99, 'הוצא מהרשימות');
   constructor(public id: number, private name: string) {
   }
   toString() {

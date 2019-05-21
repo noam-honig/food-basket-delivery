@@ -30,6 +30,7 @@ import { MyWeeklyFamilyDeliveriesComponent } from './my-weekly-family-deliveries
 import { AddressProblemComponent } from './address-problem/address-problem.component';
 import { StressTestComponent } from './stress-test/stress-test.component';
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
+import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
 
 
 
@@ -42,7 +43,7 @@ const routes: Routes = [
   FixAddressComponent.route,
   AddressProblemComponent.route,
   HelpersComponent.route,
-  DeliveryEventsComponent.route,
+  BatchOperationsComponent.route,
   ManageComponent.route,
   
   MyWeeklyFamiliesComponent.route,
