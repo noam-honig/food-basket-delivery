@@ -1,5 +1,5 @@
 <h4 class="no-print" *ngIf="showLeftFamilies()">
-    {{familyLists.getLeftFamiliesDescription()}}
+  {{familyLists.getLeftFamiliesDescription()}}
 </h4>
 <div *ngIf="familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies()" class="no-print">
   סה"כ זמן נסיעה מוערך {{familyLists.routeStats.totalTime}} דקות, {{familyLists.routeStats.totalKm}} ק"מ
@@ -9,7 +9,7 @@
 </h4>
 <mat-accordion class="no-print">
   <mat-expansion-panel #myPanel *ngFor="let f of familyLists.toDeliver;let i=index">
-    <mat-expansion-panel-header >
+    <mat-expansion-panel-header>
       <div>
         <mat-panel-title>
           {{i+1}}. {{f.name.value}}
@@ -30,19 +30,23 @@
         </mat-panel-description>
       </div>
     </mat-expansion-panel-header>
-    <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign" (assignmentCanceled)="cancelAssign(f)">
+    <ng-template matExpansionPanelContent>
 
 
-      <button mat-raised-button class="myButton" color="primary" (click)="deliveredToFamily(f)">מסרתי את החבילה
-        בהצלחה</button>
-      <br />
-      <button mat-raised-button class="myButton" (click)="leftThere(f)">השארתי ליד הבית
+      <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign" (assignmentCanceled)="cancelAssign(f)">
+
+
+        <button mat-raised-button class="myButton" color="primary" (click)="deliveredToFamily(f)">מסרתי את החבילה
+          בהצלחה</button>
+        <br />
+        <button mat-raised-button class="myButton" (click)="leftThere(f)">השארתי ליד הבית
         </button>
-      <br />
-      <button mat-raised-button class="myButton badButton" (click)="couldntDeliverToFamily(f)">לא מסרתי</button>
+        <br />
+        <button mat-raised-button class="myButton badButton" (click)="couldntDeliverToFamily(f)">לא מסרתי</button>
 
 
-    </app-family-info>
+      </app-family-info>
+    </ng-template>
   </mat-expansion-panel>
 </mat-accordion>
 <div class="sendSmsButtonLine no-print">
@@ -79,40 +83,41 @@
     </tr>
     <tr *ngFor="let f of familyLists.toDeliver;let i=index">
       <td>
-          {{i+1}}. {{f.name.value}}
-          <ng-container *ngIf="f.deliveryComments.value">
-              <br />
-              <strong style="color:red">שים לב! </strong> {{f.deliveryComments.value}}
-            </ng-container>
+        {{i+1}}. {{f.name.value}}
+        <ng-container *ngIf="f.deliveryComments.value">
+          <br />
+          <strong style="color:red">שים לב! </strong> {{f.deliveryComments.value}}
+        </ng-container>
       </td>
-     
-      <td>
-          {{f.address.value}}
-          <ng-container *ngIf="f.floor.value||f.appartment.value">
-            <br />
-          </ng-container>
-          <ng-container *ngIf="f.floor.value">
-            קומה {{f.floor.value}}
-          </ng-container>
-          <ng-container *ngIf="f.appartment.value">
-            דירה {{f.appartment.value}}
-          </ng-container>
-          <ng-container *ngIf="f.addressComment.value">
-            <br /> {{f.addressComment.value}}
-          </ng-container>
-      </td>
-      <td>
-          {{f.phone1.displayValue}}<ng-container *ngIf="f.phone1Description.value">, {{f.phone1Description.value}}</ng-container>
-          <div style="margin-top:5px" *ngIf="f.phone2.value">
 
-              <div style="display:inline-block">
-                {{f.phone2.displayValue}}, {{f.phone2Description.value?f.phone2Description.value:f.name.value}}
-      
-              </div>
-            </div>
+      <td>
+        {{f.address.value}}
+        <ng-container *ngIf="f.floor.value||f.appartment.value">
+          <br />
+        </ng-container>
+        <ng-container *ngIf="f.floor.value">
+          קומה {{f.floor.value}}
+        </ng-container>
+        <ng-container *ngIf="f.appartment.value">
+          דירה {{f.appartment.value}}
+        </ng-container>
+        <ng-container *ngIf="f.addressComment.value">
+          <br /> {{f.addressComment.value}}
+        </ng-container>
       </td>
       <td>
-          {{f.basketType.displayValue}}
+        {{f.phone1.displayValue}}<ng-container *ngIf="f.phone1Description.value">, {{f.phone1Description.value}}
+        </ng-container>
+        <div style="margin-top:5px" *ngIf="f.phone2.value">
+
+          <div style="display:inline-block">
+            {{f.phone2.displayValue}}, {{f.phone2Description.value?f.phone2Description.value:f.name.value}}
+
+          </div>
+        </div>
+      </td>
+      <td>
+        {{f.basketType.displayValue}}
       </td>
     </tr>
     <tr>
@@ -120,7 +125,7 @@
 
     </tr>
   </table>
-  
+
 
   <div class="help" *ngIf=" familyLists.toDeliver.length>0">
     <h5>
@@ -192,4 +197,5 @@
   </mat-accordion>
 </div>
 <app-map #map [class.hidden]="partOfReview"></app-map>
-<button mat-raised-button class="no-print myButton badButton" (click)="cancelAll()" *ngIf="familyLists.toDeliver.length>1 && partOfAssign">בטל את כל המשפחות המשוייכות
+<button mat-raised-button class="no-print myButton badButton" (click)="cancelAll()"
+  *ngIf="familyLists.toDeliver.length>1 && partOfAssign">בטל את כל המשפחות המשוייכות
