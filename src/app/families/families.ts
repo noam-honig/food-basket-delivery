@@ -19,6 +19,12 @@ import { FamilyDeliveries } from "./FamilyDeliveries";
 
 @EntityClass
 export class Families extends IdEntity<FamilyId>  {
+  setNewBasket() {
+    if (this.defaultSelfPickup.value)
+      this.deliverStatus.listValue = DeliveryStatus.SelfPickup;
+    else
+      this.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
+  }
   getDeliveries() {
     return this.context.for(FamilyDeliveries).find({ where: d => d.family.isEqualTo(this.id), orderBy: d => [{ column: d.deliveryStatusDate, descending: true }] });
   }
@@ -38,7 +44,7 @@ export class Families extends IdEntity<FamilyId>  {
         onSavingRow: async () => {
 
           if (this.context.onServer) {
-            if (!this.correntAnErrorInStatus.value&& DeliveryStatus.IsAResultStatus(this.deliverStatus.originalValue) && !DeliveryStatus.IsAResultStatus(this.deliverStatus.value)) {
+            if (!this.correntAnErrorInStatus.value && DeliveryStatus.IsAResultStatus(this.deliverStatus.originalValue) && !DeliveryStatus.IsAResultStatus(this.deliverStatus.value)) {
               var fd = this.context.for(FamilyDeliveries).create();
               fd.family.value = this.id.value;
               fd.basketType.value = this.basketType.originalValue;
@@ -106,7 +112,7 @@ export class Families extends IdEntity<FamilyId>  {
       });
     this.initColumns();
     if (!context.isAdmin())
-      this.__iterateColumns().forEach(c => c.readonly = c != this.courierComments && c != this.deliverStatus&&c!=this.correntAnErrorInStatus);
+      this.__iterateColumns().forEach(c => c.readonly = c != this.courierComments && c != this.deliverStatus && c != this.correntAnErrorInStatus);
   }
   disableChangeLogging = false;
 
@@ -124,6 +130,7 @@ export class Families extends IdEntity<FamilyId>  {
   basketType = new BasketId(this.context, 'סוג סל');
   familySource = new FamilySourceId(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'גורם מפנה' });
   special = new YesNoColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'שיוך מיוחד' });
+  defaultSelfPickup = new BoolColumn('ברירת מחדל באים לקחת');
   iDinExcel = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'מזהה באקסל' });
   internalComment = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'הערה פנימית - לא תופיע למשנע' });
 

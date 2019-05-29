@@ -176,7 +176,8 @@ export class DeliveryEventsComponent implements OnInit {
       async de => {
         let f = await context.for(Families).findFirst(f => f.id.isEqualTo(de.family));
         if (f) {
-          f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
+
+          f.setNewBasket();
           f.basketType.value = de.basketType.value;
           await f.save();
         }

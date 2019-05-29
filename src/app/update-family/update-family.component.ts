@@ -30,6 +30,7 @@ export class UpdateFamilyComponent implements OnInit {
         families.name,
         families.basketType.getColumn(),
         families.deliverStatus.getColumn(),
+        families.defaultSelfPickup,
         families.special.getColumn(),
         families.internalComment,
         families.deliveryComments,
@@ -74,8 +75,10 @@ export class UpdateFamilyComponent implements OnInit {
 
     this.deliverInfo = this.families.addArea({
       columnSettings: families => [
+        families.defaultSelfPickup,
         families.deliverStatus.getColumn(),
         families.courier.getColumn(this.selectService),
+        
         families.courierComments,
         {
           caption: 'טלפון משנע',

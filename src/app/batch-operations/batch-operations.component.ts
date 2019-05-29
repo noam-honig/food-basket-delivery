@@ -60,7 +60,8 @@ export class BatchOperationsComponent implements OnInit {
   static async setNewBasket(basketType: string, context?: Context) {
     let families = await context.for(Families).find({ where: f => BatchOperationsComponent.createFamiliesFilterForNewBasket(f, basketType) });
     for (const f of families) {
-      f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
+      f.setNewBasket();
+      
       await f.save();
     }
   }

@@ -276,6 +276,7 @@ export class FamiliesComponent implements OnInit {
         families.courierAssignUser,
         families.courierAssingTime,
         families.deliverStatus.getColumn(),
+        families.defaultSelfPickup,
         families.deliveryStatusUser,
         families.deliveryStatusDate,
         families.courierComments,
@@ -305,7 +306,7 @@ export class FamiliesComponent implements OnInit {
         visible: f => f.deliverStatus.listValue == DeliveryStatus.NotInEvent,
         click: async f => {
           await this.busy.donotWait(async () => {
-            f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
+            f.setNewBasket();
             await f.save();
           });
         }
