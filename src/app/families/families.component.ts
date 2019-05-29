@@ -146,6 +146,7 @@ export class FamiliesComponent implements OnInit {
 
     allowUpdate: true,
     allowInsert: true,
+    
     rowCssClass: f => f.deliverStatus.getCss(),
     numOfColumnsInGrid: 4,
     onEnterRow: async f => {

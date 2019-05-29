@@ -67,6 +67,7 @@ export class DeliveryHistoryComponent implements OnInit {
     ],
     hideDataArea: true,
     numOfColumnsInGrid: 6,
+    knowTotalRows:true,
     get: {
       limit:20,
       where: d => {
