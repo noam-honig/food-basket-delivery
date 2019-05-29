@@ -44,6 +44,9 @@ export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
       width: '150'
     };
   }
+  isSuccess(){
+    return this.IsGreaterOrEqualTo(DeliveryStatus.Success.id).and(this.IsLessOrEqualTo(DeliveryStatus.SuccessLeftThere.id));
+  }
   isProblem() {
     return this.IsGreaterOrEqualTo(DeliveryStatus.FailedBadAddress.id).and(this.IsLessOrEqualTo(DeliveryStatus.FailedOther.id));
   }

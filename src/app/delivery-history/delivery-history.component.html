@@ -1,0 +1,10 @@
+<mat-card>
+  <div style="display:flex;">
+    <data-area [settings]="rangeArea"></data-area>
+    <button mat-mini-fab style="margin-bottom:5px" (click)="refresh()">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+  <data-grid2 [settings]="deliveries" [height]="400"></data-grid2>
+  <button (click)="saveToExcel()">יצוא לאקסל</button>
+</mat-card>

@@ -1,9 +1,10 @@
-import { IdEntity, Id, StringColumn, PhoneColumn, changeDate, NumberColumn } from "../model-shared/types";
-import { EntityClass, Context } from "../shared/context";
+import { IdEntity, Id, StringColumn, PhoneColumn, changeDate, NumberColumn, SqlBuilder } from "../model-shared/types";
+import { EntityClass, Context, ContextEntity } from "../shared/context";
 import { BasketId } from "./BasketType";
-import { FamilyId } from "./families";
-import { DeliveryStatusColumn } from "./DeliveryStatus";
+import { FamilyId, Families } from "./families";
+import { DeliveryStatusColumn, DeliveryStatus } from "./DeliveryStatus";
 import { HelperId, HelperIdReadonly } from "../helpers/helpers";
+import { Entity, CompoundIdColumn } from "radweb";
 
 @EntityClass
 export class FamilyDeliveries extends IdEntity<Id>  {
@@ -11,7 +12,7 @@ export class FamilyDeliveries extends IdEntity<Id>  {
     basketType = new BasketId(this.context, 'סוג סל');
 
 
-    deliverStatus = new DeliveryStatusColumn('סטטוס');
+    deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
     courier = new HelperId(this.context, "משנע");
     courierComments = new StringColumn('הערות מסירה');
     deliveryStatusDate = new changeDate('מתי');
@@ -52,3 +53,4 @@ export class FamilyDeliveries extends IdEntity<Id>  {
 
 
 }
+

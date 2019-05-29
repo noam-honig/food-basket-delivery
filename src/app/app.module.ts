@@ -63,6 +63,7 @@ import { AddressProblemComponent } from './address-problem/address-problem.compo
 import { StressTestComponent } from './stress-test/stress-test.component';
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
+import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 
 
 
@@ -113,6 +114,7 @@ import { BatchOperationsComponent } from './batch-operations/batch-operations.co
     StressTestComponent,
     SelfPickupComponent,
     BatchOperationsComponent,
+    DeliveryHistoryComponent,
     
   ],
   imports: [

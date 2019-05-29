@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
-import { ColumnHashSet, AndFilter, ColumnSetting, DateColumn } from 'radweb';
+import { ColumnHashSet, AndFilter, ColumnSetting, DateColumn, Entity, GridSettings, Column } from 'radweb';
 import { FamilyDeliveryEventsView } from "./FamilyDeliveryEventsView";
 import { Families } from './families';
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -13,9 +13,9 @@ import { DialogService } from '../select-popup/dialog';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 
 import { DomSanitizer } from '@angular/platform-browser';
-import * as XLSX from 'xlsx';
+
 import { FilterBase } from 'radweb';
-import { foreachSync } from '../shared/utils';
+
 import { BusyService } from '../select-popup/busy-service';
 import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
@@ -29,6 +29,8 @@ import { Context } from '../shared/context';
 import { Routable, componentRoutingInfo } from '../shared/routing-helper';
 import { FamilyDeliveries } from './FamilyDeliveries';
 import { UpdateFamilyComponent } from '../update-family/update-family.component';
+import { PortalHostDirective } from '@angular/cdk/portal';
+import { saveToExcel } from '../shared/saveToExcel';
 
 @Component({
   selector: 'app-families',
@@ -129,115 +131,10 @@ export class FamiliesComponent implements OnInit {
     this.doSearch();
   }
   stats = new Stats();
-  async saveToExcel() {
-
-
-    let wb = XLSX.utils.book_new();
-    wb.Workbook = { Views: [{ RTL: true }] };
-    let ws = {
-
-    } as XLSX.WorkSheet;
-    var dc = new DateTimeColumn();
-    dc.dateValue = new Date();
-    ws["A1"] = {
-      v: dc.displayValue,
-      t: "d",
-      w: "dd/mm/yyyy HH:MM"
-
-    } as XLSX.CellObject;
-    ws["A2"] = {
-      f: "year(A1)"
-
-    } as XLSX.CellObject;
-    ws["!cols"] = [];
-
-
-
-
-    let x = this.families.page;
-    let rowNum = 2;
-    let maxChar = 'A';
-
-
-    this.families.page = 1;
-    await this.families.getRecords();
-    while (this.families.items.length > 0) {
-      await foreachSync(this.families.items
-        , async  f => {
-          let colPrefix = '';
-          let colName = 'A';
-          let colIndex = 0;
-
-          let addColumn = (caption: string, v: string, t: XLSX.ExcelDataType, hidden?: boolean) => {
-
-            if (rowNum == 2) {
-              ws[colPrefix + colName + "1"] = { v: caption };
-              ws["!cols"].push({
-                wch: caption.length,
-                hidden: hidden
-              });
-            }
-
-            ws[colPrefix + colName + (rowNum.toString())] = {
-              v: v, t: t
-            };
-            maxChar = colPrefix + colName;
-            {
-              let i = colName.charCodeAt(0);
-              i++;
-              colName = String.fromCharCode(i);
-              if (colName > 'Z') {
-                colName = 'A';
-                colPrefix = 'A';
-              }
-            }
-            let len = v.length;
-            let col = ws["!cols"][colIndex++];
-            if (len > col.wch) {
-              col.wch = len;
-            }
-          };
-
-          await foreachSync(f.__iterateColumns(), async c => {
-            try {
-
-              let v = c.displayValue;
-              if (v == undefined)
-                v = '';
-              let getv: HasAsyncGetTheValue = <any>c as HasAsyncGetTheValue;
-              if (getv && getv.getTheValue) {
-                v = await getv.getTheValue();
-              }
-
-              if (c instanceof DateTimeColumn) {
-                addColumn('תאריך ' + c.caption, c.dateValue ? c.getStringForInputDate() : undefined, "d", false);
-                addColumn('שעת ' + c.caption, c.dateValue ? c.dateValue.getHours().toString() : undefined, "n", false);
-                addColumn('מלא ' + c.caption, c.displayValue, "s", true);
-              }
-              else
-                addColumn(c.caption, v.toString(), "s", c == f.id || c == f.addressApiResult)
-
-
-            } catch (err) {
-
-              console.error(err, c.jsonName, f.__toPojo(new ColumnHashSet()));
-            }
-          });
-          rowNum++;
-
-        });
-      await this.families.nextPage();
-    }
-    this.families.page = x;
-    this.families.getRecords();
-    ws["!ref"] = "A1:" + maxChar + rowNum;
-    ws["!autofilter"] = { ref: ws["!ref"] };
-
-
-    XLSX.utils.book_append_sheet(wb, ws, 'test');
-    XLSX.writeFile(wb, 'משפחות.xlsx');
-    return;
+  async saveToExcel(){
+      await saveToExcel<Families,GridSettings<Families>>(this.families,'משפחות',(f,c)=> c == f.id || c == f.addressApiResult);
   }
+
 
   previousDeliveryEvents: FamilyDeliveryEventsView[] = [];
   currentFamilyDeliveries: FamilyDeliveries[] = [];

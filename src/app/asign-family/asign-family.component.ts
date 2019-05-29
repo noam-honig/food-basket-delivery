@@ -350,7 +350,7 @@ export class AsignFamilyComponent implements OnInit {
 
             if (info.preferRepeatFamilies)
               where = where.and(f.previousCourier.isEqualTo(info.helperId));
-            if (info.basketType)
+            if (info.basketType!=undefined)
               where = where.and(
                 f.basketType.isEqualTo(info.basketType));
             return [where];
