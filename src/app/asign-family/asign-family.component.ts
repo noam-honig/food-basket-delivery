@@ -216,15 +216,15 @@ export class AsignFamilyComponent implements OnInit {
           }
           this.id = x.helperId;
           this.familyLists.initForFamilies(this.id, this.name, x.families);
-          if (basket)
-            basket.unassignedFamilies--;
+          if (basket!=undefined)
+            basket.unassignedFamilies-=x.addedBoxes;
           else
             this.refreshBaskets();
           if (this.preferRepeatFamilies && this.repeatFamilies > 0)
             this.repeatFamilies--;
           this.doRefreshRoute();
           this.dialog.analytics('Assign Family');
-          if (!this.baskets)
+          if (this.baskets==undefined)
             this.dialog.analytics('Assign any Family (no box)');
           if (this.filterLangulage != -1)
             this.dialog.analytics('assign family-language');
