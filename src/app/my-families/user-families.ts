@@ -57,13 +57,16 @@ export class UserFamiliesList {
     async initForFamilies(helperId: string, name: string, familiesPocoArray: any[]) {
         this.helperId = helperId;
         this.helperName = name;
-        this.allFamilies = familiesPocoArray.map(x => this.context.for(Families).create().source.fromPojo(x));
+        let newFamilies = familiesPocoArray.map(x => this.context.for(Families).create().source.fromPojo(x));
+        newFamilies.push(...this.delivered);
+        newFamilies.push(...this.problem);
+        this.allFamilies = newFamilies;
         this.initFamilies();
     }
 
     async reload() {
         if (this.helperId)
-            this.allFamilies = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(this.helperId), orderBy: f => [f.routeOrder, f.address], limit: 1000 });
+            this.allFamilies = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(this.helperId).and(f.deliverStatus.isActiveDelivery()).and(f.visibleToCourier.isEqualTo(true)), orderBy: f => [f.routeOrder, f.address], limit: 1000 });
         else
             this.allFamilies = [];
         this.initFamilies();
@@ -71,32 +74,7 @@ export class UserFamiliesList {
 
 
     initFamilies() {
-        if (1 + 1 == 0) {
-            let temp = this.allFamilies;
-            this.allFamilies = [];
-            this.toDeliver = [];
-            let lastLoc: Location = {
-                lat: 32.2280236,
-                lng: 34.8807046
-            };
-            let total = temp.length;
-            for (let i = 0; i < total; i++) {
-                let closest = temp[0];
-                let closestIndex = 0;
-                let closestDist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, closest.getGeocodeInformation().location());
-                for (let j = 0; j < temp.length; j++) {
-                    let dist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, temp[j].getGeocodeInformation().location());
-                    if (dist < closestDist) {
-                        closestIndex = j;
-                        closestDist = dist;
-                        closest = temp[j];
-                    }
-                }
-                lastLoc = closest.getGeocodeInformation().location();
-                this.allFamilies.push(temp.splice(closestIndex, 1)[0]);
-
-            }
-        }
+      
         this.toDeliver = this.allFamilies.filter(f => f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery);
         this.delivered = this.allFamilies.filter(f => f.deliverStatus.listValue == DeliveryStatus.Success || f.deliverStatus.listValue == DeliveryStatus.SuccessLeftThere);
         this.problem = this.allFamilies.filter(f => {

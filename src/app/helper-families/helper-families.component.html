@@ -191,7 +191,7 @@ justify-content: space-between;">
 </div>
 
 <div *ngIf="familyLists.delivered.length>0" class="no-print">
-  <h4>משפחות שחולקו - {{familyLists.delivered.length}}</h4>
+  <h4>משפחות שחולקו ביומיים האחרונים - {{familyLists.delivered.length}}</h4>
   <mat-accordion>
     <mat-expansion-panel #myPanel *ngFor="let f of familyLists.delivered">
       <mat-expansion-panel-header>

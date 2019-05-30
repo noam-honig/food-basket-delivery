@@ -77,7 +77,7 @@ export class StressTestComponent implements OnInit {
       if (!addBox.addedBoxes)
         return;
 
-      let route =  AsignFamilyComponent.RefreshRoute(helperId);
+      let route =  AsignFamilyComponent.RefreshRoute(helperId,true);
       this.families++;
     }
   }
