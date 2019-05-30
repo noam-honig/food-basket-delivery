@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { FamilyDeliveryEventsView } from "../families/FamilyDeliveryEventsView";
 import { Context } from '../shared/context';
 import { Helpers } from '../helpers/helpers';
 import { WeeklyFamilies } from '../weekly-families/weekly-families';

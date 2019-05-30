@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { ColumnHashSet, AndFilter, ColumnSetting, DateColumn, Entity, GridSettings, Column } from 'radweb';
-import { FamilyDeliveryEventsView } from "./FamilyDeliveryEventsView";
+
 import { Families } from './families';
 import { DeliveryStatus } from "./DeliveryStatus";
 import { CallStatus } from "./CallStatus";
@@ -136,7 +136,7 @@ export class FamiliesComponent implements OnInit {
   }
 
 
-  previousDeliveryEvents: FamilyDeliveryEventsView[] = [];
+  
   currentFamilyDeliveries: FamilyDeliveries[] = [];
   async saveCurrentFamilies() {
     await this.families.currentRow.save();

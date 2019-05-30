@@ -9,10 +9,10 @@ import { evilStatics } from '../auth/evil-statics';
 
 import { foreachSync } from '../shared/utils';
 import { Families } from '../families/families';
-import { FamilySources } from "../families/FamilySources";
+
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { DeliveryEvents } from '../delivery-events/delivery-events';
+
 import { ApplicationImages } from '../manage/ApplicationImages';
 import { ServerContext, allEntities } from '../shared/context';
 import '../app.module';
@@ -22,6 +22,7 @@ import { ActualSQLServerDataProvider } from 'radweb-server';
 import { ActualDirectSQL } from '../auth/server-action';
 import { FamilyDeliveryEvents } from '../delivery-events/FamilyDeliveryEvents';
 import { SqlBuilder } from '../model-shared/types';
+import { FamilyDeliveries } from '../families/FamilyDeliveries';
 
 
 
@@ -69,6 +70,9 @@ export async function serverInit() {
 
         //create index if required
         await pool.query(sql.build('create index if not exists fde_1 on ', fde, ' (', [fde.family, fde.deliverStatus, fde.courier], ')'));
+        //create index for family deliveries if required
+        var fd = new FamilyDeliveries(context);
+        await pool.query(sql.build('create index if not exists fd_1 on ', fd, ' (', [fd.family, fd.deliveryStatusDate, fd.deliverStatus, fd.courier], ')'));
 
 
 
@@ -99,13 +103,6 @@ export async function serverInit() {
             await ff.save();
         });
 
-        if ((await context.for(DeliveryEvents).count()) == 0) {
-            let de = context.for(DeliveryEvents).create();
-            de.name.value = 'אירוע החלוקה הראשון';
-            de.isActiveEvent.value = true;
-            de.deliveryDate.dateValue = new Date();
-            await de.save();
-        }
 
 
 

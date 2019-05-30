@@ -10,9 +10,6 @@ import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
 import { Context, EntityClass } from "../shared/context";
-import { DeliveryEvents } from "../delivery-events/delivery-events";
-import { FamilyDelveryEventId, FamilyDeliveryEvents } from "../delivery-events/FamilyDeliveryEvents";
-import { Input } from "@angular/core";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { FamilyDeliveries } from "./FamilyDeliveries";
 
@@ -242,21 +239,17 @@ export class Families extends IdEntity<FamilyId>  {
     }
     return where;
   }
-  private dbNameFromLastDelivery(col: (fde: FamilyDeliveryEvents) => Column<any>, alias: string) {
+  private dbNameFromLastDelivery(col: (fd: FamilyDeliveries) => Column<any>, alias: string) {
 
-    let de = new DeliveryEvents(this.context);
-    let fde = new FamilyDeliveryEvents(this.context);
+    let fd = new FamilyDeliveries(this.context);
     let sql = new SqlBuilder();
     return sql.columnInnerSelect(this, {
-      select: () => [sql.columnWithAlias(col(fde), alias)],
-      from: de,
-      outerJoin: () => [{ to: fde, on: () => [sql.eq(fde.deliveryEvent, de.id)] }],
-      where: () => [sql.eq(fde.family, this.id),
-      sql.ne(de.isActiveEvent, true),
-      sql.not(sql.in(fde.deliverStatus, DeliveryStatus.NotInEvent.id)),
-      sql.ne(fde.courier, "''")
+      select: () => [sql.columnWithAlias(col(fd), alias)],
+      from: fd,
+      
+      where: () => [sql.eq(fd.family, this.id),
       ],
-      orderBy: [{ column: de.deliveryDate, descending: true }]
+      orderBy: [{ column: fd.deliveryStatusDate, descending: true }]
     });
   }
 
@@ -273,6 +266,8 @@ export class Families extends IdEntity<FamilyId>  {
         items: this.previousDeliveryStatus.getOptions()
       },
       getValue: f => {
+        if (!f.previousDeliveryStatus.value)
+        return '';
         let r = f.previousDeliveryStatus.displayValue;
         if (f.previousDeliveryComment.value) {
           r += ': ' + f.previousDeliveryComment.value
