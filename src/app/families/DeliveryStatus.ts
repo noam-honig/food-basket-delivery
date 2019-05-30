@@ -1,4 +1,4 @@
-import { ClosedListColumn, NumberColumn } from "radweb";
+import { ClosedListColumn, NumberColumn, FilterBase } from "radweb";
 import { DataColumnSettings } from "radweb";
 
 export class DeliveryStatus {
@@ -32,6 +32,9 @@ export class DeliveryStatus {
   }
 }
 export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
+  isAResultStatus(): FilterBase {
+    return this.IsGreaterOrEqualTo(DeliveryStatus.Success.id).and(this.IsLessOrEqualTo(DeliveryStatus.FailedOther.id));
+  }
   constructor(settingsOrCaption?: DataColumnSettings<number, NumberColumn> | string) {
     super(DeliveryStatus, settingsOrCaption);
   }
