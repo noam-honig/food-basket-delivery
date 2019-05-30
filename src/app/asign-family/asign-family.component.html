@@ -64,6 +64,9 @@
         משפחה</button>
       <h4 class="no-baskets" *ngIf="!baskets.length">לא נמצאו סלים מתאימים</h4>
     </div>
+    <!--
+    <input type="checkbox" [(ngModel)]="this.useGoogleOptimization">
+    <button (click)="doRefreshRoute()">Run Refresh Route</button>-->
     <app-helper-families [familyLists]="familyLists" [partOfAssign]="true" (assignmentCanceled)="assignmentCanceled()"
       (assignSmsSent)="smsSent()"></app-helper-families>
   </span>

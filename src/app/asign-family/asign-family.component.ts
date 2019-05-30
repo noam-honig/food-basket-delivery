@@ -82,11 +82,17 @@ export class AsignFamilyComponent implements OnInit {
   }
 
   lastRefreshRoute = Promise.resolve();
+  useGoogleOptimization = true;
   doRefreshRoute() {
     this.lastRefreshRoute = this.lastRefreshRoute.then(
       async () => await this.busy.donotWait(
-        async () => await AsignFamilyComponent.RefreshRoute(this.id).then(r => {
-          this.familyLists.routeStats = r;
+        async () => await AsignFamilyComponent.RefreshRoute(this.id, this.useGoogleOptimization).then(r => {
+
+          if (r && r.ok && r.families.length == this.familyLists.toDeliver.length) {
+            this.familyLists.routeStats = r.stats;
+            this.familyLists.initForFamilies(this.id, this.name, r.families);
+          }
+
         })));
 
   }
@@ -216,15 +222,15 @@ export class AsignFamilyComponent implements OnInit {
           }
           this.id = x.helperId;
           this.familyLists.initForFamilies(this.id, this.name, x.families);
-          if (basket!=undefined)
-            basket.unassignedFamilies-=x.addedBoxes;
+          if (basket != undefined)
+            basket.unassignedFamilies -= x.addedBoxes;
           else
             this.refreshBaskets();
           if (this.preferRepeatFamilies && this.repeatFamilies > 0)
             this.repeatFamilies--;
           this.doRefreshRoute();
           this.dialog.analytics('Assign Family');
-          if (this.baskets==undefined)
+          if (this.baskets == undefined)
             this.dialog.analytics('Assign any Family (no box)');
           if (this.filterLangulage != -1)
             this.dialog.analytics('assign family-language');
@@ -298,10 +304,10 @@ export class AsignFamilyComponent implements OnInit {
     return result;
   }
   @RunOnServer({ allowed: c => c.isAdmin() })
-  static async RefreshRoute(helperId: string, context?: Context) {
+  static async RefreshRoute(helperId: string, useGoogle: boolean, context?: Context) {
     let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id)) });
     let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
-    return await AsignFamilyComponent.optimizeRoute(h, existingFamilies, context);
+    return await AsignFamilyComponent.optimizeRoute(h, existingFamilies, context, useGoogle);
   }
 
   @RunOnServer({ allowed: c => c.isAdmin() })
@@ -350,7 +356,7 @@ export class AsignFamilyComponent implements OnInit {
 
             if (info.preferRepeatFamilies)
               where = where.and(f.previousCourier.isEqualTo(info.helperId));
-            if (info.basketType!=undefined)
+            if (info.basketType != undefined)
               where = where.and(
                 f.basketType.isEqualTo(info.basketType));
             return [where];
@@ -444,18 +450,51 @@ export class AsignFamilyComponent implements OnInit {
     return result;
   }
 
-  static async optimizeRoute(helper: Helpers, families: Families[], context: Context) {
+  static async optimizeRoute(helper: Helpers, families: Families[], context: Context, useGoogle: boolean) {
 
     if (families.length < 1)
       return;
     let result = {
-      totalKm: 0,
-      totalTime: 0
-    } as routeStats;
-    let r = await getRouteInfo(families, true, context);
-    if (r.status == 'OK' && r.routes && r.routes.length > 0 && r.routes[0].waypoint_order) {
-      let i = 1;
+      stats: {
+        totalKm: 0,
+        totalTime: 0
+      },
+      families: [],
+      ok: false
+    } as optimizeRouteResult;
+    //manual sorting of the list from closest to farthest
+    {
+      let temp = families;
+      let sorted = [];
+      let lastLoc = (await ApplicationSettings.getAsync(context)).getGeocodeInformation().location();
 
+
+      let total = temp.length;
+      for (let i = 0; i < total; i++) {
+        let closest = temp[0];
+        let closestIndex = 0;
+        let closestDist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, closest.getGeocodeInformation().location());
+        for (let j = 0; j < temp.length; j++) {
+          let dist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, temp[j].getGeocodeInformation().location());
+          if (dist < closestDist) {
+            closestIndex = j;
+            closestDist = dist;
+            closest = temp[j];
+          }
+        }
+        lastLoc = closest.getGeocodeInformation().location();
+        sorted.push(temp.splice(closestIndex, 1)[0]);
+
+      }
+      families = sorted;
+    }
+
+
+    let r = await getRouteInfo(families, useGoogle, context);
+    if (r.status == 'OK' && r.routes && r.routes.length > 0 && r.routes[0].waypoint_order) {
+      result.ok = true;
+      let i = 1;
+      
       await foreachSync(r.routes[0].waypoint_order, async (p: number) => {
         let f = families[p];
         if (f.routeOrder.value != i) {
@@ -464,18 +503,31 @@ export class AsignFamilyComponent implements OnInit {
         }
         i++;
       });
+      families.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
       for (let i = 0; i < r.routes[0].legs.length - 1; i++) {
         let l = r.routes[0].legs[i];
-        result.totalKm += l.distance.value;
-        result.totalTime += l.duration.value;
+        result.stats.totalKm += l.distance.value;
+        result.stats.totalTime += l.duration.value;
       }
-      result.totalKm = Math.round(result.totalKm / 1000);
-      result.totalTime = Math.round(result.totalTime / 60);
-      helper.totalKm.value = result.totalKm;
-      helper.totalTime.value = result.totalTime;
-      helper.save();
-
+      result.stats.totalKm = Math.round(result.stats.totalKm / 1000);
+      result.stats.totalTime = Math.round(result.stats.totalTime / 60);
+      helper.totalKm.value = result.stats.totalKm;
+      helper.totalTime.value = result.stats.totalTime;
     }
+    else {
+      result.ok = true;
+      let i = 1;
+      await foreachSync(families, async (f) => {
+        f.routeOrder.value = i++;
+        if (f.routeOrder.value != f.routeOrder.originalValue)
+          await f.save();
+      });
+    }
+    result.families = await context.for(Families).toPojoArray(families);
+
+    helper.save();
+
+
     return result;
 
   }
@@ -565,6 +617,11 @@ export interface routeStats {
   totalKm: number;
   totalTime: number;
 }
+export interface optimizeRouteResult {
+  stats: routeStats;
+  families: any[];
+  ok: boolean;
+}
 
 function getInfo(r: any) {
   let dist = 0;
@@ -588,7 +645,7 @@ async function getRouteInfo(families: Families[], optimize: boolean, context: Co
   });
   u.addObject({
     origin: startAndEnd,
-    destination: startAndEnd,
+    destination: families[families.length - 1].getGeocodeInformation().getlonglat(),
     waypoints: waypoints,
     language: 'he',
     key: process.env.GOOGLE_GECODE_API_KEY
