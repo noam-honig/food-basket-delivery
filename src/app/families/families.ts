@@ -159,6 +159,7 @@ export class Families extends IdEntity<FamilyId>  {
   deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
   fixedCourier = new HelperId(this.context, "משנע קבוע");
   courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
+  
 
   courierAssignUserName = new StringColumn({
     caption: 'שם שיוך למשנע',
@@ -221,6 +222,14 @@ export class Families extends IdEntity<FamilyId>  {
     dbReadOnly: true,
     dbName: () => {
       return this.dbNameFromLastDelivery(fde => fde.courier, "prevCourier");
+    }
+  });
+  visibleToCourier = new BoolColumn({
+    dbReadOnly:true,
+    dbName:()=>{
+      var sql = new SqlBuilder();
+      return sql.case([{when:[sql.or(sql.gt(this.deliveryStatusDate,'current_date -1'),this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id))],then:true}],false);
+      
     }
   });
 
