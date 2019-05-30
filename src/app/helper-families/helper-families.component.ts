@@ -46,6 +46,17 @@ export class HelperFamiliesComponent implements OnInit {
     });
 
   }
+  okAll()
+  {
+    this.dialog.YesNoQuestion("האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל" + this.familyLists.toDeliver.length + " משפחות?", async () => {
+      this.dialog.analytics('ok  all');
+      for (const f of this.familyLists.toDeliver) {
+        f.deliverStatus.value = DeliveryStatus.Success.id;
+        await f.save();
+      }
+      this.initFamilies();
+    });
+  }
   allDoneMessage() { return ApplicationSettings.get(this.context).messageForDoneDelivery.value; };
   async deliveredToFamily(f: Families) {
     this.deliveredToFamilyOk(f, DeliveryStatus.Success, s => s.commentForSuccessDelivery);

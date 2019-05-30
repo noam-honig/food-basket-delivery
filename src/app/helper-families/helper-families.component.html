@@ -201,4 +201,6 @@
 </div>
 <app-map #map [class.hidden]="partOfReview"></app-map>
 <button mat-raised-button class="no-print myButton badButton" (click)="cancelAll()"
-  *ngIf="familyLists.toDeliver.length>1 && partOfAssign">בטל את כל המשפחות המשוייכות
+  *ngIf="familyLists.toDeliver.length>1 && partOfAssign">בטל את כל המשפחות המשוייכות</button>
+  <button mat-raised-button class="no-print myButton " (click)="okAll()" color="primary"
+  *ngIf="familyLists.toDeliver.length>1 && partOfAssign">סמן נמסר בהצלחה לכל המשפחות</button>
