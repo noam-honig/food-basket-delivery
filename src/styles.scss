@@ -226,3 +226,7 @@ th {
 .dataGridHeaderArea{
   position: inherit !important;
 }
+.primary-menu{
+  background-color: mat-color($candy-app-primary);
+  color:white;
+}

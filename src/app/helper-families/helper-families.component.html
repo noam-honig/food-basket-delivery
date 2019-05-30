@@ -1,8 +1,25 @@
-<h4 class="no-print" *ngIf="showLeftFamilies()">
-  {{familyLists.getLeftFamiliesDescription()}}
-</h4>
-<div *ngIf="familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies()" class="no-print">
-  סה"כ זמן נסיעה מוערך {{familyLists.routeStats.totalTime}} דקות, {{familyLists.routeStats.totalKm}} ק"מ
+<div style="display: flex;
+justify-content: space-between;">
+  <div>
+    <h4 class="no-print" *ngIf="showLeftFamilies()">
+      {{familyLists.getLeftFamiliesDescription()}}
+    </h4>
+    <div *ngIf="familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies()" class="no-print">
+      סה"כ זמן נסיעה מוערך {{familyLists.routeStats.totalTime}} דקות, {{familyLists.routeStats.totalKm}} ק"מ
+    </div>
+  </div>
+  <div class="no-print">
+    <mat-menu #appMenu="matMenu">
+        <button   mat-menu-item (click)="cancelAll()" style="color:red;"
+      >בטל שיוך לכל המשפחות</button>
+      <button  mat-menu-item (click)="okAll()" class="primary-menu"
+       >סמן נמסר בהצלחה לכל המשפחות</button>
+    </mat-menu>
+
+    <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="familyLists.toDeliver.length>1 && partOfAssign">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+  </div>
 </div>
 <h4 *ngIf="!showLeftFamilies()">
   {{allDoneMessage()}}
@@ -30,7 +47,7 @@
         </mat-panel-description>
       </div>
     </mat-expansion-panel-header>
-   <ng-template matExpansionPanelContent>
+    <ng-template matExpansionPanelContent>
 
 
       <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign" (assignmentCanceled)="cancelAssign(f)">
@@ -161,13 +178,13 @@
         </div>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
-      <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign" (assignmentCanceled)="cancelAssign(f)">
-        <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
-        <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות
-          לחלוקה</button>
-        <button *ngIf="partOfAssign" mat-raised-button class="myButton badButton" (click)="cancelAssign(f)">בטלי
-          שיוך</button>
-      </app-family-info>
+        <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign" (assignmentCanceled)="cancelAssign(f)">
+          <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
+          <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות
+            לחלוקה</button>
+          <button *ngIf="partOfAssign" mat-raised-button class="myButton badButton" (click)="cancelAssign(f)">בטלי
+            שיוך</button>
+        </app-family-info>
       </ng-template>
     </mat-expansion-panel>
   </mat-accordion>
@@ -190,17 +207,13 @@
         </div>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
-      <app-family-info [f]="f" [showHelp]="true" (assignmentCanceled)="cancelAssign(f)">
-        <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
-        <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות
-          לחלוקה</button>
-      </app-family-info>
-    </ng-template>
+        <app-family-info [f]="f" [showHelp]="true" (assignmentCanceled)="cancelAssign(f)">
+          <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
+          <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות
+            לחלוקה</button>
+        </app-family-info>
+      </ng-template>
     </mat-expansion-panel>
   </mat-accordion>
 </div>
 <app-map #map [class.hidden]="partOfReview"></app-map>
-<button mat-raised-button class="no-print myButton badButton" (click)="cancelAll()"
-  *ngIf="familyLists.toDeliver.length>1 && partOfAssign">בטל את כל המשפחות המשוייכות</button>
-  <button mat-raised-button class="no-print myButton " (click)="okAll()" color="primary"
-  *ngIf="familyLists.toDeliver.length>1 && partOfAssign">סמן נמסר בהצלחה לכל המשפחות</button>
