@@ -32,7 +32,13 @@ export class DeliveryStatus {
   }
 }
 export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
-  isAResultStatus(): FilterBase {
+  isActiveDelivery() {
+    return this.IsLessOrEqualTo(DeliveryStatus.FailedOther.id);
+  }
+  isInEvent(){
+    return this.IsLessOrEqualTo(DeliveryStatus.Frozen.id);
+  }
+  isAResultStatus() {
     return this.IsGreaterOrEqualTo(DeliveryStatus.Success.id).and(this.IsLessOrEqualTo(DeliveryStatus.FailedOther.id));
   }
   constructor(settingsOrCaption?: DataColumnSettings<number, NumberColumn> | string) {
@@ -47,7 +53,7 @@ export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
       width: '150'
     };
   }
-  isSuccess(){
+  isSuccess() {
     return this.IsGreaterOrEqualTo(DeliveryStatus.Success.id).and(this.IsLessOrEqualTo(DeliveryStatus.SuccessLeftThere.id));
   }
   isProblem() {

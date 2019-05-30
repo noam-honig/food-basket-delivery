@@ -346,7 +346,7 @@ export class FamiliesComponent implements OnInit {
   statTabs: statsOnTab[] = [
     {
       name: 'באירוע',
-      rule: f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id),
+      rule: f => f.deliverStatus.isInEvent(),
       stats: [
         this.stats.ready,
         this.stats.special,
@@ -365,7 +365,7 @@ export class FamiliesComponent implements OnInit {
 
     {
       name: 'הערות',
-      rule: f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.courierComments.IsDifferentFrom('')),
+      rule: f => f.deliverStatus.isAResultStatus().and(f.courierComments.IsDifferentFrom('')),
       stats: [
         this.stats.deliveryComments
       ],

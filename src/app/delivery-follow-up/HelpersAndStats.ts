@@ -63,7 +63,7 @@ export class HelpersAndStats extends IdEntity<HelperId> {
                         h.smsDate,
                         h.reminderSmsDate,
                         sql.countInnerSelect(helperFamilies(() => [sql.eq(f.deliverStatus, DeliveryStatus.ReadyForDelivery.id)]), this.deliveriesInProgress),
-                        sql.countInnerSelect(helperFamilies(() => []), this.allFamilies),
+                        sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isActiveDelivery()]), this.allFamilies),
                         sql.countInnerSelect(helperFamilies(() => [sql.in(f.deliverStatus,
                             DeliveryStatus.FailedBadAddress.id,
                             DeliveryStatus.FailedNotHome.id,

@@ -63,7 +63,7 @@ export class UserFamiliesList {
 
     async reload() {
         if (this.helperId)
-            this.allFamilies = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(this.helperId), orderBy: f => [f.routeOrder, f.address], limit: 1000 });
+            this.allFamilies = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(this.helperId).and(f.deliverStatus.isActiveDelivery()), orderBy: f => [f.routeOrder, f.address], limit: 1000 });
         else
             this.allFamilies = [];
         this.initFamilies();
