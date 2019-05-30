@@ -27,8 +27,5 @@
   <button mat-raised-button color="warn" (click)="resetPassword()" *ngIf="helpers.currentRow">
     אתחלי סיסמה ל{{helpers.currentRow.name.value}}
   </button>
-  <div *ngIf="helpers.currentRow&&context.info.deliveryAdmin">
-    <h4> אירועים קודמים ל{{helpers.currentRow.name.value}}</h4>
-    <data-grid [settings]="previousEvents"></data-grid>
-  </div>
+  
 </mat-card>
