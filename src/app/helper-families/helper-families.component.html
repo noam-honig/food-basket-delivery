@@ -4,7 +4,7 @@ justify-content: space-between;">
     <h4 class="no-print" *ngIf="showLeftFamilies()">
       {{familyLists.getLeftFamiliesDescription()}}
     </h4>
-    <div *ngIf="familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies()" class="no-print">
+    <div *ngIf="familyLists.toDeliver.length>=1&&familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies()" class="no-print">
       סה"כ זמן נסיעה מוערך {{familyLists.routeStats.totalTime}} דקות, {{familyLists.routeStats.totalKm}} ק"מ
     </div>
   </div>
