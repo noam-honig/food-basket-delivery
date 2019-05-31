@@ -39,7 +39,9 @@ export class AsignFamilyComponent implements OnInit {
   static route: Route = {
     path: 'assign-families', component: AsignFamilyComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'שיוך משפחות' }
   };
-
+  assignOnMap() {
+    this.familyLists.startAssignByMap();
+  }
   async searchPhone() {
     this.name = undefined;
     this.shortUrl = undefined;
@@ -48,7 +50,7 @@ export class AsignFamilyComponent implements OnInit {
     this.preferRepeatFamilies = true;
     this.clearList();
     if (this.phone.length == 10) {
-
+      this.familyLists.resetMeAndMap();
 
       let helper = await this.context.for(Helpers).findFirst(h => h.phone.isEqualTo(this.phone));
       if (helper) {
@@ -181,11 +183,16 @@ export class AsignFamilyComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.familyLists.userClickedOnFamilyOnMap =
+      async  familyId => {
+        let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(familyId));
+        if (f && f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery && f.courier.value == "") {
+          this.performSepcificFamilyAssignment(f, 'assign based on map');
+        }
+      };
     if (!environment.production) {
       this.phone = '0507330590';
       await this.searchPhone();
-      //   this.selectService.updateFamiliy({ f: this.familyLists.allFamilies[0]});
-
     }
   }
   numOfBaskets: number = 1;
@@ -494,7 +501,7 @@ export class AsignFamilyComponent implements OnInit {
     if (r.status == 'OK' && r.routes && r.routes.length > 0 && r.routes[0].waypoint_order) {
       result.ok = true;
       let i = 1;
-      
+
       await foreachSync(r.routes[0].waypoint_order, async (p: number) => {
         let f = families[p];
         if (f.routeOrder.value != i) {
@@ -543,26 +550,10 @@ export class AsignFamilyComponent implements OnInit {
         return filter(f);
       },
       onSelect: async f => {
-        if (!this.id) {
-          let helper = await this.context.for(Helpers).lookupAsync(h => h.phone.isEqualTo(this.phone));
-          if (helper.isNew()) {
-            helper.phone.value = this.phone;
-            helper.name.value = this.name;
-            await helper.save();
-            Helpers.addToRecent(helper);
-          }
-          this.name = helper.name.value;
-          this.shortUrl = helper.shortUrlKey.value;
-          this.id = helper.id.value;
-        }
+        await this.verifyHelperExistance();
 
         let ok = async () => {
-          f.courier.value = this.id;
-          f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
-          this.dialog.analytics(analyticsName);
-          await f.save();
-          this.refreshList();
-          this.doRefreshRoute();
+          await this.performSepcificFamilyAssignment(f, analyticsName);
         };
 
         if (f.courier.value) {
@@ -582,6 +573,30 @@ export class AsignFamilyComponent implements OnInit {
       }
     })
   }
+  private async performSepcificFamilyAssignment(f: Families, analyticsName: string) {
+    f.courier.value = this.id;
+    f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
+    this.dialog.analytics(analyticsName);
+    await f.save();
+    this.refreshList();
+    this.doRefreshRoute();
+  }
+
+  private async verifyHelperExistance() {
+    if (!this.id) {
+      let helper = await this.context.for(Helpers).lookupAsync(h => h.phone.isEqualTo(this.phone));
+      if (helper.isNew()) {
+        helper.phone.value = this.phone;
+        helper.name.value = this.name;
+        await helper.save();
+        Helpers.addToRecent(helper);
+      }
+      this.name = helper.name.value;
+      this.shortUrl = helper.shortUrlKey.value;
+      this.id = helper.id.value;
+    }
+  }
+
   addSpecific() {
     this.addFamily(f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id), 'specific');
   }

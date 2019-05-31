@@ -11,7 +11,18 @@ export class UserFamiliesList {
     map: MapComponent;
     setMap(map: MapComponent): any {
         this.map = map;
+        this.map.userClickedOnFamilyOnMap = (f) => this.userClickedOnFamilyOnMap(f);
     }
+    resetMeAndMap() {
+        this.mapElementOrder = 0;
+        if (this.map)
+            this.map.clear();
+    }
+    startAssignByMap(){
+        this.map.loadPotentialAsigment();
+        this.mapElementOrder =-1;
+    }
+    mapElementOrder = 0;
     constructor(private context: Context) { }
     toDeliver: Families[] = [];
     delivered: Families[] = [];
@@ -21,6 +32,7 @@ export class UserFamiliesList {
     helperName: string;
     helperOptional: Helpers;
     routeStats: routeStats;
+    userClickedOnFamilyOnMap: (familyId: string) => void;
     async initForHelper(helperId: string, name: string, helperOptional?: Helpers) {
 
         this.helperOptional = helperOptional;
@@ -43,10 +55,10 @@ export class UserFamiliesList {
             return '';
         let r = '';
         if (this.toDeliver.length == 1) {
-            r = 'נותרה משפחה אחת לחלוקה';
+            r = 'משפחה אחת לחלוקה';
         }
         else
-            r = 'נותרו ' + this.toDeliver.length + ' משפחות לחלוקה';
+            r = this.toDeliver.length + ' משפחות לחלוקה';
 
 
         if (boxes > this.toDeliver.length)
@@ -74,7 +86,7 @@ export class UserFamiliesList {
 
 
     initFamilies() {
-      
+
         this.toDeliver = this.allFamilies.filter(f => f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery);
         this.delivered = this.allFamilies.filter(f => f.deliverStatus.listValue == DeliveryStatus.Success || f.deliverStatus.listValue == DeliveryStatus.SuccessLeftThere);
         this.problem = this.allFamilies.filter(f => {

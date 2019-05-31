@@ -50,20 +50,25 @@
 
     <div class="no-print">
       <h4>סלים שנותרו</h4>
-      <button mat-raised-button color="primary" class="sal-button" (click)="addSpecial()" *ngIf="specialFamilies">משפחות
-        מיוחדות - {{specialFamilies}}</button>
+      
       <button mat-raised-button color="primary" class="sal-button" (click)="assignItem(undefined)"
-        *ngIf="baskets.length>1">משפחה כלשהי - {{countAllFamilies()}}</button>
+        *ngIf="baskets.length>1">{{familyLists.toDeliver.length>0?'משפחה הכי קרובה':'משפחה כלשהי'}} - {{countAllFamilies()}}</button>
       <ng-container *ngFor="let b of baskets">
         <button mat-raised-button color="primary" class="sal-button" (click)="assignItem(b)"
           *ngIf="b.unassignedFamilies">{{b.name}}
           - {{b.unassignedFamilies}}</button>
       </ng-container>
 
-      <button mat-raised-button color="primary" class="sal-button" (click)="addSpecific()" *ngIf="baskets.length">בחירת
-        משפחה</button>
+      <button mat-button [matMenuTriggerFor]="basketMenu" mat-raised-button color="primary" class="sal-button" *ngIf="baskets.length">אפשרויות נוספות...</button>
+      <mat-menu #basketMenu="matMenu">
+        <button mat-menu-item (click)="addSpecific()" >בחירת משפחה לפי שם</button>
+        <button mat-menu-item  (click)="assignOnMap()">בחירת משפחה על המפה</button>
+        <button mat-menu-item  (click)="addSpecial()" *ngIf="specialFamilies">משפחות מיוחדות - {{specialFamilies}}</button>
+      </mat-menu>
+      
       <h4 class="no-baskets" *ngIf="!baskets.length">לא נמצאו סלים מתאימים</h4>
     </div>
+    
     <!--
     <input type="checkbox" [(ngModel)]="this.useGoogleOptimization">
     <button (click)="doRefreshRoute()">Run Refresh Route</button>-->

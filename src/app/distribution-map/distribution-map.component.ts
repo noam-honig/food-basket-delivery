@@ -17,6 +17,7 @@ import { SelectService } from '../select-popup/select-service';
 import { SWITCH_INJECTOR_FACTORY__POST_R3__ } from '@angular/core/src/di/injector';
 import { colors } from '../families/stats-action';
 import { BusyService } from '../select-popup/busy-service';
+import { YesNo } from '../families/YesNo';
 
 @Component({
   selector: 'app-distribution-map',
@@ -38,7 +39,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     this.onDestroy();
-  } 
+  }
   onDestroy = () => { };
   static route: Route = {
     path: 'addresses',
@@ -81,7 +82,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   onTheWay = new statusClass('בדרך', 'https://maps.google.com/mapfiles/ms/micons/ltblue-dot.png', colors.blue);
   problem = new statusClass('בעיות', 'https://maps.google.com/mapfiles/ms/micons/red-pushpin.png', colors.red);
   success = new statusClass('הגיעו', 'https://maps.google.com/mapfiles/ms/micons/green-dot.png', colors.green);
-  statuses = [this.ready,this.selfPickup, this.onTheWay, this.success, this.problem];
+  statuses = [this.ready, this.selfPickup, this.onTheWay, this.success, this.problem];
   selectedStatus: statusClass;
   async refreshFamilies() {
     let families = await DistributionMap.GetFamiliesLocations();
@@ -161,18 +162,23 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.updateChart();
   }
   @RunOnServer({ allowed: c => c.isAdmin() })
-  static async GetFamiliesLocations(context?: Context, directSql?: DirectSQL) {
+  static async GetFamiliesLocations(onlyPotentialAsignment?:boolean,context?: Context, directSql?: DirectSQL) {
     let f = new Families(context);
-    
+
     let sql = new SqlBuilder();
-    sql.addEntity(f,"Families");
+    sql.addEntity(f, "Families");
     let r = (await directSql.execute(sql.query({
       select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier],
       from: f,
       where: () => {
-        let where = f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.deliverStatus.IsDifferentFrom(DeliveryStatus.Frozen.id)).and(f.blockedBasket.isEqualTo(false));
-        return [where];
-      }
+        let where = [f.deliverStatus.isActiveDelivery().and(f.blockedBasket.isEqualTo(false))];
+        if (onlyPotentialAsignment)
+        {
+          where.push(f.readyFilter().and(f.special.isEqualTo(YesNo.No.id)));
+        }
+        return where;
+      },
+      orderBy:[f.addressLatitude,f.addressLongitude]
     })));
 
     return r.rows.map(x => {
@@ -246,7 +252,7 @@ interface familyQueryResult {
   status: number;
   courier: string;
 }
-interface infoOnMap {
+export interface infoOnMap {
   marker: google.maps.Marker;
   prevStatus: statusClass;
   prevCourier: string;
