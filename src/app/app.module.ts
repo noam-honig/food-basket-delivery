@@ -34,7 +34,7 @@ import { AsignFamilyComponent } from './asign-family/asign-family.component';
 import { ManageComponent } from './manage/manage.component';
 import { FamilyInfoComponent } from './family-info/family-info.component';
 import { UpdateCommentComponent } from './update-comment/update-comment.component';
-import { FixAddressComponent } from './fix-address/fix-address.component';
+import { DistributionMap } from './distribution-map/distribution-map.component';
 import { SelectHelperComponent } from './select-helper/select-helper.component';
 import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component';
 import { MapComponent } from './map/map.component';
@@ -89,7 +89,7 @@ import { DeliveryHistoryComponent } from './delivery-history/delivery-history.co
     ManageComponent,
     FamilyInfoComponent,
     UpdateCommentComponent,
-    FixAddressComponent,
+    DistributionMap,
     SelectHelperComponent,
     LoginFromSmsComponent,
     MapComponent,

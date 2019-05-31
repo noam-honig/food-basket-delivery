@@ -19,11 +19,11 @@ import { colors } from '../families/stats-action';
 import { BusyService } from '../select-popup/busy-service';
 
 @Component({
-  selector: 'app-fix-address',
-  templateUrl: './fix-address.component.html',
-  styleUrls: ['./fix-address.component.scss']
+  selector: 'app-distribution-map',
+  templateUrl: './distribution-map.component.html',
+  styleUrls: ['./distribution-map.component.scss']
 })
-export class FixAddressComponent implements OnInit, OnDestroy {
+export class DistributionMap implements OnInit, OnDestroy {
   constructor(private context: Context, private dialog: DialogService, private selectService: SelectService, busy: BusyService) {
 
     let y = dialog.refreshStatusStats.subscribe(() => {
@@ -38,11 +38,11 @@ export class FixAddressComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     this.onDestroy();
-  }
+  } 
   onDestroy = () => { };
   static route: Route = {
     path: 'addresses',
-    component: FixAddressComponent,
+    component: DistributionMap,
     data: { name: 'מפת הפצה' }, canActivate: [HolidayDeliveryAdmin]
   };
 
@@ -84,7 +84,7 @@ export class FixAddressComponent implements OnInit, OnDestroy {
   statuses = [this.ready,this.selfPickup, this.onTheWay, this.success, this.problem];
   selectedStatus: statusClass;
   async refreshFamilies() {
-    let families = await FixAddressComponent.GetFamiliesLocations();
+    let families = await DistributionMap.GetFamiliesLocations();
     this.statuses.forEach(element => {
       element.value = 0;
     });

@@ -11,7 +11,7 @@ import { FamiliesComponent } from './families/families.component';
 import { MyFamiliesComponent } from './my-families/my-families.component';
 import { AsignFamilyComponent } from './asign-family/asign-family.component';
 import { ManageComponent } from './manage/manage.component';
-import { FixAddressComponent } from './fix-address/fix-address.component';
+import { DistributionMap } from './distribution-map/distribution-map.component';
 import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component';
 import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-up.component';
 import { NewsComponent } from './news/news.component';
@@ -41,7 +41,7 @@ const routes: Routes = [
   FamiliesComponent.route,
   NewsComponent.route,
   DeliveryFollowUpComponent.route,
-  FixAddressComponent.route,
+  DistributionMap.route,
   AddressProblemComponent.route,
   HelpersComponent.route,
   DeliveryHistoryComponent.route,
