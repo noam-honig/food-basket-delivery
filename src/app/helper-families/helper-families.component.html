@@ -1,12 +1,12 @@
 <div style="display:flex;flex-direction: column;">
   <div style="display: flex;
 justify-content: space-between;order:-1;">
-    <div>
-      <h4 class="no-print" *ngIf="showLeftFamilies()">
+    <div [class.not-visible]="familyLists.toDeliver.length==0">
+      <h4 class="no-print">
         {{familyLists.getLeftFamiliesDescription()}}
       </h4>
       <div
-        *ngIf="familyLists.toDeliver.length>=1&&familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies()"
+      [class.not-visible]="!(familyLists.toDeliver.length>=1&&familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies())"
         class="no-print">
         סה"כ זמן נסיעה מוערך {{familyLists.routeStats.totalTime}} דקות, {{familyLists.routeStats.totalKm}} ק"מ
       </div>

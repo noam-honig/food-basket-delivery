@@ -52,7 +52,7 @@ export class UserFamiliesList {
             boxes += this.context.for(BasketType).lookup(iterator.basketType).boxes.value;
         }
         if (this.toDeliver.length == 0)
-            return '';
+            return 'שומר מקום';
         let r = '';
         if (this.toDeliver.length == 1) {
             r = 'משפחה אחת לחלוקה';
