@@ -13,11 +13,6 @@ export class UserFamiliesList {
         this.map = map;
         this.map.userClickedOnFamilyOnMap = (f) => this.userClickedOnFamilyOnMap(f);
     }
-    resetMeAndMap() {
-        this.mapElementOrder = 0;
-        if (this.map)
-            this.map.clear();
-    }
     startAssignByMap(){
         this.map.loadPotentialAsigment();
         this.mapElementOrder =-1;
@@ -130,6 +125,12 @@ export class UserFamiliesList {
         this.delivered = [];
         this.problem = [];
         this.toDeliver = [];
+        this.mapElementOrder = 1;
+        if (this.map)
+            this.map.clear();
+
+
+
     }
 }
 export interface basketStats {

@@ -49,9 +49,8 @@ export class AsignFamilyComponent implements OnInit {
     this.familyLists.routeStats = undefined;
     this.preferRepeatFamilies = true;
     this.clearList();
+    
     if (this.phone.length == 10) {
-      this.familyLists.resetMeAndMap();
-
       let helper = await this.context.for(Helpers).findFirst(h => h.phone.isEqualTo(this.phone));
       if (helper) {
         this.name = helper.name.value;
