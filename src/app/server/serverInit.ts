@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import { FamilyDeliveryEvents } from "./../delivery-events/FamilyDeliveryEvents";
+
 import { Helpers } from '../helpers/helpers';
 import { config } from 'dotenv';
 import { PostgresDataProvider, PostgrestSchemaBuilder } from 'radweb-server-postgres';
