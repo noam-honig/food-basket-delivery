@@ -110,7 +110,7 @@ export class MapComponent implements OnInit {
   prevFamilies: Families[] = [];
   async test(families: Families[]) {
     var prevFamilies = this.prevFamilies;
-    this.prevFamilies = families;
+    this.prevFamilies = [...families];
     this.hasFamilies = families.length > 0;
     if (!this.center) {
       var x = (await ApplicationSettings.get(this.context)).getGeocodeInformation().location();
