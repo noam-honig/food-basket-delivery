@@ -8,7 +8,7 @@ justify-content: space-between;order:-1;">
       <div
       [class.not-visible]="!(familyLists.toDeliver.length>=1&&familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies())"
         class="no-print">
-        סה"כ זמן נסיעה מוערך {{familyLists.routeStats.totalTime}} דקות, {{familyLists.routeStats.totalKm}} ק"מ
+        סה"כ זמן נסיעה מוערך <span *ngIf="familyLists.routeStats"> {{familyLists.routeStats.totalTime}} דקות, {{familyLists.routeStats.totalKm}} ק"מ</span>
       </div>
     </div>
     <div class="no-print">
