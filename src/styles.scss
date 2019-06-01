@@ -230,3 +230,7 @@ th {
   background-color: mat-color($candy-app-primary);
   color:white;
 }
+input[type=tel]{
+  direction: ltr;
+  text-align: end;
+}
