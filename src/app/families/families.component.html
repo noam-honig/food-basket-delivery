@@ -45,7 +45,7 @@
     class="btn btn-primary glyphicon glyphicon-plus"></button>
 <Data-Filter [settings]="families" #dataFilter></Data-Filter>
 
-<div [class.hide]="gridView" *ngIf="families.currentRow">
+<div [class.hide]="gridView">
         
 
     <button *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="saveCurrentFamilies()" [disabled]="!families.currentRow.wasChanged()"

@@ -1,4 +1,4 @@
-import { Entity, IDataSettings, GridSettings, Column, NumberColumn, DataList, EntityOptions, ColumnHashSet, NumberColumnSettings } from "radweb";
+import { Entity, IDataSettings, GridSettings, Column, NumberColumn, DataList, EntityOptions, ColumnHashSet, NumberColumnSettings, wrapFetch } from "radweb";
 import { EntitySourceFindOptions, FilterBase, FindOptionsPerEntity, DataProviderFactory, DataColumnSettings, DataApiRequest } from "radweb";
 import { foreachSync } from "./utils";
 import { evilStatics } from "../auth/evil-statics";
@@ -204,7 +204,13 @@ export class SpecificEntityHelper<lookupIdType, T extends Entity<lookupIdType>> 
         return this._lookupCache.lookupAsync(this.entity, filter);
     }
     lookup(filter: Column<lookupIdType> | ((entityType: T) => FilterBase)): T {
+        let x = wrapFetch.wrap;
+        wrapFetch.wrap = ()=>()=>{};
+        try{
         return this._lookupCache.lookup(this.entity, filter);
+        }finally{
+            wrapFetch.wrap = x;
+        }
     }
     async count(where?: (entity: T) => FilterBase) {
         let dl = new DataList(this.entity);
