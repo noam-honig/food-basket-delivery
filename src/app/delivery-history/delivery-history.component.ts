@@ -12,6 +12,7 @@ import { Route } from '@angular/router';
 import { DialogService } from '../select-popup/dialog';
 import { SelectService } from '../select-popup/select-service';
 import { saveToExcel } from '../shared/saveToExcel';
+import { BusyService } from '../select-popup/busy-service';
 
 @Component({
   selector: 'app-delivery-history',
@@ -19,7 +20,7 @@ import { saveToExcel } from '../shared/saveToExcel';
   styleUrls: ['./delivery-history.component.scss']
 })
 export class DeliveryHistoryComponent implements OnInit {
-
+  
   fromDate = new DateColumn({
     caption: 'מתאריך',
     valueChange: () => {
@@ -43,14 +44,14 @@ export class DeliveryHistoryComponent implements OnInit {
     component: DeliveryHistoryComponent,
     data: { name: 'היסטורית משלוחים' }, canActivate: [HolidayDeliveryAdmin]
   }
-  constructor(private context: Context, private selectService: SelectService) {
+  constructor(private context: Context, private selectService: SelectService,private busy:BusyService) {
     let today = new Date();
 
     this.fromDate.dateValue = new Date(today.getFullYear(), today.getMonth(), 1);
     this.toDate.dateValue = new Date(today.getFullYear(), today.getMonth() + 1, 0);
   }
   async saveToExcel(){
-    await saveToExcel(this.deliveries,"משלוחים",(d:FamilyDeliveries,c)=>c==d.id||c==d.family);
+    await saveToExcel(this.deliveries,"משלוחים",this.busy,(d:FamilyDeliveries,c)=>c==d.id||c==d.family);
   }
   deliveries = this.context.for(FamilyDeliveriesStats).gridSettings({
     columnSettings: d => [

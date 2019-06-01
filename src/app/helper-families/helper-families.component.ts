@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
+import { BusyService } from "./../select-popup/busy-service";
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';
 import { Families } from '../families/families';
@@ -19,7 +20,7 @@ import { Column } from 'radweb';
 })
 export class HelperFamiliesComponent implements OnInit {
 
-  constructor(public auth: AuthService, private dialog: DialogService, private router: Router, private selectService: SelectService, private context: Context) { }
+  constructor(public auth: AuthService, private dialog: DialogService, private router: Router, private selectService: SelectService, private context: Context, private busy: BusyService) { }
   @Input() familyLists: UserFamiliesList;
   @Input() partOfAssign = false;
   @Input() partOfReview = false;
@@ -36,25 +37,29 @@ export class HelperFamiliesComponent implements OnInit {
   }
   cancelAll() {
     this.dialog.YesNoQuestion("האם אתה בטוח שאתה רוצה לבטל שיוך ל" + this.familyLists.toDeliver.length + " משפחות?", async () => {
-      this.dialog.analytics('cancel all');
-      for (const f of this.familyLists.toDeliver) {
-        f.courier.value = '';
-        await f.save();
-      }
-      this.cancelAssign();
+      await this.busy.doWhileShowingBusy(async () => {
 
+        this.dialog.analytics('cancel all');
+        for (const f of this.familyLists.toDeliver) {
+          f.courier.value = '';
+          await f.save();
+        }
+        this.cancelAssign();
+      });
     });
 
   }
-  okAll()
-  {
+  okAll() {
     this.dialog.YesNoQuestion("האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל" + this.familyLists.toDeliver.length + " משפחות?", async () => {
-      this.dialog.analytics('ok  all');
-      for (const f of this.familyLists.toDeliver) {
-        f.deliverStatus.value = DeliveryStatus.Success.id;
-        await f.save();
-      }
-      this.initFamilies();
+      this.busy.doWhileShowingBusy(async () => {
+
+        this.dialog.analytics('ok  all');
+        for (const f of this.familyLists.toDeliver) {
+          f.deliverStatus.value = DeliveryStatus.Success.id;
+          await f.save();
+        }
+        this.initFamilies();
+      });
     });
   }
   allDoneMessage() { return ApplicationSettings.get(this.context).messageForDoneDelivery.value; };

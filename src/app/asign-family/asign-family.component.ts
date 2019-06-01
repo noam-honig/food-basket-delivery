@@ -49,7 +49,7 @@ export class AsignFamilyComponent implements OnInit {
     this.familyLists.routeStats = undefined;
     this.preferRepeatFamilies = true;
     this.clearList();
-    
+
     if (this.phone.length == 10) {
       let helper = await this.context.for(Helpers).findFirst(h => h.phone.isEqualTo(this.phone));
       if (helper) {
@@ -184,10 +184,12 @@ export class AsignFamilyComponent implements OnInit {
   async ngOnInit() {
     this.familyLists.userClickedOnFamilyOnMap =
       async  familyId => {
-        let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(familyId));
-        if (f && f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery && f.courier.value == "") {
-          this.performSepcificFamilyAssignment(f, 'assign based on map');
-        }
+        await this.busy.doWhileShowingBusy(async () => {
+          let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(familyId));
+          if (f && f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery && f.courier.value == "") {
+            this.performSepcificFamilyAssignment(f, 'assign based on map');
+          }
+        });
       };
     if (!environment.production) {
       this.phone = '0507330590';

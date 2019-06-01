@@ -29,6 +29,15 @@ export class BusyService {
           return this.showBusy();
         };
     }
+    async doWhileShowingBusy<t>(what: () => Promise<t>): Promise<t> {
+        let x = this.showBusy();
+        try{
+        return await  what();
+        }
+        finally{
+            x();
+        }
+    }
     showBusy(){
         let id = this.id++;
         if (this.disableWait)
