@@ -16,6 +16,7 @@ export class ApplicationSettings extends ContextEntity<number>  {
   messageForDoneDelivery = new StringColumn('הודעה למשנע כאשר סיים את כל המשפחות');
   helpText = new StringColumn('למי המשנע מתקשר כשיש לו בעיה');
   helpPhone = new PhoneColumn('טלפון עזרה למשנע');
+  dataStructureVersion = new NumberColumn({readonly:true});
   addressApiResult = new StringColumn();
   private _lastString: string;
   private _lastGeo: GeocodeInformation;
