@@ -655,19 +655,23 @@ async function getRouteInfo(families: Families[], optimize: boolean, context: Co
 
   let startAndEnd = (await ApplicationSettings.getAsync(context)).getGeocodeInformation().getlonglat();
   let waypoints = 'optimize:' + (optimize ? 'true' : 'false');
+  let addresses = [];
   families.forEach(f => {
     if (f.getGeocodeInformation().location())
       waypoints += '|' + f.getGeocodeInformation().getlonglat();
+      addresses.push(f.address.value);
   });
-  u.addObject({
+  let args = {
     origin: startAndEnd,
-    destination: families[families.length - 1].getGeocodeInformation().getlonglat(),
+    destination:families[families.length - 1].getGeocodeInformation().getlonglat(),
     waypoints: waypoints,
     language: 'he',
     key: process.env.GOOGLE_GECODE_API_KEY
-  });
+  };
+  u.addObject(args);
 
   let r = await (await fetch.default(u.url)).json();
+ // console.log(args,addresses,r,getInfo(r));
   return r;
 }
 export interface GetBasketStatusActionInfo {
