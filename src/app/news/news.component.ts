@@ -23,7 +23,7 @@ export class NewsComponent implements OnInit, OnDestroy {
     name: 'כל החדשות'
   }, {
     name: 'בעיות',
-    where: f => f.deliverStatus.isProblem()
+    where: f => f.deliverStatus.isProblem().and(f.updateType.isEqualTo(1))
   }, {
     name: 'הערות',
     where: f => f.courierComments.IsDifferentFrom('').and(f.updateType.isEqualTo(1).and(f.deliverStatus.isAResultStatus()))
