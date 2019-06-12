@@ -142,7 +142,7 @@ export class Families extends IdEntity<FamilyId>  {
   appartment = new StringColumn('דירה');
   city = new StringColumn({ caption: "עיר (מתעדכן אוטומטית)" });
   addressComment = new StringColumn('הערת כתובת');
-  deliveryComments = new StringColumn('הערות למשנע');
+  deliveryComments = new StringColumn('הערה שתופיע למשנע');
   addressApiResult = new StringColumn();
 
   phone1 = new PhoneColumn({ caption: "טלפון 1", inputType: 'tel', dbName: 'phone', valueChange: () => this.delayCheckDuplicateFamilies() });
@@ -160,7 +160,7 @@ export class Families extends IdEntity<FamilyId>  {
   deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
   correntAnErrorInStatus = new BoolColumn({ virtualData: () => false });
   courier = new HelperId(this.context, "משנע באירוע");
-  courierComments = new StringColumn('הערות מסירה');
+  courierComments = new StringColumn('הערות שכתב המשנע כשמסר');
   deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
   fixedCourier = new HelperId(this.context, "משנע קבוע");
   courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
