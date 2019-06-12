@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
-import { ColumnHashSet, UrlBuilder, FilterBase, NumberColumn } from 'radweb';
+import { ColumnHashSet, UrlBuilder, FilterBase, NumberColumn, DateColumn } from 'radweb';
 import { Families } from '../families/families';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
@@ -346,6 +346,16 @@ export class AsignFamilyComponent implements OnInit {
     }
     console.time('existingFamilies');
     let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id)) });
+    let locationReferenceFamilies = existingFamilies;
+    if (locationReferenceFamilies.length == 0) {
+      let from = new Date();
+      from.setDate(from.getDate()-1);
+      locationReferenceFamilies = await context.for(Families).find({
+        where: f => f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isAResultStatus()).and(f.deliveryStatusDate.IsGreaterOrEqualTo(DateColumn.dateToString(from))),
+        orderBy: f => [{ column: f.deliveryStatusDate, descending: true }],
+        limit: 1
+      });
+    }
     console.timeEnd('existingFamilies');
     for (let i = 0; i < info.numOfBaskets; i++) {
 
@@ -391,13 +401,14 @@ export class AsignFamilyComponent implements OnInit {
       console.timeEnd('getFamilies');
 
       if (waitingFamilies.length > 0) {
-        if (existingFamilies.length == 0) {
+        if (locationReferenceFamilies.length == 0) {
           let position = Math.trunc(Math.random() * waitingFamilies.length);
           let family = await context.for(Families).findFirst(f => f.id.isEqualTo(waitingFamilies[position].id));
           family.courier.value = result.helperId;
           await family.save();
           result.addedBoxes++;
           existingFamilies.push(family);
+          locationReferenceFamilies.push(family);
         }
         else {
 
@@ -405,7 +416,7 @@ export class AsignFamilyComponent implements OnInit {
             let r = 1000000;
             if (!x)
               return r;
-            existingFamilies.forEach(ef => {
+            locationReferenceFamilies.forEach(ef => {
               let loc = ef.getGeocodeInformation().location();
               if (loc) {
                 let dis = GeocodeInformation.GetDistanceBetweenPoints(x, loc);
@@ -436,6 +447,7 @@ export class AsignFamilyComponent implements OnInit {
 
           await f.save();
           existingFamilies.push(f);
+          locationReferenceFamilies.push(f)
           result.addedBoxes++;
         }
 
@@ -659,11 +671,11 @@ async function getRouteInfo(families: Families[], optimize: boolean, context: Co
   families.forEach(f => {
     if (f.getGeocodeInformation().location())
       waypoints += '|' + f.getGeocodeInformation().getlonglat();
-      addresses.push(f.address.value);
+    addresses.push(f.address.value);
   });
   let args = {
     origin: startAndEnd,
-    destination:families[families.length - 1].getGeocodeInformation().getlonglat(),
+    destination: families[families.length - 1].getGeocodeInformation().getlonglat(),
     waypoints: waypoints,
     language: 'he',
     key: process.env.GOOGLE_GECODE_API_KEY
@@ -671,7 +683,7 @@ async function getRouteInfo(families: Families[], optimize: boolean, context: Co
   u.addObject(args);
 
   let r = await (await fetch.default(u.url)).json();
- // console.log(args,addresses,r,getInfo(r));
+  // console.log(args,addresses,r,getInfo(r));
   return r;
 }
 export interface GetBasketStatusActionInfo {
