@@ -403,6 +403,7 @@ export class Families extends IdEntity<FamilyId>  {
     this.phone1.error = undefined;
     this.phone2.error = undefined;
     this.name.error = undefined;
+    let foundExactName = false;
     for (const d of this.duplicateFamilies) {
       let errorText = 'ערך כבר קיים למשפחת "' + d.name + '" בכתובת ' + d.address;
       if (d.tz)
@@ -411,8 +412,12 @@ export class Families extends IdEntity<FamilyId>  {
         this.phone1.error = errorText;
       if (d.phone2)
         this.phone2.error = errorText;
-      if (d.nameDup && this.name.value != this.name.originalValue)
-        this.name.error = errorText;
+      if (d.nameDup && this.name.value != this.name.originalValue) {
+        if (!foundExactName)
+          this.name.error = errorText;
+        if (this.name.value && d.name && this.name.value.trim() == d.name.trim())
+          foundExactName = tre;
+      }
     }
 
   }
