@@ -3,6 +3,7 @@ import { readFileSync, readFile } from "fs";
 import { ColumnHashSet, DateColumn } from "radweb";
 
 import { GetGeoInformation } from "../shared/googleApiHelpers";
+
 import { foreachEntityItem, foreachSync } from "../shared/utils";
 
 import { serverInit } from "./serverInit";
@@ -17,6 +18,7 @@ import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { BasketType } from "../families/BasketType";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { DeliveryStats } from "../delivery-follow-up/delivery-stats";
+import * as fetch from 'node-fetch';
 
 serverInit();
 let match = 0;
@@ -25,14 +27,47 @@ export async function DoIt() {
 
 
         let context = new ServerContext();
-        let f = await context.for(Helpers).count();
+        let f = await context.for(Families).findFirst(f => f.id.isEqualTo("c40b077e-20b8-43d7-8793-2a1e56aedcf0"));
+        let g = f.getGeocodeInformation();
+        
         let name = (await ApplicationSettings.getAsync(context)).organisationName.value;
         console.log(name);
+        var streen = 'רימלט';
+        var house = '14';
+        var location = 'רמת גן';
+       
+        console.time('geocode');
+        let x =await GetGeoInformation('רימלט 14 רמת גן');
+        console.timeEnd('geocode');
+        console.time('zip');
+        for (const c of g.info.results[0].address_components) {
+            switch (c.types[0]) {
+                case "street_number":
+                    house = c.long_name;
+                    break;
+                case "route":
+                    streen = c.long_name;
+                    break;
+                case "locality":
+                    location = c.long_name;
+                    break;
+            }
+        }
+        let r = await (await fetch.default(
+            'https://www.zipy.co.il/findzip', {
+                method: 'post',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                },
+                body: 'location=' + encodeURI(location) + '&street=' + encodeURI(streen) + '&house=' + encodeURI(house) + '&entrance=&pob='
+            }
+        )).json();
+        console.timeEnd('zip');
+        console.log(r);
 
 
-
-
-     //   await ImportFromExcel();
+        //   await ImportFromExcel();
     }
     catch (err) {
         console.error(err);
@@ -56,7 +91,7 @@ async function ImportFromExcel() {
 
     let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\מקבלי מזון.xls");
     let report = [];
-    
+
 
     for (let sheetIndex = 0; sheetIndex < 1; sheetIndex++) {
         const element = wb.SheetNames[sheetIndex];
@@ -369,7 +404,7 @@ async function readMerkazMazonFamily2(context: ServerContext, o: any, get: (key:
         }
         f.phone1.value = get('טלפון');
         f.phone2.value = get('טלפון נייד');
-        
+
         f.tz.value = taz;
 
         f.floor.value = get('קומה');
@@ -385,7 +420,7 @@ async function readMerkazMazonFamily2(context: ServerContext, o: any, get: (key:
         f.deliveryComments.value = get('הערות');
 
         report(f.name.value, 'חדש', 'חדש', 'חדש');
-  //      await f.save();
+        //      await f.save();
     }
     else {
         let changes = {};
@@ -406,8 +441,8 @@ async function readMerkazMazonFamily2(context: ServerContext, o: any, get: (key:
             f.courierComments.value = '';
         }
         ''.toString();
-        if (f.wasChanged()){
-        //    await f.save();
+        if (f.wasChanged()) {
+            //    await f.save();
         }
         //    console.log('match ', o.__rowNum__, o);
     }

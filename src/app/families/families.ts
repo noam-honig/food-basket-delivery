@@ -13,6 +13,7 @@ import { Context, EntityClass, DirectSQL } from "../shared/context";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { FamilyDeliveries } from "./FamilyDeliveries";
 import { RunOnServer } from "../auth/server-action";
+import * as fetch from 'node-fetch';
 
 
 @EntityClass
@@ -83,6 +84,7 @@ export class Families extends IdEntity<FamilyId>  {
               this.city.value = '';
               if (geo.ok()) {
                 this.city.value = geo.getCity();
+                await this.setPostalCodeServerOnly(geo);
               }
               this.addressOk.value = !geo.partialMatch();
               this.addressLongitude.value = geo.location().lng;
@@ -176,6 +178,44 @@ export class Families extends IdEntity<FamilyId>  {
     caption: 'טלפון שיוך למשנע',
     virtualData: async () => (await this.context.for(Helpers).lookupAsync(this.courierAssignUser)).phone.value
   });
+
+  private async setPostalCodeServerOnly() {
+    if (!process.env.AUTO_POSTAL_CODE)
+      return;
+    var geo = this.getGeocodeInformation();
+    var house = '';
+    var streen = '';
+    var location = '';
+    for (const c of geo.info.results[0].address_components) {
+      switch (c.types[0]) {
+        case "street_number":
+          house = c.long_name;
+          break;
+        case "route":
+          streen = c.long_name;
+          break;
+        case "locality":
+          location = c.long_name;
+          break;
+      }
+    }
+    try {
+      let r = await (await fetch.default('https://www.zipy.co.il/findzip', {
+        method: 'post',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        body: 'location=' + encodeURI(location) + '&street=' + encodeURI(streen) + '&house=' + encodeURI(house) + '&entrance=&pob='
+      })).json();
+      if (r.errors == 0 && r.zip) {
+        this.postalCode.value = +r.zip;
+      }
+    }
+    catch (err) {
+      console.log(err);
+    }
+  }
 
   courierHelpName() {
     if (ApplicationSettings.get(this.context).helpText.value)
@@ -390,6 +430,8 @@ export class Families extends IdEntity<FamilyId>  {
   }
   tzDelay: delayWhileTyping;
   private delayCheckDuplicateFamilies() {
+    if (this.context.onServer)
+      return;
     if (!this.tzDelay)
       this.tzDelay = new delayWhileTyping(1000);
     this.tzDelay.do(async () => {
