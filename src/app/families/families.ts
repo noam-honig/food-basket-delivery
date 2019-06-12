@@ -84,7 +84,7 @@ export class Families extends IdEntity<FamilyId>  {
               this.city.value = '';
               if (geo.ok()) {
                 this.city.value = geo.getCity();
-                await this.setPostalCodeServerOnly(geo);
+                await this.setPostalCodeServerOnly();
               }
               this.addressOk.value = !geo.partialMatch();
               this.addressLongitude.value = geo.location().lng;
