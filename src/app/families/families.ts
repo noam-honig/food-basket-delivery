@@ -416,7 +416,7 @@ export class Families extends IdEntity<FamilyId>  {
         if (!foundExactName)
           this.name.error = errorText;
         if (this.name.value && d.name && this.name.value.trim() == d.name.trim())
-          foundExactName = tre;
+          foundExactName = true;
       }
     }
 
