@@ -242,6 +242,8 @@ export class SqlBuilder {
   }
 
   str(val: string): string {
+    if (val == undefined)
+      val = '';
     return '\'' + val.replace('\'', '\'\'') + '\'';
   }
   private dict = new Map<Column<any>, string>();
@@ -295,7 +297,7 @@ export class SqlBuilder {
   eq<T>(a: Column<T>, b: T | Column<T>) {
     return this.build(a, ' = ', b);
   }
-  eqAny(a:string,b:any){
+  eqAny(a: string, b: any) {
     return this.build(a, ' = ', b);
   }
   ne<T>(a: Column<T>, b: T | Column<T>) {
@@ -550,7 +552,7 @@ export class delayWhileTyping {
     this.lastTimer = setTimeout(() => {
       what();
     }, this.ms);
-    
+
   }
 }
 

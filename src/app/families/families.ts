@@ -468,11 +468,9 @@ export class Families extends IdEntity<FamilyId>  {
   @RunOnServer({ allowed: x => x.isAdmin() })
   static async checkDuplicateFamilies(name: string, tz: string, phone1: string, phone2: string, id: string, context?: Context, directSQL?: DirectSQL) {
     let result: duplicateFamilyInfo[] = [];
-
+ 
     var sql = new SqlBuilder();
     var f = new Families(context);
-    if (!id)
-      id = '';
 
     let compareAsNumber = (col: Column<string>, value: string) => {
       return sql.and(sql.eq(sql.extractNumber(col), sql.extractNumber(sql.str(value))), sql.build(sql.extractNumber(sql.str(value)), ' <> ', 0));
