@@ -179,7 +179,7 @@ export class Families extends IdEntity<FamilyId>  {
     virtualData: async () => (await this.context.for(Helpers).lookupAsync(this.courierAssignUser)).phone.value
   });
 
-  private async setPostalCodeServerOnly() {
+   async setPostalCodeServerOnly() {
     if (!process.env.AUTO_POSTAL_CODE)
       return;
     var geo = this.getGeocodeInformation();

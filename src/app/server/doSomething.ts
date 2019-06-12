@@ -27,44 +27,13 @@ export async function DoIt() {
 
 
         let context = new ServerContext();
-        let f = await context.for(Families).findFirst(f => f.id.isEqualTo("c40b077e-20b8-43d7-8793-2a1e56aedcf0"));
-        let g = f.getGeocodeInformation();
+        
         
         let name = (await ApplicationSettings.getAsync(context)).organisationName.value;
         console.log(name);
-        var streen = 'רימלט';
-        var house = '14';
-        var location = 'רמת גן';
-       
-        console.time('geocode');
-        let x =await GetGeoInformation('רימלט 14 רמת גן');
-        console.timeEnd('geocode');
-        console.time('zip');
-        for (const c of g.info.results[0].address_components) {
-            switch (c.types[0]) {
-                case "street_number":
-                    house = c.long_name;
-                    break;
-                case "route":
-                    streen = c.long_name;
-                    break;
-                case "locality":
-                    location = c.long_name;
-                    break;
-            }
-        }
-        let r = await (await fetch.default(
-            'https://www.zipy.co.il/findzip', {
-                method: 'post',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                },
-                body: 'location=' + encodeURI(location) + '&street=' + encodeURI(streen) + '&house=' + encodeURI(house) + '&entrance=&pob='
-            }
-        )).json();
-        console.timeEnd('zip');
-        console.log(r);
+      
+
+     
 
 
         //   await ImportFromExcel();

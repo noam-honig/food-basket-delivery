@@ -303,8 +303,13 @@ export class FamiliesComponent implements OnInit {
         visible: f => this.problemOnly
       },
       {
-        cssClass: 'btn glyphicon glyphicon-check',
-        visible: f => f.deliverStatus.listValue == DeliveryStatus.NotInEvent,
+        cssClass: 'btn btn-success',
+        name:'משלוח חדש',
+        visible: f => f.deliverStatus.listValue != DeliveryStatus.ReadyForDelivery&&
+        f.deliverStatus.listValue != DeliveryStatus.SelfPickup&&
+        f.deliverStatus.listValue != DeliveryStatus.Frozen&&
+        f.deliverStatus.listValue != DeliveryStatus.RemovedFromList
+        ,
         click: async f => {
           await this.busy.donotWait(async () => {
             f.setNewBasket();
