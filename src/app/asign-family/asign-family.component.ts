@@ -496,11 +496,12 @@ export class AsignFamilyComponent implements OnInit {
         let closestDist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, closest.getGeocodeInformation().location());
         for (let j = 0; j < temp.length; j++) {
           let dist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, temp[j].getGeocodeInformation().location());
-          if (dist < closestDist) {
-            closestIndex = j;
+          if (dist < closestDist || dist==closestDist &&temp[j].floor.value>closest.floor.value) {
             closestDist = dist;
+            closestIndex = j;
             closest = temp[j];
           }
+          
         }
         lastLoc = closest.getGeocodeInformation().location();
         sorted.push(temp.splice(closestIndex, 1)[0]);
