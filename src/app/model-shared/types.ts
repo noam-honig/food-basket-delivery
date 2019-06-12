@@ -237,6 +237,9 @@ export async function checkForDuplicateValue(row: Entity<any>, column: Column<an
 }
 
 export class SqlBuilder {
+  extractNumber(from: any): any {
+    return this.build("NULLIF(regexp_replace(", from, ", '\\D','','g'), '')::numeric");
+  }
 
   str(val: string): string {
     return '\'' + val.replace('\'', '\'\'') + '\'';
@@ -290,6 +293,9 @@ export class SqlBuilder {
     return v;
   }
   eq<T>(a: Column<T>, b: T | Column<T>) {
+    return this.build(a, ' = ', b);
+  }
+  eqAny(a:string,b:any){
     return this.build(a, ' = ', b);
   }
   ne<T>(a: Column<T>, b: T | Column<T>) {
@@ -533,6 +539,21 @@ export class myThrottle {
     }
   }
 }
+export class delayWhileTyping {
+  lastTimer: any;
+  constructor(private ms: number) {
+
+  }
+
+  do(what: () => void) {
+    clearTimeout(this.lastTimer);
+    this.lastTimer = setTimeout(() => {
+      what();
+    }, this.ms);
+    
+  }
+}
+
 export interface QueryBuilder {
   select: () => any[];
   from: Entity<any>;

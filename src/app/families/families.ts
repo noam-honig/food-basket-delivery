@@ -4,14 +4,15 @@ import { YesNoColumn } from "./YesNo";
 import { LanguageColumn } from "./Language";
 import { FamilySourceId } from "./FamilySources";
 import { BasketId, BasketType } from "./BasketType";
-import { NumberColumn, StringColumn, IdEntity, Id, changeDate, DateTimeColumn, SqlBuilder, BoolColumn, PhoneColumn } from "../model-shared/types";
-import { ColumnSetting, Column } from "radweb";
+import { NumberColumn, StringColumn, IdEntity, Id, changeDate, DateTimeColumn, SqlBuilder, BoolColumn, PhoneColumn, delayWhileTyping } from "../model-shared/types";
+import { ColumnSetting, Column, FilterConsumerBridgeToSqlRequest } from "radweb";
 import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
 import { myAuthInfo } from "../auth/my-auth-info";
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
-import { Context, EntityClass } from "../shared/context";
+import { Context, EntityClass, DirectSQL } from "../shared/context";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { FamilyDeliveries } from "./FamilyDeliveries";
+import { RunOnServer } from "../auth/server-action";
 
 
 @EntityClass
@@ -116,12 +117,16 @@ export class Families extends IdEntity<FamilyId>  {
 
   name = new StringColumn({
     caption: "שם",
+    valueChange: () => this.delayCheckDuplicateFamilies(),
     onValidate: v => {
       if (!v.value || v.value.length < 2)
         this.name.error = 'השם קצר מידי';
     }
   });
-  tz = new StringColumn({ caption: 'מספר זהות', excludeFromApi: !this.context.isAdmin() });
+
+  tz = new StringColumn({
+    caption: 'מספר זהות', excludeFromApi: !this.context.isAdmin(), valueChange: () => this.delayCheckDuplicateFamilies()
+  });
   familyMembers = new NumberColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'מספר נפשות' });
   language = new LanguageColumn();
   basketType = new BasketId(this.context, 'סוג סל');
@@ -140,9 +145,9 @@ export class Families extends IdEntity<FamilyId>  {
   deliveryComments = new StringColumn('הערות למשנע');
   addressApiResult = new StringColumn();
 
-  phone1 = new PhoneColumn({ caption: "טלפון 1", inputType: 'tel', dbName: 'phone' });
+  phone1 = new PhoneColumn({ caption: "טלפון 1", inputType: 'tel', dbName: 'phone', valueChange: () => this.delayCheckDuplicateFamilies() });
   phone1Description = new StringColumn('תאור טלפון 1');
-  phone2 = new PhoneColumn({ caption: "טלפון 2", inputType: 'tel' });
+  phone2 = new PhoneColumn({ caption: "טלפון 2", inputType: 'tel', valueChange: () => this.delayCheckDuplicateFamilies() });
   phone2Description = new StringColumn('תאור טלפון 2');
 
 
@@ -159,7 +164,7 @@ export class Families extends IdEntity<FamilyId>  {
   deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
   fixedCourier = new HelperId(this.context, "משנע קבוע");
   courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
-  
+
 
   courierAssignUserName = new StringColumn({
     caption: 'שם שיוך למשנע',
@@ -225,11 +230,11 @@ export class Families extends IdEntity<FamilyId>  {
     }
   });
   visibleToCourier = new BoolColumn({
-    dbReadOnly:true,
-    dbName:()=>{
+    dbReadOnly: true,
+    dbName: () => {
       var sql = new SqlBuilder();
-      return sql.case([{when:[sql.or(sql.gt(this.deliveryStatusDate,'current_date -1'),this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id))],then:true}],false);
-      
+      return sql.case([{ when: [sql.or(sql.gt(this.deliveryStatusDate, 'current_date -1'), this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id))], then: true }], false);
+
     }
   });
 
@@ -255,7 +260,7 @@ export class Families extends IdEntity<FamilyId>  {
     return sql.columnInnerSelect(this, {
       select: () => [sql.columnWithAlias(col(fd), alias)],
       from: fd,
-      
+
       where: () => [sql.eq(fd.family, this.id),
       ],
       orderBy: [{ column: fd.deliveryStatusDate, descending: true }]
@@ -276,7 +281,7 @@ export class Families extends IdEntity<FamilyId>  {
       },
       getValue: f => {
         if (!f.previousDeliveryStatus.value)
-        return '';
+          return '';
         let r = f.previousDeliveryStatus.displayValue;
         if (f.previousDeliveryComment.value) {
           r += ': ' + f.previousDeliveryComment.value
@@ -381,10 +386,99 @@ export class Families extends IdEntity<FamilyId>  {
     }
     return n.deliverStatus.displayValue;
   }
+  tzDelay: delayWhileTyping;
+  private delayCheckDuplicateFamilies() {
+    if (!this.tzDelay)
+      this.tzDelay = new delayWhileTyping(1000);
+    this.tzDelay.do(async () => {
+      this.checkDuplicateFamilies();
+
+    });
+
+  }
+  duplicateFamilies: duplicateFamilyInfo[] = [];
+  async checkDuplicateFamilies() {
+    this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name.value, this.tz.value, this.phone1.value, this.phone2.value, this.id.value);
+    this.tz.error = undefined;
+    this.phone1.error = undefined;
+    this.phone2.error = undefined;
+    this.name.error = undefined;
+    for (const d of this.duplicateFamilies) {
+      let errorText = 'ערך כבר קיים למשפחת "' + d.name + '" בכתובת ' + d.address;
+      if (d.tz)
+        this.tz.error = errorText;
+      if (d.phone1)
+        this.phone1.error = errorText;
+      if (d.phone2)
+        this.phone2.error = errorText;
+      if (d.nameDup && this.name.value != this.name.originalValue)
+        this.name.error = errorText;
+    }
+
+  }
+  @RunOnServer({ allowed: x => x.isAdmin() })
+  static async checkDuplicateFamilies(name: string, tz: string, phone1: string, phone2: string, id: string, context?: Context, directSQL?: DirectSQL) {
+    let result: duplicateFamilyInfo[] = [];
+    if (!tz)
+      return result;
+    var sql = new SqlBuilder();
+    var f = new Families(context);
+
+    let compareAsNumber = (col: Column<string>, value: string) => {
+      return sql.and(sql.eq(sql.extractNumber(col), sql.extractNumber(sql.str(value))), sql.build(sql.extractNumber(sql.str(value)), ' <> ', 0));
+    };
+    let tzCol = compareAsNumber(f.tz, tz);
+    let phone1Col = sql.or(compareAsNumber(f.phone1, phone1), compareAsNumber(f.phone2, phone1));
+    let phone2Col = sql.or(compareAsNumber(f.phone1, phone2), compareAsNumber(f.phone2, phone2));
+    let nameCol = 'false';
+    if (name && name.trim().length > 0)
+      nameCol = sql.build('trim(', f.name, ') like  ', sql.str('%' + name.trim() + '%'));
+
+
+    let sqlResult = await directSQL.execute(sql.query({
+      select: () => [f.id,
+      f.name,
+      f.address,
+      sql.columnWithAlias(tzCol, 'tz'),
+      sql.columnWithAlias(phone1Col, 'phone1'),
+      sql.columnWithAlias(phone2Col, 'phone2'),
+      sql.columnWithAlias(nameCol, 'nameDup')
+
+      ],
+
+      from: f,
+      where: () => [sql.or(tzCol, phone1Col, phone2Col, nameCol), sql.ne(f.id, sql.str(id))]
+    }));
+    if (!sqlResult.rows || sqlResult.rows.length < 1)
+      return [];
+
+    for (const row of sqlResult.rows) {
+      result.push({
+        id: row[sqlResult.fields[0].name],
+        name: row[sqlResult.fields[1].name],
+        address: row[sqlResult.fields[2].name],
+        tz: row[sqlResult.fields[3].name],
+        phone1: row[sqlResult.fields[4].name],
+        phone2: row[sqlResult.fields[5].name],
+        nameDup: row[sqlResult.fields[6].name]
+
+      });
+    }
+    return result;
+
+  }
 }
 export class FamilyId extends Id { }
 
-
+export interface duplicateFamilyInfo {
+  id: string;
+  name: string;
+  address: string;
+  tz: boolean;
+  phone1: boolean;
+  phone2: boolean;
+  nameDup: boolean;
+}
 
 export interface FamilyUpdateInfo {
   name: StringColumn,
