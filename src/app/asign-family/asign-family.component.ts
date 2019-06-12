@@ -346,7 +346,7 @@ export class AsignFamilyComponent implements OnInit {
     }
     console.time('existingFamilies');
     let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id)) });
-    let locationReferenceFamilies = existingFamilies;
+    let locationReferenceFamilies = [...existingFamilies];
     if (locationReferenceFamilies.length == 0) {
       let from = new Date();
       from.setDate(from.getDate()-1);
