@@ -60,6 +60,7 @@ export class UpdateFamilyComponent implements OnInit {
         families.addressComment,
         families.addressByGoogle(),
         families.city,
+        families.postalCode,
         families.addressOk
 
       ]

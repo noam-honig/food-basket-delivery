@@ -24,6 +24,7 @@ export class FamilyDeliveries extends IdEntity<Id>  {
     archive_address = new StringColumn("כתובת");
     archive_floor = new StringColumn('קומה');
     archive_appartment = new StringColumn('דירה');
+    archive_postalCode = new NumberColumn('מיקוד');
     archive_city = new StringColumn({ caption: "עיר (מתעדכן אוטומטית)" });
     archive_addressComment = new StringColumn('הערת כתובת');
     archive_deliveryComments = new StringColumn('הערות למשנע');

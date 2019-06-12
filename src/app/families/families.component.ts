@@ -258,6 +258,7 @@ export class FamiliesComponent implements OnInit {
         families.appartment,
         this.addressCommentColumn = { column: families.addressComment },
         families.city,
+        families.postalCode,
         this.addressByGoogleColumn = families.addressByGoogle(),
         {
           caption: 'מה הבעיה של גוגל',
