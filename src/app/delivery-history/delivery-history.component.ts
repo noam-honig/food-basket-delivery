@@ -13,6 +13,7 @@ import { DialogService } from '../select-popup/dialog';
 import { SelectService } from '../select-popup/select-service';
 import { saveToExcel } from '../shared/saveToExcel';
 import { BusyService } from '../select-popup/busy-service';
+import { FamilySourceId } from '../families/FamilySources';
 
 @Component({
   selector: 'app-delivery-history',
@@ -61,13 +62,14 @@ export class DeliveryHistoryComponent implements OnInit {
       d.deliverStatus.getColumn(),
       d.basketType.getColumn(),
       d.city,
+      d.familySource.getColumn(),
       d.courierComments,
       d.courierAssignUser.getColumn(this.selectService),
       d.courierAssingTime,
       d.deliveryStatusUser.getColumn(this.selectService)
     ],
     hideDataArea: true,
-    numOfColumnsInGrid: 6,
+    numOfColumnsInGrid: 7,
     knowTotalRows:true,
     get: {
       limit:20,
@@ -93,6 +95,7 @@ export class FamilyDeliveriesStats extends ContextEntity<string> {
   basketType = new BasketId(this.context, 'סוג סל');
   city = new StringColumn({ caption: "עיר" });
   courierComments = new StringColumn('הערות מסירה');
+  familySource = new FamilySourceId(this.context, { caption: 'גורם מפנה' });
   courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
   courierAssingTime = new changeDate('מועד שיוך למשנע');
   deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
@@ -114,6 +117,7 @@ export class FamilyDeliveriesStats extends ContextEntity<string> {
           f.city,
           f.courierComments,
           f.deliveryStatusDate,
+          f.familySource,
           f.courierAssignUser,
           f.courierAssingTime,
           f.deliveryStatusUser
@@ -130,6 +134,7 @@ export class FamilyDeliveriesStats extends ContextEntity<string> {
             d.archive_city,
             d.courierComments,
             d.deliveryStatusDate,
+            d.archiveFamilySource,
             d.courierAssignUser,
             d.courierAssingTime,
             d.deliveryStatusUser],

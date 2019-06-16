@@ -5,6 +5,7 @@ import { FamilyId, Families } from "./families";
 import { DeliveryStatusColumn, DeliveryStatus } from "./DeliveryStatus";
 import { HelperId, HelperIdReadonly } from "../helpers/helpers";
 import { Entity, CompoundIdColumn } from "radweb";
+import { FamilySourceId } from "./FamilySources";
 
 @EntityClass
 export class FamilyDeliveries extends IdEntity<Id>  {
@@ -20,7 +21,7 @@ export class FamilyDeliveries extends IdEntity<Id>  {
     courierAssingTime = new changeDate('מועד שיוך למשנע');
     deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
 
-
+    archiveFamilySource = new FamilySourceId(this.context, { caption: 'גורם מפנה' });
     archive_address = new StringColumn("כתובת");
     archive_floor = new StringColumn('קומה');
     archive_appartment = new StringColumn('דירה');

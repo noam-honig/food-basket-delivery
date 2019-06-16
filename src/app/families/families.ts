@@ -53,7 +53,9 @@ export class Families extends IdEntity<FamilyId>  {
               fd.deliveryStatusDate.value = this.deliveryStatusDate.originalValue;
               fd.courierAssignUser.value = this.courierAssignUser.originalValue;
               fd.courierAssingTime.value = this.courierAssingTime.originalValue;
+              fd.archiveFamilySource.value = this.familySource.originalValue;
               fd.archive_address.value = this.address.originalValue;
+              
               fd.archive_floor.value = this.floor.originalValue;
               fd.archive_appartment.value = this.appartment.originalValue;
               fd.archive_postalCode.value = this.postalCode.originalValue;

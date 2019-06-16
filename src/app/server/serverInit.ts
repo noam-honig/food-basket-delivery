@@ -167,6 +167,18 @@ export async function serverInit() {
 
 
         }
+        if (settings.dataStructureVersion.value == 1) {
+            console.log("updating family source for historical information");
+            let f = new Families(context);
+            let fd = new FamilyDeliveries(context);
+            sql.update(fd,{
+                set:()=>[[fd.archiveFamilySource,f.familySource]],
+                from:f,
+                where:()=>[sql.eq(f.id,fd.family)]
+            });            
+            settings.dataStructureVersion.value = 2;
+            await settings.save();
+        }
 
     } catch (error) {
         console.error(error);
