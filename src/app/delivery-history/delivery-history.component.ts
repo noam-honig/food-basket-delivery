@@ -6,7 +6,7 @@ import { BasketId } from '../families/BasketType';
 import { DeliveryStatusColumn } from '../families/DeliveryStatus';
 import { HelperId, HelperIdReadonly } from '../helpers/helpers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
-import { CompoundIdColumn, DateColumn, DataAreaSettings } from 'radweb';
+import { CompoundIdColumn, DateColumn, DataAreaSettings, JsonStorageDataProvider, InMemoryDataProvider, Entity, GridSettings, EntitySource } from 'radweb';
 import { HolidayDeliveryAdmin } from '../auth/auth-guard';
 import { Route } from '@angular/router';
 import { DialogService } from '../select-popup/dialog';
@@ -39,12 +39,23 @@ export class DeliveryHistoryComponent implements OnInit {
     columnSettings: () => [this.fromDate, this.toDate],
     numberOfColumnAreas: 2
   });
+
+  helperInfo: GridSettings<helperHistoryInfo>;
+  helperSource: EntitySource<helperHistoryInfo>;
   private getEndOfMonth(): Date {
     return new Date(this.fromDate.dateValue.getFullYear(), this.fromDate.dateValue.getMonth() + 1, 0);
   }
 
-  refresh() {
+  async refresh() {
     this.deliveries.getRecords();
+    for (const h of await this.helperSource.find({})) {
+      await h.delete();
+    }
+    let h = this.helperSource.createNewItem();
+    h.id.value='123';
+    h.name.value = 'noam';
+    h.save();
+    this.helperInfo.getRecords();
   }
   static route: Route = {
     path: 'history',
@@ -52,6 +63,15 @@ export class DeliveryHistoryComponent implements OnInit {
     data: { name: 'היסטורית משלוחים' }, canActivate: [HolidayDeliveryAdmin]
   }
   constructor(private context: Context, private selectService: SelectService, private busy: BusyService) {
+    let x = new InMemoryDataProvider();
+    let hhi = new helperHistoryInfo(x);
+    this.helperSource = hhi.source;
+    this.helperInfo = new GridSettings(hhi, {
+      columnSettings: h => [
+        h.name
+      ]
+    });
+
     let today = new Date();
 
     this.fromDate.dateValue = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -116,9 +136,20 @@ export class DeliveryHistoryComponent implements OnInit {
     }
   });
   ngOnInit() {
+
   }
 
 }
+
+export class helperHistoryInfo extends Entity<string>{
+  id = new StringColumn();
+  name = new StringColumn('שם');
+  constructor(source: InMemoryDataProvider) {
+    super(() => new helperHistoryInfo(source), source, { name: 'helperHistoryInfo' });
+    this.initColumns(this.id);
+  }
+}
+
 @EntityClass
 export class FamilyDeliveriesStats extends ContextEntity<string> {
   family = new FamilyId();
