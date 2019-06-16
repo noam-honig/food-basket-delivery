@@ -1,5 +1,17 @@
 <mat-card>
+  <div  style="margin-bottom:15px">
+    <button mat-raised-button (click)="previous()">
+        <mat-icon>keyboard_arrow_right</mat-icon>
+      </button>
+      <button mat-raised-button (click)="today()">
+        <mat-icon>today</mat-icon>
+      </button>
+      <button mat-raised-button (click)="next()">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+      </button>
+    </div>
   <div style="display:flex;">
+    
     <data-area [settings]="rangeArea"></data-area>
     <button mat-mini-fab style="margin-bottom:5px" (click)="refresh()">
       <mat-icon>refresh</mat-icon>

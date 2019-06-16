@@ -15,19 +15,21 @@ import { saveToExcel } from '../shared/saveToExcel';
 import { BusyService } from '../select-popup/busy-service';
 import { FamilySourceId } from '../families/FamilySources';
 
+var fullDayValue = 24 * 60 * 60 * 1000;
+
 @Component({
   selector: 'app-delivery-history',
   templateUrl: './delivery-history.component.html',
   styleUrls: ['./delivery-history.component.scss']
 })
 export class DeliveryHistoryComponent implements OnInit {
-  
+
   fromDate = new DateColumn({
     caption: 'מתאריך',
     valueChange: () => {
 
       if (this.toDate.dateValue < this.fromDate.dateValue) {
-        this.toDate.dateValue = new Date(this.fromDate.dateValue.getFullYear(), this.fromDate.dateValue.getMonth() + 1, 0);
+        this.toDate.dateValue = this.getEndOfMonth();
       }
 
     }
@@ -37,6 +39,10 @@ export class DeliveryHistoryComponent implements OnInit {
     columnSettings: () => [this.fromDate, this.toDate],
     numberOfColumnAreas: 2
   });
+  private getEndOfMonth(): Date {
+    return new Date(this.fromDate.dateValue.getFullYear(), this.fromDate.dateValue.getMonth() + 1, 0);
+  }
+
   refresh() {
     this.deliveries.getRecords();
   }
@@ -45,14 +51,43 @@ export class DeliveryHistoryComponent implements OnInit {
     component: DeliveryHistoryComponent,
     data: { name: 'היסטורית משלוחים' }, canActivate: [HolidayDeliveryAdmin]
   }
-  constructor(private context: Context, private selectService: SelectService,private busy:BusyService) {
+  constructor(private context: Context, private selectService: SelectService, private busy: BusyService) {
     let today = new Date();
 
     this.fromDate.dateValue = new Date(today.getFullYear(), today.getMonth(), 1);
-    this.toDate.dateValue = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    this.toDate.dateValue = this.getEndOfMonth();
   }
-  async saveToExcel(){
-    await saveToExcel(this.deliveries,"משלוחים",this.busy,(d:FamilyDeliveries,c)=>c==d.id||c==d.family);
+  today() {
+    this.fromDate.dateValue = new Date();
+    this.toDate.dateValue = new Date();
+    this.refresh();
+
+  }
+  next() {
+    this.setRange(+1);
+  }
+  previous() {
+
+    this.setRange(-1);
+  }
+  private setRange(delta: number) {
+    if (this.fromDate.dateValue.getDate() == 1 && this.toDate.dateValue.toDateString() == this.getEndOfMonth().toDateString()) {
+      this.fromDate.dateValue = new Date(this.fromDate.dateValue.getFullYear(), this.fromDate.dateValue.getMonth() + delta, 1);
+      this.toDate.dateValue = this.getEndOfMonth();
+    } else {
+      let difference = this.toDate.dateValue.getTime() - this.fromDate.dateValue.getTime();
+      if (difference < fullDayValue)
+        difference = fullDayValue;
+      difference *= delta;
+      this.fromDate.dateValue = new Date(this.fromDate.dateValue.getTime() + difference);
+      this.toDate.dateValue = new Date(this.toDate.dateValue.getTime() + difference);
+
+    }
+    this.refresh();
+  }
+
+  async saveToExcel() {
+    await saveToExcel(this.deliveries, "משלוחים", this.busy, (d: FamilyDeliveries, c) => c == d.id || c == d.family);
   }
   deliveries = this.context.for(FamilyDeliveriesStats).gridSettings({
     columnSettings: d => [
@@ -70,12 +105,12 @@ export class DeliveryHistoryComponent implements OnInit {
     ],
     hideDataArea: true,
     numOfColumnsInGrid: 7,
-    knowTotalRows:true,
+    knowTotalRows: true,
     get: {
-      limit:20,
+      limit: 20,
       where: d => {
         var toDate = this.toDate.dateValue;
-        toDate = new Date(toDate.getFullYear(),toDate.getMonth(),toDate.getDate()+1);
+        toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
         return d.deliveryStatusDate.IsGreaterOrEqualTo(this.fromDate).and(d.deliveryStatusDate.IsLessThan(DateColumn.dateToString(toDate)))
       }
     }
@@ -146,5 +181,5 @@ export class FamilyDeliveriesStats extends ContextEntity<string> {
     });
     this.initColumns(new CompoundIdColumn(this, this.family, this.id));
   }
-  
+
 }
