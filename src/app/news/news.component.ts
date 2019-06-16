@@ -55,12 +55,16 @@ export class NewsComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.refresh();
   }
-
+  newsRows=50;
   async refresh() {
 
     this.busy.donotWait(async () => {
-      this.news = await this.context.for(NewsUpdate).find({ where: this.currentFilter.where, orderBy: n => [{ column: n.updateTime, descending: true }], limit: 50 });
+      this.news = await this.context.for(NewsUpdate).find({ where: this.currentFilter.where, orderBy: n => [{ column: n.updateTime, descending: true }], limit: this.newsRows });
     });
+  }
+  moreNews(){
+    this.newsRows*=2;
+    this.refresh();
   }
   icon(n: NewsUpdate) {
 
