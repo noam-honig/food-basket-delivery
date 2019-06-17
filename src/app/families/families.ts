@@ -71,6 +71,8 @@ export class Families extends IdEntity<FamilyId>  {
               await fd.save();
               if (this.courier.value == this.courier.originalValue) {
                 this.courier.value = this.fixedCourier.value;
+                this.courierAssignUser.value = this.context.info.helperId;
+                this.courierAssingTime.dateValue = new Date();
               }
               if (this.courierComments.value == this.courierComments.originalValue)
                 this.courierComments.value = '';
