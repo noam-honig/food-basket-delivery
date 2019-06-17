@@ -80,10 +80,10 @@ export class DeliveryHistoryComponent implements OnInit {
         }
       ],
       get: {
-        limit:100,
+        limit: 100,
         orderBy: h => [{ column: h.deliveries, descending: true }]
       },
-       knowTotalRows: true
+      knowTotalRows: true
     });
 
     let today = new Date();
@@ -98,6 +98,10 @@ export class DeliveryHistoryComponent implements OnInit {
     var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.fromDate.value, this.toDate.value);
     for (const hh of x) {
       let h = this.helperSource.fromPojo(hh);
+      for (const c of h.__iterateColumns()) {
+        if (c instanceof NumberColumn)
+          c.value = +c.value;
+      }
       h.__entityData["newRow"] = true;
       await h.save();
     }
