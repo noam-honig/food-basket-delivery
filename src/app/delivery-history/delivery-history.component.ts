@@ -126,12 +126,13 @@ export class DeliveryHistoryComponent implements OnInit {
       this.fromDate.dateValue = new Date(this.fromDate.dateValue.getFullYear(), this.fromDate.dateValue.getMonth() + delta, 1);
       this.toDate.dateValue = this.getEndOfMonth();
     } else {
-      let difference = this.toDate.dateValue.getTime() - this.fromDate.dateValue.getTime();
+      let difference = Math.abs( this.toDate.dateValue.getTime() - this.fromDate.dateValue.getTime());
       if (difference < fullDayValue)
         difference = fullDayValue;
       difference *= delta;
+      let to = this.toDate.dateValue;
       this.fromDate.dateValue = new Date(this.fromDate.dateValue.getTime() + difference);
-      this.toDate.dateValue = new Date(this.toDate.dateValue.getTime() + difference);
+      this.toDate.dateValue = new Date(to.getTime() + difference);
 
     }
     this.refresh();
