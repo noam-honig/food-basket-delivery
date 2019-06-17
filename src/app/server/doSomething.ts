@@ -19,6 +19,10 @@ import { BasketType } from "../families/BasketType";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { DeliveryStats } from "../delivery-follow-up/delivery-stats";
 import * as fetch from 'node-fetch';
+import { DeliveryHistoryComponent } from "../delivery-history/delivery-history.component";
+import { PostgresDataProvider } from "radweb-server-postgres";
+import { evilStatics } from "../auth/evil-statics";
+import { ActualDirectSQL } from "../auth/server-action";
 
 serverInit();
 let match = 0;
@@ -27,18 +31,22 @@ export async function DoIt() {
 
 
         let context = new ServerContext();
-        
-        
+
+
         let name = (await ApplicationSettings.getAsync(context)).organisationName.value;
         console.log(name);
-      
+        await (<PostgresDataProvider>evilStatics.dataSource).doInTransaction(async ds => {
+            var r = await DeliveryHistoryComponent.getHelperHistoryInfo('2019-06-01', '2019-06-30', context, new ActualDirectSQL(ds));
+            console.log(r);
+            console.log('');
+        });
 
-     
 
 
         //   await ImportFromExcel();
     }
     catch (err) {
+        console.error(err);
         console.error(err);
     }
 

@@ -394,8 +394,12 @@ export class SqlBuilder {
     return '(' + this.query(query) + ') result';
   }
   entityDbNameUnion(query1: QueryBuilder, query2: QueryBuilder) {
-    return '(' + this.query(query1) + ' union ' + this.query(query2) + ') result';
+    return this.union(query1, query2) + ' result';
   }
+  union(query1: QueryBuilder, query2: QueryBuilder) {
+    return '(' + this.query(query1) + ' union ' + this.query(query2) + ')';
+  }
+
   in(col: Column<any>, ...values: any[]) {
     return this.build(col, ' in (', values, ')');
   }

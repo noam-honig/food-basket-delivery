@@ -50,7 +50,7 @@ serverInit().then(async () => {
     };
 
 
-    actionInfo.runningOnServer = true;
+    
     evilStatics.auth.applyTo(eb, allUsersAlsoNotLoggedIn, {
         verify: (t, k) => jwt.verify(t, k),
         sign: (i, k) => jwt.sign(i, k),

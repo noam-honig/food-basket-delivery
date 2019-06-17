@@ -20,7 +20,7 @@ import '../app.module';
 import { WeeklyFamilyDeliveries } from '../weekly-families-deliveries/weekly-families-deliveries';
 import { WeeklyFamilies } from '../weekly-families/weekly-families';
 import { ActualSQLServerDataProvider } from 'radweb-server';
-import { ActualDirectSQL } from '../auth/server-action';
+import { ActualDirectSQL, actionInfo } from '../auth/server-action';
 import { FamilyDeliveryEvents } from '../delivery-events/FamilyDeliveryEvents';
 import { SqlBuilder } from '../model-shared/types';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -45,6 +45,7 @@ export async function serverInit() {
             ActualSQLServerDataProvider.LogToConsole = true;
             ActualDirectSQL.log = true;
         }
+        actionInfo.runningOnServer = true;
         const pool = new Pool({
             connectionString: dbUrl,
             ssl: ssl
