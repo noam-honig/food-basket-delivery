@@ -2,16 +2,16 @@
   <div class="top-bar" #myDiv>
     <button mat-raised-button color="primary" *ngIf="list.allowNextStatus()"
       [disabled]="list.nextDisabled()"
-      (click)="list.changeStatus(list.currentDelivery.status.listValue.next.status)">{{list.currentDelivery.status.listValue.next.name}}</button>
+      (click)="list.changeStatus(list.currentDelivery.status.value.next.status)">{{list.currentDelivery.status.value.next.name}}</button>
     <button mat-raised-button *ngIf="list.allowPreviousStatus()"
-      (click)="list.changeStatus(list.currentDelivery.status.listValue.prev.status)">{{list.currentDelivery.status.listValue.prev.name}}</button>
+      (click)="list.changeStatus(list.currentDelivery.status.value.prev.status)">{{list.currentDelivery.status.value.prev.name}}</button>
     <button mat-raised-button *ngIf="list.allowDelete()" (click)="list.deleteDelivery()">מחק משלוח</button>
     <button mat-mini-fab color="accent" (click)="list.updateDelivery()" *ngIf="list.canUpdateDelivery()">
       <mat-icon>create</mat-icon>
     </button>
   </div>
   <div>
-    {{list.currentDelivery.status.listValue.helpText }}
+    {{list.currentDelivery.status.value.helpText }}
   </div>
   <mat-form-field class="full-width">
     <input matInput [(ngModel)]="list.searchString" placeholder="חפשי שם מוצר" [ngModelOptions]="{standalone: true}">
