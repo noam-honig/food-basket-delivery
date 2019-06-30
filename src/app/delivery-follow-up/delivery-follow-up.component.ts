@@ -117,7 +117,7 @@ export class DeliveryFollowUpComponent implements OnInit {
         if (this.currentStatFilter) {
           addFilter(this.currentStatFilter.rule(h));
         } else {
-          addFilter(h.allFamilies.IsGreaterOrEqualTo(1))
+          addFilter(h.allFamilies.isGreaterOrEqualTo(1))
         }
 
         return result;

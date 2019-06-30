@@ -47,9 +47,9 @@ export class BatchOperationsComponent implements OnInit {
   }
  
   static createFamiliesFilterForNewBasket(f: Families, basketType: string) {
-    let x = f.deliverStatus.IsGreaterOrEqualTo(DeliveryStatus.Success.id).and(
-      f.deliverStatus.IsDifferentFrom(DeliveryStatus.Frozen.id).and(
-        f.deliverStatus.IsDifferentFrom(DeliveryStatus.RemovedFromList.id)));
+    let x = f.deliverStatus.isGreaterOrEqualTo(DeliveryStatus.Success).and(
+      f.deliverStatus.isDifferentFrom(DeliveryStatus.Frozen).and(
+        f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList)));
     if (basketType != BatchOperationsComponent.allBasketsTokenConst) {
       x = x.and(f.basketType.isEqualTo(basketType));
     }
@@ -76,8 +76,8 @@ export class BatchOperationsComponent implements OnInit {
   }
   static createFamiliesFilterForNotInEvent(f: Families, basketType: string) {
     let x =
-      f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(
-        f.deliverStatus.IsDifferentFrom(DeliveryStatus.RemovedFromList.id));
+      f.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent).and(
+        f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList));
     if (basketType != BatchOperationsComponent.allBasketsTokenConst) {
       x = x.and(f.basketType.isEqualTo(basketType));
     }
@@ -87,7 +87,7 @@ export class BatchOperationsComponent implements OnInit {
   static async setNotInEvent(basketType: string, context?: Context) {
     let families = await context.for(Families).find({ where: f => BatchOperationsComponent.createFamiliesFilterForNotInEvent(f, basketType) });
     for (const f of families) {
-      f.deliverStatus.listValue = DeliveryStatus.NotInEvent;
+      f.deliverStatus.value = DeliveryStatus.NotInEvent;
       await f.save();
     }
   }

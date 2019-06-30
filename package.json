@@ -62,7 +62,7 @@
     "password-hash": "^1.2.2",
     "path": "^0.12.7",
     "pg": "^7.6.1",
-    "radweb": "^2.0.12",
+    "radweb": "^2.0.27",
     "radweb-server": "^1.0.4",
     "radweb-server-postgres": "^1.0.3",
     "reflect-metadata": "^0.1.12",
@@ -101,8 +101,6 @@
     "karma-jasmine": "~1.1.2",
     "karma-jasmine-html-reporter": "^0.2.2",
     "protractor": "~5.4.0",
-    "ts-node": "~7.0.0",
-    "ts-node-dev": "^1.0.0-pre.30",
     "tslint": "~5.11.0",
     "typescript": "~3.1.6",
     "webpack-bundle-analyzer": "^3.3.2"

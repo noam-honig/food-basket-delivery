@@ -249,7 +249,7 @@ async function readMerkazMazonFamily(context: ServerContext, o: any, get: (key: 
 
     });
     let sal = get('ביקור בית').trim();
-    if (sal && sal.trim() == "כן" && (f.isNew() || f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery)) {
+    if (sal && sal.trim() == "כן" && (f.isNew() || f.deliverStatus.value == DeliveryStatus.ReadyForDelivery)) {
         let bask = await context.for(BasketType).lookupAsync(b => b.name.isEqualTo('סל לקשיש'));
         if (bask.isNew()) {
             bask.name.value = 'סל לקשיש';
@@ -410,10 +410,10 @@ async function readMerkazMazonFamily2(context: ServerContext, o: any, get: (key:
 
         match++;
         if (false) {
-            if (f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery && f.courier.value != '') {
+            if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery && f.courier.value != '') {
                 ''.toString();
             }
-            f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
+            f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
             f.courier.value = f.fixedCourier.value;
             f.courierComments.value = '';
         }

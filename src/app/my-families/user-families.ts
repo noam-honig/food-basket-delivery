@@ -82,10 +82,10 @@ export class UserFamiliesList {
 
     initFamilies() {
 
-        this.toDeliver = this.allFamilies.filter(f => f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery);
-        this.delivered = this.allFamilies.filter(f => f.deliverStatus.listValue == DeliveryStatus.Success || f.deliverStatus.listValue == DeliveryStatus.SuccessLeftThere);
+        this.toDeliver = this.allFamilies.filter(f => f.deliverStatus.value == DeliveryStatus.ReadyForDelivery);
+        this.delivered = this.allFamilies.filter(f => f.deliverStatus.value == DeliveryStatus.Success || f.deliverStatus.value == DeliveryStatus.SuccessLeftThere);
         this.problem = this.allFamilies.filter(f => {
-            switch (f.deliverStatus.listValue) {
+            switch (f.deliverStatus.value) {
                 case DeliveryStatus.FailedBadAddress:
                 case DeliveryStatus.FailedNotHome:
                 case DeliveryStatus.FailedOther:
@@ -99,7 +99,7 @@ export class UserFamiliesList {
         let hash: any = {};
         this.totals = [];
         this.allFamilies.forEach(ff => {
-            if (ff.deliverStatus.listValue != DeliveryStatus.Success && ff.deliverStatus.listValue != DeliveryStatus.SuccessLeftThere) {
+            if (ff.deliverStatus.value != DeliveryStatus.Success && ff.deliverStatus.value != DeliveryStatus.SuccessLeftThere) {
                 let x: basketStats = hash[ff.basketType.value];
                 if (!x) {
                     hash[ff.basketType.value] = this.totals[this.totals.push({

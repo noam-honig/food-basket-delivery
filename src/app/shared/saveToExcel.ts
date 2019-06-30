@@ -17,7 +17,7 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
 
     } as XLSX.WorkSheet;
     var dc = new DateTimeColumn();
-    dc.dateValue = new Date();
+    dc.value = new Date();
     ws["A1"] = {
       v: dc.displayValue,
       t: "d",
@@ -91,8 +91,8 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
               }
 
               if (c instanceof DateTimeColumn) {
-                addColumn('תאריך ' + c.caption, c.dateValue ? c.getStringForInputDate() : undefined, "d", false);
-                addColumn('שעת ' + c.caption, c.dateValue ? c.dateValue.getHours().toString() : undefined, "n", false);
+                addColumn('תאריך ' + c.caption, c.value ? c.getStringForInputDate() : undefined, "d", false);
+                addColumn('שעת ' + c.caption, c.value ? c.value.getHours().toString() : undefined, "n", false);
                 addColumn('מלא ' + c.caption, c.displayValue, "s", true);
               }
               else

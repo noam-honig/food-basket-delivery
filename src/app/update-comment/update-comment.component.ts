@@ -46,7 +46,7 @@ export class UpdateCommentComponent implements OnInit {
   confirm() {
     this.ok = true;
     this.dialogRef.close();
-    this.data.ok(this.data.comment, this.defaultFailStatus.id);
+    this.data.ok(this.data.comment, this.defaultFailStatus);
     return false;
   }
 
@@ -63,6 +63,6 @@ export interface UpdateCommentComponentData {
   helpText: (s: ApplicationSettings) => Column<any>
 
   comment: string,
-  ok: (comment: string, failStatusId: number) => void,
+  ok: (comment: string, failStatusId: DeliveryStatus) => void,
   cancel: () => void
 }

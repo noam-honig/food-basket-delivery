@@ -43,7 +43,7 @@ export class SendSmsAction {
                 message = 'שלום ' + helper.name.value;
                 message += " טרם נרשם במערכת שבוצעה החלוקה, אנא עדכן אותנו אם יש צורך בעזרה או עדכן שהמשלוח הגיע ליעדו"
                 message += ' אנא לחץ על ' + origin + '/x/' + helper.shortUrlKey.value;
-                helper.reminderSmsDate.dateValue = new Date();
+                helper.reminderSmsDate.value = new Date();
             }
             else {
                 

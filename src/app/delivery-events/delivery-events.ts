@@ -1,5 +1,5 @@
 import { DeliveryEventId } from "./DeliveryEventId";
-import { IdEntity, changeDate,  SqlBuilder } from "../model-shared/types";
+import { IdEntity, changeDate, SqlBuilder } from "../model-shared/types";
 import { StringColumn, DateColumn, BoolColumn, NumberColumn } from "radweb";
 import { EventStatusColumn } from "./EventStatus";
 import { HelperIdReadonly } from "../helpers/helpers";
@@ -22,7 +22,7 @@ export class DeliveryEvents extends IdEntity<DeliveryEventId>  {
     caption: 'משפחות',
     dbName: () => {
       let fde = new FamilyDeliveryEvents(new ServerContext());
-let f = new Families(new ServerContext());
+      let f = new Families(new ServerContext());
 
       let sql = new SqlBuilder();
       return sql.case([
@@ -30,13 +30,13 @@ let f = new Families(new ServerContext());
           when: [this.isActiveEvent],
           then: sql.columnCount(this, {
             from: f,
-            where: () => [sql.ne(f.deliverStatus, DeliveryStatus.NotInEvent.id)]
+            where: () => [f.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent)]
           })
         }],
         sql.columnCount(this, {
           from: fde,
           where: () => [sql.eq(fde.deliveryEvent, this.id),
-          sql.ne(fde.deliverStatus, DeliveryStatus.NotInEvent.id)]
+          fde.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent)]
 
         }));
     },
@@ -49,12 +49,12 @@ let f = new Families(new ServerContext());
       allowApiRead: context.isAdmin(),
       allowApiUpdate: context.isAdmin(),
       allowApiInsert: context.isAdmin(),
-      allowApiDelete:context.isAdmin(),
+      allowApiDelete: context.isAdmin(),
       onSavingRow: async () => {
         if (context.onServer)
           if (this.isNew()) {
 
-            this.createDate.dateValue = new Date();
+            this.createDate.value = new Date();
             this.createUser.value = context.info.helperId;
           }
       }

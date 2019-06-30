@@ -147,7 +147,7 @@ export class DeliveryEventsComponent implements OnInit {
       into: fde,
       from: f,
       set: () => [[fde.deliveryEvent, sql.str(currentEvent.id.value)], [fde.family, f.id], ...columns.map(c => <[Column<any>, any]>[c.familyColumn, c.deliveryColumn])],
-      where: () => [f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id)]
+      where: () => [f.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent)]
     }));
 
     // clear families data
@@ -172,7 +172,7 @@ export class DeliveryEventsComponent implements OnInit {
   static async copyFamiliesToActiveEvent(fromDeliveryEvent: string, context?: Context) {
     await context.for(FamilyDeliveryEvents).foreach(
       fde => fde.deliveryEvent.isEqualTo(fromDeliveryEvent)
-        .and(fde.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id)),
+        .and(fde.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent)),
       async de => {
         let f = await context.for(Families).findFirst(f => f.id.isEqualTo(de.family));
         if (f) {

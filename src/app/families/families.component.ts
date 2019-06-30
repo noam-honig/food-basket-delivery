@@ -152,9 +152,9 @@ export class FamiliesComponent implements OnInit {
     onEnterRow: async f => {
       if (f.isNew()) {
         f.basketType.value = '';
-        f.language.listValue = Language.Hebrew;
-        f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
-        f.special.listValue = YesNo.No;
+        f.language.value = Language.Hebrew;
+        f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
+        f.special.value = YesNo.No;
         this.currentFamilyDeliveries = [];
       } else {
         if (!this.gridView) {
@@ -305,10 +305,10 @@ export class FamiliesComponent implements OnInit {
       {
         cssClass: 'btn btn-success',
         name:'משלוח חדש',
-        visible: f => f.deliverStatus.listValue != DeliveryStatus.ReadyForDelivery&&
-        f.deliverStatus.listValue != DeliveryStatus.SelfPickup&&
-        f.deliverStatus.listValue != DeliveryStatus.Frozen&&
-        f.deliverStatus.listValue != DeliveryStatus.RemovedFromList
+        visible: f => f.deliverStatus.value != DeliveryStatus.ReadyForDelivery&&
+        f.deliverStatus.value != DeliveryStatus.SelfPickup&&
+        f.deliverStatus.value != DeliveryStatus.Frozen&&
+        f.deliverStatus.value != DeliveryStatus.RemovedFromList
         ,
         click: async f => {
           await this.busy.donotWait(async () => {
@@ -333,7 +333,7 @@ export class FamiliesComponent implements OnInit {
   }
   basketStats: statsOnTab = {
     name: 'נותרו לפי סלים',
-    rule: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('')),
+    rule: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(f.courier.isEqualTo('')),
     stats: [
       this.stats.ready,
       this.stats.special
@@ -371,7 +371,7 @@ export class FamiliesComponent implements OnInit {
 
     {
       name: 'הערות',
-      rule: f => f.deliverStatus.isAResultStatus().and(f.courierComments.IsDifferentFrom('')),
+      rule: f => f.deliverStatus.isAResultStatus().and(f.courierComments.isDifferentFrom('')),
       stats: [
         this.stats.deliveryComments
       ],
@@ -438,7 +438,7 @@ export class FamiliesComponent implements OnInit {
         this.totalBoxes = 0;
         this.blockedBoxes = 0;
         st.baskets.forEach(b => {
-          let fs = new FaimilyStatistics(b.name, f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.basketType.isEqualTo(b.id))), undefined);
+          let fs = new FaimilyStatistics(b.name, f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(f.courier.isEqualTo('').and(f.basketType.isEqualTo(b.id))), undefined);
           fs.value = b.unassignedFamilies;
           this.basketStats.stats.push(fs);
           if (b.blocked) {
@@ -465,9 +465,9 @@ export class FamiliesComponent implements OnInit {
               let x = this.cityStats.stats.pop();
               firstCities.pop();
               lastFs = new FaimilyStatistics('כל השאר', f => {
-                let r = f.readyFilter().and(f.city.IsDifferentFrom(firstCities[0]));
+                let r = f.readyFilter().and(f.city.isDifferentFrom(firstCities[0]));
                 for (let index = 1; index < firstCities.length; index++) {
-                  r = r.and(f.city.IsDifferentFrom(firstCities[index]));
+                  r = r.and(f.city.isDifferentFrom(firstCities[index]));
                 }
                 return r;
 

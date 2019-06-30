@@ -88,21 +88,21 @@ export class DateTimeColumn extends radweb.DateTimeColumn implements hasMoreData
   __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
     return this.settingsOrCaption as MoreDataColumnSettings<any, any>;
   }
-  constructor(private settingsOrCaption?: MoreDataColumnSettings<string, DateTimeColumn> | string) {
+  constructor(private settingsOrCaption?: MoreDataColumnSettings<Date, DateTimeColumn> | string) {
     super(settingsOrCaption);
   }
   dontShowTimeForOlderDates = false;
   getStringForInputTime() {
     if (!this.value)
       return '';
-    return this.padZero(this.dateValue.getHours()) + ':' + this.padZero(this.dateValue.getMinutes());
+    return this.padZero(this.value.getHours()) + ':' + this.padZero(this.value.getMinutes());
   }
   getStringForInputDate() {
     if (!this.value)
       return '';
 
-    return this.value.substring(0, 10);
-    return this.padZero(this.dateValue.getHours()) + ':' + this.padZero(this.dateValue.getMinutes());
+    return this.rawValue.substring(0, 10);
+    return this.padZero(this.value.getHours()) + ':' + this.padZero(this.value.getMinutes());
   }
   padZero(v: number) {
     var result = '';
@@ -121,24 +121,24 @@ export class DateTimeColumn extends radweb.DateTimeColumn implements hasMoreData
 
     }
 
-    this.dateValue = new Date(this.dateValue.getFullYear(), this.dateValue.getMonth(), this.dateValue.getDate(), hour, minutes);
+    this.value = new Date(this.value.getFullYear(), this.value.getMonth(), this.value.getDate(), hour, minutes);
 
   }
   dateInputChangeEvent(e: any) {
     var newDate: Date = e.target.valueAsDate;
     var hours = 0;
     var minutes = 0;
-    if (this.dateValue) {
-      hours = this.dateValue.getHours();
-      minutes = this.dateValue.getMinutes();
+    if (this.value) {
+      hours = this.value.getHours();
+      minutes = this.value.getMinutes();
 
     }
-    this.dateValue = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate(), hours, minutes);
+    this.value = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate(), hours, minutes);
 
   }
   relativeDateName(d?: Date, now?: Date) {
     if (!d)
-      d = this.dateValue;
+      d = this.value;
     if (!d)
       return '';
     if (!now)
@@ -201,8 +201,8 @@ export class DateTimeColumn extends radweb.DateTimeColumn implements hasMoreData
     return r += ' ב' + d.getHours() + ':' + t;
   }
   get displayValue() {
-    if (this.dateValue)
-      return this.dateValue.toLocaleString("he-il");
+    if (this.value)
+      return this.value.toLocaleString("he-il");
     return '';
   }
 
@@ -220,7 +220,7 @@ export class changeDate extends DateTimeColumn implements hasMoreDataColumnSetti
   __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
     return this.optionsOrCaption as MoreDataColumnSettings<any, any>;
   }
-  constructor(private optionsOrCaption: MoreDataColumnSettings<string, DateTimeColumn> | string) {
+  constructor(private optionsOrCaption: MoreDataColumnSettings<Date, DateTimeColumn> | string) {
     super(updateSettings(optionsOrCaption, x => x.readonly = true));
   }
 
@@ -309,6 +309,9 @@ export class SqlBuilder {
 
 
   gt<T>(a: Column<T>, b: T | Column<T>) {
+    return this.build(a, ' > ', b);
+  }
+  gtAny(a: Column<any>, b: any | any) {
     return this.build(a, ' > ', b);
   }
   and(...args: any[]): string {

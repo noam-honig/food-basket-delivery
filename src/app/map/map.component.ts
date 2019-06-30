@@ -136,7 +136,7 @@ export class MapComponent implements OnInit {
         prevFamilies.splice(pi, 1);
       let marker = this.setFamilyOnMap(f.id.value, f.addressLatitude.value, f.addressLongitude.value);
       try {
-        if (f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery)
+        if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery)
           this.bounds.extend(marker.getPosition());
         else
           secondaryBounds.extend(marker.getPosition());
@@ -146,7 +146,7 @@ export class MapComponent implements OnInit {
 
       marker.setLabel(f.name.value + " - " + f.address.value + '....');
 
-      switch (f.deliverStatus.listValue) {
+      switch (f.deliverStatus.value) {
         case DeliveryStatus.ReadyForDelivery:
           i++;
           marker.setIcon('/assets/map-markers/number_' + i + '.png');

@@ -54,7 +54,7 @@ export class SelectFamilyComponent implements OnInit {
     this.dialogRef.close();
   }
   showStatus(f: Families) {
-    if (f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery) {
+    if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery) {
       if (f.courier.value) {
         return 'משוייך למשנע';
       } else {

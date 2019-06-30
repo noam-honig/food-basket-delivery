@@ -186,7 +186,7 @@ export class AsignFamilyComponent implements OnInit {
       async  familyId => {
         await this.busy.doWhileShowingBusy(async () => {
           let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(familyId));
-          if (f && f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery && f.courier.value == "") {
+          if (f && f.deliverStatus.value == DeliveryStatus.ReadyForDelivery && f.courier.value == "") {
             this.performSepcificFamilyAssignment(f, 'assign based on map');
           }
         });
@@ -275,10 +275,10 @@ export class AsignFamilyComponent implements OnInit {
       });
     };
 
-    result.special = await countFamilies(f => f.special.isEqualTo(YesNo.Yes.id));
+    result.special = await countFamilies(f => f.special.isEqualTo(YesNo.Yes));
 
     result.repeatFamilies = await countFamilies(f =>
-      f.previousCourier.isEqualTo(info.helperId).and(f.special.isEqualTo(YesNo.No.id))
+      f.previousCourier.isEqualTo(info.helperId).and(f.special.isEqualTo(YesNo.No))
     );
 
     for (let c of await context.for(CitiesStats).find({
@@ -301,7 +301,7 @@ export class AsignFamilyComponent implements OnInit {
       let bi = {
         id: b.id.value,
         name: b.name.value,
-        unassignedFamilies: await countFamilies(f => f.basketType.isEqualTo(b.id.value).and(f.special.isEqualTo(YesNo.No.id)))
+        unassignedFamilies: await countFamilies(f => f.basketType.isEqualTo(b.id.value).and(f.special.isEqualTo(YesNo.No)))
       };
       if (bi.unassignedFamilies > 0)
         result.baskets.push(bi);
@@ -313,7 +313,7 @@ export class AsignFamilyComponent implements OnInit {
   }
   @RunOnServer({ allowed: c => c.isAdmin() })
   static async RefreshRoute(helperId: string, useGoogle: boolean, context?: Context) {
-    let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id)) });
+    let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
     let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
     return await AsignFamilyComponent.optimizeRoute(h, existingFamilies, context, useGoogle);
   }
@@ -345,13 +345,13 @@ export class AsignFamilyComponent implements OnInit {
       }
     }
     console.time('existingFamilies');
-    let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id)) });
+    let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
     let locationReferenceFamilies = [...existingFamilies];
     if (locationReferenceFamilies.length == 0) {
       let from = new Date();
       from.setDate(from.getDate()-1);
       locationReferenceFamilies = await context.for(Families).find({
-        where: f => f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isAResultStatus()).and(f.deliveryStatusDate.IsGreaterOrEqualTo(DateColumn.dateToString(from))),
+        where: f => f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isAResultStatus()).and(f.deliveryStatusDate.isGreaterOrEqualTo(from)),
         orderBy: f => [{ column: f.deliveryStatusDate, descending: true }],
         limit: 1
       });
@@ -369,7 +369,7 @@ export class AsignFamilyComponent implements OnInit {
           from: f,
           where: () => {
             let where = f.readyFilter(info.city, info.language).and(
-              f.special.IsDifferentFrom(YesNo.Yes.id)
+              f.special.isDifferentFrom(YesNo.Yes)
             );
 
             if (info.preferRepeatFamilies)
@@ -553,8 +553,8 @@ export class AsignFamilyComponent implements OnInit {
 
   }
   addSpecial() {
-    this.addFamily(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
-      f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes.id))), 'special');
+    this.addFamily(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
+      f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes))), 'special');
   }
   addFamily(filter: (f: Families) => FilterBase, analyticsName: string) {
     this.selectService.selectFamily({
@@ -589,7 +589,7 @@ export class AsignFamilyComponent implements OnInit {
   }
   private async performSepcificFamilyAssignment(f: Families, analyticsName: string) {
     f.courier.value = this.id;
-    f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
+    f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
     this.dialog.analytics(analyticsName);
     await f.save();
     this.refreshList();
@@ -612,7 +612,7 @@ export class AsignFamilyComponent implements OnInit {
   }
 
   addSpecific() {
-    this.addFamily(f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id), 'specific');
+    this.addFamily(f => f.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent), 'specific');
   }
 }
 

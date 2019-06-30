@@ -13,7 +13,7 @@ export class WeeklyFamilies extends IdEntity<WeeklyFamilyId>{
             name: 'weeklyFamilies',
             allowApiCRUD: false,
             allowApiRead: !!context.info.weeklyFamilyAdmin || !!context.info.weeklyFamilyPacker || !!context.info.weeklyFamilyVolunteer,
-            
+
             apiDataFilter: () => {
                 if (context.info.weeklyFamilyAdmin)
                     return undefined;
@@ -38,28 +38,28 @@ export class WeeklyFamilies extends IdEntity<WeeklyFamilyId>{
                 return sql.columnInnerSelect(this, {
                     select: () => [wfd.deliveredOn],
                     from: wfd,
-                    where: () => [sql.eq(wfd.familyId, this.id), sql.eq(wfd.status, WeeklyFamilyDeliveryStatus.Delivered.id)],
+                    where: () => [sql.eq(wfd.familyId, this.id), wfd.status.isEqualTo(WeeklyFamilyDeliveryStatus.Delivered)],
                     orderBy: [{ column: wfd.ordnial, descending: true }]
                 });
 
             }
         });
-        lastDeliveryStatus = new WeeklyFamilyDeliveryStatusColumn(
-            {
-                caption: 'סטטוס אחרון',
-                dbReadOnly: true,
-                dbName: () => {
-                    let wfd = new WeeklyFamilyDeliveries(this.context);
-                    let sql = new SqlBuilder();
-                    return sql.columnInnerSelect(this, {
-                        select: () => [wfd.status],
-                        from: wfd,
-                        where: () => [sql.eq(wfd.familyId, this.id)],
-                        orderBy: [{ column: wfd.ordnial, descending: true }]
-                    });
-    
-                }
-            });
+    lastDeliveryStatus = new WeeklyFamilyDeliveryStatusColumn(
+        {
+            caption: 'סטטוס אחרון',
+            dbReadOnly: true,
+            dbName: () => {
+                let wfd = new WeeklyFamilyDeliveries(this.context);
+                let sql = new SqlBuilder();
+                return sql.columnInnerSelect(this, {
+                    select: () => [wfd.status],
+                    from: wfd,
+                    where: () => [sql.eq(wfd.familyId, this.id)],
+                    orderBy: [{ column: wfd.ordnial, descending: true }]
+                });
+
+            }
+        });
     deliveriesInPacking = new NumberColumn({
         caption: 'משלוחים באריזה',
         dbReadOnly: true,

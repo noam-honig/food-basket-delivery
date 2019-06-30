@@ -29,8 +29,8 @@ export class DeliveryHistoryComponent implements OnInit {
     caption: 'מתאריך',
     valueChange: () => {
 
-      if (this.toDate.dateValue < this.fromDate.dateValue) {
-        this.toDate.dateValue = this.getEndOfMonth();
+      if (this.toDate.value < this.fromDate.value) {
+        this.toDate.value = this.getEndOfMonth();
       }
 
     }
@@ -44,7 +44,7 @@ export class DeliveryHistoryComponent implements OnInit {
   helperInfo: GridSettings<helperHistoryInfo>;
   helperSource: EntitySource<helperHistoryInfo>;
   private getEndOfMonth(): Date {
-    return new Date(this.fromDate.dateValue.getFullYear(), this.fromDate.dateValue.getMonth() + 1, 0);
+    return new Date(this.fromDate.value.getFullYear(), this.fromDate.value.getMonth() + 1, 0);
   }
 
   async refresh() {
@@ -88,14 +88,14 @@ export class DeliveryHistoryComponent implements OnInit {
 
     let today = new Date();
 
-    this.fromDate.dateValue = new Date(today.getFullYear(), today.getMonth(), 1);
-    this.toDate.dateValue = this.getEndOfMonth();
+    this.fromDate.value = new Date(today.getFullYear(), today.getMonth(), 1);
+    this.toDate.value = this.getEndOfMonth();
   }
   private async refreshHelpers() {
     for (const h of await this.helperSource.find({})) {
       await h.delete();
     }
-    var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.fromDate.value, this.toDate.value);
+    var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.fromDate.rawValue, this.toDate.rawValue);
     for (const hh of x) {
       let h = this.helperSource.fromPojo(hh);
       for (const c of h.__iterateColumns()) {
@@ -109,8 +109,8 @@ export class DeliveryHistoryComponent implements OnInit {
   }
 
   today() {
-    this.fromDate.dateValue = new Date();
-    this.toDate.dateValue = new Date();
+    this.fromDate.value = new Date();
+    this.toDate.value = new Date();
     this.refresh();
 
   }
@@ -122,17 +122,17 @@ export class DeliveryHistoryComponent implements OnInit {
     this.setRange(-1);
   }
   private setRange(delta: number) {
-    if (this.fromDate.dateValue.getDate() == 1 && this.toDate.dateValue.toDateString() == this.getEndOfMonth().toDateString()) {
-      this.fromDate.dateValue = new Date(this.fromDate.dateValue.getFullYear(), this.fromDate.dateValue.getMonth() + delta, 1);
-      this.toDate.dateValue = this.getEndOfMonth();
+    if (this.fromDate.value.getDate() == 1 && this.toDate.value.toDateString() == this.getEndOfMonth().toDateString()) {
+      this.fromDate.value = new Date(this.fromDate.value.getFullYear(), this.fromDate.value.getMonth() + delta, 1);
+      this.toDate.value = this.getEndOfMonth();
     } else {
-      let difference = Math.abs( this.toDate.dateValue.getTime() - this.fromDate.dateValue.getTime());
+      let difference = Math.abs( this.toDate.value.getTime() - this.fromDate.value.getTime());
       if (difference < fullDayValue)
         difference = fullDayValue;
       difference *= delta;
-      let to = this.toDate.dateValue;
-      this.fromDate.dateValue = new Date(this.fromDate.dateValue.getTime() + difference);
-      this.toDate.dateValue = new Date(to.getTime() + difference);
+      let to = this.toDate.value;
+      this.fromDate.value = new Date(this.fromDate.value.getTime() + difference);
+      this.toDate.value = new Date(to.getTime() + difference);
 
     }
     this.refresh();
@@ -161,9 +161,9 @@ export class DeliveryHistoryComponent implements OnInit {
     get: {
       limit: 20,
       where: d => {
-        var toDate = this.toDate.dateValue;
+        var toDate = this.toDate.value;
         toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
-        return d.deliveryStatusDate.IsGreaterOrEqualTo(this.fromDate).and(d.deliveryStatusDate.IsLessThan(DateColumn.dateToString(toDate)))
+        return d.deliveryStatusDate.isGreaterOrEqualTo(this.fromDate.value).and(d.deliveryStatusDate.isLessThan(toDate))
       }
     }
   });
@@ -173,8 +173,8 @@ export class DeliveryHistoryComponent implements OnInit {
   }
   @RunOnServer({ allowed: x => x.isAdmin() })
   static async  getHelperHistoryInfo(fromDate: string, toDate: string, context?: Context, directSql?: DirectSQL) {
-    var d = DateColumn.stringToDate(toDate);
-    toDate = DateColumn.dateToString(new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1));
+    var fromDateDate = DateColumn.stringToDate(fromDate);
+    var toDateDate = new Date(fromDateDate.getFullYear(), fromDateDate.getMonth(), fromDateDate.getDate() + 1);
     var sql = new SqlBuilder();
     var fd = new FamilyDeliveriesStats(context);
     var h = new Helpers(context);
@@ -191,7 +191,7 @@ export class DeliveryHistoryComponent implements OnInit {
           sql.build("count (distinct date (", fd.courierAssingTime.__getDbName(), ")) dates"),
           sql.build("count (distinct ", fd.family.__getDbName(), ") families")],
           ' from ', fd.__getDbName(),
-          ' where ', sql.and(fd.deliveryStatusDate.IsGreaterOrEqualTo(fromDate).and(fd.deliveryStatusDate.IsLessThan(toDate))))
+          ' where ', sql.and(fd.deliveryStatusDate.isGreaterOrEqualTo(fromDateDate).and(fd.deliveryStatusDate.isLessThan(toDateDate))))
 
         + sql.build(' group by ', fd.courier.__getDbName()), ") x"))).rows;
 

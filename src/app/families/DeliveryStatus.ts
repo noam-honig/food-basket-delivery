@@ -1,15 +1,15 @@
-import { ClosedListColumn, NumberColumn, FilterBase } from "radweb";
+import { ClosedListColumn, NumberColumn, FilterBase, Column } from "radweb";
 import { DataColumnSettings } from "radweb";
 
 export class DeliveryStatus {
-  static IsAResultStatus(value: number) {
+  static IsAResultStatus(value: DeliveryStatus) {
     switch (value) {
-      case this.Success.id:
-      case this.SuccessPickedUp.id:
-      case this.SuccessLeftThere.id:
-      case this.FailedBadAddress.id:
-      case this.FailedNotHome.id:
-      case this.FailedOther.id:
+      case this.Success:
+      case this.SuccessPickedUp:
+      case this.SuccessLeftThere:
+      case this.FailedBadAddress:
+      case this.FailedNotHome:
+      case this.FailedOther:
         return true;
     }
     return false;
@@ -33,15 +33,15 @@ export class DeliveryStatus {
 }
 export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
   isActiveDelivery() {
-    return this.IsLessOrEqualTo(DeliveryStatus.FailedOther.id);
+    return this.isLessOrEqualTo(DeliveryStatus.FailedOther);
   }
   isInEvent(){
-    return this.IsLessOrEqualTo(DeliveryStatus.Frozen.id);
+    return this.isLessOrEqualTo(DeliveryStatus.Frozen);
   }
   isAResultStatus() {
-    return this.IsGreaterOrEqualTo(DeliveryStatus.Success.id).and(this.IsLessOrEqualTo(DeliveryStatus.FailedOther.id));
+    return this.isGreaterOrEqualTo(DeliveryStatus.Success).and(this.isLessOrEqualTo(DeliveryStatus.FailedOther));
   }
-  constructor(settingsOrCaption?: DataColumnSettings<number, NumberColumn> | string) {
+  constructor(settingsOrCaption?: DataColumnSettings<DeliveryStatus, Column<DeliveryStatus>> | string) {
     super(DeliveryStatus, settingsOrCaption);
   }
   getColumn() {
@@ -54,13 +54,13 @@ export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
     };
   }
   isSuccess() {
-    return this.IsGreaterOrEqualTo(DeliveryStatus.Success.id).and(this.IsLessOrEqualTo(DeliveryStatus.SuccessLeftThere.id));
+    return this.isGreaterOrEqualTo(DeliveryStatus.Success).and(this.isLessOrEqualTo(DeliveryStatus.SuccessLeftThere));
   }
   isProblem() {
-    return this.IsGreaterOrEqualTo(DeliveryStatus.FailedBadAddress.id).and(this.IsLessOrEqualTo(DeliveryStatus.FailedOther.id));
+    return this.isGreaterOrEqualTo(DeliveryStatus.FailedBadAddress).and(this.isLessOrEqualTo(DeliveryStatus.FailedOther));
   }
   getCss() {
-    switch (this.listValue) {
+    switch (this.value) {
       case DeliveryStatus.Success:
       case DeliveryStatus.SuccessLeftThere:
       case DeliveryStatus.SuccessPickedUp:

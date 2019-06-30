@@ -55,7 +55,7 @@ export class HelperFamiliesComponent implements OnInit {
 
         this.dialog.analytics('ok  all');
         for (const f of this.familyLists.toDeliver) {
-          f.deliverStatus.value = DeliveryStatus.Success.id;
+          f.deliverStatus.value = DeliveryStatus.Success;
           await f.save();
         }
         this.initFamilies();
@@ -76,7 +76,7 @@ export class HelperFamiliesComponent implements OnInit {
       assignerPhone: f.courierHelpPhone(),
       helpText,
       ok: async (comment) => {
-        f.deliverStatus.listValue = status;
+        f.deliverStatus.value = status;
         f.courierComments.value = comment;
         try {
           await f.save();
@@ -133,7 +133,7 @@ export class HelperFamiliesComponent implements OnInit {
     await SendSmsAction.SendSms(this.familyLists.helperId, reminder);
     this.assignSmsSent.emit();
     if (reminder)
-      this.familyLists.helperOptional.reminderSmsDate.dateValue = new Date();
+      this.familyLists.helperOptional.reminderSmsDate.value = new Date();
   }
 
   updateComment(f: Families) {
@@ -162,7 +162,7 @@ export class HelperFamiliesComponent implements OnInit {
     window.open(url,'_blank');
   }
   async returnToDeliver(f: Families) {
-    f.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
+    f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
     f.correntAnErrorInStatus.value = true;
     try {
       await f.save();

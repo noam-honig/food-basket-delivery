@@ -17,7 +17,7 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
       allowApiCRUD: !!context.info.weeklyFamilyVolunteer || context.info.weeklyFamilyPacker,
       onSavingRow: async () => {
         if (this.isNew()) {
-          this.status.listValue = WeeklyFamilyDeliveryStatus.Prepare;
+          this.status.value = WeeklyFamilyDeliveryStatus.Prepare;
           this.ordnial.value = +(await context.for(WeeklyFamilyDeliveries).count(wfd => wfd.familyId.isEqualTo(this.familyId.value))) + 1;
         }
       },
@@ -34,11 +34,11 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
   }
 
   changeStatus(s: WeeklyFamilyDeliveryStatus) {
-    if (this.status.listValue == WeeklyFamilyDeliveryStatus.Delivered)
-      this.deliveredOn.value = '';
-    this.status.listValue = s;
-    if (this.status.listValue == WeeklyFamilyDeliveryStatus.Delivered) {
-      this.deliveredOn.dateValue = new Date();
+    if (this.status.value == WeeklyFamilyDeliveryStatus.Delivered)
+      this.deliveredOn.value = undefined;
+    this.status.value = s;
+    if (this.status.value == WeeklyFamilyDeliveryStatus.Delivered) {
+      this.deliveredOn.value = new Date();
       this.deliveredBy.value = this.context.info.helperId;
     }
     this.save();
@@ -116,7 +116,7 @@ export class WeeklyFamilyDeliveryProductStats extends ContextEntity<string> {
               sql.gt(deliveries.ordnial, innerSelectDeliveries.ordnial),
               sql.eq(innerSelectDeliveryProducts.product, products.id),
               sql.gt(innerSelectDeliveryProducts.Quantity, 0),
-              sql.eq(innerSelectDeliveries.status, WeeklyFamilyDeliveryStatus.Delivered.id)
+              innerSelectDeliveries.status.isEqualTo(WeeklyFamilyDeliveryStatus.Delivered)
             ],
             orderBy: [{ column: innerSelectDeliveries.ordnial, descending: true }]
           } as QueryBuilder;
@@ -201,7 +201,7 @@ export class WeeklyDeliveryStats extends ContextEntity<number>
             { to: f, on: () => [sql.eq(d.familyId, f.id)] }
           ],
           where: () => [
-            sql.eq(d.status, WeeklyFamilyDeliveryStatus.Delivered.id)
+            d.status.isEqualTo(WeeklyFamilyDeliveryStatus.Delivered)
           ]
 
         });
@@ -285,7 +285,7 @@ export interface StatusButtonEnabledHelper {
 }
 
 export class WeeklyFamilyDeliveryStatusColumn extends ClosedListColumn<WeeklyFamilyDeliveryStatus>{
-  constructor(settings?: DataColumnSettings<number, NumberColumn>) {
+  constructor(settings?: DataColumnSettings<WeeklyFamilyDeliveryStatus, Column<WeeklyFamilyDeliveryStatus>>) {
     super(WeeklyFamilyDeliveryStatus, settings ? settings : { caption: 'סטטוס שילוח' });
   }
 
@@ -328,7 +328,7 @@ export class Products extends IdEntity<ProductId>{
           on: () => [sql.eq(wfdp.delivery, wfd.id)]
         }],
         where: () => [
-          sql.eq(wfd.status, WeeklyFamilyDeliveryStatus.Pack.id),
+          wfd.status.isEqualTo(WeeklyFamilyDeliveryStatus.Pack),
           sql.eq(wfdp.product, this.id)]
       });
 

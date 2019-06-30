@@ -23,10 +23,10 @@ export class FamilyInfoComponent implements OnInit {
     window.open('sms:' + this.f.courierHelpPhone() + ';?&body=' + encodeURI(`הי ${this.f.courierHelpName()}  זה ${this.context.info.name}, נתקלתי בבעיה אצל משפחת ${this.f.name.value}`), '_blank');
   }
   showCancelAssign(f: Families) {
-    return this.partOfAssign && f.courier.value != '' && f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery;
+    return this.partOfAssign && f.courier.value != '' && f.deliverStatus.value == DeliveryStatus.ReadyForDelivery;
   }
   showFamilyPickedUp(f: Families) {
-    return f.deliverStatus.listValue == DeliveryStatus.SelfPickup;
+    return f.deliverStatus.value == DeliveryStatus.SelfPickup;
   }
   async familiyPickedUp(f: Families) {
     this.selectService.displayComment({
@@ -35,7 +35,7 @@ export class FamilyInfoComponent implements OnInit {
       assignerPhone: f.courierHelpPhone(),
       helpText: s => s.commentForSuccessDelivery,
       ok: async (comment) => {
-        f.deliverStatus.listValue = DeliveryStatus.SuccessPickedUp;
+        f.deliverStatus.value = DeliveryStatus.SuccessPickedUp;
         f.courierComments.value = comment;
         try {
           await f.save();
@@ -76,6 +76,6 @@ export class FamilyInfoComponent implements OnInit {
     this.dialog.Info("הכתובת " + f.address.value + " הועתקה בהצלחה");
   }
   showStatus() {
-    return this.f.deliverStatus.listValue != DeliveryStatus.ReadyForDelivery&&this.f.deliverStatus.listValue!=DeliveryStatus.SelfPickup;
+    return this.f.deliverStatus.value != DeliveryStatus.ReadyForDelivery&&this.f.deliverStatus.value!=DeliveryStatus.SelfPickup;
   }
 }

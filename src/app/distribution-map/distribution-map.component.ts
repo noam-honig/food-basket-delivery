@@ -174,7 +174,7 @@ export class DistributionMap implements OnInit, OnDestroy {
         let where = [f.deliverStatus.isActiveDelivery().and(f.blockedBasket.isEqualTo(false))];
         if (onlyPotentialAsignment)
         {
-          where.push(f.readyFilter().and(f.special.isEqualTo(YesNo.No.id)));
+          where.push(f.readyFilter().and(f.special.isEqualTo(YesNo.No)));
         }
         return where;
       },

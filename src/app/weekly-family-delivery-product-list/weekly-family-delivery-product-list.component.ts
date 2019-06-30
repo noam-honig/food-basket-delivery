@@ -35,7 +35,7 @@ export class WeeklyFamilyDeliveryList {
     }
   }
   showMarkAll() {
-    return this.currentDelivery.status.listValue != WeeklyFamilyDeliveryStatus.Prepare;
+    return this.currentDelivery.status.value != WeeklyFamilyDeliveryStatus.Prepare;
   }
   canUpdateDelivery() {
     return this.currentDelivery.currentUserAllowedToUpdate();
@@ -64,9 +64,9 @@ export class WeeklyFamilyDeliveryList {
   updateDelivery() {
     let d = this.currentDelivery;
     let dc = new DateColumn('נמסר בתאריך');
-    dc.dateValue = d.deliveredOn.dateValue;
+    dc.value = d.deliveredOn.value;
     let cols: ColumnSetting<any>[] = [d.assignedHelper.getColumn(this.selectService, h => h.weeklyFamilyVolunteer.isEqualTo(true))];
-    if (d.status.listValue == WeeklyFamilyDeliveryStatus.Delivered) {
+    if (d.status.value == WeeklyFamilyDeliveryStatus.Delivered) {
       cols.push(dc),
         cols.push(d.deliveredBy.getColumn(this.selectService, h => h.weeklyFamilyVolunteer.isEqualTo(true)));
     }
@@ -77,8 +77,8 @@ export class WeeklyFamilyDeliveryList {
         ]
       },
       ok: () => {
-        if (d.deliveredOn.getStringForInputDate() != dc.value) {
-          d.deliveredOn.dateValue = new Date(dc.dateValue.getFullYear(), dc.dateValue.getMonth(), dc.dateValue.getDate(), d.deliveredOn.dateValue.getHours(), d.deliveredOn.dateValue.getMinutes());
+        if (d.deliveredOn.getStringForInputDate() != dc.rawValue) {
+          d.deliveredOn.value = new Date(dc.value.getFullYear(), dc.value.getMonth(), dc.value.getDate(), d.deliveredOn.value.getHours(), d.deliveredOn.value.getMinutes());
         }
 
         d.save();
@@ -90,7 +90,7 @@ export class WeeklyFamilyDeliveryList {
   }
   shouldShowShowAllProductsCheckbox() {
 
-    return this.currentDelivery && this.currentDelivery.status.listValue != WeeklyFamilyDeliveryStatus.Prepare && this.searchString == '';
+    return this.currentDelivery && this.currentDelivery.status.value != WeeklyFamilyDeliveryStatus.Prepare && this.searchString == '';
   }
   clearSearch() {
     this.searchString = '';
@@ -105,7 +105,7 @@ export class WeeklyFamilyDeliveryList {
     dp.product.value = p.id.value;
     dp.productName.value = p.name.value;
     dp.delivery.value = this.currentDelivery.id.value;
-    if (this.currentDelivery.status.listValue == WeeklyFamilyDeliveryStatus.Prepare)
+    if (this.currentDelivery.status.value == WeeklyFamilyDeliveryStatus.Prepare)
       dp.requestQuanity.value = 1;
     else
       dp.Quantity.value = 1;
@@ -133,7 +133,7 @@ export class WeeklyFamilyDeliveryList {
     if (this.searchString)
       return p.productName.value.indexOf(this.searchString) >= 0;
 
-    if (this.currentDelivery.status.listValue == WeeklyFamilyDeliveryStatus.Prepare)
+    if (this.currentDelivery.status.value == WeeklyFamilyDeliveryStatus.Prepare)
       return true;
 
     if (this.showAllProducts)
@@ -141,7 +141,7 @@ export class WeeklyFamilyDeliveryList {
     return p.requestQuanity.value > 0;
   }
   displayRequestQuantity() {
-    return this.currentDelivery.status.listValue == WeeklyFamilyDeliveryStatus.Prepare;
+    return this.currentDelivery.status.value == WeeklyFamilyDeliveryStatus.Prepare;
   }
   test() {
     return true;
@@ -152,24 +152,24 @@ export class WeeklyFamilyDeliveryList {
     return x;
   }
   nextDisabled() {
-    if (!this.currentDelivery.status.listValue.next.disabled)
+    if (!this.currentDelivery.status.value.next.disabled)
       return false;
-    return this.currentDelivery.status.listValue.next.disabled({
+    return this.currentDelivery.status.value.next.disabled({
       hasRequestItems: () => this.totalItems() > 0
     });
   }
   allowNextStatus() {
     if (!this.currentDelivery.currentUserAllowedToUpdate())
-      return this.currentDelivery.status.listValue == WeeklyFamilyDeliveryStatus.Pack;
-    return this.currentDelivery.status.listValue.next;
+      return this.currentDelivery.status.value == WeeklyFamilyDeliveryStatus.Pack;
+    return this.currentDelivery.status.value.next;
   }
   allowPreviousStatus() {
     if (!this.currentDelivery.currentUserAllowedToUpdate())
-      return this.currentDelivery.status.listValue == WeeklyFamilyDeliveryStatus.Ready;
-    return this.currentDelivery.status.listValue.prev;
+      return this.currentDelivery.status.value == WeeklyFamilyDeliveryStatus.Ready;
+    return this.currentDelivery.status.value.prev;
   }
   allowDelete() {
-    return this.currentDelivery.currentUserAllowedToUpdate() && this.currentDelivery.status.listValue == WeeklyFamilyDeliveryStatus.Prepare;
+    return this.currentDelivery.currentUserAllowedToUpdate() && this.currentDelivery.status.value == WeeklyFamilyDeliveryStatus.Prepare;
   }
   async deleteDelivery() {
     await this.dialog.confirmDelete("המשלוח", async () => {

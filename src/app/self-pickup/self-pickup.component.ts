@@ -34,7 +34,7 @@ export class SelfPickupComponent implements OnInit {
       where: f => {
         let r = f.name.isContains(this.searchString);
         if (!this.showAllFamilies) {
-          return r.and(f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup.id));
+          return r.and(f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup));
         }
         return r;
       },
@@ -50,7 +50,7 @@ export class SelfPickupComponent implements OnInit {
   }
 
   showStatus(f: Families) {
-    if (f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery) {
+    if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery) {
       if (f.courier.value) {
         return 'משוייך למשנע';
       } else {

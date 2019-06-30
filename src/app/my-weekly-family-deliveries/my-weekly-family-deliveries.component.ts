@@ -37,8 +37,8 @@ export class MyWeeklyFamilyDeliveriesComponent implements OnInit {
     this.deliveries = await this.context.for(WeeklyFamilyDeliveries).find({
       limit: 1000,
       where: d => (this.packing
-        ? d.status.IsGreaterOrEqualTo(WeeklyFamilyDeliveryStatus.Pack.id).and(d.status.IsLessOrEqualTo(WeeklyFamilyDeliveryStatus.Ready.id))
-        : d.status.IsDifferentFrom(WeeklyFamilyDeliveryStatus.Delivered.id))
+        ? d.status.isGreaterOrEqualTo(WeeklyFamilyDeliveryStatus.Pack).and(d.status.isLessOrEqualTo(WeeklyFamilyDeliveryStatus.Ready))
+        : d.status.isDifferentFrom(WeeklyFamilyDeliveryStatus.Delivered))
     });
     this.refreshStatusList();
   }
@@ -46,7 +46,7 @@ export class MyWeeklyFamilyDeliveriesComponent implements OnInit {
     this.deliveriesByStatus.forEach(d => d.deliveries = []);
     this.deliveries.forEach(d => {
       this.deliveriesByStatus.forEach(s => {
-        if (s.status == d.status.listValue)
+        if (s.status == d.status.value)
           s.deliveries.push(d);
       });
     });

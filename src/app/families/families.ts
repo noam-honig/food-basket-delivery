@@ -1,7 +1,7 @@
 import { DeliveryStatus, DeliveryStatusColumn } from "./DeliveryStatus";
 import { CallStatusColumn } from "./CallStatus";
 import { YesNoColumn } from "./YesNo";
-import { LanguageColumn } from "./Language";
+import { LanguageColumn, Language } from "./Language";
 import { FamilySourceId } from "./FamilySources";
 import { BasketId, BasketType } from "./BasketType";
 import { NumberColumn, StringColumn, IdEntity, Id, changeDate, DateTimeColumn, SqlBuilder, BoolColumn, PhoneColumn, delayWhileTyping } from "../model-shared/types";
@@ -20,9 +20,9 @@ import * as fetch from 'node-fetch';
 export class Families extends IdEntity<FamilyId>  {
   setNewBasket() {
     if (this.defaultSelfPickup.value)
-      this.deliverStatus.listValue = DeliveryStatus.SelfPickup;
+      this.deliverStatus.value = DeliveryStatus.SelfPickup;
     else
-      this.deliverStatus.listValue = DeliveryStatus.ReadyForDelivery;
+      this.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
   }
   getDeliveries() {
     return this.context.for(FamilyDeliveries).find({ where: d => d.family.isEqualTo(this.id), orderBy: d => [{ column: d.deliveryStatusDate, descending: true }] });
@@ -72,14 +72,14 @@ export class Families extends IdEntity<FamilyId>  {
               if (this.courier.value == this.courier.originalValue) {
                 this.courier.value = this.fixedCourier.value;
                 this.courierAssignUser.value = this.context.info.helperId;
-                this.courierAssingTime.dateValue = new Date();
+                this.courierAssingTime.value = new Date();
               }
               if (this.courierComments.value == this.courierComments.originalValue)
                 this.courierComments.value = '';
             }
 
 
-            if (this.fixedCourier.value && !this.fixedCourier.originalValue && !this.courier.value && this.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery) {
+            if (this.fixedCourier.value && !this.fixedCourier.originalValue && !this.courier.value && this.deliverStatus.value == DeliveryStatus.ReadyForDelivery) {
               this.courier.value = this.fixedCourier.value;
             }
             if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
@@ -96,12 +96,12 @@ export class Families extends IdEntity<FamilyId>  {
 
             }
             if (this.isNew()) {
-              this.createDate.dateValue = new Date();
+              this.createDate.value = new Date();
               this.createUser.value = context.info.helperId;
             }
             let logChanged = (col: Column<any>, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) => {
               if (col.value != col.originalValue) {
-                dateCol.dateValue = new Date();
+                dateCol.value = new Date();
                 user.value = context.info.helperId;
                 wasChanged();
               }
@@ -279,7 +279,7 @@ export class Families extends IdEntity<FamilyId>  {
     dbReadOnly: true,
     dbName: () => {
       var sql = new SqlBuilder();
-      return sql.case([{ when: [sql.or(sql.gt(this.deliveryStatusDate, 'current_date -1'), this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id))], then: true }], false);
+      return sql.case([{ when: [sql.or(sql.gtAny(this.deliveryStatusDate, 'current_date -1'), this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))], then: true }], false);
 
     }
   });
@@ -290,10 +290,10 @@ export class Families extends IdEntity<FamilyId>  {
   addressOk = new BoolColumn({ caption: 'כתובת תקינה' });
 
   readyFilter(city?: string, language?: number) {
-    let where = this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
+    let where = this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
       this.courier.isEqualTo('')).and(this.blockedBasket.isEqualTo(false));
     if (language > -1)
-      where = where.and(this.language.isEqualTo(language));
+      where = where.and(this.language.isEqualTo( this.language.byId(language)));
     if (city) {
       where = where.and(this.city.isEqualTo(city));
     }
@@ -350,7 +350,7 @@ export class Families extends IdEntity<FamilyId>  {
     return r;
   }
   getDeliveryDescription() {
-    switch (this.deliverStatus.listValue) {
+    switch (this.deliverStatus.value) {
       case DeliveryStatus.ReadyForDelivery:
         if (this.courier.value) {
           return this.courier.getValue() + ' יצא ' + this.courierAssingTime.relativeDateName();
@@ -363,14 +363,14 @@ export class Families extends IdEntity<FamilyId>  {
       case DeliveryStatus.FailedOther:
         let duration = '';
         if (this.courierAssingTime.value && this.deliveryStatusDate.value)
-          duration = ' תוך ' + Math.round((this.deliveryStatusDate.dateValue.valueOf() - this.courierAssingTime.dateValue.valueOf()) / 60000) + " דק'";
+          duration = ' תוך ' + Math.round((this.deliveryStatusDate.value.valueOf() - this.courierAssingTime.value.valueOf()) / 60000) + " דק'";
         return this.deliverStatus.displayValue + (this.courierComments.value ? ", " + this.courierComments.value + " - " : '') + (this.courier.value ? ' על ידי ' + this.courier.getValue() : '') + ' ' + this.deliveryStatusDate.relativeDateName() + duration;
 
     }
     return this.deliverStatus.displayValue;
   }
   getShortDeliveryDescription() {
-    switch (this.deliverStatus.listValue) {
+    switch (this.deliverStatus.value) {
       case DeliveryStatus.ReadyForDelivery:
         if (this.courier.value) {
           return this.courier.getValue() + ' יצא ' + this.courierAssingTime.relativeDateName();
@@ -410,7 +410,7 @@ export class Families extends IdEntity<FamilyId>  {
   static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string) {
     switch (updateType) {
       case 1:
-        switch (n.deliverStatus.listValue) {
+        switch (n.deliverStatus.value) {
           case DeliveryStatus.ReadyForDelivery:
             break;
           case DeliveryStatus.Success:
@@ -420,7 +420,7 @@ export class Families extends IdEntity<FamilyId>  {
           case DeliveryStatus.FailedOther:
             let duration = '';
             if (n.courierAssingTime.value && n.deliveryStatusDate.value)
-              duration = ' תוך ' + Math.round((n.deliveryStatusDate.dateValue.valueOf() - n.courierAssingTime.dateValue.valueOf()) / 60000) + " דק'";
+              duration = ' תוך ' + Math.round((n.deliveryStatusDate.value.valueOf() - n.courierAssingTime.value.valueOf()) / 60000) + " דק'";
             return n.deliverStatus.displayValue + (n.courierComments.value ? ", " + n.courierComments.value + " - " : '') + ' למשפחת ' + n.name.value + ' על ידי ' + courierName + duration + "!";
         }
         return 'משפחת ' + n.name.value + ' עודכנה ל' + n.deliverStatus.displayValue;

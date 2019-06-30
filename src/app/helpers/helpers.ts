@@ -32,7 +32,7 @@ export class Helpers extends IdEntity<HelperId>  {
 
                     await checkForDuplicateValue(this, this.phone);
                     if (this.isNew())
-                        this.createDate.dateValue = new Date();
+                        this.createDate.value = new Date();
                     this.veryUrlKeyAndReturnTrueIfSaveRequired();
                 }
             },

@@ -24,7 +24,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
   lastStatus(f: WeeklyFullFamilyInfo) {
     let r = f.lastDeliveryStatus.displayValue;
 
-    if (f.lastDeliveryStatus.listValue == WeeklyFamilyDeliveryStatus.Delivered)
+    if (f.lastDeliveryStatus.value == WeeklyFamilyDeliveryStatus.Delivered)
       r += ' ' + f.lastDelivery.relativeDateName();
     return r;
 
@@ -124,7 +124,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
   }, () => { });
   statusText(d: WeeklyFamilyDeliveries) {
     var x = d.status.displayValue;
-    if (d.status.listValue == WeeklyFamilyDeliveryStatus.Delivered)
+    if (d.status.value == WeeklyFamilyDeliveryStatus.Delivered)
       x += ' ' + d.deliveredOn.relativeDateName();
     return x;
   }
@@ -145,7 +145,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
   showNew() {
     let result = true;
     this.deliveries.forEach(x => {
-      if (x.status.listValue != WeeklyFamilyDeliveryStatus.Delivered)
+      if (x.status.value != WeeklyFamilyDeliveryStatus.Delivered)
         result = false;
 
     });
@@ -163,7 +163,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
         (await this.context.for(WeeklyFamilyDeliveryProducts).find({
           limit: 1000,
           where: p => p.delivery.isEqualTo(this.deliveries[1].id).and(
-            p.requestQuanity.IsGreaterOrEqualTo(1))
+            p.requestQuanity.isGreaterOrEqualTo(1))
         })).forEach(async p => {
           var c = this.context.for(WeeklyFamilyDeliveryProducts).create();
           c.delivery.value = this.deliveries[0].id.value;
@@ -181,7 +181,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
 
 
   isDelivered(d: WeeklyFamilyDeliveries) {
-    return d.status.listValue == WeeklyFamilyDeliveryStatus.Delivered;
+    return d.status.value == WeeklyFamilyDeliveryStatus.Delivered;
   }
   saveIfNeeded(d: WeeklyFamilyDeliveries) {
     if (d.wasChanged())

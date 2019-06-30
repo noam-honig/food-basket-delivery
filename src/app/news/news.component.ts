@@ -26,7 +26,7 @@ export class NewsComponent implements OnInit, OnDestroy {
     where: f => f.deliverStatus.isProblem().and(f.updateType.isEqualTo(1))
   }, {
     name: 'הערות',
-    where: f => f.courierComments.IsDifferentFrom('').and(f.updateType.isEqualTo(1).and(f.deliverStatus.isAResultStatus()))
+    where: f => f.courierComments.isDifferentFrom('').and(f.updateType.isEqualTo(1).and(f.deliverStatus.isAResultStatus()))
   }];
   currentFilter: NewsFilter = this.filters[0];
   filterChange() {
@@ -70,7 +70,7 @@ export class NewsComponent implements OnInit, OnDestroy {
 
     switch (n.updateType.value) {
       case 1:
-        switch (n.deliverStatus.listValue) {
+        switch (n.deliverStatus.value) {
           case DeliveryStatus.ReadyForDelivery:
 
             break;
