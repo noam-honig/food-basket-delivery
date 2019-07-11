@@ -64,6 +64,7 @@ import { StressTestComponent } from './stress-test/stress-test.component';
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
+import { PreviewFamilyComponent } from './preview-family/preview-family.component';
 
 
 
@@ -115,6 +116,7 @@ import { DeliveryHistoryComponent } from './delivery-history/delivery-history.co
     SelfPickupComponent,
     BatchOperationsComponent,
     DeliveryHistoryComponent,
+    PreviewFamilyComponent,
     
   ],
   imports: [
@@ -150,7 +152,7 @@ import { DeliveryHistoryComponent } from './delivery-history/delivery-history.co
     SelectPopupComponent,
     YesNoQuestionComponent,
     InputAreaComponent,
-    UpdateFamilyDialogComponent,
+    UpdateFamilyDialogComponent,PreviewFamilyComponent,
     UpdateCommentComponent, WaitComponent]
 })
 export class AppModule { }

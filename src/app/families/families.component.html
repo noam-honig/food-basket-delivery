@@ -43,6 +43,7 @@
 <button [class.hide]="gridView" class="btn glyphicon glyphicon glyphicon-filter" (click)="dataFilter.userFilterButton()"></button>
 <button (click)="families.addNewRow()" [class.hide]="gridView" [disabled]="families.currentRow&&families.currentRow.wasChanged()"
     class="btn btn-primary glyphicon glyphicon-plus"></button>
+    <button mat-raised-button (click)="previewFamily()">תצוגה מקדימה</button>
 <Data-Filter [settings]="families" #dataFilter></Data-Filter>
 
 <div [class.hide]="gridView">

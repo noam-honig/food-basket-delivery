@@ -26,6 +26,7 @@ export class HelperFamiliesComponent implements OnInit {
   @Input() partOfReview = false;
   @Output() assignmentCanceled = new EventEmitter<void>();
   @Output() assignSmsSent = new EventEmitter<void>();
+  @Input() preview = false;
   ngOnInit() {
     this.familyLists.setMap(this.map);
 

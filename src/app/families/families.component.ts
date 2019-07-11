@@ -19,7 +19,7 @@ import { FilterBase } from 'radweb';
 import { BusyService } from '../select-popup/busy-service';
 import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
-import { MatTabGroup } from '@angular/material';
+import { MatTabGroup, MatDialog, MatDialogConfig } from '@angular/material';
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
 import { HasAsyncGetTheValue, DateTimeColumn } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
@@ -31,6 +31,7 @@ import { FamilyDeliveries } from './FamilyDeliveries';
 import { UpdateFamilyComponent } from '../update-family/update-family.component';
 import { PortalHostDirective } from '@angular/cdk/portal';
 import { saveToExcel } from '../shared/saveToExcel';
+import { PreviewFamilyComponent, PreviewFamilyInfo } from '../preview-family/preview-family.component';
 
 @Component({
   selector: 'app-families',
@@ -49,7 +50,7 @@ export class FamiliesComponent implements OnInit {
   familyNameColumn: ColumnSetting<Families>;
   familyAddressColumn: ColumnSetting<Families>;
   addressCommentColumn: ColumnSetting<Families>;
-  constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context, private selectService: SelectService) {
+  constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context, private selectService: SelectService, private matDialog: MatDialog) {
     this.doTest();
 
     let y = dialog.refreshStatusStats.subscribe(() => {
@@ -131,12 +132,12 @@ export class FamiliesComponent implements OnInit {
     this.doSearch();
   }
   stats = new Stats();
-  async saveToExcel(){
-      await saveToExcel<Families,GridSettings<Families>>(this.families,'משפחות',this.busy,(f,c)=> c == f.id || c == f.addressApiResult);
+  async saveToExcel() {
+    await saveToExcel<Families, GridSettings<Families>>(this.families, 'משפחות', this.busy, (f, c) => c == f.id || c == f.addressApiResult);
   }
 
 
-  
+
   currentFamilyDeliveries: FamilyDeliveries[] = [];
   async saveCurrentFamilies() {
     await this.families.currentRow.save();
@@ -146,7 +147,7 @@ export class FamiliesComponent implements OnInit {
 
     allowUpdate: true,
     allowInsert: true,
-    
+
     rowCssClass: f => f.deliverStatus.getCss(),
     numOfColumnsInGrid: 4,
     onEnterRow: async f => {
@@ -304,11 +305,11 @@ export class FamiliesComponent implements OnInit {
       },
       {
         cssClass: 'btn btn-success',
-        name:'משלוח חדש',
-        visible: f => f.deliverStatus.value != DeliveryStatus.ReadyForDelivery&&
-        f.deliverStatus.value != DeliveryStatus.SelfPickup&&
-        f.deliverStatus.value != DeliveryStatus.Frozen&&
-        f.deliverStatus.value != DeliveryStatus.RemovedFromList
+        name: 'משלוח חדש',
+        visible: f => f.deliverStatus.value != DeliveryStatus.ReadyForDelivery &&
+          f.deliverStatus.value != DeliveryStatus.SelfPickup &&
+          f.deliverStatus.value != DeliveryStatus.Frozen &&
+          f.deliverStatus.value != DeliveryStatus.RemovedFromList
         ,
         click: async f => {
           await this.busy.donotWait(async () => {
@@ -551,7 +552,14 @@ export class FamiliesComponent implements OnInit {
     component: FamiliesComponent,
     data: { name: 'משפחות' }, canActivate: [HolidayDeliveryAdmin]
   }
-
+  previewFamily() {
+    let x = new MatDialogConfig();
+    x.data = {
+      f: this.families.currentRow
+    } as PreviewFamilyInfo;
+    x.minWidth = 350;
+    this.matDialog.open(PreviewFamilyComponent, x);
+  }
 }
 
 interface statsOnTab {
