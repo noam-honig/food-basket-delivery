@@ -114,6 +114,11 @@
             "type": "npm",
             "script": "gc",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-plev",
+            "problemMatcher": []
         }
     ]
 }

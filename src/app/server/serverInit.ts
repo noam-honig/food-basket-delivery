@@ -57,6 +57,7 @@ export async function serverInit() {
         var sb = new PostgrestSchemaBuilder(pool);
         await foreachSync(allEntities.map(x => context.for(x).create()), async x => {
             if (x.__getDbName().toLowerCase().indexOf('from ') < 0) {
+                console.log('verify table existance '+x.__getName());
                 await sb.CreateIfNotExist(x);
                 await sb.verifyAllColumns(x);
             }

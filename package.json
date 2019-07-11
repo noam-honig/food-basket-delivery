@@ -65,7 +65,7 @@
     "pg": "^7.6.1",
     "radweb": "^2.0.27",
     "radweb-server": "^1.0.4",
-    "radweb-server-postgres": "^1.0.3",
+    "radweb-server-postgres": "^1.0.4",
     "reflect-metadata": "^0.1.12",
     "rxjs": "~6.3.3",
     "uuid": "^3.3.2",
