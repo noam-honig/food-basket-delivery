@@ -13,6 +13,7 @@
     "server:build-watch": "tsc -p tsconfig.server.json --watch",
     "publish-to-heroku-test": "git push heroku master -f",
     "publish-to-nrun": "git push nrun master -f",
+    "publish-to-plev": "git push plev master -f",
     "publish-to-salmichal": "git push salmichal master -f",
     "publish-to-hmey": "git push hmey master -f",
     "publish-to-yadl": "git push yadl master -f",
