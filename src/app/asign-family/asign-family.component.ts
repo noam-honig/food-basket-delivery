@@ -564,7 +564,7 @@ export class AsignFamilyComponent implements OnInit {
         return filter(f);
       },
       onSelect: async f => {
-        await this.verifyHelperExistance();
+        
 
         let ok = async () => {
           await this.performSepcificFamilyAssignment(f, analyticsName);
@@ -588,6 +588,7 @@ export class AsignFamilyComponent implements OnInit {
     })
   }
   private async performSepcificFamilyAssignment(f: Families, analyticsName: string) {
+    await this.verifyHelperExistance();
     f.courier.value = this.id;
     f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
     this.dialog.analytics(analyticsName);

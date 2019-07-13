@@ -16,7 +16,7 @@ import { BusyService } from '../select-popup/busy-service';
 })
 export class MapComponent implements OnInit {
   async loadPotentialAsigment() {
-
+    await this.initMap();
     let families = await DistributionMap.GetFamiliesLocations(true);
     let closeBusy = this.busy.showBusy();
     try {
@@ -26,6 +26,8 @@ export class MapComponent implements OnInit {
 
       });
       console.timeEnd('load families to map');
+
+      
       if (this.map.getZoom() > 13)
         this.map.setZoom(13);
     } finally {
@@ -112,20 +114,9 @@ export class MapComponent implements OnInit {
     var prevFamilies = this.prevFamilies;
     this.prevFamilies = [...families];
     this.hasFamilies = families.length > 0;
-    if (!this.center) {
-      var x = (await ApplicationSettings.get(this.context)).getGeocodeInformation().location();
-      this.center = new google.maps.LatLng(x.lat, x.lng);
-    }
-    var mapProp: google.maps.MapOptions = {
-      center: this.center,
-      zoom: 13,
-      mapTypeId: google.maps.MapTypeId.ROADMAP,
 
-    };
-    if (!this.mapInit) {
-      this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
-      this.mapInit = true;
-    }
+
+    await this.initMap();
 
     let i = 0;
     this.bounds = new google.maps.LatLngBounds();
@@ -183,5 +174,21 @@ export class MapComponent implements OnInit {
 
   @ViewChild('gmap') gmapElement: any;
   map: google.maps.Map;
+
+  private async initMap() {
+    if (!this.mapInit) {
+      if (!this.center) {
+        var x = (await ApplicationSettings.get(this.context)).getGeocodeInformation().location();
+        this.center = new google.maps.LatLng(x.lat, x.lng);
+      }
+      var mapProp: google.maps.MapOptions = {
+        center: this.center,
+        zoom: 13,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+      };
+      this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
+      this.mapInit = true;
+    }
+  }
 }
 
