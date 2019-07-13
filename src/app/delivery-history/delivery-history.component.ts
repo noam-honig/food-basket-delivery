@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EntityClass, ContextEntity, Context, DirectSQL } from '../shared/context';
 import { FamilyId, Families } from '../families/families';
-import { Id, StringColumn, changeDate, SqlBuilder } from '../model-shared/types';
+import { Id, StringColumn, changeDate, SqlBuilder, PhoneColumn } from '../model-shared/types';
 import { BasketId } from '../families/BasketType';
 import { DeliveryStatusColumn } from '../families/DeliveryStatus';
 import { HelperId, HelperIdReadonly, Helpers } from '../helpers/helpers';
@@ -65,6 +65,10 @@ export class DeliveryHistoryComponent implements OnInit {
         {
           column: h.name,
           width: '150'
+        },
+        {
+          column: h.phone,
+          width: '100'
         },
         {
           column: h.deliveries,
@@ -174,7 +178,8 @@ export class DeliveryHistoryComponent implements OnInit {
   @RunOnServer({ allowed: x => x.isAdmin() })
   static async  getHelperHistoryInfo(fromDate: string, toDate: string, context?: Context, directSql?: DirectSQL) {
     var fromDateDate = DateColumn.stringToDate(fromDate);
-    var toDateDate = new Date(fromDateDate.getFullYear(), fromDateDate.getMonth(), fromDateDate.getDate() + 1);
+    var toDateDate = DateColumn.stringToDate(toDate);
+    toDateDate = new Date(toDateDate.getFullYear(), toDateDate.getMonth(), toDateDate.getDate() + 1);
     var sql = new SqlBuilder();
     var fd = new FamilyDeliveriesStats(context);
     var h = new Helpers(context);
@@ -184,7 +189,13 @@ export class DeliveryHistoryComponent implements OnInit {
         select: () => [h.name],
         from: h,
         where: () => [sql.build(h.id, "=", fd.courier.__getDbName())]
-      }), "deliveries", "dates", "families"], " from (",
+      }),
+      sql.columnInnerSelect(fd, {
+        select: () => [h.phone],
+        from: h,
+        where: () => [sql.build(h.id, "=", fd.courier.__getDbName())]
+      })
+      , "deliveries", "dates", "families"], " from (",
         sql.build("select ", [
           fd.courier.__getDbName(),
           "count(*) deliveries",
@@ -202,6 +213,7 @@ export class DeliveryHistoryComponent implements OnInit {
 export class helperHistoryInfo extends Entity<string>{
   courier = new StringColumn();
   name = new StringColumn('שם');
+  phone = new PhoneColumn("טלפון");
   deliveries = new NumberColumn('משלוחים');
   families = new NumberColumn('משפחות');
   dates = new NumberColumn("תאריכים");
