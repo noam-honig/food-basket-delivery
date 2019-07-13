@@ -221,4 +221,4 @@ justify-content: space-between;order:-1;">
   <app-map #map [class.hidden]="partOfReview||preview" [style.order]="familyLists.mapElementOrder"> </app-map>
   
 </div>
-<button mat-raised-button *ngIf="!preview" (click)="showRouteOnGoogleMaps()" class="maps-button">הצג מסלול ב - google maps</button>
+<button mat-raised-button *ngIf="!preview&&familyLists.toDeliver.length>0" (click)="showRouteOnGoogleMaps()" class="maps-button">הצג מסלול ב - google maps</button>
