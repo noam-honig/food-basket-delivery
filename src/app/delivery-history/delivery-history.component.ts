@@ -145,6 +145,9 @@ export class DeliveryHistoryComponent implements OnInit {
   async saveToExcel() {
     await saveToExcel(this.deliveries, "משלוחים", this.busy, (d: FamilyDeliveries, c) => c == d.id || c == d.family);
   }
+  async saveToExcelHelpers() {
+    await saveToExcel(this.helperInfo, "מתנדבים", this.busy, (d: helperHistoryInfo, c) => c == d.courier );
+  }
   deliveries = this.context.for(FamilyDeliveriesStats).gridSettings({
     columnSettings: d => [
       d.name,
