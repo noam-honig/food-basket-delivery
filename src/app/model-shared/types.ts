@@ -318,7 +318,7 @@ export class SqlBuilder {
     return args.map(x => this.getItemSql(x)).join(' and ');
   }
   or(...args: any[]): string {
-    return args.map(x => this.getItemSql(x)).join(' or ');
+    return "(" + args.map(x => this.getItemSql(x)).join(' or ') + ")";
   }
   private last = 1;
   getEntityAlias(e: Entity<any>) {
