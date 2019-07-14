@@ -152,15 +152,16 @@ export class HelperFamiliesComponent implements OnInit {
       cancel: () => { }
     });
   }
-  async showRouteOnGoogleMaps(){
+   showRouteOnGoogleMaps(){
     
-    let s= await ApplicationSettings.getAsync(this.context);
+    let s=  ApplicationSettings.get(this.context);
     let url = 'https://www.google.com/maps/dir/'+encodeURI(s.getGeocodeInformation().getAddress());
 
     for (const f of this.familyLists.toDeliver) {
       url+='/'+encodeURI( f.getGeocodeInformation().getAddress());
     }
-    window.open(url,'_blank');
+    window.open(url, '_blank');
+    //window.open(url,'_blank');
   }
   async returnToDeliver(f: Families) {
     f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
