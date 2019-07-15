@@ -372,7 +372,7 @@ export class FamiliesComponent implements OnInit {
 
     {
       name: 'הערות',
-      rule: f => f.deliverStatus.isAResultStatus().and(f.courierComments.isDifferentFrom('')),
+      rule: f => f.deliverStatus.isInEvent().and(f.courierComments.isDifferentFrom('')),
       stats: [
         this.stats.deliveryComments
       ],
