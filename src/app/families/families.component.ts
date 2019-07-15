@@ -133,7 +133,7 @@ export class FamiliesComponent implements OnInit {
   }
   stats = new Stats();
   async saveToExcel() {
-    await saveToExcel<Families, GridSettings<Families>>(this.families, 'משפחות', this.busy, (f, c) => c == f.id || c == f.addressApiResult);
+    await saveToExcel<Families, GridSettings<Families>>(this.families, 'משפחות', this.busy, (f, c) => c == f.id || c == f.addressApiResult, (f, c) => c == f.correntAnErrorInStatus||c==f.visibleToCourier);
   }
 
 

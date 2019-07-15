@@ -4,11 +4,13 @@ import * as XLSX from 'xlsx';
 import { HasAsyncGetTheValue, DateTimeColumn } from "../model-shared/types";
 import { foreachSync } from "./utils";
 
-export async function saveToExcel<E extends Entity<any>, T extends GridSettings<E>>(grid: T, fileName: string, busy: BusyService, hideColumn?: (e: E, c: Column<any>) => boolean) {
+export async function saveToExcel<E extends Entity<any>, T extends GridSettings<E>>(grid: T, fileName: string, busy: BusyService, hideColumn?: (e: E, c: Column<any>) => boolean, excludeColumn?: (e: E, c: Column<any>) => boolean) {
   busy.doWhileShowingBusy(async () => {
 
     if (!hideColumn)
       hideColumn = () => false;
+    if (!excludeColumn)
+      excludeColumn = () => false;
 
     let wb = XLSX.utils.book_new();
 
@@ -70,9 +72,9 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
                 colPrefix = 'A';
               }
             }
+            let col = ws["!cols"][colIndex++];
             if (v) {
               let len = v.length;
-              let col = ws["!cols"][colIndex++];
               if (len > col.wch) {
                 col.wch = len;
               }
@@ -81,27 +83,28 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
 
           await foreachSync(f.__iterateColumns(), async c => {
             try {
+              if (!excludeColumn(<E>f, c)) {
+                let v = c.displayValue;
+                if (v == undefined)
+                  v = '';
+                let getv: HasAsyncGetTheValue = <any>c as HasAsyncGetTheValue;
+                if (getv && getv.getTheValue) {
+                  v = await getv.getTheValue();
+                }
 
-              let v = c.displayValue;
-              if (v == undefined)
-                v = '';
-              let getv: HasAsyncGetTheValue = <any>c as HasAsyncGetTheValue;
-              if (getv && getv.getTheValue) {
-                v = await getv.getTheValue();
+                if (c instanceof DateTimeColumn) {
+                  addColumn('תאריך ' + c.caption, c.value ? c.getStringForInputDate() : undefined, "d", false);
+                  addColumn('שעת ' + c.caption, c.value ? c.value.getHours().toString() : undefined, "n", false);
+                  addColumn('מלא ' + c.caption, c.displayValue, "s", true);
+                }
+                else
+                  addColumn(c.caption, v.toString(), "s", hideColumn(<E>f, c))
+
+
+              } catch (err) {
+
+                console.error(err, c.jsonName, f.__toPojo(new ColumnHashSet()));
               }
-
-              if (c instanceof DateTimeColumn) {
-                addColumn('תאריך ' + c.caption, c.value ? c.getStringForInputDate() : undefined, "d", false);
-                addColumn('שעת ' + c.caption, c.value ? c.value.getHours().toString() : undefined, "n", false);
-                addColumn('מלא ' + c.caption, c.displayValue, "s", true);
-              }
-              else
-                addColumn(c.caption, v.toString(), "s", hideColumn(<E>f, c))
-
-
-            } catch (err) {
-
-              console.error(err, c.jsonName, f.__toPojo(new ColumnHashSet()));
             }
           });
           rowNum++;
