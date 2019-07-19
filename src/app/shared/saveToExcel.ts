@@ -100,11 +100,10 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
                 else
                   addColumn(c.caption, v.toString(), "s", hideColumn(<E>f, c))
 
-
-              } catch (err) {
-
-                console.error(err, c.jsonName, f.__toPojo(new ColumnHashSet()));
               }
+            } catch (err) {
+
+              console.error(err, c.jsonName, f.__toPojo(new ColumnHashSet()));
             }
           });
           rowNum++;
