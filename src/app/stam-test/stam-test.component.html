@@ -1,19 +1,25 @@
-<select [(ngModel)]="column">
-    <option *ngFor="let c of columns" value="{{c.jsonName}}" >{{c.caption}}</option>
-</select>
-{{column}}
-<input [(ngModel)]="cell">
+<mat-card>
+    <input type="file" (change)="fileChange($event)" />
+    <div class="table-div">
+        <table class="table table-bordered">
+            <tr>
+                <th *ngFor="let ec of excelColumns">
+                    {{ec.title}}
+                    <br>
+                    <select [(ngModel)]="ec.column">
+                        <option value="">לא לקלוט</option>
+                        <option *ngFor="let c of columns" value="{{c.jsonName}}">{{c.caption}}</option>
+                    </select>
+                </th>
+            </tr>
+            <tr *ngFor="let r of rows">
 
-<br>
-cell:{{cell}} = {{getData()}}
-<br>
-<input type="file" (change)="fileChange($event)" />
-<table>
-    <tr *ngFor="let r of rows">
-        <td>{{r}}</td>
-        <td *ngFor="let c of excelColumns">
-            {{getTheData(c.excelColumn+r)}}
-        </td>
-    </tr>
+                <td *ngFor="let c of excelColumns">
+                    {{getTheData(c.excelColumn+r)}}
+                </td>
+            </tr>
 
-</table>
+
+        </table>
+    </div>
+</mat-card>

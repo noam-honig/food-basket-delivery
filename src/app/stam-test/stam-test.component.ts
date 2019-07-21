@@ -17,13 +17,13 @@ export class StamTestComponent implements OnInit {
   
   constructor(private context: Context) { }
   cell: string;
-  column:string;
+  
   oFile: XLSX.WorkBook;
   worksheet: XLSX.WorkSheet;
 
   excelColumns: excelColumn[] = [];
   columns: Column<any>[] = [];
-  rows = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  rows = [2, 3, 4, 5, 6, 7, 8, 9, 10];
   getData() {
     return this.getTheData(this.cell);
   }
@@ -71,12 +71,14 @@ export class StamTestComponent implements OnInit {
       let colPrefix = '';
       let colName = 'A';
       let colIndex = 0;
+      this.excelColumns=[];
       while (true) {
 
         if (colPrefix + colName == maxLetter)
           break;
         this.excelColumns.push({
           excelColumn: colPrefix + colName,
+          column:'',
           title: this.getTheData(colPrefix + colName + 1)
         });
         let j = colName.charCodeAt(0);
@@ -87,7 +89,7 @@ export class StamTestComponent implements OnInit {
           colPrefix = 'A';
         }
       }
-      console.log(this.excelColumns);
+      
 
     };
     fileReader.readAsArrayBuffer(file);
@@ -103,12 +105,10 @@ export class StamTestComponent implements OnInit {
   }
 
 }
-interface importStructure {
-  excelColumn: string;
-  column: string;
-}
+
 
 interface excelColumn {
   excelColumn: string;
+  column:string;
   title: string;
 }
