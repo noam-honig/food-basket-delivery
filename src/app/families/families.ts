@@ -570,6 +570,9 @@ export function parseAddress(s: string) {
     }
   }
   r.dira = extractSomething('דירה');
+  if (!r.dira){
+    r.dira = extractSomething('/');
+  }
   r.floor = extractSomething('קומה');
   r.knisa = extractSomething('כניסה');
 
