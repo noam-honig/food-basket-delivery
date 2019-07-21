@@ -8,18 +8,16 @@
                     <br>
                     <select [(ngModel)]="ec.column">
                         <option value="">לא לקלוט</option>
-                        <option *ngFor="let c of columns" value="{{c.jsonName}}">{{c.caption}}</option>
+                        <option *ngFor="let c of columns" [ngValue]="c">{{c.name}}</option>
                     </select>
                 </th>
             </tr>
             <tr *ngFor="let r of rows">
-
-                <td *ngFor="let c of excelColumns">
+                <td *ngFor="let c of excelColumns" (click)="test(r)">
                     {{getTheData(c.excelColumn+r)}}
                 </td>
             </tr>
-
-
         </table>
     </div>
+    <button (click)="doImport()">Import</button>
 </mat-card>

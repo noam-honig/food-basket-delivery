@@ -5,7 +5,7 @@ import { Helpers } from '../helpers/helpers';
 import { WeeklyFamilies } from '../weekly-families/weekly-families';
 import { myThrottle } from '../model-shared/types';
 import * as XLSX from 'xlsx';
-import { Families } from '../families/families';
+import { Families, parseAddress } from '../families/families';
 @Component({
   selector: 'app-stam-test',
   templateUrl: './stam-test.component.html',
@@ -14,15 +14,15 @@ import { Families } from '../families/families';
 export class StamTestComponent implements OnInit {
 
 
-  
+
   constructor(private context: Context) { }
   cell: string;
-  
+
   oFile: XLSX.WorkBook;
   worksheet: XLSX.WorkSheet;
 
   excelColumns: excelColumn[] = [];
-  columns: Column<any>[] = [];
+  columns: columnUpdater[] = [];
   rows = [2, 3, 4, 5, 6, 7, 8, 9, 10];
   getData() {
     return this.getTheData(this.cell);
@@ -31,8 +31,9 @@ export class StamTestComponent implements OnInit {
     let val = this.worksheet[cell];
     if (!val)
       return '';
-    return val.w;
+    return val.w.trim();
   }
+  totalRows: number;
   fileChange(eventArgs: any) {
 
     var files = eventArgs.target.files, file;
@@ -53,34 +54,33 @@ export class StamTestComponent implements OnInit {
       this.worksheet = this.oFile.Sheets[this.oFile.SheetNames[0]];
       let sRef = this.worksheet["!ref"];
       let to = sRef.substr(sRef.indexOf(':') + 1);
-      let rows = 0
+
       let maxLetter = 'A';
       for (let index = 0; index < to.length; index++) {
         const element = to[index];
         if ('1234567890'.indexOf(element) >= 0) {
-          maxLetter = to.substring(0, index );
-          rows = +to.substring(index, 20);
+          maxLetter = to.substring(0, index);
+          this.totalRows = +to.substring(index, 20);
           break;
         }
 
       }
 
-      if (!rows) {
+      if (!this.totalRows) {
         debugger;
       }
       let colPrefix = '';
       let colName = 'A';
       let colIndex = 0;
-      this.excelColumns=[];
+      this.excelColumns = [];
       while (true) {
-
-        if (colPrefix + colName == maxLetter)
-          break;
         this.excelColumns.push({
           excelColumn: colPrefix + colName,
-          column:'',
+          column: undefined,
           title: this.getTheData(colPrefix + colName + 1)
         });
+        if (colPrefix + colName == maxLetter)
+          break;
         let j = colName.charCodeAt(0);
         j++;
         colName = String.fromCharCode(j);
@@ -89,19 +89,110 @@ export class StamTestComponent implements OnInit {
           colPrefix = 'A';
         }
       }
-      
+      for (const col of this.excelColumns) {
 
+        let searchName = col.title;
+        switch (searchName) {
+          case "טלפון":
+            searchName = this.f.phone1.caption;
+            break;
+          case "הערות":
+            searchName = this.f.internalComment.caption;
+            break;
+          case "נפשות":
+            searchName = this.f.familyMembers.caption;
+            break;
+        }
+
+        for (const up of this.columns) {
+          if (searchName == up.name) {
+            col.column = up;
+            break;
+          }
+        }
+
+      }
     };
     fileReader.readAsArrayBuffer(file);
   }
+
+  async test(row: number) {
+    let f = await this.readFamily(row);
+    let rel = {};
+    for (const c of f.__iterateColumns()) {
+      if (c.value) {
+        rel[c.caption] = c.value;
+
+      }
+    }
+    console.table(rel);
+    return f;
+
+  }
+  async readFamily(row: number) {
+    let f = this.context.for(Families).create();
+    f._disableAutoDuplicateCheck = true;
+    for (const c of this.excelColumns) {
+      if (c.column) {
+        await c.column.updateFamily(this.getTheData(c.excelColumn + row), f);
+      }
+    }
+    return f;
+  }
+
   f: Families;
   ngOnInit() {
+
+    let updateCol = (col: Column<any>, val: string) => {
+
+      if (col.value) {
+        col.value += ' ' + val;
+      } else
+        col.value = val;
+    }
     this.f = this.context.for(Families).create();
-    this.columns = [
+    let addColumns = (cols: Column<any>[]) => {
+      for (const col of cols) {
+        this.columns.push({
+          key: col.__getMemberName(),
+          name: col.caption,
+          updateFamily: async (v, f) => {
+            updateCol(f.__getColumn(col), v);
+          }
+        });
+      }
+    };
+    addColumns([
       this.f.name,
-      this.f.address,
-      this.f.id,
-    ];
+    ]);
+    this.columns.push({
+      key: 'address',
+      name: 'כתובת',
+      updateFamily: async (v, f) => {
+        let r = parseAddress(v);
+        updateCol(f.address, r.address);
+        updateCol(f.appartment, r.dira);
+        updateCol(f.floor, r.floor);
+        if (r.knisa)
+          updateCol(f.addressComment, 'כניסה ' + r.knisa);
+      }
+    });
+    addColumns([this.f.phone1,
+    this.f.phone1Description,
+    this.f.phone2,
+    this.f.phone2Description,
+    this.f.internalComment,
+    this.f.deliveryComments,
+    this.f.familyMembers
+    ]);
+  }
+  async doImport() {
+    for (let index = 2; index < this.totalRows; index++) {
+      let f = await this.test(index);
+      if (f.name.value)
+        await f.save();
+
+    }
   }
 
 }
@@ -109,6 +200,11 @@ export class StamTestComponent implements OnInit {
 
 interface excelColumn {
   excelColumn: string;
-  column:string;
+  column: columnUpdater;
   title: string;
+}
+interface columnUpdater {
+  key: string;
+  name: string;
+  updateFamily: (val: string, f: Families) => Promise<void>;
 }

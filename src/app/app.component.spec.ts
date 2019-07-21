@@ -108,11 +108,12 @@ describe('AppComponent', () => {
     expect(r.knisa).toBe("א'"); 
   });
   it('parse address2', () => {
-    let r = parseAddress("שנהב 4/76");
-    expect(r.address).toBe('שנהב 4');
+    let r = parseAddress("שנהב 4/76 רמת גן");
+    expect(r.address).toBe('שנהב 4 רמת גן');
     expect(r.dira).toBe('76');
     
   });
+  
 });
 
 

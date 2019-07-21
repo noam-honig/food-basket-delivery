@@ -56,7 +56,7 @@ export class Families extends IdEntity<FamilyId>  {
               fd.archiveFamilySource.value = this.familySource.originalValue;
               fd.archiveGroups.value = this.groups.value;
               fd.archive_address.value = this.address.originalValue;
-              
+
               fd.archive_floor.value = this.floor.originalValue;
               fd.archive_appartment.value = this.appartment.originalValue;
               fd.archive_postalCode.value = this.postalCode.originalValue;
@@ -185,7 +185,7 @@ export class Families extends IdEntity<FamilyId>  {
     virtualData: async () => (await this.context.for(Helpers).lookupAsync(this.courierAssignUser)).phone.value
   });
 
-   async setPostalCodeServerOnly() {
+  async setPostalCodeServerOnly() {
     if (!process.env.AUTO_POSTAL_CODE)
       return;
     var geo = this.getGeocodeInformation();
@@ -295,7 +295,7 @@ export class Families extends IdEntity<FamilyId>  {
     let where = this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
       this.courier.isEqualTo('')).and(this.blockedBasket.isEqualTo(false));
     if (language > -1)
-      where = where.and(this.language.isEqualTo( this.language.byId(language)));
+      where = where.and(this.language.isEqualTo(this.language.byId(language)));
     if (city) {
       where = where.and(this.city.isEqualTo(city));
     }
@@ -436,6 +436,8 @@ export class Families extends IdEntity<FamilyId>  {
   }
   tzDelay: delayWhileTyping;
   private delayCheckDuplicateFamilies() {
+    if (this._disableAutoDuplicateCheck)
+      return;
     if (this.context.onServer)
       return;
     if (!this.tzDelay)
@@ -446,6 +448,7 @@ export class Families extends IdEntity<FamilyId>  {
     });
 
   }
+  _disableAutoDuplicateCheck = false;
   duplicateFamilies: duplicateFamilyInfo[] = [];
   async checkDuplicateFamilies() {
     this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name.value, this.tz.value, this.phone1.value, this.phone2.value, this.id.value);
@@ -474,7 +477,7 @@ export class Families extends IdEntity<FamilyId>  {
   @RunOnServer({ allowed: x => x.isAdmin() })
   static async checkDuplicateFamilies(name: string, tz: string, phone1: string, phone2: string, id: string, context?: Context, directSQL?: DirectSQL) {
     let result: duplicateFamilyInfo[] = [];
- 
+
     var sql = new SqlBuilder();
     var f = new Families(context);
 
@@ -565,12 +568,14 @@ export function parseAddress(s: string) {
         }
       }
       let after = s.substring(index + 1, 1000);
+      if (s[index] == ' ')
+        after = ' ' + after;
       s = s.substring(0, i) + after;
       return value.trim();
     }
   }
   r.dira = extractSomething('דירה');
-  if (!r.dira){
+  if (!r.dira) {
     r.dira = extractSomething('/');
   }
   r.floor = extractSomething('קומה');
