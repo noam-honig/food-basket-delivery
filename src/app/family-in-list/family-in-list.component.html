@@ -1,0 +1,15 @@
+<mat-panel-title style="justify-content: space-between">
+  <div class="familyLine">
+    <span *ngIf="i">{{i}}.&nbsp;</span>{{f.name.value}}
+    <mat-icon color="primary" *ngIf="f.deliveryComments.value"> comment</mat-icon>
+    <mat-icon color="primary" *ngIf="!f.addressOk.value">warning</mat-icon>
+    <mat-icon color="green" *ngIf="f.courierBeenHereBefore()">repeat</mat-icon>
+  </div>
+  <div>
+    {{f.basketType.displayValue}}
+  </div>
+</mat-panel-title>
+
+<mat-panel-description>
+  {{f.address.value}}
+</mat-panel-description>

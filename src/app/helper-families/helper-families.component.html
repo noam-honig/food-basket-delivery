@@ -28,25 +28,7 @@ justify-content: space-between;order:-1;">
   <mat-accordion class="no-print">
     <mat-expansion-panel #myPanel *ngFor="let f of familyLists.toDeliver;let i=index">
       <mat-expansion-panel-header>
-        <div>
-          <mat-panel-title>
-            {{i+1}}. {{f.name.value}}
-            <div style="margin-right:3px" *ngIf="f.deliveryComments.value">
-              <mat-icon color="primary">comment</mat-icon>
-            </div>
-            <div style="margin-right:3px" *ngIf="f.getGeocodeInformation().partialMatch()">
-              <mat-icon color="primary">warning</mat-icon>
-            </div>
-            <div style="margin-right:3px" *ngIf="f.courierBeenHereBefore()">
-              <mat-icon color="green">repeat</mat-icon>
-            </div>
-          </mat-panel-title>
-        </div>
-        <div>
-          <mat-panel-description>
-            {{f.address.value}}
-          </mat-panel-description>
-        </div>
+        <app-family-in-list [f]="f" [i]="i+1" style="width:100%"></app-family-in-list>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
 
@@ -167,16 +149,7 @@ justify-content: space-between;order:-1;">
     <mat-accordion>
       <mat-expansion-panel #myPanel *ngFor="let f of familyLists.problem">
         <mat-expansion-panel-header>
-          <div>
-            <mat-panel-title>
-              {{f.name.value}}
-            </mat-panel-title>
-          </div>
-          <div>
-            <mat-panel-description>
-              {{f.address.value}}
-            </mat-panel-description>
-          </div>
+            <app-family-in-list [f]="f" style="width:100%"></app-family-in-list>
         </mat-expansion-panel-header>
         <ng-template matExpansionPanelContent>
           <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign"
@@ -197,16 +170,7 @@ justify-content: space-between;order:-1;">
     <mat-accordion>
       <mat-expansion-panel #myPanel *ngFor="let f of familyLists.delivered">
         <mat-expansion-panel-header>
-          <div>
-            <mat-panel-title>
-              {{f.name.value}}
-            </mat-panel-title>
-          </div>
-          <div>
-            <mat-panel-description>
-              {{f.address.value}}
-            </mat-panel-description>
-          </div>
+            <app-family-in-list [f]="f" style="width:100%"></app-family-in-list>
         </mat-expansion-panel-header>
         <ng-template matExpansionPanelContent>
           <app-family-info [f]="f" [showHelp]="true" (assignmentCanceled)="cancelAssign(f)">
@@ -221,4 +185,4 @@ justify-content: space-between;order:-1;">
   <app-map #map [class.hidden]="partOfReview||preview" [style.order]="familyLists.mapElementOrder"> </app-map>
   
 </div>
-<button mat-raised-button *ngIf="!preview&&familyLists.toDeliver.length>0" (click)="showRouteOnGoogleMaps()" class="maps-button">הצג מסלול ב - google maps</button>
+<button mat-raised-button *ngIf="!preview&&familyLists.toDeliver.length>0" (click)="showRouteOnGoogleMaps()" class="map-button">הצג מסלול ב - google maps</button>

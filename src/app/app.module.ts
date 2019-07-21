@@ -65,6 +65,7 @@ import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 import { PreviewFamilyComponent } from './preview-family/preview-family.component';
+import { FamilyInListComponent } from './family-in-list/family-in-list.component';
 
 
 
@@ -117,6 +118,7 @@ import { PreviewFamilyComponent } from './preview-family/preview-family.componen
     BatchOperationsComponent,
     DeliveryHistoryComponent,
     PreviewFamilyComponent,
+    FamilyInListComponent,
     
   ],
   imports: [
