@@ -35,6 +35,7 @@ export class UpdateFamilyComponent implements OnInit {
         families.internalComment,
         families.deliveryComments,
         families.familySource.getColumn(),
+        families.groups,
         families.tz,
         families.familyMembers,
         {

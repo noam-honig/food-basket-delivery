@@ -54,6 +54,7 @@ export class Families extends IdEntity<FamilyId>  {
               fd.courierAssignUser.value = this.courierAssignUser.originalValue;
               fd.courierAssingTime.value = this.courierAssingTime.originalValue;
               fd.archiveFamilySource.value = this.familySource.originalValue;
+              fd.archiveGroups.value = this.groups.value;
               fd.archive_address.value = this.address.originalValue;
               
               fd.archive_floor.value = this.floor.originalValue;
@@ -138,6 +139,7 @@ export class Families extends IdEntity<FamilyId>  {
   language = new LanguageColumn();
   basketType = new BasketId(this.context, 'סוג סל');
   familySource = new FamilySourceId(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'גורם מפנה' });
+  groups = new StringColumn('קבוצות');
   special = new YesNoColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'שיוך מיוחד' });
   defaultSelfPickup = new BoolColumn('ברירת מחדל באים לקחת');
   iDinExcel = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'מזהה באקסל' });

@@ -22,6 +22,7 @@ export class FamilyDeliveries extends IdEntity<Id>  {
     deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
 
     archiveFamilySource = new FamilySourceId(this.context, { caption: 'גורם מפנה' });
+    archiveGroups = new StringColumn('קבוצות');
     archive_address = new StringColumn("כתובת");
     archive_floor = new StringColumn('קומה');
     archive_appartment = new StringColumn('דירה');
