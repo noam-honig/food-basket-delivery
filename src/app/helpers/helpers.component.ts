@@ -9,6 +9,7 @@ import { HolidayDeliveryAdmin, AnyAdmin } from '../auth/auth-guard';
 import { RunOnServer } from '../auth/server-action';
 import { Context } from '../shared/context';
 import { DialogService } from '../select-popup/dialog';
+import { BusyService } from '../select-popup/busy-service';
 
 @Component({
   selector: 'app-helpers',
@@ -16,13 +17,14 @@ import { DialogService } from '../select-popup/dialog';
   styleUrls: ['./helpers.component.css']
 })
 export class HelpersComponent implements OnInit {
-  constructor(private dialog: DialogService, public context: Context) {
+  constructor(private dialog: DialogService, public context: Context,private busy:BusyService) {
   }
   static route: Route = {
     path: 'helpers',
     component: HelpersComponent,
     data: { name: 'מתנדבים' }, canActivate: [AnyAdmin]
   };
+  searchString:string;
 
   helpers = this.context.for(Helpers).gridSettings({
     allowDelete: true,
@@ -31,7 +33,12 @@ export class HelpersComponent implements OnInit {
     numOfColumnsInGrid: 2,
     get: {
       orderBy: h => [h.name],
-      limit:100
+      limit:10,
+      where:h=>{
+        if (this.searchString)
+          return h.name.isContains(this.searchString);
+          return undefined;
+      }
     },
     columnSettings: helpers => [
       helpers.name,
@@ -42,6 +49,12 @@ export class HelpersComponent implements OnInit {
     
 
   });
+  async doSearch() {
+    if (this.helpers.currentRow && this.helpers.currentRow.wasChanged())
+      return;
+    this.busy.donotWait(async () =>
+      await this.helpers.getRecords());
+  }
 
 
   resetPassword() {
