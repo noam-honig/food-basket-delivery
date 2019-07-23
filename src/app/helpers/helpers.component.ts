@@ -10,6 +10,7 @@ import { RunOnServer } from '../auth/server-action';
 import { Context } from '../shared/context';
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from '../select-popup/busy-service';
+import { DateColumn, DataAreaSettings } from 'radweb';
 
 @Component({
   selector: 'app-helpers',
@@ -43,6 +44,7 @@ export class HelpersComponent implements OnInit {
     columnSettings: helpers => [
       helpers.name,
       helpers.phone,
+      helpers.declineSms
 
     ],
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes),
@@ -77,5 +79,20 @@ export class HelpersComponent implements OnInit {
 
   ngOnInit() {
   }
+  fromDate = new DateColumn({
+    caption: 'מתאריך',
+    valueChange: () => {
+
+      if (this.toDate.value < this.fromDate.value) {
+        //this.toDate.value = this.getEndOfMonth();
+      }
+
+    }
+  });
+  toDate = new DateColumn('עד תאריך');
+  rangeArea = new DataAreaSettings({
+    columnSettings: () => [this.fromDate, this.toDate],
+    numberOfColumnAreas: 2
+  });
 
 }

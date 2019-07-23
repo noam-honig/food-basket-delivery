@@ -59,11 +59,24 @@ export class AsignFamilyComponent implements OnInit {
         this.familyLists.routeStats = helper.getRouteStats();
         Helpers.addToRecent(helper);
 
-        await this.refreshList();
+        await this.refreshListAndUpdateRouteForFixedCourier();
       } else {
 
         await this.refreshList();
       }
+    }
+  }
+  async refreshListAndUpdateRouteForFixedCourier() {
+    await this.refreshList();
+    let allFixed = true;
+    for (const f of this.familyLists.toDeliver) {
+      if (!f.fixedCourier.value)
+        allFixed = false;
+      if (f.fixedCourier.value != f.courier.value)
+        allFixed = false;
+    }
+    if (allFixed) {
+      this.doRefreshRoute();
     }
   }
   filterCity = '';
@@ -163,15 +176,15 @@ export class AsignFamilyComponent implements OnInit {
         this.shortUrl = h.shortUrlKey.value;
         this.id = h.id.value;
         this.familyLists.routeStats = h.getRouteStats();
-
+        this.refreshListAndUpdateRouteForFixedCourier();
       }
       else {
         this.phone = '';
         this.name = '';
         this.shortUrl = '';
         this.id = '';
+        this.refreshList();
       }
-      this.refreshList();
     });
   }
 
@@ -349,7 +362,7 @@ export class AsignFamilyComponent implements OnInit {
     let locationReferenceFamilies = [...existingFamilies];
     if (locationReferenceFamilies.length == 0) {
       let from = new Date();
-      from.setDate(from.getDate()-1);
+      from.setDate(from.getDate() - 1);
       locationReferenceFamilies = await context.for(Families).find({
         where: f => f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isAResultStatus()).and(f.deliveryStatusDate.isGreaterOrEqualTo(from)),
         orderBy: f => [{ column: f.deliveryStatusDate, descending: true }],
@@ -496,12 +509,12 @@ export class AsignFamilyComponent implements OnInit {
         let closestDist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, closest.getGeocodeInformation().location());
         for (let j = 0; j < temp.length; j++) {
           let dist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, temp[j].getGeocodeInformation().location());
-          if (dist < closestDist || dist==closestDist &&temp[j].floor.value>closest.floor.value) {
+          if (dist < closestDist || dist == closestDist && temp[j].floor.value > closest.floor.value) {
             closestDist = dist;
             closestIndex = j;
             closest = temp[j];
           }
-          
+
         }
         lastLoc = closest.getGeocodeInformation().location();
         sorted.push(temp.splice(closestIndex, 1)[0]);
@@ -564,7 +577,7 @@ export class AsignFamilyComponent implements OnInit {
         return filter(f);
       },
       onSelect: async f => {
-        
+
 
         let ok = async () => {
           await this.performSepcificFamilyAssignment(f, analyticsName);

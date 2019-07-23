@@ -19,10 +19,16 @@ import * as fetch from 'node-fetch';
 @EntityClass
 export class Families extends IdEntity<FamilyId>  {
   setNewBasket() {
-    if (this.defaultSelfPickup.value)
+    if (this.defaultSelfPickup.value){
       this.deliverStatus.value = DeliveryStatus.SelfPickup;
-    else
+      this.courier.value = '';
+    }
+    else {
       this.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
+      if (this.courier.value == this.courier.originalValue) {
+        this.courier.value = this.fixedCourier.value;
+      }
+    }
   }
   getDeliveries() {
     return this.context.for(FamilyDeliveries).find({ where: d => d.family.isEqualTo(this.id), orderBy: d => [{ column: d.deliveryStatusDate, descending: true }] });

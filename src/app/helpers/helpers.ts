@@ -76,6 +76,8 @@ export class Helpers extends IdEntity<HelperId>  {
             totalTime: this.totalTime.value
         }
     }
+    generalSmsDate = new changeDate('מועד משלוח SMS כללי אחרון');
+    declineSms = new BoolColumn('מסרב לקבל הודעות SMS');
 
     superAdmin = new BoolColumn({
         caption: 'סופר מנהל'
