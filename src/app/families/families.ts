@@ -19,7 +19,7 @@ import * as fetch from 'node-fetch';
 @EntityClass
 export class Families extends IdEntity<FamilyId>  {
   setNewBasket() {
-    if (this.defaultSelfPickup.value){
+    if (this.defaultSelfPickup.value) {
       this.deliverStatus.value = DeliveryStatus.SelfPickup;
       this.courier.value = '';
     }
@@ -27,6 +27,8 @@ export class Families extends IdEntity<FamilyId>  {
       this.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
       if (this.courier.value == this.courier.originalValue) {
         this.courier.value = this.fixedCourier.value;
+        this.courierAssignUser.value = this.context.info.helperId;
+        this.courierAssingTime.value = new Date();
       }
     }
   }
