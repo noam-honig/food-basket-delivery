@@ -160,7 +160,7 @@ export class HelperFamiliesComponent implements OnInit {
     for (const f of this.familyLists.toDeliver) {
       url+='/'+encodeURI( f.getGeocodeInformation().getAddress());
     }
-    window.open(url, '_blank');
+    window.open(url+"?hl=iw", '_blank');
     //window.open(url,'_blank');
   }
   async returnToDeliver(f: Families) {
