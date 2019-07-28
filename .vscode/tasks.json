@@ -124,6 +124,11 @@
             "type": "npm",
             "script": "publish-to-cbdh",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-cbhr",
+            "problemMatcher": []
         }
     ]
 }
