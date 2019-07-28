@@ -119,6 +119,11 @@
             "type": "npm",
             "script": "publish-to-plev",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-cbdh",
+            "problemMatcher": []
         }
     ]
 }
