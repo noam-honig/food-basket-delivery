@@ -152,7 +152,7 @@ export class StamTestComponent implements OnInit {
     let updateCol = (col: Column<any>, val: string) => {
 
       if (col.value) {
-        col.value += ' ' + val;
+        col.value = (col.value+ ' ' + val).trim();
       } else
         col.value = val;
     }
