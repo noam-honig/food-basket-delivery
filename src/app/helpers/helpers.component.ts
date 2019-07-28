@@ -31,7 +31,7 @@ export class HelpersComponent implements OnInit {
     allowDelete: true,
     allowInsert: true,
     allowUpdate: true,
-    numOfColumnsInGrid: 2,
+    numOfColumnsInGrid: 3,
     get: {
       orderBy: h => [h.name],
       limit:10,
