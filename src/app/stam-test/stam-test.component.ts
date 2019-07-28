@@ -6,6 +6,8 @@ import { WeeklyFamilies } from '../weekly-families/weekly-families';
 import { myThrottle } from '../model-shared/types';
 import * as XLSX from 'xlsx';
 import { Families, parseAddress } from '../families/families';
+import { async } from 'q';
+import { BasketType } from '../families/BasketType';
 @Component({
   selector: 'app-stam-test',
   templateUrl: './stam-test.component.html',
@@ -23,7 +25,7 @@ export class StamTestComponent implements OnInit {
 
   excelColumns: excelColumn[] = [];
   columns: columnUpdater[] = [];
-  rows = [2, 3, 4, 5, 6, 7, 8, 9, 10];
+  rows = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
   getData() {
     return this.getTheData(this.cell);
   }
@@ -102,6 +104,10 @@ export class StamTestComponent implements OnInit {
           case "נפשות":
             searchName = this.f.familyMembers.caption;
             break;
+          case "שם פרטי":
+          case "משפחה":
+            searchName = this.f.name.caption;
+            break;
         }
 
         for (const up of this.columns) {
@@ -177,6 +183,26 @@ export class StamTestComponent implements OnInit {
           updateCol(f.addressComment, 'כניסה ' + r.knisa);
       }
     });
+    this.columns.push({
+      key: 'city',
+      name: 'עיר',
+      updateFamily: async (v, f) => {
+        updateCol(f.address, v);
+      }
+    });
+    this.columns.push({
+      key: 'boxes',
+      name: 'מספר ארגזים',
+      updateFamily: async (v, f) => {
+        let x = await this.context.for(BasketType).lookupAsync(b => b.boxes.isEqualTo(+v));
+        if (x.isNew()) {
+          x.boxes.value = +v;
+          x.name.value = v+' ארגזים';
+          await x.save();
+        }
+        f.basketType.value = x.id.value;
+      }
+    });
     addColumns([this.f.phone1,
     this.f.phone1Description,
     this.f.phone2,
@@ -187,7 +213,7 @@ export class StamTestComponent implements OnInit {
     ]);
   }
   async doImport() {
-    for (let index = 2; index < this.totalRows; index++) {
+    for (let index = 2; index <= this.totalRows; index++) {
       let f = await this.test(index);
       if (f.name.value)
         await f.save();

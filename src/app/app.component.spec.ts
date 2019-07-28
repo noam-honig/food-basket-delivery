@@ -113,6 +113,17 @@ describe('AppComponent', () => {
     expect(r.dira).toBe('76');
     
   });
+  it('parse address3', () => {
+    let r = parseAddress("שנהב 4/76, רמת גן");
+    expect(r.address).toBe('שנהב 4, רמת גן');
+    expect(r.dira).toBe('76');
+    
+  });
+  it('parse address4', () => {
+    let r = parseAddress("הבדיקה 5/3, קומה ב' דלת משמאל");
+    expect(r.dira).toBe('3');
+    
+  });
   
 });
 

@@ -567,7 +567,7 @@ export function parseAddress(s: string) {
       let index = 0;
       for (index = i + what.length; index < s.length; index++) {
         const element = s[index];
-        if (element != ' ') {
+        if (element != ' ' && element != ',') {
           value += element;
         }
         else if (value) {
@@ -578,6 +578,8 @@ export function parseAddress(s: string) {
       let after = s.substring(index + 1, 1000);
       if (s[index] == ' ')
         after = ' ' + after;
+      if (s[index] == ',')
+        after = ',' + after;
       s = s.substring(0, i) + after;
       return value.trim();
     }
