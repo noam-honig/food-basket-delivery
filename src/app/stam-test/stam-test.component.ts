@@ -8,6 +8,8 @@ import * as XLSX from 'xlsx';
 import { Families, parseAddress } from '../families/families';
 import { async } from 'q';
 import { BasketType } from '../families/BasketType';
+import { FamilySources } from '../families/FamilySources';
+import { DeliveryStatus } from '../families/DeliveryStatus';
 @Component({
   selector: 'app-stam-test',
   templateUrl: './stam-test.component.html',
@@ -203,13 +205,50 @@ export class StamTestComponent implements OnInit {
         f.basketType.value = x.id.value;
       }
     });
+    this.columns.push({
+      key: 'basketType',
+      name: 'סוג סל',
+      updateFamily: async (v, f) => {
+        let x = await this.context.for(BasketType).lookupAsync(b => b.name.isEqualTo(v));
+        if (x.isNew()) {
+          x.boxes.value = 1;
+          x.name.value = v;
+          await x.save();
+        }
+        f.basketType.value = x.id.value;
+      }
+    });
+    this.columns.push({
+      key: 'familySource',
+      name: 'מקור משפחה',
+      updateFamily: async (v, f) => {
+        let x = await this.context.for(FamilySources).lookupAsync(b => b.name.isEqualTo(v));
+        if (x.isNew()) {
+          x.name.value = v;
+          await x.save();
+        }
+        f.familySource.value = x.id.value;
+      }
+    });
+    this.columns.push({
+      key: 'selfPickup',
+      name: 'באים לקחת',
+      updateFamily: async (v, f) => {
+        if (v=="כן"){
+          f.defaultSelfPickup.value = true;
+          f.deliverStatus.value = DeliveryStatus.SelfPickup;
+        }
+      }
+    });
     addColumns([this.f.phone1,
     this.f.phone1Description,
     this.f.phone2,
     this.f.phone2Description,
     this.f.internalComment,
     this.f.deliveryComments,
-    this.f.familyMembers
+    this.f.addressComment,
+    this.f.familyMembers,
+    this.f.iDinExcel
     ]);
   }
   async doImport() {

@@ -129,6 +129,11 @@
             "type": "npm",
             "script": "publish-to-cbhr",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-cbey",
+            "problemMatcher": []
         }
     ]
 }
