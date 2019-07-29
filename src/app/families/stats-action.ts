@@ -1,13 +1,14 @@
-import { RunOnServer } from "../auth/server-action";
+import { RunOnServer, StringColumn, NumberColumn } from "radweb";
 import { FilterBase } from "radweb";
 import { Families } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
-import { CallStatus } from "./CallStatus";
+
 import { YesNo } from "./YesNo";
 import { BasketType } from "./BasketType";
-import { Context, ContextEntity, EntityClass } from "../shared/context";
+import { Context, ContextEntity, EntityClass } from "radweb";
 import { BasketInfo } from "../asign-family/asign-family.component";
-import { StringColumn, NumberColumn, SqlBuilder } from "../model-shared/types";
+import { SqlBuilder } from "../model-shared/types";
+import { Roles } from "../auth/roles";
 
 export interface OutArgs {
     data: any;
@@ -53,7 +54,7 @@ export class Stats {
         }
         return r;
     }
-    @RunOnServer({ allowed: c => c.isAdmin() })
+    @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
     static async getDataFromServer(context?: Context) {
         let result = { data: {}, baskets: [], cities: [] };
         let stats = new Stats();

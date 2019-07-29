@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GridSettings } from 'radweb';
 import { Events, EventHelpers } from "../events/Events";
 import { EventHelperItemsComponent } from '../event-helper-items/event-helper-items.component';
-import { Context } from '../shared/context';
+import { Context } from 'radweb';
 
 @Component({
   selector: 'app-my-events',
@@ -21,13 +21,13 @@ export class MyEventsComponent implements OnInit {
     this.events.getRecords();
   }
   getEventHelper(p: Events) {
-    let ph = p.lookup(new EventHelpers(this.context), ph => ph.helperId.isEqualTo(this.context.info.helperId).and(ph.eventId.isEqualTo(p.id.value)));
+    let ph = p.lookup(new EventHelpers(this.context), ph => ph.helperId.isEqualTo(this.context.user.id).and(ph.eventId.isEqualTo(p.id.value)));
     if (ph.isNew()) {
       if (!ph.id.value) {
         ph.id.setToNewId();
       }
       ph.eventId.value = p.id.value;
-      ph.helperId.value = this.context.info.helperId;
+      ph.helperId.value = this.context.user.id;
     }
     return ph;
   }

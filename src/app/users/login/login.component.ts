@@ -6,7 +6,7 @@ import { AuthService } from '../../auth/auth-service';
 import { Router, Route } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 import { evilStatics } from '../../auth/evil-statics';
-import { Context } from '../../shared/context';
+import { Context } from 'radweb';
 
 @Component({
   selector: 'app-login',

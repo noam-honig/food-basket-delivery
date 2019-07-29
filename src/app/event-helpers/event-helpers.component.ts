@@ -6,7 +6,7 @@ import { DialogService } from '../select-popup/dialog';
 import { EventHelperItemsComponent } from '../event-helper-items/event-helper-items.component';
 import { foreachSync } from '../shared/utils';
 import { EventHelpers } from '../events/Events';
-import { Context } from '../shared/context';
+import { Context } from 'radweb';
 
 @Component({
   selector: 'app-event-helpers',

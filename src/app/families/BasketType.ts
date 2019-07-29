@@ -1,10 +1,11 @@
 
-import { IdEntity, BoolColumn, NumberColumn } from "../model-shared/types";
-import { StringColumn } from "radweb";
+
+import { StringColumn, IdColumn, IdEntity, BoolColumn, NumberColumn } from "radweb";
 import { evilStatics } from "../auth/evil-statics";
-import { Id, HasAsyncGetTheValue } from "../model-shared/types";
-import { Context, EntityClass } from "../shared/context";
+import {  HasAsyncGetTheValue } from "../model-shared/types";
+import { Context, EntityClass } from "radweb";
 import { DataColumnSettings } from "radweb";
+import { Roles } from "../auth/roles";
 
 @EntityClass
 export class BasketType extends IdEntity<BasketId>  {
@@ -16,7 +17,7 @@ export class BasketType extends IdEntity<BasketId>  {
     super(new BasketId(context), {
       name: "BasketType",
       allowApiRead: context.isLoggedIn(),
-      allowApiCRUD: context.isAdmin(),
+      allowApiCRUD: context.hasRole(Roles.deliveryAdmin),
       onSavingRow: async () => {
         if (this.boxes.value < 1)
           this.boxes.value = 1;
@@ -24,7 +25,7 @@ export class BasketType extends IdEntity<BasketId>  {
     });
   }
 }
-export class BasketId extends Id implements HasAsyncGetTheValue {
+export class BasketId extends IdColumn implements HasAsyncGetTheValue {
   constructor(private context: Context, settingsOrCaption?: DataColumnSettings<string, StringColumn> | string) {
     super(settingsOrCaption);
   }

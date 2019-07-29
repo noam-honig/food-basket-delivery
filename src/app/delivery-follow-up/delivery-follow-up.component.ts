@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { HelpersAndStats } from "./HelpersAndStats";
-import { GridSettings, DateTimeColumn, AndFilter } from 'radweb';
+import { GridSettings, DateTimeColumn, AndFilter, AuthorizedGuard, AuthorizedGuardRoute } from 'radweb';
 import { UserFamiliesList } from '../my-families/user-families';
 import * as chart from 'chart.js';
 import { DeliveryStatistic, DeliveryStats } from './delivery-stats';
 import { BusyService } from '../select-popup/busy-service';
 import { FilterBase } from 'radweb';
 import { Helpers } from '../helpers/helpers';
-import { Route } from '@angular/router';
-import { HolidayDeliveryAdmin } from '../auth/auth-guard';
-import { Context } from '../shared/context';
+
+
+import { Context } from 'radweb';
+import { Roles } from '../auth/roles';
 
 @Component({
   selector: 'app-delivery-follow-up',
@@ -17,8 +18,8 @@ import { Context } from '../shared/context';
   styleUrls: ['./delivery-follow-up.component.scss']
 })
 export class DeliveryFollowUpComponent implements OnInit {
-  static route: Route = {
-    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'מעקב משנעים' }
+  static route: AuthorizedGuardRoute = {
+    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [AuthorizedGuard], data: { name: 'מעקב משנעים',allowedRoles:[Roles.deliveryAdmin] }
   }
 
   familyLists = new UserFamiliesList(this.context);

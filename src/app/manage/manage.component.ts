@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { ApplicationImages } from "./ApplicationImages";
 import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
-import { SelectService } from '../select-popup/select-service';
+
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings } from './ApplicationSettings';
-import { Route } from '@angular/router';
-import { AnyAdmin } from '../auth/auth-guard';
-import { Context } from '../shared/context';
+
+
+import { Context, AuthorizedGuard, AuthorizedGuardRoute } from 'radweb';
 import { DialogService } from '../select-popup/dialog';
+import { RolesGroup } from '../auth/roles';
 
 @Component({
   selector: 'app-manage',
@@ -16,10 +17,10 @@ import { DialogService } from '../select-popup/dialog';
   styleUrls: ['./manage.component.scss']
 })
 export class ManageComponent implements OnInit {
-  static route: Route = {
+  static route: AuthorizedGuardRoute = {
     path: 'manage',
     component: ManageComponent,
-    data: { name: 'הגדרות מערכת' }, canActivate: [AnyAdmin]
+    data: { name: 'הגדרות מערכת',allowedRoles:RolesGroup.anyAdmin }, canActivate: [AuthorizedGuard]
   }
   constructor(private dialog: DialogService, private context: Context) { }
 
@@ -84,7 +85,7 @@ export class ManageComponent implements OnInit {
 
   });
   testSms() {
-    return SendSmsAction.getMessage(this.settings.currentRow.smsText.value, this.settings.currentRow.organisationName.value, 'ישראל ישראלי', this.context.info.name, window.location.origin + '/x/zxcvdf');
+    return SendSmsAction.getMessage(this.settings.currentRow.smsText.value, this.settings.currentRow.organisationName.value, 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
   }
   images = this.context.for(ApplicationImages).gridSettings({
     numOfColumnsInGrid: 0,

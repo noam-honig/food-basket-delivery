@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UserFamiliesList } from './user-families';
 import { Route } from '@angular/router';
-import { WeeklyFamilyVoulenteerGuard, HelperGuard } from '../auth/auth-guard';
-import { Context } from '../shared/context';
+
+import { Context, AuthorizedGuard } from 'radweb';
 
 import { Helpers } from '../helpers/helpers';
 
@@ -14,13 +14,13 @@ import { Helpers } from '../helpers/helpers';
 export class MyFamiliesComponent implements OnInit {
 
   static route: Route = {
-    path: 'my-families', component: MyFamiliesComponent, canActivate: [HelperGuard], data: { name: 'משפחות שלי' }
+    path: 'my-families', component: MyFamiliesComponent, canActivate: [AuthorizedGuard], data: { name: 'משפחות שלי' }
   };
   familyLists = new UserFamiliesList(this.context);
 
   constructor(public context: Context) { }
   async ngOnInit() {
-    await this.familyLists.initForHelper(this.context.info.helperId, this.context.info.name,await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(this.context.info.helperId)));
+    await this.familyLists.initForHelper(this.context.user.id, this.context.user.name,await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(this.context.user.id)));
 
   }
 

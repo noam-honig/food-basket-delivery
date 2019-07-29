@@ -5,12 +5,13 @@ import { Helpers } from './helpers';
 import { SelectService } from '../select-popup/select-service';
 import { Families } from '../families/families';
 import { Route } from '@angular/router';
-import { HolidayDeliveryAdmin, AnyAdmin } from '../auth/auth-guard';
-import { RunOnServer } from '../auth/server-action';
-import { Context } from '../shared/context';
+
+import { RunOnServer } from 'radweb';
+import { Context } from 'radweb';
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from '../select-popup/busy-service';
-import { DateColumn, DataAreaSettings } from 'radweb';
+import { DateColumn, DataAreaSettings, AuthorizedGuardRoute, AuthorizedGuard } from 'radweb';
+import { RolesGroup } from '../auth/roles';
 
 @Component({
   selector: 'app-helpers',
@@ -18,14 +19,14 @@ import { DateColumn, DataAreaSettings } from 'radweb';
   styleUrls: ['./helpers.component.css']
 })
 export class HelpersComponent implements OnInit {
-  constructor(private dialog: DialogService, public context: Context,private busy:BusyService) {
+  constructor(private dialog: DialogService, public context: Context, private busy: BusyService) {
   }
-  static route: Route = {
+  static route: AuthorizedGuardRoute = {
     path: 'helpers',
     component: HelpersComponent,
-    data: { name: 'מתנדבים' }, canActivate: [AnyAdmin]
+    data: { name: 'מתנדבים', allowedRoles: RolesGroup.anyAdmin }, canActivate: [AuthorizedGuard]
   };
-  searchString:string;
+  searchString: string;
 
   helpers = this.context.for(Helpers).gridSettings({
     allowDelete: true,
@@ -34,11 +35,11 @@ export class HelpersComponent implements OnInit {
     numOfColumnsInGrid: 3,
     get: {
       orderBy: h => [h.name],
-      limit:10,
-      where:h=>{
+      limit: 10,
+      where: h => {
         if (this.searchString)
           return h.name.isContains(this.searchString);
-          return undefined;
+        return undefined;
       }
     },
     columnSettings: helpers => [
@@ -48,7 +49,7 @@ export class HelpersComponent implements OnInit {
 
     ],
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes),
-    
+
 
   });
   async doSearch() {
@@ -66,7 +67,7 @@ export class HelpersComponent implements OnInit {
     });
 
   }
-  @RunOnServer({ allowed: c => c.isAdmin() })
+  @RunOnServer({ allowed: c => c.hasRole(...RolesGroup.anyAdmin) })
   static async resetPassword(helperId: string, context?: Context) {
 
     await context.for(Helpers).foreach(h => h.id.isEqualTo(helperId), async h => {

@@ -1,21 +1,22 @@
-import { RunOnServer } from "../auth/server-action";
+import { RunOnServer } from "radweb";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Helpers } from '../helpers/helpers';
 import * as fetch from 'node-fetch';
-import { Context, ServerContext } from "../shared/context";
+import { Context, ServerContext } from "radweb";
+import { Roles } from "../auth/roles";
 
 
 
 
 export class SendSmsAction {
-    @RunOnServer({ allowed: c => c.isAdmin() })
+    @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
     static async SendSms(helperId: string, reminder: Boolean, context?: ServerContext) {
 
         try {
 
             
 
-            await SendSmsAction.generateMessage(context, helperId, context.getOrigin(), reminder, context.info.name, (phone, message,sender) => {
+            await SendSmsAction.generateMessage(context, helperId, context.getOrigin(), reminder, context.user.name, (phone, message,sender) => {
 
                 new SendSmsUtils().sendSms(phone, sender, message);
             });
@@ -58,7 +59,7 @@ export class SendSmsAction {
             }
             let sender = settings.helpPhone.value;
             if (!sender||sender.length<3){
-                let currentUser = await (ds.for(Helpers).findFirst(h => h.id.isEqualTo(ds.info.helperId)));
+                let currentUser = await (ds.for(Helpers).findFirst(h => h.id.isEqualTo(ds.user.id)));
                 sender = currentUser.phone.value;
             }
 

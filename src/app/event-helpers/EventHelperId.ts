@@ -1,3 +1,3 @@
-import { Id } from '../model-shared/types';
-export class EventHelperId extends Id {
+import { IdColumn } from 'radweb';
+export class EventHelperId extends IdColumn {
 }

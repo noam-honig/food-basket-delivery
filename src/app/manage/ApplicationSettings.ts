@@ -1,7 +1,8 @@
 import { StringColumn, NumberColumn } from "radweb";
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
-import { ContextEntity, Context, EntityClass } from "../shared/context";
+import { ContextEntity, Context, EntityClass } from "radweb";
 import { PhoneColumn } from "../model-shared/types";
+import { Roles } from "../auth/roles";
 @EntityClass
 export class ApplicationSettings extends ContextEntity<number>  {
 
@@ -32,7 +33,7 @@ export class ApplicationSettings extends ContextEntity<number>  {
     super( {
       name: 'ApplicationSettings',
       allowApiRead: true,
-      allowApiUpdate: context.isAdmin(),
+      allowApiUpdate: context.hasRole(Roles.deliveryAdmin),
       onSavingRow: async () => {
         if (context.onServer) {
           if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {

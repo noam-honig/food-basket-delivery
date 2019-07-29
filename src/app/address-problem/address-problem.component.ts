@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Route } from '@angular/router';
-import { HolidayDeliveryAdmin } from '../auth/auth-guard';
+import { AuthorizedGuardRoute, AuthorizedGuard } from 'radweb';
+import { Roles } from '../auth/roles';
+
 
 @Component({
   selector: 'app-address-problem',
@@ -13,9 +14,14 @@ export class AddressProblemComponent implements OnInit {
 
   ngOnInit() {
   }
-  static route: Route = {
+  static route: AuthorizedGuardRoute = {
     path: 'address-problem',
     component: AddressProblemComponent,
-    data: { name: 'כתובות בעיתיות' ,seperator:true}, canActivate: [HolidayDeliveryAdmin]
+    data: {
+      name: 'כתובות בעיתיות',
+      allowedRoles: [Roles.deliveryAdmin],
+      //@ts-ignore
+      seperator: true
+    }, canActivate: [AuthorizedGuard]
   }
 }

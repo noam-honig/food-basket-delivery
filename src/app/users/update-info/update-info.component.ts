@@ -3,9 +3,9 @@ import { StringColumn } from 'radweb';
 import { Helpers } from '../../helpers/helpers';
 import { DialogService } from '../../select-popup/dialog';
 import { AuthService } from '../../auth/auth-service';
-import { LoggedInGuard } from '../../auth/auth-guard';
+import { AuthorizedGuard } from 'radweb';
 import { Route } from '@angular/router';
-import { Context } from '../../shared/context';
+import { Context } from 'radweb';
 
 @Component({
   selector: 'app-update-info',
@@ -19,7 +19,7 @@ export class UpdateInfoComponent implements OnInit {
 
 
   }
-  static route: Route = { path: 'update-info', component: UpdateInfoComponent, data: { name: 'הגדרות אישיות' }, canActivate: [LoggedInGuard] };
+  static route: Route = { path: 'update-info', component: UpdateInfoComponent, data: { name: 'הגדרות אישיות' }, canActivate: [AuthorizedGuard] };
 
   confirmPassword = new StringColumn({ caption: 'אישור סיסמה', inputType: 'password', value: Helpers.emptyPassword });
   helpers = this.context.for(Helpers).gridSettings({

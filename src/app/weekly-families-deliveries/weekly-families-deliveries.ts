@@ -1,20 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { Id, IdEntity, NumberColumn, changeDate, DateTimeColumn, SqlBuilder, QueryBuilder } from '../model-shared/types';
+import { DateTimeColumn, SqlBuilder, QueryBuilder } from '../model-shared/types';
 import { WeeklyFamilyId, WeeklyFamilies, WeeklyFullFamilyInfo } from '../weekly-families/weekly-families';
-import { ClosedListColumn, StringColumn, BoolColumn, Entity, CompoundIdColumn, Column, DataColumnSettings } from 'radweb';
-import { EntityClass, Context, ServerContext, ContextEntity } from '../shared/context';
+import { ClosedListColumn, StringColumn, CompoundIdColumn, Column, DataColumnSettings, IdColumn, NumberColumn } from 'radweb';
+import { EntityClass, Context, ServerContext, ContextEntity, IdEntity } from 'radweb';
 import { BusyService } from '../select-popup/busy-service';
 import { HelperId } from '../helpers/helpers';
+import { Roles, RolesGroup } from '../auth/roles';
 
 @EntityClass
 export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
 {
 
   constructor(private context: Context) {
-    super(new ProductId(context), {
+    super(new WeeklyFamilyDeliveryId(), {
       name: 'WeeklyFamilyDeliveries',
-      allowApiRead: !!context.info.weeklyFamilyVolunteer || !!context.info.weeklyFamilyPacker,
-      allowApiCRUD: !!context.info.weeklyFamilyVolunteer || context.info.weeklyFamilyPacker,
+      allowApiRead: context.hasRole(Roles.weeklyFamilyPacker, Roles.weeklyFamilyVolunteer),
+      allowApiCRUD: context.hasRole(Roles.weeklyFamilyPacker, Roles.weeklyFamilyVolunteer),
       onSavingRow: async () => {
         if (this.isNew()) {
           this.status.value = WeeklyFamilyDeliveryStatus.Prepare;
@@ -27,10 +28,10 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
   }
   currentUserAllowedToUpdate() {
 
-    if (this.context.info.weeklyFamilyAdmin || this.context.info.helperId == this.assignedHelper.value)
+    if (this.context.hasRole(Roles.weeklyFamilyAdmin) || this.context.user.id == this.assignedHelper.value)
       return true;
 
-    return this.getFamily().assignedHelper.value == this.context.info.helperId;
+    return this.getFamily().assignedHelper.value == this.context.user.id;
   }
 
   changeStatus(s: WeeklyFamilyDeliveryStatus) {
@@ -39,7 +40,7 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
     this.status.value = s;
     if (this.status.value == WeeklyFamilyDeliveryStatus.Delivered) {
       this.deliveredOn.value = new Date();
-      this.deliveredBy.value = this.context.info.helperId;
+      this.deliveredBy.value = this.context.user.id;
     }
     this.save();
   }
@@ -54,14 +55,14 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
 
 
 @EntityClass
-export class WeeklyFamilyDeliveryProducts extends IdEntity<Id>{
+export class WeeklyFamilyDeliveryProducts extends IdEntity<IdColumn>{
 
   constructor(private context: Context) {
 
-    super(new Id(), {
+    super(new IdColumn(), {
       name: 'WeeklyFamilyDeliveryProducts',
-      allowApiRead: !!context.info.weeklyFamilyPacker || !!context.info.weeklyFamilyAdmin || !!context.info.weeklyFamilyVolunteer,
-      allowApiCRUD: context.info.weeklyFamilyPacker || context.info.weeklyFamilyAdmin || context.info.weeklyFamilyVolunteer
+      allowApiRead: context.hasRole(...RolesGroup.anyWeekly),
+      allowApiCRUD: context.hasRole(...RolesGroup.anyWeekly)
     })
   }
   delivery = new WeeklyFamilyDeliveryId();
@@ -89,7 +90,7 @@ export class WeeklyFamilyDeliveryProductStats extends ContextEntity<string> {
   constructor(private context: Context) {
     super({
       name: 'WeeklyFamilyDelivryProductStats',
-      allowApiRead: !!context.info.weeklyFamilyAdmin || !!context.info.weeklyFamilyVolunteer || !!context.info.weeklyFamilyPacker,
+      allowApiRead: context.hasRole(...RolesGroup.anyWeekly),
       dbName: () => {
         var deliveries = new WeeklyFamilyDeliveries(context);
         var innerSelectDeliveries = new WeeklyFamilyDeliveries(context);
@@ -183,7 +184,7 @@ export class WeeklyDeliveryStats extends ContextEntity<number>
   constructor(context: Context) {
     super({
       name: "WeeklyDeliveryStats",
-      allowApiRead: !!context.info.weeklyFamilyAdmin || !!context.info.weeklyFamilyVolunteer || !!context.info.weeklyFamilyPacker,
+      allowApiRead: context.hasRole(...RolesGroup.anyWeekly),
       dbName: () => {
         let f = new WeeklyFamilies(context);
         let d = new WeeklyFamilyDeliveries(context);
@@ -213,7 +214,7 @@ export class WeeklyDeliveryStats extends ContextEntity<number>
 
 
 
-export class WeeklyFamilyDeliveryId extends Id {
+export class WeeklyFamilyDeliveryId extends IdColumn {
 
 }
 
@@ -292,7 +293,7 @@ export class WeeklyFamilyDeliveryStatusColumn extends ClosedListColumn<WeeklyFam
 }
 
 
-export class ProductId extends Id {
+export class ProductId extends IdColumn {
   constructor(private context: Context) {
     super()
   }
@@ -308,8 +309,8 @@ export class Products extends IdEntity<ProductId>{
   constructor(private context: Context) {
     super(new ProductId(context), {
       name: 'products',
-      allowApiCRUD: context.info.weeklyFamilyAdmin || context.info.weeklyFamilyVolunteer,
-      allowApiRead: !!context.info.weeklyFamilyAdmin || !!context.info.weeklyFamilyPacker || !!context.info.weeklyFamilyVolunteer,
+      allowApiCRUD: context.hasRole(Roles.weeklyFamilyAdmin, Roles.weeklyFamilyVolunteer),
+      allowApiRead: context.hasRole(...RolesGroup.anyWeekly),
 
     });
   }

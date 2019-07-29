@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
-import { ColumnHashSet, AndFilter, ColumnSetting, DateColumn, Entity, GridSettings, Column } from 'radweb';
+import { ColumnHashSet, AndFilter, ColumnSetting, DateColumn, Entity, GridSettings, Column, AuthorizedGuard, AuthorizedGuardRoute } from 'radweb';
 
 import { Families } from './families';
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -24,25 +24,22 @@ import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent }
 import { HasAsyncGetTheValue, DateTimeColumn } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
-import { HolidayDeliveryAdmin } from '../auth/auth-guard';
-import { Context } from '../shared/context';
-import { Routable, componentRoutingInfo } from '../shared/routing-helper';
+
+import { Context } from 'radweb';
+
 import { FamilyDeliveries } from './FamilyDeliveries';
 import { UpdateFamilyComponent } from '../update-family/update-family.component';
 import { PortalHostDirective } from '@angular/cdk/portal';
 import { saveToExcel } from '../shared/saveToExcel';
 import { PreviewFamilyComponent, PreviewFamilyInfo } from '../preview-family/preview-family.component';
+import { Roles } from '../auth/roles';
 
 @Component({
   selector: 'app-families',
   templateUrl: './families.component.html',
   styleUrls: ['./families.component.scss']
 })
-@Routable({
-  path: 'families',
-  caption: 'משפחות',
-  canActivate: [HolidayDeliveryAdmin]
-})
+
 export class FamiliesComponent implements OnInit {
   @Input() problemOnly = false;
   limit = 10;
@@ -548,10 +545,10 @@ export class FamiliesComponent implements OnInit {
     this.refreshStats();
   }
 
-  static route: Route = {
+  static route: AuthorizedGuardRoute = {
     path: 'families',
     component: FamiliesComponent,
-    data: { name: 'משפחות' }, canActivate: [HolidayDeliveryAdmin]
+    data: { name: 'משפחות' ,allowedRoles:[Roles.deliveryAdmin]}, canActivate: [AuthorizedGuard]
   }
   previewFamily() {
     let x = new MatDialogConfig();

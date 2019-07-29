@@ -1,20 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { EntityClass, ContextEntity, Context, DirectSQL } from '../shared/context';
+import { EntityClass, ContextEntity, Context, DirectSQL, AuthorizedGuard, AuthorizedGuardRoute, StringColumn, IdColumn } from 'radweb';
 import { FamilyId, Families } from '../families/families';
-import { Id, StringColumn, changeDate, SqlBuilder, PhoneColumn } from '../model-shared/types';
+import {  changeDate, SqlBuilder, PhoneColumn } from '../model-shared/types';
 import { BasketId } from '../families/BasketType';
 import { DeliveryStatusColumn } from '../families/DeliveryStatus';
 import { HelperId, HelperIdReadonly, Helpers } from '../helpers/helpers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { CompoundIdColumn, DateColumn, DataAreaSettings, JsonStorageDataProvider, InMemoryDataProvider, Entity, GridSettings, EntitySource, NumberColumn } from 'radweb';
-import { HolidayDeliveryAdmin } from '../auth/auth-guard';
+
 import { Route } from '@angular/router';
-import { DialogService } from '../select-popup/dialog';
+
 import { SelectService } from '../select-popup/select-service';
 import { saveToExcel } from '../shared/saveToExcel';
 import { BusyService } from '../select-popup/busy-service';
 import { FamilySourceId } from '../families/FamilySources';
-import { RunOnServer } from '../auth/server-action';
+import { RunOnServer } from 'radweb';
+import { Roles } from '../auth/roles';
 
 var fullDayValue = 24 * 60 * 60 * 1000;
 
@@ -51,10 +52,10 @@ export class DeliveryHistoryComponent implements OnInit {
     this.deliveries.getRecords();
     await this.refreshHelpers();
   }
-  static route: Route = {
+  static route: AuthorizedGuardRoute = {
     path: 'history',
     component: DeliveryHistoryComponent,
-    data: { name: 'היסטורית משלוחים' }, canActivate: [HolidayDeliveryAdmin]
+    data: { name: 'היסטורית משלוחים' }, canActivate: [AuthorizedGuard]
   }
   constructor(private context: Context, private selectService: SelectService, private busy: BusyService) {
     let x = new InMemoryDataProvider();
@@ -178,7 +179,7 @@ export class DeliveryHistoryComponent implements OnInit {
 
     this.refreshHelpers();
   }
-  @RunOnServer({ allowed: x => x.isAdmin() })
+  @RunOnServer({ allowed: x => x.hasRole(Roles.deliveryAdmin) })
   static async  getHelperHistoryInfo(fromDate: string, toDate: string, context?: Context, directSql?: DirectSQL) {
     var fromDateDate = DateColumn.stringToDate(fromDate);
     var toDateDate = DateColumn.stringToDate(toDate);
@@ -229,7 +230,7 @@ export class helperHistoryInfo extends Entity<string>{
 @EntityClass
 export class FamilyDeliveriesStats extends ContextEntity<string> {
   family = new FamilyId();
-  id = new Id();
+  id = new IdColumn();
   name = new StringColumn('שם');
   courier = new HelperId(this.context, "משנע");
   deliveryStatusDate = new changeDate('מתי');
@@ -246,7 +247,7 @@ export class FamilyDeliveriesStats extends ContextEntity<string> {
   constructor(private context: Context) {
     super({
       name: 'FamilyDeliveriesStats',
-      allowApiRead: context.isAdmin(),
+      allowApiRead: context.hasRole(Roles.deliveryAdmin),
       dbName: () => {
         var f = new Families(context);
         var d = new FamilyDeliveries(context);

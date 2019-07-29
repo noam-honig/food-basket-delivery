@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
-import { HolidayDeliveryAdmin } from '../auth/auth-guard';
+
 import { BasketType } from '../families/BasketType';
-import { Context } from '../shared/context';
+import { Context, AuthorizedGuard, AuthorizedGuardRoute } from 'radweb';
 import { Families } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DialogService } from '../select-popup/dialog';
-import { RunOnServer } from '../auth/server-action';
+import { RunOnServer } from 'radweb';
+import { Roles } from '../auth/roles';
 
 
 @Component({
@@ -20,10 +21,10 @@ export class BatchOperationsComponent implements OnInit {
   constructor(private context: Context, private dialog: DialogService) {
 
   }
-  static route: Route = {
+  static route: AuthorizedGuardRoute = {
     path: 'batch-operations',
     component: BatchOperationsComponent,
-    data: { name: 'פעולות על קבוצה' }, canActivate: [HolidayDeliveryAdmin]
+    data: { name: 'פעולות על קבוצה',allowedRoles:[Roles.deliveryAdmin] }, canActivate: [AuthorizedGuard]
   }
   static allBasketsTokenConst = '!!!';
   group: string;
@@ -59,7 +60,7 @@ export class BatchOperationsComponent implements OnInit {
     return x;
   }
 
-  @RunOnServer({ allowed: c => c.isAdmin() })
+  @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
   static async setNewBasket(basketType: string, group: string, context?: Context) {
     let families = await context.for(Families).find({ where: f => BatchOperationsComponent.createFamiliesFilterForNewBasket(f, basketType, group) });
     for (const f of families) {
@@ -87,7 +88,7 @@ export class BatchOperationsComponent implements OnInit {
       x = x.and(f.groups.isContains(group));
     return x;
   }
-  @RunOnServer({ allowed: c => c.isAdmin() })
+  @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
   static async setNotInEvent(basketType: string, group: string, context?: Context) {
     let families = await context.for(Families).find({ where: f => BatchOperationsComponent.createFamiliesFilterForNotInEvent(f, basketType, group) });
     for (const f of families) {

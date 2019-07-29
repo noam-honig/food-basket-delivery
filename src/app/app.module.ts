@@ -24,7 +24,7 @@ import { EventItemHelpersComponent } from './event-item-helpers/event-item-helpe
 import { LoginComponent } from './users/login/login.component';
 import { RegisterComponent } from './users/register/register.component';
 import { AuthService } from './auth/auth-service';
-import { LoggedInGuard, HolidayDeliveryAdmin, NotLoggedInGuard, PackerGuard, WeeklyFamilyVoulenteerGuard, WeeklyFamilyAdminGuard, HelperGuard, AnyAdmin } from './auth/auth-guard';
+
 import { MyEventsComponent } from './my-events/my-events.component';
 import { InputAreaComponent } from './select-popup/input-area/input-area.component';
 import { UpdateInfoComponent } from './users/update-info/update-info.component';
@@ -46,7 +46,7 @@ import { BusyService } from './select-popup/busy-service';
 import { StamTestComponent } from './stam-test/stam-test.component';
 import { NewsComponent } from './news/news.component';
 import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
-import { Context } from './shared/context';
+
 
 import { SelectService } from './select-popup/select-service';
 import { UpdateFamilyDialogComponent } from './update-family-dialog/update-family-dialog.component';
@@ -137,15 +137,6 @@ import { FamilyInListComponent } from './family-in-list/family-in-list.component
     SelectService,
     BusyService,
     AuthService,
-    LoggedInGuard,
-    HolidayDeliveryAdmin,
-    NotLoggedInGuard,
-    PackerGuard,
-    WeeklyFamilyAdminGuard,
-    WeeklyFamilyVoulenteerGuard,
-    HelperGuard,
-    AnyAdmin,
-    Context
   ],
 
   bootstrap: [AppComponent],

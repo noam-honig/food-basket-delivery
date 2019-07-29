@@ -10,7 +10,7 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 import { Router } from '@angular/router';
 import { SelectService } from '../select-popup/select-service';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Context } from '../shared/context';
+import { Context } from 'radweb';
 import { Column } from 'radweb';
 
 @Component({

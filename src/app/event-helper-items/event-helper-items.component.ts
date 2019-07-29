@@ -4,7 +4,7 @@ import { ItemsPerHelper } from "../event-item-helpers/ItemsPerHelper";
 
 import { foreachSync } from '../shared/utils';
 import { Items } from '../events/Events';
-import { Context } from '../shared/context';
+import { Context } from 'radweb';
 
 @Component({
   selector: 'app-event-participant',

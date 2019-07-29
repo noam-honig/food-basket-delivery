@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
-import { ColumnHashSet, UrlBuilder, FilterBase, NumberColumn, DateColumn } from 'radweb';
+import { ColumnHashSet, UrlBuilder, FilterBase, NumberColumn, DateColumn, AuthorizedGuard, AuthorizedGuardRoute, RunOnServer } from 'radweb';
 import { Families } from '../families/families';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
@@ -11,18 +11,19 @@ import { UserFamiliesList } from '../my-families/user-families';
 
 import { environment } from '../../environments/environment';
 import { Route } from '@angular/router';
-import { HolidayDeliveryAdmin } from '../auth/auth-guard';
+
 import { foreachSync } from '../shared/utils';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import * as fetch from 'node-fetch';
-import { RunOnServer } from '../auth/server-action';
-import { Context, DirectSQL } from '../shared/context';
+
+import { Context, DirectSQL, } from 'radweb';
 import { SelectService } from '../select-popup/select-service';
 import { BasketType } from '../families/BasketType';
-import { Routable } from '../shared/routing-helper';
+
 import { CitiesStats } from '../families/stats-action';
 import { SqlBuilder } from '../model-shared/types';
 import { BusyService } from '../select-popup/busy-service';
+import { Roles } from '../auth/roles';
 
 
 @Component({
@@ -30,14 +31,10 @@ import { BusyService } from '../select-popup/busy-service';
   templateUrl: './asign-family.component.html',
   styleUrls: ['./asign-family.component.scss']
 })
-@Routable({
-  path: 'assign-families',
-  canActivate: [HolidayDeliveryAdmin],
-  caption: 'שיוך משפחות'
-})
+
 export class AsignFamilyComponent implements OnInit {
-  static route: Route = {
-    path: 'assign-families', component: AsignFamilyComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'שיוך משפחות' }
+  static route: AuthorizedGuardRoute = {
+    path: 'assign-families', component: AsignFamilyComponent, canActivate: [AuthorizedGuard], data: { name: 'שיוך משפחות', allowedRoles: [Roles.deliveryAdmin] }
   };
   assignOnMap() {
     this.familyLists.startAssignByMap();
@@ -269,7 +266,7 @@ export class AsignFamilyComponent implements OnInit {
     });
   }
 
-  @RunOnServer({ allowed: c => c.isAdmin() })
+  @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
   static async getBasketStatus(info: GetBasketStatusActionInfo, context?: Context): Promise<GetBasketStatusActionResponse> {
     console.time('getBasketStatus');
     let result = {
@@ -324,14 +321,14 @@ export class AsignFamilyComponent implements OnInit {
     console.timeEnd('getBasketStatus');
     return result;
   }
-  @RunOnServer({ allowed: c => c.isAdmin() })
+  @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
   static async RefreshRoute(helperId: string, useGoogle: boolean, context?: Context) {
     let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
     let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
     return await AsignFamilyComponent.optimizeRoute(h, existingFamilies, context, useGoogle);
   }
 
-  @RunOnServer({ allowed: c => c.isAdmin() })
+  @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
   static async AddBox(info: AddBoxInfo, context?: Context, directSql?: DirectSQL) {
     console.time('addBox');
 

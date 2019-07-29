@@ -1,14 +1,15 @@
-import { IdEntity, Id, StringColumn, PhoneColumn, changeDate, NumberColumn, SqlBuilder } from "../model-shared/types";
-import { EntityClass, Context, ContextEntity } from "../shared/context";
+import {  PhoneColumn, changeDate, SqlBuilder } from "../model-shared/types";
+import { EntityClass, Context, ContextEntity, IdColumn, IdEntity, StringColumn, NumberColumn } from "radweb";
 import { BasketId } from "./BasketType";
 import { FamilyId, Families } from "./families";
 import { DeliveryStatusColumn, DeliveryStatus } from "./DeliveryStatus";
 import { HelperId, HelperIdReadonly } from "../helpers/helpers";
 import { Entity, CompoundIdColumn } from "radweb";
 import { FamilySourceId } from "./FamilySources";
+import { Roles } from "../auth/roles";
 
 @EntityClass
-export class FamilyDeliveries extends IdEntity<Id>  {
+export class FamilyDeliveries extends IdEntity<IdColumn>  {
     family = new FamilyId();
     basketType = new BasketId(this.context, 'סוג סל');
 
@@ -38,10 +39,10 @@ export class FamilyDeliveries extends IdEntity<Id>  {
     archive_addressLatitude = new NumberColumn({ decimalDigits: 8 });
 
     constructor(private context: Context) {
-        super(new Id(), {
+        super(new IdColumn(), {
             name: 'FamilyDeliveries',
-            allowApiRead: context.isAdmin(),
-            allowApiDelete: context.isAdmin()
+            allowApiRead: context.hasRole(Roles.deliveryAdmin),
+            allowApiDelete: context.hasRole(Roles.deliveryAdmin)
         });
     }
     getShortDescription() {

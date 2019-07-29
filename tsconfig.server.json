@@ -17,16 +17,15 @@
     "lib": [
       "es2017",
       "dom"
-    ]
-    /*, "paths": {
-      "radweb": [
-        "../radweb/projects/radweb/src/public_api"
+    ],
+    "paths": {
+      "radwe*": [
+        "../radweb/projects/radwe*"
       ],
-    
-      "radweb/*": [
-        "../radweb/projects/radweb/src/*"
+      "*": [
+        "node_modules/*"
       ]
-    }*/
+    }
   },"files": [
     "./src/app/server/server.ts",
     "./src/app/server/doSomething.ts"

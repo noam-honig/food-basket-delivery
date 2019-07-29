@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Context } from '../shared/context';
-import { HolidayDeliveryAdmin, PackerGuard } from '../auth/auth-guard';
+
+
 import { Route } from '@angular/router';
 import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts, Products, WeeklyFamilyDeliveryProductStats } from '../weekly-families-deliveries/weekly-families-deliveries';
 import { Families } from '../families/families';
 import { WeeklyFamilies } from '../weekly-families/weekly-families';
+import { Context, AuthorizedGuardRoute, AuthorizedGuard } from 'radweb';
+import { Roles } from '../auth/roles';
 
 @Component({
   selector: 'app-weekly-packer-by-product',
@@ -16,10 +18,10 @@ export class WeeklyPackerByProductComponent implements OnInit {
 
   constructor(private context: Context) { }
 
-  static route: Route = {
+  static route: AuthorizedGuardRoute = {
     path: 'weekly-packer-by-product',
     component: WeeklyPackerByProductComponent,
-    data: { name: 'אריזה לפי מוצרים' }, canActivate: [PackerGuard]
+    data: { name: 'אריזה לפי מוצרים',allowedRoles:[Roles.weeklyFamilyPacker] }, canActivate: [AuthorizedGuard]
   }
 
 

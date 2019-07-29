@@ -1,21 +1,19 @@
-
-
 import { foreachEntityItem } from '../shared/utils';
-import { evilStatics } from '../auth/evil-statics';
-import { IdEntity, Id } from '../model-shared/types';
+import { IdEntity, IdColumn } from 'radweb';
 import { StringColumn, NumberColumn, Entity } from 'radweb';
 import { EventHelperId } from '../event-helpers/EventHelperId';
 import { HelperId, Helpers } from '../helpers/helpers';
 import { ItemsPerHelper } from '../event-item-helpers/ItemsPerHelper';
 import { ItemId } from './ItemId';
-import { Context, EntityClass } from '../shared/context';
+import { Context, EntityClass } from 'radweb';
+import { Roles } from '../auth/roles';
 
 @EntityClass
 export class Events extends IdEntity<EventId> {
   name = new StringColumn('שם אירוע');
   description = new StringColumn();
   constructor(private context: Context) {
-    super(new EventId(), { name: "events", allowApiRead: !!context.info.superAdmin });
+    super(new EventId(), { name: "events", allowApiRead: context.hasRole(Roles.superAdmin) });
   }
   async delete() {
     await foreachEntityItem(new Items(this.context), hi => hi.eventId.isEqualTo(this.id), item => item.delete());
@@ -24,14 +22,14 @@ export class Events extends IdEntity<EventId> {
   }
 }
 
-export class EventId extends Id { }
+export class EventId extends IdColumn { }
 
 @EntityClass
 export class EventHelpers extends IdEntity<EventHelperId> {
   helperId = new HelperId(this.context);
   eventId = new EventId();
   constructor(private context: Context) {
-    super(new EventHelperId(), { name: 'EventHelpers', allowApiRead: !!context.info.superAdmin });
+    super(new EventHelperId(), { name: 'EventHelpers', allowApiRead: context.hasRole(Roles.superAdmin) });
   }
   async delete() {
     foreachEntityItem(new ItemsPerHelper(), hi => hi.eventHelperId.isEqualTo(this.id), item => item.delete());
@@ -61,7 +59,7 @@ export class Items extends IdEntity<ItemId> {
     }
   });
   constructor(context: Context) {
-    super(new ItemId(), { name: "items", allowApiRead: !!context.info.superAdmin });
+    super(new ItemId(), { name: "items", allowApiRead: context.hasRole(Roles.superAdmin) });
   }
   async delete() {
     foreachEntityItem(new ItemsPerHelper(), hi => hi.itemId.isEqualTo(this.id), item => item.delete());

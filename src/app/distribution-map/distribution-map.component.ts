@@ -1,23 +1,24 @@
 /// <reference types="@types/googlemaps" />
 import * as chart from 'chart.js';
 import { Component, OnInit, ViewChild, Sanitizer, OnDestroy } from '@angular/core';
-import { GridSettings } from 'radweb';
+import { GridSettings, AuthorizedGuard, AuthorizedGuardRoute } from 'radweb';
 import { Families } from '../families/families';
 import { DialogService } from '../select-popup/dialog';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
-import { HolidayDeliveryAdmin } from '../auth/auth-guard';
-import { Context, DirectSQL } from '../shared/context';
-import { RunOnServer } from '../auth/server-action';
+
+import { Context, DirectSQL } from 'radweb';
+import { RunOnServer } from 'radweb';
 import { SqlBuilder } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { SelectService } from '../select-popup/select-service';
-import { SWITCH_INJECTOR_FACTORY__POST_R3__ } from '@angular/core/src/di/injector';
+
 import { colors } from '../families/stats-action';
 import { BusyService } from '../select-popup/busy-service';
 import { YesNo } from '../families/YesNo';
+import { Roles } from '../auth/roles';
 
 @Component({
   selector: 'app-distribution-map',
@@ -41,10 +42,10 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.onDestroy();
   }
   onDestroy = () => { };
-  static route: Route = {
+  static route: AuthorizedGuardRoute = {
     path: 'addresses',
     component: DistributionMap,
-    data: { name: 'מפת הפצה' }, canActivate: [HolidayDeliveryAdmin]
+    data: { name: 'מפת הפצה',allowedRoles:[Roles.deliveryAdmin] }, canActivate: [AuthorizedGuard]
   };
 
   gridView = true;
@@ -161,7 +162,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     });
     this.updateChart();
   }
-  @RunOnServer({ allowed: c => c.isAdmin() })
+  @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
   static async GetFamiliesLocations(onlyPotentialAsignment?:boolean,context?: Context, directSql?: DirectSQL) {
     let f = new Families(context);
 

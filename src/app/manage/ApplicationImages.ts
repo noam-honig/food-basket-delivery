@@ -1,5 +1,6 @@
 import { StringColumn, NumberColumn } from 'radweb';
-import { ContextEntity, Context, EntityClass } from '../shared/context';
+import { ContextEntity, Context, EntityClass } from 'radweb';
+import { Roles, RolesGroup } from '../auth/roles';
 @EntityClass
 export class ApplicationImages extends ContextEntity<number>  {
   id = new NumberColumn();
@@ -8,8 +9,8 @@ export class ApplicationImages extends ContextEntity<number>  {
   constructor(context: Context) {
     super({
       name: 'ApplicationImages',
-      allowApiRead: context.isAdmin(),
-      allowApiUpdate: context.isAdmin()
+      allowApiRead: context.hasRole(...RolesGroup.anyAdmin),
+      allowApiUpdate: context.hasRole(...RolesGroup.anyAdmin)
     });
   }
 

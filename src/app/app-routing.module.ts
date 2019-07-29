@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Routes, RouteReuseStrategy, RouteConfigLoadStart } from '@angular/router';
+import { RouterModule, Routes, RouteReuseStrategy } from '@angular/router';
 
 import { HelpersComponent } from './helpers/helpers.component';
 import { LoginComponent } from './users/login/login.component';
 import { RegisterComponent } from './users/register/register.component';
-import { LoggedInGuard, HolidayDeliveryAdmin, NotLoggedInGuard } from './auth/auth-guard';
+
 import { UpdateInfoComponent } from './users/update-info/update-info.component';
 import { FamiliesComponent } from './families/families.component';
 import { MyFamiliesComponent } from './my-families/my-families.component';
@@ -15,11 +15,9 @@ import { DistributionMap } from './distribution-map/distribution-map.component';
 import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component';
 import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-up.component';
 import { NewsComponent } from './news/news.component';
-import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
-import { StamTestComponent } from './stam-test/stam-test.component';
 import { CustomReuseStrategy } from './custom-reuse-controller-router-strategy'
 import { evilStatics } from './auth/evil-statics';
-import { routingInfo, componentRoutingInfo } from './shared/routing-helper';
+
 import { ProductsComponent } from './products/products.component';
 
 

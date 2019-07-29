@@ -1,11 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GridSettings } from 'radweb';
-import { ItemsPerHelper } from "../event-item-helpers/ItemsPerHelper";
 
-import { foreachSync, foreachEntityItem } from '../shared/utils';
+
+import { foreachSync } from '../shared/utils';
 import { DialogService } from '../select-popup/dialog';
 import { Items } from '../events/Events';
-import { Context } from '../shared/context';
+import { Context } from 'radweb';
 
 @Component({
   selector: 'app-event-items',

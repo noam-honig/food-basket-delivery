@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GridSettings, Column } from 'radweb';
-import { Context } from '../shared/context';
+import { Context } from 'radweb';
 import { Helpers } from '../helpers/helpers';
 import { WeeklyFamilies } from '../weekly-families/weekly-families';
 import { myThrottle } from '../model-shared/types';

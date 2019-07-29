@@ -35,13 +35,13 @@ serverInit().then(async () => {
         app.use(secure);
     let port = process.env.PORT || 3000;
 
-    let eb = new ExpressBridge<myAuthInfo>(app);
+    let eb = new ExpressBridge(app,undefined);
 
     let allUsersAlsoNotLoggedIn = eb.addArea('/api');
 
     evilStatics.auth.tokenSignKey = process.env.TOKEN_SIGN_KEY;
 
-    var addAction = (area: SiteArea<myAuthInfo>, a: any) => {
+    var addAction = (area: SiteArea, a: any) => {
         let x = <myServerAction>a[serverActionField];
         if (!x) {
             throw 'failed to set server action, did you forget the RunOnServerDecorator?';

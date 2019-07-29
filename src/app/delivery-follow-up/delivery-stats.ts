@@ -1,10 +1,11 @@
-import { RunOnServer } from "../auth/server-action";
+import { RunOnServer } from "radweb";
 import { FilterBase } from "radweb";
 
 import { HelpersAndStats } from "./HelpersAndStats";
 import { colors } from "../families/stats-action";
-import { DateTimeColumn } from "radweb";
-import { Context } from "../shared/context";
+
+import { Context } from "radweb";
+import { Roles } from "../auth/roles";
 
 
 export interface InArgs {
@@ -29,7 +30,7 @@ export class DeliveryStats {
             }
         }
     }
-    @RunOnServer({ allowed: c => c.isAdmin() })
+    @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
     static async getTheStats(context?: Context) {
         let result = { data: {} };
         let stats = new DeliveryStats();

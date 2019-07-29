@@ -1,17 +1,18 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Route } from '@angular/router';
 
-import { HolidayDeliveryAdmin, WeeklyFamilyVoulenteerGuard } from '../auth/auth-guard';
+
 import { WeeklyFullFamilyInfo, WeeklyFamilies } from '../weekly-families/weekly-families';
-import { Context } from '../shared/context';
+import { Context, AuthorizedGuard, AuthorizedGuardRoute } from 'radweb';
 
 import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts, Products, WeeklyFamilyDeliveryProductStats, WeeklyDeliveryStats } from '../weekly-families-deliveries/weekly-families-deliveries';
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from '../select-popup/busy-service';
 import { WeeklyFamilyDeliveryList } from '../weekly-family-delivery-product-list/weekly-family-delivery-product-list.component';
-import { DataAreaSettings, ColumnSetting, DateColumn } from 'radweb';
+
 import { SelectService } from '../select-popup/select-service';
-import { RunOnServer } from '../auth/server-action';
+import { Roles } from '../auth/roles';
+
 
 @Component({
   selector: 'app-my-weekly-families',
@@ -38,7 +39,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
 
 
   showFamily(f: WeeklyFullFamilyInfo) {
-    if (this.onlyMyFamilies && f.assignedHelper.value != this.context.info.helperId)
+    if (this.onlyMyFamilies && f.assignedHelper.value != this.context.user.id)
       return false;
     if (this.searchString)
       return f.name.value.indexOf(this.searchString) >= 0 || f.codeName.value.indexOf(this.searchString) >= 0
@@ -52,7 +53,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
   }
   newFamily() {
     let f = this.context.for(WeeklyFullFamilyInfo).create();
-    f.assignedHelper.value = this.context.info.helperId;
+    f.assignedHelper.value = this.context.user.id;
     this.dialog.displayArea({
       title: 'משפחה חדשה',
       settings: {
@@ -136,10 +137,10 @@ export class MyWeeklyFamiliesComponent implements OnInit {
 
 
 
-  static route: Route = {
+  static route: AuthorizedGuardRoute = {
     path: 'my-weekly-families',
     component: MyWeeklyFamiliesComponent,
-    data: { name: 'משפחות שבועיות' }, canActivate: [WeeklyFamilyVoulenteerGuard]
+    data: { name: 'משפחות שבועיות',allowedRoles:[Roles.weeklyFamilyVolunteer] }, canActivate: [AuthorizedGuard]
   }
   deliveries: WeeklyFamilyDeliveries[] = [];
   showNew() {

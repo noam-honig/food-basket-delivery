@@ -1,3 +1,3 @@
-import { Id } from "../model-shared/types";
-export class DeliveryEventId extends Id {
+import { IdColumn } from "radweb";
+export class DeliveryEventId extends IdColumn {
 }

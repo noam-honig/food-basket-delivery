@@ -1,10 +1,11 @@
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { NumberColumn, StringColumn } from 'radweb';
+import { NumberColumn, StringColumn, IdEntity } from 'radweb';
 import { HelperId, Helpers } from '../helpers/helpers';
-import { IdEntity, changeDate, DateTimeColumn,  SqlBuilder } from '../model-shared/types';
+import {  changeDate, DateTimeColumn,  SqlBuilder } from '../model-shared/types';
 import { Families } from "../families/families";
 
-import { Context,  EntityClass } from "../shared/context";
+import { Context,  EntityClass } from "radweb";
+import { Roles } from "../auth/roles";
 
 
 
@@ -43,7 +44,7 @@ export class HelpersAndStats extends IdEntity<HelperId> {
     constructor(context: Context) {
         super(new HelperId(context), {
             name: "helpersAndStats",
-            allowApiRead: context.isAdmin(),
+            allowApiRead: context.hasRole(Roles.deliveryAdmin),
             dbName: () => {
                 let f = new Families(context);
                 let h = new Helpers(context);

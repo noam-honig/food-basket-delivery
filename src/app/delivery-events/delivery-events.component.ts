@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { Column, DateTimeColumn } from 'radweb';
+import { Column, DateTimeColumn, AuthorizedGuard, AuthorizedGuardRoute } from 'radweb';
 import { DeliveryEvents } from './delivery-events';
-import { HolidayDeliveryAdmin } from '../auth/auth-guard';
+
 import { Route } from '@angular/router';
-import { Context, DirectSQL } from '../shared/context';
-import { RunOnServer } from '../auth/server-action';
+import { Context, DirectSQL } from 'radweb';
+import { RunOnServer } from 'radweb';
 import { Families } from '../families/families';
 import { FamilyDeliveryEvents } from './FamilyDeliveryEvents';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { CallStatus } from '../families/CallStatus';
+
 import { DialogService } from '../select-popup/dialog';
 import { SqlBuilder } from '../model-shared/types';
+import { Roles } from '../auth/roles';
 
 @Component({
   selector: 'app-delivery-events',
@@ -19,10 +20,10 @@ import { SqlBuilder } from '../model-shared/types';
 })
 export class DeliveryEventsComponent implements OnInit {
 
-  static route: Route = {
+  static route: AuthorizedGuardRoute = {
     path: 'delivery-events',
     component: DeliveryEventsComponent,
-    data: { name: 'אירועי חלוקה' }, canActivate: [HolidayDeliveryAdmin]
+    data: { name: 'אירועי חלוקה', allowedRoles: [Roles.deliveryAdmin] }, canActivate: [AuthorizedGuard]
   };
 
   deliveryEvents = this.context.for(DeliveryEvents).gridSettings({
@@ -87,7 +88,7 @@ export class DeliveryEventsComponent implements OnInit {
       }
     ]
   });
-  @RunOnServer({ allowed: c => c.isAdmin() })
+  @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
   static async setDeliveryActive(newDeliveryEventId: string, context?: Context, directSQL?: DirectSQL) {
     let sql = new SqlBuilder();
     let currentEvent = await context.for(DeliveryEvents).findFirst(f => f.isActiveEvent.isEqualTo(true));
@@ -166,9 +167,9 @@ export class DeliveryEventsComponent implements OnInit {
     ));
 
     Families.SendMessageToBrowsers('הוחלף אירוע פעיל ל' + newEvent.name.value);
-    
+
   }
-  @RunOnServer({ allowed: c => c.isAdmin() })
+  @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
   static async copyFamiliesToActiveEvent(fromDeliveryEvent: string, context?: Context) {
     await context.for(FamilyDeliveryEvents).foreach(
       fde => fde.deliveryEvent.isEqualTo(fromDeliveryEvent)

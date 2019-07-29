@@ -1,7 +1,9 @@
-import { IdEntity, Id, StringColumn, BoolColumn, SqlBuilder, NumberColumn, DateTimeColumn } from "../model-shared/types";
-import { EntityClass, Context, ContextEntityOptions } from "../shared/context";
+import { SqlBuilder, DateTimeColumn } from "../model-shared/types";
+import { EntityClass, Context, ContextEntityOptions, IdEntity, StringColumn, NumberColumn } from "radweb";
 import { HelperId } from "../helpers/helpers";
 import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatusColumn, WeeklyFamilyDeliveryStatus } from "../weekly-families-deliveries/weekly-families-deliveries";
+import { IdColumn } from "radweb";
+import { Roles, RolesGroup } from "../auth/roles";
 
 
 
@@ -12,10 +14,10 @@ export class WeeklyFamilies extends IdEntity<WeeklyFamilyId>{
         super(new WeeklyFamilyId(), options ? options : {
             name: 'weeklyFamilies',
             allowApiCRUD: false,
-            allowApiRead: !!context.info.weeklyFamilyAdmin || !!context.info.weeklyFamilyPacker || !!context.info.weeklyFamilyVolunteer,
+            allowApiRead: context.hasRole(...RolesGroup.anyWeekly),
 
             apiDataFilter: () => {
-                if (context.info.weeklyFamilyAdmin)
+                if (context.hasRole(Roles.weeklyFamilyAdmin))
                     return undefined;
                 return this.okToSeeIt.isEqualTo(1);
             }
@@ -80,11 +82,11 @@ export class WeeklyFamilies extends IdEntity<WeeklyFamilyId>{
         dbName: () => {
             let sql = new SqlBuilder();
             let conditions = [];
-            if (this.context.info.weeklyFamilyVolunteer)
+            if (this.context.hasRole(Roles.weeklyFamilyVolunteer))
                 conditions.push({
-                    when: [sql.eq(this.assignedHelper, sql.str(this.context.info.helperId))], then: '1'
+                    when: [sql.eq(this.assignedHelper, sql.str(this.context.user.id))], then: '1'
                 });
-            if (this.context.info.weeklyFamilyPacker) {
+            if (this.context.hasRole(Roles.weeklyFamilyPacker)) {
                 conditions.push({
                     when: [sql.gt(this.deliveriesInPacking, 0)], then: '1'
                 })
@@ -106,14 +108,14 @@ export class WeeklyFullFamilyInfo extends WeeklyFamilies {
         super(context, {
             name: 'weeklyFullFamilies',
             dbName: () => 'weeklyFamilies',
-            allowApiRead: !!context.info.weeklyFamilyVolunteer,
-            allowApiUpdate: context.info.weeklyFamilyAdmin,
-            allowApiDelete: context.info.weeklyFamilyAdmin,
-            allowApiInsert: context.info.weeklyFamilyAdmin,
+            allowApiRead:  context.hasRole(Roles.weeklyFamilyVolunteer),
+            allowApiUpdate: context.hasRole(Roles.weeklyFamilyAdmin),
+            allowApiDelete: context.hasRole(Roles.weeklyFamilyAdmin),
+            allowApiInsert: context.hasRole(Roles.weeklyFamilyAdmin),
             apiDataFilter: () => {
-                if (context.info.weeklyFamilyAdmin)
+                if (context.hasRole(Roles.weeklyFamilyAdmin))
                     return undefined;
-                return this.assignedHelper.isEqualTo(context.info.helperId)
+                return this.assignedHelper.isEqualTo(context.user.id)
             }
         });
 
@@ -124,6 +126,6 @@ export class WeeklyFullFamilyInfo extends WeeklyFamilies {
 }
 
 
-export class WeeklyFamilyId extends Id {
+export class WeeklyFamilyId extends IdColumn {
 
 }

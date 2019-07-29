@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Helpers } from '../../helpers/helpers';
-import {  StringColumn } from 'radweb';
+import {  StringColumn, NotLoggedInGuard } from 'radweb';
 import { AuthService } from '../../auth/auth-service';
-import { NotLoggedInGuard } from '../../auth/auth-guard';
+
 import { Route } from '@angular/router';
-import { Context } from '../../shared/context';
+import { Context } from 'radweb';
 
 @Component({
   selector: 'app-register',

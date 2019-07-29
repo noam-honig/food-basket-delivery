@@ -22,7 +22,7 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
-            "preserveSymlinks":true,//https://stackoverflow.com/questions/51614615/angular-6-the-result-of-a-dependency-is-an-expression
+          //  "preserveSymlinks":true,//https://stackoverflow.com/questions/51614615/angular-6-the-result-of-a-dependency-is-an-expression
             "assets": [
               "src/favicon.ico",
               "src/assets"

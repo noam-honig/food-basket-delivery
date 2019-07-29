@@ -3,7 +3,7 @@ import { GridSettings } from 'radweb';
 import { Events } from "./Events";
 import { EventItemsComponent } from '../event-items/event-items.component';
 import { EventHelpersComponent } from '../event-helpers/event-helpers.component';
-import { Context } from '../shared/context';
+import { Context } from 'radweb';
 import { DialogService } from '../select-popup/dialog';
 
 @Component({

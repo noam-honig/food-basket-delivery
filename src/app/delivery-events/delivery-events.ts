@@ -1,12 +1,13 @@
 import { DeliveryEventId } from "./DeliveryEventId";
-import { IdEntity, changeDate, SqlBuilder } from "../model-shared/types";
-import { StringColumn, DateColumn, BoolColumn, NumberColumn } from "radweb";
+import {  changeDate, SqlBuilder } from "../model-shared/types";
+import { StringColumn, DateColumn, BoolColumn, NumberColumn, IdEntity } from "radweb";
 import { EventStatusColumn } from "./EventStatus";
 import { HelperIdReadonly } from "../helpers/helpers";
 import { FamilyDeliveryEvents } from "./FamilyDeliveryEvents";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Families } from "../families/families";
-import { Context, ServerContext, EntityClass } from "../shared/context";
+import { Context, ServerContext, EntityClass } from "radweb";
+import { Roles } from "../auth/roles";
 
 @EntityClass
 export class DeliveryEvents extends IdEntity<DeliveryEventId>  {
@@ -46,16 +47,16 @@ export class DeliveryEvents extends IdEntity<DeliveryEventId>  {
   constructor(private context: Context) {
     super(new DeliveryEventId(), {
       name: 'DeliveryEvents',
-      allowApiRead: context.isAdmin(),
-      allowApiUpdate: context.isAdmin(),
-      allowApiInsert: context.isAdmin(),
-      allowApiDelete: context.isAdmin(),
+      allowApiRead: context.hasRole(Roles.deliveryAdmin),
+      allowApiUpdate: context.hasRole(Roles.deliveryAdmin),
+      allowApiInsert: context.hasRole(Roles.deliveryAdmin),
+      allowApiDelete: context.hasRole(Roles.deliveryAdmin),
       onSavingRow: async () => {
         if (context.onServer)
           if (this.isNew()) {
 
             this.createDate.value = new Date();
-            this.createUser.value = context.info.helperId;
+            this.createUser.value = context.user.id;
           }
       }
     });
