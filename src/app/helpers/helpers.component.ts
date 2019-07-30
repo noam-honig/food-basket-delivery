@@ -10,8 +10,8 @@ import { RunOnServer } from 'radweb';
 import { Context } from 'radweb';
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from '../select-popup/busy-service';
-import { DateColumn, DataAreaSettings, AuthorizedGuardRoute, AuthorizedGuard } from 'radweb';
-import { RolesGroup, Roles } from '../auth/roles';
+import { DateColumn, DataAreaSettings } from 'radweb';
+import {  Roles, AnyAdminGuard } from '../auth/roles';
 
 @Component({
   selector: 'app-helpers',
@@ -21,10 +21,10 @@ import { RolesGroup, Roles } from '../auth/roles';
 export class HelpersComponent implements OnInit {
   constructor(private dialog: DialogService, public context: Context, private busy: BusyService) {
   }
-  static route: AuthorizedGuardRoute = {
+  static route: Route = {
     path: 'helpers',
     component: HelpersComponent,
-    data: { name: 'מתנדבים', allowedRoles: RolesGroup.anyAdmin }, canActivate: [AuthorizedGuard]
+    data: { name: 'מתנדבים' }, canActivate: [AnyAdminGuard]
   };
   searchString: string;
 
@@ -68,15 +68,15 @@ export class HelpersComponent implements OnInit {
 
   }
   deliveryAdmin() {
-    return this.context.hasRole(Roles.deliveryAdmin, Roles.superAdmin);
+    return this.context.isAllowed([Roles.deliveryAdmin, Roles.superAdmin]);
   }
   superAdmin() {
-    return this.context.hasRole(Roles.superAdmin)
+    return this.context.isAllowed(Roles.superAdmin)
   }
   weeklyAdmin() {
-    return this.context.hasRole(Roles.weeklyFamilyAdmin, Roles.superAdmin);
+    return this.context.isAllowed([Roles.weeklyFamilyAdmin, Roles.superAdmin]);
   }
-  @RunOnServer({ allowed: c => c.hasRole(...RolesGroup.anyAdmin) })
+  @RunOnServer({ allowed: Roles.anyAdmin })
   static async resetPassword(helperId: string, context?: Context) {
 
     await context.for(Helpers).foreach(h => h.id.isEqualTo(helperId), async h => {

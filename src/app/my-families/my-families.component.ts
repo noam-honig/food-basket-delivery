@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { UserFamiliesList } from './user-families';
 import { Route } from '@angular/router';
 
-import { Context, AuthorizedGuard } from 'radweb';
+import { Context, SignedInGuard } from 'radweb';
 
 import { Helpers } from '../helpers/helpers';
 
@@ -14,7 +14,7 @@ import { Helpers } from '../helpers/helpers';
 export class MyFamiliesComponent implements OnInit {
 
   static route: Route = {
-    path: 'my-families', component: MyFamiliesComponent, canActivate: [AuthorizedGuard], data: { name: 'משפחות שלי' }
+    path: 'my-families', component: MyFamiliesComponent, canActivate: [SignedInGuard], data: { name: 'משפחות שלי' }
   };
   familyLists = new UserFamiliesList(this.context);
 

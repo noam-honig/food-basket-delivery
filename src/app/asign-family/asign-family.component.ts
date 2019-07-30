@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
-import { ColumnHashSet, UrlBuilder, FilterBase, NumberColumn, DateColumn, AuthorizedGuard, AuthorizedGuardRoute, RunOnServer } from 'radweb';
+import { UrlBuilder, FilterBase, RunOnServer } from 'radweb';
 import { Families } from '../families/families';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
@@ -23,7 +23,7 @@ import { BasketType } from '../families/BasketType';
 import { CitiesStats } from '../families/stats-action';
 import { SqlBuilder } from '../model-shared/types';
 import { BusyService } from '../select-popup/busy-service';
-import { Roles } from '../auth/roles';
+import { Roles, DeliveryAdminGuard } from '../auth/roles';
 
 
 
@@ -34,11 +34,9 @@ import { Roles } from '../auth/roles';
 })
 
 export class AsignFamilyComponent implements OnInit {
-  static route: AuthorizedGuardRoute = {
-    path: 'assign-families', component: AsignFamilyComponent, canActivate: [AuthorizedGuard], data: {
+  static route: Route = {
+    path: 'assign-families', component: AsignFamilyComponent, canActivate: [DeliveryAdminGuard], data: {
       name: 'שיוך משפחות',
-      allowedRoles: [Roles.deliveryAdmin],
-      alternativeRoute: '/login'
     }
   };
   assignOnMap() {
@@ -271,7 +269,7 @@ export class AsignFamilyComponent implements OnInit {
     });
   }
 
-  @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
+  @RunOnServer({ allowed: Roles.deliveryAdmin })
   static async getBasketStatus(info: GetBasketStatusActionInfo, context?: Context): Promise<GetBasketStatusActionResponse> {
     console.time('getBasketStatus');
     let result = {
@@ -326,14 +324,14 @@ export class AsignFamilyComponent implements OnInit {
     console.timeEnd('getBasketStatus');
     return result;
   }
-  @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
+  @RunOnServer({ allowed: Roles.deliveryAdmin })
   static async RefreshRoute(helperId: string, useGoogle: boolean, context?: Context) {
     let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
     let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
     return await AsignFamilyComponent.optimizeRoute(h, existingFamilies, context, useGoogle);
   }
 
-  @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
+  @RunOnServer({ allowed: Roles.deliveryAdmin })
   static async AddBox(info: AddBoxInfo, context?: Context, directSql?: DirectSQL) {
     console.time('addBox');
 

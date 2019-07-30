@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Column, DateTimeColumn, AuthorizedGuard, AuthorizedGuardRoute } from 'radweb';
+import { Column, DateTimeColumn } from 'radweb';
 import { DeliveryEvents } from './delivery-events';
 
 import { Route } from '@angular/router';
@@ -11,7 +11,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 
 import { DialogService } from '../select-popup/dialog';
 import { SqlBuilder } from '../model-shared/types';
-import { Roles } from '../auth/roles';
+import { Roles, DeliveryAdminGuard } from '../auth/roles';
 
 @Component({
   selector: 'app-delivery-events',
@@ -20,10 +20,10 @@ import { Roles } from '../auth/roles';
 })
 export class DeliveryEventsComponent implements OnInit {
 
-  static route: AuthorizedGuardRoute = {
+  static route: Route = {
     path: 'delivery-events',
     component: DeliveryEventsComponent,
-    data: { name: 'אירועי חלוקה', allowedRoles: [Roles.deliveryAdmin] }, canActivate: [AuthorizedGuard]
+    data: { name: 'אירועי חלוקה' }, canActivate: [DeliveryAdminGuard]
   };
 
   deliveryEvents = this.context.for(DeliveryEvents).gridSettings({
@@ -88,7 +88,7 @@ export class DeliveryEventsComponent implements OnInit {
       }
     ]
   });
-  @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
+  @RunOnServer({ allowed: Roles.deliveryAdmin })
   static async setDeliveryActive(newDeliveryEventId: string, context?: Context, directSQL?: DirectSQL) {
     let sql = new SqlBuilder();
     let currentEvent = await context.for(DeliveryEvents).findFirst(f => f.isActiveEvent.isEqualTo(true));
@@ -169,7 +169,7 @@ export class DeliveryEventsComponent implements OnInit {
     Families.SendMessageToBrowsers('הוחלף אירוע פעיל ל' + newEvent.name.value);
 
   }
-  @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
+  @RunOnServer({ allowed: Roles.deliveryAdmin })
   static async copyFamiliesToActiveEvent(fromDeliveryEvent: string, context?: Context) {
     await context.for(FamilyDeliveryEvents).foreach(
       fde => fde.deliveryEvent.isEqualTo(fromDeliveryEvent)

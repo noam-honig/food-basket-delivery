@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
 
 
-import { Context, AuthorizedGuard, AuthorizedGuardRoute } from 'radweb';
+import { Context } from 'radweb';
 import { Products } from '../weekly-families-deliveries/weekly-families-deliveries';
-import { Roles } from '../auth/roles';
+import { Roles, WeeklyFamilyAdminGuard } from '../auth/roles';
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',
@@ -28,13 +28,13 @@ export class ProductsComponent implements OnInit {
   ngOnInit() {
 
   }
-  static route: AuthorizedGuardRoute = {
+  static route: Route = {
     path: 'products',
     component: ProductsComponent,
     data: {
-      name: 'מוצרים', allowedRoles: [Roles.weeklyFamilyAdmin],
-    //@ts-ignore
+      name: 'מוצרים'
+    ,
     seperator: true
-    }, canActivate: [AuthorizedGuard]
+    }, canActivate: [WeeklyFamilyAdminGuard]
   }
 }

@@ -9,7 +9,7 @@ import { Roles } from "../auth/roles";
 
 
 export class SendSmsAction {
-    @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
+    @RunOnServer({ allowed: Roles.deliveryAdmin })
     static async SendSms(helperId: string, reminder: Boolean, context?: ServerContext) {
 
         try {

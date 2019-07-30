@@ -7,7 +7,7 @@ import { Helpers } from "../helpers/helpers";
 import { RunOnServer, UserInfo, JwtSessionManager, RouteHelperService } from "radweb";
 import { Context } from "radweb";
 import { LoginResponse } from "./login-response";
-import { Roles, RolesGroup } from "./roles";
+import { Roles } from "./roles";
 import { JWTCookieAuthorizationHelper } from "radweb-server";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 import { MyWeeklyFamiliesComponent } from "../my-weekly-families/my-weekly-families.component";
@@ -31,7 +31,7 @@ export class AuthService {
 
 
     }
-    @RunOnServer({ allowed: () => true })
+    @RunOnServer({ allowed: true })
     static async loginFromSms(key: string, context?: Context) {
 
         let h = await context.for(Helpers).findFirst(h => h.shortUrlKey.isEqualTo(key));
@@ -50,34 +50,34 @@ export class AuthService {
     }
     constructor(
         private dialog: DialogService,
-        
+
         private tokenHelper: JwtSessionManager,
         private context: Context,
-        private routeHelper:RouteHelperService
+        private routeHelper: RouteHelperService
     ) {
 
         tokenHelper.loadSessionFromCookie();
-        tokenHelper.tokenInfoChanged = () => dialog.refreshEventListener(this.context.hasRole(Roles.deliveryAdmin));
+        tokenHelper.tokenInfoChanged = () => dialog.refreshEventListener(this.context.isAllowed(Roles.deliveryAdmin));
         tokenHelper.tokenInfoChanged();
-     }
-     static UpdateInfoComponent: { new(...args: any[]): any };
+    }
+    static UpdateInfoComponent: { new(...args: any[]): any };
     async login(user: string, password: string, remember: boolean, fail: () => void) {
 
         let loginResponse = await AuthService.login(user, password);
         if (loginResponse.valid) {
             this.tokenHelper.setToken(loginResponse.authToken, remember);
-            this.dialog.analytics('login ' + (this.context.hasRole(Roles.deliveryAdmin) ? 'delivery admin' : ''));
+            this.dialog.analytics('login ' + (this.context.isAllowed(Roles.deliveryAdmin) ? 'delivery admin' : ''));
             if (loginResponse.requirePassword) {
                 this.dialog.YesNoQuestion('שלום ' + this.context.user.name + ' את מוגדרת כמנהלת אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועברת למסך עדכון פרטים לעדכון סיסמה.', () => {
                     this.routeHelper.navigateToComponent(AuthService.UpdateInfoComponent);//changing this caused a crash
                 });
             }
             else {
-                if (this.context.hasRole(Roles.deliveryAdmin))
+                if (this.context.isAllowed(Roles.deliveryAdmin))
                     this.routeHelper.navigateToComponent(AsignFamilyComponent);
-                else if (this.context.hasRole(Roles.weeklyFamilyVolunteer))
+                else if (this.context.isAllowed(Roles.weeklyFamilyVolunteer))
                     this.routeHelper.navigateToComponent(MyWeeklyFamiliesComponent);
-                else if (this.context.hasRole(Roles.weeklyFamilyPacker))
+                else if (this.context.isAllowed(Roles.weeklyFamilyPacker))
                     this.routeHelper.navigateToComponent(WeeklyPackerByFamilyComponent);
                 else
                     this.routeHelper.navigateToComponent(MyFamiliesComponent);
@@ -91,8 +91,8 @@ export class AuthService {
 
         }
     }
-    
-    @RunOnServer({ allowed: () => true })
+
+    @RunOnServer({ allowed: true })
     static async login(user: string, password: string, context?: Context) {
         let result: UserInfo;
         let requirePassword = false;
@@ -113,7 +113,7 @@ export class AuthService {
                         result.roles.push(Roles.superAdmin);
                     }
                     if (h.weeklyFamilyAdmin.value) {
-                        result.roles.push(...RolesGroup.anyWeekly);
+                        result.roles.push(...Roles.anyWeekly);
                     }
                     if (h.weeklyFamilyVolunteer.value)
                         result.roles.push(Roles.weeklyFamilyVolunteer);

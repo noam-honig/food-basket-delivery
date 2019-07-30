@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
-import { ColumnHashSet, AndFilter, ColumnSetting, DateColumn, Entity, GridSettings, Column, AuthorizedGuard, AuthorizedGuardRoute } from 'radweb';
+import {  AndFilter, ColumnSetting, GridSettings } from 'radweb';
 
 import { Families } from './families';
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -32,7 +32,7 @@ import { UpdateFamilyComponent } from '../update-family/update-family.component'
 import { PortalHostDirective } from '@angular/cdk/portal';
 import { saveToExcel } from '../shared/saveToExcel';
 import { PreviewFamilyComponent, PreviewFamilyInfo } from '../preview-family/preview-family.component';
-import { Roles } from '../auth/roles';
+import { Roles, DeliveryAdminGuard } from '../auth/roles';
 
 @Component({
   selector: 'app-families',
@@ -545,10 +545,10 @@ export class FamiliesComponent implements OnInit {
     this.refreshStats();
   }
 
-  static route: AuthorizedGuardRoute = {
+  static route: Route = {
     path: 'families',
     component: FamiliesComponent,
-    data: { name: 'משפחות' ,allowedRoles:[Roles.deliveryAdmin]}, canActivate: [AuthorizedGuard]
+    data: { name: 'משפחות' }, canActivate: [DeliveryAdminGuard]
   }
   previewFamily() {
     let x = new MatDialogConfig();

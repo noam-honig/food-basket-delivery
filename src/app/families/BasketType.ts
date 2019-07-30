@@ -16,8 +16,8 @@ export class BasketType extends IdEntity<BasketId>  {
   constructor(context: Context) {
     super(new BasketId(context), {
       name: "BasketType",
-      allowApiRead: context.isLoggedIn(),
-      allowApiCRUD: context.hasRole(Roles.deliveryAdmin),
+      allowApiRead: context.isSignedIn(),
+      allowApiCRUD: Roles.deliveryAdmin,
       onSavingRow: async () => {
         if (this.boxes.value < 1)
           this.boxes.value = 1;

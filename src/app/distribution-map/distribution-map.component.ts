@@ -1,7 +1,7 @@
 /// <reference types="@types/googlemaps" />
 import * as chart from 'chart.js';
 import { Component, OnInit, ViewChild, Sanitizer, OnDestroy } from '@angular/core';
-import { GridSettings, AuthorizedGuard, AuthorizedGuardRoute } from 'radweb';
+
 import { Families } from '../families/families';
 import { DialogService } from '../select-popup/dialog';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
@@ -18,7 +18,7 @@ import { SelectService } from '../select-popup/select-service';
 import { colors } from '../families/stats-action';
 import { BusyService } from '../select-popup/busy-service';
 import { YesNo } from '../families/YesNo';
-import { Roles } from '../auth/roles';
+import { Roles, DeliveryAdminGuard } from '../auth/roles';
 
 @Component({
   selector: 'app-distribution-map',
@@ -42,10 +42,10 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.onDestroy();
   }
   onDestroy = () => { };
-  static route: AuthorizedGuardRoute = {
+  static route: Route = {
     path: 'addresses',
     component: DistributionMap,
-    data: { name: 'מפת הפצה',allowedRoles:[Roles.deliveryAdmin] }, canActivate: [AuthorizedGuard]
+    data: { name: 'מפת הפצה' }, canActivate: [DeliveryAdminGuard]
   };
 
   gridView = true;
@@ -162,8 +162,8 @@ export class DistributionMap implements OnInit, OnDestroy {
     });
     this.updateChart();
   }
-  @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
-  static async GetFamiliesLocations(onlyPotentialAsignment?:boolean,context?: Context, directSql?: DirectSQL) {
+  @RunOnServer({ allowed: Roles.deliveryAdmin })
+  static async GetFamiliesLocations(onlyPotentialAsignment?: boolean, context?: Context, directSql?: DirectSQL) {
     let f = new Families(context);
 
     let sql = new SqlBuilder();
@@ -173,13 +173,12 @@ export class DistributionMap implements OnInit, OnDestroy {
       from: f,
       where: () => {
         let where = [f.deliverStatus.isActiveDelivery().and(f.blockedBasket.isEqualTo(false))];
-        if (onlyPotentialAsignment)
-        {
+        if (onlyPotentialAsignment) {
           where.push(f.readyFilter().and(f.special.isEqualTo(YesNo.No)));
         }
         return where;
       },
-      orderBy:[f.addressLatitude,f.addressLongitude]
+      orderBy: [f.addressLatitude, f.addressLongitude]
     })));
 
     return r.rows.map(x => {

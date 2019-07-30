@@ -31,6 +31,8 @@ import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 import { StamTestComponent } from './stam-test/stam-test.component';
+import { AnyAdminGuard, DeliveryAdminGuard, WeeklyFamilyAdminGuard, WeeklyFamilyPackerGuard, WeeklyFamilyVolunteerGuard } from './auth/roles';
+import { SignedInGuard } from 'radweb';
 
 
 
@@ -45,8 +47,8 @@ const routes: Routes = [
   HelpersComponent.route,
   DeliveryHistoryComponent.route,
   BatchOperationsComponent.route,
-    ManageComponent.route,
-  
+  ManageComponent.route,
+
   MyWeeklyFamiliesComponent.route,
   MyWeeklyFamilyDeliveriesComponent.route,
   WeeklyPackerByFamilyComponent.route,
@@ -59,7 +61,7 @@ const routes: Routes = [
   UpdateInfoComponent.route,
   LoginComponent.route,
   RegisterComponent.route,
-  
+
   //{ path: 'stam-test', component: StamTestComponent },
   { path: '', redirectTo: '/assign-families', pathMatch: 'full' },
   { path: '**', redirectTo: '/assign-families', pathMatch: 'full' }
@@ -68,11 +70,14 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule, RouterModule.forRoot(routes
-    //      ,{enableTracing:true}
+      //      ,{enableTracing:true}
     )
   ],
   declarations: [],
   exports: [RouterModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }]
+  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AnyAdminGuard, DeliveryAdminGuard, WeeklyFamilyAdminGuard, WeeklyFamilyPackerGuard, WeeklyFamilyVolunteerGuard]
 })
+
 export class AppRoutingModule { } 
+
+SignedInGuard.componentToNavigateIfNotAllowed = LoginComponent;

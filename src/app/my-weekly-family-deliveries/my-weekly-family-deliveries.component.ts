@@ -2,13 +2,13 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Route } from '@angular/router';
 
 import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus } from '../weekly-families-deliveries/weekly-families-deliveries';
-import { Context, AuthorizedGuard, AuthorizedGuardRoute } from 'radweb';
+import { Context } from 'radweb';
 import { WeeklyFamilies, WeeklyFullFamilyInfo } from '../weekly-families/weekly-families';
 import { WeeklyFamilyDeliveryList } from '../weekly-family-delivery-product-list/weekly-family-delivery-product-list.component';
 import { BusyService } from '../select-popup/busy-service';
 import { SelectService } from '../select-popup/select-service';
 import { DialogService } from '../select-popup/dialog';
-import { Roles } from '../auth/roles';
+import { Roles, WeeklyFamilyVolunteerGuard } from '../auth/roles';
 
 @Component({
   selector: 'app-my-weekly-family-deliveries',
@@ -21,10 +21,10 @@ export class MyWeeklyFamilyDeliveriesComponent implements OnInit {
 
   }
   @Input() packing = false;
-  static route: AuthorizedGuardRoute = {
+  static route: Route = {
     path: 'my-weekly-families-deliveries',
     component: MyWeeklyFamilyDeliveriesComponent,
-    data: { name: 'סלים שלי', allowedRoles: [Roles.weeklyFamilyVolunteer] }, canActivate: [AuthorizedGuard]
+    data: { name: 'סלים שלי' }, canActivate: [WeeklyFamilyVolunteerGuard]
   }
   async ngOnInit() {
     if (this.packing) {
@@ -75,7 +75,7 @@ export class MyWeeklyFamilyDeliveriesComponent implements OnInit {
     return true;
   }
   allowOtherBaskets() {
-    return this.context.hasRole(Roles.weeklyFamilyAdmin) && !this.packing;
+    return this.context.isAllowed(Roles.weeklyFamilyAdmin) && !this.packing;
   }
   countDeliveries(deliveries: WeeklyFamilyDeliveries[]) {
     if (!deliveries)

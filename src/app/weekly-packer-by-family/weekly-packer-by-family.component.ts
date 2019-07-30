@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthorizedGuard, AuthorizedGuardRoute } from 'radweb';
-import { Roles } from '../auth/roles';
+
+import { Roles, WeeklyFamilyPackerGuard } from '../auth/roles';
+import { Route } from '@angular/router';
 
 @Component({
   selector: 'app-weekly-packer-by-family',
@@ -9,10 +10,10 @@ import { Roles } from '../auth/roles';
 })
 export class WeeklyPackerByFamilyComponent {
 
-  static route: AuthorizedGuardRoute = {
+  static route: Route = {
     path: 'weekly-packer-by-family',
     component: WeeklyPackerByFamilyComponent,
-    data: { name: 'אריזה לפי חבילות', allowedRoles: [Roles.weeklyFamilyPacker] }, canActivate: [AuthorizedGuard]
+    data: { name: 'אריזה לפי חבילות' }, canActivate: [WeeklyFamilyPackerGuard]
   }
 
 

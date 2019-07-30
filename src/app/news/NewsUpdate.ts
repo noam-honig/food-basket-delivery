@@ -24,7 +24,7 @@ export class NewsUpdate extends ContextEntity<string> implements FamilyUpdateInf
   updateType = new NumberColumn();
   constructor(private context: Context) {
     super({
-      allowApiRead: context.hasRole(Roles.deliveryAdmin),
+      allowApiRead: Roles.deliveryAdmin,
       caption: 'חדשות',
       name: 'news',
       dbName: () => {

@@ -47,10 +47,10 @@ export class DeliveryEvents extends IdEntity<DeliveryEventId>  {
   constructor(private context: Context) {
     super(new DeliveryEventId(), {
       name: 'DeliveryEvents',
-      allowApiRead: context.hasRole(Roles.deliveryAdmin),
-      allowApiUpdate: context.hasRole(Roles.deliveryAdmin),
-      allowApiInsert: context.hasRole(Roles.deliveryAdmin),
-      allowApiDelete: context.hasRole(Roles.deliveryAdmin),
+      allowApiRead: Roles.deliveryAdmin,
+      allowApiUpdate: Roles.deliveryAdmin,
+      allowApiInsert: Roles.deliveryAdmin,
+      allowApiDelete: Roles.deliveryAdmin,
       onSavingRow: async () => {
         if (context.onServer)
           if (this.isNew()) {

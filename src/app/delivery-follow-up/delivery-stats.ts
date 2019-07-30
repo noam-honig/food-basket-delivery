@@ -30,7 +30,7 @@ export class DeliveryStats {
             }
         }
     }
-    @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
+    @RunOnServer({ allowed: Roles.deliveryAdmin })
     static async getTheStats(context?: Context) {
         let result = { data: {} };
         let stats = new DeliveryStats();

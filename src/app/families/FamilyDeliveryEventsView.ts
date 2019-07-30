@@ -28,7 +28,7 @@ export class FamilyDeliveryEventsView extends ContextEntity<string>  {
   constructor(private context: Context) {
     super( {
       name: 'FamilyDeliveryEventsView',
-      allowApiRead: context.hasRole(Roles.deliveryAdmin),
+      allowApiRead: Roles.deliveryAdmin,
       dbName: () => {
         let fde = new FamilyDeliveryEvents(new ServerContext());
         var de = new DeliveryEvents(new ServerContext());

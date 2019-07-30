@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthorizedGuardRoute, AuthorizedGuard } from 'radweb';
-import { Roles } from '../auth/roles';
+
+import { Roles, DeliveryAdminGuard } from '../auth/roles';
+import { Route } from '@angular/router';
 
 
 @Component({
@@ -14,14 +15,13 @@ export class AddressProblemComponent implements OnInit {
 
   ngOnInit() {
   }
-  static route: AuthorizedGuardRoute = {
+  static route: Route = {
     path: 'address-problem',
     component: AddressProblemComponent,
     data: {
       name: 'כתובות בעיתיות',
-      allowedRoles: [Roles.deliveryAdmin],
-      //@ts-ignore
+      
       seperator: true
-    }, canActivate: [AuthorizedGuard]
+    }, canActivate: [DeliveryAdminGuard]
   }
 }

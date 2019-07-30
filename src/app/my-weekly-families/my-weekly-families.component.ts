@@ -3,7 +3,7 @@ import { Route } from '@angular/router';
 
 
 import { WeeklyFullFamilyInfo, WeeklyFamilies } from '../weekly-families/weekly-families';
-import { Context, AuthorizedGuard, AuthorizedGuardRoute } from 'radweb';
+import { Context } from 'radweb';
 
 import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts, Products, WeeklyFamilyDeliveryProductStats, WeeklyDeliveryStats } from '../weekly-families-deliveries/weekly-families-deliveries';
 import { DialogService } from '../select-popup/dialog';
@@ -11,7 +11,7 @@ import { BusyService } from '../select-popup/busy-service';
 import { WeeklyFamilyDeliveryList } from '../weekly-family-delivery-product-list/weekly-family-delivery-product-list.component';
 
 import { SelectService } from '../select-popup/select-service';
-import { Roles } from '../auth/roles';
+import { Roles, WeeklyFamilyVolunteerGuard } from '../auth/roles';
 
 
 @Component({
@@ -52,7 +52,7 @@ export class MyWeeklyFamiliesComponent implements OnInit {
     });
   }
   weeklyAdmin() {
-    return this.context.hasRole(Roles.weeklyFamilyAdmin);
+    return this.context.isAllowed(Roles.weeklyFamilyAdmin);
   }
   newFamily() {
     let f = this.context.for(WeeklyFullFamilyInfo).create();
@@ -140,13 +140,13 @@ export class MyWeeklyFamiliesComponent implements OnInit {
 
 
 
-  static route: AuthorizedGuardRoute = {
+  static route: Route = {
     path: 'my-weekly-families',
     component: MyWeeklyFamiliesComponent,
-    data: { name: 'משפחות שבועיות', allowedRoles: [Roles.weeklyFamilyVolunteer],
+    data: { name: 'משפחות שבועיות',
   //@ts-ignore
   seperetor:true
-  }, canActivate: [AuthorizedGuard]
+  }, canActivate: [WeeklyFamilyVolunteerGuard]
   }
   deliveries: WeeklyFamilyDeliveries[] = [];
   showNew() {

@@ -7,9 +7,10 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings } from './ApplicationSettings';
 
 
-import { Context, AuthorizedGuard, AuthorizedGuardRoute } from 'radweb';
+import { Context } from 'radweb';
 import { DialogService } from '../select-popup/dialog';
-import { RolesGroup } from '../auth/roles';
+import {  AnyAdminGuard } from '../auth/roles';
+import { Route } from '@angular/router';
 
 @Component({
   selector: 'app-manage',
@@ -17,12 +18,13 @@ import { RolesGroup } from '../auth/roles';
   styleUrls: ['./manage.component.scss']
 })
 export class ManageComponent implements OnInit {
-  static route: AuthorizedGuardRoute = {
+  static route: Route = {
     path: 'manage',
     component: ManageComponent,
-    data: { name: 'הגדרות מערכת',allowedRoles:RolesGroup.anyAdmin,
-   //@ts-ignore
-   seperator: true  }, canActivate: [AuthorizedGuard]
+    data: {
+      name: 'הגדרות מערכת',
+      seperator: true
+    }, canActivate: [AnyAdminGuard]
   }
   constructor(private dialog: DialogService, private context: Context) { }
 

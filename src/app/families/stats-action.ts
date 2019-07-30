@@ -54,7 +54,7 @@ export class Stats {
         }
         return r;
     }
-    @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
+    @RunOnServer({ allowed: Roles.deliveryAdmin })
     static async getDataFromServer(context?: Context) {
         let result = { data: {}, baskets: [], cities: [] };
         let stats = new Stats();

@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
 
 import { BasketType } from '../families/BasketType';
-import { Context, AuthorizedGuard, AuthorizedGuardRoute } from 'radweb';
+import { Context } from 'radweb';
 import { Families } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DialogService } from '../select-popup/dialog';
 import { RunOnServer } from 'radweb';
-import { Roles } from '../auth/roles';
+import { Roles, DeliveryAdminGuard } from '../auth/roles';
 
 
 @Component({
@@ -21,10 +21,10 @@ export class BatchOperationsComponent implements OnInit {
   constructor(private context: Context, private dialog: DialogService) {
 
   }
-  static route: AuthorizedGuardRoute = {
+  static route: Route = {
     path: 'batch-operations',
     component: BatchOperationsComponent,
-    data: { name: 'פעולות על קבוצה',allowedRoles:[Roles.deliveryAdmin] }, canActivate: [AuthorizedGuard]
+    data: { name: 'פעולות על קבוצה' }, canActivate: [DeliveryAdminGuard]
   }
   static allBasketsTokenConst = '!!!';
   group: string;
@@ -60,7 +60,7 @@ export class BatchOperationsComponent implements OnInit {
     return x;
   }
 
-  @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
+  @RunOnServer({ allowed: Roles.deliveryAdmin })
   static async setNewBasket(basketType: string, group: string, context?: Context) {
     let families = await context.for(Families).find({ where: f => BatchOperationsComponent.createFamiliesFilterForNewBasket(f, basketType, group) });
     for (const f of families) {
@@ -88,7 +88,7 @@ export class BatchOperationsComponent implements OnInit {
       x = x.and(f.groups.isContains(group));
     return x;
   }
-  @RunOnServer({ allowed: c => c.hasRole(Roles.deliveryAdmin) })
+  @RunOnServer({ allowed: Roles.deliveryAdmin })
   static async setNotInEvent(basketType: string, group: string, context?: Context) {
     let families = await context.for(Families).find({ where: f => BatchOperationsComponent.createFamiliesFilterForNotInEvent(f, basketType, group) });
     for (const f of families) {

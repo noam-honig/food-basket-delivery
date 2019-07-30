@@ -41,8 +41,8 @@ export class FamilyDeliveries extends IdEntity<IdColumn>  {
     constructor(private context: Context) {
         super(new IdColumn(), {
             name: 'FamilyDeliveries',
-            allowApiRead: context.hasRole(Roles.deliveryAdmin),
-            allowApiDelete: context.hasRole(Roles.deliveryAdmin)
+            allowApiRead: Roles.deliveryAdmin,
+            allowApiDelete: Roles.deliveryAdmin
         });
     }
     getShortDescription() {

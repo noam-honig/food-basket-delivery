@@ -13,7 +13,7 @@ export class Events extends IdEntity<EventId> {
   name = new StringColumn('שם אירוע');
   description = new StringColumn();
   constructor(private context: Context) {
-    super(new EventId(), { name: "events", allowApiRead: context.hasRole(Roles.superAdmin) });
+    super(new EventId(), { name: "events", allowApiRead: Roles.superAdmin });
   }
   async delete() {
     await foreachEntityItem(new Items(this.context), hi => hi.eventId.isEqualTo(this.id), item => item.delete());
@@ -29,7 +29,7 @@ export class EventHelpers extends IdEntity<EventHelperId> {
   helperId = new HelperId(this.context);
   eventId = new EventId();
   constructor(private context: Context) {
-    super(new EventHelperId(), { name: 'EventHelpers', allowApiRead: context.hasRole(Roles.superAdmin) });
+    super(new EventHelperId(), { name: 'EventHelpers', allowApiRead: Roles.superAdmin });
   }
   async delete() {
     foreachEntityItem(new ItemsPerHelper(), hi => hi.eventHelperId.isEqualTo(this.id), item => item.delete());
@@ -59,7 +59,7 @@ export class Items extends IdEntity<ItemId> {
     }
   });
   constructor(context: Context) {
-    super(new ItemId(), { name: "items", allowApiRead: context.hasRole(Roles.superAdmin) });
+    super(new ItemId(), { name: "items", allowApiRead: Roles.superAdmin });
   }
   async delete() {
     foreachEntityItem(new ItemsPerHelper(), hi => hi.itemId.isEqualTo(this.id), item => item.delete());

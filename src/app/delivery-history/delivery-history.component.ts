@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { EntityClass, ContextEntity, Context, DirectSQL, AuthorizedGuard, AuthorizedGuardRoute, StringColumn, IdColumn } from 'radweb';
+import { EntityClass, ContextEntity, Context, DirectSQL,  StringColumn, IdColumn } from 'radweb';
 import { FamilyId, Families } from '../families/families';
 import {  changeDate, SqlBuilder, PhoneColumn } from '../model-shared/types';
 import { BasketId } from '../families/BasketType';
@@ -15,7 +15,7 @@ import { saveToExcel } from '../shared/saveToExcel';
 import { BusyService } from '../select-popup/busy-service';
 import { FamilySourceId } from '../families/FamilySources';
 import { RunOnServer } from 'radweb';
-import { Roles } from '../auth/roles';
+import { Roles, DeliveryAdminGuard } from '../auth/roles';
 
 var fullDayValue = 24 * 60 * 60 * 1000;
 
@@ -52,10 +52,10 @@ export class DeliveryHistoryComponent implements OnInit {
     this.deliveries.getRecords();
     await this.refreshHelpers();
   }
-  static route: AuthorizedGuardRoute = {
+  static route: Route = {
     path: 'history',
     component: DeliveryHistoryComponent,
-    data: { name: 'היסטורית משלוחים' }, canActivate: [AuthorizedGuard]
+    data: { name: 'היסטורית משלוחים' }, canActivate: [DeliveryAdminGuard]
   }
   constructor(private context: Context, private selectService: SelectService, private busy: BusyService) {
     let x = new InMemoryDataProvider();
@@ -179,7 +179,7 @@ export class DeliveryHistoryComponent implements OnInit {
 
     this.refreshHelpers();
   }
-  @RunOnServer({ allowed: x => x.hasRole(Roles.deliveryAdmin) })
+  @RunOnServer({ allowed: Roles.deliveryAdmin })
   static async  getHelperHistoryInfo(fromDate: string, toDate: string, context?: Context, directSql?: DirectSQL) {
     var fromDateDate = DateColumn.stringToDate(fromDate);
     var toDateDate = DateColumn.stringToDate(toDate);
@@ -247,7 +247,7 @@ export class FamilyDeliveriesStats extends ContextEntity<string> {
   constructor(private context: Context) {
     super({
       name: 'FamilyDeliveriesStats',
-      allowApiRead: context.hasRole(Roles.deliveryAdmin),
+      allowApiRead: Roles.deliveryAdmin,
       dbName: () => {
         var f = new Families(context);
         var d = new FamilyDeliveries(context);

@@ -5,7 +5,7 @@ import { SelectServiceInterface } from '../select-popup/select-service-interface
 
 import { routeStats } from '../asign-family/asign-family.component';
 import { helpers } from 'chart.js';
-import { Roles, RolesGroup } from "../auth/roles";
+import { Roles } from "../auth/roles";
 import { JWTCookieAuthorizationHelper } from "radweb-server";
 
 @EntityClass
@@ -16,8 +16,8 @@ export class Helpers extends IdEntity<HelperId>  {
         super(new HelperId(context), {
             name: "Helpers",
             allowApiRead: true,
-            allowApiDelete: context.isLoggedIn(),
-            allowApiUpdate: context.isLoggedIn(),
+            allowApiDelete: context.isSignedIn(),
+            allowApiUpdate: context.isSignedIn(),
             allowApiInsert: true,
             onSavingRow: async () => {
                 if (context.onServer) {
@@ -36,9 +36,9 @@ export class Helpers extends IdEntity<HelperId>  {
                 }
             },
             apiDataFilter: () => {
-                if (!context.isLoggedIn())
+                if (!context.isSignedIn())
                     return this.id.isEqualTo("No User");
-                else if (! context.hasRole(Roles.deliveryAdmin || Roles.weeklyFamilyAdmin || Roles.weeklyFamilyPacker || Roles.weeklyFamilyVolunteer))
+                else if (! context.isAllowed([Roles.deliveryAdmin , ...Roles.anyWeekly]))
                     return this.id.isEqualTo(this.context.user.id);
             }
         });
@@ -63,8 +63,8 @@ export class Helpers extends IdEntity<HelperId>  {
     reminderSmsDate = new changeDate('מועד משלוח תזכורת SMS');
     deliveryAdmin = new BoolColumn({
         caption: 'מנהלת משלוח חגים',
-        readonly: !this.context.hasRole(...RolesGroup.anyAdmin),
-        includeInApi: this.context.hasRole(...RolesGroup.anyAdmin),
+        readonly:  !this.context.isAllowed(Roles.anyAdmin),
+        includeInApi: Roles.anyAdmin,
         dbName: 'isAdmin'
     });
     totalKm = new NumberColumn();
@@ -94,7 +94,7 @@ export class Helpers extends IdEntity<HelperId>  {
         caption: 'מתנדבת משלוחים שבועיים'
     });
 
-    shortUrlKey = new StringColumn({ includeInApi: this.context.hasRole(...RolesGroup.anyAdmin) });
+    shortUrlKey = new StringColumn({ includeInApi: Roles.anyAdmin });
     veryUrlKeyAndReturnTrueIfSaveRequired() {
         if (!this.shortUrlKey.value) {
             this.shortUrlKey.value = this.makeid();

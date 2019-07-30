@@ -28,7 +28,7 @@ export class FamilyDeliveryEvents extends ContextEntity<string> {
   constructor(private context: Context) {
     super({
       name: 'FamilyDeliveryEvents',
-      allowApiRead: context.hasRole(Roles.deliveryAdmin) 
+      allowApiRead: Roles.deliveryAdmin 
     });
     this.initColumns(new CompoundIdColumn(this, this.family, this.deliveryEvent));
   }

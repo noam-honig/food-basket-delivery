@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NewsUpdate } from "./NewsUpdate";
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { Context, AuthorizedGuard, AuthorizedGuardRoute } from 'radweb';
+import { Context } from 'radweb';
 import { DialogService } from '../select-popup/dialog';
 
 import { Route } from '@angular/router';
@@ -9,7 +9,7 @@ import { SelectService } from '../select-popup/select-service';
 import { Families } from '../families/families';
 import { FilterBase } from 'radweb';
 import { BusyService } from '../select-popup/busy-service';
-import { Roles } from '../auth/roles';
+import { Roles, DeliveryAdminGuard } from '../auth/roles';
 
 @Component({
   selector: 'app-news',
@@ -17,8 +17,8 @@ import { Roles } from '../auth/roles';
   styleUrls: ['./news.component.scss']
 })
 export class NewsComponent implements OnInit, OnDestroy {
-  static route: AuthorizedGuardRoute = {
-    path: 'news', component: NewsComponent, canActivate: [AuthorizedGuard], data: { name: 'חדשות',allowedRoles:[Roles.deliveryAdmin] }
+  static route: Route = {
+    path: 'news', component: NewsComponent, canActivate: [DeliveryAdminGuard], data: { name: 'חדשות' }
   };
   filters: NewsFilter[] = [{
     name: 'כל החדשות'
@@ -31,7 +31,7 @@ export class NewsComponent implements OnInit, OnDestroy {
   }];
   currentFilter: NewsFilter = this.filters[0];
   filterChange() {
-   
+
     this.refresh();
   }
   onDestroy = () => { };
@@ -56,15 +56,15 @@ export class NewsComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.refresh();
   }
-  newsRows=50;
+  newsRows = 50;
   async refresh() {
 
     this.busy.donotWait(async () => {
       this.news = await this.context.for(NewsUpdate).find({ where: this.currentFilter.where, orderBy: n => [{ column: n.updateTime, descending: true }], limit: this.newsRows });
     });
   }
-  moreNews(){
-    this.newsRows*=2;
+  moreNews() {
+    this.newsRows *= 2;
     this.refresh();
   }
   icon(n: NewsUpdate) {

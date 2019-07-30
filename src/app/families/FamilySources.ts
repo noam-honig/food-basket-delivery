@@ -6,13 +6,13 @@ import { Roles } from "../auth/roles";
 @EntityClass
 export class FamilySources extends IdEntity<FamilySourceId>  {
   name = new StringColumn({ caption: "שם" });
-  contactPerson = new StringColumn({ caption: "איש קשר", includeInApi: this.context.hasRole(Roles.deliveryAdmin) });
-  phone = new StringColumn({ caption: 'טלפון', includeInApi: this.context.hasRole(Roles.deliveryAdmin) });
+  contactPerson = new StringColumn({ caption: "איש קשר", includeInApi: Roles.deliveryAdmin });
+  phone = new StringColumn({ caption: 'טלפון', includeInApi: Roles.deliveryAdmin });
   constructor(private context: Context) {
     super(new FamilySourceId(context), {
       name: "FamilySources",
-      allowApiRead: context.isLoggedIn(),
-      allowApiCRUD: context.hasRole(Roles.deliveryAdmin)
+      allowApiRead: context.isSignedIn(),
+      allowApiCRUD: Roles.deliveryAdmin
     });
   }
 }

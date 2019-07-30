@@ -3,7 +3,7 @@ import { EntityClass, Context, ContextEntityOptions, IdEntity, StringColumn, Num
 import { HelperId } from "../helpers/helpers";
 import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatusColumn, WeeklyFamilyDeliveryStatus } from "../weekly-families-deliveries/weekly-families-deliveries";
 import { IdColumn } from "radweb";
-import { Roles, RolesGroup } from "../auth/roles";
+import { Roles } from "../auth/roles";
 
 
 
@@ -14,10 +14,10 @@ export class WeeklyFamilies extends IdEntity<WeeklyFamilyId>{
         super(new WeeklyFamilyId(), options ? options : {
             name: 'weeklyFamilies',
             allowApiCRUD: false,
-            allowApiRead: context.hasRole(...RolesGroup.anyWeekly),
+            allowApiRead: Roles.anyWeekly,
 
             apiDataFilter: () => {
-                if (context.hasRole(Roles.weeklyFamilyAdmin))
+                if (context.isAllowed(Roles.weeklyFamilyAdmin))
                     return undefined;
                 return this.okToSeeIt.isEqualTo(1);
             }
@@ -82,11 +82,11 @@ export class WeeklyFamilies extends IdEntity<WeeklyFamilyId>{
         dbName: () => {
             let sql = new SqlBuilder();
             let conditions = [];
-            if (this.context.hasRole(Roles.weeklyFamilyVolunteer))
+            if (this.context.isAllowed(Roles.weeklyFamilyVolunteer))
                 conditions.push({
                     when: [sql.eq(this.assignedHelper, sql.str(this.context.user.id))], then: '1'
                 });
-            if (this.context.hasRole(Roles.weeklyFamilyPacker)) {
+            if (this.context.isAllowed(Roles.weeklyFamilyPacker)) {
                 conditions.push({
                     when: [sql.gt(this.deliveriesInPacking, 0)], then: '1'
                 })
@@ -108,12 +108,12 @@ export class WeeklyFullFamilyInfo extends WeeklyFamilies {
         super(context, {
             name: 'weeklyFullFamilies',
             dbName: () => 'weeklyFamilies',
-            allowApiRead:  context.hasRole(Roles.weeklyFamilyVolunteer),
-            allowApiUpdate: context.hasRole(Roles.weeklyFamilyAdmin),
-            allowApiDelete: context.hasRole(Roles.weeklyFamilyAdmin),
-            allowApiInsert: context.hasRole(Roles.weeklyFamilyAdmin),
+            allowApiRead:  Roles.weeklyFamilyVolunteer,
+            allowApiUpdate: Roles.weeklyFamilyAdmin,
+            allowApiDelete: Roles.weeklyFamilyAdmin,
+            allowApiInsert: Roles.weeklyFamilyAdmin,
             apiDataFilter: () => {
-                if (context.hasRole(Roles.weeklyFamilyAdmin))
+                if (context.isAllowed(Roles.weeklyFamilyAdmin))
                     return undefined;
                 return this.assignedHelper.isEqualTo(context.user.id)
             }

@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
 
 import { BusyService } from '../select-popup/busy-service';
-import { Context, AuthorizedGuard, AuthorizedGuardRoute } from 'radweb';
+import { Context } from 'radweb';
 import { Families } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { Roles } from '../auth/roles';
+import { Roles, DeliveryAdminGuard } from '../auth/roles';
 
 @Component({
   selector: 'app-self-pickup',
@@ -15,11 +15,11 @@ import { Roles } from '../auth/roles';
 export class SelfPickupComponent implements OnInit {
 
 
-  static route: AuthorizedGuardRoute = {
-    path: 'self-pickup-families', component: SelfPickupComponent, canActivate: [AuthorizedGuard], data: { name: 'באים לקחת', 
-    //@ts-ignore
-    seperator: true ,
-  allowedRoles:[Roles.deliveryAdmin]}
+  static route: Route = {
+    path: 'self-pickup-families', component: SelfPickupComponent, canActivate: [DeliveryAdminGuard], data: {
+      name: 'באים לקחת',
+      seperator: true
+    }
   };
 
   constructor(private busy: BusyService
@@ -49,8 +49,8 @@ export class SelfPickupComponent implements OnInit {
 
   }
   clearHelper() {
-      this.searchString='';
-      this.doFilter();
+    this.searchString = '';
+    this.doFilter();
   }
 
   showStatus(f: Families) {
