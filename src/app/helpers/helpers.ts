@@ -54,7 +54,7 @@ export class Helpers extends IdEntity<HelperId>  {
     phone = new StringColumn({ caption: "טלפון", inputType: 'tel' });
     realStoredPassword = new StringColumn({
         dbName: 'password',
-        excludeFromApi: true
+        includeInApi: false
     });
     password = new StringColumn({ caption: 'סיסמה', inputType: 'password', virtualData: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
 
@@ -64,7 +64,7 @@ export class Helpers extends IdEntity<HelperId>  {
     deliveryAdmin = new BoolColumn({
         caption: 'מנהלת משלוח חגים',
         readonly: !this.context.hasRole(...RolesGroup.anyAdmin),
-        excludeFromApi: !this.context.hasRole(...RolesGroup.anyAdmin),
+        includeInApi: this.context.hasRole(...RolesGroup.anyAdmin),
         dbName: 'isAdmin'
     });
     totalKm = new NumberColumn();
@@ -94,7 +94,7 @@ export class Helpers extends IdEntity<HelperId>  {
         caption: 'מתנדבת משלוחים שבועיים'
     });
 
-    shortUrlKey = new StringColumn({ excludeFromApi: !this.context.hasRole(...RolesGroup.anyAdmin) });
+    shortUrlKey = new StringColumn({ includeInApi: this.context.hasRole(...RolesGroup.anyAdmin) });
     veryUrlKeyAndReturnTrueIfSaveRequired() {
         if (!this.shortUrlKey.value) {
             this.shortUrlKey.value = this.makeid();

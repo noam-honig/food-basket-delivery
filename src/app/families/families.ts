@@ -140,17 +140,17 @@ export class Families extends IdEntity<FamilyId>  {
   });
 
   tz = new StringColumn({
-    caption: 'מספר זהות', excludeFromApi: !this.context.hasRole(Roles.deliveryAdmin), valueChange: () => this.delayCheckDuplicateFamilies()
+    caption: 'מספר זהות', includeInApi: this.context.hasRole(Roles.deliveryAdmin), valueChange: () => this.delayCheckDuplicateFamilies()
   });
-  familyMembers = new NumberColumn({ excludeFromApi: !this.context.hasRole(Roles.deliveryAdmin), caption: 'מספר נפשות' });
+  familyMembers = new NumberColumn({ includeInApi: this.context.hasRole(Roles.deliveryAdmin), caption: 'מספר נפשות' });
   language = new LanguageColumn();
   basketType = new BasketId(this.context, 'סוג סל');
-  familySource = new FamilySourceId(this.context, { excludeFromApi: !this.context.hasRole(Roles.deliveryAdmin), caption: 'גורם מפנה' });
+  familySource = new FamilySourceId(this.context, { includeInApi: this.context.hasRole(Roles.deliveryAdmin), caption: 'גורם מפנה' });
   groups = new StringColumn('קבוצות');
-  special = new YesNoColumn({ excludeFromApi: !this.context.hasRole(Roles.deliveryAdmin), caption: 'שיוך מיוחד' });
+  special = new YesNoColumn({ includeInApi: this.context.hasRole(Roles.deliveryAdmin), caption: 'שיוך מיוחד' });
   defaultSelfPickup = new BoolColumn('ברירת מחדל באים לקחת');
-  iDinExcel = new StringColumn({ excludeFromApi: !this.context.hasRole(Roles.deliveryAdmin), caption: 'מזהה באקסל' });
-  internalComment = new StringColumn({ excludeFromApi: !this.context.hasRole(Roles.deliveryAdmin), caption: 'הערה פנימית - לא תופיע למשנע' });
+  iDinExcel = new StringColumn({ includeInApi: this.context.hasRole(Roles.deliveryAdmin), caption: 'מזהה באקסל' });
+  internalComment = new StringColumn({ includeInApi: this.context.hasRole(Roles.deliveryAdmin), caption: 'הערה פנימית - לא תופיע למשנע' });
 
 
   address = new StringColumn("כתובת");
@@ -390,8 +390,8 @@ export class Families extends IdEntity<FamilyId>  {
   }
 
 
-  createDate = new changeDate({ excludeFromApi: !this.context.hasRole(Roles.deliveryAdmin), caption: 'מועד הוספה' });
-  createUser = new HelperIdReadonly(this.context, { excludeFromApi: !this.context.hasRole(Roles.deliveryAdmin), caption: 'משתמש מוסיף' });
+  createDate = new changeDate({ includeInApi: this.context.hasRole(Roles.deliveryAdmin), caption: 'מועד הוספה' });
+  createUser = new HelperIdReadonly(this.context, { includeInApi: this.context.hasRole(Roles.deliveryAdmin), caption: 'משתמש מוסיף' });
 
 
 
