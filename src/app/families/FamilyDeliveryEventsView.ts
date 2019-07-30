@@ -4,10 +4,11 @@ import { DeliveryStatusColumn } from "./DeliveryStatus";
 import { BasketId } from "./BasketType";
 import { StringColumn, CompoundIdColumn } from 'radweb';
 import { HelperId } from '../helpers/helpers';
-import { IdEntity, changeDate, DateTimeColumn,  SqlBuilder } from '../model-shared/types';
+import {  changeDate, DateTimeColumn,  SqlBuilder } from '../model-shared/types';
 import { DeliveryEvents } from '../delivery-events/delivery-events';
-import { Context, ServerContext, EntityClass, ContextEntity } from '../shared/context';
+import { Context, ServerContext, EntityClass, ContextEntity } from 'radweb';
 import { DeliveryEventId } from '../delivery-events/DeliveryEventId';
+import { Roles } from '../auth/roles';
 
 
 
@@ -27,7 +28,7 @@ export class FamilyDeliveryEventsView extends ContextEntity<string>  {
   constructor(private context: Context) {
     super( {
       name: 'FamilyDeliveryEventsView',
-      allowApiRead: context.isAdmin(),
+      allowApiRead: context.hasRole(Roles.deliveryAdmin),
       dbName: () => {
         let fde = new FamilyDeliveryEvents(new ServerContext());
         var de = new DeliveryEvents(new ServerContext());

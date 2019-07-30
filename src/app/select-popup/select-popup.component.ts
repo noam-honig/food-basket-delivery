@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { GridSettings, Entity, IDataSettings } from 'radweb';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import {  Context } from '../shared/context';
+import {  Context } from 'radweb';
 
 @Component({
   selector: 'app-select-popup',

@@ -1,4 +1,4 @@
-import { Component,  Injector, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { Router, Route, CanActivate, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { AuthService } from './auth/auth-service';
 
@@ -6,7 +6,9 @@ import { MatSidenav } from '@angular/material';
 import { DialogService } from './select-popup/dialog';
 import { ApplicationSettings } from './manage/ApplicationSettings';
 import { FamiliesComponent } from './families/families.component';
-import { Context, RouteHelperService } from 'radweb';
+import { Context, RouteHelperService, JwtSessionManager } from 'radweb';
+import { Roles } from './auth/roles';
+
 
 
 
@@ -20,13 +22,13 @@ export class AppComponent {
 
 
   constructor(
-    public auth: AuthService,
+    public sessionManager: JwtSessionManager,
     public router: Router,
     public activeRoute: ActivatedRoute,
     private injector: Injector,
     public dialog: DialogService,
-    private helper:RouteHelperService,
-    private context: Context) {
+    private helper: RouteHelperService,
+    public context: Context) {
     /*this.router.config.unshift({
       path: FamiliesComponent.route,
       component: FamiliesComponent,
@@ -37,9 +39,9 @@ export class AppComponent {
       this.toolbarColor = 'accent';
 
     }
-
-    auth.auth.tokenInfoChanged = () => dialog.refreshEventListener(this.auth.auth.info && this.auth.auth.info.deliveryAdmin);
-    auth.auth.tokenInfoChanged();
+    sessionManager.loadSessionFromCookie();
+    sessionManager.tokenInfoChanged = () => dialog.refreshEventListener(this.context.hasRole(Roles.deliveryAdmin));
+    sessionManager.tokenInfoChanged();
 
   }
 
@@ -56,8 +58,8 @@ export class AppComponent {
   }
   prevLogoUrl = '';
   getLogo() {
-    let result =  ApplicationSettings.get(this.context).logoUrl.value;
-    if (result){
+    let result = ApplicationSettings.get(this.context).logoUrl.value;
+    if (result) {
       this.prevLogoUrl = result;
     }
     return this.prevLogoUrl;
@@ -72,7 +74,7 @@ export class AppComponent {
   signOut() {
 
     this.routeClicked();
-    this.auth.signout();
+    this.sessionManager.signout();
   }
   shouldDisplayRoute(route: Route) {
     if (!(route.path && route.path.indexOf(':') < 0 && route.path.indexOf('**') < 0))

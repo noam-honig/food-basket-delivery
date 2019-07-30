@@ -30,6 +30,7 @@ import { StressTestComponent } from './stress-test/stress-test.component';
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
+import { StamTestComponent } from './stam-test/stam-test.component';
 
 
 
@@ -59,7 +60,7 @@ const routes: Routes = [
   LoginComponent.route,
   RegisterComponent.route,
   
-  /*{ path: 'stam', component: StamTestComponent },*/
+  //{ path: 'assign-families', component: StamTestComponent },
   { path: '', redirectTo: '/assign-families', pathMatch: 'full' },
   { path: '**', redirectTo: '/assign-families', pathMatch: 'full' }
 ];
@@ -74,7 +75,7 @@ evilStatics.routes.weeklyFamiliesPack = '/' + WeeklyPackerByFamilyComponent.rout
 @NgModule({
   imports: [
     CommonModule, RouterModule.forRoot(routes
-      //    ,{enableTracing:true}
+    //      ,{enableTracing:true}
     )
   ],
   declarations: [],

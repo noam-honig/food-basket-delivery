@@ -1,29 +1,23 @@
-import { Pool } from 'pg';
 
-import { Helpers } from '../helpers/helpers';
+import { Pool } from 'pg';
 import { config } from 'dotenv';
 import { PostgresDataProvider, PostgrestSchemaBuilder } from 'radweb-server-postgres';
-
-import { evilStatics } from '../auth/evil-statics';
-
-
-
 import { foreachSync } from '../shared/utils';
 import { Families } from '../families/families';
-
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { ServerContext, allEntities } from '../shared/context';
+import { ServerContext, allEntities } from 'radweb';
 import '../app.module';
 import { WeeklyFamilyDeliveries } from '../weekly-families-deliveries/weekly-families-deliveries';
 import { WeeklyFamilies } from '../weekly-families/weekly-families';
 import { ActualSQLServerDataProvider } from 'radweb-server';
-import { ActualDirectSQL, actionInfo } from '../auth/server-action';
+import { ActualDirectSQL, actionInfo } from 'radweb';
 import { FamilyDeliveryEvents } from '../delivery-events/FamilyDeliveryEvents';
 import { SqlBuilder } from '../model-shared/types';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
+import { Helpers } from '../helpers/helpers';
+import * as passwordHash from 'password-hash';
 
 
 
@@ -33,8 +27,6 @@ export async function serverInit() {
         let ssl = true;
         if (process.env.DISABLE_POSTGRES_SSL)
             ssl = false;
-
-
         if (!process.env.DATABASE_URL) {
             console.error("No DATABASE_URL environment variable found, if you are developing locally, please add a '.env' with DATABASE_URL='postgres://*USERNAME*:*PASSWORD*@*HOST*:*PORT*/*DATABASE*'");
         }
@@ -45,30 +37,25 @@ export async function serverInit() {
             ActualSQLServerDataProvider.LogToConsole = true;
             ActualDirectSQL.log = true;
         }
-        actionInfo.runningOnServer = true;
+        
         const pool = new Pool({
             connectionString: dbUrl,
             ssl: ssl
         });
-        evilStatics.dataSource = new PostgresDataProvider(pool);
-
-
+        Helpers.passwordHelper = {
+            generateHash: p => passwordHash.generate(p),
+            verify: (p, h) => passwordHash.verify(p, h)
+        }
+        
+        await new PostgrestSchemaBuilder(pool).verifyStructureOfAllEntities();
+        
+        var dataSource = new PostgresDataProvider(pool);
         let context = new ServerContext();
-        var sb = new PostgrestSchemaBuilder(pool);
-        await foreachSync(allEntities.map(x => context.for(x).create()), async x => {
-            if (x.__getDbName().toLowerCase().indexOf('from ') < 0) {
-                console.log('verify table existance '+x.__getName());
-                await sb.CreateIfNotExist(x);
-                await sb.verifyAllColumns(x);
-            }
-        });
+        context.setDataProvider(dataSource);
         let sql = new SqlBuilder();
         let fde = new FamilyDeliveryEvents(context);
-
-
         // remove unique constraint on id column if exists
-
-        var r = await pool.query(sql.build('ALTER TABLE ', fde, ' DROP CONSTRAINT IF EXISTS familydeliveryevents_pkey'));
+        await pool.query(sql.build('ALTER TABLE ', fde, ' DROP CONSTRAINT IF EXISTS familydeliveryevents_pkey'));
 
 
         //create index if required
@@ -186,6 +173,7 @@ export async function serverInit() {
         console.error(error);
         throw error;
     }
+    return dataSource;
 
 
 

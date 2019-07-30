@@ -1,4 +1,4 @@
-<mat-checkbox [(ngModel)]="onlyMyFamilies" *ngIf="context.info.weeklyFamilyAdmin&&!packing">רק סלים שלי
+<mat-checkbox [(ngModel)]="onlyMyFamilies" *ngIf="allowOtherBaskets()">רק סלים שלי
 </mat-checkbox>
 <ng-container *ngFor="let s of deliveriesByStatus">
   <ng-container *ngIf="countDeliveries(s.deliveries)>0">
@@ -13,7 +13,7 @@
               <div>
                 {{d.getFamily().name.value}} ({{d.getFamily().codeName.value}})
               </div>
-              <div *ngIf="context.info.weeklyFamilyAdmin||packing">
+              <div *ngIf="allowOtherBaskets()">
                 {{d.assignedHelper.getValue()}}
               </div>
             </div>

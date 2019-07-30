@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
 
-import { HolidayDeliveryAdmin, WeeklyFamilyAdminGuard } from '../auth/auth-guard';
-import { Context } from '../shared/context';
+
+import { Context, AuthorizedGuard, AuthorizedGuardRoute } from 'radweb';
 import { Products } from '../weekly-families-deliveries/weekly-families-deliveries';
+import { Roles } from '../auth/roles';
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',
@@ -16,20 +17,24 @@ export class ProductsComponent implements OnInit {
     allowUpdate: true,
     allowInsert: true,
     columnSettings: p => [
-      p.name,{column: p.order,width:'90'}
+      p.name, { column: p.order, width: '90' }
     ],
-    knowTotalRows:true,
+    knowTotalRows: true,
     get: {
       orderBy: p => [p.order, p.name],
-      limit:50
+      limit: 50
     }
   });
   ngOnInit() {
-    
+
   }
-  static route: Route = {
+  static route: AuthorizedGuardRoute = {
     path: 'products',
     component: ProductsComponent,
-    data: { name: 'מוצרים' ,seperator:true}, canActivate: [WeeklyFamilyAdminGuard]
+    data: {
+      name: 'מוצרים', allowedRoles: [Roles.weeklyFamilyAdmin],
+    //@ts-ignore
+    seperator: true
+    }, canActivate: [AuthorizedGuard]
   }
 }

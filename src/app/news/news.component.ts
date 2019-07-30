@@ -1,14 +1,15 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NewsUpdate } from "./NewsUpdate";
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { Context } from '../shared/context';
+import { Context, AuthorizedGuard, AuthorizedGuardRoute } from 'radweb';
 import { DialogService } from '../select-popup/dialog';
-import { HolidayDeliveryAdmin } from '../auth/auth-guard';
+
 import { Route } from '@angular/router';
 import { SelectService } from '../select-popup/select-service';
 import { Families } from '../families/families';
 import { FilterBase } from 'radweb';
 import { BusyService } from '../select-popup/busy-service';
+import { Roles } from '../auth/roles';
 
 @Component({
   selector: 'app-news',
@@ -16,8 +17,8 @@ import { BusyService } from '../select-popup/busy-service';
   styleUrls: ['./news.component.scss']
 })
 export class NewsComponent implements OnInit, OnDestroy {
-  static route: Route = {
-    path: 'news', component: NewsComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'חדשות' }
+  static route: AuthorizedGuardRoute = {
+    path: 'news', component: NewsComponent, canActivate: [AuthorizedGuard], data: { name: 'חדשות',allowedRoles:[Roles.deliveryAdmin] }
   };
   filters: NewsFilter[] = [{
     name: 'כל החדשות'

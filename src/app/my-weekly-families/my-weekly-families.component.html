@@ -10,10 +10,10 @@
       </mat-form-field>
       {{countFamilies()}} משפחות
       <br>
-      <mat-checkbox [(ngModel)]="onlyMyFamilies" *ngIf="context.info.weeklyFamilyAdmin">רק משפחות שלי
+      <mat-checkbox [(ngModel)]="onlyMyFamilies" *ngIf="weeklyAdmin()">רק משפחות שלי
       </mat-checkbox>
     </div>
-    <div> <button mat-mini-fab color="primary" *ngIf="context.info.weeklyFamilyAdmin" (click)="newFamily()">
+    <div> <button mat-mini-fab color="primary" *ngIf="weeklyAdmin()" (click)="newFamily()">
         <mat-icon>add</mat-icon>
       </button>
     </div>
@@ -25,7 +25,7 @@
           <div>
             {{f.name.value}} ({{f.codeName.value}})<div class="last-delivered"> {{lastStatus(f)}}</div>
           </div>
-          <div *ngIf="context.info.weeklyFamilyAdmin">
+          <div *ngIf="weeklyAdmin()">
             {{f.assignedHelper.getValue()}}
           </div>
 
@@ -37,10 +37,10 @@
           <button mat-raised-button color="primary" *ngIf="showNew()" (click)="preparePackage()">משלוח חדש</button>
         </div>
         <div>
-          <button mat-mini-fab color="primary" (click)="deleteFamily(f)" *ngIf="context.info.weeklyFamilyAdmin">
+          <button mat-mini-fab color="primary" (click)="deleteFamily(f)" *ngIf="weeklyAdmin()">
             <mat-icon>delete</mat-icon>
           </button>
-          <button mat-mini-fab color="primary" (click)="updateFamily(f)" *ngIf="context.info.weeklyFamilyAdmin">
+          <button mat-mini-fab color="primary" (click)="updateFamily(f)" *ngIf="weeklyAdmin()">
             <mat-icon>create</mat-icon>
           </button>
         </div>

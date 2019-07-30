@@ -5,21 +5,27 @@ import { Router } from "@angular/router";
 import { evilStatics } from "./evil-statics";
 import { Helpers } from "../helpers/helpers";
 
-import { RunOnServer, UserInfo } from "radweb";
+import { RunOnServer, UserInfo, JwtSessionManager } from "radweb";
 import { Context } from "radweb";
 import { LoginResponse } from "./login-response";
 import { Roles, RolesGroup } from "./roles";
+import { JWTCookieAuthorizationHelper } from "radweb-server";
 
 
 @Injectable()
 export class AuthService {
 
     async loginFromSms(key: string) {
-        this.auth.loggedIn(await AuthService.loginFromSms(key), false);
-        if (this.auth.valid) {
+        var response = await AuthService.loginFromSms(key);
+        if (response.valid) {
+            this.tokenHelper.setToken(response.authToken, false);
             this.dialog.analytics('login from sms');
             this.router.navigate([evilStatics.routes.myFamilies]);
         }
+        else
+            this.tokenHelper.signout();
+
+
     }
     @RunOnServer({ allowed: () => true })
     static async loginFromSms(key: string, context?: Context) {
@@ -28,7 +34,7 @@ export class AuthService {
         if (h) {
             return {
                 valid: true,
-                authToken: evilStatics.auth.createTokenFor({
+                authToken: Helpers.helper.createSecuredTokenBasedOn({
                     id: h.id.value,
                     name: h.name.value
                 } as UserInfo),
@@ -40,26 +46,28 @@ export class AuthService {
     }
     constructor(
         private dialog: DialogService,
-        private router: Router
+        private router: Router,
+        private tokenHelper: JwtSessionManager,
+        private context: Context
     ) { }
 
     async login(user: string, password: string, remember: boolean, fail: () => void) {
 
         let loginResponse = await AuthService.login(user, password);
-        this.auth.loggedIn(loginResponse, remember);
-        if (this.auth.valid) {
-            this.dialog.analytics('login ' + (this.auth.info.deliveryAdmin ? 'delivery admin' : ''));
+        if (loginResponse.valid) {
+            this.tokenHelper.setToken(loginResponse.authToken, remember);
+            this.dialog.analytics('login ' + (this.context.hasRole(Roles.deliveryAdmin) ? 'delivery admin' : ''));
             if (loginResponse.requirePassword) {
-                this.dialog.YesNoQuestion('שלום ' + this.auth.info.name + ' את מוגדרת כמנהלת אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועברת למסך עדכון פרטים לעדכון סיסמה.', () => {
+                this.dialog.YesNoQuestion('שלום ' + this.context.user.name + ' את מוגדרת כמנהלת אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועברת למסך עדכון פרטים לעדכון סיסמה.', () => {
                     this.router.navigate([evilStatics.routes.updateInfo])
                 });
             }
             else {
-                if (this.auth.info.deliveryAdmin)
+                if (this.context.hasRole(Roles.deliveryAdmin))
                     this.router.navigate([evilStatics.routes.assignFamilies])
-                else if (this.auth.info.weeklyFamilyVolunteer)
+                else if (this.context.hasRole(Roles.weeklyFamilyVolunteer))
                     this.router.navigate([evilStatics.routes.myWeeklyFamilies]);
-                else if (this.auth.info.weeklyFamilyPacker)
+                else if (this.context.hasRole(Roles.weeklyFamilyPacker))
                     this.router.navigate([evilStatics.routes.weeklyFamiliesPack]);
                 else
                     this.router.navigate([evilStatics.routes.myFamilies])
@@ -67,17 +75,20 @@ export class AuthService {
 
         }
         else {
+            this.tokenHelper.signout();
             this.dialog.Error("משתמשת לא נמצאה או סיסמה שגויה");
             fail();
+
         }
     }
+    
     @RunOnServer({ allowed: () => true })
     static async login(user: string, password: string, context?: Context) {
         let result: UserInfo;
         let requirePassword = false;
 
         await context.for(Helpers).foreach(h => h.phone.isEqualTo(user), async h => {
-            if (!h.realStoredPassword.value || evilStatics.passwordHelper.verify(password, h.realStoredPassword.value)) {
+            if (!h.realStoredPassword.value || Helpers.passwordHelper.verify(password, h.realStoredPassword.value)) {
                 result = {
 
                     id: h.id.value,
@@ -109,16 +120,16 @@ export class AuthService {
         if (result) {
             return {
                 valid: true,
-                authToken: evilStatics.auth.createTokenFor(result),
+                authToken: Helpers.helper.createSecuredTokenBasedOn(result),
                 requirePassword
             };
         }
         return { valid: false, requirePassword: false };
     }
     signout(): any {
-        this.auth.signout();
+        this.tokenHelper.signout();
         this.router.navigate([evilStatics.routes.login]);
     }
-    
+
 
 }

@@ -6,6 +6,7 @@ import { evilStatics } from '../auth/evil-statics';
 import { routeStats } from '../asign-family/asign-family.component';
 import { helpers } from 'chart.js';
 import { Roles, RolesGroup } from "../auth/roles";
+import { JWTCookieAuthorizationHelper } from "radweb-server";
 
 @EntityClass
 export class Helpers extends IdEntity<HelperId>  {
@@ -21,7 +22,7 @@ export class Helpers extends IdEntity<HelperId>  {
             onSavingRow: async () => {
                 if (context.onServer) {
                     if (this.password.value && this.password.value != this.password.originalValue && this.password.value != Helpers.emptyPassword) {
-                        this.realStoredPassword.value = evilStatics.passwordHelper.generateHash(this.password.value);
+                        this.realStoredPassword.value = Helpers.passwordHelper.generateHash(this.password.value);
                     }
                     if ((await context.for(Helpers).count()) == 0) {
                         this.superAdmin.value = true;
@@ -120,6 +121,11 @@ export class Helpers extends IdEntity<HelperId>  {
             Helpers.recentHelpers.splice(index, 1);
         Helpers.recentHelpers.splice(0, 0, h);
     }
+    static passwordHelper: PasswordHelper = {
+        generateHash: x => { throw ""; },
+        verify: (x, y) => { throw ""; }
+    };
+    static helper: JWTCookieAuthorizationHelper;
 
 }
 
@@ -168,4 +174,8 @@ export class HelperIdReadonly extends HelperId {
     get displayValue() {
         return this.myContext.for(Helpers).lookup(this).name.value;
     }
+}
+export interface PasswordHelper {
+    generateHash(password: string): string;
+    verify(password: string, realPasswordHash: string): boolean;
 }

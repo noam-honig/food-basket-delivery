@@ -24,6 +24,7 @@ import { CitiesStats } from '../families/stats-action';
 import { SqlBuilder } from '../model-shared/types';
 import { BusyService } from '../select-popup/busy-service';
 import { Roles } from '../auth/roles';
+import { evilStatics } from '../auth/evil-statics';
 
 
 @Component({
@@ -34,7 +35,11 @@ import { Roles } from '../auth/roles';
 
 export class AsignFamilyComponent implements OnInit {
   static route: AuthorizedGuardRoute = {
-    path: 'assign-families', component: AsignFamilyComponent, canActivate: [AuthorizedGuard], data: { name: 'שיוך משפחות', allowedRoles: [Roles.deliveryAdmin] }
+    path: 'assign-families', component: AsignFamilyComponent, canActivate: [AuthorizedGuard], data: {
+      name: 'שיוך משפחות',
+      allowedRoles: [Roles.deliveryAdmin],
+      alternativeRoute: '/login'
+    }
   };
   assignOnMap() {
     this.familyLists.startAssignByMap();

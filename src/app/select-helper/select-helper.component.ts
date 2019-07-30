@@ -2,9 +2,9 @@ import { Component, OnInit, Inject } from '@angular/core';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Helpers } from '../helpers/helpers';
-import { Context } from '../shared/context';
+import { Context } from 'radweb';
 import { FilterBase, FindOptionsPerEntity } from 'radweb';
-import { FlexibleConnectedPositionStrategy } from '@angular/cdk/overlay';
+
 import { BusyService } from '../select-popup/busy-service';
 
 @Component({

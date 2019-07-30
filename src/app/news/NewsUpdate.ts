@@ -1,9 +1,10 @@
 import { DeliveryStatusColumn } from "../families/DeliveryStatus";
-import { changeDate, StringColumn, SqlBuilder } from "../model-shared/types";
-import { NumberColumn } from "radweb";
+import { changeDate,  SqlBuilder } from "../model-shared/types";
+import { NumberColumn, StringColumn } from "radweb";
 import { HelperIdReadonly, HelperId } from "../helpers/helpers";
 import { Families, FamilyUpdateInfo } from "../families/families";
-import { Context, ContextEntity, ServerContext, EntityClass } from "../shared/context";
+import { Context, ContextEntity, ServerContext, EntityClass } from "radweb";
+import { Roles } from "../auth/roles";
 
 
 @EntityClass
@@ -23,7 +24,7 @@ export class NewsUpdate extends ContextEntity<string> implements FamilyUpdateInf
   updateType = new NumberColumn();
   constructor(private context: Context) {
     super({
-      allowApiRead: context.isAdmin(),
+      allowApiRead: context.hasRole(Roles.deliveryAdmin),
       caption: 'חדשות',
       name: 'news',
       dbName: () => {

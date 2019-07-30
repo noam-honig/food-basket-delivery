@@ -11,7 +11,7 @@ import { Context } from 'radweb';
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from '../select-popup/busy-service';
 import { DateColumn, DataAreaSettings, AuthorizedGuardRoute, AuthorizedGuard } from 'radweb';
-import { RolesGroup } from '../auth/roles';
+import { RolesGroup, Roles } from '../auth/roles';
 
 @Component({
   selector: 'app-helpers',
@@ -66,6 +66,15 @@ export class HelpersComponent implements OnInit {
       this.dialog.Info("הסיסמה נמחקה");
     });
 
+  }
+  deliveryAdmin() {
+    return this.context.hasRole(Roles.deliveryAdmin, Roles.superAdmin);
+  }
+  superAdmin() {
+    return this.context.hasRole(Roles.superAdmin)
+  }
+  weeklyAdmin() {
+    return this.context.hasRole(Roles.weeklyFamilyAdmin, Roles.superAdmin);
   }
   @RunOnServer({ allowed: c => c.hasRole(...RolesGroup.anyAdmin) })
   static async resetPassword(helperId: string, context?: Context) {

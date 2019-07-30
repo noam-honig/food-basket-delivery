@@ -10,7 +10,7 @@ import { serverInit } from "./serverInit";
 import * as XLSX from 'xlsx';
 
 import { Families, parseAddress } from "../families/families";
-import { ServerContext, Context } from "../shared/context";
+import { ServerContext, Context } from "radweb";
 import { Helpers } from "../helpers/helpers";
 import { debug, isString } from "util";
 import { FamilySources } from "../families/FamilySources";
@@ -22,7 +22,7 @@ import * as fetch from 'node-fetch';
 import { DeliveryHistoryComponent } from "../delivery-history/delivery-history.component";
 import { PostgresDataProvider } from "radweb-server-postgres";
 import { evilStatics } from "../auth/evil-statics";
-import { ActualDirectSQL } from "../auth/server-action";
+import { ActualDirectSQL } from "radweb";
 
 serverInit();
 let match = 0;
@@ -35,11 +35,6 @@ export async function DoIt() {
 
         let name = (await ApplicationSettings.getAsync(context)).organisationName.value;
         console.log(name);
-        await (<PostgresDataProvider>evilStatics.dataSource).doInTransaction(async ds => {
-            var r = await DeliveryHistoryComponent.getHelperHistoryInfo('2019-06-01', '2019-06-30', context, new ActualDirectSQL(ds));
-            console.log(r);
-            console.log('');
-        });
 
 
 

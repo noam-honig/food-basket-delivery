@@ -5,15 +5,15 @@
       </mat-form-field>  
   <data-grid2 [settings]="helpers" height="300"></data-grid2>
   <div class="col-md-12" *ngIf="helpers.currentRow">
-    <div *ngIf="context.info.superAdmin">
+    <div *ngIf="superAdmin() ">
       <mat-checkbox [(ngModel)]="helpers.currentRow.superAdmin.value">{{helpers.currentRow.superAdmin.caption}}</mat-checkbox>
     </div>
-    <div *ngIf="context.info.deliveryAdmin">
+    <div *ngIf="deliveryAdmin()">
       <div>
         <mat-checkbox [(ngModel)]="helpers.currentRow.deliveryAdmin.value">{{helpers.currentRow.deliveryAdmin.caption}}</mat-checkbox>
       </div>
     </div>
-    <div *ngIf="context.info.weeklyFamilyAdmin||context.info.superAdmin">
+    <div *ngIf="weeklyAdmin()">
       <div>
         <mat-checkbox [(ngModel)]="helpers.currentRow.weeklyFamilyAdmin.value">{{helpers.currentRow.weeklyFamilyAdmin.caption}}</mat-checkbox>
       </div>

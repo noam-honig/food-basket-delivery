@@ -51,6 +51,9 @@ export class MyWeeklyFamiliesComponent implements OnInit {
       this.families.splice(this.families.indexOf(f), 1);
     });
   }
+  weeklyAdmin() {
+    return this.context.hasRole(Roles.weeklyFamilyAdmin);
+  }
   newFamily() {
     let f = this.context.for(WeeklyFullFamilyInfo).create();
     f.assignedHelper.value = this.context.user.id;
@@ -140,7 +143,10 @@ export class MyWeeklyFamiliesComponent implements OnInit {
   static route: AuthorizedGuardRoute = {
     path: 'my-weekly-families',
     component: MyWeeklyFamiliesComponent,
-    data: { name: 'משפחות שבועיות',allowedRoles:[Roles.weeklyFamilyVolunteer] }, canActivate: [AuthorizedGuard]
+    data: { name: 'משפחות שבועיות', allowedRoles: [Roles.weeklyFamilyVolunteer],
+  //@ts-ignore
+  seperetor:true
+  }, canActivate: [AuthorizedGuard]
   }
   deliveries: WeeklyFamilyDeliveries[] = [];
   showNew() {

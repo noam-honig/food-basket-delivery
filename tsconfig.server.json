@@ -1,8 +1,8 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
-    "outDir": "./dist-server/src",
+    "baseUrl": ".",
+    "outDir": "./dist-server/",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",

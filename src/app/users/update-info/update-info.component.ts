@@ -25,7 +25,7 @@ export class UpdateInfoComponent implements OnInit {
   helpers = this.context.for(Helpers).gridSettings({
     numOfColumnsInGrid: 0,
     allowUpdate: true,
-    get: { where: h => h.id.isEqualTo(this.auth.auth.info.helperId) },
+    get: { where: h => h.id.isEqualTo(this.context.user.id) },
     columnSettings: h => [
       h.name,
       h.phone,
