@@ -17,11 +17,7 @@ import { FamilySources } from "../families/FamilySources";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { BasketType } from "../families/BasketType";
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { DeliveryStats } from "../delivery-follow-up/delivery-stats";
-import * as fetch from 'node-fetch';
-import { DeliveryHistoryComponent } from "../delivery-history/delivery-history.component";
-import { PostgresDataProvider } from "radweb-server-postgres";
-import { evilStatics } from "../auth/evil-statics";
+
 import { ActualDirectSQL } from "radweb";
 
 serverInit();

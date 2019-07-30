@@ -24,7 +24,7 @@ import { CitiesStats } from '../families/stats-action';
 import { SqlBuilder } from '../model-shared/types';
 import { BusyService } from '../select-popup/busy-service';
 import { Roles } from '../auth/roles';
-import { evilStatics } from '../auth/evil-statics';
+
 
 
 @Component({

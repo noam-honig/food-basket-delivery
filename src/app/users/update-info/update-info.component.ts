@@ -16,7 +16,7 @@ export class UpdateInfoComponent implements OnInit {
   constructor(private dialog: DialogService,
     private auth: AuthService,
     private context: Context) {
-
+    
 
   }
   static route: Route = { path: 'update-info', component: UpdateInfoComponent, data: { name: 'הגדרות אישיות' }, canActivate: [AuthorizedGuard] };
@@ -71,3 +71,4 @@ export class UpdateInfoComponent implements OnInit {
   }
 
 }
+AuthService.UpdateInfoComponent = UpdateInfoComponent;

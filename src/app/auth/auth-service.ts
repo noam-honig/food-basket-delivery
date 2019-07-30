@@ -1,15 +1,19 @@
 import { Injectable } from "@angular/core";
 
 import { DialogService } from "../select-popup/dialog";
-import { Router } from "@angular/router";
-import { evilStatics } from "./evil-statics";
+
 import { Helpers } from "../helpers/helpers";
 
-import { RunOnServer, UserInfo, JwtSessionManager } from "radweb";
+import { RunOnServer, UserInfo, JwtSessionManager, RouteHelperService } from "radweb";
 import { Context } from "radweb";
 import { LoginResponse } from "./login-response";
 import { Roles, RolesGroup } from "./roles";
 import { JWTCookieAuthorizationHelper } from "radweb-server";
+import { AsignFamilyComponent } from "../asign-family/asign-family.component";
+import { MyWeeklyFamiliesComponent } from "../my-weekly-families/my-weekly-families.component";
+import { WeeklyPackerByFamilyComponent } from "../weekly-packer-by-family/weekly-packer-by-family.component";
+import { MyFamiliesComponent } from "../my-families/my-families.component";
+import { LoginComponent } from "../users/login/login.component";
 
 
 @Injectable()
@@ -20,7 +24,7 @@ export class AuthService {
         if (response.valid) {
             this.tokenHelper.setToken(response.authToken, false);
             this.dialog.analytics('login from sms');
-            this.router.navigate([evilStatics.routes.myFamilies]);
+            this.routeHelper.navigateToComponent(MyFamiliesComponent);
         }
         else
             this.tokenHelper.signout();
@@ -46,11 +50,17 @@ export class AuthService {
     }
     constructor(
         private dialog: DialogService,
-        private router: Router,
+        
         private tokenHelper: JwtSessionManager,
-        private context: Context
-    ) { }
+        private context: Context,
+        private routeHelper:RouteHelperService
+    ) {
 
+        tokenHelper.loadSessionFromCookie();
+        tokenHelper.tokenInfoChanged = () => dialog.refreshEventListener(this.context.hasRole(Roles.deliveryAdmin));
+        tokenHelper.tokenInfoChanged();
+     }
+     static UpdateInfoComponent: { new(...args: any[]): any };
     async login(user: string, password: string, remember: boolean, fail: () => void) {
 
         let loginResponse = await AuthService.login(user, password);
@@ -59,18 +69,18 @@ export class AuthService {
             this.dialog.analytics('login ' + (this.context.hasRole(Roles.deliveryAdmin) ? 'delivery admin' : ''));
             if (loginResponse.requirePassword) {
                 this.dialog.YesNoQuestion('שלום ' + this.context.user.name + ' את מוגדרת כמנהלת אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועברת למסך עדכון פרטים לעדכון סיסמה.', () => {
-                    this.router.navigate([evilStatics.routes.updateInfo])
+                    this.routeHelper.navigateToComponent(AuthService.UpdateInfoComponent);//changing this caused a crash
                 });
             }
             else {
                 if (this.context.hasRole(Roles.deliveryAdmin))
-                    this.router.navigate([evilStatics.routes.assignFamilies])
+                    this.routeHelper.navigateToComponent(AsignFamilyComponent);
                 else if (this.context.hasRole(Roles.weeklyFamilyVolunteer))
-                    this.router.navigate([evilStatics.routes.myWeeklyFamilies]);
+                    this.routeHelper.navigateToComponent(MyWeeklyFamiliesComponent);
                 else if (this.context.hasRole(Roles.weeklyFamilyPacker))
-                    this.router.navigate([evilStatics.routes.weeklyFamiliesPack]);
+                    this.routeHelper.navigateToComponent(WeeklyPackerByFamilyComponent);
                 else
-                    this.router.navigate([evilStatics.routes.myFamilies])
+                    this.routeHelper.navigateToComponent(MyFamiliesComponent);
             }
 
         }
@@ -128,7 +138,7 @@ export class AuthService {
     }
     signout(): any {
         this.tokenHelper.signout();
-        this.router.navigate([evilStatics.routes.login]);
+        this.routeHelper.navigateToComponent(LoginComponent);
     }
 
 

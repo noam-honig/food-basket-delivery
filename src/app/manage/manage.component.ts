@@ -20,7 +20,9 @@ export class ManageComponent implements OnInit {
   static route: AuthorizedGuardRoute = {
     path: 'manage',
     component: ManageComponent,
-    data: { name: 'הגדרות מערכת',allowedRoles:RolesGroup.anyAdmin }, canActivate: [AuthorizedGuard]
+    data: { name: 'הגדרות מערכת',allowedRoles:RolesGroup.anyAdmin,
+   //@ts-ignore
+   seperator: true  }, canActivate: [AuthorizedGuard]
   }
   constructor(private dialog: DialogService, private context: Context) { }
 

@@ -16,7 +16,7 @@ import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component
 import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-up.component';
 import { NewsComponent } from './news/news.component';
 import { CustomReuseStrategy } from './custom-reuse-controller-router-strategy'
-import { evilStatics } from './auth/evil-statics';
+
 
 import { ProductsComponent } from './products/products.component';
 
@@ -65,13 +65,6 @@ const routes: Routes = [
   { path: '**', redirectTo: '/assign-families', pathMatch: 'full' }
 ];
 
-evilStatics.routes.assignFamilies = '/' + AsignFamilyComponent.route.path;
-evilStatics.routes.login = '/' + LoginComponent.route.path;
-evilStatics.routes.myFamilies = '/' + MyFamiliesComponent.route.path;
-evilStatics.routes.register = '/' + RegisterComponent.route.path;
-evilStatics.routes.updateInfo = '/' + UpdateInfoComponent.route.path;
-evilStatics.routes.myWeeklyFamilies = '/' + MyWeeklyFamiliesComponent.route.path;
-evilStatics.routes.weeklyFamiliesPack = '/' + WeeklyPackerByFamilyComponent.route.path;
 @NgModule({
   imports: [
     CommonModule, RouterModule.forRoot(routes

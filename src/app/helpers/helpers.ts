@@ -2,7 +2,7 @@
 import { ColumnSetting, Entity, FilterBase, NumberColumn, IdColumn, Context, EntityClass, DataColumnSettings, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, DecorateDataColumnSettings } from "radweb";
 import { changeDate, HasAsyncGetTheValue, } from '../model-shared/types';
 import { SelectServiceInterface } from '../select-popup/select-service-interface';
-import { evilStatics } from '../auth/evil-statics';
+
 import { routeStats } from '../asign-family/asign-family.component';
 import { helpers } from 'chart.js';
 import { Roles, RolesGroup } from "../auth/roles";

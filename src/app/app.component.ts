@@ -22,26 +22,19 @@ export class AppComponent {
 
 
   constructor(
-    public sessionManager: JwtSessionManager,
+    public sessionManager: AuthService,
     public router: Router,
     public activeRoute: ActivatedRoute,
-    private injector: Injector,
     public dialog: DialogService,
     private helper: RouteHelperService,
     public context: Context) {
-    /*this.router.config.unshift({
-      path: FamiliesComponent.route,
-      component: FamiliesComponent,
-      data: { name: FamiliesComponent.caption }, canActivate: [AdminGuard]
-    });*/
+    
 
     if (!window.location.hostname.toLocaleLowerCase().startsWith('hmey')) {
       this.toolbarColor = 'accent';
 
     }
-    sessionManager.loadSessionFromCookie();
-    sessionManager.tokenInfoChanged = () => dialog.refreshEventListener(this.context.hasRole(Roles.deliveryAdmin));
-    sessionManager.tokenInfoChanged();
+    
 
   }
 

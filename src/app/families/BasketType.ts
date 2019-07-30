@@ -1,7 +1,7 @@
 
 
 import { StringColumn, IdColumn, IdEntity, BoolColumn, NumberColumn } from "radweb";
-import { evilStatics } from "../auth/evil-statics";
+
 import {  HasAsyncGetTheValue } from "../model-shared/types";
 import { Context, EntityClass } from "radweb";
 import { DataColumnSettings } from "radweb";
