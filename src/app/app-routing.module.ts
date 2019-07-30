@@ -60,7 +60,7 @@ const routes: Routes = [
   LoginComponent.route,
   RegisterComponent.route,
   
-  //{ path: 'assign-families', component: StamTestComponent },
+  //{ path: 'stam-test', component: StamTestComponent },
   { path: '', redirectTo: '/assign-families', pathMatch: 'full' },
   { path: '**', redirectTo: '/assign-families', pathMatch: 'full' }
 ];

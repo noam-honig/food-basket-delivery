@@ -2,6 +2,9 @@ import { Injectable } from "@angular/core";
 import { MatDialog, MatDialogRef } from "@angular/material";
 import { wrapFetch } from "radweb";
 import { WaitComponent } from "../wait/wait.component";
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { finalize } from "rxjs/operators";
 
 @Injectable()
 export class BusyService {
@@ -20,25 +23,25 @@ export class BusyService {
     private numOfWaits = 0;
     private disableWait = false;
     log(id: number, what: string) {
-      //  console.log(what + ' id:' + this.id + ' w:' + this.numOfWaits);
+        //  console.log(what + ' id:' + this.id + ' w:' + this.numOfWaits);
     }
     constructor(private dialog: MatDialog) {
 
 
         wrapFetch.wrap = () => {
-          return this.showBusy();
+            return this.showBusy();
         };
     }
     async doWhileShowingBusy<t>(what: () => Promise<t>): Promise<t> {
         let x = this.showBusy();
-        try{
-        return await  what();
+        try {
+            return await what();
         }
-        finally{
+        finally {
             x();
         }
     }
-    showBusy(){
+    showBusy() {
         let id = this.id++;
         if (this.disableWait)
             return () => { };
@@ -46,8 +49,8 @@ export class BusyService {
         if (this.numOfWaits == 0) {
 
             setTimeout(() => {
-                
-                if (this.numOfWaits > 0&&!this.waitRef){
+
+                if (this.numOfWaits > 0 && !this.waitRef) {
                     this.log(id, 'actual start busy ');
                     this.waitRef = this.dialog.open(WaitComponent, { disableClose: true });
                 }
@@ -68,5 +71,17 @@ export class BusyService {
                 }
             }
         };
+    }
+
+}
+@Injectable()
+export class LoaderInterceptor implements HttpInterceptor {
+    constructor(private busy: BusyService) {
+
+
+    }
+    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        let x = this.busy.showBusy();
+        return next.handle(req).pipe(finalize(() => x()));
     }
 }

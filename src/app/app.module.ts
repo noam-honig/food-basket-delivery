@@ -42,7 +42,7 @@ import { WaitComponent } from './wait/wait.component';
 import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-up.component';
 import { HelperFamiliesComponent } from './helper-families/helper-families.component';
 import { SelectFamilyComponent } from './select-family/select-family.component';
-import { BusyService } from './select-popup/busy-service';
+import { BusyService, LoaderInterceptor } from './select-popup/busy-service';
 import { StamTestComponent } from './stam-test/stam-test.component';
 import { NewsComponent } from './news/news.component';
 import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
@@ -66,6 +66,7 @@ import { BatchOperationsComponent } from './batch-operations/batch-operations.co
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 import { PreviewFamilyComponent } from './preview-family/preview-family.component';
 import { FamilyInListComponent } from './family-in-list/family-in-list.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 
 
@@ -137,6 +138,7 @@ import { FamilyInListComponent } from './family-in-list/family-in-list.component
     SelectService,
     BusyService,
     AuthService,
+    { provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true }
   ],
 
   bootstrap: [AppComponent],
