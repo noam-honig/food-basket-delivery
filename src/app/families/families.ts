@@ -518,13 +518,13 @@ export class Families extends IdEntity<FamilyId>  {
 
     for (const row of sqlResult.rows) {
       result.push({
-        id: row[sqlResult.fields[0].name],
-        name: row[sqlResult.fields[1].name],
-        address: row[sqlResult.fields[2].name],
-        tz: row[sqlResult.fields[3].name],
-        phone1: row[sqlResult.fields[4].name],
-        phone2: row[sqlResult.fields[5].name],
-        nameDup: row[sqlResult.fields[6].name]
+        id: row[sqlResult.getcolumnNameAtIndex(0)],
+        name: row[sqlResult.getcolumnNameAtIndex(1)],
+        address: row[sqlResult.getcolumnNameAtIndex(2)],
+        tz: row[sqlResult.getcolumnNameAtIndex(3)],
+        phone1: row[sqlResult.getcolumnNameAtIndex(4)],
+        phone2: row[sqlResult.getcolumnNameAtIndex(5)],
+        nameDup: row[sqlResult.getcolumnNameAtIndex(6)]
 
       });
     }

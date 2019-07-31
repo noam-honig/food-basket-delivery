@@ -183,11 +183,11 @@ export class DistributionMap implements OnInit, OnDestroy {
 
     return r.rows.map(x => {
       return {
-        id: x[r.fields[0].name],
-        lat: +x[r.fields[1].name],
-        lng: +x[r.fields[2].name],
-        status: +x[r.fields[3].name],
-        courier: x[r.fields[4].name]
+        id: x[r.getcolumnNameAtIndex(0)] ,
+        lat: +x[r.getcolumnNameAtIndex(1)],
+        lng: +x[r.getcolumnNameAtIndex(2)],
+        status: +x[r.getcolumnNameAtIndex(3)],
+        courier: x[r.getcolumnNameAtIndex(4)]
       } as familyQueryResult;
 
     }) as familyQueryResult[];

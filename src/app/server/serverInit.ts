@@ -35,7 +35,7 @@ export async function serverInit() {
             dbUrl = process.env.HEROKU_POSTGRESQL_GREEN_URL;
         if (process.env.logSqls) {
             ActualSQLServerDataProvider.LogToConsole = true;
-            ActualDirectSQL.log = true;
+            
         }
         
         const pool = new Pool({

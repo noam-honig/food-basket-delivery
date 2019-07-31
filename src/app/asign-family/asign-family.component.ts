@@ -396,9 +396,9 @@ export class AsignFamilyComponent implements OnInit {
 
         return r.rows.map(x => {
           return {
-            id: x[r.fields[0].name],
-            addressLatitude: +x[r.fields[1].name],
-            addressLongitude: +x[r.fields[2].name]
+            id: x[r.getcolumnNameAtIndex(0)],
+            addressLatitude: +x[r.getcolumnNameAtIndex(1)],
+            addressLongitude: +x[r.getcolumnNameAtIndex(2)]
           } as familyQueryResult;
 
         }) as familyQueryResult[];
