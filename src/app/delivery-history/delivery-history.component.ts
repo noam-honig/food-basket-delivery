@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { EntityClass, ContextEntity, Context, DirectSQL,  StringColumn, IdColumn } from 'radweb';
+import { EntityClass, Context, DirectSQL, StringColumn, IdColumn } from 'radweb';
 import { FamilyId, Families } from '../families/families';
-import {  changeDate, SqlBuilder, PhoneColumn } from '../model-shared/types';
+import { changeDate, SqlBuilder, PhoneColumn } from '../model-shared/types';
 import { BasketId } from '../families/BasketType';
 import { DeliveryStatusColumn } from '../families/DeliveryStatus';
 import { HelperId, HelperIdReadonly, Helpers } from '../helpers/helpers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
-import { CompoundIdColumn, DateColumn, DataAreaSettings, JsonStorageDataProvider, InMemoryDataProvider, Entity, GridSettings, EntitySource, NumberColumn } from 'radweb';
+import { CompoundIdColumn, DateColumn, DataAreaSettings, InMemoryDataProvider, Entity, GridSettings, EntitySource, NumberColumn } from 'radweb';
 
 import { Route } from '@angular/router';
 
@@ -58,8 +58,9 @@ export class DeliveryHistoryComponent implements OnInit {
     data: { name: 'היסטורית משלוחים' }, canActivate: [DeliveryAdminGuard]
   }
   constructor(private context: Context, private selectService: SelectService, private busy: BusyService) {
+    let hhi = context.create(helperHistoryInfo);
     let x = new InMemoryDataProvider();
-    let hhi = new helperHistoryInfo(x);
+    hhi.setSource(x);
     this.helperSource = hhi.source;
     this.helperInfo = new GridSettings(hhi, {
       columnSettings: h => [
@@ -131,7 +132,7 @@ export class DeliveryHistoryComponent implements OnInit {
       this.fromDate.value = new Date(this.fromDate.value.getFullYear(), this.fromDate.value.getMonth() + delta, 1);
       this.toDate.value = this.getEndOfMonth();
     } else {
-      let difference = Math.abs( this.toDate.value.getTime() - this.fromDate.value.getTime());
+      let difference = Math.abs(this.toDate.value.getTime() - this.fromDate.value.getTime());
       if (difference < fullDayValue)
         difference = fullDayValue;
       difference *= delta;
@@ -147,7 +148,7 @@ export class DeliveryHistoryComponent implements OnInit {
     await saveToExcel(this.deliveries, "משלוחים", this.busy, (d: FamilyDeliveriesStats, c) => c == d.id || c == d.family);
   }
   async saveToExcelHelpers() {
-    await saveToExcel(this.helperInfo, "מתנדבים", this.busy, (d: helperHistoryInfo, c) => c == d.courier );
+    await saveToExcel(this.helperInfo, "מתנדבים", this.busy, (d: helperHistoryInfo, c) => c == d.courier);
   }
   deliveries = this.context.for(FamilyDeliveriesStats).gridSettings({
     columnSettings: d => [
@@ -199,7 +200,7 @@ export class DeliveryHistoryComponent implements OnInit {
         from: h,
         where: () => [sql.build(h.id, "=", fd.courier.__getDbName())]
       })
-      , "deliveries", "dates", "families"], " from (",
+        , "deliveries", "dates", "families"], " from (",
         sql.build("select ", [
           fd.courier.__getDbName(),
           "count(*) deliveries",
@@ -213,7 +214,7 @@ export class DeliveryHistoryComponent implements OnInit {
   }
 
 }
-
+@EntityClass
 export class helperHistoryInfo extends Entity<string>{
   courier = new StringColumn();
   name = new StringColumn('שם');
@@ -221,14 +222,14 @@ export class helperHistoryInfo extends Entity<string>{
   deliveries = new NumberColumn('משלוחים');
   families = new NumberColumn('משפחות');
   dates = new NumberColumn("תאריכים");
-  constructor(source: InMemoryDataProvider) {
-    super(() => new helperHistoryInfo(source), source, { name: 'helperHistoryInfo' });
+  constructor() {
+    super({ name: 'helperHistoryInfo', allowApiRead: false, allowApiCRUD: false });
     this.initColumns(this.courier);
   }
 }
 
 @EntityClass
-export class FamilyDeliveriesStats extends ContextEntity<string> {
+export class FamilyDeliveriesStats extends Entity<string> {
   family = new FamilyId();
   id = new IdColumn();
   name = new StringColumn('שם');

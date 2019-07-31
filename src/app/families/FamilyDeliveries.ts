@@ -1,5 +1,5 @@
 import {  PhoneColumn, changeDate, SqlBuilder } from "../model-shared/types";
-import { EntityClass, Context, ContextEntity, IdColumn, IdEntity, StringColumn, NumberColumn } from "radweb";
+import { EntityClass, Context, IdColumn, IdEntity, StringColumn, NumberColumn } from "radweb";
 import { BasketId } from "./BasketType";
 import { FamilyId, Families } from "./families";
 import { DeliveryStatusColumn, DeliveryStatus } from "./DeliveryStatus";

@@ -6,10 +6,10 @@ import { HelperId, HelperIdReadonly } from '../helpers/helpers';
 import {  changeDate } from '../model-shared/types';
 import { CallStatusColumn } from '../families/CallStatus';
 import { DeliveryEventId } from "./DeliveryEventId";
-import { Context, EntityClass, ContextEntity } from 'radweb';
+import { Context, EntityClass, Entity } from 'radweb';
 import { Roles } from '../auth/roles';
 @EntityClass
-export class FamilyDeliveryEvents extends ContextEntity<string> {
+export class FamilyDeliveryEvents extends Entity<string> {
   deliveryEvent = new DeliveryEventId();
   family = new FamilyId();
   basketType = new BasketId(this.context, 'סוג סל');

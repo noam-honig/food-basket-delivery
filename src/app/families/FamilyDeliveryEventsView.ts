@@ -6,7 +6,7 @@ import { StringColumn, CompoundIdColumn } from 'radweb';
 import { HelperId } from '../helpers/helpers';
 import {  changeDate, DateTimeColumn,  SqlBuilder } from '../model-shared/types';
 import { DeliveryEvents } from '../delivery-events/delivery-events';
-import { Context, ServerContext, EntityClass, ContextEntity } from 'radweb';
+import { Context, ServerContext, EntityClass, Entity } from 'radweb';
 import { DeliveryEventId } from '../delivery-events/DeliveryEventId';
 import { Roles } from '../auth/roles';
 
@@ -14,7 +14,7 @@ import { Roles } from '../auth/roles';
 
 
 @EntityClass
-export class FamilyDeliveryEventsView extends ContextEntity<string>  {
+export class FamilyDeliveryEventsView extends Entity<string>  {
   deliveryEvent = new DeliveryEventId();
   family = new FamilyId();
   basketType = new BasketId(this.context, 'סוג סל');

@@ -38,7 +38,7 @@ export class Helpers extends IdEntity<HelperId>  {
             apiDataFilter: () => {
                 if (!context.isSignedIn())
                     return this.id.isEqualTo("No User");
-                else if (! context.isAllowed([Roles.deliveryAdmin , ...Roles.anyWeekly]))
+                else if (!context.isAllowed([Roles.deliveryAdmin, ...Roles.anyWeekly]))
                     return this.id.isEqualTo(this.context.user.id);
             }
         });
@@ -63,7 +63,7 @@ export class Helpers extends IdEntity<HelperId>  {
     reminderSmsDate = new changeDate('מועד משלוח תזכורת SMS');
     deliveryAdmin = new BoolColumn({
         caption: 'מנהלת משלוח חגים',
-        readonly:  !this.context.isAllowed(Roles.anyAdmin),
+        allowApiUpdate: Roles.anyAdmin,
         includeInApi: Roles.anyAdmin,
         dbName: 'isAdmin'
     });
@@ -140,7 +140,7 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
             getValue: f => (f ? (<HelperId>(f).__getColumn(this)) : this).getValue(),
             hideDataOnInput: true,
             click: f => dialog.selectHelper(s => (f ? f.__getColumn(this) : this).value = (s ? s.id.value : ''), filter),
-            readonly: this.readonly,
+            readonly: this.context.isAllowed(this.allowApiUpdate),
             width: '200'
 
         }
@@ -168,7 +168,7 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 
 export class HelperIdReadonly extends HelperId {
     constructor(private myContext: Context, caption: DataColumnSettings<string, HelperId> | string) {
-        super(myContext, DecorateDataColumnSettings(caption, x => x.readonly = true));
+        super(myContext, DecorateDataColumnSettings(caption, x => x.allowApiUpdate = false));
     }
 
     get displayValue() {

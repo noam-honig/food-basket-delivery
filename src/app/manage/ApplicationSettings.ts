@@ -1,10 +1,10 @@
 import { StringColumn, NumberColumn } from "radweb";
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
-import { ContextEntity, Context, EntityClass } from "radweb";
+import { Entity, Context, EntityClass } from "radweb";
 import { PhoneColumn } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 @EntityClass
-export class ApplicationSettings extends ContextEntity<number>  {
+export class ApplicationSettings extends Entity<number>  {
 
   id = new NumberColumn();
   organisationName = new StringColumn('שם הארגון');
@@ -17,7 +17,7 @@ export class ApplicationSettings extends ContextEntity<number>  {
   messageForDoneDelivery = new StringColumn('הודעה למשנע כאשר סיים את כל המשפחות');
   helpText = new StringColumn('למי המשנע מתקשר כשיש לו בעיה');
   helpPhone = new PhoneColumn('טלפון עזרה למשנע');
-  dataStructureVersion = new NumberColumn({readonly:true});
+  dataStructureVersion = new NumberColumn({allowApiUpdate:false});
   addressApiResult = new StringColumn();
   private _lastString: string;
   private _lastGeo: GeocodeInformation;

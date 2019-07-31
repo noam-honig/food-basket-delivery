@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DateTimeColumn, SqlBuilder, QueryBuilder } from '../model-shared/types';
 import { WeeklyFamilyId, WeeklyFamilies, WeeklyFullFamilyInfo } from '../weekly-families/weekly-families';
 import { ClosedListColumn, StringColumn, CompoundIdColumn, Column, DataColumnSettings, IdColumn, NumberColumn } from 'radweb';
-import { EntityClass, Context, ServerContext, ContextEntity, IdEntity } from 'radweb';
+import { EntityClass, Context, ServerContext, Entity, IdEntity } from 'radweb';
 import { BusyService } from '../select-popup/busy-service';
 import { HelperId } from '../helpers/helpers';
 import { Roles } from '../auth/roles';
@@ -73,7 +73,7 @@ export class WeeklyFamilyDeliveryProducts extends IdEntity<IdColumn>{
 
 
 @EntityClass
-export class WeeklyFamilyDeliveryProductStats extends ContextEntity<string> {
+export class WeeklyFamilyDeliveryProductStats extends Entity<string> {
   delivery = new WeeklyFamilyDeliveryId();
   product = new ProductId(this.context);
   productName = new StringColumn({ caption: 'שם' });
@@ -176,7 +176,7 @@ export class WeeklyFamilyDeliveryProductStats extends ContextEntity<string> {
   }
 }
 @EntityClass
-export class WeeklyDeliveryStats extends ContextEntity<number>
+export class WeeklyDeliveryStats extends Entity<number>
 {
   families = new NumberColumn();
   deliveries = new NumberColumn();
@@ -332,8 +332,7 @@ export class Products extends IdEntity<ProductId>{
           wfd.status.isEqualTo(WeeklyFamilyDeliveryStatus.Pack),
           sql.eq(wfdp.product, this.id)]
       });
-
     },
-    readonly: true
+    allowApiUpdate: false
   });
 }

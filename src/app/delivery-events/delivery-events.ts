@@ -1,5 +1,5 @@
 import { DeliveryEventId } from "./DeliveryEventId";
-import {  changeDate, SqlBuilder } from "../model-shared/types";
+import { changeDate, SqlBuilder } from "../model-shared/types";
 import { StringColumn, DateColumn, BoolColumn, NumberColumn, IdEntity } from "radweb";
 import { EventStatusColumn } from "./EventStatus";
 import { HelperIdReadonly } from "../helpers/helpers";
@@ -20,6 +20,7 @@ export class DeliveryEvents extends IdEntity<DeliveryEventId>  {
   createUser = new HelperIdReadonly(this.context, 'משתמש מוסיף');
   families = new NumberColumn({
     dbReadOnly: true,
+    allowApiUpdate: false,
     caption: 'משפחות',
     dbName: () => {
       let fde = new FamilyDeliveryEvents(new ServerContext());
@@ -40,8 +41,7 @@ export class DeliveryEvents extends IdEntity<DeliveryEventId>  {
           fde.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent)]
 
         }));
-    },
-    readonly: true
+    }
   });
 
   constructor(private context: Context) {

@@ -1,4 +1,4 @@
-import { CompoundIdColumn, Entity, NumberColumn, ContextEntity } from 'radweb';
+import { CompoundIdColumn, NumberColumn, Entity } from 'radweb';
 
 import { ItemId } from "../events/ItemId";
 import { EventHelperId } from "../event-helpers/EventHelperId";
@@ -6,7 +6,7 @@ import { EntityClass } from 'radweb';
 
 
 @EntityClass
-export class ItemsPerHelper extends ContextEntity<string> {
+export class ItemsPerHelper extends Entity<string> {
   itemId = new ItemId();
   eventHelperId = new EventHelperId();
   quantity = new NumberColumn('כמות');

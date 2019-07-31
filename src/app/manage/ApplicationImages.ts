@@ -1,8 +1,8 @@
 import { StringColumn, NumberColumn } from 'radweb';
-import { ContextEntity, Context, EntityClass } from 'radweb';
+import { Entity, Context, EntityClass } from 'radweb';
 import { Roles } from '../auth/roles';
 @EntityClass
-export class ApplicationImages extends ContextEntity<number>  {
+export class ApplicationImages extends Entity<number>  {
   id = new NumberColumn();
   base64Icon = new StringColumn("איקון דף base64");
   base64PhoneHomeImage = new StringColumn("איקון דף הבית בטלפון base64");

@@ -3,12 +3,12 @@ import { changeDate,  SqlBuilder } from "../model-shared/types";
 import { NumberColumn, StringColumn } from "radweb";
 import { HelperIdReadonly, HelperId } from "../helpers/helpers";
 import { Families, FamilyUpdateInfo } from "../families/families";
-import { Context, ContextEntity, ServerContext, EntityClass } from "radweb";
+import { Context, Entity, ServerContext, EntityClass } from "radweb";
 import { Roles } from "../auth/roles";
 
 
 @EntityClass
-export class NewsUpdate extends ContextEntity<string> implements FamilyUpdateInfo {
+export class NewsUpdate extends Entity<string> implements FamilyUpdateInfo {
 
   id = new StringColumn();
   name = new StringColumn();

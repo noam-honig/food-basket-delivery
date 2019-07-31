@@ -1,5 +1,5 @@
 import { SqlBuilder, DateTimeColumn } from "../model-shared/types";
-import { EntityClass, Context, ContextEntityOptions, IdEntity, StringColumn, NumberColumn } from "radweb";
+import { EntityClass, Context, EntityOptions, IdEntity, StringColumn, NumberColumn } from "radweb";
 import { HelperId } from "../helpers/helpers";
 import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatusColumn, WeeklyFamilyDeliveryStatus } from "../weekly-families-deliveries/weekly-families-deliveries";
 import { IdColumn } from "radweb";
@@ -10,7 +10,7 @@ import { Roles } from "../auth/roles";
 @EntityClass
 export class WeeklyFamilies extends IdEntity<WeeklyFamilyId>{
 
-    constructor(protected context: Context, options?: ContextEntityOptions) {
+    constructor(protected context: Context, options?: EntityOptions) {
         super(new WeeklyFamilyId(), options ? options : {
             name: 'weeklyFamilies',
             allowApiCRUD: false,

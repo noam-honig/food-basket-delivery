@@ -125,7 +125,7 @@ export class Families extends IdEntity<FamilyId>  {
       });
     this.initColumns();
     if (!context.isAllowed(Roles.deliveryAdmin))
-      this.__iterateColumns().forEach(c => c.readonly = c != this.courierComments && c != this.deliverStatus && c != this.correntAnErrorInStatus);
+      this.__iterateColumns().forEach(c => c.allowApiUpdate = c == this.courierComments || c == this.deliverStatus || c == this.correntAnErrorInStatus);
   }
   disableChangeLogging = false;
 

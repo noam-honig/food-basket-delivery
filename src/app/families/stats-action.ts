@@ -1,11 +1,11 @@
-import { RunOnServer, StringColumn, NumberColumn } from "radweb";
+import { RunOnServer, StringColumn, NumberColumn, Entity } from "radweb";
 import { FilterBase } from "radweb";
 import { Families } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
 
 import { YesNo } from "./YesNo";
 import { BasketType } from "./BasketType";
-import { Context, ContextEntity, EntityClass } from "radweb";
+import { Context,  EntityClass } from "radweb";
 import { BasketInfo } from "../asign-family/asign-family.component";
 import { SqlBuilder } from "../model-shared/types";
 import { Roles } from "../auth/roles";
@@ -101,7 +101,7 @@ export class Stats {
     }
 }
 @EntityClass
-export class CitiesStats extends ContextEntity<string> {
+export class CitiesStats extends Entity<string> {
     city = new StringColumn();
     families = new NumberColumn();
     constructor(context: Context) {

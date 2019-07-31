@@ -148,7 +148,7 @@ export class DateTimeColumn extends radweb.DateTimeColumn {
 export class changeDate extends DateTimeColumn  {
  
   constructor( optionsOrCaption: DataColumnSettings<Date, DateTimeColumn> | string) {
-    super(DecorateDataColumnSettings(optionsOrCaption, x => x.readonly = true));
+    super(DecorateDataColumnSettings(optionsOrCaption, x => x.allowApiUpdate = false));
   }
 
 }
