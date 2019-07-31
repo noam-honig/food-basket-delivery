@@ -133,8 +133,8 @@ export class Families extends IdEntity<FamilyId>  {
   name = new StringColumn({
     caption: "שם",
     valueChange: () => this.delayCheckDuplicateFamilies(),
-    onValidate: v => {
-      if (!v.value || v.value.length < 2)
+    onValidate: () => {
+      if (!this.name.value || this.name.value.length < 2)
         this.name.error = 'השם קצר מידי';
     }
   });

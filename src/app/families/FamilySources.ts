@@ -1,6 +1,6 @@
 import {  HasAsyncGetTheValue } from "../model-shared/types";
 
-import { Context,  EntityClass, IdEntity, StringColumn, IdColumn, DataColumnSettings } from "radweb";
+import { Context,  EntityClass, IdEntity, StringColumn, IdColumn, ColumnOptions } from "radweb";
 import { Roles } from "../auth/roles";
 
 @EntityClass
@@ -17,7 +17,7 @@ export class FamilySources extends IdEntity<FamilySourceId>  {
   }
 }
 export class FamilySourceId extends IdColumn implements HasAsyncGetTheValue {
-  constructor(private context: Context, settingsOrCaption?: DataColumnSettings<string, IdColumn> | string) {
+  constructor(private context: Context, settingsOrCaption?: ColumnOptions<string> ) {
     super(settingsOrCaption);
   }
   get displayValue() {

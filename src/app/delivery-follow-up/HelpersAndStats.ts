@@ -18,8 +18,8 @@ function log(s: string) {
 export class HelpersAndStats extends IdEntity<HelperId> {
     name = new StringColumn({
         caption: "שם",
-        onValidate: v => {
-            if (!v.value || v.value.length < 3)
+        onValidate: () => {
+            if (!this.name.value || this.name.value.length < 3)
                 this.name.error = 'השם קצר מידי';
         }
     });

@@ -4,7 +4,7 @@ import { StringColumn, IdColumn, IdEntity, BoolColumn, NumberColumn } from "radw
 
 import {  HasAsyncGetTheValue } from "../model-shared/types";
 import { Context, EntityClass } from "radweb";
-import { DataColumnSettings } from "radweb";
+import { ColumnOptions } from "radweb";
 import { Roles } from "../auth/roles";
 
 @EntityClass
@@ -26,7 +26,7 @@ export class BasketType extends IdEntity<BasketId>  {
   }
 }
 export class BasketId extends IdColumn implements HasAsyncGetTheValue {
-  constructor(private context: Context, settingsOrCaption?: DataColumnSettings<string, StringColumn> | string) {
+  constructor(private context: Context, settingsOrCaption?: ColumnOptions<string> ) {
     super(settingsOrCaption);
   }
   get displayValue() {

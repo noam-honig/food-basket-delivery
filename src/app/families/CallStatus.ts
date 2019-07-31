@@ -1,4 +1,4 @@
-import { ClosedListColumn,  Column, DataColumnSettings } from "radweb";
+import { ClosedListColumn,  Column, ColumnOptions } from "radweb";
 
 
 export class CallStatus {
@@ -12,7 +12,7 @@ export class CallStatus {
   }
 }
 export class CallStatusColumn extends ClosedListColumn<CallStatus> {
-    constructor(settingsOrCaption?: DataColumnSettings<CallStatus, Column<CallStatus>> | string) {
+    constructor(settingsOrCaption?: ColumnOptions<CallStatus> ) {
       super(CallStatus, settingsOrCaption);
     }
   

@@ -1,5 +1,5 @@
 
-import { ColumnSetting, Entity, FilterBase, NumberColumn, IdColumn, Context, EntityClass, DataColumnSettings, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, DecorateDataColumnSettings } from "radweb";
+import { ColumnSetting, Entity, FilterBase, NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, DecorateDataColumnSettings } from "radweb";
 import { changeDate, HasAsyncGetTheValue, } from '../model-shared/types';
 import { SelectServiceInterface } from '../select-popup/select-service-interface';
 
@@ -46,8 +46,8 @@ export class Helpers extends IdEntity<HelperId>  {
     public static emptyPassword = 'password';
     name = new StringColumn({
         caption: "שם",
-        onValidate: v => {
-            if (!v.value || v.value.length < 2)
+        onValidate: () => {
+            if (!this.name.value || this.name.value.length < 2)
                 this.name.error = 'השם קצר מידי';
         }
     });
@@ -131,7 +131,7 @@ export class Helpers extends IdEntity<HelperId>  {
 
 export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 
-    constructor(private context: Context, settingsOrCaption?: DataColumnSettings<string, StringColumn> | string) {
+    constructor(private context: Context, settingsOrCaption?: ColumnOptions<string> ) {
         super(settingsOrCaption);
     }
     getColumn(dialog: SelectServiceInterface, filter?: (helper: Helpers) => FilterBase): ColumnSetting<Entity<any>> {
@@ -167,7 +167,7 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 }
 
 export class HelperIdReadonly extends HelperId {
-    constructor(private myContext: Context, caption: DataColumnSettings<string, HelperId> | string) {
+    constructor(private myContext: Context, caption: ColumnOptions<string> ) {
         super(myContext, DecorateDataColumnSettings(caption, x => x.allowApiUpdate = false));
     }
 

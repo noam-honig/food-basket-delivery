@@ -1,5 +1,5 @@
 import { ClosedListColumn, NumberColumn, Column } from "radweb";
-import { DataColumnSettings } from "radweb";
+import { ColumnOptions } from "radweb";
 
 export class EventStatus {
   static Prepare: EventStatus = new EventStatus(0, 'בהכנה');
@@ -13,7 +13,7 @@ export class EventStatus {
 }
 
 export class EventStatusColumn extends ClosedListColumn<EventStatus> {
-    constructor(settingsOrCaption?: DataColumnSettings<EventStatus, Column<EventStatus>> | string) {
+    constructor(settingsOrCaption?: ColumnOptions<EventStatus> ) {
       super(EventStatus, settingsOrCaption);
     }
     getColumn() {

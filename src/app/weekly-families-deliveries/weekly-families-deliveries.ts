@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DateTimeColumn, SqlBuilder, QueryBuilder } from '../model-shared/types';
 import { WeeklyFamilyId, WeeklyFamilies, WeeklyFullFamilyInfo } from '../weekly-families/weekly-families';
-import { ClosedListColumn, StringColumn, CompoundIdColumn, Column, DataColumnSettings, IdColumn, NumberColumn } from 'radweb';
+import { ClosedListColumn, StringColumn, CompoundIdColumn, Column, ColumnOptions, IdColumn, NumberColumn } from 'radweb';
 import { EntityClass, Context, ServerContext, Entity, IdEntity } from 'radweb';
 import { BusyService } from '../select-popup/busy-service';
 import { HelperId } from '../helpers/helpers';
@@ -286,7 +286,7 @@ export interface StatusButtonEnabledHelper {
 }
 
 export class WeeklyFamilyDeliveryStatusColumn extends ClosedListColumn<WeeklyFamilyDeliveryStatus>{
-  constructor(settings?: DataColumnSettings<WeeklyFamilyDeliveryStatus, Column<WeeklyFamilyDeliveryStatus>>) {
+  constructor(settings?: ColumnOptions<WeeklyFamilyDeliveryStatus>) {
     super(WeeklyFamilyDeliveryStatus, settings ? settings : { caption: 'סטטוס שילוח' });
   }
 

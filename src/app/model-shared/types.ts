@@ -1,5 +1,5 @@
 import * as radweb from 'radweb';
-import {  Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, SQLCommand, SQLQueryResult, DataColumnSettings, DecorateDataColumnSettings } from "radweb";
+import {  Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, SQLCommand, SQLQueryResult, ColumnOptions, DecorateDataColumnSettings } from "radweb";
 
 
 
@@ -147,7 +147,7 @@ export class DateTimeColumn extends radweb.DateTimeColumn {
 
 export class changeDate extends DateTimeColumn  {
  
-  constructor( optionsOrCaption: DataColumnSettings<Date, DateTimeColumn> | string) {
+  constructor( optionsOrCaption: ColumnOptions<Date>) {
     super(DecorateDataColumnSettings(optionsOrCaption, x => x.allowApiUpdate = false));
   }
 
