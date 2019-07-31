@@ -131,7 +131,7 @@ export class Helpers extends IdEntity<HelperId>  {
 
 export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 
-    constructor(private context: Context, settingsOrCaption?: ColumnOptions<string> ) {
+    constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string> ) {
         super(settingsOrCaption);
     }
     getColumn(dialog: SelectServiceInterface, filter?: (helper: Helpers) => FilterBase): ColumnSetting<Entity<any>> {
@@ -167,12 +167,9 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 }
 
 export class HelperIdReadonly extends HelperId {
-    constructor(private myContext: Context, caption: ColumnOptions<string> ) {
-        super(myContext, DecorateDataColumnSettings(caption, x => x.allowApiUpdate = false));
-    }
-
+    allowApiUpdate=false;
     get displayValue() {
-        return this.myContext.for(Helpers).lookup(this).name.value;
+        return this.context.for(Helpers).lookup(this).name.value;
     }
 }
 export interface PasswordHelper {
