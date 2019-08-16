@@ -20,7 +20,7 @@ export class FamilyDeliveryEvents extends Entity<string> {
   courier = new HelperId(this.context, "משנע");
   courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
   courierAssingTime = new changeDate('מועד שיוך למשנע');
-  deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
+  deliverStatus = new DeliveryStatusColumn();
   deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
   deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
   routeOrder = new NumberColumn();

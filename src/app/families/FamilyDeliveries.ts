@@ -14,7 +14,7 @@ export class FamilyDeliveries extends IdEntity<IdColumn>  {
     basketType = new BasketId(this.context, 'סוג סל');
 
 
-    deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
+    deliverStatus = new DeliveryStatusColumn();
     courier = new HelperId(this.context, "משנע");
     courierComments = new StringColumn('הערות מסירה');
     deliveryStatusDate = new changeDate('מתי');

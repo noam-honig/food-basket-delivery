@@ -174,7 +174,7 @@ export class Families extends IdEntity<FamilyId>  {
   //callHelper = new HelperIdReadonly(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'מי ביצעה את השיחה' });
   //callComments = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'הערות שיחה' });
 
-  deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
+  deliverStatus = new DeliveryStatusColumn();
   correntAnErrorInStatus = new BoolColumn({ virtualData: () => false });
   courier = new HelperId(this.context, "משנע באירוע");
   courierComments = new StringColumn('הערות שכתב המשנע כשמסר');

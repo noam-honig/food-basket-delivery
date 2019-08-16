@@ -1,4 +1,4 @@
-import { ClosedListColumn, NumberColumn, FilterBase, Column } from "radweb";
+import { ClosedListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings } from "radweb";
 import { ColumnOptions } from "radweb";
 
 export class DeliveryStatus {
@@ -35,14 +35,16 @@ export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
   isActiveDelivery() {
     return this.isLessOrEqualTo(DeliveryStatus.FailedOther);
   }
-  isInEvent(){
+  isInEvent() {
     return this.isLessOrEqualTo(DeliveryStatus.Frozen);
   }
   isAResultStatus() {
     return this.isGreaterOrEqualTo(DeliveryStatus.Success).and(this.isLessOrEqualTo(DeliveryStatus.FailedOther));
   }
-  constructor(settingsOrCaption?: ColumnOptions<DeliveryStatus> ) {
+  constructor(settingsOrCaption?: ColumnOptions<DeliveryStatus>) {
     super(DeliveryStatus, settingsOrCaption);
+    if (!this.caption)
+      this.caption = 'סטטוס שינוע';
   }
   getColumn() {
     return {
