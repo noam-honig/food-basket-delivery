@@ -16,7 +16,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 import { FilterBase } from 'radweb';
 
-import { BusyService } from '../select-popup/busy-service';
+import { BusyService } from 'radweb';
 import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
 import { MatTabGroup, MatDialog, MatDialogConfig } from '@angular/material';

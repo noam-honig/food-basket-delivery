@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
-import { BusyService } from "./../select-popup/busy-service";
+import { BusyService } from 'radweb';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';
 import { Families } from '../families/families';

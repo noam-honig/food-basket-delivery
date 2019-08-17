@@ -4,7 +4,7 @@ import { SelectHelperInfo, SelectHelperComponent } from "../select-helper/select
 import { Helpers } from '../helpers/helpers';
 import { SelectServiceInterface } from "./select-service-interface";
 import { SelectFamilyInfo, SelectFamilyComponent } from "../select-family/select-family.component";
-import { BusyService } from "./busy-service";
+import { BusyService } from 'radweb';
 
 import { UpdateCommentComponentData, UpdateCommentComponent } from "../update-comment/update-comment.component";
 import { UpdateFamilyDialogComponent, UpdateFamilyInfo } from "../update-family-dialog/update-family-dialog.component";

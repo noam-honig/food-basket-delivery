@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
 
-import { BusyService } from '../select-popup/busy-service';
+import { BusyService } from 'radweb';
 import { Context } from 'radweb';
 import { Families } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';

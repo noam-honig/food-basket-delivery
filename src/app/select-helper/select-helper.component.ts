@@ -5,7 +5,7 @@ import { Helpers } from '../helpers/helpers';
 import { Context } from 'radweb';
 import { FilterBase, FindOptionsPerEntity } from 'radweb';
 
-import { BusyService } from '../select-popup/busy-service';
+import { BusyService } from 'radweb';
 
 @Component({
   selector: 'app-select-helper',

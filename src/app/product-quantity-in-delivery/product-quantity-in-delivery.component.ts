@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { WeeklyFamilyDeliveryProducts, WeeklyFamilyDeliveryProductStats } from '../weekly-families-deliveries/weekly-families-deliveries';
 import { MatCheckboxChange } from '@angular/material';
-import { BusyService } from '../select-popup/busy-service';
+import { BusyService } from 'radweb';
 
 @Component({
   selector: 'app-product-quantity-in-delivery',

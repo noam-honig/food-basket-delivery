@@ -22,7 +22,7 @@ import { BasketType } from '../families/BasketType';
 
 import { CitiesStats } from '../families/stats-action';
 import { SqlBuilder } from '../model-shared/types';
-import { BusyService } from '../select-popup/busy-service';
+import { BusyService } from 'radweb';
 import { Roles, DeliveryAdminGuard } from '../auth/roles';
 
 
@@ -245,8 +245,9 @@ export class AsignFamilyComponent implements OnInit {
           this.familyLists.initForFamilies(this.id, this.name, x.families);
           if (basket != undefined)
             basket.unassignedFamilies -= x.addedBoxes;
-          else
-            this.refreshBaskets();
+          else {
+            this.busy.donotWait(async () => await this.refreshBaskets());
+          }
           if (this.preferRepeatFamilies && this.repeatFamilies > 0)
             this.repeatFamilies--;
           this.doRefreshRoute();

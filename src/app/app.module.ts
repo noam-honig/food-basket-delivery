@@ -38,11 +38,11 @@ import { DistributionMap } from './distribution-map/distribution-map.component';
 import { SelectHelperComponent } from './select-helper/select-helper.component';
 import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component';
 import { MapComponent } from './map/map.component';
-import { WaitComponent } from './wait/wait.component';
+
 import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-up.component';
 import { HelperFamiliesComponent } from './helper-families/helper-families.component';
 import { SelectFamilyComponent } from './select-family/select-family.component';
-import { BusyService, LoaderInterceptor } from './select-popup/busy-service';
+
 import { StamTestComponent } from './stam-test/stam-test.component';
 import { NewsComponent } from './news/news.component';
 import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
@@ -96,7 +96,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
     SelectHelperComponent,
     LoginFromSmsComponent,
     MapComponent,
-    WaitComponent,
+    
     DeliveryFollowUpComponent,
     HelperFamiliesComponent,
     SelectFamilyComponent,
@@ -136,9 +136,9 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
   providers: [
     DialogService,
     SelectService,
-    BusyService,
-    AuthService,
-    { provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true }
+    
+    AuthService
+    
   ],
 
   bootstrap: [AppComponent],
@@ -148,6 +148,6 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
     YesNoQuestionComponent,
     InputAreaComponent,
     UpdateFamilyDialogComponent,PreviewFamilyComponent,
-    UpdateCommentComponent, WaitComponent]
+    UpdateCommentComponent]
 })
 export class AppModule { }

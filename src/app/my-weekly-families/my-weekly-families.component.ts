@@ -7,7 +7,7 @@ import { Context } from 'radweb';
 
 import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts, Products, WeeklyFamilyDeliveryProductStats, WeeklyDeliveryStats } from '../weekly-families-deliveries/weekly-families-deliveries';
 import { DialogService } from '../select-popup/dialog';
-import { BusyService } from '../select-popup/busy-service';
+import { BusyService } from 'radweb';
 import { WeeklyFamilyDeliveryList } from '../weekly-family-delivery-product-list/weekly-family-delivery-product-list.component';
 
 import { SelectService } from '../select-popup/select-service';

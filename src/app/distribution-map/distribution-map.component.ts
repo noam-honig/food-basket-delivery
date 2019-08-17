@@ -16,7 +16,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { SelectService } from '../select-popup/select-service';
 
 import { colors } from '../families/stats-action';
-import { BusyService } from '../select-popup/busy-service';
+import { BusyService } from 'radweb';
 import { YesNo } from '../families/YesNo';
 import { Roles, DeliveryAdminGuard } from '../auth/roles';
 

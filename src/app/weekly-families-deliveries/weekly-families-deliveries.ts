@@ -3,7 +3,7 @@ import { DateTimeColumn, SqlBuilder, QueryBuilder } from '../model-shared/types'
 import { WeeklyFamilyId, WeeklyFamilies, WeeklyFullFamilyInfo } from '../weekly-families/weekly-families';
 import { ClosedListColumn, StringColumn, CompoundIdColumn, Column, ColumnOptions, IdColumn, NumberColumn } from 'radweb';
 import { EntityClass, Context, ServerContext, Entity, IdEntity } from 'radweb';
-import { BusyService } from '../select-popup/busy-service';
+import { BusyService } from 'radweb';
 import { HelperId } from '../helpers/helpers';
 import { Roles } from '../auth/roles';
 

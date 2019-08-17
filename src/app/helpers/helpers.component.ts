@@ -9,7 +9,7 @@ import { Route } from '@angular/router';
 import { RunOnServer } from 'radweb';
 import { Context } from 'radweb';
 import { DialogService } from '../select-popup/dialog';
-import { BusyService } from '../select-popup/busy-service';
+import { BusyService } from 'radweb';
 import { DateColumn, DataAreaSettings } from 'radweb';
 import {  Roles, AnyAdminGuard } from '../auth/roles';
 

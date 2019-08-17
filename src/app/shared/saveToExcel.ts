@@ -1,5 +1,5 @@
 import { Entity, Column, GridSettings, ColumnHashSet, } from "radweb";
-import { BusyService } from "./../select-popup/busy-service";
+import { BusyService } from 'radweb';
 import * as XLSX from 'xlsx';
 import { HasAsyncGetTheValue, DateTimeColumn } from "../model-shared/types";
 import { foreachSync } from "./utils";

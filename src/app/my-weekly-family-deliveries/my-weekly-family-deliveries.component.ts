@@ -5,7 +5,7 @@ import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus } from '../weekly-fa
 import { Context } from 'radweb';
 import { WeeklyFamilies, WeeklyFullFamilyInfo } from '../weekly-families/weekly-families';
 import { WeeklyFamilyDeliveryList } from '../weekly-family-delivery-product-list/weekly-family-delivery-product-list.component';
-import { BusyService } from '../select-popup/busy-service';
+import { BusyService } from 'radweb';
 import { SelectService } from '../select-popup/select-service';
 import { DialogService } from '../select-popup/dialog';
 import { Roles, WeeklyFamilyVolunteerGuard } from '../auth/roles';
