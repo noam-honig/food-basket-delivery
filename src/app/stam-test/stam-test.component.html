@@ -1,5 +1,7 @@
 <mat-card>
     <input type="file" (change)="fileChange($event)" />
+    <button (click)="loadSettings()">טען הגדרות</button>
+    <button (click)="saveSettings()">שמור הגדרות</button>
     <div class="table-div">
         <table class="table table-bordered">
             <tr>
@@ -19,5 +21,17 @@
             </tr>
         </table>
     </div>
+    <button (click)="additionalColumns.push({})">הוסף עמודות נוספות</button>
+    <ul>
+        <li *ngFor="let ac of additionalColumns; let i = index">
+            <select [(ngModel)]="ac.column">
+                <option value="">לא לקלוט</option>
+                <option *ngFor="let c of columns" [ngValue]="c">{{c.name}}</option>
+            </select>
+            <input [(ngModel)]="ac.value">
+            <button (click)="additionalColumns.splice(i,1)">הסר</button>
+        </li>
+    </ul>
     <button (click)="doImport()">Import</button>
+    <button (click)="testImport()">סימולצית קליטה</button>
 </mat-card>
