@@ -27,7 +27,7 @@
         <mat-expansion-panel-header>
             <div>
                 <mat-panel-title>
-                    <mat-icon class="badAddressIcon" *ngIf="families.currentRow.getGeocodeInformation().partialMatch()">
+                    <mat-icon class="badAddressIcon" *ngIf="!families.currentRow.addressOk.value&&!families.currentRow.isNew()">
                         warning
                     </mat-icon>
                     כתובת
@@ -43,7 +43,7 @@
         <ng-template matExpansionPanelContent>
 
             <div class="addressProblem"
-                *ngIf="families.currentRow.getGeocodeInformation().partialMatch()&&!families.currentRow.isNew()"><span
+                *ngIf="!families.currentRow.addressOk.value&&!families.currentRow.isNew()"><span
                     class="badAddressTitle">שים
                     לב, כתובת לא מדוייקת</span>
                 גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת. יש להשוות בין השדה "כתובת" לשדה "כתובת כפי שגוגל הבין".

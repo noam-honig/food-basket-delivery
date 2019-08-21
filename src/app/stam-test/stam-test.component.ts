@@ -10,6 +10,9 @@ import { async } from 'q';
 import { BasketType } from '../families/BasketType';
 import { FamilySources } from '../families/FamilySources';
 import { DeliveryStatus } from '../families/DeliveryStatus';
+import { DialogService } from '../select-popup/dialog';
+import { BusyService } from '../select-popup/busy-service';
+import { SelectService } from '../select-popup/select-service';
 @Component({
     selector: 'app-stam-test',
     templateUrl: './stam-test.component.html',
@@ -19,7 +22,7 @@ export class StamTestComponent implements OnInit {
 
 
 
-    constructor(private context: Context) { }
+    constructor(private context: Context, private dialog: DialogService, private busy: BusyService, private select: SelectService) { }
     cell: string;
 
     oFile: XLSX.WorkBook;
@@ -28,7 +31,11 @@ export class StamTestComponent implements OnInit {
     excelColumns: excelColumn[] = [];
     additionalColumns: additionalColumns[] = [];
     columns: columnUpdater[] = [];
-    rows = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    page = 0;
+    rows = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    getViewRow(r: number) {
+        return this.page * 10 + r;
+    }
     getData() {
         return this.getTheData(this.cell);
     }
@@ -140,27 +147,37 @@ export class StamTestComponent implements OnInit {
         };
         fileReader.readAsArrayBuffer(file);
     }
+    async test(row: number) {
+        let f = await this.readLine(row, false, true);
 
-    async test(row: number, actualImport = false) {
+
+    }
+    async readLine(row: number, actualImport = false, preview = false) {
         let f = this.context.for(Families).create();
         f._disableAutoDuplicateCheck = true;
         let importNotes = '';
+
+        function addNote(c: string, what: string) {
+            if (importNotes)
+                importNotes += ', ';
+            importNotes += c + ': ' + what;
+
+        }
+
         for (const c of this.excelColumns) {
             if (c.column) {
-                await c.column.updateFamily(this.getTheData(c.excelColumn + row), f, async x => {
-                    if (importNotes)
-                        importNotes += ', ';
-                    importNotes += c.column.name + ' חדש';
-                    if (actualImport)
-                        await x.save();
-                });
+                let val = this.getTheData(c.excelColumn + row);
+                if (val && val.length > 0)
+                    await c.column.updateFamily(val, f, async x => {
+                        addNote(c.column.name, 'חדש');
+                        if (actualImport)
+                            await x.save();
+                    });
             }
         }
         for (const v of this.additionalColumns) {
             await v.column.updateFamily(v.value, f, async x => {
-                if (importNotes)
-                    importNotes += ', ';
-                importNotes += v.column.name + ' חדש';
+                addNote(v.column.name, 'חדש');
                 if (actualImport)
                     await x.save();
             });
@@ -178,10 +195,31 @@ export class StamTestComponent implements OnInit {
 
             }
         }
+        await f.checkDuplicateFamilies();
+        if (!f.name.value) {
+            f.name.error = 'ערך חסר';
+        }
+        var error = false;
+        for (const c of f.__iterateColumns()) {
+            if (c.error) {
+                addNote(c.caption, c.error);
+                error = true;
+            }
+        }
+        if (error) {
+            importNotes = 'שורה לא תקלט! - ' + importNotes;
+            f.error = importNotes;
+        }
         if (importNotes) {
             rel["הערות קליטה"] = importNotes;
+            this.worksheet[this.commentExcelColumn + row] = {
+                w: importNotes,
+                t: 's',
+                v: importNotes
+            };
         }
         console.table(rel);
+        this.select.updateFamiliy({ f: f, disableSave: true, message: importNotes });
         return f;
 
     }
@@ -217,9 +255,12 @@ export class StamTestComponent implements OnInit {
             name: 'כתובת',
             updateFamily: async (v, f) => {
                 let r = parseAddress(v);
-                updateCol(f.address, r.address);
-                updateCol(f.appartment, r.dira);
-                updateCol(f.floor, r.floor);
+                if (r.address)
+                    updateCol(f.address, r.address);
+                if (r.dira)
+                    updateCol(f.appartment, r.dira);
+                if (r.floor)
+                    updateCol(f.floor, r.floor);
                 if (r.knisa)
                     updateCol(f.addressComment, 'כניסה ' + r.knisa);
             }
@@ -275,7 +316,8 @@ export class StamTestComponent implements OnInit {
             updateFamily: async (v, f) => {
                 if (v == "כן") {
                     f.defaultSelfPickup.value = true;
-                    f.deliverStatus.value = DeliveryStatus.SelfPickup;
+                    if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery)
+                        f.deliverStatus.value = DeliveryStatus.SelfPickup;
                 }
             }
         });
@@ -289,6 +331,29 @@ export class StamTestComponent implements OnInit {
                     await saveNewDependentValue(x);
                 }
                 f.fixedCourier.value = x.id.value;
+            }
+        });
+        this.columns.push({
+            key: 'deliverStatus',
+            name: this.f.deliverStatus.caption,
+            updateFamily: async (v, f, saveNewDependentValue) => {
+                switch (v) {
+                    case DeliveryStatus.NotInEvent.toString():
+                        f.deliverStatus.value = DeliveryStatus.NotInEvent;
+                        break;
+                    case DeliveryStatus.ReadyForDelivery.toString():
+                        f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
+                        if (f.defaultSelfPickup.value)
+                            f.deliverStatus.value = DeliveryStatus.SelfPickup;
+                        break;
+                    case DeliveryStatus.SelfPickup.toString():
+                        f.deliverStatus.value = DeliveryStatus.SelfPickup;
+                        break;
+                    default:
+                        f.deliverStatus.error = 'ערך לא ברור';
+                        break;
+
+                }
             }
         });
         addColumns([this.f.phone1,
@@ -321,14 +386,30 @@ export class StamTestComponent implements OnInit {
 
     }
     async doImport() {
-        for (let index = 2; index <= this.totalRows; index++) {
-            let f = await this.test(index);
-            if (f.name.value) {
-                //  await f.save();
-            }
-
-        }
+        this.dialog.YesNoQuestion("האם אתה בטוח שאתה מעוניין לקלוט " + (this.totalRows - 1) + " משפחות מאקסל?", async () => {
+            await this.iterateExcelFile(true);
+        });
     }
+    async iterateExcelFile(actualImport = false) {
+        let i = 0;
+        await this.busy.doWhileShowingBusy(async () => {
+            for (let index = 2; index <= this.totalRows; index++) {
+                let f = await this.readLine(index);
+                if (!f.error) {
+                    i++;
+                    if (actualImport) {
+                        //   await f.save();
+
+                    }
+                }
+                this.dialog.Info((index - 1) + ' ' + f.name.value + ' ' + (f.error ? f.error : ''));
+
+            }
+            XLSX.writeFile(this.oFile, "דוח " + (actualImport ? "" : "סימולצית ") + "קליטה - " + this.filename);
+        });
+        this.dialog.YesNoQuestion('יקלטו ' + i + ' משפחות מתוך ' + (this.totalRows - 1) + ' שורות');
+    }
+
 
     saveSettings() {
         let save: storedInfo = {
@@ -379,8 +460,9 @@ export class StamTestComponent implements OnInit {
         }
     }
     testImport() {
-        XLSX.writeFile(this.oFile, "דוח סימולצית קליטה - " + this.filename);
+        this.iterateExcelFile(false);
     }
+
 }
 
 

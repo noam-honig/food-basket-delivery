@@ -2,9 +2,12 @@
     <input type="file" (change)="fileChange($event)" />
     <button (click)="loadSettings()">טען הגדרות</button>
     <button (click)="saveSettings()">שמור הגדרות</button>
+    <button (click)="page=page+1">דף הבא</button>
+    <button (click)="page=page-1">דף קודם</button>
     <div class="table-div">
         <table class="table table-bordered">
             <tr>
+                <th>#</th>
                 <th *ngFor="let ec of excelColumns">
                     {{ec.title}}
                     <br>
@@ -14,11 +17,14 @@
                     </select>
                 </th>
             </tr>
-            <tr *ngFor="let r of rows">
-                <td *ngFor="let c of excelColumns" (click)="test(r)">
-                    {{getTheData(c.excelColumn+r)}}
-                </td>
-            </tr>
+            <ng-container *ngFor="let r of rows">
+                <tr *ngIf="getViewRow(r)>1&&getViewRow(r)<=totalRows">
+                    <td>{{getViewRow(r)}} <button (click)="test(getViewRow(r))">test</button></td>
+                    <td *ngFor="let c of excelColumns">
+                        {{getTheData(c.excelColumn+getViewRow(r))}}
+                    </td>
+                </tr>
+            </ng-container>
         </table>
     </div>
     <button (click)="additionalColumns.push({})">הוסף עמודות נוספות</button>
