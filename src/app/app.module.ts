@@ -43,7 +43,7 @@ import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-
 import { HelperFamiliesComponent } from './helper-families/helper-families.component';
 import { SelectFamilyComponent } from './select-family/select-family.component';
 import { BusyService } from './select-popup/busy-service';
-import { StamTestComponent } from './stam-test/stam-test.component';
+import { ImportFromExcelComponent } from './import-from-excel/import-from-excel.component';
 import { NewsComponent } from './news/news.component';
 import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
 import { Context } from './shared/context';
@@ -99,7 +99,7 @@ import { FamilyInListComponent } from './family-in-list/family-in-list.component
     DeliveryFollowUpComponent,
     HelperFamiliesComponent,
     SelectFamilyComponent,
-    StamTestComponent,
+    ImportFromExcelComponent,
     NewsComponent,
     DeliveryEventsComponent,
     UpdateFamilyDialogComponent,

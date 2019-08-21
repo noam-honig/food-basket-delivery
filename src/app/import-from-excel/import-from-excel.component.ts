@@ -15,10 +15,10 @@ import { BusyService } from '../select-popup/busy-service';
 import { SelectService } from '../select-popup/select-service';
 @Component({
     selector: 'app-stam-test',
-    templateUrl: './stam-test.component.html',
-    styleUrls: ['./stam-test.component.scss']
+    templateUrl: './import-from-excel.component.html',
+    styleUrls: ['./import-from-excel.component.scss']
 })
-export class StamTestComponent implements OnInit {
+export class ImportFromExcelComponent implements OnInit {
 
 
 

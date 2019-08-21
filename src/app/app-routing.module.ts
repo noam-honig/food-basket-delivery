@@ -16,7 +16,7 @@ import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component
 import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-up.component';
 import { NewsComponent } from './news/news.component';
 import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
-import { StamTestComponent } from './stam-test/stam-test.component';
+import { ImportFromExcelComponent } from './import-from-excel/import-from-excel.component';
 import { CustomReuseStrategy } from './custom-reuse-controller-router-strategy'
 import { evilStatics } from './auth/evil-statics';
 import { routingInfo, componentRoutingInfo } from './shared/routing-helper';
@@ -46,8 +46,9 @@ const routes: Routes = [
   HelpersComponent.route,
   DeliveryHistoryComponent.route,
   BatchOperationsComponent.route,
-    ManageComponent.route,
-  
+  { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'קליטה מאקסל' } },
+  ManageComponent.route,
+
   MyWeeklyFamiliesComponent.route,
   MyWeeklyFamilyDeliveriesComponent.route,
   WeeklyPackerByFamilyComponent.route,
@@ -60,8 +61,7 @@ const routes: Routes = [
   UpdateInfoComponent.route,
   LoginComponent.route,
   RegisterComponent.route,
-  
-  { path: 'stam', component: StamTestComponent },
+
   { path: '', redirectTo: '/assign-families', pathMatch: 'full' },
   { path: '**', redirectTo: '/assign-families', pathMatch: 'full' }
 ];
