@@ -405,7 +405,7 @@ export class ImportFromExcelComponent implements OnInit {
                 if (!f.error) {
                     i++;
                     if (actualImport) {
-                        //   await f.save();
+                           await f.save();
 
                     }
                 }
