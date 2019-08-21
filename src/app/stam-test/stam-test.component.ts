@@ -127,8 +127,15 @@ export class StamTestComponent implements OnInit {
                     case "נפשות":
                         searchName = this.f.familyMembers.caption;
                         break;
+                    case "רחוב":
+                    case "בית":
+                    case "עיר":
+                    case "ישוב":
+                        searchName = this.f.address.caption;
+                        break;
                     case "שם פרטי":
                     case "משפחה":
+                    case "שם משפחה":
                         searchName = this.f.name.caption;
                         break;
                     case "ת.ז.":
