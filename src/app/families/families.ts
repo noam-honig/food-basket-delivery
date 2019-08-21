@@ -431,7 +431,7 @@ export class Families extends IdEntity<FamilyId>  {
             let duration = '';
             if (n.courierAssingTime.value && n.deliveryStatusDate.value)
               duration = ' תוך ' + Math.round((n.deliveryStatusDate.value.valueOf() - n.courierAssingTime.value.valueOf()) / 60000) + " דק'";
-            return n.deliverStatus.displayValue + (n.courierComments.value ? ", " + n.courierComments.value + " - " : '') + ' למשפחת ' + n.name.value + ' על ידי ' + courierName + duration + "!";
+            return n.deliverStatus.displayValue + (n.courierComments.value ? ", " + n.courierComments.value + " - " : '') + ' למשפחת ' + n.name.value + ' על ידי ' + courierName + duration + "!!";
         }
         return 'משפחת ' + n.name.value + ' עודכנה ל' + n.deliverStatus.displayValue;
       case 2:

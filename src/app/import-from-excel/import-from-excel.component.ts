@@ -202,8 +202,9 @@ export class ImportFromExcelComponent implements OnInit {
 
             }
         }
-        await f.checkDuplicateFamilies();
-        if (!f.name.value) {
+        if (f.name.value)
+            await f.checkDuplicateFamilies();
+        else if (!f.name.value) {
             f.name.error = 'ערך חסר';
         }
         var error = false;
@@ -388,7 +389,7 @@ export class ImportFromExcelComponent implements OnInit {
         this.f.tz,
         this.f.floor,
         this.f.appartment,
-        this.f.familyMembers,
+
         this.f.groups
 
 
@@ -413,6 +414,7 @@ export class ImportFromExcelComponent implements OnInit {
     async iterateExcelFile(actualImport = false) {
         let i = 0;
         await this.busy.doWhileShowingBusy(async () => {
+            let lastTime = new Date().valueOf();
             for (let index = 2; index <= this.totalRows; index++) {
                 let f = await this.readLine(index);
                 if (!f.error) {
@@ -422,7 +424,10 @@ export class ImportFromExcelComponent implements OnInit {
 
                     }
                 }
-                this.dialog.Info((index - 1) + ' ' + f.name.value + ' ' + (f.error ? f.error : ''));
+                if ((new Date().valueOf() - lastTime) > 1000) {
+                    this.dialog.Info((index - 1) + ' ' + (f.name.value?f.name.value:'ללא שם') + ' ' + (f.error ? f.error : ''));
+                    lastTime = new Date().valueOf();
+                }
 
             }
             XLSX.writeFile(this.oFile, "דוח " + (actualImport ? "" : "סימולצית ") + "קליטה - " + this.filename);
