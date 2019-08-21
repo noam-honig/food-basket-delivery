@@ -226,7 +226,8 @@ export class ImportFromExcelComponent implements OnInit {
             };
         }
         console.table(rel);
-        this.select.updateFamiliy({ f: f, disableSave: true, message: importNotes });
+        if (preview)
+            this.select.updateFamiliy({ f: f, disableSave: true, message: importNotes });
         return f;
 
     }
@@ -405,7 +406,7 @@ export class ImportFromExcelComponent implements OnInit {
                 if (!f.error) {
                     i++;
                     if (actualImport) {
-                           await f.save();
+                        await f.save();
 
                     }
                 }
