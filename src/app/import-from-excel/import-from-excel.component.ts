@@ -308,7 +308,7 @@ export class ImportFromExcelComponent implements OnInit {
         });
         this.columns.push({
             key: 'familySource',
-            name: 'מקור משפחה',
+            name: this.f.familySource.caption,
             updateFamily: async (v, f, saveNewDependentValue) => {
                 let x = await this.context.for(FamilySources).lookupAsync(b => b.name.isEqualTo(v));
                 if (x.isNew()) {
@@ -339,6 +339,18 @@ export class ImportFromExcelComponent implements OnInit {
                     await saveNewDependentValue(x);
                 }
                 f.fixedCourier.value = x.id.value;
+            }
+        });
+        this.columns.push({
+            key: 'courier',
+            name: this.f.courier.caption,
+            updateFamily: async (v, f, saveNewDependentValue) => {
+                let x = await this.context.for(Helpers).lookupAsync(b => b.name.isEqualTo(v));
+                if (x.isNew()) {
+                    x.name.value = v;
+                    await saveNewDependentValue(x);
+                }
+                f.courier.value = x.id.value;
             }
         });
         this.columns.push({
