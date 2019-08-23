@@ -13,21 +13,23 @@ export class PreviewFamilyComponent implements OnInit {
 
   familyLists = new UserFamiliesList(this.context);
 
-  constructor(public context: Context,private dialogRef: MatDialogRef<PreviewFamilyComponent>,
+  constructor(public context: Context, private dialogRef: MatDialogRef<PreviewFamilyComponent>,
     @Inject(MAT_DIALOG_DATA) private data: PreviewFamilyInfo,
-    ) { }
+  ) { }
   async ngOnInit() {
-    this.familyLists.allFamilies = [this.data.f];
-    this.familyLists.initFamilies();
+
+    this.familyLists.toDeliver = [this.data.f];
+    
+    
 
   }
-  cancel(){
+  cancel() {
     this.dialogRef.close();
   }
 }
 
 export interface PreviewFamilyInfo {
 
-  f:Families;
+  f: Families;
 
 }
