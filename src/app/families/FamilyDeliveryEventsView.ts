@@ -21,8 +21,8 @@ export class FamilyDeliveryEventsView extends ContextEntity<string>  {
   deliveryDate = new DateTimeColumn('תאריך החלוקה');
   courier = new HelperId(this.context, "משנע");
   courierAssingTime = new changeDate('מועד שיוך למשנע');
-  deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
-  deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
+  deliverStatus = new DeliveryStatusColumn('סטטוס משלוח');
+  deliveryStatusDate = new changeDate('מועד סטטוס משלוח');
   courierComments = new StringColumn('הערות מסירה');
   constructor(private context: Context) {
     super( {

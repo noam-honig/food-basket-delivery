@@ -176,11 +176,11 @@ export class Families extends IdEntity<FamilyId>  {
   //callHelper = new HelperIdReadonly(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'מי ביצעה את השיחה' });
   //callComments = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'הערות שיחה' });
 
-  deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
+  deliverStatus = new DeliveryStatusColumn('סטטוס משלוח');
   correntAnErrorInStatus = new BoolColumn({ virtualData: () => false });
   courier = new HelperId(this.context, "משנע באירוע");
   courierComments = new StringColumn('הערות שכתב המשנע כשמסר');
-  deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
+  deliveryStatusDate = new changeDate('מועד סטטוס משלוח');
   fixedCourier = new HelperId(this.context, "משנע קבוע");
   courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
 
@@ -266,14 +266,14 @@ export class Families extends IdEntity<FamilyId>  {
   });
   routeOrder = new NumberColumn();
   previousDeliveryStatus = new DeliveryStatusColumn({
-    caption: 'סטטוס שינוע קודם',
+    caption: 'סטטוס משלוח קודם',
     dbReadOnly: true,
     dbName: () => {
       return this.dbNameFromLastDelivery(fde => fde.deliverStatus, "prevStatus");
     }
   });
   previousDeliveryComment = new StringColumn({
-    caption: 'הערת שינוע קודם',
+    caption: 'הערת משלוח קודם',
     dbReadOnly: true,
     dbName: () => {
       return this.dbNameFromLastDelivery(fde => fde.courierComments, "prevComment");
@@ -330,7 +330,7 @@ export class Families extends IdEntity<FamilyId>  {
   }
   getPreviousDeliveryColumn() {
     return {
-      caption: 'שינוע קודם',
+      caption: 'סיכום משלוח קודם',
       readonly: true,
       column: this.previousDeliveryStatus,
       dropDown: {

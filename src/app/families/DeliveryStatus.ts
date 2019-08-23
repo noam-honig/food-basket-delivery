@@ -16,15 +16,17 @@ export class DeliveryStatus {
   }
   static ReadyForDelivery: DeliveryStatus = new DeliveryStatus(0, 'מוכן למשלוח');
   static SelfPickup: DeliveryStatus = new DeliveryStatus(2, 'באים לקחת');
+  static Frozen: DeliveryStatus = new DeliveryStatus(90, 'מוקפא');
+  static NotInEvent: DeliveryStatus = new DeliveryStatus(95, 'לא באירוע');
   static Success: DeliveryStatus = new DeliveryStatus(11, 'נמסר בהצלחה');
   static SuccessPickedUp: DeliveryStatus = new DeliveryStatus(13, 'לקחו בעצמם');
   static SuccessLeftThere: DeliveryStatus = new DeliveryStatus(19, 'הושאר ליד הבית');
   static FailedBadAddress: DeliveryStatus = new DeliveryStatus(21, 'לא נמסר, בעיה בכתובת');
   static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, 'לא נמסר, לא היו בבית');
   static FailedOther: DeliveryStatus = new DeliveryStatus(25, 'לא נמסר, אחר');
-  static Frozen: DeliveryStatus = new DeliveryStatus(90, 'מוקפא');
-  static NotInEvent: DeliveryStatus = new DeliveryStatus(95, 'לא באירוע');
   static RemovedFromList: DeliveryStatus = new DeliveryStatus(99, 'הוצא מהרשימות');
+  
+  
   constructor(public id: number, private name: string) {
   }
   toString() {

@@ -13,7 +13,7 @@ export class FamilyDeliveries extends IdEntity<Id>  {
     basketType = new BasketId(this.context, 'סוג סל');
 
 
-    deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
+    deliverStatus = new DeliveryStatusColumn('סטטוס משלוח');
     courier = new HelperId(this.context, "משנע");
     courierComments = new StringColumn('הערות מסירה');
     deliveryStatusDate = new changeDate('מתי');

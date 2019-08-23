@@ -233,7 +233,7 @@ export class FamilyDeliveriesStats extends ContextEntity<string> {
   name = new StringColumn('שם');
   courier = new HelperId(this.context, "משנע");
   deliveryStatusDate = new changeDate('מתי');
-  deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
+  deliverStatus = new DeliveryStatusColumn('סטטוס משלוח');
   basketType = new BasketId(this.context, 'סוג סל');
   city = new StringColumn({ caption: "עיר" });
   courierComments = new StringColumn('הערות מסירה');
