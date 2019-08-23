@@ -66,6 +66,7 @@ import { BatchOperationsComponent } from './batch-operations/batch-operations.co
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 import { PreviewFamilyComponent } from './preview-family/preview-family.component';
 import { FamilyInListComponent } from './family-in-list/family-in-list.component';
+import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-dialog.component';
 
 
 
@@ -119,6 +120,7 @@ import { FamilyInListComponent } from './family-in-list/family-in-list.component
     DeliveryHistoryComponent,
     PreviewFamilyComponent,
     FamilyInListComponent,
+    UpdateGroupDialogComponent,
     
   ],
   imports: [
@@ -154,7 +156,7 @@ import { FamilyInListComponent } from './family-in-list/family-in-list.component
     SelectPopupComponent,
     YesNoQuestionComponent,
     InputAreaComponent,
-    UpdateFamilyDialogComponent,PreviewFamilyComponent,
+    UpdateFamilyDialogComponent,PreviewFamilyComponent,UpdateGroupDialogComponent,
     UpdateCommentComponent, WaitComponent]
 })
 export class AppModule { }

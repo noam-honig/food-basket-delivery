@@ -32,6 +32,7 @@ import { StressTestComponent } from './stress-test/stress-test.component';
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
+import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-dialog.component';
 
 
 
@@ -56,7 +57,7 @@ const routes: Routes = [
   ProductsComponent.route,
   LoginFromSmsComponent.route,
 
-  //{ path: 'stam-test', component: StressTestComponent },
+  { path: 'stam-test', component: UpdateGroupDialogComponent },
   MyFamiliesComponent.route,
   UpdateInfoComponent.route,
   LoginComponent.route,

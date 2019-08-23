@@ -14,6 +14,7 @@ import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { FamilyDeliveries } from "./FamilyDeliveries";
 import { RunOnServer } from "../auth/server-action";
 import * as fetch from 'node-fetch';
+import { SelectServiceInterface } from "../select-popup/select-service-interface";
 
 
 @EntityClass
@@ -147,7 +148,7 @@ export class Families extends IdEntity<FamilyId>  {
 
   basketType = new BasketId(this.context, 'סוג סל');
   familySource = new FamilySourceId(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'גורם מפנה' });
-  groups = new StringColumn({ caption: 'קבוצות', excludeFromApi: !this.context.isAdmin() });
+  groups = new GroupsColumn(this.context);
   special = new YesNoColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'שיוך מיוחד' });
   defaultSelfPickup = new BoolColumn('ברירת מחדל באים לקחת');
   iDinExcel = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'מזהה באקסל' });
@@ -600,4 +601,18 @@ export interface parseAddressResult {
   dira?: string;
   floor?: string;
   knisa?: string;
+}
+export class GroupsColumn extends StringColumn {
+  constructor(private context: Context) {
+    super({ caption: 'קבוצות', excludeFromApi: !context.isAdmin() });
+  }
+  getColumn(dialog: SelectServiceInterface) {
+    return {
+      column: this,
+      click: f => {
+        let col = f ? f.__getColumn(this) : this;
+        dialog.updateGroup(col.value, x => col.value = x);
+      }
+    };
+  }
 }

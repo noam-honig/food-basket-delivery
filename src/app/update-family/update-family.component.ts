@@ -32,10 +32,10 @@ export class UpdateFamilyComponent implements OnInit {
         families.deliverStatus.getColumn(),
         families.defaultSelfPickup,
         families.special.getColumn(),
+        families.groups.getColumn(this.selectService),
         families.internalComment,
         families.deliveryComments,
         families.familySource.getColumn(),
-        families.groups,
         families.tz,
         families.familyMembers,
         

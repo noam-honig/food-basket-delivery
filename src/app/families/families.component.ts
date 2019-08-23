@@ -236,7 +236,7 @@ export class FamiliesComponent implements OnInit {
         },
 
         families.familySource.getColumn(),
-        families.groups,
+        families.groups.getColumn(this.selectService),
         {
           column: families.internalComment,
           width: '300'
