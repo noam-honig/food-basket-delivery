@@ -57,7 +57,7 @@ const routes: Routes = [
   ProductsComponent.route,
   LoginFromSmsComponent.route,
 
-  { path: 'stam-test', component: UpdateGroupDialogComponent },
+  //{ path: 'stam-test', component: UpdateGroupDialogComponent },
   MyFamiliesComponent.route,
   UpdateInfoComponent.route,
   LoginComponent.route,
