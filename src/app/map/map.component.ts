@@ -27,7 +27,7 @@ export class MapComponent implements OnInit {
       });
       console.timeEnd('load families to map');
 
-      
+
       if (this.map.getZoom() > 13)
         this.map.setZoom(13);
     } finally {
@@ -35,7 +35,7 @@ export class MapComponent implements OnInit {
     }
 
   }
-  userClickedOnFamilyOnMap: (familyId: string) => void = () => { };
+  userClickedOnFamilyOnMap: (familyId: string[]) => void = () => { };
   setFamilyOnMap(familyId: string, lat: number, lng: number) {
     let marker = this.dict.get(familyId);
     if (!marker) {
@@ -43,14 +43,20 @@ export class MapComponent implements OnInit {
       google.maps.event.addListener(marker, 'click', async () => {
 
         this.disableMapBoundsRefrest++;
+        let families = [];
 
         this.dict.forEach((m, id) => {
           let p1 = m.getPosition();
           let p2 = marker.getPosition();
 
-          if (p1.lng() == p2.lng() && p1.lat() == p2.lat())
-            this.userClickedOnFamilyOnMap(id);
+          if (p1.lng() == p2.lng() && p1.lat() == p2.lat()) {
+            families.push(id);
+
+          }
+
         });
+        if (families.length > 0)
+          this.userClickedOnFamilyOnMap(families);
 
 
 

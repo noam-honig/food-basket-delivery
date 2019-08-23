@@ -84,7 +84,7 @@ export class AsignFamilyComponent implements OnInit {
   selectCity() {
     this.refreshBaskets();
   }
-  
+
   async assignmentCanceled() {
     this.lastRefreshRoute = this.lastRefreshRoute.then(
       async () => await this.busy.donotWait(
@@ -190,13 +190,18 @@ export class AsignFamilyComponent implements OnInit {
 
   async ngOnInit() {
     this.familyLists.userClickedOnFamilyOnMap =
-      async  familyId => {
-        await this.busy.doWhileShowingBusy(async () => {
-          let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(familyId));
-          if (f && f.deliverStatus.value == DeliveryStatus.ReadyForDelivery && f.courier.value == "") {
-            this.performSepcificFamilyAssignment(f, 'assign based on map');
-          }
-        });
+      async  families => {
+        if (families.length == 1)
+          await this.assignFamilyBasedOnIdFromMap(families[0]);
+        else if (families.length > 1) {
+          this.dialog.YesNoQuestion("בנקודה זו יש " + families.length + " משפחות - לשייך את כולן?", async () => {
+            await this.busy.doWhileShowingBusy(async () => {
+              for (const iterator of families) {
+                await this.assignFamilyBasedOnIdFromMap(iterator);
+              }
+            });
+          });
+        }
       };
     this.context.for(Groups).find().then(g => this.groups = g);
     if (!environment.production) {
@@ -205,6 +210,15 @@ export class AsignFamilyComponent implements OnInit {
     }
   }
   numOfBaskets: number = 1;
+  private async assignFamilyBasedOnIdFromMap(familyId: string) {
+    await this.busy.doWhileShowingBusy(async () => {
+      let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(familyId));
+      if (f && f.deliverStatus.value == DeliveryStatus.ReadyForDelivery && f.courier.value == "") {
+        this.performSepcificFamilyAssignment(f, 'assign based on map');
+      }
+    });
+  }
+
   add(what: number) {
     this.numOfBaskets += what;
     if (this.numOfBaskets < 1)
@@ -296,7 +310,7 @@ export class AsignFamilyComponent implements OnInit {
         name: c.city.value,
         unassignedFamilies: c.families.value
       };
-      if (!info.filterGroup ) {
+      if (!info.filterGroup) {
         result.cities.push(ci);
       }
       else {
