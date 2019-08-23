@@ -8,6 +8,7 @@ import { BasketType } from "./BasketType";
 import { Context, ContextEntity, EntityClass } from "../shared/context";
 import { BasketInfo } from "../asign-family/asign-family.component";
 import { StringColumn, NumberColumn, SqlBuilder } from "../model-shared/types";
+import { Groups } from "../manage/manage.component";
 
 export interface OutArgs {
     data: any;
@@ -55,7 +56,7 @@ export class Stats {
     }
     @RunOnServer({ allowed: c => c.isAdmin() })
     static async getDataFromServer(context?: Context) {
-        let result = { data: {}, baskets: [], cities: [] };
+        let result = { data: {}, baskets: [], cities: [], groups: [] as groupStats[] };
         let stats = new Stats();
         let pendingStats = [];
         for (let s in stats) {
@@ -93,6 +94,22 @@ export class Stats {
                 });
             })
         );
+        await context.for(Groups).find({
+            orderBy: f => [{ column: f.name }]
+        }).then(groups => {
+            for (const g of groups) {
+                let x: groupStats = {
+                    name: g.name.value,
+                    total: 0,
+                    totalReady: 0
+                };
+                result.groups.push(x);
+                pendingStats.push(context.for(Families).count(f => f.readyFilter(undefined, x.name)).then(r => x.totalReady = r));
+                pendingStats.push(context.for(Families).count(f => f.groups.isContains(x.name).and(f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList))).then(r => x.total = r));
+            }
+        });
+
+
         await Promise.all(pendingStats);
         result.baskets = result.baskets.filter(b => b.unassignedFamilies > 0);
         result.baskets.sort((a, b) => b.unassignedFamilies - a.unassignedFamilies);
@@ -125,8 +142,8 @@ export class CitiesStats extends ContextEntity<string> {
 }
 
 export class FaimilyStatistics {
-    constructor(public name: string, public rule: (f: Families) => FilterBase, public color: string) {
-
+    constructor(public name: string, public rule: (f: Families) => FilterBase, public color?: string, value?: number) {
+        this.value = value;
     }
 
     value = 0;
@@ -138,4 +155,8 @@ export class FaimilyStatistics {
         this.value = data[this.name];
     }
 }
-
+interface groupStats {
+    name: string,
+    totalReady: number,
+    total: number
+}

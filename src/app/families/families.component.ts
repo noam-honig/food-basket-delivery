@@ -344,6 +344,24 @@ export class FamiliesComponent implements OnInit {
     ],
     moreStats: []
   };
+  groupsReady: statsOnTab = {
+    name: 'נותרו לפי קבוצות',
+    rule: f => f.readyFilter(),
+    stats: [
+      this.stats.ready,
+      this.stats.special
+    ],
+    moreStats: []
+  };
+  groupsTotals: statsOnTab = {
+    name: 'כל המשפחות לפי קבוצות',
+    rule: f => f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList),
+    stats: [
+      this.stats.ready,
+      this.stats.special
+    ],
+    moreStats: []
+  };
   statTabs: statsOnTab[] = [
     {
       name: 'באירוע',
@@ -363,6 +381,7 @@ export class FamiliesComponent implements OnInit {
     },
     this.cityStats,
     this.basketStats,
+    this.groupsReady,
 
     {
       name: 'הערות',
@@ -380,7 +399,8 @@ export class FamiliesComponent implements OnInit {
         this.stats.notInEvent
       ],
       moreStats: []
-    }
+    },
+    this.groupsTotals
   ]
   tabChanged() {
     this.currentStatFilter = undefined;
@@ -430,6 +450,9 @@ export class FamiliesComponent implements OnInit {
         this.basketStats.stats.splice(0);
         this.cityStats.stats.splice(0);
         this.cityStats.moreStats.splice(0);
+        this.groupsReady.stats.splice(0);
+        this.groupsTotals.stats.splice(0);
+
         this.totalBoxes = 0;
         this.blockedBoxes = 0;
         st.baskets.forEach(b => {
@@ -482,6 +505,10 @@ export class FamiliesComponent implements OnInit {
 
         });
         this.cityStats.moreStats.sort((a, b) => a.name.localeCompare(b.name));
+        for (const g of st.groups) {
+          this.groupsReady.stats.push(new FaimilyStatistics(g.name, f => f.readyFilter(undefined, g.name), undefined, g.totalReady));
+          this.groupsTotals.stats.push(new FaimilyStatistics(g.name, f => f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList).and(f.groups.isContains(g.name)), undefined, g.total));
+        }
 
         this.updateChart();
       }));
