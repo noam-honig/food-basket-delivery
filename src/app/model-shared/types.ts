@@ -6,6 +6,7 @@ import { ContextEntity, ContextEntityOptions, MoreDataColumnSettings, hasMoreDat
 import { BrowserPlatformLocation } from '@angular/platform-browser/src/browser/location/browser_platform_location';
 import { query } from '@angular/animations';
 import { ValueConverter } from '@angular/compiler/src/render3/view/template';
+import { eraseStyles } from '@angular/animations/browser/src/util';
 
 export class IdEntity<idType extends Id> extends ContextEntity<string>
 {
@@ -191,7 +192,14 @@ export class DateTimeColumn extends radweb.DateTimeColumn implements hasMoreData
       r = 'שלשום';
     }
     else {
-      r = 'לפני ' + (Math.trunc(now.valueOf() / (86400 * 1000)) - Math.trunc(d.valueOf() / (86400 * 1000))) + ' ימים';
+      let days = (Math.trunc(now.valueOf() / (86400 * 1000)) - Math.trunc(d.valueOf() / (86400 * 1000)));
+      if (days <= 7)
+        r = 'לפני ' + days + ' ימים';
+      else
+      {
+        r = 'ב ' + d.toLocaleDateString("he-il");
+        return r;
+      }
     }
     let t = d.getMinutes().toString();
     if (t.length == 1)
