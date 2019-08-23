@@ -237,10 +237,10 @@ export class ImportFromExcelComponent implements OnInit {
     f: Families;
     ngOnInit() {
 
-        let updateCol = (col: Column<any>, val: string) => {
+        let updateCol = (col: Column<any>, val: string, seperator: string = ' ') => {
 
             if (col.value) {
-                col.value = (col.value + ' ' + val).trim();
+                col.value = (col.value + seperator + val).trim();
             } else
                 col.value = val;
         }
@@ -378,22 +378,32 @@ export class ImportFromExcelComponent implements OnInit {
             }
         });
         addColumns([this.f.phone1,
-        this.f.phone1Description,
         this.f.phone2,
-        this.f.phone2Description,
-        this.f.internalComment,
-        this.f.deliveryComments,
-        this.f.addressComment,
         this.f.familyMembers,
         this.f.iDinExcel,
         this.f.tz,
         this.f.floor,
         this.f.appartment,
 
-        this.f.groups
 
 
         ]);
+        for (const col of [this.f.phone1Description,
+        this.f.phone2Description,
+        this.f.internalComment,
+        this.f.deliveryComments,
+        this.f.addressComment,
+
+
+        this.f.groups]) {
+            this.columns.push({
+                key: col.__getMemberName(),
+                name: col.caption,
+                updateFamily: async (v, f) => {
+                    updateCol(f.__getColumn(col), v, ', ');
+                }
+            });
+        }
         this.columns.push({
             key: 'knisa',
             name: 'כניסה',
@@ -425,7 +435,7 @@ export class ImportFromExcelComponent implements OnInit {
                     }
                 }
                 if ((new Date().valueOf() - lastTime) > 1000) {
-                    this.dialog.Info((index - 1) + ' ' + (f.name.value?f.name.value:'ללא שם') + ' ' + (f.error ? f.error : ''));
+                    this.dialog.Info((index - 1) + ' ' + (f.name.value ? f.name.value : 'ללא שם') + ' ' + (f.error ? f.error : ''));
                     lastTime = new Date().valueOf();
                 }
 
