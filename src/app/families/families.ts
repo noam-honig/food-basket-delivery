@@ -68,6 +68,7 @@ export class Families extends IdEntity<FamilyId>  {
 
               fd.archive_floor.value = this.floor.originalValue;
               fd.archive_appartment.value = this.appartment.originalValue;
+              fd.archive_entrance.value = this.entrance.originalValue;
               fd.archive_postalCode.value = this.postalCode.originalValue;
               fd.archive_city.value = this.city.originalValue;
               fd.archive_addressComment.value = this.addressComment.originalValue;
@@ -158,6 +159,7 @@ export class Families extends IdEntity<FamilyId>  {
   address = new StringColumn("כתובת");
   floor = new StringColumn('קומה');
   appartment = new StringColumn('דירה');
+  entrance = new StringColumn('כניסה');
   city = new StringColumn({ caption: "עיר (מתעדכן אוטומטית)" });
   addressComment = new StringColumn('הערת כתובת');
   postalCode = new NumberColumn('מיקוד');

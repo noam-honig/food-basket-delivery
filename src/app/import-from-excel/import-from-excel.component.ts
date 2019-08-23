@@ -271,7 +271,7 @@ export class ImportFromExcelComponent implements OnInit {
                 if (r.floor)
                     updateCol(f.floor, r.floor);
                 if (r.knisa)
-                    updateCol(f.addressComment, 'כניסה ' + r.knisa);
+                    updateCol(f.entrance,  r.knisa);
             }
         });
         this.columns.push({
@@ -384,9 +384,7 @@ export class ImportFromExcelComponent implements OnInit {
         this.f.tz,
         this.f.floor,
         this.f.appartment,
-
-
-
+        this.f.entrance,
         ]);
         for (const col of [this.f.phone1Description,
         this.f.phone2Description,
@@ -404,15 +402,7 @@ export class ImportFromExcelComponent implements OnInit {
                 }
             });
         }
-        this.columns.push({
-            key: 'knisa',
-            name: 'כניסה',
-            updateFamily: async (v, f) => {
-                if (v) {
-                    updateCol(f.addressComment, 'כניסה ' + v);
-                }
-            }
-        });
+      
         this.columns.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0);
 
     }

@@ -152,6 +152,7 @@ export async function serverInit() {
                     fd.archive_address.value = f.address.originalValue;
                     fd.archive_floor.value = f.floor.originalValue;
                     fd.archive_appartment.value = f.appartment.originalValue;
+                    fd.archive_entrance.value = f.entrance.originalValue;
                     fd.archive_city.value = f.city.originalValue;
                     fd.archive_addressComment.value = f.addressComment.originalValue;
                     fd.archive_deliveryComments.value = f.deliveryComments.originalValue;

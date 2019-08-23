@@ -1,17 +1,20 @@
 <div>
-  <div *ngIf="showStatus()" >
+  <div *ngIf="showStatus()">
     <h4>{{f.deliverStatus.displayValue}}</h4>
     {{f.deliveryStatusDate.displayValue}}
     <div *ngIf="f.courierComments.value">
       <h5 style="display:inline">הערת משנע</h5> - {{f.courierComments.value}}
-      
+
     </div>
   </div>
   <div>
-      <button mat-raised-button class="cancelAssignButton" color="primary" *ngIf="showFamilyPickedUp(f)" (click)="familiyPickedUp(f)" >אספו את החבילה</button>
-    <button *ngIf="showCancelAssign(f)" mat-raised-button class=" badButton cancelAssignButton" (click)="cancelAssign(f)" >בטל
+    <button mat-raised-button class="cancelAssignButton" color="primary" *ngIf="showFamilyPickedUp(f)"
+      (click)="familiyPickedUp(f)">אספו את החבילה</button>
+    <button *ngIf="showCancelAssign(f)" mat-raised-button class=" badButton cancelAssignButton"
+      (click)="cancelAssign(f)">בטל
       שיוך</button>
-    <button *ngIf="partOfAssign" mat-raised-button class="cancelAssignButton" (click)=" udpateInfo(f)">עדכן פרטי משפחה</button>
+    <button *ngIf="partOfAssign" mat-raised-button class="cancelAssignButton" (click)=" udpateInfo(f)">עדכן פרטי
+      משפחה</button>
   </div>
   <h4 style="display:inline">סל</h4> - {{f.basketType.displayValue}}
 
@@ -42,6 +45,9 @@
         </ng-container>
         <ng-container *ngIf="f.appartment.value">
           דירה {{f.appartment.value}}
+        </ng-container>
+        <ng-container *ngIf="f.entrance.value">
+          כניסה {{f.entrance.value}}
         </ng-container>
         <ng-container *ngIf="f.addressComment.value">
           <br /> {{f.addressComment.value}}

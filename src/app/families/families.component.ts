@@ -256,6 +256,7 @@ export class FamiliesComponent implements OnInit {
                 families.addressOk,
                 families.floor,
                 families.appartment,
+                families.entrance,
                 this.addressCommentColumn = { column: families.addressComment },
                 families.city,
                 families.postalCode,

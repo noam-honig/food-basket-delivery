@@ -53,6 +53,7 @@ export class UpdateFamilyComponent implements OnInit {
         families.address,
         families.floor,
         families.appartment,
+        families.entrance,
         families.addressComment,
         families.addressByGoogle(),
         families.city,
