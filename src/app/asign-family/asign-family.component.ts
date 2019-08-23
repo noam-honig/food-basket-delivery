@@ -41,7 +41,7 @@ export class AsignFamilyComponent implements OnInit {
     path: 'assign-families', component: AsignFamilyComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'שיוך משפחות' }
   };
   assignOnMap() {
-    this.familyLists.startAssignByMap();
+    this.familyLists.startAssignByMap(this.filterCity,this.filterGroup);
   }
   async searchPhone() {
     this.name = undefined;
