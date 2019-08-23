@@ -3,24 +3,13 @@
     [ngModelOptions]="{standalone: true}">
   <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
 </mat-form-field>
-<mat-checkbox [(ngModel)]="showAllFamilies" (change)="doFilter()" >הצג את כל המשפחות
-  </mat-checkbox>
+<mat-checkbox [(ngModel)]="showAllFamilies" (change)="doFilter()">הצג את כל המשפחות
+</mat-checkbox>
 <mat-accordion class="no-print">
   <mat-expansion-panel #myPanel *ngFor="let f of families.items;let i=index">
-    <mat-expansion-panel-header  class="mat-expansion-panel-header {{f.deliverStatus.getCss()}}">
-      <div>
-        <mat-panel-title >
-          {{i+1}}. {{f.name.value}}
-          <div style="margin-right:3px" *ngIf="f.deliveryComments.value">
-            <mat-icon color="primary">comment</mat-icon>
-          </div>
-        </mat-panel-title>
-      </div>
-      <div>
-        <mat-panel-description>
-          {{f.address.value}}
-        </mat-panel-description>
-      </div>
+    <mat-expansion-panel-header class="mat-expansion-panel-header {{f.deliverStatus.getCss()}}">
+      <app-family-in-list [f]="f" [i]="i+1" style="width:100%"></app-family-in-list>
+
     </mat-expansion-panel-header>
     <app-family-info [partOfAssign]="true" [f]="f">
 
