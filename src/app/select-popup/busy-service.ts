@@ -51,7 +51,7 @@ export class BusyService {
                     this.log(id, 'actual start busy ');
                     this.waitRef = this.dialog.open(WaitComponent, { disableClose: true });
                 }
-            }, 2);
+            }, 350);
 
         }
         this.numOfWaits++;

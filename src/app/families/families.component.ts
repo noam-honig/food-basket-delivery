@@ -5,7 +5,7 @@ import { Families } from './families';
 import { DeliveryStatus } from "./DeliveryStatus";
 import { CallStatus } from "./CallStatus";
 import { YesNo } from "./YesNo";
-import { Language } from "./Language";
+
 import { FamilySources } from "./FamilySources";
 import { BasketType } from "./BasketType";
 import { SelectService } from '../select-popup/select-service';
@@ -153,7 +153,6 @@ export class FamiliesComponent implements OnInit {
     onEnterRow: async f => {
       if (f.isNew()) {
         f.basketType.value = '';
-        f.language.value = Language.Hebrew;
         f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
         f.special.value = YesNo.No;
         this.currentFamilyDeliveries = [];
@@ -236,13 +235,7 @@ export class FamiliesComponent implements OnInit {
 
         },
 
-        {
-          column: families.language,
-          dropDown: {
-            items: families.language.getOptions()
-          },
-
-        }, families.familySource.getColumn(),
+        families.familySource.getColumn(),
         families.groups,
         {
           column: families.internalComment,

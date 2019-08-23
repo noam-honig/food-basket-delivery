@@ -7,8 +7,9 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings } from './ApplicationSettings';
 import { Route } from '@angular/router';
 import { AnyAdmin } from '../auth/auth-guard';
-import { Context } from '../shared/context';
+import { Context, EntityClass } from '../shared/context';
 import { DialogService } from '../select-popup/dialog';
+import { IdEntity, Id, StringColumn } from '../model-shared/types';
 
 @Component({
   selector: 'app-manage',
@@ -43,6 +44,18 @@ export class ManageComponent implements OnInit {
       s.name,
       s.phone,
       s.contactPerson
+    ], allowUpdate: true,
+    allowInsert: true,
+    allowDelete: true,
+    get: {
+      limit: 25,
+      orderBy: f => [f.name]
+    },
+    confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
+  });
+  groups = this.context.for(Groups).gridSettings({
+    columnSettings: s => [
+      s.name,
     ], allowUpdate: true,
     allowInsert: true,
     allowDelete: true,
@@ -101,4 +114,17 @@ export class ManageComponent implements OnInit {
     this.images.getRecords();
   }
 
+}
+@EntityClass
+export class Groups extends IdEntity<Id>  {
+
+  name = new StringColumn("קבוצה");
+
+  constructor(context: Context) {
+    super(new Id(), {
+      name: "groups",
+      allowApiRead: context.isAdmin(),
+      allowApiCRUD: context.isAdmin(),
+    });
+  }
 }

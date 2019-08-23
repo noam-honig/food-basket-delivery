@@ -38,12 +38,7 @@ export class UpdateFamilyComponent implements OnInit {
         families.groups,
         families.tz,
         families.familyMembers,
-        {
-          column: families.language,
-          dropDown: {
-            items: families.language.getOptions()
-          }
-        },
+        
         families.iDinExcel,
         families.createUser,
         families.createDate

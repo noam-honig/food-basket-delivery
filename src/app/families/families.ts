@@ -1,7 +1,7 @@
 import { DeliveryStatus, DeliveryStatusColumn } from "./DeliveryStatus";
 import { CallStatusColumn } from "./CallStatus";
 import { YesNoColumn } from "./YesNo";
-import { LanguageColumn, Language } from "./Language";
+
 import { FamilySourceId } from "./FamilySources";
 import { BasketId, BasketType } from "./BasketType";
 import { NumberColumn, StringColumn, IdEntity, Id, changeDate, DateTimeColumn, SqlBuilder, BoolColumn, PhoneColumn, delayWhileTyping } from "../model-shared/types";
@@ -144,7 +144,7 @@ export class Families extends IdEntity<FamilyId>  {
     caption: 'מספר זהות', excludeFromApi: !this.context.isAdmin(), valueChange: () => this.delayCheckDuplicateFamilies()
   });
   familyMembers = new NumberColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'מספר נפשות' });
-  language = new LanguageColumn();
+  
   basketType = new BasketId(this.context, 'סוג סל');
   familySource = new FamilySourceId(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'גורם מפנה' });
   groups = new StringColumn('קבוצות');
@@ -299,11 +299,11 @@ export class Families extends IdEntity<FamilyId>  {
   addressLatitude = new NumberColumn({ decimalDigits: 8 });
   addressOk = new BoolColumn({ caption: 'כתובת תקינה' });
 
-  readyFilter(city?: string, language?: number) {
+  readyFilter(city?: string, group?: string) {
     let where = this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
       this.courier.isEqualTo('')).and(this.blockedBasket.isEqualTo(false));
-    if (language > -1)
-      where = where.and(this.language.isEqualTo(this.language.byId(language)));
+    if (group)
+      where = where.and(this.groups.isContains(group));
     if (city) {
       where = where.and(this.city.isEqualTo(city));
     }

@@ -4,7 +4,7 @@ import { ColumnHashSet, UrlBuilder, FilterBase, NumberColumn, DateColumn } from 
 import { Families } from '../families/families';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
-import { Language } from "../families/Language";
+
 import { Helpers } from '../helpers/helpers';
 import { DialogService } from '../select-popup/dialog';
 import { UserFamiliesList } from '../my-families/user-families';
@@ -23,6 +23,7 @@ import { Routable } from '../shared/routing-helper';
 import { CitiesStats } from '../families/stats-action';
 import { SqlBuilder } from '../model-shared/types';
 import { BusyService } from '../select-popup/busy-service';
+import { Groups } from '../manage/manage.component';
 
 
 @Component({
@@ -83,9 +84,7 @@ export class AsignFamilyComponent implements OnInit {
   selectCity() {
     this.refreshBaskets();
   }
-  langChange() {
-    this.refreshBaskets();
-  }
+  
   async assignmentCanceled() {
     this.lastRefreshRoute = this.lastRefreshRoute.then(
       async () => await this.busy.donotWait(
@@ -119,7 +118,7 @@ export class AsignFamilyComponent implements OnInit {
 
   async refreshBaskets() {
     let r = (await AsignFamilyComponent.getBasketStatus({
-      filterLanguage: this.filterLangulage,
+      filterGroup: this.filterGroup,
       filterCity: this.filterCity,
       helperId: this.id
     }))
@@ -143,13 +142,8 @@ export class AsignFamilyComponent implements OnInit {
 
   }
   familyLists = new UserFamiliesList(this.context);
-  filterLangulage = -1;
-  langulages: Language[] = [
-    new Language(-1, 'כל השפות'),
-    Language.Hebrew,
-    Language.Amharit,
-    Language.Russian
-  ];
+  filterGroup = '';
+  groups: Groups[] = [];
   phone: string;
   name: string;
   shortUrl: string;
@@ -204,6 +198,7 @@ export class AsignFamilyComponent implements OnInit {
           }
         });
       };
+    this.context.for(Groups).find().then(g => this.groups = g);
     if (!environment.production) {
       this.phone = '0507330590';
       await this.searchPhone();
@@ -231,7 +226,7 @@ export class AsignFamilyComponent implements OnInit {
           name: this.name,
           basketType: basket ? basket.id : undefined,
           helperId: this.id,
-          language: this.filterLangulage,
+          group: this.filterGroup,
           city: this.filterCity,
           numOfBaskets: this.numOfBaskets,
           preferRepeatFamilies: this.preferRepeatFamilies && this.repeatFamilies > 0
@@ -253,8 +248,8 @@ export class AsignFamilyComponent implements OnInit {
           this.dialog.analytics('Assign Family');
           if (this.baskets == undefined)
             this.dialog.analytics('Assign any Family (no box)');
-          if (this.filterLangulage != -1)
-            this.dialog.analytics('assign family-language');
+          if (this.filterGroup)
+            this.dialog.analytics('assign family-group');
           if (this.filterCity)
             this.dialog.analytics('assign family-city');
           if (this.numOfBaskets > 1)
@@ -280,7 +275,7 @@ export class AsignFamilyComponent implements OnInit {
     };
     let countFamilies = (additionalWhere?: (f: Families) => FilterBase) => {
       return context.for(Families).count(f => {
-        let where = f.readyFilter(info.filterCity, info.filterLanguage);
+        let where = f.readyFilter(info.filterCity, info.filterGroup);
         if (additionalWhere) {
           where = where.and(additionalWhere(f));
         }
@@ -301,7 +296,7 @@ export class AsignFamilyComponent implements OnInit {
         name: c.city.value,
         unassignedFamilies: c.families.value
       };
-      if (info.filterLanguage == -1) {
+      if (!info.filterGroup ) {
         result.cities.push(ci);
       }
       else {
@@ -381,7 +376,7 @@ export class AsignFamilyComponent implements OnInit {
           select: () => [f.id, f.addressLatitude, f.addressLongitude],
           from: f,
           where: () => {
-            let where = f.readyFilter(info.city, info.language).and(
+            let where = f.readyFilter(info.city, info.group).and(
               f.special.isDifferentFrom(YesNo.Yes)
             );
 
@@ -473,11 +468,6 @@ export class AsignFamilyComponent implements OnInit {
     existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
     result.families = await context.for(Families).toPojoArray(existingFamilies);
 
-    /*result.basketInfo = await AsignFamilyComponent.getBasketStatus({
-      filterCity: info.city,
-      filterLanguage: info.language,
-      helperId: info.helperId
-    }, context);*/
 
     console.timeEnd('addBox');
     return result;
@@ -634,7 +624,7 @@ export interface AddBoxInfo {
   name: string;
   basketType: string;
   phone: string;
-  language: number;
+  group: string;
   helperId?: string;
   city: string;
   numOfBaskets: number;
@@ -702,7 +692,7 @@ async function getRouteInfo(families: Families[], optimize: boolean, context: Co
   return r;
 }
 export interface GetBasketStatusActionInfo {
-  filterLanguage: number;
+  filterGroup: string;
   filterCity: string;
   helperId: string;
 }

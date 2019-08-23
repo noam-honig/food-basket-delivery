@@ -11,15 +11,16 @@
   </div>
   <input class="form-control no-print" placeholder="שם המשנע" [(ngModel)]="name">
 
-  <span *ngIf="!name" class="help no-print">אנא הזיני את הטלפון של המשנע ושמו, ואז תוכלי לבחור שפה, עיר ואילו סלים
+  <span *ngIf="!name" class="help no-print">אנא הזיני את הטלפון של המשנע ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים
     לשייך</span>
   <span *ngIf="name&&name.length>=2">
     <h4 class="no-print">
       פרטי השינוע
     </h4>
     <div class="no-print">
-      <select class="form-control" #lang (change)="langChange()" [(ngModel)]="filterLangulage">
-        <option *ngFor="let l of langulages" value="{{l.id}}">{{l.toString()}}</option>
+      <select class="form-control" #lang (change)="refreshBaskets()" [(ngModel)]="filterGroup">
+          <option value="">כל הקבוצות</option>
+        <option *ngFor="let g of groups" value="{{g.name.value}}">{{g.name.value}}</option>
       </select>
       <select class="form-control" #city (change)="selectCity()" [(ngModel)]="filterCity">
         <option value="">כל הערים</option>
