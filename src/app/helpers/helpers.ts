@@ -63,7 +63,7 @@ export class Helpers extends IdEntity<HelperId>  {
     smsDate = new changeDate('מועד משלוח SMS');
     reminderSmsDate = new changeDate('מועד משלוח תזכורת SMS');
     deliveryAdmin = new BoolColumn({
-        caption: 'מנהלת משלוח חגים',
+        caption: 'מנהל משלוח',
         readonly: !this.context.isAdmin(),
         excludeFromApi: !this.context.isAdmin(),
         dbName: 'isAdmin'
