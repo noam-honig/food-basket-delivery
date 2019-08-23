@@ -69,8 +69,8 @@
     </ng-container>
   </div>
 
-  <h4>טלפונים:</h4>
-  <div>
+  <h4 *ngIf="f.phone1.value || f.phone2.value">טלפונים:</h4>
+  <div *ngIf="f.phone1.value"> 
     <a href="tel:{{f.phone1.value}}">
       <button mat-mini-fab style="margin-left:10px;vertical-align: middle">
         <mat-icon>call</mat-icon>
