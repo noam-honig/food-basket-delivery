@@ -1,15 +1,18 @@
-<button mat-mini-fab style="margin-bottom:5px" (click)="refresh()">
-    <mat-icon>refresh</mat-icon>
-</button>
-<mat-tab-group #myTab (selectedTabChange)="tabChanged()"  [selectedIndex]="0" *ngIf="!problemOnly">
-    <mat-tab *ngFor="let t of statTabs" label="{{t.name}} - {{statTotal(t)}}" > </mat-tab>
+<div style="display:flex;justify-content: space-between">
+    <button mat-mini-fab style="margin-bottom:5px" (click)="refresh()">
+        <mat-icon>refresh</mat-icon>
+    </button>
+    <a href="https://www.youtube.com/watch?v=2FG05srq5uY&list=PLRxHq2rVTQWhe2MTYbMJbAY1EW6iXfjtK" target="_blank" class="no-print">לסרטוני הדרכה על מסך משפחות, לחצו כאן</a>
+</div>
+<mat-tab-group #myTab (selectedTabChange)="tabChanged()" [selectedIndex]="0" *ngIf="!problemOnly">
+    <mat-tab *ngFor="let t of statTabs" label="{{t.name}} - {{statTotal(t)}}"> </mat-tab>
 
 </mat-tab-group>
-<br *ngIf="problemOnly"/>
+<br *ngIf="problemOnly" />
 <div *ngIf="!problemOnly">
     <div style="display: block;width:350px;height:188px;">
-        <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType" [options]="options" [colors]="colors"
-            (chartClick)="chartClicked($event)"></canvas>
+        <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType" [options]="options"
+            [colors]="colors" (chartClick)="chartClicked($event)"></canvas>
     </div>
 </div>
 <a *ngFor="let s of currentTabStats.moreStats" (click)="setCurrentStat(s)">{{s.name }} - {{s.value}}, </a>
@@ -19,54 +22,70 @@
 <a *ngIf="currentStatFilter" (click)="clearStat()">הצג הכל</a>
 <br>
 <mat-form-field class="full-width">
-    <input matInput [(ngModel)]="searchString" (input)="doSearch()" placeholder="חיפוש משפחה" [ngModelOptions]="{standalone: true}">
+    <input matInput [(ngModel)]="searchString" (input)="doSearch()" placeholder="חיפוש משפחה"
+        [ngModelOptions]="{standalone: true}">
     <mat-icon matSuffix (click)="clearSearch()">clear</mat-icon>
 </mat-form-field>
 
 <strong>{{families.totalRows}}</strong>
 <br>
 <mat-card [class.hide]="!gridView">
-    
 
-        <data-grid2 [settings]="families" [height]="400"></data-grid2>
 
-        <button (click)="saveToExcel()">יצוא לאקסל</button>
-        <button (click)="saveAll()" *ngIf="changedRowsCount()>1" class="btn btn-success">שמור  {{changedRowsCount()}} משפחות שהשתנו</button>
+    <data-grid2 [settings]="families" [height]="400"></data-grid2>
 
-    
+    <button (click)="saveToExcel()">יצוא לאקסל</button>
+    <button (click)="saveAll()" *ngIf="changedRowsCount()>1" class="btn btn-success">שמור {{changedRowsCount()}} משפחות
+        שהשתנו</button>
+
+
 </mat-card>
-<button (click)="families.previousRow()" [disabled]="families.currentRow&& families.currentRow.wasChanged()||!families.previousRowAllowed()"
+<button (click)="families.previousRow()"
+    [disabled]="families.currentRow&& families.currentRow.wasChanged()||!families.previousRowAllowed()"
     [class.hide]="gridView" class="btn glyphicon glyphicon-chevron-right ng-star-inserted"></button>
-<button (click)="families.nextRow()" [class.hide]="gridView" [disabled]="families.currentRow&&families.currentRow.wasChanged()"
+<button (click)="families.nextRow()" [class.hide]="gridView"
+    [disabled]="families.currentRow&&families.currentRow.wasChanged()"
     class="btn glyphicon glyphicon-chevron-left"></button>
-<button (click)="gridView = !gridView" [class.hide]="gridView" class="btn glyphicon glyphicon-list-alt" title="חזרה לרשימה"></button>
-<button [class.hide]="gridView" class="btn glyphicon glyphicon glyphicon-filter" (click)="dataFilter.userFilterButton()"></button>
-<button (click)="families.addNewRow()" [class.hide]="gridView" [disabled]="families.currentRow&&families.currentRow.wasChanged()"
+<button (click)="gridView = !gridView" [class.hide]="gridView" class="btn glyphicon glyphicon-list-alt"
+    title="חזרה לרשימה"></button>
+<button [class.hide]="gridView" class="btn glyphicon glyphicon glyphicon-filter"
+    (click)="dataFilter.userFilterButton()"></button>
+<button (click)="families.addNewRow()" [class.hide]="gridView"
+    [disabled]="families.currentRow&&families.currentRow.wasChanged()"
     class="btn btn-primary glyphicon glyphicon-plus"></button>
-    <button mat-raised-button [class.hide]="gridView" (click)="previewFamily()">תצוגה מקדימה</button>
+<button mat-raised-button [class.hide]="gridView" (click)="previewFamily()">תצוגה מקדימה</button>
 <Data-Filter [settings]="families" #dataFilter></Data-Filter>
 
 <div [class.hide]="gridView">
-        
 
-    <button *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="saveCurrentFamilies()" [disabled]="!families.currentRow.wasChanged()"
-        class="btn glyphicon glyphicon-ok btn-success"></button>
-    <button *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="families.currentRow.reset();families.setCurrentRow(families.items[0]);"
-        [disabled]="!families.currentRow.wasChanged()" class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
-        <app-update-family #familyInfo [families]="families" [familyDeliveries]="currentFamilyDeliveries"></app-update-family>
 
-    <button *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="saveCurrentFamilies()" [disabled]="!families.currentRow.wasChanged()"
-        class="btn glyphicon glyphicon-ok btn-success"></button>
-    <button *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="families.currentRow.reset();families.setCurrentRow(families.items[0]);"
-        [disabled]="!families.currentRow.wasChanged()" class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
+    <button *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="saveCurrentFamilies()"
+        [disabled]="!families.currentRow.wasChanged()" class="btn glyphicon glyphicon-ok btn-success"></button>
+    <button *ngIf="families.currentRow &&families.currentRow.wasChanged()"
+        (click)="families.currentRow.reset();families.setCurrentRow(families.items[0]);"
+        [disabled]="!families.currentRow.wasChanged()"
+        class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
+    <app-update-family #familyInfo [families]="families" [familyDeliveries]="currentFamilyDeliveries">
+    </app-update-family>
+
+    <button *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="saveCurrentFamilies()"
+        [disabled]="!families.currentRow.wasChanged()" class="btn glyphicon glyphicon-ok btn-success"></button>
+    <button *ngIf="families.currentRow &&families.currentRow.wasChanged()"
+        (click)="families.currentRow.reset();families.setCurrentRow(families.items[0]);"
+        [disabled]="!families.currentRow.wasChanged()"
+        class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
 </div>
 <div *ngIf="families.currentRow">
-    <button (click)="families.previousRow()" [disabled]="families.currentRow&& families.currentRow.wasChanged()||!families.previousRowAllowed()"
+    <button (click)="families.previousRow()"
+        [disabled]="families.currentRow&& families.currentRow.wasChanged()||!families.previousRowAllowed()"
         [class.hide]="gridView" class="btn glyphicon glyphicon-chevron-right ng-star-inserted"></button>
-    <button (click)="families.nextRow()" [class.hide]="gridView" [disabled]="families.currentRow&&families.currentRow.wasChanged()"
+    <button (click)="families.nextRow()" [class.hide]="gridView"
+        [disabled]="families.currentRow&&families.currentRow.wasChanged()"
         class="btn glyphicon glyphicon-chevron-left"></button>
     <button (click)="gridView = !gridView" [class.hide]="gridView" class="btn glyphicon glyphicon-list-alt"></button>
-    <button [class.hide]="gridView" class="btn glyphicon glyphicon glyphicon-filter" (click)="dataFilter.userFilterButton()"></button>
-    <button (click)="families.addNewRow()" [class.hide]="gridView" [disabled]="families.currentRow&&families.currentRow.wasChanged()"
+    <button [class.hide]="gridView" class="btn glyphicon glyphicon glyphicon-filter"
+        (click)="dataFilter.userFilterButton()"></button>
+    <button (click)="families.addNewRow()" [class.hide]="gridView"
+        [disabled]="families.currentRow&&families.currentRow.wasChanged()"
         class="btn btn-primary glyphicon glyphicon-plus"></button>
 </div>
