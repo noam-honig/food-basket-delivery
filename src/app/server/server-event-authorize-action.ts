@@ -3,7 +3,7 @@ import { Roles } from "../auth/roles";
 
 export class ServerEventAuthorizeAction {
 
-    @RunOnServer({ allowed: Roles.deliveryAdmin })
+    @RunOnServer({ allowed: Roles.admin })
     static DoAthorize(key: string) {
         ServerEventAuthorizeAction.authorize(key);
     }

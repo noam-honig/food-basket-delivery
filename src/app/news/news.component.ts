@@ -9,7 +9,7 @@ import { SelectService } from '../select-popup/select-service';
 import { Families } from '../families/families';
 import { FilterBase } from 'radweb';
 import { BusyService } from 'radweb';
-import { Roles, DeliveryAdminGuard } from '../auth/roles';
+import { Roles, AdminGuard } from '../auth/roles';
 
 @Component({
   selector: 'app-news',
@@ -18,7 +18,7 @@ import { Roles, DeliveryAdminGuard } from '../auth/roles';
 })
 export class NewsComponent implements OnInit, OnDestroy {
   static route: Route = {
-    path: 'news', component: NewsComponent, canActivate: [DeliveryAdminGuard], data: { name: 'חדשות' }
+    path: 'news', component: NewsComponent, canActivate: [AdminGuard], data: { name: 'חדשות' }
   };
   filters: NewsFilter[] = [{
     name: 'כל החדשות'

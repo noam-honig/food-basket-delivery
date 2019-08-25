@@ -44,7 +44,7 @@ export class HelpersAndStats extends IdEntity<HelperId> {
     constructor(context: Context) {
         super(new HelperId(context), {
             name: "helpersAndStats",
-            allowApiRead: Roles.deliveryAdmin,
+            allowApiRead: Roles.admin,
             dbName: () => {
                 let f = new Families(context);
                 let h = new Helpers(context);

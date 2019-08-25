@@ -3,55 +3,17 @@ import { Injectable } from "@angular/core";
 
 
 export class Roles {
-    static weeklyFamilyPacker = 'weeklyFamilyPacker';
-    static weeklyFamilyVolunteer = 'weeklyFamilyVolunteer';
-    static weeklyFamilyAdmin = 'weeklyFamilyAdmin';
-    static deliveryAdmin = 'deliveryAdmin';
-    static superAdmin = 'superAdmin';
-    static anyAdmin = [Roles.deliveryAdmin, Roles.weeklyFamilyAdmin, Roles.superAdmin];
-    static anyWeekly = [Roles.weeklyFamilyAdmin, Roles.weeklyFamilyPacker, Roles.weeklyFamilyVolunteer];
+    static admin = 'deliveryAdmin';
 }
 
 
 @Injectable()
-export class DeliveryAdminGuard extends SignedInGuard {
+export class AdminGuard extends SignedInGuard {
 
     isAllowed() {
-        return Roles.deliveryAdmin;
+        return Roles.admin;
     }
 }
-
-
-@Injectable()
-export class AnyAdminGuard extends SignedInGuard {
-
-    isAllowed() {
-        return Roles.anyAdmin;
-    }
-}
-@Injectable()
-export class WeeklyFamilyPackerGuard extends SignedInGuard {
-
-    isAllowed() {
-        return Roles.weeklyFamilyPacker;
-    }
-}
-@Injectable()
-export class WeeklyFamilyVolunteerGuard extends SignedInGuard {
-
-    isAllowed() {
-        return Roles.weeklyFamilyVolunteer;
-    }
-}
-@Injectable()
-export class WeeklyFamilyAdminGuard extends SignedInGuard {
-
-    isAllowed() {
-        return Roles.weeklyFamilyVolunteer;
-    }
-}
-
-
 
 
 

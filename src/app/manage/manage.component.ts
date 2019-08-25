@@ -9,7 +9,7 @@ import { ApplicationSettings } from './ApplicationSettings';
 
 import { Context, IdEntity, IdColumn, StringColumn, EntityClass } from 'radweb';
 import { DialogService } from '../select-popup/dialog';
-import {  AnyAdminGuard, Roles } from '../auth/roles';
+import {  AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
 
 @Component({
@@ -24,7 +24,7 @@ export class ManageComponent implements OnInit {
     data: {
       name: 'הגדרות מערכת',
       seperator: true
-    }, canActivate: [AnyAdminGuard]
+    }, canActivate: [AdminGuard]
   }
   constructor(private dialog: DialogService, private context: Context) { }
 
@@ -127,8 +127,8 @@ export class Groups extends IdEntity<IdColumn>  {
   constructor(context: Context) {
     super(new IdColumn(), {
       name: "groups",
-      allowApiRead: Roles.deliveryAdmin,
-      allowApiCRUD: Roles.deliveryAdmin,
+      allowApiRead: Roles.admin,
+      allowApiCRUD: Roles.admin,
     });
   }
 }

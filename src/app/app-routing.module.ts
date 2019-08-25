@@ -15,26 +15,16 @@ import { DistributionMap } from './distribution-map/distribution-map.component';
 import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component';
 import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-up.component';
 import { NewsComponent } from './news/news.component';
-import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
+
 import { ImportFromExcelComponent } from './import-from-excel/import-from-excel.component';
 import { CustomReuseStrategy } from './custom-reuse-controller-router-strategy'
 
-
-import { ProductsComponent } from './products/products.component';
-
-
-import { MyWeeklyFamiliesComponent } from './my-weekly-families/my-weekly-families.component';
-import { WeeklyPackerByFamilyComponent } from './weekly-packer-by-family/weekly-packer-by-family.component';
-import { WeeklyPackerByProductComponent } from './weekly-packer-by-product/weekly-packer-by-product.component';
-import { MyWeeklyFamilyDeliveriesComponent } from './my-weekly-family-deliveries/my-weekly-family-deliveries.component';
 import { AddressProblemComponent } from './address-problem/address-problem.component';
-import { StressTestComponent } from './stress-test/stress-test.component';
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
-import { AnyAdminGuard, DeliveryAdminGuard, WeeklyFamilyAdminGuard, WeeklyFamilyPackerGuard, WeeklyFamilyVolunteerGuard } from './auth/roles';
+import { AdminGuard } from './auth/roles';
 import { SignedInGuard } from 'radweb';
-import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-dialog.component';
 
 
 
@@ -49,14 +39,8 @@ const routes: Routes = [
   HelpersComponent.route,
   DeliveryHistoryComponent.route,
   BatchOperationsComponent.route,
-  { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [DeliveryAdminGuard], data: { name: 'קליטה מאקסל' } },
+  { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard], data: { name: 'קליטה מאקסל' } },
   ManageComponent.route,
-
-  MyWeeklyFamiliesComponent.route,
-  MyWeeklyFamilyDeliveriesComponent.route,
-  WeeklyPackerByFamilyComponent.route,
-  WeeklyPackerByProductComponent.route,
-  ProductsComponent.route,
   LoginFromSmsComponent.route,
 
   //{ path: 'stam-test', component: UpdateGroupDialogComponent },
@@ -65,7 +49,6 @@ const routes: Routes = [
   LoginComponent.route,
   RegisterComponent.route,
 
-  //{ path: 'stam-test', component: StamTestComponent },
   { path: '', redirectTo: '/assign-families', pathMatch: 'full' },
   { path: '**', redirectTo: '/assign-families', pathMatch: 'full' }
 ];
@@ -78,9 +61,9 @@ const routes: Routes = [
   ],
   declarations: [],
   exports: [RouterModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AnyAdminGuard, DeliveryAdminGuard, WeeklyFamilyAdminGuard, WeeklyFamilyPackerGuard, WeeklyFamilyVolunteerGuard]
+  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard]
 })
 
-export class AppRoutingModule { } 
+export class AppRoutingModule { }
 
 SignedInGuard.componentToNavigateIfNotAllowed = LoginComponent;

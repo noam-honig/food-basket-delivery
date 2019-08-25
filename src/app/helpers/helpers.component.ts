@@ -11,7 +11,7 @@ import { Context } from 'radweb';
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from 'radweb';
 import { DateColumn, DataAreaSettings } from 'radweb';
-import {  Roles, AnyAdminGuard } from '../auth/roles';
+import {  Roles, AdminGuard } from '../auth/roles';
 
 @Component({
   selector: 'app-helpers',
@@ -24,7 +24,7 @@ export class HelpersComponent implements OnInit {
   static route: Route = {
     path: 'helpers',
     component: HelpersComponent,
-    data: { name: 'מתנדבים' }, canActivate: [AnyAdminGuard]
+    data: { name: 'מתנדבים' }, canActivate: [AdminGuard]
   };
   searchString: string;
 
@@ -67,16 +67,8 @@ export class HelpersComponent implements OnInit {
     });
 
   }
-  deliveryAdmin() {
-    return this.context.isAllowed([Roles.deliveryAdmin, Roles.superAdmin]);
-  }
-  superAdmin() {
-    return this.context.isAllowed(Roles.superAdmin)
-  }
-  weeklyAdmin() {
-    return this.context.isAllowed([Roles.weeklyFamilyAdmin, Roles.superAdmin]);
-  }
-  @RunOnServer({ allowed: Roles.anyAdmin })
+  
+  @RunOnServer({ allowed: Roles.admin })
   static async resetPassword(helperId: string, context?: Context) {
 
     await context.for(Helpers).foreach(h => h.id.isEqualTo(helperId), async h => {

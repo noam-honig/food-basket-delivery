@@ -7,7 +7,7 @@ import { Families } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DialogService } from '../select-popup/dialog';
 import { RunOnServer } from 'radweb';
-import { Roles, DeliveryAdminGuard } from '../auth/roles';
+import { Roles, AdminGuard } from '../auth/roles';
 
 
 @Component({
@@ -24,7 +24,7 @@ export class BatchOperationsComponent implements OnInit {
   static route: Route = {
     path: 'batch-operations',
     component: BatchOperationsComponent,
-    data: { name: 'פעולות על קבוצה' }, canActivate: [DeliveryAdminGuard]
+    data: { name: 'פעולות על קבוצה' }, canActivate: [AdminGuard]
   }
   static allBasketsTokenConst = '!!!';
   group: string;
@@ -60,7 +60,7 @@ export class BatchOperationsComponent implements OnInit {
     return x;
   }
 
-  @RunOnServer({ allowed: Roles.deliveryAdmin })
+  @RunOnServer({ allowed: Roles.admin })
   static async setNewBasket(basketType: string, group: string, context?: Context) {
     let families = await context.for(Families).find({ where: f => BatchOperationsComponent.createFamiliesFilterForNewBasket(f, basketType, group) });
     for (const f of families) {
@@ -88,7 +88,7 @@ export class BatchOperationsComponent implements OnInit {
       x = x.and(f.groups.isContains(group));
     return x;
   }
-  @RunOnServer({ allowed: Roles.deliveryAdmin })
+  @RunOnServer({ allowed: Roles.admin })
   static async setNotInEvent(basketType: string, group: string, context?: Context) {
     let families = await context.for(Families).find({ where: f => BatchOperationsComponent.createFamiliesFilterForNotInEvent(f, basketType, group) });
     for (const f of families) {

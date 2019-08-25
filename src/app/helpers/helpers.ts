@@ -25,8 +25,8 @@ export class Helpers extends IdEntity<HelperId>  {
                         this.realStoredPassword.value = Helpers.passwordHelper.generateHash(this.password.value);
                     }
                     if ((await context.for(Helpers).count()) == 0) {
-                        this.superAdmin.value = true;
-                        this.deliveryAdmin.value = true;
+                        
+                        this.admin.value = true;
                     }
 
                     await checkForDuplicateValue(this, this.phone);
@@ -38,7 +38,7 @@ export class Helpers extends IdEntity<HelperId>  {
             apiDataFilter: () => {
                 if (!context.isSignedIn())
                     return this.id.isEqualTo("No User");
-                else if (!context.isAllowed([Roles.deliveryAdmin, ...Roles.anyWeekly]))
+                else if (!context.isAllowed([Roles.admin]))
                     return this.id.isEqualTo(this.context.user.id);
             }
         });
@@ -61,10 +61,10 @@ export class Helpers extends IdEntity<HelperId>  {
     createDate = new changeDate({ caption: 'מועד הוספה' });
     smsDate = new changeDate('מועד משלוח SMS');
     reminderSmsDate = new changeDate('מועד משלוח תזכורת SMS');
-    deliveryAdmin = new BoolColumn({
+    admin = new BoolColumn({
         caption: 'מנהל משלוח',
-        allowApiUpdate: Roles.anyAdmin,
-        includeInApi: Roles.anyAdmin,
+        allowApiUpdate: Roles.admin,
+        includeInApi: Roles.admin,
         dbName: 'isAdmin'
     });
     totalKm = new NumberColumn();
@@ -78,23 +78,8 @@ export class Helpers extends IdEntity<HelperId>  {
     generalSmsDate = new changeDate('מועד משלוח SMS כללי אחרון');
     declineSms = new BoolColumn('מסרב לקבל הודעות SMS');
 
-    superAdmin = new BoolColumn({
-        caption: 'סופר מנהל'
-    });
-    weeklyFamilyAdmin = new BoolColumn({
-        caption: 'מנהלת משלוחים שבועיים'
-    });
-    weeklyFamilyPacker = new BoolColumn({
-        caption: 'אורזת משלוחים שבועיים'
-    });
-    deliveryVolunteer = new BoolColumn({
-        caption: 'מתנדב משלוח חגים'
-    });
-    weeklyFamilyVolunteer = new BoolColumn({
-        caption: 'מתנדבת משלוחים שבועיים'
-    });
 
-    shortUrlKey = new StringColumn({ includeInApi: Roles.anyAdmin });
+    shortUrlKey = new StringColumn({ includeInApi: Roles.admin });
     veryUrlKeyAndReturnTrueIfSaveRequired() {
         if (!this.shortUrlKey.value) {
             this.shortUrlKey.value = this.makeid();

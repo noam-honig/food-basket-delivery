@@ -8,7 +8,7 @@ import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
 import { Context, RouteHelperService } from 'radweb';
 import { RegisterComponent } from '../register/register.component';
-import { DeliveryAdminGuard } from '../../auth/roles';
+import { AdminGuard } from '../../auth/roles';
 
 @Component({
   selector: 'app-login',

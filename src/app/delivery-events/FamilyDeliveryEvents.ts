@@ -5,7 +5,7 @@ import { NumberColumn, StringColumn, CompoundIdColumn, IdColumn } from 'radweb';
 import { HelperId, HelperIdReadonly } from '../helpers/helpers';
 import {  changeDate } from '../model-shared/types';
 import { CallStatusColumn } from '../families/CallStatus';
-import { DeliveryEventId } from "./DeliveryEventId";
+
 import { Context, EntityClass, Entity } from 'radweb';
 import { Roles } from '../auth/roles';
 @EntityClass
@@ -28,9 +28,11 @@ export class FamilyDeliveryEvents extends Entity<string> {
   constructor(private context: Context) {
     super({
       name: 'FamilyDeliveryEvents',
-      allowApiRead: Roles.deliveryAdmin 
+      allowApiRead: Roles.admin 
     });
     this.initColumns(new CompoundIdColumn(this, this.family, this.deliveryEvent));
   }
 }
 export class FamilyDelveryEventId extends IdColumn { }
+export class DeliveryEventId extends IdColumn {
+}

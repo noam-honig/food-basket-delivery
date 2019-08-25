@@ -10,7 +10,7 @@ import { Helpers } from '../helpers/helpers';
 
 
 import { Context } from 'radweb';
-import { Roles, DeliveryAdminGuard } from '../auth/roles';
+import { Roles, AdminGuard } from '../auth/roles';
 import { Route } from '@angular/router';
 
 @Component({
@@ -20,7 +20,7 @@ import { Route } from '@angular/router';
 })
 export class DeliveryFollowUpComponent implements OnInit {
   static route: Route = {
-    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [DeliveryAdminGuard], data: { name: 'מעקב משנעים' }
+    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [AdminGuard], data: { name: 'מעקב משנעים' }
   }
 
   familyLists = new UserFamiliesList(this.context);

@@ -8,10 +8,7 @@ import { RunOnServer, UserInfo, JwtSessionManager, RouteHelperService } from "ra
 import { Context } from "radweb";
 import { LoginResponse } from "./login-response";
 import { Roles } from "./roles";
-import { JWTCookieAuthorizationHelper } from "radweb-server";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
-import { MyWeeklyFamiliesComponent } from "../my-weekly-families/my-weekly-families.component";
-import { WeeklyPackerByFamilyComponent } from "../weekly-packer-by-family/weekly-packer-by-family.component";
 import { MyFamiliesComponent } from "../my-families/my-families.component";
 import { LoginComponent } from "../users/login/login.component";
 
@@ -57,7 +54,7 @@ export class AuthService {
     ) {
 
         tokenHelper.loadSessionFromCookie();
-        tokenHelper.tokenInfoChanged = () => dialog.refreshEventListener(this.context.isAllowed(Roles.deliveryAdmin));
+        tokenHelper.tokenInfoChanged = () => dialog.refreshEventListener(this.context.isAllowed(Roles.admin));
         tokenHelper.tokenInfoChanged();
     }
     static UpdateInfoComponent: { new(...args: any[]): any };
@@ -66,19 +63,15 @@ export class AuthService {
         let loginResponse = await AuthService.login(user, password);
         if (loginResponse.valid) {
             this.tokenHelper.setToken(loginResponse.authToken, remember);
-            this.dialog.analytics('login ' + (this.context.isAllowed(Roles.deliveryAdmin) ? 'delivery admin' : ''));
+            this.dialog.analytics('login ' + (this.context.isAllowed(Roles.admin) ? 'delivery admin' : ''));
             if (loginResponse.requirePassword) {
                 this.dialog.YesNoQuestion('שלום ' + this.context.user.name + ' את מוגדרת כמנהלת אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועברת למסך עדכון פרטים לעדכון סיסמה.', () => {
                     this.routeHelper.navigateToComponent(AuthService.UpdateInfoComponent);//changing this caused a crash
                 });
             }
             else {
-                if (this.context.isAllowed(Roles.deliveryAdmin))
+                if (this.context.isAllowed(Roles.admin))
                     this.routeHelper.navigateToComponent(AsignFamilyComponent);
-                else if (this.context.isAllowed(Roles.weeklyFamilyVolunteer))
-                    this.routeHelper.navigateToComponent(MyWeeklyFamiliesComponent);
-                else if (this.context.isAllowed(Roles.weeklyFamilyPacker))
-                    this.routeHelper.navigateToComponent(WeeklyPackerByFamilyComponent);
                 else
                     this.routeHelper.navigateToComponent(MyFamiliesComponent);
             }
@@ -105,22 +98,12 @@ export class AuthService {
                     roles: [],
                     name: h.name.value
                 };
-                if (h.realStoredPassword.value.length == 0 && (h.deliveryAdmin.value || h.superAdmin.value || h.weeklyFamilyPacker.value || h.weeklyFamilyVolunteer.value || h.weeklyFamilyAdmin.value)) {
+                if (h.realStoredPassword.value.length == 0 && h.admin.value) {
                     requirePassword = true;
                 }
                 else {
-                    if (h.superAdmin.value) {
-                        result.roles.push(Roles.superAdmin);
-                    }
-                    if (h.weeklyFamilyAdmin.value) {
-                        result.roles.push(...Roles.anyWeekly);
-                    }
-                    if (h.weeklyFamilyVolunteer.value)
-                        result.roles.push(Roles.weeklyFamilyVolunteer);
-                    if (h.weeklyFamilyPacker.value)
-                        result.roles.push(Roles.weeklyFamilyPacker);
-                    if (h.deliveryAdmin.value)
-                        result.roles.push(Roles.deliveryAdmin);
+                    if (h.admin.value)
+                        result.roles.push(Roles.admin);
 
 
                 }

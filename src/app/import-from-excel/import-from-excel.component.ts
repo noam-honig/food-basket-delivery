@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { GridSettings, Column, Entity } from 'radweb';
 import { Context } from 'radweb';
 import { Helpers } from '../helpers/helpers';
-import { WeeklyFamilies } from '../weekly-families/weekly-families';
 import { myThrottle, HasAsyncGetTheValue } from '../model-shared/types';
 import * as XLSX from 'xlsx';
 import { Families, parseAddress } from '../families/families';

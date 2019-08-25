@@ -15,7 +15,7 @@ import { saveToExcel } from '../shared/saveToExcel';
 import { BusyService } from 'radweb';
 import { FamilySourceId } from '../families/FamilySources';
 import { RunOnServer } from 'radweb';
-import { Roles, DeliveryAdminGuard } from '../auth/roles';
+import { Roles, AdminGuard } from '../auth/roles';
 
 var fullDayValue = 24 * 60 * 60 * 1000;
 
@@ -55,7 +55,7 @@ export class DeliveryHistoryComponent implements OnInit {
   static route: Route = {
     path: 'history',
     component: DeliveryHistoryComponent,
-    data: { name: 'היסטורית משלוחים' }, canActivate: [DeliveryAdminGuard]
+    data: { name: 'היסטורית משלוחים' }, canActivate: [AdminGuard]
   }
   constructor(private context: Context, private selectService: SelectService, private busy: BusyService) {
     let hhi = context.create(helperHistoryInfo);
@@ -180,7 +180,7 @@ export class DeliveryHistoryComponent implements OnInit {
 
     this.refreshHelpers();
   }
-  @RunOnServer({ allowed: Roles.deliveryAdmin })
+  @RunOnServer({ allowed: Roles.admin })
   static async  getHelperHistoryInfo(fromDate: string, toDate: string, context?: Context, directSql?: DirectSQL) {
     var fromDateDate = DateColumn.stringToDate(fromDate);
     var toDateDate = DateColumn.stringToDate(toDate);
@@ -248,7 +248,7 @@ export class FamilyDeliveriesStats extends Entity<string> {
   constructor(private context: Context) {
     super({
       name: 'FamilyDeliveriesStats',
-      allowApiRead: Roles.deliveryAdmin,
+      allowApiRead: Roles.admin,
       dbName: () => {
         var f = new Families(context);
         var d = new FamilyDeliveries(context);

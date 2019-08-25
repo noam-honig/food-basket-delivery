@@ -32,7 +32,7 @@ import { UpdateFamilyComponent } from '../update-family/update-family.component'
 import { PortalHostDirective } from '@angular/cdk/portal';
 import { saveToExcel } from '../shared/saveToExcel';
 import { PreviewFamilyComponent, PreviewFamilyInfo } from '../preview-family/preview-family.component';
-import { Roles, DeliveryAdminGuard } from '../auth/roles';
+import { Roles, AdminGuard } from '../auth/roles';
 
 @Component({
     selector: 'app-families',
@@ -638,7 +638,7 @@ export class FamiliesComponent implements OnInit {
   static route: Route = {
     path: 'families',
     component: FamiliesComponent,
-    data: { name: 'משפחות' }, canActivate: [DeliveryAdminGuard]
+    data: { name: 'משפחות' }, canActivate: [AdminGuard]
   }
   previewFamily() {
     let x = new MatDialogConfig();

@@ -24,7 +24,7 @@ export class NewsUpdate extends Entity<string> implements FamilyUpdateInfo {
   updateType = new NumberColumn();
   constructor(private context: Context) {
     super({
-      allowApiRead: Roles.deliveryAdmin,
+      allowApiRead: Roles.admin,
       caption: 'חדשות',
       name: 'news',
       dbName: () => {

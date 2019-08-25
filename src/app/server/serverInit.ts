@@ -9,8 +9,8 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
 import { ServerContext, allEntities } from 'radweb';
 import '../app.module';
-import { WeeklyFamilyDeliveries } from '../weekly-families-deliveries/weekly-families-deliveries';
-import { WeeklyFamilies } from '../weekly-families/weekly-families';
+
+
 import { ActualSQLServerDataProvider } from 'radweb-server';
 import { ActualDirectSQL, actionInfo } from 'radweb';
 import { FamilyDeliveryEvents } from '../delivery-events/FamilyDeliveryEvents';
@@ -73,16 +73,6 @@ export async function serverInit() {
             h.boxes.value = 1;
             await h.save();
         }
-        await foreachSync(await context.for(WeeklyFamilyDeliveries).find({ where: d => d.assignedHelper.isEqualTo('') }), async d => {
-            let f = await context.for(WeeklyFamilies).lookupAsync(f => f.id.isEqualTo(d.familyId));
-            d.assignedHelper.value = f.assignedHelper.value;
-            await d.save();
-
-        });
-
-
-
-
 
         await context.for(Families).foreach(f => f.addressLongitude.isEqualTo(0), async ff => {
             let g = ff.getGeocodeInformation();
@@ -92,9 +82,6 @@ export async function serverInit() {
             ff.city.value = ff.getGeocodeInformation().getCity();
             await ff.save();
         });
-
-
-
 
         let settings = await context.for(ApplicationSettings).lookupAsync(s => s.id.isEqualTo(1));
         if (settings.isNew()) {

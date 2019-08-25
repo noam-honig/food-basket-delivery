@@ -23,7 +23,7 @@ import { BasketType } from '../families/BasketType';
 import { CitiesStats } from '../families/stats-action';
 import { SqlBuilder } from '../model-shared/types';
 import { BusyService } from 'radweb';
-import { Roles, DeliveryAdminGuard } from '../auth/roles';
+import { Roles, AdminGuard } from '../auth/roles';
 import { Groups } from '../manage/manage.component';
 
 
@@ -35,7 +35,7 @@ import { Groups } from '../manage/manage.component';
 
 export class AsignFamilyComponent implements OnInit {
   static route: Route = {
-    path: 'assign-families', component: AsignFamilyComponent, canActivate: [DeliveryAdminGuard], data: {
+    path: 'assign-families', component: AsignFamilyComponent, canActivate: [AdminGuard], data: {
       name: 'שיוך משפחות',
     }
   };
@@ -278,7 +278,7 @@ export class AsignFamilyComponent implements OnInit {
     });
   }
 
-  @RunOnServer({ allowed: Roles.deliveryAdmin })
+  @RunOnServer({ allowed: Roles.admin })
   static async getBasketStatus(info: GetBasketStatusActionInfo, context?: Context): Promise<GetBasketStatusActionResponse> {
     console.time('getBasketStatus');
     let result = {
@@ -333,14 +333,14 @@ export class AsignFamilyComponent implements OnInit {
     console.timeEnd('getBasketStatus');
     return result;
   }
-  @RunOnServer({ allowed: Roles.deliveryAdmin })
+  @RunOnServer({ allowed: Roles.admin })
   static async RefreshRoute(helperId: string, useGoogle: boolean, context?: Context) {
     let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
     let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
     return await AsignFamilyComponent.optimizeRoute(h, existingFamilies, context, useGoogle);
   }
 
-  @RunOnServer({ allowed: Roles.deliveryAdmin })
+  @RunOnServer({ allowed: Roles.admin })
   static async AddBox(info: AddBoxInfo, context?: Context, directSql?: DirectSQL) {
     console.time('addBox');
 

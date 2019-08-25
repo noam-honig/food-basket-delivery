@@ -5,7 +5,7 @@ import { BusyService } from 'radweb';
 import { Context } from 'radweb';
 import { Families } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { Roles, DeliveryAdminGuard } from '../auth/roles';
+import { Roles, AdminGuard } from '../auth/roles';
 
 @Component({
   selector: 'app-self-pickup',
@@ -16,7 +16,7 @@ export class SelfPickupComponent implements OnInit {
 
 
   static route: Route = {
-    path: 'self-pickup-families', component: SelfPickupComponent, canActivate: [DeliveryAdminGuard], data: {
+    path: 'self-pickup-families', component: SelfPickupComponent, canActivate: [AdminGuard], data: {
       name: 'באים לקחת',
       seperator: true
     }

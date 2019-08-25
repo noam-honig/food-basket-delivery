@@ -42,10 +42,10 @@ export class Families extends IdEntity<FamilyId>  {
         name: "Families",
         allowApiRead: context.isSignedIn(),
         allowApiUpdate: context.isSignedIn(),
-        allowApiDelete: Roles.deliveryAdmin,
-        allowApiInsert: Roles.deliveryAdmin,
+        allowApiDelete: Roles.admin,
+        allowApiInsert: Roles.admin,
         apiDataFilter: () => {
-          if (!context.isAllowed(Roles.deliveryAdmin))
+          if (!context.isAllowed(Roles.admin))
             return this.courier.isEqualTo(context.user.id);
         },
         onSavingRow: async () => {
@@ -126,7 +126,7 @@ export class Families extends IdEntity<FamilyId>  {
 
       });
     this.initColumns();
-    if (!context.isAllowed(Roles.deliveryAdmin))
+    if (!context.isAllowed(Roles.admin))
       this.__iterateColumns().forEach(c => c.allowApiUpdate = c == this.courierComments || c == this.deliverStatus || c == this.correntAnErrorInStatus);
   }
   disableChangeLogging = false;
@@ -142,16 +142,16 @@ export class Families extends IdEntity<FamilyId>  {
   });
 
   tz = new StringColumn({
-    caption: 'מספר זהות', includeInApi: Roles.deliveryAdmin, valueChange: () => this.delayCheckDuplicateFamilies()
+    caption: 'מספר זהות', includeInApi: Roles.admin, valueChange: () => this.delayCheckDuplicateFamilies()
   });
-  familyMembers = new NumberColumn({ includeInApi: Roles.deliveryAdmin, caption: 'מספר נפשות' });
+  familyMembers = new NumberColumn({ includeInApi: Roles.admin, caption: 'מספר נפשות' });
   basketType = new BasketId(this.context, 'סוג סל');
-  familySource = new FamilySourceId(this.context, { includeInApi: Roles.deliveryAdmin, caption: 'גורם מפנה' });
+  familySource = new FamilySourceId(this.context, { includeInApi: Roles.admin, caption: 'גורם מפנה' });
   groups = new GroupsColumn(this.context);
-  special = new YesNoColumn({ includeInApi: Roles.deliveryAdmin, caption: 'שיוך מיוחד' });
+  special = new YesNoColumn({ includeInApi: Roles.admin, caption: 'שיוך מיוחד' });
   defaultSelfPickup = new BoolColumn('ברירת מחדל באים לקחת');
-  iDinExcel = new StringColumn({ includeInApi: Roles.deliveryAdmin, caption: 'מזהה באקסל' });
-  internalComment = new StringColumn({ includeInApi: Roles.deliveryAdmin, caption: 'הערה פנימית - לא תופיע למשנע' });
+  iDinExcel = new StringColumn({ includeInApi: Roles.admin, caption: 'מזהה באקסל' });
+  internalComment = new StringColumn({ includeInApi: Roles.admin, caption: 'הערה פנימית - לא תופיע למשנע' });
 
 
   address = new StringColumn("כתובת");
@@ -392,8 +392,8 @@ export class Families extends IdEntity<FamilyId>  {
   }
 
 
-  createDate = new changeDate({ includeInApi: Roles.deliveryAdmin, caption: 'מועד הוספה' });
-  createUser = new HelperIdReadonly(this.context, { includeInApi: Roles.deliveryAdmin, caption: 'משתמש מוסיף' });
+  createDate = new changeDate({ includeInApi: Roles.admin, caption: 'מועד הוספה' });
+  createUser = new HelperIdReadonly(this.context, { includeInApi: Roles.admin, caption: 'משתמש מוסיף' });
 
 
 
@@ -483,7 +483,7 @@ export class Families extends IdEntity<FamilyId>  {
     }
 
   }
-  @RunOnServer({ allowed: Roles.deliveryAdmin })
+  @RunOnServer({ allowed: Roles.admin })
   static async checkDuplicateFamilies(name: string, tz: string, phone1: string, phone2: string, id: string, context?: Context, directSQL?: DirectSQL) {
     let result: duplicateFamilyInfo[] = [];
 
@@ -604,7 +604,7 @@ export interface parseAddressResult {
 }
 export class GroupsColumn extends StringColumn {
   constructor(private context: Context) {
-    super({ caption: 'קבוצות', includeInApi: Roles.deliveryAdmin });
+    super({ caption: 'קבוצות', includeInApi: Roles.admin });
   }
   getColumn(dialog: SelectServiceInterface) {
     return {

@@ -9,8 +9,8 @@ export class ApplicationImages extends Entity<number>  {
   constructor(context: Context) {
     super({
       name: 'ApplicationImages',
-      allowApiRead: Roles.anyAdmin,
-      allowApiUpdate: Roles.anyAdmin
+      allowApiRead: Roles.admin,
+      allowApiUpdate: Roles.admin
     });
   }
 

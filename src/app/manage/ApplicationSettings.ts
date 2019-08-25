@@ -33,7 +33,7 @@ export class ApplicationSettings extends Entity<number>  {
     super( {
       name: 'ApplicationSettings',
       allowApiRead: true,
-      allowApiUpdate: Roles.deliveryAdmin,
+      allowApiUpdate: Roles.admin,
       onSavingRow: async () => {
         if (context.onServer) {
           if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {

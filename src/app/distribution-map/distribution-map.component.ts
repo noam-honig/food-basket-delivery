@@ -18,7 +18,7 @@ import { SelectService } from '../select-popup/select-service';
 import { colors } from '../families/stats-action';
 import { BusyService } from 'radweb';
 import { YesNo } from '../families/YesNo';
-import { Roles, DeliveryAdminGuard } from '../auth/roles';
+import { Roles, AdminGuard } from '../auth/roles';
 
 @Component({
   selector: 'app-distribution-map',
@@ -45,7 +45,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   static route: Route = {
     path: 'addresses',
     component: DistributionMap,
-    data: { name: 'מפת הפצה' }, canActivate: [DeliveryAdminGuard]
+    data: { name: 'מפת הפצה' }, canActivate: [AdminGuard]
   };
 
   gridView = true;
@@ -162,7 +162,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     });
     this.updateChart();
   }
-  @RunOnServer({ allowed: Roles.deliveryAdmin })
+  @RunOnServer({ allowed: Roles.admin })
   static async GetFamiliesLocations(onlyPotentialAsignment?:boolean,city?: string, group?: string,context?: Context, directSql?: DirectSQL) {
     let f = new Families(context);
 
