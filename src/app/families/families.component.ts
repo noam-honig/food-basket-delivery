@@ -137,7 +137,45 @@ export class FamiliesComponent implements OnInit {
     }
     stats = new Stats();
     async saveToExcel() {
-        await saveToExcel<Families, GridSettings<Families>>(this.families, 'משפחות', this.busy, (f, c) => c == f.id || c == f.addressApiResult, (f, c) => c == f.correntAnErrorInStatus || c == f.visibleToCourier);
+        await saveToExcel<Families, GridSettings<Families>>(
+            this.families,
+            'משפחות',
+            this.busy,
+            (f, c) => c == f.id || c == f.addressApiResult,
+            (f, c) => c == f.correntAnErrorInStatus || c == f.visibleToCourier,
+            (f, addColumn) => {
+                let x = f.getGeocodeInformation();
+                let street = f.address.value;
+                let house = '';
+
+                let lastName = '';
+                let firstName = '';
+                if (f.name.value != undefined)
+                    lastName = f.name.value.trim();
+                let i = lastName.lastIndexOf(' ');
+                if (i >= 0) {
+                    firstName = lastName.substring(i, lastName.length).trim();
+                    lastName = lastName.substring(0, i).trim();
+                }
+                {
+                    try {
+                        for (const addressComponent of x.info.results[0].address_components) {
+                            switch (addressComponent.types[0]) {
+                                case "route":
+                                    street = addressComponent.short_name;
+                                    break;
+                                case "street_number":
+                                    house = addressComponent.short_name;
+                                    break;
+                            }
+                        }
+                    } catch{ }
+                }
+                addColumn("שם משפחה", lastName, 's');
+                addColumn("שם פרטי", firstName, 's');
+                addColumn("רחוב", street, 's');
+                addColumn("מספר בית", house, 's');
+            });
     }
 
 

@@ -4,7 +4,13 @@ import * as XLSX from 'xlsx';
 import { HasAsyncGetTheValue, DateTimeColumn } from "../model-shared/types";
 import { foreachSync } from "./utils";
 
-export async function saveToExcel<E extends Entity<any>, T extends GridSettings<E>>(grid: T, fileName: string, busy: BusyService, hideColumn?: (e: E, c: Column<any>) => boolean, excludeColumn?: (e: E, c: Column<any>) => boolean) {
+export async function saveToExcel<E extends Entity<any>, T extends GridSettings<E>>(
+  grid: T,
+  fileName: string,
+  busy: BusyService,
+  hideColumn?: (e: E, c: Column<any>) => boolean,
+  excludeColumn?: (e: E, c: Column<any>) => boolean,
+  moreColumns?: (e: E, addColumn: (caption: string, v: string, t: XLSX.ExcelDataType) => void) => void) {
   busy.doWhileShowingBusy(async () => {
 
     if (!hideColumn)
@@ -69,7 +75,10 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
               colName = String.fromCharCode(i);
               if (colName > 'Z') {
                 colName = 'A';
-                colPrefix = 'A';
+                if (colPrefix=='A')
+                  colPrefix = 'B';
+                else
+                  colPrefix = 'A';
               }
             }
             let col = ws["!cols"][colIndex++];
@@ -106,6 +115,7 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
               console.error(err, c.jsonName, f.__toPojo(new ColumnHashSet()));
             }
           });
+          moreColumns(<E>f,addColumn);
           rowNum++;
 
         });
