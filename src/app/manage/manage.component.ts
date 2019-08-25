@@ -7,9 +7,9 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings } from './ApplicationSettings';
 
 
-import { Context } from 'radweb';
+import { Context, IdEntity, IdColumn, StringColumn, EntityClass } from 'radweb';
 import { DialogService } from '../select-popup/dialog';
-import {  AnyAdminGuard } from '../auth/roles';
+import {  AnyAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
 
 @Component({
@@ -120,15 +120,15 @@ export class ManageComponent implements OnInit {
 
 }
 @EntityClass
-export class Groups extends IdEntity<Id>  {
+export class Groups extends IdEntity<IdColumn>  {
 
   name = new StringColumn("קבוצה");
 
   constructor(context: Context) {
-    super(new Id(), {
+    super(new IdColumn(), {
       name: "groups",
-      allowApiRead: context.isAdmin(),
-      allowApiCRUD: context.isAdmin(),
+      allowApiRead: Roles.deliveryAdmin,
+      allowApiCRUD: Roles.deliveryAdmin,
     });
   }
 }

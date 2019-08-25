@@ -32,7 +32,6 @@ import { StressTestComponent } from './stress-test/stress-test.component';
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
-import { StamTestComponent } from './stam-test/stam-test.component';
 import { AnyAdminGuard, DeliveryAdminGuard, WeeklyFamilyAdminGuard, WeeklyFamilyPackerGuard, WeeklyFamilyVolunteerGuard } from './auth/roles';
 import { SignedInGuard } from 'radweb';
 import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-dialog.component';
@@ -50,7 +49,7 @@ const routes: Routes = [
   HelpersComponent.route,
   DeliveryHistoryComponent.route,
   BatchOperationsComponent.route,
-  { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'קליטה מאקסל' } },
+  { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [DeliveryAdminGuard], data: { name: 'קליטה מאקסל' } },
   ManageComponent.route,
 
   MyWeeklyFamiliesComponent.route,

@@ -604,7 +604,7 @@ export interface parseAddressResult {
 }
 export class GroupsColumn extends StringColumn {
   constructor(private context: Context) {
-    super({ caption: 'קבוצות', excludeFromApi: !context.isAdmin() });
+    super({ caption: 'קבוצות', includeInApi: Roles.deliveryAdmin });
   }
   getColumn(dialog: SelectServiceInterface) {
     return {
