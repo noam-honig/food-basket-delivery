@@ -44,8 +44,8 @@ export class HelpersComponent implements OnInit {
     },
     columnSettings: helpers => [
       helpers.name,
-      helpers.phone,
-      helpers.declineSms
+      helpers.phone
+      //helpers.declineSms
 
     ],
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes),

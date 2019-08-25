@@ -16,7 +16,7 @@ export class NewsUpdate extends Entity<string> implements FamilyUpdateInfo {
   courierAssingTime = new changeDate('מועד שיוך למשנע');
   courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
   deliverStatus = new DeliveryStatusColumn();
-  deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
+  deliveryStatusDate = new changeDate('מועד סטטוס משלוח');
   deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
   updateTime = new changeDate('מועד העדכון');
   updateUser = new HelperIdReadonly(this.context, 'מי עדכן');

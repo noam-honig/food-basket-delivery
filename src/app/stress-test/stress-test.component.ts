@@ -56,7 +56,7 @@ export class StressTestComponent implements OnInit {
     }
     let stats = await AsignFamilyComponent.getBasketStatus({
       filterCity: '',
-      filterLanguage: -1,
+      filterGroup: '',
       helperId
     });
 
@@ -65,7 +65,7 @@ export class StressTestComponent implements OnInit {
       let addBox = await AsignFamilyComponent.AddBox({
         basketType: "",
         city: "",
-        language: -1,
+        group: '',
         numOfBaskets: 1,
         preferRepeatFamilies: true,
         name,

@@ -23,7 +23,7 @@ export class FamilyDeliveryEventsView extends Entity<string>  {
   courier = new HelperId(this.context, "משנע");
   courierAssingTime = new changeDate('מועד שיוך למשנע');
   deliverStatus = new DeliveryStatusColumn();
-  deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
+  deliveryStatusDate = new changeDate('מועד סטטוס משלוח');
   courierComments = new StringColumn('הערות מסירה');
   constructor(private context: Context) {
     super( {

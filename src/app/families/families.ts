@@ -1,7 +1,7 @@
 import { DeliveryStatus, DeliveryStatusColumn } from "./DeliveryStatus";
 import { CallStatusColumn } from "./CallStatus";
 import { YesNoColumn } from "./YesNo";
-import { LanguageColumn, Language } from "./Language";
+
 import { FamilySourceId } from "./FamilySources";
 import { BasketId, BasketType } from "./BasketType";
 import { changeDate, DateTimeColumn, SqlBuilder, PhoneColumn, delayWhileTyping } from "../model-shared/types";
@@ -13,6 +13,7 @@ import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { FamilyDeliveries } from "./FamilyDeliveries";
 import * as fetch from 'node-fetch';
 import { Roles } from "../auth/roles";
+import { SelectServiceInterface } from "../select-popup/select-service-interface";
 
 
 @EntityClass
@@ -66,6 +67,7 @@ export class Families extends IdEntity<FamilyId>  {
 
               fd.archive_floor.value = this.floor.originalValue;
               fd.archive_appartment.value = this.appartment.originalValue;
+              fd.archive_entrance.value = this.entrance.originalValue;
               fd.archive_postalCode.value = this.postalCode.originalValue;
               fd.archive_city.value = this.city.originalValue;
               fd.archive_addressComment.value = this.addressComment.originalValue;
@@ -143,10 +145,9 @@ export class Families extends IdEntity<FamilyId>  {
     caption: 'מספר זהות', includeInApi: Roles.deliveryAdmin, valueChange: () => this.delayCheckDuplicateFamilies()
   });
   familyMembers = new NumberColumn({ includeInApi: Roles.deliveryAdmin, caption: 'מספר נפשות' });
-  language = new LanguageColumn();
   basketType = new BasketId(this.context, 'סוג סל');
   familySource = new FamilySourceId(this.context, { includeInApi: Roles.deliveryAdmin, caption: 'גורם מפנה' });
-  groups = new StringColumn('קבוצות');
+  groups = new GroupsColumn(this.context);
   special = new YesNoColumn({ includeInApi: Roles.deliveryAdmin, caption: 'שיוך מיוחד' });
   defaultSelfPickup = new BoolColumn('ברירת מחדל באים לקחת');
   iDinExcel = new StringColumn({ includeInApi: Roles.deliveryAdmin, caption: 'מזהה באקסל' });
@@ -156,6 +157,7 @@ export class Families extends IdEntity<FamilyId>  {
   address = new StringColumn("כתובת");
   floor = new StringColumn('קומה');
   appartment = new StringColumn('דירה');
+  entrance = new StringColumn('כניסה');
   city = new StringColumn({ caption: "עיר (מתעדכן אוטומטית)" });
   addressComment = new StringColumn('הערת כתובת');
   postalCode = new NumberColumn('מיקוד');
@@ -178,7 +180,7 @@ export class Families extends IdEntity<FamilyId>  {
   correntAnErrorInStatus = new BoolColumn({ virtualData: () => false });
   courier = new HelperId(this.context, "משנע באירוע");
   courierComments = new StringColumn('הערות שכתב המשנע כשמסר');
-  deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
+  deliveryStatusDate = new changeDate('מועד סטטוס משלוח');
   fixedCourier = new HelperId(this.context, "משנע קבוע");
   courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
 
@@ -264,14 +266,14 @@ export class Families extends IdEntity<FamilyId>  {
   });
   routeOrder = new NumberColumn();
   previousDeliveryStatus = new DeliveryStatusColumn({
-    caption: 'סטטוס שינוע קודם',
+    caption: 'סטטוס משלוח קודם',
     dbReadOnly: true,
     dbName: () => {
       return this.dbNameFromLastDelivery(fde => fde.deliverStatus, "prevStatus");
     }
   });
   previousDeliveryComment = new StringColumn({
-    caption: 'הערת שינוע קודם',
+    caption: 'הערת משלוח קודם',
     dbReadOnly: true,
     dbName: () => {
       return this.dbNameFromLastDelivery(fde => fde.courierComments, "prevComment");
@@ -298,11 +300,11 @@ export class Families extends IdEntity<FamilyId>  {
   addressLatitude = new NumberColumn({ decimalDigits: 8 });
   addressOk = new BoolColumn({ caption: 'כתובת תקינה' });
 
-  readyFilter(city?: string, language?: number) {
+  readyFilter(city?: string, group?: string) {
     let where = this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
       this.courier.isEqualTo('')).and(this.blockedBasket.isEqualTo(false));
-    if (language > -1)
-      where = where.and(this.language.isEqualTo(this.language.byId(language)));
+    if (group)
+      where = where.and(this.groups.isContains(group));
     if (city) {
       where = where.and(this.city.isEqualTo(city));
     }
@@ -328,7 +330,7 @@ export class Families extends IdEntity<FamilyId>  {
   }
   getPreviousDeliveryColumn() {
     return {
-      caption: 'שינוע קודם',
+      caption: 'סיכום משלוח קודם',
       readonly: true,
       column: this.previousDeliveryStatus,
       dropDown: {
@@ -430,7 +432,7 @@ export class Families extends IdEntity<FamilyId>  {
             let duration = '';
             if (n.courierAssingTime.value && n.deliveryStatusDate.value)
               duration = ' תוך ' + Math.round((n.deliveryStatusDate.value.valueOf() - n.courierAssingTime.value.valueOf()) / 60000) + " דק'";
-            return n.deliverStatus.displayValue + (n.courierComments.value ? ", " + n.courierComments.value + " - " : '') + ' למשפחת ' + n.name.value + ' על ידי ' + courierName + duration + "!";
+            return n.deliverStatus.displayValue + (n.courierComments.value ? ", " + n.courierComments.value + " - " : '') + ' למשפחת ' + n.name.value + ' על ידי ' + courierName + duration + "!!";
         }
         return 'משפחת ' + n.name.value + ' עודכנה ל' + n.deliverStatus.displayValue;
       case 2:
@@ -599,4 +601,19 @@ export interface parseAddressResult {
   dira?: string;
   floor?: string;
   knisa?: string;
+}
+export class GroupsColumn extends StringColumn {
+  constructor(private context: Context) {
+    super({ caption: 'קבוצות', excludeFromApi: !context.isAdmin() });
+  }
+  getColumn(dialog: SelectServiceInterface) {
+    return {
+      column: this,
+      click: f => {
+        let col = f ? f.__getColumn(this) : this;
+        dialog.updateGroup(col.value, x => col.value = x);
+      },
+      width:'300'
+    };
+  }
 }

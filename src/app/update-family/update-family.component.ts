@@ -31,19 +31,14 @@ export class UpdateFamilyComponent implements OnInit {
         families.basketType.getColumn(),
         families.deliverStatus.getColumn(),
         families.defaultSelfPickup,
-        families.special.getColumn(),
+        families.groups.getColumn(this.selectService),
         families.internalComment,
         families.deliveryComments,
-        families.familySource.getColumn(),
-        families.groups,
-        families.tz,
         families.familyMembers,
-        {
-          column: families.language,
-          dropDown: {
-            items: families.language.getOptions()
-          }
-        },
+        families.familySource.getColumn(),
+        families.tz,
+        families.special.getColumn(),
+        
         families.iDinExcel,
         families.createUser,
         families.createDate
@@ -58,6 +53,7 @@ export class UpdateFamilyComponent implements OnInit {
         families.address,
         families.floor,
         families.appartment,
+        families.entrance,
         families.addressComment,
         families.addressByGoogle(),
         families.city,

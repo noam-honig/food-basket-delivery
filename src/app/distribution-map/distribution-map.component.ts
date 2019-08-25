@@ -163,7 +163,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.updateChart();
   }
   @RunOnServer({ allowed: Roles.deliveryAdmin })
-  static async GetFamiliesLocations(onlyPotentialAsignment?: boolean, context?: Context, directSql?: DirectSQL) {
+  static async GetFamiliesLocations(onlyPotentialAsignment?:boolean,city?: string, group?: string,context?: Context, directSql?: DirectSQL) {
     let f = new Families(context);
 
     let sql = new SqlBuilder();
@@ -173,8 +173,9 @@ export class DistributionMap implements OnInit, OnDestroy {
       from: f,
       where: () => {
         let where = [f.deliverStatus.isActiveDelivery().and(f.blockedBasket.isEqualTo(false))];
-        if (onlyPotentialAsignment) {
-          where.push(f.readyFilter().and(f.special.isEqualTo(YesNo.No)));
+        if (onlyPotentialAsignment)
+        {
+          where.push(f.readyFilter(city,group).and(f.special.isEqualTo(YesNo.No)));
         }
         return where;
       },

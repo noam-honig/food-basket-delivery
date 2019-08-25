@@ -1,0 +1,89 @@
+<mat-card>
+    <mat-accordion>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title> להסברים לחץ כאן</mat-panel-title>
+            </mat-expansion-panel-header>
+            קליטה מאקסל הינה קליטה אוטומטית של משפחות מקובץ אקסל.
+            <br>
+            אלו השלבים המומלצים כאשר מבצעים קליטה מאקסל:
+            <ol>
+                <li>בוחרים את קובץ האקסל אותו רוצים לקלוט על ידי לחיצה על הכפתור "choose file"</li>
+                <li>בחירת העמודות - בשלב הזה מוצגות השורות והעמודות בקובץ האקסל, ועבור כל עמודה באקסל יש לבחור לאיזו
+                    עמודה במערכת יש לקלוט אותה</li>
+                <li>אם מעוניינים לעדכן עמודות נוספות אשר אינו מופיעות באקסל, ניתן לעשות זאת באיזור הנקרא "עמודות שלא
+                    מופיעות באקסל", יש להוסיף שורה חדשה - לבחור את העמודה ולהגדיר את הערך הרלוונטי</li>
+                <li>ניתן לדפדף בין השורות בעזרת כפתורי החיצים <mat-icon>navigate_next</mat-icon>
+                    <mat-icon>navigate_before</mat-icon>
+                </li>
+                <li>לחיצה על הכפתור <mat-icon>search</mat-icon> - תציג את פרטי המשפחה כפי שיקלטו על ידי המערכת</li>
+                <li>ניתן לשמור את ההגדרות ולטעון אותן שוב מאוחר יותר על ידי הכפתורים "טען הגדרות" ו"שמור הגדרות"</li>
+                <li>סימולצית קליטה - לחיצה על כפתור זה תריץ סימולציה של קליטה ותייצר קובץ אקסל שבו לצד הנתונים המקוריים
+                    - תוצג עמודה של "הערות קליטה" אשר תפרט הערות עבור כל שורה - למשל אם משפחה לא תקלט מכיוון שקיימת
+                    משפחה דומה - זה יוצג בעמודה זו.<br>יש לציין שלא תתבצע קליטה בפועל</li>
+                <li>קלוט את המשפחות - לחיצה על כפתור זה תבצע את הליך הקליטה עצמו ותייצר דוח קליטה כקובץ אקסל בדומה
+                    לסימולציה רק עם הנתונים הסופיים</li>
+            </ol>
+        </mat-expansion-panel>
+
+    </mat-accordion>
+    <h3> בחר קובץ אקסל</h3> <input type="file" (change)="fileChange($event)" />
+    <ng-container *ngIf="filename">
+
+        <button (click)="loadSettings()" mat-raised-button>טען הגדרות</button>
+        <button (click)="saveSettings()" mat-raised-button>שמור הגדרות</button>
+        <button (click)="testImport()" mat-raised-button>סימולצית קליטה</button>
+        <button (click)="doImport()" mat-raised-button>קלוט את המשפחות</button>
+        <h3>עמודות שלא מופיעות באקסל</h3>
+
+        <ul>
+            <li *ngFor="let ac of additionalColumns; let i = index">
+                <select [(ngModel)]="ac.column">
+                    <option value="">לא לקלוט</option>
+                    <option *ngFor="let c of columns" [ngValue]="c">{{c.name}}</option>
+                </select>
+                <input [(ngModel)]="ac.value">
+                <button (click)="additionalColumns.splice(i,1)">הסר</button>
+            </li>
+        </ul>
+        <button (click)="additionalColumns.push({})" mat-raised-button>
+            הוסף עמודה
+        </button>
+        <h3>בחירת עמודות מאקסל</h3>
+        <button (click)="page=page-1" [disabled]="page==0" mat-icon-button>
+            <mat-icon>navigate_next</mat-icon>
+        </button>
+        <button (click)="page=page+1" [disabled]="getViewRow(10)>=totalRows" mat-icon-button>
+            <mat-icon>navigate_before</mat-icon>
+        </button>
+
+        <div class="table-div">
+            <table class="table table-bordered">
+                <tr>
+                    <th>#</th>
+                    <th>הצג</th>
+                    <th *ngFor="let ec of excelColumns">
+                        {{ec.title}}
+                        <br>
+                        <select [(ngModel)]="ec.column">
+                            <option value="">לא לקלוט</option>
+                            <option *ngFor="let c of columns" [ngValue]="c">{{c.name}}</option>
+                        </select>
+                    </th>
+                </tr>
+                <ng-container *ngFor="let r of rows">
+                    <tr *ngIf="getViewRow(r)>1&&getViewRow(r)<=totalRows">
+                        <td>{{getViewRow(r)}}
+                        </td>
+                        <td><button mat-icon-button (click)="test(getViewRow(r))">
+                                <mat-icon>search</mat-icon>
+                            </button></td>
+                        <td *ngFor="let c of excelColumns">
+                            {{getTheData(c.excelColumn+getViewRow(r))}}
+                        </td>
+                    </tr>
+                </ng-container>
+            </table>
+        </div>
+    </ng-container>
+</mat-card>

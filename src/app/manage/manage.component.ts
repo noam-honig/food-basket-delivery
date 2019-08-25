@@ -57,6 +57,18 @@ export class ManageComponent implements OnInit {
     },
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
   });
+  groups = this.context.for(Groups).gridSettings({
+    columnSettings: s => [
+      s.name,
+    ], allowUpdate: true,
+    allowInsert: true,
+    allowDelete: true,
+    get: {
+      limit: 25,
+      orderBy: f => [f.name]
+    },
+    confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
+  });
   settings = this.context.for(ApplicationSettings).gridSettings({
     numOfColumnsInGrid: 0,
     allowUpdate: true,
@@ -106,4 +118,17 @@ export class ManageComponent implements OnInit {
     this.images.getRecords();
   }
 
+}
+@EntityClass
+export class Groups extends IdEntity<Id>  {
+
+  name = new StringColumn("קבוצה");
+
+  constructor(context: Context) {
+    super(new Id(), {
+      name: "groups",
+      allowApiRead: context.isAdmin(),
+      allowApiCRUD: context.isAdmin(),
+    });
+  }
 }

@@ -6,9 +6,10 @@ justify-content: space-between;order:-1;">
         {{familyLists.getLeftFamiliesDescription()}}
       </h4>
       <div
-      [class.not-visible]="!(familyLists.toDeliver.length>=1&&familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies())"
+        [class.not-visible]="!(familyLists.toDeliver.length>=1&&familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies())"
         class="no-print">
-        סה"כ זמן נסיעה מוערך <span *ngIf="familyLists.routeStats"> {{familyLists.routeStats.totalTime}} דקות, {{familyLists.routeStats.totalKm}} ק"מ</span>
+        סה"כ זמן נסיעה מוערך <span *ngIf="familyLists.routeStats"> {{familyLists.routeStats.totalTime}} דקות,
+          {{familyLists.routeStats.totalKm}} ק"מ</span>
       </div>
     </div>
     <div class="no-print">
@@ -101,6 +102,9 @@ justify-content: space-between;order:-1;">
           <ng-container *ngIf="f.appartment.value">
             דירה {{f.appartment.value}}
           </ng-container>
+          <ng-container *ngIf="f.entrance.value">
+            כניסה {{f.entrance.value}}
+          </ng-container>
           <ng-container *ngIf="f.addressComment.value">
             <br /> {{f.addressComment.value}}
           </ng-container>
@@ -149,7 +153,7 @@ justify-content: space-between;order:-1;">
     <mat-accordion>
       <mat-expansion-panel #myPanel *ngFor="let f of familyLists.problem">
         <mat-expansion-panel-header>
-            <app-family-in-list [f]="f" style="width:100%"></app-family-in-list>
+          <app-family-in-list [f]="f" style="width:100%"></app-family-in-list>
         </mat-expansion-panel-header>
         <ng-template matExpansionPanelContent>
           <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign"
@@ -170,7 +174,7 @@ justify-content: space-between;order:-1;">
     <mat-accordion>
       <mat-expansion-panel #myPanel *ngFor="let f of familyLists.delivered">
         <mat-expansion-panel-header>
-            <app-family-in-list [f]="f" style="width:100%"></app-family-in-list>
+          <app-family-in-list [f]="f" style="width:100%"></app-family-in-list>
         </mat-expansion-panel-header>
         <ng-template matExpansionPanelContent>
           <app-family-info [f]="f" [showHelp]="true" (assignmentCanceled)="cancelAssign(f)">
@@ -183,6 +187,7 @@ justify-content: space-between;order:-1;">
     </mat-accordion>
   </div>
   <app-map #map [class.hidden]="partOfReview||preview" [style.order]="familyLists.mapElementOrder"> </app-map>
-  
+
 </div>
-<button mat-raised-button *ngIf="!preview&&familyLists.toDeliver.length>0" (click)="showRouteOnGoogleMaps()" class="map-button">הצג מסלול ב - google maps</button>
+<button mat-raised-button *ngIf="!preview&&familyLists.toDeliver.length>0" (click)="showRouteOnGoogleMaps()"
+  class="map-button">הצג מסלול ב - google maps</button>

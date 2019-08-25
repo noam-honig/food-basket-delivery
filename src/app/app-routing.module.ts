@@ -15,6 +15,8 @@ import { DistributionMap } from './distribution-map/distribution-map.component';
 import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component';
 import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-up.component';
 import { NewsComponent } from './news/news.component';
+import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
+import { ImportFromExcelComponent } from './import-from-excel/import-from-excel.component';
 import { CustomReuseStrategy } from './custom-reuse-controller-router-strategy'
 
 
@@ -33,6 +35,7 @@ import { DeliveryHistoryComponent } from './delivery-history/delivery-history.co
 import { StamTestComponent } from './stam-test/stam-test.component';
 import { AnyAdminGuard, DeliveryAdminGuard, WeeklyFamilyAdminGuard, WeeklyFamilyPackerGuard, WeeklyFamilyVolunteerGuard } from './auth/roles';
 import { SignedInGuard } from 'radweb';
+import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-dialog.component';
 
 
 
@@ -47,6 +50,7 @@ const routes: Routes = [
   HelpersComponent.route,
   DeliveryHistoryComponent.route,
   BatchOperationsComponent.route,
+  { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'קליטה מאקסל' } },
   ManageComponent.route,
 
   MyWeeklyFamiliesComponent.route,
@@ -56,7 +60,7 @@ const routes: Routes = [
   ProductsComponent.route,
   LoginFromSmsComponent.route,
 
-  //{ path: 'stam-test', component: StressTestComponent },
+  //{ path: 'stam-test', component: UpdateGroupDialogComponent },
   MyFamiliesComponent.route,
   UpdateInfoComponent.route,
   LoginComponent.route,

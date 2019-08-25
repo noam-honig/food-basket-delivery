@@ -43,7 +43,8 @@ import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-
 import { HelperFamiliesComponent } from './helper-families/helper-families.component';
 import { SelectFamilyComponent } from './select-family/select-family.component';
 
-import { StamTestComponent } from './stam-test/stam-test.component';
+import { ImportFromExcelComponent } from './import-from-excel/import-from-excel.component';
+
 import { NewsComponent } from './news/news.component';
 import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
 
@@ -66,7 +67,8 @@ import { BatchOperationsComponent } from './batch-operations/batch-operations.co
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 import { PreviewFamilyComponent } from './preview-family/preview-family.component';
 import { FamilyInListComponent } from './family-in-list/family-in-list.component';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
+
+import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-dialog.component';
 
 
 
@@ -100,7 +102,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
     DeliveryFollowUpComponent,
     HelperFamiliesComponent,
     SelectFamilyComponent,
-    StamTestComponent,
+    ImportFromExcelComponent,
     NewsComponent,
     DeliveryEventsComponent,
     UpdateFamilyDialogComponent,
@@ -120,6 +122,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
     DeliveryHistoryComponent,
     PreviewFamilyComponent,
     FamilyInListComponent,
+    UpdateGroupDialogComponent,
     
   ],
   imports: [
@@ -148,6 +151,6 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
     YesNoQuestionComponent,
     InputAreaComponent,
     UpdateFamilyDialogComponent,PreviewFamilyComponent,
-    UpdateCommentComponent]
+    UpdateCommentComponent,UpdateGroupDialogComponent]
 })
 export class AppModule { }

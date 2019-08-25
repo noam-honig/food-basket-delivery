@@ -13,9 +13,9 @@ export class UserFamiliesList {
         this.map = map;
         this.map.userClickedOnFamilyOnMap = (f) => this.userClickedOnFamilyOnMap(f);
     }
-    startAssignByMap(){
-        this.map.loadPotentialAsigment();
-        this.mapElementOrder =-1;
+    startAssignByMap(city: string, group: string) {
+        this.map.loadPotentialAsigment(city, group);
+        this.mapElementOrder = -1;
     }
     mapElementOrder = 0;
     constructor(private context: Context) { }
@@ -27,7 +27,7 @@ export class UserFamiliesList {
     helperName: string;
     helperOptional: Helpers;
     routeStats: routeStats;
-    userClickedOnFamilyOnMap: (familyId: string) => void;
+    userClickedOnFamilyOnMap: (familyId: string[]) => void;
     async initForHelper(helperId: string, name: string, helperOptional?: Helpers) {
 
         this.helperOptional = helperOptional;

@@ -128,7 +128,14 @@ export class DateTimeColumn extends radweb.DateTimeColumn {
       r = 'שלשום';
     }
     else {
-      r = 'לפני ' + (Math.trunc(now.valueOf() / (86400 * 1000)) - Math.trunc(d.valueOf() / (86400 * 1000))) + ' ימים';
+      let days = (Math.trunc(now.valueOf() / (86400 * 1000)) - Math.trunc(d.valueOf() / (86400 * 1000)));
+      if (days <= 7)
+        r = 'לפני ' + days + ' ימים';
+      else
+      {
+        r = 'ב ' + d.toLocaleDateString("he-il");
+        return r;
+      }
     }
     let t = d.getMinutes().toString();
     if (t.length == 1)
