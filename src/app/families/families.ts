@@ -614,7 +614,8 @@ export class GroupsColumn extends StringColumn {
       click: f => {
         let col = f ? f.__getColumn(this) : this;
         dialog.updateGroup(col.value, x => col.value = x);
-      }
+      },
+      width:300
     };
   }
 }
