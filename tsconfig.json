@@ -16,14 +16,6 @@
     "lib": [
       "es2018",
       "dom"
-    ],
-    "paths": {
-      "radwe*": [
-        "../radweb/projects/radwe*"
-      ],
-      "*": [
-        "node_modules/*"
-      ]
-    }
+    ]
   }
 }

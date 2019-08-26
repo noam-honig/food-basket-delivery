@@ -1,25 +1,29 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "./dist-server/",
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
+    "module": "es2015",
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "target": "es5",
-    "module": "commonjs",
-    "skipLibCheck": true,
     "typeRoots": [
       "node_modules/@types"
     ],
     "lib": [
-      "es2017",
+      "es2018",
       "dom"
-    ]
-  },"files": [
-    "./src/app/server/server.ts",
-    "./src/app/server/doSomething.ts"
-  ]
+    ],
+    "paths": {
+      "radwe*": [
+        "../radweb/projects/radwe*"
+      ],
+      "*": [
+        "node_modules/*"
+      ]
+    }
+  }
 }
