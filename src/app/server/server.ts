@@ -67,7 +67,7 @@ serverInit().then(async (dataSource) => {
         const index = 'dist/index.html';
 
         if (fs.existsSync(index)) {
-            let x = (await ApplicationSettings.getAsync(new ServerContext())).organisationName.value;
+            let x = (await ApplicationSettings.getAsync(serverContext)).organisationName.value;
 
             res.send(fs.readFileSync(index).toString().replace('!TITLE!', x));
         }
