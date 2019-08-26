@@ -46,7 +46,7 @@ export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
   constructor(settingsOrCaption?: ColumnOptions<DeliveryStatus>) {
     super(DeliveryStatus, settingsOrCaption);
     if (!this.caption)
-      this.caption = 'סטטוס שינוע';
+      this.caption = 'סטטוס משלוח';
   }
   getColumn() {
     return {
