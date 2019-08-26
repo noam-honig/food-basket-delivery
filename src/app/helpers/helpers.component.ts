@@ -11,7 +11,7 @@ import { Context } from 'radweb';
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from 'radweb';
 import { DateColumn, DataAreaSettings } from 'radweb';
-import {  Roles, AdminGuard } from '../auth/roles';
+import { Roles, AdminGuard } from '../auth/roles';
 
 @Component({
   selector: 'app-helpers',
@@ -44,8 +44,11 @@ export class HelpersComponent implements OnInit {
     },
     columnSettings: helpers => [
       helpers.name,
-      helpers.phone
-      //helpers.declineSms
+      helpers.phone,
+      {
+        column: helpers.admin,
+        width: '100'
+      }
 
     ],
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes),
@@ -67,7 +70,7 @@ export class HelpersComponent implements OnInit {
     });
 
   }
-  
+
   @RunOnServer({ allowed: Roles.admin })
   static async resetPassword(helperId: string, context?: Context) {
 
