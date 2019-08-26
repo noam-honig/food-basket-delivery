@@ -52,7 +52,22 @@ justify-content: space-between;order:-1;">
   </mat-accordion>
   <div class="sendSmsButtonLine no-print">
     <button *ngIf="partOfAssign&&!partOfReview&&familyLists.toDeliver.length" mat-raised-button color="primary"
-      class="myButton" (click)="sendSms(false)">שלחי הודעת SMS עם קישור</button>
+      style="border-top-left-radius: 0px;border-bottom-left-radius:0px;" (click)="sendSms(false)">שלח הודעת SMS עם
+      קישור</button>
+    <button *ngIf="partOfAssign&&!partOfReview&&familyLists.toDeliver.length" [matMenuTriggerFor]="appMenuSms"
+      mat-raised-button color="primary" style="border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      padding-left: 0;
+      padding-right: 0;
+      min-width: 38px;" (click)="prepareMessage()">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #appMenuSms="matMenu">
+      <button mat-menu-item (click)="sendWhatsapp()">שלח קישור ב whatsapp</button>
+      <button mat-menu-item (click)="copyMessage()">העתק הודעה עם קישור</button>
+      <button mat-menu-item (click)="sendPhoneSms()">שלח קישור בSMS מהטלפון</button>
+
+    </mat-menu>
 
   </div>
   <button *ngIf="partOfReview" mat-raised-button class="myButton no-print" color="primary" (click)="sendSms(true)">

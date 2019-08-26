@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { BusyService } from 'radweb';
+import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';
 import { Families } from '../families/families';
@@ -136,6 +137,32 @@ export class HelperFamiliesComponent implements OnInit {
     if (reminder)
       this.familyLists.helperOptional.reminderSmsDate.value = new Date();
   }
+  async sendWhatsapp() {
+    let phone = this.smsPhone;
+    if (phone.startsWith('0')) {
+      phone = '972' + phone.substr(1);
+    }
+    window.open('https://wa.me/' + phone + '?text=' + encodeURI(this.smsMessage), '_blank');
+  }
+  smsMessage: string = '';
+  smsPhone: string = '';
+  prepareMessage() {
+    SendSmsAction.generateMessage(this.context, this.familyLists.helperId, window.origin, false, this.context.user.name, (phone, message, sender) => {
+      this.smsMessage = message;
+      this.smsPhone = phone;
+    });
+  }
+  async sendPhoneSms() {
+    try {
+      window.open('sms:' + this.smsPhone + ';?&body=' + encodeURI(this.smsMessage), '_blank');
+    } catch (err) {
+      this.dialog.Error(err);
+    }
+  }
+  async copyMessage() {
+    copy(this.smsMessage);
+    this.dialog.Info("הודעה הועתקה");
+  }
 
   updateComment(f: Families) {
     this.selectService.displayComment({
@@ -152,15 +179,15 @@ export class HelperFamiliesComponent implements OnInit {
       cancel: () => { }
     });
   }
-   showRouteOnGoogleMaps(){
-    
-    let s=  ApplicationSettings.get(this.context);
-    let url = 'https://www.google.com/maps/dir/'+encodeURI(s.getGeocodeInformation().getAddress());
+  showRouteOnGoogleMaps() {
+
+    let s = ApplicationSettings.get(this.context);
+    let url = 'https://www.google.com/maps/dir/' + encodeURI(s.getGeocodeInformation().getAddress());
 
     for (const f of this.familyLists.toDeliver) {
-      url+='/'+encodeURI( f.getGeocodeInformation().getAddress());
+      url += '/' + encodeURI(f.getGeocodeInformation().getAddress());
     }
-    window.open(url+"?hl=iw", '_blank');
+    window.open(url + "?hl=iw", '_blank');
     //window.open(url,'_blank');
   }
   async returnToDeliver(f: Families) {

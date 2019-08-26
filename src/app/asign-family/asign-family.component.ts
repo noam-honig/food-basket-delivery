@@ -25,6 +25,7 @@ import { SqlBuilder } from '../model-shared/types';
 import { BusyService } from 'radweb';
 import { Roles, AdminGuard } from '../auth/roles';
 import { Groups } from '../manage/manage.component';
+import { SendSmsAction } from './send-sms-action';
 
 
 @Component({
@@ -40,7 +41,7 @@ export class AsignFamilyComponent implements OnInit {
     }
   };
   assignOnMap() {
-    this.familyLists.startAssignByMap(this.filterCity,this.filterGroup);
+    this.familyLists.startAssignByMap(this.filterCity, this.filterGroup);
   }
   async searchPhone() {
     this.name = undefined;
@@ -113,6 +114,7 @@ export class AsignFamilyComponent implements OnInit {
     this.phone = '';
     this.name = '';
   }
+
 
 
   async refreshBaskets() {
