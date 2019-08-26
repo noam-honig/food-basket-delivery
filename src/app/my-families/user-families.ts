@@ -27,7 +27,7 @@ export class UserFamiliesList {
     helperName: string;
     helperOptional: Helpers;
     routeStats: routeStats;
-    userClickedOnFamilyOnMap: (familyId: string[]) => void;
+    userClickedOnFamilyOnMap: (familyId: string[]) => void=x=>{};
     async initForHelper(helperId: string, name: string, helperOptional?: Helpers) {
 
         this.helperOptional = helperOptional;

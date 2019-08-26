@@ -37,7 +37,8 @@ export class AuthService {
                 valid: true,
                 authToken: Helpers.helper.createSecuredTokenBasedOn({
                     id: h.id.value,
-                    name: h.name.value
+                    name: h.name.value,
+                    roles:[]
                 } as UserInfo),
                 requirePassword: false
             } as LoginResponse
