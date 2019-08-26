@@ -24,10 +24,11 @@ serverInit().then(async (dataSource) => {
     }
     let eb = new ExpressBridge(app, dataSource, process.env.DISABLE_HTTPS == "true");
     Helpers.helper = new JWTCookieAuthorizationHelper(eb, process.env.TOKEN_SIGN_KEY);
-
+    let serverContext = new ServerContext();
+    serverContext.setDataProvider(dataSource);
     app.use('/assets/apple-touch-icon.png', async (req, res) => {
 
-        let imageBase = (await ApplicationImages.ApplicationImages.getAsync(new ServerContext())).base64PhoneHomeImage.value;
+        let imageBase = (await ApplicationImages.ApplicationImages.getAsync(serverContext)).base64PhoneHomeImage.value;
         res.contentType('png');
         if (imageBase) {
             try {
@@ -46,7 +47,7 @@ serverInit().then(async (dataSource) => {
     });
     app.use('/favicon.ico', async (req, res) => {
         res.contentType('ico');
-        let imageBase = (await ApplicationImages.ApplicationImages.getAsync(new ServerContext())).base64Icon.value;
+        let imageBase = (await ApplicationImages.ApplicationImages.getAsync(serverContext)).base64Icon.value;
         if (imageBase) {
             try {
                 res.send(Buffer.from(imageBase, 'base64'));
