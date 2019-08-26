@@ -20,7 +20,7 @@
     "publish-to-cbdh": "git push cbdh master -f",
     "publish-to-cbhr": "git push cbhr master -f",
     "publish-to-cbey": "git push cbey master -f",
-    "publish-to-merkaz-mazon": "git push mmaz master -f",
+    "publish-to-merkaz-mazon": "git push mmaz radweb-refactoring:master -f",
     "publish-to-m-h": "git push m-h master -f",
     "copy-db": "heroku pg:copy hugmoms::DATABASE_URL hugmoms2::DATABASE_URL -a hugmoms2",
     "test": "ng test",
