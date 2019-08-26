@@ -1,4 +1,4 @@
-import {  PhoneColumn, changeDate, SqlBuilder } from "../model-shared/types";
+import { PhoneColumn, changeDate, SqlBuilder } from "../model-shared/types";
 import { EntityClass, Context, IdColumn, IdEntity, StringColumn, NumberColumn } from "radweb";
 import { BasketId } from "./BasketType";
 import { FamilyId, Families } from "./families";
@@ -47,7 +47,11 @@ export class FamilyDeliveries extends IdEntity<IdColumn>  {
         });
     }
     getShortDescription() {
-        let r = this.deliverStatus.displayValue + " " + this.deliveryStatusDate.relativeDateName();
+        let r = this.deliverStatus.displayValue + " ";
+        if (this.deliveryStatusDate.value.valueOf() < new Date().valueOf() - 7 * 86400 * 1000)
+            r += "ב " + this.deliveryStatusDate.value.toLocaleDateString("he-il");
+        else
+            r += this.deliveryStatusDate.relativeDateName();
         if (this.courierComments.value) {
             r += ": " + this.courierComments.value;
         }
