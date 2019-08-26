@@ -134,6 +134,18 @@
             "type": "npm",
             "script": "publish-to-cbey",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "build:stats",
+            "problemMatcher": [
+                "$tsc"
+            ]
+        },
+        {
+            "type": "npm",
+            "script": "bundle-report",
+            "problemMatcher": []
         }
     ]
 }

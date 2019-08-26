@@ -19,7 +19,7 @@ import { FilterBase } from 'radweb';
 import { BusyService } from 'radweb';
 import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
-import { MatTabGroup, MatDialog, MatDialogConfig } from '@angular/material';
+import {  MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
 import { HasAsyncGetTheValue, DateTimeColumn } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
@@ -33,6 +33,7 @@ import { PortalHostDirective } from '@angular/cdk/portal';
 import { saveToExcel } from '../shared/saveToExcel';
 import { PreviewFamilyComponent, PreviewFamilyInfo } from '../preview-family/preview-family.component';
 import { Roles, AdminGuard } from '../auth/roles';
+import { MatTabGroup } from '@angular/material/tabs';
 
 @Component({
     selector: 'app-families',

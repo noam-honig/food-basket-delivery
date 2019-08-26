@@ -11,7 +11,7 @@
     "ng-build": "ng build --prod",
     "server:build": "tsc -p tsconfig.server.json",
     "server:build-watch": "tsc -p tsconfig.server.json --watch",
-    "publish-to-heroku-test": "git push heroku master -f",
+    "publish-to-heroku-test": "git push heroku radweb-refactoring:master  -f",
     "publish-to-nrun": "git push nrun master -f",
     "publish-to-plev": "git push plev master -f",
     "publish-to-salmichal": "git push salmichal master -f",
@@ -31,6 +31,7 @@
     "RunSomething": "node --inspect --debug-brk dist-server/src/app/server/doSomething.js",
     "server-watch": "ts-node-dev --respawn --project tsconfig.server.json  src/app/server/server.ts",
     "server-build-and-run": "npm run server:build && npm run server:execute",
+    "build:stats": "ng build  --stats-json",
     "bundle-report": "webpack-bundle-analyzer dist/stats.json"
   },
   "private": true,

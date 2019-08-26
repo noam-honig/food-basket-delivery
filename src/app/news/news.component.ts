@@ -94,6 +94,9 @@ export class NewsComponent implements OnInit, OnDestroy {
     }
     return n.deliverStatus.displayValue;
   }
+  async test(){
+    let x = await import('./test'); 
+  }
 
 
 }

@@ -6,7 +6,7 @@ import { GetGeoInformation } from "../shared/googleApiHelpers";
 import { foreachEntityItem, foreachSync } from "../shared/utils";
 
 import { serverInit } from "./serverInit";
-import * as XLSX from 'xlsx';
+
 
 import { Families, parseAddress } from "../families/families";
 import { ServerContext } from "radweb";
@@ -52,100 +52,8 @@ async function getGeolocationInfo() {
 
     });
 }
-async function ImportFromExcel() {
-
-    let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\מקבלי מזון.xls");
-    let report = [];
 
 
-    for (let sheetIndex = 0; sheetIndex < 1; sheetIndex++) {
-        const element = wb.SheetNames[sheetIndex];
-        let s = wb.Sheets[element];
-        let o = XLSX.utils.sheet_to_json(s);
-        let context = new ServerContext();
-        let found = true;
-        let i = 0;
-        await foreachSync(o, async r => {
-            try {
-
-                let get = x => {
-                    if (!r[x])
-                        return '';
-                    return r[x];
-                };
-                await readMerkazMazonFamily2(context, r, get, '5_20_2019 ' + element, (name, column, value, oldValue) => {
-                    report.push({ name, column, value, oldValue });
-                });
-
-            }
-            catch (err) {
-                console.error(err, r);
-            }
-
-        });
-        console.log('match ', match);
-    }
-    let reportExcel = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(reportExcel, XLSX.utils.json_to_sheet(report));
-    XLSX.writeFile(reportExcel, "c:/temp/report.xlsx");
-
-
-
-
-}
-async function ImportFromExcelBasedOnLetters() {
-
-    let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\רשימה לנועם.xlsx");
-    let context = new ServerContext();
-    for (let sheetIndex = 0; sheetIndex < 1; sheetIndex++) {
-        const element: string = wb.SheetNames[sheetIndex];
-        let s = wb.Sheets[element];
-        let sRef = s["!ref"];
-        let rows = +sRef.substring(sRef.indexOf(':') + 2, 10).replace(/\D/g, '');
-        if (!rows) {
-            debugger;
-        }
-
-        for (let row = 1; row < rows; row++) {
-            let get = x => {
-                let val = s[x + row];
-                if (!val)
-                    return '';
-                return val.w;
-            };
-
-            await ReadHMEYFamilies(context, element, row, get);
-
-
-        }
-
-        let o = XLSX.utils.sheet_to_json(s);
-
-
-        let found = true;
-        let i = 0;
-        await foreachSync(o, async r => {
-            try {
-
-                let get = x => {
-                    let result = r[x];
-                    if (!result)
-                        return '';
-                    if (isString(result))
-                        result = result.trim();
-                    return result;
-                };
-                // await ReadNRUNFamilies(context, r, element, ++i, get);
-            }
-            catch (err) {
-                console.error(err, r);
-            }
-
-        });
-    }
-
-
-}
 async function readHelperFromExcel(context: ServerContext, o: any, get: (key: string) => string) {
 
     let h = context.for(Helpers).create();

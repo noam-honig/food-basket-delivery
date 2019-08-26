@@ -1,5 +1,5 @@
 import { DeliveryStatusColumn } from "../families/DeliveryStatus";
-import { changeDate,  SqlBuilder } from "../model-shared/types";
+import { changeDate, SqlBuilder } from "../model-shared/types";
 import { NumberColumn, StringColumn } from "radweb";
 import { HelperIdReadonly, HelperId } from "../helpers/helpers";
 import { Families, FamilyUpdateInfo } from "../families/families";
@@ -32,26 +32,27 @@ export class NewsUpdate extends Entity<string> implements FamilyUpdateInfo {
         var sql = new SqlBuilder();
         let cols = [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser, f.courierComments];
         return sql.entityDbNameUnion({
-          select: () => [...cols, 
-            sql.columnWithAlias(f.deliveryStatusDate, this.updateTime), 
-            sql.columnWithAlias(f.deliveryStatusUser, this.updateUser), 
-            sql.columnWithAlias(1, this.updateType)],
+          select: () => [...cols,
+          sql.columnWithAlias(f.deliveryStatusDate, this.updateTime),
+          sql.columnWithAlias(f.deliveryStatusUser, this.updateUser),
+          sql.columnWithAlias(1, this.updateType)],
           from: f,
-          where:()=>[sql.notNull(f.deliveryStatusDate)]
-        },{
-          select: () => [...cols, 
+          where: () => [sql.notNull(f.deliveryStatusDate)]
+        }, {
+            select: () => [...cols,
             sql.columnWithAlias(f.courierAssingTime, this.updateTime),
-            sql.columnWithAlias(f.courierAssignUser, this.updateUser), 
-             sql.columnWithAlias(2, this.updateType)],
-          from: f,
-          where:()=>[sql.notNull(f.courierAssingTime)]
-        })
-        
+            sql.columnWithAlias(f.courierAssignUser, this.updateUser),
+            sql.columnWithAlias(2, this.updateType)],
+            from: f,
+            where: () => [sql.notNull(f.courierAssingTime)]
+          })
+
       }
     });
   }
   describe() {
     return Families.GetUpdateMessage(this, this.updateType.value, this.courier.getValue());
   }
+
 
 }

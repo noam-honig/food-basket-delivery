@@ -3,7 +3,7 @@ import { GridSettings, Column, Entity } from 'radweb';
 import { Context } from 'radweb';
 import { Helpers } from '../helpers/helpers';
 import { myThrottle, HasAsyncGetTheValue } from '../model-shared/types';
-import * as XLSX from 'xlsx';
+
 import { Families, parseAddress } from '../families/families';
 import { async } from 'q';
 import { BasketType } from '../families/BasketType';
@@ -21,11 +21,14 @@ export class ImportFromExcelComponent implements OnInit {
 
 
 
-    constructor(private context: Context, private dialog: DialogService, private busy: BusyService, private select: SelectService) { }
+    constructor(private context: Context, private dialog: DialogService, private busy: BusyService, private select: SelectService) {
+
+    }
+
     cell: string;
 
-    oFile: XLSX.WorkBook;
-    worksheet: XLSX.WorkSheet;
+    oFile: import('xlsx').WorkBook;
+    worksheet: import('xlsx').WorkSheet;
 
     excelColumns: excelColumn[] = [];
     additionalColumns: additionalColumns[] = [];
@@ -47,13 +50,13 @@ export class ImportFromExcelComponent implements OnInit {
     totalRows: number;
     filename: string;
     commentExcelColumn: string;
-    fileChange(eventArgs: any) {
+    async fileChange(eventArgs: any) {
 
         var files = eventArgs.target.files, file;
         if (!files || files.length == 0) return;
         file = files[0];
         var fileReader = new FileReader();
-        fileReader.onload = (e: any) => {
+        fileReader.onload = async (e: any) => {
             this.filename = file.name;
             // pre-process data
             var binary = "";
@@ -63,7 +66,7 @@ export class ImportFromExcelComponent implements OnInit {
                 binary += String.fromCharCode(bytes[i]);
             }
             // call 'xlsx' to read the file
-            this.oFile = XLSX.read(binary, { type: 'binary', cellDates: true, cellStyles: true });
+            this.oFile = (await import('xlsx')).read(binary, { type: 'binary', cellDates: true, cellStyles: true });
             this.worksheet = this.oFile.Sheets[this.oFile.SheetNames[0]];
             let sRef = this.worksheet["!ref"];
             let to = sRef.substr(sRef.indexOf(':') + 1);
@@ -270,7 +273,7 @@ export class ImportFromExcelComponent implements OnInit {
                 if (r.floor)
                     updateCol(f.floor, r.floor);
                 if (r.knisa)
-                    updateCol(f.entrance,  r.knisa);
+                    updateCol(f.entrance, r.knisa);
             }
         });
         this.columns.push({
@@ -401,7 +404,7 @@ export class ImportFromExcelComponent implements OnInit {
                 }
             });
         }
-      
+
         this.columns.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0);
 
     }
@@ -429,7 +432,7 @@ export class ImportFromExcelComponent implements OnInit {
                 }
 
             }
-            XLSX.writeFile(this.oFile, "דוח " + (actualImport ? "" : "סימולצית ") + "קליטה - " + this.filename);
+            (await import('xlsx')).writeFile(this.oFile, "דוח " + (actualImport ? "" : "סימולצית ") + "קליטה - " + this.filename);
         });
         this.dialog.YesNoQuestion('יקלטו ' + i + ' משפחות מתוך ' + (this.totalRows - 1) + ' שורות');
     }
