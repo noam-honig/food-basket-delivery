@@ -88,7 +88,7 @@ export class ImportFromExcelComponent implements OnInit {
                     rowsToInsert.push(i);
 
 
-                    if (rowsToInsert.length == 50) {
+                    if (rowsToInsert.length == 35) {
                         await ImportFromExcelComponent.insertRows(rowsToInsert);
                         if (new Date().valueOf() - lastDate > 1000) {
                             this.dialog.Info(i.rowInExcel + ' ' + (i.name));
@@ -132,7 +132,7 @@ export class ImportFromExcelComponent implements OnInit {
                     else
                         allRows.push(i);
 
-                    if (rowsToUpdate.length == 50) {
+                    if (rowsToUpdate.length == 35) {
                         allRows.push(...await ImportFromExcelComponent.updateColsOnServer(rowsToUpdate, col.__getMemberName()));
                         if (new Date().valueOf() - lastDate > 1000) {
                             this.dialog.Info(i.rowInExcel + ' ' + (i.name));
