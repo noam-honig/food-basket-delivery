@@ -7,6 +7,7 @@ import { RadWebModule } from 'radweb';
 import { MaterialModule } from './shared/material.module';
 import { ChartsModule } from 'ng2-charts';
 import { FormsModule } from '@angular/forms';
+import {NgxPaginationModule} from 'ngx-pagination';
 import { HelpersComponent } from './helpers/helpers.component';
 import { SelectPopupComponent } from './select-popup/select-popup.component';
 import { DialogService } from './select-popup/dialog';
@@ -97,7 +98,7 @@ import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-d
   imports: [
     BrowserModule,
     FormsModule,
-
+    NgxPaginationModule,
     MaterialModule,
     BrowserAnimationsModule,
     RadWebModule,

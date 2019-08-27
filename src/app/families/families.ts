@@ -484,7 +484,7 @@ export class Families extends IdEntity<FamilyId>  {
 
   }
   @RunOnServer({ allowed: Roles.admin })
-  static async checkDuplicateFamilies(name: string, tz: string, phone1: string, phone2: string, id: string, context?: Context, directSQL?: DirectSQL) {
+  static async checkDuplicateFamilies(name: string, tz: string, phone1: string, phone2: string, id: string, exactName: boolean = false, context?: Context, directSQL?: DirectSQL) {
     let result: duplicateFamilyInfo[] = [];
 
     var sql = new SqlBuilder();
@@ -498,7 +498,10 @@ export class Families extends IdEntity<FamilyId>  {
     let phone2Col = sql.or(compareAsNumber(f.phone1, phone2), compareAsNumber(f.phone2, phone2));
     let nameCol = 'false';
     if (name && name.trim().length > 0)
-      nameCol = sql.build('trim(', f.name, ') like  ', sql.str('%' + name.trim() + '%'));
+      if (exactName)
+      nameCol = sql.build('trim(', f.name, ') =  ', sql.str( name.trim() ));
+    else
+        nameCol = sql.build('trim(', f.name, ') like  ', sql.str('%' + name.trim() + '%'));
 
 
     let sqlResult = await directSQL.execute(sql.query({
@@ -613,7 +616,7 @@ export class GroupsColumn extends StringColumn {
         let col = f ? f.__getColumn(this) : this;
         dialog.updateGroup(col.value, x => col.value = x);
       },
-      width:'300'
+      width: '300'
     };
   }
 }

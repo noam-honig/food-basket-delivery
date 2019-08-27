@@ -159,7 +159,7 @@ export class SqlBuilder {
   str(val: string): string {
     if (val == undefined)
       val = '';
-    return '\'' + val.replace('\'', '\'\'') + '\'';
+    return '\'' + val.replace(/'/g, '\'\'') + '\'';
   }
   private dict = new Map<Column<any>, string>();
 

@@ -4,9 +4,13 @@ th {
 .table-div {
   width: 100%;
   overflow: scroll;
+  max-height:500px;
 }
 .mat-icon-button {
   width:20px;
   height:20px;
   line-height:20px;
+}
+.newValue{
+  color:green;
 }

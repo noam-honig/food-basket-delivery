@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { GridSettings, Column, Entity } from 'radweb';
+import { GridSettings, Column, Entity, RunOnServer, DirectSQL } from 'radweb';
 import { Context } from 'radweb';
 import { Helpers } from '../helpers/helpers';
 import { myThrottle, HasAsyncGetTheValue } from '../model-shared/types';
 
-import { Families, parseAddress } from '../families/families';
+import { Families, parseAddress, duplicateFamilyInfo } from '../families/families';
 import { async } from 'q';
 import { BasketType } from '../families/BasketType';
 import { FamilySources } from '../families/FamilySources';
@@ -12,6 +12,8 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from 'radweb';
 import { SelectService } from '../select-popup/select-service';
+import { isUndefined } from 'util';
+import { Roles } from '../auth/roles';
 @Component({
     selector: 'app-stam-test',
     templateUrl: './import-from-excel.component.html',
@@ -47,9 +49,73 @@ export class ImportFromExcelComponent implements OnInit {
             return '';
         return val.w.trim();
     }
+    columnsInCompare: Column<any>[] = [];
+    updatedColumns = new Map<string, boolean>();
     totalRows: number;
     filename: string;
     commentExcelColumn: string;
+    rowInfo(row: number) {
+        let r = this.getViewRow(row);
+        return this.excelRowInfo.find(x => x.rowInExcel == r);
+    }
+    getColInfo(i: excelRowInfo, col: Column<any>) {
+        let r = i.values.find(x => x.key == col.__getMemberName());
+        if (!r) {
+            r = {
+
+                key: col.__getMemberName(),
+                newDisplayValue: '',
+                existingDisplayValue: '',
+                newValue: ''
+            };
+            //  i.values.push(r);
+        }
+        return r;
+    }
+    async updateAllCol(col: Column<any>) {
+        let count = this.getColUpdateCount(col);
+        this.dialog.YesNoQuestion("האם לעדכן את השדה " + col.caption + " ל" + count + " משפחות?", () => {
+            this.busy.doWhileShowingBusy(async () => {
+                let lastDate = new Date().valueOf();
+                for (const i of this.updateRows) {
+                    await this.updateCol(i, col);
+                    if (new Date().valueOf() - lastDate > 1000) {
+                        this.dialog.Info(i.rowInExcel + ' ' + (i.name));
+                    }
+                }
+            });
+        });
+    }
+    async updateCol(i: excelRowInfo, col: Column<any>) {
+        let c = this.getColInfo(i, col);
+        if (c.existingDisplayValue == c.newDisplayValue)
+            return;
+        let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(i.duplicateFamilyInfo[0].id));
+        let val = c.newValue;
+        if (val === null)
+            val = '';
+        f.__getColumn(col).value = val;
+        await f.save();
+        c.existingDisplayValue = await getColumnDisplayValue(f.__getColumn(col));
+        c.existingValue = f.__getColumn(col).value;
+    }
+    async clearColumnUpdate(i: excelRowInfo, col: Column<any>) {
+        let c = this.getColInfo(i, col);
+        c.newDisplayValue = c.existingDisplayValue;
+        c.newValue = c.existingValue;
+    }
+
+    getColUpdateCount(col: Column<any>) {
+        let i = 0;
+        let key = col.__getMemberName();
+        for (const r of this.updateRows) {
+            let c = r.values.find(x => x.key == key);
+            if (c && c.newDisplayValue != c.existingDisplayValue)
+                i++;
+        }
+        return i;
+    }
+    excelRowInfo: excelRowInfo[] = [];
     async fileChange(eventArgs: any) {
 
         var files = eventArgs.target.files, file;
@@ -103,10 +169,14 @@ export class ImportFromExcelComponent implements OnInit {
                 colName = String.fromCharCode(j);
                 if (colName > 'Z') {
                     colName = 'A';
-                    colPrefix = 'A';
+                    if (colPrefix == 'A')
+                        colPrefix = 'B';
+                    else
+                        colPrefix = 'A';
                 }
                 if (done) {
-                    this.commentExcelColumn = colName;
+                    this.commentExcelColumn = colPrefix + colName;
+                    this.excelRowInfo = [];
                     this.worksheet[this.commentExcelColumn + "1"] = {
                         w: 'הערות קליטה',
                         t: 's',
@@ -135,12 +205,21 @@ export class ImportFromExcelComponent implements OnInit {
                     case "ישוב":
                         searchName = this.f.address.caption;
                         break;
+                    case "מס נפשות":
+                        searchName = this.f.familyMembers.caption;
+                        break;
+                    case 'טלפון נייד':
+                        searchName = this.f.phone2.caption;
+                        break;
+
                     case "שם פרטי":
                     case "משפחה":
                     case "שם משפחה":
+                    case "איש קשר":
                         searchName = this.f.name.caption;
                         break;
                     case "ת.ז.":
+                    case 'ת"ז':
                         searchName = this.f.tz.caption;
                         break;
                 }
@@ -157,87 +236,131 @@ export class ImportFromExcelComponent implements OnInit {
         fileReader.readAsArrayBuffer(file);
     }
     async test(row: number) {
+        let x = this.excelRowInfo.findIndex(x => x.rowInExcel == row);
+        if (x >= 0) {
+            this.excelRowInfo.splice(x, 1);
+        }
         let f = await this.readLine(row, false, true);
 
 
     }
-    async readLine(row: number, actualImport = false, preview = false) {
+    async readLine(row: number, actualImport = false, preview = false): Promise<excelRowInfo> {
         let f = this.context.for(Families).create();
         f._disableAutoDuplicateCheck = true;
-        let importNotes = '';
+        let info: excelRowInfo = {
+            comment: '',
+            tz: undefined,
+            phone1: undefined,
+            phone2: undefined,
+            valid: true,
+            rowInExcel: row,
+            name: undefined,
+            values: []
+        };
+        this.excelRowInfo.push(info);
 
-        function addNote(c: string, what: string) {
-            if (importNotes)
-                importNotes += ', ';
-            importNotes += c + ': ' + what;
+        function addNote(c: Column<any>, what: string) {
+            if (info.comment)
+                info.comment += '\r\n';
+            info.comment += c + ': ' + what;
 
         }
-
+        let newVals = new Map<string, any>();
         for (const c of this.excelColumns) {
             if (c.column) {
                 let val = this.getTheData(c.excelColumn + row);
                 if (val && val.length > 0)
-                    await c.column.updateFamily(val, f, async x => {
-                        addNote(c.column.name, 'חדש');
+                    await c.column.updateFamily(val, f, async (col, val, x) => {
+                        newVals.set(col.__getMemberName(), val);
                         if (actualImport)
                             await x.save();
                     });
             }
         }
         for (const v of this.additionalColumns) {
-            await v.column.updateFamily(v.value, f, async x => {
-                addNote(v.column.name, 'חדש');
+            await v.column.updateFamily(v.value, f, async (col, val, x) => {
+                newVals.set(col.__getMemberName(), val);
                 if (actualImport)
                     await x.save();
             });
         }
-        let rel = {};
-        for (const c of f.__iterateColumns()) {
-            if (c.value) {
-                let v = c.displayValue;
-                let getv: HasAsyncGetTheValue = <any>c as HasAsyncGetTheValue;
-                if (getv && getv.getTheValue) {
-                    v = await getv.getTheValue();
+        if (f.phone1.displayValue == f.phone2.displayValue)
+            f.phone2.value = '';
+
+        if (!f.name.value) {
+
+            info.error = 'שורה ללא שם';
+        }
+        else {
+            info.name = f.name.value;
+            info.tz = f.tz.value;
+            info.phone1 = f.phone1.value;
+            info.phone2 = f.phone2.value;
+
+
+            for (const col of f.__iterateColumns()) {
+                if (col.value != undefined) {
+                    let newVal = await getColumnDisplayValue(col);
+                    let val: updateColumns = {
+                        key: col.__getMemberName(),
+
+                        newValue: col.value,
+                        newDisplayValue: newVal
+                    };
+                    let x = newVals.get(col.__getMemberName());
+                    if (x) {
+                        val.newDisplayValue = x;
+                        val.comment = 'ערך חדש';
+                    }
+
+                    this.updatedColumns.set(col.__getMemberName(), true);
+                    info.values.push(val);
+
                 }
-
-                rel[c.caption] = v;
-
             }
+
         }
-        if (f.name.value)
-            await f.checkDuplicateFamilies();
-        else if (!f.name.value) {
-            f.name.error = 'ערך חסר';
-        }
-        var error = false;
+
+
         for (const c of f.__iterateColumns()) {
             if (c.error) {
-                addNote(c.caption, c.error);
-                error = true;
+                addNote(c, c.error);
+                info.valid = false;
             }
         }
-        if (error) {
-            importNotes = 'שורה לא תקלט! - ' + importNotes;
-            f.error = importNotes;
+        if (!info.valid) {
+            info.comment = 'שורה לא תקלט!\r\n - ' + info.comment;
+            f.error = info.comment;
         }
-        if (importNotes) {
-            rel["הערות קליטה"] = importNotes;
+        if (info.comment) {
+
             this.worksheet[this.commentExcelColumn + row] = {
-                w: importNotes,
+                w: info.comment,
                 t: 's',
-                v: importNotes
+                v: info.comment
             };
         }
-        console.table(rel);
+
+
+
         if (preview)
-            this.select.updateFamiliy({ f: f, disableSave: true, message: importNotes });
-        return f;
+            this.select.updateFamiliy({ f: f, disableSave: true, message: info.comment });
+
+        return info;
 
     }
 
 
     f: Families;
+
     ngOnInit() {
+        let stam = localStorage.getItem('myTest');
+
+
+        if (stam) {
+            //    this.excelRowInfo = JSON.parse(stam);
+        }
+
 
         let updateCol = (col: Column<any>, val: string, seperator: string = ' ') => {
 
@@ -247,6 +370,18 @@ export class ImportFromExcelComponent implements OnInit {
                 col.value = val;
         }
         this.f = this.context.for(Families).create();
+        try {
+            this.errorRows = JSON.parse(localStorage.getItem("errorRows"));
+            this.newRows = JSON.parse(localStorage.getItem("newRows"));
+            this.updateRows = JSON.parse(localStorage.getItem("updateRows"));
+            this.identicalRows = JSON.parse(localStorage.getItem("identicalRows"));
+            this.columnsInCompare = JSON.parse(localStorage.getItem("columnsInCompare")).map(x => this.f.__getColumnByJsonName(x));
+        }
+        catch (err) {
+            console.log(err);
+        }
+
+
         let addColumns = (cols: Column<any>[]) => {
             for (const col of cols) {
                 this.columns.push({
@@ -260,6 +395,7 @@ export class ImportFromExcelComponent implements OnInit {
         };
         addColumns([
             this.f.name,
+            this.f.postalCode
         ]);
         this.columns.push({
             key: 'address',
@@ -291,7 +427,7 @@ export class ImportFromExcelComponent implements OnInit {
                 if (x.isNew()) {
                     x.boxes.value = +v;
                     x.name.value = v + ' ארגזים';
-                    await saveNewDependentValue(x);
+                    await saveNewDependentValue(f.basketType, x.name.value, x);
                 }
                 f.basketType.value = x.id.value;
             }
@@ -304,7 +440,7 @@ export class ImportFromExcelComponent implements OnInit {
                 if (x.isNew()) {
                     x.boxes.value = 1;
                     x.name.value = v;
-                    await saveNewDependentValue(x);
+                    await saveNewDependentValue(f.basketType, v, x);
                 }
                 f.basketType.value = x.id.value;
             }
@@ -316,7 +452,7 @@ export class ImportFromExcelComponent implements OnInit {
                 let x = await this.context.for(FamilySources).lookupAsync(b => b.name.isEqualTo(v));
                 if (x.isNew()) {
                     x.name.value = v;
-                    await saveNewDependentValue(x);
+                    await saveNewDependentValue(f.familySource, v, x);
                 }
                 f.familySource.value = x.id.value;
             }
@@ -339,7 +475,7 @@ export class ImportFromExcelComponent implements OnInit {
                 let x = await this.context.for(Helpers).lookupAsync(b => b.name.isEqualTo(v));
                 if (x.isNew()) {
                     x.name.value = v;
-                    await saveNewDependentValue(x);
+                    await saveNewDependentValue(f.fixedCourier, v, x);
                 }
                 f.fixedCourier.value = x.id.value;
             }
@@ -351,7 +487,7 @@ export class ImportFromExcelComponent implements OnInit {
                 let x = await this.context.for(Helpers).lookupAsync(b => b.name.isEqualTo(v));
                 if (x.isNew()) {
                     x.name.value = v;
-                    await saveNewDependentValue(x);
+                    await saveNewDependentValue(f.courier, v, x);
                 }
                 f.courier.value = x.id.value;
             }
@@ -413,28 +549,156 @@ export class ImportFromExcelComponent implements OnInit {
             await this.iterateExcelFile(true);
         });
     }
+    errorRows: excelRowInfo[] = [];
+    newRows: excelRowInfo[] = [];
+    identicalRows: excelRowInfo[] = [];
+    updateRows: excelRowInfo[] = [];
+
+
     async iterateExcelFile(actualImport = false) {
-        let i = 0;
+
+        this.errorRows = [];
+        this.newRows = [];
+        this.updateRows = [];
+        this.identicalRows = [];
+        let rows: excelRowInfo[] = [];
+        let usedTz = new Map<string, number>();
+        let usedPhone = new Map<string, number>();
         await this.busy.doWhileShowingBusy(async () => {
-            let lastTime = new Date().valueOf();
+
             for (let index = 2; index <= this.totalRows; index++) {
                 let f = await this.readLine(index);
-                if (!f.error) {
-                    i++;
-                    if (actualImport) {
-                        await f.save();
+                if (f.error) {
+                    this.errorRows.push(f);
+                }
+                else {
 
+                    let exists = (val: string, map: Map<string, number>, caption: string) => {
+                        let origVal = val;
+                        if (!val)
+                            return false;
+                        val = val.replace(/\D/g, '');
+                        if (val.length == 0)
+                            return false;
+                        let x = map.get(val);
+                        if (x > 0 && x < index) {
+                            f.error = caption + ' - ' + origVal + ' - כבר קיים בקובץ בשורה ' + x;
+                            return true;
+                        }
+                        map.set(val, index);
+                        return false;
+                    };
+
+
+                    if (exists(f.tz, usedTz, 'תעודת זהות') || exists(f.phone1, usedPhone, 'טלפון 1') || exists(f.phone2, usedPhone, 'טלפון 2')) {
+                        this.errorRows.push(f);
+                    }
+                    else
+                        rows.push(f);
+                }
+
+                if (rows.length == 200) {
+                    this.dialog.Info((index - 1) + ' ' + (f.name ? f.name : 'ללא שם') + ' ' + (f.error ? f.error : ''));
+                    let r = await this.checkExcelInput(rows);
+                    this.errorRows.push(...r.errorRows);
+                    this.newRows.push(...r.newRows);
+                    this.updateRows.push(...r.updateRows);
+                    this.identicalRows.push(...r.identicalRows);
+                    rows = [];
+                }
+            }
+            if (rows.length > 0) {
+
+                let r = await this.checkExcelInput(rows);
+                this.errorRows.push(...r.errorRows);
+                this.newRows.push(...r.newRows);
+                this.updateRows.push(...r.updateRows);
+                this.identicalRows.push(...r.identicalRows);
+            }
+
+            this.columnsInCompare = [];
+            for (let c of this.f.__iterateColumns()) {
+                if (this.updatedColumns.get(c.__getMemberName()))
+                    this.columnsInCompare.push(c);
+            }
+            this.errorRows.sort((a, b) => a.rowInExcel - b.rowInExcel);
+            localStorage.setItem("errorRows", JSON.stringify(this.errorRows));
+            localStorage.setItem("newRows", JSON.stringify(this.newRows));
+            localStorage.setItem("updateRows", JSON.stringify(this.updateRows));
+            localStorage.setItem("identicalRows", JSON.stringify(this.identicalRows));
+
+            localStorage.setItem("columnsInCompare", JSON.stringify(this.columnsInCompare.map(x => x.__getMemberName())));
+        });
+
+
+    }
+    displayDupInfo(info: duplicateFamilyInfo) {
+        let r = [];
+
+
+        if (info.tz) {
+            r.push(' מספר זהות זהה');
+        }
+        if (info.phone1 || info.phone2) {
+            r.push(' מספר טלפון זהה');
+        }
+        if (info.nameDup) {
+            r.push(" שם זהה");
+        }
+        return info.address + ": " + r.join(', ');
+    }
+    @RunOnServer({ allowed: Roles.admin })
+    async checkExcelInput(excelRowInfo: excelRowInfo[], context?: Context, directSql?: DirectSQL) {
+        let result: serverCheckResults = {
+            errorRows: [],
+            identicalRows: [],
+            newRows: [],
+            updateRows: []
+        } as serverCheckResults;
+        for (const info of excelRowInfo) {
+            info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz, info.phone1, info.phone2, undefined, true, context, directSql);
+
+            if (!info.duplicateFamilyInfo || info.duplicateFamilyInfo.length == 0) {
+                result.newRows.push(info);
+            } else if (info.duplicateFamilyInfo.length > 1) {
+                info.error = 'משפחה קיימת יותר מפעם אחת בבסיס נתונים';
+                result.errorRows.push(info);
+            } else {
+                let ef = await context.for(Families).findFirst(f => f.id.isEqualTo(info.duplicateFamilyInfo[0].id));
+                let hasDifference = false;
+                for (const upd of info.values) {
+                    let col = ef.__getColumnByJsonName(upd.key);
+                    upd.existingValue = col.value;
+                    upd.existingDisplayValue = await getColumnDisplayValue(col);
+                    if (upd.existingDisplayValue != upd.newDisplayValue) {
+                        hasDifference = true;
+                        if (col == ef.groups) {
+                            let existingString = ef.groups.value;
+                            let newVal = upd.newValue;
+                            if (!newVal || newVal.toString() == '') {
+                                upd.newValue = upd.existingValue;
+                                upd.newDisplayValue = upd.existingDisplayValue;
+                            }
+                            else if (existingString && existingString.trim().length > 0) {
+                                let existingArray = existingString.toString().split(',').map(x => x.trim())
+                                for (const val of newVal.split(',').map(x => x.trim())) {
+                                    if (existingArray.indexOf(val) < 0)
+                                        existingArray.push(val);
+                                }
+                                upd.newValue = existingArray.join(', ');
+                                upd.newDisplayValue = upd.newValue;
+                            }
+                        }
                     }
                 }
-                if ((new Date().valueOf() - lastTime) > 1000) {
-                    this.dialog.Info((index - 1) + ' ' + (f.name.value ? f.name.value : 'ללא שם') + ' ' + (f.error ? f.error : ''));
-                    lastTime = new Date().valueOf();
+                if (hasDifference) {
+                    result.updateRows.push(info);
                 }
-
+                else
+                    result.identicalRows.push(info);
             }
-            (await import('xlsx')).writeFile(this.oFile, "דוח " + (actualImport ? "" : "סימולצית ") + "קליטה - " + this.filename);
-        });
-        this.dialog.YesNoQuestion('יקלטו ' + i + ' משפחות מתוך ' + (this.totalRows - 1) + ' שורות');
+        }
+        return result;
     }
 
 
@@ -462,12 +726,14 @@ export class ImportFromExcelComponent implements OnInit {
         if (loaded) {
             for (const excelItem of this.excelColumns) {
                 for (const loadedItem of loaded.storedColumns) {
-                    if (loadedItem.excelColumn == excelItem.excelColumn)
+                    if (loadedItem.excelColumn == excelItem.excelColumn) {
+                        excelItem.column = undefined;
                         for (const col of this.columns) {
                             if (col.key == loadedItem.columnKey) {
                                 excelItem.column = col;
                             }
                         }
+                    }
                 }
 
             }
@@ -486,8 +752,10 @@ export class ImportFromExcelComponent implements OnInit {
 
         }
     }
-    testImport() {
-        this.iterateExcelFile(false);
+    async testImport() {
+        this.excelRowInfo = [];
+        await this.iterateExcelFile(false);
+
     }
 
 }
@@ -520,5 +788,39 @@ interface storedAdditionalColumnSettings {
 interface columnUpdater {
     key: string;
     name: string;
-    updateFamily: (val: string, f: Families, saveNewDependentValue: ((e: Entity<any>) => Promise<void>)) => Promise<void>;
+    updateFamily: (val: string, f: Families, saveNewDependentValue: ((c: Column<any>, v: any, e: Entity<any>) => Promise<void>)) => Promise<void>;
+}
+interface excelRowInfo {
+    rowInExcel: number;
+    name: string;
+    tz: string;
+    phone1: string;
+    phone2: string;
+    valid: boolean;
+    error?: string;
+    comment?: string;
+    duplicateFamilyInfo?: duplicateFamilyInfo[];
+    values: updateColumns[];
+}
+interface updateColumns {
+    key: string;
+    existingValue?: any;
+    existingDisplayValue?: string;
+    comment?: string;
+    newValue: any;
+    newDisplayValue: any;
+}
+interface serverCheckResults {
+    newRows: excelRowInfo[],
+    identicalRows: excelRowInfo[],
+    updateRows: excelRowInfo[],
+    errorRows: excelRowInfo[]
+}
+async function getColumnDisplayValue(c: Column<any>) {
+    let v = c.displayValue;
+    let getv: HasAsyncGetTheValue = <any>c as HasAsyncGetTheValue;
+    if (getv && getv.getTheValue) {
+        v = await getv.getTheValue();
+    }
+    return v;
 }
