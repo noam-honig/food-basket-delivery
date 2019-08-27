@@ -93,6 +93,7 @@ export class ImportFromExcelComponent implements OnInit {
                         if (new Date().valueOf() - lastDate > 1000) {
                             this.dialog.Info(i.rowInExcel + ' ' + (i.name));
                         }
+                        this.identicalRows.push(...rowsToInsert);
                         rowsToInsert = [];
                     }
 
@@ -101,8 +102,10 @@ export class ImportFromExcelComponent implements OnInit {
                 }
                 if (rowsToInsert.length > 0) {
                     await ImportFromExcelComponent.insertRows(rowsToInsert);
+                    this.identicalRows.push(...rowsToInsert);
                 }
                 this.newRows = [];
+                this.identicalRows.sort((a, b) => a.rowInExcel - b.rowInExcel);
             });
         });
     }
@@ -191,7 +194,7 @@ export class ImportFromExcelComponent implements OnInit {
         }
         return i;
     }
-    excelRowInfo: excelRowInfo[] = [];
+
     async fileChange(eventArgs: any) {
 
         var files = eventArgs.target.files, file;
@@ -252,7 +255,7 @@ export class ImportFromExcelComponent implements OnInit {
                 }
                 if (done) {
                     this.commentExcelColumn = colPrefix + colName;
-                    this.excelRowInfo = [];
+
                     this.worksheet[this.commentExcelColumn + "1"] = {
                         w: 'הערות קליטה',
                         t: 's',
@@ -311,34 +314,18 @@ export class ImportFromExcelComponent implements OnInit {
         };
         fileReader.readAsArrayBuffer(file);
     }
-    async test(row: number) {
-        let x = this.excelRowInfo.findIndex(x => x.rowInExcel == row);
-        if (x >= 0) {
-            this.excelRowInfo.splice(x, 1);
-        }
-        let f = await this.readLine(row, false, true);
 
-
-    }
     async readLine(row: number, actualImport = false, preview = false): Promise<excelRowInfo> {
         let f = this.context.for(Families).create();
         f._disableAutoDuplicateCheck = true;
-        let info: excelRowInfo = {
-            comment: '',
-            tz: undefined,
-            phone1: undefined,
-            phone2: undefined,
-            valid: true,
-            rowInExcel: row,
-            name: undefined,
-            values: []
-        };
-        this.excelRowInfo.push(info);
+        let comment = '';
+
+
 
         function addNote(c: Column<any>, what: string) {
-            if (info.comment)
-                info.comment += '\r\n';
-            info.comment += c + ': ' + what;
+            if (comment)
+                comment += '\r\n';
+            comment += c + ': ' + what;
 
         }
         let newVals = new Map<string, any>();
@@ -363,15 +350,22 @@ export class ImportFromExcelComponent implements OnInit {
         if (f.phone1.displayValue == f.phone2.displayValue)
             f.phone2.value = '';
 
+        let info: excelRowInfo = {
+            name: f.name.value,
+            comment: comment,
+            tz: f.tz.value,
+            phone1: f.phone1.value,
+            phone2: f.phone2.value,
+            valid: true,
+            rowInExcel: row,
+            values: []
+        };
         if (!f.name.value) {
 
             info.error = 'שורה ללא שם';
         }
         else {
-            info.name = f.name.value;
-            info.tz = f.tz.value;
-            info.phone1 = f.phone1.value;
-            info.phone2 = f.phone2.value;
+
 
 
             for (const col of f.__iterateColumns()) {
@@ -697,6 +691,32 @@ export class ImportFromExcelComponent implements OnInit {
                 if (this.updatedColumns.get(c.__getMemberName()))
                     this.columnsInCompare.push(c);
             }
+
+            let check = new Map<string, excelRowInfo[]>();
+            let collected: excelRowInfo[][] = [];
+            for (const row of this.updateRows) {
+                if (row.duplicateFamilyInfo && row.duplicateFamilyInfo.length == 1) {
+                    let rowInfo: excelRowInfo[];
+                    if (rowInfo = check.get(row.duplicateFamilyInfo[0].id)) {
+                        rowInfo.push(row);
+                    }
+                    else {
+                        let arr = [row];
+                        check.set(row.duplicateFamilyInfo[0].id, arr);
+                        collected.push(arr);
+                    }
+                }
+            }
+            for (const iterator of collected) {
+                if (iterator.length > 1) {
+                    for (const row of iterator) {
+                        row.error = 'אותה משפחה באתר מתאימה למספר שורות באקסל: ' + iterator.map(x => x.rowInExcel.toString()).join(', ');
+                        this.errorRows.push(row);
+                        this.updateRows.splice(this.updateRows.indexOf(row), 1);
+                    }
+                }
+            }
+
             this.errorRows.sort((a, b) => a.rowInExcel - b.rowInExcel);
             localStorage.setItem("errorRows", JSON.stringify(this.errorRows));
             localStorage.setItem("newRows", JSON.stringify(this.newRows));

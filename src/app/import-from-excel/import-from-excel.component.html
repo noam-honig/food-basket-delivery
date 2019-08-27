@@ -43,7 +43,7 @@
                         </th>
                     </tr>
                     <ng-container
-                        *ngFor="let i of newRows  | paginate: { itemsPerPage: 5,currentPage:newRowsPage,id:'newRows'}">
+                        *ngFor="let i of newRows  | paginate: { itemsPerPage: 100,currentPage:newRowsPage,id:'newRows'}">
                         <tr>
                             <td>
                                 <mat-icon style="color:red" (click)="newRows.splice(newRows.indexOf(i),1)">
@@ -76,7 +76,7 @@
                         </th>
                     </tr>
                     <ng-container
-                        *ngFor="let i of updateRows | paginate: { itemsPerPage: 5,currentPage:updateRowsPage,id:'updateRows'}">
+                        *ngFor="let i of updateRows | paginate: { itemsPerPage: 100,currentPage:updateRowsPage,id:'updateRows'}">
                         <tr>
                             <td>
                                 <mat-icon style="color:red" (click)="updateRows.splice(updateRows.indexOf(i),1)">
@@ -137,7 +137,7 @@
                         </th>
                     </tr>
                     <ng-container
-                        *ngFor="let i of errorRows | paginate: { itemsPerPage: 5,currentPage:errorRowsPage,id:'errorRows'}">
+                        *ngFor="let i of errorRows | paginate: { itemsPerPage: 100,currentPage:errorRowsPage,id:'errorRows'}">
                         <tr>
 
                             <td>{{i.rowInExcel}}<br></td>
@@ -151,7 +151,7 @@
                             <td colspan="10" style="color:red">
                                 {{i.error}}
 
-                                <ul *ngIf="i.duplicateFamilyInfo&&i.duplicateFamilyInfo.length>1">
+                                <ul *ngIf="i.duplicateFamilyInfo&&i.duplicateFamilyInfo.length>=1">
                                     <li *ngFor="let f of i.duplicateFamilyInfo">
                                         {{f.name}} - {{displayDupInfo(f)}}
                                     </li>
