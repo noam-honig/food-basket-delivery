@@ -5,7 +5,7 @@ import { Helpers } from '../helpers/helpers';
 import { myThrottle, HasAsyncGetTheValue } from '../model-shared/types';
 
 import { Families, parseAddress, duplicateFamilyInfo } from '../families/families';
-import { async } from 'q';
+
 import { BasketType } from '../families/BasketType';
 import { FamilySources } from '../families/FamilySources';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -59,11 +59,14 @@ export class ImportFromExcelComponent implements OnInit {
         return this.excelRowInfo.find(x => x.rowInExcel == r);
     }
     getColInfo(i: excelRowInfo, col: Column<any>) {
-        let r = i.values.find(x => x.key == col.__getMemberName());
+        return ImportFromExcelComponent.actualGetColInfo(i, col.__getMemberName());
+    }
+    static actualGetColInfo(i: excelRowInfo, colMemberName: string) {
+        let r = i.values.find(x => x.key == colMemberName);
         if (!r) {
             r = {
 
-                key: col.__getMemberName(),
+                key: colMemberName,
                 newDisplayValue: '',
                 existingDisplayValue: '',
                 newValue: ''
@@ -76,28 +79,58 @@ export class ImportFromExcelComponent implements OnInit {
         let count = this.getColUpdateCount(col);
         this.dialog.YesNoQuestion("האם לעדכן את השדה " + col.caption + " ל" + count + " משפחות?", () => {
             this.busy.doWhileShowingBusy(async () => {
+                let rowsToUpdate: excelRowInfo[] = [];
+                let allRows: excelRowInfo[] = [];
                 let lastDate = new Date().valueOf();
                 for (const i of this.updateRows) {
-                    await this.updateCol(i, col);
-                    if (new Date().valueOf() - lastDate > 1000) {
-                        this.dialog.Info(i.rowInExcel + ' ' + (i.name));
+                    let cc = this.getColInfo(i, col);
+                    if (cc.newDisplayValue != cc.existingDisplayValue) {
+                        rowsToUpdate.push(i);
                     }
+                    else
+                        allRows.push(i);
+
+                    if (rowsToUpdate.length == 50) {
+                        allRows.push(...await ImportFromExcelComponent.updateColsOnServer(rowsToUpdate, col.__getMemberName()));
+                        if (new Date().valueOf() - lastDate > 1000) {
+                            this.dialog.Info(i.rowInExcel + ' ' + (i.name));
+                        }
+                        rowsToUpdate = [];
+                    }
+
+
+
                 }
+                if (rowsToUpdate.length > 0) {
+                    allRows.push(...await ImportFromExcelComponent.updateColsOnServer(rowsToUpdate, col.__getMemberName()));
+                }
+                allRows.sort((a, b) => a.rowInExcel - b.rowInExcel);
+                this.updateRows = allRows;
             });
         });
     }
+    @RunOnServer({ allowed: Roles.admin })
+    static async updateColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, context?: Context) {
+        for (const r of rowsToUpdate) {
+            await ImportFromExcelComponent.actualUpdateCol(r, columnMemberName, context);
+        }
+        return rowsToUpdate;
+    }
     async updateCol(i: excelRowInfo, col: Column<any>) {
-        let c = this.getColInfo(i, col);
+        await ImportFromExcelComponent.actualUpdateCol(i, col.__getMemberName(), this.context);
+    }
+    static async actualUpdateCol(i: excelRowInfo, colMemberName: string, context: Context) {
+        let c = ImportFromExcelComponent.actualGetColInfo(i, colMemberName);
         if (c.existingDisplayValue == c.newDisplayValue)
             return;
-        let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(i.duplicateFamilyInfo[0].id));
+        let f = await context.for(Families).findFirst(f => f.id.isEqualTo(i.duplicateFamilyInfo[0].id));
         let val = c.newValue;
         if (val === null)
             val = '';
-        f.__getColumn(col).value = val;
+        f.__getColumnByJsonName(colMemberName).value = val;
         await f.save();
-        c.existingDisplayValue = await getColumnDisplayValue(f.__getColumn(col));
-        c.existingValue = f.__getColumn(col).value;
+        c.existingDisplayValue = await getColumnDisplayValue(f.__getColumnByJsonName(colMemberName));
+        c.existingValue = f.__getColumnByJsonName(colMemberName).value;
     }
     async clearColumnUpdate(i: excelRowInfo, col: Column<any>) {
         let c = this.getColInfo(i, col);
