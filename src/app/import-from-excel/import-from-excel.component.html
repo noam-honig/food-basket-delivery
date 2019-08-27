@@ -30,8 +30,8 @@
     <h3> בחר קובץ אקסל</h3> <input type="file" (change)="fileChange($event)" />
     <h3>תוצאות</h3>
     <mat-tab-group>
-        <mat-tab label="הוספת משפחות - {{newRows.length}}" *ngIf="newRows&&newRows.length">
-
+        <mat-tab label="משפחות חדשות - {{newRows.length}}" *ngIf="newRows&&newRows.length">
+            <button (click)="addAll()" mat-raised-button>הוסף את כל המשפחות</button>
             <div class="table-div">
 
                 <table class="table table-bordered" style="white-space: nowrap;">
@@ -62,7 +62,7 @@
             <pagination-controls (pageChange)="newRowsPage = $event" previousLabel="קודם" nextLabel="הבא" id="newRows">
             </pagination-controls>
         </mat-tab>
-        <mat-tab label="עדכון משפחות - {{updateRows.length}}" *ngIf="updateRows&&updateRows.length">
+        <mat-tab label="משפחות לעדכון - {{updateRows.length}}" *ngIf="updateRows&&updateRows.length">
             <div class="table-div">
                 <table class="table table-bordered" style="white-space: nowrap;">
                     <tr>
@@ -72,7 +72,7 @@
                             {{c.caption}} <mat-icon style="color:green" *ngIf="getColUpdateCount(c)>0"
                                 (click)="updateAllCol(c)">done_all
                             </mat-icon>
-                            
+
                         </th>
                     </tr>
                     <ng-container
@@ -101,6 +101,30 @@
             </div>
             <pagination-controls (pageChange)="updateRowsPage = $event" previousLabel="קודם" nextLabel="הבא"
                 id="updateRows"></pagination-controls>
+        </mat-tab>
+        <mat-tab label="משפחות קיימות - {{identicalRows.length}}" *ngIf="identicalRows&&identicalRows.length">
+            <div class="table-div">
+                <table class="table table-bordered" style="white-space: nowrap;">
+                    <tr>
+
+                        <th></th>
+                        <th *ngFor="let c of columnsInCompare">
+                            {{c.caption}}
+                        </th>
+                    </tr>
+                    <ng-container *ngFor="let i of identicalRows">
+                        <tr>
+
+                            <td>{{i.rowInExcel}}<br></td>
+                            <td *ngFor="let c of columnsInCompare">
+
+                                {{getColInfo(i,c).newDisplayValue}}
+
+                            </td>
+                        </tr>
+                    </ng-container>
+                </table>
+            </div>
         </mat-tab>
         <mat-tab label="שגיאות -  {{errorRows.length}}" *ngIf="errorRows&&errorRows.length">
             <div class="table-div">
@@ -141,30 +165,7 @@
                 id="errorRows">
             </pagination-controls>
         </mat-tab>
-        <mat-tab label="זהות משפחות - {{identicalRows.length}}" *ngIf="identicalRows&&identicalRows.length">
-            <div class="table-div">
-                <table class="table table-bordered" style="white-space: nowrap;">
-                    <tr>
 
-                        <th></th>
-                        <th *ngFor="let c of columnsInCompare">
-                            {{c.caption}}
-                        </th>
-                    </tr>
-                    <ng-container *ngFor="let i of identicalRows">
-                        <tr>
-
-                            <td>{{i.rowInExcel}}<br></td>
-                            <td *ngFor="let c of columnsInCompare">
-
-                                {{getColInfo(i,c).newDisplayValue}}
-
-                            </td>
-                        </tr>
-                    </ng-container>
-                </table>
-            </div>
-        </mat-tab>
 
     </mat-tab-group>
 

@@ -75,6 +75,48 @@ export class ImportFromExcelComponent implements OnInit {
         }
         return r;
     }
+
+    async addAll() {
+        let count = this.newRows.length;
+        this.dialog.YesNoQuestion("האם להוסיף " + count + " משפחות?", () => {
+            this.busy.doWhileShowingBusy(async () => {
+                let rowsToInsert: excelRowInfo[] = [];
+
+                let lastDate = new Date().valueOf();
+                for (const i of this.newRows) {
+
+                    rowsToInsert.push(i);
+
+
+                    if (rowsToInsert.length == 50) {
+                        await ImportFromExcelComponent.insertRows(rowsToInsert);
+                        if (new Date().valueOf() - lastDate > 1000) {
+                            this.dialog.Info(i.rowInExcel + ' ' + (i.name));
+                        }
+                        rowsToInsert = [];
+                    }
+
+
+
+                }
+                if (rowsToInsert.length > 0) {
+                    await ImportFromExcelComponent.insertRows(rowsToInsert);
+                }
+                this.newRows = [];
+            });
+        });
+    }
+    @RunOnServer({ allowed: Roles.admin })
+    static async insertRows(rowsToInsert: excelRowInfo[], context?: Context) {
+        for (const r of rowsToInsert) {
+            let f = context.for(Families).create();
+            for (const val of r.values) {
+                f.__getColumnByJsonName(val.key).value = val.newValue;
+            }
+            await f.save();
+        }
+
+    }
     async updateAllCol(col: Column<any>) {
         let count = this.getColUpdateCount(col);
         this.dialog.YesNoQuestion("האם לעדכן את השדה " + col.caption + " ל" + count + " משפחות?", () => {
@@ -109,6 +151,7 @@ export class ImportFromExcelComponent implements OnInit {
             });
         });
     }
+
     @RunOnServer({ allowed: Roles.admin })
     static async updateColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, context?: Context) {
         for (const r of rowsToUpdate) {
@@ -704,7 +747,7 @@ export class ImportFromExcelComponent implements OnInit {
                     upd.existingValue = col.value;
                     upd.existingDisplayValue = await getColumnDisplayValue(col);
                     if (upd.existingDisplayValue != upd.newDisplayValue) {
-                        hasDifference = true;
+
                         if (col == ef.groups) {
                             let existingString = ef.groups.value;
                             let newVal = upd.newValue;
@@ -721,6 +764,9 @@ export class ImportFromExcelComponent implements OnInit {
                                 upd.newValue = existingArray.join(', ');
                                 upd.newDisplayValue = upd.newValue;
                             }
+                        }
+                        if (upd.existingDisplayValue != upd.newDisplayValue) {
+                            hasDifference = true;
                         }
                     }
                 }
