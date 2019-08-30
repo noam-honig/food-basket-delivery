@@ -125,7 +125,7 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
             getValue: f => (f ? (<HelperId>(f).__getColumn(this)) : this).getValue(),
             hideDataOnInput: true,
             click: f => dialog.selectHelper(s => (f ? f.__getColumn(this) : this).value = (s ? s.id.value : ''), filter),
-            readonly: this.context.isAllowed(this.allowApiUpdate),
+            readonly: !this.context.isAllowed(this.allowApiUpdate),
             width: '200'
 
         }
