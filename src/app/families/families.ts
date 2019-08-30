@@ -461,6 +461,24 @@ export class Families extends IdEntity<FamilyId>  {
   }
   _disableAutoDuplicateCheck = false;
   duplicateFamilies: duplicateFamilyInfo[] = [];
+  validatePhone(col:PhoneColumn){
+    if (!col.value||col.value=='')
+      return;
+    if (col.displayValue.startsWith("05")||col.displayValue.startsWith("06")) 
+    {
+      if (col.displayValue.length!=12){
+        col.error = 'מספר טלפון אינו תקין';
+      }
+
+    } else if (col.displayValue.startsWith('0')){
+      if (col.displayValue.length!=11){
+        col.error = 'מספר טלפון אינו תקין';
+      }
+    }
+    else{
+      col.error = 'מספר טלפון אינו תקין';
+    }
+  }
   async checkDuplicateFamilies() {
     this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name.value, this.tz.value, this.phone1.value, this.phone2.value, this.id.value);
     this.tz.error = undefined;
@@ -483,6 +501,9 @@ export class Families extends IdEntity<FamilyId>  {
           foundExactName = true;
       }
     }
+    this.validatePhone(this.phone1);
+    this.validatePhone(this.phone2);
+    
 
   }
   @RunOnServer({ allowed: Roles.admin })
