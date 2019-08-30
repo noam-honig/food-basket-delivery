@@ -19,7 +19,7 @@ export class BasketType extends IdEntity<BasketId>  {
       allowApiRead: context.isSignedIn(),
       allowApiCRUD: Roles.admin,
       onSavingRow: async () => {
-        if (this.boxes.value < 1)
+        if (!this.boxes.value||this.boxes.value < 1)
           this.boxes.value = 1;
       }
     });

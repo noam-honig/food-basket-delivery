@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { GridSettings, Column, Entity, RunOnServer, DirectSQL } from 'radweb';
+import { GridSettings, Column, Entity, RunOnServer, DirectSQL, IdColumn } from 'radweb';
 import { Context } from 'radweb';
 import { Helpers } from '../helpers/helpers';
 import { myThrottle, HasAsyncGetTheValue } from '../model-shared/types';
@@ -15,8 +15,10 @@ import { SelectService } from '../select-popup/select-service';
 import { isUndefined } from 'util';
 import { Roles } from '../auth/roles';
 import { MatStepper } from '@angular/material';
+import { async } from '@angular/core/testing';
+
 @Component({
-    selector: 'app-stam-test',
+    selector: 'app-excel-import',
     templateUrl: './import-from-excel.component.html',
     styleUrls: ['./import-from-excel.component.scss']
 })
@@ -49,20 +51,18 @@ export class ImportFromExcelComponent implements OnInit {
         return val.w.trim();
     }
     columnsInCompare: Column<any>[] = [];
-    updatedColumns = new Map<string, boolean>();
+
     totalRows: number;
     filename: string;
-    commentExcelColumn: string;
+
 
     getColInfo(i: excelRowInfo, col: Column<any>) {
         return ImportFromExcelComponent.actualGetColInfo(i, col.__getMemberName());
     }
     static actualGetColInfo(i: excelRowInfo, colMemberName: string) {
-        let r = i.values.find(x => x.key == colMemberName);
+        let r = i.values[colMemberName];
         if (!r) {
             r = {
-
-                key: colMemberName,
                 newDisplayValue: '',
                 existingDisplayValue: '',
                 newValue: ''
@@ -109,8 +109,8 @@ export class ImportFromExcelComponent implements OnInit {
     static async insertRows(rowsToInsert: excelRowInfo[], context?: Context) {
         for (const r of rowsToInsert) {
             let f = context.for(Families).create();
-            for (const val of r.values) {
-                f.__getColumnByJsonName(val.key).value = val.newValue;
+            for (const val in r.values) {
+                f.__getColumnByJsonName(val).value = r.values[val].newValue;
             }
             await f.save();
         }
@@ -187,7 +187,7 @@ export class ImportFromExcelComponent implements OnInit {
         let i = 0;
         let key = col.__getMemberName();
         for (const r of this.updateRows) {
-            let c = r.values.find(x => x.key == key);
+            let c = r.values[key];
             if (c && c.newDisplayValue != c.existingDisplayValue)
                 i++;
         }
@@ -253,65 +253,24 @@ export class ImportFromExcelComponent implements OnInit {
                         colPrefix = 'A';
                 }
                 if (done) {
-                    this.commentExcelColumn = colPrefix + colName;
 
-                    this.worksheet[this.commentExcelColumn + "1"] = {
-                        w: 'הערות קליטה',
-                        t: 's',
-                        v: 'הערות קליטה'
-                    };
-                    this.worksheet["!ref"] = sRef.replace(maxLetter, this.commentExcelColumn);
                     break;
                 }
             }
             for (const col of this.excelColumns) {
 
                 let searchName = col.title;
-                switch (searchName) {
-                    case "טלפון":
-                        searchName = this.f.phone1.caption;
-                        break;
-                    case "הערות":
-                        searchName = this.f.internalComment.caption;
-                        break;
-                    case "נפשות":
-                        searchName = this.f.familyMembers.caption;
-                        break;
-                    case "רחוב":
-                    case "בית":
-                    case "עיר":
-                    case "ישוב":
-                        searchName = this.f.address.caption;
-                        break;
-                    case "מס נפשות":
-                        searchName = this.f.familyMembers.caption;
-                        break;
-                    case 'טלפון נייד':
-                        searchName = this.f.phone2.caption;
-                        break;
-
-                    case "שם פרטי":
-                    case "משפחה":
-                    case "שם משפחה":
-                    case "איש קשר":
-                        searchName = this.f.name.caption;
-                        break;
-                    case "ת.ז.":
-                    case 'ת"ז':
-                        searchName = this.f.tz.caption;
-                        break;
-                }
-
                 for (const up of this.columns) {
-                    if (searchName == up.name) {
+                    if (searchName == up.name || (up.searchNames && up.searchNames.indexOf(searchName) >= 0)) {
                         col.column = up;
                         break;
                     }
+
                 }
 
             }
             this.rows = [];
-            for (let index = 2; index < this.totalRows; index++) {
+            for (let index = 2; index <= this.totalRows; index++) {
                 this.rows.push(index);
             }
             this.stepper.next();
@@ -319,106 +278,58 @@ export class ImportFromExcelComponent implements OnInit {
         fileReader.readAsArrayBuffer(file);
     }
 
-    async readLine(row: number, actualImport = false, preview = false): Promise<excelRowInfo> {
+    async readLine(row: number): Promise<excelRowInfo> {
         let f = this.context.for(Families).create();
         f._disableAutoDuplicateCheck = true;
-        let comment = '';
 
-
-
-        function addNote(c: Column<any>, what: string) {
-            if (comment)
-                comment += '\r\n';
-            comment += c + ': ' + what;
-
-        }
-        let newVals = new Map<string, any>();
+        let helper = new columnUpdateHelper(this.context, this.dialog);
         for (const c of this.excelColumns) {
             if (c.column) {
                 let val = this.getTheData(c.excelColumn + row);
                 if (val && val.length > 0)
-                    await c.column.updateFamily(val, f, async (col, val, x) => {
-                        newVals.set(col.__getMemberName(), val);
-                        if (actualImport)
-                            await x.save();
-                    });
+                    await c.column.updateFamily(val, f, helper);
             }
         }
         for (const v of this.additionalColumns) {
-            await v.column.updateFamily(v.value, f, async (col, val, x) => {
-                newVals.set(col.__getMemberName(), val);
-                if (actualImport)
-                    await x.save();
-            });
+            await v.column.updateFamily(v.value, f, helper);
         }
+        helper.laterSteps.sort((a, b) => a.step - b.step);
+        for (const s of helper.laterSteps) {
+            s.what();
+        }
+
+
         if (f.phone1.displayValue == f.phone2.displayValue)
             f.phone2.value = '';
 
         let info: excelRowInfo = {
             name: f.name.value,
-            comment: comment,
             tz: f.tz.value,
             phone1: f.phone1.value,
             phone2: f.phone2.value,
             valid: true,
             rowInExcel: row,
-            values: []
+            values: {}
         };
         if (!f.name.value) {
-
             info.error = 'שורה ללא שם';
         }
-        else {
-
-
-
-            for (const col of f.__iterateColumns()) {
-                if (col.value != undefined) {
-                    let newVal = await getColumnDisplayValue(col);
-                    let val: updateColumns = {
-                        key: col.__getMemberName(),
-
-                        newValue: col.value,
-                        newDisplayValue: newVal
-                    };
-                    let x = newVals.get(col.__getMemberName());
-                    if (x) {
-                        val.newDisplayValue = x;
-                        val.comment = 'ערך חדש';
-                    }
-
-                    this.updatedColumns.set(col.__getMemberName(), true);
-                    info.values.push(val);
-
-                }
-            }
-
-        }
-
-
         for (const c of f.__iterateColumns()) {
             if (c.error) {
-                addNote(c, c.error);
+                if (c.error) {
+                    c.error += ", ";
+                }
+                c.error += c.caption + ": " + c.error;
                 info.valid = false;
             }
-        }
-        if (!info.valid) {
-            info.comment = 'שורה לא תקלט!\r\n - ' + info.comment;
-            f.error = info.comment;
-        }
-        if (info.comment) {
-
-            this.worksheet[this.commentExcelColumn + row] = {
-                w: info.comment,
-                t: 's',
-                v: info.comment
-            };
+            if (c.value) {
+                info.values[c.__getMemberName()] = {
+                    newDisplayValue: await getColumnDisplayValue(c),
+                    newValue: c.value
+                };
+            }
         }
 
-
-
-        if (preview)
-            this.select.updateFamiliy({ f: f, disableSave: true, message: info.comment });
 
         return info;
 
@@ -429,12 +340,10 @@ export class ImportFromExcelComponent implements OnInit {
     @ViewChild("stepper") stepper: MatStepper;
 
     ngOnInit() {
-        let stam = localStorage.getItem('myTest');
+        
 
 
-        if (stam) {
-            //    this.excelRowInfo = JSON.parse(stam);
-        }
+        
 
 
         let updateCol = (col: Column<any>, val: string, seperator: string = ' ') => {
@@ -446,35 +355,48 @@ export class ImportFromExcelComponent implements OnInit {
         }
         this.f = this.context.for(Families).create();
         try {
-            this.errorRows = JSON.parse(localStorage.getItem("errorRows"));
+            /*this.errorRows = JSON.parse(localStorage.getItem("errorRows"));
             this.newRows = JSON.parse(localStorage.getItem("newRows"));
             this.updateRows = JSON.parse(localStorage.getItem("updateRows"));
             this.identicalRows = JSON.parse(localStorage.getItem("identicalRows"));
-            this.columnsInCompare = JSON.parse(localStorage.getItem("columnsInCompare")).map(x => this.f.__getColumnByJsonName(x));
+            this.columnsInCompare = JSON.parse(localStorage.getItem("columnsInCompare")).map(x => this.f.__getColumnByJsonName(x));*/
         }
         catch (err) {
             console.log(err);
         }
 
-
+        let addColumn = (col: Column<any>, searchNames?: string[]) => {
+            this.columns.push({
+                key: col.__getMemberName(),
+                name: col.caption,
+                updateFamily: async (v, f) => {
+                    updateCol(f.__getColumn(col), v);
+                },
+                searchNames: searchNames,
+                columns: [col]
+            });
+        }
         let addColumns = (cols: Column<any>[]) => {
             for (const col of cols) {
-                this.columns.push({
-                    key: col.__getMemberName(),
-                    name: col.caption,
-                    updateFamily: async (v, f) => {
-                        updateCol(f.__getColumn(col), v);
-                    }
-                });
+                addColumn(col);
             }
         };
+        addColumn(this.f.name, ["משפחה", "שם משפחה"]);
+        this.columns.push({
+            key: 'firstName',
+            name: 'שם פרטי',
+            updateFamily: async (v, f, h) => { h.laterSteps.push({ step: 2, what: () => updateCol(f.name, v) }) },
+            columns: [this.f.name],
+            searchNames: ["פרטי"]
+        });
         addColumns([
-            this.f.name,
+
             this.f.postalCode
         ]);
         this.columns.push({
             key: 'address',
             name: 'כתובת',
+            searchNames: ['רחוב'],
             updateFamily: async (v, f) => {
                 let r = parseAddress(v);
                 if (r.address)
@@ -485,52 +407,55 @@ export class ImportFromExcelComponent implements OnInit {
                     updateCol(f.floor, r.floor);
                 if (r.knisa)
                     updateCol(f.entrance, r.knisa);
-            }
+            },
+            columns: [this.f.address, this.f.appartment, this.f.floor, this.f.entrance]
         });
         this.columns.push({
             key: 'city',
             name: 'עיר',
-            updateFamily: async (v, f) => {
-                updateCol(f.address, v);
+            searchNames: ['ישוב', 'יישוב'],
+            updateFamily: async (v, f, h) => {
+                h.laterSteps.push({
+                    step: 3,
+                    what: () => updateCol(f.address, v)
+                })
             }
+            , columns: [this.f.address]
+        });
+        this.columns.push({
+            key: 'houseNum',
+            name: 'מספר בית',
+            searchNames: ["בית", "מס' בית", "מס בית"],
+            updateFamily: async (v, f, h) => {
+                h.laterSteps.push({
+                    step: 2,
+                    what: () => updateCol(f.address, v)
+                });
+
+            }
+            , columns: [this.f.address]
         });
         this.columns.push({
             key: 'boxes',
             name: 'מספר ארגזים',
-            updateFamily: async (v, f, saveNewDependentValue) => {
-                let x = await this.context.for(BasketType).lookupAsync(b => b.boxes.isEqualTo(+v));
-                if (x.isNew()) {
-                    x.boxes.value = +v;
-                    x.name.value = v + ' ארגזים';
-                    await saveNewDependentValue(f.basketType, x.name.value, x);
-                }
-                f.basketType.value = x.id.value;
-            }
+            updateFamily: async (v, f, h) => {
+                await h.lookupAndInsert(BasketType, b => b.boxes, +v, b => b.id, f.basketType, b => b.name.value = v + ' ארגזים');
+
+            }, columns: [this.f.basketType]
         });
         this.columns.push({
             key: 'basketType',
             name: 'סוג סל',
-            updateFamily: async (v, f, saveNewDependentValue) => {
-                let x = await this.context.for(BasketType).lookupAsync(b => b.name.isEqualTo(v));
-                if (x.isNew()) {
-                    x.boxes.value = 1;
-                    x.name.value = v;
-                    await saveNewDependentValue(f.basketType, v, x);
-                }
-                f.basketType.value = x.id.value;
-            }
+            updateFamily: async (v, f, h) => {
+                await h.lookupAndInsert(BasketType, b => b.name, v, b => b.id, f.basketType);
+            }, columns: [this.f.basketType]
         });
         this.columns.push({
             key: 'familySource',
             name: this.f.familySource.caption,
-            updateFamily: async (v, f, saveNewDependentValue) => {
-                let x = await this.context.for(FamilySources).lookupAsync(b => b.name.isEqualTo(v));
-                if (x.isNew()) {
-                    x.name.value = v;
-                    await saveNewDependentValue(f.familySource, v, x);
-                }
-                f.familySource.value = x.id.value;
-            }
+            updateFamily: async (v, f, h) => {
+                await h.lookupAndInsert(FamilySources, f => f.name, v, f => f.id, f.familySource);
+            }, columns: [this.f.familySource]
         });
         this.columns.push({
             key: 'selfPickup',
@@ -541,36 +466,26 @@ export class ImportFromExcelComponent implements OnInit {
                     if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery)
                         f.deliverStatus.value = DeliveryStatus.SelfPickup;
                 }
-            }
+            }, columns: [this.f.defaultSelfPickup]
         });
         this.columns.push({
             key: 'fixedCourier',
             name: this.f.fixedCourier.caption,
-            updateFamily: async (v, f, saveNewDependentValue) => {
-                let x = await this.context.for(Helpers).lookupAsync(b => b.name.isEqualTo(v));
-                if (x.isNew()) {
-                    x.name.value = v;
-                    await saveNewDependentValue(f.fixedCourier, v, x);
-                }
-                f.fixedCourier.value = x.id.value;
-            }
+            updateFamily: async (v, f, h) => {
+                await h.lookupAndInsert(Helpers, h => h.name, v, h => h.id, f.fixedCourier);
+            }, columns: [this.f.fixedCourier]
         });
         this.columns.push({
             key: 'courier',
             name: this.f.courier.caption,
-            updateFamily: async (v, f, saveNewDependentValue) => {
-                let x = await this.context.for(Helpers).lookupAsync(b => b.name.isEqualTo(v));
-                if (x.isNew()) {
-                    x.name.value = v;
-                    await saveNewDependentValue(f.courier, v, x);
-                }
-                f.courier.value = x.id.value;
-            }
+            updateFamily: async (v, f, h) => {
+                await h.lookupAndInsert(Helpers, h => h.name, v, h => h.id, f.courier);
+            }, columns: [this.f.courier]
         });
         this.columns.push({
             key: 'deliverStatus',
             name: this.f.deliverStatus.caption,
-            updateFamily: async (v, f, saveNewDependentValue) => {
+            updateFamily: async (v, f, h) => {
                 switch (v) {
                     case DeliveryStatus.NotInEvent.toString():
                         f.deliverStatus.value = DeliveryStatus.NotInEvent;
@@ -584,24 +499,41 @@ export class ImportFromExcelComponent implements OnInit {
                         f.deliverStatus.value = DeliveryStatus.SelfPickup;
                         break;
                     default:
-                        f.deliverStatus.error = 'ערך לא ברור';
+                        throw f.deliverStatus.caption + " ערך לא ברור - " + v;
                         break;
 
                 }
-            }
+            }, columns: [this.f.deliverStatus]
         });
-        addColumns([this.f.phone1,
-        this.f.phone2,
-        this.f.familyMembers,
-        this.f.iDinExcel,
-        this.f.tz,
-        this.f.floor,
-        this.f.appartment,
-        this.f.entrance,
+        this.columns.push({
+            key: 'anyPhone',
+            name: 'טלפון',
+            columns: [this.f.phone1, this.f.phone2],
+            updateFamily: async (v, f) => {
+                if (f.phone1.value && f.phone1.value.length > 0)
+                    updateCol(f.phone2, v);
+                else
+                    updateCol(f.phone1, v);
+            },
+            searchNames: ['טלפון נייד']
+        });
+
+        addColumn(this.f.internalComment, ["הערות"]);
+        addColumn(this.f.familyMembers, ["נפשות", "מס נפשות"]);
+        addColumn(this.f.tz, ["ת.ז.", "ת\"ז"])
+        addColumns([
+            this.f.phone1,
+            this.f.phone2,
+
+            this.f.iDinExcel,
+
+            this.f.floor,
+            this.f.appartment,
+            this.f.entrance,
         ]);
         for (const col of [this.f.phone1Description,
         this.f.phone2Description,
-        this.f.internalComment,
+
         this.f.deliveryComments,
         this.f.addressComment,
 
@@ -612,7 +544,7 @@ export class ImportFromExcelComponent implements OnInit {
                 name: col.caption,
                 updateFamily: async (v, f) => {
                     updateCol(f.__getColumn(col), v, ', ');
-                }
+                }, columns: [this.f.groups]
             });
         }
 
@@ -641,96 +573,115 @@ export class ImportFromExcelComponent implements OnInit {
         let usedPhone = new Map<number, number>();
         this.stepper.next();
         await this.busy.doWhileShowingBusy(async () => {
+            let updatedColumns = new Map<Column<any>, boolean>();
 
-            for (let index = 2; index <= this.totalRows; index++) {
-                let f = await this.readLine(index);
-                if (f.error) {
-                    this.errorRows.push(f);
-                }
-                else {
+            for (const cu of [...this.excelColumns.map(f => f.column), ...this.additionalColumns.map(f => f.column)]) {
+                if (cu)
+                    for (const c of cu.columns) {
+                        updatedColumns.set(c, true);
+                    }
+            }
+            this.columnsInCompare = [];
+            for (let c of this.f.__iterateColumns()) {
+                if (updatedColumns.get(c))
+                    this.columnsInCompare.push(c);
+            }
+            let columnsInCompareMemberName = this.columnsInCompare.map(x => x.__getMemberName());
 
-                    let exists = (val: string, map: Map<number, number>, caption: string) => {
-                        let origVal = val;
-                        if (!val)
-                            return false;
-                        val = val.replace(/\D/g, '');
-                        if (val.length == 0)
-                            return false;
-                        let x = map.get(+val);
-                        if (x > 0 && x < index) {
-                            f.error = caption + ' - ' + origVal + ' - כבר קיים בקובץ בשורה ' + x;
-                            return true;
-                        }
-                        map.set(+val, index);
-                        return false;
-                    };
-
-
-                    if (exists(f.tz, usedTz, 'תעודת זהות') || exists(f.phone1, usedPhone, 'טלפון 1') || exists(f.phone2, usedPhone, 'טלפון 2')) {
+            await new Promise((resolve) => setTimeout(() => {
+                resolve();
+            }, 500));
+            try {
+                for (let index = 2; index <= this.totalRows; index++) {
+                    let f = await this.readLine(index);
+                    if (f.error) {
                         this.errorRows.push(f);
                     }
-                    else
-                        rows.push(f);
-                }
+                    else {
 
-                if (rows.length == 200) {
-                    this.dialog.Info((index - 1) + ' ' + (f.name ? f.name : 'ללא שם') + ' ' + (f.error ? f.error : ''));
-                    let r = await this.checkExcelInput(rows);
+                        let exists = (val: string, map: Map<number, number>, caption: string) => {
+                            let origVal = val;
+                            if (!val)
+                                return false;
+                            val = val.replace(/\D/g, '');
+                            if (val.length == 0)
+                                return false;
+                            let x = map.get(+val);
+                            if (x > 0 && x < index) {
+                                f.error = caption + ' - ' + origVal + ' - כבר קיים בקובץ בשורה ' + x;
+                                return true;
+                            }
+                            map.set(+val, index);
+                            return false;
+                        };
+
+
+                        if (exists(f.tz, usedTz, 'תעודת זהות') || exists(f.phone1, usedPhone, 'טלפון 1') || exists(f.phone2, usedPhone, 'טלפון 2')) {
+                            this.errorRows.push(f);
+                        }
+                        else
+                            rows.push(f);
+                    }
+
+                    if (rows.length == 200) {
+                        this.dialog.Info((index - 1) + ' ' + (f.name ? f.name : 'ללא שם') + ' ' + (f.error ? f.error : ''));
+                        let r = await this.checkExcelInput(rows, columnsInCompareMemberName);
+                        this.errorRows.push(...r.errorRows);
+                        this.newRows.push(...r.newRows);
+                        this.updateRows.push(...r.updateRows);
+                        this.identicalRows.push(...r.identicalRows);
+                        rows = [];
+                    }
+                }
+                if (rows.length > 0) {
+
+                    let r = await this.checkExcelInput(rows, columnsInCompareMemberName);
                     this.errorRows.push(...r.errorRows);
                     this.newRows.push(...r.newRows);
                     this.updateRows.push(...r.updateRows);
                     this.identicalRows.push(...r.identicalRows);
-                    rows = [];
                 }
-            }
-            if (rows.length > 0) {
 
-                let r = await this.checkExcelInput(rows);
-                this.errorRows.push(...r.errorRows);
-                this.newRows.push(...r.newRows);
-                this.updateRows.push(...r.updateRows);
-                this.identicalRows.push(...r.identicalRows);
-            }
 
-            this.columnsInCompare = [];
-            for (let c of this.f.__iterateColumns()) {
-                if (this.updatedColumns.get(c.__getMemberName()))
-                    this.columnsInCompare.push(c);
-            }
 
-            let check = new Map<string, excelRowInfo[]>();
-            let collected: excelRowInfo[][] = [];
-            for (const row of this.updateRows) {
-                if (row.duplicateFamilyInfo && row.duplicateFamilyInfo.length == 1) {
-                    let rowInfo: excelRowInfo[];
-                    if (rowInfo = check.get(row.duplicateFamilyInfo[0].id)) {
-                        rowInfo.push(row);
-                    }
-                    else {
-                        let arr = [row];
-                        check.set(row.duplicateFamilyInfo[0].id, arr);
-                        collected.push(arr);
+                let check = new Map<string, excelRowInfo[]>();
+                let collected: excelRowInfo[][] = [];
+                for (const row of this.updateRows) {
+                    if (row.duplicateFamilyInfo && row.duplicateFamilyInfo.length == 1) {
+                        let rowInfo: excelRowInfo[];
+                        if (rowInfo = check.get(row.duplicateFamilyInfo[0].id)) {
+                            rowInfo.push(row);
+                        }
+                        else {
+                            let arr = [row];
+                            check.set(row.duplicateFamilyInfo[0].id, arr);
+                            collected.push(arr);
+                        }
                     }
                 }
-            }
-            this.errorRows.sort((a, b) => a.rowInExcel - b.rowInExcel);
-            for (const iterator of collected) {
-                if (iterator.length > 1) {
-                    for (const row of iterator) {
-                        row.error = 'אותה משפחה באתר מתאימה למספר שורות באקסל: ' + iterator.map(x => x.rowInExcel.toString()).join(', ');
-                        this.errorRows.push(row);
-                        this.updateRows.splice(this.updateRows.indexOf(row), 1);
+                this.errorRows.sort((a, b) => a.rowInExcel - b.rowInExcel);
+                for (const iterator of collected) {
+                    if (iterator.length > 1) {
+                        for (const row of iterator) {
+                            row.error = 'אותה משפחה באתר מתאימה למספר שורות באקסל: ' + iterator.map(x => x.rowInExcel.toString()).join(', ');
+                            this.errorRows.push(row);
+                            this.updateRows.splice(this.updateRows.indexOf(row), 1);
+                        }
                     }
                 }
+
+
+                /*localStorage.setItem("errorRows", JSON.stringify(this.errorRows));
+                localStorage.setItem("newRows", JSON.stringify(this.newRows));
+                localStorage.setItem("updateRows", JSON.stringify(this.updateRows));
+                localStorage.setItem("identicalRows", JSON.stringify(this.identicalRows));
+
+                localStorage.setItem("columnsInCompare", JSON.stringify(columnsInCompareMemberName));*/
             }
-
-
-            localStorage.setItem("errorRows", JSON.stringify(this.errorRows));
-            localStorage.setItem("newRows", JSON.stringify(this.newRows));
-            localStorage.setItem("updateRows", JSON.stringify(this.updateRows));
-            localStorage.setItem("identicalRows", JSON.stringify(this.identicalRows));
-
-            localStorage.setItem("columnsInCompare", JSON.stringify(this.columnsInCompare.map(x => x.__getMemberName())));
+            catch (err) {
+                this.stepper.previous();
+                this.dialog.Error("הקליטה הופסקה - " + err);
+            }
         });
 
 
@@ -751,7 +702,7 @@ export class ImportFromExcelComponent implements OnInit {
         return info.address + ": " + r.join(', ');
     }
     @RunOnServer({ allowed: Roles.admin })
-    async checkExcelInput(excelRowInfo: excelRowInfo[], context?: Context, directSql?: DirectSQL) {
+    async checkExcelInput(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], context?: Context, directSql?: DirectSQL) {
         let result: serverCheckResults = {
             errorRows: [],
             identicalRows: [],
@@ -769,8 +720,15 @@ export class ImportFromExcelComponent implements OnInit {
             } else {
                 let ef = await context.for(Families).findFirst(f => f.id.isEqualTo(info.duplicateFamilyInfo[0].id));
                 let hasDifference = false;
-                for (const upd of info.values) {
-                    let col = ef.__getColumnByJsonName(upd.key);
+                for (const columnMemberName of columnsInCompareMemeberName) {
+
+                    let upd = info.values[columnMemberName];
+                    if (!upd) {
+                        upd = { newDisplayValue: '', newValue: '', existingDisplayValue: '', existingValue: '' };
+                        info.values[columnMemberName] = upd;
+                    }
+
+                    let col = ef.__getColumnByJsonName(columnMemberName);
                     upd.existingValue = col.value;
                     upd.existingDisplayValue = await getColumnDisplayValue(col);
                     if (upd.existingDisplayValue != upd.newDisplayValue) {
@@ -892,7 +850,38 @@ interface storedAdditionalColumnSettings {
 interface columnUpdater {
     key: string;
     name: string;
-    updateFamily: (val: string, f: Families, saveNewDependentValue: ((c: Column<any>, v: any, e: Entity<any>) => Promise<void>)) => Promise<void>;
+    searchNames?: string[];
+    updateFamily: (val: string, f: Families, h: columnUpdateHelper) => Promise<void>;
+    columns: Column<any>[];
+}
+class columnUpdateHelper {
+    constructor(private context: Context, private dialog: DialogService) {
+
+    }
+    laterSteps: laterSteps[] = [];
+
+    async lookupAndInsert<T extends Entity<any>, dataType>(
+        c: { new(...args: any[]): T; },
+        getSearchColumn: ((entity: T) => Column<dataType>),
+        val: dataType,
+        idColumn: ((entity: T) => IdColumn),
+        updateResultTo: IdColumn,
+        additionalUpdates?: ((entity: T) => void)) {
+        let x = await this.context.for(c).lookupAsync(e => (getSearchColumn(e).isEqualTo(val)));
+        if (x.isNew()) {
+            let s = updateResultTo.caption + " \"" + val + "\" לא קיים";
+            if (await this.dialog.YesNoPromise(s + ", האם להוסיף?")) {
+                getSearchColumn(x).value = val;
+                if (additionalUpdates)
+                    additionalUpdates(x);
+                await x.save();
+            }
+            else {
+                throw s;
+            }
+        }
+        updateResultTo.value = idColumn(x).value;
+    }
 }
 interface excelRowInfo {
     rowInExcel: number;
@@ -902,15 +891,14 @@ interface excelRowInfo {
     phone2: string;
     valid: boolean;
     error?: string;
-    comment?: string;
+
     duplicateFamilyInfo?: duplicateFamilyInfo[];
-    values: updateColumns[];
+    values: { [key: string]: updateColumns };
 }
 interface updateColumns {
-    key: string;
+
     existingValue?: any;
     existingDisplayValue?: string;
-    comment?: string;
     newValue: any;
     newDisplayValue: any;
 }
@@ -926,5 +914,9 @@ async function getColumnDisplayValue(c: Column<any>) {
     if (getv && getv.getTheValue) {
         v = await getv.getTheValue();
     }
-    return v;
+    return v.trim();
+}
+interface laterSteps {
+    step: number,
+    what: () => void
 }

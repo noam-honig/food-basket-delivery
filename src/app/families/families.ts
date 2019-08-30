@@ -109,6 +109,7 @@ export class Families extends IdEntity<FamilyId>  {
               this.createDate.value = new Date();
               this.createUser.value = context.user.id;
             }
+            this.lastUpdateDate.value = new Date();
             let logChanged = (col: Column<any>, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) => {
               if (col.value != col.originalValue) {
                 dateCol.value = new Date();
@@ -394,6 +395,7 @@ export class Families extends IdEntity<FamilyId>  {
 
   createDate = new changeDate({ includeInApi: Roles.admin, caption: 'מועד הוספה' });
   createUser = new HelperIdReadonly(this.context, { includeInApi: Roles.admin, caption: 'משתמש מוסיף' });
+  lastUpdateDate = new changeDate({ includeInApi: Roles.admin, caption: 'מועד עדכון אחרון' });
 
 
 
@@ -499,8 +501,8 @@ export class Families extends IdEntity<FamilyId>  {
     let nameCol = 'false';
     if (name && name.trim().length > 0)
       if (exactName)
-      nameCol = sql.build('trim(', f.name, ') =  ', sql.str( name.trim() ));
-    else
+        nameCol = sql.build('trim(', f.name, ') =  ', sql.str(name.trim()));
+      else
         nameCol = sql.build('trim(', f.name, ') like  ', sql.str('%' + name.trim() + '%'));
 
 
