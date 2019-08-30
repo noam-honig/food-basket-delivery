@@ -41,7 +41,8 @@ export class UpdateFamilyComponent implements OnInit {
         
         families.iDinExcel,
         families.createUser,
-        families.createDate
+        families.createDate,
+        families.lastUpdateDate
 
 
 

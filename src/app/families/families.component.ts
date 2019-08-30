@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
-import {  AndFilter, ColumnSetting, GridSettings } from 'radweb';
+import { AndFilter, ColumnSetting, GridSettings } from 'radweb';
 
 import { Families } from './families';
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -19,7 +19,7 @@ import { FilterBase } from 'radweb';
 import { BusyService } from 'radweb';
 import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
-import {  MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
 import { HasAsyncGetTheValue, DateTimeColumn } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
@@ -287,6 +287,7 @@ export class FamiliesComponent implements OnInit {
                 families.special.getColumn(),
                 families.createUser,
                 families.createDate,
+                families.lastUpdateDate,
 
                 families.addressOk,
                 families.floor,
@@ -636,19 +637,19 @@ export class FamiliesComponent implements OnInit {
         this.refreshStats();
     }
 
-  static route: Route = {
-    path: 'families',
-    component: FamiliesComponent,
-    data: { name: 'משפחות' }, canActivate: [AdminGuard]
-  }
-  previewFamily() {
-    let x = new MatDialogConfig();
-    x.data = {
-      f: this.families.currentRow
-    } as PreviewFamilyInfo;
-    x.minWidth = 350;
-    this.matDialog.open(PreviewFamilyComponent, x);
-  }
+    static route: Route = {
+        path: 'families',
+        component: FamiliesComponent,
+        data: { name: 'משפחות' }, canActivate: [AdminGuard]
+    }
+    previewFamily() {
+        let x = new MatDialogConfig();
+        x.data = {
+            f: this.families.currentRow
+        } as PreviewFamilyInfo;
+        x.minWidth = 350;
+        this.matDialog.open(PreviewFamilyComponent, x);
+    }
 }
 
 interface statsOnTab {
