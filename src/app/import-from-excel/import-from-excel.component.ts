@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridSettings, Column, Entity, RunOnServer, DirectSQL } from 'radweb';
 import { Context } from 'radweb';
 import { Helpers } from '../helpers/helpers';
@@ -14,6 +14,7 @@ import { BusyService } from 'radweb';
 import { SelectService } from '../select-popup/select-service';
 import { isUndefined } from 'util';
 import { Roles } from '../auth/roles';
+import { MatStepper } from '@angular/material';
 @Component({
     selector: 'app-stam-test',
     templateUrl: './import-from-excel.component.html',
@@ -35,11 +36,9 @@ export class ImportFromExcelComponent implements OnInit {
     excelColumns: excelColumn[] = [];
     additionalColumns: additionalColumns[] = [];
     columns: columnUpdater[] = [];
-    page = 0;
-    rows = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    getViewRow(r: number) {
-        return this.page * 10 + r;
-    }
+
+    rows: number[] = [];
+
     getData() {
         return this.getTheData(this.cell);
     }
@@ -54,10 +53,7 @@ export class ImportFromExcelComponent implements OnInit {
     totalRows: number;
     filename: string;
     commentExcelColumn: string;
-    rowInfo(row: number) {
-        let r = this.getViewRow(row);
-        return this.excelRowInfo.find(x => x.rowInExcel == r);
-    }
+
     getColInfo(i: excelRowInfo, col: Column<any>) {
         return ImportFromExcelComponent.actualGetColInfo(i, col.__getMemberName());
     }
@@ -122,7 +118,10 @@ export class ImportFromExcelComponent implements OnInit {
     }
     async updateAllCol(col: Column<any>) {
         let count = this.getColUpdateCount(col);
-        this.dialog.YesNoQuestion("האם לעדכן את השדה " + col.caption + " ל" + count + " משפחות?", () => {
+        let message = "האם לעדכן את השדה " + col.caption + " ל" + count + " משפחות?";
+        if (col.__getMemberName() == this.f.address.__getMemberName())
+            message += 'שים לב- עדכון של שדה כתובת יכול לקחת יותר זמן משדות אחרים';
+        this.dialog.YesNoQuestion(message, () => {
             this.busy.doWhileShowingBusy(async () => {
                 let rowsToUpdate: excelRowInfo[] = [];
                 let allRows: excelRowInfo[] = [];
@@ -311,6 +310,11 @@ export class ImportFromExcelComponent implements OnInit {
                 }
 
             }
+            this.rows = [];
+            for (let index = 2; index < this.totalRows; index++) {
+                this.rows.push(index);
+            }
+            this.stepper.next();
         };
         fileReader.readAsArrayBuffer(file);
     }
@@ -422,6 +426,7 @@ export class ImportFromExcelComponent implements OnInit {
 
 
     f: Families;
+    @ViewChild("stepper") stepper: MatStepper;
 
     ngOnInit() {
         let stam = localStorage.getItem('myTest');
@@ -632,8 +637,9 @@ export class ImportFromExcelComponent implements OnInit {
         this.updateRows = [];
         this.identicalRows = [];
         let rows: excelRowInfo[] = [];
-        let usedTz = new Map<string, number>();
-        let usedPhone = new Map<string, number>();
+        let usedTz = new Map<number, number>();
+        let usedPhone = new Map<number, number>();
+        this.stepper.next();
         await this.busy.doWhileShowingBusy(async () => {
 
             for (let index = 2; index <= this.totalRows; index++) {
@@ -643,19 +649,19 @@ export class ImportFromExcelComponent implements OnInit {
                 }
                 else {
 
-                    let exists = (val: string, map: Map<string, number>, caption: string) => {
+                    let exists = (val: string, map: Map<number, number>, caption: string) => {
                         let origVal = val;
                         if (!val)
                             return false;
                         val = val.replace(/\D/g, '');
                         if (val.length == 0)
                             return false;
-                        let x = map.get(val);
+                        let x = map.get(+val);
                         if (x > 0 && x < index) {
                             f.error = caption + ' - ' + origVal + ' - כבר קיים בקובץ בשורה ' + x;
                             return true;
                         }
-                        map.set(val, index);
+                        map.set(+val, index);
                         return false;
                     };
 
@@ -707,6 +713,7 @@ export class ImportFromExcelComponent implements OnInit {
                     }
                 }
             }
+            this.errorRows.sort((a, b) => a.rowInExcel - b.rowInExcel);
             for (const iterator of collected) {
                 if (iterator.length > 1) {
                     for (const row of iterator) {
@@ -717,7 +724,7 @@ export class ImportFromExcelComponent implements OnInit {
                 }
             }
 
-            this.errorRows.sort((a, b) => a.rowInExcel - b.rowInExcel);
+
             localStorage.setItem("errorRows", JSON.stringify(this.errorRows));
             localStorage.setItem("newRows", JSON.stringify(this.newRows));
             localStorage.setItem("updateRows", JSON.stringify(this.updateRows));
@@ -834,7 +841,6 @@ export class ImportFromExcelComponent implements OnInit {
                         }
                     }
                 }
-
             }
             this.additionalColumns = [];
             for (const loadedItem of loaded.additionalColumns) {
@@ -851,12 +857,11 @@ export class ImportFromExcelComponent implements OnInit {
 
         }
     }
+
     async testImport() {
-        this.excelRowInfo = [];
         await this.iterateExcelFile(false);
 
     }
-
 }
 
 

@@ -14,3 +14,9 @@ th {
 .newValue{
   color:green;
 }
+td{
+  white-space: nowrap;
+  word-wrap: none;
+  max-width:300px;
+  overflow: hidden;
+}

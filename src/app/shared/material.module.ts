@@ -17,6 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
 import {MatTabsModule} from '@angular/material/tabs';
 import { MatRadioModule} from '@angular/material/radio';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatStepperModule } from '@angular/material/stepper';
 
 
 
@@ -42,6 +43,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
         MatInputModule,
         MatListModule,
         MatMenuModule,
+        MatStepperModule,
 
 
 
@@ -71,7 +73,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
         MatProgressSpinnerModule,
         MatSidenavModule,
         MatToolbarModule,
-        MatTooltipModule
+        MatTooltipModule,
+        MatStepperModule
     ]
 })
 export class MaterialModule {

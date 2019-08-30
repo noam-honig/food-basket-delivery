@@ -1,256 +1,240 @@
 <mat-card>
-    <mat-accordion>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title> להסברים לחץ כאן</mat-panel-title>
-            </mat-expansion-panel-header>
-            קליטה מאקסל הינה קליטה אוטומטית של משפחות מקובץ אקסל.
-            <br>
-            אלו השלבים המומלצים כאשר מבצעים קליטה מאקסל:
-            <ol>
-                <li>בוחרים את קובץ האקסל אותו רוצים לקלוט על ידי לחיצה על הכפתור "choose file"</li>
-                <li>בחירת העמודות - בשלב הזה מוצגות השורות והעמודות בקובץ האקסל, ועבור כל עמודה באקסל יש לבחור לאיזו
-                    עמודה במערכת יש לקלוט אותה</li>
-                <li>אם מעוניינים לעדכן עמודות נוספות אשר אינו מופיעות באקסל, ניתן לעשות זאת באיזור הנקרא "עמודות שלא
-                    מופיעות באקסל", יש להוסיף שורה חדשה - לבחור את העמודה ולהגדיר את הערך הרלוונטי</li>
-                <li>ניתן לדפדף בין השורות בעזרת כפתורי החיצים <mat-icon>navigate_next</mat-icon>
-                    <mat-icon>navigate_before</mat-icon>
-                </li>
-                <li>לחיצה על הכפתור <mat-icon>search</mat-icon> - תציג את פרטי המשפחה כפי שיקלטו על ידי המערכת</li>
-                <li>ניתן לשמור את ההגדרות ולטעון אותן שוב מאוחר יותר על ידי הכפתורים "טען הגדרות" ו"שמור הגדרות"</li>
-                <li>סימולצית קליטה - לחיצה על כפתור זה תריץ סימולציה של קליטה ותייצר קובץ אקסל שבו לצד הנתונים המקוריים
-                    - תוצג עמודה של "הערות קליטה" אשר תפרט הערות עבור כל שורה - למשל אם משפחה לא תקלט מכיוון שקיימת
-                    משפחה דומה - זה יוצג בעמודה זו.<br>יש לציין שלא תתבצע קליטה בפועל</li>
-                <li>קלוט את המשפחות - לחיצה על כפתור זה תבצע את הליך הקליטה עצמו ותייצר דוח קליטה כקובץ אקסל בדומה
-                    לסימולציה רק עם הנתונים הסופיים</li>
-            </ol>
-        </mat-expansion-panel>
+   
+    <mat-horizontal-stepper #stepper>
+        <mat-step label="בחירת קובץ אקסל">
+            <h3> בחר קובץ אקסל</h3> <input type="file" (change)="fileChange($event)" />
+        </mat-step>
+        <mat-step label="הגדרת העמודות">
 
-    </mat-accordion>
-    <h3> בחר קובץ אקסל</h3> <input type="file" (change)="fileChange($event)" />
-    <h3>תוצאות</h3>
-    <mat-tab-group>
-        <mat-tab label="משפחות חדשות - {{newRows.length}}" *ngIf="newRows&&newRows.length">
-            <button (click)="addAll()" mat-raised-button>הוסף את כל המשפחות</button>
-            <div class="table-div">
 
-                <table class="table table-bordered" style="white-space: nowrap;">
+            <ng-container *ngIf="filename">
+
+                <button (click)="loadSettings()" mat-raised-button>טען הגדרות</button>
+                <button (click)="saveSettings()" mat-raised-button>שמור הגדרות</button>
+                <button (click)="testImport()" mat-raised-button  color="primary">המשך לשלב הבא</button>
+
+                <!--
+                <h3>עמודות מהאקסל</h3>
+                <table class="table table-bordered">
                     <tr>
-                        <th></th>
-                        <th></th>
-                        <th *ngFor="let c of columnsInCompare">
-                            {{c.caption}}
+                        <th>עמודה באקסל
+                        </th>
+                        <th>
+                            עמודה במערכת
                         </th>
                     </tr>
-                    <ng-container
-                        *ngFor="let i of newRows  | paginate: { itemsPerPage: 100,currentPage:newRowsPage,id:'newRows'}">
-                        <tr>
+                    <ng-container *ngFor="let ac of excelColumns; let i = index">
+                        <tr *ngIf="ac.column&&ac.column!=''">
+                            <td>{{ac.excelColumn}} - {{ac.title}}</td>
                             <td>
-                                <mat-icon style="color:red" (click)="newRows.splice(newRows.indexOf(i),1)">
-                                    delete_forever</mat-icon>
-                            </td>
-                            <td>{{i.rowInExcel}}<br></td>
-                            <td *ngFor="let c of columnsInCompare">
-
-                                {{getColInfo(i,c).newDisplayValue}}
-
-                            </td>
+                                <select [(ngModel)]="ac.column">
+                                    <option value="">לא לקלוט</option>
+                                    <option *ngFor="let c of columns" [ngValue]="c">{{c.name}}</option>
+                                </select></td>
                         </tr>
                     </ng-container>
-                </table>
-            </div>
-            <pagination-controls (pageChange)="newRowsPage = $event" previousLabel="קודם" nextLabel="הבא" id="newRows">
-            </pagination-controls>
-        </mat-tab>
-        <mat-tab label="משפחות לעדכון - {{updateRows.length}}" *ngIf="updateRows&&updateRows.length">
-            <div class="table-div">
-                <table class="table table-bordered" style="white-space: nowrap;">
-                    <tr>
-                        <th></th>
-                        <th></th>
-                        <th *ngFor="let c of columnsInCompare">
-                            {{c.caption}} <mat-icon style="color:green" *ngIf="getColUpdateCount(c)>0"
-                                (click)="updateAllCol(c)">done_all
-                            </mat-icon>
+                </table>-->
 
-                        </th>
-                    </tr>
-                    <ng-container
-                        *ngFor="let i of updateRows | paginate: { itemsPerPage: 100,currentPage:updateRowsPage,id:'updateRows'}">
-                        <tr>
-                            <td>
-                                <mat-icon style="color:red" (click)="updateRows.splice(updateRows.indexOf(i),1)">
-                                    delete_forever</mat-icon>
-                            </td>
-                            <td>{{i.rowInExcel}}<br></td>
-                            <td *ngFor="let c of columnsInCompare">
-                                <span
-                                    [class.newValue]="!i.newRow&&i.duplicateFamilyInfo&&i.duplicateFamilyInfo.length==1&& getColInfo(i,c).newDisplayValue!=getColInfo(i,c).existingDisplayValue">
-                                    {{getColInfo(i,c).newDisplayValue}}</span>
-                                <ng-container
-                                    *ngIf="!i.newRow&&i.duplicateFamilyInfo&&i.duplicateFamilyInfo.length==1&& getColInfo(i,c).newDisplayValue!=getColInfo(i,c).existingDisplayValue">
-                                    <br><span
-                                        style="color:red;text-decoration-line: line-through">{{getColInfo(i,c).existingDisplayValue}}</span>
-                                    <mat-icon style="color:red" (click)="clearColumnUpdate(i,c)">close</mat-icon>
-                                    <mat-icon style="color:green" (click)="updateCol(i,c)">done</mat-icon>
-                                </ng-container>
-                            </td>
-                        </tr>
-                    </ng-container>
-                </table>
-            </div>
-            <pagination-controls (pageChange)="updateRowsPage = $event" previousLabel="קודם" nextLabel="הבא"
-                id="updateRows"></pagination-controls>
-        </mat-tab>
-        <mat-tab label="משפחות קיימות - {{identicalRows.length}}" *ngIf="identicalRows&&identicalRows.length">
-            <div class="table-div">
-                <table class="table table-bordered" style="white-space: nowrap;">
-                    <tr>
+                <h3>עמודות שלא מופיעות באקסל</h3>
 
-                        <th></th>
-                        <th *ngFor="let c of columnsInCompare">
-                            {{c.caption}}
-                        </th>
-                    </tr>
-                    <ng-container *ngFor="let i of identicalRows">
-                        <tr>
-
-                            <td>{{i.rowInExcel}}<br></td>
-                            <td *ngFor="let c of columnsInCompare">
-
-                                {{getColInfo(i,c).newDisplayValue}}
-
-                            </td>
-                        </tr>
-                    </ng-container>
-                </table>
-            </div>
-        </mat-tab>
-        <mat-tab label="שגיאות -  {{errorRows.length}}" *ngIf="errorRows&&errorRows.length">
-            <div class="table-div">
-                <table class="table table-bordered" style="white-space: nowrap;">
-                    <tr>
-
-                        <th></th>
-                        <th *ngFor="let c of columnsInCompare">
-                            {{c.caption}}
-                        </th>
-                    </tr>
-                    <ng-container
-                        *ngFor="let i of errorRows | paginate: { itemsPerPage: 100,currentPage:errorRowsPage,id:'errorRows'}">
-                        <tr>
-
-                            <td>{{i.rowInExcel}}<br></td>
-                            <td *ngFor="let c of columnsInCompare">
-
-                                {{getColInfo(i,c).newDisplayValue}}
-
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="10" style="color:red">
-                                {{i.error}}
-
-                                <ul *ngIf="i.duplicateFamilyInfo&&i.duplicateFamilyInfo.length>=1">
-                                    <li *ngFor="let f of i.duplicateFamilyInfo">
-                                        {{f.name}} - {{displayDupInfo(f)}}
-                                    </li>
-                                </ul>
-                            </td>
-                        </tr>
-                    </ng-container>
-                </table>
-            </div>
-            <pagination-controls (pageChange)="errorRowsPage = $event" previousLabel="קודם" nextLabel="הבא"
-                id="errorRows">
-            </pagination-controls>
-        </mat-tab>
-
-
-    </mat-tab-group>
-
-
-    <!--
-    <mat-card *ngFor="let i of excelRowInfo">
-        <mat-card-header>
-            <h4>{{i.rowInExcel.toString()+". "+i.name}}</h4>
-        </mat-card-header>
-        <mat-card-content>
-            <table class="table table-bordered">
-                <tr>
-                    <th>שדה</th>
-                    <th>ערך חדש</th>
-                    <th *ngIf="i.duplicateFamilyInfo&& i.duplicateFamilyInfo.length==1">ערך קיים</th>
-                    <th>הערה</th>
-                </tr>
-                <tr *ngFor="let c of i.values">
-                    <td>{{c.caption}} </td>
-                    <td>{{c.newDisplayValue}} </td>
-                    <td *ngIf="i.duplicateFamilyInfo&&i.duplicateFamilyInfo.length==1">{{c.existingDisplayValue}} </td>
-                    <td>{{c.comment}} </td>
-                </tr>
-
-            </table>
-        </mat-card-content>
-    </mat-card>
-    -->
-    <ng-container *ngIf="filename">
-
-        <button (click)="loadSettings()" mat-raised-button>טען הגדרות</button>
-        <button (click)="saveSettings()" mat-raised-button>שמור הגדרות</button>
-        <button (click)="testImport()" mat-raised-button>סימולצית קליטה</button>
-        <button (click)="doImport()" mat-raised-button>קלוט את המשפחות</button>
-        <h3>עמודות שלא מופיעות באקסל</h3>
-
-        <ul>
-            <li *ngFor="let ac of additionalColumns; let i = index">
-                <select [(ngModel)]="ac.column">
-                    <option value="">לא לקלוט</option>
-                    <option *ngFor="let c of columns" [ngValue]="c">{{c.name}}</option>
-                </select>
-                <input [(ngModel)]="ac.value">
-                <button (click)="additionalColumns.splice(i,1)">הסר</button>
-            </li>
-        </ul>
-        <button (click)="additionalColumns.push({})" mat-raised-button>
-            הוסף עמודה
-        </button>
-
-        <h3>בחירת עמודות מאקסל</h3>
-        <button (click)="page=page-1" [disabled]="page==0" mat-icon-button>
-            <mat-icon>navigate_next</mat-icon>
-        </button>
-        <button (click)="page=page+1" [disabled]="getViewRow(10)>=totalRows" mat-icon-button>
-            <mat-icon>navigate_before</mat-icon>
-        </button>
-
-        <div class="table-div">
-            <table class="table table-bordered">
-                <tr>
-                    <th>#</th>
-                    <th>הצג</th>
-                    <th *ngFor="let ec of excelColumns">
-                        {{ec.title}}
-                        <br>
-                        <select [(ngModel)]="ec.column">
+                <ul>
+                    <li *ngFor="let ac of additionalColumns; let i = index">
+                        <select [(ngModel)]="ac.column">
                             <option value="">לא לקלוט</option>
                             <option *ngFor="let c of columns" [ngValue]="c">{{c.name}}</option>
                         </select>
-                    </th>
-                </tr>
-                <ng-container *ngFor="let r of rows">
-                    <tr *ngIf="getViewRow(r)>1&&getViewRow(r)<=totalRows">
-                        <td>{{getViewRow(r)}}
-                        </td>
-                        <td><button mat-icon-button (click)="test(getViewRow(r))">
-                                <mat-icon>search</mat-icon>
-                            </button></td>
-                        <td *ngFor="let c of excelColumns">
-                            {{getTheData(c.excelColumn+getViewRow(r))}}
-                        </td>
-                    </tr>
-                </ng-container>
-            </table>
-        </div>
-    </ng-container>
+                        <input [(ngModel)]="ac.value">
+                        <button (click)="additionalColumns.splice(i,1)">הסר</button>
+                    </li>
+                </ul>
+                <button (click)="additionalColumns.push({})" mat-raised-button>
+                    הוסף עמודה
+                </button>
+
+                <h3>בחירת עמודות מאקסל</h3>
+
+
+                <div class="table-div">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>#</th>
+
+                            <th *ngFor="let ec of excelColumns">
+                                {{ec.title}}
+                                <br>
+                                <select [(ngModel)]="ec.column">
+                                    <option value="">לא לקלוט</option>
+                                    <option *ngFor="let c of columns" [ngValue]="c">{{c.name}}</option>
+                                </select>
+                            </th>
+                        </tr>
+                        <ng-container *ngFor="let r of rows | paginate: { itemsPerPage: 10,currentPage:excelPage,id:'excelPage'}">
+                            <tr >
+                                <td>{{r}}
+                                </td>
+
+                                <td *ngFor="let c of excelColumns">
+                                    {{getTheData(c.excelColumn+r)}}
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </table>
+                </div>
+                <pagination-controls (pageChange)="excelPage = $event" previousLabel="קודם" nextLabel="הבא"
+                    id="excelPage"></pagination-controls>
+            </ng-container>
+        </mat-step>
+        <mat-step label="ביצוע הקליטה">
+            <h3>תוצאות</h3>
+            <mat-tab-group>
+                <mat-tab label="משפחות חדשות - {{newRows.length}}" *ngIf="newRows&&newRows.length">
+                    
+                    <div class="table-div">
+
+                        <table class="table table-bordered" style="white-space: nowrap;">
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th *ngFor="let c of columnsInCompare">
+                                    {{c.caption}}
+                                </th>
+                            </tr>
+                            <ng-container
+                                *ngFor="let i of newRows  | paginate: { itemsPerPage: 100,currentPage:newRowsPage,id:'newRows'}">
+                                <tr>
+                                    <td>
+                                        <mat-icon style="color:red" (click)="newRows.splice(newRows.indexOf(i),1)">
+                                            delete_forever</mat-icon>
+                                    </td>
+                                    <td>{{i.rowInExcel}}<br></td>
+                                    <td *ngFor="let c of columnsInCompare">
+
+                                        {{getColInfo(i,c).newDisplayValue}}
+
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </table>
+                    </div>
+                    <pagination-controls (pageChange)="newRowsPage = $event" previousLabel="קודם" nextLabel="הבא"
+                        id="newRows">
+                    </pagination-controls>
+                    <button (click)="addAll()" mat-raised-button  color="primary">הוסף את כל המשפחות</button>
+                </mat-tab>
+                <mat-tab label="משפחות לעדכון - {{updateRows.length}}" *ngIf="updateRows&&updateRows.length">
+                    <div class="table-div">
+                        <table class="table table-bordered" style="white-space: nowrap;">
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th *ngFor="let c of columnsInCompare">
+                                    {{c.caption}} <mat-icon style="color:green" *ngIf="getColUpdateCount(c)>0"
+                                        (click)="updateAllCol(c)">done_all
+                                    </mat-icon>
+
+                                </th>
+                            </tr>
+                            <ng-container
+                                *ngFor="let i of updateRows | paginate: { itemsPerPage: 100,currentPage:updateRowsPage,id:'updateRows'}">
+                                <tr>
+                                    <td>
+                                        <mat-icon style="color:red"
+                                            (click)="updateRows.splice(updateRows.indexOf(i),1)">
+                                            delete_forever</mat-icon>
+                                    </td>
+                                    <td>{{i.rowInExcel}}<br></td>
+                                    <td *ngFor="let c of columnsInCompare">
+                                        <span
+                                            [class.newValue]="!i.newRow&&i.duplicateFamilyInfo&&i.duplicateFamilyInfo.length==1&& getColInfo(i,c).newDisplayValue!=getColInfo(i,c).existingDisplayValue">
+                                            {{getColInfo(i,c).newDisplayValue}}</span>
+                                        <ng-container
+                                            *ngIf="!i.newRow&&i.duplicateFamilyInfo&&i.duplicateFamilyInfo.length==1&& getColInfo(i,c).newDisplayValue!=getColInfo(i,c).existingDisplayValue">
+                                            <br><span
+                                                style="color:red;text-decoration-line: line-through">{{getColInfo(i,c).existingDisplayValue}}</span>
+                                            <mat-icon style="color:red" (click)="clearColumnUpdate(i,c)">close
+                                            </mat-icon>
+                                            <mat-icon style="color:green" (click)="updateCol(i,c)">done</mat-icon>
+                                        </ng-container>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </table>
+                    </div>
+                    <pagination-controls (pageChange)="updateRowsPage = $event" previousLabel="קודם" nextLabel="הבא"
+                        id="updateRows"></pagination-controls>
+                </mat-tab>
+                <mat-tab label="משפחות קיימות - {{identicalRows.length}}" *ngIf="identicalRows&&identicalRows.length">
+                    <div class="table-div">
+                        <table class="table table-bordered" style="white-space: nowrap;">
+                            <tr>
+
+                                <th></th>
+                                <th *ngFor="let c of columnsInCompare">
+                                    {{c.caption}}
+                                </th>
+                            </tr>
+                            <ng-container *ngFor="let i of identicalRows| paginate: { itemsPerPage: 100,currentPage:existingFamiliesPage,id:'existingFamiliesPage'}">
+                                <tr>
+
+                                    <td>{{i.rowInExcel}}<br></td>
+                                    <td *ngFor="let c of columnsInCompare">
+
+                                        {{getColInfo(i,c).newDisplayValue}}
+
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </table>
+                    </div>
+                    <pagination-controls (pageChange)="existingFamiliesPage = $event" previousLabel="קודם" nextLabel="הבא"
+                    id="existingFamiliesPage"></pagination-controls>
+                </mat-tab>
+                <mat-tab label="שגיאות -  {{errorRows.length}}" *ngIf="errorRows&&errorRows.length">
+                    <div class="table-div">
+                        <table class="table table-bordered" style="white-space: nowrap;">
+                            <tr>
+
+                                <th></th>
+                                <th *ngFor="let c of columnsInCompare">
+                                    {{c.caption}}
+                                </th>
+                            </tr>
+                            <ng-container
+                                *ngFor="let i of errorRows | paginate: { itemsPerPage: 100,currentPage:errorRowsPage,id:'errorRows'}">
+                                <tr>
+
+                                    <td>{{i.rowInExcel}}<br></td>
+                                    <td *ngFor="let c of columnsInCompare">
+
+                                        {{getColInfo(i,c).newDisplayValue}}
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="10" style="color:red">
+                                        {{i.error}}
+
+                                        <ul *ngIf="i.duplicateFamilyInfo&&i.duplicateFamilyInfo.length>=1">
+                                            <li *ngFor="let f of i.duplicateFamilyInfo">
+                                                {{f.name}} - {{displayDupInfo(f)}}
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </table>
+                    </div>
+                    <pagination-controls (pageChange)="errorRowsPage = $event" previousLabel="קודם" nextLabel="הבא"
+                        id="errorRows">
+                    </pagination-controls>
+                </mat-tab>
+
+
+            </mat-tab-group>
+        </mat-step>
+    </mat-horizontal-stepper>
+
+
+
+
 </mat-card>
