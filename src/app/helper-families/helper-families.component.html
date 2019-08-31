@@ -1,75 +1,100 @@
-<h4 class="no-print">
-  משפחות לחלוקה, נותרו {{familyLists.toDeliver.length}}</h4>
-<mat-accordion class="no-print">
-  <mat-expansion-panel #myPanel *ngFor="let f of familyLists.toDeliver;let i=index">
-    <mat-expansion-panel-header>
-      <div>
-        <mat-panel-title>
-          {{i+1}}. {{f.name.value}}
-          <div style="margin-right:3px" *ngIf="f.deliveryComments.value">
-            <mat-icon color="primary">comment</mat-icon>
-          </div>
-          <div style="margin-right:3px" *ngIf="f.getGeocodeInformation().partialMatch()">
-            <mat-icon color="primary">warning</mat-icon>
-          </div>
-          <div style="margin-right:3px"  *ngIf="f.courierBeenHereBefore()">
-              <mat-icon color="green">repeat</mat-icon>
-            </div>
-        </mat-panel-title>
+<div style="display:flex;flex-direction: column;">
+  <div style="display: flex;
+justify-content: space-between;order:-1;">
+    <div [class.not-visible]="familyLists.toDeliver.length==0">
+      <h4 class="no-print">
+        {{familyLists.getLeftFamiliesDescription()}}
+      </h4>
+      <div
+        [class.not-visible]="!(familyLists.toDeliver.length>=1&&familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies())"
+        class="no-print">
+        סה"כ זמן נסיעה מוערך <span *ngIf="familyLists.routeStats"> {{familyLists.routeStats.totalTime}} דקות,
+          {{familyLists.routeStats.totalKm}} ק"מ</span>
       </div>
-      <div>
-        <mat-panel-description>
-          {{f.address.value}}
-        </mat-panel-description>
-      </div>
-    </mat-expansion-panel-header>
-    <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign" (assignmentCanceled)="cancelAssign(f)">
+    </div>
+    <div class="no-print">
+      <mat-menu #appMenu="matMenu">
+        <button mat-menu-item (click)="cancelAll()" style="color:red;">בטל שיוך לכל המשפחות</button>
+        <button mat-menu-item (click)="okAll()" class="primary-menu">סמן נמסר בהצלחה לכל המשפחות</button>
+      </mat-menu>
 
-      
-      <button mat-raised-button class="myButton" color="primary" (click)="deliveredToFamily(f)">מסרתי את החבילה בהצלחה</button>
-      <br/>
-      <button mat-raised-button class="myButton badButton" (click)="couldntDeliverToFamily(f)">נתקלתי בבעיה במסירה</button>
+      <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="familyLists.toDeliver.length>1 && partOfAssign">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+    </div>
+  </div>
+  <h4 *ngIf="!showLeftFamilies()">
+    {{allDoneMessage()}}
+  </h4>
+  <mat-accordion class="no-print">
+    <mat-expansion-panel #myPanel *ngFor="let f of familyLists.toDeliver;let i=index">
+      <mat-expansion-panel-header>
+        <app-family-in-list [f]="f" [i]="i+1" style="width:100%"></app-family-in-list>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
 
 
-    </app-family-info>
-  </mat-expansion-panel>
-</mat-accordion>
-<div class="sendSmsButtonLine no-print">
-  <button *ngIf="partOfAssign&&!partOfReview&&familyLists.toDeliver.length" mat-raised-button color="primary" class="myButton"
-    (click)="sendSms(false)">שלחי הודעת SMS עם קישור</button>
+        <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign" (assignmentCanceled)="cancelAssign(f)">
 
-</div>
-<button *ngIf="partOfReview" mat-raised-button class="myButton no-print" color="primary" (click)="sendSms(true)">
 
-  <span *ngIf="familyLists&&familyLists.helperOptional&&familyLists.helperOptional.reminderSmsDate.value; else elseContent">תזכורת
-    נשלחה {{familyLists.helperOptional.reminderSmsDate.relativeDateName()}} שלח שוב
+          <button mat-raised-button class="myButton" color="primary" (click)="deliveredToFamily(f)">מסרתי את החבילה
+            בהצלחה</button>
+          <br />
+          <button mat-raised-button class="myButton" (click)="leftThere(f)">השארתי ליד הבית
+          </button>
+          <br />
+          <button mat-raised-button class="myButton badButton" (click)="couldntDeliverToFamily(f)">לא מסרתי</button>
 
-  </span>
 
-  <ng-template #elseContent>
-    <span>שלחי SMS לתזכורת</span>
-  </ng-template>
-</button>
-<button mat-raised-button class="myButton no-print" *ngIf="partOfReview&&familyLists.helperOptional">
-  <a href="tel:{{familyLists.helperOptional.phone.value}}"> התקשרי ל{{familyLists.helperOptional.name.value}} {{familyLists.helperOptional.phone.value}}
+        </app-family-info>
+      </ng-template>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <div class="sendSmsButtonLine no-print">
+    <button *ngIf="partOfAssign&&!partOfReview&&familyLists.toDeliver.length" mat-raised-button color="primary"
+      class="myButton" (click)="sendSms(false)">שלחי הודעת SMS עם קישור</button>
+
+  </div>
+  <button *ngIf="partOfReview" mat-raised-button class="myButton no-print" color="primary" (click)="sendSms(true)">
+
+    <span
+      *ngIf="familyLists&&familyLists.helperOptional&&familyLists.helperOptional.reminderSmsDate.value; else elseContent">תזכורת
+      נשלחה {{familyLists.helperOptional.reminderSmsDate.relativeDateName()}} שלח שוב
+
+    </span>
+
+    <ng-template #elseContent>
+      <span>שלחי SMS לתזכורת</span>
+    </ng-template>
+  </button>
+  <button mat-raised-button class="myButton no-print" *ngIf="partOfReview&&familyLists.helperOptional">
+    <a href="tel:{{familyLists.helperOptional.phone.value}}"> התקשרי ל{{familyLists.helperOptional.name.value}}
+      {{familyLists.helperOptional.phone.value}}
     </a>
-</button>
-<div class="print-only">
-  <h2 *ngIf="familyLists.helperId">שלום {{familyLists.helperName}}, אלו המשפחות לחלוקתך - ({{familyLists.toDeliver.length}})</h2>
-  <div class="families-container">
-    <div class="family" *ngFor="let f of familyLists.toDeliver;let i=index">
-      <h3>{{i+1}}. {{f.name.value}} </h3>
-      <h4 style="display:inline">סל</h4> - {{f.basketType.displayValue}}
-      <ng-container *ngIf="f.deliveryComments.value">
-        <br/>
-        <strong style="color:red">שים לב! </strong> {{f.deliveryComments.value}}
-      </ng-container>
-      <h4>כתובת</h4>
-      <div>
-        <div style="display:inline-block">
+  </button>
+  <div class="print-only">
+    <h4 *ngIf="familyLists.helperId">שלום {{familyLists.helperName}}, אלו המשפחות לחלוקתך -
+      ({{familyLists.toDeliver.length}})</h4>
+    <table class="printTable">
+      <tr>
+        <th>משפחה</th>
+        <th>כתובת</th>
+        <th>טלפונים</th>
+        <th>סל</th>
+      </tr>
+      <tr *ngFor="let f of familyLists.toDeliver;let i=index">
+        <td>
+          {{i+1}}. {{f.name.value}}
+          <ng-container *ngIf="f.deliveryComments.value">
+            <br />
+            <strong style="color:red">שים לב! </strong> {{f.deliveryComments.value}}
+          </ng-container>
+        </td>
+
+        <td>
           {{f.address.value}}
           <ng-container *ngIf="f.floor.value||f.appartment.value">
-            <br/>
+            <br />
           </ng-container>
           <ng-container *ngIf="f.floor.value">
             קומה {{f.floor.value}}
@@ -77,95 +102,92 @@
           <ng-container *ngIf="f.appartment.value">
             דירה {{f.appartment.value}}
           </ng-container>
-          <ng-container *ngIf="f.addressComment.value">
-            <br/> {{f.addressComment.value}}
+          <ng-container *ngIf="f.entrance.value">
+            כניסה {{f.entrance.value}}
           </ng-container>
-        </div>
+          <ng-container *ngIf="f.addressComment.value">
+            <br /> {{f.addressComment.value}}
+          </ng-container>
+        </td>
+        <td>
+          {{f.phone1.displayValue}}<ng-container *ngIf="f.phone1Description.value">, {{f.phone1Description.value}}
+          </ng-container>
+          <div style="margin-top:5px" *ngIf="f.phone2.value">
 
-      </div>
+            <div style="display:inline-block">
+              {{f.phone2.displayValue}}, {{f.phone2Description.value?f.phone2Description.value:f.name.value}}
 
-      <h4>טלפונים:</h4>
-      <div>
+            </div>
+          </div>
+        </td>
+        <td>
+          {{f.basketType.displayValue}}
+        </td>
+      </tr>
+      <tr>
 
-        <div style="display:inline-block">
-          {{f.phone1.displayValue}}, {{f.phone1Description.value?f.phone1Description.value:f.name.value}}
 
-        </div>
+      </tr>
+    </table>
 
-      </div>
-      <div style="margin-top:5px" *ngIf="f.phone2.value">
 
-        <div style="display:inline-block">
-          {{f.phone2.displayValue}}, {{f.phone2Description.value?f.phone2Description.value:f.name.value}}
-
-        </div>
-      </div>
+    <div class="help" *ngIf=" familyLists.toDeliver.length>0">
+      <h5>
+        צריך עזרה? התקשר ל{{familyLists.toDeliver[0].courierHelpName()}}
+        {{familyLists.toDeliver[0].courierHelpPhone()}}
+      </h5>
     </div>
   </div>
-
-  <div class="help" *ngIf="familyLists.toDeliver.length>0">
-    <h5>
-      צריך עזרה? התקשר ל{{familyLists.toDeliver[0].courierAssignUserName.value}} {{familyLists.toDeliver[0].courierAssignUserPhone.displayValue}}
-    </h5>
+  <div *ngIf="familyLists.totals.length">
+    <h4 class="total-title">סה"כ לחלוקה</h4>
+    <ul>
+      <li *ngFor="let b of familyLists.totals">{{b.name()}} - {{b.count}}</li>
+    </ul>
   </div>
+
+
+
+
+  <div *ngIf="familyLists.problem.length>0" class="no-print">
+    <h4>משפחות שנתקלתי בבעיה - {{familyLists.problem.length}}</h4>
+    <mat-accordion>
+      <mat-expansion-panel #myPanel *ngFor="let f of familyLists.problem">
+        <mat-expansion-panel-header>
+          <app-family-in-list [f]="f" style="width:100%"></app-family-in-list>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+          <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign"
+            (assignmentCanceled)="cancelAssign(f)">
+            <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
+            <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות
+              לחלוקה</button>
+            <button *ngIf="partOfAssign" mat-raised-button class="myButton badButton" (click)="cancelAssign(f)">בטלי
+              שיוך</button>
+          </app-family-info>
+        </ng-template>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+
+  <div *ngIf="familyLists.delivered.length>0" class="no-print">
+    <h4>משפחות שחולקו ביומיים האחרונים - {{familyLists.delivered.length}}</h4>
+    <mat-accordion>
+      <mat-expansion-panel #myPanel *ngFor="let f of familyLists.delivered">
+        <mat-expansion-panel-header>
+          <app-family-in-list [f]="f" style="width:100%"></app-family-in-list>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+          <app-family-info [f]="f" [showHelp]="true" (assignmentCanceled)="cancelAssign(f)">
+            <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
+            <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות
+              לחלוקה</button>
+          </app-family-info>
+        </ng-template>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+  <app-map #map [class.hidden]="partOfReview||preview" [style.order]="familyLists.mapElementOrder"> </app-map>
+
 </div>
-<div *ngIf="familyLists.totals.length">
-  <h4 class="total-title">סה"כ לחלוקה</h4>
-  <ul>
-    <li *ngFor="let b of familyLists.totals">{{b.name()}} - {{b.count}}</li>
-  </ul>
-</div>
-
-
-
-
-<div *ngIf="familyLists.problem.length>0" class="no-print">
-  <h4>משפחות שנתקלתי בבעיה - {{familyLists.problem.length}}</h4>
-  <mat-accordion>
-    <mat-expansion-panel #myPanel *ngFor="let f of familyLists.problem">
-      <mat-expansion-panel-header>
-        <div>
-          <mat-panel-title>
-            {{f.name.value}}
-          </mat-panel-title>
-        </div>
-        <div>
-          <mat-panel-description>
-            {{f.address.value}}
-          </mat-panel-description>
-        </div>
-      </mat-expansion-panel-header>
-
-      <app-family-info [f]="f" [showHelp]="true"  [partOfAssign]="partOfAssign" (assignmentCanceled)="cancelAssign(f)">
-        <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
-        <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות לחלוקה</button>
-        <button *ngIf="partOfAssign" mat-raised-button class="myButton badButton" (click)="cancelAssign(f)">בטלי שיוך</button>
-      </app-family-info>
-    </mat-expansion-panel>
-  </mat-accordion>
-</div>
-
-<div *ngIf="familyLists.delivered.length>0" class="no-print">
-  <h4>משפחות שחולקו - {{familyLists.delivered.length}}</h4>
-  <mat-accordion>
-    <mat-expansion-panel #myPanel *ngFor="let f of familyLists.delivered">
-      <mat-expansion-panel-header>
-        <div>
-          <mat-panel-title>
-            {{f.name.value}}
-          </mat-panel-title>
-        </div>
-        <div>
-          <mat-panel-description>
-            {{f.address.value}}
-          </mat-panel-description>
-        </div>
-      </mat-expansion-panel-header>
-      <app-family-info [f]="f" [showHelp]="true" (assignmentCanceled)="cancelAssign(f)">
-        <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
-        <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות לחלוקה</button>
-      </app-family-info>
-    </mat-expansion-panel>
-  </mat-accordion>
-</div>
-<app-map #map [class.hidden]="partOfReview"></app-map>
+<button mat-raised-button *ngIf="!preview&&familyLists.toDeliver.length>0" (click)="showRouteOnGoogleMaps()"
+  class="map-button">הצג מסלול ב - google maps</button>

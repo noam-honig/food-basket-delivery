@@ -1,6 +1,7 @@
 import { StringColumn, NumberColumn } from "radweb";
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
 import { ContextEntity, Context, EntityClass } from "../shared/context";
+import { PhoneColumn } from "../model-shared/types";
 @EntityClass
 export class ApplicationSettings extends ContextEntity<number>  {
 
@@ -9,6 +10,13 @@ export class ApplicationSettings extends ContextEntity<number>  {
   smsText = new StringColumn('תוכן הודעת SMS');
   logoUrl = new StringColumn('לוגו URL');
   address = new StringColumn("כתובת מרכז השילוח");
+  commentForSuccessDelivery = new StringColumn('הודעה למשנע כאשר נמסר בהצלחה');
+  commentForSuccessLeft = new StringColumn('הודעה למשנע כאשר הושאר ליד הבית');
+  commentForProblem = new StringColumn('הודעה למשנע כאשר יש בעיה');
+  messageForDoneDelivery = new StringColumn('הודעה למשנע כאשר סיים את כל המשפחות');
+  helpText = new StringColumn('למי המשנע מתקשר כשיש לו בעיה');
+  helpPhone = new PhoneColumn('טלפון עזרה למשנע');
+  dataStructureVersion = new NumberColumn({readonly:true});
   addressApiResult = new StringColumn();
   private _lastString: string;
   private _lastGeo: GeocodeInformation;

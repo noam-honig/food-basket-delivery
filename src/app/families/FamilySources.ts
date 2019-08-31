@@ -27,4 +27,16 @@ export class FamilySourceId extends Id implements HasAsyncGetTheValue {
       return r.name.value;
     return '';
   }
+  getColumn() {
+    return {
+      column: this,
+      dropDown: {
+        source: this.context.for(FamilySources).create(),
+        orderBy: (f: FamilySources) => {
+          return [{ column: f.name }];
+        }
+
+      },
+    };
+  }
 }

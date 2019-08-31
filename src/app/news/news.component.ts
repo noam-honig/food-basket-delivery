@@ -8,6 +8,7 @@ import { Route } from '@angular/router';
 import { SelectService } from '../select-popup/select-service';
 import { Families } from '../families/families';
 import { FilterBase } from 'radweb';
+import { BusyService } from '../select-popup/busy-service';
 
 @Component({
   selector: 'app-news',
@@ -22,19 +23,19 @@ export class NewsComponent implements OnInit, OnDestroy {
     name: 'כל החדשות'
   }, {
     name: 'בעיות',
-    where:f=>f.deliverStatus.isProblem()
+    where: f => f.deliverStatus.isProblem().and(f.updateType.isEqualTo(1))
   }, {
     name: 'הערות',
-    where:f=>f.courierComments.IsDifferentFrom('')
+    where: f => f.courierComments.isDifferentFrom('').and(f.updateType.isEqualTo(1).and(f.deliverStatus.isAResultStatus()))
   }];
   currentFilter: NewsFilter = this.filters[0];
-  filterChange(){
-    console.log(this.currentFilter.name);
+  filterChange() {
+   
     this.refresh();
   }
   onDestroy = () => { };
-  constructor(dialog: DialogService, private selectService: SelectService, private context: Context) {
-    let y = dialog.newsUpdate.subscribe(() => {
+  constructor(dialog: DialogService, private selectService: SelectService, private context: Context, private busy: BusyService) {
+    let y = dialog.refreshStatusStats.subscribe(() => {
       this.refresh();
     });
     this.onDestroy = () => {
@@ -54,20 +55,28 @@ export class NewsComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.refresh();
   }
-
+  newsRows=50;
   async refresh() {
-    
-    this.news = await this.context.for(NewsUpdate).find({where:this.currentFilter.where,  orderBy: n => [{ column: n.updateTime, descending: true }], limit: 50 });
+
+    this.busy.donotWait(async () => {
+      this.news = await this.context.for(NewsUpdate).find({ where: this.currentFilter.where, orderBy: n => [{ column: n.updateTime, descending: true }], limit: this.newsRows });
+    });
+  }
+  moreNews(){
+    this.newsRows*=2;
+    this.refresh();
   }
   icon(n: NewsUpdate) {
 
     switch (n.updateType.value) {
       case 1:
-        switch (n.deliverStatus.listValue) {
+        switch (n.deliverStatus.value) {
           case DeliveryStatus.ReadyForDelivery:
 
             break;
           case DeliveryStatus.Success:
+          case DeliveryStatus.SuccessLeftThere:
+          case DeliveryStatus.SuccessPickedUp:
             return 'check';
           case DeliveryStatus.FailedBadAddress:
           case DeliveryStatus.FailedNotHome:

@@ -8,16 +8,21 @@ import { BusyService } from "./busy-service";
 import { environment } from "../../environments/environment";
 import { ServerEventAuthorizeAction } from "../server/server-event-authorize-action";
 import { Subject } from "rxjs";
+import { myThrottle } from "../model-shared/types";
 
+declare var gtag;
 
 @Injectable()
 export class DialogService {
     Info(info: string): any {
+        if (info.indexOf('!!')>=0){
+            new Audio('http://www.orangefreesounds.com/wp-content/uploads/2019/02/Ping-tone.mp3').play();
+        }
         this.snackBar.open(info, "סגור", { duration: 4000 });
     }
     Error(err: string): any {
 
-        this.YesNoQuestion(err, () => { });
+        this.YesNoQuestion(err);
     }
     private mediaMatcher: MediaQueryList = matchMedia(`(max-width: 720px)`);
 
@@ -26,14 +31,29 @@ export class DialogService {
         return this.mediaMatcher.matches;
     }
 
-    newsUpdate = new Subject<string>();
+    refreshStatusStats = new Subject();
+
+    statusRefreshThrottle = new myThrottle(1000);
 
 
     constructor(private dialog: MatDialog, private zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar) {
-        this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString() ));
+        this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));
 
 
     }
+    analytics(action:string,value?:number) {
+        if (!value)
+        {
+            value =1;
+        }
+        gtag('event', action, {
+            'event_category': 'delivery',
+            'event_label': action
+          });
+        
+
+    }
+
     eventSource: any;/*EventSource*/
     refreshEventListener(enable: boolean) {
         if (typeof (window) !== 'undefined') {
@@ -49,7 +69,7 @@ export class DialogService {
                     source.onmessage = e => {
 
                         this.zone.run(() => {
-                            this.newsUpdate.next(e.data.toString());
+                            this.statusRefreshThrottle.do(() => this.refreshStatusStats.next());
                             this.Info(e.data.toString() + ' ');
                         });
                     };
@@ -76,7 +96,7 @@ export class DialogService {
             data
         });
     }
-    YesNoQuestion(question: string, onYes: () => void) {
+    YesNoQuestion(question: string, onYes?: () => void) {
         let data: YesNoQuestionComponentData = {
             question: question,
             onYes: onYes

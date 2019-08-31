@@ -1,10 +1,14 @@
 <div dir="rtl">
- <form (submit)="confirm()"> 
+  <form (submit)="confirm()">
     <h3 matDialogHeader>{{data.title}}</h3>
     <data-area [settings]="area"> </data-area>
+    
     <mat-dialog-actions>
-
-      <button type="button" mat-raised-button color="warning" (click)="this.dialogRef.close()">
+        
+      <button mat-raised-button *ngFor="let b of data.buttons" (click)="buttonClick(b,$event)">
+          {{b.text}}
+      </button>
+      <button type="button" mat-raised-button color="warning" (click)="this.dialogRef.close()" *ngIf="this.data.cancel">
         בטלי
       </button>
 

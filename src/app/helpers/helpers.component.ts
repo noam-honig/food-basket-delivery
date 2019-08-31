@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FamilyDeliveryEventsView } from "../families/FamilyDeliveryEventsView";
+
 
 import { Helpers } from './helpers';
 import { SelectService } from '../select-popup/select-service';
@@ -9,6 +9,8 @@ import { HolidayDeliveryAdmin, AnyAdmin } from '../auth/auth-guard';
 import { RunOnServer } from '../auth/server-action';
 import { Context } from '../shared/context';
 import { DialogService } from '../select-popup/dialog';
+import { BusyService } from '../select-popup/busy-service';
+import { DateColumn, DataAreaSettings } from 'radweb';
 
 @Component({
   selector: 'app-helpers',
@@ -16,49 +18,46 @@ import { DialogService } from '../select-popup/dialog';
   styleUrls: ['./helpers.component.css']
 })
 export class HelpersComponent implements OnInit {
-  constructor(private dialog: DialogService, public context: Context) {
+  constructor(private dialog: DialogService, public context: Context,private busy:BusyService) {
   }
   static route: Route = {
     path: 'helpers',
     component: HelpersComponent,
-    data: { name: 'מתנדבות' }, canActivate: [AnyAdmin]
+    data: { name: 'מתנדבים' }, canActivate: [AnyAdmin]
   };
+  searchString:string;
 
   helpers = this.context.for(Helpers).gridSettings({
     allowDelete: true,
     allowInsert: true,
     allowUpdate: true,
-    numOfColumnsInGrid: 2,
+    numOfColumnsInGrid: 3,
     get: {
       orderBy: h => [h.name],
-      limit:100
+      limit:10,
+      where:h=>{
+        if (this.searchString)
+          return h.name.isContains(this.searchString);
+          return undefined;
+      }
     },
     columnSettings: helpers => [
       helpers.name,
-      helpers.phone,
+      helpers.phone
+      //helpers.declineSms
 
     ],
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes),
-    onEnterRow: h => this.previousEvents.getRecords()
+    
 
   });
-  previousEvents = this.context.for(FamilyDeliveryEventsView).gridSettings({
-    get: {
-      where: e => e.courier.isEqualTo(this.helpers.currentRow ? this.helpers.currentRow.id.value : '-1'),
-      orderBy: e => [{ column: e.deliveryDate, descending: true }]
-    },
-    columnSettings: x => [
+  async doSearch() {
+    if (this.helpers.currentRow && this.helpers.currentRow.wasChanged())
+      return;
+    this.busy.donotWait(async () =>
+      await this.helpers.getRecords());
+  }
 
-      x.eventName,
-      {
-        column: x.family,
-        caption: 'משפחה',
-        getValue: x => this.context.for(Families).lookup(x.family).name.value
-      },
-      x.deliverStatus
-
-    ]
-  });
 
   resetPassword() {
     this.dialog.YesNoQuestion("האם את בטוחה שאת רוצה למחוק את הסיסמה של " + this.helpers.currentRow.name.value, async () => {
@@ -80,5 +79,20 @@ export class HelpersComponent implements OnInit {
 
   ngOnInit() {
   }
+  fromDate = new DateColumn({
+    caption: 'מתאריך',
+    valueChange: () => {
+
+      if (this.toDate.value < this.fromDate.value) {
+        //this.toDate.value = this.getEndOfMonth();
+      }
+
+    }
+  });
+  toDate = new DateColumn('עד תאריך');
+  rangeArea = new DataAreaSettings({
+    columnSettings: () => [this.fromDate, this.toDate],
+    numberOfColumnAreas: 2
+  });
 
 }

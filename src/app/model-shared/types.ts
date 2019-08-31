@@ -1,10 +1,13 @@
 import * as uuid from 'uuid';
 import * as radweb from 'radweb';
-import { DataProviderFactory, EntityOptions, Entity, Column, Filter, FilterBase, SortSegment } from "radweb";
+import { DataProviderFactory, EntityOptions, Entity, Column, Filter, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, SQLCommand, SQLQueryResult } from "radweb";
 
-import { ContextEntity, ContextEntityOptions, MoreDataColumnSettings, hasMoreDataColumnSettings } from '../shared/context';
+import { ContextEntity, ContextEntityOptions, MoreDataColumnSettings, hasMoreDataColumnSettings, MoreDataNumberColumnSettings } from '../shared/context';
 import { BrowserPlatformLocation } from '@angular/platform-browser/src/browser/location/browser_platform_location';
 import { query } from '@angular/animations';
+import { ValueConverter } from '@angular/compiler/src/render3/view/template';
+import { eraseStyles } from '@angular/animations/browser/src/util';
+
 export class IdEntity<idType extends Id> extends ContextEntity<string>
 {
   id: idType;
@@ -40,11 +43,31 @@ export class StringColumn extends radweb.StringColumn implements hasMoreDataColu
     super(settingsOrCaption);
   }
 }
+export class PhoneColumn extends radweb.StringColumn implements hasMoreDataColumnSettings {
+  __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
+    return this.settingsOrCaption as MoreDataColumnSettings<any, any>;
+  }
+  constructor(private settingsOrCaption?: MoreDataColumnSettings<string, StringColumn> | string) {
+    super(settingsOrCaption);
+  }
+  get displayValue() {
+
+    if (!this.value)
+      return this.value;
+    let x = this.value.replace(/\D/g, '');
+    if (x.length < 9 || x.length > 10)
+      return this.value;
+    x = x.substring(0, x.length - 4) + '-' + x.substring(x.length - 4, x.length);
+
+    x = x.substring(0, x.length - 8) + '-' + x.substring(x.length - 8, x.length);
+    return x;
+  }
+}
 export class NumberColumn extends radweb.NumberColumn implements hasMoreDataColumnSettings {
   __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
     return this.settingsOrCaption as MoreDataColumnSettings<any, any>;
   }
-  constructor(private settingsOrCaption?: MoreDataColumnSettings<number, NumberColumn> | string) {
+  constructor(private settingsOrCaption?: MoreDataNumberColumnSettings | string) {
     super(settingsOrCaption);
   }
 }
@@ -66,21 +89,21 @@ export class DateTimeColumn extends radweb.DateTimeColumn implements hasMoreData
   __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
     return this.settingsOrCaption as MoreDataColumnSettings<any, any>;
   }
-  constructor(private settingsOrCaption?: MoreDataColumnSettings<string, DateTimeColumn> | string) {
+  constructor(private settingsOrCaption?: MoreDataColumnSettings<Date, DateTimeColumn> | string) {
     super(settingsOrCaption);
   }
   dontShowTimeForOlderDates = false;
   getStringForInputTime() {
     if (!this.value)
       return '';
-    return this.padZero(this.dateValue.getHours()) + ':' + this.padZero(this.dateValue.getMinutes());
+    return this.padZero(this.value.getHours()) + ':' + this.padZero(this.value.getMinutes());
   }
   getStringForInputDate() {
     if (!this.value)
       return '';
 
-    return this.value.substring(0, 10);
-    return this.padZero(this.dateValue.getHours()) + ':' + this.padZero(this.dateValue.getMinutes());
+    return this.rawValue.substring(0, 10);
+    return this.padZero(this.value.getHours()) + ':' + this.padZero(this.value.getMinutes());
   }
   padZero(v: number) {
     var result = '';
@@ -99,24 +122,24 @@ export class DateTimeColumn extends radweb.DateTimeColumn implements hasMoreData
 
     }
 
-    this.dateValue = new Date(this.dateValue.getFullYear(), this.dateValue.getMonth(), this.dateValue.getDate(), hour, minutes);
+    this.value = new Date(this.value.getFullYear(), this.value.getMonth(), this.value.getDate(), hour, minutes);
 
   }
   dateInputChangeEvent(e: any) {
     var newDate: Date = e.target.valueAsDate;
     var hours = 0;
     var minutes = 0;
-    if (this.dateValue) {
-      hours = this.dateValue.getHours();
-      minutes = this.dateValue.getMinutes();
+    if (this.value) {
+      hours = this.value.getHours();
+      minutes = this.value.getMinutes();
 
     }
-    this.dateValue = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate(), hours, minutes);
+    this.value = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate(), hours, minutes);
 
   }
   relativeDateName(d?: Date, now?: Date) {
     if (!d)
-      d = this.dateValue;
+      d = this.value;
     if (!d)
       return '';
     if (!now)
@@ -169,7 +192,14 @@ export class DateTimeColumn extends radweb.DateTimeColumn implements hasMoreData
       r = 'שלשום';
     }
     else {
-      r = 'לפני ' + (Math.trunc(now.valueOf() / (86400 * 1000)) - Math.trunc(d.valueOf() / (86400 * 1000))) + ' ימים';
+      let days = (Math.trunc(now.valueOf() / (86400 * 1000)) - Math.trunc(d.valueOf() / (86400 * 1000)));
+      if (days <= 7)
+        r = 'לפני ' + days + ' ימים';
+      else
+      {
+        r = 'ב ' + d.toLocaleDateString("he-il");
+        return r;
+      }
     }
     let t = d.getMinutes().toString();
     if (t.length == 1)
@@ -177,6 +207,11 @@ export class DateTimeColumn extends radweb.DateTimeColumn implements hasMoreData
     if (this.dontShowTimeForOlderDates)
       return r;
     return r += ' ב' + d.getHours() + ':' + t;
+  }
+  get displayValue() {
+    if (this.value)
+      return this.value.toLocaleString("he-il");
+    return '';
   }
 
 }
@@ -193,7 +228,7 @@ export class changeDate extends DateTimeColumn implements hasMoreDataColumnSetti
   __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
     return this.optionsOrCaption as MoreDataColumnSettings<any, any>;
   }
-  constructor(private optionsOrCaption: MoreDataColumnSettings<string, DateTimeColumn> | string) {
+  constructor(private optionsOrCaption: MoreDataColumnSettings<Date, DateTimeColumn> | string) {
     super(updateSettings(optionsOrCaption, x => x.readonly = true));
   }
 
@@ -202,7 +237,7 @@ export class changeDate extends DateTimeColumn implements hasMoreDataColumnSetti
 export async function checkForDuplicateValue(row: Entity<any>, column: Column<any>, message?: string) {
   if (row.isNew() || column.value != column.originalValue) {
     let rows = await row.source.find({ where: column.isEqualTo(column.value) });
-    console.log(rows.length);
+
     if (rows.length > 0)
       column.error = message || 'כבר קיים במערכת';
   }
@@ -210,7 +245,13 @@ export async function checkForDuplicateValue(row: Entity<any>, column: Column<an
 }
 
 export class SqlBuilder {
-  str(val: string): string | radweb.Column<string> {
+  extractNumber(from: any): any {
+    return this.build("NULLIF(regexp_replace(", from, ", '\\D','','g'), '')::numeric");
+  }
+
+  str(val: string): string {
+    if (val == undefined)
+      val = '';
     return '\'' + val.replace('\'', '\'\'') + '\'';
   }
   private dict = new Map<Column<any>, string>();
@@ -248,12 +289,23 @@ export class SqlBuilder {
       v = e.__getDbName();
     if (e instanceof Column)
       v = e.__getDbName();
+
+    let f = e as FilterBase;
+    if (f && f.__applyToConsumer) {
+
+      let bridge = new FilterConsumerBridgeToSqlRequest(new myDummySQLCommand());
+      f.__applyToConsumer(bridge);
+      return bridge.where.substring(' where '.length);
+    }
     if (e instanceof Array) {
       v = e.map(x => this.getItemSql(x)).join(', ');
     }
     return v;
   }
   eq<T>(a: Column<T>, b: T | Column<T>) {
+    return this.build(a, ' = ', b);
+  }
+  eqAny(a: string, b: any) {
     return this.build(a, ' = ', b);
   }
   ne<T>(a: Column<T>, b: T | Column<T>) {
@@ -267,8 +319,14 @@ export class SqlBuilder {
   gt<T>(a: Column<T>, b: T | Column<T>) {
     return this.build(a, ' > ', b);
   }
+  gtAny(a: Column<any>, b: any | any) {
+    return this.build(a, ' > ', b);
+  }
   and(...args: any[]): string {
     return args.map(x => this.getItemSql(x)).join(' and ');
+  }
+  or(...args: any[]): string {
+    return "(" + args.map(x => this.getItemSql(x)).join(' or ') + ")";
   }
   private last = 1;
   getEntityAlias(e: Entity<any>) {
@@ -282,7 +340,7 @@ export class SqlBuilder {
 
 
   }
-  columnSum(rootEntity: Entity<any>, col: Column<Number>, query: FromAndWhere) {
+  columnSumInnerSelect(rootEntity: Entity<any>, col: Column<Number>, query: FromAndWhere) {
     return this.columnDbName(rootEntity, {
       select: () => [this.build("sum(", col, ")")],
       from: query.from,
@@ -302,11 +360,11 @@ export class SqlBuilder {
       where: query.where
     });
   }
-  columnInnerSelect(rootEntity: Entity<any>,query: QueryBuilder) {
+  columnInnerSelect(rootEntity: Entity<any>, query: QueryBuilder) {
     this.addEntity(rootEntity, rootEntity.__getDbName());
     return '(' + this.query(query) + ' limit 1)';
   }
-  count(query: FromAndWhere, mappedColumn: Column<number>) {
+  countInnerSelect(query: FromAndWhere, mappedColumn: Column<number>) {
     return this.build("(", this.query({
       select: () => [this.build("count(*)")],
       from: query.from,
@@ -316,9 +374,22 @@ export class SqlBuilder {
       where: query.where
     }), ") ", mappedColumn);
   }
+  countDistinct(col: Column<any>, mappedColumn: Column<number>) {
+    return this.build("count (distinct ", col, ") ", mappedColumn)
+  }
   min(col: Column<any>, query: FromAndWhere, mappedColumn: Column<any>) {
     return this.build('(', this.query({
       select: () => [this.build("min(", col, ")")],
+      from: query.from,
+      innerJoin: query.innerJoin,
+      outerJoin: query.outerJoin,
+      crossJoin: query.crossJoin,
+      where: query.where
+    }), ") ", mappedColumn);
+  }
+  max(col: Column<any>, query: FromAndWhere, mappedColumn: Column<any>) {
+    return this.build('(', this.query({
+      select: () => [this.build("max(", col, ")")],
       from: query.from,
       innerJoin: query.innerJoin,
       outerJoin: query.outerJoin,
@@ -334,10 +405,51 @@ export class SqlBuilder {
     return '(' + this.query(query) + ') result';
   }
   entityDbNameUnion(query1: QueryBuilder, query2: QueryBuilder) {
-    return '(' + this.query(query1) + ' union ' + this.query(query2) + ') result';
+    return this.union(query1, query2) + ' result';
   }
+  union(query1: QueryBuilder, query2: QueryBuilder) {
+    return '(' + this.query(query1) + ' union ' + this.query(query2) + ')';
+  }
+
   in(col: Column<any>, ...values: any[]) {
     return this.build(col, ' in (', values, ')');
+  }
+  not(arg0: string): any {
+    return this.build(' not (', arg0, ')');
+  }
+  delete(e: Entity<any>, ...where: string[]) {
+    return this.build('delete from ', e, ' where ', this.and(...where));
+  }
+  update(e: Entity<any>, info: UpdateInfo) {
+    let result = [];
+    result.push('update ', e, ' ', this.getEntityAlias(e), ' set ');
+
+    let from: string;
+    if (info.from) {
+      from = this.build(' from ', info.from, ' ', this.getEntityAlias(info.from));
+    }
+    result.push(info.set().map(a => this.build(this.build(a[0].__getDbName(), ' = ', a[1]))));
+    if (from)
+      result.push(from);
+
+    if (info.where) {
+      result.push(' where ')
+      result.push(this.and(...info.where()));
+    }
+    return this.build(...result);
+  }
+  insert(info: InsertInfo) {
+    let result = [];
+    result.push('insert into ', info.into, ' ');
+
+    result.push('(', info.set().map(a => a[0].__getDbName()), ') ');
+    result.push(this.query({
+      select: () => info.set().map(a => a[1]),
+      from: info.from,
+      where: info.where
+    }));
+
+    return this.build(...result);
   }
   query(query: QueryBuilder) {
 
@@ -384,7 +496,7 @@ export class SqlBuilder {
 
   }
   case(args: CaseWhenItemHelper[], else_: any) {
-    if (args.length==0)
+    if (args.length == 0)
       return else_;
     let result = [];
     result.push('case');
@@ -405,6 +517,60 @@ export class SqlBuilder {
     return this.build('(', this.query(builder), ' limit 1) ', col);
   }
 }
+class myDummySQLCommand implements SQLCommand {
+  addParameterToCommandAndReturnParameterName(col: radweb.Column<any>, val: any): string {
+    if (typeof (val) == "string") {
+      return new SqlBuilder().str(val);
+    }
+    return val.toString();
+  } query(sql: string): Promise<SQLQueryResult> {
+    throw new Error("Method not implemented.");
+  }
+
+
+}
+export class myThrottle {
+  constructor(private ms: number) {
+
+  }
+  lastRun: number = 0;
+
+  runNext: () => void;
+
+  do(what: () => void) {
+    let current = new Date().valueOf();
+    if (this.lastRun + this.ms < current) {
+      this.lastRun = current;
+      what();
+    } else {
+      if (!this.runNext) {
+        this.runNext = what;
+        setTimeout(() => {
+          let x = this.runNext;
+          this.runNext = undefined;
+          this.lastRun = new Date().valueOf();
+          x();
+        }, this.lastRun + this.ms - current);
+      }
+      else this.runNext = what;
+    }
+  }
+}
+export class delayWhileTyping {
+  lastTimer: any;
+  constructor(private ms: number) {
+
+  }
+
+  do(what: () => void) {
+    clearTimeout(this.lastTimer);
+    this.lastTimer = setTimeout(() => {
+      what();
+    }, this.ms);
+
+  }
+}
+
 export interface QueryBuilder {
   select: () => any[];
   from: Entity<any>;
@@ -419,6 +585,17 @@ export interface FromAndWhere {
   crossJoin?: () => Entity<any>[];
   innerJoin?: () => JoinInfo[];
   outerJoin?: () => JoinInfo[];
+  where?: () => any[];
+}
+export interface UpdateInfo {
+  set: () => [Column<any>, any][],
+  where?: () => any[];
+  from?: Entity<any>;
+}
+export interface InsertInfo {
+  into: Entity<any>;
+  set: () => [Column<any>, any][];
+  from: Entity<any>;
   where?: () => any[];
 }
 export interface JoinInfo {

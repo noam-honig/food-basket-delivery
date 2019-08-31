@@ -41,6 +41,7 @@ export class ServerEvents {
         });
     }
     SendMessage = (x: string) => {
-        this.connection.forEach(y => y.write("data:" + x + "\n\n"));
+        setTimeout(()=>{this.connection.forEach(y => y.write("data:" + x + "\n\n"))},250);
+        
     }
 }

@@ -1,15 +1,23 @@
 <div class="myDiv">
 
-    <h3 mat-dialog-header>עדכן פרטי משפחה</h3>
+    <h3 mat-dialog-header *ngIf="!data.disableSave">עדכן פרטי משפחה</h3>
+    <h3 mat-dialog-header *ngIf="data.disableSave">צפה בפרטי משפחה</h3>
     <div mat-dialog-content>
-        <app-update-family [families]="families"></app-update-family>
+        <div class="dialog-content-fixer">
+            {{data.message}}
+            <app-update-family [families]="families"></app-update-family>
+        </div>
     </div>
     <mat-dialog-actions>
-        <button mat-raised-button color="warning" (click)="cancel()">
+        <button mat-raised-button color="warning" (click)="cancel()" *ngIf="!data.disableSave">
             בטל
         </button>
-        <button mat-raised-button color="primary" (click)="confirm()">
+        <button mat-raised-button color="primary" (click)="confirm()" *ngIf="!data.disableSave">
             שמור
         </button>
+        <button mat-raised-button color="primary" (click)="cancel()" *ngIf="data.disableSave">
+            סגור
+        </button>
+
     </mat-dialog-actions>
 </div>

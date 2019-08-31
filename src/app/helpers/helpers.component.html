@@ -1,4 +1,8 @@
 <mat-card>
+    <mat-form-field class="full-width">
+        <input matInput [(ngModel)]="searchString" (input)="doSearch()"  placeholder="חיפוש מתנדב" [ngModelOptions]="{standalone: true}">
+        <mat-icon matSuffix (click)="searchString=''">clear</mat-icon>
+      </mat-form-field>  
   <data-grid2 [settings]="helpers" height="300"></data-grid2>
   <div class="col-md-12" *ngIf="helpers.currentRow">
     <div *ngIf="context.info.superAdmin">
@@ -7,9 +11,6 @@
     <div *ngIf="context.info.deliveryAdmin">
       <div>
         <mat-checkbox [(ngModel)]="helpers.currentRow.deliveryAdmin.value">{{helpers.currentRow.deliveryAdmin.caption}}</mat-checkbox>
-      </div>
-      <div>
-        <mat-checkbox [(ngModel)]="helpers.currentRow.deliveryVolunteer.value">{{helpers.currentRow.deliveryVolunteer.caption}}</mat-checkbox>
       </div>
     </div>
     <div *ngIf="context.info.weeklyFamilyAdmin||context.info.superAdmin">
@@ -27,8 +28,5 @@
   <button mat-raised-button color="warn" (click)="resetPassword()" *ngIf="helpers.currentRow">
     אתחלי סיסמה ל{{helpers.currentRow.name.value}}
   </button>
-  <div *ngIf="helpers.currentRow&&context.info.deliveryAdmin">
-    <h4> אירועים קודמים ל{{helpers.currentRow.name.value}}</h4>
-    <data-grid [settings]="previousEvents"></data-grid>
-  </div>
+  
 </mat-card>

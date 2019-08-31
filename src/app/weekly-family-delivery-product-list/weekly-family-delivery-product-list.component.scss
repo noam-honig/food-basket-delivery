@@ -1,3 +1,12 @@
 .last-delivered{
     font-size:12px;
 }
+.quantity-input{
+    display:flex;
+    margin: 0 0 0 5px;
+    align-items: center;
+}
+.quantity-input>input{
+    flex-basis: 50px;
+    width:50px;
+}

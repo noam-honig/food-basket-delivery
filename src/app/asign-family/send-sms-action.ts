@@ -6,27 +6,28 @@ import { Context, ServerContext } from "../shared/context";
 
 
 
+
 export class SendSmsAction {
     @RunOnServer({ allowed: c => c.isAdmin() })
     static async SendSms(helperId: string, reminder: Boolean, context?: ServerContext) {
 
         try {
 
-            let currentUser = await (context.for(Helpers).findFirst(h => h.id.isEqualTo(context.info.helperId)));
+            
 
-            await SendSmsAction.generateMessage(context, helperId, context.getOrigin(), reminder, context.info.name, (phone, message) => {
+            await SendSmsAction.generateMessage(context, helperId, context.getOrigin(), reminder, context.info.name, (phone, message,sender) => {
 
-                new SendSmsUtils().sendSms(phone, currentUser.phone.value, message);
+                new SendSmsUtils().sendSms(phone, sender, message);
             });
         }
         catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 
 
 
-    static async  generateMessage(ds: Context, id: string, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string) => void) {
+    static async  generateMessage(ds: Context, id: string, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string,sender:string) => void) {
 
         if (!origin) {
             throw 'Couldnt determine origin for sms';
@@ -37,14 +38,15 @@ export class SendSmsAction {
                 await helper.save();
             }
             let message = '';
+            let settings = await ApplicationSettings.getAsync(ds);
             if (reminder) {
                 message = 'שלום ' + helper.name.value;
                 message += " טרם נרשם במערכת שבוצעה החלוקה, אנא עדכן אותנו אם יש צורך בעזרה או עדכן שהמשלוח הגיע ליעדו"
                 message += ' אנא לחץ על ' + origin + '/x/' + helper.shortUrlKey.value;
-                helper.reminderSmsDate.dateValue = new Date();
+                helper.reminderSmsDate.value = new Date();
             }
             else {
-                let settings = await ApplicationSettings.getAsync(ds);
+                
                 message = settings.smsText.value;
                 if (!message || message.trim().length == 0) {
                     message = 'שלום !משנע! לחלוקת חבילות !ארגון! לחץ על: !אתר! תודה !שולח!';
@@ -54,7 +56,13 @@ export class SendSmsAction {
                 message = SendSmsAction.getMessage(message, settings.organisationName.value, helper.name.value, senderName, origin + '/x/' + helper.shortUrlKey.value);
 
             }
-            then(helper.phone.value, message);
+            let sender = settings.helpPhone.value;
+            if (!sender||sender.length<3){
+                let currentUser = await (ds.for(Helpers).findFirst(h => h.id.isEqualTo(ds.info.helperId)));
+                sender = currentUser.phone.value;
+            }
+
+            then(helper.phone.value, message,sender);
             await helper.save();
 
 
@@ -83,13 +91,9 @@ class SendSmsUtils {
 
 
     async sendSms(phone: string, from: string, text: string) {
-        console.log('from', from);
-        console.log('phone', phone);
-        console.log('text', text);
 
         var t = new Date();
         var date = t.getFullYear() + '/' + (t.getMonth() + 1) + '/' + t.getDate() + ' ' + t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds();
-        //console.log("date is :" + date);
 
         var data =
             '<?xml version="1.0" encoding="utf-8"?>' +
@@ -109,7 +113,7 @@ class SendSmsUtils {
             '</sendSmsToRecipients>' +
             '</soap12:Body>' +
             '</soap12:Envelope>';
-        console.log(data);
+        console.log('sms request',data);
 
 
         try {
@@ -121,11 +125,11 @@ class SendSmsUtils {
                 headers: h,
                 body: data
             });
-            console.log(r, await r.text());
+            console.log('sms response',r, await r.text());
 
         }
         catch (err) {
-            console.log('sms error ', err);
+            console.error('sms error ', err);
         }
 
 

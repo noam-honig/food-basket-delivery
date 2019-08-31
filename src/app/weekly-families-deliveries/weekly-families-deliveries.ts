@@ -1,24 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Id, IdEntity, NumberColumn, changeDate, DateTimeColumn, SqlBuilder, QueryBuilder } from '../model-shared/types';
-import { WeeklyFamilyId, WeeklyFamilies } from '../weekly-families/weekly-families';
-import { ClosedListColumn, StringColumn, BoolColumn, Entity, CompoundIdColumn, Column } from 'radweb';
+import { WeeklyFamilyId, WeeklyFamilies, WeeklyFullFamilyInfo } from '../weekly-families/weekly-families';
+import { ClosedListColumn, StringColumn, BoolColumn, Entity, CompoundIdColumn, Column, DataColumnSettings } from 'radweb';
 import { EntityClass, Context, ServerContext, ContextEntity } from '../shared/context';
 import { BusyService } from '../select-popup/busy-service';
+import { HelperId } from '../helpers/helpers';
 
-
-@Component({
-  selector: 'app-weekly-families-deliveries',
-  templateUrl: './weekly-families-deliveries.component.html',
-  styleUrls: ['./weekly-families-deliveries.component.scss']
-})
-export class WeeklyFamiliesDeliveriesComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
-}
 @EntityClass
 export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
 {
@@ -30,7 +17,7 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
       allowApiCRUD: !!context.info.weeklyFamilyVolunteer || context.info.weeklyFamilyPacker,
       onSavingRow: async () => {
         if (this.isNew()) {
-          this.status.listValue = WeeklyFamilyDeliveryStatus.Prepare;
+          this.status.value = WeeklyFamilyDeliveryStatus.Prepare;
           this.ordnial.value = +(await context.for(WeeklyFamilyDeliveries).count(wfd => wfd.familyId.isEqualTo(this.familyId.value))) + 1;
         }
       },
@@ -38,21 +25,31 @@ export class WeeklyFamilyDeliveries extends IdEntity<WeeklyFamilyDeliveryId>
     });
     this.deliveredOn.dontShowTimeForOlderDates = true;
   }
+  currentUserAllowedToUpdate() {
 
+    if (this.context.info.weeklyFamilyAdmin || this.context.info.helperId == this.assignedHelper.value)
+      return true;
+
+    return this.getFamily().assignedHelper.value == this.context.info.helperId;
+  }
 
   changeStatus(s: WeeklyFamilyDeliveryStatus) {
-    if (this.status.listValue == WeeklyFamilyDeliveryStatus.Delivered)
-      this.deliveredOn.value = '';
-    this.status.listValue = s;
-    if (this.status.listValue == WeeklyFamilyDeliveryStatus.Delivered)
-      this.deliveredOn.dateValue = new Date();
+    if (this.status.value == WeeklyFamilyDeliveryStatus.Delivered)
+      this.deliveredOn.value = undefined;
+    this.status.value = s;
+    if (this.status.value == WeeklyFamilyDeliveryStatus.Delivered) {
+      this.deliveredOn.value = new Date();
+      this.deliveredBy.value = this.context.info.helperId;
+    }
     this.save();
   }
-  getFamily() { return this.context.for(WeeklyFamilies).lookup(f => f.id.isEqualTo(this.familyId)); }
+  getFamily() { return this.context.for(WeeklyFullFamilyInfo).lookup(f => f.id.isEqualTo(this.familyId)); }
   familyId = new WeeklyFamilyId();
   status = new WeeklyFamilyDeliveryStatusColumn();
   ordnial = new NumberColumn('סידורי');
   deliveredOn = new DateTimeColumn('תאריך מסירה');
+  deliveredBy = new HelperId(this.context, { caption: 'נמסר על ידי' });
+  assignedHelper = new HelperId(this.context, { caption: 'אחראית מסירה' });
 }
 
 
@@ -119,7 +116,7 @@ export class WeeklyFamilyDeliveryProductStats extends ContextEntity<string> {
               sql.gt(deliveries.ordnial, innerSelectDeliveries.ordnial),
               sql.eq(innerSelectDeliveryProducts.product, products.id),
               sql.gt(innerSelectDeliveryProducts.Quantity, 0),
-              sql.eq(innerSelectDeliveries.status, WeeklyFamilyDeliveryStatus.Delivered.id)
+              innerSelectDeliveries.status.isEqualTo(WeeklyFamilyDeliveryStatus.Delivered)
             ],
             orderBy: [{ column: innerSelectDeliveries.ordnial, descending: true }]
           } as QueryBuilder;
@@ -175,6 +172,42 @@ export class WeeklyFamilyDeliveryProductStats extends ContextEntity<string> {
         await r.save();
       });
     });
+  }
+}
+@EntityClass
+export class WeeklyDeliveryStats extends ContextEntity<number>
+{
+  families = new NumberColumn();
+  deliveries = new NumberColumn();
+  products = new NumberColumn();
+  constructor(context: Context) {
+    super({
+      name: "WeeklyDeliveryStats",
+      allowApiRead: !!context.info.weeklyFamilyAdmin || !!context.info.weeklyFamilyVolunteer || !!context.info.weeklyFamilyPacker,
+      dbName: () => {
+        let f = new WeeklyFamilies(context);
+        let d = new WeeklyFamilyDeliveries(context);
+        let p = new WeeklyFamilyDeliveryProducts(context);
+        let sql = new SqlBuilder();
+        return sql.entityDbName({
+          select: () => [
+            sql.countDistinct(f.id, this.families),
+            sql.countDistinct(d.id, this.deliveries),
+            sql.build('sum (', p.Quantity, ') ', this.products)
+          ],
+          from: p,
+          innerJoin: () => [
+            { to: d, on: () => [sql.eq(d.id, p.delivery)] },
+            { to: f, on: () => [sql.eq(d.familyId, f.id)] }
+          ],
+          where: () => [
+            d.status.isEqualTo(WeeklyFamilyDeliveryStatus.Delivered)
+          ]
+
+        });
+      }
+    })
+    this.initColumns(this.deliveries);
   }
 }
 
@@ -252,8 +285,8 @@ export interface StatusButtonEnabledHelper {
 }
 
 export class WeeklyFamilyDeliveryStatusColumn extends ClosedListColumn<WeeklyFamilyDeliveryStatus>{
-  constructor() {
-    super(WeeklyFamilyDeliveryStatus, { caption: 'סטטוס שילוח' });
+  constructor(settings?: DataColumnSettings<WeeklyFamilyDeliveryStatus, Column<WeeklyFamilyDeliveryStatus>>) {
+    super(WeeklyFamilyDeliveryStatus, settings ? settings : { caption: 'סטטוס שילוח' });
   }
 
 }
@@ -288,14 +321,14 @@ export class Products extends IdEntity<ProductId>{
       let sql = new SqlBuilder();
       let wfdp = new WeeklyFamilyDeliveryProducts(new ServerContext());
       let wfd = new WeeklyFamilyDeliveries(new ServerContext());
-      return sql.columnSum(this, wfdp.requestQuanity, {
+      return sql.columnSumInnerSelect(this, wfdp.requestQuanity, {
         from: wfdp,
         innerJoin: () => [{
           to: wfd,
           on: () => [sql.eq(wfdp.delivery, wfd.id)]
         }],
         where: () => [
-          sql.eq(wfd.status, WeeklyFamilyDeliveryStatus.Pack.id),
+          wfd.status.isEqualTo(WeeklyFamilyDeliveryStatus.Pack),
           sql.eq(wfdp.product, this.id)]
       });
 

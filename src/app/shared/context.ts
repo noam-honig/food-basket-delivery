@@ -1,4 +1,4 @@
-import { Entity, IDataSettings, GridSettings, Column, NumberColumn, DataList, EntityOptions, ColumnHashSet } from "radweb";
+import { Entity, IDataSettings, GridSettings, Column, NumberColumn, DataList, EntityOptions, ColumnHashSet, NumberColumnSettings, wrapFetch } from "radweb";
 import { EntitySourceFindOptions, FilterBase, FindOptionsPerEntity, DataProviderFactory, DataColumnSettings, DataApiRequest } from "radweb";
 import { foreachSync } from "./utils";
 import { evilStatics } from "../auth/evil-statics";
@@ -8,10 +8,17 @@ import { DataApiSettings } from "radweb";
 
 
 
+
 @Injectable()
 export class Context {
+    clearAllCache(): any {
+        this.cache = {};
+        this._lookupCache = new stamEntity();
+        //note that this is problematic - since all the values of rows that are used are turned temporarally to empty.
+        //this caused the logo to flicker - so i cached it specifically - but this sucks :)
+    }
     isAdmin() {
-        return !!this.info && !!this.info.deliveryAdmin;
+        return !!this.info && (!!this.info.deliveryAdmin||!!this.info.weeklyFamilyAdmin||!!this.info.superAdmin);
     }
     isLoggedIn() {
         return !!this.info && !!this.info.loggedIn;
@@ -49,6 +56,7 @@ export class Context {
             return this.cache[classType.__key] as SpecificEntityHelper<lookupIdType, T>;
         return this.cache[classType.__key] = new SpecificEntityHelper<lookupIdType, T>(this.create(c), this._lookupCache);
     }
+
     private _lookupCache = new stamEntity();
 }
 export class ServerContext extends Context {
@@ -71,6 +79,9 @@ export class ServerContext extends Context {
         return this.req.getHeader('origin')
     }
 }
+export abstract class DirectSQL {
+    abstract execute(sql:string);
+}
 
 function buildEntityOptions(o: ContextEntityOptions | string): EntityOptions | string {
     if (typeof (o) == 'string')
@@ -78,7 +89,7 @@ function buildEntityOptions(o: ContextEntityOptions | string): EntityOptions | s
     return {
         name: o.name,
         caption: o.caption,
-        dbName: o.dbName ,
+        dbName: o.dbName,
         onSavingRow: o.onSavingRow,
     }
 }
@@ -161,9 +172,12 @@ export interface hasMoreDataColumnSettings {
 export interface MoreDataColumnSettings<type, colType> extends DataColumnSettings<type, colType> {
     excludeFromApi?: boolean;
 }
+export interface MoreDataNumberColumnSettings extends MoreDataColumnSettings<number, NumberColumn>, NumberColumnSettings {
+
+}
 export interface ContextEntityOptions {
     name: string;//required
-    dbName?: string|(() => string);
+    dbName?: string | (() => string);
     caption?: string;
     allowApiRead?: boolean;
     allowApiUpdate?: boolean;
@@ -190,7 +204,13 @@ export class SpecificEntityHelper<lookupIdType, T extends Entity<lookupIdType>> 
         return this._lookupCache.lookupAsync(this.entity, filter);
     }
     lookup(filter: Column<lookupIdType> | ((entityType: T) => FilterBase)): T {
+        let x = wrapFetch.wrap;
+        wrapFetch.wrap = ()=>()=>{};
+        try{
         return this._lookupCache.lookup(this.entity, filter);
+        }finally{
+            wrapFetch.wrap = x;
+        }
     }
     async count(where?: (entity: T) => FilterBase) {
         let dl = new DataList(this.entity);

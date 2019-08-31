@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from "@angular/core";
-import { MatDialog,MatDialogConfig } from "@angular/material";
+import { MatDialog, MatDialogConfig } from "@angular/material";
 import { SelectHelperInfo, SelectHelperComponent } from "../select-helper/select-helper.component";
 import { Helpers } from '../helpers/helpers';
 import { SelectServiceInterface } from "./select-service-interface";
@@ -9,16 +9,23 @@ import { BusyService } from "./busy-service";
 import { UpdateCommentComponentData, UpdateCommentComponent } from "../update-comment/update-comment.component";
 import { UpdateFamilyDialogComponent, UpdateFamilyInfo } from "../update-family-dialog/update-family-dialog.component";
 import { FilterBase } from "radweb";
+import { UpdateGroupInfo,UpdateGroupDialogComponent } from "../update-group-dialog/update-group-dialog.component";
 
 @Injectable()
 export class SelectService implements SelectServiceInterface {
+    updateGroup(group: string, ok: (s: string) => void) {
+        let data: UpdateGroupInfo = { ok: ok, groups: group };
+        this.dialog.open(UpdateGroupDialogComponent, {
+            data
+        });
+    }
 
     constructor(private dialog: MatDialog, private zone: NgZone, private busy: BusyService) {
 
     }
 
-    selectHelper(ok: (selectedValue: Helpers) => void,filter?:(helper:Helpers)=>FilterBase) {
-        let data: SelectHelperInfo = { onSelect: ok ,filter:filter };
+    selectHelper(ok: (selectedValue: Helpers) => void, filter?: (helper: Helpers) => FilterBase) {
+        let data: SelectHelperInfo = { onSelect: ok, filter: filter };
         this.dialog.open(SelectHelperComponent, {
             data
         });
@@ -33,11 +40,11 @@ export class SelectService implements SelectServiceInterface {
         });
     }
     updateFamiliy(data: UpdateFamilyInfo) {
-        console.log(data);
+
         let x = new MatDialogConfig();
         x.data = data;
-        x.minWidth=350;
-        this.dialog.open(UpdateFamilyDialogComponent,x);
+        x.minWidth = 350;
+        this.dialog.open(UpdateFamilyDialogComponent, x);
     }
 
 }

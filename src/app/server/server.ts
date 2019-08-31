@@ -27,9 +27,7 @@ serverInit().then(async () => {
         let serverEvents = new ServerEvents(app);
         Families.SendMessageToBrowsers = x => serverEvents.SendMessage(x);
     }
-    if (process.env.logSqls){
-           ActualSQLServerDataProvider.LogToConsole = true;
-    }
+    
 
     app.use(compression());
 
@@ -52,7 +50,7 @@ serverInit().then(async () => {
     };
 
 
-    actionInfo.runningOnServer = true;
+    
     evilStatics.auth.applyTo(eb, allUsersAlsoNotLoggedIn, {
         verify: (t, k) => jwt.verify(t, k),
         sign: (i, k) => jwt.sign(i, k),

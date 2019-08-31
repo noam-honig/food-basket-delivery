@@ -14,8 +14,8 @@ export class NewsUpdate extends ContextEntity<string> implements FamilyUpdateInf
   courier = new HelperId(this.context, "משנע");
   courierAssingTime = new changeDate('מועד שיוך למשנע');
   courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
-  deliverStatus = new DeliveryStatusColumn('סטטוס שינוע');
-  deliveryStatusDate = new changeDate('מועד סטטוס שינוע');
+  deliverStatus = new DeliveryStatusColumn('סטטוס משלוח');
+  deliveryStatusDate = new changeDate('מועד סטטוס משלוח');
   deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
   updateTime = new changeDate('מועד העדכון');
   updateUser = new HelperIdReadonly(this.context, 'מי עדכן');

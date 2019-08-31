@@ -8,6 +8,7 @@ import { BasketType } from "./BasketType";
 import { Context, ContextEntity, EntityClass } from "../shared/context";
 import { BasketInfo } from "../asign-family/asign-family.component";
 import { StringColumn, NumberColumn, SqlBuilder } from "../model-shared/types";
+import { Groups } from "../manage/manage.component";
 
 export interface OutArgs {
     data: any;
@@ -23,20 +24,25 @@ export const colors = {
     , gray: 'gray'
 };
 export class Stats {
-    ready = new FaimilyStatistics('טרם שוייכו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.special.IsDifferentFrom(YesNo.Yes.id))), colors.yellow);
-    special = new FaimilyStatistics('מיוחדים שטרם שוייכו', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes.id))), colors.orange);
-    onTheWay = new FaimilyStatistics('בדרך', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.IsDifferentFrom('')), colors.blue);
-    delivered = new FaimilyStatistics('הגיעו', f => f.deliverStatus.isEqualTo(DeliveryStatus.Success.id), colors.green);
+    ready = new FaimilyStatistics('טרם שוייכו',
+        f => f.readyFilter().and(
+            f.special.isDifferentFrom(YesNo.Yes))
+        , colors.yellow);
+    selfPickup = new FaimilyStatistics('באים לקחת', f => f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup), colors.orange);
+    special = new FaimilyStatistics('מיוחדים שטרם שוייכו',
+        f => f.readyFilter().and(
+            f.special.isEqualTo(YesNo.Yes))
+        , colors.orange);
+
+    onTheWay = new FaimilyStatistics('בדרך', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(f.courier.isDifferentFrom('')), colors.blue);
+    delivered = new FaimilyStatistics('הגיעו', f => f.deliverStatus.isSuccess(), colors.green);
     problem = new FaimilyStatistics('בעיות', f => f.deliverStatus.isProblem(), colors.red);
-    currentEvent = new FaimilyStatistics('באירוע', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id), colors.green);
-    notInEvent = new FaimilyStatistics('לא באירוע', f => f.deliverStatus.isEqualTo(DeliveryStatus.NotInEvent.id), colors.blue);
-    frozen = new FaimilyStatistics('קפואים', f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen.id), colors.gray);
-    deliveryComments = new FaimilyStatistics('הערות משנע', f => f.courierComments.IsDifferentFrom(''), colors.yellow);
-    //  phoneComments = new FaimilyStatistics('הערות טלפנית', f => f.callComments.IsDifferentFrom(''), colors.orange);
-    //    phoneReady = new FaimilyStatistics('ממתינה לשיחה', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.callStatus.isEqualTo(CallStatus.NotYet.id).and(f.callHelper.isEqualTo(''))), colors.yellow);
-    //phoneAssigned = new FaimilyStatistics('משוייכת לטלפנית', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.callStatus.isEqualTo(CallStatus.NotYet.id).and(f.callHelper.IsDifferentFrom(''))), colors.blue);
-    //phoneOk = new FaimilyStatistics('בוצעה שיחה', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.callStatus.isEqualTo(CallStatus.Success.id)), colors.green);
-    //phoneFailed = new FaimilyStatistics('לא השגנו', f => f.deliverStatus.IsDifferentFrom(DeliveryStatus.NotInEvent.id).and(f.callStatus.isEqualTo(CallStatus.Failed.id)), colors.red);
+    currentEvent = new FaimilyStatistics('באירוע', f => f.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent), colors.green);
+    notInEvent = new FaimilyStatistics('לא באירוע', f => f.deliverStatus.isEqualTo(DeliveryStatus.NotInEvent), colors.blue);
+    frozen = new FaimilyStatistics('קפואים', f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen), colors.gray);
+    blocked = new FaimilyStatistics('סל חסום', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(f.courier.isEqualTo('').and(f.blockedBasket.isEqualTo(true))), colors.gray);
+    deliveryComments = new FaimilyStatistics('הערות משנע', f => f.courierComments.isDifferentFrom(''), colors.yellow);
+
 
     async getData() {
         let r = await Stats.getDataFromServer();
@@ -50,7 +56,7 @@ export class Stats {
     }
     @RunOnServer({ allowed: c => c.isAdmin() })
     static async getDataFromServer(context?: Context) {
-        let result = { data: {}, baskets: [], cities: [] };
+        let result = { data: {}, baskets: [], cities: [], groups: [] as groupStats[] };
         let stats = new Stats();
         let pendingStats = [];
         for (let s in stats) {
@@ -67,7 +73,9 @@ export class Stats {
             result.baskets.push({
                 id: b.id.value,
                 name: b.name.value,
-                unassignedFamilies: await context.for(Families).count(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
+                boxes: b.boxes.value,
+                blocked: b.blocked.value,
+                unassignedFamilies: await context.for(Families).count(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
                     f.basketType.isEqualTo(b.id).and(
                         f.courier.isEqualTo('')
                     )
@@ -78,14 +86,30 @@ export class Stats {
             context.for(CitiesStats).find({
                 orderBy: f => [{ column: f.families, descending: true }]
             }).then(cities => {
-            result.cities = cities.map(x => {
-                return {
-                    name: x.city.value,
-                    count: x.families.value
-                }
-            });
+                result.cities = cities.map(x => {
+                    return {
+                        name: x.city.value,
+                        count: x.families.value
+                    }
+                });
             })
         );
+        await context.for(Groups).find({
+            orderBy: f => [{ column: f.name }]
+        }).then(groups => {
+            for (const g of groups) {
+                let x: groupStats = {
+                    name: g.name.value,
+                    total: 0,
+                    totalReady: 0
+                };
+                result.groups.push(x);
+                pendingStats.push(context.for(Families).count(f => f.readyFilter(undefined, x.name)).then(r => x.totalReady = r));
+                pendingStats.push(context.for(Families).count(f => f.groups.isContains(x.name).and(f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList))).then(r => x.total = r));
+            }
+        });
+
+
         await Promise.all(pendingStats);
         result.baskets = result.baskets.filter(b => b.unassignedFamilies > 0);
         result.baskets.sort((a, b) => b.unassignedFamilies - a.unassignedFamilies);
@@ -103,11 +127,13 @@ export class CitiesStats extends ContextEntity<string> {
             dbName: () => {
                 let f = new Families(context);
                 let sql = new SqlBuilder();
+                sql.addEntity(f, 'Families');
                 return sql.build('(', sql.query({
                     select: () => [f.city, sql.columnWithAlias("count(*)", this.families)],
                     from: f,
-                    where: () => [sql.eq(f.deliverStatus, DeliveryStatus.ReadyForDelivery.id),
-                    sql.eq(f.courier, '\'\'')]
+                    where: () => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery),
+                    sql.eq(f.courier, '\'\''),
+                    f.blockedBasket.__getDbName() + ' = false']
                 }), ' group by ', f.city, ') as result')
             }
         });
@@ -116,8 +142,8 @@ export class CitiesStats extends ContextEntity<string> {
 }
 
 export class FaimilyStatistics {
-    constructor(public name: string, public rule: (f: Families) => FilterBase, public color: string) {
-
+    constructor(public name: string, public rule: (f: Families) => FilterBase, public color?: string, value?: number) {
+        this.value = value;
     }
 
     value = 0;
@@ -129,4 +155,8 @@ export class FaimilyStatistics {
         this.value = data[this.name];
     }
 }
-
+interface groupStats {
+    name: string,
+    totalReady: number,
+    total: number
+}

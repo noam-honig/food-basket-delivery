@@ -205,11 +205,7 @@ th {
   .mat-expansion-panel-body {
     padding:0 8px 16px !important;
   }
-  .wideList>mat-list-item >div{
-    
-    
-  }
-  
+
   .wideList{
     
     .mat-list-item-content{
@@ -217,3 +213,24 @@ th {
       padding:0px!important;
     }
   }
+  .top-bar{
+    display:flex;
+    justify-content: space-between;
+}
+.family-title{
+  display:flex;
+  justify-content: space-between;
+  width:100%;
+  margin-left:10px;
+}
+.dataGridHeaderArea{
+  position: inherit !important;
+}
+.primary-menu{
+  background-color: mat-color($candy-app-primary);
+  color:white;
+}
+input[type=tel]{
+  direction: ltr;
+  text-align: end;
+}

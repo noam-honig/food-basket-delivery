@@ -11,15 +11,16 @@
   </div>
   <input class="form-control no-print" placeholder="שם המשנע" [(ngModel)]="name">
 
-  <span *ngIf="!name" class="help no-print">אנא הזיני את הטלפון של המשנע ושמו, ואז תוכלי לבחור שפה, עיר ואילו סלים
+  <span *ngIf="!name" class="help no-print">אנא הזיני את הטלפון של המשנע ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים
     לשייך</span>
   <span *ngIf="name&&name.length>=2">
     <h4 class="no-print">
       פרטי השינוע
     </h4>
     <div class="no-print">
-      <select class="form-control" #lang (change)="langChange()" [(ngModel)]="filterLangulage">
-        <option *ngFor="let l of langulages" value="{{l.id}}">{{l.toString()}}</option>
+      <select class="form-control" #lang (change)="refreshBaskets()" [(ngModel)]="filterGroup">
+          <option value="">כל הקבוצות</option>
+        <option *ngFor="let g of groups" value="{{g.name.value}}">{{g.name.value}}</option>
       </select>
       <select class="form-control" #city (change)="selectCity()" [(ngModel)]="filterCity">
         <option value="">כל הערים</option>
@@ -43,22 +44,35 @@
         <input type="text" class="form-control" type="number" id="numOfBaskets" [(ngModel)]="numOfBaskets">
       </div>
     </div>
-    <div class="no-print" *ngIf="repeatFamilies" > 
+    <div class="no-print" *ngIf="repeatFamilies">
       <mat-checkbox [(ngModel)]="preferRepeatFamilies">עדיפות למשפחות חוזרות ({{repeatFamilies}})</mat-checkbox>
     </div>
 
 
     <div class="no-print">
-      <h5>סלים שנותרו</h5>
-      <button mat-raised-button color="primary" class="sal-button" (click)="addSpecial()" *ngIf="specialFamilies">משפחות
-        מיוחדות - {{specialFamilies}}</button>
+      <h4>סלים שנותרו</h4>
+      
+      <button mat-raised-button color="primary" class="sal-button" (click)="assignItem(undefined)"
+        *ngIf="baskets.length>1">{{familyLists.allFamilies.length>0?"מש' הכי קרובה":'משפחה כלשהי'}} - {{countAllFamilies()}}</button>
       <ng-container *ngFor="let b of baskets">
         <button mat-raised-button color="primary" class="sal-button" (click)="assignItem(b)"
           *ngIf="b.unassignedFamilies">{{b.name}}
           - {{b.unassignedFamilies}}</button>
       </ng-container>
+
+      <button mat-button [matMenuTriggerFor]="basketMenu" mat-raised-button color="primary" class="sal-button" *ngIf="baskets.length">אפשרויות נוספות...</button>
+      <mat-menu #basketMenu="matMenu">
+        <button mat-menu-item (click)="addSpecific()" >בחירת משפחה לפי שם</button>
+        <button mat-menu-item  (click)="assignOnMap()">בחירת משפחה על המפה</button>
+        <button mat-menu-item  (click)="addSpecial()" *ngIf="specialFamilies">משפחות מיוחדות - {{specialFamilies}}</button>
+      </mat-menu>
+      
       <h4 class="no-baskets" *ngIf="!baskets.length">לא נמצאו סלים מתאימים</h4>
     </div>
+    
+    <!--
+    <input type="checkbox" [(ngModel)]="this.useGoogleOptimization">
+    <button (click)="doRefreshRoute()">Run Refresh Route</button>-->
     <app-helper-families [familyLists]="familyLists" [partOfAssign]="true" (assignmentCanceled)="assignmentCanceled()"
       (assignSmsSent)="smsSent()"></app-helper-families>
   </span>

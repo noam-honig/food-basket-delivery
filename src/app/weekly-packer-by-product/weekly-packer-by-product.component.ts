@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Context } from '../shared/context';
 import { HolidayDeliveryAdmin, PackerGuard } from '../auth/auth-guard';
 import { Route } from '@angular/router';
-import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts, Products, WeeklyFamilyDeliveryProductStats } from '../weekly-families-deliveries/weekly-families-deliveries.component';
+import { WeeklyFamilyDeliveries, WeeklyFamilyDeliveryStatus, WeeklyFamilyDeliveryProducts, Products, WeeklyFamilyDeliveryProductStats } from '../weekly-families-deliveries/weekly-families-deliveries';
 import { Families } from '../families/families';
 import { WeeklyFamilies } from '../weekly-families/weekly-families';
 
@@ -24,15 +24,15 @@ export class WeeklyPackerByProductComponent implements OnInit {
 
 
   async ngOnInit() {
-    this.products = await this.context.for(Products).find({ where: x => x.quantityToPack.IsGreaterThan(0),orderBy:p=>[p.order,p.name] });
+    this.products = await this.context.for(Products).find({limit:1000, where: x => x.quantityToPack.isGreaterThan(0),orderBy:p=>[p.order,p.name] });
   }
 
   deliveryProducts: WeeklyFamilyDeliveryProductStats[] = []
   async showProduct(p: Products) {
     this.deliveryProducts = await this.context.for(WeeklyFamilyDeliveryProductStats).find({
       where: x => x.product.isEqualTo(p.id).and(
-        x.status.isEqualTo(WeeklyFamilyDeliveryStatus.Pack.id)).and(
-          x.requestQuanity.IsGreaterThan(0))
+        x.status.isEqualTo(WeeklyFamilyDeliveryStatus.Pack)).and(
+          x.requestQuanity.isGreaterThan(0))
     });
   }
   getFamilyCode(p: WeeklyFamilyDeliveryProductStats) {

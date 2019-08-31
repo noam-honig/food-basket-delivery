@@ -14,7 +14,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<UpdateFamilyDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: UpdateFamilyInfo,
-    private context:Context
+    private context: Context
 
   ) {
 
@@ -32,10 +32,12 @@ export class UpdateFamilyDialogComponent implements OnInit {
 
   ngOnInit() {
   }
-  families =this.context.for(Families).gridSettings({ allowUpdate: true });
+  families = this.context.for(Families).gridSettings({ allowUpdate: true });
 
 }
 
 export interface UpdateFamilyInfo {
-  f: Families
+  f: Families,
+  message?: string,
+  disableSave?: boolean
 }

@@ -1,28 +1,44 @@
 import { RouteReuseStrategy, DetachedRouteHandle, ActivatedRouteSnapshot } from "@angular/router";
+import { Context } from "./shared/context";
+import { Injectable } from "@angular/core";
 
+@Injectable()
 // This impl. bases upon one that can be found in the router's test cases.
 export class CustomReuseStrategy implements RouteReuseStrategy {
 
     handlers: { [key: string]: DetachedRouteHandle } = {};
-
+    constructor(
+        private context: Context
+    ) { }
     shouldDetach(route: ActivatedRouteSnapshot): boolean {
         let x = (<any>route.component).prototype[reuseComponentOnNavigationAndCallMeWhenNavigatingToIt];
-        console.debug('CustomReuseStrategy:shouldDetach', this.getRouteInfo(route), this.handlers);
+        //console.debug('CustomReuseStrategy:shouldDetach', this.getRouteInfo(route), this.handlers);
         return !!x;
     }
     reloadKey = '$reload';
     store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {
-        console.debug('CustomReuseStrategy:store', this.getRouteInfo(route), handle, this.handlers);
+      //  console.debug('CustomReuseStrategy:store', this.getRouteInfo(route), handle, this.handlers);
         this.handlers[route.routeConfig.path] = handle;
+        let result: any;
+        result = handle;
+        if (result && result.componentRef && result.componentRef.instance) {
+            let m = result.componentRef.instance[leaveComponent];
+            if (m) {
+                
+                    result.componentRef.instance[leaveComponent]();
+                
+            }
+        }
         if (handle) {
             handle[this.reloadKey] = true;
-            
+
         }
     }
 
     shouldAttach(route: ActivatedRouteSnapshot): boolean {
+        this.context.clearAllCache();
         let result = !!route.routeConfig && !!this.handlers[route.routeConfig.path];
-        console.debug('CustomReuseStrategy:shouldAttach', this.getRouteInfo(route), result, this.handlers);
+      //  console.debug('CustomReuseStrategy:shouldAttach', this.getRouteInfo(route), result, this.handlers);
         return result;
     }
 
@@ -37,7 +53,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
                 if (m) {
                     if (result[this.reloadKey]) {
                         result.componentRef.instance[reuseComponentOnNavigationAndCallMeWhenNavigatingToIt]();
-                        
+
                         result[this.reloadKey] = false;
                     }
                 }
@@ -45,13 +61,13 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
 
 
         }
-        console.debug('CustomReuseStrategy:retrieve', this.getRouteInfo(route), result, this.handlers);
+    //    console.debug('CustomReuseStrategy:retrieve', this.getRouteInfo(route), result, this.handlers);
         return result;
     }
 
     shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {
         let result = future.routeConfig === curr.routeConfig;
-        console.debug('CustomReuseStrategy:shouldReuseRoute', this.getRouteInfo(future), this.getRouteInfo(curr), result, this.handlers);
+      //  console.debug('CustomReuseStrategy:shouldReuseRoute', this.getRouteInfo(future), this.getRouteInfo(curr), result, this.handlers);
         return result;
     }
     getRouteInfo(route: ActivatedRouteSnapshot) {
@@ -63,3 +79,4 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     }
 }
 export const reuseComponentOnNavigationAndCallMeWhenNavigatingToIt = Symbol('reuseComponentOnNavigationAndCallMeWhenNavigatingToIt');
+export const leaveComponent = Symbol('leaveComponent');

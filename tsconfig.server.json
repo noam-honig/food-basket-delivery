@@ -1,7 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    
+    "baseUrl": "./",
     "outDir": "./dist-server/src",
     "sourceMap": true,
     "declaration": false,
@@ -17,8 +17,16 @@
     "lib": [
       "es2017",
       "dom"
-    ],
+    ]
+    /*, "paths": {
+      "radweb": [
+        "../radweb/projects/radweb/src/public_api"
+      ],
     
+      "radweb/*": [
+        "../radweb/projects/radweb/src/*"
+      ]
+    }*/
   },"files": [
     "./src/app/server/server.ts",
     "./src/app/server/doSomething.ts"

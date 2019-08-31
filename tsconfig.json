@@ -17,5 +17,14 @@
       "es2018",
       "dom"
     ]
+    /*,"paths": {
+      "radweb": [
+        "../radweb/projects/radweb/src/public_api"
+      ],
+    
+      "radweb/*": [
+        "../radweb/projects/radweb/src/*"
+      ]
+    }*/
   }
 }

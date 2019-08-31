@@ -1,11 +1,13 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { DataAreaSettings, ColumnCollection, FilterHelper, GridSettings } from 'radweb';
+import { DataAreaSettings, ColumnCollection, FilterHelper, GridSettings, ColumnSetting } from 'radweb';
 import { Families } from '../families/families';
 import { Helpers } from '../helpers/helpers';
 import { SelectService } from '../select-popup/select-service';
 import { BasketType } from '../families/BasketType';
 import { FamilySources } from '../families/FamilySources';
 import { Context } from '../shared/context';
+import { FamilyDeliveries } from '../families/FamilyDeliveries';
+import { DialogService } from '../select-popup/dialog';
 
 @Component({
   selector: 'app-update-family',
@@ -13,9 +15,10 @@ import { Context } from '../shared/context';
   styleUrls: ['./update-family.component.scss']
 })
 export class UpdateFamilyComponent implements OnInit {
-
-  constructor(private selectService: SelectService, private context: Context) { }
+  constructor(private selectService: SelectService, private context: Context, private dialog: DialogService) { }
   @Input() families: GridSettings<Families>;
+  @Input() familyDeliveries: FamilyDeliveries[];
+
   familiesInfo: DataAreaSettings<Families>;
   familiesAddress: DataAreaSettings<Families>;
   phones: DataAreaSettings<Families>;
@@ -25,25 +28,18 @@ export class UpdateFamilyComponent implements OnInit {
     this.familiesInfo = this.families.addArea({
       columnSettings: families => [
         families.name,
-        families.familyMembers,
-        {
-          column: families.language,
-          dropDown: {
-            items: families.language.getOptions()
-          }
-        },
-        {
-          column: families.basketType,
-          dropDown: { source: this.context.for(BasketType).create() }
-        },
-        {
-          column: families.familySource,
-          dropDown: { source: this.context.for(FamilySources).create() }
-        },
+        families.basketType.getColumn(),
+        families.deliverStatus.getColumn(),
+        families.defaultSelfPickup,
+        families.groups.getColumn(this.selectService),
         families.internalComment,
-        families.iDinExcel,
         families.deliveryComments,
+        families.familyMembers,
+        families.familySource.getColumn(),
+        families.tz,
         families.special.getColumn(),
+        
+        families.iDinExcel,
         families.createUser,
         families.createDate
 
@@ -57,9 +53,12 @@ export class UpdateFamilyComponent implements OnInit {
         families.address,
         families.floor,
         families.appartment,
+        families.entrance,
         families.addressComment,
         families.addressByGoogle(),
-        families.city
+        families.city,
+        families.postalCode,
+        families.addressOk
 
       ]
     });
@@ -71,22 +70,59 @@ export class UpdateFamilyComponent implements OnInit {
         families.phone2Description
       ]
     });
- 
+
     this.deliverInfo = this.families.addArea({
       columnSettings: families => [
+        families.defaultSelfPickup,
+        families.deliverStatus.getColumn(),
         families.courier.getColumn(this.selectService),
+        
+        families.courierComments,
         {
           caption: 'טלפון משנע',
           getValue: f => f.courier.getPhone()
         },
+        families.getPreviousDeliveryColumn(),
         families.courierAssignUser,
         families.courierAssingTime,
-        families.deliverStatus.getColumn(),
         families.deliveryStatusUser,
         families.deliveryStatusDate,
-        families.courierComments,
-        families.getPreviousDeliveryColumn()
+        families.fixedCourier.getColumn(this.selectService)
       ]
+    });
+  }
+  deliveryInfo(fd: FamilyDeliveries) {
+    let columns: ColumnSetting<any>[] =
+      [
+        fd.deliverStatus.getColumn(),
+        fd.deliveryStatusDate,
+        fd.courier.getColumn(this.selectService),
+        fd.courierComments,
+        fd.courierAssingTime,
+        fd.deliveryStatusUser.getColumn(this.selectService),
+        fd.courierAssignUser.getColumn(this.selectService)
+      ];
+    for (const c of columns) {
+      c.readonly = true;
+    }
+
+
+
+    this.dialog.displayArea({
+      title: 'פרטי משלוח',
+      settings: {
+        columnSettings: () => columns
+      },
+      ok: () => { },
+      buttons: [{
+        text: 'מחקי', click: close => {
+          this.dialog.confirmDelete('פרטי משלוח זה', () => {
+            fd.delete();
+            this.familyDeliveries.splice(this.familyDeliveries.indexOf(fd), 0);
+            close();
+          });
+        }
+      }]
     });
   }
 

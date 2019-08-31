@@ -34,7 +34,7 @@ import { AsignFamilyComponent } from './asign-family/asign-family.component';
 import { ManageComponent } from './manage/manage.component';
 import { FamilyInfoComponent } from './family-info/family-info.component';
 import { UpdateCommentComponent } from './update-comment/update-comment.component';
-import { FixAddressComponent } from './fix-address/fix-address.component';
+import { DistributionMap } from './distribution-map/distribution-map.component';
 import { SelectHelperComponent } from './select-helper/select-helper.component';
 import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component';
 import { MapComponent } from './map/map.component';
@@ -43,7 +43,7 @@ import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-
 import { HelperFamiliesComponent } from './helper-families/helper-families.component';
 import { SelectFamilyComponent } from './select-family/select-family.component';
 import { BusyService } from './select-popup/busy-service';
-import { StamTestComponent } from './stam-test/stam-test.component';
+import { ImportFromExcelComponent } from './import-from-excel/import-from-excel.component';
 import { NewsComponent } from './news/news.component';
 import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
 import { Context } from './shared/context';
@@ -52,15 +52,21 @@ import { SelectService } from './select-popup/select-service';
 import { UpdateFamilyDialogComponent } from './update-family-dialog/update-family-dialog.component';
 import { UpdateFamilyComponent } from './update-family/update-family.component';
 import { ProductsComponent } from './products/products.component';
-import { WeeklyFamiliesComponent } from './weekly-families/weekly-families.component';
-import { WeeklyFamiliesDeliveriesComponent } from './weekly-families-deliveries/weekly-families-deliveries.component';
-import { WeeklyDeliveryProductsRequestComponent } from './weekly-delivery-products-request/weekly-delivery-products-request.component';
 import { MyWeeklyFamiliesComponent } from './my-weekly-families/my-weekly-families.component';
 import { WeeklyPackerByFamilyComponent } from './weekly-packer-by-family/weekly-packer-by-family.component';
 import { ProductQuantityInDeliveryComponent } from './product-quantity-in-delivery/product-quantity-in-delivery.component';
 import { WeeklyPackerByProductComponent } from './weekly-packer-by-product/weekly-packer-by-product.component';
-import { WeeklyDeliveryUpdateComponent } from './weekly-delivery-update/weekly-delivery-update.component';
+
 import { WeeklyFamilyDeliveryProductListComponent } from './weekly-family-delivery-product-list/weekly-family-delivery-product-list.component';
+import { MyWeeklyFamilyDeliveriesComponent } from './my-weekly-family-deliveries/my-weekly-family-deliveries.component';
+import { AddressProblemComponent } from './address-problem/address-problem.component';
+import { StressTestComponent } from './stress-test/stress-test.component';
+import { SelfPickupComponent } from './self-pickup/self-pickup.component';
+import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
+import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
+import { PreviewFamilyComponent } from './preview-family/preview-family.component';
+import { FamilyInListComponent } from './family-in-list/family-in-list.component';
+import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-dialog.component';
 
 
 
@@ -86,7 +92,7 @@ import { WeeklyFamilyDeliveryProductListComponent } from './weekly-family-delive
     ManageComponent,
     FamilyInfoComponent,
     UpdateCommentComponent,
-    FixAddressComponent,
+    DistributionMap,
     SelectHelperComponent,
     LoginFromSmsComponent,
     MapComponent,
@@ -94,21 +100,27 @@ import { WeeklyFamilyDeliveryProductListComponent } from './weekly-family-delive
     DeliveryFollowUpComponent,
     HelperFamiliesComponent,
     SelectFamilyComponent,
-    StamTestComponent,
+    ImportFromExcelComponent,
     NewsComponent,
     DeliveryEventsComponent,
     UpdateFamilyDialogComponent,
     UpdateFamilyComponent,
     ProductsComponent,
-    WeeklyFamiliesComponent,
-    WeeklyFamiliesDeliveriesComponent,
-    WeeklyDeliveryProductsRequestComponent,
+    
     MyWeeklyFamiliesComponent,
     WeeklyPackerByFamilyComponent,
     ProductQuantityInDeliveryComponent,
     WeeklyPackerByProductComponent,
-    WeeklyDeliveryUpdateComponent,
     WeeklyFamilyDeliveryProductListComponent,
+    MyWeeklyFamilyDeliveriesComponent,
+    AddressProblemComponent,
+    StressTestComponent,
+    SelfPickupComponent,
+    BatchOperationsComponent,
+    DeliveryHistoryComponent,
+    PreviewFamilyComponent,
+    FamilyInListComponent,
+    UpdateGroupDialogComponent,
     
   ],
   imports: [
@@ -144,7 +156,7 @@ import { WeeklyFamilyDeliveryProductListComponent } from './weekly-family-delive
     SelectPopupComponent,
     YesNoQuestionComponent,
     InputAreaComponent,
-    UpdateFamilyDialogComponent,
+    UpdateFamilyDialogComponent,PreviewFamilyComponent,UpdateGroupDialogComponent,
     UpdateCommentComponent, WaitComponent]
 })
 export class AppModule { }

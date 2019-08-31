@@ -5,12 +5,19 @@ import { Helpers } from '../helpers/helpers';
 import { MapComponent } from '../map/map.component';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
 import { Context } from '../shared/context';
+import { routeStats } from '../asign-family/asign-family.component';
 
 export class UserFamiliesList {
     map: MapComponent;
     setMap(map: MapComponent): any {
         this.map = map;
+        this.map.userClickedOnFamilyOnMap = (f) => this.userClickedOnFamilyOnMap(f);
     }
+    startAssignByMap(city: string, group: string) {
+        this.map.loadPotentialAsigment(city, group);
+        this.mapElementOrder = -1;
+    }
+    mapElementOrder = 0;
     constructor(private context: Context) { }
     toDeliver: Families[] = [];
     delivered: Families[] = [];
@@ -19,56 +26,66 @@ export class UserFamiliesList {
     helperId: string;
     helperName: string;
     helperOptional: Helpers;
+    routeStats: routeStats;
+    userClickedOnFamilyOnMap: (familyId: string[]) => void;
     async initForHelper(helperId: string, name: string, helperOptional?: Helpers) {
+
         this.helperOptional = helperOptional;
         this.helperId = helperId;
         this.helperName = name;
+        if (helperOptional) {
+            this.routeStats = helperOptional.getRouteStats();
+        }
         await this.reload();
+
+    }
+    getLeftFamiliesDescription() {
+
+
+        let boxes = 0;
+        for (const iterator of this.toDeliver) {
+            boxes += this.context.for(BasketType).lookup(iterator.basketType).boxes.value;
+        }
+        if (this.toDeliver.length == 0)
+            return 'שומר מקום';
+        let r = '';
+        if (this.toDeliver.length == 1) {
+            r = 'משפחה אחת לחלוקה';
+        }
+        else
+            r = this.toDeliver.length + ' משפחות לחלוקה';
+
+
+        if (boxes > this.toDeliver.length)
+            r += ' (' + boxes + ' ארגזים)';
+        return r;
+
     }
     async initForFamilies(helperId: string, name: string, familiesPocoArray: any[]) {
         this.helperId = helperId;
-        this.helperName = this.helperName;
-        this.allFamilies = familiesPocoArray.map(x => this.context.for(Families).create().source.fromPojo(x));
+        this.helperName = name;
+        let newFamilies = familiesPocoArray.map(x => this.context.for(Families).create().source.fromPojo(x));
+        newFamilies.push(...this.delivered);
+        newFamilies.push(...this.problem);
+        this.allFamilies = newFamilies;
         this.initFamilies();
     }
 
     async reload() {
-        this.allFamilies = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(this.helperId), orderBy: f => [f.routeOrder, f.address], limit: 1000 });
+        if (this.helperId)
+            this.allFamilies = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(this.helperId).and(f.deliverStatus.isActiveDelivery()).and(f.visibleToCourier.isEqualTo(true)), orderBy: f => [f.routeOrder, f.address], limit: 1000 });
+        else
+            this.allFamilies = [];
         this.initFamilies();
     }
 
 
     initFamilies() {
-        if (1 + 1 == 0) {
-            let temp = this.allFamilies;
-            this.allFamilies = [];
-            this.toDeliver = [];
-            let lastLoc: Location = {
-                lat: 32.2280236,
-                lng: 34.8807046
-            };
-            let total = temp.length;
-            for (let i = 0; i < total; i++) {
-                let closest = temp[0];
-                let closestIndex = 0;
-                let closestDist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, closest.getGeocodeInformation().location());
-                for (let j = 0; j < temp.length; j++) {
-                    let dist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, temp[j].getGeocodeInformation().location());
-                    if (dist < closestDist) {
-                        closestIndex = j;
-                        closestDist = dist;
-                        closest = temp[j];
-                    }
-                }
-                lastLoc = closest.getGeocodeInformation().location();
-                this.allFamilies.push(temp.splice(closestIndex, 1)[0]);
 
-            }
-        }
-        this.toDeliver = this.allFamilies.filter(f => f.deliverStatus.listValue == DeliveryStatus.ReadyForDelivery);
-        this.delivered = this.allFamilies.filter(f => f.deliverStatus.listValue == DeliveryStatus.Success);
+        this.toDeliver = this.allFamilies.filter(f => f.deliverStatus.value == DeliveryStatus.ReadyForDelivery);
+        this.delivered = this.allFamilies.filter(f => f.deliverStatus.value == DeliveryStatus.Success || f.deliverStatus.value == DeliveryStatus.SuccessLeftThere);
         this.problem = this.allFamilies.filter(f => {
-            switch (f.deliverStatus.listValue) {
+            switch (f.deliverStatus.value) {
                 case DeliveryStatus.FailedBadAddress:
                 case DeliveryStatus.FailedNotHome:
                 case DeliveryStatus.FailedOther:
@@ -82,7 +99,7 @@ export class UserFamiliesList {
         let hash: any = {};
         this.totals = [];
         this.allFamilies.forEach(ff => {
-            if (ff.deliverStatus.listValue != DeliveryStatus.Success) {
+            if (ff.deliverStatus.value != DeliveryStatus.Success && ff.deliverStatus.value != DeliveryStatus.SuccessLeftThere) {
                 let x: basketStats = hash[ff.basketType.value];
                 if (!x) {
                     hash[ff.basketType.value] = this.totals[this.totals.push({
@@ -108,6 +125,12 @@ export class UserFamiliesList {
         this.delivered = [];
         this.problem = [];
         this.toDeliver = [];
+        this.mapElementOrder = 1;
+        if (this.map)
+            this.map.clear();
+
+
+
     }
 }
 export interface basketStats {

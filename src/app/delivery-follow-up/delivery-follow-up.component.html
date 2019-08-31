@@ -11,8 +11,13 @@
 <h4 *ngIf="currentStatFilter">{{currentStatFilter.name}} - {{currentStatFilter.value}}</h4>
 <a *ngIf="currentStatFilter" (click)="clearFilter()">הצג הכל</a>
 <h4 *ngIf="!currentStatFilter">כולם - {{couriers.items.length}}</h4>
+<mat-form-field class="full-width">
+  <input matInput [(ngModel)]="searchString"  placeholder="חיפוש משנע" [ngModelOptions]="{standalone: true}">
+  <mat-icon matSuffix (click)="searchString=''">clear</mat-icon>
+</mat-form-field>
 <mat-accordion>
-  <mat-expansion-panel #myPanel *ngFor="let c of couriers.items" (opened)="selectCourier(c)">
+  <ng-container *ngFor="let c of couriers.items">
+  <mat-expansion-panel #myPanel *ngIf="showHelper(c)" (opened)="selectCourier(c)">
     <mat-expansion-panel-header>
       <div>
         <mat-panel-title>
@@ -21,7 +26,7 @@
       </div>
       <div>
         <mat-panel-description>
-          בדרך {{c.deliveriesInProgress.value}}, יצא {{c.firstDeliveryInProgressDate.relativeDateName()}}
+          בדרך {{c.deliveriesInProgress.value}}, יצא {{c.lastAsignTime.relativeDateName()}}
         </mat-panel-description>
       </div>
     </mat-expansion-panel-header>
@@ -30,4 +35,5 @@
       <app-helper-families [familyLists]="familyLists" [partOfAssign]="true" [partOfReview]="true"></app-helper-families>
     </div>
   </mat-expansion-panel>
+</ng-container>
 </mat-accordion>

@@ -1,14 +1,17 @@
 import * as radweb from 'radweb';
-import { ColumnSetting, Entity, FilterBase } from "radweb";
+import { ColumnSetting, Entity, FilterBase, NumberColumn } from "radweb";
 import { IdEntity, changeDate, Id, HasAsyncGetTheValue, checkForDuplicateValue, StringColumn, BoolColumn, updateSettings } from '../model-shared/types';
 import { SelectServiceInterface } from '../select-popup/select-service-interface';
 import { DataColumnSettings } from 'radweb';
 
 import { Context, MoreDataColumnSettings, EntityClass } from '../shared/context';
 import { evilStatics } from '../auth/evil-statics';
+import { routeStats } from '../asign-family/asign-family.component';
+import { helpers } from 'chart.js';
 
 @EntityClass
 export class Helpers extends IdEntity<HelperId>  {
+
     constructor(private context: Context) {
 
         super(new HelperId(context), {
@@ -22,19 +25,21 @@ export class Helpers extends IdEntity<HelperId>  {
                     if (this.password.value && this.password.value != this.password.originalValue && this.password.value != Helpers.emptyPassword) {
                         this.realStoredPassword.value = evilStatics.passwordHelper.generateHash(this.password.value);
                     }
-                    if ((await context.for(Helpers).count()) == 0)
+                    if ((await context.for(Helpers).count()) == 0){
+                        this.superAdmin.value = true;
                         this.deliveryAdmin.value = true;
+                    }
 
                     await checkForDuplicateValue(this, this.phone);
                     if (this.isNew())
-                        this.createDate.dateValue = new Date();
+                        this.createDate.value = new Date();
                     this.veryUrlKeyAndReturnTrueIfSaveRequired();
                 }
             },
             apiDataFilter: () => {
                 if (!context.isLoggedIn())
                     return this.id.isEqualTo("No User");
-                else if (!(context.info.deliveryAdmin || context.info.weeklyFamilyAdmin))
+                else if (!(context.info.deliveryAdmin || context.info.weeklyFamilyAdmin || context.info.weeklyFamilyPacker || context.info.weeklyFamilyVolunteer))
                     return this.id.isEqualTo(this.context.info.helperId);
             }
         });
@@ -58,11 +63,21 @@ export class Helpers extends IdEntity<HelperId>  {
     smsDate = new changeDate('מועד משלוח SMS');
     reminderSmsDate = new changeDate('מועד משלוח תזכורת SMS');
     deliveryAdmin = new BoolColumn({
-        caption: 'מנהלת משלוח חגים',
+        caption: 'מנהל משלוח',
         readonly: !this.context.isAdmin(),
         excludeFromApi: !this.context.isAdmin(),
         dbName: 'isAdmin'
     });
+    totalKm = new NumberColumn();
+    totalTime = new NumberColumn();
+    getRouteStats(): routeStats {
+        return {
+            totalKm: this.totalKm.value,
+            totalTime: this.totalTime.value
+        }
+    }
+    generalSmsDate = new changeDate('מועד משלוח SMS כללי אחרון');
+    declineSms = new BoolColumn('מסרב לקבל הודעות SMS');
 
     superAdmin = new BoolColumn({
         caption: 'סופר מנהל'
@@ -96,6 +111,18 @@ export class Helpers extends IdEntity<HelperId>  {
             text += possible.charAt(Math.floor(Math.random() * possible.length));
         return text;
     }
+    static recentHelpers: Helpers[] = [];
+    static addToRecent(h: Helpers) {
+        if (!h)
+            return;
+        if (h.isNew())
+            return;
+        let index = Helpers.recentHelpers.findIndex(x=>x.id.value==h.id.value);
+        if (index >= 0)
+            Helpers.recentHelpers.splice(index, 1);
+        Helpers.recentHelpers.splice(0, 0, h);
+    }
+
 }
 
 export class HelperId extends Id implements HasAsyncGetTheValue {
@@ -106,9 +133,9 @@ export class HelperId extends Id implements HasAsyncGetTheValue {
     getColumn(dialog: SelectServiceInterface, filter?: (helper: Helpers) => FilterBase): ColumnSetting<Entity<any>> {
         return {
             column: this,
-            getValue: f => (<HelperId>f.__getColumn(this)).getValue(),
+            getValue: f => (f ? (<HelperId>(f).__getColumn(this)) : this).getValue(),
             hideDataOnInput: true,
-            click: f => dialog.selectHelper(s => f.__getColumn(this).value = (s ? s.id.value : ''), filter),
+            click: f => dialog.selectHelper(s => (f ? f.__getColumn(this) : this).value = (s ? s.id.value : ''), filter),
             readonly: this.readonly,
             width: '200'
 

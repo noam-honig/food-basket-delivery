@@ -4,8 +4,10 @@ import { environment } from "../../environments/environment";
 import { evilStatics } from "./evil-statics";
 import { DataApiRequest } from "radweb";
 import 'reflect-metadata';
-import { Context, ServerContext } from "../shared/context";
+import { Context, ServerContext, DirectSQL } from "../shared/context";
 import { PostgresDataProvider } from "radweb-server-postgres";
+
+
 
 interface inArgs {
     args: any[];
@@ -14,8 +16,18 @@ interface result {
     data: any;
 }
 
-
-export class myServerAction extends Action<inArgs, result,myAuthInfo>
+export class ActualDirectSQL extends DirectSQL {
+    static log = false;
+    execute(sql: string) {
+        if (ActualDirectSQL.log)
+            console.log(sql);
+        return this.dp.source.query(sql);
+    }
+    constructor(private dp: any) {
+        super();
+    }
+}
+export class myServerAction extends Action<inArgs, result, myAuthInfo>
 {
     constructor(name: string, private types: any[], private options: RunOnServerOptions, private originalMethod: (args: any[]) => any) {
         super(environment.serverUrl + 'api/', name, evilStatics.auth.AddAuthInfoToRequest());
@@ -35,7 +47,10 @@ export class myServerAction extends Action<inArgs, result,myAuthInfo>
                 if (this.types[i] == Context || this.types[i] == ServerContext) {
 
                     info.args[i] = context;
+                } else if (this.types[i] == DirectSQL && ds) {
+                    info.args[i] = new ActualDirectSQL(ds);
                 }
+
             }
 
             try {
@@ -44,7 +59,7 @@ export class myServerAction extends Action<inArgs, result,myAuthInfo>
             }
 
             catch (err) {
-                console.log(err);
+                console.error(err);
                 throw err
             }
         });

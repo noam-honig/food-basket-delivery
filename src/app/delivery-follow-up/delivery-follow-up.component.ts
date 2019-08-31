@@ -22,13 +22,16 @@ export class DeliveryFollowUpComponent implements OnInit {
   }
 
   familyLists = new UserFamiliesList(this.context);
-  currentlHelper:Helpers;
-  selectCourier(c: Helpers) {
+  currentlHelper:HelpersAndStats;
+  async selectCourier(c: HelpersAndStats) {
     this.currentlHelper = c;
-    this.familyLists.initForHelper(c.id.value, c.name.value, c);
+    this.familyLists.initForHelper(c.id.value, c.name.value, await this.context.for(Helpers).findFirst(h=>h.id.isEqualTo(c.id)));
 
   }
-
+  searchString:string;
+  showHelper(h:HelpersAndStats){
+    return (!this.searchString||h.name.value.indexOf(this.searchString)>=0);
+  }
   public pieChartLabels: string[] = [];
   public pieChartData: number[] = [];
   pieChartStatObjects: DeliveryStatistic[] = [];
@@ -99,7 +102,7 @@ export class DeliveryFollowUpComponent implements OnInit {
   couriers =this.context.for(HelpersAndStats).gridSettings( {
 
     columnSettings: h => [
-      h.name, h.phone, h.deliveriesInProgress, h.firstDeliveryInProgressDate
+      h.name, h.phone, h.deliveriesInProgress, h.lastAsignTime
     ],
     get: {
       where: h => {
@@ -114,12 +117,12 @@ export class DeliveryFollowUpComponent implements OnInit {
         if (this.currentStatFilter) {
           addFilter(this.currentStatFilter.rule(h));
         } else {
-          addFilter(h.allFamilies.IsGreaterOrEqualTo(1))
+          addFilter(h.allFamilies.isGreaterOrEqualTo(1))
         }
 
         return result;
       },
-      orderBy: h => h.firstDeliveryInProgressDate,
+      orderBy: h => [{column:h.lastAsignTime,descending:true}],
       limit: 1000
     }
   });

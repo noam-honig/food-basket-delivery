@@ -94,6 +94,46 @@
                 "group": "groupA"
             },
             "isBackground": true
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-merkaz-mazon",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-nrun",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-yadl",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "gc",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-plev",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-cbdh",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-cbhr",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-cbey",
+            "problemMatcher": []
         }
     ]
 }

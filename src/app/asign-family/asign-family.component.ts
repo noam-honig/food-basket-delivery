@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
-import { ColumnHashSet, UrlBuilder } from 'radweb';
+import { ColumnHashSet, UrlBuilder, FilterBase, NumberColumn, DateColumn } from 'radweb';
 import { Families } from '../families/families';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
-import { Language } from "../families/Language";
+
 import { Helpers } from '../helpers/helpers';
 import { DialogService } from '../select-popup/dialog';
 import { UserFamiliesList } from '../my-families/user-families';
@@ -16,10 +16,14 @@ import { foreachSync } from '../shared/utils';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import * as fetch from 'node-fetch';
 import { RunOnServer } from '../auth/server-action';
-import { Context } from '../shared/context';
+import { Context, DirectSQL } from '../shared/context';
 import { SelectService } from '../select-popup/select-service';
 import { BasketType } from '../families/BasketType';
 import { Routable } from '../shared/routing-helper';
+import { CitiesStats } from '../families/stats-action';
+import { SqlBuilder } from '../model-shared/types';
+import { BusyService } from '../select-popup/busy-service';
+import { Groups } from '../manage/manage.component';
 
 
 @Component({
@@ -36,37 +40,74 @@ export class AsignFamilyComponent implements OnInit {
   static route: Route = {
     path: 'assign-families', component: AsignFamilyComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'שיוך משפחות' }
   };
-
+  assignOnMap() {
+    this.familyLists.startAssignByMap(this.filterCity,this.filterGroup);
+  }
   async searchPhone() {
     this.name = undefined;
     this.shortUrl = undefined;
     this.id = undefined;
+    this.familyLists.routeStats = undefined;
     this.preferRepeatFamilies = true;
     this.clearList();
+
     if (this.phone.length == 10) {
-
-
       let helper = await this.context.for(Helpers).findFirst(h => h.phone.isEqualTo(this.phone));
       if (helper) {
         this.name = helper.name.value;
         this.shortUrl = helper.shortUrlKey.value;
         this.id = helper.id.value;
-        await this.refreshList();
+        this.familyLists.routeStats = helper.getRouteStats();
+        Helpers.addToRecent(helper);
+
+        await this.refreshListAndUpdateRouteForFixedCourier();
       } else {
 
         await this.refreshList();
       }
     }
   }
+  async refreshListAndUpdateRouteForFixedCourier() {
+    await this.refreshList();
+    let allFixed = true;
+    for (const f of this.familyLists.toDeliver) {
+      if (!f.fixedCourier.value)
+        allFixed = false;
+      if (f.fixedCourier.value != f.courier.value)
+        allFixed = false;
+    }
+    if (allFixed) {
+      this.doRefreshRoute();
+    }
+  }
   filterCity = '';
   selectCity() {
     this.refreshBaskets();
   }
-  langChange() {
-    this.refreshBaskets();
+
+  async assignmentCanceled() {
+    this.lastRefreshRoute = this.lastRefreshRoute.then(
+      async () => await this.busy.donotWait(
+        async () =>
+          await this.refreshBaskets()));
+    this.doRefreshRoute();
+
   }
-  assignmentCanceled() {
-    this.refreshBaskets();
+
+  lastRefreshRoute = Promise.resolve();
+  useGoogleOptimization = true;
+  doRefreshRoute() {
+    this.lastRefreshRoute = this.lastRefreshRoute.then(
+      async () => await this.busy.donotWait(
+        async () => await AsignFamilyComponent.RefreshRoute(this.id, this.useGoogleOptimization).then(r => {
+
+          if (r && r.ok && r.families.length == this.familyLists.toDeliver.length) {
+            this.familyLists.routeStats = r.stats;
+            this.familyLists.initForFamilies(this.id, this.name, r.families);
+          }
+
+        })));
+
   }
   smsSent() {
     this.dialog.Info("הודעת SMS נשלחה ל" + this.name);
@@ -77,34 +118,32 @@ export class AsignFamilyComponent implements OnInit {
 
   async refreshBaskets() {
     let r = (await AsignFamilyComponent.getBasketStatus({
-      filterLanguage: this.filterLangulage,
+      filterGroup: this.filterGroup,
       filterCity: this.filterCity,
       helperId: this.id
     }))
     this.baskets = r.baskets;
     this.cities = r.cities;
-    this.specialFamilies = r.special;
-    this.repeatFamilies = r.repeatFamilies;
+    this.specialFamilies = +r.special;
+    this.repeatFamilies = +r.repeatFamilies;
   }
 
   baskets: BasketInfo[] = [];
   cities: CityInfo[] = [];
   specialFamilies = 0;
   repeatFamilies = 0;
+
   preferRepeatFamilies = true;
   async refreshList() {
-    await this.refreshBaskets();
+    this.busy.donotWait(async () => {
+      await this.refreshBaskets();
+    });
     await this.familyLists.initForHelper(this.id, this.name);
 
   }
   familyLists = new UserFamiliesList(this.context);
-  filterLangulage = -1;
-  langulages: Language[] = [
-    new Language(-1, 'כל השפות'),
-    Language.Hebrew,
-    Language.Amharit,
-    Language.Russian
-  ];
+  filterGroup = '';
+  groups: Groups[] = [];
   phone: string;
   name: string;
   shortUrl: string;
@@ -114,6 +153,8 @@ export class AsignFamilyComponent implements OnInit {
     this.name = undefined;
     this.shortUrl = undefined;
     this.id = undefined;
+    this.familyLists.routeStats = undefined;
+
     this.numOfBaskets = 1;
     this.clearList();
 
@@ -128,180 +169,268 @@ export class AsignFamilyComponent implements OnInit {
         this.name = h.name.value;
         this.shortUrl = h.shortUrlKey.value;
         this.id = h.id.value;
+        this.familyLists.routeStats = h.getRouteStats();
+        this.refreshListAndUpdateRouteForFixedCourier();
       }
       else {
         this.phone = '';
         this.name = '';
         this.shortUrl = '';
         this.id = '';
+        this.refreshList();
       }
-      this.refreshList();
     });
   }
 
 
 
-  constructor(private selectService: SelectService, private dialog: DialogService, private context: Context) {
+  constructor(private selectService: SelectService, private dialog: DialogService, private context: Context, private busy: BusyService) {
 
   }
 
   async ngOnInit() {
+    this.familyLists.userClickedOnFamilyOnMap =
+      async  families => {
+        if (families.length == 1)
+          await this.assignFamilyBasedOnIdFromMap(families[0]);
+        else if (families.length > 1) {
+          this.dialog.YesNoQuestion("בנקודה זו יש " + families.length + " משפחות - לשייך את כולן?", async () => {
+            await this.busy.doWhileShowingBusy(async () => {
+              for (const iterator of families) {
+                await this.assignFamilyBasedOnIdFromMap(iterator);
+              }
+            });
+          });
+        }
+      };
+    this.context.for(Groups).find().then(g => this.groups = g);
     if (!environment.production) {
       this.phone = '0507330590';
       await this.searchPhone();
-      //   this.selectService.updateFamiliy({ f: this.familyLists.allFamilies[0]});
-
     }
   }
   numOfBaskets: number = 1;
+  private async assignFamilyBasedOnIdFromMap(familyId: string) {
+    await this.busy.doWhileShowingBusy(async () => {
+      let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(familyId));
+      if (f && f.deliverStatus.value == DeliveryStatus.ReadyForDelivery && f.courier.value == "") {
+        this.performSepcificFamilyAssignment(f, 'assign based on map');
+      }
+    });
+  }
+
   add(what: number) {
     this.numOfBaskets += what;
     if (this.numOfBaskets < 1)
       this.numOfBaskets = 1;
 
   }
+  countAllFamilies() {
+    let r = 0;
+    this.baskets.forEach(b => r += +b.unassignedFamilies);
+    return r;
+  }
+  lastAssign = Promise.resolve();
   async assignItem(basket: BasketInfo) {
 
-    let x = await AsignFamilyComponent.AddBox({
-      phone: this.phone,
-      name: this.name,
-      basketType: basket.id,
-      helperId: this.id,
-      language: this.filterLangulage,
-      city: this.filterCity,
-      numOfBaskets: this.numOfBaskets,
-      preferRepeatFamilies: this.preferRepeatFamilies && this.repeatFamilies > 0
+    this.lastAssign = this.lastAssign.then(async () => {
+      await this.busy.donotWait(async () => {
+        let x = await AsignFamilyComponent.AddBox({
+          phone: this.phone,
+          name: this.name,
+          basketType: basket ? basket.id : undefined,
+          helperId: this.id,
+          group: this.filterGroup,
+          city: this.filterCity,
+          numOfBaskets: this.numOfBaskets,
+          preferRepeatFamilies: this.preferRepeatFamilies && this.repeatFamilies > 0
+        });
+        if (x.addedBoxes) {
+          if (!this.id) {
+            this.context.for(Helpers).findFirst(h => h.id.isContains(x.helperId)).then(x => Helpers.addToRecent(x));
+
+          }
+          this.id = x.helperId;
+          this.familyLists.initForFamilies(this.id, this.name, x.families);
+          if (basket != undefined)
+            basket.unassignedFamilies -= x.addedBoxes;
+          else
+            this.refreshBaskets();
+          if (this.preferRepeatFamilies && this.repeatFamilies > 0)
+            this.repeatFamilies--;
+          this.doRefreshRoute();
+          this.dialog.analytics('Assign Family');
+          if (this.baskets == undefined)
+            this.dialog.analytics('Assign any Family (no box)');
+          if (this.filterGroup)
+            this.dialog.analytics('assign family-group');
+          if (this.filterCity)
+            this.dialog.analytics('assign family-city');
+          if (this.numOfBaskets > 1)
+            this.dialog.analytics('assign family boxes=' + this.numOfBaskets);
+        }
+        else {
+          this.refreshList();
+          this.dialog.Info("לא נמצאה משפחה מתאימה");
+        }
+        this.id = x.helperId;
+      });
     });
-    if (x.addedBoxes) {
-      this.id = x.helperId;
-      this.familyLists.initForFamilies(this.id, this.name, x.families);
-      this.baskets = x.basketInfo.baskets;
-      this.cities = x.basketInfo.cities;
-      this.specialFamilies = x.basketInfo.special;
-      this.repeatFamilies = x.basketInfo.repeatFamilies;
-    }
-    else {
-      this.refreshList();
-      this.dialog.Info("לא נמצאה משפחה מתאימה");
-    }
-    this.id = x.helperId;
-
-
   }
+
   @RunOnServer({ allowed: c => c.isAdmin() })
   static async getBasketStatus(info: GetBasketStatusActionInfo, context?: Context): Promise<GetBasketStatusActionResponse> {
+    console.time('getBasketStatus');
     let result = {
       baskets: [],
       cities: [],
       special: 0,
       repeatFamilies: 0
     };
-    let basketHash: any = {};
-    let cityHash: any = {};
+    let countFamilies = (additionalWhere?: (f: Families) => FilterBase) => {
+      return context.for(Families).count(f => {
+        let where = f.readyFilter(info.filterCity, info.filterGroup);
+        if (additionalWhere) {
+          where = where.and(additionalWhere(f));
+        }
+        return where;
+      });
+    };
 
-    let r = await context.for(Families).find({ where: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(f.courier.isEqualTo('')) });
-    r.forEach(cf => {
-      if (info.filterLanguage == -1 || info.filterLanguage == cf.language.value) {
-        if (!info.filterCity || info.filterCity == cf.city.value) {
-          if (cf.special.listValue == YesNo.No) {
-            let bi = basketHash[cf.basketType.value];
-            if (!bi) {
-              bi = {
-                id: cf.basketType.value,
-                unassignedFamilies: 0
-              };
-              basketHash[cf.basketType.value] = bi;
-              result.baskets.push(bi);
-            }
-            bi.unassignedFamilies++;
-          }
-          else {
-            result.special++;
-          }
-          if (info.helperId && cf.previousCourier.value == info.helperId)
-            result.repeatFamilies++;
-        }
-        let ci: CityInfo = cityHash[cf.city.value];
-        if (!ci) {
-          ci = {
-            name: cf.city.value,
-            unassignedFamilies: 0
-          };
-          cityHash[cf.city.value] = ci;
-          result.cities.push(ci);
-        }
-        ci.unassignedFamilies++;
+    result.special = await countFamilies(f => f.special.isEqualTo(YesNo.Yes));
+
+    result.repeatFamilies = await countFamilies(f =>
+      f.previousCourier.isEqualTo(info.helperId).and(f.special.isEqualTo(YesNo.No))
+    );
+
+    for (let c of await context.for(CitiesStats).find({
+      orderBy: ff => [{ column: ff.city }]
+    })) {
+      var ci = {
+        name: c.city.value,
+        unassignedFamilies: c.families.value
+      };
+      if (!info.filterGroup) {
+        result.cities.push(ci);
       }
-    });
-    if (info.filterCity && !cityHash[info.filterCity]) {
-      result.cities.push({ name: info.filterCity, unassignedFamilies: 0 });
+      else {
+        ci.unassignedFamilies = await countFamilies(f => f.city.isEqualTo(c.city.value));
+        if (ci.unassignedFamilies > 0)
+          result.cities.push(ci);
+      }
     }
-    await foreachSync(result.baskets, async (b) => {
-      b.name = (await context.for(BasketType).lookupAsync(bt => bt.id.isEqualTo(b.id))).name.value;
-    });
+    for (let b of await context.for(BasketType).find({})) {
+      let bi = {
+        id: b.id.value,
+        name: b.name.value,
+        unassignedFamilies: await countFamilies(f => f.basketType.isEqualTo(b.id.value).and(f.special.isEqualTo(YesNo.No)))
+      };
+      if (bi.unassignedFamilies > 0)
+        result.baskets.push(bi);
+    }
     result.baskets.sort((a, b) => b.unassignedFamilies - a.unassignedFamilies);
+
+    console.timeEnd('getBasketStatus');
     return result;
+  }
+  @RunOnServer({ allowed: c => c.isAdmin() })
+  static async RefreshRoute(helperId: string, useGoogle: boolean, context?: Context) {
+    let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
+    let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
+    return await AsignFamilyComponent.optimizeRoute(h, existingFamilies, context, useGoogle);
   }
 
   @RunOnServer({ allowed: c => c.isAdmin() })
-  static async AddBox(info: AddBoxInfo, context?: Context) {
+  static async AddBox(info: AddBoxInfo, context?: Context, directSql?: DirectSQL) {
+    console.time('addBox');
 
     let result: AddBoxResponse = {
       helperId: info.helperId,
       addedBoxes: 0,
       shortUrl: undefined,
       families: [],
-      basketInfo: undefined
-    }
+      basketInfo: undefined,
+      routeStats: undefined
 
+    }
+    let r = await context.for(Helpers).findFirst(h => h.phone.isEqualTo(info.phone));
     if (!info.helperId) {
-      let r = await context.for(Helpers).findFirst(h => h.phone.isEqualTo(info.phone));
+
       if (!r) {
         let h = context.for(Helpers).create();
         h.phone.value = info.phone;
         h.name.value = info.name;
         await h.save();
+        r = h;
         result.helperId = h.id.value;
         result.shortUrl = h.shortUrlKey.value;
       }
     }
-
-    let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id)) });
+    console.time('existingFamilies');
+    let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
+    let locationReferenceFamilies = [...existingFamilies];
+    if (locationReferenceFamilies.length == 0) {
+      let from = new Date();
+      from.setDate(from.getDate() - 1);
+      locationReferenceFamilies = await context.for(Families).find({
+        where: f => f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isAResultStatus()).and(f.deliveryStatusDate.isGreaterOrEqualTo(from)),
+        orderBy: f => [{ column: f.deliveryStatusDate, descending: true }],
+        limit: 1
+      });
+    }
+    console.timeEnd('existingFamilies');
     for (let i = 0; i < info.numOfBaskets; i++) {
 
       let getFamilies = async () => {
-        return await context.for(Families).find({
-          where: f => {
-            let where = f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
-              f.courier.isEqualTo('').and(
-                f.basketType.isEqualTo(info.basketType).and(
-                  f.special.IsDifferentFrom(YesNo.Yes.id)
-                )));
-            if (info.language > -1)
-              where = where.and(f.language.isEqualTo(info.language));
-            if (info.city) {
-              where = where.and(f.city.isEqualTo(info.city));
-            }
+
+        let f = new Families(context);
+        let sql = new SqlBuilder();
+        sql.addEntity(f, 'Families');
+        let r = (await directSql.execute(sql.query({
+          select: () => [f.id, f.addressLatitude, f.addressLongitude],
+          from: f,
+          where: () => {
+            let where = f.readyFilter(info.city, info.group).and(
+              f.special.isDifferentFrom(YesNo.Yes)
+            );
+
             if (info.preferRepeatFamilies)
               where = where.and(f.previousCourier.isEqualTo(info.helperId));
-            return where;
+            if (info.basketType != undefined)
+              where = where.and(
+                f.basketType.isEqualTo(info.basketType));
+            return [where];
           }
-        });
+        })));
+
+        return r.rows.map(x => {
+          return {
+            id: x[r.fields[0].name],
+            addressLatitude: +x[r.fields[1].name],
+            addressLongitude: +x[r.fields[2].name]
+          } as familyQueryResult;
+
+        }) as familyQueryResult[];
+
+
       }
+      console.time('getFamilies');
       let waitingFamilies = await getFamilies();
       if (info.preferRepeatFamilies && waitingFamilies.length == 0) {
         info.preferRepeatFamilies = false;
         waitingFamilies = await getFamilies();
       }
+      console.timeEnd('getFamilies');
 
       if (waitingFamilies.length > 0) {
-        if (existingFamilies.length == 0) {
+        if (locationReferenceFamilies.length == 0) {
           let position = Math.trunc(Math.random() * waitingFamilies.length);
-          let family = waitingFamilies[position];
+          let family = await context.for(Families).findFirst(f => f.id.isEqualTo(waitingFamilies[position].id));
           family.courier.value = result.helperId;
           await family.save();
           result.addedBoxes++;
           existingFamilies.push(family);
+          locationReferenceFamilies.push(family);
         }
         else {
 
@@ -309,7 +438,7 @@ export class AsignFamilyComponent implements OnInit {
             let r = 1000000;
             if (!x)
               return r;
-            existingFamilies.forEach(ef => {
+            locationReferenceFamilies.forEach(ef => {
               let loc = ef.getGeocodeInformation().location();
               if (loc) {
                 let dis = GeocodeInformation.GetDistanceBetweenPoints(x, loc);
@@ -320,42 +449,88 @@ export class AsignFamilyComponent implements OnInit {
             return r;
 
           }
-
-          let f = waitingFamilies[0];
-          let dist = getDistance(f.getGeocodeInformation().location());
+          console.time('findClosest');
+          let smallFamily = waitingFamilies[0];
+          let dist = getDistance({
+            lat: smallFamily.addressLatitude,
+            lng: smallFamily.addressLongitude
+          });
           for (let i = 1; i < waitingFamilies.length; i++) {
-            let myDist = getDistance(waitingFamilies[i].getGeocodeInformation().location());
+            let f = waitingFamilies[i];
+            let myDist = getDistance({ lng: f.addressLongitude, lat: f.addressLatitude });
             if (myDist < dist) {
               dist = myDist;
-              f = waitingFamilies[i]
+              smallFamily = waitingFamilies[i]
             }
           }
+          console.timeEnd('findClosest');
+          let f = await context.for(Families).findFirst(f => f.id.isEqualTo(smallFamily.id));
           f.courier.value = result.helperId;
 
           await f.save();
           existingFamilies.push(f);
+          locationReferenceFamilies.push(f)
           result.addedBoxes++;
         }
 
       }
 
     }
-    await AsignFamilyComponent.optimizeRoute(existingFamilies, context);
+    console.time('optimizeRoute');
+    //result.routeStats = await AsignFamilyComponent.optimizeRoute(r, existingFamilies, context);
+    console.timeEnd('optimizeRoute');
     existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
     result.families = await context.for(Families).toPojoArray(existingFamilies);
-    result.basketInfo = await AsignFamilyComponent.getBasketStatus({
-      filterCity: info.city,
-      filterLanguage: info.language,
-      helperId: info.helperId
-    }, context);
+
+
+    console.timeEnd('addBox');
     return result;
   }
-  static async optimizeRoute(families: Families[], context: Context) {
 
-    if (families.length <= 1)
+  static async optimizeRoute(helper: Helpers, families: Families[], context: Context, useGoogle: boolean) {
+
+    if (families.length < 1)
       return;
-    let r = await getRouteInfo(families, true, context);
+    let result = {
+      stats: {
+        totalKm: 0,
+        totalTime: 0
+      },
+      families: [],
+      ok: false
+    } as optimizeRouteResult;
+    //manual sorting of the list from closest to farthest
+    {
+      let temp = families;
+      let sorted = [];
+      let lastLoc = (await ApplicationSettings.getAsync(context)).getGeocodeInformation().location();
+
+
+      let total = temp.length;
+      for (let i = 0; i < total; i++) {
+        let closest = temp[0];
+        let closestIndex = 0;
+        let closestDist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, closest.getGeocodeInformation().location());
+        for (let j = 0; j < temp.length; j++) {
+          let dist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, temp[j].getGeocodeInformation().location());
+          if (dist < closestDist || dist == closestDist && temp[j].floor.value > closest.floor.value) {
+            closestDist = dist;
+            closestIndex = j;
+            closest = temp[j];
+          }
+
+        }
+        lastLoc = closest.getGeocodeInformation().location();
+        sorted.push(temp.splice(closestIndex, 1)[0]);
+
+      }
+      families = sorted;
+    }
+
+
+    let r = await getRouteInfo(families, useGoogle, context);
     if (r.status == 'OK' && r.routes && r.routes.length > 0 && r.routes[0].waypoint_order) {
+      result.ok = true;
       let i = 1;
 
       await foreachSync(r.routes[0].waypoint_order, async (p: number) => {
@@ -366,43 +541,109 @@ export class AsignFamilyComponent implements OnInit {
         }
         i++;
       });
-      return r.routes[0].overview_polyline.points;
-
+      families.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
+      for (let i = 0; i < r.routes[0].legs.length - 1; i++) {
+        let l = r.routes[0].legs[i];
+        result.stats.totalKm += l.distance.value;
+        result.stats.totalTime += l.duration.value;
+      }
+      result.stats.totalKm = Math.round(result.stats.totalKm / 1000);
+      result.stats.totalTime = Math.round(result.stats.totalTime / 60);
+      helper.totalKm.value = result.stats.totalKm;
+      helper.totalTime.value = result.stats.totalTime;
     }
+    else {
+      result.ok = true;
+      let i = 1;
+      await foreachSync(families, async (f) => {
+        f.routeOrder.value = i++;
+        if (f.routeOrder.value != f.routeOrder.originalValue)
+          await f.save();
+      });
+    }
+    result.families = await context.for(Families).toPojoArray(families);
+
+    helper.save();
+
+
+    return result;
+
   }
   addSpecial() {
+    this.addFamily(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
+      f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes))), 'special');
+  }
+  addFamily(filter: (f: Families) => FilterBase, analyticsName: string) {
     this.selectService.selectFamily({
-      where: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery.id).and(
-        f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes.id))),
+      where: f => {
+        if (this.filterCity)
+          return f.city.isEqualTo(this.filterCity).and(filter(f));
+        return filter(f);
+      },
       onSelect: async f => {
-        if (!this.id) {
-          let helper = await this.context.for(Helpers).lookupAsync(h => h.phone.isEqualTo(this.phone));
-          if (helper.isNew()) {
-            helper.phone.value = this.phone;
-            helper.name.value = this.name;
-            await helper.save();
-          }
-          this.name = helper.name.value;
-          this.shortUrl = helper.shortUrlKey.value;
-          this.id = helper.id.value;
+
+
+        let ok = async () => {
+          await this.performSepcificFamilyAssignment(f, analyticsName);
+        };
+
+        if (f.courier.value) {
+          let c = await f.courier.getTheName();
+          this.dialog.YesNoQuestion('משפחת ' +
+            f.name.value + ' כבר משוייכת ל' + c + ' בסטטוס ' +
+            f.deliverStatus.displayValue + '. האם לשייך אותו למשנע ' + this.name + '?', () => {
+              ok();
+            });
+
         }
-        f.courier.value = this.id;
-        await f.save();
-        this.refreshList();
+        else
+          ok();
+
+
+
       }
     })
   }
+  private async performSepcificFamilyAssignment(f: Families, analyticsName: string) {
+    await this.verifyHelperExistance();
+    f.courier.value = this.id;
+    f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
+    this.dialog.analytics(analyticsName);
+    await f.save();
+    this.refreshList();
+    this.doRefreshRoute();
+  }
 
+  private async verifyHelperExistance() {
+    if (!this.id) {
+      let helper = await this.context.for(Helpers).lookupAsync(h => h.phone.isEqualTo(this.phone));
+      if (helper.isNew()) {
+        helper.phone.value = this.phone;
+        helper.name.value = this.name;
+        await helper.save();
+        Helpers.addToRecent(helper);
+      }
+      this.name = helper.name.value;
+      this.shortUrl = helper.shortUrlKey.value;
+      this.id = helper.id.value;
+    }
+  }
+
+  addSpecific() {
+    this.addFamily(f => f.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent), 'specific');
+  }
 }
+
 export interface AddBoxInfo {
   name: string;
   basketType: string;
   phone: string;
-  language: number;
+  group: string;
   helperId?: string;
   city: string;
   numOfBaskets: number;
   preferRepeatFamilies: boolean;
+
 }
 export interface AddBoxResponse {
   helperId: string;
@@ -410,7 +651,23 @@ export interface AddBoxResponse {
   families: any[];
   basketInfo: GetBasketStatusActionResponse
   addedBoxes: number;
+  routeStats: routeStats;
 
+
+}
+interface familyQueryResult {
+  id: string;
+  addressLatitude: number;
+  addressLongitude: number;
+}
+export interface routeStats {
+  totalKm: number;
+  totalTime: number;
+}
+export interface optimizeRouteResult {
+  stats: routeStats;
+  families: any[];
+  ok: boolean;
 }
 
 function getInfo(r: any) {
@@ -429,23 +686,27 @@ async function getRouteInfo(families: Families[], optimize: boolean, context: Co
 
   let startAndEnd = (await ApplicationSettings.getAsync(context)).getGeocodeInformation().getlonglat();
   let waypoints = 'optimize:' + (optimize ? 'true' : 'false');
+  let addresses = [];
   families.forEach(f => {
     if (f.getGeocodeInformation().location())
       waypoints += '|' + f.getGeocodeInformation().getlonglat();
+    addresses.push(f.address.value);
   });
-  u.addObject({
+  let args = {
     origin: startAndEnd,
-    destination: startAndEnd,
+    destination: families[families.length - 1].getGeocodeInformation().getlonglat(),
     waypoints: waypoints,
     language: 'he',
     key: process.env.GOOGLE_GECODE_API_KEY
-  });
+  };
+  u.addObject(args);
 
   let r = await (await fetch.default(u.url)).json();
+  // console.log(args,addresses,r,getInfo(r));
   return r;
 }
 export interface GetBasketStatusActionInfo {
-  filterLanguage: number;
+  filterGroup: string;
   filterCity: string;
   helperId: string;
 }

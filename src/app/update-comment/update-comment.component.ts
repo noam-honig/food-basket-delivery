@@ -1,6 +1,9 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DeliveryStatus } from "../families/DeliveryStatus";
+import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { Context } from '../shared/context';
+import { Column } from 'radweb';
 
 @Component({
   selector: 'app-update-comment',
@@ -11,6 +14,7 @@ export class UpdateCommentComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<UpdateCommentComponent>,
+    private context: Context,
     @Inject(MAT_DIALOG_DATA) public data: UpdateCommentComponentData
   ) {
 
@@ -25,7 +29,7 @@ export class UpdateCommentComponent implements OnInit {
     let r = s.toString();
     if (r.startsWith('לא נמסר, '))
       r = r.substring(9);
-      
+
     return r;
   }
 
@@ -42,19 +46,23 @@ export class UpdateCommentComponent implements OnInit {
   confirm() {
     this.ok = true;
     this.dialogRef.close();
-    this.data.ok(this.data.comment, this.defaultFailStatus.id);
+    this.data.ok(this.data.comment, this.defaultFailStatus);
     return false;
   }
 
-
+  helpText() {
+    let s = ApplicationSettings.get(this.context);
+    return this.data.helpText(s).value;
+  }
 }
 
 export interface UpdateCommentComponentData {
   showFailStatus?: boolean,
-  assignerName:string,
-  assignerPhone:string,
+  assignerName: string,
+  assignerPhone: string,
+  helpText: (s: ApplicationSettings) => Column<any>
 
   comment: string,
-  ok: (comment: string, failStatusId: number) => void,
+  ok: (comment: string, failStatusId: DeliveryStatus) => void,
   cancel: () => void
 }

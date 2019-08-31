@@ -26,35 +26,47 @@ export class BusyService {
 
 
         wrapFetch.wrap = () => {
-            let id = this.id++;
-            if (this.disableWait)
-                return () => { };
-            this.log(id, 'start busy ');
-            if (this.numOfWaits == 0) {
+          return this.showBusy();
+        };
+    }
+    async doWhileShowingBusy<t>(what: () => Promise<t>): Promise<t> {
+        let x = this.showBusy();
+        try{
+        return await  what();
+        }
+        finally{
+            x();
+        }
+    }
+    showBusy(){
+        let id = this.id++;
+        if (this.disableWait)
+            return () => { };
+        this.log(id, 'start busy ');
+        if (this.numOfWaits == 0) {
 
-                setTimeout(() => {
-                    
-                    if (this.numOfWaits > 0&&!this.waitRef){
-                        this.log(id, 'actual start busy ');
-                        this.waitRef = this.dialog.open(WaitComponent, { disableClose: true });
-                    }
-                }, 2);
-
-            }
-            this.numOfWaits++;
-
-            return () => {
-                this.numOfWaits--;
-                this.log(id, 'close busy ');
-                if (this.numOfWaits == 0) {
-                    this.log(id, 'close top busy ');
-                    if (this.waitRef) {
-                        this.log(id, 'actual close top busy ');
-                        this.waitRef.close();
-                        this.waitRef = undefined;
-                    }
+            setTimeout(() => {
+                
+                if (this.numOfWaits > 0&&!this.waitRef){
+                    this.log(id, 'actual start busy ');
+                    this.waitRef = this.dialog.open(WaitComponent, { disableClose: true });
                 }
-            };
+            }, 350);
+
+        }
+        this.numOfWaits++;
+
+        return () => {
+            this.numOfWaits--;
+            this.log(id, 'close busy ');
+            if (this.numOfWaits == 0) {
+                this.log(id, 'close top busy ');
+                if (this.waitRef) {
+                    this.log(id, 'actual close top busy ');
+                    this.waitRef.close();
+                    this.waitRef = undefined;
+                }
+            }
         };
     }
 }

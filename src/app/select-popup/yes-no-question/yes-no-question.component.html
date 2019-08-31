@@ -4,10 +4,13 @@
 
   <mat-dialog-actions>
 
-    <button mat-raised-button color="warning" (click)="close()">
+    <button mat-raised-button color="warning" (click)="close()" *ngIf="data.onYes">
       לא
     </button>
-    <button mat-raised-button color="primary"  (click)="select()">
+    <button mat-raised-button color="primary" (click)="close()" *ngIf="!data.onYes">
+      אישור
+    </button>
+    <button mat-raised-button color="primary"  (click)="select()" *ngIf="data.onYes">
       כן
     </button>
   </mat-dialog-actions>

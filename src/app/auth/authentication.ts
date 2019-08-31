@@ -33,7 +33,7 @@ export class Authentication<T> {
                     load(localStorage.getItem(authToken));
             }
             catch (err) {
-                console.log(err);
+                console.error(err);
             }
         }
     }

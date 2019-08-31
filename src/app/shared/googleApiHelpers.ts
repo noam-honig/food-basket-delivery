@@ -26,8 +26,12 @@ export class GeocodeInformation {
     }
     getAddress() {
         if (!this.ok())
-            return '!!! NOT OK!!!';
-        return this.info.results[0].formatted_address;
+            return 'יש לעדכן כתובת ולשמור את הרשומה.';
+        let r = this.info.results[0].formatted_address;
+        let i = r.lastIndexOf(', ישראל');
+        if (i > 0)
+            r = r.substring(0, i);
+        return r;
     }
     public saveToString() {
         return JSON.stringify(this.info);
@@ -44,17 +48,24 @@ export class GeocodeInformation {
         return this.info.status == "OK";
     }
     partialMatch() {
-        if (this.info.results.length<1)
-        return false;
-        if (this.info.results[0].partial_match)
-            return true;
-        if (this.info.results[0].types[0] != "street_address")
+        if (this.whyProblem())
             return true;
         return false;
     }
+    whyProblem() {
+        if (!this.ok())
+            return "not ok";
+        if (this.info.results.length < 1)
+            return "no results";
+        if (this.info.results[0].partial_match)
+            return "partial_match";
+        if (this.info.results[0].types[0] != "street_address" && this.info.results[0].types[0] != "subpremise" && this.info.results[0].types[0] != "premise")
+            return this.info.results[0].types.join(',');
+        return undefined;
+    }
     location(): Location {
         if (!this.ok())
-            return undefined;
+            return { lng: -1, lat: -1 };
         return this.info.results[0].geometry.location;
     }
     getlonglat() {

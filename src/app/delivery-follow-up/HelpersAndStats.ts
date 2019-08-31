@@ -37,7 +37,7 @@ export class HelpersAndStats extends IdEntity<HelperId> {
         dbReadOnly: true,
         caption: 'משפחות עם בעיות'
     });
-    firstDeliveryInProgressDate = new DateTimeColumn({
+    lastAsignTime = new DateTimeColumn({
         dbReadOnly: true
     });
     constructor(context: Context) {
@@ -62,16 +62,16 @@ export class HelpersAndStats extends IdEntity<HelperId> {
                         h.phone,
                         h.smsDate,
                         h.reminderSmsDate,
-                        sql.count(helperFamilies(() => [sql.eq(f.deliverStatus, DeliveryStatus.ReadyForDelivery.id)]), this.deliveriesInProgress),
-                        sql.count(helperFamilies(() => []), this.allFamilies),
-                        sql.count(helperFamilies(() => [sql.in(f.deliverStatus,
+                        sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isEqualTo( DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress),
+                        sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isActiveDelivery()]), this.allFamilies),
+                        sql.countInnerSelect(helperFamilies(() => [sql.in(f.deliverStatus,
                             DeliveryStatus.FailedBadAddress.id,
                             DeliveryStatus.FailedNotHome.id,
                             DeliveryStatus.FailedOther.id)]),
                             this.deliveriesWithProblems),
-                        sql.min(f.courierAssingTime,
+                        sql.max(f.courierAssingTime,
                             helperFamilies(() =>
-                                [sql.eq(f.deliverStatus, DeliveryStatus.ReadyForDelivery.id)]), this.firstDeliveryInProgressDate)
+                                [sql.not(sql.in(f.deliverStatus, DeliveryStatus.Frozen.id,DeliveryStatus.NotInEvent.id))]), this.lastAsignTime)
 
                     ],
                     from: h

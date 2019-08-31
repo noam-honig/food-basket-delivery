@@ -18,7 +18,7 @@ export const evilStatics = {
     //dataSource: new radweb.LocalStorageDataProvider() as radweb.DataProviderFactory
     dataSource: new RestDataProvider(environment.serverUrl + 'api', auth.AddAuthInfoToRequest()) as DataProviderFactory,
     routes: {
-        families: '',
+        assignFamilies: '',
         myFamilies: '',
         updateInfo: '',
         login: '',
