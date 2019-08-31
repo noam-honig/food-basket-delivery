@@ -32,7 +32,7 @@ export class UpdateInfoComponent implements OnInit {
       //h.userName,
       h.password,
       { column: this.confirmPassword },
-      //h.email,
+      h.declineSms,
       //h.address
     ],
 
