@@ -32,7 +32,7 @@ export class HelpersComponent implements OnInit {
     allowDelete: true,
     allowInsert: true,
     allowUpdate: true,
-    numOfColumnsInGrid: 3,
+    numOfColumnsInGrid: 4,
     get: {
       orderBy: h => [h.name],
       limit: 10,
@@ -45,6 +45,10 @@ export class HelpersComponent implements OnInit {
     columnSettings: helpers => [
       helpers.name,
       helpers.phone,
+      {
+        column: helpers.declineSms,
+        width: '100'
+      },
       {
         column: helpers.admin,
         width: '100'

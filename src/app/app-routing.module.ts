@@ -25,6 +25,7 @@ import { BatchOperationsComponent } from './batch-operations/batch-operations.co
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 import { AdminGuard } from './auth/roles';
 import { SignedInGuard } from 'radweb';
+import { SendBulkSmsComponent } from './send-bulk-sms/send-bulk-sms.component';
 
 
 
@@ -37,6 +38,7 @@ const routes: Routes = [
   DistributionMap.route,
   AddressProblemComponent.route,
   HelpersComponent.route,
+  { path: 'send-sms-to-all-helpers', component: SendBulkSmsComponent, canActivate: [AdminGuard], data: { name: 'שליחת SMS למתנדבים' } },
   DeliveryHistoryComponent.route,
   BatchOperationsComponent.route,
   { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard], data: { name: 'קליטה מאקסל' } },

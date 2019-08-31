@@ -1,0 +1,44 @@
+<mat-card>
+
+  <h4>שליחת הודעה למתנדבים קודמים</h4>
+  הודעות תישלחנה רק עבור מתנדבים אשר קובלו את הודעת הSMS האחרונה שלהם עד בין התאריכים הבאים
+
+
+
+  <data-area [settings]="rangeArea"></data-area>
+
+
+  <button mat-mini-fab style="margin-bottom:5px" (click)="refresh()">
+    <mat-icon>refresh</mat-icon>
+  </button>
+  <h3>ישנם {{matchingHelpers.length}} מתנדבים שמתאימים</h3>
+
+
+  <div class="form-horizontal">
+    <div class="form-group">
+      <div class="col-sm-2">
+        <!--bindings={
+"ng-reflect-ng-if": "true"
+}-->
+        <label class="control-label ng-star-inserted">ההודעה</label>
+      </div>
+      <div class="col-sm-10">
+        <textarea [(ngModel)]="smsText" class="form-control"></textarea>
+        <br />
+        <ul>
+          <li>!משנע! - יוחלף בשם המשנע</li>
+          <li>!שולח! - יוחלף בשם השולח</li>
+          <li>!ארגון! - יוחלף בשם הארגון</li>
+          <li>!אתר! - יוחלף בכתובת האתר</li>
+        </ul>
+        <h4>הודעה לדוגמא</h4>
+        <pre>{{testSms()}}</pre>
+        אורך הודעה: {{testSms().length}}
+      </div>
+    </div>
+  </div>
+  <button (click)="sendTestMessage()" color="accent" mat-raised-button>שלח לי הודעת בדיקה</button>
+  <button (click)="sendTheMessage()" color="primary" mat-raised-button> שלח את ההודעה ל {{this.matchingHelpers.length}}
+    מתנדבים</button>
+  <br> ההודעה תשלח ל: <span *ngFor="let h of matchingHelpers">{{h.name.value}}, </span>
+</mat-card>

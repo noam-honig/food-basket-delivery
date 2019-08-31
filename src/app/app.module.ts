@@ -52,6 +52,7 @@ import { PreviewFamilyComponent } from './preview-family/preview-family.componen
 import { FamilyInListComponent } from './family-in-list/family-in-list.component';
 
 import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-dialog.component';
+import { SendBulkSmsComponent } from './send-bulk-sms/send-bulk-sms.component';
 
 
 
@@ -93,6 +94,7 @@ import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-d
     PreviewFamilyComponent,
     FamilyInListComponent,
     UpdateGroupDialogComponent,
+    SendBulkSmsComponent,
     
   ],
   imports: [
