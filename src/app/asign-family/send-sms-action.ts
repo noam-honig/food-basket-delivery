@@ -22,28 +22,7 @@ export class SendSmsAction {
             console.error(err);
         }
     }
-    @RunOnServer({ allowed: Roles.admin })
-    static async SendCustomSmsMessage(helperId: string[], messageTemplate: string, origin: string, test = false, context?: Context) {
-        if (!process.env.allowSms)
-            throw 'שליחת SMS לקבוצע אינו פעיל עבור אתר זה';
-        let settings = await ApplicationSettings.getAsync(context);
-        let sender = settings.helpPhone.value;
-        if (!sender || sender.length < 3) {
-            let currentUser = await (context.for(Helpers).findFirst(h => h.id.isEqualTo(context.user.id)));
-            sender = currentUser.phone.value;
-        }
-        for (const id of helperId) {
-            let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(id));
-            if (h.declineSms.value)
-                throw 'cant send sms to user how declines sms';
-            let message = SendSmsAction.getMessage(messageTemplate, settings.organisationName.value, h.name.value, context.user.name, origin + '/x/' + h.shortUrlKey.value);
-            await new SendSmsUtils().sendSms(h.phone.value, sender, message);
-            if (!test) {
-                h.smsDate.value = new Date();
-                await h.save();
-            }
-        }
-    }
+   
 
 
 

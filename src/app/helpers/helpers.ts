@@ -76,7 +76,7 @@ export class Helpers extends IdEntity<HelperId>  {
         }
     }
     
-    declineSms = new BoolColumn('מסרב לקבל הודעות SMS');
+    
 
 
     shortUrlKey = new StringColumn({ includeInApi: Roles.admin });

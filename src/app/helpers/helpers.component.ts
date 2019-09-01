@@ -34,7 +34,7 @@ export class HelpersComponent implements OnInit {
     allowUpdate: true,
     knowTotalRows: true,
     hideDataArea: true,
-    numOfColumnsInGrid: 4,
+    numOfColumnsInGrid: 3,
     get: {
       orderBy: h => [h.name],
       limit: 10,
@@ -47,10 +47,7 @@ export class HelpersComponent implements OnInit {
     columnSettings: helpers => [
       helpers.name,
       helpers.phone,
-      {
-        column: helpers.declineSms,
-        width: '100'
-      },
+   
       {
         column: helpers.admin,
         width: '100'
