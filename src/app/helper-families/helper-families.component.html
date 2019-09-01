@@ -29,7 +29,7 @@ justify-content: space-between;order:-1;">
   <mat-accordion class="no-print">
     <mat-expansion-panel #myPanel *ngFor="let f of familyLists.toDeliver;let i=index">
       <mat-expansion-panel-header>
-        <app-family-in-list [f]="f" [i]="i+1" style="width:100%"></app-family-in-list>
+        <app-family-in-list [f]="f" [i]="i+1" style="width:100%" [newAssign]="familyLists.highlightNewFamilies&&!familyLists.familiesAlreadyAssigned.get(f.id.value)" ></app-family-in-list>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
 

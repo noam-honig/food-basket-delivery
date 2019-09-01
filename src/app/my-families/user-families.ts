@@ -27,7 +27,7 @@ export class UserFamiliesList {
     helperName: string;
     helperOptional: Helpers;
     routeStats: routeStats;
-    userClickedOnFamilyOnMap: (familyId: string[]) => void=x=>{};
+    userClickedOnFamilyOnMap: (familyId: string[]) => void = x => { };
     async initForHelper(helperId: string, name: string, helperOptional?: Helpers) {
 
         this.helperOptional = helperOptional;
@@ -70,12 +70,27 @@ export class UserFamiliesList {
         this.allFamilies = newFamilies;
         this.initFamilies();
     }
-
+    familiesAlreadyAssigned = new Map<string, boolean>();
+    highlightNewFamilies = false;
+    lastHelperId = undefined;
     async reload() {
-        if (this.helperId)
+        if (this.helperId) {
             this.allFamilies = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(this.helperId).and(f.deliverStatus.isActiveDelivery()).and(f.visibleToCourier.isEqualTo(true)), orderBy: f => [f.routeOrder, f.address], limit: 1000 });
-        else
+            if (this.lastHelperId != this.helperId) {
+                this.lastHelperId = this.helperId;
+                this.familiesAlreadyAssigned = new Map<string, boolean>();
+                this.highlightNewFamilies = false;
+                for (const f of this.allFamilies) {
+                    this.highlightNewFamilies = true;
+                    this.familiesAlreadyAssigned.set(f.id.value, true);
+                }
+
+            }
+        }
+        else {
             this.allFamilies = [];
+            this.highlightNewFamilies = false;
+        }
         this.initFamilies();
     }
 
