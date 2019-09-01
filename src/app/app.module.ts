@@ -52,6 +52,7 @@ import { PreviewFamilyComponent } from './preview-family/preview-family.componen
 import { FamilyInListComponent } from './family-in-list/family-in-list.component';
 
 import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-dialog.component';
+import { CreateBackupExcelFileComponent } from './create-backup-excel-file/create-backup-excel-file.component';
 
 
 
@@ -94,6 +95,7 @@ import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-d
     PreviewFamilyComponent,
     FamilyInListComponent,
     UpdateGroupDialogComponent,
+    CreateBackupExcelFileComponent,
     
     
   ],

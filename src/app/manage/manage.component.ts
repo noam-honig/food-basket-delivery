@@ -22,8 +22,7 @@ export class ManageComponent implements OnInit {
     path: 'manage',
     component: ManageComponent,
     data: {
-      name: 'הגדרות מערכת',
-      seperator: true
+      name: 'הגדרות מערכת'
     }, canActivate: [AdminGuard]
   }
   constructor(private dialog: DialogService, private context: Context) { }

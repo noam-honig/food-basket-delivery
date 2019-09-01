@@ -25,6 +25,7 @@ import { BatchOperationsComponent } from './batch-operations/batch-operations.co
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 import { AdminGuard } from './auth/roles';
 import { SignedInGuard } from 'radweb';
+import { CreateBackupExcelFileComponent,CanDeactivateGuard } from './create-backup-excel-file/create-backup-excel-file.component';
 
 
 
@@ -43,6 +44,7 @@ const routes: Routes = [
   BatchOperationsComponent.route,
   { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard], data: { name: 'קליטה מאקסל' } },
   ManageComponent.route,
+  { path: 'auto-backup', component: CreateBackupExcelFileComponent, canActivate: [AdminGuard],canDeactivate:[CanDeactivateGuard], data: { name: 'גיבוי אוטומטי',seperator: true } },
   LoginFromSmsComponent.route,
 
   //{ path: 'stam-test', component: UpdateGroupDialogComponent },
@@ -63,7 +65,7 @@ const routes: Routes = [
   ],
   declarations: [],
   exports: [RouterModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard]
+  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard,CanDeactivateGuard]
 })
 
 export class AppRoutingModule { }
