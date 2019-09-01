@@ -18,6 +18,7 @@ import { SqlBuilder } from '../model-shared/types';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { Helpers } from '../helpers/helpers';
 import * as passwordHash from 'password-hash';
+import { FamilyDeliveriesStats } from '../delivery-history/delivery-history.component';
 
 
 
@@ -35,9 +36,9 @@ export async function serverInit() {
             dbUrl = process.env.HEROKU_POSTGRESQL_GREEN_URL;
         if (process.env.logSqls) {
             ActualSQLServerDataProvider.LogToConsole = true;
-            
+
         }
-        
+
         const pool = new Pool({
             connectionString: dbUrl,
             ssl: ssl
@@ -46,9 +47,9 @@ export async function serverInit() {
             generateHash: p => passwordHash.generate(p),
             verify: (p, h) => passwordHash.verify(p, h)
         }
-        
+
         await new PostgrestSchemaBuilder(pool).verifyStructureOfAllEntities();
-        
+
         var dataSource = new PostgresDataProvider(pool);
         let context = new ServerContext();
         context.setDataProvider(dataSource);
@@ -148,13 +149,63 @@ export async function serverInit() {
             console.log("updating family source for historical information");
             let f = new Families(context);
             let fd = new FamilyDeliveries(context);
-            sql.update(fd,{
-                set:()=>[[fd.archiveFamilySource,f.familySource]],
-                from:f,
-                where:()=>[sql.eq(f.id,fd.family)]
-            });            
+            pool.query(sql.update(fd, {
+                set: () => [[fd.archiveFamilySource, f.familySource]],
+                from: f,
+                where: () => [sql.eq(f.id, fd.family)]
+            }));
             settings.dataStructureVersion.value = 2;
             await settings.save();
+        }
+        if (settings.dataStructureVersion.value == 2) {
+            console.log("updating update date");
+            let f = context.for(Families).create();
+            pool.query(sql.update(f, {
+                set: () => [[f.lastUpdateDate, f.createDate]]
+            }));
+            settings.dataStructureVersion.value = 3;
+            await settings.save();
+        }
+        if (settings.dataStructureVersion.value == 3) {
+            console.log("updating family source for historical information");
+            let f = new Families(context);
+            let fd = new FamilyDeliveries(context);
+            pool.query(sql.update(fd, {
+                set: () => [[fd.archiveFamilySource, f.familySource]],
+                from: f,
+                where: () => [sql.eq(f.id, fd.family)]
+            }));
+            settings.dataStructureVersion.value = 4;
+            await settings.save();
+        }
+        if (settings.dataStructureVersion.value == 4) {
+            console.log("updating update date");
+            let f = context.for(Families).create();
+            pool.query(sql.update(f, {
+                set: () => [[f.lastUpdateDate, f.createDate]]
+            }));
+            settings.dataStructureVersion.value = 5;
+            await settings.save();
+        }
+        if (settings.dataStructureVersion.value == 5) {
+            console.log("updating last sms date");
+
+            let helpers = await context.for(Helpers).find({});
+            for (const h of helpers) {
+                if (!h.smsDate.value) {
+                    let f = await context.for(FamilyDeliveriesStats).find({
+                        where: f => f.courier.isEqualTo(h.id),
+                        orderBy: f => [{ column: f.deliveryStatusDate, descending: true }]
+                    });
+                    if (f && f.length > 0) {
+                        h.smsDate.value = f[0].deliveryStatusDate.value;
+                        await h.save();
+                    }
+                }
+            }
+            settings.dataStructureVersion.value = 6;
+            await settings.save();
+
         }
 
     } catch (error) {

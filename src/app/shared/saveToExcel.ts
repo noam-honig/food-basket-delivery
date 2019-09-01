@@ -115,7 +115,8 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
               console.error(err, c.jsonName, f.__toPojo(new ColumnHashSet()));
             }
           });
-          moreColumns(<E>f,addColumn);
+          if (moreColumns)
+            moreColumns(<E>f,addColumn);
           rowNum++;
 
         });

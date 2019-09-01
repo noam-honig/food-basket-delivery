@@ -24,6 +24,8 @@ export class SendSmsAction {
     }
     @RunOnServer({ allowed: Roles.admin })
     static async SendCustomSmsMessage(helperId: string[], messageTemplate: string, origin: string, test = false, context?: Context) {
+        if (!process.env.allowSms)
+            throw 'שליחת SMS לקבוצע אינו פעיל עבור אתר זה';
         let settings = await ApplicationSettings.getAsync(context);
         let sender = settings.helpPhone.value;
         if (!sender || sender.length < 3) {
@@ -72,6 +74,7 @@ export class SendSmsAction {
                 }
 
                 message = SendSmsAction.getMessage(message, settings.organisationName.value, helper.name.value, senderName, origin + '/x/' + helper.shortUrlKey.value);
+                helper.smsDate.value = new Date();
 
             }
             let sender = settings.helpPhone.value;

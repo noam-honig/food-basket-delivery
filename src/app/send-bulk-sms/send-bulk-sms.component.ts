@@ -45,8 +45,15 @@ export class SendBulkSmsComponent implements OnInit {
   matchingHelpers: Helpers[] = [];
   async refresh() {
     this.matchingHelpers = await this.context.for(Helpers).find({
-      where: h => h.smsDate.isGreaterOrEqualTo(this.fromDate).and(h.smsDate.isLessOrEqualTo(this.toDate).and(h.declineSms.isEqualTo(false)))
-      , orderBy: h => h.name
+      where: h =>{
+      let r = h.smsDate.isLessOrEqualTo(this.toDate).and(h.declineSms.isEqualTo(false));
+      if (this.fromDate.value)
+        return r.and(h.smsDate.isGreaterOrEqualTo(this.fromDate))
+      else 
+        return r;
+    }
+      , orderBy: h => h.name,
+      limit:5000
     });
   }
   async sendTestMessage() {

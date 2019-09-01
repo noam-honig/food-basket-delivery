@@ -32,6 +32,8 @@ export class HelpersComponent implements OnInit {
     allowDelete: true,
     allowInsert: true,
     allowUpdate: true,
+    knowTotalRows: true,
+    hideDataArea: true,
     numOfColumnsInGrid: 4,
     get: {
       orderBy: h => [h.name],
@@ -53,6 +55,7 @@ export class HelpersComponent implements OnInit {
         column: helpers.admin,
         width: '100'
       }
+      , helpers.smsDate
 
     ],
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes),
