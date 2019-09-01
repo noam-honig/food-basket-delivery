@@ -17,7 +17,7 @@ export class CreateBackupExcelFileComponent implements OnInit {
 
   ngOnInit() {
   }
-  families = this.context.for(Families).gridSettings({ get: { limit: 100 } });
+  families = this.context.for(Families).gridSettings({ get: { limit: 500 } });
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: any) {
     if (this.command && this.command.active) {
@@ -31,7 +31,8 @@ export class CreateBackupExcelFileComponent implements OnInit {
       if (true)
         await saveToExcel<Families, GridSettings<Families>>(
           this.families,
-          'גיבוי משפחות ' + DateTimeColumn.dateToString(new Date()),
+          'גיבוי משפחות ' + new Date().toLocaleString('he').replace(/:/g,'-').replace(/\./g,'-').replace(/,/g,'')
+          ,
           this.busy,
           (f, c) => c == f.id || c == f.addressApiResult,
           (f, c) => c == f.correntAnErrorInStatus || c == f.visibleToCourier);
