@@ -519,7 +519,7 @@ export class ImportFromExcelComponent implements OnInit {
             searchNames: ['טלפון נייד']
         });
 
-        addColumn(this.f.internalComment, ["הערות"]);
+        
         addColumn(this.f.familyMembers, ["נפשות", "מס נפשות"]);
         addColumn(this.f.tz, ["ת.ז.", "ת\"ז"]);
         addColumn(this.f.tz2);
@@ -535,7 +535,7 @@ export class ImportFromExcelComponent implements OnInit {
         ]);
         for (const col of [this.f.phone1Description,
         this.f.phone2Description,
-
+            this.f.internalComment,
         this.f.deliveryComments,
         this.f.addressComment,
 
@@ -546,7 +546,7 @@ export class ImportFromExcelComponent implements OnInit {
                 name: col.caption,
                 updateFamily: async (v, f) => {
                     updateCol(f.__getColumn(col), v, ', ');
-                }, columns: [this.f.groups]
+                }, columns: [col]
             });
         }
 
