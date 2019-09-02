@@ -146,7 +146,7 @@ export class Families extends IdEntity<FamilyId>  {
     caption: 'מספר זהות', includeInApi: Roles.admin, valueChange: () => this.delayCheckDuplicateFamilies()
   });
   tz2 = new StringColumn({
-    caption: 'מספר זהות בן בת הזוג', includeInApi: Roles.admin, valueChange: () => this.delayCheckDuplicateFamilies()
+    caption: 'מספר זהות בן/בת הזוג', includeInApi: Roles.admin, valueChange: () => this.delayCheckDuplicateFamilies()
   });
   familyMembers = new NumberColumn({ includeInApi: Roles.admin, caption: 'מספר נפשות' });
   basketType = new BasketId(this.context, 'סוג סל');
