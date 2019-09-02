@@ -37,6 +37,7 @@ export class UpdateFamilyComponent implements OnInit {
         families.familyMembers,
         families.familySource.getColumn(),
         families.tz,
+        families.tz2,
         families.special.getColumn(),
         
         families.iDinExcel,

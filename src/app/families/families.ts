@@ -145,6 +145,9 @@ export class Families extends IdEntity<FamilyId>  {
   tz = new StringColumn({
     caption: 'מספר זהות', includeInApi: Roles.admin, valueChange: () => this.delayCheckDuplicateFamilies()
   });
+  tz2 = new StringColumn({
+    caption: 'מספר זהות בן בת הזוג', includeInApi: Roles.admin, valueChange: () => this.delayCheckDuplicateFamilies()
+  });
   familyMembers = new NumberColumn({ includeInApi: Roles.admin, caption: 'מספר נפשות' });
   basketType = new BasketId(this.context, 'סוג סל');
   familySource = new FamilySourceId(this.context, { includeInApi: Roles.admin, caption: 'גורם מפנה' });
@@ -461,27 +464,27 @@ export class Families extends IdEntity<FamilyId>  {
   }
   _disableAutoDuplicateCheck = false;
   duplicateFamilies: duplicateFamilyInfo[] = [];
-  validatePhone(col:PhoneColumn){
-    if (!col.value||col.value=='')
+  validatePhone(col: PhoneColumn) {
+    if (!col.value || col.value == '')
       return;
-    if (col.displayValue.startsWith("05")||col.displayValue.startsWith("06")) 
-    {
-      if (col.displayValue.length!=12){
+    if (col.displayValue.startsWith("05") || col.displayValue.startsWith("06")) {
+      if (col.displayValue.length != 12) {
         col.error = 'מספר טלפון אינו תקין';
       }
 
-    } else if (col.displayValue.startsWith('0')){
-      if (col.displayValue.length!=11){
+    } else if (col.displayValue.startsWith('0')) {
+      if (col.displayValue.length != 11) {
         col.error = 'מספר טלפון אינו תקין';
       }
     }
-    else{
+    else {
       col.error = 'מספר טלפון אינו תקין';
     }
   }
   async checkDuplicateFamilies() {
-    this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name.value, this.tz.value, this.phone1.value, this.phone2.value, this.id.value);
+    this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name.value, this.tz.value,this.tz2.value, this.phone1.value, this.phone2.value, this.id.value);
     this.tz.error = undefined;
+    this.tz2.error = undefined;
     this.phone1.error = undefined;
     this.phone2.error = undefined;
     this.name.error = undefined;
@@ -490,6 +493,8 @@ export class Families extends IdEntity<FamilyId>  {
       let errorText = 'ערך כבר קיים למשפחת "' + d.name + '" בכתובת ' + d.address;
       if (d.tz)
         this.tz.error = errorText;
+      if (d.tz2)
+        this.tz2.error = errorText;
       if (d.phone1)
         this.phone1.error = errorText;
       if (d.phone2)
@@ -503,11 +508,11 @@ export class Families extends IdEntity<FamilyId>  {
     }
     this.validatePhone(this.phone1);
     this.validatePhone(this.phone2);
-    
+
 
   }
   @RunOnServer({ allowed: Roles.admin })
-  static async checkDuplicateFamilies(name: string, tz: string, phone1: string, phone2: string, id: string, exactName: boolean = false, context?: Context, directSQL?: DirectSQL) {
+  static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, id: string, exactName: boolean = false, context?: Context, directSQL?: DirectSQL) {
     let result: duplicateFamilyInfo[] = [];
 
     var sql = new SqlBuilder();
@@ -516,7 +521,8 @@ export class Families extends IdEntity<FamilyId>  {
     let compareAsNumber = (col: Column<string>, value: string) => {
       return sql.and(sql.eq(sql.extractNumber(col), sql.extractNumber(sql.str(value))), sql.build(sql.extractNumber(sql.str(value)), ' <> ', 0));
     };
-    let tzCol = compareAsNumber(f.tz, tz);
+    let tzCol = sql.or(compareAsNumber(f.tz, tz), compareAsNumber(f.tz2, tz));
+    let tz2Col = sql.or(compareAsNumber(f.tz, tz2), compareAsNumber(f.tz2, tz2));
     let phone1Col = sql.or(compareAsNumber(f.phone1, phone1), compareAsNumber(f.phone2, phone1));
     let phone2Col = sql.or(compareAsNumber(f.phone1, phone2), compareAsNumber(f.phone2, phone2));
     let nameCol = 'false';
@@ -532,6 +538,7 @@ export class Families extends IdEntity<FamilyId>  {
       f.name,
       f.address,
       sql.columnWithAlias(tzCol, 'tz'),
+      sql.columnWithAlias(tz2Col, 'tz2'),
       sql.columnWithAlias(phone1Col, 'phone1'),
       sql.columnWithAlias(phone2Col, 'phone2'),
       sql.columnWithAlias(nameCol, 'nameDup')
@@ -539,7 +546,7 @@ export class Families extends IdEntity<FamilyId>  {
       ],
 
       from: f,
-      where: () => [sql.or(tzCol, phone1Col, phone2Col, nameCol), sql.ne(f.id, sql.str(id))]
+      where: () => [sql.or(tzCol, tz2Col, phone1Col, phone2Col, nameCol), sql.ne(f.id, sql.str(id))]
     }));
     if (!sqlResult.rows || sqlResult.rows.length < 1)
       return [];
@@ -550,9 +557,10 @@ export class Families extends IdEntity<FamilyId>  {
         name: row[sqlResult.getcolumnNameAtIndex(1)],
         address: row[sqlResult.getcolumnNameAtIndex(2)],
         tz: row[sqlResult.getcolumnNameAtIndex(3)],
-        phone1: row[sqlResult.getcolumnNameAtIndex(4)],
-        phone2: row[sqlResult.getcolumnNameAtIndex(5)],
-        nameDup: row[sqlResult.getcolumnNameAtIndex(6)]
+        tz2: row[sqlResult.getcolumnNameAtIndex(4)],
+        phone1: row[sqlResult.getcolumnNameAtIndex(5)],
+        phone2: row[sqlResult.getcolumnNameAtIndex(6)],
+        nameDup: row[sqlResult.getcolumnNameAtIndex(7)]
 
       });
     }
@@ -567,6 +575,7 @@ export interface duplicateFamilyInfo {
   name: string;
   address: string;
   tz: boolean;
+  tz2: boolean;
   phone1: boolean;
   phone2: boolean;
   nameDup: boolean;

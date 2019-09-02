@@ -305,6 +305,7 @@ export class ImportFromExcelComponent implements OnInit {
         let info: excelRowInfo = {
             name: f.name.value,
             tz: f.tz.value,
+            tz2:f.tz2.value,
             phone1: f.phone1.value,
             phone2: f.phone2.value,
             valid: true,
@@ -520,7 +521,8 @@ export class ImportFromExcelComponent implements OnInit {
 
         addColumn(this.f.internalComment, ["הערות"]);
         addColumn(this.f.familyMembers, ["נפשות", "מס נפשות"]);
-        addColumn(this.f.tz, ["ת.ז.", "ת\"ז"])
+        addColumn(this.f.tz, ["ת.ז.", "ת\"ז"]);
+        addColumn(this.f.tz2);
         addColumns([
             this.f.phone1,
             this.f.phone2,
@@ -710,7 +712,7 @@ export class ImportFromExcelComponent implements OnInit {
             updateRows: []
         } as serverCheckResults;
         for (const info of excelRowInfo) {
-            info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz, info.phone1, info.phone2, undefined, true, context, directSql);
+            info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz,info.tz2, info.phone1, info.phone2, undefined, true, context, directSql);
 
             if (!info.duplicateFamilyInfo || info.duplicateFamilyInfo.length == 0) {
                 result.newRows.push(info);
@@ -887,6 +889,7 @@ interface excelRowInfo {
     rowInExcel: number;
     name: string;
     tz: string;
+    tz2:string;
     phone1: string;
     phone2: string;
     valid: boolean;
