@@ -282,6 +282,7 @@ export class FamiliesComponent implements OnInit {
                     width: '300'
                 },
                 families.tz,
+                families.tz2,
                 families.iDinExcel,
                 families.deliveryComments,
                 families.special.getColumn(),
