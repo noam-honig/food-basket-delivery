@@ -24,14 +24,14 @@ export class QuickAddFamilyComponent implements OnInit {
     {
       columnSettings: () => [
         this.f.name,
+        this.f.tz,
+        this.f.tz2,
+        this.f.deliverStatus.getColumn(),
         this.f.address,
         this.f.floor,
         this.f.appartment,
         this.f.entrance,
         this.f.addressComment,
-        this.f.tz,
-        this.f.tz2,
-        this.f.deliverStatus.getColumn(),
         this.f.phone1,
         this.f.phone2,
         this.f.basketType.getColumn(),
