@@ -2,7 +2,8 @@
     <button mat-mini-fab style="margin-bottom:5px" (click)="refresh()">
         <mat-icon>refresh</mat-icon>
     </button>
-    <a href="https://www.youtube.com/watch?v=2FG05srq5uY&list=PLRxHq2rVTQWhe2MTYbMJbAY1EW6iXfjtK" target="_blank" class="no-print">לסרטוני הדרכה על מסך משפחות, לחצו כאן</a>
+    <a href="https://www.youtube.com/watch?v=2FG05srq5uY&list=PLRxHq2rVTQWhe2MTYbMJbAY1EW6iXfjtK" target="_blank"
+        class="no-print">לסרטוני הדרכה על מסך משפחות, לחצו כאן</a>
 </div>
 <mat-tab-group #myTab (selectedTabChange)="tabChanged()" [selectedIndex]="0" *ngIf="!problemOnly">
     <mat-tab *ngFor="let t of statTabs" label="{{t.name}} - {{statTotal(t)}}"> </mat-tab>
@@ -21,14 +22,22 @@
 
 <a *ngIf="currentStatFilter" (click)="clearStat()">הצג הכל</a>
 <br>
-<mat-form-field class="full-width">
-    <input matInput [(ngModel)]="searchString" (input)="doSearch()" placeholder="חיפוש משפחה"
-        [ngModelOptions]="{standalone: true}">
-    <mat-icon matSuffix (click)="clearSearch()">clear</mat-icon>
-</mat-form-field>
+<div style="display:flex;justify-content: space-between">
+    <div>
+        <mat-form-field>
+            <input matInput [(ngModel)]="searchString" (input)="doSearch()" placeholder="חיפוש משפחה"
+                [ngModelOptions]="{standalone: true}">
+            <mat-icon matSuffix (click)="clearSearch()">clear</mat-icon>
+        </mat-form-field>
+        <br>
 
-<strong>{{families.totalRows}}</strong>
-<br>
+        <strong>{{families.totalRows}} משפחות </strong>
+    </div>
+    <div>
+        <button (click)="quickAdd()" mat-raised-button color="accent">משפחה חדשה</button>
+    </div>
+</div>
+
 <mat-card [class.hide]="!gridView">
 
 

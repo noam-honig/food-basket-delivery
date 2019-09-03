@@ -34,6 +34,7 @@ import { saveToExcel } from '../shared/saveToExcel';
 import { PreviewFamilyComponent, PreviewFamilyInfo } from '../preview-family/preview-family.component';
 import { Roles, AdminGuard } from '../auth/roles';
 import { MatTabGroup } from '@angular/material/tabs';
+import { QuickAddFamilyComponent } from '../quick-add-family/quick-add-family.component';
 
 @Component({
     selector: 'app-families',
@@ -70,6 +71,15 @@ export class FamiliesComponent implements OnInit {
             orderBy: f => [f.name]
 
 
+        });
+    }
+    quickAdd() {
+        QuickAddFamilyComponent.dialog(this.matDialog, {
+            searchName: this.searchString,
+            addedFamily: f => {
+                this.families.items.push(f);
+                this.families.setCurrentRow(f);
+            }
         });
     }
     changedRowsCount() {

@@ -53,6 +53,7 @@ import { FamilyInListComponent } from './family-in-list/family-in-list.component
 
 import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-dialog.component';
 import { CreateBackupExcelFileComponent } from './create-backup-excel-file/create-backup-excel-file.component';
+import { QuickAddFamilyComponent } from './quick-add-family/quick-add-family.component';
 
 
 
@@ -96,6 +97,7 @@ import { CreateBackupExcelFileComponent } from './create-backup-excel-file/creat
     FamilyInListComponent,
     UpdateGroupDialogComponent,
     CreateBackupExcelFileComponent,
+    QuickAddFamilyComponent,
     
     
   ],
@@ -125,6 +127,7 @@ import { CreateBackupExcelFileComponent } from './create-backup-excel-file/creat
     YesNoQuestionComponent,
     InputAreaComponent,
     UpdateFamilyDialogComponent,PreviewFamilyComponent,
+    QuickAddFamilyComponent,
     UpdateCommentComponent,UpdateGroupDialogComponent]
 })
 export class AppModule { }

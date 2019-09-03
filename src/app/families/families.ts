@@ -511,7 +511,7 @@ export class Families extends IdEntity<FamilyId>  {
 
 
   }
-  @RunOnServer({ allowed: Roles.admin })
+  @RunOnServer({ allowed: Roles.admin,blockUser:false })
   static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, id: string, exactName: boolean = false, context?: Context, directSQL?: DirectSQL) {
     let result: duplicateFamilyInfo[] = [];
 
