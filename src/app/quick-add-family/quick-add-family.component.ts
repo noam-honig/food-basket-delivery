@@ -34,7 +34,7 @@ export class QuickAddFamilyComponent implements OnInit {
         this.f.deliverStatus.getColumn(),
         this.f.phone1,
         this.f.phone2,
-        this.f.basketType,
+        this.f.basketType.getColumn(),
         this.f.courierComments
       ]
     }
