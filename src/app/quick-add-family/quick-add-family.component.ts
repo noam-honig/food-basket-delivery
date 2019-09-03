@@ -17,7 +17,7 @@ export class QuickAddFamilyComponent implements OnInit {
     private context: Context
   ) {
     this.f.name.value = data.searchName;
-    this.f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
+    this.f.deliverStatus.value = DeliveryStatus.SelfPickup;
   }
   f: Families = this.context.for(Families).create();
   area = new DataAreaSettings<Families>(
