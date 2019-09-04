@@ -21,6 +21,7 @@
     "publish-to-cbhr": "git push cbhr master -f",
     "publish-to-cbey": "git push cbey master -f",
     "publish-to-atbh": "git push atbh master -f",
+    "publish-to-tal-chaim": "git push tal-chaim master -f",
     "publish-to-krvtj": "git push krvtj master -f",
     "publish-to-merkaz-mazon": "git push mmaz -f",
     "publish-to-m-h": "git push m-h master -f",
