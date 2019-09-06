@@ -22,6 +22,8 @@
     "publish-to-cbey": "git push cbey master -f",
     "publish-to-atbh": "git push atbh master -f",
     "publish-to-tal-chaim": "git push tal-chaim master -f",
+    "publish-to-dinale":"git push dinale master -f",
+    "publish-to-dinale-kol-halev":"git push kol-halev master -f",
     "publish-to-krvtj": "git push krvtj master -f",
     "publish-to-merkaz-mazon": "git push mmaz -f",
     "public-to-bodedim-hertzelia":"git push bodedim-hertzelia master -f",

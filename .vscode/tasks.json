@@ -146,6 +146,11 @@
             "type": "npm",
             "script": "bundle-report",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-dinale",
+            "problemMatcher": []
         }
     ]
 }
