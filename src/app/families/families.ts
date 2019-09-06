@@ -163,15 +163,15 @@ export class Families extends IdEntity<FamilyId>  {
   appartment = new StringColumn('דירה');
   entrance = new StringColumn('כניסה');
   city = new StringColumn({ caption: "עיר (מתעדכן אוטומטית)" });
-  addressComment = new StringColumn('הערת כתובת');
+  addressComment = new StringColumn('הנחיות נוספות לכתובת');
   postalCode = new NumberColumn('מיקוד');
   deliveryComments = new StringColumn('הערה שתופיע למשנע');
   addressApiResult = new StringColumn();
 
   phone1 = new PhoneColumn({ caption: "טלפון 1", inputType: 'tel', dbName: 'phone', valueChange: () => this.delayCheckDuplicateFamilies() });
-  phone1Description = new StringColumn('תאור טלפון 1');
+  phone1Description = new StringColumn('הערות לטלפון 1');
   phone2 = new PhoneColumn({ caption: "טלפון 2", inputType: 'tel', valueChange: () => this.delayCheckDuplicateFamilies() });
-  phone2Description = new StringColumn('תאור טלפון 2');
+  phone2Description = new StringColumn('הערות לטלפון 2');
 
 
 
@@ -639,7 +639,7 @@ export interface parseAddressResult {
 }
 export class GroupsColumn extends StringColumn {
   constructor(private context: Context) {
-    super({ caption: 'קבוצות', includeInApi: Roles.admin });
+    super({ caption: 'שיוך לקבוצת חלוקה', includeInApi: Roles.admin });
   }
   getColumn(dialog: SelectServiceInterface) {
     return {

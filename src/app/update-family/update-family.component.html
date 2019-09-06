@@ -1,138 +1,152 @@
 <div *ngIf="families.currentRow">
-<br>
+    <br>
 
-<div class="{{families.currentRow.deliverStatus.getCss()}}">
-    <strong>{{families.currentRow.deliverStatus.displayValue}}: </strong> {{families.currentRow.courierComments.value}}
-</div>
-<mat-accordion *ngIf="familiesInfo">
-    <mat-expansion-panel>
-        <mat-expansion-panel-header>
-            <div>
-                <mat-panel-title>
-                    משפחה
-                </mat-panel-title>
-            </div>
-            <div>
-                <mat-panel-description>
-                    {{families.currentRow.name.value}}
-                </mat-panel-description>
-            </div>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
+    <div class="{{families.currentRow.deliverStatus.getCss()}}">
+        <strong>{{families.currentRow.deliverStatus.displayValue}}: </strong>
+        {{families.currentRow.courierComments.value}}
+    </div>
+    <mat-accordion *ngIf="familiesInfo" [multi]="true">
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <div>
+                    <mat-panel-title>
+                        משפחה
+                    </mat-panel-title>
+                </div>
+                <div>
+                    <mat-panel-description>
+                        {{families.currentRow.name.value}}
+                    </mat-panel-description>
+                </div>
+            </mat-expansion-panel-header>
+            <ng-template matExpansionPanelContent>
 
-            <data-area [settings]="familiesInfo"></data-area>
-        </ng-template>
-    </mat-expansion-panel>
-    <mat-expansion-panel>
-        <mat-expansion-panel-header>
-            <div>
-                <mat-panel-title>
-                    <mat-icon class="badAddressIcon" *ngIf="!families.currentRow.addressOk.value&&!families.currentRow.isNew()">
-                        warning
-                    </mat-icon>
-                    כתובת
-                </mat-panel-title>
-            </div>
-            <div>
-                <mat-panel-description>
-                    {{families.currentRow.address.value}}
-                </mat-panel-description>
-            </div>
+                <data-area [settings]="familiesInfo"></data-area>
+            </ng-template>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <div>
+                    <mat-panel-title>
+                        <mat-icon class="badAddressIcon"
+                            *ngIf="!families.currentRow.addressOk.value&&!families.currentRow.isNew()">
+                            warning
+                        </mat-icon>
+                        כתובת
+                    </mat-panel-title>
+                </div>
+                <div>
+                    <mat-panel-description>
+                        {{families.currentRow.address.value}}
+                    </mat-panel-description>
+                </div>
 
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
+            </mat-expansion-panel-header>
+            <ng-template matExpansionPanelContent>
 
-            <div class="addressProblem"
-                *ngIf="!families.currentRow.addressOk.value&&!families.currentRow.isNew()"><span
-                    class="badAddressTitle">שים
-                    לב, כתובת לא מדוייקת</span>
-                גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת. יש להשוות בין השדה "כתובת" לשדה "כתובת כפי שגוגל הבין".
-                <br>אפשר להעזר בקישור "פתחי גוגל" כדי לחפש את הכתובת הנכונה ולעדכן.
-                <br> כתובת לא מדוייקת עלולה להוביל המשנע למקום לא נכון בוייז.
-            </div>
-            <a (click)="families.currentRow.openWaze()" target="_blank">פתחי WAZE</a> |
-            <a (click)="families.currentRow.openGoogleMaps()" target="_blank">פתחי גוגל </a>
-            <data-area [settings]="familiesAddress"></data-area>
-        </ng-template>
-    </mat-expansion-panel>
-    <mat-expansion-panel>
-        <mat-expansion-panel-header>
-            <div>
-                <mat-panel-title>
-                    טלפונים
-                </mat-panel-title>
-            </div>
-            <div>
-                <mat-panel-description>
-                    {{families.currentRow.phone1.value}}
-                </mat-panel-description>
-            </div>
+                <div class="addressProblem" *ngIf="!families.currentRow.addressOk.value&&!families.currentRow.isNew()">
+                    <span class="badAddressTitle">שים
+                        לב, כתובת לא מדוייקת</span>
+                    גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת. יש להשוות בין השדה "כתובת" לשדה "כתובת כפי שגוגל הבין".
+                    <br>אפשר להעזר בקישור "פתחי גוגל" כדי לחפש את הכתובת הנכונה ולעדכן.
+                    <br> כתובת לא מדוייקת עלולה להוביל המשנע למקום לא נכון בוייז.
+                </div>
+                <a (click)="families.currentRow.openWaze()" target="_blank">פתחי WAZE</a> |
+                <a (click)="families.currentRow.openGoogleMaps()" target="_blank">פתחי גוגל </a>
+                <data-area [settings]="familiesAddress"></data-area>
+            </ng-template>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <div>
+                    <mat-panel-title>
+                        טלפונים
+                    </mat-panel-title>
+                </div>
+                <div>
+                    <mat-panel-description>
+                        {{families.currentRow.phone1.value}}
+                    </mat-panel-description>
+                </div>
 
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
+            </mat-expansion-panel-header>
+            <ng-template matExpansionPanelContent>
 
-            <a href="tel:{{families.currentRow.phone1.value}}" *ngIf="families.currentRow.phone1.value">
+                <a href="tel:{{families.currentRow.phone1.value}}" *ngIf="families.currentRow.phone1.value">
 
-                חייג לטלפון 1
-            </a> |
-            <a href="tel:{{families.currentRow.phone2.value}}" *ngIf="families.currentRow.phone2.value">
+                    חייג לטלפון 1
+                </a> |
+                <a href="tel:{{families.currentRow.phone2.value}}" *ngIf="families.currentRow.phone2.value">
 
-                חייג לטלפון 2
+                    חייג לטלפון 2
 
-            </a>
-            <data-area [settings]="phones"></data-area>
-        </ng-template>
-    </mat-expansion-panel>
-    <mat-expansion-panel>
-        <mat-expansion-panel-header>
-            <div>
-                <mat-panel-title>
-                    פרטי משלוח
-                </mat-panel-title>
-            </div>
-            <div>
-                <mat-panel-description>
-                    {{families.currentRow.getShortDeliveryDescription()}}
-                </mat-panel-description>
-            </div>
+                </a>
+                <data-area [settings]="phones"></data-area>
+            </ng-template>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <div>
+                    <mat-panel-title>
+                        פרטי משלוח
+                    </mat-panel-title>
+                </div>
+                <div>
+                    <mat-panel-description>
+                        {{families.currentRow.getShortDeliveryDescription()}}
+                    </mat-panel-description>
+                </div>
 
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
+            </mat-expansion-panel-header>
+            <ng-template matExpansionPanelContent>
 
-            <a href="tel:{{families.currentRow.courier.getPhone()}}" *ngIf="families.currentRow.courier.value">
-                חייג למשנע {{families.currentRow.courier.getValue()}} בטלפון {{families.currentRow.courier.getPhone()}}
-                <br>
-                <br>
-            </a>
-            <data-area [settings]="deliverInfo"></data-area>
+                <a href="tel:{{families.currentRow.courier.getPhone()}}" *ngIf="families.currentRow.courier.value">
+                    חייג למשנע {{families.currentRow.courier.getValue()}} בטלפון
+                    {{families.currentRow.courier.getPhone()}}
+                    <br>
+                    <br>
+                </a>
+                <data-area [settings]="deliverInfo"></data-area>
 
-        </ng-template>
-    </mat-expansion-panel>
-    <mat-expansion-panel>
-        <mat-expansion-panel-header>
-            <div>
-                <mat-panel-title>
-                    היסטוריה
-                </mat-panel-title>
-            </div>
-            <div>
-                <mat-panel-description>
+            </ng-template>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <div>
+                    <mat-panel-title>
+                        היסטוריה
+                    </mat-panel-title>
+                </div>
+                <div>
+                    <mat-panel-description>
 
-                </mat-panel-description>
-            </div>
+                    </mat-panel-description>
+                </div>
 
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
+            </mat-expansion-panel-header>
+            <ng-template matExpansionPanelContent>
+                <div *ngIf="familyDeliveries&&familyDeliveries.length">
+                    <h5>משלוחים קודמים</h5>
+                    <ul>
+                        <li *ngFor="let fd of familyDeliveries" (click)="deliveryInfo(fd)">
+                            {{fd.getShortDescription()}}
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h5>פרטי עדכונים</h5>
+                    <ul>
+                        <li>הוספה: {{families.currentRow.createDate.displayValue}} -
+                            {{families.currentRow.createUser.displayValue}}</li>
+                        <li>עדכון אחרון: {{families.currentRow.lastUpdateDate.displayValue}}</li>
+                        <li>עדכון סטטוס משלוח: {{families.currentRow.deliveryStatusDate.displayValue}} -
+                            {{families.currentRow.deliveryStatusUser.displayValue}}</li>
+                            <li>עדכון משנע: {{families.currentRow.courierAssingTime.displayValue}} -
+                                {{families.currentRow.courierAssignUser.displayValue}}</li>
+                    </ul>
+                </div>
 
-            <ul>
-                <li *ngFor="let fd of familyDeliveries" (click)="deliveryInfo(fd)">
-                    {{fd.getShortDescription()}}
-
-
-                </li>
-            </ul>
-
-        </ng-template>
-    </mat-expansion-panel>
-</mat-accordion>
+            </ng-template>
+        </mat-expansion-panel>
+    </mat-accordion>
 </div>

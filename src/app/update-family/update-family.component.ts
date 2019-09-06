@@ -29,21 +29,19 @@ export class UpdateFamilyComponent implements OnInit {
       columnSettings: families => [
         families.name,
         families.basketType.getColumn(),
-        families.deliverStatus.getColumn(),
-        families.defaultSelfPickup,
-        families.groups.getColumn(this.selectService),
+        
+        
+        
         families.internalComment,
-        families.deliveryComments,
+        
         families.familyMembers,
         families.familySource.getColumn(),
         families.tz,
         families.tz2,
-        families.special.getColumn(),
         
-        families.iDinExcel,
-        families.createUser,
-        families.createDate,
-        families.lastUpdateDate
+        
+        families.iDinExcel
+        
 
 
 
@@ -59,8 +57,8 @@ export class UpdateFamilyComponent implements OnInit {
         families.addressComment,
         families.addressByGoogle(),
         families.city,
-        families.postalCode,
-        families.addressOk
+        families.addressOk,
+        families.postalCode
 
       ]
     });
@@ -75,20 +73,17 @@ export class UpdateFamilyComponent implements OnInit {
 
     this.deliverInfo = this.families.addArea({
       columnSettings: families => [
-        families.defaultSelfPickup,
         families.deliverStatus.getColumn(),
+        families.internalComment,
+        families.deliveryComments,
+        families.addressComment,
+        families.groups.getColumn(this.selectService),
+        
         families.courier.getColumn(this.selectService),
         
         families.courierComments,
-        {
-          caption: 'טלפון משנע',
-          getValue: f => f.courier.getPhone()
-        },
-        families.getPreviousDeliveryColumn(),
-        families.courierAssignUser,
-        families.courierAssingTime,
-        families.deliveryStatusUser,
-        families.deliveryStatusDate,
+
+        families.defaultSelfPickup,
         families.fixedCourier.getColumn(this.selectService)
       ]
     });
