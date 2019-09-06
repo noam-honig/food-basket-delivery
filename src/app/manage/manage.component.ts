@@ -82,6 +82,7 @@ export class ManageComponent implements OnInit {
       s.commentForSuccessDelivery,
       s.commentForSuccessLeft,
       s.commentForProblem,
+      s.defaultStatusType.getColumn(),
       s.helpText,
       s.helpPhone,
       {

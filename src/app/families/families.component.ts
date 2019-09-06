@@ -35,6 +35,7 @@ import { PreviewFamilyComponent, PreviewFamilyInfo } from '../preview-family/pre
 import { Roles, AdminGuard } from '../auth/roles';
 import { MatTabGroup } from '@angular/material/tabs';
 import { QuickAddFamilyComponent } from '../quick-add-family/quick-add-family.component';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
     selector: 'app-families',
@@ -202,7 +203,7 @@ export class FamiliesComponent implements OnInit {
         onEnterRow: async f => {
             if (f.isNew()) {
                 f.basketType.value = '';
-                f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
+                f.deliverStatus.value = ApplicationSettings.get(this.context).defaultStatusType.value;
                 f.special.value = YesNo.No;
                 this.currentFamilyDeliveries = [];
             } else {

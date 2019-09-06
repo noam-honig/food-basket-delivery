@@ -16,6 +16,7 @@ import { isUndefined } from 'util';
 import { Roles } from '../auth/roles';
 import { MatStepper } from '@angular/material';
 import { async } from '@angular/core/testing';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
     selector: 'app-excel-import',
@@ -281,6 +282,7 @@ export class ImportFromExcelComponent implements OnInit {
     async readLine(row: number): Promise<excelRowInfo> {
         let f = this.context.for(Families).create();
         f._disableAutoDuplicateCheck = true;
+        f.deliverStatus.value = ApplicationSettings.get(this.context).defaultStatusType.value;
 
         let helper = new columnUpdateHelper(this.context, this.dialog);
         for (const c of this.excelColumns) {
@@ -305,7 +307,7 @@ export class ImportFromExcelComponent implements OnInit {
         let info: excelRowInfo = {
             name: f.name.value,
             tz: f.tz.value,
-            tz2:f.tz2.value,
+            tz2: f.tz2.value,
             phone1: f.phone1.value,
             phone2: f.phone2.value,
             valid: true,
@@ -341,10 +343,10 @@ export class ImportFromExcelComponent implements OnInit {
     @ViewChild("stepper") stepper: MatStepper;
 
     ngOnInit() {
-        
 
 
-        
+
+
 
 
         let updateCol = (col: Column<any>, val: string, seperator: string = ' ') => {
@@ -519,7 +521,7 @@ export class ImportFromExcelComponent implements OnInit {
             searchNames: ['טלפון נייד']
         });
 
-        
+
         addColumn(this.f.familyMembers, ["נפשות", "מס נפשות"]);
         addColumn(this.f.tz, ["ת.ז.", "ת\"ז"]);
         addColumn(this.f.tz2);
@@ -535,7 +537,7 @@ export class ImportFromExcelComponent implements OnInit {
         ]);
         for (const col of [this.f.phone1Description,
         this.f.phone2Description,
-            this.f.internalComment,
+        this.f.internalComment,
         this.f.deliveryComments,
         this.f.addressComment,
 
@@ -576,7 +578,7 @@ export class ImportFromExcelComponent implements OnInit {
         this.stepper.next();
         await this.busy.doWhileShowingBusy(async () => {
             let updatedColumns = new Map<Column<any>, boolean>();
-
+            updatedColumns.set(this.f.deliverStatus, true);
             for (const cu of [...this.excelColumns.map(f => f.column), ...this.additionalColumns.map(f => f.column)]) {
                 if (cu)
                     for (const c of cu.columns) {
@@ -712,7 +714,7 @@ export class ImportFromExcelComponent implements OnInit {
             updateRows: []
         } as serverCheckResults;
         for (const info of excelRowInfo) {
-            info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz,info.tz2, info.phone1, info.phone2, undefined, true, context, directSql);
+            info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz, info.tz2, info.phone1, info.phone2, undefined, true, context, directSql);
 
             if (!info.duplicateFamilyInfo || info.duplicateFamilyInfo.length == 0) {
                 result.newRows.push(info);
@@ -889,7 +891,7 @@ interface excelRowInfo {
     rowInExcel: number;
     name: string;
     tz: string;
-    tz2:string;
+    tz2: string;
     phone1: string;
     phone2: string;
     valid: boolean;

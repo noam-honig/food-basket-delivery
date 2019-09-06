@@ -3,6 +3,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Families } from '../families/families';
 import { Context, DataAreaSettings } from 'radweb';
 import { DeliveryStatus } from '../families/DeliveryStatus';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-quick-add-family',
@@ -17,7 +18,7 @@ export class QuickAddFamilyComponent implements OnInit {
     private context: Context
   ) {
     this.f.name.value = data.searchName;
-    this.f.deliverStatus.value = DeliveryStatus.SelfPickup;
+    this.f.deliverStatus.value =  ApplicationSettings.get(this.context).defaultStatusType.value;;
   }
   f: Families = this.context.for(Families).create();
   area = new DataAreaSettings<Families>(

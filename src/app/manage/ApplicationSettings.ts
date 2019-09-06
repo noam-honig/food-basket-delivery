@@ -3,6 +3,7 @@ import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelper
 import { Entity, Context, EntityClass } from "radweb";
 import { PhoneColumn } from "../model-shared/types";
 import { Roles } from "../auth/roles";
+import { DeliveryStatusColumn, DeliveryStatus } from "../families/DeliveryStatus";
 @EntityClass
 export class ApplicationSettings extends Entity<number>  {
 
@@ -17,8 +18,11 @@ export class ApplicationSettings extends Entity<number>  {
   messageForDoneDelivery = new StringColumn('הודעה למשנע כאשר סיים את כל המשפחות');
   helpText = new StringColumn('למי המשנע מתקשר כשיש לו בעיה');
   helpPhone = new PhoneColumn('טלפון עזרה למשנע');
-  dataStructureVersion = new NumberColumn({allowApiUpdate:false});
+  dataStructureVersion = new NumberColumn({ allowApiUpdate: false });
   addressApiResult = new StringColumn();
+  defaultStatusType = new DeliveryStatusColumn({
+    caption:'סטטוס משלוח ברירת מחדל'
+  }, [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup, DeliveryStatus.NotInEvent]);
   private _lastString: string;
   private _lastGeo: GeocodeInformation;
   getGeocodeInformation() {
@@ -30,7 +34,7 @@ export class ApplicationSettings extends Entity<number>  {
 
 
   constructor(context: Context) {
-    super( {
+    super({
       name: 'ApplicationSettings',
       allowApiRead: true,
       allowApiUpdate: Roles.admin,

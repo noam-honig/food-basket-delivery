@@ -1,5 +1,5 @@
 import { ClosedListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings } from "radweb";
-import { ColumnOptions } from "radweb";
+import { ColumnOptions, DropDownItem } from "radweb";
 
 export class DeliveryStatus {
   static IsAResultStatus(value: DeliveryStatus) {
@@ -25,8 +25,8 @@ export class DeliveryStatus {
   static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, 'לא נמסר, לא היו בבית');
   static FailedOther: DeliveryStatus = new DeliveryStatus(25, 'לא נמסר, אחר');
   static RemovedFromList: DeliveryStatus = new DeliveryStatus(99, 'הוצא מהרשימות');
-  
-  
+
+
   constructor(public id: number, private name: string) {
   }
   toString() {
@@ -43,16 +43,25 @@ export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
   isAResultStatus() {
     return this.isGreaterOrEqualTo(DeliveryStatus.Success).and(this.isLessOrEqualTo(DeliveryStatus.FailedOther));
   }
-  constructor(settingsOrCaption?: ColumnOptions<DeliveryStatus>) {
+
+  constructor(settingsOrCaption?: ColumnOptions<DeliveryStatus>, private chooseFrom?: DeliveryStatus[]) {
     super(DeliveryStatus, settingsOrCaption);
     if (!this.caption)
       this.caption = 'סטטוס משלוח';
   }
   getColumn() {
+    let op = this.getOptions();
+    if (this.chooseFrom)
+      op = this.chooseFrom.map(x => {
+        return {
+          id: x.id,
+          caption: x.toString()
+        } as DropDownItem
+      });
     return {
       column: this,
       dropDown: {
-        items: this.getOptions()
+        items: op
       },
       width: '150'
     };
