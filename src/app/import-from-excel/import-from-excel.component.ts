@@ -358,11 +358,18 @@ export class ImportFromExcelComponent implements OnInit {
         }
         this.f = this.context.for(Families).create();
         try {
-            /*this.errorRows = JSON.parse(localStorage.getItem("errorRows"));
-            this.newRows = JSON.parse(localStorage.getItem("newRows"));
-            this.updateRows = JSON.parse(localStorage.getItem("updateRows"));
-            this.identicalRows = JSON.parse(localStorage.getItem("identicalRows"));
-            this.columnsInCompare = JSON.parse(localStorage.getItem("columnsInCompare")).map(x => this.f.__getColumnByJsonName(x));*/
+            this.errorRows = JSON.parse(sessionStorage.getItem("errorRows"));
+            this.newRows = JSON.parse(sessionStorage.getItem("newRows"));
+            this.updateRows = JSON.parse(sessionStorage.getItem("updateRows"));
+            this.identicalRows = JSON.parse(sessionStorage.getItem("identicalRows"));
+            this.columnsInCompare = JSON.parse(sessionStorage.getItem("columnsInCompare")).map(x => this.f.__getColumnByJsonName(x));
+            if (this.columnsInCompare.length > 0) {
+                setTimeout(() => {
+                    this.stepper.next();
+                    this.stepper.next();
+
+                }, 100);
+            }
         }
         catch (err) {
             console.log(err);
@@ -522,10 +529,10 @@ export class ImportFromExcelComponent implements OnInit {
         });
         for (const c of [this.f.phone1, this.f.phone2]) {
             this.columns.push({
-                key:c.__getMemberName(),
-                name:c.caption,
-                columns:[c],
-                updateFamily:async (v,f)=>updateCol(f.__getColumn(c),v)
+                key: c.__getMemberName(),
+                name: c.caption,
+                columns: [c],
+                updateFamily: async (v, f) => updateCol(f.__getColumn(c), v)
             });
         }
 
@@ -683,12 +690,12 @@ export class ImportFromExcelComponent implements OnInit {
                 }
 
 
-                /*localStorage.setItem("errorRows", JSON.stringify(this.errorRows));
-                localStorage.setItem("newRows", JSON.stringify(this.newRows));
-                localStorage.setItem("updateRows", JSON.stringify(this.updateRows));
-                localStorage.setItem("identicalRows", JSON.stringify(this.identicalRows));
+                sessionStorage.setItem("errorRows", JSON.stringify(this.errorRows));
+                sessionStorage.setItem("newRows", JSON.stringify(this.newRows));
+                sessionStorage.setItem("updateRows", JSON.stringify(this.updateRows));
+                sessionStorage.setItem("identicalRows", JSON.stringify(this.identicalRows));
 
-                localStorage.setItem("columnsInCompare", JSON.stringify(columnsInCompareMemberName));*/
+                sessionStorage.setItem("columnsInCompare", JSON.stringify(columnsInCompareMemberName));
             }
             catch (err) {
                 this.stepper.previous();
