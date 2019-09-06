@@ -7,6 +7,7 @@ import { SqlBuilder, QueryBuilder } from './model-shared/types';
 import { WebDriverProxy } from 'blocking-proxy/built/lib/webdriver_proxy';
 import { parseAddress, Families } from './families/families';
 import { BasketType } from './families/BasketType';
+import {fixPhone} from './import-from-excel/import-from-excel.component';
 
 describe('AppComponent', () => {
   var context = new ServerContext();
@@ -125,9 +126,12 @@ describe('AppComponent', () => {
     expect(r.dira).toBe('3');
 
   });
+  it("test phones", () => {
+    expect(fixPhone("0507330590")).toBe("0507330590");
+    expect(fixPhone("507330590")).toBe("0507330590");
+    expect(fixPhone("036733059")).toBe("036733059");
+    expect(fixPhone("36733059")).toBe("036733059");
+  });
 
 });
 
-function fixPhone(phone: string){
-  return phone
-}

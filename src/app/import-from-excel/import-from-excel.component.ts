@@ -514,12 +514,20 @@ export class ImportFromExcelComponent implements OnInit {
             columns: [this.f.phone1, this.f.phone2],
             updateFamily: async (v, f) => {
                 if (f.phone1.value && f.phone1.value.length > 0)
-                    updateCol(f.phone2, v);
+                    updateCol(f.phone2, fixPhone(v));
                 else
-                    updateCol(f.phone1, v);
+                    updateCol(f.phone1, fixPhone(v));
             },
             searchNames: ['טלפון נייד']
         });
+        for (const c of [this.f.phone1, this.f.phone2]) {
+            this.columns.push({
+                key:c.__getMemberName(),
+                name:c.caption,
+                columns:[c],
+                updateFamily:async (v,f)=>updateCol(f.__getColumn(c),v)
+            });
+        }
 
 
         addColumn(this.f.familyMembers, ["נפשות", "מס נפשות"]);
@@ -924,4 +932,14 @@ async function getColumnDisplayValue(c: Column<any>) {
 interface laterSteps {
     step: number,
     what: () => void
+}
+
+export function fixPhone(phone: string) {
+    if (!phone)
+        return phone;
+    if (phone.startsWith('0'))
+        return phone;
+    if (phone.length == 8 || phone.length == 9)
+        return '0' + phone;
+    return phone;
 }
