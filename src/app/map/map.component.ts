@@ -115,7 +115,7 @@ export class MapComponent implements OnInit {
     mapInit = false;
     markers: google.maps.Marker[] = [];
     hasFamilies = false;
-    bounds: google.maps.LatLngBounds;
+    bounds: google.maps.LatLngBounds =  new google.maps.LatLngBounds();
     prevFamilies: Families[] = [];
     async test(families: Families[]) {
         var prevFamilies = this.prevFamilies;
