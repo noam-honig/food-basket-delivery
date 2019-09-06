@@ -62,7 +62,7 @@ describe('AppComponent', () => {
       from: f,
       where: () => [sql.eq(f.basketType, bt.id)]
 
-    })).toBe('(select sum(e1.familyMembers) from Families e1 where e1.basketType = products.id)');
+    })).toBe('(select sum(e1.familyMembers) from Families e1 where e1.basketType = BasketType.id)');
   });
   it("case ", () => {
     expect(sql.case([
@@ -72,7 +72,7 @@ describe('AppComponent', () => {
   });
   it('delete 2', () => {
     let p = new BasketType(context);
-    expect(sql.delete(p, sql.eq(p.boxes, 5), sql.eq(p.boxes, 6))).toBe('delete from BasketType where ord2 = 5 and ord2 = 6');
+    expect(sql.delete(p, sql.eq(p.boxes, 5), sql.eq(p.boxes, 6))).toBe('delete from BasketType where boxes = 5 and boxes = 6');
   });
   it('update ', () => {
     expect(sql.update(bt, {
@@ -86,7 +86,7 @@ describe('AppComponent', () => {
       set: () => [[bt.id, pd.basketType], [bt.name, "'noam'"]],
       from: pd,
       where: () => [sql.eq(bt.boxes, 5), sql.eq(bt.boxes, pd.familyMembers)]
-    })).toBe("update BasketType p set id = e2.basketType, name = 'noam' from Families e2 where p.boxes = 5 and p.boxes = e2.requestQuanity");
+    })).toBe("update BasketType p set id = e2.basketType, name = 'noam' from Families e2 where p.boxes = 5 and p.boxes = e2.familyMembers");
   });
   it('insert ', () => {
     sql = new SqlBuilder();
@@ -96,7 +96,7 @@ describe('AppComponent', () => {
       set: () => [[bt.id, f.id], [bt.name, "'noam'"]],
       from: f,
       where: () => [sql.eq(f.familyMembers, 5)]
-    })).toBe("insert into BasketType (id, name) select e1.basketType, 'noam' from Families e1 where e1.requestQuanity = 5");
+    })).toBe("insert into BasketType (id, name) select e1.id, 'noam' from Families e1 where e1.familyMembers = 5");
   });
   it('filter ', () => {
     expect(sql.build(bt.boxes.isEqualTo(3).and(bt.boxes.isEqualTo(5)))).toBe('boxes = 3 and boxes = 5');
