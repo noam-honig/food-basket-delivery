@@ -54,6 +54,7 @@ import { FamilyInListComponent } from './family-in-list/family-in-list.component
 import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-dialog.component';
 import { CreateBackupExcelFileComponent } from './create-backup-excel-file/create-backup-excel-file.component';
 import { QuickAddFamilyComponent } from './quick-add-family/quick-add-family.component';
+import { ScrollDispatchModule } from '@angular/cdk/scrolling';
 
 
 
@@ -109,7 +110,8 @@ import { QuickAddFamilyComponent } from './quick-add-family/quick-add-family.com
     BrowserAnimationsModule,
     RadWebModule,
     AppRoutingModule,
-    ChartsModule
+    ChartsModule,
+    ScrollDispatchModule
 
   ],
   providers: [

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
 import { AndFilter, ColumnSetting, GridSettings } from 'radweb';
 
 import { Families } from './families';
@@ -36,6 +36,8 @@ import { Roles, AdminGuard } from '../auth/roles';
 import { MatTabGroup } from '@angular/material/tabs';
 import { QuickAddFamilyComponent } from '../quick-add-family/quick-add-family.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { ScrollDispatcher, CdkScrollable } from '@angular/cdk/scrolling';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-families',
@@ -52,10 +54,19 @@ export class FamiliesComponent implements OnInit {
     groupsColumn: ColumnSetting<Families>;
     statusColumn: ColumnSetting<Families>;
     deliverySummary: ColumnSetting<Families>;
-
-    constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context, private selectService: SelectService, private matDialog: MatDialog) {
+    scrollingSubscription: Subscription;
+    showHoverButton:boolean = false;
+    constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context, private selectService: SelectService, private matDialog: MatDialog,
+        public scroll: ScrollDispatcher) {
         this.doTest();
-
+        this.scrollingSubscription = this.scroll
+            .scrolled()
+            .subscribe((data: CdkScrollable) => {
+                let val = this.testing.nativeElement.getBoundingClientRect().y<0;
+                if (val!=this.showHoverButton)
+                    this.dialog.zone.run(()=>this.showHoverButton = val);
+                
+            });
         let y = dialog.refreshStatusStats.subscribe(() => {
             this.refreshStats();
         });
@@ -65,6 +76,7 @@ export class FamiliesComponent implements OnInit {
         if (dialog.isScreenSmall())
             this.gridView = false;
     }
+    @ViewChild("myRef") testing:ElementRef;
     filterBy(s: FaimilyStatistics) {
         this.families.get({
             where: s.rule,
@@ -74,6 +86,7 @@ export class FamiliesComponent implements OnInit {
 
         });
     }
+
     quickAdd() {
         QuickAddFamilyComponent.dialog(this.matDialog, {
             searchName: this.searchString,
@@ -379,6 +392,7 @@ export class FamiliesComponent implements OnInit {
 
     ngOnDestroy(): void {
         this.onDestroy();
+        this.scrollingSubscription.unsubscribe();
     }
     basketStats: statsOnTab = {
         name: 'נותרו לפי סלים',

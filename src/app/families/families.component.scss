@@ -1,15 +1,23 @@
-
-mat-card{
-    margin-top:10px;
+mat-card {
+  margin-top: 10px;
 }
-button:disabled{
-    color:gray;
+button:disabled {
+  color: gray;
 }
-.my-table{
-    overflow-x: scroll;
-    width:300px;
+.my-table {
+  overflow-x: scroll;
+  width: 300px;
 }
-.container{
-    
-    overflow-x: scroll;
+.container {
+  overflow-x: scroll;
+}
+.hover-top-bar {
+    background: rgba(256, 256, 256,1);
+    z-index: 1;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    border-bottom: 1px black solid;
+    padding-bottom: 7px;
+  
 }
