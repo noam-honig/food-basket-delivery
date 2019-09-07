@@ -16,12 +16,12 @@ export class ApplicationSettings extends Entity<number>  {
   commentForSuccessLeft = new StringColumn('הודעה למשנע כאשר הושאר ליד הבית');
   commentForProblem = new StringColumn('הודעה למשנע כאשר יש בעיה');
   messageForDoneDelivery = new StringColumn('הודעה למשנע כאשר סיים את כל המשפחות');
-  helpText = new StringColumn('למי המשנע מתקשר כשיש לו בעיה');
+  helpText = new StringColumn('למי המשנע מתקשר כשיש לו בעיה (שם)');
   helpPhone = new PhoneColumn('טלפון עזרה למשנע');
   dataStructureVersion = new NumberColumn({ allowApiUpdate: false });
   addressApiResult = new StringColumn();
   defaultStatusType = new DeliveryStatusColumn({
-    caption:'סטטוס משלוח ברירת מחדל'
+    caption:'סטטוס משלוח ברירת מחדל למשפחות חדשות'
   }, [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup, DeliveryStatus.NotInEvent]);
   private _lastString: string;
   private _lastGeo: GeocodeInformation;

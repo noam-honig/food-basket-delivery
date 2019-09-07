@@ -1,56 +1,102 @@
-<mat-card *ngIf="settings.currentRow">
-    <h1>הגדרות כלליות</h1>
-    <button *ngIf="settings.currentRow &&settings.currentRow.wasChanged()" (click)="settings.currentRow.save()" [disabled]="!settings.currentRow.wasChanged()"
-        class="btn glyphicon glyphicon-ok btn-success"></button>
-    <button *ngIf="settings.currentRow &&settings.currentRow.wasChanged()" (click)="settings.currentRow.reset();settings.setCurrentRow(settings.items[0]);"
-        [disabled]="!settings.currentRow.wasChanged()" class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
-    <data-area [settings]="settings"></data-area>
-    <div class="form-horizontal">
-    <div class="form-group">
-        <div class="col-sm-4">
-            <!--bindings={
-"ng-reflect-ng-if": "true"
-}-->
-            <label class="control-label ng-star-inserted">{{settings.currentRow.smsText.caption}}</label>
-        </div>
-        <div class="col-sm-8">
-            <textarea [(ngModel)]="settings.currentRow.smsText.value" class="form-control"></textarea>
-            <br/>
-            <ul>
-            <li>!משנע! - יוחלף בשם המשנע</li>
-            <li>!שולח! - יוחלף בשם השולח</li>
-            <li>!ארגון! - יוחלף בשם הארגון</li>
-            <li>!אתר! - יוחלף בכתובת האתר</li>
-        </ul>
-        <h4>הודעה לדוגמא</h4>
-            <pre>{{testSms()}}</pre>
-        </div>
-    </div>
-</div>
-</mat-card>
+<button  (click)="save()"
+[disabled]="!wasChange()" class="btn glyphicon glyphicon-ok btn-success"></button>
+<button 
+(click)="reset()"
+[disabled]="!wasChange()"
+class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
+<mat-accordion *ngIf="settings.currentRow">
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                פרטי הארגון - {{settings.currentRow.organisationName.value}}
+            </mat-panel-title>
 
-<mat-card>
-    <h1>קבוצות</h1>
-    קבוצות אלו יוצגו בשיוך משפחות ויאפשרו סינון מהיר
-    <data-grid2 [settings]="groups"></data-grid2>
-</mat-card>
-<mat-card>
-    <h1>סוגי סלים</h1>
-    <data-grid2 [settings]="basketType"></data-grid2>
-</mat-card>
-<mat-card>
-    <h1>מקורות משפחה</h1>
-    <data-grid2 [settings]="sources" height="300"></data-grid2>
-</mat-card>
-<mat-card>
-    <h1>Icons</h1>
-    <button *ngIf="images.currentRow &&images.currentRow.wasChanged()" (click)="images.currentRow.save()" [disabled]="!images.currentRow.wasChanged()"
-        class="btn glyphicon glyphicon-ok btn-success"></button>
-    <button *ngIf="images.currentRow &&images.currentRow.wasChanged()" (click)="images.currentRow.reset();images.setCurrentRow(images.items[0]);"
-        [disabled]="!images.currentRow.wasChanged()" class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
-    <data-area [settings]="images"></data-area>
-    כלי ליצירת Base64:
-    <a href="https://www.browserling.com/tools/file-to-base64">File to Base64</a>
-    כלי ליצירת Icons:
-    <a href ="https://www.favicon-generator.org/">Favicon generator</a>
-</mat-card>
+        </mat-expansion-panel-header>
+
+
+     
+        <data-area [settings]="settings"></data-area>
+        <div class="form-horizontal">
+            <div class="form-group">
+                <div class="col-sm-4">
+                    <!--bindings={
+    "ng-reflect-ng-if": "true"
+    }-->
+                    <label class="control-label ng-star-inserted">{{settings.currentRow.smsText.caption}}</label>
+                </div>
+                <div class="col-sm-8">
+                    <textarea [(ngModel)]="settings.currentRow.smsText.value" class="form-control"></textarea>
+                    <br />
+                    <ul>
+                        <li>!משנע! - יוחלף בשם המשנע</li>
+                        <li>!שולח! - יוחלף בשם השולח</li>
+                        <li>!ארגון! - יוחלף בשם הארגון</li>
+                        <li>!אתר! - יוחלף בכתובת האתר</li>
+                    </ul>
+                    <h4>הודעה לדוגמא</h4>
+                    <pre>{{testSms()}}</pre>
+                </div>
+            </div>
+        </div>
+        <data-area [settings]="settingsMore"></data-area>
+
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                קבוצות שיוך משפחות
+            </mat-panel-title>
+
+        </mat-expansion-panel-header>
+
+        קבוצות אלו יוצגו בשיוך משפחות ויאפשרו סינון מהיר
+        <data-grid2 [settings]="groups" height="300"></data-grid2>
+
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                סוגי סלים
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <data-grid2 [settings]="basketType" height="300"></data-grid2>
+
+
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                מקורות משפחה
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <data-grid2 [settings]="sources" height="300"></data-grid2>
+
+
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                הודעות למשתמש
+            </mat-panel-title>
+
+        </mat-expansion-panel-header>
+        <data-area [settings]="settingsMessages"></data-area>
+        
+
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                לוגו וצלמיות
+            </mat-panel-title>
+
+        </mat-expansion-panel-header>
+        <data-area [settings]="settingsLogo" ></data-area>
+        <data-area [settings]="images"></data-area>
+        כלי ליצירת Base64:
+        <a href="https://www.browserling.com/tools/file-to-base64">File to Base64</a>
+        כלי ליצירת Icons:
+        <a href="https://www.favicon-generator.org/">Favicon generator</a>
+
+    </mat-expansion-panel>
+</mat-accordion>
