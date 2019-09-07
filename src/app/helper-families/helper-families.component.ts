@@ -147,9 +147,11 @@ export class HelperFamiliesComponent implements OnInit {
   smsMessage: string = '';
   smsPhone: string = '';
   prepareMessage() {
-    SendSmsAction.generateMessage(this.context, this.familyLists.helperId, window.origin, false, this.context.user.name, (phone, message, sender) => {
-      this.smsMessage = message;
-      this.smsPhone = phone;
+    this.busy.donotWait(async () => {
+      await SendSmsAction.generateMessage(this.context, this.familyLists.helperId, window.origin, false, this.context.user.name, (phone, message, sender) => {
+        this.smsMessage = message;
+        this.smsPhone = phone;
+      });
     });
   }
   async sendPhoneSms() {
