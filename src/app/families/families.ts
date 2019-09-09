@@ -467,7 +467,7 @@ export class Families extends IdEntity<FamilyId>  {
   validatePhone(col: PhoneColumn) {
     if (!col.value || col.value == '')
       return;
-    if (col.displayValue.startsWith("05") || col.displayValue.startsWith("06")) {
+    if (col.displayValue.startsWith("05") || col.displayValue.startsWith("07")) {
       if (col.displayValue.length != 12) {
         col.error = 'מספר טלפון אינו תקין';
       }
