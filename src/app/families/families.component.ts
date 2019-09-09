@@ -344,7 +344,9 @@ export class FamiliesComponent implements OnInit {
                 families.deliveryStatusDate,
                 families.courierComments,
                 families.getPreviousDeliveryColumn(),
-
+                families.socialWorker,
+                families.socialWorkerPhone1,
+                families.socialWorkerPhone2
             ];
         },
         rowButtons: [

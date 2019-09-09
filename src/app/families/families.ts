@@ -151,6 +151,9 @@ export class Families extends IdEntity<FamilyId>  {
   familyMembers = new NumberColumn({ includeInApi: Roles.admin, caption: 'מספר נפשות' });
   basketType = new BasketId(this.context, 'סוג סל');
   familySource = new FamilySourceId(this.context, { includeInApi: Roles.admin, caption: 'גורם מפנה' });
+  socialWorker = new StringColumn("עובדת סוציאלית");
+  socialWorkerPhone1 = new PhoneColumn("עובדת סוציאלית טלפון 1");
+  socialWorkerPhone2 = new PhoneColumn("עובדת סוציאלית טלפון 2");
   groups = new GroupsColumn(this.context);
   special = new YesNoColumn({ includeInApi: Roles.admin, caption: 'שיוך מיוחד' });
   defaultSelfPickup = new BoolColumn('ברירת מחדל באים לקחת');

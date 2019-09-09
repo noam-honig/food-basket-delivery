@@ -54,7 +54,7 @@ export class ApplicationSettings extends Entity<number>  {
             if (geo.ok()) {
             }
           }
-          for (const l of [this.message1Link,this.message2Link,this.messageForDoneDeliveryLink]) {
+          for (const l of [this.message1Link,this.message2Link]) {
             if (l.value){
               if (l.value.trim().indexOf(':')<0)
                 l.value = 'http://'+l.value.trim();

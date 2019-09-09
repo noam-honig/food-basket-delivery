@@ -36,6 +36,9 @@ export class UpdateFamilyComponent implements OnInit {
         
         families.familyMembers,
         families.familySource.getColumn(),
+        families.socialWorker,
+        families.socialWorkerPhone1,
+        families.socialWorkerPhone2,
         families.tz,
         families.tz2,
         

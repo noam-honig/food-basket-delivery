@@ -541,14 +541,15 @@ export class ImportFromExcelComponent implements OnInit {
         addColumn(this.f.tz, ["ת.ז.", "ת\"ז"]);
         addColumn(this.f.tz2);
         addColumns([
-            this.f.phone1,
-            this.f.phone2,
 
             this.f.iDinExcel,
 
             this.f.floor,
             this.f.appartment,
             this.f.entrance,
+            this.f.socialWorker,
+            this.f.socialWorkerPhone1,
+            this.f.socialWorkerPhone2
         ]);
         for (const col of [this.f.phone1Description,
         this.f.phone2Description,

@@ -22,6 +22,16 @@
             <ng-template matExpansionPanelContent>
 
                 <data-area [settings]="familiesInfo"></data-area>
+                <a href="tel:{{families.currentRow.socialWorkerPhone1.value}}"
+                    *ngIf="families.currentRow.socialWorkerPhone1.value">
+
+                    חייג לעו"ס {{families.currentRow.socialWorker.value}} טלפון 1
+                </a> |
+                <a href="tel:{{families.currentRow.socialWorkerPhone2.value}}"
+                *ngIf="families.currentRow.socialWorkerPhone2.value">
+
+                חייג לעו"ס {{families.currentRow.socialWorker.value}} טלפון 2
+            </a> 
             </ng-template>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -141,8 +151,8 @@
                         <li>עדכון אחרון: {{families.currentRow.lastUpdateDate.displayValue}}</li>
                         <li>עדכון סטטוס משלוח: {{families.currentRow.deliveryStatusDate.displayValue}} -
                             {{families.currentRow.deliveryStatusUser.displayValue}}</li>
-                            <li>עדכון משנע: {{families.currentRow.courierAssingTime.displayValue}} -
-                                {{families.currentRow.courierAssignUser.displayValue}}</li>
+                        <li>עדכון משנע: {{families.currentRow.courierAssingTime.displayValue}} -
+                            {{families.currentRow.courierAssignUser.displayValue}}</li>
                     </ul>
                 </div>
 
