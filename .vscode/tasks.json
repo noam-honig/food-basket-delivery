@@ -40,7 +40,6 @@
                 "$tsc"
             ]
         },
-       
         {
             "type": "npm",
             "script": "ng-serve-noam-ip-10.0.0.6",
@@ -149,6 +148,16 @@
         {
             "type": "npm",
             "script": "publish-to-tal-chaim",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-shorashim",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-reim",
             "problemMatcher": []
         }
     ]

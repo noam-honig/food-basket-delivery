@@ -123,7 +123,14 @@ export class ManageComponent implements OnInit {
       s.commentForSuccessDelivery,
       s.commentForSuccessLeft,
       s.commentForProblem,
-      s.messageForDoneDelivery
+      s.messageForDoneDelivery,
+      
+      s.message1Text,
+      s.message1Link,
+      s.message1OnlyWhenDone,
+      s.message2Text,
+      s.message2Link,
+      s.message2OnlyWhenDone
     ]
   });
 

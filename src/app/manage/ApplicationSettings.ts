@@ -1,4 +1,4 @@
-import { StringColumn, NumberColumn } from "radweb";
+import { StringColumn, NumberColumn, BoolColumn } from "radweb";
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
 import { Entity, Context, EntityClass } from "radweb";
 import { PhoneColumn } from "../model-shared/types";
@@ -16,9 +16,17 @@ export class ApplicationSettings extends Entity<number>  {
   commentForSuccessLeft = new StringColumn('הודעה למשנע כאשר הושאר ליד הבית');
   commentForProblem = new StringColumn('הודעה למשנע כאשר יש בעיה');
   messageForDoneDelivery = new StringColumn('הודעה למשנע כאשר סיים את כל המשפחות');
+  
   helpText = new StringColumn('למי המשנע מתקשר כשיש לו בעיה (שם)');
   helpPhone = new PhoneColumn('טלפון עזרה למשנע');
   dataStructureVersion = new NumberColumn({ allowApiUpdate: false });
+  message1Text = new StringColumn('מלל חופשי 1 למתנדב');
+  message1Link = new StringColumn('כתובת אינטרנט ללחיצה על מלל חופשי 1 למתנדב');
+  message1OnlyWhenDone = new BoolColumn('להציג מלל חופשי 1 רק כאשר המתנדב סיים אל כל הסלים');
+  message2Text = new StringColumn('מלל חופשי 2 למתנדב');
+  message2Link = new StringColumn('כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב');
+  message2OnlyWhenDone = new BoolColumn('להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים');
+  
   addressApiResult = new StringColumn();
   defaultStatusType = new DeliveryStatusColumn({
     caption:'סטטוס משלוח ברירת מחדל למשפחות חדשות'
@@ -44,6 +52,12 @@ export class ApplicationSettings extends Entity<number>  {
             let geo = await GetGeoInformation(this.address.value);
             this.addressApiResult.value = geo.saveToString();
             if (geo.ok()) {
+            }
+          }
+          for (const l of [this.message1Link,this.message2Link,this.messageForDoneDeliveryLink]) {
+            if (l.value){
+              if (l.value.trim().indexOf(':')<0)
+                l.value = 'http://'+l.value.trim();
             }
           }
         }

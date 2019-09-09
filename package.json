@@ -27,6 +27,9 @@
     "publish-to-krvtj": "git push krvtj master -f",
     "publish-to-merkaz-mazon": "git push mmaz -f",
     "public-to-bodedim-hertzelia":"git push bodedim-hertzelia master -f",
+    "publish-to-shorashim": "git push shorashim master -f",
+    "publish-to-reim": "git push orgreim master -f",
+
     "copy-db": "heroku pg:copy hugmoms::DATABASE_URL hugmoms2::DATABASE_URL -a hugmoms2",
     "test": "ng test",
     "lint": "ng lint",
