@@ -38,7 +38,7 @@ import { translate } from '../translate';
 export class AsignFamilyComponent implements OnInit {
   static route: Route = {
     path: 'assign-families', component: AsignFamilyComponent, canActivate: [AdminGuard], data: {
-      name: translate( 'שיוך משפחות'),
+      name:  'שיוך משפחות',
     }
   };
   assignOnMap() {

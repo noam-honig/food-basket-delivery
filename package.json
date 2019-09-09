@@ -29,6 +29,7 @@
     "public-to-bodedim-hertzelia":"git push bodedim-hertzelia master -f",
     "publish-to-shorashim": "git push shorashim master -f",
     "publish-to-reim": "git push orgreim master -f",
+    "publish-to-chagsameach": "git push chagsameach master -f",
 
     "copy-db": "heroku pg:copy hugmoms::DATABASE_URL hugmoms2::DATABASE_URL -a hugmoms2",
     "test": "ng test",
