@@ -26,6 +26,7 @@ import { BusyService } from 'radweb';
 import { Roles, AdminGuard } from '../auth/roles';
 import { Groups } from '../manage/manage.component';
 import { SendSmsAction } from './send-sms-action';
+import { translate } from '../translate';
 
 
 @Component({
@@ -37,7 +38,7 @@ import { SendSmsAction } from './send-sms-action';
 export class AsignFamilyComponent implements OnInit {
   static route: Route = {
     path: 'assign-families', component: AsignFamilyComponent, canActivate: [AdminGuard], data: {
-      name: 'שיוך משפחות',
+      name: translate( 'שיוך משפחות'),
     }
   };
   assignOnMap() {
