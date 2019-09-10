@@ -159,6 +159,11 @@
             "type": "npm",
             "script": "publish-to-reim",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-chagsameach",
+            "problemMatcher": []
         }
     ]
 }

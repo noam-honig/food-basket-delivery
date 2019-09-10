@@ -17,6 +17,7 @@ import { Roles } from '../auth/roles';
 import { MatStepper } from '@angular/material';
 import { async } from '@angular/core/testing';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { translate } from '../translate';
 
 @Component({
     selector: 'app-excel-import',
@@ -75,7 +76,7 @@ export class ImportFromExcelComponent implements OnInit {
 
     async addAll() {
         let count = this.newRows.length;
-        this.dialog.YesNoQuestion("האם להוסיף " + count + " משפחות?", () => {
+        this.dialog.YesNoQuestion("האם להוסיף " + count + translate(" משפחות?"), () => {
             this.busy.doWhileShowingBusy(async () => {
                 let rowsToInsert: excelRowInfo[] = [];
 
@@ -119,7 +120,7 @@ export class ImportFromExcelComponent implements OnInit {
     }
     async updateAllCol(col: Column<any>) {
         let count = this.getColUpdateCount(col);
-        let message = "האם לעדכן את השדה " + col.caption + " ל" + count + " משפחות?";
+        let message = "האם לעדכן את השדה " + col.caption + " ל" + count + translate(" משפחות?");
         if (col.__getMemberName() == this.f.address.__getMemberName())
             message += 'שים לב- עדכון של שדה כתובת יכול לקחת יותר זמן משדות אחרים';
         this.dialog.YesNoQuestion(message, () => {
@@ -572,7 +573,7 @@ export class ImportFromExcelComponent implements OnInit {
 
     }
     async doImport() {
-        this.dialog.YesNoQuestion("האם אתה בטוח שאתה מעוניין לקלוט " + (this.totalRows - 1) + " משפחות מאקסל?", async () => {
+        this.dialog.YesNoQuestion("האם אתה בטוח שאתה מעוניין לקלוט " + (this.totalRows - 1) + translate(" משפחות מאקסל?"), async () => {
             await this.iterateExcelFile(true);
         });
     }
@@ -683,7 +684,7 @@ export class ImportFromExcelComponent implements OnInit {
                 for (const iterator of collected) {
                     if (iterator.length > 1) {
                         for (const row of iterator) {
-                            row.error = 'אותה משפחה באתר מתאימה למספר שורות באקסל: ' + iterator.map(x => x.rowInExcel.toString()).join(', ');
+                            row.error = translate( 'אותה משפחה באתר מתאימה למספר שורות באקסל: ') + iterator.map(x => x.rowInExcel.toString()).join(', ');
                             this.errorRows.push(row);
                             this.updateRows.splice(this.updateRows.indexOf(row), 1);
                         }
@@ -735,7 +736,7 @@ export class ImportFromExcelComponent implements OnInit {
             if (!info.duplicateFamilyInfo || info.duplicateFamilyInfo.length == 0) {
                 result.newRows.push(info);
             } else if (info.duplicateFamilyInfo.length > 1) {
-                info.error = 'משפחה קיימת יותר מפעם אחת בבסיס נתונים';
+                info.error = translate('משפחה קיימת יותר מפעם אחת בבסיס נתונים');
                 result.errorRows.push(info);
             } else {
                 let ef = await context.for(Families).findFirst(f => f.id.isEqualTo(info.duplicateFamilyInfo[0].id));

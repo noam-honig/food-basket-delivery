@@ -6,6 +6,7 @@ import { MapComponent } from '../map/map.component';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
 import { Context } from 'radweb';
 import { routeStats } from '../asign-family/asign-family.component';
+import { translate } from '../translate';
 
 export class UserFamiliesList {
     map: MapComponent;
@@ -50,10 +51,10 @@ export class UserFamiliesList {
             return 'שומר מקום';
         let r = '';
         if (this.toDeliver.length == 1) {
-            r = 'משפחה אחת לחלוקה';
+            r = translate('משפחה אחת לחלוקה');
         }
         else
-            r = this.toDeliver.length + ' משפחות לחלוקה';
+            r = this.toDeliver.length + translate(' משפחות לחלוקה');
 
 
         if (boxes > this.toDeliver.length)

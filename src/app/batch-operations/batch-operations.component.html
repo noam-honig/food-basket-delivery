@@ -1,11 +1,11 @@
 <mat-accordion>
   <mat-expansion-panel>
     <mat-expansion-panel-header>
-      הגדרת משלוח חדש למשפחות
+      {{'הגדרת משלוח חדש למשפחות'|translate}}
     </mat-expansion-panel-header>
-    פעולה זו תגדיר משלוח חדש לכל המשפחות בסל שתבחרו - אשר בסטטוס של הצלחה, בעיה או לא באירוע.
-    המשלוח הנוכחי של המשפחה ישמר בהיסטוריה.
-    אם למשפחה מוגדר משנע קבוע - אז הוא וקבע כמשנע.
+    {{'פעולה זו תגדיר משלוח חדש לכל המשפחות בסל שתבחרו - אשר בסטטוס של הצלחה, בעיה או לא באירוע.'|translate}}
+    {{'המשלוח הנוכחי של המשפחה ישמר בהיסטוריה.'|translate}}
+    {{'אם למשפחה מוגדר משנע קבוע - אז הוא וקבע כמשנע.'|translate}}
   
 <data-area [settings]="area" ></data-area>
  
@@ -16,9 +16,9 @@
 <mat-accordion>
   <mat-expansion-panel>
     <mat-expansion-panel-header>
-      הגדר את כל המשפחות כלא באירוע
+      {{'הגדר את כל המשפחות כלא באירוע'|translate}}
     </mat-expansion-panel-header>
-    פעולה זו תגדיר את כל המשפחות בסל שתבחרו כלא באירוע
+    {{'פעולה זו תגדיר את כל המשפחות בסל שתבחרו כלא באירוע'|translate}}
     <data-area [settings]="area" ></data-area>
 
     <button mat-raised-button (click)="setAsNotInEvent()">הגדר כלא באירוע</button>

@@ -14,7 +14,7 @@
       (click)="cancelAssign(f)">בטל
       שיוך</button>
     <button *ngIf="partOfAssign" mat-raised-button class="cancelAssignButton" (click)=" udpateInfo(f)">עדכן פרטי
-      משפחה</button>
+      {{'משפחה'|translate}}</button>
   </div>
   <h4 style="display:inline">סל</h4> - {{f.basketType.displayValue}}
 
@@ -24,7 +24,7 @@
   </div>
   <div *ngIf="f.courierBeenHereBefore()">
     <mat-icon color="green">repeat</mat-icon>
-    הייתם אצל המשפחה הזו גם פעם קודמת
+    {{'הייתם אצל המשפחה הזו גם פעם קודמת'|translate}}
   </div>
   <h4>כתובת</h4>
   <div>

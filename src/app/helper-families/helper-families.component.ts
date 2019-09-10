@@ -13,6 +13,7 @@ import { SelectService } from '../select-popup/select-service';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Context } from 'radweb';
 import { Column } from 'radweb';
+import { translate } from '../translate';
 
 @Component({
   selector: 'app-helper-families',
@@ -38,7 +39,7 @@ export class HelperFamiliesComponent implements OnInit {
     this.assignmentCanceled.emit();
   }
   cancelAll() {
-    this.dialog.YesNoQuestion("האם אתה בטוח שאתה רוצה לבטל שיוך ל" + this.familyLists.toDeliver.length + " משפחות?", async () => {
+    this.dialog.YesNoQuestion("האם אתה בטוח שאתה רוצה לבטל שיוך ל" + this.familyLists.toDeliver.length + translate( " משפחות?"), async () => {
       await this.busy.doWhileShowingBusy(async () => {
 
         this.dialog.analytics('cancel all');
@@ -52,7 +53,7 @@ export class HelperFamiliesComponent implements OnInit {
 
   }
   okAll() {
-    this.dialog.YesNoQuestion("האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל" + this.familyLists.toDeliver.length + " משפחות?", async () => {
+    this.dialog.YesNoQuestion("האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל" + this.familyLists.toDeliver.length +translate( " משפחות?"), async () => {
       this.busy.doWhileShowingBusy(async () => {
 
         this.dialog.analytics('ok  all');

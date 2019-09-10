@@ -14,6 +14,7 @@ import { FamilyDeliveries } from "./FamilyDeliveries";
 import * as fetch from 'node-fetch';
 import { Roles } from "../auth/roles";
 import { SelectServiceInterface } from "../select-popup/select-service-interface";
+import { translate } from "../translate";
 
 
 @EntityClass
@@ -440,14 +441,14 @@ export class Families extends IdEntity<FamilyId>  {
             let duration = '';
             if (n.courierAssingTime.value && n.deliveryStatusDate.value)
               duration = ' תוך ' + Math.round((n.deliveryStatusDate.value.valueOf() - n.courierAssingTime.value.valueOf()) / 60000) + " דק'";
-            return n.deliverStatus.displayValue + (n.courierComments.value ? ", " + n.courierComments.value + " - " : '') + ' למשפחת ' + n.name.value + ' על ידי ' + courierName + duration + "!!";
+            return n.deliverStatus.displayValue + (n.courierComments.value ? ", " + n.courierComments.value + " - " : '') + translate(' למשפחת ') + n.name.value + ' על ידי ' + courierName + duration + "!!";
         }
-        return 'משפחת ' + n.name.value + ' עודכנה ל' + n.deliverStatus.displayValue;
+        return translate('משפחת ') + n.name.value + ' עודכנה ל' + n.deliverStatus.displayValue;
       case 2:
         if (n.courier.value)
-          return 'משפחת ' + n.name.value + ' שוייכה ל' + courierName;
+          return translate( 'משפחת ') + n.name.value + ' שוייכה ל' + courierName;
         else
-          return "בוטל השיוך למשפחת " + n.name.value;
+          return translate("בוטל השיוך למשפחת ") + n.name.value;
     }
     return n.deliverStatus.displayValue;
   }
@@ -493,7 +494,7 @@ export class Families extends IdEntity<FamilyId>  {
     this.name.error = undefined;
     let foundExactName = false;
     for (const d of this.duplicateFamilies) {
-      let errorText = 'ערך כבר קיים למשפחת "' + d.name + '" בכתובת ' + d.address;
+      let errorText = translate('ערך כבר קיים למשפחת "') + d.name + '" בכתובת ' + d.address;
       if (d.tz)
         this.tz.error = errorText;
       if (d.tz2)

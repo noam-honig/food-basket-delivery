@@ -87,7 +87,7 @@
         <mat-step label="ביצוע הקליטה">
             <h3>תוצאות</h3>
             <mat-tab-group>
-                <mat-tab label="משפחות חדשות - {{newRows.length}}" *ngIf="newRows&&newRows.length">
+                <mat-tab label="{{'משפחות חדשות'|translate}} - {{newRows.length}}" *ngIf="newRows&&newRows.length">
                     
                     <div class="table-div">
 
@@ -119,9 +119,9 @@
                     <pagination-controls (pageChange)="newRowsPage = $event" previousLabel="קודם" nextLabel="הבא"
                         id="newRows">
                     </pagination-controls>
-                    <button (click)="addAll()" mat-raised-button  color="primary">הוסף את כל המשפחות</button>
+                    <button (click)="addAll()" mat-raised-button  color="primary">{{'הוסף את כל המשפחות'|translate}}</button>
                 </mat-tab>
-                <mat-tab label="משפחות לעדכון - {{updateRows.length}}" *ngIf="updateRows&&updateRows.length">
+                <mat-tab label="{{'משפחות לעדכון'|translate}} - {{updateRows.length}}" *ngIf="updateRows&&updateRows.length">
                     <div class="table-div">
                         <table class="table table-bordered" style="white-space: nowrap;">
                             <tr>
@@ -163,7 +163,7 @@
                     <pagination-controls (pageChange)="updateRowsPage = $event" previousLabel="קודם" nextLabel="הבא"
                         id="updateRows"></pagination-controls>
                 </mat-tab>
-                <mat-tab label="משפחות קיימות - {{identicalRows.length}}" *ngIf="identicalRows&&identicalRows.length">
+                <mat-tab label="{{'משפחות קיימות'|translate}} - {{identicalRows.length}}" *ngIf="identicalRows&&identicalRows.length">
                     <div class="table-div">
                         <table class="table table-bordered" style="white-space: nowrap;">
                             <tr>

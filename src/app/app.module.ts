@@ -55,6 +55,7 @@ import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-d
 import { CreateBackupExcelFileComponent } from './create-backup-excel-file/create-backup-excel-file.component';
 import { QuickAddFamilyComponent } from './quick-add-family/quick-add-family.component';
 import { ScrollDispatchModule } from '@angular/cdk/scrolling';
+import { TranslatePipe } from './translate';
 
 
 
@@ -99,7 +100,7 @@ import { ScrollDispatchModule } from '@angular/cdk/scrolling';
     UpdateGroupDialogComponent,
     CreateBackupExcelFileComponent,
     QuickAddFamilyComponent,
-    
+    TranslatePipe
     
   ],
   imports: [
@@ -117,6 +118,7 @@ import { ScrollDispatchModule } from '@angular/cdk/scrolling';
   providers: [
     DialogService,
     SelectService,
+    TranslatePipe,
     
     AuthService
     

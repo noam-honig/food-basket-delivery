@@ -14,8 +14,8 @@ justify-content: space-between;order:-1;">
     </div>
     <div class="no-print">
       <mat-menu #appMenu="matMenu">
-        <button mat-menu-item (click)="cancelAll()" style="color:red;">בטל שיוך לכל המשפחות</button>
-        <button mat-menu-item (click)="okAll()" class="primary-menu">סמן נמסר בהצלחה לכל המשפחות</button>
+        <button mat-menu-item (click)="cancelAll()" style="color:red;">{{'בטל שיוך לכל המשפחות'|translate}}</button>
+        <button mat-menu-item (click)="okAll()" class="primary-menu">{{'סמן נמסר בהצלחה לכל המשפחות'|translate}}</button>
       </mat-menu>
 
       <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="familyLists.toDeliver.length>1 && partOfAssign">
@@ -88,11 +88,11 @@ justify-content: space-between;order:-1;">
     </a>
   </button>
   <div class="print-only">
-    <h4 *ngIf="familyLists.helperId">שלום {{familyLists.helperName}}, אלו המשפחות לחלוקתך -
+    <h4 *ngIf="familyLists.helperId">שלום {{familyLists.helperName}}, {{'אלו המשפחות לחלוקתך -'|translate}}
       ({{familyLists.toDeliver.length}})</h4>
     <table class="printTable">
       <tr>
-        <th>משפחה</th>
+        <th>{{'משפחה'|translate}}</th>
         <th>כתובת</th>
         <th>טלפונים</th>
         <th>סל</th>
@@ -164,7 +164,7 @@ justify-content: space-between;order:-1;">
 
 
   <div *ngIf="familyLists.problem.length>0" class="no-print">
-    <h4>משפחות שנתקלתי בבעיה - {{familyLists.problem.length}}</h4>
+    <h4>{{'משפחות שנתקלתי בבעיה '|translate}}- {{familyLists.problem.length}}</h4>
     <mat-accordion>
       <mat-expansion-panel #myPanel *ngFor="let f of familyLists.problem">
         <mat-expansion-panel-header>
@@ -174,7 +174,7 @@ justify-content: space-between;order:-1;">
           <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign"
             (assignmentCanceled)="cancelAssign(f)">
             <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
-            <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות
+            <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">{{'נלחץ בטעות - החזר למשפחות'|translate}}
               לחלוקה</button>
             <button *ngIf="partOfAssign" mat-raised-button class="myButton badButton" (click)="cancelAssign(f)">בטלי
               שיוך</button>
@@ -185,7 +185,7 @@ justify-content: space-between;order:-1;">
   </div>
 
   <div *ngIf="familyLists.delivered.length>0" class="no-print">
-    <h4>משפחות שחולקו ביומיים האחרונים - {{familyLists.delivered.length}}</h4>
+    <h4>{{'משפחות שחולקו ביומיים האחרונים'|translate}} - {{familyLists.delivered.length}}</h4>
     <mat-accordion>
       <mat-expansion-panel #myPanel *ngFor="let f of familyLists.delivered">
         <mat-expansion-panel-header>
@@ -194,8 +194,7 @@ justify-content: space-between;order:-1;">
         <ng-template matExpansionPanelContent>
           <app-family-info [f]="f" [showHelp]="true" (assignmentCanceled)="cancelAssign(f)">
             <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
-            <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">נלחץ בטעות - החזר למשפחות
-              לחלוקה</button>
+            <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">{{'נלחץ בטעות - החזר למשפחות לחלוקה'|translate}}</button>
           </app-family-info>
         </ng-template>
       </mat-expansion-panel>

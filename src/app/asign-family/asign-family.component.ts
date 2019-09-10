@@ -44,6 +44,7 @@ export class AsignFamilyComponent implements OnInit {
   assignOnMap() {
     this.familyLists.startAssignByMap(this.filterCity, this.filterGroup);
   }
+  translate = translate;
   async searchPhone() {
     this.name = undefined;
     this.shortUrl = undefined;
@@ -196,7 +197,7 @@ export class AsignFamilyComponent implements OnInit {
         if (families.length == 1)
           await this.assignFamilyBasedOnIdFromMap(families[0]);
         else if (families.length > 1) {
-          this.dialog.YesNoQuestion("בנקודה זו יש " + families.length + " משפחות - לשייך את כולן?", async () => {
+          this.dialog.YesNoQuestion("בנקודה זו יש " + families.length + translate(" משפחות - לשייך את כולן?"), async () => {
             await this.busy.doWhileShowingBusy(async () => {
               for (const iterator of families) {
                 await this.assignFamilyBasedOnIdFromMap(iterator);
@@ -274,7 +275,7 @@ export class AsignFamilyComponent implements OnInit {
         }
         else {
           this.refreshList();
-          this.dialog.Info("לא נמצאה משפחה מתאימה");
+          this.dialog.Info(translate("לא נמצאה משפחה מתאימה"));
         }
         this.id = x.helperId;
       });
@@ -592,7 +593,7 @@ export class AsignFamilyComponent implements OnInit {
 
         if (f.courier.value) {
           let c = await f.courier.getTheName();
-          this.dialog.YesNoQuestion('משפחת ' +
+          this.dialog.YesNoQuestion(translate('משפחת ') +
             f.name.value + ' כבר משוייכת ל' + c + ' בסטטוס ' +
             f.deliverStatus.displayValue + '. האם לשייך אותו למשנע ' + this.name + '?', () => {
               ok();

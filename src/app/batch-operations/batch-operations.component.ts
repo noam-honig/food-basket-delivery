@@ -10,6 +10,7 @@ import { RunOnServer } from 'radweb';
 import { Roles, AdminGuard } from '../auth/roles';
 import { BasketType, BasketId } from '../families/BasketType';
 import { SelectService } from '../select-popup/select-service';
+import { translate } from '../translate';
 
 
 @Component({
@@ -72,7 +73,7 @@ export class BatchOperationsComponent implements OnInit {
     async setNewBasket() {
         let familiesThatMatch = await BatchOperationsComponent.countNewBasket(this.basketTypeColumn.value, this.groupColumn.value);
 
-        this.dialog.YesNoQuestion('ישנן ' + familiesThatMatch.toString() + ' משפחות אשר מתאימות להגדרה - האם להגדיר להן משלוח חדש?', async () => {
+        this.dialog.YesNoQuestion('ישנן ' + familiesThatMatch.toString() + translate(' משפחות אשר מתאימות להגדרה - האם להגדיר להן משלוח חדש?'), async () => {
             await BatchOperationsComponent.setNewBasket(this.basketTypeColumn.value, this.groupColumn.value);
             this.dialog.YesNoQuestion('בוצע');
         });
@@ -110,7 +111,7 @@ export class BatchOperationsComponent implements OnInit {
     }
     async setAsNotInEvent() {
         let familiesThatMatch = await BatchOperationsComponent.countNotInEvent(this.basketTypeColumn.value, this.groupColumn.value);
-        this.dialog.YesNoQuestion('ישנן ' + familiesThatMatch.toString() + ' משפחות אשר מתאימות להגדרה - האם להגדיר אותן כלא באירוע?', async () => {
+        this.dialog.YesNoQuestion('ישנן ' + familiesThatMatch.toString() + translate(' משפחות מתאימות להגדרה - האם להגדיר אותן כלא באירוע?'), async () => {
             await BatchOperationsComponent.setNotInEvent(this.basketTypeColumn.value, this.groupColumn.value);
             this.dialog.YesNoQuestion('בוצע');
         });

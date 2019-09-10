@@ -5,6 +5,7 @@ import { DialogService } from '../select-popup/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Context } from 'radweb';
 import { SelectService } from '../select-popup/select-service';
+import { translate } from '../translate';
 @Component({
   selector: 'app-family-info',
   templateUrl: './family-info.component.html',
@@ -20,7 +21,7 @@ export class FamilyInfoComponent implements OnInit {
   @Input() partOfAssign: Boolean;
   @Output() assignmentCanceled = new EventEmitter<void>();
   async SendHelpSms() {
-    window.open('sms:' + this.f.courierHelpPhone() + ';?&body=' + encodeURI(`הי ${this.f.courierHelpName()}  זה ${this.context.user.name}, נתקלתי בבעיה אצל משפחת ${this.f.name.value}`), '_blank');
+    window.open('sms:' + this.f.courierHelpPhone() + ';?&body=' + encodeURI(`הי ${this.f.courierHelpName()}  זה ${this.context.user.name}, נתקלתי בבעיה אצל ${translate('משפחת')} ${this.f.name.value}`), '_blank');
   }
   showCancelAssign(f: Families) {
     return this.partOfAssign && f.courier.value != '' && f.deliverStatus.value == DeliveryStatus.ReadyForDelivery;
@@ -59,7 +60,7 @@ export class FamilyInfoComponent implements OnInit {
   }
   openWaze(f: Families) {
     if (!f.addressOk.value) {
-      this.dialog.YesNoQuestion("הכתובת אינה מדוייקת. בדקו בגוגל או התקשרו למשפחה. נשמח אם תעדכנו את הכתובת שמצאתם בהערות. האם לפתוח וייז?", () => {
+      this.dialog.YesNoQuestion(translate("הכתובת אינה מדוייקת. בדקו בגוגל או התקשרו למשפחה. נשמח אם תעדכנו את הכתובת שמצאתם בהערות. האם לפתוח וייז?"), () => {
         f.openWaze();
       });
     }

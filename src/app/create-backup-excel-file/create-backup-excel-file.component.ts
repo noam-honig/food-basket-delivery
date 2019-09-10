@@ -5,6 +5,7 @@ import { saveToExcel } from '../shared/saveToExcel';
 import { DateTimeColumn } from '../model-shared/types';
 import { DialogService } from '../select-popup/dialog';
 import { CanDeactivate } from '@angular/router';
+import { translate } from '../translate';
 
 @Component({
   selector: 'app-create-backup-excel-file',
@@ -31,7 +32,7 @@ export class CreateBackupExcelFileComponent implements OnInit {
       if (true)
         await saveToExcel<Families, GridSettings<Families>>(
           this.families,
-          'גיבוי משפחות ' + new Date().toLocaleString('he').replace(/:/g,'-').replace(/\./g,'-').replace(/,/g,'')
+          translate('גיבוי משפחות ') + new Date().toLocaleString('he').replace(/:/g,'-').replace(/\./g,'-').replace(/,/g,'')
           ,
           this.busy,
           (f, c) => c == f.id || c == f.addressApiResult,

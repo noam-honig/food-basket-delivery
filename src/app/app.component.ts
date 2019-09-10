@@ -8,6 +8,7 @@ import { ApplicationSettings } from './manage/ApplicationSettings';
 import { FamiliesComponent } from './families/families.component';
 import { Context, RouteHelperService, JwtSessionManager } from 'radweb';
 import { Roles } from './auth/roles';
+import { translate ,translationConfig} from './translate';
 
 
 
@@ -28,7 +29,9 @@ export class AppComponent {
     public dialog: DialogService,
     private helper: RouteHelperService,
     public context: Context) {
-    
+      ApplicationSettings.getAsync(context).then(x=>{
+        translationConfig.activateTranslation = x.forSoldiers.value;
+      })
 
     if (!window.location.hostname.toLocaleLowerCase().startsWith('hmey')) {
       this.toolbarColor = 'accent';
@@ -47,7 +50,7 @@ export class AppComponent {
     let name = route.path;
     if (route.data && route.data.name)
       name = route.data.name;
-    return name;
+    return translate(name);
   }
   prevLogoUrl = '';
   getLogo() {
@@ -59,7 +62,7 @@ export class AppComponent {
   }
   currentTitle() {
     if (this.activeRoute && this.activeRoute.snapshot && this.activeRoute.firstChild && this.activeRoute.firstChild.data && this.activeRoute.snapshot.firstChild.data.name)
-      return this.activeRoute.snapshot.firstChild.data.name;
+      return translate( this.activeRoute.snapshot.firstChild.data.name);
     return ApplicationSettings.get(this.context).organisationName.value;
   }
   toolbarColor = 'primary';

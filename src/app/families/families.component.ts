@@ -38,6 +38,7 @@ import { QuickAddFamilyComponent } from '../quick-add-family/quick-add-family.co
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { ScrollDispatcher, CdkScrollable } from '@angular/cdk/scrolling';
 import { Subscription } from 'rxjs';
+import { translate } from '../translate';
 
 @Component({
     selector: 'app-families',
@@ -160,7 +161,7 @@ export class FamiliesComponent implements OnInit {
     async saveToExcel() {
         await saveToExcel<Families, GridSettings<Families>>(
             this.families,
-            'משפחות',
+            translate('משפחות'),
             this.busy,
             (f, c) => c == f.id || c == f.addressApiResult,
             (f, c) => c == f.correntAnErrorInStatus || c == f.visibleToCourier,
@@ -263,7 +264,7 @@ export class FamiliesComponent implements OnInit {
         knowTotalRows: true,
         allowDelete: true,
 
-        confirmDelete: (h, yes) => this.dialog.confirmDelete('משפחת ' + h.name.value, yes),
+        confirmDelete: (h, yes) => this.dialog.confirmDelete(translate('משפחת ') + h.name.value, yes),
         columnSettings: families => {
             return [
 
@@ -427,7 +428,7 @@ export class FamiliesComponent implements OnInit {
         fourthColumn: () => this.groupsColumn
     };
     groupsTotals: statsOnTab = {
-        name: 'כל המשפחות לפי קבוצות',
+        name:translate('כל המשפחות לפי קבוצות'),
         rule: f => f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList),
         stats: [
             this.stats.ready,
@@ -469,7 +470,7 @@ export class FamiliesComponent implements OnInit {
         },
         {
             rule: f => undefined,
-            name: 'כל המשפחות',
+            name: translate( 'כל המשפחות'),
             stats: [
                 this.stats.currentEvent,
                 this.stats.notInEvent

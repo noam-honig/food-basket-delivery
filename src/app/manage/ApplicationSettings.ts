@@ -4,6 +4,7 @@ import { Entity, Context, EntityClass } from "radweb";
 import { PhoneColumn } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { DeliveryStatusColumn, DeliveryStatus } from "../families/DeliveryStatus";
+import { translate } from "../translate";
 @EntityClass
 export class ApplicationSettings extends Entity<number>  {
 
@@ -15,7 +16,7 @@ export class ApplicationSettings extends Entity<number>  {
   commentForSuccessDelivery = new StringColumn('הודעה למשנע כאשר נמסר בהצלחה');
   commentForSuccessLeft = new StringColumn('הודעה למשנע כאשר הושאר ליד הבית');
   commentForProblem = new StringColumn('הודעה למשנע כאשר יש בעיה');
-  messageForDoneDelivery = new StringColumn('הודעה למשנע כאשר סיים את כל המשפחות');
+  messageForDoneDelivery = new StringColumn(translate( 'הודעה למשנע כאשר סיים את כל המשפחות'));
   
   helpText = new StringColumn('למי המשנע מתקשר כשיש לו בעיה (שם)');
   helpPhone = new PhoneColumn('טלפון עזרה למשנע');
@@ -26,10 +27,11 @@ export class ApplicationSettings extends Entity<number>  {
   message2Text = new StringColumn('מלל חופשי 2 למתנדב');
   message2Link = new StringColumn('כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב');
   message2OnlyWhenDone = new BoolColumn('להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים');
+  forSoldiers = new BoolColumn('המערכת היא עבור חיילים לא משפחות');
   
   addressApiResult = new StringColumn();
   defaultStatusType = new DeliveryStatusColumn({
-    caption:'סטטוס משלוח ברירת מחדל למשפחות חדשות'
+    caption:translate( 'סטטוס משלוח ברירת מחדל למשפחות חדשות')
   }, [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup, DeliveryStatus.NotInEvent]);
   private _lastString: string;
   private _lastGeo: GeocodeInformation;
