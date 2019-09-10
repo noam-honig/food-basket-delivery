@@ -164,6 +164,11 @@
             "type": "npm",
             "script": "publish-to-chagsameach",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-hbhr",
+            "problemMatcher": []
         }
     ]
 }
