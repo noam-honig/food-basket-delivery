@@ -9,7 +9,7 @@
     <mat-icon matSuffix (click)="clearHelperInfo()">clear</mat-icon>
     <mat-icon matSuffix (click)="findHelper()">search</mat-icon>
   </div>
-  <div class="name-div"*ngIf="phone.length==10">
+  <div class="name-div"*ngIf="phone&& phone.length==10">
     <div class="line-container form-control no-print">
       <div class="input-same-line">
         <input placeholder="שם המשנע" [(ngModel)]="name">
