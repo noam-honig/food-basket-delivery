@@ -33,13 +33,15 @@ export class HelperFamiliesComponent implements OnInit {
     this.familyLists.setMap(this.map);
 
   }
-  async cancelAssign() {
+  async cancelAssign(f: Families) {
     this.dialog.analytics('Cancel Assign');
+    f.courier.value = '';
+    await f.save();
     this.familyLists.reload();
     this.assignmentCanceled.emit();
   }
   cancelAll() {
-    this.dialog.YesNoQuestion("האם אתה בטוח שאתה רוצה לבטל שיוך ל" + this.familyLists.toDeliver.length + translate( " משפחות?"), async () => {
+    this.dialog.YesNoQuestion("האם אתה בטוח שאתה רוצה לבטל שיוך ל" + this.familyLists.toDeliver.length + translate(" משפחות?"), async () => {
       await this.busy.doWhileShowingBusy(async () => {
 
         this.dialog.analytics('cancel all');
@@ -47,13 +49,14 @@ export class HelperFamiliesComponent implements OnInit {
           f.courier.value = '';
           await f.save();
         }
-        this.cancelAssign();
+        this.familyLists.reload();
+        this.assignmentCanceled.emit();
       });
     });
 
   }
   okAll() {
-    this.dialog.YesNoQuestion("האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל" + this.familyLists.toDeliver.length +translate( " משפחות?"), async () => {
+    this.dialog.YesNoQuestion("האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל" + this.familyLists.toDeliver.length + translate(" משפחות?"), async () => {
       this.busy.doWhileShowingBusy(async () => {
 
         this.dialog.analytics('ok  all');

@@ -51,9 +51,6 @@ export class FamilyInfoComponent implements OnInit {
 
   }
   async cancelAssign(f: Families) {
-    f.courier.value = '';
-
-    await f.save();
 
     this.assignmentCanceled.emit();
 
