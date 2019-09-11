@@ -169,6 +169,16 @@
             "type": "npm",
             "script": "publish-to-hbhr",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-tikvabasket",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-hesed",
+            "problemMatcher": []
         }
     ]
 }
