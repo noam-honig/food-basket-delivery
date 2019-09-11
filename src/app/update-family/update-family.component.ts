@@ -81,6 +81,7 @@ export class UpdateFamilyComponent implements OnInit {
         families.deliveryComments,
         families.addressComment,
         families.groups.getColumn(this.selectService),
+        families.special.getColumn(),
         
         families.courier.getColumn(this.selectService),
         
