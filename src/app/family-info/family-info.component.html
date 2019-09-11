@@ -30,7 +30,7 @@
   <div>
     <span (click)="openWaze(f)">
       <img
-        src="https://lh3.googleusercontent.com/l4O7eQ94iRq2pPqIVKapZQvMdtYYXwT-jB1384pbxUKWJkyQ8rw85YtN-rrjoCqJ2El3=w40">
+        src="assets/waze.png">
     </span>
     <a (click)="openWaze(f)">
 
@@ -50,7 +50,8 @@
           כניסה {{f.entrance.value}}
         </ng-container>
         <ng-container *ngIf="f.addressComment.value">
-          <br /> {{f.addressComment.value}}
+          <br /> 
+          <br /><strong style="color:red">שים לב! </strong> {{f.addressComment.value}}
         </ng-container>
 
 
