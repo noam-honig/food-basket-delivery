@@ -7,6 +7,8 @@ import { routeStats } from '../asign-family/asign-family.component';
 import { helpers } from 'chart.js';
 import { Roles } from "../auth/roles";
 import { JWTCookieAuthorizationHelper } from "radweb-server";
+import { MatDialog } from "@angular/material";
+import { SelectCompanyComponent } from "../select-company/select-company.component";
 
 @EntityClass
 export class Helpers extends IdEntity<HelperId>  {
@@ -56,8 +58,9 @@ export class Helpers extends IdEntity<HelperId>  {
         dbName: 'password',
         includeInApi: false
     });
+    company = new CompanyColumn();
     password = new StringColumn({ caption: 'סיסמה', inputType: 'password', virtualData: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
-
+    
     createDate = new changeDate({ caption: 'מועד הוספה' });
     smsDate = new changeDate('מועד משלוח SMS');
     reminderSmsDate = new changeDate('מועד משלוח תזכורת SMS');
@@ -150,7 +153,21 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
         return '';
     }
 }
-
+export class CompanyColumn extends StringColumn{
+    getColumn(dialog: MatDialog) {
+        return {
+          column: this,
+          click: f => {
+            let col = f ? f.__getColumn(this) : this;
+            SelectCompanyComponent.dialog(dialog,{onSelect:x=>col.value = x})
+          },
+          width: '300'
+        };
+      }
+    constructor(){
+        super("חברה");
+    }
+}
 export class HelperIdReadonly extends HelperId {
     allowApiUpdate=false;
     get displayValue() {

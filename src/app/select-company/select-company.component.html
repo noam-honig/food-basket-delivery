@@ -1,0 +1,28 @@
+<div dir="rtl">
+    <mat-card>
+      <div class="fullSize">
+        
+        <form (submit)="selectFirst()">
+  
+          <mat-form-field class="full-width">
+            <input matInput [(ngModel)]="searchString"  placeholder="חפש שם חברה" [ngModelOptions]="{standalone: true}">
+            <mat-icon matSuffix (click)="clearCity()">clear</mat-icon>
+          </mat-form-field>
+          
+          <mat-nav-list role="list">
+            <ng-container  *ngFor="let h of cities">
+            <mat-list-item *ngIf="matches(h)" (click)="select(h)">
+  
+              <div style="min-width:100px;"> {{h}}</div>
+              <mat-divider></mat-divider>
+            </mat-list-item>
+          </ng-container>
+          </mat-nav-list>
+         
+        </form>
+        
+      </div>
+    </mat-card>
+  
+  </div>
+  

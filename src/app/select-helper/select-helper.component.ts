@@ -6,6 +6,7 @@ import { Context } from 'radweb';
 import { FilterBase, FindOptionsPerEntity } from 'radweb';
 
 import { BusyService } from 'radweb';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-select-helper',
@@ -73,6 +74,9 @@ export class SelectHelperComponent implements OnInit {
       this.getHelpers();
     }
 
+  }
+  showCompany(){
+    return ApplicationSettings.get(this.context).showCompanies.value;
   }
   selectFirst() {
     if (this.filteredHelpers.length > 0)

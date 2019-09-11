@@ -69,6 +69,7 @@ export class StressTestComponent implements OnInit {
         numOfBaskets: 1,
         preferRepeatFamilies: true,
         name,
+        company:'',
         phone: phoneNumber,
         helperId
       });

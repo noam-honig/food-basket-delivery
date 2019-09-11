@@ -56,6 +56,7 @@ import { CreateBackupExcelFileComponent } from './create-backup-excel-file/creat
 import { QuickAddFamilyComponent } from './quick-add-family/quick-add-family.component';
 import { ScrollDispatchModule } from '@angular/cdk/scrolling';
 import { TranslatePipe } from './translate';
+import { SelectCompanyComponent } from './select-company/select-company.component';
 
 
 
@@ -100,7 +101,8 @@ import { TranslatePipe } from './translate';
     UpdateGroupDialogComponent,
     CreateBackupExcelFileComponent,
     QuickAddFamilyComponent,
-    TranslatePipe
+    TranslatePipe,
+    SelectCompanyComponent
     
   ],
   imports: [
@@ -131,6 +133,7 @@ import { TranslatePipe } from './translate';
     YesNoQuestionComponent,
     InputAreaComponent,
     UpdateFamilyDialogComponent,PreviewFamilyComponent,
+    SelectCompanyComponent,
     QuickAddFamilyComponent,
     UpdateCommentComponent,UpdateGroupDialogComponent]
 })

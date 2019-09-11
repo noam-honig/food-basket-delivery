@@ -4,7 +4,7 @@ import { FamilyId, Families } from '../families/families';
 import { changeDate, SqlBuilder, PhoneColumn } from '../model-shared/types';
 import { BasketId } from '../families/BasketType';
 import { DeliveryStatusColumn } from '../families/DeliveryStatus';
-import { HelperId, HelperIdReadonly, Helpers } from '../helpers/helpers';
+import { HelperId, HelperIdReadonly, Helpers, CompanyColumn } from '../helpers/helpers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { CompoundIdColumn, DateColumn, DataAreaSettings, InMemoryDataProvider, Entity, GridSettings, EntitySource, NumberColumn } from 'radweb';
 
@@ -16,6 +16,7 @@ import { BusyService } from 'radweb';
 import { FamilySourceId } from '../families/FamilySources';
 import { RunOnServer } from 'radweb';
 import { Roles, AdminGuard } from '../auth/roles';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 var fullDayValue = 24 * 60 * 60 * 1000;
 
@@ -71,6 +72,10 @@ export class DeliveryHistoryComponent implements OnInit {
         {
           column: h.phone,
           width: '100'
+        },
+        {
+          column: h.company,
+          width: '150'
         },
         {
           column: h.deliveries,
@@ -176,9 +181,10 @@ export class DeliveryHistoryComponent implements OnInit {
       }
     }
   });
-  ngOnInit() {
+  async ngOnInit() {
 
     this.refreshHelpers();
+    
   }
   @RunOnServer({ allowed: Roles.admin })
   static async  getHelperHistoryInfo(fromDate: string, toDate: string, context?: Context, directSql?: DirectSQL) {
@@ -190,16 +196,23 @@ export class DeliveryHistoryComponent implements OnInit {
     var h = new Helpers(context);
 
     return (await directSql.execute(
-      sql.build("select ", [fd.courier.__getDbName(), sql.columnInnerSelect(fd, {
-        select: () => [h.name],
-        from: h,
-        where: () => [sql.build(h.id, "=", fd.courier.__getDbName())]
-      }),
-      sql.columnInnerSelect(fd, {
-        select: () => [h.phone],
-        from: h,
-        where: () => [sql.build(h.id, "=", fd.courier.__getDbName())]
-      })
+      sql.build("select ", [
+        fd.courier.__getDbName(),
+        sql.columnInnerSelect(fd, {
+          select: () => [h.name],
+          from: h,
+          where: () => [sql.build(h.id, "=", fd.courier.__getDbName())]
+        }),
+        sql.columnInnerSelect(fd, {
+          select: () => [h.company],
+          from: h,
+          where: () => [sql.build(h.id, "=", fd.courier.__getDbName())]
+        }),
+        sql.columnInnerSelect(fd, {
+          select: () => [h.phone],
+          from: h,
+          where: () => [sql.build(h.id, "=", fd.courier.__getDbName())]
+        })
         , "deliveries", "dates", "families"], " from (",
         sql.build("select ", [
           fd.courier.__getDbName(),
@@ -219,6 +232,7 @@ export class helperHistoryInfo extends Entity<string>{
   courier = new StringColumn();
   name = new StringColumn('שם');
   phone = new PhoneColumn("טלפון");
+  company = new CompanyColumn(); 
   deliveries = new NumberColumn('משלוחים');
   families = new NumberColumn('משפחות');
   dates = new NumberColumn("תאריכים");

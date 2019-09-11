@@ -28,6 +28,7 @@ export class ApplicationSettings extends Entity<number>  {
   message2Link = new StringColumn('כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב');
   message2OnlyWhenDone = new BoolColumn('להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים');
   forSoldiers = new BoolColumn('המערכת היא עבור חיילים לא משפחות');
+  showCompanies = new BoolColumn('שמור מטעם איזה חברה הגיע המתנדב');
   
   addressApiResult = new StringColumn();
   defaultStatusType = new DeliveryStatusColumn({
