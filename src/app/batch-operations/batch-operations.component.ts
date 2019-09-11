@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
 
 
-import { Context, DataAreaSettings, ColumnSetting, DropDownItem } from 'radweb';
+import { Context, DataAreaSettings, ColumnSetting, DropDownItem, DateColumn } from 'radweb';
 import { Families, GroupsColumn } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DialogService } from '../select-popup/dialog';
@@ -35,6 +35,8 @@ export class BatchOperationsComponent implements OnInit {
     basketTypeColumn = new BasketId(this.context);
 
     area = new DataAreaSettings();
+    deliveryDate = new DateColumn("תאריך מסירה לעדכון");
+    dateArea = new DataAreaSettings({ columnSettings: x => [this.deliveryDate] });
 
 
     allBasketsToken = BatchOperationsComponent.allBasketsTokenConst;
@@ -65,6 +67,20 @@ export class BatchOperationsComponent implements OnInit {
             result.push(g);
         }
         this.area = new DataAreaSettings({ columnSettings: () => result });
+        var d = new Date();
+        d = new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1);
+        var lastFamiliyDelivered = await this.context.for(Families).find(
+            {
+                where: f => f.deliverStatus.isEqualTo(DeliveryStatus.Success),
+                orderBy: f => [{ column: f.deliveryStatusDate, descending: true }],
+                limit: 1
+            });
+        if (lastFamiliyDelivered && lastFamiliyDelivered.length > 0) {
+            if (lastFamiliyDelivered[0].deliveryStatusDate.value < d)
+                d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
+        }
+        this.deliveryDate.value = d;
+
 
 
 
@@ -79,6 +95,26 @@ export class BatchOperationsComponent implements OnInit {
         });
 
 
+
+    }
+    async setAsDelivered() {
+        let familiesThatMatch = await this.context.for(Families).count(f => f.onTheWayFilter());
+
+        this.dialog.YesNoQuestion('ישנן ' + familiesThatMatch.toString() + translate(' משפחות המוגדרות בדרך - האם לעדכנן להן נמסר בהצלחה בתאריך ' + this.deliveryDate.displayValue + "?"), async () => {
+            await BatchOperationsComponent.setAsOnTheWayAsDelivered(DateColumn.dateToString(this.deliveryDate.value));
+            this.dialog.YesNoQuestion('בוצע');
+        });
+    }
+    @RunOnServer({ allowed: Roles.admin })
+    static async setAsOnTheWayAsDelivered(deliveryDate: string, context?: Context) {
+        let x = await context.for(Families).find({ where: f => f.onTheWayFilter() });
+        let d = DateColumn.stringToDate(deliveryDate);
+        for (const f of x) {
+            f.deliverStatus.value = DeliveryStatus.Success;
+            await f.save();
+            f.deliveryStatusDate.value = d;
+            await f.save();
+        }
 
     }
 
@@ -111,10 +147,25 @@ export class BatchOperationsComponent implements OnInit {
     }
     async setAsNotInEvent() {
         let familiesThatMatch = await BatchOperationsComponent.countNotInEvent(this.basketTypeColumn.value, this.groupColumn.value);
-        this.dialog.YesNoQuestion('ישנן ' + familiesThatMatch.toString() + translate(' משפחות מתאימות להגדרה - האם להגדיר אותן כלא באירוע?'), async () => {
-            await BatchOperationsComponent.setNotInEvent(this.basketTypeColumn.value, this.groupColumn.value);
-            this.dialog.YesNoQuestion('בוצע');
-        });
+
+
+
+        let onTheWayMatchingFamilies = await this.context.for(Families).count(
+            f => f.onTheWayFilter().and( BatchOperationsComponent.createFamiliesFilterForNotInEvent(f, this.basketTypeColumn.value, this.groupColumn.value)));
+
+        let doIt = () => {
+            this.dialog.YesNoQuestion('ישנן ' + familiesThatMatch.toString() + translate(' משפחות מתאימות להגדרה - האם להגדיר אותן כלא באירוע?'), async () => {
+                await BatchOperationsComponent.setNotInEvent(this.basketTypeColumn.value, this.groupColumn.value);
+                this.dialog.YesNoQuestion('בוצע');
+            });
+        }
+        if (onTheWayMatchingFamilies > 0) {
+            this.dialog.YesNoQuestion('שימו לב !!! - ישנן ' + onTheWayMatchingFamilies.toString() + translate(' שמוגדרות כבדרך - אם נגדיר אותן כלא באירוע - לא ישמר שהן קיבלו סל. האם להמשיך? לחלופין אפשר לבחור באפשרות הגדר נמסר בהצלחה לכל המשפחות שבדרך'), async () => {
+                await doIt();
+            });
+
+        } else
+            await doIt();
     }
 
     static createFamiliesFilterForNotInEvent(f: Families, basketType: string, group: string) {

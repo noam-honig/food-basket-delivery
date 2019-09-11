@@ -19,6 +19,9 @@ import { translate } from "../translate";
 
 @EntityClass
 export class Families extends IdEntity<FamilyId>  {
+  onTheWayFilter() {
+    return this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(this.courier.isDifferentFrom(''));
+  }
   setNewBasket() {
     if (this.defaultSelfPickup.value) {
       this.deliverStatus.value = DeliveryStatus.SelfPickup;
@@ -446,7 +449,7 @@ export class Families extends IdEntity<FamilyId>  {
         return translate('משפחת ') + n.name.value + ' עודכנה ל' + n.deliverStatus.displayValue;
       case 2:
         if (n.courier.value)
-          return translate( 'משפחת ') + n.name.value + ' שוייכה ל' + courierName;
+          return translate('משפחת ') + n.name.value + ' שוייכה ל' + courierName;
         else
           return translate("בוטל השיוך למשפחת ") + n.name.value;
     }
@@ -486,7 +489,7 @@ export class Families extends IdEntity<FamilyId>  {
     }
   }
   async checkDuplicateFamilies() {
-    this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name.value, this.tz.value,this.tz2.value, this.phone1.value, this.phone2.value, this.id.value);
+    this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name.value, this.tz.value, this.tz2.value, this.phone1.value, this.phone2.value, this.id.value);
     this.tz.error = undefined;
     this.tz2.error = undefined;
     this.phone1.error = undefined;
@@ -515,7 +518,7 @@ export class Families extends IdEntity<FamilyId>  {
 
 
   }
-  @RunOnServer({ allowed: Roles.admin,blockUser:false })
+  @RunOnServer({ allowed: Roles.admin, blockUser: false })
   static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, id: string, exactName: boolean = false, context?: Context, directSQL?: DirectSQL) {
     let result: duplicateFamilyInfo[] = [];
 

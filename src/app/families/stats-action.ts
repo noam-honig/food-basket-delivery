@@ -5,7 +5,7 @@ import { DeliveryStatus } from "./DeliveryStatus";
 
 import { YesNo } from "./YesNo";
 import { BasketType } from "./BasketType";
-import { Context,  EntityClass } from "radweb";
+import { Context, EntityClass } from "radweb";
 import { BasketInfo } from "../asign-family/asign-family.component";
 
 import { SqlBuilder } from "../model-shared/types";
@@ -37,7 +37,7 @@ export class Stats {
             f.special.isEqualTo(YesNo.Yes))
         , colors.orange);
 
-    onTheWay = new FaimilyStatistics('בדרך', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(f.courier.isDifferentFrom('')), colors.blue);
+    onTheWay = new FaimilyStatistics('בדרך', f => f.onTheWayFilter(), colors.blue);
     delivered = new FaimilyStatistics('הגיעו', f => f.deliverStatus.isSuccess(), colors.green);
     problem = new FaimilyStatistics('בעיות', f => f.deliverStatus.isProblem(), colors.red);
     currentEvent = new FaimilyStatistics('באירוע', f => f.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent), colors.green);
