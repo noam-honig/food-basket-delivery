@@ -30,6 +30,7 @@ export class ApplicationSettings extends Entity<number>  {
   message2OnlyWhenDone = new BoolColumn('להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים');
   forSoldiers = new BoolColumn('המערכת היא עבור חיילים לא משפחות');
   showCompanies = new BoolColumn('שמור מטעם איזה חברה הגיע המתנדב');
+  showLeftThereButton = new BoolColumn('הצג למתנדב כפתור השארתי ליד הבית');
   
   addressApiResult = new StringColumn();
   defaultStatusType = new DeliveryStatusColumn({

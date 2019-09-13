@@ -210,6 +210,11 @@ export async function serverInit() {
             await settings.save();
 
         }
+        if (settings.dataStructureVersion.value == 6) {
+            settings.showLeftThereButton.value = true;
+            settings.dataStructureVersion.value = 7;
+            await settings.save();
+        }
 
     } catch (error) {
         console.error(error);
