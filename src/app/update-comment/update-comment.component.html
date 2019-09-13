@@ -26,7 +26,7 @@
           בטל
         </button>
         <button mat-raised-button color="primary" (click)="confirm()">
-          אשר
+          {{data.showFailStatus?'הסל לא נמסר':'אשר'}}
         </button>
       </div>
       <div class="button-line">
