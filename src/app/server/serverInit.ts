@@ -55,6 +55,7 @@ export async function serverInit() {
         context.setDataProvider(dataSource);
         let sql = new SqlBuilder();
         let fde = new FamilyDeliveryEvents(context);
+        let f = new Families(context);
         // remove unique constraint on id column if exists
         await pool.query(sql.build('ALTER TABLE ', fde, ' DROP CONSTRAINT IF EXISTS familydeliveryevents_pkey'));
 
@@ -64,6 +65,8 @@ export async function serverInit() {
         //create index for family deliveries if required
         var fd = new FamilyDeliveries(context);
         await pool.query(sql.build('create index if not exists fd_1 on ', fd, ' (', [fd.family, fd.deliveryStatusDate, fd.deliverStatus, fd.courier], ')'));
+        //create index if required
+        await pool.query(sql.build('create index if not exists f_1 on ', f, ' (', [fde.courier, f.deliverStatus], ')'));
 
 
 
