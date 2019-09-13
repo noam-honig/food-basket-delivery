@@ -131,15 +131,15 @@ export class ManageComponent implements OnInit {
       s.commentForSuccessDelivery,
       s.commentForSuccessLeft,
       s.commentForProblem,
-      
-      
-      
-      
+
+
+
+
     ]
   });
   prefereces = this.settings.addArea({
-    columnSettings:s=>[
-      
+    columnSettings: s => [
+
       s.showLeftThereButton,
       s.showCompanies,
       s.forSoldiers
@@ -177,5 +177,10 @@ export class Groups extends IdEntity<IdColumn>  {
       allowApiRead: Roles.admin,
       allowApiCRUD: Roles.admin,
     });
+  }
+}
+class PhoneOption {
+  constructor(private key: string, public name: string) {
+
   }
 }
