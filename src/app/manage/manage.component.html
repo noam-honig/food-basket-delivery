@@ -1,9 +1,6 @@
-<button  (click)="save()"
-[disabled]="!wasChange()" class="btn glyphicon glyphicon-ok btn-success"></button>
-<button 
-(click)="reset()"
-[disabled]="!wasChange()"
-class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
+<button (click)="save()" [disabled]="!wasChange()" class="btn glyphicon glyphicon-ok btn-success"></button>
+<button (click)="reset()" [disabled]="!wasChange()"
+    class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
 <mat-accordion *ngIf="settings.currentRow">
     <mat-expansion-panel>
         <mat-expansion-panel-header>
@@ -14,7 +11,7 @@ class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
         </mat-expansion-panel-header>
 
 
-     
+
         <data-area [settings]="settings"></data-area>
         <div class="form-horizontal">
             <div class="form-group">
@@ -40,11 +37,32 @@ class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
         </div>
         <data-area [settings]="settingsMore"></data-area>
 
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    סוגי סלים
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <data-grid2 [settings]="basketType" height="300"></data-grid2>
+
+
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    {{'מקורות משפחה'|translate}}
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <data-grid2 [settings]="sources" height="300"></data-grid2>
+
+
+        </mat-expansion-panel>
     </mat-expansion-panel>
     <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title>
-                {{'קבוצות שיוך משפחות'|translate}}
+                {{'גורמים מפנים'|translate}}
             </mat-panel-title>
 
         </mat-expansion-panel-header>
@@ -56,45 +74,25 @@ class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
     <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title>
-                סוגי סלים
-            </mat-panel-title>
-        </mat-expansion-panel-header>
-        <data-grid2 [settings]="basketType" height="300"></data-grid2>
-
-
-    </mat-expansion-panel>
-    <mat-expansion-panel>
-        <mat-expansion-panel-header>
-            <mat-panel-title>
-                {{'מקורות משפחה'|translate}}
-            </mat-panel-title>
-        </mat-expansion-panel-header>
-        <data-grid2 [settings]="sources" height="300"></data-grid2>
-
-
-    </mat-expansion-panel>
-    <mat-expansion-panel>
-        <mat-expansion-panel-header>
-            <mat-panel-title>
                 הודעות למתנדב
             </mat-panel-title>
 
         </mat-expansion-panel-header>
         <data-area [settings]="settingsMessages"></data-area>
-        
+
 
     </mat-expansion-panel>
     <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    העדפות
-                </mat-panel-title>
-    
-            </mat-expansion-panel-header>
-            <data-area [settings]="prefereces"></data-area>
-            
-    
-        </mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                העדפות
+            </mat-panel-title>
+
+        </mat-expansion-panel-header>
+        <data-area [settings]="prefereces"></data-area>
+
+
+    </mat-expansion-panel>
     <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title>
@@ -102,7 +100,7 @@ class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
             </mat-panel-title>
 
         </mat-expansion-panel-header>
-        <data-area [settings]="settingsLogo" ></data-area>
+        <data-area [settings]="settingsLogo"></data-area>
         <data-area [settings]="images"></data-area>
         כלי ליצירת Base64:
         <a href="https://www.browserling.com/tools/file-to-base64">File to Base64</a>

@@ -184,6 +184,11 @@
             "type": "npm",
             "script": "publish-to-chasdei",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-dinale-kol-halev",
+            "problemMatcher": []
         }
     ]
 }
