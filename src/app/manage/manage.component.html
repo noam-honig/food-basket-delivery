@@ -2,20 +2,7 @@
 <button (click)="reset()" [disabled]="!wasChange()"
     class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
 
-<table>
-    <tr *ngFor="let p of helpPhones; let i = index">
-        <td>{{i+1}}.</td>
-        <td> <select [(ngModel)]="p.option">
-                <option *ngFor="let c of phoneOptions" [ngValue]="c">{{c.name}}</option>
-            </select></td>
-        <td><button (click)="move(p,-1)" *ngIf="i>0">up</button></td>
-        <td><button (click)="move(p,1)" *ngIf="i<helpPhones.length-1">down</button></td>
-        <td><button (click)="delete(p)">delete</button></td>
-        <td> <input [(ngModel)]="p.name" placeholder="שם" *ngIf="showNameAndPhone(p)"></td>
-        <td> <input [(ngModel)]="p.phone" input="tel" placeholder="טלפון" *ngIf="showNameAndPhone(p)"></td>
-    </tr>
-</table>
-<button (click)="addPhoneOption()">add</button>
+
 
 
 <mat-accordion *ngIf="settings.currentRow">
@@ -70,7 +57,7 @@
     <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title>
-                {{'מקורות משפחה'|translate}}
+                {{'גורמים מפנים'|translate}}
             </mat-panel-title>
         </mat-expansion-panel-header>
         <data-grid2 [settings]="sources" height="300"></data-grid2>
@@ -80,7 +67,7 @@
     <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title>
-                {{'גורמים מפנים'|translate}}
+                {{'קבוצות שיוך משפחה'|translate}}
             </mat-panel-title>
 
         </mat-expansion-panel-header>
@@ -97,8 +84,28 @@
 
         </mat-expansion-panel-header>
         <data-area [settings]="settingsMessages"></data-area>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                טלפונים לעזרה למתנדב
+            </mat-panel-title>
 
-
+        </mat-expansion-panel-header>
+        <table>
+            <tr *ngFor="let p of helpPhones; let i = index">
+                <td>{{i+1}}.</td>
+                <td> <select [(ngModel)]="p.option">
+                        <option *ngFor="let c of phoneOptions" [ngValue]="c">{{c.name}}</option>
+                    </select></td>
+                <td><button (click)="move(p,-1)" *ngIf="i>0">up</button></td>
+                <td><button (click)="move(p,1)" *ngIf="i<helpPhones.length-1">down</button></td>
+                <td><button (click)="delete(p)">delete</button></td>
+                <td> <input [(ngModel)]="p.name" placeholder="שם" *ngIf="showNameAndPhone(p)"></td>
+                <td> <input [(ngModel)]="p.phone" input="tel" placeholder="טלפון" *ngIf="showNameAndPhone(p)"></td>
+            </tr>
+        </table>
+        <button (click)="addPhoneOption()">add</button>
     </mat-expansion-panel>
     <mat-expansion-panel>
         <mat-expansion-panel-header>

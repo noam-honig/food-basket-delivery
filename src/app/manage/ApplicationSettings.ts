@@ -35,7 +35,7 @@ export class ApplicationSettings extends Entity<number>  {
     }
     catch
     {
-      return [];
+      return [{ option: PhoneOption.assignerOrOrg }];
     }
   }
   dataStructureVersion = new NumberColumn({ allowApiUpdate: false });
