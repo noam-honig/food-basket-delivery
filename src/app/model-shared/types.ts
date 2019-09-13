@@ -12,12 +12,14 @@ export interface HasAsyncGetTheValue {
 export class PhoneColumn extends radweb.StringColumn {
   
   get displayValue() {
-
-    if (!this.value)
-      return this.value;
-    let x = this.value.replace(/\D/g, '');
+    return PhoneColumn.formatPhone(this.value);
+  }
+  static formatPhone(s:string){
+    if (!s)
+      return s;
+    let x = s.replace(/\D/g, '');
     if (x.length < 9 || x.length > 10)
-      return this.value;
+      return s;
     x = x.substring(0, x.length - 4) + '-' + x.substring(x.length - 4, x.length);
 
     x = x.substring(0, x.length - 8) + '-' + x.substring(x.length - 8, x.length);

@@ -4,6 +4,7 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Context } from 'radweb';
 import { Column } from 'radweb';
+import { Families } from '../families/families';
 
 @Component({
   selector: 'app-update-comment',
@@ -33,8 +34,23 @@ export class UpdateCommentComponent implements OnInit {
     return r;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    if (this.data.showFailStatus) {
+      let s = await ApplicationSettings.getAsync(this.context);
+      for (const x of s.getPhoneStrategy()) {
+        if (x.option) {
+          x.option.build({
+            family: this.data.family,
+            context: this.context,
+            phoneItem: x,
+            settings: s,
+            addPhone: (name, phone) => this.phoneOptions.push({ name: name, phone: phone })
+          });
+        }
+      }
+    }
   }
+  phoneOptions: phoneOption[] = [];
   cancel() {
     if (!this.ok) {
       this.data.cancel();
@@ -57,6 +73,7 @@ export class UpdateCommentComponent implements OnInit {
 }
 
 export interface UpdateCommentComponentData {
+  family: Families,
   showFailStatus?: boolean,
   assignerName: string,
   assignerPhone: string,
@@ -65,4 +82,8 @@ export interface UpdateCommentComponentData {
   comment: string,
   ok: (comment: string, failStatusId: DeliveryStatus) => void,
   cancel: () => void
+}
+interface phoneOption {
+  name: string;
+  phone: string;
 }

@@ -5,6 +5,8 @@ import { PhoneColumn } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { DeliveryStatusColumn, DeliveryStatus } from "../families/DeliveryStatus";
 import { translate } from "../translate";
+import { Families } from "../families/families";
+import { FamilySources } from "../families/FamilySources";
 @EntityClass
 export class ApplicationSettings extends Entity<number>  {
 
@@ -16,10 +18,26 @@ export class ApplicationSettings extends Entity<number>  {
   commentForSuccessDelivery = new StringColumn('הודעה למשנע כאשר נמסר בהצלחה');
   commentForSuccessLeft = new StringColumn('הודעה למשנע כאשר הושאר ליד הבית');
   commentForProblem = new StringColumn('הודעה למשנע כאשר יש בעיה');
-  messageForDoneDelivery = new StringColumn(translate( 'הודעה למשנע כאשר סיים את כל המשפחות'));
-  
+  messageForDoneDelivery = new StringColumn(translate('הודעה למשנע כאשר סיים את כל המשפחות'));
+
   helpText = new StringColumn('למי המשנע מתקשר כשיש לו בעיה (שם)');
   helpPhone = new PhoneColumn('טלפון עזרה למשנע');
+  phoneStrategy = new StringColumn();
+  getPhoneStrategy(): PhoneItem[] {
+    try {
+      return JSON.parse(this.phoneStrategy.value).map(x => {
+        return {
+          name: x.name,
+          phone: x.phone,
+          option: PhoneOption[x.option]
+        };
+      });
+    }
+    catch
+    {
+      return [];
+    }
+  }
   dataStructureVersion = new NumberColumn({ allowApiUpdate: false });
   deliveredButtonText = new StringColumn("מלל כפתור נמסר בהצלחה");
   message1Text = new StringColumn('מלל חופשי 1 למתנדב');
@@ -31,10 +49,10 @@ export class ApplicationSettings extends Entity<number>  {
   forSoldiers = new BoolColumn('המערכת היא עבור חיילים לא משפחות');
   showCompanies = new BoolColumn('שמור מטעם איזה חברה הגיע המתנדב');
   showLeftThereButton = new BoolColumn('הצג למתנדב כפתור השארתי ליד הבית');
-  
+
   addressApiResult = new StringColumn();
   defaultStatusType = new DeliveryStatusColumn({
-    caption:translate( 'סטטוס משלוח ברירת מחדל למשפחות חדשות')
+    caption: translate('סטטוס משלוח ברירת מחדל למשפחות חדשות')
   }, [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup, DeliveryStatus.NotInEvent]);
   private _lastString: string;
   private _lastGeo: GeocodeInformation;
@@ -59,10 +77,10 @@ export class ApplicationSettings extends Entity<number>  {
             if (geo.ok()) {
             }
           }
-          for (const l of [this.message1Link,this.message2Link]) {
-            if (l.value){
-              if (l.value.trim().indexOf(':')<0)
-                l.value = 'http://'+l.value.trim();
+          for (const l of [this.message1Link, this.message2Link]) {
+            if (l.value) {
+              if (l.value.trim().indexOf(':') < 0)
+                l.value = 'http://' + l.value.trim();
             }
           }
         }
@@ -78,4 +96,56 @@ export class ApplicationSettings extends Entity<number>  {
     return (await context.for(ApplicationSettings).findFirst());
   }
 
+}
+export class PhoneOption {
+
+  static assignerOrOrg = new PhoneOption("assignerOrOrg", "הטלפון ממנו יצא הSMS", async args => {
+    if (args.settings.helpText.value) {
+      args.addPhone(args.settings.helpText.value, args.settings.helpPhone.displayValue);
+    }
+    else
+      args.addPhone(args.family.courierAssignUserName.value, args.family.courierAssignUserPhone.displayValue);
+  });
+  static familyHelpPhone1 = new PhoneOption("familyHelpPhone1", " איש קשר לבירור טלפון 1 כפי שמוגדר למשפחה", async args => {
+    if (args.family.socialWorker.value && args.family.socialWorkerPhone1) {
+      args.addPhone(args.family.socialWorker.value, args.family.socialWorkerPhone1.displayValue);
+    }
+  });
+  static familyHelpPhone2 = new PhoneOption("familyHelpPhone1", " איש קשר לבירור טלפון 2 כפי שמוגדר למשפחה", async args => {
+    if (args.family.socialWorker.value && args.family.socialWorkerPhone2) {
+      args.addPhone(args.family.socialWorker.value, args.family.socialWorkerPhone2.displayValue);
+    }
+  });
+  static familySource = new PhoneOption("familySource", "טלפון גורם מפנה", async args => {
+    if (args.family.familySource.value) {
+      let s = await args.context.for(FamilySources).findFirst(x => x.id.isEqualTo(args.family.familySource.value));
+      if (s && s.phone.value) {
+        let name = s.contactPerson.value;
+        if (!name || name.length == 0) {
+          name = s.name.value;
+        }
+        args.addPhone(name, s.phone.value);
+      }
+    }
+  });
+  static otherPhone = new PhoneOption("otherPhone", "טלפון אחר", async args => {
+    if (args.phoneItem.phone) {
+      args.addPhone(args.phoneItem.name, PhoneColumn.formatPhone(args.phoneItem.phone));
+    }
+  });
+  constructor(public key: string, public name: string, public build: ((args: phoneBuildArgs) => Promise<void>)) {
+
+  }
+}
+export interface PhoneItem {
+  option: PhoneOption;
+  name?: string;
+  phone?: string;
+}
+export interface phoneBuildArgs {
+  family: Families,
+  context: Context,
+  phoneItem: PhoneItem,
+  settings: ApplicationSettings,
+  addPhone: (name: string, value: string) => void
 }

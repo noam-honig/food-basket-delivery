@@ -78,6 +78,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
   async deliveredToFamilyOk(f: Families, status: DeliveryStatus, helpText: (s: ApplicationSettings) => Column<any>) {
     this.selectService.displayComment({
+      family:f,
       comment: f.courierComments.value,
       assignerName: f.courierHelpName(),
       assignerPhone: f.courierHelpPhone(),
@@ -111,6 +112,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
   async couldntDeliverToFamily(f: Families) {
     this.selectService.displayComment({
+      family:f,
       comment: f.courierComments.value,
       showFailStatus: true,
       assignerName: f.courierHelpName(),
@@ -173,6 +175,7 @@ export class HelperFamiliesComponent implements OnInit {
 
   updateComment(f: Families) {
     this.selectService.displayComment({
+      family:f,
       comment: f.courierComments.value,
       assignerName: f.courierHelpName(),
       assignerPhone: f.courierHelpPhone(),

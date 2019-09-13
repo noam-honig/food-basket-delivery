@@ -15,7 +15,7 @@
   </div>
 
   <mat-dialog-content>
-  {{helpText()}}
+    {{helpText()}}
     <textarea class="form-control" rows="3" [(ngModel)]="data.comment"></textarea>
   </mat-dialog-content>
 
@@ -29,12 +29,22 @@
           {{data.showFailStatus?'הסל לא נמסר':'אשר'}}
         </button>
       </div>
-      <div class="button-line">
-        <a href="tel:{{data.assignerPhone}}">
-          <button [class.hide]="!data.showFailStatus" mat-raised-button color="primary" class="dial-for-help">
+      <div class="button-line" [class.hide]="!data.showFailStatus">
+        <a href="tel:{{data.assignerPhone}}" *ngIf="phoneOptions.length==1">
+          <button mat-raised-button color="primary" class="dial-for-help">
             <mat-icon>phone</mat-icon> חייג ל{{data.assignerName}} לקבלת עזרה
           </button>
         </a>
+        <button mat-raised-button color="primary" class="dial-for-help" [matMenuTriggerFor]="menu"
+          *ngIf="phoneOptions.length>1">
+          <mat-icon>phone</mat-icon> חייג לקבלת עזרה
+        </button>
+
+        <mat-menu #menu="matMenu">
+          <a href="tel:{{p.phone}}" *ngFor="let p of phoneOptions">
+            <button mat-menu-item>{{p.name}} - {{p.phone}}</button>
+          </a>
+        </mat-menu>
       </div>
     </div>
 

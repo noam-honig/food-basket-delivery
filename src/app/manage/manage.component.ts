@@ -4,7 +4,7 @@ import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
 
 import { SendSmsAction } from '../asign-family/send-sms-action';
-import { ApplicationSettings } from './ApplicationSettings';
+import { ApplicationSettings,PhoneItem,PhoneOption } from './ApplicationSettings';
 
 
 import { Context, IdEntity, IdColumn, StringColumn, EntityClass } from 'radweb';
@@ -25,10 +25,12 @@ export class ManageComponent implements OnInit {
       name: 'הגדרות מערכת'
     }, canActivate: [AdminGuard]
   }
+
   wasChange() {
-    return this.settings.currentRow && this.images.currentRow && (this.settings.currentRow.wasChanged() || this.images.currentRow.wasChanged());
+    return this.settings.currentRow && this.images.currentRow && (this.settings.currentRow.wasChanged() || this.images.currentRow.wasChanged()||this.settings.currentRow.phoneStrategy.originalValue!=this.serializePhones());
   }
   save() {
+    this.settings.currentRow.phoneStrategy.value  = this.serializePhones();
     this.settings.currentRow.save();
     this.images.currentRow.save();
   }
@@ -161,9 +163,62 @@ export class ManageComponent implements OnInit {
   });
 
   ngOnInit() {
-    this.settings.getRecords();
+    this.settings.getRecords().then(x => {
+      try {
+        this.helpPhones = x.items[0].getPhoneStrategy();
+      }
+      catch
+      {
+        this.helpPhones = [];
+      }
+    });
     this.images.getRecords();
   }
+  helpPhones: PhoneItem[] = [{
+    option: PhoneOption.assignerOrOrg
+  }];
+  phoneOptions = [
+    PhoneOption.assignerOrOrg
+    , PhoneOption.familyHelpPhone1
+    , PhoneOption.familyHelpPhone2
+    , PhoneOption.familySource
+    , PhoneOption.otherPhone
+  ];
+  addPhoneOption() {
+    let x: PhoneItem = {
+      option: PhoneOption.otherPhone
+    }
+    for (const op of this.phoneOptions) {
+      let f = this.helpPhones.find(x => x.option == op);
+      if (!f) {
+        x.option = op;
+        break;
+      }
+    }
+    this.helpPhones.push(x);
+  }
+  showNameAndPhone(p: PhoneItem) {
+    return p.option == PhoneOption.otherPhone;
+  }
+  move(p: PhoneItem, dir: number) {
+    let x = this.helpPhones.indexOf(p);
+    this.helpPhones.splice(x, 1);
+    this.helpPhones.splice(x + dir, 0, p);
+  }
+  delete(p: PhoneItem, dir: number) {
+    let x = this.helpPhones.indexOf(p);
+    this.helpPhones.splice(x, 1);
+  }
+  serializePhones() {
+    return JSON.stringify(this.helpPhones.map(x => {
+      return {
+        name: x.name,
+        phone: x.phone,
+        option: x.option.key
+      }
+    }));
+  }
+
 
 }
 @EntityClass
@@ -177,10 +232,5 @@ export class Groups extends IdEntity<IdColumn>  {
       allowApiRead: Roles.admin,
       allowApiCRUD: Roles.admin,
     });
-  }
-}
-class PhoneOption {
-  constructor(private key: string, public name: string) {
-
   }
 }

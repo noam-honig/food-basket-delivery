@@ -30,24 +30,26 @@ export class FamilyInfoComponent implements OnInit {
     return f.deliverStatus.value == DeliveryStatus.SelfPickup;
   }
   async familiyPickedUp(f: Families) {
-    this.selectService.displayComment({
-      comment: f.courierComments.value,
-      assignerName: f.courierHelpName(),
-      assignerPhone: f.courierHelpPhone(),
-      helpText: s => s.commentForSuccessDelivery,
-      ok: async (comment) => {
-        f.deliverStatus.value = DeliveryStatus.SuccessPickedUp;
-        f.courierComments.value = comment;
-        try {
-          await f.save();
-          this.dialog.analytics('Self Pickup');
-        }
-        catch (err) {
-          this.dialog.Error(err);
-        }
-      },
-      cancel: () => { }
-    });
+    this.selectService.displayComment(
+      {
+        family: f,
+        comment: f.courierComments.value,
+        assignerName: f.courierHelpName(),
+        assignerPhone: f.courierHelpPhone(),
+        helpText: s => s.commentForSuccessDelivery,
+        ok: async (comment) => {
+          f.deliverStatus.value = DeliveryStatus.SuccessPickedUp;
+          f.courierComments.value = comment;
+          try {
+            await f.save();
+            this.dialog.analytics('Self Pickup');
+          }
+          catch (err) {
+            this.dialog.Error(err);
+          }
+        },
+        cancel: () => { }
+      });
 
   }
   async cancelAssign(f: Families) {
@@ -74,6 +76,6 @@ export class FamilyInfoComponent implements OnInit {
     this.dialog.Info("הכתובת " + f.address.value + " הועתקה בהצלחה");
   }
   showStatus() {
-    return this.f.deliverStatus.value != DeliveryStatus.ReadyForDelivery&&this.f.deliverStatus.value!=DeliveryStatus.SelfPickup;
+    return this.f.deliverStatus.value != DeliveryStatus.ReadyForDelivery && this.f.deliverStatus.value != DeliveryStatus.SelfPickup;
   }
 }
