@@ -69,7 +69,7 @@ export class AsignFamilyComponent implements OnInit {
             }
         }
     }
-     clearHelperInfo(clearPhone = true) {
+    clearHelperInfo(clearPhone = true) {
         this.name = '';
         this.company = '';
         this.origName = '';

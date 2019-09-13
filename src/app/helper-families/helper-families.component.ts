@@ -68,6 +68,7 @@ export class HelperFamiliesComponent implements OnInit {
       });
     });
   }
+  get settings() { return ApplicationSettings.get(this.context); }
   allDoneMessage() { return ApplicationSettings.get(this.context).messageForDoneDelivery.value; };
   async deliveredToFamily(f: Families) {
     this.deliveredToFamilyOk(f, DeliveryStatus.Success, s => s.commentForSuccessDelivery);

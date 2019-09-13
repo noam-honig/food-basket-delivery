@@ -131,7 +131,8 @@ export class ManageComponent implements OnInit {
       s.commentForSuccessLeft,
       s.commentForProblem,
       s.forSoldiers,
-      s.showCompanies
+      s.showCompanies,
+      s.deliveredButtonText
       
       
     ]

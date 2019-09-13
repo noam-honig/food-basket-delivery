@@ -21,6 +21,7 @@ export class ApplicationSettings extends Entity<number>  {
   helpText = new StringColumn('למי המשנע מתקשר כשיש לו בעיה (שם)');
   helpPhone = new PhoneColumn('טלפון עזרה למשנע');
   dataStructureVersion = new NumberColumn({ allowApiUpdate: false });
+  deliveredButtonText = new StringColumn("מלל כפתור נמסר בהצלחה");
   message1Text = new StringColumn('מלל חופשי 1 למתנדב');
   message1Link = new StringColumn('כתובת אינטרנט ללחיצה על מלל חופשי 1 למתנדב');
   message1OnlyWhenDone = new BoolColumn('להציג מלל חופשי 1 רק כאשר המתנדב סיים אל כל הסלים');

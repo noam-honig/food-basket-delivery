@@ -15,7 +15,8 @@ justify-content: space-between;order:-1;">
     <div class="no-print">
       <mat-menu #appMenu="matMenu">
         <button mat-menu-item (click)="cancelAll()" style="color:red;">{{'בטל שיוך לכל המשפחות'|translate}}</button>
-        <button mat-menu-item (click)="okAll()" class="primary-menu">{{'סמן נמסר בהצלחה לכל המשפחות'|translate}}</button>
+        <button mat-menu-item (click)="okAll()"
+          class="primary-menu">{{'סמן נמסר בהצלחה לכל המשפחות'|translate}}</button>
       </mat-menu>
 
       <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="familyLists.toDeliver.length>1 && partOfAssign">
@@ -29,7 +30,9 @@ justify-content: space-between;order:-1;">
   <mat-accordion class="no-print">
     <mat-expansion-panel #myPanel *ngFor="let f of familyLists.toDeliver;let i=index">
       <mat-expansion-panel-header>
-        <app-family-in-list [f]="f" [i]="i+1" style="width:100%" [newAssign]="familyLists.highlightNewFamilies&&!familyLists.familiesAlreadyAssigned.get(f.id.value)" ></app-family-in-list>
+        <app-family-in-list [f]="f" [i]="i+1" style="width:100%"
+          [newAssign]="familyLists.highlightNewFamilies&&!familyLists.familiesAlreadyAssigned.get(f.id.value)">
+        </app-family-in-list>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
 
@@ -37,8 +40,8 @@ justify-content: space-between;order:-1;">
         <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign" (assignmentCanceled)="cancelAssign(f)">
 
 
-          <button mat-raised-button class="myButton" color="primary" (click)="deliveredToFamily(f)">מסרתי את החבילה
-            בהצלחה</button>
+          <button mat-raised-button class="myButton" color="primary"
+            (click)="deliveredToFamily(f)">{{settings.deliveredButtonText.value}}</button>
           <br />
           <button mat-raised-button class="myButton" (click)="leftThere(f)">השארתי ליד הבית
           </button>
@@ -174,7 +177,8 @@ justify-content: space-between;order:-1;">
           <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign"
             (assignmentCanceled)="cancelAssign(f)">
             <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
-            <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">{{'נלחץ בטעות - החזר למשפחות'|translate}}
+            <button mat-raised-button class="myButton badButton"
+              (click)="returnToDeliver(f)">{{'נלחץ בטעות - החזר למשפחות'|translate}}
               לחלוקה</button>
             <button *ngIf="partOfAssign" mat-raised-button class="myButton badButton" (click)="cancelAssign(f)">בטלי
               שיוך</button>
@@ -194,7 +198,8 @@ justify-content: space-between;order:-1;">
         <ng-template matExpansionPanelContent>
           <app-family-info [f]="f" [showHelp]="true" (assignmentCanceled)="cancelAssign(f)">
             <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
-            <button mat-raised-button class="myButton badButton" (click)="returnToDeliver(f)">{{'נלחץ בטעות - החזר למשפחות לחלוקה'|translate}}</button>
+            <button mat-raised-button class="myButton badButton"
+              (click)="returnToDeliver(f)">{{'נלחץ בטעות - החזר למשפחות לחלוקה'|translate}}</button>
           </app-family-info>
         </ng-template>
       </mat-expansion-panel>

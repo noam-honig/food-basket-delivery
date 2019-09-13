@@ -100,6 +100,9 @@ export async function serverInit() {
         if (!settings.messageForDoneDelivery.value) {
             settings.messageForDoneDelivery.value = 'תודה על כל העזרה, נשמח אם תתנדבו שוב';
         }
+        if (!settings.deliveredButtonText.value) {
+            settings.deliveredButtonText.value = 'מסרתי את החבילה בהצלחה';
+        }
         await settings.save();
 
 
