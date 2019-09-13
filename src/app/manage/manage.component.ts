@@ -126,17 +126,23 @@ export class ManageComponent implements OnInit {
       s.message1OnlyWhenDone,
       s.message2Text,
       s.message2Link,
+      s.deliveredButtonText,
       s.message2OnlyWhenDone,
       s.commentForSuccessDelivery,
       s.commentForSuccessLeft,
       s.commentForProblem,
-      s.forSoldiers,
+      
+      
+      
+      
+    ]
+  });
+  prefereces = this.settings.addArea({
+    columnSettings:s=>[
+      
+      s.showLeftThereButton,
       s.showCompanies,
-      s.deliveredButtonText,
-      s.showLeftThereButton
-      
-      
-      
+      s.forSoldiers
     ]
   });
 
