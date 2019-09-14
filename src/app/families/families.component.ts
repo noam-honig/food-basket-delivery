@@ -476,7 +476,8 @@ export class FamiliesComponent implements OnInit {
             name: translate( 'כל המשפחות'),
             stats: [
                 this.stats.currentEvent,
-                this.stats.notInEvent
+                this.stats.notInEvent,
+                this.stats.outOfList
             ],
             moreStats: [],
             fourthColumn: () => this.statusColumn

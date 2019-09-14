@@ -246,7 +246,7 @@ export class AsignFamilyComponent implements OnInit {
                 }
             };
         this.context.for(Groups).find().then(g => this.groups = g);
-        if (!environment.production&&false) {
+        if (!environment.production) {
             this.phone = '0507330590';
             await this.searchPhone();
         }
