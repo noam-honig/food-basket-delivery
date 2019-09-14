@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { Helpers } from '../helpers/helpers';
+import { Helpers, HelpersBase } from '../helpers/helpers';
 import { Context } from 'radweb';
 import { FilterBase, FindOptionsPerEntity } from 'radweb';
 
@@ -19,7 +19,7 @@ export class SelectHelperComponent implements OnInit {
   searchString: string = '';
   lastFilter: string = undefined;
 
-  filteredHelpers: Helpers[] = [];
+  filteredHelpers: HelpersBase[] = [];
   constructor(
     private dialogRef: MatDialogRef<SelectHelperComponent>,
     @Inject(MAT_DIALOG_DATA) private data: SelectHelperInfo,
@@ -83,7 +83,7 @@ export class SelectHelperComponent implements OnInit {
     if (this.filteredHelpers.length > 0)
       this.select(this.filteredHelpers[0]);
   }
-  select(h: Helpers) {
+  select(h: HelpersBase) {
     this.data.onSelect(h);
     if (h && !h.isNew())
       Helpers.addToRecent(h);
@@ -99,7 +99,7 @@ export class SelectHelperComponent implements OnInit {
 }
 export interface SelectHelperInfo {
   hideRecent?: boolean,
-  onSelect: (selectedValue: Helpers) => void,
+  onSelect: (selectedValue: HelpersBase) => void,
   filter?: (helper: HelpersAndStats) => FilterBase
 
 }

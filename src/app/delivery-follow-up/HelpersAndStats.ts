@@ -1,6 +1,6 @@
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { NumberColumn, StringColumn, IdEntity } from 'radweb';
-import { HelperId, Helpers } from '../helpers/helpers';
+import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
 import {  changeDate, DateTimeColumn,  SqlBuilder } from '../model-shared/types';
 import { Families } from "../families/families";
 
@@ -15,7 +15,7 @@ function log(s: string) {
     return s;
 }
 @EntityClass
-export class HelpersAndStats extends Helpers {
+export class HelpersAndStats extends HelpersBase {
   
     deliveriesInProgress = new NumberColumn({
         dbReadOnly: true,
@@ -54,6 +54,9 @@ export class HelpersAndStats extends Helpers {
                         h.phone,
                         h.smsDate,
                         h.reminderSmsDate,
+                        h.company,
+                        h.totalKm,
+                        h.totalTime,
                         sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isEqualTo( DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress),
                         sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isActiveDelivery()]), this.allFamilies),
                         sql.countInnerSelect(helperFamilies(() => [sql.in(f.deliverStatus,

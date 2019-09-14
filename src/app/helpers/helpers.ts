@@ -10,12 +10,40 @@ import { JWTCookieAuthorizationHelper } from "radweb-server";
 import { MatDialog } from "@angular/material";
 import { SelectCompanyComponent } from "../select-company/select-company.component";
 
+
+export abstract class HelpersBase extends IdEntity<HelperId>  {
+
+    constructor(context: Context, options?: EntityOptions | string) {
+
+        super(new HelperId(context), options);
+    }
+    
+    name = new StringColumn({
+        caption: "שם",
+        onValidate: () => {
+            if (!this.name.value || this.name.value.length < 2)
+                this.name.error = 'השם קצר מידי';
+        }
+    });
+    phone = new PhoneColumn({ caption: "טלפון", inputType: 'tel' });
+   
+    company = new CompanyColumn();
+    totalKm = new NumberColumn();
+    totalTime = new NumberColumn();
+    getRouteStats(): routeStats {
+        return {
+            totalKm: this.totalKm.value,
+            totalTime: this.totalTime.value
+        }
+    }
+}
+
 @EntityClass
-export class Helpers extends IdEntity<HelperId>  {
+export class Helpers extends HelpersBase  {
 
-    constructor(private context: Context,options?: EntityOptions | string) {
+    constructor(private context: Context) {
 
-        super(new HelperId(context),options?options: {
+        super(context,  {
             name: "Helpers",
             allowApiRead: true,
             allowApiDelete: context.isSignedIn(),
@@ -27,7 +55,7 @@ export class Helpers extends IdEntity<HelperId>  {
                         this.realStoredPassword.value = Helpers.passwordHelper.generateHash(this.password.value);
                     }
                     if ((await context.for(Helpers).count()) == 0) {
-                        
+
                         this.admin.value = true;
                     }
 
@@ -46,21 +74,15 @@ export class Helpers extends IdEntity<HelperId>  {
         });
     }
     public static emptyPassword = 'password';
-    name = new StringColumn({
-        caption: "שם",
-        onValidate: () => {
-            if (!this.name.value || this.name.value.length < 2)
-                this.name.error = 'השם קצר מידי';
-        }
-    });
+   
     phone = new PhoneColumn({ caption: "טלפון", inputType: 'tel' });
     realStoredPassword = new StringColumn({
         dbName: 'password',
         includeInApi: false
     });
-    company = new CompanyColumn();
-    password = new StringColumn({ caption: 'סיסמה', inputType: 'password', virtualData: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
     
+    password = new StringColumn({ caption: 'סיסמה', inputType: 'password', virtualData: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
+
     createDate = new changeDate({ caption: 'מועד הוספה' });
     smsDate = new changeDate('מועד משלוח SMS');
     reminderSmsDate = new changeDate('מועד משלוח תזכורת SMS');
@@ -70,16 +92,14 @@ export class Helpers extends IdEntity<HelperId>  {
         includeInApi: Roles.admin,
         dbName: 'isAdmin'
     });
-    totalKm = new NumberColumn();
-    totalTime = new NumberColumn();
     getRouteStats(): routeStats {
         return {
             totalKm: this.totalKm.value,
             totalTime: this.totalTime.value
         }
     }
-    
-    
+
+
 
 
     shortUrlKey = new StringColumn({ includeInApi: Roles.admin });
@@ -98,8 +118,8 @@ export class Helpers extends IdEntity<HelperId>  {
             text += possible.charAt(Math.floor(Math.random() * possible.length));
         return text;
     }
-    static recentHelpers: Helpers[] = [];
-    static addToRecent(h: Helpers) {
+    static recentHelpers: HelpersBase[] = [];
+    static addToRecent(h: HelpersBase) {
         if (!h)
             return;
         if (h.isNew())
@@ -117,12 +137,14 @@ export class Helpers extends IdEntity<HelperId>  {
 
 }
 
+
+
 export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 
-    constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string> ) {
+    constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>) {
         super(settingsOrCaption);
     }
-    getColumn(dialog: SelectServiceInterface, filter?: (helper: Helpers) => FilterBase): ColumnSetting<Entity<any>> {
+    getColumn(dialog: SelectServiceInterface, filter?: (helper: HelpersBase) => FilterBase): ColumnSetting<Entity<any>> {
         return {
             column: this,
             getValue: f => (f ? (<HelperId>(f).__getColumn(this)) : this).getValue(),
@@ -153,23 +175,23 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
         return '';
     }
 }
-export class CompanyColumn extends StringColumn{
+export class CompanyColumn extends StringColumn {
     getColumn(dialog: MatDialog) {
         return {
-          column: this,
-          click: f => {
-            let col = f ? f.__getColumn(this) : this;
-            SelectCompanyComponent.dialog(dialog,{onSelect:x=>col.value = x})
-          },
-          width: '300'
+            column: this,
+            click: f => {
+                let col = f ? f.__getColumn(this) : this;
+                SelectCompanyComponent.dialog(dialog, { onSelect: x => col.value = x })
+            },
+            width: '300'
         };
-      }
-    constructor(){
+    }
+    constructor() {
         super("חברה");
     }
 }
 export class HelperIdReadonly extends HelperId {
-    allowApiUpdate=false;
+    allowApiUpdate = false;
     get displayValue() {
         return this.context.for(Helpers).lookup(this).name.value;
     }
