@@ -106,16 +106,15 @@ export class PhoneOption {
     else
       args.addPhone(args.family.courierAssignUserName.value, args.family.courierAssignUserPhone.displayValue);
   });
-  static familyHelpPhone1 = new PhoneOption("familyHelpPhone1", " איש קשר לבירור טלפון 1 כפי שמוגדר למשפחה", async args => {
+  static familyHelpPhone = new PhoneOption("familyHelpPhone", "איש קשר לבירור כפי שמוגדר למשפחה", async args => {
     if (args.family.socialWorker.value && args.family.socialWorkerPhone1) {
       args.addPhone(args.family.socialWorker.value, args.family.socialWorkerPhone1.displayValue);
     }
-  });
-  static familyHelpPhone2 = new PhoneOption("familyHelpPhone1", " איש קשר לבירור טלפון 2 כפי שמוגדר למשפחה", async args => {
     if (args.family.socialWorker.value && args.family.socialWorkerPhone2) {
       args.addPhone(args.family.socialWorker.value, args.family.socialWorkerPhone2.displayValue);
     }
   });
+  
   static familySource = new PhoneOption("familySource", "טלפון גורם מפנה", async args => {
     if (args.family.familySource.value) {
       let s = await args.context.for(FamilySources).findFirst(x => x.id.isEqualTo(args.family.familySource.value));
@@ -124,7 +123,7 @@ export class PhoneOption {
         if (!name || name.length == 0) {
           name = s.name.value;
         }
-        args.addPhone(name, s.phone.value);
+        args.addPhone(name, s.phone.displayValue);
       }
     }
   });

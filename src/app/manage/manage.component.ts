@@ -170,8 +170,8 @@ export class ManageComponent implements OnInit {
   }];
   phoneOptions = [
     PhoneOption.assignerOrOrg
-    , PhoneOption.familyHelpPhone1
-    , PhoneOption.familyHelpPhone2
+    , PhoneOption.familyHelpPhone
+    
     , PhoneOption.familySource
     , PhoneOption.otherPhone
   ];

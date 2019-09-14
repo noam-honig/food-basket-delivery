@@ -39,7 +39,7 @@ export class UpdateCommentComponent implements OnInit {
       let s = await ApplicationSettings.getAsync(this.context);
       for (const x of s.getPhoneStrategy()) {
         if (x.option) {
-          x.option.build({
+          await x.option.build({
             family: this.data.family,
             context: this.context,
             phoneItem: x,

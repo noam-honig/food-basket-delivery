@@ -1,4 +1,4 @@
-import {  HasAsyncGetTheValue } from "../model-shared/types";
+import {  HasAsyncGetTheValue, PhoneColumn } from "../model-shared/types";
 
 import { Context,  EntityClass, IdEntity, StringColumn, IdColumn, ColumnOptions } from "radweb";
 import { Roles } from "../auth/roles";
@@ -6,8 +6,8 @@ import { Roles } from "../auth/roles";
 @EntityClass
 export class FamilySources extends IdEntity<FamilySourceId>  {
   name = new StringColumn({ caption: "שם" });
-  contactPerson = new StringColumn({ caption: "איש קשר", includeInApi: Roles.admin });
-  phone = new StringColumn({ caption: 'טלפון', includeInApi: Roles.admin });
+  contactPerson = new StringColumn({ caption: "איש קשר" });
+  phone = new PhoneColumn({ caption: 'טלפון' });
   constructor(private context: Context) {
     super(new FamilySourceId(context), {
       name: "FamilySources",
