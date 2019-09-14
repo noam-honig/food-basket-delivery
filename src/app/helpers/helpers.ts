@@ -26,7 +26,7 @@ export abstract class HelpersBase extends IdEntity<HelperId>  {
         }
     });
     phone = new PhoneColumn({ caption: "טלפון", inputType: 'tel' });
-   
+    smsDate = new changeDate('מועד משלוח SMS');
     company = new CompanyColumn();
     totalKm = new NumberColumn();
     totalTime = new NumberColumn();
@@ -84,7 +84,7 @@ export class Helpers extends HelpersBase  {
     password = new StringColumn({ caption: 'סיסמה', inputType: 'password', virtualData: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
 
     createDate = new changeDate({ caption: 'מועד הוספה' });
-    smsDate = new changeDate('מועד משלוח SMS');
+    
     reminderSmsDate = new changeDate('מועד משלוח תזכורת SMS');
     admin = new BoolColumn({
         caption: 'מנהל משלוח',

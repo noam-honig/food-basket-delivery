@@ -81,6 +81,7 @@ export class DeliveryFollowUpComponent implements OnInit {
 
 
     [
+      this.stats.notOutYet,
       this.stats.onTheWay,
       this.stats.late,
       this.stats.problem,

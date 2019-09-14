@@ -26,6 +26,7 @@ export class HelperFamiliesComponent implements OnInit {
   @Input() familyLists: UserFamiliesList;
   @Input() partOfAssign = false;
   @Input() partOfReview = false;
+  @Input() helperGotSms = false;
   @Output() assignmentCanceled = new EventEmitter<void>();
   @Output() assignSmsSent = new EventEmitter<void>();
   @Input() preview = false;
@@ -140,6 +141,7 @@ export class HelperFamiliesComponent implements OnInit {
     });
   }
   async sendSms(reminder: Boolean) {
+    this.helperGotSms = true;
     this.dialog.analytics('Send SMS ' + (reminder ? 'reminder' : ''));
     await SendSmsAction.SendSms(this.familyLists.helperId, reminder);
     this.assignSmsSent.emit();

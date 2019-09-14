@@ -1,10 +1,10 @@
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { NumberColumn, StringColumn, IdEntity } from 'radweb';
+import { NumberColumn, StringColumn, IdEntity, BoolColumn } from 'radweb';
 import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
-import {  changeDate, DateTimeColumn,  SqlBuilder } from '../model-shared/types';
+import { changeDate, DateTimeColumn, SqlBuilder } from '../model-shared/types';
 import { Families } from "../families/families";
 
-import { Context,  EntityClass } from "radweb";
+import { Context, EntityClass } from "radweb";
 import { Roles } from "../auth/roles";
 
 
@@ -16,7 +16,7 @@ function log(s: string) {
 }
 @EntityClass
 export class HelpersAndStats extends HelpersBase {
-  
+
     deliveriesInProgress = new NumberColumn({
         dbReadOnly: true,
         caption: 'משפחות מחכות'
@@ -30,6 +30,9 @@ export class HelpersAndStats extends HelpersBase {
         caption: 'משפחות עם בעיות'
     });
     lastAsignTime = new DateTimeColumn({
+        dbReadOnly: true
+    });
+    gotSms = new BoolColumn({
         dbReadOnly: true
     });
     constructor(context: Context) {
@@ -57,7 +60,7 @@ export class HelpersAndStats extends HelpersBase {
                         h.company,
                         h.totalKm,
                         h.totalTime,
-                        sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isEqualTo( DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress),
+                        sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress),
                         sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isActiveDelivery()]), this.allFamilies),
                         sql.countInnerSelect(helperFamilies(() => [sql.in(f.deliverStatus,
                             DeliveryStatus.FailedBadAddress.id,
@@ -66,7 +69,12 @@ export class HelpersAndStats extends HelpersBase {
                             this.deliveriesWithProblems),
                         sql.max(f.courierAssingTime,
                             helperFamilies(() =>
-                                [sql.not(sql.in(f.deliverStatus, DeliveryStatus.Frozen.id,DeliveryStatus.NotInEvent.id))]), this.lastAsignTime)
+                                [sql.not(sql.in(f.deliverStatus, DeliveryStatus.Frozen.id, DeliveryStatus.NotInEvent.id))]), this.lastAsignTime),
+                        sql.build('coalesce(  ',h.smsDate, '> (', sql.query({
+                            select: () => [sql.build('max(', f.courierAssingTime, ')')],
+                            from: f,
+                            where: helperFamilies(() => [sql.not(sql.in(f.deliverStatus, DeliveryStatus.Frozen.id, DeliveryStatus.NotInEvent.id))]).where
+                        }), ") + interval '-1' day,false) as ", this.gotSms)
 
                     ],
                     from: h
