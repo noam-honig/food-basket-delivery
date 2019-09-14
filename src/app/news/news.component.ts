@@ -22,7 +22,15 @@ export class NewsComponent implements OnInit, OnDestroy {
   };
   filters: NewsFilter[] = [{
     name: 'כל החדשות'
-  }, {
+  }, 
+  {
+    name: 'בעיות מצריכות טיפול',
+    where: f => f.deliverStatus.isProblem().and(f.updateType.isEqualTo(1)).and(f.needsWork.isEqualTo(true))
+  },
+  {
+    name: 'כל הצריך טיפול',
+    where: f =>f.updateType.isEqualTo(1).and(f.needsWork.isEqualTo(true))
+  },{
     name: 'בעיות',
     where: f => f.deliverStatus.isProblem().and(f.updateType.isEqualTo(1))
   }, {
@@ -47,7 +55,11 @@ export class NewsComponent implements OnInit, OnDestroy {
   async updateFamily(n: NewsUpdate) {
 
     let f = await this.context.for(Families).findFirst(fam => fam.id.isEqualTo(n.id));
-    this.selectService.updateFamiliy({ f: f });
+    this.selectService.updateFamiliy({ f: f,onSave:()=>{
+      
+        n.needsWork.value = f.needsWork.value;
+    } });
+    
   }
   ngOnDestroy(): void {
     this.onDestroy();

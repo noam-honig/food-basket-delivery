@@ -40,6 +40,7 @@ export class FamilyInfoComponent implements OnInit {
         ok: async (comment) => {
           f.deliverStatus.value = DeliveryStatus.SuccessPickedUp;
           f.courierComments.value = comment;
+          f.checkNeedsWork();
           try {
             await f.save();
             this.dialog.analytics('Self Pickup');

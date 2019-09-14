@@ -1,6 +1,6 @@
 import { DeliveryStatusColumn } from "../families/DeliveryStatus";
 import { changeDate, SqlBuilder } from "../model-shared/types";
-import { NumberColumn, StringColumn } from "radweb";
+import { NumberColumn, StringColumn, BoolColumn } from "radweb";
 import { HelperIdReadonly, HelperId } from "../helpers/helpers";
 import { Families, FamilyUpdateInfo } from "../families/families";
 import { Context, Entity, ServerContext, EntityClass } from "radweb";
@@ -21,6 +21,7 @@ export class NewsUpdate extends Entity<string> implements FamilyUpdateInfo {
   updateTime = new changeDate('מועד העדכון');
   updateUser = new HelperIdReadonly(this.context, 'מי עדכן');
   courierComments = new StringColumn('הערות מסירה');
+  needsWork = new BoolColumn({ caption: 'צריך טיפול/מעקב' });
   updateType = new NumberColumn();
   constructor(private context: Context) {
     super({
@@ -30,7 +31,7 @@ export class NewsUpdate extends Entity<string> implements FamilyUpdateInfo {
       dbName: () => {
         let f = new Families(context);
         var sql = new SqlBuilder();
-        let cols = [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser, f.courierComments];
+        let cols = [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser, f.courierComments,f.needsWork];
         return sql.entityDbNameUnion({
           select: () => [...cols,
           sql.columnWithAlias(f.deliveryStatusDate, this.updateTime),

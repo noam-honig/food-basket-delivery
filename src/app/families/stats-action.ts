@@ -44,7 +44,7 @@ export class Stats {
     notInEvent = new FaimilyStatistics('לא באירוע', f => f.deliverStatus.isEqualTo(DeliveryStatus.NotInEvent), colors.blue);
     frozen = new FaimilyStatistics('קפואים', f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen), colors.gray);
     blocked = new FaimilyStatistics('סל חסום', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(f.courier.isEqualTo('').and(f.blockedBasket.isEqualTo(true))), colors.gray);
-    deliveryComments = new FaimilyStatistics('הערות משנע', f => f.courierComments.isDifferentFrom(''), colors.yellow);
+    needWork = new FaimilyStatistics('מצריך טיפול', f => f.needsWork.isEqualTo(true), colors.yellow);
 
 
     async getData() {

@@ -347,7 +347,10 @@ export class FamiliesComponent implements OnInit {
                 families.getPreviousDeliveryColumn(),
                 families.socialWorker,
                 families.socialWorkerPhone1,
-                families.socialWorkerPhone2
+                families.socialWorkerPhone2,
+                families.needsWork,
+                families.needsWorkDate,
+                families.needsWorkUser
             ];
         },
         rowButtons: [
@@ -460,10 +463,10 @@ export class FamiliesComponent implements OnInit {
         this.groupsReady,
 
         {
-            name: 'הערות',
-            rule: f => f.deliverStatus.isInEvent().and(f.courierComments.isDifferentFrom('')),
+            name: 'מצריך טיפול',
+            rule: f => f.deliverStatus.isInEvent().and(f.needsWork.isEqualTo(true)),
             stats: [
-                this.stats.deliveryComments
+                this.stats.needWork
             ],
             moreStats: [],
             fourthColumn: () => this.deliverySummary

@@ -86,6 +86,7 @@ export class HelperFamiliesComponent implements OnInit {
       ok: async (comment) => {
         f.deliverStatus.value = status;
         f.courierComments.value = comment;
+        f.checkNeedsWork();
         try {
           await f.save();
           this.dialog.analytics('delivered');
@@ -122,6 +123,7 @@ export class HelperFamiliesComponent implements OnInit {
       ok: async (comment, status) => {
         f.deliverStatus.value = status;
         f.courierComments.value = comment;
+        f.checkNeedsWork();
         try {
           await f.save();
           this.dialog.analytics('Problem');
@@ -182,6 +184,7 @@ export class HelperFamiliesComponent implements OnInit {
       helpText: s => s.commentForSuccessDelivery,
       ok: async comment => {
         f.courierComments.value = comment;
+        f.checkNeedsWork();
         await f.save();
         this.dialog.analytics('Update Comment');
       }

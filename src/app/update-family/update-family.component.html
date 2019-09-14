@@ -28,10 +28,10 @@
                     חייג לעו"ס {{families.currentRow.socialWorker.value}} טלפון 1
                 </a> |
                 <a href="tel:{{families.currentRow.socialWorkerPhone2.value}}"
-                *ngIf="families.currentRow.socialWorkerPhone2.value">
+                    *ngIf="families.currentRow.socialWorkerPhone2.value">
 
-                חייג לעו"ס {{families.currentRow.socialWorker.value}} טלפון 2
-            </a> 
+                    חייג לעו"ס {{families.currentRow.socialWorker.value}} טלפון 2
+                </a>
             </ng-template>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -153,6 +153,8 @@
                             {{families.currentRow.deliveryStatusUser.displayValue}}</li>
                         <li>עדכון משנע: {{families.currentRow.courierAssingTime.displayValue}} -
                             {{families.currentRow.courierAssignUser.displayValue}}</li>
+                        <li>עדכון צריך טיפול: {{families.currentRow.needsWorkDate.displayValue}} -
+                            {{families.currentRow.needsWorkDate.displayValue}}</li>
                     </ul>
                 </div>
 

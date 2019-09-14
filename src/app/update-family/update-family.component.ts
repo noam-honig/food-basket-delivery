@@ -86,6 +86,7 @@ export class UpdateFamilyComponent implements OnInit {
         families.courier.getColumn(this.selectService),
         
         families.courierComments,
+        families.needsWork,
 
         families.defaultSelfPickup,
         families.fixedCourier.getColumn(this.selectService)

@@ -39,6 +39,17 @@ export class Families extends IdEntity<FamilyId>  {
   getDeliveries() {
     return this.context.for(FamilyDeliveries).find({ where: d => d.family.isEqualTo(this.id), orderBy: d => [{ column: d.deliveryStatusDate, descending: true }] });
   }
+  checkNeedsWork(){
+    if (this.courierComments.value)
+      this.needsWork.value = true;
+    switch(this.deliverStatus.value){
+      case DeliveryStatus.FailedBadAddress:
+      case DeliveryStatus.FailedNotHome:
+      case DeliveryStatus.FailedOther:
+      this.needsWork.value = true;
+        break;
+    }
+  }
 
   constructor(private context: Context) {
     super(new FamilyId(),
@@ -125,6 +136,7 @@ export class Families extends IdEntity<FamilyId>  {
               logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName())));//should be after succesfull save
               //logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
               logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()))); //should be after succesfull save
+              logChanged(this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => {}); //should be after succesfull save
             }
           }
         }
@@ -194,6 +206,9 @@ export class Families extends IdEntity<FamilyId>  {
   deliveryStatusDate = new changeDate('מועד סטטוס משלוח');
   fixedCourier = new HelperId(this.context, "משנע קבוע");
   courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
+  needsWork = new BoolColumn({ caption: 'צריך טיפול/מעקב' });
+  needsWorkUser = new HelperIdReadonly(this.context, 'צריך טיפול - מי עדכן');
+  needsWorkDate = new changeDate( 'צריך טיפול - מתי עודכן');
 
 
   courierAssignUserName = new StringColumn({

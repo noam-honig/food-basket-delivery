@@ -28,6 +28,8 @@ export class UpdateFamilyDialogComponent implements OnInit {
   async confirm() {
     await this.families.currentRow.save();
     this.dialogRef.close();
+    if (this.data)
+      this.data.onSave();
   }
 
   ngOnInit() {
@@ -39,5 +41,6 @@ export class UpdateFamilyDialogComponent implements OnInit {
 export interface UpdateFamilyInfo {
   f: Families,
   message?: string,
-  disableSave?: boolean
+  disableSave?: boolean,
+  onSave?: () => void
 }
