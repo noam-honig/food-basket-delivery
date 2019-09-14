@@ -76,9 +76,9 @@
 
 </div>
 <div *ngIf="families.currentRow">
-    <button *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="saveCurrentFamilies()"
+    <button [class.hide]="gridView" *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="saveCurrentFamilies()"
         [disabled]="!families.currentRow.wasChanged()" class="btn glyphicon glyphicon-ok btn-success"></button>
-    <button *ngIf="families.currentRow &&families.currentRow.wasChanged()"
+    <button [class.hide]="gridView" *ngIf="families.currentRow &&families.currentRow.wasChanged()"
         (click)="families.currentRow.reset();families.setCurrentRow(families.items[0]);"
         [disabled]="!families.currentRow.wasChanged()"
         class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
