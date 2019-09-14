@@ -5,6 +5,7 @@ import { HelperIdReadonly, HelperId } from "../helpers/helpers";
 import { Families, FamilyUpdateInfo } from "../families/families";
 import { Context, Entity, ServerContext, EntityClass } from "radweb";
 import { Roles } from "../auth/roles";
+import { FamilySourceId } from "../families/FamilySources";
 
 
 @EntityClass
@@ -22,6 +23,7 @@ export class NewsUpdate extends Entity<string> implements FamilyUpdateInfo {
   updateUser = new HelperIdReadonly(this.context, 'מי עדכן');
   courierComments = new StringColumn('הערות מסירה');
   needsWork = new BoolColumn({ caption: 'צריך טיפול/מעקב' });
+  familySource = new FamilySourceId(this.context, {  caption: 'גורם מפנה' });
   updateType = new NumberColumn();
   constructor(private context: Context) {
     super({
@@ -31,7 +33,7 @@ export class NewsUpdate extends Entity<string> implements FamilyUpdateInfo {
       dbName: () => {
         let f = new Families(context);
         var sql = new SqlBuilder();
-        let cols = [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser, f.courierComments,f.needsWork];
+        let cols = [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser, f.courierComments,f.needsWork,f.familySource];
         return sql.entityDbNameUnion({
           select: () => [...cols,
           sql.columnWithAlias(f.deliveryStatusDate, this.updateTime),

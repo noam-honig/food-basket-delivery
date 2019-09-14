@@ -1,9 +1,14 @@
 <button mat-mini-fab style="margin-bottom:5px" (click)="refresh()">
   <mat-icon>refresh</mat-icon>
 </button>
-<select class="form-control" [(ngModel)]="currentFilter" (change)="filterChange()">
-  <option *ngFor="let l of filters" [ngValue]="l">{{l.name}}</option>
+<div style="display:flex">
+<select class="form-control" [(ngModel)]="filters.currentFilter" (change)="filterChange()">
+  <option *ngFor="let l of filters.filters" [ngValue]="l">{{l.name}}</option>
 </select>
+<select class="form-control" [(ngModel)]="filters.currentFamilySource" (change)="filterChange()">
+    <option *ngFor="let l of familySources" [ngValue]="l.id">{{l.name}}</option>
+  </select>
+</div>
 <mat-card *ngFor="let n of news">
   <mat-card-header>
 

@@ -36,6 +36,7 @@ import { SelectFamilyComponent } from './select-family/select-family.component';
 import { ImportFromExcelComponent } from './import-from-excel/import-from-excel.component';
 
 import { NewsComponent } from './news/news.component';
+import { NewsFilterService } from "./news/news-filter-service";
 
 
 import { SelectService } from './select-popup/select-service';
@@ -123,7 +124,7 @@ import { HelperAssignmentComponent } from './helper-assignment/helper-assignment
     DialogService,
     SelectService,
     TranslatePipe,
-    
+    NewsFilterService,
     AuthService
     
   ],
