@@ -57,6 +57,7 @@ import { QuickAddFamilyComponent } from './quick-add-family/quick-add-family.com
 import { ScrollDispatchModule } from '@angular/cdk/scrolling';
 import { TranslatePipe } from './translate';
 import { SelectCompanyComponent } from './select-company/select-company.component';
+import { HelperAssignmentComponent } from './helper-assignment/helper-assignment.component';
 
 
 
@@ -102,7 +103,8 @@ import { SelectCompanyComponent } from './select-company/select-company.componen
     CreateBackupExcelFileComponent,
     QuickAddFamilyComponent,
     TranslatePipe,
-    SelectCompanyComponent
+    SelectCompanyComponent,
+    HelperAssignmentComponent
     
   ],
   imports: [
@@ -134,7 +136,7 @@ import { SelectCompanyComponent } from './select-company/select-company.componen
     InputAreaComponent,
     UpdateFamilyDialogComponent,PreviewFamilyComponent,
     SelectCompanyComponent,
-    QuickAddFamilyComponent,
+    QuickAddFamilyComponent,HelperAssignmentComponent,
     UpdateCommentComponent,UpdateGroupDialogComponent]
 })
 export class AppModule { }

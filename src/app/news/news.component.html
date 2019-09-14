@@ -1,17 +1,25 @@
 <button mat-mini-fab style="margin-bottom:5px" (click)="refresh()">
   <mat-icon>refresh</mat-icon>
 </button>
-<select class="form-control" [(ngModel)]="currentFilter" (change)="filterChange()" >
-    <option *ngFor="let l of filters"  [ngValue]="l" >{{l.name}}</option>
-  </select>
+<select class="form-control" [(ngModel)]="currentFilter" (change)="filterChange()">
+  <option *ngFor="let l of filters" [ngValue]="l">{{l.name}}</option>
+</select>
 <mat-card *ngFor="let n of news">
   <mat-card-header>
 
-    <div mat-card-avatar class="example-header-image"> <mat-icon>{{icon(n)}}</mat-icon></div>
-    
-    <mat-card-title class="newsHeader"> {{n.describe()}}<div style="color: darkorange" *ngIf="n.needsWork.value">צריך טיפול</div></mat-card-title>
-    <mat-card-subtitle>{{n.updateTime.relativeDateName()}}, עודכן על ידי {{n.updateUser.getValue()}} <br><a (click)="updateFamily(n)">{{'עדכן פרטי משפחה'|translate}}</a></mat-card-subtitle>
+    <div mat-card-avatar class="example-header-image">
+      <mat-icon>{{icon(n)}}</mat-icon>
+    </div>
+
+    <mat-card-title class="newsHeader"> {{n.describe()}}<div style="color: darkorange" *ngIf="n.needsWork.value" (click)="cancelNeedWork(n)" >צריך
+        טיפול</div>
+    </mat-card-title>
+    <mat-card-subtitle>{{n.updateTime.relativeDateName()}}, עודכן על ידי {{n.updateUser.getValue()}}
+      <br><a (click)="updateFamily(n)">{{'עדכן פרטי משפחה'|translate}}</a>
+      <br *ngIf="n.courier.value"><a (click)="showHelper(n)"  *ngIf="n.courier.value">{{'הצג שיוך משפחות ל'|translate}}{{n.courier.getValue()}} </a>
+    </mat-card-subtitle>
 
   </mat-card-header>
 </mat-card>
-<button mat-raised-button color="primary" *ngIf="this.news.length==this.newsRows" (click)="moreNews()">עוד חדשות</button>
+<button mat-raised-button color="primary" *ngIf="this.news.length==this.newsRows" (click)="moreNews()">עוד
+  חדשות</button>

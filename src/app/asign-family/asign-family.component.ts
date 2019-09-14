@@ -111,28 +111,35 @@ export class AsignFamilyComponent implements OnInit {
 
     }
     moveBasktesFromOtherHelper() {
-        SelectHelperComponent.dialog(this.matDialog,{
-            filter:h => h.deliveriesInProgress.isGreaterOrEqualTo(1),
-            hideRecent:true,
-            onSelect:async h => {
+        SelectHelperComponent.dialog(this.matDialog, {
+            filter: h => h.deliveriesInProgress.isGreaterOrEqualTo(1),
+            hideRecent: true,
+            onSelect: async h => {
                 if (h) {
-                    let families =await  this.context.for(Families).find({where:f=>f.courier.isEqualTo(h.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))});
-                    this.dialog.YesNoQuestion("להעביר "+families.length+translate(" משפחות מ")+'"'+h.name.value+'"'+ " למתנדב "+'"'+this.name+'"',async ()=>{
-                            await this.busy.doWhileShowingBusy(async ()=>{
-                                await this.verifyHelperExistance();
-                                for (const f of families) {
-                                    f.courier.value = this.id;
-                                    await f.save();
-                                }
-                                await this.familyLists.reload();
-                                this.doRefreshRoute();
-                            });
+                    let families = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(h.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
+                    this.dialog.YesNoQuestion("להעביר " + families.length + translate(" משפחות מ") + '"' + h.name.value + '"' + " למתנדב " + '"' + this.name + '"', async () => {
+                        await this.busy.doWhileShowingBusy(async () => {
+                            await this.verifyHelperExistance();
+                            for (const f of families) {
+                                f.courier.value = this.id;
+                                await f.save();
+                            }
+                            await this.familyLists.reload();
+                            this.doRefreshRoute();
+                        });
                     });
-        }}});
-        
-        
-    }
+                }
+            }
+        });
 
+
+    }
+    showHelperInput = true;
+    specificToHelper(h: Helpers) {
+        this.showHelperInput = false;
+        this.phone = h.phone.value;
+         this.searchPhone();
+    }
     lastRefreshRoute = Promise.resolve();
     useGoogleOptimization = true;
     doRefreshRoute() {
@@ -146,7 +153,7 @@ export class AsignFamilyComponent implements OnInit {
                     }
 
                 })));
- 
+
     }
     smsSent() {
         this.dialog.Info("הודעת SMS נשלחה ל" + this.name);
@@ -239,7 +246,7 @@ export class AsignFamilyComponent implements OnInit {
                 }
             };
         this.context.for(Groups).find().then(g => this.groups = g);
-        if (!environment.production) {
+        if (!environment.production&&false) {
             this.phone = '0507330590';
             await this.searchPhone();
         }

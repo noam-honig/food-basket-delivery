@@ -1,15 +1,15 @@
 <div class="myDiv">
-  <h4 class="no-print">
+  <h4 class="no-print" *ngIf="showHelperInput">
     פרטי המשנע
   </h4>
-  <div class="line-container form-control no-print">
+  <div class="line-container form-control no-print" *ngIf="showHelperInput">
     <div class="input-same-line">
       <input placeholder="מספר הטלפון של המשנע" [(ngModel)]="phone" (input)="searchPhone()" type="tel">
     </div>
     <mat-icon matSuffix (click)="clearHelperInfo()">clear</mat-icon>
     <mat-icon matSuffix (click)="findHelper()">search</mat-icon>
   </div>
-  <div class="name-div" *ngIf="phone&& phone.length==10">
+  <div class="name-div" *ngIf="phone&& phone.length==10&&showHelperInput" >
     <div class="line-container form-control no-print">
       <div class="input-same-line">
         <input placeholder="שם המשנע" [(ngModel)]="name">
@@ -28,7 +28,7 @@
   <span *ngIf="!name" class="help no-print">אנא הזיני את הטלפון של המשנע ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים
     לשייך</span>
   <span *ngIf="name&&name.length>=2">
-    <h4 class="no-print">
+    <h4 class="no-print"  *ngIf="showHelperInput">
       פרטי המשלוח
     </h4>
     <div class="no-print">
