@@ -39,7 +39,11 @@
                 </div>
             </div>
         </div>
+        <h4>הטלפון ממנו יצא הSMS</h4>
+        כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את המשפחות ולחץ על הכפתור שלח SMS.
+        ניתן להגדיר כאן שם חלופי וטלפון חלופי
         <data-area [settings]="settingsMore"></data-area>
+
 
 
 
@@ -92,20 +96,35 @@
             </mat-panel-title>
 
         </mat-expansion-panel-header>
+        
+        
         <table>
-            <tr *ngFor="let p of helpPhones; let i = index">
-                <td>{{i+1}}.</td>
-                <td> <select [(ngModel)]="p.option">
+            <tr *ngFor="let p of helpPhones; let i = index" style="border-bottom: solid;
+            border-bottom-width: thin;
+            border-bottom-color: lightgray;">
+                <td style=" vertical-align: top;
+                padding: 9px;padding-top:18px;">{{i+1}}.</td>
+                <td style="    padding-bottom: 9px;padding-top:9px;">
+                    <select [(ngModel)]="p.option" class="form-control">
                         <option *ngFor="let c of phoneOptions" [ngValue]="c">{{c.name}}</option>
-                    </select></td>
-                <td><button (click)="move(p,-1)" *ngIf="i>0">up</button></td>
-                <td><button (click)="move(p,1)" *ngIf="i<helpPhones.length-1">down</button></td>
-                <td><button (click)="delete(p)">delete</button></td>
-                <td> <input [(ngModel)]="p.name" placeholder="שם" *ngIf="showNameAndPhone(p)"></td>
-                <td> <input [(ngModel)]="p.phone" input="tel" placeholder="טלפון" *ngIf="showNameAndPhone(p)"></td>
+                    </select>
+                    <input [(ngModel)]="p.name" placeholder="שם" *ngIf="showNameAndPhone(p)" class="form-control">
+                    <input [(ngModel)]="p.phone" input="tel" placeholder="טלפון" *ngIf="showNameAndPhone(p)"
+                        class="form-control">
+                </td>
+                <td><button mat-icon-button (click)="delete(p)">
+                    <mat-icon>delete</mat-icon>
+                </button></td>
+                <td><button mat-icon-button (click)="move(p,-1)" *ngIf="i>0">
+                        <mat-icon>arrow_drop_up</mat-icon>
+                    </button></td>
+                <td><button mat-icon-button (click)="move(p,1)" *ngIf="i<helpPhones.length-1">
+                        <mat-icon>arrow_drop_down</mat-icon>
+                    </button></td>
+              
             </tr>
         </table>
-        <button (click)="addPhoneOption()">add</button>
+        <button (click)="addPhoneOption()"  mat-icon-button ><mat-icon>add</mat-icon></button>
     </mat-expansion-panel>
     <mat-expansion-panel>
         <mat-expansion-panel-header>

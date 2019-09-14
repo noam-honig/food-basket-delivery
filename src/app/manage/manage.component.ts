@@ -4,7 +4,7 @@ import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
 
 import { SendSmsAction } from '../asign-family/send-sms-action';
-import { ApplicationSettings,PhoneItem,PhoneOption } from './ApplicationSettings';
+import { ApplicationSettings, PhoneItem, PhoneOption } from './ApplicationSettings';
 
 
 import { Context, IdEntity, IdColumn, StringColumn, EntityClass } from 'radweb';
@@ -27,10 +27,10 @@ export class ManageComponent implements OnInit {
   }
 
   wasChange() {
-    return this.settings.currentRow && this.images.currentRow && (this.settings.currentRow.wasChanged() || this.images.currentRow.wasChanged()||this.settings.currentRow.phoneStrategy.originalValue!=this.serializePhones());
+    return this.settings.currentRow && this.images.currentRow && (this.settings.currentRow.wasChanged() || this.images.currentRow.wasChanged() || this.settings.currentRow.phoneStrategy.originalValue != this.serializePhones());
   }
   save() {
-    this.settings.currentRow.phoneStrategy.value  = this.serializePhones();
+    this.settings.currentRow.phoneStrategy.value = this.serializePhones();
     this.settings.currentRow.save();
     this.images.currentRow.save();
   }
@@ -102,20 +102,11 @@ export class ManageComponent implements OnInit {
     columnSettings: s =>
       [
         s.helpText,
-        s.helpPhone,
-        {
-          caption: '',
-          getValue: s => {
-            if (!s.helpText.value) {
-              return 'מכיוון שלא הוגדר שם בשדה ' + s.helpText.caption + ', למשנע יוצג השם של מי ששייך אותו והטלפון שלו ';
-            }
-            return '';
-          }
-        },
-        s.defaultStatusType.getColumn()
+        s.helpPhone
       ]
 
   });
+
 
   settingsLogo = this.settings.addArea({
     columnSettings: s => [s.logoUrl]
@@ -141,7 +132,7 @@ export class ManageComponent implements OnInit {
   });
   prefereces = this.settings.addArea({
     columnSettings: s => [
-
+      s.defaultStatusType.getColumn(),
       s.showLeftThereButton,
       s.showCompanies,
       s.forSoldiers

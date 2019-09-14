@@ -20,8 +20,8 @@ export class ApplicationSettings extends Entity<number>  {
   commentForProblem = new StringColumn('הודעה למשנע כאשר יש בעיה');
   messageForDoneDelivery = new StringColumn(translate('הודעה למשנע כאשר סיים את כל המשפחות'));
 
-  helpText = new StringColumn('למי המשנע מתקשר כשיש לו בעיה (שם)');
-  helpPhone = new PhoneColumn('טלפון עזרה למשנע');
+  helpText = new StringColumn('שם חלופי');
+  helpPhone = new PhoneColumn('טלפון חלופי');
   phoneStrategy = new StringColumn();
   getPhoneStrategy(): PhoneItem[] {
     try {
