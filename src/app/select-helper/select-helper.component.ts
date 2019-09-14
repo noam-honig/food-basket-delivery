@@ -1,12 +1,13 @@
 import { Component, OnInit, Inject } from '@angular/core';
 
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { Helpers } from '../helpers/helpers';
 import { Context } from 'radweb';
 import { FilterBase, FindOptionsPerEntity } from 'radweb';
 
 import { BusyService } from 'radweb';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 
 @Component({
   selector: 'app-select-helper',
@@ -31,11 +32,11 @@ export class SelectHelperComponent implements OnInit {
   clearHelper() {
     this.select(undefined);
   }
-  
+
 
   findOptions = {
     orderBy: h => [h.name], limit: 25
-  } as FindOptionsPerEntity<Helpers>;
+  } as FindOptionsPerEntity<HelpersAndStats>;
   async ngOnInit() {
 
 
@@ -47,7 +48,7 @@ export class SelectHelperComponent implements OnInit {
       return r;
     };
 
-    if (Helpers.recentHelpers.length == 0)
+    if (Helpers.recentHelpers.length == 0 || this.data.hideRecent)
       this.getHelpers();
     else {
       this.filteredHelpers = [...Helpers.recentHelpers];
@@ -61,12 +62,12 @@ export class SelectHelperComponent implements OnInit {
     this.getHelpers();
   }
   async getHelpers() {
-    
-    await this.busy.donotWait(async () =>{
-      this.filteredHelpers = await this.context.for(Helpers).find(this.findOptions);
+
+    await this.busy.donotWait(async () => {
+      this.filteredHelpers = await this.context.for(HelpersAndStats).find(this.findOptions);
       this.showingRecentHelpers = false;
     });
-    
+
   }
   doFilter() {
     if (this.searchString.trim() != this.lastFilter) {
@@ -75,7 +76,7 @@ export class SelectHelperComponent implements OnInit {
     }
 
   }
-  showCompany(){
+  showCompany() {
     return ApplicationSettings.get(this.context).showCompanies.value;
   }
   selectFirst() {
@@ -84,15 +85,21 @@ export class SelectHelperComponent implements OnInit {
   }
   select(h: Helpers) {
     this.data.onSelect(h);
-    if (h&&!h.isNew())
+    if (h && !h.isNew())
       Helpers.addToRecent(h);
     this.dialogRef.close();
+  }
+  static dialog(dialog: MatDialog, options: SelectHelperInfo) {
+
+    dialog.open(SelectHelperComponent, {
+      data: options
+    });
   }
 
 }
 export interface SelectHelperInfo {
-
+  hideRecent?: boolean,
   onSelect: (selectedValue: Helpers) => void,
-  filter?: (helper: Helpers) => FilterBase
+  filter?: (helper: HelpersAndStats) => FilterBase
 
 }

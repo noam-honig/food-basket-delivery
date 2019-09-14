@@ -15,8 +15,11 @@ export class UserFamiliesList {
         this.map.userClickedOnFamilyOnMap = (f) => this.userClickedOnFamilyOnMap(f);
     }
     startAssignByMap(city: string, group: string) {
-        this.map.loadPotentialAsigment(city, group);
-        this.mapElementOrder = -1;
+        if (this.mapElementOrder == -1) { this.mapElementOrder = 1; }
+        else {
+            this.map.loadPotentialAsigment(city, group);
+            this.mapElementOrder = -1;
+        }
     }
     mapElementOrder = 0;
     constructor(private context: Context) { }

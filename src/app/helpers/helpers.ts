@@ -1,5 +1,5 @@
 
-import { ColumnSetting, Entity, FilterBase, NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, DecorateDataColumnSettings } from "radweb";
+import { ColumnSetting, Entity, FilterBase, NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, DecorateDataColumnSettings, EntityOptions } from "radweb";
 import { changeDate, HasAsyncGetTheValue, } from '../model-shared/types';
 import { SelectServiceInterface } from '../select-popup/select-service-interface';
 
@@ -13,9 +13,9 @@ import { SelectCompanyComponent } from "../select-company/select-company.compone
 @EntityClass
 export class Helpers extends IdEntity<HelperId>  {
 
-    constructor(private context: Context) {
+    constructor(private context: Context,options?: EntityOptions | string) {
 
-        super(new HelperId(context), {
+        super(new HelperId(context),options?options: {
             name: "Helpers",
             allowApiRead: true,
             allowApiDelete: context.isSignedIn(),

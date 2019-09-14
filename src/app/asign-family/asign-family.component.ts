@@ -29,6 +29,7 @@ import { SendSmsAction } from './send-sms-action';
 import { translate } from '../translate';
 import { MatDialog } from '@angular/material';
 import { SelectCompanyComponent } from '../select-company/select-company.component';
+import { SelectHelperComponent } from '../select-helper/select-helper.component';
 
 
 @Component({
@@ -108,6 +109,28 @@ export class AsignFamilyComponent implements OnInit {
                     await this.refreshBaskets()));
         this.doRefreshRoute();
 
+    }
+    moveBasktesFromOtherHelper() {
+        SelectHelperComponent.dialog(this.matDialog,{
+            filter:h => h.deliveriesInProgress.isGreaterOrEqualTo(1),
+            hideRecent:true,
+            onSelect:async h => {
+                if (h) {
+                    let families =await  this.context.for(Families).find({where:f=>f.courier.isEqualTo(h.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))});
+                    this.dialog.YesNoQuestion("להעביר "+families.length+translate(" משפחות מ")+'"'+h.name.value+'"'+ " למתנדב "+'"'+this.name+'"',async ()=>{
+                            await this.busy.doWhileShowingBusy(async ()=>{
+                                await this.verifyHelperExistance();
+                                for (const f of families) {
+                                    f.courier.value = this.id;
+                                    await f.save();
+                                }
+                                await this.familyLists.reload();
+                                this.doRefreshRoute();
+                            });
+                    });
+        }}});
+        
+        
     }
 
     lastRefreshRoute = Promise.resolve();

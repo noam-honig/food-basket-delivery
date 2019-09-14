@@ -9,7 +9,7 @@
     <mat-icon matSuffix (click)="clearHelperInfo()">clear</mat-icon>
     <mat-icon matSuffix (click)="findHelper()">search</mat-icon>
   </div>
-  <div class="name-div"*ngIf="phone&& phone.length==10">
+  <div class="name-div" *ngIf="phone&& phone.length==10">
     <div class="line-container form-control no-print">
       <div class="input-same-line">
         <input placeholder="שם המשנע" [(ngModel)]="name">
@@ -79,12 +79,14 @@
       <button mat-button [matMenuTriggerFor]="basketMenu" mat-raised-button color="primary" class="sal-button"
         *ngIf="baskets.length">אפשרויות נוספות...</button>
       <mat-menu #basketMenu="matMenu">
+        <button mat-menu-item (click)="addSpecial()"
+          *ngIf="specialFamilies">{{'משפחות מיוחדות - '|translate}}{{specialFamilies}}</button>
         <button mat-menu-item (click)="addSpecific()">{{'בחירת משפחה לפי שם'|translate}}</button>
         <button mat-menu-item (click)="assignOnMap()">{{'בחירת משפחה על המפה'|translate}}</button>
         <button mat-menu-item (click)="saveHelper()"
           *ngIf="showSave()">{{'שמור פרטי מתנדב ועבור למתנדב הבא'|translate}}</button>
-        <button mat-menu-item (click)="addSpecial()"
-          *ngIf="specialFamilies">{{'משפחות מיוחדות - '|translate}}{{specialFamilies}}</button>
+          <button mat-menu-item (click)="moveBasktesFromOtherHelper()">{{'העבר משפחות ממתנדב אחר'|translate}}</button>
+
       </mat-menu>
 
       <h4 class="no-baskets" *ngIf="!baskets.length">לא נמצאו סלים מתאימים</h4>

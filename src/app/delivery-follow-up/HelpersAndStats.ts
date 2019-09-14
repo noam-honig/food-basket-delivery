@@ -15,17 +15,8 @@ function log(s: string) {
     return s;
 }
 @EntityClass
-export class HelpersAndStats extends IdEntity<HelperId> {
-    name = new StringColumn({
-        caption: "שם",
-        onValidate: () => {
-            if (!this.name.value || this.name.value.length < 3)
-                this.name.error = 'השם קצר מידי';
-        }
-    });
-    phone = new StringColumn({ caption: "טלפון", inputType: 'tel' });
-    smsDate = new changeDate('מועד משלוח SMS');
-    reminderSmsDate = new changeDate('מועד משלוח תזכורת SMS');
+export class HelpersAndStats extends Helpers {
+  
     deliveriesInProgress = new NumberColumn({
         dbReadOnly: true,
         caption: 'משפחות מחכות'
@@ -42,7 +33,7 @@ export class HelpersAndStats extends IdEntity<HelperId> {
         dbReadOnly: true
     });
     constructor(context: Context) {
-        super(new HelperId(context), {
+        super(context, {
             name: "helpersAndStats",
             allowApiRead: Roles.admin,
             dbName: () => {
