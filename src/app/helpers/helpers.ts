@@ -1,6 +1,6 @@
 
 import { ColumnSetting, Entity, FilterBase, NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, DecorateDataColumnSettings, EntityOptions } from "radweb";
-import { changeDate, HasAsyncGetTheValue, } from '../model-shared/types';
+import { changeDate, HasAsyncGetTheValue, PhoneColumn, } from '../model-shared/types';
 import { SelectServiceInterface } from '../select-popup/select-service-interface';
 
 import { routeStats } from '../asign-family/asign-family.component';
@@ -53,7 +53,7 @@ export class Helpers extends IdEntity<HelperId>  {
                 this.name.error = 'השם קצר מידי';
         }
     });
-    phone = new StringColumn({ caption: "טלפון", inputType: 'tel' });
+    phone = new PhoneColumn({ caption: "טלפון", inputType: 'tel' });
     realStoredPassword = new StringColumn({
         dbName: 'password',
         includeInApi: false
