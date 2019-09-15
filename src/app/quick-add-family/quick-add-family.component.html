@@ -1,18 +1,21 @@
 <div class="myDiv">
 
-  <h3 mat-dialog-header >{{'הוספת משפחה חדשה'|translate}}</h3>
-  
+  <h3 mat-dialog-header>{{'הוספת משפחה חדשה'|translate}}</h3>
+
   <div mat-dialog-content>
     <div class="dialog-content-fixer">
       <data-area [settings]="area"></data-area>
     </div>
   </div>
   <mat-dialog-actions>
-    <button mat-raised-button color="warning" (click)="cancel()" >
+    <button mat-raised-button color="warning" (click)="cancel()">
       בטל
     </button>
-    <button mat-raised-button color="primary" (click)="confirm()" >
-      שמור
+    <button mat-raised-button color="accent" (click)="confirm()">
+      הוסף
+    </button>
+    <button mat-raised-button color="primary" (click)="showExistingFamily()" *ngIf="getExistingFamily()">
+      {{'הצג פרטי משפחה קיימת'|translate}} {{getExistingFamily().name}}
     </button>
 
   </mat-dialog-actions>

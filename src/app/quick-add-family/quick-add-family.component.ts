@@ -1,9 +1,11 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Families } from '../families/families';
+import { Families, duplicateFamilyInfo } from '../families/families';
 import { Context, DataAreaSettings } from 'radweb';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { DialogService } from '../select-popup/dialog';
+import { SelectService } from '../select-popup/select-service';
 
 @Component({
   selector: 'app-quick-add-family',
@@ -15,10 +17,11 @@ export class QuickAddFamilyComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<any>,
     @Inject(MAT_DIALOG_DATA) public data: QuickAddParameters,
-    private context: Context
+    private context: Context,
+    private select: SelectService
   ) {
     this.f.name.value = data.searchName;
-    this.f.deliverStatus.value =  ApplicationSettings.get(this.context).defaultStatusType.value;;
+    this.f.deliverStatus.value = ApplicationSettings.get(this.context).defaultStatusType.value;;
   }
   f: Families = this.context.for(Families).create();
   area = new DataAreaSettings<Families>(
@@ -52,6 +55,21 @@ export class QuickAddFamilyComponent implements OnInit {
   }
   static dialog(dialog: MatDialog, data: QuickAddParameters) {
     let r = dialog.open(QuickAddFamilyComponent, { data });
+  }
+  getExistingFamily() {
+    let f: duplicateFamilyInfo = undefined;
+    for (const t of this.f.duplicateFamilies) {
+      if (f == undefined)
+        f = t;
+      if (f.phone1 || f.phone2 || f.tz || f.tz2)
+        return t;
+    }
+    return f;
+
+  }
+  async showExistingFamily() {
+    let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(this.getExistingFamily().id));
+    this.select.updateFamiliy({ f: f, message: 'נוסף ב' + f.createDate.displayValue+' ע"י '+( await  f.createUser.getValue()) });
   }
 
 
