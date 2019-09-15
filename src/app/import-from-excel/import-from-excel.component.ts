@@ -835,6 +835,15 @@ export class ImportFromExcelComponent implements OnInit {
 
         }
     }
+    moveFromErrorToAdd(r:excelRowInfo){
+        this.dialog.YesNoQuestion(translate("להעביר את משפחת ")+r.name+ translate(" למשפחות להוספה?"),()=>{
+            let x= this.errorRows.indexOf(r);
+            this.errorRows.splice(x,1);
+            this.newRows.push(r);
+            this.newRows.sort((a,b)=>a.rowInExcel-b.rowInExcel);
+        });
+        
+    }
 
     async testImport() {
         await this.iterateExcelFile(false);
