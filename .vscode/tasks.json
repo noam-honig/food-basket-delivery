@@ -194,6 +194,16 @@
             "type": "npm",
             "script": "publish-to-krvtj",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-good-people",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-ladyc",
+            "problemMatcher": []
         }
     ]
 }

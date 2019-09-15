@@ -34,6 +34,8 @@
     "publish-to-tikvabasket": "git push tikvabasket master -f",
     "publish-to-hesed": "git push hesed master -f",
     "publish-to-chasdei": "git push chasdei master -f",
+    "publish-to-good-people":"git push good-people master -f",
+    "publish-to-ladyc": "git push ladyc master -f",
     "copy-db": "heroku pg:copy hugmoms::DATABASE_URL hugmoms2::DATABASE_URL -a hugmoms2",
     "test": "ng test",
     "lint": "ng lint",
