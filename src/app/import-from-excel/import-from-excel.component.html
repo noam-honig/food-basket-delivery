@@ -216,7 +216,7 @@
 
                                         <ul *ngIf="i.duplicateFamilyInfo&&i.duplicateFamilyInfo.length>=1">
                                             <li *ngFor="let f of i.duplicateFamilyInfo">
-                                                {{f.name}} - {{displayDupInfo(f)}} - <a (click)="updateFamily(f)">עדכן פרטי משפחה</a>
+                                                {{f.name}} - {{displayDupInfo(f)}} - <a (click)="updateFamily(f)">{{'הצג פרטי משפחה'|translate}}</a>
                                             </li>
                                         </ul>
                                         <a (click)="moveFromErrorToAdd(i)">העבר למשפחות להוספה</a>
