@@ -21,6 +21,7 @@ export class DeliveryStats {
     late = new DeliveryStatistic('מתעכבים', f => f.deliveriesInProgress.isGreaterOrEqualTo(1).and(f.gotSms.isEqualTo(true)).and(f.smsDate.isLessOrEqualTo(new Date(new Date().valueOf() - 3600000 * 1.5))), colors.yellow);
     delivered = new DeliveryStatistic('סיימו', f => f.deliveriesInProgress.isEqualTo(0).and(f.deliveriesWithProblems.isEqualTo(0)).and(f.allFamilies.isGreaterOrEqualTo(1)), colors.green);
     problem = new DeliveryStatistic('בעיות', f => f.deliveriesWithProblems.isGreaterOrEqualTo(1), colors.red);
+    
 
     async getData() {
         let r = await DeliveryStats.getTheStats();

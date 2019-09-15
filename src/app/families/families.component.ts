@@ -56,17 +56,17 @@ export class FamiliesComponent implements OnInit {
     statusColumn: ColumnSetting<Families>;
     deliverySummary: ColumnSetting<Families>;
     scrollingSubscription: Subscription;
-    showHoverButton:boolean = false;
+    showHoverButton: boolean = false;
     constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context, private selectService: SelectService, private matDialog: MatDialog,
         public scroll: ScrollDispatcher) {
         this.doTest();
         this.scrollingSubscription = this.scroll
             .scrolled()
             .subscribe((data: CdkScrollable) => {
-                let val = this.testing.nativeElement.getBoundingClientRect().y<0;
-                if (val!=this.showHoverButton)
-                    this.dialog.zone.run(()=>this.showHoverButton = val);
-                
+                let val = this.testing.nativeElement.getBoundingClientRect().y < 0;
+                if (val != this.showHoverButton)
+                    this.dialog.zone.run(() => this.showHoverButton = val);
+
             });
         let y = dialog.refreshStatusStats.subscribe(() => {
             this.refreshStats();
@@ -77,7 +77,7 @@ export class FamiliesComponent implements OnInit {
         if (dialog.isScreenSmall())
             this.gridView = false;
     }
-    @ViewChild("myRef") testing:ElementRef;
+    @ViewChild("myRef") testing: ElementRef;
     filterBy(s: FaimilyStatistics) {
         this.families.get({
             where: s.rule,
@@ -266,7 +266,7 @@ export class FamiliesComponent implements OnInit {
 
         confirmDelete: (h, yes) => this.dialog.confirmDelete(translate('משפחת ') + h.name.value, yes),
         columnSettings: families => {
-            return [
+            let r = [
 
                 this.familyNameColumn = {
                     column: families.name,
@@ -352,6 +352,10 @@ export class FamiliesComponent implements OnInit {
                 families.needsWorkDate,
                 families.needsWorkUser
             ];
+            if (!DeliveryStatus.usingSelfPickupModule) {
+                r = r.filter(x => x != families.defaultSelfPickup);
+            }
+            return r;
         },
         rowButtons: [
             {
@@ -431,7 +435,7 @@ export class FamiliesComponent implements OnInit {
         fourthColumn: () => this.groupsColumn
     };
     groupsTotals: statsOnTab = {
-        name:translate('כל המשפחות לפי קבוצות'),
+        name: translate('כל המשפחות לפי קבוצות'),
         rule: f => f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList),
         stats: [
             this.stats.ready,
@@ -473,7 +477,7 @@ export class FamiliesComponent implements OnInit {
         },
         {
             rule: f => undefined,
-            name: translate( 'כל המשפחות'),
+            name: translate('כל המשפחות'),
             stats: [
                 this.stats.currentEvent,
                 this.stats.notInEvent,

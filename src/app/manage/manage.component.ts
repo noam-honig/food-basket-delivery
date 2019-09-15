@@ -133,6 +133,7 @@ export class ManageComponent implements OnInit {
   prefereces = this.settings.addArea({
     columnSettings: s => [
       s.defaultStatusType.getColumn(),
+      s.usingSelfPickupModule,
       s.showLeftThereButton,
       s.showCompanies,
       s.defaultPrefixForExcelImport,

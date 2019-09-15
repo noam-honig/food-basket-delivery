@@ -8,7 +8,10 @@ import { ApplicationSettings } from './manage/ApplicationSettings';
 import { FamiliesComponent } from './families/families.component';
 import { Context, RouteHelperService, JwtSessionManager } from 'radweb';
 import { Roles } from './auth/roles';
-import { translate ,translationConfig} from './translate';
+import { translate, translationConfig } from './translate';
+import { DeliveryStats } from './delivery-follow-up/delivery-stats';
+import { SelfPickupComponent } from './self-pickup/self-pickup.component';
+import { DeliveryStatus } from './families/DeliveryStatus';
 
 
 
@@ -29,15 +32,16 @@ export class AppComponent {
     public dialog: DialogService,
     private helper: RouteHelperService,
     public context: Context) {
-      ApplicationSettings.getAsync(context).then(x=>{
-        translationConfig.activateTranslation = x.forSoldiers.value;
-      })
+    ApplicationSettings.getAsync(context).then(x => {
+      translationConfig.activateTranslation = x.forSoldiers.value;
+      DeliveryStatus.usingSelfPickupModule = x.usingSelfPickupModule.value;
+    })
 
     if (!window.location.hostname.toLocaleLowerCase().startsWith('hmey')) {
       this.toolbarColor = 'accent';
 
     }
-    
+
 
   }
 
@@ -62,7 +66,7 @@ export class AppComponent {
   }
   currentTitle() {
     if (this.activeRoute && this.activeRoute.snapshot && this.activeRoute.firstChild && this.activeRoute.firstChild.data && this.activeRoute.snapshot.firstChild.data.name)
-      return translate( this.activeRoute.snapshot.firstChild.data.name);
+      return translate(this.activeRoute.snapshot.firstChild.data.name);
     return ApplicationSettings.get(this.context).organisationName.value;
   }
   toolbarColor = 'primary';
@@ -74,6 +78,8 @@ export class AppComponent {
   }
   shouldDisplayRoute(route: Route) {
     if (!(route.path && route.path.indexOf(':') < 0 && route.path.indexOf('**') < 0))
+      return false;
+    if (!DeliveryStatus.usingSelfPickupModule && route.component == SelfPickupComponent)
       return false;
     return this.helper.canNavigateToRoute(route);
   }

@@ -8,6 +8,7 @@ import { FamilySources } from '../families/FamilySources';
 import { Context } from 'radweb';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DialogService } from '../select-popup/dialog';
+import { DeliveryStatus } from '../families/DeliveryStatus';
 
 @Component({
   selector: 'app-update-family',
@@ -75,7 +76,9 @@ export class UpdateFamilyComponent implements OnInit {
     });
 
     this.deliverInfo = this.families.addArea({
-      columnSettings: families => [
+      columnSettings: families =>{ 
+        
+        let r = [
         families.deliverStatus.getColumn(),
         families.internalComment,
         families.deliveryComments,
@@ -90,7 +93,11 @@ export class UpdateFamilyComponent implements OnInit {
 
         families.defaultSelfPickup,
         families.fixedCourier.getColumn(this.selectService)
-      ]
+      ];
+      if (!DeliveryStatus.usingSelfPickupModule)
+        r = r.filter(x=>x!=families.defaultSelfPickup);
+      return r;
+    }
     });
   }
   deliveryInfo(fd: FamilyDeliveries) {

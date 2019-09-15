@@ -2,6 +2,7 @@ import { ClosedListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnS
 import { ColumnOptions, DropDownItem } from "radweb";
 
 export class DeliveryStatus {
+  static usingSelfPickupModule: boolean;
   static IsAResultStatus(value: DeliveryStatus) {
     switch (value) {
       case this.Success:
@@ -58,6 +59,9 @@ export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
           caption: x.toString()
         } as DropDownItem
       });
+    if (!DeliveryStatus.usingSelfPickupModule) {
+      op = op.filter(x=>x.id!=DeliveryStatus.SelfPickup.id&&x.id!=DeliveryStatus.SuccessPickedUp.id);
+    }
     return {
       column: this,
       dropDown: {

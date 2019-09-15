@@ -218,6 +218,11 @@ export async function serverInit() {
             settings.dataStructureVersion.value = 7;
             await settings.save();
         }
+        if (settings.dataStructureVersion.value == 7) {
+            settings.usingSelfPickupModule.value = true;
+            settings.dataStructureVersion.value = 8;
+            await settings.save();
+        }
 
     } catch (error) {
         console.error(error);

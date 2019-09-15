@@ -83,7 +83,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   onTheWay = new statusClass('בדרך', 'https://maps.google.com/mapfiles/ms/micons/ltblue-dot.png', colors.blue);
   problem = new statusClass('בעיות', 'https://maps.google.com/mapfiles/ms/micons/red-pushpin.png', colors.red);
   success = new statusClass('הגיעו', 'https://maps.google.com/mapfiles/ms/micons/green-dot.png', colors.green);
-  statuses = [this.ready, this.selfPickup, this.onTheWay, this.success, this.problem];
+  statuses: statusClass[] = [];
   selectedStatus: statusClass;
   async refreshFamilies() {
     let families = await DistributionMap.GetFamiliesLocations();
@@ -163,7 +163,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.updateChart();
   }
   @RunOnServer({ allowed: Roles.admin })
-  static async GetFamiliesLocations(onlyPotentialAsignment?:boolean,city?: string, group?: string,context?: Context, directSql?: DirectSQL) {
+  static async GetFamiliesLocations(onlyPotentialAsignment?: boolean, city?: string, group?: string, context?: Context, directSql?: DirectSQL) {
     let f = new Families(context);
 
     let sql = new SqlBuilder();
@@ -173,9 +173,8 @@ export class DistributionMap implements OnInit, OnDestroy {
       from: f,
       where: () => {
         let where = [f.deliverStatus.isActiveDelivery().and(f.blockedBasket.isEqualTo(false))];
-        if (onlyPotentialAsignment)
-        {
-          where.push(f.readyFilter(city,group).and(f.special.isEqualTo(YesNo.No)));
+        if (onlyPotentialAsignment) {
+          where.push(f.readyFilter(city, group).and(f.special.isEqualTo(YesNo.No)));
         }
         return where;
       },
@@ -184,7 +183,7 @@ export class DistributionMap implements OnInit, OnDestroy {
 
     return r.rows.map(x => {
       return {
-        id: x[r.getcolumnNameAtIndex(0)] ,
+        id: x[r.getcolumnNameAtIndex(0)],
         lat: +x[r.getcolumnNameAtIndex(1)],
         lng: +x[r.getcolumnNameAtIndex(2)],
         status: +x[r.getcolumnNameAtIndex(3)],
@@ -197,7 +196,10 @@ export class DistributionMap implements OnInit, OnDestroy {
   @ViewChild('gmap') gmapElement: any;
   map: google.maps.Map;
   async ngOnInit() {
-
+    this.statuses.push(this.ready);
+    if (DeliveryStatus.usingSelfPickupModule)
+      this.statuses.push(this.selfPickup);
+    this.statuses.push(this.onTheWay, this.success, this.problem);
     this.test();
   }
   options: chart.ChartOptions = {
