@@ -31,7 +31,7 @@ export class HelperFamiliesComponent implements OnInit {
   @Output() assignSmsSent = new EventEmitter<void>();
   @Input() preview = false;
   ngOnInit() {
-    this.familyLists.setMap(this.map);
+    this.familyLists.setMap(this.map);//123
 
   }
   async cancelAssign(f: Families) {
