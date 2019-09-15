@@ -849,6 +849,10 @@ export class ImportFromExcelComponent implements OnInit {
         await this.iterateExcelFile(false);
 
     }
+    async updateFamily(i:duplicateFamilyInfo){
+        let f = await this.context.for(Families).findFirst(f=>f.id.isEqualTo(i.id));
+        this.select.updateFamiliy({f:f});
+    }
 }
 
 
