@@ -127,10 +127,13 @@ describe('AppComponent', () => {
 
   });
   it("test phones", () => {
-    expect(fixPhone("0507330590")).toBe("0507330590");
-    expect(fixPhone("507330590")).toBe("0507330590");
-    expect(fixPhone("036733059")).toBe("036733059");
-    expect(fixPhone("36733059")).toBe("036733059");
+    expect(fixPhone("0507330590","03")).toBe("0507330590");
+    expect(fixPhone("507330590","03")).toBe("0507330590");
+    expect(fixPhone("036733059","03")).toBe("036733059");
+    expect(fixPhone("36733059","03")).toBe("036733059");
+    expect(fixPhone("6733059","03")).toBe("036733059");
+    expect(fixPhone("733059","03")).toBe("733059");
+    
   });
 
 });

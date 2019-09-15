@@ -135,6 +135,7 @@ export class ManageComponent implements OnInit {
       s.defaultStatusType.getColumn(),
       s.showLeftThereButton,
       s.showCompanies,
+      s.defaultPrefixForExcelImport,
       s.forSoldiers
     ]
   });

@@ -283,7 +283,7 @@ export class ImportFromExcelComponent implements OnInit {
     async readLine(row: number): Promise<excelRowInfo> {
         let f = this.context.for(Families).create();
         f._disableAutoDuplicateCheck = true;
-        f.deliverStatus.value = ApplicationSettings.get(this.context).defaultStatusType.value;
+        f.deliverStatus.value = this.settings.defaultStatusType.value;
 
         let helper = new columnUpdateHelper(this.context, this.dialog);
         for (const c of this.excelColumns) {
@@ -342,9 +342,9 @@ export class ImportFromExcelComponent implements OnInit {
 
     f: Families;
     @ViewChild("stepper") stepper: MatStepper;
-
-    ngOnInit() {
-
+    settings: ApplicationSettings;
+    async ngOnInit() {
+        this.settings = await ApplicationSettings.getAsync(this.context);
 
 
 
@@ -522,18 +522,18 @@ export class ImportFromExcelComponent implements OnInit {
             columns: [this.f.phone1, this.f.phone2],
             updateFamily: async (v, f) => {
                 if (f.phone1.value && f.phone1.value.length > 0)
-                    updateCol(f.phone2, fixPhone(v));
+                    updateCol(f.phone2, fixPhone(v, this.settings.defaultPrefixForExcelImport.value));
                 else
-                    updateCol(f.phone1, fixPhone(v));
+                    updateCol(f.phone1, fixPhone(v, this.settings.defaultPrefixForExcelImport.value));
             },
             searchNames: ['טלפון נייד']
         });
-        for (const c of [this.f.phone1, this.f.phone2]) {
+        for (const c of [this.f.phone1, this.f.phone2,this.f.socialWorkerPhone1,this.f.socialWorkerPhone2]) {
             this.columns.push({
                 key: c.__getMemberName(),
                 name: c.caption,
                 columns: [c],
-                updateFamily: async (v, f) => updateCol(f.__getColumn(c), v)
+                updateFamily: async (v, f) => updateCol(f.__getColumn(c), fixPhone(v, this.settings.defaultPrefixForExcelImport.value))
             });
         }
 
@@ -548,9 +548,8 @@ export class ImportFromExcelComponent implements OnInit {
             this.f.floor,
             this.f.appartment,
             this.f.entrance,
-            this.f.socialWorker,
-            this.f.socialWorkerPhone1,
-            this.f.socialWorkerPhone2
+            this.f.socialWorker
+            
         ]);
         for (const col of [this.f.phone1Description,
         this.f.phone2Description,
@@ -684,7 +683,7 @@ export class ImportFromExcelComponent implements OnInit {
                 for (const iterator of collected) {
                     if (iterator.length > 1) {
                         for (const row of iterator) {
-                            row.error = translate( 'אותה משפחה באתר מתאימה למספר שורות באקסל: ') + iterator.map(x => x.rowInExcel.toString()).join(', ');
+                            row.error = translate('אותה משפחה באתר מתאימה למספר שורות באקסל: ') + iterator.map(x => x.rowInExcel.toString()).join(', ');
                             this.errorRows.push(row);
                             this.updateRows.splice(this.updateRows.indexOf(row), 1);
                         }
@@ -943,12 +942,14 @@ interface laterSteps {
     what: () => void
 }
 
-export function fixPhone(phone: string) {
+export function fixPhone(phone: string, defaultPrefix: string) {
     if (!phone)
         return phone;
     if (phone.startsWith('0'))
         return phone;
     if (phone.length == 8 || phone.length == 9)
         return '0' + phone;
+    if (phone.length == 7 && defaultPrefix && defaultPrefix.length > 0)
+        return defaultPrefix + phone;
     return phone;
 }

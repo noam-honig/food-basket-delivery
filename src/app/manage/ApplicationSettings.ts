@@ -49,7 +49,7 @@ export class ApplicationSettings extends Entity<number>  {
   forSoldiers = new BoolColumn('המערכת היא עבור חיילים לא משפחות');
   showCompanies = new BoolColumn('שמור מטעם איזה חברה הגיע המתנדב');
   showLeftThereButton = new BoolColumn('הצג למתנדב כפתור השארתי ליד הבית');
-
+  defaultPrefixForExcelImport = new StringColumn("קידומת טלפון ברירת מחדל בקליטה מאקסל");
   addressApiResult = new StringColumn();
   defaultStatusType = new DeliveryStatusColumn({
     caption: translate('סטטוס משלוח ברירת מחדל למשפחות חדשות')
