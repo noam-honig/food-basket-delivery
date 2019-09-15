@@ -1,28 +1,21 @@
-import { HelpersAndStats } from "../delivery-follow-up/HelpersAndStats";
-import { readFileSync, readFile } from "fs";
-import { ColumnHashSet, DateColumn } from "radweb";
+import { readFileSync } from "fs";
+import { ColumnHashSet } from "radweb";
 
 import { GetGeoInformation } from "../shared/googleApiHelpers";
 
 import { foreachEntityItem, foreachSync } from "../shared/utils";
 
 import { serverInit } from "./serverInit";
-import * as XLSX from 'xlsx';
+
 
 import { Families, parseAddress } from "../families/families";
-import { ServerContext, Context } from "../shared/context";
+import { ServerContext } from "radweb";
 import { Helpers } from "../helpers/helpers";
-import { debug, isString } from "util";
+import {  isString } from "util";
 import { FamilySources } from "../families/FamilySources";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { BasketType } from "../families/BasketType";
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { DeliveryStats } from "../delivery-follow-up/delivery-stats";
-import * as fetch from 'node-fetch';
-import { DeliveryHistoryComponent } from "../delivery-history/delivery-history.component";
-import { PostgresDataProvider } from "radweb-server-postgres";
-import { evilStatics } from "../auth/evil-statics";
-import { ActualDirectSQL } from "../auth/server-action";
 
 serverInit();
 let match = 0;
@@ -35,11 +28,6 @@ export async function DoIt() {
 
         let name = (await ApplicationSettings.getAsync(context)).organisationName.value;
         console.log(name);
-        await (<PostgresDataProvider>evilStatics.dataSource).doInTransaction(async ds => {
-            var r = await DeliveryHistoryComponent.getHelperHistoryInfo('2019-06-01', '2019-06-30', context, new ActualDirectSQL(ds));
-            console.log(r);
-            console.log('');
-        });
 
 
 
@@ -64,100 +52,8 @@ async function getGeolocationInfo() {
 
     });
 }
-async function ImportFromExcel() {
-
-    let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\מקבלי מזון.xls");
-    let report = [];
 
 
-    for (let sheetIndex = 0; sheetIndex < 1; sheetIndex++) {
-        const element = wb.SheetNames[sheetIndex];
-        let s = wb.Sheets[element];
-        let o = XLSX.utils.sheet_to_json(s);
-        let context = new ServerContext();
-        let found = true;
-        let i = 0;
-        await foreachSync(o, async r => {
-            try {
-
-                let get = x => {
-                    if (!r[x])
-                        return '';
-                    return r[x];
-                };
-                await readMerkazMazonFamily2(context, r, get, '5_20_2019 ' + element, (name, column, value, oldValue) => {
-                    report.push({ name, column, value, oldValue });
-                });
-
-            }
-            catch (err) {
-                console.error(err, r);
-            }
-
-        });
-        console.log('match ', match);
-    }
-    let reportExcel = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(reportExcel, XLSX.utils.json_to_sheet(report));
-    XLSX.writeFile(reportExcel, "c:/temp/report.xlsx");
-
-
-
-
-}
-async function ImportFromExcelBasedOnLetters() {
-
-    let wb = XLSX.readFile("C:\\Users\\Yoni\\Downloads\\רשימה לנועם.xlsx");
-    let context = new ServerContext();
-    for (let sheetIndex = 0; sheetIndex < 1; sheetIndex++) {
-        const element: string = wb.SheetNames[sheetIndex];
-        let s = wb.Sheets[element];
-        let sRef = s["!ref"];
-        let rows = +sRef.substring(sRef.indexOf(':') + 2, 10).replace(/\D/g, '');
-        if (!rows) {
-            debugger;
-        }
-
-        for (let row = 1; row < rows; row++) {
-            let get = x => {
-                let val = s[x + row];
-                if (!val)
-                    return '';
-                return val.w;
-            };
-
-            await ReadHMEYFamilies(context, element, row, get);
-
-
-        }
-
-        let o = XLSX.utils.sheet_to_json(s);
-
-
-        let found = true;
-        let i = 0;
-        await foreachSync(o, async r => {
-            try {
-
-                let get = x => {
-                    let result = r[x];
-                    if (!result)
-                        return '';
-                    if (isString(result))
-                        result = result.trim();
-                    return result;
-                };
-                // await ReadNRUNFamilies(context, r, element, ++i, get);
-            }
-            catch (err) {
-                console.error(err, r);
-            }
-
-        });
-    }
-
-
-}
 async function readHelperFromExcel(context: ServerContext, o: any, get: (key: string) => string) {
 
     let h = context.for(Helpers).create();

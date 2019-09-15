@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Routes, RouteReuseStrategy, RouteConfigLoadStart } from '@angular/router';
+import { RouterModule, Routes, RouteReuseStrategy } from '@angular/router';
 
 import { HelpersComponent } from './helpers/helpers.component';
 import { LoginComponent } from './users/login/login.component';
 import { RegisterComponent } from './users/register/register.component';
-import { LoggedInGuard, HolidayDeliveryAdmin, NotLoggedInGuard } from './auth/auth-guard';
+
 import { UpdateInfoComponent } from './users/update-info/update-info.component';
 import { FamiliesComponent } from './families/families.component';
 import { MyFamiliesComponent } from './my-families/my-families.component';
@@ -15,24 +15,18 @@ import { DistributionMap } from './distribution-map/distribution-map.component';
 import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component';
 import { DeliveryFollowUpComponent } from './delivery-follow-up/delivery-follow-up.component';
 import { NewsComponent } from './news/news.component';
-import { DeliveryEventsComponent } from './delivery-events/delivery-events.component';
+
 import { ImportFromExcelComponent } from './import-from-excel/import-from-excel.component';
 import { CustomReuseStrategy } from './custom-reuse-controller-router-strategy'
-import { evilStatics } from './auth/evil-statics';
-import { routingInfo, componentRoutingInfo } from './shared/routing-helper';
-import { ProductsComponent } from './products/products.component';
 
-
-import { MyWeeklyFamiliesComponent } from './my-weekly-families/my-weekly-families.component';
-import { WeeklyPackerByFamilyComponent } from './weekly-packer-by-family/weekly-packer-by-family.component';
-import { WeeklyPackerByProductComponent } from './weekly-packer-by-product/weekly-packer-by-product.component';
-import { MyWeeklyFamilyDeliveriesComponent } from './my-weekly-family-deliveries/my-weekly-family-deliveries.component';
 import { AddressProblemComponent } from './address-problem/address-problem.component';
-import { StressTestComponent } from './stress-test/stress-test.component';
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
-import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-dialog.component';
+import { AdminGuard } from './auth/roles';
+import { SignedInGuard } from 'radweb';
+import { CreateBackupExcelFileComponent,CanDeactivateGuard } from './create-backup-excel-file/create-backup-excel-file.component';
+
 
 
 
@@ -45,16 +39,12 @@ const routes: Routes = [
   DistributionMap.route,
   AddressProblemComponent.route,
   HelpersComponent.route,
+  
   DeliveryHistoryComponent.route,
   BatchOperationsComponent.route,
-  { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'קליטה מאקסל' } },
+  { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard], data: { name: 'קליטה מאקסל' } },
   ManageComponent.route,
-
-  MyWeeklyFamiliesComponent.route,
-  MyWeeklyFamilyDeliveriesComponent.route,
-  WeeklyPackerByFamilyComponent.route,
-  WeeklyPackerByProductComponent.route,
-  ProductsComponent.route,
+  { path: 'auto-backup', component: CreateBackupExcelFileComponent, canActivate: [AdminGuard],canDeactivate:[CanDeactivateGuard], data: { name: 'גיבוי אוטומטי',seperator: true } },
   LoginFromSmsComponent.route,
 
   //{ path: 'stam-test', component: UpdateGroupDialogComponent },
@@ -67,21 +57,17 @@ const routes: Routes = [
   { path: '**', redirectTo: '/assign-families', pathMatch: 'full' }
 ];
 
-evilStatics.routes.assignFamilies = '/' + AsignFamilyComponent.route.path;
-evilStatics.routes.login = '/' + LoginComponent.route.path;
-evilStatics.routes.myFamilies = '/' + MyFamiliesComponent.route.path;
-evilStatics.routes.register = '/' + RegisterComponent.route.path;
-evilStatics.routes.updateInfo = '/' + UpdateInfoComponent.route.path;
-evilStatics.routes.myWeeklyFamilies = '/' + MyWeeklyFamiliesComponent.route.path;
-evilStatics.routes.weeklyFamiliesPack = '/' + WeeklyPackerByFamilyComponent.route.path;
 @NgModule({
   imports: [
     CommonModule, RouterModule.forRoot(routes
-      //    ,{enableTracing:true}
+      //      ,{enableTracing:true}
     )
   ],
   declarations: [],
   exports: [RouterModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }]
+  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard,CanDeactivateGuard]
 })
-export class AppRoutingModule { } 
+
+export class AppRoutingModule { }
+
+SignedInGuard.componentToNavigateIfNotAllowed = LoginComponent;

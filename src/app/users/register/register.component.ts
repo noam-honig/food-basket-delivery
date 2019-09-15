@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Helpers } from '../../helpers/helpers';
-import {  StringColumn } from 'radweb';
+import {  StringColumn, NotSignedInGuard } from 'radweb';
 import { AuthService } from '../../auth/auth-service';
-import { NotLoggedInGuard } from '../../auth/auth-guard';
+
 import { Route } from '@angular/router';
-import { Context } from '../../shared/context';
+import { Context } from 'radweb';
 
 @Component({
   selector: 'app-register',
@@ -16,7 +16,7 @@ export class RegisterComponent implements OnInit {
 
 
   }
-  static route: Route = { path: 'register', component: RegisterComponent, data: { name: 'הרשמה' }, canActivate: [NotLoggedInGuard] };
+  static route: Route = { path: 'register', component: RegisterComponent, data: { name: 'הרשמה' }, canActivate: [NotSignedInGuard] };
 
   confirmPassword = new StringColumn({ caption: 'אישור סיסמה', inputType: 'password' });
   helpers = this.context.for(Helpers).gridSettings({

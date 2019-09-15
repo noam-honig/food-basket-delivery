@@ -1,21 +1,24 @@
 <mat-accordion>
+    <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            {{'הגדר נמסר בהצלחה לכל המשפחות שבדרך'|translate}}
+          </mat-expansion-panel-header>
+          {{'פעולה זו תגדיר לכל המשפחות ששוייכו למשנע אבל עוד לא עודכנו כנמסר בהצלחה - את הסטטוס נמסר בהצלחה, כדי שבהיסטוריה ירשם שהן קיבלו משלוח. תאריך המסירה יהיה התאריך שתבחרו'|translate}}
+          <data-area [settings]="dateArea"></data-area>
+      
+          <button mat-raised-button (click)="setAsDelivered()">הגדר כנמסר בהצלחה</button>
+        </mat-expansion-panel>
   <mat-expansion-panel>
     <mat-expansion-panel-header>
-      הגדרת משלוח חדש למשפחות
+      {{'הגדרת משלוח חדש למשפחות'|translate}}
     </mat-expansion-panel-header>
-    פעולה זו תגדיר משלוח חדש לכל המשפחות בסל שתבחרו - אשר בסטטוס של הצלחה, בעיה או לא באירוע.
-    המשלוח הנוכחי של המשפחה ישמר בהיסטוריה.
-    אם למשפחה מוגדר משנע קבוע - אז הוא וקבע כמשנע.
-    <h4>בחרו סל</h4>
+    {{'פעולה זו תגדיר משלוח חדש לכל המשפחות בסל שתבחרו - אשר בסטטוס של הצלחה, בעיה או לא באירוע.'|translate}}
+    {{'המשלוח הנוכחי של המשפחה ישמר בהיסטוריה.'|translate}}
+    {{'אם למשפחה מוגדר משנע קבוע - אז הוא וקבע כמשנע.'|translate}}
 
-    <select class="form-control" #city [(ngModel)]="basketType">
-      <option value="{{allBasketsToken}}">כל הסלים</option>
-      <option *ngFor="let b of basketTypes" value="{{b.id.value}}">{{b.name.value}}</option>
-    </select>
-    <h4>בחרו קבוצה</h4>
+    <data-area [settings]="area"></data-area>
 
-    <input type="text" class="form-control" [(ngModel)]="group" >
-    <br/>
 
     <button mat-raised-button (click)="setNewBasket()">הגדר משלוח חדש</button>
   </mat-expansion-panel>
@@ -23,20 +26,10 @@
 <mat-accordion>
   <mat-expansion-panel>
     <mat-expansion-panel-header>
-      הגדר את כל המשפחות כלא באירוע
+      {{'הגדר את כל המשפחות כלא באירוע'|translate}}
     </mat-expansion-panel-header>
-    פעולה זו תגדיר את כל המשפחות בסל שתבחרו כלא באירוע
-    <h4>בחרו סל</h4>
-
-    <select class="form-control" #city [(ngModel)]="basketType">
-      <option value="{{allBasketsToken}}">כל הסלים</option>
-      <option *ngFor="let b of basketTypes" value="{{b.id.value}}">{{b.name.value}}</option>
-
-    </select>
-    <h4>בחרו קבוצה</h4>
-
-    <input type="text" class="form-control" [(ngModel)]="group">
-    <br/>
+    {{'פעולה זו תגדיר את כל המשפחות בסל שתבחרו כלא באירוע'|translate}}
+    <data-area [settings]="area"></data-area>
 
     <button mat-raised-button (click)="setAsNotInEvent()">הגדר כלא באירוע</button>
   </mat-expansion-panel>

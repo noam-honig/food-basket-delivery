@@ -1,100 +1,200 @@
 import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
-import { HolidayDeliveryAdmin } from '../auth/auth-guard';
-import { BasketType } from '../families/BasketType';
-import { Context } from '../shared/context';
-import { Families } from '../families/families';
+
+
+import { Context, DataAreaSettings, ColumnSetting, DropDownItem, DateColumn } from 'radweb';
+import { Families, GroupsColumn } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DialogService } from '../select-popup/dialog';
-import { RunOnServer } from '../auth/server-action';
+import { RunOnServer } from 'radweb';
+import { Roles, AdminGuard } from '../auth/roles';
+import { BasketType, BasketId } from '../families/BasketType';
+import { SelectService } from '../select-popup/select-service';
+import { translate } from '../translate';
 
 
 @Component({
-  selector: 'app-batch-operations',
-  templateUrl: './batch-operations.component.html',
-  styleUrls: ['./batch-operations.component.scss']
+    selector: 'app-batch-operations',
+    templateUrl: './batch-operations.component.html',
+    styleUrls: ['./batch-operations.component.scss']
 })
 
 export class BatchOperationsComponent implements OnInit {
 
-  constructor(private context: Context, private dialog: DialogService) {
+    constructor(private context: Context, private dialog: DialogService, private selectService: SelectService) {
 
-  }
-  static route: Route = {
-    path: 'batch-operations',
-    component: BatchOperationsComponent,
-    data: { name: 'פעולות על קבוצה' }, canActivate: [HolidayDeliveryAdmin]
-  }
-  static allBasketsTokenConst = '!!!';
-  group: string;
-  basketTypes: BasketType[] = [];
-  basketType = BatchOperationsComponent.allBasketsTokenConst;
-  allBasketsToken = BatchOperationsComponent.allBasketsTokenConst;
-
-  async ngOnInit() {
-    this.basketTypes = await this.context.for(BasketType).find({});
-  }
-  async setNewBasket() {
-    let familiesThatMatch = await this.context.for(Families).count(f => {
-      return BatchOperationsComponent.createFamiliesFilterForNewBasket(f, this.basketType, this.group);
-    });
-    this.dialog.YesNoQuestion('ישנן ' + familiesThatMatch.toString() + ' משפחות אשר מתאימות להגדרה - האם להגדיר להן משלוח חדש?', async () => {
-      await BatchOperationsComponent.setNewBasket(this.basketType, this.group);
-      this.dialog.YesNoQuestion('בוצע');
-    });
-
-
-
-  }
-
-  static createFamiliesFilterForNewBasket(f: Families, basketType: string, group: string) {
-    let x = f.deliverStatus.isGreaterOrEqualTo(DeliveryStatus.Success).and(
-      f.deliverStatus.isDifferentFrom(DeliveryStatus.Frozen).and(
-        f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList)));
-    if (basketType != BatchOperationsComponent.allBasketsTokenConst) {
-      x = x.and(f.basketType.isEqualTo(basketType));
     }
-    if (group)
-      x = x.and(f.groups.isContains(group));
-    return x;
-  }
-
-  @RunOnServer({ allowed: c => c.isAdmin() })
-  static async setNewBasket(basketType: string, group: string, context?: Context) {
-    let families = await context.for(Families).find({ where: f => BatchOperationsComponent.createFamiliesFilterForNewBasket(f, basketType, group) });
-    for (const f of families) {
-      f.setNewBasket();
-
-      await f.save();
+    static route: Route = {
+        path: 'batch-operations',
+        component: BatchOperationsComponent,
+        data: { name: 'פעולות על קבוצה' }, canActivate: [AdminGuard]
     }
-  }
-  async setAsNotInEvent() {
-    let familiesThatMatch = await this.context.for(Families).count(f => {
-      return BatchOperationsComponent.createFamiliesFilterForNotInEvent(f, this.basketType, this.group);
-    });
-    this.dialog.YesNoQuestion('ישנן ' + familiesThatMatch.toString() + ' משפחות אשר מתאימות להגדרה - האם להגדיר אותן כלא באירוע?', async () => {
-      await BatchOperationsComponent.setNotInEvent(this.basketType, this.group);
-      this.dialog.YesNoQuestion('בוצע');
-    });
-  }
-  static createFamiliesFilterForNotInEvent(f: Families, basketType: string, group: string) {
-    let x =
-      f.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent).and(
-        f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList));
-    if (basketType != BatchOperationsComponent.allBasketsTokenConst) {
-      x = x.and(f.basketType.isEqualTo(basketType));
-    } if (group)
-      x = x.and(f.groups.isContains(group));
-    return x;
-  }
-  @RunOnServer({ allowed: c => c.isAdmin() })
-  static async setNotInEvent(basketType: string, group: string, context?: Context) {
-    let families = await context.for(Families).find({ where: f => BatchOperationsComponent.createFamiliesFilterForNotInEvent(f, basketType, group) });
-    for (const f of families) {
-      f.deliverStatus.value = DeliveryStatus.NotInEvent;
-      await f.save();
+    static allBasketsTokenConst = '!!!';
+
+    groupColumn = new GroupsColumn(this.context);
+    basketTypeColumn = new BasketId(this.context);
+
+    area = new DataAreaSettings();
+    deliveryDate = new DateColumn("תאריך מסירה לעדכון");
+    dateArea = new DataAreaSettings({ columnSettings: x => [this.deliveryDate] });
+
+
+    allBasketsToken = BatchOperationsComponent.allBasketsTokenConst;
+
+    async ngOnInit() {
+        var basketTypes = await this.context.for(BasketType).find({});
+
+
+        let result: ColumnSetting<any>[] = [];
+
+        {
+            let items: DropDownItem[] = [];
+            let bt: ColumnSetting<any> = {
+                caption: 'בחרו סוג סל',
+                column: this.basketTypeColumn,
+            };
+            this.basketTypeColumn.value = BatchOperationsComponent.allBasketsTokenConst;
+            items.push({ id: BatchOperationsComponent.allBasketsTokenConst, caption: 'כל הסלים' });
+            for (const t of basketTypes) {
+                items.push({ id: t.id.value, caption: t.name.value });
+            }
+            bt.dropDown = { items: items };
+            result.push(bt);
+        }
+        {
+            let g: ColumnSetting<any> = this.groupColumn.getColumn(this.selectService);
+            g.caption = 'בחרו קבוצה';
+            result.push(g);
+        }
+        this.area = new DataAreaSettings({ columnSettings: () => result });
+        var d = new Date();
+        d = new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1);
+        var lastFamiliyDelivered = await this.context.for(Families).find(
+            {
+                where: f => f.deliverStatus.isEqualTo(DeliveryStatus.Success),
+                orderBy: f => [{ column: f.deliveryStatusDate, descending: true }],
+                limit: 1
+            });
+        if (lastFamiliyDelivered && lastFamiliyDelivered.length > 0) {
+            if (lastFamiliyDelivered[0].deliveryStatusDate.value < d)
+                d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
+        }
+        this.deliveryDate.value = d;
+
+
+
+
+
     }
-  }
+    async setNewBasket() {
+        let familiesThatMatch = await BatchOperationsComponent.countNewBasket(this.basketTypeColumn.value, this.groupColumn.value);
+
+        this.dialog.YesNoQuestion('ישנן ' + familiesThatMatch.toString() + translate(' משפחות אשר מתאימות להגדרה - האם להגדיר להן משלוח חדש?'), async () => {
+            await BatchOperationsComponent.setNewBasket(this.basketTypeColumn.value, this.groupColumn.value);
+            this.dialog.YesNoQuestion('בוצע');
+        });
 
 
+
+    }
+    async setAsDelivered() {
+        let familiesThatMatch = await this.context.for(Families).count(f => f.onTheWayFilter());
+
+        this.dialog.YesNoQuestion('ישנן ' + familiesThatMatch.toString() + translate(' משפחות המוגדרות בדרך - האם לעדכנן להן נמסר בהצלחה בתאריך ' + this.deliveryDate.displayValue + "?"), async () => {
+            await BatchOperationsComponent.setAsOnTheWayAsDelivered(DateColumn.dateToString(this.deliveryDate.value));
+            this.dialog.YesNoQuestion('בוצע');
+        });
+    }
+    @RunOnServer({ allowed: Roles.admin })
+    static async setAsOnTheWayAsDelivered(deliveryDate: string, context?: Context) {
+        let x = await context.for(Families).find({ where: f => f.onTheWayFilter() });
+        let d = DateColumn.stringToDate(deliveryDate);
+        for (const f of x) {
+            f.deliverStatus.value = DeliveryStatus.Success;
+            await f.save();
+            f.deliveryStatusDate.value = d;
+            await f.save();
+        }
+
+    }
+
+
+    static createFamiliesFilterForNewBasket(f: Families, basketType: string, group: string) {
+        let x = f.deliverStatus.isGreaterOrEqualTo(DeliveryStatus.Success).and(
+            f.deliverStatus.isDifferentFrom(DeliveryStatus.Frozen).and(
+                f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList)));
+        if (basketType != BatchOperationsComponent.allBasketsTokenConst) {
+            x = x.and(f.basketType.isEqualTo(basketType));
+        }
+        if (group)
+            x = x.and(f.groups.isContains(group));
+        return x;
+    }
+
+    @RunOnServer({ allowed: Roles.admin })
+    static async setNewBasket(basketType: string, group: string, context?: Context) {
+        let families = await context.for(Families).find({ where: f => BatchOperationsComponent.createFamiliesFilterForNewBasket(f, basketType, group) });
+        for (const f of families) {
+            f.setNewBasket();
+
+            await f.save();
+        }
+    }
+    @RunOnServer({ allowed: Roles.admin })
+    static async countNewBasket(basketType: string, group: string, context?: Context) {
+        return await context.for(Families).count(f => BatchOperationsComponent.createFamiliesFilterForNewBasket(f, basketType, group));
+
+    }
+    async setAsNotInEvent() {
+        let familiesThatMatch = await BatchOperationsComponent.countNotInEvent(this.basketTypeColumn.value, this.groupColumn.value);
+
+
+
+        let onTheWayMatchingFamilies = await this.context.for(Families).count(
+            f => f.onTheWayFilter().and( BatchOperationsComponent.createFamiliesFilterForNotInEvent(f, this.basketTypeColumn.value, this.groupColumn.value)));
+
+        let doIt = () => {
+            this.dialog.YesNoQuestion('ישנן ' + familiesThatMatch.toString() + translate(' משפחות מתאימות להגדרה - האם להגדיר אותן כלא באירוע?'), async () => {
+                await BatchOperationsComponent.setNotInEvent(this.basketTypeColumn.value, this.groupColumn.value);
+                this.dialog.YesNoQuestion('בוצע');
+            });
+        }
+        if (onTheWayMatchingFamilies > 0) {
+            this.dialog.YesNoQuestion('שימו לב !!! - ישנן ' + onTheWayMatchingFamilies.toString() + translate(' שמוגדרות כבדרך - אם נגדיר אותן כלא באירוע - לא ישמר שהן קיבלו סל. האם להמשיך? לחלופין אפשר לבחור באפשרות הגדר נמסר בהצלחה לכל המשפחות שבדרך'), async () => {
+                await doIt();
+            });
+
+        } else
+            await doIt();
+    }
+
+    static createFamiliesFilterForNotInEvent(f: Families, basketType: string, group: string) {
+        let x =
+            f.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent).and(
+                f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList));
+        if (basketType != BatchOperationsComponent.allBasketsTokenConst) {
+            x = x.and(f.basketType.isEqualTo(basketType));
+        } if (group)
+            x = x.and(f.groups.isContains(group));
+        return x;
+    }
+    @RunOnServer({ allowed: Roles.admin })
+    static async setNotInEvent(basketType: string, group: string, context?: Context) {
+        let families = await context.for(Families).find({ where: f => BatchOperationsComponent.createFamiliesFilterForNotInEvent(f, basketType, group) });
+        for (const f of families) {
+            f.deliverStatus.value = DeliveryStatus.NotInEvent;
+            await f.save();
+        }
+    }
+    @RunOnServer({ allowed: Roles.admin })
+    static async countNotInEvent(basketType: string, group: string, context?: Context) {
+        return await context.for(Families).count(f => BatchOperationsComponent.createFamiliesFilterForNotInEvent(f, basketType, group));
+
+    }
+
+
+}
+interface batchOperationsCriteria {
+    group: string;
+    basketType: string;
 }

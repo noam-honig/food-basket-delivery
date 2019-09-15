@@ -1,20 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { EntityClass, ContextEntity, Context, DirectSQL } from '../shared/context';
+import { EntityClass, Context, DirectSQL, StringColumn, IdColumn } from 'radweb';
 import { FamilyId, Families } from '../families/families';
-import { Id, StringColumn, changeDate, SqlBuilder, PhoneColumn } from '../model-shared/types';
+import { changeDate, SqlBuilder, PhoneColumn } from '../model-shared/types';
 import { BasketId } from '../families/BasketType';
 import { DeliveryStatusColumn } from '../families/DeliveryStatus';
-import { HelperId, HelperIdReadonly, Helpers } from '../helpers/helpers';
+import { HelperId, HelperIdReadonly, Helpers, CompanyColumn } from '../helpers/helpers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
-import { CompoundIdColumn, DateColumn, DataAreaSettings, JsonStorageDataProvider, InMemoryDataProvider, Entity, GridSettings, EntitySource, NumberColumn } from 'radweb';
-import { HolidayDeliveryAdmin } from '../auth/auth-guard';
+import { CompoundIdColumn, DateColumn, DataAreaSettings, InMemoryDataProvider, Entity, GridSettings, EntitySource, NumberColumn } from 'radweb';
+
 import { Route } from '@angular/router';
-import { DialogService } from '../select-popup/dialog';
+
 import { SelectService } from '../select-popup/select-service';
 import { saveToExcel } from '../shared/saveToExcel';
-import { BusyService } from '../select-popup/busy-service';
+import { BusyService } from 'radweb';
 import { FamilySourceId } from '../families/FamilySources';
-import { RunOnServer } from '../auth/server-action';
+import { RunOnServer } from 'radweb';
+import { Roles, AdminGuard } from '../auth/roles';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 var fullDayValue = 24 * 60 * 60 * 1000;
 
@@ -54,11 +56,12 @@ export class DeliveryHistoryComponent implements OnInit {
   static route: Route = {
     path: 'history',
     component: DeliveryHistoryComponent,
-    data: { name: 'היסטורית משלוחים' }, canActivate: [HolidayDeliveryAdmin]
+    data: { name: 'היסטורית משלוחים' }, canActivate: [AdminGuard]
   }
   constructor(private context: Context, private selectService: SelectService, private busy: BusyService) {
+    let hhi = context.create(helperHistoryInfo);
     let x = new InMemoryDataProvider();
-    let hhi = new helperHistoryInfo(x);
+    hhi.setSource(x);
     this.helperSource = hhi.source;
     this.helperInfo = new GridSettings(hhi, {
       columnSettings: h => [
@@ -69,6 +72,10 @@ export class DeliveryHistoryComponent implements OnInit {
         {
           column: h.phone,
           width: '100'
+        },
+        {
+          column: h.company,
+          width: '150'
         },
         {
           column: h.deliveries,
@@ -130,7 +137,7 @@ export class DeliveryHistoryComponent implements OnInit {
       this.fromDate.value = new Date(this.fromDate.value.getFullYear(), this.fromDate.value.getMonth() + delta, 1);
       this.toDate.value = this.getEndOfMonth();
     } else {
-      let difference = Math.abs( this.toDate.value.getTime() - this.fromDate.value.getTime());
+      let difference = Math.abs(this.toDate.value.getTime() - this.fromDate.value.getTime());
       if (difference < fullDayValue)
         difference = fullDayValue;
       difference *= delta;
@@ -146,7 +153,7 @@ export class DeliveryHistoryComponent implements OnInit {
     await saveToExcel(this.deliveries, "משלוחים", this.busy, (d: FamilyDeliveriesStats, c) => c == d.id || c == d.family);
   }
   async saveToExcelHelpers() {
-    await saveToExcel(this.helperInfo, "מתנדבים", this.busy, (d: helperHistoryInfo, c) => c == d.courier );
+    await saveToExcel(this.helperInfo, "מתנדבים", this.busy, (d: helperHistoryInfo, c) => c == d.courier);
   }
   deliveries = this.context.for(FamilyDeliveriesStats).gridSettings({
     columnSettings: d => [
@@ -174,11 +181,12 @@ export class DeliveryHistoryComponent implements OnInit {
       }
     }
   });
-  ngOnInit() {
+  async ngOnInit() {
 
     this.refreshHelpers();
+    
   }
-  @RunOnServer({ allowed: x => x.isAdmin() })
+  @RunOnServer({ allowed: Roles.admin })
   static async  getHelperHistoryInfo(fromDate: string, toDate: string, context?: Context, directSql?: DirectSQL) {
     var fromDateDate = DateColumn.stringToDate(fromDate);
     var toDateDate = DateColumn.stringToDate(toDate);
@@ -188,17 +196,24 @@ export class DeliveryHistoryComponent implements OnInit {
     var h = new Helpers(context);
 
     return (await directSql.execute(
-      sql.build("select ", [fd.courier.__getDbName(), sql.columnInnerSelect(fd, {
-        select: () => [h.name],
-        from: h,
-        where: () => [sql.build(h.id, "=", fd.courier.__getDbName())]
-      }),
-      sql.columnInnerSelect(fd, {
-        select: () => [h.phone],
-        from: h,
-        where: () => [sql.build(h.id, "=", fd.courier.__getDbName())]
-      })
-      , "deliveries", "dates", "families"], " from (",
+      sql.build("select ", [
+        fd.courier.__getDbName(),
+        sql.columnInnerSelect(fd, {
+          select: () => [h.name],
+          from: h,
+          where: () => [sql.build(h.id, "=", fd.courier.__getDbName())]
+        }),
+        sql.columnInnerSelect(fd, {
+          select: () => [h.company],
+          from: h,
+          where: () => [sql.build(h.id, "=", fd.courier.__getDbName())]
+        }),
+        sql.columnInnerSelect(fd, {
+          select: () => [h.phone],
+          from: h,
+          where: () => [sql.build(h.id, "=", fd.courier.__getDbName())]
+        })
+        , "deliveries", "dates", "families"], " from (",
         sql.build("select ", [
           fd.courier.__getDbName(),
           "count(*) deliveries",
@@ -212,28 +227,29 @@ export class DeliveryHistoryComponent implements OnInit {
   }
 
 }
-
+@EntityClass
 export class helperHistoryInfo extends Entity<string>{
   courier = new StringColumn();
   name = new StringColumn('שם');
   phone = new PhoneColumn("טלפון");
+  company = new CompanyColumn(); 
   deliveries = new NumberColumn('משלוחים');
   families = new NumberColumn('משפחות');
   dates = new NumberColumn("תאריכים");
-  constructor(source: InMemoryDataProvider) {
-    super(() => new helperHistoryInfo(source), source, { name: 'helperHistoryInfo' });
+  constructor() {
+    super({ name: 'helperHistoryInfo', allowApiRead: false, allowApiCRUD: false });
     this.initColumns(this.courier);
   }
 }
 
 @EntityClass
-export class FamilyDeliveriesStats extends ContextEntity<string> {
+export class FamilyDeliveriesStats extends Entity<string> {
   family = new FamilyId();
-  id = new Id();
+  id = new IdColumn();
   name = new StringColumn('שם');
   courier = new HelperId(this.context, "משנע");
   deliveryStatusDate = new changeDate('מתי');
-  deliverStatus = new DeliveryStatusColumn('סטטוס משלוח');
+  deliverStatus = new DeliveryStatusColumn();
   basketType = new BasketId(this.context, 'סוג סל');
   city = new StringColumn({ caption: "עיר" });
   courierComments = new StringColumn('הערות מסירה');
@@ -246,7 +262,7 @@ export class FamilyDeliveriesStats extends ContextEntity<string> {
   constructor(private context: Context) {
     super({
       name: 'FamilyDeliveriesStats',
-      allowApiRead: context.isAdmin(),
+      allowApiRead: Roles.admin,
       dbName: () => {
         var f = new Families(context);
         var d = new FamilyDeliveries(context);

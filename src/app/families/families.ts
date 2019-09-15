@@ -4,21 +4,24 @@ import { YesNoColumn } from "./YesNo";
 
 import { FamilySourceId } from "./FamilySources";
 import { BasketId, BasketType } from "./BasketType";
-import { NumberColumn, StringColumn, IdEntity, Id, changeDate, DateTimeColumn, SqlBuilder, BoolColumn, PhoneColumn, delayWhileTyping } from "../model-shared/types";
-import { ColumnSetting, Column, FilterConsumerBridgeToSqlRequest } from "radweb";
+import { changeDate, DateTimeColumn, SqlBuilder, PhoneColumn, delayWhileTyping } from "../model-shared/types";
+import { ColumnSetting, Column, Context, EntityClass, DirectSQL, RunOnServer, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn } from "radweb";
 import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
-import { myAuthInfo } from "../auth/my-auth-info";
+
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
-import { Context, EntityClass, DirectSQL } from "../shared/context";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { FamilyDeliveries } from "./FamilyDeliveries";
-import { RunOnServer } from "../auth/server-action";
 import * as fetch from 'node-fetch';
+import { Roles } from "../auth/roles";
 import { SelectServiceInterface } from "../select-popup/select-service-interface";
+import { translate } from "../translate";
 
 
 @EntityClass
 export class Families extends IdEntity<FamilyId>  {
+  onTheWayFilter() {
+    return this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(this.courier.isDifferentFrom(''));
+  }
   setNewBasket() {
     if (this.defaultSelfPickup.value) {
       this.deliverStatus.value = DeliveryStatus.SelfPickup;
@@ -28,7 +31,7 @@ export class Families extends IdEntity<FamilyId>  {
       this.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
       if (this.courier.value == this.courier.originalValue) {
         this.courier.value = this.fixedCourier.value;
-        this.courierAssignUser.value = this.context.info.helperId;
+        this.courierAssignUser.value = this.context.user.id;
         this.courierAssingTime.value = new Date();
       }
     }
@@ -36,18 +39,29 @@ export class Families extends IdEntity<FamilyId>  {
   getDeliveries() {
     return this.context.for(FamilyDeliveries).find({ where: d => d.family.isEqualTo(this.id), orderBy: d => [{ column: d.deliveryStatusDate, descending: true }] });
   }
+  checkNeedsWork(){
+    if (this.courierComments.value)
+      this.needsWork.value = true;
+    switch(this.deliverStatus.value){
+      case DeliveryStatus.FailedBadAddress:
+      case DeliveryStatus.FailedNotHome:
+      case DeliveryStatus.FailedOther:
+      this.needsWork.value = true;
+        break;
+    }
+  }
 
   constructor(private context: Context) {
     super(new FamilyId(),
       {
         name: "Families",
-        allowApiRead: context.isLoggedIn(),
-        allowApiUpdate: context.isLoggedIn(),
-        allowApiDelete: context.isAdmin(),
-        allowApiInsert: context.isAdmin(),
+        allowApiRead: context.isSignedIn(),
+        allowApiUpdate: context.isSignedIn(),
+        allowApiDelete: Roles.admin,
+        allowApiInsert: Roles.admin,
         apiDataFilter: () => {
-          if (!context.isAdmin())
-            return this.courier.isEqualTo(context.info.helperId);
+          if (!context.isAllowed(Roles.admin))
+            return this.courier.isEqualTo(context.user.id);
         },
         onSavingRow: async () => {
 
@@ -82,7 +96,7 @@ export class Families extends IdEntity<FamilyId>  {
               await fd.save();
               if (this.courier.value == this.courier.originalValue) {
                 this.courier.value = this.fixedCourier.value;
-                this.courierAssignUser.value = this.context.info.helperId;
+                this.courierAssignUser.value = this.context.user.id;
                 this.courierAssingTime.value = new Date();
               }
               if (this.courierComments.value == this.courierComments.originalValue)
@@ -108,12 +122,13 @@ export class Families extends IdEntity<FamilyId>  {
             }
             if (this.isNew()) {
               this.createDate.value = new Date();
-              this.createUser.value = context.info.helperId;
+              this.createUser.value = context.user.id;
             }
+            this.lastUpdateDate.value = new Date();
             let logChanged = (col: Column<any>, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) => {
               if (col.value != col.originalValue) {
                 dateCol.value = new Date();
-                user.value = context.info.helperId;
+                user.value = context.user.id;
                 wasChanged();
               }
             }
@@ -121,14 +136,15 @@ export class Families extends IdEntity<FamilyId>  {
               logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName())));//should be after succesfull save
               //logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
               logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()))); //should be after succesfull save
+              logChanged(this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => {}); //should be after succesfull save
             }
           }
         }
 
       });
     this.initColumns();
-    if (!context.isAdmin())
-      this.__iterateColumns().forEach(c => c.readonly = c != this.courierComments && c != this.deliverStatus && c != this.correntAnErrorInStatus);
+    if (!context.isAllowed(Roles.admin))
+      this.__iterateColumns().forEach(c => c.allowApiUpdate = c == this.courierComments || c == this.deliverStatus || c == this.correntAnErrorInStatus);
   }
   disableChangeLogging = false;
 
@@ -136,24 +152,29 @@ export class Families extends IdEntity<FamilyId>  {
   name = new StringColumn({
     caption: "שם",
     valueChange: () => this.delayCheckDuplicateFamilies(),
-    onValidate: v => {
-      if (!v.value || v.value.length < 2)
+    onValidate: () => {
+      if (!this.name.value || this.name.value.length < 2)
         this.name.error = 'השם קצר מידי';
     }
   });
 
   tz = new StringColumn({
-    caption: 'מספר זהות', excludeFromApi: !this.context.isAdmin(), valueChange: () => this.delayCheckDuplicateFamilies()
+    caption: 'מספר זהות', includeInApi: Roles.admin, valueChange: () => this.delayCheckDuplicateFamilies()
   });
-  familyMembers = new NumberColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'מספר נפשות' });
-
+  tz2 = new StringColumn({
+    caption: 'מספר זהות בן/בת הזוג', includeInApi: Roles.admin, valueChange: () => this.delayCheckDuplicateFamilies()
+  });
+  familyMembers = new NumberColumn({ includeInApi: Roles.admin, caption: 'מספר נפשות' });
   basketType = new BasketId(this.context, 'סוג סל');
-  familySource = new FamilySourceId(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'גורם מפנה' });
+  familySource = new FamilySourceId(this.context, { includeInApi: Roles.admin, caption: 'גורם מפנה' });
+  socialWorker = new StringColumn('איש קשר לבירור פרטים (עו"ס)');
+  socialWorkerPhone1 = new PhoneColumn("איש קשר לבירור טלפון 1");
+  socialWorkerPhone2 = new PhoneColumn("איש קשר לבירור טלפון 2");
   groups = new GroupsColumn(this.context);
-  special = new YesNoColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'שיוך מיוחד' });
+  special = new YesNoColumn({ includeInApi: Roles.admin, caption: 'שיוך מיוחד' });
   defaultSelfPickup = new BoolColumn('ברירת מחדל באים לקחת');
-  iDinExcel = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'מזהה באקסל' });
-  internalComment = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'הערה פנימית - לא תופיע למשנע' });
+  iDinExcel = new StringColumn({ includeInApi: Roles.admin, caption: 'מזהה באקסל' });
+  internalComment = new StringColumn({ includeInApi: Roles.admin, caption: 'הערה פנימית - לא תופיע למשנע' });
 
 
   address = new StringColumn("כתובת");
@@ -161,15 +182,15 @@ export class Families extends IdEntity<FamilyId>  {
   appartment = new StringColumn('דירה');
   entrance = new StringColumn('כניסה');
   city = new StringColumn({ caption: "עיר (מתעדכן אוטומטית)" });
-  addressComment = new StringColumn('הערת כתובת');
+  addressComment = new StringColumn('הנחיות נוספות לכתובת');
   postalCode = new NumberColumn('מיקוד');
   deliveryComments = new StringColumn('הערה שתופיע למשנע');
   addressApiResult = new StringColumn();
 
   phone1 = new PhoneColumn({ caption: "טלפון 1", inputType: 'tel', dbName: 'phone', valueChange: () => this.delayCheckDuplicateFamilies() });
-  phone1Description = new StringColumn('תאור טלפון 1');
+  phone1Description = new StringColumn('הערות לטלפון 1');
   phone2 = new PhoneColumn({ caption: "טלפון 2", inputType: 'tel', valueChange: () => this.delayCheckDuplicateFamilies() });
-  phone2Description = new StringColumn('תאור טלפון 2');
+  phone2Description = new StringColumn('הערות לטלפון 2');
 
 
 
@@ -178,13 +199,16 @@ export class Families extends IdEntity<FamilyId>  {
   //callHelper = new HelperIdReadonly(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'מי ביצעה את השיחה' });
   //callComments = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'הערות שיחה' });
 
-  deliverStatus = new DeliveryStatusColumn('סטטוס משלוח');
+  deliverStatus = new DeliveryStatusColumn();
   correntAnErrorInStatus = new BoolColumn({ virtualData: () => false });
   courier = new HelperId(this.context, "משנע באירוע");
   courierComments = new StringColumn('הערות שכתב המשנע כשמסר');
   deliveryStatusDate = new changeDate('מועד סטטוס משלוח');
   fixedCourier = new HelperId(this.context, "משנע קבוע");
   courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
+  needsWork = new BoolColumn({ caption: 'צריך טיפול/מעקב' });
+  needsWorkUser = new HelperIdReadonly(this.context, 'צריך טיפול - מי עדכן');
+  needsWorkDate = new changeDate( 'צריך טיפול - מתי עודכן');
 
 
   courierAssignUserName = new StringColumn({
@@ -394,8 +418,9 @@ export class Families extends IdEntity<FamilyId>  {
   }
 
 
-  createDate = new changeDate({ excludeFromApi: !this.context.isAdmin(), caption: 'מועד הוספה' });
-  createUser = new HelperIdReadonly(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'משתמש מוסיף' });
+  createDate = new changeDate({ includeInApi: Roles.admin, caption: 'מועד הוספה' });
+  createUser = new HelperIdReadonly(this.context, { includeInApi: Roles.admin, caption: 'משתמש מוסיף' });
+  lastUpdateDate = new changeDate({ includeInApi: Roles.admin, caption: 'מועד עדכון אחרון' });
 
 
 
@@ -434,14 +459,14 @@ export class Families extends IdEntity<FamilyId>  {
             let duration = '';
             if (n.courierAssingTime.value && n.deliveryStatusDate.value)
               duration = ' תוך ' + Math.round((n.deliveryStatusDate.value.valueOf() - n.courierAssingTime.value.valueOf()) / 60000) + " דק'";
-            return n.deliverStatus.displayValue + (n.courierComments.value ? ", " + n.courierComments.value + " - " : '') + ' למשפחת ' + n.name.value + ' על ידי ' + courierName + duration + "!!";
+            return n.deliverStatus.displayValue + (n.courierComments.value ? ", " + n.courierComments.value + " - " : '') + translate(' למשפחת ') + n.name.value + ' על ידי ' + courierName + duration + "!!";
         }
-        return 'משפחת ' + n.name.value + ' עודכנה ל' + n.deliverStatus.displayValue;
+        return translate('משפחת ') + n.name.value + ' עודכנה ל' + n.deliverStatus.displayValue;
       case 2:
         if (n.courier.value)
-          return 'משפחת ' + n.name.value + ' שוייכה ל' + courierName;
+          return translate('משפחת ') + n.name.value + ' שוייכה ל' + courierName;
         else
-          return "בוטל השיוך למשפחת " + n.name.value;
+          return translate("בוטל השיוך למשפחת ") + n.name.value;
     }
     return n.deliverStatus.displayValue;
   }
@@ -461,17 +486,37 @@ export class Families extends IdEntity<FamilyId>  {
   }
   _disableAutoDuplicateCheck = false;
   duplicateFamilies: duplicateFamilyInfo[] = [];
+  validatePhone(col: PhoneColumn) {
+    if (!col.value || col.value == '')
+      return;
+    if (col.displayValue.startsWith("05") || col.displayValue.startsWith("07")) {
+      if (col.displayValue.length != 12) {
+        col.error = 'מספר טלפון אינו תקין';
+      }
+
+    } else if (col.displayValue.startsWith('0')) {
+      if (col.displayValue.length != 11) {
+        col.error = 'מספר טלפון אינו תקין';
+      }
+    }
+    else {
+      col.error = 'מספר טלפון אינו תקין';
+    }
+  }
   async checkDuplicateFamilies() {
-    this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name.value, this.tz.value, this.phone1.value, this.phone2.value, this.id.value);
+    this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name.value, this.tz.value, this.tz2.value, this.phone1.value, this.phone2.value, this.id.value);
     this.tz.error = undefined;
+    this.tz2.error = undefined;
     this.phone1.error = undefined;
     this.phone2.error = undefined;
     this.name.error = undefined;
     let foundExactName = false;
     for (const d of this.duplicateFamilies) {
-      let errorText = 'ערך כבר קיים למשפחת "' + d.name + '" בכתובת ' + d.address;
+      let errorText = translate('ערך כבר קיים למשפחת "') + d.name + '" בכתובת ' + d.address;
       if (d.tz)
         this.tz.error = errorText;
+      if (d.tz2)
+        this.tz2.error = errorText;
       if (d.phone1)
         this.phone1.error = errorText;
       if (d.phone2)
@@ -483,10 +528,13 @@ export class Families extends IdEntity<FamilyId>  {
           foundExactName = true;
       }
     }
+    this.validatePhone(this.phone1);
+    this.validatePhone(this.phone2);
+
 
   }
-  @RunOnServer({ allowed: x => x.isAdmin() })
-  static async checkDuplicateFamilies(name: string, tz: string, phone1: string, phone2: string, id: string, context?: Context, directSQL?: DirectSQL) {
+  @RunOnServer({ allowed: Roles.admin, blockUser: false })
+  static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, id: string, exactName: boolean = false, context?: Context, directSQL?: DirectSQL) {
     let result: duplicateFamilyInfo[] = [];
 
     var sql = new SqlBuilder();
@@ -495,12 +543,16 @@ export class Families extends IdEntity<FamilyId>  {
     let compareAsNumber = (col: Column<string>, value: string) => {
       return sql.and(sql.eq(sql.extractNumber(col), sql.extractNumber(sql.str(value))), sql.build(sql.extractNumber(sql.str(value)), ' <> ', 0));
     };
-    let tzCol = compareAsNumber(f.tz, tz);
+    let tzCol = sql.or(compareAsNumber(f.tz, tz), compareAsNumber(f.tz2, tz));
+    let tz2Col = sql.or(compareAsNumber(f.tz, tz2), compareAsNumber(f.tz2, tz2));
     let phone1Col = sql.or(compareAsNumber(f.phone1, phone1), compareAsNumber(f.phone2, phone1));
     let phone2Col = sql.or(compareAsNumber(f.phone1, phone2), compareAsNumber(f.phone2, phone2));
     let nameCol = 'false';
     if (name && name.trim().length > 0)
-      nameCol = sql.build('trim(', f.name, ') like  ', sql.str('%' + name.trim() + '%'));
+      if (exactName)
+        nameCol = sql.build('trim(', f.name, ') =  ', sql.str(name.trim()));
+      else
+        nameCol = sql.build('trim(', f.name, ') like  ', sql.str('%' + name.trim() + '%'));
 
 
     let sqlResult = await directSQL.execute(sql.query({
@@ -508,6 +560,7 @@ export class Families extends IdEntity<FamilyId>  {
       f.name,
       f.address,
       sql.columnWithAlias(tzCol, 'tz'),
+      sql.columnWithAlias(tz2Col, 'tz2'),
       sql.columnWithAlias(phone1Col, 'phone1'),
       sql.columnWithAlias(phone2Col, 'phone2'),
       sql.columnWithAlias(nameCol, 'nameDup')
@@ -515,20 +568,21 @@ export class Families extends IdEntity<FamilyId>  {
       ],
 
       from: f,
-      where: () => [sql.or(tzCol, phone1Col, phone2Col, nameCol), sql.ne(f.id, sql.str(id))]
+      where: () => [sql.or(tzCol, tz2Col, phone1Col, phone2Col, nameCol), sql.ne(f.id, sql.str(id))]
     }));
     if (!sqlResult.rows || sqlResult.rows.length < 1)
       return [];
 
     for (const row of sqlResult.rows) {
       result.push({
-        id: row[sqlResult.fields[0].name],
-        name: row[sqlResult.fields[1].name],
-        address: row[sqlResult.fields[2].name],
-        tz: row[sqlResult.fields[3].name],
-        phone1: row[sqlResult.fields[4].name],
-        phone2: row[sqlResult.fields[5].name],
-        nameDup: row[sqlResult.fields[6].name]
+        id: row[sqlResult.getcolumnNameAtIndex(0)],
+        name: row[sqlResult.getcolumnNameAtIndex(1)],
+        address: row[sqlResult.getcolumnNameAtIndex(2)],
+        tz: row[sqlResult.getcolumnNameAtIndex(3)],
+        tz2: row[sqlResult.getcolumnNameAtIndex(4)],
+        phone1: row[sqlResult.getcolumnNameAtIndex(5)],
+        phone2: row[sqlResult.getcolumnNameAtIndex(6)],
+        nameDup: row[sqlResult.getcolumnNameAtIndex(7)]
 
       });
     }
@@ -536,13 +590,14 @@ export class Families extends IdEntity<FamilyId>  {
 
   }
 }
-export class FamilyId extends Id { }
+export class FamilyId extends IdColumn { }
 
 export interface duplicateFamilyInfo {
   id: string;
   name: string;
   address: string;
   tz: boolean;
+  tz2: boolean;
   phone1: boolean;
   phone2: boolean;
   nameDup: boolean;
@@ -606,7 +661,7 @@ export interface parseAddressResult {
 }
 export class GroupsColumn extends StringColumn {
   constructor(private context: Context) {
-    super({ caption: 'קבוצות', excludeFromApi: !context.isAdmin() });
+    super({ caption: 'שיוך לקבוצת חלוקה', includeInApi: Roles.admin });
   }
   getColumn(dialog: SelectServiceInterface) {
     return {
@@ -615,7 +670,7 @@ export class GroupsColumn extends StringColumn {
         let col = f ? f.__getColumn(this) : this;
         dialog.updateGroup(col.value, x => col.value = x);
       },
-      width:'300'
+      width: '300'
     };
   }
 }

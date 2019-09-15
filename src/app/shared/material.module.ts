@@ -5,7 +5,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconModule } from '@angular/material';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
@@ -17,6 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
 import {MatTabsModule} from '@angular/material/tabs';
 import { MatRadioModule} from '@angular/material/radio';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatStepperModule } from '@angular/material/stepper';
 
 
 
@@ -42,6 +43,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
         MatInputModule,
         MatListModule,
         MatMenuModule,
+        MatStepperModule,
 
 
 
@@ -71,7 +73,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
         MatProgressSpinnerModule,
         MatSidenavModule,
         MatToolbarModule,
-        MatTooltipModule
+        MatTooltipModule,
+        MatStepperModule
     ]
 })
 export class MaterialModule {

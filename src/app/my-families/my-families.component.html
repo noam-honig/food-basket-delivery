@@ -1,4 +1,9 @@
-<h3 class="no-print">שלום {{context.info.name}}</h3>
-<a href="https://youtu.be/PHwTzaQN87g" target="_blank" class="no-print" *ngIf="familyLists.toDeliver.length">לסרטון הדרכה קצר, לחצו כאן</a>
+<h3 class="no-print">שלום {{context.user.name}}</h3>
+<a href="https://youtu.be/PHwTzaQN87g" target="_blank" class="no-print" *ngIf="familyLists.toDeliver.length">לסרטון
+    הדרכה קצר, לחצו כאן</a>
+<a href="{{settings.message1Link.value}}" target="_blank" class="no-print" style="display: block"
+    *ngIf="!settings.message1OnlyWhenDone.value || familyLists.toDeliver.length==0">{{settings.message1Text.value}}</a>
+    <a href="{{settings.message2Link.value}}" target="_blank" class="no-print" style="display: block"
+    *ngIf="!settings.message2OnlyWhenDone.value || familyLists.toDeliver.length==0">{{settings.message2Text.value}}</a>
 
 <app-helper-families [familyLists]="familyLists"></app-helper-families>

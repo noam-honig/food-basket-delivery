@@ -1,7 +1,7 @@
 <div class="myDiv">
 
-    <h3 mat-dialog-header *ngIf="!data.disableSave">עדכן פרטי משפחה</h3>
-    <h3 mat-dialog-header *ngIf="data.disableSave">צפה בפרטי משפחה</h3>
+    <h3 mat-dialog-header *ngIf="!data.disableSave">{{'עדכן פרטי משפחה'|translate}}</h3>
+    <h3 mat-dialog-header *ngIf="data.disableSave">{{'צפה בפרטי משפחה'|translate}}</h3>
     <div mat-dialog-content>
         <div class="dialog-content-fixer">
             {{data.message}}

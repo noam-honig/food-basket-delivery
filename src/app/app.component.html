@@ -4,7 +4,7 @@
       <img src="{{getLogo()}}"
       />
     </div>
-    <h4 *ngIf="auth.auth.info">שלום {{auth.auth.info.name}}</h4>
+    <h4 *ngIf="context.user">שלום {{context.user.name}}</h4>
     <mat-nav-list role="list">
       <ng-container *ngFor="let m of router.config">
         <mat-list-item *ngIf="shouldDisplayRoute(m)" routerLinkActive="active-route">
@@ -14,7 +14,7 @@
 
 
       </ng-container>
-      <mat-list-item *ngIf="auth.auth.info">
+      <mat-list-item *ngIf="context.user">
         <a matLine (click)="signOut()">יציאה</a>
       </mat-list-item>
     </mat-nav-list>

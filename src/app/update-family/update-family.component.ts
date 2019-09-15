@@ -5,7 +5,7 @@ import { Helpers } from '../helpers/helpers';
 import { SelectService } from '../select-popup/select-service';
 import { BasketType } from '../families/BasketType';
 import { FamilySources } from '../families/FamilySources';
-import { Context } from '../shared/context';
+import { Context } from 'radweb';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DialogService } from '../select-popup/dialog';
 
@@ -29,19 +29,22 @@ export class UpdateFamilyComponent implements OnInit {
       columnSettings: families => [
         families.name,
         families.basketType.getColumn(),
-        families.deliverStatus.getColumn(),
-        families.defaultSelfPickup,
-        families.groups.getColumn(this.selectService),
+        
+        
+        
         families.internalComment,
-        families.deliveryComments,
+        
         families.familyMembers,
         families.familySource.getColumn(),
+        families.socialWorker,
+        families.socialWorkerPhone1,
+        families.socialWorkerPhone2,
         families.tz,
-        families.special.getColumn(),
+        families.tz2,
         
-        families.iDinExcel,
-        families.createUser,
-        families.createDate
+        
+        families.iDinExcel
+        
 
 
 
@@ -57,8 +60,8 @@ export class UpdateFamilyComponent implements OnInit {
         families.addressComment,
         families.addressByGoogle(),
         families.city,
-        families.postalCode,
-        families.addressOk
+        families.addressOk,
+        families.postalCode
 
       ]
     });
@@ -73,20 +76,19 @@ export class UpdateFamilyComponent implements OnInit {
 
     this.deliverInfo = this.families.addArea({
       columnSettings: families => [
-        families.defaultSelfPickup,
         families.deliverStatus.getColumn(),
+        families.internalComment,
+        families.deliveryComments,
+        families.addressComment,
+        families.groups.getColumn(this.selectService),
+        families.special.getColumn(),
+        
         families.courier.getColumn(this.selectService),
         
         families.courierComments,
-        {
-          caption: 'טלפון משנע',
-          getValue: f => f.courier.getPhone()
-        },
-        families.getPreviousDeliveryColumn(),
-        families.courierAssignUser,
-        families.courierAssingTime,
-        families.deliveryStatusUser,
-        families.deliveryStatusDate,
+        families.needsWork,
+
+        families.defaultSelfPickup,
         families.fixedCourier.getColumn(this.selectService)
       ]
     });

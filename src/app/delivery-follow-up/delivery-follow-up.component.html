@@ -26,13 +26,13 @@
       </div>
       <div>
         <mat-panel-description>
-          בדרך {{c.deliveriesInProgress.value}}, יצא {{c.lastAsignTime.relativeDateName()}}
+          בדרך {{c.deliveriesInProgress.value}}<span *ngIf="c.gotSms.value">, יצא {{c.smsDate.relativeDateName()}}</span> <span *ngIf="!c.gotSms.value">, טרם נשלח SMS</span>
         </mat-panel-description>
       </div>
     </mat-expansion-panel-header>
 
     <div  *ngIf="currentlHelper==c">
-      <app-helper-families [familyLists]="familyLists" [partOfAssign]="true" [partOfReview]="true"></app-helper-families>
+      <app-helper-families [familyLists]="familyLists" [partOfAssign]="true" [partOfReview]="true" [helperGotSms]="c.gotSms.value"></app-helper-families>
     </div>
   </mat-expansion-panel>
 </ng-container>

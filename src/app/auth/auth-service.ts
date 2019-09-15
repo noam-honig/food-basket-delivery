@@ -1,113 +1,129 @@
 import { Injectable } from "@angular/core";
-import { myAuthInfo } from "./my-auth-info";
+
 import { DialogService } from "../select-popup/dialog";
-import { Router } from "@angular/router";
-import { evilStatics } from "./evil-statics";
+
 import { Helpers } from "../helpers/helpers";
 
-import { RunOnServer } from "./server-action";
-import { Context } from "../shared/context";
-import { LoginResponse } from "./auth-info";
+import { RunOnServer, UserInfo, JwtSessionManager, RouteHelperService } from "radweb";
+import { Context } from "radweb";
+import { LoginResponse } from "./login-response";
+import { Roles } from "./roles";
+import { AsignFamilyComponent } from "../asign-family/asign-family.component";
+import { MyFamiliesComponent } from "../my-families/my-families.component";
+import { LoginComponent } from "../users/login/login.component";
 
 
 @Injectable()
 export class AuthService {
 
     async loginFromSms(key: string) {
-        this.auth.loggedIn(await AuthService.loginFromSms(key), false);
-        if (this.auth.valid) {
+        var response = await AuthService.loginFromSms(key);
+        if (response.valid) {
+            this.tokenHelper.setToken(response.authToken, false);
             this.dialog.analytics('login from sms');
-            this.router.navigate([evilStatics.routes.myFamilies]);
+            this.routeHelper.navigateToComponent(MyFamiliesComponent);
         }
+        else
+            this.tokenHelper.signout();
+
+
     }
-    @RunOnServer({ allowed: () => true })
+    @RunOnServer({ allowed: true })
     static async loginFromSms(key: string, context?: Context) {
 
         let h = await context.for(Helpers).findFirst(h => h.shortUrlKey.isEqualTo(key));
-        if (h){
+        if (h) {
             return {
                 valid: true,
-                authToken: evilStatics.auth.createTokenFor({
-                    loggedIn: true,
-                    helperId: h.id.value,
-                    deliveryAdmin: false,
-                    name: h.name.value
-                }),
+                authToken: Helpers.helper.createSecuredTokenBasedOn({
+                    id: h.id.value,
+                    name: h.name.value,
+                    roles:[]
+                } as UserInfo),
                 requirePassword: false
             } as LoginResponse
+
         }
         return { valid: false, requirePassword: false } as LoginResponse;
     }
     constructor(
         private dialog: DialogService,
-        private router: Router
-    ) { }
 
+        private tokenHelper: JwtSessionManager,
+        private context: Context,
+        private routeHelper: RouteHelperService
+    ) {
+
+        tokenHelper.loadSessionFromCookie();
+        tokenHelper.tokenInfoChanged = () => dialog.refreshEventListener(this.context.isAllowed(Roles.admin));
+        tokenHelper.tokenInfoChanged();
+    }
+    static UpdateInfoComponent: { new(...args: any[]): any };
     async login(user: string, password: string, remember: boolean, fail: () => void) {
 
         let loginResponse = await AuthService.login(user, password);
-        this.auth.loggedIn(loginResponse, remember);
-        if (this.auth.valid) {
-            this.dialog.analytics('login '+(this.auth.info.deliveryAdmin?'delivery admin':''));
+        if (loginResponse.valid) {
+            this.tokenHelper.setToken(loginResponse.authToken, remember);
+            this.dialog.analytics('login ' + (this.context.isAllowed(Roles.admin) ? 'delivery admin' : ''));
             if (loginResponse.requirePassword) {
-                this.dialog.YesNoQuestion('שלום ' + this.auth.info.name + ' את מוגדרת כמנהלת אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועברת למסך עדכון פרטים לעדכון סיסמה.', () => {
-                    this.router.navigate([evilStatics.routes.updateInfo])
+                this.dialog.YesNoQuestion('שלום ' + this.context.user.name + ' את מוגדרת כמנהלת אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועברת למסך עדכון פרטים לעדכון סיסמה.', () => {
+                    this.routeHelper.navigateToComponent(AuthService.UpdateInfoComponent);//changing this caused a crash
                 });
             }
             else {
-                if (this.auth.info.deliveryAdmin)
-                    this.router.navigate([evilStatics.routes.assignFamilies])
-                else if (this.auth.info.weeklyFamilyVolunteer)
-                    this.router.navigate([evilStatics.routes.myWeeklyFamilies]);
-                else if (this.auth.info.weeklyFamilyPacker)
-                    this.router.navigate([evilStatics.routes.weeklyFamiliesPack]);
+                if (this.context.isAllowed(Roles.admin))
+                    this.routeHelper.navigateToComponent(AsignFamilyComponent);
                 else
-                    this.router.navigate([evilStatics.routes.myFamilies])
+                    this.routeHelper.navigateToComponent(MyFamiliesComponent);
             }
 
         }
         else {
+            this.tokenHelper.signout();
             this.dialog.Error("משתמשת לא נמצאה או סיסמה שגויה");
             fail();
+
         }
     }
-    @RunOnServer({ allowed: () => true })
+
+    @RunOnServer({ allowed: true })
     static async login(user: string, password: string, context?: Context) {
-        let result: myAuthInfo;
+        let result: UserInfo;
         let requirePassword = false;
 
         await context.for(Helpers).foreach(h => h.phone.isEqualTo(user), async h => {
-            if (!h.realStoredPassword.value || evilStatics.passwordHelper.verify(password, h.realStoredPassword.value)) {
+            if (!h.realStoredPassword.value || Helpers.passwordHelper.verify(password, h.realStoredPassword.value)) {
                 result = {
-                    loggedIn: true,
-                    helperId: h.id.value,
-                    superAdmin: h.superAdmin.value,
-                    deliveryAdmin: h.deliveryAdmin.value ,
-                    weeklyFamilyVolunteer: h.weeklyFamilyVolunteer.value || h.weeklyFamilyAdmin.value ,
-                    weeklyFamilyPacker: h.weeklyFamilyPacker.value || h.weeklyFamilyAdmin.value ,
-                    weeklyFamilyAdmin: h.weeklyFamilyAdmin.value ,
-                    deliveryVolunteer: h.deliveryVolunteer.value || h.deliveryAdmin.value ,
+
+                    id: h.id.value,
+                    roles: [],
                     name: h.name.value
                 };
-                if ((result.deliveryAdmin||result.superAdmin||result.weeklyFamilyPacker||result.weeklyFamilyVolunteer||result.weeklyFamilyAdmin) && h.realStoredPassword.value.length == 0) {
-                    result.deliveryAdmin = false;
+                if (h.realStoredPassword.value.length == 0 && h.admin.value) {
                     requirePassword = true;
                 }
+                else {
+                    if (h.admin.value)
+                        result.roles.push(Roles.admin);
+
+
+                }
+
             }
         });
         if (result) {
             return {
                 valid: true,
-                authToken: evilStatics.auth.createTokenFor(result),
+                authToken: Helpers.helper.createSecuredTokenBasedOn(result),
                 requirePassword
             };
         }
         return { valid: false, requirePassword: false };
     }
     signout(): any {
-        this.auth.signout();
-        this.router.navigate([evilStatics.routes.login]);
+        this.tokenHelper.signout();
+        this.routeHelper.navigateToComponent(LoginComponent);
     }
-    auth = evilStatics.auth;
+
 
 }

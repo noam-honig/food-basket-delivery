@@ -14,27 +14,34 @@
       (click)="cancelAssign(f)">בטל
       שיוך</button>
     <button *ngIf="partOfAssign" mat-raised-button class="cancelAssignButton" (click)=" udpateInfo(f)">עדכן פרטי
-      משפחה</button>
+      {{'משפחה'|translate}}</button>
   </div>
   <h4 style="display:inline">סל</h4> - {{f.basketType.displayValue}}
 
   <div *ngIf="f.deliveryComments.value">
     <mat-icon color="primary" style="vertical-align: middle">comment</mat-icon>
-    <strong style="color:red">שים לב! </strong> {{f.deliveryComments.value}}
+    <strong style="color:red">שימו לב! </strong> {{f.deliveryComments.value}}
   </div>
   <div *ngIf="f.courierBeenHereBefore()">
     <mat-icon color="green">repeat</mat-icon>
-    הייתם אצל המשפחה הזו גם פעם קודמת
+    {{'הייתם אצל המשפחה הזו גם פעם קודמת'|translate}}
   </div>
   <h4>כתובת</h4>
-  <div>
+  <div class="address-container">
     <span (click)="openWaze(f)">
-      <img
-        src="https://lh3.googleusercontent.com/l4O7eQ94iRq2pPqIVKapZQvMdtYYXwT-jB1384pbxUKWJkyQ8rw85YtN-rrjoCqJ2El3=w40">
+      <img src="assets/waze.png">
     </span>
-    <a (click)="openWaze(f)">
+    <div style="flex-grow:1;padding-right:10px;">
+      <ng-container *ngIf="!f.addressOk.value">
+        <mat-icon style="margin-right:5px" color="primary">warning
+        </mat-icon>
+        שימו לב, כתובת לא מדוייקת!
+        <br />
+        <br />
+      </ng-container>
+      <a (click)="openWaze(f)">
 
-      <div style="display:inline-block;margin-right:5px">
+
 
         {{f.address.value}}
         <ng-container *ngIf="f.floor.value||f.appartment.value">
@@ -49,28 +56,27 @@
         <ng-container *ngIf="f.entrance.value">
           כניסה {{f.entrance.value}}
         </ng-container>
-        <ng-container *ngIf="f.addressComment.value">
-          <br /> {{f.addressComment.value}}
-        </ng-container>
 
 
-      </div>
-    </a>
+
+
+      </a>
+      <ng-container *ngIf="f.addressComment.value">
+        <br />
+        <br /><strong style="color:red">שימו לב! </strong> {{f.addressComment.value}}
+      </ng-container>
+    </div>
+
     <div style="float:left;text-align: left">
       <a (click)="f.openGoogleMaps()">מפה</a>
       <br />
       <a (click)="copyAddress(f)">העתק כתובת</a>
     </div>
-    <ng-container *ngIf="f.getGeocodeInformation().partialMatch()">
-      <br />
-      <mat-icon style="margin-right:5px" color="primary">warning
-      </mat-icon>
-      שימו לב, כתובת לא מדוייקת!
-    </ng-container>
+
   </div>
 
   <h4 *ngIf="f.phone1.value || f.phone2.value">טלפונים:</h4>
-  <div *ngIf="f.phone1.value"> 
+  <div *ngIf="f.phone1.value">
     <a href="tel:{{f.phone1.value}}">
       <button mat-mini-fab style="margin-left:10px;vertical-align: middle">
         <mat-icon>call</mat-icon>

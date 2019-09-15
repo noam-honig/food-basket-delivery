@@ -22,7 +22,7 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
-            "preserveSymlinks":true,//https://stackoverflow.com/questions/51614615/angular-6-the-result-of-a-dependency-is-an-expression
+          
             "assets": [
               "src/favicon.ico",
               "src/assets"
@@ -63,7 +63,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "hug-moms:build"
+            "browserTarget": "hug-moms:build",
+            "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
             "production": {

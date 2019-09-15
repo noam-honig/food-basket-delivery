@@ -1,19 +1,20 @@
-import { IdEntity, Id, StringColumn, PhoneColumn, changeDate, NumberColumn, SqlBuilder } from "../model-shared/types";
-import { EntityClass, Context, ContextEntity } from "../shared/context";
+import { PhoneColumn, changeDate, SqlBuilder } from "../model-shared/types";
+import { EntityClass, Context, IdColumn, IdEntity, StringColumn, NumberColumn } from "radweb";
 import { BasketId } from "./BasketType";
 import { FamilyId, Families } from "./families";
 import { DeliveryStatusColumn, DeliveryStatus } from "./DeliveryStatus";
 import { HelperId, HelperIdReadonly } from "../helpers/helpers";
 import { Entity, CompoundIdColumn } from "radweb";
 import { FamilySourceId } from "./FamilySources";
+import { Roles } from "../auth/roles";
 
 @EntityClass
-export class FamilyDeliveries extends IdEntity<Id>  {
+export class FamilyDeliveries extends IdEntity<IdColumn>  {
     family = new FamilyId();
     basketType = new BasketId(this.context, 'סוג סל');
 
 
-    deliverStatus = new DeliveryStatusColumn('סטטוס משלוח');
+    deliverStatus = new DeliveryStatusColumn();
     courier = new HelperId(this.context, "משנע");
     courierComments = new StringColumn('הערות מסירה');
     deliveryStatusDate = new changeDate('מתי');
@@ -39,14 +40,18 @@ export class FamilyDeliveries extends IdEntity<Id>  {
     archive_addressLatitude = new NumberColumn({ decimalDigits: 8 });
 
     constructor(private context: Context) {
-        super(new Id(), {
+        super(new IdColumn(), {
             name: 'FamilyDeliveries',
-            allowApiRead: context.isAdmin(),
-            allowApiDelete: context.isAdmin()
+            allowApiRead: Roles.admin,
+            allowApiDelete: Roles.admin
         });
     }
     getShortDescription() {
-        let r = this.deliverStatus.displayValue + " " + this.deliveryStatusDate.relativeDateName();
+        let r = this.deliverStatus.displayValue + " ";
+        if (this.deliveryStatusDate.value.valueOf() < new Date().valueOf() - 7 * 86400 * 1000)
+            r += "ב " + this.deliveryStatusDate.value.toLocaleDateString("he-il");
+        else
+            r += this.deliveryStatusDate.relativeDateName();
         if (this.courierComments.value) {
             r += ": " + this.courierComments.value;
         }

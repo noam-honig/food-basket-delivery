@@ -1,21 +1,19 @@
-import { RunOnServer } from "../auth/server-action";
+import { RunOnServer } from "radweb";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Helpers } from '../helpers/helpers';
 import * as fetch from 'node-fetch';
-import { Context, ServerContext } from "../shared/context";
+import { Context, ServerContext } from "radweb";
+import { Roles } from "../auth/roles";
 
 
 
 
 export class SendSmsAction {
-    @RunOnServer({ allowed: c => c.isAdmin() })
+    @RunOnServer({ allowed: Roles.admin })
     static async SendSms(helperId: string, reminder: Boolean, context?: ServerContext) {
 
         try {
-
-            
-
-            await SendSmsAction.generateMessage(context, helperId, context.getOrigin(), reminder, context.info.name, (phone, message,sender) => {
+            await SendSmsAction.generateMessage(context, helperId, context.getOrigin(), reminder, context.user.name, (phone, message, sender) => {
 
                 new SendSmsUtils().sendSms(phone, sender, message);
             });
@@ -24,10 +22,11 @@ export class SendSmsAction {
             console.error(err);
         }
     }
+   
 
 
 
-    static async  generateMessage(ds: Context, id: string, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string,sender:string) => void) {
+    static async  generateMessage(ds: Context, id: string, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string, sender: string) => void) {
 
         if (!origin) {
             throw 'Couldnt determine origin for sms';
@@ -46,7 +45,7 @@ export class SendSmsAction {
                 helper.reminderSmsDate.value = new Date();
             }
             else {
-                
+
                 message = settings.smsText.value;
                 if (!message || message.trim().length == 0) {
                     message = 'שלום !משנע! לחלוקת חבילות !ארגון! לחץ על: !אתר! תודה !שולח!';
@@ -54,15 +53,16 @@ export class SendSmsAction {
                 }
 
                 message = SendSmsAction.getMessage(message, settings.organisationName.value, helper.name.value, senderName, origin + '/x/' + helper.shortUrlKey.value);
+                helper.smsDate.value = new Date();
 
             }
             let sender = settings.helpPhone.value;
-            if (!sender||sender.length<3){
-                let currentUser = await (ds.for(Helpers).findFirst(h => h.id.isEqualTo(ds.info.helperId)));
+            if (!sender || sender.length < 3) {
+                let currentUser = await (ds.for(Helpers).findFirst(h => h.id.isEqualTo(ds.user.id)));
                 sender = currentUser.phone.value;
             }
 
-            then(helper.phone.value, message,sender);
+            then(helper.phone.value, message, sender);
             await helper.save();
 
 
@@ -113,7 +113,7 @@ class SendSmsUtils {
             '</sendSmsToRecipients>' +
             '</soap12:Body>' +
             '</soap12:Envelope>';
-        console.log('sms request',data);
+        console.log('sms request', data);
 
 
         try {
@@ -125,7 +125,7 @@ class SendSmsUtils {
                 headers: h,
                 body: data
             });
-            console.log('sms response',r, await r.text());
+            console.log('sms response', r, await r.text());
 
         }
         catch (err) {

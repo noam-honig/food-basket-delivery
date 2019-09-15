@@ -4,7 +4,7 @@ import { Entity, IDataSettings } from "radweb";
 import { SelectPopupComponent, SelectComponentInfo } from "./select-popup.component";
 import { YesNoQuestionComponentData, YesNoQuestionComponent } from "./yes-no-question/yes-no-question.component";
 import { InputAreaComponentData, InputAreaComponent } from "./input-area/input-area.component";
-import { BusyService } from "./busy-service";
+import { BusyService } from 'radweb';
 import { environment } from "../../environments/environment";
 import { ServerEventAuthorizeAction } from "../server/server-event-authorize-action";
 import { Subject } from "rxjs";
@@ -15,7 +15,7 @@ declare var gtag;
 @Injectable()
 export class DialogService {
     Info(info: string): any {
-        if (info.indexOf('!!')>=0){
+        if (info.indexOf('!!') >= 0) {
             new Audio('http://www.orangefreesounds.com/wp-content/uploads/2019/02/Ping-tone.mp3').play();
         }
         this.snackBar.open(info, "סגור", { duration: 4000 });
@@ -36,21 +36,20 @@ export class DialogService {
     statusRefreshThrottle = new myThrottle(1000);
 
 
-    constructor(private dialog: MatDialog, private zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar) {
+    constructor(private dialog: MatDialog, public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar) {
         this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));
 
 
     }
-    analytics(action:string,value?:number) {
-        if (!value)
-        {
-            value =1;
+    analytics(action: string, value?: number) {
+        if (!value) {
+            value = 1;
         }
         gtag('event', action, {
             'event_category': 'delivery',
             'event_label': action
-          });
-        
+        });
+
 
     }
 
@@ -99,9 +98,20 @@ export class DialogService {
     YesNoQuestion(question: string, onYes?: () => void) {
         let data: YesNoQuestionComponentData = {
             question: question,
-            onYes: onYes
+            onYes: onYes,
+            showOnlyConfirm: !onYes
         };
         this.dialog.open(YesNoQuestionComponent, { data });
+    }
+    async YesNoPromise(question: string) {
+        return new Promise<boolean>((resolve, reject) => {
+            let data: YesNoQuestionComponentData = {
+                question: question,
+                onYes: () => resolve(true),
+                onNo: () => resolve(false)
+            };
+            this.dialog.open(YesNoQuestionComponent, { data });
+        });
     }
     confirmDelete(of: string, onOk: () => void) {
         this.YesNoQuestion("האם את בטוחה שאת מעוניית למחוק את " + of + "?", onOk);

@@ -1,6 +1,6 @@
 import { Entity, Column, GridSettings, ColumnHashSet, } from "radweb";
-import { BusyService } from "./../select-popup/busy-service";
-import * as XLSX from 'xlsx';
+import { BusyService } from 'radweb';
+
 import { HasAsyncGetTheValue, DateTimeColumn } from "../model-shared/types";
 import { foreachSync } from "./utils";
 
@@ -10,9 +10,9 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
   busy: BusyService,
   hideColumn?: (e: E, c: Column<any>) => boolean,
   excludeColumn?: (e: E, c: Column<any>) => boolean,
-  moreColumns?: (e: E, addColumn: (caption: string, v: string, t: XLSX.ExcelDataType) => void) => void) {
-  busy.doWhileShowingBusy(async () => {
-
+  moreColumns?: (e: E, addColumn: (caption: string, v: string, t: import('xlsx').ExcelDataType) => void) => void) {
+  await busy.doWhileShowingBusy(async () => {
+    let XLSX = await import('xlsx');
     if (!hideColumn)
       hideColumn = () => false;
     if (!excludeColumn)
@@ -23,7 +23,7 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
     wb.Workbook = { Views: [{ RTL: true }] };
     let ws = {
 
-    } as XLSX.WorkSheet;
+    } as import('xlsx').WorkSheet;
     var dc = new DateTimeColumn();
     dc.value = new Date();
     ws["A1"] = {
@@ -31,11 +31,11 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
       t: "d",
       w: "dd/mm/yyyy HH:MM"
 
-    } as XLSX.CellObject;
+    } as import('xlsx').CellObject;
     ws["A2"] = {
       f: "year(A1)"
 
-    } as XLSX.CellObject;
+    } as import('xlsx').CellObject;
     ws["!cols"] = [];
 
 
@@ -55,7 +55,7 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
           let colName = 'A';
           let colIndex = 0;
 
-          let addColumn = (caption: string, v: string, t: XLSX.ExcelDataType, hidden?: boolean) => {
+          let addColumn = (caption: string, v: string, t: import('xlsx').ExcelDataType, hidden?: boolean) => {
 
             if (rowNum == 2) {
               ws[colPrefix + colName + "1"] = { v: caption };
@@ -115,7 +115,8 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
               console.error(err, c.jsonName, f.__toPojo(new ColumnHashSet()));
             }
           });
-          moreColumns(<E>f,addColumn);
+          if (moreColumns)
+            moreColumns(<E>f,addColumn);
           rowNum++;
 
         });

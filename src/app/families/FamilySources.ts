@@ -1,21 +1,23 @@
-import { IdEntity, HasAsyncGetTheValue, Id, StringColumn } from "../model-shared/types";
+import {  HasAsyncGetTheValue, PhoneColumn } from "../model-shared/types";
 
-import { Context, MoreDataColumnSettings, EntityClass } from "../shared/context";
+import { Context,  EntityClass, IdEntity, StringColumn, IdColumn, ColumnOptions } from "radweb";
+import { Roles } from "../auth/roles";
+
 @EntityClass
 export class FamilySources extends IdEntity<FamilySourceId>  {
   name = new StringColumn({ caption: "שם" });
-  contactPerson = new StringColumn({ caption: "איש קשר", excludeFromApi: !this.context.isAdmin() });
-  phone = new StringColumn({ caption: 'טלפון', excludeFromApi: !this.context.isAdmin() });
+  contactPerson = new StringColumn({ caption: "איש קשר" });
+  phone = new PhoneColumn({ caption: 'טלפון' });
   constructor(private context: Context) {
     super(new FamilySourceId(context), {
       name: "FamilySources",
-      allowApiRead: context.isLoggedIn(),
-      allowApiCRUD: context.isAdmin()
+      allowApiRead: context.isSignedIn(),
+      allowApiCRUD: Roles.admin
     });
   }
 }
-export class FamilySourceId extends Id implements HasAsyncGetTheValue {
-  constructor(private context: Context, settingsOrCaption?: MoreDataColumnSettings<string, Id> | string) {
+export class FamilySourceId extends IdColumn implements HasAsyncGetTheValue {
+  constructor(private context: Context, settingsOrCaption?: ColumnOptions<string> ) {
     super(settingsOrCaption);
   }
   get displayValue() {

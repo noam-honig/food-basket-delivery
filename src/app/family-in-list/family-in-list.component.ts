@@ -11,6 +11,7 @@ export class FamilyInListComponent implements OnInit {
   constructor() { }
   @Input() f: Families;
   @Input() i: number;
+  @Input() newAssign:boolean;
   ngOnInit() {
   }
 

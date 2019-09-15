@@ -5,7 +5,7 @@
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
-    "module": "es2015",
+    "module": "esNext",
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -17,14 +17,5 @@
       "es2018",
       "dom"
     ]
-    /*,"paths": {
-      "radweb": [
-        "../radweb/projects/radweb/src/public_api"
-      ],
-    
-      "radweb/*": [
-        "../radweb/projects/radweb/src/*"
-      ]
-    }*/
   }
 }

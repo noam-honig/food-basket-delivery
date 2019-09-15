@@ -1,29 +1,24 @@
-import { Pool } from 'pg';
 
-import { Helpers } from '../helpers/helpers';
+import { Pool } from 'pg';
 import { config } from 'dotenv';
 import { PostgresDataProvider, PostgrestSchemaBuilder } from 'radweb-server-postgres';
-
-import { evilStatics } from '../auth/evil-statics';
-
-
-
 import { foreachSync } from '../shared/utils';
 import { Families } from '../families/families';
-
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { ServerContext, allEntities } from '../shared/context';
+import { ServerContext, allEntities } from 'radweb';
 import '../app.module';
-import { WeeklyFamilyDeliveries } from '../weekly-families-deliveries/weekly-families-deliveries';
-import { WeeklyFamilies } from '../weekly-families/weekly-families';
+
+
 import { ActualSQLServerDataProvider } from 'radweb-server';
-import { ActualDirectSQL, actionInfo } from '../auth/server-action';
+import { ActualDirectSQL, actionInfo } from 'radweb';
 import { FamilyDeliveryEvents } from '../delivery-events/FamilyDeliveryEvents';
 import { SqlBuilder } from '../model-shared/types';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
+import { Helpers } from '../helpers/helpers';
+import * as passwordHash from 'password-hash';
+import { FamilyDeliveriesStats } from '../delivery-history/delivery-history.component';
 
 
 
@@ -33,8 +28,6 @@ export async function serverInit() {
         let ssl = true;
         if (process.env.DISABLE_POSTGRES_SSL)
             ssl = false;
-
-
         if (!process.env.DATABASE_URL) {
             console.error("No DATABASE_URL environment variable found, if you are developing locally, please add a '.env' with DATABASE_URL='postgres://*USERNAME*:*PASSWORD*@*HOST*:*PORT*/*DATABASE*'");
         }
@@ -43,32 +36,28 @@ export async function serverInit() {
             dbUrl = process.env.HEROKU_POSTGRESQL_GREEN_URL;
         if (process.env.logSqls) {
             ActualSQLServerDataProvider.LogToConsole = true;
-            ActualDirectSQL.log = true;
+
         }
-        actionInfo.runningOnServer = true;
+
         const pool = new Pool({
             connectionString: dbUrl,
             ssl: ssl
         });
-        evilStatics.dataSource = new PostgresDataProvider(pool);
+        Helpers.passwordHelper = {
+            generateHash: p => passwordHash.generate(p),
+            verify: (p, h) => passwordHash.verify(p, h)
+        }
 
+        await new PostgrestSchemaBuilder(pool).verifyStructureOfAllEntities();
 
+        var dataSource = new PostgresDataProvider(pool);
         let context = new ServerContext();
-        var sb = new PostgrestSchemaBuilder(pool);
-        await foreachSync(allEntities.map(x => context.for(x).create()), async x => {
-            if (x.__getDbName().toLowerCase().indexOf('from ') < 0) {
-                console.log('verify table existance '+x.__getName());
-                await sb.CreateIfNotExist(x);
-                await sb.verifyAllColumns(x);
-            }
-        });
+        context.setDataProvider(dataSource);
         let sql = new SqlBuilder();
         let fde = new FamilyDeliveryEvents(context);
-
-
+        let f = new Families(context);
         // remove unique constraint on id column if exists
-
-        var r = await pool.query(sql.build('ALTER TABLE ', fde, ' DROP CONSTRAINT IF EXISTS familydeliveryevents_pkey'));
+        await pool.query(sql.build('ALTER TABLE ', fde, ' DROP CONSTRAINT IF EXISTS familydeliveryevents_pkey'));
 
 
         //create index if required
@@ -76,6 +65,8 @@ export async function serverInit() {
         //create index for family deliveries if required
         var fd = new FamilyDeliveries(context);
         await pool.query(sql.build('create index if not exists fd_1 on ', fd, ' (', [fd.family, fd.deliveryStatusDate, fd.deliverStatus, fd.courier], ')'));
+        //create index if required
+        await pool.query(sql.build('create index if not exists f_1 on ', f, ' (', [fde.courier, f.deliverStatus], ')'));
 
 
 
@@ -86,16 +77,6 @@ export async function serverInit() {
             h.boxes.value = 1;
             await h.save();
         }
-        await foreachSync(await context.for(WeeklyFamilyDeliveries).find({ where: d => d.assignedHelper.isEqualTo('') }), async d => {
-            let f = await context.for(WeeklyFamilies).lookupAsync(f => f.id.isEqualTo(d.familyId));
-            d.assignedHelper.value = f.assignedHelper.value;
-            await d.save();
-
-        });
-
-
-
-
 
         await context.for(Families).foreach(f => f.addressLongitude.isEqualTo(0), async ff => {
             let g = ff.getGeocodeInformation();
@@ -105,9 +86,6 @@ export async function serverInit() {
             ff.city.value = ff.getGeocodeInformation().getCity();
             await ff.save();
         });
-
-
-
 
         let settings = await context.for(ApplicationSettings).lookupAsync(s => s.id.isEqualTo(1));
         if (settings.isNew()) {
@@ -124,6 +102,9 @@ export async function serverInit() {
             settings.commentForProblem.value = 'נשמח אם תכתוב לנו הערה על מה שראית והיה';
         if (!settings.messageForDoneDelivery.value) {
             settings.messageForDoneDelivery.value = 'תודה על כל העזרה, נשמח אם תתנדבו שוב';
+        }
+        if (!settings.deliveredButtonText.value) {
+            settings.deliveredButtonText.value = 'מסרתי את החבילה בהצלחה';
         }
         await settings.save();
 
@@ -174,12 +155,67 @@ export async function serverInit() {
             console.log("updating family source for historical information");
             let f = new Families(context);
             let fd = new FamilyDeliveries(context);
-            sql.update(fd,{
-                set:()=>[[fd.archiveFamilySource,f.familySource]],
-                from:f,
-                where:()=>[sql.eq(f.id,fd.family)]
-            });            
+            pool.query(sql.update(fd, {
+                set: () => [[fd.archiveFamilySource, f.familySource]],
+                from: f,
+                where: () => [sql.eq(f.id, fd.family)]
+            }));
             settings.dataStructureVersion.value = 2;
+            await settings.save();
+        }
+        if (settings.dataStructureVersion.value == 2) {
+            console.log("updating update date");
+            let f = context.for(Families).create();
+            pool.query(sql.update(f, {
+                set: () => [[f.lastUpdateDate, f.createDate]]
+            }));
+            settings.dataStructureVersion.value = 3;
+            await settings.save();
+        }
+        if (settings.dataStructureVersion.value == 3) {
+            console.log("updating family source for historical information");
+            let f = new Families(context);
+            let fd = new FamilyDeliveries(context);
+            pool.query(sql.update(fd, {
+                set: () => [[fd.archiveFamilySource, f.familySource]],
+                from: f,
+                where: () => [sql.eq(f.id, fd.family)]
+            }));
+            settings.dataStructureVersion.value = 4;
+            await settings.save();
+        }
+        if (settings.dataStructureVersion.value == 4) {
+            console.log("updating update date");
+            let f = context.for(Families).create();
+            pool.query(sql.update(f, {
+                set: () => [[f.lastUpdateDate, f.createDate]]
+            }));
+            settings.dataStructureVersion.value = 5;
+            await settings.save();
+        }
+        if (settings.dataStructureVersion.value == 5) {
+            console.log("updating last sms date");
+
+            let helpers = await context.for(Helpers).find({});
+            for (const h of helpers) {
+                if (!h.smsDate.value) {
+                    let f = await context.for(FamilyDeliveriesStats).find({
+                        where: f => f.courier.isEqualTo(h.id),
+                        orderBy: f => [{ column: f.deliveryStatusDate, descending: true }]
+                    });
+                    if (f && f.length > 0) {
+                        h.smsDate.value = f[0].deliveryStatusDate.value;
+                        await h.save();
+                    }
+                }
+            }
+            settings.dataStructureVersion.value = 6;
+            await settings.save();
+
+        }
+        if (settings.dataStructureVersion.value == 6) {
+            settings.showLeftThereButton.value = true;
+            settings.dataStructureVersion.value = 7;
             await settings.save();
         }
 
@@ -187,6 +223,7 @@ export async function serverInit() {
         console.error(error);
         throw error;
     }
+    return dataSource;
 
 
 

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+
+import { Roles, AdminGuard } from '../auth/roles';
 import { Route } from '@angular/router';
-import { HolidayDeliveryAdmin } from '../auth/auth-guard';
+
 
 @Component({
   selector: 'app-address-problem',
@@ -16,6 +18,10 @@ export class AddressProblemComponent implements OnInit {
   static route: Route = {
     path: 'address-problem',
     component: AddressProblemComponent,
-    data: { name: 'כתובות בעיתיות' ,seperator:true}, canActivate: [HolidayDeliveryAdmin]
+    data: {
+      name: 'כתובות בעיתיות',
+      
+      seperator: true
+    }, canActivate: [AdminGuard]
   }
 }

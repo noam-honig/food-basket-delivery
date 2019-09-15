@@ -1,11 +1,13 @@
 import { Component, OnInit, Inject } from '@angular/core';
 
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Helpers } from '../helpers/helpers';
-import { Context } from '../shared/context';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { Helpers, HelpersBase } from '../helpers/helpers';
+import { Context } from 'radweb';
 import { FilterBase, FindOptionsPerEntity } from 'radweb';
-import { FlexibleConnectedPositionStrategy } from '@angular/cdk/overlay';
-import { BusyService } from '../select-popup/busy-service';
+
+import { BusyService } from 'radweb';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 
 @Component({
   selector: 'app-select-helper',
@@ -17,7 +19,7 @@ export class SelectHelperComponent implements OnInit {
   searchString: string = '';
   lastFilter: string = undefined;
 
-  filteredHelpers: Helpers[] = [];
+  filteredHelpers: HelpersBase[] = [];
   constructor(
     private dialogRef: MatDialogRef<SelectHelperComponent>,
     @Inject(MAT_DIALOG_DATA) private data: SelectHelperInfo,
@@ -30,11 +32,11 @@ export class SelectHelperComponent implements OnInit {
   clearHelper() {
     this.select(undefined);
   }
-  
+
 
   findOptions = {
     orderBy: h => [h.name], limit: 25
-  } as FindOptionsPerEntity<Helpers>;
+  } as FindOptionsPerEntity<HelpersAndStats>;
   async ngOnInit() {
 
 
@@ -46,7 +48,7 @@ export class SelectHelperComponent implements OnInit {
       return r;
     };
 
-    if (Helpers.recentHelpers.length == 0)
+    if (Helpers.recentHelpers.length == 0 || this.data.hideRecent)
       this.getHelpers();
     else {
       this.filteredHelpers = [...Helpers.recentHelpers];
@@ -60,12 +62,12 @@ export class SelectHelperComponent implements OnInit {
     this.getHelpers();
   }
   async getHelpers() {
-    
-    await this.busy.donotWait(async () =>{
-      this.filteredHelpers = await this.context.for(Helpers).find(this.findOptions);
+
+    await this.busy.donotWait(async () => {
+      this.filteredHelpers = await this.context.for(HelpersAndStats).find(this.findOptions);
       this.showingRecentHelpers = false;
     });
-    
+
   }
   doFilter() {
     if (this.searchString.trim() != this.lastFilter) {
@@ -74,21 +76,30 @@ export class SelectHelperComponent implements OnInit {
     }
 
   }
+  showCompany() {
+    return ApplicationSettings.get(this.context).showCompanies.value;
+  }
   selectFirst() {
     if (this.filteredHelpers.length > 0)
       this.select(this.filteredHelpers[0]);
   }
-  select(h: Helpers) {
+  select(h: HelpersBase) {
     this.data.onSelect(h);
-    if (h&&!h.isNew())
+    if (h && !h.isNew())
       Helpers.addToRecent(h);
     this.dialogRef.close();
+  }
+  static dialog(dialog: MatDialog, options: SelectHelperInfo) {
+
+    dialog.open(SelectHelperComponent, {
+      data: options
+    });
   }
 
 }
 export interface SelectHelperInfo {
-
-  onSelect: (selectedValue: Helpers) => void,
-  filter?: (helper: Helpers) => FilterBase
+  hideRecent?: boolean,
+  onSelect: (selectedValue: HelpersBase) => void,
+  filter?: (helper: HelpersAndStats) => FilterBase
 
 }

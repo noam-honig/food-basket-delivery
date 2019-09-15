@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { Context } from '../shared/context';
+import { Context } from 'radweb';
 import { Groups } from '../manage/manage.component';
 import { DialogService } from '../select-popup/dialog';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -23,6 +23,8 @@ export class UpdateGroupDialogComponent implements OnInit {
   }
   groups = '';
   selected(group: string) {
+    if (!this.groups)
+      return false;
     return this.groups.indexOf(group) >= 0;
   }
   select(group: string) {
@@ -30,6 +32,8 @@ export class UpdateGroupDialogComponent implements OnInit {
 
       if (this.groups)
         this.groups += ', ';
+      else
+        this.groups = '';
       this.groups += group;
     }
     else {
@@ -47,7 +51,7 @@ export class UpdateGroupDialogComponent implements OnInit {
 
   }
   cancel() {
-    
+
     this.dialogRef.close();
   }
   async confirm() {

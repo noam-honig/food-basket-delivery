@@ -1,10 +1,11 @@
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { NumberColumn, StringColumn } from 'radweb';
-import { HelperId, Helpers } from '../helpers/helpers';
-import { IdEntity, changeDate, DateTimeColumn,  SqlBuilder } from '../model-shared/types';
+import { NumberColumn, StringColumn, IdEntity, BoolColumn } from 'radweb';
+import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
+import { changeDate, DateTimeColumn, SqlBuilder } from '../model-shared/types';
 import { Families } from "../families/families";
 
-import { Context,  EntityClass } from "../shared/context";
+import { Context, EntityClass } from "radweb";
+import { Roles } from "../auth/roles";
 
 
 
@@ -14,17 +15,8 @@ function log(s: string) {
     return s;
 }
 @EntityClass
-export class HelpersAndStats extends IdEntity<HelperId> {
-    name = new StringColumn({
-        caption: "שם",
-        onValidate: v => {
-            if (!v.value || v.value.length < 3)
-                this.name.error = 'השם קצר מידי';
-        }
-    });
-    phone = new StringColumn({ caption: "טלפון", inputType: 'tel' });
-    smsDate = new changeDate('מועד משלוח SMS');
-    reminderSmsDate = new changeDate('מועד משלוח תזכורת SMS');
+export class HelpersAndStats extends HelpersBase {
+
     deliveriesInProgress = new NumberColumn({
         dbReadOnly: true,
         caption: 'משפחות מחכות'
@@ -40,10 +32,13 @@ export class HelpersAndStats extends IdEntity<HelperId> {
     lastAsignTime = new DateTimeColumn({
         dbReadOnly: true
     });
+    gotSms = new BoolColumn({
+        dbReadOnly: true
+    });
     constructor(context: Context) {
-        super(new HelperId(context), {
+        super(context, {
             name: "helpersAndStats",
-            allowApiRead: context.isAdmin(),
+            allowApiRead: Roles.admin,
             dbName: () => {
                 let f = new Families(context);
                 let h = new Helpers(context);
@@ -62,7 +57,10 @@ export class HelpersAndStats extends IdEntity<HelperId> {
                         h.phone,
                         h.smsDate,
                         h.reminderSmsDate,
-                        sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isEqualTo( DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress),
+                        h.company,
+                        h.totalKm,
+                        h.totalTime,
+                        sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress),
                         sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isActiveDelivery()]), this.allFamilies),
                         sql.countInnerSelect(helperFamilies(() => [sql.in(f.deliverStatus,
                             DeliveryStatus.FailedBadAddress.id,
@@ -71,7 +69,12 @@ export class HelpersAndStats extends IdEntity<HelperId> {
                             this.deliveriesWithProblems),
                         sql.max(f.courierAssingTime,
                             helperFamilies(() =>
-                                [sql.not(sql.in(f.deliverStatus, DeliveryStatus.Frozen.id,DeliveryStatus.NotInEvent.id))]), this.lastAsignTime)
+                                [sql.not(sql.in(f.deliverStatus, DeliveryStatus.Frozen.id, DeliveryStatus.NotInEvent.id))]), this.lastAsignTime),
+                        sql.build('coalesce(  ',h.smsDate, '> (', sql.query({
+                            select: () => [sql.build('max(', f.courierAssingTime, ')')],
+                            from: f,
+                            where: helperFamilies(() => [sql.not(sql.in(f.deliverStatus, DeliveryStatus.Frozen.id, DeliveryStatus.NotInEvent.id))]).where
+                        }), ") + interval '-1' day,false) as ", this.gotSms)
 
                     ],
                     from: h

@@ -1,10 +1,11 @@
-import { RunOnServer } from "../auth/server-action";
+import { RunOnServer } from "radweb";
 import { FilterBase } from "radweb";
 
 import { HelpersAndStats } from "./HelpersAndStats";
 import { colors } from "../families/stats-action";
-import { DateTimeColumn } from "radweb";
-import { Context } from "../shared/context";
+
+import { Context } from "radweb";
+import { Roles } from "../auth/roles";
 
 
 export interface InArgs {
@@ -15,8 +16,9 @@ export interface OutArgs {
 
 }
 export class DeliveryStats {
-    onTheWay = new DeliveryStatistic('בדרך', f => f.deliveriesInProgress.isGreaterOrEqualTo(1).and(f.lastAsignTime.isGreaterThan(new Date(new Date().valueOf() - 3600000 * 1.5))), colors.blue);
-    late = new DeliveryStatistic('מתעכבים', f => f.deliveriesInProgress.isGreaterOrEqualTo(1).and(f.lastAsignTime.isLessOrEqualTo(new Date(new Date().valueOf() - 3600000 * 1.5))), colors.yellow);
+    notOutYet = new DeliveryStatistic('טרם נשלח SMS', f => f.deliveriesInProgress.isGreaterOrEqualTo(1).and(f.gotSms.isDifferentFrom(true)), colors.blue);
+    onTheWay = new DeliveryStatistic('בדרך', f => f.deliveriesInProgress.isGreaterOrEqualTo(1).and(f.gotSms.isEqualTo(true)).and(f.smsDate.isGreaterThan(new Date(new Date().valueOf() - 3600000 * 1.5))), colors.blue);
+    late = new DeliveryStatistic('מתעכבים', f => f.deliveriesInProgress.isGreaterOrEqualTo(1).and(f.gotSms.isEqualTo(true)).and(f.smsDate.isLessOrEqualTo(new Date(new Date().valueOf() - 3600000 * 1.5))), colors.yellow);
     delivered = new DeliveryStatistic('סיימו', f => f.deliveriesInProgress.isEqualTo(0).and(f.deliveriesWithProblems.isEqualTo(0)).and(f.allFamilies.isGreaterOrEqualTo(1)), colors.green);
     problem = new DeliveryStatistic('בעיות', f => f.deliveriesWithProblems.isGreaterOrEqualTo(1), colors.red);
 
@@ -29,7 +31,7 @@ export class DeliveryStats {
             }
         }
     }
-    @RunOnServer({ allowed: c => c.isAdmin() })
+    @RunOnServer({ allowed: Roles.admin })
     static async getTheStats(context?: Context) {
         let result = { data: {} };
         let stats = new DeliveryStats();

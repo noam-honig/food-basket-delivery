@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { HelpersAndStats } from "./HelpersAndStats";
-import { GridSettings, DateTimeColumn, AndFilter } from 'radweb';
+import { AndFilter } from 'radweb';
 import { UserFamiliesList } from '../my-families/user-families';
 import * as chart from 'chart.js';
 import { DeliveryStatistic, DeliveryStats } from './delivery-stats';
-import { BusyService } from '../select-popup/busy-service';
+import { BusyService } from 'radweb';
 import { FilterBase } from 'radweb';
 import { Helpers } from '../helpers/helpers';
+
+
+import { Context } from 'radweb';
+import { Roles, AdminGuard } from '../auth/roles';
 import { Route } from '@angular/router';
-import { HolidayDeliveryAdmin } from '../auth/auth-guard';
-import { Context } from '../shared/context';
 
 @Component({
   selector: 'app-delivery-follow-up',
@@ -18,19 +20,19 @@ import { Context } from '../shared/context';
 })
 export class DeliveryFollowUpComponent implements OnInit {
   static route: Route = {
-    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [HolidayDeliveryAdmin], data: { name: 'מעקב משנעים' }
+    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [AdminGuard], data: { name: 'מעקב משנעים' }
   }
 
   familyLists = new UserFamiliesList(this.context);
-  currentlHelper:HelpersAndStats;
+  currentlHelper: HelpersAndStats;
   async selectCourier(c: HelpersAndStats) {
     this.currentlHelper = c;
-    this.familyLists.initForHelper(c.id.value, c.name.value, await this.context.for(Helpers).findFirst(h=>h.id.isEqualTo(c.id)));
+    this.familyLists.initForHelper(c.id.value, c.name.value, await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(c.id)));
 
   }
-  searchString:string;
-  showHelper(h:HelpersAndStats){
-    return (!this.searchString||h.name.value.indexOf(this.searchString)>=0);
+  searchString: string;
+  showHelper(h: HelpersAndStats) {
+    return (!this.searchString || h.name.value.indexOf(this.searchString) >= 0);
   }
   public pieChartLabels: string[] = [];
   public pieChartData: number[] = [];
@@ -79,6 +81,7 @@ export class DeliveryFollowUpComponent implements OnInit {
 
 
     [
+      this.stats.notOutYet,
       this.stats.onTheWay,
       this.stats.late,
       this.stats.problem,
@@ -98,8 +101,8 @@ export class DeliveryFollowUpComponent implements OnInit {
       this.updateChart();
     }));
   }
-  constructor(private busy: BusyService,private context:Context) { }
-  couriers =this.context.for(HelpersAndStats).gridSettings( {
+  constructor(private busy: BusyService, private context: Context) { }
+  couriers = this.context.for(HelpersAndStats).gridSettings({
 
     columnSettings: h => [
       h.name, h.phone, h.deliveriesInProgress, h.lastAsignTime
@@ -122,7 +125,7 @@ export class DeliveryFollowUpComponent implements OnInit {
 
         return result;
       },
-      orderBy: h => [{column:h.lastAsignTime,descending:true}],
+      orderBy: h => [{ column: h.lastAsignTime, descending: true }],
       limit: 1000
     }
   });

@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { foreachSync, foreachEntityItem } from '../../shared/utils';
+
 
 import { DialogService } from '../../select-popup/dialog';
 import { AuthService } from '../../auth/auth-service';
 import { Router, Route } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
-import { evilStatics } from '../../auth/evil-statics';
-import { Context } from '../../shared/context';
+
+import { Context, RouteHelperService } from 'radweb';
+import { RegisterComponent } from '../register/register.component';
+import { AdminGuard } from '../../auth/roles';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +20,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private dialog: DialogService,
     private auth: AuthService,
-    private router: Router,
+    private router: RouteHelperService,
     private context:Context
   ) { }
   user: string;
@@ -34,6 +36,6 @@ export class LoginComponent implements OnInit {
 
   }
   register() {
-    this.router.navigate([evilStatics.routes.register]);
+    this.router.navigateToComponent(RegisterComponent);
   }
 }

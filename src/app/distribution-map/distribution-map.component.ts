@@ -1,23 +1,24 @@
 /// <reference types="@types/googlemaps" />
 import * as chart from 'chart.js';
 import { Component, OnInit, ViewChild, Sanitizer, OnDestroy } from '@angular/core';
-import { GridSettings } from 'radweb';
+
 import { Families } from '../families/families';
 import { DialogService } from '../select-popup/dialog';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
-import { HolidayDeliveryAdmin } from '../auth/auth-guard';
-import { Context, DirectSQL } from '../shared/context';
-import { RunOnServer } from '../auth/server-action';
+
+import { Context, DirectSQL } from 'radweb';
+import { RunOnServer } from 'radweb';
 import { SqlBuilder } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { SelectService } from '../select-popup/select-service';
-import { SWITCH_INJECTOR_FACTORY__POST_R3__ } from '@angular/core/src/di/injector';
+
 import { colors } from '../families/stats-action';
-import { BusyService } from '../select-popup/busy-service';
+import { BusyService } from 'radweb';
 import { YesNo } from '../families/YesNo';
+import { Roles, AdminGuard } from '../auth/roles';
 
 @Component({
   selector: 'app-distribution-map',
@@ -44,7 +45,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   static route: Route = {
     path: 'addresses',
     component: DistributionMap,
-    data: { name: 'מפת הפצה' }, canActivate: [HolidayDeliveryAdmin]
+    data: { name: 'מפת הפצה' }, canActivate: [AdminGuard]
   };
 
   gridView = true;
@@ -161,7 +162,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     });
     this.updateChart();
   }
-  @RunOnServer({ allowed: c => c.isAdmin() })
+  @RunOnServer({ allowed: Roles.admin })
   static async GetFamiliesLocations(onlyPotentialAsignment?:boolean,city?: string, group?: string,context?: Context, directSql?: DirectSQL) {
     let f = new Families(context);
 
@@ -175,20 +176,19 @@ export class DistributionMap implements OnInit, OnDestroy {
         if (onlyPotentialAsignment)
         {
           where.push(f.readyFilter(city,group).and(f.special.isEqualTo(YesNo.No)));
-          
         }
         return where;
       },
-      orderBy:[f.addressLatitude,f.addressLongitude]
+      orderBy: [f.addressLatitude, f.addressLongitude]
     })));
 
     return r.rows.map(x => {
       return {
-        id: x[r.fields[0].name],
-        lat: +x[r.fields[1].name],
-        lng: +x[r.fields[2].name],
-        status: +x[r.fields[3].name],
-        courier: x[r.fields[4].name]
+        id: x[r.getcolumnNameAtIndex(0)] ,
+        lat: +x[r.getcolumnNameAtIndex(1)],
+        lng: +x[r.getcolumnNameAtIndex(2)],
+        status: +x[r.getcolumnNameAtIndex(3)],
+        courier: x[r.getcolumnNameAtIndex(4)]
       } as familyQueryResult;
 
     }) as familyQueryResult[];

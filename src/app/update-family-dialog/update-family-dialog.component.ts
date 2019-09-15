@@ -1,8 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Families } from '../families/families';
 import { GridSettings } from 'radweb';
-import { Context } from '../shared/context';
+import { Context } from 'radweb';
 
 @Component({
   selector: 'app-update-family-dialog',
@@ -28,6 +28,8 @@ export class UpdateFamilyDialogComponent implements OnInit {
   async confirm() {
     await this.families.currentRow.save();
     this.dialogRef.close();
+    if (this.data)
+      this.data.onSave();
   }
 
   ngOnInit() {
@@ -39,5 +41,6 @@ export class UpdateFamilyDialogComponent implements OnInit {
 export interface UpdateFamilyInfo {
   f: Families,
   message?: string,
-  disableSave?: boolean
+  disableSave?: boolean,
+  onSave?: () => void
 }

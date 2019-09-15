@@ -3,9 +3,9 @@ import { StringColumn } from 'radweb';
 import { Helpers } from '../../helpers/helpers';
 import { DialogService } from '../../select-popup/dialog';
 import { AuthService } from '../../auth/auth-service';
-import { LoggedInGuard } from '../../auth/auth-guard';
+import { SignedInGuard } from 'radweb';
 import { Route } from '@angular/router';
-import { Context } from '../../shared/context';
+import { Context } from 'radweb';
 
 @Component({
   selector: 'app-update-info',
@@ -16,23 +16,23 @@ export class UpdateInfoComponent implements OnInit {
   constructor(private dialog: DialogService,
     private auth: AuthService,
     private context: Context) {
-
+    
 
   }
-  static route: Route = { path: 'update-info', component: UpdateInfoComponent, data: { name: 'הגדרות אישיות' }, canActivate: [LoggedInGuard] };
+  static route: Route = { path: 'update-info', component: UpdateInfoComponent, data: { name: 'הגדרות אישיות' }, canActivate: [SignedInGuard] };
 
   confirmPassword = new StringColumn({ caption: 'אישור סיסמה', inputType: 'password', value: Helpers.emptyPassword });
   helpers = this.context.for(Helpers).gridSettings({
     numOfColumnsInGrid: 0,
     allowUpdate: true,
-    get: { where: h => h.id.isEqualTo(this.auth.auth.info.helperId) },
+    get: { where: h => h.id.isEqualTo(this.context.user.id) },
     columnSettings: h => [
       h.name,
       h.phone,
       //h.userName,
       h.password,
       { column: this.confirmPassword },
-      //h.email,
+      
       //h.address
     ],
 
@@ -71,3 +71,4 @@ export class UpdateInfoComponent implements OnInit {
   }
 
 }
+AuthService.UpdateInfoComponent = UpdateInfoComponent;

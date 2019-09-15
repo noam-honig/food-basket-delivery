@@ -42,13 +42,6 @@
         },
         {
             "type": "npm",
-            "script": "publish-to-m-h",
-            "problemMatcher": [
-                "$tsc"
-            ]
-        },
-        {
-            "type": "npm",
             "script": "ng-serve-noam-ip-10.0.0.6",
             "problemMatcher": [
                 "$tsc-watch"
@@ -133,6 +126,73 @@
         {
             "type": "npm",
             "script": "publish-to-cbey",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "build:stats",
+            "problemMatcher": [
+                "$tsc"
+            ]
+        },
+        {
+            "type": "npm",
+            "script": "bundle-report",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-dinale",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-tal-chaim",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-shorashim",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-reim",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-chagsameach",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-hbhr",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-tikvabasket",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-hesed",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-chasdei",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-dinale-kol-halev",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-krvtj",
             "problemMatcher": []
         }
     ]

@@ -1,5 +1,5 @@
 import { RouteReuseStrategy, DetachedRouteHandle, ActivatedRouteSnapshot } from "@angular/router";
-import { Context } from "./shared/context";
+import { Context } from "radweb";
 import { Injectable } from "@angular/core";
 
 @Injectable()

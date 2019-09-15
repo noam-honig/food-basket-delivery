@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Context } from '../shared/context';
+import { Context } from 'radweb';
 import { Helpers } from '../helpers/helpers';
 import { AsignFamilyComponent } from '../asign-family/asign-family.component'
 import { Families } from '../families/families';
@@ -69,6 +69,7 @@ export class StressTestComponent implements OnInit {
         numOfBaskets: 1,
         preferRepeatFamilies: true,
         name,
+        company:'',
         phone: phoneNumber,
         helperId
       });

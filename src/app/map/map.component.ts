@@ -4,8 +4,8 @@ import { Families } from '../families/families';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { DistributionMap, infoOnMap } from '../distribution-map/distribution-map.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Context } from '../shared/context';
-import { BusyService } from '../select-popup/busy-service';
+import { Context } from 'radweb';
+import { BusyService } from 'radweb';
 
 //import 'googlemaps';
 
@@ -115,7 +115,7 @@ export class MapComponent implements OnInit {
     mapInit = false;
     markers: google.maps.Marker[] = [];
     hasFamilies = false;
-    bounds: google.maps.LatLngBounds;
+    bounds: google.maps.LatLngBounds =  new google.maps.LatLngBounds();
     prevFamilies: Families[] = [];
     async test(families: Families[]) {
         var prevFamilies = this.prevFamilies;

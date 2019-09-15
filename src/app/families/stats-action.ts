@@ -1,14 +1,17 @@
-import { RunOnServer } from "../auth/server-action";
+import { RunOnServer, StringColumn, NumberColumn, Entity } from "radweb";
 import { FilterBase } from "radweb";
 import { Families } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
-import { CallStatus } from "./CallStatus";
+
 import { YesNo } from "./YesNo";
 import { BasketType } from "./BasketType";
-import { Context, ContextEntity, EntityClass } from "../shared/context";
+import { Context, EntityClass } from "radweb";
 import { BasketInfo } from "../asign-family/asign-family.component";
-import { StringColumn, NumberColumn, SqlBuilder } from "../model-shared/types";
+
+import { SqlBuilder } from "../model-shared/types";
+import { Roles } from "../auth/roles";
 import { Groups } from "../manage/manage.component";
+
 
 export interface OutArgs {
     data: any;
@@ -34,14 +37,15 @@ export class Stats {
             f.special.isEqualTo(YesNo.Yes))
         , colors.orange);
 
-    onTheWay = new FaimilyStatistics('בדרך', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(f.courier.isDifferentFrom('')), colors.blue);
+    onTheWay = new FaimilyStatistics('בדרך', f => f.onTheWayFilter(), colors.blue);
     delivered = new FaimilyStatistics('הגיעו', f => f.deliverStatus.isSuccess(), colors.green);
     problem = new FaimilyStatistics('בעיות', f => f.deliverStatus.isProblem(), colors.red);
-    currentEvent = new FaimilyStatistics('באירוע', f => f.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent), colors.green);
+    currentEvent = new FaimilyStatistics('באירוע', f => f.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent).and(f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList)), colors.green);
+    outOfList = new FaimilyStatistics('הוצאו מהרשימות', f => f.deliverStatus.isEqualTo(DeliveryStatus.RemovedFromList), colors.green);
     notInEvent = new FaimilyStatistics('לא באירוע', f => f.deliverStatus.isEqualTo(DeliveryStatus.NotInEvent), colors.blue);
     frozen = new FaimilyStatistics('קפואים', f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen), colors.gray);
     blocked = new FaimilyStatistics('סל חסום', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(f.courier.isEqualTo('').and(f.blockedBasket.isEqualTo(true))), colors.gray);
-    deliveryComments = new FaimilyStatistics('הערות משנע', f => f.courierComments.isDifferentFrom(''), colors.yellow);
+    needWork = new FaimilyStatistics('מצריך טיפול', f => f.needsWork.isEqualTo(true), colors.yellow);
 
 
     async getData() {
@@ -54,7 +58,7 @@ export class Stats {
         }
         return r;
     }
-    @RunOnServer({ allowed: c => c.isAdmin() })
+    @RunOnServer({ allowed: Roles.admin })
     static async getDataFromServer(context?: Context) {
         let result = { data: {}, baskets: [], cities: [], groups: [] as groupStats[] };
         let stats = new Stats();
@@ -117,7 +121,7 @@ export class Stats {
     }
 }
 @EntityClass
-export class CitiesStats extends ContextEntity<string> {
+export class CitiesStats extends Entity<string> {
     city = new StringColumn();
     families = new NumberColumn();
     constructor(context: Context) {

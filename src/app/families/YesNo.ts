@@ -1,6 +1,6 @@
-import { ClosedListColumn, Column } from "radweb";
-import { NumberColumn } from "../model-shared/types";
-import { MoreDataColumnSettings } from "../shared/context";
+import { ClosedListColumn, Column, ColumnOptions } from "radweb";
+
+
 
 export class YesNo {
   static Yes = new YesNo(1, 'כן');
@@ -12,7 +12,7 @@ export class YesNo {
   }
 }
 export class YesNoColumn extends ClosedListColumn<YesNo>{
-  constructor(caption: MoreDataColumnSettings<YesNo, Column<YesNo>> | string) {
+  constructor(caption: ColumnOptions<YesNo> ) {
     super(YesNo, caption);
   }
   getColumn() {

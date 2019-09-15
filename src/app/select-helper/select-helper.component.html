@@ -12,9 +12,15 @@
         <mat-nav-list role="list">
           <mat-list-item *ngFor="let h of filteredHelpers" (click)="select(h)">
 
-            <div style="min-width:100px;"> {{h.name.value}}</div>
+            <span style="min-width:100px;"> {{h.name.value}}
+            
+            </span>
 
-            {{h.phone.value}}
+            {{h.phone.displayValue}}
+            <ng-container *ngIf="showCompany()&&h.company.value">
+                <br/>
+                {{h.company.value}}
+              </ng-container>
             <mat-divider></mat-divider>
           </mat-list-item>
         </mat-nav-list>

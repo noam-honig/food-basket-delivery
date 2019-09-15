@@ -1,33 +1,6 @@
-import * as uuid from 'uuid';
 import * as radweb from 'radweb';
-import { DataProviderFactory, EntityOptions, Entity, Column, Filter, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, SQLCommand, SQLQueryResult } from "radweb";
+import {  Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, SQLCommand, SQLQueryResult, ColumnOptions, DecorateDataColumnSettings } from "radweb";
 
-import { ContextEntity, ContextEntityOptions, MoreDataColumnSettings, hasMoreDataColumnSettings, MoreDataNumberColumnSettings } from '../shared/context';
-import { BrowserPlatformLocation } from '@angular/platform-browser/src/browser/location/browser_platform_location';
-import { query } from '@angular/animations';
-import { ValueConverter } from '@angular/compiler/src/render3/view/template';
-import { eraseStyles } from '@angular/animations/browser/src/util';
-
-export class IdEntity<idType extends Id> extends ContextEntity<string>
-{
-  id: idType;
-  constructor(id: idType, options?: ContextEntityOptions | string) {
-    super(options);
-    this.id = id;
-    id.readonly = true;
-    let x = this.onSavingRow;
-    this.onSavingRow = () => {
-      if (this.isNew() && !this.id.value && !this.disableNewId)
-        this.id.setToNewId();
-      return x();
-    }
-  }
-  private disableNewId = false;
-  setEmptyIdForNewRow() {
-    this.id.value = '';
-    this.disableNewId = true;
-  }
-}
 
 
 
@@ -35,63 +8,28 @@ export class IdEntity<idType extends Id> extends ContextEntity<string>
 export interface HasAsyncGetTheValue {
   getTheValue(): Promise<string>;
 }
-export class StringColumn extends radweb.StringColumn implements hasMoreDataColumnSettings {
-  __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
-    return this.settingsOrCaption as MoreDataColumnSettings<any, any>;
-  }
-  constructor(private settingsOrCaption?: MoreDataColumnSettings<string, StringColumn> | string) {
-    super(settingsOrCaption);
-  }
-}
-export class PhoneColumn extends radweb.StringColumn implements hasMoreDataColumnSettings {
-  __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
-    return this.settingsOrCaption as MoreDataColumnSettings<any, any>;
-  }
-  constructor(private settingsOrCaption?: MoreDataColumnSettings<string, StringColumn> | string) {
-    super(settingsOrCaption);
-  }
-  get displayValue() {
 
-    if (!this.value)
-      return this.value;
-    let x = this.value.replace(/\D/g, '');
+export class PhoneColumn extends radweb.StringColumn {
+  
+  get displayValue() {
+    return PhoneColumn.formatPhone(this.value);
+  }
+  static formatPhone(s:string){
+    if (!s)
+      return s;
+    let x = s.replace(/\D/g, '');
     if (x.length < 9 || x.length > 10)
-      return this.value;
+      return s;
     x = x.substring(0, x.length - 4) + '-' + x.substring(x.length - 4, x.length);
 
     x = x.substring(0, x.length - 8) + '-' + x.substring(x.length - 8, x.length);
     return x;
   }
 }
-export class NumberColumn extends radweb.NumberColumn implements hasMoreDataColumnSettings {
-  __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
-    return this.settingsOrCaption as MoreDataColumnSettings<any, any>;
-  }
-  constructor(private settingsOrCaption?: MoreDataNumberColumnSettings | string) {
-    super(settingsOrCaption);
-  }
-}
-export class Id extends StringColumn {
-  setToNewId() {
-    this.value = uuid();
-  }
-}
-export class BoolColumn extends radweb.BoolColumn implements hasMoreDataColumnSettings {
-  __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
-    return this.settingsOrCaption as MoreDataColumnSettings<any, any>;
-  }
-  constructor(private settingsOrCaption?: MoreDataColumnSettings<boolean, BoolColumn> | string) {
-    super(settingsOrCaption);
-  }
-}
 
-export class DateTimeColumn extends radweb.DateTimeColumn implements hasMoreDataColumnSettings {
-  __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
-    return this.settingsOrCaption as MoreDataColumnSettings<any, any>;
-  }
-  constructor(private settingsOrCaption?: MoreDataColumnSettings<Date, DateTimeColumn> | string) {
-    super(settingsOrCaption);
-  }
+
+export class DateTimeColumn extends radweb.DateTimeColumn {
+  
   dontShowTimeForOlderDates = false;
   getStringForInputTime() {
     if (!this.value)
@@ -193,13 +131,7 @@ export class DateTimeColumn extends radweb.DateTimeColumn implements hasMoreData
     }
     else {
       let days = (Math.trunc(now.valueOf() / (86400 * 1000)) - Math.trunc(d.valueOf() / (86400 * 1000)));
-      if (days <= 7)
         r = 'לפני ' + days + ' ימים';
-      else
-      {
-        r = 'ב ' + d.toLocaleDateString("he-il");
-        return r;
-      }
     }
     let t = d.getMinutes().toString();
     if (t.length == 1)
@@ -215,34 +147,11 @@ export class DateTimeColumn extends radweb.DateTimeColumn implements hasMoreData
   }
 
 }
-export function updateSettings<type, colType>(original: MoreDataColumnSettings<type, colType> | string, addValues: (x: MoreDataColumnSettings<type, colType>) => void) {
-  let result: MoreDataColumnSettings<type, colType> = {};
-  if (typeof (original) == "string")
-    result.caption = original;
-  else
-    result = original;
-  addValues(result);
-  return result;
-}
-export class changeDate extends DateTimeColumn implements hasMoreDataColumnSettings {
-  __getMoreDataColumnSettings(): MoreDataColumnSettings<any, any> {
-    return this.optionsOrCaption as MoreDataColumnSettings<any, any>;
-  }
-  constructor(private optionsOrCaption: MoreDataColumnSettings<Date, DateTimeColumn> | string) {
-    super(updateSettings(optionsOrCaption, x => x.readonly = true));
-  }
 
+export class changeDate extends DateTimeColumn  {
+  allowApiUpdate = false;
 }
 
-export async function checkForDuplicateValue(row: Entity<any>, column: Column<any>, message?: string) {
-  if (row.isNew() || column.value != column.originalValue) {
-    let rows = await row.source.find({ where: column.isEqualTo(column.value) });
-
-    if (rows.length > 0)
-      column.error = message || 'כבר קיים במערכת';
-  }
-
-}
 
 export class SqlBuilder {
   extractNumber(from: any): any {
@@ -252,7 +161,7 @@ export class SqlBuilder {
   str(val: string): string {
     if (val == undefined)
       val = '';
-    return '\'' + val.replace('\'', '\'\'') + '\'';
+    return '\'' + val.replace(/'/g, '\'\'') + '\'';
   }
   private dict = new Map<Column<any>, string>();
 

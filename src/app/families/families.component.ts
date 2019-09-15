@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
-import { ColumnHashSet, AndFilter, ColumnSetting, DateColumn, Entity, GridSettings, Column } from 'radweb';
+import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
+import { AndFilter, ColumnSetting, GridSettings } from 'radweb';
 
 import { Families } from './families';
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -16,32 +16,34 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 import { FilterBase } from 'radweb';
 
-import { BusyService } from '../select-popup/busy-service';
+import { BusyService } from 'radweb';
 import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
-import { MatTabGroup, MatDialog, MatDialogConfig } from '@angular/material';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
 import { HasAsyncGetTheValue, DateTimeColumn } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
-import { HolidayDeliveryAdmin } from '../auth/auth-guard';
-import { Context } from '../shared/context';
-import { Routable, componentRoutingInfo } from '../shared/routing-helper';
+
+import { Context } from 'radweb';
+
 import { FamilyDeliveries } from './FamilyDeliveries';
 import { UpdateFamilyComponent } from '../update-family/update-family.component';
 import { PortalHostDirective } from '@angular/cdk/portal';
 import { saveToExcel } from '../shared/saveToExcel';
 import { PreviewFamilyComponent, PreviewFamilyInfo } from '../preview-family/preview-family.component';
+import { Roles, AdminGuard } from '../auth/roles';
+import { MatTabGroup } from '@angular/material/tabs';
+import { QuickAddFamilyComponent } from '../quick-add-family/quick-add-family.component';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { ScrollDispatcher, CdkScrollable } from '@angular/cdk/scrolling';
+import { Subscription } from 'rxjs';
+import { translate } from '../translate';
 
 @Component({
     selector: 'app-families',
     templateUrl: './families.component.html',
     styleUrls: ['./families.component.scss']
-})
-@Routable({
-    path: 'families',
-    caption: 'משפחות',
-    canActivate: [HolidayDeliveryAdmin]
 })
 export class FamiliesComponent implements OnInit {
     @Input() problemOnly = false;
@@ -53,10 +55,19 @@ export class FamiliesComponent implements OnInit {
     groupsColumn: ColumnSetting<Families>;
     statusColumn: ColumnSetting<Families>;
     deliverySummary: ColumnSetting<Families>;
-
-    constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context, private selectService: SelectService, private matDialog: MatDialog) {
+    scrollingSubscription: Subscription;
+    showHoverButton:boolean = false;
+    constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context, private selectService: SelectService, private matDialog: MatDialog,
+        public scroll: ScrollDispatcher) {
         this.doTest();
-
+        this.scrollingSubscription = this.scroll
+            .scrolled()
+            .subscribe((data: CdkScrollable) => {
+                let val = this.testing.nativeElement.getBoundingClientRect().y<0;
+                if (val!=this.showHoverButton)
+                    this.dialog.zone.run(()=>this.showHoverButton = val);
+                
+            });
         let y = dialog.refreshStatusStats.subscribe(() => {
             this.refreshStats();
         });
@@ -66,6 +77,7 @@ export class FamiliesComponent implements OnInit {
         if (dialog.isScreenSmall())
             this.gridView = false;
     }
+    @ViewChild("myRef") testing:ElementRef;
     filterBy(s: FaimilyStatistics) {
         this.families.get({
             where: s.rule,
@@ -73,6 +85,16 @@ export class FamiliesComponent implements OnInit {
             orderBy: f => [f.name]
 
 
+        });
+    }
+
+    quickAdd() {
+        QuickAddFamilyComponent.dialog(this.matDialog, {
+            searchName: this.searchString,
+            addedFamily: f => {
+                this.families.items.push(f);
+                this.families.setCurrentRow(f);
+            }
         });
     }
     changedRowsCount() {
@@ -139,7 +161,7 @@ export class FamiliesComponent implements OnInit {
     async saveToExcel() {
         await saveToExcel<Families, GridSettings<Families>>(
             this.families,
-            'משפחות',
+            translate('משפחות'),
             this.busy,
             (f, c) => c == f.id || c == f.addressApiResult,
             (f, c) => c == f.correntAnErrorInStatus || c == f.visibleToCourier,
@@ -195,7 +217,7 @@ export class FamiliesComponent implements OnInit {
         onEnterRow: async f => {
             if (f.isNew()) {
                 f.basketType.value = '';
-                f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
+                f.deliverStatus.value = ApplicationSettings.get(this.context).defaultStatusType.value;
                 f.special.value = YesNo.No;
                 this.currentFamilyDeliveries = [];
             } else {
@@ -242,7 +264,7 @@ export class FamiliesComponent implements OnInit {
         knowTotalRows: true,
         allowDelete: true,
 
-        confirmDelete: (h, yes) => this.dialog.confirmDelete('משפחת ' + h.name.value, yes),
+        confirmDelete: (h, yes) => this.dialog.confirmDelete(translate('משפחת ') + h.name.value, yes),
         columnSettings: families => {
             return [
 
@@ -285,11 +307,13 @@ export class FamiliesComponent implements OnInit {
                     width: '300'
                 },
                 families.tz,
+                families.tz2,
                 families.iDinExcel,
                 families.deliveryComments,
                 families.special.getColumn(),
                 families.createUser,
                 families.createDate,
+                families.lastUpdateDate,
 
                 families.addressOk,
                 families.floor,
@@ -321,7 +345,12 @@ export class FamiliesComponent implements OnInit {
                 families.deliveryStatusDate,
                 families.courierComments,
                 families.getPreviousDeliveryColumn(),
-
+                families.socialWorker,
+                families.socialWorkerPhone1,
+                families.socialWorkerPhone2,
+                families.needsWork,
+                families.needsWorkDate,
+                families.needsWorkUser
             ];
         },
         rowButtons: [
@@ -369,6 +398,7 @@ export class FamiliesComponent implements OnInit {
 
     ngOnDestroy(): void {
         this.onDestroy();
+        this.scrollingSubscription.unsubscribe();
     }
     basketStats: statsOnTab = {
         name: 'נותרו לפי סלים',
@@ -401,7 +431,7 @@ export class FamiliesComponent implements OnInit {
         fourthColumn: () => this.groupsColumn
     };
     groupsTotals: statsOnTab = {
-        name: 'כל המשפחות לפי קבוצות',
+        name:translate('כל המשפחות לפי קבוצות'),
         rule: f => f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList),
         stats: [
             this.stats.ready,
@@ -433,20 +463,21 @@ export class FamiliesComponent implements OnInit {
         this.groupsReady,
 
         {
-            name: 'הערות',
-            rule: f => f.deliverStatus.isInEvent().and(f.courierComments.isDifferentFrom('')),
+            name: 'מצריך טיפול',
+            rule: f => f.deliverStatus.isInEvent().and(f.needsWork.isEqualTo(true)),
             stats: [
-                this.stats.deliveryComments
+                this.stats.needWork
             ],
             moreStats: [],
             fourthColumn: () => this.deliverySummary
         },
         {
             rule: f => undefined,
-            name: 'כל המשפחות',
+            name: translate( 'כל המשפחות'),
             stats: [
                 this.stats.currentEvent,
-                this.stats.notInEvent
+                this.stats.notInEvent,
+                this.stats.outOfList
             ],
             moreStats: [],
             fourthColumn: () => this.statusColumn
@@ -642,7 +673,7 @@ export class FamiliesComponent implements OnInit {
     static route: Route = {
         path: 'families',
         component: FamiliesComponent,
-        data: { name: 'משפחות' }, canActivate: [HolidayDeliveryAdmin]
+        data: { name: 'משפחות' }, canActivate: [AdminGuard]
     }
     previewFamily() {
         let x = new MatDialogConfig();

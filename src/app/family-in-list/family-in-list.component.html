@@ -10,6 +10,11 @@
   </div>
 </mat-panel-title>
 
-<mat-panel-description>
-  {{f.address.value}}
+<mat-panel-description style="justify-content: space-between">
+
+  <div>
+    {{f.address.value}}
+  </div>
+  <div *ngIf="newAssign" style="font-size: 11px;">(שוייכה עכשיו)</div>
+
 </mat-panel-description>
