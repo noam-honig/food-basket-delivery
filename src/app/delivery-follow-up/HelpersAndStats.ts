@@ -60,6 +60,7 @@ export class HelpersAndStats extends HelpersBase {
                         h.company,
                         h.totalKm,
                         h.totalTime,
+                        h.shortUrlKey,
                         sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress),
                         sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isActiveDelivery()]), this.allFamilies),
                         sql.countInnerSelect(helperFamilies(() => [sql.in(f.deliverStatus,

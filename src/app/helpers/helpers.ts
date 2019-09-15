@@ -30,6 +30,7 @@ export abstract class HelpersBase extends IdEntity<HelperId>  {
     company = new CompanyColumn();
     totalKm = new NumberColumn();
     totalTime = new NumberColumn();
+    shortUrlKey = new StringColumn({ includeInApi: Roles.admin });
     getRouteStats(): routeStats {
         return {
             totalKm: this.totalKm.value,
@@ -102,7 +103,7 @@ export class Helpers extends HelpersBase  {
 
 
 
-    shortUrlKey = new StringColumn({ includeInApi: Roles.admin });
+    
     veryUrlKeyAndReturnTrueIfSaveRequired() {
         if (!this.shortUrlKey.value) {
             this.shortUrlKey.value = this.makeid();
