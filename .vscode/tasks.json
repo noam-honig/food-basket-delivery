@@ -204,6 +204,16 @@
             "type": "npm",
             "script": "publish-to-ladyc",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-atbh",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "public-to-bodedim-hertzelia",
+            "problemMatcher": []
         }
     ]
 }
