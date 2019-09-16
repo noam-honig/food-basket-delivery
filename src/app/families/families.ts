@@ -336,6 +336,11 @@ export class Families extends IdEntity<FamilyId>  {
     }
     return where;
   }
+  readyAndSelfPickup() {
+    let where = this.deliverStatus.isGreaterOrEqualTo(DeliveryStatus.ReadyForDelivery).and(this.deliverStatus.isLessOrEqualTo(DeliveryStatus.SelfPickup)).and(
+      this.courier.isEqualTo('')).and(this.blockedBasket.isEqualTo(false));
+    return where;
+  }
   private dbNameFromLastDelivery(col: (fd: FamilyDeliveries) => Column<any>, alias: string) {
 
     let fd = new FamilyDeliveries(this.context);

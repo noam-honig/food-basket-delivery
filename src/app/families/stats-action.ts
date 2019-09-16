@@ -79,11 +79,7 @@ export class Stats {
                 name: b.name.value,
                 boxes: b.boxes.value,
                 blocked: b.blocked.value,
-                unassignedFamilies: await context.for(Families).count(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
-                    f.basketType.isEqualTo(b.id).and(
-                        f.courier.isEqualTo('')
-                    )
-                ))
+                unassignedFamilies: await context.for(Families).count(f => f.readyAndSelfPickup().and(f.basketType.isEqualTo(b.id)))
             });
         }));
         pendingStats.push(
@@ -108,7 +104,7 @@ export class Stats {
                     totalReady: 0
                 };
                 result.groups.push(x);
-                pendingStats.push(context.for(Families).count(f => f.readyFilter(undefined, x.name)).then(r => x.totalReady = r));
+                pendingStats.push(context.for(Families).count(f => f.readyAndSelfPickup().and(f.groups.isContains(x.name))).then(r => x.totalReady = r));
                 pendingStats.push(context.for(Families).count(f => f.groups.isContains(x.name).and(f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList))).then(r => x.total = r));
             }
         });

@@ -406,7 +406,7 @@ export class FamiliesComponent implements OnInit {
     }
     basketStats: statsOnTab = {
         name: 'נותרו לפי סלים',
-        rule: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(f.courier.isEqualTo('')),
+        rule: f => f.readyAndSelfPickup(),
         stats: [
             this.stats.ready,
             this.stats.special
