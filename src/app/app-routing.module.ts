@@ -26,6 +26,7 @@ import { DeliveryHistoryComponent } from './delivery-history/delivery-history.co
 import { AdminGuard } from './auth/roles';
 import { SignedInGuard } from 'radweb';
 import { CreateBackupExcelFileComponent,CanDeactivateGuard } from './create-backup-excel-file/create-backup-excel-file.component';
+import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';
 
 
 
@@ -42,7 +43,8 @@ const routes: Routes = [
   
   DeliveryHistoryComponent.route,
   BatchOperationsComponent.route,
-  { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard], data: { name: 'קליטה מאקסל' } },
+  { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard], data: { name: 'קליטת משפחות מאקסל' } },
+  { path: 'import-helpers-from-excel', component: ImportHelpersFromExcelComponent, canActivate: [AdminGuard], data: { name: 'קליטת מתנדבים מאקסל' } },
   ManageComponent.route,
   { path: 'auto-backup', component: CreateBackupExcelFileComponent, canActivate: [AdminGuard],canDeactivate:[CanDeactivateGuard], data: { name: 'גיבוי אוטומטי',seperator: true } },
   LoginFromSmsComponent.route,

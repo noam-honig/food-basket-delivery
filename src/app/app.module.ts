@@ -59,6 +59,7 @@ import { ScrollDispatchModule } from '@angular/cdk/scrolling';
 import { TranslatePipe } from './translate';
 import { SelectCompanyComponent } from './select-company/select-company.component';
 import { HelperAssignmentComponent } from './helper-assignment/helper-assignment.component';
+import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';
 
 
 
@@ -105,7 +106,8 @@ import { HelperAssignmentComponent } from './helper-assignment/helper-assignment
     QuickAddFamilyComponent,
     TranslatePipe,
     SelectCompanyComponent,
-    HelperAssignmentComponent
+    HelperAssignmentComponent,
+    ImportHelpersFromExcelComponent
     
   ],
   imports: [

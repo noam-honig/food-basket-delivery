@@ -67,6 +67,7 @@ export class HelpersComponent implements OnInit {
       allowUpdate: true,
       knowTotalRows: true,
       hideDataArea: true,
+      numOfColumnsInGrid:s.showCompanies.value?4:3,
 
       get: {
         orderBy: h => [h.name],
@@ -88,6 +89,7 @@ export class HelpersComponent implements OnInit {
           column: helpers.admin,
           width: '100'
         });
+        r.push(helpers.createDate);
         return r;
       },
       confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes),
