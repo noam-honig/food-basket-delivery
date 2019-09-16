@@ -214,6 +214,11 @@
             "type": "npm",
             "script": "public-to-bodedim-hertzelia",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-kruvit-sansana",
+            "problemMatcher": []
         }
     ]
 }

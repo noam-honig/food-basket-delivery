@@ -20,4 +20,4 @@ npm run publish-to-hesed
 npm run publish-to-chasdei
 npm run publish-to-good-people
 npm run publish-to-ladyc
-    
+npm run publish-to-kruvit-sansana
