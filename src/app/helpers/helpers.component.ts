@@ -14,6 +14,7 @@ import { DateColumn, DataAreaSettings } from 'radweb';
 import { Roles, AdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { MatDialog } from '@angular/material/dialog';
+import { saveToExcel } from '../shared/saveToExcel';
 
 @Component({
   selector: 'app-helpers',
@@ -80,6 +81,9 @@ export class HelpersComponent implements OnInit {
       this.dialog.Info("הסיסמה נמחקה");
     });
 
+  }
+  async saveToExcel(){
+    await saveToExcel(this.helpers, "מתנדבים", this.busy, (d: Helpers, c) => c == d.id||c==d.password||c==d.totalKm||c==d.totalTime||c==d.smsDate||c==d.reminderSmsDate||c==d.realStoredPassword||c==d.shortUrlKey||c==d.admin);
   }
 
   @RunOnServer({ allowed: Roles.admin })

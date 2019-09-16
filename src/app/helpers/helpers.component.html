@@ -6,7 +6,8 @@
   <data-grid2 [settings]="helpers" height="300"></data-grid2>
   
   <button mat-raised-button color="warn" (click)="resetPassword()" *ngIf="helpers.currentRow">
-    אתחלי סיסמה ל{{helpers.currentRow.name.value}}
+    אתחל סיסמה ל{{helpers.currentRow.name.value}}
   </button>
-  
+  <br>
+  <button mat-raised-button (click)="saveToExcel()">שמור מתנדבים לאקסל</button>
 </mat-card>
