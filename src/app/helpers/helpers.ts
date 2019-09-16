@@ -41,6 +41,7 @@ export abstract class HelpersBase extends IdEntity<HelperId>  {
 
 @EntityClass
 export class Helpers extends HelpersBase  {
+  static usingCompanyModule: boolean;
 
     constructor(private context: Context) {
 

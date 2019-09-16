@@ -12,6 +12,7 @@ import { translate, translationConfig } from './translate';
 import { DeliveryStats } from './delivery-follow-up/delivery-stats';
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { DeliveryStatus } from './families/DeliveryStatus';
+import { Helpers } from './helpers/helpers';
 
 
 
@@ -35,6 +36,7 @@ export class AppComponent {
     ApplicationSettings.getAsync(context).then(x => {
       translationConfig.activateTranslation = x.forSoldiers.value;
       DeliveryStatus.usingSelfPickupModule = x.usingSelfPickupModule.value;
+      Helpers.usingCompanyModule = x.showCompanies.value;
     })
 
     if (!window.location.hostname.toLocaleLowerCase().startsWith('hmey')) {

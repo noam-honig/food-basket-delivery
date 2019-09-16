@@ -30,7 +30,42 @@ export class HelpersComponent implements OnInit {
   };
   searchString: string;
 
-  helpers = this.context.for(Helpers).gridSettings();
+  helpers = this.context.for(Helpers).gridSettings({
+    allowDelete: true,
+    allowInsert: true,
+    allowUpdate: true,
+    knowTotalRows: true,
+    hideDataArea: true,
+    numOfColumnsInGrid:Helpers.usingCompanyModule?4:3,
+
+    get: {
+      orderBy: h => [h.name],
+      limit: 10,
+      where: h => {
+        if (this.searchString)
+          return h.name.isContains(this.searchString);
+        return undefined;
+      }
+    },
+    columnSettings: helpers => {
+      let r: ColumnSetting<Helpers>[] = [
+        helpers.name,
+        helpers.phone
+      ];
+      if (Helpers.usingCompanyModule)
+        r.push(helpers.company.getColumn(this.matDialog));
+      r.push({
+        column: helpers.admin,
+        width: '100'
+      });
+      r.push(helpers.createDate);
+      return r;
+    },
+    confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes),
+
+
+  });
+
   async doSearch() {
     if (this.helpers.currentRow && this.helpers.currentRow.wasChanged())
       return;
@@ -61,42 +96,7 @@ export class HelpersComponent implements OnInit {
   async ngOnInit() {
     let s = await ApplicationSettings.getAsync(this.context);
 
-    this.helpers = this.context.for(Helpers).gridSettings({
-      allowDelete: true,
-      allowInsert: true,
-      allowUpdate: true,
-      knowTotalRows: true,
-      hideDataArea: true,
-      numOfColumnsInGrid:s.showCompanies.value?4:3,
-
-      get: {
-        orderBy: h => [h.name],
-        limit: 10,
-        where: h => {
-          if (this.searchString)
-            return h.name.isContains(this.searchString);
-          return undefined;
-        }
-      },
-      columnSettings: helpers => {
-        let r: ColumnSetting<Helpers>[] = [
-          helpers.name,
-          helpers.phone
-        ];
-        if (s.showCompanies.value)
-        r.push(helpers.company.getColumn(this.matDialog));
-        r.push({
-          column: helpers.admin,
-          width: '100'
-        });
-        r.push(helpers.createDate);
-        return r;
-      },
-      confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes),
-
-
-    });
-
+   
   }
   fromDate = new DateColumn({
     caption: 'מתאריך',
