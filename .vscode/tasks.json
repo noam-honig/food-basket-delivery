@@ -219,6 +219,11 @@
             "type": "npm",
             "script": "publish-to-kruvit-sansana",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-kruvit",
+            "problemMatcher": []
         }
     ]
 }

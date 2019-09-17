@@ -2,7 +2,7 @@ import { ClosedListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnS
 import { ColumnOptions, DropDownItem } from "radweb";
 
 export class DeliveryStatus {
-  static usingSelfPickupModule: boolean;
+  static usingSelfPickupModule: boolean=true;
   static IsAResultStatus(value: DeliveryStatus) {
     switch (value) {
       case this.Success:
