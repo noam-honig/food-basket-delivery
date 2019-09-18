@@ -1,24 +1,24 @@
-npm run publish-to-heroku-test
-npm run publish-to-nrun
-npm run publish-to-hmey
-npm run publish-to-cbdh
-npm run publish-to-cbhr
-npm run publish-to-cbey
-npm run publish-to-atbh
-npm run publish-to-tal-chaim
-npm run publish-to-dinale
-npm run publish-to-dinale-kol-halev
-npm run publish-to-krvtj
-npm run publish-to-merkaz-mazon
-npm run publish-to-bodedim-hertzelia
-npm run publish-to-shorashim
-npm run publish-to-reim
-npm run publish-to-chagsameach
-npm run publish-to-hbhr
-npm run publish-to-tikvabasket
-npm run publish-to-hesed
-npm run publish-to-chasdei
-npm run publish-to-good-people
-npm run publish-to-ladyc
-npm run publish-to-kruvit-sansana
-npm run publish-to-kruvit
+start npm run publish-to-heroku-test
+start npm run publish-to-nrun
+start npm run publish-to-hmey
+start npm run publish-to-cbdh
+start npm run publish-to-cbhr
+start npm run publish-to-cbey
+start npm run publish-to-atbh
+start npm run publish-to-tal-chaim
+start npm run publish-to-dinale
+start npm run publish-to-dinale-kol-halev
+start npm run publish-to-krvtj
+start npm run publish-to-merkaz-mazon
+start npm run publish-to-bodedim-hertzelia
+start npm run publish-to-shorashim
+start npm run publish-to-reim
+start npm run publish-to-chagsameach
+start npm run publish-to-hbhr
+start npm run publish-to-tikvabasket
+start npm run publish-to-hesed
+start npm run publish-to-chasdei
+start npm run publish-to-good-people
+start npm run publish-to-ladyc
+start npm run publish-to-kruvit-sansana
+start npm run publish-to-kruvit

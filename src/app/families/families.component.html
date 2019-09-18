@@ -18,10 +18,9 @@
 </div>
 <a *ngFor="let s of currentTabStats.moreStats" (click)="setCurrentStat(s)">{{s.name }} - {{s.value}}, </a>
 <div *ngIf="showTotalBoxes()">{{showTotalBoxes()}}</div>
-<h4 *ngIf="currentStatFilter">{{currentStatFilter.name}}: </h4>
+<strong>{{families.totalRows}} {{'משפחות'|translate}} </strong> <strong *ngIf="currentStatFilter"> - {{currentStatFilter.name}} - </strong> <a *ngIf="currentStatFilter" (click)="clearStat()">הצג הכל</a>
 
-<a *ngIf="currentStatFilter" (click)="clearStat()">הצג הכל</a>
-<br>
+
 <div style="display:flex;justify-content: space-between">
     <div>
         <mat-form-field>
@@ -31,7 +30,7 @@
         </mat-form-field>
         <br>
 
-        <strong>{{families.totalRows}} {{'משפחות'|translate}} </strong>
+        
     </div>
     <div>
         <button (click)="quickAdd()" mat-raised-button color="accent">{{'משפחה חדשה'|translate}}</button>

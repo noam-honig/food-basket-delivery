@@ -143,14 +143,18 @@ export class FamiliesComponent implements OnInit {
     }
     setCurrentStat(s: FaimilyStatistics) {
         this.currentStatFilter = s;
-        this.families.getRecords();
+        this.refreshFamilyGrid();
     }
     searchString = '';
     async doSearch() {
         if (this.families.currentRow && this.families.currentRow.wasChanged())
             return;
         this.busy.donotWait(async () =>
-            await this.families.getRecords());
+            await this.refreshFamilyGrid());
+    }
+    async refreshFamilyGrid(){
+        this.families.page = 1;
+        await this.families.getRecords();
     }
 
     clearSearch() {
@@ -491,7 +495,7 @@ export class FamiliesComponent implements OnInit {
     tabChanged() {
         this.currentStatFilter = undefined;
         let prevTabColumn = this.currentTabStats.fourthColumn();
-        this.families.getRecords();
+        this.refreshFamilyGrid();
         this.updateChart();
 
         let cols = this.families.columns;
@@ -506,7 +510,7 @@ export class FamiliesComponent implements OnInit {
     }
     clearStat() {
         this.currentStatFilter = undefined;
-        this.families.getRecords();
+        this.refreshFamilyGrid();
 
     }
     currentTabStats: statsOnTab = { name: '', stats: [], moreStats: [], rule: undefined, fourthColumn: () => this.statusColumn };
@@ -670,7 +674,7 @@ export class FamiliesComponent implements OnInit {
         this.suspend = true;
     }
     refresh() {
-        this.families.getRecords();
+        this.refreshFamilyGrid();
         this.refreshStats();
     }
 
