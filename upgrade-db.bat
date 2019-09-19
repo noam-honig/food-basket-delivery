@@ -1,7 +1,13 @@
-set app=hugmoms
+set app=shorashim
 set dbType=hobby-dev
 rem set dbType=standard-0
 heroku pg:info --app=%app%
+
+rem create backup
+heroku pg:backups:capture --app=%app%
+heroku pg:backups:download --app=%app%
+
+rem create db
 heroku addons:create heroku-postgresql:%dbType% --app=%app%
 heroku pg:wait --app=%app%
 heroku pg:info --app=%app%
