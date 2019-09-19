@@ -22,3 +22,5 @@ start npm run publish-to-good-people
 start npm run publish-to-ladyc
 start npm run publish-to-kruvit-sansana
 start npm run publish-to-kruvit
+start npm run publish-to-plev
+start npm run publish-to-yadl
