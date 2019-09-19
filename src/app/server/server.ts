@@ -13,7 +13,8 @@ import '../app.module';
 import { ServerContext, ActualDirectSQL, DateColumn } from "radweb";
 import { AuthService } from "../auth/auth-service";
 import { Helpers } from '../helpers/helpers';
-import { FamilyDeliveries } from "../families/FamilyDeliveries";
+import { FamilyDeliveriesStats } from "../delivery-history/delivery-history.component";
+
 
 serverInit().then(async (dataSource) => {
 
@@ -96,7 +97,7 @@ serverInit().then(async (dataSource) => {
 
         var familiesInEvent = await context.for(Families).count(f => f.deliverStatus.isInEvent());
 
-        var deliveries = await context.for(FamilyDeliveries).count(f => f.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(f.deliveryStatusDate.isLessThan(toDate)));
+        var deliveries = await context.for(FamilyDeliveriesStats).count(f => f.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(f.deliveryStatusDate.isLessThan(toDate)));
         var settings = await ApplicationSettings.getAsync(context);
 
         let r: monitorResult = {
