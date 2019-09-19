@@ -10,9 +10,10 @@ import { Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import "../helpers/helpers.component";
 import '../app.module';
-import { ServerContext } from "radweb";
+import { ServerContext, ActualDirectSQL, DateColumn } from "radweb";
 import { AuthService } from "../auth/auth-service";
 import { Helpers } from '../helpers/helpers';
+import { FamilyDeliveries } from "../families/FamilyDeliveries";
 
 serverInit().then(async (dataSource) => {
 
@@ -24,11 +25,11 @@ serverInit().then(async (dataSource) => {
     }
     let eb = new ExpressBridge(app, dataSource, process.env.DISABLE_HTTPS == "true");
     Helpers.helper = new JWTCookieAuthorizationHelper(eb, process.env.TOKEN_SIGN_KEY);
-    let serverContext = new ServerContext();
-    serverContext.setDataProvider(dataSource);
+    let context = new ServerContext();
+    context.setDataProvider(dataSource);
     app.use('/assets/apple-touch-icon.png', async (req, res) => {
 
-        let imageBase = (await ApplicationImages.ApplicationImages.getAsync(serverContext)).base64PhoneHomeImage.value;
+        let imageBase = (await ApplicationImages.ApplicationImages.getAsync(context)).base64PhoneHomeImage.value;
         res.contentType('png');
         if (imageBase) {
             try {
@@ -47,7 +48,7 @@ serverInit().then(async (dataSource) => {
     });
     app.use('/favicon.ico', async (req, res) => {
         res.contentType('ico');
-        let imageBase = (await ApplicationImages.ApplicationImages.getAsync(serverContext)).base64Icon.value;
+        let imageBase = (await ApplicationImages.ApplicationImages.getAsync(context)).base64Icon.value;
         if (imageBase) {
             try {
                 res.send(Buffer.from(imageBase, 'base64'));
@@ -67,7 +68,7 @@ serverInit().then(async (dataSource) => {
         const index = 'dist/index.html';
 
         if (fs.existsSync(index)) {
-            let x = (await ApplicationSettings.getAsync(serverContext)).organisationName.value;
+            let x = (await ApplicationSettings.getAsync(context)).organisationName.value;
 
             res.send(fs.readFileSync(index).toString().replace('!TITLE!', x));
         }
@@ -75,6 +76,38 @@ serverInit().then(async (dataSource) => {
             res.send('No Result' + fs.realpathSync(index));
         }
     }
+    app.get('/monitor-report', async (req, res) => {
+        let auth = req.header('Authorization');
+        if (auth != process.env.MONITOR_KEY) {
+            res.sendStatus(404);
+            return;
+        }
+        var dsql = new ActualDirectSQL(dataSource);
+        var fromDate = DateColumn.stringToDate(req.query["fromdate"]);
+        var toDate = DateColumn.stringToDate(req.query["todate"]);
+        if (!fromDate)
+            fromDate = new Date();
+        if (!toDate)
+            toDate = new Date();
+        toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
+        
+
+        var connections = (await dsql.execute("SELECT count(*) as x FROM pg_stat_activity where datname=current_database()")).rows[0]['x'];
+
+        var familiesInEvent = await context.for(Families).count(f => f.deliverStatus.isInEvent());
+
+        var deliveries = await context.for(FamilyDeliveries).count(f => f.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(f.deliveryStatusDate.isLessThan(toDate)));
+        var settings = await ApplicationSettings.getAsync(context);
+
+        let r: monitorResult = {
+            familiesInEvent,
+            dbConnections: connections,
+            deliveries,
+            name:settings.organisationName.value
+
+        };
+        res.json(r);
+    });
 
     app.get('', (req, res) => {
 
@@ -92,3 +125,10 @@ serverInit().then(async (dataSource) => {
     let port = process.env.PORT || 3000;
     app.listen(port);
 });
+
+export interface monitorResult {
+    name:string;
+    familiesInEvent: number;
+    dbConnections: number;
+    deliveries:number;
+}
