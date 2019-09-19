@@ -49,24 +49,24 @@
 
 </mat-card>
 <div #myRef></div>
-<div *ngIf="showHoverButton&&families.currentRow" class="hover-top-bar">
-    <h4>{{'משפחת'|translate}} {{families.currentRow.name.value}}</h4>
-    <button *ngIf="families.currentRow.wasChanged()" (click)="saveCurrentFamilies()"
+<div *ngIf="showHoverButton" class="hover-top-bar">
+    <h4 *ngIf="families.currentRow">{{'משפחת'|translate}} {{families.currentRow.name.value}}</h4>
+    <button *ngIf="families.currentRow&&families.currentRow.wasChanged()" (click)="saveCurrentFamilies()"
         [disabled]="!families.currentRow.wasChanged()" class="btn glyphicon glyphicon-ok btn-success">
     </button>
-    <button *ngIf="families.currentRow.wasChanged()"
-        (click)="families.currentRow.reset();families.setCurrentRow(families.items[0]);"
+    <button *ngIf="families.currentRow&&families.currentRow.wasChanged()"
+        (click)="resetRow()"
         [disabled]="!families.currentRow.wasChanged()"
         class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted">
     </button>
 
-    <button (click)="families.previousRow()" *ngIf="!families.currentRow.wasChanged()"
+    <button (click)="families.previousRow()" *ngIf="!families.currentRow||!families.currentRow.wasChanged()"
         [disabled]="families.currentRow&& families.currentRow.wasChanged()||!families.previousRowAllowed()"
         [class.hide]="gridView" class="btn glyphicon glyphicon-chevron-right ng-star-inserted"></button>
-    <button (click)="families.nextRow()" *ngIf="!families.currentRow.wasChanged()" [class.hide]="gridView"
+    <button (click)="families.nextRow()" *ngIf="!families.currentRow||!families.currentRow.wasChanged()" [class.hide]="gridView"
         [disabled]="families.currentRow&&families.currentRow.wasChanged()"
         class="btn glyphicon glyphicon-chevron-left"></button>
-    <button (click)="gridView = !gridView" *ngIf="!families.currentRow.wasChanged()" [class.hide]="gridView"
+    <button (click)="gridView = !gridView" *ngIf="!families.currentRow||!families.currentRow.wasChanged()" [class.hide]="gridView"
         class="btn glyphicon glyphicon-list-alt"></button>
     <button mat-raised-button [class.hide]="gridView" (click)="previewFamily()">תצוגה מקדימה</button>
 
@@ -74,17 +74,17 @@
 
 
 </div>
-<div *ngIf="families.currentRow">
+<div >
     <button [class.hide]="gridView" *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="saveCurrentFamilies()"
         [disabled]="!families.currentRow.wasChanged()" class="btn glyphicon glyphicon-ok btn-success"></button>
     <button [class.hide]="gridView" *ngIf="families.currentRow &&families.currentRow.wasChanged()"
-        (click)="families.currentRow.reset();families.setCurrentRow(families.items[0]);"
+        (click)="resetRow()"
         [disabled]="!families.currentRow.wasChanged()"
         class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
-    <button *ngIf="!families.currentRow.wasChanged()" (click)="families.previousRow()"
+    <button *ngIf="!families.currentRow||!families.currentRow.wasChanged()" (click)="families.previousRow()"
         [disabled]="families.currentRow&& families.currentRow.wasChanged()||!families.previousRowAllowed()"
         [class.hide]="gridView" class="btn glyphicon glyphicon-chevron-right ng-star-inserted"></button>
-    <button *ngIf="!families.currentRow.wasChanged()" (click)="families.nextRow()" [class.hide]="gridView"
+    <button *ngIf="!families.currentRow||!families.currentRow.wasChanged()" (click)="families.nextRow()" [class.hide]="gridView"
         [disabled]="families.currentRow&&families.currentRow.wasChanged()"
         class="btn glyphicon glyphicon-chevron-left"></button>
     <button (click)="gridView = !gridView" [class.hide]="gridView" class="btn glyphicon glyphicon-list-alt"

@@ -88,6 +88,17 @@ export class FamiliesComponent implements OnInit {
         });
     }
 
+    resetRow() {
+        var focus: Families;
+        if (this.families.currentRow.isNew()) {
+            let i = this.families.items.indexOf(this.families.currentRow);
+            if (i > 0)
+                focus = this.families.items[i - 1];
+        }
+        this.families.currentRow.reset();
+        if (focus)
+            this.families.setCurrentRow(focus);
+    }
     quickAdd() {
         QuickAddFamilyComponent.dialog(this.matDialog, {
             searchName: this.searchString,
@@ -152,7 +163,7 @@ export class FamiliesComponent implements OnInit {
         this.busy.donotWait(async () =>
             await this.refreshFamilyGrid());
     }
-    async refreshFamilyGrid(){
+    async refreshFamilyGrid() {
         this.families.page = 1;
         await this.families.getRecords();
     }
