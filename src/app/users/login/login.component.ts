@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
     private dialog: DialogService,
     private auth: AuthService,
     private router: RouteHelperService,
-    private context:Context
+    private context: Context
   ) { }
   user: string;
   password: string;
@@ -37,5 +37,8 @@ export class LoginComponent implements OnInit {
   }
   register() {
     this.router.navigateToComponent(RegisterComponent);
+  }
+  orgName() {
+  return   ApplicationSettings.get(this.context).organisationName.value;
   }
 }
