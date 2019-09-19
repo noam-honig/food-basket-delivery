@@ -91,20 +91,23 @@ serverInit().then(async (dataSource) => {
         if (!toDate)
             toDate = new Date();
         toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
-        
+
 
         var connections = (await dsql.execute("SELECT count(*) as x FROM pg_stat_activity where datname=current_database()")).rows[0]['x'];
 
         var familiesInEvent = await context.for(Families).count(f => f.deliverStatus.isInEvent());
+        var totalFamilies = await context.for(Families).count();
 
         var deliveries = await context.for(FamilyDeliveriesStats).count(f => f.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(f.deliveryStatusDate.isLessThan(toDate)));
+        deliveries += await context.for(Families).count(f => f.onTheWayFilter());
         var settings = await ApplicationSettings.getAsync(context);
 
         let r: monitorResult = {
+            totalFamilies,
             familiesInEvent,
             dbConnections: connections,
             deliveries,
-            name:settings.organisationName.value
+            name: settings.organisationName.value
 
         };
         res.json(r);
@@ -128,8 +131,9 @@ serverInit().then(async (dataSource) => {
 });
 
 export interface monitorResult {
-    name:string;
+    totalFamilies:number;
+    name: string;
     familiesInEvent: number;
     dbConnections: number;
-    deliveries:number;
+    deliveries: number;
 }
