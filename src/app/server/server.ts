@@ -99,7 +99,7 @@ serverInit().then(async (dataSource) => {
         var totalFamilies = await context.for(Families).count();
 
         var deliveries = await context.for(FamilyDeliveriesStats).count(f => f.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(f.deliveryStatusDate.isLessThan(toDate)));
-        deliveries += await context.for(Families).count(f => f.onTheWayFilter());
+     //   deliveries += await context.for(Families).count(f => f.onTheWayFilter());
         var settings = await ApplicationSettings.getAsync(context);
 
         let r: monitorResult = {
