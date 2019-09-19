@@ -50,6 +50,7 @@ export class ApplicationSettings extends Entity<number>  {
   usingSelfPickupModule = new BoolColumn('ישנן משפחות שבאות לקחת ממרכז החלוקה');
   showCompanies = new BoolColumn('שמור מטעם איזה חברה הגיע המתנדב');
   showLeftThereButton = new BoolColumn('הצג למתנדב כפתור השארתי ליד הבית');
+  redTitleBar = new BoolColumn("כותרת דף בצבע אדום");
   defaultPrefixForExcelImport = new StringColumn("קידומת טלפון ברירת מחדל בקליטה מאקסל");
   addressApiResult = new StringColumn();
   defaultStatusType = new DeliveryStatusColumn({

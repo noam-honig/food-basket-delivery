@@ -4,6 +4,7 @@
       <img src="{{getLogo()}}"
       />
     </div>
+    <p style="text-align: center" >{{orgName}}</p>
     <h4 *ngIf="context.user">שלום {{context.user.name}}</h4>
     <mat-nav-list role="list">
       <ng-container *ngFor="let m of router.config">

@@ -37,6 +37,9 @@ export class AppComponent {
       translationConfig.activateTranslation = x.forSoldiers.value;
       DeliveryStatus.usingSelfPickupModule = x.usingSelfPickupModule.value;
       Helpers.usingCompanyModule = x.showCompanies.value;
+      this.orgName = x.organisationName.value;
+      if (x.redTitleBar.value)
+      this.toolbarColor = 'primary';
     })
 
     if (!window.location.hostname.toLocaleLowerCase().startsWith('hmey')) {
@@ -46,6 +49,7 @@ export class AppComponent {
 
 
   }
+  orgName = '';
 
   showSeperator(route: Route) {
     if (route.data && route.data.seperator)

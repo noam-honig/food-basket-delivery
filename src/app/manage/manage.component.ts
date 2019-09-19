@@ -137,6 +137,7 @@ export class ManageComponent implements OnInit {
       s.showLeftThereButton,
       s.showCompanies,
       s.defaultPrefixForExcelImport,
+      s.redTitleBar,
       s.forSoldiers
     ]
   });
