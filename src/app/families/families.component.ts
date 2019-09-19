@@ -237,7 +237,8 @@ export class FamiliesComponent implements OnInit {
                 this.currentFamilyDeliveries = [];
             } else {
                 if (!this.gridView) {
-                    this.currentFamilyDeliveries = await this.families.currentRow.getDeliveries();
+                    this.currentFamilyDeliveries = [];
+                    this.busy.donotWait(async () => this.currentFamilyDeliveries = await this.families.currentRow.getDeliveries());
                 }
             }
         },
