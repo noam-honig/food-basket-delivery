@@ -14,6 +14,7 @@ import { ServerContext, ActualDirectSQL, DateColumn } from "radweb";
 import { AuthService } from "../auth/auth-service";
 import { Helpers } from '../helpers/helpers';
 import { FamilyDeliveriesStats } from "../delivery-history/delivery-history.component";
+import { SqlBuilder } from "../model-shared/types";
 
 
 serverInit().then(async (dataSource) => {
@@ -97,9 +98,21 @@ serverInit().then(async (dataSource) => {
 
         var familiesInEvent = await context.for(Families).count(f => f.deliverStatus.isInEvent());
         var totalFamilies = await context.for(Families).count();
-
+        var sql = new SqlBuilder();
         var deliveries = await context.for(FamilyDeliveriesStats).count(f => f.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(f.deliveryStatusDate.isLessThan(toDate)));
-     //   deliveries += await context.for(Families).count(f => f.onTheWayFilter());
+        var fds = new FamilyDeliveriesStats(context);
+        var query = sql.build(
+            'select count (distinct ',
+            fds.courier,
+            ' ) as x from ',
+            fds.__getDbName(),
+            ' where ',
+            fds.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(fds.deliveryStatusDate.isLessThan(toDate)));
+
+        
+        var helpers = (await dsql.execute(query)).rows[0]['x'];
+        await context.for(FamilyDeliveriesStats).count(f => f.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(f.deliveryStatusDate.isLessThan(toDate)));
+        var onTheWay = await context.for(Families).count(f => f.onTheWayFilter());
         var settings = await ApplicationSettings.getAsync(context);
 
         let r: monitorResult = {
@@ -107,7 +120,9 @@ serverInit().then(async (dataSource) => {
             familiesInEvent,
             dbConnections: connections,
             deliveries,
-            name: settings.organisationName.value
+            name: settings.organisationName.value,
+            onTheWay,
+            helpers
 
         };
         res.json(r);
@@ -136,4 +151,6 @@ export interface monitorResult {
     familiesInEvent: number;
     dbConnections: number;
     deliveries: number;
+    onTheWay:number;
+    helpers:number;
 }

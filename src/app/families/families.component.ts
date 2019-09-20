@@ -361,6 +361,8 @@ export class FamiliesComponent implements OnInit {
                 families.deliveryStatusDate,
                 families.courierComments,
                 families.getPreviousDeliveryColumn(),
+                families.previousDeliveryComment,
+                families.previousDeliveryDate,
                 families.socialWorker,
                 families.socialWorkerPhone1,
                 families.socialWorkerPhone2,

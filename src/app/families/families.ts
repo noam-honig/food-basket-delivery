@@ -298,6 +298,13 @@ export class Families extends IdEntity<FamilyId>  {
       return this.dbNameFromLastDelivery(fde => fde.deliverStatus, "prevStatus");
     }
   });
+  previousDeliveryDate = new changeDate({
+    caption: 'תאריך משלוח קודם',
+    dbReadOnly: true,
+    dbName: () => {
+      return this.dbNameFromLastDelivery(fde => fde.deliveryStatusDate, "prevDate");
+    }
+  });
   previousDeliveryComment = new StringColumn({
     caption: 'הערת משלוח קודם',
     dbReadOnly: true,
