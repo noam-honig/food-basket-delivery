@@ -1,6 +1,6 @@
 
-import { ColumnSetting, Entity, FilterBase, NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, DecorateDataColumnSettings, EntityOptions} from "radweb";
-import { changeDate, HasAsyncGetTheValue, PhoneColumn,DateTimeColumn } from '../model-shared/types';
+import { ColumnSetting, Entity, FilterBase, NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, DecorateDataColumnSettings, EntityOptions } from "radweb";
+import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn } from '../model-shared/types';
 import { SelectServiceInterface } from '../select-popup/select-service-interface';
 
 import { routeStats } from '../asign-family/asign-family.component';
@@ -17,7 +17,7 @@ export abstract class HelpersBase extends IdEntity<HelperId>  {
 
         super(new HelperId(context), options);
     }
-    
+
     name = new StringColumn({
         caption: "שם",
         onValidate: () => {
@@ -40,12 +40,12 @@ export abstract class HelpersBase extends IdEntity<HelperId>  {
 }
 
 @EntityClass
-export class Helpers extends HelpersBase  {
-  static usingCompanyModule: boolean;
+export class Helpers extends HelpersBase {
+    static usingCompanyModule: boolean;
 
     constructor(private context: Context) {
 
-        super(context,  {
+        super(context, {
             name: "Helpers",
             allowApiRead: true,
             allowApiDelete: context.isSignedIn(),
@@ -76,18 +76,20 @@ export class Helpers extends HelpersBase  {
         });
     }
     public static emptyPassword = 'password';
-   
+
     phone = new PhoneColumn({ caption: "טלפון", inputType: 'tel' });
     realStoredPassword = new StringColumn({
         dbName: 'password',
         includeInApi: false
     });
-    
+
     password = new StringColumn({ caption: 'סיסמה', inputType: 'password', virtualData: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
 
     createDate = new changeDate({ caption: 'מועד הוספה' });
-    
-    reminderSmsDate = new changeDate('מועד משלוח תזכורת SMS');
+
+    reminderSmsDate = new DateTimeColumn({
+        caption: 'מועד משלוח תזכורת SMS'
+    });
     admin = new BoolColumn({
         caption: 'מנהל משלוח',
         allowApiUpdate: Roles.admin,
@@ -104,7 +106,7 @@ export class Helpers extends HelpersBase  {
 
 
 
-    
+
     veryUrlKeyAndReturnTrueIfSaveRequired() {
         if (!this.shortUrlKey.value) {
             this.shortUrlKey.value = this.makeid();

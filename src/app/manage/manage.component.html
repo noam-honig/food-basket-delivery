@@ -17,32 +17,48 @@
 
 
         <data-area [settings]="settings"></data-area>
+        <label>הטלפון ממנו יצא הSMS</label><br>
+        כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את המשפחות ולחץ על הכפתור שלח SMS.
+        ניתן להגדיר כאן שם חלופי וטלפון חלופי
+        <br />
+        <data-area [settings]="settingsMore"></data-area>
         <div class="form-horizontal">
             <div class="form-group">
-                <div class="col-sm-4">
-                    <!--bindings={
-    "ng-reflect-ng-if": "true"
-    }-->
+                <div class="col-sm-12">
+
+
                     <label class="control-label ng-star-inserted">{{settings.currentRow.smsText.caption}}</label>
-                </div>
-                <div class="col-sm-8">
-                    <textarea [(ngModel)]="settings.currentRow.smsText.value" class="form-control"></textarea>
-                    <br />
+                    <br>
+                    הודעה זו תשלך למתנדב ממסך שיוך משפחות - עם הקישור למשפחות להן הוא מתבקש לחלק.
                     <ul>
                         <li>!משנע! - יוחלף בשם המשנע</li>
                         <li>!שולח! - יוחלף בשם השולח</li>
                         <li>!ארגון! - יוחלף בשם הארגון</li>
                         <li>!אתר! - יוחלף בכתובת האתר</li>
                     </ul>
+                    <textarea [(ngModel)]="settings.currentRow.smsText.value" class="form-control"></textarea>
                     <h4>הודעה לדוגמא</h4>
                     <pre>{{testSms()}}</pre>
                 </div>
             </div>
         </div>
-        <h4>הטלפון ממנו יצא הSMS</h4>
-        כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את המשפחות ולחץ על הכפתור שלח SMS.
-        ניתן להגדיר כאן שם חלופי וטלפון חלופי
-        <data-area [settings]="settingsMore"></data-area>
+        <div class="form-horizontal">
+            <div class="form-group">
+                <div class="col-sm-12">
+
+                    <label
+                        class="control-label ng-star-inserted">{{settings.currentRow.reminderSmsText.caption}}</label>
+                        <br>
+                        הודעה זו תשלח למשנע שמתעכב ממסך מעקב משנעים
+                    <textarea [(ngModel)]="settings.currentRow.reminderSmsText.value" class="form-control"
+                        lines=3></textarea>
+
+                    <h4>הודעה לדוגמא</h4>
+                    <pre>{{testSmsReminder()}}</pre>
+                </div>
+            </div>
+        </div>
+
 
 
 
@@ -99,7 +115,7 @@
         כאשר המתנדב לוחץ על הכפתור "נתקלתי בבעיה" מופע לו מסך אם אפשרות להתקשר לעזרה או לעדכן שלא מסר.
         <br>
         כאן ניתן לעדכן אילו טלפונים יופיעו לו לעזרה, אפשר לעדכן אחד או יותר.
-        
+
         <table>
             <tr *ngFor="let p of helpPhones; let i = index" style="border-bottom: solid;
             border-bottom-width: thin;
@@ -115,18 +131,20 @@
                         class="form-control">
                 </td>
                 <td><button mat-icon-button (click)="delete(p)">
-                    <mat-icon>delete</mat-icon>
-                </button></td>
+                        <mat-icon>delete</mat-icon>
+                    </button></td>
                 <td><button mat-icon-button (click)="move(p,-1)" *ngIf="i>0">
                         <mat-icon>arrow_drop_up</mat-icon>
                     </button></td>
                 <td><button mat-icon-button (click)="move(p,1)" *ngIf="i<helpPhones.length-1">
                         <mat-icon>arrow_drop_down</mat-icon>
                     </button></td>
-              
+
             </tr>
         </table>
-        <button (click)="addPhoneOption()"  mat-icon-button ><mat-icon>add</mat-icon></button>
+        <button (click)="addPhoneOption()" mat-icon-button>
+            <mat-icon>add</mat-icon>
+        </button>
     </mat-expansion-panel>
     <mat-expansion-panel>
         <mat-expansion-panel-header>

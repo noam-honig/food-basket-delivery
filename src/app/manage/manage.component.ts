@@ -152,6 +152,9 @@ export class ManageComponent implements OnInit {
   testSms() {
     return SendSmsAction.getMessage(this.settings.currentRow.smsText.value, this.settings.currentRow.organisationName.value, 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
   }
+  testSmsReminder() {
+    return SendSmsAction.getMessage(this.settings.currentRow.reminderSmsText.value, this.settings.currentRow.organisationName.value, 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
+  }
   images = this.context.for(ApplicationImages).gridSettings({
     numOfColumnsInGrid: 0,
     allowUpdate: true,

@@ -92,8 +92,11 @@ export async function serverInit() {
             settings.id.value = 1;
             settings.organisationName.value = 'שם הארגון שלי';
             settings.logoUrl.value = '/assets/apple-touch-icon.png';
-            settings.smsText.value = 'שלום !משנע!\n לחלוקת חבילות !ארגון! לחץ על: !אתר! \nתודה !שולח!';
+            settings.smsText.value = 'שלום !משנע!\nלחלוקת חבילות !ארגון! לחץ על: !אתר! \nתודה !שולח!';
         }
+        if (!settings.reminderSmsText.value)
+            settings.reminderSmsText.value = 'שלום !משנע!, \nנשמח אם תעדכן את המערכת במצב המסירה של הסלים. לעדכון לחץ על:  !אתר!\nבתודה !ארגון!';
+     
         if (!settings.commentForSuccessDelivery.value)
             settings.commentForSuccessDelivery.value = 'נשמח אם תכתוב לנו הערה על מה שראית והיה';
         if (!settings.commentForSuccessLeft.value)

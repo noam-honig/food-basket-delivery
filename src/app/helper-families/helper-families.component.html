@@ -73,7 +73,7 @@ justify-content: space-between;order:-1;">
     </mat-menu>
 
   </div>
-  <button *ngIf="partOfReview&&helperGotSms" mat-raised-button class="myButton no-print" color="primary" (click)="sendSms(true)">
+  <button *ngIf="partOfReview&&helperGotSms&&familyLists.toDeliver.length>0" mat-raised-button class="myButton no-print" color="primary" (click)="sendSms(true)">
 
     <span
       *ngIf="familyLists&&familyLists.helperOptional&&familyLists.helperOptional.reminderSmsDate.value; else elseContent">תזכורת

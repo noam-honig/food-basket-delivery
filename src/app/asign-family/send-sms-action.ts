@@ -17,7 +17,10 @@ export class SendSmsAction {
 
                 new SendSmsUtils().sendSms(phone, sender, message);
                 let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
-                h.smsDate.value = new Date();
+                if (reminder)
+                    h.reminderSmsDate.value = new Date();
+                else
+                    h.smsDate.value = new Date();
                 await h.save();
             });
         }
@@ -42,23 +45,17 @@ export class SendSmsAction {
             let message = '';
             let settings = await ApplicationSettings.getAsync(ds);
             if (reminder) {
-                message = 'שלום ' + helper.name.value;
-                message += " טרם נרשם במערכת שבוצעה החלוקה, אנא עדכן אותנו אם יש צורך בעזרה או עדכן שהמשלוח הגיע ליעדו"
-                message += ' אנא לחץ על ' + origin + '/x/' + helper.shortUrlKey.value;
-                helper.reminderSmsDate.value = new Date();
+                message = settings.reminderSmsText.value;
+                
             }
             else {
 
                 message = settings.smsText.value;
                 if (!message || message.trim().length == 0) {
                     message = 'שלום !משנע! לחלוקת חבילות !ארגון! לחץ על: !אתר! תודה !שולח!';
-
                 }
-
-                message = SendSmsAction.getMessage(message, settings.organisationName.value, helper.name.value, senderName, origin + '/x/' + helper.shortUrlKey.value);
-
-
             }
+            message = SendSmsAction.getMessage(message, settings.organisationName.value, helper.name.value, senderName, origin + '/x/' + helper.shortUrlKey.value);
             let sender = settings.helpPhone.value;
             if (!sender || sender.length < 3) {
                 let currentUser = await (ds.for(Helpers).findFirst(h => h.id.isEqualTo(ds.user.id)));
@@ -67,7 +64,7 @@ export class SendSmsAction {
 
             then(helper.phone.value, message, sender);
             await helper.save();
-
+var x = 1+1;
 
         }
     }

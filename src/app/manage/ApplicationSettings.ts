@@ -13,6 +13,7 @@ export class ApplicationSettings extends Entity<number>  {
   id = new NumberColumn();
   organisationName = new StringColumn('שם הארגון');
   smsText = new StringColumn('תוכן הודעת SMS');
+  reminderSmsText = new StringColumn('תוכן הודעת תזכורת SMS');
   logoUrl = new StringColumn('לוגו URL');
   address = new StringColumn("כתובת מרכז השילוח");
   commentForSuccessDelivery = new StringColumn('הודעה למשנע כאשר נמסר בהצלחה');
