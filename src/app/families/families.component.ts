@@ -555,8 +555,10 @@ export class FamiliesComponent implements OnInit {
             this.colors[0].backgroundColor.push(colors.green, colors.blue, colors.yellow, colors.red, colors.orange, colors.gray);
         }
     }
-    totalBoxes = 0;
-    blockedBoxes = 0;
+    totalBoxes1 = 0;
+    blockedBoxes1 = 0;
+    totalBoxes2 = 0;
+    blockedBoxes2 = 0;
 
     refreshStats() {
         if (this.suspend)
@@ -569,16 +571,21 @@ export class FamiliesComponent implements OnInit {
                 this.groupsReady.stats.splice(0);
                 this.groupsTotals.stats.splice(0);
 
-                this.totalBoxes = 0;
-                this.blockedBoxes = 0;
+                this.totalBoxes1 = 0;
+                this.blockedBoxes1 = 0;
+                this.totalBoxes2 = 0;
+                this.blockedBoxes2 = 0;
                 st.baskets.forEach(b => {
                     let fs = new FaimilyStatistics(b.name, f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(f.courier.isEqualTo('').and(f.basketType.isEqualTo(b.id))), undefined);
                     fs.value = b.unassignedFamilies;
                     this.basketStats.stats.push(fs);
                     if (b.blocked) {
-                        this.blockedBoxes += +b.boxes * +b.unassignedFamilies;
-                    } else
-                        this.totalBoxes += +b.boxes * +b.unassignedFamilies;
+                        this.blockedBoxes1 += +b.boxes * +b.unassignedFamilies;
+                        this.blockedBoxes2 += +b.boxes2 * +b.unassignedFamilies;
+                    } else {
+                        this.totalBoxes1 += +b.boxes * +b.unassignedFamilies;
+                        this.totalBoxes2 += +b.boxes2 * +b.unassignedFamilies;
+                    }
 
                 });
                 let i = 0;
@@ -631,9 +638,14 @@ export class FamiliesComponent implements OnInit {
     }
     showTotalBoxes() {
         if (this.currentTabStats == this.basketStats) {
-            let r = 'סה"כ ארגזים: ' + this.totalBoxes;
-            if (this.blockedBoxes > 0) {
-                r += ', סה"כ ארגזים חסומים: ' + this.blockedBoxes;
+            let r = 'סה"כ ' + BasketType.boxes1Name + ': ' + this.totalBoxes1;
+            if (this.blockedBoxes1 > 0) {
+                r += ', סה"כ ' + BasketType.boxes1Name + ' חסומים: ' + this.blockedBoxes1;
+            }
+            if (this.totalBoxes2 > 0)
+                r += ', סה"כ ' + BasketType.boxes2Name + ': ' + this.totalBoxes2;
+            if (this.blockedBoxes2 > 0) {
+                r += ', סה"כ ' + BasketType.boxes2Name + ' חסומים: ' + this.blockedBoxes2;
             }
             return r;
         }

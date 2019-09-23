@@ -106,6 +106,10 @@ export async function serverInit() {
         if (!settings.deliveredButtonText.value) {
             settings.deliveredButtonText.value = 'מסרתי את החבילה בהצלחה';
         }
+        if (!settings.boxes1Name.value)
+            settings.boxes1Name.value = 'ארגזים';
+        if (!settings.boxes2Name.value)
+            settings.boxes2Name.value = 'משהו אחר';
         await settings.save();
 
 

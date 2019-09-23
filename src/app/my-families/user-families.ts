@@ -47,8 +47,10 @@ export class UserFamiliesList {
 
 
         let boxes = 0;
+        let boxes2 = 0;
         for (const iterator of this.toDeliver) {
             boxes += this.context.for(BasketType).lookup(iterator.basketType).boxes.value;
+            boxes2 += this.context.for(BasketType).lookup(iterator.basketType).boxes2.value;
         }
         if (this.toDeliver.length == 0)
             return 'שומר מקום';
@@ -59,9 +61,14 @@ export class UserFamiliesList {
         else
             r = this.toDeliver.length + translate(' משפחות לחלוקה');
 
-
-        if (boxes > this.toDeliver.length)
-            r += ' (' + boxes + ' ארגזים)';
+        let boxesText = '';
+        if (boxes != this.toDeliver.length || boxes2 != 0)
+            boxesText += + boxes + ' ' + BasketType.boxes1Name;
+        if (boxes2 != 0) {
+            boxesText += ' ו-' + boxes2 + ' ' + BasketType.boxes2Name;
+        }
+        if (boxesText != '')
+            r += ' (' + boxesText + ')';
         return r;
 
     }

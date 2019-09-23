@@ -64,6 +64,8 @@ export class ApplicationSettings extends Entity<number>  {
     this._lastString = this.addressApiResult.value;
     return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
   }
+  boxes1Name = new StringColumn("שם כמות 1 בסוגי סלים");
+  boxes2Name = new StringColumn("שם כמות 2 בסוגי סלים");
 
 
   constructor(context: Context) {

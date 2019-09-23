@@ -14,7 +14,7 @@ heroku pg:info --app=%app%
 heroku maintenance:on --app=%app%
 
 ------- wait here
-set newdb=HEROKU_POSTGRESQL_COBALT_URL
+set newdb=HEROKU_POSTGRESQL_PUCE_URL
 heroku pg:copy DATABASE_URL %newdb% --app=%app%
 ------- wait here
 heroku pg:promote %newdb%  --app=%app%

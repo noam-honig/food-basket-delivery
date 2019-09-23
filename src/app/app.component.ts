@@ -13,6 +13,7 @@ import { DeliveryStats } from './delivery-follow-up/delivery-stats';
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { DeliveryStatus } from './families/DeliveryStatus';
 import { Helpers } from './helpers/helpers';
+import { BasketType } from './families/BasketType';
 
 
 
@@ -38,6 +39,8 @@ export class AppComponent {
       DeliveryStatus.usingSelfPickupModule = x.usingSelfPickupModule.value;
       Helpers.usingCompanyModule = x.showCompanies.value;
       this.orgName = x.organisationName.value;
+      BasketType.boxes1Name = x.boxes1Name.value;
+      BasketType.boxes2Name = x.boxes2Name.value;
       if (x.redTitleBar.value)
       this.toolbarColor = 'primary';
     })

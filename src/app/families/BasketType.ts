@@ -12,7 +12,8 @@ export class BasketType extends IdEntity<BasketId>  {
 
   name = new StringColumn({ caption: "שם" });
   blocked = new BoolColumn({ caption: 'חסום לחלוקה' });
-  boxes = new NumberColumn({ caption: 'ארגזים', value: 1 });
+  boxes = new NumberColumn({ caption: BasketType.boxes1Name, value: 1 });
+  boxes2 = new NumberColumn({ caption: BasketType.boxes2Name, value: 0 });
   constructor(context: Context) {
     super(new BasketId(context), {
       name: "BasketType",
@@ -24,6 +25,8 @@ export class BasketType extends IdEntity<BasketId>  {
       }
     });
   }
+  static boxes1Name='ארגזים';
+  static boxes2Name = 'משהו אחר';
 }
 export class BasketId extends IdColumn implements HasAsyncGetTheValue {
   constructor(private context: Context, settingsOrCaption?: ColumnOptions<string> ) {

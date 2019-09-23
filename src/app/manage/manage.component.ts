@@ -47,6 +47,10 @@ export class ManageComponent implements OnInit {
         column: x.boxes,
         width: '100px'
       },
+      {
+        column: x.boxes2,
+        width: '100px'
+      },
       x.blocked
     ],
     get: {
@@ -135,6 +139,8 @@ export class ManageComponent implements OnInit {
       s.defaultStatusType.getColumn(),
       s.usingSelfPickupModule,
       s.showLeftThereButton,
+      s.boxes1Name,
+      s.boxes2Name,
       s.showCompanies,
       s.defaultPrefixForExcelImport,
       s.redTitleBar,

@@ -78,6 +78,7 @@ export class Stats {
                 id: b.id.value,
                 name: b.name.value,
                 boxes: b.boxes.value,
+                boxes2:b.boxes2.value,
                 blocked: b.blocked.value,
                 unassignedFamilies: await context.for(Families).count(f => f.readyAndSelfPickup().and(f.basketType.isEqualTo(b.id)))
             });
