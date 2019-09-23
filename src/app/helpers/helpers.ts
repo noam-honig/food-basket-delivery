@@ -1,6 +1,6 @@
 
-import { ColumnSetting, Entity, FilterBase, NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, DecorateDataColumnSettings, EntityOptions } from "radweb";
-import { changeDate, HasAsyncGetTheValue, PhoneColumn, } from '../model-shared/types';
+import { ColumnSetting, Entity, FilterBase, NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, DecorateDataColumnSettings, EntityOptions} from "radweb";
+import { changeDate, HasAsyncGetTheValue, PhoneColumn,DateTimeColumn } from '../model-shared/types';
 import { SelectServiceInterface } from '../select-popup/select-service-interface';
 
 import { routeStats } from '../asign-family/asign-family.component';
@@ -26,7 +26,7 @@ export abstract class HelpersBase extends IdEntity<HelperId>  {
         }
     });
     phone = new PhoneColumn({ caption: "טלפון", inputType: 'tel' });
-    smsDate = new changeDate('מועד משלוח SMS');
+    smsDate = new DateTimeColumn('מועד משלוח SMS');
     company = new CompanyColumn();
     totalKm = new NumberColumn();
     totalTime = new NumberColumn();

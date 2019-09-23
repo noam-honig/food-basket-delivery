@@ -26,7 +26,7 @@
       </div>
       <div>
         <mat-panel-description>
-          בדרך {{c.deliveriesInProgress.value}}<span *ngIf="c.gotSms.value">, יצא {{c.smsDate.relativeDateName()}}</span> <span *ngIf="!c.gotSms.value">, טרם נשלח SMS</span>
+           חולקו {{c.allFamilies.value - c.deliveriesInProgress.value}}/{{c.allFamilies.value}}<span *ngIf="c.gotSms.value">, יצא {{c.smsDate.relativeDateName()}}</span> <span *ngIf="!c.gotSms.value">, טרם נשלח SMS</span>
         </mat-panel-description>
       </div>
     </mat-expansion-panel-header>

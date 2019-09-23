@@ -13,16 +13,19 @@ export class SendSmsAction {
     static async SendSms(helperId: string, reminder: Boolean, context?: ServerContext) {
 
         try {
-            await SendSmsAction.generateMessage(context, helperId, context.getOrigin(), reminder, context.user.name, (phone, message, sender) => {
+            await SendSmsAction.generateMessage(context, helperId, context.getOrigin(), reminder, context.user.name, async (phone, message, sender) => {
 
                 new SendSmsUtils().sendSms(phone, sender, message);
+                let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
+                h.smsDate.value = new Date();
+                await h.save();
             });
         }
         catch (err) {
             console.error(err);
         }
     }
-   
+
 
 
 
@@ -53,7 +56,7 @@ export class SendSmsAction {
                 }
 
                 message = SendSmsAction.getMessage(message, settings.organisationName.value, helper.name.value, senderName, origin + '/x/' + helper.shortUrlKey.value);
-                helper.smsDate.value = new Date();
+
 
             }
             let sender = settings.helpPhone.value;

@@ -14,6 +14,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Context } from 'radweb';
 import { Column } from 'radweb';
 import { translate } from '../translate';
+import { Helpers } from '../helpers/helpers';
 
 @Component({
   selector: 'app-helper-families',
@@ -154,6 +155,7 @@ export class HelperFamiliesComponent implements OnInit {
       phone = '972' + phone.substr(1);
     }
     window.open('https://wa.me/' + phone + '?text=' + encodeURI(this.smsMessage), '_blank');
+    await this.updateMessageSent();
   }
   smsMessage: string = '';
   smsPhone: string = '';
@@ -168,13 +170,21 @@ export class HelperFamiliesComponent implements OnInit {
   async sendPhoneSms() {
     try {
       window.open('sms:' + this.smsPhone + ';?&body=' + encodeURI(this.smsMessage), '_blank');
+      await this.updateMessageSent();
     } catch (err) {
       this.dialog.Error(err);
     }
   }
+  async updateMessageSent(){
+    let h = await this.context.for(Helpers).findFirst(h=>h.id.isEqualTo(this.familyLists.helperId));
+    h.smsDate.value =  new Date();
+    await h.save();
+    this.assignSmsSent.emit();
+  }
   async copyMessage() {
     copy(this.smsMessage);
     this.dialog.Info("הודעה הועתקה");
+    await this.updateMessageSent();
   }
 
   updateComment(f: Families) {
