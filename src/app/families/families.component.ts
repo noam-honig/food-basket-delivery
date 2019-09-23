@@ -639,12 +639,12 @@ export class FamiliesComponent implements OnInit {
     showTotalBoxes() {
         if (this.currentTabStats == this.basketStats) {
             let r = 'סה"כ ' + BasketType.boxes1Name + ': ' + this.totalBoxes1;
-            if (this.blockedBoxes1 > 0) {
+            if (this.blockedBoxes1 ) {
                 r += ', סה"כ ' + BasketType.boxes1Name + ' חסומים: ' + this.blockedBoxes1;
             }
-            if (this.totalBoxes2 > 0)
+            if (this.totalBoxes2 )
                 r += ', סה"כ ' + BasketType.boxes2Name + ': ' + this.totalBoxes2;
-            if (this.blockedBoxes2 > 0) {
+            if (this.blockedBoxes2 ) {
                 r += ', סה"כ ' + BasketType.boxes2Name + ' חסומים: ' + this.blockedBoxes2;
             }
             return r;
