@@ -224,6 +224,11 @@
             "type": "npm",
             "script": "publish-to-kruvit",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-cbhr-doners",
+            "problemMatcher": []
         }
     ]
 }
