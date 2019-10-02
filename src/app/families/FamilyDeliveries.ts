@@ -47,18 +47,9 @@ export class FamilyDeliveries extends IdEntity<IdColumn>  {
         });
     }
     getShortDescription() {
-        let r = this.deliverStatus.displayValue + " ";
-        if (this.deliveryStatusDate.value.valueOf() < new Date().valueOf() - 7 * 86400 * 1000)
-            r += "ב " + this.deliveryStatusDate.value.toLocaleDateString("he-il");
-        else
-            r += this.deliveryStatusDate.relativeDateName();
-        if (this.courierComments.value) {
-            r += ": " + this.courierComments.value;
-        }
-        if (this.courier.value)
-            r += ' ע"י ' + this.courier.getValue();
-        return r;
+        return Families.staticGetShortDescription(this.deliverStatus, this.deliveryStatusDate, this.courier, this.courierComments);
     }
+
 
 
 }

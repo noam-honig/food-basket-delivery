@@ -39,14 +39,14 @@ export class Families extends IdEntity<FamilyId>  {
   getDeliveries() {
     return this.context.for(FamilyDeliveries).find({ where: d => d.family.isEqualTo(this.id), orderBy: d => [{ column: d.deliveryStatusDate, descending: true }] });
   }
-  checkNeedsWork(){
+  checkNeedsWork() {
     if (this.courierComments.value)
       this.needsWork.value = true;
-    switch(this.deliverStatus.value){
+    switch (this.deliverStatus.value) {
       case DeliveryStatus.FailedBadAddress:
       case DeliveryStatus.FailedNotHome:
       case DeliveryStatus.FailedOther:
-      this.needsWork.value = true;
+        this.needsWork.value = true;
         break;
     }
   }
@@ -136,7 +136,7 @@ export class Families extends IdEntity<FamilyId>  {
               logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName())));//should be after succesfull save
               //logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
               logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()))); //should be after succesfull save
-              logChanged(this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => {}); //should be after succesfull save
+              logChanged(this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => { }); //should be after succesfull save
             }
           }
         }
@@ -144,7 +144,7 @@ export class Families extends IdEntity<FamilyId>  {
       });
     this.initColumns();
     if (!context.isAllowed(Roles.admin))
-      this.__iterateColumns().forEach(c => c.allowApiUpdate = c == this.courierComments || c == this.deliverStatus || c == this.correntAnErrorInStatus||c==this.needsWork);
+      this.__iterateColumns().forEach(c => c.allowApiUpdate = c == this.courierComments || c == this.deliverStatus || c == this.correntAnErrorInStatus || c == this.needsWork);
   }
   disableChangeLogging = false;
 
@@ -208,7 +208,7 @@ export class Families extends IdEntity<FamilyId>  {
   courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
   needsWork = new BoolColumn({ caption: 'צריך טיפול/מעקב' });
   needsWorkUser = new HelperIdReadonly(this.context, 'צריך טיפול - מי עדכן');
-  needsWorkDate = new changeDate( 'צריך טיפול - מתי עודכן');
+  needsWorkDate = new changeDate('צריך טיפול - מתי עודכן');
 
 
   courierAssignUserName = new StringColumn({
@@ -419,15 +419,23 @@ export class Families extends IdEntity<FamilyId>  {
     return this.deliverStatus.displayValue;
   }
   getShortDeliveryDescription() {
-    switch (this.deliverStatus.value) {
-      case DeliveryStatus.ReadyForDelivery:
-        if (this.courier.value) {
-          return this.courier.getValue() + ' יצא ' + this.courierAssingTime.relativeDateName();
-        }
-        break;
-    }
-    return this.deliverStatus.displayValue;
+    return Families.staticGetShortDescription(this.deliverStatus,this.deliveryStatusDate,this.courier,this.courierComments);
   }
+  static staticGetShortDescription(deliverStatus:DeliveryStatusColumn,deliveryStatusDate:changeDate,courier:HelperId,courierComments:StringColumn) {
+    let r = deliverStatus.displayValue + " ";
+    if (DeliveryStatus.IsAResultStatus(deliverStatus.value)){
+    if (deliveryStatusDate.value.valueOf() < new Date().valueOf() - 7 * 86400 * 1000)
+        r += "ב " + deliveryStatusDate.value.toLocaleDateString("he-il");
+    else
+        r += deliveryStatusDate.relativeDateName();
+    if (courierComments.value) {
+        r += ": " + courierComments.value;
+    }
+    if (courier.value&&deliverStatus.value!=DeliveryStatus.SelfPickup&&deliverStatus.value!=DeliveryStatus.SuccessPickedUp)
+        r += ' ע"י ' + courier.getValue();
+  }
+    return r;
+}
 
 
   createDate = new changeDate({ includeInApi: Roles.admin, caption: 'מועד הוספה' });
