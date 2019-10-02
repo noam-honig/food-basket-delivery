@@ -78,16 +78,11 @@ export class DistributionMap implements OnInit, OnDestroy {
 
 
   }
-  ready = new statusClass('טרם שויכו', 'https://maps.google.com/mapfiles/ms/micons/yellow-dot.png', colors.yellow);
-  selfPickup = new statusClass('באים לקחת', 'https://maps.google.com/mapfiles/ms/micons/orange-dot.png', colors.orange);
-  onTheWay = new statusClass('בדרך', 'https://maps.google.com/mapfiles/ms/micons/ltblue-dot.png', colors.blue);
-  problem = new statusClass('בעיות', 'https://maps.google.com/mapfiles/ms/micons/red-pushpin.png', colors.red);
-  success = new statusClass('הגיעו', 'https://maps.google.com/mapfiles/ms/micons/green-dot.png', colors.green);
-  statuses: statusClass[] = [];
+  statuses = new Statuses();
   selectedStatus: statusClass;
   async refreshFamilies() {
     let families = await DistributionMap.GetFamiliesLocations();
-    this.statuses.forEach(element => {
+    this.statuses.statuses.forEach(element => {
       element.value = 0;
     });
 
@@ -118,28 +113,8 @@ export class DistributionMap implements OnInit, OnDestroy {
         });
       }
 
-      let status: statusClass;
-      switch (f.status) {
-        case DeliveryStatus.ReadyForDelivery.id:
-          if (f.courier)
-            status = this.onTheWay;
-          else
-            status = this.ready;
-          break;
-        case DeliveryStatus.SelfPickup.id:
-          status = this.selfPickup;
-          break;
-        case DeliveryStatus.Success.id:
-        case DeliveryStatus.SuccessLeftThere.id:
-        case DeliveryStatus.SuccessPickedUp.id:
-          status = this.success;
-          break;
-        case DeliveryStatus.FailedBadAddress.id:
-        case DeliveryStatus.FailedNotHome.id:
-        case DeliveryStatus.FailedOther.id:
-          status = this.problem;
-          break;
-      }
+      let status: statusClass = this.statuses.getBy(f.status,f.courier);
+
       if (status)
         status.value++;
 
@@ -196,10 +171,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   @ViewChild('gmap') gmapElement: any;
   map: google.maps.Map;
   async ngOnInit() {
-    this.statuses.push(this.ready);
-    if (DeliveryStatus.usingSelfPickupModule)
-      this.statuses.push(this.selfPickup);
-    this.statuses.push(this.onTheWay, this.success, this.problem);
+
     this.test();
   }
   options: chart.ChartOptions = {
@@ -226,7 +198,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.colors[0].backgroundColor.splice(0);
 
 
-    this.statuses.forEach(s => {
+    this.statuses.statuses.forEach(s => {
 
       this.pieChartLabels.push(s.name + ' ' + s.value);
       this.pieChartData.push(s.value);
@@ -262,10 +234,49 @@ export interface infoOnMap {
 
 }
 
-class statusClass {
+export class statusClass {
   constructor(public name: string, public icon: string, public color: string) {
 
   }
   value = 0;
 }
 
+export class Statuses {
+  constructor() {
+    this.statuses.push(this.ready);
+    if (DeliveryStatus.usingSelfPickupModule)
+      this.statuses.push(this.selfPickup);
+    this.statuses.push(this.onTheWay, this.success, this.problem);
+  }
+  getBy(statusId: number, courierId: string): statusClass {
+    switch (statusId) {
+      case DeliveryStatus.ReadyForDelivery.id:
+        if (courierId)
+          return this.onTheWay;
+        else
+          return this.ready;
+        break;
+      case DeliveryStatus.SelfPickup.id:
+        return this.selfPickup;
+        break;
+      case DeliveryStatus.Success.id:
+      case DeliveryStatus.SuccessLeftThere.id:
+      case DeliveryStatus.SuccessPickedUp.id:
+        return this.success;
+        break;
+      case DeliveryStatus.FailedBadAddress.id:
+      case DeliveryStatus.FailedNotHome.id:
+      case DeliveryStatus.FailedOther.id:
+        return this.problem;
+        break;
+    }
+  }
+  ready = new statusClass('טרם שויכו', 'https://maps.google.com/mapfiles/ms/micons/yellow-dot.png', colors.yellow);
+  selfPickup = new statusClass('באים לקחת', 'https://maps.google.com/mapfiles/ms/micons/orange-dot.png', colors.orange);
+  onTheWay = new statusClass('בדרך', 'https://maps.google.com/mapfiles/ms/micons/ltblue-dot.png', colors.blue);
+  problem = new statusClass('בעיות', 'https://maps.google.com/mapfiles/ms/micons/red-pushpin.png', colors.red);
+  success = new statusClass('הגיעו', 'https://maps.google.com/mapfiles/ms/micons/green-dot.png', colors.green);
+  statuses: statusClass[] = [];
+
+
+}

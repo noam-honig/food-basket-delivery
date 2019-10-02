@@ -42,7 +42,7 @@ export class AppComponent {
       BasketType.boxes1Name = x.boxes1Name.value;
       BasketType.boxes2Name = x.boxes2Name.value;
       if (x.redTitleBar.value)
-      this.toolbarColor = 'primary';
+        this.toolbarColor = 'primary';
     })
 
     if (!window.location.hostname.toLocaleLowerCase().startsWith('hmey')) {
@@ -88,6 +88,8 @@ export class AppComponent {
   shouldDisplayRoute(route: Route) {
     if (!(route.path && route.path.indexOf(':') < 0 && route.path.indexOf('**') < 0))
       return false;
+    if (route.data && route.data.hide)
+      return;
     if (!DeliveryStatus.usingSelfPickupModule && route.component == SelfPickupComponent)
       return false;
     return this.helper.canNavigateToRoute(route);

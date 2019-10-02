@@ -60,6 +60,7 @@ import { TranslatePipe } from './translate';
 import { SelectCompanyComponent } from './select-company/select-company.component';
 import { HelperAssignmentComponent } from './helper-assignment/helper-assignment.component';
 import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';
+import { PlaybackComponent } from './playback/playback.component';
 
 
 
@@ -107,7 +108,8 @@ import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/imp
     TranslatePipe,
     SelectCompanyComponent,
     HelperAssignmentComponent,
-    ImportHelpersFromExcelComponent
+    ImportHelpersFromExcelComponent,
+    PlaybackComponent
     
   ],
   imports: [

@@ -27,6 +27,7 @@ import { AdminGuard } from './auth/roles';
 import { SignedInGuard } from 'radweb';
 import { CreateBackupExcelFileComponent,CanDeactivateGuard } from './create-backup-excel-file/create-backup-excel-file.component';
 import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';
+import { PlaybackComponent } from './playback/playback.component';
 
 
 
@@ -42,6 +43,8 @@ const routes: Routes = [
   HelpersComponent.route,
   
   DeliveryHistoryComponent.route,
+  { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { name: 'playback',hide:true } },
+  
   BatchOperationsComponent.route,
   { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard], data: { name: 'קליטת משפחות מאקסל' } },
   { path: 'import-helpers-from-excel', component: ImportHelpersFromExcelComponent, canActivate: [AdminGuard], data: { name: 'קליטת מתנדבים מאקסל' } },
