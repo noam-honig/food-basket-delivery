@@ -262,13 +262,23 @@ export class ImportFromExcelComponent implements OnInit {
             for (const col of this.excelColumns) {
 
                 let searchName = col.title;
-                for (const up of this.columns) {
-                    if (searchName == up.name || (up.searchNames && up.searchNames.indexOf(searchName) >= 0)) {
-                        col.column = up;
+                switch(searchName)
+                {
+                    case this.f.deliverStatus.caption:
+                    case this.f.courier.caption:
+                    case this.f.fixedCourier.caption:
                         break;
-                    }
-
+                    default:
+                            for (const up of this.columns) {
+                                if (searchName == up.name || (up.searchNames && up.searchNames.indexOf(searchName) >= 0)) {
+                                    col.column = up;
+                                    break;
+                                }
+            
+                            }
+                            break;
                 }
+                
 
             }
             this.rows = [];
@@ -358,22 +368,24 @@ export class ImportFromExcelComponent implements OnInit {
                 col.value = val;
         }
         this.f = this.context.for(Families).create();
-        try {
-            this.errorRows = JSON.parse(sessionStorage.getItem("errorRows"));
-            this.newRows = JSON.parse(sessionStorage.getItem("newRows"));
-            this.updateRows = JSON.parse(sessionStorage.getItem("updateRows"));
-            this.identicalRows = JSON.parse(sessionStorage.getItem("identicalRows"));
-            this.columnsInCompare = JSON.parse(sessionStorage.getItem("columnsInCompare")).map(x => this.f.__getColumnByJsonName(x));
-            if (this.columnsInCompare.length > 0) {
-                setTimeout(() => {
-                    this.stepper.next();
-                    this.stepper.next();
+        if (false) {
+            try {
+                this.errorRows = JSON.parse(sessionStorage.getItem("errorRows"));
+                this.newRows = JSON.parse(sessionStorage.getItem("newRows"));
+                this.updateRows = JSON.parse(sessionStorage.getItem("updateRows"));
+                this.identicalRows = JSON.parse(sessionStorage.getItem("identicalRows"));
+                this.columnsInCompare = JSON.parse(sessionStorage.getItem("columnsInCompare")).map(x => this.f.__getColumnByJsonName(x));
+                if (this.columnsInCompare.length > 0) {
+                    setTimeout(() => {
+                        this.stepper.next();
+                        this.stepper.next();
 
-                }, 100);
+                    }, 100);
+                }
             }
-        }
-        catch (err) {
-            console.log(err);
+            catch (err) {
+                console.log(err);
+            }
         }
 
         let addColumn = (col: Column<any>, searchNames?: string[]) => {
@@ -528,7 +540,7 @@ export class ImportFromExcelComponent implements OnInit {
             },
             searchNames: ['טלפון נייד']
         });
-        for (const c of [this.f.phone1, this.f.phone2,this.f.socialWorkerPhone1,this.f.socialWorkerPhone2]) {
+        for (const c of [this.f.phone1, this.f.phone2, this.f.socialWorkerPhone1, this.f.socialWorkerPhone2]) {
             this.columns.push({
                 key: c.__getMemberName(),
                 name: c.caption,
@@ -549,7 +561,7 @@ export class ImportFromExcelComponent implements OnInit {
             this.f.appartment,
             this.f.entrance,
             this.f.socialWorker
-            
+
         ]);
         for (const col of [this.f.phone1Description,
         this.f.phone2Description,
@@ -775,7 +787,12 @@ export class ImportFromExcelComponent implements OnInit {
                         }
                     }
                 }
-                if (hasDifference) {
+                if (ef.deliverStatus.value==DeliveryStatus.RemovedFromList)
+                {
+                    info.error = 'משפחה מעודכנת בבסיס הנתונים כהוצא מהרשימות';
+                    result.errorRows.push(info);
+                }
+                else if (hasDifference) {
                     result.updateRows.push(info);
                 }
                 else
@@ -835,23 +852,23 @@ export class ImportFromExcelComponent implements OnInit {
 
         }
     }
-    moveFromErrorToAdd(r:excelRowInfo){
-        this.dialog.YesNoQuestion(translate("להעביר את משפחת ")+r.name+ translate(" למשפחות להוספה?"),()=>{
-            let x= this.errorRows.indexOf(r);
-            this.errorRows.splice(x,1);
+    moveFromErrorToAdd(r: excelRowInfo) {
+        this.dialog.YesNoQuestion(translate("להעביר את משפחת ") + r.name + translate(" למשפחות להוספה?"), () => {
+            let x = this.errorRows.indexOf(r);
+            this.errorRows.splice(x, 1);
             this.newRows.push(r);
-            this.newRows.sort((a,b)=>a.rowInExcel-b.rowInExcel);
+            this.newRows.sort((a, b) => a.rowInExcel - b.rowInExcel);
         });
-        
+
     }
 
     async testImport() {
         await this.iterateExcelFile(false);
 
     }
-    async updateFamily(i:duplicateFamilyInfo){
-        let f = await this.context.for(Families).findFirst(f=>f.id.isEqualTo(i.id));
-        this.select.updateFamiliy({f:f});
+    async updateFamily(i: duplicateFamilyInfo) {
+        let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(i.id));
+        this.select.updateFamiliy({ f: f });
     }
 }
 

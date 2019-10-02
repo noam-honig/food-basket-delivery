@@ -208,10 +208,10 @@ export class FamiliesComponent implements OnInit {
                         }
                     } catch{ }
                 }
-                addColumn("שם משפחה", lastName, 's');
-                addColumn("שם פרטי", firstName, 's');
-                addColumn("רחוב", street, 's');
-                addColumn("מספר בית", house, 's');
+                addColumn("Xשם משפחה", lastName, 's');
+                addColumn("Xשם פרטי", firstName, 's');
+                addColumn("Xרחוב", street, 's');
+                addColumn("Xמספר בית", house, 's');
             });
     }
 

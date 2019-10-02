@@ -338,22 +338,24 @@ export class ImportHelpersFromExcelComponent implements OnInit {
         col.value = val;
     }
     this.helper = this.context.for(Helpers).create();
-    try {
-      this.errorRows = JSON.parse(sessionStorage.getItem("errorRowsHelpers"));
-      this.newRows = JSON.parse(sessionStorage.getItem("newRowsHelpers"));
-      this.updateRows = JSON.parse(sessionStorage.getItem("updateRowsHelpers"));
-      this.identicalRows = JSON.parse(sessionStorage.getItem("identicalRowsHelpers"));
-      this.columnsInCompare = JSON.parse(sessionStorage.getItem("columnsInCompareHelpers")).map(x => this.helper.__getColumnByJsonName(x));
-      if (this.columnsInCompare.length > 0) {
-        setTimeout(() => {
-          this.stepper.next();
-          this.stepper.next();
+    if (false) {
+      try {
+        this.errorRows = JSON.parse(sessionStorage.getItem("errorRowsHelpers"));
+        this.newRows = JSON.parse(sessionStorage.getItem("newRowsHelpers"));
+        this.updateRows = JSON.parse(sessionStorage.getItem("updateRowsHelpers"));
+        this.identicalRows = JSON.parse(sessionStorage.getItem("identicalRowsHelpers"));
+        this.columnsInCompare = JSON.parse(sessionStorage.getItem("columnsInCompareHelpers")).map(x => this.helper.__getColumnByJsonName(x));
+        if (this.columnsInCompare.length > 0) {
+          setTimeout(() => {
+            this.stepper.next();
+            this.stepper.next();
 
-        }, 100);
+          }, 100);
+        }
       }
-    }
-    catch (err) {
-      console.log(err);
+      catch (err) {
+        console.log(err);
+      }
     }
 
     let addColumn = (col: Column<any>, searchNames?: string[]) => {
@@ -541,10 +543,10 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     } as serverCheckResults;
     for (const info of excelRowInfo) {
 
-      info.duplicateHelperInfo = (await context.for(Helpers).find({where:h=>h.phone.isEqualTo(info.phone)})).map(x=>{
+      info.duplicateHelperInfo = (await context.for(Helpers).find({ where: h => h.phone.isEqualTo(info.phone) })).map(x => {
         return {
-          id:x.id.value,
-          name:x.name.value
+          id: x.id.value,
+          name: x.name.value
         } as duplicateHelperInfo;
       });
 
@@ -767,5 +769,5 @@ class ExcelHelper {
 }
 interface duplicateHelperInfo {
   id: string;
-  name:string;
+  name: string;
 }
