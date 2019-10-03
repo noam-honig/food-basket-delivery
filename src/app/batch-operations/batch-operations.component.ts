@@ -117,6 +117,26 @@ export class BatchOperationsComponent implements OnInit {
         }
 
     }
+    async setAsSelfPickup() {
+        let familiesThatMatch = await this.context.for(Families).count(f => f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup));
+
+        this.dialog.YesNoQuestion('ישנן ' + familiesThatMatch.toString() + translate(' משפחות המוגדרות כבאים לקחת - האם לעדכנן להן "קיבלו משלוח" בתאריך ' + this.deliveryDate.displayValue + "?"), async () => {
+            await BatchOperationsComponent.setAsSelfPickupStatic(DateColumn.dateToString(this.deliveryDate.value));
+            this.dialog.YesNoQuestion('בוצע');
+        });
+    }
+    @RunOnServer({ allowed: Roles.admin })
+    static async setAsSelfPickupStatic(deliveryDate: string, context?: Context) {
+        let x = await context.for(Families).find({ where: f => f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup) });
+        let d = DateColumn.stringToDate(deliveryDate);
+        for (const f of x) {
+            f.deliverStatus.value = DeliveryStatus.SuccessPickedUp;
+            await f.save();
+            f.deliveryStatusDate.value = d;
+            await f.save();
+        }
+
+    }
 
 
     static createFamiliesFilterForNewBasket(f: Families, basketType: string, group: string) {

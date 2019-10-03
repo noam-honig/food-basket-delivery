@@ -229,6 +229,11 @@
             "type": "npm",
             "script": "publish-to-cbhr-doners",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-chabadekron",
+            "problemMatcher": []
         }
     ]
 }

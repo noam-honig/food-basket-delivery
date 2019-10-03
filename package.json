@@ -39,6 +39,7 @@
     "publish-to-kruvit-sansana": "git push kruvit-sansana master -f",
     "publish-to-kruvit": "git push kruvit master -f",
     "publish-to-cbhr-doners": "git push cbhr-doners master -f",
+    "publish-to-chabadekron":"git push chabadekron -f",
     "copy-db": "heroku pg:copy hugmoms::DATABASE_URL hugmoms2::DATABASE_URL -a hugmoms2",
     "test": "ng test",
     "lint": "ng lint",

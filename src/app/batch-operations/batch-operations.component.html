@@ -1,14 +1,23 @@
 <mat-accordion>
-    <mat-accordion>
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            {{'הגדר נמסר בהצלחה לכל המשפחות שבדרך'|translate}}
-          </mat-expansion-panel-header>
-          {{'פעולה זו תגדיר לכל המשפחות ששוייכו למשנע אבל עוד לא עודכנו כנמסר בהצלחה - את הסטטוס נמסר בהצלחה, כדי שבהיסטוריה ירשם שהן קיבלו משלוח. תאריך המסירה יהיה התאריך שתבחרו'|translate}}
-          <data-area [settings]="dateArea"></data-area>
-      
-          <button mat-raised-button (click)="setAsDelivered()">הגדר כנמסר בהצלחה</button>
-        </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      {{'הגדר נמסר בהצלחה לכל המשפחות שבדרך'|translate}}
+    </mat-expansion-panel-header>
+    {{'פעולה זו תגדיר לכל המשפחות ששוייכו למשנע אבל עוד לא עודכנו כנמסר בהצלחה - את הסטטוס נמסר בהצלחה, כדי שבהיסטוריה ירשם שהן קיבלו משלוח. תאריך המסירה יהיה התאריך שתבחרו'|translate}}
+    <data-area [settings]="dateArea"></data-area>
+
+    <button mat-raised-button (click)="setAsDelivered()">הגדר כנמסר בהצלחה</button>
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      {{'הגדר לקחו בעצמם לכל המשפחות שבאים לקחת'|translate}}
+    </mat-expansion-panel-header>
+    {{'פעולה זו תגדיר לכל המשפחות המוגדרות "באים לקחת" שהן לקחו את הסל בעצמם, כדי שבהיסטוריה ירשם שהן קיבלו משלוח. תאריך המסירה יהיה התאריך שתבחרו'|translate}}
+    <data-area [settings]="dateArea"></data-area>
+
+    <button mat-raised-button (click)="setAsSelfPickup()">הגדר כלקחו בעצמם</button>
+  </mat-expansion-panel>
   <mat-expansion-panel>
     <mat-expansion-panel-header>
       {{'הגדרת משלוח חדש למשפחות'|translate}}
@@ -22,8 +31,7 @@
 
     <button mat-raised-button (click)="setNewBasket()">הגדר משלוח חדש</button>
   </mat-expansion-panel>
-</mat-accordion>
-<mat-accordion>
+
   <mat-expansion-panel>
     <mat-expansion-panel-header>
       {{'הגדר את כל המשפחות כלא באירוע'|translate}}
