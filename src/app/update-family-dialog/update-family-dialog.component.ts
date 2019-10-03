@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Families } from '../families/families';
 import { GridSettings } from 'radweb';
 import { Context } from 'radweb';
+import { FamilyDeliveries } from '../families/FamilyDeliveries';
 
 @Component({
   selector: 'app-update-family-dialog',
@@ -32,7 +33,10 @@ export class UpdateFamilyDialogComponent implements OnInit {
       this.data.onSave();
   }
 
-  ngOnInit() {
+  currentFamilyDeliveries: FamilyDeliveries[] = [];
+
+  async ngOnInit() {
+    this.currentFamilyDeliveries = await this.families.currentRow.getDeliveries();
   }
   families = this.context.for(Families).gridSettings({ allowUpdate: true });
 
