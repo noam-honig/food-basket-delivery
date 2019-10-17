@@ -227,5 +227,5 @@ export class HelperFamiliesComponent implements OnInit {
       this.dialog.Error(err);
     }
   }
-  @ViewChild("map") map: MapComponent;
+  @ViewChild("map", { static: true }) map: MapComponent;
 }

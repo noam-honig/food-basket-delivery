@@ -351,7 +351,7 @@ export class ImportFromExcelComponent implements OnInit {
 
 
     f: Families;
-    @ViewChild("stepper") stepper: MatStepper;
+    @ViewChild("stepper", { static: true }) stepper: MatStepper;
     settings: ApplicationSettings;
     async ngOnInit() {
         this.settings = await ApplicationSettings.getAsync(this.context);

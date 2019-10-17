@@ -168,7 +168,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     }) as familyQueryResult[];
   }
 
-  @ViewChild('gmap') gmapElement: any;
+  @ViewChild('gmap', { static: true }) gmapElement: any;
   map: google.maps.Map;
   async ngOnInit() {
 

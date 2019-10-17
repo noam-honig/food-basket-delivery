@@ -179,7 +179,7 @@ export class MapComponent implements OnInit {
 
     }
 
-    @ViewChild('gmap') gmapElement: any;
+    @ViewChild('gmap', { static: true }) gmapElement: any;
     map: google.maps.Map;
 
     private async initMap() {

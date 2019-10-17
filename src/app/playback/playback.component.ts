@@ -40,7 +40,7 @@ export class PlaybackComponent implements OnInit {
   mapInit = false;
   map: google.maps.Map;
 
-  @ViewChild('gmap') gmapElement: any;
+  @ViewChild('gmap', { static: true }) gmapElement: any;
 
   statuses = new Statuses();
 

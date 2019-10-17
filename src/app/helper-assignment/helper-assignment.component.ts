@@ -17,7 +17,7 @@ export class HelperAssignmentComponent implements OnInit {
     private context: Context
   ) {
   }
-  @ViewChild("assign") asign: AsignFamilyComponent;
+  @ViewChild("assign", { static: true }) asign: AsignFamilyComponent;
   ngOnInit() {
     this.asign.specificToHelper(this.data.helper);
   }

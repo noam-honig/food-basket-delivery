@@ -6,7 +6,7 @@ export class ApplicationImages extends Entity<number>  {
   id = new NumberColumn();
   base64Icon = new StringColumn("איקון דף base64");
   base64PhoneHomeImage = new StringColumn("איקון דף הבית בטלפון base64");
-  constructor(context: Context) {
+  constructor() {
     super({
       name: 'ApplicationImages',
       allowApiRead: Roles.admin,

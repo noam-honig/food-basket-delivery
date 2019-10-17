@@ -77,7 +77,7 @@ export class FamiliesComponent implements OnInit {
         if (dialog.isScreenSmall())
             this.gridView = false;
     }
-    @ViewChild("myRef") testing: ElementRef;
+    @ViewChild("myRef", { static: true }) testing: ElementRef;
     filterBy(s: FaimilyStatistics) {
         this.families.get({
             where: s.rule,
@@ -651,8 +651,8 @@ export class FamiliesComponent implements OnInit {
         }
         return undefined;
     }
-    @ViewChild('myTab') myTab: MatTabGroup;
-    @ViewChild('familyInfo') familyInfo: UpdateFamilyComponent;
+    @ViewChild('myTab', { static: false }) myTab: MatTabGroup;
+    @ViewChild('familyInfo', { static: true }) familyInfo: UpdateFamilyComponent;
     ngOnInit() {
 
         this.refreshStats();

@@ -14,7 +14,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
   styleUrls: ['./select-family.component.scss']
 })
 export class SelectFamilyComponent implements OnInit {
-  @ViewChild("search") search: ElementRef;
+  @ViewChild("search", { static: true }) search: ElementRef;
   constructor(private busy: BusyService, private dialogRef: MatDialogRef<SelectFamilyComponent>,
     @Inject(MAT_DIALOG_DATA) private data: SelectFamilyInfo, private context: Context) { }
   searchString: string = '';
