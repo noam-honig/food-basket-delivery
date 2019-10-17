@@ -4,12 +4,12 @@ import { Context,  EntityClass, IdEntity, StringColumn, IdColumn, ColumnOptions 
 import { Roles } from "../auth/roles";
 
 @EntityClass
-export class FamilySources extends IdEntity<FamilySourceId>  {
+export class FamilySources extends IdEntity  {
   name = new StringColumn({ caption: "שם" });
   contactPerson = new StringColumn({ caption: "איש קשר" });
   phone = new PhoneColumn({ caption: 'טלפון' });
   constructor(private context: Context) {
-    super(new FamilySourceId(context), {
+    super({
       name: "FamilySources",
       allowApiRead: context.isSignedIn(),
       allowApiCRUD: Roles.admin

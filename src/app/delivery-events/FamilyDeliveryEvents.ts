@@ -30,7 +30,7 @@ export class FamilyDeliveryEvents extends Entity<string> {
       name: 'FamilyDeliveryEvents',
       allowApiRead: Roles.admin 
     });
-    this.initColumns(new CompoundIdColumn(this, this.family, this.deliveryEvent));
+    this.__initColumns(new CompoundIdColumn(this, this.family, this.deliveryEvent));
   }
 }
 export class FamilyDelveryEventId extends IdColumn { }

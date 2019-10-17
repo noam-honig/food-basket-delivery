@@ -4,7 +4,7 @@ import { DialogService } from "../select-popup/dialog";
 
 import { Helpers } from "../helpers/helpers";
 
-import { RunOnServer, UserInfo, JwtSessionManager, RouteHelperService } from "radweb";
+import { ServerFunction, UserInfo, JwtSessionManager, RouteHelperService } from "radweb";
 import { Context } from "radweb";
 import { LoginResponse } from "./login-response";
 import { Roles } from "./roles";
@@ -28,7 +28,7 @@ export class AuthService {
 
 
     }
-    @RunOnServer({ allowed: true })
+    @ServerFunction({ allowed: true })
     static async loginFromSms(key: string, context?: Context) {
 
         let h = await context.for(Helpers).findFirst(h => h.shortUrlKey.isEqualTo(key));
@@ -86,7 +86,7 @@ export class AuthService {
         }
     }
 
-    @RunOnServer({ allowed: true })
+    @ServerFunction({ allowed: true })
     static async login(user: string, password: string, context?: Context) {
         let result: UserInfo;
         let requirePassword = false;

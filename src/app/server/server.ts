@@ -84,7 +84,8 @@ serverInit().then(async (dataSource) => {
             res.sendStatus(404);
             return;
         }
-        var dsql = new ActualDirectSQL(dataSource);
+        
+        var dsql = dataSource.getDirectSql();
         var fromDate = DateColumn.stringToDate(req.query["fromdate"]);
         var toDate = DateColumn.stringToDate(req.query["todate"]);
         if (!fromDate)

@@ -6,7 +6,7 @@ import { SelectService } from '../select-popup/select-service';
 import { Families } from '../families/families';
 import { Route } from '@angular/router';
 
-import { RunOnServer, GridSettings, ColumnSetting } from 'radweb';
+import { ServerFunction, GridSettings, ColumnSetting } from 'radweb';
 import { Context } from 'radweb';
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from 'radweb';
@@ -86,7 +86,7 @@ export class HelpersComponent implements OnInit {
     await saveToExcel(this.helpers, "מתנדבים", this.busy, (d: Helpers, c) => c == d.id||c==d.password||c==d.totalKm||c==d.totalTime||c==d.smsDate||c==d.reminderSmsDate||c==d.realStoredPassword||c==d.shortUrlKey||c==d.admin);
   }
 
-  @RunOnServer({ allowed: Roles.admin })
+  @ServerFunction({ allowed: Roles.admin })
   static async resetPassword(helperId: string, context?: Context) {
 
     await context.for(Helpers).foreach(h => h.id.isEqualTo(helperId), async h => {

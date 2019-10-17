@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { GridSettings, Column, Entity, RunOnServer, DirectSQL, IdColumn } from 'radweb';
+import { GridSettings, Column, Entity, ServerFunction, DirectSQL, IdColumn } from 'radweb';
 import { Context } from 'radweb';
 
 import { myThrottle, HasAsyncGetTheValue } from '../model-shared/types';
@@ -93,7 +93,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
       });
     });
   }
-  @RunOnServer({ allowed: Roles.admin })
+  @ServerFunction({ allowed: Roles.admin })
   static async insertHelperRows(rowsToInsert: excelRowInfo[], context?: Context) {
     for (const r of rowsToInsert) {
       let f = context.for(Helpers).create();
@@ -141,7 +141,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     });
   }
 
-  @RunOnServer({ allowed: Roles.admin })
+  @ServerFunction({ allowed: Roles.admin })
   static async updateHelperColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, context?: Context) {
     for (const r of rowsToUpdate) {
       await ImportHelpersFromExcelComponent.actualUpdateCol(r, columnMemberName, context);
@@ -533,7 +533,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
   displayDupInfo(info: duplicateHelperInfo) {
     return 'טלפון זהה';
   }
-  @RunOnServer({ allowed: Roles.admin })
+  @ServerFunction({ allowed: Roles.admin })
   async checkExcelInputHelpers(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], context?: Context) {
     let result: serverCheckResults = {
       errorRows: [],

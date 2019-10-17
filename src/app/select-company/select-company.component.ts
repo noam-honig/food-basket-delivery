@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { Context, RunOnServer, DirectSQL } from 'radweb';
+import { Context, ServerFunction, DirectSQL } from 'radweb';
 import { Roles } from '../auth/roles';
 import { SqlBuilder } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
@@ -47,7 +47,7 @@ export class SelectCompanyComponent implements OnInit {
     }
 
   }
-  @RunOnServer({ allowed: Roles.admin })
+  @ServerFunction({ allowed: Roles.admin })
   static async getCompanies(context?: Context, directSql?: DirectSQL) {
     var sql = new SqlBuilder();
     let h = new Helpers(context);

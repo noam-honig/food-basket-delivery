@@ -1,4 +1,4 @@
-import { RunOnServer } from "radweb";
+import { ServerFunction } from "radweb";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Helpers } from '../helpers/helpers';
 import * as fetch from 'node-fetch';
@@ -9,7 +9,7 @@ import { Roles } from "../auth/roles";
 
 
 export class SendSmsAction {
-    @RunOnServer({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.admin })
     static async SendSms(helperId: string, reminder: Boolean, context?: ServerContext) {
 
         try {

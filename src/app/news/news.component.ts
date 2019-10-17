@@ -62,7 +62,7 @@ export class NewsComponent implements OnInit, OnDestroy {
     }
     async showHelper(n: NewsUpdate) {
         HelperAssignmentComponent.dialog(this.matDialog, {
-            helper: this.context.for(Helpers).lookup(h => h.__idColumn.isEqualTo(n.courier))
+            helper: this.context.for(Helpers).lookup(n.courier)
         });
     }
     ngOnDestroy(): void {

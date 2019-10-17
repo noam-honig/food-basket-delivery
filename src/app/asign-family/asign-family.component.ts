@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
-import { UrlBuilder, FilterBase, RunOnServer } from 'radweb';
+import { UrlBuilder, FilterBase, ServerFunction } from 'radweb';
 import { Families } from '../families/families';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
@@ -324,7 +324,7 @@ export class AsignFamilyComponent implements OnInit {
         });
     }
 
-    @RunOnServer({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.admin })
     static async getBasketStatus(info: GetBasketStatusActionInfo, context?: Context): Promise<GetBasketStatusActionResponse> {
         console.time('getBasketStatus');
         let result = {
@@ -379,7 +379,7 @@ export class AsignFamilyComponent implements OnInit {
         console.timeEnd('getBasketStatus');
         return result;
     }
-    @RunOnServer({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.admin })
     static async RefreshRoute(helperId: string, useGoogle: boolean, context?: Context) {
         let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
         let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
@@ -388,7 +388,7 @@ export class AsignFamilyComponent implements OnInit {
     findCompany() {
         SelectCompanyComponent.dialog(this.matDialog, { onSelect: x => this.company = x });
     }
-    @RunOnServer({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.admin })
     static async AddBox(info: AddBoxInfo, context?: Context, directSql?: DirectSQL) {
         console.time('addBox');
 

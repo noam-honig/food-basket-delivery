@@ -9,7 +9,7 @@ import { FamilySourceId } from "./FamilySources";
 import { Roles } from "../auth/roles";
 
 @EntityClass
-export class FamilyDeliveries extends IdEntity<IdColumn>  {
+export class FamilyDeliveries extends IdEntity  {
     family = new FamilyId();
     basketType = new BasketId(this.context, 'סוג סל');
 
@@ -40,7 +40,7 @@ export class FamilyDeliveries extends IdEntity<IdColumn>  {
     archive_addressLatitude = new NumberColumn({ decimalDigits: 8 });
 
     constructor(private context: Context) {
-        super(new IdColumn(), {
+        super( {
             name: 'FamilyDeliveries',
             allowApiRead: Roles.admin,
             allowApiDelete: Roles.admin

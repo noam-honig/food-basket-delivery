@@ -6,7 +6,7 @@ import { Context, DataAreaSettings, ColumnSetting, DropDownItem, DateColumn } fr
 import { Families, GroupsColumn } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DialogService } from '../select-popup/dialog';
-import { RunOnServer } from 'radweb';
+import { ServerFunction } from 'radweb';
 import { Roles, AdminGuard } from '../auth/roles';
 import { BasketType, BasketId } from '../families/BasketType';
 import { SelectService } from '../select-popup/select-service';
@@ -105,7 +105,7 @@ export class BatchOperationsComponent implements OnInit {
             this.dialog.YesNoQuestion('בוצע');
         });
     }
-    @RunOnServer({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.admin })
     static async setAsOnTheWayAsDelivered(deliveryDate: string, context?: Context) {
         let x = await context.for(Families).find({ where: f => f.onTheWayFilter() });
         let d = DateColumn.stringToDate(deliveryDate);
@@ -125,7 +125,7 @@ export class BatchOperationsComponent implements OnInit {
             this.dialog.YesNoQuestion('בוצע');
         });
     }
-    @RunOnServer({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.admin })
     static async setAsSelfPickupStatic(deliveryDate: string, context?: Context) {
         let x = await context.for(Families).find({ where: f => f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup) });
         let d = DateColumn.stringToDate(deliveryDate);
@@ -151,7 +151,7 @@ export class BatchOperationsComponent implements OnInit {
         return x;
     }
 
-    @RunOnServer({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.admin })
     static async setNewBasket(basketType: string, group: string, context?: Context) {
         let families = await context.for(Families).find({ where: f => BatchOperationsComponent.createFamiliesFilterForNewBasket(f, basketType, group) });
         for (const f of families) {
@@ -160,7 +160,7 @@ export class BatchOperationsComponent implements OnInit {
             await f.save();
         }
     }
-    @RunOnServer({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.admin })
     static async countNewBasket(basketType: string, group: string, context?: Context) {
         return await context.for(Families).count(f => BatchOperationsComponent.createFamiliesFilterForNewBasket(f, basketType, group));
 
@@ -198,7 +198,7 @@ export class BatchOperationsComponent implements OnInit {
             x = x.and(f.groups.isContains(group));
         return x;
     }
-    @RunOnServer({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.admin })
     static async setNotInEvent(basketType: string, group: string, context?: Context) {
         let families = await context.for(Families).find({ where: f => BatchOperationsComponent.createFamiliesFilterForNotInEvent(f, basketType, group) });
         for (const f of families) {
@@ -206,7 +206,7 @@ export class BatchOperationsComponent implements OnInit {
             await f.save();
         }
     }
-    @RunOnServer({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.admin })
     static async countNotInEvent(basketType: string, group: string, context?: Context) {
         return await context.for(Families).count(f => BatchOperationsComponent.createFamiliesFilterForNotInEvent(f, basketType, group));
 

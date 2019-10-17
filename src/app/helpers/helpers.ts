@@ -11,11 +11,11 @@ import { MatDialog } from "@angular/material";
 import { SelectCompanyComponent } from "../select-company/select-company.component";
 
 
-export abstract class HelpersBase extends IdEntity<HelperId>  {
+export abstract class HelpersBase extends IdEntity  {
 
-    constructor(context: Context, options?: EntityOptions | string) {
+    constructor(options?: EntityOptions | string) {
 
-        super(new HelperId(context), options);
+        super(options);
     }
 
     name = new StringColumn({
@@ -45,7 +45,7 @@ export class Helpers extends HelpersBase {
 
     constructor(private context: Context) {
 
-        super(context, {
+        super( {
             name: "Helpers",
             allowApiRead: true,
             allowApiDelete: context.isSignedIn(),

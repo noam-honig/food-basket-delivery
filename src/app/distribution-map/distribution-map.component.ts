@@ -10,7 +10,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
 
 import { Context, DirectSQL } from 'radweb';
-import { RunOnServer } from 'radweb';
+import { ServerFunction } from 'radweb';
 import { SqlBuilder } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { SelectService } from '../select-popup/select-service';
@@ -137,7 +137,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     });
     this.updateChart();
   }
-  @RunOnServer({ allowed: Roles.admin })
+  @ServerFunction({ allowed: Roles.admin })
   static async GetFamiliesLocations(onlyPotentialAsignment?: boolean, city?: string, group?: string, context?: Context, directSql?: DirectSQL) {
     let f = new Families(context);
 

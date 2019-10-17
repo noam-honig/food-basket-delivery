@@ -225,12 +225,12 @@ export class ManageComponent implements OnInit {
 
 }
 @EntityClass
-export class Groups extends IdEntity<IdColumn>  {
+export class Groups extends IdEntity  {
 
   name = new StringColumn("קבוצה");
 
   constructor(context: Context) {
-    super(new IdColumn(), {
+    super({
       name: "groups",
       allowApiRead: Roles.admin,
       allowApiCRUD: Roles.admin,

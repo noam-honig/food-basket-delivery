@@ -1,5 +1,5 @@
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { NumberColumn, StringColumn, IdEntity, BoolColumn } from 'radweb';
+import { NumberColumn,  BoolColumn } from 'radweb';
 import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
 import { changeDate, DateTimeColumn, SqlBuilder } from '../model-shared/types';
 import { Families } from "../families/families";
@@ -36,7 +36,7 @@ export class HelpersAndStats extends HelpersBase {
         dbReadOnly: true
     });
     constructor(context: Context) {
-        super(context, {
+        super( {
             name: "helpersAndStats",
             allowApiRead: Roles.admin,
             dbName: () => {

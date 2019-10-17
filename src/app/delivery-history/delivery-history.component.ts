@@ -14,7 +14,7 @@ import { SelectService } from '../select-popup/select-service';
 import { saveToExcel } from '../shared/saveToExcel';
 import { BusyService } from 'radweb';
 import { FamilySourceId } from '../families/FamilySources';
-import { RunOnServer } from 'radweb';
+import { ServerFunction } from 'radweb';
 import { Roles, AdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
@@ -186,7 +186,7 @@ export class DeliveryHistoryComponent implements OnInit {
     this.refreshHelpers();
     
   }
-  @RunOnServer({ allowed: Roles.admin })
+  @ServerFunction({ allowed: Roles.admin })
   static async  getHelperHistoryInfo(fromDate: string, toDate: string, context?: Context, directSql?: DirectSQL) {
     var fromDateDate = DateColumn.stringToDate(fromDate);
     var toDateDate = DateColumn.stringToDate(toDate);
@@ -238,7 +238,7 @@ export class helperHistoryInfo extends Entity<string>{
   dates = new NumberColumn("תאריכים");
   constructor() {
     super({ name: 'helperHistoryInfo', allowApiRead: false, allowApiCRUD: false });
-    this.initColumns(this.courier);
+    this.__initColumns(this.courier);
   }
 }
 
@@ -304,7 +304,7 @@ export class FamilyDeliveriesStats extends Entity<string> {
       }
 
     });
-    this.initColumns(new CompoundIdColumn(this, this.family, this.id));
+    this.__initColumns(new CompoundIdColumn(this, this.family, this.id));
   }
 
 }

@@ -5,7 +5,7 @@ import { YesNoColumn } from "./YesNo";
 import { FamilySourceId } from "./FamilySources";
 import { BasketId, BasketType } from "./BasketType";
 import { changeDate, DateTimeColumn, SqlBuilder, PhoneColumn, delayWhileTyping } from "../model-shared/types";
-import { ColumnSetting, Column, Context, EntityClass, DirectSQL, RunOnServer, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn } from "radweb";
+import { ColumnSetting, Column, Context, EntityClass, DirectSQL, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn } from "radweb";
 import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
@@ -18,7 +18,7 @@ import { translate } from "../translate";
 
 
 @EntityClass
-export class Families extends IdEntity<FamilyId>  {
+export class Families extends IdEntity  {
   onTheWayFilter() {
     return this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(this.courier.isDifferentFrom(''));
   }
@@ -52,7 +52,7 @@ export class Families extends IdEntity<FamilyId>  {
   }
 
   constructor(private context: Context) {
-    super(new FamilyId(),
+    super(
       {
         name: "Families",
         allowApiRead: context.isSignedIn(),
@@ -142,7 +142,7 @@ export class Families extends IdEntity<FamilyId>  {
         }
 
       });
-    this.initColumns();
+    this.__initColumns();
     if (!context.isAllowed(Roles.admin))
       this.__iterateColumns().forEach(c => c.allowApiUpdate = c == this.courierComments || c == this.deliverStatus || c == this.correntAnErrorInStatus || c == this.needsWork);
   }
@@ -553,7 +553,7 @@ export class Families extends IdEntity<FamilyId>  {
 
 
   }
-  @RunOnServer({ allowed: Roles.admin, blockUser: false })
+  @ServerFunction({ allowed: Roles.admin, blockUser: false })
   static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, id: string, exactName: boolean = false, context?: Context, directSQL?: DirectSQL) {
     let result: duplicateFamilyInfo[] = [];
 

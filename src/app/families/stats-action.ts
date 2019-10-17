@@ -1,4 +1,4 @@
-import { RunOnServer, StringColumn, NumberColumn, Entity } from "radweb";
+import { ServerFunction, StringColumn, NumberColumn, Entity } from "radweb";
 import { FilterBase } from "radweb";
 import { Families } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -58,7 +58,7 @@ export class Stats {
         }
         return r;
     }
-    @RunOnServer({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.admin })
     static async getDataFromServer(context?: Context) {
         let result = { data: {}, baskets: [], cities: [], groups: [] as groupStats[] };
         let stats = new Stats();
@@ -138,7 +138,7 @@ export class CitiesStats extends Entity<string> {
                 }), ' group by ', f.city, ') as result')
             }
         });
-        this.initColumns(this.city);
+        this.__initColumns(this.city);
     }
 }
 

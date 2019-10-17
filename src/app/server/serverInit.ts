@@ -11,7 +11,7 @@ import { ServerContext, allEntities } from 'radweb';
 import '../app.module';
 
 
-import { ActualSQLServerDataProvider } from 'radweb-server';
+import { ActualSQLServerDataProvider } from 'radweb';
 import { ActualDirectSQL, actionInfo } from 'radweb';
 import { FamilyDeliveryEvents } from '../delivery-events/FamilyDeliveryEvents';
 import { SqlBuilder } from '../model-shared/types';

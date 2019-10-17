@@ -1,4 +1,4 @@
-import { RunOnServer } from "radweb";
+import { ServerFunction } from "radweb";
 import { FilterBase } from "radweb";
 
 import { HelpersAndStats } from "./HelpersAndStats";
@@ -32,7 +32,7 @@ export class DeliveryStats {
             }
         }
     }
-    @RunOnServer({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.admin })
     static async getTheStats(context?: Context) {
         let result = { data: {} };
         let stats = new DeliveryStats();

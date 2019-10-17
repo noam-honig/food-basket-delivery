@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { infoOnMap, statusClass, Statuses } from '../distribution-map/distribution-map.component';
 import * as chart from 'chart.js';
-import { RunOnServer, Context, DirectSQL, DateTimeColumn } from 'radweb';
+import { ServerFunction, Context, DirectSQL, DateTimeColumn } from 'radweb';
 import { Roles } from '../auth/roles';
 import { Families } from '../families/families';
 import { SqlBuilder } from '../model-shared/types';
@@ -201,7 +201,7 @@ export class PlaybackComponent implements OnInit {
   }
   timeline: timelineStep[] = [];
 
-  @RunOnServer({ allowed: Roles.admin })
+  @ServerFunction({ allowed: Roles.admin })
   static async GetTimeline(context?: Context, directSql?: DirectSQL) {
     let f = new Families(context);
 

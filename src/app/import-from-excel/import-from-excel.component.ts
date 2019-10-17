@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { GridSettings, Column, Entity, RunOnServer, DirectSQL, IdColumn } from 'radweb';
+import { GridSettings, Column, Entity, ServerFunction, DirectSQL, IdColumn } from 'radweb';
 import { Context } from 'radweb';
 import { Helpers } from '../helpers/helpers';
 import { myThrottle, HasAsyncGetTheValue } from '../model-shared/types';
@@ -107,7 +107,7 @@ export class ImportFromExcelComponent implements OnInit {
             });
         });
     }
-    @RunOnServer({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.admin })
     static async insertRows(rowsToInsert: excelRowInfo[], context?: Context) {
         for (const r of rowsToInsert) {
             let f = context.for(Families).create();
@@ -156,7 +156,7 @@ export class ImportFromExcelComponent implements OnInit {
         });
     }
 
-    @RunOnServer({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.admin })
     static async updateColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, context?: Context) {
         for (const r of rowsToUpdate) {
             await ImportFromExcelComponent.actualUpdateCol(r, columnMemberName, context);
@@ -733,7 +733,7 @@ export class ImportFromExcelComponent implements OnInit {
         }
         return info.address + ": " + r.join(', ');
     }
-    @RunOnServer({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.admin })
     async checkExcelInput(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], context?: Context, directSql?: DirectSQL) {
         let result: serverCheckResults = {
             errorRows: [],
