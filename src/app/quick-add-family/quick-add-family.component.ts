@@ -24,25 +24,26 @@ export class QuickAddFamilyComponent implements OnInit {
     this.f.deliverStatus.value = ApplicationSettings.get(this.context).defaultStatusType.value;;
   }
   f: Families = this.context.for(Families).create();
-  area = new DataAreaSettings<Families>(
-    {
-      columnSettings: () => [
-        this.f.name,
-        this.f.tz,
-        this.f.tz2,
-        this.f.deliverStatus.getColumn(),
-        this.f.address,
-        this.f.floor,
-        this.f.appartment,
-        this.f.entrance,
-        this.f.addressComment,
-        this.f.phone1,
-        this.f.phone2,
-        this.f.basketType.getColumn(),
-        this.f.deliveryComments
-      ]
-    }
-  );
+
+  addressInfo = new DataAreaSettings<Families>({
+    columnSettings: () => [
+      this.f.floor,
+      this.f.appartment,
+      this.f.entrance
+    ]
+  });
+  basketStatusLine = new DataAreaSettings<Families>({
+    columnSettings: () => [
+      this.f.deliverStatus.getColumn(),
+      this.f.basketType.getColumn()
+    ]
+  });
+  afterAddressInfo = new DataAreaSettings<Families>({
+    columnSettings: () => [
+      this.f.addressComment,
+      this.f.deliveryComments
+    ]
+  });
   async confirm() {
     await this.f.save();
     this.dialogRef.close();
@@ -69,7 +70,7 @@ export class QuickAddFamilyComponent implements OnInit {
   }
   async showExistingFamily() {
     let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(this.getExistingFamily().id));
-    this.select.updateFamiliy({ f: f, message: 'נוסף ב' + f.createDate.displayValue+' ע"י '+( await  f.createUser.getValue()) });
+    this.select.updateFamiliy({ f: f, message: 'נוסף ב' + f.createDate.displayValue + ' ע"י ' + (await f.createUser.getValue()) });
   }
 
 

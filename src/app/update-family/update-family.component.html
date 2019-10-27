@@ -20,8 +20,9 @@
                 </div>
             </mat-expansion-panel-header>
             <ng-template matExpansionPanelContent>
-
-                <data-area [settings]="familiesInfo"></data-area>
+                <data-control2 [column]="families.currentRow.name"></data-control2>
+                <data-area2 [settings]="basketTypeArea" class="one-line"></data-area2>
+                <data-area2 [settings]="familiesInfo"></data-area2>
                 <a href="tel:{{families.currentRow.socialWorkerPhone1.value}}"
                     *ngIf="families.currentRow.socialWorkerPhone1.value">
 
@@ -63,7 +64,9 @@
                 </div>
                 <a (click)="families.currentRow.openWaze()" target="_blank">פתחי WAZE</a> |
                 <a (click)="families.currentRow.openGoogleMaps()" target="_blank">פתחי גוגל </a>
-                <data-area [settings]="familiesAddress"></data-area>
+                <data-control2 [column]="families.currentRow.address"></data-control2>
+                <data-area2 [settings]="familiesAddressFloor" class="one-line"></data-area2>
+                <data-area2 [settings]="familiesAddress"></data-area2>
             </ng-template>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -91,7 +94,7 @@
                     חייג לטלפון 2
 
                 </a>
-                <data-area [settings]="phones"></data-area>
+                <data-area2 [settings]="phones"></data-area2>
             </ng-template>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -116,7 +119,7 @@
                     <br>
                     <br>
                 </a>
-                <data-area [settings]="deliverInfo"></data-area>
+                <data-area2 [settings]="deliverInfo"></data-area2>
 
             </ng-template>
         </mat-expansion-panel>

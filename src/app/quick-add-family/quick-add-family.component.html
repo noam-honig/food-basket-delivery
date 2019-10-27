@@ -3,8 +3,22 @@
   <h3 mat-dialog-header>{{'הוספת משפחה חדשה'|translate}}</h3>
 
   <div mat-dialog-content>
-    <div class="dialog-content-fixer">
-      <data-area [settings]="area"></data-area>
+    <div class="dialog-content-fixer around-area">
+      <data-control2 [column]="f.name"></data-control2>
+      
+      <data-area2 [settings]="basketStatusLine" class="one-line"></data-area2>
+      
+      <div class="one-line">
+        <data-control2 [column]="f.tz"></data-control2>
+        <data-control2 [column]="f.tz2"></data-control2>
+      </div>
+      <data-control2 [column]="f.address"></data-control2>
+      <data-area2 [settings]="addressInfo" class="one-line"></data-area2>
+      <div class="one-line">
+          <data-control2 [column]="f.phone1"></data-control2>
+          <data-control2 [column]="f.phone2"></data-control2>
+        </div>
+      <data-area2 [settings]="afterAddressInfo"></data-area2>
     </div>
   </div>
   <mat-dialog-actions>

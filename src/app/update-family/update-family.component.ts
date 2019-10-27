@@ -20,50 +20,49 @@ export class UpdateFamilyComponent implements OnInit {
   @Input() families: GridSettings<Families>;
   @Input() familyDeliveries: FamilyDeliveries[];
 
+  basketTypeArea:DataAreaSettings<Families>;
   familiesInfo: DataAreaSettings<Families>;
   familiesAddress: DataAreaSettings<Families>;
+  familiesAddressFloor: DataAreaSettings<Families>;
   phones: DataAreaSettings<Families>;
   callInfo: DataAreaSettings<Families>;
   deliverInfo: DataAreaSettings<Families>;
   ngOnInit() {
+    this.basketTypeArea = this.families.addArea({
+      columnSettings:f=>[
+        f.basketType.getColumn(),
+        f.familyMembers
+      ]
+    });
     this.familiesInfo = this.families.addArea({
       columnSettings: families => [
-        families.name,
-        families.basketType.getColumn(),
-        
-        
-        
         families.internalComment,
-        
-        families.familyMembers,
         families.familySource.getColumn(),
         families.socialWorker,
         families.socialWorkerPhone1,
         families.socialWorkerPhone2,
         families.tz,
         families.tz2,
-        
-        
         families.iDinExcel
-        
-
-
-
-
       ],
     });
     this.familiesAddress = this.families.addArea({
       columnSettings: families => [
-        families.address,
-        families.floor,
-        families.appartment,
-        families.entrance,
+        
+        
         families.addressComment,
         families.addressByGoogle(),
         families.city,
         families.addressOk,
         families.postalCode
 
+      ]
+    });
+    this.familiesAddressFloor = this.families.addArea({
+      columnSettings:families=>[
+        families.floor,
+        families.appartment,
+        families.entrance
       ]
     });
     this.phones = this.families.addArea({
