@@ -234,6 +234,11 @@
             "type": "npm",
             "script": "publish-to-chabadekron",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-selek",
+            "problemMatcher": []
         }
     ]
 }
