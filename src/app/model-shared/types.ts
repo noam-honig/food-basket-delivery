@@ -1,5 +1,5 @@
 import * as radweb from 'radweb';
-import {  Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, SQLCommand, SQLQueryResult, ColumnOptions, DecorateDataColumnSettings } from "radweb";
+import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, SQLCommand, SQLQueryResult, ColumnOptions, DecorateDataColumnSettings, ColumnSetting } from "radweb";
 
 
 
@@ -10,11 +10,19 @@ export interface HasAsyncGetTheValue {
 }
 
 export class PhoneColumn extends radweb.StringColumn {
-  
+
   get displayValue() {
     return PhoneColumn.formatPhone(this.value);
   }
-  static formatPhone(s:string){
+  getColumn(): ColumnSetting<Entity<any>> {
+    return {
+      column: this,
+      click: f => window.open('tel:' + (f ? f.__getColumn(this) : this).displayValue),
+      clickIcon: 'phone',
+      allowClick: f => !!(f ? f.__getColumn(this) : this).displayValue
+    }
+  }
+  static formatPhone(s: string) {
     if (!s)
       return s;
     let x = s.replace(/\D/g, '');
@@ -29,7 +37,7 @@ export class PhoneColumn extends radweb.StringColumn {
 
 
 export class DateTimeColumn extends radweb.DateTimeColumn {
-  
+
   dontShowTimeForOlderDates = false;
   getStringForInputTime() {
     if (!this.value)
@@ -131,7 +139,7 @@ export class DateTimeColumn extends radweb.DateTimeColumn {
     }
     else {
       let days = (Math.trunc(now.valueOf() / (86400 * 1000)) - Math.trunc(d.valueOf() / (86400 * 1000)));
-        r = 'לפני ' + days + ' ימים';
+      r = 'לפני ' + days + ' ימים';
     }
     let t = d.getMinutes().toString();
     if (t.length == 1)
@@ -148,7 +156,7 @@ export class DateTimeColumn extends radweb.DateTimeColumn {
 
 }
 
-export class changeDate extends DateTimeColumn  {
+export class changeDate extends DateTimeColumn {
   allowApiUpdate = false;
 }
 

@@ -6,7 +6,7 @@ import { SelectService } from '../select-popup/select-service';
 import { BasketType } from '../families/BasketType';
 import { FamilySources } from '../families/FamilySources';
 import { Context } from 'radweb';
-import { FamilyDeliveries } from '../families/FamilyDeliveries';
+import { FamilyDeliveries } from '../families/FamilyDeliveries'; 
 import { DialogService } from '../select-popup/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 
@@ -20,36 +20,42 @@ export class UpdateFamilyComponent implements OnInit {
   @Input() families: GridSettings<Families>;
   @Input() familyDeliveries: FamilyDeliveries[];
 
-  basketTypeArea:DataAreaSettings<Families>;
+  
   familiesInfo: DataAreaSettings<Families>;
   familiesAddress: DataAreaSettings<Families>;
-  familiesAddressFloor: DataAreaSettings<Families>;
   phones: DataAreaSettings<Families>;
   callInfo: DataAreaSettings<Families>;
   deliverInfo: DataAreaSettings<Families>;
   ngOnInit() {
-    this.basketTypeArea = this.families.addArea({
-      columnSettings:f=>[
-        f.basketType.getColumn(),
-        f.familyMembers
-      ]
-    });
+    
     this.familiesInfo = this.families.addArea({
       columnSettings: families => [
+        families.name,
+        [
+          families.basketType.getColumn(),
+          families.familyMembers
+        ],
         families.internalComment,
         families.familySource.getColumn(),
         families.socialWorker,
-        families.socialWorkerPhone1,
-        families.socialWorkerPhone2,
+        [
+        families.socialWorkerPhone1.getColumn(),
+        families.socialWorkerPhone2.getColumn()
+        ],[
         families.tz,
-        families.tz2,
+        families.tz2],
         families.iDinExcel
       ],
     });
     this.familiesAddress = this.families.addArea({
       columnSettings: families => [
         
-        
+        families.address,
+        [
+          families.floor,
+        families.appartment,
+        families.entrance
+        ],
         families.addressComment,
         families.addressByGoogle(),
         families.city,
@@ -58,19 +64,14 @@ export class UpdateFamilyComponent implements OnInit {
 
       ]
     });
-    this.familiesAddressFloor = this.families.addArea({
-      columnSettings:families=>[
-        families.floor,
-        families.appartment,
-        families.entrance
-      ]
-    });
+   
     this.phones = this.families.addArea({
       columnSettings: families => [
-        families.phone1,
-        families.phone1Description,
-        families.phone2,
-        families.phone2Description
+        [
+        families.phone1.getColumn(),
+        families.phone1Description],
+        [families.phone2.getColumn(),
+        families.phone2Description]
       ]
     });
 

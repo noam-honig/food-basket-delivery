@@ -34,8 +34,23 @@ export class QuickAddFamilyComponent implements OnInit {
   });
   basketStatusLine = new DataAreaSettings<Families>({
     columnSettings: () => [
-      this.f.deliverStatus.getColumn(),
-      this.f.basketType.getColumn()
+      this.f.name,
+      [
+        this.f.deliverStatus.getColumn(),
+        this.f.basketType.getColumn()],
+      [this.f.tz, this.f.tz2],
+      this.f.address,
+      [this.f.floor,
+      this.f.appartment,
+      this.f.entrance
+      ],
+      [this.f.phone1,
+      this.f.phone2],
+      this.f.addressComment,
+      this.f.deliveryComments
+
+
+
     ]
   });
   afterAddressInfo = new DataAreaSettings<Families>({

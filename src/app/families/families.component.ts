@@ -654,7 +654,7 @@ export class FamiliesComponent implements OnInit {
     @ViewChild('myTab', { static: false }) myTab: MatTabGroup;
     @ViewChild('familyInfo', { static: true }) familyInfo: UpdateFamilyComponent;
     ngOnInit() {
-
+        
         this.refreshStats();
         let cols = this.families.columns;
         let firstColumns = [

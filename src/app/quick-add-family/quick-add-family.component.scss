@@ -1,20 +1,3 @@
 .around-area {
   max-width: 340px;
 }
-.one-line {
-  display: flex;
-  justify-content: space-between;
-}
-
-.one-line > ::ng-deep * {
-  padding-left: 0.2em;
-  padding-right: 0.2em;
-  flex-basis: 1px;
-  flex-grow: 1;
-}
-.one-line > ::ng-deep :first-child {
-  padding-right: 0em;
-}
-.one-line > ::ng-deep :last-child {
-  padding-left: 0em;
-}
