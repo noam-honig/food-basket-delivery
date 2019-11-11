@@ -239,6 +239,11 @@
             "type": "npm",
             "script": "publish-to-selek",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-tavshil",
+            "problemMatcher": []
         }
     ]
 }

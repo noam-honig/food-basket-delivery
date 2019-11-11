@@ -44,6 +44,7 @@
     "publish-to-cbhr-doners": "git push cbhr-doners master -f",
     "publish-to-chabadekron": "git push chabadekron -f",
     "publish-to-selek": "git push selek latest-release:master -f",
+    "publish-to-tavshil": "git push tavshil latest-release:master -f",
     "copy-db": "heroku pg:copy hugmoms::DATABASE_URL hugmoms2::DATABASE_URL -a hugmoms2",
     "test": "ng test",
     "lint": "ng lint",
