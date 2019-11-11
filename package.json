@@ -41,7 +41,6 @@
     "publish-to-cbhr-doners": "git push cbhr-doners master -f",
     "publish-to-chabadekron": "git push chabadekron -f",
     "publish-to-selek": "git push selek -f",
-
     "copy-db": "heroku pg:copy hugmoms::DATABASE_URL hugmoms2::DATABASE_URL -a hugmoms2",
     "test": "ng test",
     "lint": "ng lint",
@@ -68,7 +67,6 @@
     "@angular/router": "^8.2.11",
     "@auth0/angular-jwt": "^3.0.0",
     "body-parser": "^1.19.0",
-    "bootstrap3": "^3.3.5",
     "chart.js": "^2.8.0",
     "compression": "^1.7.4",
     "copy-to-clipboard": "^3.2.0",
