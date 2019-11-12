@@ -26,7 +26,7 @@ import { BasketType } from './families/BasketType';
 })
 export class AppComponent {
 
-
+  isEdge = /msie\s|trident\/|edge\//i.test(window.navigator.userAgent);
   constructor(
     public sessionManager: AuthService,
     public router: Router,

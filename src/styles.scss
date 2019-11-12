@@ -132,6 +132,7 @@ th {
 
 .hide {
   visibility: collapse;
+  height:0;
 }
 .myButton {
   width: 85%;
@@ -222,7 +223,7 @@ text-area {
   margin-left: 10px;
 }
 .dataGridHeaderArea {
-  position: inherit !important;
+  //position: inherit !important;
 }
 .primary-menu {
   background-color: mat-color($candy-app-primary);

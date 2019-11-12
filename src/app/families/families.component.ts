@@ -47,7 +47,7 @@ import { translate } from '../translate';
 })
 export class FamiliesComponent implements OnInit {
     @Input() problemOnly = false;
-    limit = 10;
+    limit = 50;
     addressByGoogleColumn: ColumnSetting<Families>;
     familyNameColumn: ColumnSetting<Families>;
     familyAddressColumn: ColumnSetting<Families>;
@@ -278,7 +278,7 @@ export class FamiliesComponent implements OnInit {
         },
         hideDataArea: true,
         knowTotalRows: true,
-        allowDelete: true,
+        
 
         confirmDelete: (h, yes) => this.dialog.confirmDelete(translate('משפחת ') + h.name.value, yes),
         columnSettings: families => {
@@ -297,6 +297,8 @@ export class FamiliesComponent implements OnInit {
                         return '';
                     }
                 },
+                families.courier.getColumn(this.selectService),
+
                 families.basketType.getColumn()
                 ,
                 this.statusColumn = families.deliverStatus.getColumn(),
@@ -378,7 +380,7 @@ export class FamiliesComponent implements OnInit {
         rowButtons: [
             {
                 name: '',
-                cssClass: 'btn glyphicon glyphicon-pencil',
+                icon:'edit',
                 click: async f => {
                     this.gridView = !this.gridView;
                     if (!this.gridView) {
