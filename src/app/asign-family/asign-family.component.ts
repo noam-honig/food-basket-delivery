@@ -154,7 +154,7 @@ export class AsignFamilyComponent implements OnInit {
 
                     if (r && r.ok && r.families.length == this.familyLists.toDeliver.length) {
                         this.familyLists.routeStats = r.stats;
-                        this.familyLists.initForFamilies(this.id, this.name.value, r.families);
+                        this.familyLists.initForFamilies(this.id, this.name.value,this.phone, r.families);
                     }
 
                 })));
@@ -206,7 +206,7 @@ export class AsignFamilyComponent implements OnInit {
         this.busy.donotWait(async () => {
             await this.refreshBaskets();
         });
-        await this.familyLists.initForHelper(this.id, this.name.value);
+        await this.familyLists.initForHelper(this.id, this.name.value,this.phone);
 
     }
     familyLists = new UserFamiliesList(this.context);
@@ -338,7 +338,7 @@ export class AsignFamilyComponent implements OnInit {
 
 
                     this.id = x.helperId;
-                    this.familyLists.initForFamilies(this.id, this.name.value, x.families);
+                    this.familyLists.initForFamilies(this.id, this.name.value,this.phone, x.families);
                     if (basket != undefined)
                         basket.unassignedFamilies -= x.addedBoxes;
                     else {

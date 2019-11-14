@@ -21,7 +21,7 @@ export class MyFamiliesComponent implements OnInit {
   get settings(){return ApplicationSettings.get(this.context);}
   constructor(public context: Context) { }
   async ngOnInit() {
-    await this.familyLists.initForHelper(this.context.user.id, this.context.user.name,await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(this.context.user.id)));
+    await this.familyLists.initForHelper(this.context.user.id, this.context.user.name,'',await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(this.context.user.id)));
 
   }
 

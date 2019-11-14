@@ -8,6 +8,7 @@ import { Context } from 'radweb';
 import { routeStats } from '../asign-family/asign-family.component';
 import { translate } from '../translate';
 import { ElementRef } from '@angular/core';
+import { PhoneColumn } from '../model-shared/types';
 
 export class UserFamiliesList {
     map: MapComponent;
@@ -30,14 +31,19 @@ export class UserFamiliesList {
     allFamilies: Families[] = [];
     helperId: string;
     helperName: string;
+    private helperPhone:string;
+    getHelperPhone(){
+        return PhoneColumn.formatPhone(this.helperPhone);
+    }
     helperOptional: Helpers;
     routeStats: routeStats;
     userClickedOnFamilyOnMap: (familyId: string[]) => void = x => { };
-    async initForHelper(helperId: string, name: string, helperOptional?: Helpers) {
+    async initForHelper(helperId: string, name: string,phone:string, helperOptional?: Helpers) {
 
         this.helperOptional = helperOptional;
         this.helperId = helperId;
         this.helperName = name;
+        this.helperPhone = phone;
         if (helperOptional) {
             this.routeStats = helperOptional.getRouteStats();
         }
@@ -73,9 +79,10 @@ export class UserFamiliesList {
         return r;
 
     }
-    async initForFamilies(helperId: string, name: string, familiesPocoArray: any[]) {
+    async initForFamilies(helperId: string, name: string,phone:string, familiesPocoArray: any[]) {
         this.helperId = helperId;
         this.helperName = name;
+        this.helperPhone = phone;
         let newFamilies = familiesPocoArray.map(x => this.context.for(Families).create().source.fromPojo(x));
         newFamilies.push(...this.delivered);
         newFamilies.push(...this.problem);
