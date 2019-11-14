@@ -11,7 +11,7 @@
 
                 <button (click)="loadSettings()" mat-raised-button>טען הגדרות</button>
                 <button (click)="saveSettings()" mat-raised-button>שמור הגדרות</button>
-                <button (click)="testImport()" mat-raised-button  color="primary">המשך לשלב הבא</button>
+                <button (click)="testImport()" mat-raised-button  color="accent">המשך לשלב הבא</button>
 
                 <!--
                 <h3>עמודות מהאקסל</h3>
@@ -119,7 +119,7 @@
                     <pagination-controls (pageChange)="newRowsPage = $event" previousLabel="קודם" nextLabel="הבא"
                         id="newRows">
                     </pagination-controls>
-                    <button (click)="addAll()" mat-raised-button  color="primary">{{'הוסף את כל המשפחות'|translate}}</button>
+                    <button (click)="addAll()" mat-raised-button  color="accent">{{'הוסף את כל המשפחות'|translate}}</button>
                 </mat-tab>
                 <mat-tab label="{{'משפחות לעדכון'|translate}} - {{updateRows.length}}" *ngIf="updateRows&&updateRows.length">
                     <div class="table-div">

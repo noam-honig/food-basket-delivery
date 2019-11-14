@@ -16,7 +16,7 @@
     <button mat-raised-button color="accent" (click)="confirm()">
       הוסף
     </button>
-    <button mat-raised-button color="primary" (click)="showExistingFamily()" *ngIf="getExistingFamily()">
+    <button mat-raised-button color="accent" (click)="showExistingFamily()" *ngIf="getExistingFamily()">
       {{'הצג פרטי משפחה קיימת'|translate}} {{getExistingFamily().name}}
     </button>
 

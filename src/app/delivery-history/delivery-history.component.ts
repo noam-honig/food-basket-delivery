@@ -64,6 +64,7 @@ export class DeliveryHistoryComponent implements OnInit {
     hhi.setSource(x);
     this.helperSource = hhi.source;
     this.helperInfo = new GridSettings(hhi, {
+      hideDataArea: true,
       columnSettings: h => [
         {
           column: h.name,
@@ -71,7 +72,7 @@ export class DeliveryHistoryComponent implements OnInit {
         },
         {
           column: h.phone,
-          width: '100'
+          width: '120'
         },
         {
           column: h.company,
@@ -156,6 +157,7 @@ export class DeliveryHistoryComponent implements OnInit {
     await saveToExcel(this.helperInfo, "מתנדבים", this.busy, (d: helperHistoryInfo, c) => c == d.courier);
   }
   deliveries = this.context.for(FamilyDeliveriesStats).gridSettings({
+    
     columnSettings: d => [
       d.name,
       d.courier.getColumn(this.selectService),
@@ -169,6 +171,7 @@ export class DeliveryHistoryComponent implements OnInit {
       d.courierAssingTime,
       d.deliveryStatusUser.getColumn(this.selectService)
     ],
+    
     hideDataArea: true,
     numOfColumnsInGrid: 7,
     knowTotalRows: true,

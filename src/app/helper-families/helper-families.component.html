@@ -33,7 +33,7 @@
         <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign" (assignmentCanceled)="cancelAssign(f)">
 
 
-          <button mat-raised-button class="myButton" color="primary"
+          <button mat-raised-button class="myButton" color="accent"
             (click)="deliveredToFamily(f)">{{settings.deliveredButtonText.value}}</button>
           <br *ngIf="settings.showLeftThereButton.value" />
           <button *ngIf="settings.showLeftThereButton.value" mat-raised-button class="myButton"
@@ -56,10 +56,10 @@
 
   <div class="sendSmsButtonLine no-print"
     *ngIf="familyLists.toDeliver.length &&(partOfAssign&&!partOfReview||partOfReview&&!helperGotSms)">
-    <button mat-raised-button color="primary" style="border-top-left-radius: 0px;border-bottom-left-radius:0px;"
+    <button mat-raised-button color="accent" style="border-top-left-radius: 0px;border-bottom-left-radius:0px;"
       (click)="sendSms(false)">שלח הודעת SMS עם
       קישור</button>
-    <button [matMenuTriggerFor]="appMenuSms" mat-raised-button color="primary" style="border-top-right-radius: 0;
+    <button [matMenuTriggerFor]="appMenuSms" mat-raised-button color="accent" style="border-top-right-radius: 0;
       border-bottom-right-radius: 0;
       padding-left: 0;
       padding-right: 0;
@@ -75,7 +75,7 @@
 
   </div>
   <button *ngIf="partOfReview&&helperGotSms&&familyLists.toDeliver.length>0" mat-raised-button class="myButton no-print"
-    color="primary" (click)="sendSms(true)">
+    color="accent" (click)="sendSms(true)">
 
     <span
       *ngIf="familyLists&&familyLists.helperOptional&&familyLists.helperOptional.reminderSmsDate.value; else elseContent">תזכורת

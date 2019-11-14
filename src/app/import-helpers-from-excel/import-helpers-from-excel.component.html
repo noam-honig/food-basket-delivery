@@ -11,7 +11,7 @@
 
               <button (click)="loadSettings()" mat-raised-button>טען הגדרות</button>
               <button (click)="saveSettings()" mat-raised-button>שמור הגדרות</button>
-              <button (click)="testImport()" mat-raised-button  color="primary">המשך לשלב הבא</button>
+              <button (click)="testImport()" mat-raised-button  color="accent">המשך לשלב הבא</button>
 
             
 
@@ -99,7 +99,7 @@
                   <pagination-controls (pageChange)="newRowsPage = $event" previousLabel="קודם" nextLabel="הבא"
                       id="newRows">
                   </pagination-controls>
-                  <button (click)="addAll()" mat-raised-button  color="primary">{{'הוסף את כל המתנדבים'|translate}}</button>
+                  <button (click)="addAll()" mat-raised-button  color="accent">{{'הוסף את כל המתנדבים'|translate}}</button>
               </mat-tab>
               <mat-tab label="{{'מתנדבים לעדכון'|translate}} - {{updateRows.length}}" *ngIf="updateRows&&updateRows.length">
                   <div class="table-div">

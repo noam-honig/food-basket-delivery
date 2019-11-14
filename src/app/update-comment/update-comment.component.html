@@ -1,6 +1,6 @@
 <div dir="rtl">
-
-  <h3 matDialogHeader>תודה</h3>
+<mat-card-title>תודה</mat-card-title>
+  
 
   <div [class.hide]="!data.showFailStatus">
     מה לא הסתדר?
@@ -16,7 +16,7 @@
 
   <mat-dialog-content>
     {{helpText()}}
-    <textarea class="form-control" rows="3" [(ngModel)]="data.comment"></textarea>
+    <textarea class="form-control" rows="3" [(ngModel)]="data.comment" class="comment-text-area"></textarea>
   </mat-dialog-content>
 
   <mat-dialog-actions>
@@ -25,17 +25,17 @@
         <button mat-raised-button color="warning" (click)="cancel()">
           בטל
         </button>
-        <button mat-raised-button color="primary" (click)="confirm()">
+        <button mat-raised-button color="accent" (click)="confirm()">
           {{data.showFailStatus?'הסל לא נמסר':'אשר'}}
         </button>
       </div>
       <div class="button-line" [class.hide]="!data.showFailStatus">
         <a href="tel:{{data.assignerPhone}}" *ngIf="phoneOptions.length==1">
-          <button mat-raised-button color="primary" class="dial-for-help">
+          <button mat-raised-button color="accent" class="dial-for-help">
             <mat-icon>phone</mat-icon> חייג ל{{data.assignerName}} לקבלת עזרה
           </button>
         </a>
-        <button mat-raised-button color="primary" class="dial-for-help" [matMenuTriggerFor]="menu"
+        <button mat-raised-button color="accent" class="dial-for-help" [matMenuTriggerFor]="menu"
           *ngIf="phoneOptions.length>1">
           <mat-icon>phone</mat-icon> חייג לקבלת עזרה
         </button>

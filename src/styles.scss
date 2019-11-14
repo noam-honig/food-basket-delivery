@@ -68,8 +68,8 @@ $mat-pink-noam: (
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://www.google.com/design/spec/style/color.html
-$candy-app-primary: mat-palette($mat-pink-noam);
-$candy-app-accent: mat-palette($mat-blue, A200, A100, A400);
+$candy-app-primary: mat-palette($mat-blue);
+$candy-app-accent: mat-palette($mat-pink-noam, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
 $candy-app-warn: mat-palette($mat-red);
@@ -88,9 +88,6 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
 }
-h1 {
-  font-weight: 300;
-}
 
 th {
   text-align: right;
@@ -99,36 +96,6 @@ th {
 .button-area {
   margin-top: 10px;
 }
-
-//fix right to left problem in data area
-.col-sm-4 {
-  float: right;
-  width: 30%;
-}
-.col-sm-8 {
-  float: right;
-  width: 70%;
-}
-
-//rtl related stuff
-@media (min-width: 768px) {
-  .col-sm-1,
-  .col-sm-10,
-  .col-sm-11,
-  .col-sm-12,
-  .col-sm-2,
-  .col-sm-3,
-  .col-sm-4,
-  .col-sm-5,
-  .col-sm-6,
-  .col-sm-7,
-  .col-sm-8,
-  .col-sm-9 {
-    float: right !important;
-  }
-}
-
-//end rtl stuff
 
 .hide {
   visibility: collapse;
@@ -226,8 +193,11 @@ text-area {
   //position: inherit !important;
 }
 .primary-menu {
-  background-color: mat-color($candy-app-primary);
+  background-color: #ff4081;
   color: white;
+}
+.primary-menu:hover {
+  background-color: #ff4050 !important;
 }
 input[type="tel"] {
   direction: ltr;
@@ -251,17 +221,17 @@ input[type="tel"] {
 .one-line > :last-child {
   padding-left: 0em;
 }
-.mat-card{
+.mat-card {
   margin-bottom: 5px;
 }
-.mat-card-title{
+.mat-card-title {
   font-size: 18px;
-  display:flex !important;
+  display: flex !important;
   align-items: center;
   justify-content: space-between;
 }
-.title-with-menu{
-  display:flex;
+.title-with-menu {
+  display: flex;
   align-items: center;
   justify-content: space-between;
 }
@@ -295,4 +265,18 @@ input[type="tel"] {
 }
 .dense-form-field.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
   transform: translateY(-1em) scale(0.75) !important;
+}
+a {
+  background-color: transparent;
+  color: #337ab7;
+  text-decoration: none;
+}
+textarea{
+  width: 94%;
+  height: 7em;
+  border-radius: 5px;
+  margin-top: 8px;
+  padding:12px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue",
+    sans-serif;
 }

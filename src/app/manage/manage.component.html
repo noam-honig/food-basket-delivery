@@ -1,11 +1,11 @@
-<button (click)="save()" [disabled]="!wasChange()" class="btn glyphicon glyphicon-ok btn-success"></button>
-<button (click)="reset()" [disabled]="!wasChange()"
-    class="btn btn-danger glyphicon glyphicon-ban-circle ng-star-inserted"></button>
+<button mat-icon-button (click)="save()" [disabled]="!wasChange()" ><mat-icon>check</mat-icon></button>
+<button mat-icon-button (click)="reset()" [disabled]="!wasChange()" 
+    > <mat-icon color="warning">clear</mat-icon></button>
 
 
 
 
-<mat-accordion *ngIf="settings.currentRow">
+<mat-accordion *ngIf="settings.currentRow" style="margin-top:10px">
     <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title>

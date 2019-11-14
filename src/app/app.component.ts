@@ -42,11 +42,11 @@ export class AppComponent {
       BasketType.boxes1Name = x.boxes1Name.value;
       BasketType.boxes2Name = x.boxes2Name.value;
       if (x.redTitleBar.value)
-        this.toolbarColor = 'primary';
+        this.toolbarColor = 'accent';
     })
 
     if (!window.location.hostname.toLocaleLowerCase().startsWith('hmey')) {
-      this.toolbarColor = 'accent';
+      this.toolbarColor = 'primary';
 
     }
 

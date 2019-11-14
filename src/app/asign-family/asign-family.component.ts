@@ -220,7 +220,15 @@ export class AsignFamilyComponent implements OnInit {
     area: DataAreaSettings<any> = new DataAreaSettings<any>({});
     changeShowCompany() {
         if (this.settings.showCompanies.value) {
-            this.area = new DataAreaSettings({ columnSettings: () => [[this.name, this.company]] });
+            this.area = new DataAreaSettings({
+                columnSettings: () => [[this.name,
+                {
+                    column: this.company,
+                    click: () => this.findCompany(),
+                    clickIcon:'search'
+                }
+                ]]
+            });
         } else
             this.area = new DataAreaSettings({ columnSettings: () => [[this.name]] });
         this.settings.save();

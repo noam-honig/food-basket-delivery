@@ -8,7 +8,7 @@
     </div>
   </div>
   <div>
-    <button mat-raised-button class="cancelAssignButton" color="primary" *ngIf="showFamilyPickedUp(f)"
+    <button mat-raised-button class="cancelAssignButton" color="accent" *ngIf="showFamilyPickedUp(f)"
       (click)="familiyPickedUp(f)">אספו את החבילה</button>
     <button *ngIf="showCancelAssign(f)" mat-raised-button class=" badButton cancelAssignButton"
       (click)="cancelAssign(f)">בטל
@@ -19,7 +19,7 @@
   <h4 style="display:inline">סל</h4> - {{f.basketType.displayValue}}
 
   <div *ngIf="f.deliveryComments.value">
-    <mat-icon color="primary" style="vertical-align: middle">comment</mat-icon>
+    <mat-icon color="accent" style="vertical-align: middle">comment</mat-icon>
     <strong style="color:red">שימו לב! </strong> {{f.deliveryComments.value}}
   </div>
   <div *ngIf="f.courierBeenHereBefore()">
@@ -33,7 +33,7 @@
     </span>
     <div style="flex-grow:1;padding-right:10px;">
       <ng-container *ngIf="!f.addressOk.value">
-        <mat-icon style="margin-right:5px" color="primary">warning
+        <mat-icon style="margin-right:5px" color="accent">warning
         </mat-icon>
         שימו לב, כתובת לא מדוייקת!
         <br />
@@ -78,7 +78,7 @@
   <h4 *ngIf="f.phone1.value || f.phone2.value">טלפונים:</h4>
   <div *ngIf="f.phone1.value">
     <a href="tel:{{f.phone1.value}}">
-      <button mat-mini-fab style="margin-left:10px;vertical-align: middle">
+      <button mat-mini-fab style="margin-left:10px;vertical-align: middle" color="primary">
         <mat-icon>call</mat-icon>
       </button>
     </a>
@@ -91,7 +91,7 @@
   </div>
   <div style="margin-top:5px" *ngIf="f.phone2.value">
     <a href="tel:{{f.phone2.value}}">
-      <button mat-mini-fab style="margin-left:10px;vertical-align: middle">
+      <button mat-mini-fab style="margin-left:10px;vertical-align: middle"  color="primary">
         <mat-icon>call</mat-icon>
       </button>
     </a>
