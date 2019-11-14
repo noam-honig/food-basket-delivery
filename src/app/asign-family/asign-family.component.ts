@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
 import { UrlBuilder, FilterBase, ServerFunction, StringColumn, DataAreaSettings, BoolColumn } from 'radweb';
 import { Families } from '../families/families';
@@ -45,6 +45,8 @@ export class AsignFamilyComponent implements OnInit {
             name: 'שיוך משפחות'
         }
     };
+    @ViewChild("phoneInput", { static: false }) phoneInput: ElementRef;
+    
     assignOnMap() {
         this.familyLists.startAssignByMap(this.filterCity, this.filterGroup);
     }
@@ -86,6 +88,10 @@ export class AsignFamilyComponent implements OnInit {
         this.preferRepeatFamilies = true;
         this.showRepeatFamilies = false;
         this.clearList();
+        if (this.phoneInput)
+            setTimeout(() => {
+                this.phoneInput.nativeElement.focus();
+            }, 200);
     }
 
     async refreshListAndUpdateRouteForFixedCourier() {
@@ -295,6 +301,7 @@ export class AsignFamilyComponent implements OnInit {
             this.phone = '0507330590';
             await this.searchPhone();
         }
+        
     }
     numOfBaskets: number = 1;
     private async assignFamilyBasedOnIdFromMap(familyId: string) {
@@ -390,7 +397,7 @@ export class AsignFamilyComponent implements OnInit {
 
         result.special = await countFamilies(f => f.special.isEqualTo(YesNo.Yes));
 
-    
+
         let sql = new SqlBuilder();
         let f = context.for(Families).create();
         let fd = context.for(FamilyDeliveries).create();

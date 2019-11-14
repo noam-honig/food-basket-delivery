@@ -22,7 +22,7 @@
       </mat-card-title>
       <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
         <mat-label>מספר הטלפון של המשנע</mat-label>
-        <input matInput [(ngModel)]="phone" (input)="searchPhone()" type="tel">
+        <input matInput [(ngModel)]="phone" (input)="searchPhone()" type="tel" #phoneInput>
         <div matSuffix style="display:flex">
           <mat-icon (click)="clearHelperInfo()">clear</mat-icon>
           <mat-icon (click)="findHelper()">search</mat-icon>

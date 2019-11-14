@@ -242,6 +242,11 @@ a {
   color: #337ab7;
   text-decoration: none;
 }
+a:hover{
+  background-color: transparent;
+  color: #337ab7;
+  text-decoration: underline;
+}
 textarea{
   width: 94%;
   height: 7em;
