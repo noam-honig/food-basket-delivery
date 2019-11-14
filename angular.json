@@ -27,7 +27,7 @@
               "src/assets"
             ],
             "styles": [
-              
+              "./node_modules/radweb/input-styles.scss",
               "src/styles.scss"
             ],
             "scripts": []
@@ -85,6 +85,7 @@
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
             "styles": [
+              
               "src/styles.scss"
             ],
             "scripts": [],

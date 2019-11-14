@@ -1,6 +1,9 @@
-<button mat-icon-button (click)="save()" [disabled]="!wasChange()" ><mat-icon>check</mat-icon></button>
-<button mat-icon-button (click)="reset()" [disabled]="!wasChange()" 
-    > <mat-icon color="warning">clear</mat-icon></button>
+<button mat-icon-button (click)="save()" [disabled]="!wasChange()">
+    <mat-icon>check</mat-icon>
+</button>
+<button mat-icon-button (click)="reset()" [disabled]="!wasChange()">
+    <mat-icon color="warning">clear</mat-icon>
+</button>
 
 
 
@@ -17,50 +20,41 @@
 
 
         <data-area2 [settings]="settings"></data-area2>
-        <label>הטלפון ממנו יצא הSMS</label><br>
-        כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את המשפחות ולחץ על הכפתור שלח SMS.
-        ניתן להגדיר כאן שם חלופי וטלפון חלופי
-        <br />
-        <data-area2 [settings]="settingsMore"></data-area2>
-        <div class="form-horizontal">
-            <div class="form-group">
-                <div class="col-sm-12">
+        <mat-card>
+            <mat-card-title>
+                הטלפון ממנו יצא הSMS
+            </mat-card-title>
+            כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את המשפחות ולחץ על הכפתור שלח
+            SMS.
+            ניתן להגדיר כאן שם חלופי וטלפון חלופי
+            <br />
+            <data-area2 [settings]="settingsMore"></data-area2>
+        </mat-card>
+        <mat-card>
+            <mat-card-title>
+                {{settings.currentRow.smsText.caption}}
+            </mat-card-title>
+            הודעה זו תשלח למתנדב ממסך שיוך משפחות - עם הקישור למשפחות להן הוא מתבקש לחלק.
+            <ul>
+                <li>!משנע! - יוחלף בשם המשנע</li>
+                <li>!שולח! - יוחלף בשם השולח</li>
+                <li>!ארגון! - יוחלף בשם הארגון</li>
+                <li>!אתר! - יוחלף בכתובת האתר</li>
+            </ul>
+            <textarea [(ngModel)]="settings.currentRow.smsText.value" class="form-control"></textarea>
+            <strong>הודעה לדוגמא</strong>
+            <pre>{{testSms()}}</pre>
+        </mat-card>
+        <mat-card>
+            <mat-card-title>
+                {{settings.currentRow.reminderSmsText.caption}}
+            </mat-card-title>
+            הודעה זו תשלח למשנע שמתעכב ממסך מעקב משנעים
+            <textarea [(ngModel)]="settings.currentRow.reminderSmsText.value" class="form-control" lines=3></textarea>
 
-
-                    <label class="control-label ng-star-inserted">{{settings.currentRow.smsText.caption}}</label>
-                    <br>
-                    הודעה זו תשלך למתנדב ממסך שיוך משפחות - עם הקישור למשפחות להן הוא מתבקש לחלק.
-                    <ul>
-                        <li>!משנע! - יוחלף בשם המשנע</li>
-                        <li>!שולח! - יוחלף בשם השולח</li>
-                        <li>!ארגון! - יוחלף בשם הארגון</li>
-                        <li>!אתר! - יוחלף בכתובת האתר</li>
-                    </ul>
-                    <textarea [(ngModel)]="settings.currentRow.smsText.value" class="form-control"></textarea>
-                    <h4>הודעה לדוגמא</h4>
-                    <pre>{{testSms()}}</pre>
-                </div>
-            </div>
-        </div>
-        <div class="form-horizontal">
-            <div class="form-group">
-                <div class="col-sm-12">
-
-                    <label
-                        class="control-label ng-star-inserted">{{settings.currentRow.reminderSmsText.caption}}</label>
-                        <br>
-                        הודעה זו תשלח למשנע שמתעכב ממסך מעקב משנעים
-                    <textarea [(ngModel)]="settings.currentRow.reminderSmsText.value" class="form-control"
-                        lines=3></textarea>
-
-                    <h4>הודעה לדוגמא</h4>
-                    <pre>{{testSmsReminder()}}</pre>
-                </div>
-            </div>
-        </div>
-
-
-
+            <h4>הודעת תזכורת לדוגמא</h4>
+            <pre>{{testSmsReminder()}}</pre>
+        </mat-card>
 
 
     </mat-expansion-panel>
