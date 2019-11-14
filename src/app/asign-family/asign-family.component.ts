@@ -301,6 +301,9 @@ export class AsignFamilyComponent implements OnInit {
             this.phone = '0507330590';
             await this.searchPhone();
         }
+        setTimeout(() => {
+            this.phoneInput.nativeElement.focus();
+        }, 200);
         
     }
     numOfBaskets: number = 1;
