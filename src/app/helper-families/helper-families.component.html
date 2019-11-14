@@ -1,18 +1,7 @@
-<div style="display:flex;flex-direction: column;">
-  <div style="display: flex;
-justify-content: space-between;order:-1;">
-    <div [class.not-visible]="familyLists.toDeliver.length==0">
-      <h4 class="no-print">
-        {{familyLists.getLeftFamiliesDescription()}}
-      </h4>
-      <div
-        [class.not-visible]="!(familyLists.toDeliver.length>=1&&familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies())"
-        class="no-print">
-        סה"כ זמן נסיעה מוערך <span *ngIf="familyLists.routeStats"> {{familyLists.routeStats.totalTime}} דקות,
-          {{familyLists.routeStats.totalKm}} ק"מ</span>
-      </div>
-    </div>
-    <div class="no-print">
+<mat-card class="no-print" *ngIf="familyLists.toDeliver.length>0">
+  <mat-card-title>
+    {{familyLists.getLeftFamiliesDescription()}}
+    <div>
       <mat-menu #appMenu="matMenu">
         <button mat-menu-item (click)="cancelAll()" style="color:red;">{{'בטל שיוך לכל המשפחות'|translate}}</button>
         <button mat-menu-item (click)="okAll()"
@@ -22,11 +11,15 @@ justify-content: space-between;order:-1;">
       <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="familyLists.toDeliver.length>1 && partOfAssign">
         <mat-icon>more_vert</mat-icon>
       </button>
+      
     </div>
+  </mat-card-title>
+  <div
+    [class.not-visible]="!(familyLists.toDeliver.length>=1&&familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies())"
+    class="no-print">
+    סה"כ זמן נסיעה מוערך <span *ngIf="familyLists.routeStats"> {{familyLists.routeStats.totalTime}} דקות,
+      {{familyLists.routeStats.totalKm}} ק"מ</span>
   </div>
-  <h4 *ngIf="!showLeftFamilies()">
-    {{allDoneMessage()}}
-  </h4>
   <mat-accordion class="no-print">
     <mat-expansion-panel #myPanel *ngFor="let f of familyLists.toDeliver;let i=index">
       <mat-expansion-panel-header>
@@ -42,8 +35,9 @@ justify-content: space-between;order:-1;">
 
           <button mat-raised-button class="myButton" color="primary"
             (click)="deliveredToFamily(f)">{{settings.deliveredButtonText.value}}</button>
-          <br  *ngIf="settings.showLeftThereButton.value"/>
-          <button *ngIf="settings.showLeftThereButton.value" mat-raised-button class="myButton" (click)="leftThere(f)">השארתי ליד הבית
+          <br *ngIf="settings.showLeftThereButton.value" />
+          <button *ngIf="settings.showLeftThereButton.value" mat-raised-button class="myButton"
+            (click)="leftThere(f)">השארתי ליד הבית
           </button>
           <br />
           <button mat-raised-button class="myButton badButton" (click)="couldntDeliverToFamily(f)">נתקלתי בבעיה</button>
@@ -53,12 +47,19 @@ justify-content: space-between;order:-1;">
       </ng-template>
     </mat-expansion-panel>
   </mat-accordion>
-  <div class="sendSmsButtonLine no-print" *ngIf="familyLists.toDeliver.length &&(partOfAssign&&!partOfReview||partOfReview&&!helperGotSms)" >
-    <button mat-raised-button color="primary"
-      style="border-top-left-radius: 0px;border-bottom-left-radius:0px;" (click)="sendSms(false)">שלח הודעת SMS עם
+</mat-card>
+
+<div style="display:flex;flex-direction: column;">
+  <h4 *ngIf="!showLeftFamilies()">
+    {{allDoneMessage()}}
+  </h4>
+
+  <div class="sendSmsButtonLine no-print"
+    *ngIf="familyLists.toDeliver.length &&(partOfAssign&&!partOfReview||partOfReview&&!helperGotSms)">
+    <button mat-raised-button color="primary" style="border-top-left-radius: 0px;border-bottom-left-radius:0px;"
+      (click)="sendSms(false)">שלח הודעת SMS עם
       קישור</button>
-    <button  [matMenuTriggerFor]="appMenuSms"
-      mat-raised-button color="primary" style="border-top-right-radius: 0;
+    <button [matMenuTriggerFor]="appMenuSms" mat-raised-button color="primary" style="border-top-right-radius: 0;
       border-bottom-right-radius: 0;
       padding-left: 0;
       padding-right: 0;
@@ -73,7 +74,8 @@ justify-content: space-between;order:-1;">
     </mat-menu>
 
   </div>
-  <button *ngIf="partOfReview&&helperGotSms&&familyLists.toDeliver.length>0" mat-raised-button class="myButton no-print" color="primary" (click)="sendSms(true)">
+  <button *ngIf="partOfReview&&helperGotSms&&familyLists.toDeliver.length>0" mat-raised-button class="myButton no-print"
+    color="primary" (click)="sendSms(true)">
 
     <span
       *ngIf="familyLists&&familyLists.helperOptional&&familyLists.helperOptional.reminderSmsDate.value; else elseContent">תזכורת
@@ -156,18 +158,10 @@ justify-content: space-between;order:-1;">
       </h5>
     </div>
   </div>
-  <div *ngIf="familyLists.totals.length">
-    <h4 class="total-title">סה"כ לחלוקה</h4>
-    <ul>
-      <li *ngFor="let b of familyLists.totals">{{b.name()}} - {{b.count}}</li>
-    </ul>
-  </div>
 
-
-
-
-  <div *ngIf="familyLists.problem.length>0" class="no-print">
-    <h4>{{'משפחות שנתקלתי בבעיה '|translate}}- {{familyLists.problem.length}}</h4>
+  <mat-card *ngIf="familyLists.problem.length>0" class="no-print">
+    <mat-card-title>{{'משפחות שנתקלתי בבעיה '|translate}}- {{familyLists.problem.length}}
+    </mat-card-title>
     <mat-accordion>
       <mat-expansion-panel #myPanel *ngFor="let f of familyLists.problem">
         <mat-expansion-panel-header>
@@ -186,10 +180,11 @@ justify-content: space-between;order:-1;">
         </ng-template>
       </mat-expansion-panel>
     </mat-accordion>
-  </div>
-
-  <div *ngIf="familyLists.delivered.length>0" class="no-print">
-    <h4>{{'משפחות שחולקו ביומיים האחרונים'|translate}} - {{familyLists.delivered.length}}</h4>
+  </mat-card>
+  <mat-card *ngIf="familyLists.delivered.length>0" class="no-print">
+    <mat-card-title>
+      {{'משפחות שחולקו ביומיים האחרונים'|translate}} - {{familyLists.delivered.length}}
+    </mat-card-title>
     <mat-accordion>
       <mat-expansion-panel #myPanel *ngFor="let f of familyLists.delivered">
         <mat-expansion-panel-header>
@@ -204,9 +199,12 @@ justify-content: space-between;order:-1;">
         </ng-template>
       </mat-expansion-panel>
     </mat-accordion>
-  </div>
-  <app-map #map [class.hidden]="partOfReview||preview" [style.order]="familyLists.mapElementOrder"> </app-map>
+  </mat-card>
+  <mat-card>
+
+    <app-map #map [class.hidden]="partOfReview||preview"> </app-map>
+    <button mat-raised-button *ngIf="!preview&&familyLists.toDeliver.length>0" (click)="showRouteOnGoogleMaps()"
+      class="map-button no-print">הצג מסלול ב - google maps</button>
+  </mat-card>
 
 </div>
-<button mat-raised-button *ngIf="!preview&&familyLists.toDeliver.length>0" (click)="showRouteOnGoogleMaps()"
-  class="map-button">הצג מסלול ב - google maps</button>

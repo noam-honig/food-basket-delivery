@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
 import { BusyService } from 'radweb';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
@@ -228,4 +228,5 @@ export class HelperFamiliesComponent implements OnInit {
     }
   }
   @ViewChild("map", { static: true }) map: MapComponent;
+  
 }

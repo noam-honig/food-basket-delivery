@@ -7,13 +7,6 @@ import 'hammerjs';
 if (environment.production) {
   enableProdMode();
 }
-const isIEOrEdge = /msie\s|trident\/|edge\//i.test(window.navigator.userAgent);
-if (isIEOrEdge||true)
-  document.writeln(`<style>
-.dataGridHeaderArea {
-  position: inherit !important;
-}
-</style>`);
 
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));

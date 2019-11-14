@@ -1,101 +1,140 @@
 <div class="myDiv">
-  <h4 class="no-print" *ngIf="showHelperInput">
-    פרטי המשנע
-  </h4>
-  <div class="line-container form-control no-print" *ngIf="showHelperInput">
-    <div class="input-same-line">
-      <input placeholder="מספר הטלפון של המשנע" [(ngModel)]="phone" (input)="searchPhone()" type="tel">
-    </div>
-    <mat-icon matSuffix (click)="clearHelperInfo()">clear</mat-icon>
-    <mat-icon matSuffix (click)="findHelper()">search</mat-icon>
+
+  <div class="no-print" *ngIf="showHelperInput">
+
+    <mat-card>
+      <mat-card-title>
+        פרטי משנע
+        <div >
+            
+            <mat-menu #appMenu="matMenu">
+              <button mat-menu-item (click)="findHelper()" >{{'חפש משנע לפי שם'|translate}}</button>
+              <button mat-menu-item (click)="clearHelperInfo()" >{{'נקה פרטי משנע'|translate}}</button>
+              <button mat-menu-item (click)="saveHelper()"
+              *ngIf="showSave()">{{'שמור פרטי משנע ועבור למשנע הבא'|translate}}</button>
+              <mat-checkbox  class="mat-menu-item" [(ngModel)]="settings.showCompanies.inputValue" (change)="changeShowCompany()">{{settings.showCompanies.caption}}</mat-checkbox>
+            </mat-menu>
+    
+            <button mat-icon-button [matMenuTriggerFor]="appMenu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </div>
+      </mat-card-title>
+      <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
+        <mat-label>מספר הטלפון של המשנע</mat-label>
+        <input matInput [(ngModel)]="phone" (input)="searchPhone()" type="tel">
+        <div matSuffix style="display:flex">
+          <mat-icon (click)="clearHelperInfo()">clear</mat-icon>
+          <mat-icon (click)="findHelper()">search</mat-icon>
+        </div>
+      </mat-form-field>
+      <data-area2 [settings]="area" *ngIf="phone&& phone.length==10&&showHelperInput"></data-area2>
+    </mat-card>
   </div>
-  <div class="name-div" *ngIf="phone&& phone.length==10&&showHelperInput" >
-    <div class="line-container form-control no-print">
-      <div class="input-same-line">
-        <input placeholder="שם המשנע" [(ngModel)]="name">
-      </div>
-    </div>
-
-    <div class="line-container form-control no-print" *ngIf="showCompany()">
-      <div class="input-same-line">
-        <input placeholder="חברה" [(ngModel)]="company">
-      </div>
-      <mat-icon matSuffix (click)="findCompany()">search</mat-icon>
-    </div>
-  </div>
 
 
-  <span *ngIf="!name" class="help no-print">אנא הזיני את הטלפון של המשנע ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים
+  <span *ngIf="!name.value" class="help no-print">אנא הזיני את הטלפון של המשנע ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו
+    סלים
     לשייך</span>
-  <span *ngIf="name&&name.length>=2">
-    <h4 class="no-print"  *ngIf="showHelperInput">
-      פרטי המשלוח
-    </h4>
-    <div class="no-print">
-      <select class="form-control" #lang (change)="refreshBaskets()" [(ngModel)]="filterGroup">
-        <option value="">כל הקבוצות</option>
-        <option *ngFor="let g of groups" value="{{g.name.value}}">{{g.name.value}}</option>
-      </select>
-      <select class="form-control" #city (change)="selectCity()" [(ngModel)]="filterCity">
-        <option value="">כל הערים</option>
-        <option *ngFor="let c of cities" value="{{c.name}}">{{c.name}} - {{c.unassignedFamilies}}</option>
+  <div *ngIf="name.value&&name.value.length>=2">
+    <mat-card class="no-print">
+      <mat-card-title>
+        {{'שיוך משפחות למשנע'|translate}}
+        <div >
+            
+            <mat-menu #filterOptionsMenu="matMenu">
+              
+              <mat-checkbox  class="mat-menu-item" [(ngModel)]="o.inputValue" (change)="changeShowCompany()" *ngFor="let o of filterOptions">{{o.caption}}</mat-checkbox>
+            </mat-menu>
+    
+            <button mat-icon-button [matMenuTriggerFor]="filterOptionsMenu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </div>
+      </mat-card-title>
+      <mat-card-content>
 
-      </select>
-    </div>
+        <div class="filter-div">
+          <mat-form-field appearance="outline" class="full-width-form-field dense-form-field" *ngIf="settings.showGroupsOnAssing.value">
+            <mat-label>קבוצת חלוקה</mat-label>
+            <select matNativeControl class="form-control" #lang (change)="refreshBaskets()" [(ngModel)]="filterGroup">
+              <option value="">כל הקבוצות</option>
+              <option *ngFor="let g of groups" value="{{g.name.value}}">{{g.name.value}}</option>
+            </select>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline" class="full-width-form-field dense-form-field" *ngIf="settings.showCityOnAssing.value">
+            <mat-label>עיר לחלוקה</mat-label>
+            <select matNativeControl class="form-control" #city (change)="selectCity()" [(ngModel)]="filterCity">
+              <option value="">כל הערים</option>
+              <option *ngFor="let c of cities" value="{{c.name}}">{{c.name}} - {{c.unassignedFamilies}}</option>
+            </select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width-form-field dense-form-field" *ngIf="settings.showBasketOnAssing.value">
+            <mat-label>סוג סל</mat-label>
+            <select matNativeControl class="form-control" #lang [(ngModel)]="basketType">
+              <option *ngFor="let b of baskets" [ngValue]="b">{{b.name}} <span *ngIf="b!=allBaskets">-
+                  {{b.unassignedFamilies}}</span></option>
+            </select>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline" class="full-width-form-field dense-form-field" *ngIf="settings.showNumOfBoxesOnAssing.value">
+            <mat-label>{{'מספר משפחות'|translate}}</mat-label>
+            <input matInput type="number" id="numOfBaskets" [(ngModel)]="numOfBaskets">
+            <div matSuffix style="display:flex">
+              <button mat-icon-button (click)="add(1)">
+                <mat-icon>add</mat-icon>
+              </button>
+              <button mat-icon-button (click)="add(-1)">
+                <mat-icon>remove</mat-icon>
+              </button>
+            </div>
+          </mat-form-field>
+          
+          <mat-checkbox [(ngModel)]="preferRepeatFamilies" style="width:auto" *ngIf="showRepeatFamilies">{{'עדיפות למשפחות חוזרות'|translate}} ({{repeatFamilies}})
+            </mat-checkbox>
+            
+        </div>
 
-    <div class="no-print numOfBasketsDiv">
-      <h4 for="numOfBaskets">
-        {{'מספר משפחות'|translate}}
-      </h4>
-
-      <div class="input-group ">
-        <span class="input-group-btn">
-          <button class="btn btn-default" type="button" (click)="add(1)">+</button>
-        </span>
-        <span class="input-group-btn">
-          <button class="btn btn-default" type="button" (click)="add(-1)">-</button>
-        </span>
-        <input type="text" class="form-control" type="number" id="numOfBaskets" [(ngModel)]="numOfBaskets">
-      </div>
-    </div>
-    <div class="no-print" *ngIf="repeatFamilies">
-      <mat-checkbox [(ngModel)]="preferRepeatFamilies">{{'עדיפות למשפחות חוזרות'|translate}} ({{repeatFamilies}})
-      </mat-checkbox>
-    </div>
 
 
-    <div class="no-print">
-      <h4>סלים שנותרו</h4>
 
-      <button mat-raised-button color="primary" class="sal-button" (click)="assignItem(undefined)"
-        *ngIf="baskets.length>1">{{translate( familyLists.allFamilies.length>0?"מש' הכי קרובה":'משפחה כלשהי')}} -
-        {{countAllFamilies()}}</button>
-      <ng-container *ngFor="let b of baskets">
-        <button mat-raised-button color="primary" class="sal-button" (click)="assignItem(b)"
-          *ngIf="b.unassignedFamilies">{{b.name}}
-          - {{b.unassignedFamilies}}</button>
-      </ng-container>
+        <div class="no-print" style="display:flex;justify-content: center;">
+          <button mat-raised-button color="primary" (click)="assignItem(undefined)"
+            [disabled]="basketType.unassignedFamilies==0"
+            style="border-top-left-radius: 0px;border-bottom-left-radius:0px;">
+            {{translate( basketType.unassignedFamilies==0?'לא נותרו משפחות מתאימות': familyLists.allFamilies.length>0?"שייך משפחה הכי קרובה":'שייך משפחה כלשהי')}}
+            -
+            {{getBasketsToClick()}}</button>
+          <button mat-button [matMenuTriggerFor]="basketMenu" mat-raised-button color="primary" style="border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+          padding-left: 0;
+          padding-right: 0;
+          min-width: 38px;" *ngIf="baskets.length">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #basketMenu="matMenu">
+            <button mat-menu-item (click)="addSpecial()"
+              *ngIf="specialFamilies">{{'משפחות מיוחדות - '|translate}}{{specialFamilies}}</button>
+            <button mat-menu-item (click)="addSpecific()">{{'בחירת משפחה לפי שם'|translate}}</button>
+            <button mat-menu-item (click)="assignOnMap()">{{'בחירת משפחה על המפה'|translate}}</button>
+          
+            <button mat-menu-item (click)="moveBasktesFromOtherHelper()">{{'העבר משפחות ממתנדב אחר'|translate}}</button>
 
-      <button mat-button [matMenuTriggerFor]="basketMenu" mat-raised-button color="primary" class="sal-button"
-        *ngIf="baskets.length">אפשרויות נוספות...</button>
-      <mat-menu #basketMenu="matMenu">
-        <button mat-menu-item (click)="addSpecial()"
-          *ngIf="specialFamilies">{{'משפחות מיוחדות - '|translate}}{{specialFamilies}}</button>
-        <button mat-menu-item (click)="addSpecific()">{{'בחירת משפחה לפי שם'|translate}}</button>
-        <button mat-menu-item (click)="assignOnMap()">{{'בחירת משפחה על המפה'|translate}}</button>
-        <button mat-menu-item (click)="saveHelper()"
-          *ngIf="showSave()">{{'שמור פרטי מתנדב ועבור למתנדב הבא'|translate}}</button>
-          <button mat-menu-item (click)="moveBasktesFromOtherHelper()">{{'העבר משפחות ממתנדב אחר'|translate}}</button>
+          </mat-menu>
 
-      </mat-menu>
 
-      <h4 class="no-baskets" *ngIf="!baskets.length">לא נמצאו סלים מתאימים</h4>
-    </div>
+
+        </div>
+        
+      </mat-card-content>
+    </mat-card>
+
 
     <!--
     <input type="checkbox" [(ngModel)]="this.useGoogleOptimization">
     <button (click)="doRefreshRoute()">Run Refresh Route</button>-->
     <app-helper-families [familyLists]="familyLists" [partOfAssign]="true" (assignmentCanceled)="assignmentCanceled()"
       (assignSmsSent)="smsSent()"></app-helper-families>
-  </span>
+  </div>
 </div>

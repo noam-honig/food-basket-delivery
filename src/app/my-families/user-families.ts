@@ -7,6 +7,7 @@ import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
 import { Context } from 'radweb';
 import { routeStats } from '../asign-family/asign-family.component';
 import { translate } from '../translate';
+import { ElementRef } from '@angular/core';
 
 export class UserFamiliesList {
     map: MapComponent;
@@ -15,13 +16,13 @@ export class UserFamiliesList {
         this.map.userClickedOnFamilyOnMap = (f) => this.userClickedOnFamilyOnMap(f);
     }
     startAssignByMap(city: string, group: string) {
-        if (this.mapElementOrder == -1) { this.mapElementOrder = 1; }
-        else {
-            this.map.loadPotentialAsigment(city, group);
-            this.mapElementOrder = -1;
-        }
+        
+        this.map.loadPotentialAsigment(city, group);
+        setTimeout(() => {
+            this.map.gmapElement.nativeElement.scrollIntoView();
+        }, 100);
     }
-    mapElementOrder = 0;
+
     constructor(private context: Context) { }
     toDeliver: Families[] = [];
     delivered: Families[] = [];
@@ -151,7 +152,6 @@ export class UserFamiliesList {
         this.delivered = [];
         this.problem = [];
         this.toDeliver = [];
-        this.mapElementOrder = 1;
         if (this.map)
             this.map.clear();
 

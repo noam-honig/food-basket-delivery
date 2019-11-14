@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
-import { UrlBuilder, FilterBase, ServerFunction } from 'radweb';
+import { UrlBuilder, FilterBase, ServerFunction, StringColumn, DataAreaSettings, BoolColumn } from 'radweb';
 import { Families } from '../families/families';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
@@ -54,10 +54,10 @@ export class AsignFamilyComponent implements OnInit {
         if (this.phone.length == 10) {
             let helper = await this.context.for(Helpers).findFirst(h => h.phone.isEqualTo(this.phone));
             if (helper) {
-                this.name = helper.name.value;
-                this.company = helper.company.value;
-                this.origName = this.name;
-                this.origCompany = this.company;
+                this.name.value = helper.name.value;
+                this.company.value = helper.company.value;
+                this.origName = this.name.value;
+                this.origCompany = this.company.value;
                 this.shortUrl = helper.shortUrlKey.value;
                 this.id = helper.id.value;
                 this.familyLists.routeStats = helper.getRouteStats();
@@ -67,12 +67,14 @@ export class AsignFamilyComponent implements OnInit {
             } else {
 
                 await this.refreshList();
+
             }
+
         }
     }
     clearHelperInfo(clearPhone = true) {
-        this.name = '';
-        this.company = '';
+        this.name.value = '';
+        this.company.value = '';
         this.origName = '';
         this.origCompany = '';
         this.shortUrl = '';
@@ -81,6 +83,7 @@ export class AsignFamilyComponent implements OnInit {
         this.id = '';
         this.familyLists.routeStats = undefined;
         this.preferRepeatFamilies = true;
+        this.showRepeatFamilies = false;
         this.clearList();
     }
 
@@ -98,6 +101,8 @@ export class AsignFamilyComponent implements OnInit {
         }
     }
     filterCity = '';
+    allBaskets: BasketInfo = { id: 'undefined', name: 'כל הסלים', unassignedFamilies: 0 };
+    basketType: BasketInfo = this.allBaskets;
     selectCity() {
         this.refreshBaskets();
     }
@@ -138,7 +143,7 @@ export class AsignFamilyComponent implements OnInit {
     specificToHelper(h: Helpers) {
         this.showHelperInput = false;
         this.phone = h.phone.value;
-         this.searchPhone();
+        this.searchPhone();
     }
     lastRefreshRoute = Promise.resolve();
     useGoogleOptimization = true;
@@ -149,7 +154,7 @@ export class AsignFamilyComponent implements OnInit {
 
                     if (r && r.ok && r.families.length == this.familyLists.toDeliver.length) {
                         this.familyLists.routeStats = r.stats;
-                        this.familyLists.initForFamilies(this.id, this.name, r.families);
+                        this.familyLists.initForFamilies(this.id, this.name.value, r.families);
                     }
 
                 })));
@@ -168,15 +173,32 @@ export class AsignFamilyComponent implements OnInit {
             filterCity: this.filterCity,
             helperId: this.id
         }))
-        this.baskets = r.baskets;
+        this.baskets = [this.allBaskets];
+        this.baskets.push(...r.baskets);
+        this.allBaskets.unassignedFamilies = 0;
+        let found = false;
+        if (this.basketType == this.allBaskets)
+            found = true;
+        for (const iterator of this.baskets) {
+            this.allBaskets.unassignedFamilies += +iterator.unassignedFamilies;
+            if (!found && this.basketType.id == iterator.id) {
+                this.basketType = iterator;
+                found = true;
+            }
+        }
+
+
         this.cities = r.cities;
         this.specialFamilies = +r.special;
         this.repeatFamilies = +r.repeatFamilies;
+        if (this.repeatFamilies)
+            this.showRepeatFamilies = true;
     }
 
     baskets: BasketInfo[] = [];
     cities: CityInfo[] = [];
     specialFamilies = 0;
+    showRepeatFamilies = false;
     repeatFamilies = 0;
 
     preferRepeatFamilies = true;
@@ -184,23 +206,32 @@ export class AsignFamilyComponent implements OnInit {
         this.busy.donotWait(async () => {
             await this.refreshBaskets();
         });
-        await this.familyLists.initForHelper(this.id, this.name);
+        await this.familyLists.initForHelper(this.id, this.name.value);
 
     }
     familyLists = new UserFamiliesList(this.context);
     filterGroup = '';
     groups: Groups[] = [];
     phone: string;
-    name: string;
-    company: string;
     origName: string;
     origCompany: string;
+    name = new StringColumn('שם המשנע');
+    company = new StringColumn('חברה');
+    area: DataAreaSettings<any> = new DataAreaSettings<any>({});
+    changeShowCompany() {
+        if (this.settings.showCompanies.value) {
+            this.area = new DataAreaSettings({ columnSettings: () => [[this.name, this.company]] });
+        } else
+            this.area = new DataAreaSettings({ columnSettings: () => [[this.name]] });
+        this.settings.save();
+    }
+
 
     shortUrl: string;
     id: string;
-    showCompany() {
-        return ApplicationSettings.get(this.context).showCompanies.value;
-    }
+    settings = ApplicationSettings.get(this.context);
+
+
 
     clearList() {
         this.familyLists.clear();
@@ -209,14 +240,15 @@ export class AsignFamilyComponent implements OnInit {
         this.selectService.selectHelper(h => {
             if (h) {
                 this.phone = h.phone.value;
-                this.name = h.name.value;
-                this.company = h.company.value;
-                this.origName = this.name;
-                this.origCompany = this.company;
+                this.name.value = h.name.value;
+                this.company.value = h.company.value;
+                this.origName = this.name.value;
+                this.origCompany = this.company.value;
                 this.shortUrl = h.shortUrlKey.value;
                 this.id = h.id.value;
                 this.familyLists.routeStats = h.getRouteStats();
                 this.refreshListAndUpdateRouteForFixedCourier();
+
             }
             else {
                 this.clearHelperInfo();
@@ -229,8 +261,12 @@ export class AsignFamilyComponent implements OnInit {
     constructor(private selectService: SelectService, private dialog: DialogService, private context: Context, private busy: BusyService, private matDialog: MatDialog) {
 
     }
-
+    filterOptions: BoolColumn[] = [];
     async ngOnInit() {
+
+        this.settings = await ApplicationSettings.getAsync(this.context);
+        this.filterOptions.push(this.settings.showGroupsOnAssing, this.settings.showCityOnAssing, this.settings.showBasketOnAssing, this.settings.showNumOfBoxesOnAssing);
+        this.changeShowCompany();
         this.familyLists.userClickedOnFamilyOnMap =
             async  families => {
                 if (families.length == 1)
@@ -267,20 +303,20 @@ export class AsignFamilyComponent implements OnInit {
             this.numOfBaskets = 1;
 
     }
-    countAllFamilies() {
-        let r = 0;
-        this.baskets.forEach(b => r += +b.unassignedFamilies);
-        return r;
+    getBasketsToClick() {
+        return this.basketType.unassignedFamilies;
     }
     lastAssign = Promise.resolve();
-    async assignItem(basket: BasketInfo) {
-
+    async assignItem() {
+        let basket = this.basketType;
+        if (this.allBaskets == basket)
+            basket = undefined;
         this.lastAssign = this.lastAssign.then(async () => {
             await this.busy.donotWait(async () => {
                 let x = await AsignFamilyComponent.AddBox({
                     phone: this.phone,
-                    name: this.name,
-                    company: this.company,
+                    name: this.name.value,
+                    company: this.company.value,
                     basketType: basket ? basket.id : undefined,
                     helperId: this.id,
                     group: this.filterGroup,
@@ -294,7 +330,7 @@ export class AsignFamilyComponent implements OnInit {
 
 
                     this.id = x.helperId;
-                    this.familyLists.initForFamilies(this.id, this.name, x.families);
+                    this.familyLists.initForFamilies(this.id, this.name.value, x.families);
                     if (basket != undefined)
                         basket.unassignedFamilies -= x.addedBoxes;
                     else {
@@ -318,8 +354,8 @@ export class AsignFamilyComponent implements OnInit {
                     this.dialog.Info(translate("לא נמצאה משפחה מתאימה"));
                 }
                 this.id = x.helperId;
-                this.origName = this.name;
-                this.origCompany = this.company;
+                this.origName = this.name.value;
+                this.origCompany = this.company.value;
             });
         });
     }
@@ -386,7 +422,7 @@ export class AsignFamilyComponent implements OnInit {
         return await AsignFamilyComponent.optimizeRoute(h, existingFamilies, context, useGoogle);
     }
     findCompany() {
-        SelectCompanyComponent.dialog(this.matDialog, { onSelect: x => this.company = x });
+        SelectCompanyComponent.dialog(this.matDialog, { onSelect: x => this.company.value = x });
     }
     @ServerFunction({ allowed: Roles.admin })
     static async AddBox(info: AddBoxInfo, context?: Context, directSql?: DirectSQL) {
@@ -659,7 +695,7 @@ export class AsignFamilyComponent implements OnInit {
         this.doRefreshRoute();
     }
     showSave() {
-        return !this.id || this.name != this.origName || this.company != this.origCompany;
+        return !this.id || this.name.value != this.origName || this.company.value != this.origCompany;
     }
     async saveHelper() {
         await this.verifyHelperExistance();
@@ -668,18 +704,18 @@ export class AsignFamilyComponent implements OnInit {
     async verifyHelperExistance() {
         if (this.showSave()) {
             let helper = await this.context.for(Helpers).lookupAsync(h => h.phone.isEqualTo(this.phone));
-            helper.name.value = this.name;
-            helper.company.value = this.company;
+            helper.name.value = this.name.value;
+            helper.company.value = this.company.value;
             if (helper.isNew()) {
                 helper.phone.value = this.phone;
             }
             if (helper.isNew() || helper.wasChanged())
                 await helper.save();
             Helpers.addToRecent(helper);
-            this.name = helper.name.value;
-            this.company = helper.company.value;
-            this.origName = this.name;
-            this.origCompany = this.company;
+            this.name.value = helper.name.value;
+            this.company.value = helper.company.value;
+            this.origName = this.name.value;
+            this.origCompany = this.company.value;
             this.shortUrl = helper.shortUrlKey.value;
             this.id = helper.id.value;
         }

@@ -132,7 +132,7 @@ th {
 
 .hide {
   visibility: collapse;
-  height:0;
+  height: 0;
 }
 .myButton {
   width: 85%;
@@ -234,22 +234,65 @@ input[type="tel"] {
   text-align: end;
 }
 
-
-
 .one-line {
   display: flex;
   justify-content: space-between;
 }
 
-.one-line >  * {
+.one-line > * {
   padding-left: 0.2em;
   padding-right: 0.2em;
   flex-basis: 1px;
   flex-grow: 1;
 }
-.one-line >  :first-child {
+.one-line > :first-child {
   padding-right: 0em;
 }
-.one-line >  :last-child {
+.one-line > :last-child {
   padding-left: 0em;
+}
+.mat-card{
+  margin-bottom: 5px;
+}
+.mat-card-title{
+  font-size: 18px;
+  display:flex !important;
+  align-items: center;
+  justify-content: space-between;
+}
+.title-with-menu{
+  display:flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.full-width-form-field {
+  width: 100%;
+  .mat-form-field-infix {
+    width: auto !important;
+  }
+}
+.dense-form-field {
+  .mat-form-field-infix {
+    padding: 0.3em 0 0.3em 0 !important;
+  }
+  .mat-form-field-wrapper {
+    padding-bottom: 0.5em !important;
+  }
+  .mat-form-field-subscript-wrapper {
+    padding-top: 0.6666666667em !important;
+  }
+  .mat-form-field-label {
+    top: 1.2em !important;
+  }
+  .mat-error {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1em) scale(0.75) !important;
+  }
+}
+.dense-form-field.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+  transform: translateY(-1em) scale(0.75) !important;
 }
