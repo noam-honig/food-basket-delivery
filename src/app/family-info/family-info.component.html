@@ -22,7 +22,7 @@
     <mat-icon color="accent" style="vertical-align: middle">comment</mat-icon>
     <strong style="color:red">שימו לב! </strong> {{f.deliveryComments.value}}
   </div>
-  <div *ngIf="f.courierBeenHereBefore()">
+  <div *ngIf="f.courierBeenHereBefore.value">
     <mat-icon color="green">repeat</mat-icon>
     {{'הייתם אצל המשפחה הזו גם פעם קודמת'|translate}}
   </div>

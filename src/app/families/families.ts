@@ -18,7 +18,7 @@ import { translate } from "../translate";
 
 
 @EntityClass
-export class Families extends IdEntity  {
+export class Families extends IdEntity {
   onTheWayFilter() {
     return this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(this.courier.isDifferentFrom(''));
   }
@@ -312,11 +312,16 @@ export class Families extends IdEntity  {
       return this.dbNameFromLastDelivery(fde => fde.courierComments, "prevComment");
     }
   });
-  previousCourier = new HelperIdReadonly(this.context, {
-    caption: 'משנע  קודם',
+
+  courierBeenHereBefore = new BoolColumn({
     dbReadOnly: true,
     dbName: () => {
-      return this.dbNameFromLastDelivery(fde => fde.courier, "prevCourier");
+      var sql = new SqlBuilder();
+
+      var fd = this.context.for(FamilyDeliveries).create();
+      let f = this;
+      sql.addEntity(f, "families");
+      return sql.columnWithAlias(sql.case([{ when: [sql.ne(f.courier, "''")], then: sql.build('exists (select 1 from ', fd, ' where ', sql.and(sql.eq(fd.family, f.id), sql.eq(fd.courier, f.courier)), ")") }], false),'courierBeenHereBefore');
     }
   });
   visibleToCourier = new BoolColumn({
@@ -363,9 +368,7 @@ export class Families extends IdEntity  {
   }
 
 
-  courierBeenHereBefore() {
-    return this.previousCourier.value == this.courier.value;
-  }
+
   getPreviousDeliveryColumn() {
     return {
       caption: 'סיכום משלוח קודם',
@@ -419,23 +422,23 @@ export class Families extends IdEntity  {
     return this.deliverStatus.displayValue;
   }
   getShortDeliveryDescription() {
-    return Families.staticGetShortDescription(this.deliverStatus,this.deliveryStatusDate,this.courier,this.courierComments);
+    return Families.staticGetShortDescription(this.deliverStatus, this.deliveryStatusDate, this.courier, this.courierComments);
   }
-  static staticGetShortDescription(deliverStatus:DeliveryStatusColumn,deliveryStatusDate:changeDate,courier:HelperId,courierComments:StringColumn) {
+  static staticGetShortDescription(deliverStatus: DeliveryStatusColumn, deliveryStatusDate: changeDate, courier: HelperId, courierComments: StringColumn) {
     let r = deliverStatus.displayValue + " ";
-    if (DeliveryStatus.IsAResultStatus(deliverStatus.value)){
-    if (deliveryStatusDate.value.valueOf() < new Date().valueOf() - 7 * 86400 * 1000)
+    if (DeliveryStatus.IsAResultStatus(deliverStatus.value)) {
+      if (deliveryStatusDate.value.valueOf() < new Date().valueOf() - 7 * 86400 * 1000)
         r += "ב " + deliveryStatusDate.value.toLocaleDateString("he-il");
-    else
+      else
         r += deliveryStatusDate.relativeDateName();
-    if (courierComments.value) {
+      if (courierComments.value) {
         r += ": " + courierComments.value;
-    }
-    if (courier.value&&deliverStatus.value!=DeliveryStatus.SelfPickup&&deliverStatus.value!=DeliveryStatus.SuccessPickedUp)
+      }
+      if (courier.value && deliverStatus.value != DeliveryStatus.SelfPickup && deliverStatus.value != DeliveryStatus.SuccessPickedUp)
         r += ' ע"י ' + courier.getValue();
-  }
+    }
     return r;
-}
+  }
 
 
   createDate = new changeDate({ includeInApi: Roles.admin, caption: 'מועד הוספה' });

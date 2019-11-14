@@ -3,7 +3,7 @@
     <span *ngIf="i">{{i}}.&nbsp;</span>{{f.name.value}}
     <mat-icon color="accent" *ngIf="f.deliveryComments.value"> comment</mat-icon>
     <mat-icon color="accent" *ngIf="!f.addressOk.value">warning</mat-icon>
-    <mat-icon color="green" *ngIf="f.courierBeenHereBefore()">repeat</mat-icon>
+    <mat-icon color="green" *ngIf="f.courierBeenHereBefore.value">repeat</mat-icon>
   </div>
   <div>
     {{f.basketType.displayValue}}

@@ -93,9 +93,9 @@
     </a>
   </button>
   <div class="print-only">
-    <h4 *ngIf="familyLists.helperId">שלום {{familyLists.helperName}}, {{'אלו המשפחות לחלוקתך -'|translate}}
+    <h4 *ngIf="familyLists.helperId">שלום {{familyLists.helperName}}, טלפון {{familyLists.getHelperPhone()}}, {{'אלו המשפחות לחלוקתך -'|translate}}
       ({{familyLists.toDeliver.length}})</h4>
-    {{familyLists.getHelperPhone()}}
+    
     <table class="printTable">
       <tr>
         <th>{{'משפחה'|translate}}</th>

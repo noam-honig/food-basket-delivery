@@ -30,6 +30,7 @@ import { translate } from '../translate';
 import { MatDialog } from '@angular/material';
 import { SelectCompanyComponent } from '../select-company/select-company.component';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
+import { FamilyDeliveries } from '../families/FamilyDeliveries';
 
 
 @Component({
@@ -154,7 +155,7 @@ export class AsignFamilyComponent implements OnInit {
 
                     if (r && r.ok && r.families.length == this.familyLists.toDeliver.length) {
                         this.familyLists.routeStats = r.stats;
-                        this.familyLists.initForFamilies(this.id, this.name.value,this.phone, r.families);
+                        this.familyLists.initForFamilies(this.id, this.name.value, this.phone, r.families);
                     }
 
                 })));
@@ -206,7 +207,7 @@ export class AsignFamilyComponent implements OnInit {
         this.busy.donotWait(async () => {
             await this.refreshBaskets();
         });
-        await this.familyLists.initForHelper(this.id, this.name.value,this.phone);
+        await this.familyLists.initForHelper(this.id, this.name.value, this.phone);
 
     }
     familyLists = new UserFamiliesList(this.context);
@@ -225,7 +226,7 @@ export class AsignFamilyComponent implements OnInit {
                 {
                     column: this.company,
                     click: () => this.findCompany(),
-                    clickIcon:'search'
+                    clickIcon: 'search'
                 }
                 ]]
             });
@@ -338,7 +339,7 @@ export class AsignFamilyComponent implements OnInit {
 
 
                     this.id = x.helperId;
-                    this.familyLists.initForFamilies(this.id, this.name.value,this.phone, x.families);
+                    this.familyLists.initForFamilies(this.id, this.name.value, this.phone, x.families);
                     if (basket != undefined)
                         basket.unassignedFamilies -= x.addedBoxes;
                     else {
@@ -369,14 +370,14 @@ export class AsignFamilyComponent implements OnInit {
     }
 
     @ServerFunction({ allowed: Roles.admin })
-    static async getBasketStatus(info: GetBasketStatusActionInfo, context?: Context): Promise<GetBasketStatusActionResponse> {
+    static async getBasketStatus(info: GetBasketStatusActionInfo, context?: Context, directSql?: DirectSQL): Promise<GetBasketStatusActionResponse> {
         console.time('getBasketStatus');
         let result = {
             baskets: [],
             cities: [],
             special: 0,
             repeatFamilies: 0
-        };
+        } as GetBasketStatusActionResponse;
         let countFamilies = (additionalWhere?: (f: Families) => FilterBase) => {
             return context.for(Families).count(f => {
                 let where = f.readyFilter(info.filterCity, info.filterGroup);
@@ -389,9 +390,15 @@ export class AsignFamilyComponent implements OnInit {
 
         result.special = await countFamilies(f => f.special.isEqualTo(YesNo.Yes));
 
-        result.repeatFamilies = await countFamilies(f =>
-            f.previousCourier.isEqualTo(info.helperId).and(f.special.isEqualTo(YesNo.No))
-        );
+    
+        let sql = new SqlBuilder();
+        let f = context.for(Families).create();
+        let fd = context.for(FamilyDeliveries).create();
+
+        let r = await directSql.execute(sql.build('select count(*) from ', f, ' where ', f.readyFilter(info.filterCity, info.filterGroup).and(f.special.isEqualTo(YesNo.No)), ' and ',
+            filterRepeatFamilies(sql, f, fd, info.helperId)));
+        result.repeatFamilies = r.rows[0][r.getcolumnNameAtIndex(0)];
+
 
         for (let c of await context.for(CitiesStats).find({
             orderBy: ff => [{ column: ff.city }]
@@ -482,13 +489,14 @@ export class AsignFamilyComponent implements OnInit {
                         let where = f.readyFilter(info.city, info.group).and(
                             f.special.isDifferentFrom(YesNo.Yes)
                         );
-
-                        if (info.preferRepeatFamilies)
-                            where = where.and(f.previousCourier.isEqualTo(info.helperId));
                         if (info.basketType != undefined)
                             where = where.and(
                                 f.basketType.isEqualTo(info.basketType));
-                        return [where];
+                        let res = [];
+                        res.push(where);
+                        if (info.preferRepeatFamilies)
+                            res.push(filterRepeatFamilies(sql, f, context.for(FamilyDeliveries).create(), info.helperId));
+                        return res;
                     }
                 })));
 
@@ -821,6 +829,10 @@ export interface BasketInfo {
     name: string;
     id: string;
     unassignedFamilies: number;
+
+}
+function filterRepeatFamilies(sql: SqlBuilder, f: Families, fd: FamilyDeliveries, helperId: string) {
+    return sql.build(f.id, ' in (select ', fd.family, ' from ', fd, ' where ', fd.courier.isEqualTo(helperId), ')');
 
 }
 export interface CityInfo {
