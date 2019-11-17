@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Helpers } from '../../helpers/helpers';
-import {  StringColumn, NotSignedInGuard } from 'radweb';
+import {  StringColumn, NotSignedInGuard } from '@remult/core';
 import { AuthService } from '../../auth/auth-service';
 
 import { Route } from '@angular/router';
-import { Context } from 'radweb';
+import { Context } from '@remult/core';
 
 @Component({
   selector: 'app-register',

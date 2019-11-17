@@ -40,7 +40,7 @@
 <mat-card [class.hide]="!gridView">
 
 
-    <data-grid2 [settings]="families" [height]="400"></data-grid2>
+    <data-grid [settings]="families" [height]="400"></data-grid>
 
     <button (click)="saveToExcel()">יצוא לאקסל</button>
     <button (click)="saveAll()" *ngIf="changedRowsCount()>1" mat-raised-button>שמור {{changedRowsCount()}} {{'משפחות'|translate}}

@@ -1,5 +1,5 @@
 import { Helpers, HelpersBase } from '../helpers/helpers';
-import { FilterBase } from 'radweb';
+import { FilterBase } from '@remult/core';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 
 export interface SelectServiceInterface {

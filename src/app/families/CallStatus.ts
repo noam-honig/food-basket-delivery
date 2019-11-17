@@ -1,4 +1,4 @@
-import { ClosedListColumn,  Column, ColumnOptions } from "radweb";
+import { ClosedListColumn,  Column, ColumnOptions } from '@remult/core';
 
 
 export class CallStatus {

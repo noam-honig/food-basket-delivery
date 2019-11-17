@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { Context } from 'radweb';
+import { Context } from '@remult/core';
 import { Groups } from '../manage/manage.component';
 import { DialogService } from '../select-popup/dialog';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';

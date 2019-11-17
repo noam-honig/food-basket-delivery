@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig } from '@angular/material/dialog';
 import { Helpers } from '../helpers/helpers';
-import { Context } from 'radweb';
+import { Context } from '@remult/core';
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 
 @Component({

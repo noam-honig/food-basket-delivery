@@ -6,7 +6,7 @@ import { AuthService } from '../../auth/auth-service';
 import { Router, Route } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
-import { Context, RouteHelperService } from 'radweb';
+import { Context, RouteHelperService } from '@remult/core';
 import { RegisterComponent } from '../register/register.component';
 import { AdminGuard } from '../../auth/roles';
 

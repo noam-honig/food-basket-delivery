@@ -1,5 +1,5 @@
 import { Component, OnInit, Injectable, HostListener } from '@angular/core';
-import { Context, GridSettings, BusyService } from 'radweb';
+import { Context, GridSettings, BusyService } from '@remult/core';
 import { Families } from '../families/families';
 import { saveToExcel } from '../shared/saveToExcel';
 import { DateTimeColumn } from '../model-shared/types';

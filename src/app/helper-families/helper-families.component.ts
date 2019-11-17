@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
-import { BusyService } from 'radweb';
+import { BusyService } from '@remult/core';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';
@@ -11,8 +11,8 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 import { Router } from '@angular/router';
 import { SelectService } from '../select-popup/select-service';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Context } from 'radweb';
-import { Column } from 'radweb';
+import { Context } from '@remult/core';
+import { Column } from '@remult/core';
 import { translate } from '../translate';
 import { Helpers } from '../helpers/helpers';
 

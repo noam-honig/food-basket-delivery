@@ -1,5 +1,5 @@
-import { Entity, Column, GridSettings, ColumnHashSet, } from "radweb";
-import { FilterBase, EntitySourceFindOptions } from "radweb";
+import { Entity, Column, GridSettings, ColumnHashSet, } from '@remult/core';
+import { FilterBase, EntitySourceFindOptions } from '@remult/core';
 
 export async function foreachSync<T>(array: T[], action: (item: T) => Promise<void>) {
   for (let i = 0; i < array.length; i++) {

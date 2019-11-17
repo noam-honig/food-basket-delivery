@@ -1,10 +1,10 @@
 import { Injectable, NgZone } from "@angular/core";
 import { MatDialog, MatSnackBar } from "@angular/material";
-import { Entity, IDataSettings } from "radweb";
+import { Entity, IDataSettings } from '@remult/core';
 import { SelectPopupComponent, SelectComponentInfo } from "./select-popup.component";
 import { YesNoQuestionComponentData, YesNoQuestionComponent } from "./yes-no-question/yes-no-question.component";
 import { InputAreaComponentData, InputAreaComponent } from "./input-area/input-area.component";
-import { BusyService } from 'radweb';
+import { BusyService } from '@remult/core';
 import { environment } from "../../environments/environment";
 import { ServerEventAuthorizeAction } from "../server/server-event-authorize-action";
 import { Subject } from "rxjs";

@@ -1,4 +1,4 @@
-import * as radweb from 'radweb';
+
 const serverUrl= '/';
 
 export const environment = {

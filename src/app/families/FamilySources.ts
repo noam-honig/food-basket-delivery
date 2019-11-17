@@ -1,6 +1,6 @@
 import {  HasAsyncGetTheValue, PhoneColumn } from "../model-shared/types";
 
-import { Context,  EntityClass, IdEntity, StringColumn, IdColumn, ColumnOptions } from "radweb";
+import { Context,  EntityClass, IdEntity, StringColumn, IdColumn, ColumnOptions } from '@remult/core';
 import { Roles } from "../auth/roles";
 
 @EntityClass

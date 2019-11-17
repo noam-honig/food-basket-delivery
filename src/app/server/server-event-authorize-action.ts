@@ -1,4 +1,4 @@
-import {  ServerFunction } from "radweb";
+import {  ServerFunction } from '@remult/core';
 import { Roles } from "../auth/roles";
 
 export class ServerEventAuthorizeAction {

@@ -24,7 +24,7 @@ import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 import { AdminGuard } from './auth/roles';
-import { SignedInGuard } from 'radweb';
+import { SignedInGuard } from '@remult/core';
 import { CreateBackupExcelFileComponent,CanDeactivateGuard } from './create-backup-excel-file/create-backup-excel-file.component';
 import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';
 import { PlaybackComponent } from './playback/playback.component';

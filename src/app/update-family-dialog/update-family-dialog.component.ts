@@ -1,8 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Families } from '../families/families';
-import { GridSettings } from 'radweb';
-import { Context } from 'radweb';
+import { GridSettings } from '@remult/core';
+import { Context } from '@remult/core';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 
 @Component({

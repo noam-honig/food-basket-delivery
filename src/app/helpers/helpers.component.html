@@ -3,7 +3,7 @@
         <input matInput [(ngModel)]="searchString" (input)="doSearch()"  placeholder="חיפוש מתנדב" [ngModelOptions]="{standalone: true}">
         <mat-icon matSuffix (click)="searchString=''">clear</mat-icon>
       </mat-form-field>  
-  <data-grid2 [settings]="helpers" height="300"></data-grid2>
+  <data-grid [settings]="helpers" height="300"></data-grid>
   
   <button mat-raised-button color="warn" (click)="resetPassword()" *ngIf="helpers.currentRow">
     אתחל סיסמה ל{{helpers.currentRow.name.value}}

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { infoOnMap, statusClass, Statuses } from '../distribution-map/distribution-map.component';
 import * as chart from 'chart.js';
-import { ServerFunction, Context, DirectSQL, DateTimeColumn } from 'radweb';
+import { ServerFunction, Context, DirectSQL, DateTimeColumn } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { Families } from '../families/families';
 import { SqlBuilder } from '../model-shared/types';

@@ -1,10 +1,10 @@
 
 
-import { StringColumn, IdColumn, IdEntity, BoolColumn, NumberColumn } from "radweb";
+import { StringColumn, IdColumn, IdEntity, BoolColumn, NumberColumn } from '@remult/core';
 
 import {  HasAsyncGetTheValue } from "../model-shared/types";
-import { Context, EntityClass } from "radweb";
-import { ColumnOptions } from "radweb";
+import { Context, EntityClass } from '@remult/core';
+import { ColumnOptions } from '@remult/core';
 import { Roles } from "../auth/roles";
 
 @EntityClass

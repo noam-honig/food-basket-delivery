@@ -21,7 +21,7 @@
             </mat-expansion-panel-header>
             <ng-template matExpansionPanelContent>
                 
-                <data-area2 [settings]="familiesInfo"></data-area2>
+                <data-area [settings]="familiesInfo"></data-area>
                 <a href="tel:{{families.currentRow.socialWorkerPhone1.value}}"
                     *ngIf="families.currentRow.socialWorkerPhone1.value">
 
@@ -63,7 +63,7 @@
                 </div>
                 <a (click)="families.currentRow.openWaze()" target="_blank">פתחי WAZE</a> |
                 <a (click)="families.currentRow.openGoogleMaps()" target="_blank">פתחי גוגל </a>
-                <data-area2 [settings]="familiesAddress"></data-area2>
+                <data-area [settings]="familiesAddress"></data-area>
             </ng-template>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -91,7 +91,7 @@
                     חייג לטלפון 2
 
                 </a>
-                <data-area2 [settings]="phones"></data-area2>
+                <data-area [settings]="phones"></data-area>
             </ng-template>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -116,7 +116,7 @@
                     <br>
                     <br>
                 </a>
-                <data-area2 [settings]="deliverInfo"></data-area2>
+                <data-area [settings]="deliverInfo"></data-area>
 
             </ng-template>
         </mat-expansion-panel>

@@ -1,12 +1,12 @@
 import { FamilyId } from '../families/families';
 import { DeliveryStatusColumn } from "../families/DeliveryStatus";
 import { BasketId } from "../families/BasketType";
-import { NumberColumn, StringColumn, CompoundIdColumn, IdColumn } from 'radweb';
+import { NumberColumn, StringColumn, CompoundIdColumn, IdColumn } from '@remult/core';
 import { HelperId, HelperIdReadonly } from '../helpers/helpers';
 import {  changeDate } from '../model-shared/types';
 import { CallStatusColumn } from '../families/CallStatus';
 
-import { Context, EntityClass, Entity } from 'radweb';
+import { Context, EntityClass, Entity } from '@remult/core';
 import { Roles } from '../auth/roles';
 @EntityClass
 export class FamilyDeliveryEvents extends Entity<string> {

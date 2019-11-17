@@ -1,8 +1,8 @@
-import { ServerFunction } from "radweb";
+import { ServerFunction } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Helpers } from '../helpers/helpers';
 import * as fetch from 'node-fetch';
-import { Context, ServerContext } from "radweb";
+import { Context, ServerContext } from '@remult/core';
 import { Roles } from "../auth/roles";
 
 

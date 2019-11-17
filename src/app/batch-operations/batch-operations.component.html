@@ -5,7 +5,7 @@
       {{'הגדר נמסר בהצלחה לכל המשפחות שבדרך'|translate}}
     </mat-expansion-panel-header>
     {{'פעולה זו תגדיר לכל המשפחות ששוייכו למשנע אבל עוד לא עודכנו כנמסר בהצלחה - את הסטטוס נמסר בהצלחה, כדי שבהיסטוריה ירשם שהן קיבלו משלוח. תאריך המסירה יהיה התאריך שתבחרו'|translate}}
-    <data-area2 [settings]="dateArea"></data-area2>
+    <data-area [settings]="dateArea"></data-area>
 
     <button mat-raised-button (click)="setAsDelivered()">הגדר כנמסר בהצלחה</button>
   </mat-expansion-panel>
@@ -14,7 +14,7 @@
       {{'הגדר לקחו בעצמם לכל המשפחות שבאים לקחת'|translate}}
     </mat-expansion-panel-header>
     {{'פעולה זו תגדיר לכל המשפחות המוגדרות "באים לקחת" שהן לקחו את הסל בעצמם, כדי שבהיסטוריה ירשם שהן קיבלו משלוח. תאריך המסירה יהיה התאריך שתבחרו'|translate}}
-    <data-area2 [settings]="dateArea"></data-area2>
+    <data-area [settings]="dateArea"></data-area>
 
     <button mat-raised-button (click)="setAsSelfPickup()">הגדר כלקחו בעצמם</button>
   </mat-expansion-panel>
@@ -26,7 +26,7 @@
     {{'המשלוח הנוכחי של המשפחה ישמר בהיסטוריה.'|translate}}
     {{'אם למשפחה מוגדר משנע קבוע - אז הוא וקבע כמשנע.'|translate}}
 
-    <data-area2 [settings]="area"></data-area2>
+    <data-area [settings]="area"></data-area>
 
 
     <button mat-raised-button (click)="setNewBasket()">הגדר משלוח חדש</button>
@@ -37,7 +37,7 @@
       {{'הגדר את כל המשפחות כלא באירוע'|translate}}
     </mat-expansion-panel-header>
     {{'פעולה זו תגדיר את כל המשפחות בסל שתבחרו כלא באירוע'|translate}}
-    <data-area2 [settings]="area"></data-area2>
+    <data-area [settings]="area"></data-area>
 
     <button mat-raised-button (click)="setAsNotInEvent()">הגדר כלא באירוע</button>
   </mat-expansion-panel>

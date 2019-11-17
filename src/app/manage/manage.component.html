@@ -19,7 +19,7 @@
 
 
 
-        <data-area2 [settings]="settings"></data-area2>
+        <data-area [settings]="settings"></data-area>
         <mat-card>
             <mat-card-title>
                 הטלפון ממנו יצא הSMS
@@ -28,7 +28,7 @@
             SMS.
             ניתן להגדיר כאן שם חלופי וטלפון חלופי
             <br />
-            <data-area2 [settings]="settingsMore"></data-area2>
+            <data-area [settings]="settingsMore"></data-area>
         </mat-card>
         <mat-card>
             <mat-card-title>
@@ -64,7 +64,7 @@
                 סוגי סלים
             </mat-panel-title>
         </mat-expansion-panel-header>
-        <data-grid2 [settings]="basketType" height="300"></data-grid2>
+        <data-grid [settings]="basketType" height="300"></data-grid>
 
 
     </mat-expansion-panel>
@@ -74,7 +74,7 @@
                 {{'גורמים מפנים'|translate}}
             </mat-panel-title>
         </mat-expansion-panel-header>
-        <data-grid2 [settings]="sources" height="300"></data-grid2>
+        <data-grid [settings]="sources" height="300"></data-grid>
 
 
     </mat-expansion-panel>
@@ -87,7 +87,7 @@
         </mat-expansion-panel-header>
 
         {{'קבוצות אלו יוצגו בשיוך משפחות ויאפשרו סינון מהיר'|translate}}
-        <data-grid2 [settings]="groups" height="300"></data-grid2>
+        <data-grid [settings]="groups" height="300"></data-grid>
 
     </mat-expansion-panel>
     <mat-expansion-panel>
@@ -97,7 +97,7 @@
             </mat-panel-title>
 
         </mat-expansion-panel-header>
-        <data-area2 [settings]="settingsMessages"></data-area2>
+        <data-area [settings]="settingsMessages"></data-area>
     </mat-expansion-panel>
     <mat-expansion-panel>
         <mat-expansion-panel-header>
@@ -147,7 +147,7 @@
             </mat-panel-title>
 
         </mat-expansion-panel-header>
-        <data-area2 [settings]="prefereces"></data-area2>
+        <data-area [settings]="prefereces"></data-area>
 
 
     </mat-expansion-panel>
@@ -158,8 +158,8 @@
             </mat-panel-title>
 
         </mat-expansion-panel-header>
-        <data-area2 [settings]="settingsLogo"></data-area2>
-        <data-area2 [settings]="images"></data-area2>
+        <data-area [settings]="settingsLogo"></data-area>
+        <data-area [settings]="images"></data-area>
         כלי ליצירת Base64:
         <a href="https://www.browserling.com/tools/file-to-base64">File to Base64</a>
         כלי ליצירת Icons:

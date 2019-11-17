@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
 
 
-import { Context, DataAreaSettings, ColumnSetting, DropDownItem, DateColumn } from 'radweb';
+import { Context, DataAreaSettings, ColumnSetting, DropDownItem, DateColumn } from '@remult/core';
 import { Families, GroupsColumn } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DialogService } from '../select-popup/dialog';
-import { ServerFunction } from 'radweb';
+import { ServerFunction } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
 import { BasketType, BasketId } from '../families/BasketType';
 import { SelectService } from '../select-popup/select-service';

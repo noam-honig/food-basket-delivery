@@ -3,7 +3,7 @@ import { Families } from '../families/families';
 import * as copy from 'copy-to-clipboard';
 import { DialogService } from '../select-popup/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { Context } from 'radweb';
+import { Context } from '@remult/core';
 import { SelectService } from '../select-popup/select-service';
 import { translate } from '../translate';
 @Component({

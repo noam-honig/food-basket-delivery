@@ -9,14 +9,14 @@ import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelper
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
 
-import { Context, DirectSQL } from 'radweb';
-import { ServerFunction } from 'radweb';
+import { Context, DirectSQL } from '@remult/core';
+import { ServerFunction } from '@remult/core';
 import { SqlBuilder } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { SelectService } from '../select-popup/select-service';
 
 import { colors } from '../families/stats-action';
-import { BusyService } from 'radweb';
+import { BusyService } from '@remult/core';
 import { YesNo } from '../families/YesNo';
 import { Roles, AdminGuard } from '../auth/roles';
 

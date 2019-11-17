@@ -7,7 +7,7 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings, PhoneItem, PhoneOption } from './ApplicationSettings';
 
 
-import { Context, IdEntity, IdColumn, StringColumn, EntityClass } from 'radweb';
+import { Context, IdEntity, IdColumn, StringColumn, EntityClass } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';

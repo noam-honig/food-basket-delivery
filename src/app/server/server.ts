@@ -2,7 +2,7 @@
 //let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
 import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
-import { ExpressBridge, JWTCookieAuthorizationHelper } from 'radweb-server';
+import { ExpressBridge, JWTCookieAuthorizationHelper } from '@remult/server';
 import * as fs from 'fs';
 import { serverInit } from './serverInit';
 import { ServerEvents } from './server-events';
@@ -10,7 +10,7 @@ import { Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import "../helpers/helpers.component";
 import '../app.module';
-import { ServerContext, ActualDirectSQL, DateColumn } from "radweb";
+import { ServerContext, ActualDirectSQL, DateColumn } from '@remult/core';
 import { AuthService } from "../auth/auth-service";
 import { Helpers } from '../helpers/helpers';
 import { FamilyDeliveriesStats } from "../delivery-history/delivery-history.component";

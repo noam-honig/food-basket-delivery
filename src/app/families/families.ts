@@ -5,7 +5,7 @@ import { YesNoColumn } from "./YesNo";
 import { FamilySourceId } from "./FamilySources";
 import { BasketId, BasketType } from "./BasketType";
 import { changeDate, DateTimeColumn, SqlBuilder, PhoneColumn, delayWhileTyping } from "../model-shared/types";
-import { ColumnSetting, Column, Context, EntityClass, DirectSQL, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn } from "radweb";
+import { ColumnSetting, Column, Context, EntityClass, DirectSQL, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn } from '@remult/core';
 import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";

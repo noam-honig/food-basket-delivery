@@ -6,7 +6,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { DialogService } from './select-popup/dialog';
 import { ApplicationSettings } from './manage/ApplicationSettings';
 import { FamiliesComponent } from './families/families.component';
-import { Context, RouteHelperService, JwtSessionManager } from 'radweb';
+import { Context, RouteHelperService, JwtSessionManager } from '@remult/core';
 import { Roles } from './auth/roles';
 import { translate, translationConfig } from './translate';
 import { DeliveryStats } from './delivery-follow-up/delivery-stats';

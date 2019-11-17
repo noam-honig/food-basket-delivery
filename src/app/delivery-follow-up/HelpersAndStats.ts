@@ -1,10 +1,10 @@
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { NumberColumn,  BoolColumn } from 'radweb';
+import { NumberColumn,  BoolColumn } from '@remult/core';
 import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
 import { changeDate, DateTimeColumn, SqlBuilder } from '../model-shared/types';
 import { Families } from "../families/families";
 
-import { Context, EntityClass } from "radweb";
+import { Context, EntityClass } from '@remult/core';
 import { Roles } from "../auth/roles";
 
 

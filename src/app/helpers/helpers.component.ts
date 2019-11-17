@@ -6,11 +6,11 @@ import { SelectService } from '../select-popup/select-service';
 import { Families } from '../families/families';
 import { Route } from '@angular/router';
 
-import { ServerFunction, GridSettings, ColumnSetting } from 'radweb';
-import { Context } from 'radweb';
+import { ServerFunction, GridSettings, ColumnSetting } from '@remult/core';
+import { Context } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
-import { BusyService } from 'radweb';
-import { DateColumn, DataAreaSettings } from 'radweb';
+import { BusyService } from '@remult/core';
+import { DateColumn, DataAreaSettings } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { MatDialog } from '@angular/material/dialog';

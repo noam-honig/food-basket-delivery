@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { Context, ServerFunction, DirectSQL } from 'radweb';
+import { Context, ServerFunction, DirectSQL } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { SqlBuilder } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';

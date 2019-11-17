@@ -2,10 +2,10 @@ import { Component, OnInit, Inject } from '@angular/core';
 
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { Helpers, HelpersBase } from '../helpers/helpers';
-import { Context } from 'radweb';
-import { FilterBase, FindOptionsPerEntity } from 'radweb';
+import { Context } from '@remult/core';
+import { FilterBase, FindOptionsPerEntity } from '@remult/core';
 
-import { BusyService } from 'radweb';
+import { BusyService } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 

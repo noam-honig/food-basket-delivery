@@ -1,5 +1,5 @@
-import { StringColumn, NumberColumn } from 'radweb';
-import { Entity, Context, EntityClass } from 'radweb';
+import { StringColumn, NumberColumn } from '@remult/core';
+import { Entity, Context, EntityClass } from '@remult/core';
 import { Roles } from '../auth/roles';
 @EntityClass
 export class ApplicationImages extends Entity<number>  {

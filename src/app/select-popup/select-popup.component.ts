@@ -1,8 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { GridSettings, Entity, IDataSettings } from 'radweb';
+import { GridSettings, Entity, IDataSettings } from '@remult/core';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import {  Context } from 'radweb';
+import {  Context } from '@remult/core';
 
 @Component({
   selector: 'app-select-popup',

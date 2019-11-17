@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { StringColumn } from 'radweb';
+import { StringColumn } from '@remult/core';
 import { Helpers } from '../../helpers/helpers';
 import { DialogService } from '../../select-popup/dialog';
 import { AuthService } from '../../auth/auth-service';
-import { SignedInGuard } from 'radweb';
+import { SignedInGuard } from '@remult/core';
 import { Route } from '@angular/router';
-import { Context } from 'radweb';
+import { Context } from '@remult/core';
 
 @Component({
   selector: 'app-update-info',

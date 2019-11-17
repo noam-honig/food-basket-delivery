@@ -1,12 +1,12 @@
 
-import { ColumnSetting, Entity, FilterBase, NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, DecorateDataColumnSettings, EntityOptions } from "radweb";
+import { ColumnSetting, Entity, FilterBase, NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, DecorateDataColumnSettings, EntityOptions } from '@remult/core';
 import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn } from '../model-shared/types';
 import { SelectServiceInterface } from '../select-popup/select-service-interface';
 
 import { routeStats } from '../asign-family/asign-family.component';
 import { helpers } from 'chart.js';
 import { Roles } from "../auth/roles";
-import { JWTCookieAuthorizationHelper } from "radweb-server";
+import { JWTCookieAuthorizationHelper } from '@remult/server';
 import { MatDialog } from "@angular/material";
 import { SelectCompanyComponent } from "../select-company/select-company.component";
 

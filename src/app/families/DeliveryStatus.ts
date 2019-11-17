@@ -1,5 +1,5 @@
-import { ClosedListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings } from "radweb";
-import { ColumnOptions, DropDownItem } from "radweb";
+import { ClosedListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings } from '@remult/core';
+import { ColumnOptions, DropDownItem } from '@remult/core';
 
 export class DeliveryStatus {
   static usingSelfPickupModule: boolean=true;

@@ -1,5 +1,5 @@
 import * as fetch from 'node-fetch';
-import { UrlBuilder } from "radweb";
+import { UrlBuilder } from '@remult/core';
 
 export async function GetGeoInformation(address: string) {
 

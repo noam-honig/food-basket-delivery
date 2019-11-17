@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Families, duplicateFamilyInfo } from '../families/families';
-import { Context, DataAreaSettings } from 'radweb';
+import { Context, DataAreaSettings } from '@remult/core';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DialogService } from '../select-popup/dialog';

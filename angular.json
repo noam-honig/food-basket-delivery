@@ -27,7 +27,7 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/radweb/input-styles.scss",
+              "./node_modules/@remult/core/input-styles.scss",
               "src/styles.scss"
             ],
             "scripts": []

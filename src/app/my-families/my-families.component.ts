@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { UserFamiliesList } from './user-families';
 import { Route } from '@angular/router';
 
-import { Context, SignedInGuard } from 'radweb';
+import { Context, SignedInGuard } from '@remult/core';
 
 import { Helpers } from '../helpers/helpers';
 import { ApplicationSettings } from '../manage/ApplicationSettings';

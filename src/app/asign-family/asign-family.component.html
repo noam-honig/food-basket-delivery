@@ -7,15 +7,17 @@
         פרטי משנע
         <div >
             
-            <mat-menu #appMenu="matMenu">
+            <mat-menu #appMenu77>
               <button mat-menu-item (click)="findHelper()" >{{'חפש משנע לפי שם'|translate}}</button>
               <button mat-menu-item (click)="clearHelperInfo()" >{{'נקה פרטי משנע'|translate}}</button>
               <button mat-menu-item (click)="saveHelper()"
               *ngIf="showSave()">{{'שמור פרטי משנע ועבור למשנע הבא'|translate}}</button>
-              <mat-checkbox  class="mat-menu-item" [(ngModel)]="settings.showCompanies.inputValue" (change)="changeShowCompany()">{{settings.showCompanies.caption}}</mat-checkbox>
+              <button *ngIf="!settings.showCompanies.value" mat-menu-item (click)="settings.showCompanies.value= true; changeShowCompany()" >{{'הצג חברה למשנע'|translate}}</button>
+              <button *ngIf="settings.showCompanies.value" mat-menu-item (click)="settings.showCompanies.value= false; changeShowCompany()" >{{'הסתר חברה למשנע'|translate}}</button>
+              
             </mat-menu>
     
-            <button mat-icon-button [matMenuTriggerFor]="appMenu">
+            <button mat-icon-button [matMenuTriggerFor]="appMenu77">
               <mat-icon>more_vert</mat-icon>
             </button>
           </div>
@@ -28,7 +30,7 @@
           <mat-icon (click)="findHelper()">search</mat-icon>
         </div>
       </mat-form-field>
-      <data-area2 [settings]="area" *ngIf="phone&& phone.length==10&&showHelperInput"></data-area2>
+      <data-area [settings]="area" *ngIf="phone&& phone.length==10&&showHelperInput"></data-area>
     </mat-card>
   </div>
 

@@ -1,6 +1,6 @@
-import { StringColumn, NumberColumn, BoolColumn } from "radweb";
+import { StringColumn, NumberColumn, BoolColumn } from '@remult/core';
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
-import { Entity, Context, EntityClass } from "radweb";
+import { Entity, Context, EntityClass } from '@remult/core';
 import { PhoneColumn } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { DeliveryStatusColumn, DeliveryStatus } from "../families/DeliveryStatus";
