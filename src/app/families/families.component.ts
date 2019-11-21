@@ -21,7 +21,7 @@ import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
-import { HasAsyncGetTheValue, DateTimeColumn } from '../model-shared/types';
+import { HasAsyncGetTheValue, DateTimeColumn, PhoneColumn } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
 
@@ -212,6 +212,14 @@ export class FamiliesComponent implements OnInit {
                 addColumn("Xשם פרטי", firstName, 's');
                 addColumn("Xרחוב", street, 's');
                 addColumn("Xמספר בית", house, 's');
+                function fixPhone(p: PhoneColumn) {
+                    if (!p.value)
+                        return '';
+                    else return p.value.replace(/\D/g, '')
+                }
+                addColumn("טלפון1X", fixPhone(f.phone1), 's');
+                addColumn("טלפון2X", fixPhone(f.phone2), 's');
+
             });
     }
 
@@ -278,7 +286,7 @@ export class FamiliesComponent implements OnInit {
         },
         hideDataArea: true,
         knowTotalRows: true,
-        
+
 
         confirmDelete: (h, yes) => this.dialog.confirmDelete(translate('משפחת ') + h.name.value, yes),
         columnSettings: families => {
@@ -380,7 +388,7 @@ export class FamiliesComponent implements OnInit {
         rowButtons: [
             {
                 name: '',
-                icon:'edit',
+                icon: 'edit',
                 click: async f => {
                     this.gridView = !this.gridView;
                     if (!this.gridView) {
@@ -641,12 +649,12 @@ export class FamiliesComponent implements OnInit {
     showTotalBoxes() {
         if (this.currentTabStats == this.basketStats) {
             let r = 'סה"כ ' + BasketType.boxes1Name + ': ' + this.totalBoxes1;
-            if (this.blockedBoxes1 ) {
+            if (this.blockedBoxes1) {
                 r += ', סה"כ ' + BasketType.boxes1Name + ' חסומים: ' + this.blockedBoxes1;
             }
-            if (this.totalBoxes2 )
+            if (this.totalBoxes2)
                 r += ', סה"כ ' + BasketType.boxes2Name + ': ' + this.totalBoxes2;
-            if (this.blockedBoxes2 ) {
+            if (this.blockedBoxes2) {
                 r += ', סה"כ ' + BasketType.boxes2Name + ' חסומים: ' + this.blockedBoxes2;
             }
             return r;
@@ -656,7 +664,7 @@ export class FamiliesComponent implements OnInit {
     @ViewChild('myTab', { static: false }) myTab: MatTabGroup;
     @ViewChild('familyInfo', { static: true }) familyInfo: UpdateFamilyComponent;
     ngOnInit() {
-        
+
         this.refreshStats();
         let cols = this.families.columns;
         let firstColumns = [
