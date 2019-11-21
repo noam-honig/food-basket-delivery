@@ -381,7 +381,7 @@ export class AsignFamilyComponent implements OnInit {
 
     @ServerFunction({ allowed: Roles.admin })
     static async getBasketStatus(info: GetBasketStatusActionInfo, context?: Context, directSql?: DirectSQL): Promise<GetBasketStatusActionResponse> {
-        console.time('getBasketStatus');
+        
         let result = {
             baskets: [],
             cities: [],
@@ -437,7 +437,7 @@ export class AsignFamilyComponent implements OnInit {
         }
         result.baskets.sort((a, b) => b.unassignedFamilies - a.unassignedFamilies);
 
-        console.timeEnd('getBasketStatus');
+        
         return result;
     }
     @ServerFunction({ allowed: Roles.admin })
@@ -451,7 +451,7 @@ export class AsignFamilyComponent implements OnInit {
     }
     @ServerFunction({ allowed: Roles.admin })
     static async AddBox(info: AddBoxInfo, context?: Context, directSql?: DirectSQL) {
-        console.time('addBox');
+        
 
         let result: AddBoxResponse = {
             helperId: info.helperId,
@@ -472,7 +472,7 @@ export class AsignFamilyComponent implements OnInit {
             await r.save();
         result.helperId = r.id.value;
         result.shortUrl = r.shortUrlKey.value;
-        console.time('existingFamilies');
+        
         let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
         let locationReferenceFamilies = [...existingFamilies];
         if (locationReferenceFamilies.length == 0) {
@@ -484,7 +484,7 @@ export class AsignFamilyComponent implements OnInit {
                 limit: 1
             });
         }
-        console.timeEnd('existingFamilies');
+        
         for (let i = 0; i < info.numOfBaskets; i++) {
 
             let getFamilies = async () => {
@@ -521,13 +521,13 @@ export class AsignFamilyComponent implements OnInit {
 
 
             }
-            console.time('getFamilies');
+            
             let waitingFamilies = await getFamilies();
             if (info.preferRepeatFamilies && waitingFamilies.length == 0) {
                 info.preferRepeatFamilies = false;
                 waitingFamilies = await getFamilies();
             }
-            console.timeEnd('getFamilies');
+            
 
             if (waitingFamilies.length > 0) {
                 if (locationReferenceFamilies.length == 0) {
@@ -556,7 +556,7 @@ export class AsignFamilyComponent implements OnInit {
                         return r;
 
                     }
-                    console.time('findClosest');
+                    
                     let smallFamily = waitingFamilies[0];
                     let dist = getDistance({
                         lat: smallFamily.addressLatitude,
@@ -570,7 +570,7 @@ export class AsignFamilyComponent implements OnInit {
                             smallFamily = waitingFamilies[i]
                         }
                     }
-                    console.timeEnd('findClosest');
+                    
                     let f = await context.for(Families).findFirst(f => f.id.isEqualTo(smallFamily.id));
                     f.courier.value = result.helperId;
 
@@ -583,14 +583,14 @@ export class AsignFamilyComponent implements OnInit {
             }
 
         }
-        console.time('optimizeRoute');
+        
         //result.routeStats = await AsignFamilyComponent.optimizeRoute(r, existingFamilies, context);
-        console.timeEnd('optimizeRoute');
+        
         existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
         result.families = await context.for(Families).toPojoArray(existingFamilies);
 
 
-        console.timeEnd('addBox');
+        
         return result;
     }
 
@@ -642,6 +642,7 @@ export class AsignFamilyComponent implements OnInit {
 
             await foreachSync(r.routes[0].waypoint_order, async (p: number) => {
                 let f = families[p];
+                
                 if (f.routeOrder.value != i) {
                     f.routeOrder.value = i;
                     f.save();
@@ -819,9 +820,9 @@ async function getRouteInfo(families: Families[], optimize: boolean, context: Co
         key: process.env.GOOGLE_GECODE_API_KEY
     };
     u.addObject(args);
-
+    
     let r = await (await fetch.default(u.url)).json();
-    // console.log(args,addresses,r,getInfo(r));
+     
     return r;
 }
 export interface GetBasketStatusActionInfo {
