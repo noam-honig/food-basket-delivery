@@ -1,5 +1,5 @@
-//import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModuleLoader';
-//let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
+import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModuleLoader';
+let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
 import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
 import { ExpressBridge, JWTCookieAuthorizationHelper } from '@remult/server';
@@ -11,7 +11,6 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import "../helpers/helpers.component";
 import '../app.module';
 import { ServerContext, ActualDirectSQL, DateColumn } from '@remult/core';
-import { AuthService } from "../auth/auth-service";
 import { Helpers } from '../helpers/helpers';
 import { FamilyDeliveriesStats } from "../delivery-history/delivery-history.component";
 import { SqlBuilder } from "../model-shared/types";
@@ -25,7 +24,11 @@ serverInit().then(async (dataSource) => {
         let serverEvents = new ServerEvents(app);
         Families.SendMessageToBrowsers = x => serverEvents.SendMessage(x);
     }
-    let eb = new ExpressBridge(app, dataSource, process.env.DISABLE_HTTPS == "true");
+
+    let eb = new ExpressBridge(
+        //@ts-ignore
+        app,
+        dataSource, process.env.DISABLE_HTTPS == "true");
     Helpers.helper = new JWTCookieAuthorizationHelper(eb, process.env.TOKEN_SIGN_KEY);
     let context = new ServerContext();
     context.setDataProvider(dataSource);
@@ -84,7 +87,7 @@ serverInit().then(async (dataSource) => {
             res.sendStatus(404);
             return;
         }
-        
+
         var dsql = dataSource.getDirectSql();
         var fromDate = DateColumn.stringToDate(req.query["fromdate"]);
         var toDate = DateColumn.stringToDate(req.query["todate"]);
@@ -110,7 +113,7 @@ serverInit().then(async (dataSource) => {
             ' where ',
             fds.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(fds.deliveryStatusDate.isLessThan(toDate)));
 
-        
+
         var helpers = (await dsql.execute(query)).rows[0]['x'];
         await context.for(FamilyDeliveriesStats).count(f => f.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(f.deliveryStatusDate.isLessThan(toDate)));
         var onTheWay = await context.for(Families).count(f => f.onTheWayFilter());
@@ -147,11 +150,11 @@ serverInit().then(async (dataSource) => {
 });
 
 export interface monitorResult {
-    totalFamilies:number;
+    totalFamilies: number;
     name: string;
     familiesInEvent: number;
     dbConnections: number;
     deliveries: number;
-    onTheWay:number;
-    helpers:number;
+    onTheWay: number;
+    helpers: number;
 }

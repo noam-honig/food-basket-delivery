@@ -1,13 +1,13 @@
 
-import { Pool } from 'pg';
+import { Pool, QueryResult } from 'pg';
 import { config } from 'dotenv';
-import { PostgresDataProvider, PostgrestSchemaBuilder } from '@remult/server-postgres';
+import { PostgresDataProvider, PostgrestSchemaBuilder, PostgresPool, PostgresClient } from '@remult/server-postgres';
 import { foreachSync } from '../shared/utils';
 import { Families } from '../families/families';
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { ServerContext, allEntities } from '@remult/core';
+import { ServerContext, allEntities, Context, DataApiRequest, SupportsDirectSql, SupportsTransaction } from '@remult/core';
 import '../app.module';
 
 
@@ -20,7 +20,7 @@ import { Helpers } from '../helpers/helpers';
 import * as passwordHash from 'password-hash';
 import { FamilyDeliveriesStats } from '../delivery-history/delivery-history.component';
 
-
+let schemas = ['test1','test2'];
 
 export async function serverInit() {
     try {
@@ -46,6 +46,11 @@ export async function serverInit() {
         Helpers.passwordHelper = {
             generateHash: p => passwordHash.generate(p),
             verify: (p, h) => passwordHash.verify(p, h)
+        }
+
+        for (const s of schemas) {
+           /* let exists = await pool.query('PostSELECT schema_name FROM information_schema.schemata WHERE schema_name = 'name';
+            gresPool')*/
         }
 
         await new PostgrestSchemaBuilder(pool).verifyStructureOfAllEntities();
@@ -96,7 +101,7 @@ export async function serverInit() {
         }
         if (!settings.reminderSmsText.value)
             settings.reminderSmsText.value = 'שלום !משנע!, \nנשמח אם תעדכן את המערכת במצב המסירה של הסלים. לעדכון לחץ על:  !אתר!\nבתודה !ארגון!';
-     
+
         if (!settings.commentForSuccessDelivery.value)
             settings.commentForSuccessDelivery.value = 'נשמח אם תכתוב לנו הערה על מה שראית והיה';
         if (!settings.commentForSuccessLeft.value)
@@ -231,13 +236,57 @@ export async function serverInit() {
             await settings.save();
         }
 
+
+
+
+
+
+        return (y: DataApiRequest) => {
+
+            let orig = y.getHeader('host');
+            let cookieHeader = y.getHeader('cookie');
+            let org: string;
+            if (cookieHeader)
+                for (const iterator of cookieHeader.split(';')) {
+                    let itemInfo = iterator.split('=');
+                    if (itemInfo && itemInfo[0].trim() == 'org') {
+                        org = itemInfo[1];
+                    }
+                }
+            if (!org) {
+                org = orig.split('.')[0];
+            }
+            return new PostgresDataProvider(new PostgresSchemaWrapper(pool,org));
+        }
+
     } catch (error) {
         console.error(error);
         throw error;
     }
-    return dataSource;
 
 
 
 
+
+
+}
+class PostgresSchemaWrapper implements PostgresPool {
+    constructor(private pool: Pool, private schema: string) {
+
+    }
+    async connect(): Promise<PostgresClient> {
+        let r = await  this.pool.connect();
+        await r.query('set search_path to '+this.schema);
+        return r;
+    }
+    async query(queryText: string, values?: any[]): Promise<QueryResult> {
+        let c = await this.connect();
+        try {
+            return await c.query(queryText, values);
+        }
+        finally {
+            c.release();
+        }
+
+    }
 }
