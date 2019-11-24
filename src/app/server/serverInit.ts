@@ -22,7 +22,7 @@ import { FamilyDeliveriesStats } from '../delivery-history/delivery-history.comp
 import { getOrganizationFromContext } from '../auth/auth-service';
 import { initSchema } from './initSchema';
 const guestSchema = 'guest';
-let schemas = ['test1', 'test2'];
+let schemas = [];
 
 export async function serverInit() {
     try {
@@ -108,13 +108,6 @@ export async function serverInit() {
             await pool.query('create schema ' + s);
         }
     }
-}
-
-export function validOrganization(y: Context) {
-    let x = getOrganizationFromUrl(y);
-    if (schemas.length == 0)
-        return true;
-    return schemas.indexOf(x) >= 0;
 }
 
 export function getOrganizationFromUrl(y: Context) {

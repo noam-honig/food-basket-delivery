@@ -4,7 +4,7 @@ import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
 import { ExpressBridge, JWTCookieAuthorizationHelper, ExpressRequestBridgeToDataApiRequest } from '@remult/server';
 import * as fs from 'fs';
-import { serverInit, validOrganization } from './serverInit';
+import { serverInit } from './serverInit';
 import { ServerEvents } from './server-events';
 import { Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
