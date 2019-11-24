@@ -38,6 +38,16 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Do Something direct ref",
+            "program": "${workspaceFolder}/dist-server/hug-moms/src/app/server/doSomething.js",
+            "args": [],
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Run Something",
             "runtimeExecutable": "npm",
             "runtimeArgs": [

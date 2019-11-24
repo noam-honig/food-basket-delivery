@@ -24,7 +24,7 @@ serverInit().then(async (dataSource) => {
     let app = express();
     if (!process.env.DISABLE_SERVER_EVENTS) {
         let serverEvents = new ServerEvents(app);
-        Families.SendMessageToBrowsers = x => serverEvents.SendMessage(x);
+        Families.SendMessageToBrowsers = (x,c) => serverEvents.SendMessage(x,c);
     }
 
     let eb = new ExpressBridge(

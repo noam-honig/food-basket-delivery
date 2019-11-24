@@ -244,6 +244,14 @@
             "type": "npm",
             "script": "publish-to-heroku-test-old",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "ng-build",
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "group": "build"
         }
     ]
 }

@@ -59,7 +59,7 @@ export class DeliveryHistoryComponent implements OnInit {
     data: { name: 'היסטורית משלוחים' }, canActivate: [AdminGuard]
   }
   constructor(private context: Context, private selectService: SelectService, private busy: BusyService) {
-    let hhi = context.create(helperHistoryInfo);
+    let hhi = context.for(helperHistoryInfo).create();
     let x = new InMemoryDataProvider();
     hhi.setSource(x);
     this.helperSource = hhi.source;

@@ -155,6 +155,7 @@ export class AsignFamilyComponent implements OnInit {
     lastRefreshRoute = Promise.resolve();
     useGoogleOptimization = true;
     doRefreshRoute() {
+        return;
         this.lastRefreshRoute = this.lastRefreshRoute.then(
             async () => await this.busy.donotWait(
                 async () => await AsignFamilyComponent.RefreshRoute(this.id, this.useGoogleOptimization).then(r => {
@@ -472,8 +473,9 @@ export class AsignFamilyComponent implements OnInit {
             await r.save();
         result.helperId = r.id.value;
         result.shortUrl = r.shortUrlKey.value;
-        
+        console.time('existing families');
         let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(result.helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
+        console.timeEnd('existing families');
         let locationReferenceFamilies = [...existingFamilies];
         if (locationReferenceFamilies.length == 0) {
             let from = new Date();

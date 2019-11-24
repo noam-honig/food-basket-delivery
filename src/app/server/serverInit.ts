@@ -30,6 +30,9 @@ export async function serverInit() {
         let ssl = true;
         if (process.env.DISABLE_POSTGRES_SSL)
             ssl = false;
+        let x = process.env.SCHEMAS;
+        if (x)
+            schemas = x.split(',');
         if (!process.env.DATABASE_URL) {
             console.error("No DATABASE_URL environment variable found, if you are developing locally, please add a '.env' with DATABASE_URL='postgres://*USERNAME*:*PASSWORD*@*HOST*:*PORT*/*DATABASE*'");
         }
@@ -50,7 +53,7 @@ export async function serverInit() {
             verify: (p, h) => passwordHash.verify(p, h)
         }
         if (schemas.length > 0) {
-            
+
             {
                 await verifySchemaExistance(pool, guestSchema);
                 let adminSchemaPool = new PostgresSchemaWrapper(pool, guestSchema);
@@ -81,7 +84,7 @@ export async function serverInit() {
             }
             return (y: Context) => {
                 let org = getOrganizationFromUrl(y);
-                console.log('Schema: ' + org);
+                
                 return new PostgresDataProvider(new PostgresSchemaWrapper(pool, org));
             };
         }
@@ -102,11 +105,12 @@ export async function serverInit() {
         throw error;
     }
 
-    async function verifySchemaExistance(pool: Pool, s: string) {
-        let exists = await pool.query('SELECT schema_name FROM information_schema.schemata WHERE schema_name = \'' + s + '\'');
-        if (exists.rows.length == 0) {
-            await pool.query('create schema ' + s);
-        }
+    
+}
+export async function verifySchemaExistance(pool: Pool, s: string) {
+    let exists = await pool.query('SELECT schema_name FROM information_schema.schemata WHERE schema_name = \'' + s + '\'');
+    if (exists.rows.length == 0) {
+        await pool.query('create schema ' + s);
     }
 }
 
@@ -117,13 +121,13 @@ export function getOrganizationFromUrl(y: Context) {
     return org;
 }
 
-class PostgresSchemaWrapper implements PostgresPool {
+export class PostgresSchemaWrapper implements PostgresPool {
     constructor(private pool: Pool, private schema: string) {
 
     }
     async connect(): Promise<PostgresClient> {
         let r = await this.pool.connect();
-        console.log("schema: "+this.schema);
+        
         await r.query('set search_path to ' + this.schema);
         return r;
     }
