@@ -1,5 +1,5 @@
-import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModuleLoader';
-let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
+//import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModuleLoader';
+//let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
 
 import { readFileSync } from "fs";
 import { ColumnHashSet } from '@remult/core';

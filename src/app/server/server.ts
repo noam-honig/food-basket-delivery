@@ -1,5 +1,5 @@
-import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModuleLoader';
-let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
+//import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModuleLoader';
+//let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
 import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
 import { ExpressBridge, JWTCookieAuthorizationHelper, ExpressRequestBridgeToDataApiRequest } from '@remult/server';

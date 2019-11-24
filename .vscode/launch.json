@@ -24,17 +24,7 @@
                 "<node_internals>/**"
             ]
         },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Debug Server",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": [
-                "run-script",
-                "server:debug"
-            ],
-            "port": 9229
-        },
+       
         {
             "type": "node",
             "request": "launch",
@@ -48,13 +38,13 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Run Something",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": [
-                "run-script",
-                "RunSomething"
-            ],
-            "port": 9229
+            "name": "Do Something ",
+            "program": "${workspaceFolder}/dist-server/app/server/doSomething.js",
+            "args": [],
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
         }
+      
     ]
 }

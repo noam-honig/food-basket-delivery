@@ -18,8 +18,14 @@
       "dom"
     ],
     "paths": {
-      "radwe*": [
-        "../radweb/projects/radwe*"
+      "@remult/core": [
+        "../radweb/projects/radweb"
+      ],
+      "@remult/server": [
+        "../radweb/projects/radweb-server"
+      ],
+      "@remult/server-postgres": [
+        "../radweb/projects/radweb-server-postgres"
       ],
       "*": [
         "node_modules/*"
