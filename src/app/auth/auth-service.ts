@@ -4,7 +4,7 @@ import { DialogService } from "../select-popup/dialog";
 
 import { Helpers } from "../helpers/helpers";
 
-import { ServerFunction, UserInfo, JwtSessionManager, RouteHelperService } from '@remult/core';
+import { ServerFunction, UserInfo, JwtSessionManager, RouteHelperService, DataApiRequest } from '@remult/core';
 import { Context } from '@remult/core';
 import { LoginResponse } from "./login-response";
 import { Roles } from "./roles";
@@ -38,7 +38,7 @@ export class AuthService {
                 authToken: Helpers.helper.createSecuredTokenBasedOn({
                     id: h.id.value,
                     name: h.name.value,
-                    roles:[]
+                    roles: [getOrgRole(context)]
                 } as UserInfo),
                 requirePassword: false
             } as LoginResponse
@@ -96,7 +96,7 @@ export class AuthService {
                 result = {
 
                     id: h.id.value,
-                    roles: [],
+                    roles: [getOrgRole(context)],
                     name: h.name.value
                 };
                 if (h.realStoredPassword.value.length == 0 && h.admin.value) {
@@ -126,4 +126,15 @@ export class AuthService {
     }
 
 
+}
+
+export function getOrganizationFromContext(y: Context) {
+    let host = y.getHost();
+    let cookie = y.getCookie('org');
+    if (cookie)
+        return cookie;
+    return host.split('.')[0];
+}
+export function getOrgRole(y:Context){
+    return 'org:'+getOrganizationFromContext(y);
 }

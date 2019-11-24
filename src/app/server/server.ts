@@ -2,9 +2,9 @@ import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModu
 let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
 import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
-import { ExpressBridge, JWTCookieAuthorizationHelper } from '@remult/server';
+import { ExpressBridge, JWTCookieAuthorizationHelper, ExpressRequestBridgeToDataApiRequest } from '@remult/server';
 import * as fs from 'fs';
-import { serverInit } from './serverInit';
+import { serverInit, validOrganization } from './serverInit';
 import { ServerEvents } from './server-events';
 import { Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -14,6 +14,8 @@ import { ServerContext, ActualDirectSQL, DateColumn } from '@remult/core';
 import { Helpers } from '../helpers/helpers';
 import { FamilyDeliveriesStats } from "../delivery-history/delivery-history.component";
 import { SqlBuilder } from "../model-shared/types";
+import { getOrgRole } from '../auth/auth-service';
+import { PostgresDataProvider } from '@remult/server-postgres';
 
 
 serverInit().then(async (dataSource) => {
@@ -30,19 +32,40 @@ serverInit().then(async (dataSource) => {
         app,
         dataSource, process.env.DISABLE_HTTPS == "true");
     Helpers.helper = new JWTCookieAuthorizationHelper(eb, process.env.TOKEN_SIGN_KEY);
-    let context = new ServerContext();
-    context.setDataProvider(dataSource);
-    app.use('/assets/apple-touch-icon.png', async (req, res) => {
+    eb.addRequestProcessor(req => {
+        if (req.user) {
+            let context = new ServerContext();
+            context.setReq(req);
+            if (!context.isAllowed(getOrgRole(context)))
+                req.user = undefined;
+        }
+    });
+    function getContext(req: express.Request, sendDs?: (ds: PostgresDataProvider) => void) {
+        //@ts-ignore
+        let r = new ExpressRequestBridgeToDataApiRequest(req);
+        let context = new ServerContext();
+        context.setReq(r);
+        let ds = dataSource(context);
+        context.setDataProvider(ds);
+        if (sendDs)
+            sendDs(ds);
+        return context;
+    }
 
-        let imageBase = (await ApplicationImages.ApplicationImages.getAsync(context)).base64PhoneHomeImage.value;
-        res.contentType('png');
-        if (imageBase) {
-            try {
+    app.use('/assets/apple-touch-icon.png', async (req, res) => {
+        try {
+            let context = getContext(req);
+
+            let imageBase = (await ApplicationImages.ApplicationImages.getAsync(context)).base64PhoneHomeImage.value;
+            res.contentType('png');
+            if (imageBase) {
+
                 res.send(Buffer.from(imageBase, 'base64'));
                 return;
+
             }
-            catch (err) {
-            }
+        }
+        catch (err) {
         }
         try {
             res.send(fs.readFileSync('dist/assets/apple-touch-icon.png'));
@@ -52,15 +75,19 @@ serverInit().then(async (dataSource) => {
         }
     });
     app.use('/favicon.ico', async (req, res) => {
-        res.contentType('ico');
-        let imageBase = (await ApplicationImages.ApplicationImages.getAsync(context)).base64Icon.value;
-        if (imageBase) {
-            try {
+        try {
+            let context = getContext(req);
+            res.contentType('ico');
+
+            let imageBase = (await ApplicationImages.ApplicationImages.getAsync(context)).base64Icon.value;
+            if (imageBase) {
+
                 res.send(Buffer.from(imageBase, 'base64'));
                 return;
+
             }
-            catch (err) { }
         }
+        catch (err) { }
         try {
             res.send(fs.readFileSync('dist/favicon.ico'));
         }
@@ -69,12 +96,13 @@ serverInit().then(async (dataSource) => {
             res.send(err);
         }
     });
-    async function sendIndex(res: express.Response) {
+    async function sendIndex(res: express.Response, req: express.Request) {
+        let context = getContext(req);
         const index = 'dist/index.html';
 
         if (fs.existsSync(index)) {
-            let x = (await ApplicationSettings.getAsync(context)).organisationName.value;
-
+            let x = '';
+            x = (await ApplicationSettings.getAsync(context)).organisationName.value;
             res.send(fs.readFileSync(index).toString().replace('!TITLE!', x));
         }
         else {
@@ -87,8 +115,9 @@ serverInit().then(async (dataSource) => {
             res.sendStatus(404);
             return;
         }
-
-        var dsql = dataSource.getDirectSql();
+        let ds: PostgresDataProvider;
+        let context = getContext(req, x => ds = x);
+        var dsql = ds.getDirectSql();
         var fromDate = DateColumn.stringToDate(req.query["fromdate"]);
         var toDate = DateColumn.stringToDate(req.query["todate"]);
         if (!fromDate)
@@ -134,16 +163,16 @@ serverInit().then(async (dataSource) => {
 
     app.get('', (req, res) => {
 
-        sendIndex(res);
+        sendIndex(res, req);
     });
     app.get('/index.html', (req, res) => {
 
-        sendIndex(res);
+        sendIndex(res, req);
     });
     app.use(express.static('dist'));
 
     app.use('/*', async (req, res) => {
-        await sendIndex(res);
+        await sendIndex(res, req);
     });
     let port = process.env.PORT || 3000;
     app.listen(port);
@@ -158,3 +187,4 @@ export interface monitorResult {
     onTheWay: number;
     helpers: number;
 }
+
