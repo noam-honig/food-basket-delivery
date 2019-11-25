@@ -1,32 +1,18 @@
-//import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModuleLoader';
-//let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
-
-import { readFileSync } from "fs";
-import { ColumnHashSet } from '@remult/core';
-
-import { GetGeoInformation } from "../shared/googleApiHelpers";
-
-import { foreachEntityItem, foreachSync } from "../shared/utils";
-
-import { serverInit, PostgresSchemaWrapper, verifySchemaExistance } from "./serverInit";
-
-
-import { Families, parseAddress } from "../families/families";
-import { ServerContext, allEntities } from '@remult/core';
-import { Helpers } from "../helpers/helpers";
-import { isString } from "util";
-import { FamilySources } from "../families/FamilySources";
-import { ApplicationSettings } from "../manage/ApplicationSettings";
-import { BasketType } from "../families/BasketType";
-import { DeliveryStatus } from "../families/DeliveryStatus";
+import { Response } from "express";
+import { ServerContext, allEntities } from "@remult/core";
 import { Pool } from "pg";
 import { PostgresDataProvider, PostgrestSchemaBuilder } from "@remult/server-postgres";
+import { verifySchemaExistance, PostgresSchemaWrapper } from "./serverInit";
+import { Families } from "../families/families";
+import { Sites } from "../sites/sites";
 
-
-let match = 0;
-export async function DoIt() {
+export async function dataMigration(res: Response) {
     try {
-        await serverInit();
+        let schema = process.env.MIGRATION_SCHEMA;
+        if (!schema || schema.length == 0 || schema == Sites.guestSchema) {
+            res.send("invalid schema");
+            return;
+        }
         let source = new ServerContext();
 
         {
@@ -34,19 +20,20 @@ export async function DoIt() {
                 connectionString: process.env.MIGRATION_SOURCE_DATABASE_URL,
                 ssl: true
             });
-            let schema = "test"; 
+
             let targetPool = new Pool({
                 connectionString: process.env.DATABASE_URL,
                 ssl: true
             });
             source.setDataProvider(new PostgresDataProvider(sourcePool));
-            console.log('123');
-           // debugger;
+
+            // debugger;
             //return;
             verifySchemaExistance(targetPool, schema);
             var w = new PostgresSchemaWrapper(targetPool, schema);
             let builder = new PostgrestSchemaBuilder(w, schema);
             var psw = new PostgresDataProvider(w);
+            let r = "";
             await psw.doInTransaction(async tdp => {
                 let target = new ServerContext();
                 target.setDataProvider(tdp);
@@ -58,6 +45,7 @@ export async function DoIt() {
 
                         let rows = await source.for(entity).find();
                         console.log(x.__getDbName() + ": " + rows.length);
+                        r += x.__getDbName() + ": " + rows.length + "\r\n";
                         for (const r of rows) {
                             let tr = target.for(entity).create();
                             for (const col of r.__iterateColumns()) {
@@ -71,18 +59,14 @@ export async function DoIt() {
                     }
                 }
             });
+            res.send(r);
 
         }
 
-
-
-
-        //   await ImportFromExcel();
-    }
-    catch (err) {
-        console.error(err);
     }
 
+
+    catch (error) {
+        res.send("error:" + JSON.stringify(error));
+    }
 }
-DoIt();
-

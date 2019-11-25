@@ -17,6 +17,7 @@ import { SqlBuilder } from "../model-shared/types";
 
 import { PostgresDataProvider } from '@remult/server-postgres';
 import { Sites } from '../sites/sites';
+import { dataMigration } from "./dataMigration";
 
 
 serverInit().then(async (dataSource) => {
@@ -37,6 +38,9 @@ serverInit().then(async (dataSource) => {
 
         Families.SendMessageToBrowsers = (x, c) => serverEvents.SendMessage(x, c);
     }
+    app.get('/data-migration', async(req, res) => {
+        await dataMigration(res);
+    });
 
     let eb = new ExpressBridge(
         //@ts-ignore
@@ -117,7 +121,7 @@ serverInit().then(async (dataSource) => {
         let context = getContext(req);
         let org = Sites.getOrganizationFromContext(context);
         if (!Sites.isValidOrganization(org)) {
-            res.redirect('/'+Sites.guestSchema+'/');
+            res.redirect('/' + Sites.guestSchema + '/');
             return;
         }
         const index = 'dist/index.html';

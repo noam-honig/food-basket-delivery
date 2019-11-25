@@ -252,6 +252,13 @@
                 "$tsc"
             ],
             "group": "build"
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-salmaz",
+            "problemMatcher": [
+                "$tsc"
+            ]
         }
     ]
 }
