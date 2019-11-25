@@ -1,5 +1,5 @@
-import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModuleLoader';
-let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
+//import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModuleLoader';
+//let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
 import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
 import { ExpressBridge, JWTCookieAuthorizationHelper, ExpressRequestBridgeToDataApiRequest, registerEntitiesOnServer, registerActionsOnServer } from '@remult/server';
@@ -44,7 +44,7 @@ serverInit().then(async (dataSource) => {
         dataSource, process.env.DISABLE_HTTPS == "true", !Sites.multipleSites);
     if (Sites.multipleSites)
         for (const schema of Sites.schemas) {
-            let area = eb.addArea('/' + schema + '/api', req => {
+            let area = eb.addArea('/' + schema + '/api', async req => {
                 if (req.user) {
                     let context = new ServerContext();
                     context.setReq(req);
