@@ -17,8 +17,23 @@
     "lib": [
       "es2017",
       "dom"
-    ]
-  },"files": [
+    ],
+    "paths": {
+      "@remult/core": [
+        "../radweb/projects/radweb"
+      ],
+      "@remult/server": [
+        "../radweb/projects/radweb-server"
+      ],
+      "@remult/server-postgres": [
+        "../radweb/projects/radweb-server-postgres"
+      ],
+      "*": [
+        "node_modules/*"
+      ]
+    }
+  },
+  "files": [
     "./src/app/server/server.ts",
     "./src/app/server/doSomething.ts"
   ]

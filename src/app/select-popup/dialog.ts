@@ -1,6 +1,6 @@
 import { Injectable, NgZone } from "@angular/core";
 import { MatDialog, MatSnackBar } from "@angular/material";
-import { Entity, IDataSettings } from '@remult/core';
+import { Entity, IDataSettings, Context } from '@remult/core';
 import { SelectPopupComponent, SelectComponentInfo } from "./select-popup.component";
 import { YesNoQuestionComponentData, YesNoQuestionComponent } from "./yes-no-question/yes-no-question.component";
 import { InputAreaComponentData, InputAreaComponent } from "./input-area/input-area.component";
@@ -59,7 +59,7 @@ export class DialogService {
             let EventSource: any = window['EventSource'];
             if (enable && typeof (EventSource) !== "undefined") {
                 this.zone.run(() => {
-                    var source = new EventSource(environment.serverUrl + 'stream', { withCredentials: true });
+                    var source = new EventSource(Context.apiBaseUrl+'/' + 'stream', { withCredentials: true });
                     if (this.eventSource) {
                         this.eventSource.close();
                         this.eventSource = undefined;

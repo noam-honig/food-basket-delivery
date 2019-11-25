@@ -1,15 +1,25 @@
-<div class="myDiv">
+<div *ngIf="isguest">
+<h1>
+  מערכת חלוקת סלי מזון
+</h1>
+ הכתובת איתה הגעתם אינה מכילה את פרטי הארגון בו אתם מתנדבים - אנא פנו למי ששלך לכם את הכתובת הזו ובקשו כתובת מעודכנת.
+
+<br/>
+<br/>
+למידע נוסף על מערכת חלוקת סלי מזון, אנא גשו ל<a href="https://www.facebook.com/foodbasketdelivery">דף הפייסבוק שלנו</a>
+
+</div>
+<div class="myDiv" *ngIf="!isguest">
   <div style="width:100%;text-align: center">
-    <img src="{{getLogo()}}"
-    />
+    <img src="{{getLogo()}}" />
   </div>
   <div style="width:100%;text-align: center">
     {{orgName()}}
-    
+
   </div>
-    <h1>
-      כניסה
-    </h1>
+  <h1>
+    כניסה
+  </h1>
   <mat-form-field class="example-full-width">
     <input matInput placeholder="טלפון" [(ngModel)]="user" type="tel">
   </mat-form-field>
@@ -24,8 +34,8 @@
     כניסה
   </button>
 
-  <br/>
-  <br/> אם אינך רשומה, אנא הרשמי כאן
+  <br />
+  <br /> אם אינך רשומה, אנא הרשמי כאן
   <button mat-raised-button color="accent" (click)="register()">
     הרשמה
   </button>

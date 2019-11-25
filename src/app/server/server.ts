@@ -1,8 +1,8 @@
-//import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModuleLoader';
-//let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
+import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModuleLoader';
+let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
 import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
-import { ExpressBridge, JWTCookieAuthorizationHelper, ExpressRequestBridgeToDataApiRequest } from '@remult/server';
+import { ExpressBridge, JWTCookieAuthorizationHelper, ExpressRequestBridgeToDataApiRequest, registerEntitiesOnServer, registerActionsOnServer } from '@remult/server';
 import * as fs from 'fs';
 import { serverInit } from './serverInit';
 import { ServerEvents } from './server-events';
@@ -14,8 +14,9 @@ import { ServerContext, ActualDirectSQL, DateColumn } from '@remult/core';
 import { Helpers } from '../helpers/helpers';
 import { FamilyDeliveriesStats } from "../delivery-history/delivery-history.component";
 import { SqlBuilder } from "../model-shared/types";
-import { getOrgRole } from '../auth/auth-service';
+
 import { PostgresDataProvider } from '@remult/server-postgres';
+import { Sites } from '../sites/sites';
 
 
 serverInit().then(async (dataSource) => {
@@ -24,22 +25,38 @@ serverInit().then(async (dataSource) => {
     let app = express();
     if (!process.env.DISABLE_SERVER_EVENTS) {
         let serverEvents = new ServerEvents(app);
-        Families.SendMessageToBrowsers = (x,c) => serverEvents.SendMessage(x,c);
+        if (Sites.multipleSites) {
+            for (const s of Sites.schemas) {
+                serverEvents.registerPath('/' + s + '/api');
+            }
+        }
+        else {
+            serverEvents.registerPath('/api');
+        }
+
+
+        Families.SendMessageToBrowsers = (x, c) => serverEvents.SendMessage(x, c);
     }
 
     let eb = new ExpressBridge(
         //@ts-ignore
         app,
-        dataSource, process.env.DISABLE_HTTPS == "true");
-    Helpers.helper = new JWTCookieAuthorizationHelper(eb, process.env.TOKEN_SIGN_KEY);
-    eb.addRequestProcessor(req => {
-        if (req.user) {
-            let context = new ServerContext();
-            context.setReq(req);
-            if (!context.isAllowed(getOrgRole(context)))
-                req.user = undefined;
+        dataSource, process.env.DISABLE_HTTPS == "true", !Sites.multipleSites);
+    if (Sites.multipleSites)
+        for (const schema of Sites.schemas) {
+            let area = eb.addArea('/' + schema + '/api', req => {
+                if (req.user) {
+                    let context = new ServerContext();
+                    context.setReq(req);
+                    if (!context.isAllowed(Sites.getOrgRole(context)))
+                        req.user = undefined;
+                }
+            });
+            registerActionsOnServer(area, dataSource);
+            registerEntitiesOnServer(area, dataSource);
         }
-    });
+    Helpers.helper = new JWTCookieAuthorizationHelper(eb, process.env.TOKEN_SIGN_KEY);
+
     function getContext(req: express.Request, sendDs?: (ds: PostgresDataProvider) => void) {
         //@ts-ignore
         let r = new ExpressRequestBridgeToDataApiRequest(req);
@@ -98,12 +115,17 @@ serverInit().then(async (dataSource) => {
     });
     async function sendIndex(res: express.Response, req: express.Request) {
         let context = getContext(req);
+        let org = Sites.getOrganizationFromContext(context);
+        if (!Sites.isValidOrganization(org)) {
+            res.redirect('/'+Sites.guestSchema+'/');
+            return;
+        }
         const index = 'dist/index.html';
 
         if (fs.existsSync(index)) {
             let x = '';
             x = (await ApplicationSettings.getAsync(context)).organisationName.value;
-            res.send(fs.readFileSync(index).toString().replace('!TITLE!', x));
+            res.send(fs.readFileSync(index).toString().replace('!TITLE!', x).replace("/*!SITE!*/", "multiSite=" + Sites.multipleSites));
         }
         else {
             res.send('No Result' + fs.realpathSync(index));

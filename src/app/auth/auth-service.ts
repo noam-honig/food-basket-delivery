@@ -11,6 +11,7 @@ import { Roles } from "./roles";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 import { MyFamiliesComponent } from "../my-families/my-families.component";
 import { LoginComponent } from "../users/login/login.component";
+import { Sites } from "../sites/sites";
 
 
 @Injectable()
@@ -19,7 +20,7 @@ export class AuthService {
     async loginFromSms(key: string) {
         var response = await AuthService.loginFromSms(key);
         if (response.valid) {
-            this.tokenHelper.setToken(response.authToken, false);
+            this.setToken(response.authToken, false);
             this.dialog.analytics('login from sms');
             this.routeHelper.navigateToComponent(MyFamiliesComponent);
         }
@@ -27,6 +28,10 @@ export class AuthService {
             this.tokenHelper.signout();
 
 
+    }
+    private setToken(token: string, remember: boolean) {
+        let org = Sites.getOrganizationFromContext(this.context);
+        this.tokenHelper.setToken(token, remember, '/' + org);
     }
     @ServerFunction({ allowed: true })
     static async loginFromSms(key: string, context?: Context) {
@@ -38,7 +43,7 @@ export class AuthService {
                 authToken: Helpers.helper.createSecuredTokenBasedOn({
                     id: h.id.value,
                     name: h.name.value,
-                    roles: [getOrgRole(context)]
+                    roles: [Sites.getOrgRole(context)]
                 } as UserInfo),
                 requirePassword: false
             } as LoginResponse
@@ -63,7 +68,7 @@ export class AuthService {
 
         let loginResponse = await AuthService.login(user, password);
         if (loginResponse.valid) {
-            this.tokenHelper.setToken(loginResponse.authToken, remember);
+            this.setToken(loginResponse.authToken, remember);
             this.dialog.analytics('login ' + (this.context.isAllowed(Roles.admin) ? 'delivery admin' : ''));
             if (loginResponse.requirePassword) {
                 this.dialog.YesNoQuestion('שלום ' + this.context.user.name + ' את מוגדרת כמנהלת אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועברת למסך עדכון פרטים לעדכון סיסמה.', () => {
@@ -96,7 +101,7 @@ export class AuthService {
                 result = {
 
                     id: h.id.value,
-                    roles: [getOrgRole(context)],
+                    roles: [Sites.getOrgRole(context)],
                     name: h.name.value
                 };
                 if (h.realStoredPassword.value.length == 0 && h.admin.value) {
@@ -126,15 +131,4 @@ export class AuthService {
     }
 
 
-}
-
-export function getOrganizationFromContext(y: Context) {
-    let host = y.getHost();
-    let cookie = y.getCookie('org');
-    if (cookie)
-        return cookie;
-    return host.split('.')[0];
-}
-export function getOrgRole(y:Context){
-    return 'org:'+getOrganizationFromContext(y);
 }

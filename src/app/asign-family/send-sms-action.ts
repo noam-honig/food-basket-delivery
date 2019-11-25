@@ -4,6 +4,7 @@ import { Helpers } from '../helpers/helpers';
 import * as fetch from 'node-fetch';
 import { Context, ServerContext } from '@remult/core';
 import { Roles } from "../auth/roles";
+import { Sites } from '../sites/sites';
 
 
 
@@ -37,6 +38,10 @@ export class SendSmsAction {
         if (!origin) {
             throw 'Couldnt determine origin for sms';
         }
+        let org = Sites.getOrganizationFromContext(ds);
+        if (org.length > 0) {
+            origin = origin + '/' + org;
+        }
         let helper = await ds.for(Helpers).findFirst(h => h.id.isEqualTo(id));
         if (helper) {
             if (helper.veryUrlKeyAndReturnTrueIfSaveRequired()) {
@@ -46,7 +51,7 @@ export class SendSmsAction {
             let settings = await ApplicationSettings.getAsync(ds);
             if (reminder) {
                 message = settings.reminderSmsText.value;
-                
+
             }
             else {
 
@@ -64,7 +69,7 @@ export class SendSmsAction {
 
             then(helper.phone.value, message, sender);
             await helper.save();
-var x = 1+1;
+            var x = 1 + 1;
 
         }
     }

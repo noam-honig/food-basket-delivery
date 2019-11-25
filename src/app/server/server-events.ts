@@ -2,7 +2,8 @@ import { Express, Response } from 'express';
 import { ServerEventAuthorizeAction } from './server-event-authorize-action';
 import { Context, ServerContext } from '@remult/core';
 import { ExpressRequestBridgeToDataApiRequest } from '@remult/server';
-import { getOrganizationFromContext } from '../auth/auth-service';
+import { Sites } from '../sites/sites';
+
 
 
 
@@ -16,13 +17,18 @@ ServerEventAuthorizeAction.authorize = key => {
 export class ServerEvents {
     sites = new Map<string, Response[]>();
 
-    constructor(app: Express) {
-        app.get('/stream', (req, res) => {
+    constructor(private app: Express) {
+       
+    }
+    registerPath(path:string){
+        let p = path+'/stream';
+        console.log(p);
+        this.app.get(p, (req, res) => {
             //@ts-ignore
             let r = new ExpressRequestBridgeToDataApiRequest(req);
             let context = new ServerContext();
             context.setReq(r);
-            let org = getOrganizationFromContext(context);
+            let org = Sites.getOrganizationFromContext(context);
             res.writeHead(200, {
                 "Access-Control-Allow-Origin": req.header('origin') ? req.header('origin') : '',
                 "Access-Control-Allow-Credentials": "true",
@@ -58,7 +64,8 @@ export class ServerEvents {
     }
     SendMessage = (x: string, context: Context) => {
         setTimeout(() => {
-            let y = this.sites.get(getOrganizationFromContext(context));
+            let org = Sites.getOrganizationFromContext(context);
+            let y = this.sites.get(org);
             if (y)
                 y.forEach(y => y.write("data:" + x + "\n\n"));
         }, 250);

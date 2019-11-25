@@ -1,13 +1,15 @@
+
+
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { RemultModule } from '@remult/core'; 
+import { RemultModule, Context, JwtSessionManager } from '@remult/core';
 import { MaterialModule } from './shared/material.module';
 import { ChartsModule } from 'ng2-charts';
 import { FormsModule } from '@angular/forms';
-import {NgxPaginationModule} from 'ngx-pagination';
+import { NgxPaginationModule } from 'ngx-pagination';
 import { HelpersComponent } from './helpers/helpers.component';
 import { SelectPopupComponent } from './select-popup/select-popup.component';
 import { DialogService } from './select-popup/dialog';
@@ -61,6 +63,13 @@ import { SelectCompanyComponent } from './select-company/select-company.componen
 import { HelperAssignmentComponent } from './helper-assignment/helper-assignment.component';
 import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';
 import { PlaybackComponent } from './playback/playback.component';
+import { APP_BASE_HREF } from '@angular/common';
+import { environment } from '../environments/environment';
+import { Sites } from './sites/sites';
+import { ApplicationSettings } from './manage/ApplicationSettings';
+
+var site = Sites.initOnBrowserAndReturnAngularBaseHref();
+
 
 
 
@@ -85,7 +94,7 @@ import { PlaybackComponent } from './playback/playback.component';
     SelectHelperComponent,
     LoginFromSmsComponent,
     MapComponent,
-    
+
     DeliveryFollowUpComponent,
     HelperFamiliesComponent,
     SelectFamilyComponent,
@@ -93,8 +102,8 @@ import { PlaybackComponent } from './playback/playback.component';
     NewsComponent,
     UpdateFamilyDialogComponent,
     UpdateFamilyComponent,
-    
-    
+
+
     AddressProblemComponent,
     StressTestComponent,
     SelfPickupComponent,
@@ -110,7 +119,7 @@ import { PlaybackComponent } from './playback/playback.component';
     HelperAssignmentComponent,
     ImportHelpersFromExcelComponent,
     PlaybackComponent
-    
+
   ],
   imports: [
     BrowserModule,
@@ -129,8 +138,21 @@ import { PlaybackComponent } from './playback/playback.component';
     SelectService,
     TranslatePipe,
     NewsFilterService,
-    AuthService
-    
+    AuthService,
+    {
+      provide: APP_BASE_HREF, useFactory: () => {
+        return '/' + site;
+      }
+
+    }
+    ,
+    {
+      provide: APP_INITIALIZER,
+      deps: [Context,JwtSessionManager],
+      useFactory: initApp,
+      multi: true
+    }
+
   ],
 
   bootstrap: [AppComponent],
@@ -139,9 +161,24 @@ import { PlaybackComponent } from './playback/playback.component';
     SelectPopupComponent,
     YesNoQuestionComponent,
     InputAreaComponent,
-    UpdateFamilyDialogComponent,PreviewFamilyComponent,
+    UpdateFamilyDialogComponent, PreviewFamilyComponent,
     SelectCompanyComponent,
-    QuickAddFamilyComponent,HelperAssignmentComponent,
-    UpdateCommentComponent,UpdateGroupDialogComponent]
+    QuickAddFamilyComponent, HelperAssignmentComponent,
+    UpdateCommentComponent, UpdateGroupDialogComponent]
 })
 export class AppModule { }
+
+export function initApp(context: Context,session:JwtSessionManager) {
+  return async () => {
+    session.loadSessionFromCookie();
+    console.log(context.user);
+    try {
+      let settings = await ApplicationSettings.getAsync(context);
+    }
+    catch{
+      console.error('failed to get settings');
+    }
+    return '';
+
+  };
+}

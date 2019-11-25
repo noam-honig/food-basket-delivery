@@ -10,5 +10,4 @@ if (environment.production) {
 
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));
-  document.writeln('<h1>This Is my test</h1>');
-console.log('this is my test');
+  

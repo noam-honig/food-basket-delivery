@@ -2,27 +2,19 @@
 import { Pool, QueryResult } from 'pg';
 import { config } from 'dotenv';
 import { PostgresDataProvider, PostgrestSchemaBuilder, PostgresPool, PostgresClient } from '@remult/server-postgres';
-import { foreachSync } from '../shared/utils';
-import { Families } from '../families/families';
-import { BasketType } from "../families/BasketType";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { ServerContext, allEntities, Context, DataApiRequest, SupportsDirectSql, SupportsTransaction, Entity } from '@remult/core';
+import { ServerContext,  Context, Entity } from '@remult/core';
 import '../app.module';
 
 
 import { ActualSQLServerDataProvider } from '@remult/core';
-import { ActualDirectSQL, actionInfo } from '@remult/core';
-import { FamilyDeliveryEvents } from '../delivery-events/FamilyDeliveryEvents';
-import { SqlBuilder } from '../model-shared/types';
-import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { Helpers } from '../helpers/helpers';
 import * as passwordHash from 'password-hash';
-import { FamilyDeliveriesStats } from '../delivery-history/delivery-history.component';
-import { getOrganizationFromContext } from '../auth/auth-service';
 import { initSchema } from './initSchema';
-const guestSchema = 'guest';
-let schemas = [];
+import { Sites } from '../sites/sites';
+
+
 
 export async function serverInit() {
     try {
@@ -30,9 +22,8 @@ export async function serverInit() {
         let ssl = true;
         if (process.env.DISABLE_POSTGRES_SSL)
             ssl = false;
-        let x = process.env.SCHEMAS;
-        if (x)
-            schemas = x.split(',');
+        
+        
         if (!process.env.DATABASE_URL) {
             console.error("No DATABASE_URL environment variable found, if you are developing locally, please add a '.env' with DATABASE_URL='postgres://*USERNAME*:*PASSWORD*@*HOST*:*PORT*/*DATABASE*'");
         }
@@ -52,15 +43,16 @@ export async function serverInit() {
             generateHash: p => passwordHash.generate(p),
             verify: (p, h) => passwordHash.verify(p, h)
         }
-        if (schemas.length > 0) {
+        Sites.initOnServer();
+        if (Sites.multipleSites) {
 
             {
-                await verifySchemaExistance(pool, guestSchema);
-                let adminSchemaPool = new PostgresSchemaWrapper(pool, guestSchema);
+                await verifySchemaExistance(pool, Sites.guestSchema);
+                let adminSchemaPool = new PostgresSchemaWrapper(pool,Sites. guestSchema);
                 let context = new ServerContext();
                 let dp = new PostgresDataProvider(adminSchemaPool);
                 context.setDataProvider(dp)
-                let builder = new PostgrestSchemaBuilder(adminSchemaPool, guestSchema);
+                let builder = new PostgrestSchemaBuilder(adminSchemaPool,Sites. guestSchema);
                 for (const entity of <{ new(...args: any[]): Entity<any>; }[]>[
                     ApplicationSettings,
                     ApplicationImages]) {
@@ -74,8 +66,8 @@ export async function serverInit() {
                 }
             }
 
-            for (const s of schemas) {
-                if (s.toLowerCase() == guestSchema)
+            for (const s of Sites.schemas) {
+                if (s.toLowerCase() == Sites.guestSchema)
                     throw 'admin is an ivalid schema name;'
                 await verifySchemaExistance(pool, s);
                 let schemaPool = new PostgresSchemaWrapper(pool, s);
@@ -83,8 +75,8 @@ export async function serverInit() {
                 await initSchema(schemaPool);
             }
             return (y: Context) => {
-                let org = getOrganizationFromUrl(y);
-                
+                let org = Sites.getValidSchemaFromContext(y);
+
                 return new PostgresDataProvider(new PostgresSchemaWrapper(pool, org));
             };
         }
@@ -114,12 +106,7 @@ export async function verifySchemaExistance(pool: Pool, s: string) {
     }
 }
 
-export function getOrganizationFromUrl(y: Context) {
-    let org = getOrganizationFromContext(y);
-    if (schemas.indexOf(org) < 0)
-        return guestSchema;
-    return org;
-}
+
 
 export class PostgresSchemaWrapper implements PostgresPool {
     constructor(private pool: Pool, private schema: string) {

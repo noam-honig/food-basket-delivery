@@ -169,7 +169,7 @@ export class AsignFamilyComponent implements OnInit {
 
     }
     smsSent() {
-        this.dialog.Info("הודעת SMS נשלחה ל" + this.name);
+        this.dialog.Info("הודעת SMS נשלחה ל" + this.name.value);
         this.clearHelperInfo();
     }
 

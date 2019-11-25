@@ -9,6 +9,7 @@ import { ApplicationSettings } from '../../manage/ApplicationSettings';
 import { Context, RouteHelperService } from '@remult/core';
 import { RegisterComponent } from '../register/register.component';
 import { AdminGuard } from '../../auth/roles';
+import { Sites } from '../../sites/sites';
 
 @Component({
   selector: 'app-login',
@@ -23,6 +24,7 @@ export class LoginComponent implements OnInit {
     private router: RouteHelperService,
     private context: Context
   ) { }
+  isguest = Sites.getOrganizationFromContext(this.context) == Sites.guestSchema;
   user: string;
   password: string;
   remember: boolean;
@@ -39,6 +41,6 @@ export class LoginComponent implements OnInit {
     this.router.navigateToComponent(RegisterComponent);
   }
   orgName() {
-  return   ApplicationSettings.get(this.context).organisationName.value;
+    return ApplicationSettings.get(this.context).organisationName.value;
   }
 }
