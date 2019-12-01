@@ -9,6 +9,7 @@ import { Helpers } from "../helpers/helpers";
 
 export async function dataMigration(res: Response) {
     try {
+        console.time('data-migration');
         let schema = process.env.MIGRATION_SCHEMA;
         if (!schema || schema.length == 0 || schema == Sites.guestSchema) {
             res.send("invalid schema");
@@ -64,6 +65,8 @@ export async function dataMigration(res: Response) {
                     }
                 }
             });
+            console.log('done');
+            console.timeEnd('data-migration');
             res.send(r);
 
         }
