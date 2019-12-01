@@ -11,7 +11,7 @@ import { MatDialog } from "@angular/material";
 import { SelectCompanyComponent } from "../select-company/select-company.component";
 
 
-export abstract class HelpersBase extends IdEntity  {
+export abstract class HelpersBase extends IdEntity {
 
     constructor(options?: EntityOptions | string) {
 
@@ -45,13 +45,15 @@ export class Helpers extends HelpersBase {
 
     constructor(private context: Context) {
 
-        super( {
+        super({
             name: "Helpers",
             allowApiRead: true,
             allowApiDelete: context.isSignedIn(),
             allowApiUpdate: context.isSignedIn(),
             allowApiInsert: true,
             onSavingRow: async () => {
+                if (this._disableOnSavingRow) return;
+
                 if (context.onServer) {
                     if (this.password.value && this.password.value != this.password.originalValue && this.password.value != Helpers.emptyPassword) {
                         this.realStoredPassword.value = Helpers.passwordHelper.generateHash(this.password.value);
@@ -60,7 +62,6 @@ export class Helpers extends HelpersBase {
 
                         this.admin.value = true;
                     }
-
                     await checkForDuplicateValue(this, this.phone);
                     if (this.isNew())
                         this.createDate.value = new Date();
@@ -75,6 +76,7 @@ export class Helpers extends HelpersBase {
             }
         });
     }
+    _disableOnSavingRow = false;
     public static emptyPassword = 'password';
 
     phone = new PhoneColumn({ caption: "טלפון", inputType: 'tel' });

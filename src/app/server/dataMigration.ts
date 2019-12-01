@@ -5,6 +5,7 @@ import { PostgresDataProvider, PostgrestSchemaBuilder } from "@remult/server-pos
 import { verifySchemaExistance, PostgresSchemaWrapper } from "./serverInit";
 import { Families } from "../families/families";
 import { Sites } from "../sites/sites";
+import { Helpers } from "../helpers/helpers";
 
 export async function dataMigration(res: Response) {
     try {
@@ -55,6 +56,8 @@ export async function dataMigration(res: Response) {
                             }
                             if (tr instanceof Families)
                                 tr.disableOnSavingRow = true;
+                            if (tr instanceof Helpers)
+                                tr._disableOnSavingRow = true;
                             await tr.save();
 
                         }
