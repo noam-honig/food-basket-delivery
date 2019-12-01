@@ -1,5 +1,5 @@
 
-import { PostgresDataProvider,  PostgresPool } from '@remult/server-postgres';
+import { PostgresDataProvider, PostgresPool } from '@remult/server-postgres';
 import { Families } from '../families/families';
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -13,8 +13,9 @@ import { SqlBuilder } from '../model-shared/types';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { Helpers } from '../helpers/helpers';
 import { FamilyDeliveriesStats } from '../delivery-history/delivery-history.component';
+import { Sites } from '../sites/sites';
 
-export async function initSchema(pool: PostgresPool) {
+export async function initSchema(pool: PostgresPool, org: string) {
 
 
     var dataSource = new PostgresDataProvider(pool);
@@ -195,6 +196,13 @@ export async function initSchema(pool: PostgresPool) {
     if (settings.dataStructureVersion.value == 7) {
         settings.usingSelfPickupModule.value = true;
         settings.dataStructureVersion.value = 8;
+        await settings.save();
+    }
+    if (settings.dataStructureVersion.value == 8) {
+        if (org && settings.logoUrl.value == '/assets/apple-touch-icon.png') {
+            settings.logoUrl.value = '/' + org + settings.logoUrl.value;
+        }
+        settings.dataStructureVersion.value = 9;
         await settings.save();
     }
 }

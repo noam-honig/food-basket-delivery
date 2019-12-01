@@ -38,7 +38,7 @@ serverInit().then(async (dataSource) => {
 
         Families.SendMessageToBrowsers = (x, c) => serverEvents.SendMessage(x, c);
     }
-    app.get('/data-migration', async(req, res) => {
+    app.get('/data-migration', async (req, res) => {
         await dataMigration(res);
     });
 
@@ -46,19 +46,6 @@ serverInit().then(async (dataSource) => {
         //@ts-ignore
         app,
         dataSource, process.env.DISABLE_HTTPS == "true", !Sites.multipleSites);
-    if (Sites.multipleSites)
-        for (const schema of Sites.schemas) {
-            let area = eb.addArea('/' + schema + '/api', async req => {
-                if (req.user) {
-                    let context = new ServerContext();
-                    context.setReq(req);
-                    if (!context.isAllowed(Sites.getOrgRole(context)))
-                        req.user = undefined;
-                }
-            });
-            registerActionsOnServer(area, dataSource);
-            registerEntitiesOnServer(area, dataSource);
-        }
     Helpers.helper = new JWTCookieAuthorizationHelper(eb, process.env.TOKEN_SIGN_KEY);
 
     function getContext(req: express.Request, sendDs?: (ds: PostgresDataProvider) => void) {
@@ -72,51 +59,23 @@ serverInit().then(async (dataSource) => {
             sendDs(ds);
         return context;
     }
-
-    app.use('/assets/apple-touch-icon.png', async (req, res) => {
-        try {
-            let context = getContext(req);
-
-            let imageBase = (await ApplicationImages.ApplicationImages.getAsync(context)).base64PhoneHomeImage.value;
-            res.contentType('png');
-            if (imageBase) {
-
-                res.send(Buffer.from(imageBase, 'base64'));
-                return;
-
-            }
+    if (Sites.multipleSites)
+        for (const schema of Sites.schemas) {
+            let area = eb.addArea('/' + schema + '/api', async req => {
+                if (req.user) {
+                    let context = new ServerContext();
+                    context.setReq(req);
+                    if (!context.isAllowed(Sites.getOrgRole(context)))
+                        req.user = undefined;
+                }
+            });
+            registerActionsOnServer(area, dataSource);
+            registerEntitiesOnServer(area, dataSource);
+            registerImageUrls(app, getContext, '/' + schema);
         }
-        catch (err) {
-        }
-        try {
-            res.send(fs.readFileSync('dist/assets/apple-touch-icon.png'));
-        } catch (err) {
-            res.statusCode = 404;
-            res.send(err);
-        }
-    });
-    app.use('/favicon.ico', async (req, res) => {
-        try {
-            let context = getContext(req);
-            res.contentType('ico');
-
-            let imageBase = (await ApplicationImages.ApplicationImages.getAsync(context)).base64Icon.value;
-            if (imageBase) {
-
-                res.send(Buffer.from(imageBase, 'base64'));
-                return;
-
-            }
-        }
-        catch (err) { }
-        try {
-            res.send(fs.readFileSync('dist/favicon.ico'));
-        }
-        catch (err) {
-            res.statusCode = 404;
-            res.send(err);
-        }
-    });
+    else {
+        registerImageUrls(app, getContext, '');
+    }
     async function sendIndex(res: express.Response, req: express.Request) {
         let context = getContext(req);
         let org = Sites.getOrganizationFromContext(context);
@@ -129,7 +88,13 @@ serverInit().then(async (dataSource) => {
         if (fs.existsSync(index)) {
             let x = '';
             x = (await ApplicationSettings.getAsync(context)).organisationName.value;
-            res.send(fs.readFileSync(index).toString().replace('!TITLE!', x).replace("/*!SITE!*/", "multiSite=" + Sites.multipleSites));
+            let result = fs.readFileSync(index).toString().replace('!TITLE!', x).replace("/*!SITE!*/", "multiSite=" + Sites.multipleSites);
+            if (Sites.multipleSites)
+            {
+                result = result.replace('"favicon.ico','"/'+org+'/favicon.ico')
+                .replace('"/assets/apple-touch-icon.png"','"/'+org+'/assets/apple-touch-icon.png"');
+            }
+            res.send(result);
         }
         else {
             res.send('No Result' + fs.realpathSync(index));
@@ -212,5 +177,47 @@ export interface monitorResult {
     deliveries: number;
     onTheWay: number;
     helpers: number;
+}
+
+function registerImageUrls(app, getContext: (req: express.Request, sendDs?: (ds: PostgresDataProvider) => void) => ServerContext, sitePrefix: string) {
+    app.use(sitePrefix + '/assets/apple-touch-icon.png', async (req, res) => {
+        try {
+            let context = getContext(req);
+            let imageBase = (await ApplicationImages.ApplicationImages.getAsync(context)).base64PhoneHomeImage.value;
+            res.contentType('png');
+            if (imageBase) {
+                res.send(Buffer.from(imageBase, 'base64'));
+                return;
+            }
+        }
+        catch (err) {
+        }
+        try {
+            res.send(fs.readFileSync('dist/assets/apple-touch-icon.png'));
+        }
+        catch (err) {
+            res.statusCode = 404;
+            res.send(err);
+        }
+    });
+    app.use(sitePrefix + '/favicon.ico', async (req, res) => {
+        try {
+            let context = getContext(req);
+            res.contentType('ico');
+            let imageBase = (await ApplicationImages.ApplicationImages.getAsync(context)).base64Icon.value;
+            if (imageBase) {
+                res.send(Buffer.from(imageBase, 'base64'));
+                return;
+            }
+        }
+        catch (err) { }
+        try {
+            res.send(fs.readFileSync('dist/favicon.ico'));
+        }
+        catch (err) {
+            res.statusCode = 404;
+            res.send(err);
+        }
+    });
 }
 

@@ -72,7 +72,7 @@ export async function serverInit() {
                 await verifySchemaExistance(pool, s);
                 let schemaPool = new PostgresSchemaWrapper(pool, s);
                 await new PostgrestSchemaBuilder(schemaPool, s).verifyStructureOfAllEntities();
-                await initSchema(schemaPool);
+                await initSchema(schemaPool,s);
             }
             return (y: Context) => {
                 let org = Sites.getValidSchemaFromContext(y);
@@ -82,7 +82,7 @@ export async function serverInit() {
         }
         else {
             await new PostgrestSchemaBuilder(pool).verifyStructureOfAllEntities();
-            await initSchema(pool);
+            await initSchema(pool,'');
             return y => new PostgresDataProvider(pool);
         }
 
