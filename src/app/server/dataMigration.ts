@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { ServerContext, allEntities } from "@remult/core";
+import { ServerContext, allEntities, IdEntity } from "@remult/core";
 import { Pool } from "pg";
 import { PostgresDataProvider, PostgrestSchemaBuilder } from "@remult/server-postgres";
 import { verifySchemaExistance, PostgresSchemaWrapper } from "./serverInit";
@@ -48,6 +48,8 @@ export async function dataMigration(res: Response) {
                         r += x.__getDbName() + ": " + rows.length + "\r\n";
                         for (const r of rows) {
                             let tr = target.for(entity).create();
+                            if (tr instanceof IdEntity)
+                                tr.setEmptyIdForNewRow();
                             for (const col of r.__iterateColumns()) {
                                 tr.__getColumn(col).value = col.value;
                             }
