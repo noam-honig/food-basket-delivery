@@ -12,6 +12,7 @@ import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 import { MyFamiliesComponent } from "../my-families/my-families.component";
 import { LoginComponent } from "../users/login/login.component";
 import { Sites } from "../sites/sites";
+import { OverviewComponent } from "../overview/overview.component";
 
 
 @Injectable()
@@ -78,6 +79,8 @@ export class AuthService {
             else {
                 if (this.context.isAllowed(Roles.admin))
                     this.routeHelper.navigateToComponent(AsignFamilyComponent);
+                if (this.context.isAllowed(Roles.overview))
+                    this.routeHelper.navigateToComponent(OverviewComponent);
                 else
                     this.routeHelper.navigateToComponent(MyFamiliesComponent);
             }
@@ -108,8 +111,12 @@ export class AuthService {
                     requirePassword = true;
                 }
                 else {
-                    if (h.admin.value)
-                        result.roles.push(Roles.admin);
+                    if (h.admin.value) {
+                        if (Sites.getOrganizationFromContext(context) == Sites.guestSchema)
+                            result.roles.push(Roles.overview)
+                        else
+                            result.roles.push(Roles.admin);
+                    }
 
 
                 }

@@ -61,7 +61,7 @@ serverInit().then(async (dataSource) => {
     let redirect = process.env.REDIRECT;
     if (redirect) {
         app.use('/*', async (req, res) => {
-            let to = redirect+req.originalUrl;
+            let to = redirect + req.originalUrl;
             await res.redirect(to);
         });
     } else {
@@ -89,8 +89,8 @@ serverInit().then(async (dataSource) => {
             dataSource, process.env.DISABLE_HTTPS == "true", !Sites.multipleSites);
         Helpers.helper = new JWTCookieAuthorizationHelper(eb, process.env.TOKEN_SIGN_KEY);
 
-     
-        if (Sites.multipleSites)
+
+        if (Sites.multipleSites) {
             for (const schema of Sites.schemas) {
                 let area = eb.addArea('/' + schema + '/api', async req => {
                     if (req.user) {
@@ -104,10 +104,23 @@ serverInit().then(async (dataSource) => {
                 registerEntitiesOnServer(area, dataSource);
                 registerImageUrls(app, getContext, '/' + schema);
             }
+            {
+                let area = eb.addArea('/' + Sites.guestSchema + '/api', async req => {
+                    if (req.user) {
+                        let context = new ServerContext();
+                        context.setReq(req);
+                        if (!context.isAllowed(Sites.getOrgRole(context)))
+                            req.user = undefined;
+                    }
+                });
+                registerActionsOnServer(area, dataSource);
+                registerEntitiesOnServer(area, dataSource);
+            }
+        }
         else {
             registerImageUrls(app, getContext, '');
         }
-     
+
         app.get('/monitor-report', async (req, res) => {
             let auth = req.header('Authorization');
             if (auth != process.env.MONITOR_KEY) {

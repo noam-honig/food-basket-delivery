@@ -23,16 +23,18 @@ import { AddressProblemComponent } from './address-problem/address-problem.compo
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
-import { AdminGuard } from './auth/roles';
+import { AdminGuard, OverviewGuard } from './auth/roles';
 import { SignedInGuard } from '@remult/core';
 import { CreateBackupExcelFileComponent,CanDeactivateGuard } from './create-backup-excel-file/create-backup-excel-file.component';
 import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';
 import { PlaybackComponent } from './playback/playback.component';
+import { OverviewComponent } from './overview/overview.component';
 
 
 
 
 const routes: Routes = [
+
   AsignFamilyComponent.route,
   SelfPickupComponent.route,
   FamiliesComponent.route,
@@ -41,6 +43,7 @@ const routes: Routes = [
   DistributionMap.route,
   AddressProblemComponent.route,
   HelpersComponent.route,
+  {path:'overview',component:OverviewComponent,canActivate:[OverviewGuard]},
   
   DeliveryHistoryComponent.route,
   { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { name: 'playback',hide:true } },
@@ -70,7 +73,7 @@ const routes: Routes = [
   ],
   declarations: [],
   exports: [RouterModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard,CanDeactivateGuard]
+  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard,CanDeactivateGuard,OverviewGuard]
 })
 
 export class AppRoutingModule { }

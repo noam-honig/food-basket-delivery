@@ -1,4 +1,4 @@
-import { Context } from "@remult/core";
+import { Context, DataProviderFactory } from "@remult/core";
 
 declare var multiSite: boolean;
 
@@ -33,6 +33,7 @@ export class Sites {
         return site;
 
     }
+    static getDataProviderForOrg:(org: string) =>DataProviderFactory;
     static isValidOrganization(org: string) {
         if (!Sites.multipleSites)
             return true;

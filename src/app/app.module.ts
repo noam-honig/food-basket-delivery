@@ -67,6 +67,7 @@ import { APP_BASE_HREF } from '@angular/common';
 import { environment } from '../environments/environment';
 import { Sites } from './sites/sites';
 import { ApplicationSettings } from './manage/ApplicationSettings';
+import { OverviewComponent } from './overview/overview.component';
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref();
 
@@ -118,7 +119,8 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     SelectCompanyComponent,
     HelperAssignmentComponent,
     ImportHelpersFromExcelComponent,
-    PlaybackComponent
+    PlaybackComponent,
+    OverviewComponent
 
   ],
   imports: [

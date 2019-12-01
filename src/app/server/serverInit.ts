@@ -4,7 +4,7 @@ import { config } from 'dotenv';
 import { PostgresDataProvider, PostgrestSchemaBuilder, PostgresPool, PostgresClient } from '@remult/server-postgres';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { ServerContext,  Context, Entity } from '@remult/core';
+import { ServerContext, Context, Entity } from '@remult/core';
 import '../app.module';
 
 
@@ -22,8 +22,8 @@ export async function serverInit() {
         let ssl = true;
         if (process.env.DISABLE_POSTGRES_SSL)
             ssl = false;
-        
-        
+
+
         if (!process.env.DATABASE_URL) {
             console.error("No DATABASE_URL environment variable found, if you are developing locally, please add a '.env' with DATABASE_URL='postgres://*USERNAME*:*PASSWORD*@*HOST*:*PORT*/*DATABASE*'");
         }
@@ -46,24 +46,23 @@ export async function serverInit() {
         Sites.initOnServer();
         if (Sites.multipleSites) {
 
-            {
-                await verifySchemaExistance(pool, Sites.guestSchema);
-                let adminSchemaPool = new PostgresSchemaWrapper(pool,Sites. guestSchema);
-                let context = new ServerContext();
-                let dp = new PostgresDataProvider(adminSchemaPool);
-                context.setDataProvider(dp)
-                let builder = new PostgrestSchemaBuilder(adminSchemaPool,Sites. guestSchema);
-                for (const entity of <{ new(...args: any[]): Entity<any>; }[]>[
-                    ApplicationSettings,
-                    ApplicationImages]) {
-                    await builder.CreateIfNotExist(context.for(entity).create());
-                }
-                let settings = await context.for(ApplicationSettings).lookupAsync(s => s.id.isEqualTo(1));
-                if (settings.isNew()) {
-                    settings.organisationName.value = "מערכת חלוקה";
-                    settings.id.value = 1;
-                    await settings.save();
-                }
+            await verifySchemaExistance(pool, Sites.guestSchema);
+            let adminSchemaPool = new PostgresSchemaWrapper(pool, Sites.guestSchema);
+            let context = new ServerContext();
+            let dp = new PostgresDataProvider(adminSchemaPool);
+            context.setDataProvider(dp)
+            let builder = new PostgrestSchemaBuilder(adminSchemaPool, Sites.guestSchema);
+            for (const entity of <{ new(...args: any[]): Entity<any>; }[]>[
+                ApplicationSettings,
+                ApplicationImages,
+                Helpers]) {
+                await builder.CreateIfNotExist(context.for(entity).create());
+            }
+            let settings = await context.for(ApplicationSettings).lookupAsync(s => s.id.isEqualTo(1));
+            if (settings.isNew()) {
+                settings.organisationName.value = "מערכת חלוקה";
+                settings.id.value = 1;
+                await settings.save();
             }
 
             for (const s of Sites.schemas) {
@@ -72,8 +71,9 @@ export async function serverInit() {
                 await verifySchemaExistance(pool, s);
                 let schemaPool = new PostgresSchemaWrapper(pool, s);
                 await new PostgrestSchemaBuilder(schemaPool, s).verifyStructureOfAllEntities();
-                await initSchema(schemaPool,s);
+                await initSchema(schemaPool, s);
             }
+            Sites.getDataProviderForOrg = org=> new PostgresDataProvider(new PostgresSchemaWrapper(pool, org));
             return (y: Context) => {
                 let org = Sites.getValidSchemaFromContext(y);
 
@@ -82,7 +82,7 @@ export async function serverInit() {
         }
         else {
             await new PostgrestSchemaBuilder(pool).verifyStructureOfAllEntities();
-            await initSchema(pool,'');
+            await initSchema(pool, '');
             return y => new PostgresDataProvider(pool);
         }
 
@@ -97,7 +97,7 @@ export async function serverInit() {
         throw error;
     }
 
-    
+
 }
 export async function verifySchemaExistance(pool: Pool, s: string) {
     let exists = await pool.query('SELECT schema_name FROM information_schema.schemata WHERE schema_name = \'' + s + '\'');
@@ -114,7 +114,7 @@ export class PostgresSchemaWrapper implements PostgresPool {
     }
     async connect(): Promise<PostgresClient> {
         let r = await this.pool.connect();
-        
+
         await r.query('set search_path to ' + this.schema);
         return r;
     }
