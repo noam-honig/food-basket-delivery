@@ -27,7 +27,7 @@
     "publish-to-dinale": "git push dinale master -f",
     "publish-to-dinale-kol-halev": "git push kol-halev master -f",
     "publish-to-krvtj": "git push krvtj master -f",
-    "publish-to-merkaz-mazon": "git push mmaz -f",
+    "publish-to-merkaz-mazon": "git push mmaz multi-sites:master -f",
     "publish-to-bodedim-hertzelia": "git push bodedim-hertzelia master -f",
     "publish-to-shorashim": "git push shorashim master -f",
     "publish-to-reim": "git push orgreim master -f",

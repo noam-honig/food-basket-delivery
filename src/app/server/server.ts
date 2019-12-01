@@ -24,6 +24,40 @@ serverInit().then(async (dataSource) => {
 
 
     let app = express();
+    function getContext(req: express.Request, sendDs?: (ds: PostgresDataProvider) => void) {
+        //@ts-ignore
+        let r = new ExpressRequestBridgeToDataApiRequest(req);
+        let context = new ServerContext();
+        context.setReq(r);
+        let ds = dataSource(context);
+        context.setDataProvider(ds);
+        if (sendDs)
+            sendDs(ds);
+        return context;
+    }
+    async function sendIndex(res: express.Response, req: express.Request) {
+        let context = getContext(req);
+        let org = Sites.getOrganizationFromContext(context);
+        if (!Sites.isValidOrganization(org)) {
+            res.redirect('/' + Sites.guestSchema + '/');
+            return;
+        }
+        const index = 'dist/index.html';
+
+        if (fs.existsSync(index)) {
+            let x = '';
+            x = (await ApplicationSettings.getAsync(context)).organisationName.value;
+            let result = fs.readFileSync(index).toString().replace('!TITLE!', x).replace("/*!SITE!*/", "multiSite=" + Sites.multipleSites);
+            if (Sites.multipleSites) {
+                result = result.replace('"favicon.ico', '"/' + org + '/favicon.ico')
+                    .replace('"/assets/apple-touch-icon.png"', '"/' + org + '/assets/apple-touch-icon.png"');
+            }
+            res.send(result);
+        }
+        else {
+            res.send('No Result' + fs.realpathSync(index));
+        }
+    }
     let redirect = process.env.REDIRECT;
     if (redirect) {
         app.use('/*', async (req, res) => {
@@ -55,17 +89,7 @@ serverInit().then(async (dataSource) => {
             dataSource, process.env.DISABLE_HTTPS == "true", !Sites.multipleSites);
         Helpers.helper = new JWTCookieAuthorizationHelper(eb, process.env.TOKEN_SIGN_KEY);
 
-        function getContext(req: express.Request, sendDs?: (ds: PostgresDataProvider) => void) {
-            //@ts-ignore
-            let r = new ExpressRequestBridgeToDataApiRequest(req);
-            let context = new ServerContext();
-            context.setReq(r);
-            let ds = dataSource(context);
-            context.setDataProvider(ds);
-            if (sendDs)
-                sendDs(ds);
-            return context;
-        }
+     
         if (Sites.multipleSites)
             for (const schema of Sites.schemas) {
                 let area = eb.addArea('/' + schema + '/api', async req => {
@@ -83,29 +107,7 @@ serverInit().then(async (dataSource) => {
         else {
             registerImageUrls(app, getContext, '');
         }
-        async function sendIndex(res: express.Response, req: express.Request) {
-            let context = getContext(req);
-            let org = Sites.getOrganizationFromContext(context);
-            if (!Sites.isValidOrganization(org)) {
-                res.redirect('/' + Sites.guestSchema + '/');
-                return;
-            }
-            const index = 'dist/index.html';
-
-            if (fs.existsSync(index)) {
-                let x = '';
-                x = (await ApplicationSettings.getAsync(context)).organisationName.value;
-                let result = fs.readFileSync(index).toString().replace('!TITLE!', x).replace("/*!SITE!*/", "multiSite=" + Sites.multipleSites);
-                if (Sites.multipleSites) {
-                    result = result.replace('"favicon.ico', '"/' + org + '/favicon.ico')
-                        .replace('"/assets/apple-touch-icon.png"', '"/' + org + '/assets/apple-touch-icon.png"');
-                }
-                res.send(result);
-            }
-            else {
-                res.send('No Result' + fs.realpathSync(index));
-            }
-        }
+     
         app.get('/monitor-report', async (req, res) => {
             let auth = req.header('Authorization');
             if (auth != process.env.MONITOR_KEY) {
