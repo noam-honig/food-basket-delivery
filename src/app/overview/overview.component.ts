@@ -19,36 +19,49 @@ export class OverviewComponent implements OnInit {
   @ServerFunction({ allowed: Roles.overview })
   static async getOverview(context?: Context) {
     let today = new Date();
-    let statistics: dateRange[] = [{
-      caption: 'החודש',
-      value: 0,
-      from: new Date(today.getFullYear(), today.getMonth(), 1),
-      to: new Date(today.getFullYear(), today.getMonth() + 1, 1)
-    }, 
-    {
-      caption: 'חודש שעבר',
-      value: 0,
-      from: new Date(today.getFullYear(), today.getMonth() - 1, 1),
-      to: new Date(today.getFullYear(), today.getMonth(), 1)
-    },
-    {
-      caption: 'השבוע',
-      value: 0,
-      from: new Date(today.getFullYear(), today.getMonth(), -today.getDay() + 2),
-      to: new Date(today.getFullYear(), today.getMonth(), -today.getDay() + 9)
-    },
-    {
-      caption: 'השבוע שעבר',
-      value: 0,
-      from: new Date(today.getFullYear(), today.getMonth(), -today.getDay() + 1-7),
-      to: new Date(today.getFullYear(), today.getMonth(), -today.getDay() + 2)
-    },
-    {
-      caption: 'השנה',
-      value: 0,
-      from: new Date(today.getFullYear(), 0, 1),
-      to: new Date(today.getFullYear() + 1, 0, 1)
-    }
+    let statistics: dateRange[] = [
+      {
+        caption: 'היום',
+        value: 0,
+        from: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
+        to: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1)
+      },
+      {
+        caption: 'אתמול',
+        value: 0,
+        from: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1),
+        to: new Date(today.getFullYear(), today.getMonth(), today.getDate())
+      },
+      {
+        caption: 'השבוע',
+        value: 0,
+        from: new Date(today.getFullYear(), today.getMonth(), -today.getDay() + 1),
+        to: new Date(today.getFullYear(), today.getMonth(), -today.getDay() + 8)
+      },
+      {
+        caption: 'השבוע שעבר',
+        value: 0,
+        from: new Date(today.getFullYear(), today.getMonth(), -today.getDay() + 1 - 8),
+        to: new Date(today.getFullYear(), today.getMonth(), -today.getDay() + 1)
+      },
+      {
+        caption: 'החודש',
+        value: 0,
+        from: new Date(today.getFullYear(), today.getMonth(), 1),
+        to: new Date(today.getFullYear(), today.getMonth() + 1, 1)
+      },
+      {
+        caption: 'חודש שעבר',
+        value: 0,
+        from: new Date(today.getFullYear(), today.getMonth() - 1, 1),
+        to: new Date(today.getFullYear(), today.getMonth(), 1)
+      },
+      {
+        caption: 'השנה',
+        value: 0,
+        from: new Date(today.getFullYear(), 0, 1),
+        to: new Date(today.getFullYear() + 1, 0, 1)
+      }
     ];
 
 
