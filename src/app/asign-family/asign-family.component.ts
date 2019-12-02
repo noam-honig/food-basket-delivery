@@ -129,7 +129,7 @@ export class AsignFamilyComponent implements OnInit {
             onSelect: async h => {
                 if (h) {
                     let families = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(h.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
-                    this.dialog.YesNoQuestion("להעביר " + families.length + translate(" משפחות מ") + '"' + h.name.value + '"' + " למתנדב " + '"' + this.name + '"', async () => {
+                    this.dialog.YesNoQuestion("להעביר " + families.length + translate(" משפחות מ") + '"' + h.name.value + '"' + " למתנדב " + '"' + this.name.value + '"', async () => {
                         await this.busy.doWhileShowingBusy(async () => {
                             await this.verifyHelperExistance();
                             for (const f of families) {
@@ -701,7 +701,7 @@ export class AsignFamilyComponent implements OnInit {
                     let c = await f.courier.getTheName();
                     this.dialog.YesNoQuestion(translate('משפחת ') +
                         f.name.value + ' כבר משוייכת ל' + c + ' בסטטוס ' +
-                        f.deliverStatus.displayValue + '. האם לשייך אותו למשנע ' + this.name + '?', () => {
+                        f.deliverStatus.displayValue + '. האם לשייך אותו למשנע ' + this.name.value + '?', () => {
                             ok();
                         });
 
