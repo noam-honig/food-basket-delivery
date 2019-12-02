@@ -41,7 +41,7 @@ export class OverviewComponent implements OnInit {
       {
         caption: 'השבוע שעבר',
         value: 0,
-        from: new Date(today.getFullYear(), today.getMonth(), -today.getDay() + 1 - 8),
+        from: new Date(today.getFullYear(), today.getMonth(), -today.getDay() + 1 - 7),
         to: new Date(today.getFullYear(), today.getMonth(), -today.getDay() + 1)
       },
       {
