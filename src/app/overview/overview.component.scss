@@ -1,0 +1,17 @@
+.site-container{
+    display:flex;
+    width:100%;
+}
+.site {
+  width: 100px;
+  
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  margin:5px;
+}
+.site img{
+    width:80px;
+    height:80px;
+    background-color:green;
+}

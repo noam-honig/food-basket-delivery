@@ -173,7 +173,6 @@ export class AppModule { }
 export function initApp(context: Context,session:JwtSessionManager) {
   return async () => {
     session.loadSessionFromCookie();
-    console.log(context.user);
     try {
       let settings = await ApplicationSettings.getAsync(context);
     }

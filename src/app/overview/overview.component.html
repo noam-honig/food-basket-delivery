@@ -1,7 +1,15 @@
-<ul>
-    <li *ngFor="let i of overview">
-        {{i.caption}} - {{i.value}}
-    </li>
-</ul>
+<ng-container *ngIf="overview">
+    <ul>
+        <li *ngFor="let i of overview.statistics" (click)="doSort(i)">
+            {{i.caption}} - {{i.value}}
+        </li>
+    </ul>
 
-
+    <div class="site-container">
+        <mat-card *ngFor="let site of overview.sites" class="site">
+            <span *ngIf="sortBy">{{site.stats[sortBy]}}</span>
+            <a href="/{{site.site}}"><img src="{{site.logo}}"></a>
+            {{site.name}}
+        </mat-card>
+    </div>
+</ng-container>
