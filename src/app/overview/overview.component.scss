@@ -1,6 +1,7 @@
 .site-container{
     display:flex;
     width:100%;
+    flex-wrap: wrap;
 }
 .site {
   width: 100px;
@@ -13,7 +14,7 @@
 .site img{
     width:80px;
     height:80px;
-    background-color:green;
+    
 }
 
 .sorted{
