@@ -68,6 +68,7 @@ import { environment } from '../environments/environment';
 import { Sites } from './sites/sites';
 import { ApplicationSettings } from './manage/ApplicationSettings';
 import { OverviewComponent } from './overview/overview.component';
+import { TransitionGroupComponent, TransitionGroupItemDirective } from './overview/transition-group';
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref();
 
@@ -120,7 +121,9 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     HelperAssignmentComponent,
     ImportHelpersFromExcelComponent,
     PlaybackComponent,
-    OverviewComponent
+    OverviewComponent,
+    TransitionGroupComponent,
+    TransitionGroupItemDirective
 
   ],
   imports: [
