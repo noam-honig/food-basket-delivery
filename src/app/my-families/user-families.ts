@@ -83,7 +83,7 @@ export class UserFamiliesList {
         this.helperId = helperId;
         this.helperName = name;
         this.helperPhone = phone;
-        let newFamilies = familiesPocoArray.map(x => this.context.for(Families).create().source.fromPojo(x));
+        let newFamilies = familiesPocoArray.map(x => this.context.for(Families).fromPojo(x));
         newFamilies.push(...this.delivered);
         newFamilies.push(...this.problem);
         this.allFamilies = newFamilies;

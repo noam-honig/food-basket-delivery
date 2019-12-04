@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { EntityClass, Context, DirectSQL, StringColumn, IdColumn } from '@remult/core';
+import { EntityClass, Context, DirectSQL, StringColumn, IdColumn, SpecificEntityHelper } from '@remult/core';
 import { FamilyId, Families } from '../families/families';
 import { changeDate, SqlBuilder, PhoneColumn } from '../model-shared/types';
 import { BasketId } from '../families/BasketType';
 import { DeliveryStatusColumn } from '../families/DeliveryStatus';
 import { HelperId, HelperIdReadonly, Helpers, CompanyColumn } from '../helpers/helpers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
-import { CompoundIdColumn, DateColumn, DataAreaSettings, InMemoryDataProvider, Entity, GridSettings, EntitySource, NumberColumn } from '@remult/core';
+import { CompoundIdColumn, DateColumn, DataAreaSettings, InMemoryDataProvider, Entity, GridSettings,  NumberColumn } from '@remult/core';
 
 import { Route } from '@angular/router';
 
@@ -44,7 +44,8 @@ export class DeliveryHistoryComponent implements OnInit {
   });
 
   helperInfo: GridSettings<helperHistoryInfo>;
-  helperSource: EntitySource<helperHistoryInfo>;
+  helperSource: SpecificEntityHelper<string, helperHistoryInfo>;
+  
   private getEndOfMonth(): Date {
     return new Date(this.fromDate.value.getFullYear(), this.fromDate.value.getMonth() + 1, 0);
   }
@@ -59,11 +60,10 @@ export class DeliveryHistoryComponent implements OnInit {
     data: { name: 'היסטורית משלוחים' }, canActivate: [AdminGuard]
   }
   constructor(private context: Context, private selectService: SelectService, private busy: BusyService) {
-    let hhi = context.for(helperHistoryInfo).create();
     let x = new InMemoryDataProvider();
-    hhi.setSource(x);
-    this.helperSource = hhi.source;
-    this.helperInfo = new GridSettings(hhi, {
+    
+    this.helperSource = context.for(helperHistoryInfo,x);
+    this.helperInfo = this.helperSource.gridSettings( {
       hideDataArea: true,
       columnSettings: h => [
         {
