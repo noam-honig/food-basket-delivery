@@ -11,7 +11,7 @@ import { ChartsModule } from 'ng2-charts';
 import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { HelpersComponent } from './helpers/helpers.component';
-import { SelectPopupComponent } from './select-popup/select-popup.component';
+
 import { DialogService } from './select-popup/dialog';
 import { YesNoQuestionComponent } from './select-popup/yes-no-question/yes-no-question.component';
 import { LoginComponent } from './users/login/login.component';
@@ -41,7 +41,6 @@ import { NewsComponent } from './news/news.component';
 import { NewsFilterService } from "./news/news-filter-service";
 
 
-import { SelectService } from './select-popup/select-service';
 import { UpdateFamilyDialogComponent } from './update-family-dialog/update-family-dialog.component';
 import { UpdateFamilyComponent } from './update-family/update-family.component';
 
@@ -80,7 +79,7 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
   declarations: [
     AppComponent,
     HelpersComponent,
-    SelectPopupComponent,
+    
     YesNoQuestionComponent,
     LoginComponent,
     RegisterComponent,
@@ -140,7 +139,7 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
   ],
   providers: [
     DialogService,
-    SelectService,
+    
     TranslatePipe,
     NewsFilterService,
     AuthService,
@@ -163,7 +162,7 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
   bootstrap: [AppComponent],
   entryComponents: [SelectHelperComponent,
     SelectFamilyComponent,
-    SelectPopupComponent,
+    
     YesNoQuestionComponent,
     InputAreaComponent,
     UpdateFamilyDialogComponent, PreviewFamilyComponent,

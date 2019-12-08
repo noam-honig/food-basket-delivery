@@ -99,7 +99,11 @@ th {
 
 .hide {
   visibility: collapse;
-  height: 0;
+  height: 0!important;
+}
+.hide *{
+  visibility: collapse;
+  height:0!important;
 }
 .myButton {
   width: 85%;

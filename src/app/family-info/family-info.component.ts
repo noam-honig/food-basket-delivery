@@ -4,8 +4,10 @@ import * as copy from 'copy-to-clipboard';
 import { DialogService } from '../select-popup/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Context } from '@remult/core';
-import { SelectService } from '../select-popup/select-service';
+
 import { translate } from '../translate';
+import { UpdateCommentComponent } from '../update-comment/update-comment.component';
+import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 @Component({
   selector: 'app-family-info',
   templateUrl: './family-info.component.html',
@@ -13,7 +15,7 @@ import { translate } from '../translate';
 })
 export class FamilyInfoComponent implements OnInit {
 
-  constructor(private dialog: DialogService, private context: Context, private selectService: SelectService) { }
+  constructor(private dialog: DialogService, private context: Context) { }
   @Input() f: Families;
   @Input() showHelp = false;
   ngOnInit() {
@@ -30,7 +32,7 @@ export class FamilyInfoComponent implements OnInit {
     return f.deliverStatus.value == DeliveryStatus.SelfPickup;
   }
   async familiyPickedUp(f: Families) {
-    this.selectService.displayComment(
+    this.context.openDialog(UpdateCommentComponent, x => x.args =
       {
         family: f,
         comment: f.courierComments.value,
@@ -70,7 +72,7 @@ export class FamilyInfoComponent implements OnInit {
 
   }
   udpateInfo(f: Families) {
-    this.selectService.updateFamiliy({ f: f });
+    this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { f: f });
   }
   copyAddress(f: Families) {
     copy(f.address.value);

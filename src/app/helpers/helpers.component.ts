@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 
 import { Helpers } from './helpers';
-import { SelectService } from '../select-popup/select-service';
+
 import { Families } from '../families/families';
 import { Route } from '@angular/router';
 
@@ -13,7 +13,7 @@ import { BusyService } from '@remult/core';
 import { DateColumn, DataAreaSettings } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { MatDialog } from '@angular/material/dialog';
+
 import { saveToExcel } from '../shared/saveToExcel';
 
 @Component({
@@ -22,7 +22,7 @@ import { saveToExcel } from '../shared/saveToExcel';
   styleUrls: ['./helpers.component.css']
 })
 export class HelpersComponent implements OnInit {
-  constructor(private dialog: DialogService, public context: Context, private busy: BusyService,private matDialog:MatDialog) {
+  constructor(private dialog: DialogService, public context: Context, private busy: BusyService) {
   }
   static route: Route = {
     path: 'helpers',
@@ -54,7 +54,7 @@ export class HelpersComponent implements OnInit {
         helpers.phone
       ];
       if (Helpers.usingCompanyModule)
-        r.push(helpers.company.getColumn(this.matDialog));
+        r.push(helpers.company);
       r.push({
         column: helpers.admin,
         width: '100'

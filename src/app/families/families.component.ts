@@ -8,7 +8,7 @@ import { YesNo } from "./YesNo";
 
 import { FamilySources } from "./FamilySources";
 import { BasketType } from "./BasketType";
-import { SelectService } from '../select-popup/select-service';
+
 import { DialogService } from '../select-popup/dialog';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 
@@ -19,7 +19,7 @@ import { FilterBase } from '@remult/core';
 import { BusyService } from '@remult/core';
 import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
 import { HasAsyncGetTheValue, DateTimeColumn, PhoneColumn } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
@@ -31,7 +31,7 @@ import { FamilyDeliveries } from './FamilyDeliveries';
 import { UpdateFamilyComponent } from '../update-family/update-family.component';
 import { PortalHostDirective } from '@angular/cdk/portal';
 import { saveToExcel } from '../shared/saveToExcel';
-import { PreviewFamilyComponent, PreviewFamilyInfo } from '../preview-family/preview-family.component';
+import { PreviewFamilyComponent } from '../preview-family/preview-family.component';
 import { Roles, AdminGuard } from '../auth/roles';
 import { MatTabGroup } from '@angular/material/tabs';
 import { QuickAddFamilyComponent } from '../quick-add-family/quick-add-family.component';
@@ -57,7 +57,7 @@ export class FamiliesComponent implements OnInit {
     deliverySummary: ColumnSetting<Families>;
     scrollingSubscription: Subscription;
     showHoverButton: boolean = false;
-    constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context, private selectService: SelectService, private matDialog: MatDialog,
+    constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context,
         public scroll: ScrollDispatcher) {
         this.doTest();
         this.scrollingSubscription = this.scroll
@@ -100,9 +100,9 @@ export class FamiliesComponent implements OnInit {
             this.families.setCurrentRow(focus);
     }
     quickAdd() {
-        QuickAddFamilyComponent.dialog(this.matDialog, {
-            searchName: this.searchString,
-            addedFamily: f => {
+        this.context.openDialog(QuickAddFamilyComponent, s => {
+            s.f.name.value = this.searchString;
+            s.argOnAdd = f => {
                 this.families.items.push(f);
                 this.families.setCurrentRow(f);
             }
@@ -305,11 +305,9 @@ export class FamiliesComponent implements OnInit {
                         return '';
                     }
                 },
-                families.courier.getColumn(this.selectService),
-
-                families.basketType.getColumn()
+                families.basketType
                 ,
-                this.statusColumn = families.deliverStatus.getColumn(),
+                this.statusColumn = families.deliverStatus,
                 this.deliverySummary = {
                     caption: 'סיכום משלוח',
                     column: families.deliverStatus,
@@ -321,13 +319,11 @@ export class FamiliesComponent implements OnInit {
                     width: '200'
                 },
 
-                {
-                    column: families.familyMembers,
 
-                },
+                families.familyMembers,
+                families.familySource,
 
-                families.familySource.getColumn(),
-                this.groupsColumn = families.groups.getColumn(this.selectService),
+                this.groupsColumn = families.groups,
                 {
                     column: families.internalComment,
                     width: '300'
@@ -336,7 +332,7 @@ export class FamiliesComponent implements OnInit {
                 families.tz2,
                 families.iDinExcel,
                 families.deliveryComments,
-                families.special.getColumn(),
+                families.special,
                 families.createUser,
                 families.createDate,
                 families.lastUpdateDate,
@@ -357,8 +353,8 @@ export class FamiliesComponent implements OnInit {
                 families.phone1Description,
                 families.phone2,
                 families.phone2Description,
-                families.courier.getColumn(this.selectService),
-                families.fixedCourier.getColumn(this.selectService),
+                families.courier,
+                families.fixedCourier,
                 {
                     caption: 'טלפון משנע',
                     getValue: f => this.context.for(Helpers).lookup(f.courier).phone.value
@@ -720,12 +716,7 @@ export class FamiliesComponent implements OnInit {
         data: { name: 'משפחות' }, canActivate: [AdminGuard]
     }
     previewFamily() {
-        let x = new MatDialogConfig();
-        x.data = {
-            f: this.families.currentRow
-        } as PreviewFamilyInfo;
-        x.minWidth = 350;
-        this.matDialog.open(PreviewFamilyComponent, x);
+        this.context.openDialog(PreviewFamilyComponent, s => s.argsFamily = this.families.currentRow)
     }
 }
 

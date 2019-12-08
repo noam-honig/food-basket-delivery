@@ -8,7 +8,7 @@ import { myThrottle, HasAsyncGetTheValue } from '../model-shared/types';
 
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from '@remult/core';
-import { SelectService } from '../select-popup/select-service';
+
 import { isUndefined } from 'util';
 import { Roles } from '../auth/roles';
 import { MatStepper } from '@angular/material';
@@ -26,7 +26,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
 
 
-  constructor(private context: Context, private dialog: DialogService, private busy: BusyService, private select: SelectService) {
+  constructor(private context: Context, private dialog: DialogService, private busy: BusyService) {
 
   }
 

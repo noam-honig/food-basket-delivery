@@ -6,7 +6,7 @@ import { ColumnHashSet } from '@remult/core';
 
 import { GetGeoInformation } from "../shared/googleApiHelpers";
 
-import { foreachEntityItem, foreachSync } from "../shared/utils";
+
 
 import { serverInit, PostgresSchemaWrapper, verifySchemaExistance } from "./serverInit";
 

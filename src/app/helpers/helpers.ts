@@ -1,19 +1,20 @@
 
 import { ColumnSetting, Entity, FilterBase, NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, DecorateDataColumnSettings, EntityOptions } from '@remult/core';
 import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn } from '../model-shared/types';
-import { SelectServiceInterface } from '../select-popup/select-service-interface';
+
 
 import { routeStats } from '../asign-family/asign-family.component';
 import { helpers } from 'chart.js';
 import { Roles } from "../auth/roles";
 import { JWTCookieAuthorizationHelper } from '@remult/server';
-import { MatDialog } from "@angular/material";
 import { SelectCompanyComponent } from "../select-company/select-company.component";
+
+
 
 
 export abstract class HelpersBase extends IdEntity {
 
-    constructor(options?: EntityOptions | string) {
+    constructor(protected context: Context, options?: EntityOptions | string) {
 
         super(options);
     }
@@ -27,7 +28,7 @@ export abstract class HelpersBase extends IdEntity {
     });
     phone = new PhoneColumn({ caption: "טלפון", inputType: 'tel' });
     smsDate = new DateTimeColumn('מועד משלוח SMS');
-    company = new CompanyColumn();
+    company = new CompanyColumn(this.context);
     totalKm = new NumberColumn();
     totalTime = new NumberColumn();
     shortUrlKey = new StringColumn({ includeInApi: Roles.admin });
@@ -43,9 +44,9 @@ export abstract class HelpersBase extends IdEntity {
 export class Helpers extends HelpersBase {
     static usingCompanyModule: boolean;
 
-    constructor(private context: Context) {
+    constructor(context: Context) {
 
-        super({
+        super(context, {
             name: "Helpers",
             allowApiRead: true,
             allowApiDelete: context.isSignedIn(),
@@ -62,7 +63,7 @@ export class Helpers extends HelpersBase {
 
                         this.admin.value = true;
                     }
-                    await checkForDuplicateValue(this, this.phone);
+                    await checkForDuplicateValue(this, this.phone, context.for(Helpers));
                     if (this.isNew())
                         this.createDate.value = new Date();
                     this.veryUrlKeyAndReturnTrueIfSaveRequired();
@@ -148,19 +149,18 @@ export class Helpers extends HelpersBase {
 export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 
     constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>) {
-        super(settingsOrCaption);
+        super({
+            display: d =>
+                d({
+                    getValue: () => this.getValue(),
+                    hideDataOnInput: true,
+                    width: '200',
+                    click: async () => this.context.openDialog((await import('../select-helper/select-helper.component')).SelectHelperComponent,
+                        x => x.args = { onSelect: s => this.value = (s ? s.id.value : '') })
+                })
+        }, settingsOrCaption);
     }
-    getColumn(dialog: SelectServiceInterface, filter?: (helper: HelpersBase) => FilterBase): ColumnSetting<Entity<any>> {
-        return {
-            column: this,
-            getValue: f => (f ? (<HelperId>(f).__getColumn(this)) : this).getValue(),
-            hideDataOnInput: true,
-            click: f => dialog.selectHelper(s => (f ? f.__getColumn(this) : this).value = (s ? s.id.value : ''), filter),
-            readonly: !this.context.isAllowed(this.allowApiUpdate),
-            width: '200'
 
-        }
-    }
 
     getValue() {
         return this.context.for(Helpers).lookup(this).name.value;
@@ -182,18 +182,16 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
     }
 }
 export class CompanyColumn extends StringColumn {
-    getColumn(dialog: MatDialog) {
-        return {
-            column: this,
-            click: f => {
-                let col = f ? f.__getColumn(this) : this;
-                SelectCompanyComponent.dialog(dialog, { onSelect: x => col.value = x })
-            },
-            width: '300'
-        };
-    }
-    constructor() {
-        super("חברה");
+
+    constructor(context: Context) {
+        super({
+            caption: "חברה",
+            display: d =>
+                d({
+                    width: '300',
+                    click: () => context.openDialog(SelectCompanyComponent, s => s.argOnSelect = x => this.value = x)
+                })
+        });
     }
 }
 export class HelperIdReadonly extends HelperId {

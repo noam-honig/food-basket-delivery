@@ -13,8 +13,9 @@ import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { FamilyDeliveries } from "./FamilyDeliveries";
 import * as fetch from 'node-fetch';
 import { Roles } from "../auth/roles";
-import { SelectServiceInterface } from "../select-popup/select-service-interface";
+
 import { translate } from "../translate";
+import { UpdateGroupDialogComponent } from "../update-group-dialog/update-group-dialog.component";
 
 
 @EntityClass
@@ -134,9 +135,9 @@ export class Families extends IdEntity {
               }
             }
             if (!this.disableChangeLogging) {
-              logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName()),this.context));//should be after succesfull save
+              logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName()), this.context));//should be after succesfull save
               //logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
-              logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()),this.context)); //should be after succesfull save
+              logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()), this.context)); //should be after succesfull save
               logChanged(this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => { }); //should be after succesfull save
             }
           }
@@ -469,7 +470,7 @@ export class Families extends IdEntity {
     return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
   }
 
-  static SendMessageToBrowsers = (s: string,context:Context) => { };
+  static SendMessageToBrowsers = (s: string, context: Context) => { };
   static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string) {
     switch (updateType) {
       case 1:
@@ -686,16 +687,21 @@ export interface parseAddressResult {
 }
 export class GroupsColumn extends StringColumn {
   constructor(private context: Context) {
-    super({ caption: 'שיוך לקבוצת חלוקה', includeInApi: Roles.admin });
+    super({
+      caption: 'שיוך לקבוצת חלוקה',
+      includeInApi: Roles.admin,
+      display: d => d({
+        width: '300',
+        click: () => {
+          this.context.openDialog(UpdateGroupDialogComponent, s => {
+            s.args = {
+              groups: this.value,
+              ok: x => this.value = x
+            }
+          });
+        }
+      })
+    });
   }
-  getColumn(dialog: SelectServiceInterface) {
-    return {
-      column: this,
-      click: f => {
-        let col = f ? f.__getColumn(this) : this;
-        dialog.updateGroup(col.value, x => col.value = x);
-      },
-      width: '300'
-    };
-  }
+
 }

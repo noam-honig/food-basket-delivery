@@ -1,7 +1,7 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UserFamiliesList } from '../my-families/user-families';
-import { Context } from '@remult/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Context, DialogConfig } from '@remult/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Families } from '../families/families';
 
 @Component({
@@ -9,27 +9,21 @@ import { Families } from '../families/families';
   templateUrl: './preview-family.component.html',
   styleUrls: ['./preview-family.component.scss']
 })
+@DialogConfig({minWidth:350})
 export class PreviewFamilyComponent implements OnInit {
 
   familyLists = new UserFamiliesList(this.context);
-
-  constructor(public context: Context, private dialogRef: MatDialogRef<PreviewFamilyComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: PreviewFamilyInfo,
+  public argsFamily: Families;
+  constructor(public context: Context, private dialogRef: MatDialogRef<any>
   ) { }
   async ngOnInit() {
 
-    this.familyLists.toDeliver = [this.data.f];
-    
-    
+    this.familyLists.toDeliver = [this.argsFamily];
+
+
 
   }
   cancel() {
     this.dialogRef.close();
   }
-}
-
-export interface PreviewFamilyInfo {
-
-  f: Families;
-
 }

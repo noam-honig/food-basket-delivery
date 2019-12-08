@@ -9,7 +9,7 @@ import { DialogService } from '../select-popup/dialog';
 import { ServerFunction } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
 import { BasketType, BasketId } from '../families/BasketType';
-import { SelectService } from '../select-popup/select-service';
+
 import { translate } from '../translate';
 
 
@@ -21,7 +21,7 @@ import { translate } from '../translate';
 
 export class BatchOperationsComponent implements OnInit {
 
-    constructor(private context: Context, private dialog: DialogService, private selectService: SelectService) {
+    constructor(private context: Context, private dialog: DialogService) {
 
     }
     static route: Route = {
@@ -62,7 +62,7 @@ export class BatchOperationsComponent implements OnInit {
             result.push(bt);
         }
         {
-            let g: ColumnSetting<any> = this.groupColumn.getColumn(this.selectService);
+            let g: ColumnSetting<any> = this.groupColumn;
             g.caption = 'בחרו קבוצה';
             result.push(g);
         }
@@ -91,7 +91,7 @@ export class BatchOperationsComponent implements OnInit {
 
         this.dialog.YesNoQuestion('ישנן ' + familiesThatMatch.toString() + translate(' משפחות אשר מתאימות להגדרה - האם להגדיר להן משלוח חדש?'), async () => {
             await BatchOperationsComponent.setNewBasket(this.basketTypeColumn.value, this.groupColumn.value);
-            this.dialog.YesNoQuestion('בוצע');
+            this.dialog.messageDialog('בוצע');
         });
 
 
@@ -102,7 +102,7 @@ export class BatchOperationsComponent implements OnInit {
 
         this.dialog.YesNoQuestion('ישנן ' + familiesThatMatch.toString() + translate(' משפחות המוגדרות בדרך - האם לעדכנן להן נמסר בהצלחה בתאריך ' + this.deliveryDate.displayValue + "?"), async () => {
             await BatchOperationsComponent.setAsOnTheWayAsDelivered(DateColumn.dateToString(this.deliveryDate.value));
-            this.dialog.YesNoQuestion('בוצע');
+            this.dialog.messageDialog('בוצע');
         });
     }
     @ServerFunction({ allowed: Roles.admin })
@@ -122,7 +122,7 @@ export class BatchOperationsComponent implements OnInit {
 
         this.dialog.YesNoQuestion('ישנן ' + familiesThatMatch.toString() + translate(' משפחות המוגדרות כבאים לקחת - האם לעדכנן להן "קיבלו משלוח" בתאריך ' + this.deliveryDate.displayValue + "?"), async () => {
             await BatchOperationsComponent.setAsSelfPickupStatic(DateColumn.dateToString(this.deliveryDate.value));
-            this.dialog.YesNoQuestion('בוצע');
+            this.dialog.messageDialog('בוצע');
         });
     }
     @ServerFunction({ allowed: Roles.admin })
@@ -176,7 +176,7 @@ export class BatchOperationsComponent implements OnInit {
         let doIt = () => {
             this.dialog.YesNoQuestion('ישנן ' + familiesThatMatch.toString() + translate(' משפחות מתאימות להגדרה - האם להגדיר אותן כלא באירוע?'), async () => {
                 await BatchOperationsComponent.setNotInEvent(this.basketTypeColumn.value, this.groupColumn.value);
-                this.dialog.YesNoQuestion('בוצע');
+                this.dialog.messageDialog('בוצע');
             });
         }
         if (onTheWayMatchingFamilies > 0) {

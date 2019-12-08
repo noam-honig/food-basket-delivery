@@ -1,10 +1,10 @@
-import {  HasAsyncGetTheValue, PhoneColumn } from "../model-shared/types";
+import { HasAsyncGetTheValue, PhoneColumn } from "../model-shared/types";
 
-import { Context,  EntityClass, IdEntity, StringColumn, IdColumn, ColumnOptions } from '@remult/core';
+import { Context, EntityClass, IdEntity, StringColumn, IdColumn, ColumnOptions, DecorateDataColumnSettings } from '@remult/core';
 import { Roles } from "../auth/roles";
 
 @EntityClass
-export class FamilySources extends IdEntity  {
+export class FamilySources extends IdEntity {
   name = new StringColumn({ caption: "שם" });
   contactPerson = new StringColumn({ caption: "איש קשר" });
   phone = new PhoneColumn({ caption: 'טלפון' });
@@ -17,8 +17,19 @@ export class FamilySources extends IdEntity  {
   }
 }
 export class FamilySourceId extends IdColumn implements HasAsyncGetTheValue {
-  constructor(private context: Context, settingsOrCaption?: ColumnOptions<string> ) {
-    super(settingsOrCaption);
+  constructor(private context: Context, settingsOrCaption?: ColumnOptions<string>) {
+    super({
+      display: d =>
+        d({
+          dropDown: {
+            source: this.context.for(FamilySources).dropDownSource({
+              orderBy: (f: FamilySources) => {
+                return [{ column: f.name }];
+              }
+            })
+          }
+        })
+    }, settingsOrCaption);
   }
   get displayValue() {
     return this.context.for(FamilySources).lookup(this).name.value;
@@ -29,16 +40,5 @@ export class FamilySourceId extends IdColumn implements HasAsyncGetTheValue {
       return r.name.value;
     return '';
   }
-  getColumn() {
-    return {
-      column: this,
-      dropDown: {
-        source: this.context.for(FamilySources).create(),
-        orderBy: (f: FamilySources) => {
-          return [{ column: f.name }];
-        }
 
-      },
-    };
-  }
 }

@@ -10,7 +10,7 @@ import { CompoundIdColumn, DateColumn, DataAreaSettings, InMemoryDataProvider, E
 
 import { Route } from '@angular/router';
 
-import { SelectService } from '../select-popup/select-service';
+
 import { saveToExcel } from '../shared/saveToExcel';
 import { BusyService } from '@remult/core';
 import { FamilySourceId } from '../families/FamilySources';
@@ -59,12 +59,13 @@ export class DeliveryHistoryComponent implements OnInit {
     component: DeliveryHistoryComponent,
     data: { name: 'היסטורית משלוחים' }, canActivate: [AdminGuard]
   }
-  constructor(private context: Context, private selectService: SelectService, private busy: BusyService) {
+  constructor(private context: Context, private busy: BusyService) {
     let x = new InMemoryDataProvider();
     
     this.helperSource = context.for(helperHistoryInfo,x);
     this.helperInfo = this.helperSource.gridSettings( {
       hideDataArea: true,
+      numOfColumnsInGrid:6,
       columnSettings: h => [
         {
           column: h.name,
@@ -72,7 +73,7 @@ export class DeliveryHistoryComponent implements OnInit {
         },
         {
           column: h.phone,
-          width: '120'
+          width: '140'
         },
         {
           column: h.company,
@@ -160,16 +161,16 @@ export class DeliveryHistoryComponent implements OnInit {
     
     columnSettings: d => [
       d.name,
-      d.courier.getColumn(this.selectService),
+      d.courier,
       d.deliveryStatusDate,
-      d.deliverStatus.getColumn(),
-      d.basketType.getColumn(),
+      d.deliverStatus,
+      d.basketType,
       d.city,
-      d.familySource.getColumn(),
+      d.familySource,
       d.courierComments,
-      d.courierAssignUser.getColumn(this.selectService),
+      d.courierAssignUser,
       d.courierAssingTime,
-      d.deliveryStatusUser.getColumn(this.selectService)
+      d.deliveryStatusUser
     ],
     
     hideDataArea: true,
@@ -235,11 +236,11 @@ export class helperHistoryInfo extends Entity<string>{
   courier = new StringColumn();
   name = new StringColumn('שם');
   phone = new PhoneColumn("טלפון");
-  company = new CompanyColumn(); 
+  company = new CompanyColumn(this.context); 
   deliveries = new NumberColumn('משלוחים');
   families = new NumberColumn('משפחות');
   dates = new NumberColumn("תאריכים");
-  constructor() {
+  constructor(private context:Context) {
     super({ name: 'helperHistoryInfo', allowApiRead: false, allowApiCRUD: false });
     this.__initColumns(this.courier);
   }

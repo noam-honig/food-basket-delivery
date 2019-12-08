@@ -201,9 +201,9 @@
       </mat-expansion-panel>
     </mat-accordion>
   </mat-card>
-  <mat-card>
+  <mat-card [class.hide]="partOfReview||preview">
 
-    <app-map #map [class.hidden]="partOfReview||preview"> </app-map>
+    <app-map #map > </app-map>
     <button mat-raised-button *ngIf="!preview&&familyLists.toDeliver.length>0" (click)="showRouteOnGoogleMaps()"
       class="map-button no-print">הצג מסלול ב - google maps</button>
   </mat-card>

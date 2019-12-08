@@ -1,6 +1,6 @@
 <div class="myDiv">
 
-  <h3 mat-dialog-header>{{'שיוך משפחות ל'|translate}} {{data.helper.name.value}}</h3>
+  <h3 mat-dialog-header>{{'שיוך משפחות ל'|translate}} {{argsHelper.name.value}}</h3>
 
   <div mat-dialog-content>
     <div class="dialog-content-fixer">
@@ -13,9 +13,9 @@
     <button mat-raised-button color="accent" (click)="close()">
       סגור
     </button>
-    <a href="tel:{{data.helper.phone.displayValue}}" style="padding-right:15px;">
+    <a href="tel:{{argsHelper.phone.displayValue}}" style="padding-right:15px;">
       <button mat-raised-button  class="dial-for-help">
-        <mat-icon>phone</mat-icon> חייג ל{{data.helper.name.value}} {{data.helper.phone.displayValue}}
+        <mat-icon>phone</mat-icon> חייג ל{{argsHelper.name.value}} {{argsHelper.phone.displayValue}}
       </button>
     </a>
   </mat-dialog-actions>

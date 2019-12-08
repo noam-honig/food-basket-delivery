@@ -35,7 +35,7 @@
   </div>
 
 
-  <span *ngIf="!name.value" class="help no-print">אנא הזיני את הטלפון של המשנע ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו
+  <span *ngIf="showHelperInput&&!name.value" class="help no-print">אנא הזיני את הטלפון של המשנע ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו
     סלים
     לשייך</span>
   <div *ngIf="name.value&&name.value.length>=2">

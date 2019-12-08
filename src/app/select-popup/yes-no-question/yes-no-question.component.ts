@@ -1,6 +1,5 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { SelectPopupComponent } from '../select-popup.component';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-yes-no-question',
@@ -8,18 +7,27 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./yes-no-question.component.scss']
 })
 export class YesNoQuestionComponent implements OnInit {
-
+  public args: {
+    onYes?: () => void;
+    onNo?: () => void;
+    showOnlyConfirm?: boolean;
+    question: string;
+  };
+  confirmOnly=false;
+  question: string;
   constructor(
-    private dialogRef: MatDialogRef<SelectPopupComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: YesNoQuestionComponentData
+    private dialogRef: MatDialogRef<any>
+
   ) {
     dialogRef.afterClosed().subscribe(s => {
-      if (!this.yes && data.onNo)
-        data.onNo();
+      if (!this.yes && this.args.onNo)
+        this.args.onNo();
     });
   }
 
   ngOnInit() {
+    if (!this.question)
+      this.question = this.args.question;
   }
   close() {
     this.dialogRef.close();
@@ -28,12 +36,7 @@ export class YesNoQuestionComponent implements OnInit {
   select() {
     this.yes = true;
     this.dialogRef.close();
-    this.data.onYes();
+    if (this.args.onYes)
+      this.args.onYes();
   }
-}
-export interface YesNoQuestionComponentData {
-  onYes: () => void;
-  onNo?: () => void;
-  showOnlyConfirm?:boolean;
-  question: string;
 }

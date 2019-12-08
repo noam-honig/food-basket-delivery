@@ -1,5 +1,5 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Context, ServerFunction, DirectSQL } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { SqlBuilder } from '../model-shared/types';
@@ -14,10 +14,12 @@ export class SelectCompanyComponent implements OnInit {
 
   searchString: string = '';
   cities: string[] = [];
+  public argOnSelect: (selectedValue: string) => void;
+
+
+
   constructor(
-    private dialogRef: MatDialogRef<SelectCompanyComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: SelectCompanyHelper,
-    private context: Context
+    private dialogRef: MatDialogRef<any>
   ) {
 
   }
@@ -25,7 +27,7 @@ export class SelectCompanyComponent implements OnInit {
     this.select('');
   }
   select(city: string) {
-    this.data.onSelect(city);
+    this.argOnSelect(city);
     this.dialogRef.close();
   }
 
@@ -55,22 +57,10 @@ export class SelectCompanyComponent implements OnInit {
       from: h,
       select: () => [sql.build("distinct ", h.company)],
       where: () => [h.company.isGreaterThan('')],
-      orderBy:  [{ column: h.company, descending: false }]
+      orderBy: [{ column: h.company, descending: false }]
 
     }));
     return r.rows.map(x => x.company);
   }
-  static dialog(dialog: MatDialog, data: SelectCompanyHelper) {
-    dialog.open(SelectCompanyComponent, { data });
-  }
-
-
-
 }
 
-export interface SelectCompanyHelper {
-
-  onSelect: (selectedValue: string) => void,
-
-
-}

@@ -13,12 +13,13 @@ import { Context, DirectSQL } from '@remult/core';
 import { ServerFunction } from '@remult/core';
 import { SqlBuilder } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { SelectService } from '../select-popup/select-service';
+
 
 import { colors } from '../families/stats-action';
 import { BusyService } from '@remult/core';
 import { YesNo } from '../families/YesNo';
 import { Roles, AdminGuard } from '../auth/roles';
+import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 
 @Component({
   selector: 'app-distribution-map',
@@ -26,7 +27,7 @@ import { Roles, AdminGuard } from '../auth/roles';
   styleUrls: ['./distribution-map.component.scss']
 })
 export class DistributionMap implements OnInit, OnDestroy {
-  constructor(private context: Context, private dialog: DialogService, private selectService: SelectService, busy: BusyService) {
+  constructor(private context: Context, private dialog: DialogService,  busy: BusyService) {
 
     let y = dialog.refreshStatusStats.subscribe(() => {
       busy.donotWait(async () => {
@@ -109,11 +110,11 @@ export class DistributionMap implements OnInit, OnDestroy {
             //info.open(this.map, familyOnMap.marker);
           }
           family = await this.context.for(Families).findFirst(fam => fam.id.isEqualTo(f.id));
-          this.selectService.updateFamiliy({ f: family });
+          this.context.openDialog(UpdateFamilyDialogComponent, x=>x.args={ f: family });
         });
       }
 
-      let status: statusClass = this.statuses.getBy(f.status,f.courier);
+      let status: statusClass = this.statuses.getBy(f.status, f.courier);
 
       if (status)
         status.value++;

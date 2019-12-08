@@ -1,11 +1,11 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material';
 import { Families, duplicateFamilyInfo } from '../families/families';
 import { Context, DataAreaSettings } from '@remult/core';
-import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { DialogService } from '../select-popup/dialog';
-import { SelectService } from '../select-popup/select-service';
+
+
+import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 
 @Component({
   selector: 'app-quick-add-family',
@@ -13,14 +13,14 @@ import { SelectService } from '../select-popup/select-service';
   styleUrls: ['./quick-add-family.component.scss']
 })
 export class QuickAddFamilyComponent implements OnInit {
+  public argOnAdd: (f: Families) => void;
+
 
   constructor(
     private dialogRef: MatDialogRef<any>,
-    @Inject(MAT_DIALOG_DATA) public data: QuickAddParameters,
-    private context: Context,
-    private select: SelectService
+    private context: Context
   ) {
-    this.f.name.value = data.searchName;
+
     this.f.deliverStatus.value = ApplicationSettings.get(this.context).defaultStatusType.value;;
   }
   f: Families = this.context.for(Families).create();
@@ -45,8 +45,8 @@ export class QuickAddFamilyComponent implements OnInit {
       [this.f.phone1,
       this.f.phone2],
       [
-        this.f.deliverStatus.getColumn(),
-        this.f.basketType.getColumn()],
+        this.f.deliverStatus,
+        this.f.basketType],
       this.f.deliveryComments
 
 
@@ -62,17 +62,15 @@ export class QuickAddFamilyComponent implements OnInit {
   async confirm() {
     await this.f.save();
     this.dialogRef.close();
-    this.data.addedFamily(this.f);
+    this.argOnAdd(this.f);
   }
   cancel() {
     this.dialogRef.close();
   }
   ngOnInit() {
-    this.f.basketType.value='';
+    this.f.basketType.value = '';
   }
-  static dialog(dialog: MatDialog, data: QuickAddParameters) {
-    let r = dialog.open(QuickAddFamilyComponent, { data });
-  }
+
   getExistingFamily() {
     let f: duplicateFamilyInfo = undefined;
     for (const t of this.f.duplicateFamilies) {
@@ -86,13 +84,8 @@ export class QuickAddFamilyComponent implements OnInit {
   }
   async showExistingFamily() {
     let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(this.getExistingFamily().id));
-    this.select.updateFamiliy({ f: f, message: 'נוסף ב' + f.createDate.displayValue + ' ע"י ' + (await f.createUser.getValue()) });
+    this.context.openDialog(UpdateFamilyDialogComponent, async x => x.args = { f: f, message: 'נוסף ב' + f.createDate.displayValue + ' ע"י ' + (await f.createUser.getValue()) });
   }
 
 
-}
-
-interface QuickAddParameters {
-  searchName: string;
-  addedFamily: (f: Families) => void;
 }

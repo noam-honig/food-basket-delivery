@@ -6,16 +6,17 @@ import { DialogService } from '../select-popup/dialog';
 import { translate } from '../translate';
 
 import { Route } from '@angular/router';
-import { SelectService } from '../select-popup/select-service';
+
 import { Families } from '../families/families';
 import { FilterBase } from '@remult/core';
 import { BusyService } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { Helpers } from '../helpers/helpers';
-import { MatDialog } from '@angular/material/dialog';
+
 import { FamilySources } from '../families/FamilySources';
 import { NewsFilterService } from './news-filter-service';
+import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 @Component({
     selector: 'app-news',
     templateUrl: './news.component.html',
@@ -31,7 +32,7 @@ export class NewsComponent implements OnInit, OnDestroy {
         this.refresh();
     }
     onDestroy = () => { };
-    constructor(private dialog: DialogService, private selectService: SelectService, private context: Context, private busy: BusyService, private matDialog: MatDialog, public filters: NewsFilterService) {
+    constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public filters: NewsFilterService) {
         let y = dialog.refreshStatusStats.subscribe(() => {
             this.refresh();
         });
@@ -43,7 +44,7 @@ export class NewsComponent implements OnInit, OnDestroy {
     async updateFamily(n: NewsUpdate) {
 
         let f = await this.context.for(Families).findFirst(fam => fam.id.isEqualTo(n.id));
-        this.selectService.updateFamiliy({
+        this.context.openDialog(UpdateFamilyDialogComponent, x => x.args= {
             f: f, onSave: () => {
 
                 n.needsWork.value = f.needsWork.value;
@@ -61,9 +62,8 @@ export class NewsComponent implements OnInit, OnDestroy {
         });
     }
     async showHelper(n: NewsUpdate) {
-        HelperAssignmentComponent.dialog(this.matDialog, {
-            helper: this.context.for(Helpers).lookup(n.courier)
-        });
+        this.context.openDialog(
+            HelperAssignmentComponent, s => s.argsHelper = this.context.for(Helpers).lookup(n.courier));
     }
     ngOnDestroy(): void {
         this.onDestroy();

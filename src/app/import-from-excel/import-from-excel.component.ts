@@ -11,13 +11,14 @@ import { FamilySources } from '../families/FamilySources';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from '@remult/core';
-import { SelectService } from '../select-popup/select-service';
+
 import { isUndefined } from 'util';
 import { Roles } from '../auth/roles';
 import { MatStepper } from '@angular/material';
 import { async } from '@angular/core/testing';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { translate } from '../translate';
+import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 
 @Component({
     selector: 'app-excel-import',
@@ -28,7 +29,7 @@ export class ImportFromExcelComponent implements OnInit {
 
 
 
-    constructor(private context: Context, private dialog: DialogService, private busy: BusyService, private select: SelectService) {
+    constructor(private context: Context, private dialog: DialogService, private busy: BusyService) {
 
     }
 
@@ -262,23 +263,22 @@ export class ImportFromExcelComponent implements OnInit {
             for (const col of this.excelColumns) {
 
                 let searchName = col.title;
-                switch(searchName)
-                {
+                switch (searchName) {
                     case this.f.deliverStatus.caption:
                     case this.f.courier.caption:
                     case this.f.fixedCourier.caption:
                         break;
                     default:
-                            for (const up of this.columns) {
-                                if (searchName == up.name || (up.searchNames && up.searchNames.indexOf(searchName) >= 0)) {
-                                    col.column = up;
-                                    break;
-                                }
-            
+                        for (const up of this.columns) {
+                            if (searchName == up.name || (up.searchNames && up.searchNames.indexOf(searchName) >= 0)) {
+                                col.column = up;
+                                break;
                             }
-                            break;
+
+                        }
+                        break;
                 }
-                
+
 
             }
             this.rows = [];
@@ -787,8 +787,7 @@ export class ImportFromExcelComponent implements OnInit {
                         }
                     }
                 }
-                if (ef.deliverStatus.value==DeliveryStatus.RemovedFromList)
-                {
+                if (ef.deliverStatus.value == DeliveryStatus.RemovedFromList) {
                     info.error = 'משפחה מעודכנת בבסיס הנתונים כהוצא מהרשימות';
                     result.errorRows.push(info);
                 }
@@ -868,7 +867,7 @@ export class ImportFromExcelComponent implements OnInit {
     }
     async updateFamily(i: duplicateFamilyInfo) {
         let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(i.id));
-        this.select.updateFamiliy({ f: f });
+        this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { f: f });
     }
 }
 

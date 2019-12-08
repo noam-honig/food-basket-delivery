@@ -36,7 +36,7 @@ export class HelpersAndStats extends HelpersBase {
         dbReadOnly: true
     });
     constructor(context: Context) {
-        super( {
+        super(context, {
             name: "helpersAndStats",
             allowApiRead: Roles.admin,
             dbName: () => {

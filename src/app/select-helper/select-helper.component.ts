@@ -1,6 +1,6 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { Context } from '@remult/core';
 import { FilterBase, FindOptionsPerEntity } from '@remult/core';
@@ -18,11 +18,16 @@ export class SelectHelperComponent implements OnInit {
 
   searchString: string = '';
   lastFilter: string = undefined;
+  public args: {
+    hideRecent?: boolean,
+    onSelect: (selectedValue: HelpersBase) => void,
+    filter?: (helper: HelpersAndStats) => FilterBase
 
+  };
   filteredHelpers: HelpersBase[] = [];
   constructor(
-    private dialogRef: MatDialogRef<SelectHelperComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: SelectHelperInfo,
+    private dialogRef: MatDialogRef<any>,
+
     private context: Context,
     private busy: BusyService
 
@@ -42,13 +47,13 @@ export class SelectHelperComponent implements OnInit {
 
     this.findOptions.where = h => {
       let r = h.name.isContains(this.searchString);
-      if (this.data.filter) {
-        return r.and(this.data.filter(h));
+      if (this.args.filter) {
+        return r.and(this.args.filter(h));
       }
       return r;
     };
 
-    if (Helpers.recentHelpers.length == 0 || this.data.hideRecent)
+    if (Helpers.recentHelpers.length == 0 || this.args.hideRecent)
       this.getHelpers();
     else {
       this.filteredHelpers = [...Helpers.recentHelpers];
@@ -84,22 +89,9 @@ export class SelectHelperComponent implements OnInit {
       this.select(this.filteredHelpers[0]);
   }
   select(h: HelpersBase) {
-    this.data.onSelect(h);
+    this.args.onSelect(h);
     if (h && !h.isNew())
       Helpers.addToRecent(h);
     this.dialogRef.close();
   }
-  static dialog(dialog: MatDialog, options: SelectHelperInfo) {
-
-    dialog.open(SelectHelperComponent, {
-      data: options
-    });
-  }
-
-}
-export interface SelectHelperInfo {
-  hideRecent?: boolean,
-  onSelect: (selectedValue: HelpersBase) => void,
-  filter?: (helper: HelpersAndStats) => FilterBase
-
 }

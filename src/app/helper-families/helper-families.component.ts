@@ -9,12 +9,13 @@ import { AuthService } from '../auth/auth-service';
 import { DialogService } from '../select-popup/dialog';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { Router } from '@angular/router';
-import { SelectService } from '../select-popup/select-service';
+
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Context } from '@remult/core';
 import { Column } from '@remult/core';
 import { translate } from '../translate';
 import { Helpers } from '../helpers/helpers';
+import { UpdateCommentComponent } from '../update-comment/update-comment.component';
 
 @Component({
   selector: 'app-helper-families',
@@ -23,7 +24,7 @@ import { Helpers } from '../helpers/helpers';
 })
 export class HelperFamiliesComponent implements OnInit {
 
-  constructor(public auth: AuthService, private dialog: DialogService, private router: Router, private selectService: SelectService, private context: Context, private busy: BusyService) { }
+  constructor(public auth: AuthService, private dialog: DialogService, private context: Context, private busy: BusyService) { }
   @Input() familyLists: UserFamiliesList;
   @Input() partOfAssign = false;
   @Input() partOfReview = false;
@@ -79,8 +80,8 @@ export class HelperFamiliesComponent implements OnInit {
     this.deliveredToFamilyOk(f, DeliveryStatus.SuccessLeftThere, s => s.commentForSuccessLeft);
   }
   async deliveredToFamilyOk(f: Families, status: DeliveryStatus, helpText: (s: ApplicationSettings) => Column<any>) {
-    this.selectService.displayComment({
-      family:f,
+    this.context.openDialog(UpdateCommentComponent, x => x.args = {
+      family: f,
       comment: f.courierComments.value,
       assignerName: f.courierHelpName(),
       assignerPhone: f.courierHelpPhone(),
@@ -94,7 +95,7 @@ export class HelperFamiliesComponent implements OnInit {
           this.dialog.analytics('delivered');
           this.initFamilies();
           if (this.familyLists.toDeliver.length == 0) {
-            this.dialog.YesNoQuestion(this.allDoneMessage());
+            this.dialog.messageDialog(this.allDoneMessage());
           }
 
         }
@@ -114,8 +115,8 @@ export class HelperFamiliesComponent implements OnInit {
     return this.partOfAssign || this.partOfReview || this.familyLists.toDeliver.length > 0;
   }
   async couldntDeliverToFamily(f: Families) {
-    this.selectService.displayComment({
-      family:f,
+    this.context.openDialog(UpdateCommentComponent, x => x.args = {
+      family: f,
       comment: f.courierComments.value,
       showFailStatus: true,
       assignerName: f.courierHelpName(),
@@ -175,9 +176,9 @@ export class HelperFamiliesComponent implements OnInit {
       this.dialog.Error(err);
     }
   }
-  async updateMessageSent(){
-    let h = await this.context.for(Helpers).findFirst(h=>h.id.isEqualTo(this.familyLists.helperId));
-    h.smsDate.value =  new Date();
+  async updateMessageSent() {
+    let h = await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(this.familyLists.helperId));
+    h.smsDate.value = new Date();
     await h.save();
     this.assignSmsSent.emit();
   }
@@ -188,8 +189,8 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
   updateComment(f: Families) {
-    this.selectService.displayComment({
-      family:f,
+    this.context.openDialog(UpdateCommentComponent, x => x.args = {
+      family: f,
       comment: f.courierComments.value,
       assignerName: f.courierHelpName(),
       assignerPhone: f.courierHelpPhone(),
@@ -228,5 +229,5 @@ export class HelperFamiliesComponent implements OnInit {
     }
   }
   @ViewChild("map", { static: true }) map: MapComponent;
-  
+
 }

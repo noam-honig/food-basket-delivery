@@ -10,18 +10,19 @@ export interface HasAsyncGetTheValue {
 }
 
 export class PhoneColumn extends radweb.StringColumn {
-
+  constructor(settingsOrCaption?: ColumnOptions<string>) {
+    super({
+      display: d => d({
+        click: () => window.open('tel:' + this.displayValue),
+        allowClick: () => !!this.displayValue,
+        clickIcon: 'phone'
+      })
+    }, settingsOrCaption);
+  }
   get displayValue() {
     return PhoneColumn.formatPhone(this.value);
   }
-  getColumn(): ColumnSetting<Entity<any>> {
-    return {
-      column: this,
-      click: f => window.open('tel:' + (f ? f.__getColumn(this) : this).displayValue),
-      clickIcon: 'phone',
-      allowClick: f => !!(f ? f.__getColumn(this) : this).displayValue
-    }
-  }
+
   static formatPhone(s: string) {
     if (!s)
       return s;

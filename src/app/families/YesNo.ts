@@ -1,4 +1,4 @@
-import { ClosedListColumn, Column, ColumnOptions } from '@remult/core';
+import { ClosedListColumn, Column, ColumnOptions, DecorateDataColumnSettings } from '@remult/core';
 
 
 
@@ -12,16 +12,16 @@ export class YesNo {
   }
 }
 export class YesNoColumn extends ClosedListColumn<YesNo>{
-  constructor(caption: ColumnOptions<YesNo> ) {
-    super(YesNo, caption);
+  constructor(caption: ColumnOptions<YesNo>) {
+    super(YesNo, {
+      display: d => d({
+        dropDown: {
+          items: this.getOptions()
+        },
+        width: '100'
+      })
+    }
+      , caption);
   }
-  getColumn() {
-    return {
-      column: this,
-      dropDown: {
-        items: this.getOptions()
-      },
-      width: '100'
-    };
-  }
+
 }
