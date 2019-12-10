@@ -31,8 +31,8 @@ export class BasketType extends IdEntity {
 export class BasketId extends IdColumn implements HasAsyncGetTheValue {
   constructor(private context: Context, settingsOrCaption?: ColumnOptions<string>) {
     super(settingsOrCaption, {
-      display: d =>
-        d({
+      display: () =>
+        ({
           dropDown: {
             source: this.context.for(BasketType).dropDownSource({
               orderBy: (f: BasketType) => {

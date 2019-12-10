@@ -47,7 +47,7 @@ export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
 
   constructor(settingsOrCaption?: ColumnOptions<DeliveryStatus>, chooseFrom?: DeliveryStatus[]) {
     super(DeliveryStatus, {
-      display: d => {
+      display: () => {
         let op = this.getOptions();
         if (chooseFrom)
           op = chooseFrom.map(x => {
@@ -59,12 +59,12 @@ export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
         if (!DeliveryStatus.usingSelfPickupModule) {
           op = op.filter(x => x.id != DeliveryStatus.SelfPickup.id && x.id != DeliveryStatus.SuccessPickedUp.id);
         }
-        d({
+        return {
           dropDown: {
             items: op
           },
           width: '150'
-        });
+        };
 
       }
     },settingsOrCaption);

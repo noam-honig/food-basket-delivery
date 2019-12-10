@@ -690,7 +690,7 @@ export class GroupsColumn extends StringColumn {
     super({
       caption: 'שיוך לקבוצת חלוקה',
       includeInApi: Roles.admin,
-      display: d => d({
+      display: () => ({
         width: '300',
         click: () => {
           this.context.openDialog(UpdateGroupDialogComponent, s => {

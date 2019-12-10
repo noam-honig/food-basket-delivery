@@ -150,8 +150,8 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 
     constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>) {
         super({
-            display: d =>
-                d({
+            display: () =>
+                ({
                     getValue: () => this.getValue(),
                     hideDataOnInput: true,
                     width: '200',
@@ -186,8 +186,8 @@ export class CompanyColumn extends StringColumn {
     constructor(context: Context) {
         super({
             caption: "חברה",
-            display: d =>
-                d({
+            display: () =>
+                ({
                     width: '300',
                     click: () => context.openDialog(SelectCompanyComponent, s => s.argOnSelect = x => this.value = x)
                 })

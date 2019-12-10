@@ -51,14 +51,7 @@
                 "group": "groupA"
             }
         },
-        {
-            "type": "npm",
-            "script": "server-watch",
-            "problemMatcher": [
-                "$tsc-watch"
-            ],
-            "isBackground": true
-        },
+       
         {
             "type": "npm",
             "script": "server-build-and-run",

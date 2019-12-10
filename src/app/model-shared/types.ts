@@ -12,7 +12,7 @@ export interface HasAsyncGetTheValue {
 export class PhoneColumn extends radweb.StringColumn {
   constructor(settingsOrCaption?: ColumnOptions<string>) {
     super({
-      display: d => d({
+      display: () => ({
         click: () => window.open('tel:' + this.displayValue),
         allowClick: () => !!this.displayValue,
         clickIcon: 'phone'

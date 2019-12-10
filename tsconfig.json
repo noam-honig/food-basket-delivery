@@ -17,7 +17,16 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    
+    "paths": {
+      "@remult/*": [
+        "../radweb/projects/*"
+      ],     
+      "*": [
+        "node_modules/*"
+      ]
+    }
     
   }
 }
