@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
 
 
-import { Context, DataAreaSettings, ColumnSetting, DropDownItem, DateColumn } from '@remult/core';
+import { Context, DataAreaSettings, ColumnInAreaDisplaySettings, DropDownItem, DateColumn } from '@remult/core';
 import { Families, GroupsColumn } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DialogService } from '../select-popup/dialog';
@@ -45,11 +45,11 @@ export class BatchOperationsComponent implements OnInit {
         var basketTypes = await this.context.for(BasketType).find({});
 
 
-        let result: ColumnSetting<any>[] = [];
+        let result: ColumnInAreaDisplaySettings<any>[] = [];
 
         {
             let items: DropDownItem[] = [];
-            let bt: ColumnSetting<any> = {
+            let bt: ColumnInAreaDisplaySettings<any> = {
                 caption: 'בחרו סוג סל',
                 column: this.basketTypeColumn,
             };
@@ -62,7 +62,7 @@ export class BatchOperationsComponent implements OnInit {
             result.push(bt);
         }
         {
-            let g: ColumnSetting<any> = this.groupColumn;
+            let g: ColumnInAreaDisplaySettings<any> = this.groupColumn;
             g.caption = 'בחרו קבוצה';
             result.push(g);
         }

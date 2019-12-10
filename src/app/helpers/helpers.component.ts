@@ -6,7 +6,7 @@ import { Helpers } from './helpers';
 import { Families } from '../families/families';
 import { Route } from '@angular/router';
 
-import { ServerFunction, GridSettings, ColumnSetting } from '@remult/core';
+import { ServerFunction,  ColumnInAreaDisplaySettings } from '@remult/core';
 import { Context } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from '@remult/core';
@@ -49,7 +49,7 @@ export class HelpersComponent implements OnInit {
       }
     },
     columnSettings: helpers => {
-      let r: ColumnSetting<Helpers>[] = [
+      let r: ColumnInAreaDisplaySettings<Helpers>[] = [
         helpers.name,
         helpers.phone
       ];

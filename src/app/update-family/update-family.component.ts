@@ -1,10 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { DataAreaSettings, ColumnCollection, FilterHelper, GridSettings, ColumnSetting } from '@remult/core';
+import { DataAreaSettings,  GridSettings, ColumnInAreaDisplaySettings } from '@remult/core';
 import { Families } from '../families/families';
-import { Helpers } from '../helpers/helpers';
-
-import { BasketType } from '../families/BasketType';
-import { FamilySources } from '../families/FamilySources';
 import { Context } from '@remult/core';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DialogService } from '../select-popup/dialog';
@@ -102,7 +98,7 @@ export class UpdateFamilyComponent implements OnInit {
     });
   }
   deliveryInfo(fd: FamilyDeliveries) {
-    let columns: ColumnSetting<any>[] =
+    let columns: ColumnInAreaDisplaySettings<any>[] =
       [
         fd.deliverStatus,
         fd.deliveryStatusDate,

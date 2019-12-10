@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { AndFilter, ColumnSetting, GridSettings } from '@remult/core';
+import { AndFilter, ColumnInAreaDisplaySettings, GridSettings } from '@remult/core';
 
 import { Families } from './families';
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -48,13 +48,13 @@ import { translate } from '../translate';
 export class FamiliesComponent implements OnInit {
     @Input() problemOnly = false;
     limit = 50;
-    addressByGoogleColumn: ColumnSetting<Families>;
-    familyNameColumn: ColumnSetting<Families>;
-    familyAddressColumn: ColumnSetting<Families>;
-    addressCommentColumn: ColumnSetting<Families>;
-    groupsColumn: ColumnSetting<Families>;
-    statusColumn: ColumnSetting<Families>;
-    deliverySummary: ColumnSetting<Families>;
+    addressByGoogleColumn: ColumnInAreaDisplaySettings<Families>;
+    familyNameColumn: ColumnInAreaDisplaySettings<Families>;
+    familyAddressColumn: ColumnInAreaDisplaySettings<Families>;
+    addressCommentColumn: ColumnInAreaDisplaySettings<Families>;
+    groupsColumn: ColumnInAreaDisplaySettings<Families>;
+    statusColumn: ColumnInAreaDisplaySettings<Families>;
+    deliverySummary: ColumnInAreaDisplaySettings<Families>;
     scrollingSubscription: Subscription;
     showHoverButton: boolean = false;
     constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context,
@@ -725,5 +725,5 @@ interface statsOnTab {
     stats: FaimilyStatistics[],
     moreStats: FaimilyStatistics[],
     rule: (f: Families) => FilterBase,
-    fourthColumn: () => ColumnSetting<any>
+    fourthColumn: () => ColumnInAreaDisplaySettings<any>
 }
