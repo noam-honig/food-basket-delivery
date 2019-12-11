@@ -5,7 +5,7 @@ import { YesNoColumn } from "./YesNo";
 import { FamilySourceId } from "./FamilySources";
 import { BasketId, BasketType } from "./BasketType";
 import { changeDate, DateTimeColumn, SqlBuilder, PhoneColumn, delayWhileTyping } from "../model-shared/types";
-import { DataControlSettings, Column, Context, EntityClass,  ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase } from '@remult/core';
+import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase } from '@remult/core';
 import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
@@ -190,9 +190,9 @@ export class Families extends IdEntity {
   deliveryComments = new StringColumn('הערה שתופיע למשנע');
   addressApiResult = new StringColumn();
 
-  phone1 = new PhoneColumn({ caption: "טלפון 1", inputType: 'tel', dbName: 'phone', valueChange: () => this.delayCheckDuplicateFamilies() });
+  phone1 = new PhoneColumn({ caption: "טלפון 1", dbName: 'phone', valueChange: () => this.delayCheckDuplicateFamilies() });
   phone1Description = new StringColumn('הערות לטלפון 1');
-  phone2 = new PhoneColumn({ caption: "טלפון 2", inputType: 'tel', valueChange: () => this.delayCheckDuplicateFamilies() });
+  phone2 = new PhoneColumn({ caption: "טלפון 2", valueChange: () => this.delayCheckDuplicateFamilies() });
   phone2Description = new StringColumn('הערות לטלפון 2');
 
 

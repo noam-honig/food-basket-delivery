@@ -18,7 +18,7 @@ export class RegisterComponent implements OnInit {
   }
   static route: Route = { path: 'register', component: RegisterComponent, data: { name: 'הרשמה' }, canActivate: [NotSignedInGuard] };
 
-  confirmPassword = new StringColumn({ caption: 'אישור סיסמה', inputType: 'password' });
+  confirmPassword = new StringColumn({ caption: 'אישור סיסמה', dataControlSettings: () => ({inputType: 'password'}) });
   helpers = this.context.for(Helpers).gridSettings({
     numOfColumnsInGrid: 0,
     allowUpdate: true,

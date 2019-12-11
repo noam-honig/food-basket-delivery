@@ -26,7 +26,7 @@ export abstract class HelpersBase extends IdEntity {
                 this.name.error = 'השם קצר מידי';
         }
     });
-    phone = new PhoneColumn({ caption: "טלפון", inputType: 'tel' });
+    phone = new PhoneColumn("טלפון");
     smsDate = new DateTimeColumn('מועד משלוח SMS');
     company = new CompanyColumn(this.context);
     totalKm = new NumberColumn();
@@ -80,13 +80,13 @@ export class Helpers extends HelpersBase {
     _disableOnSavingRow = false;
     public static emptyPassword = 'password';
 
-    phone = new PhoneColumn({ caption: "טלפון", inputType: 'tel' });
+    phone = new PhoneColumn("טלפון");
     realStoredPassword = new StringColumn({
         dbName: 'password',
         includeInApi: false
     });
 
-    password = new StringColumn({ caption: 'סיסמה', inputType: 'password', serverExpression: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
+    password = new StringColumn({ caption: 'סיסמה', dataControlSettings: () => ({ inputType: 'password' }), serverExpression: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
 
     createDate = new changeDate({ caption: 'מועד הוספה' });
 

@@ -15,7 +15,8 @@ export class PhoneColumn extends radweb.StringColumn {
       dataControlSettings: () => ({
         click: () => window.open('tel:' + this.displayValue),
         allowClick: () => !!this.displayValue,
-        clickIcon: 'phone'
+        clickIcon: 'phone',
+        inputType:'phone'
       })
     }, settingsOrCaption);
   }
