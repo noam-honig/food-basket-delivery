@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { GridSettings, Column, Entity, ServerFunction, DirectSQL, IdColumn } from '@remult/core';
+import {  Column, Entity, ServerFunction,  IdColumn, SqlDatabase } from '@remult/core';
 import { Context } from '@remult/core';
 import { Helpers } from '../helpers/helpers';
-import { myThrottle, HasAsyncGetTheValue } from '../model-shared/types';
+import {  HasAsyncGetTheValue } from '../model-shared/types';
 
 import { Families, parseAddress, duplicateFamilyInfo } from '../families/families';
 
@@ -12,10 +12,10 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from '@remult/core';
 
-import { isUndefined } from 'util';
+
 import { Roles } from '../auth/roles';
 import { MatStepper } from '@angular/material';
-import { async } from '@angular/core/testing';
+
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { translate } from '../translate';
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
@@ -734,7 +734,7 @@ export class ImportFromExcelComponent implements OnInit {
         return info.address + ": " + r.join(', ');
     }
     @ServerFunction({ allowed: Roles.admin })
-    async checkExcelInput(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], context?: Context, directSql?: DirectSQL) {
+    async checkExcelInput(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], context?: Context, db?: SqlDatabase) {
         let result: serverCheckResults = {
             errorRows: [],
             identicalRows: [],
@@ -742,7 +742,7 @@ export class ImportFromExcelComponent implements OnInit {
             updateRows: []
         } as serverCheckResults;
         for (const info of excelRowInfo) {
-            info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz, info.tz2, info.phone1, info.phone2, undefined, true, context, directSql);
+            info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz, info.tz2, info.phone1, info.phone2, undefined, true, context, db);
 
             if (!info.duplicateFamilyInfo || info.duplicateFamilyInfo.length == 0) {
                 result.newRows.push(info);

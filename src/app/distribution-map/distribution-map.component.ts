@@ -9,7 +9,7 @@ import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelper
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
 
-import { Context, DirectSQL } from '@remult/core';
+import { Context, SqlDatabase } from '@remult/core';
 import { ServerFunction } from '@remult/core';
 import { SqlBuilder } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -139,12 +139,12 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.updateChart();
   }
   @ServerFunction({ allowed: Roles.admin })
-  static async GetFamiliesLocations(onlyPotentialAsignment?: boolean, city?: string, group?: string, context?: Context, directSql?: DirectSQL) {
+  static async GetFamiliesLocations(onlyPotentialAsignment?: boolean, city?: string, group?: string, context?: Context, db?: SqlDatabase) {
     let f = new Families(context);
 
     let sql = new SqlBuilder();
     sql.addEntity(f, "Families");
-    let r = (await directSql.execute(sql.query({
+    let r = (await db.createCommand().execute(sql.query({
       select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier],
       from: f,
       where: () => {

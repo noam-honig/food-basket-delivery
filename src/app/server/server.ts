@@ -10,7 +10,7 @@ import { Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import "../helpers/helpers.component";
 import '../app.module';
-import { ServerContext, ActualDirectSQL, DateColumn } from '@remult/core';
+import { ServerContext,  DateColumn } from '@remult/core';
 import { Helpers } from '../helpers/helpers';
 import { FamilyDeliveriesStats } from "../delivery-history/delivery-history.component";
 import { SqlBuilder } from "../model-shared/types";
@@ -129,7 +129,7 @@ serverInit().then(async (dataSource) => {
             }
             let ds: PostgresDataProvider;
             let context = getContext(req, x => ds = x);
-            var dsql = ds.getDirectSql();
+            
             var fromDate = DateColumn.stringToDate(req.query["fromdate"]);
             var toDate = DateColumn.stringToDate(req.query["todate"]);
             if (!fromDate)
@@ -139,7 +139,7 @@ serverInit().then(async (dataSource) => {
             toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
 
 
-            var connections = (await dsql.execute("SELECT count(*) as x FROM pg_stat_activity where datname=current_database()")).rows[0]['x'];
+            var connections = (await ds.createCommand().execute("SELECT count(*) as x FROM pg_stat_activity where datname=current_database()")).rows[0]['x'];
 
             var familiesInEvent = await context.for(Families).count(f => f.deliverStatus.isInEvent());
             var totalFamilies = await context.for(Families).count();
@@ -155,7 +155,7 @@ serverInit().then(async (dataSource) => {
                 fds.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(fds.deliveryStatusDate.isLessThan(toDate)));
 
 
-            var helpers = (await dsql.execute(query)).rows[0]['x'];
+            var helpers = (await ds.createCommand().execute(query)).rows[0]['x'];
             await context.for(FamilyDeliveriesStats).count(f => f.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(f.deliveryStatusDate.isLessThan(toDate)));
             var onTheWay = await context.for(Families).count(f => f.onTheWayFilter());
             var settings = await ApplicationSettings.getAsync(context);

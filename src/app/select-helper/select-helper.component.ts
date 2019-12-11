@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 
 import { MatDialogRef } from '@angular/material/dialog';
 import { Helpers, HelpersBase } from '../helpers/helpers';
-import { Context } from '@remult/core';
-import { FilterBase, FindOptionsPerEntity } from '@remult/core';
+import { Context, FindOptions } from '@remult/core';
+import { FilterBase } from '@remult/core';
 
 import { BusyService } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -41,7 +41,7 @@ export class SelectHelperComponent implements OnInit {
 
   findOptions = {
     orderBy: h => [h.name], limit: 25
-  } as FindOptionsPerEntity<HelpersAndStats>;
+  } as FindOptions<HelpersAndStats>;
   async ngOnInit() {
 
 

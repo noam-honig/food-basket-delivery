@@ -5,7 +5,7 @@ import { YesNoColumn } from "./YesNo";
 import { FamilySourceId } from "./FamilySources";
 import { BasketId, BasketType } from "./BasketType";
 import { changeDate, DateTimeColumn, SqlBuilder, PhoneColumn, delayWhileTyping } from "../model-shared/types";
-import { ColumnInAreaDisplaySettings, Column, Context, EntityClass, DirectSQL, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn } from '@remult/core';
+import { DataControlSettings, Column, Context, EntityClass,  ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase } from '@remult/core';
 import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
@@ -155,7 +155,7 @@ export class Families extends IdEntity {
   name = new StringColumn({
     caption: "שם",
     valueChange: () => this.delayCheckDuplicateFamilies(),
-    onValidate: () => {
+    validate: () => {
       if (!this.name.value || this.name.value.length < 2)
         this.name.error = 'השם קצר מידי';
     }
@@ -203,7 +203,7 @@ export class Families extends IdEntity {
   //callComments = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'הערות שיחה' });
 
   deliverStatus = new DeliveryStatusColumn();
-  correntAnErrorInStatus = new BoolColumn({ virtualData: () => false });
+  correntAnErrorInStatus = new BoolColumn({ serverExpression: () => false });
   courier = new HelperId(this.context, "משנע באירוע");
   courierComments = new StringColumn('הערות שכתב המשנע כשמסר');
   deliveryStatusDate = new changeDate('מועד סטטוס משלוח');
@@ -216,11 +216,11 @@ export class Families extends IdEntity {
 
   courierAssignUserName = new StringColumn({
     caption: 'שם שיוך למשנע',
-    virtualData: async () => (await this.context.for(Helpers).lookupAsync(this.courierAssignUser)).name.value
+    serverExpression: async () => (await this.context.for(Helpers).lookupAsync(this.courierAssignUser)).name.value
   });
   courierAssignUserPhone = new PhoneColumn({
     caption: 'טלפון שיוך למשנע',
-    virtualData: async () => (await this.context.for(Helpers).lookupAsync(this.courierAssignUser)).phone.value
+    serverExpression: async () => (await this.context.for(Helpers).lookupAsync(this.courierAssignUser)).phone.value
   });
 
   async setPostalCodeServerOnly() {
@@ -392,11 +392,11 @@ export class Families extends IdEntity {
       cssClass: f => f.previousDeliveryStatus.getCss()
 
 
-    } as ColumnInAreaDisplaySettings<Families>;
+    } as DataControlSettings<Families>;
   }
 
   addressByGoogle() {
-    let r: ColumnInAreaDisplaySettings<Families> = {
+    let r: DataControlSettings<Families> = {
       caption: 'כתובת כפי שגוגל הבין',
       getValue: f => f.getGeocodeInformation().getAddress()
 
@@ -560,7 +560,7 @@ export class Families extends IdEntity {
 
   }
   @ServerFunction({ allowed: Roles.admin, blockUser: false })
-  static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, id: string, exactName: boolean = false, context?: Context, directSQL?: DirectSQL) {
+  static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, id: string, exactName: boolean = false, context?: Context, db?: SqlDatabase) {
     let result: duplicateFamilyInfo[] = [];
 
     var sql = new SqlBuilder();
@@ -581,7 +581,7 @@ export class Families extends IdEntity {
         nameCol = sql.build('trim(', f.name, ') like  ', sql.str('%' + name.trim() + '%'));
 
 
-    let sqlResult = await directSQL.execute(sql.query({
+    let sqlResult = await db.createCommand().execute(sql.query({
       select: () => [f.id,
       f.name,
       f.address,
@@ -690,7 +690,7 @@ export class GroupsColumn extends StringColumn {
     super({
       caption: 'שיוך לקבוצת חלוקה',
       includeInApi: Roles.admin,
-      display: () => ({
+      dataControlSettings: () => ({
         width: '300',
         click: () => {
           this.context.openDialog(UpdateGroupDialogComponent, s => {

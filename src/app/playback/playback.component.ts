@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { infoOnMap, statusClass, Statuses } from '../distribution-map/distribution-map.component';
 import * as chart from 'chart.js';
-import { ServerFunction, Context, DirectSQL, DateTimeColumn } from '@remult/core';
+import { ServerFunction, Context,  DateTimeColumn, SqlDatabase } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { Families } from '../families/families';
 import { SqlBuilder } from '../model-shared/types';
@@ -202,12 +202,12 @@ export class PlaybackComponent implements OnInit {
   timeline: timelineStep[] = [];
 
   @ServerFunction({ allowed: Roles.admin })
-  static async GetTimeline(context?: Context, directSql?: DirectSQL) {
+  static async GetTimeline(context?: Context, db?: SqlDatabase) {
     let f = new Families(context);
 
     let sql = new SqlBuilder();
     sql.addEntity(f, "Families");
-    let r = (await directSql.execute(sql.query({
+    let r = (await db.createCommand().execute(sql.query({
       select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier, f.courierAssingTime, f.deliveryStatusDate],
       from: f,
       where: () => {

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { EntityClass, Context, DirectSQL, StringColumn, IdColumn, SpecificEntityHelper } from '@remult/core';
+import { EntityClass, Context,  StringColumn, IdColumn, SpecificEntityHelper, SqlDatabase } from '@remult/core';
 import { FamilyId, Families } from '../families/families';
 import { changeDate, SqlBuilder, PhoneColumn } from '../model-shared/types';
 import { BasketId } from '../families/BasketType';
@@ -191,7 +191,7 @@ export class DeliveryHistoryComponent implements OnInit {
     
   }
   @ServerFunction({ allowed: Roles.admin })
-  static async  getHelperHistoryInfo(fromDate: string, toDate: string, context?: Context, directSql?: DirectSQL) {
+  static async  getHelperHistoryInfo(fromDate: string, toDate: string, context?: Context, db?: SqlDatabase) {
     var fromDateDate = DateColumn.stringToDate(fromDate);
     var toDateDate = DateColumn.stringToDate(toDate);
     toDateDate = new Date(toDateDate.getFullYear(), toDateDate.getMonth(), toDateDate.getDate() + 1);
@@ -199,7 +199,7 @@ export class DeliveryHistoryComponent implements OnInit {
     var fd = new FamilyDeliveriesStats(context);
     var h = new Helpers(context);
 
-    return (await directSql.execute(
+    return (await db.createCommand().execute(
       sql.build("select ", [
         fd.courier.__getDbName(),
         sql.columnInnerSelect(fd, {

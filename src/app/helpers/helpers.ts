@@ -21,7 +21,7 @@ export abstract class HelpersBase extends IdEntity {
 
     name = new StringColumn({
         caption: "שם",
-        onValidate: () => {
+        validate: () => {
             if (!this.name.value || this.name.value.length < 2)
                 this.name.error = 'השם קצר מידי';
         }
@@ -86,7 +86,7 @@ export class Helpers extends HelpersBase {
         includeInApi: false
     });
 
-    password = new StringColumn({ caption: 'סיסמה', inputType: 'password', virtualData: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
+    password = new StringColumn({ caption: 'סיסמה', inputType: 'password', serverExpression: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
 
     createDate = new changeDate({ caption: 'מועד הוספה' });
 
@@ -150,7 +150,7 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 
     constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>) {
         super({
-            display: () =>
+            dataControlSettings: () =>
                 ({
                     getValue: () => this.getValue(),
                     hideDataOnInput: true,
@@ -186,7 +186,7 @@ export class CompanyColumn extends StringColumn {
     constructor(context: Context) {
         super({
             caption: "חברה",
-            display: () =>
+            dataControlSettings: () =>
                 ({
                     width: '300',
                     click: () => context.openDialog(SelectCompanyComponent, s => s.argOnSelect = x => this.value = x)

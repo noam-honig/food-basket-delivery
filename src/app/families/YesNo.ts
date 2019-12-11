@@ -14,7 +14,7 @@ export class YesNo {
 export class YesNoColumn extends ClosedListColumn<YesNo>{
   constructor(caption: ColumnOptions<YesNo>) {
     super(YesNo, {
-      display: () => ({
+      dataControlSettings: () => ({
         dropDown: {
           items: this.getOptions()
         },

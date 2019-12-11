@@ -1,16 +1,16 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { AndFilter, ColumnInAreaDisplaySettings, GridSettings } from '@remult/core';
+import { AndFilter,  GridSettings ,DataControlSettings} from '@remult/core';
 
 import { Families } from './families';
 import { DeliveryStatus } from "./DeliveryStatus";
-import { CallStatus } from "./CallStatus";
+
 import { YesNo } from "./YesNo";
 
-import { FamilySources } from "./FamilySources";
+
 import { BasketType } from "./BasketType";
 
 import { DialogService } from '../select-popup/dialog';
-import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
+
 
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -21,7 +21,7 @@ import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
 
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
-import { HasAsyncGetTheValue, DateTimeColumn, PhoneColumn } from '../model-shared/types';
+import {  PhoneColumn } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
 
@@ -29,7 +29,7 @@ import { Context } from '@remult/core';
 
 import { FamilyDeliveries } from './FamilyDeliveries';
 import { UpdateFamilyComponent } from '../update-family/update-family.component';
-import { PortalHostDirective } from '@angular/cdk/portal';
+
 import { saveToExcel } from '../shared/saveToExcel';
 import { PreviewFamilyComponent } from '../preview-family/preview-family.component';
 import { Roles, AdminGuard } from '../auth/roles';
@@ -48,13 +48,13 @@ import { translate } from '../translate';
 export class FamiliesComponent implements OnInit {
     @Input() problemOnly = false;
     limit = 50;
-    addressByGoogleColumn: ColumnInAreaDisplaySettings<Families>;
-    familyNameColumn: ColumnInAreaDisplaySettings<Families>;
-    familyAddressColumn: ColumnInAreaDisplaySettings<Families>;
-    addressCommentColumn: ColumnInAreaDisplaySettings<Families>;
-    groupsColumn: ColumnInAreaDisplaySettings<Families>;
-    statusColumn: ColumnInAreaDisplaySettings<Families>;
-    deliverySummary: ColumnInAreaDisplaySettings<Families>;
+    addressByGoogleColumn: DataControlSettings<Families>;
+    familyNameColumn: DataControlSettings<Families>;
+    familyAddressColumn: DataControlSettings<Families>;
+    addressCommentColumn: DataControlSettings<Families>;
+    groupsColumn: DataControlSettings<Families>;
+    statusColumn: DataControlSettings<Families>;
+    deliverySummary: DataControlSettings<Families>;
     scrollingSubscription: Subscription;
     showHoverButton: boolean = false;
     constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context,
@@ -725,5 +725,5 @@ interface statsOnTab {
     stats: FaimilyStatistics[],
     moreStats: FaimilyStatistics[],
     rule: (f: Families) => FilterBase,
-    fourthColumn: () => ColumnInAreaDisplaySettings<any>
+    fourthColumn: () => DataControlSettings<any>
 }

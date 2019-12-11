@@ -47,7 +47,7 @@ export async function DoIt() {
             var w = new PostgresSchemaWrapper(targetPool, schema);
             let builder = new PostgrestSchemaBuilder(w, schema);
             var psw = new PostgresDataProvider(w);
-            await psw.doInTransaction(async tdp => {
+            await psw.transaction(async tdp => {
                 let target = new ServerContext();
                 target.setDataProvider(tdp);
 

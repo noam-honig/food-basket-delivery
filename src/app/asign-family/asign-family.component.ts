@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
-import { UrlBuilder, FilterBase, ServerFunction, StringColumn, DataAreaSettings, BoolColumn } from '@remult/core';
+import { UrlBuilder, FilterBase, ServerFunction, StringColumn, DataAreaSettings, BoolColumn, SqlDatabase } from '@remult/core';
 import { Families } from '../families/families';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
@@ -16,7 +16,7 @@ import { foreachSync } from '../shared/utils';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import * as fetch from 'node-fetch';
 
-import { Context, DirectSQL, } from '@remult/core';
+import { Context } from '@remult/core';
 
 import { BasketType } from '../families/BasketType';
 
@@ -385,7 +385,7 @@ export class AsignFamilyComponent implements OnInit {
     }
 
     @ServerFunction({ allowed: Roles.admin })
-    static async getBasketStatus(info: GetBasketStatusActionInfo, context?: Context, directSql?: DirectSQL): Promise<GetBasketStatusActionResponse> {
+    static async getBasketStatus(info: GetBasketStatusActionInfo, context?: Context, db?: SqlDatabase): Promise<GetBasketStatusActionResponse> {
 
         let result = {
             baskets: [],
@@ -410,7 +410,7 @@ export class AsignFamilyComponent implements OnInit {
         let f = context.for(Families).create();
         let fd = context.for(FamilyDeliveries).create();
 
-        let r = await directSql.execute(sql.build('select count(*) from ', f, ' where ', f.readyFilter(info.filterCity, info.filterGroup).and(f.special.isEqualTo(YesNo.No)), ' and ',
+        let r = await db.createCommand().execute(sql.build('select count(*) from ', f, ' where ', f.readyFilter(info.filterCity, info.filterGroup).and(f.special.isEqualTo(YesNo.No)), ' and ',
             filterRepeatFamilies(sql, f, fd, info.helperId)));
         result.repeatFamilies = r.rows[0][r.getcolumnNameAtIndex(0)];
 
@@ -455,7 +455,7 @@ export class AsignFamilyComponent implements OnInit {
         this.context.openDialog(SelectCompanyComponent, s => s.argOnSelect = x => this.company.value = x);
     }
     @ServerFunction({ allowed: Roles.admin })
-    static async AddBox(info: AddBoxInfo, context?: Context, directSql?: DirectSQL) {
+    static async AddBox(info: AddBoxInfo, context?: Context, db?: SqlDatabase) {
 
 
         let result: AddBoxResponse = {
@@ -498,7 +498,7 @@ export class AsignFamilyComponent implements OnInit {
                 let f = new Families(context);
                 let sql = new SqlBuilder();
                 sql.addEntity(f, 'Families');
-                let r = (await directSql.execute(sql.query({
+                let r = (await db.createCommand().execute(sql.query({
                     select: () => [f.id, f.addressLatitude, f.addressLongitude],
                     from: f,
                     where: () => {

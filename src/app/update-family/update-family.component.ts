@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { DataAreaSettings,  GridSettings, ColumnInAreaDisplaySettings } from '@remult/core';
+import { DataAreaSettings,  GridSettings, DataControlSettings } from '@remult/core';
 import { Families } from '../families/families';
 import { Context } from '@remult/core';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -98,7 +98,7 @@ export class UpdateFamilyComponent implements OnInit {
     });
   }
   deliveryInfo(fd: FamilyDeliveries) {
-    let columns: ColumnInAreaDisplaySettings<any>[] =
+    let columns: DataControlSettings<any>[] =
       [
         fd.deliverStatus,
         fd.deliveryStatusDate,

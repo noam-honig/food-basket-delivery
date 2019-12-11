@@ -1,5 +1,5 @@
 import * as radweb from '@remult/core';
-import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, SQLCommand, SQLQueryResult, ColumnOptions} from '@remult/core';
+import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest,  ColumnOptions, SqlCommand, SqlResult} from '@remult/core';
 
 
 
@@ -12,7 +12,7 @@ export interface HasAsyncGetTheValue {
 export class PhoneColumn extends radweb.StringColumn {
   constructor(settingsOrCaption?: ColumnOptions<string>) {
     super({
-      display: () => ({
+      dataControlSettings: () => ({
         click: () => window.open('tel:' + this.displayValue),
         allowClick: () => !!this.displayValue,
         clickIcon: 'phone'
@@ -435,14 +435,16 @@ export class SqlBuilder {
     return this.build('(', this.query(builder), ' limit 1) ', col);
   }
 }
-class myDummySQLCommand implements SQLCommand {
-  addParameterToCommandAndReturnParameterName(col: radweb.Column<any>, val: any): string {
+class myDummySQLCommand implements SqlCommand {
+
+  execute(sql: string): Promise<radweb.SqlResult> {
+    throw new Error("Method not implemented.");
+  }
+  addParameterAndReturnSqlToken(col: radweb.Column<any>, val: any): string {
     if (typeof (val) == "string") {
       return new SqlBuilder().str(val);
     }
     return val.toString();
-  } query(sql: string): Promise<SQLQueryResult> {
-    throw new Error("Method not implemented.");
   }
 
 

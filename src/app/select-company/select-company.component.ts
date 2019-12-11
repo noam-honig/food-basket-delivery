@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Context, ServerFunction, DirectSQL } from '@remult/core';
+import { Context, ServerFunction, SqlDatabase } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { SqlBuilder } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
@@ -50,10 +50,10 @@ export class SelectCompanyComponent implements OnInit {
 
   }
   @ServerFunction({ allowed: Roles.admin })
-  static async getCompanies(context?: Context, directSql?: DirectSQL) {
+  static async getCompanies(context?: Context, db?: SqlDatabase) {
     var sql = new SqlBuilder();
     let h = new Helpers(context);
-    let r = await directSql.execute(sql.query({
+    let r = await db.createCommand().execute(sql.query({
       from: h,
       select: () => [sql.build("distinct ", h.company)],
       where: () => [h.company.isGreaterThan('')],

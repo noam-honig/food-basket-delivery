@@ -47,7 +47,7 @@ export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
 
   constructor(settingsOrCaption?: ColumnOptions<DeliveryStatus>, chooseFrom?: DeliveryStatus[]) {
     super(DeliveryStatus, {
-      display: () => {
+      dataControlSettings: () => {
         let op = this.getOptions();
         if (chooseFrom)
           op = chooseFrom.map(x => {
