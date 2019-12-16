@@ -581,7 +581,7 @@ export class Families extends IdEntity {
         nameCol = sql.build('trim(', f.name, ') like  ', sql.str('%' + name.trim() + '%'));
 
 
-    let sqlResult = await db.createCommand().execute(sql.query({
+    let sqlResult = await db.execute(sql.query({
       select: () => [f.id,
       f.name,
       f.address,
@@ -601,14 +601,14 @@ export class Families extends IdEntity {
 
     for (const row of sqlResult.rows) {
       result.push({
-        id: row[sqlResult.getcolumnNameAtIndex(0)],
-        name: row[sqlResult.getcolumnNameAtIndex(1)],
-        address: row[sqlResult.getcolumnNameAtIndex(2)],
-        tz: row[sqlResult.getcolumnNameAtIndex(3)],
-        tz2: row[sqlResult.getcolumnNameAtIndex(4)],
-        phone1: row[sqlResult.getcolumnNameAtIndex(5)],
-        phone2: row[sqlResult.getcolumnNameAtIndex(6)],
-        nameDup: row[sqlResult.getcolumnNameAtIndex(7)]
+        id: row[sqlResult.getResultJsonNameForIndexInSelect(0)],
+        name: row[sqlResult.getResultJsonNameForIndexInSelect(1)],
+        address: row[sqlResult.getResultJsonNameForIndexInSelect(2)],
+        tz: row[sqlResult.getResultJsonNameForIndexInSelect(3)],
+        tz2: row[sqlResult.getResultJsonNameForIndexInSelect(4)],
+        phone1: row[sqlResult.getResultJsonNameForIndexInSelect(5)],
+        phone2: row[sqlResult.getResultJsonNameForIndexInSelect(6)],
+        nameDup: row[sqlResult.getResultJsonNameForIndexInSelect(7)]
 
       });
     }

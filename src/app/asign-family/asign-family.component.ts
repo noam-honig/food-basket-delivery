@@ -410,9 +410,9 @@ export class AsignFamilyComponent implements OnInit {
         let f = context.for(Families).create();
         let fd = context.for(FamilyDeliveries).create();
 
-        let r = await db.createCommand().execute(sql.build('select count(*) from ', f, ' where ', f.readyFilter(info.filterCity, info.filterGroup).and(f.special.isEqualTo(YesNo.No)), ' and ',
+        let r = await db.execute(sql.build('select count(*) from ', f, ' where ', f.readyFilter(info.filterCity, info.filterGroup).and(f.special.isEqualTo(YesNo.No)), ' and ',
             filterRepeatFamilies(sql, f, fd, info.helperId)));
-        result.repeatFamilies = r.rows[0][r.getcolumnNameAtIndex(0)];
+        result.repeatFamilies = r.rows[0][r.getResultJsonNameForIndexInSelect(0)];
 
 
         for (let c of await context.for(CitiesStats).find({
@@ -498,7 +498,7 @@ export class AsignFamilyComponent implements OnInit {
                 let f = new Families(context);
                 let sql = new SqlBuilder();
                 sql.addEntity(f, 'Families');
-                let r = (await db.createCommand().execute(sql.query({
+                let r = (await db.execute(sql.query({
                     select: () => [f.id, f.addressLatitude, f.addressLongitude],
                     from: f,
                     where: () => {
@@ -518,9 +518,9 @@ export class AsignFamilyComponent implements OnInit {
 
                 return r.rows.map(x => {
                     return {
-                        id: x[r.getcolumnNameAtIndex(0)],
-                        addressLatitude: +x[r.getcolumnNameAtIndex(1)],
-                        addressLongitude: +x[r.getcolumnNameAtIndex(2)]
+                        id: x[r.getResultJsonNameForIndexInSelect(0)],
+                        addressLatitude: +x[r.getResultJsonNameForIndexInSelect(1)],
+                        addressLongitude: +x[r.getResultJsonNameForIndexInSelect(2)]
                     } as familyQueryResult;
 
                 }) as familyQueryResult[];

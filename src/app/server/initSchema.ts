@@ -4,7 +4,7 @@ import { Families } from '../families/families';
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { ServerContext } from '@remult/core';
+import { ServerContext, SqlDatabase } from '@remult/core';
 import '../app.module';
 
 
@@ -18,7 +18,7 @@ import { Sites } from '../sites/sites';
 export async function initSchema(pool: PostgresPool, org: string) {
 
 
-    var dataSource = new PostgresDataProvider(pool);
+    var dataSource = new SqlDatabase( new PostgresDataProvider(pool));
     let context = new ServerContext();
     context.setDataProvider(dataSource);
     let sql = new SqlBuilder();

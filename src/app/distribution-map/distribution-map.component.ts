@@ -144,7 +144,7 @@ export class DistributionMap implements OnInit, OnDestroy {
 
     let sql = new SqlBuilder();
     sql.addEntity(f, "Families");
-    let r = (await db.createCommand().execute(sql.query({
+    let r = (await db.execute(sql.query({
       select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier],
       from: f,
       where: () => {
@@ -159,11 +159,11 @@ export class DistributionMap implements OnInit, OnDestroy {
 
     return r.rows.map(x => {
       return {
-        id: x[r.getcolumnNameAtIndex(0)],
-        lat: +x[r.getcolumnNameAtIndex(1)],
-        lng: +x[r.getcolumnNameAtIndex(2)],
-        status: +x[r.getcolumnNameAtIndex(3)],
-        courier: x[r.getcolumnNameAtIndex(4)]
+        id: x[r.getResultJsonNameForIndexInSelect(0)],
+        lat: +x[r.getResultJsonNameForIndexInSelect(1)],
+        lng: +x[r.getResultJsonNameForIndexInSelect(2)],
+        status: +x[r.getResultJsonNameForIndexInSelect(3)],
+        courier: x[r.getResultJsonNameForIndexInSelect(4)]
       } as familyQueryResult;
 
     }) as familyQueryResult[];

@@ -199,7 +199,7 @@ export class DeliveryHistoryComponent implements OnInit {
     var fd = new FamilyDeliveriesStats(context);
     var h = new Helpers(context);
 
-    return (await db.createCommand().execute(
+    return (await db.execute(
       sql.build("select ", [
         fd.courier.__getDbName(),
         sql.columnInnerSelect(fd, {

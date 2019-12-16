@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { ServerContext, allEntities, IdEntity } from "@remult/core";
+import { ServerContext, allEntities, IdEntity, SqlDatabase } from "@remult/core";
 import { Pool } from "pg";
 import { PostgresDataProvider, PostgrestSchemaBuilder } from "@remult/server-postgres";
 import { verifySchemaExistance, PostgresSchemaWrapper } from "./serverInit";
@@ -27,14 +27,14 @@ export async function dataMigration(res: Response) {
                 connectionString: process.env.DATABASE_URL,
                 ssl: true
             });
-            source.setDataProvider(new PostgresDataProvider(sourcePool));
+            source.setDataProvider(new SqlDatabase(new PostgresDataProvider(sourcePool)));
 
             // debugger;
             //return;
             verifySchemaExistance(targetPool, schema);
             var w = new PostgresSchemaWrapper(targetPool, schema);
             let builder = new PostgrestSchemaBuilder(w, schema);
-            var psw = new PostgresDataProvider(w);
+            var psw = new SqlDatabase( new  PostgresDataProvider(w));
             let r = "";
             await psw.transaction(async tdp => {
                 let target = new ServerContext();

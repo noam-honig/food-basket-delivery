@@ -4,11 +4,11 @@ import { config } from 'dotenv';
 import { PostgresDataProvider, PostgrestSchemaBuilder, PostgresPool, PostgresClient } from '@remult/server-postgres';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { ServerContext, Context, Entity } from '@remult/core';
+import { ServerContext, Context, Entity, SqlDatabase } from '@remult/core';
 import '../app.module';
 
 
-import { ActualSQLServerDataProvider } from '@remult/core';
+
 import { Helpers } from '../helpers/helpers';
 import * as passwordHash from 'password-hash';
 import { initSchema } from './initSchema';
@@ -31,7 +31,7 @@ export async function serverInit() {
         if (process.env.HEROKU_POSTGRESQL_GREEN_URL)
             dbUrl = process.env.HEROKU_POSTGRESQL_GREEN_URL;
         if (process.env.logSqls) {
-            ActualSQLServerDataProvider.LogToConsole = true;
+            SqlDatabase.LogToConsole = true;
 
         }
 
@@ -49,7 +49,7 @@ export async function serverInit() {
             await verifySchemaExistance(pool, Sites.guestSchema);
             let adminSchemaPool = new PostgresSchemaWrapper(pool, Sites.guestSchema);
             let context = new ServerContext();
-            let dp = new PostgresDataProvider(adminSchemaPool);
+            let dp = new SqlDatabase( new PostgresDataProvider(adminSchemaPool));
             context.setDataProvider(dp)
             let builder = new PostgrestSchemaBuilder(adminSchemaPool, Sites.guestSchema);
             for (const entity of <{ new(...args: any[]): Entity<any>; }[]>[
@@ -73,17 +73,17 @@ export async function serverInit() {
                 await new PostgrestSchemaBuilder(schemaPool, s).verifyStructureOfAllEntities();
                 await initSchema(schemaPool, s);
             }
-            Sites.getDataProviderForOrg = org=> new PostgresDataProvider(new PostgresSchemaWrapper(pool, org));
+            Sites.getDataProviderForOrg = org=> new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, org)));
             return (y: Context) => {
                 let org = Sites.getValidSchemaFromContext(y);
 
-                return new PostgresDataProvider(new PostgresSchemaWrapper(pool, org));
+                return new SqlDatabase( new PostgresDataProvider(new PostgresSchemaWrapper(pool, org)));
             };
         }
         else {
             await new PostgrestSchemaBuilder(pool).verifyStructureOfAllEntities();
             await initSchema(pool, '');
-            return y => new PostgresDataProvider(pool);
+            return y => new SqlDatabase( new PostgresDataProvider(pool));
         }
 
 

@@ -1,5 +1,5 @@
-//import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModuleLoader';
-//let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
+import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModuleLoader';
+let moduleLoader = new CustomModuleLoader('/dist-server/radweb/projects');
 import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
 import { ExpressBridge, JWTCookieAuthorizationHelper, ExpressRequestBridgeToDataApiRequest, registerEntitiesOnServer, registerActionsOnServer } from '@remult/server';
@@ -10,7 +10,7 @@ import { Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import "../helpers/helpers.component";
 import '../app.module';
-import { ServerContext,  DateColumn } from '@remult/core';
+import { ServerContext,  DateColumn, SqlDatabase } from '@remult/core';
 import { Helpers } from '../helpers/helpers';
 import { FamilyDeliveriesStats } from "../delivery-history/delivery-history.component";
 import { SqlBuilder } from "../model-shared/types";
@@ -24,7 +24,7 @@ serverInit().then(async (dataSource) => {
 
 
     let app = express();
-    function getContext(req: express.Request, sendDs?: (ds: PostgresDataProvider) => void) {
+    function getContext(req: express.Request, sendDs?: (ds: SqlDatabase) => void) {
         //@ts-ignore
         let r = new ExpressRequestBridgeToDataApiRequest(req);
         let context = new ServerContext();
@@ -127,7 +127,7 @@ serverInit().then(async (dataSource) => {
                 res.sendStatus(404);
                 return;
             }
-            let ds: PostgresDataProvider;
+            let ds: SqlDatabase;
             let context = getContext(req, x => ds = x);
             
             var fromDate = DateColumn.stringToDate(req.query["fromdate"]);
@@ -139,7 +139,7 @@ serverInit().then(async (dataSource) => {
             toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
 
 
-            var connections = (await ds.createCommand().execute("SELECT count(*) as x FROM pg_stat_activity where datname=current_database()")).rows[0]['x'];
+            var connections = (await ds.execute("SELECT count(*) as x FROM pg_stat_activity where datname=current_database()")).rows[0]['x'];
 
             var familiesInEvent = await context.for(Families).count(f => f.deliverStatus.isInEvent());
             var totalFamilies = await context.for(Families).count();
@@ -155,7 +155,7 @@ serverInit().then(async (dataSource) => {
                 fds.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(fds.deliveryStatusDate.isLessThan(toDate)));
 
 
-            var helpers = (await ds.createCommand().execute(query)).rows[0]['x'];
+            var helpers = (await ds.execute(query)).rows[0]['x'];
             await context.for(FamilyDeliveriesStats).count(f => f.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(f.deliveryStatusDate.isLessThan(toDate)));
             var onTheWay = await context.for(Families).count(f => f.onTheWayFilter());
             var settings = await ApplicationSettings.getAsync(context);
@@ -201,7 +201,7 @@ export interface monitorResult {
     helpers: number;
 }
 
-function registerImageUrls(app, getContext: (req: express.Request, sendDs?: (ds: PostgresDataProvider) => void) => ServerContext, sitePrefix: string) {
+function registerImageUrls(app, getContext: (req: express.Request, sendDs?: (ds: SqlDatabase) => void) => ServerContext, sitePrefix: string) {
     app.use(sitePrefix + '/assets/apple-touch-icon.png', async (req, res) => {
         try {
             let context = getContext(req);

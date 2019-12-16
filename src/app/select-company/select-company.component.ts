@@ -53,7 +53,7 @@ export class SelectCompanyComponent implements OnInit {
   static async getCompanies(context?: Context, db?: SqlDatabase) {
     var sql = new SqlBuilder();
     let h = new Helpers(context);
-    let r = await db.createCommand().execute(sql.query({
+    let r = await db.execute(sql.query({
       from: h,
       select: () => [sql.build("distinct ", h.company)],
       where: () => [h.company.isGreaterThan('')],

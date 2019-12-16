@@ -2,7 +2,7 @@
 //let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
 
 import { readFileSync } from "fs";
-import { ColumnHashSet } from '@remult/core';
+import { ColumnHashSet, SqlDatabase } from '@remult/core';
 
 import { GetGeoInformation } from "../shared/googleApiHelpers";
 
@@ -39,7 +39,7 @@ export async function DoIt() {
                 connectionString: process.env.DATABASE_URL,
                 ssl: true
             });
-            source.setDataProvider(new PostgresDataProvider(sourcePool));
+            source.setDataProvider( new SqlDatabase( new PostgresDataProvider(sourcePool)));
             console.log('123');
            // debugger;
             //return;
@@ -49,7 +49,7 @@ export async function DoIt() {
             var psw = new PostgresDataProvider(w);
             await psw.transaction(async tdp => {
                 let target = new ServerContext();
-                target.setDataProvider(tdp);
+                target.setDataProvider(new SqlDatabase( tdp));
 
                 for (const entity of allEntities) {
                     let x = source.for(entity).create();

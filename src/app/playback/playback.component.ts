@@ -207,7 +207,7 @@ export class PlaybackComponent implements OnInit {
 
     let sql = new SqlBuilder();
     sql.addEntity(f, "Families");
-    let r = (await db.createCommand().execute(sql.query({
+    let r = (await db.execute(sql.query({
       select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier, f.courierAssingTime, f.deliveryStatusDate],
       from: f,
       where: () => {
@@ -220,13 +220,13 @@ export class PlaybackComponent implements OnInit {
 
     return r.rows.map(x => {
       return {
-        id: x[r.getcolumnNameAtIndex(0)],
-        lat: +x[r.getcolumnNameAtIndex(1)],
-        lng: +x[r.getcolumnNameAtIndex(2)],
-        status: +x[r.getcolumnNameAtIndex(3)],
-        courier: x[r.getcolumnNameAtIndex(4)],
-        courierTime: DateTimeColumn.dateToString(x[r.getcolumnNameAtIndex(5)]),
-        statusTime: DateTimeColumn.dateToString(x[r.getcolumnNameAtIndex(6)])
+        id: x[r.getResultJsonNameForIndexInSelect(0)],
+        lat: +x[r.getResultJsonNameForIndexInSelect(1)],
+        lng: +x[r.getResultJsonNameForIndexInSelect(2)],
+        status: +x[r.getResultJsonNameForIndexInSelect(3)],
+        courier: x[r.getResultJsonNameForIndexInSelect(4)],
+        courierTime: DateTimeColumn.dateToString(x[r.getResultJsonNameForIndexInSelect(5)]),
+        statusTime: DateTimeColumn.dateToString(x[r.getResultJsonNameForIndexInSelect(6)])
       } as familyQueryResult;
 
     }) as familyQueryResult[];
