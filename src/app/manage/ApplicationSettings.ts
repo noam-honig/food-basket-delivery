@@ -78,7 +78,7 @@ export class ApplicationSettings extends Entity<number>  {
       name: 'ApplicationSettings',
       allowApiRead: true,
       allowApiUpdate: Roles.admin,
-      onSavingRow: async () => {
+      savingRow: async () => {
         if (context.onServer) {
           if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
             let geo = await GetGeoInformation(this.address.value);

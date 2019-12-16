@@ -64,7 +64,7 @@ export class Families extends IdEntity {
           if (!context.isAllowed(Roles.admin))
             return this.courier.isEqualTo(context.user.id);
         },
-        onSavingRow: async () => {
+        savingRow: async () => {
           if (this.disableOnSavingRow)
             return;
           if (this.context.onServer) {

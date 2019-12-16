@@ -52,7 +52,7 @@ export class Helpers extends HelpersBase {
             allowApiDelete: context.isSignedIn(),
             allowApiUpdate: context.isSignedIn(),
             allowApiInsert: true,
-            onSavingRow: async () => {
+            savingRow: async () => {
                 if (this._disableOnSavingRow) return;
 
                 if (context.onServer) {

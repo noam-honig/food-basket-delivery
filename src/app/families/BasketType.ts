@@ -19,7 +19,7 @@ export class BasketType extends IdEntity {
       name: "BasketType",
       allowApiRead: context.isSignedIn(),
       allowApiCRUD: Roles.admin,
-      onSavingRow: async () => {
+      savingRow: async () => {
         if (!this.boxes.value || this.boxes.value < 1)
           this.boxes.value = 1;
       }
