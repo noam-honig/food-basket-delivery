@@ -12,8 +12,8 @@ export class BasketType extends IdEntity {
 
   name = new StringColumn({ caption: "שם" });
   blocked = new BoolColumn({ caption: 'חסום לחלוקה' });
-  boxes = new NumberColumn({ caption: BasketType.boxes1Name, value: 1 });
-  boxes2 = new NumberColumn({ caption: BasketType.boxes2Name, value: 0 });
+  boxes = new NumberColumn({ caption: BasketType.boxes1Name, defaultValue: 1 });
+  boxes2 = new NumberColumn({ caption: BasketType.boxes2Name, defaultValue: 0 });
   constructor(context: Context) {
     super({
       name: "BasketType",

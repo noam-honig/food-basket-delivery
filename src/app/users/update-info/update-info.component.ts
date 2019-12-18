@@ -21,7 +21,7 @@ export class UpdateInfoComponent implements OnInit {
   }
   static route: Route = { path: 'update-info', component: UpdateInfoComponent, data: { name: 'הגדרות אישיות' }, canActivate: [SignedInGuard] };
 
-  confirmPassword = new StringColumn({ caption: 'אישור סיסמה', dataControlSettings: () => ({inputType: 'password'}), value: Helpers.emptyPassword });
+  confirmPassword = new StringColumn({ caption: 'אישור סיסמה', dataControlSettings: () => ({inputType: 'password'}), defaultValue: Helpers.emptyPassword });
   helpers = this.context.for(Helpers).gridSettings({
     numOfColumnsInGrid: 0,
     allowUpdate: true,
