@@ -311,7 +311,7 @@ export class FamiliesComponent implements OnInit {
                 this.deliverySummary = {
                     caption: 'סיכום משלוח',
                     column: families.deliverStatus,
-                    readonly: true,
+                    readOnly: true,
                     dropDown: {
                         items: families.deliverStatus.getOptions()
                     },

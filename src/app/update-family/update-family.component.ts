@@ -109,7 +109,7 @@ export class UpdateFamilyComponent implements OnInit {
         fd.courierAssignUser
       ];
     for (const c of columns) {
-      c.readonly = true;
+      c.readOnly = true;
     }
 
 
