@@ -387,6 +387,8 @@ export class FamiliesComponent implements OnInit {
                 families.socialWorker,
                 families.socialWorkerPhone1,
                 families.socialWorkerPhone2,
+                families.birthDate,
+                families.nextBirthday,
                 families.needsWork,
                 families.needsWorkDate,
                 families.needsWorkUser

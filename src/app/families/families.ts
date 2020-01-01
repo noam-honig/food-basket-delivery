@@ -5,7 +5,7 @@ import { YesNoColumn } from "./YesNo";
 import { FamilySourceId } from "./FamilySources";
 import { BasketId, BasketType } from "./BasketType";
 import { changeDate, DateTimeColumn, SqlBuilder, PhoneColumn, delayWhileTyping } from "../model-shared/types";
-import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase } from '@remult/core';
+import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn } from '@remult/core';
 import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
@@ -168,6 +168,13 @@ export class Families extends IdEntity {
     caption: 'מספר זהות בן/בת הזוג', includeInApi: Roles.admin, valueChange: () => this.delayCheckDuplicateFamilies()
   });
   familyMembers = new NumberColumn({ includeInApi: Roles.admin, caption: 'מספר נפשות' });
+  birthDate = new DateColumn({ includeInApi: Roles.admin, caption: 'תאריך לידה' });
+  nextBirthday = new DateColumn({
+    includeInApi: Roles.admin,
+    caption: 'יומולדת הבא',
+    sqlExpression: () => "cast(birthDate + ((extract(year from age(birthDate)) + 1) * interval '1' year) as date) as nextBirthday",
+    allowApiUpdate:false
+  })
   basketType = new BasketId(this.context, 'סוג סל');
   familySource = new FamilySourceId(this.context, { includeInApi: Roles.admin, caption: 'גורם מפנה' });
   socialWorker = new StringColumn('איש קשר לבירור פרטים (עו"ס)');

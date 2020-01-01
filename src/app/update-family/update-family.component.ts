@@ -40,7 +40,9 @@ export class UpdateFamilyComponent implements OnInit {
           families.socialWorkerPhone2
         ], [
           families.tz,
-          families.tz2],
+          families.tz2
+        ],
+        families.birthDate,
         families.iDinExcel
       ],
     });

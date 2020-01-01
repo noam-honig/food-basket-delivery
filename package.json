@@ -19,7 +19,6 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "server:execute": "node dist-server/app/server/server.js",
-    
     "build:stats": "ng build  --stats-json",
     "bundle-report": "webpack-bundle-analyzer dist/stats.json"
   },
@@ -36,9 +35,9 @@
     "@angular/platform-browser-dynamic": "^8.2.11",
     "@angular/router": "^8.2.11",
     "@auth0/angular-jwt": "^3.0.0",
-    "@remult/core": "^1.0.10",
-    "@remult/server": "^1.0.10",
-    "@remult/server-postgres": "^1.0.10",
+    "@remult/core": "^1.0.11",
+    "@remult/server": "^1.0.11",
+    "@remult/server-postgres": "^1.0.11",
     "body-parser": "^1.19.0",
     "chart.js": "^2.8.0",
     "compression": "^1.7.4",
