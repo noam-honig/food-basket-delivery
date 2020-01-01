@@ -23,7 +23,7 @@ export class MapComponent implements OnInit {
             console.time('load families to map');
             families.forEach(f => {
                 let marker = this.setFamilyOnMap(f.id, f.lat, f.lng);
-                if (marker&&marker.getPosition().lat() > 0)
+                if (marker && marker.getPosition().lat() > 0)
                     this.bounds.extend(marker.getPosition());
             });
             console.timeEnd('load families to map');
@@ -89,19 +89,25 @@ export class MapComponent implements OnInit {
 
     stam = '';
     center: google.maps.LatLng;
+
     fitBounds() {
         if (this.disableMapBoundsRefrest)
             return;
+        let x = JSON.stringify(this.bounds.toJSON());
+        if (x == this.lastBounds)
+            return;
+        this.lastBounds = x;
         if (this.bounds.isEmpty()) {
             this.map.setCenter(this.center);
         } else {
             this.map.fitBounds(this.bounds);
-
         }
+        
+
 
         setTimeout(() => {
-            if (this.map.getZoom() > 17)
-                this.map.setZoom(17);
+                  if (this.map.getZoom() > 17)
+                      this.map.setZoom(17);
         }, 300);
     }
     clear() {
@@ -115,7 +121,8 @@ export class MapComponent implements OnInit {
     mapInit = false;
     markers: google.maps.Marker[] = [];
     hasFamilies = false;
-    bounds: google.maps.LatLngBounds =  new google.maps.LatLngBounds();
+    bounds: google.maps.LatLngBounds = new google.maps.LatLngBounds();
+    lastBounds: string;
     prevFamilies: Families[] = [];
     async test(families: Families[]) {
         var prevFamilies = this.prevFamilies;

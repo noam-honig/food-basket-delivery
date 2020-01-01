@@ -612,9 +612,31 @@ export class AsignFamilyComponent implements OnInit {
             families: [],
             ok: false
         } as optimizeRouteResult;
+
+        var fams: familiesInRoute[] = [];
+        {
+            var map = new Map<string, familiesInRoute>();
+            for (const f of families) {
+                let geo = f.getGeocodeInformation();
+                let longlat = geo.getlonglat();
+                let loc: familiesInRoute = map.get(longlat);
+                if (!loc) {
+                    loc = {
+                        families: [],
+                        geo: geo,
+                        longlat: longlat,
+                        address: f.address.value
+                    };
+                    map.set(longlat, loc);
+                    fams.push(loc);
+                }
+                loc.families.push(f);
+            }
+        }
+
         //manual sorting of the list from closest to farthest
         {
-            let temp = families;
+            let temp = fams;
             let sorted = [];
             let lastLoc = (await ApplicationSettings.getAsync(context)).getGeocodeInformation().location();
 
@@ -623,37 +645,45 @@ export class AsignFamilyComponent implements OnInit {
             for (let i = 0; i < total; i++) {
                 let closest = temp[0];
                 let closestIndex = 0;
-                let closestDist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, closest.getGeocodeInformation().location());
+                let closestDist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, closest.geo.location());
                 for (let j = 0; j < temp.length; j++) {
-                    let dist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, temp[j].getGeocodeInformation().location());
-                    if (dist < closestDist || dist == closestDist && temp[j].floor.value > closest.floor.value) {
+                    let dist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, temp[j].geo.location());
+                    if (dist < closestDist) {
                         closestDist = dist;
                         closestIndex = j;
                         closest = temp[j];
                     }
 
                 }
-                lastLoc = closest.getGeocodeInformation().location();
+                lastLoc = closest.geo.location();
                 sorted.push(temp.splice(closestIndex, 1)[0]);
 
             }
-            families = sorted;
+            fams = sorted;
+        }
+        for (const f of fams) {
+            if (f.families.length > 0)
+                f.families.sort((a, b) => {return  (+a.appartment.value) - (+b.appartment.value) });
         }
 
 
-        let r = await getRouteInfo(families, useGoogle, context);
+        let r = await getRouteInfo(fams, useGoogle, context);
         if (r.status == 'OK' && r.routes && r.routes.length > 0 && r.routes[0].waypoint_order) {
             result.ok = true;
             let i = 1;
 
             await foreachSync(r.routes[0].waypoint_order, async (p: number) => {
-                let f = families[p];
-
-                if (f.routeOrder.value != i) {
-                    f.routeOrder.value = i;
-                    f.save();
+                let waypoint = fams[p];
+                for (const f of waypoint.families) {
+                    if (f.routeOrder.value != i) {
+                        f.routeOrder.value = i;
+                        f.save();
+                    }
+                    i++;    
                 }
-                i++;
+                
+
+                
             });
             families.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
             for (let i = 0; i < r.routes[0].legs.length - 1; i++) {
@@ -807,20 +837,20 @@ function getInfo(r: any) {
         dist, duration
     }
 }
-async function getRouteInfo(families: Families[], optimize: boolean, context: Context) {
+async function getRouteInfo(families: familiesInRoute[], optimize: boolean, context: Context) {
     let u = new UrlBuilder('https://maps.googleapis.com/maps/api/directions/json');
 
     let startAndEnd = (await ApplicationSettings.getAsync(context)).getGeocodeInformation().getlonglat();
     let waypoints = 'optimize:' + (optimize ? 'true' : 'false');
     let addresses = [];
     families.forEach(f => {
-        if (f.getGeocodeInformation().location())
-            waypoints += '|' + f.getGeocodeInformation().getlonglat();
-        addresses.push(f.address.value);
+        if (f.geo.location())
+            waypoints += '|' + f.geo.getlonglat();
+        addresses.push(f.address);
     });
     let args = {
         origin: startAndEnd,
-        destination: families[families.length - 1].getGeocodeInformation().getlonglat(),
+        destination: families[families.length - 1].geo.getlonglat(),
         waypoints: waypoints,
         language: 'he',
         key: process.env.GOOGLE_GECODE_API_KEY
@@ -855,4 +885,10 @@ function filterRepeatFamilies(sql: SqlBuilder, f: Families, fd: FamilyDeliveries
 export interface CityInfo {
     name: string;
     unassignedFamilies: number;
+}
+interface familiesInRoute {
+    geo: GeocodeInformation;
+    longlat: string;
+    families: Families[];
+    address: string;
 }
