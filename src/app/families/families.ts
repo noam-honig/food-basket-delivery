@@ -280,8 +280,7 @@ export class Families extends IdEntity {
   deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
   blockedBasket = new BoolColumn({
     caption: 'סל חסום',
-    dbReadOnly: true,
-    dbName: () => {
+    sqlExpression: () => {
       let b = new BasketType(this.context);
 
       let sql = new SqlBuilder();
@@ -296,29 +295,26 @@ export class Families extends IdEntity {
   routeOrder = new NumberColumn();
   previousDeliveryStatus = new DeliveryStatusColumn({
     caption: 'סטטוס משלוח קודם',
-    dbReadOnly: true,
-    dbName: () => {
+    sqlExpression: () => {
       return this.dbNameFromLastDelivery(fde => fde.deliverStatus, "prevStatus");
     }
   });
   previousDeliveryDate = new changeDate({
     caption: 'תאריך משלוח קודם',
-    dbReadOnly: true,
-    dbName: () => {
+    
+    sqlExpression: () => {
       return this.dbNameFromLastDelivery(fde => fde.deliveryStatusDate, "prevDate");
     }
   });
   previousDeliveryComment = new StringColumn({
     caption: 'הערת משלוח קודם',
-    dbReadOnly: true,
-    dbName: () => {
+    sqlExpression: () => {
       return this.dbNameFromLastDelivery(fde => fde.courierComments, "prevComment");
     }
   });
 
   courierBeenHereBefore = new BoolColumn({
-    dbReadOnly: true,
-    dbName: () => {
+    sqlExpression: () => {
       var sql = new SqlBuilder();
 
       var fd = this.context.for(FamilyDeliveries).create();
@@ -328,8 +324,7 @@ export class Families extends IdEntity {
     }
   });
   visibleToCourier = new BoolColumn({
-    dbReadOnly: true,
-    dbName: () => {
+    sqlExpression: () => {
       var sql = new SqlBuilder();
       return sql.case([{ when: [sql.or(sql.gtAny(this.deliveryStatusDate, 'current_date -1'), this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))], then: true }], false);
 
