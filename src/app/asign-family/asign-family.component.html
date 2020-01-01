@@ -1,26 +1,27 @@
 <div class="myDiv">
-<button (click)="doRefreshRoute()">test</button>
   <div class="no-print" *ngIf="showHelperInput">
 
     <mat-card>
       <mat-card-title>
         פרטי משנע
-        <div >
-            
-            <mat-menu #appMenu77>
-              <button mat-menu-item (click)="findHelper()" >{{'חפש משנע לפי שם'|translate}}</button>
-              <button mat-menu-item (click)="clearHelperInfo()" >{{'נקה פרטי משנע'|translate}}</button>
-              <button mat-menu-item (click)="saveHelper()"
+        <div>
+
+          <mat-menu #appMenu77>
+            <button mat-menu-item (click)="findHelper()">{{'חפש משנע לפי שם'|translate}}</button>
+            <button mat-menu-item (click)="clearHelperInfo()">{{'נקה פרטי משנע'|translate}}</button>
+            <button mat-menu-item (click)="saveHelper()"
               *ngIf="showSave()">{{'שמור פרטי משנע ועבור למשנע הבא'|translate}}</button>
-              <button *ngIf="!settings.showCompanies.value" mat-menu-item (click)="settings.showCompanies.value= true; changeShowCompany()" >{{'הצג חברה למשנע'|translate}}</button>
-              <button *ngIf="settings.showCompanies.value" mat-menu-item (click)="settings.showCompanies.value= false; changeShowCompany()" >{{'הסתר חברה למשנע'|translate}}</button>
-              
-            </mat-menu>
-    
-            <button mat-icon-button [matMenuTriggerFor]="appMenu77">
-              <mat-icon>more_vert</mat-icon>
-            </button>
-          </div>
+            <button *ngIf="!settings.showCompanies.value" mat-menu-item
+              (click)="settings.showCompanies.value= true; changeShowCompany()">{{'הצג חברה למשנע'|translate}}</button>
+            <button *ngIf="settings.showCompanies.value" mat-menu-item
+              (click)="settings.showCompanies.value= false; changeShowCompany()">{{'הסתר חברה למשנע'|translate}}</button>
+
+          </mat-menu>
+
+          <button mat-icon-button [matMenuTriggerFor]="appMenu77">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        </div>
       </mat-card-title>
       <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
         <mat-label>מספר הטלפון של המשנע</mat-label>
@@ -35,52 +36,58 @@
   </div>
 
 
-  <span *ngIf="showHelperInput&&!name.value" class="help no-print">אנא הזיני את הטלפון של המשנע ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו
+  <span *ngIf="showHelperInput&&!name.value" class="help no-print">אנא הזיני את הטלפון של המשנע ושמו, ואז תוכלי לבחור
+    קבוצה, עיר ואילו
     סלים
     לשייך</span>
   <div *ngIf="name.value&&name.value.length>=2">
     <mat-card class="no-print">
       <mat-card-title>
         {{'שיוך משפחות למשנע'|translate}}
-        <div >
-            
-            <mat-menu #filterOptionsMenu="matMenu">
-              
-              <mat-checkbox  class="mat-menu-item" [(ngModel)]="o.inputValue" (change)="changeShowCompany()" *ngFor="let o of filterOptions">{{o.caption}}</mat-checkbox>
-            </mat-menu>
-    
-            <button mat-icon-button [matMenuTriggerFor]="filterOptionsMenu">
-              <mat-icon>more_vert</mat-icon>
-            </button>
-          </div>
+        <div>
+
+          <mat-menu #filterOptionsMenu="matMenu">
+
+            <mat-checkbox class="mat-menu-item" [(ngModel)]="o.inputValue" (change)="changeShowCompany()"
+              *ngFor="let o of filterOptions">{{o.caption}}</mat-checkbox>
+          </mat-menu>
+
+          <button mat-icon-button [matMenuTriggerFor]="filterOptionsMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        </div>
       </mat-card-title>
       <mat-card-content>
 
         <div class="filter-div">
-          <mat-form-field appearance="outline" class="full-width-form-field dense-form-field" *ngIf="settings.showGroupsOnAssing.value">
+          <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
+            *ngIf="settings.showGroupsOnAssing.value">
             <mat-label>קבוצת חלוקה</mat-label>
             <select matNativeControl class="form-control" #lang (change)="refreshBaskets()" [(ngModel)]="filterGroup">
               <option value="">כל הקבוצות</option>
               <option *ngFor="let g of groups" value="{{g.name.value}}">{{g.name.value}}</option>
             </select>
           </mat-form-field>
-          
-          <mat-form-field appearance="outline" class="full-width-form-field dense-form-field" *ngIf="settings.showCityOnAssing.value">
+
+          <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
+            *ngIf="settings.showCityOnAssing.value">
             <mat-label>עיר לחלוקה</mat-label>
             <select matNativeControl class="form-control" #city (change)="selectCity()" [(ngModel)]="filterCity">
               <option value="">כל הערים</option>
               <option *ngFor="let c of cities" value="{{c.name}}">{{c.name}} - {{c.unassignedFamilies}}</option>
             </select>
           </mat-form-field>
-          <mat-form-field appearance="outline" class="full-width-form-field dense-form-field" *ngIf="settings.showBasketOnAssing.value">
+          <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
+            *ngIf="settings.showBasketOnAssing.value">
             <mat-label>סוג סל</mat-label>
             <select matNativeControl class="form-control" #lang [(ngModel)]="basketType">
               <option *ngFor="let b of baskets" [ngValue]="b">{{b.name}} <span *ngIf="b!=allBaskets">-
                   {{b.unassignedFamilies}}</span></option>
             </select>
           </mat-form-field>
-          
-          <mat-form-field appearance="outline" class="full-width-form-field dense-form-field" *ngIf="settings.showNumOfBoxesOnAssing.value">
+
+          <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
+            *ngIf="settings.showNumOfBoxesOnAssing.value">
             <mat-label>{{'מספר משפחות'|translate}}</mat-label>
             <input matInput type="number" id="numOfBaskets" [(ngModel)]="numOfBaskets">
             <div matSuffix style="display:flex">
@@ -92,10 +99,11 @@
               </button>
             </div>
           </mat-form-field>
-          
-          <mat-checkbox [(ngModel)]="preferRepeatFamilies" style="width:auto" *ngIf="showRepeatFamilies">{{'עדיפות למשפחות חוזרות'|translate}} ({{repeatFamilies}})
-            </mat-checkbox>
-            
+
+          <mat-checkbox [(ngModel)]="preferRepeatFamilies" style="width:auto" *ngIf="showRepeatFamilies">
+            {{'עדיפות למשפחות חוזרות'|translate}} ({{repeatFamilies}})
+          </mat-checkbox>
+
         </div>
 
 
@@ -120,7 +128,7 @@
               *ngIf="specialFamilies">{{'משפחות מיוחדות - '|translate}}{{specialFamilies}}</button>
             <button mat-menu-item (click)="addSpecific()">{{'בחירת משפחה לפי שם'|translate}}</button>
             <button mat-menu-item (click)="assignOnMap()">{{'בחירת משפחה על המפה'|translate}}</button>
-          
+
             <button mat-menu-item (click)="moveBasktesFromOtherHelper()">{{'העבר משפחות ממתנדב אחר'|translate}}</button>
 
           </mat-menu>
@@ -128,7 +136,7 @@
 
 
         </div>
-        
+
       </mat-card-content>
     </mat-card>
 
