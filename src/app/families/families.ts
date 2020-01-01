@@ -403,7 +403,7 @@ export class Families extends IdEntity {
     switch (this.deliverStatus.value) {
       case DeliveryStatus.ReadyForDelivery:
         if (this.courier.value) {
-          return 'בדרך: ' + this.courier.getValue() + ' שוייך ' + this.courierAssingTime.relativeDateName();
+          return 'בדרך: ' + this.courier.getValue() + ', שוייך ' + this.courierAssingTime.relativeDateName();
         }
         break;
       case DeliveryStatus.Success:
