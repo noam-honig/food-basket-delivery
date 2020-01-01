@@ -2,8 +2,7 @@
     <br>
 
     <div class="{{families.currentRow.deliverStatus.getCss()}}">
-        <strong>{{families.currentRow.deliverStatus.displayValue}}: </strong>
-        {{families.currentRow.courierComments.value}}
+        <strong>{{families.currentRow.getDeliveryDescription()}}: </strong>
     </div>
     <mat-accordion *ngIf="familiesInfo" [multi]="true">
         <mat-expansion-panel>

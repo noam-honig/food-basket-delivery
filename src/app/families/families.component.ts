@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { AndFilter,  GridSettings ,DataControlSettings} from '@remult/core';
+import { AndFilter, GridSettings, DataControlSettings } from '@remult/core';
 
 import { Families } from './families';
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -21,7 +21,7 @@ import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
 
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
-import {  PhoneColumn } from '../model-shared/types';
+import { PhoneColumn } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
 
@@ -59,6 +59,21 @@ export class FamiliesComponent implements OnInit {
     showHoverButton: boolean = false;
     constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context,
         public scroll: ScrollDispatcher) {
+        for (const item of this.families.columns.items) {
+            if (item.column == this.statusColumn && !item.readOnly) {
+                this.statusColumn = item;
+            }
+            if (this.groupsColumn == item.column)
+                this.groupsColumn = item;
+            if (this.addressByGoogleColumn == item.column)
+                this.addressByGoogleColumn = item;
+            if (this.familyNameColumn == item.column)
+                this.familyNameColumn = item;
+            if (this.addressCommentColumn == item.column)
+                this.addressCommentColumn = item;
+            if (this.groupsColumn == item.column)
+                this.groupsColumn = item;
+        }
         this.doTest();
         this.scrollingSubscription = this.scroll
             .scrolled()
@@ -307,7 +322,6 @@ export class FamiliesComponent implements OnInit {
                 },
                 families.basketType
                 ,
-                this.statusColumn = families.deliverStatus,
                 this.deliverySummary = {
                     caption: 'סיכום משלוח',
                     column: families.deliverStatus,
@@ -316,9 +330,10 @@ export class FamiliesComponent implements OnInit {
                         items: families.deliverStatus.getOptions()
                     },
                     getValue: f => f.getDeliveryDescription(),
-                    width: '200'
+                    width: '300'
                 },
 
+                this.statusColumn = families.deliverStatus,
 
                 families.familyMembers,
                 families.familySource,
@@ -484,7 +499,7 @@ export class FamiliesComponent implements OnInit {
 
             ],
             moreStats: [],
-            fourthColumn: () => this.statusColumn
+            fourthColumn: () => this.deliverySummary
         },
         this.cityStats,
         this.basketStats,
@@ -533,7 +548,7 @@ export class FamiliesComponent implements OnInit {
         this.refreshFamilyGrid();
 
     }
-    currentTabStats: statsOnTab = { name: '', stats: [], moreStats: [], rule: undefined, fourthColumn: () => this.statusColumn };
+    currentTabStats: statsOnTab = { name: '', stats: [], moreStats: [], rule: undefined, fourthColumn: () => this.deliverySummary };
     previousTabStats: statsOnTab = this.currentTabStats;
     updateChart() {
         this.pieChartData = [];

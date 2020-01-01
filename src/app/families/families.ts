@@ -301,7 +301,7 @@ export class Families extends IdEntity {
   });
   previousDeliveryDate = new changeDate({
     caption: 'תאריך משלוח קודם',
-    
+
     sqlExpression: () => {
       return this.dbNameFromLastDelivery(fde => fde.deliveryStatusDate, "prevDate");
     }
@@ -403,7 +403,7 @@ export class Families extends IdEntity {
     switch (this.deliverStatus.value) {
       case DeliveryStatus.ReadyForDelivery:
         if (this.courier.value) {
-          return this.courier.getValue() + ' יצא ' + this.courierAssingTime.relativeDateName();
+          return 'בדרך: ' + this.courier.getValue() + ' שוייך ' + this.courierAssingTime.relativeDateName();
         }
         break;
       case DeliveryStatus.Success:
