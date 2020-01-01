@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { DataAreaSettings,  GridSettings, DataControlSettings } from '@remult/core';
+import { DataAreaSettings, GridSettings, DataControlSettings } from '@remult/core';
 import { Families } from '../families/families';
 import { Context } from '@remult/core';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -42,7 +42,15 @@ export class UpdateFamilyComponent implements OnInit {
           families.tz,
           families.tz2
         ],
-        families.birthDate,
+        [families.birthDate, {
+          caption: 'גיל',
+          getValue: (f) => {
+            if (!f.birthDate.value) {
+              return '';
+            }
+            return Math.round( (new Date().valueOf() - f.birthDate.value.valueOf()) / (365 * 86400000))
+          }
+        }],
         families.iDinExcel
       ],
     });

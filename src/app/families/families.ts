@@ -173,7 +173,17 @@ export class Families extends IdEntity {
     includeInApi: Roles.admin,
     caption: 'יומולדת הבא',
     sqlExpression: () => "cast(birthDate + ((extract(year from age(birthDate)) + 1) * interval '1' year) as date) as nextBirthday",
-    allowApiUpdate:false
+    allowApiUpdate:false,
+    dataControlSettings: () => ({
+      readOnly: true,
+      inputType:'date',
+      getValue: () => {
+        if (!this.nextBirthday.value)
+          return;
+        return this.nextBirthday.displayValue + " - גיל " + (this.nextBirthday.value.getFullYear()-this.birthDate.value.getFullYear())
+      }
+    })
+
   })
   basketType = new BasketId(this.context, 'סוג סל');
   familySource = new FamilySourceId(this.context, { includeInApi: Roles.admin, caption: 'גורם מפנה' });
