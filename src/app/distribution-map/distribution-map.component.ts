@@ -181,7 +181,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     legend: {
       position: 'right',
       onClick: (event: MouseEvent, legendItem: any) => {
-        this.selectedStatus = this.statuses[legendItem.index];
+        this.selectedStatus = this.statuses.statuses[legendItem.index];
         this.refreshFamilies();
         return false;
       }
@@ -189,7 +189,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   };
   public chartClicked(e: any): void {
     if (e.active && e.active.length > 0) {
-      this.selectedStatus = this.statuses[e.active[0]._index];
+      this.selectedStatus = this.statuses.statuses[e.active[0]._index];
       this.refreshFamilies();
     }
   }
