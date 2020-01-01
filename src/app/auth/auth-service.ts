@@ -79,7 +79,7 @@ export class AuthService {
             else {
                 if (this.context.isAllowed(Roles.admin))
                     this.routeHelper.navigateToComponent(AsignFamilyComponent);
-                if (this.context.isAllowed(Roles.overview))
+                else if (this.context.isAllowed(Roles.overview))
                     this.routeHelper.navigateToComponent(OverviewComponent);
                 else
                     this.routeHelper.navigateToComponent(MyFamiliesComponent);
