@@ -191,7 +191,8 @@ export class BatchOperationsComponent implements OnInit {
     static createFamiliesFilterForNotInEvent(f: Families, basketType: string, group: string) {
         let x =
             f.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent).and(
-                f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList));
+                f.deliverStatus.isDifferentFrom(DeliveryStatus.Frozen).and(
+                f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList)));
         if (basketType != BatchOperationsComponent.allBasketsTokenConst) {
             x = x.and(f.basketType.isEqualTo(basketType));
         } if (group)
