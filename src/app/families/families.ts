@@ -103,6 +103,7 @@ export class Families extends IdEntity {
               }
               if (this.courierComments.value == this.courierComments.originalValue)
                 this.courierComments.value = '';
+              this.needsWork.value = false;
             }
 
 
@@ -173,14 +174,14 @@ export class Families extends IdEntity {
     includeInApi: Roles.admin,
     caption: 'יומולדת הבא',
     sqlExpression: () => "cast(birthDate + ((extract(year from age(birthDate)) + 1) * interval '1' year) as date) as nextBirthday",
-    allowApiUpdate:false,
+    allowApiUpdate: false,
     dataControlSettings: () => ({
       readOnly: true,
-      inputType:'date',
+      inputType: 'date',
       getValue: () => {
         if (!this.nextBirthday.value)
           return;
-        return this.nextBirthday.displayValue + " - גיל " + (this.nextBirthday.value.getFullYear()-this.birthDate.value.getFullYear())
+        return this.nextBirthday.displayValue + " - גיל " + (this.nextBirthday.value.getFullYear() - this.birthDate.value.getFullYear())
       }
     })
 
