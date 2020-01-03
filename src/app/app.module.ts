@@ -65,7 +65,7 @@ import { PlaybackComponent } from './playback/playback.component';
 import { APP_BASE_HREF } from '@angular/common';
 import { environment } from '../environments/environment';
 import { Sites } from './sites/sites';
-import { ApplicationSettings } from './manage/ApplicationSettings';
+import { ApplicationSettings, SettingsService } from './manage/ApplicationSettings';
 import { OverviewComponent } from './overview/overview.component';
 import { TransitionGroupComponent, TransitionGroupItemDirective } from './overview/transition-group';
 
@@ -138,6 +138,7 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
 
   ],
   providers: [
+    
     DialogService,
     
     TranslatePipe,
@@ -148,14 +149,22 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
         return '/' + site;
       }
 
-    }
-    ,
+    },
+    {
+      provide: ApplicationSettings, useFactory: (service:SettingsService) => {
+        return service.instance;
+      },
+      deps:[SettingsService]
+
+    },
     {
       provide: APP_INITIALIZER,
-      deps: [Context,JwtSessionManager],
+      deps: [JwtSessionManager,SettingsService],
       useFactory: initApp,
-      multi: true
+      multi: true,
+      
     }
+    ,SettingsService
 
   ],
 
@@ -172,14 +181,14 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
 })
 export class AppModule { }
 
-export function initApp(context: Context,session:JwtSessionManager) {
+export function initApp(session:JwtSessionManager,settings:SettingsService) {
   return async () => {
     session.loadSessionFromCookie();
     try {
-      let settings = await ApplicationSettings.getAsync(context);
+      await settings.init();
     }
-    catch{
-      console.error('failed to get settings');
+    catch (err){
+      console.error('failed to get settings ',err);
     }
     return '';
 

@@ -4,9 +4,12 @@ import { Entity, Context, EntityClass } from '@remult/core';
 import { PhoneColumn } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { DeliveryStatusColumn, DeliveryStatus } from "../families/DeliveryStatus";
-import { translate } from "../translate";
+import { translate, translationConfig } from "../translate";
 import { Families } from "../families/families";
 import { FamilySources } from "../families/FamilySources";
+import { Injectable } from '@angular/core';
+import { Helpers } from '../helpers/helpers';
+import { BasketType } from '../families/BasketType';
 @EntityClass
 export class ApplicationSettings extends Entity<number>  {
 
@@ -123,7 +126,7 @@ export class PhoneOption {
       args.addPhone(args.family.socialWorker.value, args.family.socialWorkerPhone2.displayValue);
     }
   });
-  
+
   static familySource = new PhoneOption("familySource", "טלפון גורם מפנה", async args => {
     if (args.family.familySource.value) {
       let s = await args.context.for(FamilySources).findFirst(x => x.id.isEqualTo(args.family.familySource.value));
@@ -156,4 +159,22 @@ export interface phoneBuildArgs {
   phoneItem: PhoneItem,
   settings: ApplicationSettings,
   addPhone: (name: string, value: string) => void
+}
+@Injectable()
+export class SettingsService {
+  constructor(private context: Context) {
+
+  }
+  instance:ApplicationSettings;
+  async init() {
+    this.instance = await ApplicationSettings.getAsync(this.context);
+    translationConfig.activateTranslation = this.instance.forSoldiers.value;
+    DeliveryStatus.usingSelfPickupModule = this.instance.usingSelfPickupModule.value;
+    Helpers.usingCompanyModule = this.instance.showCompanies.value;
+    
+    BasketType.boxes1Name = this.instance.boxes1Name.value;
+    BasketType.boxes2Name = this.instance.boxes2Name.value;
+
+  }
+
 }

@@ -4,7 +4,7 @@ import { AuthService } from './auth/auth-service';
 
 import { MatSidenav } from '@angular/material/sidenav';
 import { DialogService } from './select-popup/dialog';
-import { ApplicationSettings } from './manage/ApplicationSettings';
+import { ApplicationSettings, SettingsService } from './manage/ApplicationSettings';
 import { FamiliesComponent } from './families/families.component';
 import { Context, RouteHelperService, JwtSessionManager } from '@remult/core';
 import { Roles } from './auth/roles';
@@ -33,26 +33,19 @@ export class AppComponent {
     public activeRoute: ActivatedRoute,
     public dialog: DialogService,
     private helper: RouteHelperService,
-    public context: Context) {
-    ApplicationSettings.getAsync(context).then(x => {
-      translationConfig.activateTranslation = x.forSoldiers.value;
-      DeliveryStatus.usingSelfPickupModule = x.usingSelfPickupModule.value;
-      Helpers.usingCompanyModule = x.showCompanies.value;
-      this.orgName = x.organisationName.value;
-      BasketType.boxes1Name = x.boxes1Name.value;
-      BasketType.boxes2Name = x.boxes2Name.value;
-      if (x.redTitleBar.value)
-        this.toolbarColor = 'accent';
-    })
+    public context: Context,
+    public settings: ApplicationSettings) {
 
-    if (!window.location.hostname.toLocaleLowerCase().startsWith('hmey')) {
-      this.toolbarColor = 'primary';
+    this.toolbarColor = 'primary';
 
+    if (settings.redTitleBar.value) {
+      this.toolbarColor = 'accent';
     }
+    
 
 
   }
-  orgName = '';
+  
 
   showSeperator(route: Route) {
     if (route.data && route.data.seperator)
