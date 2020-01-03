@@ -148,7 +148,8 @@ export class ManageComponent implements OnInit {
       s.showCompanies,
       s.defaultPrefixForExcelImport,
       s.redTitleBar,
-      s.forSoldiers
+      s.forSoldiers,
+      s.manageEscorts
     ]
   });
 

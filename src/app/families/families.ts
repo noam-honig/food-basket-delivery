@@ -6,7 +6,7 @@ import { FamilySourceId } from "./FamilySources";
 import { BasketId, BasketType } from "./BasketType";
 import { changeDate, DateTimeColumn, SqlBuilder, PhoneColumn, delayWhileTyping } from "../model-shared/types";
 import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn } from '@remult/core';
-import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
+import { HelperIdReadonly, HelperId, Helpers, HelperUserInfo } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
@@ -61,8 +61,13 @@ export class Families extends IdEntity {
         allowApiDelete: Roles.admin,
         allowApiInsert: Roles.admin,
         apiDataFilter: () => {
-          if (!context.isAllowed(Roles.admin))
-            return this.courier.isEqualTo(context.user.id);
+          if (!context.isAllowed(Roles.admin)) {
+            let user = <HelperUserInfo>context.user;
+            if (user.theHelperIAmEscortingId)
+              return this.courier.isEqualTo(user.theHelperIAmEscortingId).and(this.visibleToCourier.isEqualTo(true));
+            else
+              return this.courier.isEqualTo(user.id).and(this.visibleToCourier.isEqualTo(true));
+          }
         },
         savingRow: async () => {
           if (this.disableOnSavingRow)

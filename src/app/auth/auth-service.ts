@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 
 import { DialogService } from "../select-popup/dialog";
 
-import { Helpers } from "../helpers/helpers";
+import { Helpers, HelperUserInfo } from "../helpers/helpers";
 
 import { ServerFunction, UserInfo, JwtSessionManager, RouteHelperService, DataApiRequest } from '@remult/core';
 import { Context } from '@remult/core';
@@ -44,8 +44,10 @@ export class AuthService {
                 authToken: Helpers.helper.createSecuredTokenBasedOn({
                     id: h.id.value,
                     name: h.name.value,
-                    roles: [Sites.getOrgRole(context)]
-                } as UserInfo),
+                    roles: [Sites.getOrgRole(context)],
+                    theHelperIAmEscortingId:h.theHelperIAmEscorting.value,
+                    escortedHelperName:h.theHelperIAmEscorting.value?(await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value :''
+                } as HelperUserInfo),
                 requirePassword: false
             } as LoginResponse
 
@@ -96,7 +98,7 @@ export class AuthService {
 
     @ServerFunction({ allowed: true })
     static async login(user: string, password: string, context?: Context) {
-        let result: UserInfo;
+        let result: HelperUserInfo;
         let requirePassword = false;
 
         await context.for(Helpers).foreach(h => h.phone.isEqualTo(user), async h => {
@@ -105,7 +107,9 @@ export class AuthService {
 
                     id: h.id.value,
                     roles: [Sites.getOrgRole(context)],
-                    name: h.name.value
+                    name: h.name.value,
+                    theHelperIAmEscortingId:h.theHelperIAmEscorting.value,
+                    escortedHelperName:h.theHelperIAmEscorting.value?(await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value :''
                 };
                 if (h.realStoredPassword.value.length == 0 && h.admin.value) {
                     requirePassword = true;

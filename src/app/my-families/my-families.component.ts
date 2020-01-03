@@ -4,7 +4,7 @@ import { Route } from '@angular/router';
 
 import { Context, SignedInGuard } from '@remult/core';
 
-import { Helpers } from '../helpers/helpers';
+import { Helpers, HelperUserInfo } from '../helpers/helpers';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
@@ -18,10 +18,13 @@ export class MyFamiliesComponent implements OnInit {
     path: 'my-families', component: MyFamiliesComponent, canActivate: [SignedInGuard], data: { name: 'משפחות שלי' }
   };
   familyLists = new UserFamiliesList(this.context);
-  get settings(){return ApplicationSettings.get(this.context);}
-  constructor(public context: Context) { }
+  user:HelperUserInfo;
+  constructor(public context: Context,public settings:ApplicationSettings) {
+    this.user = context.user as HelperUserInfo;
+   }
   async ngOnInit() {
-    await this.familyLists.initForHelper(this.context.user.id, this.context.user.name,'',await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(this.context.user.id)));
+    
+    await this.familyLists.initForHelper(this.user.theHelperIAmEscortingId?this.user.theHelperIAmEscortingId: this.context.user.id, this.context.user.name,'',await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(this.context.user.id)));
 
   }
 

@@ -6,7 +6,7 @@ import { Helpers } from './helpers';
 import { Families } from '../families/families';
 import { Route } from '@angular/router';
 
-import { ServerFunction,  DataControlSettings } from '@remult/core';
+import { ServerFunction, DataControlSettings } from '@remult/core';
 import { Context } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from '@remult/core';
@@ -22,7 +22,7 @@ import { saveToExcel } from '../shared/saveToExcel';
   styleUrls: ['./helpers.component.css']
 })
 export class HelpersComponent implements OnInit {
-  constructor(private dialog: DialogService, public context: Context, private busy: BusyService) {
+  constructor(private dialog: DialogService, public context: Context, private busy: BusyService, private settings: ApplicationSettings) {
   }
   static route: Route = {
     path: 'helpers',
@@ -37,7 +37,7 @@ export class HelpersComponent implements OnInit {
     allowUpdate: true,
     knowTotalRows: true,
     hideDataArea: true,
-    numOfColumnsInGrid:Helpers.usingCompanyModule?4:3,
+    numOfColumnsInGrid: 3 + (this.settings.showCompanies.value ? 1 : 0) + (this.settings.manageEscorts.value ? 3 : 0),
 
     get: {
       orderBy: h => [h.name],
@@ -53,12 +53,15 @@ export class HelpersComponent implements OnInit {
         helpers.name,
         helpers.phone
       ];
-      if (Helpers.usingCompanyModule)
+      if (this.settings.manageEscorts.value)
         r.push(helpers.company);
       r.push({
         column: helpers.admin,
         width: '100'
       });
+      if (this.settings.manageEscorts.value) {
+        r.push(helpers.escortingHelper, helpers.theHelperIAmEscorting, helpers.needEscort);
+      }
       r.push(helpers.createDate);
       return r;
     },
@@ -82,8 +85,8 @@ export class HelpersComponent implements OnInit {
     });
 
   }
-  async saveToExcel(){
-    await saveToExcel(this.helpers, "מתנדבים", this.busy, (d: Helpers, c) => c == d.id||c==d.password||c==d.totalKm||c==d.totalTime||c==d.smsDate||c==d.reminderSmsDate||c==d.realStoredPassword||c==d.shortUrlKey||c==d.admin);
+  async saveToExcel() {
+    await saveToExcel(this.helpers, "מתנדבים", this.busy, (d: Helpers, c) => c == d.id || c == d.password || c == d.totalKm || c == d.totalTime || c == d.smsDate || c == d.reminderSmsDate || c == d.realStoredPassword || c == d.shortUrlKey || c == d.admin);
   }
 
   @ServerFunction({ allowed: Roles.admin })
@@ -100,7 +103,7 @@ export class HelpersComponent implements OnInit {
   async ngOnInit() {
     let s = await ApplicationSettings.getAsync(this.context);
 
-   
+
   }
   fromDate = new DateColumn({
     caption: 'מתאריך',

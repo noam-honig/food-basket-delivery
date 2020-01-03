@@ -1,5 +1,5 @@
 
-import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, EntityOptions } from '@remult/core';
+import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, EntityOptions, UserInfo } from '@remult/core';
 import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn } from '../model-shared/types';
 
 
@@ -32,6 +32,11 @@ export abstract class HelpersBase extends IdEntity {
     totalKm = new NumberColumn();
     totalTime = new NumberColumn();
     shortUrlKey = new StringColumn({ includeInApi: Roles.admin });
+    eventComment = new StringColumn('הערה לאירוע');
+    needEscort = new BoolColumn('צריך מלווה');
+    theHelperIAmEscorting = new HelperIdReadonly(this.context, { caption: 'מלווה את המתנדב' });
+    escortingHelper = new HelperId(this.context, { caption: 'המתנדב שמלווה אותי' });
+
     getRouteStats(): routeStats {
         return {
             totalKm: this.totalKm.value,
@@ -54,7 +59,9 @@ export class Helpers extends HelpersBase {
             allowApiInsert: true,
             savingRow: async () => {
                 if (this._disableOnSavingRow) return;
-
+                if (this.escortingHelper.value == this.id.value) {
+                    this.escortingHelper.value = '';
+                }
                 if (context.onServer) {
                     if (this.password.value && this.password.value != this.password.originalValue && this.password.value != Helpers.emptyPassword) {
                         this.realStoredPassword.value = Helpers.passwordHelper.generateHash(this.password.value);
@@ -67,7 +74,21 @@ export class Helpers extends HelpersBase {
                     if (this.isNew())
                         this.createDate.value = new Date();
                     this.veryUrlKeyAndReturnTrueIfSaveRequired();
+                    if (this.escortingHelper.value != this.escortingHelper.originalValue) {
+                        if (this.escortingHelper.originalValue) {
+                            let h = await context.for(Helpers).lookupAsync(x => x.id.isEqualTo(this.escortingHelper.originalValue));
+                            h.theHelperIAmEscorting.value = '';
+                            await h.save();
+                        }
+                        if (this.escortingHelper.value) {
+                            let h = await context.for(Helpers).lookupAsync(this.escortingHelper);
+                            h.theHelperIAmEscorting.value = this.id.value;
+                            await h.save();
+                        }
+                    }
+
                 }
+
             },
             apiDataFilter: () => {
                 if (!context.isSignedIn())
@@ -203,4 +224,9 @@ export class HelperIdReadonly extends HelperId {
 export interface PasswordHelper {
     generateHash(password: string): string;
     verify(password: string, realPasswordHash: string): boolean;
+}
+
+export interface HelperUserInfo extends UserInfo{
+    theHelperIAmEscortingId:string;
+    escortedHelperName:string;
 }

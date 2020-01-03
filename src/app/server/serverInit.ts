@@ -49,14 +49,16 @@ export async function serverInit() {
             await verifySchemaExistance(pool, Sites.guestSchema);
             let adminSchemaPool = new PostgresSchemaWrapper(pool, Sites.guestSchema);
             let context = new ServerContext();
-            let dp = new SqlDatabase( new PostgresDataProvider(adminSchemaPool));
+            let dp = new SqlDatabase(new PostgresDataProvider(adminSchemaPool));
             context.setDataProvider(dp)
+
             let builder = new PostgrestSchemaBuilder(adminSchemaPool, Sites.guestSchema);
             for (const entity of <{ new(...args: any[]): Entity<any>; }[]>[
                 ApplicationSettings,
                 ApplicationImages,
                 Helpers]) {
                 await builder.CreateIfNotExist(context.for(entity).create());
+                await builder.verifyAllColumns(context.for(entity).create());
             }
             let settings = await context.for(ApplicationSettings).lookupAsync(s => s.id.isEqualTo(1));
             if (settings.isNew()) {
@@ -73,17 +75,17 @@ export async function serverInit() {
                 await new PostgrestSchemaBuilder(schemaPool, s).verifyStructureOfAllEntities();
                 await initSchema(schemaPool, s);
             }
-            Sites.getDataProviderForOrg = org=> new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, org)));
+            Sites.getDataProviderForOrg = org => new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, org)));
             return (y: Context) => {
                 let org = Sites.getValidSchemaFromContext(y);
 
-                return new SqlDatabase( new PostgresDataProvider(new PostgresSchemaWrapper(pool, org)));
+                return new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, org)));
             };
         }
         else {
             await new PostgrestSchemaBuilder(pool).verifyStructureOfAllEntities();
             await initSchema(pool, '');
-            return y => new SqlDatabase( new PostgresDataProvider(pool));
+            return y => new SqlDatabase(new PostgresDataProvider(pool));
         }
 
 

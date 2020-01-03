@@ -51,6 +51,7 @@ export class ApplicationSettings extends Entity<number>  {
   message2Link = new StringColumn('כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב');
   message2OnlyWhenDone = new BoolColumn('להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים');
   forSoldiers = new BoolColumn('המערכת היא עבור חיילים לא משפחות');
+  manageEscorts = new BoolColumn('הפעל ניהול מלווים לנהגים');
   usingSelfPickupModule = new BoolColumn('ישנן משפחות שבאות לקחת ממרכז החלוקה');
   showCompanies = new BoolColumn('שמור מטעם איזה חברה הגיע המתנדב');
   showGroupsOnAssing = new BoolColumn('סינון קבוצת חלוקה');
