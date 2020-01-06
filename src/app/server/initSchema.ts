@@ -15,26 +15,26 @@ import { Helpers } from '../helpers/helpers';
 import { FamilyDeliveriesStats } from '../delivery-history/delivery-history.component';
 import { Sites } from '../sites/sites';
 
-export async function initSchema(pool: PostgresPool, org: string) {
+export async function initSchema(pool1: PostgresPool, org: string) {
 
 
-    var dataSource = new SqlDatabase( new PostgresDataProvider(pool));
+    var dataSource = new SqlDatabase( new PostgresDataProvider(pool1));
     let context = new ServerContext();
     context.setDataProvider(dataSource);
     let sql = new SqlBuilder();
     let fde = context.for(FamilyDeliveryEvents).create();
     let f = context.for(Families).create();
     // remove unique constraint on id column if exists
-    await pool.query(sql.build('ALTER TABLE ', fde, ' DROP CONSTRAINT IF EXISTS familydeliveryevents_pkey'));
+    await dataSource.execute(sql.build('ALTER TABLE ', fde, ' DROP CONSTRAINT IF EXISTS familydeliveryevents_pkey'));
 
 
     //create index if required
-    await pool.query(sql.build('create index if not exists fde_1 on ', fde, ' (', [fde.family, fde.deliverStatus, fde.courier], ')'));
+    await dataSource.execute(sql.build('create index if not exists fde_1 on ', fde, ' (', [fde.family, fde.deliverStatus, fde.courier], ')'));
     //create index for family deliveries if required
     var fd = context.for(FamilyDeliveries).create();
-    await pool.query(sql.build('create index if not exists fd_1 on ', fd, ' (', [fd.family, fd.deliveryStatusDate, fd.deliverStatus, fd.courier], ')'));
+    await dataSource.execute(sql.build('create index if not exists fd_1 on ', fd, ' (', [fd.family, fd.deliveryStatusDate, fd.deliverStatus, fd.courier], ')'));
     //create index if required
-    await pool.query(sql.build('create index if not exists f_1 on ', f, ' (', [fde.courier, f.deliverStatus], ')'));
+    await dataSource.execute(sql.build('create index if not exists f_1 on ', f, ' (', [fde.courier, f.deliverStatus], ')'));
 
 
 
@@ -130,7 +130,7 @@ export async function initSchema(pool: PostgresPool, org: string) {
         console.log("updating family source for historical information");
         let f = context.for(Families).create();
         let fd = context.for(FamilyDeliveries).create();
-        pool.query(sql.update(fd, {
+        dataSource.execute(sql.update(fd, {
             set: () => [[fd.archiveFamilySource, f.familySource]],
             from: f,
             where: () => [sql.eq(f.id, fd.family)]
@@ -141,7 +141,7 @@ export async function initSchema(pool: PostgresPool, org: string) {
     if (settings.dataStructureVersion.value == 2) {
         console.log("updating update date");
         let f = context.for(Families).create();
-        pool.query(sql.update(f, {
+        dataSource.execute(sql.update(f, {
             set: () => [[f.lastUpdateDate, f.createDate]]
         }));
         settings.dataStructureVersion.value = 3;
@@ -151,7 +151,7 @@ export async function initSchema(pool: PostgresPool, org: string) {
         console.log("updating family source for historical information");
         let f = context.for(Families).create();
         let fd = context.for(FamilyDeliveries).create();
-        pool.query(sql.update(fd, {
+        dataSource.execute(sql.update(fd, {
             set: () => [[fd.archiveFamilySource, f.familySource]],
             from: f,
             where: () => [sql.eq(f.id, fd.family)]
@@ -162,7 +162,7 @@ export async function initSchema(pool: PostgresPool, org: string) {
     if (settings.dataStructureVersion.value == 4) {
         console.log("updating update date");
         let f = context.for(Families).create();
-        pool.query(sql.update(f, {
+        dataSource.execute(sql.update(f, {
             set: () => [[f.lastUpdateDate, f.createDate]]
         }));
         settings.dataStructureVersion.value = 5;
