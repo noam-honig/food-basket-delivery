@@ -13,7 +13,7 @@ export class YesNoQuestionComponent implements OnInit {
     showOnlyConfirm?: boolean;
     question: string;
   };
-  confirmOnly=false;
+  confirmOnly = false;
   question: string;
   constructor(
     private dialogRef: MatDialogRef<any>
@@ -26,6 +26,8 @@ export class YesNoQuestionComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.args && this.args.showOnlyConfirm)
+      this.confirmOnly = this.args.showOnlyConfirm;
     if (!this.question)
       this.question = this.args.question;
   }

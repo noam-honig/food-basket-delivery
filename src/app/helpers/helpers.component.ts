@@ -15,6 +15,7 @@ import { Roles, AdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 import { saveToExcel } from '../shared/saveToExcel';
+import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 
 @Component({
   selector: 'app-helpers',
@@ -22,7 +23,7 @@ import { saveToExcel } from '../shared/saveToExcel';
   styleUrls: ['./helpers.component.css']
 })
 export class HelpersComponent implements OnInit {
-  constructor(private dialog: DialogService, public context: Context, private busy: BusyService, private settings: ApplicationSettings) {
+  constructor(private dialog: DialogService, public context: Context, private busy: BusyService, public settings: ApplicationSettings) {
   }
   static route: Route = {
     path: 'helpers',
@@ -37,7 +38,7 @@ export class HelpersComponent implements OnInit {
     allowUpdate: true,
     knowTotalRows: true,
     hideDataArea: true,
-    numOfColumnsInGrid: 3 + (this.settings.showCompanies.value ? 1 : 0) + (this.settings.manageEscorts.value ? 3 : 0),
+    numOfColumnsInGrid: 3,
 
     get: {
       orderBy: h => [h.name],
@@ -53,15 +54,16 @@ export class HelpersComponent implements OnInit {
         helpers.name,
         helpers.phone
       ];
-      if (this.settings.manageEscorts.value)
-        r.push(helpers.company);
       r.push({
         column: helpers.admin,
         width: '100'
       });
+      if (this.settings.manageEscorts.value)
+        r.push(helpers.company);
       if (this.settings.manageEscorts.value) {
-        r.push(helpers.escortingHelper, helpers.theHelperIAmEscorting, helpers.needEscort);
+        r.push(helpers.escort, helpers.theHelperIAmEscorting, helpers.needEscort);
       }
+      r.push(helpers.eventComment);
       r.push(helpers.createDate);
       return r;
     },
@@ -120,5 +122,33 @@ export class HelpersComponent implements OnInit {
     columnSettings: () => [this.fromDate, this.toDate],
     numberOfColumnAreas: 2
   });
+  async clearComments() {
+    if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: 'האם אתה בטוח שברצונך לנקות את כל ההערות למתנדבים?' }, x => x.yes)) {
+      await HelpersComponent.clearCommentsOnServer();
+      this.helpers.getRecords();
+    }
+  }
+  @ServerFunction({ allowed: Roles.admin })
+  static async clearCommentsOnServer(context?: Context) {
+    for (const h of await context.for(Helpers).find({ where: h => h.eventComment.isDifferentFrom('') })) {
+      h.eventComment.value = '';
+      await h.save();
+    }
+  }
+  async clearEscorts(){
+    if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: 'האם אתה בטוח שברצונך לנקות את נתוני המלווים לכל המתנדבים?' }, x => x.yes)) {
+      await HelpersComponent.clearEscortsOnServer();
+      this.helpers.getRecords();
+    }
+  }
+  @ServerFunction({ allowed: Roles.admin })
+  static async clearEscortsOnServer(context?: Context) {
+    for (const h of await context.for(Helpers).find()) {
+      h.escort.value = '';
+      h.needEscort.value = false;
+      h.theHelperIAmEscorting.value = '';
+      await h.save();
+    }
+  }
 
 }

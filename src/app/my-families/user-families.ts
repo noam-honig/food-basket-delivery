@@ -17,7 +17,7 @@ export class UserFamiliesList {
         this.map.userClickedOnFamilyOnMap = (f) => this.userClickedOnFamilyOnMap(f);
     }
     startAssignByMap(city: string, group: string) {
-        
+
         this.map.loadPotentialAsigment(city, group);
         setTimeout(() => {
             this.map.gmapElement.nativeElement.scrollIntoView();
@@ -29,25 +29,28 @@ export class UserFamiliesList {
     delivered: Families[] = [];
     problem: Families[] = [];
     allFamilies: Families[] = [];
-    helperId: string;
-    helperName: string;
-    private helperPhone:string;
-    getHelperPhone(){
-        return PhoneColumn.formatPhone(this.helperPhone);
+    getHelperPhone() {
+        return this.helper.phone.displayValue;
     }
-    helperOptional: Helpers;
+    helper: Helpers;
+    escort: Helpers;
     routeStats: routeStats;
     userClickedOnFamilyOnMap: (familyId: string[]) => void = x => { };
-    async initForHelper(helperId: string, name: string,phone:string, helperOptional?: Helpers) {
+    async initForHelper(helper: Helpers) {
 
-        this.helperOptional = helperOptional;
-        this.helperId = helperId;
-        this.helperName = name;
-        this.helperPhone = phone;
-        if (helperOptional) {
-            this.routeStats = helperOptional.getRouteStats();
+        this.initHelper(helper);
+        if (helper) {
+            this.routeStats = helper.getRouteStats();
         }
         await this.reload();
+
+    }
+    private async  initHelper(h: Helpers) {
+        this.helper = h;
+        this.escort = undefined;
+        if (this.helper && h.escort) {
+            this.escort = await this.context.for(Helpers).findFirst(x => x.id.isEqualTo(h.escort));
+        }
 
     }
     getLeftFamiliesDescription() {
@@ -79,10 +82,8 @@ export class UserFamiliesList {
         return r;
 
     }
-    async initForFamilies(helperId: string, name: string,phone:string, familiesPocoArray: any[]) {
-        this.helperId = helperId;
-        this.helperName = name;
-        this.helperPhone = phone;
+    async initForFamilies(helper: Helpers, familiesPocoArray: any[]) {
+        this.initHelper(helper);
         let newFamilies = familiesPocoArray.map(x => this.context.for(Families).fromPojo(x));
         newFamilies.push(...this.delivered);
         newFamilies.push(...this.problem);
@@ -93,10 +94,10 @@ export class UserFamiliesList {
     highlightNewFamilies = false;
     lastHelperId = undefined;
     async reload() {
-        if (this.helperId) {
-            this.allFamilies = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(this.helperId).and(f.deliverStatus.isActiveDelivery()).and(f.visibleToCourier.isEqualTo(true)), orderBy: f => [f.routeOrder, f.address], limit: 1000 });
-            if (this.lastHelperId != this.helperId) {
-                this.lastHelperId = this.helperId;
+        if (this.helper.id) {
+            this.allFamilies = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(this.helper.id).and(f.deliverStatus.isActiveDelivery()).and(f.visibleToCourier.isEqualTo(true)), orderBy: f => [f.routeOrder, f.address], limit: 1000 });
+            if (this.lastHelperId != this.helper.id) {
+                this.lastHelperId = this.helper.id;
                 this.familiesAlreadyAssigned = new Map<string, boolean>();
                 this.highlightNewFamilies = false;
                 for (const f of this.allFamilies) {

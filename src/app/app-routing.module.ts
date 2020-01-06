@@ -25,10 +25,11 @@ import { BatchOperationsComponent } from './batch-operations/batch-operations.co
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 import { AdminGuard, OverviewGuard } from './auth/roles';
 import { SignedInGuard } from '@remult/core';
-import { CreateBackupExcelFileComponent,CanDeactivateGuard } from './create-backup-excel-file/create-backup-excel-file.component';
+import { CreateBackupExcelFileComponent, CanDeactivateGuard } from './create-backup-excel-file/create-backup-excel-file.component';
 import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';
 import { PlaybackComponent } from './playback/playback.component';
 import { OverviewComponent } from './overview/overview.component';
+import { AssignEscortComponent } from './assign-escort/assign-escort.component';
 
 
 
@@ -36,6 +37,11 @@ import { OverviewComponent } from './overview/overview.component';
 const routes: Routes = [
 
   AsignFamilyComponent.route,
+  {
+    path: 'assign-escort', component: AssignEscortComponent, canActivate: [AdminGuard], data: {
+      name: 'שיוך מלווים'
+    }
+  },
   SelfPickupComponent.route,
   FamiliesComponent.route,
   NewsComponent.route,
@@ -43,16 +49,16 @@ const routes: Routes = [
   DistributionMap.route,
   AddressProblemComponent.route,
   HelpersComponent.route,
-  {path:'overview',component:OverviewComponent,canActivate:[OverviewGuard]},
-  
+  { path: 'overview', component: OverviewComponent, canActivate: [OverviewGuard] },
+
   DeliveryHistoryComponent.route,
-  { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { name: 'playback',hide:true } },
-  
+  { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { name: 'playback', hide: true } },
+
   BatchOperationsComponent.route,
   { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard], data: { name: 'קליטת משפחות מאקסל' } },
   { path: 'import-helpers-from-excel', component: ImportHelpersFromExcelComponent, canActivate: [AdminGuard], data: { name: 'קליטת מתנדבים מאקסל' } },
   ManageComponent.route,
-  { path: 'auto-backup', component: CreateBackupExcelFileComponent, canActivate: [AdminGuard],canDeactivate:[CanDeactivateGuard], data: { name: 'גיבוי אוטומטי',seperator: true } },
+  { path: 'auto-backup', component: CreateBackupExcelFileComponent, canActivate: [AdminGuard], canDeactivate: [CanDeactivateGuard], data: { name: 'גיבוי אוטומטי', seperator: true } },
   LoginFromSmsComponent.route,
 
   //{ path: 'stam-test', component: UpdateGroupDialogComponent },
@@ -73,7 +79,7 @@ const routes: Routes = [
   ],
   declarations: [],
   exports: [RouterModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard,CanDeactivateGuard,OverviewGuard]
+  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, CanDeactivateGuard, OverviewGuard]
 })
 
 export class AppRoutingModule { }

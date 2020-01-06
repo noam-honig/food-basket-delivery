@@ -24,7 +24,7 @@ export class MyFamiliesComponent implements OnInit {
    }
   async ngOnInit() {
     
-    await this.familyLists.initForHelper(this.user.theHelperIAmEscortingId?this.user.theHelperIAmEscortingId: this.context.user.id, this.context.user.name,'',await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(this.context.user.id)));
+    await this.familyLists.initForHelper(await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(this.user.theHelperIAmEscortingId?this.user.theHelperIAmEscortingId: this.context.user.id)));
 
   }
 

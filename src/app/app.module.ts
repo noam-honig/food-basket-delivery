@@ -46,7 +46,7 @@ import { UpdateFamilyComponent } from './update-family/update-family.component';
 
 
 import { AddressProblemComponent } from './address-problem/address-problem.component';
-import { StressTestComponent } from './stress-test/stress-test.component';
+
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
@@ -68,6 +68,7 @@ import { Sites } from './sites/sites';
 import { ApplicationSettings, SettingsService } from './manage/ApplicationSettings';
 import { OverviewComponent } from './overview/overview.component';
 import { TransitionGroupComponent, TransitionGroupItemDirective } from './overview/transition-group';
+import { AssignEscortComponent } from './assign-escort/assign-escort.component';
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref();
 
@@ -106,7 +107,7 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
 
 
     AddressProblemComponent,
-    StressTestComponent,
+    
     SelfPickupComponent,
     BatchOperationsComponent,
     DeliveryHistoryComponent,
@@ -122,7 +123,8 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     PlaybackComponent,
     OverviewComponent,
     TransitionGroupComponent,
-    TransitionGroupItemDirective
+    TransitionGroupItemDirective,
+    AssignEscortComponent
 
   ],
   imports: [

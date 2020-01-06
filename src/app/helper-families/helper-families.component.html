@@ -77,9 +77,8 @@
   <button *ngIf="partOfReview&&helperGotSms&&familyLists.toDeliver.length>0" mat-raised-button class="myButton no-print"
     color="accent" (click)="sendSms(true)">
 
-    <span
-      *ngIf="familyLists&&familyLists.helperOptional&&familyLists.helperOptional.reminderSmsDate.value; else elseContent">תזכורת
-      נשלחה {{familyLists.helperOptional.reminderSmsDate.relativeDateName()}} שלח שוב
+    <span *ngIf="familyLists&&familyLists.helper&&familyLists.helper.reminderSmsDate.value; else elseContent">תזכורת
+      נשלחה {{familyLists.helper.reminderSmsDate.relativeDateName()}} שלח שוב
 
     </span>
 
@@ -87,15 +86,22 @@
       <span>שלחי SMS לתזכורת</span>
     </ng-template>
   </button>
-  <button mat-raised-button class="myButton no-print" *ngIf="partOfReview&&familyLists.helperOptional">
-    <a href="tel:{{familyLists.helperOptional.phone.value}}"> התקשרי ל{{familyLists.helperOptional.name.value}}
-      {{familyLists.helperOptional.phone.value}}
-    </a>
-  </button>
-  <div class="print-only">
-    <h4 *ngIf="familyLists.helperId">שלום {{familyLists.helperName}}, טלפון {{familyLists.getHelperPhone()}}, {{'אלו המשפחות לחלוקתך -'|translate}}
-      ({{familyLists.toDeliver.length}})</h4>
+  <button mat-raised-button class="myButton no-print" *ngIf="partOfReview&&familyLists.helper" (click)="callHelper()" >
+     התקשר ל{{familyLists.helper.name.value}}
+      {{familyLists.helper.phone.displayValue}}
     
+  </button >
+  <button mat-raised-button class="myButton no-print" *ngIf="partOfReview&&familyLists.helper && familyLists.escort" (click)="callEscort()" >
+    התקשר למלווה {{familyLists.escort.name.value}}
+     {{familyLists.escort.phone.displayValue}}
+   
+ </button >
+  <div class="print-only">
+    <h4 *ngIf="familyLists.helper">שלום
+      {{familyLists.helper.name.value +(familyLists.helper.eventComment.value?' ('+familyLists.helper.eventComment.value+')':'')}},
+      טלפון {{familyLists.getHelperPhone() }}, {{'אלו המשפחות לחלוקתך -'|translate}}
+      ({{familyLists.toDeliver.length}})</h4>
+
     <table class="printTable">
       <tr>
         <th>{{'משפחה'|translate}}</th>
@@ -203,7 +209,7 @@
   </mat-card>
   <mat-card [class.hide]="partOfReview||preview">
 
-    <app-map #map > </app-map>
+    <app-map #map> </app-map>
     <button mat-raised-button *ngIf="!preview&&familyLists.toDeliver.length>0" (click)="showRouteOnGoogleMaps()"
       class="map-button no-print">הצג מסלול ב - google maps</button>
   </mat-card>

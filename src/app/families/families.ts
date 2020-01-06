@@ -426,7 +426,8 @@ export class Families extends IdEntity {
     switch (this.deliverStatus.value) {
       case DeliveryStatus.ReadyForDelivery:
         if (this.courier.value) {
-          return 'בדרך: ' + this.courier.getValue() + ', שוייך ' + this.courierAssingTime.relativeDateName();
+          let c = this.context.for(Helpers).lookup(this.courier);
+          return 'בדרך: ' + c.name.value+(c.eventComment.value?' ('+c.eventComment.value+')':'') + ', שוייך ' + this.courierAssingTime.relativeDateName();
         }
         break;
       case DeliveryStatus.Success:

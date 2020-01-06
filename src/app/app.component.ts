@@ -14,6 +14,7 @@ import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { DeliveryStatus } from './families/DeliveryStatus';
 import { Helpers } from './helpers/helpers';
 import { BasketType } from './families/BasketType';
+import { AssignEscortComponent } from './assign-escort/assign-escort.component';
 
 
 
@@ -41,11 +42,11 @@ export class AppComponent {
     if (settings.redTitleBar.value) {
       this.toolbarColor = 'accent';
     }
-    
+
 
 
   }
-  
+
 
   showSeperator(route: Route) {
     if (route.data && route.data.seperator)
@@ -84,6 +85,8 @@ export class AppComponent {
     if (route.data && route.data.hide)
       return;
     if (!DeliveryStatus.usingSelfPickupModule && route.component == SelfPickupComponent)
+      return false;
+    if (route.component == AssignEscortComponent && !this.settings.manageEscorts.value)
       return false;
     return this.helper.canNavigateToRoute(route);
   }

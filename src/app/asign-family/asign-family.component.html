@@ -31,16 +31,17 @@
           <mat-icon (click)="findHelper()">search</mat-icon>
         </div>
       </mat-form-field>
-      <data-area [settings]="area" *ngIf="phone&& phone.length==10&&showHelperInput"></data-area>
+      <data-area [settings]="area" *ngIf="phone&& phone.length==10&&showHelperInput&&helper"></data-area>
     </mat-card>
   </div>
 
 
-  <span *ngIf="showHelperInput&&!name.value" class="help no-print">אנא הזיני את הטלפון של המשנע ושמו, ואז תוכלי לבחור
+  <span *ngIf="showHelperInput&&(!helper||!helper.name.value)" class="help no-print">אנא הזיני את הטלפון של המשנע ושמו,
+    ואז תוכלי לבחור
     קבוצה, עיר ואילו
     סלים
     לשייך</span>
-  <div *ngIf="name.value&&name.value.length>=2">
+  <div *ngIf="helper&&helper. name.value&&helper.name.value.length>=2">
     <mat-card class="no-print">
       <mat-card-title>
         {{'שיוך משפחות למשנע'|translate}}

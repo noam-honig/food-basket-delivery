@@ -27,7 +27,7 @@ export class DeliveryFollowUpComponent implements OnInit {
   currentlHelper: HelpersAndStats;
   async selectCourier(c: HelpersAndStats) {
     this.currentlHelper = c;
-    this.familyLists.initForHelper(c.id.value, c.name.value,c.phone.value, await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(c.id)));
+    this.familyLists.initForHelper( await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(c.id)));
 
   }
   searchString: string;

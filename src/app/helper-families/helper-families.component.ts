@@ -145,10 +145,16 @@ export class HelperFamiliesComponent implements OnInit {
   async sendSms(reminder: Boolean) {
     this.helperGotSms = true;
     this.dialog.analytics('Send SMS ' + (reminder ? 'reminder' : ''));
-    await SendSmsAction.SendSms(this.familyLists.helperId, reminder);
+    let to = this.familyLists.helper.name.value;
+    await SendSmsAction.SendSms(this.familyLists.helper.id.value, reminder);
+    if (this.familyLists.helper.escort.value) {
+      to += ' ול' + this.familyLists.escort.name.value;
+      await SendSmsAction.SendSms(this.familyLists.helper.escort.value, reminder);
+    }
+    this.dialog.Info("הודעת SMS נשלחה ל" + to);
     this.assignSmsSent.emit();
     if (reminder)
-      this.familyLists.helperOptional.reminderSmsDate.value = new Date();
+      this.familyLists.helper.reminderSmsDate.value = new Date();
   }
   async sendWhatsapp() {
     let phone = this.smsPhone;
@@ -162,7 +168,7 @@ export class HelperFamiliesComponent implements OnInit {
   smsPhone: string = '';
   prepareMessage() {
     this.busy.donotWait(async () => {
-      await SendSmsAction.generateMessage(this.context, this.familyLists.helperId, window.origin, false, this.context.user.name, (phone, message, sender) => {
+      await SendSmsAction.generateMessage(this.context, this.familyLists.helper.id.value, window.origin, false, this.context.user.name, (phone, message, sender) => {
         this.smsMessage = message;
         this.smsPhone = phone;
       });
@@ -176,11 +182,16 @@ export class HelperFamiliesComponent implements OnInit {
       this.dialog.Error(err);
     }
   }
+  callHelper() {
+    window.open('tel:' + this.familyLists.helper.phone.value);
+  }
+  callEscort() {
+    window.open('tel:' + this.familyLists.escort.phone.value);
+  }
   async updateMessageSent() {
-    let h = await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(this.familyLists.helperId));
-    h.smsDate.value = new Date();
-    await h.save();
-    this.assignSmsSent.emit();
+
+    this.familyLists.helper.smsDate.value = new Date();
+    await this.familyLists.helper.save();
   }
   async copyMessage() {
     copy(this.smsMessage);
