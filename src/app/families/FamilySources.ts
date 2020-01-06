@@ -21,13 +21,13 @@ export class FamilySourceId extends IdColumn implements HasAsyncGetTheValue {
     super({
       dataControlSettings: () =>
         ({
-          dropDown: {
-            source: this.context.for(FamilySources).dropDownSource({
+          valueList: 
+             this.context.for(FamilySources).getDropDownItems({
               orderBy: (f: FamilySources) => {
                 return [{ column: f.name }];
-              }
-            })
-          }
+              
+            }
+          })
         })
     }, settingsOrCaption);
   }

@@ -1,5 +1,5 @@
-import { ClosedListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings } from '@remult/core';
-import { ColumnOptions, DropDownItem } from '@remult/core';
+import { ColumnOptions,ValueListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings, ValueListItem } from '@remult/core';
+
 
 export class DeliveryStatus {
   static usingSelfPickupModule: boolean = true;
@@ -34,7 +34,7 @@ export class DeliveryStatus {
     return this.name;
   }
 }
-export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
+export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
   isActiveDelivery() {
     return this.isLessOrEqualTo(DeliveryStatus.FailedOther);
   }
@@ -54,7 +54,7 @@ export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
             return {
               id: x.id,
               caption: x.toString()
-            } as DropDownItem
+            } as ValueListItem
           });
         if (!DeliveryStatus.usingSelfPickupModule) {
           op = op.filter(x => x.id != DeliveryStatus.SelfPickup.id && x.id != DeliveryStatus.SuccessPickedUp.id);

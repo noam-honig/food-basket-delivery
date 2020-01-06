@@ -33,13 +33,12 @@ export class BasketId extends IdColumn implements HasAsyncGetTheValue {
     super(settingsOrCaption, {
       dataControlSettings: () =>
         ({
-          dropDown: {
-            source: this.context.for(BasketType).dropDownSource({
-              orderBy: (f: BasketType) => {
-                return [{ column: f.name }];
-              }
-            })
-          }, width: '100'
+          valueList: this.context.for(BasketType).getDropDownItems({
+            orderBy: (f: BasketType) => {
+              return [{ column: f.name }];
+            }
+          })
+          , width: '100'
         }),
     });
   }

@@ -40,8 +40,8 @@ export class HelpersAndStats extends HelpersBase {
             name: "helpersAndStats",
             allowApiRead: Roles.admin,
             dbName: () => {
-                let f = new Families(context);
-                let h = new Helpers(context);
+                let f = context.for(Families).create();
+                let h = context.for( Helpers).create();
                 var sql = new SqlBuilder();
 
                 let helperFamilies = (where: () => any[]) => {

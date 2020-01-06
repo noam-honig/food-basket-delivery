@@ -31,7 +31,7 @@ export class NewsUpdate extends Entity<string> implements FamilyUpdateInfo {
       caption: 'חדשות',
       name: 'news',
       dbName: () => {
-        let f = new Families(context);
+        let f = context.for( Families).create();
         var sql = new SqlBuilder();
         let cols = [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser, f.courierComments,f.needsWork,f.familySource];
         return sql.entityDbNameUnion({

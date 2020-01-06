@@ -140,7 +140,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   @ServerFunction({ allowed: Roles.admin })
   static async GetFamiliesLocations(onlyPotentialAsignment?: boolean, city?: string, group?: string, context?: Context, db?: SqlDatabase) {
-    let f = new Families(context);
+    let f = context.for( Families).create();
 
     let sql = new SqlBuilder();
     sql.addEntity(f, "Families");

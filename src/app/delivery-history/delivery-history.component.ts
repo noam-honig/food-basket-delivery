@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { EntityClass, Context,  StringColumn, IdColumn, SpecificEntityHelper, SqlDatabase } from '@remult/core';
+import { EntityClass, Context, StringColumn, IdColumn, SpecificEntityHelper, SqlDatabase } from '@remult/core';
 import { FamilyId, Families } from '../families/families';
 import { changeDate, SqlBuilder, PhoneColumn } from '../model-shared/types';
 import { BasketId } from '../families/BasketType';
 import { DeliveryStatusColumn } from '../families/DeliveryStatus';
 import { HelperId, HelperIdReadonly, Helpers, CompanyColumn } from '../helpers/helpers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
-import { CompoundIdColumn, DateColumn, DataAreaSettings, InMemoryDataProvider, Entity, GridSettings,  NumberColumn } from '@remult/core';
+import { CompoundIdColumn, DateColumn, DataAreaSettings, InMemoryDataProvider, Entity, GridSettings, NumberColumn } from '@remult/core';
 
 import { Route } from '@angular/router';
 
@@ -45,7 +45,7 @@ export class DeliveryHistoryComponent implements OnInit {
 
   helperInfo: GridSettings<helperHistoryInfo>;
   helperSource: SpecificEntityHelper<string, helperHistoryInfo>;
-  
+
   private getEndOfMonth(): Date {
     return new Date(this.fromDate.value.getFullYear(), this.fromDate.value.getMonth() + 1, 0);
   }
@@ -61,11 +61,11 @@ export class DeliveryHistoryComponent implements OnInit {
   }
   constructor(private context: Context, private busy: BusyService) {
     let x = new InMemoryDataProvider();
-    
-    this.helperSource = context.for(helperHistoryInfo,x);
-    this.helperInfo = this.helperSource.gridSettings( {
+
+    this.helperSource = context.for(helperHistoryInfo, x);
+    this.helperInfo = this.helperSource.gridSettings({
       hideDataArea: true,
-      numOfColumnsInGrid:6,
+      numOfColumnsInGrid: 6,
       columnSettings: h => [
         {
           column: h.name,
@@ -158,7 +158,7 @@ export class DeliveryHistoryComponent implements OnInit {
     await saveToExcel(this.helperInfo, "מתנדבים", this.busy, (d: helperHistoryInfo, c) => c == d.courier);
   }
   deliveries = this.context.for(FamilyDeliveriesStats).gridSettings({
-    
+
     columnSettings: d => [
       d.name,
       d.courier,
@@ -172,7 +172,7 @@ export class DeliveryHistoryComponent implements OnInit {
       d.courierAssingTime,
       d.deliveryStatusUser
     ],
-    
+
     hideDataArea: true,
     numOfColumnsInGrid: 7,
     knowTotalRows: true,
@@ -188,7 +188,7 @@ export class DeliveryHistoryComponent implements OnInit {
   async ngOnInit() {
 
     this.refreshHelpers();
-    
+
   }
   @ServerFunction({ allowed: Roles.admin })
   static async  getHelperHistoryInfo(fromDate: string, toDate: string, context?: Context, db?: SqlDatabase) {
@@ -196,8 +196,8 @@ export class DeliveryHistoryComponent implements OnInit {
     var toDateDate = DateColumn.stringToDate(toDate);
     toDateDate = new Date(toDateDate.getFullYear(), toDateDate.getMonth(), toDateDate.getDate() + 1);
     var sql = new SqlBuilder();
-    var fd = new FamilyDeliveriesStats(context);
-    var h = new Helpers(context);
+    var fd = context.for(FamilyDeliveriesStats).create();
+    var h = context.for(Helpers).create();
 
     return (await db.execute(
       sql.build("select ", [
@@ -236,11 +236,11 @@ export class helperHistoryInfo extends Entity<string>{
   courier = new StringColumn();
   name = new StringColumn('שם');
   phone = new PhoneColumn("טלפון");
-  company = new CompanyColumn(this.context); 
+  company = new CompanyColumn(this.context);
   deliveries = new NumberColumn('משלוחים');
   families = new NumberColumn('משפחות');
   dates = new NumberColumn("תאריכים");
-  constructor(private context:Context) {
+  constructor(private context: Context) {
     super({ name: 'helperHistoryInfo', allowApiRead: false, allowApiCRUD: false });
     this.__initColumns(this.courier);
   }
@@ -268,8 +268,8 @@ export class FamilyDeliveriesStats extends Entity<string> {
       name: 'FamilyDeliveriesStats',
       allowApiRead: Roles.admin,
       dbName: () => {
-        var f = new Families(context);
-        var d = new FamilyDeliveries(context);
+        var f = context.for(Families).create();
+        var d = context.for(FamilyDeliveries).create();
         var sql = new SqlBuilder();
         let r = sql.union({
           select: () => [sql.columnWithAlias(f.id, 'as family'), f.name, sql.columnWithAlias(sql.str(''), 'id'),

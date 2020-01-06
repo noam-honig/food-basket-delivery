@@ -126,7 +126,7 @@ export class CitiesStats extends Entity<string> {
             allowApiRead: false,
             name: 'citiesStats',
             dbName: () => {
-                let f = new Families(context);
+                let f = context.for( Families).create();
                 let sql = new SqlBuilder();
                 sql.addEntity(f, 'Families');
                 return sql.build('(', sql.query({

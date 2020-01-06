@@ -490,7 +490,7 @@ export class AsignFamilyComponent implements OnInit {
 
             let getFamilies = async () => {
 
-                let f = new Families(context);
+                let f = context.for( Families).create();
                 let sql = new SqlBuilder();
                 sql.addEntity(f, 'Families');
                 let r = (await db.execute(sql.query({

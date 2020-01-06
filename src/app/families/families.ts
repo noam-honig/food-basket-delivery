@@ -304,7 +304,7 @@ export class Families extends IdEntity {
   blockedBasket = new BoolColumn({
     caption: 'סל חסום',
     sqlExpression: () => {
-      let b = new BasketType(this.context);
+      let b =this.context.for( BasketType).create();
 
       let sql = new SqlBuilder();
       return sql.columnInnerSelect(this, {
@@ -376,7 +376,7 @@ export class Families extends IdEntity {
   }
   private dbNameFromLastDelivery(col: (fd: FamilyDeliveries) => Column<any>, alias: string) {
 
-    let fd = new FamilyDeliveries(this.context);
+    let fd = this.context.for(FamilyDeliveries).create();
     let sql = new SqlBuilder();
     return sql.columnInnerSelect(this, {
       select: () => [sql.columnWithAlias(col(fd), alias)],
@@ -427,7 +427,7 @@ export class Families extends IdEntity {
       case DeliveryStatus.ReadyForDelivery:
         if (this.courier.value) {
           let c = this.context.for(Helpers).lookup(this.courier);
-          return 'בדרך: ' + c.name.value+(c.eventComment.value?' ('+c.eventComment.value+')':'') + ', שוייך ' + this.courierAssingTime.relativeDateName();
+          return 'בדרך: ' + c.name.value + (c.eventComment.value ? ' (' + c.eventComment.value + ')' : '') + ', שוייך ' + this.courierAssingTime.relativeDateName();
         }
         break;
       case DeliveryStatus.Success:
@@ -583,7 +583,7 @@ export class Families extends IdEntity {
     let result: duplicateFamilyInfo[] = [];
 
     var sql = new SqlBuilder();
-    var f = new Families(context);
+    var f = context.for(Families).create();
 
     let compareAsNumber = (col: Column<string>, value: string) => {
       return sql.and(sql.eq(sql.extractNumber(col), sql.extractNumber(sql.str(value))), sql.build(sql.extractNumber(sql.str(value)), ' <> ', 0));

@@ -203,7 +203,7 @@ export class PlaybackComponent implements OnInit {
 
   @ServerFunction({ allowed: Roles.admin })
   static async GetTimeline(context?: Context, db?: SqlDatabase) {
-    let f = new Families(context);
+    let f = context.for( Families).create();
 
     let sql = new SqlBuilder();
     sql.addEntity(f, "Families");

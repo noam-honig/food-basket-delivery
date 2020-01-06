@@ -34,7 +34,7 @@ export abstract class HelpersBase extends IdEntity {
     shortUrlKey = new StringColumn({ includeInApi: Roles.admin });
     eventComment = new StringColumn('הערה');
     needEscort = new BoolColumn('צריך מלווה');
-    theHelperIAmEscorting = new HelperIdReadonly(this.context, { caption: 'נהג מלווה' });
+    theHelperIAmEscorting = new HelperIdReadonly(this.context, { caption: 'נהג משוייך' });
     escort = new HelperId(this.context, { caption: 'מלווה' });
 
     getRouteStats(): routeStats {

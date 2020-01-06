@@ -22,8 +22,8 @@ export async function initSchema(pool: PostgresPool, org: string) {
     let context = new ServerContext();
     context.setDataProvider(dataSource);
     let sql = new SqlBuilder();
-    let fde = new FamilyDeliveryEvents(context);
-    let f = new Families(context);
+    let fde = context.for(FamilyDeliveryEvents).create();
+    let f = context.for(Families).create();
     // remove unique constraint on id column if exists
     await pool.query(sql.build('ALTER TABLE ', fde, ' DROP CONSTRAINT IF EXISTS familydeliveryevents_pkey'));
 
@@ -31,7 +31,7 @@ export async function initSchema(pool: PostgresPool, org: string) {
     //create index if required
     await pool.query(sql.build('create index if not exists fde_1 on ', fde, ' (', [fde.family, fde.deliverStatus, fde.courier], ')'));
     //create index for family deliveries if required
-    var fd = new FamilyDeliveries(context);
+    var fd = context.for(FamilyDeliveries).create();
     await pool.query(sql.build('create index if not exists fd_1 on ', fd, ' (', [fd.family, fd.deliveryStatusDate, fd.deliverStatus, fd.courier], ')'));
     //create index if required
     await pool.query(sql.build('create index if not exists f_1 on ', f, ' (', [fde.courier, f.deliverStatus], ')'));
@@ -128,8 +128,8 @@ export async function initSchema(pool: PostgresPool, org: string) {
     }
     if (settings.dataStructureVersion.value == 1) {
         console.log("updating family source for historical information");
-        let f = new Families(context);
-        let fd = new FamilyDeliveries(context);
+        let f = context.for(Families).create();
+        let fd = context.for(FamilyDeliveries).create();
         pool.query(sql.update(fd, {
             set: () => [[fd.archiveFamilySource, f.familySource]],
             from: f,
@@ -149,8 +149,8 @@ export async function initSchema(pool: PostgresPool, org: string) {
     }
     if (settings.dataStructureVersion.value == 3) {
         console.log("updating family source for historical information");
-        let f = new Families(context);
-        let fd = new FamilyDeliveries(context);
+        let f = context.for(Families).create();
+        let fd = context.for(FamilyDeliveries).create();
         pool.query(sql.update(fd, {
             set: () => [[fd.archiveFamilySource, f.familySource]],
             from: f,
