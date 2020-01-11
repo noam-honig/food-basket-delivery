@@ -1,28 +1,35 @@
-import { RunOnServer } from "radweb";
+import { ServerFunction } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Helpers } from '../helpers/helpers';
 import * as fetch from 'node-fetch';
-import { Context, ServerContext } from "radweb";
+import { Context, ServerContext } from '@remult/core';
 import { Roles } from "../auth/roles";
+import { Sites } from '../sites/sites';
 
 
 
 
 export class SendSmsAction {
-    @RunOnServer({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.admin })
     static async SendSms(helperId: string, reminder: Boolean, context?: ServerContext) {
 
         try {
-            await SendSmsAction.generateMessage(context, helperId, context.getOrigin(), reminder, context.user.name, (phone, message, sender) => {
+            await SendSmsAction.generateMessage(context, helperId, context.getOrigin(), reminder, context.user.name, async (phone, message, sender) => {
 
                 new SendSmsUtils().sendSms(phone, sender, message);
+                let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
+                if (reminder)
+                    h.reminderSmsDate.value = new Date();
+                else
+                    h.smsDate.value = new Date();
+                await h.save();
             });
         }
         catch (err) {
             console.error(err);
         }
     }
-   
+
 
 
 
@@ -30,6 +37,10 @@ export class SendSmsAction {
 
         if (!origin) {
             throw 'Couldnt determine origin for sms';
+        }
+        let org = Sites.getOrganizationFromContext(ds);
+        if (org.length > 0) {
+            origin = origin + '/' + org;
         }
         let helper = await ds.for(Helpers).findFirst(h => h.id.isEqualTo(id));
         if (helper) {
@@ -39,23 +50,17 @@ export class SendSmsAction {
             let message = '';
             let settings = await ApplicationSettings.getAsync(ds);
             if (reminder) {
-                message = 'שלום ' + helper.name.value;
-                message += " טרם נרשם במערכת שבוצעה החלוקה, אנא עדכן אותנו אם יש צורך בעזרה או עדכן שהמשלוח הגיע ליעדו"
-                message += ' אנא לחץ על ' + origin + '/x/' + helper.shortUrlKey.value;
-                helper.reminderSmsDate.value = new Date();
+                message = settings.reminderSmsText.value;
+
             }
             else {
 
                 message = settings.smsText.value;
                 if (!message || message.trim().length == 0) {
                     message = 'שלום !משנע! לחלוקת חבילות !ארגון! לחץ על: !אתר! תודה !שולח!';
-
                 }
-
-                message = SendSmsAction.getMessage(message, settings.organisationName.value, helper.name.value, senderName, origin + '/x/' + helper.shortUrlKey.value);
-                helper.smsDate.value = new Date();
-
             }
+            message = SendSmsAction.getMessage(message, settings.organisationName.value, helper.name.value, senderName, origin + '/x/' + helper.shortUrlKey.value);
             let sender = settings.helpPhone.value;
             if (!sender || sender.length < 3) {
                 let currentUser = await (ds.for(Helpers).findFirst(h => h.id.isEqualTo(ds.user.id)));
@@ -64,7 +69,7 @@ export class SendSmsAction {
 
             then(helper.phone.value, message, sender);
             await helper.save();
-
+            var x = 1 + 1;
 
         }
     }

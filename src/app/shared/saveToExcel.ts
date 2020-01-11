@@ -1,5 +1,5 @@
-import { Entity, Column, GridSettings, ColumnHashSet, } from "radweb";
-import { BusyService } from 'radweb';
+import { Entity, Column, GridSettings, ColumnHashSet, } from '@remult/core';
+import { BusyService } from '@remult/core';
 
 import { HasAsyncGetTheValue, DateTimeColumn } from "../model-shared/types";
 import { foreachSync } from "./utils";

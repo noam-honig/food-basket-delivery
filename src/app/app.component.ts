@@ -4,11 +4,17 @@ import { AuthService } from './auth/auth-service';
 
 import { MatSidenav } from '@angular/material/sidenav';
 import { DialogService } from './select-popup/dialog';
-import { ApplicationSettings } from './manage/ApplicationSettings';
+import { ApplicationSettings, SettingsService } from './manage/ApplicationSettings';
 import { FamiliesComponent } from './families/families.component';
-import { Context, RouteHelperService, JwtSessionManager } from 'radweb';
+import { Context, RouteHelperService, JwtSessionManager } from '@remult/core';
 import { Roles } from './auth/roles';
-import { translate ,translationConfig} from './translate';
+import { translate, translationConfig } from './translate';
+import { DeliveryStats } from './delivery-follow-up/delivery-stats';
+import { SelfPickupComponent } from './self-pickup/self-pickup.component';
+import { DeliveryStatus } from './families/DeliveryStatus';
+import { Helpers } from './helpers/helpers';
+import { BasketType } from './families/BasketType';
+import { AssignEscortComponent } from './assign-escort/assign-escort.component';
 
 
 
@@ -21,25 +27,26 @@ import { translate ,translationConfig} from './translate';
 })
 export class AppComponent {
 
-
+  isEdge = /msie\s|trident\/|edge\//i.test(window.navigator.userAgent);
   constructor(
     public sessionManager: AuthService,
     public router: Router,
     public activeRoute: ActivatedRoute,
     public dialog: DialogService,
     private helper: RouteHelperService,
-    public context: Context) {
-      ApplicationSettings.getAsync(context).then(x=>{
-        translationConfig.activateTranslation = x.forSoldiers.value;
-      })
+    public context: Context,
+    public settings: ApplicationSettings) {
 
-    if (!window.location.hostname.toLocaleLowerCase().startsWith('hmey')) {
+    this.toolbarColor = 'primary';
+
+    if (settings.redTitleBar.value) {
       this.toolbarColor = 'accent';
-
     }
-    
+
+
 
   }
+
 
   showSeperator(route: Route) {
     if (route.data && route.data.seperator)
@@ -62,7 +69,7 @@ export class AppComponent {
   }
   currentTitle() {
     if (this.activeRoute && this.activeRoute.snapshot && this.activeRoute.firstChild && this.activeRoute.firstChild.data && this.activeRoute.snapshot.firstChild.data.name)
-      return translate( this.activeRoute.snapshot.firstChild.data.name);
+      return translate(this.activeRoute.snapshot.firstChild.data.name);
     return ApplicationSettings.get(this.context).organisationName.value;
   }
   toolbarColor = 'primary';
@@ -75,9 +82,15 @@ export class AppComponent {
   shouldDisplayRoute(route: Route) {
     if (!(route.path && route.path.indexOf(':') < 0 && route.path.indexOf('**') < 0))
       return false;
+    if (route.data && route.data.hide)
+      return;
+    if (!DeliveryStatus.usingSelfPickupModule && route.component == SelfPickupComponent)
+      return false;
+    if (route.component == AssignEscortComponent && !this.settings.manageEscorts.value)
+      return false;
     return this.helper.canNavigateToRoute(route);
   }
-  @ViewChild('sidenav') sidenav: MatSidenav;
+  @ViewChild('sidenav', { static: true }) sidenav: MatSidenav;
   routeClicked() {
     if (this.dialog.isScreenSmall())
       this.sidenav.close();

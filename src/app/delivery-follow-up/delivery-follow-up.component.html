@@ -1,39 +1,46 @@
-<button mat-mini-fab style="margin-bottom:5px" (click)="refresh()">
+<button mat-mini-fab style="margin-bottom:5px" (click)="refresh()" color="primary">
   <mat-icon>refresh</mat-icon>
 
 </button>
 <div>
   <div style="display: block;width:350px;">
-    <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType" [options]="options" [colors]="colors"
-      (chartClick)="chartClicked($event)"></canvas>
+    <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType" [options]="options"
+      [colors]="colors" (chartClick)="chartClicked($event)"></canvas>
   </div>
 </div>
 <h4 *ngIf="currentStatFilter">{{currentStatFilter.name}} - {{currentStatFilter.value}}</h4>
 <a *ngIf="currentStatFilter" (click)="clearFilter()">הצג הכל</a>
 <h4 *ngIf="!currentStatFilter">כולם - {{couriers.items.length}}</h4>
 <mat-form-field class="full-width">
-  <input matInput [(ngModel)]="searchString"  placeholder="חיפוש משנע" [ngModelOptions]="{standalone: true}">
+  <input matInput [(ngModel)]="searchString" placeholder="חיפוש משנע" [ngModelOptions]="{standalone: true}">
   <mat-icon matSuffix (click)="searchString=''">clear</mat-icon>
 </mat-form-field>
 <mat-accordion>
   <ng-container *ngFor="let c of couriers.items">
-  <mat-expansion-panel #myPanel *ngIf="showHelper(c)" (opened)="selectCourier(c)">
-    <mat-expansion-panel-header>
-      <div>
-        <mat-panel-title>
-          {{c.name.value}}
-        </mat-panel-title>
-      </div>
-      <div>
-        <mat-panel-description>
-          בדרך {{c.deliveriesInProgress.value}}<span *ngIf="c.gotSms.value">, יצא {{c.smsDate.relativeDateName()}}</span> <span *ngIf="!c.gotSms.value">, טרם נשלח SMS</span>
-        </mat-panel-description>
-      </div>
-    </mat-expansion-panel-header>
+    <mat-expansion-panel #myPanel *ngIf="showHelper(c)" (opened)="selectCourier(c)">
+      <mat-expansion-panel-header>
+        <div style="display:flex;flex-direction: column;">
+          <div style="display:flex;">
+            <mat-panel-title>
+              {{c.name.value}}
+            </mat-panel-title>
+            <mat-panel-description>
+              חולקו {{c.allFamilies.value - c.deliveriesInProgress.value}}/{{c.allFamilies.value}}<span
+                *ngIf="c.gotSms.value">, יצא {{c.smsDate.relativeDateName()}}</span> <span *ngIf="!c.gotSms.value">, טרם
+                נשלח SMS</span>
+            </mat-panel-description>
+          </div>
+          <div *ngIf="c.eventComment.value">
+            {{c.eventComment.value}}
 
-    <div  *ngIf="currentlHelper==c">
-      <app-helper-families [familyLists]="familyLists" [partOfAssign]="true" [partOfReview]="true" [helperGotSms]="c.gotSms.value"></app-helper-families>
-    </div>
-  </mat-expansion-panel>
-</ng-container>
+          </div>
+        </div>
+      </mat-expansion-panel-header>
+
+      <div *ngIf="currentlHelper==c">
+        <app-helper-families [familyLists]="familyLists" [partOfAssign]="true" [partOfReview]="true"
+          [helperGotSms]="c.gotSms.value"></app-helper-families>
+      </div>
+    </mat-expansion-panel>
+  </ng-container>
 </mat-accordion>

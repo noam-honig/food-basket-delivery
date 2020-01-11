@@ -1,18 +1,18 @@
 <div dir="rtl">
   <form (submit)="confirm()">
-    <h3 matDialogHeader>{{data.title}}</h3>
+    <h3 matDialogHeader>{{args.title}}</h3>
     <data-area [settings]="area"> </data-area>
     
     <mat-dialog-actions>
         
-      <button mat-raised-button *ngFor="let b of data.buttons" (click)="buttonClick(b,$event)">
+      <button mat-raised-button *ngFor="let b of args.buttons" (click)="buttonClick(b,$event)">
           {{b.text}}
       </button>
-      <button type="button" mat-raised-button color="warning" (click)="this.dialogRef.close()" *ngIf="this.data.cancel">
+      <button type="button" mat-raised-button color="warning" (click)="this.dialogRef.close()" *ngIf="this.args.cancel">
         בטלי
       </button>
 
-      <button type="submit" mat-raised-button color="primary" (click)="confirm()">
+      <button type="submit" mat-raised-button color="accent" (click)="confirm()">
         אשרי
       </button>
 

@@ -2,7 +2,7 @@ import { TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 
-import { ServerContext } from 'radweb';
+import { ServerContext } from '@remult/core';
 import { SqlBuilder, QueryBuilder } from './model-shared/types';
 import { WebDriverProxy } from 'blocking-proxy/built/lib/webdriver_proxy';
 import { parseAddress, Families } from './families/families';
@@ -11,8 +11,8 @@ import {fixPhone} from './import-from-excel/import-from-excel.component';
 
 describe('AppComponent', () => {
   var context = new ServerContext();
-  var bt = new BasketType(context);
-  var f = new Families(context);
+  var bt = context.for( BasketType).create();
+  var f = context.for( Families).create();
   var sql = new SqlBuilder();
   sql.addEntity(bt, 'p');
   var q = (query: QueryBuilder, expectresult: String) => {
@@ -72,7 +72,7 @@ describe('AppComponent', () => {
     ], 9)).toBe("case when 1=1 and 2=2 then 3 when 3=3 then 4 else 9 end");
   });
   it('delete 2', () => {
-    let p = new BasketType(context);
+    let p = context.for( BasketType).create();
     expect(sql.delete(p, sql.eq(p.boxes, 5), sql.eq(p.boxes, 6))).toBe('delete from BasketType where boxes = 5 and boxes = 6');
   });
   it('update ', () => {
@@ -82,7 +82,7 @@ describe('AppComponent', () => {
     })).toBe("update BasketType p set id = '123', name = 'noam' where p.boxes = 5 and p.boxes = 6");
   });
   it('update 2 ', () => {
-    let pd = new Families(context);
+    let pd = context.for( Families).create();
     expect(sql.update(bt, {
       set: () => [[bt.id, pd.basketType], [bt.name, "'noam'"]],
       from: pd,
@@ -127,10 +127,13 @@ describe('AppComponent', () => {
 
   });
   it("test phones", () => {
-    expect(fixPhone("0507330590")).toBe("0507330590");
-    expect(fixPhone("507330590")).toBe("0507330590");
-    expect(fixPhone("036733059")).toBe("036733059");
-    expect(fixPhone("36733059")).toBe("036733059");
+    expect(fixPhone("0507330590","03")).toBe("0507330590");
+    expect(fixPhone("507330590","03")).toBe("0507330590");
+    expect(fixPhone("036733059","03")).toBe("036733059");
+    expect(fixPhone("36733059","03")).toBe("036733059");
+    expect(fixPhone("6733059","03")).toBe("036733059");
+    expect(fixPhone("733059","03")).toBe("733059");
+    
   });
 
 });

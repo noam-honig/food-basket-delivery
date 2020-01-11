@@ -1,15 +1,17 @@
+
+
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { RadWebModule } from 'radweb'; 
+import { RemultModule, Context, JwtSessionManager } from '@remult/core';
 import { MaterialModule } from './shared/material.module';
 import { ChartsModule } from 'ng2-charts';
 import { FormsModule } from '@angular/forms';
-import {NgxPaginationModule} from 'ngx-pagination';
+import { NgxPaginationModule } from 'ngx-pagination';
 import { HelpersComponent } from './helpers/helpers.component';
-import { SelectPopupComponent } from './select-popup/select-popup.component';
+
 import { DialogService } from './select-popup/dialog';
 import { YesNoQuestionComponent } from './select-popup/yes-no-question/yes-no-question.component';
 import { LoginComponent } from './users/login/login.component';
@@ -39,13 +41,12 @@ import { NewsComponent } from './news/news.component';
 import { NewsFilterService } from "./news/news-filter-service";
 
 
-import { SelectService } from './select-popup/select-service';
 import { UpdateFamilyDialogComponent } from './update-family-dialog/update-family-dialog.component';
 import { UpdateFamilyComponent } from './update-family/update-family.component';
 
 
 import { AddressProblemComponent } from './address-problem/address-problem.component';
-import { StressTestComponent } from './stress-test/stress-test.component';
+
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
@@ -59,6 +60,18 @@ import { ScrollDispatchModule } from '@angular/cdk/scrolling';
 import { TranslatePipe } from './translate';
 import { SelectCompanyComponent } from './select-company/select-company.component';
 import { HelperAssignmentComponent } from './helper-assignment/helper-assignment.component';
+import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';
+import { PlaybackComponent } from './playback/playback.component';
+import { APP_BASE_HREF } from '@angular/common';
+import { environment } from '../environments/environment';
+import { Sites } from './sites/sites';
+import { ApplicationSettings, SettingsService } from './manage/ApplicationSettings';
+import { OverviewComponent } from './overview/overview.component';
+import { TransitionGroupComponent, TransitionGroupItemDirective } from './overview/transition-group';
+import { AssignEscortComponent } from './assign-escort/assign-escort.component';
+
+var site = Sites.initOnBrowserAndReturnAngularBaseHref();
+
 
 
 
@@ -67,7 +80,7 @@ import { HelperAssignmentComponent } from './helper-assignment/helper-assignment
   declarations: [
     AppComponent,
     HelpersComponent,
-    SelectPopupComponent,
+    
     YesNoQuestionComponent,
     LoginComponent,
     RegisterComponent,
@@ -83,7 +96,7 @@ import { HelperAssignmentComponent } from './helper-assignment/helper-assignment
     SelectHelperComponent,
     LoginFromSmsComponent,
     MapComponent,
-    
+
     DeliveryFollowUpComponent,
     HelperFamiliesComponent,
     SelectFamilyComponent,
@@ -91,10 +104,10 @@ import { HelperAssignmentComponent } from './helper-assignment/helper-assignment
     NewsComponent,
     UpdateFamilyDialogComponent,
     UpdateFamilyComponent,
-    
-    
+
+
     AddressProblemComponent,
-    StressTestComponent,
+    
     SelfPickupComponent,
     BatchOperationsComponent,
     DeliveryHistoryComponent,
@@ -105,8 +118,14 @@ import { HelperAssignmentComponent } from './helper-assignment/helper-assignment
     QuickAddFamilyComponent,
     TranslatePipe,
     SelectCompanyComponent,
-    HelperAssignmentComponent
-    
+    HelperAssignmentComponent,
+    ImportHelpersFromExcelComponent,
+    PlaybackComponent,
+    OverviewComponent,
+    TransitionGroupComponent,
+    TransitionGroupItemDirective,
+    AssignEscortComponent
+
   ],
   imports: [
     BrowserModule,
@@ -114,30 +133,66 @@ import { HelperAssignmentComponent } from './helper-assignment/helper-assignment
     NgxPaginationModule,
     MaterialModule,
     BrowserAnimationsModule,
-    RadWebModule,
+    RemultModule,
     AppRoutingModule,
     ChartsModule,
     ScrollDispatchModule
 
   ],
   providers: [
+    
     DialogService,
-    SelectService,
+    
     TranslatePipe,
     NewsFilterService,
-    AuthService
-    
+    AuthService,
+    {
+      provide: APP_BASE_HREF, useFactory: () => {
+        return '/' + site;
+      }
+
+    },
+    {
+      provide: ApplicationSettings, useFactory: (service:SettingsService) => {
+        return service.instance;
+      },
+      deps:[SettingsService]
+
+    },
+    {
+      provide: APP_INITIALIZER,
+      deps: [JwtSessionManager,SettingsService],
+      useFactory: initApp,
+      multi: true,
+      
+    }
+    ,SettingsService
+
   ],
 
   bootstrap: [AppComponent],
   entryComponents: [SelectHelperComponent,
     SelectFamilyComponent,
-    SelectPopupComponent,
+    
     YesNoQuestionComponent,
     InputAreaComponent,
-    UpdateFamilyDialogComponent,PreviewFamilyComponent,
+    UpdateFamilyDialogComponent, PreviewFamilyComponent,
     SelectCompanyComponent,
-    QuickAddFamilyComponent,HelperAssignmentComponent,
-    UpdateCommentComponent,UpdateGroupDialogComponent]
+    QuickAddFamilyComponent, HelperAssignmentComponent,
+    UpdateCommentComponent, UpdateGroupDialogComponent]
 })
 export class AppModule { }
+
+export function initApp(session:JwtSessionManager,settings:SettingsService) {
+  return async () => {
+    session.loadSessionFromCookie();
+    try {
+      await settings.init();
+    }
+    catch (err){
+      console.error('failed to get settings ',err);
+    }
+    return '';
+
+  };
+}

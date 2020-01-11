@@ -6,9 +6,10 @@ import { AuthService } from '../../auth/auth-service';
 import { Router, Route } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
-import { Context, RouteHelperService } from 'radweb';
+import { Context, RouteHelperService } from '@remult/core';
 import { RegisterComponent } from '../register/register.component';
 import { AdminGuard } from '../../auth/roles';
+import { Sites } from '../../sites/sites';
 
 @Component({
   selector: 'app-login',
@@ -21,8 +22,9 @@ export class LoginComponent implements OnInit {
     private dialog: DialogService,
     private auth: AuthService,
     private router: RouteHelperService,
-    private context:Context
+    private context: Context
   ) { }
+  isguest = Sites.getOrganizationFromContext(this.context) == Sites.guestSchema;
   user: string;
   password: string;
   remember: boolean;
@@ -37,5 +39,8 @@ export class LoginComponent implements OnInit {
   }
   register() {
     this.router.navigateToComponent(RegisterComponent);
+  }
+  orgName() {
+    return ApplicationSettings.get(this.context).organisationName.value;
   }
 }

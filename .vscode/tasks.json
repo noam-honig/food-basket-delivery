@@ -51,14 +51,7 @@
                 "group": "groupA"
             }
         },
-        {
-            "type": "npm",
-            "script": "server-watch",
-            "problemMatcher": [
-                "$tsc-watch"
-            ],
-            "isBackground": true
-        },
+       
         {
             "type": "npm",
             "script": "server-build-and-run",
@@ -194,6 +187,71 @@
             "type": "npm",
             "script": "publish-to-krvtj",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-good-people",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-ladyc",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-atbh",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "public-to-bodedim-hertzelia",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-kruvit-sansana",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-kruvit",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-cbhr-doners",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-chabadekron",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-selek",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-heroku-test-old",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "ng-build",
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "group": "build"
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-salmaz",
+            "problemMatcher": [
+                "$tsc"
+            ]
         }
     ]
 }

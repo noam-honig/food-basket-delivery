@@ -1,9 +1,9 @@
 import { DeliveryStatusColumn } from "../families/DeliveryStatus";
 import { changeDate, SqlBuilder } from "../model-shared/types";
-import { NumberColumn, StringColumn, BoolColumn } from "radweb";
+import { NumberColumn, StringColumn, BoolColumn } from '@remult/core';
 import { HelperIdReadonly, HelperId } from "../helpers/helpers";
 import { Families, FamilyUpdateInfo } from "../families/families";
-import { Context, Entity, ServerContext, EntityClass } from "radweb";
+import { Context, Entity, ServerContext, EntityClass } from '@remult/core';
 import { Roles } from "../auth/roles";
 import { FamilySourceId } from "../families/FamilySources";
 
@@ -31,7 +31,7 @@ export class NewsUpdate extends Entity<string> implements FamilyUpdateInfo {
       caption: 'חדשות',
       name: 'news',
       dbName: () => {
-        let f = new Families(context);
+        let f = context.for( Families).create();
         var sql = new SqlBuilder();
         let cols = [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser, f.courierComments,f.needsWork,f.familySource];
         return sql.entityDbNameUnion({

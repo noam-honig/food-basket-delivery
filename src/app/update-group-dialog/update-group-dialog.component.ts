@@ -1,8 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { Context } from 'radweb';
+import { Context } from '@remult/core';
 import { Groups } from '../manage/manage.component';
 import { DialogService } from '../select-popup/dialog';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-update-group-dialog',
@@ -12,39 +12,42 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 export class UpdateGroupDialogComponent implements OnInit {
 
   constructor(private context: Context, private dialog: DialogService,
-    private dialogRef: MatDialogRef<UpdateGroupInfo>,
-    @Inject(MAT_DIALOG_DATA) public data: UpdateGroupInfo) {
-    this.groups = data.groups;
+    private dialogRef: MatDialogRef<any>) {
+
 
   }
+  public args: {
+    groups: string,
+    ok: (s: string) => void
+  };
   availableGroups: Groups[] = [];
   async ngOnInit() {
     this.availableGroups = await this.context.for(Groups).find();
   }
-  groups = '';
+
   selected(group: string) {
-    if (!this.groups)
+    if (!this.args.groups)
       return false;
-    return this.groups.indexOf(group) >= 0;
+    return this.args.groups.indexOf(group) >= 0;
   }
   select(group: string) {
     if (!this.selected(group)) {
 
-      if (this.groups)
-        this.groups += ', ';
+      if (this.args.groups)
+        this.args.groups += ', ';
       else
-        this.groups = '';
-      this.groups += group;
+        this.args.groups = '';
+      this.args.groups += group;
     }
     else {
-      let groups = this.groups.split(",").map(x => x.trim());
+      let groups = this.args.groups.split(",").map(x => x.trim());
       let index = groups.indexOf(group);
       if (index < 0) {
-        this.dialog.YesNoQuestion("לא הצלחתי לבטל את הקבוצה " + group + " כנראה שהיא לא מופיעה בפני עצמה אלא כחלק משם קבוצה אחרת, אנא וודא שיש פסיקים בין הקבוצות");
+        this.dialog.messageDialog("לא הצלחתי לבטל את הקבוצה " + group + " כנראה שהיא לא מופיעה בפני עצמה אלא כחלק משם קבוצה אחרת, אנא וודא שיש פסיקים בין הקבוצות");
       }
       else {
         groups.splice(index, 1);
-        this.groups = groups.join(", ");
+        this.args.groups = groups.join(", ");
       }
 
     }
@@ -55,11 +58,7 @@ export class UpdateGroupDialogComponent implements OnInit {
     this.dialogRef.close();
   }
   async confirm() {
-    await this.data.ok(this.groups);
+    await this.args.ok(this.args.groups);
     this.dialogRef.close();
   }
-}
-export interface UpdateGroupInfo {
-  groups: string,
-  ok: (s: string) => void
 }

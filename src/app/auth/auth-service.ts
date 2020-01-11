@@ -2,15 +2,17 @@ import { Injectable } from "@angular/core";
 
 import { DialogService } from "../select-popup/dialog";
 
-import { Helpers } from "../helpers/helpers";
+import { Helpers, HelperUserInfo } from "../helpers/helpers";
 
-import { RunOnServer, UserInfo, JwtSessionManager, RouteHelperService } from "radweb";
-import { Context } from "radweb";
+import { ServerFunction, UserInfo, JwtSessionManager, RouteHelperService, DataApiRequest } from '@remult/core';
+import { Context } from '@remult/core';
 import { LoginResponse } from "./login-response";
 import { Roles } from "./roles";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 import { MyFamiliesComponent } from "../my-families/my-families.component";
 import { LoginComponent } from "../users/login/login.component";
+import { Sites } from "../sites/sites";
+import { OverviewComponent } from "../overview/overview.component";
 
 
 @Injectable()
@@ -19,7 +21,7 @@ export class AuthService {
     async loginFromSms(key: string) {
         var response = await AuthService.loginFromSms(key);
         if (response.valid) {
-            this.tokenHelper.setToken(response.authToken, false);
+            this.setToken(response.authToken, false);
             this.dialog.analytics('login from sms');
             this.routeHelper.navigateToComponent(MyFamiliesComponent);
         }
@@ -28,7 +30,11 @@ export class AuthService {
 
 
     }
-    @RunOnServer({ allowed: true })
+    private setToken(token: string, remember: boolean) {
+        let org = Sites.getOrganizationFromContext(this.context);
+        this.tokenHelper.setToken(token, remember, '/' + org);
+    }
+    @ServerFunction({ allowed: true })
     static async loginFromSms(key: string, context?: Context) {
 
         let h = await context.for(Helpers).findFirst(h => h.shortUrlKey.isEqualTo(key));
@@ -38,8 +44,10 @@ export class AuthService {
                 authToken: Helpers.helper.createSecuredTokenBasedOn({
                     id: h.id.value,
                     name: h.name.value,
-                    roles:[]
-                } as UserInfo),
+                    roles: [Sites.getOrgRole(context)],
+                    theHelperIAmEscortingId:h.theHelperIAmEscorting.value,
+                    escortedHelperName:h.theHelperIAmEscorting.value?(await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value :''
+                } as HelperUserInfo),
                 requirePassword: false
             } as LoginResponse
 
@@ -63,7 +71,7 @@ export class AuthService {
 
         let loginResponse = await AuthService.login(user, password);
         if (loginResponse.valid) {
-            this.tokenHelper.setToken(loginResponse.authToken, remember);
+            this.setToken(loginResponse.authToken, remember);
             this.dialog.analytics('login ' + (this.context.isAllowed(Roles.admin) ? 'delivery admin' : ''));
             if (loginResponse.requirePassword) {
                 this.dialog.YesNoQuestion('שלום ' + this.context.user.name + ' את מוגדרת כמנהלת אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועברת למסך עדכון פרטים לעדכון סיסמה.', () => {
@@ -73,6 +81,8 @@ export class AuthService {
             else {
                 if (this.context.isAllowed(Roles.admin))
                     this.routeHelper.navigateToComponent(AsignFamilyComponent);
+                else if (this.context.isAllowed(Roles.overview))
+                    this.routeHelper.navigateToComponent(OverviewComponent);
                 else
                     this.routeHelper.navigateToComponent(MyFamiliesComponent);
             }
@@ -86,9 +96,9 @@ export class AuthService {
         }
     }
 
-    @RunOnServer({ allowed: true })
+    @ServerFunction({ allowed: true })
     static async login(user: string, password: string, context?: Context) {
-        let result: UserInfo;
+        let result: HelperUserInfo;
         let requirePassword = false;
 
         await context.for(Helpers).foreach(h => h.phone.isEqualTo(user), async h => {
@@ -96,15 +106,21 @@ export class AuthService {
                 result = {
 
                     id: h.id.value,
-                    roles: [],
-                    name: h.name.value
+                    roles: [Sites.getOrgRole(context)],
+                    name: h.name.value,
+                    theHelperIAmEscortingId:h.theHelperIAmEscorting.value,
+                    escortedHelperName:h.theHelperIAmEscorting.value?(await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value :''
                 };
                 if (h.realStoredPassword.value.length == 0 && h.admin.value) {
                     requirePassword = true;
                 }
                 else {
-                    if (h.admin.value)
-                        result.roles.push(Roles.admin);
+                    if (h.admin.value) {
+                        if (Sites.getOrganizationFromContext(context) == Sites.guestSchema)
+                            result.roles.push(Roles.overview)
+                        else
+                            result.roles.push(Roles.admin);
+                    }
 
 
                 }

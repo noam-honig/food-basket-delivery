@@ -1,13 +1,19 @@
-<button mat-mini-fab style="margin-bottom:5px" (click)="refresh()">
+<button mat-mini-fab style="margin-bottom:5px" (click)="refresh()" color="primary">
   <mat-icon>refresh</mat-icon>
 </button>
 <div style="display:flex">
-<select class="form-control" [(ngModel)]="filters.currentFilter" (change)="filterChange()">
-  <option *ngFor="let l of filters.filters" [ngValue]="l">{{l.name}}</option>
-</select>
-<select class="form-control" [(ngModel)]="filters.currentFamilySource" (change)="filterChange()">
-    <option *ngFor="let l of familySources" [ngValue]="l.id">{{l.name}}</option>
-  </select>
+  <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
+    <mat-label>סינון</mat-label>
+    <select matNativeControl [(ngModel)]="filters.currentFilter" (change)="filterChange()">
+      <option *ngFor="let l of filters.filters" [ngValue]="l">{{l.name}}</option>
+    </select>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
+    <mat-label>גורם מפנה</mat-label>
+    <select matNativeControl [(ngModel)]="filters.currentFamilySource" (change)="filterChange()">
+      <option *ngFor="let l of familySources" [ngValue]="l.id">{{l.name}}</option>
+    </select>
+  </mat-form-field>
 </div>
 <mat-card *ngFor="let n of news">
   <mat-card-header>
@@ -16,15 +22,20 @@
       <mat-icon>{{icon(n)}}</mat-icon>
     </div>
 
-    <mat-card-title class="newsHeader"> {{n.describe()}}<div style="color: darkorange" *ngIf="n.needsWork.value" (click)="cancelNeedWork(n)" >צריך
-        טיפול</div>
+    <mat-card-title class="newsHeader">
+      <div>
+        {{n.describe()}}
+        <div style="color: darkorange" *ngIf="n.needsWork.value" (click)="cancelNeedWork(n)">צריך
+          טיפול</div>
+      </div>
     </mat-card-title>
     <mat-card-subtitle>{{n.updateTime.relativeDateName()}}, עודכן על ידי {{n.updateUser.getValue()}}
       <br><a (click)="updateFamily(n)">{{'עדכן פרטי משפחה'|translate}}</a>
-      <br *ngIf="n.courier.value"><a (click)="showHelper(n)"  *ngIf="n.courier.value">{{'הצג שיוך משפחות ל'|translate}}{{n.courier.getValue()}} </a>
+      <br *ngIf="n.courier.value"><a (click)="showHelper(n)"
+        *ngIf="n.courier.value">{{'הצג שיוך משפחות ל'|translate}}{{n.courier.getValue()}} </a>
     </mat-card-subtitle>
 
   </mat-card-header>
 </mat-card>
-<button mat-raised-button color="primary" *ngIf="this.news.length==this.newsRows" (click)="moreNews()">עוד
+<button mat-raised-button color="accent" *ngIf="this.news.length==this.newsRows" (click)="moreNews()">עוד
   חדשות</button>

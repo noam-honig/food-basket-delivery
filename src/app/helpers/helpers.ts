@@ -1,35 +1,42 @@
 
-import { ColumnSetting, Entity, FilterBase, NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, DecorateDataColumnSettings, EntityOptions } from "radweb";
-import { changeDate, HasAsyncGetTheValue, PhoneColumn, } from '../model-shared/types';
-import { SelectServiceInterface } from '../select-popup/select-service-interface';
+import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, EntityOptions, UserInfo } from '@remult/core';
+import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn } from '../model-shared/types';
+
 
 import { routeStats } from '../asign-family/asign-family.component';
 import { helpers } from 'chart.js';
 import { Roles } from "../auth/roles";
-import { JWTCookieAuthorizationHelper } from "radweb-server";
-import { MatDialog } from "@angular/material";
+import { JWTCookieAuthorizationHelper } from '@remult/server';
 import { SelectCompanyComponent } from "../select-company/select-company.component";
 
 
-export abstract class HelpersBase extends IdEntity<HelperId>  {
 
-    constructor(context: Context, options?: EntityOptions | string) {
 
-        super(new HelperId(context), options);
+export abstract class HelpersBase extends IdEntity {
+
+    constructor(protected context: Context, options?: EntityOptions | string) {
+
+        super(options);
     }
-    
+
     name = new StringColumn({
         caption: "שם",
-        onValidate: () => {
+        validate: () => {
             if (!this.name.value || this.name.value.length < 2)
                 this.name.error = 'השם קצר מידי';
         }
     });
-    phone = new PhoneColumn({ caption: "טלפון", inputType: 'tel' });
-    smsDate = new changeDate('מועד משלוח SMS');
-    company = new CompanyColumn();
+    phone = new PhoneColumn("טלפון");
+    smsDate = new DateTimeColumn('מועד משלוח SMS');
+    company = new CompanyColumn(this.context);
     totalKm = new NumberColumn();
     totalTime = new NumberColumn();
+    shortUrlKey = new StringColumn({ includeInApi: Roles.admin });
+    eventComment = new StringColumn('הערה');
+    needEscort = new BoolColumn('צריך מלווה');
+    theHelperIAmEscorting = new HelperIdReadonly(this.context, { caption: 'נהג משוייך' });
+    escort = new HelperId(this.context, { caption: 'מלווה' });
+
     getRouteStats(): routeStats {
         return {
             totalKm: this.totalKm.value,
@@ -39,17 +46,22 @@ export abstract class HelpersBase extends IdEntity<HelperId>  {
 }
 
 @EntityClass
-export class Helpers extends HelpersBase  {
+export class Helpers extends HelpersBase {
+    static usingCompanyModule: boolean;
 
-    constructor(private context: Context) {
+    constructor(context: Context) {
 
-        super(context,  {
+        super(context, {
             name: "Helpers",
             allowApiRead: true,
             allowApiDelete: context.isSignedIn(),
             allowApiUpdate: context.isSignedIn(),
             allowApiInsert: true,
-            onSavingRow: async () => {
+            savingRow: async () => {
+                if (this._disableOnSavingRow) return;
+                if (this.escort.value == this.id.value) {
+                    this.escort.value = '';
+                }
                 if (context.onServer) {
                     if (this.password.value && this.password.value != this.password.originalValue && this.password.value != Helpers.emptyPassword) {
                         this.realStoredPassword.value = Helpers.passwordHelper.generateHash(this.password.value);
@@ -58,12 +70,27 @@ export class Helpers extends HelpersBase  {
 
                         this.admin.value = true;
                     }
-
-                    await checkForDuplicateValue(this, this.phone);
+                    await checkForDuplicateValue(this, this.phone, context.for(Helpers));
                     if (this.isNew())
                         this.createDate.value = new Date();
                     this.veryUrlKeyAndReturnTrueIfSaveRequired();
+                    if (!this.needEscort.value)
+                        this.escort.value = '';
+                    if (this.escort.value != this.escort.originalValue) {
+                        if (this.escort.originalValue) {
+                            let h = await context.for(Helpers).lookupAsync(x => x.id.isEqualTo(this.escort.originalValue));
+                            h.theHelperIAmEscorting.value = '';
+                            await h.save();
+                        }
+                        if (this.escort.value) {
+                            let h = await context.for(Helpers).lookupAsync(this.escort);
+                            h.theHelperIAmEscorting.value = this.id.value;
+                            await h.save();
+                        }
+                    }
+
                 }
+
             },
             apiDataFilter: () => {
                 if (!context.isSignedIn())
@@ -73,19 +100,22 @@ export class Helpers extends HelpersBase  {
             }
         });
     }
+    _disableOnSavingRow = false;
     public static emptyPassword = 'password';
-   
-    phone = new PhoneColumn({ caption: "טלפון", inputType: 'tel' });
+
+    phone = new PhoneColumn("טלפון");
     realStoredPassword = new StringColumn({
         dbName: 'password',
         includeInApi: false
     });
-    
-    password = new StringColumn({ caption: 'סיסמה', inputType: 'password', virtualData: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
+
+    password = new StringColumn({ caption: 'סיסמה', dataControlSettings: () => ({ inputType: 'password' }), serverExpression: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
 
     createDate = new changeDate({ caption: 'מועד הוספה' });
-    
-    reminderSmsDate = new changeDate('מועד משלוח תזכורת SMS');
+
+    reminderSmsDate = new DateTimeColumn({
+        caption: 'מועד משלוח תזכורת SMS'
+    });
     admin = new BoolColumn({
         caption: 'מנהל משלוח',
         allowApiUpdate: Roles.admin,
@@ -102,7 +132,7 @@ export class Helpers extends HelpersBase  {
 
 
 
-    shortUrlKey = new StringColumn({ includeInApi: Roles.admin });
+
     veryUrlKeyAndReturnTrueIfSaveRequired() {
         if (!this.shortUrlKey.value) {
             this.shortUrlKey.value = this.makeid();
@@ -142,19 +172,18 @@ export class Helpers extends HelpersBase  {
 export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 
     constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>) {
-        super(settingsOrCaption);
+        super({
+            dataControlSettings: () =>
+                ({
+                    getValue: () => this.getValue(),
+                    hideDataOnInput: true,
+                    width: '200',
+                    click: async () => this.context.openDialog((await import('../select-helper/select-helper.component')).SelectHelperComponent,
+                        x => x.args = { onSelect: s => this.value = (s ? s.id.value : '') })
+                })
+        }, settingsOrCaption);
     }
-    getColumn(dialog: SelectServiceInterface, filter?: (helper: HelpersBase) => FilterBase): ColumnSetting<Entity<any>> {
-        return {
-            column: this,
-            getValue: f => (f ? (<HelperId>(f).__getColumn(this)) : this).getValue(),
-            hideDataOnInput: true,
-            click: f => dialog.selectHelper(s => (f ? f.__getColumn(this) : this).value = (s ? s.id.value : ''), filter),
-            readonly: !this.context.isAllowed(this.allowApiUpdate),
-            width: '200'
 
-        }
-    }
 
     getValue() {
         return this.context.for(Helpers).lookup(this).name.value;
@@ -176,18 +205,16 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
     }
 }
 export class CompanyColumn extends StringColumn {
-    getColumn(dialog: MatDialog) {
-        return {
-            column: this,
-            click: f => {
-                let col = f ? f.__getColumn(this) : this;
-                SelectCompanyComponent.dialog(dialog, { onSelect: x => col.value = x })
-            },
-            width: '300'
-        };
-    }
-    constructor() {
-        super("חברה");
+
+    constructor(context: Context) {
+        super({
+            caption: "חברה",
+            dataControlSettings: () =>
+                ({
+                    width: '300',
+                    click: () => context.openDialog(SelectCompanyComponent, s => s.argOnSelect = x => this.value = x)
+                })
+        });
     }
 }
 export class HelperIdReadonly extends HelperId {
@@ -199,4 +226,9 @@ export class HelperIdReadonly extends HelperId {
 export interface PasswordHelper {
     generateHash(password: string): string;
     verify(password: string, realPasswordHash: string): boolean;
+}
+
+export interface HelperUserInfo extends UserInfo {
+    theHelperIAmEscortingId: string;
+    escortedHelperName: string;
 }

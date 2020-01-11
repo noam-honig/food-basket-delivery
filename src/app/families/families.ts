@@ -5,20 +5,21 @@ import { YesNoColumn } from "./YesNo";
 import { FamilySourceId } from "./FamilySources";
 import { BasketId, BasketType } from "./BasketType";
 import { changeDate, DateTimeColumn, SqlBuilder, PhoneColumn, delayWhileTyping } from "../model-shared/types";
-import { ColumnSetting, Column, Context, EntityClass, DirectSQL, RunOnServer, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn } from "radweb";
-import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
+import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn } from '@remult/core';
+import { HelperIdReadonly, HelperId, Helpers, HelperUserInfo } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { FamilyDeliveries } from "./FamilyDeliveries";
 import * as fetch from 'node-fetch';
 import { Roles } from "../auth/roles";
-import { SelectServiceInterface } from "../select-popup/select-service-interface";
+
 import { translate } from "../translate";
+import { UpdateGroupDialogComponent } from "../update-group-dialog/update-group-dialog.component";
 
 
 @EntityClass
-export class Families extends IdEntity<FamilyId>  {
+export class Families extends IdEntity {
   onTheWayFilter() {
     return this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(this.courier.isDifferentFrom(''));
   }
@@ -39,20 +40,20 @@ export class Families extends IdEntity<FamilyId>  {
   getDeliveries() {
     return this.context.for(FamilyDeliveries).find({ where: d => d.family.isEqualTo(this.id), orderBy: d => [{ column: d.deliveryStatusDate, descending: true }] });
   }
-  checkNeedsWork(){
+  checkNeedsWork() {
     if (this.courierComments.value)
       this.needsWork.value = true;
-    switch(this.deliverStatus.value){
+    switch (this.deliverStatus.value) {
       case DeliveryStatus.FailedBadAddress:
       case DeliveryStatus.FailedNotHome:
       case DeliveryStatus.FailedOther:
-      this.needsWork.value = true;
+        this.needsWork.value = true;
         break;
     }
   }
 
   constructor(private context: Context) {
-    super(new FamilyId(),
+    super(
       {
         name: "Families",
         allowApiRead: context.isSignedIn(),
@@ -60,11 +61,17 @@ export class Families extends IdEntity<FamilyId>  {
         allowApiDelete: Roles.admin,
         allowApiInsert: Roles.admin,
         apiDataFilter: () => {
-          if (!context.isAllowed(Roles.admin))
-            return this.courier.isEqualTo(context.user.id);
+          if (!context.isAllowed(Roles.admin)) {
+            let user = <HelperUserInfo>context.user;
+            if (user.theHelperIAmEscortingId)
+              return this.courier.isEqualTo(user.theHelperIAmEscortingId).and(this.visibleToCourier.isEqualTo(true));
+            else
+              return this.courier.isEqualTo(user.id).and(this.visibleToCourier.isEqualTo(true));
+          }
         },
-        onSavingRow: async () => {
-
+        savingRow: async () => {
+          if (this.disableOnSavingRow)
+            return;
           if (this.context.onServer) {
             if (!this.correntAnErrorInStatus.value && DeliveryStatus.IsAResultStatus(this.deliverStatus.originalValue) && !DeliveryStatus.IsAResultStatus(this.deliverStatus.value)) {
               var fd = this.context.for(FamilyDeliveries).create();
@@ -101,6 +108,7 @@ export class Families extends IdEntity<FamilyId>  {
               }
               if (this.courierComments.value == this.courierComments.originalValue)
                 this.courierComments.value = '';
+              this.needsWork.value = false;
             }
 
 
@@ -133,26 +141,27 @@ export class Families extends IdEntity<FamilyId>  {
               }
             }
             if (!this.disableChangeLogging) {
-              logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName())));//should be after succesfull save
+              logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName()), this.context));//should be after succesfull save
               //logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
-              logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()))); //should be after succesfull save
-              logChanged(this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => {}); //should be after succesfull save
+              logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()), this.context)); //should be after succesfull save
+              logChanged(this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => { }); //should be after succesfull save
             }
           }
         }
 
       });
-    this.initColumns();
+    this.__initColumns();
     if (!context.isAllowed(Roles.admin))
-      this.__iterateColumns().forEach(c => c.allowApiUpdate = c == this.courierComments || c == this.deliverStatus || c == this.correntAnErrorInStatus);
+      this.__iterateColumns().forEach(c => c.allowApiUpdate = c == this.courierComments || c == this.deliverStatus || c == this.correntAnErrorInStatus || c == this.needsWork);
   }
   disableChangeLogging = false;
+  disableOnSavingRow = false;
 
 
   name = new StringColumn({
     caption: "שם",
     valueChange: () => this.delayCheckDuplicateFamilies(),
-    onValidate: () => {
+    validate: () => {
       if (!this.name.value || this.name.value.length < 2)
         this.name.error = 'השם קצר מידי';
     }
@@ -165,11 +174,28 @@ export class Families extends IdEntity<FamilyId>  {
     caption: 'מספר זהות בן/בת הזוג', includeInApi: Roles.admin, valueChange: () => this.delayCheckDuplicateFamilies()
   });
   familyMembers = new NumberColumn({ includeInApi: Roles.admin, caption: 'מספר נפשות' });
+  birthDate = new DateColumn({ includeInApi: Roles.admin, caption: 'תאריך לידה' });
+  nextBirthday = new DateColumn({
+    includeInApi: Roles.admin,
+    caption: 'יומולדת הבא',
+    sqlExpression: () => "cast(birthDate + ((extract(year from age(birthDate)) + 1) * interval '1' year) as date) as nextBirthday",
+    allowApiUpdate: false,
+    dataControlSettings: () => ({
+      readOnly: true,
+      inputType: 'date',
+      getValue: () => {
+        if (!this.nextBirthday.value)
+          return;
+        return this.nextBirthday.displayValue + " - גיל " + (this.nextBirthday.value.getFullYear() - this.birthDate.value.getFullYear())
+      }
+    })
+
+  })
   basketType = new BasketId(this.context, 'סוג סל');
   familySource = new FamilySourceId(this.context, { includeInApi: Roles.admin, caption: 'גורם מפנה' });
   socialWorker = new StringColumn('איש קשר לבירור פרטים (עו"ס)');
-  socialWorkerPhone1 = new PhoneColumn("איש קשר לבירור טלפון 1");
-  socialWorkerPhone2 = new PhoneColumn("איש קשר לבירור טלפון 2");
+  socialWorkerPhone1 = new PhoneColumn("איש קשר טלפון 1");
+  socialWorkerPhone2 = new PhoneColumn("איש קשר טלפון 2");
   groups = new GroupsColumn(this.context);
   special = new YesNoColumn({ includeInApi: Roles.admin, caption: 'שיוך מיוחד' });
   defaultSelfPickup = new BoolColumn('ברירת מחדל באים לקחת');
@@ -187,9 +213,9 @@ export class Families extends IdEntity<FamilyId>  {
   deliveryComments = new StringColumn('הערה שתופיע למשנע');
   addressApiResult = new StringColumn();
 
-  phone1 = new PhoneColumn({ caption: "טלפון 1", inputType: 'tel', dbName: 'phone', valueChange: () => this.delayCheckDuplicateFamilies() });
+  phone1 = new PhoneColumn({ caption: "טלפון 1", dbName: 'phone', valueChange: () => this.delayCheckDuplicateFamilies() });
   phone1Description = new StringColumn('הערות לטלפון 1');
-  phone2 = new PhoneColumn({ caption: "טלפון 2", inputType: 'tel', valueChange: () => this.delayCheckDuplicateFamilies() });
+  phone2 = new PhoneColumn({ caption: "טלפון 2", valueChange: () => this.delayCheckDuplicateFamilies() });
   phone2Description = new StringColumn('הערות לטלפון 2');
 
 
@@ -200,7 +226,7 @@ export class Families extends IdEntity<FamilyId>  {
   //callComments = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'הערות שיחה' });
 
   deliverStatus = new DeliveryStatusColumn();
-  correntAnErrorInStatus = new BoolColumn({ virtualData: () => false });
+  correntAnErrorInStatus = new BoolColumn({ serverExpression: () => false });
   courier = new HelperId(this.context, "משנע באירוע");
   courierComments = new StringColumn('הערות שכתב המשנע כשמסר');
   deliveryStatusDate = new changeDate('מועד סטטוס משלוח');
@@ -208,16 +234,16 @@ export class Families extends IdEntity<FamilyId>  {
   courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
   needsWork = new BoolColumn({ caption: 'צריך טיפול/מעקב' });
   needsWorkUser = new HelperIdReadonly(this.context, 'צריך טיפול - מי עדכן');
-  needsWorkDate = new changeDate( 'צריך טיפול - מתי עודכן');
+  needsWorkDate = new changeDate('צריך טיפול - מתי עודכן');
 
 
   courierAssignUserName = new StringColumn({
     caption: 'שם שיוך למשנע',
-    virtualData: async () => (await this.context.for(Helpers).lookupAsync(this.courierAssignUser)).name.value
+    serverExpression: async () => (await this.context.for(Helpers).lookupAsync(this.courierAssignUser)).name.value
   });
   courierAssignUserPhone = new PhoneColumn({
     caption: 'טלפון שיוך למשנע',
-    virtualData: async () => (await this.context.for(Helpers).lookupAsync(this.courierAssignUser)).phone.value
+    serverExpression: async () => (await this.context.for(Helpers).lookupAsync(this.courierAssignUser)).phone.value
   });
 
   async setPostalCodeServerOnly() {
@@ -277,9 +303,8 @@ export class Families extends IdEntity<FamilyId>  {
   deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
   blockedBasket = new BoolColumn({
     caption: 'סל חסום',
-    dbReadOnly: true,
-    dbName: () => {
-      let b = new BasketType(this.context);
+    sqlExpression: () => {
+      let b =this.context.for( BasketType).create();
 
       let sql = new SqlBuilder();
       return sql.columnInnerSelect(this, {
@@ -293,28 +318,36 @@ export class Families extends IdEntity<FamilyId>  {
   routeOrder = new NumberColumn();
   previousDeliveryStatus = new DeliveryStatusColumn({
     caption: 'סטטוס משלוח קודם',
-    dbReadOnly: true,
-    dbName: () => {
+    sqlExpression: () => {
       return this.dbNameFromLastDelivery(fde => fde.deliverStatus, "prevStatus");
+    }
+  });
+  previousDeliveryDate = new changeDate({
+    caption: 'תאריך משלוח קודם',
+
+    sqlExpression: () => {
+      return this.dbNameFromLastDelivery(fde => fde.deliveryStatusDate, "prevDate");
     }
   });
   previousDeliveryComment = new StringColumn({
     caption: 'הערת משלוח קודם',
-    dbReadOnly: true,
-    dbName: () => {
+    sqlExpression: () => {
       return this.dbNameFromLastDelivery(fde => fde.courierComments, "prevComment");
     }
   });
-  previousCourier = new HelperIdReadonly(this.context, {
-    caption: 'משנע  קודם',
-    dbReadOnly: true,
-    dbName: () => {
-      return this.dbNameFromLastDelivery(fde => fde.courier, "prevCourier");
+
+  courierBeenHereBefore = new BoolColumn({
+    sqlExpression: () => {
+      var sql = new SqlBuilder();
+
+      var fd = this.context.for(FamilyDeliveries).create();
+      let f = this;
+      sql.addEntity(f, "families");
+      return sql.columnWithAlias(sql.case([{ when: [sql.ne(f.courier, "''")], then: sql.build('exists (select 1 from ', fd, ' where ', sql.and(sql.eq(fd.family, f.id), sql.eq(fd.courier, f.courier)), ")") }], false), 'courierBeenHereBefore');
     }
   });
   visibleToCourier = new BoolColumn({
-    dbReadOnly: true,
-    dbName: () => {
+    sqlExpression: () => {
       var sql = new SqlBuilder();
       return sql.case([{ when: [sql.or(sql.gtAny(this.deliveryStatusDate, 'current_date -1'), this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))], then: true }], false);
 
@@ -336,9 +369,14 @@ export class Families extends IdEntity<FamilyId>  {
     }
     return where;
   }
+  readyAndSelfPickup() {
+    let where = this.deliverStatus.isGreaterOrEqualTo(DeliveryStatus.ReadyForDelivery).and(this.deliverStatus.isLessOrEqualTo(DeliveryStatus.SelfPickup)).and(
+      this.courier.isEqualTo('')).and(this.blockedBasket.isEqualTo(false));
+    return where;
+  }
   private dbNameFromLastDelivery(col: (fd: FamilyDeliveries) => Column<any>, alias: string) {
 
-    let fd = new FamilyDeliveries(this.context);
+    let fd = this.context.for(FamilyDeliveries).create();
     let sql = new SqlBuilder();
     return sql.columnInnerSelect(this, {
       select: () => [sql.columnWithAlias(col(fd), alias)],
@@ -351,9 +389,7 @@ export class Families extends IdEntity<FamilyId>  {
   }
 
 
-  courierBeenHereBefore() {
-    return this.previousCourier.value == this.courier.value;
-  }
+
   getPreviousDeliveryColumn() {
     return {
       caption: 'סיכום משלוח קודם',
@@ -374,11 +410,11 @@ export class Families extends IdEntity<FamilyId>  {
       cssClass: f => f.previousDeliveryStatus.getCss()
 
 
-    } as ColumnSetting<Families>;
+    } as DataControlSettings<Families>;
   }
 
   addressByGoogle() {
-    let r: ColumnSetting<Families> = {
+    let r: DataControlSettings<Families> = {
       caption: 'כתובת כפי שגוגל הבין',
       getValue: f => f.getGeocodeInformation().getAddress()
 
@@ -390,7 +426,8 @@ export class Families extends IdEntity<FamilyId>  {
     switch (this.deliverStatus.value) {
       case DeliveryStatus.ReadyForDelivery:
         if (this.courier.value) {
-          return this.courier.getValue() + ' יצא ' + this.courierAssingTime.relativeDateName();
+          let c = this.context.for(Helpers).lookup(this.courier);
+          return 'בדרך: ' + c.name.value + (c.eventComment.value ? ' (' + c.eventComment.value + ')' : '') + ', שוייך ' + this.courierAssingTime.relativeDateName();
         }
         break;
       case DeliveryStatus.Success:
@@ -407,14 +444,22 @@ export class Families extends IdEntity<FamilyId>  {
     return this.deliverStatus.displayValue;
   }
   getShortDeliveryDescription() {
-    switch (this.deliverStatus.value) {
-      case DeliveryStatus.ReadyForDelivery:
-        if (this.courier.value) {
-          return this.courier.getValue() + ' יצא ' + this.courierAssingTime.relativeDateName();
-        }
-        break;
+    return Families.staticGetShortDescription(this.deliverStatus, this.deliveryStatusDate, this.courier, this.courierComments);
+  }
+  static staticGetShortDescription(deliverStatus: DeliveryStatusColumn, deliveryStatusDate: changeDate, courier: HelperId, courierComments: StringColumn) {
+    let r = deliverStatus.displayValue + " ";
+    if (DeliveryStatus.IsAResultStatus(deliverStatus.value)) {
+      if (deliveryStatusDate.value.valueOf() < new Date().valueOf() - 7 * 86400 * 1000)
+        r += "ב " + deliveryStatusDate.value.toLocaleDateString("he-il");
+      else
+        r += deliveryStatusDate.relativeDateName();
+      if (courierComments.value) {
+        r += ": " + courierComments.value;
+      }
+      if (courier.value && deliverStatus.value != DeliveryStatus.SelfPickup && deliverStatus.value != DeliveryStatus.SuccessPickedUp)
+        r += ' ע"י ' + courier.getValue();
     }
-    return this.deliverStatus.displayValue;
+    return r;
   }
 
 
@@ -444,7 +489,7 @@ export class Families extends IdEntity<FamilyId>  {
     return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
   }
 
-  static SendMessageToBrowsers = (s: string) => { };
+  static SendMessageToBrowsers = (s: string, context: Context) => { };
   static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string) {
     switch (updateType) {
       case 1:
@@ -533,12 +578,12 @@ export class Families extends IdEntity<FamilyId>  {
 
 
   }
-  @RunOnServer({ allowed: Roles.admin, blockUser: false })
-  static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, id: string, exactName: boolean = false, context?: Context, directSQL?: DirectSQL) {
+  @ServerFunction({ allowed: Roles.admin, blockUser: false })
+  static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, id: string, exactName: boolean = false, context?: Context, db?: SqlDatabase) {
     let result: duplicateFamilyInfo[] = [];
 
     var sql = new SqlBuilder();
-    var f = new Families(context);
+    var f = context.for(Families).create();
 
     let compareAsNumber = (col: Column<string>, value: string) => {
       return sql.and(sql.eq(sql.extractNumber(col), sql.extractNumber(sql.str(value))), sql.build(sql.extractNumber(sql.str(value)), ' <> ', 0));
@@ -555,7 +600,7 @@ export class Families extends IdEntity<FamilyId>  {
         nameCol = sql.build('trim(', f.name, ') like  ', sql.str('%' + name.trim() + '%'));
 
 
-    let sqlResult = await directSQL.execute(sql.query({
+    let sqlResult = await db.execute(sql.query({
       select: () => [f.id,
       f.name,
       f.address,
@@ -575,14 +620,14 @@ export class Families extends IdEntity<FamilyId>  {
 
     for (const row of sqlResult.rows) {
       result.push({
-        id: row[sqlResult.getcolumnNameAtIndex(0)],
-        name: row[sqlResult.getcolumnNameAtIndex(1)],
-        address: row[sqlResult.getcolumnNameAtIndex(2)],
-        tz: row[sqlResult.getcolumnNameAtIndex(3)],
-        tz2: row[sqlResult.getcolumnNameAtIndex(4)],
-        phone1: row[sqlResult.getcolumnNameAtIndex(5)],
-        phone2: row[sqlResult.getcolumnNameAtIndex(6)],
-        nameDup: row[sqlResult.getcolumnNameAtIndex(7)]
+        id: row[sqlResult.getResultJsonNameForIndexInSelect(0)],
+        name: row[sqlResult.getResultJsonNameForIndexInSelect(1)],
+        address: row[sqlResult.getResultJsonNameForIndexInSelect(2)],
+        tz: row[sqlResult.getResultJsonNameForIndexInSelect(3)],
+        tz2: row[sqlResult.getResultJsonNameForIndexInSelect(4)],
+        phone1: row[sqlResult.getResultJsonNameForIndexInSelect(5)],
+        phone2: row[sqlResult.getResultJsonNameForIndexInSelect(6)],
+        nameDup: row[sqlResult.getResultJsonNameForIndexInSelect(7)]
 
       });
     }
@@ -661,16 +706,21 @@ export interface parseAddressResult {
 }
 export class GroupsColumn extends StringColumn {
   constructor(private context: Context) {
-    super({ caption: 'שיוך לקבוצת חלוקה', includeInApi: Roles.admin });
+    super({
+      caption: 'שיוך לקבוצת חלוקה',
+      includeInApi: Roles.admin,
+      dataControlSettings: () => ({
+        width: '300',
+        click: () => {
+          this.context.openDialog(UpdateGroupDialogComponent, s => {
+            s.args = {
+              groups: this.value,
+              ok: x => this.value = x
+            }
+          });
+        }
+      })
+    });
   }
-  getColumn(dialog: SelectServiceInterface) {
-    return {
-      column: this,
-      click: f => {
-        let col = f ? f.__getColumn(this) : this;
-        dialog.updateGroup(col.value, x => col.value = x);
-      },
-      width: '300'
-    };
-  }
+
 }

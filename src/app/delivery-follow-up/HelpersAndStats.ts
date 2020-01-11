@@ -1,10 +1,10 @@
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { NumberColumn, StringColumn, IdEntity, BoolColumn } from 'radweb';
+import { NumberColumn,  BoolColumn } from '@remult/core';
 import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
 import { changeDate, DateTimeColumn, SqlBuilder } from '../model-shared/types';
 import { Families } from "../families/families";
 
-import { Context, EntityClass } from "radweb";
+import { Context, EntityClass } from '@remult/core';
 import { Roles } from "../auth/roles";
 
 
@@ -40,8 +40,8 @@ export class HelpersAndStats extends HelpersBase {
             name: "helpersAndStats",
             allowApiRead: Roles.admin,
             dbName: () => {
-                let f = new Families(context);
-                let h = new Helpers(context);
+                let f = context.for(Families).create();
+                let h = context.for( Helpers).create();
                 var sql = new SqlBuilder();
 
                 let helperFamilies = (where: () => any[]) => {
@@ -60,6 +60,11 @@ export class HelpersAndStats extends HelpersBase {
                         h.company,
                         h.totalKm,
                         h.totalTime,
+                        h.shortUrlKey,
+                        h.eventComment,
+                        h.needEscort,
+                        h.theHelperIAmEscorting,
+                        h.escort,
                         sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress),
                         sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isActiveDelivery()]), this.allFamilies),
                         sql.countInnerSelect(helperFamilies(() => [sql.in(f.deliverStatus,

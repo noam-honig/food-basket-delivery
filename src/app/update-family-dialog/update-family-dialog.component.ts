@@ -1,25 +1,30 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef, MatDialogActions } from '@angular/material/dialog';
 import { Families } from '../families/families';
-import { GridSettings } from 'radweb';
-import { Context } from 'radweb';
+
+import { Context, DialogConfig } from '@remult/core';
+import { FamilyDeliveries } from '../families/FamilyDeliveries';
 
 @Component({
   selector: 'app-update-family-dialog',
   templateUrl: './update-family-dialog.component.html',
   styleUrls: ['./update-family-dialog.component.scss']
 })
+@DialogConfig({ minWidth: 350 })
 export class UpdateFamilyDialogComponent implements OnInit {
-
+  public args: {
+    f: Families,
+    message?: string,
+    disableSave?: boolean,
+    onSave?: () => void
+  };
   constructor(
-    private dialogRef: MatDialogRef<UpdateFamilyDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: UpdateFamilyInfo,
+    private dialogRef: MatDialogRef<any>,
+
     private context: Context
 
   ) {
 
-
-    this.families.currentRow = data.f;
   }
   cancel() {
     this.families.currentRow.reset();
@@ -28,19 +33,15 @@ export class UpdateFamilyDialogComponent implements OnInit {
   async confirm() {
     await this.families.currentRow.save();
     this.dialogRef.close();
-    if (this.data)
-      this.data.onSave();
+    if (this.args)
+      this.args.onSave();
   }
 
-  ngOnInit() {
+  currentFamilyDeliveries: FamilyDeliveries[] = [];
+
+  async ngOnInit() {
+    this.families.currentRow = this.args.f;
+    this.currentFamilyDeliveries = await this.families.currentRow.getDeliveries();
   }
   families = this.context.for(Families).gridSettings({ allowUpdate: true });
-
-}
-
-export interface UpdateFamilyInfo {
-  f: Families,
-  message?: string,
-  disableSave?: boolean,
-  onSave?: () => void
 }

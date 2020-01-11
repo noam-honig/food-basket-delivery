@@ -1,7 +1,8 @@
-import { ClosedListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings } from "radweb";
-import { ColumnOptions, DropDownItem } from "radweb";
+import { ColumnOptions,ValueListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings, ValueListItem } from '@remult/core';
+
 
 export class DeliveryStatus {
+  static usingSelfPickupModule: boolean = true;
   static IsAResultStatus(value: DeliveryStatus) {
     switch (value) {
       case this.Success:
@@ -33,7 +34,7 @@ export class DeliveryStatus {
     return this.name;
   }
 }
-export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
+export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
   isActiveDelivery() {
     return this.isLessOrEqualTo(DeliveryStatus.FailedOther);
   }
@@ -44,28 +45,33 @@ export class DeliveryStatusColumn extends ClosedListColumn<DeliveryStatus> {
     return this.isGreaterOrEqualTo(DeliveryStatus.Success).and(this.isLessOrEqualTo(DeliveryStatus.FailedOther));
   }
 
-  constructor(settingsOrCaption?: ColumnOptions<DeliveryStatus>, private chooseFrom?: DeliveryStatus[]) {
-    super(DeliveryStatus, settingsOrCaption);
+  constructor(settingsOrCaption?: ColumnOptions<DeliveryStatus>, chooseFrom?: DeliveryStatus[]) {
+    super(DeliveryStatus, {
+      dataControlSettings: () => {
+        let op = this.getOptions();
+        if (chooseFrom)
+          op = chooseFrom.map(x => {
+            return {
+              id: x.id,
+              caption: x.toString()
+            } as ValueListItem
+          });
+        if (!DeliveryStatus.usingSelfPickupModule) {
+          op = op.filter(x => x.id != DeliveryStatus.SelfPickup.id && x.id != DeliveryStatus.SuccessPickedUp.id);
+        }
+        return {
+          dropDown: {
+            items: op
+          },
+          width: '150'
+        };
+
+      }
+    },settingsOrCaption);
     if (!this.caption)
       this.caption = 'סטטוס משלוח';
   }
-  getColumn() {
-    let op = this.getOptions();
-    if (this.chooseFrom)
-      op = this.chooseFrom.map(x => {
-        return {
-          id: x.id,
-          caption: x.toString()
-        } as DropDownItem
-      });
-    return {
-      column: this,
-      dropDown: {
-        items: op
-      },
-      width: '150'
-    };
-  }
+
   isSuccess() {
     return this.isGreaterOrEqualTo(DeliveryStatus.Success).and(this.isLessOrEqualTo(DeliveryStatus.SuccessLeftThere));
   }

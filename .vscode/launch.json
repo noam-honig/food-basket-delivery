@@ -4,28 +4,47 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
             "type": "node",
             "request": "launch",
-            "name": "Debug Server",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": [
-                "run-script",
-                "server:debug"
-            ],
-            "port": 9229
+            "name": "debug node",
+            "program": "${workspaceFolder}/dist-server/app/server/server.js",
+            "args": [],
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "Run Something",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": [
-                "run-script",
-                "RunSomething"
-            ],
-            "port": 9229
+            "name": "debug direct ref",
+            "program": "${workspaceFolder}/dist-server/hug-moms/src/app/server/server.js",
+            "args": [],
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+       
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Do Something direct ref",
+            "program": "${workspaceFolder}/dist-server/hug-moms/src/app/server/doSomething.js",
+            "args": [],
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Do Something ",
+            "program": "${workspaceFolder}/dist-server/app/server/doSomething.js",
+            "args": [],
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
         }
+      
     ]
 }

@@ -1,12 +1,12 @@
-import { StringColumn, NumberColumn } from 'radweb';
-import { Entity, Context, EntityClass } from 'radweb';
+import { StringColumn, NumberColumn } from '@remult/core';
+import { Entity, Context, EntityClass } from '@remult/core';
 import { Roles } from '../auth/roles';
 @EntityClass
 export class ApplicationImages extends Entity<number>  {
   id = new NumberColumn();
   base64Icon = new StringColumn("איקון דף base64");
   base64PhoneHomeImage = new StringColumn("איקון דף הבית בטלפון base64");
-  constructor(context: Context) {
+  constructor() {
     super({
       name: 'ApplicationImages',
       allowApiRead: Roles.admin,

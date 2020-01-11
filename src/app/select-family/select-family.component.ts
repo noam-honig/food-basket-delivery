@@ -1,10 +1,9 @@
-import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core';
-import { GridSettings, Filter } from 'radweb';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Families } from '../families/families';
-import { BusyService } from 'radweb';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FilterBase } from 'radweb';
-import { Context } from 'radweb';
+import { BusyService } from '@remult/core';
+import { MatDialogRef } from '@angular/material/dialog';
+import { FilterBase } from '@remult/core';
+import { Context } from '@remult/core';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 
 
@@ -14,9 +13,13 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
   styleUrls: ['./select-family.component.scss']
 })
 export class SelectFamilyComponent implements OnInit {
-  @ViewChild("search") search: ElementRef;
-  constructor(private busy: BusyService, private dialogRef: MatDialogRef<SelectFamilyComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: SelectFamilyInfo, private context: Context) { }
+
+  public args: {
+    where: (f: Families) => FilterBase,
+    onSelect: (selectedValue: Families) => void,
+  };
+  @ViewChild("search", { static: true }) search: ElementRef;
+  constructor(private busy: BusyService, private dialogRef: MatDialogRef<any>, private context: Context) { }
   searchString: string = '';
   families = this.context.for(Families).gridSettings({ knowTotalRows: true });
   pageSize = 7;
@@ -33,8 +36,8 @@ export class SelectFamilyComponent implements OnInit {
     await this.families.get({
       where: f => {
         let r = f.name.isContains(this.searchString);
-        if (this.data.where) {
-          let x = this.data.where(f);
+        if (this.args.where) {
+          let x = this.args.where(f);
           if (x)
             return r.and(x);
         }
@@ -50,7 +53,7 @@ export class SelectFamilyComponent implements OnInit {
     this.dialogRef.close();
   }
   select(f: Families) {
-    this.data.onSelect(f);
+    this.args.onSelect(f);
     this.dialogRef.close();
   }
   showStatus(f: Families) {
@@ -73,11 +76,5 @@ export class SelectFamilyComponent implements OnInit {
     this.getRows();
   }
 
-
-}
-export interface SelectFamilyInfo {
-
-  where: (f: Families) => FilterBase,
-  onSelect: (selectedValue: Families) => void,
 
 }

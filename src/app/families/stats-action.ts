@@ -1,11 +1,11 @@
-import { RunOnServer, StringColumn, NumberColumn, Entity } from "radweb";
-import { FilterBase } from "radweb";
+import { ServerFunction, StringColumn, NumberColumn, Entity } from '@remult/core';
+import { FilterBase } from '@remult/core';
 import { Families } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
 
 import { YesNo } from "./YesNo";
 import { BasketType } from "./BasketType";
-import { Context, EntityClass } from "radweb";
+import { Context, EntityClass } from '@remult/core';
 import { BasketInfo } from "../asign-family/asign-family.component";
 
 import { SqlBuilder } from "../model-shared/types";
@@ -45,7 +45,7 @@ export class Stats {
     notInEvent = new FaimilyStatistics('לא באירוע', f => f.deliverStatus.isEqualTo(DeliveryStatus.NotInEvent), colors.blue);
     frozen = new FaimilyStatistics('קפואים', f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen), colors.gray);
     blocked = new FaimilyStatistics('סל חסום', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(f.courier.isEqualTo('').and(f.blockedBasket.isEqualTo(true))), colors.gray);
-    needWork = new FaimilyStatistics('מצריך טיפול', f => f.needsWork.isEqualTo(true), colors.yellow);
+    needWork = new FaimilyStatistics('מצריך טיפול', f => f.deliverStatus.isInEvent().and( f.needsWork.isEqualTo(true)), colors.yellow);
 
 
     async getData() {
@@ -58,7 +58,7 @@ export class Stats {
         }
         return r;
     }
-    @RunOnServer({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.admin })
     static async getDataFromServer(context?: Context) {
         let result = { data: {}, baskets: [], cities: [], groups: [] as groupStats[] };
         let stats = new Stats();
@@ -78,12 +78,9 @@ export class Stats {
                 id: b.id.value,
                 name: b.name.value,
                 boxes: b.boxes.value,
+                boxes2:b.boxes2.value,
                 blocked: b.blocked.value,
-                unassignedFamilies: await context.for(Families).count(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
-                    f.basketType.isEqualTo(b.id).and(
-                        f.courier.isEqualTo('')
-                    )
-                ))
+                unassignedFamilies: await context.for(Families).count(f => f.readyAndSelfPickup().and(f.basketType.isEqualTo(b.id)))
             });
         }));
         pendingStats.push(
@@ -108,7 +105,7 @@ export class Stats {
                     totalReady: 0
                 };
                 result.groups.push(x);
-                pendingStats.push(context.for(Families).count(f => f.readyFilter(undefined, x.name)).then(r => x.totalReady = r));
+                pendingStats.push(context.for(Families).count(f => f.readyAndSelfPickup().and(f.groups.isContains(x.name))).then(r => x.totalReady = r));
                 pendingStats.push(context.for(Families).count(f => f.groups.isContains(x.name).and(f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList))).then(r => x.total = r));
             }
         });
@@ -129,7 +126,7 @@ export class CitiesStats extends Entity<string> {
             allowApiRead: false,
             name: 'citiesStats',
             dbName: () => {
-                let f = new Families(context);
+                let f = context.for( Families).create();
                 let sql = new SqlBuilder();
                 sql.addEntity(f, 'Families');
                 return sql.build('(', sql.query({
@@ -141,7 +138,7 @@ export class CitiesStats extends Entity<string> {
                 }), ' group by ', f.city, ') as result')
             }
         });
-        this.initColumns(this.city);
+        this.__initColumns(this.city);
     }
 }
 

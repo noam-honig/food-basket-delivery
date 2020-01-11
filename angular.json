@@ -22,14 +22,13 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
-          
             "assets": [
               "src/favicon.ico",
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss",
-              "node_modules/bootstrap3/dist/css/bootstrap.min.css"
+              "./node_modules/@remult/core/input-styles.scss",
+              "src/styles.scss"
             ],
             "scripts": []
           },
@@ -86,6 +85,7 @@
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
             "styles": [
+              
               "src/styles.scss"
             ],
             "scripts": [],

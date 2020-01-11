@@ -2,18 +2,20 @@ import { Component, OnInit } from '@angular/core';
 
 
 import { Helpers } from './helpers';
-import { SelectService } from '../select-popup/select-service';
+
 import { Families } from '../families/families';
 import { Route } from '@angular/router';
 
-import { RunOnServer, GridSettings, ColumnSetting } from 'radweb';
-import { Context } from 'radweb';
+import { ServerFunction, DataControlSettings } from '@remult/core';
+import { Context } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
-import { BusyService } from 'radweb';
-import { DateColumn, DataAreaSettings } from 'radweb';
+import { BusyService } from '@remult/core';
+import { DateColumn, DataAreaSettings } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { MatDialog } from '@angular/material/dialog';
+
+import { saveToExcel } from '../shared/saveToExcel';
+import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 
 @Component({
   selector: 'app-helpers',
@@ -21,7 +23,7 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrls: ['./helpers.component.css']
 })
 export class HelpersComponent implements OnInit {
-  constructor(private dialog: DialogService, public context: Context, private busy: BusyService,private matDialog:MatDialog) {
+  constructor(private dialog: DialogService, public context: Context, private busy: BusyService, public settings: ApplicationSettings) {
   }
   static route: Route = {
     path: 'helpers',
@@ -30,7 +32,46 @@ export class HelpersComponent implements OnInit {
   };
   searchString: string;
 
-  helpers = this.context.for(Helpers).gridSettings();
+  helpers = this.context.for(Helpers).gridSettings({
+    allowDelete: true,
+    allowInsert: true,
+    allowUpdate: true,
+    knowTotalRows: true,
+    hideDataArea: true,
+    numOfColumnsInGrid: 3,
+
+    get: {
+      orderBy: h => [h.name],
+      limit: 10,
+      where: h => {
+        if (this.searchString)
+          return h.name.isContains(this.searchString);
+        return undefined;
+      }
+    },
+    columnSettings: helpers => {
+      let r: DataControlSettings<Helpers>[] = [
+        helpers.name,
+        helpers.phone
+      ];
+      r.push({
+        column: helpers.admin,
+        width: '100'
+      });
+      if (this.settings.manageEscorts.value)
+        r.push(helpers.company);
+      if (this.settings.manageEscorts.value) {
+        r.push(helpers.escort, helpers.theHelperIAmEscorting, helpers.needEscort);
+      }
+      r.push(helpers.eventComment);
+      r.push(helpers.createDate);
+      return r;
+    },
+    confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes),
+
+
+  });
+
   async doSearch() {
     if (this.helpers.currentRow && this.helpers.currentRow.wasChanged())
       return;
@@ -46,8 +87,11 @@ export class HelpersComponent implements OnInit {
     });
 
   }
+  async saveToExcel() {
+    await saveToExcel(this.helpers, "מתנדבים", this.busy, (d: Helpers, c) => c == d.id || c == d.password || c == d.totalKm || c == d.totalTime || c == d.smsDate || c == d.reminderSmsDate || c == d.realStoredPassword || c == d.shortUrlKey || c == d.admin);
+  }
 
-  @RunOnServer({ allowed: Roles.admin })
+  @ServerFunction({ allowed: Roles.admin })
   static async resetPassword(helperId: string, context?: Context) {
 
     await context.for(Helpers).foreach(h => h.id.isEqualTo(helperId), async h => {
@@ -61,39 +105,6 @@ export class HelpersComponent implements OnInit {
   async ngOnInit() {
     let s = await ApplicationSettings.getAsync(this.context);
 
-    this.helpers = this.context.for(Helpers).gridSettings({
-      allowDelete: true,
-      allowInsert: true,
-      allowUpdate: true,
-      knowTotalRows: true,
-      hideDataArea: true,
-
-      get: {
-        orderBy: h => [h.name],
-        limit: 10,
-        where: h => {
-          if (this.searchString)
-            return h.name.isContains(this.searchString);
-          return undefined;
-        }
-      },
-      columnSettings: helpers => {
-        let r: ColumnSetting<Helpers>[] = [
-          helpers.name,
-          helpers.phone
-        ];
-        if (s.showCompanies.value)
-        r.push(helpers.company.getColumn(this.matDialog));
-        r.push({
-          column: helpers.admin,
-          width: '100'
-        });
-        return r;
-      },
-      confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes),
-
-
-    });
 
   }
   fromDate = new DateColumn({
@@ -111,5 +122,33 @@ export class HelpersComponent implements OnInit {
     columnSettings: () => [this.fromDate, this.toDate],
     numberOfColumnAreas: 2
   });
+  async clearComments() {
+    if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: 'האם אתה בטוח שברצונך לנקות את כל ההערות למתנדבים?' }, x => x.yes)) {
+      await HelpersComponent.clearCommentsOnServer();
+      this.helpers.getRecords();
+    }
+  }
+  @ServerFunction({ allowed: Roles.admin })
+  static async clearCommentsOnServer(context?: Context) {
+    for (const h of await context.for(Helpers).find({ where: h => h.eventComment.isDifferentFrom('') })) {
+      h.eventComment.value = '';
+      await h.save();
+    }
+  }
+  async clearEscorts(){
+    if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: 'האם אתה בטוח שברצונך לנקות את נתוני המלווים לכל המתנדבים?' }, x => x.yes)) {
+      await HelpersComponent.clearEscortsOnServer();
+      this.helpers.getRecords();
+    }
+  }
+  @ServerFunction({ allowed: Roles.admin })
+  static async clearEscortsOnServer(context?: Context) {
+    for (const h of await context.for(Helpers).find()) {
+      h.escort.value = '';
+      h.needEscort.value = false;
+      h.theHelperIAmEscorting.value = '';
+      await h.save();
+    }
+  }
 
 }

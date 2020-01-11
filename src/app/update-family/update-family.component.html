@@ -2,8 +2,7 @@
     <br>
 
     <div class="{{families.currentRow.deliverStatus.getCss()}}">
-        <strong>{{families.currentRow.deliverStatus.displayValue}}: </strong>
-        {{families.currentRow.courierComments.value}}
+        <strong>{{families.currentRow.getDeliveryDescription()}}: </strong>
     </div>
     <mat-accordion *ngIf="familiesInfo" [multi]="true">
         <mat-expansion-panel>
@@ -20,7 +19,7 @@
                 </div>
             </mat-expansion-panel-header>
             <ng-template matExpansionPanelContent>
-
+                
                 <data-area [settings]="familiesInfo"></data-area>
                 <a href="tel:{{families.currentRow.socialWorkerPhone1.value}}"
                     *ngIf="families.currentRow.socialWorkerPhone1.value">
@@ -124,7 +123,7 @@
             <mat-expansion-panel-header>
                 <div>
                     <mat-panel-title>
-                        היסטוריה
+                        היסטורית משלוחים
                     </mat-panel-title>
                 </div>
                 <div>
@@ -135,28 +134,46 @@
 
             </mat-expansion-panel-header>
             <ng-template matExpansionPanelContent>
-                <div *ngIf="familyDeliveries&&familyDeliveries.length">
-                    <h5>משלוחים קודמים</h5>
-                    <ul>
-                        <li *ngFor="let fd of familyDeliveries" (click)="deliveryInfo(fd)">
-                            {{fd.getShortDescription()}}
-                        </li>
-                    </ul>
+
+                <ul>
+                    <li>
+                        {{families.currentRow.getShortDeliveryDescription()}}
+                    </li>
+                    <li *ngFor="let fd of familyDeliveries" (click)="deliveryInfo(fd)">
+                        {{fd.getShortDescription()}}
+                    </li>
+                </ul>
+
+
+            </ng-template>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <div>
+                    <mat-panel-title>
+                        פרטי עדכונים
+                    </mat-panel-title>
                 </div>
                 <div>
-                    <h5>פרטי עדכונים</h5>
-                    <ul>
-                        <li>הוספה: {{families.currentRow.createDate.displayValue}} -
-                            {{families.currentRow.createUser.displayValue}}</li>
-                        <li>עדכון אחרון: {{families.currentRow.lastUpdateDate.displayValue}}</li>
-                        <li>עדכון סטטוס משלוח: {{families.currentRow.deliveryStatusDate.displayValue}} -
-                            {{families.currentRow.deliveryStatusUser.displayValue}}</li>
-                        <li>עדכון משנע: {{families.currentRow.courierAssingTime.displayValue}} -
-                            {{families.currentRow.courierAssignUser.displayValue}}</li>
-                        <li>עדכון צריך טיפול: {{families.currentRow.needsWorkDate.displayValue}} -
-                            {{families.currentRow.needsWorkDate.displayValue}}</li>
-                    </ul>
+                    <mat-panel-description>
+
+                    </mat-panel-description>
                 </div>
+
+            </mat-expansion-panel-header>
+            <ng-template matExpansionPanelContent>
+
+                <ul>
+                    <li>הוספה: {{families.currentRow.createDate.displayValue}} -
+                        {{families.currentRow.createUser.displayValue}}</li>
+                    <li>עדכון אחרון: {{families.currentRow.lastUpdateDate.displayValue}}</li>
+                    <li>עדכון סטטוס משלוח: {{families.currentRow.deliveryStatusDate.displayValue}} -
+                        {{families.currentRow.deliveryStatusUser.displayValue}}</li>
+                    <li>עדכון משנע: {{families.currentRow.courierAssingTime.displayValue}} -
+                        {{families.currentRow.courierAssignUser.displayValue}}</li>
+                    <li>עדכון צריך טיפול: {{families.currentRow.needsWorkDate.displayValue}} -
+                        {{families.currentRow.needsWorkUser.displayValue}}</li>
+                </ul>
 
             </ng-template>
         </mat-expansion-panel>

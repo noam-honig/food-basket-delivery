@@ -1,15 +1,15 @@
-import {  HasAsyncGetTheValue, PhoneColumn } from "../model-shared/types";
+import { HasAsyncGetTheValue, PhoneColumn } from "../model-shared/types";
 
-import { Context,  EntityClass, IdEntity, StringColumn, IdColumn, ColumnOptions } from "radweb";
+import { Context, EntityClass, IdEntity, StringColumn, IdColumn, ColumnOptions, DecorateDataColumnSettings } from '@remult/core';
 import { Roles } from "../auth/roles";
 
 @EntityClass
-export class FamilySources extends IdEntity<FamilySourceId>  {
+export class FamilySources extends IdEntity {
   name = new StringColumn({ caption: "שם" });
   contactPerson = new StringColumn({ caption: "איש קשר" });
   phone = new PhoneColumn({ caption: 'טלפון' });
   constructor(private context: Context) {
-    super(new FamilySourceId(context), {
+    super({
       name: "FamilySources",
       allowApiRead: context.isSignedIn(),
       allowApiCRUD: Roles.admin
@@ -17,8 +17,19 @@ export class FamilySources extends IdEntity<FamilySourceId>  {
   }
 }
 export class FamilySourceId extends IdColumn implements HasAsyncGetTheValue {
-  constructor(private context: Context, settingsOrCaption?: ColumnOptions<string> ) {
-    super(settingsOrCaption);
+  constructor(private context: Context, settingsOrCaption?: ColumnOptions<string>) {
+    super({
+      dataControlSettings: () =>
+        ({
+          valueList: 
+             this.context.for(FamilySources).getDropDownItems({
+              orderBy: (f: FamilySources) => {
+                return [{ column: f.name }];
+              
+            }
+          })
+        })
+    }, settingsOrCaption);
   }
   get displayValue() {
     return this.context.for(FamilySources).lookup(this).name.value;
@@ -29,16 +40,5 @@ export class FamilySourceId extends IdColumn implements HasAsyncGetTheValue {
       return r.name.value;
     return '';
   }
-  getColumn() {
-    return {
-      column: this,
-      dropDown: {
-        source: this.context.for(FamilySources).create(),
-        orderBy: (f: FamilySources) => {
-          return [{ column: f.name }];
-        }
 
-      },
-    };
-  }
 }

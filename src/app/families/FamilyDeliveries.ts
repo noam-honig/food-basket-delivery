@@ -1,15 +1,15 @@
 import { PhoneColumn, changeDate, SqlBuilder } from "../model-shared/types";
-import { EntityClass, Context, IdColumn, IdEntity, StringColumn, NumberColumn } from "radweb";
+import { EntityClass, Context, IdColumn, IdEntity, StringColumn, NumberColumn } from '@remult/core';
 import { BasketId } from "./BasketType";
 import { FamilyId, Families } from "./families";
 import { DeliveryStatusColumn, DeliveryStatus } from "./DeliveryStatus";
 import { HelperId, HelperIdReadonly } from "../helpers/helpers";
-import { Entity, CompoundIdColumn } from "radweb";
+import { Entity, CompoundIdColumn } from '@remult/core';
 import { FamilySourceId } from "./FamilySources";
 import { Roles } from "../auth/roles";
 
 @EntityClass
-export class FamilyDeliveries extends IdEntity<IdColumn>  {
+export class FamilyDeliveries extends IdEntity {
     family = new FamilyId();
     basketType = new BasketId(this.context, 'סוג סל');
 
@@ -32,33 +32,24 @@ export class FamilyDeliveries extends IdEntity<IdColumn>  {
     archive_city = new StringColumn({ caption: "עיר (מתעדכן אוטומטית)" });
     archive_addressComment = new StringColumn('הערת כתובת');
     archive_deliveryComments = new StringColumn('הערות למשנע');
-    archive_phone1 = new PhoneColumn({ caption: "טלפון 1", inputType: 'tel', dbName: 'phone' });
+    archive_phone1 = new PhoneColumn({ caption: "טלפון 1", dbName: 'phone' });
     archive_phone1Description = new StringColumn('תאור טלפון 1');
-    archive_phone2 = new PhoneColumn({ caption: "טלפון 2", inputType: 'tel' });
+    archive_phone2 = new PhoneColumn("טלפון 2");
     archive_phone2Description = new StringColumn('תאור טלפון 2');
     archive_addressLongitude = new NumberColumn({ decimalDigits: 8 });
     archive_addressLatitude = new NumberColumn({ decimalDigits: 8 });
 
     constructor(private context: Context) {
-        super(new IdColumn(), {
+        super({
             name: 'FamilyDeliveries',
             allowApiRead: Roles.admin,
             allowApiDelete: Roles.admin
         });
     }
     getShortDescription() {
-        let r = this.deliverStatus.displayValue + " ";
-        if (this.deliveryStatusDate.value.valueOf() < new Date().valueOf() - 7 * 86400 * 1000)
-            r += "ב " + this.deliveryStatusDate.value.toLocaleDateString("he-il");
-        else
-            r += this.deliveryStatusDate.relativeDateName();
-        if (this.courierComments.value) {
-            r += ": " + this.courierComments.value;
-        }
-        if (this.courier.value)
-            r += ' ע"י ' + this.courier.getValue();
-        return r;
+        return Families.staticGetShortDescription(this.deliverStatus, this.deliveryStatusDate, this.courier, this.courierComments);
     }
+
 
 
 }

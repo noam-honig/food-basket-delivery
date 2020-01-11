@@ -1,0 +1,22 @@
+.site-container{
+    display:flex;
+    width:100%;
+    flex-wrap: wrap;
+}
+.site {
+  width:70px;
+  
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  margin:5px;
+}
+.site img{
+    width:80px;
+    height:80px;
+    
+}
+
+.sorted{
+    font-size: 130%;
+}

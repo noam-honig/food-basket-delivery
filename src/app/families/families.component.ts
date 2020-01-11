@@ -1,37 +1,37 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { AndFilter, ColumnSetting, GridSettings } from 'radweb';
+import { AndFilter, GridSettings, DataControlSettings } from '@remult/core';
 
 import { Families } from './families';
 import { DeliveryStatus } from "./DeliveryStatus";
-import { CallStatus } from "./CallStatus";
+
 import { YesNo } from "./YesNo";
 
-import { FamilySources } from "./FamilySources";
+
 import { BasketType } from "./BasketType";
-import { SelectService } from '../select-popup/select-service';
+
 import { DialogService } from '../select-popup/dialog';
-import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
+
 
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { FilterBase } from 'radweb';
+import { FilterBase } from '@remult/core';
 
-import { BusyService } from 'radweb';
+import { BusyService } from '@remult/core';
 import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
-import { HasAsyncGetTheValue, DateTimeColumn } from '../model-shared/types';
+import { PhoneColumn } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
 
-import { Context } from 'radweb';
+import { Context } from '@remult/core';
 
 import { FamilyDeliveries } from './FamilyDeliveries';
 import { UpdateFamilyComponent } from '../update-family/update-family.component';
-import { PortalHostDirective } from '@angular/cdk/portal';
+
 import { saveToExcel } from '../shared/saveToExcel';
-import { PreviewFamilyComponent, PreviewFamilyInfo } from '../preview-family/preview-family.component';
+import { PreviewFamilyComponent } from '../preview-family/preview-family.component';
 import { Roles, AdminGuard } from '../auth/roles';
 import { MatTabGroup } from '@angular/material/tabs';
 import { QuickAddFamilyComponent } from '../quick-add-family/quick-add-family.component';
@@ -47,26 +47,41 @@ import { translate } from '../translate';
 })
 export class FamiliesComponent implements OnInit {
     @Input() problemOnly = false;
-    limit = 10;
-    addressByGoogleColumn: ColumnSetting<Families>;
-    familyNameColumn: ColumnSetting<Families>;
-    familyAddressColumn: ColumnSetting<Families>;
-    addressCommentColumn: ColumnSetting<Families>;
-    groupsColumn: ColumnSetting<Families>;
-    statusColumn: ColumnSetting<Families>;
-    deliverySummary: ColumnSetting<Families>;
+    limit = 50;
+    addressByGoogleColumn: DataControlSettings<Families>;
+    familyNameColumn: DataControlSettings<Families>;
+    familyAddressColumn: DataControlSettings<Families>;
+    addressCommentColumn: DataControlSettings<Families>;
+    groupsColumn: DataControlSettings<Families>;
+    statusColumn: DataControlSettings<Families>;
+    deliverySummary: DataControlSettings<Families>;
     scrollingSubscription: Subscription;
-    showHoverButton:boolean = false;
-    constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context, private selectService: SelectService, private matDialog: MatDialog,
+    showHoverButton: boolean = false;
+    constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context,
         public scroll: ScrollDispatcher) {
+        for (const item of this.families.columns.items) {
+            if (item.column == this.statusColumn && !item.readOnly) {
+                this.statusColumn = item;
+            }
+            if (this.groupsColumn == item.column)
+                this.groupsColumn = item;
+            if (this.addressByGoogleColumn == item.column)
+                this.addressByGoogleColumn = item;
+            if (this.familyNameColumn == item.column)
+                this.familyNameColumn = item;
+            if (this.addressCommentColumn == item.column)
+                this.addressCommentColumn = item;
+            if (this.groupsColumn == item.column)
+                this.groupsColumn = item;
+        }
         this.doTest();
         this.scrollingSubscription = this.scroll
             .scrolled()
             .subscribe((data: CdkScrollable) => {
-                let val = this.testing.nativeElement.getBoundingClientRect().y<0;
-                if (val!=this.showHoverButton)
-                    this.dialog.zone.run(()=>this.showHoverButton = val);
-                
+                let val = this.testing.nativeElement.getBoundingClientRect().y < 0;
+                if (val != this.showHoverButton)
+                    this.dialog.zone.run(() => this.showHoverButton = val);
+
             });
         let y = dialog.refreshStatusStats.subscribe(() => {
             this.refreshStats();
@@ -77,7 +92,7 @@ export class FamiliesComponent implements OnInit {
         if (dialog.isScreenSmall())
             this.gridView = false;
     }
-    @ViewChild("myRef") testing:ElementRef;
+    @ViewChild("myRef", { static: true }) testing: ElementRef;
     filterBy(s: FaimilyStatistics) {
         this.families.get({
             where: s.rule,
@@ -88,10 +103,21 @@ export class FamiliesComponent implements OnInit {
         });
     }
 
+    resetRow() {
+        var focus: Families;
+        if (this.families.currentRow.isNew()) {
+            let i = this.families.items.indexOf(this.families.currentRow);
+            if (i > 0)
+                focus = this.families.items[i - 1];
+        }
+        this.families.currentRow.reset();
+        if (focus)
+            this.families.setCurrentRow(focus);
+    }
     quickAdd() {
-        QuickAddFamilyComponent.dialog(this.matDialog, {
-            searchName: this.searchString,
-            addedFamily: f => {
+        this.context.openDialog(QuickAddFamilyComponent, s => {
+            s.f.name.value = this.searchString;
+            s.argOnAdd = f => {
                 this.families.items.push(f);
                 this.families.setCurrentRow(f);
             }
@@ -143,14 +169,18 @@ export class FamiliesComponent implements OnInit {
     }
     setCurrentStat(s: FaimilyStatistics) {
         this.currentStatFilter = s;
-        this.families.getRecords();
+        this.refreshFamilyGrid();
     }
     searchString = '';
     async doSearch() {
         if (this.families.currentRow && this.families.currentRow.wasChanged())
             return;
         this.busy.donotWait(async () =>
-            await this.families.getRecords());
+            await this.refreshFamilyGrid());
+    }
+    async refreshFamilyGrid() {
+        this.families.page = 1;
+        await this.families.getRecords();
     }
 
     clearSearch() {
@@ -193,10 +223,18 @@ export class FamiliesComponent implements OnInit {
                         }
                     } catch{ }
                 }
-                addColumn("שם משפחה", lastName, 's');
-                addColumn("שם פרטי", firstName, 's');
-                addColumn("רחוב", street, 's');
-                addColumn("מספר בית", house, 's');
+                addColumn("Xשם משפחה", lastName, 's');
+                addColumn("Xשם פרטי", firstName, 's');
+                addColumn("Xרחוב", street, 's');
+                addColumn("Xמספר בית", house, 's');
+                function fixPhone(p: PhoneColumn) {
+                    if (!p.value)
+                        return '';
+                    else return p.value.replace(/\D/g, '')
+                }
+                addColumn("טלפון1X", fixPhone(f.phone1), 's');
+                addColumn("טלפון2X", fixPhone(f.phone2), 's');
+
             });
     }
 
@@ -222,7 +260,8 @@ export class FamiliesComponent implements OnInit {
                 this.currentFamilyDeliveries = [];
             } else {
                 if (!this.gridView) {
-                    this.currentFamilyDeliveries = await this.families.currentRow.getDeliveries();
+                    this.currentFamilyDeliveries = [];
+                    this.busy.donotWait(async () => this.currentFamilyDeliveries = await this.families.currentRow.getDeliveries());
                 }
             }
         },
@@ -262,11 +301,11 @@ export class FamiliesComponent implements OnInit {
         },
         hideDataArea: true,
         knowTotalRows: true,
-        allowDelete: true,
+
 
         confirmDelete: (h, yes) => this.dialog.confirmDelete(translate('משפחת ') + h.name.value, yes),
         columnSettings: families => {
-            return [
+            let r = [
 
                 this.familyNameColumn = {
                     column: families.name,
@@ -281,27 +320,24 @@ export class FamiliesComponent implements OnInit {
                         return '';
                     }
                 },
-                families.basketType.getColumn()
+                families.basketType
                 ,
-                this.statusColumn = families.deliverStatus.getColumn(),
                 this.deliverySummary = {
                     caption: 'סיכום משלוח',
                     column: families.deliverStatus,
-                    readonly: true,
-                    dropDown: {
-                        items: families.deliverStatus.getOptions()
-                    },
+                    readOnly: true,
+                    valueList: families.deliverStatus.getOptions()
+                    ,
                     getValue: f => f.getDeliveryDescription(),
-                    width: '200'
+                    width: '300'
                 },
 
-                {
-                    column: families.familyMembers,
+                this.statusColumn = families.deliverStatus,
 
-                },
+                families.familyMembers,
+                families.familySource,
 
-                families.familySource.getColumn(),
-                this.groupsColumn = families.groups.getColumn(this.selectService),
+                this.groupsColumn = families.groups,
                 {
                     column: families.internalComment,
                     width: '300'
@@ -310,7 +346,7 @@ export class FamiliesComponent implements OnInit {
                 families.tz2,
                 families.iDinExcel,
                 families.deliveryComments,
-                families.special.getColumn(),
+                families.special,
                 families.createUser,
                 families.createDate,
                 families.lastUpdateDate,
@@ -331,8 +367,8 @@ export class FamiliesComponent implements OnInit {
                 families.phone1Description,
                 families.phone2,
                 families.phone2Description,
-                families.courier.getColumn(this.selectService),
-                families.fixedCourier.getColumn(this.selectService),
+                families.courier,
+                families.fixedCourier,
                 {
                     caption: 'טלפון משנע',
                     getValue: f => this.context.for(Helpers).lookup(f.courier).phone.value
@@ -345,18 +381,26 @@ export class FamiliesComponent implements OnInit {
                 families.deliveryStatusDate,
                 families.courierComments,
                 families.getPreviousDeliveryColumn(),
+                families.previousDeliveryComment,
+                families.previousDeliveryDate,
                 families.socialWorker,
                 families.socialWorkerPhone1,
                 families.socialWorkerPhone2,
+                families.birthDate,
+                families.nextBirthday,
                 families.needsWork,
                 families.needsWorkDate,
                 families.needsWorkUser
             ];
+            if (!DeliveryStatus.usingSelfPickupModule) {
+                r = r.filter(x => x != families.defaultSelfPickup);
+            }
+            return r;
         },
         rowButtons: [
             {
                 name: '',
-                cssClass: 'btn glyphicon glyphicon-pencil',
+                icon: 'edit',
                 click: async f => {
                     this.gridView = !this.gridView;
                     if (!this.gridView) {
@@ -402,7 +446,7 @@ export class FamiliesComponent implements OnInit {
     }
     basketStats: statsOnTab = {
         name: 'נותרו לפי סלים',
-        rule: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(f.courier.isEqualTo('')),
+        rule: f => f.readyAndSelfPickup(),
         stats: [
             this.stats.ready,
             this.stats.special
@@ -431,7 +475,7 @@ export class FamiliesComponent implements OnInit {
         fourthColumn: () => this.groupsColumn
     };
     groupsTotals: statsOnTab = {
-        name:translate('כל המשפחות לפי קבוצות'),
+        name: translate('כל המשפחות לפי קבוצות'),
         rule: f => f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList),
         stats: [
             this.stats.ready,
@@ -456,7 +500,7 @@ export class FamiliesComponent implements OnInit {
 
             ],
             moreStats: [],
-            fourthColumn: () => this.statusColumn
+            fourthColumn: () => this.deliverySummary
         },
         this.cityStats,
         this.basketStats,
@@ -473,7 +517,7 @@ export class FamiliesComponent implements OnInit {
         },
         {
             rule: f => undefined,
-            name: translate( 'כל המשפחות'),
+            name: translate('כל המשפחות'),
             stats: [
                 this.stats.currentEvent,
                 this.stats.notInEvent,
@@ -487,7 +531,7 @@ export class FamiliesComponent implements OnInit {
     tabChanged() {
         this.currentStatFilter = undefined;
         let prevTabColumn = this.currentTabStats.fourthColumn();
-        this.families.getRecords();
+        this.refreshFamilyGrid();
         this.updateChart();
 
         let cols = this.families.columns;
@@ -502,10 +546,10 @@ export class FamiliesComponent implements OnInit {
     }
     clearStat() {
         this.currentStatFilter = undefined;
-        this.families.getRecords();
+        this.refreshFamilyGrid();
 
     }
-    currentTabStats: statsOnTab = { name: '', stats: [], moreStats: [], rule: undefined, fourthColumn: () => this.statusColumn };
+    currentTabStats: statsOnTab = { name: '', stats: [], moreStats: [], rule: undefined, fourthColumn: () => this.deliverySummary };
     previousTabStats: statsOnTab = this.currentTabStats;
     updateChart() {
         this.pieChartData = [];
@@ -533,8 +577,10 @@ export class FamiliesComponent implements OnInit {
             this.colors[0].backgroundColor.push(colors.green, colors.blue, colors.yellow, colors.red, colors.orange, colors.gray);
         }
     }
-    totalBoxes = 0;
-    blockedBoxes = 0;
+    totalBoxes1 = 0;
+    blockedBoxes1 = 0;
+    totalBoxes2 = 0;
+    blockedBoxes2 = 0;
 
     refreshStats() {
         if (this.suspend)
@@ -547,16 +593,21 @@ export class FamiliesComponent implements OnInit {
                 this.groupsReady.stats.splice(0);
                 this.groupsTotals.stats.splice(0);
 
-                this.totalBoxes = 0;
-                this.blockedBoxes = 0;
+                this.totalBoxes1 = 0;
+                this.blockedBoxes1 = 0;
+                this.totalBoxes2 = 0;
+                this.blockedBoxes2 = 0;
                 st.baskets.forEach(b => {
                     let fs = new FaimilyStatistics(b.name, f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(f.courier.isEqualTo('').and(f.basketType.isEqualTo(b.id))), undefined);
                     fs.value = b.unassignedFamilies;
                     this.basketStats.stats.push(fs);
                     if (b.blocked) {
-                        this.blockedBoxes += +b.boxes * +b.unassignedFamilies;
-                    } else
-                        this.totalBoxes += +b.boxes * +b.unassignedFamilies;
+                        this.blockedBoxes1 += +b.boxes * +b.unassignedFamilies;
+                        this.blockedBoxes2 += +b.boxes2 * +b.unassignedFamilies;
+                    } else {
+                        this.totalBoxes1 += +b.boxes * +b.unassignedFamilies;
+                        this.totalBoxes2 += +b.boxes2 * +b.unassignedFamilies;
+                    }
 
                 });
                 let i = 0;
@@ -609,16 +660,21 @@ export class FamiliesComponent implements OnInit {
     }
     showTotalBoxes() {
         if (this.currentTabStats == this.basketStats) {
-            let r = 'סה"כ ארגזים: ' + this.totalBoxes;
-            if (this.blockedBoxes > 0) {
-                r += ', סה"כ ארגזים חסומים: ' + this.blockedBoxes;
+            let r = 'סה"כ ' + BasketType.boxes1Name + ': ' + this.totalBoxes1;
+            if (this.blockedBoxes1) {
+                r += ', סה"כ ' + BasketType.boxes1Name + ' חסומים: ' + this.blockedBoxes1;
+            }
+            if (this.totalBoxes2)
+                r += ', סה"כ ' + BasketType.boxes2Name + ': ' + this.totalBoxes2;
+            if (this.blockedBoxes2) {
+                r += ', סה"כ ' + BasketType.boxes2Name + ' חסומים: ' + this.blockedBoxes2;
             }
             return r;
         }
         return undefined;
     }
-    @ViewChild('myTab') myTab: MatTabGroup;
-    @ViewChild('familyInfo') familyInfo: UpdateFamilyComponent;
+    @ViewChild('myTab', { static: false }) myTab: MatTabGroup;
+    @ViewChild('familyInfo', { static: true }) familyInfo: UpdateFamilyComponent;
     ngOnInit() {
 
         this.refreshStats();
@@ -666,7 +722,7 @@ export class FamiliesComponent implements OnInit {
         this.suspend = true;
     }
     refresh() {
-        this.families.getRecords();
+        this.refreshFamilyGrid();
         this.refreshStats();
     }
 
@@ -676,12 +732,7 @@ export class FamiliesComponent implements OnInit {
         data: { name: 'משפחות' }, canActivate: [AdminGuard]
     }
     previewFamily() {
-        let x = new MatDialogConfig();
-        x.data = {
-            f: this.families.currentRow
-        } as PreviewFamilyInfo;
-        x.minWidth = 350;
-        this.matDialog.open(PreviewFamilyComponent, x);
+        this.context.openDialog(PreviewFamilyComponent, s => s.argsFamily = this.families.currentRow)
     }
 }
 
@@ -690,5 +741,5 @@ interface statsOnTab {
     stats: FaimilyStatistics[],
     moreStats: FaimilyStatistics[],
     rule: (f: Families) => FilterBase,
-    fourthColumn: () => ColumnSetting<any>
+    fourthColumn: () => DataControlSettings<any>
 }

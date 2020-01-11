@@ -1,20 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { EntityClass, Context, DirectSQL, StringColumn, IdColumn } from 'radweb';
+import { EntityClass, Context, StringColumn, IdColumn, SpecificEntityHelper, SqlDatabase } from '@remult/core';
 import { FamilyId, Families } from '../families/families';
 import { changeDate, SqlBuilder, PhoneColumn } from '../model-shared/types';
 import { BasketId } from '../families/BasketType';
 import { DeliveryStatusColumn } from '../families/DeliveryStatus';
 import { HelperId, HelperIdReadonly, Helpers, CompanyColumn } from '../helpers/helpers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
-import { CompoundIdColumn, DateColumn, DataAreaSettings, InMemoryDataProvider, Entity, GridSettings, EntitySource, NumberColumn } from 'radweb';
+import { CompoundIdColumn, DateColumn, DataAreaSettings, InMemoryDataProvider, Entity, GridSettings, NumberColumn } from '@remult/core';
 
 import { Route } from '@angular/router';
 
-import { SelectService } from '../select-popup/select-service';
+
 import { saveToExcel } from '../shared/saveToExcel';
-import { BusyService } from 'radweb';
+import { BusyService } from '@remult/core';
 import { FamilySourceId } from '../families/FamilySources';
-import { RunOnServer } from 'radweb';
+import { ServerFunction } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
@@ -44,7 +44,8 @@ export class DeliveryHistoryComponent implements OnInit {
   });
 
   helperInfo: GridSettings<helperHistoryInfo>;
-  helperSource: EntitySource<helperHistoryInfo>;
+  helperSource: SpecificEntityHelper<string, helperHistoryInfo>;
+
   private getEndOfMonth(): Date {
     return new Date(this.fromDate.value.getFullYear(), this.fromDate.value.getMonth() + 1, 0);
   }
@@ -58,12 +59,13 @@ export class DeliveryHistoryComponent implements OnInit {
     component: DeliveryHistoryComponent,
     data: { name: 'היסטורית משלוחים' }, canActivate: [AdminGuard]
   }
-  constructor(private context: Context, private selectService: SelectService, private busy: BusyService) {
-    let hhi = context.create(helperHistoryInfo);
+  constructor(private context: Context, private busy: BusyService) {
     let x = new InMemoryDataProvider();
-    hhi.setSource(x);
-    this.helperSource = hhi.source;
-    this.helperInfo = new GridSettings(hhi, {
+
+    this.helperSource = context.for(helperHistoryInfo, x);
+    this.helperInfo = this.helperSource.gridSettings({
+      hideDataArea: true,
+      numOfColumnsInGrid: 6,
       columnSettings: h => [
         {
           column: h.name,
@@ -71,7 +73,7 @@ export class DeliveryHistoryComponent implements OnInit {
         },
         {
           column: h.phone,
-          width: '100'
+          width: '140'
         },
         {
           column: h.company,
@@ -156,19 +158,21 @@ export class DeliveryHistoryComponent implements OnInit {
     await saveToExcel(this.helperInfo, "מתנדבים", this.busy, (d: helperHistoryInfo, c) => c == d.courier);
   }
   deliveries = this.context.for(FamilyDeliveriesStats).gridSettings({
+
     columnSettings: d => [
       d.name,
-      d.courier.getColumn(this.selectService),
+      d.courier,
       d.deliveryStatusDate,
-      d.deliverStatus.getColumn(),
-      d.basketType.getColumn(),
+      d.deliverStatus,
+      d.basketType,
       d.city,
-      d.familySource.getColumn(),
+      d.familySource,
       d.courierComments,
-      d.courierAssignUser.getColumn(this.selectService),
+      d.courierAssignUser,
       d.courierAssingTime,
-      d.deliveryStatusUser.getColumn(this.selectService)
+      d.deliveryStatusUser
     ],
+
     hideDataArea: true,
     numOfColumnsInGrid: 7,
     knowTotalRows: true,
@@ -184,18 +188,18 @@ export class DeliveryHistoryComponent implements OnInit {
   async ngOnInit() {
 
     this.refreshHelpers();
-    
+
   }
-  @RunOnServer({ allowed: Roles.admin })
-  static async  getHelperHistoryInfo(fromDate: string, toDate: string, context?: Context, directSql?: DirectSQL) {
+  @ServerFunction({ allowed: Roles.admin })
+  static async  getHelperHistoryInfo(fromDate: string, toDate: string, context?: Context, db?: SqlDatabase) {
     var fromDateDate = DateColumn.stringToDate(fromDate);
     var toDateDate = DateColumn.stringToDate(toDate);
     toDateDate = new Date(toDateDate.getFullYear(), toDateDate.getMonth(), toDateDate.getDate() + 1);
     var sql = new SqlBuilder();
-    var fd = new FamilyDeliveriesStats(context);
-    var h = new Helpers(context);
+    var fd = context.for(FamilyDeliveriesStats).create();
+    var h = context.for(Helpers).create();
 
-    return (await directSql.execute(
+    return (await db.execute(
       sql.build("select ", [
         fd.courier.__getDbName(),
         sql.columnInnerSelect(fd, {
@@ -232,13 +236,13 @@ export class helperHistoryInfo extends Entity<string>{
   courier = new StringColumn();
   name = new StringColumn('שם');
   phone = new PhoneColumn("טלפון");
-  company = new CompanyColumn(); 
+  company = new CompanyColumn(this.context);
   deliveries = new NumberColumn('משלוחים');
   families = new NumberColumn('משפחות');
   dates = new NumberColumn("תאריכים");
-  constructor() {
+  constructor(private context: Context) {
     super({ name: 'helperHistoryInfo', allowApiRead: false, allowApiCRUD: false });
-    this.initColumns(this.courier);
+    this.__initColumns(this.courier);
   }
 }
 
@@ -264,8 +268,8 @@ export class FamilyDeliveriesStats extends Entity<string> {
       name: 'FamilyDeliveriesStats',
       allowApiRead: Roles.admin,
       dbName: () => {
-        var f = new Families(context);
-        var d = new FamilyDeliveries(context);
+        var f = context.for(Families).create();
+        var d = context.for(FamilyDeliveries).create();
         var sql = new SqlBuilder();
         let r = sql.union({
           select: () => [sql.columnWithAlias(f.id, 'as family'), f.name, sql.columnWithAlias(sql.str(''), 'id'),
@@ -304,7 +308,7 @@ export class FamilyDeliveriesStats extends Entity<string> {
       }
 
     });
-    this.initColumns(new CompoundIdColumn(this, this.family, this.id));
+    this.__initColumns(new CompoundIdColumn(this, this.family, this.id));
   }
 
 }

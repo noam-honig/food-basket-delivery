@@ -1,0 +1,51 @@
+<mat-card>
+    <mat-card-title>
+        פרטי מלווה
+        <div>
+
+            <mat-menu #appMenu77>
+                <button mat-menu-item (click)="findHelper()">{{'חפש לפי שם'|translate}}</button>
+                <button mat-menu-item (click)="clearHelperInfo()">{{'נקה פרטי מלווה'|translate}}</button>
+                <button mat-menu-item (click)="saveHelper()"
+                    *ngIf="showSave()">{{'שמור פרטי מלווה ועבור למלווה הבא'|translate}}</button>
+
+            </mat-menu>
+
+            <button mat-icon-button [matMenuTriggerFor]="appMenu77">
+                <mat-icon>more_vert</mat-icon>
+            </button>
+        </div>
+    </mat-card-title>
+    <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
+        <mat-label>מספר הטלפון של המלווה</mat-label>
+        <input matInput [(ngModel)]="phone" (input)="searchPhone()" type="tel" #phoneInput>
+        <div matSuffix style="display:flex">
+            <mat-icon (click)="clearHelperInfo()">clear</mat-icon>
+            <mat-icon (click)="findHelper()">search</mat-icon>
+        </div>
+    </mat-form-field>
+    <data-area [settings]="area" *ngIf="area&& phone&& phone.length==10"></data-area>
+</mat-card>
+<mat-card *ngIf="helper&&alreadyEscortingDriver">
+    <mat-card-title>
+        מוגדר כמלווה של {{alreadyEscortingDriver.name.value}}
+    </mat-card-title>
+    <button mat-raised-button color="primary" (click)="clearEscort()"> בטל שיוך כמלווה</button>
+    <button mat-raised-button color="accent" (click)="sendSms()" style="margin-right:5px;"> שלח הודעת SMS</button>
+</mat-card>
+<mat-card *ngIf="helper &&!helper.theHelperIAmEscorting.value&&helper.name.value">
+    <mat-card-title>
+        נהגים ללא מלווים
+    </mat-card-title>
+    <mat-card-subtitle>
+        לחצו על שם הנהג לשיוך
+    </mat-card-subtitle>
+    <mat-nav-list>
+        <mat-list-item *ngFor="let h of optionalDrivers" (click)="assignForDriver(h)">
+            {{h.name.value}} -
+            {{h.deliveriesInProgress.value}}
+            <mat-divider></mat-divider>
+        </mat-list-item>
+    </mat-nav-list>
+
+</mat-card>

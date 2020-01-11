@@ -1,9 +1,9 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Context } from 'radweb';
-import { Column } from 'radweb';
+import { Context } from '@remult/core';
+import { Column } from '@remult/core';
 import { Families } from '../families/families';
 
 @Component({
@@ -12,11 +12,20 @@ import { Families } from '../families/families';
   styleUrls: ['./update-comment.component.scss']
 })
 export class UpdateCommentComponent implements OnInit {
-
+  public args: {
+    family: Families,
+    showFailStatus?: boolean,
+    assignerName: string,
+    assignerPhone: string,
+    helpText: (s: ApplicationSettings) => Column<any>
+  
+    comment: string,
+    ok: (comment: string, failStatusId: DeliveryStatus) => void,
+    cancel: () => void
+  };
   constructor(
-    public dialogRef: MatDialogRef<UpdateCommentComponent>,
-    private context: Context,
-    @Inject(MAT_DIALOG_DATA) public data: UpdateCommentComponentData
+    public dialogRef: MatDialogRef<any>,
+    private context: Context
   ) {
 
   }
@@ -35,12 +44,12 @@ export class UpdateCommentComponent implements OnInit {
   }
 
   async ngOnInit() {
-    if (this.data.showFailStatus) {
+    if (this.args.showFailStatus) {
       let s = await ApplicationSettings.getAsync(this.context);
       for (const x of s.getPhoneStrategy()) {
         if (x.option) {
           await x.option.build({
-            family: this.data.family,
+            family: this.args.family,
             context: this.context,
             phoneItem: x,
             settings: s,
@@ -53,7 +62,7 @@ export class UpdateCommentComponent implements OnInit {
   phoneOptions: phoneOption[] = [];
   cancel() {
     if (!this.ok) {
-      this.data.cancel();
+      this.args.cancel();
       this.dialogRef.close();
     }
 
@@ -62,27 +71,17 @@ export class UpdateCommentComponent implements OnInit {
   confirm() {
     this.ok = true;
     this.dialogRef.close();
-    this.data.ok(this.data.comment, this.defaultFailStatus);
+    this.args.ok(this.args.comment, this.defaultFailStatus);
     return false;
   }
 
   helpText() {
     let s = ApplicationSettings.get(this.context);
-    return this.data.helpText(s).value;
+    return this.args.helpText(s).value;
   }
 }
 
-export interface UpdateCommentComponentData {
-  family: Families,
-  showFailStatus?: boolean,
-  assignerName: string,
-  assignerPhone: string,
-  helpText: (s: ApplicationSettings) => Column<any>
 
-  comment: string,
-  ok: (comment: string, failStatusId: DeliveryStatus) => void,
-  cancel: () => void
-}
 interface phoneOption {
   name: string;
   phone: string;

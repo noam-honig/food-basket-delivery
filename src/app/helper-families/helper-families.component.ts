@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
-import { BusyService } from 'radweb';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
+import { BusyService } from '@remult/core';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';
@@ -9,11 +9,13 @@ import { AuthService } from '../auth/auth-service';
 import { DialogService } from '../select-popup/dialog';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { Router } from '@angular/router';
-import { SelectService } from '../select-popup/select-service';
+
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Context } from 'radweb';
-import { Column } from 'radweb';
+import { Context } from '@remult/core';
+import { Column } from '@remult/core';
 import { translate } from '../translate';
+import { Helpers } from '../helpers/helpers';
+import { UpdateCommentComponent } from '../update-comment/update-comment.component';
 
 @Component({
   selector: 'app-helper-families',
@@ -22,7 +24,7 @@ import { translate } from '../translate';
 })
 export class HelperFamiliesComponent implements OnInit {
 
-  constructor(public auth: AuthService, private dialog: DialogService, private router: Router, private selectService: SelectService, private context: Context, private busy: BusyService) { }
+  constructor(public auth: AuthService, private dialog: DialogService, private context: Context, private busy: BusyService) { }
   @Input() familyLists: UserFamiliesList;
   @Input() partOfAssign = false;
   @Input() partOfReview = false;
@@ -31,7 +33,7 @@ export class HelperFamiliesComponent implements OnInit {
   @Output() assignSmsSent = new EventEmitter<void>();
   @Input() preview = false;
   ngOnInit() {
-    this.familyLists.setMap(this.map);
+    this.familyLists.setMap(this.map);//123
 
   }
   async cancelAssign(f: Families) {
@@ -78,8 +80,8 @@ export class HelperFamiliesComponent implements OnInit {
     this.deliveredToFamilyOk(f, DeliveryStatus.SuccessLeftThere, s => s.commentForSuccessLeft);
   }
   async deliveredToFamilyOk(f: Families, status: DeliveryStatus, helpText: (s: ApplicationSettings) => Column<any>) {
-    this.selectService.displayComment({
-      family:f,
+    this.context.openDialog(UpdateCommentComponent, x => x.args = {
+      family: f,
       comment: f.courierComments.value,
       assignerName: f.courierHelpName(),
       assignerPhone: f.courierHelpPhone(),
@@ -93,7 +95,7 @@ export class HelperFamiliesComponent implements OnInit {
           this.dialog.analytics('delivered');
           this.initFamilies();
           if (this.familyLists.toDeliver.length == 0) {
-            this.dialog.YesNoQuestion(this.allDoneMessage());
+            this.dialog.messageDialog(this.allDoneMessage());
           }
 
         }
@@ -113,8 +115,8 @@ export class HelperFamiliesComponent implements OnInit {
     return this.partOfAssign || this.partOfReview || this.familyLists.toDeliver.length > 0;
   }
   async couldntDeliverToFamily(f: Families) {
-    this.selectService.displayComment({
-      family:f,
+    this.context.openDialog(UpdateCommentComponent, x => x.args = {
+      family: f,
       comment: f.courierComments.value,
       showFailStatus: true,
       assignerName: f.courierHelpName(),
@@ -143,10 +145,16 @@ export class HelperFamiliesComponent implements OnInit {
   async sendSms(reminder: Boolean) {
     this.helperGotSms = true;
     this.dialog.analytics('Send SMS ' + (reminder ? 'reminder' : ''));
-    await SendSmsAction.SendSms(this.familyLists.helperId, reminder);
+    let to = this.familyLists.helper.name.value;
+    await SendSmsAction.SendSms(this.familyLists.helper.id.value, reminder);
+    if (this.familyLists.helper.escort.value) {
+      to += ' ול' + this.familyLists.escort.name.value;
+      await SendSmsAction.SendSms(this.familyLists.helper.escort.value, reminder);
+    }
+    this.dialog.Info("הודעת SMS נשלחה ל" + to);
     this.assignSmsSent.emit();
     if (reminder)
-      this.familyLists.helperOptional.reminderSmsDate.value = new Date();
+      this.familyLists.helper.reminderSmsDate.value = new Date();
   }
   async sendWhatsapp() {
     let phone = this.smsPhone;
@@ -154,12 +162,13 @@ export class HelperFamiliesComponent implements OnInit {
       phone = '972' + phone.substr(1);
     }
     window.open('https://wa.me/' + phone + '?text=' + encodeURI(this.smsMessage), '_blank');
+    await this.updateMessageSent();
   }
   smsMessage: string = '';
   smsPhone: string = '';
   prepareMessage() {
     this.busy.donotWait(async () => {
-      await SendSmsAction.generateMessage(this.context, this.familyLists.helperId, window.origin, false, this.context.user.name, (phone, message, sender) => {
+      await SendSmsAction.generateMessage(this.context, this.familyLists.helper.id.value, window.origin, false, this.context.user.name, (phone, message, sender) => {
         this.smsMessage = message;
         this.smsPhone = phone;
       });
@@ -168,18 +177,31 @@ export class HelperFamiliesComponent implements OnInit {
   async sendPhoneSms() {
     try {
       window.open('sms:' + this.smsPhone + ';?&body=' + encodeURI(this.smsMessage), '_blank');
+      await this.updateMessageSent();
     } catch (err) {
       this.dialog.Error(err);
     }
   }
+  callHelper() {
+    window.open('tel:' + this.familyLists.helper.phone.value);
+  }
+  callEscort() {
+    window.open('tel:' + this.familyLists.escort.phone.value);
+  }
+  async updateMessageSent() {
+
+    this.familyLists.helper.smsDate.value = new Date();
+    await this.familyLists.helper.save();
+  }
   async copyMessage() {
     copy(this.smsMessage);
     this.dialog.Info("הודעה הועתקה");
+    await this.updateMessageSent();
   }
 
   updateComment(f: Families) {
-    this.selectService.displayComment({
-      family:f,
+    this.context.openDialog(UpdateCommentComponent, x => x.args = {
+      family: f,
       comment: f.courierComments.value,
       assignerName: f.courierHelpName(),
       assignerPhone: f.courierHelpPhone(),
@@ -217,5 +239,6 @@ export class HelperFamiliesComponent implements OnInit {
       this.dialog.Error(err);
     }
   }
-  @ViewChild("map") map: MapComponent;
+  @ViewChild("map", { static: true }) map: MapComponent;
+
 }

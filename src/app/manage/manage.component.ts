@@ -7,7 +7,7 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings, PhoneItem, PhoneOption } from './ApplicationSettings';
 
 
-import { Context, IdEntity, IdColumn, StringColumn, EntityClass } from 'radweb';
+import { Context, IdEntity, IdColumn, StringColumn, EntityClass } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
@@ -41,10 +41,15 @@ export class ManageComponent implements OnInit {
   constructor(private dialog: DialogService, private context: Context) { }
 
   basketType = this.context.for(BasketType).gridSettings({
+    hideDataArea:true,
     columnSettings: x => [
       x.name,
       {
         column: x.boxes,
+        width: '100px'
+      },
+      {
+        column: x.boxes2,
         width: '100px'
       },
       x.blocked
@@ -60,6 +65,7 @@ export class ManageComponent implements OnInit {
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
   });
   sources = this.context.for(FamilySources).gridSettings({
+    hideDataArea:true,
     columnSettings: s => [
       s.name,
       s.phone,
@@ -74,6 +80,7 @@ export class ManageComponent implements OnInit {
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
   });
   groups = this.context.for(Groups).gridSettings({
+    hideDataArea:true,
     columnSettings: s => [
       s.name,
     ], allowUpdate: true,
@@ -86,6 +93,7 @@ export class ManageComponent implements OnInit {
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
   });
   settings = this.context.for(ApplicationSettings).gridSettings({
+    
     numOfColumnsInGrid: 0,
     allowUpdate: true,
     columnSettings: s => [
@@ -119,8 +127,8 @@ export class ManageComponent implements OnInit {
       s.message1OnlyWhenDone,
       s.message2Text,
       s.message2Link,
-      s.deliveredButtonText,
       s.message2OnlyWhenDone,
+      s.deliveredButtonText,
       s.commentForSuccessDelivery,
       s.commentForSuccessLeft,
       s.commentForProblem,
@@ -132,16 +140,26 @@ export class ManageComponent implements OnInit {
   });
   prefereces = this.settings.addArea({
     columnSettings: s => [
-      s.defaultStatusType.getColumn(),
+      s.defaultStatusType,
+      s.usingSelfPickupModule,
       s.showLeftThereButton,
+      s.boxes1Name,
+      s.boxes2Name,
       s.showCompanies,
-      s.forSoldiers
+      s.showHelperComment,
+      s.defaultPrefixForExcelImport,
+      s.redTitleBar,
+      s.forSoldiers,
+      s.manageEscorts
     ]
   });
 
 
   testSms() {
     return SendSmsAction.getMessage(this.settings.currentRow.smsText.value, this.settings.currentRow.organisationName.value, 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
+  }
+  testSmsReminder() {
+    return SendSmsAction.getMessage(this.settings.currentRow.reminderSmsText.value, this.settings.currentRow.organisationName.value, 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
   }
   images = this.context.for(ApplicationImages).gridSettings({
     numOfColumnsInGrid: 0,
@@ -213,12 +231,12 @@ export class ManageComponent implements OnInit {
 
 }
 @EntityClass
-export class Groups extends IdEntity<IdColumn>  {
+export class Groups extends IdEntity  {
 
   name = new StringColumn("קבוצה");
 
   constructor(context: Context) {
-    super(new IdColumn(), {
+    super({
       name: "groups",
       allowApiRead: Roles.admin,
       allowApiCRUD: Roles.admin,

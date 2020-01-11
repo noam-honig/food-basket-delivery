@@ -1,9 +1,9 @@
-import {  RunOnServer } from "radweb";
+import {  ServerFunction } from '@remult/core';
 import { Roles } from "../auth/roles";
 
 export class ServerEventAuthorizeAction {
 
-    @RunOnServer({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.admin })
     static DoAthorize(key: string) {
         ServerEventAuthorizeAction.authorize(key);
     }

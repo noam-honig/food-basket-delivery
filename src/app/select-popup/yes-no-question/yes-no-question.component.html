@@ -1,16 +1,16 @@
 <div dir="rtl">
 
-  <h3 matDialogHeader>{{data.question}}</h3>
+  <h3 matDialogHeader>{{question}}</h3>
 
   <mat-dialog-actions>
 
-    <button mat-raised-button color="warning" (click)="close()" *ngIf="data.onYes">
+    <button mat-raised-button color="warning" (click)="close()" *ngIf="!confirmOnly">
       לא
     </button>
-    <button mat-raised-button color="primary" (click)="close()" *ngIf="!data.onYes">
+    <button mat-raised-button color="accent" (click)="close()" *ngIf="confirmOnly">
       אישור
     </button>
-    <button mat-raised-button color="primary"  (click)="select()" *ngIf="data.onYes">
+    <button mat-raised-button color="accent"  (click)="select()" *ngIf="!confirmOnly">
       כן
     </button>
   </mat-dialog-actions>

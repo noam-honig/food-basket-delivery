@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { StringColumn } from 'radweb';
+import { StringColumn } from '@remult/core';
 import { Helpers } from '../../helpers/helpers';
 import { DialogService } from '../../select-popup/dialog';
 import { AuthService } from '../../auth/auth-service';
-import { SignedInGuard } from 'radweb';
+import { SignedInGuard } from '@remult/core';
 import { Route } from '@angular/router';
-import { Context } from 'radweb';
+import { Context } from '@remult/core';
 
 @Component({
   selector: 'app-update-info',
@@ -21,7 +21,7 @@ export class UpdateInfoComponent implements OnInit {
   }
   static route: Route = { path: 'update-info', component: UpdateInfoComponent, data: { name: 'הגדרות אישיות' }, canActivate: [SignedInGuard] };
 
-  confirmPassword = new StringColumn({ caption: 'אישור סיסמה', inputType: 'password', value: Helpers.emptyPassword });
+  confirmPassword = new StringColumn({ caption: 'אישור סיסמה', dataControlSettings: () => ({inputType: 'password'}), defaultValue: Helpers.emptyPassword });
   helpers = this.context.for(Helpers).gridSettings({
     numOfColumnsInGrid: 0,
     allowUpdate: true,

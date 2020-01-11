@@ -1,5 +1,5 @@
-import * as radweb from 'radweb';
-import {  Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, SQLCommand, SQLQueryResult, ColumnOptions, DecorateDataColumnSettings } from "radweb";
+import * as radweb from '@remult/core';
+import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest,  ColumnOptions, SqlCommand, SqlResult} from '@remult/core';
 
 
 
@@ -10,11 +10,21 @@ export interface HasAsyncGetTheValue {
 }
 
 export class PhoneColumn extends radweb.StringColumn {
-  
+  constructor(settingsOrCaption?: ColumnOptions<string>) {
+    super({
+      dataControlSettings: () => ({
+        click: () => window.open('tel:' + this.displayValue),
+        allowClick: () => !!this.displayValue,
+        clickIcon: 'phone',
+        inputType:'phone'
+      })
+    }, settingsOrCaption);
+  }
   get displayValue() {
     return PhoneColumn.formatPhone(this.value);
   }
-  static formatPhone(s:string){
+
+  static formatPhone(s: string) {
     if (!s)
       return s;
     let x = s.replace(/\D/g, '');
@@ -29,7 +39,7 @@ export class PhoneColumn extends radweb.StringColumn {
 
 
 export class DateTimeColumn extends radweb.DateTimeColumn {
-  
+
   dontShowTimeForOlderDates = false;
   getStringForInputTime() {
     if (!this.value)
@@ -131,7 +141,7 @@ export class DateTimeColumn extends radweb.DateTimeColumn {
     }
     else {
       let days = (Math.trunc(now.valueOf() / (86400 * 1000)) - Math.trunc(d.valueOf() / (86400 * 1000)));
-        r = 'לפני ' + days + ' ימים';
+      r = 'לפני ' + days + ' ימים';
     }
     let t = d.getMinutes().toString();
     if (t.length == 1)
@@ -148,7 +158,7 @@ export class DateTimeColumn extends radweb.DateTimeColumn {
 
 }
 
-export class changeDate extends DateTimeColumn  {
+export class changeDate extends DateTimeColumn {
   allowApiUpdate = false;
 }
 
@@ -426,14 +436,16 @@ export class SqlBuilder {
     return this.build('(', this.query(builder), ' limit 1) ', col);
   }
 }
-class myDummySQLCommand implements SQLCommand {
-  addParameterToCommandAndReturnParameterName(col: radweb.Column<any>, val: any): string {
+class myDummySQLCommand implements SqlCommand {
+
+  execute(sql: string): Promise<radweb.SqlResult> {
+    throw new Error("Method not implemented.");
+  }
+  addParameterAndReturnSqlToken(col: radweb.Column<any>, val: any): string {
     if (typeof (val) == "string") {
       return new SqlBuilder().str(val);
     }
     return val.toString();
-  } query(sql: string): Promise<SQLQueryResult> {
-    throw new Error("Method not implemented.");
   }
 
 

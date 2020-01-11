@@ -4,9 +4,11 @@ import { BasketType } from "../families/BasketType";
 import { Helpers } from '../helpers/helpers';
 import { MapComponent } from '../map/map.component';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
-import { Context } from 'radweb';
+import { Context } from '@remult/core';
 import { routeStats } from '../asign-family/asign-family.component';
 import { translate } from '../translate';
+import { ElementRef } from '@angular/core';
+import { PhoneColumn } from '../model-shared/types';
 
 export class UserFamiliesList {
     map: MapComponent;
@@ -15,40 +17,50 @@ export class UserFamiliesList {
         this.map.userClickedOnFamilyOnMap = (f) => this.userClickedOnFamilyOnMap(f);
     }
     startAssignByMap(city: string, group: string) {
-        if (this.mapElementOrder == -1) { this.mapElementOrder = 1; }
-        else {
-            this.map.loadPotentialAsigment(city, group);
-            this.mapElementOrder = -1;
-        }
+
+        this.map.loadPotentialAsigment(city, group);
+        setTimeout(() => {
+            this.map.gmapElement.nativeElement.scrollIntoView();
+        }, 100);
     }
-    mapElementOrder = 0;
+
     constructor(private context: Context) { }
     toDeliver: Families[] = [];
     delivered: Families[] = [];
     problem: Families[] = [];
     allFamilies: Families[] = [];
-    helperId: string;
-    helperName: string;
-    helperOptional: Helpers;
+    getHelperPhone() {
+        return this.helper.phone.displayValue;
+    }
+    helper: Helpers;
+    escort: Helpers;
     routeStats: routeStats;
     userClickedOnFamilyOnMap: (familyId: string[]) => void = x => { };
-    async initForHelper(helperId: string, name: string, helperOptional?: Helpers) {
+    async initForHelper(helper: Helpers) {
 
-        this.helperOptional = helperOptional;
-        this.helperId = helperId;
-        this.helperName = name;
-        if (helperOptional) {
-            this.routeStats = helperOptional.getRouteStats();
+        this.initHelper(helper);
+        if (helper) {
+            this.routeStats = helper.getRouteStats();
         }
         await this.reload();
+
+    }
+    private async  initHelper(h: Helpers) {
+        this.helper = h;
+        this.escort = undefined;
+        if (this.helper && h.escort) {
+            this.escort = await this.context.for(Helpers).findFirst(x => x.id.isEqualTo(h.escort));
+        }
 
     }
     getLeftFamiliesDescription() {
 
 
         let boxes = 0;
+        let boxes2 = 0;
         for (const iterator of this.toDeliver) {
             boxes += this.context.for(BasketType).lookup(iterator.basketType).boxes.value;
+            boxes2 += this.context.for(BasketType).lookup(iterator.basketType).boxes2.value;
         }
         if (this.toDeliver.length == 0)
             return 'שומר מקום';
@@ -59,16 +71,20 @@ export class UserFamiliesList {
         else
             r = this.toDeliver.length + translate(' משפחות לחלוקה');
 
-
-        if (boxes > this.toDeliver.length)
-            r += ' (' + boxes + ' ארגזים)';
+        let boxesText = '';
+        if (boxes != this.toDeliver.length || boxes2 != 0)
+            boxesText += + boxes + ' ' + BasketType.boxes1Name;
+        if (boxes2 != 0) {
+            boxesText += ' ו-' + boxes2 + ' ' + BasketType.boxes2Name;
+        }
+        if (boxesText != '')
+            r += ' (' + boxesText + ')';
         return r;
 
     }
-    async initForFamilies(helperId: string, name: string, familiesPocoArray: any[]) {
-        this.helperId = helperId;
-        this.helperName = name;
-        let newFamilies = familiesPocoArray.map(x => this.context.for(Families).create().source.fromPojo(x));
+    async initForFamilies(helper: Helpers, familiesPocoArray: any[]) {
+        this.initHelper(helper);
+        let newFamilies = familiesPocoArray.map(x => this.context.for(Families).fromPojo(x));
         newFamilies.push(...this.delivered);
         newFamilies.push(...this.problem);
         this.allFamilies = newFamilies;
@@ -78,10 +94,10 @@ export class UserFamiliesList {
     highlightNewFamilies = false;
     lastHelperId = undefined;
     async reload() {
-        if (this.helperId) {
-            this.allFamilies = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(this.helperId).and(f.deliverStatus.isActiveDelivery()).and(f.visibleToCourier.isEqualTo(true)), orderBy: f => [f.routeOrder, f.address], limit: 1000 });
-            if (this.lastHelperId != this.helperId) {
-                this.lastHelperId = this.helperId;
+        if (this.helper.id) {
+            this.allFamilies = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(this.helper.id).and(f.deliverStatus.isActiveDelivery()).and(f.visibleToCourier.isEqualTo(true)), orderBy: f => [f.routeOrder, f.address], limit: 1000 });
+            if (this.lastHelperId != this.helper.id) {
+                this.lastHelperId = this.helper.id;
                 this.familiesAlreadyAssigned = new Map<string, boolean>();
                 this.highlightNewFamilies = false;
                 for (const f of this.allFamilies) {
@@ -144,7 +160,6 @@ export class UserFamiliesList {
         this.delivered = [];
         this.problem = [];
         this.toDeliver = [];
-        this.mapElementOrder = 1;
         if (this.map)
             this.map.clear();
 

@@ -1,85 +1,88 @@
-.name-div{
-    display:flex;
+.name-div {
+  display: flex;
 }
-.myDiv{
-    display:flex;
-    flex-direction: column;
+.filter-div {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -5px;
+  margin-right: -5px;
+  align-items: center;
+  .mat-form-field,.mat-checkbox {
+    width: 150px;
+    flex-grow: 1;
+    margin-left: 5px;
+    margin-right: 5px;
+  }
 }
-.largeInput{
-    font-size:24px;
+.myDiv {
+  display: flex;
+  flex-direction: column;
 }
-.no-baskets{
-    color:red;
-    text-align: center;
+.largeInput {
+  font-size: 24px;
 }
-.help{
-    font-size:20px;
-    text-align: center;
-    margin-top:30px;
+.no-baskets {
+  color: red;
+  text-align: center;
 }
-.sal-button{
-    width:45%;
-    margin:5px;
-}
-input{
-    font-size:20px;
-}
-.line-container{
-    width:100%;
-    display:flex;
-    align-items: center;
-    flex-direction: row;
-    vertical-align:middle;
-    margin-bottom: 5px;
-    
-}
-.line-container:focus-within{
-    outline-width: 1;
-    
-    border-color: #66afe9;
-    outline: 0;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);   
+.help {
+  font-size: 20px;
+  text-align: center;
+  margin-top: 30px;
 }
 
-.line-container > div >input{
-    border-width:0px;
-    width:100%;
-    outline:0;
-    padding: 0;
+input {
+  //font-size:20px;
 }
-.same-line{
-    background-color:gainsboro;
-    flex:auto;
-}
-.input-same-line{
-    width:auto;
-    flex:auto;
-    background-color:yellow;
-    border-width:0;
-    
+.line-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  vertical-align: middle;
+  margin-bottom: 5px;
 }
 
-h4{
-margin-bottom:2px;
-margin-top:3px;
+.line-container > div > input {
+  border-width: 0px;
+  width: 100%;
+  outline: 0;
+  padding: 0;
 }
-h5{
-    margin-bottom:2px;
-    margin-top:5px;
-    margin-right:2px;
-    }
-select{
-    display:inline-block;
-    width:48%;
-    margin-top:5px;
+.same-line {
+  background-color: gainsboro;
+  flex: auto;
 }
-.numOfBasketsDiv{
-    display:flex;
-    margin-top:10px;
-    justify-content:space-between;
+.input-same-line {
+  width: auto;
+  flex: auto;
+  //background-color:yellow;
+  border-width: 0;
 }
 
-.numOfBasketsDiv>div{
-    width:200px;
+h4 {
+  margin-bottom: 2px;
+  margin-top: 3px;
+}
+h5 {
+  margin-bottom: 2px;
+  margin-top: 5px;
+  margin-right: 2px;
+}
+
+.numOfBasketsDiv {
+  display: flex;
+  margin-top: 10px;
+  justify-content: space-between;
+}
+
+.numOfBasketsDiv > div {
+  width: 200px;
+}
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+  background-color: white;
+  border-radius: 5px;
+}
+::ng-deep .mat-form-field-infix {
+  width: auto !important;
 }

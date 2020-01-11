@@ -9,16 +9,17 @@ import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelper
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
 
-import { Context, DirectSQL } from 'radweb';
-import { RunOnServer } from 'radweb';
+import { Context, SqlDatabase } from '@remult/core';
+import { ServerFunction } from '@remult/core';
 import { SqlBuilder } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { SelectService } from '../select-popup/select-service';
+
 
 import { colors } from '../families/stats-action';
-import { BusyService } from 'radweb';
+import { BusyService } from '@remult/core';
 import { YesNo } from '../families/YesNo';
 import { Roles, AdminGuard } from '../auth/roles';
+import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 
 @Component({
   selector: 'app-distribution-map',
@@ -26,7 +27,7 @@ import { Roles, AdminGuard } from '../auth/roles';
   styleUrls: ['./distribution-map.component.scss']
 })
 export class DistributionMap implements OnInit, OnDestroy {
-  constructor(private context: Context, private dialog: DialogService, private selectService: SelectService, busy: BusyService) {
+  constructor(private context: Context, private dialog: DialogService,  busy: BusyService) {
 
     let y = dialog.refreshStatusStats.subscribe(() => {
       busy.donotWait(async () => {
@@ -78,16 +79,11 @@ export class DistributionMap implements OnInit, OnDestroy {
 
 
   }
-  ready = new statusClass('טרם שויכו', 'https://maps.google.com/mapfiles/ms/micons/yellow-dot.png', colors.yellow);
-  selfPickup = new statusClass('באים לקחת', 'https://maps.google.com/mapfiles/ms/micons/orange-dot.png', colors.orange);
-  onTheWay = new statusClass('בדרך', 'https://maps.google.com/mapfiles/ms/micons/ltblue-dot.png', colors.blue);
-  problem = new statusClass('בעיות', 'https://maps.google.com/mapfiles/ms/micons/red-pushpin.png', colors.red);
-  success = new statusClass('הגיעו', 'https://maps.google.com/mapfiles/ms/micons/green-dot.png', colors.green);
-  statuses = [this.ready, this.selfPickup, this.onTheWay, this.success, this.problem];
+  statuses = new Statuses();
   selectedStatus: statusClass;
   async refreshFamilies() {
     let families = await DistributionMap.GetFamiliesLocations();
-    this.statuses.forEach(element => {
+    this.statuses.statuses.forEach(element => {
       element.value = 0;
     });
 
@@ -114,32 +110,12 @@ export class DistributionMap implements OnInit, OnDestroy {
             //info.open(this.map, familyOnMap.marker);
           }
           family = await this.context.for(Families).findFirst(fam => fam.id.isEqualTo(f.id));
-          this.selectService.updateFamiliy({ f: family });
+          this.context.openDialog(UpdateFamilyDialogComponent, x=>x.args={ f: family });
         });
       }
 
-      let status: statusClass;
-      switch (f.status) {
-        case DeliveryStatus.ReadyForDelivery.id:
-          if (f.courier)
-            status = this.onTheWay;
-          else
-            status = this.ready;
-          break;
-        case DeliveryStatus.SelfPickup.id:
-          status = this.selfPickup;
-          break;
-        case DeliveryStatus.Success.id:
-        case DeliveryStatus.SuccessLeftThere.id:
-        case DeliveryStatus.SuccessPickedUp.id:
-          status = this.success;
-          break;
-        case DeliveryStatus.FailedBadAddress.id:
-        case DeliveryStatus.FailedNotHome.id:
-        case DeliveryStatus.FailedOther.id:
-          status = this.problem;
-          break;
-      }
+      let status: statusClass = this.statuses.getBy(f.status, f.courier);
+
       if (status)
         status.value++;
 
@@ -162,20 +138,19 @@ export class DistributionMap implements OnInit, OnDestroy {
     });
     this.updateChart();
   }
-  @RunOnServer({ allowed: Roles.admin })
-  static async GetFamiliesLocations(onlyPotentialAsignment?:boolean,city?: string, group?: string,context?: Context, directSql?: DirectSQL) {
-    let f = new Families(context);
+  @ServerFunction({ allowed: Roles.admin })
+  static async GetFamiliesLocations(onlyPotentialAsignment?: boolean, city?: string, group?: string, context?: Context, db?: SqlDatabase) {
+    let f = context.for( Families).create();
 
     let sql = new SqlBuilder();
     sql.addEntity(f, "Families");
-    let r = (await directSql.execute(sql.query({
+    let r = (await db.execute(sql.query({
       select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier],
       from: f,
       where: () => {
         let where = [f.deliverStatus.isActiveDelivery().and(f.blockedBasket.isEqualTo(false))];
-        if (onlyPotentialAsignment)
-        {
-          where.push(f.readyFilter(city,group).and(f.special.isEqualTo(YesNo.No)));
+        if (onlyPotentialAsignment) {
+          where.push(f.readyFilter(city, group).and(f.special.isEqualTo(YesNo.No)));
         }
         return where;
       },
@@ -184,17 +159,17 @@ export class DistributionMap implements OnInit, OnDestroy {
 
     return r.rows.map(x => {
       return {
-        id: x[r.getcolumnNameAtIndex(0)] ,
-        lat: +x[r.getcolumnNameAtIndex(1)],
-        lng: +x[r.getcolumnNameAtIndex(2)],
-        status: +x[r.getcolumnNameAtIndex(3)],
-        courier: x[r.getcolumnNameAtIndex(4)]
+        id: x[r.getResultJsonNameForIndexInSelect(0)],
+        lat: +x[r.getResultJsonNameForIndexInSelect(1)],
+        lng: +x[r.getResultJsonNameForIndexInSelect(2)],
+        status: +x[r.getResultJsonNameForIndexInSelect(3)],
+        courier: x[r.getResultJsonNameForIndexInSelect(4)]
       } as familyQueryResult;
 
     }) as familyQueryResult[];
   }
 
-  @ViewChild('gmap') gmapElement: any;
+  @ViewChild('gmap', { static: true }) gmapElement: any;
   map: google.maps.Map;
   async ngOnInit() {
 
@@ -206,7 +181,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     legend: {
       position: 'right',
       onClick: (event: MouseEvent, legendItem: any) => {
-        this.selectedStatus = this.statuses[legendItem.index];
+        this.selectedStatus = this.statuses.statuses[legendItem.index];
         this.refreshFamilies();
         return false;
       }
@@ -214,7 +189,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   };
   public chartClicked(e: any): void {
     if (e.active && e.active.length > 0) {
-      this.selectedStatus = this.statuses[e.active[0]._index];
+      this.selectedStatus = this.statuses.statuses[e.active[0]._index];
       this.refreshFamilies();
     }
   }
@@ -224,7 +199,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.colors[0].backgroundColor.splice(0);
 
 
-    this.statuses.forEach(s => {
+    this.statuses.statuses.forEach(s => {
 
       this.pieChartLabels.push(s.name + ' ' + s.value);
       this.pieChartData.push(s.value);
@@ -260,10 +235,49 @@ export interface infoOnMap {
 
 }
 
-class statusClass {
+export class statusClass {
   constructor(public name: string, public icon: string, public color: string) {
 
   }
   value = 0;
 }
 
+export class Statuses {
+  constructor() {
+    this.statuses.push(this.ready);
+    if (DeliveryStatus.usingSelfPickupModule)
+      this.statuses.push(this.selfPickup);
+    this.statuses.push(this.onTheWay, this.success, this.problem);
+  }
+  getBy(statusId: number, courierId: string): statusClass {
+    switch (statusId) {
+      case DeliveryStatus.ReadyForDelivery.id:
+        if (courierId)
+          return this.onTheWay;
+        else
+          return this.ready;
+        break;
+      case DeliveryStatus.SelfPickup.id:
+        return this.selfPickup;
+        break;
+      case DeliveryStatus.Success.id:
+      case DeliveryStatus.SuccessLeftThere.id:
+      case DeliveryStatus.SuccessPickedUp.id:
+        return this.success;
+        break;
+      case DeliveryStatus.FailedBadAddress.id:
+      case DeliveryStatus.FailedNotHome.id:
+      case DeliveryStatus.FailedOther.id:
+        return this.problem;
+        break;
+    }
+  }
+  ready = new statusClass('טרם שויכו', 'https://maps.google.com/mapfiles/ms/micons/yellow-dot.png', colors.yellow);
+  selfPickup = new statusClass('באים לקחת', 'https://maps.google.com/mapfiles/ms/micons/orange-dot.png', colors.orange);
+  onTheWay = new statusClass('בדרך', 'https://maps.google.com/mapfiles/ms/micons/ltblue-dot.png', colors.blue);
+  problem = new statusClass('בעיות', 'https://maps.google.com/mapfiles/ms/micons/red-pushpin.png', colors.red);
+  success = new statusClass('הגיעו', 'https://maps.google.com/mapfiles/ms/micons/green-dot.png', colors.green);
+  statuses: statusClass[] = [];
+
+
+}

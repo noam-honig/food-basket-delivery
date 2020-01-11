@@ -1,14 +1,13 @@
 import { Injectable, NgZone } from "@angular/core";
-import { MatDialog, MatSnackBar } from "@angular/material";
-import { Entity, IDataSettings } from "radweb";
-import { SelectPopupComponent, SelectComponentInfo } from "./select-popup.component";
-import { YesNoQuestionComponentData, YesNoQuestionComponent } from "./yes-no-question/yes-no-question.component";
-import { InputAreaComponentData, InputAreaComponent } from "./input-area/input-area.component";
-import { BusyService } from 'radweb';
-import { environment } from "../../environments/environment";
+import { MatSnackBar } from "@angular/material";
+import { Context } from '@remult/core';
+
+import { YesNoQuestionComponent } from "./yes-no-question/yes-no-question.component";
+import { BusyService } from '@remult/core';
 import { ServerEventAuthorizeAction } from "../server/server-event-authorize-action";
 import { Subject } from "rxjs";
 import { myThrottle } from "../model-shared/types";
+import { TestComponentRenderer } from "@angular/core/testing";
 
 declare var gtag;
 
@@ -22,7 +21,7 @@ export class DialogService {
     }
     Error(err: string): any {
 
-        this.YesNoQuestion(err);
+        this.messageDialog(err);
     }
     private mediaMatcher: MediaQueryList = matchMedia(`(max-width: 720px)`);
 
@@ -36,7 +35,7 @@ export class DialogService {
     statusRefreshThrottle = new myThrottle(1000);
 
 
-    constructor(private dialog: MatDialog, public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar) {
+    constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private context: Context) {
         this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));
 
 
@@ -59,7 +58,7 @@ export class DialogService {
             let EventSource: any = window['EventSource'];
             if (enable && typeof (EventSource) !== "undefined") {
                 this.zone.run(() => {
-                    var source = new EventSource(environment.serverUrl + 'stream', { withCredentials: true });
+                    var source = new EventSource(Context.apiBaseUrl + '/' + 'stream', { withCredentials: true });
                     if (this.eventSource) {
                         this.eventSource.close();
                         this.eventSource = undefined;
@@ -81,37 +80,21 @@ export class DialogService {
             }
         }
     }
-    displayArea(settings: InputAreaComponentData) {
-        this.dialog.open(InputAreaComponent, { data: settings });
+    async messageDialog(what: string) {
+        return await this.context.openDialog(YesNoQuestionComponent, y => {
+            y.question = what;
+            y.confirmOnly = true;
+        }, x => x.yes);
     }
-    showPopup<T extends Entity<any>>(entityType: { new(...args: any[]): T; }, selected: (selectedValue: T) => void, settings?: IDataSettings<T>) {
-
-        let data: SelectComponentInfo<T> = {
-            onSelect: selected,
-            entity: entityType,
-            settings: settings
-        };
-        let ref = this.dialog.open(SelectPopupComponent, {
-            data
-        });
-    }
-    YesNoQuestion(question: string, onYes?: () => void) {
-        let data: YesNoQuestionComponentData = {
+    YesNoQuestion(question: string, onYes: () => void) {
+        this.context.openDialog(YesNoQuestionComponent, x => x.args = {
             question: question,
             onYes: onYes,
             showOnlyConfirm: !onYes
-        };
-        this.dialog.open(YesNoQuestionComponent, { data });
+        });
     }
     async YesNoPromise(question: string) {
-        return new Promise<boolean>((resolve, reject) => {
-            let data: YesNoQuestionComponentData = {
-                question: question,
-                onYes: () => resolve(true),
-                onNo: () => resolve(false)
-            };
-            this.dialog.open(YesNoQuestionComponent, { data });
-        });
+        return await this.context.openDialog(YesNoQuestionComponent, y => y.question = question, x => x.yes);
     }
     confirmDelete(of: string, onOk: () => void) {
         this.YesNoQuestion("האם את בטוחה שאת מעוניית למחוק את " + of + "?", onOk);

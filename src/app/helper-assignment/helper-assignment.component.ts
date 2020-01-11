@@ -1,7 +1,7 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig } from '@angular/material/dialog';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Helpers } from '../helpers/helpers';
-import { Context } from 'radweb';
+
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 
 @Component({
@@ -10,27 +10,17 @@ import { AsignFamilyComponent } from '../asign-family/asign-family.component';
   styleUrls: ['./helper-assignment.component.scss']
 })
 export class HelperAssignmentComponent implements OnInit {
-
+  public argsHelper: Helpers;
   constructor(
-    private dialogRef: MatDialogRef<any>,
-    @Inject(MAT_DIALOG_DATA) public data: HelperAssignmentParameters,
-    private context: Context
+    private dialogRef: MatDialogRef<any>
   ) {
   }
-  @ViewChild("assign") asign: AsignFamilyComponent;
+  @ViewChild("assign", { static: true }) asign: AsignFamilyComponent;
   ngOnInit() {
-    this.asign.specificToHelper(this.data.helper);
+    this.asign.specificToHelper(this.argsHelper);
   }
-  static dialog(dialog: MatDialog, data: HelperAssignmentParameters) {
-    let x = new MatDialogConfig();
-    x.data = data;
-    x.minWidth = 350;
-    let r = dialog.open(HelperAssignmentComponent, x);
-  }
+
   close() {
     this.dialogRef.close();
   }
-}
-export interface HelperAssignmentParameters {
-  helper: Helpers
 }

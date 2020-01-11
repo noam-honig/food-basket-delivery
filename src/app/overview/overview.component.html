@@ -1,0 +1,15 @@
+<ng-container *ngIf="overview">
+    <ul>
+        <li *ngFor="let i of overview.statistics" (click)="doSort(i)" [class.sorted]="sortBy==i.caption">
+            {{i.caption}} - {{i.value}}
+        </li>
+    </ul>
+
+    <div class="site-container" [transition-group]="'flip-list'">
+        <mat-card *ngFor="let site of overview.sites" class="site" transition-group-item>
+            <span *ngIf="sortBy">{{site.stats[sortBy]}}</span>
+            <a href="/{{site.site}}"><img src="{{site.logo}}"></a>
+            {{site.name}}
+        </mat-card>
+    </div>
+</ng-container>
