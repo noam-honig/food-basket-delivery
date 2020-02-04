@@ -20,6 +20,9 @@ export class FamilyInfoComponent implements OnInit {
   @Input() showHelp = false;
   ngOnInit() {
   }
+  actuallyShowHelp() {
+    return this.showHelp && this.f.deliverStatus.value != DeliveryStatus.ReadyForDelivery;
+  }
   @Input() partOfAssign: Boolean;
   @Output() assignmentCanceled = new EventEmitter<void>();
   async SendHelpSms() {
@@ -33,26 +36,26 @@ export class FamilyInfoComponent implements OnInit {
   }
   async familiyPickedUp(f: Families) {
     this.context.openDialog(UpdateCommentComponent, x => x.args =
-      {
-        family: f,
-        comment: f.courierComments.value,
-        assignerName: f.courierHelpName(),
-        assignerPhone: f.courierHelpPhone(),
-        helpText: s => s.commentForSuccessDelivery,
-        ok: async (comment) => {
-          f.deliverStatus.value = DeliveryStatus.SuccessPickedUp;
-          f.courierComments.value = comment;
-          f.checkNeedsWork();
-          try {
-            await f.save();
-            this.dialog.analytics('Self Pickup');
-          }
-          catch (err) {
-            this.dialog.Error(err);
-          }
-        },
-        cancel: () => { }
-      });
+    {
+      family: f,
+      comment: f.courierComments.value,
+      assignerName: f.courierHelpName(),
+      assignerPhone: f.courierHelpPhone(),
+      helpText: s => s.commentForSuccessDelivery,
+      ok: async (comment) => {
+        f.deliverStatus.value = DeliveryStatus.SuccessPickedUp;
+        f.courierComments.value = comment;
+        f.checkNeedsWork();
+        try {
+          await f.save();
+          this.dialog.analytics('Self Pickup');
+        }
+        catch (err) {
+          this.dialog.Error(err);
+        }
+      },
+      cancel: () => { }
+    });
 
   }
   async cancelAssign(f: Families) {
