@@ -15,7 +15,7 @@ declare var gtag;
 export class DialogService {
     Info(info: string): any {
         if (info.indexOf('!!') >= 0) {
-            new Audio('http://www.orangefreesounds.com/wp-content/uploads/2019/02/Ping-tone.mp3').play();
+            //new Audio('http://www.orangefreesounds.com/wp-content/uploads/2019/02/Ping-tone.mp3').play();
         }
         this.snackBar.open(info, "סגור", { duration: 4000 });
     }
