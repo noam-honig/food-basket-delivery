@@ -76,8 +76,10 @@ export class BatchOperationsComponent implements OnInit {
                 limit: 1
             });
         if (lastFamiliyDelivered && lastFamiliyDelivered.length > 0) {
-            if (lastFamiliyDelivered[0].deliveryStatusDate.value < d)
+            if (lastFamiliyDelivered[0].deliveryStatusDate.value < d){
+                d = lastFamiliyDelivered[0].deliveryStatusDate.value;
                 d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
+            }
         }
         this.deliveryDate.value = d;
 
@@ -114,6 +116,7 @@ export class BatchOperationsComponent implements OnInit {
             await f.save();
             f.deliveryStatusDate.value = d;
             await f.save();
+            f.deliveryStatusDate.value.toString();
         }
 
     }

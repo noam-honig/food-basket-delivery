@@ -84,7 +84,7 @@ export class UserFamiliesList {
     }
     async initForFamilies(helper: Helpers, familiesPocoArray: any[]) {
         this.initHelper(helper);
-        let newFamilies = familiesPocoArray.map(x => this.context.for(Families).fromPojo(x));
+        let newFamilies =await Promise.all(familiesPocoArray.map(x => this.context.for(Families).fromPojo(x)));
         newFamilies.push(...this.delivered);
         newFamilies.push(...this.problem);
         this.allFamilies = newFamilies;
