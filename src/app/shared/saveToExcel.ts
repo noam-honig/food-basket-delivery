@@ -1,10 +1,11 @@
-import { Entity, Column, GridSettings, ColumnHashSet, } from '@remult/core';
+import { Entity, Column, GridSettings,  Context, SpecificEntityHelper, } from '@remult/core';
 import { BusyService } from '@remult/core';
 
 import { HasAsyncGetTheValue, DateTimeColumn } from "../model-shared/types";
 import { foreachSync } from "./utils";
 
 export async function saveToExcel<E extends Entity<any>, T extends GridSettings<E>>(
+  context:SpecificEntityHelper<any,E>,
   grid: T,
   fileName: string,
   busy: BusyService,
@@ -75,7 +76,7 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
               colName = String.fromCharCode(i);
               if (colName > 'Z') {
                 colName = 'A';
-                if (colPrefix=='A')
+                if (colPrefix == 'A')
                   colPrefix = 'B';
                 else
                   colPrefix = 'A';
@@ -89,8 +90,7 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
               }
             }
           };
-
-          await foreachSync(f.__iterateColumns(), async c => {
+          for (const c of f.columns) {
             try {
               if (!excludeColumn(<E>f, c)) {
                 let v = c.displayValue;
@@ -102,21 +102,22 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
                 }
 
                 if (c instanceof DateTimeColumn) {
-                  addColumn('תאריך ' + c.caption, c.value ? c.getStringForInputDate() : undefined, "d", false);
-                  addColumn('שעת ' + c.caption, c.value ? c.value.getHours().toString() : undefined, "n", false);
-                  addColumn('מלא ' + c.caption, c.displayValue, "s", true);
+                  addColumn('תאריך ' + c.defs.caption, c.value ? c.getStringForInputDate() : undefined, "d", false);
+                  addColumn('שעת ' + c.defs.caption, c.value ? c.value.getHours().toString() : undefined, "n", false);
+                  addColumn('מלא ' + c.defs.caption, c.displayValue, "s", true);
                 }
                 else
-                  addColumn(c.caption, v.toString(), "s", hideColumn(<E>f, c))
+                  addColumn(c.defs.caption, v.toString(), "s", hideColumn(<E>f, c))
 
               }
             } catch (err) {
 
-              console.error(err, c.jsonName, f.__toPojo(new ColumnHashSet()));
+              console.error(err, c.defs.key,context.toApiPojo(<E>f));
             }
-          });
+          }
+         
           if (moreColumns)
-            moreColumns(<E>f,addColumn);
+            moreColumns(<E>f, addColumn);
           rowNum++;
 
         });

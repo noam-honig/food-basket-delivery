@@ -420,7 +420,7 @@ export class AsignFamilyComponent implements OnInit {
         if (info.helperId) {
             let r = await db.execute(sql.build('select count(*) from ', f, ' where ', f.readyFilter(info.filterCity, info.filterGroup).and(f.special.isEqualTo(YesNo.No)), ' and ',
                 filterRepeatFamilies(sql, f, fd, info.helperId)));
-            result.repeatFamilies = r.rows[0][r.getResultJsonNameForIndexInSelect(0)];
+            result.repeatFamilies = r.rows[0][r.getColumnKeyInResultForIndexInSelect(0)];
         }
 
 
@@ -513,9 +513,9 @@ export class AsignFamilyComponent implements OnInit {
 
                 return r.rows.map(x => {
                     return {
-                        id: x[r.getResultJsonNameForIndexInSelect(0)],
-                        addressLatitude: +x[r.getResultJsonNameForIndexInSelect(1)],
-                        addressLongitude: +x[r.getResultJsonNameForIndexInSelect(2)]
+                        id: x[r.getColumnKeyInResultForIndexInSelect(0)],
+                        addressLatitude: +x[r.getColumnKeyInResultForIndexInSelect(1)],
+                        addressLongitude: +x[r.getColumnKeyInResultForIndexInSelect(2)]
                     } as familyQueryResult;
 
                 }) as familyQueryResult[];

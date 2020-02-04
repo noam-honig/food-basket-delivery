@@ -150,7 +150,7 @@ serverInit().then(async (dataSource) => {
                 'select count (distinct ',
                 fds.courier,
                 ' ) as x from ',
-                fds.__getDbName(),
+                fds.defs.dbName,
                 ' where ',
                 fds.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(fds.deliveryStatusDate.isLessThan(toDate)));
 

@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { ServerContext, allEntities, IdEntity, SqlDatabase } from "@remult/core";
 import { Pool } from "pg";
-import { PostgresDataProvider, PostgrestSchemaBuilder } from "@remult/server-postgres";
+import { PostgresDataProvider, PostgresSchemaBuilder } from "@remult/server-postgres";
 import { verifySchemaExistance, PostgresSchemaWrapper } from "./serverInit";
 import { Families } from "../families/families";
 import { Sites } from "../sites/sites";
@@ -33,8 +33,8 @@ export async function dataMigration(res: Response) {
             //return;
             verifySchemaExistance(targetPool, schema);
             var w = new PostgresSchemaWrapper(targetPool, schema);
-            let builder = new PostgrestSchemaBuilder(w, schema);
             var psw = new SqlDatabase( new  PostgresDataProvider(w));
+            let builder = new PostgresSchemaBuilder(psw, schema);
             let r = "";
             await psw.transaction(async tdp => {
                 let target = new ServerContext();
@@ -42,18 +42,18 @@ export async function dataMigration(res: Response) {
 
                 for (const entity of allEntities) {
                     let x = source.for(entity).create();
-                    if (x.__getDbName().toLowerCase().indexOf('from ') < 0) {
-                        await builder.CreateIfNotExist(x);
+                    if (x.defs.dbName.toLowerCase().indexOf('from ') < 0) {
+                        await builder.createIfNotExist(x);
 
                         let rows = await source.for(entity).find();
-                        console.log(x.__getDbName() + ": " + rows.length);
-                        r += x.__getDbName() + ": " + rows.length + "\r\n";
+                        console.log(x.defs.dbName + ": " + rows.length);
+                        r += x.defs.dbName + ": " + rows.length + "\r\n";
                         for (const r of rows) {
                             let tr = target.for(entity).create();
                             if (tr instanceof IdEntity)
                                 tr.setEmptyIdForNewRow();
-                            for (const col of r.__iterateColumns()) {
-                                tr.__getColumn(col).value = col.value;
+                            for (const col of r.columns) {
+                                tr.columns.find(col).value = col.value;
                             }
                             if (tr instanceof Families)
                                 tr.disableOnSavingRow = true;

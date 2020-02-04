@@ -96,7 +96,7 @@
                                 <th></th>
                                 <th></th>
                                 <th *ngFor="let c of columnsInCompare">
-                                    {{c.caption}}
+                                    {{c.defs.caption}}
                                 </th>
                             </tr>
                             <ng-container
@@ -128,7 +128,7 @@
                                 <th></th>
                                 <th></th>
                                 <th *ngFor="let c of columnsInCompare">
-                                    {{c.caption}} <mat-icon style="color:green" *ngIf="getColUpdateCount(c)>0"
+                                    {{c.defs.caption}} <mat-icon style="color:green" *ngIf="getColUpdateCount(c)>0"
                                         (click)="updateAllCol(c)">done_all
                                     </mat-icon>
 
@@ -170,7 +170,7 @@
 
                                 <th></th>
                                 <th *ngFor="let c of columnsInCompare">
-                                    {{c.caption}}
+                                    {{c.defs.caption}}
                                 </th>
                             </tr>
                             <ng-container *ngFor="let i of identicalRows| paginate: { itemsPerPage: 100,currentPage:existingFamiliesPage,id:'existingFamiliesPage'}">
@@ -196,7 +196,7 @@
 
                                 <th></th>
                                 <th *ngFor="let c of columnsInCompare">
-                                    {{c.caption}}
+                                    {{c.defs.caption}}
                                 </th>
                             </tr>
                             <ng-container

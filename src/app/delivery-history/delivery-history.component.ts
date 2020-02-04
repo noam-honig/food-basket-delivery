@@ -44,7 +44,7 @@ export class DeliveryHistoryComponent implements OnInit {
   });
 
   helperInfo: GridSettings<helperHistoryInfo>;
-  helperSource: SpecificEntityHelper<string, helperHistoryInfo>;
+  
 
   private getEndOfMonth(): Date {
     return new Date(this.fromDate.value.getFullYear(), this.fromDate.value.getMonth() + 1, 0);
@@ -59,11 +59,12 @@ export class DeliveryHistoryComponent implements OnInit {
     component: DeliveryHistoryComponent,
     data: { name: 'היסטורית משלוחים' }, canActivate: [AdminGuard]
   }
+  helperStorage: InMemoryDataProvider;
   constructor(private context: Context, private busy: BusyService) {
-    let x = new InMemoryDataProvider();
+    this.helperStorage = new InMemoryDataProvider();
 
-    this.helperSource = context.for(helperHistoryInfo, x);
-    this.helperInfo = this.helperSource.gridSettings({
+     
+    this.helperInfo = context.for(helperHistoryInfo, this.helperStorage).gridSettings({
       hideDataArea: true,
       numOfColumnsInGrid: 6,
       columnSettings: h => [
@@ -105,19 +106,10 @@ export class DeliveryHistoryComponent implements OnInit {
     this.toDate.value = this.getEndOfMonth();
   }
   private async refreshHelpers() {
-    for (const h of await this.helperSource.find({})) {
-      await h.delete();
-    }
+    
     var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.fromDate.rawValue, this.toDate.rawValue);
-    for (const hh of x) {
-      let h = this.helperSource.fromPojo(hh);
-      for (const c of h.__iterateColumns()) {
-        if (c instanceof NumberColumn)
-          c.value = +c.value;
-      }
-      h.__entityData["newRow"] = true;
-      await h.save();
-    }
+    let rows:any[] = this.helperStorage.rows[this.context.for(helperHistoryInfo).create().defs.dbName];
+    rows.splice(0,rows.length,...x);
     this.helperInfo.getRecords();
   }
 
@@ -152,10 +144,10 @@ export class DeliveryHistoryComponent implements OnInit {
   }
 
   async saveToExcel() {
-    await saveToExcel(this.deliveries, "משלוחים", this.busy, (d: FamilyDeliveriesStats, c) => c == d.id || c == d.family);
+    await saveToExcel(this.context.for(FamilyDeliveriesStats), this.deliveries, "משלוחים", this.busy, (d: FamilyDeliveriesStats, c) => c == d.id || c == d.family);
   }
   async saveToExcelHelpers() {
-    await saveToExcel(this.helperInfo, "מתנדבים", this.busy, (d: helperHistoryInfo, c) => c == d.courier);
+    await saveToExcel(this.context.for(helperHistoryInfo), this.helperInfo, "מתנדבים", this.busy, (d: helperHistoryInfo, c) => c == d.courier);
   }
   deliveries = this.context.for(FamilyDeliveriesStats).gridSettings({
 
@@ -201,32 +193,32 @@ export class DeliveryHistoryComponent implements OnInit {
 
     return (await db.execute(
       sql.build("select ", [
-        fd.courier.__getDbName(),
+        fd.courier.defs.dbName,
         sql.columnInnerSelect(fd, {
           select: () => [h.name],
           from: h,
-          where: () => [sql.build(h.id, "=", fd.courier.__getDbName())]
+          where: () => [sql.build(h.id, "=", fd.courier.defs.dbName)]
         }),
         sql.columnInnerSelect(fd, {
           select: () => [h.company],
           from: h,
-          where: () => [sql.build(h.id, "=", fd.courier.__getDbName())]
+          where: () => [sql.build(h.id, "=", fd.courier.defs.dbName)]
         }),
         sql.columnInnerSelect(fd, {
           select: () => [h.phone],
           from: h,
-          where: () => [sql.build(h.id, "=", fd.courier.__getDbName())]
+          where: () => [sql.build(h.id, "=", fd.courier.defs.dbName)]
         })
         , "deliveries", "dates", "families"], " from (",
         sql.build("select ", [
-          fd.courier.__getDbName(),
+          fd.courier.defs.dbName,
           "count(*) deliveries",
-          sql.build("count (distinct date (", fd.courierAssingTime.__getDbName(), ")) dates"),
-          sql.build("count (distinct ", fd.family.__getDbName(), ") families")],
-          ' from ', fd.__getDbName(),
+          sql.build("count (distinct date (", fd.courierAssingTime.defs.dbName, ")) dates"),
+          sql.build("count (distinct ", fd.family.defs.dbName, ") families")],
+          ' from ', fd.defs.dbName,
           ' where ', sql.and(fd.deliveryStatusDate.isGreaterOrEqualTo(fromDateDate).and(fd.deliveryStatusDate.isLessThan(toDateDate))))
 
-        + sql.build(' group by ', fd.courier.__getDbName()), ") x"))).rows;
+        + sql.build(' group by ', fd.courier.defs.dbName), ") x"))).rows;
 
   }
 
@@ -242,7 +234,7 @@ export class helperHistoryInfo extends Entity<string>{
   dates = new NumberColumn("תאריכים");
   constructor(private context: Context) {
     super({ name: 'helperHistoryInfo', allowApiRead: false, allowApiCRUD: false });
-    this.__initColumns(this.courier);
+    
   }
 }
 
@@ -272,7 +264,7 @@ export class FamilyDeliveriesStats extends Entity<string> {
         var d = context.for(FamilyDeliveries).create();
         var sql = new SqlBuilder();
         let r = sql.union({
-          select: () => [sql.columnWithAlias(f.id, 'as family'), f.name, sql.columnWithAlias(sql.str(''), 'id'),
+          select: () => [sql.columnWithAlias(f.id, 'as family'), f.name, sql.columnWithAlias(f.id, 'id'),
           f.basketType,
           f.deliverStatus,
           f.courier,
@@ -308,7 +300,7 @@ export class FamilyDeliveriesStats extends Entity<string> {
       }
 
     });
-    this.__initColumns(new CompoundIdColumn(this, this.family, this.id));
+    
   }
 
 }

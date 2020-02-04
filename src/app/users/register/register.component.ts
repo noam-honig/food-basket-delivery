@@ -31,7 +31,7 @@ export class RegisterComponent implements OnInit {
     onValidate: h => {
       if (h)
         if (h.password.value != this.confirmPassword.value) {
-          h.password.error = "הסיסמה אינה תואמת את אישור הסיסמה";
+          h.password.validationError = "הסיסמה אינה תואמת את אישור הסיסמה";
         }
     }
   });

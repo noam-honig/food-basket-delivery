@@ -28,11 +28,9 @@ export class DeliveryStatus {
   static RemovedFromList: DeliveryStatus = new DeliveryStatus(99, 'הוצא מהרשימות');
 
 
-  constructor(public id: number, private name: string) {
+  constructor(public id: number, public caption: string) {
   }
-  toString() {
-    return this.name;
-  }
+  
 }
 export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
   isActiveDelivery() {
@@ -68,8 +66,8 @@ export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
 
       }
     },settingsOrCaption);
-    if (!this.caption)
-      this.caption = 'סטטוס משלוח';
+    if (!this.defs.caption)
+      this.defs.caption = 'סטטוס משלוח';
   }
 
   isSuccess() {

@@ -13,9 +13,7 @@ export class YesNoColumn extends ValueListColumn<YesNo>{
   constructor(caption: ColumnOptions<YesNo>) {
     super(YesNo, {
       dataControlSettings: () => ({
-        dropDown: {
-          items: this.getOptions()
-        },
+        valueList:this.getOptions(),
         width: '100'
       })
     }

@@ -35,8 +35,8 @@ export class ManageComponent implements OnInit {
     this.images.currentRow.save();
   }
   reset() {
-    this.settings.currentRow.reset();
-    this.images.currentRow.reset();
+    this.settings.currentRow.undoChanges();
+    this.images.currentRow.undoChanges();
   }
   constructor(private dialog: DialogService, private context: Context) { }
 

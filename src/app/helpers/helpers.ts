@@ -23,7 +23,7 @@ export abstract class HelpersBase extends IdEntity {
         caption: "שם",
         validate: () => {
             if (!this.name.value || this.name.value.length < 2)
-                this.name.error = 'השם קצר מידי';
+                this.name.validationError = 'השם קצר מידי';
         }
     });
     phone = new PhoneColumn("טלפון");

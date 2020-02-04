@@ -1,7 +1,7 @@
 
 import { Pool, QueryResult } from 'pg';
 import { config } from 'dotenv';
-import { PostgresDataProvider, PostgrestSchemaBuilder, PostgresPool, PostgresClient } from '@remult/server-postgres';
+import { PostgresDataProvider, PostgresSchemaBuilder, PostgresPool, PostgresClient } from '@remult/server-postgres';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
 import { ServerContext, Context, Entity, SqlDatabase } from '@remult/core';
@@ -52,12 +52,12 @@ export async function serverInit() {
             let dp = new SqlDatabase(new PostgresDataProvider(adminSchemaPool));
             context.setDataProvider(dp)
 
-            let builder = new PostgrestSchemaBuilder(adminSchemaPool, Sites.guestSchema);
+            let builder = new PostgresSchemaBuilder(dp, Sites.guestSchema);
             for (const entity of <{ new(...args: any[]): Entity<any>; }[]>[
                 ApplicationSettings,
                 ApplicationImages,
                 Helpers]) {
-                await builder.CreateIfNotExist(context.for(entity).create());
+                await builder.createIfNotExist(context.for(entity).create());
                 await builder.verifyAllColumns(context.for(entity).create());
             }
             let settings = await context.for(ApplicationSettings).lookupAsync(s => s.id.isEqualTo(1));
@@ -72,7 +72,7 @@ export async function serverInit() {
                     throw 'admin is an ivalid schema name;'
                 await verifySchemaExistance(pool, s);
                 let schemaPool = new PostgresSchemaWrapper(pool, s);
-                await new PostgrestSchemaBuilder(schemaPool, s).verifyStructureOfAllEntities();
+                await new PostgresSchemaBuilder( new SqlDatabase(new PostgresDataProvider(adminSchemaPool)), s).verifyStructureOfAllEntities();
                 await initSchema(schemaPool, s);
             }
             Sites.getDataProviderForOrg = org => new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, org)));
@@ -83,7 +83,7 @@ export async function serverInit() {
             };
         }
         else {
-            await new PostgrestSchemaBuilder(pool).verifyStructureOfAllEntities();
+            await new PostgresSchemaBuilder(new SqlDatabase(new PostgresDataProvider(pool))).verifyStructureOfAllEntities();
             await initSchema(pool, '');
             return y => new SqlDatabase(new PostgresDataProvider(pool));
         }

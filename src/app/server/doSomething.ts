@@ -2,9 +2,9 @@
 //let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
 
 import { readFileSync } from "fs";
-import { ColumnHashSet, SqlDatabase } from '@remult/core';
+import {  SqlDatabase } from '@remult/core';
 
-import { GetGeoInformation } from "../shared/googleApiHelpers";
+
 
 
 
@@ -20,7 +20,7 @@ import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { BasketType } from "../families/BasketType";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Pool } from "pg";
-import { PostgresDataProvider, PostgrestSchemaBuilder } from "@remult/server-postgres";
+import { PostgresDataProvider, PostgresSchemaBuilder } from "@remult/server-postgres";
 
 
 let match = 0;
@@ -45,23 +45,23 @@ export async function DoIt() {
             //return;
             verifySchemaExistance(targetPool, schema);
             var w = new PostgresSchemaWrapper(targetPool, schema);
-            let builder = new PostgrestSchemaBuilder(w, schema);
             var psw = new PostgresDataProvider(w);
+            let builder = new PostgresSchemaBuilder(new SqlDatabase( psw), schema);
             await psw.transaction(async tdp => {
                 let target = new ServerContext();
                 target.setDataProvider(new SqlDatabase( tdp));
 
                 for (const entity of allEntities) {
                     let x = source.for(entity).create();
-                    if (x.__getDbName().toLowerCase().indexOf('from ') < 0) {
-                        await builder.CreateIfNotExist(x);
+                    if (x.defs.name.toLowerCase().indexOf('from ') < 0) {
+                        await builder.createIfNotExist(x);
 
                         let rows = await source.for(entity).find();
-                        console.log(x.__getDbName() + ": " + rows.length);
+                        console.log(x.defs.name + ": " + rows.length);
                         for (const r of rows) {
                             let tr = target.for(entity).create();
-                            for (const col of r.__iterateColumns()) {
-                                tr.__getColumn(col).value = col.value;
+                            for (const col of r.columns) {
+                                tr.columns.find(col).value = col.value;
                             }
                             if (tr instanceof Families)
                                 tr.disableOnSavingRow = true;

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { AndFilter, GridSettings, DataControlSettings } from '@remult/core';
+import { AndFilter, GridSettings, DataControlSettings, DataControlInfo } from '@remult/core';
 
 import { Families } from './families';
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -110,7 +110,7 @@ export class FamiliesComponent implements OnInit {
             if (i > 0)
                 focus = this.families.items[i - 1];
         }
-        this.families.currentRow.reset();
+        this.families.currentRow.undoChanges();
         if (focus)
             this.families.setCurrentRow(focus);
     }
@@ -190,6 +190,7 @@ export class FamiliesComponent implements OnInit {
     stats = new Stats();
     async saveToExcel() {
         await saveToExcel<Families, GridSettings<Families>>(
+            this.context.for(Families),
             this.families,
             translate('משפחות'),
             this.busy,
@@ -332,12 +333,12 @@ export class FamiliesComponent implements OnInit {
                     width: '300'
                 },
 
-                this.statusColumn = families.deliverStatus,
+                this.statusColumn ={column: families.deliverStatus},
 
                 families.familyMembers,
                 families.familySource,
 
-                this.groupsColumn = families.groups,
+                this.groupsColumn = {column: families.groups},
                 {
                     column: families.internalComment,
                     width: '300'

@@ -62,8 +62,8 @@ export class BatchOperationsComponent implements OnInit {
             result.push(bt);
         }
         {
-            let g: DataControlSettings<any> = this.groupColumn;
-            g.caption = 'בחרו קבוצה';
+            let g: DataControlSettings<any> = {column:this.groupColumn,caption:'בחרו קבוצה'};
+            
             result.push(g);
         }
         this.area = new DataAreaSettings({ columnSettings: () => result });

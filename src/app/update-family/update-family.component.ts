@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { DataAreaSettings, GridSettings, DataControlSettings } from '@remult/core';
+import { DataAreaSettings, GridSettings, DataControlSettings, Column } from '@remult/core';
 import { Families } from '../families/families';
 import { Context } from '@remult/core';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -48,7 +48,7 @@ export class UpdateFamilyComponent implements OnInit {
             if (!f.birthDate.value) {
               return '';
             }
-            return Math.round( (new Date().valueOf() - f.birthDate.value.valueOf()) / (365 * 86400000))
+            return Math.round((new Date().valueOf() - f.birthDate.value.valueOf()) / (365 * 86400000))
           }
         }],
         families.iDinExcel
@@ -108,25 +108,23 @@ export class UpdateFamilyComponent implements OnInit {
     });
   }
   deliveryInfo(fd: FamilyDeliveries) {
-    let columns: DataControlSettings<any>[] =
-      [
-        fd.deliverStatus,
-        fd.deliveryStatusDate,
-        fd.courier,
-        fd.courierComments,
-        fd.courierAssingTime,
-        fd.deliveryStatusUser,
-        fd.courierAssignUser
-      ];
-    for (const c of columns) {
-      c.readOnly = true;
-    }
-
+   
 
     this.context.openDialog(InputAreaComponent, x => x.args = {
       title: 'פרטי משלוח',
       settings: {
-        columnSettings: () => columns
+        columnSettings: () => [
+          fd.deliverStatus,
+          fd.deliveryStatusDate,
+          fd.courier,
+          fd.courierComments,
+          fd.courierAssingTime,
+          fd.deliveryStatusUser,
+          fd.courierAssignUser
+        ].map(x => ({
+          columns: x,
+            readOnly: true
+        } as DataControlSettings<any>))
       },
       ok: () => { },
       buttons: [{

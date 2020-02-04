@@ -30,7 +30,7 @@ export class CreateBackupExcelFileComponent implements OnInit {
     this.command = new CurrentBackupCommand(async () => {
       this.dialog.analytics('גיבוי אוטומטי');
       if (true)
-        await saveToExcel<Families, GridSettings<Families>>(
+        await saveToExcel<Families, GridSettings<Families>>(this.context.for(Families),
           this.families,
           translate('גיבוי משפחות ') + new Date().toLocaleString('he').replace(/:/g,'-').replace(/\./g,'-').replace(/,/g,'')
           ,

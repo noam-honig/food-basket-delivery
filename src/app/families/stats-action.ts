@@ -134,11 +134,10 @@ export class CitiesStats extends Entity<string> {
                     from: f,
                     where: () => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery),
                     sql.eq(f.courier, '\'\''),
-                    f.blockedBasket.__getDbName() + ' = false']
+                    f.blockedBasket.defs.dbName + ' = false']
                 }), ' group by ', f.city, ') as result')
             }
         });
-        this.__initColumns(this.city);
     }
 }
 

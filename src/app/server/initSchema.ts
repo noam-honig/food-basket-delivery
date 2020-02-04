@@ -8,7 +8,7 @@ import { ServerContext, SqlDatabase } from '@remult/core';
 import '../app.module';
 
 
-import { FamilyDeliveryEvents } from '../delivery-events/FamilyDeliveryEvents';
+
 import { SqlBuilder } from '../model-shared/types';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { Helpers } from '../helpers/helpers';
@@ -22,19 +22,17 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     let context = new ServerContext();
     context.setDataProvider(dataSource);
     let sql = new SqlBuilder();
-    let fde = context.for(FamilyDeliveryEvents).create();
+    
     let f = context.for(Families).create();
-    // remove unique constraint on id column if exists
-    await dataSource.execute(sql.build('ALTER TABLE ', fde, ' DROP CONSTRAINT IF EXISTS familydeliveryevents_pkey'));
+    
 
 
-    //create index if required
-    await dataSource.execute(sql.build('create index if not exists fde_1 on ', fde, ' (', [fde.family, fde.deliverStatus, fde.courier], ')'));
+    
     //create index for family deliveries if required
     var fd = context.for(FamilyDeliveries).create();
     await dataSource.execute(sql.build('create index if not exists fd_1 on ', fd, ' (', [fd.family, fd.deliveryStatusDate, fd.deliverStatus, fd.courier], ')'));
     //create index if required
-    await dataSource.execute(sql.build('create index if not exists f_1 on ', f, ' (', [fde.courier, f.deliverStatus], ')'));
+    await dataSource.execute(sql.build('create index if not exists f_1 on ', f, ' (', [f.courier, f.deliverStatus], ')'));
 
 
 
@@ -91,36 +89,6 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await images.save();
     }
     if (settings.dataStructureVersion.value == 0) {
-        console.log("migrating family delivery events to family deliveries");
-        let fdes = await context.for(FamilyDeliveryEvents).find({ where: fde => fde.deliverStatus.isAResultStatus() });
-        for (const fde of fdes) {
-            let f = await context.for(Families).findFirst(f => f.id.isEqualTo(fde.family));
-            if (f) {
-                fd = context.for(FamilyDeliveries).create();
-                fd.family.value = f.id.value;
-                fd.basketType.value = fde.basketType.value;
-                fd.deliverStatus.value = fde.deliverStatus.value;
-                fd.courier.value = fde.courier.value;
-                fd.courierComments.value = fde.courierComments.value;
-                fd.deliveryStatusDate.value = fde.deliveryStatusDate.value;
-                fd.courierAssignUser.value = fde.courierAssignUser.value;
-                fd.courierAssingTime.value = fde.courierAssingTime.value;
-                fd.archive_address.value = f.address.originalValue;
-                fd.archive_floor.value = f.floor.originalValue;
-                fd.archive_appartment.value = f.appartment.originalValue;
-                fd.archive_entrance.value = f.entrance.originalValue;
-                fd.archive_city.value = f.city.originalValue;
-                fd.archive_addressComment.value = f.addressComment.originalValue;
-                fd.archive_deliveryComments.value = f.deliveryComments.originalValue;
-                fd.archive_phone1.value = f.phone1.originalValue;
-                fd.archive_phone1Description.value = f.phone1Description.originalValue;
-                fd.archive_phone2.value = f.phone2.originalValue;
-                fd.archive_phone2Description.value = f.phone2Description.originalValue;
-                fd.archive_addressLongitude.value = f.addressLongitude.originalValue;
-                fd.archive_addressLatitude.value = f.addressLatitude.originalValue;
-                await fd.save();
-            }
-        }
         settings.dataStructureVersion.value = 1;
         await settings.save();
 

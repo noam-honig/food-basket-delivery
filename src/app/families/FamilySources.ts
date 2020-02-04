@@ -22,7 +22,7 @@ export class FamilySourceId extends IdColumn implements HasAsyncGetTheValue {
       dataControlSettings: () =>
         ({
           valueList: 
-             this.context.for(FamilySources).getDropDownItems({
+             this.context.for(FamilySources).getValueList({
               orderBy: (f: FamilySources) => {
                 return [{ column: f.name }];
               

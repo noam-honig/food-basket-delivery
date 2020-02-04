@@ -263,3 +263,17 @@ textarea{
 .flip-list-move {
   transition: transform 1s!important;
 }
+.table-bordered{
+  border: 1px solid #ddd;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+.table-bordered >  tr > th,
+.table-bordered >  tr > td{
+  border: 1px solid #ddd;
+  padding:6px;
+}
+.table-bordered >  tr > th {
+  border-bottom-width: 2px;
+}

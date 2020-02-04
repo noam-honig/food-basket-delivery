@@ -6,7 +6,7 @@ import { Helpers } from './helpers';
 import { Families } from '../families/families';
 import { Route } from '@angular/router';
 
-import { ServerFunction, DataControlSettings } from '@remult/core';
+import { ServerFunction, DataControlSettings, DataControlInfo } from '@remult/core';
 import { Context } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from '@remult/core';
@@ -50,7 +50,7 @@ export class HelpersComponent implements OnInit {
       }
     },
     columnSettings: helpers => {
-      let r: DataControlSettings<Helpers>[] = [
+      let r: DataControlInfo<Helpers>[] = [
         helpers.name,
         helpers.phone
       ];
@@ -88,7 +88,7 @@ export class HelpersComponent implements OnInit {
 
   }
   async saveToExcel() {
-    await saveToExcel(this.helpers, "מתנדבים", this.busy, (d: Helpers, c) => c == d.id || c == d.password || c == d.totalKm || c == d.totalTime || c == d.smsDate || c == d.reminderSmsDate || c == d.realStoredPassword || c == d.shortUrlKey || c == d.admin);
+    await saveToExcel(this.context.for(Helpers), this.helpers, "מתנדבים", this.busy, (d: Helpers, c) => c == d.id || c == d.password || c == d.totalKm || c == d.totalTime || c == d.smsDate || c == d.reminderSmsDate || c == d.realStoredPassword || c == d.shortUrlKey || c == d.admin);
   }
 
   @ServerFunction({ allowed: Roles.admin })

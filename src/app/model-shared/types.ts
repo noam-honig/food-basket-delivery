@@ -182,9 +182,10 @@ export class SqlBuilder {
 
   addEntity(e: Entity<any>, alias?: string) {
     if (alias) {
-      e.__iterateColumns().forEach(c => {
+      for (const c of e.columns) {
         this.dict.set(c, alias);
-      });
+      }
+      
       this.entites.set(e, alias);
     }
   }
@@ -202,12 +203,12 @@ export class SqlBuilder {
 
   getItemSql(e: any) {
     if (this.dict.has(e))
-      return this.dict.get(e) + '.' + e.__getDbName();
+      return this.dict.get(e) + '.' + e.defs.dbName;
     let v = e;
     if (e instanceof Entity)
-      v = e.__getDbName();
+      v = e.defs.dbName;
     if (e instanceof Column)
-      v = e.__getDbName();
+      v = e.defs.dbName;
 
     let f = e as FilterBase;
     if (f && f.__applyToConsumer) {
@@ -280,7 +281,7 @@ export class SqlBuilder {
     });
   }
   columnInnerSelect(rootEntity: Entity<any>, query: QueryBuilder) {
-    this.addEntity(rootEntity, rootEntity.__getDbName());
+    this.addEntity(rootEntity, rootEntity.defs.dbName);
     return '(' + this.query(query) + ' limit 1)';
   }
   countInnerSelect(query: FromAndWhere, mappedColumn: Column<number>) {
@@ -317,7 +318,7 @@ export class SqlBuilder {
     }), ") ", mappedColumn);
   }
   columnDbName(rootEntity: Entity<any>, query: QueryBuilder) {
-    this.addEntity(rootEntity, rootEntity.__getDbName());
+    this.addEntity(rootEntity, rootEntity.defs.dbName);
     return '(' + this.query(query) + ')';
   }
   entityDbName(query: QueryBuilder) {
@@ -347,7 +348,7 @@ export class SqlBuilder {
     if (info.from) {
       from = this.build(' from ', info.from, ' ', this.getEntityAlias(info.from));
     }
-    result.push(info.set().map(a => this.build(this.build(a[0].__getDbName(), ' = ', a[1]))));
+    result.push(info.set().map(a => this.build(this.build(a[0].defs.dbName, ' = ', a[1]))));
     if (from)
       result.push(from);
 
@@ -361,7 +362,7 @@ export class SqlBuilder {
     let result = [];
     result.push('insert into ', info.into, ' ');
 
-    result.push('(', info.set().map(a => a[0].__getDbName()), ') ');
+    result.push('(', info.set().map(a => a[0].defs.dbName), ') ');
     result.push(this.query({
       select: () => info.set().map(a => a[1]),
       from: info.from,
@@ -441,7 +442,7 @@ class myDummySQLCommand implements SqlCommand {
   execute(sql: string): Promise<radweb.SqlResult> {
     throw new Error("Method not implemented.");
   }
-  addParameterAndReturnSqlToken(col: radweb.Column<any>, val: any): string {
+  addParameterAndReturnSqlToken(val: any): string {
     if (typeof (val) == "string") {
       return new SqlBuilder().str(val);
     }

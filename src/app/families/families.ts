@@ -150,9 +150,11 @@ export class Families extends IdEntity {
         }
 
       });
-    this.__initColumns();
+    
     if (!context.isAllowed(Roles.admin))
-      this.__iterateColumns().forEach(c => c.allowApiUpdate = c == this.courierComments || c == this.deliverStatus || c == this.correntAnErrorInStatus || c == this.needsWork);
+    for (const c of this.columns) {
+      c.defs.allowApiUpdate = c == this.courierComments || c == this.deliverStatus || c == this.correntAnErrorInStatus || c == this.needsWork
+    }
   }
   disableChangeLogging = false;
   disableOnSavingRow = false;
@@ -163,7 +165,7 @@ export class Families extends IdEntity {
     valueChange: () => this.delayCheckDuplicateFamilies(),
     validate: () => {
       if (!this.name.value || this.name.value.length < 2)
-        this.name.error = 'השם קצר מידי';
+        this.name.validationError = 'השם קצר מידי';
     }
   });
 
@@ -536,39 +538,39 @@ export class Families extends IdEntity {
       return;
     if (col.displayValue.startsWith("05") || col.displayValue.startsWith("07")) {
       if (col.displayValue.length != 12) {
-        col.error = 'מספר טלפון אינו תקין';
+        col.validationError = 'מספר טלפון אינו תקין';
       }
 
     } else if (col.displayValue.startsWith('0')) {
       if (col.displayValue.length != 11) {
-        col.error = 'מספר טלפון אינו תקין';
+        col.validationError = 'מספר טלפון אינו תקין';
       }
     }
     else {
-      col.error = 'מספר טלפון אינו תקין';
+      col.validationError = 'מספר טלפון אינו תקין';
     }
   }
   async checkDuplicateFamilies() {
     this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name.value, this.tz.value, this.tz2.value, this.phone1.value, this.phone2.value, this.id.value);
-    this.tz.error = undefined;
-    this.tz2.error = undefined;
-    this.phone1.error = undefined;
-    this.phone2.error = undefined;
-    this.name.error = undefined;
+    this.tz.validationError = undefined;
+    this.tz2.validationError = undefined;
+    this.phone1.validationError = undefined;
+    this.phone2.validationError = undefined;
+    this.name.validationError = undefined;
     let foundExactName = false;
     for (const d of this.duplicateFamilies) {
       let errorText = translate('ערך כבר קיים למשפחת "') + d.name + '" בכתובת ' + d.address;
       if (d.tz)
-        this.tz.error = errorText;
+        this.tz.validationError = errorText;
       if (d.tz2)
-        this.tz2.error = errorText;
+        this.tz2.validationError = errorText;
       if (d.phone1)
-        this.phone1.error = errorText;
+        this.phone1.validationError = errorText;
       if (d.phone2)
-        this.phone2.error = errorText;
+        this.phone2.validationError = errorText;
       if (d.nameDup && this.name.value != this.name.originalValue) {
         if (!foundExactName)
-          this.name.error = errorText;
+          this.name.validationError = errorText;
         if (this.name.value && d.name && this.name.value.trim() == d.name.trim())
           foundExactName = true;
       }
@@ -620,14 +622,14 @@ export class Families extends IdEntity {
 
     for (const row of sqlResult.rows) {
       result.push({
-        id: row[sqlResult.getResultJsonNameForIndexInSelect(0)],
-        name: row[sqlResult.getResultJsonNameForIndexInSelect(1)],
-        address: row[sqlResult.getResultJsonNameForIndexInSelect(2)],
-        tz: row[sqlResult.getResultJsonNameForIndexInSelect(3)],
-        tz2: row[sqlResult.getResultJsonNameForIndexInSelect(4)],
-        phone1: row[sqlResult.getResultJsonNameForIndexInSelect(5)],
-        phone2: row[sqlResult.getResultJsonNameForIndexInSelect(6)],
-        nameDup: row[sqlResult.getResultJsonNameForIndexInSelect(7)]
+        id: row[sqlResult.getColumnKeyInResultForIndexInSelect(0)],
+        name: row[sqlResult.getColumnKeyInResultForIndexInSelect(1)],
+        address: row[sqlResult.getColumnKeyInResultForIndexInSelect(2)],
+        tz: row[sqlResult.getColumnKeyInResultForIndexInSelect(3)],
+        tz2: row[sqlResult.getColumnKeyInResultForIndexInSelect(4)],
+        phone1: row[sqlResult.getColumnKeyInResultForIndexInSelect(5)],
+        phone2: row[sqlResult.getColumnKeyInResultForIndexInSelect(6)],
+        nameDup: row[sqlResult.getColumnKeyInResultForIndexInSelect(7)]
 
       });
     }

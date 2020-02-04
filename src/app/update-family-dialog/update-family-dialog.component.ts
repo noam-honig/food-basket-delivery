@@ -27,7 +27,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
 
   }
   cancel() {
-    this.families.currentRow.reset();
+    this.families.currentRow.undoChanges();
     this.dialogRef.close();
   }
   async confirm() {
