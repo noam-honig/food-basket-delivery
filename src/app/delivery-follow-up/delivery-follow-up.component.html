@@ -25,7 +25,7 @@
               {{c.name.value}}
             </mat-panel-title>
             <mat-panel-description>
-              חולקו {{c.allFamilies.value - c.deliveriesInProgress.value}}/{{c.allFamilies.value}}<span
+            הושלמו {{c.allFamilies.value - c.deliveriesInProgress.value}}/{{c.allFamilies.value}} <span *ngIf="c.deliveriesWithProblems.value>0">&nbsp; ({{c.deliveriesWithProblems.value}} לא נמסרו)</span> <span
                 *ngIf="c.gotSms.value">, יצא {{c.smsDate.relativeDateName()}}</span> <span *ngIf="!c.gotSms.value">, טרם
                 נשלח SMS</span>
             </mat-panel-description>
