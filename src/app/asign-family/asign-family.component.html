@@ -111,7 +111,7 @@
 
 
         <div class="no-print" style="display:flex;justify-content: center;">
-          <button mat-raised-button color="accent" (click)="assignItem(undefined)"
+          <button mat-raised-button color="accent" (click)="assignItem()"
             [disabled]="basketType.unassignedFamilies==0"
             style="border-top-left-radius: 0px;border-bottom-left-radius:0px;">
             {{translate( basketType.unassignedFamilies==0?'לא נותרו משפחות מתאימות': familyLists.allFamilies.length>0?"שייך משפחה הכי קרובה":'שייך משפחה כלשהי')}}

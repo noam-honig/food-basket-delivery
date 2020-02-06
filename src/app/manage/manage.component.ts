@@ -235,11 +235,11 @@ export class ManageComponent implements OnInit {
     this.qaItems.splice(x, 1);
     this.qaItems.splice(x + dir, 0, p);
   }
-  delete(p: PhoneItem, dir: number) {
+  delete(p: PhoneItem) {
     let x = this.helpPhones.indexOf(p);
     this.helpPhones.splice(x, 1);
   }
-  deleteQuestion(p: qaItem, dir: number) {
+  deleteQuestion(p: qaItem) {
     let x = this.qaItems.indexOf(p);
     this.qaItems.splice(x, 1);
   }

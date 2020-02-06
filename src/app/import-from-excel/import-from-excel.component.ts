@@ -32,7 +32,11 @@ export class ImportFromExcelComponent implements OnInit {
     constructor(private context: Context, private dialog: DialogService, private busy: BusyService) {
 
     }
-
+    updateRowsPage:number;
+    existingFamiliesPage:number;
+    errorRowsPage:number;
+    excelPage:number;
+    newRowsPage:number;
     cell: string;
 
     oFile: import('xlsx').WorkBook;

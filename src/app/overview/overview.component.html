@@ -1,6 +1,6 @@
 <ng-container *ngIf="overview">
     <ul>
-        <li *ngFor="let i of overview.statistics" (click)="doSort(i)" [class.sorted]="sortBy==i.caption">
+        <li *ngFor="let i of overview.statistics" (click)="doSort(i)" [class.sorted]="sortBy==i.caption" >
             {{i.caption}} - {{i.value}}
         </li>
     </ul>

@@ -318,8 +318,11 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     return info;
 
   }
-
-
+  excelPage:number;
+  newRowsPage:number;
+  updateRowsPage:number;
+  existingFamiliesPage:number;
+  errorRowsPage:number;
   helper: Helpers;
   @ViewChild("stepper", { static: true }) stepper: MatStepper;
   settings: ApplicationSettings;
