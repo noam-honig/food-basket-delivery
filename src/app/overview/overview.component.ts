@@ -70,6 +70,19 @@ export class OverviewComponent implements OnInit {
           from: new Date(today.getFullYear(), 0, 1),
           to: new Date(today.getFullYear() + 1, 0, 1)
         }
+        ,
+        {
+          caption: 'שנה שעברה',
+          value: 0,
+          from: new Date(today.getFullYear() - 1, 0, 1),
+          to: new Date(today.getFullYear(), 0, 1)
+        },
+        {
+          caption: 'אי פעם',
+          value: 0,
+          from: new Date(2017, 0, 1),
+          to: new Date(today.getFullYear() + 1, 0, 1)
+        }
       ],
       sites: []
     };
