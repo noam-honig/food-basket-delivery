@@ -147,10 +147,10 @@ export class PhoneOption {
       args.addPhone(args.family.courierAssignUserName.value, args.family.courierAssignUserPhone.displayValue);
   });
   static familyHelpPhone = new PhoneOption("familyHelpPhone", "איש קשר לבירור כפי שמוגדר למשפחה", async args => {
-    if (args.family.socialWorker.value && args.family.socialWorkerPhone1) {
+    if (args.family.socialWorker.value && args.family.socialWorkerPhone1.value) {
       args.addPhone(args.family.socialWorker.value, args.family.socialWorkerPhone1.displayValue);
     }
-    if (args.family.socialWorker.value && args.family.socialWorkerPhone2) {
+    if (args.family.socialWorker.value && args.family.socialWorkerPhone2.value) {
       args.addPhone(args.family.socialWorker.value, args.family.socialWorkerPhone2.displayValue);
     }
   });
