@@ -72,7 +72,7 @@ export async function serverInit() {
                     throw 'admin is an ivalid schema name;'
                 await verifySchemaExistance(pool, s);
                 let schemaPool = new PostgresSchemaWrapper(pool, s);
-                await new PostgresSchemaBuilder( new SqlDatabase(new PostgresDataProvider(adminSchemaPool)), s).verifyStructureOfAllEntities();
+                await new PostgresSchemaBuilder( new SqlDatabase(new PostgresDataProvider(schemaPool)), s).verifyStructureOfAllEntities();
                 await initSchema(schemaPool, s);
             }
             Sites.getDataProviderForOrg = org => new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, org)));

@@ -12,6 +12,21 @@ import { Helpers } from '../helpers/helpers';
 import { BasketType } from '../families/BasketType';
 @EntityClass
 export class ApplicationSettings extends Entity<number>  {
+  async getPhoneOptions(family: Families, context: Context){
+    let r :phoneOption[]=[];
+    for (const x of this.getPhoneStrategy()) {
+      if (x.option) {
+        await x.option.build({
+          family: family,
+          context: context,
+          phoneItem: x,
+          settings: this,
+          addPhone: (name, phone) => r.push({ name: name, phone: phone })
+        });
+      }
+    }
+    return r;
+  }
 
   id = new NumberColumn();
   organisationName = new StringColumn('שם הארגון');
@@ -42,6 +57,16 @@ export class ApplicationSettings extends Entity<number>  {
       return [{ option: PhoneOption.assignerOrOrg }];
     }
   }
+  getQuestions(): qaItem[] {
+    try {
+      return JSON.parse(this.commonQuestions.value);
+    }
+    catch
+    {
+      return [];
+    }
+  }
+  commonQuestions = new StringColumn();
   dataStructureVersion = new NumberColumn({ allowApiUpdate: false });
   deliveredButtonText = new StringColumn("מלל כפתור נמסר בהצלחה");
   message1Text = new StringColumn('מלל חופשי 1 למתנדב');
@@ -155,6 +180,14 @@ export interface PhoneItem {
   option: PhoneOption;
   name?: string;
   phone?: string;
+}
+export interface phoneOption {
+  name: string;
+  phone: string;
+}
+export interface qaItem{
+  question?:string;
+  answer?:string;
 }
 export interface phoneBuildArgs {
   family: Families,

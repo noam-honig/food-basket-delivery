@@ -69,6 +69,7 @@ import { ApplicationSettings, SettingsService } from './manage/ApplicationSettin
 import { OverviewComponent } from './overview/overview.component';
 import { TransitionGroupComponent, TransitionGroupItemDirective } from './overview/transition-group';
 import { AssignEscortComponent } from './assign-escort/assign-escort.component';
+import { CommonQuestionsComponent } from './common-questions/common-questions.component';
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref();
 
@@ -124,7 +125,8 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     OverviewComponent,
     TransitionGroupComponent,
     TransitionGroupItemDirective,
-    AssignEscortComponent
+    AssignEscortComponent,
+    CommonQuestionsComponent
 
   ],
   imports: [
@@ -173,7 +175,7 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
   bootstrap: [AppComponent],
   entryComponents: [SelectHelperComponent,
     SelectFamilyComponent,
-    
+ CommonQuestionsComponent,   
     YesNoQuestionComponent,
     InputAreaComponent,
     UpdateFamilyDialogComponent, PreviewFamilyComponent,

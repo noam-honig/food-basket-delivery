@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings, phoneOption } from '../manage/ApplicationSettings';
 import { Context } from '@remult/core';
 import { Column } from '@remult/core';
 import { Families } from '../families/families';
@@ -36,7 +36,7 @@ export class UpdateCommentComponent implements OnInit {
   ];
   defaultFailStatus = DeliveryStatus.FailedBadAddress;
   getStatusName(s: DeliveryStatus) {
-    let r = s.toString();
+    let r = s.caption;
     if (r.startsWith('לא נמסר, '))
       r = r.substring(9);
 
@@ -46,17 +46,8 @@ export class UpdateCommentComponent implements OnInit {
   async ngOnInit() {
     if (this.args.showFailStatus) {
       let s = await ApplicationSettings.getAsync(this.context);
-      for (const x of s.getPhoneStrategy()) {
-        if (x.option) {
-          await x.option.build({
-            family: this.args.family,
-            context: this.context,
-            phoneItem: x,
-            settings: s,
-            addPhone: (name, phone) => this.phoneOptions.push({ name: name, phone: phone })
-          });
-        }
-      }
+      this.phoneOptions = await s.getPhoneOptions(this.args.family,this.context);
+      
     }
   }
   phoneOptions: phoneOption[] = [];
@@ -82,7 +73,3 @@ export class UpdateCommentComponent implements OnInit {
 }
 
 
-interface phoneOption {
-  name: string;
-  phone: string;
-}

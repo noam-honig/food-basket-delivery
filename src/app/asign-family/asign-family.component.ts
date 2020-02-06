@@ -32,6 +32,7 @@ import { SelectHelperComponent } from '../select-helper/select-helper.component'
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { SelectFamilyComponent } from '../select-family/select-family.component';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
+import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
 
 
 @Component({

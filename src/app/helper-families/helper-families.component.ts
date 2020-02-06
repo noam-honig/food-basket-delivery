@@ -16,6 +16,7 @@ import { Column } from '@remult/core';
 import { translate } from '../translate';
 import { Helpers } from '../helpers/helpers';
 import { UpdateCommentComponent } from '../update-comment/update-comment.component';
+import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
 
 @Component({
   selector: 'app-helper-families',
@@ -115,32 +116,39 @@ export class HelperFamiliesComponent implements OnInit {
     return this.partOfAssign || this.partOfReview || this.familyLists.toDeliver.length > 0;
   }
   async couldntDeliverToFamily(f: Families) {
-    this.context.openDialog(UpdateCommentComponent, x => x.args = {
-      family: f,
-      comment: f.courierComments.value,
-      showFailStatus: true,
-      assignerName: f.courierHelpName(),
-      assignerPhone: f.courierHelpPhone(),
-      helpText: s => s.commentForProblem,
+    let showUpdateFail = false;
+    if (!this.settings.getQuestions()) {
+      showUpdateFail = true;
+    } else {
+      showUpdateFail = await this.context.openDialog(CommonQuestionsComponent, x => x.init(this.familyLists.allFamilies[0]), x => x.updateFailedDelivery);
+    }
+    if (showUpdateFail)
+      this.context.openDialog(UpdateCommentComponent, x => x.args = {
+        family: f,
+        comment: f.courierComments.value,
+        showFailStatus: true,
+        assignerName: f.courierHelpName(),
+        assignerPhone: f.courierHelpPhone(),
+        helpText: s => s.commentForProblem,
 
-      ok: async (comment, status) => {
-        f.deliverStatus.value = status;
-        f.courierComments.value = comment;
-        f.checkNeedsWork();
-        try {
-          await f.save();
-          this.dialog.analytics('Problem');
-          this.initFamilies();
+        ok: async (comment, status) => {
+          f.deliverStatus.value = status;
+          f.courierComments.value = comment;
+          f.checkNeedsWork();
+          try {
+            await f.save();
+            this.dialog.analytics('Problem');
+            this.initFamilies();
 
 
-        }
-        catch (err) {
-          this.dialog.Error(err);
-        }
-      },
-      cancel: () => { },
+          }
+          catch (err) {
+            this.dialog.Error(err);
+          }
+        },
+        cancel: () => { },
 
-    });
+      });
   }
   async sendSms(reminder: Boolean) {
     this.helperGotSms = true;

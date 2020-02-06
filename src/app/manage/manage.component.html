@@ -32,7 +32,7 @@
         </mat-card>
         <mat-card>
             <mat-card-title>
-                {{settings.currentRow.smsText.caption}}
+                {{settings.currentRow.smsText.defs.caption}}
             </mat-card-title>
             הודעה זו תשלח למתנדב ממסך שיוך משפחות - עם הקישור למשפחות להן הוא מתבקש לחלק.
             <ul>
@@ -47,7 +47,7 @@
         </mat-card>
         <mat-card>
             <mat-card-title>
-                {{settings.currentRow.reminderSmsText.caption}}
+                {{settings.currentRow.reminderSmsText.defs.caption}}
             </mat-card-title>
             הודעה זו תשלח למשנע שמתעכב ממסך מעקב משנעים
             <textarea [(ngModel)]="settings.currentRow.reminderSmsText.value" class="form-control" lines=3></textarea>
@@ -98,6 +98,47 @@
 
         </mat-expansion-panel-header>
         <data-area [settings]="settingsMessages"></data-area>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                שאלות ותשובות למתנדב
+            </mat-panel-title>
+
+        </mat-expansion-panel-header>
+        כאשר המתנדב לוחץ על הכפתור "נתקלתי בבעיה" מופע לו מסך אם רשימה זו של שאלות ותשובות לעזרה
+        
+        <table>
+            <tr *ngFor="let p of qaItems; let i = index" style="border-bottom: solid;
+            border-bottom-width: thin;
+            border-bottom-color: lightgray;">
+                <td style=" vertical-align: top;
+                padding: 9px;">{{i+1}}.</td>
+                <td style="    padding-bottom: 9px;padding-top:9px;">
+                    <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
+                        <mat-label>שאלה</mat-label>
+                        <input matInput [(ngModel)]="p.question"  >
+                      </mat-form-field>
+                      <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
+                        <mat-label>תשובה</mat-label>
+                    <textarea matInput [(ngModel)]="p.answer"style="height:50px;" ></textarea>
+                </mat-form-field>
+                </td>
+                <td><button mat-icon-button (click)="deleteQuestion(p)">
+                        <mat-icon>delete</mat-icon>
+                    </button></td>
+                <td><button mat-icon-button (click)="moveQuestion(p,-1)" *ngIf="i>0">
+                        <mat-icon>arrow_drop_up</mat-icon>
+                    </button></td>
+                <td><button mat-icon-button (click)="move(p,1)" *ngIf="i<helpPhones.length-1">
+                        <mat-icon>arrow_drop_down</mat-icon>
+                    </button></td>
+
+            </tr>
+        </table>
+        <button (click)="addQuestion()" mat-icon-button>
+            <mat-icon>add</mat-icon>
+        </button>
     </mat-expansion-panel>
     <mat-expansion-panel>
         <mat-expansion-panel-header>

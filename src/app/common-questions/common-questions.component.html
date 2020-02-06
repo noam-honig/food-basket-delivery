@@ -1,0 +1,46 @@
+<div dir="rtl">
+    <mat-card-title>שאלות ותשובות</mat-card-title>
+    <mat-dialog-content class="dialog-content-fixer">
+        <mat-accordion>
+            <mat-expansion-panel *ngFor="let f of questions">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <b>{{f.question}}</b>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                {{f.answer}}
+            </mat-expansion-panel>
+            
+        </mat-accordion>
+        <div class="button-line">
+            <a href="tel:{{args.family.courierAssignUserPhone.value}}" *ngIf="phoneOptions.length==1">
+                <button mat-raised-button color="accent" class="dial-for-help">
+                    <mat-icon>phone</mat-icon> חייג ל{{args.family.courierAssignUserName.value}} לקבלת עזרה
+                </button>
+            </a>
+            <button mat-raised-button color="accent" class="dial-for-help" [matMenuTriggerFor]="menu"
+                *ngIf="phoneOptions.length>1">
+                <mat-icon>phone</mat-icon> חייג לקבלת עזרה
+            </button>
+
+            <mat-menu #menu="matMenu">
+                <a href="tel:{{p.phone}}" *ngFor="let p of phoneOptions">
+                    <button mat-menu-item>{{p.name}} - {{p.phone}}</button>
+                </a>
+            </mat-menu>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions *ngIf="args&&args.family">
+        <div class="button-container">
+            <div class="button-line">
+                <button mat-raised-button color="warning" (click)="cancel()">
+                    בטל
+                </button>
+                <button mat-raised-button color="accent" (click)="confirm()">
+                    {{'עדכן אי מסירה'}}
+                </button>
+            </div>
+            
+        </div>
+    </mat-dialog-actions>
+</div>
