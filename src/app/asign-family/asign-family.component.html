@@ -50,7 +50,7 @@
           <mat-menu #filterOptionsMenu="matMenu">
 
             <mat-checkbox class="mat-menu-item" [(ngModel)]="o.inputValue" (change)="changeShowCompany()"
-              *ngFor="let o of filterOptions">{{o.caption}}</mat-checkbox>
+              *ngFor="let o of filterOptions">{{o.defs.caption}}</mat-checkbox>
           </mat-menu>
 
           <button mat-icon-button [matMenuTriggerFor]="filterOptionsMenu">
