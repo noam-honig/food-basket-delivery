@@ -1,4 +1,4 @@
-import { ColumnOptions,ValueListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings, ValueListItem } from '@remult/core';
+import { ColumnOptions, ValueListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings, ValueListItem } from '@remult/core';
 
 
 export class DeliveryStatus {
@@ -30,7 +30,7 @@ export class DeliveryStatus {
 
   constructor(public id: number, public caption: string) {
   }
-  
+
 }
 export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
   isActiveDelivery() {
@@ -51,21 +51,19 @@ export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
           op = chooseFrom.map(x => {
             return {
               id: x.id,
-              caption: x.toString()
+              caption: x.caption
             } as ValueListItem
           });
         if (!DeliveryStatus.usingSelfPickupModule) {
           op = op.filter(x => x.id != DeliveryStatus.SelfPickup.id && x.id != DeliveryStatus.SuccessPickedUp.id);
         }
         return {
-          dropDown: {
-            items: op
-          },
+          valueList: op,
           width: '150'
         };
 
       }
-    },settingsOrCaption);
+    }, settingsOrCaption);
     if (!this.defs.caption)
       this.defs.caption = 'סטטוס משלוח';
   }
