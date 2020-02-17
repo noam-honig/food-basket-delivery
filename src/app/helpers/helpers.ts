@@ -1,6 +1,6 @@
 
 import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, EntityOptions, UserInfo } from '@remult/core';
-import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn } from '../model-shared/types';
+import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, SqlBuilder } from '../model-shared/types';
 
 
 import { routeStats } from '../asign-family/asign-family.component';
@@ -96,10 +96,16 @@ export class Helpers extends HelpersBase {
                 if (!context.isSignedIn())
                     return this.id.isEqualTo("No User");
                 else if (!context.isAllowed([Roles.admin]))
-                    return this.id.isEqualTo(this.context.user.id);
+                    return this.allowedIds.isContains(this.context.user.id);
             }
         });
     }
+    allowedIds = new StringColumn({
+        sqlExpression:()=>{
+            let sql = new SqlBuilder();
+            return sql.build(this.id,' || ',this.escort,' || ',this.theHelperIAmEscorting);
+        }
+    });
     _disableOnSavingRow = false;
     public static emptyPassword = 'password';
 
