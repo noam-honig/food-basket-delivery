@@ -1,5 +1,5 @@
 import * as radweb from '@remult/core';
-import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest,  ColumnOptions, SqlCommand, SqlResult} from '@remult/core';
+import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, ColumnOptions, SqlCommand, SqlResult } from '@remult/core';
 
 
 
@@ -16,7 +16,7 @@ export class PhoneColumn extends radweb.StringColumn {
         click: () => window.open('tel:' + this.displayValue),
         allowClick: () => !!this.displayValue,
         clickIcon: 'phone',
-        inputType:'phone'
+        inputType: 'phone'
       })
     }, settingsOrCaption);
   }
@@ -160,6 +160,10 @@ export class DateTimeColumn extends radweb.DateTimeColumn {
 
 export class changeDate extends DateTimeColumn {
   allowApiUpdate = false;
+  constructor(settingsOrCaption?: ColumnOptions<Date>) {
+    super(settingsOrCaption);
+    this.defs.allowApiUpdate = false;
+  }
 }
 
 
@@ -185,7 +189,7 @@ export class SqlBuilder {
       for (const c of e.columns) {
         this.dict.set(c, alias);
       }
-      
+
       this.entites.set(e, alias);
     }
   }
