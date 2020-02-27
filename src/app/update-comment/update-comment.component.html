@@ -30,9 +30,9 @@
         </button>
       </div>
       <div class="button-line" [class.hide]="!args.showFailStatus">
-        <a href="tel:{{args.assignerPhone}}" *ngIf="phoneOptions.length==1">
+        <a href="tel:{{phoneOptions[0].phone}}" *ngIf="phoneOptions.length==1">
           <button mat-raised-button color="accent" class="dial-for-help">
-            <mat-icon>phone</mat-icon> חייג ל{{args.assignerName}} לקבלת עזרה
+            <mat-icon>phone</mat-icon> חייג ל{{phoneOptions[0].name}} לקבלת עזרה
           </button>
         </a>
         <button mat-raised-button color="accent" class="dial-for-help" [matMenuTriggerFor]="menu"
