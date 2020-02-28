@@ -3,6 +3,9 @@ import { NewsUpdate } from "./NewsUpdate";
 import { NewsFilter } from './news.component';
 @Injectable()
 export class NewsFilterService {
+    setToNeedsWork() {
+        this.currentFilter = this.filters[2];
+    }
     filters: NewsFilter[] = [{
         name: 'כל החדשות'
     },

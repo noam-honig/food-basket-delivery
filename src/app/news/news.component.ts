@@ -5,7 +5,7 @@ import { Context } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { translate } from '../translate';
 
-import { Route } from '@angular/router';
+import { Route, ActivatedRoute } from '@angular/router';
 
 import { Families } from '../families/families';
 import { FilterBase } from '@remult/core';
@@ -26,13 +26,16 @@ export class NewsComponent implements OnInit, OnDestroy {
     static route: Route = {
         path: 'news', component: NewsComponent, canActivate: [AdminGuard], data: { name: 'חדשות' }
     };
+    static needsWorkRoute: Route = {
+        path: 'needsWork', component: NewsComponent, canActivate: [AdminGuard], data: { name: 'מצריך טיפול' }
+    };
 
     filterChange() {
 
         this.refresh();
     }
     onDestroy = () => { };
-    constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public filters: NewsFilterService) {
+    constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public filters: NewsFilterService,private activatedRoute:ActivatedRoute) {
         let y = dialog.refreshStatusStats.subscribe(() => {
             this.refresh();
         });
@@ -70,7 +73,12 @@ export class NewsComponent implements OnInit, OnDestroy {
     }
     news: NewsUpdate[] = [];
     familySources: familySource[] = [{ id: undefined, name: "כל הגורמים מפנים" }];
+    
     async ngOnInit() {
+        if (this.activatedRoute.routeConfig.path==NewsComponent.needsWorkRoute.path)
+        {
+         this.filters.setToNeedsWork();   
+        }
         this.refresh();
         this.familySources.push(...(await this.context.for(FamilySources).find({ orderBy: x => [x.name] })).map(x => { return { id: x.id.value, name: x.name.value } as familySource }));
 
