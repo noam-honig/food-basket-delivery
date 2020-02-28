@@ -11,4 +11,5 @@
 <button mat-mini-fab style="margin-bottom:5px" (click)="refreshFamilies()">
   <mat-icon>refresh</mat-icon>
 </button>
+<mat-checkbox (change)="refreshFamilies()" [(ngModel)]="showHelper" style="margin-right: 10px;">הצג משנעים</mat-checkbox>
 

@@ -20,6 +20,7 @@ import { BusyService } from '@remult/core';
 import { YesNo } from '../families/YesNo';
 import { Roles, AdminGuard } from '../auth/roles';
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
+import { Helpers } from '../helpers/helpers';
 
 @Component({
   selector: 'app-distribution-map',
@@ -27,7 +28,7 @@ import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-fami
   styleUrls: ['./distribution-map.component.scss']
 })
 export class DistributionMap implements OnInit, OnDestroy {
-  constructor(private context: Context, private dialog: DialogService,  busy: BusyService) {
+  constructor(private context: Context, private dialog: DialogService, busy: BusyService) {
 
     let y = dialog.refreshStatusStats.subscribe(() => {
       busy.donotWait(async () => {
@@ -39,6 +40,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     };
 
   }
+  showHelper = false;
   ngOnDestroy(): void {
     this.onDestroy();
   }
@@ -100,17 +102,11 @@ export class DistributionMap implements OnInit, OnDestroy {
 
         };
         this.dict.set(f.id, familyOnMap);
-        let info: google.maps.InfoWindow;
+
         let family: Families;
         google.maps.event.addListener(familyOnMap.marker, 'click', async () => {
-          if (!info) {
-            info = new google.maps.InfoWindow({
-              content: `<h4>${f.status}</h4>`
-            });
-            //info.open(this.map, familyOnMap.marker);
-          }
           family = await this.context.for(Families).findFirst(fam => fam.id.isEqualTo(f.id));
-          this.context.openDialog(UpdateFamilyDialogComponent, x=>x.args={ f: family });
+          this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { f: family });
         });
       }
 
@@ -132,6 +128,12 @@ export class DistributionMap implements OnInit, OnDestroy {
         familyOnMap.prevCourier = f.courier;
       }
       familyOnMap.marker.setVisible(!this.selectedStatus || this.selectedStatus == status);
+
+
+      familyOnMap.marker.setLabel(this.showHelper && f.courierName ? f.courierName + '...' : '');
+
+
+
       if (familyOnMap.marker.getPosition().lat() > 0)
         this.bounds.extend(familyOnMap.marker.getPosition());
 
@@ -140,13 +142,14 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   @ServerFunction({ allowed: Roles.admin })
   static async GetFamiliesLocations(onlyPotentialAsignment?: boolean, city?: string, group?: string, context?: Context, db?: SqlDatabase) {
-    let f = context.for( Families).create();
-
+    let f = context.for(Families).create();
+    let h = context.for(Helpers).create();
     let sql = new SqlBuilder();
     sql.addEntity(f, "Families");
     let r = (await db.execute(sql.query({
-      select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier],
+      select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier, h.name],
       from: f,
+      outerJoin: () => [{ to: h, on: () => [sql.eq(h.id, f.courier)] }],
       where: () => {
         let where = [f.deliverStatus.isActiveDelivery().and(f.blockedBasket.isEqualTo(false))];
         if (onlyPotentialAsignment) {
@@ -163,7 +166,8 @@ export class DistributionMap implements OnInit, OnDestroy {
         lat: +x[r.getColumnKeyInResultForIndexInSelect(1)],
         lng: +x[r.getColumnKeyInResultForIndexInSelect(2)],
         status: +x[r.getColumnKeyInResultForIndexInSelect(3)],
-        courier: x[r.getColumnKeyInResultForIndexInSelect(4)]
+        courier: x[r.getColumnKeyInResultForIndexInSelect(4)],
+        courierName: x[r.getColumnKeyInResultForIndexInSelect(5)]
       } as familyQueryResult;
 
     }) as familyQueryResult[];
@@ -227,6 +231,7 @@ interface familyQueryResult {
   lng: number;
   status: number;
   courier: string;
+  courierName: string;
 }
 export interface infoOnMap {
   marker: google.maps.Marker;
