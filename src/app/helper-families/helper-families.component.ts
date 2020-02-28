@@ -117,7 +117,8 @@ export class HelperFamiliesComponent implements OnInit {
   }
   async couldntDeliverToFamily(f: Families) {
     let showUpdateFail = false;
-    if (!this.settings.getQuestions()) {
+    let q = this.settings.getQuestions();
+    if (!q||q.length==0) {
       showUpdateFail = true;
     } else {
       showUpdateFail = await this.context.openDialog(CommonQuestionsComponent, x => x.init(this.familyLists.allFamilies[0]), x => x.updateFailedDelivery);
