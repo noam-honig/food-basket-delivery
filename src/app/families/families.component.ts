@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { AndFilter, GridSettings, DataControlSettings, DataControlInfo } from '@remult/core';
+import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings } from '@remult/core';
 
 import { Families } from './families';
-import { DeliveryStatus } from "./DeliveryStatus";
+import { DeliveryStatus, DeliveryStatusColumn } from "./DeliveryStatus";
 
 import { YesNo } from "./YesNo";
 
@@ -12,7 +12,7 @@ import { BasketType } from "./BasketType";
 import { DialogService } from '../select-popup/dialog';
 
 
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, Title } from '@angular/platform-browser';
 
 import { FilterBase } from '@remult/core';
 
@@ -39,6 +39,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { ScrollDispatcher, CdkScrollable } from '@angular/cdk/scrolling';
 import { Subscription } from 'rxjs';
 import { translate } from '../translate';
+import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 @Component({
     selector: 'app-families',
@@ -333,12 +334,12 @@ export class FamiliesComponent implements OnInit {
                     width: '300'
                 },
 
-                this.statusColumn ={column: families.deliverStatus},
+                this.statusColumn = { column: families.deliverStatus },
 
                 families.familyMembers,
                 families.familySource,
 
-                this.groupsColumn = {column: families.groups},
+                this.groupsColumn = { column: families.groups },
                 {
                     column: families.internalComment,
                     width: '300'
@@ -432,6 +433,62 @@ export class FamiliesComponent implements OnInit {
             }
         ]
     });
+    async updateStatus() {
+        let s = new DeliveryStatusColumn();
+        let ok = false;
+        await this.context.openDialog(InputAreaComponent, x => {
+            x.args = {
+                settings: {
+                    columnSettings: () => [s]
+                },
+                title: 'עדכון סטטוס ל-' + this.families.totalRows + ' המשפחות המסומנות',
+                ok: () => ok = true
+                , cancel: () => { }
+
+            }
+        });
+        if (ok)
+            if (!s.value) {
+                this.dialog.Info('לא נבחר סטטוס לעדכון - העדכון בוטל');
+            }
+            else {
+                if (await this.dialog.YesNoPromise('האם לעדכן את הסטטוס "' + s.value.caption + '" ל-' + this.families.totalRows + translate(' משפחות?'))) {
+                    await this.busy.doWhileShowingBusy(async () => {
+
+                        try {
+                            this.suspend = true;
+                            let x = this.families.rowsPerPage;
+                            this.families.rowsPerPage = this.families.totalRows;
+                            await this.families.getRecords();
+                            let transaction = [];
+                            let i = 0;
+                            for (const f of this.families.items) {
+                                f.deliverStatus.value = s.value;
+                                transaction.push(f.save());
+                                i++;
+                                if (transaction.length >= 10) {
+                                    await Promise.all(transaction);
+                                    transaction = [];
+                                    this.dialog.Info('בינתיים עודכנו ' + i);
+                                }
+                            }
+                            await Promise.all(transaction);
+                            this.families.rowsPerPage = x;
+                            
+                            await this.families.getRecords();
+                            this.dialog.Info('עודכנו ' + i);
+
+                        }
+                        catch (err) { this.dialog.Error(err); }
+                        finally {
+                            this.suspend = false;
+                        }
+                        this.refreshStats();
+                    });
+
+                }
+            }
+    }
 
     gridView = true;
 

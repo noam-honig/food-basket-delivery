@@ -51,7 +51,6 @@
                 "group": "groupA"
             }
         },
-       
         {
             "type": "npm",
             "script": "server-build-and-run",
@@ -252,6 +251,11 @@
             "problemMatcher": [
                 "$tsc"
             ]
+        },
+        {
+            "type": "npm",
+            "script": "start",
+            "problemMatcher": []
         }
     ]
 }

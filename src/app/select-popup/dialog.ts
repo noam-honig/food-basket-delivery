@@ -94,7 +94,7 @@ export class DialogService {
         });
     }
     async YesNoPromise(question: string) {
-        return await this.context.openDialog(YesNoQuestionComponent, y => y.question = question, x => x.yes);
+        return await this.context.openDialog(YesNoQuestionComponent, y =>y.args = {question: question}, x => x.yes);
     }
     confirmDelete(of: string, onOk: () => void) {
         this.YesNoQuestion("האם את בטוחה שאת מעוניית למחוק את " + of + "?", onOk);

@@ -10,7 +10,7 @@ import { Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import "../helpers/helpers.component";
 import '../app.module';
-import { ServerContext,  DateColumn, SqlDatabase } from '@remult/core';
+import { ServerContext, DateColumn, SqlDatabase } from '@remult/core';
 import { Helpers } from '../helpers/helpers';
 import { FamilyDeliveriesStats } from "../delivery-history/delivery-history.component";
 import { SqlBuilder } from "../model-shared/types";
@@ -76,8 +76,13 @@ serverInit().then(async (dataSource) => {
                 serverEvents.registerPath('/api');
             }
 
-
-            Families.SendMessageToBrowsers = (x, c) => serverEvents.SendMessage(x, c);
+            let lastMessage = new Date();
+            Families.SendMessageToBrowsers = (x, c) => {
+                if (new Date().valueOf() - lastMessage.valueOf() > 3000) {
+                    lastMessage = new Date();
+                    serverEvents.SendMessage(x, c)
+                }
+            };
         }
         app.get('/data-migration', async (req, res) => {
             await dataMigration(res);
@@ -129,7 +134,7 @@ serverInit().then(async (dataSource) => {
             }
             let ds: SqlDatabase;
             let context = getContext(req, x => ds = x);
-            
+
             var fromDate = DateColumn.stringToDate(req.query["fromdate"]);
             var toDate = DateColumn.stringToDate(req.query["todate"]);
             if (!fromDate)

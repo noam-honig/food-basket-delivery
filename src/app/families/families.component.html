@@ -18,7 +18,8 @@
 </div>
 <a *ngFor="let s of currentTabStats.moreStats" (click)="setCurrentStat(s)">{{s.name }} - {{s.value}}, </a>
 <div *ngIf="showTotalBoxes()">{{showTotalBoxes()}}</div>
-<strong>{{families.totalRows}} {{'משפחות'|translate}} </strong> <strong *ngIf="currentStatFilter"> - {{currentStatFilter.name}} - </strong> <a *ngIf="currentStatFilter" (click)="clearStat()">הצג הכל</a>
+<strong>{{families.totalRows}} {{'משפחות'|translate}} </strong> <strong *ngIf="currentStatFilter"> -
+    {{currentStatFilter.name}} - </strong> <a *ngIf="currentStatFilter" (click)="clearStat()">הצג הכל</a>
 
 
 <div style="display:flex;justify-content: space-between">
@@ -30,10 +31,20 @@
         </mat-form-field>
         <br>
 
-        
+
     </div>
     <div>
-        <button (click)="quickAdd()" mat-raised-button color="primary">{{'משפחה חדשה'|translate}}</button>
+        <button [matMenuTriggerFor]="menu" mat-raised-button style="margin-left:5px" *ngIf="gridView">אפשרויות</button>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="saveAll()" *ngIf="changedRowsCount()>1">שמור {{changedRowsCount()}}
+                {{'משפחות'|translate}}
+                שהשתנו</button>
+            <button mat-menu-item (click)="saveToExcel()">יצוא לאקסל</button>
+            <button mat-menu-item (click)="updateStatus()">עדכן סטטוס ל-{{families.totalRows}} המשפחות המסומנות</button>
+        </mat-menu>
+        <button mat-raised-button color="primary" (click)="quickAdd()">{{'משפחה חדשה'|translate}}</button>
+
+
     </div>
 </div>
 
@@ -41,10 +52,8 @@
 
 
     <data-grid [settings]="families" [height]="400"></data-grid>
+<br>    כפתור יצוא לאקסל ושמור משפחות שהשתנו - עברו לכפתור "אפשרויות" מעל הטבלא
 
-    <button (click)="saveToExcel()">יצוא לאקסל</button>
-    <button (click)="saveAll()" *ngIf="changedRowsCount()>1" mat-raised-button>שמור {{changedRowsCount()}} {{'משפחות'|translate}}
-        שהשתנו</button>
 
 
 </mat-card>
@@ -52,48 +61,61 @@
 <div *ngIf="showHoverButton" class="hover-top-bar">
     <h4 *ngIf="families.currentRow">{{'משפחת'|translate}} {{families.currentRow.name.value}}</h4>
     <button *ngIf="families.currentRow&&families.currentRow.wasChanged()" (click)="saveCurrentFamilies()"
-        [disabled]="!families.currentRow.wasChanged()" mat-icon-button><mat-icon>check</mat-icon>
+        [disabled]="!families.currentRow.wasChanged()" mat-icon-button>
+        <mat-icon>check</mat-icon>
     </button>
-    <button *ngIf="families.currentRow&&families.currentRow.wasChanged()" mat-icon-button
-        (click)="resetRow()"
+    <button *ngIf="families.currentRow&&families.currentRow.wasChanged()" mat-icon-button (click)="resetRow()"
         [disabled]="!families.currentRow.wasChanged()">
         <mat-icon>cancel</mat-icon>
     </button>
 
     <button (click)="families.previousRow()" *ngIf="!families.currentRow||!families.currentRow.wasChanged()"
         [disabled]="families.currentRow&& families.currentRow.wasChanged()||!families.previousRowAllowed()"
-        [class.hide]="gridView" mat-icon-button><mat-icon>chevron_right</mat-icon></button>
-    <button (click)="families.nextRow()" *ngIf="!families.currentRow||!families.currentRow.wasChanged()" [class.hide]="gridView"
-        [disabled]="families.currentRow&&families.currentRow.wasChanged()"
-        mat-icon-button><mat-icon>chevron_left</mat-icon></button>
-    <button (click)="gridView = !gridView" *ngIf="!families.currentRow||!families.currentRow.wasChanged()" [class.hide]="gridView"
-        mat-icon-button><mat-icon>list</mat-icon></button>
+        [class.hide]="gridView" mat-icon-button>
+        <mat-icon>chevron_right</mat-icon>
+    </button>
+    <button (click)="families.nextRow()" *ngIf="!families.currentRow||!families.currentRow.wasChanged()"
+        [class.hide]="gridView" [disabled]="families.currentRow&&families.currentRow.wasChanged()" mat-icon-button>
+        <mat-icon>chevron_left</mat-icon>
+    </button>
+    <button (click)="gridView = !gridView" *ngIf="!families.currentRow||!families.currentRow.wasChanged()"
+        [class.hide]="gridView" mat-icon-button>
+        <mat-icon>list</mat-icon>
+    </button>
     <button mat-raised-button [class.hide]="gridView" (click)="previewFamily()">תצוגה מקדימה</button>
 
 
 
 
 </div>
-<div >
-    <button [class.hide]="gridView" *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="saveCurrentFamilies()"
-        [disabled]="!families.currentRow.wasChanged()" mat-icon-button><mat-icon>check</mat-icon></button>
+<div>
     <button [class.hide]="gridView" *ngIf="families.currentRow &&families.currentRow.wasChanged()"
-        (click)="resetRow()"
-        [disabled]="!families.currentRow.wasChanged()"
-        mat-icon-button><mat-icon>cancel</mat-icon></button>
+        (click)="saveCurrentFamilies()" [disabled]="!families.currentRow.wasChanged()" mat-icon-button>
+        <mat-icon>check</mat-icon>
+    </button>
+    <button [class.hide]="gridView" *ngIf="families.currentRow &&families.currentRow.wasChanged()" (click)="resetRow()"
+        [disabled]="!families.currentRow.wasChanged()" mat-icon-button>
+        <mat-icon>cancel</mat-icon>
+    </button>
     <button *ngIf="!families.currentRow||!families.currentRow.wasChanged()" (click)="families.previousRow()"
         [disabled]="families.currentRow&& families.currentRow.wasChanged()||!families.previousRowAllowed()"
-        [class.hide]="gridView" mat-icon-button><mat-icon>chevron_right</mat-icon></button>
-    <button *ngIf="!families.currentRow||!families.currentRow.wasChanged()" (click)="families.nextRow()" [class.hide]="gridView"
-        [disabled]="families.currentRow&&families.currentRow.wasChanged()" mat-icon-button
-        ><mat-icon>chevron_left</mat-icon></button>
-    <button (click)="gridView = !gridView" [class.hide]="gridView" mat-icon-button
-        title="חזרה לרשימה"><mat-icon>list</mat-icon></button>
-    <button [class.hide]="gridView" mat-icon-button
-        (click)="dataFilter.userFilterButton()"><mat-icon>details</mat-icon></button>
+        [class.hide]="gridView" mat-icon-button>
+        <mat-icon>chevron_right</mat-icon>
+    </button>
+    <button *ngIf="!families.currentRow||!families.currentRow.wasChanged()" (click)="families.nextRow()"
+        [class.hide]="gridView" [disabled]="families.currentRow&&families.currentRow.wasChanged()" mat-icon-button>
+        <mat-icon>chevron_left</mat-icon>
+    </button>
+    <button (click)="gridView = !gridView" [class.hide]="gridView" mat-icon-button title="חזרה לרשימה">
+        <mat-icon>list</mat-icon>
+    </button>
+    <button [class.hide]="gridView" mat-icon-button (click)="dataFilter.userFilterButton()">
+        <mat-icon>details</mat-icon>
+    </button>
     <button (click)="families.addNewRow()" [class.hide]="gridView"
-        [disabled]="families.currentRow&&families.currentRow.wasChanged()"
-        mat-icon-button><mat-icon>add</mat-icon></button>
+        [disabled]="families.currentRow&&families.currentRow.wasChanged()" mat-icon-button>
+        <mat-icon>add</mat-icon>
+    </button>
     <button mat-raised-button [class.hide]="gridView" (click)="previewFamily()">תצוגה מקדימה</button>
     <Data-Filter [settings]="families" #dataFilter></Data-Filter>
 </div>

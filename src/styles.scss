@@ -99,11 +99,13 @@ th {
 
 .hide {
   visibility: collapse;
-  height: 0!important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
-.hide *{
+.hide * {
   visibility: collapse;
-  height:0!important;
+  height: 0 !important;
 }
 .myButton {
   width: 85%;
@@ -240,40 +242,39 @@ input[type="tel"] {
   justify-content: space-between;
 }
 
-
 a {
   background-color: transparent;
   color: #337ab7;
   text-decoration: none;
 }
-a:hover{
+a:hover {
   background-color: transparent;
   color: #337ab7;
   text-decoration: underline;
 }
-textarea{
+textarea {
   width: 94%;
   height: 7em;
   border-radius: 5px;
   margin-top: 8px;
-  padding:12px;
+  padding: 12px;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue",
     sans-serif;
 }
 .flip-list-move {
-  transition: transform 1s!important;
+  transition: transform 1s !important;
 }
-.table-bordered{
+.table-bordered {
   border: 1px solid #ddd;
   border-spacing: 0;
   border-collapse: collapse;
 }
 
-.table-bordered >  tr > th,
-.table-bordered >  tr > td{
+.table-bordered > tr > th,
+.table-bordered > tr > td {
   border: 1px solid #ddd;
-  padding:6px;
+  padding: 6px;
 }
-.table-bordered >  tr > th {
+.table-bordered > tr > th {
   border-bottom-width: 2px;
 }
