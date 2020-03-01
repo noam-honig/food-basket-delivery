@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings } from '@remult/core';
+import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn } from '@remult/core';
 
-import { Families } from './families';
+import { Families, GroupsColumn } from './families';
 import { DeliveryStatus, DeliveryStatusColumn } from "./DeliveryStatus";
 
 import { YesNo } from "./YesNo";
@@ -40,6 +40,8 @@ import { ScrollDispatcher, CdkScrollable } from '@angular/cdk/scrolling';
 import { Subscription } from 'rxjs';
 import { translate } from '../translate';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
+import { UpdateGroupDialogComponent } from '../update-group-dialog/update-group-dialog.component';
+import { Groups } from '../manage/manage.component';
 
 @Component({
     selector: 'app-families',
@@ -433,6 +435,51 @@ export class FamiliesComponent implements OnInit {
             }
         ]
     });
+    async updateGroup() {
+        let group = new StringColumn({
+            caption: 'שיוך לקבוצת חלוקה',
+            dataControlSettings: () => ({
+                valueList: this.context.for(Groups).getValueList({ idColumn: x => x.name, captionColumn: x => x.name })
+            })
+        });
+        let add = ' להוסיף ';
+        let action = new StringColumn({
+            caption: 'פעולה',
+            defaultValue: add,
+            dataControlSettings: () => ({
+                valueList: [{ id: add, caption: 'הוסף שיוך לקבוצת חלוקה' }, { id: 'להסיר', caption: 'הסר שיוך לקבוצת חלוקה' }]
+            })
+        });
+        let ok = false;
+        await this.context.openDialog(InputAreaComponent, x => {
+            x.args = {
+                settings: {
+                    columnSettings: () => [group, action]
+                },
+                title: 'עדכון שיוך לקבוצת חלוקה ל-' + this.families.totalRows + ' המשפחות המסומנות',
+                ok: () => ok = true
+                , cancel: () => { }
+
+            }
+        });
+
+        if (ok && group.value) {
+            if (await this.dialog.YesNoPromise('האם ' + action.value + ' את השיוך לקבוצה "' + group.value + '" ל-' + this.families.totalRows + translate(' משפחות?'))) {
+                this.doOnFamiliesInGrid(f => {
+                    if (action.value == add) {
+                        if (!f.groups.selected(group.value))
+                            f.groups.addGroup(group.value);
+                    } else {
+                        if (f.groups.selected(group.value))
+                            f.groups.removeGroup(group.value);
+                    }
+
+                });
+            }
+        }
+
+
+    }
     async updateStatus() {
         let s = new DeliveryStatusColumn();
         let ok = false;
@@ -453,38 +500,7 @@ export class FamiliesComponent implements OnInit {
             }
             else {
                 if (await this.dialog.YesNoPromise('האם לעדכן את הסטטוס "' + s.value.caption + '" ל-' + this.families.totalRows + translate(' משפחות?'))) {
-                    await this.busy.doWhileShowingBusy(async () => {
-
-                        try {
-                            this.suspend = true;
-                            let x = this.families.rowsPerPage;
-                            this.families.rowsPerPage = this.families.totalRows;
-                            await this.families.getRecords();
-                            let transaction = [];
-                            let i = 0;
-                            for (const f of this.families.items) {
-                                f.deliverStatus.value = s.value;
-                                transaction.push(f.save());
-                                i++;
-                                if (transaction.length >= 10) {
-                                    await Promise.all(transaction);
-                                    transaction = [];
-                                    this.dialog.Info('בינתיים עודכנו ' + i);
-                                }
-                            }
-                            await Promise.all(transaction);
-                            this.families.rowsPerPage = x;
-                            
-                            await this.families.getRecords();
-                            this.dialog.Info('עודכנו ' + i);
-
-                        }
-                        catch (err) { this.dialog.Error(err); }
-                        finally {
-                            this.suspend = false;
-                        }
-                        this.refreshStats();
-                    });
+                    await this.doOnFamiliesInGrid(f => f.deliverStatus.value = s.value);
 
                 }
             }
@@ -492,6 +508,41 @@ export class FamiliesComponent implements OnInit {
 
     gridView = true;
 
+
+    private async doOnFamiliesInGrid(what: (f: Families) => void) {
+        await this.busy.doWhileShowingBusy(async () => {
+            try {
+                this.suspend = true;
+                let x = this.families.rowsPerPage;
+                this.families.rowsPerPage = this.families.totalRows;
+                await this.families.getRecords();
+                let transaction = [];
+                let i = 0;
+                for (const f of this.families.items) {
+                    what(f);
+
+                    transaction.push(f.save());
+                    i++;
+                    if (transaction.length >= 10) {
+                        await Promise.all(transaction);
+                        transaction = [];
+                        this.dialog.Info('בינתיים עודכנו ' + i);
+                    }
+                }
+                await Promise.all(transaction);
+                this.families.rowsPerPage = x;
+                await this.families.getRecords();
+                this.dialog.Info('עודכנו ' + i);
+            }
+            catch (err) {
+                this.dialog.Error(err);
+            }
+            finally {
+                this.suspend = false;
+            }
+            this.refreshStats();
+        });
+    }
 
     async doTest() {
     }

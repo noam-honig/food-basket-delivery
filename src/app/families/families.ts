@@ -150,11 +150,11 @@ export class Families extends IdEntity {
         }
 
       });
-    
+
     if (!context.isAllowed(Roles.admin))
-    for (const c of this.columns) {
-      c.defs.allowApiUpdate = c == this.courierComments || c == this.deliverStatus || c == this.correntAnErrorInStatus || c == this.needsWork
-    }
+      for (const c of this.columns) {
+        c.defs.allowApiUpdate = c == this.courierComments || c == this.deliverStatus || c == this.correntAnErrorInStatus || c == this.needsWork
+      }
   }
   disableChangeLogging = false;
   disableOnSavingRow = false;
@@ -306,7 +306,7 @@ export class Families extends IdEntity {
   blockedBasket = new BoolColumn({
     caption: 'סל חסום',
     sqlExpression: () => {
-      let b =this.context.for( BasketType).create();
+      let b = this.context.for(BasketType).create();
 
       let sql = new SqlBuilder();
       return sql.columnInnerSelect(this, {
@@ -707,6 +707,21 @@ export interface parseAddressResult {
   knisa?: string;
 }
 export class GroupsColumn extends StringColumn {
+  removeGroup(group: string) {
+    let groups = this.value.split(",").map(x => x.trim());
+    let index = groups.indexOf(group);
+    if (index >= 0) {
+      groups.splice(index, 1);
+      this.value = groups.join(", ");
+    }
+  }
+  addGroup(group: string) {
+    if (this.value)
+      this.value += ', ';
+    else
+      this.value = '';
+    this.value += group;
+  }
   constructor(private context: Context) {
     super({
       caption: 'שיוך לקבוצת חלוקה',
@@ -715,14 +730,19 @@ export class GroupsColumn extends StringColumn {
         width: '300',
         click: () => {
           this.context.openDialog(UpdateGroupDialogComponent, s => {
-            s.args = {
+            s.init({
               groups: this.value,
               ok: x => this.value = x
-            }
+            })
           });
         }
       })
     });
+  }
+  selected(group: string) {
+    if (!this.value)
+      return false;
+    return this.value.indexOf(group) >= 0;
   }
 
 }
