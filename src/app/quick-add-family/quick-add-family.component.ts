@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Families, duplicateFamilyInfo } from '../families/families';
 import { Context, DataAreaSettings } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';

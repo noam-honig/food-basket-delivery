@@ -7,23 +7,28 @@
 .app-sidenav-container {
   flex: 1;
   width: 100%;
-  //    position:fixed;
   height: 100%;
-  min-width: 100%;
-  min-height: 100%;
-  //   border:1px solid rgba(0,0,0,0.5);
+  
+  
 }
 .app-sidenav-content {
-  display: flex;
   height: 100%;
+  padding: 10px;
+  overflow-y: auto;
+  display:flex;
+  flex-direction: column;
+  
+
+}
+.app-sidenav-content :nth-child(2){
+  height:100%;
+  display:flex;
   flex-direction: column;
 }
 .app-sidenav {
   width: 240px;
 }
-.wrapper {
-  margin: 5px 10px 0px;
-}
+
 
 $iconWidth: 56px;
 
@@ -55,4 +60,14 @@ h4 {
 }
 .edge-fix ::ng-deep.dataGridHeaderArea {
   position: inherit !important;
+}
+
+.sidenav .mat-toolbar {
+  background: inherit;
+}
+
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }

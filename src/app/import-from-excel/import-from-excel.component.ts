@@ -14,7 +14,7 @@ import { BusyService } from '@remult/core';
 
 
 import { Roles } from '../auth/roles';
-import { MatStepper } from '@angular/material';
+import { MatStepper } from '@angular/material/stepper';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { translate } from '../translate';

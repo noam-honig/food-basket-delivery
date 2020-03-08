@@ -1,17 +1,17 @@
 <mat-sidenav-container class="app-sidenav-container">
-  <mat-sidenav #sidenav class="app-sidenav mat-elevation-z10 no-print" [opened]="!dialog.isScreenSmall()" [mode]="dialog.isScreenSmall()?'over':'side'">
+  <mat-sidenav #sidenav class="app-sidenav mat-elevation-z10 no-print" [opened]="!dialog.isScreenSmall()"
+    [mode]="dialog.isScreenSmall()?'over':'side'">
     <div style="width:100%;text-align: center">
-      <img src="{{getLogo()}}"
-      />
+      <img src="{{getLogo()}}" />
     </div>
-    <p style="text-align: center" >{{settings.organisationName.value}}</p>
+    <p style="text-align: center">{{settings.organisationName.value}}</p>
     <h4 *ngIf="context.user">שלום {{context.user.name}}</h4>
     <mat-nav-list role="list">
       <ng-container *ngFor="let m of router.config">
         <mat-list-item *ngIf="shouldDisplayRoute(m)" routerLinkActive="active-route">
           <a matLine [routerLink]="m.path" (click)="routeClicked()">{{routeName(m)}}</a>
         </mat-list-item>
-        <mat-divider *ngIf="showSeperator(m)" ></mat-divider>
+        <mat-divider *ngIf="showSeperator(m)"></mat-divider>
 
 
       </ng-container>
@@ -21,22 +21,24 @@
     </mat-nav-list>
 
   </mat-sidenav>
-  <mat-toolbar color="{{toolbarColor}}" class="no-print">
-    <button mat-button class="sidenav-toggle" (click)="sidenav.toggle()">
-      <mat-icon>menu</mat-icon>
-    </button>
-    <span>{{currentTitle()}}</span>
+  <mat-sidenav-content style="display:flex;flex-direction: column;">
 
-  </mat-toolbar>
+    <mat-toolbar color="{{toolbarColor}}" class="no-print" style="flex-shrink:0;">
+      <button mat-button class="sidenav-toggle" (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span>{{currentTitle()}}</span>
 
-  <div class="app-sidenav-content ">
+    </mat-toolbar>
 
+    <div class="app-sidenav-content" [class.edge-fix]="isEdge">
 
-    <div class="wrapper" [class.edge-fix]="isEdge">
       <router-outlet></router-outlet>
-      <div class="footer"></div>
+
+
     </div>
 
-  </div>
+  </mat-sidenav-content>
+
 
 </mat-sidenav-container>
