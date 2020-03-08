@@ -42,6 +42,7 @@ import { translate } from '../translate';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { UpdateGroupDialogComponent } from '../update-group-dialog/update-group-dialog.component';
 import { Groups } from '../manage/manage.component';
+import { FamilySourceId } from './FamilySources';
 
 @Component({
     selector: 'app-families',
@@ -501,6 +502,31 @@ export class FamiliesComponent implements OnInit {
             else {
                 if (await this.dialog.YesNoPromise('האם לעדכן את הסטטוס "' + s.value.caption + '" ל-' + this.families.totalRows + translate(' משפחות?'))) {
                     await this.doOnFamiliesInGrid(f => f.deliverStatus.value = s.value);
+
+                }
+            }
+    }
+    async updateFamilySource() {
+        let s = new FamilySourceId(this.context);
+        let ok = false;
+        await this.context.openDialog(InputAreaComponent, x => {
+            x.args = {
+                settings: {
+                    columnSettings: () => [s]
+                },
+                title: 'עדכון גורם מפנה ל-' + this.families.totalRows + ' המשפחות המסומנות',
+                ok: () => ok = true
+                , cancel: () => { }
+
+            }
+        });
+        if (ok)
+            if (!s.value) {
+                this.dialog.Info('לא נבחר גורם מפנה לעדכון - העדכון בוטל');
+            }
+            else {
+                if (await this.dialog.YesNoPromise('האם לעדכן את הגורם מפנה "' + (await s.getTheValue()) + '" ל-' + this.families.totalRows + translate(' משפחות?'))) {
+                    await this.doOnFamiliesInGrid(f => f.familySource.value = s.value);
 
                 }
             }
