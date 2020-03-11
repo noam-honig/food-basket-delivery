@@ -1,1 +1,21 @@
-<mat-card style="height:100%"></mat-card> 
+<div class="fhc">
+  <mat-card class="fh-grow">
+    <mat-form-field class="full-width">
+      <input matInput [(ngModel)]="searchString" (input)="doSearch()" placeholder="חיפוש מתנדב"
+        [ngModelOptions]="{standalone: true}">
+      <mat-icon matSuffix (click)="searchString=''">clear</mat-icon>
+    </mat-form-field>
+    <data-grid [settings]="helpers" class="fh-grow"></data-grid>
+    <div>
+      <button mat-raised-button color="warn" (click)="resetPassword()" *ngIf="helpers.currentRow">
+        אתחל סיסמה ל{{helpers.currentRow.name.value}}
+      </button>
+
+      <button mat-raised-button (click)="saveToExcel()">שמור מתנדבים לאקסל</button>
+      <button mat-raised-button (click)="clearComments()" *ngIf="settings.showHelperComment.value">נקה הערות לכל
+        המתנדבים</button>
+      <button mat-raised-button (click)="clearEscorts()" *ngIf="settings.manageEscorts.value">נקה נתוני ליווי לכל
+        המתנדבים</button>
+    </div>
+  </mat-card>
+</div>
