@@ -318,7 +318,7 @@ export class AsignFamilyComponent implements OnInit {
                     });
                 }
             };
-        this.context.for(Groups).find().then(g => this.groups = g);
+        this.context.for(Groups).find({limit:1000,orderBy:f=>f.name}).then(g => this.groups = g);
         if (!environment.production && this.showHelperInput) {
             this.phone = '0507330590';
             await this.searchPhone();

@@ -30,7 +30,7 @@ export class UpdateGroupDialogComponent implements OnInit {
 
   availableGroups: Groups[] = [];
   async ngOnInit() {
-    this.availableGroups = await this.context.for(Groups).find();
+    this.availableGroups = await this.context.for(Groups).find({limit:1000});
   }
   groups = new GroupsColumn(this.context);
   selected(group: string) {

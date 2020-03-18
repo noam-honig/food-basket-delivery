@@ -96,6 +96,7 @@ export class Stats {
             })
         );
         await context.for(Groups).find({
+            limit:1000,
             orderBy: f => [{ column: f.name }]
         }).then(groups => {
             for (const g of groups) {
