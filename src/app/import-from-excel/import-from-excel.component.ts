@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Column, Entity, ServerFunction, IdColumn, SqlDatabase } from '@remult/core';
+import { Column, Entity, ServerFunction, IdColumn, SqlDatabase, StringColumn } from '@remult/core';
 import { Context } from '@remult/core';
 import { Helpers } from '../helpers/helpers';
 import { HasAsyncGetTheValue } from '../model-shared/types';
@@ -19,6 +19,7 @@ import { MatStepper } from '@angular/material';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { translate } from '../translate';
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
+import { Groups } from '../manage/manage.component';
 
 @Component({
     selector: 'app-excel-import',
@@ -581,7 +582,10 @@ export class ImportFromExcelComponent implements OnInit {
             this.columns.push({
                 key: col.defs.key,
                 name: col.defs.caption,
-                updateFamily: async (v, f) => {
+                updateFamily: async (v, f, h) => {
+                    if (v && v.trim().length > 0) {
+                        await h.lookupAndInsert(Groups, g => g.name, v, g => g.id, new IdColumn(f.groups.defs.caption));
+                    }
                     updateCol(f.columns.find(col), v, ', ');
                 }, columns: [col]
             });

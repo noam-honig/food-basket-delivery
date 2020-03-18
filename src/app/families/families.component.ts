@@ -444,11 +444,12 @@ export class FamiliesComponent implements OnInit {
             })
         });
         let add = ' להוסיף ';
+        let replace = ' להחליף ';
         let action = new StringColumn({
             caption: 'פעולה',
             defaultValue: add,
             dataControlSettings: () => ({
-                valueList: [{ id: add, caption: 'הוסף שיוך לקבוצת חלוקה' }, { id: 'להסיר', caption: 'הסר שיוך לקבוצת חלוקה' }]
+                valueList: [{ id: add, caption: 'הוסף שיוך לקבוצת חלוקה' }, { id: 'להסיר', caption: 'הסר שיוך לקבוצת חלוקה' }, { id: replace, caption: 'החלף שיוך לקבוצת חלוקה' }]
             })
         });
         let ok = false;
@@ -470,7 +471,10 @@ export class FamiliesComponent implements OnInit {
                     if (action.value == add) {
                         if (!f.groups.selected(group.value))
                             f.groups.addGroup(group.value);
-                    } else {
+                    } else if (action.value == replace) {
+                        f.groups.value = group.value;
+                    }
+                    else {
                         if (f.groups.selected(group.value))
                             f.groups.removeGroup(group.value);
                     }
@@ -757,7 +761,7 @@ export class FamiliesComponent implements OnInit {
                     (f, g) => f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList).and(f.groups.isContains(g)),
                     (f, g) => f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList).and(f.groups.isDifferentFrom(g)));
 
-               
+
 
                 this.updateChart();
             }));
