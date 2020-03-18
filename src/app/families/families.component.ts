@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn } from '@remult/core';
+import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn, Filter } from '@remult/core';
 
 import { Families, GroupsColumn } from './families';
 import { DeliveryStatus, DeliveryStatusColumn } from "./DeliveryStatus";
@@ -745,54 +745,70 @@ export class FamiliesComponent implements OnInit {
                     }
 
                 });
-                let i = 0;
-                let lastFs: FaimilyStatistics;
-                let firstCities = [];
-                st.cities.forEach(b => {
-                    let fs = new FaimilyStatistics(b.name, f => f.readyFilter().and(f.city.isEqualTo(b.name)), undefined);
-                    fs.value = +b.count;
+                this.prepComplexStats(st.cities, this.cityStats,
+                    (f, c) => f.readyFilter().and(f.city.isEqualTo(c)),
+                    (f, c) => f.readyFilter().and(f.city.isDifferentFrom(c)));
+                this.prepComplexStats(st.groups.map(g => ({ name: g.name, count: g.totalReady })),
+                    this.groupsReady,
+                    (f, g) => f.readyFilter(undefined, g),
+                    (f, g) => f.readyFilter().and(f.groups.isDifferentFrom(g)).and(f.groups.isDifferentFrom('')));
+                this.prepComplexStats(st.groups.map(g => ({ name: g.name, count: g.total })),
+                    this.groupsTotals,
+                    (f, g) => f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList).and(f.groups.isContains(g)),
+                    (f, g) => f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList).and(f.groups.isDifferentFrom(g)));
 
-                    i++;
-
-                    if (i <= 8) {
-                        this.cityStats.stats.push(fs);
-                        firstCities.push(b.name);
-                    }
-                    if (i > 8) {
-                        if (!lastFs) {
-                            let x = this.cityStats.stats.pop();
-                            firstCities.pop();
-                            lastFs = new FaimilyStatistics('כל השאר', f => {
-                                let r = f.readyFilter().and(f.city.isDifferentFrom(firstCities[0]));
-                                for (let index = 1; index < firstCities.length; index++) {
-                                    r = r.and(f.city.isDifferentFrom(firstCities[index]));
-                                }
-                                return r;
-
-                            }, undefined);
-                            this.cityStats.moreStats.push(x);
-                            lastFs.value = x.value;
-                            this.cityStats.stats.push(lastFs);
-                        }
-
-                    }
-                    if (i > 8) {
-                        lastFs.value += fs.value;
-                        this.cityStats.moreStats.push(fs);
-                    }
-
-
-
-                });
-                this.cityStats.moreStats.sort((a, b) => a.name.localeCompare(b.name));
-                for (const g of st.groups) {
-                    this.groupsReady.stats.push(new FaimilyStatistics(g.name, f => f.readyFilter(undefined, g.name), undefined, g.totalReady));
-                    this.groupsTotals.stats.push(new FaimilyStatistics(g.name, f => f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList).and(f.groups.isContains(g.name)), undefined, g.total));
-                }
+                /*  for (const g of st.groups) {
+                      this.groupsReady.stats.push(new FaimilyStatistics(g.name, f => f.readyFilter(undefined, g.name), undefined, g.totalReady));
+                      this.groupsTotals.stats.push(new FaimilyStatistics(g.name, f => f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList).and(f.groups.isContains(g.name)), undefined, g.total));
+                  }*/
 
                 this.updateChart();
             }));
     }
+    private prepComplexStats<type extends { name: string, count: number }>(
+        cities: type[],
+        stats: statsOnTab,
+        equalToFilter: (f: Families, item: string) => FilterBase,
+        differentFromFilter: (f: Families, item: string) => AndFilter
+    ) {
+        stats.stats.splice(0);
+        stats.moreStats.splice(0);
+        let i = 0;
+        let lastFs: FaimilyStatistics;
+        let firstCities = [];
+        cities.sort((a, b) => b.count - a.count);
+        cities.forEach(b => {
+            let fs = new FaimilyStatistics(b.name, f => equalToFilter(f, b.name), undefined);
+            fs.value = +b.count;
+            i++;
+            if (i <= 8) {
+                stats.stats.push(fs);
+                firstCities.push(b.name);
+            }
+            if (i > 8) {
+                if (!lastFs) {
+                    let x = stats.stats.pop();
+                    firstCities.pop();
+                    lastFs = new FaimilyStatistics('כל השאר', f => {
+                        let r = differentFromFilter(f, firstCities[0]);
+                        for (let index = 1; index < firstCities.length; index++) {
+                            r = r.and(differentFromFilter(f, firstCities[index]));
+                        }
+                        return r;
+                    }, undefined);
+                    stats.moreStats.push(x);
+                    lastFs.value = x.value;
+                    stats.stats.push(lastFs);
+                }
+            }
+            if (i > 8) {
+                lastFs.value += fs.value;
+                stats.moreStats.push(fs);
+            }
+        });
+        stats.moreStats.sort((a, b) => a.name.localeCompare(b.name));
+    }
+
     showTotalBoxes() {
         if (this.currentTabStats == this.basketStats) {
             let r = 'סה"כ ' + BasketType.boxes1Name + ': ' + this.totalBoxes1;
