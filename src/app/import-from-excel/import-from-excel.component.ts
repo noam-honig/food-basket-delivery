@@ -32,11 +32,11 @@ export class ImportFromExcelComponent implements OnInit {
     constructor(private context: Context, private dialog: DialogService, private busy: BusyService) {
 
     }
-    updateRowsPage:number;
-    existingFamiliesPage:number;
-    errorRowsPage:number;
-    excelPage:number;
-    newRowsPage:number;
+    updateRowsPage: number;
+    existingFamiliesPage: number;
+    errorRowsPage: number;
+    excelPage: number;
+    newRowsPage: number;
     cell: string;
 
     oFile: import('xlsx').WorkBook;
@@ -514,16 +514,19 @@ export class ImportFromExcelComponent implements OnInit {
             name: this.f.deliverStatus.defs.caption,
             updateFamily: async (v, f, h) => {
                 switch (v) {
-                    case DeliveryStatus.NotInEvent.toString():
+                    case DeliveryStatus.NotInEvent.caption:
                         f.deliverStatus.value = DeliveryStatus.NotInEvent;
                         break;
-                    case DeliveryStatus.ReadyForDelivery.toString():
+                    case DeliveryStatus.ReadyForDelivery.caption:
                         f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
                         if (f.defaultSelfPickup.value)
                             f.deliverStatus.value = DeliveryStatus.SelfPickup;
                         break;
-                    case DeliveryStatus.SelfPickup.toString():
+                    case DeliveryStatus.SelfPickup.caption:
                         f.deliverStatus.value = DeliveryStatus.SelfPickup;
+                        break;
+                    case DeliveryStatus.Success.caption:
+                        f.deliverStatus.value = DeliveryStatus.Success;
                         break;
                     default:
                         throw f.deliverStatus.defs.caption + " ערך לא ברור - " + v;
