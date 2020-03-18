@@ -138,9 +138,16 @@
                                 *ngFor="let i of updateRows | paginate: { itemsPerPage: 100,currentPage:updateRowsPage,id:'updateRows'}">
                                 <tr>
                                     <td>
-                                        <mat-icon style="color:red"
-                                            (click)="updateRows.splice(updateRows.indexOf(i),1)">
-                                            remove_circle_outline</mat-icon>
+                                        <mat-menu #updatedRowOptions="matMenu">
+
+                                            <button mat-menu-item (click)="updateRows.splice(updateRows.indexOf(i),1)">{{'הסר ממשפחות לעדכן'|translate}}</button>
+                                            <button mat-menu-item (click)="moveFromUpdateToAdd(i)">{{'העבר למשפחות להוספה'|translate}}</button>
+                                          </mat-menu>
+                                
+                                          <button mat-icon-button [matMenuTriggerFor]="updatedRowOptions">
+                                            <mat-icon>more_vert</mat-icon>
+                                          </button>
+                                     
                                     </td>
                                     <td>{{i.rowInExcel}}<br></td>
                                     <td *ngFor="let c of columnsInCompare">
