@@ -779,6 +779,8 @@ export class FamiliesComponent implements OnInit {
         let firstCities = [];
         cities.sort((a, b) => b.count - a.count);
         cities.forEach(b => {
+            if (b.count == 0)
+                return;
             let fs = new FaimilyStatistics(b.name, f => equalToFilter(f, b.name), undefined);
             fs.value = +b.count;
             i++;
