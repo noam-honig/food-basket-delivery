@@ -575,21 +575,26 @@ export class ImportFromExcelComponent implements OnInit {
         this.f.phone2Description,
         this.f.internalComment,
         this.f.deliveryComments,
-        this.f.addressComment,
-
-
-        this.f.groups]) {
+        this.f.addressComment]) {
             this.columns.push({
                 key: col.defs.key,
                 name: col.defs.caption,
                 updateFamily: async (v, f, h) => {
-                    if (v && v.trim().length > 0) {
-                        await h.lookupAndInsert(Groups, g => g.name, v, g => g.id, new IdColumn(f.groups.defs.caption));
-                    }
+
                     updateCol(f.columns.find(col), v, ', ');
                 }, columns: [col]
             });
         }
+        this.columns.push({
+            key: this.f.groups.defs.key,
+            name: this.f.groups.defs.caption,
+            updateFamily: async (v, f, h) => {
+                if (v && v.trim().length > 0) {
+                    await h.lookupAndInsert(Groups, g => g.name, v, g => g.id, new IdColumn(f.groups.defs.caption));
+                }
+                updateCol(f.columns.find(this.f.groups), v, ', ');
+            }, columns: [this.f.groups]
+        });
 
         this.columns.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0);
 
