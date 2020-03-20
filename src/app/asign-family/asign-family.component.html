@@ -41,6 +41,8 @@
     קבוצה, עיר ואילו
     סלים
     לשייך</span>
+    <br>
+    <a href="https://youtu.be/8LCeQRQPL1U" *ngIf="showHelperInput&&(!helper||!helper.name.value)" class="help no-print">לסרטון הדרכה על שיוך משפחות ויום האירוע לחצו כאן</a>
   <div *ngIf="helper&&helper. name.value&&helper.name.value.length>=2">
     <mat-card class="no-print">
       <mat-card-title>
