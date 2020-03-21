@@ -68,7 +68,7 @@
             <mat-label>קבוצת חלוקה</mat-label>
             <select matNativeControl class="form-control" #lang (change)="refreshBaskets()" [(ngModel)]="filterGroup">
               <option value="">כל הקבוצות</option>
-              <option *ngFor="let g of groups" value="{{g.name.value}}">{{g.name.value}}</option>
+              <option *ngFor="let g of groups" value="{{g.name.value}}">{{g.name.value}} - {{g.familiesCount.value}}</option>
             </select>
           </mat-form-field>
 

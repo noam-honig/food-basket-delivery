@@ -24,7 +24,7 @@ import { CitiesStats } from '../families/stats-action';
 import { SqlBuilder } from '../model-shared/types';
 import { BusyService } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
-import { Groups } from '../manage/manage.component';
+import { Groups, GroupsStats } from '../manage/manage.component';
 import { SendSmsAction } from './send-sms-action';
 import { translate } from '../translate';
 import { SelectCompanyComponent } from '../select-company/select-company.component';
@@ -131,9 +131,7 @@ export class AsignFamilyComponent implements OnInit {
 
     async assignmentCanceled() {
         this.lastRefreshRoute = this.lastRefreshRoute.then(
-            async () => await this.busy.donotWait(
-                async () =>
-                    await this.refreshBaskets()));
+            async () => await this.refreshBaskets());
         this.doRefreshRoute();
 
     }
@@ -191,31 +189,36 @@ export class AsignFamilyComponent implements OnInit {
 
 
     async refreshBaskets() {
-        let r = (await AsignFamilyComponent.getBasketStatus({
-            filterGroup: this.filterGroup,
-            filterCity: this.filterCity,
-            helperId: this.helper ? this.helper.id.value : ''
-        }))
-        this.baskets = [this.allBaskets];
-        this.baskets.push(...r.baskets);
-        this.allBaskets.unassignedFamilies = 0;
-        let found = false;
-        if (this.basketType == this.allBaskets)
-            found = true;
-        for (const iterator of this.baskets) {
-            this.allBaskets.unassignedFamilies += +iterator.unassignedFamilies;
-            if (!found && this.basketType.id == iterator.id) {
-                this.basketType = iterator;
+        await this.busy.donotWait(async () => {
+
+            this.context.for(GroupsStats).find({ limit: 1000, orderBy: f => f.name, where: f => f.familiesCount.isGreaterThan(0) }).then(g => this.groups = g);
+            let r = (await AsignFamilyComponent.getBasketStatus({
+                filterGroup: this.filterGroup,
+                filterCity: this.filterCity,
+                helperId: this.helper ? this.helper.id.value : ''
+            }));
+            this.baskets = [this.allBaskets];
+            this.baskets.push(...r.baskets);
+            this.allBaskets.unassignedFamilies = 0;
+            let found = false;
+            if (this.basketType == this.allBaskets)
                 found = true;
+            for (const iterator of this.baskets) {
+                this.allBaskets.unassignedFamilies += +iterator.unassignedFamilies;
+                if (!found && this.basketType.id == iterator.id) {
+                    this.basketType = iterator;
+                    found = true;
+                }
             }
-        }
 
 
-        this.cities = r.cities;
-        this.specialFamilies = +r.special;
-        this.repeatFamilies = +r.repeatFamilies;
-        if (this.repeatFamilies)
-            this.showRepeatFamilies = true;
+            this.cities = r.cities;
+            this.specialFamilies = +r.special;
+            this.repeatFamilies = +r.repeatFamilies;
+            if (this.repeatFamilies)
+                this.showRepeatFamilies = true;
+
+        });
     }
 
     baskets: BasketInfo[] = [];
@@ -226,15 +229,13 @@ export class AsignFamilyComponent implements OnInit {
 
     preferRepeatFamilies = true;
     async refreshList() {
-        this.busy.donotWait(async () => {
-            await this.refreshBaskets();
-        });
+        await this.refreshBaskets();
         await this.familyLists.initForHelper(this.helper);
 
     }
     familyLists = new UserFamiliesList(this.context);
     filterGroup = '';
-    groups: Groups[] = [];
+    groups: GroupsStats[] = [];
     phone: string;
     helper: Helpers;
 
@@ -318,7 +319,7 @@ export class AsignFamilyComponent implements OnInit {
                     });
                 }
             };
-        this.context.for(Groups).find({limit:1000,orderBy:f=>f.name}).then(g => this.groups = g);
+
         if (!environment.production && this.showHelperInput) {
             this.phone = '0507330590';
             await this.searchPhone();
@@ -356,6 +357,7 @@ export class AsignFamilyComponent implements OnInit {
         await this.verifyHelperExistance();
         this.lastAssign = this.lastAssign.then(async () => {
             await this.busy.donotWait(async () => {
+                
                 let x = await AsignFamilyComponent.AddBox({
                     basketType: basket ? basket.id : undefined,
                     helperId: this.helper.id.value,
@@ -369,7 +371,7 @@ export class AsignFamilyComponent implements OnInit {
                     if (basket != undefined)
                         basket.unassignedFamilies -= x.addedBoxes;
                     else {
-                        this.busy.donotWait(async () => await this.refreshBaskets());
+                        await this.refreshBaskets();
                     }
                     if (this.preferRepeatFamilies && this.repeatFamilies > 0)
                         this.repeatFamilies--;
@@ -491,7 +493,7 @@ export class AsignFamilyComponent implements OnInit {
 
             let getFamilies = async () => {
 
-                let f = context.for( Families).create();
+                let f = context.for(Families).create();
                 let sql = new SqlBuilder();
                 sql.addEntity(f, 'Families');
                 let r = (await db.execute(sql.query({

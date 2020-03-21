@@ -7,10 +7,12 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings, PhoneItem, PhoneOption, qaItem } from './ApplicationSettings';
 
 
-import { Context, IdEntity, IdColumn, StringColumn, EntityClass } from '@remult/core';
+import { Context, IdEntity, IdColumn, StringColumn, EntityClass, Entity, NumberColumn, RouteHelperService } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
+import { Families } from '../families/families';
+import { SqlBuilder } from '../model-shared/types';
 
 @Component({
   selector: 'app-manage',
@@ -268,6 +270,36 @@ export class Groups extends IdEntity {
       name: "groups",
       allowApiRead: Roles.admin,
       allowApiCRUD: Roles.admin,
+    });
+  }
+}
+
+@EntityClass
+export class GroupsStats extends Entity<string> {
+  name = new StringColumn();
+  familiesCount = new NumberColumn();
+  constructor(context: Context) {
+    super({
+      allowApiRead: Roles.admin,
+      name: 'groupsStats',
+      dbName: () => {
+        let f = context.for(Families).create();
+        let g = context.for(Groups).create();
+        let sql = new SqlBuilder();
+        sql.addEntity(f, 'Families');
+        sql.addEntity(g, 'groups');
+        return sql.entityDbName(
+          {
+            select: () => [g.name, sql.countInnerSelect({
+              from: f, where: () => [
+                sql.build(f.groups, ' like \'%\'||', g.name, '||\'%\''),
+                f.readyFilter(),
+                f.blockedBasket.defs.dbName + ' = false']
+            }, this.familiesCount)],
+            from:g
+           
+          })
+      }
     });
   }
 }
