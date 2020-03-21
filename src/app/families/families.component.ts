@@ -641,19 +641,11 @@ export class FamiliesComponent implements OnInit {
             moreStats: [],
             fourthColumn: () => this.deliverySummary
         },
-        this.cityStats,
+
         this.basketStats,
         this.groupsReady,
 
-        {
-            name: 'מצריך טיפול',
-            rule: f => f.deliverStatus.isInEvent().and(f.needsWork.isEqualTo(true)),
-            stats: [
-                this.stats.needWork
-            ],
-            moreStats: [],
-            fourthColumn: () => this.deliverySummary
-        },
+
         {
             rule: f => undefined,
             name: translate('כל המשפחות'),
@@ -665,7 +657,17 @@ export class FamiliesComponent implements OnInit {
             moreStats: [],
             fourthColumn: () => this.statusColumn
         },
-        this.groupsTotals
+        this.groupsTotals,
+        this.cityStats,
+        {
+            name: 'מצריך טיפול',
+            rule: f => f.deliverStatus.isInEvent().and(f.needsWork.isEqualTo(true)),
+            stats: [
+                this.stats.needWork
+            ],
+            moreStats: [],
+            fourthColumn: () => this.deliverySummary
+        }
     ]
     tabChanged() {
         this.currentStatFilter = undefined;
