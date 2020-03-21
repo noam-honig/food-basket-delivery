@@ -67,14 +67,7 @@ export async function serverInit() {
                 await settings.save();
             }
 
-            for (const s of Sites.schemas) {
-                if (s.toLowerCase() == Sites.guestSchema)
-                    throw 'admin is an ivalid schema name;'
-                await verifySchemaExistance(pool, s);
-                let schemaPool = new PostgresSchemaWrapper(pool, s);
-                await new PostgresSchemaBuilder( new SqlDatabase(new PostgresDataProvider(schemaPool)), s).verifyStructureOfAllEntities();
-                await initSchema(schemaPool, s);
-            }
+            InitSchemas(pool);
             Sites.getDataProviderForOrg = org => new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, org)));
             return (y: Context) => {
                 let org = Sites.getValidSchemaFromContext(y);
@@ -100,6 +93,17 @@ export async function serverInit() {
     }
 
 
+
+    async function InitSchemas(pool: Pool) {
+        for (const s of Sites.schemas) {
+            if (s.toLowerCase() == Sites.guestSchema)
+                throw 'admin is an ivalid schema name;';
+            await verifySchemaExistance(pool, s);
+            let schemaPool = new PostgresSchemaWrapper(pool, s);
+            await new PostgresSchemaBuilder(new SqlDatabase(new PostgresDataProvider(schemaPool)), s).verifyStructureOfAllEntities();
+            await initSchema(schemaPool, s);
+        }
+    }
 }
 export async function verifySchemaExistance(pool: Pool, s: string) {
     let exists = await pool.query('SELECT schema_name FROM information_schema.schemata WHERE schema_name = \'' + s + '\'');
