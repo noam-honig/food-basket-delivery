@@ -88,7 +88,7 @@ export class PlaybackComponent implements OnInit {
         if (newStat == prevStep)
           return;
         let p = prevStep;
-        when = new Date( when.valueOf()+1000*60*60*3);
+        when = new Date( when.valueOf());
         this.timeline.push({
           caption: prevStep.name + ' > ' + newStat.name,
           timeline: when,
