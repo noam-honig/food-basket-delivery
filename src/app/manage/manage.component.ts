@@ -7,7 +7,7 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings, PhoneItem, PhoneOption, qaItem } from './ApplicationSettings';
 
 
-import { Context, IdEntity, IdColumn, StringColumn, EntityClass, Entity, NumberColumn, RouteHelperService } from '@remult/core';
+import { Context, IdEntity, IdColumn, StringColumn, EntityClass, Entity, NumberColumn, RouteHelperService, DataAreaSettings } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
@@ -30,27 +30,27 @@ export class ManageComponent implements OnInit {
   }
 
   wasChange() {
-    return this.settings.currentRow &&
+    return this.settings &&
       this.images.currentRow &&
-      (this.settings.currentRow.wasChanged() ||
+      (this.settings.wasChanged() ||
         this.images.currentRow.wasChanged() ||
-        this.settings.currentRow.phoneStrategy.originalValue != this.serializePhones() ||
-        this.settings.currentRow.commonQuestions.originalValue != this.serializeQa()
+        this.settings.phoneStrategy.originalValue != this.serializePhones() ||
+        this.settings.commonQuestions.originalValue != this.serializeQa()
       );
   }
   save() {
-    this.settings.currentRow.phoneStrategy.value = this.serializePhones();
-    this.settings.currentRow.commonQuestions.value = this.serializeQa();
-    this.settings.currentRow.save();
+    this.settings.phoneStrategy.value = this.serializePhones();
+    this.settings.commonQuestions.value = this.serializeQa();
+    this.settings.save();
     this.images.currentRow.save();
   }
   reset() {
-    this.settings.currentRow.undoChanges();
+    this.settings.undoChanges();
     this.images.currentRow.undoChanges();
-    this.helpPhones = this.settings.currentRow.getPhoneStrategy();
-    this.qaItems = this.settings.currentRow.getQuestions();
+    this.helpPhones = this.settings.getPhoneStrategy();
+    this.qaItems = this.settings.getQuestions();
   }
-  constructor(private dialog: DialogService, private context: Context, private sanitization: DomSanitizer) { }
+  constructor(private dialog: DialogService, private context: Context, private sanitization: DomSanitizer, public settings: ApplicationSettings) { }
 
   basketType = this.context.for(BasketType).gridSettings({
     hideDataArea: true,
@@ -104,74 +104,74 @@ export class ManageComponent implements OnInit {
     },
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
   });
-  settings = this.context.for(ApplicationSettings).gridSettings({
+  settingsArea = new DataAreaSettings({
 
-    numOfColumnsInGrid: 0,
-    allowUpdate: true,
-    columnSettings: s => [
-      s.organisationName,
-      s.address,
+
+
+    columnSettings: () => [
+      this.settings.organisationName,
+      this.settings.address,
       {
         caption: 'כתובת כפי שגוגל הבין',
-        getValue: s => s.getGeocodeInformation().getAddress()
+        getValue: s => this.settings.getGeocodeInformation().getAddress()
       }
 
     ]
   });
-  settingsMore = this.settings.addArea({
+  settingsMore = new DataAreaSettings({
     columnSettings: s =>
       [
-        s.helpText,
-        s.helpPhone
+        this.settings.helpText,
+        this.settings.helpPhone
       ]
 
   });
 
 
-  settingsLogo = this.settings.addArea({
-    columnSettings: s => [s.logoUrl]
+  settingsLogo = new DataAreaSettings({
+    columnSettings: s => [this.settings.logoUrl]
   });
-  settingsMessages = this.settings.addArea({
+  settingsMessages = new DataAreaSettings({
     columnSettings: s => [
-      s.messageForDoneDelivery,
-      s.message1Text,
-      s.message1Link,
-      s.message1OnlyWhenDone,
-      s.message2Text,
-      s.message2Link,
-      s.message2OnlyWhenDone,
-      s.deliveredButtonText,
-      s.commentForSuccessDelivery,
-      s.commentForSuccessLeft,
-      s.commentForProblem,
+      this.settings.messageForDoneDelivery,
+      this.settings.message1Text,
+      this.settings.message1Link,
+      this.settings.message1OnlyWhenDone,
+      this.settings.message2Text,
+      this.settings.message2Link,
+      this.settings.message2OnlyWhenDone,
+      this.settings.deliveredButtonText,
+      this.settings.commentForSuccessDelivery,
+      this.settings.commentForSuccessLeft,
+      this.settings.commentForProblem,
 
 
 
 
     ]
   });
-  prefereces = this.settings.addArea({
+  prefereces = new DataAreaSettings({
     columnSettings: s => [
-      s.defaultStatusType,
-      s.usingSelfPickupModule,
-      s.showLeftThereButton,
-      s.boxes1Name,
-      s.boxes2Name,
-      s.showCompanies,
-      s.showHelperComment,
-      s.defaultPrefixForExcelImport,
-      s.redTitleBar,
-      s.forSoldiers,
-      s.manageEscorts
+      this.settings.defaultStatusType,
+      this.settings.usingSelfPickupModule,
+      this.settings.showLeftThereButton,
+      this.settings.boxes1Name,
+      this.settings.boxes2Name,
+      this.settings.showCompanies,
+      this.settings.showHelperComment,
+      this.settings.defaultPrefixForExcelImport,
+      this.settings.redTitleBar,
+      this.settings.forSoldiers,
+      this.settings.manageEscorts
     ]
   });
 
 
   testSms() {
-    return SendSmsAction.getMessage(this.settings.currentRow.smsText.value, this.settings.currentRow.organisationName.value, 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
+    return SendSmsAction.getMessage(this.settings.smsText.value, this.settings.organisationName.value, 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
   }
   testSmsReminder() {
-    return SendSmsAction.getMessage(this.settings.currentRow.reminderSmsText.value, this.settings.currentRow.organisationName.value, 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
+    return SendSmsAction.getMessage(this.settings.reminderSmsText.value, this.settings.organisationName.value, 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
   }
   images = this.context.for(ApplicationImages).gridSettings({
     numOfColumnsInGrid: 0,
@@ -184,16 +184,16 @@ export class ManageComponent implements OnInit {
   });
 
   ngOnInit() {
-    this.settings.getRecords().then(x => {
-      try {
-        this.helpPhones = x.items[0].getPhoneStrategy();
-        this.qaItems = x.items[0].getQuestions();
-      }
-      catch
-      {
-        this.helpPhones = [];
-      }
-    });
+
+    try {
+      this.helpPhones = this.settings.getPhoneStrategy();
+      this.qaItems = this.settings.getQuestions();
+    }
+    catch
+    {
+      this.helpPhones = [];
+    }
+
     this.images.getRecords();
   }
   helpPhones: PhoneItem[] = [{
@@ -262,8 +262,8 @@ export class ManageComponent implements OnInit {
     return this.sanitization.bypassSecurityTrustResourceUrl(
       'data:image;base64,' + this.images.currentRow.base64PhoneHomeImage.value);
   }
-  onFileChange(id:string,column:StringColumn) {
-    const inputNode: any = document.querySelector('#'+id);
+  onFileChange(id: string, column: StringColumn) {
+    const inputNode: any = document.querySelector('#' + id);
 
     if (typeof (FileReader) !== 'undefined') {
       const reader = new FileReader();

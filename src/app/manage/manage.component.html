@@ -8,18 +8,18 @@
 
 
 
-<mat-accordion *ngIf="settings.currentRow" style="margin-top:10px">
+<mat-accordion *ngIf="settings" style="margin-top:10px">
     <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title>
-                פרטי הארגון - {{settings.currentRow.organisationName.value}}
+                פרטי הארגון - {{settings.organisationName.value}}
             </mat-panel-title>
 
         </mat-expansion-panel-header>
 
 
 
-        <data-area [settings]="settings"></data-area>
+        <data-area [settings]="settingsArea"></data-area>
         <mat-card>
             <mat-card-title>
                 הטלפון ממנו יצא הSMS
@@ -32,7 +32,7 @@
         </mat-card>
         <mat-card>
             <mat-card-title>
-                {{settings.currentRow.smsText.defs.caption}}
+                {{settings.smsText.defs.caption}}
             </mat-card-title>
             הודעה זו תשלח למתנדב ממסך שיוך משפחות - עם הקישור למשפחות להן הוא מתבקש לחלק.
             <ul>
@@ -41,16 +41,16 @@
                 <li>!ארגון! - יוחלף בשם הארגון</li>
                 <li>!אתר! - יוחלף בכתובת האתר</li>
             </ul>
-            <textarea [(ngModel)]="settings.currentRow.smsText.value" class="form-control"></textarea>
+            <textarea [(ngModel)]="settings.smsText.value" class="form-control"></textarea>
             <strong>הודעה לדוגמא</strong>
             <pre>{{testSms()}}</pre>
         </mat-card>
         <mat-card>
             <mat-card-title>
-                {{settings.currentRow.reminderSmsText.defs.caption}}
+                {{settings.reminderSmsText.defs.caption}}
             </mat-card-title>
             הודעה זו תשלח למשנע שמתעכב ממסך מעקב משנעים
-            <textarea [(ngModel)]="settings.currentRow.reminderSmsText.value" class="form-control" lines=3></textarea>
+            <textarea [(ngModel)]="settings.reminderSmsText.value" class="form-control" lines=3></textarea>
 
             <h4>הודעת תזכורת לדוגמא</h4>
             <pre>{{testSmsReminder()}}</pre>
@@ -200,22 +200,32 @@
 
         </mat-expansion-panel-header>
         <data-area [settings]="settingsLogo"></data-area>
-        אייקון לאתר
-        <br>
-        <input type="file" id="icon" (change)="onFileChange('icon',images.currentRow.base64Icon)">
-        <br>
-        <img [src]="getIcon()" *ngIf="this.images.currentRow">
-        <br>
-        <br>
-        לוגו לטלפון
-        <br>
-        <input type="file" id="logo" (change)="onFileChange('logo',images.currentRow.base64PhoneHomeImage)">
-        <br>
-        <img [src]="getLogo()" *ngIf="this.images.currentRow">
-        <br>
 
-        כלי ליצירת Icons:
-        <a href="https://www.favicon-generator.org/">Favicon generator</a>
+         אנו ממליצים ליצור את האייקונים בעזרת
+            <a href="https://www.favicon-generator.org/">Favicon generator</a> ומהתוצאה שהוא יוצר להשתמש favicon.ico
+            עבור
+            האייקון - וב apple-icon-120x120.png עבור הלוגו
+        
+        <mat-card>
+            <mat-card-title>אייקון לאתר (favicon.ico)</mat-card-title>
+            <br>
+            <input type="file" id="icon" (change)="onFileChange('icon',images.currentRow.base64Icon)">
+            <br>
+            <img [src]="getIcon()" *ngIf="this.images.currentRow">
+        </mat-card>
+        <br>
+        <br>
+        <mat-card>
+            <mat-card-title>
+                לוגו לאתר ולטלפון - (apple-icon-120x120.png)</mat-card-title>
+            <br>
+            <input type="file" id="logo" (change)="onFileChange('logo',images.currentRow.base64PhoneHomeImage)">
+            <br>
+            <img [src]="getLogo()" *ngIf="this.images.currentRow">
+            <br>
+        </mat-card>
+
+
 
     </mat-expansion-panel>
 </mat-accordion>
