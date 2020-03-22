@@ -16,7 +16,7 @@ export class SendSmsAction {
         try {
             await SendSmsAction.generateMessage(context, helperId, context.getOrigin(), reminder, context.user.name, async (phone, message, sender) => {
 
-                new SendSmsUtils().sendSms(phone, sender, message);
+                new SendSmsUtils().sendSms(phone, sender, message, context.getOrigin());
                 let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
                 if (reminder)
                     h.reminderSmsDate.value = new Date();
@@ -95,7 +95,7 @@ class SendSmsUtils {
     accid = process.env.SMS_ACCID;
 
 
-    async sendSms(phone: string, from: string, text: string) {
+    async sendSms(phone: string, from: string, text: string, org: string) {
 
         var t = new Date();
         var date = t.getFullYear() + '/' + (t.getMonth() + 1) + '/' + t.getDate() + ' ' + t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds();
@@ -118,7 +118,7 @@ class SendSmsUtils {
             '</sendSmsToRecipients>' +
             '</soap12:Body>' +
             '</soap12:Envelope>';
-        console.log('sms request', data);
+
 
 
         try {
@@ -130,7 +130,17 @@ class SendSmsUtils {
                 headers: h,
                 body: data
             });
-            console.log('sms response', r, await r.text());
+            
+            let res = await r.text();
+            let orig = res;
+            let t = '<sendSmsToRecipientsResult>';
+            let i = res.indexOf(t);
+            if (i >= 0) {
+                res = res.substring(i + t.length);
+                res = res.substring(0, res.indexOf('<'));
+            }
+            console.log('sms response for:' + org + ' - ' + res);
+            
 
         }
         catch (err) {
