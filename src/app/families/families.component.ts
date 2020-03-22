@@ -797,6 +797,7 @@ export class FamiliesComponent implements OnInit {
                 stats.totalBoxes2 += +b.boxes2 * +fs.value;
             }
         });
+        stats.stats.sort((a,b)=>b.value-a.value);
     }
 
     private prepComplexStats<type extends { name: string, count: number }>(

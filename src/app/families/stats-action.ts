@@ -115,8 +115,7 @@ export class Stats {
 
 
         await Promise.all(pendingStats);
-        result.baskets = result.baskets.filter(b => b.unassignedFamilies > 0);
-        result.baskets.sort((a, b) => b.unassignedFamilies - a.unassignedFamilies);
+        
         return result;
     }
 }
