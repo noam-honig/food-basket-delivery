@@ -4,6 +4,7 @@ import { Roles } from '../auth/roles';
 import { FamilyDeliveriesStats } from '../delivery-history/delivery-history.component';
 import { Sites } from '../sites/sites';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { Families } from '../families/families';
 
 @Component({
   selector: 'app-overview',
@@ -104,8 +105,9 @@ export class OverviewComponent implements OnInit {
         let r = await context.for(FamilyDeliveriesStats, dp).count(f => f.deliveryStatusDate.isGreaterOrEqualTo(dateRange.from).and(f.deliveryStatusDate.isLessThan(dateRange.to)));
         dateRange.value += +r;
         site.stats[dateRange.caption] = r;
-
       }
+      site.stats["משפחות באירוע"] = await context.for(Families).count(f => f.deliverStatus.isInEvent());
+      site.stats["בדרך"] = await context.for(Families).count(f => f.onTheWayFilter());
 
     }
     return result;
