@@ -27,6 +27,8 @@ export class OverviewComponent implements OnInit {
   @ServerFunction({ allowed: Roles.overview })
   static async getOverview(context?: Context) {
     let today = new Date();
+    let onTheWay = "בדרך";
+    let inEvent = "באירוע";
     let result: overviewResult = {
       statistics: [
         {
@@ -83,6 +85,18 @@ export class OverviewComponent implements OnInit {
           value: 0,
           from: new Date(2017, 0, 1),
           to: new Date(today.getFullYear() + 1, 0, 1)
+        },
+        {
+          caption: inEvent,
+          value: 0,
+          from: undefined,
+          to: undefined
+        },
+        {
+          caption: onTheWay,
+          value: 0,
+          from: undefined,
+          to: undefined
         }
       ],
       sites: []
@@ -102,12 +116,18 @@ export class OverviewComponent implements OnInit {
       };
       result.sites.push(site);
       for (const dateRange of result.statistics) {
-        let r = await context.for(FamilyDeliveriesStats, dp).count(f => f.deliveryStatusDate.isGreaterOrEqualTo(dateRange.from).and(f.deliveryStatusDate.isLessThan(dateRange.to)));
+        let r = 0;
+        if (dateRange.caption == inEvent) {
+          r = await context.for(Families, dp).count(f => f.deliverStatus.isInEvent());
+        } else if (dateRange.caption == onTheWay) {
+          r = await context.for(Families, dp).count(f => f.onTheWayFilter());;
+        }
+        else
+          r = await context.for(FamilyDeliveriesStats, dp).count(f => f.deliveryStatusDate.isGreaterOrEqualTo(dateRange.from).and(f.deliveryStatusDate.isLessThan(dateRange.to)));
         dateRange.value += +r;
         site.stats[dateRange.caption] = r;
       }
-      site.stats["משפחות באירוע"] = await context.for(Families).count(f => f.deliverStatus.isInEvent());
-      site.stats["בדרך"] = await context.for(Families).count(f => f.onTheWayFilter());
+      
 
     }
     return result;
