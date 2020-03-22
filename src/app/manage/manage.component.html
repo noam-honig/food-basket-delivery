@@ -107,7 +107,7 @@
 
         </mat-expansion-panel-header>
         כאשר המתנדב לוחץ על הכפתור "נתקלתי בבעיה" מופע לו מסך אם רשימה זו של שאלות ותשובות לעזרה
-        
+
         <table>
             <tr *ngFor="let p of qaItems; let i = index" style="border-bottom: solid;
             border-bottom-width: thin;
@@ -117,12 +117,12 @@
                 <td style="    padding-bottom: 9px;padding-top:9px;">
                     <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
                         <mat-label>שאלה</mat-label>
-                        <input matInput [(ngModel)]="p.question"  >
-                      </mat-form-field>
-                      <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
+                        <input matInput [(ngModel)]="p.question">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
                         <mat-label>תשובה</mat-label>
-                    <textarea matInput [(ngModel)]="p.answer"style="height:50px;" ></textarea>
-                </mat-form-field>
+                        <textarea matInput [(ngModel)]="p.answer" style="height:50px;"></textarea>
+                    </mat-form-field>
                 </td>
                 <td><button mat-icon-button (click)="deleteQuestion(p)">
                         <mat-icon>delete</mat-icon>
@@ -200,9 +200,20 @@
 
         </mat-expansion-panel-header>
         <data-area [settings]="settingsLogo"></data-area>
-        <data-area [settings]="images"></data-area>
-        כלי ליצירת Base64:
-        <a href="https://www.browserling.com/tools/file-to-base64">File to Base64</a>
+        אייקון לאתר
+        <br>
+        <input type="file" id="icon" (change)="onFileChange('icon',images.currentRow.base64Icon)">
+        <br>
+        <img [src]="getIcon()" *ngIf="this.images.currentRow">
+        <br>
+        <br>
+        לוגו לטלפון
+        <br>
+        <input type="file" id="logo" (change)="onFileChange('logo',images.currentRow.base64PhoneHomeImage)">
+        <br>
+        <img [src]="getLogo()" *ngIf="this.images.currentRow">
+        <br>
+
         כלי ליצירת Icons:
         <a href="https://www.favicon-generator.org/">Favicon generator</a>
 

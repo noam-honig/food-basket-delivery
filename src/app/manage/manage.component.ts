@@ -13,6 +13,7 @@ import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
 import { Families } from '../families/families';
 import { SqlBuilder } from '../model-shared/types';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-manage',
@@ -49,7 +50,7 @@ export class ManageComponent implements OnInit {
     this.helpPhones = this.settings.currentRow.getPhoneStrategy();
     this.qaItems = this.settings.currentRow.getQuestions();
   }
-  constructor(private dialog: DialogService, private context: Context) { }
+  constructor(private dialog: DialogService, private context: Context, private sanitization: DomSanitizer) { }
 
   basketType = this.context.for(BasketType).gridSettings({
     hideDataArea: true,
@@ -257,6 +258,29 @@ export class ManageComponent implements OnInit {
   serializeQa() {
     return JSON.stringify(this.qaItems);
   }
+  getLogo() {
+    return this.sanitization.bypassSecurityTrustResourceUrl(
+      'data:image;base64,' + this.images.currentRow.base64PhoneHomeImage.value);
+  }
+  onFileChange(id:string,column:StringColumn) {
+    const inputNode: any = document.querySelector('#'+id);
+
+    if (typeof (FileReader) !== 'undefined') {
+      const reader = new FileReader();
+
+      reader.onload = (e: any) => {
+        let x = e.target.result;
+        let y = x.indexOf(',');
+        column.value = x.substring(y + 1).trim();
+      };
+
+      reader.readAsDataURL(inputNode.files[0]);
+    }
+  }
+  getIcon() {
+    return this.sanitization.bypassSecurityTrustResourceUrl(
+      'data:image;base64,' + this.images.currentRow.base64Icon.value);
+  }
 
 
 }
@@ -296,8 +320,8 @@ export class GroupsStats extends Entity<string> {
                 f.readyFilter(),
                 f.blockedBasket.defs.dbName + ' = false']
             }, this.familiesCount)],
-            from:g
-           
+            from: g
+
           })
       }
     });
