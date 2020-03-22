@@ -583,7 +583,7 @@ export class FamiliesComponent implements OnInit {
         this.onDestroy();
         this.scrollingSubscription.unsubscribe();
     }
-    basketStats: statsOnTab = {
+    basketStats: statsOnTabBasket = {
         name: 'נותרו לפי סלים',
         rule: f => f.readyAndSelfPickup(),
         stats: [
@@ -593,6 +593,28 @@ export class FamiliesComponent implements OnInit {
         moreStats: [],
         fourthColumn: () => this.statusColumn
     };
+
+    basketsInEvent: statsOnTabBasket = {
+        name: 'באירוע לפי סלים',
+        rule: f => f.deliverStatus.isInEvent(),
+        stats: [
+            this.stats.ready,
+            this.stats.special
+        ],
+        moreStats: [],
+        fourthColumn: () => this.statusColumn
+    };
+    basketsDelivered: statsOnTabBasket = {
+        name: 'נמסרו לפי סלים',
+        rule: f => f.deliverStatus.isSuccess(),
+        stats: [
+            this.stats.ready,
+            this.stats.special
+        ],
+        moreStats: [],
+        fourthColumn: () => this.statusColumn
+    };
+
     cityStats: statsOnTab = {
         name: 'נותרו לפי ערים',
         rule: f => f.readyFilter(),
@@ -641,8 +663,9 @@ export class FamiliesComponent implements OnInit {
             moreStats: [],
             fourthColumn: () => this.deliverySummary
         },
-
+        this.basketsInEvent,
         this.basketStats,
+        this.basketsDelivered,
         this.groupsReady,
 
 
@@ -718,10 +741,7 @@ export class FamiliesComponent implements OnInit {
             this.colors[0].backgroundColor.push(colors.green, colors.blue, colors.yellow, colors.red, colors.orange, colors.gray);
         }
     }
-    totalBoxes1 = 0;
-    blockedBoxes1 = 0;
-    totalBoxes2 = 0;
-    blockedBoxes2 = 0;
+
 
     refreshStats() {
         if (this.suspend)
@@ -734,23 +754,12 @@ export class FamiliesComponent implements OnInit {
                 this.groupsReady.stats.splice(0);
                 this.groupsTotals.stats.splice(0);
 
-                this.totalBoxes1 = 0;
-                this.blockedBoxes1 = 0;
-                this.totalBoxes2 = 0;
-                this.blockedBoxes2 = 0;
-                st.baskets.forEach(b => {
-                    let fs = new FaimilyStatistics(b.name, f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(f.courier.isEqualTo('').and(f.basketType.isEqualTo(b.id))), undefined);
-                    fs.value = b.unassignedFamilies;
-                    this.basketStats.stats.push(fs);
-                    if (b.blocked) {
-                        this.blockedBoxes1 += +b.boxes * +b.unassignedFamilies;
-                        this.blockedBoxes2 += +b.boxes2 * +b.unassignedFamilies;
-                    } else {
-                        this.totalBoxes1 += +b.boxes * +b.unassignedFamilies;
-                        this.totalBoxes2 += +b.boxes2 * +b.unassignedFamilies;
-                    }
-
-                });
+                this.basketStatsCalc(st.baskets, this.basketStats, b => b.unassignedFamilies, (f, id) =>
+                    f.readyFilter().and(f.basketType.isEqualTo(id)));
+                this.basketStatsCalc(st.baskets, this.basketsInEvent, b => b.inEventFamilies, (f, id) =>
+                    f.deliverStatus.isInEvent().and(f.basketType.isEqualTo(id)));
+                    this.basketStatsCalc(st.baskets, this.basketsDelivered, b => b.successFamilies, (f, id) =>
+                    f.deliverStatus.isSuccess().and(f.basketType.isEqualTo(id)));
                 this.prepComplexStats(st.cities, this.cityStats,
                     (f, c) => f.readyFilter().and(f.city.isEqualTo(c)),
                     (f, c) => f.readyFilter().and(f.city.isDifferentFrom(c)));
@@ -768,6 +777,28 @@ export class FamiliesComponent implements OnInit {
                 this.updateChart();
             }));
     }
+    private basketStatsCalc(baskets: any[], stats: statsOnTabBasket, getCount: (x: any) => number, equalToFilter: (f: Families, id: string) => FilterBase) {
+        stats.stats.splice(0);
+        stats.totalBoxes1 = 0;
+        stats.blockedBoxes1 = 0;
+        stats.totalBoxes2 = 0;
+        stats.blockedBoxes2 = 0;
+        baskets.forEach(b => {
+            let fs = new FaimilyStatistics(b.name, f => equalToFilter(f, b.id),
+                undefined);
+            fs.value = getCount(b);
+            stats.stats.push(fs);
+            if (b.blocked) {
+                stats.blockedBoxes1 += +b.boxes * +fs.value;
+                stats.blockedBoxes2 += +b.boxes2 * +fs.value;
+            }
+            else {
+                stats.totalBoxes1 += +b.boxes * +fs.value;
+                stats.totalBoxes2 += +b.boxes2 * +fs.value;
+            }
+        });
+    }
+
     private prepComplexStats<type extends { name: string, count: number }>(
         cities: type[],
         stats: statsOnTab,
@@ -815,15 +846,16 @@ export class FamiliesComponent implements OnInit {
     }
 
     showTotalBoxes() {
-        if (this.currentTabStats == this.basketStats) {
-            let r = 'סה"כ ' + BasketType.boxes1Name + ': ' + this.totalBoxes1;
-            if (this.blockedBoxes1) {
-                r += ', סה"כ ' + BasketType.boxes1Name + ' חסומים: ' + this.blockedBoxes1;
+        let x: statsOnTabBasket = this.currentTabStats;
+        if (x && (x.totalBoxes1 + x.totalBoxes2 + x.blockedBoxes1 + x.blockedBoxes2)) {
+            let r = 'סה"כ ' + BasketType.boxes1Name + ': ' + x.totalBoxes1;
+            if (x.blockedBoxes1) {
+                r += ', סה"כ ' + BasketType.boxes1Name + ' חסומים: ' + x.blockedBoxes1;
             }
-            if (this.totalBoxes2)
-                r += ', סה"כ ' + BasketType.boxes2Name + ': ' + this.totalBoxes2;
-            if (this.blockedBoxes2) {
-                r += ', סה"כ ' + BasketType.boxes2Name + ' חסומים: ' + this.blockedBoxes2;
+            if (x.totalBoxes2)
+                r += ', סה"כ ' + BasketType.boxes2Name + ': ' + x.totalBoxes2;
+            if (x.blockedBoxes2) {
+                r += ', סה"כ ' + BasketType.boxes2Name + ' חסומים: ' + x.blockedBoxes2;
             }
             return r;
         }
@@ -898,4 +930,11 @@ interface statsOnTab {
     moreStats: FaimilyStatistics[],
     rule: (f: Families) => FilterBase,
     fourthColumn: () => DataControlSettings<any>
+}
+interface statsOnTabBasket extends statsOnTab {
+    totalBoxes1?: number;
+    blockedBoxes1?: number;
+    totalBoxes2?: number;
+    blockedBoxes2?: number;
+
 }

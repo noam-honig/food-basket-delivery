@@ -80,7 +80,9 @@ export class Stats {
                 boxes: b.boxes.value,
                 boxes2:b.boxes2.value,
                 blocked: b.blocked.value,
-                unassignedFamilies: await context.for(Families).count(f => f.readyAndSelfPickup().and(f.basketType.isEqualTo(b.id)))
+                unassignedFamilies: await context.for(Families).count(f => f.readyAndSelfPickup().and(f.basketType.isEqualTo(b.id))),
+                inEventFamilies: await context.for(Families).count(f => f.deliverStatus.isInEvent().and(f.basketType.isEqualTo(b.id))),
+                successFamilies: await context.for(Families).count(f => f.deliverStatus.isSuccess().and(f.basketType.isEqualTo(b.id)))
             });
         }));
         pendingStats.push(
