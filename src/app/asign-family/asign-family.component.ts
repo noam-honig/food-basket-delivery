@@ -357,7 +357,7 @@ export class AsignFamilyComponent implements OnInit {
         await this.verifyHelperExistance();
         this.lastAssign = this.lastAssign.then(async () => {
             await this.busy.donotWait(async () => {
-                
+
                 let x = await AsignFamilyComponent.AddBox({
                     basketType: basket ? basket.id : undefined,
                     helperId: this.helper.id.value,
@@ -771,7 +771,7 @@ export class AsignFamilyComponent implements OnInit {
     }
 
     addSpecific() {
-        this.addFamily(f => f.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent), 'specific');
+        this.addFamily(f => f.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent).and(f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList).and(f.blockedBasket.isEqualTo(false))), 'specific');
     }
 }
 
