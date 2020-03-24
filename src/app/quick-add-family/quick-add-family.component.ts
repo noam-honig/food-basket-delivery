@@ -47,6 +47,7 @@ export class QuickAddFamilyComponent implements OnInit {
       [
         this.f.deliverStatus,
         this.f.basketType],
+      this.f.groups,
       this.f.deliveryComments
 
 
