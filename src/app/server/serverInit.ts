@@ -102,6 +102,9 @@ export async function serverInit() {
             let schemaPool = new PostgresSchemaWrapper(pool, s);
             await new PostgresSchemaBuilder(new SqlDatabase(new PostgresDataProvider(schemaPool)), s).verifyStructureOfAllEntities();
             await initSchema(schemaPool, s);
+            await new Promise(x=>setTimeout(() => {
+                x();
+            }, 1000));
         }
     }
 }
