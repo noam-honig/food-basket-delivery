@@ -194,7 +194,7 @@ export class Families extends IdEntity {
 
   })
   basketType = new BasketId(this.context, 'סוג סל');
-  familySource = new FamilySourceId(this.context, { includeInApi: Roles.admin, caption: 'גורם מפנה' });
+  familySource = new FamilySourceId(this.context, { includeInApi: true, caption: 'גורם מפנה' });
   socialWorker = new StringColumn('איש קשר לבירור פרטים (עו"ס)');
   socialWorkerPhone1 = new PhoneColumn("איש קשר טלפון 1");
   socialWorkerPhone2 = new PhoneColumn("איש קשר טלפון 2");
