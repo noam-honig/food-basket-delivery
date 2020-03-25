@@ -17,6 +17,7 @@ export class SelectFamilyComponent implements OnInit {
   public args: {
     where: (f: Families) => FilterBase,
     onSelect: (selectedValue: Families) => void,
+    selectStreet: boolean
   };
   @ViewChild("search", { static: true }) search: ElementRef;
   constructor(private busy: BusyService, private dialogRef: MatDialogRef<any>, private context: Context) { }
@@ -36,6 +37,8 @@ export class SelectFamilyComponent implements OnInit {
     await this.families.get({
       where: f => {
         let r = f.name.isContains(this.searchString);
+        if (this.args.selectStreet)
+          r = f.address.isContains(this.searchString);
         if (this.args.where) {
           let x = this.args.where(f);
           if (x)
@@ -55,6 +58,15 @@ export class SelectFamilyComponent implements OnInit {
   select(f: Families) {
     this.args.onSelect(f);
     this.dialogRef.close();
+  }
+  async selectAllInStreet() {
+    this.pageSize = 1000;
+    await this.getRows();
+    for (const f of this.families.items) {
+      this.args.onSelect(f);
+    }
+    this.dialogRef.close();
+
   }
   showStatus(f: Families) {
     if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery) {

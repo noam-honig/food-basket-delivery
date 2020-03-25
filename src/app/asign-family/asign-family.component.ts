@@ -715,13 +715,14 @@ export class AsignFamilyComponent implements OnInit {
         this.addFamily(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
             f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes))), 'special');
     }
-    addFamily(filter: (f: Families) => FilterBase, analyticsName: string) {
+    addFamily(filter: (f: Families) => FilterBase, analyticsName: string, selectStreet?: boolean) {
         this.context.openDialog(SelectFamilyComponent, x => x.args = {
             where: f => {
                 if (this.filterCity)
                     return f.city.isEqualTo(this.filterCity).and(filter(f));
                 return filter(f);
             },
+            selectStreet,
             onSelect: async f => {
 
 
@@ -730,6 +731,8 @@ export class AsignFamilyComponent implements OnInit {
                 };
 
                 if (f.courier.value) {
+                    if (selectStreet)
+                        return;
                     let c = await f.courier.getTheName();
                     this.dialog.YesNoQuestion(translate('משפחת ') +
                         f.name.value + ' כבר משוייכת ל' + c + ' בסטטוס ' +
@@ -772,6 +775,9 @@ export class AsignFamilyComponent implements OnInit {
 
     addSpecific() {
         this.addFamily(f => f.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent).and(f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList).and(f.blockedBasket.isEqualTo(false))), 'specific');
+    }
+    addStreet() {
+        this.addFamily(f => f.readyFilter(this.filterCity, this.filterGroup), 'street', true);
     }
 }
 
