@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Context, ServerFunction, DateColumn } from '@remult/core';
+import { Context, ServerFunction, DateColumn, Entity, SqlDatabase } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { FamilyDeliveriesStats } from '../delivery-history/delivery-history.component';
 import { Sites } from '../sites/sites';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Families } from '../families/families';
+import { SqlBuilder } from '../model-shared/types';
 
 @Component({
   selector: 'app-overview',
@@ -102,32 +103,58 @@ export class OverviewComponent implements OnInit {
       sites: []
     };
 
+    var builder = new SqlBuilder();
+    let f = context.for(Families).create();
+    let fd = context.for(FamilyDeliveriesStats).create();
 
 
 
     for (const org of Sites.schemas) {
       let dp = Sites.getDataProviderForOrg(org);
-      let s = await context.for(ApplicationSettings, dp).findFirst();
-      let site: siteItem = {
-        name: s.organisationName.value,
-        site: org,
-        logo: s.logoUrl.value,
-        stats: {}
-      };
-      result.sites.push(site);
+
+      var as = context.for(ApplicationSettings, dp).create();
+
+      let cols: any[] = [as.organisationName, as.logoUrl];
+
       for (const dateRange of result.statistics) {
-        let r = 0;
+        let key = 'a' + cols.length;
         if (dateRange.caption == inEvent) {
-          r = await context.for(Families, dp).count(f => f.deliverStatus.isInEvent());
+          cols.push(builder.countInnerSelect({ from: f, where: () => [f.deliverStatus.isInEvent()] }, key));
+
+
         } else if (dateRange.caption == onTheWay) {
-          r = await context.for(Families, dp).count(f => f.onTheWayFilter());;
+          cols.push(builder.countInnerSelect({ from: f, where: () => [f.onTheWayFilter()] }, key));
         }
         else
-          r = await context.for(FamilyDeliveriesStats, dp).count(f => f.deliveryStatusDate.isGreaterOrEqualTo(dateRange.from).and(f.deliveryStatusDate.isLessThan(dateRange.to)));
+          cols.push(builder.build('(select count(*) from ', fd, ' where ', builder.and(fd.deliveryStatusDate.isGreaterOrEqualTo(dateRange.from).and(fd.deliveryStatusDate.isLessThan(dateRange.to))), ') ',key));
+
+      }
+
+      let z = builder.query({
+        select: () => cols,
+        from: as,
+      });
+      let sql = dp as SqlDatabase;
+      let zz = await sql.execute(z);
+      let row = zz.rows[0];
+
+      let site: siteItem = {
+        name: row[zz.getColumnKeyInResultForIndexInSelect(0)],
+        site: org,
+        logo: row[zz.getColumnKeyInResultForIndexInSelect(1)],
+        stats: {}
+      };
+
+
+      result.sites.push(site);
+      let i=2;
+      for (const dateRange of result.statistics) {
+        let r = row[zz.getColumnKeyInResultForIndexInSelect(i++)];
+        
         dateRange.value += +r;
         site.stats[dateRange.caption] = r;
       }
-      
+
 
     }
     return result;
@@ -135,6 +162,7 @@ export class OverviewComponent implements OnInit {
   }
 
 }
+
 interface siteItem {
   site: string;
   name: string;
@@ -153,5 +181,4 @@ interface dateRange {
   value: number;
   from: Date;
   to: Date;
-
 }

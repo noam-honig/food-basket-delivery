@@ -288,7 +288,7 @@ export class SqlBuilder {
     this.addEntity(rootEntity, rootEntity.defs.dbName);
     return '(' + this.query(query) + ' limit 1)';
   }
-  countInnerSelect(query: FromAndWhere, mappedColumn: Column<number>) {
+  countInnerSelect(query: FromAndWhere, mappedColumn: any) {
     return this.build("(", this.query({
       select: () => [this.build("count(*)")],
       from: query.from,
@@ -298,6 +298,8 @@ export class SqlBuilder {
       where: query.where
     }), ") ", mappedColumn);
   }
+  
+  
   countDistinct(col: Column<any>, mappedColumn: Column<number>) {
     return this.build("count (distinct ", col, ") ", mappedColumn)
   }
