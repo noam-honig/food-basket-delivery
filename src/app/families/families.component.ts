@@ -538,9 +538,9 @@ export class FamiliesComponent implements OnInit {
         });
         if (ok)
             if (!s.value) {
-                this.dialog.Info('לא נבחר סוג סל לעדכון - העדכון בוטל');
+                s.value="";
             }
-            else {
+            {
                 if (await this.dialog.YesNoPromise('האם לעדכן את הסוג סל "' + await s.getTheValue() + '" ל-' + this.families.totalRows + translate(' משפחות?'))) {
                     this.dialog.Info(await FamiliesComponent.updateBasketOnServer(this.packWhere(), s.value));
                     this.refresh();
