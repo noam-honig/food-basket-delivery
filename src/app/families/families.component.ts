@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn, Filter } from '@remult/core';
+import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn, Filter, ServerFunction, unpackWhere, packWhere } from '@remult/core';
 
 import { Families, GroupsColumn } from './families';
 import { DeliveryStatus, DeliveryStatusColumn } from "./DeliveryStatus";
@@ -7,7 +7,7 @@ import { DeliveryStatus, DeliveryStatusColumn } from "./DeliveryStatus";
 import { YesNo } from "./YesNo";
 
 
-import { BasketType } from "./BasketType";
+import { BasketType, BasketId } from "./BasketType";
 
 import { DialogService } from '../select-popup/dialog';
 
@@ -43,7 +43,8 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { UpdateGroupDialogComponent } from '../update-group-dialog/update-group-dialog.component';
 import { Groups } from '../manage/manage.component';
 import { FamilySourceId } from './FamilySources';
-
+const addGroupAction = ' להוסיף ';
+const replaceGroupAction = ' להחליף ';
 @Component({
     selector: 'app-families',
     templateUrl: './families.component.html',
@@ -137,10 +138,13 @@ export class FamiliesComponent implements OnInit {
         return r;
     }
     async saveAll() {
+        let wait = [];
         this.families.items.forEach(f => {
             if (f.wasChanged())
-                f.save();
+                wait.push(f.save());
         });
+        await Promise.all(wait);
+        this.refreshStats();
     }
     public pieChartLabels: string[] = [];
     public pieChartData: number[] = [];
@@ -443,13 +447,12 @@ export class FamiliesComponent implements OnInit {
                 valueList: this.context.for(Groups).getValueList({ idColumn: x => x.name, captionColumn: x => x.name })
             })
         });
-        let add = ' להוסיף ';
-        let replace = ' להחליף ';
+
         let action = new StringColumn({
             caption: 'פעולה',
-            defaultValue: add,
+            defaultValue: addGroupAction,
             dataControlSettings: () => ({
-                valueList: [{ id: add, caption: 'הוסף שיוך לקבוצת חלוקה' }, { id: 'להסיר', caption: 'הסר שיוך לקבוצת חלוקה' }, { id: replace, caption: 'החלף שיוך לקבוצת חלוקה' }]
+                valueList: [{ id: addGroupAction, caption: 'הוסף שיוך לקבוצת חלוקה' }, { id: 'להסיר', caption: 'הסר שיוך לקבוצת חלוקה' }, { id: replaceGroupAction, caption: 'החלף שיוך לקבוצת חלוקה' }]
             })
         });
         let ok = false;
@@ -467,23 +470,28 @@ export class FamiliesComponent implements OnInit {
 
         if (ok && group.value) {
             if (await this.dialog.YesNoPromise('האם ' + action.value + ' את השיוך לקבוצה "' + group.value + '" ל-' + this.families.totalRows + translate(' משפחות?'))) {
-                this.doOnFamiliesInGrid(f => {
-                    if (action.value == add) {
-                        if (!f.groups.selected(group.value))
-                            f.groups.addGroup(group.value);
-                    } else if (action.value == replace) {
-                        f.groups.value = group.value;
-                    }
-                    else {
-                        if (f.groups.selected(group.value))
-                            f.groups.removeGroup(group.value);
-                    }
-
-                });
+                this.dialog.Info(await FamiliesComponent.updateGroupOnServer(this.packWhere(), group.value, action.value));
+                this.refresh();
             }
         }
 
 
+    }
+    @ServerFunction({ allowed: Roles.admin })
+    static async updateGroupOnServer(info: serverUpdateInfo, group: string, action: string, context?: Context) {
+        return await FamiliesComponent.processFamilies(info, context, f => {
+            if (action == addGroupAction) {
+                if (!f.groups.selected(group))
+                    f.groups.addGroup(group);
+            } else if (action == replaceGroupAction) {
+                f.groups.value = group;
+            }
+            else {
+                if (f.groups.selected(group))
+                    f.groups.removeGroup(group);
+            }
+
+        });
     }
     async updateStatus() {
         let s = new DeliveryStatusColumn();
@@ -505,11 +513,65 @@ export class FamiliesComponent implements OnInit {
             }
             else {
                 if (await this.dialog.YesNoPromise('האם לעדכן את הסטטוס "' + s.value.caption + '" ל-' + this.families.totalRows + translate(' משפחות?'))) {
-                    await this.doOnFamiliesInGrid(f => f.deliverStatus.value = s.value);
-
+                    this.dialog.Info(await FamiliesComponent.updateStatusOnServer(this.packWhere(), s.rawValue));
+                    this.refresh();
                 }
             }
     }
+    @ServerFunction({ allowed: Roles.admin })
+    static async updateStatusOnServer(info: serverUpdateInfo, status: any, context?: Context) {
+        return await FamiliesComponent.processFamilies(info, context, f => f.deliverStatus.rawValue = status);
+    }
+    async updateBasket() {
+        let s = new BasketId(this.context);
+        let ok = false;
+        await this.context.openDialog(InputAreaComponent, x => {
+            x.args = {
+                settings: {
+                    columnSettings: () => [s]
+                },
+                title: 'עדכון סוג סל ל-' + this.families.totalRows + ' המשפחות המסומנות',
+                ok: () => ok = true
+                , cancel: () => { }
+
+            }
+        });
+        if (ok)
+            if (!s.value) {
+                this.dialog.Info('לא נבחר סוג סל לעדכון - העדכון בוטל');
+            }
+            else {
+                if (await this.dialog.YesNoPromise('האם לעדכן את הסוג סל "' + await s.getTheValue() + '" ל-' + this.families.totalRows + translate(' משפחות?'))) {
+                    this.dialog.Info(await FamiliesComponent.updateBasketOnServer(this.packWhere(), s.value));
+                    this.refresh();
+                }
+            }
+    }
+    @ServerFunction({ allowed: Roles.admin })
+    static async updateBasketOnServer(info: serverUpdateInfo, basketType: string, context?: Context) {
+        return await FamiliesComponent.processFamilies(info, context, f => f.basketType.value = basketType);
+    }
+    packWhere() {
+        return {
+            where: packWhere(this.context.for(Families).create(), this.families.buildFindOptions().where),
+            count: this.families.totalRows
+        };
+    }
+
+
+    static async processFamilies(info: serverUpdateInfo, context: Context, what: (f: Families) => void) {
+        let rows = await context.for(Families).find({ where: f => unpackWhere(f, info.where) });
+        if (rows.length != info.count) {
+            return "ארעה שגיאה אנא נסה שוב";
+        }
+        for (const f of await rows) {
+            what(f);
+            await f.save();
+        }
+        return "עודכנו " + rows.length + " משפחות";
+    }
+
+
     async updateFamilySource() {
         let s = new FamilySourceId(this.context);
         let ok = false;
@@ -530,49 +592,19 @@ export class FamiliesComponent implements OnInit {
             }
             else {
                 if (await this.dialog.YesNoPromise('האם לעדכן את הגורם מפנה "' + (await s.getTheValue()) + '" ל-' + this.families.totalRows + translate(' משפחות?'))) {
-                    await this.doOnFamiliesInGrid(f => f.familySource.value = s.value);
-
+                    this.dialog.Info(await FamiliesComponent.updateFamilySourceOnServer(this.packWhere(), s.value));
+                    this.refresh();
                 }
             }
     }
-
+    @ServerFunction({ allowed: Roles.admin })
+    static async updateFamilySourceOnServer(info: serverUpdateInfo, familySource: string, context?: Context) {
+        return await FamiliesComponent.processFamilies(info, context, f => f.familySource.value = familySource);
+    }
     gridView = true;
 
 
-    private async doOnFamiliesInGrid(what: (f: Families) => void) {
-        await this.busy.doWhileShowingBusy(async () => {
-            try {
-                this.suspend = true;
-                let x = this.families.rowsPerPage;
-                this.families.rowsPerPage = this.families.totalRows;
-                await this.families.getRecords();
-                let transaction = [];
-                let i = 0;
-                for (const f of this.families.items) {
-                    what(f);
 
-                    transaction.push(f.save());
-                    i++;
-                    if (transaction.length >= 10) {
-                        await Promise.all(transaction);
-                        transaction = [];
-                        this.dialog.Info('בינתיים עודכנו ' + i);
-                    }
-                }
-                await Promise.all(transaction);
-                this.families.rowsPerPage = x;
-                await this.families.getRecords();
-                this.dialog.Info('עודכנו ' + i);
-            }
-            catch (err) {
-                this.dialog.Error(err);
-            }
-            finally {
-                this.suspend = false;
-            }
-            this.refreshStats();
-        });
-    }
 
     async doTest() {
     }
@@ -758,7 +790,7 @@ export class FamiliesComponent implements OnInit {
                     f.readyFilter().and(f.basketType.isEqualTo(id)));
                 this.basketStatsCalc(st.baskets, this.basketsInEvent, b => b.inEventFamilies, (f, id) =>
                     f.deliverStatus.isInEvent().and(f.basketType.isEqualTo(id)));
-                    this.basketStatsCalc(st.baskets, this.basketsDelivered, b => b.successFamilies, (f, id) =>
+                this.basketStatsCalc(st.baskets, this.basketsDelivered, b => b.successFamilies, (f, id) =>
                     f.deliverStatus.isSuccess().and(f.basketType.isEqualTo(id)));
                 this.prepComplexStats(st.cities, this.cityStats,
                     (f, c) => f.readyFilter().and(f.city.isEqualTo(c)),
@@ -797,7 +829,7 @@ export class FamiliesComponent implements OnInit {
                 stats.totalBoxes2 += +b.boxes2 * +fs.value;
             }
         });
-        stats.stats.sort((a,b)=>b.value-a.value);
+        stats.stats.sort((a, b) => b.value - a.value);
     }
 
     private prepComplexStats<type extends { name: string, count: number }>(
@@ -938,4 +970,8 @@ interface statsOnTabBasket extends statsOnTab {
     totalBoxes2?: number;
     blockedBoxes2?: number;
 
+}
+interface serverUpdateInfo {
+    where: any;
+    count: number;
 }
