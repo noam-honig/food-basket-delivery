@@ -122,7 +122,7 @@ export class UpdateFamilyComponent implements OnInit {
           fd.deliveryStatusUser,
           fd.courierAssignUser
         ].map(x => ({
-          columns: x,
+          column: x,
             readOnly: true
         } as DataControlSettings<any>))
       },
@@ -131,7 +131,7 @@ export class UpdateFamilyComponent implements OnInit {
         text: 'מחקי', click: close => {
           this.dialog.confirmDelete('פרטי משלוח זה', () => {
             fd.delete();
-            this.familyDeliveries.splice(this.familyDeliveries.indexOf(fd), 0);
+            this.familyDeliveries.splice(this.familyDeliveries.indexOf(fd), 1);
             close();
           });
         }
