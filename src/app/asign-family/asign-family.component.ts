@@ -368,13 +368,15 @@ export class AsignFamilyComponent implements OnInit {
                 });
                 if (x.addedBoxes) {
                     this.familyLists.initForFamilies(this.helper, x.families);
-                    if (basket != undefined)
+                    if (basket != undefined) {
                         basket.unassignedFamilies -= x.addedBoxes;
+                        if (this.preferRepeatFamilies && this.repeatFamilies > 0)
+                            this.repeatFamilies--;
+                    }
                     else {
                         await this.refreshBaskets();
                     }
-                    if (this.preferRepeatFamilies && this.repeatFamilies > 0)
-                        this.repeatFamilies--;
+
                     this.doRefreshRoute();
                     this.dialog.analytics('Assign Family');
                     if (this.baskets == undefined)
