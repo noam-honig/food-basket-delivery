@@ -57,6 +57,7 @@ export class FamiliesComponent implements OnInit {
     familyNameColumn: DataControlSettings<Families>;
     familyAddressColumn: DataControlSettings<Families>;
     addressCommentColumn: DataControlSettings<Families>;
+    addressOkColumn: DataControlSettings<Families>;
     groupsColumn: DataControlSettings<Families>;
     statusColumn: DataControlSettings<Families>;
     deliverySummary: DataControlSettings<Families>;
@@ -78,6 +79,7 @@ export class FamiliesComponent implements OnInit {
                 this.addressCommentColumn = item;
             if (this.groupsColumn == item.column)
                 this.groupsColumn = item;
+                
         }
         this.doTest();
         this.scrollingSubscription = this.scroll
@@ -361,7 +363,7 @@ export class FamiliesComponent implements OnInit {
                 families.createDate,
                 families.lastUpdateDate,
 
-                families.addressOk,
+                this.addressOkColumn = { column: families.addressOk, width: '110' },
                 families.floor,
                 families.appartment,
                 families.entrance,
@@ -650,7 +652,7 @@ export class FamiliesComponent implements OnInit {
 
     cityStats: statsOnTab = {
         name: 'נותרו לפי ערים',
-        showTotal:true,
+        showTotal: true,
         rule: f => f.readyFilter(),
         stats: [
             this.stats.ready,
@@ -706,7 +708,7 @@ export class FamiliesComponent implements OnInit {
 
         {
             rule: f => undefined,
-            showTotal:true,
+            showTotal: true,
             name: translate('כל המשפחות'),
             stats: [
                 this.stats.currentEvent,
@@ -720,7 +722,7 @@ export class FamiliesComponent implements OnInit {
         this.cityStats,
         {
             name: 'מצריך טיפול',
-            showTotal:true,
+            showTotal: true,
             rule: f => f.deliverStatus.isInEvent().and(f.needsWork.isEqualTo(true)),
             stats: [
                 this.stats.needWork
@@ -916,8 +918,11 @@ export class FamiliesComponent implements OnInit {
                 this.familyNameColumn,
                 this.addressByGoogleColumn,
                 this.familyAddressColumn,
-                this.addressCommentColumn
+                this.addressCommentColumn,
+                this.addressOkColumn
+
             ];
+            this.families.columns.numOfColumnsInGrid = 5;
         }
         cols.items.sort((a, b) => a.caption > b.caption ? 1 : a.caption < b.caption ? -1 : 0);
 
