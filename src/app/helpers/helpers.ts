@@ -62,6 +62,7 @@ export class Helpers extends HelpersBase {
                 if (this.escort.value == this.id.value) {
                     this.escort.value = '';
                 }
+
                 if (context.onServer) {
                     if (this.password.value && this.password.value != this.password.originalValue && this.password.value != Helpers.emptyPassword) {
                         this.realStoredPassword.value = Helpers.passwordHelper.generateHash(this.password.value);
@@ -70,6 +71,7 @@ export class Helpers extends HelpersBase {
 
                         this.admin.value = true;
                     }
+                    this.phone.value = this.phone.value.replace(/\D/g, '');
                     await checkForDuplicateValue(this, this.phone, context.for(Helpers));
                     if (this.isNew())
                         this.createDate.value = new Date();
