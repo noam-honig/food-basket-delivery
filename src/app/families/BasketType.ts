@@ -20,7 +20,7 @@ export class BasketType extends IdEntity {
       allowApiRead: context.isSignedIn(),
       allowApiCRUD: Roles.admin,
       savingRow: async () => {
-        if ((!this.boxes.value || this.boxes.value < 1)&& (!this.boxes2.value || this.boxes2.value < 1))
+        if ((!this.boxes.value || this.boxes.value < 1) && (!this.boxes2.value || this.boxes2.value < 1))
           this.boxes.value = 1;
       }
     });
@@ -29,6 +29,13 @@ export class BasketType extends IdEntity {
   static boxes2Name = 'משהו אחר';
 }
 export class BasketId extends IdColumn implements HasAsyncGetTheValue {
+  async addBasketTypes(addColumn: (caption: string, v: string, t: import("xlsx/types").ExcelDataType) => void) {
+    let r = await this.context.for(BasketType).lookupAsync(this);
+    if (r) {
+        addColumn(BasketType.boxes1Name,r.boxes.value.toString(),'n');
+        addColumn(BasketType.boxes2Name,r.boxes2.value.toString(),'n');
+    }
+  }
   constructor(private context: Context, settingsOrCaption?: ColumnOptions<string>) {
     super(settingsOrCaption, {
       dataControlSettings: () =>

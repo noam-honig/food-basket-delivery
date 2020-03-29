@@ -204,7 +204,7 @@ export class FamiliesComponent implements OnInit {
             this.busy,
             (f, c) => c == f.id || c == f.addressApiResult,
             (f, c) => c == f.correntAnErrorInStatus || c == f.visibleToCourier,
-            (f, addColumn) => {
+            async (f, addColumn) => {
                 let x = f.getGeocodeInformation();
                 let street = f.address.value;
                 let house = '';
@@ -238,11 +238,12 @@ export class FamiliesComponent implements OnInit {
                 addColumn("Xמספר בית", house, 's');
                 function fixPhone(p: PhoneColumn) {
                     if (!p.value)
-                        return '';
+                    return '';
                     else return p.value.replace(/\D/g, '')
                 }
                 addColumn("טלפון1X", fixPhone(f.phone1), 's');
                 addColumn("טלפון2X", fixPhone(f.phone2), 's');
+                await f.basketType.addBasketTypes(addColumn);
 
             });
     }

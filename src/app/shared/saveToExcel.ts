@@ -117,7 +117,7 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
           }
          
           if (moreColumns)
-            moreColumns(<E>f, addColumn);
+            await moreColumns(<E>f, addColumn);
           rowNum++;
 
         });
