@@ -179,6 +179,7 @@ export class FamiliesComponent implements OnInit {
     }
     setCurrentStat(s: FaimilyStatistics) {
         this.currentStatFilter = s;
+        this.searchString='';
         this.refreshFamilyGrid();
     }
     searchString = '';
@@ -733,7 +734,9 @@ export class FamiliesComponent implements OnInit {
     ]
     tabChanged() {
         this.currentStatFilter = undefined;
+        this.searchString='';
         let prevTabColumn = this.currentTabStats.fourthColumn();
+        
         this.refreshFamilyGrid();
         this.updateChart();
 
@@ -749,6 +752,7 @@ export class FamiliesComponent implements OnInit {
     }
     clearStat() {
         this.currentStatFilter = undefined;
+        this.searchString='';
         this.refreshFamilyGrid();
 
     }
