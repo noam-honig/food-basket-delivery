@@ -238,7 +238,7 @@ export class FamiliesComponent implements OnInit {
                 addColumn("Xמספר בית", house, 's');
                 function fixPhone(p: PhoneColumn) {
                     if (!p.value)
-                    return '';
+                        return '';
                     else return p.value.replace(/\D/g, '')
                 }
                 addColumn("טלפון1X", fixPhone(f.phone1), 's');
@@ -539,14 +539,14 @@ export class FamiliesComponent implements OnInit {
         });
         if (ok)
             if (!s.value) {
-                s.value="";
+                s.value = "";
             }
-            {
-                if (await this.dialog.YesNoPromise('האם לעדכן את הסוג סל "' + await s.getTheValue() + '" ל-' + this.families.totalRows + translate(' משפחות?'))) {
-                    this.dialog.Info(await FamiliesComponent.updateBasketOnServer(this.packWhere(), s.value));
-                    this.refresh();
-                }
+        {
+            if (await this.dialog.YesNoPromise('האם לעדכן את הסוג סל "' + await s.getTheValue() + '" ל-' + this.families.totalRows + translate(' משפחות?'))) {
+                this.dialog.Info(await FamiliesComponent.updateBasketOnServer(this.packWhere(), s.value));
+                this.refresh();
             }
+        }
     }
     @ServerFunction({ allowed: Roles.admin })
     static async updateBasketOnServer(info: serverUpdateInfo, basketType: string, context?: Context) {
@@ -650,6 +650,7 @@ export class FamiliesComponent implements OnInit {
 
     cityStats: statsOnTab = {
         name: 'נותרו לפי ערים',
+        showTotal:true,
         rule: f => f.readyFilter(),
         stats: [
             this.stats.ready,
@@ -681,6 +682,7 @@ export class FamiliesComponent implements OnInit {
     statTabs: statsOnTab[] = [
         {
             name: 'באירוע',
+            showTotal: true,
             rule: f => f.deliverStatus.isInEvent(),
             stats: [
                 this.stats.ready,
@@ -704,6 +706,7 @@ export class FamiliesComponent implements OnInit {
 
         {
             rule: f => undefined,
+            showTotal:true,
             name: translate('כל המשפחות'),
             stats: [
                 this.stats.currentEvent,
@@ -717,6 +720,7 @@ export class FamiliesComponent implements OnInit {
         this.cityStats,
         {
             name: 'מצריך טיפול',
+            showTotal:true,
             rule: f => f.deliverStatus.isInEvent().and(f.needsWork.isEqualTo(true)),
             stats: [
                 this.stats.needWork
@@ -928,9 +932,11 @@ export class FamiliesComponent implements OnInit {
 
     }
     statTotal(t: statsOnTab) {
+        if (!t.showTotal)
+            return;
         let r = 0;
         t.stats.forEach(x => r += +x.value);
-        return r;
+        return " - " + r;
     }
 
     [reuseComponentOnNavigationAndCallMeWhenNavigatingToIt]() {
@@ -962,6 +968,7 @@ interface statsOnTab {
     name: string,
     stats: FaimilyStatistics[],
     moreStats: FaimilyStatistics[],
+    showTotal?: boolean,
     rule: (f: Families) => FilterBase,
     fourthColumn: () => DataControlSettings<any>
 }

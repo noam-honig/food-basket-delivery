@@ -6,7 +6,7 @@
         class="no-print">{{'לסרטוני הדרכה על מסך משפחות, לחצו כאן'|translate}}</a>
 </div>
 <mat-tab-group #myTab (selectedTabChange)="tabChanged()" [selectedIndex]="0" *ngIf="!problemOnly">
-    <mat-tab *ngFor="let t of statTabs" label="{{t.name}} - {{statTotal(t)}}"> </mat-tab>
+    <mat-tab *ngFor="let t of statTabs" label="{{t.name}} {{statTotal(t)}}"> </mat-tab>
 
 </mat-tab-group>
 <br *ngIf="problemOnly" />
