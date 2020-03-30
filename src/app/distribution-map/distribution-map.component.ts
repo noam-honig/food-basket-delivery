@@ -286,3 +286,7 @@ export class Statuses {
 
 
 }
+/*update haderamoadonit.families  set deliverstatus=11 where addresslongitude >(select x.addresslongitude from haderamoadonit.families x
+  where name like '%גרובש%')
+  and addresslongitude<= (select x.addresslongitude from haderamoadonit.families x
+  where name like '%וולנץ%')*/
