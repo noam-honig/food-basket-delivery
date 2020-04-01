@@ -356,43 +356,57 @@ export class AsignFamilyComponent implements OnInit {
             basket = undefined;
         await this.verifyHelperExistance();
         this.lastAssign = this.lastAssign.then(async () => {
-            await this.busy.donotWait(async () => {
 
-                let x = await AsignFamilyComponent.AddBox({
-                    basketType: basket ? basket.id : undefined,
-                    helperId: this.helper.id.value,
-                    group: this.filterGroup,
-                    city: this.filterCity,
-                    numOfBaskets: this.numOfBaskets,
-                    preferRepeatFamilies: this.preferRepeatFamilies && this.repeatFamilies > 0
-                });
-                if (x.addedBoxes) {
-                    this.familyLists.initForFamilies(this.helper, x.families);
-                    if (basket != undefined) {
-                        basket.unassignedFamilies -= x.addedBoxes;
-                        if (this.preferRepeatFamilies && this.repeatFamilies > 0)
-                            this.repeatFamilies--;
-                    }
-                    else {
-                        await this.refreshBaskets();
-                    }
+            let x = await AsignFamilyComponent.AddBox({
+                basketType: basket ? basket.id : undefined,
+                helperId: this.helper.id.value,
+                group: this.filterGroup,
+                city: this.filterCity,
+                numOfBaskets: this.numOfBaskets,
+                preferRepeatFamilies: this.preferRepeatFamilies && this.repeatFamilies > 0
+            });
+            if (x.addedBoxes) {
+                this.familyLists.initForFamilies(this.helper, x.families);
 
-                    this.doRefreshRoute();
-                    this.dialog.analytics('Assign Family');
-                    if (this.baskets == undefined)
-                        this.dialog.analytics('Assign any Family (no box)');
-                    if (this.filterGroup)
-                        this.dialog.analytics('assign family-group');
-                    if (this.filterCity)
-                        this.dialog.analytics('assign family-city');
-                    if (this.numOfBaskets > 1)
-                        this.dialog.analytics('assign family boxes=' + this.numOfBaskets);
+                let refreshBaskets = basket == undefined;
+                if (x.familiesInSameAddress.length > 0) {
+                    if (await this.dialog.YesNoPromise("ישנן עוד " + x.familiesInSameAddress.length + " משפחות באותה הכתובת, האם לשייך גם אותן?")) {
+                        await this.busy.doWhileShowingBusy(async () => {
+                            this.dialog.analytics('More families in same address');
+                            for (const id of x.familiesInSameAddress) {
+                                let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(id).and(f.readyFilter()));
+                                f.courier.value = this.helper.id.value;
+                                await f.save();
+                            }
+                            await this.familyLists.initForHelper(this.helper)
+                        });
+                    }
+                }
+                if (!refreshBaskets) {
+                    basket.unassignedFamilies -= x.addedBoxes;
+                    if (this.preferRepeatFamilies && this.repeatFamilies > 0)
+                        this.repeatFamilies--;
                 }
                 else {
-                    this.refreshList();
-                    this.dialog.Info(translate("לא נמצאה משפחה מתאימה"));
+                    await this.refreshBaskets();
                 }
-            });
+
+
+                this.doRefreshRoute();
+                this.dialog.analytics('Assign Family');
+                if (this.baskets == undefined)
+                    this.dialog.analytics('Assign any Family (no box)');
+                if (this.filterGroup)
+                    this.dialog.analytics('assign family-group');
+                if (this.filterCity)
+                    this.dialog.analytics('assign family-city');
+                if (this.numOfBaskets > 1)
+                    this.dialog.analytics('assign family boxes=' + this.numOfBaskets);
+            }
+            else {
+                this.refreshList();
+                this.dialog.Info(translate("לא נמצאה משפחה מתאימה"));
+            }
         });
     }
 
@@ -474,7 +488,8 @@ export class AsignFamilyComponent implements OnInit {
             addedBoxes: 0,
             families: [],
             basketInfo: undefined,
-            routeStats: undefined
+            routeStats: undefined,
+            familiesInSameAddress: []
         }
         if (!info.helperId)
             throw 'invalid helper';
@@ -490,7 +505,15 @@ export class AsignFamilyComponent implements OnInit {
                 limit: 1
             });
         }
-
+        function buildWhere(f: Families) {
+            let where = f.readyFilter(info.city, info.group).and(
+                f.special.isDifferentFrom(YesNo.Yes)
+            );
+            if (info.basketType != undefined)
+                where = where.and(
+                    f.basketType.isEqualTo(info.basketType));
+            return where;
+        }
         for (let i = 0; i < info.numOfBaskets; i++) {
 
             let getFamilies = async () => {
@@ -502,12 +525,7 @@ export class AsignFamilyComponent implements OnInit {
                     select: () => [f.id, f.addressLatitude, f.addressLongitude],
                     from: f,
                     where: () => {
-                        let where = f.readyFilter(info.city, info.group).and(
-                            f.special.isDifferentFrom(YesNo.Yes)
-                        );
-                        if (info.basketType != undefined)
-                            where = where.and(
-                                f.basketType.isEqualTo(info.basketType));
+                        let where = buildWhere(f);
                         let res = [];
                         res.push(where);
                         if (info.preferRepeatFamilies)
@@ -534,16 +552,26 @@ export class AsignFamilyComponent implements OnInit {
                 waitingFamilies = await getFamilies();
             }
 
+            let  addFamilyToResult=async (id: string)=> {
+                let family = await context.for(Families).findFirst(f => f.id.isEqualTo(id));
+                family.courier.value = info.helperId;
+                await family.save();
+                {
+                    let sameLocationFamilies = await context.for(Families).find({ where: f => buildWhere(f).and(f.addressLongitude.isEqualTo(family.addressLongitude).and(f.addressLatitude.isEqualTo(family.addressLatitude))) });
+                    if (sameLocationFamilies.length > 0) {
+                        result.familiesInSameAddress.push(...(sameLocationFamilies).map(x => x.id.value));
+                    }
+                }
+                result.addedBoxes++;
+                existingFamilies.push(family);
+                locationReferenceFamilies.push(family);
+            }
 
             if (waitingFamilies.length > 0) {
+
                 if (locationReferenceFamilies.length == 0) {
                     let position = Math.trunc(Math.random() * waitingFamilies.length);
-                    let family = await context.for(Families).findFirst(f => f.id.isEqualTo(waitingFamilies[position].id));
-                    family.courier.value = info.helperId;
-                    await family.save();
-                    result.addedBoxes++;
-                    existingFamilies.push(family);
-                    locationReferenceFamilies.push(family);
+                    await addFamilyToResult(waitingFamilies[position].id);
                 }
                 else {
 
@@ -576,27 +604,22 @@ export class AsignFamilyComponent implements OnInit {
                             smallFamily = waitingFamilies[i]
                         }
                     }
+                    await addFamilyToResult(smallFamily.id);
 
-                    let f = await context.for(Families).findFirst(f => f.id.isEqualTo(smallFamily.id));
-                    f.courier.value = info.helperId;
 
-                    await f.save();
-                    existingFamilies.push(f);
-                    locationReferenceFamilies.push(f)
-                    result.addedBoxes++;
                 }
 
             }
 
         }
 
-        //result.routeStats = await AsignFamilyComponent.optimizeRoute(r, existingFamilies, context);
+
 
         existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
         result.families = await context.for(Families).toPojoArray(existingFamilies);
 
-
-
+        result.familiesInSameAddress = result.familiesInSameAddress.filter((x, i) => !existingFamilies.find(f => f.id.value == x) && result.familiesInSameAddress.indexOf(x) == i);
+        console.log(result.familiesInSameAddress);
         return result;
     }
 
@@ -797,6 +820,7 @@ export interface AddBoxResponse {
     basketInfo: GetBasketStatusActionResponse
     addedBoxes: number;
     routeStats: routeStats;
+    familiesInSameAddress: string[];
 
 
 }
