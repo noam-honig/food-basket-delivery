@@ -350,7 +350,7 @@ export class AsignFamilyComponent implements OnInit {
         return this.basketType.unassignedFamilies;
     }
     lastAssign = Promise.resolve();
-    async assignItem() {
+    async assignItem(allRepeat?: boolean) {
         let basket = this.basketType;
         if (this.allBaskets == basket)
             basket = undefined;
@@ -362,8 +362,9 @@ export class AsignFamilyComponent implements OnInit {
                 helperId: this.helper.id.value,
                 group: this.filterGroup,
                 city: this.filterCity,
-                numOfBaskets: this.numOfBaskets,
-                preferRepeatFamilies: this.preferRepeatFamilies && this.repeatFamilies > 0
+                numOfBaskets: allRepeat ? this.repeatFamilies : this.numOfBaskets,
+                preferRepeatFamilies: this.preferRepeatFamilies && this.repeatFamilies > 0,
+                allRepeat: allRepeat
             });
             if (x.addedBoxes) {
                 this.familyLists.initForFamilies(this.helper, x.families);
@@ -547,12 +548,12 @@ export class AsignFamilyComponent implements OnInit {
             }
 
             let waitingFamilies = await getFamilies();
-            if (info.preferRepeatFamilies && waitingFamilies.length == 0) {
+            if (info.preferRepeatFamilies && waitingFamilies.length == 0 && !info.allRepeat) {
                 info.preferRepeatFamilies = false;
                 waitingFamilies = await getFamilies();
             }
 
-            let  addFamilyToResult=async (id: string)=> {
+            let addFamilyToResult = async (id: string) => {
                 let family = await context.for(Families).findFirst(f => f.id.isEqualTo(id));
                 family.courier.value = info.helperId;
                 await family.save();
@@ -813,6 +814,7 @@ export interface AddBoxInfo {
     city: string;
     numOfBaskets: number;
     preferRepeatFamilies: boolean;
+    allRepeat: boolean;
 
 }
 export interface AddBoxResponse {

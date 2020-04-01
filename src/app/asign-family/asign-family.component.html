@@ -127,11 +127,13 @@
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #basketMenu="matMenu">
+            <button mat-menu-item (click)="assignItem(true)" *ngIf="preferRepeatFamilies&&repeatFamilies>0">{{'הוסף את כל המשפחות החוזרות'|translate}}</button>
             <button mat-menu-item (click)="addSpecial()"
               *ngIf="specialFamilies">{{'משפחות מיוחדות - '|translate}}{{specialFamilies}}</button>
             <button mat-menu-item (click)="addSpecific()">{{'בחירת משפחה לפי שם'|translate}}</button>
             <button mat-menu-item (click)="assignOnMap()">{{'בחירת משפחה על המפה'|translate}}</button>
             <button mat-menu-item (click)="addStreet()">{{'בחירת משפחה לפי רחוב'|translate}}</button>
+            
 
             <button mat-menu-item (click)="moveBasktesFromOtherHelper()">{{'העבר משפחות ממתנדב אחר'|translate}}</button>
 
