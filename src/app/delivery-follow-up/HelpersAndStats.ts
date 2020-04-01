@@ -79,7 +79,7 @@ export class HelpersAndStats extends HelpersBase {
                             select: () => [sql.build('max(', f.courierAssingTime, ')')],
                             from: f,
                             where: helperFamilies(() => [sql.not(sql.in(f.deliverStatus, DeliveryStatus.Frozen.id, DeliveryStatus.NotInEvent.id))]).where
-                        }), ") + interval '-1' day,false) as ", this.gotSms)
+                        }), ") ,false) as ", this.gotSms)
 
                     ],
                     from: h
