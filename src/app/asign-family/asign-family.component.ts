@@ -620,7 +620,7 @@ export class AsignFamilyComponent implements OnInit {
         result.families = await context.for(Families).toPojoArray(existingFamilies);
 
         result.familiesInSameAddress = result.familiesInSameAddress.filter((x, i) => !existingFamilies.find(f => f.id.value == x) && result.familiesInSameAddress.indexOf(x) == i);
-        console.log(result.familiesInSameAddress);
+        
         return result;
     }
 

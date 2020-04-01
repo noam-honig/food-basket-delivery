@@ -11,10 +11,20 @@
 <h4 *ngIf="currentStatFilter">{{currentStatFilter.name}} - {{currentStatFilter.value}}</h4>
 <a *ngIf="currentStatFilter" (click)="clearFilter()">הצג הכל</a>
 <h4 *ngIf="!currentStatFilter">כולם - {{couriers.items.length}}</h4>
-<mat-form-field class="full-width">
-  <input matInput [(ngModel)]="searchString" placeholder="חיפוש משנע" [ngModelOptions]="{standalone: true}">
-  <mat-icon matSuffix (click)="searchString=''">clear</mat-icon>
-</mat-form-field>
+<div style="width:100%;display:flex;justify-content: space-between;">
+  <mat-form-field class="full-width">
+    <input matInput [(ngModel)]="searchString" placeholder="חיפוש משנע" [ngModelOptions]="{standalone: true}">
+    <mat-icon matSuffix (click)="searchString=''">clear</mat-icon>
+  </mat-form-field>
+  <mat-menu #appMenu="matMenu">
+    <button mat-menu-item (click)="sendSmsToAll()" >{{'שלח הודעת SMS למתנדבים שטרם קיבלו'|translate}}</button>
+    
+  </mat-menu>
+
+  <button mat-icon-button [matMenuTriggerFor]="appMenu" >
+    <mat-icon>more_vert</mat-icon>
+  </button>
+</div>
 <mat-accordion>
   <ng-container *ngFor="let c of couriers.items">
     <mat-expansion-panel #myPanel *ngIf="showHelper(c)" (opened)="selectCourier(c)">
@@ -25,8 +35,10 @@
               {{c.name.value}}
             </mat-panel-title>
             <mat-panel-description>
-            הושלמו {{c.allFamilies.value - c.deliveriesInProgress.value}}/{{c.allFamilies.value}} <span *ngIf="c.deliveriesWithProblems.value>0">&nbsp; ({{c.deliveriesWithProblems.value}} לא נמסרו)</span> <span
-                *ngIf="c.gotSms.value">, יצא {{c.smsDate.relativeDateName()}}</span> <span *ngIf="!c.gotSms.value">, טרם
+              הושלמו {{c.allFamilies.value - c.deliveriesInProgress.value}}/{{c.allFamilies.value}} <span
+                *ngIf="c.deliveriesWithProblems.value>0">&nbsp; ({{c.deliveriesWithProblems.value}} לא נמסרו)</span>
+              <span *ngIf="c.gotSms.value">, יצא {{c.smsDate.relativeDateName()}}</span> <span *ngIf="!c.gotSms.value">,
+                טרם
                 נשלח SMS</span>
             </mat-panel-description>
           </div>

@@ -16,7 +16,7 @@ export class SendSmsAction {
         try {
             await SendSmsAction.generateMessage(context, helperId, context.getOrigin(), reminder, context.user.name, async (phone, message, sender) => {
 
-                new SendSmsUtils().sendSms(phone, sender, message, context.getOrigin());
+                new SendSmsUtils().sendSms(phone, sender, message, context.getOrigin(), Sites.getOrganizationFromContext(context));
                 let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
                 if (reminder)
                     h.reminderSmsDate.value = new Date();
@@ -95,7 +95,7 @@ class SendSmsUtils {
     accid = process.env.SMS_ACCID;
 
 
-    async sendSms(phone: string, from: string, text: string, org: string) {
+    async sendSms(phone: string, from: string, text: string, org: string, schema: string) {
 
         var t = new Date();
         var date = t.getFullYear() + '/' + (t.getMonth() + 1) + '/' + t.getDate() + ' ' + t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds();
@@ -130,7 +130,7 @@ class SendSmsUtils {
                 headers: h,
                 body: data
             });
-            
+
             let res = await r.text();
             let orig = res;
             let t = '<sendSmsToRecipientsResult>';
@@ -139,8 +139,8 @@ class SendSmsUtils {
                 res = res.substring(i + t.length);
                 res = res.substring(0, res.indexOf('<'));
             }
-            console.log('sms response for:' + org + ' - ' + res);
-            
+            console.log('sms response for:' + schema + ' - ' + res);
+
 
         }
         catch (err) {

@@ -12,6 +12,8 @@ import { Helpers } from '../helpers/helpers';
 import { Context } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
 import { Route } from '@angular/router';
+import { DialogService } from '../select-popup/dialog';
+import { SendSmsAction } from '../asign-family/send-sms-action';
 
 @Component({
   selector: 'app-delivery-follow-up',
@@ -27,7 +29,7 @@ export class DeliveryFollowUpComponent implements OnInit {
   currentlHelper: HelpersAndStats;
   async selectCourier(c: HelpersAndStats) {
     this.currentlHelper = c;
-    this.familyLists.initForHelper( await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(c.id)));
+    this.familyLists.initForHelper(await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(c.id)));
 
   }
   searchString: string;
@@ -72,6 +74,19 @@ export class DeliveryFollowUpComponent implements OnInit {
     this.refreshStats();
     this.couriers.getRecords();
   }
+  async sendSmsToAll() {
+    if (await this.dialog.YesNoPromise("האם לשלוח הודעת SMS ל" + this.stats.notOutYet.value + " מתנדבים?")) {
+      await this.busy.doWhileShowingBusy(async () => {
+        await this.couriers.getRecords();
+        for (const h of this.couriers.items) {
+          if (!h.gotSms.value) {
+            await SendSmsAction.SendSms(h.id.value, false);
+          }
+        }
+      });
+      this.refresh();
+    }
+  }
   stats = new DeliveryStats();
   updateChart() {
     this.pieChartData = [];
@@ -101,7 +116,7 @@ export class DeliveryFollowUpComponent implements OnInit {
       this.updateChart();
     }));
   }
-  constructor(private busy: BusyService, private context: Context) { }
+  constructor(private busy: BusyService, private context: Context, private dialog: DialogService) { }
   couriers = this.context.for(HelpersAndStats).gridSettings({
 
     columnSettings: h => [
