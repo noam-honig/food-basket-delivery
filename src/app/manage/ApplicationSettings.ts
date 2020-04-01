@@ -12,8 +12,8 @@ import { Helpers } from '../helpers/helpers';
 import { BasketType } from '../families/BasketType';
 @EntityClass
 export class ApplicationSettings extends Entity<number>  {
-  async getPhoneOptions(family: Families, context: Context){
-    let r :phoneOption[]=[];
+  async getPhoneOptions(family: Families, context: Context) {
+    let r: phoneOption[] = [];
     for (const x of this.getPhoneStrategy()) {
       if (x.option) {
         await x.option.build({
@@ -30,8 +30,20 @@ export class ApplicationSettings extends Entity<number>  {
 
   id = new NumberColumn();
   organisationName = new StringColumn('שם הארגון');
-  smsText = new StringColumn('תוכן הודעת SMS');
-  reminderSmsText = new StringColumn('תוכן הודעת תזכורת SMS');
+  smsText = new StringColumn({
+    caption: 'תוכן הודעת SMS', validate: () => {
+      if (this.smsText.value.indexOf("!אתר!") < 0)
+        this.smsText.validationError =  " חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור";
+
+    }
+  });
+  reminderSmsText = new StringColumn({
+    caption: 'תוכן הודעת תזכורת SMS',
+    validate: () => {
+      if (this.reminderSmsText.value.indexOf("!אתר!") < 0)
+        this.reminderSmsText.validationError =  " חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור";
+    }
+  });
   logoUrl = new StringColumn('לוגו URL');
   address = new StringColumn("כתובת מרכז השילוח");
   commentForSuccessDelivery = new StringColumn('הודעה למשנע כאשר נמסר בהצלחה');
@@ -76,7 +88,7 @@ export class ApplicationSettings extends Entity<number>  {
   message2Link = new StringColumn('כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב');
   message2OnlyWhenDone = new BoolColumn('להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים');
   forSoldiers = new BoolColumn('המערכת היא עבור חיילים לא משפחות');
-  
+
   usingSelfPickupModule = new BoolColumn('ישנן משפחות שבאות לקחת ממרכז החלוקה');
   showCompanies = new BoolColumn('שמור מטעם איזה חברה הגיע המתנדב');
   manageEscorts = new BoolColumn('הפעל ניהול מלווים לנהגים');
@@ -185,9 +197,9 @@ export interface phoneOption {
   name: string;
   phone: string;
 }
-export interface qaItem{
-  question?:string;
-  answer?:string;
+export interface qaItem {
+  question?: string;
+  answer?: string;
 }
 export interface phoneBuildArgs {
   family: Families,
@@ -201,13 +213,13 @@ export class SettingsService {
   constructor(private context: Context) {
 
   }
-  instance:ApplicationSettings;
+  instance: ApplicationSettings;
   async init() {
     this.instance = await ApplicationSettings.getAsync(this.context);
     translationConfig.activateTranslation = this.instance.forSoldiers.value;
     DeliveryStatus.usingSelfPickupModule = this.instance.usingSelfPickupModule.value;
     Helpers.usingCompanyModule = this.instance.showCompanies.value;
-    
+
     BasketType.boxes1Name = this.instance.boxes1Name.value;
     BasketType.boxes2Name = this.instance.boxes2Name.value;
 

@@ -38,10 +38,20 @@ export class ManageComponent implements OnInit {
         this.settings.commonQuestions.originalValue != this.serializeQa()
       );
   }
-  save() {
+  async save() {
     this.settings.phoneStrategy.value = this.serializePhones();
     this.settings.commonQuestions.value = this.serializeQa();
-    this.settings.save();
+    try {
+      await this.settings.save();
+    } catch (err) {
+      let x = "שגיאה בשמירה: ";
+      for (const c of this.settings.columns) {
+        if (c.validationError) {
+          x += c.defs.caption + " - " + c.validationError + " ";
+        }
+      }
+      this.dialog.Error(x);
+    }
     this.images.currentRow.save();
   }
   reset() {
