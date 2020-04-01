@@ -79,7 +79,7 @@ export class FamiliesComponent implements OnInit {
                 this.addressCommentColumn = item;
             if (this.groupsColumn == item.column)
                 this.groupsColumn = item;
-                
+
         }
         this.doTest();
         this.scrollingSubscription = this.scroll
@@ -179,7 +179,7 @@ export class FamiliesComponent implements OnInit {
     }
     setCurrentStat(s: FaimilyStatistics) {
         this.currentStatFilter = s;
-        this.searchString='';
+        this.searchString = '';
         this.refreshFamilyGrid();
     }
     searchString = '';
@@ -524,7 +524,10 @@ export class FamiliesComponent implements OnInit {
     }
     @ServerFunction({ allowed: Roles.admin })
     static async updateStatusOnServer(info: serverUpdateInfo, status: any, context?: Context) {
-        return await FamiliesComponent.processFamilies(info, context, f => f.deliverStatus.rawValue = status);
+        return await FamiliesComponent.processFamilies(info, context, f => {
+            if (f.deliverStatus.value != DeliveryStatus.RemovedFromList)
+                f.deliverStatus.rawValue = status;
+        });
     }
     async updateBasket() {
         let s = new BasketId(this.context);
@@ -734,9 +737,9 @@ export class FamiliesComponent implements OnInit {
     ]
     tabChanged() {
         this.currentStatFilter = undefined;
-        this.searchString='';
+        this.searchString = '';
         let prevTabColumn = this.currentTabStats.fourthColumn();
-        
+
         this.refreshFamilyGrid();
         this.updateChart();
 
@@ -752,7 +755,7 @@ export class FamiliesComponent implements OnInit {
     }
     clearStat() {
         this.currentStatFilter = undefined;
-        this.searchString='';
+        this.searchString = '';
         this.refreshFamilyGrid();
 
     }
