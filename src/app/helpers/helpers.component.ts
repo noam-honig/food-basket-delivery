@@ -16,6 +16,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 import { saveToExcel } from '../shared/saveToExcel';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
+import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 
 @Component({
   selector: 'app-helpers',
@@ -33,12 +34,22 @@ export class HelpersComponent implements OnInit {
   searchString: string;
 
   helpers = this.context.for(Helpers).gridSettings({
-    allowDelete: true,
+    allowDelete: false,
     allowInsert: true,
     allowUpdate: true,
     knowTotalRows: true,
     hideDataArea: true,
     numOfColumnsInGrid: 3,
+    rowButtons: [
+      {
+        name: 'שיוך משפחות',
+        visible: h => !h.isNew(),
+        click: async h =>
+          this.context.openDialog(
+            HelperAssignmentComponent, s => s.argsHelper = h)
+
+      }
+    ],
 
     get: {
       orderBy: h => [h.name],
@@ -51,8 +62,17 @@ export class HelpersComponent implements OnInit {
     },
     columnSettings: helpers => {
       let r: DataControlInfo<Helpers>[] = [
-        helpers.name,
-        helpers.phone
+        {
+          column: helpers.name,
+          width: '150'
+        },
+        {
+          column: helpers.phone,
+          width: '150'
+        },
+        {
+          column: helpers.eventComment
+        }
       ];
       r.push({
         column: helpers.admin,
@@ -135,7 +155,7 @@ export class HelpersComponent implements OnInit {
       await h.save();
     }
   }
-  async clearEscorts(){
+  async clearEscorts() {
     if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: 'האם אתה בטוח שברצונך לנקות את נתוני המלווים לכל המתנדבים?' }, x => x.yes)) {
       await HelpersComponent.clearEscortsOnServer();
       this.helpers.getRecords();

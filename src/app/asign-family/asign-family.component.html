@@ -46,7 +46,7 @@
   <div *ngIf="helper&&helper. name.value&&helper.name.value.length>=2">
     <mat-card class="no-print">
       <mat-card-title>
-        {{'שיוך משפחות למשנע'|translate}}
+        {{'שיוך משפחות ל'|translate}}{{helper.name.value}}
         <div>
 
           <mat-menu #filterOptionsMenu="matMenu">
