@@ -8,7 +8,7 @@
           class="primary-menu">{{'סמן נמסר בהצלחה לכל המשפחות'|translate}}</button>
       </mat-menu>
 
-      <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="familyLists.toDeliver.length>1 && partOfAssign">
+      <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="familyLists.toDeliver.length>0 && partOfAssign">
         <mat-icon>more_vert</mat-icon>
       </button>
 
