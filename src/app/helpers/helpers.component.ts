@@ -39,7 +39,7 @@ export class HelpersComponent implements OnInit {
     allowUpdate: true,
     knowTotalRows: true,
     hideDataArea: true,
-    numOfColumnsInGrid: 3,
+    numOfColumnsInGrid: 4,
     rowButtons: [
       {
         name: 'שיוך משפחות',
