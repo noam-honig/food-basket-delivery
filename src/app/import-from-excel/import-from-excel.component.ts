@@ -465,9 +465,9 @@ export class ImportFromExcelComponent implements OnInit {
         });
         this.columns.push({
             key: 'boxes',
-            name: 'מספר ארגזים',
+            name: 'מספר מנות',
             updateFamily: async (v, f, h) => {
-                await h.lookupAndInsert(BasketType, b => b.boxes, +v, b => b.id, f.basketType, b => b.name.value = v + ' ארגזים');
+                await h.lookupAndInsert(BasketType, b => b.boxes, +v, b => b.id, f.basketType, b => b.name.value = v + ' מנות');
 
             }, columns: [this.f.basketType]
         });

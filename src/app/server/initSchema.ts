@@ -76,7 +76,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         settings.deliveredButtonText.value = 'מסרתי את החבילה בהצלחה';
     }
     if (!settings.boxes1Name.value)
-        settings.boxes1Name.value = 'ארגזים';
+        settings.boxes1Name.value = 'מנות';
     if (!settings.boxes2Name.value)
         settings.boxes2Name.value = 'משהו אחר';
     await settings.save();
@@ -162,7 +162,6 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await settings.save();
     }
     if (settings.dataStructureVersion.value == 7) {
-        settings.usingSelfPickupModule.value = true;
         settings.dataStructureVersion.value = 8;
         await settings.save();
     }
