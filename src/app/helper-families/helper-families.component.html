@@ -198,7 +198,7 @@
           <app-family-in-list [f]="f" style="width:100%"></app-family-in-list>
         </mat-expansion-panel-header>
         <ng-template matExpansionPanelContent>
-          <app-family-info [f]="f" [showHelp]="true" (assignmentCanceled)="cancelAssign(f)">
+          <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign" (assignmentCanceled)="cancelAssign(f)">
             <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
             <button mat-raised-button class="myButton badButton"
               (click)="returnToDeliver(f)">{{'נלחץ בטעות - החזר למשפחות לחלוקה'|translate}}</button>
