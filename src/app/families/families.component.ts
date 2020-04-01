@@ -127,6 +127,7 @@ export class FamiliesComponent implements OnInit {
             s.argOnAdd = f => {
                 this.families.items.push(f);
                 this.families.setCurrentRow(f);
+                this.gridView = false;
             }
         });
     }
