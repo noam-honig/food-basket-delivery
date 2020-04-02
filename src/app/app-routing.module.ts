@@ -53,7 +53,7 @@ const routes: Routes = [
   { path: 'overview', component: OverviewComponent, canActivate: [OverviewGuard] },
 
   DeliveryHistoryComponent.route,
-  { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { name: 'playback', hide: true } },
+  { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { name: 'סרטון החלוקה', hide: true } },
 
   BatchOperationsComponent.route,
   { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard], data: { name: 'קליטת משפחות מאקסל' } },

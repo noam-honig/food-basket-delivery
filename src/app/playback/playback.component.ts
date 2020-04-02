@@ -48,7 +48,7 @@ export class PlaybackComponent implements OnInit {
 
     var mapProp: google.maps.MapOptions = {
       center: new google.maps.LatLng(32.3215, 34.8532),
-      zoom: 13,
+      zoom: 17,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
 
     };
@@ -170,7 +170,9 @@ export class PlaybackComponent implements OnInit {
     while (this.timeline[this.position].timeline.valueOf() >= now - 60 * 1000);
     this.updateChart();
   }
+  playing=false;
   animate() {
+    this.playing = true;
     setTimeout(() => {
       this.next();
       if (this.position < this.timeline.length - 1)
