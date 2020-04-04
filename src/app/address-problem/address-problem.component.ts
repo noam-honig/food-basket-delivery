@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Roles, AdminGuard } from '../auth/roles';
+import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { Route } from '@angular/router';
 
 
@@ -22,6 +22,6 @@ export class AddressProblemComponent implements OnInit {
       name: 'כתובות בעיתיות',
       
       seperator: true
-    }, canActivate: [AdminGuard]
+    }, canActivate: [distCenterAdminGuard]
   }
 }

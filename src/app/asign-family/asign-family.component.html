@@ -23,6 +23,7 @@
           </button>
         </div>
       </mat-card-title>
+      <data-area [settings]="distCenterArea" *ngIf="this.canSeeCenter()"></data-area>
       <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
         <mat-label>מספר הטלפון של המשנע</mat-label>
         <input matInput [(ngModel)]="phone" (input)="searchPhone()" type="tel" #phoneInput>
@@ -41,8 +42,9 @@
     קבוצה, עיר ואילו
     סלים
     לשייך</span>
-    <br>
-    <a href="https://youtu.be/8LCeQRQPL1U" *ngIf="showHelperInput&&(!helper||!helper.name.value)" class="help no-print">לסרטון הדרכה על שיוך משפחות ויום האירוע לחצו כאן</a>
+  <br>
+  <a href="https://youtu.be/8LCeQRQPL1U" *ngIf="showHelperInput&&(!helper||!helper.name.value)"
+    class="help no-print">לסרטון הדרכה על שיוך משפחות ויום האירוע לחצו כאן</a>
   <div *ngIf="helper&&helper. name.value&&helper.name.value.length>=2">
     <mat-card class="no-print">
       <mat-card-title>
@@ -68,7 +70,8 @@
             <mat-label>קבוצת חלוקה</mat-label>
             <select matNativeControl class="form-control" #lang (change)="refreshBaskets()" [(ngModel)]="filterGroup">
               <option value="">כל הקבוצות</option>
-              <option *ngFor="let g of groups" value="{{g.name.value}}">{{g.name.value}} - {{g.familiesCount.value}}</option>
+              <option *ngFor="let g of groups" value="{{g.name.value}}">{{g.name.value}} - {{g.familiesCount.value}}
+              </option>
             </select>
           </mat-form-field>
 
@@ -113,8 +116,7 @@
 
 
         <div class="no-print" style="display:flex;justify-content: center;">
-          <button mat-raised-button color="accent" (click)="assignItem()"
-            [disabled]="basketType.unassignedFamilies==0"
+          <button mat-raised-button color="accent" (click)="assignItem()" [disabled]="basketType.unassignedFamilies==0"
             style="border-top-left-radius: 0px;border-bottom-left-radius:0px;">
             {{translate( basketType.unassignedFamilies==0?'לא נותרו משפחות מתאימות': familyLists.allFamilies.length>0?"שייך משפחה הכי קרובה":'שייך משפחה כלשהי')}}
             -
@@ -127,13 +129,14 @@
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #basketMenu="matMenu">
-            <button mat-menu-item (click)="assignItem(true)" *ngIf="preferRepeatFamilies&&repeatFamilies>0">{{'הוסף את כל המשפחות החוזרות'|translate}}</button>
+            <button mat-menu-item (click)="assignItem(true)"
+              *ngIf="preferRepeatFamilies&&repeatFamilies>0">{{'הוסף את כל המשפחות החוזרות'|translate}}</button>
             <button mat-menu-item (click)="addSpecial()"
               *ngIf="specialFamilies">{{'משפחות מיוחדות - '|translate}}{{specialFamilies}}</button>
             <button mat-menu-item (click)="addSpecific()">{{'בחירת משפחה לפי שם'|translate}}</button>
             <button mat-menu-item (click)="assignOnMap()">{{'בחירת משפחה על המפה'|translate}}</button>
             <button mat-menu-item (click)="addStreet()">{{'בחירת משפחה לפי רחוב'|translate}}</button>
-            
+
 
             <button mat-menu-item (click)="moveBasktesFromOtherHelper()">{{'העבר משפחות ממתנדב אחר'|translate}}</button>
 

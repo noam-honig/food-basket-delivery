@@ -32,7 +32,7 @@ import { UpdateFamilyComponent } from '../update-family/update-family.component'
 
 import { saveToExcel } from '../shared/saveToExcel';
 import { PreviewFamilyComponent } from '../preview-family/preview-family.component';
-import { Roles, AdminGuard } from '../auth/roles';
+import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { MatTabGroup } from '@angular/material/tabs';
 import { QuickAddFamilyComponent } from '../quick-add-family/quick-add-family.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -43,6 +43,7 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { UpdateGroupDialogComponent } from '../update-group-dialog/update-group-dialog.component';
 import { Groups } from '../manage/manage.component';
 import { FamilySourceId } from './FamilySources';
+import { DistributionCenterId } from '../manage/distribution-centers';
 const addGroupAction = ' להוסיף ';
 const replaceGroupAction = ' להחליף ';
 @Component({
@@ -63,8 +64,11 @@ export class FamiliesComponent implements OnInit {
     deliverySummary: DataControlSettings<Families>;
     scrollingSubscription: Subscription;
     showHoverButton: boolean = false;
+    distCenter = new DistributionCenterId(this.context);
     constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context,
         public scroll: ScrollDispatcher) {
+        if (this.distCenter.value === undefined)
+            this.distCenter.value = "";
         for (const item of this.families.columns.items) {
             if (item.column == this.statusColumn && !item.readOnly) {
                 this.statusColumn = item;
@@ -382,6 +386,7 @@ export class FamiliesComponent implements OnInit {
                 families.phone2,
                 families.phone2Description,
                 families.courier,
+                families.distributionCenter,
                 families.fixedCourier,
                 {
                     caption: 'טלפון משנע',
@@ -405,6 +410,7 @@ export class FamiliesComponent implements OnInit {
                 families.needsWork,
                 families.needsWorkDate,
                 families.needsWorkUser
+
             ];
             if (!DeliveryStatus.usingSelfPickupModule) {
                 r = r.filter(x => x != families.defaultSelfPickup);
@@ -794,7 +800,7 @@ export class FamiliesComponent implements OnInit {
         if (this.suspend)
             return;
         if (!this.problemOnly)
-            this.busy.donotWait(async () => this.stats.getData().then(st => {
+            this.busy.donotWait(async () => this.stats.getData(this.distCenter.value).then(st => {
                 this.basketStats.stats.splice(0);
                 this.cityStats.stats.splice(0);
                 this.cityStats.moreStats.splice(0);
@@ -970,7 +976,7 @@ export class FamiliesComponent implements OnInit {
     static route: Route = {
         path: 'families',
         component: FamiliesComponent,
-        data: { name: 'משפחות' }, canActivate: [AdminGuard]
+        data: { name: 'משפחות' }, canActivate: [distCenterAdminGuard]
     }
     previewFamily() {
         this.context.openDialog(PreviewFamilyComponent, s => s.argsFamily = this.families.currentRow)

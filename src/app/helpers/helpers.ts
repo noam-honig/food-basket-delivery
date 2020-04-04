@@ -1,5 +1,5 @@
 
-import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, EntityOptions, UserInfo } from '@remult/core';
+import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, Entity, Column, EntityProvider } from '@remult/core';
 import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, SqlBuilder } from '../model-shared/types';
 
 
@@ -8,6 +8,7 @@ import { helpers } from 'chart.js';
 import { Roles } from "../auth/roles";
 import { JWTCookieAuthorizationHelper } from '@remult/server';
 import { SelectCompanyComponent } from "../select-company/select-company.component";
+import { DistributionCenterId } from '../manage/distribution-centers';
 
 
 
@@ -31,12 +32,12 @@ export abstract class HelpersBase extends IdEntity {
     company = new CompanyColumn(this.context);
     totalKm = new NumberColumn();
     totalTime = new NumberColumn();
-    shortUrlKey = new StringColumn({ includeInApi: Roles.admin });
+    shortUrlKey = new StringColumn({ includeInApi: Roles.distCenterAdmin });
     eventComment = new StringColumn('הערה');
     needEscort = new BoolColumn('צריך מלווה');
-    theHelperIAmEscorting = new HelperIdReadonly(this.context, { caption: 'נהג משוייך' });
-    escort = new HelperId(this.context, { caption: 'מלווה' });
-
+    theHelperIAmEscorting = new HelperIdReadonly(this.context, () => this.distributionCenter.value, { caption: 'נהג משוייך' });
+    escort = new HelperId(this.context, () => this.distributionCenter.value, { caption: 'מלווה' });
+    distributionCenter = new DistributionCenterId(this.context);
     getRouteStats(): routeStats {
         return {
             totalKm: this.totalKm.value,
@@ -72,7 +73,7 @@ export class Helpers extends HelpersBase {
                         this.admin.value = true;
                     }
                     this.phone.value = this.phone.value.replace(/\D/g, '');
-                    await checkForDuplicateValue(this, this.phone, context.for(Helpers));
+                    await checkForDuplicateValue(this, this.phone, this.distributionCenter, context.for(Helpers));
                     if (this.isNew())
                         this.createDate.value = new Date();
                     this.veryUrlKeyAndReturnTrueIfSaveRequired();
@@ -98,16 +99,20 @@ export class Helpers extends HelpersBase {
                 if (!context.isSignedIn())
                     return this.id.isEqualTo("No User");
                 else if (!context.isAllowed([Roles.admin]))
-                    return this.allowedIds.isContains(this.context.user.id);
+                    if (context.isAllowed([Roles.distCenterAdmin]))
+                        return this.distributionCenter.isAllowedForUser();
+                    else
+                        return this.allowedIds.isContains(this.context.user.id);
             }
         });
     }
     allowedIds = new StringColumn({
-        sqlExpression:()=>{
+        sqlExpression: () => {
             let sql = new SqlBuilder();
-            return sql.build(this.id,' || ',this.escort,' || ',this.theHelperIAmEscorting);
+            return sql.build(this.id, ' || ', this.escort, ' || ', this.theHelperIAmEscorting);
         }
     });
+
     _disableOnSavingRow = false;
     public static emptyPassword = 'password';
 
@@ -125,10 +130,16 @@ export class Helpers extends HelpersBase {
         caption: 'מועד משלוח תזכורת SMS'
     });
     admin = new BoolColumn({
-        caption: 'מנהל משלוח',
+        caption: 'מנהל כלל המערכת',
         allowApiUpdate: Roles.admin,
         includeInApi: Roles.admin,
         dbName: 'isAdmin'
+    });
+    distCenterAdmin = new BoolColumn({
+        caption: 'מנהל נקודת חלוקה',
+        allowApiUpdate: Roles.admin,
+        includeInApi: Roles.admin,
+        dbName: 'distCenterAdmin'
     });
     getRouteStats(): routeStats {
         return {
@@ -179,7 +190,7 @@ export class Helpers extends HelpersBase {
 
 export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 
-    constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>) {
+    constructor(protected context: Context, distCenter: () => string, settingsOrCaption?: ColumnOptions<string>) {
         super({
             dataControlSettings: () =>
                 ({
@@ -187,7 +198,10 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
                     hideDataOnInput: true,
                     width: '200',
                     click: async () => this.context.openDialog((await import('../select-helper/select-helper.component')).SelectHelperComponent,
-                        x => x.args = { onSelect: s => this.value = (s ? s.id.value : '') })
+                        x => x.args = {
+                            distCenter: distCenter(),
+                            onSelect: s => this.value = (s ? s.id.value : '')
+                        })
                 })
         }, settingsOrCaption);
     }
@@ -239,4 +253,13 @@ export interface PasswordHelper {
 export interface HelperUserInfo extends UserInfo {
     theHelperIAmEscortingId: string;
     escortedHelperName: string;
+    distributionCenter: string;
+}
+export async function checkForDuplicateValue(row: Entity<any>, column: Column<any>, column2: Column<any>, provider: EntityProvider<any>, message?: string) {
+    if (row.isNew() || column.value != column.originalValue || column2.value != column2.originalValue) {
+        let rows = await provider.find({ where: r => r.columns.find(column).isEqualTo(column.value).and(r.columns.find(column2).isEqualTo(column2.value)) });
+        if (rows.length > 0)
+            column.validationError = message || 'כבר קיים בנקודת החלוקה';
+    }
+
 }

@@ -23,7 +23,7 @@ import { BasketType } from '../families/BasketType';
 import { CitiesStats } from '../families/stats-action';
 import { SqlBuilder } from '../model-shared/types';
 import { BusyService } from '@remult/core';
-import { Roles, AdminGuard } from '../auth/roles';
+import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { Groups, GroupsStats } from '../manage/manage.component';
 import { SendSmsAction } from './send-sms-action';
 import { translate } from '../translate';
@@ -33,6 +33,7 @@ import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { SelectFamilyComponent } from '../select-family/select-family.component';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
+import { DistributionCenters, DistributionCenterId } from '../manage/distribution-centers';
 
 
 @Component({
@@ -43,12 +44,16 @@ import { CommonQuestionsComponent } from '../common-questions/common-questions.c
 
 export class AsignFamilyComponent implements OnInit {
     static route: Route = {
-        path: 'assign-families', component: AsignFamilyComponent, canActivate: [AdminGuard], data: {
+        path: 'assign-families', component: AsignFamilyComponent, canActivate: [distCenterAdminGuard], data: {
             name: 'שיוך משפחות'
         }
     };
     @ViewChild("phoneInput", { static: false }) phoneInput: ElementRef;
-
+    distCenter = new DistributionCenterId(this.context);
+    distCenterArea = new DataAreaSettings({ columnSettings: () => [this.distCenter] });
+    canSeeCenter() {
+        return this.context.isAllowed(Roles.admin);
+    }
     assignOnMap() {
         this.familyLists.startAssignByMap(this.filterCity, this.filterGroup);
     }
@@ -57,13 +62,14 @@ export class AsignFamilyComponent implements OnInit {
         this.clearHelperInfo(false);
 
         if (this.phone.length == 10) {
-            let helper = await this.context.for(Helpers).findFirst(h => h.phone.isEqualTo(this.phone));
+            let helper = await this.context.for(Helpers).findFirst(h => h.phone.isEqualTo(this.phone).and(h.distributionCenter.isEqualTo(this.distCenter)));
             if (helper) {
 
                 this.initHelper(helper);
             } else {
                 helper = this.context.for(Helpers).create();
                 helper.phone.value = this.phone;
+                helper.distributionCenter.value = this.distCenter.value;
                 this.initHelper(helper);
 
             }
@@ -72,7 +78,7 @@ export class AsignFamilyComponent implements OnInit {
     }
     async initHelper(helper: Helpers) {
         if (helper.theHelperIAmEscorting.value) {
-            let other = await this.context.for(Helpers).findFirst(x => x.id.isEqualTo(helper.theHelperIAmEscorting));
+            let other = await this.context.for(Helpers).findFirst(x => x.id.isEqualTo(helper.theHelperIAmEscorting).and(x.distributionCenter.isEqualTo(this.distCenter)));
             if (await this.context.openDialog(YesNoQuestionComponent, q => q.args = {
                 question: helper.name.value + ' מוגדר כמלווה של ' + other.name.value + '. האם להציג את המשפחות של ' + other.name.value + '?'
             }, q => q.yes)) {
@@ -140,6 +146,7 @@ export class AsignFamilyComponent implements OnInit {
             SelectHelperComponent, s => s.args = {
                 filter: h => h.deliveriesInProgress.isGreaterOrEqualTo(1).and(h.id.isDifferentFrom(this.helper.id)),
                 hideRecent: true,
+                distCenter:this.distCenter.value,
                 onSelect: async h => {
                     if (h) {
                         let families = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(h.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
@@ -195,7 +202,8 @@ export class AsignFamilyComponent implements OnInit {
             let r = (await AsignFamilyComponent.getBasketStatus({
                 filterGroup: this.filterGroup,
                 filterCity: this.filterCity,
-                helperId: this.helper ? this.helper.id.value : ''
+                helperId: this.helper ? this.helper.id.value : '',
+                distCenter: this.distCenter.value
             }));
             this.baskets = [this.allBaskets];
             this.baskets.push(...r.baskets);
@@ -241,7 +249,7 @@ export class AsignFamilyComponent implements OnInit {
 
     area: DataAreaSettings<any> = new DataAreaSettings<any>({});
     changeShowCompany() {
-        this.initArea();
+
         this.settings.save();
     }
 
@@ -282,9 +290,10 @@ export class AsignFamilyComponent implements OnInit {
     }
     findHelper() {
         this.context.openDialog(SelectHelperComponent, s => s.args = {
+            distCenter:this.distCenter.value,
             onSelect: async h => {
                 if (h) {
-                    this.initHelper(await this.context.for(Helpers).findFirst(hh => hh.id.isEqualTo(h.id)));
+                    this.initHelper(await this.context.for(Helpers).findFirst(hh => hh.id.isEqualTo(h.id).and(hh.distributionCenter.isEqualTo(this.distCenter))));
                 }
                 else {
                     this.clearHelperInfo();
@@ -297,6 +306,9 @@ export class AsignFamilyComponent implements OnInit {
 
 
     constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public settings: ApplicationSettings) {
+        if (this.distCenter.value === undefined) {
+            this.distCenter.value = '';
+        }
 
     }
     filterOptions: BoolColumn[] = [];
@@ -304,7 +316,7 @@ export class AsignFamilyComponent implements OnInit {
 
 
         this.filterOptions.push(this.settings.showGroupsOnAssing, this.settings.showCityOnAssing, this.settings.showBasketOnAssing, this.settings.showNumOfBoxesOnAssing);
-        this.changeShowCompany();
+        this.initArea();
         this.familyLists.userClickedOnFamilyOnMap =
             async  families => {
                 if (families.length == 1)
@@ -364,7 +376,8 @@ export class AsignFamilyComponent implements OnInit {
                 city: this.filterCity,
                 numOfBaskets: allRepeat ? this.repeatFamilies : this.numOfBaskets,
                 preferRepeatFamilies: this.preferRepeatFamilies && this.repeatFamilies > 0,
-                allRepeat: allRepeat
+                allRepeat: allRepeat,
+                distCenter:this.distCenter.value
             });
             if (x.addedBoxes) {
                 this.familyLists.initForFamilies(this.helper, x.families);
@@ -411,7 +424,7 @@ export class AsignFamilyComponent implements OnInit {
         });
     }
 
-    @ServerFunction({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async getBasketStatus(info: GetBasketStatusActionInfo, context?: Context, db?: SqlDatabase): Promise<GetBasketStatusActionResponse> {
 
         let result = {
@@ -474,16 +487,18 @@ export class AsignFamilyComponent implements OnInit {
 
         return result;
     }
-    @ServerFunction({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async RefreshRoute(helperId: string, useGoogle: boolean, context?: Context) {
-        let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
+        let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(helperId).and(
+            f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)).and(
+                f.distributionCenter.isAllowedForUser()) });
         let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
         return await AsignFamilyComponent.optimizeRoute(h, existingFamilies, context, useGoogle);
     }
     findCompany() {
         this.context.openDialog(SelectCompanyComponent, s => s.argOnSelect = x => this.helper.company.value = x);
     }
-    @ServerFunction({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async AddBox(info: AddBoxInfo, context?: Context, db?: SqlDatabase) {
         let result: AddBoxResponse = {
             addedBoxes: 0,
@@ -495,7 +510,11 @@ export class AsignFamilyComponent implements OnInit {
         if (!info.helperId)
             throw 'invalid helper';
 
-        let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(info.helperId).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
+        let existingFamilies = await context.for(Families).find({
+            where: f => f.courier.isEqualTo(info.helperId).and(
+                f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
+                    f.distributionCenter.isAllowedForUser()))
+        });
         let locationReferenceFamilies = [...existingFamilies];
         if (locationReferenceFamilies.length == 0) {
             let from = new Date();
@@ -620,7 +639,7 @@ export class AsignFamilyComponent implements OnInit {
         result.families = await context.for(Families).toPojoArray(existingFamilies);
 
         result.familiesInSameAddress = result.familiesInSameAddress.filter((x, i) => !existingFamilies.find(f => f.id.value == x) && result.familiesInSameAddress.indexOf(x) == i);
-        
+
         return result;
     }
 
@@ -815,6 +834,7 @@ export interface AddBoxInfo {
     numOfBaskets: number;
     preferRepeatFamilies: boolean;
     allRepeat: boolean;
+    distCenter: string;
 
 }
 export interface AddBoxResponse {
@@ -880,6 +900,7 @@ export interface GetBasketStatusActionInfo {
     filterGroup: string;
     filterCity: string;
     helperId: string;
+    distCenter: string;
 }
 export interface GetBasketStatusActionResponse {
     baskets: BasketInfo[];

@@ -17,6 +17,7 @@ import { FamilySourceId } from '../families/FamilySources';
 import { ServerFunction } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { DistributionCenterId } from '../manage/distribution-centers';
 
 var fullDayValue = 24 * 60 * 60 * 1000;
 
@@ -244,16 +245,17 @@ export class FamilyDeliveriesStats extends Entity<string> {
   family = new FamilyId();
   id = new IdColumn();
   name = new StringColumn('שם');
-  courier = new HelperId(this.context, "משנע");
+  distributionCenter = new DistributionCenterId(this.context);
+  courier = new HelperId(this.context,()=>this.distributionCenter.value, "משנע");
   deliveryStatusDate = new changeDate('מתי');
   deliverStatus = new DeliveryStatusColumn();
   basketType = new BasketId(this.context, 'סוג סל');
   city = new StringColumn({ caption: "עיר" });
   courierComments = new StringColumn('הערות מסירה');
   familySource = new FamilySourceId(this.context, { caption: 'גורם מפנה' });
-  courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
+  courierAssignUser = new HelperIdReadonly(this.context,()=>this.distributionCenter.value, 'מי שייכה למשנע');
   courierAssingTime = new changeDate('מועד שיוך למשנע');
-  deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
+  deliveryStatusUser = new HelperIdReadonly(this.context,()=>this.distributionCenter.value, 'מי עדכן את סטטוס המשלוח');
 
 
   constructor(private context: Context) {
@@ -267,6 +269,7 @@ export class FamilyDeliveriesStats extends Entity<string> {
         let r = sql.union({
           select: () => [sql.columnWithAlias(f.id, 'as family'), f.name, sql.columnWithAlias(f.id, 'id'),
           f.basketType,
+          f.distributionCenter,
           f.deliverStatus,
           f.courier,
           f.city,
@@ -284,6 +287,7 @@ export class FamilyDeliveriesStats extends Entity<string> {
           {
             select: () => [f.id, f.name, d.id,
             d.basketType,
+            d.distributionCenter,
             d.deliverStatus,
             d.courier,
             d.archive_city,

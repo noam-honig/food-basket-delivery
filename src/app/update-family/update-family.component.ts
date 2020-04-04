@@ -99,6 +99,7 @@ export class UpdateFamilyComponent implements OnInit {
           families.needsWork,
 
           families.defaultSelfPickup,
+          families.distributionCenter,
           families.fixedCourier
         ];
         if (!DeliveryStatus.usingSelfPickupModule)

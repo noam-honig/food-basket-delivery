@@ -14,6 +14,7 @@ import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { Helpers } from '../helpers/helpers';
 import { FamilyDeliveriesStats } from '../delivery-history/delivery-history.component';
 import { Sites } from '../sites/sites';
+import { DistributionCenters } from '../manage/distribution-centers';
 
 export async function initSchema(pool1: PostgresPool, org: string) {
 
@@ -40,7 +41,14 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         let h = context.for(BasketType).create();
         h.setEmptyIdForNewRow();
         h.name.value = 'רגיל';
-        h.boxes.value = 1;
+                h.boxes.value = 1;
+        await h.save();
+    }
+    if ((await context.for(DistributionCenters).count() == 0)) {
+        let h = context.for(DistributionCenters).create();
+        h.setEmptyIdForNewRow();
+        h.name.value = 'ראשי';
+        h.address.value = 'ישראל';
         await h.save();
     }
 

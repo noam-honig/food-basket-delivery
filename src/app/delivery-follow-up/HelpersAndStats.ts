@@ -38,7 +38,7 @@ export class HelpersAndStats extends HelpersBase {
     constructor(context: Context) {
         super(context, {
             name: "helpersAndStats",
-            allowApiRead: Roles.admin,
+            allowApiRead: Roles.distCenterAdmin,
             dbName: () => {
                 let f = context.for(Families).create();
                 let h = context.for( Helpers).create();
@@ -47,7 +47,7 @@ export class HelpersAndStats extends HelpersBase {
                 let helperFamilies = (where: () => any[]) => {
                     return {
                         from: f,
-                        where: () => [sql.eq(f.courier, h.id), ...where()]
+                        where: () => [f.distributionCenter.isAllowedForUser(),sql.eq(f.courier, h.id), ...where()]
                     }
                 }
                 return sql.entityDbName({
@@ -65,6 +65,7 @@ export class HelpersAndStats extends HelpersBase {
                         h.needEscort,
                         h.theHelperIAmEscorting,
                         h.escort,
+                        h.distributionCenter ,
                         sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress),
                         sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isActiveDelivery()]), this.allFamilies),
                         sql.countInnerSelect(helperFamilies(() => [sql.in(f.deliverStatus,

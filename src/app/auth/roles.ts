@@ -4,6 +4,7 @@ import { Injectable } from "@angular/core";
 
 export class Roles {
     static admin = 'deliveryAdmin';
+    static distCenterAdmin = 'distCenterAdmin';
     static overview='overview';
 }
 
@@ -13,6 +14,13 @@ export class AdminGuard extends SignedInGuard {
 
     isAllowed() {
         return Roles.admin;
+    }
+}
+@Injectable()
+export class distCenterAdminGuard extends SignedInGuard {
+
+    isAllowed() {
+        return Roles.distCenterAdmin;
     }
 }
 

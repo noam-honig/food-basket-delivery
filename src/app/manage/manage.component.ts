@@ -14,6 +14,8 @@ import { Route } from '@angular/router';
 import { Families } from '../families/families';
 import { SqlBuilder } from '../model-shared/types';
 import { DomSanitizer } from '@angular/platform-browser';
+import { DistributionCenters } from './distribution-centers';
+
 
 @Component({
   selector: 'app-manage',
@@ -84,6 +86,32 @@ export class ManageComponent implements OnInit {
     allowUpdate: true,
     allowInsert: true,
     allowDelete: true,
+    confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
+  });
+  distributionCenters = this.context.for(DistributionCenters).gridSettings({
+    hideDataArea: true,
+    columnSettings: x => [
+      x.name,
+      {
+        column: x.semel,
+        width: '100px'
+      },
+      {
+        column: x.address,
+      },
+      {
+        caption: 'כתובת כפי שגוגל הבין',
+        getValue: s => s.getGeocodeInformation().getAddress()
+      }
+    ],
+    get: {
+      limit: 25,
+      orderBy: f => [f.name]
+    },
+
+    allowUpdate: true,
+    allowInsert: true,
+
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
   });
   sources = this.context.for(FamilySources).gridSettings({
@@ -314,7 +342,7 @@ export class GroupsStats extends Entity<string> {
   familiesCount = new NumberColumn();
   constructor(context: Context) {
     super({
-      allowApiRead: Roles.admin,
+      allowApiRead: Roles.distCenterAdmin,
       name: 'groupsStats',
       dbName: () => {
         let f = context.for(Families).create();

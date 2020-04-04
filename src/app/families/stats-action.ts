@@ -1,4 +1,4 @@
-import { ServerFunction, StringColumn, NumberColumn, Entity } from '@remult/core';
+import { ServerFunction, StringColumn, NumberColumn, Entity, AndFilter } from '@remult/core';
 import { FilterBase } from '@remult/core';
 import { Families } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -45,11 +45,11 @@ export class Stats {
     notInEvent = new FaimilyStatistics('לא באירוע', f => f.deliverStatus.isEqualTo(DeliveryStatus.NotInEvent), colors.blue);
     frozen = new FaimilyStatistics('קפואים', f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen), colors.gray);
     blocked = new FaimilyStatistics('סל חסום', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(f.courier.isEqualTo('').and(f.blockedBasket.isEqualTo(true))), colors.gray);
-    needWork = new FaimilyStatistics('מצריך טיפול', f => f.deliverStatus.isInEvent().and( f.needsWork.isEqualTo(true)), colors.yellow);
+    needWork = new FaimilyStatistics('מצריך טיפול', f => f.deliverStatus.isInEvent().and(f.needsWork.isEqualTo(true)), colors.yellow);
 
 
-    async getData() {
-        let r = await Stats.getDataFromServer();
+    async getData(distCenter: string) {
+        let r = await Stats.getDataFromServer(distCenter);
         for (let s in this) {
             let x: any = this[s];
             if (x instanceof FaimilyStatistics) {
@@ -58,15 +58,15 @@ export class Stats {
         }
         return r;
     }
-    @ServerFunction({ allowed: Roles.admin })
-    static async getDataFromServer(context?: Context) {
+    @ServerFunction({ allowed: Roles.distCenterAdmin })
+    static async getDataFromServer(distCenter: string, context?: Context) {
         let result = { data: {}, baskets: [], cities: [], groups: [] as groupStats[] };
         let stats = new Stats();
         let pendingStats = [];
         for (let s in stats) {
             let x = stats[s];
             if (x instanceof FaimilyStatistics) {
-                pendingStats.push(x.saveTo(result.data, context));
+                pendingStats.push(x.saveTo(distCenter, result.data, context));
             }
         }
 
@@ -78,11 +78,11 @@ export class Stats {
                 id: b.id.value,
                 name: b.name.value,
                 boxes: b.boxes.value,
-                boxes2:b.boxes2.value,
+                boxes2: b.boxes2.value,
                 blocked: b.blocked.value,
-                unassignedFamilies: await context.for(Families).count(f => f.readyAndSelfPickup().and(f.basketType.isEqualTo(b.id))),
-                inEventFamilies: await context.for(Families).count(f => f.deliverStatus.isInEvent().and(f.basketType.isEqualTo(b.id))),
-                successFamilies: await context.for(Families).count(f => f.deliverStatus.isSuccess().and(f.basketType.isEqualTo(b.id)))
+                unassignedFamilies: await context.for(Families).count(f => f.readyAndSelfPickup().and(f.basketType.isEqualTo(b.id).and(f.filterDistCenter(distCenter)))),
+                inEventFamilies: await context.for(Families).count(f => f.deliverStatus.isInEvent().and(f.basketType.isEqualTo(b.id).and(f.filterDistCenter(distCenter)))),
+                successFamilies: await context.for(Families).count(f => f.deliverStatus.isSuccess().and(f.basketType.isEqualTo(b.id).and(f.filterDistCenter(distCenter))))
             });
         }));
         pendingStats.push(
@@ -98,7 +98,7 @@ export class Stats {
             })
         );
         await context.for(Groups).find({
-            limit:1000,
+            limit: 1000,
             orderBy: f => [{ column: f.name }]
         }).then(groups => {
             for (const g of groups) {
@@ -108,14 +108,17 @@ export class Stats {
                     totalReady: 0
                 };
                 result.groups.push(x);
-                pendingStats.push(context.for(Families).count(f => f.readyAndSelfPickup().and(f.groups.isContains(x.name))).then(r => x.totalReady = r));
-                pendingStats.push(context.for(Families).count(f => f.groups.isContains(x.name).and(f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList))).then(r => x.total = r));
+                pendingStats.push(context.for(Families).count(f => f.readyAndSelfPickup().and(
+                    f.groups.isContains(x.name).and(
+                        f.filterDistCenter(distCenter)))).then(r => x.totalReady = r));
+                pendingStats.push(context.for(Families).count(f => f.groups.isContains(x.name).and(
+                    f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList)).and(f.filterDistCenter(distCenter))).then(r => x.total = r));
             }
         });
 
 
         await Promise.all(pendingStats);
-        
+
         return result;
     }
 }
@@ -128,13 +131,14 @@ export class CitiesStats extends Entity<string> {
             allowApiRead: false,
             name: 'citiesStats',
             dbName: () => {
-                let f = context.for( Families).create();
+                let f = context.for(Families).create();
                 let sql = new SqlBuilder();
                 sql.addEntity(f, 'Families');
                 return sql.build('(', sql.query({
                     select: () => [f.city, sql.columnWithAlias("count(*)", this.families)],
                     from: f,
                     where: () => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery),
+                    f.distributionCenter.isAllowedForUser(),
                     sql.eq(f.courier, '\'\''),
                     f.blockedBasket.defs.dbName + ' = false']
                 }), ' group by ', f.city, ') as result')
@@ -149,9 +153,9 @@ export class FaimilyStatistics {
     }
 
     value = 0;
-    async saveTo(data: any, context: Context) {
+    async saveTo(distCenter: string, data: any, context: Context) {
 
-        data[this.name] = await context.for(Families).count(f => this.rule(f)).then(c => this.value = c);
+        data[this.name] = await context.for(Families).count(f => new AndFilter(this.rule(f), f.filterDistCenter(distCenter))).then(c => this.value = c);
     }
     async loadFrom(data: any) {
         this.value = data[this.name];

@@ -45,8 +45,8 @@ export class AuthService {
                     id: h.id.value,
                     name: h.name.value,
                     roles: [Sites.getOrgRole(context)],
-                    theHelperIAmEscortingId:h.theHelperIAmEscorting.value,
-                    escortedHelperName:h.theHelperIAmEscorting.value?(await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value :''
+                    theHelperIAmEscortingId: h.theHelperIAmEscorting.value,
+                    escortedHelperName: h.theHelperIAmEscorting.value ? (await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value : ''
                 } as HelperUserInfo),
                 requirePassword: false
             } as LoginResponse
@@ -79,7 +79,7 @@ export class AuthService {
                 });
             }
             else {
-                if (this.context.isAllowed(Roles.admin))
+                if (this.context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
                     this.routeHelper.navigateToComponent(AsignFamilyComponent);
                 else if (this.context.isAllowed(Roles.overview))
                     this.routeHelper.navigateToComponent(OverviewComponent);
@@ -108,18 +108,24 @@ export class AuthService {
                     id: h.id.value,
                     roles: [Sites.getOrgRole(context)],
                     name: h.name.value,
-                    theHelperIAmEscortingId:h.theHelperIAmEscorting.value,
-                    escortedHelperName:h.theHelperIAmEscorting.value?(await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value :''
+                    distributionCenter:h.distributionCenter.value,
+                    theHelperIAmEscortingId: h.theHelperIAmEscorting.value,
+                    escortedHelperName: h.theHelperIAmEscorting.value ? (await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value : ''
                 };
-                if (h.realStoredPassword.value.length == 0 && h.admin.value) {
+                if (h.realStoredPassword.value.length == 0 && (h.admin.value || h.distCenterAdmin.value)) {
                     requirePassword = true;
                 }
                 else {
                     if (h.admin.value) {
                         if (Sites.getOrganizationFromContext(context) == Sites.guestSchema)
                             result.roles.push(Roles.overview)
-                        else
+                        else {
                             result.roles.push(Roles.admin);
+                            result.roles.push(Roles.distCenterAdmin);
+                        }
+                    }
+                    if (h.distCenterAdmin.value) {
+                        result.roles.push(Roles.distCenterAdmin);
                     }
 
 

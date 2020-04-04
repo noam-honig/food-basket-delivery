@@ -16,10 +16,15 @@ import { Roles } from "../auth/roles";
 
 import { translate } from "../translate";
 import { UpdateGroupDialogComponent } from "../update-group-dialog/update-group-dialog.component";
+import { DistributionCenterId, DistributionCenters } from "../manage/distribution-centers";
 
 
 @EntityClass
 export class Families extends IdEntity {
+  filterDistCenter(distCenter: string): import("@remult/core").FilterBase {
+    if (distCenter != "*")
+      return this.distributionCenter.isEqualTo(distCenter);
+  }
   onTheWayFilter() {
     return this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(this.courier.isDifferentFrom(''));
   }
@@ -58,11 +63,13 @@ export class Families extends IdEntity {
         name: "Families",
         allowApiRead: context.isSignedIn(),
         allowApiUpdate: context.isSignedIn(),
-        allowApiDelete: Roles.admin,
-        allowApiInsert: Roles.admin,
+        allowApiDelete: false,
+        allowApiInsert: Roles.distCenterAdmin,
         apiDataFilter: () => {
           if (!context.isAllowed(Roles.admin)) {
             let user = <HelperUserInfo>context.user;
+            if (context.isAllowed(Roles.distCenterAdmin))
+              return this.distributionCenter.isAllowedForUser();
             if (user.theHelperIAmEscortingId)
               return this.courier.isEqualTo(user.theHelperIAmEscortingId).and(this.visibleToCourier.isEqualTo(true));
             else
@@ -79,6 +86,7 @@ export class Families extends IdEntity {
               fd.basketType.value = this.basketType.originalValue;
               fd.deliverStatus.value = this.deliverStatus.originalValue;
               fd.courier.value = this.courier.originalValue;
+              fd.distributionCenter.value = this.distributionCenter.value;
               fd.courierComments.value = this.courierComments.originalValue;
               fd.deliveryStatusDate.value = this.deliveryStatusDate.originalValue;
               fd.courierAssignUser.value = this.courierAssignUser.originalValue;
@@ -151,10 +159,19 @@ export class Families extends IdEntity {
 
       });
 
-    if (!context.isAllowed(Roles.admin))
-      for (const c of this.columns) {
-        c.defs.allowApiUpdate = c == this.courierComments || c == this.deliverStatus || c == this.correntAnErrorInStatus || c == this.needsWork
+    if (!context.isAllowed([Roles.admin, Roles.distCenterAdmin])) {
+      for (const key in this) {
+        if (this.hasOwnProperty(key)) {
+          const c = this[key];
+          if (c instanceof Column) {
+            //@ts-ignore
+            c.defs.allowApiUpdate = c == this.courierComments || c == this.deliverStatus || c == this.correntAnErrorInStatus || c == this.needsWork;
+          }
+
+        }
       }
+
+    }
   }
   disableChangeLogging = false;
   disableOnSavingRow = false;
@@ -194,6 +211,7 @@ export class Families extends IdEntity {
 
   })
   basketType = new BasketId(this.context, 'סוג סל');
+  distributionCenter = new DistributionCenterId(this.context);
   familySource = new FamilySourceId(this.context, { includeInApi: true, caption: 'גורם מפנה' });
   socialWorker = new StringColumn('איש קשר לבירור פרטים (עו"ס)');
   socialWorkerPhone1 = new PhoneColumn("איש קשר טלפון 1");
@@ -229,13 +247,13 @@ export class Families extends IdEntity {
 
   deliverStatus = new DeliveryStatusColumn();
   correntAnErrorInStatus = new BoolColumn({ serverExpression: () => false });
-  courier = new HelperId(this.context, "משנע באירוע");
+  courier = new HelperId(this.context, () => this.distributionCenter.value, "משנע באירוע");
   courierComments = new StringColumn('הערות שכתב המשנע כשמסר');
   deliveryStatusDate = new changeDate('מועד סטטוס משלוח');
-  fixedCourier = new HelperId(this.context, "משנע קבוע");
-  courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
+  fixedCourier = new HelperId(this.context, () => this.distributionCenter.value, "משנע קבוע");
+  courierAssignUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'מי שייכה למשנע');
   needsWork = new BoolColumn({ caption: 'צריך טיפול/מעקב' });
-  needsWorkUser = new HelperIdReadonly(this.context, 'צריך טיפול - מי עדכן');
+  needsWorkUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'צריך טיפול - מי עדכן');
   needsWorkDate = new changeDate('צריך טיפול - מתי עודכן');
 
 
@@ -302,7 +320,7 @@ export class Families extends IdEntity {
 
 
 
-  deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
+  deliveryStatusUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'מי עדכן את סטטוס המשלוח');
   blockedBasket = new BoolColumn({
     caption: 'סל חסום',
     sqlExpression: () => {
@@ -363,12 +381,13 @@ export class Families extends IdEntity {
 
   readyFilter(city?: string, group?: string) {
     let where = this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
-      this.courier.isEqualTo('')).and(this.blockedBasket.isEqualTo(false));
+      this.courier.isEqualTo('')).and(this.blockedBasket.isEqualTo(false)).and(this.distributionCenter.isAllowedForUser());
     if (group)
       where = where.and(this.groups.isContains(group));
     if (city) {
       where = where.and(this.city.isEqualTo(city));
     }
+
     return where;
   }
   readyAndSelfPickup() {
@@ -466,7 +485,7 @@ export class Families extends IdEntity {
 
 
   createDate = new changeDate({ includeInApi: Roles.admin, caption: 'מועד הוספה' });
-  createUser = new HelperIdReadonly(this.context, { includeInApi: Roles.admin, caption: 'משתמש מוסיף' });
+  createUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, { includeInApi: Roles.admin, caption: 'משתמש מוסיף' });
   lastUpdateDate = new changeDate({ includeInApi: Roles.admin, caption: 'מועד עדכון אחרון' });
 
 
@@ -580,7 +599,7 @@ export class Families extends IdEntity {
 
 
   }
-  @ServerFunction({ allowed: Roles.admin, blockUser: false })
+  @ServerFunction({ allowed: Roles.distCenterAdmin, blockUser: false })
   static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, id: string, exactName: boolean = false, context?: Context, db?: SqlDatabase) {
     let result: duplicateFamilyInfo[] = [];
 
@@ -615,7 +634,7 @@ export class Families extends IdEntity {
       ],
 
       from: f,
-      where: () => [sql.or(tzCol, tz2Col, phone1Col, phone2Col, nameCol), sql.ne(f.id, sql.str(id))]
+      where: () => [f.distributionCenter.isAllowedForUser(), sql.or(tzCol, tz2Col, phone1Col, phone2Col, nameCol), sql.ne(f.id, sql.str(id))]
     }));
     if (!sqlResult.rows || sqlResult.rows.length < 1)
       return [];

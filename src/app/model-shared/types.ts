@@ -247,7 +247,7 @@ export class SqlBuilder {
     return this.build(a, ' > ', b);
   }
   and(...args: any[]): string {
-    return args.map(x => this.getItemSql(x)).join(' and ');
+    return args.map(x => this.getItemSql(x)).filter(x => x != undefined).join(' and ');
   }
   or(...args: any[]): string {
     return "(" + args.map(x => this.getItemSql(x)).join(' or ') + ")";
@@ -298,8 +298,8 @@ export class SqlBuilder {
       where: query.where
     }), ") ", mappedColumn);
   }
-  
-  
+
+
   countDistinct(col: Column<any>, mappedColumn: Column<number>) {
     return this.build("count (distinct ", col, ") ", mappedColumn)
   }

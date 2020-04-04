@@ -85,6 +85,8 @@ export class HelpersComponent implements OnInit {
       }
       r.push(helpers.eventComment);
       r.push(helpers.createDate);
+      r.push(helpers.distCenterAdmin);
+      r.push(helpers.distributionCenter);
       return r;
     },
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes),

@@ -7,20 +7,21 @@ import { HelperId, HelperIdReadonly } from "../helpers/helpers";
 import { Entity, CompoundIdColumn } from '@remult/core';
 import { FamilySourceId } from "./FamilySources";
 import { Roles } from "../auth/roles";
+import { DistributionCenters, DistributionCenterId as DistributionCenterId } from "../manage/distribution-centers";
 
 @EntityClass
 export class FamilyDeliveries extends IdEntity {
     family = new FamilyId();
     basketType = new BasketId(this.context, 'סוג סל');
 
-
+    distributionCenter= new DistributionCenterId(this.context);
     deliverStatus = new DeliveryStatusColumn();
-    courier = new HelperId(this.context, "משנע");
+    courier = new HelperId(this.context,()=>this.distributionCenter.value, "משנע");
     courierComments = new StringColumn('הערות מסירה');
     deliveryStatusDate = new changeDate('מתי');
-    courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
+    courierAssignUser = new HelperIdReadonly(this.context,()=>this.distributionCenter.value, 'מי שייכה למשנע');
     courierAssingTime = new changeDate('מועד שיוך למשנע');
-    deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
+    deliveryStatusUser = new HelperIdReadonly(this.context,()=>this.distributionCenter.value, 'מי עדכן את סטטוס המשלוח');
 
     archiveFamilySource = new FamilySourceId(this.context, { caption: 'גורם מפנה' });
     archiveGroups = new StringColumn('קבוצות');
@@ -42,7 +43,7 @@ export class FamilyDeliveries extends IdEntity {
     constructor(private context: Context) {
         super({
             name: 'FamilyDeliveries',
-            allowApiRead: Roles.admin,
+            allowApiRead: Roles.distCenterAdmin,
             allowApiDelete: Roles.admin
         });
     }

@@ -20,6 +20,7 @@ export class SelectHelperComponent implements OnInit {
   lastFilter: string = undefined;
   public args: {
     hideRecent?: boolean,
+    distCenter: string,
     onSelect: (selectedValue: HelpersBase) => void,
     filter?: (helper: HelpersAndStats) => FilterBase
 
@@ -46,17 +47,18 @@ export class SelectHelperComponent implements OnInit {
 
 
     this.findOptions.where = h => {
-      let r = h.name.isContains(this.searchString);
+      let r = h.name.isContains(this.searchString).and(h.distributionCenter.isEqualTo(this.args.distCenter));
       if (this.args.filter) {
         return r.and(this.args.filter(h));
       }
+
       return r;
     };
 
     if (Helpers.recentHelpers.length == 0 || this.args.hideRecent)
       this.getHelpers();
     else {
-      this.filteredHelpers = [...Helpers.recentHelpers];
+      this.filteredHelpers = [...Helpers.recentHelpers.filter(h => h.distributionCenter.value == this.args.distCenter)];
       this.showingRecentHelpers = true;
     }
 
