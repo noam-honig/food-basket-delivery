@@ -1,5 +1,6 @@
 import * as fetch from 'node-fetch';
 import { UrlBuilder, EntityClass, IdEntity, StringColumn, Entity, DateTimeColumn, Context } from '@remult/core';
+import { extractError } from '../import-from-excel/import-from-excel.component';
 
 export class GeoCodeOptions {
     static disableGeocode = false;
@@ -16,6 +17,7 @@ export async function GetGeoInformation(address: string, context: Context) {
     address = address.trim();
     let cacheEntry = await context.for(GeocodeCache).lookupAsync(x => x.id.isEqualTo(address));
     if (!cacheEntry.isNew()) {
+        console.log('cache:' + address);
         return new GeocodeInformation(JSON.parse(cacheEntry.googleApiResult.value) as GeocodeResult);
     }
     let x = pendingRequests.get(address);
@@ -27,20 +29,34 @@ export async function GetGeoInformation(address: string, context: Context) {
             language: 'HE'
         });
         try {
-            let r = fetch.default(u.url).then(async x => await x.json().then(async r => {
+            let r = fetch.default(u.url).then(async x => await x.json().then(async (r: GeocodeResult) => {
+
+                console.log('google:' + address);
                 cacheEntry.id.value = address;
-                cacheEntry.googleApiResult.value = r;
+                cacheEntry.googleApiResult.value = JSON.stringify(r);
                 cacheEntry.createDate.value = new Date();
                 await cacheEntry.save();
-                return new GeocodeInformation(r as GeocodeResult);
+                let g = new GeocodeInformation(r as GeocodeResult);
+                if (!g.ok())
+                    console.log('api error:' + g.info.status + ' for ' + address);
+                return g;
+
             }));
             pendingRequests.set(address, r);
             return await r;
 
         }
+        catch (err) {
+            return new GeocodeInformation({ results: [], status: extractError(err) });
+
+        }
         finally {
         }
     }
+    else {
+        console.log('reuse: ' + address);
+    }
+    return await x;
 
 
 

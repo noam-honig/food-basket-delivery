@@ -1,0 +1,59 @@
+import { Component, OnInit } from '@angular/core';
+import { Context, ServerFunction } from '@remult/core';
+import { Families } from '../families/families';
+import { Roles } from '../auth/roles';
+import { PromiseThrottle, extractError } from '../import-from-excel/import-from-excel.component';
+import { DialogService } from '../select-popup/dialog';
+
+@Component({
+  selector: 'app-geocode',
+  templateUrl: './geocode.component.html',
+  styleUrls: ['./geocode.component.scss']
+})
+export class GeocodeComponent implements OnInit {
+
+  constructor(private context: Context, private dialog: DialogService) { }
+  families = 0;
+  async ngOnInit() {
+    this.families = await this.context.for(Families).count(filterBadGeocoding);
+  }
+  message = '';
+  async doIt() {
+
+    let startNumber = this.families;
+    let start = new Date().valueOf();
+    try {
+      while (this.families > 0) {
+        await GeocodeComponent.geocodeOnServer();
+        let x = this.families;
+        await this.ngOnInit();
+        if (x - this.families < 100) {
+          throw ('עדכון GEOCODE הופסתק בגלל אי התקדמות במספרים לפני הספירה היה: ' + x);
+          return;
+        }
+        let timeLeft = ((new Date().valueOf() - start) / (this.families - startNumber)) * (this.families) / 1000 / 60;
+        this.dialog.Info(this.message = "נשאר עוד " + timeLeft.toFixed(1) + ' דקות ');
+      }
+      this.dialog.Info('זהו נגמר');
+    } catch (err) {
+      this.dialog.Error(extractError(err));
+    }
+
+  }
+  @ServerFunction({ allowed: Roles.admin })
+  static async geocodeOnServer(context?: Context) {
+    let p = new PromiseThrottle(10);
+    let start = new Date().valueOf();
+    for (const f of await context.for(Families).find({ where: filterBadGeocoding, limit: 1000 })) {
+      await p.push(f.reloadGeoCoding().then(() => f.save()));
+      if (new Date().valueOf() - start > 20000)
+        break;
+    }
+    await p.done();
+  }
+
+}
+
+function filterBadGeocoding(f: Families) {
+  return f.address.isDifferentFrom('').and(f.addressApiResult.isEqualTo(''));
+}

@@ -30,6 +30,7 @@ import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/imp
 import { PlaybackComponent } from './playback/playback.component';
 import { OverviewComponent } from './overview/overview.component';
 import { AssignEscortComponent } from './assign-escort/assign-escort.component';
+import { GeocodeComponent } from './geocode/geocode.component';
 
 
 
@@ -51,9 +52,11 @@ const routes: Routes = [
   AddressProblemComponent.route,
   HelpersComponent.route,
   { path: 'overview', component: OverviewComponent, canActivate: [OverviewGuard] },
+  
 
   DeliveryHistoryComponent.route,
   { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { name: 'סרטון החלוקה', hide: true } },
+  { path: 'geocode', component: GeocodeComponent, canActivate: [AdminGuard], data: { name: 'geocode', hide: true } },
 
   BatchOperationsComponent.route,
   { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard], data: { name: 'קליטת משפחות מאקסל' } },

@@ -1089,14 +1089,14 @@ export function fixPhone(phone: string, defaultPrefix: string) {
         return defaultPrefix + phone;
     return phone;
 }
-function extractError(err: any) {
+export function extractError(err: any) {
     if (err.error)
         err = err.error;
     return err;
 
 }
 
-class PromiseThrottle {
+export class PromiseThrottle {
     constructor(private howMany: number) {
 
     }

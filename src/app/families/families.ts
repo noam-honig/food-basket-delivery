@@ -123,20 +123,9 @@ export class Families extends IdEntity {
             if (this.fixedCourier.value && !this.fixedCourier.originalValue && !this.courier.value && this.deliverStatus.value == DeliveryStatus.ReadyForDelivery) {
               this.courier.value = this.fixedCourier.value;
             }
-            if (!this.__disableGeocoding) {
-              if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
-                let geo = await GetGeoInformation(this.address.value, this.context);
-                this.addressApiResult.value = geo.saveToString();
-                this.city.value = '';
-                if (geo.ok()) {
-                  this.city.value = geo.getCity();
-                  await this.setPostalCodeServerOnly();
-                }
-                this.addressOk.value = !geo.partialMatch();
-                this.addressLongitude.value = geo.location().lng;
-                this.addressLatitude.value = geo.location().lat;
 
-              }
+            if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
+              await this.reloadGeoCoding();
             }
             if (this.isNew()) {
               this.createDate.value = new Date();
@@ -267,6 +256,22 @@ export class Families extends IdEntity {
     caption: 'טלפון שיוך למשנע',
     serverExpression: async () => (await this.context.for(Helpers).lookupAsync(this.courierAssignUser)).phone.value
   });
+
+   async reloadGeoCoding() {
+
+    let geo = new GeocodeInformation();
+    if (!this.__disableGeocoding)
+      geo = await GetGeoInformation(this.address.value, this.context);
+    this.addressApiResult.value = geo.saveToString();
+    this.city.value = '';
+    if (geo.ok()) {
+      this.city.value = geo.getCity();
+      await this.setPostalCodeServerOnly();
+    }
+    this.addressOk.value = !geo.partialMatch();
+    this.addressLongitude.value = geo.location().lng;
+    this.addressLatitude.value = geo.location().lat;
+  }
 
   async setPostalCodeServerOnly() {
     if (!process.env.AUTO_POSTAL_CODE)
