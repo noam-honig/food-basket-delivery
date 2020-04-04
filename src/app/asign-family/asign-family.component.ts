@@ -200,7 +200,7 @@ export class AsignFamilyComponent implements OnInit {
     async refreshBaskets() {
         await this.busy.donotWait(async () => {
 
-            this.context.for(GroupsStats).find({ limit: 1000, orderBy: f => f.name, where: f => f.familiesCount.isGreaterThan(0) }).then(g => this.groups = g);
+            this.context.for(GroupsStats).find({ limit: 1000, orderBy: f => f.name, where: f => f.familiesCount.isGreaterThan(0).and(f.distCenter.isEqualTo(this.distCenter)) }).then(g => this.groups = g);
             let r = (await AsignFamilyComponent.getBasketStatus({
                 filterGroup: this.filterGroup,
                 filterCity: this.filterCity,

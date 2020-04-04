@@ -14,7 +14,7 @@ import { Route } from '@angular/router';
 import { Families } from '../families/families';
 import { SqlBuilder } from '../model-shared/types';
 import { DomSanitizer } from '@angular/platform-browser';
-import { DistributionCenters } from './distribution-centers';
+import { DistributionCenters, DistributionCenterId } from './distribution-centers';
 
 
 @Component({
@@ -339,23 +339,28 @@ export class Groups extends IdEntity {
 @EntityClass
 export class GroupsStats extends Entity<string> {
   name = new StringColumn();
+  distCenter = new DistributionCenterId(this.context);
   familiesCount = new NumberColumn();
-  constructor(context: Context) {
+  constructor(private context: Context) {
     super({
       allowApiRead: Roles.distCenterAdmin,
       name: 'groupsStats',
       dbName: () => {
         let f = context.for(Families).create();
         let g = context.for(Groups).create();
+        let d = context.for(DistributionCenters).create();
         let sql = new SqlBuilder();
         sql.addEntity(f, 'Families');
         sql.addEntity(g, 'groups');
         return sql.entityDbName(
           {
-            select: () => [g.name, sql.countInnerSelect({
-              from: f, where: () => [
+            select: () => [g.name,sql.columnWithAlias(d.name,this.distCenter), sql.countInnerSelect({
+              from: f,
+              crossJoin: () => [d],
+               where: () => [
                 sql.build(f.groups, ' like \'%\'||', g.name, '||\'%\''),
-                f.readyFilter(),
+                f.readyFilter().and(f.distributionCenter.isAllowedForUser()),
+                sql.eq(f.distributionCenter,d.id),
                 f.blockedBasket.defs.dbName + ' = false']
             }, this.familiesCount)],
             from: g
