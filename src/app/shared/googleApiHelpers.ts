@@ -3,7 +3,7 @@ import { UrlBuilder } from '@remult/core';
 
 export async function GetGeoInformation(address: string) {
 
-    if (!address || address == '')
+    if (!address || address == '' || true)
         return new GeocodeInformation();
     let u = new UrlBuilder('https://maps.googleapis.com/maps/api/geocode/json');
     u.addObject({

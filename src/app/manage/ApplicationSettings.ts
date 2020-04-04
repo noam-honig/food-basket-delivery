@@ -32,16 +32,16 @@ export class ApplicationSettings extends Entity<number>  {
   organisationName = new StringColumn('שם הארגון');
   smsText = new StringColumn({
     caption: 'תוכן הודעת SMS', validate: () => {
-      if (this.smsText.value.indexOf("!אתר!") < 0)
-        this.smsText.validationError =  " חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור";
+      if (this.smsText.value && this.smsText.value.indexOf("!אתר!") < 0)
+        this.smsText.validationError = " חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור";
 
     }
   });
   reminderSmsText = new StringColumn({
     caption: 'תוכן הודעת תזכורת SMS',
     validate: () => {
-      if (this.reminderSmsText.value.indexOf("!אתר!") < 0)
-        this.reminderSmsText.validationError =  " חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור";
+      if (this.reminderSmsText.value && this.reminderSmsText.value.indexOf("!אתר!") < 0)
+        this.reminderSmsText.validationError = " חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור";
     }
   });
   logoUrl = new StringColumn('לוגו URL');
@@ -100,6 +100,12 @@ export class ApplicationSettings extends Entity<number>  {
   showLeftThereButton = new BoolColumn('הצג למתנדב כפתור השארתי ליד הבית');
   redTitleBar = new BoolColumn("כותרת דף בצבע אדום");
   defaultPrefixForExcelImport = new StringColumn("קידומת טלפון ברירת מחדל בקליטה מאקסל");
+  checkIfFamilyExistsInDb = new BoolColumn("בדוק עם משפחה כבר קיימת במאגר הנתונים");
+  checkIfFamilyExistsInFile = new BoolColumn("בדוק עם משפחה כבר קיימת בקובץ האקסל");
+  excelImportAutoAddValues = new BoolColumn("הוסף בלי לשאול ערכים לטבלאות התשתית");
+  checkDuplicatePhones = new BoolColumn("בדוק טלפונים כפולים");
+
+
   addressApiResult = new StringColumn();
   defaultStatusType = new DeliveryStatusColumn({
     caption: translate('סטטוס משלוח ברירת מחדל למשפחות חדשות')
