@@ -48,7 +48,7 @@ serverInit().then(async (dataSource) => {
         if (fs.existsSync(index)) {
             let x = '';
             x = (await ApplicationSettings.getAsync(context)).organisationName.value;
-            let result = fs.readFileSync(index).toString().replace('!TITLE!', x).replace("/*!SITE!*/", "multiSite=" + Sites.multipleSites);
+            let result = fs.readFileSync(index).toString().replace(/!TITLE!/g, x).replace("/*!SITE!*/", "multiSite=" + Sites.multipleSites);
             if (Sites.multipleSites) {
                 result = result.replace('"favicon.ico', '"/' + org + '/favicon.ico')
                     .replace('"/assets/apple-touch-icon.png"', '"/' + org + '/assets/apple-touch-icon.png"');
