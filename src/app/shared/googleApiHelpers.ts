@@ -1,10 +1,23 @@
 import * as fetch from 'node-fetch';
-import { UrlBuilder } from '@remult/core';
+import { UrlBuilder, EntityClass, IdEntity, StringColumn, Entity, DateTimeColumn, Context } from '@remult/core';
 
-export async function GetGeoInformation(address: string) {
+export class GeoCodeOptions {
+    static disableGeocode = false;
+}
 
-    if (!address || address == '' || true)
+
+export async function GetGeoInformation(address: string, context: Context) {
+
+    if (!address || address == '' || address.trim() == '')
         return new GeocodeInformation();
+    if (GeoCodeOptions.disableGeocode) {
+        return new GeocodeInformation();
+    }
+    address = address.trim();
+    let cacheEntry = await context.for(GeocodeCache).lookupAsync(x => x.id.isEqualTo(address));
+    if (!cacheEntry.isNew()) {
+        return new GeocodeInformation(JSON.parse(cacheEntry.googleApiResult.value) as GeocodeResult);
+    }
     let u = new UrlBuilder('https://maps.googleapis.com/maps/api/geocode/json');
     u.addObject({
         key: process.env.GOOGLE_GECODE_API_KEY,
@@ -12,13 +25,35 @@ export async function GetGeoInformation(address: string) {
         language: 'HE'
     });
     try {
-        return new GeocodeInformation(await (await fetch.default(u.url)).json() as GeocodeResult);
+        let r = await (await fetch.default(u.url)).json();
+        cacheEntry.id.value = address;
+        cacheEntry.googleApiResult.value = r;
+        cacheEntry.createDate.value = new Date();
+        await cacheEntry.save();
+        return new GeocodeInformation(r as GeocodeResult);
     }
     finally {
     }
 
 
 }
+
+
+@EntityClass
+export class GeocodeCache extends Entity<string> {
+    id = new StringColumn();
+    googleApiResult = new StringColumn();
+    createDate = new DateTimeColumn();
+    constructor() {
+        super({
+            name: "GeocodeCache",
+            allowApiRead: false,
+            allowApiCRUD: false
+        });
+    }
+}
+
+
 export class GeocodeInformation {
     constructor(public info: GeocodeResult = null) {
         if (!this.info)

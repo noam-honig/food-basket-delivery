@@ -18,6 +18,7 @@ import { SqlBuilder } from "../model-shared/types";
 import { PostgresDataProvider } from '@remult/server-postgres';
 import { Sites } from '../sites/sites';
 import { dataMigration } from "./dataMigration";
+import { GeoCodeOptions } from "../shared/googleApiHelpers";
 
 
 serverInit().then(async (dataSource) => {
@@ -58,6 +59,11 @@ serverInit().then(async (dataSource) => {
             res.send('No Result' + fs.realpathSync(index));
         }
     }
+    if (process.env.DISABLE_GEOCODE){
+        console.log("geocode disabled");
+        GeoCodeOptions.disableGeocode = true;
+    }
+
     let redirect = process.env.REDIRECT;
     if (redirect) {
         app.use('/*', async (req, res) => {

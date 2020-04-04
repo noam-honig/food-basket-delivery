@@ -84,9 +84,9 @@ export class ImportFromExcelComponent implements OnInit {
     async addAll() {
         let count = this.newRows.length;
         this.dialog.YesNoQuestion("האם להוסיף " + count + translate(" משפחות?"), () => {
-            try {
-                this.busy.doWhileShowingBusy(async () => {
 
+            this.busy.doWhileShowingBusy(async () => {
+                try {
                     let rowsToInsert: excelRowInfo[] = [];
 
                     let lastDate = new Date().valueOf();
@@ -118,14 +118,16 @@ export class ImportFromExcelComponent implements OnInit {
                     }
                     this.newRows = [];
                     this.identicalRows.sort((a, b) => a.rowInExcel - b.rowInExcel);
+                    this.dialog.Info("הוספת השורות הסתיימה בהצלחה");
+                }
+                catch (err) {
+                    this.dialog.Error("הוספה נכשלה:" + extractError(err));
+                    this.newRows = this.newRows.filter(x => this.identicalRows.indexOf(x) < 0);
+                }
+
+            });
 
 
-                });
-                this.dialog.Info("הוספת השורות הסתיימה בהצלחה");
-            }
-            catch (err) {
-                this.dialog.Error("הוספה נכשלה:" + extractError(err));
-            }
         });
     }
     @ServerFunction({ allowed: Roles.admin })

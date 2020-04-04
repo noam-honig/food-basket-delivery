@@ -130,7 +130,7 @@ export class ApplicationSettings extends Entity<number>  {
       savingRow: async () => {
         if (context.onServer) {
           if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
-            let geo = await GetGeoInformation(this.address.value);
+            let geo = await GetGeoInformation(this.address.value,context);
             this.addressApiResult.value = geo.saveToString();
             if (geo.ok()) {
             }
