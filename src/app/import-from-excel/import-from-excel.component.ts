@@ -138,6 +138,8 @@ export class ImportFromExcelComponent implements OnInit {
             for (const val in r.values) {
                 f.columns.find(val).value = r.values[val].newValue;
             }
+            if (!f.name.value)
+                f.name.value = 'ללא שם';
             await t.push(f.save());
         }
         await t.done();
@@ -495,7 +497,17 @@ export class ImportFromExcelComponent implements OnInit {
             updateFamily: async (v, f, h) => {
                 h.laterSteps.push({
                     step: 2,
-                    what: () => updateCol(f.address, v)
+                    what: () => {
+                        let r = parseAddress(v);
+                        if (r.address)
+                            updateCol(f.address, r.address);
+                        if (r.dira)
+                            updateCol(f.appartment, r.dira);
+                        if (r.floor)
+                            updateCol(f.floor, r.floor);
+                        if (r.knisa)
+                            updateCol(f.entrance, r.knisa);
+                    }
                 });
 
             }
@@ -589,18 +601,7 @@ export class ImportFromExcelComponent implements OnInit {
                 }
             }, columns: [this.f.deliverStatus]
         });
-        this.columns.push({
-            key: 'anyPhone',
-            name: 'טלפון',
-            columns: [this.f.phone1, this.f.phone2],
-            updateFamily: async (v, f) => {
-                if (f.phone1.value && f.phone1.value.length > 0)
-                    updateCol(f.phone2, fixPhone(v, this.settings.defaultPrefixForExcelImport.value));
-                else
-                    updateCol(f.phone1, fixPhone(v, this.settings.defaultPrefixForExcelImport.value));
-            },
-            searchNames: ['טלפון נייד']
-        });
+
         for (const c of [this.f.phone1, this.f.phone2, this.f.socialWorkerPhone1, this.f.socialWorkerPhone2]) {
             this.columns.push({
                 key: c.defs.key,

@@ -214,8 +214,8 @@ export class Families extends IdEntity {
   distributionCenter = new DistributionCenterId(this.context);
   familySource = new FamilySourceId(this.context, { includeInApi: true, caption: 'גורם מפנה' });
   socialWorker = new StringColumn('איש קשר לבירור פרטים (עו"ס)');
-  socialWorkerPhone1 = new PhoneColumn("איש קשר טלפון 1");
-  socialWorkerPhone2 = new PhoneColumn("איש קשר טלפון 2");
+  socialWorkerPhone1 = new PhoneColumn('עו"ס טלפון 1');
+  socialWorkerPhone2 = new PhoneColumn('עו"ס טלפון 2');
   groups = new GroupsColumn(this.context);
   special = new YesNoColumn({ includeInApi: Roles.admin, caption: 'שיוך מיוחד' });
   defaultSelfPickup = new BoolColumn('ברירת מחדל באים לקחת');
