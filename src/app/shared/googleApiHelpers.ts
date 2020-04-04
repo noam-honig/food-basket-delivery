@@ -5,7 +5,7 @@ export class GeoCodeOptions {
     static disableGeocode = false;
 }
 
-
+var pendingRequests = new Map<string, Promise<GeocodeInformation>>();
 export async function GetGeoInformation(address: string, context: Context) {
 
     if (!address || address == '' || address.trim() == '')
@@ -18,22 +18,31 @@ export async function GetGeoInformation(address: string, context: Context) {
     if (!cacheEntry.isNew()) {
         return new GeocodeInformation(JSON.parse(cacheEntry.googleApiResult.value) as GeocodeResult);
     }
-    let u = new UrlBuilder('https://maps.googleapis.com/maps/api/geocode/json');
-    u.addObject({
-        key: process.env.GOOGLE_GECODE_API_KEY,
-        address: address,
-        language: 'HE'
-    });
-    try {
-        let r = await (await fetch.default(u.url)).json();
-        cacheEntry.id.value = address;
-        cacheEntry.googleApiResult.value = r;
-        cacheEntry.createDate.value = new Date();
-        await cacheEntry.save();
-        return new GeocodeInformation(r as GeocodeResult);
+    let x = pendingRequests.get(address);
+    if (!x) {
+        let u = new UrlBuilder('https://maps.googleapis.com/maps/api/geocode/json');
+        u.addObject({
+            key: process.env.GOOGLE_GECODE_API_KEY,
+            address: address,
+            language: 'HE'
+        });
+        try {
+            let r = fetch.default(u.url).then(async x => await x.json().then(async r => {
+                cacheEntry.id.value = address;
+                cacheEntry.googleApiResult.value = r;
+                cacheEntry.createDate.value = new Date();
+                await cacheEntry.save();
+                return new GeocodeInformation(r as GeocodeResult);
+            }));
+            pendingRequests.set(address, r);
+            return await r;
+
+        }
+        finally {
+        }
     }
-    finally {
-    }
+
+
 
 
 }
@@ -73,11 +82,12 @@ export class GeocodeInformation {
     }
     static fromString(s: string) {
         try {
-            return new GeocodeInformation(JSON.parse(s));
+            if (s && s.trim() != "")
+                return new GeocodeInformation(JSON.parse(s));
         }
         catch (err) {
-            return new GeocodeInformation();
         }
+        return new GeocodeInformation();
     }
     ok() {
         return this.info.status == "OK";

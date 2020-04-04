@@ -52,14 +52,14 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await h.save();
     }
 
-    await context.for(Families).foreach(f => f.addressLongitude.isEqualTo(0), async ff => {
+    /*await context.for(Families).foreach(f => f.addressLongitude.isEqualTo(0), async ff => {
         let g = ff.getGeocodeInformation();
         ff.addressOk.value = !g.partialMatch();
         ff.addressLongitude.value = g.location().lng;
         ff.addressLatitude.value = g.location().lat;
         ff.city.value = ff.getGeocodeInformation().getCity();
         await ff.save();
-    });
+    });*/
 
     let settings = await context.for(ApplicationSettings).lookupAsync(s => s.id.isEqualTo(1));
     if (settings.isNew()) {

@@ -83,8 +83,13 @@ export class ImportFromExcelComponent implements OnInit {
 
     async addAll() {
         let count = this.newRows.length;
-        this.dialog.YesNoQuestion("האם להוסיף " + count + translate(" משפחות?"), () => {
-
+        this.dialog.YesNoQuestion("האם להוסיף " + count + translate(" משפחות?"), async () => {
+            let disableGeocoding = false;
+            if (count > 2000) {
+                disableGeocoding = true;
+                if (! await this.dialog.YesNoPromise("בגלל כמות המשפחות יש לבצע GEOCODING בנפרד, האם להמשיך?"))
+                    return;
+            }
             this.busy.doWhileShowingBusy(async () => {
                 try {
                     let rowsToInsert: excelRowInfo[] = [];
@@ -97,13 +102,13 @@ export class ImportFromExcelComponent implements OnInit {
                         rowsToInsert.push(i);
                         index++;
 
-                        if (rowsToInsert.length == 150) {
+                        if (rowsToInsert.length == (disableGeocoding ? 2000 : 35)) {
 
                             if (new Date().valueOf() - lastDate > 10000) {
                                 let timeLeft = ((new Date().valueOf() - start) / index) * (this.newRows.length - index) / 1000 / 60;
                                 this.dialog.Info(i.rowInExcel + ' ' + (i.name) + " נשאר עוד " + timeLeft.toFixed(1) + " דקות");
                             }
-                            await ImportFromExcelComponent.insertRows(rowsToInsert);
+                            await ImportFromExcelComponent.insertRows(rowsToInsert, disableGeocoding);
 
                             this.identicalRows.push(...rowsToInsert);
                             rowsToInsert = [];
@@ -113,7 +118,7 @@ export class ImportFromExcelComponent implements OnInit {
 
                     }
                     if (rowsToInsert.length > 0) {
-                        await ImportFromExcelComponent.insertRows(rowsToInsert);
+                        await ImportFromExcelComponent.insertRows(rowsToInsert, disableGeocoding);
                         this.identicalRows.push(...rowsToInsert);
                     }
                     this.newRows = [];
@@ -131,10 +136,11 @@ export class ImportFromExcelComponent implements OnInit {
         });
     }
     @ServerFunction({ allowed: Roles.admin })
-    static async insertRows(rowsToInsert: excelRowInfo[], context?: Context) {
+    static async insertRows(rowsToInsert: excelRowInfo[], disableGeocoding: boolean, context?: Context) {
         let t = new PromiseThrottle(10);
         for (const r of rowsToInsert) {
             let f = context.for(Families).create();
+            f.__disableGeocoding = disableGeocoding;
             for (const val in r.values) {
                 f.columns.find(val).value = r.values[val].newValue;
             }
