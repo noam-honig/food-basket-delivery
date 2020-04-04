@@ -49,7 +49,9 @@ export class AsignFamilyComponent implements OnInit {
         }
     };
     @ViewChild("phoneInput", { static: false }) phoneInput: ElementRef;
-    distCenter = new DistributionCenterId(this.context);
+    distCenter = new DistributionCenterId(this.context, {
+        valueChange: () => this.clearHelperInfo()
+    });
     distCenterArea = new DataAreaSettings({ columnSettings: () => [this.distCenter] });
     canSeeCenter() {
         return this.context.isAllowed(Roles.admin);
@@ -146,7 +148,7 @@ export class AsignFamilyComponent implements OnInit {
             SelectHelperComponent, s => s.args = {
                 filter: h => h.deliveriesInProgress.isGreaterOrEqualTo(1).and(h.id.isDifferentFrom(this.helper.id)),
                 hideRecent: true,
-                distCenter:this.distCenter.value,
+                distCenter: this.distCenter.value,
                 onSelect: async h => {
                     if (h) {
                         let families = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(h.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
@@ -290,7 +292,7 @@ export class AsignFamilyComponent implements OnInit {
     }
     findHelper() {
         this.context.openDialog(SelectHelperComponent, s => s.args = {
-            distCenter:this.distCenter.value,
+            distCenter: this.distCenter.value,
             onSelect: async h => {
                 if (h) {
                     this.initHelper(await this.context.for(Helpers).findFirst(hh => hh.id.isEqualTo(h.id).and(hh.distributionCenter.isEqualTo(this.distCenter))));
@@ -377,7 +379,7 @@ export class AsignFamilyComponent implements OnInit {
                 numOfBaskets: allRepeat ? this.repeatFamilies : this.numOfBaskets,
                 preferRepeatFamilies: this.preferRepeatFamilies && this.repeatFamilies > 0,
                 allRepeat: allRepeat,
-                distCenter:this.distCenter.value
+                distCenter: this.distCenter.value
             });
             if (x.addedBoxes) {
                 this.familyLists.initForFamilies(this.helper, x.families);
@@ -436,10 +438,11 @@ export class AsignFamilyComponent implements OnInit {
 
         let countFamilies = (additionalWhere?: (f: Families) => FilterBase) => {
             return context.for(Families).count(f => {
-                let where = f.readyFilter(info.filterCity, info.filterGroup);
+                let where = f.readyFilter(info.filterCity, info.filterGroup).and(f.filterDistCenter(info.distCenter));
                 if (additionalWhere) {
                     where = where.and(additionalWhere(f));
                 }
+
                 return where;
             });
         };
@@ -489,9 +492,11 @@ export class AsignFamilyComponent implements OnInit {
     }
     @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async RefreshRoute(helperId: string, useGoogle: boolean, context?: Context) {
-        let existingFamilies = await context.for(Families).find({ where: f => f.courier.isEqualTo(helperId).and(
-            f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)).and(
-                f.distributionCenter.isAllowedForUser()) });
+        let existingFamilies = await context.for(Families).find({
+            where: f => f.courier.isEqualTo(helperId).and(
+                f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)).and(
+                    f.distributionCenter.isAllowedForUser())
+        });
         let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
         return await AsignFamilyComponent.optimizeRoute(h, existingFamilies, context, useGoogle);
     }
@@ -513,7 +518,7 @@ export class AsignFamilyComponent implements OnInit {
         let existingFamilies = await context.for(Families).find({
             where: f => f.courier.isEqualTo(info.helperId).and(
                 f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
-                    f.distributionCenter.isAllowedForUser()))
+                    f.distributionCenter.isAllowedForUser()).and(f.filterDistCenter(info.distCenter)))
         });
         let locationReferenceFamilies = [...existingFamilies];
         if (locationReferenceFamilies.length == 0) {
@@ -576,8 +581,11 @@ export class AsignFamilyComponent implements OnInit {
                 let family = await context.for(Families).findFirst(f => f.id.isEqualTo(id));
                 family.courier.value = info.helperId;
                 await family.save();
-                {
-                    let sameLocationFamilies = await context.for(Families).find({ where: f => buildWhere(f).and(f.addressLongitude.isEqualTo(family.addressLongitude).and(f.addressLatitude.isEqualTo(family.addressLatitude))) });
+                if (family.addressOk.value) {
+                    let sameLocationFamilies = await context.for(Families).find({
+                        where: f => buildWhere(f).and(f.addressLongitude.isEqualTo(family.addressLongitude).and(f.addressLatitude.isEqualTo(family.addressLatitude)))
+                            .and(f.distributionCenter.isAllowedForUser()).and(f.filterDistCenter(info.distCenter))
+                    });
                     if (sameLocationFamilies.length > 0) {
                         result.familiesInSameAddress.push(...(sameLocationFamilies).map(x => x.id.value));
                     }
