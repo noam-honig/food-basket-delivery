@@ -13,7 +13,7 @@
     "server:build-watch": "tsc -p tsconfig.server.json --watch",
     "publish-to-heroku-test": "git push heroku distribution-centers:master -f",
     "publish-to-salmaz": "git push salmaz master -f",
-    "publish-to-mshz": "git push mshz distribution-center:master -f",
+    "publish-to-mshz": "git push mshz distribution-centers:master -f",
     "publish-to-heroku-test-old": "git push hug-moms-old latest-release:master -f",
     "copy-db": "heroku pg:copy hugmoms::DATABASE_URL hugmoms2::DATABASE_URL -a hugmoms2",
     "test": "ng test",

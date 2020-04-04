@@ -256,6 +256,11 @@
             "type": "npm",
             "script": "start",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "publish-to-mshz",
+            "problemMatcher": []
         }
     ]
 }

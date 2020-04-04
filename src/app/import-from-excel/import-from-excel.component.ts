@@ -100,7 +100,7 @@ export class ImportFromExcelComponent implements OnInit {
                         if (rowsToInsert.length == 150) {
 
                             if (new Date().valueOf() - lastDate > 10000) {
-                                var timeLeft = (index / (new Date().valueOf() - start) * (this.newRows.length - index)) / 1000 / 60;
+                                let timeLeft = ((new Date().valueOf() - start) / index) * (this.newRows.length - index) / 1000 / 60;
                                 this.dialog.Info(i.rowInExcel + ' ' + (i.name) + " נשאר עוד " + timeLeft.toFixed(1) + " דקות");
                             }
                             await ImportFromExcelComponent.insertRows(rowsToInsert);
@@ -691,7 +691,7 @@ export class ImportFromExcelComponent implements OnInit {
             try {
                 for (index = 2; index <= this.totalRows; index++) {
                     if (index % 10000 == 0) {
-                        var timeLeft = (index / (new Date().valueOf() - start) * (this.totalRows - index)) / 1000 / 60;
+                        var timeLeft = ((new Date().valueOf() - start) / index * (this.totalRows - index)) / 1000 / 60;
 
                         this.dialog.Info(index + " שורות עובדו, נשאר עוד  " + timeLeft.toFixed(1) + " דקות");
                         await new Promise(r => {
@@ -787,12 +787,12 @@ export class ImportFromExcelComponent implements OnInit {
                     }
                 }
 
-/*
-                sessionStorage.setItem("errorRows", JSON.stringify(this.errorRows));
-                sessionStorage.setItem("newRows", JSON.stringify(this.newRows));
-                sessionStorage.setItem("updateRows", JSON.stringify(this.updateRows));
-                sessionStorage.setItem("identicalRows", JSON.stringify(this.identicalRows));
-*/
+                /*
+                                sessionStorage.setItem("errorRows", JSON.stringify(this.errorRows));
+                                sessionStorage.setItem("newRows", JSON.stringify(this.newRows));
+                                sessionStorage.setItem("updateRows", JSON.stringify(this.updateRows));
+                                sessionStorage.setItem("identicalRows", JSON.stringify(this.identicalRows));
+                */
                 sessionStorage.setItem("columnsInCompare", JSON.stringify(columnsInCompareMemberName));
             }
             catch (err) {
