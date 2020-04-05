@@ -64,7 +64,7 @@ export class Families extends IdEntity {
         allowApiRead: context.isSignedIn(),
         allowApiUpdate: context.isSignedIn(),
         allowApiDelete: false,
-        allowApiInsert: Roles.distCenterAdmin,
+        allowApiInsert: Roles.admin,
         apiDataFilter: () => {
           if (!context.isAllowed(Roles.admin)) {
             let user = <HelperUserInfo>context.user;

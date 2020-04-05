@@ -113,6 +113,7 @@ export class FamiliesComponent implements OnInit {
 
         });
     }
+    canAdd = this.context.isAllowed(Roles.admin);
 
     resetRow() {
         var focus: Families;
@@ -266,7 +267,7 @@ export class FamiliesComponent implements OnInit {
     families = this.context.for(Families).gridSettings({
 
         allowUpdate: true,
-        allowInsert: true,
+        allowInsert: this.canAdd,
 
         rowCssClass: f => f.deliverStatus.getCss(),
         numOfColumnsInGrid: 4,

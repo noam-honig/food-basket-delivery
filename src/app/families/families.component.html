@@ -24,9 +24,8 @@
 
 <div style="display:flex;justify-content: space-between">
     <div>
-        <mat-form-field >
+        <mat-form-field>
             <input matInput [(ngModel)]="searchString" (input)="doSearch()" placeholder="{{'חיפוש משפחה'|translate}}"
-            
                 [ngModelOptions]="{standalone: true}">
             <mat-icon matSuffix (click)="clearSearch()">clear</mat-icon>
         </mat-form-field>
@@ -42,12 +41,16 @@
                 שהשתנו</button>
             <button mat-menu-item (click)="saveToExcel()">יצוא לאקסל</button>
             <button mat-menu-item (click)="updateStatus()">עדכן סטטוס ל-{{families.totalRows}} המשפחות המסומנות</button>
-            <button mat-menu-item (click)="updateGroup()"> שיוך לקבוצת חלוקה ל-{{families.totalRows}} המשפחות המסומנות</button>
-            <button mat-menu-item (click)="updateBasket()">עדכן סוג סל ל-{{families.totalRows}} המשפחות המסומנות</button>
-            <button mat-menu-item (click)="updateFamilySource()"> עדכן גורם מפנה ל-{{families.totalRows}} המשפחות המסומנות</button>
-            
+            <button mat-menu-item (click)="updateGroup()"> שיוך לקבוצת חלוקה ל-{{families.totalRows}} המשפחות
+                המסומנות</button>
+            <button mat-menu-item (click)="updateBasket()">עדכן סוג סל ל-{{families.totalRows}} המשפחות
+                המסומנות</button>
+            <button mat-menu-item (click)="updateFamilySource()"> עדכן גורם מפנה ל-{{families.totalRows}} המשפחות
+                המסומנות</button>
+
         </mat-menu>
-        <button mat-raised-button color="primary" (click)="quickAdd()">{{'משפחה חדשה'|translate}}</button>
+        <button mat-raised-button color="primary" (click)="quickAdd()"
+            *ngIf="canAdd">{{'משפחה חדשה'|translate}}</button>
 
 
     </div>
@@ -57,7 +60,7 @@
 
 
     <data-grid [settings]="families" [height]="400"></data-grid>
-<br>    כפתור יצוא לאקסל ושמור משפחות שהשתנו - עברו לכפתור "אפשרויות" מעל הטבלא
+    <br> כפתור יצוא לאקסל ושמור משפחות שהשתנו - עברו לכפתור "אפשרויות" מעל הטבלא
 
 
 
@@ -118,7 +121,7 @@
         <mat-icon>details</mat-icon>
     </button>
     <button (click)="families.addNewRow()" [class.hide]="gridView"
-        [disabled]="families.currentRow&&families.currentRow.wasChanged()" mat-icon-button>
+        [disabled]="families.currentRow&&families.currentRow.wasChanged()" mat-icon-button *ngIf="canAdd">
         <mat-icon>add</mat-icon>
     </button>
     <button mat-raised-button [class.hide]="gridView" (click)="previewFamily()">תצוגה מקדימה</button>
