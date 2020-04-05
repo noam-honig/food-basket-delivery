@@ -49,29 +49,26 @@ export class AsignFamilyComponent implements OnInit {
         }
     };
     @ViewChild("phoneInput", { static: false }) phoneInput: ElementRef;
-    distCenter = new DistributionCenterId(this.context, {
-        valueChange: () => this.clearHelperInfo()
-    });
-    distCenterArea = new DataAreaSettings({ columnSettings: () => [this.distCenter] });
+
     canSeeCenter() {
         return this.context.isAllowed(Roles.admin);
     }
     assignOnMap() {
-        this.familyLists.startAssignByMap(this.filterCity, this.filterGroup,this.distCenter.value);
+        this.familyLists.startAssignByMap(this.filterCity, this.filterGroup, this.dialog.distCenter.value);
     }
     translate = translate;
     async searchPhone() {
         this.clearHelperInfo(false);
 
         if (this.phone.length == 10) {
-            let helper = await this.context.for(Helpers).findFirst(h => h.phone.isEqualTo(this.phone).and(h.distributionCenter.isEqualTo(this.distCenter)));
+            let helper = await this.context.for(Helpers).findFirst(h => h.phone.isEqualTo(this.phone).and(h.distributionCenter.isEqualTo(this.dialog.distCenter)));
             if (helper) {
 
                 this.initHelper(helper);
             } else {
                 helper = this.context.for(Helpers).create();
                 helper.phone.value = this.phone;
-                helper.distributionCenter.value = this.distCenter.value;
+                helper.distributionCenter.value = this.dialog.distCenter.value;
                 this.initHelper(helper);
 
             }
@@ -80,7 +77,7 @@ export class AsignFamilyComponent implements OnInit {
     }
     async initHelper(helper: Helpers) {
         if (helper.theHelperIAmEscorting.value) {
-            let other = await this.context.for(Helpers).findFirst(x => x.id.isEqualTo(helper.theHelperIAmEscorting).and(x.distributionCenter.isEqualTo(this.distCenter)));
+            let other = await this.context.for(Helpers).findFirst(x => x.id.isEqualTo(helper.theHelperIAmEscorting).and(x.distributionCenter.isEqualTo(this.dialog.distCenter)));
             if (await this.context.openDialog(YesNoQuestionComponent, q => q.args = {
                 question: helper.name.value + ' מוגדר כמלווה של ' + other.name.value + '. האם להציג את המשפחות של ' + other.name.value + '?'
             }, q => q.yes)) {
@@ -148,7 +145,7 @@ export class AsignFamilyComponent implements OnInit {
             SelectHelperComponent, s => s.args = {
                 filter: h => h.deliveriesInProgress.isGreaterOrEqualTo(1).and(h.id.isDifferentFrom(this.helper.id)),
                 hideRecent: true,
-                distCenter: this.distCenter.value,
+                distCenter: this.dialog.distCenter.value,
                 onSelect: async h => {
                     if (h) {
                         let families = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(h.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
@@ -200,12 +197,12 @@ export class AsignFamilyComponent implements OnInit {
     async refreshBaskets() {
         await this.busy.donotWait(async () => {
 
-            this.context.for(GroupsStats).find({ limit: 1000, orderBy: f => f.name, where: f => f.familiesCount.isGreaterThan(0).and(f.distCenter.isEqualTo(this.distCenter)) }).then(g => this.groups = g);
+            this.context.for(GroupsStats).find({ limit: 1000, orderBy: f => f.name, where: f => f.familiesCount.isGreaterThan(0).and(f.distCenter.isEqualTo(this.dialog.distCenter)) }).then(g => this.groups = g);
             let r = (await AsignFamilyComponent.getBasketStatus({
                 filterGroup: this.filterGroup,
                 filterCity: this.filterCity,
                 helperId: this.helper ? this.helper.id.value : '',
-                distCenter: this.distCenter.value
+                distCenter: this.dialog.distCenter.value
             }));
             this.baskets = [this.allBaskets];
             this.baskets.push(...r.baskets);
@@ -292,10 +289,10 @@ export class AsignFamilyComponent implements OnInit {
     }
     findHelper() {
         this.context.openDialog(SelectHelperComponent, s => s.args = {
-            distCenter: this.distCenter.value,
+            distCenter: this.dialog.distCenter.value,
             onSelect: async h => {
                 if (h) {
-                    this.initHelper(await this.context.for(Helpers).findFirst(hh => hh.id.isEqualTo(h.id).and(hh.distributionCenter.isEqualTo(this.distCenter))));
+                    this.initHelper(await this.context.for(Helpers).findFirst(hh => hh.id.isEqualTo(h.id).and(hh.distributionCenter.isEqualTo(this.dialog.distCenter))));
                 }
                 else {
                     this.clearHelperInfo();
@@ -308,10 +305,14 @@ export class AsignFamilyComponent implements OnInit {
 
 
     constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public settings: ApplicationSettings) {
-        if (this.distCenter.value === undefined) {
-            this.distCenter.value = '';
+        if (this.dialog.distCenter.value === undefined) {
+            this.dialog.distCenter.value = '';
         }
+        this.dialog.onDistCenterChange(() => this.clearHelperInfo(), this);
 
+    }
+    disableAll() {
+        return this.dialog.distCenter.value == Families.allCentersToken;
     }
     filterOptions: BoolColumn[] = [];
     async ngOnInit() {
@@ -379,7 +380,7 @@ export class AsignFamilyComponent implements OnInit {
                 numOfBaskets: allRepeat ? this.repeatFamilies : this.numOfBaskets,
                 preferRepeatFamilies: this.preferRepeatFamilies && this.repeatFamilies > 0,
                 allRepeat: allRepeat,
-                distCenter: this.distCenter.value
+                distCenter: this.dialog.distCenter.value
             });
             if (x.addedBoxes) {
                 this.familyLists.initForFamilies(this.helper, x.families);
@@ -718,7 +719,7 @@ export class AsignFamilyComponent implements OnInit {
         }
 
 
-        let r = await getRouteInfo(fams, useGoogle,await helper.distributionCenter.getRouteStartGeo(), context);
+        let r = await getRouteInfo(fams, useGoogle, await helper.distributionCenter.getRouteStartGeo(), context);
         if (r.status == 'OK' && r.routes && r.routes.length > 0 && r.routes[0].waypoint_order) {
             result.ok = true;
             let i = 1;
@@ -776,7 +777,7 @@ export class AsignFamilyComponent implements OnInit {
                 return filter(f);
             },
             selectStreet,
-            distCenter:this.distCenter.value,
+            distCenter: this.dialog.distCenter.value,
             onSelect: async f => {
 
 
@@ -881,7 +882,7 @@ function getInfo(r: any) {
         dist, duration
     }
 }
-async function getRouteInfo(families: familiesInRoute[], optimize: boolean,start:GeocodeInformation, context: Context) {
+async function getRouteInfo(families: familiesInRoute[], optimize: boolean, start: GeocodeInformation, context: Context) {
     let u = new UrlBuilder('https://maps.googleapis.com/maps/api/directions/json');
 
     let startAndEnd = start;

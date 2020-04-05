@@ -64,20 +64,10 @@ export class FamiliesComponent implements OnInit {
     deliverySummary: DataControlSettings<Families>;
     scrollingSubscription: Subscription;
     showHoverButton: boolean = false;
-    distCenter = new DistributionCenterId(this.context, {
 
-        valueChange: () => {
-            this.refresh();
-        }
-    }, true);
-    distCenterArea = new DataAreaSettings({ columnSettings: () => [this.distCenter] });
-    canSeeCenter() {
-        return this.context.isAllowed(Roles.admin);
-    }
     constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context,
         public scroll: ScrollDispatcher) {
-        if (this.distCenter.value === undefined)
-            this.distCenter.value = "";
+
         for (const item of this.families.columns.items) {
             if (item.column == this.statusColumn && !item.readOnly) {
                 this.statusColumn = item;
@@ -103,12 +93,18 @@ export class FamiliesComponent implements OnInit {
                     this.dialog.zone.run(() => this.showHoverButton = val);
 
             });
-        let y = dialog.refreshStatusStats.subscribe(() => {
-            this.refreshStats();
-        });
-        this.onDestroy = () => {
-            y.unsubscribe();
-        };
+        {
+            let y = dialog.refreshStatusStats.subscribe(() => {
+                this.refreshStats();
+            });
+            this.onDestroy = () => {
+                y.unsubscribe();
+            };
+        }
+        {
+            dialog.onDistCenterChange(()=>this.refresh(),this);
+            
+        }
         if (dialog.isScreenSmall())
             this.gridView = false;
     }
@@ -323,7 +319,7 @@ export class FamiliesComponent implements OnInit {
                 if (this.problemOnly) {
                     addFilter(f.addressOk.isEqualTo(false));
                 }
-                addFilter(f.filterDistCenter(this.distCenter.value));
+                addFilter(f.filterDistCenter(this.dialog.distCenter.value));
                 return result;
             }
             , orderBy: f => f.name
@@ -810,7 +806,7 @@ export class FamiliesComponent implements OnInit {
         if (this.suspend)
             return;
         if (!this.problemOnly)
-            this.busy.donotWait(async () => this.stats.getData(this.distCenter.value).then(st => {
+            this.busy.donotWait(async () => this.stats.getData(this.dialog.distCenter.value).then(st => {
                 this.basketStats.stats.splice(0);
                 this.cityStats.stats.splice(0);
                 this.cityStats.moreStats.splice(0);
@@ -979,11 +975,6 @@ export class FamiliesComponent implements OnInit {
         this.suspend = true;
     }
     refresh() {
-        var dist = (<HelperUserInfo>this.context.user).distributionCenter;
-        if (!this.context.isAllowed(Roles.admin) && this.distCenter.value != dist) {
-            this.distCenter.value = dist;
-            return;
-        }
         this.refreshFamilyGrid();
         this.refreshStats();
     }

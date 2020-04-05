@@ -1,4 +1,7 @@
-<div class="myDiv">
+<div *ngIf="disableAll()">
+  <h3>אנא בחר מרכז חלוקה לפני שיוך מתדנבים</h3>
+</div>
+<div class="myDiv" *ngIf="!disableAll()">
   <div class="no-print" *ngIf="showHelperInput">
 
     <mat-card>
@@ -23,7 +26,7 @@
           </button>
         </div>
       </mat-card-title>
-      <data-area [settings]="distCenterArea" *ngIf="this.canSeeCenter()"></data-area>
+      
       <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
         <mat-label>מספר הטלפון של המשנע</mat-label>
         <input matInput [(ngModel)]="phone" (input)="searchPhone()" type="tel" #phoneInput>

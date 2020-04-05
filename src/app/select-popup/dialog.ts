@@ -8,17 +8,29 @@ import { ServerEventAuthorizeAction } from "../server/server-event-authorize-act
 import { Subject } from "rxjs";
 import { myThrottle } from "../model-shared/types";
 import { TestComponentRenderer } from "@angular/core/testing";
+import { DistributionCenterId } from "../manage/distribution-centers";
+import { Roles } from "../auth/roles";
+import { HelperUserInfo } from "../helpers/helpers";
 
 declare var gtag;
 
 @Injectable()
 export class DialogService {
+    onDistCenterChange(whatToDo: () => void, component: any) {
+        let y = this.refreshDistCenter.subscribe(() => {
+            whatToDo();
+        });
+        component.onDestroy = () => {
+            y.unsubscribe();
+        };
+    }
     Info(info: string): any {
         if (info.indexOf('!!') >= 0) {
             //new Audio('http://www.orangefreesounds.com/wp-content/uploads/2019/02/Ping-tone.mp3').play();
         }
         this.snackBar.open(info, "סגור", { duration: 4000 });
     }
+
     Error(err: string): any {
 
         this.messageDialog(err);
@@ -31,13 +43,15 @@ export class DialogService {
     }
 
     refreshStatusStats = new Subject();
+    private refreshDistCenter = new Subject();
 
     statusRefreshThrottle = new myThrottle(1000);
 
 
     constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private context: Context) {
         this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));
-
+        if (this.distCenter.value === undefined)
+            this.distCenter.value = "";
 
     }
     analytics(action: string, value?: number) {
@@ -50,6 +64,20 @@ export class DialogService {
         });
 
 
+    }
+    distCenter = new DistributionCenterId(this.context, {
+
+        valueChange: () => {
+            this.refreshDistCenter.next();
+        }
+    }, true);
+
+    canSeeCenter() {
+        var dist = (<HelperUserInfo>this.context.user).distributionCenter;
+        if (!this.context.isAllowed(Roles.admin) && this.distCenter.value != dist) {
+            this.distCenter.value = dist;
+        }
+        return this.context.isAllowed(Roles.admin);
     }
 
     eventSource: any;/*EventSource*/
@@ -94,7 +122,7 @@ export class DialogService {
         });
     }
     async YesNoPromise(question: string) {
-        return await this.context.openDialog(YesNoQuestionComponent, y =>y.args = {question: question}, x => x.yes);
+        return await this.context.openDialog(YesNoQuestionComponent, y => y.args = { question: question }, x => x.yes);
     }
     confirmDelete(of: string, onOk: () => void) {
         this.YesNoQuestion("האם את בטוחה שאת מעוניית למחוק את " + of + "?", onOk);

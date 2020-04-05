@@ -38,7 +38,7 @@ export class AppComponent {
     private helper: RouteHelperService,
     public context: Context,
     public settings: ApplicationSettings) {
-
+      
     this.toolbarColor = 'primary';
 
     if (settings.redTitleBar.value) {
@@ -47,6 +47,7 @@ export class AppComponent {
 
 
   }
+  distCenterArea = new DataAreaSettings({ columnSettings: () => [this.dialog.distCenter] });
   lastUser: any;
   refreshdc() {
     if (this.context.user == this.lastUser)

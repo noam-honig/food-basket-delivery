@@ -8,7 +8,7 @@
     <div *ngIf="dc" (click)="updateDistCenter()">
       <p style="text-align: center">{{dc.name.value}}
       </p>
-      <p style="text-align: center" >{{dc.getGeocodeInformation().getAddress()}}</p>
+      <p style="text-align: center">{{dc.getGeocodeInformation().getAddress()}}</p>
     </div>
     <h4 *ngIf="context.user">שלום {{context.user.name}}</h4>
     <mat-nav-list role="list">
@@ -27,11 +27,23 @@
     </mat-nav-list>
 
   </mat-sidenav>
-  <mat-toolbar color="{{toolbarColor}}" class="no-print">
-    <button mat-button class="sidenav-toggle" (click)="sidenav.toggle()">
-      <mat-icon>menu</mat-icon>
-    </button>
-    <span>{{currentTitle()}}</span>
+  <mat-toolbar color="{{toolbarColor}}" class="no-print" style="justify-content: space-between;">
+    <div style="    display: flex;
+    
+    align-items: center;">
+      <button mat-button class="sidenav-toggle" (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span style="padding-left: 10px;">{{currentTitle()}}</span>
+    </div>
+    <div style="background-color: white;color: rgba(0, 0, 0, 0.87); border-radius: 10px;
+    height: 3em;
+    padding-top: 4px;
+    padding-left: 6px;
+    padding-right: 6px;">
+      <data-area [settings]="distCenterArea" *ngIf="this.dialog.canSeeCenter()"></data-area>
+
+    </div>
 
   </mat-toolbar>
 
