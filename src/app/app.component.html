@@ -1,20 +1,26 @@
 <mat-sidenav-container class="app-sidenav-container">
-  <mat-sidenav #sidenav class="app-sidenav mat-elevation-z10 no-print" [opened]="!dialog.isScreenSmall()" [mode]="dialog.isScreenSmall()?'over':'side'">
+  <mat-sidenav #sidenav class="app-sidenav mat-elevation-z10 no-print" [opened]="!dialog.isScreenSmall()"
+    [mode]="dialog.isScreenSmall()?'over':'side'">
     <div style="width:100%;text-align: center">
-      <img src="{{getLogo()}}"
-      />
+      <img src="{{getLogo()}}" />
     </div>
-    <p style="text-align: center" >{{settings.organisationName.value}}</p>
+    <p style="text-align: center" *ngIf="!dc">{{settings.organisationName.value}}</p>
+    <div *ngIf="dc" (click)="updateDistCenter()">
+      <p style="text-align: center">{{dc.name.value}}
+      </p>
+      <p style="text-align: center" >{{dc.getGeocodeInformation().getAddress()}}</p>
+    </div>
     <h4 *ngIf="context.user">שלום {{context.user.name}}</h4>
     <mat-nav-list role="list">
       <ng-container *ngFor="let m of router.config">
         <mat-list-item *ngIf="shouldDisplayRoute(m)" routerLinkActive="active-route">
           <a matLine [routerLink]="m.path" (click)="routeClicked()">{{routeName(m)}}</a>
         </mat-list-item>
-        <mat-divider *ngIf="showSeperator(m)" ></mat-divider>
+        <mat-divider *ngIf="showSeperator(m)"></mat-divider>
 
 
       </ng-container>
+
       <mat-list-item *ngIf="context.user">
         <a matLine (click)="signOut()">יציאה</a>
       </mat-list-item>

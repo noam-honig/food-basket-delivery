@@ -10,7 +10,7 @@ import { ApplicationSettings } from "./ApplicationSettings";
 export class DistributionCenters extends IdEntity {
 
   name = new StringColumn({ caption: "שם" });
-  semel = new StringColumn({ caption: "סמל" });
+  semel = new StringColumn({ caption: "סמל",allowApiUpdate:Roles.admin });
   address = new StringColumn("כתובת מרכז השילוח");
   addressApiResult = new StringColumn();
   private _lastString: string;
@@ -27,7 +27,7 @@ export class DistributionCenters extends IdEntity {
       name: "DistributionCenters",
       allowApiRead: context.isSignedIn(),
       allowApiInsert: Roles.admin,
-      allowApiUpdate: Roles.admin,
+      allowApiUpdate: Roles.distCenterAdmin,
       apiDataFilter: () => filterCenterAllowedForUser(this.id, context),
 
       savingRow: async () => {

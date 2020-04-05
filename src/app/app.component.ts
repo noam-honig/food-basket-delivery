@@ -6,15 +6,17 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { DialogService } from './select-popup/dialog';
 import { ApplicationSettings, SettingsService } from './manage/ApplicationSettings';
 import { FamiliesComponent } from './families/families.component';
-import { Context, RouteHelperService, JwtSessionManager } from '@remult/core';
+import { Context, RouteHelperService, JwtSessionManager, DataAreaSettings } from '@remult/core';
 import { Roles } from './auth/roles';
 import { translate, translationConfig } from './translate';
 import { DeliveryStats } from './delivery-follow-up/delivery-stats';
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { DeliveryStatus } from './families/DeliveryStatus';
-import { Helpers } from './helpers/helpers';
+import { Helpers, HelperUserInfo } from './helpers/helpers';
 import { BasketType } from './families/BasketType';
 import { AssignEscortComponent } from './assign-escort/assign-escort.component';
+import { DistributionCenters } from './manage/distribution-centers';
+import { InputAreaComponent } from './select-popup/input-area/input-area.component';
 
 
 
@@ -43,7 +45,7 @@ export class AppComponent {
       this.toolbarColor = 'accent';
     }
 
-
+    this.context.for(DistributionCenters).lookupAsync(x => x.id.isEqualTo((<HelperUserInfo>this.context.user).distributionCenter)).then(x => this.dc = x);
 
   }
 
@@ -97,6 +99,33 @@ export class AppComponent {
 
   }
   test() {
+
+  }
+
+  dc: DistributionCenters;
+  async updateDistCenter() {
+
+
+
+    await this.context.openDialog(InputAreaComponent, x => x.args = {
+      title: 'עדכון פרטים נקודת חלוקה',
+      settings: {
+        columnSettings: () => [
+          this.dc.name,
+          this.dc.address,
+          {
+            caption: 'כתובת כפי שגוגל הבין',
+            getValue: () => this.dc.getGeocodeInformation().getAddress()
+          }
+        ]
+      },
+      ok: async () => {
+        await this.dc.save();
+      },
+      cancel: () => {
+        this.dc.undoChanges()
+      }
+    });
 
   }
 
