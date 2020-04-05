@@ -17,7 +17,7 @@ export async function GetGeoInformation(address: string, context: Context) {
     address = address.trim();
     let cacheEntry = await context.for(GeocodeCache).lookupAsync(x => x.id.isEqualTo(address));
     if (!cacheEntry.isNew()) {
-        console.log('cache:' + address);
+        //console.log('cache:' + address);
         return new GeocodeInformation(JSON.parse(cacheEntry.googleApiResult.value) as GeocodeResult);
     }
     let x = pendingRequests.get(address);
@@ -31,7 +31,7 @@ export async function GetGeoInformation(address: string, context: Context) {
         try {
             let r = fetch.default(u.url).then(async x => await x.json().then(async (r: GeocodeResult) => {
 
-                console.log('google:' + address);
+                //console.log('google:' + address);
                 cacheEntry.id.value = address;
                 cacheEntry.googleApiResult.value = JSON.stringify(r);
                 cacheEntry.createDate.value = new Date();
@@ -54,7 +54,7 @@ export async function GetGeoInformation(address: string, context: Context) {
         }
     }
     else {
-        console.log('reuse: ' + address);
+        //console.log('reuse: ' + address);
     }
     return await x;
 

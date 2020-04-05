@@ -165,7 +165,7 @@ export class PlaybackComponent implements OnInit {
       let x = this.timeline[this.position];
       x.revert();
       this.position--;
-      console.log(this.timeline[this.position].timeline.valueOf() - now - 60 * 1000);
+      
     }
     while (this.timeline[this.position].timeline.valueOf() >= now - 60 * 1000);
     this.updateChart();
