@@ -23,7 +23,7 @@ import { AddressProblemComponent } from './address-problem/address-problem.compo
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
-import { AdminGuard, OverviewGuard, distCenterAdminGuard } from './auth/roles';
+import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterAndNotAdmin } from './auth/roles';
 import { SignedInGuard } from '@remult/core';
 import { CreateBackupExcelFileComponent, CanDeactivateGuard } from './create-backup-excel-file/create-backup-excel-file.component';
 import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';
@@ -83,7 +83,7 @@ const routes: Routes = [
   ],
   declarations: [],
   exports: [RouterModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, CanDeactivateGuard, OverviewGuard,distCenterAdminGuard]
+  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, CanDeactivateGuard, OverviewGuard,distCenterAdminGuard,distCenterAndNotAdmin]
 })
 
 export class AppRoutingModule { }

@@ -18,7 +18,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { colors } from '../families/stats-action';
 import { BusyService } from '@remult/core';
 import { YesNo } from '../families/YesNo';
-import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
+import { Roles, AdminGuard, distCenterAdminGuard, distCenterAndNotAdmin } from '../auth/roles';
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 import { Helpers } from '../helpers/helpers';
 
@@ -38,6 +38,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.onDestroy = () => {
       y.unsubscribe();
     };
+    this.dialog.onDistCenterChange(() => location.reload(), this);
 
   }
   showHelper = false;
@@ -48,7 +49,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   static route: Route = {
     path: 'addresses',
     component: DistributionMap,
-    data: { name: 'מפת הפצה' }, canActivate: [distCenterAdminGuard]
+    data: { name: 'מפת הפצה' }, canActivate: [distCenterAndNotAdmin]
   };
 
   gridView = true;
@@ -84,10 +85,10 @@ export class DistributionMap implements OnInit, OnDestroy {
   statuses = new Statuses();
   selectedStatus: statusClass;
   async refreshFamilies() {
-    let families = await DistributionMap.GetFamiliesLocations();
-    if (families.length > 10000) {
-      this.dialog.Info('מוצגת 1000 נקודות מתוך ' + families.length);
-      families = families.splice(0, 10000);
+    let families = await DistributionMap.GetFamiliesLocations(false, undefined, undefined, this.dialog.distCenter.value);
+    if (families.length > 4000) {
+      this.dialog.Info('מוצגת 4000 נקודות מתוך ' + families.length);
+      families = families.splice(0, 4000);
     }
     this.statuses.statuses.forEach(element => {
       element.value = 0;
@@ -146,6 +147,8 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async GetFamiliesLocations(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: string, context?: Context, db?: SqlDatabase) {
+    if (!distCenter)
+      distCenter = '';
     let f = context.for(Families).create();
     let h = context.for(Helpers).create();
     let sql = new SqlBuilder();
