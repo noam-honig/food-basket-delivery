@@ -44,7 +44,6 @@ export class Stats {
     outOfList = new FaimilyStatistics('הוצאו מהרשימות', f => f.deliverStatus.isEqualTo(DeliveryStatus.RemovedFromList), colors.green);
     notInEvent = new FaimilyStatistics('לא באירוע', f => f.deliverStatus.isEqualTo(DeliveryStatus.NotInEvent), colors.blue);
     frozen = new FaimilyStatistics('קפואים', f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen), colors.gray);
-    blocked = new FaimilyStatistics('סל חסום', f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(f.courier.isEqualTo('').and(f.blockedBasket.isEqualTo(true))), colors.gray);
     needWork = new FaimilyStatistics('מצריך טיפול', f => f.deliverStatus.isInEvent().and(f.needsWork.isEqualTo(true)), colors.yellow);
 
 
@@ -79,7 +78,6 @@ export class Stats {
                 name: b.name.value,
                 boxes: b.boxes.value,
                 boxes2: b.boxes2.value,
-                blocked: b.blocked.value,
                 unassignedFamilies: await context.for(Families).count(f => f.readyAndSelfPickup().and(f.basketType.isEqualTo(b.id).and(f.filterDistCenter(distCenter)))),
                 inEventFamilies: await context.for(Families).count(f => f.deliverStatus.isInEvent().and(f.basketType.isEqualTo(b.id).and(f.filterDistCenter(distCenter)))),
                 successFamilies: await context.for(Families).count(f => f.deliverStatus.isSuccess().and(f.basketType.isEqualTo(b.id).and(f.filterDistCenter(distCenter))))
@@ -139,8 +137,7 @@ export class CitiesStats extends Entity<string> {
                     from: f,
                     where: () => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery),
                     f.distributionCenter.isAllowedForUser(),
-                    sql.eq(f.courier, '\'\''),
-                    f.blockedBasket.defs.dbName + ' = false']
+                    sql.eq(f.courier, '\'\'')]
                 }), ' group by ', f.city, ') as result')
             }
         });

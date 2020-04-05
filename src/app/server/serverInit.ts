@@ -34,6 +34,11 @@ export async function serverInit() {
             SqlDatabase.LogToConsole = true;
 
         }
+        if (process.env.logSqlsThreshold) {
+            SqlDatabase.durationThreshold = +process.env.logSqlsThreshold;
+            
+
+        }
 
         const pool = new Pool({
             connectionString: dbUrl,
@@ -50,6 +55,7 @@ export async function serverInit() {
             let adminSchemaPool = new PostgresSchemaWrapper(pool, Sites.guestSchema);
             let context = new ServerContext();
             let dp = new SqlDatabase(new PostgresDataProvider(adminSchemaPool));
+            
             context.setDataProvider(dp)
 
             let builder = new PostgresSchemaBuilder(dp, Sites.guestSchema);

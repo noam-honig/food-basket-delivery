@@ -329,20 +329,7 @@ export class Families extends IdEntity {
 
 
   deliveryStatusUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'מי עדכן את סטטוס המשלוח');
-  blockedBasket = new BoolColumn({
-    caption: 'סל חסום',
-    sqlExpression: () => {
-      let b = this.context.for(BasketType).create();
-
-      let sql = new SqlBuilder();
-      return sql.columnInnerSelect(this, {
-        select: () => [sql.columnWithAlias(b.blocked, "blockedBasket")],
-        from: b,
-        where: () => [sql.eq(b.id, this.basketType),
-        ]
-      });
-    }
-  });
+  
   routeOrder = new NumberColumn();
   previousDeliveryStatus = new DeliveryStatusColumn({
     caption: 'סטטוס משלוח קודם',
@@ -389,7 +376,7 @@ export class Families extends IdEntity {
 
   readyFilter(city?: string, group?: string) {
     let where = this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
-      this.courier.isEqualTo('')).and(this.blockedBasket.isEqualTo(false)).and(this.distributionCenter.isAllowedForUser());
+      this.courier.isEqualTo('')).and(this.distributionCenter.isAllowedForUser());
     if (group)
       where = where.and(this.groups.isContains(group));
     if (city) {
@@ -400,7 +387,7 @@ export class Families extends IdEntity {
   }
   readyAndSelfPickup() {
     let where = this.deliverStatus.isGreaterOrEqualTo(DeliveryStatus.ReadyForDelivery).and(this.deliverStatus.isLessOrEqualTo(DeliveryStatus.SelfPickup)).and(
-      this.courier.isEqualTo('')).and(this.blockedBasket.isEqualTo(false));
+      this.courier.isEqualTo(''));
     return where;
   }
   private dbNameFromLastDelivery(col: (fd: FamilyDeliveries) => Column<any>, alias: string) {

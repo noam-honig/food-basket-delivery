@@ -713,7 +713,6 @@ export class FamiliesComponent implements OnInit {
                 this.stats.special,
                 this.stats.selfPickup,
                 this.stats.frozen,
-                this.stats.blocked,
                 this.stats.onTheWay,
                 this.stats.delivered,
                 this.stats.problem

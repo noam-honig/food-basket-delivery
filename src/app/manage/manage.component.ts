@@ -75,8 +75,7 @@ export class ManageComponent implements OnInit {
       {
         column: x.boxes2,
         width: '100px'
-      },
-      x.blocked
+      }
     ],
     get: {
       limit: 25,
@@ -360,8 +359,8 @@ export class GroupsStats extends Entity<string> {
                where: () => [
                 sql.build(f.groups, ' like \'%\'||', g.name, '||\'%\''),
                 f.readyFilter().and(f.distributionCenter.isAllowedForUser()),
-                sql.eq(f.distributionCenter,d.id),
-                f.blockedBasket.defs.dbName + ' = false']
+                sql.eq(f.distributionCenter,d.id)]
+                
             }, this.familiesCount)],
             from: g
 
