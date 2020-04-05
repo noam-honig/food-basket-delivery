@@ -21,8 +21,9 @@ import { DistributionCenterId, DistributionCenters } from "../manage/distributio
 
 @EntityClass
 export class Families extends IdEntity {
+  static allCentersToken='<allCenters>';
   filterDistCenter(distCenter: string): import("@remult/core").FilterBase {
-    if (distCenter != "*")
+    if (distCenter != Families.allCentersToken)
       return this.distributionCenter.isEqualTo(distCenter);
   }
   onTheWayFilter() {

@@ -64,7 +64,16 @@ export class FamiliesComponent implements OnInit {
     deliverySummary: DataControlSettings<Families>;
     scrollingSubscription: Subscription;
     showHoverButton: boolean = false;
-    distCenter = new DistributionCenterId(this.context);
+    distCenter = new DistributionCenterId(this.context, {
+
+        valueChange: () => {
+            this.refresh();
+        }
+    });
+    distCenterArea = new DataAreaSettings({ columnSettings: () => [this.distCenter] });
+    canSeeCenter() {
+        return this.context.isAllowed(Roles.admin);
+    }
     constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context,
         public scroll: ScrollDispatcher) {
         if (this.distCenter.value === undefined)
@@ -314,6 +323,7 @@ export class FamiliesComponent implements OnInit {
                 if (this.problemOnly) {
                     addFilter(f.addressOk.isEqualTo(false));
                 }
+                addFilter(f.filterDistCenter(this.distCenter.value));
                 return result;
             }
             , orderBy: f => f.name

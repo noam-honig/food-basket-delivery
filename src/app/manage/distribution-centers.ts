@@ -4,13 +4,15 @@ import { HasAsyncGetTheValue } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { HelperUserInfo } from "../helpers/helpers";
 import { ApplicationSettings } from "./ApplicationSettings";
+import { Families } from "../families/families";
 
 
 @EntityClass
 export class DistributionCenters extends IdEntity {
 
+
   name = new StringColumn({ caption: "שם" });
-  semel = new StringColumn({ caption: "סמל",allowApiUpdate:Roles.admin });
+  semel = new StringColumn({ caption: "סמל", allowApiUpdate: Roles.admin });
   address = new StringColumn("כתובת מרכז השילוח");
   addressApiResult = new StringColumn();
   private _lastString: string;
@@ -63,7 +65,7 @@ export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValu
     return (await ApplicationSettings.getAsync(this.context)).getGeocodeInformation();
   }
 
-  constructor(private context: Context, settingsOrCaption?: ColumnOptions<string>) {
+  constructor(private context: Context, settingsOrCaption?: ColumnOptions<string>, showAllOption?: boolean) {
     super(settingsOrCaption, {
       dataControlSettings: () =>
         ({
@@ -71,6 +73,9 @@ export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValu
             orderBy: (f: DistributionCenters) => {
               return [{ column: f.name }];
             }
+          }).then(x => {
+             x.splice(0, 0, { caption: 'כל הנקודות', id: Families.allCentersToken })
+             return x;
           })
           , width: '150'
         }),
