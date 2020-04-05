@@ -5,6 +5,7 @@ import { Roles } from '../auth/roles';
 import { PromiseThrottle, extractError } from '../import-from-excel/import-from-excel.component';
 import { DialogService } from '../select-popup/dialog';
 import { DistributionCenterId } from '../manage/distribution-centers';
+import { GeocodeInformation } from '../shared/googleApiHelpers';
 
 @Component({
   selector: 'app-geocode',
@@ -61,5 +62,5 @@ export class GeocodeComponent implements OnInit {
 }
 
 function filterBadGeocoding(f: Families, distCenter: string) {
-  return f.address.isDifferentFrom('').and(f.addressApiResult.isEqualTo('').and(f.filterDistCenter(distCenter)));
+  return f.address.isDifferentFrom('').and(f.addressApiResult.isEqualTo(new GeocodeInformation().saveToString()).and(f.filterDistCenter(distCenter)));
 }

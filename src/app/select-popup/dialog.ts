@@ -75,7 +75,7 @@ export class DialogService {
     canSeeCenter() {
         var dist ='';
         if (this.context.user)
-            (<HelperUserInfo>this.context.user).distributionCenter;
+            dist = (<HelperUserInfo>this.context.user).distributionCenter;
         if (!this.context.isAllowed(Roles.admin) && this.distCenter.value != dist) {
             this.distCenter.value = dist;
         }
