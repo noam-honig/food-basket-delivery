@@ -22,7 +22,7 @@ import { Stats, FaimilyStatistics, colors } from './stats-action';
 
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
 import { PhoneColumn } from '../model-shared/types';
-import { Helpers } from '../helpers/helpers';
+import { Helpers, HelperUserInfo } from '../helpers/helpers';
 import { Route } from '@angular/router';
 
 import { Context } from '@remult/core';
@@ -979,6 +979,11 @@ export class FamiliesComponent implements OnInit {
         this.suspend = true;
     }
     refresh() {
+        var dist = (<HelperUserInfo>this.context.user).distributionCenter;
+        if (!this.context.isAllowed(Roles.admin) && this.distCenter.value != dist) {
+            this.distCenter.value = dist;
+            return;
+        }
         this.refreshFamilyGrid();
         this.refreshStats();
     }

@@ -44,11 +44,19 @@ export class AppComponent {
     if (settings.redTitleBar.value) {
       this.toolbarColor = 'accent';
     }
-    if (this.context.isAllowed(Roles.distCenterAdmin) && !this.context.isAllowed(Roles.admin))
-      this.context.for(DistributionCenters).lookupAsync(x => x.id.isEqualTo((<HelperUserInfo>this.context.user).distributionCenter)).then(x => this.dc = x);
+
 
   }
-
+  lastUser: any;
+  refreshdc() {
+    if (this.context.user == this.lastUser)
+      return "";
+    this.dc = undefined;
+    this.lastUser = this.context.user;
+    if (this.context.isAllowed(Roles.distCenterAdmin) && !this.context.isAllowed(Roles.admin))
+      this.context.for(DistributionCenters).lookupAsync(x => x.id.isEqualTo((<HelperUserInfo>this.context.user).distributionCenter)).then(x => this.dc = x);
+    return '';
+  }
 
   showSeperator(route: Route) {
     if (route.data && route.data.seperator)
