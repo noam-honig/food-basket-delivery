@@ -73,7 +73,9 @@ export class HelpersComponent implements OnInit {
 
       ];
       if (this.context.isAllowed(Roles.distCenterAdmin)) {
-        r.push(helpers.distCenterAdmin);
+        r.push({
+          column: helpers.distCenterAdmin, width: '160'
+        });
         if (!this.context.isAllowed(Roles.admin))
           r.push({
             column: helpers.eventComment
@@ -83,7 +85,7 @@ export class HelpersComponent implements OnInit {
         r.push(helpers.distributionCenter);
         r.push({
           column: helpers.admin,
-          width: '100'
+          width: '160'
         });
       }
       this.numOfColsInGrid = r.length;
@@ -136,11 +138,11 @@ export class HelpersComponent implements OnInit {
   }
 
 
-  
+
   async ngOnInit() {
     let s = await ApplicationSettings.getAsync(this.context);
     this.helpers.columns.numOfColumnsInGrid = this.numOfColsInGrid;
-    
+
 
 
   }
