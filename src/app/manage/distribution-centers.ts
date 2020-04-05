@@ -74,8 +74,9 @@ export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValu
               return [{ column: f.name }];
             }
           }).then(x => {
-             x.splice(0, 0, { caption: 'כל הנקודות', id: Families.allCentersToken })
-             return x;
+            if (showAllOption)
+              x.splice(0, 0, { caption: 'כל הנקודות', id: Families.allCentersToken })
+            return x;
           })
           , width: '150'
         }),

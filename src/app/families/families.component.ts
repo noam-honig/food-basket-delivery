@@ -69,7 +69,7 @@ export class FamiliesComponent implements OnInit {
         valueChange: () => {
             this.refresh();
         }
-    });
+    }, true);
     distCenterArea = new DataAreaSettings({ columnSettings: () => [this.distCenter] });
     canSeeCenter() {
         return this.context.isAllowed(Roles.admin);

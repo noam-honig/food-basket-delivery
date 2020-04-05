@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Context, ServerFunction } from '@remult/core';
+import { Context, ServerFunction, DataAreaSettings } from '@remult/core';
 import { Families } from '../families/families';
 import { Roles } from '../auth/roles';
 import { PromiseThrottle, extractError } from '../import-from-excel/import-from-excel.component';
 import { DialogService } from '../select-popup/dialog';
+import { DistributionCenterId } from '../manage/distribution-centers';
 
 @Component({
   selector: 'app-geocode',
@@ -11,11 +12,16 @@ import { DialogService } from '../select-popup/dialog';
   styleUrls: ['./geocode.component.scss']
 })
 export class GeocodeComponent implements OnInit {
-
-  constructor(private context: Context, private dialog: DialogService) { }
+  distCenter = new DistributionCenterId(this.context, {
+    valueChange:()=>this.ngOnInit()
+  }, true);
+  distCenterArea = new DataAreaSettings({ columnSettings: () => [this.distCenter] });
+  constructor(private context: Context, private dialog: DialogService) {
+    this.distCenter.value = Families.allCentersToken;
+  }
   families = 0;
   async ngOnInit() {
-    this.families = await this.context.for(Families).count(filterBadGeocoding);
+    this.families = await this.context.for(Families).count(f => filterBadGeocoding(f, this.distCenter.value));
   }
   message = '';
   async doIt() {
@@ -24,7 +30,7 @@ export class GeocodeComponent implements OnInit {
     let start = new Date().valueOf();
     try {
       while (this.families > 0) {
-        await GeocodeComponent.geocodeOnServer();
+        await GeocodeComponent.geocodeOnServer(this.distCenter.value);
         let x = this.families;
         await this.ngOnInit();
         if (x - this.families < 100) {
@@ -41,10 +47,10 @@ export class GeocodeComponent implements OnInit {
 
   }
   @ServerFunction({ allowed: Roles.admin })
-  static async geocodeOnServer(context?: Context) {
+  static async geocodeOnServer(distCenter: string, context?: Context) {
     let p = new PromiseThrottle(10);
     let start = new Date().valueOf();
-    for (const f of await context.for(Families).find({ where: filterBadGeocoding, limit: 1000 })) {
+    for (const f of await context.for(Families).find({ where: f => filterBadGeocoding(f, distCenter), limit: 1000 })) {
       await p.push(f.reloadGeoCoding().then(() => f.save()));
       if (new Date().valueOf() - start > 20000)
         break;
@@ -54,6 +60,6 @@ export class GeocodeComponent implements OnInit {
 
 }
 
-function filterBadGeocoding(f: Families) {
-  return f.address.isDifferentFrom('').and(f.addressApiResult.isEqualTo(''));
+function filterBadGeocoding(f: Families, distCenter: string) {
+  return f.address.isDifferentFrom('').and(f.addressApiResult.isEqualTo('').and(f.filterDistCenter(distCenter)));
 }
