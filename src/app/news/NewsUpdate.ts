@@ -36,7 +36,7 @@ export class NewsUpdate extends Entity<string> implements FamilyUpdateInfo {
         let f = context.for(Families).create();
         var sql = new SqlBuilder();
         let cols = [f.id, f.name, f.courier, f.deliverStatus, f.deliveryStatusDate, f.courierAssingTime, f.courierAssignUser, f.deliveryStatusUser, f.courierComments, f.needsWork, f.familySource];
-        return sql.entityDbNameUnion({
+        return sql.entityDbNameUnionAll({
           select: () => [...cols,
           sql.columnWithAlias(f.deliveryStatusDate, this.updateTime),
           sql.columnWithAlias(f.deliveryStatusUser, this.updateUser),

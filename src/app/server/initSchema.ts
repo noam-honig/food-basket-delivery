@@ -39,7 +39,9 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     let createIndex = async (name: string, ...columns: Column<any>[]) => {
         await dataSource.execute(sql.build("create index if not exists ", name, " on ", f, "  (", columns, ")"));
     }
-    await dataSource.execute(sql.build('create index if not exists f_1 on ', f, ' (', [f.courier, f.deliverStatus], ')'));
+    await dataSource.execute(sql.build('drop index if exists f_1  '));
+    await createIndex('for_courier', f.courier, f.deliverStatus, f.courierAssingTime);
+    
     await dataSource.execute("create extension if not exists pg_trgm with schema pg_catalog;");
     await dataSource.execute(sql.build('create index if not exists for_like_on_groups on families using gin  (groups gin_trgm_ops)'));
     await createIndex("for_distribution_status_queries", f.distributionCenter, f.courier, f.deliverStatus);
