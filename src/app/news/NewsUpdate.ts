@@ -29,7 +29,7 @@ export class NewsUpdate extends Entity<string> implements FamilyUpdateInfo {
   updateType = new NumberColumn();
   constructor(private context: Context) {
     super({
-      allowApiRead: Roles.admin,
+      allowApiRead: Roles.distCenterAdmin,
       caption: 'חדשות',
       name: 'news',
       dbName: () => {
@@ -51,7 +51,7 @@ export class NewsUpdate extends Entity<string> implements FamilyUpdateInfo {
           sql.columnWithAlias(f.distributionCenter,this.distributionCenter),
           sql.columnWithAlias(2, this.updateType)],
           from: f,
-          where: () => [sql.notNull(f.courierAssingTime)]
+          where: () => [sql.notNull(f.courierAssingTime),f.distributionCenter.isAllowedForUser()]
         })
 
       }

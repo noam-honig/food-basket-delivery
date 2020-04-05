@@ -10,7 +10,7 @@ import { Helpers } from '../helpers/helpers';
 
 
 import { Context } from '@remult/core';
-import { Roles, AdminGuard } from '../auth/roles';
+import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { Route } from '@angular/router';
 import { DialogService } from '../select-popup/dialog';
 import { SendSmsAction } from '../asign-family/send-sms-action';
@@ -22,7 +22,7 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 })
 export class DeliveryFollowUpComponent implements OnInit {
   static route: Route = {
-    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [AdminGuard], data: { name: 'מעקב משנעים' }
+    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [distCenterAdminGuard], data: { name: 'מעקב משנעים' }
   }
 
   familyLists = new UserFamiliesList(this.context);

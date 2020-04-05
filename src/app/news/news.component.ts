@@ -10,7 +10,7 @@ import { Route, ActivatedRoute } from '@angular/router';
 import { Families } from '../families/families';
 import { FilterBase } from '@remult/core';
 import { BusyService } from '@remult/core';
-import { Roles, AdminGuard } from '../auth/roles';
+import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { Helpers } from '../helpers/helpers';
 
@@ -24,10 +24,10 @@ import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-fami
 })
 export class NewsComponent implements OnInit, OnDestroy {
     static route: Route = {
-        path: 'news', component: NewsComponent, canActivate: [AdminGuard], data: { name: 'חדשות' }
+        path: 'news', component: NewsComponent, canActivate: [distCenterAdminGuard], data: { name: 'חדשות' }
     };
     static needsWorkRoute: Route = {
-        path: 'needsWork', component: NewsComponent, canActivate: [AdminGuard], data: { name: 'מצריך טיפול' }
+        path: 'needsWork', component: NewsComponent, canActivate: [distCenterAdminGuard], data: { name: 'מצריך טיפול' }
     };
 
     filterChange() {
