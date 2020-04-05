@@ -48,6 +48,7 @@ export class NewsUpdate extends Entity<string> implements FamilyUpdateInfo {
           select: () => [...cols,
           sql.columnWithAlias(f.courierAssingTime, this.updateTime),
           sql.columnWithAlias(f.courierAssignUser, this.updateUser),
+          sql.columnWithAlias(f.distributionCenter,this.distributionCenter),
           sql.columnWithAlias(2, this.updateType)],
           from: f,
           where: () => [sql.notNull(f.courierAssingTime)]
