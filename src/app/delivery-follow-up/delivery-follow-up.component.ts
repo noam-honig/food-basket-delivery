@@ -94,7 +94,7 @@ export class DeliveryFollowUpComponent implements OnInit {
     this.pieChartLabels.splice(0);
     this.colors[0].backgroundColor.splice(0);
 
-
+    this.hasChart = false;
     [
       this.stats.notOutYet,
       this.stats.onTheWay,
@@ -103,6 +103,7 @@ export class DeliveryFollowUpComponent implements OnInit {
       this.stats.delivered
     ].forEach(s => {
       if (s.value > 0) {
+        this.hasChart = true;
         this.pieChartLabels.push(s.name + ' ' + s.value);
         this.pieChartData.push(s.value);
         this.colors[0].backgroundColor.push(s.color);
@@ -110,13 +111,17 @@ export class DeliveryFollowUpComponent implements OnInit {
       }
     });
   }
+  hasChart = true;
   refreshStats() {
 
-    this.busy.donotWait(async () => this.stats.getData().then(() => {
+    this.busy.donotWait(async () => this.stats.getData(this.dialog.distCenter.value).then(() => {
       this.updateChart();
     }));
   }
-  constructor(private busy: BusyService, private context: Context, private dialog: DialogService) { }
+  constructor(private busy: BusyService, private context: Context, private dialog: DialogService) {
+
+    dialog.onDistCenterChange(() => this.refresh(), this);
+  }
   couriers = this.context.for(HelpersAndStats).gridSettings({
 
     columnSettings: h => [
@@ -137,6 +142,7 @@ export class DeliveryFollowUpComponent implements OnInit {
         } else {
           addFilter(h.allFamilies.isGreaterOrEqualTo(1))
         }
+        addFilter(h.distributionCenter.filter(this.dialog.distCenter.value));
 
         return result;
       },

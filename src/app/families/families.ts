@@ -23,8 +23,7 @@ import { DistributionCenterId, DistributionCenters } from "../manage/distributio
 export class Families extends IdEntity {
   static allCentersToken='<allCenters>';
   filterDistCenter(distCenter: string): import("@remult/core").FilterBase {
-    if (distCenter != Families.allCentersToken)
-      return this.distributionCenter.isEqualTo(distCenter);
+    return this.distributionCenter.filter(distCenter);
   }
   onTheWayFilter() {
     return this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(this.courier.isDifferentFrom(''));

@@ -4,7 +4,7 @@
 </button>
 <div>
   <div style="display: block;width:350px;">
-    <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType" [options]="options"
+    <canvas *ngIf="hasChart" baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType" [options]="options"
       [colors]="colors" (chartClick)="chartClicked($event)"></canvas>
   </div>
 </div>

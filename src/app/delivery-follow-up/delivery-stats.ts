@@ -1,4 +1,4 @@
-import { ServerFunction } from '@remult/core';
+import { ServerFunction, AndFilter } from '@remult/core';
 import { FilterBase } from '@remult/core';
 
 import { HelpersAndStats } from "./HelpersAndStats";
@@ -21,10 +21,10 @@ export class DeliveryStats {
     late = new DeliveryStatistic('מתעכבים', f => f.deliveriesInProgress.isGreaterOrEqualTo(1).and(f.gotSms.isEqualTo(true)).and(f.smsDate.isLessOrEqualTo(new Date(new Date().valueOf() - 3600000 * 1.5))), colors.yellow);
     delivered = new DeliveryStatistic('סיימו', f => f.deliveriesInProgress.isEqualTo(0).and(f.deliveriesWithProblems.isEqualTo(0)).and(f.allFamilies.isGreaterOrEqualTo(1)), colors.green);
     problem = new DeliveryStatistic('בעיות', f => f.deliveriesWithProblems.isGreaterOrEqualTo(1), colors.red);
-    
 
-    async getData() {
-        let r = await DeliveryStats.getTheStats();
+
+    async getData(distCenter) {
+        let r = await DeliveryStats.getTheStats(distCenter);
         for (let s in this) {
             let x: any = this[s];
             if (x instanceof DeliveryStatistic) {
@@ -32,15 +32,15 @@ export class DeliveryStats {
             }
         }
     }
-    @ServerFunction({ allowed: Roles.admin })
-    static async getTheStats(context?: Context) {
+    @ServerFunction({ allowed: Roles.distCenterAdmin })
+    static async getTheStats(distCenter: string, context?: Context) {
         let result = { data: {} };
         let stats = new DeliveryStats();
         let pending = [];
         for (let s in stats) {
             let x = stats[s];
             if (x instanceof DeliveryStatistic) {
-                pending.push(x.saveTo(result.data, context));
+                pending.push(x.saveTo(result.data, context, distCenter));
             }
         }
         await Promise.all(pending);
@@ -54,9 +54,9 @@ export class DeliveryStatistic {
     }
 
     value = 0;
-    async saveTo(data: any, context: Context) {
+    async saveTo(data: any, context: Context, distCenter: string) {
 
-        data[this.name] = await context.for(HelpersAndStats).count(f => this.rule(f)).then(c => this.value = c);
+        data[this.name] = await context.for(HelpersAndStats).count(f => new AndFilter( this.rule(f),(f.distributionCenter.filter(distCenter)))).then(c => this.value = c);
     }
     async loadFrom(data: any) {
         this.value = data[this.name];

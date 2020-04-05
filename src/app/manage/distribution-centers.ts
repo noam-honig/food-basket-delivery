@@ -1,4 +1,4 @@
-import { IdEntity, EntityClass, StringColumn, Context, IdColumn, ColumnOptions } from "@remult/core";
+import { IdEntity, EntityClass, StringColumn, Context, IdColumn, ColumnOptions, AndFilter } from "@remult/core";
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
 import { HasAsyncGetTheValue } from "../model-shared/types";
 import { Roles } from "../auth/roles";
@@ -54,6 +54,11 @@ function filterCenterAllowedForUser(center: IdColumn, context: Context) {
 }
 
 export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValue {
+  filter(distCenter: string): import("@remult/core").FilterBase {
+    if (distCenter != Families.allCentersToken)
+      return new AndFilter(this.isAllowedForUser(), this.isEqualTo(distCenter));
+    return this.isAllowedForUser();
+  }
   isAllowedForUser(): import("@remult/core").FilterBase {
     return filterCenterAllowedForUser(this, this.context);
 
