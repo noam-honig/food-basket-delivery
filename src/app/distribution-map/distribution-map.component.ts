@@ -48,7 +48,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   static route: Route = {
     path: 'addresses',
     component: DistributionMap,
-    data: { name: 'מפת הפצה' }, canActivate: [AdminGuard]
+    data: { name: 'מפת הפצה' }, canActivate: [distCenterAdminGuard]
   };
 
   gridView = true;
@@ -85,6 +85,10 @@ export class DistributionMap implements OnInit, OnDestroy {
   selectedStatus: statusClass;
   async refreshFamilies() {
     let families = await DistributionMap.GetFamiliesLocations();
+    if (families.length > 10000) {
+      this.dialog.Info('מוצגת 1000 נקודות מתוך ' + families.length);
+      families = families.splice(0, 10000);
+    }
     this.statuses.statuses.forEach(element => {
       element.value = 0;
     });
@@ -140,7 +144,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     });
     this.updateChart();
   }
-  @ServerFunction({ allowed: Roles.admin })
+  @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async GetFamiliesLocations(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: string, context?: Context, db?: SqlDatabase) {
     let f = context.for(Families).create();
     let h = context.for(Helpers).create();
@@ -157,7 +161,9 @@ export class DistributionMap implements OnInit, OnDestroy {
       from: f,
 
       where: () => {
-        let where = [f.deliverStatus.isActiveDelivery().and(f.blockedBasket.isEqualTo(false)).and(f.filterDistCenter(distCenter)).and(f.distributionCenter.isAllowedForUser())];
+        let where: any[] = [f.deliverStatus.isActiveDelivery().and(f.blockedBasket.isEqualTo(false)).and(f.distributionCenter.isAllowedForUser())];
+        if (distCenter)
+          where.push(f.filterDistCenter(distCenter));
         if (onlyPotentialAsignment) {
           where.push(f.readyFilter(city, group).and(f.special.isEqualTo(YesNo.No)));
         }
