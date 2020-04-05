@@ -147,7 +147,7 @@ export class DeliveryFollowUpComponent implements OnInit {
         return result;
       },
       orderBy: h => [{ column: h.lastAsignTime, descending: true }],
-      limit: 1000
+      limit: 100
     }
   });
 
