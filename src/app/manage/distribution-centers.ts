@@ -3,6 +3,7 @@ import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelper
 import { HasAsyncGetTheValue } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { HelperUserInfo } from "../helpers/helpers";
+import { ApplicationSettings } from "./ApplicationSettings";
 
 
 @EntityClass
@@ -32,7 +33,7 @@ export class DistributionCenters extends IdEntity {
       savingRow: async () => {
         if (context.onServer) {
           if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
-            let geo = await GetGeoInformation(this.address.value,context);
+            let geo = await GetGeoInformation(this.address.value, context);
             this.addressApiResult.value = geo.saveToString();
             if (geo.ok()) {
             }
@@ -54,6 +55,12 @@ export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValu
   isAllowedForUser(): import("@remult/core").FilterBase {
     return filterCenterAllowedForUser(this, this.context);
 
+  }
+  async getRouteStartGeo() {
+    let d = await this.context.for(DistributionCenters).lookupAsync(this);
+    if (d.addressApiResult.value && d.address.value)
+      return d.getGeocodeInformation();
+    return (await ApplicationSettings.getAsync(this.context)).getGeocodeInformation();
   }
 
   constructor(private context: Context, settingsOrCaption?: ColumnOptions<string>) {

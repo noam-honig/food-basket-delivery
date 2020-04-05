@@ -118,7 +118,7 @@ export class HelperFamiliesComponent implements OnInit {
   async couldntDeliverToFamily(f: Families) {
     let showUpdateFail = false;
     let q = this.settings.getQuestions();
-    if (!q||q.length==0) {
+    if (!q || q.length == 0) {
       showUpdateFail = true;
     } else {
       showUpdateFail = await this.context.openDialog(CommonQuestionsComponent, x => x.init(this.familyLists.allFamilies[0]), x => x.updateFailedDelivery);
@@ -225,10 +225,10 @@ export class HelperFamiliesComponent implements OnInit {
       cancel: () => { }
     });
   }
-  showRouteOnGoogleMaps() {
+  async showRouteOnGoogleMaps() {
 
-    let s = ApplicationSettings.get(this.context);
-    let url = 'https://www.google.com/maps/dir/' + encodeURI(s.getGeocodeInformation().getAddress());
+    
+    let url = 'https://www.google.com/maps/dir/' + encodeURI((await this.familyLists.helper.distributionCenter.getRouteStartGeo()).getAddress());
 
     for (const f of this.familyLists.toDeliver) {
       url += '/' + encodeURI(f.getGeocodeInformation().getAddress());

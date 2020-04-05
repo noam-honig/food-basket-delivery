@@ -689,7 +689,7 @@ export class AsignFamilyComponent implements OnInit {
         {
             let temp = fams;
             let sorted = [];
-            let lastLoc = (await ApplicationSettings.getAsync(context)).getGeocodeInformation().location();
+            let lastLoc = await (await helper.distributionCenter.getRouteStartGeo()).location();
 
 
             let total = temp.length;
@@ -718,7 +718,7 @@ export class AsignFamilyComponent implements OnInit {
         }
 
 
-        let r = await getRouteInfo(fams, useGoogle, context);
+        let r = await getRouteInfo(fams, useGoogle,await helper.distributionCenter.getRouteStartGeo(), context);
         if (r.status == 'OK' && r.routes && r.routes.length > 0 && r.routes[0].waypoint_order) {
             result.ok = true;
             let i = 1;
@@ -881,10 +881,10 @@ function getInfo(r: any) {
         dist, duration
     }
 }
-async function getRouteInfo(families: familiesInRoute[], optimize: boolean, context: Context) {
+async function getRouteInfo(families: familiesInRoute[], optimize: boolean,start:GeocodeInformation, context: Context) {
     let u = new UrlBuilder('https://maps.googleapis.com/maps/api/directions/json');
 
-    let startAndEnd = (await ApplicationSettings.getAsync(context)).getGeocodeInformation().getlonglat();
+    let startAndEnd = start;
     let waypoints = 'optimize:' + (optimize ? 'true' : 'false');
     let addresses = [];
     families.forEach(f => {
