@@ -71,7 +71,7 @@ serverInit().then(async (dataSource) => {
             await res.redirect(to);
         });
     } else {
-        if (!process.env.DISABLE_SERVER_EVENTS) {
+        if (false&&!process.env.DISABLE_SERVER_EVENTS) {
             let serverEvents = new ServerEvents(app);
             if (Sites.multipleSites) {
                 for (const s of Sites.schemas) {
