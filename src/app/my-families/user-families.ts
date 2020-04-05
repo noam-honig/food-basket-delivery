@@ -16,9 +16,9 @@ export class UserFamiliesList {
         this.map = map;
         this.map.userClickedOnFamilyOnMap = (f) => this.userClickedOnFamilyOnMap(f);
     }
-    startAssignByMap(city: string, group: string) {
+    startAssignByMap(city: string, group: string, distCenter: string) {
 
-        this.map.loadPotentialAsigment(city, group);
+        this.map.loadPotentialAsigment(city, group,distCenter);
         setTimeout(() => {
             this.map.gmapElement.nativeElement.scrollIntoView();
         }, 100);
@@ -84,7 +84,7 @@ export class UserFamiliesList {
     }
     async initForFamilies(helper: Helpers, familiesPocoArray: any[]) {
         this.initHelper(helper);
-        let newFamilies =await Promise.all(familiesPocoArray.map(x => this.context.for(Families).fromPojo(x)));
+        let newFamilies = await Promise.all(familiesPocoArray.map(x => this.context.for(Families).fromPojo(x)));
         newFamilies.push(...this.delivered);
         newFamilies.push(...this.problem);
         this.allFamilies = newFamilies;

@@ -18,7 +18,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { colors } from '../families/stats-action';
 import { BusyService } from '@remult/core';
 import { YesNo } from '../families/YesNo';
-import { Roles, AdminGuard } from '../auth/roles';
+import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 import { Helpers } from '../helpers/helpers';
 
@@ -141,17 +141,23 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.updateChart();
   }
   @ServerFunction({ allowed: Roles.admin })
-  static async GetFamiliesLocations(onlyPotentialAsignment?: boolean, city?: string, group?: string, context?: Context, db?: SqlDatabase) {
+  static async GetFamiliesLocations(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: string, context?: Context, db?: SqlDatabase) {
     let f = context.for(Families).create();
     let h = context.for(Helpers).create();
     let sql = new SqlBuilder();
     sql.addEntity(f, "Families");
     let r = (await db.execute(sql.query({
-      select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier, h.name],
+      select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier,
+      sql.columnInnerSelect(f, {
+        from: h,
+        select: () => [h.name],
+        where: () => [sql.eq(h.id, f.courier)]
+      })
+      ],
       from: f,
-      outerJoin: () => [{ to: h, on: () => [sql.eq(h.id, f.courier)] }],
+
       where: () => {
-        let where = [f.deliverStatus.isActiveDelivery().and(f.blockedBasket.isEqualTo(false))];
+        let where = [f.deliverStatus.isActiveDelivery().and(f.blockedBasket.isEqualTo(false)).and(f.filterDistCenter(distCenter)).and(f.distributionCenter.isAllowedForUser())];
         if (onlyPotentialAsignment) {
           where.push(f.readyFilter(city, group).and(f.special.isEqualTo(YesNo.No)));
         }

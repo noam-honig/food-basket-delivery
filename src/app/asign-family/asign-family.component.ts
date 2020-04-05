@@ -57,7 +57,7 @@ export class AsignFamilyComponent implements OnInit {
         return this.context.isAllowed(Roles.admin);
     }
     assignOnMap() {
-        this.familyLists.startAssignByMap(this.filterCity, this.filterGroup);
+        this.familyLists.startAssignByMap(this.filterCity, this.filterGroup,this.distCenter.value);
     }
     translate = translate;
     async searchPhone() {
@@ -532,7 +532,7 @@ export class AsignFamilyComponent implements OnInit {
         }
         function buildWhere(f: Families) {
             let where = f.readyFilter(info.city, info.group).and(
-                f.special.isDifferentFrom(YesNo.Yes)
+                f.special.isDifferentFrom(YesNo.Yes).and(f.filterDistCenter(info.distCenter))
             );
             if (info.basketType != undefined)
                 where = where.and(
@@ -776,6 +776,7 @@ export class AsignFamilyComponent implements OnInit {
                 return filter(f);
             },
             selectStreet,
+            distCenter:this.distCenter.value,
             onSelect: async f => {
 
 

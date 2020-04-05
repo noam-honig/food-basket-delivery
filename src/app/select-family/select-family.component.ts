@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Families } from '../families/families';
-import { BusyService } from '@remult/core';
+import { BusyService, AndFilter } from '@remult/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { FilterBase } from '@remult/core';
 import { Context } from '@remult/core';
@@ -17,7 +17,8 @@ export class SelectFamilyComponent implements OnInit {
   public args: {
     where: (f: Families) => FilterBase,
     onSelect: (selectedValue: Families) => void,
-    selectStreet: boolean
+    selectStreet: boolean,
+    distCenter: string
   };
   @ViewChild("search", { static: true }) search: ElementRef;
   constructor(private busy: BusyService, private dialogRef: MatDialogRef<any>, private context: Context) { }
@@ -36,15 +37,19 @@ export class SelectFamilyComponent implements OnInit {
 
     await this.families.get({
       where: f => {
-        let r = f.name.isContains(this.searchString);
-        if (this.args.selectStreet)
-          r = f.address.isContains(this.searchString);
+        let result = f.filterDistCenter(this.args.distCenter);
+        {
+          let r = f.name.isContains(this.searchString);
+          if (this.args.selectStreet)
+            r = f.address.isContains(this.searchString);
+          result = new AndFilter(result, r);
+        }
         if (this.args.where) {
           let x = this.args.where(f);
           if (x)
-            return r.and(x);
+            return new AndFilter(result, x);
         }
-        return r;
+        return result;
       },
       orderBy: f => f.name,
       limit: this.pageSize

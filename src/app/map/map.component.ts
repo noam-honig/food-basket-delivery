@@ -15,9 +15,9 @@ import { BusyService } from '@remult/core';
     styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit {
-    async loadPotentialAsigment(city: string, group: string) {
+    async loadPotentialAsigment(city: string, group: string, distCenter: string) {
         await this.initMap();
-        let families = await DistributionMap.GetFamiliesLocations(true, city, group);
+        let families = await DistributionMap.GetFamiliesLocations(true, city, group,distCenter);
         let closeBusy = this.busy.showBusy();
         try {
             console.time('load families to map');
@@ -102,12 +102,12 @@ export class MapComponent implements OnInit {
         } else {
             this.map.fitBounds(this.bounds);
         }
-        
+
 
 
         setTimeout(() => {
-                  if (this.map.getZoom() > 17)
-                      this.map.setZoom(17);
+            if (this.map.getZoom() > 17)
+                this.map.setZoom(17);
         }, 300);
     }
     clear() {
