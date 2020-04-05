@@ -37,7 +37,9 @@ export abstract class HelpersBase extends IdEntity {
     needEscort = new BoolColumn('צריך מלווה');
     theHelperIAmEscorting = new HelperIdReadonly(this.context, () => this.distributionCenter.value, { caption: 'נהג משוייך' });
     escort = new HelperId(this.context, () => this.distributionCenter.value, { caption: 'מלווה' });
-    distributionCenter = new DistributionCenterId(this.context);
+    distributionCenter = new DistributionCenterId(this.context, {
+        allowApiUpdate: Roles.admin
+    });
     getRouteStats(): routeStats {
         return {
             totalKm: this.totalKm.value,
@@ -48,7 +50,7 @@ export abstract class HelpersBase extends IdEntity {
 
 @EntityClass
 export class Helpers extends HelpersBase {
-    
+
     static usingCompanyModule: boolean;
 
     constructor(context: Context) {
@@ -138,8 +140,8 @@ export class Helpers extends HelpersBase {
     });
     distCenterAdmin = new BoolColumn({
         caption: 'מנהל נקודת חלוקה',
-        allowApiUpdate: Roles.admin,
-        includeInApi: Roles.admin,
+        allowApiUpdate: Roles.distCenterAdmin,
+        includeInApi: Roles.distCenterAdmin,
         dbName: 'distCenterAdmin'
     });
     getRouteStats(): routeStats {

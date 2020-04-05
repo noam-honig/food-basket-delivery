@@ -11,7 +11,7 @@ import { Context } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from '@remult/core';
 import { DateColumn, DataAreaSettings } from '@remult/core';
-import { Roles, AdminGuard } from '../auth/roles';
+import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 import { saveToExcel } from '../shared/saveToExcel';
@@ -29,17 +29,17 @@ export class HelpersComponent implements OnInit {
   static route: Route = {
     path: 'helpers',
     component: HelpersComponent,
-    data: { name: 'מתנדבים' }, canActivate: [AdminGuard]
+    data: { name: 'מתנדבים' }, canActivate: [distCenterAdminGuard]
   };
   searchString: string;
-
+  numOfColsInGrid = 4;
   helpers = this.context.for(Helpers).gridSettings({
     allowDelete: false,
     allowInsert: true,
     allowUpdate: true,
     knowTotalRows: true,
     hideDataArea: true,
-    numOfColumnsInGrid: 4,
+
     rowButtons: [
       {
         name: 'שיוך משפחות',
@@ -70,14 +70,26 @@ export class HelpersComponent implements OnInit {
           column: helpers.phone,
           width: '150'
         },
-        {
-          column: helpers.eventComment
-        }
+
       ];
-      r.push({
-        column: helpers.admin,
-        width: '100'
-      });
+      if (this.context.isAllowed(Roles.distCenterAdmin)) {
+        r.push(helpers.distCenterAdmin);
+        if (!this.context.isAllowed(Roles.admin))
+          r.push({
+            column: helpers.eventComment
+          })
+      }
+      if (this.context.isAllowed(Roles.admin)) {
+        r.push(helpers.distributionCenter);
+        r.push({
+          column: helpers.admin,
+          width: '100'
+        });
+      }
+      this.numOfColsInGrid = r.length;
+
+
+
       if (this.settings.manageEscorts.value)
         r.push(helpers.company);
       if (this.settings.manageEscorts.value) {
@@ -85,8 +97,9 @@ export class HelpersComponent implements OnInit {
       }
       r.push(helpers.eventComment);
       r.push(helpers.createDate);
-      r.push(helpers.distCenterAdmin);
-      r.push(helpers.distributionCenter);
+
+
+
       return r;
     },
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes),
@@ -123,9 +136,11 @@ export class HelpersComponent implements OnInit {
   }
 
 
-
+  
   async ngOnInit() {
     let s = await ApplicationSettings.getAsync(this.context);
+    this.helpers.columns.numOfColumnsInGrid = this.numOfColsInGrid;
+    
 
 
   }

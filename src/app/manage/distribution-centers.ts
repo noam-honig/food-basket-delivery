@@ -72,7 +72,7 @@ export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValu
               return [{ column: f.name }];
             }
           })
-          , width: '100'
+          , width: '150'
         }),
       defaultValue: context.user ? (<HelperUserInfo>context.user).distributionCenter : ''
     });
