@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NewsUpdate } from "./NewsUpdate";
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { Context } from '@remult/core';
+import { Context, AndFilter } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { translate } from '../translate';
 
@@ -35,10 +35,11 @@ export class NewsComponent implements OnInit, OnDestroy {
         this.refresh();
     }
     onDestroy = () => { };
-    constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public filters: NewsFilterService,private activatedRoute:ActivatedRoute) {
+    constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public filters: NewsFilterService, private activatedRoute: ActivatedRoute) {
         let y = dialog.refreshStatusStats.subscribe(() => {
             this.refresh();
         });
+        dialog.onDistCenterChange(() => this.refresh(), this);
         this.onDestroy = () => {
             y.unsubscribe();
         };
@@ -47,7 +48,7 @@ export class NewsComponent implements OnInit, OnDestroy {
     async updateFamily(n: NewsUpdate) {
 
         let f = await this.context.for(Families).findFirst(fam => fam.id.isEqualTo(n.id));
-        this.context.openDialog(UpdateFamilyDialogComponent, x => x.args= {
+        this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = {
             f: f, onSave: () => {
 
                 n.needsWork.value = f.needsWork.value;
@@ -73,11 +74,10 @@ export class NewsComponent implements OnInit, OnDestroy {
     }
     news: NewsUpdate[] = [];
     familySources: familySource[] = [{ id: undefined, name: "כל הגורמים מפנים" }];
-    
+
     async ngOnInit() {
-        if (this.activatedRoute.routeConfig.path==NewsComponent.needsWorkRoute.path)
-        {
-         this.filters.setToNeedsWork();   
+        if (this.activatedRoute.routeConfig.path == NewsComponent.needsWorkRoute.path) {
+            this.filters.setToNeedsWork();
         }
         this.refresh();
         this.familySources.push(...(await this.context.for(FamilySources).find({ orderBy: x => [x.name] })).map(x => { return { id: x.id.value, name: x.name.value } as familySource }));
@@ -89,7 +89,7 @@ export class NewsComponent implements OnInit, OnDestroy {
         this.busy.donotWait(async () => {
             this.news = await this.context.for(NewsUpdate).find({
                 where: n => {
-                    return this.filters.where(n);
+                    return new AndFilter( this.filters.where(n),n.distributionCenter.filter( this.dialog.distCenter.value));
 
 
                 }, orderBy: n => [{ column: n.updateTime, descending: true }], limit: this.newsRows
