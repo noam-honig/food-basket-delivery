@@ -71,6 +71,7 @@ import { TransitionGroupComponent, TransitionGroupItemDirective } from './overvi
 import { AssignEscortComponent } from './assign-escort/assign-escort.component';
 import { CommonQuestionsComponent } from './common-questions/common-questions.component';
 import { GeocodeComponent } from './geocode/geocode.component';
+import { SelectListComponent } from './select-list/select-list.component';
 
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref();
@@ -129,7 +130,8 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     TransitionGroupItemDirective,
     AssignEscortComponent,
     CommonQuestionsComponent,
-    GeocodeComponent
+    GeocodeComponent,
+    SelectListComponent
 
   ],
   imports: [
@@ -183,7 +185,7 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     InputAreaComponent,
     UpdateFamilyDialogComponent, PreviewFamilyComponent,
     SelectCompanyComponent,
-    QuickAddFamilyComponent, HelperAssignmentComponent,
+    QuickAddFamilyComponent, HelperAssignmentComponent,SelectListComponent,
     UpdateCommentComponent, UpdateGroupDialogComponent]
 })
 export class AppModule { }

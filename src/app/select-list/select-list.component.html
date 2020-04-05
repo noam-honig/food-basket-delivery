@@ -1,0 +1,24 @@
+<div dir="rtl">
+
+    <h3 matDialogHeader>{{args.title}}</h3>
+
+    <mat-nav-list role="list">
+        <mat-list-item *ngFor="let h of args.options" (click)="select(h)">
+
+            <span style="min-width:100px;"> {{h.name}}
+
+            </span>
+
+            <mat-divider></mat-divider>
+        </mat-list-item>
+    </mat-nav-list>
+    <mat-dialog-actions>
+
+        <button mat-raised-button color="warning" (click)="close()">
+            סגור
+        </button>
+
+    </mat-dialog-actions>
+
+
+</div>

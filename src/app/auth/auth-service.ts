@@ -13,6 +13,7 @@ import { MyFamiliesComponent } from "../my-families/my-families.component";
 import { LoginComponent } from "../users/login/login.component";
 import { Sites } from "../sites/sites";
 import { OverviewComponent } from "../overview/overview.component";
+import { SelectListComponent } from "../select-list/select-list.component";
 
 
 @Injectable()
@@ -69,8 +70,25 @@ export class AuthService {
     static UpdateInfoComponent: { new(...args: any[]): any };
     async login(user: string, password: string, remember: boolean, fail: () => void) {
 
-        let loginResponse = await AuthService.login(user, password);
-        if (loginResponse.valid) {
+        let options = await AuthService.login(user, password);
+
+        if (options.length > 0) {
+
+            let loginResponse = options[0];
+            if (options.length > 1) {
+                loginResponse = undefined;
+                await this.context.openDialog(SelectListComponent, x => x.args = {
+                    title: 'בחר מרכז חלוקה',
+                    options: options.map(x => ({ name: x.distCenterName, item: x }))
+
+                }, x => loginResponse = x.selected != undefined ? x.selected.item : undefined);
+                if (!loginResponse) {
+                    fail();
+                    return;
+                }
+            }
+
+
             this.setToken(loginResponse.authToken, remember);
             this.dialog.analytics('login ' + (this.context.isAllowed(Roles.admin) ? 'delivery admin' : ''));
             if (loginResponse.requirePassword) {
@@ -97,18 +115,21 @@ export class AuthService {
     }
 
     @ServerFunction({ allowed: true })
-    static async login(user: string, password: string, context?: Context) {
-        let result: HelperUserInfo;
-        let requirePassword = false;
+    static async login(user: string, password: string, context?: Context): Promise<loginResult[]> {
+        let r: loginResult[] = [];
+
 
         await context.for(Helpers).foreach(h => h.phone.isEqualTo(user), async h => {
+
             if (!h.realStoredPassword.value || Helpers.passwordHelper.verify(password, h.realStoredPassword.value)) {
+                let result: HelperUserInfo;
+                let requirePassword = false;
                 result = {
 
                     id: h.id.value,
                     roles: [Sites.getOrgRole(context)],
                     name: h.name.value,
-                    distributionCenter:h.distributionCenter.value,
+                    distributionCenter: h.distributionCenter.value,
                     theHelperIAmEscortingId: h.theHelperIAmEscorting.value,
                     escortedHelperName: h.theHelperIAmEscorting.value ? (await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value : ''
                 };
@@ -130,17 +151,15 @@ export class AuthService {
 
 
                 }
+                r.push({
+                    authToken: Helpers.helper.createSecuredTokenBasedOn(result),
+                    requirePassword,
+                    distCenterName: await h.distributionCenter.getTheValue()
+                });
 
             }
         });
-        if (result) {
-            return {
-                valid: true,
-                authToken: Helpers.helper.createSecuredTokenBasedOn(result),
-                requirePassword
-            };
-        }
-        return { valid: false, requirePassword: false };
+        return r;
     }
     signout(): any {
         this.tokenHelper.signout();
@@ -148,4 +167,10 @@ export class AuthService {
     }
 
 
+}
+export interface loginResult {
+
+    authToken: string,
+    requirePassword: boolean,
+    distCenterName: string
 }
