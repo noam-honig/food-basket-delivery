@@ -23,13 +23,14 @@ import { AddressProblemComponent } from './address-problem/address-problem.compo
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
-import { AdminGuard, OverviewGuard } from './auth/roles';
+import { AdminGuard, OverviewGuard, OverviewOrAdminGuard } from './auth/roles';
 import { SignedInGuard } from '@remult/core';
 import { CreateBackupExcelFileComponent, CanDeactivateGuard } from './create-backup-excel-file/create-backup-excel-file.component';
 import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';
 import { PlaybackComponent } from './playback/playback.component';
 import { OverviewComponent } from './overview/overview.component';
 import { AssignEscortComponent } from './assign-escort/assign-escort.component';
+import { TestMapComponent } from './test-map/test-map.component';
 
 
 
@@ -47,13 +48,14 @@ const routes: Routes = [
   DeliveryFollowUpComponent.route,
   NewsComponent.needsWorkRoute,
   NewsComponent.route,
+  { path: 'overview', component: OverviewComponent, canActivate: [OverviewGuard] },
   DistributionMap.route,
   AddressProblemComponent.route,
   HelpersComponent.route,
-  { path: 'overview', component: OverviewComponent, canActivate: [OverviewGuard] },
 
   DeliveryHistoryComponent.route,
   { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { name: 'סרטון החלוקה', hide: true } },
+  { path: 'testmap', component: TestMapComponent, canActivate: [AdminGuard], data: { name: 'סרטון החלוקה', hide: true } },
 
   BatchOperationsComponent.route,
   { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard], data: { name: 'קליטת משפחות מאקסל' } },
@@ -80,7 +82,7 @@ const routes: Routes = [
   ],
   declarations: [],
   exports: [RouterModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, CanDeactivateGuard, OverviewGuard]
+  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, CanDeactivateGuard, OverviewGuard,OverviewOrAdminGuard]
 })
 
 export class AppRoutingModule { }
