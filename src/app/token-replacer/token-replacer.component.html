@@ -1,0 +1,8 @@
+<div style="display:flex;direction: ltr;flex-direction: column;">
+    <input [(ngModel)]="listOfSchemas">
+    <input [(ngModel)]="token">
+    <input [(ngModel)]="seperator">
+    <textarea [(ngModel)]="sql" style="direction: ltr;" (keyup)="build()"></textarea>
+    
+    <textarea [(ngModel)]="result" readonly style="direction: ltr;"></textarea>
+</div>

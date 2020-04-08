@@ -2,7 +2,7 @@
 import { PostgresDataProvider, PostgresPool } from '@remult/server-postgres';
 import { Families } from '../families/families';
 import { BasketType } from "../families/BasketType";
-import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings, RemovedFromListExcelImportStrategy } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
 import { ServerContext, SqlDatabase } from '@remult/core';
 import '../app.module';
@@ -170,6 +170,14 @@ export async function initSchema(pool1: PostgresPool, org: string) {
             settings.logoUrl.value = '/' + org + settings.logoUrl.value;
         }
         settings.dataStructureVersion.value = 9;
+        await settings.save();
+    }
+    if (settings.dataStructureVersion.value <11 ) {
+        settings.checkDuplicatePhones.value = true;
+        settings.checkIfFamilyExistsInDb.value = true;
+        settings.checkIfFamilyExistsInFile.value = true;
+        settings.removedFromListStrategy.value = RemovedFromListExcelImportStrategy.displayAsError;
+        settings.dataStructureVersion.value = 11;
         await settings.save();
     }
 }

@@ -116,7 +116,7 @@ export class Families extends IdEntity {
               this.courier.value = this.fixedCourier.value;
             }
             if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
-              let geo = await GetGeoInformation(this.address.value);
+              let geo = await GetGeoInformation(this.address.value,context);
               this.addressApiResult.value = geo.saveToString();
               this.city.value = '';
               if (geo.ok()) {
@@ -478,6 +478,9 @@ export class Families extends IdEntity {
   }
   openGoogleMaps() {
     window.open('https://www.google.com/maps/search/?api=1&hl=iw&query=' + this.address.value, '_blank');
+  }
+  showOnGoogleMaps() {
+    window.open('https://www.google.com/maps/place/' + this.getGeocodeInformation().getlonglat(), '_blank');
   }
 
 

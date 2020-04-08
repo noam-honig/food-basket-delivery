@@ -30,6 +30,7 @@ import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/imp
 import { PlaybackComponent } from './playback/playback.component';
 import { OverviewComponent } from './overview/overview.component';
 import { AssignEscortComponent } from './assign-escort/assign-escort.component';
+import { TokenReplacerComponent } from './token-replacer/token-replacer.component';
 
 
 
@@ -51,6 +52,7 @@ const routes: Routes = [
   AddressProblemComponent.route,
   HelpersComponent.route,
   { path: 'overview', component: OverviewComponent, canActivate: [OverviewGuard] },
+  { path: 'tr', component: TokenReplacerComponent, canActivate: [OverviewGuard], data: { name: 'סרטון החלוקה', hide: true }  },
 
   DeliveryHistoryComponent.route,
   { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { name: 'סרטון החלוקה', hide: true } },

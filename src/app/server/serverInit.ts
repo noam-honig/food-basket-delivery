@@ -34,6 +34,11 @@ export async function serverInit() {
             SqlDatabase.LogToConsole = true;
 
         }
+        if (process.env.logSqlsThreshold) {
+            SqlDatabase.durationThreshold = +process.env.logSqlsThreshold;
+            
+
+        }
 
         const pool = new Pool({
             connectionString: dbUrl,

@@ -241,7 +241,7 @@ export class AsignFamilyComponent implements OnInit {
 
     area: DataAreaSettings<any> = new DataAreaSettings<any>({});
     changeShowCompany() {
-        this.initArea();
+        
         this.settings.save();
     }
 
@@ -304,7 +304,7 @@ export class AsignFamilyComponent implements OnInit {
 
 
         this.filterOptions.push(this.settings.showGroupsOnAssing, this.settings.showCityOnAssing, this.settings.showBasketOnAssing, this.settings.showNumOfBoxesOnAssing);
-        this.changeShowCompany();
+        this.initArea();
         this.familyLists.userClickedOnFamilyOnMap =
             async  families => {
                 if (families.length == 1)

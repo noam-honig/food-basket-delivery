@@ -1,24 +1,85 @@
 import * as fetch from 'node-fetch';
-import { UrlBuilder } from '@remult/core';
+import { UrlBuilder, EntityClass, IdEntity, StringColumn, Entity, DateTimeColumn, Context } from '@remult/core';
+import { extractError } from '../model-shared/types';
 
-export async function GetGeoInformation(address: string) {
 
-    if (!address || address == '')
+export class GeoCodeOptions {
+    static disableGeocode = false;
+}
+
+var pendingRequests = new Map<string, Promise<GeocodeInformation>>();
+export async function GetGeoInformation(address: string, context: Context) {
+
+    if (!address || address == '' || address.trim() == '')
         return new GeocodeInformation();
-    let u = new UrlBuilder('https://maps.googleapis.com/maps/api/geocode/json');
-    u.addObject({
-        key: process.env.GOOGLE_GECODE_API_KEY,
-        address: address,
-        language: 'HE'
-    });
-    try {
-        return new GeocodeInformation(await (await fetch.default(u.url)).json() as GeocodeResult);
+    if (GeoCodeOptions.disableGeocode) {
+        return new GeocodeInformation();
     }
-    finally {
+    address = address.trim();
+    let cacheEntry = await context.for(GeocodeCache).lookupAsync(x => x.id.isEqualTo(address));
+    if (!cacheEntry.isNew()) {
+        //console.log('cache:' + address);
+        return new GeocodeInformation(JSON.parse(cacheEntry.googleApiResult.value) as GeocodeResult);
     }
+    let x = pendingRequests.get(address);
+    if (!x) {
+        let u = new UrlBuilder('https://maps.googleapis.com/maps/api/geocode/json');
+        u.addObject({
+            key: process.env.GOOGLE_GECODE_API_KEY,
+            address: address,
+            language: 'HE'
+        });
+        try {
+            let r = fetch.default(u.url).then(async x => await x.json().then(async (r: GeocodeResult) => {
+
+                //console.log('google:' + address);
+                cacheEntry.id.value = address;
+                cacheEntry.googleApiResult.value = JSON.stringify(r);
+                cacheEntry.createDate.value = new Date();
+                await cacheEntry.save();
+                let g = new GeocodeInformation(r as GeocodeResult);
+                if (!g.ok())
+                    console.log('api error:' + g.info.status + ' for ' + address);
+                return g;
+
+            }));
+            pendingRequests.set(address, r);
+            return await r;
+
+        }
+        catch (err) {
+            return new GeocodeInformation({ results: [], status: extractError(err) });
+
+        }
+        finally {
+        }
+    }
+    else {
+        //console.log('reuse: ' + address);
+    }
+    return await x;
+
+
 
 
 }
+
+
+@EntityClass
+export class GeocodeCache extends Entity<string> {
+    id = new StringColumn();
+    googleApiResult = new StringColumn();
+    createDate = new DateTimeColumn();
+    constructor() {
+        super({
+            name: "GeocodeCache",
+            allowApiRead: false,
+            allowApiCRUD: false
+        });
+    }
+}
+
+
 export class GeocodeInformation {
     constructor(public info: GeocodeResult = null) {
         if (!this.info)
@@ -38,11 +99,12 @@ export class GeocodeInformation {
     }
     static fromString(s: string) {
         try {
-            return new GeocodeInformation(JSON.parse(s));
+            if (s && s.trim() != "")
+                return new GeocodeInformation(JSON.parse(s));
         }
         catch (err) {
-            return new GeocodeInformation();
         }
+        return new GeocodeInformation();
     }
     ok() {
         return this.info.status == "OK";
@@ -65,7 +127,7 @@ export class GeocodeInformation {
     }
     location(): Location {
         if (!this.ok())
-            return { lng: -1, lat: -1 };
+            return { lng: 32.3215, lat: 34.8532 };
         return this.info.results[0].geometry.location;
     }
     getlonglat() {
