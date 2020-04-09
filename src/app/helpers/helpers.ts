@@ -29,13 +29,25 @@ export abstract class HelpersBase extends IdEntity {
     phone = new PhoneColumn("טלפון");
     smsDate = new DateTimeColumn('מועד משלוח SMS');
     company = new CompanyColumn(this.context);
-    totalKm = new NumberColumn();
-    totalTime = new NumberColumn();
+    totalKm = new NumberColumn({ allowApiUpdate: Roles.admin });
+    totalTime = new NumberColumn({ allowApiUpdate: Roles.admin });
     shortUrlKey = new StringColumn({ includeInApi: Roles.admin });
-    eventComment = new StringColumn('הערה');
-    needEscort = new BoolColumn('צריך מלווה');
-    theHelperIAmEscorting = new HelperIdReadonly(this.context, { caption: 'נהג משוייך' });
-    escort = new HelperId(this.context, { caption: 'מלווה' });
+    eventComment = new StringColumn({
+        caption: 'הערה',
+        allowApiUpdate: Roles.admin
+    });
+    needEscort = new BoolColumn({
+        caption: 'צריך מלווה',
+        allowApiUpdate: Roles.admin
+    });
+    theHelperIAmEscorting = new HelperIdReadonly(this.context, {
+        caption: 'נהג משוייך',
+        allowApiUpdate: Roles.admin
+    });
+    escort = new HelperId(this.context, {
+        caption: 'מלווה'
+        , allowApiUpdate: Roles.admin
+    });
 
     getRouteStats(): routeStats {
         return {
@@ -64,6 +76,8 @@ export class Helpers extends HelpersBase {
                 }
 
                 if (context.onServer) {
+                    if (!context.isAllowed(Roles.admin) && this.id.value != context.user.id)
+                        throw "Not Allowed";
                     if (this.password.value && this.password.value != this.password.originalValue && this.password.value != Helpers.emptyPassword) {
                         this.realStoredPassword.value = Helpers.passwordHelper.generateHash(this.password.value);
                     }
@@ -103,9 +117,9 @@ export class Helpers extends HelpersBase {
         });
     }
     allowedIds = new StringColumn({
-        sqlExpression:()=>{
+        sqlExpression: () => {
             let sql = new SqlBuilder();
-            return sql.build(this.id,' || ',this.escort,' || ',this.theHelperIAmEscorting);
+            return sql.build(this.id, ' || ', this.escort, ' || ', this.theHelperIAmEscorting);
         }
     });
     _disableOnSavingRow = false;
