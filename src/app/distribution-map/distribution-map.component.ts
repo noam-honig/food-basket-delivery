@@ -87,15 +87,18 @@ export class DistributionMap implements OnInit, OnDestroy {
   statuses = new Statuses();
   selectedStatus: statusClass;
   async refreshFamilies() {
+    let allInAlll = false;
     let families: familyQueryResult[];
-    if (this.context.isAllowed(Roles.overview))
+    if (this.context.isAllowed(Roles.overview)) {
       families = await DistributionMap.GetLocationsForOverview();
+      allInAlll = true;
+    }
     else
       families = await DistributionMap.GetFamiliesLocations();
     this.statuses.statuses.forEach(element => {
       element.value = 0;
     });
-    let markers = []
+    let markers: google.maps.Marker[] = []
     families.forEach(f => {
 
       let familyOnMap = this.dict.get(f.id);
@@ -146,22 +149,31 @@ export class DistributionMap implements OnInit, OnDestroy {
         this.bounds.extend(familyOnMap.marker.getPosition());
 
     });
-    var x = new MarkerClusterer(this.map, markers, {
-      //imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
-      imagePath: 'http://localhost:4200/assets/test',
-      clusterClass: 'map-cluster',
-      styles: [{
-        textColor: 'black',
-        //  url: '/assets/test0.png',
-        height: 17,
-        width: 50,
+    if (allInAlll || markers.length > 4000)
+      var x = new MarkerClusterer(this.map, markers, {
+        //imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+        imagePath: 'http://localhost:4200/assets/test',
+        clusterClass: 'map-cluster',
+        minimumClusterSize: 10,
+        averageCenter: true,
+        styles: [{
+          textColor: 'black',
+          //  url: '/assets/test0.png',
+          height: 17,
+          width: 50,
 
-        anchorText: [2, 0]
+          anchorText: [2, 0]
 
-      }],
-      calculator: (m, x) => ({ index: 2, text: m.length.toString() , title: m.length.toString() + 'title' }),
-      gridSize: 40
-    });
+        }],
+        calculator: (m, x) => ({ index: 2, text: m.length.toString(), title: m.length.toString() + 'title' }),
+        gridSize: 40
+      });
+
+    else {
+      for (const m of markers) {
+        m.setMap(this.map);
+      }
+    }
     this.updateChart();
   }
   @ServerFunction({ allowed: Roles.admin })
@@ -215,7 +227,7 @@ export class DistributionMap implements OnInit, OnDestroy {
           let where = [f.deliverStatus.isSuccess().and(f.deliveryStatusDate.isGreaterOrEqualTo(new Date(2020, 2, 18)))];
           return where;
         }
-        
+
       })))));
       result.push(...mapSqlResult((await dp.execute(sql.query({
         select: () => [fd.id, fd.archive_addressLatitude, fd.archive_addressLongitude, fd.deliverStatus],
@@ -224,7 +236,7 @@ export class DistributionMap implements OnInit, OnDestroy {
           let where = [fd.deliverStatus.isSuccess().and(fd.deliveryStatusDate.isGreaterOrEqualTo(new Date(2020, 2, 18)))];
           return where;
         }
-        
+
       })))));
     }
     return result;
