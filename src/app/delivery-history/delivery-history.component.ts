@@ -44,7 +44,7 @@ export class DeliveryHistoryComponent implements OnInit {
   });
 
   helperInfo: GridSettings<helperHistoryInfo>;
-  
+
 
   private getEndOfMonth(): Date {
     return new Date(this.fromDate.value.getFullYear(), this.fromDate.value.getMonth() + 1, 0);
@@ -63,7 +63,7 @@ export class DeliveryHistoryComponent implements OnInit {
   constructor(private context: Context, private busy: BusyService) {
     this.helperStorage = new InMemoryDataProvider();
 
-     
+
     this.helperInfo = context.for(helperHistoryInfo, this.helperStorage).gridSettings({
       hideDataArea: true,
       numOfColumnsInGrid: 6,
@@ -106,10 +106,10 @@ export class DeliveryHistoryComponent implements OnInit {
     this.toDate.value = this.getEndOfMonth();
   }
   private async refreshHelpers() {
-    
+
     var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.fromDate.rawValue, this.toDate.rawValue);
-    let rows:any[] = this.helperStorage.rows[this.context.for(helperHistoryInfo).create().defs.dbName];
-    rows.splice(0,rows.length,...x);
+    let rows: any[] = this.helperStorage.rows[this.context.for(helperHistoryInfo).create().defs.dbName];
+    rows.splice(0, rows.length, ...x);
     this.helperInfo.getRecords();
   }
 
@@ -144,8 +144,8 @@ export class DeliveryHistoryComponent implements OnInit {
   }
 
   async saveToExcel() {
-    await saveToExcel(this.context.for(FamilyDeliveriesStats), this.deliveries, "משלוחים", this.busy, (d: FamilyDeliveriesStats, c) => c == d.id || c == d.family,undefined,
-    async (f,addColumn)=>await f.basketType.addBasketTypes(addColumn));
+    await saveToExcel(this.context.for(FamilyDeliveriesStats), this.deliveries, "משלוחים", this.busy, (d: FamilyDeliveriesStats, c) => c == d.id || c == d.family, undefined,
+      async (f, addColumn) => await f.basketType.addBasketTypes(addColumn));
   }
   async saveToExcelHelpers() {
     await saveToExcel(this.context.for(helperHistoryInfo), this.helperInfo, "מתנדבים", this.busy, (d: helperHistoryInfo, c) => c == d.courier);
@@ -235,7 +235,7 @@ export class helperHistoryInfo extends Entity<string>{
   dates = new NumberColumn("תאריכים");
   constructor(private context: Context) {
     super({ name: 'helperHistoryInfo', allowApiRead: false, allowApiCRUD: false });
-    
+
   }
 }
 
@@ -282,7 +282,7 @@ export class FamilyDeliveriesStats extends Entity<string> {
           where: () => [f.deliverStatus.isSuccess()]
         },
           {
-            select: () => [f.id, f.name, d.id,
+            select: () => [d.family, d.familyName, d.id,
             d.basketType,
             d.deliverStatus,
             d.courier,
@@ -293,15 +293,15 @@ export class FamilyDeliveriesStats extends Entity<string> {
             d.courierAssignUser,
             d.courierAssingTime,
             d.deliveryStatusUser],
-            from: d,
-            outerJoin: () => [{ to: f, on: () => [sql.eq(f.id, d.family)] }]
+            from: d
+
           });
 
         return r + ' result';
       }
 
     });
-    
+
   }
 
 }
