@@ -530,6 +530,22 @@ export class FamiliesComponent implements OnInit {
                 f.deliverStatus.rawValue = status;
         });
     }
+
+
+    async cancelAssignment() {
+        if (await this.dialog.YesNoPromise('האם לבטל שיוך ל-' + this.families.totalRows + translate(' משפחות?'))) {
+            this.dialog.Info(await FamiliesComponent.cancelAssignmentOnServer(this.packWhere()));
+            this.refresh();
+        }
+
+    }
+    @ServerFunction({ allowed: Roles.admin })
+    static async cancelAssignmentOnServer(info: serverUpdateInfo,  context?: Context) {
+        return await FamiliesComponent.processFamilies(info, context, f => {
+            if (f.deliverStatus.value != DeliveryStatus.RemovedFromList)
+                f.courier.value = '';
+        });
+    }
     async updateBasket() {
         let s = new BasketId(this.context);
         let ok = false;
