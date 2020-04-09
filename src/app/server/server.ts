@@ -78,7 +78,7 @@ serverInit().then(async (dataSource) => {
 
             let lastMessage = new Date();
             Families.SendMessageToBrowsers = (x, c) => {
-                if (new Date().valueOf() - lastMessage.valueOf() > 3000) {
+                if (new Date().valueOf() - lastMessage.valueOf() > 1000) {
                     lastMessage = new Date();
                     serverEvents.SendMessage(x, c)
                 }
