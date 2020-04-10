@@ -76,7 +76,7 @@ export class Helpers extends HelpersBase {
                 }
 
                 if (context.onServer) {
-                    if (!context.isAllowed(Roles.admin) && this.id.value != context.user.id)
+                    if (!this.isNew() && !context.isAllowed(Roles.admin) && this.id.value != context.user.id)
                         throw "Not Allowed";
                     if (this.password.value && this.password.value != this.password.originalValue && this.password.value != Helpers.emptyPassword) {
                         this.realStoredPassword.value = Helpers.passwordHelper.generateHash(this.password.value);
