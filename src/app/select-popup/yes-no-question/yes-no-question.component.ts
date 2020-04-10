@@ -20,7 +20,7 @@ export class YesNoQuestionComponent implements OnInit {
 
   ) {
     dialogRef.afterClosed().subscribe(s => {
-      if (!this.yes && this.args.onNo)
+      if (!this.yes && this.args && this.args.onNo)
         this.args.onNo();
     });
   }

@@ -228,4 +228,12 @@
 
 
     </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            מחיקת נתונים
+        </mat-expansion-panel-header>
+        לחיצה על הכפתור תמחוק את כל המשפחות בסטטוס "הוצא מהרשימות" מהמערכת. היסטורית המשלוחים שלהן תישמרנה.
+        <br><br>
+        <button mat-raised-button (click)="deleteFamilies()" color="accent">מחק את כל המשפחות בסטטוס "הוצא מהרשימות"</button>
+    </mat-expansion-panel>
 </mat-accordion>
