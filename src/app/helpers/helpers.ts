@@ -76,7 +76,9 @@ export class Helpers extends HelpersBase {
                 }
 
                 if (context.onServer) {
-                    if (!this.isNew() && !context.isAllowed(Roles.admin) && this.id.value != context.user.id)
+                    if (!this.isNew() && !context.isAllowed(Roles.admin) && this.id.value != context.user.id) //למנוע ממשתמש שאינו ADMIN מעדכון הפרטים של UESR שהוא לא הוא.
+                        throw "Not Allowed";
+                    if (!this.isNew() && this.admin.value && !context.isAllowed(Roles.admin))//למנוע מצב שמישהו נכנס לחשבון ADMIN דרך הקישור לפי ה SHORT URL KEY ואז משנה את הסיסמה של ADMIN ופורץ למערכת.
                         throw "Not Allowed";
                     if (this.password.value && this.password.value != this.password.originalValue && this.password.value != Helpers.emptyPassword) {
                         this.realStoredPassword.value = Helpers.passwordHelper.generateHash(this.password.value);
