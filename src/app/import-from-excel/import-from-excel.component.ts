@@ -875,6 +875,9 @@ export class ImportFromExcelComponent implements OnInit {
                         case RemovedFromListExcelImportStrategy.showInUpdate:
                             result.updateRows.push(info);
                             break;
+                        case RemovedFromListExcelImportStrategy.ignore:
+                            result.newRows.push(info);
+                            break;
                     }
                 }
                 else if (hasDifference) {
@@ -938,7 +941,15 @@ export class ImportFromExcelComponent implements OnInit {
         }
     }
     moveFromErrorToAdd(r: excelRowInfo) {
-        this.dialog.YesNoQuestion(translate("להעביר את משפחת ") + r.name + translate(" למשפחות להוספה?"), () => {
+        let name = r.name;
+        if (!name) {
+            name = "ללא שם";
+        }
+        this.dialog.YesNoQuestion(translate("להעביר את משפחת ") + name + translate(" למשפחות להוספה?"), () => {
+            if (!r.name) {
+                r.name = name;
+                r.values[this.f.name.defs.key] = { newValue: r.name, newDisplayValue: r.name };
+            }
             let x = this.errorRows.indexOf(r);
             this.errorRows.splice(x, 1);
             this.newRows.push(r);
