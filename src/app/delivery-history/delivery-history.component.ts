@@ -279,7 +279,7 @@ export class FamilyDeliveriesStats extends Entity<string> {
           ],
 
           from: f,
-          where: () => [f.deliverStatus.isSuccess()]
+          where: () => [f.deliverStatus.isAResultStatus()]
         },
           {
             select: () => [d.family, d.familyName, d.id,
