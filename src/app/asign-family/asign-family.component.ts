@@ -21,7 +21,7 @@ import { Context } from '@remult/core';
 import { BasketType } from '../families/BasketType';
 
 import { CitiesStats } from '../families/stats-action';
-import { SqlBuilder } from '../model-shared/types';
+import { SqlBuilder, extractError } from '../model-shared/types';
 import { BusyService } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
 import { Groups, GroupsStats } from '../manage/manage.component';
@@ -241,7 +241,7 @@ export class AsignFamilyComponent implements OnInit {
 
     area: DataAreaSettings<any> = new DataAreaSettings<any>({});
     changeShowCompany() {
-        
+
         this.settings.save();
     }
 
@@ -804,7 +804,12 @@ export class AsignFamilyComponent implements OnInit {
     async verifyHelperExistance() {
 
         if (this.showSave()) {
-            await this.helper.save();
+            try {
+                await this.helper.save();
+            } catch (err) {
+                this.dialog.Error(extractError(err));
+
+            }
         }
         Helpers.addToRecent(this.helper);
     }
