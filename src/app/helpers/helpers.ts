@@ -1,5 +1,5 @@
 
-import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, EntityOptions, UserInfo } from '@remult/core';
+import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, checkForDuplicateValue, StringColumn, BoolColumn, EntityOptions, UserInfo, FilterBase } from '@remult/core';
 import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, SqlBuilder } from '../model-shared/types';
 
 
@@ -8,6 +8,7 @@ import { helpers } from 'chart.js';
 import { Roles } from "../auth/roles";
 import { JWTCookieAuthorizationHelper } from '@remult/server';
 import { SelectCompanyComponent } from "../select-company/select-company.component";
+import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 
 
 
@@ -195,7 +196,7 @@ export class Helpers extends HelpersBase {
 
 export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 
-    constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>) {
+    constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>,filter?:(helper: HelpersAndStats) => FilterBase) {
         super({
             dataControlSettings: () =>
                 ({
@@ -203,7 +204,7 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
                     hideDataOnInput: true,
                     width: '200',
                     click: async () => this.context.openDialog((await import('../select-helper/select-helper.component')).SelectHelperComponent,
-                        x => x.args = { onSelect: s => this.value = (s ? s.id.value : '') })
+                        x => x.args = {filter, onSelect: s => this.value = (s ? s.id.value : '') })
                 })
         }, settingsOrCaption);
     }

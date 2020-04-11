@@ -9,7 +9,7 @@ import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelper
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
 
-import { Context, SqlDatabase } from '@remult/core';
+import { Context, SqlDatabase, DataAreaSettings } from '@remult/core';
 import { ServerFunction } from '@remult/core';
 import { SqlBuilder } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -20,7 +20,7 @@ import { BusyService } from '@remult/core';
 import { YesNo } from '../families/YesNo';
 import { Roles, AdminGuard, OverviewOrAdminGuard } from '../auth/roles';
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
-import { Helpers } from '../helpers/helpers';
+import { Helpers, HelperId } from '../helpers/helpers';
 import MarkerClusterer, { ClusterIconInfo } from "@google/markerclustererplus";
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { Sites } from '../sites/sites';
@@ -86,6 +86,11 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   statuses = new Statuses();
   selectedStatus: statusClass;
+  filterCourier = new HelperId(this.context, {
+    caption: 'משנע לסינון',
+    valueChange: () => this.refreshFamilies()
+  }, h => h.allFamilies.isGreaterThan(0));
+
   overviewMap = false;
   async refreshFamilies() {
     let allInAlll = false;
@@ -101,6 +106,7 @@ export class DistributionMap implements OnInit, OnDestroy {
       element.value = 0;
     });
     let markers: google.maps.Marker[] = []
+
     families.forEach(f => {
 
       let familyOnMap = this.dict.get(f.id);
@@ -143,7 +149,7 @@ export class DistributionMap implements OnInit, OnDestroy {
         familyOnMap.prevStatus = status;
         familyOnMap.prevCourier = f.courier;
       }
-      familyOnMap.marker.setVisible(!this.selectedStatus || this.selectedStatus == status);
+      familyOnMap.marker.setVisible((!this.selectedStatus || this.selectedStatus == status) && (!this.filterCourier.value || this.filterCourier.value == familyOnMap.prevCourier));
 
 
       familyOnMap.marker.setLabel(this.showHelper && f.courierName ? f.courierName + '...' : '');

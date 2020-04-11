@@ -1,4 +1,5 @@
-<a [style.visibility]="selectedStatus?'visible':'hidden'"  (click)="selectedStatus = undefined;refreshFamilies()" >הצג את כל המשפחות</a>  
+<a [style.visibility]="selectedStatus?'visible':'hidden'" (click)="selectedStatus = undefined;refreshFamilies()">הצג את
+  כל המשפחות</a>
 <div style="display: block;width:350px;">
   <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType" [options]="options"
     [colors]="colors" (chartClick)="chartClicked($event)"></canvas>
@@ -11,5 +12,8 @@
 <button mat-mini-fab style="margin-bottom:5px" (click)="refreshFamilies()">
   <mat-icon>refresh</mat-icon>
 </button>
-<mat-checkbox (change)="refreshFamilies()" [(ngModel)]="showHelper" style="margin-right: 10px;" *ngIf="!overviewMap">הצג משנעים</mat-checkbox>
-
+<mat-checkbox (change)="refreshFamilies()" [(ngModel)]="showHelper" style="margin-right: 10px;" *ngIf="!overviewMap">הצג
+  משנעים</mat-checkbox>
+<data-control [column]="filterCourier" style="display: inline-block;
+width: 200px;
+margin-right: 10px;"></data-control>
