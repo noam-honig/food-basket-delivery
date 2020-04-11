@@ -53,8 +53,7 @@ const routes: Routes = [
   DistributionMap.route,
   AddressProblemComponent.route,
   HelpersComponent.route,
-  { path: 'overview', component: OverviewComponent, canActivate: [OverviewGuard] },
-  { path: 'tr', component: TokenReplacerComponent, canActivate: [OverviewGuard], data: { name: 'סרטון החלוקה', hide: true }  },
+  { path: 'tr', component: TokenReplacerComponent, canActivate: [OverviewGuard], data: { name: 'בונה שאילתות', hide: true }  },
 
   DeliveryHistoryComponent.route,
   { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { name: 'סרטון החלוקה', hide: true } },
