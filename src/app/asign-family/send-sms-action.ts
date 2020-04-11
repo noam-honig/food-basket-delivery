@@ -89,7 +89,7 @@ export interface SendSmsResponse {
 
 }
 
-class SendSmsUtils {
+export class SendSmsUtils {
     un = process.env.SMS_UN;
     pw = process.env.SMS_PW;
     accid = process.env.SMS_ACCID;

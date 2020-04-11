@@ -6,7 +6,7 @@ import { Helpers } from './helpers';
 import { Families } from '../families/families';
 import { Route } from '@angular/router';
 
-import { ServerFunction, DataControlSettings, DataControlInfo } from '@remult/core';
+import { ServerFunction, DataControlSettings, DataControlInfo, ServerContext } from '@remult/core';
 import { Context } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from '@remult/core';
@@ -17,6 +17,8 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { saveToExcel } from '../shared/saveToExcel';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
+import { Sites } from '../sites/sites';
+import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 
 @Component({
   selector: 'app-helpers',
@@ -118,6 +120,38 @@ export class HelpersComponent implements OnInit {
       h.realStoredPassword.value = '';
       await h.save();
     });
+  }
+  async sendInvite() {
+    let r = await HelpersComponent.sendInvite(this.helpers.currentRow.id.value);
+    this.dialog.Info(r);
+  }
+  @ServerFunction({ allowed: Roles.admin })
+  static async sendInvite(helperId: string, context?: ServerContext) {
+    let h = await context.for(Helpers).findFirst(x => x.id.isEqualTo(helperId));
+    if (!h)
+      return 'לא מתאים להזמנה';
+    if (!h.admin.value)
+      return 'לא מתאים להזמנה';
+    let url = context.getOrigin() + '/' + Sites.getOrganizationFromContext(context);
+    let s = await ApplicationSettings.getAsync(context);
+    let hasPassword = h.password.value && h.password.value.length > 0;
+    let message = `שלום ${h.name.value}
+ברוך הבא לסביבה של ${s.organisationName.value}.
+אנא הכנס למערכת באמצעות הקישור:
+${url}
+`;
+    if (!hasPassword) {
+      message += `מכיוון שלא מוגדרת לך סיסמה עדיין - אנא הכנס בפעם הראשונה, על ידי הקלדת מספר הטלפון שלך ללא סיסמה ולחיצה על הכפתור "כניסה". המערכת תבקש שתגדיר סיסמה וזו תהיה סיסמתך.
+בהצלחה`
+    }
+    let from = await context.for(Helpers).findFirst(h => h.id.isEqualTo(context.user.id));
+    await new SendSmsUtils().sendSms(h.phone.value, from.phone.value, message, context.getOrigin(), Sites.getOrganizationFromContext(context));
+    return 'הזמנה נשלחה בהצלחה'
+
+
+
+
+
   }
 
 
