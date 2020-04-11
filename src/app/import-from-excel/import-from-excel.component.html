@@ -13,7 +13,7 @@
 
                 <button (click)="loadSettings()" mat-raised-button>טען הגדרות</button>
                 <button (click)="saveSettings()" mat-raised-button>שמור הגדרות</button>
-                <button (click)="this.stepper.next()" mat-raised-button  color="accent">המשך לשלב הבא</button>
+                <button (click)="saveSettings(); this.stepper.next()" mat-raised-button  color="accent">המשך לשלב הבא</button>
 
                 <!--
                 <h3>עמודות מהאקסל</h3>
