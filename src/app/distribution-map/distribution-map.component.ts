@@ -115,10 +115,11 @@ export class DistributionMap implements OnInit, OnDestroy {
         markers.push(familyOnMap.marker);
 
         let family: Families;
-        /*  google.maps.event.addListener(familyOnMap.marker, 'click', async () => {
+        if (!allInAlll)
+          google.maps.event.addListener(familyOnMap.marker, 'click', async () => {
             family = await this.context.for(Families).findFirst(fam => fam.id.isEqualTo(f.id));
             this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { f: family });
-          });*/
+          });
       }
 
       let status: statusClass = this.statuses.getBy(f.status, f.courier);
@@ -154,7 +155,7 @@ export class DistributionMap implements OnInit, OnDestroy {
         //imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
         imagePath: 'http://localhost:4200/assets/test',
         clusterClass: 'map-cluster',
-        minimumClusterSize: 10,
+        minimumClusterSize: 13,
         averageCenter: true,
         styles: [{
           textColor: 'black',
