@@ -20,6 +20,8 @@ import { ApplicationSettings, RemovedFromListExcelImportStrategy } from '../mana
 import { translate } from '../translate';
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 import { Groups } from '../manage/manage.component';
+import { jsonToXlsx } from '../shared/saveToExcel';
+import { Sites } from '../sites/sites';
 
 
 @Component({
@@ -105,7 +107,9 @@ export class ImportFromExcelComponent implements OnInit {
                                 this.dialog.Info(i.rowInExcel + ' ' + (i.name) + " נשאר עוד " + timeLeft.toFixed(1) + " דקות");
                             }
                             await ImportFromExcelComponent.insertRows(rowsToInsert);
-
+                            for (const r of rowsToInsert) {
+                                r.created = true;
+                            }
                             this.identicalRows.push(...rowsToInsert);
                             rowsToInsert = [];
                         }
@@ -115,6 +119,9 @@ export class ImportFromExcelComponent implements OnInit {
                     }
                     if (rowsToInsert.length > 0) {
                         await ImportFromExcelComponent.insertRows(rowsToInsert);
+                        for (const r of rowsToInsert) {
+                            r.created = true;
+                        }
                         this.identicalRows.push(...rowsToInsert);
                     }
                     this.newRows = [];
@@ -125,6 +132,7 @@ export class ImportFromExcelComponent implements OnInit {
                     this.dialog.Error("הוספה נכשלה:" + extractError(err));
                     this.newRows = this.newRows.filter(x => this.identicalRows.indexOf(x) < 0);
                 }
+                this.createImportReport();
 
             });
 
@@ -973,10 +981,47 @@ export class ImportFromExcelComponent implements OnInit {
         await this.iterateExcelFile(false);
     }
 
+    async createImportReport() {
+        let rows: importReportRow[] = [];
+        let addRows = (from: excelRowInfo[], status: string, updateRows?: boolean) => {
+            for (const f of from) {
+                let r: importReportRow = {
+                    "שורה באקסל המקורי": f.rowInExcel,
+                    סטטוס: status,
+                    "שגיאה": f.error
+                };
+                if (f.created) {
+                    r.סטטוס = 'נוספה לאתר';
+                    f.error = '';
+                }
+                for (const col of this.columnsInCompare) {
+                    let v = f.values[col.defs.key];
+                    if (v)
+                        r[col.defs.caption] = updateRows ? v.existingDisplayValue : v.newDisplayValue;
+                    if (r[col.defs.caption] === undefined)
+                        r[col.defs.caption] = '';
+                }
+                rows.push(r);
+            }
+        };
+        addRows(this.newRows, 'לא נקלטה');
+        addRows(this.updateRows, 'קיימת עם עדכון', true);
+        addRows(this.identicalRows, 'קיימת זהה');
+        addRows(this.errorRows, 'שגיאה');
+        rows.sort((a, b) => a["שורה באקסל המקורי"] - b["שורה באקסל המקורי"]);
+        await jsonToXlsx(this.busy, rows, Sites.getOrganizationFromContext(this.context) + ' סיכום קליטה '+new Date().toLocaleString('he').replace(/:/g,'-').replace(/\./g,'-').replace(/,/g,'') + this.filename);
+    }
+
     async updateFamily(i: duplicateFamilyInfo) {
         let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(i.id));
         this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { f: f });
     }
+}
+interface importReportRow {
+    "שורה באקסל המקורי": number;
+    "סטטוס": string;
+    "שגיאה"?: string;
+    [caption: string]: any;
 }
 
 
@@ -1049,6 +1094,7 @@ interface excelRowInfo {
     phone2ForDuplicateCheck: string;
     valid: boolean;
     error?: string;
+    created?: boolean;
 
     duplicateFamilyInfo?: duplicateFamilyInfo[];
     values: { [key: string]: updateColumns };
