@@ -241,7 +241,7 @@ export class AsignFamilyComponent implements OnInit {
 
     area: DataAreaSettings<any> = new DataAreaSettings<any>({});
     changeShowCompany() {
-
+        this.initArea();
         this.settings.save();
     }
 
