@@ -102,7 +102,8 @@ export class AuthService {
         let requirePassword = false;
 
         await context.for(Helpers).foreach(h => h.phone.isEqualTo(user), async h => {
-            if (!h.realStoredPassword.value || Helpers.passwordHelper.verify(password, h.realStoredPassword.value)) {
+            let noPassword = h.realStoredPassword.value.length == 0;
+            if (noPassword || Helpers.passwordHelper.verify(password, h.realStoredPassword.value)) {
                 result = {
 
                     id: h.id.value,
@@ -111,7 +112,7 @@ export class AuthService {
                     theHelperIAmEscortingId:h.theHelperIAmEscorting.value,
                     escortedHelperName:h.theHelperIAmEscorting.value?(await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value :''
                 };
-                if (h.realStoredPassword.value.length == 0 && h.admin.value) {
+                if (noPassword && h.admin.value) {
                     requirePassword = true;
                 }
                 else {

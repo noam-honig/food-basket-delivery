@@ -76,9 +76,9 @@ export class Helpers extends HelpersBase {
                 }
 
                 if (context.onServer) {
-                    if (!this.isNew() && !context.isAllowed(Roles.admin) && this.id.value != context.user.id) //למנוע ממשתמש שאינו ADMIN מעדכון הפרטים של UESR שהוא לא הוא.
+                    if (!this.isNew() && !context.isAllowed(Roles.admin) && this.id.originalValue != context.user.id) //למנוע ממשתמש שאינו ADMIN מעדכון הפרטים של UESR שהוא לא הוא.
                         throw "Not Allowed";
-                    if (!this.isNew() && this.admin.value && !context.isAllowed(Roles.admin) && this.realStoredPassword.value && this.realStoredPassword.value.length > 0)//למנוע מצב שמישהו נכנס לחשבון ADMIN דרך הקישור לפי ה SHORT URL KEY ואז משנה את הסיסמה של ADMIN ופורץ למערכת.
+                    if (!this.isNew() && this.admin.originalValue && !context.isAllowed(Roles.admin) && this.realStoredPassword.originalValue && this.realStoredPassword.originalValue.length > 0)//למנוע מצב שמישהו נכנס לחשבון ADMIN דרך הקישור לפי ה SHORT URL KEY ואז משנה את הסיסמה של ADMIN ופורץ למערכת.
                         throw "Not Allowed";
                     if (this.password.value && this.password.value != this.password.originalValue && this.password.value != Helpers.emptyPassword) {
                         this.realStoredPassword.value = Helpers.passwordHelper.generateHash(this.password.value);
@@ -158,7 +158,7 @@ export class Helpers extends HelpersBase {
 
 
     veryUrlKeyAndReturnTrueIfSaveRequired() {
-        if (!this.shortUrlKey.value) {
+        if (!this.shortUrlKey.value||this.shortUrlKey.value.length<10) {
             this.shortUrlKey.value = this.makeid();
             return true;
         }
@@ -168,7 +168,7 @@ export class Helpers extends HelpersBase {
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-        for (var i = 0; i < 5; i++)
+        for (var i = 0; i < 10; i++)
             text += possible.charAt(Math.floor(Math.random() * possible.length));
         return text;
     }
