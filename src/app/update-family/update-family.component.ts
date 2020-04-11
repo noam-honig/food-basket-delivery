@@ -78,7 +78,11 @@ export class UpdateFamilyComponent implements OnInit {
           families.phone1,
           families.phone1Description],
         [families.phone2,
-        families.phone2Description]
+        families.phone2Description],
+        [families.phone3,
+        families.phone3Description],
+        [families.phone4,
+        families.phone4Description]
       ]
     });
 
@@ -108,7 +112,7 @@ export class UpdateFamilyComponent implements OnInit {
     });
   }
   deliveryInfo(fd: FamilyDeliveries) {
-   
+
 
     this.context.openDialog(InputAreaComponent, x => x.args = {
       title: 'פרטי משלוח',
@@ -123,7 +127,7 @@ export class UpdateFamilyComponent implements OnInit {
           fd.courierAssignUser
         ].map(x => ({
           column: x,
-            readOnly: true
+          readOnly: true
         } as DataControlSettings<any>))
       },
       ok: () => { },

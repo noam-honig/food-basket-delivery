@@ -363,6 +363,8 @@ export class ImportFromExcelComponent implements OnInit {
             tz2: f.tz2.value,
             phone1ForDuplicateCheck: f.phone1.value,
             phone2ForDuplicateCheck: f.phone2.value,
+            phone3ForDuplicateCheck: f.phone3.value,
+            phone4ForDuplicateCheck: f.phone4.value,
             valid: true,
             rowInExcel: row,
             values: {}
@@ -598,7 +600,7 @@ export class ImportFromExcelComponent implements OnInit {
             }, columns: [this.f.deliverStatus]
         });
 
-        for (const c of [this.f.phone1, this.f.phone2, this.f.socialWorkerPhone1, this.f.socialWorkerPhone2]) {
+        for (const c of [this.f.phone1, this.f.phone2, this.f.phone3, this.f.phone4, this.f.socialWorkerPhone1, this.f.socialWorkerPhone2]) {
             this.columns.push({
                 key: c.defs.key,
                 name: c.defs.caption,
@@ -623,6 +625,8 @@ export class ImportFromExcelComponent implements OnInit {
         ]);
         for (const col of [this.f.phone1Description,
         this.f.phone2Description,
+        this.f.phone3Description,
+        this.f.phone4Description,
         this.f.internalComment,
         this.f.deliveryComments,
         this.f.addressComment]) {
@@ -725,9 +729,16 @@ export class ImportFromExcelComponent implements OnInit {
                         if (!this.settings.checkDuplicatePhones.value) {
                             f.phone1ForDuplicateCheck = '';
                             f.phone2ForDuplicateCheck = '';
+                            f.phone3ForDuplicateCheck = '';
+                            f.phone4ForDuplicateCheck = '';
                         }
 
-                        if (this.settings.checkIfFamilyExistsInFile.value && (exists(f.tz, usedTz, 'תעודת זהות') || this.settings.checkDuplicatePhones.value && (exists(f.phone1ForDuplicateCheck, usedPhone, 'טלפון 1') || exists(f.phone2ForDuplicateCheck, usedPhone, 'טלפון 2')))) {
+                        if (this.settings.checkIfFamilyExistsInFile.value && (exists(f.tz, usedTz, 'תעודת זהות') || this.settings.checkDuplicatePhones.value &&
+                            (exists(f.phone1ForDuplicateCheck, usedPhone, 'טלפון 1')
+                                || exists(f.phone2ForDuplicateCheck, usedPhone, 'טלפון 2')
+                                || exists(f.phone3ForDuplicateCheck, usedPhone, 'טלפון 3')
+                                || exists(f.phone4ForDuplicateCheck, usedPhone, 'טלפון 4')
+                            ))) {
                             this.errorRows.push(f);
                         }
 
@@ -809,7 +820,7 @@ export class ImportFromExcelComponent implements OnInit {
         if (info.tz) {
             r.push(' מספר זהות זהה');
         }
-        if (info.phone1 || info.phone2) {
+        if (info.phone1 || info.phone2 || info.phone3 || info.phone4) {
             r.push(' מספר טלפון זהה');
         }
         if (info.nameDup) {
@@ -827,7 +838,7 @@ export class ImportFromExcelComponent implements OnInit {
         } as serverCheckResults;
         let settings = await ApplicationSettings.getAsync(context);
         for (const info of excelRowInfo) {
-            info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz, info.tz2, info.phone1ForDuplicateCheck, info.phone2ForDuplicateCheck, undefined, true, context, db);
+            info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz, info.tz2, info.phone1ForDuplicateCheck, info.phone2ForDuplicateCheck, info.phone3ForDuplicateCheck, info.phone4ForDuplicateCheck, undefined, true, context, db);
 
             if (!info.duplicateFamilyInfo || info.duplicateFamilyInfo.length == 0) {
                 result.newRows.push(info);
@@ -1009,7 +1020,7 @@ export class ImportFromExcelComponent implements OnInit {
         addRows(this.identicalRows, 'קיימת זהה');
         addRows(this.errorRows, 'שגיאה');
         rows.sort((a, b) => a["שורה באקסל המקורי"] - b["שורה באקסל המקורי"]);
-        await jsonToXlsx(this.busy, rows, Sites.getOrganizationFromContext(this.context) + ' סיכום קליטה '+new Date().toLocaleString('he').replace(/:/g,'-').replace(/\./g,'-').replace(/,/g,'') + this.filename);
+        await jsonToXlsx(this.busy, rows, Sites.getOrganizationFromContext(this.context) + ' סיכום קליטה ' + new Date().toLocaleString('he').replace(/:/g, '-').replace(/\./g, '-').replace(/,/g, '') + this.filename);
     }
 
     async updateFamily(i: duplicateFamilyInfo) {
@@ -1092,6 +1103,8 @@ interface excelRowInfo {
     tz2: string;
     phone1ForDuplicateCheck: string;
     phone2ForDuplicateCheck: string;
+    phone3ForDuplicateCheck: string;
+    phone4ForDuplicateCheck: string;
     valid: boolean;
     error?: string;
     created?: boolean;

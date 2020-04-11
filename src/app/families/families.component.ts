@@ -247,6 +247,8 @@ export class FamiliesComponent implements OnInit {
                 }
                 addColumn("טלפון1X", fixPhone(f.phone1), 's');
                 addColumn("טלפון2X", fixPhone(f.phone2), 's');
+                addColumn("טלפון3X", fixPhone(f.phone3), 's');
+                addColumn("טלפון4X", fixPhone(f.phone4), 's');
                 await f.basketType.addBasketTypes(addColumn);
 
             });
@@ -381,6 +383,10 @@ export class FamiliesComponent implements OnInit {
                 families.phone1Description,
                 families.phone2,
                 families.phone2Description,
+                families.phone3,
+                families.phone3Description,
+                families.phone4,
+                families.phone4Description,
                 families.courier,
                 families.fixedCourier,
                 {

@@ -99,6 +99,10 @@ export class Families extends IdEntity {
               fd.archive_phone1Description.value = this.phone1Description.originalValue;
               fd.archive_phone2.value = this.phone2.originalValue;
               fd.archive_phone2Description.value = this.phone2Description.originalValue;
+              fd.archive_phone3.value = this.phone3.originalValue;
+              fd.archive_phone3Description.value = this.phone3Description.originalValue;
+              fd.archive_phone4.value = this.phone4.originalValue;
+              fd.archive_phone4Description.value = this.phone4Description.originalValue;
               fd.archive_addressLongitude.value = this.addressLongitude.originalValue;
               fd.archive_addressLatitude.value = this.addressLatitude.originalValue;
               await fd.save();
@@ -117,7 +121,7 @@ export class Families extends IdEntity {
               this.courier.value = this.fixedCourier.value;
             }
             if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
-              let geo = await GetGeoInformation(this.address.value,context);
+              let geo = await GetGeoInformation(this.address.value, context);
               this.addressApiResult.value = geo.saveToString();
               this.city.value = '';
               if (geo.ok()) {
@@ -220,6 +224,10 @@ export class Families extends IdEntity {
   phone1Description = new StringColumn('הערות לטלפון 1');
   phone2 = new PhoneColumn({ caption: "טלפון 2", valueChange: () => this.delayCheckDuplicateFamilies() });
   phone2Description = new StringColumn('הערות לטלפון 2');
+  phone3 = new PhoneColumn({ caption: "טלפון 3",  valueChange: () => this.delayCheckDuplicateFamilies() });
+  phone3Description = new StringColumn('הערות לטלפון 3');
+  phone4 = new PhoneColumn({ caption: "טלפון 4", valueChange: () => this.delayCheckDuplicateFamilies() });
+  phone4Description = new StringColumn('הערות לטלפון 4');
 
 
 
@@ -555,11 +563,13 @@ export class Families extends IdEntity {
     }
   }
   async checkDuplicateFamilies() {
-    this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name.value, this.tz.value, this.tz2.value, this.phone1.value, this.phone2.value, this.id.value);
+    this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name.value, this.tz.value, this.tz2.value, this.phone1.value, this.phone2.value, this.phone3.value, this.phone4.value, this.id.value);
     this.tz.validationError = undefined;
     this.tz2.validationError = undefined;
     this.phone1.validationError = undefined;
     this.phone2.validationError = undefined;
+    this.phone3.validationError = undefined;
+    this.phone4.validationError = undefined;
     this.name.validationError = undefined;
     let foundExactName = false;
     for (const d of this.duplicateFamilies) {
@@ -572,6 +582,10 @@ export class Families extends IdEntity {
         this.phone1.validationError = errorText;
       if (d.phone2)
         this.phone2.validationError = errorText;
+      if (d.phone3)
+        this.phone3.validationError = errorText;
+      if (d.phone4)
+        this.phone4.validationError = errorText;
       if (d.nameDup && this.name.value != this.name.originalValue) {
         if (!foundExactName)
           this.name.validationError = errorText;
@@ -585,7 +599,7 @@ export class Families extends IdEntity {
 
   }
   @ServerFunction({ allowed: Roles.admin, blockUser: false })
-  static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, id: string, exactName: boolean = false, context?: Context, db?: SqlDatabase) {
+  static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, phone3: string, phone4: string, id: string, exactName: boolean = false, context?: Context, db?: SqlDatabase) {
     let result: duplicateFamilyInfo[] = [];
 
     var sql = new SqlBuilder();
@@ -596,8 +610,10 @@ export class Families extends IdEntity {
     };
     let tzCol = sql.or(compareAsNumber(f.tz, tz), compareAsNumber(f.tz2, tz));
     let tz2Col = sql.or(compareAsNumber(f.tz, tz2), compareAsNumber(f.tz2, tz2));
-    let phone1Col = sql.or(compareAsNumber(f.phone1, phone1), compareAsNumber(f.phone2, phone1));
-    let phone2Col = sql.or(compareAsNumber(f.phone1, phone2), compareAsNumber(f.phone2, phone2));
+    let phone1Col = sql.or(compareAsNumber(f.phone1, phone1), compareAsNumber(f.phone2, phone1), compareAsNumber(f.phone3, phone1), compareAsNumber(f.phone4, phone1));
+    let phone2Col = sql.or(compareAsNumber(f.phone1, phone2), compareAsNumber(f.phone2, phone2), compareAsNumber(f.phone3, phone2), compareAsNumber(f.phone4, phone2));
+    let phone3Col = sql.or(compareAsNumber(f.phone1, phone3), compareAsNumber(f.phone2, phone3), compareAsNumber(f.phone3, phone3), compareAsNumber(f.phone4, phone3));
+    let phone4Col = sql.or(compareAsNumber(f.phone1, phone4), compareAsNumber(f.phone2, phone4), compareAsNumber(f.phone3, phone4), compareAsNumber(f.phone4, phone4));
     let nameCol = 'false';
     if (name && name.trim().length > 0)
       if (exactName)
@@ -614,12 +630,14 @@ export class Families extends IdEntity {
       sql.columnWithAlias(tz2Col, 'tz2'),
       sql.columnWithAlias(phone1Col, 'phone1'),
       sql.columnWithAlias(phone2Col, 'phone2'),
+      sql.columnWithAlias(phone3Col, 'phone3'),
+      sql.columnWithAlias(phone4Col, 'phone4'),
       sql.columnWithAlias(nameCol, 'nameDup')
 
       ],
 
       from: f,
-      where: () => [sql.or(tzCol, tz2Col, phone1Col, phone2Col, nameCol), sql.ne(f.id, sql.str(id))]
+      where: () => [sql.or(tzCol, tz2Col, phone1Col, phone2Col, phone3Col, phone4Col, nameCol), sql.ne(f.id, sql.str(id))]
     }));
     if (!sqlResult.rows || sqlResult.rows.length < 1)
       return [];
@@ -633,7 +651,9 @@ export class Families extends IdEntity {
         tz2: row[sqlResult.getColumnKeyInResultForIndexInSelect(4)],
         phone1: row[sqlResult.getColumnKeyInResultForIndexInSelect(5)],
         phone2: row[sqlResult.getColumnKeyInResultForIndexInSelect(6)],
-        nameDup: row[sqlResult.getColumnKeyInResultForIndexInSelect(7)]
+        phone3: row[sqlResult.getColumnKeyInResultForIndexInSelect(7)],
+        phone4: row[sqlResult.getColumnKeyInResultForIndexInSelect(8)],
+        nameDup: row[sqlResult.getColumnKeyInResultForIndexInSelect(9)]
 
       });
     }
@@ -651,6 +671,8 @@ export interface duplicateFamilyInfo {
   tz2: boolean;
   phone1: boolean;
   phone2: boolean;
+  phone3: boolean;
+  phone4: boolean;
   nameDup: boolean;
 }
 
