@@ -18,19 +18,22 @@ import { Sites } from '../sites/sites';
 export async function initSchema(pool1: PostgresPool, org: string) {
 
 
-    var dataSource = new SqlDatabase( new PostgresDataProvider(pool1));
+    var dataSource = new SqlDatabase(new PostgresDataProvider(pool1));
     let context = new ServerContext();
     context.setDataProvider(dataSource);
     let sql = new SqlBuilder();
-    
+
     let f = context.for(Families).create();
-    
 
 
-    
+
+
     //create index for family deliveries if required
     var fd = context.for(FamilyDeliveries).create();
     await dataSource.execute(sql.build('create index if not exists fd_1 on ', fd, ' (', [fd.family, fd.deliveryStatusDate, fd.deliverStatus, fd.courier], ')'));
+
+
+
     //create index if required
     await dataSource.execute(sql.build('create index if not exists f_1 on ', f, ' (', [f.courier, f.deliverStatus], ')'));
 
@@ -172,12 +175,18 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         settings.dataStructureVersion.value = 9;
         await settings.save();
     }
-    if (settings.dataStructureVersion.value <11 ) {
+
+
+    if (settings.dataStructureVersion.value == 9) {
+        await dataSource.execute(sql.build('update ', fd, ' set ', fd.familyName, ' = ', f.name, ' from ', f, ' where ', sql.build(f, '.', f.id), ' = ', fd.family));
+        settings.dataStructureVersion.value = 10;
+        await settings.save();
+    }
+    if (settings.dataStructureVersion.value < 10) {
         settings.checkDuplicatePhones.value = true;
         settings.checkIfFamilyExistsInDb.value = true;
         settings.checkIfFamilyExistsInFile.value = true;
         settings.removedFromListStrategy.value = RemovedFromListExcelImportStrategy.displayAsError;
         settings.dataStructureVersion.value = 11;
-        await settings.save();
     }
 }

@@ -76,6 +76,7 @@ export class Families extends IdEntity {
             if (!this.correntAnErrorInStatus.value && DeliveryStatus.IsAResultStatus(this.deliverStatus.originalValue) && !DeliveryStatus.IsAResultStatus(this.deliverStatus.value)) {
               var fd = this.context.for(FamilyDeliveries).create();
               fd.family.value = this.id.value;
+              fd.familyName.value = this.name.value;
               fd.basketType.value = this.basketType.originalValue;
               fd.deliverStatus.value = this.deliverStatus.originalValue;
               fd.courier.value = this.courier.originalValue;

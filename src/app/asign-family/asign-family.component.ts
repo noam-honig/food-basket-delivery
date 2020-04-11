@@ -572,7 +572,17 @@ export class AsignFamilyComponent implements OnInit {
 
                 if (locationReferenceFamilies.length == 0) {
                     let position = Math.trunc(Math.random() * waitingFamilies.length);
-                    await addFamilyToResult(waitingFamilies[position].id);
+                    let distCenter = (await ApplicationSettings.getAsync(context)).getGeocodeInformation().location();
+                    let lastFamiliy = waitingFamilies[0];
+                    let lastDist = 0;
+                    for (const f of waitingFamilies) {
+                        let dist = GeocodeInformation.GetDistanceBetweenPoints({ lng: f.addressLongitude, lat: f.addressLatitude }, distCenter);
+                        if (dist > lastDist) {
+                            lastFamiliy = f;
+                            lastDist = dist;
+                        }
+                    }
+                    await addFamilyToResult(lastFamiliy.id);
                 }
                 else {
 
@@ -620,7 +630,7 @@ export class AsignFamilyComponent implements OnInit {
         result.families = await context.for(Families).toPojoArray(existingFamilies);
 
         result.familiesInSameAddress = result.familiesInSameAddress.filter((x, i) => !existingFamilies.find(f => f.id.value == x) && result.familiesInSameAddress.indexOf(x) == i);
-        
+
         return result;
     }
 

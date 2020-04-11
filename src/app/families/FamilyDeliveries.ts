@@ -11,6 +11,10 @@ import { Roles } from "../auth/roles";
 @EntityClass
 export class FamilyDeliveries extends IdEntity {
     family = new FamilyId();
+
+    familyName = new StringColumn({
+        caption: "שם"
+    });
     basketType = new BasketId(this.context, 'סוג סל');
 
 
