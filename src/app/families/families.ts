@@ -595,6 +595,8 @@ export class Families extends IdEntity {
     }
     this.validatePhone(this.phone1);
     this.validatePhone(this.phone2);
+    this.validatePhone(this.phone3);
+    this.validatePhone(this.phone4);
 
 
   }
