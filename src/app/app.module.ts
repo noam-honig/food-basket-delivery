@@ -72,6 +72,7 @@ import { AssignEscortComponent } from './assign-escort/assign-escort.component';
 import { CommonQuestionsComponent } from './common-questions/common-questions.component';
 import { TokenReplacerComponent } from './token-replacer/token-replacer.component';
 import { TestMapComponent } from './test-map/test-map.component';
+import { SelectListComponent } from './select-list/select-list.component';
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref();
 
@@ -97,6 +98,7 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     UpdateCommentComponent,
     DistributionMap,
     SelectHelperComponent,
+    SelectListComponent,
     LoginFromSmsComponent,
     MapComponent,
 
@@ -179,6 +181,7 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
   bootstrap: [AppComponent],
   entryComponents: [SelectHelperComponent,
     SelectFamilyComponent,
+    SelectListComponent,
  CommonQuestionsComponent,   
     YesNoQuestionComponent,
     InputAreaComponent,
