@@ -86,10 +86,12 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   statuses = new Statuses();
   selectedStatus: statusClass;
+  overviewMap = false;
   async refreshFamilies() {
     let allInAlll = false;
     let families: familyQueryResult[];
     if (this.context.isAllowed(Roles.overview)) {
+      this.overviewMap = true;
       families = await DistributionMap.GetLocationsForOverview();
       allInAlll = true;
     }
@@ -118,9 +120,11 @@ export class DistributionMap implements OnInit, OnDestroy {
         if (!allInAlll)
           google.maps.event.addListener(familyOnMap.marker, 'click', async () => {
             family = await this.context.for(Families).findFirst(fam => fam.id.isEqualTo(f.id));
-            this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { f: family });
+            this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { f: family, onSave: () => { this.refreshFamilies() } });
           });
       }
+      else
+        familyOnMap.marker.setPosition({ lat: f.lat, lng: f.lng });
 
       let status: statusClass = this.statuses.getBy(f.status, f.courier);
 
@@ -150,7 +154,7 @@ export class DistributionMap implements OnInit, OnDestroy {
         this.bounds.extend(familyOnMap.marker.getPosition());
 
     });
-    if (allInAlll || markers.length > 4000)
+    if (allInAlll || markers.length > 5000)
       var x = new MarkerClusterer(this.map, markers, {
         //imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
         imagePath: 'http://localhost:4200/assets/test',
