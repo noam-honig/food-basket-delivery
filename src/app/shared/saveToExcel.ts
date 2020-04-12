@@ -78,6 +78,8 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
                 colName = 'A';
                 if (colPrefix == 'A')
                   colPrefix = 'B';
+                else if (colPrefix == 'B')
+                  colPrefix = 'C';
                 else
                   colPrefix = 'A';
               }
