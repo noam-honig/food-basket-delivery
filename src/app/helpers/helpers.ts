@@ -94,6 +94,8 @@ export class Helpers extends HelpersBase {
                             canUpdate = true;
                         if (this.distCenterAdmin.originalValue && context.isAllowed(Roles.distCenterAdmin))
                             canUpdate = true;
+                        if (!this.realStoredPassword.value && this.realStoredPassword.value.length == 0) //it's the first time I'm setting the password
+                            canUpdate = true;
                     }
                     else {
                         if (this.context.isAllowed(Roles.admin))

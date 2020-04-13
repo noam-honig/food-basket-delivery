@@ -130,7 +130,7 @@ export class HelpersComponent implements OnInit {
     await saveToExcel(this.context.for(Helpers), this.helpers, "מתנדבים", this.busy, (d: Helpers, c) => c == d.id || c == d.password || c == d.totalKm || c == d.totalTime || c == d.smsDate || c == d.reminderSmsDate || c == d.realStoredPassword || c == d.shortUrlKey || c == d.admin);
   }
 
-  @ServerFunction({ allowed: Roles.admin })
+  @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async resetPassword(helperId: string, context?: Context) {
 
     await context.for(Helpers).foreach(h => h.id.isEqualTo(helperId), async h => {
