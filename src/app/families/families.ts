@@ -68,9 +68,11 @@ export class Families extends IdEntity {
         apiDataFilter: () => {
           if (!context.isAllowed(Roles.admin)) {
             let user = <HelperUserInfo>context.user;
+            if (!user)
+              return this.id.isEqualTo('no rows');
             if (context.isAllowed(Roles.distCenterAdmin))
               return this.distributionCenter.isAllowedForUser();
-            if (user && user.theHelperIAmEscortingId)
+            if (user.theHelperIAmEscortingId)
               return this.courier.isEqualTo(user.theHelperIAmEscortingId).and(this.visibleToCourier.isEqualTo(true));
             else
               return this.courier.isEqualTo(user.id).and(this.visibleToCourier.isEqualTo(true));
@@ -502,7 +504,7 @@ export class Families extends IdEntity {
     window.open('https://www.google.com/maps/search/?api=1&hl=iw&query=' + this.address.value, '_blank');
   }
   showOnGoogleMaps() {
-    window.open('https://www.google.com/maps/place/' + this.getGeocodeInformation().getlonglat(), '_blank');
+    window.open('https://www.google.com/maps/place/' + this.getGeocodeInformation().getlonglat()+'?hl=iw', '_blank');
   }
 
 

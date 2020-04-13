@@ -69,7 +69,8 @@ export class DialogService {
     distCenter = new DistributionCenterId(this.context, {
 
         valueChange: () => {
-            this.refreshDistCenter.next();
+            if (this.context.isSignedIn())
+                this.refreshDistCenter.next();
         }
     }, true);
     hasManyCenters = false;
@@ -83,7 +84,9 @@ export class DialogService {
         return this.context.isAllowed(Roles.admin) && this.hasManyCenters;
     }
     async refreshCanSeeCenter() {
-        this.hasManyCenters = await this.context.for(DistributionCenters).count() > 1;
+        this.hasManyCenters = false;
+        if (this.context.isAllowed(Roles.admin))
+            this.hasManyCenters = await this.context.for(DistributionCenters).count() > 1;
     }
 
     eventSource: any;/*EventSource*/

@@ -34,7 +34,7 @@ export abstract class HelpersBase extends IdEntity {
     totalKm = new NumberColumn({ allowApiUpdate: Roles.admin });
     totalTime = new NumberColumn({ allowApiUpdate: Roles.admin });
     shortUrlKey = new StringColumn({ includeInApi: Roles.admin });
-     distributionCenter = new DistributionCenterId(this.context, {
+    distributionCenter = new DistributionCenterId(this.context, {
         allowApiUpdate: Roles.admin
     });
     eventComment = new StringColumn({
@@ -45,11 +45,11 @@ export abstract class HelpersBase extends IdEntity {
         caption: 'צריך מלווה',
         allowApiUpdate: Roles.admin
     });
-    theHelperIAmEscorting = new HelperIdReadonly(this.context,()=>this.distributionCenter.value, {
+    theHelperIAmEscorting = new HelperIdReadonly(this.context, () => this.distributionCenter.value, {
         caption: 'נהג משוייך',
         allowApiUpdate: Roles.admin
     });
-    escort = new HelperId(this.context,()=>this.distributionCenter.value, {
+    escort = new HelperId(this.context, () => this.distributionCenter.value, {
         caption: 'מלווה'
         , allowApiUpdate: Roles.admin
     });
@@ -82,9 +82,29 @@ export class Helpers extends HelpersBase {
                 }
 
                 if (context.onServer) {
-                    if (!this.isNew() && !context.isAllowed(Roles.admin) && this.id.originalValue != context.user.id) //למנוע ממשתמש שאינו ADMIN מעדכון הפרטים של UESR שהוא לא הוא.
-                        throw "Not Allowed";
-                    if (!this.isNew() && this.admin.originalValue && !context.isAllowed(Roles.admin) && this.realStoredPassword.originalValue && this.realStoredPassword.originalValue.length > 0)//למנוע מצב שמישהו נכנס לחשבון ADMIN דרך הקישור לפי ה SHORT URL KEY ואז משנה את הסיסמה של ADMIN ופורץ למערכת.
+
+                    let canUpdate = false;
+                    if (this.isNew())
+                        canUpdate = true;
+                    let updatingMyOwnHelperInfo = this.id.originalValue == context.user.id;
+                    if (updatingMyOwnHelperInfo) {
+                        if (!this.admin.originalValue && !this.distCenterAdmin.originalValue)
+                            canUpdate = true;
+                        if (this.admin.originalValue && context.isAllowed(Roles.admin))
+                            canUpdate = true;
+                        if (this.distCenterAdmin.originalValue && context.isAllowed(Roles.distCenterAdmin))
+                            canUpdate = true;
+                    }
+                    else {
+                        if (this.context.isAllowed(Roles.admin))
+                            canUpdate = true;
+
+                        if (this.context.isAllowed(Roles.distCenterAdmin) && this.distributionCenter.originalValue == (<HelperUserInfo>context.user).distributionCenter)
+                            canUpdate = true;
+
+                    }
+
+                    if (!canUpdate)
                         throw "Not Allowed";
                     if (this.password.value && this.password.value != this.password.originalValue && this.password.value != Helpers.emptyPassword) {
                         this.realStoredPassword.value = Helpers.passwordHelper.generateHash(this.password.value);
@@ -174,7 +194,7 @@ export class Helpers extends HelpersBase {
 
 
     veryUrlKeyAndReturnTrueIfSaveRequired() {
-        if (!this.shortUrlKey.value||this.shortUrlKey.value.length<10) {
+        if (!this.shortUrlKey.value || this.shortUrlKey.value.length < 10) {
             this.shortUrlKey.value = this.makeid();
             return true;
         }
@@ -211,7 +231,7 @@ export class Helpers extends HelpersBase {
 
 export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 
-    constructor(protected context: Context,distCenter: () => string, settingsOrCaption?: ColumnOptions<string>,filter?:(helper: HelpersAndStats) => FilterBase) {
+    constructor(protected context: Context, distCenter: () => string, settingsOrCaption?: ColumnOptions<string>, filter?: (helper: HelpersAndStats) => FilterBase) {
         super({
             dataControlSettings: () =>
                 ({
@@ -219,7 +239,7 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
                     hideDataOnInput: true,
                     width: '200',
                     click: async () => this.context.openDialog((await import('../select-helper/select-helper.component')).SelectHelperComponent,
-                        x => x.args = {filter,distCenter: distCenter(), onSelect: s => this.value = (s ? s.id.value : '') })
+                        x => x.args = { filter, distCenter: distCenter(), onSelect: s => this.value = (s ? s.id.value : '') })
                 })
         }, settingsOrCaption);
     }

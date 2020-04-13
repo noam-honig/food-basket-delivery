@@ -127,7 +127,7 @@ export class GeocodeInformation {
     }
     location(): Location {
         if (!this.ok())
-            return { lng: 32.3215, lat: 34.8532 };
+            return { lat: 32.0922212, lng: 34.8731951 };
         return this.info.results[0].geometry.location;
     }
     getlonglat() {
