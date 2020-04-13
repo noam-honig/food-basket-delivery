@@ -10,7 +10,7 @@ import { Sites } from '../sites/sites';
 
 
 export class SendSmsAction {
-    @ServerFunction({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async SendSms(helperId: string, reminder: Boolean, context?: ServerContext) {
 
         try {
