@@ -38,22 +38,26 @@ export class AppComponent {
     private helper: RouteHelperService,
     public context: Context,
     public settings: ApplicationSettings) {
-      
+
     this.toolbarColor = 'primary';
 
     if (settings.redTitleBar.value) {
       this.toolbarColor = 'accent';
     }
+    this.refreshdc();
 
 
   }
-  distCenterArea = new DataAreaSettings({ columnSettings: () => [this.dialog.distCenter] });
+  distCenterArea: DataAreaSettings<any>;
   lastUser: any;
+
   refreshdc() {
-    if (this.context.user == this.lastUser)
+    if (this.context.user == this.lastUser && this.distCenterArea)
       return "";
     this.dc = undefined;
     this.lastUser = this.context.user;
+    this.distCenterArea = new DataAreaSettings({ columnSettings: () => [this.dialog.distCenter] })
+
     if (this.context.isAllowed(Roles.distCenterAdmin) && !this.context.isAllowed(Roles.admin))
       this.context.for(DistributionCenters).lookupAsync(x => x.id.isEqualTo((<HelperUserInfo>this.context.user).distributionCenter)).then(x => this.dc = x);
     return '';

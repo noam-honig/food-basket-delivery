@@ -21,7 +21,7 @@ import { DistributionCenterId, DistributionCenters } from "../manage/distributio
 
 @EntityClass
 export class Families extends IdEntity {
-  static allCentersToken='<allCenters>';
+  static allCentersToken = '<allCenters>';
   filterDistCenter(distCenter: string): import("@remult/core").FilterBase {
     return this.distributionCenter.filter(distCenter);
   }
@@ -70,7 +70,7 @@ export class Families extends IdEntity {
             let user = <HelperUserInfo>context.user;
             if (context.isAllowed(Roles.distCenterAdmin))
               return this.distributionCenter.isAllowedForUser();
-            if (user.theHelperIAmEscortingId)
+            if (user && user.theHelperIAmEscortingId)
               return this.courier.isEqualTo(user.theHelperIAmEscortingId).and(this.visibleToCourier.isEqualTo(true));
             else
               return this.courier.isEqualTo(user.id).and(this.visibleToCourier.isEqualTo(true));
@@ -233,7 +233,7 @@ export class Families extends IdEntity {
   phone1Description = new StringColumn('הערות לטלפון 1');
   phone2 = new PhoneColumn({ caption: "טלפון 2", valueChange: () => this.delayCheckDuplicateFamilies() });
   phone2Description = new StringColumn('הערות לטלפון 2');
-  phone3 = new PhoneColumn({ caption: "טלפון 3",  valueChange: () => this.delayCheckDuplicateFamilies() });
+  phone3 = new PhoneColumn({ caption: "טלפון 3", valueChange: () => this.delayCheckDuplicateFamilies() });
   phone3Description = new StringColumn('הערות לטלפון 3');
   phone4 = new PhoneColumn({ caption: "טלפון 4", valueChange: () => this.delayCheckDuplicateFamilies() });
   phone4Description = new StringColumn('הערות לטלפון 4');
@@ -266,7 +266,7 @@ export class Families extends IdEntity {
     serverExpression: async () => (await this.context.for(Helpers).lookupAsync(this.courierAssignUser)).phone.value
   });
 
-   async reloadGeoCoding() {
+  async reloadGeoCoding() {
 
     let geo = new GeocodeInformation();
     if (!this.__disableGeocoding)
@@ -337,7 +337,7 @@ export class Families extends IdEntity {
 
 
   deliveryStatusUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'מי עדכן את סטטוס המשלוח');
-  
+
   routeOrder = new NumberColumn();
   previousDeliveryStatus = new DeliveryStatusColumn({
     caption: 'סטטוס משלוח קודם',
