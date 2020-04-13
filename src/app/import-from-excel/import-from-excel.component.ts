@@ -107,7 +107,7 @@ export class ImportFromExcelComponent implements OnInit {
                                 let timeLeft = ((new Date().valueOf() - start) / index) * (this.newRows.length - index) / 1000 / 60;
                                 this.dialog.Info(i.rowInExcel + ' ' + (i.name) + " נשאר עוד " + timeLeft.toFixed(1) + " דקות");
                             }
-                            await ImportFromExcelComponent.insertRows(rowsToInsert);
+                            await ImportFromExcelComponent.insertRows(rowsToInsert,this.dialog.distCenter.value);
                             for (const r of rowsToInsert) {
                                 r.created = true;
                             }
@@ -119,7 +119,7 @@ export class ImportFromExcelComponent implements OnInit {
 
                     }
                     if (rowsToInsert.length > 0) {
-                        await ImportFromExcelComponent.insertRows(rowsToInsert);
+                        await ImportFromExcelComponent.insertRows(rowsToInsert,this.dialog.distCenter.value);
                         for (const r of rowsToInsert) {
                             r.created = true;
                         }
@@ -141,16 +141,19 @@ export class ImportFromExcelComponent implements OnInit {
         });
     }
     @ServerFunction({ allowed: Roles.admin })
-    static async insertRows(rowsToInsert: excelRowInfo[], context?: Context) {
+    static async insertRows(rowsToInsert: excelRowInfo[], distCenter: string, context?: Context) {
         let t = new PromiseThrottle(10);
         for (const r of rowsToInsert) {
             let f = context.for(Families).create();
-            
+
             for (const val in r.values) {
                 f.columns.find(val).value = r.values[val].newValue;
             }
             if (!f.name.value)
                 f.name.value = 'ללא שם';
+            if (f.distributionCenter.value === undefined && distCenter != Families.allCentersToken)
+                f.distributionCenter.value = distCenter;
+
             await t.push(f.save());
         }
         await t.done();
