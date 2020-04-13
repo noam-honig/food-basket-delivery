@@ -120,7 +120,7 @@ export class AuthService {
 
 
         await context.for(Helpers).foreach(h => h.phone.isEqualTo(user), async h => {
-
+            let distCenterName = '';
             let noPassword = h.realStoredPassword.value.length == 0;
             if (noPassword || Helpers.passwordHelper.verify(password, h.realStoredPassword.value)) {
                 let result: HelperUserInfo;
@@ -134,7 +134,7 @@ export class AuthService {
                     theHelperIAmEscortingId: h.theHelperIAmEscorting.value,
                     escortedHelperName: h.theHelperIAmEscorting.value ? (await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value : ''
                 };
-                if (noPassword  && (h.admin.value || h.distCenterAdmin.value)) {
+                if (noPassword && (h.admin.value || h.distCenterAdmin.value)) {
                     requirePassword = true;
                 }
                 else {
@@ -142,6 +142,7 @@ export class AuthService {
                         if (Sites.getOrganizationFromContext(context) == Sites.guestSchema)
                             result.roles.push(Roles.overview)
                         else {
+                            distCenterName = await h.distributionCenter.getTheValue();
                             result.roles.push(Roles.admin);
                             result.roles.push(Roles.distCenterAdmin);
                         }
@@ -155,7 +156,7 @@ export class AuthService {
                 r.push({
                     authToken: Helpers.helper.createSecuredTokenBasedOn(result),
                     requirePassword,
-                    distCenterName: await h.distributionCenter.getTheValue()
+                    distCenterName: distCenterName
                 });
 
             }

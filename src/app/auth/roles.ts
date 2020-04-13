@@ -24,10 +24,10 @@ export class distCenterAdminGuard extends SignedInGuard {
     }
 }
 @Injectable()
-export class distCenterAndNotAdmin extends SignedInGuard {
+export class distCenterOrOverviewOrAdmin extends SignedInGuard {
 
     isAllowed() {
-        return x => x.isAllowed(Roles.distCenterAdmin) && !x.isAllowed(Roles.admin);
+        return this.context.isAllowed([Roles.distCenterAdmin,Roles.admin,Roles.overview]) ;
     }
 }
 

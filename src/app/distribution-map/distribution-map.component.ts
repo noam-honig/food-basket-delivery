@@ -18,7 +18,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { colors } from '../families/stats-action';
 import { BusyService } from '@remult/core';
 import { YesNo } from '../families/YesNo';
-import { Roles, AdminGuard, distCenterAdminGuard, distCenterAndNotAdmin,OverviewOrAdminGuard } from '../auth/roles';
+import { Roles, AdminGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, OverviewGuard } from '../auth/roles';
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 import { Helpers, HelperId } from '../helpers/helpers';
 import MarkerClusterer, { ClusterIconInfo } from "@google/markerclustererplus";
@@ -35,13 +35,23 @@ export class DistributionMap implements OnInit, OnDestroy {
 
     let y = dialog.refreshStatusStats.subscribe(() => {
       busy.donotWait(async () => {
+
         await this.refreshFamilies();
+
       });
     });
     this.onDestroy = () => {
       y.unsubscribe();
     };
-    this.dialog.onDistCenterChange(() => location.reload(), this);
+    this.dialog.onDistCenterChange(async () => {
+      for (const f of this.dict.values()) {
+        f.marker.setMap(null);
+      }
+      this.dict = new Map<string, infoOnMap>();
+      this.bounds = new google.maps.LatLngBounds();
+      await this.refreshFamilies();
+      this.map.fitBounds(this.bounds);
+    }, this);
 
   }
   showHelper = false;
@@ -52,7 +62,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   static route: Route = {
     path: 'addresses',
     component: DistributionMap,
-    data: { name: 'מפת הפצה' }, canActivate: [distCenterAndNotAdmin]
+    data: { name: 'מפת הפצה' }, canActivate: [distCenterOrOverviewOrAdmin]
   };
 
   gridView = true;
@@ -72,7 +82,8 @@ export class DistributionMap implements OnInit, OnDestroy {
 
     };
     if (!this.mapInit) {
-
+      this.dict = new Map<string, infoOnMap>();
+      this.bounds = new google.maps.LatLngBounds();
       this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
       this.mapInit = true;
       await this.refreshFamilies();
@@ -87,7 +98,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   statuses = new Statuses();
   selectedStatus: statusClass;
-  filterCourier = new HelperId(this.context,()=>this.dialog.distCenter.value, {
+  filterCourier = new HelperId(this.context, () => this.dialog.distCenter.value, {
     caption: 'משנע לסינון',
     valueChange: () => this.refreshFamilies()
   }, h => h.allFamilies.isGreaterThan(0));
@@ -208,8 +219,9 @@ export class DistributionMap implements OnInit, OnDestroy {
 
       where: () => {
         let where: any[] = [f.deliverStatus.isActiveDelivery().and(f.distributionCenter.isAllowedForUser())];
-        if (distCenter)
+        if (distCenter !== undefined)
           where.push(f.filterDistCenter(distCenter));
+
         if (onlyPotentialAsignment) {
           where.push(f.readyFilter(city, group).and(f.special.isEqualTo(YesNo.No)));
         }
