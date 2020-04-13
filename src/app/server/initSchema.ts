@@ -2,7 +2,7 @@
 import { PostgresDataProvider, PostgresPool } from '@remult/server-postgres';
 import { Families } from '../families/families';
 import { BasketType } from "../families/BasketType";
-import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings, RemovedFromListExcelImportStrategy } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
 import { ServerContext, SqlDatabase, Column } from '@remult/core';
 import '../app.module';
@@ -35,6 +35,9 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     var fd = context.for(FamilyDeliveries).create();
 
     await dataSource.execute(sql.build('create index if not exists fd_1 on ', fd, ' (', [fd.family, fd.deliveryStatusDate, fd.deliverStatus, fd.courier], ')'));
+
+
+
     //create index if required
     let createIndex = async (name: string, ...columns: Column<any>[]) => {
         await dataSource.execute(sql.build("create index if not exists ", name, " on ", f, "  (", columns, ")"));
@@ -189,7 +192,21 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         settings.dataStructureVersion.value = 9;
         await settings.save();
     }
+    if (settings.dataStructureVersion.value == 9) {
+        await dataSource.execute(sql.build('update ', fd, ' set ', fd.familyName, ' = ', f.name, ' from ', f, ' where ', sql.build(f, '.', f.id), ' = ', fd.family));
+        settings.dataStructureVersion.value = 10;
+        await settings.save();
+    }
+    if (settings.dataStructureVersion.value = 10) {
+        settings.checkDuplicatePhones.value = true;
+        settings.checkIfFamilyExistsInDb.value = true;
+        settings.checkIfFamilyExistsInFile.value = true;
+        settings.removedFromListStrategy.value = RemovedFromListExcelImportStrategy.displayAsError;
+        settings.dataStructureVersion.value = 11;
+        await settings.save();
+    }
 }
+
 
 
 //some index work for performance -
@@ -250,3 +267,5 @@ select name, familiesCount from
   familiesCount from groups groups) result where familiesCount > 0 Order By name limit 1000 offset 0*/
 
 /*create index x3 on families ( name,deliverstatus)*/
+
+

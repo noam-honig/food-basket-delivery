@@ -257,6 +257,8 @@ export class FamiliesComponent implements OnInit {
                 }
                 addColumn("טלפון1X", fixPhone(f.phone1), 's');
                 addColumn("טלפון2X", fixPhone(f.phone2), 's');
+                addColumn("טלפון3X", fixPhone(f.phone3), 's');
+                addColumn("טלפון4X", fixPhone(f.phone4), 's');
                 await f.basketType.addBasketTypes(addColumn);
 
             });
@@ -392,6 +394,10 @@ export class FamiliesComponent implements OnInit {
                 families.phone1Description,
                 families.phone2,
                 families.phone2Description,
+                families.phone3,
+                families.phone3Description,
+                families.phone4,
+                families.phone4Description,
                 families.courier,
                 families.distributionCenter,
                 families.fixedCourier,
@@ -541,6 +547,22 @@ export class FamiliesComponent implements OnInit {
         return await FamiliesComponent.processFamilies(info, context, f => {
             if (f.deliverStatus.value != DeliveryStatus.RemovedFromList)
                 f.deliverStatus.rawValue = status;
+        });
+    }
+
+
+    async cancelAssignment() {
+        if (await this.dialog.YesNoPromise('האם לבטל שיוך ל-' + this.families.totalRows + translate(' משפחות?'))) {
+            this.dialog.Info(await FamiliesComponent.cancelAssignmentOnServer(this.packWhere()));
+            this.refresh();
+        }
+
+    }
+    @ServerFunction({ allowed: Roles.admin })
+    static async cancelAssignmentOnServer(info: serverUpdateInfo,  context?: Context) {
+        return await FamiliesComponent.processFamilies(info, context, f => {
+            if (f.deliverStatus.value != DeliveryStatus.RemovedFromList)
+                f.courier.value = '';
         });
     }
     async updateBasket() {

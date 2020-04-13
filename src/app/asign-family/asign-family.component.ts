@@ -21,7 +21,7 @@ import { Context } from '@remult/core';
 import { BasketType } from '../families/BasketType';
 
 import { CitiesStats } from '../families/stats-action';
-import { SqlBuilder } from '../model-shared/types';
+import { SqlBuilder, extractError } from '../model-shared/types';
 import { BusyService } from '@remult/core';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { Groups, GroupsStats } from '../manage/manage.component';
@@ -600,7 +600,17 @@ export class AsignFamilyComponent implements OnInit {
 
                 if (locationReferenceFamilies.length == 0) {
                     let position = Math.trunc(Math.random() * waitingFamilies.length);
-                    await addFamilyToResult(waitingFamilies[position].id);
+                    let distCenter = (await ApplicationSettings.getAsync(context)).getGeocodeInformation().location();
+                    let lastFamiliy = waitingFamilies[0];
+                    let lastDist = 0;
+                    for (const f of waitingFamilies) {
+                        let dist = GeocodeInformation.GetDistanceBetweenPoints({ lng: f.addressLongitude, lat: f.addressLatitude }, distCenter);
+                        if (dist > lastDist) {
+                            lastFamiliy = f;
+                            lastDist = dist;
+                        }
+                    }
+                    await addFamilyToResult(lastFamiliy.id);
                 }
                 else {
 
@@ -823,7 +833,12 @@ export class AsignFamilyComponent implements OnInit {
     async verifyHelperExistance() {
 
         if (this.showSave()) {
-            await this.helper.save();
+            try {
+                await this.helper.save();
+            } catch (err) {
+                this.dialog.Error(extractError(err));
+
+            }
         }
         Helpers.addToRecent(this.helper);
     }

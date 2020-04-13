@@ -1,6 +1,7 @@
 import * as fetch from 'node-fetch';
 import { UrlBuilder, EntityClass, IdEntity, StringColumn, Entity, DateTimeColumn, Context } from '@remult/core';
-import { extractError } from '../import-from-excel/import-from-excel.component';
+import { extractError } from '../model-shared/types';
+
 
 export class GeoCodeOptions {
     static disableGeocode = false;

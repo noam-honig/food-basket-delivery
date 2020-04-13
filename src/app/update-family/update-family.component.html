@@ -57,11 +57,11 @@
                     <span class="badAddressTitle">שים
                         לב, כתובת לא מדוייקת</span>
                     גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת. יש להשוות בין השדה "כתובת" לשדה "כתובת כפי שגוגל הבין".
-                    <br>אפשר להעזר בקישור "פתחי גוגל" כדי לחפש את הכתובת הנכונה ולעדכן.
+                    
                     <br> כתובת לא מדוייקת עלולה להוביל המשנע למקום לא נכון בוייז.
                 </div>
                 <a (click)="families.currentRow.openWaze()" target="_blank">פתחי WAZE</a> |
-                <a (click)="families.currentRow.openGoogleMaps()" target="_blank">פתחי גוגל </a>
+                <a (click)="families.currentRow.showOnGoogleMaps()" target="_blank">הצג נקודה שגוגל מצא </a>
                 <data-area [settings]="familiesAddress"></data-area>
             </ng-template>
         </mat-expansion-panel>

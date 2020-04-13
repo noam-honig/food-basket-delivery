@@ -75,7 +75,7 @@
 
   </div>
 
-  <h4 *ngIf="f.phone1.value || f.phone2.value">טלפונים:</h4>
+  <h4 *ngIf="f.phone1.value || f.phone2.value||f.phone3.value||f.phone4.value">טלפונים:</h4>
   <div *ngIf="f.phone1.value">
     <a href="tel:{{f.phone1.value}}">
       <button mat-mini-fab style="margin-left:10px;vertical-align: middle" color="primary">
@@ -91,7 +91,7 @@
   </div>
   <div style="margin-top:5px" *ngIf="f.phone2.value">
     <a href="tel:{{f.phone2.value}}">
-      <button mat-mini-fab style="margin-left:10px;vertical-align: middle"  color="primary">
+      <button mat-mini-fab style="margin-left:10px;vertical-align: middle" color="primary">
         <mat-icon>call</mat-icon>
       </button>
     </a>
@@ -102,11 +102,37 @@
     </div>
 
   </div>
+  <div style="margin-top:5px" *ngIf="f.phone3.value">
+    <a href="tel:{{f.phone3.value}}">
+      <button mat-mini-fab style="margin-left:10px;vertical-align: middle" color="primary">
+        <mat-icon>call</mat-icon>
+      </button>
+    </a>
+    <div style="display:inline-block">
+      <a href="tel:{{f.phone3.value}}">{{f.phone3.displayValue}}</a>,
+      {{f.phone3Description.value?f.phone3Description.value:f.name.value}}
+
+    </div>
+
+  </div>
+  <div style="margin-top:5px" *ngIf="f.phone4.value">
+    <a href="tel:{{f.phone4.value}}">
+      <button mat-mini-fab style="margin-left:10px;vertical-align: middle" color="primary">
+        <mat-icon>call</mat-icon>
+      </button>
+    </a>
+    <div style="display:inline-block">
+      <a href="tel:{{f.phone4.value}}">{{f.phone4.displayValue}}</a>,
+      {{f.phone4Description.value?f.phone4Description.value:f.name.value}}
+
+    </div>
+
+  </div>
 
 </div>
 <div class="button-area">
   <ng-content></ng-content>
   <div class="help" *ngIf="actuallyShowHelp()">
     צריך עזרה? התקשר ל{{f.courierHelpName()}}
-    <a href="tel:{{f.courierHelpPhone()}}">{{f.courierHelpPhone()}} </a>   </div>
+    <a href="tel:{{f.courierHelpPhone()}}">{{f.courierHelpPhone()}} </a> </div>
 </div>

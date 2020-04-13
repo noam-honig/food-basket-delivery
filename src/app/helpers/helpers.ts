@@ -1,5 +1,5 @@
 
-import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, Entity, Column, EntityProvider } from '@remult/core';
+import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, FilterBase, Entity, Column, EntityProvider } from '@remult/core';
 import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, SqlBuilder } from '../model-shared/types';
 
 
@@ -9,6 +9,7 @@ import { Roles } from "../auth/roles";
 import { JWTCookieAuthorizationHelper } from '@remult/server';
 import { SelectCompanyComponent } from "../select-company/select-company.component";
 import { DistributionCenterId } from '../manage/distribution-centers';
+import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 
 
 
@@ -30,16 +31,29 @@ export abstract class HelpersBase extends IdEntity {
     phone = new PhoneColumn("טלפון");
     smsDate = new DateTimeColumn('מועד משלוח SMS');
     company = new CompanyColumn(this.context);
-    totalKm = new NumberColumn();
-    totalTime = new NumberColumn();
-    shortUrlKey = new StringColumn({ includeInApi: Roles.distCenterAdmin });
-    eventComment = new StringColumn('הערה');
-    needEscort = new BoolColumn('צריך מלווה');
-    theHelperIAmEscorting = new HelperIdReadonly(this.context, () => this.distributionCenter.value, { caption: 'נהג משוייך' });
-    escort = new HelperId(this.context, () => this.distributionCenter.value, { caption: 'מלווה' });
-    distributionCenter = new DistributionCenterId(this.context, {
+    totalKm = new NumberColumn({ allowApiUpdate: Roles.admin });
+    totalTime = new NumberColumn({ allowApiUpdate: Roles.admin });
+    shortUrlKey = new StringColumn({ includeInApi: Roles.admin });
+     distributionCenter = new DistributionCenterId(this.context, {
         allowApiUpdate: Roles.admin
     });
+    eventComment = new StringColumn({
+        caption: 'הערה',
+        allowApiUpdate: Roles.admin
+    });
+    needEscort = new BoolColumn({
+        caption: 'צריך מלווה',
+        allowApiUpdate: Roles.admin
+    });
+    theHelperIAmEscorting = new HelperIdReadonly(this.context, {
+        caption: 'נהג משוייך',
+        allowApiUpdate: Roles.admin
+    });
+    escort = new HelperId(this.context, {
+        caption: 'מלווה'
+        , allowApiUpdate: Roles.admin
+    });
+
     getRouteStats(): routeStats {
         return {
             totalKm: this.totalKm.value,
@@ -68,6 +82,10 @@ export class Helpers extends HelpersBase {
                 }
 
                 if (context.onServer) {
+                    if (!this.isNew() && !context.isAllowed(Roles.admin) && this.id.originalValue != context.user.id) //למנוע ממשתמש שאינו ADMIN מעדכון הפרטים של UESR שהוא לא הוא.
+                        throw "Not Allowed";
+                    if (!this.isNew() && this.admin.originalValue && !context.isAllowed(Roles.admin) && this.realStoredPassword.originalValue && this.realStoredPassword.originalValue.length > 0)//למנוע מצב שמישהו נכנס לחשבון ADMIN דרך הקישור לפי ה SHORT URL KEY ואז משנה את הסיסמה של ADMIN ופורץ למערכת.
+                        throw "Not Allowed";
                     if (this.password.value && this.password.value != this.password.originalValue && this.password.value != Helpers.emptyPassword) {
                         this.realStoredPassword.value = Helpers.passwordHelper.generateHash(this.password.value);
                     }
@@ -156,7 +174,7 @@ export class Helpers extends HelpersBase {
 
 
     veryUrlKeyAndReturnTrueIfSaveRequired() {
-        if (!this.shortUrlKey.value) {
+        if (!this.shortUrlKey.value||this.shortUrlKey.value.length<10) {
             this.shortUrlKey.value = this.makeid();
             return true;
         }
@@ -166,7 +184,7 @@ export class Helpers extends HelpersBase {
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-        for (var i = 0; i < 5; i++)
+        for (var i = 0; i < 10; i++)
             text += possible.charAt(Math.floor(Math.random() * possible.length));
         return text;
     }
@@ -193,7 +211,7 @@ export class Helpers extends HelpersBase {
 
 export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 
-    constructor(protected context: Context, distCenter: () => string, settingsOrCaption?: ColumnOptions<string>) {
+    constructor(protected context: Context,distCenter: () => string, settingsOrCaption?: ColumnOptions<string>,filter?:(helper: HelpersAndStats) => FilterBase) {
         super({
             dataControlSettings: () =>
                 ({
@@ -201,10 +219,7 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
                     hideDataOnInput: true,
                     width: '200',
                     click: async () => this.context.openDialog((await import('../select-helper/select-helper.component')).SelectHelperComponent,
-                        x => x.args = {
-                            distCenter: distCenter(),
-                            onSelect: s => this.value = (s ? s.id.value : '')
-                        })
+                        x => x.args = {filter,distCenter: distCenter(),, onSelect: s => this.value = (s ? s.id.value : '') })
                 })
         }, settingsOrCaption);
     }

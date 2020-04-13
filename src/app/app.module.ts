@@ -72,6 +72,8 @@ import { AssignEscortComponent } from './assign-escort/assign-escort.component';
 import { CommonQuestionsComponent } from './common-questions/common-questions.component';
 import { GeocodeComponent } from './geocode/geocode.component';
 import { SelectListComponent } from './select-list/select-list.component';
+import { TokenReplacerComponent } from './token-replacer/token-replacer.component';
+import { TestMapComponent } from './test-map/test-map.component';
 
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref();
@@ -98,6 +100,7 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     UpdateCommentComponent,
     DistributionMap,
     SelectHelperComponent,
+    
     LoginFromSmsComponent,
     MapComponent,
 
@@ -131,7 +134,9 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     AssignEscortComponent,
     CommonQuestionsComponent,
     GeocodeComponent,
-    SelectListComponent
+    SelectListComponent,
+    TokenReplacerComponent,
+    TestMapComponent
 
   ],
   imports: [
@@ -180,12 +185,13 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
   bootstrap: [AppComponent],
   entryComponents: [SelectHelperComponent,
     SelectFamilyComponent,
+    SelectListComponent,
  CommonQuestionsComponent,   
     YesNoQuestionComponent,
     InputAreaComponent,
     UpdateFamilyDialogComponent, PreviewFamilyComponent,
     SelectCompanyComponent,
-    QuickAddFamilyComponent, HelperAssignmentComponent,SelectListComponent,
+    QuickAddFamilyComponent, HelperAssignmentComponent,
     UpdateCommentComponent, UpdateGroupDialogComponent]
 })
 export class AppModule { }

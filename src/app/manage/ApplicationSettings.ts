@@ -1,4 +1,4 @@
-import { StringColumn, NumberColumn, BoolColumn } from '@remult/core';
+import { StringColumn, NumberColumn, BoolColumn, ValueListColumn } from '@remult/core';
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
 import { Entity, Context, EntityClass } from '@remult/core';
 import { PhoneColumn } from "../model-shared/types";
@@ -100,8 +100,9 @@ export class ApplicationSettings extends Entity<number>  {
   showLeftThereButton = new BoolColumn('הצג למתנדב כפתור השארתי ליד הבית');
   redTitleBar = new BoolColumn("כותרת דף בצבע אדום");
   defaultPrefixForExcelImport = new StringColumn("קידומת טלפון ברירת מחדל בקליטה מאקסל");
-  checkIfFamilyExistsInDb = new BoolColumn("בדוק עם משפחה כבר קיימת במאגר הנתונים");
-  checkIfFamilyExistsInFile = new BoolColumn("בדוק עם משפחה כבר קיימת בקובץ האקסל");
+  checkIfFamilyExistsInDb = new BoolColumn("בדוק אם משפחה כבר קיימת במאגר הנתונים");
+  removedFromListStrategy = new RemovedFromListExcelImportStrategyColumn();
+  checkIfFamilyExistsInFile = new BoolColumn("בדוק אם משפחה כבר קיימת בקובץ האקסל");
   excelImportAutoAddValues = new BoolColumn("הוסף בלי לשאול ערכים לטבלאות התשתית");
   checkDuplicatePhones = new BoolColumn("בדוק טלפונים כפולים");
 
@@ -229,6 +230,24 @@ export class SettingsService {
     BasketType.boxes1Name = this.instance.boxes1Name.value;
     BasketType.boxes2Name = this.instance.boxes2Name.value;
 
+  }
+
+}
+export class RemovedFromListExcelImportStrategy {
+  static displayAsError = new RemovedFromListExcelImportStrategy(0, 'הצג כשגיאה');
+  static showInUpdate = new RemovedFromListExcelImportStrategy(1, 'הצג במשפחות לעדכון');
+  static ignore = new RemovedFromListExcelImportStrategy(2, 'התעלם');
+  constructor(public id: number, public caption: string) { }
+}
+class RemovedFromListExcelImportStrategyColumn extends ValueListColumn<RemovedFromListExcelImportStrategy>{
+  constructor() {
+    super(RemovedFromListExcelImportStrategy, {
+      caption: 'מה לעשות אם נמצאה משפחה תואמת המסומנת כהוצא מהרשימות'
+      , dataControlSettings: () => ({
+        valueList: this.getOptions(),
+
+      })
+    })
   }
 
 }

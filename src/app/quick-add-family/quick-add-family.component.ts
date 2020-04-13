@@ -77,7 +77,7 @@ export class QuickAddFamilyComponent implements OnInit {
     for (const t of this.f.duplicateFamilies) {
       if (f == undefined)
         f = t;
-      if (f.phone1 || f.phone2 || f.tz || f.tz2)
+      if (f.phone1 || f.phone2 || f.phone3 || f.phone4 || f.tz || f.tz2)
         return t;
     }
     return f;

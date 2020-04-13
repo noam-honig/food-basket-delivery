@@ -32,8 +32,9 @@ export class BasketId extends IdColumn implements HasAsyncGetTheValue {
   async addBasketTypes(addColumn: (caption: string, v: string, t: import("xlsx/types").ExcelDataType) => void) {
     let r = await this.context.for(BasketType).lookupAsync(this);
     if (r) {
-        addColumn(BasketType.boxes1Name,r.boxes.value.toString(),'n');
-        addColumn(BasketType.boxes2Name,r.boxes2.value.toString(),'n');
+      
+        addColumn(BasketType.boxes1Name,r.boxes.value? r.boxes.value.toString():'','n');
+        addColumn(BasketType.boxes2Name,r.boxes2.value? r.boxes2.value.toString():'','n');
     }
   }
   constructor(private context: Context, settingsOrCaption?: ColumnOptions<string>) {

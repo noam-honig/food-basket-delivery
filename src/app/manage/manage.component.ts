@@ -7,7 +7,7 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings, PhoneItem, PhoneOption, qaItem } from './ApplicationSettings';
 
 
-import { Context, IdEntity, IdColumn, StringColumn, EntityClass, Entity, NumberColumn, RouteHelperService, DataAreaSettings } from '@remult/core';
+import { Context, IdEntity, IdColumn, StringColumn, EntityClass, Entity, NumberColumn, RouteHelperService, DataAreaSettings, ServerFunction } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
@@ -16,6 +16,8 @@ import { SqlBuilder } from '../model-shared/types';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DistributionCenters, DistributionCenterId } from './distribution-centers';
 
+import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
+import { DeliveryStatus } from '../families/DeliveryStatus';
 
 @Component({
   selector: 'app-manage',
@@ -317,6 +319,38 @@ export class ManageComponent implements OnInit {
   getIcon() {
     return this.sanitization.bypassSecurityTrustResourceUrl(
       'data:image;base64,' + this.images.currentRow.base64Icon.value);
+  }
+  async deleteFamilies() {
+    let codeWord = new StringColumn('מילת קוד');
+    let codeWords = ["נועם", "יעל", "עופרי", "מעיין", "איתמר", "יוני", "ניצן"];
+    let correctCodeWord = codeWords[Math.trunc(Math.random() * codeWords.length)];
+    let doIt = false;
+    let count = await this.context.for(Families).count(f => f.deliverStatus.isEqualTo(DeliveryStatus.RemovedFromList));
+    if (!await this.dialog.YesNoPromise("האם אתה בטוח שאתה רוצה למחוק " + count + " משפחות?"))
+      return;
+    await this.context.openDialog(InputAreaComponent, x => {
+      x.args = {
+        title: 'אנא הקלד "' + correctCodeWord + '" בשדה מילת קוד לאישור המחיקה',
+        settings: { columnSettings: () => [codeWord] }, ok: () => doIt = true, cancel: () => doIt = false
+      }
+    })
+    if (!doIt)
+      return;
+    if (codeWord.value != correctCodeWord) {
+      this.dialog.Error("מילת קוד שגויה - התהליך מופסק");
+      return;
+    }
+    let r = await ManageComponent.deleteFamiliesOnServer();
+    this.dialog.Info('נתחקו ' + r + ' משפחות');
+  }
+  @ServerFunction({ allowed: Roles.admin })
+  static async deleteFamiliesOnServer(context?: Context) {
+    let count = 0;
+    for (const f of await context.for(Families).find({ where: f => f.deliverStatus.isEqualTo(DeliveryStatus.RemovedFromList) })) {
+      await f.delete();
+      count++;
+    }
+    return count;
   }
 
 

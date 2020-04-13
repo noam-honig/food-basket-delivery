@@ -92,7 +92,7 @@ export class AuthService {
             this.setToken(loginResponse.authToken, remember);
             this.dialog.analytics('login ' + (this.context.isAllowed(Roles.admin) ? 'delivery admin' : ''));
             if (loginResponse.requirePassword) {
-                this.dialog.YesNoQuestion('שלום ' + this.context.user.name + ' את מוגדרת כמנהלת אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועברת למסך עדכון פרטים לעדכון סיסמה.', () => {
+                this.dialog.YesNoQuestion('שלום ' + this.context.user.name + ' אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועבר למסך עדכון פרטים לעדכון סיסמה.', () => {
                     this.routeHelper.navigateToComponent(AuthService.UpdateInfoComponent);//changing this caused a crash
                 });
             }
@@ -121,7 +121,8 @@ export class AuthService {
 
         await context.for(Helpers).foreach(h => h.phone.isEqualTo(user), async h => {
 
-            if (!h.realStoredPassword.value || Helpers.passwordHelper.verify(password, h.realStoredPassword.value)) {
+            let noPassword = h.realStoredPassword.value.length == 0;
+            if (noPassword || Helpers.passwordHelper.verify(password, h.realStoredPassword.value)) {
                 let result: HelperUserInfo;
                 let requirePassword = false;
                 result = {
@@ -133,7 +134,7 @@ export class AuthService {
                     theHelperIAmEscortingId: h.theHelperIAmEscorting.value,
                     escortedHelperName: h.theHelperIAmEscorting.value ? (await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value : ''
                 };
-                if (h.realStoredPassword.value.length == 0 && (h.admin.value || h.distCenterAdmin.value)) {
+                if (noPassword  && (h.admin.value || h.distCenterAdmin.value)) {
                     requirePassword = true;
                 }
                 else {

@@ -12,6 +12,10 @@ import { DistributionCenters, DistributionCenterId as DistributionCenterId } fro
 @EntityClass
 export class FamilyDeliveries extends IdEntity {
     family = new FamilyId();
+
+    familyName = new StringColumn({
+        caption: "שם"
+    });
     basketType = new BasketId(this.context, 'סוג סל');
 
     distributionCenter= new DistributionCenterId(this.context);
@@ -37,6 +41,10 @@ export class FamilyDeliveries extends IdEntity {
     archive_phone1Description = new StringColumn('תאור טלפון 1');
     archive_phone2 = new PhoneColumn("טלפון 2");
     archive_phone2Description = new StringColumn('תאור טלפון 2');
+    archive_phone3 = new PhoneColumn("טלפון 3");
+    archive_phone3Description = new StringColumn('תאור טלפון 3');
+    archive_phone4 = new PhoneColumn("טלפון 4");
+    archive_phone4Description = new StringColumn('תאור טלפון 4');
     archive_addressLongitude = new NumberColumn({ decimalDigits: 8 });
     archive_addressLatitude = new NumberColumn({ decimalDigits: 8 });
 

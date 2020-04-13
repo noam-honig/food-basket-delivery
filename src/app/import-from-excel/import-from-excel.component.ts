@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Column, Entity, ServerFunction, IdColumn, SqlDatabase, StringColumn, DataAreaSettings } from '@remult/core';
 import { Context } from '@remult/core';
 import { Helpers } from '../helpers/helpers';
-import { HasAsyncGetTheValue } from '../model-shared/types';
+import { HasAsyncGetTheValue, extractError } from '../model-shared/types';
 
 import { Families, parseAddress, duplicateFamilyInfo } from '../families/families';
 
@@ -16,11 +16,14 @@ import { BusyService } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { MatStepper } from '@angular/material';
 
-import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings, RemovedFromListExcelImportStrategy } from '../manage/ApplicationSettings';
 import { translate } from '../translate';
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 import { Groups } from '../manage/manage.component';
 import { DistributionCenters, DistributionCenterId } from '../manage/distribution-centers';
+import { jsonToXlsx } from '../shared/saveToExcel';
+import { Sites } from '../sites/sites';
+
 
 @Component({
     selector: 'app-excel-import',
@@ -84,12 +87,8 @@ export class ImportFromExcelComponent implements OnInit {
     async addAll() {
         let count = this.newRows.length;
         this.dialog.YesNoQuestion("האם להוסיף " + count + translate(" משפחות?"), async () => {
-            let disableGeocoding = false;
-            if (count > 2000) {
-                disableGeocoding = true;
-                if (! await this.dialog.YesNoPromise("בגלל כמות המשפחות יש לבצע GEOCODING בנפרד, האם להמשיך?"))
-                    return;
-            }
+
+
             this.busy.doWhileShowingBusy(async () => {
                 try {
                     let rowsToInsert: excelRowInfo[] = [];
@@ -102,14 +101,16 @@ export class ImportFromExcelComponent implements OnInit {
                         rowsToInsert.push(i);
                         index++;
 
-                        if (rowsToInsert.length == (disableGeocoding ? 2000 : 35)) {
+                        if (rowsToInsert.length == 35) {
 
                             if (new Date().valueOf() - lastDate > 10000) {
                                 let timeLeft = ((new Date().valueOf() - start) / index) * (this.newRows.length - index) / 1000 / 60;
                                 this.dialog.Info(i.rowInExcel + ' ' + (i.name) + " נשאר עוד " + timeLeft.toFixed(1) + " דקות");
                             }
-                            await ImportFromExcelComponent.insertRows(rowsToInsert, disableGeocoding);
-
+                            await ImportFromExcelComponent.insertRows(rowsToInsert);
+                            for (const r of rowsToInsert) {
+                                r.created = true;
+                            }
                             this.identicalRows.push(...rowsToInsert);
                             rowsToInsert = [];
                         }
@@ -118,7 +119,10 @@ export class ImportFromExcelComponent implements OnInit {
 
                     }
                     if (rowsToInsert.length > 0) {
-                        await ImportFromExcelComponent.insertRows(rowsToInsert, disableGeocoding);
+                        await ImportFromExcelComponent.insertRows(rowsToInsert);
+                        for (const r of rowsToInsert) {
+                            r.created = true;
+                        }
                         this.identicalRows.push(...rowsToInsert);
                     }
                     this.newRows = [];
@@ -129,6 +133,7 @@ export class ImportFromExcelComponent implements OnInit {
                     this.dialog.Error("הוספה נכשלה:" + extractError(err));
                     this.newRows = this.newRows.filter(x => this.identicalRows.indexOf(x) < 0);
                 }
+                this.createImportReport();
 
             });
 
@@ -136,7 +141,7 @@ export class ImportFromExcelComponent implements OnInit {
         });
     }
     @ServerFunction({ allowed: Roles.admin })
-    static async insertRows(rowsToInsert: excelRowInfo[], disableGeocoding: boolean, context?: Context) {
+    static async insertRows(rowsToInsert: excelRowInfo[], context?: Context) {
         let t = new PromiseThrottle(10);
         for (const r of rowsToInsert) {
             let f = context.for(Families).create();
@@ -316,7 +321,6 @@ export class ImportFromExcelComponent implements OnInit {
                             break;
                     }
 
-
                 }
                 this.rows = [];
                 for (let index = 2; index <= this.totalRows; index++) {
@@ -360,6 +364,8 @@ export class ImportFromExcelComponent implements OnInit {
             tz2: f.tz2.value,
             phone1ForDuplicateCheck: f.phone1.value,
             phone2ForDuplicateCheck: f.phone2.value,
+            phone3ForDuplicateCheck: f.phone3.value,
+            phone4ForDuplicateCheck: f.phone4.value,
             valid: true,
             rowInExcel: row,
             values: {}
@@ -399,11 +405,12 @@ export class ImportFromExcelComponent implements OnInit {
             columnSettings: () => {
                 let s = this.settings;
                 return [
-                    s.checkIfFamilyExistsInDb,
+                    s.defaultPrefixForExcelImport,
                     s.checkIfFamilyExistsInFile,
                     s.checkDuplicatePhones,
                     s.excelImportAutoAddValues,
-                    s.defaultPrefixForExcelImport
+                    s.checkIfFamilyExistsInDb,
+                    s.removedFromListStrategy
                 ]
             }
         });
@@ -534,6 +541,7 @@ export class ImportFromExcelComponent implements OnInit {
                 await h.lookupAndInsert(BasketType, b => b.name, v, b => b.id, f.basketType);
             }, columns: [this.f.basketType]
         });
+
         this.columns.push({
             key: 'distCenterSemel',
             name: 'סמל נקודת חלוקה',
@@ -543,7 +551,7 @@ export class ImportFromExcelComponent implements OnInit {
             }, columns: [this.f.distributionCenter]
         });
         this.columns.push({
-            key: 'distSenterName',
+            key: 'distCenterName',
             name: 'נקודת חלקה',
             updateFamily: async (v, f, h) => {
                 await h.lookupAndInsert(DistributionCenters, b => b.name, v, b => b.id, f.distributionCenter);
@@ -608,7 +616,7 @@ export class ImportFromExcelComponent implements OnInit {
             }, columns: [this.f.deliverStatus]
         });
 
-        for (const c of [this.f.phone1, this.f.phone2, this.f.socialWorkerPhone1, this.f.socialWorkerPhone2]) {
+        for (const c of [this.f.phone1, this.f.phone2, this.f.phone3, this.f.phone4, this.f.socialWorkerPhone1, this.f.socialWorkerPhone2]) {
             this.columns.push({
                 key: c.defs.key,
                 name: c.defs.caption,
@@ -633,6 +641,8 @@ export class ImportFromExcelComponent implements OnInit {
         ]);
         for (const col of [this.f.phone1Description,
         this.f.phone2Description,
+        this.f.phone3Description,
+        this.f.phone4Description,
         this.f.internalComment,
         this.f.deliveryComments,
         this.f.addressComment]) {
@@ -735,9 +745,16 @@ export class ImportFromExcelComponent implements OnInit {
                         if (!this.settings.checkDuplicatePhones.value) {
                             f.phone1ForDuplicateCheck = '';
                             f.phone2ForDuplicateCheck = '';
+                            f.phone3ForDuplicateCheck = '';
+                            f.phone4ForDuplicateCheck = '';
                         }
 
-                        if (this.settings.checkIfFamilyExistsInFile.value && (exists(f.tz, usedTz, 'תעודת זהות') || this.settings.checkDuplicatePhones.value && (exists(f.phone1ForDuplicateCheck, usedPhone, 'טלפון 1') || exists(f.phone2ForDuplicateCheck, usedPhone, 'טלפון 2')))) {
+                        if (this.settings.checkIfFamilyExistsInFile.value && (exists(f.tz, usedTz, 'תעודת זהות') || this.settings.checkDuplicatePhones.value &&
+                            (exists(f.phone1ForDuplicateCheck, usedPhone, 'טלפון 1')
+                                || exists(f.phone2ForDuplicateCheck, usedPhone, 'טלפון 2')
+                                || exists(f.phone3ForDuplicateCheck, usedPhone, 'טלפון 3')
+                                || exists(f.phone4ForDuplicateCheck, usedPhone, 'טלפון 4')
+                            ))) {
                             this.errorRows.push(f);
                         }
 
@@ -819,7 +836,7 @@ export class ImportFromExcelComponent implements OnInit {
         if (info.tz) {
             r.push(' מספר זהות זהה');
         }
-        if (info.phone1 || info.phone2) {
+        if (info.phone1 || info.phone2 || info.phone3 || info.phone4) {
             r.push(' מספר טלפון זהה');
         }
         if (info.nameDup) {
@@ -835,8 +852,9 @@ export class ImportFromExcelComponent implements OnInit {
             newRows: [],
             updateRows: []
         } as serverCheckResults;
+        let settings = await ApplicationSettings.getAsync(context);
         for (const info of excelRowInfo) {
-            info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz, info.tz2, info.phone1ForDuplicateCheck, info.phone2ForDuplicateCheck, undefined, true, context, db);
+            info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz, info.tz2, info.phone1ForDuplicateCheck, info.phone2ForDuplicateCheck, info.phone3ForDuplicateCheck, info.phone4ForDuplicateCheck, undefined, true, context, db);
 
             if (!info.duplicateFamilyInfo || info.duplicateFamilyInfo.length == 0) {
                 result.newRows.push(info);
@@ -884,8 +902,18 @@ export class ImportFromExcelComponent implements OnInit {
                     }
                 }
                 if (ef.deliverStatus.value == DeliveryStatus.RemovedFromList) {
-                    info.error = 'משפחה מעודכנת בבסיס הנתונים כהוצא מהרשימות';
-                    result.errorRows.push(info);
+                    switch (settings.removedFromListStrategy.value) {
+                        case RemovedFromListExcelImportStrategy.displayAsError:
+                            info.error = 'משפחה מעודכנת בבסיס הנתונים כהוצא מהרשימות';
+                            result.errorRows.push(info);
+                            break;
+                        case RemovedFromListExcelImportStrategy.showInUpdate:
+                            result.updateRows.push(info);
+                            break;
+                        case RemovedFromListExcelImportStrategy.ignore:
+                            result.newRows.push(info);
+                            break;
+                    }
                 }
                 else if (hasDifference) {
                     result.updateRows.push(info);
@@ -948,7 +976,15 @@ export class ImportFromExcelComponent implements OnInit {
         }
     }
     moveFromErrorToAdd(r: excelRowInfo) {
-        this.dialog.YesNoQuestion(translate("להעביר את משפחת ") + r.name + translate(" למשפחות להוספה?"), () => {
+        let name = r.name;
+        if (!name) {
+            name = "ללא שם";
+        }
+        this.dialog.YesNoQuestion(translate("להעביר את משפחת ") + name + translate(" למשפחות להוספה?"), () => {
+            if (!r.name) {
+                r.name = name;
+                r.values[this.f.name.defs.key] = { newValue: r.name, newDisplayValue: r.name };
+            }
             let x = this.errorRows.indexOf(r);
             this.errorRows.splice(x, 1);
             this.newRows.push(r);
@@ -972,10 +1008,47 @@ export class ImportFromExcelComponent implements OnInit {
         await this.iterateExcelFile(false);
     }
 
+    async createImportReport() {
+        let rows: importReportRow[] = [];
+        let addRows = (from: excelRowInfo[], status: string, updateRows?: boolean) => {
+            for (const f of from) {
+                let r: importReportRow = {
+                    "שורה באקסל המקורי": f.rowInExcel,
+                    סטטוס: status,
+                    "שגיאה": f.error
+                };
+                if (f.created) {
+                    r.סטטוס = 'נוספה לאתר';
+                    f.error = '';
+                }
+                for (const col of this.columnsInCompare) {
+                    let v = f.values[col.defs.key];
+                    if (v)
+                        r[col.defs.caption] = updateRows ? v.existingDisplayValue : v.newDisplayValue;
+                    if (r[col.defs.caption] === undefined)
+                        r[col.defs.caption] = '';
+                }
+                rows.push(r);
+            }
+        };
+        addRows(this.newRows, 'לא נקלטה');
+        addRows(this.updateRows, 'קיימת עם עדכון', true);
+        addRows(this.identicalRows, 'קיימת זהה');
+        addRows(this.errorRows, 'שגיאה');
+        rows.sort((a, b) => a["שורה באקסל המקורי"] - b["שורה באקסל המקורי"]);
+        await jsonToXlsx(this.busy, rows, Sites.getOrganizationFromContext(this.context) + ' סיכום קליטה ' + new Date().toLocaleString('he').replace(/:/g, '-').replace(/\./g, '-').replace(/,/g, '') + this.filename);
+    }
+
     async updateFamily(i: duplicateFamilyInfo) {
         let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(i.id));
         this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { f: f });
     }
+}
+interface importReportRow {
+    "שורה באקסל המקורי": number;
+    "סטטוס": string;
+    "שגיאה"?: string;
+    [caption: string]: any;
 }
 
 
@@ -1046,8 +1119,11 @@ interface excelRowInfo {
     tz2: string;
     phone1ForDuplicateCheck: string;
     phone2ForDuplicateCheck: string;
+    phone3ForDuplicateCheck: string;
+    phone4ForDuplicateCheck: string;
     valid: boolean;
     error?: string;
+    created?: boolean;
 
     duplicateFamilyInfo?: duplicateFamilyInfo[];
     values: { [key: string]: updateColumns };
@@ -1088,12 +1164,6 @@ export function fixPhone(phone: string, defaultPrefix: string) {
     if (phone.length == 7 && defaultPrefix && defaultPrefix.length > 0)
         return defaultPrefix + phone;
     return phone;
-}
-export function extractError(err: any) {
-    if (err.error)
-        err = err.error;
-    return err;
-
 }
 
 export class PromiseThrottle {

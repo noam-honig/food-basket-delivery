@@ -41,3 +41,10 @@ export class OverviewGuard extends SignedInGuard {
 
 
 
+@Injectable()
+export class OverviewOrAdminGuard extends SignedInGuard {
+
+    isAllowed() {
+        return c => c.isAllowed(Roles.admin) || c.isAllowed(Roles.overview);
+    }
+}

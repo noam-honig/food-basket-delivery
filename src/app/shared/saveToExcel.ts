@@ -1,11 +1,11 @@
-import { Entity, Column, GridSettings,  Context, SpecificEntityHelper, } from '@remult/core';
+import { Entity, Column, GridSettings, Context, SpecificEntityHelper, } from '@remult/core';
 import { BusyService } from '@remult/core';
 
 import { HasAsyncGetTheValue, DateTimeColumn } from "../model-shared/types";
 import { foreachSync } from "./utils";
 
 export async function saveToExcel<E extends Entity<any>, T extends GridSettings<E>>(
-  context:SpecificEntityHelper<any,E>,
+  context: SpecificEntityHelper<any, E>,
   grid: T,
   fileName: string,
   busy: BusyService,
@@ -78,6 +78,8 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
                 colName = 'A';
                 if (colPrefix == 'A')
                   colPrefix = 'B';
+                else if (colPrefix == 'B')
+                  colPrefix = 'C';
                 else
                   colPrefix = 'A';
               }
@@ -112,10 +114,10 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
               }
             } catch (err) {
 
-              console.error(err, c.defs.key,context.toApiPojo(<E>f));
+              console.error(err, c.defs.key, context.toApiPojo(<E>f));
             }
           }
-         
+
           if (moreColumns)
             await moreColumns(<E>f, addColumn);
           rowNum++;
@@ -130,6 +132,19 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
 
 
     XLSX.utils.book_append_sheet(wb, ws, 'test');
+    XLSX.writeFile(wb, fileName + '.xlsx');
+  });
+}
+export async function jsonToXlsx(busy: BusyService, rows: any[], fileName: string) {
+  await busy.doWhileShowingBusy(async () => {
+    let XLSX = await import('xlsx');
+
+
+    let wb = XLSX.utils.book_new();
+
+    wb.Workbook = { Views: [{ RTL: true }] };
+    let ws = XLSX.utils.json_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
     XLSX.writeFile(wb, fileName + '.xlsx');
   });
 }

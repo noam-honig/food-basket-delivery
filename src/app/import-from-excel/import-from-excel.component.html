@@ -13,7 +13,7 @@
 
                 <button (click)="loadSettings()" mat-raised-button>טען הגדרות</button>
                 <button (click)="saveSettings()" mat-raised-button>שמור הגדרות</button>
-                <button (click)="this.stepper.next()" mat-raised-button  color="accent">המשך לשלב הבא</button>
+                <button (click)="saveSettings(); this.stepper.next()" mat-raised-button  color="accent">המשך לשלב הבא</button>
 
                 <!--
                 <h3>עמודות מהאקסל</h3>
@@ -88,7 +88,8 @@
         </mat-step>
         <mat-step label="הגדרות אחרונות">
             <button (click)="testImport()" mat-raised-button  color="accent">המשך לשלב הבא</button>
-            <br>
+            <h3>הגדרות אחרונות...</h3>
+            
             <data-area [settings]="settingsArea" *ngIf="settingsArea"></data-area>
 
         </mat-step>
