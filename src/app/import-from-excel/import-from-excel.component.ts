@@ -145,7 +145,7 @@ export class ImportFromExcelComponent implements OnInit {
         let t = new PromiseThrottle(10);
         for (const r of rowsToInsert) {
             let f = context.for(Families).create();
-            f.__disableGeocoding = disableGeocoding;
+            
             for (const val in r.values) {
                 f.columns.find(val).value = r.values[val].newValue;
             }

@@ -45,11 +45,11 @@ export abstract class HelpersBase extends IdEntity {
         caption: 'צריך מלווה',
         allowApiUpdate: Roles.admin
     });
-    theHelperIAmEscorting = new HelperIdReadonly(this.context, {
+    theHelperIAmEscorting = new HelperIdReadonly(this.context,()=>this.distributionCenter.value, {
         caption: 'נהג משוייך',
         allowApiUpdate: Roles.admin
     });
-    escort = new HelperId(this.context, {
+    escort = new HelperId(this.context,()=>this.distributionCenter.value, {
         caption: 'מלווה'
         , allowApiUpdate: Roles.admin
     });
@@ -219,7 +219,7 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
                     hideDataOnInput: true,
                     width: '200',
                     click: async () => this.context.openDialog((await import('../select-helper/select-helper.component')).SelectHelperComponent,
-                        x => x.args = {filter,distCenter: distCenter(),, onSelect: s => this.value = (s ? s.id.value : '') })
+                        x => x.args = {filter,distCenter: distCenter(), onSelect: s => this.value = (s ? s.id.value : '') })
                 })
         }, settingsOrCaption);
     }

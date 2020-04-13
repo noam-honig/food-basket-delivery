@@ -87,7 +87,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   statuses = new Statuses();
   selectedStatus: statusClass;
-  filterCourier = new HelperId(this.context, {
+  filterCourier = new HelperId(this.context,()=>this.dialog.distCenter.value, {
     caption: 'משנע לסינון',
     valueChange: () => this.refreshFamilies()
   }, h => h.allFamilies.isGreaterThan(0));

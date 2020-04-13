@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Context, ServerFunction, DataAreaSettings } from '@remult/core';
 import { Families } from '../families/families';
 import { Roles } from '../auth/roles';
-import { PromiseThrottle, extractError } from '../import-from-excel/import-from-excel.component';
+import { PromiseThrottle } from '../import-from-excel/import-from-excel.component';
 import { DialogService } from '../select-popup/dialog';
 import { DistributionCenterId } from '../manage/distribution-centers';
 import { GeocodeInformation } from '../shared/googleApiHelpers';
+import { extractError } from '../model-shared/types';
 
 @Component({
   selector: 'app-geocode',

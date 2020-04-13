@@ -21,15 +21,7 @@ export class TestMapComponent implements OnInit {
     this.helpers = await this.context.for(HelpersAndStats).find();
   }
   async assignFamilies(h: HelpersAndStats) {
-    await AsignFamilyComponent.AddBox({
-      allRepeat: false,
-      preferRepeatFamilies: false,
-      numOfBaskets: 10,
-      helperId: h.id.value,
-      basketType: undefined,
-      city: undefined,
-      group: undefined
-    });
+    alert('disabled for now');
     this.ngOnInit();
   }
 
