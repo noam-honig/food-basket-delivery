@@ -8,7 +8,7 @@ import { ServerEventAuthorizeAction } from "../server/server-event-authorize-act
 import { Subject } from "rxjs";
 import { myThrottle } from "../model-shared/types";
 import { TestComponentRenderer } from "@angular/core/testing";
-import { DistributionCenterId } from "../manage/distribution-centers";
+import { DistributionCenterId, DistributionCenters } from "../manage/distribution-centers";
 import { Roles } from "../auth/roles";
 import { HelperUserInfo } from "../helpers/helpers";
 
@@ -16,6 +16,7 @@ declare var gtag;
 
 @Injectable()
 export class DialogService {
+
     onDistCenterChange(whatToDo: () => void, component: any) {
         let y = this.refreshDistCenter.subscribe(() => {
             whatToDo();
@@ -71,15 +72,18 @@ export class DialogService {
             this.refreshDistCenter.next();
         }
     }, true);
-
+    hasManyCenters = false;
     canSeeCenter() {
-        var dist ='';
+        var dist = '';
         if (this.context.user)
             dist = (<HelperUserInfo>this.context.user).distributionCenter;
         if (!this.context.isAllowed(Roles.admin) && this.distCenter.value != dist) {
             this.distCenter.value = dist;
         }
-        return this.context.isAllowed(Roles.admin);
+        return this.context.isAllowed(Roles.admin) && this.hasManyCenters;
+    }
+    async refreshCanSeeCenter() {
+        this.hasManyCenters = await this.context.for(DistributionCenters).count() > 1;
     }
 
     eventSource: any;/*EventSource*/

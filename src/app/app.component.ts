@@ -57,6 +57,7 @@ export class AppComponent {
     this.dc = undefined;
     this.lastUser = this.context.user;
     this.distCenterArea = new DataAreaSettings({ columnSettings: () => [this.dialog.distCenter] })
+    this.dialog.refreshCanSeeCenter();
 
     if (this.context.isAllowed(Roles.distCenterAdmin) && !this.context.isAllowed(Roles.admin))
       this.context.for(DistributionCenters).lookupAsync(x => x.id.isEqualTo((<HelperUserInfo>this.context.user).distributionCenter)).then(x => this.dc = x);
