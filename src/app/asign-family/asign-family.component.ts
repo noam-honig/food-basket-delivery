@@ -20,7 +20,7 @@ import { Context } from '@remult/core';
 
 import { BasketType } from '../families/BasketType';
 
-import { CitiesStats } from '../families/stats-action';
+import { CitiesStats, CitiesStatsPerDistCenter } from '../families/stats-action';
 import { SqlBuilder, extractError } from '../model-shared/types';
 import { BusyService } from '@remult/core';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
@@ -461,8 +461,9 @@ export class AsignFamilyComponent implements OnInit {
         }
 
 
-        for (let c of await context.for(CitiesStats).find({
-            orderBy: ff => [{ column: ff.city }]
+        for (let c of await context.for(CitiesStatsPerDistCenter).find({
+            orderBy: ff => [{ column: ff.city }],
+            where: ff => ff.distributionCenter.filter(info.distCenter)
         })) {
             var ci = {
                 name: c.city.value,

@@ -11,6 +11,7 @@ import { BasketInfo } from "../asign-family/asign-family.component";
 import { SqlBuilder } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { Groups } from "../manage/manage.component";
+import { DistributionCenterId } from '../manage/distribution-centers';
 
 
 export interface OutArgs {
@@ -83,18 +84,34 @@ export class Stats {
                 successFamilies: await context.for(Families).count(f => f.deliverStatus.isSuccess().and(f.basketType.isEqualTo(b.id).and(f.filterDistCenter(distCenter))))
             });
         }));
-        pendingStats.push(
-            context.for(CitiesStats).find({
-                orderBy: f => [{ column: f.families, descending: true }]
-            }).then(cities => {
-                result.cities = cities.map(x => {
-                    return {
-                        name: x.city.value,
-                        count: x.families.value
-                    }
-                });
-            })
-        );
+        if (distCenter == Families.allCentersToken)
+            pendingStats.push(
+                context.for(CitiesStats).find({
+                    orderBy: f => [{ column: f.families, descending: true }]
+                }).then(cities => {
+                    result.cities = cities.map(x => {
+                        return {
+                            name: x.city.value,
+                            count: x.families.value
+                        }
+                    });
+                })
+            );
+        else
+            pendingStats.push(
+                context.for(CitiesStatsPerDistCenter).find({
+                    orderBy: f => [{ column: f.families, descending: true }],
+                    where: f => f.distributionCenter.filter(distCenter)
+
+                }).then(cities => {
+                    result.cities = cities.map(x => {
+                        return {
+                            name: x.city.value,
+                            count: x.families.value
+                        }
+                    });
+                })
+            );
         await context.for(Groups).find({
             limit: 1000,
             orderBy: f => [{ column: f.name }]
@@ -139,6 +156,30 @@ export class CitiesStats extends Entity<string> {
                     f.distributionCenter.isAllowedForUser(),
                     sql.eq(f.courier, '\'\'')]
                 }), ' group by ', f.city, ') as result')
+            }
+        });
+    }
+}
+@EntityClass
+export class CitiesStatsPerDistCenter extends Entity<string> {
+    city = new StringColumn();
+    distributionCenter = new DistributionCenterId(this.context);
+    families = new NumberColumn();
+    constructor(private context: Context) {
+        super({
+            allowApiRead: false,
+            name: 'citiesStats',
+            dbName: () => {
+                let f = context.for(Families).create();
+                let sql = new SqlBuilder();
+                sql.addEntity(f, 'Families');
+                return sql.build('(', sql.query({
+                    select: () => [f.city, f.distributionCenter, sql.columnWithAlias("count(*)", this.families)],
+                    from: f,
+                    where: () => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery),
+                    f.distributionCenter.isAllowedForUser(),
+                    sql.eq(f.courier, '\'\'')]
+                }), ' group by ', [f.city, f.distributionCenter], ') as result')
             }
         });
     }
