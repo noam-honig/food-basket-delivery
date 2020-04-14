@@ -64,7 +64,7 @@ export class AuthService {
     ) {
 
         tokenHelper.loadSessionFromCookie();
-        tokenHelper.tokenInfoChanged = () => dialog.refreshEventListener(this.context.isAllowed(Roles.admin));
+        tokenHelper.tokenInfoChanged = () => dialog.refreshEventListener(this.context.isAllowed(Roles.distCenterAdmin));
         tokenHelper.tokenInfoChanged();
     }
     static UpdateInfoComponent: { new(...args: any[]): any };

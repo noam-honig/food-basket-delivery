@@ -71,7 +71,7 @@ serverInit().then(async (dataSource) => {
             await res.redirect(to);
         });
     } else {
-        if (false&&!process.env.DISABLE_SERVER_EVENTS) {
+        if (!process.env.DISABLE_SERVER_EVENTS) {
             let serverEvents = new ServerEvents(app);
             if (Sites.multipleSites) {
                 for (const s of Sites.schemas) {
@@ -83,10 +83,10 @@ serverInit().then(async (dataSource) => {
             }
 
             let lastMessage = new Date();
-            Families.SendMessageToBrowsers = (x, c) => {
+            Families.SendMessageToBrowsers = (x, c,distCenter) => {
                 if (new Date().valueOf() - lastMessage.valueOf() > 1000) {
                     lastMessage = new Date();
-                    serverEvents.SendMessage(x, c)
+                    serverEvents.SendMessage(x, c,distCenter)
                 }
             };
         }

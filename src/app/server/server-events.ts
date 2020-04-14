@@ -3,30 +3,46 @@ import { ServerEventAuthorizeAction } from './server-event-authorize-action';
 import { Context, ServerContext } from '@remult/core';
 import { ExpressRequestBridgeToDataApiRequest } from '@remult/server';
 import { Sites } from '../sites/sites';
+import { HelperUserInfo } from '../helpers/helpers';
+import { Roles } from '../auth/roles';
 
 
 
 
 let tempConnections: any = {};
-ServerEventAuthorizeAction.authorize = key => {
+ServerEventAuthorizeAction.authorize = (key, context) => {
     let x = tempConnections[key];
     if (x)
-        x();
+        x(context);
 };
+class userInSite {
+    write(distributionCenter: string, message: string): void {
+        if (this.canSeeAllDistCenters||this.distCenter==distributionCenter)
+            this.response.write(message);
+    }
+
+    constructor(private distCenter: string,
+        public response: Response,
+        private canSeeAllDistCenters: boolean) {
+
+    }
+}
 
 export class ServerEvents {
-    sites = new Map<string, Response[]>();
+    sites = new Map<string, userInSite[]>();
 
     constructor(private app: Express) {
-       
+
     }
-    registerPath(path:string){
-        let p = path+'/stream';
+    registerPath(path: string) {
+        let p = path + '/stream';
         console.log(p);
         this.app.get(p, (req, res) => {
             //@ts-ignore
             let r = new ExpressRequestBridgeToDataApiRequest(req);
             let context = new ServerContext();
+            if (context.isAllowed(Roles.distCenterAdmin))
+                throw  "not allowed";
             context.setReq(r);
             let org = Sites.getOrganizationFromContext(context);
             res.writeHead(200, {
@@ -38,13 +54,13 @@ export class ServerEvents {
             });
             let key = new Date().toISOString();
 
-            tempConnections[key] = () => {
+            tempConnections[key] = (context: Context) => {
                 let x = this.sites.get(org);
                 if (!x) {
                     x = [];
                     this.sites.set(org, x);
                 }
-                x.push(res);
+                x.push(new userInSite((<HelperUserInfo>context.user).distributionCenter, res,context.isAllowed(Roles.admin)));
                 tempConnections[key] = undefined;
 
             };
@@ -54,7 +70,7 @@ export class ServerEvents {
                 tempConnections[key] = undefined;
                 let x = this.sites.get(org);
                 if (x) {
-                    let i = x.indexOf(res);
+                    let i = x.findIndex(x=>x.response== res);
                     if (i >= 0)
                         x.splice(i, 1);
                 }
@@ -62,12 +78,12 @@ export class ServerEvents {
 
         });
     }
-    SendMessage = (x: string, context: Context) => {
+    SendMessage = (x: string, context: Context,distributionCenter:string) => {
         setTimeout(() => {
             let org = Sites.getOrganizationFromContext(context);
             let y = this.sites.get(org);
             if (y)
-                y.forEach(y => y.write("data:" + x + "\n\n"));
+                y.forEach(y => y.write(distributionCenter, "data:" + x + "\n\n"));
         }, 250);
 
     }

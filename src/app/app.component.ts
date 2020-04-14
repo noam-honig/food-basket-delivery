@@ -52,7 +52,7 @@ export class AppComponent {
   lastUser: any;
 
   refreshdc() {
-    if (this.context.user == this.lastUser && this.dialog.distCenterArea)
+    if (this.context.user == this.lastUser )
       return "";
     this.dc = undefined;
     this.lastUser = this.context.user;

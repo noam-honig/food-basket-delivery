@@ -147,9 +147,9 @@ export class Families extends IdEntity {
               }
             }
             if (!this.disableChangeLogging) {
-              logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName()), this.context));//should be after succesfull save
+              logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName()), this.context,this.distributionCenter.value));//should be after succesfull save
               //logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
-              logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()), this.context)); //should be after succesfull save
+              logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()), this.context,this.distributionCenter.value)); //should be after succesfull save
               logChanged(this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => { }); //should be after succesfull save
             }
           }
@@ -518,7 +518,7 @@ export class Families extends IdEntity {
     return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
   }
 
-  static SendMessageToBrowsers = (s: string, context: Context) => { };
+  static SendMessageToBrowsers = (s: string, context: Context,distCenter:string) => { };
   static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string) {
     switch (updateType) {
       case 1:

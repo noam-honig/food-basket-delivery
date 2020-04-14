@@ -126,6 +126,10 @@ export class DialogService {
                     });
                 });
             }
+            else if (this.eventSource){
+                this.eventSource.close();
+                this.eventSource = undefined;
+            }
         }
     }
     async messageDialog(what: string) {
