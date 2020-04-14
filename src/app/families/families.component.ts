@@ -118,7 +118,7 @@ export class FamiliesComponent implements OnInit {
 
         });
     }
-    canAdd = this.context.isAllowed(Roles.admin);
+    isAdmin = this.context.isAllowed(Roles.admin);
 
     resetRow() {
         var focus: Families;
@@ -274,7 +274,7 @@ export class FamiliesComponent implements OnInit {
     families = this.context.for(Families).gridSettings({
 
         allowUpdate: true,
-        allowInsert: this.canAdd,
+        allowInsert: this.isAdmin,
 
         rowCssClass: f => f.deliverStatus.getCss(),
         numOfColumnsInGrid: 4,
@@ -501,7 +501,7 @@ export class FamiliesComponent implements OnInit {
 
 
     }
-    @ServerFunction({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async updateGroupOnServer(info: serverUpdateInfo, group: string, action: string, context?: Context) {
         return await FamiliesComponent.processFamilies(info, context, f => {
             if (action == addGroupAction) {
@@ -542,7 +542,7 @@ export class FamiliesComponent implements OnInit {
                 }
             }
     }
-    @ServerFunction({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async updateStatusOnServer(info: serverUpdateInfo, status: any, context?: Context) {
         return await FamiliesComponent.processFamilies(info, context, f => {
             if (f.deliverStatus.value != DeliveryStatus.RemovedFromList)
@@ -588,7 +588,7 @@ export class FamiliesComponent implements OnInit {
         }
 
     }
-    @ServerFunction({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async cancelAssignmentOnServer(info: serverUpdateInfo, context?: Context) {
         return await FamiliesComponent.processFamilies(info, context, f => {
             if (f.deliverStatus.value != DeliveryStatus.RemovedFromList)
@@ -620,7 +620,7 @@ export class FamiliesComponent implements OnInit {
             }
         }
     }
-    @ServerFunction({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async updateBasketOnServer(info: serverUpdateInfo, basketType: string, context?: Context) {
         return await FamiliesComponent.processFamilies(info, context, f => f.basketType.value = basketType);
     }
@@ -633,7 +633,7 @@ export class FamiliesComponent implements OnInit {
 
 
     static async processFamilies(info: serverUpdateInfo, context: Context, what: (f: Families) => void) {
-        let rows = await context.for(Families).find({ where: f => unpackWhere(f, info.where) });
+        let rows = await context.for(Families).find({ where: f => new AndFilter(f.distributionCenter.isAllowedForUser(), unpackWhere(f, info.where)) });
         if (rows.length != info.count) {
             return "ארעה שגיאה אנא נסה שוב";
         }
@@ -670,7 +670,7 @@ export class FamiliesComponent implements OnInit {
                 }
             }
     }
-    @ServerFunction({ allowed: Roles.admin })
+    @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async updateFamilySourceOnServer(info: serverUpdateInfo, familySource: string, context?: Context) {
         return await FamiliesComponent.processFamilies(info, context, f => f.familySource.value = familySource);
     }
