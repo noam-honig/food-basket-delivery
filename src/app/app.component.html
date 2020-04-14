@@ -4,11 +4,11 @@
     <div style="width:100%;text-align: center">
       <img src="{{getLogo()}}" />
     </div>
-    <p style="text-align: center" *ngIf="!dc">{{settings.organisationName.value}}</p>
-    <div *ngIf="dc" (click)="updateDistCenter()">
-      <p style="text-align: center">{{dc.name.value}}
+    <p style="text-align: center" *ngIf="!dialog.dc">{{settings.organisationName.value}}</p>
+    <div *ngIf="dialog.dc" (click)="dialog.updateDistCenter()">
+      <p style="text-align: center">{{dialog.dc.name.value}}
       </p>
-      <p style="text-align: center">{{dc.getGeocodeInformation().getAddress()}}</p>
+      <p style="text-align: center">{{dialog.dc.getGeocodeInformation().getAddress()}}</p>
     </div>
     <h4 *ngIf="context.user">שלום {{context.user.name}}</h4>
     <mat-nav-list role="list">
@@ -59,4 +59,3 @@
   </div>
 
 </mat-sidenav-container>
-{{refreshdc()}}

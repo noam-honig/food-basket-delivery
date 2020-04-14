@@ -37,7 +37,6 @@ export class LoginComponent implements OnInit {
   }
   login() {
     this.auth.login(this.user, this.password, this.remember, () => this.password = '');
-    this.dialog.refreshFamiliesAndDistributionCenters();
   }
   register() {
     this.router.navigateToComponent(RegisterComponent);

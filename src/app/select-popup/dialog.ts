@@ -13,6 +13,7 @@ import { Roles } from "../auth/roles";
 import { HelperUserInfo } from "../helpers/helpers";
 import { RouteReuseStrategy } from "@angular/router";
 import { CustomReuseStrategy } from "../custom-reuse-controller-router-strategy";
+import { InputAreaComponent } from "./input-area/input-area.component";
 
 declare var gtag;
 
@@ -73,6 +74,32 @@ export class DialogService {
 
 
     }
+
+    async updateDistCenter() {
+
+
+
+        await this.context.openDialog(InputAreaComponent, x => x.args = {
+            title: 'עדכון פרטים נקודת חלוקה',
+            settings: {
+                columnSettings: () => [
+                    this.dc.name,
+                    this.dc.address,
+                    {
+                        caption: 'כתובת כפי שגוגל הבין',
+                        getValue: () => this.dc.getGeocodeInformation().getAddress()
+                    }
+                ]
+            },
+            ok: async () => {
+                await this.dc.save();
+            },
+            cancel: () => {
+                this.dc.undoChanges()
+            }
+        });
+
+    }
     distCenter = new DistributionCenterId(this.context, {
 
         valueChange: () => {
@@ -91,12 +118,17 @@ export class DialogService {
         }
         return this.context.isAllowed(Roles.admin) && this.hasManyCenters;
     }
+    dc: DistributionCenters;
     async refreshCanSeeCenter() {
         this.hasManyCenters = false;
         this.distCenterArea = undefined;
+        this.dc = undefined;
+
+        if (this.context.isAllowed(Roles.distCenterAdmin) && !this.context.isAllowed(Roles.admin))
+            this.context.for(DistributionCenters).lookupAsync(x => x.id.isEqualTo((<HelperUserInfo>this.context.user).distributionCenter)).then(x => this.dc = x);
         if (this.context.isAllowed(Roles.admin)) {
             this.hasManyCenters = await this.context.for(DistributionCenters).count() > 1;
-            this.distCenterArea =  new DataAreaSettings({ columnSettings: () => [this.distCenter] });
+            this.distCenterArea = new DataAreaSettings({ columnSettings: () => [this.distCenter] });
         }
     }
 
@@ -126,7 +158,7 @@ export class DialogService {
                     });
                 });
             }
-            else if (this.eventSource){
+            else if (this.eventSource) {
                 this.eventSource.close();
                 this.eventSource = undefined;
             }

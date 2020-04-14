@@ -44,25 +44,12 @@ export class AppComponent {
     if (settings.redTitleBar.value) {
       this.toolbarColor = 'accent';
     }
-    this.refreshdc();
+    
 
 
   }
   
-  lastUser: any;
 
-  refreshdc() {
-    if (this.context.user == this.lastUser )
-      return "";
-    this.dc = undefined;
-    this.lastUser = this.context.user;
-    
-    this.dialog.refreshCanSeeCenter();
-
-    if (this.context.isAllowed(Roles.distCenterAdmin) && !this.context.isAllowed(Roles.admin))
-      this.context.for(DistributionCenters).lookupAsync(x => x.id.isEqualTo((<HelperUserInfo>this.context.user).distributionCenter)).then(x => this.dc = x);
-    return '';
-  }
 
   showSeperator(route: Route) {
     if (route.data && route.data.seperator)
@@ -116,31 +103,6 @@ export class AppComponent {
 
   }
 
-  dc: DistributionCenters;
-  async updateDistCenter() {
-
-
-
-    await this.context.openDialog(InputAreaComponent, x => x.args = {
-      title: 'עדכון פרטים נקודת חלוקה',
-      settings: {
-        columnSettings: () => [
-          this.dc.name,
-          this.dc.address,
-          {
-            caption: 'כתובת כפי שגוגל הבין',
-            getValue: () => this.dc.getGeocodeInformation().getAddress()
-          }
-        ]
-      },
-      ok: async () => {
-        await this.dc.save();
-      },
-      cancel: () => {
-        this.dc.undoChanges()
-      }
-    });
-
-  }
+  
 
 }

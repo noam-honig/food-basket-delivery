@@ -64,7 +64,10 @@ export class AuthService {
     ) {
 
         tokenHelper.loadSessionFromCookie();
-        tokenHelper.tokenInfoChanged = () => dialog.refreshEventListener(this.context.isAllowed(Roles.distCenterAdmin));
+        tokenHelper.tokenInfoChanged = () => {
+            dialog.refreshEventListener(this.context.isAllowed(Roles.distCenterAdmin));
+            dialog.refreshFamiliesAndDistributionCenters();
+        };
         tokenHelper.tokenInfoChanged();
     }
     static UpdateInfoComponent: { new(...args: any[]): any };
@@ -138,19 +141,19 @@ export class AuthService {
                     requirePassword = true;
                 }
                 else {
-                    if (!Sites.isOverviewSchema(context)) 
-                    distCenterName = await h.distributionCenter.getTheValue();
+                    if (!Sites.isOverviewSchema(context))
+                        distCenterName = await h.distributionCenter.getTheValue();
                     if (h.admin.value) {
-                        if (Sites.isOverviewSchema(context) )
+                        if (Sites.isOverviewSchema(context))
                             result.roles.push(Roles.overview)
                         else {
-                            distCenterName+='- אדמין';
+                            distCenterName += '- אדמין';
                             result.roles.push(Roles.admin);
                             result.roles.push(Roles.distCenterAdmin);
                         }
                     }
                     if (h.distCenterAdmin.value) {
-                        distCenterName+='-מנהל נקודת חלוקה ';
+                        distCenterName += '-מנהל נקודת חלוקה ';
                         result.roles.push(Roles.distCenterAdmin);
                     }
 
