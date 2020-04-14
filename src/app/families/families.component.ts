@@ -43,7 +43,7 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { UpdateGroupDialogComponent } from '../update-group-dialog/update-group-dialog.component';
 import { Groups } from '../manage/manage.component';
 import { FamilySourceId } from './FamilySources';
-import { DistributionCenterId } from '../manage/distribution-centers';
+import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser } from '../manage/distribution-centers';
 const addGroupAction = ' להוסיף ';
 const replaceGroupAction = ' להחליף ';
 @Component({
@@ -102,8 +102,8 @@ export class FamiliesComponent implements OnInit {
             };
         }
         {
-            dialog.onDistCenterChange(()=>this.refresh(),this);
-            
+            dialog.onDistCenterChange(() => this.refresh(), this);
+
         }
         if (dialog.isScreenSmall())
             this.gridView = false;
@@ -549,6 +549,36 @@ export class FamiliesComponent implements OnInit {
                 f.deliverStatus.rawValue = status;
         });
     }
+    async updateDistributionCenter() {
+        let s = new DistributionCenterId(this.context);
+        let ok = false;
+        await this.context.openDialog(InputAreaComponent, x => {
+            x.args = {
+                settings: {
+                    columnSettings: () => [s]
+                },
+                title: 'עדכון נקודת חלוקה ל-' + this.families.totalRows + ' המשפחות המסומנות',
+                ok: () => ok = true
+                , cancel: () => { }
+
+            }
+        });
+        if (ok) {
+            if (await this.dialog.YesNoPromise('האם לעדכן את נקודת החלוקה "' + await s.getTheValue() + '" ל-' + this.families.totalRows + translate(' משפחות?'))) {
+                this.dialog.Info(await FamiliesComponent.updateDistributionCenterOnServer(this.packWhere(), s.rawValue));
+                this.refresh();
+            }
+        }
+    }
+    @ServerFunction({ allowed: Roles.admin })
+    static async updateDistributionCenterOnServer(info: serverUpdateInfo, distributionCenter: string, context?: Context) {
+        if (await context.for(DistributionCenters).count(d => d.id.isEqualTo(distributionCenter).and(filterCenterAllowedForUser(d.id, context))) == 0)
+            throw "נקודת חלוקה לא קיימת או מורשת";
+        return await FamiliesComponent.processFamilies(info, context, f => {
+
+            f.distributionCenter.value = distributionCenter;
+        });
+    }
 
 
     async cancelAssignment() {
@@ -559,7 +589,7 @@ export class FamiliesComponent implements OnInit {
 
     }
     @ServerFunction({ allowed: Roles.admin })
-    static async cancelAssignmentOnServer(info: serverUpdateInfo,  context?: Context) {
+    static async cancelAssignmentOnServer(info: serverUpdateInfo, context?: Context) {
         return await FamiliesComponent.processFamilies(info, context, f => {
             if (f.deliverStatus.value != DeliveryStatus.RemovedFromList)
                 f.courier.value = '';

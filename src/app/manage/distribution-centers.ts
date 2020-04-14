@@ -46,7 +46,7 @@ export class DistributionCenters extends IdEntity {
   }
 
 }
-function filterCenterAllowedForUser(center: IdColumn, context: Context) {
+export function filterCenterAllowedForUser(center: IdColumn, context: Context) {
   if (context.isAllowed(Roles.admin)) {
     return undefined;
   } else if (context.isSignedIn())
