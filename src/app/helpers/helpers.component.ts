@@ -19,6 +19,7 @@ import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-q
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { Sites } from '../sites/sites';
 import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
+import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 @Component({
   selector: 'app-helpers',
@@ -47,6 +48,24 @@ export class HelpersComponent implements OnInit {
 
     rowButtons: [
       {
+        name: '',
+        icon: 'edit',
+        click: async f => {
+          this.context.openDialog(InputAreaComponent, x => x.args = {
+            title: 'עדכן פרטי ' + f.name.value,
+            ok: () => {
+              f.save();
+            },
+            cancel: () => {
+
+            },
+            settings: {
+              columnSettings: () => this.selectColumns(f)
+            }
+          });
+        }
+      },
+      {
         name: 'שיוך משפחות',
         visible: h => !h.isNew(),
         click: async h =>
@@ -67,53 +86,53 @@ export class HelpersComponent implements OnInit {
       }
     },
     columnSettings: helpers => {
-      let r: DataControlInfo<Helpers>[] = [
-        {
-          column: helpers.name,
-          width: '150'
-        },
-        {
-          column: helpers.phone,
-          width: '150'
-        },
-
-      ];
-      if (this.context.isAllowed(Roles.distCenterAdmin)) {
-        r.push({
-          column: helpers.distCenterAdmin, width: '160'
-        });
-        if (!this.context.isAllowed(Roles.admin))
-          r.push({
-            column: helpers.eventComment
-          })
-      }
-      if (this.context.isAllowed(Roles.admin)) {
-        r.push(helpers.distributionCenter);
-        r.push({
-          column: helpers.admin,
-          width: '160'
-        });
-      }
-      this.numOfColsInGrid = r.length;
-
-
-
-      if (this.settings.manageEscorts.value)
-        r.push(helpers.company);
-      if (this.settings.manageEscorts.value) {
-        r.push(helpers.escort, helpers.theHelperIAmEscorting, helpers.needEscort);
-      }
-      r.push(helpers.eventComment);
-      r.push(helpers.createDate);
-
-
-
-      return r;
+      this.numOfColsInGrid = 4;
+      return this.selectColumns(helpers);
     },
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes),
 
 
   });
+
+  private selectColumns(helpers: Helpers) {
+    let r: DataControlInfo<Helpers>[] = [
+      {
+        column: helpers.name,
+        width: '150'
+      },
+      {
+        column: helpers.phone,
+        width: '150'
+      },
+    ];
+    r.push({
+      column: helpers.eventComment,
+      width: '120'
+    });
+    if (this.context.isAllowed(Roles.admin)) {
+      r.push({
+        column: helpers.admin,
+        width: '160'
+      });
+
+    }
+    if (this.context.isAllowed(Roles.distCenterAdmin)) {
+      r.push({
+        column: helpers.distCenterAdmin, width: '160'
+      });
+    }
+    if (this.context.isAllowed(Roles.admin)) {
+      r.push(helpers.distributionCenter);
+    }
+
+    if (this.settings.manageEscorts.value)
+      r.push(helpers.company);
+    if (this.settings.manageEscorts.value) {
+      r.push(helpers.escort, helpers.theHelperIAmEscorting, helpers.needEscort);
+    }
+    r.push(helpers.createDate);
+    return r;
+  }
 
   async doSearch() {
     if (this.helpers.currentRow && this.helpers.currentRow.wasChanged())
