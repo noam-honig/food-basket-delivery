@@ -1,6 +1,6 @@
 import { Injectable, NgZone } from "@angular/core";
 import { MatSnackBar } from "@angular/material";
-import { Context } from '@remult/core';
+import { Context, DataAreaSettings } from '@remult/core';
 
 import { YesNoQuestionComponent } from "./yes-no-question/yes-no-question.component";
 import { BusyService } from '@remult/core';
@@ -11,6 +11,8 @@ import { TestComponentRenderer } from "@angular/core/testing";
 import { DistributionCenterId, DistributionCenters } from "../manage/distribution-centers";
 import { Roles } from "../auth/roles";
 import { HelperUserInfo } from "../helpers/helpers";
+import { RouteReuseStrategy } from "@angular/router";
+import { CustomReuseStrategy } from "../custom-reuse-controller-router-strategy";
 
 declare var gtag;
 
@@ -49,10 +51,15 @@ export class DialogService {
     statusRefreshThrottle = new myThrottle(1000);
 
 
-    constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private context: Context) {
+    constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private context: Context,private routeReuseStrategy:RouteReuseStrategy) {
         this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));
         if (this.distCenter.value === undefined)
             this.distCenter.value = "";
+
+    }
+    refreshFamiliesAndDistributionCenters() {
+        (<CustomReuseStrategy>this.routeReuseStrategy).recycleAll();
+        this.refreshCanSeeCenter();
 
     }
     analytics(action: string, value?: number) {
@@ -73,6 +80,7 @@ export class DialogService {
                 this.refreshDistCenter.next();
         }
     }, true);
+    distCenterArea: DataAreaSettings<any>;
     hasManyCenters = false;
     canSeeCenter() {
         var dist = '';
@@ -85,6 +93,7 @@ export class DialogService {
     }
     async refreshCanSeeCenter() {
         this.hasManyCenters = false;
+        this.distCenterArea = new DataAreaSettings({ columnSettings: () => [this.distCenter] })
         if (this.context.isAllowed(Roles.admin))
             this.hasManyCenters = await this.context.for(DistributionCenters).count() > 1;
     }

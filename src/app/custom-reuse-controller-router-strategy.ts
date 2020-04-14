@@ -17,16 +17,16 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     }
     reloadKey = '$reload';
     store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {
-      //  console.debug('CustomReuseStrategy:store', this.getRouteInfo(route), handle, this.handlers);
+        //  console.debug('CustomReuseStrategy:store', this.getRouteInfo(route), handle, this.handlers);
         this.handlers[route.routeConfig.path] = handle;
         let result: any;
         result = handle;
         if (result && result.componentRef && result.componentRef.instance) {
             let m = result.componentRef.instance[leaveComponent];
             if (m) {
-                
-                    result.componentRef.instance[leaveComponent]();
-                
+
+                result.componentRef.instance[leaveComponent]();
+
             }
         }
         if (handle) {
@@ -37,9 +37,14 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
 
     shouldAttach(route: ActivatedRouteSnapshot): boolean {
         this.context.clearAllCache();
-        let result = !!route.routeConfig && !!this.handlers[route.routeConfig.path];
-      //  console.debug('CustomReuseStrategy:shouldAttach', this.getRouteInfo(route), result, this.handlers);
-        return result;
+        if (!!route.routeConfig) {
+            let h = this.handlers[route.routeConfig.path];
+            if (h) {
+                if (!h[recycleComponent])
+                    return true;
+            }
+        }
+        return false;
     }
 
     retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle {
@@ -49,25 +54,30 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
         else {
             result = this.handlers[route.routeConfig.path];
             if (result && result.componentRef && result.componentRef.instance) {
-                let m = result.componentRef.instance[reuseComponentOnNavigationAndCallMeWhenNavigatingToIt];
-                if (m) {
-                    if (result[this.reloadKey]) {
-                        result.componentRef.instance[reuseComponentOnNavigationAndCallMeWhenNavigatingToIt]();
+                if (result[recycleComponent]) {
+                    result = null;
+                }
+                else {
+                    let m = result.componentRef.instance[reuseComponentOnNavigationAndCallMeWhenNavigatingToIt];
+                    if (m) {
+                        if (result[this.reloadKey]) {
+                            result.componentRef.instance[reuseComponentOnNavigationAndCallMeWhenNavigatingToIt]();
 
-                        result[this.reloadKey] = false;
+                            result[this.reloadKey] = false;
+                        }
                     }
                 }
             }
 
 
         }
-    //    console.debug('CustomReuseStrategy:retrieve', this.getRouteInfo(route), result, this.handlers);
+        //    console.debug('CustomReuseStrategy:retrieve', this.getRouteInfo(route), result, this.handlers);
         return result;
     }
 
     shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {
         let result = future.routeConfig === curr.routeConfig;
-      //  console.debug('CustomReuseStrategy:shouldReuseRoute', this.getRouteInfo(future), this.getRouteInfo(curr), result, this.handlers);
+        //  console.debug('CustomReuseStrategy:shouldReuseRoute', this.getRouteInfo(future), this.getRouteInfo(curr), result, this.handlers);
         return result;
     }
     getRouteInfo(route: ActivatedRouteSnapshot) {
@@ -77,6 +87,15 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
             return 'no route config';
         return route.routeConfig.path;
     }
+    recycleAll() {
+        for (const key in this.handlers) {
+            if (this.handlers.hasOwnProperty(key)) {
+                const element = this.handlers[key];
+                element[recycleComponent] = true;
+            }
+        }
+    }
 }
 export const reuseComponentOnNavigationAndCallMeWhenNavigatingToIt = Symbol('reuseComponentOnNavigationAndCallMeWhenNavigatingToIt');
 export const leaveComponent = Symbol('leaveComponent');
+const recycleComponent = Symbol('recycleComponent');

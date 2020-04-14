@@ -1107,6 +1107,7 @@ class columnUpdateHelper {
                 if (additionalUpdates)
                     additionalUpdates(x);
                 await x.save();
+                this.dialog.refreshFamiliesAndDistributionCenters();
             }
             else {
                 throw s;

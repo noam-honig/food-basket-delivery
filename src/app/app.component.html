@@ -40,8 +40,9 @@
     height: 3em;
     padding-top: 4px;
     padding-left: 6px;
-    padding-right: 6px;" *ngIf="this.dialog.canSeeCenter()&&distCenterArea">
-      <data-area [settings]="distCenterArea" *ngIf="distCenterArea&&dialog.canSeeCenter()"></data-area>
+    padding-right: 6px;" *ngIf="this.dialog.canSeeCenter()&&dialog.distCenterArea">
+    
+      <data-area [settings]="dialog.distCenterArea" *ngIf="dialog.distCenterArea&&dialog.canSeeCenter()"></data-area>
 
     </div>
 

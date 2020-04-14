@@ -48,15 +48,15 @@ export class AppComponent {
 
 
   }
-  distCenterArea: DataAreaSettings<any>;
+  
   lastUser: any;
 
   refreshdc() {
-    if (this.context.user == this.lastUser && this.distCenterArea)
+    if (this.context.user == this.lastUser && this.dialog.distCenterArea)
       return "";
     this.dc = undefined;
     this.lastUser = this.context.user;
-    this.distCenterArea = new DataAreaSettings({ columnSettings: () => [this.dialog.distCenter] })
+    
     this.dialog.refreshCanSeeCenter();
 
     if (this.context.isAllowed(Roles.distCenterAdmin) && !this.context.isAllowed(Roles.admin))

@@ -3,13 +3,14 @@ import { Component, OnInit } from '@angular/core';
 
 import { DialogService } from '../../select-popup/dialog';
 import { AuthService } from '../../auth/auth-service';
-import { Router, Route } from '@angular/router';
+import { Router, Route, RouteReuseStrategy } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
 import { Context, RouteHelperService } from '@remult/core';
 import { RegisterComponent } from '../register/register.component';
 import { AdminGuard } from '../../auth/roles';
 import { Sites } from '../../sites/sites';
+import { CustomReuseStrategy } from 'src/app/custom-reuse-controller-router-strategy';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +23,8 @@ export class LoginComponent implements OnInit {
     private dialog: DialogService,
     private auth: AuthService,
     private router: RouteHelperService,
-    private context: Context
+    private context: Context,
+    private routeReuseStrategy:RouteReuseStrategy
   ) { }
   isguest = Sites.getOrganizationFromContext(this.context) == Sites.guestSchema;
   user: string;
@@ -35,7 +37,7 @@ export class LoginComponent implements OnInit {
   }
   login() {
     this.auth.login(this.user, this.password, this.remember, () => this.password = '');
-
+    this.dialog.refreshFamiliesAndDistributionCenters();
   }
   register() {
     this.router.navigateToComponent(RegisterComponent);

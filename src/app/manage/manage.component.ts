@@ -47,6 +47,7 @@ export class ManageComponent implements OnInit {
     this.settings.commonQuestions.value = this.serializeQa();
     try {
       await this.settings.save();
+      this.dialog.refreshFamiliesAndDistributionCenters();
     } catch (err) {
       let x = "שגיאה בשמירה: ";
       for (const c of this.settings.columns) {
@@ -79,6 +80,7 @@ export class ManageComponent implements OnInit {
         width: '100px'
       }
     ],
+    onSavingRow:()=>this.refreshEnvironmentAfterSave(),
     get: {
       limit: 25,
       orderBy: f => [f.name]
@@ -108,6 +110,9 @@ export class ManageComponent implements OnInit {
     get: {
       limit: 25,
       orderBy: f => [f.name]
+    }, onSavingRow: f => {
+      this.refreshEnvironmentAfterSave();
+
     },
 
     allowUpdate: true,
@@ -115,6 +120,12 @@ export class ManageComponent implements OnInit {
 
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
   });
+
+  refreshEnvironmentAfterSave() {
+    setTimeout(() => {
+      this.dialog.refreshFamiliesAndDistributionCenters();
+    }, 1000);
+  }
   sources = this.context.for(FamilySources).gridSettings({
     hideDataArea: true,
     columnSettings: s => [
@@ -131,6 +142,7 @@ export class ManageComponent implements OnInit {
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
   });
   groups = this.context.for(Groups).gridSettings({
+    onSavingRow:()=>this.refreshEnvironmentAfterSave(),
     hideDataArea: true,
     columnSettings: s => [
       s.name,
@@ -387,14 +399,14 @@ export class GroupsStats extends Entity<string> {
         sql.addEntity(g, 'groups');
         return sql.entityDbName(
           {
-            select: () => [g.name,sql.columnWithAlias(d.name,this.distCenter), sql.countInnerSelect({
+            select: () => [g.name, sql.columnWithAlias(d.name, this.distCenter), sql.countInnerSelect({
               from: f,
               crossJoin: () => [d],
-               where: () => [
+              where: () => [
                 sql.build(f.groups, ' like \'%\'||', g.name, '||\'%\''),
                 f.readyFilter().and(f.distributionCenter.isAllowedForUser()),
-                sql.eq(f.distributionCenter,d.id)]
-                
+                sql.eq(f.distributionCenter, d.id)]
+
             }, this.familiesCount)],
             from: g
 
