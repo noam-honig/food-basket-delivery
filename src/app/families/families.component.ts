@@ -283,6 +283,7 @@ export class FamiliesComponent implements OnInit {
                 f.basketType.value = '';
                 f.deliverStatus.value = ApplicationSettings.get(this.context).defaultStatusType.value;
                 f.special.value = YesNo.No;
+                f.distributionCenter.value = this.dialog.distCenter.value;
                 this.currentFamilyDeliveries = [];
             } else {
                 if (!this.gridView) {

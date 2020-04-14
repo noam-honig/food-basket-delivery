@@ -6,6 +6,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
+import { DialogService } from '../select-popup/dialog';
 
 @Component({
   selector: 'app-quick-add-family',
@@ -18,10 +19,12 @@ export class QuickAddFamilyComponent implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<any>,
-    private context: Context
+    private context: Context,
+    private dialog: DialogService
   ) {
 
     this.f.deliverStatus.value = ApplicationSettings.get(this.context).defaultStatusType.value;;
+    this.f.distributionCenter.value = dialog.distCenter.value;
   }
   f: Families = this.context.for(Families).create();
 
