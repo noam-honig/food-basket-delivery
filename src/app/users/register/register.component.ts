@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Helpers } from '../../helpers/helpers';
-import {  StringColumn, NotSignedInGuard } from '@remult/core';
+import { StringColumn, NotSignedInGuard } from '@remult/core';
 import { AuthService } from '../../auth/auth-service';
 
 import { Route } from '@angular/router';
@@ -12,13 +12,13 @@ import { Context } from '@remult/core';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
-  constructor(private auth: AuthService,private context:Context) {
+  constructor(private auth: AuthService, private context: Context) {
 
 
   }
   static route: Route = { path: 'register', component: RegisterComponent, data: { name: 'הרשמה' }, canActivate: [NotSignedInGuard] };
 
-  confirmPassword = new StringColumn({ caption: 'אישור סיסמה', dataControlSettings: () => ({inputType: 'password'}) });
+  confirmPassword = new StringColumn({ caption: 'אישור סיסמה', dataControlSettings: () => ({ inputType: 'password' }) });
   helpers = this.context.for(Helpers).gridSettings({
     numOfColumnsInGrid: 0,
     allowUpdate: true,
@@ -46,7 +46,10 @@ export class RegisterComponent implements OnInit {
     try {
       let userInfo = this.helpers.currentRow;
       await this.helpers._doSavingRow(userInfo);
-      this.auth.login(userInfo.phone.value, this.confirmPassword.value, false, () => { });
+      this.auth.login(userInfo.phone.value, this.confirmPassword.value, false, async () => {
+          await this.helpers.getRecords();
+          this.helpers.addNewRow();
+      });
     }
     catch (err) {
       console.error(err);

@@ -3,6 +3,9 @@ import { Context, DataProvider } from "@remult/core";
 declare var multiSite: boolean;
 
 export class Sites {
+    static isOverviewSchema(context: Context) {
+        return  Sites.getOrganizationFromContext(context) == Sites.guestSchema;
+    }
     static guestSchema = 'guest';
     static schemas = [];
     static multipleSites = false;

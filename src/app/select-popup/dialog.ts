@@ -51,7 +51,7 @@ export class DialogService {
     statusRefreshThrottle = new myThrottle(1000);
 
 
-    constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private context: Context,private routeReuseStrategy:RouteReuseStrategy) {
+    constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private context: Context, private routeReuseStrategy: RouteReuseStrategy) {
         this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));
         if (this.distCenter.value === undefined)
             this.distCenter.value = "";
@@ -93,9 +93,11 @@ export class DialogService {
     }
     async refreshCanSeeCenter() {
         this.hasManyCenters = false;
-        this.distCenterArea = new DataAreaSettings({ columnSettings: () => [this.distCenter] })
-        if (this.context.isAllowed(Roles.admin))
+        this.distCenterArea = undefined;
+        if (this.context.isAllowed(Roles.admin)) {
             this.hasManyCenters = await this.context.for(DistributionCenters).count() > 1;
+            this.distCenterArea =  new DataAreaSettings({ columnSettings: () => [this.distCenter] });
+        }
     }
 
     eventSource: any;/*EventSource*/

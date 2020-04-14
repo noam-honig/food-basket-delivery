@@ -138,16 +138,19 @@ export class AuthService {
                     requirePassword = true;
                 }
                 else {
+                    if (!Sites.isOverviewSchema(context)) 
+                    distCenterName = await h.distributionCenter.getTheValue();
                     if (h.admin.value) {
-                        if (Sites.getOrganizationFromContext(context) == Sites.guestSchema)
+                        if (Sites.isOverviewSchema(context) )
                             result.roles.push(Roles.overview)
                         else {
-                            distCenterName = await h.distributionCenter.getTheValue();
+                            distCenterName+='- אדמין';
                             result.roles.push(Roles.admin);
                             result.roles.push(Roles.distCenterAdmin);
                         }
                     }
                     if (h.distCenterAdmin.value) {
+                        distCenterName+='-מנהל נקודת חלוקה ';
                         result.roles.push(Roles.distCenterAdmin);
                     }
 

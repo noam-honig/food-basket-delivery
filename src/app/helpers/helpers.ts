@@ -86,24 +86,26 @@ export class Helpers extends HelpersBase {
                     let canUpdate = false;
                     if (this.isNew())
                         canUpdate = true;
-                    let updatingMyOwnHelperInfo = this.id.originalValue == context.user.id;
-                    if (updatingMyOwnHelperInfo) {
-                        if (!this.admin.originalValue && !this.distCenterAdmin.originalValue)
-                            canUpdate = true;
-                        if (this.admin.originalValue && context.isAllowed(Roles.admin))
-                            canUpdate = true;
-                        if (this.distCenterAdmin.originalValue && context.isAllowed(Roles.distCenterAdmin))
-                            canUpdate = true;
-                        if (!this.realStoredPassword.value && this.realStoredPassword.value.length == 0) //it's the first time I'm setting the password
-                            canUpdate = true;
-                    }
                     else {
-                        if (this.context.isAllowed(Roles.admin))
-                            canUpdate = true;
+                        let updatingMyOwnHelperInfo = this.id.originalValue == context.user.id;
+                        if (updatingMyOwnHelperInfo) {
+                            if (!this.admin.originalValue && !this.distCenterAdmin.originalValue)
+                                canUpdate = true;
+                            if (this.admin.originalValue && context.isAllowed(Roles.admin))
+                                canUpdate = true;
+                            if (this.distCenterAdmin.originalValue && context.isAllowed(Roles.distCenterAdmin))
+                                canUpdate = true;
+                            if (!this.realStoredPassword.value && this.realStoredPassword.value.length == 0) //it's the first time I'm setting the password
+                                canUpdate = true;
+                        }
+                        else {
+                            if (this.context.isAllowed(Roles.admin))
+                                canUpdate = true;
 
-                        if (this.context.isAllowed(Roles.distCenterAdmin) && this.distributionCenter.originalValue == (<HelperUserInfo>context.user).distributionCenter)
-                            canUpdate = true;
+                            if (this.context.isAllowed(Roles.distCenterAdmin) && this.distributionCenter.originalValue == (<HelperUserInfo>context.user).distributionCenter)
+                                canUpdate = true;
 
+                        }
                     }
 
                     if (!canUpdate)
@@ -296,6 +298,10 @@ export interface HelperUserInfo extends UserInfo {
     distributionCenter: string;
 }
 export async function checkForDuplicateValue(row: Entity<any>, column: Column<any>, column2: Column<any>, provider: EntityProvider<any>, message?: string) {
+    if (column.value == undefined)
+        column.value = '';
+    if (column2.value == undefined)
+        column2.value = '';
     if (row.isNew() || column.value != column.originalValue || column2.value != column2.originalValue) {
         let rows = await provider.find({ where: r => r.columns.find(column).isEqualTo(column.value).and(r.columns.find(column2).isEqualTo(column2.value)) });
         if (rows.length > 0)
