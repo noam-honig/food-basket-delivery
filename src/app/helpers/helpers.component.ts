@@ -6,7 +6,7 @@ import { Helpers } from './helpers';
 import { Families } from '../families/families';
 import { Route } from '@angular/router';
 
-import { ServerFunction, DataControlSettings, DataControlInfo, ServerContext } from '@remult/core';
+import { ServerFunction, DataControlSettings, DataControlInfo, ServerContext, AndFilter } from '@remult/core';
 import { Context } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from '@remult/core';
@@ -27,6 +27,9 @@ import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 })
 export class HelpersComponent implements OnInit {
   constructor(private dialog: DialogService, public context: Context, private busy: BusyService, public settings: ApplicationSettings) {
+    this.dialog.onDistCenterChange(async () => {
+      this.helpers.getRecords();
+    }, this);
   }
   static route: Route = {
     path: 'helpers',
@@ -57,9 +60,10 @@ export class HelpersComponent implements OnInit {
       orderBy: h => [h.name],
       limit: 10,
       where: h => {
+        let x = h.distributionCenter.filter(this.dialog.distCenter.value);
         if (this.searchString)
-          return h.name.isContains(this.searchString);
-        return undefined;
+          return new AndFilter(x, h.name.isContains(this.searchString));
+        return x;
       }
     },
     columnSettings: helpers => {
