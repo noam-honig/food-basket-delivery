@@ -138,7 +138,13 @@ export class DistributionMap implements OnInit, OnDestroy {
         if (!allInAlll)
           google.maps.event.addListener(familyOnMap.marker, 'click', async () => {
             family = await this.context.for(Families).findFirst(fam => fam.id.isEqualTo(f.id));
-            this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { f: family, onSave: () => { this.refreshFamilies() } });
+            this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = {
+              f: family, onSave: () => {
+                familyOnMap.marker.setMap(null);
+                this.dict.delete(f.id);
+                this.refreshFamilies()
+              }
+            });
           });
       }
       else

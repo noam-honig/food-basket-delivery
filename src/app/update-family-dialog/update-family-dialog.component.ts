@@ -33,7 +33,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
   async confirm() {
     await this.families.currentRow.save();
     this.dialogRef.close();
-    if (this.args)
+    if (this.args&&this.args.onSave)
       this.args.onSave();
   }
 
