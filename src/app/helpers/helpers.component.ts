@@ -87,6 +87,8 @@ export class HelpersComponent implements OnInit {
     },
     columnSettings: helpers => {
       this.numOfColsInGrid = 4;
+      if (this.context.isAllowed(Roles.admin))
+        this.numOfColsInGrid++;
       return this.selectColumns(helpers);
     },
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes),
