@@ -56,13 +56,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         h.boxes.value = 1;
         await h.save();
     }
-    if ((await context.for(DistributionCenters).count() == 0)) {
-        let h = context.for(DistributionCenters).create();
-        h.setEmptyIdForNewRow();
-        h.name.value = 'ראשי';
-        h.address.value = 'ישראל';
-        await h.save();
-    }
+    
 
     /*await context.for(Families).foreach(f => f.addressLongitude.isEqualTo(0), async ff => {
         let g = ff.getGeocodeInformation();
@@ -204,6 +198,13 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         settings.removedFromListStrategy.value = RemovedFromListExcelImportStrategy.displayAsError;
         settings.dataStructureVersion.value = 11;
         await settings.save();
+    }
+    if ((await context.for(DistributionCenters).count() == 0)) {
+        let h = context.for(DistributionCenters).create();
+        h.setEmptyIdForNewRow();
+        h.name.value = 'נקודת חלוקה ראשונה';
+        h.address.value = settings.address.value;
+        await h.save();
     }
 }
 
