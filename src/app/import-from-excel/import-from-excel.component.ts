@@ -107,7 +107,7 @@ export class ImportFromExcelComponent implements OnInit {
                                 let timeLeft = ((new Date().valueOf() - start) / index) * (this.newRows.length - index) / 1000 / 60;
                                 this.dialog.Info(i.rowInExcel + ' ' + (i.name) + " נשאר עוד " + timeLeft.toFixed(1) + " דקות");
                             }
-                            await ImportFromExcelComponent.insertRows(rowsToInsert,this.dialog.distCenter.value);
+                            await ImportFromExcelComponent.insertRows(rowsToInsert, this.dialog.distCenter.value);
                             for (const r of rowsToInsert) {
                                 r.created = true;
                             }
@@ -119,7 +119,7 @@ export class ImportFromExcelComponent implements OnInit {
 
                     }
                     if (rowsToInsert.length > 0) {
-                        await ImportFromExcelComponent.insertRows(rowsToInsert,this.dialog.distCenter.value);
+                        await ImportFromExcelComponent.insertRows(rowsToInsert, this.dialog.distCenter.value);
                         for (const r of rowsToInsert) {
                             r.created = true;
                         }
@@ -151,9 +151,6 @@ export class ImportFromExcelComponent implements OnInit {
             }
             if (!f.name.value)
                 f.name.value = 'ללא שם';
-            if (f.distributionCenter.value === undefined && distCenter != Families.allCentersToken)
-                f.distributionCenter.value = distCenter;
-
             await t.push(f.save());
         }
         await t.done();
@@ -339,6 +336,9 @@ export class ImportFromExcelComponent implements OnInit {
 
         let f = this.context.for(Families).create();
         f._disableAutoDuplicateCheck = true;
+        if (this.dialog.distCenter.value != Families.allCentersToken) {
+            f.distributionCenter.value = this.dialog.distCenter.value;
+        }
         f.deliverStatus.value = this.settings.defaultStatusType.value;
 
         let helper = new columnUpdateHelper(this.context, this.dialog, this.settings.excelImportAutoAddValues.value);
@@ -384,7 +384,7 @@ export class ImportFromExcelComponent implements OnInit {
                 c.validationError += c.defs.caption + ": " + c.validationError;
                 info.valid = false;
             }
-            if (c.value) {
+            if (c.value || c == f.distributionCenter) {
                 info.values[c.defs.key] = {
                     newDisplayValue: await getColumnDisplayValue(c),
                     newValue: c.value
