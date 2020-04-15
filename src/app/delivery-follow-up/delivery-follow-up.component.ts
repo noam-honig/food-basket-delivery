@@ -14,6 +14,7 @@ import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { Route } from '@angular/router';
 import { DialogService } from '../select-popup/dialog';
 import { SendSmsAction } from '../asign-family/send-sms-action';
+import { Families } from '../families/families';
 
 @Component({
   selector: 'app-delivery-follow-up',
@@ -31,6 +32,9 @@ export class DeliveryFollowUpComponent implements OnInit {
     this.currentlHelper = c;
     this.familyLists.initForHelper(await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(c.id)));
 
+  }
+  seeAllCenters(){
+    return this.dialog.distCenter.value==Families.allCentersToken;
   }
   searchString: string;
   showHelper(h: HelpersAndStats) {

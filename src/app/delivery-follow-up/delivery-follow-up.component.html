@@ -50,6 +50,7 @@
       </mat-expansion-panel-header>
 
       <div *ngIf="currentlHelper==c">
+        <span *ngIf="seeAllCenters()">נקודת חלוקה: {{ c.distributionCenter.displayValue}}</span>
         <app-helper-families [familyLists]="familyLists" [partOfAssign]="true" [partOfReview]="true"
           [helperGotSms]="c.gotSms.value"></app-helper-families>
       </div>
