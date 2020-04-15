@@ -40,7 +40,7 @@
             <button mat-menu-item (click)="saveAll()" *ngIf="changedRowsCount()>1">שמור {{changedRowsCount()}}
                 {{'משפחות'|translate}}
                 שהשתנו</button>
-            <button mat-menu-item (click)="saveToExcel()">יצוא לאקסל</button>
+            <button mat-menu-item (click)="saveToExcel()" *ngIf="isAdmin">יצוא לאקסל</button>
             <button mat-menu-item (click)="updateStatus()">עדכן סטטוס ל-{{families.totalRows}} המשפחות המסומנות</button>
             <button mat-menu-item (click)="cancelAssignment()"> בטל שיוך ל-{{families.totalRows}} המשפחות המסומנות</button>
             <button mat-menu-item (click)="updateGroup()"> שיוך לקבוצת חלוקה ל-{{families.totalRows}} המשפחות המסומנות</button>
