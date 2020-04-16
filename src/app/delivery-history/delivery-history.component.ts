@@ -251,6 +251,7 @@ export class FamilyDeliveriesStats extends Entity<string> {
   deliverStatus = new DeliveryStatusColumn();
   basketType = new BasketId(this.context, 'סוג סל');
   city = new StringColumn({ caption: "עיר" });
+  address = new StringColumn({ caption: "כתובת" });
   courierComments = new StringColumn('הערות מסירה');
   familySource = new FamilySourceId(this.context, { caption: 'גורם מפנה' });
   courierAssignUser = new HelperIdReadonly(this.context,()=>this.distributionCenter.value, 'מי שייכה למשנע');
@@ -273,6 +274,7 @@ export class FamilyDeliveriesStats extends Entity<string> {
           f.deliverStatus,
           f.courier,
           f.city,
+          f.address,
           f.courierComments,
           f.deliveryStatusDate,
           f.familySource,
@@ -291,6 +293,7 @@ export class FamilyDeliveriesStats extends Entity<string> {
             d.deliverStatus,
             d.courier,
             d.archive_city,
+            d.archive_address,
             d.courierComments,
             d.deliveryStatusDate,
             d.archiveFamilySource,
