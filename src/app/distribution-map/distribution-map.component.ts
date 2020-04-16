@@ -4,7 +4,7 @@ import { Component, OnInit, ViewChild, Sanitizer, OnDestroy } from '@angular/cor
 
 import { Families } from '../families/families';
 import { DialogService } from '../select-popup/dialog';
-import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
+import { GeocodeInformation, GetGeoInformation, polygonContains } from '../shared/googleApiHelpers';
 
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
@@ -47,6 +47,7 @@ export class DistributionMap implements OnInit, OnDestroy {
       for (const f of this.dict.values()) {
         f.marker.setMap(null);
       }
+      this.selectedFamilies = [];
       this.dict = new Map<string, infoOnMap>();
       this.bounds = new google.maps.LatLngBounds();
       await this.refreshFamilies();
@@ -66,7 +67,46 @@ export class DistributionMap implements OnInit, OnDestroy {
   };
 
   gridView = true;
+  drawing=  false;
+  selectedFamilies:infoOnMap[]=[];
+  selectFamilies() {
+    if (this.activePolygon){
+      this.activePolygon.setMap(null);
+    }
+    let dm = new google.maps.drawing.DrawingManager({
+      drawingMode: google.maps.drawing.OverlayType.POLYGON,
+      drawingControl: false,
+      polygonOptions: {
+        editable: true
 
+      }
+    });
+
+    google.maps.event.addListener(dm, 'polygoncomplete', (polygon: google.maps.Polygon) => {
+      this.activePolygon = polygon;
+      let calcFamilies = () => {
+
+        this.selectedFamilies = [];
+        for (const f of this.dict.values()) {
+          if (f.marker.getVisible() && f.marker.getMap()) {
+            if (polygonContains(polygon, f.marker.getPosition())) {
+              this.selectedFamilies.push(f);
+            }
+          }
+          console.log(x);
+        };
+      }
+      calcFamilies();
+      polygon.addListener('mouseup', () => {
+        calcFamilies();
+      })
+
+      dm.setDrawingMode(null);
+
+    });
+    dm.setMap(this.map);
+  }
+  activePolygon: google.maps.Polygon;
 
 
   mapVisible = true;
@@ -88,6 +128,7 @@ export class DistributionMap implements OnInit, OnDestroy {
       this.mapInit = true;
       await this.refreshFamilies();
       this.map.fitBounds(this.bounds);
+
     }
 
 
