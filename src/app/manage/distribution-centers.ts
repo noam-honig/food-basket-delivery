@@ -65,7 +65,7 @@ export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValu
   }
   async getRouteStartGeo() {
     let d = await this.context.for(DistributionCenters).lookupAsync(this);
-    if (d.addressApiResult.value && d.address.value)
+    if (d.addressApiResult.value && d.address.value&&d.getGeocodeInformation().ok())
       return d.getGeocodeInformation();
     return (await ApplicationSettings.getAsync(this.context)).getGeocodeInformation();
   }

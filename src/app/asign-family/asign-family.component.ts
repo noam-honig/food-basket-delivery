@@ -901,7 +901,7 @@ function getInfo(r: any) {
 async function getRouteInfo(families: familiesInRoute[], optimize: boolean, start: GeocodeInformation, context: Context) {
     let u = new UrlBuilder('https://maps.googleapis.com/maps/api/directions/json');
 
-    let startAndEnd = start;
+    let startAndEnd = start.getlonglat();
     let waypoints = 'optimize:' + (optimize ? 'true' : 'false');
     let addresses = [];
     families.forEach(f => {
@@ -917,9 +917,16 @@ async function getRouteInfo(families: familiesInRoute[], optimize: boolean, star
         key: process.env.GOOGLE_GECODE_API_KEY
     };
     u.addObject(args);
+    
 
     let r = await (await fetch.default(u.url)).json();
-
+    if (!r || r.status != "OK") {
+        let status = 'no response';
+        if (r && r.status) {
+            status = r.status;
+        }
+        console.error("error in google route api", status, r,u.url);
+    }
     return r;
 }
 export interface GetBasketStatusActionInfo {
