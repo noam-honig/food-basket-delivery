@@ -399,16 +399,17 @@ export class GroupsStats extends Entity<string> {
         sql.addEntity(g, 'groups');
         return sql.entityDbName(
           {
-            select: () => [g.name, sql.columnWithAlias(d.name, this.distCenter), sql.countInnerSelect({
+            select: () => [g.name, sql.columnWithAlias(d.id, this.distCenter), sql.countInnerSelect({
               from: f,
-              crossJoin: () => [d],
+              
               where: () => [
                 sql.build(f.groups, ' like \'%\'||', g.name, '||\'%\''),
                 f.readyFilter().and(f.distributionCenter.isAllowedForUser()),
                 sql.eq(f.distributionCenter, d.id)]
 
             }, this.familiesCount)],
-            from: g
+            from: g,
+            crossJoin: () => [d],
 
           })
       }
