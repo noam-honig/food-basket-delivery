@@ -2,9 +2,9 @@
 import * as chart from 'chart.js';
 import { Component, OnInit, ViewChild, Sanitizer, OnDestroy } from '@angular/core';
 
-import { Families } from '../families/families';
+import { Families, FamilyId } from '../families/families';
 import { DialogService } from '../select-popup/dialog';
-import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
+import { GeocodeInformation, GetGeoInformation, polygonContains } from '../shared/googleApiHelpers';
 
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
@@ -24,6 +24,9 @@ import { Helpers, HelperId } from '../helpers/helpers';
 import MarkerClusterer, { ClusterIconInfo } from "@google/markerclustererplus";
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { Sites } from '../sites/sites';
+import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser } from '../manage/distribution-centers';
+import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
+import { translate } from '../translate';
 
 @Component({
   selector: 'app-distribution-map',
@@ -44,10 +47,7 @@ export class DistributionMap implements OnInit, OnDestroy {
       y.unsubscribe();
     };
     this.dialog.onDistCenterChange(async () => {
-      for (const f of this.dict.values()) {
-        f.marker.setMap(null);
-      }
-      this.dict = new Map<string, infoOnMap>();
+      this.clearMap();
       this.bounds = new google.maps.LatLngBounds();
       await this.refreshFamilies();
       this.map.fitBounds(this.bounds);
@@ -55,6 +55,19 @@ export class DistributionMap implements OnInit, OnDestroy {
 
   }
   showHelper = false;
+  private clearMap() {
+    for (const f of this.dict.values()) {
+      f.marker.setMap(null);
+    }
+    this.selectedFamilies = [];
+    this.dict = new Map<string, infoOnMap>();
+    if (this.activePolygon) {
+      this.activePolygon.setMap(null);
+      this.activePolygon = undefined;
+    }
+    
+  }
+
   ngOnDestroy(): void {
     this.onDestroy();
   }
@@ -66,7 +79,84 @@ export class DistributionMap implements OnInit, OnDestroy {
   };
 
   gridView = true;
+  drawing = false;
+  selectedFamilies: infoOnMap[] = [];
+  selectFamilies() {
+    this.drawing = true;
+    if (this.activePolygon) {
+      this.activePolygon.setMap(null);
+    }
+    let dm = new google.maps.drawing.DrawingManager({
+      drawingMode: google.maps.drawing.OverlayType.POLYGON,
+      drawingControl: false,
+      polygonOptions: {
+        editable: true
 
+      }
+    });
+
+    google.maps.event.addListener(dm, 'polygoncomplete', (polygon: google.maps.Polygon) => {
+      this.activePolygon = polygon;
+      this.drawing = false;
+      let calcFamilies = () => {
+
+        this.selectedFamilies = [];
+        for (const f of this.dict.values()) {
+          if (f.marker.getVisible() && f.marker.getMap()) {
+            if (polygonContains(polygon, f.marker.getPosition())) {
+              this.selectedFamilies.push(f);
+            }
+          }
+        };
+      }
+      calcFamilies();
+      polygon.addListener('mouseup', () => {
+        calcFamilies();
+      })
+
+      dm.setDrawingMode(null);
+
+    });
+    dm.setMap(this.map);
+  }
+  activePolygon: google.maps.Polygon;
+
+  async updateDistributionCenter() {
+    let s = new DistributionCenterId(this.context);
+    let ok = false;
+    await this.context.openDialog(InputAreaComponent, x => {
+      x.args = {
+        settings: {
+          columnSettings: () => [s]
+        },
+        title: 'עדכון נקודת חלוקה ל-' + this.selectedFamilies.length + ' המשפחות המסומנות',
+        ok: () => ok = true
+        , cancel: () => { }
+
+      }
+    });
+    if (ok) {
+      if (await this.dialog.YesNoPromise('האם לעדכן את נקודת החלוקה "' + await s.getTheValue() + '" ל-' + this.selectedFamilies.length + translate(' משפחות?'))) {
+        this.dialog.Info(await DistributionMap.updateDistributionCenterOnServerBasedOnMap(this.selectedFamilies.map(x => x.id), s.rawValue));
+        this.clearMap();
+        this.refreshFamilies();
+      }
+    }
+  }
+  @ServerFunction({ allowed: Roles.admin })
+  static async updateDistributionCenterOnServerBasedOnMap(families: string[], distributionCenter: string, context?: Context) {
+    if (await context.for(DistributionCenters).count(d => d.id.isEqualTo(distributionCenter).and(filterCenterAllowedForUser(d.id, context))) == 0)
+      throw "נקודת חלוקה לא קיימת או מורשת";
+    for (const id of families) {
+      let f = await context.for(Families).findFirst(f => f.id.isEqualTo(id).and(f.distributionCenter.isAllowedForUser()));
+      if (f) {
+        f.distributionCenter.value = distributionCenter;
+        await f.save();
+      }
+    }
+    return "עודכנו " + families.length + " משפחות";
+
+  }
 
 
   mapVisible = true;
@@ -88,6 +178,7 @@ export class DistributionMap implements OnInit, OnDestroy {
       this.mapInit = true;
       await this.refreshFamilies();
       this.map.fitBounds(this.bounds);
+
     }
 
 
@@ -128,7 +219,8 @@ export class DistributionMap implements OnInit, OnDestroy {
         familyOnMap = {
           marker: new google.maps.Marker({ position: { lat: f.lat, lng: f.lng } })
           , prevStatus: undefined,
-          prevCourier: undefined
+          prevCourier: undefined,
+          id: f.id
 
         };
         this.dict.set(f.id, familyOnMap);
@@ -347,6 +439,7 @@ export interface infoOnMap {
   marker: google.maps.Marker;
   prevStatus: statusClass;
   prevCourier: string;
+  id: string;
 
 }
 
