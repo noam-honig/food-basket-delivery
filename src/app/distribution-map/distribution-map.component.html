@@ -5,7 +5,13 @@
     [colors]="colors" (chartClick)="chartClicked($event)"></canvas>
 </div>
 <h4>{{selectedStatus? selectedStatus.name:'משפחות באירוע'}} </h4>
-<button mat-raised-button (click)="selectFamilies()">בחר משפחות על המפה </button>
+<button mat-raised-button (click)="selectFamilies()" *ngIf="!drawing">בחר משפחות על המפה </button>
+<span *ngIf="drawing">אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום</span>
+
+
+
+<button mat-raised-button (click)="updateDistributionCenter()" *ngIf="!drawing&& selectedFamilies.length">עדכון נקודת חלוקה ל
+  {{selectedFamilies.length}} המשפחות המסומנות</button>
 
 <div #gmap style="width:100%;height:400px;"></div>
 
