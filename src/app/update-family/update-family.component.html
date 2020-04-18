@@ -19,7 +19,7 @@
                 </div>
             </mat-expansion-panel-header>
             <ng-template matExpansionPanelContent>
-                
+
                 <data-area [settings]="familiesInfo"></data-area>
                 <a href="tel:{{families.currentRow.socialWorkerPhone1.value}}"
                     *ngIf="families.currentRow.socialWorkerPhone1.value">
@@ -57,11 +57,16 @@
                     <span class="badAddressTitle">שים
                         לב, כתובת לא מדוייקת</span>
                     גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת. יש להשוות בין השדה "כתובת" לשדה "כתובת כפי שגוגל הבין".
-                    
+
                     <br> כתובת לא מדוייקת עלולה להוביל המשנע למקום לא נכון בוייז.
                 </div>
-                <a (click)="families.currentRow.openWaze()" target="_blank">פתחי WAZE</a> |
-                <a (click)="families.currentRow.showOnGoogleMaps()" target="_blank">הצג נקודה שגוגל מצא </a>
+                <span *ngIf="families.currentRow.address.value!=families.currentRow.address.originalValue"><a
+                        (click)="families.currentRow.save()" target="_blank">בדוק כתובת</a></span>
+                <ng-container *ngIf="families.currentRow.address.value==families.currentRow.address.originalValue">
+                    <a (click)="families.currentRow.showOnGovMap()" target="_blank">הצג ב govmap</a> |
+                    <a (click)="families.currentRow.showOnGoogleMaps()" target="_blank">הצג בגוגל</a> |
+                    <a (click)="families.currentRow.openWaze()" target="_blank">פתח WAZE</a>
+                </ng-container>
                 <data-area [settings]="familiesAddress"></data-area>
             </ng-template>
         </mat-expansion-panel>

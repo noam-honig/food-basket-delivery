@@ -5,6 +5,7 @@ import { ApplicationSettings, phoneOption } from '../manage/ApplicationSettings'
 import { Context } from '@remult/core';
 import { Column } from '@remult/core';
 import { Families } from '../families/families';
+import { DialogService } from '../select-popup/dialog';
 
 @Component({
   selector: 'app-update-comment',
@@ -18,16 +19,31 @@ export class UpdateCommentComponent implements OnInit {
     assignerName: string,
     assignerPhone: string,
     helpText: (s: ApplicationSettings) => Column<any>
-  
+
     comment: string,
     ok: (comment: string, failStatusId: DeliveryStatus) => void,
     cancel: () => void
   };
   constructor(
     public dialogRef: MatDialogRef<any>,
-    private context: Context
+    private context: Context,
+    private dialog: DialogService
   ) {
 
+  }
+  addLocationToComment() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(x => {
+        if (this.args.comment)
+          this.args.comment += '\r\n';
+        this.args.comment += `מיקום:
+${x.coords.latitude},${x.coords.longitude}
+דיוק: ${x.coords.accuracy}
+`
+      }, error => {
+        this.dialog.Error("שליפת מיקום נכשלה " + error.message);
+      });
+    }
   }
   failOptions: DeliveryStatus[] = [
     DeliveryStatus.FailedBadAddress,
@@ -46,8 +62,8 @@ export class UpdateCommentComponent implements OnInit {
   async ngOnInit() {
     if (this.args.showFailStatus) {
       let s = await ApplicationSettings.getAsync(this.context);
-      this.phoneOptions = await s.getPhoneOptions(this.args.family,this.context);
-      
+      this.phoneOptions = await s.getPhoneOptions(this.args.family, this.context);
+
     }
   }
   phoneOptions: phoneOption[] = [];

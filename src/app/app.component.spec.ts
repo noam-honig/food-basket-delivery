@@ -5,14 +5,14 @@ import { AppComponent } from './app.component';
 import { ServerContext } from '@remult/core';
 import { SqlBuilder, QueryBuilder } from './model-shared/types';
 import { WebDriverProxy } from 'blocking-proxy/built/lib/webdriver_proxy';
-import { parseAddress, Families } from './families/families';
+import { parseAddress, Families, parseUrlInAddress } from './families/families';
 import { BasketType } from './families/BasketType';
-import {fixPhone} from './import-from-excel/import-from-excel.component';
+import { fixPhone } from './import-from-excel/import-from-excel.component';
 
 describe('AppComponent', () => {
   var context = new ServerContext();
-  var bt = context.for( BasketType).create();
-  var f = context.for( Families).create();
+  var bt = context.for(BasketType).create();
+  var f = context.for(Families).create();
   var sql = new SqlBuilder();
   sql.addEntity(bt, 'p');
   var q = (query: QueryBuilder, expectresult: String) => {
@@ -72,7 +72,7 @@ describe('AppComponent', () => {
     ], 9)).toBe("case when 1=1 and 2=2 then 3 when 3=3 then 4 else 9 end");
   });
   it('delete 2', () => {
-    let p = context.for( BasketType).create();
+    let p = context.for(BasketType).create();
     expect(sql.delete(p, sql.eq(p.boxes, 5), sql.eq(p.boxes, 6))).toBe('delete from BasketType where boxes = 5 and boxes = 6');
   });
   it('update ', () => {
@@ -82,7 +82,7 @@ describe('AppComponent', () => {
     })).toBe("update BasketType p set id = '123', name = 'noam' where p.boxes = 5 and p.boxes = 6");
   });
   it('update 2 ', () => {
-    let pd = context.for( Families).create();
+    let pd = context.for(Families).create();
     expect(sql.update(bt, {
       set: () => [[bt.id, pd.basketType], [bt.name, "'noam'"]],
       from: pd,
@@ -127,13 +127,27 @@ describe('AppComponent', () => {
 
   });
   it("test phones", () => {
-    expect(fixPhone("0507330590","03")).toBe("0507330590");
-    expect(fixPhone("507330590","03")).toBe("0507330590");
-    expect(fixPhone("036733059","03")).toBe("036733059");
-    expect(fixPhone("36733059","03")).toBe("036733059");
-    expect(fixPhone("6733059","03")).toBe("036733059");
-    expect(fixPhone("733059","03")).toBe("733059");
-    
+    expect(fixPhone("0507330590", "03")).toBe("0507330590");
+    expect(fixPhone("507330590", "03")).toBe("0507330590");
+    expect(fixPhone("036733059", "03")).toBe("036733059");
+    expect(fixPhone("36733059", "03")).toBe("036733059");
+    expect(fixPhone("6733059", "03")).toBe("036733059");
+    expect(fixPhone("733059", "03")).toBe("733059");
+
+  });
+  it("test address parser", () => {
+    expect(parseUrlInAddress("https://maps.google.com/maps?q=32.53666305541992%2C34.905311584472656&z=17&hl=en")).toBe("32.53666305541992,34.905311584472656");
+    expect(parseUrlInAddress("https://www.google.com/maps/place/32%C2%B032'12.0%22N+34%C2%B054'19.1%22E/@32.5366631,34.9031229,17z/data=!3m1!4b1!4m5!3m4!1s0x0:0x0!8m2!3d32.5366631!4d34.9053116?hl=en")).toBe("32.5366631,34.9053116");
+    expect(parseUrlInAddress("https://www.google.com/maps/place/32%C2%B032'01.9%22N+34%C2%B054'14.3%22E/@32.5338692,34.9055186,17z/data=!3m1!4b1!4m14!1m7!3m6!1s0x0:0x0!2zMzLCsDMyJzEyLjYiTiAzNMKwNTQnMjAuMiJF!3b1!8m2!3d32.5368337!4d34.9056189!3m5!1s0x0:0x0!7e2!8m2!3d32.533866!4d34.9039709?hl=iw")).toBe("32.533866,34.9039709");
+
+    expect(parseUrlInAddress(`asdfasfdsa
+מיקום:
+32.271319,34.8734415
+    דיוק: 7855
+    asdfas`)).toBe('32.271319,34.8734415')
+
+    expect(parseUrlInAddress("נועם")).toBe("נועם");
+
   });
 
 });

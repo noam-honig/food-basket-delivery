@@ -147,9 +147,9 @@ export class Families extends IdEntity {
               }
             }
             if (!this.disableChangeLogging) {
-              logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName()), this.context,this.distributionCenter.value));//should be after succesfull save
+              logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName()), this.context, this.distributionCenter.value));//should be after succesfull save
               //logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
-              logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()), this.context,this.distributionCenter.value)); //should be after succesfull save
+              logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()), this.context, this.distributionCenter.value)); //should be after succesfull save
               logChanged(this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => { }); //should be after succesfull save
             }
           }
@@ -221,7 +221,18 @@ export class Families extends IdEntity {
   internalComment = new StringColumn({ includeInApi: Roles.admin, caption: 'הערה פנימית - לא תופיע למשנע' });
 
 
-  address = new StringColumn("כתובת");
+  address = new StringColumn("כתובת", {
+    valueChange: () => {
+      if (!this.address.value)
+        return;
+      let y = parseUrlInAddress(this.address.value);
+      if (y != this.address.value)
+        this.address.value = y;
+
+
+
+    }
+  });
   floor = new StringColumn('קומה');
   appartment = new StringColumn('דירה');
   entrance = new StringColumn('כניסה');
@@ -504,7 +515,11 @@ export class Families extends IdEntity {
     window.open('https://www.google.com/maps/search/?api=1&hl=iw&query=' + this.address.value, '_blank');
   }
   showOnGoogleMaps() {
-    window.open('https://www.google.com/maps/place/' + this.getGeocodeInformation().getlonglat()+'?hl=iw', '_blank');
+    window.open('https://maps.google.com/maps?q=' + this.getGeocodeInformation().getlonglat() + '&hl=iw', '_blank');
+  }
+  showOnGovMap() {
+    let x = this.getGeocodeInformation().location();
+    window.open('https://www.govmap.gov.il/?q=' + this.address.value + '&z=10', '_blank');
   }
 
 
@@ -518,7 +533,7 @@ export class Families extends IdEntity {
     return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
   }
 
-  static SendMessageToBrowsers = (s: string, context: Context,distCenter:string) => { };
+  static SendMessageToBrowsers = (s: string, context: Context, distCenter: string) => { };
   static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string) {
     switch (updateType) {
       case 1:
@@ -788,4 +803,64 @@ export class GroupsColumn extends StringColumn {
     return this.value.indexOf(group) >= 0;
   }
 
+}
+export function parseUrlInAddress(address: string) {
+  let x = address.toLowerCase();
+  let search = 'https://maps.google.com/maps?q=';
+  if (x.startsWith(search)) {
+    x = x.substring(search.length, 1000);
+    let i = x.indexOf('&')
+    if (i >= 0) {
+      x = x.substring(0, i);
+    }
+    x = x.replace('%2c', ',');
+    return x;
+  } else if (x.startsWith('https://www.google.com/maps/place/')) {
+    let r = x.split('!3d');
+    if (r.length > 0) {
+      x = r[r.length - 1];
+      let j = x.split('!4d')
+      x = j[0] + ',' + j[1];
+      let i = x.indexOf('!');
+      if (i > 0) {
+        x = x.substring(0, i);
+      }
+      return leaveOnlyNumericChars(x);
+
+    }
+  } else if (x.indexOf('מיקום:') >= 0) {
+    let j = x.substring(x.indexOf('מיקום:')).split('\n');
+    
+    if (j.length > 1) {
+      x = leaveOnlyNumericChars(j[1]);
+      if (x.indexOf(',') > 0)
+        return x;
+    }
+  }
+
+  return address;
+}
+
+function leaveOnlyNumericChars(x: string) {
+  for (let index = 0; index < x.length; index++) {
+    switch (x[index]) {
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+      case '9':
+      case '0':
+      case '.':
+      case ',':
+      case ' ':
+        break;
+      default:
+        return x.substring(0, index);
+    }
+  }
+  return x;
 }

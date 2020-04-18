@@ -67,7 +67,11 @@ export class UpdateFamilyComponent implements OnInit {
         families.addressByGoogle(),
         families.city,
         families.addressOk,
-        families.postalCode
+        families.postalCode,
+        {
+          caption: 'מה הבעיה של גוגל',
+          getValue: f => f.getGeocodeInformation().whyProblem()
+        }
 
       ]
     });

@@ -121,7 +121,11 @@ export class GeocodeInformation {
             return "no results";
         if (this.info.results[0].partial_match)
             return "partial_match";
-        if (this.info.results[0].types[0] != "street_address" && this.info.results[0].types[0] != "subpremise" && this.info.results[0].types[0] != "premise")
+        if (this.info.results[0].types[0] != "street_address"
+         && this.info.results[0].types[0] != "subpremise" 
+         && this.info.results[0].types[0] != "premise"
+         && this.info.results[0].types[0] != "route"
+         && this.info.results[0].types[0] != "establishment")
             return this.info.results[0].types.join(',');
         return undefined;
     }
