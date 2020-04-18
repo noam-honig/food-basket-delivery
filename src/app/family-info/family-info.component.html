@@ -43,7 +43,7 @@
 
 
 
-        {{f.address.value}}
+        {{f.getAddressDescription()}}
         <ng-container *ngIf="f.floor.value||f.appartment.value">
           <br />
         </ng-container>
@@ -68,7 +68,9 @@
     </div>
 
     <div style="float:left;text-align: left">
-      <a (click)="f.openGoogleMaps()">מפה</a>
+      <a (click)="f.openGoogleMaps()">google map</a>
+      <br />
+      <a (click)="f.showOnGovMap()">govmap</a>
       <br />
       <a (click)="copyAddress(f)">העתק כתובת</a>
     </div>

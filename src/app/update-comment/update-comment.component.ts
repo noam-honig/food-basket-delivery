@@ -37,8 +37,8 @@ export class UpdateCommentComponent implements OnInit {
         if (this.args.comment)
           this.args.comment += '\r\n';
         this.args.comment += `מיקום:
-${x.coords.latitude},${x.coords.longitude}
-דיוק: ${x.coords.accuracy}
+${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
+דיוק: ${x.coords.accuracy.toFixed()}
 `
       }, error => {
         this.dialog.Error("שליפת מיקום נכשלה " + error.message);

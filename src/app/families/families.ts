@@ -233,6 +233,20 @@ export class Families extends IdEntity {
 
     }
   });
+  isGpsAddress() {
+    return isGpsAddress(this.address.value);
+  }
+  getAddressDescription() {
+    if (this.isGpsAddress()) {
+      let r = 'נקודת GPS ';
+      let g = this.getGeocodeInformation();
+      if (g.getAddress()) {
+        r += 'ליד ' + g.getAddress();
+      }
+      return r;
+    }
+    return this.address.value;
+  }
   floor = new StringColumn('קומה');
   appartment = new StringColumn('דירה');
   entrance = new StringColumn('כניסה');
@@ -293,6 +307,11 @@ export class Families extends IdEntity {
     this.addressOk.value = !geo.partialMatch();
     this.addressLongitude.value = geo.location().lng;
     this.addressLatitude.value = geo.location().lat;
+    if (this.isGpsAddress()) {
+      var j = this.address.value.split(',');
+      this.addressLatitude.value = +j[0];
+      this.addressLongitude.value = +j[1];
+    }
   }
 
   async setPostalCodeServerOnly() {
@@ -391,7 +410,7 @@ export class Families extends IdEntity {
   });
 
 
-  addressLongitude = new NumberColumn({ decimalDigits: 8 });
+  addressLongitude = new NumberColumn({ decimalDigits: 8 });//שים לב - אם המשתמש הקליד כתובת GPS בכתובת - אז הנקודה הזו תהיה הנקודה שהמשתמש הקליד ולא מה שגוגל מצא
   addressLatitude = new NumberColumn({ decimalDigits: 8 });
   addressOk = new BoolColumn({ caption: 'כתובת תקינה' });
 
@@ -693,6 +712,7 @@ export class Families extends IdEntity {
 
   }
 }
+
 export class FamilyId extends IdColumn { }
 
 export interface duplicateFamilyInfo {
@@ -829,13 +849,20 @@ export function parseUrlInAddress(address: string) {
 
     }
   } else if (x.indexOf('מיקום:') >= 0) {
-    let j = x.substring(x.indexOf('מיקום:')).split('\n');
-    
-    if (j.length > 1) {
-      x = leaveOnlyNumericChars(j[1]);
-      if (x.indexOf(',') > 0)
-        return x;
+    let j = x.substring(x.indexOf('מיקום:') + 6);
+    let k = j.indexOf('דיוק');
+    if (k > 0) {
+      j = j.substring(0, k);
+      j = leaveOnlyNumericChars(j);
+      if (j.indexOf(',') > 0)
+        return j;
     }
+
+
+  }
+  if (isGpsAddress(address)) {
+    let x = address.split(',');
+    return (+x[0]).toFixed(6) + ',' + (+x[1]).toFixed(6);
   }
 
   return address;
@@ -863,4 +890,11 @@ function leaveOnlyNumericChars(x: string) {
     }
   }
   return x;
+}
+function isGpsAddress(address: string) {
+  if (!address)
+    return false;
+  let x = leaveOnlyNumericChars(address);
+  if (x == address && x.indexOf(',') > 5)
+    return true;
 }

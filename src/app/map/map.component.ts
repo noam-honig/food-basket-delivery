@@ -148,8 +148,8 @@ export class MapComponent implements OnInit {
             } catch (err) {
                 console.log(err, marker);
             }
-
-            marker.setLabel(f.name.value + " - " + f.address.value + '....');
+            
+            marker.setLabel(f.name.value + (f.isGpsAddress()?'': " - " + f.address.value) + '....');
 
             switch (f.deliverStatus.value) {
                 case DeliveryStatus.ReadyForDelivery:

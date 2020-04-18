@@ -140,12 +140,8 @@ describe('AppComponent', () => {
     expect(parseUrlInAddress("https://www.google.com/maps/place/32%C2%B032'12.0%22N+34%C2%B054'19.1%22E/@32.5366631,34.9031229,17z/data=!3m1!4b1!4m5!3m4!1s0x0:0x0!8m2!3d32.5366631!4d34.9053116?hl=en")).toBe("32.5366631,34.9053116");
     expect(parseUrlInAddress("https://www.google.com/maps/place/32%C2%B032'01.9%22N+34%C2%B054'14.3%22E/@32.5338692,34.9055186,17z/data=!3m1!4b1!4m14!1m7!3m6!1s0x0:0x0!2zMzLCsDMyJzEyLjYiTiAzNMKwNTQnMjAuMiJF!3b1!8m2!3d32.5368337!4d34.9056189!3m5!1s0x0:0x0!7e2!8m2!3d32.533866!4d34.9039709?hl=iw")).toBe("32.533866,34.9039709");
 
-    expect(parseUrlInAddress(`asdfasfdsa
-מיקום:
-32.271319,34.8734415
-    דיוק: 7855
-    asdfas`)).toBe('32.271319,34.8734415')
-
+    expect(parseUrlInAddress(`מיקום:32.267417990635636,34.878578873069586דיוק: 20.679268441942863`)).toBe('32.267417990635636,34.878578873069586')
+    expect(parseUrlInAddress('32.267417990635636,34.878578873069586')).toBe('32.267418,34.878579')
     expect(parseUrlInAddress("נועם")).toBe("נועם");
 
   });
