@@ -634,15 +634,27 @@ export class FamiliesComponent implements OnInit {
 
 
     static async processFamilies(info: serverUpdateInfo, context: Context, what: (f: Families) => void) {
-        let rows = await context.for(Families).find({ where: f => new AndFilter(f.distributionCenter.isAllowedForUser(), unpackWhere(f, info.where)) });
-        if (rows.length != info.count) {
+
+        let pageSize = 200;
+        let where = (f: Families) => new AndFilter(f.distributionCenter.isAllowedForUser(), unpackWhere(f, info.where));
+        let count = await context.for(Families).count(where);
+        if (count != info.count) {
             return "ארעה שגיאה אנא נסה שוב";
         }
-        for (const f of await rows) {
-            what(f);
-            await f.save();
+        let updated = 0;
+        for (let index = (count / pageSize); index >=0 ; index--) {
+            let rows = await context.for(Families).find({ where, limit: pageSize, page: index ,orderBy:f=>[f.id] });
+            //console.log(rows.length);
+            for (const f of await rows) {
+                what(f);
+                await f.save();
+                updated++;
+            }
         }
-        return "עודכנו " + rows.length + " משפחות";
+
+
+
+        return "עודכנו " + updated + " משפחות";
     }
 
 
