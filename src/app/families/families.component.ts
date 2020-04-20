@@ -44,6 +44,7 @@ import { UpdateGroupDialogComponent } from '../update-group-dialog/update-group-
 import { Groups } from '../manage/manage.component';
 import { FamilySourceId } from './FamilySources';
 import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser } from '../manage/distribution-centers';
+import { PromiseThrottle } from '../import-from-excel/import-from-excel.component';
 const addGroupAction = ' להוסיף ';
 const replaceGroupAction = ' להחליף ';
 @Component({
@@ -642,15 +643,17 @@ export class FamiliesComponent implements OnInit {
             return "ארעה שגיאה אנא נסה שוב";
         }
         let updated = 0;
+        let pt = new PromiseThrottle(10);
         for (let index = (count / pageSize); index >=0 ; index--) {
             let rows = await context.for(Families).find({ where, limit: pageSize, page: index ,orderBy:f=>[f.id] });
             //console.log(rows.length);
             for (const f of await rows) {
                 what(f);
-                await f.save();
+                await pt.push( f.save());
                 updated++;
             }
         }
+        await pt.done();
 
 
 
