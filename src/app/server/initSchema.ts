@@ -43,12 +43,18 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await dataSource.execute(sql.build("create index if not exists ", name, " on ", f, "  (", columns, ")"));
     }
     await dataSource.execute(sql.build('drop index if exists f_1  '));
-    await createIndex('for_courier', f.courier, f.deliverStatus, f.courierAssingTime);
+    await dataSource.execute(sql.build('drop index if exists for_courier  '));
+    await dataSource.execute(sql.build('drop index if exists for_distribution_status_queries  '));
+    await dataSource.execute(sql.build('drop index if exists for_name  '));
+    await createIndex('for_courier1', f.courier, f.deliverStatus, f.courierAssingTime,f.city,f.basketType);
+    await createIndex("for_distribution_status_queries1", f.distributionCenter, f.courier, f.deliverStatus,f.city,f.basketType);
+    await createIndex("for_name1",f.name,f.deliverStatus,f.basketType);
+    await createIndex("for_distCenter_name",f.distributionCenter, f.name,f.deliverStatus,f.basketType);
+    await createIndex("for_basket",f.basketType,f.deliverStatus,f.courier);
+    await createIndex("for_basket_dist",f.distributionCenter, f.basketType,f.deliverStatus,f.courier);
     
     await dataSource.execute("create extension if not exists pg_trgm with schema pg_catalog;");
     await dataSource.execute(sql.build('create index if not exists for_like_on_groups on families using gin  (groups gin_trgm_ops)'));
-    await createIndex("for_distribution_status_queries", f.distributionCenter, f.courier, f.deliverStatus);
-    await createIndex("for_name",f.name,f.deliverStatus);
 
     if ((await context.for(BasketType).count() == 0)) {
         let h = context.for(BasketType).create();
