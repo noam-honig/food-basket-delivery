@@ -1,12 +1,11 @@
 <div *ngIf="isguest">
 <h1>
-  מערכת חלוקת סלי מזון
+  חגי - אפליקציה לחלוקת סלי מזון
+<br>
+  <a href="https://noam-honig.github.io/salmaz">לפרטים נוספים, לחצו כאן</a>
 </h1>
- הכתובת איתה הגעתם אינה מכילה את פרטי הארגון בו אתם מתנדבים - אנא פנו למי ששלך לכם את הכתובת הזו ובקשו כתובת מעודכנת.
 
-<br/>
-<br/>
-למידע נוסף על מערכת חלוקת סלי מזון, אנא גשו ל<a href="https://www.facebook.com/foodbasketdelivery">דף הפייסבוק שלנו</a>
+
 <button mat-button style="position:absolute;bottom:0px;left:0;" (click)="isguest = false">overview</button>
 </div>
 <div class="myDiv" *ngIf="!isguest">
