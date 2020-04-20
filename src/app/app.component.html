@@ -1,6 +1,7 @@
 <mat-sidenav-container class="app-sidenav-container">
   <mat-sidenav #sidenav class="app-sidenav mat-elevation-z10 no-print" [opened]="!dialog.isScreenSmall()"
     [mode]="dialog.isScreenSmall()?'over':'side'">
+
     <div style="width:100%;text-align: center">
       <img src="{{getLogo()}}" />
     </div>
@@ -41,21 +42,27 @@
     padding-top: 4px;
     padding-left: 6px;
     padding-right: 6px;" *ngIf="this.dialog.canSeeCenter()&&dialog.distCenterArea">
-    
+
       <data-area [settings]="dialog.distCenterArea" *ngIf="dialog.distCenterArea&&dialog.canSeeCenter()"></data-area>
 
     </div>
 
   </mat-toolbar>
 
-  <div class="app-sidenav-content ">
+  <div class="app-sidenav-content " style="justify-content: space-between;">
 
 
     <div class="wrapper" [class.edge-fix]="isEdge">
       <router-outlet></router-outlet>
-      <div class="footer"></div>
+      <div class="footer">
+        
+      </div>
     </div>
-
+    <footer style="text-align:center;font-size:70%;height:100px">
+      <hr>
+      <a href="https://noam-honig.github.io/salmaz" target="_blank"> חגי - אפליקציה לחלוקת
+        סלי מזון</a>
+    </footer>
   </div>
 
 </mat-sidenav-container>
