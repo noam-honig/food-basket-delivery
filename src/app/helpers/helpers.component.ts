@@ -167,12 +167,12 @@ export class HelpersComponent implements OnInit {
     let r = await HelpersComponent.sendInvite(this.helpers.currentRow.id.value);
     this.dialog.Info(r);
   }
-  @ServerFunction({ allowed: Roles.admin })
+  @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async sendInvite(helperId: string, context?: ServerContext) {
     let h = await context.for(Helpers).findFirst(x => x.id.isEqualTo(helperId));
     if (!h)
       return 'לא מתאים להזמנה';
-    if (!h.admin.value)
+    if (!(h.admin.value || h.distCenterAdmin.value))
       return 'לא מתאים להזמנה';
     let url = context.getOrigin() + '/' + Sites.getOrganizationFromContext(context);
     let s = await ApplicationSettings.getAsync(context);

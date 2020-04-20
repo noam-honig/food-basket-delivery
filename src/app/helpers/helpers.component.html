@@ -10,7 +10,7 @@
     אתחל סיסמה ל{{helpers.currentRow.name.value}}
   </button>
   <button mat-raised-button color="primary" (click)="sendInvite()" style="margin-right:5px"
-    *ngIf="helpers.currentRow&&helpers.currentRow.admin.value">
+    *ngIf="helpers.currentRow&&(helpers.currentRow.admin.value||helpers.currentRow.distributionCenter.value)">
     שלח הזמנה בSMS ל{{helpers.currentRow.name.value}}
   </button>
   <br>
