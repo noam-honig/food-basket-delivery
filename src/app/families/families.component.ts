@@ -644,12 +644,13 @@ export class FamiliesComponent implements OnInit {
         }
         let updated = 0;
         let pt = new PromiseThrottle(10);
-        for (let index = (count / pageSize); index >=0 ; index--) {
-            let rows = await context.for(Families).find({ where, limit: pageSize, page: index ,orderBy:f=>[f.id] });
+        for (let index = (count / pageSize); index >= 0; index--) {
+            let rows = await context.for(Families).find({ where, limit: pageSize, page: index, orderBy: f => [f.id] });
             //console.log(rows.length);
             for (const f of await rows) {
+                f._disableMessageToUsers = true;
                 what(f);
-                await pt.push( f.save());
+                await pt.push(f.save());
                 updated++;
             }
         }

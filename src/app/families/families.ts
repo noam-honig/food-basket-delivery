@@ -57,6 +57,7 @@ export class Families extends IdEntity {
     }
   }
   __disableGeocoding = false;
+  _disableMessageToUsers = false;
   constructor(private context: Context) {
     super(
       {
@@ -147,9 +148,16 @@ export class Families extends IdEntity {
               }
             }
             if (!this.disableChangeLogging) {
-              logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName()), this.context, this.distributionCenter.value));//should be after succesfull save
+              logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => {
+                if (!this._disableMessageToUsers)
+                  Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName()), this.context, this.distributionCenter.value)
+              }
+              );//should be after succesfull save
               //logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
-              logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()), this.context, this.distributionCenter.value)); //should be after succesfull save
+              logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => {
+                if (!this._disableMessageToUsers)
+                  Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()), this.context, this.distributionCenter.value);
+              }); //should be after succesfull save
               logChanged(this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => { }); //should be after succesfull save
             }
           }
