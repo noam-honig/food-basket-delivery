@@ -15,7 +15,7 @@ export class FamilyDeliveries extends IdEntity {
 
     name = new StringColumn({
         caption: "שם",
-        dbName:'familyName'
+        dbName: 'familyName'
     });
     basketType = new BasketId(this.context, 'סוג סל');
 
@@ -77,14 +77,14 @@ export class FamilyDeliveries extends IdEntity {
 
                 if (!this.disableChangeLogging) {
                     logChanged(context, this.courier, this.courierAssingTime, this.courierAssignUser, async () => {
-                        if (!this._disableMessageToUsers){
+                        if (!this._disableMessageToUsers) {
                             Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName()), this.context, this.distributionCenter.value)
                         }
                     }
                     );//should be after succesfull save
                     //logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
                     logChanged(context, this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => {
-                        if (!this._disableMessageToUsers){
+                        if (!this._disableMessageToUsers) {
                             Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()), this.context, this.distributionCenter.value);
                         }
                     }); //should be after succesfull save
@@ -103,6 +103,7 @@ export class FamilyDeliveries extends IdEntity {
     filterDistCenter(distCenter: string): FilterBase {
         return this.distributionCenter.filter(distCenter);
     }
+    
 
 
 

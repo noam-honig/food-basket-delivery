@@ -3,7 +3,7 @@ import { BusyService } from '@remult/core';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';
-import { Families } from '../families/families';
+
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { AuthService } from '../auth/auth-service';
 import { DialogService } from '../select-popup/dialog';
@@ -37,7 +37,7 @@ export class HelperFamiliesComponent implements OnInit {
     this.familyLists.setMap(this.map);//123
 
   }
-  async cancelAssign(f: Families) {
+  async cancelAssign(f: ActiveFamilyDeliveries) {
     this.dialog.analytics('Cancel Assign');
     f.courier.value = '';
     await f.save();

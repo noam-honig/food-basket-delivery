@@ -8,6 +8,7 @@ import { DistributionCenterId } from '../manage/distribution-centers';
 import { DeliveryStatusColumn, DeliveryStatus } from '../families/DeliveryStatus';
 import { HelperId, HelperIdReadonly, Helpers } from '../helpers/helpers';
 import { YesNoColumn } from '../families/YesNo';
+import { Location } from '../shared/googleApiHelpers'
 
 
 @EntityClass
@@ -64,8 +65,12 @@ export class AllFamilyDeliveresIncludingHistory extends IdEntity {
         serverExpression: async () => (await this.context.for(Helpers).lookupAsync(this.courierAssignUser)).phone.value
     });
     routeOrder = new NumberColumn();
-    addressLongitude = new NumberColumn({ decimalDigits: 8 });//שים לב - אם המשתמש הקליד כתובת GPS בכתובת - אז הנקודה הזו תהיה הנקודה שהמשתמש הקליד ולא מה שגוגל מצא
+    //שים לב - אם המשתמש הקליד כתובת GPS בכתובת - אז הנקודה הזו תהיה הנקודה שהמשתמש הקליד ולא מה שגוגל מצא
+    addressLongitude = new NumberColumn({ decimalDigits: 8 });
     addressLatitude = new NumberColumn({ decimalDigits: 8 });
+    //זו התוצאה שחזרה מהGEOCODING כך שהיא מכוונת לכביש הקרוב
+    drivingLongitude = new NumberColumn({ decimalDigits: 8 });
+    drivingLatitude = new NumberColumn({ decimalDigits: 8 });
     addressOk = new BoolColumn({ caption: 'כתובת תקינה' });
     filterDistCenter(distCenter: string): FilterBase {
         return this.distributionCenter.filter(distCenter);
@@ -110,7 +115,7 @@ export class AllFamilyDeliveresIncludingHistory extends IdEntity {
     onTheWayFilter() {
         return this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(this.courier.isDifferentFrom(''));
     }
-    constructor(private context: Context, onlyActive=false,apiName = 'AllFamilyDeliveresIncludingHistory') {
+    constructor(private context: Context, onlyActive = false, apiName = 'AllFamilyDeliveresIncludingHistory') {
         super({
             name: apiName,
             allowApiUpdate: Roles.admin,
@@ -158,6 +163,8 @@ export class AllFamilyDeliveresIncludingHistory extends IdEntity {
                         , f.routeOrder
                         , f.addressLongitude
                         , f.addressLatitude
+                        , f.drivingLongitude
+                        , f.drivingLatitude
                         , f.addressOk
 
                     ],
@@ -172,9 +179,14 @@ export class AllFamilyDeliveresIncludingHistory extends IdEntity {
             },
             savingRow: async doNotSaveToDb => {
                 if (context.onServer) {
-                    let f = await context.for(Families).findFirst(f => f.id.isEqualTo(this.familyId));
-                    f.name.value = this.name.value;
-                    await f.save();
+                    if (this.courier.value != this.courier.originalValue) {
+                        let fd = await this.context.for(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(this.id));
+                        fd.courier.value = this.courier.value;
+                        await fd.save();
+                    }
+
+
+
                     doNotSaveToDb();
                 }
             },
@@ -196,7 +208,31 @@ export class AllFamilyDeliveresIncludingHistory extends IdEntity {
 @EntityClass
 export class ActiveFamilyDeliveries extends AllFamilyDeliveresIncludingHistory {
 
+    getDrivingLocation(): Location {
+        if (this.drivingLatitude.value != 0)
+            return {
+                lat: this.drivingLatitude.value,
+                lng: this.drivingLongitude.value
+            }
+        else
+            return {
+                lat: this.addressLatitude.value,
+                lng: this.addressLongitude.value
+            }
+    }
+
     constructor(context: Context) {
-        super(context, true,'ActiveFamilyDeliveries');
+        super(context, true, 'ActiveFamilyDeliveries');
+    }
+    checkNeedsWork() {
+        if (this.courierComments.value)
+            this.needsWork.value = true;
+        switch (this.deliverStatus.value) {
+            case DeliveryStatus.FailedBadAddress:
+            case DeliveryStatus.FailedNotHome:
+            case DeliveryStatus.FailedOther:
+                this.needsWork.value = true;
+                break;
+        }
     }
 }

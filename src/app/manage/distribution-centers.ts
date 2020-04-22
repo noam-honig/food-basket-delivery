@@ -23,6 +23,7 @@ export class DistributionCenters extends IdEntity {
     this._lastString = this.addressApiResult.value;
     return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
   }
+  
 
   constructor(context: Context) {
     super({
@@ -46,6 +47,7 @@ export class DistributionCenters extends IdEntity {
   }
 
 }
+export const allCentersToken = '<allCenters>';
 export function filterCenterAllowedForUser(center: IdColumn, context: Context) {
   if (context.isAllowed(Roles.admin)) {
     return undefined;
@@ -55,7 +57,7 @@ export function filterCenterAllowedForUser(center: IdColumn, context: Context) {
 
 export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValue {
   filter(distCenter: string): import("@remult/core").FilterBase {
-    if (distCenter != Families.allCentersToken)
+    if (distCenter != allCentersToken)
       return new AndFilter(this.isAllowedForUser(), this.isEqualTo(distCenter));
     return this.isAllowedForUser();
   }
@@ -80,7 +82,7 @@ export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValu
             }
           }).then(x => {
             if (showAllOption)
-              x.splice(0, 0, { caption: 'כל הנקודות', id: Families.allCentersToken })
+              x.splice(0, 0, { caption: 'כל הנקודות', id: allCentersToken })
             return x;
           })
           , width: '150'

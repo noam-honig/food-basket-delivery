@@ -7,7 +7,7 @@ import { FamilyDeliveresStatistics, FamilyDeliveryStats } from './family-deliver
 import { MatTabGroup } from '@angular/material/tabs';
 import { DialogService } from '../select-popup/dialog';
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
-import { DeliveryStatistic } from '../delivery-follow-up/delivery-stats';
+
 import * as chart from 'chart.js';
 import { colors } from '../families/stats-action';
 import { BasketType } from '../families/BasketType';

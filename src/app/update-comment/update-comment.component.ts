@@ -4,8 +4,9 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { ApplicationSettings, phoneOption } from '../manage/ApplicationSettings';
 import { Context } from '@remult/core';
 import { Column } from '@remult/core';
-import { Families } from '../families/families';
+
 import { DialogService } from '../select-popup/dialog';
+import { ActiveFamilyDeliveries } from '../family-deliveries/family-deliveries-join';
 
 @Component({
   selector: 'app-update-comment',
@@ -14,10 +15,8 @@ import { DialogService } from '../select-popup/dialog';
 })
 export class UpdateCommentComponent implements OnInit {
   public args: {
-    family: Families,
+    family: ActiveFamilyDeliveries,
     showFailStatus?: boolean,
-    assignerName: string,
-    assignerPhone: string,
     helpText: (s: ApplicationSettings) => Column<any>
 
     comment: string,
@@ -61,8 +60,8 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
 
   async ngOnInit() {
     if (this.args.showFailStatus) {
-      let s = await ApplicationSettings.getAsync(this.context);
-      this.phoneOptions = await s.getPhoneOptions(this.args.family, this.context);
+      
+      this.phoneOptions = await ApplicationSettings.getPhoneOptions(this.args.family.id.value, this.context);
 
     }
   }

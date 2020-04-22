@@ -29,7 +29,7 @@ export class Families extends IdEntity {
     fd.distributionCenter.value = this.distributionCenter.value;
     return fd;
   }
-  static allCentersToken = '<allCenters>';
+  
   filterDistCenter(distCenter: string): import("@remult/core").FilterBase {
     return this.distributionCenter.filter(distCenter);
   }
@@ -416,9 +416,12 @@ export class Families extends IdEntity {
     }
   });
 
-
-  addressLongitude = new NumberColumn({ decimalDigits: 8 });//שים לב - אם המשתמש הקליד כתובת GPS בכתובת - אז הנקודה הזו תהיה הנקודה שהמשתמש הקליד ולא מה שגוגל מצא
+//שים לב - אם המשתמש הקליד כתובת GPS בכתובת - אז הנקודה הזו תהיה הנקודה שהמשתמש הקליד ולא מה שגוגל מצא
+  addressLongitude = new NumberColumn({ decimalDigits: 8 });
   addressLatitude = new NumberColumn({ decimalDigits: 8 });
+  //זו התוצאה שחזרה מהGEOCODING כך שהיא מכוונת לכביש הקרוב
+  drivingLongitude = new NumberColumn({ decimalDigits: 8 });
+  drivingLatitude = new NumberColumn({ decimalDigits: 8 });
   addressOk = new BoolColumn({ caption: 'כתובת תקינה' });
 
   readyFilter(city?: string, group?: string) {

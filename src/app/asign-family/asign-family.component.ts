@@ -1,7 +1,7 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
-import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
+import { Location, GeocodeInformation, toLongLat } from '../shared/googleApiHelpers';
 import { UrlBuilder, FilterBase, ServerFunction, StringColumn, DataAreaSettings, BoolColumn, SqlDatabase } from '@remult/core';
-import { Families } from '../families/families';
+
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
 
@@ -33,8 +33,10 @@ import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { SelectFamilyComponent } from '../select-family/select-family.component';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
-import { DistributionCenters, DistributionCenterId } from '../manage/distribution-centers';
+import { DistributionCenters, DistributionCenterId, allCentersToken } from '../manage/distribution-centers';
 import { CitiesStatsPerDistCenter } from '../family-deliveries/family-deliveries-stats';
+import { ActiveFamilyDeliveries } from '../family-deliveries/family-deliveries-join';
+
 
 
 @Component({
@@ -149,8 +151,8 @@ export class AsignFamilyComponent implements OnInit {
                 distCenter: this.dialog.distCenter.value,
                 onSelect: async h => {
                     if (h) {
-                        let families = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(h.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
-                        this.dialog.YesNoQuestion("להעביר " + families.length + translate(" משפחות מ") + '"' + h.name.value + '"' + " למתנדב " + '"' + this.helper.name.value + '"', async () => {
+                        let families = await this.context.for(ActiveFamilyDeliveries).find({ where: f => f.courier.isEqualTo(h.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
+                        this.dialog.YesNoQuestion("להעביר " + families.length + translate(" משלוחים מ") + '"' + h.name.value + '"' + " למתנדב " + '"' + this.helper.name.value + '"', async () => {
                             await this.busy.doWhileShowingBusy(async () => {
                                 await this.verifyHelperExistance();
                                 for (const f of families) {
@@ -313,7 +315,7 @@ export class AsignFamilyComponent implements OnInit {
 
     }
     disableAll() {
-        return this.dialog.distCenter.value == Families.allCentersToken;
+        return this.dialog.distCenter.value == allCentersToken;
     }
     filterOptions: BoolColumn[] = [];
     async ngOnInit() {
@@ -349,7 +351,7 @@ export class AsignFamilyComponent implements OnInit {
     numOfBaskets: number = 1;
     private async assignFamilyBasedOnIdFromMap(familyId: string) {
         await this.busy.doWhileShowingBusy(async () => {
-            let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(familyId));
+            let f = await this.context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(familyId));
             if (f && f.deliverStatus.value == DeliveryStatus.ReadyForDelivery && f.courier.value == "") {
                 this.performSepcificFamilyAssignment(f, 'assign based on map');
             }
@@ -392,7 +394,7 @@ export class AsignFamilyComponent implements OnInit {
                         await this.busy.doWhileShowingBusy(async () => {
                             this.dialog.analytics('More families in same address');
                             for (const id of x.familiesInSameAddress) {
-                                let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(id).and(f.readyFilter()));
+                                let f = await this.context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(id).and(f.readyFilter()));
                                 f.courier.value = this.helper.id.value;
                                 await f.save();
                             }
@@ -438,8 +440,8 @@ export class AsignFamilyComponent implements OnInit {
             repeatFamilies: 0
         } as GetBasketStatusActionResponse;
 
-        let countFamilies = (additionalWhere?: (f: Families) => FilterBase) => {
-            return context.for(Families).count(f => {
+        let countFamilies = (additionalWhere?: (f: ActiveFamilyDeliveries) => FilterBase) => {
+            return context.for(ActiveFamilyDeliveries).count(f => {
                 let where = f.readyFilter(info.filterCity, info.filterGroup).and(f.filterDistCenter(info.distCenter));
                 if (additionalWhere) {
                     where = where.and(additionalWhere(f));
@@ -453,7 +455,7 @@ export class AsignFamilyComponent implements OnInit {
 
 
         let sql = new SqlBuilder();
-        let f = context.for(Families).create();
+        let f = context.for(ActiveFamilyDeliveries).create();
         let fd = context.for(FamilyDeliveries).create();
         if (info.helperId) {
             let r = await db.execute(sql.build('select count(*) from ', f, ' where ', f.readyFilter(info.filterCity, info.filterGroup).and(f.special.isEqualTo(YesNo.No)), ' and ',
@@ -495,7 +497,7 @@ export class AsignFamilyComponent implements OnInit {
     }
     @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async RefreshRoute(helperId: string, useGoogle: boolean, context?: Context) {
-        let existingFamilies = await context.for(Families).find({
+        let existingFamilies = await context.for(ActiveFamilyDeliveries).find({
             where: f => f.courier.isEqualTo(helperId).and(
                 f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)).and(
                     f.distributionCenter.isAllowedForUser())
@@ -518,7 +520,7 @@ export class AsignFamilyComponent implements OnInit {
         if (!info.helperId)
             throw 'invalid helper';
 
-        let existingFamilies = await context.for(Families).find({
+        let existingFamilies = await context.for(ActiveFamilyDeliveries).find({
             where: f => f.courier.isEqualTo(info.helperId).and(
                 f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
                     f.distributionCenter.isAllowedForUser()).and(f.filterDistCenter(info.distCenter)))
@@ -527,13 +529,13 @@ export class AsignFamilyComponent implements OnInit {
         if (locationReferenceFamilies.length == 0) {
             let from = new Date();
             from.setDate(from.getDate() - 1);
-            locationReferenceFamilies = await context.for(Families).find({
+            locationReferenceFamilies = await context.for(ActiveFamilyDeliveries).find({
                 where: f => f.courier.isEqualTo(info.helperId).and(f.deliverStatus.isAResultStatus()).and(f.deliveryStatusDate.isGreaterOrEqualTo(from)),
                 orderBy: f => [{ column: f.deliveryStatusDate, descending: true }],
                 limit: 1
             });
         }
-        function buildWhere(f: Families) {
+        function buildWhere(f: ActiveFamilyDeliveries) {
             let where = f.readyFilter(info.city, info.group).and(
                 f.special.isDifferentFrom(YesNo.Yes).and(f.filterDistCenter(info.distCenter))
             );
@@ -546,7 +548,7 @@ export class AsignFamilyComponent implements OnInit {
 
             let getFamilies = async () => {
 
-                let f = context.for(Families).create();
+                let f = context.for(ActiveFamilyDeliveries).create();
                 let sql = new SqlBuilder();
                 sql.addEntity(f, 'Families');
                 let r = (await db.execute(sql.query({
@@ -581,11 +583,11 @@ export class AsignFamilyComponent implements OnInit {
             }
 
             let addFamilyToResult = async (id: string) => {
-                let family = await context.for(Families).findFirst(f => f.id.isEqualTo(id));
+                let family = await context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(id));
                 family.courier.value = info.helperId;
                 await family.save();
                 if (family.addressOk.value) {
-                    let sameLocationFamilies = await context.for(Families).find({
+                    let sameLocationFamilies = await context.for(ActiveFamilyDeliveries).find({
                         where: f => buildWhere(f).and(f.addressLongitude.isEqualTo(family.addressLongitude).and(f.addressLatitude.isEqualTo(family.addressLatitude)))
                             .and(f.distributionCenter.isAllowedForUser()).and(f.filterDistCenter(info.distCenter))
                     });
@@ -621,7 +623,7 @@ export class AsignFamilyComponent implements OnInit {
                         if (!x)
                             return r;
                         locationReferenceFamilies.forEach(ef => {
-                            let loc = ef.getGeocodeInformation().location();
+                            let loc = ef.getDrivingLocation();
                             if (loc) {
                                 let dis = GeocodeInformation.GetDistanceBetweenPoints(x, loc);
                                 if (dis < r)
@@ -657,14 +659,14 @@ export class AsignFamilyComponent implements OnInit {
 
 
         existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
-        result.families = await context.for(Families).toPojoArray(existingFamilies);
+        result.families = await context.for(ActiveFamilyDeliveries).toPojoArray(existingFamilies);
 
         result.familiesInSameAddress = result.familiesInSameAddress.filter((x, i) => !existingFamilies.find(f => f.id.value == x) && result.familiesInSameAddress.indexOf(x) == i);
 
         return result;
     }
 
-    static async optimizeRoute(helper: Helpers, families: Families[], context: Context, useGoogle: boolean) {
+    static async optimizeRoute(helper: Helpers, families: ActiveFamilyDeliveries[], context: Context, useGoogle: boolean) {
 
         if (families.length < 1)
             return;
@@ -681,13 +683,13 @@ export class AsignFamilyComponent implements OnInit {
         {
             var map = new Map<string, familiesInRoute>();
             for (const f of families) {
-                let geo = f.getGeocodeInformation();
-                let longlat = geo.getlonglat();
+                let location = f.getDrivingLocation();
+                let longlat = toLongLat(location);
                 let loc: familiesInRoute = map.get(longlat);
                 if (!loc) {
                     loc = {
                         families: [],
-                        geo: geo,
+                        location: location,
                         longlat: longlat,
                         address: f.address.value
                     };
@@ -709,9 +711,9 @@ export class AsignFamilyComponent implements OnInit {
             for (let i = 0; i < total; i++) {
                 let closest = temp[0];
                 let closestIndex = 0;
-                let closestDist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, closest.geo.location());
+                let closestDist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, closest.location);
                 for (let j = 0; j < temp.length; j++) {
-                    let dist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, temp[j].geo.location());
+                    let dist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, temp[j].location);
                     if (dist < closestDist) {
                         closestDist = dist;
                         closestIndex = j;
@@ -719,7 +721,7 @@ export class AsignFamilyComponent implements OnInit {
                     }
 
                 }
-                lastLoc = closest.geo.location();
+                lastLoc = closest.location;
                 sorted.push(temp.splice(closestIndex, 1)[0]);
 
             }
@@ -769,7 +771,7 @@ export class AsignFamilyComponent implements OnInit {
                     await f.save();
             });
         }
-        result.families = await context.for(Families).toPojoArray(families);
+        result.families = await context.for(ActiveFamilyDeliveries).toPojoArray(families);
 
         helper.save();
 
@@ -781,7 +783,7 @@ export class AsignFamilyComponent implements OnInit {
         this.addFamily(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
             f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes))), 'special');
     }
-    addFamily(filter: (f: Families) => FilterBase, analyticsName: string, selectStreet?: boolean) {
+    addFamily(filter: (f: ActiveFamilyDeliveries) => FilterBase, analyticsName: string, selectStreet?: boolean) {
         this.context.openDialog(SelectFamilyComponent, x => x.args = {
             where: f => {
                 if (this.filterCity)
@@ -816,7 +818,7 @@ export class AsignFamilyComponent implements OnInit {
             }
         })
     }
-    private async performSepcificFamilyAssignment(f: Families, analyticsName: string) {
+    private async performSepcificFamilyAssignment(f: ActiveFamilyDeliveries, analyticsName: string) {
         await this.verifyHelperExistance();
         f.courier.value = this.helper.id.value;
         f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
@@ -906,19 +908,19 @@ async function getRouteInfo(families: familiesInRoute[], optimize: boolean, star
     let waypoints = 'optimize:' + (optimize ? 'true' : 'false');
     let addresses = [];
     families.forEach(f => {
-        if (f.geo.location())
-            waypoints += '|' + f.geo.getlonglat();
+        if (f.location)
+            waypoints += '|' + toLongLat(f.location);
         addresses.push(f.address);
     });
     let args = {
         origin: startAndEnd,
-        destination: families[families.length - 1].geo.getlonglat(),
+        destination: toLongLat(families[families.length - 1].location),
         waypoints: waypoints,
         language: 'he',
         key: process.env.GOOGLE_GECODE_API_KEY
     };
     u.addObject(args);
-    
+
 
     let r = await (await fetch.default(u.url)).json();
     if (!r || r.status != "OK") {
@@ -926,7 +928,7 @@ async function getRouteInfo(families: familiesInRoute[], optimize: boolean, star
         if (r && r.status) {
             status = r.status;
         }
-        console.error("error in google route api", status, r,u.url);
+        console.error("error in google route api", status, r, u.url);
     }
     return r;
 }
@@ -948,8 +950,8 @@ export interface BasketInfo {
     unassignedFamilies: number;
 
 }
-function filterRepeatFamilies(sql: SqlBuilder, f: Families, fd: FamilyDeliveries, helperId: string) {
-    return sql.build(f.id, ' in (select ', fd.family, ' from ', fd, ' where ', fd.courier.isEqualTo(helperId), ')');
+function filterRepeatFamilies(sql: SqlBuilder, f: ActiveFamilyDeliveries, fd: FamilyDeliveries, helperId: string) {
+    return sql.build(f.familyId, ' in (select ', fd.family, ' from ', fd, ' where ', fd.courier.isEqualTo(helperId), ')');
 
 }
 export interface CityInfo {
@@ -957,8 +959,8 @@ export interface CityInfo {
     unassignedFamilies: number;
 }
 interface familiesInRoute {
-    geo: GeocodeInformation;
+    location: Location;
     longlat: string;
-    families: Families[];
+    families: ActiveFamilyDeliveries[];
     address: string;
 }

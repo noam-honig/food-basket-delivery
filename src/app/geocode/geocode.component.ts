@@ -4,7 +4,7 @@ import { Families } from '../families/families';
 import { Roles } from '../auth/roles';
 import { PromiseThrottle } from '../import-from-excel/import-from-excel.component';
 import { DialogService } from '../select-popup/dialog';
-import { DistributionCenterId } from '../manage/distribution-centers';
+import { DistributionCenterId, allCentersToken } from '../manage/distribution-centers';
 import { GeocodeInformation } from '../shared/googleApiHelpers';
 import { extractError } from '../model-shared/types';
 
@@ -19,7 +19,7 @@ export class GeocodeComponent implements OnInit {
   }, true);
   distCenterArea = new DataAreaSettings({ columnSettings: () => [this.distCenter] });
   constructor(private context: Context, private dialog: DialogService) {
-    this.distCenter.value = Families.allCentersToken;
+    this.distCenter.value = allCentersToken;
   }
   families = 0;
   async ngOnInit() {

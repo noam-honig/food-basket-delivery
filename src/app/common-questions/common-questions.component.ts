@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ApplicationSettings, qaItem, phoneOption } from '../manage/ApplicationSettings';
 import { MatDialogRef } from '@angular/material';
 import { Context } from '@remult/core';
-import { Families } from '../families/families';
+
+import { ActiveFamilyDeliveries } from '../family-deliveries/family-deliveries-join';
 
 @Component({
   selector: 'app-common-questions',
@@ -13,14 +14,14 @@ export class CommonQuestionsComponent implements OnInit {
 
   questions:qaItem[];
   args: {
-    family:Families
+    family:ActiveFamilyDeliveries
   };
   phoneOptions: phoneOption[]=[];
   constructor(private settings: ApplicationSettings, private dialog: MatDialogRef<any>,private context:Context) { 
     this.questions = settings.getQuestions();
 
   }
-  async init(family:Families){
+  async init(family:ActiveFamilyDeliveries){
     this.args ={family: family};
     this.phoneOptions = await this.settings.getPhoneOptions(family,this.context);
   }

@@ -2,10 +2,11 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { NumberColumn,  BoolColumn } from '@remult/core';
 import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
 import { changeDate, DateTimeColumn, SqlBuilder } from '../model-shared/types';
-import { Families } from "../families/families";
+
 
 import { Context, EntityClass } from '@remult/core';
 import { Roles } from "../auth/roles";
+import { ActiveFamilyDeliveries } from "../family-deliveries/family-deliveries-join";
 
 
 
@@ -40,7 +41,7 @@ export class HelpersAndStats extends HelpersBase {
             name: "helpersAndStats",
             allowApiRead: Roles.distCenterAdmin,
             dbName: () => {
-                let f = context.for(Families).create();
+                let f = context.for(ActiveFamilyDeliveries).create();
                 let h = context.for( Helpers).create();
                 var sql = new SqlBuilder();
 

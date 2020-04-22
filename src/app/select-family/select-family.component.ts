@@ -1,10 +1,11 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Families } from '../families/families';
+
 import { BusyService, AndFilter } from '@remult/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { FilterBase } from '@remult/core';
 import { Context } from '@remult/core';
 import { DeliveryStatus } from '../families/DeliveryStatus';
+import { ActiveFamilyDeliveries } from '../family-deliveries/family-deliveries-join';
 
 
 @Component({
@@ -15,15 +16,15 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 export class SelectFamilyComponent implements OnInit {
 
   public args: {
-    where: (f: Families) => FilterBase,
-    onSelect: (selectedValue: Families) => void,
+    where: (f: ActiveFamilyDeliveries) => FilterBase,
+    onSelect: (selectedValue: ActiveFamilyDeliveries) => void,
     selectStreet: boolean,
     distCenter: string
   };
   @ViewChild("search", { static: true }) search: ElementRef;
   constructor(private busy: BusyService, private dialogRef: MatDialogRef<any>, private context: Context) { }
   searchString: string = '';
-  families = this.context.for(Families).gridSettings({ knowTotalRows: true });
+  families = this.context.for(ActiveFamilyDeliveries).gridSettings({ knowTotalRows: true });
   pageSize = 7;
   selectFirst() {
     if (this.families.items.length > 0)
@@ -60,7 +61,7 @@ export class SelectFamilyComponent implements OnInit {
   clearHelper() {
     this.dialogRef.close();
   }
-  select(f: Families) {
+  select(f: ActiveFamilyDeliveries) {
     this.args.onSelect(f);
     this.dialogRef.close();
   }
@@ -73,7 +74,7 @@ export class SelectFamilyComponent implements OnInit {
     this.dialogRef.close();
 
   }
-  showStatus(f: Families) {
+  showStatus(f: ActiveFamilyDeliveries) {
     if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery) {
       if (f.courier.value) {
         return 'משוייך למשנע';
