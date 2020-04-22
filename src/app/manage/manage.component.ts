@@ -11,7 +11,7 @@ import { Context, IdEntity, IdColumn, StringColumn, EntityClass, Entity, NumberC
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import { Families } from '../families/families';
+import { Families, iterateFamilies } from '../families/families';
 import { SqlBuilder } from '../model-shared/types';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DistributionCenters, DistributionCenterId } from './distribution-centers';
@@ -80,7 +80,7 @@ export class ManageComponent implements OnInit {
         width: '100px'
       }
     ],
-    onSavingRow:()=>this.refreshEnvironmentAfterSave(),
+    onSavingRow: () => this.refreshEnvironmentAfterSave(),
     get: {
       limit: 25,
       orderBy: f => [f.name]
@@ -142,7 +142,7 @@ export class ManageComponent implements OnInit {
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
   });
   groups = this.context.for(Groups).gridSettings({
-    onSavingRow:()=>this.refreshEnvironmentAfterSave(),
+    onSavingRow: () => this.refreshEnvironmentAfterSave(),
     hideDataArea: true,
     columnSettings: s => [
       s.name,
@@ -357,11 +357,9 @@ export class ManageComponent implements OnInit {
   }
   @ServerFunction({ allowed: Roles.admin })
   static async deleteFamiliesOnServer(context?: Context) {
-    let count = 0;
-    for (const f of await context.for(Families).find({ where: f => f.deliverStatus.isEqualTo(DeliveryStatus.RemovedFromList) })) {
-      await f.delete();
-      count++;
-    }
+    let count = await iterateFamilies(context,
+      f => f.deliverStatus.isEqualTo(DeliveryStatus.RemovedFromList),
+      async f => await f.delete());
     return count;
   }
 
@@ -401,7 +399,7 @@ export class GroupsStats extends Entity<string> {
           {
             select: () => [g.name, sql.columnWithAlias(d.id, this.distCenter), sql.countInnerSelect({
               from: f,
-              
+
               where: () => [
                 sql.build(f.groups, ' like \'%\'||', g.name, '||\'%\''),
                 f.readyFilter().and(f.distributionCenter.isAllowedForUser()),

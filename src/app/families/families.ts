@@ -5,7 +5,7 @@ import { YesNoColumn } from "./YesNo";
 import { FamilySourceId } from "./FamilySources";
 import { BasketId, BasketType } from "./BasketType";
 import { changeDate, DateTimeColumn, SqlBuilder, PhoneColumn, delayWhileTyping } from "../model-shared/types";
-import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn } from '@remult/core';
+import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, FilterBase } from '@remult/core';
 import { HelperIdReadonly, HelperId, Helpers, HelperUserInfo } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
@@ -17,6 +17,7 @@ import { Roles } from "../auth/roles";
 import { translate } from "../translate";
 import { UpdateGroupDialogComponent } from "../update-group-dialog/update-group-dialog.component";
 import { DistributionCenterId, DistributionCenters } from "../manage/distribution-centers";
+import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
 
 
 @EntityClass
@@ -905,4 +906,25 @@ function isGpsAddress(address: string) {
   let x = leaveOnlyNumericChars(address);
   if (x == address && x.indexOf(',') > 5)
     return true;
+}
+
+export async function iterateFamilies( context: Context, where: (f: Families) => FilterBase, what: (f: Families) => void,count?: number) {
+  let updated = 0;
+  let pageSize = 200;
+  if (count===undefined){
+      count = await context.for(Families).count(where);
+  }
+  let pt = new PromiseThrottle(10);
+  for (let index = (count / pageSize); index >= 0; index--) {
+      let rows = await context.for(Families).find({ where, limit: pageSize, page: index, orderBy: f => [f.id] });
+      //console.log(rows.length);
+      for (const f of await rows) {
+          f._disableMessageToUsers = true;
+          what(f);
+          await pt.push(f.save());
+          updated++;
+      }
+  }
+  await pt.done();
+  return updated;
 }

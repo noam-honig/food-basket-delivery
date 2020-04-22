@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
 import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn, Filter, ServerFunction, unpackWhere, packWhere } from '@remult/core';
 
-import { Families, GroupsColumn } from './families';
+import { Families, GroupsColumn, iterateFamilies } from './families';
 import { DeliveryStatus, DeliveryStatusColumn } from "./DeliveryStatus";
 
 import { YesNo } from "./YesNo";
@@ -636,25 +636,12 @@ export class FamiliesComponent implements OnInit {
 
     static async processFamilies(info: serverUpdateInfo, context: Context, what: (f: Families) => void) {
 
-        let pageSize = 200;
         let where = (f: Families) => new AndFilter(f.distributionCenter.isAllowedForUser(), unpackWhere(f, info.where));
         let count = await context.for(Families).count(where);
         if (count != info.count) {
             return "ארעה שגיאה אנא נסה שוב";
         }
-        let updated = 0;
-        let pt = new PromiseThrottle(10);
-        for (let index = (count / pageSize); index >= 0; index--) {
-            let rows = await context.for(Families).find({ where, limit: pageSize, page: index, orderBy: f => [f.id] });
-            //console.log(rows.length);
-            for (const f of await rows) {
-                f._disableMessageToUsers = true;
-                what(f);
-                await pt.push(f.save());
-                updated++;
-            }
-        }
-        await pt.done();
+        let updated = await iterateFamilies( context, where, what,count);
 
 
 
@@ -1077,3 +1064,4 @@ interface serverUpdateInfo {
     where: any;
     count: number;
 }
+
