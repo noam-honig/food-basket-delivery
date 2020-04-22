@@ -287,7 +287,7 @@ export class FamilyDeliveriesStats extends Entity<string> {
           where: () => [f.deliverStatus.isAResultStatus()]
         },
           {
-            select: () => [d.family, d.familyName, d.id,
+            select: () => [d.family, d.name, d.id,
             d.basketType,
             d.distributionCenter,
             d.deliverStatus,

@@ -413,7 +413,9 @@ export class SqlBuilder {
     result.push(query.select());
     result.push(...from);
     if (query.where) {
-      result.push(' where ', this.and(...query.where()));
+       let w =  query.where();
+       if (w)
+        result.push(' where ', this.and(...w));
     }
     if (query.orderBy) {
       result.push(' order by ', query.orderBy.map(x => {

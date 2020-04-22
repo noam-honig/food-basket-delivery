@@ -21,6 +21,14 @@ import { DistributionCenterId, DistributionCenters } from "../manage/distributio
 
 @EntityClass
 export class Families extends IdEntity {
+  createDelivery() {
+    let fd= this.context.for(FamilyDeliveries).create();
+    fd.family.value = this.id.value;
+    
+    fd.name.value = this.name.value;
+    fd.distributionCenter.value = this.distributionCenter.value;
+    return fd;
+  }
   static allCentersToken = '<allCenters>';
   filterDistCenter(distCenter: string): import("@remult/core").FilterBase {
     return this.distributionCenter.filter(distCenter);
@@ -86,7 +94,7 @@ export class Families extends IdEntity {
             if (!this.correntAnErrorInStatus.value && DeliveryStatus.IsAResultStatus(this.deliverStatus.originalValue) && !DeliveryStatus.IsAResultStatus(this.deliverStatus.value)) {
               var fd = this.context.for(FamilyDeliveries).create();
               fd.family.value = this.id.value;
-              fd.familyName.value = this.name.value;
+              fd.name.value = this.name.value;
               fd.basketType.value = this.basketType.originalValue;
               fd.deliverStatus.value = this.deliverStatus.originalValue;
               fd.courier.value = this.courier.originalValue;
@@ -140,25 +148,19 @@ export class Families extends IdEntity {
               this.createUser.value = context.user.id;
             }
             this.lastUpdateDate.value = new Date();
-            let logChanged = (col: Column<any>, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) => {
-              if (col.value != col.originalValue) {
-                dateCol.value = new Date();
-                user.value = context.user.id;
-                wasChanged();
-              }
-            }
+
             if (!this.disableChangeLogging) {
-              logChanged(this.courier, this.courierAssingTime, this.courierAssignUser, async () => {
+              logChanged(context, this.courier, this.courierAssingTime, this.courierAssignUser, async () => {
                 if (!this._disableMessageToUsers)
                   Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName()), this.context, this.distributionCenter.value)
               }
               );//should be after succesfull save
               //logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
-              logChanged(this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => {
+              logChanged(context, this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => {
                 if (!this._disableMessageToUsers)
                   Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()), this.context, this.distributionCenter.value);
               }); //should be after succesfull save
-              logChanged(this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => { }); //should be after succesfull save
+              logChanged(context, this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => { }); //should be after succesfull save
             }
           }
         }
@@ -904,4 +906,11 @@ function isGpsAddress(address: string) {
   let x = leaveOnlyNumericChars(address);
   if (x == address && x.indexOf(',') > 5)
     return true;
+}
+export function logChanged(context: Context, col: Column<any>, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) {
+  if (col.value != col.originalValue) {
+    dateCol.value = new Date();
+    user.value = context.user.id;
+    wasChanged();
+  }
 }

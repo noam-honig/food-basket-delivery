@@ -1,4 +1,4 @@
-import { FamilyDeliveresJoin } from "./family-deliveries-join";
+import { AllFamilyDeliveresIncludingHistory } from "./family-deliveries-join";
 import { FilterBase, AndFilter, Context, ServerFunction, EntityClass, Entity, StringColumn, NumberColumn } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { YesNo } from "../families/YesNo";
@@ -123,14 +123,14 @@ export class FamilyDeliveryStats {
 }
 
 export class FamilyDeliveresStatistics {
-    constructor(public name: string, public rule: (f: FamilyDeliveresJoin) => FilterBase, public color?: string, value?: number) {
+    constructor(public name: string, public rule: (f: AllFamilyDeliveresIncludingHistory) => FilterBase, public color?: string, value?: number) {
         this.value = value;
     }
 
     value = 0;
     async saveTo(distCenter: string, data: any, context: Context) {
 
-        data[this.name] = await context.for(FamilyDeliveresJoin).count(f => new AndFilter(this.rule(f), f.filterDistCenter(distCenter))).then(c => this.value = c);
+        data[this.name] = await context.for(AllFamilyDeliveresIncludingHistory).count(f => new AndFilter(this.rule(f), f.filterDistCenter(distCenter))).then(c => this.value = c);
     }
     async loadFrom(data: any) {
         this.value = data[this.name];
@@ -150,7 +150,7 @@ export class CitiesStats extends Entity<string> {
             allowApiRead: false,
             name: 'citiesStats',
             dbName: () => {
-                let f = context.for(FamilyDeliveresJoin).create();
+                let f = context.for(AllFamilyDeliveresIncludingHistory).create();
                 let sql = new SqlBuilder();
                 
                 return sql.build('(', sql.query({
@@ -174,7 +174,7 @@ export class CitiesStatsPerDistCenter extends Entity<string> {
             allowApiRead: false,
             name: 'citiesStats',
             dbName: () => {
-                let f = context.for(FamilyDeliveresJoin).create();
+                let f = context.for(AllFamilyDeliveresIncludingHistory).create();
                 let sql = new SqlBuilder();
                 
                 return sql.build('(', sql.query({

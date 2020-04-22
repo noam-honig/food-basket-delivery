@@ -432,13 +432,28 @@ export class FamiliesComponent implements OnInit {
             },
             {
                 name: 'משלוח חדש',
-                
-                
                 click: async f => {
-                    
-                    await this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { f });
+
+                    let s = new BasketId(this.context);
+                    s.value = '';
+                    await this.context.openDialog(InputAreaComponent, x => {
+                        x.args = {
+                            settings: {
+                                columnSettings: () => [s]
+                            },
+                            title: 'משלוח חדש',
+                            ok: async () => {
+                                let fd =f.createDelivery();
+                                fd.basketType.value = s.value;
+                                await fd.save();
+                                this.dialog.Info("משלוח נוצר בהצלחה");
+                            }
+                            , cancel: () => { }
+
+                        }
+                    });
                 }
-                , textInMenu: () => 'פרטי משפחה'
+
             }
             ,
             {

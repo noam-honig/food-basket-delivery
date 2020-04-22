@@ -194,7 +194,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await settings.save();
     }
     if (settings.dataStructureVersion.value == 9) {
-        await dataSource.execute(sql.build('update ', fd, ' set ', fd.familyName, ' = ', f.name, ' from ', f, ' where ', sql.build(f, '.', f.id), ' = ', fd.family));
+        await dataSource.execute(sql.build('update ', fd, ' set ', fd.name, ' = ', f.name, ' from ', f, ' where ', sql.build(f, '.', f.id), ' = ', fd.family));
         settings.dataStructureVersion.value = 10;
         await settings.save();
     }

@@ -11,7 +11,7 @@ import { YesNoColumn } from '../families/YesNo';
 
 
 @EntityClass
-export class FamilyDeliveresJoin extends IdEntity {
+export class AllFamilyDeliveresIncludingHistory extends IdEntity {
 
 
     //family delivereies
@@ -110,9 +110,9 @@ export class FamilyDeliveresJoin extends IdEntity {
     onTheWayFilter() {
         return this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(this.courier.isDifferentFrom(''));
     }
-    constructor(private context: Context) {
+    constructor(private context: Context, onlyActive=false,apiName = 'AllFamilyDeliveresIncludingHistory') {
         super({
-            name: 'FamilyDeliveresJoin',
+            name: apiName,
             allowApiUpdate: Roles.admin,
             dbName: () => {
                 let f = context.for(Families).create();
@@ -162,7 +162,12 @@ export class FamilyDeliveresJoin extends IdEntity {
 
                     ],
                     from: d,
-                    innerJoin: () => [{ to: f, on: () => [sql.eq(f.id, d.family)] }]
+                    innerJoin: () => [{ to: f, on: () => [sql.eq(f.id, d.family)] }],
+                    where: () => {
+                        if (onlyActive)
+                            return [d.active()];
+                        return undefined;
+                    }
                 }), ') as result');
             },
             savingRow: async doNotSaveToDb => {
@@ -172,7 +177,8 @@ export class FamilyDeliveresJoin extends IdEntity {
                     await f.save();
                     doNotSaveToDb();
                 }
-            }
+            },
+
         });
         for (const key in this) {
             if (this.hasOwnProperty(key)) {
@@ -186,4 +192,11 @@ export class FamilyDeliveresJoin extends IdEntity {
         }
     }
 
+}
+@EntityClass
+export class ActiveFamilyDeliveries extends AllFamilyDeliveresIncludingHistory {
+
+    constructor(context: Context) {
+        super(context, true,'ActiveFamilyDeliveries');
+    }
 }

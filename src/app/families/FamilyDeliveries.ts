@@ -1,7 +1,7 @@
 import { PhoneColumn, changeDate, SqlBuilder } from "../model-shared/types";
 import { EntityClass, Context, IdColumn, IdEntity, StringColumn, NumberColumn, BoolColumn, FilterBase } from '@remult/core';
 import { BasketId } from "./BasketType";
-import { FamilyId, Families } from "./families";
+import { FamilyId, Families, logChanged } from "./families";
 import { DeliveryStatusColumn, DeliveryStatus } from "./DeliveryStatus";
 import { HelperId, HelperIdReadonly } from "../helpers/helpers";
 import { Entity, CompoundIdColumn } from '@remult/core';
@@ -13,8 +13,9 @@ import { DistributionCenters, DistributionCenterId as DistributionCenterId } fro
 export class FamilyDeliveries extends IdEntity {
     family = new FamilyId();
 
-    familyName = new StringColumn({
-        caption: "שם"
+    name = new StringColumn({
+        caption: "שם",
+        dbName:'familyName'
     });
     basketType = new BasketId(this.context, 'סוג סל');
 
@@ -55,28 +56,54 @@ export class FamilyDeliveries extends IdEntity {
     archive_phone4Description = new StringColumn('תאור טלפון 4');
     archive_addressLongitude = new NumberColumn({ decimalDigits: 8 });
     archive_addressLatitude = new NumberColumn({ decimalDigits: 8 });
-    active(){
+    active() {
         return this.archive.isEqualTo(false);
     }
-
+    disableChangeLogging = false;
+    _disableMessageToUsers = false;
     constructor(private context: Context) {
         super({
             name: 'FamilyDeliveries',
             allowApiRead: Roles.distCenterAdmin,
-            allowApiDelete: Roles.admin
+            allowApiInsert: Roles.distCenterAdmin,
+            allowApiUpdate: Roles.distCenterAdmin,
+            allowApiDelete: Roles.admin,
+            savingRow: () => {
+                if (this.isNew()) {
+                    this.createDate.value = new Date();
+                    this.createUser.value = context.user.id;
+                }
+
+
+                if (!this.disableChangeLogging) {
+                    logChanged(context, this.courier, this.courierAssingTime, this.courierAssignUser, async () => {
+                        if (!this._disableMessageToUsers){
+                            Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName()), this.context, this.distributionCenter.value)
+                        }
+                    }
+                    );//should be after succesfull save
+                    //logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
+                    logChanged(context, this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => {
+                        if (!this._disableMessageToUsers){
+                            Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()), this.context, this.distributionCenter.value);
+                        }
+                    }); //should be after succesfull save
+                    logChanged(context, this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => { }); //should be after succesfull save
+                }
+            }
         });
     }
-    
+
     getShortDeliveryDescription() {
         return Families.staticGetShortDescription(this.deliverStatus, this.deliveryStatusDate, this.courier, this.courierComments);
-      }
+    }
     readyAndSelfPickup() {
         return this.deliverStatus.readyAndSelfPickup(this.courier);
     }
-    filterDistCenter(distCenter: string):FilterBase {
+    filterDistCenter(distCenter: string): FilterBase {
         return this.distributionCenter.filter(distCenter);
-      }
-    
+    }
+
 
 
 

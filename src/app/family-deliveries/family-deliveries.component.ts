@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
 import { Context, DataControlSettings, FilterBase, AndFilter, BusyService } from '@remult/core';
-import { FamilyDeliveresJoin } from './family-deliveries-join';
+import { ActiveFamilyDeliveries } from './family-deliveries-join';
 import { FamilyDeliveresStatistics, FamilyDeliveryStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
 import { DialogService } from '../select-popup/dialog';
@@ -15,6 +15,7 @@ import { BasketType } from '../families/BasketType';
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { Families } from '../families/families';
+import { DeliveryStatus } from '../families/DeliveryStatus';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -28,9 +29,9 @@ export class FamilyDeliveriesComponent implements OnInit {
     data: { name: 'משלוחים' }, canActivate: [distCenterAdminGuard]
   }
   limit = 50;
-  groupsColumn: DataControlSettings<FamilyDeliveresJoin>;
-  statusColumn: DataControlSettings<FamilyDeliveresJoin>;
-  deliverySummary: DataControlSettings<FamilyDeliveresJoin>;
+  groupsColumn: DataControlSettings<ActiveFamilyDeliveries>;
+  statusColumn: DataControlSettings<ActiveFamilyDeliveries>;
+  deliverySummary: DataControlSettings<ActiveFamilyDeliveries>;
   currentStatFilter: FamilyDeliveresStatistics = undefined;
   searchString = '';
   async doSearch() {
@@ -273,7 +274,7 @@ export class FamilyDeliveriesComponent implements OnInit {
       this.updateChart();
     }));
   }
-  private basketStatsCalc(baskets: any[], stats: statsOnTabBasket, getCount: (x: any) => number, equalToFilter: (f: FamilyDeliveresJoin, id: string) => FilterBase) {
+  private basketStatsCalc(baskets: any[], stats: statsOnTabBasket, getCount: (x: any) => number, equalToFilter: (f: ActiveFamilyDeliveries, id: string) => FilterBase) {
     stats.stats.splice(0);
     stats.totalBoxes1 = 0;
 
@@ -299,8 +300,8 @@ export class FamilyDeliveriesComponent implements OnInit {
   private prepComplexStats<type extends { name: string, count: number }>(
     cities: type[],
     stats: statsOnTab,
-    equalToFilter: (f: FamilyDeliveresJoin, item: string) => FilterBase,
-    differentFromFilter: (f: FamilyDeliveresJoin, item: string) => AndFilter
+    equalToFilter: (f: ActiveFamilyDeliveries, item: string) => FilterBase,
+    differentFromFilter: (f: ActiveFamilyDeliveries, item: string) => AndFilter
   ) {
     stats.stats.splice(0);
     stats.moreStats.splice(0);
@@ -364,7 +365,7 @@ export class FamilyDeliveriesComponent implements OnInit {
     dialog.onDistCenterChange(() => this.refresh(), this);
     dialog.onStatusStatsChange(() => this.refreshStats(), this);
   }
-  deliveries = this.context.for(FamilyDeliveresJoin).gridSettings({
+  deliveries = this.context.for(ActiveFamilyDeliveries).gridSettings({
     allowUpdate: true,
     rowCssClass: f => f.deliverStatus.getCss(),
     numOfColumnsInGrid: 4,
@@ -487,6 +488,45 @@ export class FamilyDeliveriesComponent implements OnInit {
           });
         }
         , textInMenu: () => 'כרטיס משפחה'
+      },
+      {
+        name: 'בטל שיוך',
+        click: async d => {
+          if (await this.dialog.YesNoPromise("האם לבטל שיוך מתנדב ל" + d.name.value)) {
+            {
+              d.courier.value = '';
+              await d.save();
+            }
+          }
+        },
+        visible: d => d.deliverStatus.value == DeliveryStatus.ReadyForDelivery && d.courier.value != ''
+      },
+      {
+        name: 'מחק משלוח',
+        click: async d => {
+          if (await this.dialog.YesNoPromise("האם למחוק את המשלוח ל" + d.name.value)) {
+            {
+              let fd = await this.context.for(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
+              await fd.delete();
+              this.deliveries.items.splice(this.deliveries.items.indexOf(d), 1);
+            }
+          }
+        },
+        visible: d => d.deliverStatus.value == DeliveryStatus.ReadyForDelivery && d.courier.value == ''
+      },
+      {
+        name: 'העבר לארכיון',
+        click: async d => {
+          if (await this.dialog.YesNoPromise("האם להעביר את המשלוח לארכיון?")) {
+            {
+              let fd = await this.context.for(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
+              fd.archive.value = true;
+              await fd.save();
+              this.deliveries.items.splice(this.deliveries.items.indexOf(d), 1);
+            }
+          }
+        }
+
       }
     ]
   });
@@ -521,6 +561,6 @@ interface statsOnTab {
   stats: FamilyDeliveresStatistics[],
   moreStats: FamilyDeliveresStatistics[],
   showTotal?: boolean,
-  rule: (f: FamilyDeliveresJoin) => FilterBase,
+  rule: (f: ActiveFamilyDeliveries) => FilterBase,
   fourthColumn: () => DataControlSettings<any>
 }
