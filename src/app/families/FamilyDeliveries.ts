@@ -1,5 +1,5 @@
 import { PhoneColumn, changeDate, SqlBuilder } from "../model-shared/types";
-import { EntityClass, Context, IdColumn, IdEntity, StringColumn, NumberColumn } from '@remult/core';
+import { EntityClass, Context, IdColumn, IdEntity, StringColumn, NumberColumn, BoolColumn, FilterBase } from '@remult/core';
 import { BasketId } from "./BasketType";
 import { FamilyId, Families } from "./families";
 import { DeliveryStatusColumn, DeliveryStatus } from "./DeliveryStatus";
@@ -18,15 +18,23 @@ export class FamilyDeliveries extends IdEntity {
     });
     basketType = new BasketId(this.context, 'סוג סל');
 
-    distributionCenter= new DistributionCenterId(this.context);
+    distributionCenter = new DistributionCenterId(this.context);
     deliverStatus = new DeliveryStatusColumn();
-    courier = new HelperId(this.context,()=>this.distributionCenter.value, "משנע");
-    courierComments = new StringColumn('הערות מסירה');
+    courier = new HelperId(this.context, () => this.distributionCenter.value, "משנע");
+    courierComments = new StringColumn('הערות שכתב המשנע כשמסר');
     deliveryStatusDate = new changeDate('מתי');
-    courierAssignUser = new HelperIdReadonly(this.context,()=>this.distributionCenter.value, 'מי שייכה למשנע');
+    courierAssignUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'מי שייכה למשנע');
     courierAssingTime = new changeDate('מועד שיוך למשנע');
-    deliveryStatusUser = new HelperIdReadonly(this.context,()=>this.distributionCenter.value, 'מי עדכן את סטטוס המשלוח');
+    deliveryStatusUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'מי עדכן את סטטוס המשלוח');
 
+    createDate = new changeDate({ includeInApi: Roles.admin, caption: 'מועד הקצאה' });
+    createUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, { includeInApi: Roles.admin, caption: 'משתמש מקצה' });
+    needsWork = new BoolColumn({ caption: 'צריך טיפול/מעקב' });
+    needsWorkUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'צריך טיפול - מי עדכן');
+    needsWorkDate = new changeDate('צריך טיפול - מתי עודכן');
+    deliveryComments = new StringColumn('הערה שתופיע למשנע');
+
+    archive = new BoolColumn();
     archiveFamilySource = new FamilySourceId(this.context, { caption: 'גורם מפנה' });
     archiveGroups = new StringColumn('קבוצות');
     archive_address = new StringColumn("כתובת");
@@ -47,6 +55,9 @@ export class FamilyDeliveries extends IdEntity {
     archive_phone4Description = new StringColumn('תאור טלפון 4');
     archive_addressLongitude = new NumberColumn({ decimalDigits: 8 });
     archive_addressLatitude = new NumberColumn({ decimalDigits: 8 });
+    active(){
+        return this.archive.isEqualTo(false);
+    }
 
     constructor(private context: Context) {
         super({
@@ -55,9 +66,17 @@ export class FamilyDeliveries extends IdEntity {
             allowApiDelete: Roles.admin
         });
     }
-    getShortDescription() {
+    
+    getShortDeliveryDescription() {
         return Families.staticGetShortDescription(this.deliverStatus, this.deliveryStatusDate, this.courier, this.courierComments);
+      }
+    readyAndSelfPickup() {
+        return this.deliverStatus.readyAndSelfPickup(this.courier);
     }
+    filterDistCenter(distCenter: string):FilterBase {
+        return this.distributionCenter.filter(distCenter);
+      }
+    
 
 
 

@@ -236,9 +236,6 @@ export class Families extends IdEntity {
       let y = parseUrlInAddress(this.address.value);
       if (y != this.address.value)
         this.address.value = y;
-
-
-
     }
   });
   isGpsAddress() {
@@ -486,6 +483,8 @@ export class Families extends IdEntity {
     }
     return r;
   }
+
+  //delme
   getDeliveryDescription() {
     switch (this.deliverStatus.value) {
       case DeliveryStatus.ReadyForDelivery:

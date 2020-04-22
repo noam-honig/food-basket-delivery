@@ -2,18 +2,25 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef, MatDialogActions } from '@angular/material/dialog';
 import { Families } from '../families/families';
 
-import { Context, DialogConfig } from '@remult/core';
+import { Context, DialogConfig, DataControlSettings, DataAreaSettings, GridSettings } from '@remult/core';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
+import { FamilyDeliveryStats } from '../family-deliveries/family-deliveries-stats';
+import { DeliveryStatus } from '../families/DeliveryStatus';
+import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 @Component({
   selector: 'app-update-family-dialog',
   templateUrl: './update-family-dialog.component.html',
   styleUrls: ['./update-family-dialog.component.scss']
 })
-@DialogConfig({ minWidth: 350 })
+@DialogConfig({
+
+  minWidth: '90vw'
+})
 export class UpdateFamilyDialogComponent implements OnInit {
   public args: {
     f: Families,
+    delivery?: FamilyDeliveries,
     message?: string,
     disableSave?: boolean,
     onSave?: () => void
@@ -32,16 +39,118 @@ export class UpdateFamilyDialogComponent implements OnInit {
   }
   async confirm() {
     await this.families.currentRow.save();
+    if (this.delivery && this.delivery.wasChanged())
+      await this.delivery.save();
     this.dialogRef.close();
-    if (this.args&&this.args.onSave)
+    if (this.args && this.args.onSave)
       this.args.onSave();
   }
 
-  currentFamilyDeliveries: FamilyDeliveries[] = [];
 
-  async ngOnInit() {
-    this.families.currentRow = this.args.f;
-    this.currentFamilyDeliveries = await this.families.currentRow.getDeliveries();
-  }
+
   families = this.context.for(Families).gridSettings({ allowUpdate: true });
+
+  delivery: FamilyDeliveries;
+
+
+
+
+  familiesInfo: DataAreaSettings<Families>;
+  familiesAddress: DataAreaSettings<Families>;
+  phones: DataAreaSettings<Families>;
+  callInfo: DataAreaSettings<Families>;
+  deliverInfo: DataAreaSettings<Families>;
+  extraFamilyInfo: DataAreaSettings<Families>;
+  ngOnInit() {
+    this.families.currentRow = this.args.f;
+
+
+    this.familiesInfo = this.families.addArea({
+      columnSettings: families => [
+        families.name
+      ],
+    });
+    this.extraFamilyInfo = this.families.addArea({
+      columnSettings: families => [
+        families.groups,
+        families.distributionCenter,
+
+        families.familyMembers,
+        families.internalComment,
+        families.familySource,
+        families.socialWorker,
+        [
+          families.socialWorkerPhone1,
+          families.socialWorkerPhone2
+        ], [
+          families.tz,
+          families.tz2
+        ],
+        families.special,
+        [families.birthDate, {
+          caption: 'גיל',
+          getValue: (f) => {
+            if (!f.birthDate.value) {
+              return '';
+            }
+            return Math.round((new Date().valueOf() - f.birthDate.value.valueOf()) / (365 * 86400000))
+          }
+        }],
+        families.iDinExcel,
+        families.defaultSelfPickup,
+        families.fixedCourier
+      ]
+    });
+    this.familiesAddress = this.families.addArea({
+      columnSettings: families => [
+
+        families.address,
+        [
+          families.appartment,
+          families.floor,
+          families.entrance
+        ],
+        families.addressComment,
+        families.addressByGoogle(),
+        families.city,
+        families.addressOk,
+        families.postalCode
+
+
+      ]
+    });
+
+    this.phones = this.families.addArea({
+      columnSettings: families => [
+        [
+          families.phone1,
+          families.phone1Description],
+        [families.phone2,
+        families.phone2Description],
+        [families.phone3,
+        families.phone3Description],
+        [families.phone4,
+        families.phone4Description]
+      ]
+    });
+
+    if (this.delivery = this.args.delivery)
+      if (this.delivery)
+        this.deliverInfo = this.families.addArea({
+          columnSettings: families => {
+
+            let r = [
+              this.delivery.deliverStatus,
+              this.delivery.deliveryComments,
+              this.delivery.courier,
+              this.delivery.needsWork,
+              this.delivery.courierComments
+            ];
+            return r;
+          }
+        });
+  }
+
+
+
 }

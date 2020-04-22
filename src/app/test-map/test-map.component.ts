@@ -1,7 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Context } from '@remult/core';
+import { Context, EntityClass, IdEntity, StringColumn, BoolColumn, NumberColumn } from '@remult/core';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
+import { Families, FamilyId, GroupsColumn } from '../families/families';
+import { SqlBuilder, changeDate, PhoneColumn } from '../model-shared/types';
+import { FamilyDeliveries } from '../families/FamilyDeliveries';
+import { Roles } from '../auth/roles';
+import { BasketId } from '../families/BasketType';
+import { DistributionCenterId } from '../manage/distribution-centers';
+import { DeliveryStatusColumn } from '../families/DeliveryStatus';
+import { HelperId, HelperIdReadonly, Helpers } from '../helpers/helpers';
+import { YesNoColumn } from '../families/YesNo';
 
 
 @Component({
@@ -13,12 +22,14 @@ import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 
 
 export class TestMapComponent implements OnInit {
-  helpers: HelpersAndStats[];
+
 
   constructor(private context: Context) { }
 
+  
+
   async ngOnInit() {
-    this.helpers = await this.context.for(HelpersAndStats).find();
+
   }
   async assignFamilies(h: HelpersAndStats) {
     alert('disabled for now');
@@ -26,3 +37,5 @@ export class TestMapComponent implements OnInit {
   }
 
 }
+
+

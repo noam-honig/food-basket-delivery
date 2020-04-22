@@ -20,6 +20,15 @@ declare var gtag;
 @Injectable()
 export class DialogService {
 
+    onStatusStatsChange(whatToDo: () => void, component: any) {
+       
+        let y = this.refreshStatusStats.subscribe(() => {
+            whatToDo();
+        });
+        component.onDestroy = () => {
+            y.unsubscribe();
+        };
+    }
     onDistCenterChange(whatToDo: () => void, component: any) {
         let y = this.refreshDistCenter.subscribe(() => {
             whatToDo();

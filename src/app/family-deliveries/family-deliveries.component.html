@@ -2,24 +2,21 @@
     <button mat-mini-fab style="margin-bottom:5px" (click)="refresh()" color="primary">
         <mat-icon>refresh</mat-icon>
     </button>
-    
-    <a href="https://www.youtube.com/watch?v=2FG05srq5uY&list=PLRxHq2rVTQWhe2MTYbMJbAY1EW6iXfjtK" target="_blank"
-        class="no-print">{{'לסרטוני הדרכה על מסך משפחות, לחצו כאן'|translate}}</a>
 </div>
-<mat-tab-group #myTab (selectedTabChange)="tabChanged()" [selectedIndex]="0" *ngIf="!problemOnly">
+<mat-tab-group #myTab (selectedTabChange)="tabChanged()" [selectedIndex]="0" >
     <mat-tab *ngFor="let t of statTabs" label="{{t.name}} {{statTotal(t)}}"> </mat-tab>
 
 </mat-tab-group>
-<br *ngIf="problemOnly" />
-<div *ngIf="!problemOnly">
+
+<div >
     <div style="display: block;width:350px;height:188px;">
         <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType" [options]="options"
             [colors]="colors" (chartClick)="chartClicked($event)"></canvas>
     </div>
 </div>
 <a *ngFor="let s of currentTabStats.moreStats" (click)="setCurrentStat(s)">{{s.name }} - {{s.value}}, </a>
-
-<strong>{{families.totalRows}} {{'משפחות'|translate}} </strong> <strong *ngIf="currentStatFilter"> -
+<div *ngIf="showTotalBoxes()">{{showTotalBoxes()}}</div>
+<strong>{{deliveries.totalRows}} {{'משלוחים'|translate}} </strong> <strong *ngIf="currentStatFilter"> -
     {{currentStatFilter.name}} - </strong> <a *ngIf="currentStatFilter" (click)="clearStat()">הצג הכל</a>
 
 
@@ -35,11 +32,12 @@
 
     </div>
     <div>
-        <button mat-raised-button color="primary" (click)="quickAdd()"
+       
+        <button mat-raised-button color="primary" (click)="dialog.Error('todo')"
             *ngIf="isAdmin">{{'משפחה חדשה'|translate}}</button>
+
+
     </div>
 </div>
 
-<mat-card >
-    <data-grid [settings]="families" [height]="400"></data-grid>
-</mat-card>
+<data-grid [settings]="deliveries" [height]="400"></data-grid>

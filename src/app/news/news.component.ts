@@ -23,9 +23,7 @@ import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-fami
     styleUrls: ['./news.component.scss']
 })
 export class NewsComponent implements OnInit, OnDestroy {
-    static route: Route = {
-        path: 'news', component: NewsComponent, canActivate: [distCenterAdminGuard], data: { name: 'חדשות' }
-    };
+    
     static needsWorkRoute: Route = {
         path: 'needsWork', component: NewsComponent, canActivate: [distCenterAdminGuard], data: { name: 'מצריך טיפול' }
     };

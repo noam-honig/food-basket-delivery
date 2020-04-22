@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn, Filter, ServerFunction, unpackWhere, packWhere } from '@remult/core';
+import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn, Filter, ServerFunction, unpackWhere, packWhere, Column } from '@remult/core';
 
 import { Families, GroupsColumn } from './families';
 import { DeliveryStatus, DeliveryStatusColumn } from "./DeliveryStatus";
@@ -28,7 +28,7 @@ import { Route } from '@angular/router';
 import { Context } from '@remult/core';
 
 import { FamilyDeliveries } from './FamilyDeliveries';
-import { UpdateFamilyComponent } from '../update-family/update-family.component';
+
 
 import { saveToExcel } from '../shared/saveToExcel';
 import { PreviewFamilyComponent } from '../preview-family/preview-family.component';
@@ -45,6 +45,7 @@ import { Groups } from '../manage/manage.component';
 import { FamilySourceId } from './FamilySources';
 import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser } from '../manage/distribution-centers';
 import { PromiseThrottle } from '../import-from-excel/import-from-excel.component';
+import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 const addGroupAction = ' להוסיף ';
 const replaceGroupAction = ' להחליף ';
 @Component({
@@ -55,45 +56,13 @@ const replaceGroupAction = ' להחליף ';
 export class FamiliesComponent implements OnInit {
     @Input() problemOnly = false;
     limit = 50;
-    addressByGoogleColumn: DataControlSettings<Families>;
-    familyNameColumn: DataControlSettings<Families>;
-    familyAddressColumn: DataControlSettings<Families>;
-    addressCommentColumn: DataControlSettings<Families>;
-    addressOkColumn: DataControlSettings<Families>;
-    groupsColumn: DataControlSettings<Families>;
-    statusColumn: DataControlSettings<Families>;
-    deliverySummary: DataControlSettings<Families>;
-    scrollingSubscription: Subscription;
+
+
     showHoverButton: boolean = false;
 
-    constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context,
-        public scroll: ScrollDispatcher) {
-
-        for (const item of this.families.columns.items) {
-            if (item.column == this.statusColumn && !item.readOnly) {
-                this.statusColumn = item;
-            }
-            if (this.groupsColumn == item.column)
-                this.groupsColumn = item;
-            if (this.addressByGoogleColumn == item.column)
-                this.addressByGoogleColumn = item;
-            if (this.familyNameColumn == item.column)
-                this.familyNameColumn = item;
-            if (this.addressCommentColumn == item.column)
-                this.addressCommentColumn = item;
-            if (this.groupsColumn == item.column)
-                this.groupsColumn = item;
-
-        }
+    constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context) {
         this.doTest();
-        this.scrollingSubscription = this.scroll
-            .scrolled()
-            .subscribe((data: CdkScrollable) => {
-                let val = this.testing.nativeElement.getBoundingClientRect().y < 0;
-                if (val != this.showHoverButton)
-                    this.dialog.zone.run(() => this.showHoverButton = val);
 
-            });
         {
             let y = dialog.refreshStatusStats.subscribe(() => {
                 this.refreshStats();
@@ -106,10 +75,8 @@ export class FamiliesComponent implements OnInit {
             dialog.onDistCenterChange(() => this.refresh(), this);
 
         }
-        if (dialog.isScreenSmall())
-            this.gridView = false;
     }
-    @ViewChild("myRef", { static: true }) testing: ElementRef;
+
     filterBy(s: FaimilyStatistics) {
         this.families.get({
             where: s.rule,
@@ -272,13 +239,17 @@ export class FamiliesComponent implements OnInit {
         await this.families.currentRow.save();
         this.currentFamilyDeliveries = await this.families.currentRow.getDeliveries();
     }
+    normalColumns: DataControlInfo<Families>[];
+    addressProblemColumns: DataControlInfo<Families>[];
+    addressByGoogle: DataControlInfo<Families>;
+
     families = this.context.for(Families).gridSettings({
 
         allowUpdate: true,
         allowInsert: this.isAdmin,
 
         rowCssClass: f => f.deliverStatus.getCss(),
-        numOfColumnsInGrid: 4,
+        numOfColumnsInGrid: 5,
         onEnterRow: async f => {
             if (f.isNew()) {
                 f.basketType.value = '';
@@ -336,11 +307,11 @@ export class FamiliesComponent implements OnInit {
         columnSettings: families => {
             let r = [
 
-                this.familyNameColumn = {
+                {
                     column: families.name,
                     width: '200'
                 },
-                this.familyAddressColumn = {
+                {
                     column: families.address,
                     width: '250',
                     cssClass: f => {
@@ -349,24 +320,13 @@ export class FamiliesComponent implements OnInit {
                         return '';
                     }
                 },
-                families.basketType
-                ,
-                this.deliverySummary = {
-                    caption: 'סיכום משלוח',
-                    column: families.deliverStatus,
-                    readOnly: true,
-                    valueList: families.deliverStatus.getOptions()
-                    ,
-                    getValue: f => f.getDeliveryDescription(),
-                    width: '300'
-                },
+                families.phone1,
 
-                this.statusColumn = { column: families.deliverStatus },
+                { column: families.groups },
 
                 families.familyMembers,
                 families.familySource,
 
-                this.groupsColumn = { column: families.groups },
                 {
                     column: families.internalComment,
                     width: '300'
@@ -380,19 +340,18 @@ export class FamiliesComponent implements OnInit {
                 families.createDate,
                 families.lastUpdateDate,
 
-                this.addressOkColumn = { column: families.addressOk, width: '110' },
-                families.floor,
-                families.appartment,
-                families.entrance,
-                this.addressCommentColumn = { column: families.addressComment },
+                { column: families.addressOk, width: '70' },
+                { column: families.floor, width: '50' },
+                { column: families.appartment, width: '50' },
+                { column: families.entrance, width: '50' },
+                { column: families.addressComment },
                 families.city,
                 families.postalCode,
-                this.addressByGoogleColumn = families.addressByGoogle(),
+                this.addressByGoogle = families.addressByGoogle(),
                 {
                     caption: 'מה הבעיה של גוגל',
                     getValue: f => f.getGeocodeInformation().whyProblem()
                 },
-                families.phone1,
                 families.phone1Description,
                 families.phone2,
                 families.phone2Description,
@@ -427,22 +386,61 @@ export class FamiliesComponent implements OnInit {
                 families.needsWorkUser
 
             ];
-            if (!DeliveryStatus.usingSelfPickupModule) {
-                r = r.filter(x => x != families.defaultSelfPickup);
-            }
+            this.normalColumns = [
+                families.name,
+                families.address,
+                families.phone1,
+                families.groups
+            ];
+            this.addressProblemColumns = [
+                families.name,
+                this.addressByGoogle,
+                families.addressOk,
+                families.address,
+                families.appartment,
+                families.floor,
+                families.entrance,
+                families.addressComment
+            ]
             return r;
         },
+        gridButton: [{
+            name: 'יצוא לאקסל',
+            click: () => this.saveToExcel(),
+            visible: () => this.isAdmin
+        },
+        {
+            name: 'עדכן שיוך לקבוצת חלוקה למשפחות המסומנות',
+            click: () => { this.updateGroup() }
+        },
+        {
+            name: 'עדכן גורם מפנה למשפחות המסומנות',
+            click: () => { this.updateFamilySource() }
+        }
+
+        ],
+
         rowButtons: [
             {
                 name: '',
                 icon: 'edit',
+                showInLine: true,
                 click: async f => {
-                    this.gridView = !this.gridView;
-                    if (!this.gridView) {
-                        this.currentFamilyDeliveries = await f.getDeliveries()
-                    }
+                    await this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { f });
                 }
+                , textInMenu: () => 'פרטי משפחה'
             },
+            {
+                name: 'משלוח חדש',
+                
+                
+                click: async f => {
+                    
+                    await this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { f });
+                }
+                , textInMenu: () => 'פרטי משפחה'
+            }
+            ,
             {
                 name: 'חפש כתובת בגוגל',
                 cssClass: 'btn btn-success',
@@ -703,136 +701,60 @@ export class FamiliesComponent implements OnInit {
 
     ngOnDestroy(): void {
         this.onDestroy();
-        this.scrollingSubscription.unsubscribe();
+
     }
-    basketStats: statsOnTabBasket = {
-        name: 'נותרו לפי סלים',
-        rule: f => f.readyAndSelfPickup(),
-        stats: [
-            this.stats.ready,
-            this.stats.special
-        ],
-        moreStats: [],
-        fourthColumn: () => this.statusColumn
-    };
 
-    basketsInEvent: statsOnTabBasket = {
-        name: 'באירוע לפי סלים',
-        rule: f => f.deliverStatus.isInEvent(),
-        stats: [
-            this.stats.ready,
-            this.stats.special
-        ],
-        moreStats: [],
-        fourthColumn: () => this.statusColumn
-    };
-    basketsDelivered: statsOnTabBasket = {
-        name: 'נמסרו לפי סלים',
-        rule: f => f.deliverStatus.isSuccess(),
-        stats: [
-            this.stats.ready,
-            this.stats.special
-        ],
-        moreStats: [],
-        fourthColumn: () => this.statusColumn
-    };
-
-    cityStats: statsOnTab = {
-        name: 'נותרו לפי ערים',
-        showTotal: true,
-        rule: f => f.readyFilter(),
-        stats: [
-            this.stats.ready,
-            this.stats.special
-        ],
-        moreStats: [],
-        fourthColumn: () => this.statusColumn
-    };
-    groupsReady: statsOnTab = {
-        name: 'נותרו לפי קבוצות',
-        rule: f => f.readyFilter(),
-        stats: [
-            this.stats.ready,
-            this.stats.special
-        ],
-        moreStats: [],
-        fourthColumn: () => this.groupsColumn
-    };
     groupsTotals: statsOnTab = {
-        name: translate('כל המשפחות לפי קבוצות'),
+        name: translate('לפי קבוצות'),
         rule: f => f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList),
         stats: [
-            this.stats.ready,
-            this.stats.special
         ],
+        moreStats: []
+    };
+    addressProblem: statsOnTab = {
+        rule: f => f.addressOk.isEqualTo(false).and(f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList)),
         moreStats: [],
-        fourthColumn: () => this.groupsColumn
+        name: 'כתובות בעיתיות',
+        stats: [
+            this.stats.problem
+        ],
+        showTotal: true
+
     };
     statTabs: statsOnTab[] = [
-        {
-            name: 'באירוע',
-            showTotal: true,
-            rule: f => f.deliverStatus.isInEvent(),
-            stats: [
-                this.stats.ready,
-                this.stats.special,
-                this.stats.selfPickup,
-                this.stats.frozen,
-                this.stats.onTheWay,
-                this.stats.delivered,
-                this.stats.problem
-
-            ],
-            moreStats: [],
-            fourthColumn: () => this.deliverySummary
-        },
-        this.basketsInEvent,
-        this.basketStats,
-        this.basketsDelivered,
-        this.groupsReady,
-
 
         {
             rule: f => undefined,
             showTotal: true,
-            name: translate('כל המשפחות'),
+            name: translate('משפחות'),
             stats: [
-                this.stats.currentEvent,
-                this.stats.notInEvent,
+                this.stats.active,
                 this.stats.outOfList
             ],
-            moreStats: [],
-            fourthColumn: () => this.statusColumn
+            moreStats: []
+
         },
         this.groupsTotals,
-        this.cityStats,
-        {
-            name: 'מצריך טיפול',
-            showTotal: true,
-            rule: f => f.deliverStatus.isInEvent().and(f.needsWork.isEqualTo(true)),
-            stats: [
-                this.stats.needWork
-            ],
-            moreStats: [],
-            fourthColumn: () => this.deliverySummary
-        }
+        this.addressProblem
     ]
-    tabChanged() {
+
+    async tabChanged() {
         this.currentStatFilter = undefined;
         this.searchString = '';
-        let prevTabColumn = this.currentTabStats.fourthColumn();
-
-        this.refreshFamilyGrid();
+        await this.refreshFamilyGrid();
         this.updateChart();
-
-        let cols = this.families.columns;
-        let currentTabColumn = this.currentTabStats.fourthColumn();
-        if (prevTabColumn != currentTabColumn && prevTabColumn == cols.items[3]) {
-
-            let origIndex = cols.items.indexOf(currentTabColumn);
-            cols.moveCol(currentTabColumn, -origIndex + 3);
+        if (this.cols) {
+            this.sortColumns(this.cols);
+            this.cols = undefined;
         }
+        if (this.currentTabStats == this.addressProblem) {
+            this.cols = [...this.families.columns.items];
+            this.cols.splice(this.families.columns.numOfColumnsInGrid);
+            this.prevNumOfCols = this.families.columns.numOfColumnsInGrid;
 
+            this.sortColumns(this.addressProblemColumns);
+
+        }
 
     }
     clearStat() {
@@ -841,7 +763,9 @@ export class FamiliesComponent implements OnInit {
         this.refreshFamilyGrid();
 
     }
-    currentTabStats: statsOnTab = { name: '', stats: [], moreStats: [], rule: undefined, fourthColumn: () => this.deliverySummary };
+    cols: DataControlSettings<Families>[];
+    prevNumOfCols = 5;
+    currentTabStats: statsOnTab = { name: '', stats: [], moreStats: [], rule: undefined };
     previousTabStats: statsOnTab = this.currentTabStats;
     updateChart() {
         this.pieChartData = [];
@@ -876,25 +800,8 @@ export class FamiliesComponent implements OnInit {
             return;
         if (!this.problemOnly)
             this.busy.donotWait(async () => this.stats.getData(this.dialog.distCenter.value).then(st => {
-                this.basketStats.stats.splice(0);
-                this.cityStats.stats.splice(0);
-                this.cityStats.moreStats.splice(0);
-                this.groupsReady.stats.splice(0);
-                this.groupsTotals.stats.splice(0);
 
-                this.basketStatsCalc(st.baskets, this.basketStats, b => b.unassignedFamilies, (f, id) =>
-                    f.readyFilter().and(f.basketType.isEqualTo(id)));
-                this.basketStatsCalc(st.baskets, this.basketsInEvent, b => b.inEventFamilies, (f, id) =>
-                    f.deliverStatus.isInEvent().and(f.basketType.isEqualTo(id)));
-                this.basketStatsCalc(st.baskets, this.basketsDelivered, b => b.successFamilies, (f, id) =>
-                    f.deliverStatus.isSuccess().and(f.basketType.isEqualTo(id)));
-                this.prepComplexStats(st.cities, this.cityStats,
-                    (f, c) => f.readyFilter().and(f.city.isEqualTo(c)),
-                    (f, c) => f.readyFilter().and(f.city.isDifferentFrom(c)));
-                this.prepComplexStats(st.groups.map(g => ({ name: g.name, count: g.totalReady })),
-                    this.groupsReady,
-                    (f, g) => f.readyFilter(undefined, g),
-                    (f, g) => f.readyFilter().and(f.groups.isDifferentFrom(g)).and(f.groups.isDifferentFrom('')));
+                this.groupsTotals.stats.splice(0);
                 this.prepComplexStats(st.groups.map(g => ({ name: g.name, count: g.total })),
                     this.groupsTotals,
                     (f, g) => f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList).and(f.groups.isContains(g)),
@@ -905,28 +812,7 @@ export class FamiliesComponent implements OnInit {
                 this.updateChart();
             }));
     }
-    private basketStatsCalc(baskets: any[], stats: statsOnTabBasket, getCount: (x: any) => number, equalToFilter: (f: Families, id: string) => FilterBase) {
-        stats.stats.splice(0);
-        stats.totalBoxes1 = 0;
-        stats.blockedBoxes1 = 0;
-        stats.totalBoxes2 = 0;
-        stats.blockedBoxes2 = 0;
-        baskets.forEach(b => {
-            let fs = new FaimilyStatistics(b.name, f => equalToFilter(f, b.id),
-                undefined);
-            fs.value = getCount(b);
-            stats.stats.push(fs);
-            if (b.blocked) {
-                stats.blockedBoxes1 += +b.boxes * +fs.value;
-                stats.blockedBoxes2 += +b.boxes2 * +fs.value;
-            }
-            else {
-                stats.totalBoxes1 += +b.boxes * +fs.value;
-                stats.totalBoxes2 += +b.boxes2 * +fs.value;
-            }
-        });
-        stats.stats.sort((a, b) => b.value - a.value);
-    }
+
 
     private prepComplexStats<type extends { name: string, count: number }>(
         cities: type[],
@@ -974,55 +860,30 @@ export class FamiliesComponent implements OnInit {
         stats.moreStats.sort((a, b) => a.name.localeCompare(b.name));
     }
 
-    showTotalBoxes() {
-        let x: statsOnTabBasket = this.currentTabStats;
-        if (x && (x.totalBoxes1 + x.totalBoxes2 + x.blockedBoxes1 + x.blockedBoxes2)) {
-            let r = 'סה"כ ' + BasketType.boxes1Name + ': ' + x.totalBoxes1;
-            if (x.blockedBoxes1) {
-                r += ', סה"כ ' + BasketType.boxes1Name + ' חסומים: ' + x.blockedBoxes1;
-            }
-            if (x.totalBoxes2)
-                r += ', סה"כ ' + BasketType.boxes2Name + ': ' + x.totalBoxes2;
-            if (x.blockedBoxes2) {
-                r += ', סה"כ ' + BasketType.boxes2Name + ' חסומים: ' + x.blockedBoxes2;
-            }
-            return r;
-        }
-        return undefined;
-    }
+
     @ViewChild('myTab', { static: false }) myTab: MatTabGroup;
-    @ViewChild('familyInfo', { static: true }) familyInfo: UpdateFamilyComponent;
+
     ngOnInit() {
 
         this.refreshStats();
-        let cols = this.families.columns;
-        let firstColumns = [
-            cols.items[0],
-            cols.items[1],
-            cols.items[2],
-            cols.items[3]
-        ];
-        if (this.problemOnly) {
-            firstColumns = [
-                this.familyNameColumn,
-                this.addressByGoogleColumn,
-                this.familyAddressColumn,
-                this.addressCommentColumn,
-                this.addressOkColumn
-
-            ];
-            this.families.columns.numOfColumnsInGrid = 5;
-        }
-        cols.items.sort((a, b) => a.caption > b.caption ? 1 : a.caption < b.caption ? -1 : 0);
-
-        for (let index = 0; index < firstColumns.length; index++) {
-            const item = firstColumns[index];
-            let origIndex = cols.items.indexOf(item);
-            cols.moveCol(item, -origIndex + index);
-        }
+        this.sortColumns(this.normalColumns);
 
         //  debugger;
+    }
+    sortColumns(columns: DataControlInfo<Families>[]) {
 
+        this.families.columns.items.sort((a, b) => a.caption > b.caption ? 1 : a.caption < b.caption ? -1 : 0);
+        this.families.columns.numOfColumnsInGrid = columns.length;
+        for (let index = 0; index < columns.length; index++) {
+            const origItem = columns[index];
+            let item: DataControlSettings<Families>;
+            if (origItem instanceof Column) {
+                item = this.families.columns.items.find(x => x.column == origItem);
+            }
+            else item = origItem;
+            let origIndex = this.families.columns.items.indexOf(item);
+            this.families.columns.moveCol(item, -origIndex + index);
+        }
 
     }
     statTotal(t: statsOnTab) {
@@ -1063,16 +924,10 @@ interface statsOnTab {
     stats: FaimilyStatistics[],
     moreStats: FaimilyStatistics[],
     showTotal?: boolean,
-    rule: (f: Families) => FilterBase,
-    fourthColumn: () => DataControlSettings<any>
-}
-interface statsOnTabBasket extends statsOnTab {
-    totalBoxes1?: number;
-    blockedBoxes1?: number;
-    totalBoxes2?: number;
-    blockedBoxes2?: number;
+    rule: (f: Families) => FilterBase
 
 }
+
 interface serverUpdateInfo {
     where: any;
     count: number;

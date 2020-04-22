@@ -19,7 +19,7 @@ import { NewsComponent } from './news/news.component';
 import { ImportFromExcelComponent } from './import-from-excel/import-from-excel.component';
 import { CustomReuseStrategy } from './custom-reuse-controller-router-strategy'
 
-import { AddressProblemComponent } from './address-problem/address-problem.component';
+
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
@@ -37,6 +37,7 @@ import { GeocodeComponent } from './geocode/geocode.component';
 
 import { TokenReplacerComponent } from './token-replacer/token-replacer.component';
 import { TestMapComponent } from './test-map/test-map.component';
+import { FamilyDeliveriesComponent } from './family-deliveries/family-deliveries.component';
 
 
 
@@ -51,13 +52,13 @@ const routes: Routes = [
     }
   },
   SelfPickupComponent.route,
+  FamilyDeliveriesComponent.route,
   FamiliesComponent.route,
   DeliveryFollowUpComponent.route,
   NewsComponent.needsWorkRoute,
-  NewsComponent.route,
   { path: 'overview', component: OverviewComponent, canActivate: [OverviewGuard] },
   DistributionMap.route,
-  AddressProblemComponent.route,
+  
   HelpersComponent.route,
   { path: 'tr', component: TokenReplacerComponent, canActivate: [OverviewGuard], data: { name: 'בונה שאילתות', hide: true }  },
 

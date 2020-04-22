@@ -20,7 +20,7 @@ import { Context } from '@remult/core';
 
 import { BasketType } from '../families/BasketType';
 
-import { CitiesStats, CitiesStatsPerDistCenter } from '../families/stats-action';
+
 import { SqlBuilder, extractError } from '../model-shared/types';
 import { BusyService } from '@remult/core';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
@@ -34,6 +34,7 @@ import { SelectFamilyComponent } from '../select-family/select-family.component'
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
 import { DistributionCenters, DistributionCenterId } from '../manage/distribution-centers';
+import { CitiesStatsPerDistCenter } from '../family-deliveries/family-deliveries-stats';
 
 
 @Component({

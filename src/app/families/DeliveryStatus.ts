@@ -1,4 +1,5 @@
 import { ColumnOptions, ValueListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings, ValueListItem } from '@remult/core';
+import { HelperId } from '../helpers/helpers';
 
 
 export class DeliveryStatus {
@@ -41,6 +42,11 @@ export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
   }
   isAResultStatus() {
     return this.isGreaterOrEqualTo(DeliveryStatus.Success).and(this.isLessOrEqualTo(DeliveryStatus.FailedOther));
+  }
+  readyAndSelfPickup(courier:HelperId) {
+    let where = this.isGreaterOrEqualTo(DeliveryStatus.ReadyForDelivery).and(this.isLessOrEqualTo(DeliveryStatus.SelfPickup)).and(
+      courier.isEqualTo(''));
+    return where;
   }
 
   constructor(settingsOrCaption?: ColumnOptions<DeliveryStatus>, chooseFrom?: DeliveryStatus[]) {

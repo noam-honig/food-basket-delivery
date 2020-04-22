@@ -42,10 +42,10 @@ import { NewsFilterService } from "./news/news-filter-service";
 
 
 import { UpdateFamilyDialogComponent } from './update-family-dialog/update-family-dialog.component';
-import { UpdateFamilyComponent } from './update-family/update-family.component';
 
 
-import { AddressProblemComponent } from './address-problem/address-problem.component';
+
+
 
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
@@ -74,6 +74,7 @@ import { GeocodeComponent } from './geocode/geocode.component';
 import { SelectListComponent } from './select-list/select-list.component';
 import { TokenReplacerComponent } from './token-replacer/token-replacer.component';
 import { TestMapComponent } from './test-map/test-map.component';
+import { FamilyDeliveriesComponent } from './family-deliveries/family-deliveries.component';
 
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref();
@@ -110,10 +111,6 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     ImportFromExcelComponent,
     NewsComponent,
     UpdateFamilyDialogComponent,
-    UpdateFamilyComponent,
-
-
-    AddressProblemComponent,
     
     SelfPickupComponent,
     BatchOperationsComponent,
@@ -136,7 +133,8 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     GeocodeComponent,
     SelectListComponent,
     TokenReplacerComponent,
-    TestMapComponent
+    TestMapComponent,
+    FamilyDeliveriesComponent
 
   ],
   imports: [
