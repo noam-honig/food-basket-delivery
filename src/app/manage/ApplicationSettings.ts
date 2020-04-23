@@ -118,7 +118,7 @@ export class ApplicationSettings extends Entity<number>  {
   addressApiResult = new StringColumn();
   defaultStatusType = new DeliveryStatusColumn({
     caption: translate('סטטוס משלוח ברירת מחדל למשפחות חדשות')
-  }, [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup, DeliveryStatus.NotInEvent]);
+  }, [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup]);
   private _lastString: string;
   private _lastGeo: GeocodeInformation;
   getGeocodeInformation() {

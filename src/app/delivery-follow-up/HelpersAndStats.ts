@@ -76,11 +76,11 @@ export class HelpersAndStats extends HelpersBase {
                             this.deliveriesWithProblems),
                         sql.max(f.courierAssingTime,
                             helperFamilies(() =>
-                                [sql.not(sql.in(f.deliverStatus, DeliveryStatus.Frozen.id, DeliveryStatus.NotInEvent.id))]), this.lastAsignTime),
+                                [sql.not(sql.in(f.deliverStatus, DeliveryStatus.Frozen.id))]), this.lastAsignTime),
                         sql.build('coalesce(  ',h.smsDate, '> (', sql.query({
                             select: () => [sql.build('max(', f.courierAssingTime, ')')],
                             from: f,
-                            where: helperFamilies(() => [sql.not(sql.in(f.deliverStatus, DeliveryStatus.Frozen.id, DeliveryStatus.NotInEvent.id))]).where
+                            where: helperFamilies(() => [sql.not(sql.in(f.deliverStatus, DeliveryStatus.Frozen.id))]).where
                         }), ") ,false) as ", this.gotSms)
 
                     ],

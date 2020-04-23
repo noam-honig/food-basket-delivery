@@ -23,6 +23,7 @@ import { Groups } from '../manage/manage.component';
 import { DistributionCenters, DistributionCenterId, allCentersToken } from '../manage/distribution-centers';
 import { jsonToXlsx } from '../shared/saveToExcel';
 import { Sites } from '../sites/sites';
+import { FamilyStatus } from '../families/FamilyStatus';
 
 
 @Component({
@@ -863,7 +864,7 @@ export class ImportFromExcelComponent implements OnInit {
                         }
                     }
                 }
-                if (ef.status.value == DeliveryStatus.RemovedFromList) {
+                if (ef.status.value == FamilyStatus.RemovedFromList) {
                     switch (settings.removedFromListStrategy.value) {
                         case RemovedFromListExcelImportStrategy.displayAsError:
                             info.error = 'משפחה מעודכנת בבסיס הנתונים כהוצא מהרשימות';

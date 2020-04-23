@@ -25,9 +25,6 @@ export class FamilyDeliveryStats {
     onTheWay = new FamilyDeliveresStatistics('בדרך', f => f.onTheWayFilter(), colors.blue);
     delivered = new FamilyDeliveresStatistics('הגיעו', f => f.deliverStatus.isSuccess(), colors.green);
     problem = new FamilyDeliveresStatistics('בעיות', f => f.deliverStatus.isProblem(), colors.red);
-    currentEvent = new FamilyDeliveresStatistics('באירוע', f => f.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent).and(f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList)), colors.green);
-    outOfList = new FamilyDeliveresStatistics('הוצאו מהרשימות', f => f.deliverStatus.isEqualTo(DeliveryStatus.RemovedFromList), colors.green);
-    notInEvent = new FamilyDeliveresStatistics('לא באירוע', f => f.deliverStatus.isEqualTo(DeliveryStatus.NotInEvent), colors.blue);
     frozen = new FamilyDeliveresStatistics('קפואים', f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen), colors.gray);
     needWork = new FamilyDeliveresStatistics('מצריך טיפול', f => f.deliverStatus.isInEvent().and(f.needsWork.isEqualTo(true)), colors.yellow);
 
@@ -103,15 +100,13 @@ export class FamilyDeliveryStats {
             for (const g of groups) {
                 let x: groupStats = {
                     name: g.name.value,
-                    total: 0,
                     totalReady: 0
                 };
                 result.groups.push(x);
                 pendingStats.push(context.for(FamilyDeliveries).count(f => f.readyAndSelfPickup().and(
                     f.groups.isContains(x.name).and(
                         f.filterDistCenter(distCenter)))).then(r => x.totalReady = r));
-                pendingStats.push(context.for(FamilyDeliveries).count(f => f.groups.isContains(x.name).and(
-                    f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList)).and(f.filterDistCenter(distCenter))).then(r => x.total = r));
+                
             }
         });
 
@@ -138,8 +133,8 @@ export class FamilyDeliveresStatistics {
 }
 interface groupStats {
     name: string,
-    totalReady: number,
-    total: number
+    totalReady: number
+    
 }
 @EntityClass
 export class CitiesStats extends Entity<string> {

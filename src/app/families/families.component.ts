@@ -545,7 +545,6 @@ export class FamiliesComponent implements OnInit {
     @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async updateStatusOnServer(info: serverUpdateInfo, status: any, context?: Context) {
         return await FamiliesComponent.processFamilies(info, context, f => {
-            if (f.status.value != DeliveryStatus.RemovedFromList)
                 f.status.rawValue = status;
         });
     }
@@ -591,9 +590,8 @@ export class FamiliesComponent implements OnInit {
     @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async cancelAssignmentOnServer(info: serverUpdateInfo, context?: Context) {
         return await FamiliesComponent.processFamilies(info, context, f => {
-            if (f.status.value != DeliveryStatus.RemovedFromList){
+            
             //    f.courier.value = '';
-            }
         });
     }
     async updateBasket() {

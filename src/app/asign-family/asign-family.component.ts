@@ -836,7 +836,7 @@ export class AsignFamilyComponent implements OnInit {
     }
 
     addSpecific() {
-        this.addFamily(f => f.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent).and(f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList)), 'specific');
+        this.addFamily(f => undefined, 'specific');
     }
     addStreet() {
         this.addFamily(f => f.readyFilter(this.filterCity, this.filterGroup), 'street', true);

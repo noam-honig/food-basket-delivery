@@ -38,7 +38,7 @@ export class FamilyDeliveries extends IdEntity {
     needsWork = new BoolColumn({ caption: 'צריך טיפול/מעקב' });
     needsWorkUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'צריך טיפול - מי עדכן');
     needsWorkDate = new changeDate('צריך טיפול - מתי עודכן');
-    deliveryComments = new StringColumn('הערה שתופיע למשנע');
+    deliveryComments = new StringColumn('הערה למשלוח');
 
     familySource = new FamilySourceId(this.context, { includeInApi: true, caption: 'גורם מפנה' });
     groups = new GroupsColumn(this.context);
