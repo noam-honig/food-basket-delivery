@@ -218,7 +218,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         settings.dataStructureVersion.value = 14;
         await settings.save();
     }
-
+    
     await version(15, async () => {
         let fromArchive = (col: Column<any>) =>
             [col, 'archive_' + col.defs.dbName] as [Column<any>, any];
@@ -226,6 +226,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
             await dataSource.execute(sql.update(fd, {
                 set: () => [
                     [fd.archive, true],
+                    [fd.name,'familyname'],
                     [fd.createDate, fd.deliveryStatusDate],
                     fromArchive(fd.deliveryComments),
                     [fd.groups, 'archivegroups'],
@@ -241,7 +242,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
                     [fd.drivingLongitude, fd.addressLongitude],
                     [fd.drivingLatitude, fd.addressLatitude],
                     [fd.addressByGoogle, fd.address],
-                    fromArchive(fd.addressOk),
+                    [fd.addressOk,true],
                     fromArchive(fd.phone1Description),
                     fromArchive(fd.phone2),
                     fromArchive(fd.phone3),
@@ -311,6 +312,9 @@ export async function initSchema(pool1: PostgresPool, org: string) {
                 where: () => ['deliverstatus not in (99,95)']
             }));
     });
+   
+   
+    
 
 
 

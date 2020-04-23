@@ -5,18 +5,20 @@ import { PhoneColumn } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { DeliveryStatusColumn, DeliveryStatus } from "../families/DeliveryStatus";
 import { translate, translationConfig } from "../translate";
-import { Families } from "../families/families";
+
 import { FamilySources } from "../families/FamilySources";
 import { Injectable } from '@angular/core';
 import { Helpers } from '../helpers/helpers';
 import { BasketType } from '../families/BasketType';
 
-import { FamilyDeliveries } from '../families/FamilyDeliveries';
+
 @EntityClass
 export class ApplicationSettings extends Entity<number>  {
   @ServerFunction({ allowed: c => c.isSignedIn() })
   static async getPhoneOptions(deliveryId: string, context: Context) {
+    let FamilyDeliveries = await (await import('../families/FamilyDeliveries')).FamilyDeliveries;
     let d = await context.for(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId));
+    let Families = await (await import('../families/families')).Families;
     let family = await context.for(Families).findFirst(f => f.id.isEqualTo(d.family));
     let r: phoneOption[] = [];
     let settings = await ApplicationSettings.get(context);
@@ -219,8 +221,8 @@ export interface qaItem {
   answer?: string;
 }
 export interface phoneBuildArgs {
-  family: Families,
-  d: FamilyDeliveries,
+  family: import('../families/families').Families,
+  d: import('../families/FamilyDeliveries').FamilyDeliveries,
   context: Context,
   phoneItem: PhoneItem,
   settings: ApplicationSettings,

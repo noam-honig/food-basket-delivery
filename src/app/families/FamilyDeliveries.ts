@@ -17,8 +17,7 @@ export class FamilyDeliveries extends IdEntity {
     family = new FamilyId();
 
     name = new StringColumn({
-        caption: "שם",
-        dbName: 'familyName'
+        caption: "שם"
     });
     basketType = new BasketId(this.context, 'סוג סל');
 
@@ -270,7 +269,7 @@ export class ActiveFamilyDeliveries extends FamilyDeliveries {
     
           var fd = this.context.for(FamilyDeliveries).create();
           let f = this;
-          sql.addEntity(f, "families");
+          sql.addEntity(f, "FamilyDeliveries");
           return sql.columnWithAlias(sql.case([{ when: [sql.ne(f.courier, "''")], then: sql.build('exists (select 1 from ', fd, ' where ', sql.and(sql.eq(fd.family, f.id), sql.eq(fd.courier, f.courier)), ")") }], false), 'courierBeenHereBefore');
         }
       });
