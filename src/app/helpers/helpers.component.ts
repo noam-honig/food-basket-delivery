@@ -45,7 +45,10 @@ export class HelpersComponent implements OnInit {
     allowUpdate: true,
     knowTotalRows: true,
     hideDataArea: true,
-
+    onEnterRow: h => {
+      if (h.isNew())
+        h.distributionCenter.value = this.dialog.distCenter.value;
+    },
     rowButtons: [
       {
         name: '',

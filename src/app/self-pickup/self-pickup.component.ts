@@ -5,8 +5,9 @@ import { BusyService } from '@remult/core';
 import { Context } from '@remult/core';
 
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { Roles, AdminGuard } from '../auth/roles';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
+import { DialogService } from '../select-popup/dialog';
 
 @Component({
   selector: 'app-self-pickup',
@@ -17,14 +18,18 @@ export class SelfPickupComponent implements OnInit {
 
 
   static route: Route = {
-    path: 'self-pickup-families', component: SelfPickupComponent, canActivate: [AdminGuard], data: {
+    path: 'self-pickup-families', component: SelfPickupComponent, canActivate: [distCenterAdminGuard], data: {
       name: 'באים לקחת',
       seperator: true
     }
   };
 
   constructor(private busy: BusyService
-    , private context: Context) { }
+    , private context: Context, private dialog: DialogService) {
+    this.dialog.onDistCenterChange(async () => {
+      this.families.getRecords();
+    }, this);
+  }
   searchString: string = '';
   showAllFamilies = false;
   families = this.context.for(ActiveFamilyDeliveries).gridSettings({ knowTotalRows: true });
@@ -37,7 +42,7 @@ export class SelfPickupComponent implements OnInit {
 
     await this.families.get({
       where: f => {
-        let r = f.name.isContains(this.searchString);
+        let r = f.name.isContains(this.searchString).and(f.distributionCenter.filter(this.dialog.distCenter.value));
         if (!this.showAllFamilies) {
           return r.and(f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup));
         }

@@ -267,6 +267,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
   async readLine(row: number): Promise<excelRowInfo> {
     let f = this.context.for(Helpers).create();
+    f.distributionCenter.value = this.dialog.distCenter.value;
 
     let helper = new columnUpdateHelper(this.context, this.dialog);
     for (const c of this.excelColumns) {
@@ -290,7 +291,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     let info: excelRowInfo = {
       name: f.name.value,
       phone: f.phone.value,
-
+      distributionCenter:f.distributionCenter.value,
       valid: true,
       rowInExcel: row,
       values: {}
@@ -547,7 +548,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     } as serverCheckResults;
     for (const info of excelRowInfo) {
 
-      info.duplicateHelperInfo = (await context.for(Helpers).find({ where: h => h.phone.isEqualTo(info.phone) })).map(x => {
+      info.duplicateHelperInfo = (await context.for(Helpers).find({ where: h => h.phone.isEqualTo(info.phone).and(h.distributionCenter.isEqualTo(info.distributionCenter)) })).map(x => {
         return {
           id: x.id.value,
           name: x.name.value
@@ -726,6 +727,7 @@ interface excelRowInfo {
 
   valid: boolean;
   error?: string;
+  distributionCenter:string;
 
   duplicateHelperInfo?: duplicateHelperInfo[];
   values: { [key: string]: updateColumns };
