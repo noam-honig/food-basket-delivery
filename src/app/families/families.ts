@@ -28,6 +28,8 @@ export class Families extends IdEntity {
     fd.family.value = this.id.value;
     fd.distributionCenter.value = this.distributionCenter.value;
     fd.special.value = this.special.value;
+    fd.basketType.value = this.basketType.value;
+    this.updateDelivery(fd);
     return fd;
   }
   sharedColumns() {
@@ -35,7 +37,6 @@ export class Families extends IdEntity {
       this.name,
       this.familySource,
       this.groups,
-      this.special,
       this.address,
       this.floor,
       this.appartment,
@@ -72,7 +73,7 @@ export class Families extends IdEntity {
   }
   updateDelivery(fd: FamilyDeliveries) {
     for (const col of this.sharedColumns()) {
-      fd.columns[col.defs.key].value = col.value;
+      fd.columns.find(col).value = col.value;
     }
   }
 

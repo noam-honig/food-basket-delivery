@@ -120,7 +120,7 @@ export class OverviewComponent implements OnInit {
       for (const dateRange of result.statistics) {
         let key = 'a' + cols.length;
         if (dateRange.caption == inEvent) {
-          cols.push(builder.countInnerSelect({ from: f, where: () => [f.deliverStatus.isInEvent()] }, key));
+          cols.push(builder.countInnerSelect({ from: f }, key));
 
 
         } else if (dateRange.caption == onTheWay) {

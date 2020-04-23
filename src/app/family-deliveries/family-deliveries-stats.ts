@@ -26,7 +26,7 @@ export class FamilyDeliveryStats {
     delivered = new FamilyDeliveresStatistics('הגיעו', f => f.deliverStatus.isSuccess(), colors.green);
     problem = new FamilyDeliveresStatistics('בעיות', f => f.deliverStatus.isProblem(), colors.red);
     frozen = new FamilyDeliveresStatistics('קפואים', f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen), colors.gray);
-    needWork = new FamilyDeliveresStatistics('מצריך טיפול', f => f.deliverStatus.isInEvent().and(f.needsWork.isEqualTo(true)), colors.yellow);
+    needWork = new FamilyDeliveresStatistics('מצריך טיפול', f => f.needsWork.isEqualTo(true), colors.yellow);
 
 
     async getData(distCenter: string) {
@@ -61,7 +61,7 @@ export class FamilyDeliveryStats {
                 boxes: b.boxes.value,
                 boxes2: b.boxes2.value,
                 unassignedDeliveries: await context.for(FamilyDeliveries).count(f => f.readyAndSelfPickup().and(f.basketType.isEqualTo(b.id).and(f.filterDistCenter(distCenter)))),
-                inEventDeliveries: await context.for(FamilyDeliveries).count(f => f.deliverStatus.isInEvent().and(f.basketType.isEqualTo(b.id).and(f.filterDistCenter(distCenter)))),
+                inEventDeliveries: await context.for(FamilyDeliveries).count(f => f.basketType.isEqualTo(b.id).and(f.filterDistCenter(distCenter))),
                 successDeliveries: await context.for(FamilyDeliveries).count(f => f.deliverStatus.isSuccess().and(f.basketType.isEqualTo(b.id).and(f.filterDistCenter(distCenter))))
             });
         }));
