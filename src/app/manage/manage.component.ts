@@ -360,7 +360,7 @@ export class ManageComponent implements OnInit {
   @ServerFunction({ allowed: Roles.admin })
   static async deleteFamiliesOnServer(context?: Context) {
     let count = await iterateFamilies(context,
-      f => f.FamilyStatus.isEqualTo(FamilyStatus.RemovedFromList),
+      f => f.status.isEqualTo(FamilyStatus.RemovedFromList),
       async f => await f.delete());
     return count;
   }
