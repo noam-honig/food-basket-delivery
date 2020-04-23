@@ -15,7 +15,7 @@ import { DistributionCenters } from '../manage/distribution-centers';
 
 export async function initSchema(pool1: PostgresPool, org: string) {
 
-
+    console.log("init schema for ", org);
     var dataSource = new SqlDatabase(new PostgresDataProvider(pool1));
     let context = new ServerContext();
     context.setDataProvider(dataSource);
@@ -147,7 +147,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         settings.dataStructureVersion.value = 10;
         await settings.save();
     }
-    if (settings.dataStructureVersion.value = 10) {
+    if (settings.dataStructureVersion.value == 10) {
         settings.checkDuplicatePhones.value = true;
         settings.checkIfFamilyExistsInDb.value = true;
         settings.checkIfFamilyExistsInFile.value = true;
@@ -155,7 +155,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         settings.dataStructureVersion.value = 11;
         await settings.save();
     }
-    if (settings.dataStructureVersion.value = 11) {
+    if (settings.dataStructureVersion.value == 11) {
         await dataSource.execute(sql.build('create index if not exists fd_1 on ', fd, ' (', [fd.family, fd.deliveryStatusDate, fd.deliverStatus, fd.courier], ')'));
         //create index if required
         await dataSource.execute(sql.build('drop index if exists f_1  '));
@@ -180,20 +180,36 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         settings.dataStructureVersion.value = 12;
         await settings.save();
     }
-    if (settings.dataStructureVersion.value = 12) {
-        await dataSource.execute(sql.update(f, {
-            set: () => [
-                [f.status, sql.case([{ when: ['deliverstatus=99'], then: 99 }], 0)]
-                [f.statusUser, 'deliverystatususer'],
-                [f.statusDate, 'deliverystatusdate']
-            ]
-        }));
-        settings.dataStructureVersion.value = 13;
-        await settings.save();
+    let version = async (ver: number, what: () => Promise<void>) => {
+        if (settings.dataStructureVersion.value < ver) {
+            try {
+                await what();
+            } catch (err) {
+                console.error("failed for version ", ver, err);
+                throw err;
+
+            }
+            settings.dataStructureVersion.value = ver;
+            await settings.save();
+        }
     }
-    if (settings.dataStructureVersion.value = 13) {
+    await version(13, async () => {
+        if ((await context.for(Families).count()) > 0)
+            await dataSource.execute(sql.update(f, {
+                set: () => [
+                    [f.status, sql.case([{ when: ['deliverstatus=99'], then: 99 }], 0)],
+                    [f.statusUser, 'deliverystatususer'],
+                    [f.statusDate, 'deliverystatusdate']
+                ]
+
+
+            }));
+    })
+
+    if (settings.dataStructureVersion.value == 13) {
         await iterateFamilies(context, f => undefined,
             f => {
+                f._suppressLastUpdateDuringSchemaInit = true;
                 let g = f.getGeocodeInformation();
                 f.addressByGoogle.value = g.getAddress();
                 f.drivingLatitude.value = g.location().lat;
@@ -202,103 +218,98 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         settings.dataStructureVersion.value = 14;
         await settings.save();
     }
-    let version = async (ver: number, what: () => Promise<void>) => {
-        if (settings.dataStructureVersion.value < ver) {
-            await what();
-            settings.dataStructureVersion.value = ver;
-            await settings.save();
-        }
-    }
+
     await version(15, async () => {
         let fromArchive = (col: Column<any>) =>
             [col, 'archive_' + col.defs.dbName] as [Column<any>, any];
-
-        await dataSource.execute(sql.update(fd, {
-            set: () => [
-                [fd.archive, true],
-                [fd.createDate, fd.deliveryStatusDate],
-                fromArchive(fd.deliveryComments),
-                [fd.groups, 'archivegroups'],
-                [fd.familySource, 'archivefamilysource'],
-                fromArchive(fd.address),
-                fromArchive(fd.entrance),
-                fromArchive(fd.floor),
-                fromArchive(fd.addressComment),
-                fromArchive(fd.appartment),
-                fromArchive(fd.addressLongitude),
-                fromArchive(fd.city),
-                fromArchive(fd.addressLatitude),
-                [fd.drivingLongitude, fd.addressLongitude],
-                [fd.drivingLatitude, fd.addressLatitude],
-                [fd.addressByGoogle, fd.address],
-                fromArchive(fd.addressOk),
-                fromArchive(fd.phone1Description),
-                fromArchive(fd.phone2),
-                fromArchive(fd.phone3),
-                fromArchive(fd.phone3Description),
-                fromArchive(fd.phone4),
-                fromArchive(fd.phone2Description),
-                fromArchive(fd.phone4Description),
-            ]
-        }));
+        if ((await context.for(Families).count()) > 0)
+            await dataSource.execute(sql.update(fd, {
+                set: () => [
+                    [fd.archive, true],
+                    [fd.createDate, fd.deliveryStatusDate],
+                    fromArchive(fd.deliveryComments),
+                    [fd.groups, 'archivegroups'],
+                    [fd.familySource, 'archivefamilysource'],
+                    fromArchive(fd.address),
+                    fromArchive(fd.entrance),
+                    fromArchive(fd.floor),
+                    fromArchive(fd.addressComment),
+                    fromArchive(fd.appartment),
+                    fromArchive(fd.addressLongitude),
+                    fromArchive(fd.city),
+                    fromArchive(fd.addressLatitude),
+                    [fd.drivingLongitude, fd.addressLongitude],
+                    [fd.drivingLatitude, fd.addressLatitude],
+                    [fd.addressByGoogle, fd.address],
+                    fromArchive(fd.addressOk),
+                    fromArchive(fd.phone1Description),
+                    fromArchive(fd.phone2),
+                    fromArchive(fd.phone3),
+                    fromArchive(fd.phone3Description),
+                    fromArchive(fd.phone4),
+                    fromArchive(fd.phone2Description),
+                    fromArchive(fd.phone4Description),
+                ]
+            }));
     });
     await version(16, async () => {
-        await dataSource.execute(sql.insert({
-            into: fd,
-            from: f,
-            set: () => {
-                let r:[Column<any>, any][] = [
-                    [fd.id, f.id],
-                    [fd.family, f.id],
-                    [fd.createDate, sql.case([{ when: ['deliverStatus in (0,2)'], then: 'deliveryStatusDate' }], 'courierAssingTime')],
-                    [fd.createUser, 'courierAssignUser'],
-                    [fd.deliverStatus,sql.case([{when:['deliverStatus=90'],then:'9'}],'deliverStatus')]
-                ];
-                for (const c of [
-                    fd.name,
-                    fd.basketType,
-                    fd.distributionCenter,
-                    
-                    fd.courier,
-                    fd.courierComments,
-                    fd.routeOrder,
-                    fd.special,
-                    fd.deliveryStatusDate,
-                    fd.courierAssignUser,
-                    fd.courierAssingTime,
-                    fd.deliveryStatusUser,
-                    fd.needsWork,
-                    fd.needsWorkDate,
-                    fd.needsWorkUser,
-                    fd.deliveryComments,
-                    fd.familySource,
-                    fd.groups,
-                    fd.address,
-                    fd.floor,
-                    fd.appartment,
-                    fd.entrance,
-                    fd.city,
-                    fd.addressComment,
-                    fd.addressLongitude,
-                    fd.addressLatitude,
-                    fd.addressByGoogle,
-                    fd.addressOk,
-                    fd.phone1,
-                    fd.phone1Description,
-                    fd.phone2,
-                    fd.phone2Description,
-                    fd.phone3,
-                    fd.phone3Description,
-                    fd.phone4,
-                    fd.phone4Description
+        if ((await context.for(Families).count()) > 0)
+            await dataSource.execute(sql.insert({
+                into: fd,
+                from: f,
+                set: () => {
+                    let r: [Column<any>, any][] = [
+                        [fd.id, f.id],
+                        [fd.family, f.id],
+                        [fd.createDate, sql.case([{ when: ['deliverStatus in (0,2)'], then: 'deliveryStatusDate' }], 'courierAssingTime')],
+                        [fd.createUser, 'courierAssignUser'],
+                        [fd.deliverStatus, sql.case([{ when: ['deliverStatus=90'], then: '9' }], 'deliverStatus')]
+                    ];
+                    for (const c of [
+                        fd.name,
+                        fd.basketType,
+                        fd.distributionCenter,
 
-                ]) {
-                    r.push([c, c.defs.dbName])
-                }
-                return r;
-            },
-            where: () => ['deliverstatus not in (99,95)']
-        }));
+                        fd.courier,
+                        fd.courierComments,
+                        fd.routeOrder,
+                        fd.special,
+                        fd.deliveryStatusDate,
+                        fd.courierAssignUser,
+                        fd.courierAssingTime,
+                        fd.deliveryStatusUser,
+                        fd.needsWork,
+                        fd.needsWorkDate,
+                        fd.needsWorkUser,
+                        fd.deliveryComments,
+                        fd.familySource,
+                        fd.groups,
+                        fd.address,
+                        fd.floor,
+                        fd.appartment,
+                        fd.entrance,
+                        fd.city,
+                        fd.addressComment,
+                        fd.addressLongitude,
+                        fd.addressLatitude,
+                        fd.addressByGoogle,
+                        fd.addressOk,
+                        fd.phone1,
+                        fd.phone1Description,
+                        fd.phone2,
+                        fd.phone2Description,
+                        fd.phone3,
+                        fd.phone3Description,
+                        fd.phone4,
+                        fd.phone4Description
+
+                    ]) {
+                        r.push([c, c.defs.dbName])
+                    }
+                    return r;
+                },
+                where: () => ['deliverstatus not in (99,95)']
+            }));
     });
 
 

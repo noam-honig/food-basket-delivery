@@ -60,16 +60,16 @@ export class Families extends IdEntity {
   }
   isGpsAddress() {
     return isGpsAddress(this.address.value);
-}
-getAddressDescription() {
+  }
+  getAddressDescription() {
     if (this.isGpsAddress()) {
-        let r = 'נקודת GPS ';
-        r += 'ליד ' + this.addressByGoogle.value;
+      let r = 'נקודת GPS ';
+      r += 'ליד ' + this.addressByGoogle.value;
 
-        return r;
+      return r;
     }
     return this.address.value;
-}
+  }
   updateDelivery(fd: FamilyDeliveries) {
     for (const col of this.sharedColumns()) {
       fd.columns[col.defs.key].value = col.value;
@@ -79,13 +79,13 @@ getAddressDescription() {
   filterDistCenter(distCenter: string): import("@remult/core").FilterBase {
     return this.distributionCenter.filter(distCenter);
   }
- 
+
   getDeliveries() {
     return this.context.for(FamilyDeliveries).find({ where: d => d.family.isEqualTo(this.id), orderBy: d => [{ column: d.deliveryStatusDate, descending: true }] });
   }
- 
+
   __disableGeocoding = false;
-  
+
   constructor(private context: Context) {
     super(
       {
@@ -125,7 +125,7 @@ getAddressDescription() {
 
 
 
-           
+
 
             if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
               await this.reloadGeoCoding();
@@ -134,11 +134,11 @@ getAddressDescription() {
               this.createDate.value = new Date();
               this.createUser.value = context.user.id;
             }
-            this.lastUpdateDate.value = new Date();
-            this.lastUpdateUser.value = context.user.id;
 
-            
-            
+            if (!this._suppressLastUpdateDuringSchemaInit) {
+              this.lastUpdateDate.value = new Date();
+              this.lastUpdateUser.value = context.user.id;
+            }
           }
         }
 
@@ -160,6 +160,7 @@ getAddressDescription() {
   }
   disableChangeLogging = false;
   disableOnSavingRow = false;
+  _suppressLastUpdateDuringSchemaInit = false;
 
 
   name = new StringColumn({
@@ -321,7 +322,7 @@ getAddressDescription() {
     }
   });
 
- 
+
 
 
   //שים לב - אם המשתמש הקליד כתובת GPS בכתובת - אז הנקודה הזו תהיה הנקודה שהמשתמש הקליד ולא מה שגוגל מצא
@@ -372,8 +373,8 @@ getAddressDescription() {
     } as DataControlSettings<Families>;
   }
 
- 
-  
+
+
 
 
   createDate = new changeDate({ includeInApi: Roles.admin, caption: 'מועד הוספה' });
@@ -728,21 +729,21 @@ export function parseUrlInAddress(address: string) {
 
 
 
-export async function iterateFamilies( context: Context, where: (f: Families) => FilterBase, what: (f: Families) => void,count?: number) {
+export async function iterateFamilies(context: Context, where: (f: Families) => FilterBase, what: (f: Families) => void, count?: number) {
   let updated = 0;
   let pageSize = 200;
-  if (count===undefined){
-      count = await context.for(Families).count(where);
+  if (count === undefined) {
+    count = await context.for(Families).count(where);
   }
   let pt = new PromiseThrottle(10);
   for (let index = (count / pageSize); index >= 0; index--) {
-      let rows = await context.for(Families).find({ where, limit: pageSize, page: index, orderBy: f => [f.id] });
-      //console.log(rows.length);
-      for (const f of await rows) {
-          what(f);
-          await pt.push(f.save());
-          updated++;
-      }
+    let rows = await context.for(Families).find({ where, limit: pageSize, page: index, orderBy: f => [f.id] });
+    //console.log(rows.length);
+    for (const f of await rows) {
+      what(f);
+      await pt.push(f.save());
+      updated++;
+    }
   }
   await pt.done();
   return updated;

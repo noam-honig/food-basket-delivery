@@ -363,7 +363,8 @@ export class SqlBuilder {
     if (info.from) {
       from = this.build(' from ', info.from, ' ', this.getEntityAlias(info.from));
     }
-    result.push(info.set().map(a => this.build(this.build(a[0].defs.dbName, ' = ', a[1]))));
+    let set = info.set();
+    result.push(set.map(a => this.build(this.build(a[0].defs.dbName, ' = ', a[1]))));
     if (from)
       result.push(from);
 
