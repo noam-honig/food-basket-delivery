@@ -64,7 +64,7 @@ export class FamilyDeliveriesComponent implements OnInit {
 
   basketsInEvent: statsOnTabBasket = {
     name: 'לפי סלים',
-    rule: f => f.deliverStatus.isInEvent(),
+    rule: f =>undefined,
     stats: [
       this.stats.ready,
       this.stats.special
@@ -108,7 +108,7 @@ export class FamilyDeliveriesComponent implements OnInit {
     {
       name: 'משלוחים',
       showTotal: true,
-      rule: f => f.deliverStatus.isInEvent(),
+      rule: f => undefined,
       stats: [
         this.stats.ready,
         this.stats.special,
@@ -131,7 +131,7 @@ export class FamilyDeliveriesComponent implements OnInit {
     {
       name: 'מצריך טיפול',
       showTotal: true,
-      rule: f => f.deliverStatus.isInEvent().and(f.needsWork.isEqualTo(true)),
+      rule: f => f.needsWork.isEqualTo(true),
       stats: [
         this.stats.needWork
       ],
@@ -261,7 +261,7 @@ export class FamilyDeliveriesComponent implements OnInit {
       this.basketStatsCalc(st.baskets, this.basketStats, b => b.unassignedFamilies, (f, id) =>
         f.readyFilter().and(f.basketType.isEqualTo(id)));
       this.basketStatsCalc(st.baskets, this.basketsInEvent, b => b.inEventFamilies, (f, id) =>
-        f.deliverStatus.isInEvent().and(f.basketType.isEqualTo(id)));
+        f.basketType.isEqualTo(id));
       this.basketStatsCalc(st.baskets, this.basketsDelivered, b => b.successFamilies, (f, id) =>
         f.deliverStatus.isSuccess().and(f.basketType.isEqualTo(id)));
       this.prepComplexStats(st.cities, this.cityStats,

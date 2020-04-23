@@ -37,9 +37,7 @@ export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
   isActiveDelivery() {
     return this.isLessOrEqualTo(DeliveryStatus.FailedOther);
   }
-  isInEvent() {
-    return this.isLessOrEqualTo(DeliveryStatus.Frozen);
-  }
+  
   isAResultStatus() {
     return this.isGreaterOrEqualTo(DeliveryStatus.Success).and(this.isLessOrEqualTo(DeliveryStatus.FailedOther));
   }
