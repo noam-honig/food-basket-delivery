@@ -12,6 +12,7 @@ import { SqlBuilder } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { Groups } from "../manage/manage.component";
 import { DistributionCenterId } from '../manage/distribution-centers';
+import { FamilyStatusColumn, FamilyStatus } from './FamilyStatus';
 
 
 export interface OutArgs {
@@ -28,9 +29,9 @@ export const colors = {
     , gray: 'gray'
 };
 export class Stats {
-    outOfList = new FaimilyStatistics('הוצאו מהרשימות', f => f.deliverStatus.isEqualTo(DeliveryStatus.RemovedFromList), colors.green);
-    active = new FaimilyStatistics('פעילות', f => f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList), colors.blue);
-    problem = new FaimilyStatistics('כתובות בעיתיות', f => f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList).and(f.addressOk.isEqualTo(false)), colors.blue);
+    outOfList = new FaimilyStatistics('הוצאו מהרשימות', f => f.status.isEqualTo(FamilyStatus.RemovedFromList), colors.green);
+    active = new FaimilyStatistics('פעילות', f => f.status.isDifferentFrom(FamilyStatus.RemovedFromList), colors.blue);
+    problem = new FaimilyStatistics('כתובות בעיתיות', f => f.status.isDifferentFrom(FamilyStatus.RemovedFromList).and(f.addressOk.isEqualTo(false)), colors.blue);
 
     async getData(distCenter: string) {
         let r = await Stats.getFamilyStats(distCenter);
@@ -65,7 +66,7 @@ export class Stats {
                 };
                 result.groups.push(x);
                 pendingStats.push(context.for(Families).count(f => f.groups.isContains(x.name).and(
-                    f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList)).and(f.filterDistCenter(distCenter))).then(r => x.total = r));
+                    f.status.isDifferentFrom(FamilyStatus.RemovedFromList)).and(f.filterDistCenter(distCenter))).then(r => x.total = r));
             }
         });
 

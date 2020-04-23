@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { Helpers } from './helpers';
 
-import { Families } from '../families/families';
+
 import { Route } from '@angular/router';
 
 import { ServerFunction, DataControlSettings, DataControlInfo, ServerContext, AndFilter } from '@remult/core';

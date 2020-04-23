@@ -18,6 +18,8 @@ import { DistributionCenters, DistributionCenterId } from './distribution-center
 
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { FamilyStatus } from '../families/FamilyStatus';
 
 @Component({
   selector: 'app-manage',
@@ -337,7 +339,7 @@ export class ManageComponent implements OnInit {
     let codeWords = ["נועם", "יעל", "עופרי", "מעיין", "איתמר", "יוני", "ניצן"];
     let correctCodeWord = codeWords[Math.trunc(Math.random() * codeWords.length)];
     let doIt = false;
-    let count = await this.context.for(Families).count(f => f.deliverStatus.isEqualTo(DeliveryStatus.RemovedFromList));
+    let count = await this.context.for(Families).count(f => f.status.isEqualTo(FamilyStatus.RemovedFromList));
     if (!await this.dialog.YesNoPromise("האם אתה בטוח שאתה רוצה למחוק " + count + " משפחות?"))
       return;
     await this.context.openDialog(InputAreaComponent, x => {
@@ -358,7 +360,7 @@ export class ManageComponent implements OnInit {
   @ServerFunction({ allowed: Roles.admin })
   static async deleteFamiliesOnServer(context?: Context) {
     let count = 0;
-    for (const f of await context.for(Families).find({ where: f => f.deliverStatus.isEqualTo(DeliveryStatus.RemovedFromList) })) {
+    for (const f of await context.for(Families).find({ where: f => f.status.isEqualTo(FamilyStatus.RemovedFromList) })) {
       await f.delete();
       count++;
     }
@@ -391,7 +393,7 @@ export class GroupsStats extends Entity<string> {
       allowApiRead: Roles.distCenterAdmin,
       name: 'groupsStats',
       dbName: () => {
-        let f = context.for(Families).create();
+        let f = context.for(ActiveFamilyDeliveries).create();
         let g = context.for(Groups).create();
         let d = context.for(DistributionCenters).create();
         let sql = new SqlBuilder();

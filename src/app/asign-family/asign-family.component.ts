@@ -35,7 +35,7 @@ import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-q
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
 import { DistributionCenters, DistributionCenterId, allCentersToken } from '../manage/distribution-centers';
 import { CitiesStatsPerDistCenter } from '../family-deliveries/family-deliveries-stats';
-import { ActiveFamilyDeliveries } from '../family-deliveries/family-deliveries-join';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 
 
 
@@ -99,7 +99,7 @@ export class AsignFamilyComponent implements OnInit {
         else {
             Helpers.addToRecent(helper);
             this.familyLists.routeStats = helper.getRouteStats();
-            await this.refreshListAndUpdateRouteForFixedCourier();
+            await this.refreshList();
         }
     }
     clearHelperInfo(clearPhone = true) {
@@ -117,19 +117,7 @@ export class AsignFamilyComponent implements OnInit {
             }, 200);
     }
 
-    async refreshListAndUpdateRouteForFixedCourier() {
-        await this.refreshList();
-        let allFixed = true;
-        for (const f of this.familyLists.toDeliver) {
-            if (!f.fixedCourier.value)
-                allFixed = false;
-            if (f.fixedCourier.value != f.courier.value)
-                allFixed = false;
-        }
-        if (allFixed) {
-            this.doRefreshRoute();
-        }
-    }
+   
     filterCity = '';
     allBaskets: BasketInfo = { id: 'undefined', name: 'כל הסלים', unassignedFamilies: 0 };
     basketType: BasketInfo = this.allBaskets;
@@ -951,7 +939,7 @@ export interface BasketInfo {
 
 }
 function filterRepeatFamilies(sql: SqlBuilder, f: ActiveFamilyDeliveries, fd: FamilyDeliveries, helperId: string) {
-    return sql.build(f.familyId, ' in (select ', fd.family, ' from ', fd, ' where ', fd.courier.isEqualTo(helperId), ')');
+    return sql.build(f.family, ' in (select ', fd.family, ' from ', fd, ' where ', fd.courier.isEqualTo(helperId), ')');
 
 }
 export interface CityInfo {

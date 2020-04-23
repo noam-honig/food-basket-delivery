@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
 import { Context, DataControlSettings, FilterBase, AndFilter, BusyService } from '@remult/core';
-import { ActiveFamilyDeliveries } from './family-deliveries-join';
+
 import { FamilyDeliveresStatistics, FamilyDeliveryStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
 import { DialogService } from '../select-popup/dialog';
@@ -13,7 +13,7 @@ import { colors } from '../families/stats-action';
 import { BasketType } from '../families/BasketType';
 
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
-import { FamilyDeliveries } from '../families/FamilyDeliveries';
+import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Families } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 
@@ -478,11 +478,10 @@ export class FamilyDeliveriesComponent implements OnInit {
         icon: 'edit',
         showInLine: true,
         click: async fd => {
-          let delivery = await this.context.for(FamilyDeliveries).findFirst(x => x.id.isEqualTo(fd.id));
-          let f = await this.context.for(Families).findFirst(x => x.id.isEqualTo(fd.familyId));
+          
           this.context.openDialog(UpdateFamilyDialogComponent, async x => {
             x.args = {
-              delivery, f
+              
 
             }
           });

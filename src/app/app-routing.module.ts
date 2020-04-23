@@ -21,13 +21,13 @@ import { CustomReuseStrategy } from './custom-reuse-controller-router-strategy'
 
 
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
-import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
+
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 
 import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin,OverviewOrAdminGuard } from './auth/roles';
 
 import { SignedInGuard } from '@remult/core';
-import { CreateBackupExcelFileComponent, CanDeactivateGuard } from './create-backup-excel-file/create-backup-excel-file.component';
+
 import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';
 import { PlaybackComponent } from './playback/playback.component';
 import { OverviewComponent } from './overview/overview.component';
@@ -67,11 +67,11 @@ const routes: Routes = [
   { path: 'geocode', component: GeocodeComponent, canActivate: [AdminGuard], data: { name: 'geocode', hide: true } },
   { path: 'testmap', component: TestMapComponent, canActivate: [AdminGuard], data: {  hide: true } },
 
-  BatchOperationsComponent.route,
+  
   { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard], data: { name: 'קליטת משפחות מאקסל' } },
   { path: 'import-helpers-from-excel', component: ImportHelpersFromExcelComponent, canActivate: [AdminGuard], data: { name: 'קליטת מתנדבים מאקסל' } },
   ManageComponent.route,
-  { path: 'auto-backup', component: CreateBackupExcelFileComponent, canActivate: [AdminGuard], canDeactivate: [CanDeactivateGuard], data: { name: 'גיבוי אוטומטי', seperator: true } },
+  
   LoginFromSmsComponent.route,
 
   //{ path: 'stam-test', component: UpdateGroupDialogComponent },
@@ -92,7 +92,7 @@ const routes: Routes = [
   ],
   declarations: [],
   exports: [RouterModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, CanDeactivateGuard, OverviewGuard,distCenterAdminGuard,distCenterOrOverviewOrAdmin,OverviewOrAdminGuard]
+  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard,  OverviewGuard,distCenterAdminGuard,distCenterOrOverviewOrAdmin,OverviewOrAdminGuard]
 
 })
 

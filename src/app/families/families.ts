@@ -8,7 +8,7 @@ import { changeDate, DateTimeColumn, SqlBuilder, PhoneColumn, delayWhileTyping }
 import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn } from '@remult/core';
 import { HelperIdReadonly, HelperId, Helpers, HelperUserInfo } from "../helpers/helpers";
 
-import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
+import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress } from "../shared/googleApiHelpers";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { FamilyDeliveries } from "./FamilyDeliveries";
 import * as fetch from 'node-fetch';
@@ -17,128 +17,114 @@ import { Roles } from "../auth/roles";
 import { translate } from "../translate";
 import { UpdateGroupDialogComponent } from "../update-group-dialog/update-group-dialog.component";
 import { DistributionCenterId, DistributionCenters } from "../manage/distribution-centers";
+import { FamilyStatusColumn } from "./FamilyStatus";
 
 
 @EntityClass
 export class Families extends IdEntity {
   createDelivery() {
-    let fd= this.context.for(FamilyDeliveries).create();
+    let fd = this.context.for(FamilyDeliveries).create();
     fd.family.value = this.id.value;
-    
-    fd.name.value = this.name.value;
     fd.distributionCenter.value = this.distributionCenter.value;
+    fd.special.value = this.special.value;
     return fd;
   }
-  
+  sharedColumns() {
+    return [
+      this.name,
+      this.familySource,
+      this.groups,
+      this.special,
+      this.address,
+      this.floor,
+      this.appartment,
+      this.entrance,
+      this.city,
+      this.addressComment,
+      this.addressLongitude,
+      this.addressLatitude,
+      this.drivingLongitude,
+      this.drivingLatitude,
+      this.addressByGoogle,
+      this.addressOk,
+      this.phone1,
+      this.phone1Description,
+      this.phone2,
+      this.phone2Description,
+      this.phone3,
+      this.phone3Description,
+      this.phone4,
+      this.phone4Description
+    ];
+  }
+  isGpsAddress() {
+    return isGpsAddress(this.address.value);
+}
+getAddressDescription() {
+    if (this.isGpsAddress()) {
+        let r = 'נקודת GPS ';
+        r += 'ליד ' + this.addressByGoogle.value;
+
+        return r;
+    }
+    return this.address.value;
+}
+  updateDelivery(fd: FamilyDeliveries) {
+    for (const col of this.sharedColumns()) {
+      fd.columns[col.defs.key].value = col.value;
+    }
+  }
+
   filterDistCenter(distCenter: string): import("@remult/core").FilterBase {
     return this.distributionCenter.filter(distCenter);
   }
-  onTheWayFilter() {
-    return this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(this.courier.isDifferentFrom(''));
-  }
-  setNewBasket() {
-    if (this.defaultSelfPickup.value) {
-      this.deliverStatus.value = DeliveryStatus.SelfPickup;
-      this.courier.value = '';
-    }
-    else {
-      this.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
-      if (this.courier.value == this.courier.originalValue) {
-        this.courier.value = this.fixedCourier.value;
-        this.courierAssignUser.value = this.context.user.id;
-        this.courierAssingTime.value = new Date();
-      }
-    }
-  }
+ 
   getDeliveries() {
     return this.context.for(FamilyDeliveries).find({ where: d => d.family.isEqualTo(this.id), orderBy: d => [{ column: d.deliveryStatusDate, descending: true }] });
   }
-  checkNeedsWork() {
-    if (this.courierComments.value)
-      this.needsWork.value = true;
-    switch (this.deliverStatus.value) {
-      case DeliveryStatus.FailedBadAddress:
-      case DeliveryStatus.FailedNotHome:
-      case DeliveryStatus.FailedOther:
-        this.needsWork.value = true;
-        break;
-    }
-  }
+ 
   __disableGeocoding = false;
-  _disableMessageToUsers = false;
+  
   constructor(private context: Context) {
     super(
       {
         name: "Families",
-        allowApiRead: context.isSignedIn(),
-        allowApiUpdate: context.isSignedIn(),
+        allowApiRead: Roles.distCenterAdmin,
+        allowApiUpdate: Roles.distCenterAdmin,
         allowApiDelete: false,
         allowApiInsert: Roles.admin,
         apiDataFilter: () => {
           if (!context.isAllowed(Roles.admin)) {
-            let user = <HelperUserInfo>context.user;
-            if (!user)
-              return this.id.isEqualTo('no rows');
+            if (context.isAllowed(Roles.admin))
+              return undefined;
             if (context.isAllowed(Roles.distCenterAdmin))
               return this.distributionCenter.isAllowedForUser();
-            if (user.theHelperIAmEscortingId)
-              return this.courier.isEqualTo(user.theHelperIAmEscortingId).and(this.visibleToCourier.isEqualTo(true));
-            else
-              return this.courier.isEqualTo(user.id).and(this.visibleToCourier.isEqualTo(true));
+            return this.id.isEqualTo('no rows');
+
+
           }
         },
         savingRow: async () => {
           if (this.disableOnSavingRow)
             return;
           if (this.context.onServer) {
-            if (!this.correntAnErrorInStatus.value && DeliveryStatus.IsAResultStatus(this.deliverStatus.originalValue) && !DeliveryStatus.IsAResultStatus(this.deliverStatus.value)) {
-              var fd = this.context.for(FamilyDeliveries).create();
-              fd.family.value = this.id.value;
-              fd.name.value = this.name.value;
-              fd.basketType.value = this.basketType.originalValue;
-              fd.deliverStatus.value = this.deliverStatus.originalValue;
-              fd.courier.value = this.courier.originalValue;
-              fd.distributionCenter.value = this.distributionCenter.value;
-              fd.courierComments.value = this.courierComments.originalValue;
-              fd.deliveryStatusDate.value = this.deliveryStatusDate.originalValue;
-              fd.courierAssignUser.value = this.courierAssignUser.originalValue;
-              fd.courierAssingTime.value = this.courierAssingTime.originalValue;
-              fd.archiveFamilySource.value = this.familySource.originalValue;
-              fd.archiveGroups.value = this.groups.value;
-              fd.archive_address.value = this.address.originalValue;
-
-              fd.archive_floor.value = this.floor.originalValue;
-              fd.archive_appartment.value = this.appartment.originalValue;
-              fd.archive_entrance.value = this.entrance.originalValue;
-              fd.archive_postalCode.value = this.postalCode.originalValue;
-              fd.archive_city.value = this.city.originalValue;
-              fd.archive_addressComment.value = this.addressComment.originalValue;
-              fd.archive_deliveryComments.value = this.deliveryComments.originalValue;
-              fd.archive_phone1.value = this.phone1.originalValue;
-              fd.archive_phone1Description.value = this.phone1Description.originalValue;
-              fd.archive_phone2.value = this.phone2.originalValue;
-              fd.archive_phone2Description.value = this.phone2Description.originalValue;
-              fd.archive_phone3.value = this.phone3.originalValue;
-              fd.archive_phone3Description.value = this.phone3Description.originalValue;
-              fd.archive_phone4.value = this.phone4.originalValue;
-              fd.archive_phone4Description.value = this.phone4Description.originalValue;
-              fd.archive_addressLongitude.value = this.addressLongitude.originalValue;
-              fd.archive_addressLatitude.value = this.addressLatitude.originalValue;
-              await fd.save();
-              if (this.courier.value == this.courier.originalValue) {
-                this.courier.value = this.fixedCourier.value;
-                this.courierAssignUser.value = this.context.user.id;
-                this.courierAssingTime.value = new Date();
+            if (this.sharedColumns().find(x => x.value != x.originalValue)) {
+              for (const fd of await context.for(FamilyDeliveries).find({
+                where: fd =>
+                  fd.archive.isEqualTo(false).and(
+                    fd.deliverStatus.isGreaterOrEqualTo(DeliveryStatus.ReadyForDelivery).and(
+                      fd.deliverStatus.isLessOrEqualTo(DeliveryStatus.Frozen)
+                    ))
+              })) {
+                this.updateDelivery(fd);
+                await fd.save();
               }
-              if (this.courierComments.value == this.courierComments.originalValue)
-                this.courierComments.value = '';
-              this.needsWork.value = false;
             }
 
 
-            if (this.fixedCourier.value && !this.fixedCourier.originalValue && !this.courier.value && this.deliverStatus.value == DeliveryStatus.ReadyForDelivery) {
-              this.courier.value = this.fixedCourier.value;
-            }
+
+
+           
 
             if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
               await this.reloadGeoCoding();
@@ -148,20 +134,10 @@ export class Families extends IdEntity {
               this.createUser.value = context.user.id;
             }
             this.lastUpdateDate.value = new Date();
+            this.lastUpdateUser.value = context.user.id;
 
-            if (!this.disableChangeLogging) {
-              logChanged(context, this.courier, this.courierAssingTime, this.courierAssignUser, async () => {
-                if (!this._disableMessageToUsers)
-                  Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName()), this.context, this.distributionCenter.value)
-              }
-              );//should be after succesfull save
-              //logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
-              logChanged(context, this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => {
-                if (!this._disableMessageToUsers)
-                  Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName()), this.context, this.distributionCenter.value);
-              }); //should be after succesfull save
-              logChanged(context, this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => { }); //should be after succesfull save
-            }
+            
+            
           }
         }
 
@@ -173,7 +149,7 @@ export class Families extends IdEntity {
           const c = this[key];
           if (c instanceof Column) {
             //@ts-ignore
-            c.defs.allowApiUpdate = c == this.courierComments || c == this.deliverStatus || c == this.correntAnErrorInStatus || c == this.needsWork;
+            c.defs.allowApiUpdate = c == this.courierComments || c == this.status || c == this.correntAnErrorInStatus || c == this.needsWork;
           }
 
         }
@@ -218,7 +194,7 @@ export class Families extends IdEntity {
     })
 
   })
-  basketType = new BasketId(this.context, 'סוג סל');
+  basketType = new BasketId(this.context, 'סוג סל ברירת מחדל');
   distributionCenter = new DistributionCenterId(this.context);
   familySource = new FamilySourceId(this.context, { includeInApi: true, caption: 'גורם מפנה' });
   socialWorker = new StringColumn('איש קשר לבירור פרטים (עו"ס)');
@@ -226,7 +202,7 @@ export class Families extends IdEntity {
   socialWorkerPhone2 = new PhoneColumn('עו"ס טלפון 2');
   groups = new GroupsColumn(this.context);
   special = new YesNoColumn({ includeInApi: Roles.admin, caption: 'שיוך מיוחד' });
-  defaultSelfPickup = new BoolColumn('ברירת מחדל באים לקחת');
+  defaultSelfPickup = new BoolColumn('באים לקחת ברירת מחדל');
   iDinExcel = new StringColumn({ includeInApi: Roles.admin, caption: 'מזהה באקסל' });
   internalComment = new StringColumn({ includeInApi: Roles.admin, caption: 'הערה פנימית - לא תופיע למשנע' });
 
@@ -240,20 +216,7 @@ export class Families extends IdEntity {
         this.address.value = y;
     }
   });
-  isGpsAddress() {
-    return isGpsAddress(this.address.value);
-  }
-  getAddressDescription() {
-    if (this.isGpsAddress()) {
-      let r = 'נקודת GPS ';
-      let g = this.getGeocodeInformation();
-      if (g.getAddress()) {
-        r += 'ליד ' + g.getAddress();
-      }
-      return r;
-    }
-    return this.address.value;
-  }
+
   floor = new StringColumn('קומה');
   appartment = new StringColumn('דירה');
   entrance = new StringColumn('כניסה');
@@ -272,34 +235,10 @@ export class Families extends IdEntity {
   phone4 = new PhoneColumn({ caption: "טלפון 4", valueChange: () => this.delayCheckDuplicateFamilies() });
   phone4Description = new StringColumn('הערות לטלפון 4');
 
-
-
-  //callStatus = new CallStatusColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'סטטוס שיחה' });
-  //callTime = new changeDate({ excludeFromApi: !this.context.isAdmin(), caption: 'מועד שיחה' });
-  //callHelper = new HelperIdReadonly(this.context, { excludeFromApi: !this.context.isAdmin(), caption: 'מי ביצעה את השיחה' });
-  //callComments = new StringColumn({ excludeFromApi: !this.context.isAdmin(), caption: 'הערות שיחה' });
-
-  deliverStatus = new DeliveryStatusColumn();
-  correntAnErrorInStatus = new BoolColumn({ serverExpression: () => false });
-  courier = new HelperId(this.context, () => this.distributionCenter.value, "משנע באירוע");
-  courierComments = new StringColumn('הערות שכתב המשנע כשמסר');
-  deliveryStatusDate = new changeDate('מועד סטטוס משלוח');
-  fixedCourier = new HelperId(this.context, () => this.distributionCenter.value, "משנע קבוע");
-  courierAssignUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'מי שייכה למשנע');
-  needsWork = new BoolColumn({ caption: 'צריך טיפול/מעקב' });
-  needsWorkUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'צריך טיפול - מי עדכן');
-  needsWorkDate = new changeDate('צריך טיפול - מתי עודכן');
-
-
-  courierAssignUserName = new StringColumn({
-    caption: 'שם שיוך למשנע',
-    serverExpression: async () => (await this.context.for(Helpers).lookupAsync(this.courierAssignUser)).name.value
-  });
-  courierAssignUserPhone = new PhoneColumn({
-    caption: 'טלפון שיוך למשנע',
-    serverExpression: async () => (await this.context.for(Helpers).lookupAsync(this.courierAssignUser)).phone.value
-  });
-
+  status = new FamilyStatusColumn();
+  statusDate = new changeDate('סטטוס: תאריך שינוי');
+  statusUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'סטטוס: מי עדכן');
+  fixedCourier = new HelperId(this.context, () => this.distributionCenter.value, "משנע ברירת מחדל");
   async reloadGeoCoding() {
 
     let geo = new GeocodeInformation();
@@ -312,9 +251,10 @@ export class Families extends IdEntity {
       await this.setPostalCodeServerOnly();
     }
     this.addressOk.value = !geo.partialMatch();
+    this.addressByGoogle.value = geo.getAddress();
     this.addressLongitude.value = geo.location().lng;
     this.addressLatitude.value = geo.location().lat;
-    if (this.isGpsAddress()) {
+    if (isGpsAddress(this.address.value)) {
       var j = this.address.value.split(',');
       this.addressLatitude.value = +j[0];
       this.addressLongitude.value = +j[1];
@@ -359,24 +299,6 @@ export class Families extends IdEntity {
     }
   }
 
-  courierHelpName() {
-    if (ApplicationSettings.get(this.context).helpText.value)
-      return ApplicationSettings.get(this.context).helpText.value;
-    return this.courierAssignUser.displayValue;
-  }
-  courierHelpPhone() {
-    if (ApplicationSettings.get(this.context).helpText.value)
-      return ApplicationSettings.get(this.context).helpPhone.displayValue;
-    return this.courierAssignUserPhone.displayValue;
-  }
-
-  courierAssingTime = new changeDate('מועד שיוך למשנע');
-
-
-
-
-  deliveryStatusUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'מי עדכן את סטטוס המשלוח');
-
   routeOrder = new NumberColumn();
   previousDeliveryStatus = new DeliveryStatusColumn({
     caption: 'סטטוס משלוח קודם',
@@ -398,48 +320,18 @@ export class Families extends IdEntity {
     }
   });
 
-  courierBeenHereBefore = new BoolColumn({
-    sqlExpression: () => {
-      var sql = new SqlBuilder();
+ 
 
-      var fd = this.context.for(FamilyDeliveries).create();
-      let f = this;
-      sql.addEntity(f, "families");
-      return sql.columnWithAlias(sql.case([{ when: [sql.ne(f.courier, "''")], then: sql.build('exists (select 1 from ', fd, ' where ', sql.and(sql.eq(fd.family, f.id), sql.eq(fd.courier, f.courier)), ")") }], false), 'courierBeenHereBefore');
-    }
-  });
-  visibleToCourier = new BoolColumn({
-    sqlExpression: () => {
-      var sql = new SqlBuilder();
-      return sql.case([{ when: [sql.or(sql.gtAny(this.deliveryStatusDate, 'current_date -1'), this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))], then: true }], false);
 
-    }
-  });
-
-//שים לב - אם המשתמש הקליד כתובת GPS בכתובת - אז הנקודה הזו תהיה הנקודה שהמשתמש הקליד ולא מה שגוגל מצא
+  //שים לב - אם המשתמש הקליד כתובת GPS בכתובת - אז הנקודה הזו תהיה הנקודה שהמשתמש הקליד ולא מה שגוגל מצא
   addressLongitude = new NumberColumn({ decimalDigits: 8 });
   addressLatitude = new NumberColumn({ decimalDigits: 8 });
   //זו התוצאה שחזרה מהGEOCODING כך שהיא מכוונת לכביש הקרוב
   drivingLongitude = new NumberColumn({ decimalDigits: 8 });
   drivingLatitude = new NumberColumn({ decimalDigits: 8 });
+  addressByGoogle = new StringColumn({ caption: "כתובת כפי שגוגל הבין", allowApiUpdate: false });
   addressOk = new BoolColumn({ caption: 'כתובת תקינה' });
 
-  readyFilter(city?: string, group?: string) {
-    let where = this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
-      this.courier.isEqualTo('')).and(this.distributionCenter.isAllowedForUser());
-    if (group)
-      where = where.and(this.groups.isContains(group));
-    if (city) {
-      where = where.and(this.city.isEqualTo(city));
-    }
-
-    return where;
-  }
-  readyAndSelfPickup() {
-    let where = this.deliverStatus.isGreaterOrEqualTo(DeliveryStatus.ReadyForDelivery).and(this.deliverStatus.isLessOrEqualTo(DeliveryStatus.SelfPickup)).and(
-      this.courier.isEqualTo(''));
-    return where;
-  }
   private dbNameFromLastDelivery(col: (fd: FamilyDeliveries) => Column<any>, alias: string) {
 
     let fd = this.context.for(FamilyDeliveries).create();
@@ -479,61 +371,14 @@ export class Families extends IdEntity {
     } as DataControlSettings<Families>;
   }
 
-  addressByGoogle() {
-    let r: DataControlSettings<Families> = {
-      caption: 'כתובת כפי שגוגל הבין',
-      getValue: f => f.getGeocodeInformation().getAddress()
-
-
-    }
-    return r;
-  }
-
-  //delme
-  getDeliveryDescription() {
-    switch (this.deliverStatus.value) {
-      case DeliveryStatus.ReadyForDelivery:
-        if (this.courier.value) {
-          let c = this.context.for(Helpers).lookup(this.courier);
-          return 'בדרך: ' + c.name.value + (c.eventComment.value ? ' (' + c.eventComment.value + ')' : '') + ', שוייך ' + this.courierAssingTime.relativeDateName();
-        }
-        break;
-      case DeliveryStatus.Success:
-      case DeliveryStatus.SuccessLeftThere:
-      case DeliveryStatus.FailedBadAddress:
-      case DeliveryStatus.FailedNotHome:
-      case DeliveryStatus.FailedOther:
-        let duration = '';
-        if (this.courierAssingTime.value && this.deliveryStatusDate.value)
-          duration = ' תוך ' + Math.round((this.deliveryStatusDate.value.valueOf() - this.courierAssingTime.value.valueOf()) / 60000) + " דק'";
-        return this.deliverStatus.displayValue + (this.courierComments.value ? ", " + this.courierComments.value + " - " : '') + (this.courier.value ? ' על ידי ' + this.courier.getValue() : '') + ' ' + this.deliveryStatusDate.relativeDateName() + duration;
-
-    }
-    return this.deliverStatus.displayValue;
-  }
-  getShortDeliveryDescription() {
-    return Families.staticGetShortDescription(this.deliverStatus, this.deliveryStatusDate, this.courier, this.courierComments);
-  }
-  static staticGetShortDescription(deliverStatus: DeliveryStatusColumn, deliveryStatusDate: changeDate, courier: HelperId, courierComments: StringColumn) {
-    let r = deliverStatus.displayValue + " ";
-    if (DeliveryStatus.IsAResultStatus(deliverStatus.value)) {
-      if (deliveryStatusDate.value.valueOf() < new Date().valueOf() - 7 * 86400 * 1000)
-        r += "ב " + deliveryStatusDate.value.toLocaleDateString("he-il");
-      else
-        r += deliveryStatusDate.relativeDateName();
-      if (courierComments.value) {
-        r += ": " + courierComments.value;
-      }
-      if (courier.value && deliverStatus.value != DeliveryStatus.SelfPickup && deliverStatus.value != DeliveryStatus.SuccessPickedUp)
-        r += ' ע"י ' + courier.getValue();
-    }
-    return r;
-  }
+ 
+  
 
 
   createDate = new changeDate({ includeInApi: Roles.admin, caption: 'מועד הוספה' });
   createUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, { includeInApi: Roles.admin, caption: 'משתמש מוסיף' });
   lastUpdateDate = new changeDate({ includeInApi: Roles.admin, caption: 'מועד עדכון אחרון' });
+  lastUpdateUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, { includeInApi: Roles.admin, caption: 'משתמש מעדכן' });
 
 
 
@@ -880,40 +725,4 @@ export function parseUrlInAddress(address: string) {
   return address;
 }
 
-function leaveOnlyNumericChars(x: string) {
-  for (let index = 0; index < x.length; index++) {
-    switch (x[index]) {
-      case '1':
-      case '2':
-      case '3':
-      case '4':
-      case '5':
-      case '6':
-      case '7':
-      case '8':
-      case '9':
-      case '0':
-      case '.':
-      case ',':
-      case ' ':
-        break;
-      default:
-        return x.substring(0, index);
-    }
-  }
-  return x;
-}
-function isGpsAddress(address: string) {
-  if (!address)
-    return false;
-  let x = leaveOnlyNumericChars(address);
-  if (x == address && x.indexOf(',') > 5)
-    return true;
-}
-export function logChanged(context: Context, col: Column<any>, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) {
-  if (col.value != col.originalValue) {
-    dateCol.value = new Date();
-    user.value = context.user.id;
-    wasChanged();
-  }
-}
+

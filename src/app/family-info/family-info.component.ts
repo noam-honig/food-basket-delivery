@@ -9,7 +9,8 @@ import { translate } from '../translate';
 import { UpdateCommentComponent } from '../update-comment/update-comment.component';
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 import { extractError } from '../model-shared/types';
-import { ActiveFamilyDeliveries } from '../family-deliveries/family-deliveries-join';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+
 @Component({
   selector: 'app-family-info',
   templateUrl: './family-info.component.html',
@@ -56,12 +57,12 @@ export class FamilyInfoComponent implements OnInit {
     });
 
   }
-  async cancelAssign(f: Families) {
+  async cancelAssign(f: ActiveFamilyDeliveries) {
 
     this.assignmentCanceled.emit();
 
   }
-  openWaze(f: Families) {
+  openWaze(f: ActiveFamilyDeliveries) {
     if (!f.addressOk.value) {
       this.dialog.YesNoQuestion(translate("הכתובת אינה מדוייקת. בדקו בגוגל או התקשרו למשפחה. נשמח אם תעדכנו את הכתובת שמצאתם בהערות. האם לפתוח וייז?"), () => {
         f.openWaze();
@@ -72,10 +73,10 @@ export class FamilyInfoComponent implements OnInit {
 
 
   }
-  udpateInfo(f: Families) {
-    this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { f: f });
+  udpateInfo(f: ActiveFamilyDeliveries) {
+    this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { familyDelivery: f });
   }
-  copyAddress(f: Families) {
+  copyAddress(f: ActiveFamilyDeliveries) {
     copy(f.address.value);
     this.dialog.Info("הכתובת " + f.address.value + " הועתקה בהצלחה");
   }

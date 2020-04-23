@@ -6,7 +6,7 @@ import { Context } from '@remult/core';
 import { Column } from '@remult/core';
 
 import { DialogService } from '../select-popup/dialog';
-import { ActiveFamilyDeliveries } from '../family-deliveries/family-deliveries-join';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 
 @Component({
   selector: 'app-update-comment',

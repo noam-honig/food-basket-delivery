@@ -3,9 +3,10 @@ import { Route } from '@angular/router';
 
 import { BusyService } from '@remult/core';
 import { Context } from '@remult/core';
-import { Families } from '../families/families';
+
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Roles, AdminGuard } from '../auth/roles';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 
 @Component({
   selector: 'app-self-pickup',
@@ -26,7 +27,7 @@ export class SelfPickupComponent implements OnInit {
     , private context: Context) { }
   searchString: string = '';
   showAllFamilies = false;
-  families = this.context.for(Families).gridSettings({ knowTotalRows: true });
+  families = this.context.for(ActiveFamilyDeliveries).gridSettings({ knowTotalRows: true });
   pageSize = 7;
 
   async doFilter() {
@@ -53,7 +54,7 @@ export class SelfPickupComponent implements OnInit {
     this.doFilter();
   }
 
-  showStatus(f: Families) {
+  showStatus(f: ActiveFamilyDeliveries) {
     if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery) {
       if (f.courier.value) {
         return 'משוייך למשנע';

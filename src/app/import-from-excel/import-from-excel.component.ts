@@ -20,7 +20,7 @@ import { ApplicationSettings, RemovedFromListExcelImportStrategy } from '../mana
 import { translate } from '../translate';
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 import { Groups } from '../manage/manage.component';
-import { DistributionCenters, DistributionCenterId } from '../manage/distribution-centers';
+import { DistributionCenters, DistributionCenterId, allCentersToken } from '../manage/distribution-centers';
 import { jsonToXlsx } from '../shared/saveToExcel';
 import { Sites } from '../sites/sites';
 
@@ -145,7 +145,7 @@ export class ImportFromExcelComponent implements OnInit {
         let t = new PromiseThrottle(10);
         for (const r of rowsToInsert) {
             let f = context.for(Families).create();
-            f._disableMessageToUsers = true;
+            
             for (const val in r.values) {
                 f.columns.find(val).value = r.values[val].newValue;
             }
@@ -307,8 +307,7 @@ export class ImportFromExcelComponent implements OnInit {
 
                     let searchName = col.title;
                     switch (searchName) {
-                        case this.f.deliverStatus.defs.caption:
-                        case this.f.courier.defs.caption:
+                        case this.f.status.defs.caption:
                         case this.f.fixedCourier.defs.caption:
                             break;
                         default:
@@ -337,10 +336,10 @@ export class ImportFromExcelComponent implements OnInit {
 
         let f = this.context.for(Families).create();
         f._disableAutoDuplicateCheck = true;
-        if (this.dialog.distCenter.value != Families.allCentersToken) {
+        if (this.dialog.distCenter.value != allCentersToken) {
             f.distributionCenter.value = this.dialog.distCenter.value;
         }
-        f.deliverStatus.value = this.settings.defaultStatusType.value;
+        
 
         let helper = new columnUpdateHelper(this.context, this.dialog, this.settings.excelImportAutoAddValues.value);
         for (const c of this.excelColumns) {
@@ -568,17 +567,7 @@ export class ImportFromExcelComponent implements OnInit {
                 await h.lookupAndInsert(FamilySources, f => f.name, v, f => f.id, f.familySource);
             }, columns: [this.f.familySource]
         });
-        this.columns.push({
-            key: 'selfPickup',
-            name: 'באים לקחת',
-            updateFamily: async (v, f) => {
-                if (v == "כן") {
-                    f.defaultSelfPickup.value = true;
-                    if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery)
-                        f.deliverStatus.value = DeliveryStatus.SelfPickup;
-                }
-            }, columns: [this.f.defaultSelfPickup]
-        });
+       
         this.columns.push({
             key: 'fixedCourier',
             name: this.f.fixedCourier.defs.caption,
@@ -586,39 +575,8 @@ export class ImportFromExcelComponent implements OnInit {
                 await h.lookupAndInsert(Helpers, h => h.name, v, h => h.id, f.fixedCourier);
             }, columns: [this.f.fixedCourier]
         });
-        this.columns.push({
-            key: 'courier',
-            name: this.f.courier.defs.caption,
-            updateFamily: async (v, f, h) => {
-                await h.lookupAndInsert(Helpers, h => h.name, v, h => h.id, f.courier);
-            }, columns: [this.f.courier]
-        });
-        this.columns.push({
-            key: 'deliverStatus',
-            name: this.f.deliverStatus.defs.caption,
-            updateFamily: async (v, f, h) => {
-                switch (v) {
-                    case DeliveryStatus.NotInEvent.caption:
-                        f.deliverStatus.value = DeliveryStatus.NotInEvent;
-                        break;
-                    case DeliveryStatus.ReadyForDelivery.caption:
-                        f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
-                        if (f.defaultSelfPickup.value)
-                            f.deliverStatus.value = DeliveryStatus.SelfPickup;
-                        break;
-                    case DeliveryStatus.SelfPickup.caption:
-                        f.deliverStatus.value = DeliveryStatus.SelfPickup;
-                        break;
-                    case DeliveryStatus.Success.caption:
-                        f.deliverStatus.value = DeliveryStatus.Success;
-                        break;
-                    default:
-                        throw f.deliverStatus.defs.caption + " ערך לא ברור - " + v;
-                        break;
-
-                }
-            }, columns: [this.f.deliverStatus]
-        });
+      
+        
 
         for (const c of [this.f.phone1, this.f.phone2, this.f.phone3, this.f.phone4, this.f.socialWorkerPhone1, this.f.socialWorkerPhone2]) {
             this.columns.push({
@@ -692,7 +650,7 @@ export class ImportFromExcelComponent implements OnInit {
         this.stepper.next();
         await this.busy.doWhileShowingBusy(async () => {
             let updatedColumns = new Map<Column<any>, boolean>();
-            updatedColumns.set(this.f.deliverStatus, true);
+            updatedColumns.set(this.f.status, true);
             for (const cu of [...this.excelColumns.map(f => f.column), ...this.additionalColumns.map(f => f.column)]) {
                 if (cu)
                     for (const c of cu.columns) {
@@ -905,7 +863,7 @@ export class ImportFromExcelComponent implements OnInit {
                         }
                     }
                 }
-                if (ef.deliverStatus.value == DeliveryStatus.RemovedFromList) {
+                if (ef.status.value == DeliveryStatus.RemovedFromList) {
                     switch (settings.removedFromListStrategy.value) {
                         case RemovedFromListExcelImportStrategy.displayAsError:
                             info.error = 'משפחה מעודכנת בבסיס הנתונים כהוצא מהרשימות';
@@ -1045,7 +1003,7 @@ export class ImportFromExcelComponent implements OnInit {
 
     async updateFamily(i: duplicateFamilyInfo) {
         let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(i.id));
-        this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { f: f });
+        this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { family: f });
     }
 }
 interface importReportRow {

@@ -3,7 +3,7 @@ import { ApplicationSettings, qaItem, phoneOption } from '../manage/ApplicationS
 import { MatDialogRef } from '@angular/material';
 import { Context } from '@remult/core';
 
-import { ActiveFamilyDeliveries } from '../family-deliveries/family-deliveries-join';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 
 @Component({
   selector: 'app-common-questions',
@@ -23,7 +23,7 @@ export class CommonQuestionsComponent implements OnInit {
   }
   async init(family:ActiveFamilyDeliveries){
     this.args ={family: family};
-    this.phoneOptions = await this.settings.getPhoneOptions(family,this.context);
+    this.phoneOptions = await ApplicationSettings.getPhoneOptions(family.id.value,this.context);
   }
 
   async ngOnInit() {

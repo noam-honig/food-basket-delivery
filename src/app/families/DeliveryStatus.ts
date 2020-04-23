@@ -18,7 +18,7 @@ export class DeliveryStatus {
   }
   static ReadyForDelivery: DeliveryStatus = new DeliveryStatus(0, 'מוכן למשלוח');
   static SelfPickup: DeliveryStatus = new DeliveryStatus(2, 'באים לקחת');
-  static Frozen: DeliveryStatus = new DeliveryStatus(90, 'מוקפא');
+  static Frozen: DeliveryStatus = new DeliveryStatus(9, 'מוקפא');
   static NotInEvent: DeliveryStatus = new DeliveryStatus(95, 'לא באירוע');
   static Success: DeliveryStatus = new DeliveryStatus(11, 'נמסר בהצלחה');
   static SuccessPickedUp: DeliveryStatus = new DeliveryStatus(13, 'לקחו בעצמם');

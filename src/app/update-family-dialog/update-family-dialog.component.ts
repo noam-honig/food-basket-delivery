@@ -7,6 +7,7 @@ import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyDeliveryStats } from '../family-deliveries/family-deliveries-stats';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 
 @Component({
   selector: 'app-update-family-dialog',
@@ -19,8 +20,11 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 })
 export class UpdateFamilyDialogComponent implements OnInit {
   public args: {
-    f: Families,
+    family?: Families,
     delivery?: FamilyDeliveries,
+    familyDelivery?: FamilyDeliveries,
+    familyId?: string,
+    deliveryId?: string,
     message?: string,
     disableSave?: boolean,
     onSave?: () => void
@@ -61,8 +65,25 @@ export class UpdateFamilyDialogComponent implements OnInit {
   callInfo: DataAreaSettings<Families>;
   deliverInfo: DataAreaSettings<Families>;
   extraFamilyInfo: DataAreaSettings<Families>;
-  ngOnInit() {
-    this.families.currentRow = this.args.f;
+  async ngOnInit() {
+    if (!this.args.delivery) {
+      if (this.args.familyDelivery) {
+        this.args.deliveryId = this.args.familyDelivery.id.value;
+      }
+      if (this.args.deliveryId) {
+        this.args.delivery = await this.context.for(FamilyDeliveries).findFirst(x => x.id.isEqualTo(this.args.deliveryId));
+        this.args.familyId = this.args.delivery.family.value;
+      }
+
+    }
+    if (!this.args.family) {
+      if (this.args.familyId)
+        this.args.family = await this.context.for(Families).findFirst(x => x.id.isEqualTo(this.args.familyId));
+    }
+
+
+
+    this.families.currentRow = this.args.family;
 
 
     this.familiesInfo = this.families.addArea({
@@ -111,7 +132,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
           families.entrance
         ],
         families.addressComment,
-        families.addressByGoogle(),
+        families.addressByGoogle,
         families.city,
         families.addressOk,
         families.postalCode

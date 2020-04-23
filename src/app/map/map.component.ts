@@ -1,11 +1,12 @@
 /// <reference types="@types/googlemaps" />
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Families } from '../families/families';
+
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { DistributionMap, infoOnMap } from '../distribution-map/distribution-map.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Context } from '@remult/core';
 import { BusyService } from '@remult/core';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 
 //import 'googlemaps';
 
@@ -123,8 +124,8 @@ export class MapComponent implements OnInit {
     hasFamilies = false;
     bounds: google.maps.LatLngBounds = new google.maps.LatLngBounds();
     lastBounds: string;
-    prevFamilies: Families[] = [];
-    async test(families: Families[]) {
+    prevFamilies: ActiveFamilyDeliveries[] = [];
+    async test(families: ActiveFamilyDeliveries[]) {
         var prevFamilies = this.prevFamilies;
         this.prevFamilies = [...families];
         this.hasFamilies = families.length > 0;

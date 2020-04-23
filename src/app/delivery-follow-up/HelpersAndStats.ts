@@ -6,7 +6,7 @@ import { changeDate, DateTimeColumn, SqlBuilder } from '../model-shared/types';
 
 import { Context, EntityClass } from '@remult/core';
 import { Roles } from "../auth/roles";
-import { ActiveFamilyDeliveries } from "../family-deliveries/family-deliveries-join";
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 
 
 

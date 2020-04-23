@@ -1,13 +1,13 @@
-import { AllFamilyDeliveresIncludingHistory } from "./family-deliveries-join";
+
 import { FilterBase, AndFilter, Context, ServerFunction, EntityClass, Entity, StringColumn, NumberColumn } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { YesNo } from "../families/YesNo";
 import { BasketType } from "../families/BasketType";
-import { FamilyDeliveries } from "../families/FamilyDeliveries";
+import { FamilyDeliveries, ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
 import { Families } from "../families/families";
 import { SqlBuilder } from "../model-shared/types";
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { DistributionCenterId } from "../manage/distribution-centers";
+import { DistributionCenterId, allCentersToken } from "../manage/distribution-centers";
 import { Groups } from "../manage/manage.component";
 import { colors } from "../families/stats-action";
 
@@ -68,7 +68,7 @@ export class FamilyDeliveryStats {
                 successDeliveries: await context.for(FamilyDeliveries).count(f => f.deliverStatus.isSuccess().and(f.basketType.isEqualTo(b.id).and(f.filterDistCenter(distCenter))))
             });
         }));
-        if (distCenter == Families.allCentersToken)
+        if (distCenter == allCentersToken)
             pendingStats.push(
                 context.for(CitiesStats).find({
                     orderBy: f => [{ column: f.deliveries, descending: true }]
@@ -107,10 +107,10 @@ export class FamilyDeliveryStats {
                     totalReady: 0
                 };
                 result.groups.push(x);
-                pendingStats.push(context.for(Families).count(f => f.readyAndSelfPickup().and(
+                pendingStats.push(context.for(FamilyDeliveries).count(f => f.readyAndSelfPickup().and(
                     f.groups.isContains(x.name).and(
                         f.filterDistCenter(distCenter)))).then(r => x.totalReady = r));
-                pendingStats.push(context.for(Families).count(f => f.groups.isContains(x.name).and(
+                pendingStats.push(context.for(FamilyDeliveries).count(f => f.groups.isContains(x.name).and(
                     f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList)).and(f.filterDistCenter(distCenter))).then(r => x.total = r));
             }
         });
@@ -123,14 +123,14 @@ export class FamilyDeliveryStats {
 }
 
 export class FamilyDeliveresStatistics {
-    constructor(public name: string, public rule: (f: AllFamilyDeliveresIncludingHistory) => FilterBase, public color?: string, value?: number) {
+    constructor(public name: string, public rule: (f: ActiveFamilyDeliveries) => FilterBase, public color?: string, value?: number) {
         this.value = value;
     }
 
     value = 0;
     async saveTo(distCenter: string, data: any, context: Context) {
 
-        data[this.name] = await context.for(AllFamilyDeliveresIncludingHistory).count(f => new AndFilter(this.rule(f), f.filterDistCenter(distCenter))).then(c => this.value = c);
+        data[this.name] = await context.for(ActiveFamilyDeliveries).count(f => new AndFilter(this.rule(f), f.filterDistCenter(distCenter))).then(c => this.value = c);
     }
     async loadFrom(data: any) {
         this.value = data[this.name];
@@ -150,7 +150,7 @@ export class CitiesStats extends Entity<string> {
             allowApiRead: false,
             name: 'citiesStats',
             dbName: () => {
-                let f = context.for(AllFamilyDeliveresIncludingHistory).create();
+                let f = context.for(ActiveFamilyDeliveries).create();
                 let sql = new SqlBuilder();
                 
                 return sql.build('(', sql.query({
@@ -174,7 +174,7 @@ export class CitiesStatsPerDistCenter extends Entity<string> {
             allowApiRead: false,
             name: 'citiesStats',
             dbName: () => {
-                let f = context.for(AllFamilyDeliveresIncludingHistory).create();
+                let f = context.for(ActiveFamilyDeliveries).create();
                 let sql = new SqlBuilder();
                 
                 return sql.build('(', sql.query({

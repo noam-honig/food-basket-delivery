@@ -5,7 +5,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { FilterBase } from '@remult/core';
 import { Context } from '@remult/core';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { ActiveFamilyDeliveries } from '../family-deliveries/family-deliveries-join';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 
 
 @Component({

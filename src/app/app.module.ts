@@ -48,13 +48,13 @@ import { UpdateFamilyDialogComponent } from './update-family-dialog/update-famil
 
 
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
-import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
+
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 import { PreviewFamilyComponent } from './preview-family/preview-family.component';
 import { FamilyInListComponent } from './family-in-list/family-in-list.component';
 
 import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-dialog.component';
-import { CreateBackupExcelFileComponent } from './create-backup-excel-file/create-backup-excel-file.component';
+
 import { QuickAddFamilyComponent } from './quick-add-family/quick-add-family.component';
 import { ScrollDispatchModule } from '@angular/cdk/scrolling';
 import { TranslatePipe } from './translate';
@@ -113,12 +113,12 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     UpdateFamilyDialogComponent,
     
     SelfPickupComponent,
-    BatchOperationsComponent,
+    
     DeliveryHistoryComponent,
     PreviewFamilyComponent,
     FamilyInListComponent,
     UpdateGroupDialogComponent,
-    CreateBackupExcelFileComponent,
+    
     QuickAddFamilyComponent,
     TranslatePipe,
     SelectCompanyComponent,

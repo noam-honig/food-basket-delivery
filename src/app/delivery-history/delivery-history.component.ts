@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { EntityClass, Context, StringColumn, IdColumn, SpecificEntityHelper, SqlDatabase } from '@remult/core';
-import { FamilyId, Families } from '../families/families';
+import { FamilyId } from '../families/families';
 import { changeDate, SqlBuilder, PhoneColumn } from '../model-shared/types';
 import { BasketId } from '../families/BasketType';
 import { DeliveryStatusColumn } from '../families/DeliveryStatus';
@@ -18,6 +18,7 @@ import { ServerFunction } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DistributionCenterId } from '../manage/distribution-centers';
+
 
 var fullDayValue = 24 * 60 * 60 * 1000;
 
@@ -145,13 +146,13 @@ export class DeliveryHistoryComponent implements OnInit {
   }
 
   async saveToExcel() {
-    await saveToExcel(this.context.for(FamilyDeliveriesStats), this.deliveries, "משלוחים", this.busy, (d: FamilyDeliveriesStats, c) => c == d.id || c == d.family, undefined,
+    await saveToExcel(this.context.for(FamilyDeliveries), this.deliveries, "משלוחים", this.busy, (d: FamilyDeliveries, c) => c == d.id || c == d.family, undefined,
       async (f, addColumn) => await f.basketType.addBasketTypes(addColumn));
   }
   async saveToExcelHelpers() {
     await saveToExcel(this.context.for(helperHistoryInfo), this.helperInfo, "מתנדבים", this.busy, (d: helperHistoryInfo, c) => c == d.courier);
   }
-  deliveries = this.context.for(FamilyDeliveriesStats).gridSettings({
+  deliveries = this.context.for(FamilyDeliveries).gridSettings({
 
     columnSettings: d => [
       d.name,
@@ -190,7 +191,7 @@ export class DeliveryHistoryComponent implements OnInit {
     var toDateDate = DateColumn.stringToDate(toDate);
     toDateDate = new Date(toDateDate.getFullYear(), toDateDate.getMonth(), toDateDate.getDate() + 1);
     var sql = new SqlBuilder();
-    var fd = context.for(FamilyDeliveriesStats).create();
+    var fd = context.for(FamilyDeliveries).create();
     var h = context.for(Helpers).create();
 
     return (await db.execute(
@@ -240,75 +241,3 @@ export class helperHistoryInfo extends Entity<string>{
   }
 }
 
-@EntityClass
-export class FamilyDeliveriesStats extends Entity<string> {
-  family = new FamilyId();
-  id = new IdColumn();
-  name = new StringColumn('שם');
-  distributionCenter = new DistributionCenterId(this.context);
-  courier = new HelperId(this.context,()=>this.distributionCenter.value, "משנע");
-  deliveryStatusDate = new changeDate('מתי');
-  deliverStatus = new DeliveryStatusColumn();
-  basketType = new BasketId(this.context, 'סוג סל');
-  city = new StringColumn({ caption: "עיר" });
-  address = new StringColumn({ caption: "כתובת" });
-  courierComments = new StringColumn('הערות מסירה');
-  familySource = new FamilySourceId(this.context, { caption: 'גורם מפנה' });
-  courierAssignUser = new HelperIdReadonly(this.context,()=>this.distributionCenter.value, 'מי שייכה למשנע');
-  courierAssingTime = new changeDate('מועד שיוך למשנע');
-  deliveryStatusUser = new HelperIdReadonly(this.context,()=>this.distributionCenter.value, 'מי עדכן את סטטוס המשלוח');
-
-
-  constructor(private context: Context) {
-    super({
-      name: 'FamilyDeliveriesStats',
-      allowApiRead: Roles.admin,
-      dbName: () => {
-        var f = context.for(Families).create();
-        var d = context.for(FamilyDeliveries).create();
-        var sql = new SqlBuilder();
-        let r = sql.union({
-          select: () => [sql.columnWithAlias(f.id, 'as family'), f.name, sql.columnWithAlias(f.id, 'id'),
-          f.basketType,
-          f.distributionCenter,
-          f.deliverStatus,
-          f.courier,
-          f.city,
-          f.address,
-          f.courierComments,
-          f.deliveryStatusDate,
-          f.familySource,
-          f.courierAssignUser,
-          f.courierAssingTime,
-          f.deliveryStatusUser
-          ],
-
-          from: f,
-          where: () => [f.deliverStatus.isAResultStatus()]
-        },
-          {
-            select: () => [d.family, d.name, d.id,
-            d.basketType,
-            d.distributionCenter,
-            d.deliverStatus,
-            d.courier,
-            d.archive_city,
-            d.archive_address,
-            d.courierComments,
-            d.deliveryStatusDate,
-            d.archiveFamilySource,
-            d.courierAssignUser,
-            d.courierAssingTime,
-            d.deliveryStatusUser],
-            from: d
-
-          });
-
-        return r + ' result';
-      }
-
-    });
-
-  }
-
-}

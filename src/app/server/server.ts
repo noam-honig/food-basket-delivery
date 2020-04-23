@@ -6,19 +6,16 @@ import { ExpressBridge, JWTCookieAuthorizationHelper, ExpressRequestBridgeToData
 import * as fs from 'fs';
 import { serverInit } from './serverInit';
 import { ServerEvents } from './server-events';
-import { Families } from '../families/families';
+
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import "../helpers/helpers.component";
 import '../app.module';
 import { ServerContext, DateColumn, SqlDatabase } from '@remult/core';
 import { Helpers } from '../helpers/helpers';
-import { FamilyDeliveriesStats } from "../delivery-history/delivery-history.component";
-import { SqlBuilder } from "../model-shared/types";
-
-import { PostgresDataProvider } from '@remult/server-postgres';
 import { Sites } from '../sites/sites';
 import { dataMigration } from "./dataMigration";
 import { GeoCodeOptions } from "../shared/googleApiHelpers";
+import { Families } from "../families/families";
 
 
 serverInit().then(async (dataSource) => {
@@ -132,57 +129,7 @@ serverInit().then(async (dataSource) => {
             registerImageUrls(app, getContext, '');
         }
 
-        app.get('/monitor-report', async (req, res) => {
-            let auth = req.header('Authorization');
-            if (auth != process.env.MONITOR_KEY) {
-                res.sendStatus(404);
-                return;
-            }
-            let ds: SqlDatabase;
-            let context = getContext(req, x => ds = x);
-
-            var fromDate = DateColumn.stringToDate(req.query["fromdate"]);
-            var toDate = DateColumn.stringToDate(req.query["todate"]);
-            if (!fromDate)
-                fromDate = new Date();
-            if (!toDate)
-                toDate = new Date();
-            toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
-
-
-            var connections = (await ds.execute("SELECT count(*) as x FROM pg_stat_activity where datname=current_database()")).rows[0]['x'];
-
-            var familiesInEvent = await context.for(Families).count(f => f.deliverStatus.isInEvent());
-            var totalFamilies = await context.for(Families).count();
-            var sql = new SqlBuilder();
-            var deliveries = await context.for(FamilyDeliveriesStats).count(f => f.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(f.deliveryStatusDate.isLessThan(toDate)));
-            var fds = new FamilyDeliveriesStats(context);
-            var query = sql.build(
-                'select count (distinct ',
-                fds.courier,
-                ' ) as x from ',
-                fds.defs.dbName,
-                ' where ',
-                fds.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(fds.deliveryStatusDate.isLessThan(toDate)));
-
-
-            var helpers = (await ds.execute(query)).rows[0]['x'];
-            await context.for(FamilyDeliveriesStats).count(f => f.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(f.deliveryStatusDate.isLessThan(toDate)));
-            var onTheWay = await context.for(Families).count(f => f.onTheWayFilter());
-            var settings = await ApplicationSettings.getAsync(context);
-
-            let r: monitorResult = {
-                totalFamilies,
-                familiesInEvent,
-                dbConnections: connections,
-                deliveries,
-                name: settings.organisationName.value,
-                onTheWay,
-                helpers
-
-            };
-            res.json(r);
-        });
+     
 
         app.get('', (req, res) => {
 

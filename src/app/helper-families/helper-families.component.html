@@ -156,14 +156,6 @@
 
       </tr>
     </table>
-
-
-    <div class="help" *ngIf=" familyLists.toDeliver.length>0">
-      <h5>
-        צריך עזרה? התקשר ל{{familyLists.toDeliver[0].courierHelpName()}}
-        {{familyLists.toDeliver[0].courierHelpPhone()}}
-      </h5>
-    </div>
   </div>
 
   <mat-card *ngIf="familyLists.problem.length>0" class="no-print">

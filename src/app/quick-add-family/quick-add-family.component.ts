@@ -23,7 +23,7 @@ export class QuickAddFamilyComponent implements OnInit {
     private dialog: DialogService
   ) {
 
-    this.f.deliverStatus.value = ApplicationSettings.get(this.context).defaultStatusType.value;;
+    
     this.f.distributionCenter.value = dialog.distCenter.value;
   }
   f: Families = this.context.for(Families).create();
@@ -48,7 +48,7 @@ export class QuickAddFamilyComponent implements OnInit {
       [this.f.phone1,
       this.f.phone2],
       [
-        this.f.deliverStatus,
+        this.f.status,
         this.f.basketType],
       this.f.groups,
       this.f.deliveryComments
@@ -88,7 +88,7 @@ export class QuickAddFamilyComponent implements OnInit {
   }
   async showExistingFamily() {
     let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(this.getExistingFamily().id));
-    this.context.openDialog(UpdateFamilyDialogComponent, async x => x.args = { f: f, message: 'נוסף ב' + f.createDate.displayValue + ' ע"י ' + (await f.createUser.getValue()) });
+    this.context.openDialog(UpdateFamilyDialogComponent, async x => x.args = { family: f, message: 'נוסף ב' + f.createDate.displayValue + ' ע"י ' + (await f.createUser.getValue()) });
   }
 
 

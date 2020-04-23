@@ -46,6 +46,7 @@ import { FamilySourceId } from './FamilySources';
 import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser } from '../manage/distribution-centers';
 import { PromiseThrottle } from '../import-from-excel/import-from-excel.component';
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
+import { FamilyStatus } from './FamilyStatus';
 const addGroupAction = ' להוסיף ';
 const replaceGroupAction = ' להחליף ';
 @Component({
@@ -185,7 +186,7 @@ export class FamiliesComponent implements OnInit {
             translate('משפחות'),
             this.busy,
             (f, c) => c == f.id || c == f.addressApiResult,
-            (f, c) => c == f.correntAnErrorInStatus || c == f.visibleToCourier,
+            (f, c) => false,
             async (f, addColumn) => {
                 let x = f.getGeocodeInformation();
                 let street = f.address.value;
@@ -248,12 +249,12 @@ export class FamiliesComponent implements OnInit {
         allowUpdate: true,
         allowInsert: this.isAdmin,
 
-        rowCssClass: f => f.deliverStatus.getCss(),
+        rowCssClass: f => f.status.getCss(),
         numOfColumnsInGrid: 5,
         onEnterRow: async f => {
             if (f.isNew()) {
                 f.basketType.value = '';
-                f.deliverStatus.value = ApplicationSettings.get(this.context).defaultStatusType.value;
+                
                 f.special.value = YesNo.No;
                 f.distributionCenter.value = this.dialog.distCenter.value;
                 this.currentFamilyDeliveries = [];
@@ -347,7 +348,7 @@ export class FamiliesComponent implements OnInit {
                 { column: families.addressComment },
                 families.city,
                 families.postalCode,
-                this.addressByGoogle = families.addressByGoogle(),
+                families.addressByGoogle,
                 {
                     caption: 'מה הבעיה של גוגל',
                     getValue: f => f.getGeocodeInformation().whyProblem()
@@ -359,20 +360,20 @@ export class FamiliesComponent implements OnInit {
                 families.phone3Description,
                 families.phone4,
                 families.phone4Description,
-                families.courier,
+                
                 families.distributionCenter,
                 families.fixedCourier,
                 {
                     caption: 'טלפון משנע',
                     getValue: f => this.context.for(Helpers).lookup(f.courier).phone.value
                 },
-                families.courierAssignUser,
-                families.courierAssingTime,
+                
+                
 
                 families.defaultSelfPickup,
-                families.deliveryStatusUser,
-                families.deliveryStatusDate,
-                families.courierComments,
+                families.statusUser,
+                families.statusDate,
+                
                 families.getPreviousDeliveryColumn(),
                 families.previousDeliveryComment,
                 families.previousDeliveryDate,
@@ -380,10 +381,8 @@ export class FamiliesComponent implements OnInit {
                 families.socialWorkerPhone1,
                 families.socialWorkerPhone2,
                 families.birthDate,
-                families.nextBirthday,
-                families.needsWork,
-                families.needsWorkDate,
-                families.needsWorkUser
+                families.nextBirthday
+              
 
             ];
             this.normalColumns = [
@@ -426,7 +425,7 @@ export class FamiliesComponent implements OnInit {
                 icon: 'edit',
                 showInLine: true,
                 click: async f => {
-                    await this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { f });
+                    await this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { family: f });
                 }
                 , textInMenu: () => 'פרטי משפחה'
             },
@@ -443,7 +442,7 @@ export class FamiliesComponent implements OnInit {
                             },
                             title: 'משלוח חדש',
                             ok: async () => {
-                                let fd =f.createDelivery();
+                                let fd = f.createDelivery();
                                 fd.basketType.value = s.value;
                                 await fd.save();
                                 this.dialog.Info("משלוח נוצר בהצלחה");
@@ -461,22 +460,8 @@ export class FamiliesComponent implements OnInit {
                 cssClass: 'btn btn-success',
                 click: f => f.openGoogleMaps(),
                 visible: f => this.problemOnly
-            },
-            {
-                cssClass: 'btn btn-success',
-                name: 'משלוח חדש',
-                visible: f => f.deliverStatus.value != DeliveryStatus.ReadyForDelivery &&
-                    f.deliverStatus.value != DeliveryStatus.SelfPickup &&
-                    f.deliverStatus.value != DeliveryStatus.Frozen &&
-                    f.deliverStatus.value != DeliveryStatus.RemovedFromList
-                ,
-                click: async f => {
-                    await this.busy.donotWait(async () => {
-                        f.setNewBasket();
-                        await f.save();
-                    });
-                }
             }
+           
         ]
     });
     async updateGroup() {
@@ -560,8 +545,8 @@ export class FamiliesComponent implements OnInit {
     @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async updateStatusOnServer(info: serverUpdateInfo, status: any, context?: Context) {
         return await FamiliesComponent.processFamilies(info, context, f => {
-            if (f.deliverStatus.value != DeliveryStatus.RemovedFromList)
-                f.deliverStatus.rawValue = status;
+            if (f.status.value != DeliveryStatus.RemovedFromList)
+                f.status.rawValue = status;
         });
     }
     async updateDistributionCenter() {
@@ -606,8 +591,9 @@ export class FamiliesComponent implements OnInit {
     @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async cancelAssignmentOnServer(info: serverUpdateInfo, context?: Context) {
         return await FamiliesComponent.processFamilies(info, context, f => {
-            if (f.deliverStatus.value != DeliveryStatus.RemovedFromList)
-                f.courier.value = '';
+            if (f.status.value != DeliveryStatus.RemovedFromList){
+            //    f.courier.value = '';
+            }
         });
     }
     async updateBasket() {
@@ -661,7 +647,6 @@ export class FamiliesComponent implements OnInit {
             let rows = await context.for(Families).find({ where, limit: pageSize, page: index, orderBy: f => [f.id] });
             //console.log(rows.length);
             for (const f of await rows) {
-                f._disableMessageToUsers = true;
                 what(f);
                 await pt.push(f.save());
                 updated++;
@@ -721,13 +706,13 @@ export class FamiliesComponent implements OnInit {
 
     groupsTotals: statsOnTab = {
         name: translate('לפי קבוצות'),
-        rule: f => f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList),
+        rule: f => f.status.isDifferentFrom(FamilyStatus.RemovedFromList),
         stats: [
         ],
         moreStats: []
     };
     addressProblem: statsOnTab = {
-        rule: f => f.addressOk.isEqualTo(false).and(f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList)),
+        rule: f => f.addressOk.isEqualTo(false).and(f.status.isDifferentFrom(FamilyStatus.RemovedFromList)),
         moreStats: [],
         name: 'כתובות בעיתיות',
         stats: [
@@ -819,8 +804,8 @@ export class FamiliesComponent implements OnInit {
                 this.groupsTotals.stats.splice(0);
                 this.prepComplexStats(st.groups.map(g => ({ name: g.name, count: g.total })),
                     this.groupsTotals,
-                    (f, g) => f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList).and(f.groups.isContains(g)),
-                    (f, g) => f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList).and(f.groups.isDifferentFrom(g)));
+                    (f, g) => f.status.isDifferentFrom(FamilyStatus.RemovedFromList).and(f.groups.isContains(g)),
+                    (f, g) => f.status.isDifferentFrom(FamilyStatus.RemovedFromList).and(f.groups.isDifferentFrom(g)));
 
 
 
@@ -929,9 +914,7 @@ export class FamiliesComponent implements OnInit {
         component: FamiliesComponent,
         data: { name: 'משפחות' }, canActivate: [distCenterAdminGuard]
     }
-    previewFamily() {
-        this.context.openDialog(PreviewFamilyComponent, s => s.argsFamily = this.families.currentRow)
-    }
+
 }
 
 interface statsOnTab {

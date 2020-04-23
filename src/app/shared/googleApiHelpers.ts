@@ -267,3 +267,33 @@ export interface GeocodeResult {
 export function toLongLat(l: Location) {
     return l.lat + ',' + l.lng;
 }
+export function isGpsAddress(address: string) {
+    if (!address)
+        return false;
+    let x = leaveOnlyNumericChars(address);
+    if (x == address && x.indexOf(',') > 5)
+        return true;
+}
+export function leaveOnlyNumericChars(x: string) {
+    for (let index = 0; index < x.length; index++) {
+        switch (x[index]) {
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+            case '0':
+            case '.':
+            case ',':
+            case ' ':
+                break;
+            default:
+                return x.substring(0, index);
+        }
+    }
+    return x;
+}

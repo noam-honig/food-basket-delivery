@@ -10,7 +10,7 @@ import { FamilySources } from "../families/FamilySources";
 import { Injectable } from '@angular/core';
 import { Helpers } from '../helpers/helpers';
 import { BasketType } from '../families/BasketType';
-import { ActiveFamilyDeliveries } from '../family-deliveries/family-deliveries-join';
+
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 @EntityClass
 export class ApplicationSettings extends Entity<number>  {
@@ -24,7 +24,9 @@ export class ApplicationSettings extends Entity<number>  {
       if (x.option) {
         await x.option.build({
           family: family,
+          d: d,
           context: context,
+
           phoneItem: x,
           settings,
           addPhone: (name, phone) => r.push({ name: name, phone: phone })
@@ -168,8 +170,10 @@ export class PhoneOption {
     if (args.settings.helpText.value) {
       args.addPhone(args.settings.helpText.value, args.settings.helpPhone.displayValue);
     }
-    else
-      args.addPhone(args.family.courierAssignUserName.value, args.family.courierAssignUserPhone.displayValue);
+    else {
+      let h = await args.context.for(Helpers).lookupAsync(args.d.courierAssignUser)
+      args.addPhone(h.name.value, h.phone.displayValue);
+    }
   });
   static familyHelpPhone = new PhoneOption("familyHelpPhone", "איש קשר לבירור כפי שמוגדר למשפחה", async args => {
     if (args.family.socialWorker.value && args.family.socialWorkerPhone1.value) {
@@ -216,6 +220,7 @@ export interface qaItem {
 }
 export interface phoneBuildArgs {
   family: Families,
+  d: FamilyDeliveries,
   context: Context,
   phoneItem: PhoneItem,
   settings: ApplicationSettings,

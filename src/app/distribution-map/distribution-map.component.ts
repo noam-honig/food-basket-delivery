@@ -2,7 +2,7 @@
 import * as chart from 'chart.js';
 import { Component, OnInit, ViewChild, Sanitizer, OnDestroy } from '@angular/core';
 
-import { Families, FamilyId } from '../families/families';
+
 import { DialogService } from '../select-popup/dialog';
 import { GeocodeInformation, GetGeoInformation, polygonContains } from '../shared/googleApiHelpers';
 
@@ -148,7 +148,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     if (await context.for(DistributionCenters).count(d => d.id.isEqualTo(distributionCenter).and(filterCenterAllowedForUser(d.id, context))) == 0)
       throw "נקודת חלוקה לא קיימת או מורשת";
     for (const id of families) {
-      let f = await context.for(Families).findFirst(f => f.id.isEqualTo(id).and(f.distributionCenter.isAllowedForUser()));
+      let f = await context.for(FamilyDeliveries).findFirst(f => f.id.isEqualTo(id).and(f.distributionCenter.isAllowedForUser()));
       if (f) {
         f.distributionCenter.value = distributionCenter;
         await f.save();
@@ -226,12 +226,12 @@ export class DistributionMap implements OnInit, OnDestroy {
         this.dict.set(f.id, familyOnMap);
         markers.push(familyOnMap.marker);
 
-        let family: Families;
+        let family: FamilyDeliveries;
         if (!allInAlll)
           google.maps.event.addListener(familyOnMap.marker, 'click', async () => {
-            family = await this.context.for(Families).findFirst(fam => fam.id.isEqualTo(f.id));
+            family = await this.context.for(FamilyDeliveries).findFirst(fam => fam.id.isEqualTo(f.id));
             this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = {
-              f: family, onSave: () => {
+              familyDelivery: family, onSave: () => {
                 familyOnMap.marker.setMap(null);
                 this.dict.delete(f.id);
                 this.refreshFamilies()
@@ -301,7 +301,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   static async GetFamiliesLocations(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: string, context?: Context, db?: SqlDatabase) {
     if (!distCenter)
       distCenter = '';
-    let f = context.for(Families).create();
+    let f = context.for(FamilyDeliveries).create();
     let h = context.for(Helpers).create();
     let sql = new SqlBuilder();
     sql.addEntity(f, "Families");
@@ -344,11 +344,11 @@ export class DistributionMap implements OnInit, OnDestroy {
   static async GetLocationsForOverview(context?: Context, db?: SqlDatabase) {
 
     let result: familyQueryResult[] = []
-    let f = context.for(Families).create();
-    let fd = context.for(FamilyDeliveries).create();
+    let f = context.for(FamilyDeliveries).create();
+    
     let sql = new SqlBuilder();
-    sql.addEntity(f, "Families");
-    sql.addEntity(fd, "FamiliesDeliveries");
+    sql.addEntity(f, "fd");
+    
 
     for (const org of Sites.schemas) {
       let dp = Sites.getDataProviderForOrg(org) as SqlDatabase;
@@ -361,15 +361,7 @@ export class DistributionMap implements OnInit, OnDestroy {
         }
 
       })))));
-      result.push(...mapSqlResult((await dp.execute(sql.query({
-        select: () => [fd.id, fd.archive_addressLatitude, fd.archive_addressLongitude, fd.deliverStatus],
-        from: fd,
-        where: () => {
-          let where = [fd.deliverStatus.isSuccess().and(fd.deliveryStatusDate.isGreaterOrEqualTo(new Date(2020, 2, 18)))];
-          return where;
-        }
-
-      })))));
+    
     }
     return result;
 

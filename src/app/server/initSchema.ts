@@ -11,9 +11,6 @@ import '../app.module';
 
 import { SqlBuilder } from '../model-shared/types';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
-import { Helpers } from '../helpers/helpers';
-import { FamilyDeliveriesStats } from '../delivery-history/delivery-history.component';
-import { Sites } from '../sites/sites';
 import { DistributionCenters } from '../manage/distribution-centers';
 
 export async function initSchema(pool1: PostgresPool, org: string) {
@@ -39,19 +36,28 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
 
     //create index if required
-    let createIndex = async (name: string, ...columns: Column<any>[]) => {
+    let createFamilyIndex = async (name: string, ...columns: Column<any>[]) => {
         await dataSource.execute(sql.build("create index if not exists ", name, " on ", f, "  (", columns, ")"));
+    }
+    let createDeliveryIndex = async (name: string, ...columns: Column<any>[]) => {
+        await dataSource.execute(sql.build("create index if not exists ", name, " on ", fd, "  (", columns, ")"));
     }
     await dataSource.execute(sql.build('drop index if exists f_1  '));
     await dataSource.execute(sql.build('drop index if exists for_courier  '));
     await dataSource.execute(sql.build('drop index if exists for_distribution_status_queries  '));
     await dataSource.execute(sql.build('drop index if exists for_name  '));
-    await createIndex('for_courier1', f.courier, f.deliverStatus, f.courierAssingTime,f.city,f.basketType);
-    await createIndex("for_distribution_status_queries1", f.distributionCenter, f.courier, f.deliverStatus,f.city,f.basketType);
-    await createIndex("for_name1",f.name,f.deliverStatus,f.basketType);
-    await createIndex("for_distCenter_name",f.distributionCenter, f.name,f.deliverStatus,f.basketType);
-    await createIndex("for_basket",f.basketType,f.deliverStatus,f.courier);
-    await createIndex("for_basket_dist",f.distributionCenter, f.basketType,f.deliverStatus,f.courier);
+    await dataSource.execute(sql.build('drop index if exists for_courier1  '));
+    await dataSource.execute(sql.build('drop index if exists for_distribution_status_queries1  '));
+    await dataSource.execute(sql.build('drop index if exists for_basket  '));
+    await dataSource.execute(sql.build('drop index if exists for_basket_dist  '));
+    await createDeliveryIndex('for_courier2', fd.courier, fd.deliveryStatusDate, fd.courierAssingTime,fd.city,fd.basketType);
+    await createDeliveryIndex("for_distribution_status_queries2", f.distributionCenter, fd.courier, f.status,f.city,f.basketType);
+    await createFamilyIndex("for_name1",f.name,f.status,f.basketType);
+    await createDeliveryIndex("for_name2",fd.name,fd.deliverStatus,fd.basketType);
+    await createFamilyIndex("for_distCenter_name",f.distributionCenter, f.name,f.status,f.basketType);
+    await createDeliveryIndex("for_distCenter_name1",fd.distributionCenter, fd.name,fd.deliverStatus,fd.basketType);
+    await createDeliveryIndex("for_basket1",fd.basketType,fd.deliverStatus,fd.courier);
+    await createDeliveryIndex("for_basket_dist1",fd.distributionCenter, fd.basketType,fd.deliverStatus,fd.courier);
     
     await dataSource.execute("create extension if not exists pg_trgm with schema pg_catalog;");
     await dataSource.execute(sql.build('create index if not exists for_like_on_groups on families using gin  (groups gin_trgm_ops)'));
@@ -116,14 +122,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
     }
     if (settings.dataStructureVersion.value == 1) {
-        console.log("updating family source for historical information");
-        let f = context.for(Families).create();
-        let fd = context.for(FamilyDeliveries).create();
-        dataSource.execute(sql.update(fd, {
-            set: () => [[fd.archiveFamilySource, f.familySource]],
-            from: f,
-            where: () => [sql.eq(f.id, fd.family)]
-        }));
+        
         settings.dataStructureVersion.value = 2;
         await settings.save();
     }
@@ -137,14 +136,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await settings.save();
     }
     if (settings.dataStructureVersion.value == 3) {
-        console.log("updating family source for historical information");
-        let f = context.for(Families).create();
-        let fd = context.for(FamilyDeliveries).create();
-        dataSource.execute(sql.update(fd, {
-            set: () => [[fd.archiveFamilySource, f.familySource]],
-            from: f,
-            where: () => [sql.eq(f.id, fd.family)]
-        }));
+        
         settings.dataStructureVersion.value = 4;
         await settings.save();
     }
@@ -158,21 +150,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await settings.save();
     }
     if (settings.dataStructureVersion.value == 5) {
-        console.log("updating last sms date");
-
-        let helpers = await context.for(Helpers).find({});
-        for (const h of helpers) {
-            if (!h.smsDate.value) {
-                let f = await context.for(FamilyDeliveriesStats).find({
-                    where: f => f.courier.isEqualTo(h.id),
-                    orderBy: f => [{ column: f.deliveryStatusDate, descending: true }]
-                });
-                if (f && f.length > 0) {
-                    h.smsDate.value = f[0].deliveryStatusDate.value;
-                    await h.save();
-                }
-            }
-        }
+       
         settings.dataStructureVersion.value = 6;
         await settings.save();
 
