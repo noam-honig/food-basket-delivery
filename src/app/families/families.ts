@@ -5,7 +5,7 @@ import { YesNoColumn } from "./YesNo";
 import { FamilySourceId } from "./FamilySources";
 import { BasketId, BasketType } from "./BasketType";
 import { changeDate, DateTimeColumn, SqlBuilder, PhoneColumn, delayWhileTyping } from "../model-shared/types";
-import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, FilterBase } from '@remult/core';
+import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, FilterBase, ColumnOptions } from '@remult/core';
 import { HelperIdReadonly, HelperId, Helpers, HelperUserInfo } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress } from "../shared/googleApiHelpers";
@@ -145,19 +145,6 @@ export class Families extends IdEntity {
 
       });
 
-    if (!context.isAllowed([Roles.admin, Roles.distCenterAdmin])) {
-      for (const key in this) {
-        if (this.hasOwnProperty(key)) {
-          const c = this[key];
-          if (c instanceof Column) {
-            //@ts-ignore
-            c.defs.allowApiUpdate = c == this.courierComments || c == this.status || c == this.correntAnErrorInStatus || c == this.needsWork;
-          }
-
-        }
-      }
-
-    }
   }
   disableChangeLogging = false;
   disableOnSavingRow = false;
@@ -174,15 +161,15 @@ export class Families extends IdEntity {
   });
 
   tz = new StringColumn({
-    caption: 'מספר זהות', includeInApi: Roles.admin, valueChange: () => this.delayCheckDuplicateFamilies()
+    caption: 'מספר זהות', valueChange: () => this.delayCheckDuplicateFamilies()
   });
   tz2 = new StringColumn({
-    caption: 'מספר זהות בן/בת הזוג', includeInApi: Roles.admin, valueChange: () => this.delayCheckDuplicateFamilies()
+    caption: 'מספר זהות בן/בת הזוג', valueChange: () => this.delayCheckDuplicateFamilies()
   });
-  familyMembers = new NumberColumn({ includeInApi: Roles.admin, caption: 'מספר נפשות' });
-  birthDate = new DateColumn({ includeInApi: Roles.admin, caption: 'תאריך לידה' });
+  familyMembers = new NumberColumn({ caption: 'מספר נפשות' });
+  birthDate = new DateColumn({ caption: 'תאריך לידה' });
   nextBirthday = new DateColumn({
-    includeInApi: Roles.admin,
+
     caption: 'יומולדת הבא',
     sqlExpression: () => "cast(birthDate + ((extract(year from age(birthDate)) + 1) * interval '1' year) as date) as nextBirthday",
     allowApiUpdate: false,
@@ -204,10 +191,10 @@ export class Families extends IdEntity {
   socialWorkerPhone1 = new PhoneColumn('עו"ס טלפון 1');
   socialWorkerPhone2 = new PhoneColumn('עו"ס טלפון 2');
   groups = new GroupsColumn(this.context);
-  special = new YesNoColumn({ includeInApi: Roles.admin, caption: 'שיוך מיוחד' });
+  special = new YesNoColumn({ caption: 'שיוך מיוחד' });
   defaultSelfPickup = new BoolColumn('באים לקחת ברירת מחדל');
-  iDinExcel = new StringColumn({ includeInApi: Roles.admin, caption: 'מזהה באקסל' });
-  internalComment = new StringColumn({ includeInApi: Roles.admin, caption: 'הערה פנימית - לא תופיע למשנע' });
+  iDinExcel = new StringColumn({ caption: 'מזהה באקסל' });
+  internalComment = new StringColumn({ caption: 'הערה פנימית - לא תופיע למשנע' });
 
 
   address = new StringColumn("כתובת", {
@@ -302,7 +289,7 @@ export class Families extends IdEntity {
     }
   }
 
-  routeOrder = new NumberColumn();
+
   previousDeliveryStatus = new DeliveryStatusColumn({
     caption: 'סטטוס משלוח קודם',
     sqlExpression: () => {
@@ -378,10 +365,10 @@ export class Families extends IdEntity {
 
 
 
-  createDate = new changeDate({ includeInApi: Roles.admin, caption: 'מועד הוספה' });
-  createUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, { includeInApi: Roles.admin, caption: 'משתמש מוסיף' });
-  lastUpdateDate = new changeDate({ includeInApi: Roles.admin, caption: 'מועד עדכון אחרון' });
-  lastUpdateUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, { includeInApi: Roles.admin, caption: 'משתמש מעדכן' });
+  createDate = new changeDate({ caption: 'מועד הוספה' });
+  createUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, { caption: 'משתמש מוסיף' });
+  lastUpdateDate = new changeDate({ caption: 'מועד עדכון אחרון' });
+  lastUpdateUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, { caption: 'משתמש מעדכן' });
 
 
 
@@ -660,10 +647,10 @@ export class GroupsColumn extends StringColumn {
       this.value = '';
     this.value += group;
   }
-  constructor(private context: Context) {
+  constructor(private context: Context,settingsOrCaption?: ColumnOptions<string>) {
     super({
       caption: 'שיוך לקבוצת חלוקה',
-      includeInApi: Roles.admin,
+
       dataControlSettings: () => ({
         width: '300',
         click: () => {
@@ -675,7 +662,7 @@ export class GroupsColumn extends StringColumn {
           });
         }
       })
-    });
+    },settingsOrCaption);
   }
   selected(group: string) {
     if (!this.value)

@@ -5,7 +5,7 @@ import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, SqlBuilde
 
 import { routeStats } from '../asign-family/asign-family.component';
 import { helpers } from 'chart.js';
-import { Roles } from "../auth/roles";
+import { Roles, distCenterAdminGuard } from "../auth/roles";
 import { JWTCookieAuthorizationHelper } from '@remult/server';
 import { SelectCompanyComponent } from "../select-company/select-company.component";
 import { DistributionCenterId } from '../manage/distribution-centers';
@@ -282,7 +282,10 @@ export class CompanyColumn extends StringColumn {
     }
 }
 export class HelperIdReadonly extends HelperId {
-    allowApiUpdate = false;
+    constructor(protected context: Context, distCenter: () => string, settingsOrCaption?: ColumnOptions<string>, filter?: (helper: HelpersAndStats) => FilterBase) {
+        super(context, distCenter, settingsOrCaption, filter);
+        this.defs.allowApiUpdate = false;
+    }
     get displayValue() {
         return this.context.for(Helpers).lookup(this).name.value;
     }

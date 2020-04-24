@@ -14,59 +14,140 @@ import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
 
 @EntityClass
 export class FamilyDeliveries extends IdEntity {
-    family = new FamilyId();
+    family = new FamilyId({
+        allowApiUpdate: false
+    });
 
     name = new StringColumn({
+        allowApiUpdate: false,
         caption: "שם"
     });
-    basketType = new BasketId(this.context, 'סוג סל');
+    basketType = new BasketId(this.context, {
+        caption: 'סוג סל',
+        allowApiUpdate: Roles.distCenterAdmin
+    });
 
-    distributionCenter = new DistributionCenterId(this.context);
+    distributionCenter = new DistributionCenterId(this.context, {
+        allowApiUpdate: Roles.distCenterAdmin
+    });
     deliverStatus = new DeliveryStatusColumn();
-    courier = new HelperId(this.context, () => this.distributionCenter.value, "משנע");
-    courierComments = new StringColumn('הערות שכתב המשנע כשמסר');
-    routeOrder = new NumberColumn();
-    special = new YesNoColumn({ includeInApi: Roles.admin, caption: 'שיוך מיוחד' });
+    courier = new HelperId(this.context, () => this.distributionCenter.value, {
+        caption: "מתנדב",
+        allowApiUpdate: Roles.distCenterAdmin
+    });
+    courierComments = new StringColumn('הערות שכתב המתנדב כשמסר');
+    routeOrder = new NumberColumn({
+        allowApiUpdate: Roles.distCenterAdmin
+    });
+    special = new YesNoColumn({ includeInApi: Roles.distCenterAdmin, caption: 'שיוך מיוחד' });
     deliveryStatusDate = new changeDate('מתי');
     courierAssignUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'מי שייכה למשנע');
     courierAssingTime = new changeDate('מועד שיוך למשנע');
     deliveryStatusUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'מי עדכן את סטטוס המשלוח');
 
-    createDate = new changeDate({ includeInApi: Roles.admin, caption: 'מועד הקצאה' });
+    createDate = new changeDate({ includeInApi: Roles.distCenterAdmin, caption: 'מועד הקצאה' });
     createUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, { includeInApi: Roles.admin, caption: 'משתמש מקצה' });
-    needsWork = new BoolColumn({ caption: 'צריך טיפול/מעקב' });
+    needsWork = new BoolColumn({
+        caption: 'צריך טיפול/מעקב',
+        allowApiUpdate: Roles.distCenterAdmin
+    });
     needsWorkUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'צריך טיפול - מי עדכן');
     needsWorkDate = new changeDate('צריך טיפול - מתי עודכן');
-    deliveryComments = new StringColumn('הערה למשלוח');
+    deliveryComments = new StringColumn({
+        caption: 'הערה למשלוח',
+        allowApiUpdate: Roles.distCenterAdmin
+    });
 
-    familySource = new FamilySourceId(this.context, { includeInApi: true, caption: 'גורם מפנה' });
-    groups = new GroupsColumn(this.context);
+    familySource = new FamilySourceId(this.context, {
+        includeInApi: Roles.distCenterAdmin,
+        caption: 'גורם מפנה'
+    });
+    groups = new GroupsColumn(this.context, {
+        includeInApi: Roles.distCenterAdmin
+    });
 
 
-    address = new StringColumn("כתובת");
-    floor = new StringColumn('קומה');
-    appartment = new StringColumn('דירה');
-    entrance = new StringColumn('כניסה');
-    city = new StringColumn({ caption: "עיר (מתעדכן אוטומטית)" });
-    addressComment = new StringColumn('הנחיות נוספות לכתובת');
+    address = new StringColumn({
+        caption: "כתובת",
+        allowApiUpdate: false
+    });
+    floor = new StringColumn({
+        caption: 'קומה',
+        allowApiUpdate: false
+    });
+    appartment = new StringColumn({
+        caption: 'דירה',
+        allowApiUpdate: false
+    });
+    entrance = new StringColumn({
+        caption: 'כניסה',
+        allowApiUpdate: false
+    });
+    city = new StringColumn({
+        caption: "עיר (מתעדכן אוטומטית)"
+        , allowApiUpdate: false
+    });
+    addressComment = new StringColumn({
+        caption: 'הנחיות נוספות לכתובת',
+        allowApiUpdate: false
+    });
     //שים לב - אם המשתמש הקליד כתובת GPS בכתובת - אז הנקודה הזו תהיה הנקודה שהמשתמש הקליד ולא מה שגוגל מצא
-    addressLongitude = new NumberColumn({ decimalDigits: 8 });
-    addressLatitude = new NumberColumn({ decimalDigits: 8 });
+    addressLongitude = new NumberColumn({
+        decimalDigits: 8,
+        allowApiUpdate: false
+    });
+    addressLatitude = new NumberColumn({
+        decimalDigits: 8,
+        allowApiUpdate: false
+    });
     //זו התוצאה שחזרה מהGEOCODING כך שהיא מכוונת לכביש הקרוב
-    drivingLongitude = new NumberColumn({ decimalDigits: 8 });
-    drivingLatitude = new NumberColumn({ decimalDigits: 8 });
+    drivingLongitude = new NumberColumn({
+        decimalDigits: 8,
+        allowApiUpdate: false
+    });
+    drivingLatitude = new NumberColumn({
+        decimalDigits: 8,
+        allowApiUpdate: false
+    });
     addressByGoogle = new StringColumn({ caption: "כתובת כפי שגוגל הבין", allowApiUpdate: false });
-    addressOk = new BoolColumn({ caption: 'כתובת תקינה' });
+    addressOk = new BoolColumn({
+        caption: 'כתובת תקינה',
+        allowApiUpdate: false
+    });
 
 
-    phone1 = new PhoneColumn({ caption: "טלפון 1", dbName: 'phone' });
-    phone1Description = new StringColumn('הערות לטלפון 1');
-    phone2 = new PhoneColumn({ caption: "טלפון 2" });
-    phone2Description = new StringColumn('הערות לטלפון 2');
-    phone3 = new PhoneColumn({ caption: "טלפון 3" });
-    phone3Description = new StringColumn('הערות לטלפון 3');
-    phone4 = new PhoneColumn({ caption: "טלפון 4" });
-    phone4Description = new StringColumn('הערות לטלפון 4');
+    phone1 = new PhoneColumn({
+        caption: "טלפון 1", dbName: 'phone',
+        allowApiUpdate: false
+    });
+    phone1Description = new StringColumn({
+        caption: 'הערות לטלפון 1',
+        allowApiUpdate: false
+    });
+    phone2 = new PhoneColumn({
+        caption: "טלפון 2",
+        allowApiUpdate: false
+    });
+    phone2Description = new StringColumn({
+        caption: 'הערות לטלפון 2',
+        allowApiUpdate: false
+    });
+    phone3 = new PhoneColumn({
+        caption: "טלפון 3",
+        allowApiUpdate: false
+    });
+    phone3Description = new StringColumn({
+        caption: 'הערות לטלפון 3',
+        allowApiUpdate: false
+    });
+    phone4 = new PhoneColumn({
+        caption: "טלפון 4",
+        allowApiUpdate: false
+    });
+    phone4Description = new StringColumn({
+        caption: 'הערות לטלפון 4',
+        allowApiUpdate: false
+    });
 
     archive = new BoolColumn();
 
@@ -87,10 +168,10 @@ export class FamilyDeliveries extends IdEntity {
         super({
             name: apiEndPoing,
             dbName: 'FamilyDeliveries',
-            allowApiRead: Roles.distCenterAdmin,
+            allowApiRead: context.isSignedIn(),
             allowApiInsert: Roles.distCenterAdmin,
-            allowApiUpdate: Roles.distCenterAdmin,
-            allowApiDelete: Roles.admin,
+            allowApiUpdate: context.isSignedIn(),
+            allowApiDelete: Roles.distCenterAdmin,
             apiDataFilter: () => {
                 if (!context.isSignedIn())
                     this.id.isEqualTo('no rows');
@@ -113,6 +194,12 @@ export class FamilyDeliveries extends IdEntity {
                 return result;
 
             },
+            fixedWhereFilter: () => {
+                if (onlyActive)
+                    return this.active();
+
+            },
+
             savingRow: () => {
                 if (this.isNew()) {
                     this.createDate.value = new Date();
@@ -145,18 +232,18 @@ export class FamilyDeliveries extends IdEntity {
     staticGetShortDescription(deliverStatus: DeliveryStatusColumn, deliveryStatusDate: changeDate, courier: HelperId, courierComments: StringColumn) {
         let r = deliverStatus.displayValue + " ";
         if (DeliveryStatus.IsAResultStatus(deliverStatus.value)) {
-          if (deliveryStatusDate.value.valueOf() < new Date().valueOf() - 7 * 86400 * 1000)
-            r += "ב " + deliveryStatusDate.value.toLocaleDateString("he-il");
-          else
-            r += deliveryStatusDate.relativeDateName();
-          if (courierComments.value) {
-            r += ": " + courierComments.value;
-          }
-          if (courier.value && deliverStatus.value != DeliveryStatus.SelfPickup && deliverStatus.value != DeliveryStatus.SuccessPickedUp)
-            r += ' ע"י ' + courier.getValue();
+            if (deliveryStatusDate.value.valueOf() < new Date().valueOf() - 7 * 86400 * 1000)
+                r += "ב " + deliveryStatusDate.value.toLocaleDateString("he-il");
+            else
+                r += deliveryStatusDate.relativeDateName();
+            if (courierComments.value) {
+                r += ": " + courierComments.value;
+            }
+            if (courier.value && deliverStatus.value != DeliveryStatus.SelfPickup && deliverStatus.value != DeliveryStatus.SuccessPickedUp)
+                r += ' ע"י ' + courier.getValue();
         }
         return r;
-      }
+    }
     readyAndSelfPickup() {
         return this.deliverStatus.readyAndSelfPickup(this.courier);
     }
@@ -216,17 +303,17 @@ export class FamilyDeliveries extends IdEntity {
     }
     openWaze() {
         //window.open('https://waze.com/ul?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + 'export &navigate=yes', '_blank');
-        window.open('waze://?ll=' + toLongLat(this.getDrivingLocation())+ "&q=" + encodeURI(this.address.value) + '&navigate=yes');
-      }
-      openGoogleMaps() {
+        window.open('waze://?ll=' + toLongLat(this.getDrivingLocation()) + "&q=" + encodeURI(this.address.value) + '&navigate=yes');
+    }
+    openGoogleMaps() {
         window.open('https://www.google.com/maps/search/?api=1&hl=iw&query=' + this.address.value, '_blank');
-      }
-      showOnGoogleMaps() {
+    }
+    showOnGoogleMaps() {
         window.open('https://maps.google.com/maps?q=' + toLongLat(this.getDrivingLocation()) + '&hl=iw', '_blank');
-      }
-      showOnGovMap() {
+    }
+    showOnGovMap() {
         window.open('https://www.govmap.gov.il/?q=' + this.address.value + '&z=10', '_blank');
-      }
+    }
     isGpsAddress() {
         return isGpsAddress(this.address.value);
     }
@@ -265,20 +352,20 @@ export class ActiveFamilyDeliveries extends FamilyDeliveries {
     }
     courierBeenHereBefore = new BoolColumn({
         sqlExpression: () => {
-          var sql = new SqlBuilder();
-    
-          var fd = this.context.for(FamilyDeliveries).create();
-          let f = this;
-          sql.addEntity(f, "FamilyDeliveries");
-          return sql.columnWithAlias(sql.case([{ when: [sql.ne(f.courier, "''")], then: sql.build('exists (select 1 from ', fd, ' where ', sql.and(sql.eq(fd.family, f.id), sql.eq(fd.courier, f.courier)), ")") }], false), 'courierBeenHereBefore');
+            var sql = new SqlBuilder();
+
+            var fd = this.context.for(FamilyDeliveries).create();
+            let f = this;
+            sql.addEntity(f, "FamilyDeliveries");
+            return sql.columnWithAlias(sql.case([{ when: [sql.ne(f.courier, "''")], then: sql.build('exists (select 1 from ', fd, ' where ', sql.and(sql.eq(fd.family, f.id), sql.eq(fd.courier, f.courier)), ")") }], false), 'courierBeenHereBefore');
         }
-      });
+    });
 }
 
- function logChanged(context: Context, col: Column<any>, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) {
+function logChanged(context: Context, col: Column<any>, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) {
     if (col.value != col.originalValue) {
-      dateCol.value = new Date();
-      user.value = context.user.id;
-      wasChanged();
+        dateCol.value = new Date();
+        user.value = context.user.id;
+        wasChanged();
     }
-  }
+}
