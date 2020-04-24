@@ -169,7 +169,7 @@ export class FamilyDeliveries extends IdEntity {
             name: apiEndPoing,
             dbName: 'FamilyDeliveries',
             allowApiRead: context.isSignedIn(),
-            allowApiInsert: Roles.distCenterAdmin,
+            allowApiInsert: false,
             allowApiUpdate: context.isSignedIn(),
             allowApiDelete: Roles.distCenterAdmin,
             apiDataFilter: () => {

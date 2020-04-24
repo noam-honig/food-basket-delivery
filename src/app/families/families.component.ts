@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
 import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn, Filter, ServerFunction, unpackWhere, packWhere, Column } from '@remult/core';
 
-import { Families, GroupsColumn, iterateFamilies } from './families';
+import { Families, GroupsColumn, iterateFamilies, FamilyId } from './families';
 import { DeliveryStatus, DeliveryStatusColumn } from "./DeliveryStatus";
 
 import { YesNo } from "./YesNo";
@@ -254,7 +254,7 @@ export class FamiliesComponent implements OnInit {
         onEnterRow: async f => {
             if (f.isNew()) {
                 f.basketType.value = '';
-                
+
                 f.special.value = YesNo.No;
                 f.distributionCenter.value = this.dialog.distCenter.value;
                 this.currentFamilyDeliveries = [];
@@ -360,20 +360,20 @@ export class FamiliesComponent implements OnInit {
                 families.phone3Description,
                 families.phone4,
                 families.phone4Description,
-                
+
                 families.distributionCenter,
                 families.fixedCourier,
                 {
                     caption: 'טלפון משנע',
                     getValue: f => this.context.for(Helpers).lookup(f.courier).phone.value
                 },
-                
-                
+
+
 
                 families.defaultSelfPickup,
                 families.statusUser,
                 families.statusDate,
-                
+
                 families.getPreviousDeliveryColumn(),
                 families.previousDeliveryComment,
                 families.previousDeliveryDate,
@@ -382,7 +382,7 @@ export class FamiliesComponent implements OnInit {
                 families.socialWorkerPhone2,
                 families.birthDate,
                 families.nextBirthday
-              
+
 
             ];
             this.normalColumns = [
@@ -442,9 +442,7 @@ export class FamiliesComponent implements OnInit {
                             },
                             title: 'משלוח חדש',
                             ok: async () => {
-                                let fd = f.createDelivery();
-                                fd.basketType.value = s.value;
-                                await fd.save();
+                                await FamiliesComponent.addDelivery(f.id.value,s.value);
                                 this.dialog.Info("משלוח נוצר בהצלחה");
                             }
                             , cancel: () => { }
@@ -461,9 +459,21 @@ export class FamiliesComponent implements OnInit {
                 click: f => f.openGoogleMaps(),
                 visible: f => this.problemOnly
             }
-           
+
         ]
     });
+    @ServerFunction({ allowed: Roles.distCenterAdmin })
+    static async addDelivery(familyId: string, basketType: string, context?: Context) {
+        let f = await context.for(Families).findFirst(x=>x.id.isEqualTo(familyId).and(x.distributionCenter.isAllowedForUser()));
+        if (f){
+            let fd = f.createDelivery();
+            fd.basketType.value = basketType;
+            await fd.save();
+            return 1;
+        }
+        return 0;
+        
+    }
     async updateGroup() {
         let group = new StringColumn({
             caption: 'שיוך לקבוצת חלוקה',
@@ -545,7 +555,7 @@ export class FamiliesComponent implements OnInit {
     @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async updateStatusOnServer(info: serverUpdateInfo, status: any, context?: Context) {
         return await FamiliesComponent.processFamilies(info, context, f => {
-                f.status.rawValue = status;
+            f.status.rawValue = status;
         });
     }
     async updateDistributionCenter() {
@@ -590,7 +600,7 @@ export class FamiliesComponent implements OnInit {
     @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async cancelAssignmentOnServer(info: serverUpdateInfo, context?: Context) {
         return await FamiliesComponent.processFamilies(info, context, f => {
-            
+
             //    f.courier.value = '';
         });
     }
@@ -638,7 +648,7 @@ export class FamiliesComponent implements OnInit {
         if (count != info.count) {
             return "ארעה שגיאה אנא נסה שוב";
         }
-        let updated = await iterateFamilies( context, where, what,count);
+        let updated = await iterateFamilies(context, where, what, count);
 
 
 
