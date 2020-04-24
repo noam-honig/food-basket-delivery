@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn, Filter, ServerFunction, unpackWhere, packWhere, Column } from '@remult/core';
+import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn, Filter, ServerFunction, unpackWhere, packWhere, Column, dataAreaSettings, IDataAreaSettings, DataArealColumnSetting, GridButton, Allowed } from '@remult/core';
 
 import { Families, GroupsColumn, iterateFamilies, FamilyId } from './families';
 import { DeliveryStatus, DeliveryStatusColumn } from "./DeliveryStatus";
@@ -22,7 +22,7 @@ import { Stats, FaimilyStatistics, colors } from './stats-action';
 
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
 import { PhoneColumn } from '../model-shared/types';
-import { Helpers, HelperUserInfo } from '../helpers/helpers';
+import { Helpers, HelperUserInfo, HelperId } from '../helpers/helpers';
 import { Route } from '@angular/router';
 
 import { Context } from '@remult/core';
@@ -46,7 +46,7 @@ import { FamilySourceId } from './FamilySources';
 import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser } from '../manage/distribution-centers';
 import { PromiseThrottle } from '../import-from-excel/import-from-excel.component';
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
-import { FamilyStatus } from './FamilyStatus';
+import { FamilyStatus, FamilyStatusColumn } from './FamilyStatus';
 const addGroupAction = ' להוסיף ';
 const replaceGroupAction = ' להחליף ';
 @Component({
@@ -61,7 +61,7 @@ export class FamiliesComponent implements OnInit {
 
     showHoverButton: boolean = false;
 
-    constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context, private settings: ApplicationSettings) {
+    constructor(public dialog: DialogService, private san: DomSanitizer, public busy: BusyService, public context: Context, private settings: ApplicationSettings) {
         this.doTest();
 
         {
@@ -408,53 +408,7 @@ export class FamiliesComponent implements OnInit {
             click: () => this.saveToExcel(),
             visible: () => this.isAdmin
         },
-        {
-            name: 'משלוח חדש למשפחות המסומנות',
-            click: async () => {
-
-                let fd = f.createDelivery();
-                await this.context.openDialog(InputAreaComponent, x => {
-                    x.args = {
-                        settings: {
-                            columnSettings: () => {
-                                let r: Column<any>[] = [
-                                    fd.basketType,
-                                    fd.deliveryComments
-
-                                ];
-                                if (this.dialog.hasManyCenters)
-                                    r.push(fd.distributionCenter);
-                                r.push(fd.courier);
-                                return r;
-                            }
-                        },
-                        title: 'משלוח חדש',
-                        ok: async () => {
-                            await FamiliesComponent.addDelivery(f.id.value, {
-                                basketType: fd.basketType.value,
-                                comment: fd.courierComments.value,
-                                courier: fd.courier.value,
-                                distCenter: fd.distributionCenter.value
-
-                            });
-                            this.dialog.Info("משלוח נוצר בהצלחה");
-                        }
-                        , cancel: () => { }
-
-                    }
-                });
-            }
-
-        }
-        {
-            name: 'עדכן שיוך לקבוצת חלוקה למשפחות המסומנות',
-            click: () => { this.updateGroup() }
-        },
-        {
-            name: 'עדכן גורם מפנה למשפחות המסומנות',
-            click: () => { this.updateFamilySource() }
-        }
-
+        ...new FamilyActions().getMenuButtons(this),
         ],
 
         rowButtons: [
@@ -535,165 +489,11 @@ export class FamiliesComponent implements OnInit {
         return 0;
 
     }
-    async updateGroup() {
-        let group = new StringColumn({
-            caption: 'שיוך לקבוצת חלוקה',
-            dataControlSettings: () => ({
-                valueList: this.context.for(Groups).getValueList({ idColumn: x => x.name, captionColumn: x => x.name })
-            })
-        });
-
-        let action = new StringColumn({
-            caption: 'פעולה',
-            defaultValue: addGroupAction,
-            dataControlSettings: () => ({
-                valueList: [{ id: addGroupAction, caption: 'הוסף שיוך לקבוצת חלוקה' }, { id: 'להסיר', caption: 'הסר שיוך לקבוצת חלוקה' }, { id: replaceGroupAction, caption: 'החלף שיוך לקבוצת חלוקה' }]
-            })
-        });
-        let ok = false;
-        await this.context.openDialog(InputAreaComponent, x => {
-            x.args = {
-                settings: {
-                    columnSettings: () => [group, action]
-                },
-                title: 'עדכון שיוך לקבוצת חלוקה ל-' + this.families.totalRows + ' המשפחות המסומנות',
-                ok: () => ok = true
-                , cancel: () => { }
-
-            }
-        });
-
-        if (ok && group.value) {
-            if (await this.dialog.YesNoPromise('האם ' + action.value + ' את השיוך לקבוצה "' + group.value + '" ל-' + this.families.totalRows + translate(' משפחות?'))) {
-                this.dialog.Info(await FamiliesComponent.updateGroupOnServer(this.packWhere(), group.value, action.value));
-                this.refresh();
-            }
-        }
 
 
-    }
-    @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async updateGroupOnServer(info: serverUpdateInfo, group: string, action: string, context?: Context) {
-        return await FamiliesComponent.processFamilies(info, context, f => {
-            if (action == addGroupAction) {
-                if (!f.groups.selected(group))
-                    f.groups.addGroup(group);
-            } else if (action == replaceGroupAction) {
-                f.groups.value = group;
-            }
-            else {
-                if (f.groups.selected(group))
-                    f.groups.removeGroup(group);
-            }
-
-        });
-    }
-    async updateStatus() {
-        let s = new DeliveryStatusColumn();
-        let ok = false;
-        await this.context.openDialog(InputAreaComponent, x => {
-            x.args = {
-                settings: {
-                    columnSettings: () => [s]
-                },
-                title: 'עדכון סטטוס ל-' + this.families.totalRows + ' המשפחות המסומנות',
-                ok: () => ok = true
-                , cancel: () => { }
-
-            }
-        });
-        if (ok)
-            if (!s.value) {
-                this.dialog.Info('לא נבחר סטטוס לעדכון - העדכון בוטל');
-            }
-            else {
-                if (await this.dialog.YesNoPromise('האם לעדכן את הסטטוס "' + s.value.caption + '" ל-' + this.families.totalRows + translate(' משפחות?'))) {
-                    this.dialog.Info(await FamiliesComponent.updateStatusOnServer(this.packWhere(), s.rawValue));
-                    this.refresh();
-                }
-            }
-    }
-    @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async updateStatusOnServer(info: serverUpdateInfo, status: any, context?: Context) {
-        return await FamiliesComponent.processFamilies(info, context, f => {
-            f.status.rawValue = status;
-        });
-    }
-    async updateDistributionCenter() {
-        let s = new DistributionCenterId(this.context);
-        let ok = false;
-        await this.context.openDialog(InputAreaComponent, x => {
-            x.args = {
-                settings: {
-                    columnSettings: () => [s]
-                },
-                title: 'עדכון נקודת חלוקה ל-' + this.families.totalRows + ' המשפחות המסומנות',
-                ok: () => ok = true
-                , cancel: () => { }
-
-            }
-        });
-        if (ok) {
-            if (await this.dialog.YesNoPromise('האם לעדכן את נקודת החלוקה "' + await s.getTheValue() + '" ל-' + this.families.totalRows + translate(' משפחות?'))) {
-                this.dialog.Info(await FamiliesComponent.updateDistributionCenterOnServer(this.packWhere(), s.rawValue));
-                this.refresh();
-            }
-        }
-    }
-    @ServerFunction({ allowed: Roles.admin })
-    static async updateDistributionCenterOnServer(info: serverUpdateInfo, distributionCenter: string, context?: Context) {
-        if (await context.for(DistributionCenters).count(d => d.id.isEqualTo(distributionCenter).and(filterCenterAllowedForUser(d.id, context))) == 0)
-            throw "נקודת חלוקה לא קיימת או מורשת";
-        return await FamiliesComponent.processFamilies(info, context, f => {
-
-            f.distributionCenter.value = distributionCenter;
-        });
-    }
 
 
-    async cancelAssignment() {
-        if (await this.dialog.YesNoPromise('האם לבטל שיוך ל-' + this.families.totalRows + translate(' משפחות?'))) {
-            this.dialog.Info(await FamiliesComponent.cancelAssignmentOnServer(this.packWhere()));
-            this.refresh();
-        }
 
-    }
-    @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async cancelAssignmentOnServer(info: serverUpdateInfo, context?: Context) {
-        return await FamiliesComponent.processFamilies(info, context, f => {
-
-            //    f.courier.value = '';
-        });
-    }
-    async updateBasket() {
-        let s = new BasketId(this.context);
-        let ok = false;
-        await this.context.openDialog(InputAreaComponent, x => {
-            x.args = {
-                settings: {
-                    columnSettings: () => [s]
-                },
-                title: 'עדכון סוג סל ל-' + this.families.totalRows + ' המשפחות המסומנות',
-                ok: () => ok = true
-                , cancel: () => { }
-
-            }
-        });
-        if (ok)
-            if (!s.value) {
-                s.value = "";
-            }
-        {
-            if (await this.dialog.YesNoPromise('האם לעדכן את הסוג סל "' + await s.getTheValue() + '" ל-' + this.families.totalRows + translate(' משפחות?'))) {
-                this.dialog.Info(await FamiliesComponent.updateBasketOnServer(this.packWhere(), s.value));
-                this.refresh();
-            }
-        }
-    }
-    @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async updateBasketOnServer(info: serverUpdateInfo, basketType: string, context?: Context) {
-        return await FamiliesComponent.processFamilies(info, context, f => f.basketType.value = basketType);
-    }
     packWhere() {
         return {
             where: packWhere(this.context.for(Families).create(), this.families.buildFindOptions().where),
@@ -717,35 +517,7 @@ export class FamiliesComponent implements OnInit {
     }
 
 
-    async updateFamilySource() {
-        let s = new FamilySourceId(this.context);
-        let ok = false;
-        await this.context.openDialog(InputAreaComponent, x => {
-            x.args = {
-                settings: {
-                    columnSettings: () => [s]
-                },
-                title: 'עדכון גורם מפנה ל-' + this.families.totalRows + ' המשפחות המסומנות',
-                ok: () => ok = true
-                , cancel: () => { }
 
-            }
-        });
-        if (ok)
-            if (!s.value) {
-                this.dialog.Info('לא נבחר גורם מפנה לעדכון - העדכון בוטל');
-            }
-            else {
-                if (await this.dialog.YesNoPromise('האם לעדכן את הגורם מפנה "' + (await s.getTheValue()) + '" ל-' + this.families.totalRows + translate(' משפחות?'))) {
-                    this.dialog.Info(await FamiliesComponent.updateFamilySourceOnServer(this.packWhere(), s.value));
-                    this.refresh();
-                }
-            }
-    }
-    @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async updateFamilySourceOnServer(info: serverUpdateInfo, familySource: string, context?: Context) {
-        return await FamiliesComponent.processFamilies(info, context, f => f.familySource.value = familySource);
-    }
     gridView = true;
 
 
@@ -988,3 +760,217 @@ interface serverUpdateInfo {
     count: number;
 }
 
+
+
+
+
+
+
+
+
+class ActionOnFamilies {
+    constructor(protected context: Context,
+        public args: {
+            dialogColumns?: (component: FamiliesComponent) => DataArealColumnSetting<any>[],
+            columns: () => Column<any>[],
+            title: string,
+            whatToDoOnFamily: (f: Families) => Promise<void>,
+            allowed: Allowed,
+            confirmQuestion?: () => string
+        }
+    ) {
+        if (!args.confirmQuestion)
+            args.confirmQuestion = () => args.title;
+    }
+    @ServerFunction({ allowed: Roles.distCenterAdmin })
+    static async FamilyActionOnServer(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
+        return await new FamilyActions().doWorkOnServer(info, action, args, context);
+
+    }
+    async doWorkOnServer(info: serverUpdateInfo, args: any[]) {
+        let i = 0;
+        for (const c of this.args.columns()) {
+            c.rawValue = args[i++];
+        }
+        return await FamiliesComponent.processFamilies(info, this.context, async f => {
+            await this.args.whatToDoOnFamily(f);
+        });
+    }
+    gridButton(component: FamiliesComponent) {
+        return {
+            name: this.args.title+' למשפחות המסומנות',
+            visible: () => this.context.isAllowed(this.args.allowed),
+            click: async () => {
+                await this.context.openDialog(InputAreaComponent, x => {
+                    x.args = {
+                        settings: {
+                            columnSettings: () => this.args.dialogColumns ? this.args.dialogColumns(component) : this.args.columns()
+                        },
+                        title: this.args.title + ' ל-' + component.families.totalRows + ' המשפחות המסומנות',
+                        ok: async () => {
+                            if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + ' ל-' + component.families.totalRows + translate(' משפחות?'))) {
+                                let args = [];
+                                for (const c of this.args.columns()) {
+                                    args.push(c.rawValue);
+                                }
+                                component.dialog.Info(await ActionOnFamilies.FamilyActionOnServer(component.packWhere(), this.args.title, args));
+                                component.refresh();
+                            }
+                        }
+                        , cancel: () => { }
+
+                    }
+                });
+
+            }
+        } as GridButton;
+    }
+}
+
+class NewDelivery extends ActionOnFamilies {
+    useFamilyBasket = new BoolColumn({ caption: 'השתמש בסוג הסל המוגדר למשפחה', defaultValue: false });
+    basketType = new BasketId(this.context);
+
+    distributionCenter = new DistributionCenterId(this.context);
+    determineCourier = new BoolColumn('הגדר מתנדב');
+    courier = new HelperId(this.context, () => this.distributionCenter.value);
+    constructor(context: Context) {
+        super(context, {
+            allowed: Roles.distCenterAdmin,
+            columns: () => [
+                this.useFamilyBasket,
+                this.basketType,
+                this.distributionCenter,
+                this.determineCourier,
+                this.courier
+            ],
+            dialogColumns: (component) => {
+                this.basketType.value = '';
+                this.distributionCenter.value = component.dialog.distCenter.value;
+                return [
+                    { column: this.basketType, visible: () => !this.useFamilyBasket.value },
+                    this.useFamilyBasket,
+                    { column: this.distributionCenter, visible: () => component.dialog.hasManyCenters },
+                    this.determineCourier,
+                    { column: this.courier, visible: () => this.determineCourier.value }
+                ]
+            },
+            title: 'משלוח חדש',
+            whatToDoOnFamily: async f => {
+                let fd = f.createDelivery();
+                if (!this.useFamilyBasket.value) {
+                    fd.basketType.value = this.basketType.value;
+                }
+                fd.distributionCenter.value = this.distributionCenter.value;
+                if (this.determineCourier.value) {
+                    fd.courier.value = this.courier.value;
+                }
+                await fd.save();
+            }
+        });
+    }
+}
+class updateGroup extends ActionOnFamilies {
+
+    group = new StringColumn({
+        caption: 'שיוך לקבוצת חלוקה',
+        dataControlSettings: () => ({
+            valueList: this.context.for(Groups).getValueList({ idColumn: x => x.name, captionColumn: x => x.name })
+        })
+    });
+    action = new StringColumn({
+        caption: 'פעולה',
+        defaultValue: addGroupAction,
+        dataControlSettings: () => ({
+            valueList: [{ id: addGroupAction, caption: 'הוסף שיוך לקבוצת חלוקה' }, { id: 'להסיר', caption: 'הסר שיוך לקבוצת חלוקה' }, { id: replaceGroupAction, caption: 'החלף שיוך לקבוצת חלוקה' }]
+        })
+    });
+    constructor(context: Context) {
+        super(context, {
+            columns: () => [this.group, this.action],
+            confirmQuestion: () => 'האם ' + this.action.value + ' את השיוך לקבוצה "' + this.group.value,
+            title: 'שיוך לקבוצת חלוקה',
+            allowed: Roles.distCenterAdmin,
+            whatToDoOnFamily: async f => {
+                if (this.action.value == addGroupAction) {
+                    if (!f.groups.selected(this.group.value))
+                        f.groups.addGroup(this.group.value);
+                } else if (this.action.value == replaceGroupAction) {
+                    f.groups.value = this.group.value;
+                }
+                else {
+                    if (f.groups.selected(this.group.value))
+                        f.groups.removeGroup(this.group.value);
+                }
+            }
+
+        });
+    }
+}
+
+class UpdateStatus extends ActionOnFamilies {
+    status = new FamilyStatusColumn();
+    constructor(context: Context) {
+        super(context, {
+            allowed: Roles.distCenterAdmin,
+            columns: () => [this.status],
+            title: 'עדכן סטטוס משפחה ',
+            whatToDoOnFamily: async f => { f.status.value = this.status.value; }
+        });
+    }
+}
+class UpdateBasketType extends ActionOnFamilies {
+    basket = new BasketId(this.context);
+    constructor(context: Context) {
+        super(context, {
+            allowed: Roles.distCenterAdmin,
+            columns: () => [this.basket],
+            title: 'עדכן סוג סל ברירת מחדל',
+            whatToDoOnFamily: async f => { f.basketType.value = this.basket.value },
+        });
+    }
+}
+class UpdateFamilySource extends ActionOnFamilies {
+    familySource = new FamilySourceId(this.context);
+    constructor(context: Context) {
+        super(context, {
+            allowed: Roles.distCenterAdmin,
+            columns: () => [this.familySource],
+            title: 'עדכן גורם מפנה ',
+            whatToDoOnFamily: async f => { f.familySource.value = this.familySource.value }
+        });
+    }
+}
+
+
+class FamilyActions {
+    actions: {
+        new(context: Context): ActionOnFamilies;
+    }[] = [NewDelivery, updateGroup, UpdateStatus, UpdateBasketType, UpdateFamilySource];
+
+
+    async doWorkOnServer(info: serverUpdateInfo, action: string, args: any[], context: Context) {
+        for (const a of this.actions) {
+            let x = new a(context);
+            if (x.args.title == action) {
+                if (context.isAllowed(x.args.allowed)) {
+                    return await x.doWorkOnServer(info, args);
+                }
+                else {
+                    throw "פעולה לא מורשת";
+                }
+            }
+        }
+        throw "פעולה לא נמצאה בשרת";
+    }
+
+
+    getMenuButtons(component: FamiliesComponent) {
+        let r = [];
+        for (const a of this.actions) {
+            r.push(new a(component.context).gridButton(component));
+        }
+        return r;
+    }
+
+}

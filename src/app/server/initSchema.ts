@@ -185,7 +185,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
             try {
                 await what();
             } catch (err) {
-                console.error("failed for version ", ver, err);
+                console.error("failed for version ", ver,org, err);
                 throw err;
 
             }
