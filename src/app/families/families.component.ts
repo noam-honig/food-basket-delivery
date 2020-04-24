@@ -61,7 +61,7 @@ export class FamiliesComponent implements OnInit {
 
     showHoverButton: boolean = false;
 
-    constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context) {
+    constructor(private dialog: DialogService, private san: DomSanitizer, public busy: BusyService, private context: Context, private settings: ApplicationSettings) {
         this.doTest();
 
         {
@@ -409,6 +409,44 @@ export class FamiliesComponent implements OnInit {
             visible: () => this.isAdmin
         },
         {
+            name: 'משלוח חדש למשפחות המסומנות',
+            click: async () => {
+
+                let fd = f.createDelivery();
+                await this.context.openDialog(InputAreaComponent, x => {
+                    x.args = {
+                        settings: {
+                            columnSettings: () => {
+                                let r: Column<any>[] = [
+                                    fd.basketType,
+                                    fd.deliveryComments
+
+                                ];
+                                if (this.dialog.hasManyCenters)
+                                    r.push(fd.distributionCenter);
+                                r.push(fd.courier);
+                                return r;
+                            }
+                        },
+                        title: 'משלוח חדש',
+                        ok: async () => {
+                            await FamiliesComponent.addDelivery(f.id.value, {
+                                basketType: fd.basketType.value,
+                                comment: fd.courierComments.value,
+                                courier: fd.courier.value,
+                                distCenter: fd.distributionCenter.value
+
+                            });
+                            this.dialog.Info("משלוח נוצר בהצלחה");
+                        }
+                        , cancel: () => { }
+
+                    }
+                });
+            }
+
+        }
+        {
             name: 'עדכן שיוך לקבוצת חלוקה למשפחות המסומנות',
             click: () => { this.updateGroup() }
         },
@@ -430,19 +468,34 @@ export class FamiliesComponent implements OnInit {
                 , textInMenu: () => 'פרטי משפחה'
             },
             {
-                name: 'משלוח חדש',
+                name: 'משלוח חדש למשפחה',
                 click: async f => {
 
-                    let s = new BasketId(this.context);
-                    s.value = '';
+                    let fd = f.createDelivery();
                     await this.context.openDialog(InputAreaComponent, x => {
                         x.args = {
                             settings: {
-                                columnSettings: () => [s]
+                                columnSettings: () => {
+                                    let r: Column<any>[] = [
+                                        fd.basketType,
+                                        fd.deliveryComments
+
+                                    ];
+                                    if (this.dialog.hasManyCenters)
+                                        r.push(fd.distributionCenter);
+                                    r.push(fd.courier);
+                                    return r;
+                                }
                             },
                             title: 'משלוח חדש',
                             ok: async () => {
-                                await FamiliesComponent.addDelivery(f.id.value,s.value);
+                                await FamiliesComponent.addDelivery(f.id.value, {
+                                    basketType: fd.basketType.value,
+                                    comment: fd.courierComments.value,
+                                    courier: fd.courier.value,
+                                    distCenter: fd.distributionCenter.value
+
+                                });
                                 this.dialog.Info("משלוח נוצר בהצלחה");
                             }
                             , cancel: () => { }
@@ -463,16 +516,24 @@ export class FamiliesComponent implements OnInit {
         ]
     });
     @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async addDelivery(familyId: string, basketType: string, context?: Context) {
-        let f = await context.for(Families).findFirst(x=>x.id.isEqualTo(familyId).and(x.distributionCenter.isAllowedForUser()));
-        if (f){
+    static async addDelivery(familyId: string, settings: {
+        basketType: string,
+        comment: string,
+        distCenter: string,
+        courier: string
+    }, context?: Context) {
+        let f = await context.for(Families).findFirst(x => x.id.isEqualTo(familyId).and(x.distributionCenter.isAllowedForUser()));
+        if (f) {
             let fd = f.createDelivery();
-            fd.basketType.value = basketType;
+            fd.basketType.value = settings.basketType;
+            fd.courierComments.value = settings.comment;
+            fd.distributionCenter.value = settings.distCenter;
+            fd.courier.value = settings.courier;
             await fd.save();
             return 1;
         }
         return 0;
-        
+
     }
     async updateGroup() {
         let group = new StringColumn({

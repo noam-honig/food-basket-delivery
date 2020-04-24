@@ -29,6 +29,8 @@ export class Families extends IdEntity {
     fd.distributionCenter.value = this.distributionCenter.value;
     fd.special.value = this.special.value;
     fd.basketType.value = this.basketType.value;
+    fd.deliveryComments.value = this.deliveryComments.value;
+    fd.courier.value = this.fixedCourier.value;
     this.updateDelivery(fd);
     return fd;
   }

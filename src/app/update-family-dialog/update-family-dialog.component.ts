@@ -8,6 +8,7 @@ import { FamilyDeliveryStats } from '../family-deliveries/family-deliveries-stat
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-update-family-dialog',
@@ -32,7 +33,8 @@ export class UpdateFamilyDialogComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<any>,
 
-    private context: Context
+    private context: Context,
+    private settings: ApplicationSettings
 
   ) {
 
@@ -65,6 +67,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
   callInfo: DataAreaSettings<Families>;
   deliverInfo: DataAreaSettings<Families>;
   extraFamilyInfo: DataAreaSettings<Families>;
+  deliveryDefaults: DataAreaSettings<Families>;
   async ngOnInit() {
     if (!this.args.delivery) {
       if (this.args.familyDelivery) {
@@ -94,7 +97,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
     this.extraFamilyInfo = this.families.addArea({
       columnSettings: families => [
         families.groups,
-        families.distributionCenter,
+
 
         families.familyMembers,
         families.internalComment,
@@ -154,7 +157,16 @@ export class UpdateFamilyDialogComponent implements OnInit {
         families.phone4Description]
       ]
     });
-
+    this.deliveryDefaults = this.families.addArea({
+      columnSettings: f =>
+        [
+          f.basketType,
+          f.deliveryComments,
+          f.defaultSelfPickup,
+          f.fixedCourier,
+          f.distributionCenter
+        ].filter(x => this.settings.usingSelfPickupModule.value ? true : x != f.defaultSelfPickup)
+    });
     if (this.delivery = this.args.delivery)
       if (this.delivery)
         this.deliverInfo = this.families.addArea({
