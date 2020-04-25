@@ -44,6 +44,20 @@ export class UpdateFamilyDialogComponent implements OnInit {
     let fd = this.args.family.createDelivery();
     this.context.openDialog(PreviewFamilyComponent, x => { x.argsFamily = fd });
   }
+  updateInfo() {
+    let f = this.families.currentRow;
+    this.context.openDialog(InputAreaComponent, x => x.args = {
+      title: 'פרטי עדכונים עבור ' + f.name.value,
+      ok: () => { },
+      settings: {
+        columnSettings: () => [
+          [f.createDate, f.createUser],
+          [f.lastUpdateDate, f.lastUpdateUser],
+          [f.statusDate, f.statusUser]
+        ]
+      }
+    });
+  }
   cancel() {
     this.families.currentRow.undoChanges();
     this.dialogRef.close();

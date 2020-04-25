@@ -75,6 +75,7 @@ import { SelectListComponent } from './select-list/select-list.component';
 import { TokenReplacerComponent } from './token-replacer/token-replacer.component';
 import { TestMapComponent } from './test-map/test-map.component';
 import { FamilyDeliveriesComponent } from './family-deliveries/family-deliveries.component';
+import { GridDialogComponent } from './grid-dialog/grid-dialog.component';
 
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref();
@@ -134,7 +135,8 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     SelectListComponent,
     TokenReplacerComponent,
     TestMapComponent,
-    FamilyDeliveriesComponent
+    FamilyDeliveriesComponent,
+    GridDialogComponent
 
   ],
   imports: [
@@ -187,6 +189,7 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
  CommonQuestionsComponent,   
     YesNoQuestionComponent,
     InputAreaComponent,
+    GridDialogComponent,
     UpdateFamilyDialogComponent, PreviewFamilyComponent,
     SelectCompanyComponent,
     QuickAddFamilyComponent, HelperAssignmentComponent,

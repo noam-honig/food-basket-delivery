@@ -39,6 +39,7 @@ import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-fami
 import { FamilyStatus, FamilyStatusColumn } from './FamilyStatus';
 import { familyActions } from './familyActions';
 import { buildGridButtonFromActions } from './familyActionsWiring';
+import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 
 
 
@@ -420,6 +421,13 @@ export class FamiliesComponent implements OnInit {
                 }
                 , textInMenu: () => 'פרטי משפחה'
             },
+            {
+                name: 'משלוחים',
+                click: async f => {
+                    f.showDeliveryHistoryDialog();
+                }
+            }
+            ,
             {
                 name: 'משלוח חדש למשפחה',
                 click: async f => {

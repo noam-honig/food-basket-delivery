@@ -223,6 +223,8 @@ export class FamilyDeliveries extends IdEntity {
                 if (this.isNew()) {
                     this.createDate.value = new Date();
                     this.createUser.value = context.user.id;
+                    this.deliveryStatusDate.value = new Date();
+                    this.deliveryStatusUser.value = context.user.id;
                 }
 
 
@@ -369,7 +371,7 @@ export class ActiveFamilyDeliveries extends FamilyDeliveries {
     constructor(context: Context) {
         super(context, true, 'ActiveFamilyDeliveries');
     }
-    
+
 }
 
 function logChanged(context: Context, col: Column<any>, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) {

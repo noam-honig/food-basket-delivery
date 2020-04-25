@@ -19,10 +19,38 @@ import { UpdateGroupDialogComponent } from "../update-group-dialog/update-group-
 import { DistributionCenterId, DistributionCenters } from "../manage/distribution-centers";
 import { FamilyStatusColumn } from "./FamilyStatus";
 import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
+import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 
 
 @EntityClass
 export class Families extends IdEntity {
+  showDeliveryHistoryDialog() {
+    this.context.openDialog(GridDialogComponent, x => x.args = {
+      title: 'משלוחים עבור ' + this.name.value,
+      settings: this.context.for(FamilyDeliveries).gridSettings({
+        numOfColumnsInGrid: 6,
+        hideDataArea: true,
+        rowCssClass: fd => fd.deliverStatus.getCss(),
+        columnSettings: fd => {
+          let r: Column<any>[] = [
+            fd.deliverStatus,
+            fd.deliveryStatusDate,
+            fd.basketType,
+            fd.courier,
+            fd.distributionCenter,
+            fd.courierComments
+          ]
+          r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
+          return r;
+        },
+        get: {
+          where: fd => fd.family.isEqualTo(this.id),
+          orderBy: fd => [fd.deliveryStatusDate],
+          limit: 25
+        }
+      })
+    });
+  }
   createDelivery() {
     let fd = this.context.for(FamilyDeliveries).create();
     fd.family.value = this.id.value;
@@ -115,11 +143,11 @@ export class Families extends IdEntity {
             if (this.sharedColumns().find(x => x.value != x.originalValue)) {
               for (const fd of await context.for(FamilyDeliveries).find({
                 where: fd =>
-                fd.familySource.isEqualTo(this.id).and(
-                  fd.archive.isEqualTo(false).and(
-                    fd.deliverStatus.isGreaterOrEqualTo(DeliveryStatus.ReadyForDelivery).and(
-                      fd.deliverStatus.isLessOrEqualTo(DeliveryStatus.Frozen)
-                    )))
+                  fd.familySource.isEqualTo(this.id).and(
+                    fd.archive.isEqualTo(false).and(
+                      fd.deliverStatus.isGreaterOrEqualTo(DeliveryStatus.ReadyForDelivery).and(
+                        fd.deliverStatus.isLessOrEqualTo(DeliveryStatus.Frozen)
+                      )))
               })) {
                 this.updateDelivery(fd);
                 await fd.save();
@@ -650,7 +678,7 @@ export class GroupsColumn extends StringColumn {
       this.value = '';
     this.value += group;
   }
-  constructor(private context: Context,settingsOrCaption?: ColumnOptions<string>) {
+  constructor(private context: Context, settingsOrCaption?: ColumnOptions<string>) {
     super({
       caption: 'שיוך לקבוצת חלוקה',
 
@@ -665,7 +693,7 @@ export class GroupsColumn extends StringColumn {
           });
         }
       })
-    },settingsOrCaption);
+    }, settingsOrCaption);
   }
   selected(group: string) {
     if (!this.value)

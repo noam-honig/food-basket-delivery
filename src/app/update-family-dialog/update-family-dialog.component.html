@@ -3,6 +3,8 @@
     <div>
         <mat-menu #appMenu77>
             <button mat-menu-item (click)="preview()">הצג משפחה כפי שתנדב יראה אותה</button>
+            <button mat-menu-item (click)="families.currentRow.showDeliveryHistoryDialog()">משלוחים</button>
+            <button mat-menu-item (click)="updateInfo()">פרטי עדכונים</button>
                 <!--
         <button mat-menu-item (click)="clearHelperInfo()">{{'נקה פרטי משנע'|translate}}</button>
         <button mat-menu-item (click)="saveHelper()"
