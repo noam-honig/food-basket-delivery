@@ -5,37 +5,23 @@ import { Roles } from "../auth/roles";
 import { BasketId } from "./BasketType";
 import { DistributionCenterId } from "../manage/distribution-centers";
 import { HelperId } from "../helpers/helpers";
-import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { Groups } from "../manage/manage.component";
-import { translate } from "../translate";
 import { FamilyStatusColumn } from "./FamilyStatus";
 import { FamilySourceId } from "./FamilySources";
 import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer, serverUpdateInfo, pagedRowsIterator } from "./familyActionsWiring";
-import { async } from "@angular/core/testing";
 
-interface ActionOnFamiliesArgs extends ActionOnRowsArgs {
-    whatToDoOnFamily: (f: Families) => Promise<void>
-}
 
-class ActionOnFamilies extends ActionOnRows {
-    constructor(context: Context, args: ActionOnFamiliesArgs) {
-        super(context, args, {
+
+class ActionOnFamilies extends ActionOnRows<Families> {
+    constructor(context: Context, args: ActionOnRowsArgs<Families>) {
+        super(context,Families, args, {
             callServer: async (info, action, args) => await ActionOnFamilies.FamilyActionOnServer(info, action, args),
-            doWorkOnServer: async (info) => {
-
-                let where = (f: Families) => new AndFilter(f.distributionCenter.isAllowedForUser(), unpackWhere(f, info.where));
-                let count = await context.for(Families).count(where);
-                if (count != info.count) {
-                    return "ארעה שגיאה אנא נסה שוב";
-                }
-                let updated = await pagedRowsIterator(context.for(Families), where, args.whatToDoOnFamily, count);
-                return "עודכנו " + updated + " משפחות";
-            }
+            groupName: 'משפחות'
         });
     }
     @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async FamilyActionOnServer(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
-        return await filterActionOnServer(familyActions(),context,info,action,args);
+        return await filterActionOnServer(familyActions(), context, info, action, args);
     }
 }
 class NewDelivery extends ActionOnFamilies {
@@ -158,4 +144,4 @@ class UpdateFamilySource extends ActionOnFamilies {
 
 
 
-export const familyActions  =()=> [NewDelivery, updateGroup, UpdateStatus, UpdateBasketType, UpdateFamilySource];
+export const familyActions = () => [NewDelivery, updateGroup, UpdateStatus, UpdateBasketType, UpdateFamilySource];

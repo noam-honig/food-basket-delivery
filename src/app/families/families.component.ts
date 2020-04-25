@@ -29,7 +29,7 @@ import { FamilyDeliveries } from './FamilyDeliveries';
 
 
 import { saveToExcel } from '../shared/saveToExcel';
-import { Roles,  distCenterAdminGuard } from '../auth/roles';
+import { Roles, distCenterAdminGuard } from '../auth/roles';
 import { MatTabGroup } from '@angular/material/tabs';
 import { QuickAddFamilyComponent } from '../quick-add-family/quick-add-family.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -405,8 +405,8 @@ export class FamiliesComponent implements OnInit {
             {
                 afterAction: async () => await this.refresh(),
                 dialog: this.dialog,
-                packWhere: () => this.packWhere(),
-                totalRows: () => this.families.totalRows
+                where: f => this.families.buildFindOptions().where(f)
+
             }),
         ],
 

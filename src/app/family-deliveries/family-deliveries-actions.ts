@@ -1,4 +1,4 @@
-import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere } from "@remult/core";
+import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, FilterBase } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { DistributionCenterId } from "../manage/distribution-centers";
 import { HelperId } from "../helpers/helpers";
@@ -7,32 +7,45 @@ import { Groups } from "../manage/manage.component";
 import { translate } from "../translate";
 import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer, serverUpdateInfo, pagedRowsIterator } from "../families/familyActionsWiring";
 import { async } from "@angular/core/testing";
-import { FamilyDeliveries } from "../families/FamilyDeliveries";
+import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
 
 
 
-interface ActionOnFamiliesArgs extends ActionOnRowsArgs {
-    whatToDoOnFamily: (f: FamilyDeliveries) => Promise<void>
-}
-class ActionOnFamilyDelveries extends ActionOnRows {
-    constructor(context: Context, args: ActionOnFamiliesArgs) {
-        super(context, args, {
-            callServer: async (info, action, args) => await ActionOnFamilyDelveries.FamilyActionOnServer(info, action, args),
-            doWorkOnServer: async (info) => {
 
-                let where = (f: FamilyDeliveries) => new AndFilter(f.distributionCenter.isAllowedForUser(), unpackWhere(f, info.where));
-                let count = await context.for(FamilyDeliveries).count(where);
-                if (count != info.count) {
-                    return "ארעה שגיאה אנא נסה שוב";
-                }
-                let updated = await pagedRowsIterator(context.for(FamilyDeliveries), where, args.whatToDoOnFamily, count);
-                return "עודכנו " + updated + " משפחות";
-            }
+class ActionOnFamilyDelveries extends ActionOnRows<ActiveFamilyDeliveries> {
+    constructor(context: Context, args: ActionOnRowsArgs<ActiveFamilyDeliveries>) {
+        super(context, ActiveFamilyDeliveries, args, {
+            callServer: async (info, action, args) => await ActionOnFamilyDelveries.DeliveriesActionOnServer(info, action, args)
+            , groupName: 'משלוחים'
         });
     }
     @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async FamilyActionOnServer(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
-        return await filterActionOnServer(delvieryActions(),context,info,action,args);
+    static async DeliveriesActionOnServer(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
+        return await filterActionOnServer(delvieryActions(), context, info, action, args);
     }
 }
-export const delvieryActions  =()=> [];
+class DeleteDeliveries extends ActionOnFamilyDelveries {
+
+    constructor(context: Context) {
+        super(context, {
+            allowed: Roles.distCenterAdmin,
+            columns: () => [],
+            title: 'מחיקה ',
+            whatToDoOnFamily: async f => { f.delete(); }
+        });
+    }
+}
+
+class ArchiveDeliveries extends ActionOnFamilyDelveries {
+
+    constructor(context: Context) {
+        super(context, {
+            allowed: Roles.distCenterAdmin,
+            columns: () => [],
+            title: 'העברה לארכיב של משלוחים שהסתיימו',
+            whatToDoOnFamily: async f => { f.archive.value = true; },
+            additionalWhere: f => f.deliverStatus.isAResultStatus()
+        });
+    }
+}
+export const delvieryActions = () => [ArchiveDeliveries, DeleteDeliveries];

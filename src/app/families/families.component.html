@@ -2,7 +2,7 @@
     <button mat-mini-fab style="margin-bottom:5px" (click)="refresh()" color="primary">
         <mat-icon>refresh</mat-icon>
     </button>
-    
+
     <a href="https://www.youtube.com/watch?v=2FG05srq5uY&list=PLRxHq2rVTQWhe2MTYbMJbAY1EW6iXfjtK" target="_blank"
         class="no-print">{{'לסרטוני הדרכה על מסך משפחות, לחצו כאן'|translate}}</a>
 </div>
@@ -40,6 +40,5 @@
     </div>
 </div>
 
-<mat-card >
-    <data-grid [settings]="families" [height]="400"></data-grid>
-</mat-card>
+
+<data-grid [settings]="families" [height]="400"></data-grid>

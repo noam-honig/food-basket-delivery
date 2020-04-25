@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import { Context, DataControlSettings, FilterBase, AndFilter, BusyService } from '@remult/core';
+import { Context, DataControlSettings, FilterBase, AndFilter, BusyService, packWhere } from '@remult/core';
 
 import { FamilyDeliveresStatistics, FamilyDeliveryStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
@@ -16,6 +16,8 @@ import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-fami
 import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Families } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
+import { delvieryActions } from './family-deliveries-actions';
+import { buildGridButtonFromActions } from '../families/familyActionsWiring';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -472,6 +474,15 @@ export class FamilyDeliveriesComponent implements OnInit {
       ];
       return r;
     },
+    gridButton:[
+      ...buildGridButtonFromActions(delvieryActions(), this.context,
+            {
+                afterAction: async () => await this.refresh(),
+                dialog: this.dialog,
+                where: f=> this.deliveries.buildFindOptions().where(f)
+            }),
+        ]
+    ,
     rowButtons: [
       {
         name: '',
@@ -549,8 +560,14 @@ export class FamilyDeliveriesComponent implements OnInit {
     }
 
   }
-
+  packWhere() {
+    return {
+        where: packWhere(this.context.for(FamilyDeliveries).create(), this.deliveries.buildFindOptions().where),
+        count: this.deliveries.totalRows
+    };
+  }
 }
+
 interface statsOnTabBasket extends statsOnTab {
   totalBoxes1?: number;
   totalBoxes2?: number;
