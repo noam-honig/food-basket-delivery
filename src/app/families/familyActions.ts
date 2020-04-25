@@ -53,7 +53,7 @@ class NewDelivery extends ActionOnFamilies {
                 ]
             },
             title: 'משלוח חדש',
-            whatToDoOnFamily: async f => {
+            forEach: async f => {
                 let fd = f.createDelivery();
                 if (!this.useFamilyBasket.value) {
                     fd.basketType.value = this.basketType.value;
@@ -91,7 +91,7 @@ class updateGroup extends ActionOnFamilies {
             confirmQuestion: () => 'האם ' + this.action.value + ' את השיוך לקבוצה "' + this.group.value,
             title: 'שיוך לקבוצת חלוקה',
             allowed: Roles.distCenterAdmin,
-            whatToDoOnFamily: async f => {
+            forEach: async f => {
                 if (this.action.value == addGroupAction) {
                     if (!f.groups.selected(this.group.value))
                         f.groups.addGroup(this.group.value);
@@ -115,7 +115,7 @@ class UpdateStatus extends ActionOnFamilies {
             allowed: Roles.distCenterAdmin,
             columns: () => [this.status],
             title: 'עדכן סטטוס משפחה ',
-            whatToDoOnFamily: async f => { f.status.value = this.status.value; }
+            forEach: async f => { f.status.value = this.status.value; }
         });
     }
 }
@@ -126,7 +126,7 @@ class UpdateBasketType extends ActionOnFamilies {
             allowed: Roles.distCenterAdmin,
             columns: () => [this.basket],
             title: 'עדכן סוג סל ברירת מחדל',
-            whatToDoOnFamily: async f => { f.basketType.value = this.basket.value },
+            forEach: async f => { f.basketType.value = this.basket.value },
         });
     }
 }
@@ -137,7 +137,7 @@ class UpdateFamilySource extends ActionOnFamilies {
             allowed: Roles.distCenterAdmin,
             columns: () => [this.familySource],
             title: 'עדכן גורם מפנה ',
-            whatToDoOnFamily: async f => { f.familySource.value = this.familySource.value }
+            forEach: async f => { f.familySource.value = this.familySource.value }
         });
     }
 }

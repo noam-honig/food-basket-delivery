@@ -21,11 +21,19 @@ export class ActionOnRows<T extends IdEntity> {
         public worker: {
             callServer: (info: serverUpdateInfo, action: string, columns: any[]) => Promise<string>,
             groupName: string,
+            beforeEach?: (f:T) => Promise<void>,
             additionalWhere?: EntityWhere<T>
         }
     ) {
         if (!args.confirmQuestion)
             args.confirmQuestion = () => args.title;
+        if (worker.beforeEach) {
+            let orig = args.forEach;
+            args.forEach = async f => {
+                await worker.beforeEach(f);
+                await orig(f);
+            }
+        }
     }
 
     async doWorkOnServer(info: serverUpdateInfo, args: any[]) {
@@ -39,7 +47,7 @@ export class ActionOnRows<T extends IdEntity> {
         if (count != info.count) {
             return "ארעה שגיאה אנא נסה שוב";
         }
-        let updated = await pagedRowsIterator<T>(this.context.for(this.entity), where, this.args.whatToDoOnFamily, count);
+        let updated = await pagedRowsIterator<T>(this.context.for(this.entity), where, this.args.forEach, count);
         return "עודכנו " + updated + " " + this.worker.groupName;
     }
     complementWhere(where: EntityWhere<T>) {
@@ -97,7 +105,7 @@ export interface actionDialogNeeds<T extends IdEntity> {
 
 export interface ActionOnRowsArgs<T extends IdEntity> {
     dialogColumns?: (component: actionDialogNeeds<T>) => DataArealColumnSetting<any>[],
-    whatToDoOnFamily: (f: T) => Promise<void>
+    forEach: (f: T) => Promise<void>
     columns: () => Column<any>[],
     title: string,
     allowed: Allowed,

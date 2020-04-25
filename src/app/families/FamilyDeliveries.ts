@@ -229,12 +229,13 @@ export class FamilyDeliveries extends IdEntity {
 
 
                 if (!this.disableChangeLogging) {
-                    logChanged(context, this.courier, this.courierAssingTime, this.courierAssignUser, async () => {
-                        if (!this._disableMessageToUsers) {
-                            Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName()), this.context, this.distributionCenter.value)
+                    if (!this.isNew() || this.courier.value)
+                        logChanged(context, this.courier, this.courierAssingTime, this.courierAssignUser, async () => {
+                            if (!this._disableMessageToUsers) {
+                                Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName()), this.context, this.distributionCenter.value)
+                            }
                         }
-                    }
-                    );//should be after succesfull save
+                        );//should be after succesfull save
                     //logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
                     logChanged(context, this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => {
                         if (!this._disableMessageToUsers) {

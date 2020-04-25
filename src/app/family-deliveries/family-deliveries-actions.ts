@@ -9,6 +9,7 @@ import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer
 import { async } from "@angular/core/testing";
 import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
+import { Families } from "../families/families";
 
 
 
@@ -17,12 +18,17 @@ class ActionOnFamilyDelveries extends ActionOnRows<ActiveFamilyDeliveries> {
     constructor(context: Context, args: ActionOnRowsArgs<ActiveFamilyDeliveries>) {
         super(context, ActiveFamilyDeliveries, args, {
             callServer: async (info, action, args) => await ActionOnFamilyDelveries.DeliveriesActionOnServer(info, action, args)
-            , groupName: 'משלוחים'
+            , groupName: 'משלוחים',
+            beforeEach: async f => {
+                f._disableMessageToUsers = true;
+            }
         });
     }
     @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async DeliveriesActionOnServer(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
-        return await filterActionOnServer(delvieryActions(), context, info, action, args);
+        let r = await filterActionOnServer(delvieryActions(), context, info, action, args);
+        Families.SendMessageToBrowsers('משלוחים עודכנו', context, '');
+        return r;
     }
 }
 class DeleteDeliveries extends ActionOnFamilyDelveries {
@@ -32,7 +38,7 @@ class DeleteDeliveries extends ActionOnFamilyDelveries {
             allowed: Roles.distCenterAdmin,
             columns: () => [],
             title: 'מחיקה ',
-            whatToDoOnFamily: async f => { f.delete(); }
+            forEach: async f => { f.delete(); }
         });
     }
 }
@@ -44,7 +50,7 @@ class ArchiveDeliveries extends ActionOnFamilyDelveries {
             allowed: Roles.distCenterAdmin,
             columns: () => [],
             title: 'העברה לארכיב של משלוחים שהסתיימו',
-            whatToDoOnFamily: async f => { f.archive.value = true; },
+            forEach: async f => { f.archive.value = true; },
             additionalWhere: f => f.deliverStatus.isAResultStatus()
         });
     }
@@ -56,7 +62,7 @@ class DeliveredForOnTheWay extends ActionOnFamilyDelveries {
             allowed: Roles.distCenterAdmin,
             columns: () => [],
             title: 'עדכן נמסר בהצלחה עבור אלו שבדרך',
-            whatToDoOnFamily: async f => { f.deliverStatus.value = DeliveryStatus.Success },
+            forEach: async f => { f.deliverStatus.value = DeliveryStatus.Success },
             additionalWhere: f => f.onTheWayFilter()
         });
     }
@@ -72,7 +78,7 @@ class UpdateFamilySource extends ActionOnFamilyDelveries {
                 return [this.distributionCenter]
             },
             title: 'עדכן נקודת חלוקה ',
-            whatToDoOnFamily: async f => { f.distributionCenter.value = this.distributionCenter.value }
+            forEach: async f => { f.distributionCenter.value = this.distributionCenter.value }
         });
     }
 }
@@ -83,7 +89,7 @@ class CancelAsignment extends ActionOnFamilyDelveries {
             allowed: Roles.distCenterAdmin,
             columns: () => [],
             title: 'בטל שיוך למתנדב',
-            whatToDoOnFamily: async f => { f.courier.value = ''; },
+            forEach: async f => { f.courier.value = ''; },
             additionalWhere: f => f.onTheWayFilter()
         });
     }
