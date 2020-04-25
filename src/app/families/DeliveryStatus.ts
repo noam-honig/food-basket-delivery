@@ -34,6 +34,9 @@ export class DeliveryStatus {
 
 }
 export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
+  isNotAResultStatus(): FilterBase {
+      return this.isLessOrEqualTo(DeliveryStatus.Frozen);
+  }
   isActiveDelivery() {
     return this.isLessOrEqualTo(DeliveryStatus.FailedOther);
   }

@@ -9,6 +9,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { PreviewFamilyComponent } from '../preview-family/preview-family.component';
 
 @Component({
   selector: 'app-update-family-dialog',
@@ -38,6 +39,10 @@ export class UpdateFamilyDialogComponent implements OnInit {
 
   ) {
 
+  }
+  preview() {
+    let fd = this.args.family.createDelivery();
+    this.context.openDialog(PreviewFamilyComponent, x => { x.argsFamily = fd });
   }
   cancel() {
     this.families.currentRow.undoChanges();

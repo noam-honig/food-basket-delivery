@@ -14,6 +14,15 @@ import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
 
 @EntityClass
 export class FamilyDeliveries extends IdEntity {
+    async duplicateCount() {
+        return await this.context.for(ActiveFamilyDeliveries).count(
+            fd => fd.family.isEqualTo(this.family).and(
+                fd.deliverStatus.isNotAResultStatus()).and(
+                    fd.basketType.isEqualTo(this.basketType).and(
+                        fd.distributionCenter.isEqualTo(this.distributionCenter)
+                    )
+                ));
+    }
     family = new FamilyId({
         allowApiUpdate: false
     });
@@ -147,6 +156,16 @@ export class FamilyDeliveries extends IdEntity {
     phone4Description = new StringColumn({
         caption: 'הערות לטלפון 4',
         allowApiUpdate: false
+    });
+    courierBeenHereBefore = new BoolColumn({
+        sqlExpression: () => {
+            var sql = new SqlBuilder();
+
+            var fd = this.context.for(FamilyDeliveries).create();
+            let f = this;
+            sql.addEntity(f, "FamilyDeliveries");
+            return sql.columnWithAlias(sql.case([{ when: [sql.ne(f.courier, "''")], then: sql.build('exists (select 1 from ', fd, ' where ', sql.and(sql.eq(fd.family, f.id), sql.eq(fd.courier, f.courier)), ")") }], false), 'courierBeenHereBefore');
+        }
     });
 
     archive = new BoolColumn();
@@ -350,16 +369,7 @@ export class ActiveFamilyDeliveries extends FamilyDeliveries {
     constructor(context: Context) {
         super(context, true, 'ActiveFamilyDeliveries');
     }
-    courierBeenHereBefore = new BoolColumn({
-        sqlExpression: () => {
-            var sql = new SqlBuilder();
-
-            var fd = this.context.for(FamilyDeliveries).create();
-            let f = this;
-            sql.addEntity(f, "FamilyDeliveries");
-            return sql.columnWithAlias(sql.case([{ when: [sql.ne(f.courier, "''")], then: sql.build('exists (select 1 from ', fd, ' where ', sql.and(sql.eq(fd.family, f.id), sql.eq(fd.courier, f.courier)), ")") }], false), 'courierBeenHereBefore');
-        }
-    });
+    
 }
 
 function logChanged(context: Context, col: Column<any>, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) {

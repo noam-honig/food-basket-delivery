@@ -25,7 +25,7 @@ import { Route } from '@angular/router';
 
 import { Context } from '@remult/core';
 
-import { FamilyDeliveries } from './FamilyDeliveries';
+import { FamilyDeliveries, ActiveFamilyDeliveries } from './FamilyDeliveries';
 
 
 import { saveToExcel } from '../shared/saveToExcel';
@@ -424,29 +424,40 @@ export class FamiliesComponent implements OnInit {
                 name: 'משלוח חדש למשפחה',
                 click: async f => {
 
-                    let fd = f.createDelivery();
+                    let newDelivery = f.createDelivery();
                     await this.context.openDialog(InputAreaComponent, x => {
                         x.args = {
                             settings: {
                                 columnSettings: () => {
                                     let r: Column<any>[] = [
-                                        fd.basketType,
-                                        fd.deliveryComments
+                                        newDelivery.basketType,
+                                        newDelivery.deliveryComments
 
                                     ];
                                     if (this.dialog.hasManyCenters)
-                                        r.push(fd.distributionCenter);
-                                    r.push(fd.courier);
+                                        r.push(newDelivery.distributionCenter);
+                                    r.push(newDelivery.courier);
                                     return r;
                                 }
                             },
                             title: 'משלוח חדש',
+                            validate: async () => {
+                                let count = await newDelivery.duplicateCount();
+                                if (count > 0) {
+                                    if (await this.dialog.YesNoPromise("למשפחה זו כבר קיים משלוח מאותו סוג האם להוסיף עוד אחד?")) {
+                                        return;
+                                    }
+                                    else {
+                                        throw 'לא תקין';
+                                    }
+                                }
+                            },
                             ok: async () => {
                                 await FamiliesComponent.addDelivery(f.id.value, {
-                                    basketType: fd.basketType.value,
-                                    comment: fd.courierComments.value,
-                                    courier: fd.courier.value,
-                                    distCenter: fd.distributionCenter.value
+                                    basketType: newDelivery.basketType.value,
+                                    comment: newDelivery.courierComments.value,
+                                    courier: newDelivery.courier.value,
+                                    distCenter: newDelivery.distributionCenter.value
 
                                 });
                                 this.dialog.Info("משלוח נוצר בהצלחה");

@@ -13,9 +13,10 @@ export class InputAreaComponent implements OnInit {
     settings: IDataAreaSettings<any>,
     ok: () => void,
     cancel?: () => void,
+    validate?: () => Promise<void>,
     buttons?: button[]
   };
-  
+
   constructor(
     public dialogRef: MatDialogRef<any>
 
@@ -34,10 +35,18 @@ export class InputAreaComponent implements OnInit {
 
   }
   ok = false;
-  confirm() {
+  async confirm() {
+    if (this.args.validate) {
+      try {
+        await this.args.validate();
+      }
+      catch{
+        return;
+      }
+    }
+    await this.args.ok();
     this.ok = true;
     this.dialogRef.close();
-    this.args.ok();
     return false;
   }
   buttonClick(b: button, e: MouseEvent) {

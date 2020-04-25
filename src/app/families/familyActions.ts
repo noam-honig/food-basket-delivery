@@ -62,7 +62,8 @@ class NewDelivery extends ActionOnFamilies {
                 if (this.determineCourier.value) {
                     fd.courier.value = this.courier.value;
                 }
-                await fd.save();
+                if ((await fd.duplicateCount())==0)
+                    await fd.save();
             }
         });
     }
