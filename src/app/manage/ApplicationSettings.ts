@@ -16,8 +16,10 @@ import { BasketType } from '../families/BasketType';
 export class ApplicationSettings extends Entity<number>  {
   @ServerFunction({ allowed: c => c.isSignedIn() })
   static async getPhoneOptions(deliveryId: string, context: Context) {
-    let FamilyDeliveries = await (await import('../families/FamilyDeliveries')).FamilyDeliveries;
-    let d = await context.for(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId));
+    let ActiveFamilyDeliveries = await (await import('../families/FamilyDeliveries')).ActiveFamilyDeliveries;
+    let d = await context.for(ActiveFamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId).and(fd.isAllowedForUser()));
+    if (!d)
+      return [];
     let Families = await (await import('../families/families')).Families;
     let family = await context.for(Families).findFirst(f => f.id.isEqualTo(d.family));
     let r: phoneOption[] = [];

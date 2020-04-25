@@ -183,7 +183,7 @@ export class FamilyDeliveries extends IdEntity {
     }
     disableChangeLogging = false;
     _disableMessageToUsers = false;
-    constructor(protected context: Context, onlyActive = false, apiEndPoing = 'FamilyDeliveries') {
+    constructor(protected context: Context, private onlyActive = false, apiEndPoing = 'FamilyDeliveries') {
         super({
             name: apiEndPoing,
             dbName: 'FamilyDeliveries',
@@ -192,25 +192,7 @@ export class FamilyDeliveries extends IdEntity {
             allowApiUpdate: context.isSignedIn(),
             allowApiDelete: Roles.distCenterAdmin,
             apiDataFilter: () => {
-                if (!context.isSignedIn())
-                    this.id.isEqualTo('no rows');
-                let user = <HelperUserInfo>context.user;
-                let result: FilterBase;
-                let add = (f: FilterBase) => result = new AndFilter(f, result);
-                if (onlyActive)
-                    add(this.active());
-
-                if (!context.isAllowed(Roles.admin)) {
-                    if (context.isAllowed(Roles.distCenterAdmin))
-                        add(this.distributionCenter.isAllowedForUser());
-                    else
-                        add(this.active())
-                    if (user.theHelperIAmEscortingId)
-                        add(this.courier.isEqualTo(user.theHelperIAmEscortingId).and(this.visibleToCourier.isEqualTo(true)));
-                    else
-                        add(this.courier.isEqualTo(user.id).and(this.visibleToCourier.isEqualTo(true)));
-                }
-                return result;
+                return this.isAllowedForUser();
 
             },
             fixedWhereFilter: () => {
@@ -246,6 +228,27 @@ export class FamilyDeliveries extends IdEntity {
                 }
             }
         });
+    }
+
+    isAllowedForUser() {
+        if (!this.context.isSignedIn())
+            this.id.isEqualTo('no rows');
+        let user = <HelperUserInfo>this.context.user;
+        let result: FilterBase;
+        let add = (f: FilterBase) => result = new AndFilter(f, result);
+        if (this.onlyActive)
+            add(this.active());
+        if (!this.context.isAllowed(Roles.admin)) {
+            if (this.context.isAllowed(Roles.distCenterAdmin))
+                add(this.distributionCenter.isAllowedForUser());
+            else
+                add(this.active());
+            if (user.theHelperIAmEscortingId)
+                add(this.courier.isEqualTo(user.theHelperIAmEscortingId).and(this.visibleToCourier.isEqualTo(true)));
+            else
+                add(this.courier.isEqualTo(user.id).and(this.visibleToCourier.isEqualTo(true)));
+        }
+        return result;
     }
 
     getShortDeliveryDescription() {
