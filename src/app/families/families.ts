@@ -5,7 +5,7 @@ import { YesNoColumn } from "./YesNo";
 import { FamilySourceId } from "./FamilySources";
 import { BasketId, BasketType } from "./BasketType";
 import { changeDate, DateTimeColumn, SqlBuilder, PhoneColumn, delayWhileTyping } from "../model-shared/types";
-import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, FilterBase, ColumnOptions } from '@remult/core';
+import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, FilterBase, ColumnOptions, SpecificEntityHelper, Entity } from '@remult/core';
 import { HelperIdReadonly, HelperId, Helpers, HelperUserInfo } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress } from "../shared/googleApiHelpers";
@@ -720,22 +720,5 @@ export function parseUrlInAddress(address: string) {
 
 
 
-export async function iterateFamilies(context: Context, where: (f: Families) => FilterBase, what: (f: Families) => void, count?: number) {
-  let updated = 0;
-  let pageSize = 200;
-  if (count === undefined) {
-    count = await context.for(Families).count(where);
-  }
-  let pt = new PromiseThrottle(10);
-  for (let index = (count / pageSize); index >= 0; index--) {
-    let rows = await context.for(Families).find({ where, limit: pageSize, page: index, orderBy: f => [f.id] });
-    //console.log(rows.length);
-    for (const f of await rows) {
-      what(f);
-      await pt.push(f.save());
-      updated++;
-    }
-  }
-  await pt.done();
-  return updated;
-}
+
+

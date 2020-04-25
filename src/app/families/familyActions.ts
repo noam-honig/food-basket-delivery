@@ -1,6 +1,6 @@
 import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere } from "@remult/core";
 import { FamiliesComponent } from "./families.component";
-import { Families, iterateFamilies } from "./families";
+import { Families } from "./families";
 import { Roles } from "../auth/roles";
 import { BasketId } from "./BasketType";
 import { DistributionCenterId } from "../manage/distribution-centers";
@@ -10,7 +10,7 @@ import { Groups } from "../manage/manage.component";
 import { translate } from "../translate";
 import { FamilyStatusColumn } from "./FamilyStatus";
 import { FamilySourceId } from "./FamilySources";
-import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer } from "./familyActionsWiring";
+import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer, serverUpdateInfo, pagedRowsIterator } from "./familyActionsWiring";
 import { async } from "@angular/core/testing";
 
 interface ActionOnFamiliesArgs extends ActionOnRowsArgs {
@@ -28,7 +28,7 @@ class ActionOnFamilies extends ActionOnRows {
                 if (count != info.count) {
                     return "ארעה שגיאה אנא נסה שוב";
                 }
-                let updated = await iterateFamilies(context, where, args.whatToDoOnFamily, count);
+                let updated = await pagedRowsIterator(context.for(Families), where, args.whatToDoOnFamily, count);
                 return "עודכנו " + updated + " משפחות";
             }
         });
@@ -156,9 +156,6 @@ class UpdateFamilySource extends ActionOnFamilies {
 }
 
 
-export interface serverUpdateInfo {
-    where: any;
-    count: number;
-}
+
 
 export const familyActions  =()=> [NewDelivery, updateGroup, UpdateStatus, UpdateBasketType, UpdateFamilySource];

@@ -11,7 +11,7 @@ import { Context, IdEntity, IdColumn, StringColumn, EntityClass, Entity, NumberC
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import { Families, iterateFamilies } from '../families/families';
+import { Families } from '../families/families';
 import { SqlBuilder } from '../model-shared/types';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DistributionCenters, DistributionCenterId } from './distribution-centers';
@@ -20,6 +20,7 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyStatus, FamilyStatusColumn } from '../families/FamilyStatus';
+import { pagedRowsIterator } from '../families/familyActionsWiring';
 
 @Component({
   selector: 'app-manage',
@@ -359,7 +360,7 @@ export class ManageComponent implements OnInit {
   }
   @ServerFunction({ allowed: Roles.admin })
   static async deleteFamiliesOnServer(context?: Context) {
-    let count = await iterateFamilies(context,
+    let count = await pagedRowsIterator(context.for(Families),
       f => f.status.isEqualTo(FamilyStatus.RemovedFromList),
       async f => await f.delete());
     return count;

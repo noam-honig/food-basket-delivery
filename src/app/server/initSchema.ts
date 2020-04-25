@@ -1,6 +1,6 @@
 
 import { PostgresDataProvider, PostgresPool } from '@remult/server-postgres';
-import { Families, iterateFamilies } from '../families/families';
+import { Families } from '../families/families';
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings, RemovedFromListExcelImportStrategy } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
@@ -12,6 +12,7 @@ import '../app.module';
 import { SqlBuilder } from '../model-shared/types';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DistributionCenters } from '../manage/distribution-centers';
+import { pagedRowsIterator } from '../families/familyActionsWiring';
 
 export async function initSchema(pool1: PostgresPool, org: string) {
 
@@ -207,7 +208,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     })
 
     if (settings.dataStructureVersion.value == 13) {
-        await iterateFamilies(context, f => undefined,
+        await pagedRowsIterator(context.for(Families), f => undefined,
             f => {
                 f._suppressLastUpdateDuringSchemaInit = true;
                 let g = f.getGeocodeInformation();

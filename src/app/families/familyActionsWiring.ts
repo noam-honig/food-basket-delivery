@@ -1,21 +1,15 @@
-import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere } from "@remult/core";
-import { FamiliesComponent } from "./families.component";
-import { Families, iterateFamilies } from "./families";
-import { Roles } from "../auth/roles";
-import { BasketId } from "./BasketType";
-import { DistributionCenterId } from "../manage/distribution-centers";
-import { HelperId } from "../helpers/helpers";
+import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, IdEntity, SpecificEntityHelper, FilterBase } from "@remult/core";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
-import { Groups } from "../manage/manage.component";
 import { translate } from "../translate";
-import { FamilyStatusColumn } from "./FamilyStatus";
-import { FamilySourceId } from "./FamilySources";
-import { serverUpdateInfo } from "./familyActions";
 import { DialogService } from "../select-popup/dialog";
+import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
 
 
 
-
+export interface serverUpdateInfo {
+    where: any;
+    count: number;
+}
 
 
 export class ActionOnRows {
@@ -110,3 +104,24 @@ export function buildGridButtonFromActions(actions: {
     }
     return r;
 }
+
+export async function pagedRowsIterator<T extends IdEntity>(context: SpecificEntityHelper<string,T>, where: (f: T) => FilterBase, what: (f: T) => void, count?: number) {
+    let updated = 0;
+    let pageSize = 200;
+    if (count === undefined) {
+      count = await context.count(where);
+    }
+    let pt = new PromiseThrottle(10);
+    for (let index = (count / pageSize); index >= 0; index--) {
+      let rows = await context.find({ where, limit: pageSize, page: index, orderBy: f => [f.id] });
+      //console.log(rows.length);
+      for (const f of await rows) {
+        what(f);
+        await pt.push(f.save());
+        updated++;
+      }
+    }
+    await pt.done();
+    return updated;
+  }
+  
