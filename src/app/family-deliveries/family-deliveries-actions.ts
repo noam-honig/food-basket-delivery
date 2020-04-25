@@ -8,6 +8,7 @@ import { translate } from "../translate";
 import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer, serverUpdateInfo, pagedRowsIterator } from "../families/familyActionsWiring";
 import { async } from "@angular/core/testing";
 import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
+import { DeliveryStatus } from "../families/DeliveryStatus";
 
 
 
@@ -48,4 +49,43 @@ class ArchiveDeliveries extends ActionOnFamilyDelveries {
         });
     }
 }
-export const delvieryActions = () => [ArchiveDeliveries, DeleteDeliveries];
+class DeliveredForOnTheWay extends ActionOnFamilyDelveries {
+
+    constructor(context: Context) {
+        super(context, {
+            allowed: Roles.distCenterAdmin,
+            columns: () => [],
+            title: 'עדכן נמסר בהצלחה עבור אלו שבדרך',
+            whatToDoOnFamily: async f => { f.deliverStatus.value = DeliveryStatus.Success },
+            additionalWhere: f => f.onTheWayFilter()
+        });
+    }
+}
+class UpdateFamilySource extends ActionOnFamilyDelveries {
+    distributionCenter = new DistributionCenterId(this.context);
+    constructor(context: Context) {
+        super(context, {
+            allowed: Roles.distCenterAdmin,
+            columns: () => [this.distributionCenter],
+            dialogColumns: c => {
+                this.distributionCenter.value = c.dialog.distCenter.value;
+                return [this.distributionCenter]
+            },
+            title: 'עדכן נקודת חלוקה ',
+            whatToDoOnFamily: async f => { f.distributionCenter.value = this.distributionCenter.value }
+        });
+    }
+}
+class CancelAsignment extends ActionOnFamilyDelveries {
+
+    constructor(context: Context) {
+        super(context, {
+            allowed: Roles.distCenterAdmin,
+            columns: () => [],
+            title: 'בטל שיוך למתנדב',
+            whatToDoOnFamily: async f => { f.courier.value = ''; },
+            additionalWhere: f => f.onTheWayFilter()
+        });
+    }
+}
+export const delvieryActions = () => [UpdateFamilySource, DeliveredForOnTheWay, CancelAsignment, ArchiveDeliveries, DeleteDeliveries];
