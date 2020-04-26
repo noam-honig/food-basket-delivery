@@ -304,7 +304,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     let f = context.for(FamilyDeliveries).create();
     let h = context.for(Helpers).create();
     let sql = new SqlBuilder();
-    sql.addEntity(f, "Families");
+    sql.addEntity(f, "FamilyDeliveries");
     let r = (await db.execute(sql.query({
       select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier,
       sql.columnInnerSelect(f, {
