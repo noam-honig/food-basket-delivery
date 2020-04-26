@@ -352,7 +352,9 @@ export class FamilyDeliveries extends IdEntity {
         return this.address.value;
     }
 
-
+    checkAllowedForUser(): boolean {
+        return this.distributionCenter.checkAllowedForUser();
+    }
     checkNeedsWork() {
         if (this.courierComments.value)
             this.needsWork.value = true;
@@ -370,9 +372,7 @@ export class FamilyDeliveries extends IdEntity {
 
 @EntityClass
 export class ActiveFamilyDeliveries extends FamilyDeliveries {
-    checkAllowedForUser(): boolean {
-        return this.distributionCenter.checkAllowedForUser();
-    }
+    
 
 
     constructor(context: Context) {
