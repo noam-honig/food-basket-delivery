@@ -54,8 +54,14 @@ export class Families extends IdEntity {
       })
     });
   }
-  async showNewDeliveryDialog(dialog: DialogService) {
+  async showNewDeliveryDialog(dialog: DialogService, copyFrom?: FamilyDeliveries) {
     let newDelivery = this.createDelivery(dialog.distCenter.value);
+    if (copyFrom != undefined) {
+      newDelivery.basketType.value = copyFrom.basketType.value;
+      newDelivery.quantity.value = copyFrom.quantity.value;
+      newDelivery.deliveryComments.value = copyFrom.deliveryComments.value;
+      newDelivery.distributionCenter.value = copyFrom.distributionCenter.value;
+    }
 
     await this.context.openDialog(InputAreaComponent, x => {
       x.args = {
@@ -205,7 +211,7 @@ export class Families extends IdEntity {
           if (this.disableOnSavingRow)
             return;
           if (this.context.onServer) {
-            if (!this.quantity.value||this.quantity.value < 1)
+            if (!this.quantity.value || this.quantity.value < 1)
               this.quantity.value = 1;
             if (this.sharedColumns().find(x => x.value != x.originalValue)) {
               for (const fd of await context.for(FamilyDeliveries).find({

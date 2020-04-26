@@ -433,7 +433,7 @@ export class FamilyDeliveriesComponent implements OnInit {
         },
         deliveries.basketType,
         deliveries.quantity,
-        
+
         {
           caption: 'סיכום משלוח',
           column: deliveries.deliverStatus,
@@ -505,12 +505,20 @@ export class FamilyDeliveriesComponent implements OnInit {
 
           this.context.openDialog(UpdateFamilyDialogComponent, async x => {
             x.args = {
-                familyDelivery:fd
+              familyDelivery: fd
 
             }
           });
         }
         , textInMenu: () => 'כרטיס משפחה'
+      },
+      {
+        name: 'צור משלוח חדש על בסיס משלוח זה',
+        click: async d => {
+          let f = await this.context.for(Families).findId(d.family);
+          await f.showNewDeliveryDialog(this.dialog, d);
+        },
+        visible: d => DeliveryStatus.IsAResultStatus(d.deliverStatus.value)
       },
       {
         name: 'בטל שיוך',

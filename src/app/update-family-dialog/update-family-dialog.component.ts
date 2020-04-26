@@ -65,11 +65,18 @@ export class UpdateFamilyDialogComponent implements OnInit {
   }
   async confirm() {
     await this.families.currentRow.save();
-    if (this.delivery && this.delivery.wasChanged())
+    if (this.delivery && this.delivery.wasChanged()) {
       await this.delivery.save();
+    }
     this.dialogRef.close();
     if (this.args && this.args.onSave)
       this.args.onSave();
+  }
+  async newDelivery() {
+    await this.args.family.showNewDeliveryDialog(this.dialog, this.delivery);
+  }
+  showNewDelivery() {
+    return this.delivery && DeliveryStatus.IsAResultStatus(this.delivery.deliverStatus.value);
   }
 
 
@@ -109,6 +116,8 @@ export class UpdateFamilyDialogComponent implements OnInit {
       if (this.args.familyId)
         this.args.family = await this.context.for(Families).findFirst(x => x.id.isEqualTo(this.args.familyId));
     }
+    if (this.args.familyDelivery)
+      this.delivery = this.args.familyDelivery;
 
 
 
@@ -193,22 +202,22 @@ export class UpdateFamilyDialogComponent implements OnInit {
           f.special
         ].filter(x => this.settings.usingSelfPickupModule.value ? true : x != f.defaultSelfPickup)
     });
-    if (this.delivery = this.args.familyDelivery)
-      if (this.delivery)
-        this.deliverInfo = this.families.addArea({
-          columnSettings: families => {
+    if (this.delivery)
+      this.deliverInfo = new DataAreaSettings({
+        columnSettings: () => {
 
-            let r = [
-              this.delivery.deliverStatus,
-              this.delivery.deliveryComments,
-              this.delivery.courier,
-              this.delivery.needsWork,
-              this.delivery.courierComments,
-              this.delivery.special
-            ];
-            return r;
-          }
-        });
+          let r = [
+            this.delivery.deliverStatus,
+            this.delivery.deliveryComments,
+            this.delivery.courier,
+            this.delivery.distributionCenter,
+            this.delivery.needsWork,
+            this.delivery.courierComments,
+            this.delivery.special
+          ];
+          return r;
+        }
+      });
   }
 
 
