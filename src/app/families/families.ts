@@ -57,10 +57,8 @@ export class Families extends IdEntity {
   async showNewDeliveryDialog(dialog: DialogService, copyFrom?: FamilyDeliveries) {
     let newDelivery = this.createDelivery(dialog.distCenter.value);
     if (copyFrom != undefined) {
-      newDelivery.basketType.value = copyFrom.basketType.value;
-      newDelivery.quantity.value = copyFrom.quantity.value;
-      newDelivery.deliveryComments.value = copyFrom.deliveryComments.value;
-      newDelivery.distributionCenter.value = copyFrom.distributionCenter.value;
+      newDelivery.copyFrom(copyFrom);
+      
     }
 
     await this.context.openDialog(InputAreaComponent, x => {

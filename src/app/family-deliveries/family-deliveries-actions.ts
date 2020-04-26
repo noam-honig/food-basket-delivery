@@ -10,6 +10,7 @@ import { async } from "@angular/core/testing";
 import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Families } from "../families/families";
+import { BasketId, QuantityColumn } from "../families/BasketType";
 
 
 
@@ -38,7 +39,8 @@ class DeleteDeliveries extends ActionOnFamilyDelveries {
             allowed: Roles.distCenterAdmin,
             columns: () => [],
             title: 'מחיקה ',
-            forEach: async f => { f.delete(); }
+            forEach: async f => { f.delete(); },
+            additionalWhere:f=>f.deliverStatus.isActiveDelivery()
         });
     }
 }
@@ -67,21 +69,7 @@ class DeliveredForOnTheWay extends ActionOnFamilyDelveries {
         });
     }
 }
-class UpdateFamilySource extends ActionOnFamilyDelveries {
-    distributionCenter = new DistributionCenterId(this.context);
-    constructor(context: Context) {
-        super(context, {
-            allowed: Roles.distCenterAdmin,
-            columns: () => [this.distributionCenter],
-            dialogColumns: c => {
-                this.distributionCenter.value = c.dialog.distCenter.value;
-                return [this.distributionCenter]
-            },
-            title: 'עדכן נקודת חלוקה ',
-            forEach: async f => { f.distributionCenter.value = this.distributionCenter.value }
-        });
-    }
-}
+
 class CancelAsignment extends ActionOnFamilyDelveries {
 
     constructor(context: Context) {
@@ -94,4 +82,46 @@ class CancelAsignment extends ActionOnFamilyDelveries {
         });
     }
 }
-export const delvieryActions = () => [UpdateFamilySource, DeliveredForOnTheWay, CancelAsignment, ArchiveDeliveries, DeleteDeliveries];
+class NewDelivery extends ActionOnFamilyDelveries {
+    useExistingBasket = new BoolColumn({ caption: 'השתמש בסוג הסל המוגדר במשלוח הנוכחי', defaultValue: true });
+    basketType = new BasketId(this.context);
+    quantity = new QuantityColumn();
+
+    distributionCenter = new DistributionCenterId(this.context);
+    
+    constructor(context: Context) {
+        super(context, {
+            allowed: Roles.distCenterAdmin,
+            columns: () => [
+                this.useExistingBasket,
+                this.basketType,
+                this.quantity,
+                this.distributionCenter,
+            ],
+            dialogColumns: (component) => {
+                this.basketType.value = '';
+                this.quantity.value = 1;
+                this.distributionCenter.value = component.dialog.distCenter.value;
+                return [
+                    this.useExistingBasket,
+                    [{ column: this.basketType, visible: () => !this.useExistingBasket.value }, { column: this.quantity, visible: () => !this.useExistingBasket.value }],
+                    { column: this.distributionCenter, visible: () => component.dialog.hasManyCenters }
+                ]
+            },
+            additionalWhere:f=>f.deliverStatus.isAResultStatus(),
+            title: 'משלוח חדש על בסיס משלוח זה',
+            forEach: async existingDelivery => {
+                let f = await this.context.for(Families).findId(existingDelivery.family);
+                let newDelivery = f.createDelivery(existingDelivery.distributionCenter.value);
+                newDelivery.copyFrom(existingDelivery);
+                if (!this.useExistingBasket.value) {
+                    newDelivery.basketType.value = this.basketType.value;
+                    newDelivery.quantity.value = this.quantity.value;
+                }
+                if ((await newDelivery.duplicateCount()) == 0)
+                    await newDelivery.save();
+            }
+        });
+    }
+}
+export const delvieryActions = () => [NewDelivery, DeliveredForOnTheWay, CancelAsignment, ArchiveDeliveries, DeleteDeliveries];

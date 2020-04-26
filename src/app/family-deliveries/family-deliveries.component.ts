@@ -513,7 +513,7 @@ export class FamilyDeliveriesComponent implements OnInit {
         , textInMenu: () => 'כרטיס משפחה'
       },
       {
-        name: 'צור משלוח חדש על בסיס משלוח זה',
+        name: 'משלוח חדש על בסיס משלוח זה',
         click: async d => {
           let f = await this.context.for(Families).findId(d.family);
           await f.showNewDeliveryDialog(this.dialog, d);

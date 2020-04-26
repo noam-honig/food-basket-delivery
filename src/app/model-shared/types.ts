@@ -11,6 +11,8 @@ export interface HasAsyncGetTheValue {
 export function extractError(err: any) {
   if (err.error)
     err = err.error;
+  if (err.message)
+    err = err.message;
   return err;
 
 }
@@ -253,7 +255,7 @@ export class SqlBuilder {
     return this.build(a, ' > ', b);
   }
   and(...args: any[]): string {
-    return args.map(x => this.getItemSql(x)).filter(x => x != undefined &&x!='').join(' and ');
+    return args.map(x => this.getItemSql(x)).filter(x => x != undefined && x != '').join(' and ');
   }
   or(...args: any[]): string {
     return "(" + args.map(x => this.getItemSql(x)).join(' or ') + ")";
@@ -419,11 +421,11 @@ export class SqlBuilder {
     }
     {
       let before: FilterBase = {
-        __applyToConsumer:(x)=> {
+        __applyToConsumer: (x) => {
         }
       };
       let x = query.from.__decorateWhere(before);
-      if (x!=before)
+      if (x != before)
         where.push(x);
     }
     if (where.length > 0)

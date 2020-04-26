@@ -14,6 +14,13 @@ import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
 
 @EntityClass
 export class FamilyDeliveries extends IdEntity {
+    copyFrom(originalDelivery: FamilyDeliveries) {
+        this.distributionCenter.value = originalDelivery.distributionCenter.value;
+        this.special.value = originalDelivery.special.value;
+        this.basketType.value = originalDelivery.basketType.value;
+        this.quantity.value = originalDelivery.quantity.value;
+        this.deliveryComments.value = originalDelivery.deliveryComments.value;
+    }
     async duplicateCount() {
         return await this.context.for(ActiveFamilyDeliveries).count(
             fd => fd.family.isEqualTo(this.family).and(

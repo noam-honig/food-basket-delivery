@@ -3,6 +3,7 @@ import { InputAreaComponent } from "../select-popup/input-area/input-area.compon
 import { translate } from "../translate";
 import { DialogService } from "../select-popup/dialog";
 import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
+import { extractError } from "../model-shared/types";
 
 
 
@@ -21,7 +22,7 @@ export class ActionOnRows<T extends IdEntity> {
         public worker: {
             callServer: (info: serverUpdateInfo, action: string, columns: any[]) => Promise<string>,
             groupName: string,
-            beforeEach?: (f:T) => Promise<void>,
+            beforeEach?: (f: T) => Promise<void>,
             additionalWhere?: EntityWhere<T>
         }
     ) {
@@ -37,6 +38,7 @@ export class ActionOnRows<T extends IdEntity> {
     }
 
     async doWorkOnServer(info: serverUpdateInfo, args: any[]) {
+
         let i = 0;
         for (const c of this.args.columns()) {
             c.rawValue = args[i++];
@@ -45,10 +47,11 @@ export class ActionOnRows<T extends IdEntity> {
 
         let count = await this.context.for(this.entity).count(where);
         if (count != info.count) {
-            return "ארעה שגיאה אנא נסה שוב";
+            throw "ארעה שגיאה אנא נסה שוב";
         }
-        let updated = await pagedRowsIterator<T>(this.context.for(this.entity), where, this.args.forEach, count);
+        let updated = await pagedRowsIterator<T>(this.context.for(this.entity), where, async f => await this.args.forEach(f), count);
         return "עודכנו " + updated + " " + this.worker.groupName;
+
     }
     complementWhere(where: EntityWhere<T>) {
         if (this.args.additionalWhere) {
@@ -81,10 +84,18 @@ export class ActionOnRows<T extends IdEntity> {
                                 for (const c of this.args.columns()) {
                                     args.push(c.rawValue);
                                 }
-                                component.dialog.Info(await this.worker.callServer({
-                                    count,
-                                    where: packWhere(this.context.for(this.entity).create(), where)
-                                }, this.args.title, args));
+                                try {
+                                    let r = await this.worker.callServer({
+                                        count,
+                                        where: packWhere(this.context.for(this.entity).create(), where)
+                                    }, this.args.title, args);
+                                    component.dialog.Info(r);
+                                }
+                                catch (err) {
+                                    console.log(err);
+                                    component.dialog.Error(extractError(err));
+
+                                }
                                 component.afterAction();
                             }
                         }
@@ -124,7 +135,7 @@ export async function filterActionOnServer(actions: {
                 return await x.doWorkOnServer(info, args);
             }
             else {
-                throw "פעולה לא מורשת";
+                return "!פעולה לא מורשת";
             }
         }
     }
@@ -141,7 +152,7 @@ export function buildGridButtonFromActions<T extends IdEntity>(actions: {
     return r;
 }
 
-export async function pagedRowsIterator<T extends IdEntity>(context: SpecificEntityHelper<string, T>, where: (f: T) => FilterBase, what: (f: T) => void, count?: number) {
+export async function pagedRowsIterator<T extends IdEntity>(context: SpecificEntityHelper<string, T>, where: (f: T) => FilterBase, what: (f: T) => Promise<void>, count?: number) {
     let updated = 0;
     let pageSize = 200;
     if (count === undefined) {
@@ -151,8 +162,8 @@ export async function pagedRowsIterator<T extends IdEntity>(context: SpecificEnt
     for (let index = (count / pageSize); index >= 0; index--) {
         let rows = await context.find({ where, limit: pageSize, page: index, orderBy: f => [f.id] });
         //console.log(rows.length);
-        for (const f of await rows) {
-            what(f);
+        for (const f of rows) {
+            await what(f);
             await pt.push(f.save());
             updated++;
         }
