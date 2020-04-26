@@ -233,6 +233,10 @@ export class Families extends IdEntity {
               this.createDate.value = new Date();
               this.createUser.value = context.user.id;
             }
+            if (this.status.value != this.status.originalValue) {
+              this.statusDate.value = new Date();
+              this.statusUser.value = context.user.id;
+            }
 
             if (!this._suppressLastUpdateDuringSchemaInit) {
               this.lastUpdateDate.value = new Date();
