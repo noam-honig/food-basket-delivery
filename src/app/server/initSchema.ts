@@ -198,7 +198,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         settings.dataStructureVersion.value = 10;
         await settings.save();
     }
-    if (settings.dataStructureVersion.value = 10) {
+    if (settings.dataStructureVersion.value == 10) {
         settings.checkDuplicatePhones.value = true;
         settings.checkIfFamilyExistsInDb.value = true;
         settings.checkIfFamilyExistsInFile.value = true;
