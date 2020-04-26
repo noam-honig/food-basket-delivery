@@ -224,13 +224,14 @@ export class HelperFamiliesComponent implements OnInit {
   }
   async showRouteOnGoogleMaps() {
 
+    if (this.familyLists.toDeliver.length > 0) {
+      let url = 'https://www.google.com/maps/dir/' + encodeURI((await this.familyLists.toDeliver[0].distributionCenter.getRouteStartGeo()).getAddress());
 
-    let url = 'https://www.google.com/maps/dir/' + encodeURI((await this.familyLists.helper.distributionCenter.getRouteStartGeo()).getAddress());
-
-    for (const f of this.familyLists.toDeliver) {
-      url += '/' + encodeURI(isGpsAddress(f.address.value) ? f.address.value : f.addressByGoogle.value);
+      for (const f of this.familyLists.toDeliver) {
+        url += '/' + encodeURI(isGpsAddress(f.address.value) ? f.address.value : f.addressByGoogle.value);
+      }
+      window.open(url + "?hl=iw", '_blank');
     }
-    window.open(url + "?hl=iw", '_blank');
     //window.open(url,'_blank');
   }
   async returnToDeliver(f: ActiveFamilyDeliveries) {

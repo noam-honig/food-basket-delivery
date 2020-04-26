@@ -128,7 +128,7 @@ export class AssignEscortComponent implements OnInit {
   
   findHelper() {
     this.context.openDialog(SelectHelperComponent, s => s.args = {
-      distCenter:(<HelperUserInfo>this.context.user).distributionCenter,
+      
       onSelect: async h => {
         if (h) {
 

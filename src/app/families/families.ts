@@ -324,8 +324,8 @@ export class Families extends IdEntity {
 
   status = new FamilyStatusColumn();
   statusDate = new changeDate('סטטוס: תאריך שינוי');
-  statusUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'סטטוס: מי עדכן');
-  fixedCourier = new HelperId(this.context, () => this.distributionCenter.value, "משנע ברירת מחדל");
+  statusUser = new HelperIdReadonly(this.context, 'סטטוס: מי עדכן');
+  fixedCourier = new HelperId(this.context, "משנע ברירת מחדל");
   async reloadGeoCoding() {
 
     let geo = new GeocodeInformation();
@@ -463,9 +463,9 @@ export class Families extends IdEntity {
 
 
   createDate = new changeDate({ caption: 'מועד הוספה' });
-  createUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, { caption: 'משתמש מוסיף' });
+  createUser = new HelperIdReadonly(this.context, { caption: 'משתמש מוסיף' });
   lastUpdateDate = new changeDate({ caption: 'מועד עדכון אחרון' });
-  lastUpdateUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, { caption: 'משתמש מעדכן' });
+  lastUpdateUser = new HelperIdReadonly(this.context, { caption: 'משתמש מעדכן' });
 
 
 

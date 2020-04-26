@@ -82,7 +82,7 @@ export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValu
             }
           }).then(x => {
             if (showAllOption)
-              x.splice(0, 0, { caption: 'כל הנקודות', id: allCentersToken })
+              x.splice(0, 0, { caption: 'כל הרשימות', id: allCentersToken })
             return x;
           })
           , width: '150'
@@ -90,7 +90,7 @@ export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValu
       defaultValue: context.user ? (<HelperUserInfo>context.user).distributionCenter : ''
     });
     if (!this.defs.caption)
-      this.defs.caption = 'נקודת חלוקה';
+      this.defs.caption = 'רשימת חלוקה';
   }
   get displayValue() {
     return this.context.for(DistributionCenters).lookup(this).name.value;

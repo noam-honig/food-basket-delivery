@@ -1,5 +1,5 @@
 
-import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, FilterBase, Entity, Column, EntityProvider } from '@remult/core';
+import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, FilterBase, Entity, Column, EntityProvider, checkForDuplicateValue } from '@remult/core';
 import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, SqlBuilder } from '../model-shared/types';
 
 
@@ -45,11 +45,11 @@ export abstract class HelpersBase extends IdEntity {
         caption: 'צריך מלווה',
         allowApiUpdate: Roles.admin
     });
-    theHelperIAmEscorting = new HelperIdReadonly(this.context, () => this.distributionCenter.value, {
+    theHelperIAmEscorting = new HelperIdReadonly(this.context,  {
         caption: 'נהג משוייך',
         allowApiUpdate: Roles.admin
     });
-    escort = new HelperId(this.context, () => this.distributionCenter.value, {
+    escort = new HelperId(this.context, {
         caption: 'מלווה'
         , allowApiUpdate: Roles.admin
     });
@@ -118,7 +118,7 @@ export class Helpers extends HelpersBase {
                         this.admin.value = true;
                     }
                     this.phone.value = this.phone.value.replace(/\D/g, '');
-                    await checkForDuplicateValue(this, this.phone, this.distributionCenter, context.for(Helpers));
+                    await checkForDuplicateValue(this, this.phone, context.for(Helpers),'כבר קיים במערכת');
                     if (this.isNew())
                         this.createDate.value = new Date();
                     this.veryUrlKeyAndReturnTrueIfSaveRequired();
@@ -235,7 +235,7 @@ export class Helpers extends HelpersBase {
 
 export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 
-    constructor(protected context: Context, distCenter: () => string, settingsOrCaption?: ColumnOptions<string>, filter?: (helper: HelpersAndStats) => FilterBase) {
+    constructor(protected context: Context,  settingsOrCaption?: ColumnOptions<string>, filter?: (helper: HelpersAndStats) => FilterBase) {
         super({
             dataControlSettings: () =>
                 ({
@@ -243,7 +243,7 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
                     hideDataOnInput: true,
                     width: '200',
                     click: async () => this.context.openDialog((await import('../select-helper/select-helper.component')).SelectHelperComponent,
-                        x => x.args = { filter, distCenter: distCenter(), onSelect: s => this.value = (s ? s.id.value : '') })
+                        x => x.args = { filter,  onSelect: s => this.value = (s ? s.id.value : '') })
                 })
         }, settingsOrCaption);
     }
@@ -282,8 +282,8 @@ export class CompanyColumn extends StringColumn {
     }
 }
 export class HelperIdReadonly extends HelperId {
-    constructor(protected context: Context, distCenter: () => string, settingsOrCaption?: ColumnOptions<string>, filter?: (helper: HelpersAndStats) => FilterBase) {
-        super(context, distCenter, settingsOrCaption, filter);
+    constructor(protected context: Context,  settingsOrCaption?: ColumnOptions<string>, filter?: (helper: HelpersAndStats) => FilterBase) {
+        super(context,  settingsOrCaption, filter);
         this.defs.allowApiUpdate = false;
     }
     get displayValue() {
@@ -299,16 +299,4 @@ export interface HelperUserInfo extends UserInfo {
     theHelperIAmEscortingId: string;
     escortedHelperName: string;
     distributionCenter: string;
-}
-export async function checkForDuplicateValue(row: Entity<any>, column: Column<any>, column2: Column<any>, provider: EntityProvider<any>, message?: string) {
-    if (column.value == undefined)
-        column.value = '';
-    if (column2.value == undefined)
-        column2.value = '';
-    if (row.isNew() || column.value != column.originalValue || column2.value != column2.originalValue) {
-        let rows = await provider.find({ where: r => r.columns.find(column).isEqualTo(column.value).and(r.columns.find(column2).isEqualTo(column2.value)) });
-        if (rows.length > 0)
-            column.validationError = message || 'כבר קיים בנקודת החלוקה';
-    }
-
 }

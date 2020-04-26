@@ -45,10 +45,7 @@ export class HelpersComponent implements OnInit {
     allowUpdate: true,
     knowTotalRows: true,
     hideDataArea: true,
-    onEnterRow: h => {
-      if (h.isNew())
-        h.distributionCenter.value = this.dialog.distCenter.value;
-    },
+
     rowButtons: [
       {
         name: '',
@@ -82,10 +79,7 @@ export class HelpersComponent implements OnInit {
       orderBy: h => [h.name],
       limit: 10,
       where: h => {
-        let x = h.distributionCenter.filter(this.dialog.distCenter.value);
-        if (this.searchString)
-          return new AndFilter(x, h.name.isContains(this.searchString));
-        return x;
+        return h.name.isContains(this.searchString);
       }
     },
     columnSettings: helpers => {

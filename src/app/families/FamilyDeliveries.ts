@@ -40,7 +40,7 @@ export class FamilyDeliveries extends IdEntity {
         allowApiUpdate: Roles.distCenterAdmin
     });
     deliverStatus = new DeliveryStatusColumn();
-    courier = new HelperId(this.context, () => this.distributionCenter.value, {
+    courier = new HelperId(this.context, {
         caption: "מתנדב",
         allowApiUpdate: Roles.distCenterAdmin
     });
@@ -50,17 +50,17 @@ export class FamilyDeliveries extends IdEntity {
     });
     special = new YesNoColumn({ includeInApi: Roles.distCenterAdmin, caption: 'שיוך מיוחד' });
     deliveryStatusDate = new changeDate('מתי');
-    courierAssignUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'מי שייכה למשנע');
+    courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
     courierAssingTime = new changeDate('מועד שיוך למשנע');
-    deliveryStatusUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'מי עדכן את סטטוס המשלוח');
+    deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
 
     createDate = new changeDate({ includeInApi: Roles.distCenterAdmin, caption: 'מועד הקצאה' });
-    createUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, { includeInApi: Roles.admin, caption: 'משתמש מקצה' });
+    createUser = new HelperIdReadonly(this.context, { includeInApi: Roles.admin, caption: 'משתמש מקצה' });
     needsWork = new BoolColumn({
         caption: 'צריך טיפול/מעקב',
         allowApiUpdate: Roles.distCenterAdmin
     });
-    needsWorkUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'צריך טיפול - מי עדכן');
+    needsWorkUser = new HelperIdReadonly(this.context, 'צריך טיפול - מי עדכן');
     needsWorkDate = new changeDate('צריך טיפול - מתי עודכן');
     deliveryComments = new StringColumn({
         caption: 'הערה למשלוח',

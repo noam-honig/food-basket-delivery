@@ -1,5 +1,5 @@
 import * as radweb from '@remult/core';
-import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, ColumnOptions, SqlCommand, SqlResult } from '@remult/core';
+import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, ColumnOptions, SqlCommand, SqlResult, AndFilter } from '@remult/core';
 
 
 
@@ -10,7 +10,7 @@ export interface HasAsyncGetTheValue {
 }
 export function extractError(err: any) {
   if (err.error)
-      err = err.error;
+    err = err.error;
   return err;
 
 }
@@ -413,11 +413,21 @@ export class SqlBuilder {
     result.push('select ');
     result.push(query.select());
     result.push(...from);
+    let where = [];
     if (query.where) {
-       let w =  query.where();
-       if (w)
-        result.push(' where ', this.and(...w));
+      where.push(...query.where());
     }
+    {
+      let before: FilterBase = {
+        __applyToConsumer:(x)=> {
+        }
+      };
+      let x = query.from.__decorateWhere(before);
+      if (x!=before)
+        where.push(x);
+    }
+    if (where.length > 0)
+      result.push(' where ', this.and(...where));
     if (query.orderBy) {
       result.push(' order by ', query.orderBy.map(x => {
         var f = x as SortSegment;

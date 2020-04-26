@@ -147,8 +147,6 @@ export class DeliveryFollowUpComponent implements OnInit {
         } else {
           addFilter(h.allFamilies.isGreaterOrEqualTo(1))
         }
-        addFilter(h.distributionCenter.filter(this.dialog.distCenter.value));
-
         return result;
       },
       orderBy: h => [{ column: h.lastAsignTime, descending: true }],

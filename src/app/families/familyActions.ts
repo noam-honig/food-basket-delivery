@@ -14,7 +14,7 @@ import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer
 
 class ActionOnFamilies extends ActionOnRows<Families> {
     constructor(context: Context, args: ActionOnRowsArgs<Families>) {
-        super(context,Families, args, {
+        super(context, Families, args, {
             callServer: async (info, action, args) => await ActionOnFamilies.FamilyActionOnServer(info, action, args),
             groupName: 'משפחות'
         });
@@ -30,7 +30,7 @@ class NewDelivery extends ActionOnFamilies {
 
     distributionCenter = new DistributionCenterId(this.context);
     determineCourier = new BoolColumn('הגדר מתנדב');
-    courier = new HelperId(this.context, () => this.distributionCenter.value);
+    courier = new HelperId(this.context);
     constructor(context: Context) {
         super(context, {
             allowed: Roles.distCenterAdmin,
@@ -62,7 +62,7 @@ class NewDelivery extends ActionOnFamilies {
                 if (this.determineCourier.value) {
                     fd.courier.value = this.courier.value;
                 }
-                if ((await fd.duplicateCount())==0)
+                if ((await fd.duplicateCount()) == 0)
                     await fd.save();
             }
         });

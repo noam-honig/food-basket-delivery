@@ -64,14 +64,13 @@ export class AsignFamilyComponent implements OnInit {
         this.clearHelperInfo(false);
 
         if (this.phone.length == 10) {
-            let helper = await this.context.for(Helpers).findFirst(h => h.phone.isEqualTo(this.phone).and(h.distributionCenter.isEqualTo(this.dialog.distCenter)));
+            let helper = await this.context.for(Helpers).findFirst(h => h.phone.isEqualTo(this.phone));
             if (helper) {
 
                 this.initHelper(helper);
             } else {
                 helper = this.context.for(Helpers).create();
                 helper.phone.value = this.phone;
-                helper.distributionCenter.value = this.dialog.distCenter.value;
                 this.initHelper(helper);
 
             }
@@ -80,7 +79,7 @@ export class AsignFamilyComponent implements OnInit {
     }
     async initHelper(helper: Helpers) {
         if (helper.theHelperIAmEscorting.value) {
-            let other = await this.context.for(Helpers).findFirst(x => x.id.isEqualTo(helper.theHelperIAmEscorting).and(x.distributionCenter.isEqualTo(this.dialog.distCenter)));
+            let other = await this.context.for(Helpers).findFirst(x => x.id.isEqualTo(helper.theHelperIAmEscorting));
             if (await this.context.openDialog(YesNoQuestionComponent, q => q.args = {
                 question: helper.name.value + ' מוגדר כמלווה של ' + other.name.value + '. האם להציג את המשפחות של ' + other.name.value + '?'
             }, q => q.yes)) {
@@ -136,7 +135,6 @@ export class AsignFamilyComponent implements OnInit {
             SelectHelperComponent, s => s.args = {
                 filter: h => h.deliveriesInProgress.isGreaterOrEqualTo(1).and(h.id.isDifferentFrom(this.helper.id)),
                 hideRecent: true,
-                distCenter: this.dialog.distCenter.value,
                 onSelect: async h => {
                     if (h) {
                         let families = await this.context.for(ActiveFamilyDeliveries).find({ where: f => f.courier.isEqualTo(h.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
@@ -280,10 +278,9 @@ export class AsignFamilyComponent implements OnInit {
     }
     findHelper() {
         this.context.openDialog(SelectHelperComponent, s => s.args = {
-            distCenter: this.dialog.distCenter.value,
             onSelect: async h => {
                 if (h) {
-                    this.initHelper(await this.context.for(Helpers).findFirst(hh => hh.id.isEqualTo(h.id).and(hh.distributionCenter.isEqualTo(this.dialog.distCenter))));
+                    this.initHelper(await this.context.for(Helpers).findFirst(hh => hh.id.isEqualTo(h.id)));
                 }
                 else {
                     this.clearHelperInfo();
@@ -687,12 +684,12 @@ export class AsignFamilyComponent implements OnInit {
                 loc.families.push(f);
             }
         }
-
+        let startPoint=await (await families[0].distributionCenter.getRouteStartGeo());
         //manual sorting of the list from closest to farthest
         {
             let temp = fams;
             let sorted = [];
-            let lastLoc = await (await helper.distributionCenter.getRouteStartGeo()).location();
+            let lastLoc = startPoint.location();
 
 
             let total = temp.length;
@@ -721,7 +718,7 @@ export class AsignFamilyComponent implements OnInit {
         }
 
 
-        let r = await getRouteInfo(fams, useGoogle, await helper.distributionCenter.getRouteStartGeo(), context);
+        let r = await getRouteInfo(fams, useGoogle, startPoint, context);
         if (r.status == 'OK' && r.routes && r.routes.length > 0 && r.routes[0].waypoint_order) {
             result.ok = true;
             let i = 1;
