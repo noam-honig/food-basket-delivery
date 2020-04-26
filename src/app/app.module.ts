@@ -55,7 +55,7 @@ import { FamilyInListComponent } from './family-in-list/family-in-list.component
 
 import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-dialog.component';
 
-import { QuickAddFamilyComponent } from './quick-add-family/quick-add-family.component';
+
 import { ScrollDispatchModule } from '@angular/cdk/scrolling';
 import { TranslatePipe } from './translate';
 import { SelectCompanyComponent } from './select-company/select-company.component';
@@ -88,7 +88,7 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
   declarations: [
     AppComponent,
     HelpersComponent,
-    
+
     YesNoQuestionComponent,
     LoginComponent,
     RegisterComponent,
@@ -102,7 +102,7 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     UpdateCommentComponent,
     DistributionMap,
     SelectHelperComponent,
-    
+
     LoginFromSmsComponent,
     MapComponent,
 
@@ -112,15 +112,15 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     ImportFromExcelComponent,
     NewsComponent,
     UpdateFamilyDialogComponent,
-    
+
     SelfPickupComponent,
-    
+
     DeliveryHistoryComponent,
     PreviewFamilyComponent,
     FamilyInListComponent,
     UpdateGroupDialogComponent,
-    
-    QuickAddFamilyComponent,
+
+
     TranslatePipe,
     SelectCompanyComponent,
     HelperAssignmentComponent,
@@ -152,9 +152,9 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
 
   ],
   providers: [
-    
+
     DialogService,
-    
+
     TranslatePipe,
     NewsFilterService,
     AuthService,
@@ -165,20 +165,20 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
 
     },
     {
-      provide: ApplicationSettings, useFactory: (service:SettingsService) => {
+      provide: ApplicationSettings, useFactory: (service: SettingsService) => {
         return service.instance;
       },
-      deps:[SettingsService]
+      deps: [SettingsService]
 
     },
     {
       provide: APP_INITIALIZER,
-      deps: [JwtSessionManager,SettingsService],
+      deps: [JwtSessionManager, SettingsService],
       useFactory: initApp,
       multi: true,
-      
+
     }
-    ,SettingsService
+    , SettingsService
 
   ],
 
@@ -186,25 +186,25 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
   entryComponents: [SelectHelperComponent,
     SelectFamilyComponent,
     SelectListComponent,
- CommonQuestionsComponent,   
+    CommonQuestionsComponent,
     YesNoQuestionComponent,
     InputAreaComponent,
     GridDialogComponent,
     UpdateFamilyDialogComponent, PreviewFamilyComponent,
     SelectCompanyComponent,
-    QuickAddFamilyComponent, HelperAssignmentComponent,
+    HelperAssignmentComponent,
     UpdateCommentComponent, UpdateGroupDialogComponent]
 })
 export class AppModule { }
 
-export function initApp(session:JwtSessionManager,settings:SettingsService) {
+export function initApp(session: JwtSessionManager, settings: SettingsService) {
   return async () => {
     session.loadSessionFromCookie();
     try {
       await settings.init();
     }
-    catch (err){
-      console.error('failed to get settings ',err);
+    catch (err) {
+      console.error('failed to get settings ', err);
     }
     return '';
 

@@ -31,7 +31,7 @@ import { FamilyDeliveries, ActiveFamilyDeliveries } from './FamilyDeliveries';
 import { saveToExcel } from '../shared/saveToExcel';
 import { Roles, distCenterAdminGuard } from '../auth/roles';
 import { MatTabGroup } from '@angular/material/tabs';
-import { QuickAddFamilyComponent } from '../quick-add-family/quick-add-family.component';
+
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { translate } from '../translate';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
@@ -423,22 +423,23 @@ export class FamiliesComponent implements OnInit {
                 }
                 , textInMenu: () => 'פרטי משפחה'
             },
+
             {
-                name: 'משלוחים',
+                name: 'משלוח חדש',
+                click: async f => {
+                    await f.showNewDeliveryDialog(this.dialog);
+                }
+                , visible: f => !f.isNew()
+
+            }
+            ,
+            {
+                name: 'משלוחים קודמים',
                 click: async f => {
                     f.showDeliveryHistoryDialog();
                 }
-            }
-            ,
-            {
-                name: 'משלוח חדש למשפחה',
-                click: async f => {
-
-                   
-                }
-
-            }
-            ,
+                , visible: f => !f.isNew()
+            },
             {
                 name: 'חפש כתובת בגוגל',
                 cssClass: 'btn btn-success',
@@ -448,7 +449,7 @@ export class FamiliesComponent implements OnInit {
 
         ]
     });
- 
+
 
 
 

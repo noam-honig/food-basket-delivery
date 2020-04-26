@@ -46,6 +46,18 @@ export class FamilyDeliveriesComponent implements OnInit {
     this.deliveries.page = 1;
     await this.deliveries.getRecords();
   }
+  async newFamily() {
+    let f = this.context.for(Families).create();
+    this.context.openDialog(UpdateFamilyDialogComponent, x => {
+      x.args = {
+        family: f,
+        onSave: async () => {
+          await f.showNewDeliveryDialog(this.dialog);
+        }
+      }
+    })
+
+  }
 
   clearSearch() {
     this.searchString = '';
@@ -66,7 +78,7 @@ export class FamilyDeliveriesComponent implements OnInit {
 
   basketsInEvent: statsOnTabBasket = {
     name: 'לפי סלים',
-    rule: f =>undefined,
+    rule: f => undefined,
     stats: [
       this.stats.ready,
       this.stats.special
@@ -474,14 +486,14 @@ export class FamilyDeliveriesComponent implements OnInit {
       ];
       return r;
     },
-    gridButton:[
+    gridButton: [
       ...buildGridButtonFromActions(delvieryActions(), this.context,
-            {
-                afterAction: async () => await this.refresh(),
-                dialog: this.dialog,
-                where: f=> this.deliveries.buildFindOptions().where(f)
-            }),
-        ]
+        {
+          afterAction: async () => await this.refresh(),
+          dialog: this.dialog,
+          where: f => this.deliveries.buildFindOptions().where(f)
+        }),
+    ]
     ,
     rowButtons: [
       {
@@ -489,10 +501,10 @@ export class FamilyDeliveriesComponent implements OnInit {
         icon: 'edit',
         showInLine: true,
         click: async fd => {
-          
+
           this.context.openDialog(UpdateFamilyDialogComponent, async x => {
             x.args = {
-              
+
 
             }
           });
@@ -562,8 +574,8 @@ export class FamilyDeliveriesComponent implements OnInit {
   }
   packWhere() {
     return {
-        where: packWhere(this.context.for(FamilyDeliveries).create(), this.deliveries.buildFindOptions().where),
-        count: this.deliveries.totalRows
+      where: packWhere(this.context.for(FamilyDeliveries).create(), this.deliveries.buildFindOptions().where),
+      count: this.deliveries.totalRows
     };
   }
 }
