@@ -313,7 +313,7 @@ export class AsignFamilyComponent implements OnInit {
                 if (families.length == 1)
                     await this.assignFamilyBasedOnIdFromMap(families[0]);
                 else if (families.length > 1) {
-                    this.dialog.YesNoQuestion("בנקודה זו יש " + families.length + translate(" משפחות - לשייך את כולן?"), async () => {
+                    this.dialog.YesNoQuestion("בנקודה זו יש " + families.length + translate(" משלוחים - לשייך את כולם?"), async () => {
                         await this.busy.doWhileShowingBusy(async () => {
                             for (const iterator of families) {
                                 await this.assignFamilyBasedOnIdFromMap(iterator);
@@ -375,7 +375,7 @@ export class AsignFamilyComponent implements OnInit {
 
                 let refreshBaskets = basket == undefined;
                 if (x.familiesInSameAddress.length > 0) {
-                    if (await this.dialog.YesNoPromise("ישנן עוד " + x.familiesInSameAddress.length + " משפחות באותה הכתובת, האם לשייך גם אותן?")) {
+                    if (await this.dialog.YesNoPromise("ישנן עוד " + x.familiesInSameAddress.length + " משלוחים באותה הכתובת, האם לשייך גם אותם?")) {
                         await this.busy.doWhileShowingBusy(async () => {
                             this.dialog.analytics('More families in same address');
                             for (const id of x.familiesInSameAddress) {
