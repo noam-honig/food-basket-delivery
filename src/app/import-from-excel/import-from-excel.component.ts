@@ -522,14 +522,14 @@ export class ImportFromExcelComponent implements OnInit {
             }
             , columns: [this.f.address]
         });
-        this.columns.push({
-            key: 'boxes',
-            name: 'מספר מנות',
-            updateFamily: async (v, f, h) => {
-                await h.lookupAndInsert(BasketType, b => b.boxes, +v, b => b.id, f.basketType, b => b.name.value = v + ' מנות');
+        // this.columns.push({
+        //     key: 'boxes',
+        //     name: 'מספר מנות',
+        //     updateFamily: async (v, f, h) => {
+        //         await h.lookupAndInsert(BasketType, b => b.boxes, +v, b => b.id, f.basketType, b => b.name.value = v + ' מנות');
 
-            }, columns: [this.f.basketType]
-        });
+        //     }, columns: [this.f.basketType]
+        // });
         this.columns.push({
             key: 'basketType',
             name: 'סוג סל',

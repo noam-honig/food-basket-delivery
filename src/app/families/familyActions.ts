@@ -2,7 +2,7 @@ import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolC
 import { FamiliesComponent } from "./families.component";
 import { Families } from "./families";
 import { Roles } from "../auth/roles";
-import { BasketId } from "./BasketType";
+import { BasketId, QuantityColumn } from "./BasketType";
 import { DistributionCenterId } from "../manage/distribution-centers";
 import { HelperId } from "../helpers/helpers";
 import { Groups } from "../manage/manage.component";
@@ -27,6 +27,7 @@ class ActionOnFamilies extends ActionOnRows<Families> {
 class NewDelivery extends ActionOnFamilies {
     useFamilyBasket = new BoolColumn({ caption: 'השתמש בסוג הסל המוגדר למשפחה', defaultValue: false });
     basketType = new BasketId(this.context);
+    quantity = new QuantityColumn();
 
     distributionCenter = new DistributionCenterId(this.context);
     determineCourier = new BoolColumn('הגדר מתנדב');
@@ -37,15 +38,17 @@ class NewDelivery extends ActionOnFamilies {
             columns: () => [
                 this.useFamilyBasket,
                 this.basketType,
+                this.quantity,
                 this.distributionCenter,
                 this.determineCourier,
                 this.courier
             ],
             dialogColumns: (component) => {
                 this.basketType.value = '';
+                this.quantity.value = 1;
                 this.distributionCenter.value = component.dialog.distCenter.value;
                 return [
-                    { column: this.basketType, visible: () => !this.useFamilyBasket.value },
+                    [{ column: this.basketType, visible: () => !this.useFamilyBasket.value }, { column: this.quantity, visible: () => !this.useFamilyBasket.value }],
                     this.useFamilyBasket,
                     { column: this.distributionCenter, visible: () => component.dialog.hasManyCenters },
                     this.determineCourier,
@@ -58,7 +61,7 @@ class NewDelivery extends ActionOnFamilies {
                 if (!this.useFamilyBasket.value) {
                     fd.basketType.value = this.basketType.value;
                 }
-                
+
                 if (this.determineCourier.value) {
                     fd.courier.value = this.courier.value;
                 }
@@ -130,6 +133,18 @@ class UpdateBasketType extends ActionOnFamilies {
         });
     }
 }
+
+class UpddateQuantity extends ActionOnFamilies {
+    quantity = new QuantityColumn();
+    constructor(context: Context) {
+        super(context, {
+            allowed: Roles.distCenterAdmin,
+            columns: () => [this.quantity],
+            title: 'עדכן כמות סלים ברירת מחדל',
+            forEach: async f => { f.quantity.value = this.quantity.value },
+        });
+    }
+}
 class UpdateFamilySource extends ActionOnFamilies {
     familySource = new FamilySourceId(this.context);
     constructor(context: Context) {
@@ -145,4 +160,4 @@ class UpdateFamilySource extends ActionOnFamilies {
 
 
 
-export const familyActions = () => [NewDelivery, updateGroup, UpdateStatus, UpdateBasketType, UpdateFamilySource];
+export const familyActions = () => [NewDelivery, updateGroup, UpdateStatus, UpdateBasketType, UpddateQuantity, UpdateFamilySource];

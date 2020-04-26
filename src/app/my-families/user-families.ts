@@ -19,7 +19,7 @@ export class UserFamiliesList {
     }
     startAssignByMap(city: string, group: string, distCenter: string) {
 
-        this.map.loadPotentialAsigment(city, group,distCenter);
+        this.map.loadPotentialAsigment(city, group, distCenter);
         setTimeout(() => {
             this.map.gmapElement.nativeElement.scrollIntoView();
         }, 100);
@@ -60,8 +60,8 @@ export class UserFamiliesList {
         let boxes = 0;
         let boxes2 = 0;
         for (const iterator of this.toDeliver) {
-            boxes += this.context.for(BasketType).lookup(iterator.basketType).boxes.value;
-            boxes2 += this.context.for(BasketType).lookup(iterator.basketType).boxes2.value;
+            boxes += this.context.for(BasketType).lookup(iterator.basketType).boxes.value * iterator.quantity.value;
+            boxes2 += this.context.for(BasketType).lookup(iterator.basketType).boxes2.value * iterator.quantity.value;
         }
         if (this.toDeliver.length == 0)
             return 'שומר מקום';

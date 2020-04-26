@@ -171,7 +171,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await createDeliveryIndex("for_distribution_status_queries2", fd.distributionCenter, fd.courier, fd.deliverStatus, fd.city, fd.basketType);
         await createFamilyIndex("for_name1", f.name, f.status, f.basketType);
         await createDeliveryIndex("for_name2", fd.name, fd.deliverStatus, fd.basketType);
-        
+
         await createDeliveryIndex("for_distCenter_name1", fd.distributionCenter, fd.name, fd.deliverStatus, fd.basketType);
         await createDeliveryIndex("for_basket1", fd.basketType, fd.deliverStatus, fd.courier);
         await createDeliveryIndex("for_basket_dist1", fd.distributionCenter, fd.basketType, fd.deliverStatus, fd.courier);
@@ -184,9 +184,11 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     let version = async (ver: number, what: () => Promise<void>) => {
         if (settings.dataStructureVersion.value < ver) {
             try {
+                console.log('start ', ver);
                 await what();
+                console.log('end ', ver);
             } catch (err) {
-                console.error("failed for version ", ver,org, err);
+                console.error("failed for version ", ver, org, err);
                 throw err;
 
             }
@@ -219,7 +221,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         settings.dataStructureVersion.value = 14;
         await settings.save();
     }
-    
+
     await version(15, async () => {
         let fromArchive = (col: Column<any>) =>
             [col, 'archive_' + col.defs.dbName] as [Column<any>, any];
@@ -227,7 +229,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
             await dataSource.execute(sql.update(fd, {
                 set: () => [
                     [fd.archive, true],
-                    [fd.name,'familyname'],
+                    [fd.name, 'familyname'],
                     [fd.createDate, fd.deliveryStatusDate],
                     fromArchive(fd.deliveryComments),
                     [fd.groups, 'archivegroups'],
@@ -243,7 +245,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
                     [fd.drivingLongitude, fd.addressLongitude],
                     [fd.drivingLatitude, fd.addressLatitude],
                     [fd.addressByGoogle, fd.address],
-                    [fd.addressOk,true],
+                    [fd.addressOk, true],
                     fromArchive(fd.phone1Description),
                     fromArchive(fd.phone2),
                     fromArchive(fd.phone3),
@@ -313,13 +315,20 @@ export async function initSchema(pool1: PostgresPool, org: string) {
                 },
                 where: () => ['deliverstatus not in (99,95)']
             }));
-            version(18,async ()=>{
-                await dataSource.execute(sql.build('drop index if exists for_distCenter_name  '));
-            });
+
     });
-   
-   
-    
+    await version(17, async () => {
+        await dataSource.execute(sql.build('drop index if exists for_distCenter_name  '));
+    });
+    await version(18, async () => {
+        await dataSource.execute(sql.update(f, { set: () => [[f.quantity, 1]] }));
+    });
+    await version(19, async () => {
+        await dataSource.execute(sql.update(fd, { set: () => [[fd.quantity, 1]] }));
+    });
+
+
+
 
 
 

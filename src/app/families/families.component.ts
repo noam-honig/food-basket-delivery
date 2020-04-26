@@ -224,7 +224,7 @@ export class FamiliesComponent implements OnInit {
                 addColumn("טלפון2X", fixPhone(f.phone2), 's');
                 addColumn("טלפון3X", fixPhone(f.phone3), 's');
                 addColumn("טלפון4X", fixPhone(f.phone4), 's');
-                await f.basketType.addBasketTypes(addColumn);
+                await f.basketType.addBasketTypes(f.quantity, addColumn);
 
             });
     }
@@ -250,6 +250,7 @@ export class FamiliesComponent implements OnInit {
         onEnterRow: async f => {
             if (f.isNew()) {
                 f.basketType.value = '';
+                f.quantity.value = 1;
 
                 f.special.value = YesNo.No;
                 this.currentFamilyDeliveries = [];
@@ -364,6 +365,7 @@ export class FamiliesComponent implements OnInit {
 
 
                 families.defaultSelfPickup,
+                families.status,
                 families.statusUser,
                 families.statusDate,
 
@@ -374,7 +376,12 @@ export class FamiliesComponent implements OnInit {
                 families.socialWorkerPhone1,
                 families.socialWorkerPhone2,
                 families.birthDate,
-                families.nextBirthday
+                families.nextBirthday,
+                families.basketType,
+                families.quantity,
+                families.deliveryComments,
+                families.fixedCourier,
+                families.special
 
 
             ];

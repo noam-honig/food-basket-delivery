@@ -3,9 +3,9 @@ import { CallStatusColumn } from "./CallStatus";
 import { YesNoColumn } from "./YesNo";
 
 import { FamilySourceId } from "./FamilySources";
-import { BasketId, BasketType } from "./BasketType";
+import { BasketId, BasketType, QuantityColumn } from "./BasketType";
 import { changeDate, DateTimeColumn, SqlBuilder, PhoneColumn, delayWhileTyping } from "../model-shared/types";
-import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, FilterBase, ColumnOptions, SpecificEntityHelper, Entity } from '@remult/core';
+import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, FilterBase, ColumnOptions, SpecificEntityHelper, Entity, DataArealColumnSetting } from '@remult/core';
 import { HelperIdReadonly, HelperId, Helpers, HelperUserInfo } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress } from "../shared/googleApiHelpers";
@@ -38,6 +38,7 @@ export class Families extends IdEntity {
             fd.deliverStatus,
             fd.deliveryStatusDate,
             fd.basketType,
+            fd.quantity,
             fd.courier,
             fd.distributionCenter,
             fd.courierComments
@@ -60,11 +61,10 @@ export class Families extends IdEntity {
       x.args = {
         settings: {
           columnSettings: () => {
-            let r: Column<any>[] = [
-              newDelivery.basketType,
-              newDelivery.deliveryComments
-
-            ];
+            let r: DataArealColumnSetting<any>[] = [
+              [newDelivery.basketType,
+              newDelivery.quantity],
+              newDelivery.deliveryComments];
             if (dialog.hasManyCenters)
               r.push(newDelivery.distributionCenter);
             r.push(newDelivery.courier);
@@ -86,6 +86,7 @@ export class Families extends IdEntity {
         ok: async () => {
           await Families.addDelivery(newDelivery.family.value, {
             basketType: newDelivery.basketType.value,
+            quantity: newDelivery.quantity.value,
             comment: newDelivery.courierComments.value,
             courier: newDelivery.courier.value,
             distCenter: newDelivery.distributionCenter.value
@@ -101,6 +102,7 @@ export class Families extends IdEntity {
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async addDelivery(familyId: string, settings: {
     basketType: string,
+    quantity: number,
     comment: string,
     distCenter: string,
     courier: string
@@ -109,6 +111,7 @@ export class Families extends IdEntity {
     if (f) {
       let fd = f.createDelivery(settings.distCenter);
       fd.basketType.value = settings.basketType;
+      fd.quantity.value = settings.quantity;
       fd.courierComments.value = settings.comment;
       fd.distributionCenter.value = settings.distCenter;
       fd.courier.value = settings.courier;
@@ -124,6 +127,7 @@ export class Families extends IdEntity {
     fd.distributionCenter.value = distCenter;
     fd.special.value = this.special.value;
     fd.basketType.value = this.basketType.value;
+    fd.quantity.value = this.quantity.value;
     fd.deliveryComments.value = this.deliveryComments.value;
     fd.courier.value = this.fixedCourier.value;
     this.updateDelivery(fd);
@@ -201,6 +205,8 @@ export class Families extends IdEntity {
           if (this.disableOnSavingRow)
             return;
           if (this.context.onServer) {
+            if (this.quantity.value < 1)
+              this.quantity.value = 1;
             if (this.sharedColumns().find(x => x.value != x.originalValue)) {
               for (const fd of await context.for(FamilyDeliveries).find({
                 where: fd =>
@@ -277,6 +283,7 @@ export class Families extends IdEntity {
 
   })
   basketType = new BasketId(this.context, 'סוג סל ברירת מחדל');
+  quantity = new QuantityColumn({ caption: 'מספר סלים ברירת מחדל', allowApiUpdate: Roles.distCenterAdmin });
 
   familySource = new FamilySourceId(this.context, { includeInApi: true, caption: 'גורם מפנה' });
   socialWorker = new StringColumn('איש קשר לבירור פרטים (עו"ס)');

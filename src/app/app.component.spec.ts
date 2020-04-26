@@ -8,16 +8,18 @@ import { WebDriverProxy } from 'blocking-proxy/built/lib/webdriver_proxy';
 import { parseAddress, Families, parseUrlInAddress } from './families/families';
 import { BasketType } from './families/BasketType';
 import { fixPhone } from './import-from-excel/import-from-excel.component';
-import { ActiveFamilyDeliveries } from './families/FamilyDeliveries';
+import { ActiveFamilyDeliveries, FamilyDeliveries } from './families/FamilyDeliveries';
 
 describe('AppComponent', () => {
   var context = new ServerContext();
   var bt = context.for(BasketType).create();
   var f = context.for(Families).create();
   var sql = new SqlBuilder();
-  let fd = context.for(ActiveFamilyDeliveries).create();
+  let afd = context.for(ActiveFamilyDeliveries).create();
+  let fd = context.for(FamilyDeliveries).create();
   sql.addEntity(bt, 'p');
-  sql.addEntity(fd,'fd');
+  sql.addEntity(afd,'fd');
+  sql.addEntity(fd,'h');
   var q = (query: QueryBuilder, expectresult: String) => {
     expect(sql.query(query)).toBe(expectresult);
   };
@@ -34,10 +36,30 @@ describe('AppComponent', () => {
   it('fixed filter', () => {
     
     q({
-      select: () => [fd.id],
-      from: fd
+      select: () => [afd.id],
+      from: afd
     }, 'select fd.id from FamilyDeliveries fd where archive = false');
   });
+  it('fixed filter 2',()=>{
+     expect(sql.columnInnerSelect(afd, {
+      select: () => [sql.columnWithAlias(afd.deliverStatus, 's')],
+      from: afd,
+
+      where: () => [sql.eq(afd.family, '123'),
+      ],
+      orderBy: [{ column: afd.deliveryStatusDate, descending: true }]
+    })).toBe('(select FamilyDeliveries.deliverStatus s from FamilyDeliveries FamilyDeliveries where FamilyDeliveries.family = 123 and archive = false order by FamilyDeliveries.deliveryStatusDate desc limit 1)');
+  });
+  it('fixed filter 3',()=>{
+    expect(sql.columnInnerSelect(fd, {
+     select: () => [sql.columnWithAlias(fd.deliverStatus, 's')],
+     from: fd,
+
+     where: () => [sql.eq(fd.family, '123'),
+     ],
+     orderBy: [{ column: fd.deliveryStatusDate, descending: true }]
+   })).toBe('(select FamilyDeliveries.deliverStatus s from FamilyDeliveries FamilyDeliveries where FamilyDeliveries.family = 123 order by FamilyDeliveries.deliveryStatusDate desc limit 1)');
+ });
   it('Where', () => {
     q({
       select: () => [bt.id],

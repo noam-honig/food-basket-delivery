@@ -187,7 +187,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
     this.deliveryDefaults = this.families.addArea({
       columnSettings: f =>
         [
-          f.basketType,
+          [f.basketType, f.quantity],
           f.deliveryComments,
           f.defaultSelfPickup,
           f.fixedCourier,

@@ -1,6 +1,6 @@
 
 
-import { StringColumn, IdColumn, IdEntity, BoolColumn, NumberColumn, DecorateDataColumnSettings } from '@remult/core';
+import { StringColumn, IdColumn, IdEntity, BoolColumn, NumberColumn, DecorateDataColumnSettings, NumberColumnOptions } from '@remult/core';
 
 import { HasAsyncGetTheValue } from "../model-shared/types";
 import { Context, EntityClass } from '@remult/core';
@@ -29,12 +29,12 @@ export class BasketType extends IdEntity {
   static boxes2Name = 'משהו אחר';
 }
 export class BasketId extends IdColumn implements HasAsyncGetTheValue {
-  async addBasketTypes(addColumn: (caption: string, v: string, t: import("xlsx/types").ExcelDataType) => void) {
+  async addBasketTypes(quantity: NumberColumn, addColumn: (caption: string, v: string, t: import("xlsx/types").ExcelDataType) => void) {
     let r = await this.context.for(BasketType).lookupAsync(this);
     if (r) {
 
-      addColumn(BasketType.boxes1Name, r.boxes.value ? r.boxes.value.toString() : '', 'n');
-      addColumn(BasketType.boxes2Name, r.boxes2.value ? r.boxes2.value.toString() : '', 'n');
+      addColumn(BasketType.boxes1Name, r.boxes.value ? (r.boxes.value * quantity.value).toString() : '', 'n');
+      addColumn(BasketType.boxes2Name, r.boxes2.value ? (r.boxes2.value * quantity.value).toString() : '', 'n');
     }
   }
   constructor(private context: Context, settingsOrCaption?: ColumnOptions<string>) {
@@ -60,5 +60,13 @@ export class BasketId extends IdColumn implements HasAsyncGetTheValue {
     if (r && r.name && r.name.value)
       return r.name.value;
     return '';
+  }
+}
+
+export class QuantityColumn extends NumberColumn {
+  constructor(settingsOrCaption?: NumberColumnOptions) {
+    super(settingsOrCaption);
+    if (!this.defs.caption)
+      this.defs.caption = 'מספר סלים';
   }
 }

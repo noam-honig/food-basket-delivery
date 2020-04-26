@@ -415,15 +415,15 @@ export class FamilyDeliveriesComponent implements OnInit {
       }
       , orderBy: f => f.name
     },
-    columnSettings: families => {
+    columnSettings: deliveries => {
       let r = [
 
         {
-          column: families.name,
+          column: deliveries.name,
           width: '200'
         },
         {
-          column: families.address,
+          column: deliveries.address,
           width: '250',
           cssClass: f => {
             if (!f.addressOk.value)
@@ -431,57 +431,58 @@ export class FamilyDeliveriesComponent implements OnInit {
             return '';
           }
         },
-        families.basketType
+        deliveries.basketType,
+        deliveries.quantity,
         ,
         {
           caption: 'סיכום משלוח',
-          column: families.deliverStatus,
+          column: deliveries.deliverStatus,
           readOnly: true,
-          valueList: families.deliverStatus.getOptions()
+          valueList: deliveries.deliverStatus.getOptions()
           ,
           getValue: f => f.getDeliveryDescription(),
           width: '300'
         },
 
-        this.statusColumn = { column: families.deliverStatus },
+        this.statusColumn = { column: deliveries.deliverStatus },
 
 
 
-        this.groupsColumn = { column: families.groups },
+        this.groupsColumn = { column: deliveries.groups },
 
 
-        families.deliveryComments,
-        families.special,
-        families.createUser,
-        families.createDate,
+        deliveries.deliveryComments,
+        deliveries.special,
+        deliveries.createUser,
+        deliveries.createDate,
 
 
-        { column: families.addressOk, width: '110' },
-        families.floor,
-        families.appartment,
-        families.entrance,
-        { column: families.addressComment },
-        families.city,
-        families.phone1,
-        families.phone1Description,
-        families.phone2,
-        families.phone2Description,
-        families.phone3,
-        families.phone3Description,
-        families.phone4,
-        families.phone4Description,
-        families.courier,
-        families.distributionCenter,
-        families.courierAssignUser,
-        families.courierAssingTime,
+        { column: deliveries.addressOk, width: '110' },
+        deliveries.floor,
+        deliveries.appartment,
+        deliveries.entrance,
+        { column: deliveries.addressComment },
+        deliveries.city,
+        deliveries.phone1,
+        deliveries.phone1Description,
+        deliveries.phone2,
+        deliveries.phone2Description,
+        deliveries.phone3,
+        deliveries.phone3Description,
+        deliveries.phone4,
+        deliveries.phone4Description,
+        deliveries.courier,
+        deliveries.distributionCenter,
+        deliveries.courierAssignUser,
+        deliveries.courierAssingTime,
 
 
-        families.deliveryStatusUser,
-        families.deliveryStatusDate,
-        families.courierComments,
-        families.needsWork,
-        families.needsWorkDate,
-        families.needsWorkUser
+        deliveries.deliveryStatusUser,
+        deliveries.deliveryStatusDate,
+        deliveries.courierComments,
+        deliveries.needsWork,
+        deliveries.needsWorkDate,
+        deliveries.needsWorkUser
 
       ];
       return r;

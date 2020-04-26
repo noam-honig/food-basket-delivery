@@ -147,7 +147,7 @@ export class DeliveryHistoryComponent implements OnInit {
 
   async saveToExcel() {
     await saveToExcel(this.context.for(FamilyDeliveries), this.deliveries, "משלוחים", this.busy, (d: FamilyDeliveries, c) => c == d.id || c == d.family, undefined,
-      async (f, addColumn) => await f.basketType.addBasketTypes(addColumn));
+      async (f, addColumn) => await f.basketType.addBasketTypes(f.quantity, addColumn));
   }
   async saveToExcelHelpers() {
     await saveToExcel(this.context.for(helperHistoryInfo), this.helperInfo, "מתנדבים", this.busy, (d: helperHistoryInfo, c) => c == d.courier);
@@ -160,6 +160,7 @@ export class DeliveryHistoryComponent implements OnInit {
       d.deliveryStatusDate,
       d.deliverStatus,
       d.basketType,
+      d.quantity,
       d.city,
       d.familySource,
       d.courierComments,

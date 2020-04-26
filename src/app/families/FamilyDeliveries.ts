@@ -1,6 +1,6 @@
 import { PhoneColumn, changeDate, SqlBuilder, DateTimeColumn } from "../model-shared/types";
 import { EntityClass, Context, IdColumn, IdEntity, StringColumn, NumberColumn, BoolColumn, FilterBase, AndFilter, Column } from '@remult/core';
-import { BasketId } from "./BasketType";
+import { BasketId, QuantityColumn } from "./BasketType";
 import { FamilyId, Families, GroupsColumn } from "./families";
 import { DeliveryStatusColumn, DeliveryStatus } from "./DeliveryStatus";
 import { HelperId, HelperIdReadonly, Helpers, HelperUserInfo } from "../helpers/helpers";
@@ -35,6 +35,7 @@ export class FamilyDeliveries extends IdEntity {
         caption: 'סוג סל',
         allowApiUpdate: Roles.distCenterAdmin
     });
+    quantity = new QuantityColumn({ caption: 'מספר סלים', allowApiUpdate: Roles.distCenterAdmin });
 
     distributionCenter = new DistributionCenterId(this.context, {
         allowApiUpdate: Roles.distCenterAdmin
@@ -208,6 +209,8 @@ export class FamilyDeliveries extends IdEntity {
                     this.deliveryStatusDate.value = new Date();
                     this.deliveryStatusUser.value = context.user.id;
                 }
+                if (this.quantity.value < 1)
+                    this.quantity.value = 1;
 
 
                 if (!this.disableChangeLogging) {
@@ -372,7 +375,7 @@ export class FamilyDeliveries extends IdEntity {
 
 @EntityClass
 export class ActiveFamilyDeliveries extends FamilyDeliveries {
-    
+
 
 
     constructor(context: Context) {
