@@ -1,5 +1,5 @@
 
-import { FilterBase, AndFilter, Context, ServerFunction, EntityClass, Entity, StringColumn, NumberColumn } from "@remult/core";
+import { FilterBase, AndFilter, Context, ServerFunction, EntityClass, Entity, StringColumn, NumberColumn, SqlDatabase } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { YesNo } from "../families/YesNo";
 import { BasketType } from "../families/BasketType";
@@ -40,8 +40,18 @@ export class FamilyDeliveryStats {
         return r;
     }
     @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async getFamilyDeliveryStatsFromServer(distCenter: string, context?: Context) {
-        let result = { data: {}, baskets: [], cities: [], groups: [] as groupStats[] };
+    static async getFamilyDeliveryStatsFromServer(distCenter: string, context?: Context, db?: SqlDatabase) {
+        let result = {
+            data: {}, baskets: [] as {
+                id: string,
+                name: string,
+                boxes: number,
+                boxes2: number,
+                unassignedDeliveries: number,
+                inEventDeliveries: number,
+                successDeliveries: number
+            }[], cities: [], groups: [] as groupStats[]
+        };
         let stats = new FamilyDeliveryStats();
         let pendingStats = [];
         for (let s in stats) {
@@ -51,20 +61,33 @@ export class FamilyDeliveryStats {
             }
         }
 
-
-
-
-        pendingStats.push(context.for(BasketType).foreach(undefined, async  b => {
+        let f = context.for(ActiveFamilyDeliveries).create();
+        let sql = new SqlBuilder();
+        let baskets = await db.execute(sql.build(sql.query({
+            select: () => [f.basketType,
+            sql.build('sum (', sql.case([{ when: [f.readyAndSelfPickup()], then: f.quantity }], 0), ') a'),
+            sql.build('sum (', f.quantity, ') b'),
+            sql.build('sum (', sql.case([{ when: [f.deliverStatus.isSuccess()], then: f.quantity }], 0), ') c')
+            ],
+            from: f,
+            where: () => [f.filterDistCenterAndAllowed(distCenter)]
+        }), ' group by ', f.basketType));
+        for (const r of baskets.rows) {
+            let basketId = r[baskets.getColumnKeyInResultForIndexInSelect(0)];
+            let b = await context.for(BasketType).lookupAsync(basketId);
             result.baskets.push({
-                id: b.id.value,
+                id: basketId,
                 name: b.name.value,
                 boxes: b.boxes.value,
                 boxes2: b.boxes2.value,
-                unassignedDeliveries: await context.for(FamilyDeliveries).count(f => f.readyAndSelfPickup().and(f.basketType.isEqualTo(b.id).and(f.filterDistCenterAndAllowed(distCenter)))),
-                inEventDeliveries: await context.for(FamilyDeliveries).count(f => f.basketType.isEqualTo(b.id).and(f.filterDistCenterAndAllowed(distCenter))),
-                successDeliveries: await context.for(FamilyDeliveries).count(f => f.deliverStatus.isSuccess().and(f.basketType.isEqualTo(b.id).and(f.filterDistCenterAndAllowed(distCenter))))
+                unassignedDeliveries: +r[baskets.getColumnKeyInResultForIndexInSelect(1)],
+                inEventDeliveries: +r[baskets.getColumnKeyInResultForIndexInSelect(2)],
+                successDeliveries: +r[baskets.getColumnKeyInResultForIndexInSelect(3)]
             });
-        }));
+        }
+
+
+
         if (distCenter == allCentersToken)
             pendingStats.push(
                 context.for(CitiesStats).find({
@@ -106,7 +129,7 @@ export class FamilyDeliveryStats {
                 pendingStats.push(context.for(FamilyDeliveries).count(f => f.readyAndSelfPickup().and(
                     f.groups.isContains(x.name).and(
                         f.filterDistCenterAndAllowed(distCenter)))).then(r => x.totalReady = r));
-                
+
             }
         });
 
@@ -134,7 +157,7 @@ export class FamilyDeliveresStatistics {
 interface groupStats {
     name: string,
     totalReady: number
-    
+
 }
 @EntityClass
 export class CitiesStats extends Entity<string> {
@@ -147,14 +170,14 @@ export class CitiesStats extends Entity<string> {
             dbName: () => {
                 let f = context.for(ActiveFamilyDeliveries).create();
                 let sql = new SqlBuilder();
-                
+
                 return sql.build('(', sql.query({
                     select: () => [f.city, sql.columnWithAlias("count(*)", this.deliveries)],
                     from: f,
                     where: () => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery),
                     f.distributionCenter.isAllowedForUser(),
                     sql.eq(f.courier, '\'\'')]
-                }).replace('as result','as '), ' group by ', f.city, ') as result')
+                }).replace('as result', 'as '), ' group by ', f.city, ') as result')
             }
         });
     }
@@ -171,14 +194,14 @@ export class CitiesStatsPerDistCenter extends Entity<string> {
             dbName: () => {
                 let f = context.for(ActiveFamilyDeliveries).create();
                 let sql = new SqlBuilder();
-                
+
                 return sql.build('(', sql.query({
                     select: () => [f.city, f.distributionCenter, sql.columnWithAlias("count(*)", this.families)],
                     from: f,
                     where: () => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery),
                     f.distributionCenter.isAllowedForUser(),
                     sql.eq(f.courier, '\'\'')]
-                }).replace('as result','as '), ' group by ', [f.city, f.distributionCenter], ') as result')
+                }).replace('as result', 'as '), ' group by ', [f.city, f.distributionCenter], ') as result')
             }
         });
     }

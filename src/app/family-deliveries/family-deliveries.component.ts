@@ -272,11 +272,11 @@ export class FamilyDeliveriesComponent implements OnInit {
       this.groupsReady.stats.splice(0);
 
 
-      this.basketStatsCalc(st.baskets, this.basketStats, b => b.unassignedFamilies, (f, id) =>
+      this.basketStatsCalc(st.baskets, this.basketStats, b => b.unassignedDeliveries, (f, id) =>
         f.readyFilter().and(f.basketType.isEqualTo(id)));
-      this.basketStatsCalc(st.baskets, this.basketsInEvent, b => b.inEventFamilies, (f, id) =>
+      this.basketStatsCalc(st.baskets, this.basketsInEvent, b => b.inEventDeliveries, (f, id) =>
         f.basketType.isEqualTo(id));
-      this.basketStatsCalc(st.baskets, this.basketsDelivered, b => b.successFamilies, (f, id) =>
+      this.basketStatsCalc(st.baskets, this.basketsDelivered, b => b.successDeliveries, (f, id) =>
         f.deliverStatus.isSuccess().and(f.basketType.isEqualTo(id)));
       this.prepComplexStats(st.cities, this.cityStats,
         (f, c) => f.readyFilter().and(f.city.isEqualTo(c)),
@@ -288,7 +288,7 @@ export class FamilyDeliveriesComponent implements OnInit {
       this.updateChart();
     }));
   }
-  private basketStatsCalc(baskets: any[], stats: statsOnTabBasket, getCount: (x: any) => number, equalToFilter: (f: ActiveFamilyDeliveries, id: string) => FilterBase) {
+  private basketStatsCalc<T extends { boxes: number, boxes2: number, name: string, id: string }>(baskets: T[], stats: statsOnTabBasket, getCount: (x: T) => number, equalToFilter: (f: ActiveFamilyDeliveries, id: string) => FilterBase) {
     stats.stats.splice(0);
     stats.totalBoxes1 = 0;
 
@@ -299,14 +299,9 @@ export class FamilyDeliveriesComponent implements OnInit {
         undefined);
       fs.value = getCount(b);
       stats.stats.push(fs);
-      if (b.blocked) {
+      stats.totalBoxes1 += +b.boxes * +fs.value;
+      stats.totalBoxes2 += +b.boxes2 * +fs.value;
 
-
-      }
-      else {
-        stats.totalBoxes1 += +b.boxes * +fs.value;
-        stats.totalBoxes2 += +b.boxes2 * +fs.value;
-      }
     });
     stats.stats.sort((a, b) => b.value - a.value);
   }
