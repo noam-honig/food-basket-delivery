@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
 
 
-import { Context, DataAreaSettings,  ValueListItem, DateColumn, DataControlSettings } from '@remult/core';
-import { Families, GroupsColumn } from '../families/families';
+import { Context, DataAreaSettings, ValueListItem, DateColumn, DataControlSettings } from '@remult/core';
+import { Families, GroupsColumn, iterateFamilies } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DialogService } from '../select-popup/dialog';
 import { ServerFunction } from '@remult/core';
@@ -58,12 +58,12 @@ export class BatchOperationsComponent implements OnInit {
             for (const t of basketTypes) {
                 items.push({ id: t.id.value, caption: t.name.value });
             }
-            bt.valueList=items ;
+            bt.valueList = items;
             result.push(bt);
         }
         {
-            let g: DataControlSettings<any> = {column:this.groupColumn,caption:'בחרו קבוצה'};
-            
+            let g: DataControlSettings<any> = { column: this.groupColumn, caption: 'בחרו קבוצה' };
+
             result.push(g);
         }
         this.area = new DataAreaSettings({ columnSettings: () => result });
@@ -76,7 +76,7 @@ export class BatchOperationsComponent implements OnInit {
                 limit: 1
             });
         if (lastFamiliyDelivered && lastFamiliyDelivered.length > 0) {
-            if (lastFamiliyDelivered[0].deliveryStatusDate.value < d){
+            if (lastFamiliyDelivered[0].deliveryStatusDate.value < d) {
                 d = lastFamiliyDelivered[0].deliveryStatusDate.value;
                 d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
             }
@@ -109,15 +109,14 @@ export class BatchOperationsComponent implements OnInit {
     }
     @ServerFunction({ allowed: Roles.admin })
     static async setAsOnTheWayAsDelivered(deliveryDate: string, context?: Context) {
-        let x = await context.for(Families).find({ where: f => f.onTheWayFilter() });
         let d = DateColumn.stringToDate(deliveryDate);
-        for (const f of x) {
+        await iterateFamilies(context, f => f.onTheWayFilter(), async f => {
             f.deliverStatus.value = DeliveryStatus.Success;
             await f.save();
             f.deliveryStatusDate.value = d;
             await f.save();
-            f.deliveryStatusDate.value.toString();
-        }
+        });
+
 
     }
     async setAsSelfPickup() {
@@ -130,15 +129,12 @@ export class BatchOperationsComponent implements OnInit {
     }
     @ServerFunction({ allowed: Roles.admin })
     static async setAsSelfPickupStatic(deliveryDate: string, context?: Context) {
-        let x = await context.for(Families).find({ where: f => f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup) });
         let d = DateColumn.stringToDate(deliveryDate);
-        for (const f of x) {
+        await iterateFamilies(context, f =>  f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup), async f => {
             f.deliverStatus.value = DeliveryStatus.SuccessPickedUp;
             await f.save();
             f.deliveryStatusDate.value = d;
-            await f.save();
-        }
-
+        });
     }
 
 
@@ -174,7 +170,7 @@ export class BatchOperationsComponent implements OnInit {
 
 
         let onTheWayMatchingFamilies = await this.context.for(Families).count(
-            f => f.onTheWayFilter().and( BatchOperationsComponent.createFamiliesFilterForNotInEvent(f, this.basketTypeColumn.value, this.groupColumn.value)));
+            f => f.onTheWayFilter().and(BatchOperationsComponent.createFamiliesFilterForNotInEvent(f, this.basketTypeColumn.value, this.groupColumn.value)));
 
         let doIt = () => {
             this.dialog.YesNoQuestion('ישנן ' + familiesThatMatch.toString() + translate(' משפחות מתאימות להגדרה - האם להגדיר אותן כלא באירוע?'), async () => {
@@ -195,7 +191,7 @@ export class BatchOperationsComponent implements OnInit {
         let x =
             f.deliverStatus.isDifferentFrom(DeliveryStatus.NotInEvent).and(
                 f.deliverStatus.isDifferentFrom(DeliveryStatus.Frozen).and(
-                f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList)));
+                    f.deliverStatus.isDifferentFrom(DeliveryStatus.RemovedFromList)));
         if (basketType != BatchOperationsComponent.allBasketsTokenConst) {
             x = x.and(f.basketType.isEqualTo(basketType));
         } if (group)
@@ -204,11 +200,9 @@ export class BatchOperationsComponent implements OnInit {
     }
     @ServerFunction({ allowed: Roles.admin })
     static async setNotInEvent(basketType: string, group: string, context?: Context) {
-        let families = await context.for(Families).find({ where: f => BatchOperationsComponent.createFamiliesFilterForNotInEvent(f, basketType, group) });
-        for (const f of families) {
+        await iterateFamilies(context, f => BatchOperationsComponent.createFamiliesFilterForNotInEvent(f, basketType, group), f => {
             f.deliverStatus.value = DeliveryStatus.NotInEvent;
-            await f.save();
-        }
+        })
     }
     @ServerFunction({ allowed: Roles.admin })
     static async countNotInEvent(basketType: string, group: string, context?: Context) {
