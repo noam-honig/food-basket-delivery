@@ -273,7 +273,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
                     for (const c of [
                         fd.name,
                         fd.basketType,
-                        fd.distributionCenter,
+                        
 
                         fd.courier,
                         fd.courierComments,

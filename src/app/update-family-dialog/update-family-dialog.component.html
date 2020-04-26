@@ -1,12 +1,15 @@
 <mat-card-title>
     <data-area [settings]="familiesInfo"></data-area>
     <div *ngIf="this.families.currentRow">
-        <mat-menu #appMenu77 >
-            <button mat-menu-item (click)="updateInfo()" *ngIf="!this.families.currentRow.isNew()">משלוח חדש</button>
+        <mat-menu #appMenu77>
+            <button mat-menu-item (click)="updateInfo()" *ngIf="!this.families.currentRow.isNew()">משלוח
+                חדש</button>
             <button mat-menu-item (click)="preview()">הצג משפחה כפי שתנדב יראה אותה</button>
-            <button mat-menu-item (click)="families.currentRow.showDeliveryHistoryDialog()"  *ngIf="!this.families.currentRow.isNew()">משלוחים</button>
-            <button mat-menu-item (click)="updateInfo()"  *ngIf="!this.families.currentRow.isNew()">פרטי עדכונים</button>
-            
+            <button mat-menu-item (click)="families.currentRow.showDeliveryHistoryDialog()"
+                *ngIf="!this.families.currentRow.isNew()">משלוחים</button>
+            <button mat-menu-item (click)="updateInfo()" *ngIf="!this.families.currentRow.isNew()">פרטי
+                עדכונים</button>
+
         </mat-menu>
 
         <button mat-icon-button [matMenuTriggerFor]="appMenu77">
@@ -21,7 +24,7 @@
         <div *ngIf="families.currentRow">
 
             <mat-accordion *ngIf="familiesInfo" [multi]="true">
-                <mat-expansion-panel *ngIf="args.delivery">
+                <mat-expansion-panel *ngIf="args.familyDelivery">
                     <mat-expansion-panel-header>
                         <div>
                             <mat-panel-title>
@@ -75,7 +78,8 @@
                             <span class="badAddressTitle">שים
                                 לב, כתובת לא מדוייקת</span>
                             גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת
-                            ({{families.currentRow.getGeocodeInformation().whyProblem()}}). יש להשוות בין השדה "כתובת"
+                            ({{families.currentRow.getGeocodeInformation().whyProblem()}}). יש להשוות בין השדה
+                            "כתובת"
                             לשדה "כתובת כפי שגוגל הבין".
                             <br> כתובת לא מדוייקת עלולה להוביל המשנע למקום לא נכון בוייז.
 

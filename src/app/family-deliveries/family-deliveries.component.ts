@@ -505,7 +505,7 @@ export class FamilyDeliveriesComponent implements OnInit {
 
           this.context.openDialog(UpdateFamilyDialogComponent, async x => {
             x.args = {
-
+                familyDelivery:fd
 
             }
           });

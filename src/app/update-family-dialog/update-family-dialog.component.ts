@@ -24,7 +24,6 @@ import { DialogService } from '../select-popup/dialog';
 export class UpdateFamilyDialogComponent implements OnInit {
   public args: {
     family?: Families,
-    delivery?: FamilyDeliveries,
     familyDelivery?: FamilyDeliveries,
     familyId?: string,
     deliveryId?: string,
@@ -96,17 +95,17 @@ export class UpdateFamilyDialogComponent implements OnInit {
   extraFamilyInfo: DataAreaSettings<Families>;
   deliveryDefaults: DataAreaSettings<Families>;
   async ngOnInit() {
-    if (!this.args.delivery) {
-      if (this.args.familyDelivery) {
-        this.args.deliveryId = this.args.familyDelivery.id.value;
-      }
+    if (!this.args.familyDelivery) {
       if (this.args.deliveryId) {
-        this.args.delivery = await this.context.for(FamilyDeliveries).findFirst(x => x.id.isEqualTo(this.args.deliveryId));
-        this.args.familyId = this.args.delivery.family.value;
+        this.args.familyDelivery = await this.context.for(FamilyDeliveries).findFirst(x => x.id.isEqualTo(this.args.deliveryId));
+        this.args.familyId = this.args.familyDelivery.family.value;
       }
 
     }
     if (!this.args.family) {
+      if (this.args.familyDelivery) {
+        this.args.familyId = this.args.familyDelivery.family.value;
+      }
       if (this.args.familyId)
         this.args.family = await this.context.for(Families).findFirst(x => x.id.isEqualTo(this.args.familyId));
     }
@@ -194,7 +193,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
           f.special
         ].filter(x => this.settings.usingSelfPickupModule.value ? true : x != f.defaultSelfPickup)
     });
-    if (this.delivery = this.args.delivery)
+    if (this.delivery = this.args.familyDelivery)
       if (this.delivery)
         this.deliverInfo = this.families.addArea({
           columnSettings: families => {
