@@ -4,7 +4,7 @@ import { Context } from '@remult/core';
 import { Helpers } from '../helpers/helpers';
 import { HasAsyncGetTheValue, extractError } from '../model-shared/types';
 
-import { Families, parseAddress, duplicateFamilyInfo } from '../families/families';
+import { Families, parseAddress, duplicateFamilyInfo, displayDupInfo } from '../families/families';
 
 import { BasketType } from '../families/BasketType';
 import { FamilySources } from '../families/FamilySources';
@@ -793,19 +793,7 @@ export class ImportFromExcelComponent implements OnInit {
 
     }
     displayDupInfo(info: duplicateFamilyInfo) {
-        let r = [];
-
-
-        if (info.tz) {
-            r.push(' מספר זהות זהה');
-        }
-        if (info.phone1 || info.phone2 || info.phone3 || info.phone4) {
-            r.push(' מספר טלפון זהה');
-        }
-        if (info.nameDup) {
-            r.push(" שם זהה");
-        }
-        return info.address + ": " + r.join(', ');
+        return displayDupInfo(info);
     }
     @ServerFunction({ allowed: Roles.admin })
     async checkExcelInput(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], context?: Context, db?: SqlDatabase) {

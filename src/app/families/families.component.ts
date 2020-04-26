@@ -95,14 +95,16 @@ export class FamiliesComponent implements OnInit {
             this.families.setCurrentRow(focus);
     }
     quickAdd() {
-        this.context.openDialog(QuickAddFamilyComponent, s => {
-            s.f.name.value = this.searchString;
-            s.argOnAdd = f => {
-                this.families.items.push(f);
-                this.families.setCurrentRow(f);
-                this.gridView = false;
+        this.families.addNewRow();
+        this.context.openDialog(UpdateFamilyDialogComponent, x => {
+            x.args = {
+                family: this.families.currentRow,
+                onSave: async () => {
+                    await this.families.currentRow.showNewDeliveryDialog(this.dialog);
+                }
             }
-        });
+        })
+
     }
     changedRowsCount() {
         let r = 0;
@@ -432,48 +434,7 @@ export class FamiliesComponent implements OnInit {
                 name: 'משלוח חדש למשפחה',
                 click: async f => {
 
-                    let newDelivery = f.createDelivery();
-                    await this.context.openDialog(InputAreaComponent, x => {
-                        x.args = {
-                            settings: {
-                                columnSettings: () => {
-                                    let r: Column<any>[] = [
-                                        newDelivery.basketType,
-                                        newDelivery.deliveryComments
-
-                                    ];
-                                    if (this.dialog.hasManyCenters)
-                                        r.push(newDelivery.distributionCenter);
-                                    r.push(newDelivery.courier);
-                                    return r;
-                                }
-                            },
-                            title: 'משלוח חדש',
-                            validate: async () => {
-                                let count = await newDelivery.duplicateCount();
-                                if (count > 0) {
-                                    if (await this.dialog.YesNoPromise("למשפחה זו כבר קיים משלוח מאותו סוג האם להוסיף עוד אחד?")) {
-                                        return;
-                                    }
-                                    else {
-                                        throw 'לא תקין';
-                                    }
-                                }
-                            },
-                            ok: async () => {
-                                await FamiliesComponent.addDelivery(f.id.value, {
-                                    basketType: newDelivery.basketType.value,
-                                    comment: newDelivery.courierComments.value,
-                                    courier: newDelivery.courier.value,
-                                    distCenter: newDelivery.distributionCenter.value
-
-                                });
-                                this.dialog.Info("משלוח נוצר בהצלחה");
-                            }
-                            , cancel: () => { }
-
-                        }
-                    });
+                   
                 }
 
             }
@@ -487,26 +448,7 @@ export class FamiliesComponent implements OnInit {
 
         ]
     });
-    @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async addDelivery(familyId: string, settings: {
-        basketType: string,
-        comment: string,
-        distCenter: string,
-        courier: string
-    }, context?: Context) {
-        let f = await context.for(Families).findFirst(x => x.id.isEqualTo(familyId).and(x.distributionCenter.isAllowedForUser()));
-        if (f) {
-            let fd = f.createDelivery();
-            fd.basketType.value = settings.basketType;
-            fd.courierComments.value = settings.comment;
-            fd.distributionCenter.value = settings.distCenter;
-            fd.courier.value = settings.courier;
-            await fd.save();
-            return 1;
-        }
-        return 0;
-
-    }
+ 
 
 
 

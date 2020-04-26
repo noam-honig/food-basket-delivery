@@ -2,24 +2,16 @@
     <data-area [settings]="familiesInfo"></data-area>
     <div>
         <mat-menu #appMenu77>
+            <button mat-menu-item (click)="updateInfo()" *ngIf="!this.families.currentRow.isNew()">משלוח חדש</button>
             <button mat-menu-item (click)="preview()">הצג משפחה כפי שתנדב יראה אותה</button>
-            <button mat-menu-item (click)="families.currentRow.showDeliveryHistoryDialog()">משלוחים</button>
-            <button mat-menu-item (click)="updateInfo()">פרטי עדכונים</button>
-                <!--
-        <button mat-menu-item (click)="clearHelperInfo()">{{'נקה פרטי משנע'|translate}}</button>
-        <button mat-menu-item (click)="saveHelper()"
-          *ngIf="showSave()">{{'שמור פרטי משנע ועבור למשנע הבא'|translate}}</button>
-        <button *ngIf="!settings.showCompanies.value" mat-menu-item
-          (click)="settings.showCompanies.value= true; changeShowCompany()">{{'הצג חברה למשנע'|translate}}</button>
-        <button *ngIf="settings.showCompanies.value" mat-menu-item
-          (click)="settings.showCompanies.value= false; changeShowCompany()">{{'הסתר חברה למשנע'|translate}}</button>
+            <button mat-menu-item (click)="families.currentRow.showDeliveryHistoryDialog()"  *ngIf="!this.families.currentRow.isNew()">משלוחים</button>
+            <button mat-menu-item (click)="updateInfo()"  *ngIf="!this.families.currentRow.isNew()">פרטי עדכונים</button>
+            
+        </mat-menu>
 
-        -->
-      </mat-menu>
-
-      <button mat-icon-button [matMenuTriggerFor]="appMenu77">
-        <mat-icon>more_vert</mat-icon>
-      </button>
+        <button mat-icon-button [matMenuTriggerFor]="appMenu77">
+            <mat-icon>more_vert</mat-icon>
+        </button>
     </div>
 </mat-card-title>
 
@@ -27,7 +19,7 @@
     <div>
         {{args.message}}
         <div *ngIf="families.currentRow">
-            
+
             <mat-accordion *ngIf="familiesInfo" [multi]="true">
                 <mat-expansion-panel *ngIf="args.delivery">
                     <mat-expansion-panel-header>
@@ -41,13 +33,13 @@
                                 {{delivery.getShortDeliveryDescription()}}
                             </mat-panel-description>
                         </div>
-        
+
                     </mat-expansion-panel-header>
                     <ng-template matExpansionPanelContent>
                         <data-area [settings]="deliverInfo"></data-area>
                     </ng-template>
                 </mat-expansion-panel>
-               
+
                 <mat-expansion-panel>
                     <mat-expansion-panel-header>
                         <div>
@@ -64,25 +56,29 @@
                                 {{families.currentRow.getAddressDescription()}}
                             </mat-panel-description>
                         </div>
-        
+
                     </mat-expansion-panel-header>
                     <ng-template matExpansionPanelContent>
-        
-                     
+
+
                         <span *ngIf="families.currentRow.address.value!=families.currentRow.address.originalValue"><a
                                 (click)="families.currentRow.save()" target="_blank">בדוק כתובת</a></span>
-                        <ng-container *ngIf="families.currentRow.address.value==families.currentRow.address.originalValue">
+                        <ng-container
+                            *ngIf="families.currentRow.address.value==families.currentRow.address.originalValue">
                             <a (click)="families.currentRow.showOnGovMap()" target="_blank">הצג ב govmap</a> |
                             <a (click)="families.currentRow.showOnGoogleMaps()" target="_blank">הצג בגוגל</a> |
                             <a (click)="families.currentRow.openWaze()" target="_blank">פתח WAZE</a>
                         </ng-container>
                         <data-area [settings]="familiesAddress"></data-area>
-                        <div class="addressProblem" *ngIf="!families.currentRow.addressOk.value&&!families.currentRow.isNew()">
+                        <div class="addressProblem"
+                            *ngIf="!families.currentRow.addressOk.value&&!families.currentRow.isNew()">
                             <span class="badAddressTitle">שים
                                 לב, כתובת לא מדוייקת</span>
-                            גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת ({{families.currentRow.getGeocodeInformation().whyProblem()}}). יש להשוות בין השדה "כתובת" לשדה "כתובת כפי שגוגל הבין". 
+                            גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת
+                            ({{families.currentRow.getGeocodeInformation().whyProblem()}}). יש להשוות בין השדה "כתובת"
+                            לשדה "כתובת כפי שגוגל הבין".
                             <br> כתובת לא מדוייקת עלולה להוביל המשנע למקום לא נכון בוייז.
-                            
+
                         </div>
                     </ng-template>
                 </mat-expansion-panel>
@@ -98,14 +94,14 @@
                                 {{families.currentRow.phone1.value}}
                             </mat-panel-description>
                         </div>
-        
+
                     </mat-expansion-panel-header>
                     <ng-template matExpansionPanelContent>
                         <data-area [settings]="phones"></data-area>
                     </ng-template>
                 </mat-expansion-panel>
                 <mat-expansion-panel>
-        
+
                     <mat-expansion-panel-header>
                         <div>
                             <mat-panel-title>
@@ -117,8 +113,8 @@
                         <data-area [settings]="extraFamilyInfo"></data-area>
                     </ng-template>
                 </mat-expansion-panel>
+
                 <mat-expansion-panel>
-        
                     <mat-expansion-panel-header>
                         <div>
                             <mat-panel-title>
@@ -130,12 +126,40 @@
                         <data-area [settings]="deliveryDefaults"></data-area>
                     </ng-template>
                 </mat-expansion-panel>
-        
-        
+                <mat-expansion-panel
+                    *ngIf="families.currentRow.duplicateFamilies&&families.currentRow.duplicateFamilies.length>0">
+                    <mat-expansion-panel-header>
+                        <div>
+                            <mat-panel-title style="color:red">
+                                משפחות עם פרטים דומים {{families.currentRow.duplicateFamilies.length}}
+                            </mat-panel-title>
+                        </div>
+                    </mat-expansion-panel-header>
+                    <ng-template matExpansionPanelContent>
+                        <mat-list role="list">
+                            <mat-list-item role="listitem" *ngFor="let f of families.currentRow.duplicateFamilies">
+                                <button mat-icon-button (click)="showDuplicate(f)">
+                                    <mat-icon>
+                                        edit
+                                    </mat-icon>
+                                </button>
+                                <span>
+                                    <strong> {{f.name}}</strong> {{displayDupInfo(f)}}
+                                </span>
+                            </mat-list-item>
+
+                        </mat-list>
+                    </ng-template>
+                </mat-expansion-panel>
+
+
+
+
             </mat-accordion>
         </div>
     </div>
 </div>
+
 <mat-dialog-actions>
     <button mat-raised-button color="warning" (click)="cancel()" *ngIf="!args.disableSave">
         בטל

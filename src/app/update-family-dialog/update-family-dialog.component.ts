@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef, MatDialogActions } from '@angular/material/dialog';
-import { Families } from '../families/families';
+import { Families, duplicateFamilyInfo, displayDupInfo } from '../families/families';
 
 import { Context, DialogConfig, DataControlSettings, DataAreaSettings, GridSettings } from '@remult/core';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -77,7 +77,13 @@ export class UpdateFamilyDialogComponent implements OnInit {
 
   delivery: FamilyDeliveries;
 
-
+  async showDuplicate(dup: duplicateFamilyInfo) {
+    let f = await this.context.for(Families).findId(dup.id);
+    this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { family: f });
+  }
+  displayDupInfo(info: duplicateFamilyInfo) {
+    return displayDupInfo(info);
+}
 
 
   familiesInfo: DataAreaSettings<Families>;
@@ -116,20 +122,20 @@ export class UpdateFamilyDialogComponent implements OnInit {
     this.extraFamilyInfo = this.families.addArea({
       columnSettings: families => [
         families.groups,
-
-
-        families.familyMembers,
+        [families.familyMembers, families.status],
         families.internalComment,
+        [
+          families.tz,
+          families.tz2
+        ],
         families.familySource,
         families.socialWorker,
         [
           families.socialWorkerPhone1,
           families.socialWorkerPhone2
-        ], [
-          families.tz,
-          families.tz2
         ],
-        families.special,
+
+
         [families.birthDate, {
           caption: 'גיל',
           getValue: (f) => {
@@ -183,7 +189,8 @@ export class UpdateFamilyDialogComponent implements OnInit {
           f.deliveryComments,
           f.defaultSelfPickup,
           f.fixedCourier,
-          f.distributionCenter
+          f.distributionCenter,
+          f.special
         ].filter(x => this.settings.usingSelfPickupModule.value ? true : x != f.defaultSelfPickup)
     });
     if (this.delivery = this.args.delivery)
@@ -196,7 +203,8 @@ export class UpdateFamilyDialogComponent implements OnInit {
               this.delivery.deliveryComments,
               this.delivery.courier,
               this.delivery.needsWork,
-              this.delivery.courierComments
+              this.delivery.courierComments,
+              this.delivery.special
             ];
             return r;
           }

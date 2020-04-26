@@ -20,6 +20,8 @@ import { DistributionCenterId, DistributionCenters } from "../manage/distributio
 import { FamilyStatusColumn } from "./FamilyStatus";
 import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
+import { DialogService } from "../select-popup/dialog";
+import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 
 
 @EntityClass
@@ -50,6 +52,70 @@ export class Families extends IdEntity {
         }
       })
     });
+  }
+  async showNewDeliveryDialog(dialog: DialogService) {
+    let newDelivery = this.createDelivery();
+    await this.context.openDialog(InputAreaComponent, x => {
+      x.args = {
+        settings: {
+          columnSettings: () => {
+            let r: Column<any>[] = [
+              newDelivery.basketType,
+              newDelivery.deliveryComments
+
+            ];
+            if (dialog.hasManyCenters)
+              r.push(newDelivery.distributionCenter);
+            r.push(newDelivery.courier);
+            return r;
+          }
+        },
+        title: 'משלוח חדש ל' + this.name.value,
+        validate: async () => {
+          let count = await newDelivery.duplicateCount();
+          if (count > 0) {
+            if (await dialog.YesNoPromise("למשפחה זו כבר קיים משלוח מאותו סוג האם להוסיף עוד אחד?")) {
+              return;
+            }
+            else {
+              throw 'לא תקין';
+            }
+          }
+        },
+        ok: async () => {
+          await Families.addDelivery(newDelivery.family.value, {
+            basketType: newDelivery.basketType.value,
+            comment: newDelivery.courierComments.value,
+            courier: newDelivery.courier.value,
+            distCenter: newDelivery.distributionCenter.value
+
+          });
+          dialog.Info("משלוח נוצר בהצלחה");
+        }
+        , cancel: () => { }
+
+      }
+    });
+  }
+  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  static async addDelivery(familyId: string, settings: {
+    basketType: string,
+    comment: string,
+    distCenter: string,
+    courier: string
+  }, context?: Context) {
+    let f = await context.for(Families).findFirst(x => x.id.isEqualTo(familyId).and(x.distributionCenter.isAllowedForUser()));
+    if (f) {
+      let fd = f.createDelivery();
+      fd.basketType.value = settings.basketType;
+      fd.courierComments.value = settings.comment;
+      fd.distributionCenter.value = settings.distCenter;
+      fd.courier.value = settings.courier;
+      await fd.save();
+      return 1;
+    }
+    return 0;
+
   }
   createDelivery() {
     let fd = this.context.for(FamilyDeliveries).create();
@@ -750,3 +816,18 @@ export function parseUrlInAddress(address: string) {
 
 
 
+export function displayDupInfo(info: duplicateFamilyInfo) {
+  let r = [];
+
+
+  if (info.tz) {
+    r.push(' מספר זהות זהה');
+  }
+  if (info.phone1 || info.phone2 || info.phone3 || info.phone4) {
+    r.push(' מספר טלפון זהה');
+  }
+  if (info.nameDup) {
+    r.push(" שם דומה");
+  }
+  return info.address + ": " + r.join(', ');
+}
