@@ -48,7 +48,7 @@ export class Families extends IdEntity {
         },
         get: {
           where: fd => fd.family.isEqualTo(this.id),
-          orderBy: fd => [fd.deliveryStatusDate],
+          orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
           limit: 25
         }
       })
