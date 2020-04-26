@@ -382,7 +382,7 @@ export class FamilyDeliveriesComponent implements OnInit {
   deliveries = this.context.for(ActiveFamilyDeliveries).gridSettings({
     allowUpdate: true,
     rowCssClass: f => f.deliverStatus.getCss(),
-    numOfColumnsInGrid: 4,
+    numOfColumnsInGrid: 5,
     hideDataArea: true,
     knowTotalRows: true,
     get: {
@@ -433,7 +433,7 @@ export class FamilyDeliveriesComponent implements OnInit {
         },
         deliveries.basketType,
         deliveries.quantity,
-        ,
+        
         {
           caption: 'סיכום משלוח',
           column: deliveries.deliverStatus,
@@ -561,7 +561,8 @@ export class FamilyDeliveriesComponent implements OnInit {
       cols.items[0],
       cols.items[1],
       cols.items[2],
-      cols.items[3]
+      cols.items[3],
+      cols.items[4]
     ];
 
     cols.items.sort((a, b) => a.caption > b.caption ? 1 : a.caption < b.caption ? -1 : 0);

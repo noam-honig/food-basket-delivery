@@ -35,7 +35,7 @@ export class FamilyDeliveries extends IdEntity {
         caption: 'סוג סל',
         allowApiUpdate: Roles.distCenterAdmin
     });
-    quantity = new QuantityColumn({ caption: 'מספר סלים', allowApiUpdate: Roles.distCenterAdmin });
+    quantity = new QuantityColumn({ caption: 'מספר סלים', allowApiUpdate: Roles.distCenterAdmin, dataControlSettings: () => ({ width: '100',inputType:'number' }) });
 
     distributionCenter = new DistributionCenterId(this.context, {
         allowApiUpdate: Roles.distCenterAdmin
