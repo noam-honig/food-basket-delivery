@@ -1,7 +1,7 @@
 <mat-card-title>
     <data-area [settings]="familiesInfo"></data-area>
-    <div>
-        <mat-menu #appMenu77>
+    <div *ngIf="this.families.currentRow">
+        <mat-menu #appMenu77 >
             <button mat-menu-item (click)="updateInfo()" *ngIf="!this.families.currentRow.isNew()">משלוח חדש</button>
             <button mat-menu-item (click)="preview()">הצג משפחה כפי שתנדב יראה אותה</button>
             <button mat-menu-item (click)="families.currentRow.showDeliveryHistoryDialog()"  *ngIf="!this.families.currentRow.isNew()">משלוחים</button>

@@ -205,7 +205,7 @@ export class Families extends IdEntity {
           if (this.disableOnSavingRow)
             return;
           if (this.context.onServer) {
-            if (this.quantity.value < 1)
+            if (!this.quantity.value||this.quantity.value < 1)
               this.quantity.value = 1;
             if (this.sharedColumns().find(x => x.value != x.originalValue)) {
               for (const fd of await context.for(FamilyDeliveries).find({
