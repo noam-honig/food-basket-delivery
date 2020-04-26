@@ -6,9 +6,10 @@ import { BasketId, QuantityColumn } from "./BasketType";
 import { DistributionCenterId } from "../manage/distribution-centers";
 import { HelperId } from "../helpers/helpers";
 import { Groups } from "../manage/manage.component";
-import { FamilyStatusColumn } from "./FamilyStatus";
+import { FamilyStatusColumn, FamilyStatus } from "./FamilyStatus";
 import { FamilySourceId } from "./FamilySources";
 import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer, serverUpdateInfo, pagedRowsIterator } from "./familyActionsWiring";
+import { DeliveryStatus } from "./DeliveryStatus";
 
 
 
@@ -55,6 +56,7 @@ class NewDelivery extends ActionOnFamilies {
                     { column: this.courier, visible: () => this.determineCourier.value }
                 ]
             },
+            additionalWhere:f=>f.status.isEqualTo(FamilyStatus.Active),
             title: 'משלוח חדש',
             forEach: async f => {
                 let fd = f.createDelivery(this.distributionCenter.value);

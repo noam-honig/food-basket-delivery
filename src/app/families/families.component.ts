@@ -393,7 +393,7 @@ export class FamiliesComponent implements OnInit {
             ];
             this.addressProblemColumns = [
                 families.name,
-                this.addressByGoogle,
+                families.addressByGoogle,
                 families.addressOk,
                 families.address,
                 families.appartment,
