@@ -211,7 +211,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
     if (settings.dataStructureVersion.value == 13) {
         await pagedRowsIterator(context.for(Families), f => undefined,
-            f => {
+            async f => {
                 f._suppressLastUpdateDuringSchemaInit = true;
                 let g = f.getGeocodeInformation();
                 f.addressByGoogle.value = g.getAddress();
