@@ -53,6 +53,7 @@ export class FamilyDeliveriesComponent implements OnInit {
         family: f,
         onSave: async () => {
           await f.showNewDeliveryDialog(this.dialog);
+          this.refresh();
         }
       }
     })
