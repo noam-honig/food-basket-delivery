@@ -74,15 +74,15 @@ export class FamilyDeliveryStats {
         }), ' group by ', f.basketType));
         for (const r of baskets.rows) {
             let basketId = r[baskets.getColumnKeyInResultForIndexInSelect(0)];
-            let b = await context.for(BasketType).lookupAsync(basketId);
+            let b = await context.for(BasketType).lookupAsync(b=>b.id.isEqualTo(basketId));
             result.baskets.push({
                 id: basketId,
                 name: b.name.value,
                 boxes: b.boxes.value,
                 boxes2: b.boxes2.value,
-                unassignedDeliveries: +r[baskets.getColumnKeyInResultForIndexInSelect(1)],
-                inEventDeliveries: +r[baskets.getColumnKeyInResultForIndexInSelect(2)],
-                successDeliveries: +r[baskets.getColumnKeyInResultForIndexInSelect(3)]
+                unassignedDeliveries: +r['a'],
+                inEventDeliveries: +r['b'],
+                successDeliveries: +r['c']
             });
         }
 

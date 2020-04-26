@@ -466,15 +466,26 @@ export class AsignFamilyComponent implements OnInit {
                     result.cities.push(ci);
             }
         }
-        for (let b of await context.for(BasketType).find({})) {
-            let bi = {
-                id: b.id.value,
+
+        
+        
+        let baskets = await db.execute(sql.build(sql.query({
+            select: () => [f.basketType,
+            sql.build('count (', f.quantity, ') b'),
+            ],
+            from: f,
+            where: () => [f.filterDistCenterAndAllowed(info.distCenter),f.readyFilter(info.filterCity, info.filterGroup)]
+        }), ' group by ', f.basketType));
+        for (const r of baskets.rows) {
+            let basketId = r[baskets.getColumnKeyInResultForIndexInSelect(0)];
+            let b = await context.for(BasketType).lookupAsync(b=>b.id.isEqualTo(basketId));
+            result.baskets.push({
+                id: basketId,
                 name: b.name.value,
-                unassignedFamilies: await countFamilies(f => f.basketType.isEqualTo(b.id.value).and(f.special.isEqualTo(YesNo.No)))
-            };
-            if (bi.unassignedFamilies > 0)
-                result.baskets.push(bi);
+                unassignedFamilies: +r['b']
+            });
         }
+        
         result.baskets.sort((a, b) => b.unassignedFamilies - a.unassignedFamilies);
 
 
