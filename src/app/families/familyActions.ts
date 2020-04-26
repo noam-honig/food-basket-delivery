@@ -62,6 +62,7 @@ class NewDelivery extends ActionOnFamilies {
                 let fd = f.createDelivery(this.distributionCenter.value);
                 if (!this.useFamilyBasket.value) {
                     fd.basketType.value = this.basketType.value;
+                    fd.quantity.value = this.quantity.value;
                 }
 
                 if (this.determineCourier.value) {
