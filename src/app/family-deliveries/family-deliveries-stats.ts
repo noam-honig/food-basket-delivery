@@ -60,9 +60,9 @@ export class FamilyDeliveryStats {
                 name: b.name.value,
                 boxes: b.boxes.value,
                 boxes2: b.boxes2.value,
-                unassignedDeliveries: await context.for(FamilyDeliveries).count(f => f.readyAndSelfPickup().and(f.basketType.isEqualTo(b.id).and(f.filterDistCenter(distCenter)))),
-                inEventDeliveries: await context.for(FamilyDeliveries).count(f => f.basketType.isEqualTo(b.id).and(f.filterDistCenter(distCenter))),
-                successDeliveries: await context.for(FamilyDeliveries).count(f => f.deliverStatus.isSuccess().and(f.basketType.isEqualTo(b.id).and(f.filterDistCenter(distCenter))))
+                unassignedDeliveries: await context.for(FamilyDeliveries).count(f => f.readyAndSelfPickup().and(f.basketType.isEqualTo(b.id).and(f.filterDistCenterAndAllowed(distCenter)))),
+                inEventDeliveries: await context.for(FamilyDeliveries).count(f => f.basketType.isEqualTo(b.id).and(f.filterDistCenterAndAllowed(distCenter))),
+                successDeliveries: await context.for(FamilyDeliveries).count(f => f.deliverStatus.isSuccess().and(f.basketType.isEqualTo(b.id).and(f.filterDistCenterAndAllowed(distCenter))))
             });
         }));
         if (distCenter == allCentersToken)
@@ -105,7 +105,7 @@ export class FamilyDeliveryStats {
                 result.groups.push(x);
                 pendingStats.push(context.for(FamilyDeliveries).count(f => f.readyAndSelfPickup().and(
                     f.groups.isContains(x.name).and(
-                        f.filterDistCenter(distCenter)))).then(r => x.totalReady = r));
+                        f.filterDistCenterAndAllowed(distCenter)))).then(r => x.totalReady = r));
                 
             }
         });
@@ -125,7 +125,7 @@ export class FamilyDeliveresStatistics {
     value = 0;
     async saveTo(distCenter: string, data: any, context: Context) {
 
-        data[this.name] = await context.for(ActiveFamilyDeliveries).count(f => new AndFilter(this.rule(f), f.filterDistCenter(distCenter))).then(c => this.value = c);
+        data[this.name] = await context.for(ActiveFamilyDeliveries).count(f => new AndFilter(this.rule(f), f.filterDistCenterAndAllowed(distCenter))).then(c => this.value = c);
     }
     async loadFrom(data: any) {
         this.value = data[this.name];

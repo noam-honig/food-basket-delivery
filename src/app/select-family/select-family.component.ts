@@ -38,7 +38,7 @@ export class SelectFamilyComponent implements OnInit {
 
     await this.families.get({
       where: f => {
-        let result = f.filterDistCenter(this.args.distCenter);
+        let result = f.filterDistCenterAndAllowed(this.args.distCenter);
         {
           let r = f.name.isContains(this.searchString);
           if (this.args.selectStreet)

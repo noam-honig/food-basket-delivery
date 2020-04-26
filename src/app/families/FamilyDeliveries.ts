@@ -272,7 +272,7 @@ export class FamilyDeliveries extends IdEntity {
     readyAndSelfPickup() {
         return this.deliverStatus.readyAndSelfPickup(this.courier);
     }
-    filterDistCenter(distCenter: string): FilterBase {
+    filterDistCenterAndAllowed(distCenter: string): FilterBase {
         return this.distributionCenter.filter(distCenter);
     }
     getDeliveryDescription() {
@@ -370,6 +370,9 @@ export class FamilyDeliveries extends IdEntity {
 
 @EntityClass
 export class ActiveFamilyDeliveries extends FamilyDeliveries {
+    checkAllowedForUser(): boolean {
+        return this.distributionCenter.checkAllowedForUser();
+    }
 
 
     constructor(context: Context) {

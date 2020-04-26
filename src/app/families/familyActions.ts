@@ -54,11 +54,11 @@ class NewDelivery extends ActionOnFamilies {
             },
             title: 'משלוח חדש',
             forEach: async f => {
-                let fd = f.createDelivery();
+                let fd = f.createDelivery(this.distributionCenter.value);
                 if (!this.useFamilyBasket.value) {
                     fd.basketType.value = this.basketType.value;
                 }
-                fd.distributionCenter.value = this.distributionCenter.value;
+                
                 if (this.determineCourier.value) {
                     fd.courier.value = this.courier.value;
                 }

@@ -23,7 +23,7 @@ export class DistributionCenters extends IdEntity {
     this._lastString = this.addressApiResult.value;
     return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
   }
-  
+
 
   constructor(context: Context) {
     super({
@@ -56,6 +56,7 @@ export function filterCenterAllowedForUser(center: IdColumn, context: Context) {
 }
 
 export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValue {
+
   filter(distCenter: string): import("@remult/core").FilterBase {
     if (distCenter != allCentersToken)
       return new AndFilter(this.isAllowedForUser(), this.isEqualTo(distCenter));
@@ -65,9 +66,16 @@ export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValu
     return filterCenterAllowedForUser(this, this.context);
 
   }
+  checkAllowedForUser() {
+    if (this.context.isAllowed(Roles.admin)) {
+      return true;
+    } else if (this.context.isAllowed(Roles.distCenterAdmin))
+      return (<HelperUserInfo>this.context.user).distributionCenter == this.value;
+    return false;
+  }
   async getRouteStartGeo() {
     let d = await this.context.for(DistributionCenters).lookupAsync(this);
-    if (d.addressApiResult.value && d.address.value&&d.getGeocodeInformation().ok())
+    if (d.addressApiResult.value && d.address.value && d.getGeocodeInformation().ok())
       return d.getGeocodeInformation();
     return (await ApplicationSettings.getAsync(this.context)).getGeocodeInformation();
   }

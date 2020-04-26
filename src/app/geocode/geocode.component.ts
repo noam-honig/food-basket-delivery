@@ -63,5 +63,5 @@ export class GeocodeComponent implements OnInit {
 }
 
 function filterBadGeocoding(f: Families, distCenter: string) {
-  return f.address.isDifferentFrom('').and(f.addressApiResult.isEqualTo(new GeocodeInformation().saveToString()).and(f.filterDistCenter(distCenter)));
+  return f.address.isDifferentFrom('').and(f.addressApiResult.isEqualTo(new GeocodeInformation().saveToString()));
 }

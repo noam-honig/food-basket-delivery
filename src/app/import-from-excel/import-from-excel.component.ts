@@ -337,9 +337,7 @@ export class ImportFromExcelComponent implements OnInit {
 
         let f = this.context.for(Families).create();
         f._disableAutoDuplicateCheck = true;
-        if (this.dialog.distCenter.value != allCentersToken) {
-            f.distributionCenter.value = this.dialog.distCenter.value;
-        }
+        
         
 
         let helper = new columnUpdateHelper(this.context, this.dialog, this.settings.excelImportAutoAddValues.value);
@@ -384,12 +382,6 @@ export class ImportFromExcelComponent implements OnInit {
                 }
                 c.validationError += c.defs.caption + ": " + c.validationError;
                 info.valid = false;
-            }
-            if (c.value || c == f.distributionCenter) {
-                info.values[c.defs.key] = {
-                    newDisplayValue: await getColumnDisplayValue(c),
-                    newValue: c.value
-                };
             }
         }
 
@@ -546,21 +538,21 @@ export class ImportFromExcelComponent implements OnInit {
             }, columns: [this.f.basketType]
         });
 
-        this.columns.push({
-            key: 'distCenterSemel',
-            name: 'סמל נקודת חלוקה',
-            updateFamily: async (v, f, h) => {
-                await h.lookupAndInsert(DistributionCenters, b => b.semel, v, b => b.id, f.distributionCenter, b => b.name.value = v);
+        // this.columns.push({
+        //     key: 'distCenterSemel',
+        //     name: 'סמל נקודת חלוקה',
+        //     updateFamily: async (v, f, h) => {
+        //         await h.lookupAndInsert(DistributionCenters, b => b.semel, v, b => b.id, f.distributionCenter, b => b.name.value = v);
 
-            }, columns: [this.f.distributionCenter]
-        });
-        this.columns.push({
-            key: 'distCenterName',
-            name: 'נקודת חלקה',
-            updateFamily: async (v, f, h) => {
-                await h.lookupAndInsert(DistributionCenters, b => b.name, v, b => b.id, f.distributionCenter);
-            }, columns: [this.f.distributionCenter]
-        });
+        //     }, columns: [this.f.distributionCenter]
+        // });
+        // this.columns.push({
+        //     key: 'distCenterName',
+        //     name: 'נקודת חלקה',
+        //     updateFamily: async (v, f, h) => {
+        //         await h.lookupAndInsert(DistributionCenters, b => b.name, v, b => b.id, f.distributionCenter);
+        //     }, columns: [this.f.distributionCenter]
+        // });
         this.columns.push({
             key: 'familySource',
             name: this.f.familySource.defs.caption,

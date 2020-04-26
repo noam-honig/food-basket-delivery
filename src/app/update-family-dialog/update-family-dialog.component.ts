@@ -10,6 +10,7 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { PreviewFamilyComponent } from '../preview-family/preview-family.component';
+import { DialogService } from '../select-popup/dialog';
 
 @Component({
   selector: 'app-update-family-dialog',
@@ -35,13 +36,14 @@ export class UpdateFamilyDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<any>,
 
     private context: Context,
-    private settings: ApplicationSettings
+    private settings: ApplicationSettings,
+    private dialog: DialogService
 
   ) {
 
   }
   preview() {
-    let fd = this.args.family.createDelivery();
+    let fd = this.args.family.createDelivery(this.dialog.distCenter.value);
     this.context.openDialog(PreviewFamilyComponent, x => { x.argsFamily = fd });
   }
   updateInfo() {
@@ -83,7 +85,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
   }
   displayDupInfo(info: duplicateFamilyInfo) {
     return displayDupInfo(info);
-}
+  }
 
 
   familiesInfo: DataAreaSettings<Families>;
@@ -189,7 +191,6 @@ export class UpdateFamilyDialogComponent implements OnInit {
           f.deliveryComments,
           f.defaultSelfPickup,
           f.fixedCourier,
-          f.distributionCenter,
           f.special
         ].filter(x => this.settings.usingSelfPickupModule.value ? true : x != f.defaultSelfPickup)
     });

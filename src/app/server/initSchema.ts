@@ -171,7 +171,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await createDeliveryIndex("for_distribution_status_queries2", fd.distributionCenter, fd.courier, fd.deliverStatus, fd.city, fd.basketType);
         await createFamilyIndex("for_name1", f.name, f.status, f.basketType);
         await createDeliveryIndex("for_name2", fd.name, fd.deliverStatus, fd.basketType);
-        await createFamilyIndex("for_distCenter_name", f.distributionCenter, f.name, f.status, f.basketType);
+        
         await createDeliveryIndex("for_distCenter_name1", fd.distributionCenter, fd.name, fd.deliverStatus, fd.basketType);
         await createDeliveryIndex("for_basket1", fd.basketType, fd.deliverStatus, fd.courier);
         await createDeliveryIndex("for_basket_dist1", fd.distributionCenter, fd.basketType, fd.deliverStatus, fd.courier);
@@ -265,6 +265,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
                         [fd.family, f.id],
                         [fd.createDate, sql.case([{ when: ['deliverStatus in (0,2)'], then: 'deliveryStatusDate' }], 'courierAssingTime')],
                         [fd.createUser, 'courierAssignUser'],
+                        [fd.distributionCenter, 'distributionCenter'],
                         [fd.deliverStatus, sql.case([{ when: ['deliverStatus=90'], then: '9' }], 'deliverStatus')]
                     ];
                     for (const c of [
@@ -312,6 +313,9 @@ export async function initSchema(pool1: PostgresPool, org: string) {
                 },
                 where: () => ['deliverstatus not in (99,95)']
             }));
+            version(18,async ()=>{
+                await dataSource.execute(sql.build('drop index if exists for_distCenter_name  '));
+            });
     });
    
    

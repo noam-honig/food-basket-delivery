@@ -427,7 +427,7 @@ export class AsignFamilyComponent implements OnInit {
 
         let countFamilies = (additionalWhere?: (f: ActiveFamilyDeliveries) => FilterBase) => {
             return context.for(ActiveFamilyDeliveries).count(f => {
-                let where = f.readyFilter(info.filterCity, info.filterGroup).and(f.filterDistCenter(info.distCenter));
+                let where = f.readyFilter(info.filterCity, info.filterGroup).and(f.filterDistCenterAndAllowed(info.distCenter));
                 if (additionalWhere) {
                     where = where.and(additionalWhere(f));
                 }
@@ -484,11 +484,12 @@ export class AsignFamilyComponent implements OnInit {
     static async RefreshRoute(helperId: string, useGoogle: boolean, context?: Context) {
         let existingFamilies = await context.for(ActiveFamilyDeliveries).find({
             where: f => f.courier.isEqualTo(helperId).and(
-                f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)).and(
-                    f.distributionCenter.isAllowedForUser())
+                f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))
         });
         let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
-        return await AsignFamilyComponent.optimizeRoute(h, existingFamilies, context, useGoogle);
+        let r =  await AsignFamilyComponent.optimizeRoute(h, existingFamilies, context, useGoogle);
+        r.families = r.families.filter(f=>f.checkAllowedForUser());
+        return r;
     }
     findCompany() {
         this.context.openDialog(SelectCompanyComponent, s => s.argOnSelect = x => this.helper.company.value = x);
@@ -507,8 +508,7 @@ export class AsignFamilyComponent implements OnInit {
 
         let existingFamilies = await context.for(ActiveFamilyDeliveries).find({
             where: f => f.courier.isEqualTo(info.helperId).and(
-                f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
-                    f.distributionCenter.isAllowedForUser()).and(f.filterDistCenter(info.distCenter)))
+                f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))
         });
         let locationReferenceFamilies = [...existingFamilies];
         if (locationReferenceFamilies.length == 0) {
@@ -522,7 +522,7 @@ export class AsignFamilyComponent implements OnInit {
         }
         function buildWhere(f: ActiveFamilyDeliveries) {
             let where = f.readyFilter(info.city, info.group).and(
-                f.special.isDifferentFrom(YesNo.Yes).and(f.filterDistCenter(info.distCenter))
+                f.special.isDifferentFrom(YesNo.Yes).and(f.filterDistCenterAndAllowed(info.distCenter))
             );
             if (info.basketType != undefined)
                 where = where.and(
@@ -574,7 +574,7 @@ export class AsignFamilyComponent implements OnInit {
                 if (family.addressOk.value) {
                     let sameLocationFamilies = await context.for(ActiveFamilyDeliveries).find({
                         where: f => buildWhere(f).and(f.addressLongitude.isEqualTo(family.addressLongitude).and(f.addressLatitude.isEqualTo(family.addressLatitude)))
-                            .and(f.distributionCenter.isAllowedForUser()).and(f.filterDistCenter(info.distCenter))
+                            .and(f.filterDistCenterAndAllowed(info.distCenter))
                     });
                     if (sameLocationFamilies.length > 0) {
                         result.familiesInSameAddress.push(...(sameLocationFamilies).map(x => x.id.value));
@@ -642,7 +642,7 @@ export class AsignFamilyComponent implements OnInit {
         }
 
 
-
+        existingFamilies = existingFamilies.filter(f=>f.checkAllowedForUser());
         existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
         result.families = await context.for(ActiveFamilyDeliveries).toPojoArray(existingFamilies);
 
@@ -871,7 +871,7 @@ export interface routeStats {
 }
 export interface optimizeRouteResult {
     stats: routeStats;
-    families: any[];
+    families: ActiveFamilyDeliveries[];
     ok: boolean;
 }
 

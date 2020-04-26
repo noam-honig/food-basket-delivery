@@ -252,7 +252,6 @@ export class FamiliesComponent implements OnInit {
                 f.basketType.value = '';
 
                 f.special.value = YesNo.No;
-                f.distributionCenter.value = this.dialog.distCenter.value;
                 this.currentFamilyDeliveries = [];
             } else {
                 if (!this.gridView) {
@@ -291,7 +290,7 @@ export class FamiliesComponent implements OnInit {
                 if (this.problemOnly) {
                     addFilter(f.addressOk.isEqualTo(false));
                 }
-                addFilter(f.filterDistCenter(this.dialog.distCenter.value));
+                
                 return result;
             }
             , orderBy: f => f.name
@@ -356,8 +355,6 @@ export class FamiliesComponent implements OnInit {
                 families.phone3Description,
                 families.phone4,
                 families.phone4Description,
-
-                families.distributionCenter,
                 families.fixedCourier,
                 {
                     caption: 'טלפון משנע',

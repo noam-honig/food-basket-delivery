@@ -54,7 +54,8 @@ export class Families extends IdEntity {
     });
   }
   async showNewDeliveryDialog(dialog: DialogService) {
-    let newDelivery = this.createDelivery();
+    let newDelivery = this.createDelivery(dialog.distCenter.value);
+
     await this.context.openDialog(InputAreaComponent, x => {
       x.args = {
         settings: {
@@ -104,9 +105,9 @@ export class Families extends IdEntity {
     distCenter: string,
     courier: string
   }, context?: Context) {
-    let f = await context.for(Families).findFirst(x => x.id.isEqualTo(familyId).and(x.distributionCenter.isAllowedForUser()));
+    let f = await context.for(Families).findId(familyId);
     if (f) {
-      let fd = f.createDelivery();
+      let fd = f.createDelivery(settings.distCenter);
       fd.basketType.value = settings.basketType;
       fd.courierComments.value = settings.comment;
       fd.distributionCenter.value = settings.distCenter;
@@ -117,10 +118,10 @@ export class Families extends IdEntity {
     return 0;
 
   }
-  createDelivery() {
+  createDelivery(distCenter: string) {
     let fd = this.context.for(FamilyDeliveries).create();
     fd.family.value = this.id.value;
-    fd.distributionCenter.value = this.distributionCenter.value;
+    fd.distributionCenter.value = distCenter;
     fd.special.value = this.special.value;
     fd.basketType.value = this.basketType.value;
     fd.deliveryComments.value = this.deliveryComments.value;
@@ -173,9 +174,7 @@ export class Families extends IdEntity {
     }
   }
 
-  filterDistCenter(distCenter: string): import("@remult/core").FilterBase {
-    return this.distributionCenter.filter(distCenter);
-  }
+
 
   getDeliveries() {
     return this.context.for(FamilyDeliveries).find({ where: d => d.family.isEqualTo(this.id), orderBy: d => [{ column: d.deliveryStatusDate, descending: true }] });
@@ -195,11 +194,7 @@ export class Families extends IdEntity {
           if (!context.isAllowed(Roles.admin)) {
             if (context.isAllowed(Roles.admin))
               return undefined;
-            if (context.isAllowed(Roles.distCenterAdmin))
-              return this.distributionCenter.isAllowedForUser();
             return this.id.isEqualTo('no rows');
-
-
           }
         },
         savingRow: async () => {
@@ -282,7 +277,7 @@ export class Families extends IdEntity {
 
   })
   basketType = new BasketId(this.context, 'סוג סל ברירת מחדל');
-  distributionCenter = new DistributionCenterId(this.context);
+
   familySource = new FamilySourceId(this.context, { includeInApi: true, caption: 'גורם מפנה' });
   socialWorker = new StringColumn('איש קשר לבירור פרטים (עו"ס)');
   socialWorkerPhone1 = new PhoneColumn('עו"ס טלפון 1');
@@ -632,7 +627,7 @@ export class Families extends IdEntity {
       ],
 
       from: f,
-      where: () => [f.distributionCenter.isAllowedForUser(), sql.or(tzCol, tz2Col, phone1Col, phone2Col, phone3Col, phone4Col, nameCol), sql.ne(f.id, sql.str(id))]
+      where: () => [sql.or(tzCol, tz2Col, phone1Col, phone2Col, phone3Col, phone4Col, nameCol), sql.ne(f.id, sql.str(id))]
     }));
     if (!sqlResult.rows || sqlResult.rows.length < 1)
       return [];

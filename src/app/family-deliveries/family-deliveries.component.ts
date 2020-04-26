@@ -410,7 +410,7 @@ export class FamilyDeliveriesComponent implements OnInit {
           addFilter(f.name.isContains(this.searchString));
         }
 
-        addFilter(f.filterDistCenter(this.dialog.distCenter.value));
+        addFilter(f.filterDistCenterAndAllowed(this.dialog.distCenter.value));
         return result;
       }
       , orderBy: f => f.name

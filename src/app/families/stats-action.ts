@@ -66,7 +66,7 @@ export class Stats {
                 };
                 result.groups.push(x);
                 pendingStats.push(context.for(Families).count(f => f.groups.isContains(x.name).and(
-                    f.status.isDifferentFrom(FamilyStatus.RemovedFromList)).and(f.filterDistCenter(distCenter))).then(r => x.total = r));
+                    f.status.isDifferentFrom(FamilyStatus.RemovedFromList))).then(r => x.total = r));
             }
         });
 
@@ -87,7 +87,7 @@ export class FaimilyStatistics {
     value = 0;
     async saveTo(distCenter: string, data: any, context: Context) {
 
-        data[this.name] = await context.for(Families).count(f => new AndFilter(this.rule(f), f.filterDistCenter(distCenter))).then(c => this.value = c);
+        data[this.name] = await context.for(Families).count(f => this.rule(f)).then(c => this.value = c);
     }
     async loadFrom(data: any) {
         this.value = data[this.name];
