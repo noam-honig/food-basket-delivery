@@ -443,7 +443,7 @@ export class AsignFamilyComponent implements OnInit {
         let f = context.for(ActiveFamilyDeliveries).create();
         let fd = context.for(FamilyDeliveries).create();
         if (info.helperId) {
-            let r = await db.execute(sql.build('select count(*) from ', f, ' where ', f.readyFilter(info.filterCity, info.filterGroup).and(f.special.isEqualTo(YesNo.No)), ' and ',
+            let r = await db.execute(sql.build('select count(*) from ', f, ' where ', f.active().and(f.distributionCenter.filter(info.distCenter)).and(f.readyFilter(info.filterCity, info.filterGroup).and(f.special.isEqualTo(YesNo.No))), ' and ',
                 filterRepeatFamilies(sql, f, fd, info.helperId)));
             result.repeatFamilies = r.rows[0][r.getColumnKeyInResultForIndexInSelect(0)];
         }
@@ -500,6 +500,7 @@ export class AsignFamilyComponent implements OnInit {
         let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
         let r = await AsignFamilyComponent.optimizeRoute(h, existingFamilies, context, useGoogle);
         r.families = r.families.filter(f => f.checkAllowedForUser());
+        r.families =  await context.for(ActiveFamilyDeliveries).toPojoArray(r.families)
         return r;
     }
     findCompany() {
@@ -666,7 +667,14 @@ export class AsignFamilyComponent implements OnInit {
 
         if (families.length < 1)
             return;
-        let result = {
+        let result: {
+            families: ActiveFamilyDeliveries[],
+            stats: {
+                totalKm: number,
+                totalTime: number
+            }
+            ok: boolean
+        } = {
             stats: {
                 totalKm: 0,
                 totalTime: 0
@@ -767,7 +775,7 @@ export class AsignFamilyComponent implements OnInit {
                     await f.save();
             });
         }
-        result.families = await context.for(ActiveFamilyDeliveries).toPojoArray(families);
+        result.families = families;
 
         helper.save();
 
