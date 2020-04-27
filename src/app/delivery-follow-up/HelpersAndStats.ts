@@ -26,16 +26,8 @@ export class HelpersAndStats extends HelpersBase {
         dbReadOnly: true,
         caption: 'משפחות'
     });
-    deliveriesWithProblems = new NumberColumn({
-        dbReadOnly: true,
-        caption: 'משפחות עם בעיות'
-    });
-    lastAsignTime = new DateTimeColumn({
-        dbReadOnly: true
-    });
-    gotSms = new BoolColumn({
-        dbReadOnly: true
-    });
+  
+  
     constructor(context: Context) {
         super(context, {
             name: "helpersAndStats",
@@ -69,19 +61,6 @@ export class HelpersAndStats extends HelpersBase {
                         h.distributionCenter ,
                         sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress),
                         sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isActiveDelivery()]), this.allFamilies),
-                        sql.countInnerSelect(helperFamilies(() => [sql.in(f.deliverStatus,
-                            DeliveryStatus.FailedBadAddress.id,
-                            DeliveryStatus.FailedNotHome.id,
-                            DeliveryStatus.FailedOther.id)]),
-                            this.deliveriesWithProblems),
-                        sql.max(f.courierAssingTime,
-                            helperFamilies(() =>
-                                [sql.not(sql.in(f.deliverStatus, DeliveryStatus.Frozen.id))]), this.lastAsignTime),
-                        sql.build('coalesce(  ',h.smsDate, '> (', sql.query({
-                            select: () => [sql.build('max(', f.courierAssingTime, ')')],
-                            from: f,
-                            where: helperFamilies(() => [sql.not(sql.in(f.deliverStatus, DeliveryStatus.Frozen.id))]).where
-                        }), ") ,false) as ", this.gotSms)
 
                     ],
                     from: h
