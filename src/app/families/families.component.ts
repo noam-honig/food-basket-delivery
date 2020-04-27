@@ -56,20 +56,7 @@ export class FamiliesComponent implements OnInit {
     showHoverButton: boolean = false;
 
     constructor(public dialog: DialogService, private san: DomSanitizer, public busy: BusyService, public context: Context, private settings: ApplicationSettings) {
-        this.doTest();
 
-        {
-            let y = dialog.refreshStatusStats.subscribe(() => {
-                this.refreshStats();
-            });
-            this.onDestroy = () => {
-                y.unsubscribe();
-            };
-        }
-        {
-            dialog.onDistCenterChange(() => this.refresh(), this);
-
-        }
     }
 
     filterBy(s: FaimilyStatistics) {
@@ -291,7 +278,7 @@ export class FamiliesComponent implements OnInit {
                 if (this.problemOnly) {
                     addFilter(f.addressOk.isEqualTo(false));
                 }
-                
+
                 return result;
             }
             , orderBy: f => f.name
@@ -476,8 +463,7 @@ export class FamiliesComponent implements OnInit {
 
 
 
-    async doTest() {
-    }
+
 
     onDestroy = () => { };
 
@@ -506,18 +492,29 @@ export class FamiliesComponent implements OnInit {
     statTabs: statsOnTab[] = [
 
         {
-            rule: f => undefined,
+            rule: f => f.status.isDifferentFrom(FamilyStatus.RemovedFromList),
             showTotal: true,
             name: translate('משפחות'),
             stats: [
                 this.stats.active,
-                this.stats.outOfList
+
             ],
             moreStats: []
 
         },
         this.groupsTotals,
-        this.addressProblem
+        this.addressProblem,
+        {
+            rule: f => f.status.isEqualTo(FamilyStatus.RemovedFromList),
+            showTotal: true,
+            name: 'הוצאו מהרשימות',
+            stats: [
+                this.stats.outOfList
+
+            ],
+            moreStats: []
+
+        },
     ]
 
     async tabChanged() {
