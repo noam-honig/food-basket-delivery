@@ -147,6 +147,7 @@ export class Families extends IdEntity {
       this.appartment,
       this.entrance,
       this.city,
+      this.area,
       this.addressComment,
       this.addressLongitude,
       this.addressLatitude,
@@ -319,6 +320,7 @@ export class Families extends IdEntity {
   appartment = new StringColumn('דירה');
   entrance = new StringColumn('כניסה');
   city = new StringColumn({ caption: "עיר (מתעדכן אוטומטית)" });
+  area = new StringColumn({ caption: 'אזור' });
   addressComment = new StringColumn('הנחיות נוספות לכתובת');
   postalCode = new NumberColumn('מיקוד');
   deliveryComments = new StringColumn('הערה שתופיע למתנדב');

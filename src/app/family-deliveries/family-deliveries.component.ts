@@ -459,6 +459,7 @@ export class FamilyDeliveriesComponent implements OnInit {
         deliveries.entrance,
         { column: deliveries.addressComment },
         deliveries.city,
+        deliveries.area,
         deliveries.phone1,
         deliveries.phone1Description,
         deliveries.phone2,

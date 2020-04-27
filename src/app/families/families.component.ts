@@ -330,6 +330,7 @@ export class FamiliesComponent implements OnInit {
                 { column: families.entrance, width: '50' },
                 { column: families.addressComment },
                 families.city,
+                families.area,
                 families.postalCode,
                 families.addressByGoogle,
                 {

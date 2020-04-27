@@ -87,6 +87,14 @@
             </select>
           </mat-form-field>
           <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
+            *ngIf="settings.showAreaOnAssing.value">
+            <mat-label>אזור לחלוקה</mat-label>
+            <select matNativeControl class="form-control" #city (change)="selectCity()" [(ngModel)]="filterArea">
+              <option value="">כל האזורים</option>
+              <option *ngFor="let c of areas" value="{{c.name}}">{{c.name}} - {{c.unassignedFamilies}}</option>
+            </select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
             *ngIf="settings.showBasketOnAssing.value">
             <mat-label>סוג סל</mat-label>
             <select matNativeControl class="form-control" #lang [(ngModel)]="basketType">

@@ -506,6 +506,7 @@ export class ImportFromExcelComponent implements OnInit {
             }
         };
         addColumn(this.f.name, ["משפחה", "שם משפחה"]);
+        addColumn(this.f.area);
         this.columns.push({
             key: 'firstName',
             name: 'שם פרטי',

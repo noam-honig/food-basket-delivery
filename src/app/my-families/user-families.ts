@@ -17,9 +17,9 @@ export class UserFamiliesList {
         this.map = map;
         this.map.userClickedOnFamilyOnMap = (f) => this.userClickedOnFamilyOnMap(f);
     }
-    startAssignByMap(city: string, group: string, distCenter: string) {
+    startAssignByMap(city: string, group: string, distCenter: string, area:string) {
 
-        this.map.loadPotentialAsigment(city, group, distCenter);
+        this.map.loadPotentialAsigment(city, group, distCenter,area);
         setTimeout(() => {
             this.map.gmapElement.nativeElement.scrollIntoView();
         }, 100);

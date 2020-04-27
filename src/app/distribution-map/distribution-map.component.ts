@@ -65,7 +65,7 @@ export class DistributionMap implements OnInit, OnDestroy {
       this.activePolygon.setMap(null);
       this.activePolygon = undefined;
     }
-    
+
   }
 
   ngOnDestroy(): void {
@@ -189,7 +189,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   statuses = new Statuses();
   selectedStatus: statusClass;
-  filterCourier = new HelperId(this.context,  {
+  filterCourier = new HelperId(this.context, {
     caption: 'מתנדב לסינון',
     valueChange: () => this.refreshFamilies()
   }, h => h.allFamilies.isGreaterThan(0));
@@ -298,7 +298,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.updateChart();
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
-  static async GetFamiliesLocations(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: string, context?: Context, db?: SqlDatabase) {
+  static async GetFamiliesLocations(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: string, area?: string, context?: Context, db?: SqlDatabase) {
     if (!distCenter)
       distCenter = '';
     let f = context.for(FamilyDeliveries).create();
@@ -321,7 +321,7 @@ export class DistributionMap implements OnInit, OnDestroy {
           where.push(f.filterDistCenterAndAllowed(distCenter));
 
         if (onlyPotentialAsignment) {
-          where.push(f.readyFilter(city, group).and(f.special.isEqualTo(YesNo.No)));
+          where.push(f.readyFilter(city, group, area).and(f.special.isEqualTo(YesNo.No)));
         }
         return where;
       },
@@ -345,10 +345,10 @@ export class DistributionMap implements OnInit, OnDestroy {
 
     let result: familyQueryResult[] = []
     let f = context.for(FamilyDeliveries).create();
-    
+
     let sql = new SqlBuilder();
     sql.addEntity(f, "fd");
-    
+
 
     for (const org of Sites.schemas) {
       let dp = Sites.getDataProviderForOrg(org) as SqlDatabase;
@@ -361,7 +361,7 @@ export class DistributionMap implements OnInit, OnDestroy {
         }
 
       })))));
-    
+
     }
     return result;
 

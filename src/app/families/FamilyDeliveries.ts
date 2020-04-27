@@ -42,7 +42,7 @@ export class FamilyDeliveries extends IdEntity {
         caption: 'סוג סל',
         allowApiUpdate: Roles.distCenterAdmin
     });
-    quantity = new QuantityColumn({ caption: 'מספר סלים', allowApiUpdate: Roles.distCenterAdmin, dataControlSettings: () => ({ width: '100',inputType:'number' }) });
+    quantity = new QuantityColumn({ caption: 'מספר סלים', allowApiUpdate: Roles.distCenterAdmin, dataControlSettings: () => ({ width: '100', inputType: 'number' }) });
 
     distributionCenter = new DistributionCenterId(this.context, {
         allowApiUpdate: Roles.distCenterAdmin
@@ -104,6 +104,7 @@ export class FamilyDeliveries extends IdEntity {
         caption: "עיר (מתעדכן אוטומטית)"
         , allowApiUpdate: false
     });
+    area = new StringColumn({ caption: 'אזור', allowApiUpdate: false });
     addressComment = new StringColumn({
         caption: 'הנחיות נוספות לכתובת',
         allowApiUpdate: false
@@ -308,7 +309,7 @@ export class FamilyDeliveries extends IdEntity {
     }
 
 
-    readyFilter(city?: string, group?: string) {
+    readyFilter(city?: string, group?: string, area?: string) {
         let where = this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
             this.courier.isEqualTo('')).and(this.distributionCenter.isAllowedForUser());
         if (group)
@@ -316,6 +317,8 @@ export class FamilyDeliveries extends IdEntity {
         if (city) {
             where = where.and(this.city.isEqualTo(city));
         }
+        if (area)
+            where = where.and(this.area.isEqualTo(area));
 
         return where;
     }

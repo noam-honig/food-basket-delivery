@@ -107,6 +107,7 @@ export class ApplicationSettings extends Entity<number>  {
   showHelperComment = new BoolColumn('שמור הערה למתנדב');
   showGroupsOnAssing = new BoolColumn('סינון קבוצת משפחה');
   showCityOnAssing = new BoolColumn('סינון עיר');
+  showAreaOnAssing = new BoolColumn('סינון אזור');
   showBasketOnAssing = new BoolColumn('סינון סוג סל');
   showNumOfBoxesOnAssing = new BoolColumn('בחירת מספר משפחות');
   showLeftThereButton = new BoolColumn('הצג למתנדב כפתור השארתי ליד הבית');

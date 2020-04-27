@@ -171,7 +171,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
         ],
         families.addressComment,
         families.addressByGoogle,
-        families.city,
+        [families.city, families.area],
         families.addressOk,
         families.postalCode
 
