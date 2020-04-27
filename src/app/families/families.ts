@@ -17,7 +17,7 @@ import { Roles } from "../auth/roles";
 import { translate } from "../translate";
 import { UpdateGroupDialogComponent } from "../update-group-dialog/update-group-dialog.component";
 import { DistributionCenterId, DistributionCenters } from "../manage/distribution-centers";
-import { FamilyStatusColumn } from "./FamilyStatus";
+import { FamilyStatusColumn, FamilyStatus } from "./FamilyStatus";
 import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { DialogService } from "../select-popup/dialog";
@@ -58,7 +58,7 @@ export class Families extends IdEntity {
     let newDelivery = this.createDelivery(dialog.distCenter.value);
     if (copyFrom != undefined) {
       newDelivery.copyFrom(copyFrom);
-      
+
     }
 
     await this.context.openDialog(InputAreaComponent, x => {
@@ -177,6 +177,7 @@ export class Families extends IdEntity {
     return this.address.value;
   }
   updateDelivery(fd: FamilyDeliveries) {
+    fd.family.value = this.id.value;
     for (const col of this.sharedColumns()) {
       fd.columns.find(col).value = col.value;
     }
@@ -637,7 +638,8 @@ export class Families extends IdEntity {
       sql.columnWithAlias(phone2Col, 'phone2'),
       sql.columnWithAlias(phone3Col, 'phone3'),
       sql.columnWithAlias(phone4Col, 'phone4'),
-      sql.columnWithAlias(nameCol, 'nameDup')
+      sql.columnWithAlias(nameCol, 'nameDup'),
+      sql.columnWithAlias(f.status, 'status')
 
       ],
 
@@ -658,7 +660,8 @@ export class Families extends IdEntity {
         phone2: row[sqlResult.getColumnKeyInResultForIndexInSelect(6)],
         phone3: row[sqlResult.getColumnKeyInResultForIndexInSelect(7)],
         phone4: row[sqlResult.getColumnKeyInResultForIndexInSelect(8)],
-        nameDup: row[sqlResult.getColumnKeyInResultForIndexInSelect(9)]
+        nameDup: row[sqlResult.getColumnKeyInResultForIndexInSelect(9)],
+        removedFromList: row['status'] == FamilyStatus.RemovedFromList.id
 
       });
     }
@@ -680,6 +683,7 @@ export interface duplicateFamilyInfo {
   phone3: boolean;
   phone4: boolean;
   nameDup: boolean;
+  removedFromList: boolean;
 }
 
 export interface FamilyUpdateInfo {

@@ -251,7 +251,7 @@ export class SettingsService {
 export class RemovedFromListExcelImportStrategy {
   static displayAsError = new RemovedFromListExcelImportStrategy(0, 'הצג כשגיאה');
   static showInUpdate = new RemovedFromListExcelImportStrategy(1, 'הצג במשפחות לעדכון');
-  static ignore = new RemovedFromListExcelImportStrategy(2, 'התעלם');
+  static ignore = new RemovedFromListExcelImportStrategy(2, 'התעלם והוסף משפחה חדשה');
   constructor(public id: number, public caption: string) { }
 }
 class RemovedFromListExcelImportStrategyColumn extends ValueListColumn<RemovedFromListExcelImportStrategy>{
