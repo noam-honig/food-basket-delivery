@@ -116,7 +116,7 @@ export class AsignFamilyComponent implements OnInit {
             }, 200);
     }
 
-   
+
     filterCity = '';
     allBaskets: BasketInfo = { id: 'undefined', name: 'כל הסלים', unassignedFamilies: 0 };
     basketType: BasketInfo = this.allBaskets;
@@ -296,7 +296,7 @@ export class AsignFamilyComponent implements OnInit {
         if (this.dialog.distCenter.value === undefined) {
             this.dialog.distCenter.value = '';
         }
-        this.dialog.onDistCenterChange(() => this.clearHelperInfo(), this);
+        this.dialog.onDistCenterChange(() => this.refreshBaskets(), this);
 
     }
     disableAll() {
@@ -467,25 +467,25 @@ export class AsignFamilyComponent implements OnInit {
             }
         }
 
-        
-        
+
+
         let baskets = await db.execute(sql.build(sql.query({
             select: () => [f.basketType,
             sql.build('count (', f.quantity, ') b'),
             ],
             from: f,
-            where: () => [f.filterDistCenterAndAllowed(info.distCenter),f.readyFilter(info.filterCity, info.filterGroup)]
+            where: () => [f.filterDistCenterAndAllowed(info.distCenter), f.readyFilter(info.filterCity, info.filterGroup)]
         }), ' group by ', f.basketType));
         for (const r of baskets.rows) {
             let basketId = r[baskets.getColumnKeyInResultForIndexInSelect(0)];
-            let b = await context.for(BasketType).lookupAsync(b=>b.id.isEqualTo(basketId));
+            let b = await context.for(BasketType).lookupAsync(b => b.id.isEqualTo(basketId));
             result.baskets.push({
                 id: basketId,
                 name: b.name.value,
                 unassignedFamilies: +r['b']
             });
         }
-        
+
         result.baskets.sort((a, b) => b.unassignedFamilies - a.unassignedFamilies);
 
 
@@ -498,8 +498,8 @@ export class AsignFamilyComponent implements OnInit {
                 f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))
         });
         let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
-        let r =  await AsignFamilyComponent.optimizeRoute(h, existingFamilies, context, useGoogle);
-        r.families = r.families.filter(f=>f.checkAllowedForUser());
+        let r = await AsignFamilyComponent.optimizeRoute(h, existingFamilies, context, useGoogle);
+        r.families = r.families.filter(f => f.checkAllowedForUser());
         return r;
     }
     findCompany() {
@@ -653,7 +653,7 @@ export class AsignFamilyComponent implements OnInit {
         }
 
 
-        existingFamilies = existingFamilies.filter(f=>f.checkAllowedForUser());
+        existingFamilies = existingFamilies.filter(f => f.checkAllowedForUser());
         existingFamilies.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
         result.families = await context.for(ActiveFamilyDeliveries).toPojoArray(existingFamilies);
 
@@ -695,7 +695,7 @@ export class AsignFamilyComponent implements OnInit {
                 loc.families.push(f);
             }
         }
-        let startPoint=await (await families[0].distributionCenter.getRouteStartGeo());
+        let startPoint = await (await families[0].distributionCenter.getRouteStartGeo());
         //manual sorting of the list from closest to farthest
         {
             let temp = fams;
