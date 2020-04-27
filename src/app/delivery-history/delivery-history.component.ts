@@ -246,7 +246,7 @@ export class FamilyDeliveriesStats extends Entity<string> {
   id = new IdColumn();
   name = new StringColumn('שם');
   distributionCenter = new DistributionCenterId(this.context);
-  courier = new HelperId(this.context,()=>this.distributionCenter.value, "משנע");
+  courier = new HelperId(this.context, () => this.distributionCenter.value, "משנע");
   deliveryStatusDate = new changeDate('מתי');
   deliverStatus = new DeliveryStatusColumn();
   basketType = new BasketId(this.context, 'סוג סל');
@@ -254,9 +254,16 @@ export class FamilyDeliveriesStats extends Entity<string> {
   address = new StringColumn({ caption: "כתובת" });
   courierComments = new StringColumn('הערות מסירה');
   familySource = new FamilySourceId(this.context, { caption: 'גורם מפנה' });
-  courierAssignUser = new HelperIdReadonly(this.context,()=>this.distributionCenter.value, 'מי שייכה למשנע');
+  courierAssignUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'מי שייכה למשנע');
   courierAssingTime = new changeDate('מועד שיוך למשנע');
-  deliveryStatusUser = new HelperIdReadonly(this.context,()=>this.distributionCenter.value, 'מי עדכן את סטטוס המשלוח');
+  deliveryStatusUser = new HelperIdReadonly(this.context, () => this.distributionCenter.value, 'מי עדכן את סטטוס המשלוח');
+  phone1 = new PhoneColumn({ caption: "טלפון 1", dbName: 'phone' });
+  phone1Description = new StringColumn('תאור טלפון 1');
+  phone2 = new PhoneColumn("טלפון 2");
+  phone2Description = new StringColumn('תאור טלפון 2');
+  phone3 = new PhoneColumn("טלפון 3");
+  phone3Description = new StringColumn('תאור טלפון 3');
+  phone4 = new PhoneColumn("טלפון 4");
 
 
   constructor(private context: Context) {
@@ -280,7 +287,15 @@ export class FamilyDeliveriesStats extends Entity<string> {
           f.familySource,
           f.courierAssignUser,
           f.courierAssingTime,
-          f.deliveryStatusUser
+          f.deliveryStatusUser,
+          f.phone1,
+          f.phone1Description,
+          f.phone2,
+          f.phone2Description,
+          f.phone3,
+          f.phone3Description,
+          f.phone4,
+          f.phone4Description
           ],
 
           from: f,
@@ -299,7 +314,16 @@ export class FamilyDeliveriesStats extends Entity<string> {
             d.archiveFamilySource,
             d.courierAssignUser,
             d.courierAssingTime,
-            d.deliveryStatusUser],
+            d.deliveryStatusUser,
+            d.archive_phone1,
+            d.archive_phone1Description,
+            d.archive_phone2,
+            d.archive_phone2Description,
+            d.archive_phone3,
+            d.archive_phone3Description,
+            d.archive_phone4,
+            d.archive_phone4Description
+            ],
             from: d
 
           });
