@@ -70,7 +70,7 @@
         <div class="filter-div">
           <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
             *ngIf="settings.showGroupsOnAssing.value">
-            <mat-label>קבוצת חלוקה</mat-label>
+            <mat-label>קבוצות שיוך משפחה</mat-label>
             <select matNativeControl class="form-control" #lang (change)="refreshBaskets()" [(ngModel)]="filterGroup">
               <option value="">כל הקבוצות</option>
               <option *ngFor="let g of groups" value="{{g.name.value}}">{{g.name.value}} - {{g.familiesCount.value}}

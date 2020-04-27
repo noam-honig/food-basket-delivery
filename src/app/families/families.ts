@@ -760,7 +760,7 @@ export class GroupsColumn extends StringColumn {
   }
   constructor(private context: Context, settingsOrCaption?: ColumnOptions<string>) {
     super({
-      caption: 'שיוך לקבוצת חלוקה',
+      caption: 'קבוצת שיוך משפחה',
 
       dataControlSettings: () => ({
         width: '300',
