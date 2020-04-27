@@ -6,18 +6,18 @@
 
     <mat-card>
       <mat-card-title>
-        פרטי משנע
+        פרטי מתנדב
         <div>
 
           <mat-menu #appMenu77>
-            <button mat-menu-item (click)="findHelper()">{{'חפש משנע לפי שם'|translate}}</button>
-            <button mat-menu-item (click)="clearHelperInfo()">{{'נקה פרטי משנע'|translate}}</button>
+            <button mat-menu-item (click)="findHelper()">{{'חפש מתנדב לפי שם'|translate}}</button>
+            <button mat-menu-item (click)="clearHelperInfo()">{{'נקה פרטי מתנדב'|translate}}</button>
             <button mat-menu-item (click)="saveHelper()"
-              *ngIf="showSave()">{{'שמור פרטי משנע ועבור למשנע הבא'|translate}}</button>
+              *ngIf="showSave()">{{'שמור פרטי מתנדב ועבור למתנדב הבא'|translate}}</button>
             <button *ngIf="!settings.showCompanies.value" mat-menu-item
-              (click)="settings.showCompanies.value= true; changeShowCompany()">{{'הצג חברה למשנע'|translate}}</button>
+              (click)="settings.showCompanies.value= true; changeShowCompany()">{{'הצג חברה למתנדב'|translate}}</button>
             <button *ngIf="settings.showCompanies.value" mat-menu-item
-              (click)="settings.showCompanies.value= false; changeShowCompany()">{{'הסתר חברה למשנע'|translate}}</button>
+              (click)="settings.showCompanies.value= false; changeShowCompany()">{{'הסתר חברה למתנדב'|translate}}</button>
 
           </mat-menu>
 
@@ -28,7 +28,7 @@
       </mat-card-title>
       
       <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
-        <mat-label>מספר הטלפון של המשנע</mat-label>
+        <mat-label>מספר הטלפון של המתנדב</mat-label>
         <input matInput [(ngModel)]="phone" (input)="searchPhone()" type="tel" #phoneInput>
         <div matSuffix style="display:flex">
           <mat-icon (click)="clearHelperInfo()">clear</mat-icon>
@@ -40,7 +40,7 @@
   </div>
 
 
-  <span *ngIf="showHelperInput&&(!helper||!helper.name.value)" class="help no-print">אנא הזיני את הטלפון של המשנע ושמו,
+  <span *ngIf="showHelperInput&&(!helper||!helper.name.value)" class="help no-print">אנא הזיני את הטלפון של המתנדב ושמו,
     ואז תוכלי לבחור
     קבוצה, עיר ואילו
     סלים

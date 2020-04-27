@@ -58,10 +58,10 @@ export class ApplicationSettings extends Entity<number>  {
   });
   logoUrl = new StringColumn('לוגו URL');
   address = new StringColumn("כתובת מרכז השילוח");
-  commentForSuccessDelivery = new StringColumn('הודעה למשנע כאשר נמסר בהצלחה');
-  commentForSuccessLeft = new StringColumn('הודעה למשנע כאשר הושאר ליד הבית');
-  commentForProblem = new StringColumn('הודעה למשנע כאשר יש בעיה');
-  messageForDoneDelivery = new StringColumn(translate('הודעה למשנע כאשר סיים את כל המשפחות'));
+  commentForSuccessDelivery = new StringColumn('הודעה למתנדב כאשר נמסר בהצלחה');
+  commentForSuccessLeft = new StringColumn('הודעה למתנדב כאשר הושאר ליד הבית');
+  commentForProblem = new StringColumn('הודעה למתנדב כאשר יש בעיה');
+  messageForDoneDelivery = new StringColumn(translate('הודעה למתנדב כאשר סיים את כל המשפחות'));
 
   helpText = new StringColumn('שם חלופי');
   helpPhone = new PhoneColumn('טלפון חלופי');
@@ -105,7 +105,7 @@ export class ApplicationSettings extends Entity<number>  {
   showCompanies = new BoolColumn('שמור מטעם איזה חברה הגיע המתנדב');
   manageEscorts = new BoolColumn('הפעל ניהול מלווים לנהגים');
   showHelperComment = new BoolColumn('שמור הערה למתנדב');
-  showGroupsOnAssing = new BoolColumn('סינון קבוצת חלוקה');
+  showGroupsOnAssing = new BoolColumn('סינון קבוצת משפחה');
   showCityOnAssing = new BoolColumn('סינון עיר');
   showBasketOnAssing = new BoolColumn('סינון סוג סל');
   showNumOfBoxesOnAssing = new BoolColumn('בחירת מספר משפחות');

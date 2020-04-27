@@ -13,7 +13,7 @@
 <h4 *ngIf="!currentStatFilter">כולם - {{couriers.items.length}}</h4>
 <div style="width:100%;display:flex;justify-content: space-between;">
   <mat-form-field class="full-width">
-    <input matInput [(ngModel)]="searchString" placeholder="חיפוש משנע" [ngModelOptions]="{standalone: true}">
+    <input matInput [(ngModel)]="searchString" placeholder="חיפוש מתנדב" [ngModelOptions]="{standalone: true}">
     <mat-icon matSuffix (click)="searchString=''">clear</mat-icon>
   </mat-form-field>
   <mat-menu #appMenu="matMenu">

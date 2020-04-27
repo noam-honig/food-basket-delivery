@@ -302,7 +302,7 @@ export class Families extends IdEntity {
   special = new YesNoColumn({ caption: 'שיוך מיוחד' });
   defaultSelfPickup = new BoolColumn('באים לקחת ברירת מחדל');
   iDinExcel = new StringColumn({ caption: 'מזהה באקסל' });
-  internalComment = new StringColumn({ caption: 'הערה פנימית - לא תופיע למשנע' });
+  internalComment = new StringColumn({ caption: 'הערה פנימית - לא תופיע למתנדב' });
 
 
   address = new StringColumn("כתובת", {
@@ -321,7 +321,7 @@ export class Families extends IdEntity {
   city = new StringColumn({ caption: "עיר (מתעדכן אוטומטית)" });
   addressComment = new StringColumn('הנחיות נוספות לכתובת');
   postalCode = new NumberColumn('מיקוד');
-  deliveryComments = new StringColumn('הערה שתופיע למשנע');
+  deliveryComments = new StringColumn('הערה שתופיע למתנדב');
   addressApiResult = new StringColumn();
 
   phone1 = new PhoneColumn({ caption: "טלפון 1", dbName: 'phone', valueChange: () => this.delayCheckDuplicateFamilies() });
@@ -336,7 +336,7 @@ export class Families extends IdEntity {
   status = new FamilyStatusColumn();
   statusDate = new changeDate('סטטוס: תאריך שינוי');
   statusUser = new HelperIdReadonly(this.context, 'סטטוס: מי עדכן');
-  fixedCourier = new HelperId(this.context, "משנע ברירת מחדל");
+  fixedCourier = new HelperId(this.context, "מתנדב ברירת מחדל");
   async reloadGeoCoding() {
 
     let geo = new GeocodeInformation();
@@ -760,7 +760,7 @@ export class GroupsColumn extends StringColumn {
   }
   constructor(private context: Context, settingsOrCaption?: ColumnOptions<string>) {
     super({
-      caption: 'קבוצת שיוך משפחה',
+      caption: 'קבוצות שיוך משפחה',
 
       dataControlSettings: () => ({
         width: '300',

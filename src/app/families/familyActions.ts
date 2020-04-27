@@ -79,7 +79,7 @@ const replaceGroupAction = ' להחליף ';
 class updateGroup extends ActionOnFamilies {
 
     group = new StringColumn({
-        caption: 'שיוך לקבוצת חלוקה',
+        caption: 'שיוך לקבוצה',
         dataControlSettings: () => ({
             valueList: this.context.for(Groups).getValueList({ idColumn: x => x.name, captionColumn: x => x.name })
         })
@@ -88,14 +88,14 @@ class updateGroup extends ActionOnFamilies {
         caption: 'פעולה',
         defaultValue: addGroupAction,
         dataControlSettings: () => ({
-            valueList: [{ id: addGroupAction, caption: 'הוסף שיוך לקבוצת חלוקה' }, { id: 'להסיר', caption: 'הסר שיוך לקבוצת חלוקה' }, { id: replaceGroupAction, caption: 'החלף שיוך לקבוצת חלוקה' }]
+            valueList: [{ id: addGroupAction, caption: 'הוסף שיוך לקבוצה' }, { id: 'להסיר', caption: 'הסר שיוך לקבוצה' }, { id: replaceGroupAction, caption: 'החלף שיוך לקבוצה' }]
         })
     });
     constructor(context: Context) {
         super(context, {
             columns: () => [this.group, this.action],
             confirmQuestion: () => 'האם ' + this.action.value + ' את השיוך לקבוצה "' + this.group.value,
-            title: 'שיוך לקבוצת חלוקה',
+            title: 'שיוך לקבוצת משפחות',
             allowed: Roles.distCenterAdmin,
             forEach: async f => {
                 if (this.action.value == addGroupAction) {

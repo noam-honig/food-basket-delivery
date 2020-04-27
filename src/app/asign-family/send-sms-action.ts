@@ -57,7 +57,7 @@ export class SendSmsAction {
 
                 message = settings.smsText.value;
                 if (!message || message.trim().length == 0) {
-                    message = 'שלום !משנע! לחלוקת חבילות !ארגון! לחץ על: !אתר! תודה !שולח!';
+                    message = 'שלום !מתנדב! לחלוקת חבילות !ארגון! לחץ על: !אתר! תודה !שולח!';
                 }
             }
             message = SendSmsAction.getMessage(message, settings.organisationName.value, helper.name.value, senderName, origin + '/x/' + helper.shortUrlKey.value);
@@ -74,7 +74,7 @@ export class SendSmsAction {
         }
     }
     static getMessage(template: string, orgName: string, courier: string, sender: string, url: string) {
-        return template.replace('!משנע!', courier).replace('!שולח!', sender).replace('!ארגון!', orgName).replace('!אתר!', url)
+        return template.replace('!מתנדב!', courier).replace('!משנע!', courier).replace('!שולח!', sender).replace('!ארגון!', orgName).replace('!אתר!', url)
 
     }
 }

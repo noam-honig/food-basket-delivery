@@ -24,7 +24,7 @@ import { allCentersToken } from '../manage/distribution-centers';
 })
 export class DeliveryFollowUpComponent implements OnInit {
   static route: Route = {
-    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [distCenterAdminGuard], data: { name: 'מעקב משנעים' }
+    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [distCenterAdminGuard], data: { name: 'מעקב מתנדבים' }
   }
 
   familyLists = new UserFamiliesList(this.context);

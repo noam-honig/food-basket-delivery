@@ -77,7 +77,7 @@ export class SelectFamilyComponent implements OnInit {
   showStatus(f: ActiveFamilyDeliveries) {
     if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery) {
       if (f.courier.value) {
-        return 'משוייך למשנע';
+        return 'משוייך למתנדב';
       } else {
         return '';
       }

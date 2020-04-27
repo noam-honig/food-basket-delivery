@@ -801,7 +801,7 @@ export class AsignFamilyComponent implements OnInit {
                     let c = await f.courier.getTheName();
                     this.dialog.YesNoQuestion(translate('משפחת ') +
                         f.name.value + ' כבר משוייכת ל' + c + ' בסטטוס ' +
-                        f.deliverStatus.displayValue + '. האם לשייך אותו למשנע ' + this.helper.name.value + '?', () => {
+                        f.deliverStatus.displayValue + '. האם לשייך אותו למתנדב ' + this.helper.name.value + '?', () => {
                             ok();
                         });
 

@@ -58,8 +58,8 @@ export class FamilyDeliveries extends IdEntity {
     });
     special = new YesNoColumn({ includeInApi: Roles.distCenterAdmin, caption: 'שיוך מיוחד' });
     deliveryStatusDate = new changeDate('מתי');
-    courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למשנע');
-    courierAssingTime = new changeDate('מועד שיוך למשנע');
+    courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למתנדב');
+    courierAssingTime = new changeDate('מועד שיוך למתנדב');
     deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
 
     createDate = new changeDate({ includeInApi: Roles.distCenterAdmin, caption: 'מועד הקצאה' });
