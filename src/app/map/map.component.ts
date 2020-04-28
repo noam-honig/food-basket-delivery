@@ -18,7 +18,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 export class MapComponent implements OnInit {
     async loadPotentialAsigment(city: string, group: string, distCenter: string,area:string) {
         await this.initMap();
-        let families = await DistributionMap.GetFamiliesLocations(true, city, group,distCenter,area);
+        let families = await DistributionMap.GetDeliveriesLocation(true, city, group,distCenter,area);
         let closeBusy = this.busy.showBusy();
         try {
             console.time('load families to map');

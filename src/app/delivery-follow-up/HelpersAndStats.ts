@@ -22,7 +22,7 @@ export class HelpersAndStats extends HelpersBase {
         dbReadOnly: true,
         caption: 'משפחות מחכות'
     });
-    allFamilies = new NumberColumn({
+    allDeliveires = new NumberColumn({
         dbReadOnly: true,
         caption: 'משפחות'
     });
@@ -60,7 +60,7 @@ export class HelpersAndStats extends HelpersBase {
                         h.escort,
                         h.distributionCenter ,
                         sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress),
-                        sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isActiveDelivery()]), this.allFamilies),
+                        sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isActiveDelivery()]), this.allDeliveires),
 
                     ],
                     from: h

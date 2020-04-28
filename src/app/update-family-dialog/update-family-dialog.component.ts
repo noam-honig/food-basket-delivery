@@ -94,13 +94,13 @@ export class UpdateFamilyDialogComponent implements OnInit {
   }
 
 
-  familiesInfo: DataAreaSettings<Families>;
-  familiesAddress: DataAreaSettings<Families>;
-  phones: DataAreaSettings<Families>;
-  callInfo: DataAreaSettings<Families>;
-  deliverInfo: DataAreaSettings<Families>;
-  extraFamilyInfo: DataAreaSettings<Families>;
-  deliveryDefaults: DataAreaSettings<Families>;
+  familiesInfo = new DataAreaSettings<Families>();
+  familiesAddress = new DataAreaSettings<Families>();
+  phones = new DataAreaSettings<Families>();
+  callInfo = new DataAreaSettings<Families>();
+  deliverInfo = new DataAreaSettings<Families>();
+  extraFamilyInfo = new DataAreaSettings<Families>();
+  deliveryDefaults = new DataAreaSettings<Families>();
   async ngOnInit() {
     if (!this.args.familyDelivery) {
       if (this.args.deliveryId) {
