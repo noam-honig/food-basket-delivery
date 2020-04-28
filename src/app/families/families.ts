@@ -216,7 +216,7 @@ export class Families extends IdEntity {
             if (this.sharedColumns().find(x => x.value != x.originalValue)) {
               for (const fd of await context.for(FamilyDeliveries).find({
                 where: fd =>
-                  fd.familySource.isEqualTo(this.id).and(
+                  fd.family.isEqualTo(this.id).and(
                     fd.archive.isEqualTo(false).and(
                       fd.deliverStatus.isGreaterOrEqualTo(DeliveryStatus.ReadyForDelivery).and(
                         fd.deliverStatus.isLessOrEqualTo(DeliveryStatus.Frozen)

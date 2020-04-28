@@ -686,8 +686,7 @@ export class AsignFamilyComponent implements OnInit {
 
     static async optimizeRoute(helper: Helpers, families: ActiveFamilyDeliveries[], context: Context, useGoogle: boolean) {
 
-        if (families.length < 1)
-            return;
+
         let result: {
             families: ActiveFamilyDeliveries[],
             stats: {
@@ -703,7 +702,8 @@ export class AsignFamilyComponent implements OnInit {
             families: [],
             ok: false
         } as optimizeRouteResult;
-
+        if (families.length < 1)
+            return result;
         var fams: familiesInRoute[] = [];
         {
             var map = new Map<string, familiesInRoute>();
