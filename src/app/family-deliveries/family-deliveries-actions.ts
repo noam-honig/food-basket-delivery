@@ -7,7 +7,7 @@ import { Groups } from "../manage/manage.component";
 import { translate } from "../translate";
 import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer, serverUpdateInfo, pagedRowsIterator } from "../families/familyActionsWiring";
 import { async } from "@angular/core/testing";
-import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
+import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Families } from "../families/families";
 import { BasketId, QuantityColumn } from "../families/BasketType";
@@ -15,40 +15,24 @@ import { BasketId, QuantityColumn } from "../families/BasketType";
 
 
 
-class ActionOnFamilyDelveries extends ActionOnRows<ActiveFamilyDeliveries> {
-    constructor(context: Context, args: ActionOnRowsArgs<ActiveFamilyDeliveries>) {
-        super(context, ActiveFamilyDeliveries, args, {
-            callServer: async (info, action, args) => await ActionOnFamilyDelveries.DeliveriesActionOnServer(info, action, args)
-            , groupName: 'משלוחים',
-            beforeEach: async f => {
-                f._disableMessageToUsers = true;
-            }
-        });
-    }
-    @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async DeliveriesActionOnServer(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
-        let r = await filterActionOnServer(delvieryActions(), context, info, action, args);
-        Families.SendMessageToBrowsers('משלוחים עודכנו', context, '');
-        return r;
-    }
-}
-class DeleteDeliveries extends ActionOnFamilyDelveries {
+
+class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
 
     constructor(context: Context) {
-        super(context, {
+        super(context, FamilyDeliveries, {
             allowed: Roles.distCenterAdmin,
             columns: () => [],
             title: 'מחיקה ',
             forEach: async f => { f.delete(); },
-            additionalWhere:f=>f.deliverStatus.isActiveDelivery()
+            additionalWhere: f => f.deliverStatus.isActiveDelivery()
         });
     }
 }
 
-class ArchiveDeliveries extends ActionOnFamilyDelveries {
+class ArchiveDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
 
     constructor(context: Context) {
-        super(context, {
+        super(context, FamilyDeliveries, {
             allowed: Roles.distCenterAdmin,
             columns: () => [],
             title: 'העברה לארכיב של משלוחים שהסתיימו',
@@ -57,10 +41,10 @@ class ArchiveDeliveries extends ActionOnFamilyDelveries {
         });
     }
 }
-class DeliveredForOnTheWay extends ActionOnFamilyDelveries {
+class DeliveredForOnTheWay extends ActionOnRows<ActiveFamilyDeliveries> {
 
     constructor(context: Context) {
-        super(context, {
+        super(context, FamilyDeliveries, {
             allowed: Roles.distCenterAdmin,
             columns: () => [],
             title: 'עדכן נמסר בהצלחה עבור אלו שבדרך',
@@ -70,10 +54,52 @@ class DeliveredForOnTheWay extends ActionOnFamilyDelveries {
     }
 }
 
-class CancelAsignment extends ActionOnFamilyDelveries {
+class UpdateBasketType extends ActionOnRows<ActiveFamilyDeliveries> {
+    basketType = new BasketId(this.context);
+    constructor(context: Context) {
+        super(context, FamilyDeliveries, {
+            allowed: Roles.distCenterAdmin,
+            columns: () => [this.basketType],
+            title: 'עדכן סוג סל',
+            forEach: async f => { f.basketType.value = this.basketType.value },
+
+        });
+    }
+}
+class UpdateQuantity extends ActionOnRows<ActiveFamilyDeliveries> {
+    quantity = new QuantityColumn();
+    constructor(context: Context) {
+        super(context, FamilyDeliveries, {
+            allowed: Roles.distCenterAdmin,
+            columns: () => [this.quantity],
+            title: 'עדכן כמות סלים',
+            forEach: async f => { f.quantity.value = this.quantity.value },
+        });
+    }
+}
+
+class UpdateDistributionCenter extends ActionOnRows<ActiveFamilyDeliveries> {
+    distributionCenter = new DistributionCenterId(this.context);
+    constructor(context: Context) {
+        super(context, FamilyDeliveries, {
+            allowed: Roles.distCenterAdmin,
+            columns: () => [this.distributionCenter],
+            title: 'עדכן רשימת חלוקה',
+            forEach: async f => { f.distributionCenter.value = this.distributionCenter.value },
+
+        });
+    }
+}
+
+
+
+
+
+
+class CancelAsignment extends ActionOnRows<ActiveFamilyDeliveries> {
 
     constructor(context: Context) {
-        super(context, {
+        super(context, FamilyDeliveries, {
             allowed: Roles.distCenterAdmin,
             columns: () => [],
             title: 'בטל שיוך למתנדב',
@@ -82,15 +108,15 @@ class CancelAsignment extends ActionOnFamilyDelveries {
         });
     }
 }
-class NewDelivery extends ActionOnFamilyDelveries {
+class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
     useExistingBasket = new BoolColumn({ caption: 'השתמש בסוג הסל המוגדר במשלוח הנוכחי', defaultValue: true });
     basketType = new BasketId(this.context);
     quantity = new QuantityColumn();
 
     distributionCenter = new DistributionCenterId(this.context);
-    
+
     constructor(context: Context) {
-        super(context, {
+        super(context, FamilyDeliveries, {
             allowed: Roles.distCenterAdmin,
             columns: () => [
                 this.useExistingBasket,
@@ -108,7 +134,7 @@ class NewDelivery extends ActionOnFamilyDelveries {
                     { column: this.distributionCenter, visible: () => component.dialog.hasManyCenters }
                 ]
             },
-            additionalWhere:f=>f.deliverStatus.isAResultStatus(),
+            additionalWhere: f => f.deliverStatus.isAResultStatus(),
             title: 'משלוח חדש על בסיס משלוח זה',
             forEach: async existingDelivery => {
                 let f = await this.context.for(Families).findId(existingDelivery.family);
@@ -124,4 +150,4 @@ class NewDelivery extends ActionOnFamilyDelveries {
         });
     }
 }
-export const delvieryActions = () => [NewDelivery, DeliveredForOnTheWay, CancelAsignment, ArchiveDeliveries, DeleteDeliveries];
+export const delvieryActions = () => [NewDelivery, DeliveredForOnTheWay, UpdateBasketType, UpdateQuantity, UpdateDistributionCenter, CancelAsignment, ArchiveDeliveries, DeleteDeliveries];

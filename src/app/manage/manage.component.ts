@@ -361,10 +361,14 @@ export class ManageComponent implements OnInit {
   @ServerFunction({ allowed: Roles.admin })
   static async deleteFamiliesOnServer(context?: Context) {
     let count = await pagedRowsIterator(context.for(Families),
-      f => f.status.isEqualTo(FamilyStatus.RemovedFromList),
-      async f => await f.delete());
+      {
+        where: f => f.status.isEqualTo(FamilyStatus.RemovedFromList),
+        forEachRow: async f => await f.delete(),
+        
+      });
     return count;
   }
+  
 
 
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import { Context, DataControlSettings, FilterBase, AndFilter, BusyService, packWhere } from '@remult/core';
+import { Context, DataControlSettings, FilterBase, AndFilter, BusyService, packWhere, ServerFunction, unpackWhere } from '@remult/core';
 
 import { FamilyDeliveresStatistics, FamilyDeliveryStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
@@ -17,7 +17,9 @@ import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeli
 import { Families } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { delvieryActions } from './family-deliveries-actions';
-import { buildGridButtonFromActions } from '../families/familyActionsWiring';
+import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, pagedRowsIterator, iterateRowsActionOnServer } from '../families/familyActionsWiring';
+import { familyActionsForDelivery } from '../families/familyActions';
+import { async } from '@angular/core/testing';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -489,8 +491,29 @@ export class FamilyDeliveriesComponent implements OnInit {
         {
           afterAction: async () => await this.refresh(),
           dialog: this.dialog,
-          where: f => this.deliveries.buildFindOptions().where(f)
+          callServer: async (info, action, args) => await FamilyDeliveriesComponent.DeliveriesActionOnServer(info, action, args),
+          buildActionInfo: async actionWhere => {
+            let where = f => new AndFilter(actionWhere(f), this.deliveries.buildFindOptions().where(f));
+            return {
+              count: await this.context.for(ActiveFamilyDeliveries).count(where),
+              actionRowsFilterInfo: packWhere(this.context.for(ActiveFamilyDeliveries).create(), where)
+            };
+          },
+          groupName: 'משלוחים'
         }),
+      ...buildGridButtonFromActions(familyActionsForDelivery(), this.context, {
+        afterAction: async () => await this.refresh(),
+        dialog: this.dialog,
+        callServer: async (info, action, args) => await FamilyDeliveriesComponent.FamilyInDeliveryActionOnServer(info, action, args),
+        buildActionInfo: async actionWhere => {
+          let where = f => new AndFilter(actionWhere(f), this.deliveries.buildFindOptions().where(f));
+          return {
+            count: await this.context.for(ActiveFamilyDeliveries).count(where),
+            actionRowsFilterInfo: packWhere(this.context.for(ActiveFamilyDeliveries).create(), where)
+          };
+        },
+        groupName: 'משפחות'
+      })
     ]
     ,
     rowButtons: [
@@ -558,7 +581,55 @@ export class FamilyDeliveriesComponent implements OnInit {
       }
     ]
   });
+  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  static async DeliveriesActionOnServer(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
+    let r = await filterActionOnServer(delvieryActions(), context, async (h) => {
+      return await iterateRowsActionOnServer({
+        context: context.for(ActiveFamilyDeliveries),
+        h: {
+          actionWhere: x => h.actionWhere(x),
+          forEach: async fd => {
+            fd._disableMessageToUsers = true;
+            await h.forEach(fd);
+            await fd.save();
+          }
+        },
+        info,
+        additionalWhere:
+          fd => fd.isAllowedForUser(),
+      });
+    }, action, args);
+    Families.SendMessageToBrowsers('משלוחים עודכנו', context, '');
+    return "עודכנו " + r + " משלוחים";
+  }
+  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  static async FamilyInDeliveryActionOnServer(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
+    let processedFamilies = new Map<string, boolean>();
+    let r = await filterActionOnServer(familyActionsForDelivery(), context, async (h) => {
+      return await iterateRowsActionOnServer({
+        context: context.for(ActiveFamilyDeliveries),
+        h: {
+          actionWhere: x => undefined,
+          forEach: async fd => {
+            if (processedFamilies.get(fd.family.value))
+              return;
+            processedFamilies.set(fd.family.value, true);
+            let f = await context.for(Families).findFirst(x => new AndFilter(h.actionWhere(x), x.id.isEqualTo(fd.family.value)))
+            if (f) {
+              await h.forEach(f);
+              await f.save();
+            }
+          }
+        },
+        info,
+        additionalWhere: fd => fd.isAllowedForUser()
+      });
+    }, action, args);
+    Families.SendMessageToBrowsers('משלוחים עודכנו', context, '');
+    return "עודכנו " + r + " משלוחים";
+  }
 
+  
   ngOnInit() {
     this.refreshStats();
     let cols = this.deliveries.columns;
@@ -599,3 +670,5 @@ interface statsOnTab {
   rule: (f: ActiveFamilyDeliveries) => FilterBase,
   fourthColumn: () => DataControlSettings<any>
 }
+
+

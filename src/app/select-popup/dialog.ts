@@ -89,7 +89,7 @@ export class DialogService {
 
 
         await this.context.openDialog(InputAreaComponent, x => x.args = {
-            title: 'עדכון פרטים נקודת חלוקה',
+            title: 'עדכון פרטי רשימת חלוקה',
             settings: {
                 columnSettings: () => [
                     this.dc.name,

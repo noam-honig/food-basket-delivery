@@ -38,7 +38,7 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 import { FamilyStatus, FamilyStatusColumn } from './FamilyStatus';
 import { familyActions } from './familyActions';
-import { buildGridButtonFromActions } from './familyActionsWiring';
+import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, iterateRowsActionOnServer } from './familyActionsWiring';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 
 
@@ -400,8 +400,15 @@ export class FamiliesComponent implements OnInit {
             {
                 afterAction: async () => await this.refresh(),
                 dialog: this.dialog,
-                where: f => this.families.buildFindOptions().where(f)
-
+                callServer: async (info, action, args) => await FamiliesComponent.FamilyActionOnServer(info, action, args),
+                buildActionInfo: async actionWhere => {
+                    let where = f => new AndFilter(actionWhere(f), this.families.buildFindOptions().where(f));
+                    return {
+                        count: await this.context.for(Families).count(where),
+                        actionRowsFilterInfo: packWhere(this.context.for(Families).create(), where)
+                    };
+                },
+                groupName: 'משפחות'
             }),
         ],
 
@@ -442,7 +449,23 @@ export class FamiliesComponent implements OnInit {
         ]
     });
 
-
+    @ServerFunction({ allowed: Roles.distCenterAdmin })
+    static async FamilyActionOnServer(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
+        let r = await filterActionOnServer(familyActions(), context, async  h =>
+            await iterateRowsActionOnServer({
+                context: context.for(Families),
+                h: {
+                    actionWhere: h.actionWhere,
+                    forEach: async f => {
+                        await h.forEach(f);
+                        await f.save();
+                    }
+                },
+                info
+            })
+            , action, args);
+        return r + ' משפחות עודכנו';
+    }
 
 
 

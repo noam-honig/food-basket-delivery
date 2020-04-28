@@ -9,10 +9,10 @@ export interface HasAsyncGetTheValue {
   getTheValue(): Promise<string>;
 }
 export function extractError(err: any) {
-  if (err.error)
-    err = err.error;
   if (err.message)
     err = err.message;
+  if (err.error)
+    err = err.error;
   return err;
 
 }

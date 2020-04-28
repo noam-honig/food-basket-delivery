@@ -181,7 +181,7 @@ export class Helpers extends HelpersBase {
         dbName: 'isAdmin'
     });
     distCenterAdmin = new BoolColumn({
-        caption: 'מנהל נקודת חלוקה',
+        caption: 'משייך מתנדבים לרשימת חלוקה',
         allowApiUpdate: Roles.distCenterAdmin,
         includeInApi: Roles.distCenterAdmin,
         dbName: 'distCenterAdmin'

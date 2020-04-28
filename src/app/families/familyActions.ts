@@ -12,20 +12,7 @@ import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer
 import { DeliveryStatus } from "./DeliveryStatus";
 
 
-
-class ActionOnFamilies extends ActionOnRows<Families> {
-    constructor(context: Context, args: ActionOnRowsArgs<Families>) {
-        super(context, Families, args, {
-            callServer: async (info, action, args) => await ActionOnFamilies.FamilyActionOnServer(info, action, args),
-            groupName: 'משפחות'
-        });
-    }
-    @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async FamilyActionOnServer(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
-        return await filterActionOnServer(familyActions(), context, info, action, args);
-    }
-}
-class NewDelivery extends ActionOnFamilies {
+class NewDelivery extends ActionOnRows<Families> {
     useFamilyBasket = new BoolColumn({ caption: 'השתמש בסוג הסל המוגדר למשפחה', defaultValue: false });
     basketType = new BasketId(this.context);
     quantity = new QuantityColumn();
@@ -34,7 +21,7 @@ class NewDelivery extends ActionOnFamilies {
     determineCourier = new BoolColumn('הגדר מתנדב');
     courier = new HelperId(this.context);
     constructor(context: Context) {
-        super(context, {
+        super(context, Families, {
             allowed: Roles.distCenterAdmin,
             columns: () => [
                 this.useFamilyBasket,
@@ -56,7 +43,7 @@ class NewDelivery extends ActionOnFamilies {
                     { column: this.courier, visible: () => this.determineCourier.value }
                 ]
             },
-            additionalWhere:f=>f.status.isEqualTo(FamilyStatus.Active),
+            additionalWhere: f => f.status.isEqualTo(FamilyStatus.Active),
             title: 'משלוח חדש',
             forEach: async f => {
                 let fd = f.createDelivery(this.distributionCenter.value);
@@ -76,7 +63,7 @@ class NewDelivery extends ActionOnFamilies {
 }
 const addGroupAction = ' להוסיף ';
 const replaceGroupAction = ' להחליף ';
-class updateGroup extends ActionOnFamilies {
+class updateGroup extends ActionOnRows<Families> {
 
     group = new StringColumn({
         caption: 'שיוך לקבוצה',
@@ -92,7 +79,7 @@ class updateGroup extends ActionOnFamilies {
         })
     });
     constructor(context: Context) {
-        super(context, {
+        super(context, Families, {
             columns: () => [this.group, this.action],
             confirmQuestion: () => 'האם ' + this.action.value + ' את השיוך לקבוצה "' + this.group.value,
             title: 'שיוך לקבוצת משפחות',
@@ -114,10 +101,10 @@ class updateGroup extends ActionOnFamilies {
     }
 }
 
-class UpdateStatus extends ActionOnFamilies {
+class UpdateStatus extends ActionOnRows<Families> {
     status = new FamilyStatusColumn();
     constructor(context: Context) {
-        super(context, {
+        super(context, Families, {
             allowed: Roles.distCenterAdmin,
             columns: () => [this.status],
             title: 'עדכן סטטוס משפחה ',
@@ -125,10 +112,10 @@ class UpdateStatus extends ActionOnFamilies {
         });
     }
 }
-class UpdateBasketType extends ActionOnFamilies {
+class UpdateBasketType extends ActionOnRows<Families> {
     basket = new BasketId(this.context);
     constructor(context: Context) {
-        super(context, {
+        super(context, Families, {
             allowed: Roles.distCenterAdmin,
             columns: () => [this.basket],
             title: 'עדכן סוג סל ברירת מחדל',
@@ -136,11 +123,22 @@ class UpdateBasketType extends ActionOnFamilies {
         });
     }
 }
+class UpdateArea extends ActionOnRows<Families> {
+    area = new StringColumn('אזור');
+    constructor(context: Context) {
+        super(context, Families, {
+            allowed: Roles.distCenterAdmin,
+            columns: () => [this.area],
+            title: 'עדכן אזור',
+            forEach: async f => { f.area.value = this.area.value },
+        });
+    }
+}
 
-class UpddateQuantity extends ActionOnFamilies {
+class UpdateQuantity extends ActionOnRows<Families> {
     quantity = new QuantityColumn();
     constructor(context: Context) {
-        super(context, {
+        super(context, Families, {
             allowed: Roles.distCenterAdmin,
             columns: () => [this.quantity],
             title: 'עדכן כמות סלים ברירת מחדל',
@@ -148,10 +146,10 @@ class UpddateQuantity extends ActionOnFamilies {
         });
     }
 }
-class UpdateFamilySource extends ActionOnFamilies {
+class UpdateFamilySource extends ActionOnRows<Families> {
     familySource = new FamilySourceId(this.context);
     constructor(context: Context) {
-        super(context, {
+        super(context, Families, {
             allowed: Roles.distCenterAdmin,
             columns: () => [this.familySource],
             title: 'עדכן גורם מפנה ',
@@ -163,4 +161,5 @@ class UpdateFamilySource extends ActionOnFamilies {
 
 
 
-export const familyActions = () => [NewDelivery, updateGroup, UpdateStatus, UpdateBasketType, UpddateQuantity, UpdateFamilySource];
+export const familyActions = () => [NewDelivery, updateGroup, UpdateArea, UpdateStatus, UpdateBasketType, UpdateQuantity, UpdateFamilySource];
+export const familyActionsForDelivery = () => [updateGroup, UpdateArea];

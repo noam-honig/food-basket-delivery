@@ -9,7 +9,7 @@ import { GeocodeInformation, GetGeoInformation, polygonContains } from '../share
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
 
-import { Context, SqlDatabase, DataAreaSettings } from '@remult/core';
+import { Context, SqlDatabase, DataAreaSettings, GridButton, AndFilter } from '@remult/core';
 import { ServerFunction } from '@remult/core';
 import { SqlBuilder } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -27,6 +27,10 @@ import { Sites } from '../sites/sites';
 import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser } from '../manage/distribution-centers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { translate } from '../translate';
+import { delvieryActions } from '../family-deliveries/family-deliveries-actions';
+import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer } from '../families/familyActionsWiring';
+import { familyActionsForDelivery } from '../families/familyActions';
+import { Families } from '../families/families';
 
 @Component({
   selector: 'app-distribution-map',
@@ -66,6 +70,39 @@ export class DistributionMap implements OnInit, OnDestroy {
       this.activePolygon = undefined;
     }
 
+  }
+  buttons: GridButton[] = [
+    ...buildGridButtonFromActions(delvieryActions(), this.context,
+      {
+        afterAction: async () => await this.refreshDeliveries(),
+        dialog: this.dialog,
+        callServer: async (info, action, args) => await DistributionMap.updateDeliveriesBasedOnMap(info, action, args),
+        buildActionInfo: async actionWhere => {
+
+          return {
+            count: this.selectedDeliveries.length,
+            actionRowsFilterInfo: this.selectedDeliveries.map(x => x.id)
+          };
+        },
+        groupName: 'משלוחים'
+      }),
+
+    ...buildGridButtonFromActions(familyActionsForDelivery(), this.context,
+      {
+        afterAction: async () => await this.refreshDeliveries(),
+        dialog: this.dialog,
+        callServer: async (info, action, args) => await DistributionMap.updateFamiliesBasedOnMap(info, action, args),
+        buildActionInfo: async actionWhere => {
+
+          return {
+            count: this.selectedDeliveries.length,
+            actionRowsFilterInfo: this.selectedDeliveries.map(x => x.id)
+          };
+        },
+        groupName: 'משלוחים'
+      })];
+  hasVisibleButtons() {
+    return this.buttons.find(x => !x.visible || x.visible());
   }
 
   ngOnDestroy(): void {
@@ -121,40 +158,44 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   activePolygon: google.maps.Polygon;
 
-  async updateDistributionCenter() {
-    let s = new DistributionCenterId(this.context);
-    let ok = false;
-    await this.context.openDialog(InputAreaComponent, x => {
-      x.args = {
-        settings: {
-          columnSettings: () => [s]
-        },
-        title: 'עדכון נקודת חלוקה ל-' + this.selectedDeliveries.length + ' המשפחות המסומנות',
-        ok: () => ok = true
-        , cancel: () => { }
 
+  @ServerFunction({ allowed: Roles.admin })
+  static async updateDeliveriesBasedOnMap(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
+    let r = await filterActionOnServer(delvieryActions(), context, async (h) => {
+      let deliveries: string[] = info.actionRowsFilterInfo;
+      let i = 0;
+      for (const id of deliveries) {
+        let f = await context.for(ActiveFamilyDeliveries).findFirst(f => new AndFilter(h.actionWhere(f), f.id.isEqualTo(id).and(f.distributionCenter.isAllowedForUser())));
+        if (f) {
+          i++;
+          await h.forEach(f);
+          await f.save();
+        }
       }
-    });
-    if (ok) {
-      if (await this.dialog.YesNoPromise('האם לעדכן את נקודת החלוקה "' + await s.getTheValue() + '" ל-' + this.selectedDeliveries.length + translate(' משפחות?'))) {
-        this.dialog.Info(await DistributionMap.updateDistributionCenterOnServerBasedOnMap(this.selectedDeliveries.map(x => x.id), s.rawValue));
-        this.clearMap();
-        this.refreshDeliveries();
-      }
-    }
+      return i;
+    }, action, args);
+    return 'עודכנו ' + r + ' משלוחים';
+
   }
   @ServerFunction({ allowed: Roles.admin })
-  static async updateDistributionCenterOnServerBasedOnMap(deliveries: string[], distributionCenter: string, context?: Context) {
-    if (await context.for(DistributionCenters).count(d => d.id.isEqualTo(distributionCenter).and(filterCenterAllowedForUser(d.id, context))) == 0)
-      throw "נקודת חלוקה לא קיימת או מורשת";
-    for (const id of deliveries) {
-      let f = await context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(id).and(f.distributionCenter.isAllowedForUser()));
-      if (f) {
-        f.distributionCenter.value = distributionCenter;
-        await f.save();
+  static async updateFamiliesBasedOnMap(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
+    let r = await filterActionOnServer(familyActionsForDelivery(), context, async (h) => {
+      let deliveries: string[] = info.actionRowsFilterInfo;
+      let i = 0;
+      for (const id of deliveries) {
+        let fd = await context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(id).and(f.distributionCenter.isAllowedForUser()));
+        if (fd) {
+          i++;
+          let f = await context.for(Families).findFirst(f => f.id.isEqualTo(fd.family).and(h.actionWhere(f)));
+          if (f) {
+            await h.forEach(f);
+            await f.save();
+          }
+        }
       }
-    }
-    return "עודכנו " + deliveries.length + " משפחות";
+      return i;
+    }, action, args);
+    return 'עודכנו ' + r + ' משלוחים';
 
   }
 

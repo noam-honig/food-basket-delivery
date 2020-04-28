@@ -210,14 +210,18 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     })
 
     if (settings.dataStructureVersion.value == 13) {
-        await pagedRowsIterator(context.for(Families), f => undefined,
-            async f => {
+        await pagedRowsIterator(context.for(Families), {
+            forEachRow: async f => {
                 f._suppressLastUpdateDuringSchemaInit = true;
                 let g = f.getGeocodeInformation();
                 f.addressByGoogle.value = g.getAddress();
                 f.drivingLatitude.value = g.location().lat;
                 f.drivingLongitude.value = g.location().lng;
-            });
+                await f.save();
+            },
+            where: x => undefined,
+            
+        });
         settings.dataStructureVersion.value = 14;
         await settings.save();
     }
@@ -273,7 +277,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
                     for (const c of [
                         fd.name,
                         fd.basketType,
-                        
+
 
                         fd.courier,
                         fd.courierComments,
@@ -326,6 +330,13 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     await version(19, async () => {
         await dataSource.execute(sql.update(fd, { set: () => [[fd.quantity, 1]] }));
     });
+    await version(20, async () => {
+        let dc = await context.for(DistributionCenters).find({ where: d => d.name.isEqualTo('נקודת חלוקה ראשונה') });
+        for (const d of dc) {
+            d.name.value = 'חלוקת מזון';
+            await d.save();
+        }
+    });
 
 
 
@@ -335,7 +346,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     if ((await context.for(DistributionCenters).count() == 0)) {
         let h = context.for(DistributionCenters).create();
         h.setEmptyIdForNewRow();
-        h.name.value = 'נקודת חלוקה ראשונה';
+        h.name.value = 'חלוקת מזון';
         h.address.value = settings.address.value;
         await h.save();
     }

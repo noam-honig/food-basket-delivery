@@ -207,6 +207,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
         columnSettings: () => {
 
           let r = [
+            [this.delivery.basketType, this.delivery.quantity],
             this.delivery.deliverStatus,
             this.delivery.deliveryComments,
             this.delivery.courier,

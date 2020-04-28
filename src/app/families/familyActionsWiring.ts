@@ -1,6 +1,5 @@
 import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, IdEntity, SpecificEntityHelper, FilterBase, EntityWhere, packWhere } from "@remult/core";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
-import { translate } from "../translate";
 import { DialogService } from "../select-popup/dialog";
 import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
 import { extractError } from "../model-shared/types";
@@ -8,8 +7,12 @@ import { extractError } from "../model-shared/types";
 
 
 export interface serverUpdateInfo {
-    where: any;
+    actionRowsFilterInfo: any;
     count: number;
+}
+export interface DoWorkOnServerHelper<T extends IdEntity> {
+    actionWhere: EntityWhere<T>;
+    forEach: (f: T) => Promise<void>;
 }
 
 
@@ -18,56 +21,39 @@ export class ActionOnRows<T extends IdEntity> {
         private entity: {
             new(...args: any[]): T;
         },
-        public args: ActionOnRowsArgs<T>,
-        public worker: {
-            callServer: (info: serverUpdateInfo, action: string, columns: any[]) => Promise<string>,
-            groupName: string,
-            beforeEach?: (f: T) => Promise<void>,
-            additionalWhere?: EntityWhere<T>
-        }
+        public args: ActionOnRowsArgs<T>
+
     ) {
         if (!args.confirmQuestion)
             args.confirmQuestion = () => args.title;
-        if (worker.beforeEach) {
-            let orig = args.forEach;
-            args.forEach = async f => {
-                await worker.beforeEach(f);
-                await orig(f);
-            }
+        if (!args.additionalWhere) {
+            args.additionalWhere = x => undefined;
         }
+
     }
 
-    async doWorkOnServer(info: serverUpdateInfo, args: any[]) {
+    async doWorkOnServer(doWork: (h: DoWorkOnServerHelper<T>) => Promise<number>, args: any[]) {
 
         let i = 0;
         for (const c of this.args.columns()) {
             c.rawValue = args[i++];
         }
-        let where = this.complementWhere((f: T) => unpackWhere(f, info.where));
 
-        let count = await this.context.for(this.entity).count(where);
-        if (count != info.count) {
-            throw "ארעה שגיאה אנא נסה שוב";
-        }
-        let updated = await pagedRowsIterator<T>(this.context.for(this.entity), where, async f => await this.args.forEach(f), count);
-        return "עודכנו " + updated + " " + this.worker.groupName;
+        return await doWork({
+            actionWhere: x => {
+                if (this.args.additionalWhere)
+                    return this.args.additionalWhere(x);
+            },
+            forEach: this.args.forEach
+        });
+
 
     }
-    complementWhere(where: EntityWhere<T>) {
-        if (this.args.additionalWhere) {
-            let originalWhere = where;
-            where = f => new AndFilter(originalWhere(f), this.args.additionalWhere(f));
-        }
-        if (this.worker.additionalWhere) {
-            let originalWhere = where;
-            where = f => new AndFilter(originalWhere(f), this.worker.additionalWhere(f));
-        }
-        return where;
-    }
+
 
     gridButton(component: actionDialogNeeds<T>) {
         return {
-            name: this.args.title + ' ל' + this.worker.groupName,
+            name: this.args.title + ' ל' + component.groupName,
             visible: () => this.context.isAllowed(this.args.allowed),
             click: async () => {
                 await this.context.openDialog(InputAreaComponent, x => {
@@ -75,20 +61,17 @@ export class ActionOnRows<T extends IdEntity> {
                         settings: {
                             columnSettings: () => this.args.dialogColumns ? this.args.dialogColumns(component) : this.args.columns()
                         },
-                        title: this.args.title + ' ' + this.worker.groupName,
+                        title: this.args.title + ' ' + component.groupName,
                         ok: async () => {
-                            let where = this.complementWhere(component.where);
-                            let count = await this.context.for(this.entity).count(where);
-                            if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + ' ל-' + count + ' ' + this.worker.groupName + '?')) {
+
+                            let info = await component.buildActionInfo(this.args.additionalWhere);
+                            if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + ' ל-' + info.count + ' ' + component.groupName + '?')) {
                                 let args = [];
                                 for (const c of this.args.columns()) {
                                     args.push(c.rawValue);
                                 }
                                 try {
-                                    let r = await this.worker.callServer({
-                                        count,
-                                        where: packWhere(this.context.for(this.entity).create(), where)
-                                    }, this.args.title, args);
+                                    let r = await component.callServer(info, this.args.title, args);
                                     component.dialog.Info(r);
                                 }
                                 catch (err) {
@@ -108,11 +91,15 @@ export class ActionOnRows<T extends IdEntity> {
         } as GridButton;
     }
 }
+
 export interface actionDialogNeeds<T extends IdEntity> {
     dialog: DialogService,
     afterAction: () => {},
-    where: EntityWhere<T>
+    buildActionInfo: (actionWhere: EntityWhere<T>) => Promise<serverUpdateInfo>,
+    callServer: (info: serverUpdateInfo, action: string, columns: any[]) => Promise<string>,
+    groupName: string
 }
+
 
 export interface ActionOnRowsArgs<T extends IdEntity> {
     dialogColumns?: (component: actionDialogNeeds<T>) => DataArealColumnSetting<any>[],
@@ -125,14 +112,14 @@ export interface ActionOnRowsArgs<T extends IdEntity> {
 }
 
 
-export async function filterActionOnServer(actions: {
-    new(context: Context): ActionOnRows<any>;
-}[], context: Context, info: serverUpdateInfo, action: string, args: any[]) {
+export async function filterActionOnServer<T extends IdEntity>(actions: {
+    new(context: Context): ActionOnRows<T>;
+}[], context: Context, doWork: (h: DoWorkOnServerHelper<T>) => Promise<number>, action: string, args: any[]) {
     for (const a of actions) {
         let x = new a(context);
         if (x.args.title == action) {
             if (context.isAllowed(x.args.allowed)) {
-                return await x.doWorkOnServer(info, args);
+                return await x.doWorkOnServer(doWork, args);
             }
             else {
                 return "!פעולה לא מורשת";
@@ -152,22 +139,52 @@ export function buildGridButtonFromActions<T extends IdEntity>(actions: {
     return r;
 }
 
-export async function pagedRowsIterator<T extends IdEntity>(context: SpecificEntityHelper<string, T>, where: (f: T) => FilterBase, what: (f: T) => Promise<void>, count?: number) {
+
+
+export async function pagedRowsIterator<T extends IdEntity>(context: SpecificEntityHelper<string, T>, args: {
+
+    where: (f: T) => FilterBase,
+    forEachRow: (f: T) => Promise<void>,
+    count?: number
+}) {
     let updated = 0;
     let pageSize = 200;
-    if (count === undefined) {
-        count = await context.count(where);
+    if (args.count === undefined) {
+        args.count = await context.count(args.where);
     }
     let pt = new PromiseThrottle(10);
-    for (let index = (count / pageSize); index >= 0; index--) {
-        let rows = await context.find({ where, limit: pageSize, page: index, orderBy: f => [f.id] });
+    for (let index = (args.count / pageSize); index >= 0; index--) {
+        let rows = await context.find({ where: args.where, limit: pageSize, page: index, orderBy: f => [f.id] });
         //console.log(rows.length);
         for (const f of rows) {
-            await what(f);
-            await pt.push(f.save());
+            await pt.push(args.forEachRow(f));
             updated++;
         }
     }
     await pt.done();
     return updated;
+}
+export async function iterateRowsActionOnServer<T extends IdEntity>(
+    args: {
+        context: SpecificEntityHelper<string, T>,
+        h: DoWorkOnServerHelper<T>,
+        info: serverUpdateInfo,
+        additionalWhere?: EntityWhere<T>
+        
+    }) {
+    let where = x => new AndFilter(args.h.actionWhere(x), unpackWhere(x, args.info.actionRowsFilterInfo));
+    if (args.additionalWhere) {
+        let w = where;
+        where = x => new AndFilter(w(x), args.additionalWhere(x));
+    }
+    let count = await args.context.count(where);
+    if (count != args.info.count) {
+        throw "ארעה שגיאה אנא נסה שוב";
+    }
+    return await pagedRowsIterator<T>(args.context, {
+        where,
+        forEachRow: async (f) => await args.h.forEach(f),
+        count,
+        
+    });
 }
