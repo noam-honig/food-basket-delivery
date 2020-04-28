@@ -53,7 +53,7 @@ export class ActionOnRows<T extends IdEntity> {
 
     gridButton(component: actionDialogNeeds<T>) {
         return {
-            name: this.args.title + ' ל' + component.groupName,
+            name: this.args.title ,
             visible: () => this.context.isAllowed(this.args.allowed),
             click: async () => {
                 await this.context.openDialog(InputAreaComponent, x => {
@@ -61,7 +61,8 @@ export class ActionOnRows<T extends IdEntity> {
                         settings: {
                             columnSettings: () => this.args.dialogColumns ? this.args.dialogColumns(component) : this.args.columns()
                         },
-                        title: this.args.title + ' ' + component.groupName,
+                        title: this.args.title ,
+                        helpText:this.args.help,
                         ok: async () => {
 
                             let info = await component.buildActionInfo(this.args.additionalWhere);
@@ -106,6 +107,7 @@ export interface ActionOnRowsArgs<T extends IdEntity> {
     forEach: (f: T) => Promise<void>
     columns: () => Column<any>[],
     title: string,
+    help?:string,
     allowed: Allowed,
     confirmQuestion?: () => string,
     additionalWhere?: (f: T) => FilterBase

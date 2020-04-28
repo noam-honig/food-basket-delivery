@@ -10,6 +10,7 @@ import { IDataAreaSettings, DataAreaSettings } from '@remult/core';
 export class InputAreaComponent implements OnInit {
   args: {
     title: string,
+    helpText?:string,
     settings: IDataAreaSettings<any>,
     ok: () => void,
     cancel?: () => void,

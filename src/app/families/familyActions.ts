@@ -129,7 +129,7 @@ class UpdateArea extends ActionOnRows<Families> {
         super(context, Families, {
             allowed: Roles.distCenterAdmin,
             columns: () => [this.area],
-            title: 'עדכן אזור',
+            title: 'עדכן אזור למשפחות',
             forEach: async f => { f.area.value = this.area.value },
         });
     }

@@ -22,9 +22,10 @@ class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
         super(context, FamilyDeliveries, {
             allowed: Roles.distCenterAdmin,
             columns: () => [],
-            title: 'מחיקה ',
+            title: 'מחק משלוחים',
+            help: 'המחיקה תתבצע רק עבור משלוחים שטרם נמסרו',
             forEach: async f => { f.delete(); },
-            additionalWhere: f => f.deliverStatus.isActiveDelivery()
+            additionalWhere: f => f.deliverStatus.isNotAResultStatus()
         });
     }
 }
@@ -35,7 +36,8 @@ class ArchiveDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
         super(context, FamilyDeliveries, {
             allowed: Roles.distCenterAdmin,
             columns: () => [],
-            title: 'העברה לארכיב של משלוחים שהסתיימו',
+            title: 'העברה לארכיב',
+            help:'העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים',
             forEach: async f => { f.archive.value = true; },
             additionalWhere: f => f.deliverStatus.isAResultStatus()
         });
@@ -47,7 +49,8 @@ class DeliveredForOnTheWay extends ActionOnRows<ActiveFamilyDeliveries> {
         super(context, FamilyDeliveries, {
             allowed: Roles.distCenterAdmin,
             columns: () => [],
-            title: 'עדכן נמסר בהצלחה עבור אלו שבדרך',
+            title: 'עדכן נמסר בהצלחה',
+            help:'פעולה זו תעדכן נמסר בהצלחה עבור משלוחים שבדרך',
             forEach: async f => { f.deliverStatus.value = DeliveryStatus.Success },
             additionalWhere: f => f.onTheWayFilter()
         });
@@ -91,11 +94,6 @@ class UpdateDistributionCenter extends ActionOnRows<ActiveFamilyDeliveries> {
     }
 }
 
-
-
-
-
-
 class CancelAsignment extends ActionOnRows<ActiveFamilyDeliveries> {
 
     constructor(context: Context) {
@@ -103,6 +101,7 @@ class CancelAsignment extends ActionOnRows<ActiveFamilyDeliveries> {
             allowed: Roles.distCenterAdmin,
             columns: () => [],
             title: 'בטל שיוך למתנדב',
+            help:'פעולה זו תבטל את השיוך בין מתנדבים למשפחות, ותחזיר משלוחים המסומנים כ"בדרך" ל"טרם שויכו"',
             forEach: async f => { f.courier.value = ''; },
             additionalWhere: f => f.onTheWayFilter()
         });
@@ -135,7 +134,8 @@ class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                 ]
             },
             additionalWhere: f => f.deliverStatus.isAResultStatus(),
-            title: 'משלוח חדש על בסיס משלוח זה',
+            title: 'משלוח חדש',
+            help:'משלוח חדש יוגדר עבור כל המשלוחים המסומנים שהם בסטטוס נמסר בהצלחה, או בעיה כלשהי',
             forEach: async existingDelivery => {
                 let f = await this.context.for(Families).findId(existingDelivery.family);
                 let newDelivery = f.createDelivery(existingDelivery.distributionCenter.value);
@@ -150,4 +150,4 @@ class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
         });
     }
 }
-export const delvieryActions = () => [NewDelivery, DeliveredForOnTheWay, UpdateBasketType, UpdateQuantity, UpdateDistributionCenter, CancelAsignment, ArchiveDeliveries, DeleteDeliveries];
+export const delvieryActions = () => [ UpdateBasketType, UpdateQuantity,DeliveredForOnTheWay,  UpdateDistributionCenter, CancelAsignment, ArchiveDeliveries, DeleteDeliveries,NewDelivery];
