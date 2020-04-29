@@ -11,6 +11,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { PreviewFamilyComponent } from '../preview-family/preview-family.component';
 import { DialogService } from '../select-popup/dialog';
+import { wasChanged } from '../model-shared/types';
 
 @Component({
   selector: 'app-update-family-dialog',
@@ -59,13 +60,18 @@ export class UpdateFamilyDialogComponent implements OnInit {
       }
     });
   }
+  refreshDeliveryStatistics = false;
   cancel() {
     this.families.currentRow.undoChanges();
     this.dialogRef.close();
   }
   async confirm() {
     await this.families.currentRow.save();
-    if (this.delivery && this.delivery.wasChanged()) {
+    if (this.delivery) {
+      let d = this.delivery;
+      if (wasChanged(d.deliverStatus, d.courier, d.basketType, d.quantity))
+        this.refreshDeliveryStatistics = true;
+      
       await this.delivery.save();
     }
     this.dialogRef.close();

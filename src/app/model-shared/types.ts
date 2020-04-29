@@ -574,3 +574,9 @@ export function relativeDateName(args: { d?: Date, now?: Date, dontShowTimeForOl
     return r;
   return r += ' ב' + d.getHours() + ':' + t;
 }
+export function wasChanged(...columns: Column<any>[]) {
+  for (const c of columns) {
+    if (c.value != c.originalValue)
+      return true;
+  }
+}

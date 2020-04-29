@@ -29,6 +29,32 @@ class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
         });
     }
 }
+class FreezeDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
+
+    constructor(context: Context) {
+        super(context, FamilyDeliveries, {
+            allowed: Roles.distCenterAdmin,
+            columns: () => [],
+            title: 'הקפא משלוחים',
+            help: 'ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח',
+            forEach: async f => { f.deliverStatus.value = DeliveryStatus.Frozen; },
+            additionalWhere: f => f.readyFilter()
+        });
+    }
+}
+class UnfreezeDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
+
+    constructor(context: Context) {
+        super(context, FamilyDeliveries, {
+            allowed: Roles.distCenterAdmin,
+            columns: () => [],
+            title: 'ביטול הקפאת משלוחים',
+            help: 'ביטול ההקפאה יחזיר משלוחים קפואים למוכן למשלוח',
+            forEach: async f => { f.deliverStatus.value = DeliveryStatus.ReadyForDelivery; },
+            additionalWhere: f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen)
+        });
+    }
+}
 
 class ArchiveDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
 
@@ -37,7 +63,7 @@ class ArchiveDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
             allowed: Roles.distCenterAdmin,
             columns: () => [],
             title: 'העברה לארכיב',
-            help:'העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים',
+            help: 'העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים',
             forEach: async f => { f.archive.value = true; },
             additionalWhere: f => f.deliverStatus.isAResultStatus()
         });
@@ -50,7 +76,7 @@ class DeliveredForOnTheWay extends ActionOnRows<ActiveFamilyDeliveries> {
             allowed: Roles.distCenterAdmin,
             columns: () => [],
             title: 'עדכן נמסר בהצלחה',
-            help:'פעולה זו תעדכן נמסר בהצלחה עבור משלוחים שבדרך',
+            help: 'פעולה זו תעדכן נמסר בהצלחה עבור משלוחים שבדרך',
             forEach: async f => { f.deliverStatus.value = DeliveryStatus.Success },
             additionalWhere: f => f.onTheWayFilter()
         });
@@ -101,7 +127,7 @@ class CancelAsignment extends ActionOnRows<ActiveFamilyDeliveries> {
             allowed: Roles.distCenterAdmin,
             columns: () => [],
             title: 'בטל שיוך למתנדב',
-            help:'פעולה זו תבטל את השיוך בין מתנדבים למשפחות, ותחזיר משלוחים המסומנים כ"בדרך" ל"טרם שויכו"',
+            help: 'פעולה זו תבטל את השיוך בין מתנדבים למשפחות, ותחזיר משלוחים המסומנים כ"בדרך" ל"טרם שויכו"',
             forEach: async f => { f.courier.value = ''; },
             additionalWhere: f => f.onTheWayFilter()
         });
@@ -135,7 +161,7 @@ class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
             },
             additionalWhere: f => f.deliverStatus.isAResultStatus(),
             title: 'משלוח חדש',
-            help:'משלוח חדש יוגדר עבור כל המשלוחים המסומנים שהם בסטטוס נמסר בהצלחה, או בעיה כלשהי',
+            help: 'משלוח חדש יוגדר עבור כל המשלוחים המסומנים שהם בסטטוס נמסר בהצלחה, או בעיה כלשהי',
             forEach: async existingDelivery => {
                 let f = await this.context.for(Families).findId(existingDelivery.family);
                 let newDelivery = f.createDelivery(existingDelivery.distributionCenter.value);
@@ -150,4 +176,4 @@ class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
         });
     }
 }
-export const delvieryActions = () => [ UpdateBasketType, UpdateQuantity,DeliveredForOnTheWay,  UpdateDistributionCenter, CancelAsignment, ArchiveDeliveries, DeleteDeliveries,NewDelivery];
+export const delvieryActions = () => [UpdateBasketType, UpdateQuantity, DeliveredForOnTheWay, UpdateDistributionCenter, CancelAsignment, FreezeDeliveries, UnfreezeDeliveries, ArchiveDeliveries, DeleteDeliveries, NewDelivery];

@@ -528,6 +528,9 @@ export class FamilyDeliveriesComponent implements OnInit {
               familyDelivery: fd
 
             }
+          }, y => {
+            if (y.refreshDeliveryStatistics)
+              this.refreshStats();
           });
         }
         , textInMenu: () => 'כרטיס משפחה'
@@ -629,7 +632,7 @@ export class FamilyDeliveriesComponent implements OnInit {
     return "עודכנו " + r + " משלוחים";
   }
 
-  
+
   ngOnInit() {
     this.refreshStats();
     let cols = this.deliveries.columns;
