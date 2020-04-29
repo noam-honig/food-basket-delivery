@@ -21,7 +21,7 @@ import { Context } from '@remult/core';
 import { BasketType } from '../families/BasketType';
 
 
-import { SqlBuilder, extractError } from '../model-shared/types';
+import { SqlBuilder } from '../model-shared/types';
 import { BusyService } from '@remult/core';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { Groups, GroupsStats } from '../manage/manage.component';
@@ -868,7 +868,7 @@ export class AsignFamilyComponent implements OnInit {
             try {
                 await this.helper.save();
             } catch (err) {
-                this.dialog.Error(extractError(err));
+                this.dialog.Error(err);
 
             }
         }

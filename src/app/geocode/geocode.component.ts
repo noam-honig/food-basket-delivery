@@ -6,7 +6,7 @@ import { PromiseThrottle } from '../import-from-excel/import-from-excel.componen
 import { DialogService } from '../select-popup/dialog';
 import { DistributionCenterId, allCentersToken } from '../manage/distribution-centers';
 import { GeocodeInformation } from '../shared/googleApiHelpers';
-import { extractError } from '../model-shared/types';
+
 
 @Component({
   selector: 'app-geocode',
@@ -44,7 +44,7 @@ export class GeocodeComponent implements OnInit {
       }
       this.dialog.Info('זהו נגמר');
     } catch (err) {
-      this.dialog.Error(extractError(err));
+      this.dialog.Error(err);
     }
 
   }

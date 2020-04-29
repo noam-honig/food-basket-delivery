@@ -2,7 +2,7 @@ import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolC
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService } from "../select-popup/dialog";
 import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
-import { extractError } from "../model-shared/types";
+
 
 
 
@@ -38,7 +38,8 @@ export class ActionOnRows<T extends IdEntity> {
         for (const c of this.args.columns()) {
             c.rawValue = args[i++];
         }
-
+        if (this.args.validate)
+            await this.args.validate();
         return await doWork({
             actionWhere: x => {
                 if (this.args.additionalWhere)
@@ -53,7 +54,7 @@ export class ActionOnRows<T extends IdEntity> {
 
     gridButton(component: actionDialogNeeds<T>) {
         return {
-            name: this.args.title ,
+            name: this.args.title,
             visible: () => this.context.isAllowed(this.args.allowed),
             click: async () => {
                 await this.context.openDialog(InputAreaComponent, x => {
@@ -61,8 +62,9 @@ export class ActionOnRows<T extends IdEntity> {
                         settings: {
                             columnSettings: () => this.args.dialogColumns ? this.args.dialogColumns(component) : this.args.columns()
                         },
-                        title: this.args.title ,
-                        helpText:this.args.help,
+                        title: this.args.title,
+                        helpText: this.args.help,
+                        validate: this.args.validate,
                         ok: async () => {
 
                             let info = await component.buildActionInfo(this.args.additionalWhere);
@@ -77,7 +79,7 @@ export class ActionOnRows<T extends IdEntity> {
                                 }
                                 catch (err) {
                                     console.log(err);
-                                    component.dialog.Error(extractError(err));
+                                    component.dialog.Error(err);
 
                                 }
                                 component.afterAction();
@@ -106,8 +108,9 @@ export interface ActionOnRowsArgs<T extends IdEntity> {
     dialogColumns?: (component: actionDialogNeeds<T>) => DataArealColumnSetting<any>[],
     forEach: (f: T) => Promise<void>
     columns: () => Column<any>[],
+    validate?: () => Promise<void>
     title: string,
-    help?:string,
+    help?: string,
     allowed: Allowed,
     confirmQuestion?: () => string,
     additionalWhere?: (f: T) => FilterBase
@@ -172,7 +175,7 @@ export async function iterateRowsActionOnServer<T extends IdEntity>(
         h: DoWorkOnServerHelper<T>,
         info: serverUpdateInfo,
         additionalWhere?: EntityWhere<T>
-        
+
     }) {
     let where = x => new AndFilter(args.h.actionWhere(x), unpackWhere(x, args.info.actionRowsFilterInfo));
     if (args.additionalWhere) {
@@ -187,6 +190,6 @@ export async function iterateRowsActionOnServer<T extends IdEntity>(
         where,
         forEachRow: async (f) => await args.h.forEach(f),
         count,
-        
+
     });
 }

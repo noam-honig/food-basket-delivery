@@ -3,7 +3,7 @@ import { FamiliesComponent } from "./families.component";
 import { Families } from "./families";
 import { Roles } from "../auth/roles";
 import { BasketId, QuantityColumn } from "./BasketType";
-import { DistributionCenterId } from "../manage/distribution-centers";
+import { DistributionCenterId, DistributionCenters } from "../manage/distribution-centers";
 import { HelperId } from "../helpers/helpers";
 import { Groups } from "../manage/manage.component";
 import { FamilyStatusColumn, FamilyStatus } from "./FamilyStatus";
@@ -31,6 +31,13 @@ class NewDelivery extends ActionOnRows<Families> {
                 this.determineCourier,
                 this.courier
             ],
+            validate: async () => {
+                let x =await  context.for(DistributionCenters).findId(this.distributionCenter);
+                if (!x) {
+                    this.distributionCenter.validationError = 'חובה לבחור רשימת חלוקה';
+                    throw this.distributionCenter.validationError;
+                }
+            },
             dialogColumns: (component) => {
                 this.basketType.value = '';
                 this.quantity.value = 1;
@@ -44,6 +51,7 @@ class NewDelivery extends ActionOnRows<Families> {
                 ]
             },
             additionalWhere: f => f.status.isEqualTo(FamilyStatus.Active),
+
             title: 'משלוח חדש',
             forEach: async f => {
                 let fd = f.createDelivery(this.distributionCenter.value);

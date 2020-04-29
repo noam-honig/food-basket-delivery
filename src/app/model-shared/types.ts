@@ -8,14 +8,7 @@ import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlReque
 export interface HasAsyncGetTheValue {
   getTheValue(): Promise<string>;
 }
-export function extractError(err: any) {
-  if (err.message)
-    err = err.message;
-  if (err.error)
-    err = err.error;
-  return err;
 
-}
 
 export class PhoneColumn extends radweb.StringColumn {
   constructor(settingsOrCaption?: ColumnOptions<string>) {

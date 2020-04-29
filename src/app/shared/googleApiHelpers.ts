@@ -1,6 +1,7 @@
 import * as fetch from 'node-fetch';
 import { UrlBuilder, EntityClass, IdEntity, StringColumn, Entity, DateTimeColumn, Context } from '@remult/core';
-import { extractError } from '../model-shared/types';
+import { extractError } from '../select-popup/dialog';
+
 
 
 export class GeoCodeOptions {

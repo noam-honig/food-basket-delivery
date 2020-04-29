@@ -13,7 +13,7 @@ import { Roles } from "../auth/roles";
 import { HelperUserInfo } from "../helpers/helpers";
 import { RouteReuseStrategy } from "@angular/router";
 import { CustomReuseStrategy } from "../custom-reuse-controller-router-strategy";
-import { InputAreaComponent } from "./input-area/input-area.component";
+
 
 declare var gtag;
 
@@ -21,7 +21,7 @@ declare var gtag;
 export class DialogService {
 
     onStatusStatsChange(whatToDo: () => void, component: any) {
-       
+
         let y = this.refreshStatusStats.subscribe(() => {
             whatToDo();
         });
@@ -46,7 +46,7 @@ export class DialogService {
 
     Error(err: string): any {
 
-        this.messageDialog(err);
+        this.messageDialog(extractError(err));
     }
     private mediaMatcher: MediaQueryList = matchMedia(`(max-width: 720px)`);
 
@@ -84,31 +84,7 @@ export class DialogService {
 
     }
 
-    async updateDistCenter() {
 
-
-
-        await this.context.openDialog(InputAreaComponent, x => x.args = {
-            title: 'עדכון פרטי רשימת חלוקה',
-            settings: {
-                columnSettings: () => [
-                    this.dc.name,
-                    this.dc.address,
-                    {
-                        caption: 'כתובת כפי שגוגל הבין',
-                        getValue: () => this.dc.getGeocodeInformation().getAddress()
-                    }
-                ]
-            },
-            ok: async () => {
-                await this.dc.save();
-            },
-            cancel: () => {
-                this.dc.undoChanges()
-            }
-        });
-
-    }
     distCenter = new DistributionCenterId(this.context, {
 
         valueChange: () => {
@@ -192,4 +168,12 @@ export class DialogService {
     confirmDelete(of: string, onOk: () => void) {
         this.YesNoQuestion("האם את בטוחה שאת מעוניית למחוק את " + of + "?", onOk);
     }
+}
+export function extractError(err: any) {
+    if (err.message)
+        err = err.message;
+    if (err.error)
+        err = err.error;
+    return err;
+
 }

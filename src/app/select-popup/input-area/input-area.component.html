@@ -1,7 +1,7 @@
 <div dir="rtl">
   <form (submit)="confirm()">
     <h3 matDialogHeader>{{args.title}}</h3>
-    <div class="help-text" *ngIf="args.helpText">
+    <div  class="help-text" *ngIf="args.helpText">
       {{args.helpText}}
     </div>
     <data-area [settings]="area"> </data-area>

@@ -8,7 +8,7 @@ import { Context } from '@remult/core';
 import { translate } from '../translate';
 import { UpdateCommentComponent } from '../update-comment/update-comment.component';
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
-import { extractError } from '../model-shared/types';
+
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 
 @Component({
@@ -50,7 +50,7 @@ export class FamilyInfoComponent implements OnInit {
           this.dialog.analytics('Self Pickup');
         }
         catch (err) {
-          this.dialog.Error(extractError( err));
+          this.dialog.Error( err);
         }
       },
       cancel: () => { }

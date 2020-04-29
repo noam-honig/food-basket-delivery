@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { IDataAreaSettings, DataAreaSettings } from '@remult/core';
+import { DialogService } from '../dialog';
+
 
 @Component({
   selector: 'app-input-area',
@@ -10,7 +12,7 @@ import { IDataAreaSettings, DataAreaSettings } from '@remult/core';
 export class InputAreaComponent implements OnInit {
   args: {
     title: string,
-    helpText?:string,
+    helpText?: string,
     settings: IDataAreaSettings<any>,
     ok: () => void,
     cancel?: () => void,
@@ -19,7 +21,8 @@ export class InputAreaComponent implements OnInit {
   };
 
   constructor(
-    public dialogRef: MatDialogRef<any>
+    public dialogRef: MatDialogRef<any>,
+    private dialog: DialogService
 
   ) {
 
@@ -41,7 +44,8 @@ export class InputAreaComponent implements OnInit {
       try {
         await this.args.validate();
       }
-      catch{
+      catch (err) {
+        this.dialog.Error((err));
         return;
       }
     }
