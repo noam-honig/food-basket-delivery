@@ -1,5 +1,5 @@
-import { PhoneColumn, changeDate, SqlBuilder, DateTimeColumn } from "../model-shared/types";
-import { EntityClass, Context, IdColumn, IdEntity, StringColumn, NumberColumn, BoolColumn, FilterBase, AndFilter, Column } from '@remult/core';
+import { PhoneColumn, changeDate, SqlBuilder, DateTimeColumn, wasChanged } from "../model-shared/types";
+import { EntityClass, Context, IdColumn, IdEntity, StringColumn, NumberColumn, BoolColumn, FilterBase, AndFilter, Column, DataAreaSettings, IDataAreaSettings } from '@remult/core';
 import { BasketId, QuantityColumn } from "./BasketType";
 import { FamilyId, Families, GroupsColumn } from "./families";
 import { DeliveryStatusColumn, DeliveryStatus } from "./DeliveryStatus";
@@ -11,9 +11,14 @@ import { DistributionCenters, DistributionCenterId as DistributionCenterId } fro
 import { YesNoColumn } from "./YesNo";
 
 import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
+import { UpdateFamilyDialogComponent } from "../update-family-dialog/update-family-dialog.component";
+import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 
 @EntityClass
 export class FamilyDeliveries extends IdEntity {
+    changeRequireStatsRefresh() {
+        return wasChanged(this.deliverStatus, this.courier, this.basketType, this.quantity);
+    }
     copyFrom(originalDelivery: FamilyDeliveries) {
         this.distributionCenter.value = originalDelivery.distributionCenter.value;
         this.special.value = originalDelivery.special.value;
@@ -40,12 +45,12 @@ export class FamilyDeliveries extends IdEntity {
     });
     basketType = new BasketId(this.context, {
         caption: 'סוג סל',
-        allowApiUpdate: Roles.distCenterAdmin
+        allowApiUpdate: Roles.admin
     });
-    quantity = new QuantityColumn({ caption: 'מספר סלים', allowApiUpdate: Roles.distCenterAdmin, dataControlSettings: () => ({ width: '100', inputType: 'number' }) });
+    quantity = new QuantityColumn({ caption: 'מספר סלים', allowApiUpdate: Roles.admin, dataControlSettings: () => ({ width: '100', inputType: 'number' }) });
 
     distributionCenter = new DistributionCenterId(this.context, {
-        allowApiUpdate: Roles.distCenterAdmin
+        allowApiUpdate: Roles.admin
     });
     deliverStatus = new DeliveryStatusColumn();
     courier = new HelperId(this.context, {
@@ -56,13 +61,13 @@ export class FamilyDeliveries extends IdEntity {
     routeOrder = new NumberColumn({
         allowApiUpdate: Roles.distCenterAdmin
     });
-    special = new YesNoColumn({ includeInApi: Roles.distCenterAdmin, caption: 'שיוך מיוחד' });
+    special = new YesNoColumn({ includeInApi: Roles.admin, caption: 'שיוך מיוחד' });
     deliveryStatusDate = new changeDate('מתי');
     courierAssignUser = new HelperIdReadonly(this.context, 'מי שייכה למתנדב');
     courierAssingTime = new changeDate('מועד שיוך למתנדב');
     deliveryStatusUser = new HelperIdReadonly(this.context, 'מי עדכן את סטטוס המשלוח');
 
-    createDate = new changeDate({ includeInApi: Roles.distCenterAdmin, caption: 'מועד הקצאה' });
+    createDate = new changeDate({ includeInApi: Roles.admin, caption: 'מועד הקצאה' });
     createUser = new HelperIdReadonly(this.context, { includeInApi: Roles.admin, caption: 'משתמש מקצה' });
     needsWork = new BoolColumn({
         caption: 'צריך טיפול/מעקב',
@@ -72,11 +77,11 @@ export class FamilyDeliveries extends IdEntity {
     needsWorkDate = new changeDate('צריך טיפול - מתי עודכן');
     deliveryComments = new StringColumn({
         caption: 'הערה למשלוח',
-        allowApiUpdate: Roles.distCenterAdmin
+        allowApiUpdate: Roles.admin
     });
 
     familySource = new FamilySourceId(this.context, {
-        includeInApi: Roles.distCenterAdmin,
+        includeInApi: Roles.admin,
         caption: 'גורם מפנה'
     });
     groups = new GroupsColumn(this.context, {
@@ -177,7 +182,7 @@ export class FamilyDeliveries extends IdEntity {
         }
     });
 
-    archive = new BoolColumn();
+    archive = new BoolColumn({ allowApiUpdate: Roles.admin });
 
     visibleToCourier = new BoolColumn({
         sqlExpression: () => {
@@ -199,7 +204,7 @@ export class FamilyDeliveries extends IdEntity {
             allowApiRead: context.isSignedIn(),
             allowApiInsert: false,
             allowApiUpdate: context.isSignedIn(),
-            allowApiDelete: Roles.distCenterAdmin,
+            allowApiDelete: Roles.admin,
             apiDataFilter: () => {
                 return this.isAllowedForUser();
 
@@ -250,14 +255,15 @@ export class FamilyDeliveries extends IdEntity {
         if (this.onlyActive)
             add(this.active());
         if (!this.context.isAllowed(Roles.admin)) {
+            add(this.active());
             if (this.context.isAllowed(Roles.distCenterAdmin))
                 add(this.distributionCenter.isAllowedForUser());
-            else
-                add(this.active());
-            if (user.theHelperIAmEscortingId)
-                add(this.courier.isEqualTo(user.theHelperIAmEscortingId).and(this.visibleToCourier.isEqualTo(true)));
-            else
-                add(this.courier.isEqualTo(user.id).and(this.visibleToCourier.isEqualTo(true)));
+            else {
+                if (user.theHelperIAmEscortingId)
+                    add(this.courier.isEqualTo(user.theHelperIAmEscortingId).and(this.visibleToCourier.isEqualTo(true)));
+                else
+                    add(this.courier.isEqualTo(user.id).and(this.visibleToCourier.isEqualTo(true)));
+            }
         }
         return result;
     }
@@ -379,12 +385,68 @@ export class FamilyDeliveries extends IdEntity {
                 break;
         }
     }
+    async showDetailsDialog(callerHelper?: {
+        refreshDeliveryStats?: () => void,
+        onSave?: () => Promise<void>
+    }) {
+        if (!this.context.isAllowed(Roles.admin)) {
+            await this.context.openDialog(InputAreaComponent, x => {
+                x.args = {
+                    title: 'פרטי משלוח עבור ' + this.name.value,
+                    ok:
+                        () => {
+                            this.save();
+                            if (callerHelper) {
+                                if (this.changeRequireStatsRefresh() && callerHelper.refreshDeliveryStats)
+                                    callerHelper.refreshDeliveryStats();
+                                if (callerHelper.onSave)
+                                    callerHelper.onSave();
+                            }
+                        },
+                    cancel: () => {
+                        this.undoChanges();
+                    },
+                    settings: this.deilveryDetailsAreaSettings()
+                }
+            });
+        }
+        else
+
+            this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = {
+                familyDelivery: this,
+                onSave: async () => {
+                    if (callerHelper && callerHelper.onSave)
+                        await callerHelper.onSave();
+                }
+            }, y => {
+                if (y.refreshDeliveryStatistics)
+                    if (callerHelper && callerHelper.refreshDeliveryStats)
+                        callerHelper.refreshDeliveryStats();
+
+            });
+    }
+    deilveryDetailsAreaSettings(): IDataAreaSettings<any> {
+        return {
+            columnSettings: () =>
+                [
+                    [this.basketType, this.quantity],
+                    this.deliverStatus,
+                    this.deliveryComments,
+                    this.courier,
+                    this.distributionCenter,
+                    this.needsWork,
+                    this.courierComments,
+                    this.special
+                ]
+        };
+    }
 
 
 }
 
 @EntityClass
 export class ActiveFamilyDeliveries extends FamilyDeliveries {
+
 
 
 

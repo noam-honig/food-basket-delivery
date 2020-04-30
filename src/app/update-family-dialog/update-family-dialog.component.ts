@@ -69,9 +69,9 @@ export class UpdateFamilyDialogComponent implements OnInit {
     await this.families.currentRow.save();
     if (this.delivery) {
       let d = this.delivery;
-      if (wasChanged(d.deliverStatus, d.courier, d.basketType, d.quantity))
+      if (d.changeRequireStatsRefresh())
         this.refreshDeliveryStatistics = true;
-      
+
       await this.delivery.save();
     }
     this.dialogRef.close();
@@ -89,7 +89,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
 
   families = this.context.for(Families).gridSettings({ allowUpdate: true });
 
-  delivery: FamilyDeliveries;
+  delivery: ActiveFamilyDeliveries;
 
   async showDuplicate(dup: duplicateFamilyInfo) {
     let f = await this.context.for(Families).findId(dup.id);
@@ -209,22 +209,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
         ].filter(x => this.settings.usingSelfPickupModule.value ? true : x != f.defaultSelfPickup)
     });
     if (this.delivery)
-      this.deliverInfo = new DataAreaSettings({
-        columnSettings: () => {
-
-          let r = [
-            [this.delivery.basketType, this.delivery.quantity],
-            this.delivery.deliverStatus,
-            this.delivery.deliveryComments,
-            this.delivery.courier,
-            this.delivery.distributionCenter,
-            this.delivery.needsWork,
-            this.delivery.courierComments,
-            this.delivery.special
-          ];
-          return r;
-        }
-      });
+      this.deliverInfo = new DataAreaSettings(this.delivery.deilveryDetailsAreaSettings());
   }
 
 

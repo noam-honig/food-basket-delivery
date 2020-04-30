@@ -1,6 +1,6 @@
 
 import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, FilterBase, Entity, Column, EntityProvider, checkForDuplicateValue } from '@remult/core';
-import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, SqlBuilder } from '../model-shared/types';
+import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, SqlBuilder, wasChanged } from '../model-shared/types';
 
 
 import { routeStats } from '../asign-family/asign-family.component';
@@ -45,7 +45,7 @@ export abstract class HelpersBase extends IdEntity {
         caption: 'צריך מלווה',
         allowApiUpdate: Roles.admin
     });
-    theHelperIAmEscorting = new HelperIdReadonly(this.context,  {
+    theHelperIAmEscorting = new HelperIdReadonly(this.context, {
         caption: 'נהג משוייך',
         allowApiUpdate: Roles.admin
     });
@@ -102,8 +102,19 @@ export class Helpers extends HelpersBase {
                             if (this.context.isAllowed(Roles.admin))
                                 canUpdate = true;
 
-                            if (this.context.isAllowed(Roles.distCenterAdmin) && this.distributionCenter.originalValue == (<HelperUserInfo>context.user).distributionCenter)
-                                canUpdate = true;
+                            if (this.context.isAllowed(Roles.distCenterAdmin)) {
+                                if (!this.admin.originalValue && !this.distCenterAdmin.originalValue) {
+                                    canUpdate = true;
+                                    if (this.distCenterAdmin.value) {
+                                        this.distributionCenter.value = (<HelperUserInfo>context.user).distributionCenter;
+                                    }
+                                }
+                                if (this.distCenterAdmin.originalValue && this.distributionCenter.originalValue == (<HelperUserInfo>context.user).distributionCenter)
+                                    canUpdate = true;
+                                if (this.distCenterAdmin.originalValue || this.admin.value) {
+                                    canUpdate = !wasChanged(this.name, this.phone, this.password, this.distCenterAdmin, this.distributionCenter, this.admin);
+                                }
+                            }
 
                         }
                     }
@@ -118,7 +129,7 @@ export class Helpers extends HelpersBase {
                         this.admin.value = true;
                     }
                     this.phone.value = this.phone.value.replace(/\D/g, '');
-                    await checkForDuplicateValue(this, this.phone, context.for(Helpers),'כבר קיים במערכת');
+                    await checkForDuplicateValue(this, this.phone, context.for(Helpers), 'כבר קיים במערכת');
                     if (this.isNew())
                         this.createDate.value = new Date();
                     this.veryUrlKeyAndReturnTrueIfSaveRequired();
@@ -184,7 +195,20 @@ export class Helpers extends HelpersBase {
         caption: 'משייך מתנדבים לרשימת חלוקה',
         allowApiUpdate: Roles.distCenterAdmin,
         includeInApi: Roles.distCenterAdmin,
-        dbName: 'distCenterAdmin'
+        dbName: 'distCenterAdmin',
+        validate: () => {
+            if (this.context.isAllowed(Roles.admin)) {
+                return;
+            }
+            if (wasChanged(this.distCenterAdmin))
+                if (this.admin.originalValue) {
+                    this.distCenterAdmin.validationError = 'אינך רשאי לעדכן עבור מתנדב זה';
+                }
+                else if (this.distributionCenter.value != (<HelperUserInfo>this.context.user).distributionCenter) {
+                    this.distributionCenter.validationError = 'אינך רשאי לעדכן עבור מתנדב זה';
+                }
+
+        }
     });
     getRouteStats(): routeStats {
         return {
@@ -235,7 +259,7 @@ export class Helpers extends HelpersBase {
 
 export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 
-    constructor(protected context: Context,  settingsOrCaption?: ColumnOptions<string>, filter?: (helper: HelpersAndStats) => FilterBase) {
+    constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>, filter?: (helper: HelpersAndStats) => FilterBase) {
         super({
             dataControlSettings: () =>
                 ({
@@ -243,7 +267,7 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
                     hideDataOnInput: true,
                     width: '200',
                     click: async () => this.context.openDialog((await import('../select-helper/select-helper.component')).SelectHelperComponent,
-                        x => x.args = { filter,  onSelect: s => this.value = (s ? s.id.value : '') })
+                        x => x.args = { filter, onSelect: s => this.value = (s ? s.id.value : '') })
                 })
         }, settingsOrCaption);
     }
@@ -282,8 +306,8 @@ export class CompanyColumn extends StringColumn {
     }
 }
 export class HelperIdReadonly extends HelperId {
-    constructor(protected context: Context,  settingsOrCaption?: ColumnOptions<string>, filter?: (helper: HelpersAndStats) => FilterBase) {
-        super(context,  settingsOrCaption, filter);
+    constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>, filter?: (helper: HelpersAndStats) => FilterBase) {
+        super(context, settingsOrCaption, filter);
         this.defs.allowApiUpdate = false;
     }
     get displayValue() {

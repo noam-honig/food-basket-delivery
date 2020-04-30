@@ -19,7 +19,7 @@ import { colors } from '../families/stats-action';
 import { BusyService } from '@remult/core';
 import { YesNo } from '../families/YesNo';
 import { Roles, AdminGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, OverviewGuard } from '../auth/roles';
-import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
+
 import { Helpers, HelperId } from '../helpers/helpers';
 import MarkerClusterer, { ClusterIconInfo } from "@google/markerclustererplus";
 import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
@@ -270,14 +270,15 @@ export class DistributionMap implements OnInit, OnDestroy {
 
         if (!allInAlll)
           google.maps.event.addListener(familyOnMap.marker, 'click', async () => {
-
-            this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = {
-              deliveryId: familyOnMap.id, onSave: () => {
+            let fd = await this.context.for(ActiveFamilyDeliveries).findId(familyOnMap.id);
+            await fd.showDetailsDialog({
+              onSave: async () => {
                 familyOnMap.marker.setMap(null);
                 this.dict.delete(f.id);
                 this.refreshDeliveries()
               }
             });
+
           });
       }
       else

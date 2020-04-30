@@ -22,7 +22,7 @@ class NewDelivery extends ActionOnRows<Families> {
     courier = new HelperId(this.context);
     constructor(context: Context) {
         super(context, Families, {
-            allowed: Roles.distCenterAdmin,
+            allowed: Roles.admin,
             columns: () => [
                 this.useFamilyBasket,
                 this.basketType,
@@ -91,7 +91,7 @@ class updateGroup extends ActionOnRows<Families> {
             columns: () => [this.group, this.action],
             confirmQuestion: () => 'האם ' + this.action.value + ' את השיוך לקבוצה "' + this.group.value,
             title: 'שיוך לקבוצת משפחות',
-            allowed: Roles.distCenterAdmin,
+            allowed: Roles.admin,
             forEach: async f => {
                 if (this.action.value == addGroupAction) {
                     if (!f.groups.selected(this.group.value))
@@ -113,7 +113,7 @@ class UpdateStatus extends ActionOnRows<Families> {
     status = new FamilyStatusColumn();
     constructor(context: Context) {
         super(context, Families, {
-            allowed: Roles.distCenterAdmin,
+            allowed: Roles.admin,
             columns: () => [this.status],
             title: 'עדכן סטטוס משפחה ',
             forEach: async f => { f.status.value = this.status.value; }
@@ -124,7 +124,7 @@ class UpdateBasketType extends ActionOnRows<Families> {
     basket = new BasketId(this.context);
     constructor(context: Context) {
         super(context, Families, {
-            allowed: Roles.distCenterAdmin,
+            allowed: Roles.admin,
             columns: () => [this.basket],
             title: 'עדכן סוג סל ברירת מחדל',
             forEach: async f => { f.basketType.value = this.basket.value },
@@ -135,7 +135,7 @@ class UpdateArea extends ActionOnRows<Families> {
     area = new StringColumn('אזור');
     constructor(context: Context) {
         super(context, Families, {
-            allowed: Roles.distCenterAdmin,
+            allowed: Roles.admin,
             columns: () => [this.area],
             title: 'עדכן אזור למשפחות',
             forEach: async f => { f.area.value = this.area.value },
@@ -147,7 +147,7 @@ class UpdateQuantity extends ActionOnRows<Families> {
     quantity = new QuantityColumn();
     constructor(context: Context) {
         super(context, Families, {
-            allowed: Roles.distCenterAdmin,
+            allowed: Roles.admin,
             columns: () => [this.quantity],
             title: 'עדכן כמות סלים ברירת מחדל',
             forEach: async f => { f.quantity.value = this.quantity.value },
@@ -158,7 +158,7 @@ class UpdateFamilySource extends ActionOnRows<Families> {
     familySource = new FamilySourceId(this.context);
     constructor(context: Context) {
         super(context, Families, {
-            allowed: Roles.distCenterAdmin,
+            allowed: Roles.admin,
             columns: () => [this.familySource],
             title: 'עדכן גורם מפנה ',
             forEach: async f => { f.familySource.value = this.familySource.value }

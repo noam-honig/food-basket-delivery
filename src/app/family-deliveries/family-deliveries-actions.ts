@@ -20,7 +20,7 @@ class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
 
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
-            allowed: Roles.distCenterAdmin,
+            allowed: Roles.admin,
             columns: () => [],
             title: 'מחק משלוחים',
             help: 'המחיקה תתבצע רק עבור משלוחים שטרם נמסרו',
@@ -33,7 +33,7 @@ class FreezeDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
 
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
-            allowed: Roles.distCenterAdmin,
+            allowed: Roles.admin,
             columns: () => [],
             title: 'הקפא משלוחים',
             help: 'ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח',
@@ -46,7 +46,7 @@ class UnfreezeDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
 
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
-            allowed: Roles.distCenterAdmin,
+            allowed: Roles.admin,
             columns: () => [],
             title: 'ביטול הקפאת משלוחים',
             help: 'ביטול ההקפאה יחזיר משלוחים קפואים למוכן למשלוח',
@@ -60,7 +60,7 @@ class ArchiveDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
 
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
-            allowed: Roles.distCenterAdmin,
+            allowed: Roles.admin,
             columns: () => [],
             title: 'העברה לארכיב',
             help: 'העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים',
@@ -87,7 +87,7 @@ class UpdateBasketType extends ActionOnRows<ActiveFamilyDeliveries> {
     basketType = new BasketId(this.context);
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
-            allowed: Roles.distCenterAdmin,
+            allowed: Roles.admin,
             columns: () => [this.basketType],
             title: 'עדכן סוג סל',
             forEach: async f => { f.basketType.value = this.basketType.value },
@@ -99,7 +99,7 @@ class UpdateQuantity extends ActionOnRows<ActiveFamilyDeliveries> {
     quantity = new QuantityColumn();
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
-            allowed: Roles.distCenterAdmin,
+            allowed: Roles.admin,
             columns: () => [this.quantity],
             title: 'עדכן כמות סלים',
             forEach: async f => { f.quantity.value = this.quantity.value },
@@ -111,7 +111,7 @@ class UpdateDistributionCenter extends ActionOnRows<ActiveFamilyDeliveries> {
     distributionCenter = new DistributionCenterId(this.context);
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
-            allowed: Roles.distCenterAdmin,
+            allowed: Roles.admin,
             columns: () => [this.distributionCenter],
             title: 'עדכן רשימת חלוקה',
             forEach: async f => { f.distributionCenter.value = this.distributionCenter.value },
@@ -142,7 +142,7 @@ class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
 
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
-            allowed: Roles.distCenterAdmin,
+            allowed: Roles.admin,
             columns: () => [
                 this.useExistingBasket,
                 this.basketType,

@@ -61,6 +61,7 @@ export class HelpersComponent implements OnInit {
         click: async () => {
           await saveToExcel(this.context.for(Helpers), this.helpers, "מתנדבים", this.busy, (d: Helpers, c) => c == d.id || c == d.password || c == d.totalKm || c == d.totalTime || c == d.smsDate || c == d.reminderSmsDate || c == d.realStoredPassword || c == d.shortUrlKey || c == d.admin);
         }
+        , visible: () => this.context.isAllowed(Roles.admin)
       },
       {
         name: 'נקה הערות לכל המתנדבים',
@@ -70,7 +71,8 @@ export class HelpersComponent implements OnInit {
             this.helpers.getRecords();
           }
         },
-        visible: () => this.settings.showHelperComment.value
+        visible: () => this.settings.showHelperComment.value && this.context.isAllowed(Roles.admin)
+
       },
       {
         name: 'נקה נתוני ליווי לכל המתנדבים',
@@ -80,7 +82,7 @@ export class HelpersComponent implements OnInit {
             this.helpers.getRecords();
           }
         },
-        visible: () => this.settings.showHelperComment.value
+        visible: () => this.settings.showHelperComment.value && this.context.isAllowed(Roles.admin)
       }
 
     ],
@@ -109,7 +111,8 @@ export class HelpersComponent implements OnInit {
             await HelpersComponent.resetPassword(h.id.value);
             this.dialog.Info("הסיסמה נמחקה");
           });
-        }
+        },
+        visible: h => (this.context.isAllowed(Roles.admin) || !h.admin.value)
       },
       {
         name: 'שלח הזמנה בSMS למנהל',

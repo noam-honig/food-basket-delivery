@@ -30,7 +30,7 @@ export class DistributionCenters extends IdEntity {
       name: "DistributionCenters",
       allowApiRead: context.isSignedIn(),
       allowApiInsert: Roles.admin,
-      allowApiUpdate: Roles.distCenterAdmin,
+      allowApiUpdate: Roles.admin,
       apiDataFilter: () => filterCenterAllowedForUser(this.id, context),
 
       savingRow: async () => {

@@ -29,13 +29,13 @@ import { FamilyDeliveries, ActiveFamilyDeliveries } from './FamilyDeliveries';
 
 
 import { saveToExcel } from '../shared/saveToExcel';
-import { Roles, distCenterAdminGuard } from '../auth/roles';
+import { Roles, distCenterAdminGuard, AdminGuard } from '../auth/roles';
 import { MatTabGroup } from '@angular/material/tabs';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { translate } from '../translate';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
+
 import { FamilyStatus, FamilyStatusColumn } from './FamilyStatus';
 import { familyActions } from './familyActions';
 import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, iterateRowsActionOnServer } from './familyActionsWiring';
@@ -83,14 +83,12 @@ export class FamiliesComponent implements OnInit {
     }
     quickAdd() {
         this.families.addNewRow();
-        this.context.openDialog(UpdateFamilyDialogComponent, x => {
-            x.args = {
-                family: this.families.currentRow,
-                onSave: async () => {
-                    await this.families.currentRow.showNewDeliveryDialog(this.dialog);
-                }
+        this.families.currentRow.showFamilyDialog({
+            onSave: async () => {
+                await this.families.currentRow.showNewDeliveryDialog(this.dialog);
             }
-        })
+        });
+
 
     }
     changedRowsCount() {
@@ -418,7 +416,7 @@ export class FamiliesComponent implements OnInit {
                 icon: 'edit',
                 showInLine: true,
                 click: async f => {
-                    await this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { family: f });
+                    await f.showFamilyDialog();
                 }
                 , textInMenu: () => 'פרטי משפחה'
             },
@@ -715,7 +713,7 @@ export class FamiliesComponent implements OnInit {
     static route: Route = {
         path: 'families',
         component: FamiliesComponent,
-        data: { name: 'משפחות' }, canActivate: [distCenterAdminGuard]
+        data: { name: 'משפחות' }, canActivate: [AdminGuard]
     }
 
 }

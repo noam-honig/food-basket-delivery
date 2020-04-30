@@ -169,7 +169,7 @@ export class DeliveryFollowUpComponent implements OnInit {
       ],
       where: () => [fd.courier.isDifferentFrom('').and(fd.distributionCenter.filter(distCenter))],
 
-    }).replace('distributionCenter', 'e1.distributionCenter'), ' group by ', [fd.courier, h.name, h.phone, h.smsDate, h.eventComment], ' order by ', sql.func('max', fd.courierAssingTime)));
+    }).replace(/distributionCenter/g, 'e1.distributionCenter'), ' group by ', [fd.courier, h.name, h.phone, h.smsDate, h.eventComment], ' order by ', sql.func('max', fd.courierAssingTime)));
     return r.rows.map(r => {
       let smsDate = r['smsdate'];
       let maxAsign = r['maxasign'];

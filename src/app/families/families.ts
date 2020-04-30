@@ -22,10 +22,20 @@ import { PromiseThrottle } from "../import-from-excel/import-from-excel.componen
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { DialogService } from "../select-popup/dialog";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
+import { UpdateFamilyDialogComponent } from "../update-family-dialog/update-family-dialog.component";
 
 
 @EntityClass
 export class Families extends IdEntity {
+  showFamilyDialog(tools?: { onSave: () => Promise<void> }) {
+    this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = {
+      family: this,
+      onSave: async () => {
+        if (tools)
+          await tools.onSave();
+      }
+    });
+  }
   showDeliveryHistoryDialog() {
     this.context.openDialog(GridDialogComponent, x => x.args = {
       title: 'משלוחים עבור ' + this.name.value,
@@ -103,7 +113,7 @@ export class Families extends IdEntity {
       }
     });
   }
-  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  @ServerFunction({ allowed: Roles.admin })
   static async addDelivery(familyId: string, settings: {
     basketType: string,
     quantity: number,
@@ -196,8 +206,8 @@ export class Families extends IdEntity {
     super(
       {
         name: "Families",
-        allowApiRead: Roles.distCenterAdmin,
-        allowApiUpdate: Roles.distCenterAdmin,
+        allowApiRead: Roles.admin,
+        allowApiUpdate: Roles.admin,
         allowApiDelete: false,
         allowApiInsert: Roles.admin,
         apiDataFilter: () => {
@@ -293,7 +303,7 @@ export class Families extends IdEntity {
 
   })
   basketType = new BasketId(this.context, 'סוג סל ברירת מחדל');
-  quantity = new QuantityColumn({ caption: 'מספר סלים ברירת מחדל', allowApiUpdate: Roles.distCenterAdmin });
+  quantity = new QuantityColumn({ caption: 'מספר סלים ברירת מחדל', allowApiUpdate: Roles.admin });
 
   familySource = new FamilySourceId(this.context, { includeInApi: true, caption: 'גורם מפנה' });
   socialWorker = new StringColumn('איש קשר לבירור פרטים (עו"ס)');

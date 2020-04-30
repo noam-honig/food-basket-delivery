@@ -12,7 +12,7 @@ import * as chart from 'chart.js';
 import { colors } from '../families/stats-action';
 import { BasketType } from '../families/BasketType';
 
-import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
+
 import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Families } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -50,15 +50,13 @@ export class FamilyDeliveriesComponent implements OnInit {
   }
   async newFamily() {
     let f = this.context.for(Families).create();
-    this.context.openDialog(UpdateFamilyDialogComponent, x => {
-      x.args = {
-        family: f,
-        onSave: async () => {
-          await f.showNewDeliveryDialog(this.dialog);
-          this.refresh();
-        }
+    f.showFamilyDialog({
+      onSave: async () => {
+        await f.showNewDeliveryDialog(this.dialog);
+        this.refresh();
       }
-    })
+    });
+
 
   }
 
@@ -522,18 +520,11 @@ export class FamilyDeliveriesComponent implements OnInit {
         icon: 'edit',
         showInLine: true,
         click: async fd => {
-
-          this.context.openDialog(UpdateFamilyDialogComponent, async x => {
-            x.args = {
-              familyDelivery: fd
-
-            }
-          }, y => {
-            if (y.refreshDeliveryStatistics)
-              this.refreshStats();
+          fd.showDetailsDialog({
+            refreshDeliveryStats: () => this.refreshStats()
           });
         }
-        , textInMenu: () => 'כרטיס משפחה'
+        , textInMenu: () => 'כרטיס משלוח'
       },
       {
         name: 'משלוח חדש על בסיס משלוח זה',
@@ -541,7 +532,7 @@ export class FamilyDeliveriesComponent implements OnInit {
           let f = await this.context.for(Families).findId(d.family);
           await f.showNewDeliveryDialog(this.dialog, d);
         },
-        visible: d => DeliveryStatus.IsAResultStatus(d.deliverStatus.value)
+        visible: d => DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && this.context.isAllowed(Roles.admin)
       },
       {
         name: 'בטל שיוך',
@@ -566,7 +557,7 @@ export class FamilyDeliveriesComponent implements OnInit {
             }
           }
         },
-        visible: d => d.deliverStatus.value == DeliveryStatus.ReadyForDelivery && d.courier.value == ''
+        visible: d => d.deliverStatus.value == DeliveryStatus.ReadyForDelivery && d.courier.value == '' && this.context.isAllowed(Roles.admin)
       },
       {
         name: 'העבר לארכיון',
@@ -579,7 +570,7 @@ export class FamilyDeliveriesComponent implements OnInit {
               this.deliveries.items.splice(this.deliveries.items.indexOf(d), 1);
             }
           }
-        }
+        }, visible: () => this.context.isAllowed(Roles.admin)
 
       }
     ]
@@ -605,7 +596,7 @@ export class FamilyDeliveriesComponent implements OnInit {
     Families.SendMessageToBrowsers('משלוחים עודכנו', context, '');
     return "עודכנו " + r + " משלוחים";
   }
-  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  @ServerFunction({ allowed: Roles.admin })
   static async FamilyInDeliveryActionOnServer(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
     let processedFamilies = new Map<string, boolean>();
     let r = await filterActionOnServer(familyActionsForDelivery(), context, async (h) => {

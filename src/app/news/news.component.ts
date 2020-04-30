@@ -16,7 +16,7 @@ import { Helpers } from '../helpers/helpers';
 
 import { FamilySources } from '../families/FamilySources';
 import { NewsFilterService } from './news-filter-service';
-import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
+
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Families } from '../families/families';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -47,13 +47,8 @@ export class NewsComponent implements OnInit, OnDestroy {
 
     }
     async updateFamily(n: ActiveFamilyDeliveries) {
-
-        this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = {
-            familyDelivery: n, onSave: () => {
-
-                
-            }
-        });
+        n.showDetailsDialog();
+        
 
     }
     cancelNeedWork(n: ActiveFamilyDeliveries) {

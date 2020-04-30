@@ -43,7 +43,7 @@ export class Stats {
         }
         return r;
     }
-    @ServerFunction({ allowed: Roles.distCenterAdmin })
+    @ServerFunction({ allowed: Roles.admin })
     static async getFamilyStats(distCenter: string, context?: Context) {
         let result = { data: {}, groups: [] as groupStats[] };
         let stats = new Stats();

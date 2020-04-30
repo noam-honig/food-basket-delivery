@@ -521,7 +521,7 @@ export class AsignFamilyComponent implements OnInit {
         let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
         let r = await AsignFamilyComponent.optimizeRoute(h, existingFamilies, context, useGoogle);
         r.families = r.families.filter(f => f.checkAllowedForUser());
-        r.families = await context.for(ActiveFamilyDeliveries).toPojoArray(r.families)
+        r.families = await context.for(ActiveFamilyDeliveries).toPojoArray(r.families);
         return r;
     }
     findCompany() {
@@ -777,7 +777,7 @@ export class AsignFamilyComponent implements OnInit {
 
             });
             families.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
-            for (let i = 0; i < r.routes[0].legs.length - 1; i++) {
+            for (let i = 0; i < r.routes[0].legs.length; i++) {
                 let l = r.routes[0].legs[i];
                 result.stats.totalKm += l.distance.value;
                 result.stats.totalTime += l.duration.value;

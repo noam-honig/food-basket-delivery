@@ -7,7 +7,7 @@ import { Context } from '@remult/core';
 
 import { translate } from '../translate';
 import { UpdateCommentComponent } from '../update-comment/update-comment.component';
-import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
+
 
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 
@@ -74,7 +74,8 @@ export class FamilyInfoComponent implements OnInit {
 
   }
   udpateInfo(f: ActiveFamilyDeliveries) {
-    this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { familyDelivery: f });
+    f.showDetailsDialog();
+    
   }
   copyAddress(f: ActiveFamilyDeliveries) {
     copy(f.address.value);

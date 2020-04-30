@@ -1,5 +1,5 @@
 <div dir="rtl">
-  <form (submit)="confirm()">
+  <form >
     <h3 matDialogHeader>{{args.title}}</h3>
     <div  class="help-text" *ngIf="args.helpText">
       {{args.helpText}}
@@ -15,7 +15,7 @@
         בטל
       </button>
 
-      <button type="submit" mat-raised-button color="accent">
+      <button  mat-raised-button color="accent" (click)="confirm()">
         אשר
       </button>
 

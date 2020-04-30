@@ -18,7 +18,7 @@ import { MatStepper } from '@angular/material';
 
 import { ApplicationSettings, RemovedFromListExcelImportStrategy } from '../manage/ApplicationSettings';
 import { translate } from '../translate';
-import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
+
 import { Groups } from '../manage/manage.component';
 import { DistributionCenters, DistributionCenterId, allCentersToken } from '../manage/distribution-centers';
 import { jsonToXlsx } from '../shared/saveToExcel';
@@ -1123,7 +1123,8 @@ export class ImportFromExcelComponent implements OnInit {
 
     async updateFamily(i: duplicateFamilyInfo) {
         let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(i.id));
-        this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { family: f });
+        f.showFamilyDialog();
+        
     }
 }
 interface importReportRow {
