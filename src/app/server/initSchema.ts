@@ -144,7 +144,8 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await settings.save();
     }
     if (settings.dataStructureVersion.value == 9) {
-        await dataSource.execute(sql.build('update ', fd, ' set ', fd.name, ' = ', f.name, ' from ', f, ' where ', sql.build(f, '.', f.id), ' = ', fd.family));
+        if ((await context.for(Families).count()) > 0)
+            await dataSource.execute(sql.build('update ', fd, ' set ', fd.name, ' = ', f.name, ' from ', f, ' where ', sql.build(f, '.', f.id), ' = ', fd.family));
         settings.dataStructureVersion.value = 10;
         await settings.save();
     }
@@ -220,7 +221,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
                 await f.save();
             },
             where: x => undefined,
-            
+
         });
         settings.dataStructureVersion.value = 14;
         await settings.save();
