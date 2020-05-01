@@ -165,7 +165,7 @@ export class ImportFromExcelComponent implements OnInit {
             await t.push(save());
         }
         await t.done();
-        Families.SendMessageToBrowsers("משפחות נקלטו מאקסל ", context, '');
+        //Families.SendMessageToBrowsers("משפחות נקלטו מאקסל ", context, '');
 
     }
     async updateAllCol(col: columnInCompare) {
