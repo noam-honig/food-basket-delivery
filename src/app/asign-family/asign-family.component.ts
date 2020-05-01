@@ -21,7 +21,7 @@ import { Context } from '@remult/core';
 import { BasketType } from '../families/BasketType';
 
 
-import { SqlBuilder } from '../model-shared/types';
+import { SqlBuilder, wasChanged } from '../model-shared/types';
 import { BusyService } from '@remult/core';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { Groups, GroupsStats } from '../manage/manage.component';
@@ -753,7 +753,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 sorted.push(temp.splice(closestIndex, 1)[0]);
 
             }
+
             fams = sorted;
+            console.log(startPoint.location().lng + "," + startPoint.location().lat + "," + startPoint.getAddress());
+            fams.forEach(x => console.log(x.location.lng + "," + x.location.lat + "," + x.address));
         }
         for (const f of fams) {
             if (f.families.length > 0)
@@ -779,7 +782,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
 
             });
-            families.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
+            
             for (let i = 0; i < r.routes[0].legs.length; i++) {
                 let l = r.routes[0].legs[i];
                 result.stats.totalKm += l.distance.value;
@@ -793,12 +796,16 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         else {
             result.ok = true;
             let i = 1;
-            await foreachSync(families, async (f) => {
-                f.routeOrder.value = i++;
-                if (f.routeOrder.value != f.routeOrder.originalValue)
-                    await f.save();
-            });
+            for (const addre of fams) {
+                for (const f of addre.families) {
+                    f.routeOrder.value = i++;
+                    if (wasChanged(f.routeOrder))
+                        await f.save();
+                }
+            }
+
         }
+        families.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
         result.families = families;
 
         helper.save();
