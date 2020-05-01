@@ -1,5 +1,5 @@
 /// <reference types="@types/googlemaps" />
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { Families } from '../families/families';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { DistributionMap, infoOnMap } from '../distribution-map/distribution-map.component';
@@ -14,7 +14,7 @@ import { BusyService } from '@remult/core';
     templateUrl: './map.component.html',
     styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit,OnDestroy {
     async loadPotentialAsigment(city: string, group: string, distCenter: string) {
         await this.initMap();
         let families = await DistributionMap.GetFamiliesLocations(true, city, group,distCenter);
@@ -81,6 +81,10 @@ export class MapComponent implements OnInit {
 
             }
         });
+    }
+    ngOnDestroy(): void {
+        this.clear();
+        console.log('destroy map');
     }
     private mediaMatcher: MediaQueryList = matchMedia('print');
     async ngOnInit() {

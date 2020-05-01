@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
 import { UrlBuilder, FilterBase, ServerFunction, StringColumn, DataAreaSettings, BoolColumn, SqlDatabase } from '@remult/core';
 import { Families } from '../families/families';
@@ -6,7 +6,7 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
 
 import { Helpers } from '../helpers/helpers';
-import { DialogService } from '../select-popup/dialog';
+import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { UserFamiliesList } from '../my-families/user-families';
 
 import { environment } from '../../environments/environment';
@@ -42,7 +42,7 @@ import { DistributionCenters, DistributionCenterId } from '../manage/distributio
     styleUrls: ['./asign-family.component.scss']
 })
 
-export class AsignFamilyComponent implements OnInit {
+export class AsignFamilyComponent implements OnInit, OnDestroy {
     static route: Route = {
         path: 'assign-families', component: AsignFamilyComponent, canActivate: [distCenterAdminGuard], data: {
             name: 'שיוך משפחות'
@@ -303,12 +303,15 @@ export class AsignFamilyComponent implements OnInit {
 
 
 
-
+    destroyHelper = new DestroyHelper();
+    ngOnDestroy(): void {
+        this.destroyHelper.destroy();
+    }
     constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public settings: ApplicationSettings) {
         if (this.dialog.distCenter.value === undefined) {
             this.dialog.distCenter.value = '';
         }
-        this.dialog.onDistCenterChange(() => this.clearHelperInfo(), this);
+        this.dialog.onDistCenterChange(() => this.clearHelperInfo(), this.destroyHelper);
 
     }
     disableAll() {
@@ -917,7 +920,7 @@ async function getRouteInfo(families: familiesInRoute[], optimize: boolean, star
         key: process.env.GOOGLE_GECODE_API_KEY
     };
     u.addObject(args);
-    
+
 
     let r = await (await fetch.default(u.url)).json();
     if (!r || r.status != "OK") {
@@ -925,7 +928,7 @@ async function getRouteInfo(families: familiesInRoute[], optimize: boolean, star
         if (r && r.status) {
             status = r.status;
         }
-        console.error("error in google route api", status, r,u.url);
+        console.error("error in google route api", status, r, u.url);
     }
     return r;
 }

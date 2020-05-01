@@ -9,7 +9,7 @@ import { YesNo } from "./YesNo";
 
 import { BasketType, BasketId } from "./BasketType";
 
-import { DialogService } from '../select-popup/dialog';
+import { DialogService, DestroyHelper } from '../select-popup/dialog';
 
 
 import { DomSanitizer, Title } from '@angular/platform-browser';
@@ -95,15 +95,13 @@ export class FamiliesComponent implements OnInit {
 
             });
         {
-            let y = dialog.refreshStatusStats.subscribe(() => {
+            dialog.onStatusChange(() => {
                 this.refreshStats();
-            });
-            this.onDestroy = () => {
-                y.unsubscribe();
-            };
+            }, this.destroyHelper);
+
         }
         {
-            dialog.onDistCenterChange(() => this.refresh(), this);
+            dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
 
         }
         if (dialog.isScreenSmall())
@@ -641,7 +639,7 @@ export class FamiliesComponent implements OnInit {
         if (count != info.count) {
             return "ארעה שגיאה אנא נסה שוב";
         }
-        let updated = await iterateFamilies( context, where, what,count);
+        let updated = await iterateFamilies(context, where, what, count);
 
 
 
@@ -686,12 +684,14 @@ export class FamiliesComponent implements OnInit {
     async doTest() {
     }
 
-    onDestroy = () => { };
 
+    destroyHelper = new DestroyHelper();
     ngOnDestroy(): void {
-        this.onDestroy();
+        this.destroyHelper.destroy();
         this.scrollingSubscription.unsubscribe();
     }
+
+
     basketStats: statsOnTabBasket = {
         name: 'נותרו לפי סלים',
         rule: f => f.readyAndSelfPickup(),

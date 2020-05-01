@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NewsUpdate } from "./NewsUpdate";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Context, AndFilter } from '@remult/core';
-import { DialogService } from '../select-popup/dialog';
+import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { translate } from '../translate';
 
 import { Route, ActivatedRoute } from '@angular/router';
@@ -34,15 +34,10 @@ export class NewsComponent implements OnInit, OnDestroy {
 
         this.refresh();
     }
-    onDestroy = () => { };
+
     constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public filters: NewsFilterService, private activatedRoute: ActivatedRoute) {
-        let y = dialog.refreshStatusStats.subscribe(() => {
-            this.refresh();
-        });
-        dialog.onDistCenterChange(() => this.refresh(), this);
-        this.onDestroy = () => {
-            y.unsubscribe();
-        };
+        dialog.onStatusChange(() => this.refresh(), this.destroyHelper);
+        dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
 
     }
     async updateFamily(n: NewsUpdate) {
@@ -69,8 +64,9 @@ export class NewsComponent implements OnInit, OnDestroy {
         this.context.openDialog(
             HelperAssignmentComponent, s => s.argsHelper = this.context.for(Helpers).lookup(n.courier));
     }
+    destroyHelper = new DestroyHelper();
     ngOnDestroy(): void {
-        this.onDestroy();
+        this.destroyHelper.destroy();
     }
     news: NewsUpdate[] = [];
     familySources: familySource[] = [{ id: undefined, name: "כל הגורמים מפנים" }];
@@ -89,7 +85,7 @@ export class NewsComponent implements OnInit, OnDestroy {
         this.busy.donotWait(async () => {
             this.news = await this.context.for(NewsUpdate).find({
                 where: n => {
-                    return new AndFilter( this.filters.where(n),n.distributionCenter.filter( this.dialog.distCenter.value));
+                    return new AndFilter(this.filters.where(n), n.distributionCenter.filter(this.dialog.distCenter.value));
 
 
                 }, orderBy: n => [{ column: n.updateTime, descending: true }], limit: this.newsRows
