@@ -20,22 +20,19 @@ declare var gtag;
 @Injectable()
 export class DialogService {
 
-    onStatusStatsChange(whatToDo: () => void, component: any) {
-
-        let y = this.refreshStatusStats.subscribe(() => {
-            whatToDo();
-        });
-        component.onDestroy = () => {
-            y.unsubscribe();
-        };
-    }
-    onDistCenterChange(whatToDo: () => void, component: any) {
+    onDistCenterChange(whatToDo: () => void, destroyHelper: DestroyHelper) {
         let y = this.refreshDistCenter.subscribe(() => {
             whatToDo();
         });
-        component.onDestroy = () => {
-            y.unsubscribe();
-        };
+        destroyHelper.add(() => y.unsubscribe());
+
+    }
+    onStatusChange(whatToDo: () => void, destroyHelper: DestroyHelper) {
+        let y = this.refreshStatusStats.subscribe(() => {
+            whatToDo();
+        });
+        destroyHelper.add(() => y.unsubscribe());
+
     }
     Info(info: string): any {
         if (info.indexOf('!!') >= 0) {
@@ -55,7 +52,7 @@ export class DialogService {
         return this.mediaMatcher.matches;
     }
 
-    refreshStatusStats = new Subject();
+    private refreshStatusStats = new Subject();
     private refreshDistCenter = new Subject();
 
     statusRefreshThrottle = new myThrottle(1000);
@@ -175,5 +172,16 @@ export function extractError(err: any) {
     if (err.error)
         err = err.error;
     return err;
+}
+export class DestroyHelper {
+    private destroyList: (() => void)[] = [];
+    add(arg0: () => void) {
+        this.destroyList.push(arg0);
+    }
+    destroy() {
+        for (const d of this.destroyList) {
+            d();
+        }
+    }
 
 }

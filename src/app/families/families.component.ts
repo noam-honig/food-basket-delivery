@@ -7,7 +7,7 @@ import { YesNo } from "./YesNo";
 
 
 
-import { DialogService } from '../select-popup/dialog';
+import { DialogService, DestroyHelper } from '../select-popup/dialog';
 
 
 import { DomSanitizer, Title } from '@angular/platform-browser';
@@ -487,11 +487,10 @@ export class FamiliesComponent implements OnInit {
 
 
 
-    onDestroy = () => { };
 
+    destroyHelper = new DestroyHelper();
     ngOnDestroy(): void {
-        this.onDestroy();
-
+        this.destroyHelper.destroy();
     }
 
     groupsTotals: statsOnTab = {

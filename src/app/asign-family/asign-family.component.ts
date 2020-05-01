@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { Location, GeocodeInformation, toLongLat } from '../shared/googleApiHelpers';
 import { UrlBuilder, FilterBase, ServerFunction, StringColumn, DataAreaSettings, BoolColumn, SqlDatabase, AndFilter } from '@remult/core';
 
@@ -6,7 +6,7 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
 
 import { Helpers } from '../helpers/helpers';
-import { DialogService } from '../select-popup/dialog';
+import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { UserFamiliesList } from '../my-families/user-families';
 
 import { environment } from '../../environments/environment';
@@ -45,7 +45,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
     styleUrls: ['./asign-family.component.scss']
 })
 
-export class AsignFamilyComponent implements OnInit {
+export class AsignFamilyComponent implements OnInit, OnDestroy {
     static route: Route = {
         path: 'assign-families', component: AsignFamilyComponent, canActivate: [distCenterAdminGuard], data: {
             name: 'שיוך משפחות'
@@ -295,12 +295,15 @@ export class AsignFamilyComponent implements OnInit {
 
 
 
-
+    destroyHelper = new DestroyHelper();
+    ngOnDestroy(): void {
+        this.destroyHelper.destroy();
+    }
     constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public settings: ApplicationSettings) {
         if (this.dialog.distCenter.value === undefined) {
             this.dialog.distCenter.value = '';
         }
-        this.dialog.onDistCenterChange(() => this.refreshBaskets(), this);
+        this.dialog.onDistCenterChange(() => this.clearHelperInfo(), this.destroyHelper);
 
     }
     disableAll() {

@@ -1,11 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
 import { Context, DataControlSettings, FilterBase, AndFilter, BusyService, packWhere, ServerFunction, unpackWhere } from '@remult/core';
 
 import { FamilyDeliveresStatistics, FamilyDeliveryStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
-import { DialogService } from '../select-popup/dialog';
+import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
 
 import * as chart from 'chart.js';
@@ -26,7 +26,7 @@ import { async } from '@angular/core/testing';
   templateUrl: './family-deliveries.component.html',
   styleUrls: ['./family-deliveries.component.scss']
 })
-export class FamilyDeliveriesComponent implements OnInit {
+export class FamilyDeliveriesComponent implements OnInit,OnDestroy {
   static route: Route = {
     path: 'deliveries',
     component: FamilyDeliveriesComponent,
@@ -372,9 +372,14 @@ export class FamilyDeliveriesComponent implements OnInit {
   ) {
 
 
-    dialog.onDistCenterChange(() => this.refresh(), this);
-    dialog.onStatusStatsChange(() => this.refreshStats(), this);
+    dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
+    dialog.onStatusChange(() => this.refreshStats(), this.destroyHelper);
   }
+  destroyHelper = new DestroyHelper();
+  ngOnDestroy(): void {
+      this.destroyHelper.destroy();
+  }
+
   deliveries = this.context.for(ActiveFamilyDeliveries).gridSettings({
     allowUpdate: true,
     rowCssClass: f => f.deliverStatus.getCss(),

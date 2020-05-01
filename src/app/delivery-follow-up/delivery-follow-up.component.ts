@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { AndFilter, ServerFunction, SqlDatabase } from '@remult/core';
 import { UserFamiliesList } from '../my-families/user-families';
@@ -12,7 +12,7 @@ import { Helpers } from '../helpers/helpers';
 import { Context } from '@remult/core';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { Route } from '@angular/router';
-import { DialogService } from '../select-popup/dialog';
+import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { allCentersToken } from '../manage/distribution-centers';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
@@ -26,7 +26,7 @@ import { colors } from '../families/stats-action';
   templateUrl: './delivery-follow-up.component.html',
   styleUrls: ['./delivery-follow-up.component.scss']
 })
-export class DeliveryFollowUpComponent implements OnInit {
+export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
   static route: Route = {
     path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [distCenterAdminGuard], data: { name: 'מעקב מתנדבים' }
   }
@@ -137,7 +137,11 @@ export class DeliveryFollowUpComponent implements OnInit {
 
   constructor(private busy: BusyService, private context: Context, private dialog: DialogService) {
 
-    dialog.onDistCenterChange(() => this.refresh(), this);
+    dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
+  }
+  destroyHelper = new DestroyHelper();
+  ngOnDestroy(): void {
+    this.destroyHelper.destroy();
   }
 
 

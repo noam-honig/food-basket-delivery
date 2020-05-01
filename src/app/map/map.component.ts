@@ -1,5 +1,5 @@
 /// <reference types="@types/googlemaps" />
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { DistributionMap, infoOnMap } from '../distribution-map/distribution-map.component';
@@ -15,10 +15,10 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
     templateUrl: './map.component.html',
     styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit {
-    async loadPotentialAsigment(city: string, group: string, distCenter: string,area:string) {
+export class MapComponent implements OnInit,OnDestroy {
+    async loadPotentialAsigment(city: string, group: string, distCenter: string, area: string) {
         await this.initMap();
-        let families = await DistributionMap.GetDeliveriesLocation(true, city, group,distCenter,area);
+        let families = await DistributionMap.GetDeliveriesLocation(true, city, group, distCenter, area);
         let closeBusy = this.busy.showBusy();
         try {
             console.time('load families to map');
@@ -82,6 +82,9 @@ export class MapComponent implements OnInit {
 
             }
         });
+    }
+    ngOnDestroy(): void {
+        this.clear();
     }
     private mediaMatcher: MediaQueryList = matchMedia('print');
     async ngOnInit() {
@@ -149,8 +152,8 @@ export class MapComponent implements OnInit {
             } catch (err) {
                 console.log(err, marker);
             }
-            
-            marker.setLabel(f.name.value + (f.isGpsAddress()?'': " - " + f.address.value) + '....');
+
+            marker.setLabel(f.name.value + (f.isGpsAddress() ? '' : " - " + f.address.value) + '....');
 
             switch (f.deliverStatus.value) {
                 case DeliveryStatus.ReadyForDelivery:

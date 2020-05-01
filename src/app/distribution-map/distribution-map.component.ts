@@ -3,7 +3,7 @@ import * as chart from 'chart.js';
 import { Component, OnInit, ViewChild, Sanitizer, OnDestroy } from '@angular/core';
 
 
-import { DialogService } from '../select-popup/dialog';
+import { DialogService,DestroyHelper } from '../select-popup/dialog';
 import { GeocodeInformation, GetGeoInformation, polygonContains } from '../shared/googleApiHelpers';
 
 import { DomSanitizer } from '@angular/platform-browser';
@@ -40,22 +40,20 @@ import { Families } from '../families/families';
 export class DistributionMap implements OnInit, OnDestroy {
   constructor(private context: Context, private dialog: DialogService, busy: BusyService) {
 
-    let y = dialog.refreshStatusStats.subscribe(() => {
+     dialog.onStatusChange(() => {
       busy.donotWait(async () => {
 
         await this.refreshDeliveries();
 
       });
-    });
-    this.onDestroy = () => {
-      y.unsubscribe();
-    };
+    },this.destroyHelper);
+    
     this.dialog.onDistCenterChange(async () => {
       this.clearMap();
       this.bounds = new google.maps.LatLngBounds();
       await this.refreshDeliveries();
       this.map.fitBounds(this.bounds);
-    }, this);
+    }, this.destroyHelper);
 
   }
   showHelper = false;
@@ -105,10 +103,10 @@ export class DistributionMap implements OnInit, OnDestroy {
     return this.buttons.find(x => !x.visible || x.visible());
   }
 
+  destroyHelper = new DestroyHelper();
   ngOnDestroy(): void {
-    this.onDestroy();
+      this.destroyHelper.destroy();
   }
-  onDestroy = () => { };
   static route: Route = {
     path: 'addresses',
     component: DistributionMap,

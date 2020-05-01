@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Route } from '@angular/router';
 
 import { BusyService } from '@remult/core';
@@ -7,14 +7,14 @@ import { Context } from '@remult/core';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
-import { DialogService } from '../select-popup/dialog';
+import { DialogService, DestroyHelper } from '../select-popup/dialog';
 
 @Component({
   selector: 'app-self-pickup',
   templateUrl: './self-pickup.component.html',
   styleUrls: ['./self-pickup.component.scss']
 })
-export class SelfPickupComponent implements OnInit {
+export class SelfPickupComponent implements OnInit, OnDestroy {
 
 
   static route: Route = {
@@ -28,7 +28,11 @@ export class SelfPickupComponent implements OnInit {
     , private context: Context, private dialog: DialogService) {
     this.dialog.onDistCenterChange(async () => {
       this.families.getRecords();
-    }, this);
+    }, this.destroyHelper);
+  }
+  destroyHelper = new DestroyHelper();
+  ngOnDestroy(): void {
+    this.destroyHelper.destroy();
   }
   searchString: string = '';
   showAllFamilies = false;

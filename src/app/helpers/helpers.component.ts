@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 
 import { Helpers } from './helpers';
@@ -8,7 +8,7 @@ import { Route } from '@angular/router';
 
 import { ServerFunction, DataControlSettings, DataControlInfo, ServerContext, AndFilter, Column } from '@remult/core';
 import { Context } from '@remult/core';
-import { DialogService } from '../select-popup/dialog';
+import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { BusyService } from '@remult/core';
 import { DateColumn, DataAreaSettings } from '@remult/core';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
@@ -29,14 +29,21 @@ import { visitAll } from '@angular/compiler';
   templateUrl: './helpers.component.html',
   styleUrls: ['./helpers.component.css']
 })
-export class HelpersComponent implements OnInit {
+export class HelpersComponent implements OnInit, OnDestroy {
   constructor(private dialog: DialogService, public context: Context, private busy: BusyService, public settings: ApplicationSettings) {
-
+    this.dialog.onDistCenterChange(async () => {
+      this.helpers.getRecords();
+    }, this.destroyHelper);
   }
   quickAdd() {
     this.helpers.addNewRow();
 
     this.editHelper(this.helpers.currentRow);
+
+  }
+  destroyHelper = new DestroyHelper();
+  ngOnDestroy(): void {
+    this.destroyHelper.destroy();
   }
   static route: Route = {
     path: 'helpers',
