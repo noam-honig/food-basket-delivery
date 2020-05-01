@@ -112,7 +112,8 @@ export class Helpers extends HelpersBase {
                                 if (this.distCenterAdmin.originalValue && this.distributionCenter.originalValue == (<HelperUserInfo>context.user).distributionCenter)
                                     canUpdate = true;
                                 if (this.distCenterAdmin.originalValue || this.admin.value) {
-                                    canUpdate = !wasChanged(this.name, this.phone, this.password, this.distCenterAdmin, this.distributionCenter, this.admin);
+                                    if (!canUpdate)
+                                        canUpdate = !wasChanged(this.name, this.phone, this.password, this.distCenterAdmin, this.distributionCenter, this.admin);
                                 }
                             }
 
