@@ -25,9 +25,12 @@ export class AuthService {
             this.setToken(response.authToken, false);
             this.dialog.analytics('login from sms');
             this.routeHelper.navigateToComponent(MyFamiliesComponent);
+            return true;
         }
-        else
+        else {
             this.tokenHelper.signout();
+            return false;
+        }
 
 
     }
@@ -78,7 +81,7 @@ export class AuthService {
         if (options) {
 
             let loginResponse = options;
-           
+
 
 
             this.setToken(loginResponse.authToken, remember);
