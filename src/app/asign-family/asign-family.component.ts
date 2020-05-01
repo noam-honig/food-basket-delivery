@@ -755,8 +755,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             }
 
             fams = sorted;
-            console.log(startPoint.location().lng + "," + startPoint.location().lat + "," + startPoint.getAddress());
-            fams.forEach(x => console.log(x.location.lng + "," + x.location.lat + "," + x.address));
+            
         }
         for (const f of fams) {
             if (f.families.length > 0)
@@ -782,7 +781,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
 
             });
-            
+
             for (let i = 0; i < r.routes[0].legs.length; i++) {
                 let l = r.routes[0].legs[i];
                 result.stats.totalKm += l.distance.value;
@@ -941,6 +940,8 @@ function getInfo(r: any) {
     }
 }
 async function getRouteInfo(families: familiesInRoute[], optimize: boolean, start: GeocodeInformation, context: Context) {
+    if (families.length > 25)
+        return {};
     let u = new UrlBuilder('https://maps.googleapis.com/maps/api/directions/json');
 
     let startAndEnd = start.getlonglat();
