@@ -185,7 +185,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         this.familyLists.initForFamilies(this.helper, r.families);
                     }
 
-                })));
+                }))).catch(x=>this.lastRefreshRoute = Promise.resolve());
 
     }
     smsSent() {
@@ -725,6 +725,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 sorted.push(temp.splice(closestIndex, 1)[0]);
 
             }
+
             fams = sorted;
         }
         for (const f of fams) {
@@ -732,7 +733,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 f.families.sort((a, b) => { return (+a.appartment.value) - (+b.appartment.value) });
         }
 
-
+        
         let r = await getRouteInfo(fams, useGoogle, await helper.distributionCenter.getRouteStartGeo(), context);
         if (r.status == 'OK' && r.routes && r.routes.length > 0 && r.routes[0].waypoint_order) {
             result.ok = true;
@@ -751,8 +752,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
 
             });
-            families.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
-            for (let i = 0; i < r.routes[0].legs.length - 1; i++) {
+
+            for (let i = 0; i < r.routes[0].legs.length; i++) {
                 let l = r.routes[0].legs[i];
                 result.stats.totalKm += l.distance.value;
                 result.stats.totalTime += l.duration.value;
@@ -765,14 +766,17 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         else {
             result.ok = true;
             let i = 1;
-            await foreachSync(families, async (f) => {
-                f.routeOrder.value = i++;
-                if (f.routeOrder.value != f.routeOrder.originalValue)
-                    await f.save();
-            });
-        }
-        result.families = await context.for(Families).toPojoArray(families);
+            for (const addre of fams) {
+                for (const f of addre.families) {
+                    f.routeOrder.value = i++;
+                    if (f.routeOrder.value != f.routeOrder.originalValue)
+                        await f.save();
+                }
+            }
 
+        }
+        families.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
+        result.families = await context.for(Families).toPojoArray(families);
         helper.save();
 
 
@@ -902,6 +906,8 @@ function getInfo(r: any) {
     }
 }
 async function getRouteInfo(families: familiesInRoute[], optimize: boolean, start: GeocodeInformation, context: Context) {
+    if (families.length>25)
+        return {};
     let u = new UrlBuilder('https://maps.googleapis.com/maps/api/directions/json');
 
     let startAndEnd = start.getlonglat();
