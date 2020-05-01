@@ -88,20 +88,22 @@ export class HelperFamiliesComponent implements OnInit {
       comment: f.courierComments.value,
       helpText,
       ok: async (comment) => {
-        f.deliverStatus.value = status;
-        f.courierComments.value = comment;
-        f.checkNeedsWork();
-        try {
-          await f.save();
-          this.dialog.analytics('delivered');
-          this.initFamilies();
-          if (this.familyLists.toDeliver.length == 0) {
-            this.dialog.messageDialog(this.allDoneMessage());
-          }
+        if (!f.isNew()) {
+          f.deliverStatus.value = status;
+          f.courierComments.value = comment;
+          f.checkNeedsWork();
+          try {
+            await f.save();
+            this.dialog.analytics('delivered');
+            this.initFamilies();
+            if (this.familyLists.toDeliver.length == 0) {
+              this.dialog.messageDialog(this.allDoneMessage());
+            }
 
-        }
-        catch (err) {
-          this.dialog.Error(err);
+          }
+          catch (err) {
+            this.dialog.Error(err);
+          }
         }
       },
       cancel: () => { }
@@ -132,6 +134,8 @@ export class HelperFamiliesComponent implements OnInit {
         helpText: s => s.commentForProblem,
 
         ok: async (comment, status) => {
+          if (f.isNew())
+            return;
           f.deliverStatus.value = status;
           f.courierComments.value = comment;
           f.checkNeedsWork();
@@ -213,6 +217,8 @@ export class HelperFamiliesComponent implements OnInit {
       comment: f.courierComments.value,
       helpText: s => s.commentForSuccessDelivery,
       ok: async comment => {
+        if (f.isNew())
+          return;
         f.courierComments.value = comment;
         f.checkNeedsWork();
         await f.save();
