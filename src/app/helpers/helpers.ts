@@ -31,9 +31,9 @@ export abstract class HelpersBase extends IdEntity {
     phone = new PhoneColumn("טלפון");
     smsDate = new DateTimeColumn('מועד משלוח SMS');
     company = new CompanyColumn(this.context);
-    totalKm = new NumberColumn({ allowApiUpdate: Roles.admin });
-    totalTime = new NumberColumn({ allowApiUpdate: Roles.admin });
-    shortUrlKey = new StringColumn({ includeInApi: Roles.admin });
+    totalKm = new NumberColumn({ allowApiUpdate: Roles.distCenterAdmin });
+    totalTime = new NumberColumn({ allowApiUpdate: Roles.distCenterAdmin });
+    shortUrlKey = new StringColumn({ includeInApi: Roles.distCenterAdmin });
     distributionCenter = new DistributionCenterId(this.context, {
         allowApiUpdate: Roles.admin
     });
