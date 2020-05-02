@@ -102,7 +102,7 @@ export class AuthService {
 
         }
         else {
-            this.tokenHelper.signout();
+            this.tokenHelper.signout('/' + Sites.getOrganizationFromContext(this.context));
             this.dialog.Error("משתמשת לא נמצאה או סיסמה שגויה");
             fail();
 
@@ -162,7 +162,7 @@ export class AuthService {
         return r[0];
     }
     signout(): any {
-        this.tokenHelper.signout();
+        this.tokenHelper.signout('/' + Sites.getOrganizationFromContext(this.context));
         this.routeHelper.navigateToComponent(LoginComponent);
     }
 

@@ -56,7 +56,7 @@ serverInit().then(async (dataSource) => {
             res.send('No Result' + fs.realpathSync(index));
         }
     }
-    if (process.env.DISABLE_GEOCODE){
+    if (process.env.DISABLE_GEOCODE) {
         console.log("geocode disabled");
         GeoCodeOptions.disableGeocode = true;
     }
@@ -80,10 +80,10 @@ serverInit().then(async (dataSource) => {
             }
 
             let lastMessage = new Date();
-            Families.SendMessageToBrowsers = (x, c,distCenter) => {
+            Families.SendMessageToBrowsers = (x, c, distCenter) => {
                 if (new Date().valueOf() - lastMessage.valueOf() > 1000) {
                     lastMessage = new Date();
-                    serverEvents.SendMessage(x, c,distCenter)
+                    serverEvents.SendMessage(x, c, distCenter)
                 }
             };
         }
@@ -95,6 +95,8 @@ serverInit().then(async (dataSource) => {
             //@ts-ignore
             app,
             dataSource, process.env.DISABLE_HTTPS == "true", !Sites.multipleSites);
+        if (process.env.logUrls != "true")
+            eb.logApiEndPoints = false;
         Helpers.helper = new JWTCookieAuthorizationHelper(eb, process.env.TOKEN_SIGN_KEY);
 
 
@@ -129,7 +131,7 @@ serverInit().then(async (dataSource) => {
             registerImageUrls(app, getContext, '');
         }
 
-     
+
 
         app.get('', (req, res) => {
 
