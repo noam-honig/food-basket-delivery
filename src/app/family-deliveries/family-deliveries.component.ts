@@ -20,6 +20,7 @@ import { delvieryActions } from './family-deliveries-actions';
 import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, pagedRowsIterator, iterateRowsActionOnServer } from '../families/familyActionsWiring';
 import { familyActionsForDelivery } from '../families/familyActions';
 import { async } from '@angular/core/testing';
+import { saveToExcel } from '../shared/saveToExcel';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -516,7 +517,14 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           };
         },
         groupName: 'משפחות'
-      })
+      }),
+      {
+        name: 'יצוא לאקסל',
+        click: async () => {
+          await saveToExcel(this.context.for(ActiveFamilyDeliveries), this.deliveries, "משלוחים", this.busy, (d: ActiveFamilyDeliveries, c) => c == d.id || c == d.family );
+        }
+        , visible: () => this.context.isAllowed(Roles.admin)
+      }
     ]
     ,
     rowButtons: [
