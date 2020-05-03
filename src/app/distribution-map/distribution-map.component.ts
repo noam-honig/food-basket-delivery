@@ -76,7 +76,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     ...buildGridButtonFromActions([NewDelivery, FreezeDeliveries, UnfreezeDeliveries], this.context, this.buttonDeliveryHelper())
 
   ];
-  private buttonFamilyHelper():actionDialogNeeds<Families> {
+  private buttonFamilyHelper(): actionDialogNeeds<Families> {
     return {
       afterAction: async () => await this.refreshDeliveries(),
       dialog: this.dialog,
@@ -91,7 +91,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     };
   }
 
-  private buttonDeliveryHelper():actionDialogNeeds<ActiveFamilyDeliveries> {
+  private buttonDeliveryHelper(): actionDialogNeeds<ActiveFamilyDeliveries> {
     return {
       afterAction: async () => await this.refreshDeliveries(),
       dialog: this.dialog,
@@ -515,6 +515,7 @@ export class Statuses {
       case DeliveryStatus.FailedBadAddress.id:
       case DeliveryStatus.FailedNotHome.id:
       case DeliveryStatus.FailedOther.id:
+      case DeliveryStatus.Frozen.id:
         return this.problem;
         break;
     }
