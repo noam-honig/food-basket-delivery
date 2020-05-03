@@ -1,4 +1,4 @@
-import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, FilterBase } from "@remult/core";
+import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, FilterBase, ValueListColumn } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { DistributionCenterId } from "../manage/distribution-centers";
 import { HelperId } from "../helpers/helpers";
@@ -23,7 +23,7 @@ class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
             allowed: Roles.admin,
             columns: () => [],
             title: 'מחק משלוחים',
-            help: 'המחיקה תתבצע רק עבור משלוחים שטרם נמסרו',
+            help:()=> 'המחיקה תתבצע רק עבור משלוחים שטרם נמסרו',
             forEach: async f => { f.delete(); },
             additionalWhere: f => f.deliverStatus.isNotAResultStatus()
         });
@@ -36,7 +36,7 @@ class FreezeDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
             allowed: Roles.admin,
             columns: () => [],
             title: 'הקפא משלוחים',
-            help: 'ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח',
+            help:()=> 'ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח',
             forEach: async f => { f.deliverStatus.value = DeliveryStatus.Frozen; },
             additionalWhere: f => f.readyFilter()
         });
@@ -49,7 +49,7 @@ class UnfreezeDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
             allowed: Roles.admin,
             columns: () => [],
             title: 'ביטול הקפאת משלוחים',
-            help: 'ביטול ההקפאה יחזיר משלוחים קפואים למוכן למשלוח',
+            help:()=> 'ביטול ההקפאה יחזיר משלוחים קפואים למוכן למשלוח',
             forEach: async f => { f.deliverStatus.value = DeliveryStatus.ReadyForDelivery; },
             additionalWhere: f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen)
         });
@@ -63,7 +63,7 @@ class ArchiveDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
             allowed: Roles.admin,
             columns: () => [],
             title: 'העברה לארכיב',
-            help: 'העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים',
+            help:()=> 'העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים',
             forEach: async f => { f.archive.value = true; },
             additionalWhere: f => f.deliverStatus.isAResultStatus()
         });
@@ -76,7 +76,7 @@ class DeliveredForOnTheWay extends ActionOnRows<ActiveFamilyDeliveries> {
             allowed: Roles.distCenterAdmin,
             columns: () => [],
             title: 'עדכן נמסר בהצלחה',
-            help: 'פעולה זו תעדכן נמסר בהצלחה עבור משלוחים שבדרך',
+            help:()=> 'פעולה זו תעדכן נמסר בהצלחה עבור משלוחים שבדרך',
             forEach: async f => { f.deliverStatus.value = DeliveryStatus.Success },
             additionalWhere: f => f.onTheWayFilter()
         });
@@ -127,7 +127,7 @@ class CancelAsignment extends ActionOnRows<ActiveFamilyDeliveries> {
             allowed: Roles.distCenterAdmin,
             columns: () => [],
             title: 'בטל שיוך למתנדב',
-            help: 'פעולה זו תבטל את השיוך בין מתנדבים למשפחות, ותחזיר משלוחים המסומנים כ"בדרך" ל"טרם שויכו"',
+            help:()=> 'פעולה זו תבטל את השיוך בין מתנדבים למשפחות, ותחזיר משלוחים המסומנים כ"בדרך" ל"טרם שויכו"',
             forEach: async f => { f.courier.value = ''; },
             additionalWhere: f => f.onTheWayFilter()
         });
@@ -137,6 +137,10 @@ class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
     useExistingBasket = new BoolColumn({ caption: 'השתמש בסוג הסל המוגדר במשלוח הנוכחי', defaultValue: true });
     basketType = new BasketId(this.context);
     quantity = new QuantityColumn();
+    helperStrategy = new HelperStrategyColumn();
+    helper = new HelperId(this.context);
+    autoArchive = new BoolColumn({ caption: 'העבר את המשלוח שהסתיים לארכיון', defaultValue: true });
+    newDeliveryForAll = new BoolColumn('משלוח חדש לכל המשלוחים ולא רק לאלו שהסתיימו בהצלחה');
 
     distributionCenter = new DistributionCenterId(this.context);
 
@@ -147,7 +151,11 @@ class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                 this.useExistingBasket,
                 this.basketType,
                 this.quantity,
+                this.helperStrategy,
+                this.helper,
                 this.distributionCenter,
+                this.autoArchive,
+                this.newDeliveryForAll
             ],
             dialogColumns: (component) => {
                 this.basketType.value = '';
@@ -156,12 +164,20 @@ class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                 return [
                     this.useExistingBasket,
                     [{ column: this.basketType, visible: () => !this.useExistingBasket.value }, { column: this.quantity, visible: () => !this.useExistingBasket.value }],
-                    { column: this.distributionCenter, visible: () => component.dialog.hasManyCenters }
+                    { column: this.distributionCenter, visible: () => component.dialog.hasManyCenters },
+                    this.helperStrategy,
+                    { column: this.helper, visible: () => this.helperStrategy.value == HelperStrategy.selectHelper },
+                    this.autoArchive,
+                    this.newDeliveryForAll,
                 ]
             },
-            additionalWhere: f => f.deliverStatus.isAResultStatus(),
+            additionalWhere: f => {
+                if (this.newDeliveryForAll)
+                    return undefined;
+                f.deliverStatus.isAResultStatus();
+            },
             title: 'משלוח חדש',
-            help: 'משלוח חדש יוגדר עבור כל המשלוחים המסומנים שהם בסטטוס נמסר בהצלחה, או בעיה כלשהי',
+            help:()=> 'משלוח חדש יוגדר עבור כל המשלוחים המסומנים שהם בסטטוס נמסר בהצלחה, או בעיה כלשהי, אלא אם תבחרו לסמן את השדה ' + this.newDeliveryForAll.defs.caption,
             forEach: async existingDelivery => {
                 let f = await this.context.for(Families).findId(existingDelivery.family);
                 let newDelivery = f.createDelivery(existingDelivery.distributionCenter.value);
@@ -170,10 +186,56 @@ class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                     newDelivery.basketType.value = this.basketType.value;
                     newDelivery.quantity.value = this.quantity.value;
                 }
+                newDelivery.distributionCenter.value = this.distributionCenter.value;
+                this.helperStrategy.value.applyTo({ existingDelivery, newDelivery, helper: this.helper.value });
+
                 if ((await newDelivery.duplicateCount()) == 0)
                     await newDelivery.save();
+                if (this.autoArchive) {
+                    if (DeliveryStatus.IsAResultStatus(existingDelivery.deliverStatus.value))
+                        existingDelivery.archive.value = true;
+                    await existingDelivery.save();
+                }
             }
         });
     }
 }
-export const delvieryActions = () => [UpdateBasketType, UpdateQuantity, DeliveredForOnTheWay, UpdateDistributionCenter, CancelAsignment, FreezeDeliveries, UnfreezeDeliveries, ArchiveDeliveries, DeleteDeliveries, NewDelivery];
+class HelperStrategy {
+    static familyDefault = new HelperStrategy(0, 'הגדר מתנדב לפי מתנדב ברירת מחדל המוגדר למשפחה', x => { });
+    static currentHelper = new HelperStrategy(1, 'הגדר מתנדב לפי המתנדב במשלוח הנוכחי', x => {
+        x.newDelivery.courier.value = x.existingDelivery.courier.value;
+    });
+    static noHelper = new HelperStrategy(2, 'ללא מתנדב', x => {
+        x.newDelivery.courier.value = '';
+    });
+    static selectHelper = new HelperStrategy(3, 'בחר מתנדב', x => {
+        x.newDelivery.courier.value = x.helper;
+    });
+    constructor(public id: number, public caption: string, public applyTo: (args: { existingDelivery: ActiveFamilyDeliveries, newDelivery: ActiveFamilyDeliveries, helper: string }) => void) {
+
+    }
+}
+class HelperStrategyColumn extends ValueListColumn<HelperStrategy>{
+    constructor() {
+        super(HelperStrategy, {
+            caption: 'הגדרת מתנדב',
+            defaultValue: HelperStrategy.familyDefault,
+            dataControlSettings: () => ({
+                valueList: this.getOptions()
+            })
+        })
+    }
+}
+
+export const delvieryActions = () => [
+    NewDelivery,
+    DeliveredForOnTheWay,
+    ArchiveDeliveries,
+    UpdateBasketType,
+    UpdateQuantity,
+    UpdateDistributionCenter,
+    FreezeDeliveries,
+    UnfreezeDeliveries,
+    CancelAsignment,
+    DeleteDeliveries
+];

@@ -63,7 +63,7 @@ export class ActionOnRows<T extends IdEntity> {
                             columnSettings: () => this.args.dialogColumns ? this.args.dialogColumns(component) : this.args.columns()
                         },
                         title: this.args.title,
-                        helpText: this.args.help,
+                        helpText: this.args.help ? this.args.help() : undefined,
                         validate: this.args.validate,
                         ok: async () => {
 
@@ -110,7 +110,7 @@ export interface ActionOnRowsArgs<T extends IdEntity> {
     columns: () => Column<any>[],
     validate?: () => Promise<void>
     title: string,
-    help?: string,
+    help?: () => string,
     allowed: Allowed,
     confirmQuestion?: () => string,
     additionalWhere?: (f: T) => FilterBase
