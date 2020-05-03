@@ -28,7 +28,7 @@ import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser }
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { translate } from '../translate';
 import { delvieryActions, UpdateDistributionCenter, NewDelivery, FreezeDeliveries, UnfreezeDeliveries } from '../family-deliveries/family-deliveries-actions';
-import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer } from '../families/familyActionsWiring';
+import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, actionDialogNeeds } from '../families/familyActionsWiring';
 import { familyActionsForDelivery, UpdateArea, updateGroup } from '../families/familyActions';
 import { Families } from '../families/families';
 
@@ -76,7 +76,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     ...buildGridButtonFromActions([NewDelivery, FreezeDeliveries, UnfreezeDeliveries], this.context, this.buttonDeliveryHelper())
 
   ];
-  private buttonFamilyHelper(): import("c:/Repos/hug-moms/src/app/families/familyActionsWiring").actionDialogNeeds<Families> {
+  private buttonFamilyHelper():actionDialogNeeds<Families> {
     return {
       afterAction: async () => await this.refreshDeliveries(),
       dialog: this.dialog,
@@ -91,7 +91,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     };
   }
 
-  private buttonDeliveryHelper(): import("c:/Repos/hug-moms/src/app/families/familyActionsWiring").actionDialogNeeds<ActiveFamilyDeliveries> {
+  private buttonDeliveryHelper():actionDialogNeeds<ActiveFamilyDeliveries> {
     return {
       afterAction: async () => await this.refreshDeliveries(),
       dialog: this.dialog,
