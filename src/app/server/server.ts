@@ -16,6 +16,7 @@ import { Sites } from '../sites/sites';
 import { dataMigration } from "./dataMigration";
 import { GeoCodeOptions } from "../shared/googleApiHelpers";
 import { Families } from "../families/families";
+import { OverviewComponent } from "../overview/overview.component";
 
 
 serverInit().then(async (dataSource) => {
@@ -68,11 +69,14 @@ serverInit().then(async (dataSource) => {
             await res.redirect(to);
         });
     } else {
+
+        let addServerEvent = x => { };
         if (!process.env.DISABLE_SERVER_EVENTS) {
             let serverEvents = new ServerEvents(app);
+            addServerEvent = async (s) => serverEvents.registerPath('/' + s + '/api');;
             if (Sites.multipleSites) {
                 for (const s of Sites.schemas) {
-                    serverEvents.registerPath('/' + s + '/api');
+                    addServerEvent(s);
                 }
             }
             else {
@@ -101,7 +105,7 @@ serverInit().then(async (dataSource) => {
 
 
         if (Sites.multipleSites) {
-            for (const schema of Sites.schemas) {
+            let createSchemaApi = async schema => {
                 let area = eb.addArea('/' + schema + '/api', async req => {
                     if (req.user) {
                         let context = new ServerContext();
@@ -113,7 +117,20 @@ serverInit().then(async (dataSource) => {
                 registerActionsOnServer(area, dataSource);
                 registerEntitiesOnServer(area, dataSource);
                 registerImageUrls(app, getContext, '/' + schema);
+            };
+            for (const schema of Sites.schemas) {
+                createSchemaApi(schema);
             }
+            OverviewComponent.createSchemaApi = async schema => {
+                let stack: [] = app._router.stack;
+                stack.splice(stack.length - 1, 1);
+                addServerEvent(schema);
+                createSchemaApi(schema);
+                app.use('/*', async (req, res) => {
+                    await sendIndex(res, req);
+                });
+
+            };
             {
                 let area = eb.addArea('/' + Sites.guestSchema + '/api', async req => {
                     if (req.user) {

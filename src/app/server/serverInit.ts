@@ -13,6 +13,7 @@ import { Helpers } from '../helpers/helpers';
 import * as passwordHash from 'password-hash';
 import { initSchema } from './initSchema';
 import { Sites } from '../sites/sites';
+import { OverviewComponent } from '../overview/overview.component';
 
 
 
@@ -36,7 +37,7 @@ export async function serverInit() {
         }
         if (process.env.logSqlsThreshold) {
             SqlDatabase.durationThreshold = +process.env.logSqlsThreshold;
-            
+
 
         }
 
@@ -55,17 +56,18 @@ export async function serverInit() {
             let adminSchemaPool = new PostgresSchemaWrapper(pool, Sites.guestSchema);
             let context = new ServerContext();
             let dp = new SqlDatabase(new PostgresDataProvider(adminSchemaPool));
-            
+
             context.setDataProvider(dp)
 
             let builder = new PostgresSchemaBuilder(dp, Sites.guestSchema);
             for (const entity of <{ new(...args: any[]): Entity<any>; }[]>[
                 ApplicationSettings,
                 ApplicationImages,
-                Helpers]) {
+                Helpers, Sites]) {
                 await builder.createIfNotExist(context.for(entity).create());
                 await builder.verifyAllColumns(context.for(entity).create());
             }
+            await Sites.completeInit(context);
             let settings = await context.for(ApplicationSettings).lookupAsync(s => s.id.isEqualTo(1));
             if (settings.isNew()) {
                 settings.organisationName.value = "מערכת חלוקה";
@@ -101,23 +103,33 @@ export async function serverInit() {
 
 
     async function InitSchemas(pool: Pool) {
+        OverviewComponent.createDbSchema = async site => {
+            return await InitSpecificSchema(pool, site);
+        }
         for (const s of Sites.schemas) {
             if (s.toLowerCase() == Sites.guestSchema)
-                throw 'admin is an ivalid schema name;';
-            await verifySchemaExistance(pool, s);
-            let schemaPool = new PostgresSchemaWrapper(pool, s);
-            await new PostgresSchemaBuilder(new SqlDatabase(new PostgresDataProvider(schemaPool)), s).verifyStructureOfAllEntities();
-            await initSchema(schemaPool, s);
-            await new Promise(x=>setTimeout(() => {
+                throw 'admin is an ivalid schema name';
+            await InitSpecificSchema(pool, s);
+            await new Promise(x => setTimeout(() => {
                 x();
             }, 1000));
         }
     }
 }
+async function InitSpecificSchema(pool: Pool, s: any) {
+    await verifySchemaExistance(pool, s);
+    let schemaPool = new PostgresSchemaWrapper(pool, s);
+    let db = new SqlDatabase(new PostgresDataProvider(schemaPool));
+    await new PostgresSchemaBuilder(db, s).verifyStructureOfAllEntities();
+    await initSchema(schemaPool, s);
+    return db;
+}
+
 export async function verifySchemaExistance(pool: Pool, s: string) {
-    let exists = await pool.query('SELECT schema_name FROM information_schema.schemata WHERE schema_name = \'' + s + '\'');
+    let db = new PostgresDataProvider(pool);
+    let exists = await db.createCommand().execute('SELECT schema_name FROM information_schema.schemata WHERE schema_name = \'' + s + '\'');
     if (exists.rows.length == 0) {
-        await pool.query('create schema ' + s);
+        await db.createCommand().execute('create schema ' + s);
     }
 }
 

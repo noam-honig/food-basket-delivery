@@ -9,6 +9,7 @@ import { parseAddress, Families, parseUrlInAddress } from './families/families';
 import { BasketType } from './families/BasketType';
 import { fixPhone } from './import-from-excel/import-from-excel.component';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from './families/FamilyDeliveries';
+import { validSchemaName } from './sites/sites';
 
 describe('AppComponent', () => {
   var context = new ServerContext();
@@ -18,8 +19,8 @@ describe('AppComponent', () => {
   let afd = context.for(ActiveFamilyDeliveries).create();
   let fd = context.for(FamilyDeliveries).create();
   sql.addEntity(bt, 'p');
-  sql.addEntity(afd,'fd');
-  sql.addEntity(fd,'h');
+  sql.addEntity(afd, 'fd');
+  sql.addEntity(fd, 'h');
   var q = (query: QueryBuilder, expectresult: String) => {
     expect(sql.query(query)).toBe(expectresult);
   };
@@ -34,14 +35,14 @@ describe('AppComponent', () => {
     }, 'select p.id from BasketType p order by p.id');
   });
   it('fixed filter', () => {
-    
+
     q({
       select: () => [afd.id],
       from: afd
     }, 'select fd.id from FamilyDeliveries fd where archive = false');
   });
-  it('fixed filter 2',()=>{
-     expect(sql.columnInnerSelect(afd, {
+  it('fixed filter 2', () => {
+    expect(sql.columnInnerSelect(afd, {
       select: () => [sql.columnWithAlias(afd.deliverStatus, 's')],
       from: afd,
 
@@ -50,16 +51,16 @@ describe('AppComponent', () => {
       orderBy: [{ column: afd.deliveryStatusDate, descending: true }]
     })).toBe('(select FamilyDeliveries.deliverStatus s from FamilyDeliveries FamilyDeliveries where FamilyDeliveries.family = 123 and archive = false order by FamilyDeliveries.deliveryStatusDate desc limit 1)');
   });
-  it('fixed filter 3',()=>{
+  it('fixed filter 3', () => {
     expect(sql.columnInnerSelect(fd, {
-     select: () => [sql.columnWithAlias(fd.deliverStatus, 's')],
-     from: fd,
+      select: () => [sql.columnWithAlias(fd.deliverStatus, 's')],
+      from: fd,
 
-     where: () => [sql.eq(fd.family, '123'),
-     ],
-     orderBy: [{ column: fd.deliveryStatusDate, descending: true }]
-   })).toBe('(select FamilyDeliveries.deliverStatus s from FamilyDeliveries FamilyDeliveries where FamilyDeliveries.family = 123 order by FamilyDeliveries.deliveryStatusDate desc limit 1)');
- });
+      where: () => [sql.eq(fd.family, '123'),
+      ],
+      orderBy: [{ column: fd.deliveryStatusDate, descending: true }]
+    })).toBe('(select FamilyDeliveries.deliverStatus s from FamilyDeliveries FamilyDeliveries where FamilyDeliveries.family = 123 order by FamilyDeliveries.deliveryStatusDate desc limit 1)');
+  });
   it('Where', () => {
     q({
       select: () => [bt.id],
@@ -176,6 +177,15 @@ describe('AppComponent', () => {
     expect(parseUrlInAddress('32.267417990635636,34.878578873069586')).toBe('32.267418,34.878579')
     expect(parseUrlInAddress("נועם")).toBe("נועם");
 
+  });
+  it("test schema name", () => {
+    expect(validSchemaName("abc")).toBe("abc");
+    expect(validSchemaName("1abc")).toBe("abc");
+    expect(validSchemaName("abc#")).toBe("abc");
+    expect(validSchemaName("a#b#c#")).toBe("abc");
+    expect(validSchemaName("ABC")).toBe("abc");
+    expect(validSchemaName("abc1")).toBe("abc1");
+    expect(validSchemaName("abc-")).toBe("abc");
   });
 
 });

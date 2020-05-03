@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { Context, ServerFunction, DateColumn, Entity, SqlDatabase } from '@remult/core';
+import { Context, ServerFunction, DateColumn, Entity, SqlDatabase, StringColumn, ServerContext } from '@remult/core';
 import { Roles } from '../auth/roles';
-import { Sites } from '../sites/sites';
+import { Sites, SchemaIdColumn } from '../sites/sites';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 import { SqlBuilder } from '../model-shared/types';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
+import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
+import { DialogService, extractError } from '../select-popup/dialog';
+import { Helpers } from '../helpers/helpers';
 
 @Component({
   selector: 'app-overview',
@@ -15,7 +18,7 @@ import { FamilyDeliveries } from '../families/FamilyDeliveries';
 })
 export class OverviewComponent implements OnInit {
 
-  constructor() { }
+  constructor(private context: Context, private dialog: DialogService) { }
   overview: overviewResult;
   sortBy: string;
   async ngOnInit() {
@@ -127,7 +130,7 @@ export class OverviewComponent implements OnInit {
           cols.push(builder.countInnerSelect({ from: f, where: () => [f.onTheWayFilter()] }, key));
         }
         else
-          cols.push(builder.build('(select count(*) from ', fd, ' where ', builder.and(fd.deliveryStatusDate.isGreaterOrEqualTo(dateRange.from).and(fd.deliveryStatusDate.isLessThan(dateRange.to))), ') ',key));
+          cols.push(builder.build('(select count(*) from ', fd, ' where ', builder.and(fd.deliveryStatusDate.isGreaterOrEqualTo(dateRange.from).and(fd.deliveryStatusDate.isLessThan(dateRange.to))), ') ', key));
 
       }
 
@@ -148,10 +151,10 @@ export class OverviewComponent implements OnInit {
 
 
       result.sites.push(site);
-      let i=2;
+      let i = 2;
       for (const dateRange of result.statistics) {
         let r = row[zz.getColumnKeyInResultForIndexInSelect(i++)];
-        
+
         dateRange.value += +r;
         site.stats[dateRange.caption] = r;
       }
@@ -160,6 +163,92 @@ export class OverviewComponent implements OnInit {
     }
     return result;
 
+  }
+  async createNewSchema() {
+    let id = new SchemaIdColumn();
+    let name = new StringColumn('שם הארגון');
+    this.context.openDialog(InputAreaComponent, x => x.args = {
+      title: 'הוספת סביבה חדשה',
+      settings: {
+        columnSettings: () => [id, name]
+      },
+      validate: async () => {
+
+        let r = await OverviewComponent.validateNewSchema(id.value);
+        if (r) {
+          throw r;
+        }
+      },
+      ok: async () => {
+        try {
+          let r = await OverviewComponent.createSchema(id.value, name.value);
+          if (!r.ok)
+            throw r.errorText;
+          location.href = '/' + id.value;
+        }
+        catch (err) {
+          this.dialog.Error(err);
+        }
+
+      }
+    });
+  }
+  @ServerFunction({ allowed: Roles.overview })
+  static async createSchema(id: string, name: string, context?: Context): Promise<{
+    ok: boolean,
+    errorText: string
+  }> {
+    let r = await OverviewComponent.validateNewSchema(id, context);
+    if (r) {
+      return {
+        ok: false,
+        errorText: r
+      }
+    }
+    try {
+      let oh = await context.for(Helpers).findId(context.user.id);
+      let db = await OverviewComponent.createDbSchema(id);
+      let otherContext = new ServerContext(db);
+      otherContext._setUser(context.user);
+      let h = await otherContext.for(Helpers).create();
+      h.name.value = oh.name.value;
+      h.realStoredPassword.value = oh.realStoredPassword.value;
+      h.phone.value = oh.phone.value;
+      h.admin.value = oh.admin.value;
+      await h.save();
+      let settings = await ApplicationSettings.get(otherContext);
+      if (name) {
+        settings.organisationName.value = name;
+        await settings.save();
+      }
+      let s = context.for(Sites).create();
+      s.id.value = id;
+      await s.save();
+
+
+
+      
+      await OverviewComponent.createSchemaApi(id);
+      Sites.addSchema(id);
+      return { ok: true, errorText: '' }
+    }
+    catch (err) {
+      return { ok: false, errorText: extractError(err) }
+    }
+  }
+  static createDbSchema = async (id: string): Promise<SqlDatabase> => { return undefined };
+  static createSchemaApi = async (id: string) => { };
+  
+  @ServerFunction({ allowed: Roles.overview })
+  static async validateNewSchema(id: string, context?: Context) {
+    let x = await context.for(Sites).lookupAsync(x => x.id.isEqualTo(id));
+    if (!x.isNew()) {
+      return "מזהה כבר קיים";
+    }
+    let invalidSchemaName = ['admin', 'guest', 'public', 'select'];
+    if (invalidSchemaName.includes(id))
+      return id + ' הוא מזהה שמור ואסור לשימוש';
+    return '';
   }
 
 }

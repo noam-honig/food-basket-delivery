@@ -1,10 +1,10 @@
 <ng-container *ngIf="overview">
     <ul>
-        <li *ngFor="let i of overview.statistics" (click)="doSort(i)" [class.sorted]="sortBy==i.caption" >
+        <li *ngFor="let i of overview.statistics" (click)="doSort(i)" [class.sorted]="sortBy==i.caption">
             {{i.caption}} - {{i.value}}
         </li>
     </ul>
-
+    <button mat-raised-button (click)="createNewSchema()">הוסף סביבה</button>
     <div class="site-container" [transition-group]="'flip-list'">
         <mat-card *ngFor="let site of overview.sites" class="site" transition-group-item>
             <span *ngIf="sortBy">{{site.stats[sortBy]}}</span>
