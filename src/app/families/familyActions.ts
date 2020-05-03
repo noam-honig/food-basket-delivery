@@ -32,7 +32,7 @@ class NewDelivery extends ActionOnRows<Families> {
                 this.courier
             ],
             validate: async () => {
-                let x =await  context.for(DistributionCenters).findId(this.distributionCenter);
+                let x = await context.for(DistributionCenters).findId(this.distributionCenter);
                 if (!x) {
                     this.distributionCenter.validationError = 'חובה לבחור רשימת חלוקה';
                     throw this.distributionCenter.validationError;
@@ -169,5 +169,6 @@ class UpdateFamilySource extends ActionOnRows<Families> {
 
 
 
+
 export const familyActions = () => [NewDelivery, updateGroup, UpdateArea, UpdateStatus, UpdateBasketType, UpdateQuantity, UpdateFamilySource];
-export const familyActionsForDelivery = () => [updateGroup, UpdateArea];
+export const familyActionsForDelivery = () => [updateGroup, UpdateArea, UpdateStatus];
