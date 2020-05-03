@@ -342,7 +342,7 @@ export class FamiliesComponent implements OnInit {
                 families.phone3Description,
                 families.phone4,
                 families.phone4Description,
-                
+
                 {
                     caption: 'טלפון מתנדב',
                     getValue: f => this.context.for(Helpers).lookup(f.courier).phone.value
@@ -389,26 +389,26 @@ export class FamiliesComponent implements OnInit {
             ]
             return r;
         },
-        gridButton: [{
-            name: 'יצוא לאקסל',
-            click: () => this.saveToExcel(),
-            visible: () => this.isAdmin
-        },
-        ...buildGridButtonFromActions(familyActions(), this.context,
-            {
-                afterAction: async () => await this.refresh(),
-                dialog: this.dialog,
-                callServer: async (info, action, args) => await FamiliesComponent.FamilyActionOnServer(info, action, args),
-                buildActionInfo: async actionWhere => {
-                    let where = f => new AndFilter(actionWhere(f), this.families.buildFindOptions().where(f));
-                    return {
-                        count: await this.context.for(Families).count(where),
-                        actionRowsFilterInfo: packWhere(this.context.for(Families).create(), where)
-                    };
-                },
-                groupName: 'משפחות'
-            }),
-        ],
+        gridButton: [
+            ...buildGridButtonFromActions(familyActions(), this.context,
+                {
+                    afterAction: async () => await this.refresh(),
+                    dialog: this.dialog,
+                    callServer: async (info, action, args) => await FamiliesComponent.FamilyActionOnServer(info, action, args),
+                    buildActionInfo: async actionWhere => {
+                        let where = f => new AndFilter(actionWhere(f), this.families.buildFindOptions().where(f));
+                        return {
+                            count: await this.context.for(Families).count(where),
+                            actionRowsFilterInfo: packWhere(this.context.for(Families).create(), where)
+                        };
+                    },
+                    groupName: 'משפחות'
+                }),
+            , {
+                name: 'יצוא לאקסל',
+                click: () => this.saveToExcel(),
+                visible: () => this.isAdmin
+            }],
 
         rowButtons: [
             {

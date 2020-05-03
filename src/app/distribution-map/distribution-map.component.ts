@@ -3,7 +3,7 @@ import * as chart from 'chart.js';
 import { Component, OnInit, ViewChild, Sanitizer, OnDestroy } from '@angular/core';
 
 
-import { DialogService,DestroyHelper } from '../select-popup/dialog';
+import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { GeocodeInformation, GetGeoInformation, polygonContains } from '../shared/googleApiHelpers';
 
 import { DomSanitizer } from '@angular/platform-browser';
@@ -27,9 +27,9 @@ import { Sites } from '../sites/sites';
 import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser } from '../manage/distribution-centers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { translate } from '../translate';
-import { delvieryActions } from '../family-deliveries/family-deliveries-actions';
+import { delvieryActions, UpdateDistributionCenter, NewDelivery, FreezeDeliveries, UnfreezeDeliveries } from '../family-deliveries/family-deliveries-actions';
 import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer } from '../families/familyActionsWiring';
-import { familyActionsForDelivery } from '../families/familyActions';
+import { familyActionsForDelivery, UpdateArea, updateGroup } from '../families/familyActions';
 import { Families } from '../families/families';
 
 @Component({
@@ -40,14 +40,14 @@ import { Families } from '../families/families';
 export class DistributionMap implements OnInit, OnDestroy {
   constructor(private context: Context, private dialog: DialogService, busy: BusyService) {
 
-     dialog.onStatusChange(() => {
+    dialog.onStatusChange(() => {
       busy.donotWait(async () => {
 
         await this.refreshDeliveries();
 
       });
-    },this.destroyHelper);
-    
+    }, this.destroyHelper);
+
     this.dialog.onDistCenterChange(async () => {
       this.clearMap();
       this.bounds = new google.maps.LatLngBounds();
@@ -70,42 +70,49 @@ export class DistributionMap implements OnInit, OnDestroy {
 
   }
   buttons: GridButton[] = [
-    ...buildGridButtonFromActions(delvieryActions(), this.context,
-      {
-        afterAction: async () => await this.refreshDeliveries(),
-        dialog: this.dialog,
-        callServer: async (info, action, args) => await DistributionMap.updateDeliveriesBasedOnMap(info, action, args),
-        buildActionInfo: async actionWhere => {
+    ...buildGridButtonFromActions([UpdateArea], this.context, this.buttonFamilyHelper()),
+    ...buildGridButtonFromActions([UpdateDistributionCenter], this.context, this.buttonDeliveryHelper()),
+    ...buildGridButtonFromActions([updateGroup], this.context, this.buttonFamilyHelper()),
+    ...buildGridButtonFromActions([NewDelivery, FreezeDeliveries, UnfreezeDeliveries], this.context, this.buttonDeliveryHelper())
 
-          return {
-            count: this.selectedDeliveries.length,
-            actionRowsFilterInfo: this.selectedDeliveries.map(x => x.id)
-          };
-        },
-        groupName: 'משלוחים'
-      }),
+  ];
+  private buttonFamilyHelper(): import("c:/Repos/hug-moms/src/app/families/familyActionsWiring").actionDialogNeeds<Families> {
+    return {
+      afterAction: async () => await this.refreshDeliveries(),
+      dialog: this.dialog,
+      callServer: async (info, action, args) => await DistributionMap.updateFamiliesBasedOnMap(info, action, args),
+      buildActionInfo: async (actionWhere) => {
+        return {
+          count: this.selectedDeliveries.length,
+          actionRowsFilterInfo: this.selectedDeliveries.map(x => x.id)
+        };
+      },
+      groupName: 'משלוחים'
+    };
+  }
 
-    ...buildGridButtonFromActions(familyActionsForDelivery(), this.context,
-      {
-        afterAction: async () => await this.refreshDeliveries(),
-        dialog: this.dialog,
-        callServer: async (info, action, args) => await DistributionMap.updateFamiliesBasedOnMap(info, action, args),
-        buildActionInfo: async actionWhere => {
+  private buttonDeliveryHelper(): import("c:/Repos/hug-moms/src/app/families/familyActionsWiring").actionDialogNeeds<ActiveFamilyDeliveries> {
+    return {
+      afterAction: async () => await this.refreshDeliveries(),
+      dialog: this.dialog,
+      callServer: async (info, action, args) => await DistributionMap.updateDeliveriesBasedOnMap(info, action, args),
+      buildActionInfo: async (actionWhere) => {
+        return {
+          count: this.selectedDeliveries.length,
+          actionRowsFilterInfo: this.selectedDeliveries.map(x => x.id)
+        };
+      },
+      groupName: 'משלוחים'
+    };
+  }
 
-          return {
-            count: this.selectedDeliveries.length,
-            actionRowsFilterInfo: this.selectedDeliveries.map(x => x.id)
-          };
-        },
-        groupName: 'משלוחים'
-      })];
   hasVisibleButtons() {
     return this.buttons.find(x => !x.visible || x.visible());
   }
 
   destroyHelper = new DestroyHelper();
   ngOnDestroy(): void {
-      this.destroyHelper.destroy();
+    this.destroyHelper.destroy();
   }
   static route: Route = {
     path: 'addresses',

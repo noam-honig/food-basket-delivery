@@ -29,7 +29,7 @@ class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
         });
     }
 }
-class FreezeDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
+export class FreezeDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
 
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
@@ -44,7 +44,7 @@ class FreezeDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
         });
     }
 }
-class UnfreezeDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
+export class UnfreezeDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
 
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
@@ -109,7 +109,7 @@ class UpdateQuantity extends ActionOnRows<ActiveFamilyDeliveries> {
     }
 }
 
-class UpdateDistributionCenter extends ActionOnRows<ActiveFamilyDeliveries> {
+export class UpdateDistributionCenter extends ActionOnRows<ActiveFamilyDeliveries> {
     distributionCenter = new DistributionCenterId(this.context);
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
@@ -135,7 +135,7 @@ class CancelAsignment extends ActionOnRows<ActiveFamilyDeliveries> {
         });
     }
 }
-class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
+export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
     useExistingBasket = new BoolColumn({ caption: 'השתמש בסוג הסל המוגדר במשלוח הנוכחי', defaultValue: true });
     basketType = new BasketId(this.context);
     quantity = new QuantityColumn();

@@ -71,7 +71,7 @@ class NewDelivery extends ActionOnRows<Families> {
 }
 const addGroupAction = ' להוסיף ';
 const replaceGroupAction = ' להחליף ';
-class updateGroup extends ActionOnRows<Families> {
+export class updateGroup extends ActionOnRows<Families> {
 
     group = new StringColumn({
         caption: 'שיוך לקבוצה',
@@ -131,7 +131,7 @@ class UpdateBasketType extends ActionOnRows<Families> {
         });
     }
 }
-class UpdateArea extends ActionOnRows<Families> {
+export class UpdateArea extends ActionOnRows<Families> {
     area = new StringColumn('אזור');
     constructor(context: Context) {
         super(context, Families, {
