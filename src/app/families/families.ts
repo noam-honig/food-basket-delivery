@@ -64,8 +64,9 @@ export class Families extends IdEntity {
       })
     });
   }
-  async showNewDeliveryDialog(dialog: DialogService, copyFrom?: FamilyDeliveries) {
+  async showNewDeliveryDialog(dialog: DialogService, copyFrom?: FamilyDeliveries, aDeliveryWasAdded?: () => void) {
     let newDelivery = this.createDelivery(dialog.distCenter.value);
+    let arciveCurrentDelivery = new BoolColumn({ caption: 'העבר משלוח נוכחי לארכיב?', defaultValue: true });
     if (copyFrom != undefined) {
       newDelivery.copyFrom(copyFrom);
 
@@ -82,6 +83,9 @@ export class Families extends IdEntity {
             if (dialog.hasManyCenters)
               r.push(newDelivery.distributionCenter);
             r.push(newDelivery.courier);
+            if (copyFrom != null && DeliveryStatus.IsAResultStatus(copyFrom.deliverStatus.value)) {
+              r.push(arciveCurrentDelivery);
+            }
             return r;
           }
         },
@@ -106,6 +110,12 @@ export class Families extends IdEntity {
             distCenter: newDelivery.distributionCenter.value
 
           });
+          if (copyFrom != null && DeliveryStatus.IsAResultStatus(copyFrom.deliverStatus.value)) {
+            copyFrom.archive.value = true;
+            await copyFrom.save();
+          }
+          if (aDeliveryWasAdded)
+            aDeliveryWasAdded();
           dialog.Info("משלוח נוצר בהצלחה");
         }
         , cancel: () => { }

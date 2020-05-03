@@ -26,7 +26,7 @@ import { async } from '@angular/core/testing';
   templateUrl: './family-deliveries.component.html',
   styleUrls: ['./family-deliveries.component.scss']
 })
-export class FamilyDeliveriesComponent implements OnInit,OnDestroy {
+export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   static route: Route = {
     path: 'deliveries',
     component: FamilyDeliveriesComponent,
@@ -377,7 +377,7 @@ export class FamilyDeliveriesComponent implements OnInit,OnDestroy {
   }
   destroyHelper = new DestroyHelper();
   ngOnDestroy(): void {
-      this.destroyHelper.destroy();
+    this.destroyHelper.destroy();
   }
 
   deliveries = this.context.for(ActiveFamilyDeliveries).gridSettings({
@@ -535,7 +535,7 @@ export class FamilyDeliveriesComponent implements OnInit,OnDestroy {
         name: 'משלוח חדש על בסיס משלוח זה',
         click: async d => {
           let f = await this.context.for(Families).findId(d.family);
-          await f.showNewDeliveryDialog(this.dialog, d);
+          await f.showNewDeliveryDialog(this.dialog, d, () =>  this.refresh() );
         },
         visible: d => DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && this.context.isAllowed(Roles.admin)
       },

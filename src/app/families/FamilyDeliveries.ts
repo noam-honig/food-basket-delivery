@@ -35,6 +35,7 @@ export class FamilyDeliveries extends IdEntity {
                     )
                 ));
     }
+    
     family = new FamilyId({
         allowApiUpdate: false
     });
