@@ -201,6 +201,7 @@ export class OverviewComponent implements OnInit {
           if (!r.ok)
             throw r.errorText;
             window.open(location.href = '/' + id.value,'_blank');
+            this.ngOnInit();
         }
         catch (err) {
           this.dialog.Error(err);
