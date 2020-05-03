@@ -342,7 +342,7 @@ export class FamiliesComponent implements OnInit {
                 families.phone3Description,
                 families.phone4,
                 families.phone4Description,
-                families.fixedCourier,
+                
                 {
                     caption: 'טלפון מתנדב',
                     getValue: f => this.context.for(Helpers).lookup(f.courier).phone.value
