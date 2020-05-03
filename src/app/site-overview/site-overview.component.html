@@ -1,0 +1,21 @@
+<h3 matDialogHeader>{{args.site.name}}</h3>
+<ul>
+    <li *ngFor="let i of args.statistics">
+        {{i.caption}} - {{args.site.stats[i.caption]}}
+    </li>
+</ul>
+
+
+
+<mat-dialog-actions>
+
+
+    <button type="button" mat-raised-button color="warning" (click)="this.dialogRef.close()">
+        סגור
+    </button>
+
+    <button mat-raised-button color="accent" (click)="openSite()">
+        עבור לאתר
+    </button>
+
+</mat-dialog-actions>

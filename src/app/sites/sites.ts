@@ -128,11 +128,10 @@ export function validSchemaName(x: string) {
 export class SchemaIdColumn extends StringColumn {
     constructor() {
         super({
-            caption: 'מזהה הסביבה', valueChange: () => {
-                let x = validSchemaName(this.value);
-                if (x != this.value)
-                    this.value = x;
-            }
+            caption: 'מזהה הסביבה'
         })
     }
+    // __processValue(value: string) {
+    //     return validSchemaName(value);
+    // }
 }

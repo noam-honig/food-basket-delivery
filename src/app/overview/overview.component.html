@@ -4,12 +4,29 @@
             {{i.caption}} - {{i.value}}
         </li>
     </ul>
-    <button mat-raised-button (click)="createNewSchema()">הוסף סביבה</button>
+    <div style="display:flex;justify-content: space-between">
+        <div>
+            <mat-form-field>
+                <input matInput [(ngModel)]="searchString" placeholder="{{'חיפוש סביבה'|translate}}"
+                    [ngModelOptions]="{standalone: true}">
+                <mat-icon matSuffix (click)="searchString=''">clear</mat-icon>
+            </mat-form-field>
+            <br>
+
+
+        </div>
+        <div>
+            <button mat-raised-button color="primary"
+                (click)="createNewSchema()">{{'הוסף סביבה חדשה'|translate}}</button>
+        </div>
+    </div>
     <div class="site-container" [transition-group]="'flip-list'">
-        <mat-card *ngFor="let site of overview.sites" class="site" transition-group-item>
-            <span *ngIf="sortBy">{{site.stats[sortBy]}}</span>
-            <a href="/{{site.site}}"><img src="{{site.logo}}"></a>
-            {{site.name}}
-        </mat-card>
+        <ng-container *ngFor="let site of overview.sites">
+            <mat-card *ngIf="showSite(site)" class="site" transition-group-item>
+                <span *ngIf="sortBy">{{site.stats[sortBy]}}</span>
+                <a (click)="showSiteInfo(site)"><img src="{{site.logo}}"></a>
+                {{site.name}}
+            </mat-card>
+        </ng-container>
     </div>
 </ng-container>

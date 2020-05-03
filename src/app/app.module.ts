@@ -76,6 +76,7 @@ import { TokenReplacerComponent } from './token-replacer/token-replacer.componen
 import { TestMapComponent } from './test-map/test-map.component';
 import { FamilyDeliveriesComponent } from './family-deliveries/family-deliveries.component';
 import { GridDialogComponent } from './grid-dialog/grid-dialog.component';
+import { SiteOverviewComponent } from './site-overview/site-overview.component';
 
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref();
@@ -136,7 +137,8 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     TokenReplacerComponent,
     TestMapComponent,
     FamilyDeliveriesComponent,
-    GridDialogComponent
+    GridDialogComponent,
+    SiteOverviewComponent
 
   ],
   imports: [
@@ -193,6 +195,7 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     UpdateFamilyDialogComponent, PreviewFamilyComponent,
     SelectCompanyComponent,
     HelperAssignmentComponent,
+    SiteOverviewComponent,
     UpdateCommentComponent, UpdateGroupDialogComponent]
 })
 export class AppModule { }

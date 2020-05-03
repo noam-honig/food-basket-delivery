@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Context, ServerFunction, DateColumn, Entity, SqlDatabase, StringColumn, ServerContext } from '@remult/core';
 import { Roles } from '../auth/roles';
-import { Sites, SchemaIdColumn } from '../sites/sites';
+import { Sites, SchemaIdColumn, validSchemaName } from '../sites/sites';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 import { SqlBuilder } from '../model-shared/types';
@@ -10,6 +10,7 @@ import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { DialogService, extractError } from '../select-popup/dialog';
 import { Helpers } from '../helpers/helpers';
+import { SiteOverviewComponent } from '../site-overview/site-overview.component';
 
 @Component({
   selector: 'app-overview',
@@ -24,6 +25,13 @@ export class OverviewComponent implements OnInit {
   async ngOnInit() {
     this.overview = await OverviewComponent.getOverview();
 
+  }
+  searchString = '';
+  showSite(s: siteItem) {
+    return !this.searchString || s.name.includes(this.searchString);
+  }
+  showSiteInfo(s: siteItem) {
+    this.context.openDialog(SiteOverviewComponent, x => x.args = { site: s, statistics: this.overview.statistics });
   }
   doSort(s: dateRange) {
     this.sortBy = s.caption;
@@ -173,12 +181,20 @@ export class OverviewComponent implements OnInit {
         columnSettings: () => [id, name]
       },
       validate: async () => {
-
+        let x = validSchemaName(id.value);
+        if (x != id.value) {
+          if (await this.dialog.YesNoPromise('המזהה כלל תוים לא חוקיים שהוסרו, האם להמשיך עם המזהה "' + x + '"')) {
+            id.value = x;
+          } else
+            return;
+        }
+        id.value = validSchemaName(id.value);
         let r = await OverviewComponent.validateNewSchema(id.value);
         if (r) {
           throw r;
         }
       },
+      cancel: () => { },
       ok: async () => {
         try {
           let r = await OverviewComponent.createSchema(id.value, name.value);
@@ -206,6 +222,8 @@ export class OverviewComponent implements OnInit {
       }
     }
     try {
+      if (!name || name.length == 0)
+        name = id;
       let oh = await context.for(Helpers).findId(context.user.id);
       let db = await OverviewComponent.createDbSchema(id);
       let otherContext = new ServerContext(db);
@@ -216,18 +234,18 @@ export class OverviewComponent implements OnInit {
       h.phone.value = oh.phone.value;
       h.admin.value = oh.admin.value;
       await h.save();
-      let settings = await ApplicationSettings.get(otherContext);
-      if (name) {
-        settings.organisationName.value = name;
-        await settings.save();
-      }
+      let settings = await ApplicationSettings.getAsync(otherContext);
+
+      settings.organisationName.value = name;
+      await settings.save();
+
       let s = context.for(Sites).create();
       s.id.value = id;
       await s.save();
 
 
 
-      
+
       await OverviewComponent.createSchemaApi(id);
       Sites.addSchema(id);
       return { ok: true, errorText: '' }
@@ -238,7 +256,7 @@ export class OverviewComponent implements OnInit {
   }
   static createDbSchema = async (id: string): Promise<SqlDatabase> => { return undefined };
   static createSchemaApi = async (id: string) => { };
-  
+
   @ServerFunction({ allowed: Roles.overview })
   static async validateNewSchema(id: string, context?: Context) {
     let x = await context.for(Sites).lookupAsync(x => x.id.isEqualTo(id));
@@ -253,7 +271,7 @@ export class OverviewComponent implements OnInit {
 
 }
 
-interface siteItem {
+export interface siteItem {
   site: string;
   name: string;
   logo: string;
@@ -266,7 +284,7 @@ interface overviewResult {
   sites: siteItem[];
 }
 
-interface dateRange {
+export interface dateRange {
   caption: string;
   value: number;
   from: Date;
