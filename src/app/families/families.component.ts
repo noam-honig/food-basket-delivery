@@ -403,7 +403,7 @@ export class FamiliesComponent implements OnInit {
                         };
                     },
                     groupName: 'משפחות'
-                }),
+                })
             , {
                 name: 'יצוא לאקסל',
                 click: () => this.saveToExcel(),
