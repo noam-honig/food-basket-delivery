@@ -36,7 +36,9 @@ class FreezeDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
             allowed: Roles.admin,
             columns: () => [],
             title: 'הקפא משלוחים',
-            help:()=> 'ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח',
+            help:()=> `משלוח "קפוא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח.
+            ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח.
+            `,
             forEach: async f => { f.deliverStatus.value = DeliveryStatus.Frozen; },
             additionalWhere: f => f.readyFilter()
         });

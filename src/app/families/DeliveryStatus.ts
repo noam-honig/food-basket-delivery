@@ -19,14 +19,14 @@ export class DeliveryStatus {
   static ReadyForDelivery: DeliveryStatus = new DeliveryStatus(0, 'מוכן למשלוח');
   static SelfPickup: DeliveryStatus = new DeliveryStatus(2, 'באים לקחת');
   static Frozen: DeliveryStatus = new DeliveryStatus(9, 'מוקפא');
-  
+
   static Success: DeliveryStatus = new DeliveryStatus(11, 'נמסר בהצלחה');
   static SuccessPickedUp: DeliveryStatus = new DeliveryStatus(13, 'לקחו בעצמם');
   static SuccessLeftThere: DeliveryStatus = new DeliveryStatus(19, 'הושאר ליד הבית');
   static FailedBadAddress: DeliveryStatus = new DeliveryStatus(21, 'לא נמסר, בעיה בכתובת');
   static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, 'לא נמסר, לא היו בבית');
   static FailedOther: DeliveryStatus = new DeliveryStatus(25, 'לא נמסר, אחר');
-  
+
 
 
   constructor(public id: number, public caption: string) {
@@ -35,16 +35,16 @@ export class DeliveryStatus {
 }
 export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
   isNotAResultStatus(): FilterBase {
-      return this.isLessOrEqualTo(DeliveryStatus.Frozen);
+    return this.isLessOrEqualTo(DeliveryStatus.Frozen);
   }
   isActiveDelivery() {
     return this.isLessOrEqualTo(DeliveryStatus.FailedOther);
   }
-  
+
   isAResultStatus() {
     return this.isGreaterOrEqualTo(DeliveryStatus.Success).and(this.isLessOrEqualTo(DeliveryStatus.FailedOther));
   }
-  readyAndSelfPickup(courier:HelperId) {
+  readyAndSelfPickup(courier: HelperId) {
     let where = this.isGreaterOrEqualTo(DeliveryStatus.ReadyForDelivery).and(this.isLessOrEqualTo(DeliveryStatus.SelfPickup)).and(
       courier.isEqualTo(''));
     return where;
@@ -91,6 +91,8 @@ export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
       case DeliveryStatus.FailedNotHome:
       case DeliveryStatus.FailedOther:
         return 'deliveredProblem';
+      case DeliveryStatus.Frozen:
+        return 'forzen';
       default:
         return '';
     }
