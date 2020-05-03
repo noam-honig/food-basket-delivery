@@ -48,7 +48,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 export class AsignFamilyComponent implements OnInit, OnDestroy {
     static route: Route = {
         path: 'assign-families', component: AsignFamilyComponent, canActivate: [distCenterAdminGuard], data: {
-            name: 'שיוך משפחות'
+            name: 'שיוך משלוחים למתנדב'
         }
     };
     @ViewChild("phoneInput", { static: false }) phoneInput: ElementRef;

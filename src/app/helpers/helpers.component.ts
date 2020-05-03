@@ -104,7 +104,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
         }
       },
       {
-        name: 'שיוך משפחות',
+        name: 'שיוך משלוחים',
         visible: h => !h.isNew(),
         click: async h =>
           this.context.openDialog(
