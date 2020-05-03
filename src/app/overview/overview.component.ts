@@ -200,7 +200,7 @@ export class OverviewComponent implements OnInit {
           let r = await OverviewComponent.createSchema(id.value, name.value);
           if (!r.ok)
             throw r.errorText;
-          location.href = '/' + id.value;
+            window.open(location.href = '/' + id.value,'_blank');
         }
         catch (err) {
           this.dialog.Error(err);
