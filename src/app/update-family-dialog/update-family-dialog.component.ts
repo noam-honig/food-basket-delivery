@@ -164,9 +164,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
             return Math.round((new Date().valueOf() - f.birthDate.value.valueOf()) / (365 * 86400000))
           }
         }],
-        families.iDinExcel,
-        families.defaultSelfPickup,
-        families.fixedCourier
+        families.iDinExcel
       ]
     });
     this.familiesAddress = this.families.addArea({
