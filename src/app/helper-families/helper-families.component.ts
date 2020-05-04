@@ -178,11 +178,13 @@ export class HelperFamiliesComponent implements OnInit {
   }
   smsMessage: string = '';
   smsPhone: string = '';
+  smsLink: string = '';
   prepareMessage() {
     this.busy.donotWait(async () => {
-      await SendSmsAction.generateMessage(this.context, this.familyLists.helper, window.origin, false, this.context.user.name, (phone, message, sender) => {
+      await SendSmsAction.generateMessage(this.context, this.familyLists.helper, window.origin, false, this.context.user.name, (phone, message, sender, link) => {
         this.smsMessage = message;
         this.smsPhone = phone;
+        this.smsLink = link;
       });
     });
   }
@@ -208,6 +210,11 @@ export class HelperFamiliesComponent implements OnInit {
   async copyMessage() {
     copy(this.smsMessage);
     this.dialog.Info("הודעה הועתקה");
+    await this.updateMessageSent();
+  }
+  async copyLink() {
+    copy(this.smsLink);
+    this.dialog.Info("קישור הועתק");
     await this.updateMessageSent();
   }
 

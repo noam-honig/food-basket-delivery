@@ -33,7 +33,7 @@ export class SendSmsAction {
 
 
 
-    static async  generateMessage(ds: Context, helper: Helpers, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string, sender: string) => void) {
+    static async  generateMessage(ds: Context, helper: Helpers, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string, sender: string, url: string) => void) {
 
         if (!origin) {
             throw 'Couldnt determine origin for sms';
@@ -60,14 +60,15 @@ export class SendSmsAction {
                     message = 'שלום !מתנדב! לחלוקת חבילות !ארגון! לחץ על: !אתר! תודה !שולח!';
                 }
             }
-            message = SendSmsAction.getMessage(message, settings.organisationName.value, helper.name.value, senderName, origin + '/x/' + helper.shortUrlKey.value);
+            let url = origin + '/x/' + helper.shortUrlKey.value;
+            message = SendSmsAction.getMessage(message, settings.organisationName.value, helper.name.value, senderName, url);
             let sender = settings.helpPhone.value;
             if (!sender || sender.length < 3) {
                 let currentUser = await (ds.for(Helpers).findFirst(h => h.id.isEqualTo(ds.user.id)));
                 sender = currentUser.phone.value;
             }
 
-            then(helper.phone.value, message, sender);
+            then(helper.phone.value, message, sender, url);
             await helper.save();
             var x = 1 + 1;
 
