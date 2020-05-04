@@ -431,7 +431,7 @@ export class FamiliesComponent implements OnInit {
             }
             ,
             {
-                name: 'משלוחים קודמים',
+                name: 'משלוחים למשפחה',
                 click: async f => {
                     f.showDeliveryHistoryDialog();
                 }

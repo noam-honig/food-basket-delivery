@@ -521,7 +521,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       {
         name: 'יצוא לאקסל',
         click: async () => {
-          await saveToExcel(this.context.for(ActiveFamilyDeliveries), this.deliveries, "משלוחים", this.busy, (d: ActiveFamilyDeliveries, c) => c == d.id || c == d.family );
+          await saveToExcel(this.context.for(ActiveFamilyDeliveries), this.deliveries, "משלוחים", this.busy, (d: ActiveFamilyDeliveries, c) => c == d.id || c == d.family);
         }
         , visible: () => this.context.isAllowed(Roles.admin)
       }
@@ -540,12 +540,12 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         , textInMenu: () => 'כרטיס משלוח'
       },
       {
-        name: 'משלוח חדש על בסיס משלוח זה',
+        name: 'משלוח חדש',
         click: async d => {
           let f = await this.context.for(Families).findId(d.family);
-          await f.showNewDeliveryDialog(this.dialog, d, () =>  this.refresh() );
+          await f.showNewDeliveryDialog(this.dialog, d, () => this.refresh());
         },
-        visible: d => DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && this.context.isAllowed(Roles.admin)
+        visible: d => this.context.isAllowed(Roles.admin)
       },
       {
         name: 'בטל שיוך',
@@ -558,6 +558,36 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           }
         },
         visible: d => d.deliverStatus.value == DeliveryStatus.ReadyForDelivery && d.courier.value != ''
+      },
+      {
+        name: 'משלוחים למשפחה',
+        click: async fd => {
+          let f = await this.context.for(Families).findId(fd.family);
+          f.showDeliveryHistoryDialog();
+        }
+        , visible: f => !f.isNew()
+      },
+      {
+        name: 'הקפא משלוח',
+        click: async d => {
+          if (await this.dialog.YesNoPromise(`משלוח "קפוא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל` + d.name.value+"?")) {
+            {
+              d.deliverStatus.value = DeliveryStatus.Frozen;
+              await d.save();
+            }
+          }
+        },
+        visible: d => d.deliverStatus.value == DeliveryStatus.ReadyForDelivery
+      },
+      {
+        name: 'הפשר משלוח',
+        click: async d => {
+          {
+            d.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
+            await d.save();
+          }
+        },
+        visible: d => d.deliverStatus.value == DeliveryStatus.Frozen
       },
       {
         name: 'מחק משלוח',
