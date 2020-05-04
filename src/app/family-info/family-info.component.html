@@ -3,7 +3,7 @@
     <h4>{{f.deliverStatus.displayValue}}</h4>
     {{f.deliveryStatusDate.displayValue}}
     <div *ngIf="f.courierComments.value">
-      <h5 style="display:inline">הערת משנע</h5> - {{f.courierComments.value}}
+      <h5 style="display:inline">הערת מתנדב</h5> - {{f.courierComments.value}}
 
     </div>
   </div>
@@ -134,7 +134,4 @@
 </div>
 <div class="button-area">
   <ng-content></ng-content>
-  <div class="help" *ngIf="actuallyShowHelp()">
-    צריך עזרה? התקשר ל{{f.courierHelpName()}}
-    <a href="tel:{{f.courierHelpPhone()}}">{{f.courierHelpPhone()}} </a> </div>
 </div>

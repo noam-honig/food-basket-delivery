@@ -1,11 +1,12 @@
 /// <reference types="@types/googlemaps" />
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import { Families } from '../families/families';
+
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { DistributionMap, infoOnMap } from '../distribution-map/distribution-map.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Context } from '@remult/core';
 import { BusyService } from '@remult/core';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 
 //import 'googlemaps';
 
@@ -15,9 +16,9 @@ import { BusyService } from '@remult/core';
     styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit,OnDestroy {
-    async loadPotentialAsigment(city: string, group: string, distCenter: string) {
+    async loadPotentialAsigment(city: string, group: string, distCenter: string, area: string) {
         await this.initMap();
-        let families = await DistributionMap.GetFamiliesLocations(true, city, group,distCenter);
+        let families = await DistributionMap.GetDeliveriesLocation(true, city, group, distCenter, area);
         let closeBusy = this.busy.showBusy();
         try {
             console.time('load families to map');
@@ -84,7 +85,6 @@ export class MapComponent implements OnInit,OnDestroy {
     }
     ngOnDestroy(): void {
         this.clear();
-        console.log('destroy map');
     }
     private mediaMatcher: MediaQueryList = matchMedia('print');
     async ngOnInit() {
@@ -127,8 +127,8 @@ export class MapComponent implements OnInit,OnDestroy {
     hasFamilies = false;
     bounds: google.maps.LatLngBounds = new google.maps.LatLngBounds();
     lastBounds: string;
-    prevFamilies: Families[] = [];
-    async test(families: Families[]) {
+    prevFamilies: ActiveFamilyDeliveries[] = [];
+    async test(families: ActiveFamilyDeliveries[]) {
         var prevFamilies = this.prevFamilies;
         this.prevFamilies = [...families];
         this.hasFamilies = families.length > 0;
@@ -152,8 +152,8 @@ export class MapComponent implements OnInit,OnDestroy {
             } catch (err) {
                 console.log(err, marker);
             }
-            
-            marker.setLabel(f.name.value + (f.isGpsAddress()?'': " - " + f.address.value) + '....');
+
+            marker.setLabel(f.name.value + (f.isGpsAddress() ? '' : " - " + f.address.value) + '....');
 
             switch (f.deliverStatus.value) {
                 case DeliveryStatus.ReadyForDelivery:

@@ -4,7 +4,7 @@ import { HasAsyncGetTheValue } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { HelperUserInfo } from "../helpers/helpers";
 import { ApplicationSettings } from "./ApplicationSettings";
-import { Families } from "../families/families";
+
 
 
 @EntityClass
@@ -24,13 +24,14 @@ export class DistributionCenters extends IdEntity {
     return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
   }
 
+
   constructor(context: Context) {
     super({
       name: "DistributionCenters",
       allowApiRead: context.isSignedIn(),
       allowApiInsert: Roles.admin,
-      allowApiUpdate: Roles.distCenterAdmin,
-      apiDataFilter: () => filterCenterAllowedForUser(this.id, context),
+      allowApiUpdate: Roles.admin,
+      
 
       savingRow: async () => {
         if (context.onServer) {
@@ -46,6 +47,7 @@ export class DistributionCenters extends IdEntity {
   }
 
 }
+export const allCentersToken = '<allCenters>';
 export function filterCenterAllowedForUser(center: IdColumn, context: Context) {
   if (context.isAllowed(Roles.admin)) {
     return undefined;
@@ -54,8 +56,9 @@ export function filterCenterAllowedForUser(center: IdColumn, context: Context) {
 }
 
 export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValue {
+
   filter(distCenter: string): import("@remult/core").FilterBase {
-    if (distCenter != Families.allCentersToken)
+    if (distCenter != allCentersToken)
       return new AndFilter(this.isAllowedForUser(), this.isEqualTo(distCenter));
     return this.isAllowedForUser();
   }
@@ -63,9 +66,16 @@ export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValu
     return filterCenterAllowedForUser(this, this.context);
 
   }
+  checkAllowedForUser() {
+    if (this.context.isAllowed(Roles.admin)) {
+      return true;
+    } else if (this.context.isAllowed(Roles.distCenterAdmin))
+      return (<HelperUserInfo>this.context.user).distributionCenter == this.value;
+    return false;
+  }
   async getRouteStartGeo() {
     let d = await this.context.for(DistributionCenters).lookupAsync(this);
-    if (d.addressApiResult.value && d.address.value&&d.getGeocodeInformation().ok())
+    if (d.addressApiResult.value && d.address.value && d.getGeocodeInformation().ok())
       return d.getGeocodeInformation();
     return (await ApplicationSettings.getAsync(this.context)).getGeocodeInformation();
   }
@@ -80,7 +90,7 @@ export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValu
             }
           }).then(x => {
             if (showAllOption)
-              x.splice(0, 0, { caption: 'כל הנקודות', id: Families.allCentersToken })
+              x.splice(0, 0, { caption: 'כל הרשימות', id: allCentersToken })
             return x;
           })
           , width: '150'
@@ -88,7 +98,7 @@ export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValu
       defaultValue: context.user ? (<HelperUserInfo>context.user).distributionCenter : ''
     });
     if (!this.defs.caption)
-      this.defs.caption = 'נקודת חלוקה';
+      this.defs.caption = 'רשימת חלוקה';
   }
   get displayValue() {
     return this.context.for(DistributionCenters).lookup(this).name.value;

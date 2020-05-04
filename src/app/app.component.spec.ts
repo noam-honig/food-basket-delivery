@@ -2,19 +2,25 @@ import { TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 
-import { ServerContext } from '@remult/core';
+import { ServerContext, EntityClass, IdEntity, StringColumn, NumberColumn, Context } from '@remult/core';
 import { SqlBuilder, QueryBuilder } from './model-shared/types';
 import { WebDriverProxy } from 'blocking-proxy/built/lib/webdriver_proxy';
 import { parseAddress, Families, parseUrlInAddress } from './families/families';
 import { BasketType } from './families/BasketType';
 import { fixPhone } from './import-from-excel/import-from-excel.component';
+import { ActiveFamilyDeliveries, FamilyDeliveries } from './families/FamilyDeliveries';
+import { validSchemaName } from './sites/sites';
 
 describe('AppComponent', () => {
   var context = new ServerContext();
   var bt = context.for(BasketType).create();
   var f = context.for(Families).create();
   var sql = new SqlBuilder();
+  let afd = context.for(ActiveFamilyDeliveries).create();
+  let fd = context.for(FamilyDeliveries).create();
   sql.addEntity(bt, 'p');
+  sql.addEntity(afd, 'fd');
+  sql.addEntity(fd, 'h');
   var q = (query: QueryBuilder, expectresult: String) => {
     expect(sql.query(query)).toBe(expectresult);
   };
@@ -27,6 +33,33 @@ describe('AppComponent', () => {
       from: bt,
       orderBy: [bt.id]
     }, 'select p.id from BasketType p order by p.id');
+  });
+  it('fixed filter', () => {
+
+    q({
+      select: () => [afd.id],
+      from: afd
+    }, 'select fd.id from FamilyDeliveries fd where archive = false');
+  });
+  it('fixed filter 2', () => {
+    expect(sql.columnInnerSelect(afd, {
+      select: () => [sql.columnWithAlias(afd.deliverStatus, 's')],
+      from: afd,
+
+      where: () => [sql.eq(afd.family, '123'),
+      ],
+      orderBy: [{ column: afd.deliveryStatusDate, descending: true }]
+    })).toBe('(select FamilyDeliveries.deliverStatus s from FamilyDeliveries FamilyDeliveries where FamilyDeliveries.family = 123 and archive = false order by FamilyDeliveries.deliveryStatusDate desc limit 1)');
+  });
+  it('fixed filter 3', () => {
+    expect(sql.columnInnerSelect(fd, {
+      select: () => [sql.columnWithAlias(fd.deliverStatus, 's')],
+      from: fd,
+
+      where: () => [sql.eq(fd.family, '123'),
+      ],
+      orderBy: [{ column: fd.deliveryStatusDate, descending: true }]
+    })).toBe('(select FamilyDeliveries.deliverStatus s from FamilyDeliveries FamilyDeliveries where FamilyDeliveries.family = 123 order by FamilyDeliveries.deliveryStatusDate desc limit 1)');
   });
   it('Where', () => {
     q({
@@ -145,6 +178,16 @@ describe('AppComponent', () => {
     expect(parseUrlInAddress("נועם")).toBe("נועם");
 
   });
+  it("test schema name", () => {
+    expect(validSchemaName("abc")).toBe("abc");
+    expect(validSchemaName("1abc")).toBe("abc");
+    expect(validSchemaName("abc#")).toBe("abc");
+    expect(validSchemaName("a#b#c#")).toBe("abc");
+    expect(validSchemaName("ABC")).toBe("abc");
+    expect(validSchemaName("abc1")).toBe("abc1");
+    expect(validSchemaName("abc-")).toBe("abc");
+  });
 
 });
+
 

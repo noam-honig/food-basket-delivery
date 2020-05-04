@@ -4,9 +4,9 @@ import { Families } from '../families/families';
 import { Roles } from '../auth/roles';
 import { PromiseThrottle } from '../import-from-excel/import-from-excel.component';
 import { DialogService } from '../select-popup/dialog';
-import { DistributionCenterId } from '../manage/distribution-centers';
+import { DistributionCenterId, allCentersToken } from '../manage/distribution-centers';
 import { GeocodeInformation } from '../shared/googleApiHelpers';
-import { extractError } from '../model-shared/types';
+
 
 @Component({
   selector: 'app-geocode',
@@ -19,7 +19,7 @@ export class GeocodeComponent implements OnInit {
   }, true);
   distCenterArea = new DataAreaSettings({ columnSettings: () => [this.distCenter] });
   constructor(private context: Context, private dialog: DialogService) {
-    this.distCenter.value = Families.allCentersToken;
+    this.distCenter.value = allCentersToken;
   }
   families = 0;
   async ngOnInit() {
@@ -44,7 +44,7 @@ export class GeocodeComponent implements OnInit {
       }
       this.dialog.Info('זהו נגמר');
     } catch (err) {
-      this.dialog.Error(extractError(err));
+      this.dialog.Error(err);
     }
 
   }
@@ -63,5 +63,5 @@ export class GeocodeComponent implements OnInit {
 }
 
 function filterBadGeocoding(f: Families, distCenter: string) {
-  return f.address.isDifferentFrom('').and(f.addressApiResult.isEqualTo(new GeocodeInformation().saveToString()).and(f.filterDistCenter(distCenter)));
+  return f.address.isDifferentFrom('').and(f.addressApiResult.isEqualTo(new GeocodeInformation().saveToString()));
 }

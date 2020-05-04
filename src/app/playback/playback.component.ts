@@ -3,9 +3,9 @@ import { infoOnMap, statusClass, Statuses } from '../distribution-map/distributi
 import * as chart from 'chart.js';
 import { ServerFunction, Context,  DateTimeColumn, SqlDatabase } from '@remult/core';
 import { Roles } from '../auth/roles';
-import { Families } from '../families/families';
 import { SqlBuilder } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 
 @Component({
   selector: 'app-playback',
@@ -205,7 +205,7 @@ export class PlaybackComponent implements OnInit {
 
   @ServerFunction({ allowed: Roles.admin })
   static async GetTimeline(context?: Context, db?: SqlDatabase) {
-    let f = context.for( Families).create();
+    let f = context.for( ActiveFamilyDeliveries).create();
 
     let sql = new SqlBuilder();
     sql.addEntity(f, "Families");

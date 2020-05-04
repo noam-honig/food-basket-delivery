@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { NewsUpdate } from "./NewsUpdate";
+
 import { NewsFilter } from './news.component';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 @Injectable()
 export class NewsFilterService {
     setToNeedsWork() {
@@ -11,21 +12,21 @@ export class NewsFilterService {
     },
     {
         name: 'בעיות הצריכות טיפול',
-        where: f => f.deliverStatus.isProblem().and(f.updateType.isEqualTo(1)).and(f.needsWork.isEqualTo(true))
+        where: f => f.deliverStatus.isProblem().and(f.needsWork.isEqualTo(true))
     },
     {
         name: 'כל הצריך טיפול',
-        where: f => f.updateType.isEqualTo(1).and(f.needsWork.isEqualTo(true))
+        where: f => f.needsWork.isEqualTo(true)
     }, {
         name: 'בעיות',
-        where: f => f.deliverStatus.isProblem().and(f.updateType.isEqualTo(1))
+        where: f => f.deliverStatus.isProblem()
     }, {
         name: 'הערות',
-        where: f => f.courierComments.isDifferentFrom('').and(f.updateType.isEqualTo(1).and(f.deliverStatus.isAResultStatus()))
+        where: f => f.courierComments.isDifferentFrom('').and(f.deliverStatus.isAResultStatus())
     }];
     currentFilter: NewsFilter = this.filters[0];
     currentFamilySource: string = undefined;
-    where(n: NewsUpdate) {
+    where(n: ActiveFamilyDeliveries) {
         if (this.currentFamilySource) {
             if (this.currentFilter.where)
                 return n.familySource.isEqualTo(this.currentFamilySource).and(this.currentFilter.where(n));

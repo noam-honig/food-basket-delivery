@@ -11,13 +11,16 @@ import { Context, IdEntity, IdColumn, StringColumn, EntityClass, Entity, NumberC
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import { Families, iterateFamilies } from '../families/families';
+import { Families } from '../families/families';
 import { SqlBuilder } from '../model-shared/types';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DistributionCenters, DistributionCenterId } from './distribution-centers';
 
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { FamilyStatus, FamilyStatusColumn } from '../families/FamilyStatus';
+import { pagedRowsIterator } from '../families/familyActionsWiring';
 
 @Component({
   selector: 'app-manage',
@@ -337,7 +340,7 @@ export class ManageComponent implements OnInit {
     let codeWords = ["נועם", "יעל", "עופרי", "מעיין", "איתמר", "יוני", "ניצן"];
     let correctCodeWord = codeWords[Math.trunc(Math.random() * codeWords.length)];
     let doIt = false;
-    let count = await this.context.for(Families).count(f => f.deliverStatus.isEqualTo(DeliveryStatus.RemovedFromList));
+    let count = await this.context.for(Families).count(f => f.status.isEqualTo(FamilyStatus.RemovedFromList));
     if (!await this.dialog.YesNoPromise("האם אתה בטוח שאתה רוצה למחוק " + count + " משפחות?"))
       return;
     await this.context.openDialog(InputAreaComponent, x => {
@@ -357,11 +360,15 @@ export class ManageComponent implements OnInit {
   }
   @ServerFunction({ allowed: Roles.admin })
   static async deleteFamiliesOnServer(context?: Context) {
-    let count = await iterateFamilies(context,
-      f => f.deliverStatus.isEqualTo(DeliveryStatus.RemovedFromList),
-      async f => await f.delete());
+    let count = await pagedRowsIterator(context.for(Families),
+      {
+        where: f => f.status.isEqualTo(FamilyStatus.RemovedFromList),
+        forEachRow: async f => await f.delete(),
+        
+      });
     return count;
   }
+  
 
 
 }
@@ -389,7 +396,7 @@ export class GroupsStats extends Entity<string> {
       allowApiRead: Roles.distCenterAdmin,
       name: 'groupsStats',
       dbName: () => {
-        let f = context.for(Families).create();
+        let f = context.for(ActiveFamilyDeliveries).create();
         let g = context.for(Groups).create();
         let d = context.for(DistributionCenters).create();
         let sql = new SqlBuilder();

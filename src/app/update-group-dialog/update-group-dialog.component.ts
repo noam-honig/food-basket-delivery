@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { Context } from '@remult/core';
+import { Context, DialogConfig } from '@remult/core';
 import { Groups } from '../manage/manage.component';
 import { DialogService } from '../select-popup/dialog';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -10,6 +10,7 @@ import { GroupsColumn } from '../families/families';
   templateUrl: './update-group-dialog.component.html',
   styleUrls: ['./update-group-dialog.component.scss']
 })
+
 export class UpdateGroupDialogComponent implements OnInit {
 
   constructor(private context: Context, private dialog: DialogService,
@@ -32,6 +33,7 @@ export class UpdateGroupDialogComponent implements OnInit {
   async ngOnInit() {
     this.availableGroups = await this.context.for(Groups).find({limit:1000});
   }
+  
   groups = new GroupsColumn(this.context);
   selected(group: string) {
     return this.groups.selected(group);

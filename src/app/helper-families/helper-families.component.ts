@@ -3,7 +3,7 @@ import { BusyService } from '@remult/core';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';
-import { Families } from '../families/families';
+
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { AuthService } from '../auth/auth-service';
 import { DialogService } from '../select-popup/dialog';
@@ -17,6 +17,8 @@ import { translate } from '../translate';
 import { Helpers } from '../helpers/helpers';
 import { UpdateCommentComponent } from '../update-comment/update-comment.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { isGpsAddress } from '../shared/googleApiHelpers';
 
 @Component({
   selector: 'app-helper-families',
@@ -37,7 +39,7 @@ export class HelperFamiliesComponent implements OnInit {
     this.familyLists.setMap(this.map);//123
 
   }
-  async cancelAssign(f: Families) {
+  async cancelAssign(f: ActiveFamilyDeliveries) {
     this.dialog.analytics('Cancel Assign');
     f.courier.value = '';
     await f.save();
@@ -74,34 +76,34 @@ export class HelperFamiliesComponent implements OnInit {
   }
   get settings() { return ApplicationSettings.get(this.context); }
   allDoneMessage() { return ApplicationSettings.get(this.context).messageForDoneDelivery.value; };
-  async deliveredToFamily(f: Families) {
+  async deliveredToFamily(f: ActiveFamilyDeliveries) {
     this.deliveredToFamilyOk(f, DeliveryStatus.Success, s => s.commentForSuccessDelivery);
   }
-  async leftThere(f: Families) {
+  async leftThere(f: ActiveFamilyDeliveries) {
     this.deliveredToFamilyOk(f, DeliveryStatus.SuccessLeftThere, s => s.commentForSuccessLeft);
   }
-  async deliveredToFamilyOk(f: Families, status: DeliveryStatus, helpText: (s: ApplicationSettings) => Column<any>) {
+  async deliveredToFamilyOk(f: ActiveFamilyDeliveries, status: DeliveryStatus, helpText: (s: ApplicationSettings) => Column<any>) {
     this.context.openDialog(UpdateCommentComponent, x => x.args = {
       family: f,
       comment: f.courierComments.value,
-      assignerName: f.courierHelpName(),
-      assignerPhone: f.courierHelpPhone(),
       helpText,
       ok: async (comment) => {
-        f.deliverStatus.value = status;
-        f.courierComments.value = comment;
-        f.checkNeedsWork();
-        try {
-          await f.save();
-          this.dialog.analytics('delivered');
-          this.initFamilies();
-          if (this.familyLists.toDeliver.length == 0) {
-            this.dialog.messageDialog(this.allDoneMessage());
-          }
+        if (!f.isNew()) {
+          f.deliverStatus.value = status;
+          f.courierComments.value = comment;
+          f.checkNeedsWork();
+          try {
+            await f.save();
+            this.dialog.analytics('delivered');
+            this.initFamilies();
+            if (this.familyLists.toDeliver.length == 0) {
+              this.dialog.messageDialog(this.allDoneMessage());
+            }
 
-        }
-        catch (err) {
-          this.dialog.Error(err);
+          }
+          catch (err) {
+            this.dialog.Error(err);
+          }
         }
       },
       cancel: () => { }
@@ -115,7 +117,7 @@ export class HelperFamiliesComponent implements OnInit {
   showLeftFamilies() {
     return this.partOfAssign || this.partOfReview || this.familyLists.toDeliver.length > 0;
   }
-  async couldntDeliverToFamily(f: Families) {
+  async couldntDeliverToFamily(f: ActiveFamilyDeliveries) {
     let showUpdateFail = false;
     let q = this.settings.getQuestions();
     if (!q || q.length == 0) {
@@ -128,11 +130,12 @@ export class HelperFamiliesComponent implements OnInit {
         family: f,
         comment: f.courierComments.value,
         showFailStatus: true,
-        assignerName: f.courierHelpName(),
-        assignerPhone: f.courierHelpPhone(),
+
         helpText: s => s.commentForProblem,
 
         ok: async (comment, status) => {
+          if (f.isNew())
+            return;
           f.deliverStatus.value = status;
           f.courierComments.value = comment;
           f.checkNeedsWork();
@@ -175,11 +178,13 @@ export class HelperFamiliesComponent implements OnInit {
   }
   smsMessage: string = '';
   smsPhone: string = '';
+  smsLink: string = '';
   prepareMessage() {
     this.busy.donotWait(async () => {
-      await SendSmsAction.generateMessage(this.context, this.familyLists.helper.id.value, window.origin, false, this.context.user.name, (phone, message, sender) => {
+      await SendSmsAction.generateMessage(this.context, this.familyLists.helper, window.origin, false, this.context.user.name, (phone, message, sender, link) => {
         this.smsMessage = message;
         this.smsPhone = phone;
+        this.smsLink = link;
       });
     });
   }
@@ -207,15 +212,20 @@ export class HelperFamiliesComponent implements OnInit {
     this.dialog.Info("הודעה הועתקה");
     await this.updateMessageSent();
   }
+  async copyLink() {
+    copy(this.smsLink);
+    this.dialog.Info("קישור הועתק");
+    await this.updateMessageSent();
+  }
 
-  updateComment(f: Families) {
+  updateComment(f: ActiveFamilyDeliveries) {
     this.context.openDialog(UpdateCommentComponent, x => x.args = {
       family: f,
       comment: f.courierComments.value,
-      assignerName: f.courierHelpName(),
-      assignerPhone: f.courierHelpPhone(),
       helpText: s => s.commentForSuccessDelivery,
       ok: async comment => {
+        if (f.isNew())
+          return;
         f.courierComments.value = comment;
         f.checkNeedsWork();
         await f.save();
@@ -227,18 +237,18 @@ export class HelperFamiliesComponent implements OnInit {
   }
   async showRouteOnGoogleMaps() {
 
-    
-    let url = 'https://www.google.com/maps/dir/' + encodeURI((await this.familyLists.helper.distributionCenter.getRouteStartGeo()).getAddress());
+    if (this.familyLists.toDeliver.length > 0) {
+      let url = 'https://www.google.com/maps/dir/' + encodeURI((await this.familyLists.toDeliver[0].distributionCenter.getRouteStartGeo()).getAddress());
 
-    for (const f of this.familyLists.toDeliver) {
-      url += '/' + encodeURI(f.getGeocodeInformation().getAddress());
+      for (const f of this.familyLists.toDeliver) {
+        url += '/' + encodeURI(isGpsAddress(f.address.value) ? f.address.value : f.addressByGoogle.value);
+      }
+      window.open(url + "?hl=iw", '_blank');
     }
-    window.open(url + "?hl=iw", '_blank');
     //window.open(url,'_blank');
   }
-  async returnToDeliver(f: Families) {
+  async returnToDeliver(f: ActiveFamilyDeliveries) {
     f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
-    f.correntAnErrorInStatus.value = true;
     try {
       await f.save();
       this.dialog.analytics('Return to Deliver');

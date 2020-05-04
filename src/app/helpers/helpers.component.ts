@@ -3,10 +3,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { Helpers } from './helpers';
 
-import { Families } from '../families/families';
+
 import { Route } from '@angular/router';
 
-import { ServerFunction, DataControlSettings, DataControlInfo, ServerContext, AndFilter } from '@remult/core';
+import { ServerFunction, DataControlSettings, DataControlInfo, ServerContext, AndFilter, Column } from '@remult/core';
 import { Context } from '@remult/core';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { BusyService } from '@remult/core';
@@ -20,28 +20,41 @@ import { HelperAssignmentComponent } from '../helper-assignment/helper-assignmen
 import { Sites } from '../sites/sites';
 import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
+import { FamilyDeliveries } from '../families/FamilyDeliveries';
+import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
+import { visitAll } from '@angular/compiler';
 
 @Component({
   selector: 'app-helpers',
   templateUrl: './helpers.component.html',
   styleUrls: ['./helpers.component.css']
 })
-export class HelpersComponent implements OnInit,OnDestroy {
+export class HelpersComponent implements OnInit, OnDestroy {
   constructor(private dialog: DialogService, public context: Context, private busy: BusyService, public settings: ApplicationSettings) {
     this.dialog.onDistCenterChange(async () => {
       this.helpers.getRecords();
     }, this.destroyHelper);
   }
+  quickAdd() {
+    this.helpers.addNewRow();
+
+    this.editHelper(this.helpers.currentRow);
+
+  }
   destroyHelper = new DestroyHelper();
   ngOnDestroy(): void {
-      this.destroyHelper.destroy();
+    this.destroyHelper.destroy();
   }
   static route: Route = {
     path: 'helpers',
     component: HelpersComponent,
     data: { name: 'מתנדבים' }, canActivate: [distCenterAdminGuard]
   };
-  searchString: string;
+  clearSearch() {
+    this.searchString = '';
+    this.helpers.getRecords();
+  }
+  searchString: string = '';
   numOfColsInGrid = 4;
   helpers = this.context.for(Helpers).gridSettings({
     allowDelete: false,
@@ -49,47 +62,116 @@ export class HelpersComponent implements OnInit,OnDestroy {
     allowUpdate: true,
     knowTotalRows: true,
     hideDataArea: true,
-    onEnterRow: h => {
-      if (h.isNew())
-        h.distributionCenter.value = this.dialog.distCenter.value;
-    },
+    gridButton: [
+      {
+        name: 'יצוא לאקסל',
+        click: async () => {
+          await saveToExcel(this.context.for(Helpers), this.helpers, "מתנדבים", this.busy, (d: Helpers, c) => c == d.id || c == d.password || c == d.totalKm || c == d.totalTime || c == d.smsDate || c == d.reminderSmsDate || c == d.realStoredPassword || c == d.shortUrlKey || c == d.admin);
+        }
+        , visible: () => this.context.isAllowed(Roles.admin)
+      },
+      {
+        name: 'נקה הערות לכל המתנדבים',
+        click: async () => {
+          if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: 'האם אתה בטוח שברצונך לנקות את כל ההערות למתנדבים?' }, x => x.yes)) {
+            await HelpersComponent.clearCommentsOnServer();
+            this.helpers.getRecords();
+          }
+        },
+        visible: () => this.settings.showHelperComment.value && this.context.isAllowed(Roles.admin)
+
+      },
+      {
+        name: 'נקה נתוני ליווי לכל המתנדבים',
+        click: async () => {
+          if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: 'האם אתה בטוח שברצונך לנקות את נתוני המלווים לכל המתנדבים?' }, x => x.yes)) {
+            await HelpersComponent.clearEscortsOnServer();
+            this.helpers.getRecords();
+          }
+        },
+        visible: () => this.settings.showHelperComment.value && this.context.isAllowed(Roles.admin)
+      }
+
+    ],
     rowButtons: [
       {
         name: '',
         icon: 'edit',
+        showInLine: true,
+        textInMenu: () => 'כרטיס מתנדב',
         click: async f => {
-          this.context.openDialog(InputAreaComponent, x => x.args = {
-            title: 'עדכן פרטי ' + f.name.value,
-            ok: () => {
-              f.save();
-            },
-            cancel: () => {
-
-            },
-            settings: {
-              columnSettings: () => this.selectColumns(f)
-            }
-          });
+          this.editHelper(f);
         }
       },
       {
-        name: 'שיוך משפחות',
+        name: 'שיוך משלוחים',
         visible: h => !h.isNew(),
         click: async h =>
           this.context.openDialog(
             HelperAssignmentComponent, s => s.argsHelper = h)
 
+      },
+      {
+        name: 'אתחל סיסמה',
+        click: async h => {
+          this.dialog.YesNoQuestion("האם את בטוחה שאת רוצה למחוק את הסיסמה של " + h.name.value, async () => {
+            await HelpersComponent.resetPassword(h.id.value);
+            this.dialog.Info("הסיסמה נמחקה");
+          });
+        },
+        visible: h => (this.context.isAllowed(Roles.admin) || !h.admin.value)
+      },
+      {
+        name: 'שלח הזמנה בSMS למנהל',
+        click: async h => {
+          let r = await HelpersComponent.sendInvite(h.id.value);
+          this.dialog.Info(r);
+        },
+        visible: h => h.admin.value || h.distCenterAdmin.value
       }
+      ,
+      {
+        name: 'היסטורית משלוחים',
+        visible: h => !h.isNew(),
+        click: async h => {
+          this.context.openDialog(GridDialogComponent, x => x.args = {
+            title: 'משלוחים עבור ' + h.name.value,
+            settings: this.context.for(FamilyDeliveries).gridSettings({
+              numOfColumnsInGrid: 6,
+              hideDataArea: true,
+              knowTotalRows: true,
+              rowCssClass: fd => fd.deliverStatus.getCss(),
+              columnSettings: fd => {
+                let r: Column<any>[] = [
+                  fd.deliverStatus,
+                  fd.deliveryStatusDate,
+                  fd.basketType,
+                  fd.quantity,
+                  fd.name,
+                  fd.address,
+                  fd.distributionCenter,
+                  fd.courierComments
+                ]
+                r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
+                return r;
+              },
+              get: {
+                where: fd => fd.courier.isEqualTo(h.id),
+                orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
+                limit: 25
+              }
+            })
+          });
+        }
+      }
+
     ],
 
     get: {
       orderBy: h => [h.name],
-      limit: 10,
+      limit: 25,
       where: h => {
-        let x = h.distributionCenter.filter(this.dialog.distCenter.value);
-        if (this.searchString)
-          return new AndFilter(x, h.name.isContains(this.searchString));
-        return x;
+        return h.name.isContains(this.searchString);
       }
     },
     columnSettings: helpers => {
@@ -102,6 +184,20 @@ export class HelpersComponent implements OnInit,OnDestroy {
 
 
   });
+
+  private editHelper(f: Helpers) {
+    this.context.openDialog(InputAreaComponent, x => x.args = {
+      title: f.isNew() ? 'הוסף מתנדב' : 'עדכן פרטי ' + f.name.value,
+      ok: () => {
+        f.save();
+      },
+      cancel: () => {
+      },
+      settings: {
+        columnSettings: () => this.selectColumns(f)
+      }
+    });
+  }
 
   private selectColumns(helpers: Helpers) {
     let r: DataControlInfo<Helpers>[] = [
@@ -151,16 +247,8 @@ export class HelpersComponent implements OnInit,OnDestroy {
   }
 
 
-  resetPassword() {
-    this.dialog.YesNoQuestion("האם את בטוחה שאת רוצה למחוק את הסיסמה של " + this.helpers.currentRow.name.value, async () => {
-      await HelpersComponent.resetPassword(this.helpers.currentRow.id.value);
-      this.dialog.Info("הסיסמה נמחקה");
-    });
 
-  }
-  async saveToExcel() {
-    await saveToExcel(this.context.for(Helpers), this.helpers, "מתנדבים", this.busy, (d: Helpers, c) => c == d.id || c == d.password || c == d.totalKm || c == d.totalTime || c == d.smsDate || c == d.reminderSmsDate || c == d.realStoredPassword || c == d.shortUrlKey || c == d.admin);
-  }
+
 
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async resetPassword(helperId: string, context?: Context) {
@@ -170,10 +258,7 @@ export class HelpersComponent implements OnInit,OnDestroy {
       await h.save();
     });
   }
-  async sendInvite() {
-    let r = await HelpersComponent.sendInvite(this.helpers.currentRow.id.value);
-    this.dialog.Info(r);
-  }
+
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async sendInvite(helperId: string, context?: ServerContext) {
     let h = await context.for(Helpers).findFirst(x => x.id.isEqualTo(helperId));
@@ -227,12 +312,7 @@ ${url}
     columnSettings: () => [this.fromDate, this.toDate],
     numberOfColumnAreas: 2
   });
-  async clearComments() {
-    if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: 'האם אתה בטוח שברצונך לנקות את כל ההערות למתנדבים?' }, x => x.yes)) {
-      await HelpersComponent.clearCommentsOnServer();
-      this.helpers.getRecords();
-    }
-  }
+
   @ServerFunction({ allowed: Roles.admin })
   static async clearCommentsOnServer(context?: Context) {
     for (const h of await context.for(Helpers).find({ where: h => h.eventComment.isDifferentFrom('') })) {
@@ -240,12 +320,7 @@ ${url}
       await h.save();
     }
   }
-  async clearEscorts() {
-    if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: 'האם אתה בטוח שברצונך לנקות את נתוני המלווים לכל המתנדבים?' }, x => x.yes)) {
-      await HelpersComponent.clearEscortsOnServer();
-      this.helpers.getRecords();
-    }
-  }
+
   @ServerFunction({ allowed: Roles.admin })
   static async clearEscortsOnServer(context?: Context) {
     for (const h of await context.for(Helpers).find()) {

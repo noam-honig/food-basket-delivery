@@ -34,9 +34,9 @@
             <mat-card-title>
                 {{settings.smsText.defs.caption}}
             </mat-card-title>
-            הודעה זו תשלח למתנדב ממסך שיוך משפחות - עם הקישור למשפחות להן הוא מתבקש לחלק.
+            הודעה זו תשלח למתנדב ממסך שיוך משלוחים - עם הקישור למשפחות להן הוא מתבקש לחלק.
             <ul>
-                <li>!משנע! - יוחלף בשם המשנע</li>
+                <li>!מתנדב! - יוחלף בשם המתנדב</li>
                 <li>!שולח! - יוחלף בשם השולח</li>
                 <li>!ארגון! - יוחלף בשם הארגון</li>
                 <li>!אתר! - יוחלף בכתובת האתר</li>
@@ -49,7 +49,7 @@
             <mat-card-title>
                 {{settings.reminderSmsText.defs.caption}}
             </mat-card-title>
-            הודעה זו תשלח למשנע שמתעכב ממסך מעקב משנעים
+            הודעה זו תשלח למתנדב שמתעכב ממסך מעקב מתנדבים
             <textarea [(ngModel)]="settings.reminderSmsText.value" class="form-control" lines=3></textarea>
 
             <h4>הודעת תזכורת לדוגמא</h4>
@@ -71,7 +71,7 @@
     <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title>
-                נקודות חלוקה
+                רשימות חלוקה
             </mat-panel-title>
         </mat-expansion-panel-header>
         <data-grid [settings]="distributionCenters" height="300"></data-grid>
@@ -91,7 +91,7 @@
     <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title>
-                {{'קבוצות שיוך משפחה'|translate}}
+                {{'קבוצות משפחות'|translate}}
             </mat-panel-title>
 
         </mat-expansion-panel-header>

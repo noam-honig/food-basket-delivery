@@ -9,7 +9,7 @@ import { FamiliesComponent } from './families/families.component';
 import { Context, RouteHelperService, JwtSessionManager, DataAreaSettings } from '@remult/core';
 import { Roles } from './auth/roles';
 import { translate, translationConfig } from './translate';
-import { DeliveryStats } from './delivery-follow-up/delivery-stats';
+
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { DeliveryStatus } from './families/DeliveryStatus';
 import { Helpers, HelperUserInfo } from './helpers/helpers';

@@ -26,15 +26,15 @@
 
     <mat-card-title class="newsHeader">
       <div>
-        {{n.describe()}}
+        {{n.getDeliveryDescription()}}
         <div style="color: darkorange" *ngIf="n.needsWork.value" (click)="cancelNeedWork(n)">צריך
           טיפול</div>
       </div>
     </mat-card-title>
-    <mat-card-subtitle>{{n.updateTime.relativeDateName()}}, עודכן על ידי {{n.updateUser.getValue()}}
-      <br><a (click)="updateFamily(n)">{{'עדכן פרטי משפחה'|translate}}</a>
+    <mat-card-subtitle>{{n.deliveryStatusDate.relativeDateName()}}, עודכן על ידי {{n.deliveryStatusUser.getValue()}}
+      <br><a (click)="updateFamily(n)">{{'עדכן פרטי משלוח'|translate}}</a>
       <br *ngIf="n.courier.value"><a (click)="showHelper(n)"
-        *ngIf="n.courier.value">{{'הצג שיוך משפחות ל'|translate}}{{n.courier.getValue()}} </a>
+        *ngIf="n.courier.value">{{'הצג שיוך משלוחים ל'|translate}}{{n.courier.getValue()}} </a>
     </mat-card-subtitle>
 
   </mat-card-header>

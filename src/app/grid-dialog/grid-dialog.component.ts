@@ -1,37 +1,34 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { IDataAreaSettings, DataAreaSettings } from '@remult/core';
-import { DialogService } from '../dialog';
-
+import { IDataAreaSettings, DataAreaSettings, GridSettings } from '@remult/core';
 
 @Component({
-  selector: 'app-input-area',
-  templateUrl: './input-area.component.html',
-  styleUrls: ['./input-area.component.scss']
+  selector: 'app-grid-dialog',
+  templateUrl: './grid-dialog.component.html',
+  styleUrls: ['./grid-dialog.component.scss']
 })
-export class InputAreaComponent implements OnInit {
+export class GridDialogComponent implements OnInit {
+
   args: {
     title: string,
-    helpText?: string,
-    settings: IDataAreaSettings<any>,
-    ok: () => void,
+    settings: GridSettings<any>,
+    ok?: () => void,
     cancel?: () => void,
     validate?: () => Promise<void>,
     buttons?: button[]
   };
 
   constructor(
-    public dialogRef: MatDialogRef<any>,
-    private dialog: DialogService
+    public dialogRef: MatDialogRef<any>
 
   ) {
 
     dialogRef.afterClosed().toPromise().then(x => this.cancel());
   }
-  area: DataAreaSettings<any>;
+
 
   ngOnInit() {
-    this.area = new DataAreaSettings(this.args.settings, null, null);
+
   }
   cancel() {
     if (!this.ok && this.args.cancel)
@@ -44,15 +41,15 @@ export class InputAreaComponent implements OnInit {
       try {
         await this.args.validate();
       }
-      catch (err) {
-        this.dialog.Error((err));
+      catch{
         return;
       }
     }
-    await this.args.ok();
+    if (this.args.ok)
+      await this.args.ok();
     this.ok = true;
     this.dialogRef.close();
-    return false;
+    
   }
   buttonClick(b: button, e: MouseEvent) {
     e.preventDefault();

@@ -147,6 +147,12 @@ th {
 .deliveredOk > td {
   background-color: #dff0d8 !important;
 }
+.forzen {
+  background-color: lightgray !important;
+  > td {
+    background-color: lightgray !important;
+  }
+}
 .deliveredProblem {
   background-color: #f2dede !important;
 }
@@ -299,8 +305,7 @@ textarea {
 
 .pin1 {
   position: absolute;
-  
-  
+
   border-radius: 50% 50% 50% 0;
   border: 4px solid #fff;
   width: 20px;
@@ -310,7 +315,7 @@ textarea {
 
 .pin1::after {
   position: absolute;
-  content: '';
+  content: "";
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -321,12 +326,9 @@ textarea {
   background-color: #fff;
 }
 
-
-
 .pin2 {
   position: absolute;
-  
-  
+
   border-radius: 50%;
   border: 8px solid #fff;
   width: 8px;
@@ -335,7 +337,7 @@ textarea {
 
 .pin2::after {
   position: absolute;
-  content: '';
+  content: "";
   width: 0px;
   height: 0px;
   bottom: -30px;

@@ -1,4 +1,4 @@
-import { Families } from '../families/families';
+
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { BasketType } from "../families/BasketType";
 import { Helpers } from '../helpers/helpers';
@@ -9,6 +9,7 @@ import { routeStats } from '../asign-family/asign-family.component';
 import { translate } from '../translate';
 import { ElementRef } from '@angular/core';
 import { PhoneColumn } from '../model-shared/types';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 
 export class UserFamiliesList {
     map: MapComponent;
@@ -16,19 +17,19 @@ export class UserFamiliesList {
         this.map = map;
         this.map.userClickedOnFamilyOnMap = (f) => this.userClickedOnFamilyOnMap(f);
     }
-    startAssignByMap(city: string, group: string, distCenter: string) {
+    startAssignByMap(city: string, group: string, distCenter: string, area:string) {
 
-        this.map.loadPotentialAsigment(city, group,distCenter);
+        this.map.loadPotentialAsigment(city, group, distCenter,area);
         setTimeout(() => {
             this.map.gmapElement.nativeElement.scrollIntoView();
         }, 100);
     }
 
     constructor(private context: Context) { }
-    toDeliver: Families[] = [];
-    delivered: Families[] = [];
-    problem: Families[] = [];
-    allFamilies: Families[] = [];
+    toDeliver: ActiveFamilyDeliveries[] = [];
+    delivered: ActiveFamilyDeliveries[] = [];
+    problem: ActiveFamilyDeliveries[] = [];
+    allFamilies: ActiveFamilyDeliveries[] = [];
     getHelperPhone() {
         return this.helper.phone.displayValue;
     }
@@ -59,8 +60,8 @@ export class UserFamiliesList {
         let boxes = 0;
         let boxes2 = 0;
         for (const iterator of this.toDeliver) {
-            boxes += this.context.for(BasketType).lookup(iterator.basketType).boxes.value;
-            boxes2 += this.context.for(BasketType).lookup(iterator.basketType).boxes2.value;
+            boxes += this.context.for(BasketType).lookup(iterator.basketType).boxes.value * iterator.quantity.value;
+            boxes2 += this.context.for(BasketType).lookup(iterator.basketType).boxes2.value * iterator.quantity.value;
         }
         if (this.toDeliver.length == 0)
             return 'שומר מקום';
@@ -84,7 +85,7 @@ export class UserFamiliesList {
     }
     async initForFamilies(helper: Helpers, familiesPocoArray: any[]) {
         this.initHelper(helper);
-        let newFamilies = await Promise.all(familiesPocoArray.map(x => this.context.for(Families).fromPojo(x)));
+        let newFamilies = await Promise.all(familiesPocoArray.map(x => this.context.for(ActiveFamilyDeliveries).fromPojo(x)));
         newFamilies.push(...this.delivered);
         newFamilies.push(...this.problem);
         this.allFamilies = newFamilies;
@@ -95,7 +96,7 @@ export class UserFamiliesList {
     lastHelperId = undefined;
     async reload() {
         if (this.helper.id) {
-            this.allFamilies = await this.context.for(Families).find({ where: f => f.courier.isEqualTo(this.helper.id).and(f.deliverStatus.isActiveDelivery()).and(f.visibleToCourier.isEqualTo(true)), orderBy: f => [f.routeOrder, f.address], limit: 1000 });
+            this.allFamilies = await this.context.for(ActiveFamilyDeliveries).find({ where: f => f.courier.isEqualTo(this.helper.id).and(f.deliverStatus.isActiveDelivery()).and(f.visibleToCourier.isEqualTo(true)), orderBy: f => [f.routeOrder, f.address], limit: 1000 });
             if (this.lastHelperId != this.helper.id) {
                 this.lastHelperId = this.helper.id;
                 this.familiesAlreadyAssigned = new Map<string, boolean>();
@@ -151,7 +152,7 @@ export class UserFamiliesList {
 
     }
     totals: basketStats[] = [];
-    remove(f: Families) {
+    remove(f: ActiveFamilyDeliveries) {
         this.allFamilies.splice(this.allFamilies.indexOf(f), 1);
         this.initFamilies();
     }

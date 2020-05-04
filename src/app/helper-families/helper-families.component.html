@@ -69,6 +69,7 @@
     <mat-menu #appMenuSms="matMenu">
       <button mat-menu-item (click)="sendWhatsapp()">שלח קישור ב whatsapp</button>
       <button mat-menu-item (click)="copyMessage()">העתק הודעה עם קישור</button>
+      <button mat-menu-item (click)="copyLink()">העתק קישור</button>
       <button mat-menu-item (click)="sendPhoneSms()">שלח קישור בSMS מהטלפון</button>
 
     </mat-menu>
@@ -156,14 +157,6 @@
 
       </tr>
     </table>
-
-
-    <div class="help" *ngIf=" familyLists.toDeliver.length>0">
-      <h5>
-        צריך עזרה? התקשר ל{{familyLists.toDeliver[0].courierHelpName()}}
-        {{familyLists.toDeliver[0].courierHelpPhone()}}
-      </h5>
-    </div>
   </div>
 
   <mat-card *ngIf="familyLists.problem.length>0" class="no-print">

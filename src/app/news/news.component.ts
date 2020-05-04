@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NewsUpdate } from "./NewsUpdate";
+
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Context, AndFilter } from '@remult/core';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
@@ -7,7 +7,7 @@ import { translate } from '../translate';
 
 import { Route, ActivatedRoute } from '@angular/router';
 
-import { Families } from '../families/families';
+
 import { FilterBase } from '@remult/core';
 import { BusyService } from '@remult/core';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
@@ -16,16 +16,17 @@ import { Helpers } from '../helpers/helpers';
 
 import { FamilySources } from '../families/FamilySources';
 import { NewsFilterService } from './news-filter-service';
-import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
+
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { Families } from '../families/families';
+import { FamilyDeliveries } from '../families/FamilyDeliveries';
 @Component({
     selector: 'app-news',
     templateUrl: './news.component.html',
     styleUrls: ['./news.component.scss']
 })
 export class NewsComponent implements OnInit, OnDestroy {
-    static route: Route = {
-        path: 'news', component: NewsComponent, canActivate: [distCenterAdminGuard], data: { name: 'חדשות' }
-    };
+
     static needsWorkRoute: Route = {
         path: 'needsWork', component: NewsComponent, canActivate: [distCenterAdminGuard], data: { name: 'מצריך טיפול' }
     };
@@ -40,27 +41,21 @@ export class NewsComponent implements OnInit, OnDestroy {
         dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
 
     }
-    async updateFamily(n: NewsUpdate) {
-
-        let f = await this.context.for(Families).findFirst(fam => fam.id.isEqualTo(n.id));
-        this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = {
-            f: f, onSave: () => {
-
-                n.needsWork.value = f.needsWork.value;
-            }
-        });
+    async updateFamily(n: ActiveFamilyDeliveries) {
+        n.showDetailsDialog();
+        
 
     }
-    cancelNeedWork(n: NewsUpdate) {
+    cancelNeedWork(n: ActiveFamilyDeliveries) {
         this.dialog.YesNoQuestion(translate('לבטל את הסימון "מצריך טיפול" למשפחת "') + n.name.value + '"?', async () => {
-            let f = await this.context.for(Families).findFirst(fam => fam.id.isEqualTo(n.id));
+            let f = await this.context.for(ActiveFamilyDeliveries).findFirst(fam => fam.id.isEqualTo(n.id));
             f.needsWork.value = false;
             await f.save();
             n.needsWork.value = false;
 
         });
     }
-    async showHelper(n: NewsUpdate) {
+    async showHelper(n: ActiveFamilyDeliveries) {
         this.context.openDialog(
             HelperAssignmentComponent, s => s.argsHelper = this.context.for(Helpers).lookup(n.courier));
     }
@@ -68,7 +63,7 @@ export class NewsComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.destroyHelper.destroy();
     }
-    news: NewsUpdate[] = [];
+    news: ActiveFamilyDeliveries[] = [];
     familySources: familySource[] = [{ id: undefined, name: "כל הגורמים מפנים" }];
 
     async ngOnInit() {
@@ -83,12 +78,12 @@ export class NewsComponent implements OnInit, OnDestroy {
     async refresh() {
 
         this.busy.donotWait(async () => {
-            this.news = await this.context.for(NewsUpdate).find({
+            this.news = await this.context.for(ActiveFamilyDeliveries).find({
                 where: n => {
                     return new AndFilter(this.filters.where(n), n.distributionCenter.filter(this.dialog.distCenter.value));
 
 
-                }, orderBy: n => [{ column: n.updateTime, descending: true }], limit: this.newsRows
+                }, orderBy: n => [{ column: n.deliveryStatusDate, descending: true }], limit: this.newsRows
             });
         });
     }
@@ -96,37 +91,28 @@ export class NewsComponent implements OnInit, OnDestroy {
         this.newsRows *= 2;
         this.refresh();
     }
-    icon(n: NewsUpdate) {
+    icon(n: ActiveFamilyDeliveries) {
+        switch (n.deliverStatus.value) {
+            case DeliveryStatus.ReadyForDelivery:
 
-        switch (n.updateType.value) {
-            case 1:
-                switch (n.deliverStatus.value) {
-                    case DeliveryStatus.ReadyForDelivery:
+                break;
+            case DeliveryStatus.Success:
+            case DeliveryStatus.SuccessLeftThere:
+            case DeliveryStatus.SuccessPickedUp:
+                return 'check';
+            case DeliveryStatus.FailedBadAddress:
+            case DeliveryStatus.FailedNotHome:
+            case DeliveryStatus.FailedOther:
+                return 'error';
 
-                        break;
-                    case DeliveryStatus.Success:
-                    case DeliveryStatus.SuccessLeftThere:
-                    case DeliveryStatus.SuccessPickedUp:
-                        return 'check';
-                    case DeliveryStatus.FailedBadAddress:
-                    case DeliveryStatus.FailedNotHome:
-                    case DeliveryStatus.FailedOther:
-                        return 'error';
-
-                }
-                return "create";
-            case 2:
-                if (n.courier.value)
-                    return "how_to_reg";
-                else
-                    return "clear";
         }
+        return "create";
         return n.deliverStatus.displayValue;
     }
 }
 export interface NewsFilter {
     name: string;
-    where?: (rowType: NewsUpdate) => FilterBase;
+    where?: (rowType: ActiveFamilyDeliveries) => FilterBase;
 }
 interface familySource {
     name: string;

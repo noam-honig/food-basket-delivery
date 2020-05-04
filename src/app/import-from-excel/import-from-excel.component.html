@@ -4,7 +4,7 @@
         <mat-step label="בחירת קובץ אקסל">
             <a href="https://youtu.be/Jtmhyf8-E4g" target="_blank"
     class="no-print" style="margin-right:10px" >{{'לסרטון הדרכה על קליטה מאקסל לחץ כאן'|translate}}</a>   
-            <h3> בחר קובץ אקסל</h3> <input type="file" (change)="fileChange($event)" />
+            <h3> בחר קובץ אקסל</h3> <input type="file" (input)="fileChange($event)" />
         </mat-step>
         <mat-step label="הגדרת העמודות">
 
@@ -13,7 +13,7 @@
 
                 <button (click)="loadSettings()" mat-raised-button>טען הגדרות</button>
                 <button (click)="saveSettings()" mat-raised-button>שמור הגדרות</button>
-                <button (click)="saveSettings(); this.stepper.next()" mat-raised-button  color="accent">המשך לשלב הבא</button>
+                <button (click)="saveSettings(); moveToAdvancedSettings()" mat-raised-button  color="accent">המשך לשלב הבא</button>
 
                 <!--
                 <h3>עמודות מהאקסל</h3>
@@ -105,7 +105,7 @@
                                 <th></th>
                                 <th></th>
                                 <th *ngFor="let c of columnsInCompare">
-                                    {{c.defs.caption}}
+                                    {{c.c.defs.caption}}
                                 </th>
                             </tr>
                             <ng-container
@@ -137,7 +137,7 @@
                                 <th></th>
                                 <th></th>
                                 <th *ngFor="let c of columnsInCompare">
-                                    {{c.defs.caption}} <mat-icon style="color:green" *ngIf="getColUpdateCount(c)>0"
+                                    {{c.c.defs.caption}} <mat-icon style="color:green" *ngIf="getColUpdateCount(c)>0"
                                         (click)="updateAllCol(c)">done_all
                                     </mat-icon>
 
@@ -186,7 +186,7 @@
 
                                 <th></th>
                                 <th *ngFor="let c of columnsInCompare">
-                                    {{c.defs.caption}}
+                                    {{c.c.defs.caption}}
                                 </th>
                             </tr>
                             <ng-container *ngFor="let i of identicalRows| paginate: { itemsPerPage: 100,currentPage:existingFamiliesPage,id:'existingFamiliesPage'}">
@@ -212,7 +212,7 @@
 
                                 <th></th>
                                 <th *ngFor="let c of columnsInCompare">
-                                    {{c.defs.caption}}
+                                    {{c.c.defs.caption}}
                                 </th>
                             </tr>
                             <ng-container

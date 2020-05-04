@@ -6,7 +6,7 @@
       <img src="{{getLogo()}}" />
     </div>
     <p style="text-align: center" *ngIf="!dialog.dc">{{settings.organisationName.value}}</p>
-    <div *ngIf="dialog.dc" (click)="dialog.updateDistCenter()">
+    <div *ngIf="dialog.dc" >
       <p style="text-align: center">{{dialog.dc.name.value}}
       </p>
       <p style="text-align: center">{{dialog.dc.getGeocodeInformation().getAddress()}}</p>

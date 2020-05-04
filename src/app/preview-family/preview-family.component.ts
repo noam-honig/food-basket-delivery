@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { UserFamiliesList } from '../my-families/user-families';
 import { Context, DialogConfig } from '@remult/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Families } from '../families/families';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+
 
 @Component({
   selector: 'app-preview-family',
@@ -13,7 +14,7 @@ import { Families } from '../families/families';
 export class PreviewFamilyComponent implements OnInit {
 
   familyLists = new UserFamiliesList(this.context);
-  public argsFamily: Families;
+  public argsFamily: ActiveFamilyDeliveries;
   constructor(public context: Context, private dialogRef: MatDialogRef<any>
   ) { }
   async ngOnInit() {

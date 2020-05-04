@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Families } from '../families/families';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+
+
 
 @Component({
   selector: 'app-family-in-list',
@@ -9,7 +11,7 @@ import { Families } from '../families/families';
 export class FamilyInListComponent implements OnInit {
 
   constructor() { }
-  @Input() f: Families;
+  @Input() f: ActiveFamilyDeliveries;
   @Input() i: number;
   @Input() newAssign:boolean;
   ngOnInit() {

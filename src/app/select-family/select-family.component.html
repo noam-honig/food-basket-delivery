@@ -6,7 +6,7 @@
 
         <mat-form-field class="full-width">
           <input matInput [(ngModel)]="searchString" (input)="doFilter()"
-            placeholder="חפשי {{args.selectStreet?'רחוב':'שם'}}" #search [ngModelOptions]="{standalone: true}">
+            placeholder="חפש {{args.selectStreet?'רחוב':'שם'}}" #search [ngModelOptions]="{standalone: true}">
           <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
         </mat-form-field>
         <button mat-raised-button color="accent" *ngIf="args.selectStreet&&families.totalRows>1&&searchString"
@@ -21,11 +21,9 @@
               <h5>{{showStatus(f)}}</h5>
             </div>
             <h5 style="display: inline-block"> סל</h5> - {{f.basketType.displayValue}}
-            <div *ngIf="f.internalComment.value">
-              <h5 style="display: inline-block"> הערה פנימית</h5>- {{f.internalComment.value}}
-            </div>
+            
             <div *ngIf="f.deliveryComments.value">
-              <h5 style="display: inline-block"> הערה למשנע</h5>- {{f.deliveryComments.value}}
+              <h5 style="display: inline-block"> הערה למתנדב</h5>- {{f.deliveryComments.value}}
             </div>
             <h5>{{f.address.value}}</h5>
 

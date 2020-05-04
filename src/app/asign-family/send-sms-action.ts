@@ -14,10 +14,10 @@ export class SendSmsAction {
     static async SendSms(helperId: string, reminder: Boolean, context?: ServerContext) {
 
         try {
-            await SendSmsAction.generateMessage(context, helperId, context.getOrigin(), reminder, context.user.name, async (phone, message, sender) => {
+            let h = await context.for(Helpers).findId(helperId);
+            await SendSmsAction.generateMessage(context, h, context.getOrigin(), reminder, context.user.name, async (phone, message, sender) => {
 
                 new SendSmsUtils().sendSms(phone, sender, message, context.getOrigin(), Sites.getOrganizationFromContext(context));
-                let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
                 if (reminder)
                     h.reminderSmsDate.value = new Date();
                 else
@@ -33,7 +33,7 @@ export class SendSmsAction {
 
 
 
-    static async  generateMessage(ds: Context, id: string, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string, sender: string) => void) {
+    static async  generateMessage(ds: Context, helper: Helpers, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string, sender: string, url: string) => void) {
 
         if (!origin) {
             throw 'Couldnt determine origin for sms';
@@ -42,7 +42,7 @@ export class SendSmsAction {
         if (org.length > 0) {
             origin = origin + '/' + org;
         }
-        let helper = await ds.for(Helpers).findFirst(h => h.id.isEqualTo(id));
+
         if (helper) {
             if (helper.veryUrlKeyAndReturnTrueIfSaveRequired()) {
                 await helper.save();
@@ -57,24 +57,25 @@ export class SendSmsAction {
 
                 message = settings.smsText.value;
                 if (!message || message.trim().length == 0) {
-                    message = 'שלום !משנע! לחלוקת חבילות !ארגון! לחץ על: !אתר! תודה !שולח!';
+                    message = 'שלום !מתנדב! לחלוקת חבילות !ארגון! לחץ על: !אתר! תודה !שולח!';
                 }
             }
-            message = SendSmsAction.getMessage(message, settings.organisationName.value, helper.name.value, senderName, origin + '/x/' + helper.shortUrlKey.value);
+            let url = origin + '/x/' + helper.shortUrlKey.value;
+            message = SendSmsAction.getMessage(message, settings.organisationName.value, helper.name.value, senderName, url);
             let sender = settings.helpPhone.value;
             if (!sender || sender.length < 3) {
                 let currentUser = await (ds.for(Helpers).findFirst(h => h.id.isEqualTo(ds.user.id)));
                 sender = currentUser.phone.value;
             }
 
-            then(helper.phone.value, message, sender);
+            then(helper.phone.value, message, sender, url);
             await helper.save();
             var x = 1 + 1;
 
         }
     }
     static getMessage(template: string, orgName: string, courier: string, sender: string, url: string) {
-        return template.replace('!משנע!', courier).replace('!שולח!', sender).replace('!ארגון!', orgName).replace('!אתר!', url)
+        return template.replace('!מתנדב!', courier).replace('!משנע!', courier).replace('!שולח!', sender).replace('!ארגון!', orgName).replace('!אתר!', url)
 
     }
 }

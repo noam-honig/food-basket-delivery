@@ -42,20 +42,20 @@ import { NewsFilterService } from "./news/news-filter-service";
 
 
 import { UpdateFamilyDialogComponent } from './update-family-dialog/update-family-dialog.component';
-import { UpdateFamilyComponent } from './update-family/update-family.component';
 
 
-import { AddressProblemComponent } from './address-problem/address-problem.component';
+
+
 
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
-import { BatchOperationsComponent } from './batch-operations/batch-operations.component';
+
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 import { PreviewFamilyComponent } from './preview-family/preview-family.component';
 import { FamilyInListComponent } from './family-in-list/family-in-list.component';
 
 import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-dialog.component';
-import { CreateBackupExcelFileComponent } from './create-backup-excel-file/create-backup-excel-file.component';
-import { QuickAddFamilyComponent } from './quick-add-family/quick-add-family.component';
+
+
 import { ScrollDispatchModule } from '@angular/cdk/scrolling';
 import { TranslatePipe } from './translate';
 import { SelectCompanyComponent } from './select-company/select-company.component';
@@ -74,6 +74,9 @@ import { GeocodeComponent } from './geocode/geocode.component';
 import { SelectListComponent } from './select-list/select-list.component';
 import { TokenReplacerComponent } from './token-replacer/token-replacer.component';
 import { TestMapComponent } from './test-map/test-map.component';
+import { FamilyDeliveriesComponent } from './family-deliveries/family-deliveries.component';
+import { GridDialogComponent } from './grid-dialog/grid-dialog.component';
+import { SiteOverviewComponent } from './site-overview/site-overview.component';
 
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref();
@@ -86,7 +89,7 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
   declarations: [
     AppComponent,
     HelpersComponent,
-    
+
     YesNoQuestionComponent,
     LoginComponent,
     RegisterComponent,
@@ -100,7 +103,7 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     UpdateCommentComponent,
     DistributionMap,
     SelectHelperComponent,
-    
+
     LoginFromSmsComponent,
     MapComponent,
 
@@ -110,19 +113,15 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     ImportFromExcelComponent,
     NewsComponent,
     UpdateFamilyDialogComponent,
-    UpdateFamilyComponent,
 
-
-    AddressProblemComponent,
-    
     SelfPickupComponent,
-    BatchOperationsComponent,
+
     DeliveryHistoryComponent,
     PreviewFamilyComponent,
     FamilyInListComponent,
     UpdateGroupDialogComponent,
-    CreateBackupExcelFileComponent,
-    QuickAddFamilyComponent,
+
+
     TranslatePipe,
     SelectCompanyComponent,
     HelperAssignmentComponent,
@@ -136,7 +135,10 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     GeocodeComponent,
     SelectListComponent,
     TokenReplacerComponent,
-    TestMapComponent
+    TestMapComponent,
+    FamilyDeliveriesComponent,
+    GridDialogComponent,
+    SiteOverviewComponent
 
   ],
   imports: [
@@ -152,9 +154,9 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
 
   ],
   providers: [
-    
+
     DialogService,
-    
+
     TranslatePipe,
     NewsFilterService,
     AuthService,
@@ -165,20 +167,20 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
 
     },
     {
-      provide: ApplicationSettings, useFactory: (service:SettingsService) => {
+      provide: ApplicationSettings, useFactory: (service: SettingsService) => {
         return service.instance;
       },
-      deps:[SettingsService]
+      deps: [SettingsService]
 
     },
     {
       provide: APP_INITIALIZER,
-      deps: [JwtSessionManager,SettingsService],
+      deps: [JwtSessionManager, SettingsService],
       useFactory: initApp,
       multi: true,
-      
+
     }
-    ,SettingsService
+    , SettingsService
 
   ],
 
@@ -186,24 +188,26 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
   entryComponents: [SelectHelperComponent,
     SelectFamilyComponent,
     SelectListComponent,
- CommonQuestionsComponent,   
+    CommonQuestionsComponent,
     YesNoQuestionComponent,
     InputAreaComponent,
+    GridDialogComponent,
     UpdateFamilyDialogComponent, PreviewFamilyComponent,
     SelectCompanyComponent,
-    QuickAddFamilyComponent, HelperAssignmentComponent,
+    HelperAssignmentComponent,
+    SiteOverviewComponent,
     UpdateCommentComponent, UpdateGroupDialogComponent]
 })
 export class AppModule { }
 
-export function initApp(session:JwtSessionManager,settings:SettingsService) {
+export function initApp(session: JwtSessionManager, settings: SettingsService) {
   return async () => {
     session.loadSessionFromCookie();
     try {
       await settings.init();
     }
-    catch (err){
-      console.error('failed to get settings ',err);
+    catch (err) {
+      console.error('failed to get settings ', err);
     }
     return '';
 

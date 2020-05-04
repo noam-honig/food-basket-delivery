@@ -1,5 +1,5 @@
 import * as radweb from '@remult/core';
-import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, ColumnOptions, SqlCommand, SqlResult } from '@remult/core';
+import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, ColumnOptions, SqlCommand, SqlResult, AndFilter } from '@remult/core';
 
 
 
@@ -8,12 +8,7 @@ import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlReque
 export interface HasAsyncGetTheValue {
   getTheValue(): Promise<string>;
 }
-export function extractError(err: any) {
-  if (err.error)
-      err = err.error;
-  return err;
 
-}
 
 export class PhoneColumn extends radweb.StringColumn {
   constructor(settingsOrCaption?: ColumnOptions<string>) {
@@ -92,69 +87,7 @@ export class DateTimeColumn extends radweb.DateTimeColumn {
 
   }
   relativeDateName(d?: Date, now?: Date) {
-    if (!d)
-      d = this.value;
-    if (!d)
-      return '';
-    if (!now)
-      now = new Date();
-    let sameDay = (x: Date, y: Date) => {
-      return x.getFullYear() == y.getFullYear() && x.getMonth() == y.getMonth() && x.getDate() == y.getDate()
-    }
-    let diffInMinues = Math.ceil((now.valueOf() - d.valueOf()) / 60000);
-    if (diffInMinues <= 1)
-      return 'לפני דקה';
-    if (diffInMinues < 60) {
-
-      return 'לפני ' + diffInMinues + ' דקות';
-    }
-    if (diffInMinues < 60 * 10 || sameDay(d, now)) {
-      let hours = Math.floor(diffInMinues / 60);
-      let min = diffInMinues % 60;
-      if (min > 50) {
-        hours += 1;
-        min = 0;
-      }
-      let r;
-      switch (hours) {
-        case 1:
-          r = 'שעה';
-          break
-        case 2:
-          r = "שעתיים";
-          break;
-        default:
-          r = hours + ' שעות';
-      }
-
-      if (min > 35)
-        r += ' ושלושת רבעי';
-      else if (min > 22) {
-        r += ' וחצי';
-      }
-      else if (min > 7) {
-        r += ' ורבע ';
-      }
-      return 'לפני ' + r;
-
-    }
-    let r = ''
-    if (sameDay(d, new Date(now.valueOf() - 86400 * 1000))) {
-      r = 'אתמול';
-    }
-    else if (sameDay(d, new Date(now.valueOf() - 86400 * 1000 * 2))) {
-      r = 'שלשום';
-    }
-    else {
-      let days = (Math.trunc(now.valueOf() / (86400 * 1000)) - Math.trunc(d.valueOf() / (86400 * 1000)));
-      r = 'לפני ' + days + ' ימים';
-    }
-    let t = d.getMinutes().toString();
-    if (t.length == 1)
-      t = '0' + t;
-    if (this.dontShowTimeForOlderDates)
-      return r;
-    return r += ' ב' + d.getHours() + ':' + t;
+    return relativeDateName({ d, now, dontShowTimeForOlderDates: this.dontShowTimeForOlderDates });
   }
   get displayValue() {
     if (this.value)
@@ -174,6 +107,7 @@ export class changeDate extends DateTimeColumn {
 
 
 export class SqlBuilder {
+
   extractNumber(from: any): any {
     return this.build("NULLIF(regexp_replace(", from, ", '\\D','','g'), '')::numeric");
   }
@@ -188,7 +122,14 @@ export class SqlBuilder {
 
   private entites = new Map<Entity<any>, string>();
 
-
+  sumWithAlias(what: any, alias: string, ...when: any[]) {
+    if (when && when.length > 0) {
+      return this.columnWithAlias(this.func('sum', this.case([{ when: when, then: what }], 0)), alias);
+    }
+    else {
+      return this.columnWithAlias(this.func('sum', what), alias);
+    }
+  }
 
   addEntity(e: Entity<any>, alias?: string) {
     if (alias) {
@@ -209,6 +150,9 @@ export class SqlBuilder {
       result += this.getItemSql(e);
     });
     return result;
+  }
+  func(funcName: string, ...args: any[]): any {
+    return this.build(funcName, '(', args, ')');
   }
 
   getItemSql(e: any) {
@@ -253,7 +197,7 @@ export class SqlBuilder {
     return this.build(a, ' > ', b);
   }
   and(...args: any[]): string {
-    return args.map(x => this.getItemSql(x)).filter(x => x != undefined).join(' and ');
+    return args.map(x => this.getItemSql(x)).filter(x => x != undefined && x != '').join(' and ');
   }
   or(...args: any[]): string {
     return "(" + args.map(x => this.getItemSql(x)).join(' or ') + ")";
@@ -363,7 +307,8 @@ export class SqlBuilder {
     if (info.from) {
       from = this.build(' from ', info.from, ' ', this.getEntityAlias(info.from));
     }
-    result.push(info.set().map(a => this.build(this.build(a[0].defs.dbName, ' = ', a[1]))));
+    let set = info.set();
+    result.push(set.map(a => this.build(this.build(a[0].defs.dbName, ' = ', a[1]))));
     if (from)
       result.push(from);
 
@@ -412,9 +357,21 @@ export class SqlBuilder {
     result.push('select ');
     result.push(query.select());
     result.push(...from);
+    let where = [];
     if (query.where) {
-      result.push(' where ', this.and(...query.where()));
+      where.push(...query.where());
     }
+    {
+      let before: FilterBase = {
+        __applyToConsumer: (x) => {
+        }
+      };
+      let x = query.from.__decorateWhere(before);
+      if (x != before)
+        where.push(x);
+    }
+    if (where.length > 0)
+      result.push(' where ', this.and(...where));
     if (query.orderBy) {
       result.push(' order by ', query.orderBy.map(x => {
         var f = x as SortSegment;
@@ -543,4 +500,76 @@ export interface JoinInfo {
 export interface CaseWhenItemHelper {
   when: any[];
   then: any;
+}
+export function relativeDateName(args: { d?: Date, now?: Date, dontShowTimeForOlderDates?: boolean }) {
+
+  let d = args.d;
+  let now = args.now;
+  if (!d)
+    return '';
+  if (!now)
+    now = new Date();
+  let sameDay = (x: Date, y: Date) => {
+    return x.getFullYear() == y.getFullYear() && x.getMonth() == y.getMonth() && x.getDate() == y.getDate()
+  }
+  let diffInMinues = Math.ceil((now.valueOf() - d.valueOf()) / 60000);
+  if (diffInMinues <= 1)
+    return 'לפני דקה';
+  if (diffInMinues < 60) {
+
+    return 'לפני ' + diffInMinues + ' דקות';
+  }
+  if (diffInMinues < 60 * 10 || sameDay(d, now)) {
+    let hours = Math.floor(diffInMinues / 60);
+    let min = diffInMinues % 60;
+    if (min > 50) {
+      hours += 1;
+      min = 0;
+    }
+    let r: string;
+    switch (hours) {
+      case 1:
+        r = 'שעה';
+        break
+      case 2:
+        r = "שעתיים";
+        break;
+      default:
+        r = hours + ' שעות';
+    }
+
+    if (min > 35)
+      r += ' ושלושת רבעי';
+    else if (min > 22) {
+      r += ' וחצי';
+    }
+    else if (min > 7) {
+      r += ' ורבע ';
+    }
+    return 'לפני ' + r;
+
+  }
+  let r = ''
+  if (sameDay(d, new Date(now.valueOf() - 86400 * 1000))) {
+    r = 'אתמול';
+  }
+  else if (sameDay(d, new Date(now.valueOf() - 86400 * 1000 * 2))) {
+    r = 'שלשום';
+  }
+  else {
+    let days = (Math.trunc(now.valueOf() / (86400 * 1000)) - Math.trunc(d.valueOf() / (86400 * 1000)));
+    r = 'לפני ' + days + ' ימים';
+  }
+  let t = d.getMinutes().toString();
+  if (t.length == 1)
+    t = '0' + t;
+  if (args.dontShowTimeForOlderDates)
+    return r;
+  return r += ' ב' + d.getHours() + ':' + t;
+}
+export function wasChanged(...columns: Column<any>[]) {
+  for (const c of columns) {
+    if (c.value != c.originalValue)
+      return true;
+  }
 }

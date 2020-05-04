@@ -25,9 +25,12 @@ export class AuthService {
             this.setToken(response.authToken, false);
             this.dialog.analytics('login from sms');
             this.routeHelper.navigateToComponent(MyFamiliesComponent);
+            return true;
         }
-        else
+        else {
             this.tokenHelper.signout();
+            return false;
+        }
 
 
     }
@@ -75,21 +78,10 @@ export class AuthService {
 
         let options = await AuthService.login(user, password);
 
-        if (options.length > 0) {
+        if (options) {
 
-            let loginResponse = options[0];
-            if (options.length > 1) {
-                loginResponse = undefined;
-                await this.context.openDialog(SelectListComponent, x => x.args = {
-                    title: 'בחר מרכז חלוקה',
-                    options: options.map(x => ({ name: x.distCenterName, item: x }))
+            let loginResponse = options;
 
-                }, x => loginResponse = x.selected != undefined ? x.selected.item : undefined);
-                if (!loginResponse) {
-                    fail();
-                    return;
-                }
-            }
 
 
             this.setToken(loginResponse.authToken, remember);
@@ -110,7 +102,7 @@ export class AuthService {
 
         }
         else {
-            this.tokenHelper.signout();
+            this.tokenHelper.signout('/' + Sites.getOrganizationFromContext(this.context));
             this.dialog.Error("משתמשת לא נמצאה או סיסמה שגויה");
             fail();
 
@@ -118,12 +110,12 @@ export class AuthService {
     }
 
     @ServerFunction({ allowed: true })
-    static async login(user: string, password: string, context?: Context): Promise<loginResult[]> {
+    static async login(user: string, password: string, context?: Context): Promise<loginResult> {
         let r: loginResult[] = [];
 
 
         await context.for(Helpers).foreach(h => h.phone.isEqualTo(user), async h => {
-            let distCenterName = '';
+            let sort = 9;
             let noPassword = h.realStoredPassword.value.length == 0;
             if (noPassword || Helpers.passwordHelper.verify(password, h.realStoredPassword.value)) {
                 let result: HelperUserInfo;
@@ -141,19 +133,18 @@ export class AuthService {
                     requirePassword = true;
                 }
                 else {
-                    if (!Sites.isOverviewSchema(context))
-                        distCenterName = await h.distributionCenter.getTheValue();
+
                     if (h.admin.value) {
+                        sort = 1;
                         if (Sites.isOverviewSchema(context))
                             result.roles.push(Roles.overview)
                         else {
-                            distCenterName += '- אדמין';
                             result.roles.push(Roles.admin);
                             result.roles.push(Roles.distCenterAdmin);
                         }
                     }
                     if (h.distCenterAdmin.value) {
-                        distCenterName += '-מנהל נקודת חלוקה ';
+                        sort = 5;
                         result.roles.push(Roles.distCenterAdmin);
                     }
 
@@ -162,15 +153,16 @@ export class AuthService {
                 r.push({
                     authToken: Helpers.helper.createSecuredTokenBasedOn(result),
                     requirePassword,
-                    distCenterName: distCenterName
+                    sort
                 });
 
             }
         });
-        return r;
+        r.sort((a, b) => a.sort - b.sort);
+        return r[0];
     }
     signout(): any {
-        this.tokenHelper.signout();
+        this.tokenHelper.signout('/' + Sites.getOrganizationFromContext(this.context));
         this.routeHelper.navigateToComponent(LoginComponent);
     }
 
@@ -180,5 +172,5 @@ export interface loginResult {
 
     authToken: string,
     requirePassword: boolean,
-    distCenterName: string
+    sort: number
 }

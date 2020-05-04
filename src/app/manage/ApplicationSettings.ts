@@ -1,26 +1,38 @@
-import { StringColumn, NumberColumn, BoolColumn, ValueListColumn } from '@remult/core';
+import { StringColumn, NumberColumn, BoolColumn, ValueListColumn, ServerFunction } from '@remult/core';
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
 import { Entity, Context, EntityClass } from '@remult/core';
 import { PhoneColumn } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { DeliveryStatusColumn, DeliveryStatus } from "../families/DeliveryStatus";
 import { translate, translationConfig } from "../translate";
-import { Families } from "../families/families";
+
 import { FamilySources } from "../families/FamilySources";
 import { Injectable } from '@angular/core';
 import { Helpers } from '../helpers/helpers';
 import { BasketType } from '../families/BasketType';
+
+
 @EntityClass
 export class ApplicationSettings extends Entity<number>  {
-  async getPhoneOptions(family: Families, context: Context) {
+  @ServerFunction({ allowed: c => c.isSignedIn() })
+  static async getPhoneOptions(deliveryId: string, context?: Context) {
+    let ActiveFamilyDeliveries = await (await import('../families/FamilyDeliveries')).ActiveFamilyDeliveries;
+    let d = await context.for(ActiveFamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId).and(fd.isAllowedForUser()));
+    if (!d)
+      return [];
+    let Families = await (await import('../families/families')).Families;
+    let family = await context.for(Families).findFirst(f => f.id.isEqualTo(d.family));
     let r: phoneOption[] = [];
-    for (const x of this.getPhoneStrategy()) {
+    let settings = await ApplicationSettings.get(context);
+    for (const x of settings.getPhoneStrategy()) {
       if (x.option) {
         await x.option.build({
           family: family,
+          d: d,
           context: context,
+
           phoneItem: x,
-          settings: this,
+          settings,
           addPhone: (name, phone) => r.push({ name: name, phone: phone })
         });
       }
@@ -46,10 +58,10 @@ export class ApplicationSettings extends Entity<number>  {
   });
   logoUrl = new StringColumn('לוגו URL');
   address = new StringColumn("כתובת מרכז השילוח");
-  commentForSuccessDelivery = new StringColumn('הודעה למשנע כאשר נמסר בהצלחה');
-  commentForSuccessLeft = new StringColumn('הודעה למשנע כאשר הושאר ליד הבית');
-  commentForProblem = new StringColumn('הודעה למשנע כאשר יש בעיה');
-  messageForDoneDelivery = new StringColumn(translate('הודעה למשנע כאשר סיים את כל המשפחות'));
+  commentForSuccessDelivery = new StringColumn('הודעה למתנדב כאשר נמסר בהצלחה');
+  commentForSuccessLeft = new StringColumn('הודעה למתנדב כאשר הושאר ליד הבית');
+  commentForProblem = new StringColumn('הודעה למתנדב כאשר יש בעיה');
+  messageForDoneDelivery = new StringColumn(translate('הודעה למתנדב כאשר סיים את כל המשפחות'));
 
   helpText = new StringColumn('שם חלופי');
   helpPhone = new PhoneColumn('טלפון חלופי');
@@ -93,8 +105,9 @@ export class ApplicationSettings extends Entity<number>  {
   showCompanies = new BoolColumn('שמור מטעם איזה חברה הגיע המתנדב');
   manageEscorts = new BoolColumn('הפעל ניהול מלווים לנהגים');
   showHelperComment = new BoolColumn('שמור הערה למתנדב');
-  showGroupsOnAssing = new BoolColumn('סינון קבוצת חלוקה');
+  showGroupsOnAssing = new BoolColumn('סינון קבוצת משפחה');
   showCityOnAssing = new BoolColumn('סינון עיר');
+  showAreaOnAssing = new BoolColumn('סינון אזור');
   showBasketOnAssing = new BoolColumn('סינון סוג סל');
   showNumOfBoxesOnAssing = new BoolColumn('בחירת מספר משפחות');
   showLeftThereButton = new BoolColumn('הצג למתנדב כפתור השארתי ליד הבית');
@@ -110,7 +123,7 @@ export class ApplicationSettings extends Entity<number>  {
   addressApiResult = new StringColumn();
   defaultStatusType = new DeliveryStatusColumn({
     caption: translate('סטטוס משלוח ברירת מחדל למשפחות חדשות')
-  }, [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup, DeliveryStatus.NotInEvent]);
+  }, [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup]);
   private _lastString: string;
   private _lastGeo: GeocodeInformation;
   getGeocodeInformation() {
@@ -131,7 +144,7 @@ export class ApplicationSettings extends Entity<number>  {
       savingRow: async () => {
         if (context.onServer) {
           if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
-            let geo = await GetGeoInformation(this.address.value,context);
+            let geo = await GetGeoInformation(this.address.value, context);
             this.addressApiResult.value = geo.saveToString();
             if (geo.ok()) {
             }
@@ -162,8 +175,10 @@ export class PhoneOption {
     if (args.settings.helpText.value) {
       args.addPhone(args.settings.helpText.value, args.settings.helpPhone.displayValue);
     }
-    else
-      args.addPhone(args.family.courierAssignUserName.value, args.family.courierAssignUserPhone.displayValue);
+    else {
+      let h = await args.context.for(Helpers).lookupAsync(args.d.courierAssignUser)
+      args.addPhone(h.name.value, h.phone.displayValue);
+    }
   });
   static familyHelpPhone = new PhoneOption("familyHelpPhone", "איש קשר לבירור כפי שמוגדר למשפחה", async args => {
     if (args.family.socialWorker.value && args.family.socialWorkerPhone1.value) {
@@ -209,7 +224,8 @@ export interface qaItem {
   answer?: string;
 }
 export interface phoneBuildArgs {
-  family: Families,
+  family: import('../families/families').Families,
+  d: import('../families/FamilyDeliveries').FamilyDeliveries,
   context: Context,
   phoneItem: PhoneItem,
   settings: ApplicationSettings,
@@ -236,7 +252,7 @@ export class SettingsService {
 export class RemovedFromListExcelImportStrategy {
   static displayAsError = new RemovedFromListExcelImportStrategy(0, 'הצג כשגיאה');
   static showInUpdate = new RemovedFromListExcelImportStrategy(1, 'הצג במשפחות לעדכון');
-  static ignore = new RemovedFromListExcelImportStrategy(2, 'התעלם');
+  static ignore = new RemovedFromListExcelImportStrategy(2, 'התעלם והוסף משפחה חדשה');
   constructor(public id: number, public caption: string) { }
 }
 class RemovedFromListExcelImportStrategyColumn extends ValueListColumn<RemovedFromListExcelImportStrategy>{

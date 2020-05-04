@@ -3,8 +3,9 @@ import { Route } from '@angular/router';
 
 import { BusyService } from '@remult/core';
 import { Context } from '@remult/core';
-import { Families } from '../families/families';
+
 import { DeliveryStatus } from '../families/DeliveryStatus';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 
@@ -35,7 +36,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
   }
   searchString: string = '';
   showAllFamilies = false;
-  families = this.context.for(Families).gridSettings({ knowTotalRows: true });
+  families = this.context.for(ActiveFamilyDeliveries).gridSettings({ knowTotalRows: true });
   pageSize = 7;
 
   async doFilter() {
@@ -62,10 +63,10 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
     this.doFilter();
   }
 
-  showStatus(f: Families) {
+  showStatus(f: ActiveFamilyDeliveries) {
     if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery) {
       if (f.courier.value) {
-        return 'משוייך למשנע';
+        return 'משוייך למתנדב';
       } else {
         return '';
       }

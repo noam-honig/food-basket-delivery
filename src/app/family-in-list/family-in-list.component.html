@@ -6,7 +6,7 @@
     <mat-icon color="green" *ngIf="f.courierBeenHereBefore.value">repeat</mat-icon>
   </div>
   <div>
-    {{f.basketType.displayValue}}
+    <span *ngIf="f.quantity.value>1">{{f.quantity.value}} x </span> {{f.basketType.displayValue}}
   </div>
 </mat-panel-title>
 

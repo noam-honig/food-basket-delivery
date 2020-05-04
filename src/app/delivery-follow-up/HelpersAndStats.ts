@@ -2,10 +2,11 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { NumberColumn,  BoolColumn } from '@remult/core';
 import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
 import { changeDate, DateTimeColumn, SqlBuilder } from '../model-shared/types';
-import { Families } from "../families/families";
+
 
 import { Context, EntityClass } from '@remult/core';
 import { Roles } from "../auth/roles";
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 
 
 
@@ -21,26 +22,18 @@ export class HelpersAndStats extends HelpersBase {
         dbReadOnly: true,
         caption: 'משפחות מחכות'
     });
-    allFamilies = new NumberColumn({
+    allDeliveires = new NumberColumn({
         dbReadOnly: true,
         caption: 'משפחות'
     });
-    deliveriesWithProblems = new NumberColumn({
-        dbReadOnly: true,
-        caption: 'משפחות עם בעיות'
-    });
-    lastAsignTime = new DateTimeColumn({
-        dbReadOnly: true
-    });
-    gotSms = new BoolColumn({
-        dbReadOnly: true
-    });
+  
+  
     constructor(context: Context) {
         super(context, {
             name: "helpersAndStats",
             allowApiRead: Roles.distCenterAdmin,
             dbName: () => {
-                let f = context.for(Families).create();
+                let f = context.for(ActiveFamilyDeliveries).create();
                 let h = context.for( Helpers).create();
                 var sql = new SqlBuilder();
 
@@ -67,20 +60,7 @@ export class HelpersAndStats extends HelpersBase {
                         h.escort,
                         h.distributionCenter ,
                         sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress),
-                        sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isActiveDelivery()]), this.allFamilies),
-                        sql.countInnerSelect(helperFamilies(() => [sql.in(f.deliverStatus,
-                            DeliveryStatus.FailedBadAddress.id,
-                            DeliveryStatus.FailedNotHome.id,
-                            DeliveryStatus.FailedOther.id)]),
-                            this.deliveriesWithProblems),
-                        sql.max(f.courierAssingTime,
-                            helperFamilies(() =>
-                                [sql.not(sql.in(f.deliverStatus, DeliveryStatus.Frozen.id, DeliveryStatus.NotInEvent.id))]), this.lastAsignTime),
-                        sql.build('coalesce(  ',h.smsDate, '> (', sql.query({
-                            select: () => [sql.build('max(', f.courierAssingTime, ')')],
-                            from: f,
-                            where: helperFamilies(() => [sql.not(sql.in(f.deliverStatus, DeliveryStatus.Frozen.id, DeliveryStatus.NotInEvent.id))]).where
-                        }), ") ,false) as ", this.gotSms)
+                        sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isActiveDelivery()]), this.allDeliveires),
 
                     ],
                     from: h

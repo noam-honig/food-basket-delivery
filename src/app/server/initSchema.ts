@@ -11,50 +11,28 @@ import '../app.module';
 
 import { SqlBuilder } from '../model-shared/types';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
-import { Helpers } from '../helpers/helpers';
-import { FamilyDeliveriesStats } from '../delivery-history/delivery-history.component';
-import { Sites } from '../sites/sites';
 import { DistributionCenters } from '../manage/distribution-centers';
+import { pagedRowsIterator } from '../families/familyActionsWiring';
 
 export async function initSchema(pool1: PostgresPool, org: string) {
 
-
+    console.log("init schema for ", org);
     var dataSource = new SqlDatabase(new PostgresDataProvider(pool1));
     let context = new ServerContext();
     context.setDataProvider(dataSource);
     let sql = new SqlBuilder();
+    let createFamilyIndex = async (name: string, ...columns: Column<any>[]) => {
+        await dataSource.execute(sql.build("create index if not exists ", name, " on ", f, "  (", columns, ")"));
+    }
+    let createDeliveryIndex = async (name: string, ...columns: Column<any>[]) => {
+        await dataSource.execute(sql.build("create index if not exists ", name, " on ", fd, "  (", columns, ")"));
+    }
 
     let f = context.for(Families).create();
-
-
-
-
-
-
     //create index for family deliveries if required
     var fd = context.for(FamilyDeliveries).create();
 
-    await dataSource.execute(sql.build('create index if not exists fd_1 on ', fd, ' (', [fd.family, fd.deliveryStatusDate, fd.deliverStatus, fd.courier], ')'));
 
-
-
-    //create index if required
-    let createIndex = async (name: string, ...columns: Column<any>[]) => {
-        await dataSource.execute(sql.build("create index if not exists ", name, " on ", f, "  (", columns, ")"));
-    }
-    await dataSource.execute(sql.build('drop index if exists f_1  '));
-    await dataSource.execute(sql.build('drop index if exists for_courier  '));
-    await dataSource.execute(sql.build('drop index if exists for_distribution_status_queries  '));
-    await dataSource.execute(sql.build('drop index if exists for_name  '));
-    await createIndex('for_courier1', f.courier, f.deliverStatus, f.courierAssingTime,f.city,f.basketType);
-    await createIndex("for_distribution_status_queries1", f.distributionCenter, f.courier, f.deliverStatus,f.city,f.basketType);
-    await createIndex("for_name1",f.name,f.deliverStatus,f.basketType);
-    await createIndex("for_distCenter_name",f.distributionCenter, f.name,f.deliverStatus,f.basketType);
-    await createIndex("for_basket",f.basketType,f.deliverStatus,f.courier);
-    await createIndex("for_basket_dist",f.distributionCenter, f.basketType,f.deliverStatus,f.courier);
-    
-    await dataSource.execute("create extension if not exists pg_trgm with schema pg_catalog;");
-    await dataSource.execute(sql.build('create index if not exists for_like_on_groups on families using gin  (groups gin_trgm_ops)'));
 
     if ((await context.for(BasketType).count() == 0)) {
         let h = context.for(BasketType).create();
@@ -63,7 +41,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         h.boxes.value = 1;
         await h.save();
     }
-    
+
 
     /*await context.for(Families).foreach(f => f.addressLongitude.isEqualTo(0), async ff => {
         let g = ff.getGeocodeInformation();
@@ -79,10 +57,10 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         settings.id.value = 1;
         settings.organisationName.value = 'שם הארגון שלי';
         settings.logoUrl.value = '/assets/apple-touch-icon.png';
-        settings.smsText.value = 'שלום !משנע!\nלחלוקת חבילות !ארגון! לחץ על: !אתר! \nתודה !שולח!';
+        settings.smsText.value = 'שלום !מתנדב!\nלחלוקת חבילות !ארגון! לחץ על: !אתר! \nתודה !שולח!';
     }
     if (!settings.reminderSmsText.value)
-        settings.reminderSmsText.value = 'שלום !משנע!, \nנשמח אם תעדכן את המערכת במצב המסירה של הסלים. לעדכון לחץ על:  !אתר!\nבתודה !ארגון!';
+        settings.reminderSmsText.value = 'שלום !מתנדב!, \nנשמח אם תעדכן את המערכת במצב המסירה של הסלים. לעדכון לחץ על:  !אתר!\nבתודה !ארגון!';
 
     if (!settings.commentForSuccessDelivery.value)
         settings.commentForSuccessDelivery.value = 'נשמח אם תכתוב לנו הערה על מה שראית והיה';
@@ -116,19 +94,12 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
     }
     if (settings.dataStructureVersion.value == 1) {
-        console.log("updating family source for historical information");
-        let f = context.for(Families).create();
-        let fd = context.for(FamilyDeliveries).create();
-        dataSource.execute(sql.update(fd, {
-            set: () => [[fd.archiveFamilySource, f.familySource]],
-            from: f,
-            where: () => [sql.eq(f.id, fd.family)]
-        }));
+
         settings.dataStructureVersion.value = 2;
         await settings.save();
     }
     if (settings.dataStructureVersion.value == 2) {
-        console.log("updating update date");
+
         let f = context.for(Families).create();
         dataSource.execute(sql.update(f, {
             set: () => [[f.lastUpdateDate, f.createDate]]
@@ -137,14 +108,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await settings.save();
     }
     if (settings.dataStructureVersion.value == 3) {
-        console.log("updating family source for historical information");
-        let f = context.for(Families).create();
-        let fd = context.for(FamilyDeliveries).create();
-        dataSource.execute(sql.update(fd, {
-            set: () => [[fd.archiveFamilySource, f.familySource]],
-            from: f,
-            where: () => [sql.eq(f.id, fd.family)]
-        }));
+
         settings.dataStructureVersion.value = 4;
         await settings.save();
     }
@@ -158,21 +122,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await settings.save();
     }
     if (settings.dataStructureVersion.value == 5) {
-        console.log("updating last sms date");
 
-        let helpers = await context.for(Helpers).find({});
-        for (const h of helpers) {
-            if (!h.smsDate.value) {
-                let f = await context.for(FamilyDeliveriesStats).find({
-                    where: f => f.courier.isEqualTo(h.id),
-                    orderBy: f => [{ column: f.deliveryStatusDate, descending: true }]
-                });
-                if (f && f.length > 0) {
-                    h.smsDate.value = f[0].deliveryStatusDate.value;
-                    await h.save();
-                }
-            }
-        }
         settings.dataStructureVersion.value = 6;
         await settings.save();
 
@@ -194,7 +144,8 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await settings.save();
     }
     if (settings.dataStructureVersion.value == 9) {
-        await dataSource.execute(sql.build('update ', fd, ' set ', fd.familyName, ' = ', f.name, ' from ', f, ' where ', sql.build(f, '.', f.id), ' = ', fd.family));
+        if ((await context.for(Families).count()) > 0)
+            await dataSource.execute(sql.build('update ', fd, ' set ', fd.name, ' = ', f.name, ' from ', f, ' where ', sql.build(f, '.', f.id), ' = ', fd.family));
         settings.dataStructureVersion.value = 10;
         await settings.save();
     }
@@ -206,10 +157,197 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         settings.dataStructureVersion.value = 11;
         await settings.save();
     }
+    if (settings.dataStructureVersion.value == 11) {
+        await dataSource.execute(sql.build('create index if not exists fd_1 on ', fd, ' (', [fd.family, fd.deliveryStatusDate, fd.deliverStatus, fd.courier], ')'));
+        //create index if required
+        await dataSource.execute(sql.build('drop index if exists f_1  '));
+        await dataSource.execute(sql.build('drop index if exists for_courier  '));
+        await dataSource.execute(sql.build('drop index if exists for_distribution_status_queries  '));
+        await dataSource.execute(sql.build('drop index if exists for_name  '));
+        await dataSource.execute(sql.build('drop index if exists for_courier1  '));
+        await dataSource.execute(sql.build('drop index if exists for_distribution_status_queries1  '));
+        await dataSource.execute(sql.build('drop index if exists for_basket  '));
+        await dataSource.execute(sql.build('drop index if exists for_basket_dist  '));
+        await createDeliveryIndex('for_courier2', fd.courier, fd.deliveryStatusDate, fd.courierAssingTime, fd.city, fd.basketType);
+        await createDeliveryIndex("for_distribution_status_queries2", fd.distributionCenter, fd.courier, fd.deliverStatus, fd.city, fd.basketType);
+        await createFamilyIndex("for_name1", f.name, f.status, f.basketType);
+        await createDeliveryIndex("for_name2", fd.name, fd.deliverStatus, fd.basketType);
+
+        await createDeliveryIndex("for_distCenter_name1", fd.distributionCenter, fd.name, fd.deliverStatus, fd.basketType);
+        await createDeliveryIndex("for_basket1", fd.basketType, fd.deliverStatus, fd.courier);
+        await createDeliveryIndex("for_basket_dist1", fd.distributionCenter, fd.basketType, fd.deliverStatus, fd.courier);
+
+        await dataSource.execute("create extension if not exists pg_trgm with schema pg_catalog;");
+        await dataSource.execute(sql.build('create index if not exists for_like_on_groups on families using gin  (groups gin_trgm_ops)'));
+        settings.dataStructureVersion.value = 12;
+        await settings.save();
+    }
+    let version = async (ver: number, what: () => Promise<void>) => {
+        if (settings.dataStructureVersion.value < ver) {
+            try {
+                console.log('start ', ver);
+                await what();
+                console.log('end ', ver);
+            } catch (err) {
+                console.error("failed for version ", ver, org, err);
+                throw err;
+
+            }
+            settings.dataStructureVersion.value = ver;
+            await settings.save();
+        }
+    }
+    await version(13, async () => {
+        if ((await context.for(Families).count()) > 0)
+            await dataSource.execute(sql.update(f, {
+                set: () => [
+                    [f.status, sql.case([{ when: ['deliverstatus=99'], then: 99 }], 0)],
+                    [f.statusUser, 'deliverystatususer'],
+                    [f.statusDate, 'deliverystatusdate']
+                ]
+
+
+            }));
+    })
+
+    if (settings.dataStructureVersion.value == 13) {
+        await pagedRowsIterator(context.for(Families), {
+            forEachRow: async f => {
+                f._suppressLastUpdateDuringSchemaInit = true;
+                let g = f.getGeocodeInformation();
+                f.addressByGoogle.value = g.getAddress();
+                f.drivingLatitude.value = g.location().lat;
+                f.drivingLongitude.value = g.location().lng;
+                await f.save();
+            },
+            where: x => undefined,
+
+        });
+        settings.dataStructureVersion.value = 14;
+        await settings.save();
+    }
+
+    await version(15, async () => {
+        let fromArchive = (col: Column<any>) =>
+            [col, 'archive_' + col.defs.dbName] as [Column<any>, any];
+        if ((await context.for(Families).count()) > 0)
+            await dataSource.execute(sql.update(fd, {
+                set: () => [
+                    [fd.archive, true],
+                    [fd.name, 'familyname'],
+                    [fd.createDate, fd.deliveryStatusDate],
+                    fromArchive(fd.deliveryComments),
+                    [fd.groups, 'archivegroups'],
+                    [fd.familySource, 'archivefamilysource'],
+                    fromArchive(fd.address),
+                    fromArchive(fd.entrance),
+                    fromArchive(fd.floor),
+                    fromArchive(fd.addressComment),
+                    fromArchive(fd.appartment),
+                    fromArchive(fd.addressLongitude),
+                    fromArchive(fd.city),
+                    fromArchive(fd.addressLatitude),
+                    [fd.drivingLongitude, fd.addressLongitude],
+                    [fd.drivingLatitude, fd.addressLatitude],
+                    [fd.addressByGoogle, fd.address],
+                    [fd.addressOk, true],
+                    fromArchive(fd.phone1Description),
+                    fromArchive(fd.phone2),
+                    fromArchive(fd.phone3),
+                    fromArchive(fd.phone3Description),
+                    fromArchive(fd.phone4),
+                    fromArchive(fd.phone2Description),
+                    fromArchive(fd.phone4Description),
+                ]
+            }));
+    });
+    await version(16, async () => {
+        if ((await context.for(Families).count()) > 0)
+            await dataSource.execute(sql.insert({
+                into: fd,
+                from: f,
+                set: () => {
+                    let r: [Column<any>, any][] = [
+                        [fd.id, f.id],
+                        [fd.family, f.id],
+                        [fd.createDate, sql.case([{ when: ['deliverStatus in (0,2)'], then: 'deliveryStatusDate' }], 'courierAssingTime')],
+                        [fd.createUser, 'courierAssignUser'],
+                        [fd.distributionCenter, 'distributionCenter'],
+                        [fd.deliverStatus, sql.case([{ when: ['deliverStatus=90'], then: '9' }], 'deliverStatus')]
+                    ];
+                    for (const c of [
+                        fd.name,
+                        fd.basketType,
+
+
+                        fd.courier,
+                        fd.courierComments,
+                        fd.routeOrder,
+                        fd.special,
+                        fd.deliveryStatusDate,
+                        fd.courierAssignUser,
+                        fd.courierAssingTime,
+                        fd.deliveryStatusUser,
+                        fd.needsWork,
+                        fd.needsWorkDate,
+                        fd.needsWorkUser,
+                        fd.deliveryComments,
+                        fd.familySource,
+                        fd.groups,
+                        fd.address,
+                        fd.floor,
+                        fd.appartment,
+                        fd.entrance,
+                        fd.city,
+                        fd.addressComment,
+                        fd.addressLongitude,
+                        fd.addressLatitude,
+                        fd.addressByGoogle,
+                        fd.addressOk,
+                        fd.phone1,
+                        fd.phone1Description,
+                        fd.phone2,
+                        fd.phone2Description,
+                        fd.phone3,
+                        fd.phone3Description,
+                        fd.phone4,
+                        fd.phone4Description
+
+                    ]) {
+                        r.push([c, c.defs.dbName])
+                    }
+                    return r;
+                },
+                where: () => ['deliverstatus not in (99,95)']
+            }));
+
+    });
+    await version(17, async () => {
+        await dataSource.execute(sql.build('drop index if exists for_distCenter_name  '));
+    });
+    await version(18, async () => {
+        await dataSource.execute(sql.update(f, { set: () => [[f.quantity, 1]] }));
+    });
+    await version(19, async () => {
+        await dataSource.execute(sql.update(fd, { set: () => [[fd.quantity, 1]] }));
+    });
+    await version(20, async () => {
+        let dc = await context.for(DistributionCenters).find({ where: d => d.name.isEqualTo('נקודת חלוקה ראשונה') });
+        for (const d of dc) {
+            d.name.value = 'חלוקת מזון';
+            await d.save();
+        }
+    });
+
+
+
+
+
+
     if ((await context.for(DistributionCenters).count() == 0)) {
         let h = context.for(DistributionCenters).create();
         h.setEmptyIdForNewRow();
-        h.name.value = 'נקודת חלוקה ראשונה';
+        h.name.value = 'חלוקת מזון';
         h.address.value = settings.address.value;
         await h.save();
     }

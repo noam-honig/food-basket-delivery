@@ -2,14 +2,14 @@
 import * as chart from 'chart.js';
 import { Component, OnInit, ViewChild, Sanitizer, OnDestroy } from '@angular/core';
 
-import { Families, FamilyId } from '../families/families';
+
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { GeocodeInformation, GetGeoInformation, polygonContains } from '../shared/googleApiHelpers';
 
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
 
-import { Context, SqlDatabase, DataAreaSettings } from '@remult/core';
+import { Context, SqlDatabase, DataAreaSettings, GridButton, AndFilter } from '@remult/core';
 import { ServerFunction } from '@remult/core';
 import { SqlBuilder } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -19,14 +19,18 @@ import { colors } from '../families/stats-action';
 import { BusyService } from '@remult/core';
 import { YesNo } from '../families/YesNo';
 import { Roles, AdminGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, OverviewGuard } from '../auth/roles';
-import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
+
 import { Helpers, HelperId } from '../helpers/helpers';
 import MarkerClusterer, { ClusterIconInfo } from "@google/markerclustererplus";
-import { FamilyDeliveries } from '../families/FamilyDeliveries';
+import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Sites } from '../sites/sites';
 import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser } from '../manage/distribution-centers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { translate } from '../translate';
+import { delvieryActions, UpdateDistributionCenter, NewDelivery, FreezeDeliveries, UnfreezeDeliveries } from '../family-deliveries/family-deliveries-actions';
+import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, actionDialogNeeds } from '../families/familyActionsWiring';
+import { familyActionsForDelivery, UpdateArea, updateGroup } from '../families/familyActions';
+import { Families } from '../families/families';
 
 @Component({
   selector: 'app-distribution-map',
@@ -36,18 +40,18 @@ import { translate } from '../translate';
 export class DistributionMap implements OnInit, OnDestroy {
   constructor(private context: Context, private dialog: DialogService, busy: BusyService) {
 
-     dialog.onStatusChange(() => {
+    dialog.onStatusChange(() => {
       busy.donotWait(async () => {
 
-        await this.refreshFamilies();
+        await this.refreshDeliveries();
 
       });
-    },this.destroyHelper);
-    
+    }, this.destroyHelper);
+
     this.dialog.onDistCenterChange(async () => {
       this.clearMap();
       this.bounds = new google.maps.LatLngBounds();
-      await this.refreshFamilies();
+      await this.refreshDeliveries();
       this.map.fitBounds(this.bounds);
     }, this.destroyHelper);
 
@@ -57,18 +61,58 @@ export class DistributionMap implements OnInit, OnDestroy {
     for (const f of this.dict.values()) {
       f.marker.setMap(null);
     }
-    this.selectedFamilies = [];
+    this.selectedDeliveries = [];
     this.dict = new Map<string, infoOnMap>();
     if (this.activePolygon) {
       this.activePolygon.setMap(null);
       this.activePolygon = undefined;
     }
-    
+
+  }
+  buttons: GridButton[] = [
+    ...buildGridButtonFromActions([UpdateArea], this.context, this.buttonFamilyHelper()),
+    ...buildGridButtonFromActions([UpdateDistributionCenter], this.context, this.buttonDeliveryHelper()),
+    ...buildGridButtonFromActions([updateGroup], this.context, this.buttonFamilyHelper()),
+    ...buildGridButtonFromActions([NewDelivery, FreezeDeliveries, UnfreezeDeliveries], this.context, this.buttonDeliveryHelper())
+
+  ];
+  private buttonFamilyHelper(): actionDialogNeeds<Families> {
+    return {
+      afterAction: async () => await this.refreshDeliveries(),
+      dialog: this.dialog,
+      callServer: async (info, action, args) => await DistributionMap.updateFamiliesBasedOnMap(info, action, args),
+      buildActionInfo: async (actionWhere) => {
+        return {
+          count: this.selectedDeliveries.length,
+          actionRowsFilterInfo: this.selectedDeliveries.map(x => x.id)
+        };
+      },
+      groupName: 'משלוחים'
+    };
+  }
+
+  private buttonDeliveryHelper(): actionDialogNeeds<ActiveFamilyDeliveries> {
+    return {
+      afterAction: async () => await this.refreshDeliveries(),
+      dialog: this.dialog,
+      callServer: async (info, action, args) => await DistributionMap.updateDeliveriesBasedOnMap(info, action, args),
+      buildActionInfo: async (actionWhere) => {
+        return {
+          count: this.selectedDeliveries.length,
+          actionRowsFilterInfo: this.selectedDeliveries.map(x => x.id)
+        };
+      },
+      groupName: 'משלוחים'
+    };
+  }
+
+  hasVisibleButtons() {
+    return this.buttons.find(x => !x.visible || x.visible());
   }
 
   destroyHelper = new DestroyHelper();
   ngOnDestroy(): void {
-      this.destroyHelper.destroy();
+    this.destroyHelper.destroy();
   }
   static route: Route = {
     path: 'addresses',
@@ -78,8 +122,8 @@ export class DistributionMap implements OnInit, OnDestroy {
 
   gridView = true;
   drawing = false;
-  selectedFamilies: infoOnMap[] = [];
-  selectFamilies() {
+  selectedDeliveries: infoOnMap[] = [];
+  selectDeliveries() {
     this.drawing = true;
     if (this.activePolygon) {
       this.activePolygon.setMap(null);
@@ -96,20 +140,20 @@ export class DistributionMap implements OnInit, OnDestroy {
     google.maps.event.addListener(dm, 'polygoncomplete', (polygon: google.maps.Polygon) => {
       this.activePolygon = polygon;
       this.drawing = false;
-      let calcFamilies = () => {
+      let calcDeliveries = () => {
 
-        this.selectedFamilies = [];
+        this.selectedDeliveries = [];
         for (const f of this.dict.values()) {
           if (f.marker.getVisible() && f.marker.getMap()) {
             if (polygonContains(polygon, f.marker.getPosition())) {
-              this.selectedFamilies.push(f);
+              this.selectedDeliveries.push(f);
             }
           }
         };
       }
-      calcFamilies();
+      calcDeliveries();
       polygon.addListener('mouseup', () => {
-        calcFamilies();
+        calcDeliveries();
       })
 
       dm.setDrawingMode(null);
@@ -119,40 +163,44 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   activePolygon: google.maps.Polygon;
 
-  async updateDistributionCenter() {
-    let s = new DistributionCenterId(this.context);
-    let ok = false;
-    await this.context.openDialog(InputAreaComponent, x => {
-      x.args = {
-        settings: {
-          columnSettings: () => [s]
-        },
-        title: 'עדכון נקודת חלוקה ל-' + this.selectedFamilies.length + ' המשפחות המסומנות',
-        ok: () => ok = true
-        , cancel: () => { }
 
+  @ServerFunction({ allowed: Roles.admin })
+  static async updateDeliveriesBasedOnMap(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
+    let r = await filterActionOnServer(delvieryActions(), context, async (h) => {
+      let deliveries: string[] = info.actionRowsFilterInfo;
+      let i = 0;
+      for (const id of deliveries) {
+        let f = await context.for(ActiveFamilyDeliveries).findFirst(f => new AndFilter(h.actionWhere(f), f.id.isEqualTo(id).and(f.distributionCenter.isAllowedForUser())));
+        if (f) {
+          i++;
+          await h.forEach(f);
+          await f.save();
+        }
       }
-    });
-    if (ok) {
-      if (await this.dialog.YesNoPromise('האם לעדכן את נקודת החלוקה "' + await s.getTheValue() + '" ל-' + this.selectedFamilies.length + translate(' משפחות?'))) {
-        this.dialog.Info(await DistributionMap.updateDistributionCenterOnServerBasedOnMap(this.selectedFamilies.map(x => x.id), s.rawValue));
-        this.clearMap();
-        this.refreshFamilies();
-      }
-    }
+      return i;
+    }, action, args);
+    return 'עודכנו ' + r + ' משלוחים';
+
   }
   @ServerFunction({ allowed: Roles.admin })
-  static async updateDistributionCenterOnServerBasedOnMap(families: string[], distributionCenter: string, context?: Context) {
-    if (await context.for(DistributionCenters).count(d => d.id.isEqualTo(distributionCenter).and(filterCenterAllowedForUser(d.id, context))) == 0)
-      throw "נקודת חלוקה לא קיימת או מורשת";
-    for (const id of families) {
-      let f = await context.for(Families).findFirst(f => f.id.isEqualTo(id).and(f.distributionCenter.isAllowedForUser()));
-      if (f) {
-        f.distributionCenter.value = distributionCenter;
-        await f.save();
+  static async updateFamiliesBasedOnMap(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
+    let r = await filterActionOnServer(familyActionsForDelivery(), context, async (h) => {
+      let deliveries: string[] = info.actionRowsFilterInfo;
+      let i = 0;
+      for (const id of deliveries) {
+        let fd = await context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(id).and(f.distributionCenter.isAllowedForUser()));
+        if (fd) {
+          i++;
+          let f = await context.for(Families).findFirst(f => f.id.isEqualTo(fd.family).and(h.actionWhere(f)));
+          if (f) {
+            await h.forEach(f);
+            await f.save();
+          }
+        }
       }
-    }
-    return "עודכנו " + families.length + " משפחות";
+      return i;
+    }, action, args);
+    return 'עודכנו ' + r + ' משלוחים';
 
   }
 
@@ -174,7 +222,7 @@ export class DistributionMap implements OnInit, OnDestroy {
       this.bounds = new google.maps.LatLngBounds();
       this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
       this.mapInit = true;
-      await this.refreshFamilies();
+      await this.refreshDeliveries();
       this.map.fitBounds(this.bounds);
 
     }
@@ -187,28 +235,28 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   statuses = new Statuses();
   selectedStatus: statusClass;
-  filterCourier = new HelperId(this.context, () => this.dialog.distCenter.value, {
-    caption: 'משנע לסינון',
-    valueChange: () => this.refreshFamilies()
-  }, h => h.allFamilies.isGreaterThan(0));
+  filterCourier = new HelperId(this.context, {
+    caption: 'מתנדב לסינון',
+    valueChange: () => this.refreshDeliveries()
+  }, h => h.allDeliveires.isGreaterThan(0));
 
   overviewMap = false;
-  async refreshFamilies() {
+  async refreshDeliveries() {
     let allInAlll = false;
-    let families: familyQueryResult[];
+    let deliveries: deliveryOnMap[];
     if (this.context.isAllowed(Roles.overview)) {
       this.overviewMap = true;
-      families = await DistributionMap.GetLocationsForOverview();
+      deliveries = await DistributionMap.GetLocationsForOverview();
       allInAlll = true;
     }
     else
-      families = await DistributionMap.GetFamiliesLocations(false, undefined, undefined, this.dialog.distCenter.value);
+      deliveries = await DistributionMap.GetDeliveriesLocation(false, undefined, undefined, this.dialog.distCenter.value);
     this.statuses.statuses.forEach(element => {
       element.value = 0;
     });
     let markers: google.maps.Marker[] = []
 
-    families.forEach(f => {
+    deliveries.forEach(f => {
 
       let familyOnMap = this.dict.get(f.id);
       let isnew = false;
@@ -224,17 +272,18 @@ export class DistributionMap implements OnInit, OnDestroy {
         this.dict.set(f.id, familyOnMap);
         markers.push(familyOnMap.marker);
 
-        let family: Families;
+
         if (!allInAlll)
           google.maps.event.addListener(familyOnMap.marker, 'click', async () => {
-            family = await this.context.for(Families).findFirst(fam => fam.id.isEqualTo(f.id));
-            this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = {
-              f: family, onSave: () => {
+            let fd = await this.context.for(ActiveFamilyDeliveries).findId(familyOnMap.id);
+            await fd.showDetailsDialog({
+              onSave: async () => {
                 familyOnMap.marker.setMap(null);
                 this.dict.delete(f.id);
-                this.refreshFamilies()
+                this.refreshDeliveries()
               }
             });
+
           });
       }
       else
@@ -296,13 +345,13 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.updateChart();
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
-  static async GetFamiliesLocations(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: string, context?: Context, db?: SqlDatabase) {
+  static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: string, area?: string, context?: Context, db?: SqlDatabase) {
     if (!distCenter)
       distCenter = '';
-    let f = context.for(Families).create();
+    let f = context.for(ActiveFamilyDeliveries).create();
     let h = context.for(Helpers).create();
     let sql = new SqlBuilder();
-    sql.addEntity(f, "Families");
+    sql.addEntity(f, "FamilyDeliveries");
     let r = (await db.execute(sql.query({
       select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier,
       sql.columnInnerSelect(f, {
@@ -316,10 +365,10 @@ export class DistributionMap implements OnInit, OnDestroy {
       where: () => {
         let where: any[] = [f.deliverStatus.isActiveDelivery().and(f.distributionCenter.isAllowedForUser())];
         if (distCenter !== undefined)
-          where.push(f.filterDistCenter(distCenter));
+          where.push(f.filterDistCenterAndAllowed(distCenter));
 
         if (onlyPotentialAsignment) {
-          where.push(f.readyFilter(city, group).and(f.special.isEqualTo(YesNo.No)));
+          where.push(f.readyFilter(city, group, area).and(f.special.isEqualTo(YesNo.No)));
         }
         return where;
       },
@@ -334,19 +383,19 @@ export class DistributionMap implements OnInit, OnDestroy {
         status: +x[r.getColumnKeyInResultForIndexInSelect(3)],
         courier: x[r.getColumnKeyInResultForIndexInSelect(4)],
         courierName: x[r.getColumnKeyInResultForIndexInSelect(5)]
-      } as familyQueryResult;
+      } as deliveryOnMap;
 
-    }) as familyQueryResult[];
+    }) as deliveryOnMap[];
   }
   @ServerFunction({ allowed: Roles.overview })
   static async GetLocationsForOverview(context?: Context, db?: SqlDatabase) {
 
-    let result: familyQueryResult[] = []
-    let f = context.for(Families).create();
-    let fd = context.for(FamilyDeliveries).create();
+    let result: deliveryOnMap[] = []
+    let f = context.for(FamilyDeliveries).create();
+
     let sql = new SqlBuilder();
-    sql.addEntity(f, "Families");
-    sql.addEntity(fd, "FamiliesDeliveries");
+    sql.addEntity(f, "fd");
+
 
     for (const org of Sites.schemas) {
       let dp = Sites.getDataProviderForOrg(org) as SqlDatabase;
@@ -359,15 +408,7 @@ export class DistributionMap implements OnInit, OnDestroy {
         }
 
       })))));
-      result.push(...mapSqlResult((await dp.execute(sql.query({
-        select: () => [fd.id, fd.archive_addressLatitude, fd.archive_addressLongitude, fd.deliverStatus],
-        from: fd,
-        where: () => {
-          let where = [fd.deliverStatus.isSuccess().and(fd.deliveryStatusDate.isGreaterOrEqualTo(new Date(2020, 2, 18)))];
-          return where;
-        }
 
-      })))));
     }
     return result;
 
@@ -386,7 +427,7 @@ export class DistributionMap implements OnInit, OnDestroy {
       position: 'right',
       onClick: (event: MouseEvent, legendItem: any) => {
         this.selectedStatus = this.statuses.statuses[legendItem.index];
-        this.refreshFamilies();
+        this.refreshDeliveries();
         return false;
       }
     },
@@ -394,7 +435,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   public chartClicked(e: any): void {
     if (e.active && e.active.length > 0) {
       this.selectedStatus = this.statuses.statuses[e.active[0]._index];
-      this.refreshFamilies();
+      this.refreshDeliveries();
     }
   }
   updateChart() {
@@ -425,7 +466,7 @@ export class DistributionMap implements OnInit, OnDestroy {
 
 
 }
-interface familyQueryResult {
+interface deliveryOnMap {
   id: string;
   lat: number;
   lng: number;
@@ -474,6 +515,7 @@ export class Statuses {
       case DeliveryStatus.FailedBadAddress.id:
       case DeliveryStatus.FailedNotHome.id:
       case DeliveryStatus.FailedOther.id:
+      case DeliveryStatus.Frozen.id:
         return this.problem;
         break;
     }
@@ -497,10 +539,6 @@ function mapSqlResult(r) {
       status: +x[r.getColumnKeyInResultForIndexInSelect(3)],
       courier: '',
       courierName: ''
-    } as familyQueryResult;
-  }) as familyQueryResult[];
+    } as deliveryOnMap;
+  }) as deliveryOnMap[];
 }
-/*update haderamoadonit.families  set deliverstatus=11 where addresslongitude >(select x.addresslongitude from haderamoadonit.families x
-  where name like '%גרובש%')
-  and addresslongitude<= (select x.addresslongitude from haderamoadonit.families x
-  where name like '%וולנץ%')*/
