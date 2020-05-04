@@ -61,7 +61,7 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
   async ngOnInit() {
     if (this.args.showFailStatus) {
       
-      this.phoneOptions = await ApplicationSettings.getPhoneOptions(this.args.family.id.value, this.context);
+      this.phoneOptions = await ApplicationSettings.getPhoneOptions(this.args.family.id.value);
 
     }
   }

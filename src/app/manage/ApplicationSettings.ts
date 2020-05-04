@@ -15,7 +15,7 @@ import { BasketType } from '../families/BasketType';
 @EntityClass
 export class ApplicationSettings extends Entity<number>  {
   @ServerFunction({ allowed: c => c.isSignedIn() })
-  static async getPhoneOptions(deliveryId: string, context: Context) {
+  static async getPhoneOptions(deliveryId: string, context?: Context) {
     let ActiveFamilyDeliveries = await (await import('../families/FamilyDeliveries')).ActiveFamilyDeliveries;
     let d = await context.for(ActiveFamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId).and(fd.isAllowedForUser()));
     if (!d)
