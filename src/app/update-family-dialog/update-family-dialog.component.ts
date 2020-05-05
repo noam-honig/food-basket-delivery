@@ -210,7 +210,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
         ].filter(x => this.settings.usingSelfPickupModule.value ? true : x != f.defaultSelfPickup)
     });
     if (this.delivery)
-      this.deliverInfo = new DataAreaSettings(this.delivery.deilveryDetailsAreaSettings());
+      this.deliverInfo = new DataAreaSettings(this.delivery.deilveryDetailsAreaSettings(this.dialog));
   }
 
 

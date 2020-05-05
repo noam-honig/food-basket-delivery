@@ -138,7 +138,7 @@ export class OverviewComponent implements OnInit {
           cols.push(builder.countInnerSelect({ from: f, where: () => [f.onTheWayFilter()] }, key));
         }
         else
-          cols.push(builder.build('(select count(*) from ', fd, ' where ', builder.and(fd.deliveryStatusDate.isGreaterOrEqualTo(dateRange.from).and(fd.deliveryStatusDate.isLessThan(dateRange.to).and(d.deliverStatus.isAResultStatus()))), ') ', key));
+          cols.push(builder.build('(select count(*) from ', fd, ' where ', builder.and(fd.deliveryStatusDate.isGreaterOrEqualTo(dateRange.from).and(fd.deliveryStatusDate.isLessThan(dateRange.to).and(fd.deliverStatus.isAResultStatus()))), ') ', key));
 
       }
 

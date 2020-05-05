@@ -534,7 +534,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         showInLine: true,
         click: async fd => {
           fd.showDetailsDialog({
-            refreshDeliveryStats: () => this.refreshStats()
+            refreshDeliveryStats: () => this.refreshStats(),
+            dialog:this.dialog
           });
         }
         , textInMenu: () => 'כרטיס משלוח'

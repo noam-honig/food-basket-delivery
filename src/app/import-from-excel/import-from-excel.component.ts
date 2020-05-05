@@ -725,7 +725,7 @@ export class ImportFromExcelComponent implements OnInit {
                     this.addDelivery,
                     { column: this.defaultBasketType, visible: () => this.addDelivery.value && !updateColumns.get(this.fd.basketType) && !updateColumns.get(this.f.basketType) },
                     { column: this.compareBasketType, visible: () => this.addDelivery },
-                    { column: this.distributionCenter, visible: () => this.addDelivery.value && !updateColumns.get(this.fd.distributionCenter) },
+                    { column: this.distributionCenter, visible: () => this.addDelivery.value && !updateColumns.get(this.fd.distributionCenter) && this.dialog.hasManyCenters },
                     { column: this.useFamilyMembersAsNumOfBaskets, visible: () => this.addDelivery.value && !updateColumns.get(this.fd.quantity) && updateColumns.get(this.f.familyMembers) },
                     s.defaultPrefixForExcelImport,
                     s.checkIfFamilyExistsInFile,
@@ -1124,7 +1124,7 @@ export class ImportFromExcelComponent implements OnInit {
     async updateFamily(i: duplicateFamilyInfo) {
         let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(i.id));
         f.showFamilyDialog();
-        
+
     }
 }
 interface importReportRow {

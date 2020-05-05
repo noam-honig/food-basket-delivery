@@ -13,6 +13,7 @@ import { YesNoColumn } from "./YesNo";
 import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
 import { UpdateFamilyDialogComponent } from "../update-family-dialog/update-family-dialog.component";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
+import { DialogService } from "../select-popup/dialog";
 
 @EntityClass
 export class FamilyDeliveries extends IdEntity {
@@ -35,7 +36,7 @@ export class FamilyDeliveries extends IdEntity {
                     )
                 ));
     }
-    
+
     family = new FamilyId({
         allowApiUpdate: false
     });
@@ -388,7 +389,8 @@ export class FamilyDeliveries extends IdEntity {
     }
     async showDetailsDialog(callerHelper?: {
         refreshDeliveryStats?: () => void,
-        onSave?: () => Promise<void>
+        onSave?: () => Promise<void>,
+        dialog: DialogService
     }) {
         if (!this.context.isAllowed(Roles.admin)) {
             await this.context.openDialog(InputAreaComponent, x => {
@@ -407,7 +409,7 @@ export class FamilyDeliveries extends IdEntity {
                     cancel: () => {
                         this.undoChanges();
                     },
-                    settings: this.deilveryDetailsAreaSettings()
+                    settings: this.deilveryDetailsAreaSettings(callerHelper.dialog)
                 }
             });
         }
@@ -426,7 +428,7 @@ export class FamilyDeliveries extends IdEntity {
 
             });
     }
-    deilveryDetailsAreaSettings(): IDataAreaSettings<any> {
+    deilveryDetailsAreaSettings(dialog: DialogService): IDataAreaSettings<any> {
         return {
             columnSettings: () =>
                 [
@@ -434,7 +436,7 @@ export class FamilyDeliveries extends IdEntity {
                     this.deliverStatus,
                     this.deliveryComments,
                     this.courier,
-                    this.distributionCenter,
+                    { column: this.distributionCenter, visible: () => dialog.hasManyCenters },
                     this.needsWork,
                     this.courierComments,
                     this.special

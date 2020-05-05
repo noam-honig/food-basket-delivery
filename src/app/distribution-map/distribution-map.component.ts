@@ -282,6 +282,7 @@ export class DistributionMap implements OnInit, OnDestroy {
                 this.dict.delete(f.id);
                 this.refreshDeliveries()
               }
+              , dialog: this.dialog
             });
 
           });
