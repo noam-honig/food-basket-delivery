@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn, Filter, ServerFunction, unpackWhere, packWhere, Column, dataAreaSettings, IDataAreaSettings, DataArealColumnSetting, GridButton, Allowed } from '@remult/core';
+import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn, Filter, ServerFunction, unpackWhere, packWhere, Column, dataAreaSettings, IDataAreaSettings, DataArealColumnSetting, GridButton, Allowed, EntityWhere } from '@remult/core';
 
 import { Families } from './families';
 
@@ -396,12 +396,17 @@ export class FamiliesComponent implements OnInit {
                     dialog: this.dialog,
                     callServer: async (info, action, args) => await FamiliesComponent.FamilyActionOnServer(info, action, args),
                     buildActionInfo: async actionWhere => {
-                        let where = f => new AndFilter(actionWhere(f), this.families.buildFindOptions().where(f));
+                        let where: EntityWhere<Families> = f => {
+                            let r = new AndFilter(actionWhere(f), this.families.buildFindOptions().where(f));
+                            if (this.families.selectedRows.length >= 1)
+                                r = new AndFilter(r, f.id.isIn(...this.families.selectedRows.map(x => x.id.value)));
+                            return r;
+                        };
                         return {
                             count: await this.context.for(Families).count(where),
                             actionRowsFilterInfo: packWhere(this.context.for(Families).create(), where)
                         };
-                    },settings:this.settings,
+                    }, settings: this.settings,
                     groupName: 'משפחות'
                 })
             , {
@@ -409,7 +414,7 @@ export class FamiliesComponent implements OnInit {
                 click: () => this.saveToExcel(),
                 visible: () => this.isAdmin
             }],
-
+        allowSelection: true,
         rowButtons: [
             {
                 name: '',

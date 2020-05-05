@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import { Context, DataControlSettings, FilterBase, AndFilter, BusyService, packWhere, ServerFunction, unpackWhere } from '@remult/core';
+import { Context, DataControlSettings, FilterBase, AndFilter, BusyService, packWhere, ServerFunction, unpackWhere, EntityWhere } from '@remult/core';
 
 import { FamilyDeliveresStatistics, FamilyDeliveryStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
@@ -492,6 +492,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       ];
       return r;
     },
+    allowSelection: true,
     gridButton: [
       ...buildGridButtonFromActions(delvieryActions(), this.context,
         {
@@ -499,13 +500,9 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           dialog: this.dialog,
           callServer: async (info, action, args) => await FamilyDeliveriesComponent.DeliveriesActionOnServer(info, action, args),
           buildActionInfo: async actionWhere => {
-            let where = f => new AndFilter(actionWhere(f), this.deliveries.buildFindOptions().where(f));
-            return {
-              count: await this.context.for(ActiveFamilyDeliveries).count(where),
-              actionRowsFilterInfo: packWhere(this.context.for(ActiveFamilyDeliveries).create(), where)
-            };
+            return await this.buildWhereForAction(actionWhere);
           },
-          settings:this.settings,
+          settings: this.settings,
           groupName: 'משלוחים'
         }),
       ...buildGridButtonFromActions(familyActionsForDelivery(), this.context, {
@@ -513,13 +510,9 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         dialog: this.dialog,
         callServer: async (info, action, args) => await FamilyDeliveriesComponent.FamilyInDeliveryActionOnServer(info, action, args),
         buildActionInfo: async actionWhere => {
-          let where = f => new AndFilter(actionWhere(f), this.deliveries.buildFindOptions().where(f));
-          return {
-            count: await this.context.for(ActiveFamilyDeliveries).count(where),
-            actionRowsFilterInfo: packWhere(this.context.for(ActiveFamilyDeliveries).create(), where)
-          };
+          return await this.buildWhereForAction(actionWhere);
         },
-        settings:this.settings,
+        settings: this.settings,
         groupName: 'משפחות'
       }),
       {
@@ -623,6 +616,20 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       }
     ]
   });
+  private async buildWhereForAction(actionWhere) {
+    let where: EntityWhere<ActiveFamilyDeliveries> = f => {
+      let r = new AndFilter(actionWhere(f), this.deliveries.buildFindOptions().where(f));
+      if (this.deliveries.selectedRows.length > 0)
+        r = new AndFilter(r, f.id.isIn(...this.deliveries.selectedRows.map(x => x.id.value)));
+      return r;
+
+    };
+    return {
+      count: await this.context.for(ActiveFamilyDeliveries).count(where),
+      actionRowsFilterInfo: packWhere(this.context.for(ActiveFamilyDeliveries).create(), where)
+    };
+  }
+
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async DeliveriesActionOnServer(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
     let r = await filterActionOnServer(delvieryActions(), context, async (h) => {

@@ -93,7 +93,7 @@ export class updateGroup extends ActionOnRows<Families> {
     constructor(context: Context) {
         super(context, Families, {
             columns: () => [this.group, this.action],
-            confirmQuestion: () => 'האם ' + this.action.value + ' את השיוך לקבוצה "' + this.group.value,
+            confirmQuestion: () => 'האם ' + this.action.value + ' את השיוך לקבוצה "' + this.group.value+'"',
             title: 'שיוך לקבוצת משפחות',
             allowed: Roles.admin,
             forEach: async f => {
