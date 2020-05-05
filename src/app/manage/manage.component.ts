@@ -356,7 +356,7 @@ export class ManageComponent implements OnInit {
       return;
     }
     let r = await ManageComponent.deleteFamiliesOnServer();
-    this.dialog.Info('נתחקו ' + r + ' משפחות');
+    this.dialog.Info('נמחקו ' + r + ' משפחות');
   }
   @ServerFunction({ allowed: Roles.admin })
   static async deleteFamiliesOnServer(context?: Context) {
