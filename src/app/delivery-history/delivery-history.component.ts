@@ -177,7 +177,7 @@ export class DeliveryHistoryComponent implements OnInit {
       where: d => {
         var toDate = this.toDate.value;
         toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
-        return d.deliveryStatusDate.isGreaterOrEqualTo(this.fromDate.value).and(d.deliveryStatusDate.isLessThan(toDate))
+        return d.deliveryStatusDate.isGreaterOrEqualTo(this.fromDate.value).and(d.deliveryStatusDate.isLessThan(toDate)).and(d.deliverStatus.isAResultStatus())
       }
     }
   });
@@ -220,7 +220,7 @@ export class DeliveryHistoryComponent implements OnInit {
           sql.build("count (distinct date (", fd.courierAssingTime.defs.dbName, ")) dates"),
           sql.build("count (distinct ", fd.family.defs.dbName, ") families")],
           ' from ', fd.defs.dbName,
-          ' where ', sql.and(fd.deliveryStatusDate.isGreaterOrEqualTo(fromDateDate).and(fd.deliveryStatusDate.isLessThan(toDateDate))))
+          ' where ', sql.and(fd.deliveryStatusDate.isGreaterOrEqualTo(fromDateDate).and(fd.deliveryStatusDate.isLessThan(toDateDate).and(fd.deliverStatus.isAResultStatus()))))
 
         + sql.build(' group by ', fd.courier.defs.dbName), ") x"))).rows;
 

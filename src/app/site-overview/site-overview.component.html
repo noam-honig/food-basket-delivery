@@ -1,4 +1,4 @@
-<h3 matDialogHeader>{{args.site.name}}</h3>
+<h3 matDialogHeader>{{args.site.name}} ({{args.site.site}})</h3>
 <ul>
     <li *ngFor="let i of args.statistics">
         {{i.caption}} - {{args.site.stats[i.caption]}}
