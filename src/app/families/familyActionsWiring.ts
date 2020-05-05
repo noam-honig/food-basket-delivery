@@ -1,6 +1,6 @@
 import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, IdEntity, SpecificEntityHelper, FilterBase, EntityWhere, packWhere } from "@remult/core";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
-import { DialogService } from "../select-popup/dialog";
+import { DialogService, extractError } from "../select-popup/dialog";
 import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 
@@ -80,7 +80,7 @@ export class ActionOnRows<T extends IdEntity> {
                                 }
                                 catch (err) {
                                     console.log(err);
-                                    component.dialog.Error(err);
+                                    component.dialog.Error(this.args.title + ":" + extractError(err));
 
                                 }
                                 component.afterAction();
@@ -98,7 +98,7 @@ export class ActionOnRows<T extends IdEntity> {
 
 export interface actionDialogNeeds<T extends IdEntity> {
     dialog: DialogService,
-    settings:ApplicationSettings,
+    settings: ApplicationSettings,
     afterAction: () => {},
     buildActionInfo: (actionWhere: EntityWhere<T>) => Promise<serverUpdateInfo>,
     callServer: (info: serverUpdateInfo, action: string, columns: any[]) => Promise<string>,
