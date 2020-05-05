@@ -199,6 +199,14 @@ function registerImageUrls(app, getContext: (req: express.Request, sendDs?: (ds:
             res.send(err);
         }
     });
+    app.use('/guest/favicon.ico', async (req, res) => {
+        try {
+            res.send(fs.readFileSync('dist/favicon.ico'));
+        }
+        catch{
+            res.send(fs.readFileSync('assets/favicon.ico'));
+        }
+    })
     app.use(sitePrefix + '/favicon.ico', async (req, res) => {
         try {
             let context = getContext(req);

@@ -14,6 +14,7 @@ import * as passwordHash from 'password-hash';
 import { initSchema } from './initSchema';
 import { Sites } from '../sites/sites';
 import { OverviewComponent } from '../overview/overview.component';
+import { wasChanged } from '../model-shared/types';
 
 
 
@@ -73,6 +74,10 @@ export async function serverInit() {
                 settings.organisationName.value = "מערכת חלוקה";
                 settings.id.value = 1;
                 await settings.save();
+            } else {
+                settings.logoUrl.value = '/assets/apple-touch-icon.png';
+                if (wasChanged(settings.logoUrl))
+                    await settings.save();
             }
 
             InitSchemas(pool);
