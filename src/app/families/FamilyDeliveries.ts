@@ -180,7 +180,8 @@ export class FamilyDeliveries extends IdEntity {
             var fd = this.context.for(FamilyDeliveries).create();
             let f = this;
             sql.addEntity(f, "FamilyDeliveries");
-            return sql.columnWithAlias(sql.case([{ when: [sql.ne(f.courier, "''")], then: sql.build('exists (select 1 from ', fd, ' where ', sql.and(sql.eq(fd.family, f.id), sql.eq(fd.courier, f.courier)), ")") }], false), 'courierBeenHereBefore');
+            sql.addEntity(fd,'fd');
+            return sql.columnWithAlias(sql.case([{ when: [sql.ne(f.courier, "''")], then: sql.build('exists (select 1 from ', fd,' as ','fd', ' where ', sql.and(sql.not(sql.eq(fd.id, f.id)), sql.eq(fd.family, f.family), sql.eq(fd.courier, f.courier), fd.deliverStatus.isAResultStatus()), ")") }], false), 'courierBeenHereBefore');
         }
     });
 
