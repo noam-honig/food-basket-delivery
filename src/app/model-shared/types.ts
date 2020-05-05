@@ -87,6 +87,8 @@ export class DateTimeColumn extends radweb.DateTimeColumn {
 
   }
   relativeDateName(d?: Date, now?: Date) {
+    if (!d)
+      d = this.value;
     return relativeDateName({ d, now, dontShowTimeForOlderDates: this.dontShowTimeForOlderDates });
   }
   get displayValue() {
