@@ -138,7 +138,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 hideRecent: true,
                 onSelect: async h => {
                     if (h) {
-                        let families = await this.context.for(ActiveFamilyDeliveries).find({ where: f => f.courier.isEqualTo(h.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
+                        let families = await this.context.for(ActiveFamilyDeliveries).find({ where: f => f.courier.isEqualTo(h.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),limit:1000});
                         this.dialog.YesNoQuestion("להעביר " + families.length + translate(" משלוחים מ") + '"' + h.name.value + '"' + " למתנדב " + '"' + this.helper.name.value + '"', async () => {
                             await this.busy.doWhileShowingBusy(async () => {
                                 await this.verifyHelperExistance();
