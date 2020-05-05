@@ -69,6 +69,13 @@ export class DeliveryHistoryComponent implements OnInit {
     this.helperInfo = context.for(helperHistoryInfo, this.helperStorage).gridSettings({
       hideDataArea: true,
       numOfColumnsInGrid: 6,
+      gridButton: [{
+        name: 'יצוא לאקסל',
+        visible: () => this.context.isAllowed(Roles.admin),
+        click: async () => {
+          await saveToExcel(this.context.for(helperHistoryInfo), this.helperInfo, "מתנדבים", this.busy, (d: helperHistoryInfo, c) => c == d.courier);
+        }
+      }],
       columnSettings: h => [
         {
           column: h.name,
@@ -111,6 +118,12 @@ export class DeliveryHistoryComponent implements OnInit {
 
     var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.fromDate.rawValue, this.toDate.rawValue);
     let rows: any[] = this.helperStorage.rows[this.context.for(helperHistoryInfo).create().defs.dbName];
+    x = x.map(x => {
+      x.deliveries = +x.deliveries;
+      x.dates = +x.dates;
+      x.families = +x.families;
+      return x;
+    });
     rows.splice(0, rows.length, ...x);
     this.helperInfo.getRecords();
   }
@@ -145,17 +158,18 @@ export class DeliveryHistoryComponent implements OnInit {
     this.refresh();
   }
 
-  async saveToExcel() {
-    await saveToExcel(this.context.for(FamilyDeliveries), this.deliveries, "משלוחים", this.busy, (d: FamilyDeliveries, c) => c == d.id || c == d.family, undefined,
-      async (f, addColumn) => await f.basketType.addBasketTypes(f.quantity, addColumn));
-  }
-  async saveToExcelHelpers() {
-    await saveToExcel(this.context.for(helperHistoryInfo), this.helperInfo, "מתנדבים", this.busy, (d: helperHistoryInfo, c) => c == d.courier);
-  }
-  deliveries = this.context.for(FamilyDeliveries).gridSettings({
 
+
+  deliveries = this.context.for(FamilyDeliveries).gridSettings({
+    gridButton: [{
+      name: 'יצוא לאקסל',
+      click: async () => {
+        await saveToExcel(this.context.for(FamilyDeliveries), this.deliveries, "משלוחים", this.busy, (d: FamilyDeliveries, c) => c == d.id || c == d.family, undefined,
+          async (f, addColumn) => await f.basketType.addBasketTypes(f.quantity, addColumn));
+      }, visible: () => this.context.isAllowed(Roles.admin)
+    }],
     columnSettings: d => {
-      let r:Column<any>[] = [
+      let r: Column<any>[] = [
         d.name,
         d.courier,
         d.deliveryStatusDate,
