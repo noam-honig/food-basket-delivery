@@ -706,7 +706,7 @@ export class ImportFromExcelComponent implements OnInit {
     newRows: excelRowInfo[] = [];
     identicalRows: excelRowInfo[] = [];
     updateRows: excelRowInfo[] = [];
-    addDelivery = new BoolColumn('קרא גם פרטי משלוח מאקסל');
+    addDelivery = new BoolColumn('הגדר משלוחים לכל המשפחות מהאקסל');
     compareBasketType = new BoolColumn('אם קיים משלוח למשפחה עם סוג סל שונה, הוסף משלוח חדש');
     defaultBasketType = new BasketId(this.context);
     distributionCenter = new DistributionCenterId(this.context);
@@ -724,7 +724,7 @@ export class ImportFromExcelComponent implements OnInit {
                 return [
                     this.addDelivery,
                     { column: this.defaultBasketType, visible: () => this.addDelivery.value && !updateColumns.get(this.fd.basketType) && !updateColumns.get(this.f.basketType) },
-                    { column: this.compareBasketType, visible: () => this.addDelivery },
+                    { column: this.compareBasketType, visible: () => this.addDelivery.value },
                     { column: this.distributionCenter, visible: () => this.addDelivery.value && !updateColumns.get(this.fd.distributionCenter) && this.dialog.hasManyCenters },
                     { column: this.useFamilyMembersAsNumOfBaskets, visible: () => this.addDelivery.value && !updateColumns.get(this.fd.quantity) && updateColumns.get(this.f.familyMembers) },
                     s.defaultPrefixForExcelImport,
@@ -766,6 +766,8 @@ export class ImportFromExcelComponent implements OnInit {
             for (let e of [this.f, this.fd]) {
                 for (let c of e.columns) {
                     if (updatedColumns.get(c)) {
+                        if (c == this.fd.distributionCenter && !this.dialog.hasManyCenters)
+                            continue;
                         this.columnsInCompare.push({ c, e });
                         columnsInCompareMemberName.push(keyFromColumnInCompare({ e, c }));
                     }
