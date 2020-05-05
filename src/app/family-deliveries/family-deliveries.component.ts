@@ -570,14 +570,14 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       {
         name: 'הקפא משלוח',
         click: async d => {
-          if (await this.dialog.YesNoPromise(`משלוח "קפוא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל` + d.name.value+"?")) {
+          if (await this.dialog.YesNoPromise(`משלוח "קפוא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל` + d.name.value + "?")) {
             {
               d.deliverStatus.value = DeliveryStatus.Frozen;
               await d.save();
             }
           }
         },
-        visible: d => d.deliverStatus.value == DeliveryStatus.ReadyForDelivery
+        visible: d => d.deliverStatus.value == DeliveryStatus.ReadyForDelivery && d.courier.value == ''
       },
       {
         name: 'הפשר משלוח',
