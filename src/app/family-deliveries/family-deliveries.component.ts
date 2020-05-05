@@ -457,7 +457,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.special,
         deliveries.createUser,
         deliveries.createDate,
-
+        deliveries.familySource,
 
         { column: deliveries.addressOk, width: '110' },
         deliveries.floor,
