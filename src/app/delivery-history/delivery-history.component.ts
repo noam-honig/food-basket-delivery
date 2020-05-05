@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { EntityClass, Context, StringColumn, IdColumn, SpecificEntityHelper, SqlDatabase } from '@remult/core';
+import { EntityClass, Context, StringColumn, IdColumn, SpecificEntityHelper, SqlDatabase, Column } from '@remult/core';
 import { FamilyId } from '../families/families';
 import { changeDate, SqlBuilder, PhoneColumn } from '../model-shared/types';
 import { BasketId } from '../families/BasketType';
@@ -154,23 +154,30 @@ export class DeliveryHistoryComponent implements OnInit {
   }
   deliveries = this.context.for(FamilyDeliveries).gridSettings({
 
-    columnSettings: d => [
-      d.name,
-      d.courier,
-      d.deliveryStatusDate,
-      d.deliverStatus,
-      d.basketType,
-      d.quantity,
-      d.city,
-      d.familySource,
-      d.courierComments,
-      d.courierAssignUser,
-      d.courierAssingTime,
-      d.deliveryStatusUser
-    ],
+    columnSettings: d => {
+      let r:Column<any>[] = [
+        d.name,
+        d.courier,
+        d.deliveryStatusDate,
+        d.deliverStatus,
+        d.basketType,
+        d.quantity,
+        d.city,
+        d.familySource,
+        d.courierComments,
+        d.courierAssignUser,
+        d.courierAssingTime,
+        d.deliveryStatusUser
+      ]
+      for (const c of d.columns) {
+        if (!r.includes(c) && c != d.id && c != d.family)
+          r.push(c);
+      }
+      return r;
+    },
 
     hideDataArea: true,
-    numOfColumnsInGrid: 7,
+    numOfColumnsInGrid: 6,
     knowTotalRows: true,
     get: {
       limit: 20,
