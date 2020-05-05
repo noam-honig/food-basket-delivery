@@ -79,7 +79,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
       this.args.onSave();
   }
   async newDelivery() {
-    await this.args.family.showNewDeliveryDialog(this.dialog, this.delivery,()=>{
+    await this.args.family.showNewDeliveryDialog(this.dialog,this.settings, this.delivery,()=>{
       if (this.delivery)
       this.refreshDeliveryStatistics = true;
     });

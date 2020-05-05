@@ -31,6 +31,7 @@ import { delvieryActions, UpdateDistributionCenter, NewDelivery, FreezeDeliverie
 import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, actionDialogNeeds } from '../families/familyActionsWiring';
 import { familyActionsForDelivery, UpdateArea, updateGroup } from '../families/familyActions';
 import { Families } from '../families/families';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-distribution-map',
@@ -38,7 +39,7 @@ import { Families } from '../families/families';
   styleUrls: ['./distribution-map.component.scss']
 })
 export class DistributionMap implements OnInit, OnDestroy {
-  constructor(private context: Context, private dialog: DialogService, busy: BusyService) {
+  constructor(private context: Context, private dialog: DialogService, busy: BusyService, private settings: ApplicationSettings) {
 
     dialog.onStatusChange(() => {
       busy.donotWait(async () => {
@@ -87,6 +88,7 @@ export class DistributionMap implements OnInit, OnDestroy {
           actionRowsFilterInfo: this.selectedDeliveries.map(x => x.id)
         };
       },
+      settings: this.settings,
       groupName: 'משלוחים'
     };
   }
@@ -102,6 +104,7 @@ export class DistributionMap implements OnInit, OnDestroy {
           actionRowsFilterInfo: this.selectedDeliveries.map(x => x.id)
         };
       },
+      settings: this.settings,
       groupName: 'משלוחים'
     };
   }

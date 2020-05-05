@@ -2,6 +2,7 @@ import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolC
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService } from "../select-popup/dialog";
 import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
+import { ApplicationSettings } from "../manage/ApplicationSettings";
 
 
 
@@ -97,6 +98,7 @@ export class ActionOnRows<T extends IdEntity> {
 
 export interface actionDialogNeeds<T extends IdEntity> {
     dialog: DialogService,
+    settings:ApplicationSettings,
     afterAction: () => {},
     buildActionInfo: (actionWhere: EntityWhere<T>) => Promise<serverUpdateInfo>,
     callServer: (info: serverUpdateInfo, action: string, columns: any[]) => Promise<string>,

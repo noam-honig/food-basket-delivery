@@ -1,4 +1,4 @@
-import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere } from "@remult/core";
+import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, ValueListColumn, DataControlInfo } from "@remult/core";
 import { FamiliesComponent } from "./families.component";
 import { Families } from "./families";
 import { Roles } from "../auth/roles";
@@ -10,6 +10,7 @@ import { FamilyStatusColumn, FamilyStatus } from "./FamilyStatus";
 import { FamilySourceId } from "./FamilySources";
 import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer, serverUpdateInfo, pagedRowsIterator } from "./familyActionsWiring";
 import { DeliveryStatus } from "./DeliveryStatus";
+import { ActiveFamilyDeliveries } from "./FamilyDeliveries";
 
 
 class NewDelivery extends ActionOnRows<Families> {
@@ -20,6 +21,7 @@ class NewDelivery extends ActionOnRows<Families> {
     distributionCenter = new DistributionCenterId(this.context);
     determineCourier = new BoolColumn('הגדר מתנדב');
     courier = new HelperId(this.context);
+    selfPickup = new SelfPickupStrategyColumn(false);
     constructor(context: Context) {
         super(context, Families, {
             allowed: Roles.admin,
@@ -29,7 +31,8 @@ class NewDelivery extends ActionOnRows<Families> {
                 this.quantity,
                 this.distributionCenter,
                 this.determineCourier,
-                this.courier
+                this.courier,
+                this.selfPickup
             ],
             validate: async () => {
                 let x = await context.for(DistributionCenters).findId(this.distributionCenter);
@@ -47,7 +50,8 @@ class NewDelivery extends ActionOnRows<Families> {
                     this.useFamilyBasket,
                     { column: this.distributionCenter, visible: () => component.dialog.hasManyCenters },
                     this.determineCourier,
-                    { column: this.courier, visible: () => this.determineCourier.value }
+                    { column: this.courier, visible: () => this.determineCourier.value },
+                    this.selfPickup.getDispaySettings(component.settings.usingSelfPickupModule.value)
                 ]
             },
             additionalWhere: f => f.status.isEqualTo(FamilyStatus.Active),
@@ -59,7 +63,7 @@ class NewDelivery extends ActionOnRows<Families> {
                     fd.basketType.value = this.basketType.value;
                     fd.quantity.value = this.quantity.value;
                 }
-
+                this.selfPickup.value.applyTo({ existingDelivery: undefined, newDelivery: fd, family: f });
                 if (this.determineCourier.value) {
                     fd.courier.value = this.courier.value;
                 }
@@ -166,7 +170,40 @@ class UpdateFamilySource extends ActionOnRows<Families> {
     }
 }
 
+export class SelfPickupStrategy {
+    static familyDefault = new SelfPickupStrategy(0, "באים לקחת בהתאם להגדרת הברירת מחדל למשפחה", x => {
+        x.newDelivery.deliverStatus.value = x.family.defaultSelfPickup.value ? DeliveryStatus.SelfPickup : DeliveryStatus.ReadyForDelivery;
+    });
+    static byCurrentDelivery = new SelfPickupStrategy(1, "באים לקחת בהתאם להגדרת המשלוח הנוכחי", x => {
+        x.newDelivery.deliverStatus.value =
+            x.existingDelivery.deliverStatus.value == DeliveryStatus.SuccessPickedUp || x.existingDelivery.deliverStatus.value == DeliveryStatus.SelfPickup
+                ? DeliveryStatus.SelfPickup
+                : DeliveryStatus.ReadyForDelivery;
+    });
+    static yes = new SelfPickupStrategy(2, "יבואו לקחת את המשלוח ואינם צריכים משלוח", x => {
+        x.newDelivery.deliverStatus.value = DeliveryStatus.SelfPickup
+    });
+    static no = new SelfPickupStrategy(3, "משלוח עד הבית", x => {
+        x.newDelivery.deliverStatus.value = DeliveryStatus.ReadyForDelivery
+    });
 
+    constructor(public id: number, public caption: string, public applyTo: (args: { existingDelivery: ActiveFamilyDeliveries, newDelivery: ActiveFamilyDeliveries, family: Families }) => void) {
+
+    }
+}
+export class SelfPickupStrategyColumn extends ValueListColumn<SelfPickupStrategy>{
+    constructor(private showByCurrentDeliery = true) {
+        super(SelfPickupStrategy, { caption: 'הגדרת באים לקחת' })
+    }
+    getDispaySettings(allowSelfPickup: boolean) {
+        this.value = allowSelfPickup ? this.showByCurrentDeliery ? SelfPickupStrategy.byCurrentDelivery : SelfPickupStrategy.familyDefault : SelfPickupStrategy.no;
+        return {
+            column: this,
+            valueList: this.getOptions().filter(x => this.showByCurrentDeliery || x.id != SelfPickupStrategy.byCurrentDelivery.id),
+            visible: () => allowSelfPickup
+        } as DataControlInfo<any>
+    }
+}
 
 
 

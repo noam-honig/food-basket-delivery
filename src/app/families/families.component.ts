@@ -85,7 +85,7 @@ export class FamiliesComponent implements OnInit {
         this.families.addNewRow();
         this.families.currentRow.showFamilyDialog({
             onSave: async () => {
-                await this.families.currentRow.showNewDeliveryDialog(this.dialog);
+                await this.families.currentRow.showNewDeliveryDialog(this.dialog, this.settings);
             }
         });
 
@@ -401,7 +401,7 @@ export class FamiliesComponent implements OnInit {
                             count: await this.context.for(Families).count(where),
                             actionRowsFilterInfo: packWhere(this.context.for(Families).create(), where)
                         };
-                    },
+                    },settings:this.settings,
                     groupName: 'משפחות'
                 })
             , {
@@ -424,7 +424,7 @@ export class FamiliesComponent implements OnInit {
             {
                 name: 'משלוח חדש',
                 click: async f => {
-                    await f.showNewDeliveryDialog(this.dialog);
+                    await f.showNewDeliveryDialog(this.dialog, this.settings);
                 }
                 , visible: f => !f.isNew()
 

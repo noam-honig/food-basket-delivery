@@ -12,6 +12,7 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Families } from "../families/families";
 import { BasketId, QuantityColumn } from "../families/BasketType";
 import { FamilyStatus } from "../families/FamilyStatus";
+import { SelfPickupStrategyColumn } from "../families/familyActions";
 
 
 
@@ -144,6 +145,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
     helper = new HelperId(this.context);
     autoArchive = new BoolColumn({ caption: 'העבר את המשלוח שהסתיים לארכיון', defaultValue: true });
     newDeliveryForAll = new BoolColumn('משלוח חדש לכל המשלוחים ולא רק לאלו שהסתיימו בהצלחה');
+    selfPickup = new SelfPickupStrategyColumn(true);
 
     distributionCenter = new DistributionCenterId(this.context);
 
@@ -158,7 +160,8 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                 this.helper,
                 this.distributionCenter,
                 this.autoArchive,
-                this.newDeliveryForAll
+                this.newDeliveryForAll,
+                this.selfPickup
             ],
             dialogColumns: (component) => {
                 this.basketType.value = '';
@@ -172,6 +175,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                     { column: this.helper, visible: () => this.helperStrategy.value == HelperStrategy.selectHelper },
                     this.autoArchive,
                     this.newDeliveryForAll,
+                    this.selfPickup.getDispaySettings(component.settings.usingSelfPickupModule.value)
                 ]
             },
             additionalWhere: f => {
@@ -193,6 +197,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                 }
                 newDelivery.distributionCenter.value = this.distributionCenter.value;
                 this.helperStrategy.value.applyTo({ existingDelivery, newDelivery, helper: this.helper.value });
+                this.selfPickup.value.applyTo({ existingDelivery, newDelivery, family: f });
 
                 if ((await newDelivery.duplicateCount()) == 0)
                     await newDelivery.save();
@@ -231,6 +236,8 @@ class HelperStrategyColumn extends ValueListColumn<HelperStrategy>{
         })
     }
 }
+
+
 
 export const delvieryActions = () => [
     NewDelivery,

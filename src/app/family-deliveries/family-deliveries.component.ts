@@ -21,6 +21,7 @@ import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, pag
 import { familyActionsForDelivery } from '../families/familyActions';
 import { async } from '@angular/core/testing';
 import { saveToExcel } from '../shared/saveToExcel';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -53,7 +54,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     let f = this.context.for(Families).create();
     f.showFamilyDialog({
       onSave: async () => {
-        await f.showNewDeliveryDialog(this.dialog);
+        await f.showNewDeliveryDialog(this.dialog, this.settings);
         this.refresh();
       }
     });
@@ -369,7 +370,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   constructor(
     private context: Context,
     public dialog: DialogService,
-    private busy: BusyService
+    private busy: BusyService,
+    private settings: ApplicationSettings
   ) {
 
 
@@ -503,6 +505,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
               actionRowsFilterInfo: packWhere(this.context.for(ActiveFamilyDeliveries).create(), where)
             };
           },
+          settings:this.settings,
           groupName: 'משלוחים'
         }),
       ...buildGridButtonFromActions(familyActionsForDelivery(), this.context, {
@@ -516,6 +519,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
             actionRowsFilterInfo: packWhere(this.context.for(ActiveFamilyDeliveries).create(), where)
           };
         },
+        settings:this.settings,
         groupName: 'משפחות'
       }),
       {
@@ -535,7 +539,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         click: async fd => {
           fd.showDetailsDialog({
             refreshDeliveryStats: () => this.refreshStats(),
-            dialog:this.dialog
+            dialog: this.dialog
           });
         }
         , textInMenu: () => 'כרטיס משלוח'
@@ -544,7 +548,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         name: 'משלוח חדש',
         click: async d => {
           let f = await this.context.for(Families).findId(d.family);
-          await f.showNewDeliveryDialog(this.dialog, d, () => this.refresh());
+          await f.showNewDeliveryDialog(this.dialog, this.settings, d, () => this.refresh());
         },
         visible: d => this.context.isAllowed(Roles.admin)
       },

@@ -64,13 +64,17 @@ export class Families extends IdEntity {
       })
     });
   }
-  async showNewDeliveryDialog(dialog: DialogService, copyFrom?: FamilyDeliveries, aDeliveryWasAdded?: () => void) {
+  async showNewDeliveryDialog(dialog: DialogService, settings: ApplicationSettings, copyFrom?: FamilyDeliveries, aDeliveryWasAdded?: () => void) {
     let newDelivery = this.createDelivery(dialog.distCenter.value);
     let arciveCurrentDelivery = new BoolColumn({ caption: 'העבר משלוח נוכחי לארכיב?', defaultValue: true });
     if (copyFrom != undefined) {
       newDelivery.copyFrom(copyFrom);
 
     }
+    let selfPickup = new BoolColumn({ caption: 'יבואו לקחת את המשלוח ואינם צריכים משלוח?', defaultValue: this.defaultSelfPickup.value });
+    if (copyFrom)
+      selfPickup.value = copyFrom.deliverStatus.value == DeliveryStatus.SuccessPickedUp;
+
 
     await this.context.openDialog(InputAreaComponent, x => {
       x.args = {
@@ -86,6 +90,8 @@ export class Families extends IdEntity {
             if (copyFrom != null && DeliveryStatus.IsAResultStatus(copyFrom.deliverStatus.value)) {
               r.push(arciveCurrentDelivery);
             }
+            r.push({ column: selfPickup, visible: () => settings.usingSelfPickupModule.value })
+
             return r;
           }
         },
@@ -107,7 +113,8 @@ export class Families extends IdEntity {
             quantity: newDelivery.quantity.value,
             comment: newDelivery.courierComments.value,
             courier: newDelivery.courier.value,
-            distCenter: newDelivery.distributionCenter.value
+            distCenter: newDelivery.distributionCenter.value,
+            selfPickup: selfPickup.value
 
           });
           if (copyFrom != null && DeliveryStatus.IsAResultStatus(copyFrom.deliverStatus.value)) {
@@ -129,7 +136,8 @@ export class Families extends IdEntity {
     quantity: number,
     comment: string,
     distCenter: string,
-    courier: string
+    courier: string,
+    selfPickup: boolean
   }, context?: Context) {
     let f = await context.for(Families).findId(familyId);
     if (f) {
@@ -139,6 +147,8 @@ export class Families extends IdEntity {
       fd.courierComments.value = settings.comment;
       fd.distributionCenter.value = settings.distCenter;
       fd.courier.value = settings.courier;
+      if (settings.selfPickup)
+        fd.deliverStatus.value = DeliveryStatus.SelfPickup;
       await fd.save();
       return 1;
     }
