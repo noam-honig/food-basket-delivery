@@ -86,6 +86,7 @@ export class FamiliesComponent implements OnInit {
         this.families.currentRow.showFamilyDialog({
             onSave: async () => {
                 await this.families.currentRow.showNewDeliveryDialog(this.dialog, this.settings);
+                this.refreshStats();
             }
         });
 
