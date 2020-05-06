@@ -16,9 +16,8 @@ import { Roles } from "../auth/roles";
 
 import { translate } from "../translate";
 import { UpdateGroupDialogComponent } from "../update-group-dialog/update-group-dialog.component";
-import { DistributionCenterId, DistributionCenters } from "../manage/distribution-centers";
 import { FamilyStatusColumn, FamilyStatus } from "./FamilyStatus";
-import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
+
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { DialogService } from "../select-popup/dialog";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
@@ -599,7 +598,7 @@ export class Families extends IdEntity {
     }
   }
   async checkDuplicateFamilies() {
-    this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name.value, this.tz.value, this.tz2.value, this.phone1.value, this.phone2.value, this.phone3.value, this.phone4.value, this.id.value);
+    this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name.value, this.tz.value, this.tz2.value, this.phone1.value, this.phone2.value, this.phone3.value, this.phone4.value, this.id.value, false, this.address.value);
     this.tz.validationError = undefined;
     this.tz2.validationError = undefined;
     this.phone1.validationError = undefined;
@@ -637,7 +636,7 @@ export class Families extends IdEntity {
 
   }
   @ServerFunction({ allowed: Roles.admin, blockUser: false })
-  static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, phone3: string, phone4: string, id: string, exactName: boolean = false, context?: Context, db?: SqlDatabase) {
+  static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, phone3: string, phone4: string, id: string, exactName: boolean = false, address: string, context?: Context, db?: SqlDatabase) {
     let result: duplicateFamilyInfo[] = [];
 
     var sql = new SqlBuilder();
@@ -693,14 +692,28 @@ export class Families extends IdEntity {
         phone3: row[sqlResult.getColumnKeyInResultForIndexInSelect(7)],
         phone4: row[sqlResult.getColumnKeyInResultForIndexInSelect(8)],
         nameDup: row[sqlResult.getColumnKeyInResultForIndexInSelect(9)],
-        removedFromList: row['status'] == FamilyStatus.RemovedFromList.id
+        removedFromList: row['status'] == FamilyStatus.RemovedFromList.id,
+        sameAddress: address == row[sqlResult.getColumnKeyInResultForIndexInSelect(2)],
+        rank: 0
 
       });
     }
+    for (const r of result) {
+      for (const key in r) {
+        if (r.hasOwnProperty(key)) {
+          const element = r[key];
+          if (element === true) {
+            r.rank++;
+          }
+        }
+      }
+    }
+    result.sort((a, b) => b.rank - a.rank);
     return result;
 
   }
 }
+
 
 export class FamilyId extends IdColumn { }
 
@@ -708,6 +721,7 @@ export interface duplicateFamilyInfo {
   id: string;
   name: string;
   address: string;
+  sameAddress: boolean;
   tz: boolean;
   tz2: boolean;
   phone1: boolean;
@@ -716,6 +730,7 @@ export interface duplicateFamilyInfo {
   phone4: boolean;
   nameDup: boolean;
   removedFromList: boolean;
+  rank: number;
 }
 
 export interface FamilyUpdateInfo {
@@ -868,6 +883,9 @@ export function displayDupInfo(info: duplicateFamilyInfo) {
 
   if (info.tz) {
     r.push(' מספר זהות זהה');
+  }
+  if (info.sameAddress) {
+    r.push("כתובת זהה ");
   }
   if (info.phone1 || info.phone2 || info.phone3 || info.phone4) {
     r.push(' מספר טלפון זהה');

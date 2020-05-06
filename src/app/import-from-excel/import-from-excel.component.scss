@@ -4,19 +4,34 @@ th {
 .table-div {
   width: 100%;
   overflow: scroll;
-  max-height:500px;
+  max-height: 500px;
 }
 .mat-icon-button {
-  width:20px;
-  height:20px;
-  line-height:20px;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
 }
-.newValue{
-  color:green;
+.newValue {
+  color: green;
 }
-td{
+td {
   white-space: nowrap;
   word-wrap: none;
-  max-width:300px;
+  max-width: 300px;
   overflow: hidden;
+}
+.disabledErrorRow {
+  text-decoration: line-through;
+}
+.error {
+  color: red;
+}
+.match {
+  color: green;
+}
+.top-error-row {
+  td {
+    border-top-width: 8px;
+    border-top-color: darkgray;
+  }
 }
