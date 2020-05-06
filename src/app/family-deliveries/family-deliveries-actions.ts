@@ -33,7 +33,7 @@ class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
 }
 class UpdateFixedCourier extends ActionOnRows<FamilyDeliveries> {
     byCurrentCourier = new BoolColumn('עדכן את המתנדב מהמשלוח הנוכחי');
-    courier = new HelperId(this.context);
+    courier = new HelperId(this.context,'מתנדב ברירת מחדל למשפחה');
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
