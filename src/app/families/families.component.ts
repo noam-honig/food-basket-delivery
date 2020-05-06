@@ -500,13 +500,13 @@ export class FamiliesComponent implements OnInit {
 
     groupsTotals: statsOnTab = {
         name: translate('לפי קבוצות'),
-        rule: f => f.status.isDifferentFrom(FamilyStatus.RemovedFromList),
+        rule: f => f.status.isEqualTo(FamilyStatus.Active),
         stats: [
         ],
         moreStats: []
     };
     addressProblem: statsOnTab = {
-        rule: f => f.addressOk.isEqualTo(false).and(f.status.isDifferentFrom(FamilyStatus.RemovedFromList)),
+        rule: f => f.addressOk.isEqualTo(false).and(f.status.isEqualTo(FamilyStatus.Active)),
         moreStats: [],
         name: 'כתובות בעיתיות',
         stats: [
@@ -518,9 +518,9 @@ export class FamiliesComponent implements OnInit {
     statTabs: statsOnTab[] = [
 
         {
-            rule: f => f.status.isDifferentFrom(FamilyStatus.RemovedFromList),
+            rule: f => f.status.isEqualTo(FamilyStatus.Active),
             showTotal: true,
-            name: translate('משפחות'),
+            name: translate('פעילות'),
             stats: [
                 this.stats.active,
 
@@ -531,16 +531,18 @@ export class FamiliesComponent implements OnInit {
         this.groupsTotals,
         this.addressProblem,
         {
-            rule: f => f.status.isEqualTo(FamilyStatus.RemovedFromList),
+            rule: f => undefined,
             showTotal: true,
-            name: 'הוצאו מהרשימות',
+            name: 'כל המשפחות',
             stats: [
-                this.stats.outOfList
+                this.stats.active,
+                this.stats.outOfList,
+                this.stats.toDelete
 
             ],
             moreStats: []
 
-        },
+        }
     ]
 
     async tabChanged() {
@@ -609,8 +611,8 @@ export class FamiliesComponent implements OnInit {
                 this.groupsTotals.stats.splice(0);
                 this.prepComplexStats(st.groups.map(g => ({ name: g.name, count: g.total })),
                     this.groupsTotals,
-                    (f, g) => f.status.isDifferentFrom(FamilyStatus.RemovedFromList).and(f.groups.isContains(g)),
-                    (f, g) => f.status.isDifferentFrom(FamilyStatus.RemovedFromList).and(f.groups.isDifferentFrom(g)));
+                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.groups.isContains(g)),
+                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.groups.isDifferentFrom(g)));
 
 
 

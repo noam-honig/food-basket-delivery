@@ -29,9 +29,10 @@ export const colors = {
     , gray: 'gray'
 };
 export class Stats {
-    outOfList = new FaimilyStatistics('הוצאו מהרשימות', f => f.status.isEqualTo(FamilyStatus.RemovedFromList), colors.green);
-    active = new FaimilyStatistics('פעילות', f => f.status.isDifferentFrom(FamilyStatus.RemovedFromList), colors.blue);
-    problem = new FaimilyStatistics('כתובות בעיתיות', f => f.status.isDifferentFrom(FamilyStatus.RemovedFromList).and(f.addressOk.isEqualTo(false)), colors.blue);
+    outOfList = new FaimilyStatistics('הוצאו מהרשימות', f => f.status.isEqualTo(FamilyStatus.RemovedFromList), colors.gray);
+    toDelete = new FaimilyStatistics('למחיקה', f => f.status.isEqualTo(FamilyStatus.ToDelete), colors.red);
+    active = new FaimilyStatistics('פעילות', f => f.status.isEqualTo(FamilyStatus.Active), colors.green);
+    problem = new FaimilyStatistics('כתובות בעיתיות', f => f.status.isEqualTo(FamilyStatus.Active).and(f.addressOk.isEqualTo(false)), colors.orange);
 
     async getData(distCenter: string) {
         let r = await Stats.getFamilyStats(distCenter);
@@ -54,7 +55,7 @@ export class Stats {
                 pendingStats.push(x.saveTo(distCenter, result.data, context));
             }
         }
-        
+
         await context.for(Groups).find({
             limit: 1000,
             orderBy: f => [{ column: f.name }]
@@ -66,7 +67,7 @@ export class Stats {
                 };
                 result.groups.push(x);
                 pendingStats.push(context.for(Families).count(f => f.groups.isContains(x.name).and(
-                    f.status.isDifferentFrom(FamilyStatus.RemovedFromList))).then(r => x.total = r));
+                    f.status.isEqualTo(FamilyStatus.Active))).then(r => x.total = r));
             }
         });
 

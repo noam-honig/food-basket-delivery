@@ -3,27 +3,30 @@ import { HelperId } from '../helpers/helpers';
 
 
 export class FamilyStatus {
-  
-  
+
+
   static Active: FamilyStatus = new FamilyStatus(0, 'פעיל');
   static RemovedFromList: FamilyStatus = new FamilyStatus(99, 'הוצא מהרשימות');
-  familyStatus(){
+  static ToDelete: FamilyStatus = new FamilyStatus(98, 'למחיקה');
+  familyStatus() {
 
   }
-  
+
 
   constructor(public id: number, public caption: string) {
   }
 
 }
 export class FamilyStatusColumn extends ValueListColumn<FamilyStatus> {
-  
+
   isInEvent() {
     return this.isEqualTo(FamilyStatus.Active);
   }
   getCss() {
     switch (this.value) {
       case FamilyStatus.RemovedFromList:
+        return 'frozen';
+      case FamilyStatus.ToDelete:
         return 'deliveredProblem';
       default:
         return '';
@@ -41,7 +44,7 @@ export class FamilyStatusColumn extends ValueListColumn<FamilyStatus> {
               caption: x.caption
             } as ValueListItem
           });
-       
+
         return {
           valueList: op,
           width: '150'

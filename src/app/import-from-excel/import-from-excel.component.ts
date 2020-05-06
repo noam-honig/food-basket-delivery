@@ -939,7 +939,7 @@ export class ImportFromExcelComponent implements OnInit {
 
     displayDupInfo(info: duplicateFamilyInfo) {
         let r = '';
-        if (info.removedFromList) {
+        if (info.status) {
             r = 'הוצא מהרשימות! ';
         }
         return r + displayDupInfo(info);
@@ -957,7 +957,7 @@ export class ImportFromExcelComponent implements OnInit {
         for (const info of excelRowInfo) {
             info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz, info.tz2, info.phone1ForDuplicateCheck, info.phone2ForDuplicateCheck, info.phone3ForDuplicateCheck, info.phone4ForDuplicateCheck, undefined, true, info.address, context, db);
             if (settings.removedFromListStrategy.value == RemovedFromListExcelImportStrategy.ignore) {
-                info.duplicateFamilyInfo = info.duplicateFamilyInfo.filter(x => !x.removedFromList);
+                info.duplicateFamilyInfo = info.duplicateFamilyInfo.filter(x => !x.status);
             }
             if (!info.duplicateFamilyInfo || info.duplicateFamilyInfo.length == 0) {
                 result.newRows.push(info);

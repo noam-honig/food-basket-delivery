@@ -340,7 +340,7 @@ export class ManageComponent implements OnInit {
     let codeWords = ["נועם", "יעל", "עופרי", "מעיין", "איתמר", "יוני", "ניצן"];
     let correctCodeWord = codeWords[Math.trunc(Math.random() * codeWords.length)];
     let doIt = false;
-    let count = await this.context.for(Families).count(f => f.status.isEqualTo(FamilyStatus.RemovedFromList));
+    let count = await this.context.for(Families).count(f => f.status.isEqualTo(FamilyStatus.ToDelete));
     if (!await this.dialog.YesNoPromise("האם אתה בטוח שאתה רוצה למחוק " + count + " משפחות?"))
       return;
     await this.context.openDialog(InputAreaComponent, x => {
@@ -362,13 +362,13 @@ export class ManageComponent implements OnInit {
   static async deleteFamiliesOnServer(context?: Context) {
     let count = await pagedRowsIterator(context.for(Families),
       {
-        where: f => f.status.isEqualTo(FamilyStatus.RemovedFromList),
+        where: f => f.status.isEqualTo(FamilyStatus.ToDelete),
         forEachRow: async f => await f.delete(),
-        
+
       });
     return count;
   }
-  
+
 
 
 }

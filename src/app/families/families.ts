@@ -675,7 +675,7 @@ export class Families extends IdEntity {
       ],
 
       from: f,
-      where: () => [sql.or(tzCol, tz2Col, phone1Col, phone2Col, phone3Col, phone4Col, nameCol), sql.ne(f.id, sql.str(id))]
+      where: () => [sql.or(tzCol, tz2Col, phone1Col, phone2Col, phone3Col, phone4Col, nameCol), sql.ne(f.id, sql.str(id)), f.status.isDifferentFrom(FamilyStatus.ToDelete)]
     }));
     if (!sqlResult.rows || sqlResult.rows.length < 1)
       return [];
@@ -692,7 +692,7 @@ export class Families extends IdEntity {
         phone3: row[sqlResult.getColumnKeyInResultForIndexInSelect(7)],
         phone4: row[sqlResult.getColumnKeyInResultForIndexInSelect(8)],
         nameDup: row[sqlResult.getColumnKeyInResultForIndexInSelect(9)],
-        removedFromList: row['status'] == FamilyStatus.RemovedFromList.id,
+        status: row['status'] == FamilyStatus.RemovedFromList.id,
         sameAddress: address == row[sqlResult.getColumnKeyInResultForIndexInSelect(2)],
         rank: 0
 
@@ -729,7 +729,7 @@ export interface duplicateFamilyInfo {
   phone3: boolean;
   phone4: boolean;
   nameDup: boolean;
-  removedFromList: boolean;
+  status: boolean;
   rank: number;
 }
 
