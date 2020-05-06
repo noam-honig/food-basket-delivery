@@ -139,6 +139,8 @@ export class FamilyDeliveries extends IdEntity {
         caption: 'כתובת תקינה',
         allowApiUpdate: false
     });
+    fixedCourier = new HelperId(this.context, { caption: "מתנדב ברירת מחדל למשפחה", allowApiUpdate: false });
+    familyMembers = new NumberColumn({ caption: 'מספר נפשות למשפחה', allowApiUpdate: false });
 
 
     phone1 = new PhoneColumn({

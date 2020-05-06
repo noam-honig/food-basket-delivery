@@ -31,6 +31,41 @@ class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
         });
     }
 }
+class UpdateFixedCourier extends ActionOnRows<FamilyDeliveries> {
+    byCurrentCourier = new BoolColumn('עדכן את המתנדב מהמשלוח הנוכחי');
+    courier = new HelperId(this.context);
+    constructor(context: Context) {
+        super(context, FamilyDeliveries, {
+            allowed: Roles.admin,
+            columns: () => [this.courier, this.byCurrentCourier],
+            dialogColumns: () => {
+                this.courier.value = '';
+                return [
+                    this.byCurrentCourier,
+                    { column: this.courier, visible: () => !this.byCurrentCourier.value }
+                ]
+            },
+            title: 'עדכן מתנדב ברירת מחדל למשפחה',
+            forEach: async fd => {
+
+
+                let f = await this.context.for(Families).findId(fd.family);
+                if (f) {
+                    if (this.byCurrentCourier.value) {
+                        if (fd.courier.value)
+                            f.fixedCourier.value = fd.courier.value;
+                    }
+                    else
+                        f.fixedCourier.value = this.courier.value;
+                    if (f.wasChanged()) {
+                        await f.save();
+                        f.updateDelivery(fd);
+                    }
+                }
+            },
+        });
+    }
+}
 export class FreezeDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
 
     constructor(context: Context) {
@@ -246,6 +281,7 @@ export const delvieryActions = () => [
     UpdateBasketType,
     UpdateQuantity,
     UpdateDistributionCenter,
+    UpdateFixedCourier,
     FreezeDeliveries,
     UnfreezeDeliveries,
     CancelAsignment,

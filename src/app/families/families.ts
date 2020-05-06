@@ -191,7 +191,9 @@ export class Families extends IdEntity {
       this.phone3,
       this.phone3Description,
       this.phone4,
-      this.phone4Description
+      this.phone4Description,
+      this.fixedCourier,
+      this.familyMembers
     ];
   }
   isGpsAddress() {

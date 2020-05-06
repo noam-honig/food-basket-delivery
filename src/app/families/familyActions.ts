@@ -93,7 +93,7 @@ export class updateGroup extends ActionOnRows<Families> {
     constructor(context: Context) {
         super(context, Families, {
             columns: () => [this.group, this.action],
-            confirmQuestion: () => 'האם ' + this.action.value + ' את השיוך לקבוצה "' + this.group.value+'"',
+            confirmQuestion: () => 'האם ' + this.action.value + ' את השיוך לקבוצה "' + this.group.value + '"',
             title: 'שיוך לקבוצת משפחות',
             allowed: Roles.admin,
             forEach: async f => {
@@ -135,6 +135,7 @@ class UpdateBasketType extends ActionOnRows<Families> {
         });
     }
 }
+
 export class UpdateArea extends ActionOnRows<Families> {
     area = new StringColumn('אזור');
     constructor(context: Context) {
@@ -208,4 +209,4 @@ export class SelfPickupStrategyColumn extends ValueListColumn<SelfPickupStrategy
 
 
 export const familyActions = () => [NewDelivery, updateGroup, UpdateArea, UpdateStatus, UpdateBasketType, UpdateQuantity, UpdateFamilySource];
-export const familyActionsForDelivery = () => [updateGroup, UpdateArea, UpdateStatus];
+export const familyActionsForDelivery = () => [updateGroup, UpdateArea,  UpdateStatus];

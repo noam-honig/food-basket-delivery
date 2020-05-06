@@ -338,6 +338,15 @@ export async function initSchema(pool1: PostgresPool, org: string) {
             await d.save();
         }
     });
+    await version(21, async () => {
+        if ((await context.for(Families).count()) > 0)
+            await dataSource.execute(sql.update(fd, {
+                set: () => [[fd.fixedCourier, f.fixedCourier], [fd.familyMembers, f.familyMembers]],
+                from: f,
+                where: () => [sql.eq(f.id, fd.family)]
+            }));
+    });
+
 
 
 
