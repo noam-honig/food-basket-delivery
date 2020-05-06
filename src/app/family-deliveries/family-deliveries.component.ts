@@ -518,7 +518,10 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       {
         name: 'יצוא לאקסל',
         click: async () => {
-          await saveToExcel(this.context.for(ActiveFamilyDeliveries), this.deliveries, "משלוחים", this.busy, (d: ActiveFamilyDeliveries, c) => c == d.id || c == d.family);
+          await saveToExcel(this.context.for(ActiveFamilyDeliveries), this.deliveries, "משלוחים", this.busy, (d: ActiveFamilyDeliveries, c) => c == d.id || c == d.family, undefined,
+            async (f, addColumn) => {
+              await f.basketType.addBasketTypes(f.quantity, addColumn);
+            });
         }
         , visible: () => this.context.isAllowed(Roles.admin)
       }
