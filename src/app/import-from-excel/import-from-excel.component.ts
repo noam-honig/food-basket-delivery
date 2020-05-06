@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Column, Entity, ServerFunction, IdColumn, SqlDatabase, StringColumn, DataAreaSettings, BoolColumn, DataArealColumnSetting } from '@remult/core';
 import { Context } from '@remult/core';
 import { Helpers, HelperUserInfo } from '../helpers/helpers';
-import { HasAsyncGetTheValue } from '../model-shared/types';
+import { HasAsyncGetTheValue, PhoneColumn } from '../model-shared/types';
 
 import { Families, parseAddress, duplicateFamilyInfo, displayDupInfo } from '../families/families';
 
@@ -383,7 +383,7 @@ export class ImportFromExcelComponent implements OnInit {
         }
         helper.laterSteps.sort((a, b) => a.step - b.step);
         for (const s of helper.laterSteps) {
-            s.what();
+            await s.what();
         }
         if (updatedFields.get(f.basketType) && !updatedFields.get(fd.basketType)) {
             fd.basketType.value = f.basketType.value;
@@ -509,7 +509,7 @@ export class ImportFromExcelComponent implements OnInit {
         this.columns.push({
             key: 'firstName',
             name: 'שם פרטי',
-            updateFamily: async (v, f, h) => { h.laterSteps.push({ step: 2, what: () => updateCol(f.name, v) }) },
+            updateFamily: async (v, f, h) => { h.laterSteps.push({ step: 2, what: async () => updateCol(f.name, v) }) },
             columns: [this.f.name],
             searchNames: ["פרטי"]
         });
@@ -541,7 +541,7 @@ export class ImportFromExcelComponent implements OnInit {
             updateFamily: async (v, f, h) => {
                 h.laterSteps.push({
                     step: 3,
-                    what: () => updateCol(f.address, v)
+                    what:async () => updateCol(f.address, v)
                 })
             }
             , columns: [this.f.address]
@@ -553,7 +553,7 @@ export class ImportFromExcelComponent implements OnInit {
             updateFamily: async (v, f, h) => {
                 h.laterSteps.push({
                     step: 2,
-                    what: () => {
+                    what:async () => {
                         let r = parseAddress(v);
                         if (r.address)
                             updateCol(f.address, r.address);
@@ -640,9 +640,31 @@ export class ImportFromExcelComponent implements OnInit {
 
         this.columns.push({
             key: 'fixedCourier',
-            name: this.f.fixedCourier.defs.caption,
+            name: this.f.fixedCourier.defs.caption + ' שם',
             updateFamily: async (v, f, h) => {
-                await h.lookupAndInsert(Helpers, h => h.name, v, h => h.id, f.fixedCourier);
+                h.laterSteps.push({
+                    step: 3, what: async () => {
+                        if (f.fixedCourier.value) {
+                            let h = await this.context.for(Helpers).lookupAsync(f.fixedCourier);
+                            if (!h.isNew()) {
+                                h.name.value = v;
+                                if (h.wasChanged())
+                                    await h.save();
+                            }
+                        }
+                    }
+                });
+            }, columns: [this.f.fixedCourier]
+        });
+        this.columns.push({
+            key: 'fixedCourierPhone',
+            name: this.f.fixedCourier.defs.caption + ' טלפון',
+
+            updateFamily: async (v, f, h) => {
+                v = PhoneColumn.fixPhoneInput(v);
+                await h.lookupAndInsert(Helpers, h => h.phone, v, h => h.id, f.fixedCourier, x => {
+                    x.name.value = 'מתנדב ' + v;
+                });
             }, columns: [this.f.fixedCourier]
         });
 
@@ -1313,7 +1335,7 @@ async function getColumnDisplayValue(c: Column<any>) {
 }
 interface laterSteps {
     step: number,
-    what: () => void
+    what: () => Promise<void>
 }
 
 export function fixPhone(phone: string, defaultPrefix: string) {

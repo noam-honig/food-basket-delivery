@@ -24,6 +24,12 @@ export class PhoneColumn extends radweb.StringColumn {
   get displayValue() {
     return PhoneColumn.formatPhone(this.value);
   }
+  static fixPhoneInput(s: string) {
+    s = s.replace(/\D/g, '');
+    if (s.length == 9 && s[0] != '0')
+      s = '0' + s;
+    return s;
+  }
 
   static formatPhone(s: string) {
     if (!s)

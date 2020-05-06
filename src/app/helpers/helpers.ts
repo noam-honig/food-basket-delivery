@@ -129,9 +129,7 @@ export class Helpers extends HelpersBase {
 
                         this.admin.value = true;
                     }
-                    this.phone.value = this.phone.value.replace(/\D/g, '');
-                    if (this.phone.value.length == 9 && this.phone.value[0] != '0')
-                        this.phone.value = '0' + this.phone.value;
+                    this.phone.value = PhoneColumn.fixPhoneInput(this.phone.value);
                     await checkForDuplicateValue(this, this.phone, context.for(Helpers), 'כבר קיים במערכת');
                     if (this.isNew())
                         this.createDate.value = new Date();
