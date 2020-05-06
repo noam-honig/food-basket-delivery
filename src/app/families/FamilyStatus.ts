@@ -25,7 +25,7 @@ export class FamilyStatusColumn extends ValueListColumn<FamilyStatus> {
   getCss() {
     switch (this.value) {
       case FamilyStatus.RemovedFromList:
-        return 'frozen';
+        return 'forzen';
       case FamilyStatus.ToDelete:
         return 'deliveredProblem';
       default:
