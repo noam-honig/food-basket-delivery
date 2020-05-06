@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Column, Entity, ServerFunction, IdColumn, SqlDatabase, StringColumn, DataAreaSettings, BoolColumn, DataArealColumnSetting } from '@remult/core';
+import { Column, Entity, ServerFunction, IdColumn, SqlDatabase, StringColumn, DataAreaSettings, BoolColumn, DataArealColumnSetting, EntityWhere, AndFilter } from '@remult/core';
 import { Context } from '@remult/core';
 import { Helpers, HelperUserInfo } from '../helpers/helpers';
 import { HasAsyncGetTheValue, PhoneColumn } from '../model-shared/types';
@@ -385,13 +385,13 @@ export class ImportFromExcelComponent implements OnInit {
         for (const s of helper.laterSteps) {
             await s.what();
         }
-        if (updatedFields.get(f.basketType) && !updatedFields.get(fd.basketType)) {
+        if (updatedFields.get(this.f.basketType) && !updatedFields.get(this.fd.basketType)) {
             fd.basketType.value = f.basketType.value;
         }
-        if (updatedFields.get(f.quantity) && !updatedFields.get(fd.quantity)) {
+        if (updatedFields.get(this.f.quantity) && !updatedFields.get(this.fd.quantity)) {
             fd.quantity.value = f.quantity.value;
         }
-        if (this.useFamilyMembersAsNumOfBaskets.value && !updatedFields.get(fd.quantity)) {
+        if (this.useFamilyMembersAsNumOfBaskets.value && !updatedFields.get(this.fd.quantity)) {
             fd.quantity.value = f.familyMembers.value;
         }
 
@@ -409,6 +409,8 @@ export class ImportFromExcelComponent implements OnInit {
             phone4ForDuplicateCheck: f.phone4.value,
             distCenter: fd.distributionCenter.value,
             basketType: fd.basketType.value,
+            idInHagai: updatedFields.get(this.f.id) ? f.id.value : '',
+            iDinExcel: f.iDinExcel.value,
 
             valid: true,
             rowInExcel: row,
@@ -517,6 +519,7 @@ export class ImportFromExcelComponent implements OnInit {
 
             this.f.postalCode
         ]);
+        addColumn(this.f.id);
         this.columns.push({
             key: 'address',
             name: 'כתובת',
@@ -541,7 +544,7 @@ export class ImportFromExcelComponent implements OnInit {
             updateFamily: async (v, f, h) => {
                 h.laterSteps.push({
                     step: 3,
-                    what:async () => updateCol(f.address, v)
+                    what: async () => updateCol(f.address, v)
                 })
             }
             , columns: [this.f.address]
@@ -553,7 +556,7 @@ export class ImportFromExcelComponent implements OnInit {
             updateFamily: async (v, f, h) => {
                 h.laterSteps.push({
                     step: 2,
-                    what:async () => {
+                    what: async () => {
                         let r = parseAddress(v);
                         if (r.address)
                             updateCol(f.address, r.address);
@@ -939,7 +942,7 @@ export class ImportFromExcelComponent implements OnInit {
 
     displayDupInfo(info: duplicateFamilyInfo) {
         let r = '';
-        if (info.status) {
+        if (info.removedFromList) {
             r = 'הוצא מהרשימות! ';
         }
         return r + displayDupInfo(info);
@@ -952,12 +955,34 @@ export class ImportFromExcelComponent implements OnInit {
             identicalRows: [],
             newRows: [],
             updateRows: []
+
         } as serverCheckResults;
         let settings = await ApplicationSettings.getAsync(context);
         for (const info of excelRowInfo) {
-            info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz, info.tz2, info.phone1ForDuplicateCheck, info.phone2ForDuplicateCheck, info.phone3ForDuplicateCheck, info.phone4ForDuplicateCheck, undefined, true, info.address, context, db);
+            info.duplicateFamilyInfo = [];
+            let findDuplicate = async (w: EntityWhere<Families>) => {
+                if (info.duplicateFamilyInfo.length == 0)
+                    info.duplicateFamilyInfo = (await context.for(Families).find({ where: f => new AndFilter(w(f), f.status.isDifferentFrom(FamilyStatus.ToDelete)) }))
+                        .map(f => (<duplicateFamilyInfo>{
+                            id: f.id.value,
+                            address: f.address.value,
+                            name: f.name.value,
+                            tz: true,
+                            removedFromList: f.status.value == FamilyStatus.RemovedFromList,
+                            rank: 9
+                        }));
+            }
+            if (info.idInHagai)
+                await findDuplicate(f => f.id.isEqualTo(info.idInHagai));
+            if (info.iDinExcel)
+                await findDuplicate(f => f.iDinExcel.isEqualTo(info.iDinExcel));
+            if (info.tz)
+                await findDuplicate(f => f.tz.isEqualTo(info.tz));
+
+            if (info.duplicateFamilyInfo.length == 0)
+                info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz, info.tz2, info.phone1ForDuplicateCheck, info.phone2ForDuplicateCheck, info.phone3ForDuplicateCheck, info.phone4ForDuplicateCheck, undefined, true, info.address, context, db);
             if (settings.removedFromListStrategy.value == RemovedFromListExcelImportStrategy.ignore) {
-                info.duplicateFamilyInfo = info.duplicateFamilyInfo.filter(x => !x.status);
+                info.duplicateFamilyInfo = info.duplicateFamilyInfo.filter(x => !x.removedFromList);
             }
             if (!info.duplicateFamilyInfo || info.duplicateFamilyInfo.length == 0) {
                 result.newRows.push(info);
@@ -1251,6 +1276,8 @@ interface excelRowInfo {
     name: string;
     tz: string;
     tz2: string;
+    iDinExcel: string;
+    idInHagai: string;
     address: string;
     phone1ForDuplicateCheck: string;
     phone2ForDuplicateCheck: string;

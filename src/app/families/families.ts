@@ -281,7 +281,7 @@ export class Families extends IdEntity {
         }
 
       });
-
+    this.id.defs.caption = 'id של המשפחה באפליקצית חגי';
   }
   disableChangeLogging = false;
   disableOnSavingRow = false;
@@ -331,7 +331,7 @@ export class Families extends IdEntity {
   groups = new GroupsColumn(this.context);
   special = new YesNoColumn({ caption: 'שיוך מיוחד' });
   defaultSelfPickup = new BoolColumn('באים לקחת ברירת מחדל');
-  iDinExcel = new StringColumn({ caption: 'מזהה באקסל' });
+  iDinExcel = new StringColumn({ caption: 'מזהה חד ערכי למשפחה' });
   internalComment = new StringColumn({ caption: 'הערה פנימית - לא תופיע למתנדב' });
 
 
@@ -692,7 +692,7 @@ export class Families extends IdEntity {
         phone3: row[sqlResult.getColumnKeyInResultForIndexInSelect(7)],
         phone4: row[sqlResult.getColumnKeyInResultForIndexInSelect(8)],
         nameDup: row[sqlResult.getColumnKeyInResultForIndexInSelect(9)],
-        status: row['status'] == FamilyStatus.RemovedFromList.id,
+        removedFromList: row['status'] == FamilyStatus.RemovedFromList.id,
         sameAddress: address == row[sqlResult.getColumnKeyInResultForIndexInSelect(2)],
         rank: 0
 
@@ -715,7 +715,13 @@ export class Families extends IdEntity {
 }
 
 
-export class FamilyId extends IdColumn { }
+export class FamilyId extends IdColumn {
+  constructor(settingsOrCaption?: ColumnOptions<string>) {
+    super(settingsOrCaption);
+    if (!this.defs.caption)
+      this.defs.caption = 'id של המשפחה באפליקצית חגי'
+  }
+}
 
 export interface duplicateFamilyInfo {
   id: string;
@@ -729,7 +735,7 @@ export interface duplicateFamilyInfo {
   phone3: boolean;
   phone4: boolean;
   nameDup: boolean;
-  status: boolean;
+  removedFromList: boolean;
   rank: number;
 }
 
