@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Column, Entity, ServerFunction, IdColumn, SqlDatabase, StringColumn, DataAreaSettings, BoolColumn, DataArealColumnSetting, EntityWhere, AndFilter } from '@remult/core';
+import { Column, Entity, ServerFunction, IdColumn, SqlDatabase, StringColumn, DataAreaSettings, BoolColumn, DataArealColumnSetting, EntityWhere, AndFilter, RouteHelperService } from '@remult/core';
 import { Context } from '@remult/core';
 import { Helpers, HelperUserInfo } from '../helpers/helpers';
 import { HasAsyncGetTheValue, PhoneColumn } from '../model-shared/types';
@@ -28,6 +28,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { leaveOnlyNumericChars } from '../shared/googleApiHelpers';
 
 
+
 @Component({
     selector: 'app-excel-import',
     templateUrl: './import-from-excel.component.html',
@@ -37,7 +38,7 @@ export class ImportFromExcelComponent implements OnInit {
 
 
 
-    constructor(private context: Context, private dialog: DialogService, private busy: BusyService) {
+    constructor(private context: Context, private dialog: DialogService, private busy: BusyService, private routeHelper: RouteHelperService) {
 
     }
     updateRowsPage: number;
@@ -133,10 +134,12 @@ export class ImportFromExcelComponent implements OnInit {
                     this.dialog.Info("הוספת השורות הסתיימה בהצלחה");
                 }
                 catch (err) {
-                    this.dialog.Error("הוספה נכשלה:" + extractError(err));
+                    await this.dialog.Error("הוספה נכשלה:" + extractError(err));
                     this.newRows = this.newRows.filter(x => this.identicalRows.indexOf(x) < 0);
                 }
                 this.createImportReport();
+                if (await this.dialog.YesNoPromise("האם לעבור למסך משלוחים או להשאר במסך זה?"))
+                    this.routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
 
             });
         }
@@ -1072,7 +1075,7 @@ export class ImportFromExcelComponent implements OnInit {
         if (!name) {
             name = "ללא שם";
         }
-        if (await this.ask(translate("להעביר את משפחת ") + name + translate(" למשפחות להוספה?"))) {
+        if (await this.ask(translate("להעביר את משפחת ") + name + translate(" למשפחות חדשות?"))) {
             if (!r.name) {
                 r.name = name;
                 r.values[keyFromColumnInCompare({ e: this.f, c: this.f.name })] = { newValue: r.name, newDisplayValue: r.name };

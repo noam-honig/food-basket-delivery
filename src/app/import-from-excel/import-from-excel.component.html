@@ -139,7 +139,7 @@
                                             </ul>
                                             <a (click)="moveFromErrorToAdd(i)"><span *ngIf="i.duplicateFamilyInfo">
                                                     אף אחת מהמשפחות הללו אינה מתאימה לשורה באקסל, </span>
-                                                העבר למשפחות להוספה</a>
+                                                העבר למשפחות חדשות</a>
                                         </td>
                                     </tr>
                                     <ng-container *ngIf="i.otherExcelRow">
@@ -197,7 +197,7 @@
                                             <button mat-menu-item
                                                 (click)="updateRows.splice(updateRows.indexOf(i),1)">{{'הסר ממשפחות לעדכן'|translate}}</button>
                                             <button mat-menu-item
-                                                (click)="moveFromUpdateToAdd(i)">{{'העבר למשפחות להוספה'|translate}}</button>
+                                                (click)="moveFromUpdateToAdd(i)">{{'העבר למשפחות חדשות'|translate}}</button>
                                         </mat-menu>
 
                                         <button mat-icon-button [matMenuTriggerFor]="updatedRowOptions">
@@ -294,6 +294,7 @@
 
 
             </mat-tab-group>
+            <button mat-raised-button (click)="createImportReport()" >שמור דוח מצב קליטה מאקסל</button>
         </mat-step>
     </mat-horizontal-stepper>
 
