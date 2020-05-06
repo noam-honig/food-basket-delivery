@@ -900,6 +900,19 @@ export class ImportFromExcelComponent implements OnInit {
                         }
                     }
                 }
+                if (rows.length > 0) {
+                    let suspectAddress = 0;
+                    for (const r of rows) {
+                        if (!r.address || r.address.match(/[0-9]$/))
+                            suspectAddress++;
+                    }
+                    let precent = (suspectAddress * 100 / rows.length);
+                    if (precent > 30) {
+                        if (await this.dialog.YesNoPromise("כ" + precent.toFixed() + "% מהכתובות ריקות או מסתיימות בספרה - יתכן שלא קלטתם את הישוב של הכתובת. לבטל את הקליטה?"))
+                            this.stepper.previous();;
+                    }
+                }
+
 
                 /*
                                 sessionStorage.setItem("errorRows", JSON.stringify(this.errorRows));
