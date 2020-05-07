@@ -1,6 +1,6 @@
 import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, FilterBase, ValueListColumn } from "@remult/core";
 import { Roles } from "../auth/roles";
-import { DistributionCenterId } from "../manage/distribution-centers";
+import { DistributionCenterId, DistributionCenters, allCentersToken } from "../manage/distribution-centers";
 import { HelperId } from "../helpers/helpers";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { Groups } from "../manage/manage.component";
@@ -33,7 +33,7 @@ class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
 }
 class UpdateFixedCourier extends ActionOnRows<FamilyDeliveries> {
     byCurrentCourier = new BoolColumn('עדכן את המתנדב מהמשלוח הנוכחי');
-    courier = new HelperId(this.context,'מתנדב ברירת מחדל למשפחה');
+    courier = new HelperId(this.context, 'מתנדב ברירת מחדל למשפחה');
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
@@ -183,6 +183,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
     selfPickup = new SelfPickupStrategyColumn(true);
 
     distributionCenter = new DistributionCenterId(this.context);
+    useCurrentDistributionCenter = new BoolColumn('רשימת חלוקה כמו במשלוח הנוכחי');
 
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
@@ -196,22 +197,32 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                 this.distributionCenter,
                 this.autoArchive,
                 this.newDeliveryForAll,
-                this.selfPickup
+                this.selfPickup,
+                this.useCurrentDistributionCenter
             ],
             dialogColumns: (component) => {
                 this.basketType.value = '';
                 this.quantity.value = 1;
                 this.distributionCenter.value = component.dialog.distCenter.value;
+                this.useCurrentDistributionCenter.value = component.dialog.distCenter.value == allCentersToken;
                 return [
                     this.useExistingBasket,
                     [{ column: this.basketType, visible: () => !this.useExistingBasket.value }, { column: this.quantity, visible: () => !this.useExistingBasket.value }],
-                    { column: this.distributionCenter, visible: () => component.dialog.hasManyCenters },
+                    { column: this.useCurrentDistributionCenter, visible: () => component.dialog.distCenter.value == allCentersToken },
+                    { column: this.distributionCenter, visible: () => component.dialog.hasManyCenters && !this.useCurrentDistributionCenter.value },
                     this.helperStrategy,
                     { column: this.helper, visible: () => this.helperStrategy.value == HelperStrategy.selectHelper },
                     this.autoArchive,
                     this.newDeliveryForAll,
                     this.selfPickup.getDispaySettings(component.settings.usingSelfPickupModule.value)
                 ]
+            },
+            validate: async () => {
+                if (!this.useCurrentDistributionCenter.value) {
+                    let dc = await this.context.for(DistributionCenters).findId(this.distributionCenter.value);
+                    if (!dc)
+                        throw 'חובה לבחור רשימת חלוקה';
+                }
             },
             additionalWhere: f => {
                 if (this.newDeliveryForAll)
@@ -222,7 +233,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
             help: () => 'משלוח חדש יוגדר עבור כל המשלוחים המסומנים שהם בסטטוס נמסר בהצלחה, או בעיה כלשהי, אלא אם תבחרו לסמן את השדה ' + this.newDeliveryForAll.defs.caption,
             forEach: async existingDelivery => {
                 let f = await this.context.for(Families).findId(existingDelivery.family);
-                if (!f||f.status.value != FamilyStatus.Active)
+                if (!f || f.status.value != FamilyStatus.Active)
                     return;
                 let newDelivery = f.createDelivery(existingDelivery.distributionCenter.value);
                 newDelivery.copyFrom(existingDelivery);
@@ -231,6 +242,8 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                     newDelivery.quantity.value = this.quantity.value;
                 }
                 newDelivery.distributionCenter.value = this.distributionCenter.value;
+                if (this.useCurrentDistributionCenter.value)
+                    newDelivery.distributionCenter.value = existingDelivery.distributionCenter.value;
                 this.helperStrategy.value.applyTo({ existingDelivery, newDelivery, helper: this.helper.value });
                 this.selfPickup.value.applyTo({ existingDelivery, newDelivery, family: f });
 
