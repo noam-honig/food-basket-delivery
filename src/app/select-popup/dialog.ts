@@ -44,7 +44,7 @@ export class DialogService {
 
     Error(err: string): any {
 
-        this.messageDialog(extractError(err));
+        return this.messageDialog(extractError(err));
     }
     private mediaMatcher: MediaQueryList = matchMedia(`(max-width: 720px)`);
 

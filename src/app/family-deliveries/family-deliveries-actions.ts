@@ -222,7 +222,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
             help: () => 'משלוח חדש יוגדר עבור כל המשלוחים המסומנים שהם בסטטוס נמסר בהצלחה, או בעיה כלשהי, אלא אם תבחרו לסמן את השדה ' + this.newDeliveryForAll.defs.caption,
             forEach: async existingDelivery => {
                 let f = await this.context.for(Families).findId(existingDelivery.family);
-                if (f.status.value != FamilyStatus.Active)
+                if (!f||f.status.value != FamilyStatus.Active)
                     return;
                 let newDelivery = f.createDelivery(existingDelivery.distributionCenter.value);
                 newDelivery.copyFrom(existingDelivery);

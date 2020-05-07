@@ -398,7 +398,31 @@ export class FamilyDeliveries extends IdEntity {
         onSave?: () => Promise<void>,
         dialog: DialogService
     }) {
-        if (!this.context.isAllowed(Roles.admin)) {
+
+        let showFamilyDetails = this.context.isAllowed(Roles.admin);
+        if (showFamilyDetails) {
+            let f = await this.context.for(Families).findId(this.family);
+            if (f) {
+
+                this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = {
+                    familyDelivery: this,
+                    onSave: async () => {
+                        if (callerHelper && callerHelper.onSave)
+                            await callerHelper.onSave();
+                    }
+                }, y => {
+                    if (y.refreshDeliveryStatistics)
+                        if (callerHelper && callerHelper.refreshDeliveryStats)
+                            callerHelper.refreshDeliveryStats();
+
+                });
+            }
+            else {
+                await callerHelper.dialog.Error('פרטי משפחה לא נמצאו - ייתכן ומחקתם אותה?');
+                showFamilyDetails = false;
+            }
+        }
+        if (!showFamilyDetails) {
             await this.context.openDialog(InputAreaComponent, x => {
                 x.args = {
                     title: 'פרטי משלוח עבור ' + this.name.value,
@@ -419,20 +443,9 @@ export class FamilyDeliveries extends IdEntity {
                 }
             });
         }
-        else
 
-            this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = {
-                familyDelivery: this,
-                onSave: async () => {
-                    if (callerHelper && callerHelper.onSave)
-                        await callerHelper.onSave();
-                }
-            }, y => {
-                if (y.refreshDeliveryStatistics)
-                    if (callerHelper && callerHelper.refreshDeliveryStats)
-                        callerHelper.refreshDeliveryStats();
 
-            });
+
     }
     deilveryDetailsAreaSettings(dialog: DialogService): IDataAreaSettings<any> {
         return {
