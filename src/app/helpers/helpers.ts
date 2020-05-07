@@ -155,11 +155,8 @@ export class Helpers extends HelpersBase {
             apiDataFilter: () => {
                 if (!context.isSignedIn())
                     return this.id.isEqualTo("No User");
-                else if (!context.isAllowed([Roles.admin]))
-                    if (context.isAllowed([Roles.distCenterAdmin]))
-                        return this.distributionCenter.isAllowedForUser();
-                    else
-                        return this.allowedIds.isContains(this.context.user.id);
+                else if (!context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
+                    return this.allowedIds.isContains(this.context.user.id);
             }
         });
     }

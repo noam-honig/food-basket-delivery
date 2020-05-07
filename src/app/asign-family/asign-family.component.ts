@@ -6,7 +6,7 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
 
 import { Helpers } from '../helpers/helpers';
-import { DialogService, DestroyHelper } from '../select-popup/dialog';
+import { DialogService, DestroyHelper,  extractError } from '../select-popup/dialog';
 import { UserFamiliesList } from '../my-families/user-families';
 
 import { environment } from '../../environments/environment';
@@ -879,7 +879,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             try {
                 await this.helper.save();
             } catch (err) {
-                this.dialog.Error(err);
+                await this.dialog.Error('שמירת פרטי מתנדב: ' + extractError(err));
+                throw err;
 
             }
         }

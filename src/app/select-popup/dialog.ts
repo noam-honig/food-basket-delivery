@@ -13,6 +13,7 @@ import { Roles } from "../auth/roles";
 import { HelperUserInfo } from "../helpers/helpers";
 import { RouteReuseStrategy } from "@angular/router";
 import { CustomReuseStrategy } from "../custom-reuse-controller-router-strategy";
+import { isString } from "util";
 
 
 declare var gtag;
@@ -167,11 +168,14 @@ export class DialogService {
     }
 }
 export function extractError(err: any) {
-    if (err.message)
-        err = err.message;
+    if (isString(err))
+        return err;
     if (err.error)
-        err = err.error;
-    return err;
+        return extractError(err.error);
+    if (err.message)
+        return  extractError(err.message);
+
+    return JSON.stringify(err);
 }
 export class DestroyHelper {
     private destroyList: (() => void)[] = [];

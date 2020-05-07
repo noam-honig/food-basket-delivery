@@ -35,7 +35,12 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
   currentlHelper: helperFollowupInfo;
   async selectCourier(c: helperFollowupInfo) {
     this.currentlHelper = c;
-    this.familyLists.initForHelper(await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(c.id)));
+    let h = await this.context.for(Helpers).lookupAsync(h => h.id.isEqualTo(c.id));;
+    if (h.isNew()) {//if there is a row with an invalid helper id - I want it to at least work
+      h.id.value = c.id;
+    }
+
+    this.familyLists.initForHelper(h);
 
   }
   seeAllCenters() {
