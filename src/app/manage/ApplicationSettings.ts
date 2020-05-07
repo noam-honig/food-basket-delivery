@@ -23,7 +23,7 @@ export class ApplicationSettings extends Entity<number>  {
     let Families = await (await import('../families/families')).Families;
     let family = await context.for(Families).findFirst(f => f.id.isEqualTo(d.family));
     let r: phoneOption[] = [];
-    let settings = await ApplicationSettings.get(context);
+    let settings = await ApplicationSettings.getAsync(context);
     for (const x of settings.getPhoneStrategy()) {
       if (x.option) {
         await x.option.build({
@@ -155,6 +155,7 @@ export class ApplicationSettings extends Entity<number>  {
                 l.value = 'http://' + l.value.trim();
             }
           }
+          this.helpPhone.value = PhoneColumn.fixPhoneInput(this.helpPhone.value);
         }
       }
     })

@@ -21,7 +21,7 @@ import { Context } from '@remult/core';
 import { BasketType } from '../families/BasketType';
 
 
-import { SqlBuilder, wasChanged } from '../model-shared/types';
+import { SqlBuilder, wasChanged, PhoneColumn } from '../model-shared/types';
 import { BusyService } from '@remult/core';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { Groups, GroupsStats } from '../manage/manage.component';
@@ -62,8 +62,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     translate = translate;
     async searchPhone() {
         this.clearHelperInfo(false);
+        let cleanPhone = PhoneColumn.fixPhoneInput(this.phone);
 
-        if (this.phone.length == 10) {
+        if (cleanPhone.length == 10) {
+            this.phone = cleanPhone;
             let helper = await this.context.for(Helpers).findFirst(h => h.phone.isEqualTo(this.phone));
             if (helper) {
 
@@ -138,7 +140,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 hideRecent: true,
                 onSelect: async h => {
                     if (h) {
-                        let families = await this.context.for(ActiveFamilyDeliveries).find({ where: f => f.courier.isEqualTo(h.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),limit:1000});
+                        let families = await this.context.for(ActiveFamilyDeliveries).find({ where: f => f.courier.isEqualTo(h.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)), limit: 1000 });
                         this.dialog.YesNoQuestion("להעביר " + families.length + translate(" משלוחים מ") + '"' + h.name.value + '"' + " למתנדב " + '"' + this.helper.name.value + '"', async () => {
                             await this.busy.doWhileShowingBusy(async () => {
                                 await this.verifyHelperExistance();
@@ -175,7 +177,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         this.familyLists.initForFamilies(this.helper, r.families);
                     }
 
-                }))).catch(x=>this.lastRefreshRoute = Promise.resolve());
+                }))).catch(x => this.lastRefreshRoute = Promise.resolve());
 
     }
     smsSent() {
@@ -755,7 +757,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             }
 
             fams = sorted;
-            
+
         }
         for (const f of fams) {
             if (f.families.length > 0)
