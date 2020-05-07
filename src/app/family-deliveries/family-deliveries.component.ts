@@ -456,6 +456,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
 
         deliveries.deliveryComments,
+        deliveries.internalDeliveryComment,
         deliveries.special,
         deliveries.createUser,
         deliveries.createDate,

@@ -60,6 +60,7 @@ export class FamilyDeliveries extends IdEntity {
         allowApiUpdate: Roles.distCenterAdmin
     });
     courierComments = new StringColumn('הערות שכתב המתנדב כשמסר');
+    internalDeliveryComment = new StringColumn({ caption: 'הערה פנימית למשלוח - לא תופיע למתנדב', includeInApi: Roles.admin });
     routeOrder = new NumberColumn({
         allowApiUpdate: Roles.distCenterAdmin
     });
@@ -445,6 +446,7 @@ export class FamilyDeliveries extends IdEntity {
                     { column: this.distributionCenter, visible: () => dialog.hasManyCenters },
                     this.needsWork,
                     this.courierComments,
+                    this.internalDeliveryComment,
                     this.special
                 ]
         };

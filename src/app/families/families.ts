@@ -39,7 +39,7 @@ export class Families extends IdEntity {
     this.context.openDialog(GridDialogComponent, x => x.args = {
       title: 'משלוחים עבור ' + this.name.value,
       settings: this.context.for(FamilyDeliveries).gridSettings({
-        numOfColumnsInGrid: 6,
+        numOfColumnsInGrid: 7,
         hideDataArea: true,
         rowCssClass: fd => fd.deliverStatus.getCss(),
         columnSettings: fd => {
@@ -49,8 +49,9 @@ export class Families extends IdEntity {
             fd.basketType,
             fd.quantity,
             fd.courier,
-            fd.distributionCenter,
-            fd.courierComments
+            fd.courierComments,
+            fd.internalDeliveryComment,
+            fd.distributionCenter
           ]
           r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
           return r;
