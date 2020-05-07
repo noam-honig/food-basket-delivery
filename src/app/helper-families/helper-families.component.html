@@ -1,12 +1,16 @@
 <mat-card class="no-print" *ngIf="familyLists.toDeliver.length>0">
   <mat-card-title>
-    {{familyLists.getLeftFamiliesDescription()}}
+    {{familyLists.getLeftFamiliesDescription()}} 
     <div>
       <mat-menu #appMenu="matMenu">
-        <button mat-menu-item (click)="cancelAll()" style="color:red;">{{'בטל שיוך לכל המשפחות'|translate}}</button>
+        <button mat-menu-item (click)="cancelAll()" style="color:red;">{{'בטל שיוך לכל המשלוחים'|translate}}</button>
         <button mat-menu-item (click)="okAll()"
-          class="primary-menu">{{'סמן נמסר בהצלחה לכל המשפחות'|translate}}</button>
+          class="primary-menu">{{'סמן נמסר בהצלחה לכל המשלוחים'|translate}}</button>
       </mat-menu>
+      <button mat-icon-button (click)="familyLists.showBasketSummary()">
+      <mat-icon >assignment
+      </mat-icon>
+    </button>
 
       <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="familyLists.toDeliver.length>0 && partOfAssign">
         <mat-icon>more_vert</mat-icon>
@@ -87,20 +91,21 @@
       <span>שלחי SMS לתזכורת</span>
     </ng-template>
   </button>
-  <button mat-raised-button class="myButton no-print" *ngIf="partOfReview&&familyLists.helper" (click)="callHelper()" >
-     התקשר ל{{familyLists.helper.name.value}}
-      {{familyLists.helper.phone.displayValue}}
-    
-  </button >
-  <button mat-raised-button class="myButton no-print" *ngIf="partOfReview&&familyLists.helper && familyLists.escort" (click)="callEscort()" >
+  <button mat-raised-button class="myButton no-print" *ngIf="partOfReview&&familyLists.helper" (click)="callHelper()">
+    התקשר ל{{familyLists.helper.name.value}}
+    {{familyLists.helper.phone.displayValue}}
+
+  </button>
+  <button mat-raised-button class="myButton no-print" *ngIf="partOfReview&&familyLists.helper && familyLists.escort"
+    (click)="callEscort()">
     התקשר למלווה {{familyLists.escort.name.value}}
-     {{familyLists.escort.phone.displayValue}}
-   
- </button >
+    {{familyLists.escort.phone.displayValue}}
+
+  </button>
   <div class="print-only">
     <h4 *ngIf="familyLists.helper">שלום
       {{familyLists.helper.name.value +(familyLists.helper.eventComment.value?' ('+familyLists.helper.eventComment.value+')':'')}},
-      טלפון {{familyLists.getHelperPhone() }}, {{'אלו המשפחות לחלוקתך -'|translate}}
+      טלפון {{familyLists.getHelperPhone() }}, {{'אלו המשלוחים לחלוקתך -'|translate}}
       ({{familyLists.toDeliver.length}})</h4>
 
     <table class="printTable">
@@ -160,7 +165,7 @@
   </div>
 
   <mat-card *ngIf="familyLists.problem.length>0" class="no-print">
-    <mat-card-title>{{'משפחות שנתקלתי בבעיה '|translate}}- {{familyLists.problem.length}}
+    <mat-card-title>{{'משלוחים שנתקלתי בבעיה '|translate}}- {{familyLists.problem.length}}
     </mat-card-title>
     <mat-accordion>
       <mat-expansion-panel #myPanel *ngFor="let f of familyLists.problem">
@@ -172,7 +177,7 @@
             (assignmentCanceled)="cancelAssign(f)">
             <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
             <button mat-raised-button class="myButton badButton"
-              (click)="returnToDeliver(f)">{{'נלחץ בטעות - החזר למשפחות'|translate}}
+              (click)="returnToDeliver(f)">{{'נלחץ בטעות - החזר למשלוחים'|translate}}
               לחלוקה</button>
             <button *ngIf="partOfAssign" mat-raised-button class="myButton badButton" (click)="cancelAssign(f)">בטלי
               שיוך</button>
@@ -183,7 +188,7 @@
   </mat-card>
   <mat-card *ngIf="familyLists.delivered.length>0" class="no-print">
     <mat-card-title>
-      {{'משפחות שחולקו ביומיים האחרונים'|translate}} - {{familyLists.delivered.length}}
+      {{'משלוחים שחולקו ביומיים האחרונים'|translate}} - {{familyLists.delivered.length}}
     </mat-card-title>
     <mat-accordion>
       <mat-expansion-panel #myPanel *ngFor="let f of familyLists.delivered">
@@ -191,10 +196,11 @@
           <app-family-in-list [f]="f" style="width:100%"></app-family-in-list>
         </mat-expansion-panel-header>
         <ng-template matExpansionPanelContent>
-          <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign" (assignmentCanceled)="cancelAssign(f)">
+          <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign"
+            (assignmentCanceled)="cancelAssign(f)">
             <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
             <button mat-raised-button class="myButton badButton"
-              (click)="returnToDeliver(f)">{{'נלחץ בטעות - החזר למשפחות לחלוקה'|translate}}</button>
+              (click)="returnToDeliver(f)">{{'נלחץ בטעות - החזר למשלוחים לחלוקה'|translate}}</button>
           </app-family-info>
         </ng-template>
       </mat-expansion-panel>

@@ -1,0 +1,44 @@
+<div dir="rtl">
+
+    <h3 matDialogHeader> {{families.toDeliver.length}} משלוחים לחלוקה</h3>
+
+    <div mat-dialog-content>
+        <table class="table table-bordered" style="width: 100%;">
+            <tr>
+                <th>
+
+                </th>
+                <td>
+                    {{boxes1Name}}
+                </td>
+                <td *ngIf="boxes2">
+                    {{boxes2Name}}
+                </td>
+
+            </tr>
+            <tr *ngFor="let b of totals">
+                <th> {{b.name}}</th>
+                <th>{{b.boxes1}}</th>
+                <th *ngIf="boxes2">{{b.boxes2}}</th>
+            </tr>
+            <tr>
+                <td>סה"כ</td>
+                <td>{{boxes1}}
+                </td>
+                <td *ngIf="boxes2">{{boxes2}}</td>
+            </tr>
+
+        </table>
+    </div>
+
+
+    <mat-dialog-actions>
+
+        <button mat-raised-button color="accent" [mat-dialog-close]>
+            סגור
+        </button>
+
+    </mat-dialog-actions>
+
+
+</div>

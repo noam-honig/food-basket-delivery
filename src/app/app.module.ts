@@ -77,6 +77,7 @@ import { TestMapComponent } from './test-map/test-map.component';
 import { FamilyDeliveriesComponent } from './family-deliveries/family-deliveries.component';
 import { GridDialogComponent } from './grid-dialog/grid-dialog.component';
 import { SiteOverviewComponent } from './site-overview/site-overview.component';
+import { BasketSummaryComponent } from './basket-summary/basket-summary.component';
 
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref();
@@ -138,7 +139,8 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     TestMapComponent,
     FamilyDeliveriesComponent,
     GridDialogComponent,
-    SiteOverviewComponent
+    SiteOverviewComponent,
+    BasketSummaryComponent
 
   ],
   imports: [
@@ -196,7 +198,7 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     SelectCompanyComponent,
     HelperAssignmentComponent,
     SiteOverviewComponent,
-    UpdateCommentComponent, UpdateGroupDialogComponent]
+    UpdateCommentComponent, UpdateGroupDialogComponent,BasketSummaryComponent]
 })
 export class AppModule { }
 
