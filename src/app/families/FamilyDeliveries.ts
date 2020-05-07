@@ -73,8 +73,7 @@ export class FamilyDeliveries extends IdEntity {
     createDate = new changeDate({ includeInApi: Roles.admin, caption: 'מועד הקצאה' });
     createUser = new HelperIdReadonly(this.context, { includeInApi: Roles.admin, caption: 'משתמש מקצה' });
     needsWork = new BoolColumn({
-        caption: 'צריך טיפול/מעקב',
-        allowApiUpdate: Roles.distCenterAdmin
+        caption: 'צריך טיפול/מעקב'
     });
     needsWorkUser = new HelperIdReadonly(this.context, 'צריך טיפול - מי עדכן');
     needsWorkDate = new changeDate('צריך טיפול - מתי עודכן');
