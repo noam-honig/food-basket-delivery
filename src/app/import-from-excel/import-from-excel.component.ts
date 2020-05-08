@@ -908,8 +908,10 @@ export class ImportFromExcelComponent implements OnInit {
                     }
                     let precent = (suspectAddress * 100 / rows.length);
                     if (precent > 30) {
-                        if (await this.dialog.YesNoPromise("כ" + precent.toFixed() + "% מהכתובות ריקות או מסתיימות בספרה - יתכן שלא קלטתם את הישוב של הכתובת. לבטל את הקליטה?"))
-                            this.stepper.previous();;
+                        if (await this.dialog.YesNoPromise("כ" + precent.toFixed() + "% מהכתובות ריקות או מסתיימות בספרה - יתכן שלא קלטתם את הישוב של הכתובת. לחזור להגדרת עמודות??")) {
+                            this.stepper.previous();
+                            this.stepper.previous();
+                        }
                     }
                 }
 
@@ -988,15 +990,23 @@ export class ImportFromExcelComponent implements OnInit {
                             rank: 9
                         }));
             }
-            if (info.idInHagai)
+            if (info.idInHagai && info.duplicateFamilyInfo.length == 0)
                 await findDuplicate(f => f.id.isEqualTo(info.idInHagai));
-            if (info.iDinExcel)
+            if (info.iDinExcel && info.duplicateFamilyInfo.length == 0)
                 await findDuplicate(f => f.iDinExcel.isEqualTo(info.iDinExcel));
-            if (info.tz)
+            if (info.tz && info.duplicateFamilyInfo.length == 0)
                 await findDuplicate(f => f.tz.isEqualTo(info.tz));
 
-            if (info.duplicateFamilyInfo.length == 0)
+            if (info.duplicateFamilyInfo.length == 0) {
                 info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz, info.tz2, info.phone1ForDuplicateCheck, info.phone2ForDuplicateCheck, info.phone3ForDuplicateCheck, info.phone4ForDuplicateCheck, undefined, true, info.address, context, db);
+                if (info.duplicateFamilyInfo.length > 1) {
+                    if (info.duplicateFamilyInfo.find(f => f.nameDup && f.sameAddress)) {
+                        info.duplicateFamilyInfo = info.duplicateFamilyInfo.filter(f =>!onlyNameMatch(f)
+                            )
+                    }
+                }
+            }
+
             if (settings.removedFromListStrategy.value == RemovedFromListExcelImportStrategy.ignore) {
                 info.duplicateFamilyInfo = info.duplicateFamilyInfo.filter(x => !x.removedFromList);
             }
@@ -1322,6 +1332,17 @@ interface serverCheckResults {
     updateRows: excelRowInfo[],
     errorRows: excelRowInfo[]
 }
+function onlyNameMatch(f: duplicateFamilyInfo) {
+    return (f.nameDup
+        && !f.sameAddress
+        && !f.phone1
+        && !f.phone2
+        && !f.phone3
+        && !f.phone4
+        && !f.tz
+        && !f.tz2);
+}
+
 async function compareValuesWithRow(context: Context, info: excelRowInfo, withFamily: string, compareBasketType: boolean, columnsInCompareMemeberName: string[]) {
     let hasDifference = false;
     let ef = await context.for(Families).findFirst(f => f.id.isEqualTo(withFamily));
