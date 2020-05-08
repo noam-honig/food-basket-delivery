@@ -321,7 +321,7 @@ export class DistributionMap implements OnInit, OnDestroy {
         this.bounds.extend(familyOnMap.marker.getPosition());
 
     });
-    if (allInAlll || markers.length > 7000)
+    if (allInAlll || markers.length > 40000)
       var x = new MarkerClusterer(this.map, markers, {
         //imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
         imagePath: 'http://localhost:4200/assets/test',
