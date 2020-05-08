@@ -117,9 +117,11 @@ export class GeocodeInformation {
     }
     whyProblem() {
         if (!this.ok())
-            return "not ok";
+            return this.info.status;
         if (this.info.results.length < 1)
             return "no results";
+        if (this.info.results[0].address_components[0].types[0] == "street_number")
+            return undefined;
         if (this.info.results[0].partial_match)
             return "partial_match";
         if (this.info.results[0].types[0] != "street_address"

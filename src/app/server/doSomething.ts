@@ -2,7 +2,7 @@
 //let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
 
 import { readFileSync } from "fs";
-import {  SqlDatabase } from '@remult/core';
+import { SqlDatabase } from '@remult/core';
 
 
 
@@ -21,56 +21,50 @@ import { BasketType } from "../families/BasketType";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Pool } from "pg";
 import { PostgresDataProvider, PostgresSchemaBuilder } from "@remult/server-postgres";
+import { GeocodeCache, GeocodeInformation } from "../shared/googleApiHelpers";
+import { Sites } from "../sites/sites";
 
 
 let match = 0;
 export async function DoIt() {
     try {
         await serverInit();
-        let source = new ServerContext();
-
+        let context = new ServerContext();
+        context.setDataProvider(Sites.getDataProviderForOrg("zkaj"));
         {
-            let sourcePool = new Pool({
-                connectionString: process.env.MIGRATION_SOURCE_DATABASE_URL,
-                ssl: true
-            });
-            let schema = "test"; 
-            let targetPool = new Pool({
-                connectionString: process.env.DATABASE_URL,
-                ssl: true
-            });
-            source.setDataProvider( new SqlDatabase( new PostgresDataProvider(sourcePool)));
+
             console.log('123');
-           // debugger;
+            // debugger;
             //return;
-            verifySchemaExistance(targetPool, schema);
-            var w = new PostgresSchemaWrapper(targetPool, schema);
-            var psw = new PostgresDataProvider(w);
-            let builder = new PostgresSchemaBuilder(new SqlDatabase( psw), schema);
-            await psw.transaction(async tdp => {
-                let target = new ServerContext();
-                target.setDataProvider(new SqlDatabase( tdp));
+            let rows = [];
 
-                for (const entity of allEntities) {
-                    let x = source.for(entity).create();
-                    if (x.defs.name.toLowerCase().indexOf('from ') < 0) {
-                        await builder.createIfNotExist(x);
+            for (const g of await context.for(GeocodeCache).find()) {
+                let x = GeocodeInformation.fromString(g.googleApiResult.value);
+                if (x.partialMatch()) {
+                    let r = {
+                        source: g.id.value,
+                        found: x.getAddress(),
+                        why: x.whyProblem(),
+                    //    whyNew: x.whyProblemNew(),
+                        what: x.info.results.length > 0 ? x.info.results[0].types[0] : '',
+                        st: x.info.results.length > 0 ? x.info.results[0].address_components[0].types.join(',') : '',
 
-                        let rows = await source.for(entity).find();
-                        console.log(x.defs.name + ": " + rows.length);
-                        for (const r of rows) {
-                            let tr = target.for(entity).create();
-                            for (const col of r.columns) {
-                                tr.columns.find(col).value = col.value;
-                            }
-                            if (tr instanceof Families)
-                                tr.disableOnSavingRow = true;
-                            await tr.save();
-
-                        }
+                    };
+                 //   if (!r.whyNew)
+                  //      r.whyNew = '';
+                    if (r.found == "סנהדריה מורחבת 114 ירושלים") {
+debugger;
                     }
+                    rows.push(r);
+
                 }
-            });
+
+
+
+            }
+            rows.sort((a, b) => a.whyNew.localeCompare(b.whyNew));
+            console.table(rows);
+
 
         }
 

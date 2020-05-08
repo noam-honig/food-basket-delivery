@@ -12,7 +12,7 @@ import '../app.module';
 import { SqlBuilder } from '../model-shared/types';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DistributionCenters } from '../manage/distribution-centers';
-import { pagedRowsIterator } from '../families/familyActionsWiring';
+import { pagedRowsIterator, iterateRowsActionOnServer } from '../families/familyActionsWiring';
 
 export async function initSchema(pool1: PostgresPool, org: string) {
 
@@ -345,6 +345,16 @@ export async function initSchema(pool1: PostgresPool, org: string) {
                 from: f,
                 where: () => [sql.eq(f.id, fd.family)]
             }));
+    });
+    await version(22, async () => {
+        await pagedRowsIterator(context.for(Families), {
+            where: f => f.addressOk.isEqualTo(false),
+            forEachRow: async f => {
+                f.addressOk.value = !f.getGeocodeInformation().partialMatch();
+                if (f.addressOk.value)
+                    await f.save();
+            }
+        });
     });
 
 
