@@ -185,9 +185,9 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     let version = async (ver: number, what: () => Promise<void>) => {
         if (settings.dataStructureVersion.value < ver) {
             try {
-                console.log('start ', ver);
+                console.log('start version ', ver, org);
                 await what();
-                console.log('end ', ver);
+                console.log('end version ', ver, org);
             } catch (err) {
                 console.error("failed for version ", ver, org, err);
                 throw err;
