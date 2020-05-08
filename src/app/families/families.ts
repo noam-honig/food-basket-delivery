@@ -245,20 +245,7 @@ export class Families extends IdEntity {
           if (this.context.onServer) {
             if (!this.quantity.value || this.quantity.value < 1)
               this.quantity.value = 1;
-            if (this.sharedColumns().find(x => x.value != x.originalValue)) {
-              for (const fd of await context.for(FamilyDeliveries).find({
-                where: fd =>
-                  fd.family.isEqualTo(this.id).and(
-                    fd.archive.isEqualTo(false).and(
-                      fd.deliverStatus.isGreaterOrEqualTo(DeliveryStatus.ReadyForDelivery).and(
-                        fd.deliverStatus.isLessOrEqualTo(DeliveryStatus.Frozen)
-                      )))
-              })) {
-                this.updateDelivery(fd);
-                await fd.save();
-              }
-            }
-
+            
 
 
 
@@ -280,6 +267,20 @@ export class Families extends IdEntity {
               this.lastUpdateDate.value = new Date();
               this.lastUpdateUser.value = context.user.id;
             }
+            if (this.sharedColumns().find(x => x.value != x.originalValue)) {
+              for (const fd of await context.for(FamilyDeliveries).find({
+                where: fd =>
+                  fd.family.isEqualTo(this.id).and(
+                    fd.archive.isEqualTo(false).and(
+                      fd.deliverStatus.isGreaterOrEqualTo(DeliveryStatus.ReadyForDelivery).and(
+                        fd.deliverStatus.isLessOrEqualTo(DeliveryStatus.Frozen)
+                      )))
+              })) {
+                this.updateDelivery(fd);
+                await fd.save();
+              }
+            }
+
           }
         }
 
