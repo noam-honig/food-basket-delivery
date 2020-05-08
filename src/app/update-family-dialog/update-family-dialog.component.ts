@@ -30,6 +30,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
     deliveryId?: string,
     message?: string,
     disableSave?: boolean,
+    userCanUpdateButDontSave?: boolean,
     onSave?: () => void
   };
   constructor(
@@ -62,7 +63,8 @@ export class UpdateFamilyDialogComponent implements OnInit {
   }
   refreshDeliveryStatistics = false;
   cancel() {
-    this.families.currentRow.undoChanges();
+    if (!this.args.userCanUpdateButDontSave)
+      this.families.currentRow.undoChanges();
     this.dialogRef.close();
   }
   async confirm() {
@@ -79,9 +81,9 @@ export class UpdateFamilyDialogComponent implements OnInit {
       this.args.onSave();
   }
   async newDelivery() {
-    await this.args.family.showNewDeliveryDialog(this.dialog,this.settings, this.delivery,()=>{
+    await this.args.family.showNewDeliveryDialog(this.dialog, this.settings, this.delivery, () => {
       if (this.delivery)
-      this.refreshDeliveryStatistics = true;
+        this.refreshDeliveryStatistics = true;
     });
   }
   showNewDelivery() {
@@ -127,7 +129,8 @@ export class UpdateFamilyDialogComponent implements OnInit {
     }
     if (this.args.familyDelivery)
       this.delivery = this.args.familyDelivery;
-
+    if (this.args.userCanUpdateButDontSave)
+      this.args.disableSave = true;
 
 
     this.families.currentRow = this.args.family;

@@ -40,6 +40,7 @@ import { FamilyStatus, FamilyStatusColumn } from './FamilyStatus';
 import { familyActions } from './familyActions';
 import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, iterateRowsActionOnServer } from './familyActionsWiring';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
+import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
 
 
 
@@ -414,6 +415,16 @@ export class FamiliesComponent implements OnInit {
                 name: 'יצוא לאקסל',
                 click: () => this.saveToExcel(),
                 visible: () => this.isAdmin
+            }, {
+                name: 'מיזוג משפחות',
+                click: async () => {
+                    await this.context.openDialog(MergeFamiliesComponent, x => x.families = [...this.families.selectedRows], y => {
+                        if (y.merged)
+                            this.refresh();
+                    });
+
+                },
+                visible: () => this.isAdmin && this.families.selectedRows.length > 1
             }],
         allowSelection: true,
         rowButtons: [
@@ -675,7 +686,6 @@ export class FamiliesComponent implements OnInit {
 
         this.refreshStats();
         this.sortColumns(this.normalColumns);
-
         //  debugger;
     }
     sortColumns(columns: DataControlInfo<Families>[]) {

@@ -78,6 +78,7 @@ import { FamilyDeliveriesComponent } from './family-deliveries/family-deliveries
 import { GridDialogComponent } from './grid-dialog/grid-dialog.component';
 import { SiteOverviewComponent } from './site-overview/site-overview.component';
 import { BasketSummaryComponent } from './basket-summary/basket-summary.component';
+import { MergeFamiliesComponent } from './merge-families/merge-families.component';
 
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref();
@@ -140,7 +141,8 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     FamilyDeliveriesComponent,
     GridDialogComponent,
     SiteOverviewComponent,
-    BasketSummaryComponent
+    BasketSummaryComponent,
+    MergeFamiliesComponent
 
   ],
   imports: [
@@ -197,6 +199,7 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     UpdateFamilyDialogComponent, PreviewFamilyComponent,
     SelectCompanyComponent,
     HelperAssignmentComponent,
+    MergeFamiliesComponent,
     SiteOverviewComponent,
     UpdateCommentComponent, UpdateGroupDialogComponent,BasketSummaryComponent]
 })
