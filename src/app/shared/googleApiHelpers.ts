@@ -120,7 +120,7 @@ export class GeocodeInformation {
             return this.info.status;
         if (this.info.results.length < 1)
             return "no results";
-        if (this.info.results[0].address_components[0].types[0] == "street_number")
+        if (this.info.results[0].address_components.length > 0 && this.info.results[0].address_components[0].types[0] == "street_number")
             return undefined;
         if (this.info.results[0].partial_match)
             return "partial_match";
