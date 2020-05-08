@@ -68,6 +68,15 @@ describe('AppComponent', () => {
       where: () => [sql.eq(bt.boxes, 5)]
     }, 'select p.id from BasketType p where p.boxes = 5');
   });
+  it('group By', () => {
+    q({
+      select: () => [bt.id],
+      from: bt,
+      groupBy: () => [bt.id],
+      having: () => ['count(*)>1'],
+      where: () => [sql.eq(bt.boxes, 5)]
+    }, 'select p.id from BasketType p where p.boxes = 5 group by p.id having count(*)>1');
+  });
   it('Where 2', () => {
     q({
       select: () => [bt.id],

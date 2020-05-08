@@ -25,6 +25,8 @@ export class PhoneColumn extends radweb.StringColumn {
     return PhoneColumn.formatPhone(this.value);
   }
   static fixPhoneInput(s: string) {
+    if (!s)
+      return s;
     s = s.replace(/\D/g, '');
     if (s.length == 9 && s[0] != '0')
       s = '0' + s;
@@ -115,6 +117,9 @@ export class changeDate extends DateTimeColumn {
 
 
 export class SqlBuilder {
+  max(val: any): any {
+    return this.func('max', val);
+  }
 
   extractNumber(from: any): any {
     return this.build("NULLIF(regexp_replace(", from, ", '\\D','','g'), '')::numeric");
@@ -261,7 +266,10 @@ export class SqlBuilder {
   countDistinct(col: Column<any>, mappedColumn: Column<number>) {
     return this.build("count (distinct ", col, ") ", mappedColumn)
   }
-  min(col: Column<any>, query: FromAndWhere, mappedColumn: Column<any>) {
+  count() {
+    return this.func('count', '*');
+  }
+  minInnerSelect(col: Column<any>, query: FromAndWhere, mappedColumn: Column<any>) {
     return this.build('(', this.query({
       select: () => [this.build("min(", col, ")")],
       from: query.from,
@@ -271,7 +279,7 @@ export class SqlBuilder {
       where: query.where
     }), ") ", mappedColumn);
   }
-  max(col: Column<any>, query: FromAndWhere, mappedColumn: Column<any>) {
+  maxInnerSelect(col: Column<any>, query: FromAndWhere, mappedColumn: Column<any>) {
     return this.build('(', this.query({
       select: () => [this.build("max(", col, ")")],
       from: query.from,
@@ -380,6 +388,13 @@ export class SqlBuilder {
     }
     if (where.length > 0)
       result.push(' where ', this.and(...where));
+    if (query.groupBy) {
+      result.push(' group by ');
+      result.push(query.groupBy());
+    }
+    if (query.having) {
+      result.push(' having ', this.and(...query.having()));
+    }
     if (query.orderBy) {
       result.push(' order by ', query.orderBy.map(x => {
         var f = x as SortSegment;
@@ -481,6 +496,8 @@ export interface QueryBuilder {
   outerJoin?: () => JoinInfo[];
   where?: () => any[];
   orderBy?: (Column<any> | SortSegment)[];
+  groupBy?: () => any[];
+  having?: () => any[];
 }
 export interface FromAndWhere {
   from: Entity<any>;

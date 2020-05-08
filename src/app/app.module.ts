@@ -79,6 +79,7 @@ import { GridDialogComponent } from './grid-dialog/grid-dialog.component';
 import { SiteOverviewComponent } from './site-overview/site-overview.component';
 import { BasketSummaryComponent } from './basket-summary/basket-summary.component';
 import { MergeFamiliesComponent } from './merge-families/merge-families.component';
+import { DuplicateFamiliesComponent } from './duplicate-families/duplicate-families.component';
 
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref();
@@ -142,7 +143,8 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     GridDialogComponent,
     SiteOverviewComponent,
     BasketSummaryComponent,
-    MergeFamiliesComponent
+    MergeFamiliesComponent,
+    DuplicateFamiliesComponent
 
   ],
   imports: [
