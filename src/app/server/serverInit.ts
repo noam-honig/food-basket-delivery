@@ -114,7 +114,12 @@ export async function serverInit() {
         for (const s of Sites.schemas) {
             if (s.toLowerCase() == Sites.guestSchema)
                 throw 'admin is an ivalid schema name';
-            await InitSpecificSchema(pool, s);
+            try {
+                await InitSpecificSchema(pool, s);
+            }
+            catch (err) {
+                console.error(err);
+            }
             await new Promise(x => setTimeout(() => {
                 x();
             }, 1000));

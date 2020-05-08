@@ -350,6 +350,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await pagedRowsIterator(context.for(Families), {
             where: f => f.addressOk.isEqualTo(false),
             forEachRow: async f => {
+                f._suppressLastUpdateDuringSchemaInit = true;
                 f.addressOk.value = !f.getGeocodeInformation().partialMatch();
                 if (f.addressOk.value)
                     await f.save();
