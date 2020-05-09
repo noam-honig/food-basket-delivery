@@ -163,61 +163,7 @@ export class FamiliesComponent implements OnInit {
     }
     stats = new Stats();
     async saveToExcel() {
-        await saveToExcel<Families, GridSettings<Families>>(
-            this.context.for(Families),
-            this.families,
-            translate('משפחות'),
-            this.busy,
-            (f, c) => c == f.id || c == f.addressApiResult,
-            (f, c) => false,
-            async (f, addColumn) => {
-                let x = f.getGeocodeInformation();
-                let street = f.address.value;
-                let house = '';
-
-                let lastName = '';
-                let firstName = '';
-                if (f.name.value != undefined)
-                    lastName = f.name.value.trim();
-                let i = lastName.lastIndexOf(' ');
-                if (i >= 0) {
-                    firstName = lastName.substring(i, lastName.length).trim();
-                    lastName = lastName.substring(0, i).trim();
-                }
-                {
-                    try {
-                        for (const addressComponent of x.info.results[0].address_components) {
-                            switch (addressComponent.types[0]) {
-                                case "route":
-                                    street = addressComponent.short_name;
-                                    break;
-                                case "street_number":
-                                    house = addressComponent.short_name;
-                                    break;
-                            }
-                        }
-                    } catch{ }
-                }
-                addColumn("Xשם משפחה", lastName, 's');
-                addColumn("Xשם פרטי", firstName, 's');
-                addColumn("Xרחוב", street, 's');
-                addColumn("Xמספר בית", house, 's');
-                function fixPhone(p: PhoneColumn) {
-                    if (!p.value)
-                        return '';
-                    else return p.value.replace(/\D/g, '')
-                }
-                addColumn("טלפון1X", fixPhone(f.phone1), 's');
-                addColumn("טלפון2X", fixPhone(f.phone2), 's');
-                addColumn("טלפון3X", fixPhone(f.phone3), 's');
-                addColumn("טלפון4X", fixPhone(f.phone4), 's');
-                addColumn("טלפון 1 מקור", f.phone1.value,'s');
-                addColumn("טלפון 2 מקור", f.phone2.value,'s');
-                addColumn("טלפון 3 מקור", f.phone3.value,'s');
-                addColumn("טלפון 4 מקור", f.phone4.value,'s');
-                await f.basketType.addBasketTypes(f.quantity, addColumn);
-
-            });
+        await saveFamiliesToExcel(this.context,this.families,this.busy);
     }
 
 
@@ -747,3 +693,54 @@ interface statsOnTab {
     rule: (f: Families) => FilterBase
 
 }
+export async function saveFamiliesToExcel(context:Context,gs:GridSettings<Families>,busy:BusyService,name='משפחות') {
+    await saveToExcel<Families, GridSettings<Families>>(context.for(Families), gs, translate(name), busy, (f, c) => c == f.id || c == f.addressApiResult, (f, c) => false, async (f, addColumn) => {
+        let x = f.getGeocodeInformation();
+        let street = f.address.value;
+        let house = '';
+        let lastName = '';
+        let firstName = '';
+        if (f.name.value != undefined)
+            lastName = f.name.value.trim();
+        let i = lastName.lastIndexOf(' ');
+        if (i >= 0) {
+            firstName = lastName.substring(i, lastName.length).trim();
+            lastName = lastName.substring(0, i).trim();
+        }
+        {
+            try {
+                for (const addressComponent of x.info.results[0].address_components) {
+                    switch (addressComponent.types[0]) {
+                        case "route":
+                            street = addressComponent.short_name;
+                            break;
+                        case "street_number":
+                            house = addressComponent.short_name;
+                            break;
+                    }
+                }
+            }
+            catch { }
+        }
+        addColumn("Xשם משפחה", lastName, 's');
+        addColumn("Xשם פרטי", firstName, 's');
+        addColumn("Xרחוב", street, 's');
+        addColumn("Xמספר בית", house, 's');
+        function fixPhone(p: PhoneColumn) {
+            if (!p.value)
+                return '';
+            else
+                return p.value.replace(/\D/g, '');
+        }
+        addColumn("טלפון1X", fixPhone(f.phone1), 's');
+        addColumn("טלפון2X", fixPhone(f.phone2), 's');
+        addColumn("טלפון3X", fixPhone(f.phone3), 's');
+        addColumn("טלפון4X", fixPhone(f.phone4), 's');
+        addColumn("טלפון 1 מקור", f.phone1.value, 's');
+        addColumn("טלפון 2 מקור", f.phone2.value, 's');
+        addColumn("טלפון 3 מקור", f.phone3.value, 's');
+        addColumn("טלפון 4 מקור", f.phone4.value, 's');
+        await f.basketType.addBasketTypes(f.quantity, addColumn);
+    });
+}
+

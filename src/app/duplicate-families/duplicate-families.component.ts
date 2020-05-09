@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { ServerFunction, Context, SqlDatabase, EntityWhere, AndFilter, packWhere } from '@remult/core';
+import { ServerFunction, Context, SqlDatabase, EntityWhere, AndFilter, packWhere, BusyService } from '@remult/core';
 import { SqlBuilder } from '../model-shared/types';
 import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { DialogService } from '../select-popup/dialog';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { buildGridButtonFromActions } from '../families/familyActionsWiring';
-import { familyActions, UpdateStatus } from '../families/familyActions';
-import { FamiliesComponent } from '../families/families.component';
+import { familyActions, UpdateStatus, FreezeDeliveriesForFamilies, UnfreezeDeliveriesForFamilies, updateGroup } from '../families/familyActions';
+import { FamiliesComponent, saveFamiliesToExcel } from '../families/families.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
 import { Roles } from '../auth/roles';
@@ -19,7 +19,7 @@ import { Roles } from '../auth/roles';
 })
 export class DuplicateFamiliesComponent implements OnInit {
 
-  constructor(private context: Context, private dialog: DialogService, private settings: ApplicationSettings) { }
+  constructor(private context: Context, private dialog: DialogService, private settings: ApplicationSettings, private busy: BusyService) { }
   duplicateFamilies: duplicateFamilies[] = [];
   async ngOnInit() {
     try {
@@ -52,7 +52,7 @@ export class DuplicateFamiliesComponent implements OnInit {
 
         ],
         gridButton: [
-          ...buildGridButtonFromActions([UpdateStatus], this.context,
+          ...buildGridButtonFromActions([UpdateStatus, updateGroup, FreezeDeliveriesForFamilies, UnfreezeDeliveriesForFamilies], this.context,
             {
               afterAction: async () => await x.args.settings.getRecords(),
               dialog: this.dialog,
@@ -78,6 +78,11 @@ export class DuplicateFamiliesComponent implements OnInit {
 
             },
             visible: () => this.context.isAllowed(Roles.admin) && (x.args.settings.selectedRows.length > 1 || x.args.settings.totalRows < 10)
+          }, {
+            name: 'יצוא לאקסל',
+            click: async () => {
+              await saveFamiliesToExcel(this.context, x.args.settings, this.busy)
+            }
           }],
         allowSelection: true,
         knowTotalRows: true,

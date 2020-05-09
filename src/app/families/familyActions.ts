@@ -112,6 +112,44 @@ export class updateGroup extends ActionOnRows<Families> {
         });
     }
 }
+export class FreezeDeliveriesForFamilies extends ActionOnRows<Families> {
+
+    constructor(context: Context) {
+        super(context, Families, {
+            allowed: Roles.admin,
+            columns: () => [],
+            title: 'הקפא משלוחים',
+            help: () => `משלוח "קפוא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח.
+            ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח.
+            `,
+            forEach: async f => {
+                for (const fd of await this.context.for(ActiveFamilyDeliveries).find({ where: fd => fd.family.isEqualTo(f.id).and(fd.readyFilter()) })) {
+                    fd.deliverStatus.value = DeliveryStatus.Frozen;
+                    await fd.save();
+                }
+
+            }
+
+        });
+    }
+}
+export class UnfreezeDeliveriesForFamilies extends ActionOnRows<Families> {
+
+    constructor(context: Context) {
+        super(context, Families, {
+            allowed: Roles.admin,
+            columns: () => [],
+            title: 'ביטול הקפאת משלוחים',
+            help: () => 'ביטול ההקפאה יחזיר משלוחים קפואים למוכן למשלוח',
+            forEach: async f => {
+                for (const fd of await this.context.for(ActiveFamilyDeliveries).find({ where: fd => fd.family.isEqualTo(f.id).and(fd.deliverStatus.isEqualTo(DeliveryStatus.Frozen)) })) {
+                    fd.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
+                    await fd.save();
+                }
+            }
+        });
+    }
+}
 
 export class UpdateStatus extends ActionOnRows<Families> {
     status = new FamilyStatusColumn();
@@ -238,5 +276,5 @@ export class SelfPickupStrategyColumn extends ValueListColumn<SelfPickupStrategy
 
 
 
-export const familyActions = () => [NewDelivery, updateGroup, UpdateArea, UpdateStatus, UpdateBasketType, UpdateQuantity, UpdateFamilySource];
+export const familyActions = () => [NewDelivery, updateGroup, UpdateArea, UpdateStatus, UpdateBasketType, UpdateQuantity, UpdateFamilySource, FreezeDeliveriesForFamilies, UnfreezeDeliveriesForFamilies];
 export const familyActionsForDelivery = () => [updateGroup, UpdateArea, UpdateStatus];
