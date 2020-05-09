@@ -8,65 +8,28 @@ import { SqlDatabase } from '@remult/core';
 
 
 
-import { serverInit, PostgresSchemaWrapper, verifySchemaExistance } from "./serverInit";
+import { serverInit } from "./serverInit";
 
 
-import { Families, parseAddress } from "../families/families";
 import { ServerContext, allEntities } from '@remult/core';
-import { Helpers } from "../helpers/helpers";
-import { isString } from "util";
-import { FamilySources } from "../families/FamilySources";
-import { ApplicationSettings } from "../manage/ApplicationSettings";
-import { BasketType } from "../families/BasketType";
-import { DeliveryStatus } from "../families/DeliveryStatus";
-import { Pool } from "pg";
-import { PostgresDataProvider, PostgresSchemaBuilder } from "@remult/server-postgres";
 import { GeocodeCache, GeocodeInformation } from "../shared/googleApiHelpers";
 import { Sites } from "../sites/sites";
+import * as fs from 'fs';
+import { processPhone } from "../import-from-excel/import-from-excel.component";
+
 
 
 let match = 0;
 export async function DoIt() {
     try {
         await serverInit();
-        let context = new ServerContext();
-        context.setDataProvider(Sites.getDataProviderForOrg("zkaj"));
-        {
 
-            console.log('123');
-            // debugger;
-            //return;
-            let rows = [];
-
-            for (const g of await context.for(GeocodeCache).find()) {
-                let x = GeocodeInformation.fromString(g.googleApiResult.value);
-                if (x.partialMatch()) {
-                    let r = {
-                        source: g.id.value,
-                        found: x.getAddress(),
-                        why: x.whyProblem(),
-                    //    whyNew: x.whyProblemNew(),
-                        what: x.info.results.length > 0 ? x.info.results[0].types[0] : '',
-                        st: x.info.results.length > 0 ? x.info.results[0].address_components[0].types.join(',') : '',
-
-                    };
-                 //   if (!r.whyNew)
-                  //      r.whyNew = '';
-                    if (r.found == "סנהדריה מורחבת 114 ירושלים") {
-debugger;
-                    }
-                    rows.push(r);
-
-                }
+        let dp = Sites.getDataProviderForOrg('catz');
+        let context = new ServerContext(dp);
+        
+        workOnPhones();
 
 
-
-            }
-            rows.sort((a, b) => a.whyNew.localeCompare(b.whyNew));
-            console.table(rows);
-
-
-        }
 
 
 
@@ -79,4 +42,37 @@ debugger;
 
 }
 DoIt();
+
+function workOnPhones() {
+    let data = fs.readFileSync('c:/temp/test.txt');
+    let lines = data.toString().split('\r\n');
+    let rows = [];
+    let result = "<html><body dir=rtl><table border=1>";
+    for (let l of lines) {
+        try {
+            l = l.substring(1, l.length - 1);
+            let r = processPhone(l);
+            let x = {
+                input: l
+            };
+            result += "\r\n";
+            let dec = "<tr>";
+            let row = "<td>" + l + "</td>";
+            for (let i = 0; i < r.length; i++) {
+                const element = r[i];
+                row += `<td>${element.phone}</td><td>${element.comment}</td>`;
+                x["p" + i] = element.phone;
+                x["c" + i] = element.comment;
+                if (element.phone.length < 7 || element.phone.length > 13)
+                    dec = '<tr style="background-color:yellow">';
+            }
+            result += dec + row + "</tr>";
+            rows.push(x);
+        }
+        catch (err) {
+            console.error(l, err);
+        }
+    }
+    fs.writeFileSync('c:/temp/result.html', result + "</table></body></html>");
+}
 

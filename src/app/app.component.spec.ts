@@ -7,7 +7,7 @@ import { SqlBuilder, QueryBuilder } from './model-shared/types';
 import { WebDriverProxy } from 'blocking-proxy/built/lib/webdriver_proxy';
 import { parseAddress, Families, parseUrlInAddress } from './families/families';
 import { BasketType } from './families/BasketType';
-import { fixPhone } from './import-from-excel/import-from-excel.component';
+import { fixPhone, processPhone, phoneResult, parseAndUpdatePhone } from './import-from-excel/import-from-excel.component';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from './families/FamilyDeliveries';
 import { validSchemaName } from './sites/sites';
 
@@ -196,6 +196,78 @@ describe('AppComponent', () => {
     expect(validSchemaName("abc1")).toBe("abc1");
     expect(validSchemaName("abc-")).toBe("abc");
   });
+  let testPhone = (phone: string, results: phoneResult[]) => {
+    it(phone, () => {
+      let r = processPhone(phone);
+      expect(r.length).toBe(results.length, r);
+      if (r.length == results.length) {
+        for (let i = 0; i < r.length; i++) {
+          const p = r[i];
+          expect(p.phone).toBe(results[i].phone, 'phone ' + i);
+          expect(p.comment).toBe(results[i].comment, 'comment ' + i);
+        }
+      }
+    });
+  }
+  testPhone("050-7330590 (noam)", [{ phone: '050-7330590', comment: '(noam)' }]);
+  testPhone("0532777561 // 0532777561", [{ phone: '0532777561', comment: '' }, { phone: '0532777561', comment: '' }]);
+  testPhone("04-8767772 / 050-7467774 (לריסה)", [{ phone: '04-8767772', comment: '' }, { phone: '050-7467774', comment: '(לריסה)' }]);
+  testPhone("  03-1234567   ", [{ phone: '03-1234567', comment: '' }]);
+  testPhone("0 52-727-7773", [{ phone: '052-727-7773', comment: '' }]);
+  testPhone('‎050-7277770‏', [{ phone: '050-7277770', comment: '‎ ‏' }]);
+  testPhone('0533377277- אלי אחיו של יעקב', [{ phone: '0533377277', comment: 'אלי אחיו של יעקב' }]);
+  testPhone("+772 57-777-7572", [{ phone: '+77257-777-7572', comment: '' }]);
+  testPhone("0537777237 או 057-7227322(של שותף)", [{ phone: '0537777237', comment: 'או' }, { phone: '057-7227322', comment: '(של שותף)' }]);
+  testPhone("טלפון איש קשר 0523773707 אורלי", [{ phone: '0523773707', comment: 'טלפון איש קשר אורלי' }]);
+  testPhone("חרשים -הבן יוסף 057-5773777-    03-7377772", [{ comment: 'חרשים-הבן יוסף', phone: '057-5773777' }, { phone: '03-7377772', comment: '' }]);
+  testPhone("אמא רויטל 057-2225337", [{ phone: '057-2225337', comment: 'אמא רויטל' }]);
+  testPhone("057 - 5005570", [{ phone: '057-5005570', comment: '' }]);
+  testPhone("טלפון של סימי- אחות: 0527323705", [{ phone: "0527323705", comment: 'טלפון של סימי-אחות:' }]);
+  testPhone("נהוראי-אבא: 052-7777737", [{ phone: '052-7777737', comment: 'נהוראי-אבא:' }]);
+  testPhone("7337777 - 057", [{ phone: '057-7337777', comment: '' }]);
+  testPhone("מלכי ישראל 770/77", [{ phone: "מלכי ישראל 770/77", comment: '' }]);
+  testPhone("0507330590/1", [{ phone: '0507330590', comment: '' }, { phone: '0507330591', comment: '' }]);
+  testPhone("0507330590/81", [{ phone: '0507330590', comment: '' }, { phone: '0507330581', comment: '' }]);
+  testPhone("052-737-7703 052-737-7703", [{ phone: '052-737-7703', comment: '' }, { phone: '052-737-7703', comment: '' }])
+  testPhone("7322575 – 057", [{ phone: '057-7322575', comment: '' }]);
+  testPhone("050-7330590 | 050-7953019",[{phone:'050-7330590',comment:''},{phone:'050-7953019',comment:''}])
+  //testPhone("0507330590 / 1", [{ phone: '0507330590', comment: '' }, { phone: '0507330591', comment: '' }]);
+  //testPhone("0507330590 / 81", [{ phone: '0507330590', comment: '' }, { phone: '0507330581', comment: '' }]);
+  it("updatePhone", () => {
+    let f = context.for(Families).create();
+    parseAndUpdatePhone("04-8767772 / 050-7467774 (לריסה)", f, '');
+    expect(f.phone1.value).toBe('04-8767772');
+    expect(f.phone1Description.value).toBe('');
+    expect(f.phone2.value).toBe('050-7467774');
+    expect(f.phone2Description.value).toBe('(לריסה)');
+    expect(f.phone3.value).toBe(undefined);
+    expect(f.phone3Description.value).toBe(undefined);
+  });
+  it("updatePhone2", () => {
+    let f = context.for(Families).create();
+    f.phone1.value = '0507330590';
+    parseAndUpdatePhone("04-8767772 / 050-7467774 (לריסה)", f, '');
+    expect(f.phone1.value).toBe('0507330590');
+    expect(f.phone2.value).toBe('04-8767772');
+    expect(f.phone2Description.value).toBe('');
+    expect(f.phone3.value).toBe('050-7467774');
+    expect(f.phone3Description.value).toBe('(לריסה)');
+    expect(f.phone4.value).toBe(undefined);
+    expect(f.phone4Description.value).toBe(undefined);
+  });
+  it("updatePhone3", () => {
+    let f = context.for(Families).create();
+    f.phone2.value = '0507330590';
+    parseAndUpdatePhone("04-8767772 / 050-7467774 (לריסה)", f, '');
+    expect(f.phone1.value).toBe('04-8767772');
+    expect(f.phone1Description.value).toBe('');
+    expect(f.phone2.value).toBe('0507330590');
+    expect(f.phone3.value).toBe('050-7467774');
+    expect(f.phone3Description.value).toBe('(לריסה)');
+    expect(f.phone4.value).toBe(undefined);
+    expect(f.phone4Description.value).toBe(undefined);
+  });
+
 
 });
 

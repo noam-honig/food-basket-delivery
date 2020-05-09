@@ -211,6 +211,10 @@ export class FamiliesComponent implements OnInit {
                 addColumn("טלפון2X", fixPhone(f.phone2), 's');
                 addColumn("טלפון3X", fixPhone(f.phone3), 's');
                 addColumn("טלפון4X", fixPhone(f.phone4), 's');
+                addColumn("טלפון 1 מקור", f.phone1.value,'s');
+                addColumn("טלפון 2 מקור", f.phone2.value,'s');
+                addColumn("טלפון 3 מקור", f.phone3.value,'s');
+                addColumn("טלפון 4 מקור", f.phone4.value,'s');
                 await f.basketType.addBasketTypes(f.quantity, addColumn);
 
             });

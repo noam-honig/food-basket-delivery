@@ -724,6 +724,18 @@ export class ImportFromExcelComponent implements OnInit {
                 updateCol(f.columns.find(this.f.groups), v, ', ');
             }, columns: [this.f.groups]
         });
+        this.columns.push({
+            key: 'phone_complex',
+            name: 'טלפון',
+            updateFamily: async (v, f, h) => {
+                h.laterSteps.push({
+                    step: 2, what: async () => {
+                        parseAndUpdatePhone(v, f, this.settings.defaultPrefixForExcelImport.value);
+                    }
+                });
+            },
+            columns: [this.f.phone1, this.f.phone1Description, this.f.phone2, this.f.phone2Description, this.f.phone3, this.f.phone3Description, this.f.phone4, this.f.phone4Description]
+        })
 
         this.columns.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0);
 
@@ -1001,8 +1013,8 @@ export class ImportFromExcelComponent implements OnInit {
                 info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz, info.tz2, info.phone1ForDuplicateCheck, info.phone2ForDuplicateCheck, info.phone3ForDuplicateCheck, info.phone4ForDuplicateCheck, undefined, true, info.address, context, db);
                 if (info.duplicateFamilyInfo.length > 1) {
                     if (info.duplicateFamilyInfo.find(f => f.nameDup && f.sameAddress)) {
-                        info.duplicateFamilyInfo = info.duplicateFamilyInfo.filter(f =>!onlyNameMatch(f)
-                            )
+                        info.duplicateFamilyInfo = info.duplicateFamilyInfo.filter(f => !onlyNameMatch(f)
+                        )
                     }
                 }
             }
@@ -1412,6 +1424,184 @@ export function fixPhone(phone: string, defaultPrefix: string) {
     if (phone.length == 7 && defaultPrefix && defaultPrefix.length > 0)
         return defaultPrefix + phone;
     return phone;
+}
+export function processPhone(input: string): phoneResult[] {
+    let result = [];
+    let temp: string[] = [];
+    let currentText = '';
+    for (let i = 0; i < input.length; i++) {
+        let char = input[i];
+        if (char == "–")
+            char = '-';
+        switch (char) {
+            case ' ':
+            case '/':
+            case '\\':
+            case ',':
+            case '-':
+            case '|':
+
+                if ((temp.length == 0 || temp[i - 1] != char))
+                    if (currentText.length > 0) {
+                        temp.push(currentText);
+                        temp.push(char);
+                        currentText = '';
+                    }
+                    else if (char == '-') {
+                        temp.push(temp.pop().trim() + char);
+                    }
+                break;
+            default:
+                let d = isDigit(char);
+                let only = onlyDigits(currentText);
+                if (d == only || currentText == '')
+                    currentText += char;
+                else {
+                    temp.push(currentText);
+                    currentText = char;
+                }
+                break;
+        }
+    }
+    if (currentText > '')
+        temp.push(currentText);
+    let temp2 = [];
+    while (temp.length > 0) {
+        let c = temp.pop();
+        if (c == ' ' || c == ',' || c == '-' || c == "/") {
+            let prev = temp2.pop();
+            if (prev) {
+                let next = temp.pop();
+                let p = onlyDigits(prev);
+                let n = onlyDigits(next);
+                if (c == ' ' && prev == "-") {
+                    c = prev;
+                    prev = temp.pop();
+                    if (!prev)
+                        continue;
+                    p = onlyDigits(prev);
+                }
+                if (p == n) {
+                    if (!p) {
+
+                        temp.push(next + c + prev);
+                        continue;
+
+                    }
+                    if (p) {
+                        if (next.length < 2 && c == ' ') {
+                            temp.push(next + prev);
+                            continue;
+                        }
+
+
+                        if (!next.startsWith('0') && prev.startsWith('0') && prev.length < 4) {
+                            temp.push(prev + c + next);
+                            continue;
+                        }
+                        if (c == '/' && prev.length < 4 && next.length > 6) {
+                            let x = next.substring(0, next.length - prev.length) + prev;
+                            temp2.push(x);
+                            temp2.push(next);
+                            continue;
+                        }
+                        if ((c == '-' || c == ' ') && next.length < 7 && prev.length < 9) {
+                            temp.push(next + c + prev);
+                            continue;
+                        }
+
+
+                    }
+                }
+
+                temp2.push(prev);
+                temp2.push(next);
+                continue;
+            }
+            else
+                continue;
+        }
+
+        temp2.push(c);
+    }
+    temp2.reverse();
+    let current = { phone: '', comment: '' };
+    for (const item of temp2) {
+        if (item.trim().length == 0)
+            continue;
+        if (onlyDigits(item)) {
+            if (current.phone) {
+                if (current.phone.length < 5) {
+                    current.phone += item;
+                }
+                else {
+                    result.push(current);
+                    current = { phone: item, comment: '' };
+                }
+            }
+            else current.phone = item;
+        }
+        else {
+            if (current.comment) {
+                result.push(current);
+                current = { phone: '', comment: item };
+            } else
+                current.comment = item;
+        }
+    }
+    if (current.phone)
+        result.push(current);
+    else if (current.comment && result.length > 0) {
+        result[0].comment += ' ' + current.comment;
+
+    }
+    if (result.length == 0 || result[0].phone.length < 7)
+        return [{ phone: input, comment: '' }];
+
+    return result;
+}
+export function parseAndUpdatePhone(input: string, f: Families, defaultPrefix: string) {
+    let r = processPhone(input);
+    let i = 1;
+    for (const p of r) {
+        while (i <= 4 && f.columns.find('phone' + i).value)
+            i++;
+        if (i == 4)
+            return;
+        f.columns.find('phone' + i).value = fixPhone(p.phone, defaultPrefix);
+        f.columns.find('phone' + i + 'Description').value = p.comment;
+
+    }
+}
+function onlyDigits(input: string) {
+    for (let index = 0; index < input.length; index++) {
+        const element = input[index];
+        if (element != ' ' && !isDigit(element))
+            return false;
+    }
+    return true;
+}
+function isDigit(c: string) {
+    switch (c) {
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+        case '-':
+        case '+':
+            return true;
+    }
+    return false;
+}
+export interface phoneResult {
+    phone: string,
+    comment: string
 }
 
 export class PromiseThrottle {
