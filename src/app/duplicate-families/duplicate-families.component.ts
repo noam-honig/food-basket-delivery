@@ -42,7 +42,14 @@ export class DuplicateFamiliesComponent implements OnInit {
           f.address,
           f.status,
           f.phone1,
-          f.phone2
+          f.phone2,
+          f.phone3,
+          f.phone4,
+          f.addressByGoogle,
+          f.addressOk
+
+
+
         ],
         gridButton: [
           ...buildGridButtonFromActions([UpdateStatus], this.context,
@@ -87,7 +94,7 @@ export class DuplicateFamiliesComponent implements OnInit {
         get: {
           limit: 25,
           where: f => f.status.isDifferentFrom(FamilyStatus.ToDelete).and(f.addressLatitude.isEqualTo(d.lat).and(f.addressLongitude.isEqualTo(d.lng))),
-          orderBy:f=>f.name
+          orderBy: f => f.name
         }
 
       })
