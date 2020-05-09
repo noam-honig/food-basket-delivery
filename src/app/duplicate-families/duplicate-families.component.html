@@ -1,1 +1,14 @@
-<p>duplicate-families works!</p>
+<table class="table table-bordered">
+    <tr>
+        <th>כתובת</th>
+        <th>מספר משפחות</th>
+        <th>סה"כ {{duplicateFamilies.length}}</th>
+        <th>מיקום</th>
+    </tr>
+    <tr *ngFor="let d of duplicateFamilies">
+        <td> {{d.address}}</td>
+        <td>{{d.count}}</td>
+        <td><a (click)="showFamilies(d)">הצג משפחות</a></td>
+        <td>{{d.lat}},{{d.lng}}</td>
+    </tr>
+</table>

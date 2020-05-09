@@ -113,7 +113,7 @@ export class updateGroup extends ActionOnRows<Families> {
     }
 }
 
-class UpdateStatus extends ActionOnRows<Families> {
+export class UpdateStatus extends ActionOnRows<Families> {
     status = new FamilyStatusColumn();
     archiveFinshedDeliveries = new BoolColumn({ caption: "העבר משלוחים שהסתיימו לארכיון", defaultValue: true });
     deletePendingDeliveries = new BoolColumn({ caption: "מחק משלוחים שטרם נמסרו למשפחות אלו", defaultValue: true });

@@ -71,7 +71,7 @@ const routes: Routes = [
   
   { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard], data: { name: 'קליטת משפחות מאקסל' } },
   { path: 'import-helpers-from-excel', component: ImportHelpersFromExcelComponent, canActivate: [AdminGuard], data: { name: 'קליטת מתנדבים מאקסל' } },
-  // { path: 'duplicate-families', component: DuplicateFamiliesComponent, canActivate: [AdminGuard], data: { name: 'חיפוש משפחות כפולות' } },
+   { path: 'duplicate-families', component: DuplicateFamiliesComponent, canActivate: [AdminGuard], data: { name: 'חיפוש משפחות כפולות' } },
   ManageComponent.route,
   
   LoginFromSmsComponent.route,
