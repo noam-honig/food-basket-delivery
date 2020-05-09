@@ -86,7 +86,8 @@ export class DuplicateFamiliesComponent implements OnInit {
         ],
         get: {
           limit: 25,
-          where: f => f.status.isDifferentFrom(FamilyStatus.ToDelete).and(f.drivingLatitude.isEqualTo(d.lat).and(f.drivingLongitude.isEqualTo(d.lng)))
+          where: f => f.status.isDifferentFrom(FamilyStatus.ToDelete).and(f.addressLatitude.isEqualTo(d.lat).and(f.addressLongitude.isEqualTo(d.lng))),
+          orderBy:f=>f.name
         }
 
       })
@@ -122,13 +123,13 @@ export class DuplicateFamiliesComponent implements OnInit {
     return (await db.execute(sql.query({
       select: () => [
         sql.max(f.createDate),
-        sql.columnWithAlias(f.drivingLatitude, 'lat'),
-        sql.columnWithAlias(f.drivingLongitude, 'lng'),
+        sql.columnWithAlias(f.addressLatitude, 'lat'),
+        sql.columnWithAlias(f.addressLongitude, 'lng'),
         sql.columnWithAlias(sql.max(f.address), 'address'),
         sql.columnWithAlias(sql.count(), 'c')],
       from: f,
       where: () => [f.status.isDifferentFrom(FamilyStatus.ToDelete)],
-      groupBy: () => [f.drivingLatitude, f.drivingLongitude],
+      groupBy: () => [f.addressLatitude, f.addressLongitude],
       having: () => [sql.gt(sql.count(), 1)]
 
     }))).rows.map(x => ({

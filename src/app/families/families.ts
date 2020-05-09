@@ -245,7 +245,7 @@ export class Families extends IdEntity {
           if (this.context.onServer) {
             if (!this.quantity.value || this.quantity.value < 1)
               this.quantity.value = 1;
-            
+
 
 
 
@@ -387,6 +387,8 @@ export class Families extends IdEntity {
     this.addressByGoogle.value = geo.getAddress();
     this.addressLongitude.value = geo.location().lng;
     this.addressLatitude.value = geo.location().lat;
+    this.drivingLatitude.value = this.addressLatitude.value;
+    this.drivingLongitude.value = this.addressLongitude.value;
     if (isGpsAddress(this.address.value)) {
       var j = this.address.value.split(',');
       this.addressLatitude.value = +j[0];
