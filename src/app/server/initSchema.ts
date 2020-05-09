@@ -43,6 +43,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     }
 
 
+
     /*await context.for(Families).foreach(f => f.addressLongitude.isEqualTo(0), async ff => {
         let g = ff.getGeocodeInformation();
         ff.addressOk.value = !g.partialMatch();
@@ -86,6 +87,13 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         images = context.for(ApplicationImages).create();
         images.id.value = 1;
         await images.save();
+    }
+    if ((await context.for(DistributionCenters).count() == 0)) {
+        let h = context.for(DistributionCenters).create();
+        h.setEmptyIdForNewRow();
+        h.name.value = 'חלוקת מזון';
+        h.address.value = settings.address.value;
+        await h.save();
     }
     if (settings.dataStructureVersion.value == 0) {
         settings.dataStructureVersion.value = 1;
@@ -357,6 +365,21 @@ export async function initSchema(pool1: PostgresPool, org: string) {
             }
         });
     });
+    await version(23, async () => {
+        let r = await dataSource.execute(sql.query({
+            from: fd,
+            select: () => [fd.id],
+            innerJoin: () => [{ to: f, on: () => [sql.eq(f.id, fd.family)] }],
+            where: () => [fd.active(), sql.or(sql.ne(fd.addressByGoogle, f.addressByGoogle), sql.ne(fd.addressOk, f.addressOk))]
+        }));
+        console.log("fixing deliveries mismatch with family info ", r.rows.length);
+        for (const id of r.rows.map(x => x.id)) {
+            let fd = await context.for(FamilyDeliveries).findId(id);
+            let f = await context.for(Families).findId(fd.family);
+            f.updateDelivery(fd);
+            await fd.save();
+        }
+    });
 
 
 
@@ -364,74 +387,5 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
 
 
-    if ((await context.for(DistributionCenters).count() == 0)) {
-        let h = context.for(DistributionCenters).create();
-        h.setEmptyIdForNewRow();
-        h.name.value = 'חלוקת מזון';
-        h.address.value = settings.address.value;
-        await h.save();
-    }
+
 }
-
-
-
-//some index work for performance -
-/* remove the blocked basket logic
-
-/*select count(*) count from (select e1.id, e1.name, e1.phone, e1.smsDate, e1.reminderSmsDate, e1.company, e1.totalKm, e1.totalTime, e1.shortUrlKey, e1.eventComment, e1.needEscort, e1.theHelperIAmEscorting, e1.escort,
-							(select count(*) from Families e2 where e2.courier = e1.id and deliverStatus = 0) deliveriesInProgress,
-							(select count(*) from Families e2 where e2.courier = e1.id and deliverStatus <= 25) allFamilies,
-							(select count(*) from Families e2 where e2.courier = e1.id and e2.deliverStatus in (21, 23, 25)) deliveriesWithProblems,
-							(select max(e2.courierAssingTime) from Families e2 where e2.courier = e1.id and  not (e2.deliverStatus in (90, 95))) lastAsignTime,
-							coalesce(  e1.smsDate> (select max(e2.courierAssingTime) from Families e2 where e2.courier = e1.id and  not (e2.deliverStatus in (90, 95))) + interval '-1' day,false) as gotSms
-
-							from Helpers e1)
-							result where deliveriesInProgress >= 1-- and gotSms <> true
-
-drop index x7
-create index x7 on families (courier,deliverstatus)
-
-/*select count(*) count from Families where deliverStatus = 0 and courier = '' and special <> 1
-
- create index x6 on families(special,deliverstatus,courier)
-
-/*select city, families from (select Families.city, count(*) families from Families Families where deliverStatus = 0 and Families.courier = '' group by Families.city) as result Order By families desc
-
-create index x5 on families (deliverstatus,courier,city)
-
-/* select count(*) count
- from Families where deliverStatus >= 0 and deliverStatus <= 2 and courier = ''
---and (select e1.blocked blockedBasket from BasketType e1 where e1.id = Families.basketType limit 1) = false
- and basketType = ''
-
-
-create index x4 on families ( baskettype,courier,deliverstatus)
-
-
-/* select id, name, tz, tz2, familyMembers, birthDate, cast(birthDate + ((extract(year from age(birthDate)) + 1) * interval '1' year) as date) as nextBirthday, basketType, familySource, socialWorker,
- socialWorkerPhone1, socialWorkerPhone2, groups, special, defaultSelfPickup, iDinExcel, internalComment, address, floor, appartment, entrance, city, addressComment, postalCode, deliveryComments,
- addressApiResult, phone, phone1Description, phone2, phone2Description, deliverStatus, courier, courierComments, deliveryStatusDate, fixedCourier, courierAssignUser, needsWork, needsWorkUser,
- needsWorkDate, courierAssingTime, deliveryStatusUser,
- --(select e1.blocked blockedBasket from BasketType e1 where e1.id = Families.basketType limit 1),
- routeOrder,
- --(select e1.deliverStatus prevStatus from FamilyDeliveries e1 where e1.family = Families.id order by e1.deliveryStatusDate desc limit 1),
- --(select e1.deliveryStatusDate prevDate from FamilyDeliveries e1 where e1.family = Families.id order by e1.deliveryStatusDate desc limit 1),
- --(select e1.courierComments prevComment from FamilyDeliveries e1 where e1.family = Families.id order by e1.deliveryStatusDate desc limit 1),
- --case when families.courier <> '' then exists (select 1 from FamilyDeliveries where family = families.id and courier = families.courier) else false end courierBeenHereBefore, case when (deliveryStatusDate > current_date -1 or deliverStatus = 0) then true else false end,
-
- addressLongitude, addressLatitude, addressOk, createDate, createUser, lastUpdateDate from Families where deliverStatus < 90 Order By name limit 50 offset 0
-*/
-
-
-/*create index xy on families using gin  (groups gin_trgm_ops)
-
-
-select name, familiesCount from
- (select
-  groups.name,
-  (select count(*) from Families Families where Families.groups like '%'||groups.name||'%' and deliverStatus = 0 and courier = '' and (select e1.blocked blockedBasket from BasketType e1 where e1.id = Families.basketType limit 1) = false and (select e1.blocked blockedBasket from BasketType e1 where e1.id = Families.basketType limit 1) = false)
-  familiesCount from groups groups) result where familiesCount > 0 Order By name limit 1000 offset 0*/
-
-/*create index x3 on families ( name,deliverstatus)*/
-
-
