@@ -115,12 +115,42 @@ export class updateGroup extends ActionOnRows<Families> {
 
 class UpdateStatus extends ActionOnRows<Families> {
     status = new FamilyStatusColumn();
+    archiveFinshedDeliveries = new BoolColumn({ caption: "העבר משלוחים שהסתיימו לארכיון", defaultValue: true });
+    deletePendingDeliveries = new BoolColumn({ caption: "מחק משלוחים שטרם נמסרו למשפחות אלו", defaultValue: true });
     constructor(context: Context) {
         super(context, Families, {
             allowed: Roles.admin,
-            columns: () => [this.status],
+            columns: () => [this.status, this.archiveFinshedDeliveries, this.deletePendingDeliveries],
+            help: () => 'סטטוס הוצא מהרשימות - נועד כדי לסמן שהמשפחה לא אמורה לקבל מזון - אבל בניגוד לסטטוס למחיקה - אנחנו רוצים לשמור אותה בבסיס הנתונים כדי שאם הרווחה יביאו לנו אותה שוב, נדע להגיד שהם הוצאו מהרשימות. זה מתאים למשפחות שחס וחלילה נפתרו או שפשוט לא רוצים לקבל - או שהכתובת לא קיימת וכו...',
+            dialogColumns: () => {
+                if (!this.status.value)
+                    this.status.value = FamilyStatus.Active;
+
+                return [
+                    this.status,
+                    { column: this.archiveFinshedDeliveries, visible: () => this.status.value != FamilyStatus.Active },
+                    { column: this.deletePendingDeliveries, visible: () => this.status.value != FamilyStatus.Active }
+                ]
+            },
             title: 'עדכן סטטוס משפחה ',
-            forEach: async f => { f.status.value = this.status.value; }
+            forEach: async f => {
+                f.status.value = this.status.value;
+                if (f.status.value != FamilyStatus.Active && (this.archiveFinshedDeliveries.value || this.deletePendingDeliveries.value)) {
+                    for (const fd of await this.context.for(ActiveFamilyDeliveries).find({ where: fd => fd.family.isEqualTo(f.id) })) {
+                        if (DeliveryStatus.IsAResultStatus(fd.deliverStatus.value)) {
+                            if (this.archiveFinshedDeliveries) {
+                                fd.archive.value = true;
+                                await fd.save();
+                            }
+                        }
+                        else {
+                            if (this.deletePendingDeliveries.value)
+                                await fd.delete();
+                        }
+
+                    }
+                }
+            }
         });
     }
 }
@@ -209,4 +239,4 @@ export class SelfPickupStrategyColumn extends ValueListColumn<SelfPickupStrategy
 
 
 export const familyActions = () => [NewDelivery, updateGroup, UpdateArea, UpdateStatus, UpdateBasketType, UpdateQuantity, UpdateFamilySource];
-export const familyActionsForDelivery = () => [updateGroup, UpdateArea,  UpdateStatus];
+export const familyActionsForDelivery = () => [updateGroup, UpdateArea, UpdateStatus];

@@ -228,9 +228,10 @@ describe('AppComponent', () => {
   testPhone("מלכי ישראל 770/77", [{ phone: "מלכי ישראל 770/77", comment: '' }]);
   testPhone("0507330590/1", [{ phone: '0507330590', comment: '' }, { phone: '0507330591', comment: '' }]);
   testPhone("0507330590/81", [{ phone: '0507330590', comment: '' }, { phone: '0507330581', comment: '' }]);
-  testPhone("052-737-7703 052-737-7703", [{ phone: '052-737-7703', comment: '' }, { phone: '052-737-7703', comment: '' }])
+  testPhone("052-737-7703 052-737-7703", [{ phone: '052-737-7703', comment: '' }, { phone: '052-737-7703', comment: '' }]);
   testPhone("7322575 – 057", [{ phone: '057-7322575', comment: '' }]);
-  testPhone("050-7330590 | 050-7953019",[{phone:'050-7330590',comment:''},{phone:'050-7953019',comment:''}])
+  testPhone("050-7330590 | 050-7953019", [{ phone: '050-7330590', comment: '' }, { phone: '050-7953019', comment: '' }]);
+  testPhone("0532777561 // 0532777561", [{ phone: '0532777561', comment: '' }, { phone: '0532777561', comment: '' }]);
   //testPhone("0507330590 / 1", [{ phone: '0507330590', comment: '' }, { phone: '0507330591', comment: '' }]);
   //testPhone("0507330590 / 81", [{ phone: '0507330590', comment: '' }, { phone: '0507330581', comment: '' }]);
   it("updatePhone", () => {

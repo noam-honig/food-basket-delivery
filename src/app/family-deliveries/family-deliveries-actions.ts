@@ -25,7 +25,7 @@ class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
             allowed: Roles.admin,
             columns: () => [],
             title: 'מחק משלוחים',
-            help: () => 'המחיקה תתבצע רק עבור משלוחים שטרם נמסרו',
+            help: () => 'שים לב - מחיקת המשלוח לא תוציא את המשפחה מהרשימות - כדי להוציא את המשפחה מהרשימות יש לבצע עדכון לסטטוס המשפחה. המחיקה תתבצע רק עבור משלוחים שטרם נמסרו',
             forEach: async f => { f.delete(); },
             additionalWhere: f => f.deliverStatus.isNotAResultStatus()
         });
