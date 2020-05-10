@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { infoOnMap, statusClass, Statuses } from '../distribution-map/distribution-map.component';
 import * as chart from 'chart.js';
-import { ServerFunction, Context,  DateTimeColumn, SqlDatabase } from '@remult/core';
+import { ServerFunction, Context, DateTimeColumn, SqlDatabase } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { SqlBuilder } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -88,7 +88,7 @@ export class PlaybackComponent implements OnInit {
         if (newStat == prevStep)
           return;
         let p = prevStep;
-        when = new Date( when.valueOf());
+        when = new Date(when.valueOf());
         this.timeline.push({
           caption: prevStep.name + ' > ' + newStat.name,
           timeline: when,
@@ -165,12 +165,12 @@ export class PlaybackComponent implements OnInit {
       let x = this.timeline[this.position];
       x.revert();
       this.position--;
-      
+
     }
     while (this.timeline[this.position].timeline.valueOf() >= now - 60 * 1000);
     this.updateChart();
   }
-  playing=false;
+  playing = false;
   animate() {
     this.playing = true;
     setTimeout(() => {
@@ -181,7 +181,7 @@ export class PlaybackComponent implements OnInit {
   }
 
   currentTime() {
-    if (this.timeline.length>0)
+    if (this.timeline.length > 0)
       return this.timeline[this.position].timeline.toLocaleString("he-il");
     return '';
   }
@@ -205,7 +205,7 @@ export class PlaybackComponent implements OnInit {
 
   @ServerFunction({ allowed: Roles.admin })
   static async GetTimeline(context?: Context, db?: SqlDatabase) {
-    let f = context.for( ActiveFamilyDeliveries).create();
+    let f = context.for(ActiveFamilyDeliveries).create();
 
     let sql = new SqlBuilder();
     sql.addEntity(f, "Families");
@@ -213,7 +213,7 @@ export class PlaybackComponent implements OnInit {
       select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier, f.courierAssingTime, f.deliveryStatusDate],
       from: f,
       where: () => {
-        let where = [f.deliverStatus.isActiveDelivery()];
+        let where = [f.deliverStatus.isActiveDelivery().and(f.deliverStatus.isDifferentFrom(DeliveryStatus.Frozen))];
 
         return where;
       },
