@@ -105,8 +105,7 @@
   <div class="print-only">
     <h4 *ngIf="familyLists.helper">שלום
       {{familyLists.helper.name.value +(familyLists.helper.eventComment.value?' ('+familyLists.helper.eventComment.value+')':'')}},
-      טלפון {{familyLists.getHelperPhone() }}, {{'אלו המשלוחים לחלוקתך -'|translate}}
-      ({{familyLists.toDeliver.length}})</h4>
+      טלפון {{familyLists.getHelperPhone() }}, יש {{familyLists.getLeftFamiliesDescription()}} </h4>
 
     <table class="printTable">
       <tr>
