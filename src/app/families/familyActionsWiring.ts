@@ -67,23 +67,24 @@ export class ActionOnRows<T extends IdEntity> {
                         helpText: this.args.help ? this.args.help() : undefined,
                         validate: this.args.validate,
                         ok: async () => {
+                            try {
+                                let info = await component.buildActionInfo(this.args.additionalWhere);
+                                if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + ' ל-' + info.count + ' ' + component.groupName + '?')) {
+                                    let args = [];
+                                    for (const c of this.args.columns()) {
+                                        args.push(c.rawValue);
+                                    }
 
-                            let info = await component.buildActionInfo(this.args.additionalWhere);
-                            if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + ' ל-' + info.count + ' ' + component.groupName + '?')) {
-                                let args = [];
-                                for (const c of this.args.columns()) {
-                                    args.push(c.rawValue);
-                                }
-                                try {
                                     let r = await component.callServer(info, this.args.title, args);
                                     component.dialog.Info(r);
-                                }
-                                catch (err) {
-                                    console.log(err);
-                                    component.dialog.Error(this.args.title + ":" + extractError(err));
 
+                                    component.afterAction();
                                 }
-                                component.afterAction();
+                            }
+                            catch (err) {
+                                console.log(err);
+                                component.dialog.Error(this.args.title + ":" + extractError(err));
+
                             }
                         }
                         , cancel: () => { }

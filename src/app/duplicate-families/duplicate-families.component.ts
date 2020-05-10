@@ -42,6 +42,8 @@ export class DuplicateFamiliesComponent implements OnInit {
           f.address,
           f.status,
           f.phone1,
+          f.previousDeliveryDate,
+          f.previousDeliveryStatus,
           f.phone2,
           f.phone3,
           f.phone4,
@@ -51,6 +53,8 @@ export class DuplicateFamiliesComponent implements OnInit {
 
 
         ],
+        numOfColumnsInGrid:6,
+        hideDataArea:true,
         gridButton: [
           ...buildGridButtonFromActions([UpdateStatus, updateGroup, FreezeDeliveriesForFamilies, UnfreezeDeliveriesForFamilies], this.context,
             {
