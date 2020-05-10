@@ -154,7 +154,7 @@
           </div>
         </td>
         <td>
-          {{f.basketType.displayValue}}
+          <span *ngIf="f.quantity.value>1">{{f.quantity.value}} x </span> {{f.basketType.displayValue}}
         </td>
       </tr>
       <tr>

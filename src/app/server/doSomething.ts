@@ -2,7 +2,7 @@
 //let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
 
 import { readFileSync } from "fs";
-import { SqlDatabase } from '@remult/core';
+import { SqlDatabase, Column } from '@remult/core';
 
 
 
@@ -24,10 +24,15 @@ export async function DoIt() {
     try {
         await serverInit();
 
-        let dp = Sites.getDataProviderForOrg('catz');
+        let dp = Sites.getDataProviderForOrg('test2');
         let context = new ServerContext(dp);
-        
-        workOnPhones();
+        let r = new htmlReport();
+        for (const gCache of await context.for(GeocodeCache).find()) {
+            let g = GeocodeInformation.fromString(gCache.googleApiResult.value);
+            r.addRow(gCache.id, g.getAddress(), g.whyProblem());
+        }
+        r.writeToFile();
+
 
 
 
@@ -76,3 +81,20 @@ function workOnPhones() {
     fs.writeFileSync('c:/temp/result.html', result + "</table></body></html>");
 }
 
+class htmlReport {
+    result = '<html><body dir=rtl style="font-family:\'Segoe UI\';"><table border=1>';
+    addRow(...what: any[]) {
+        this.result += "\r\n<tr>";
+        for (let v of what) {
+            if (v instanceof Column)
+                v = v.displayValue;
+            if (v === undefined)
+                v = '';
+            this.result += "<td>" + v + "</td>";
+        }
+        this.result += "</tr>";
+    }
+    writeToFile() {
+        fs.writeFileSync('c:/temp/result.html', this.result + "</table></body></html>");
+    }
+}
