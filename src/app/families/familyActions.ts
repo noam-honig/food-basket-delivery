@@ -148,6 +148,7 @@ export class UnfreezeDeliveriesForFamilies extends ActionOnRows<Families> {
                 }
             }
         });
+
     }
 }
 
@@ -201,6 +202,38 @@ class UpdateBasketType extends ActionOnRows<Families> {
             title: 'עדכן סוג סל ברירת מחדל',
             forEach: async f => { f.basketType.value = this.basket.value },
         });
+    }
+}
+
+class UpdateSelfPickup extends ActionOnRows<Families> {
+    selfPickup = new BoolColumn("באים לקחת");
+    updateExistingDeliveries = new BoolColumn("שנה גם עבור משלוחים שטרם נמסרו");
+    constructor(context: Context) {
+        super(context, Families, {
+            allowed: Roles.admin,
+            columns: () => [this.selfPickup, this.updateExistingDeliveries],
+            title: 'עדכן באים לקחת ברירת מחדל',
+            forEach: async f => {
+                {
+                    f.defaultSelfPickup.value = this.selfPickup.value;
+                    if (this.updateExistingDeliveries.value) {
+                        for (const fd of await this.context.for(ActiveFamilyDeliveries).find({ where: fd => fd.family.isEqualTo(f.id).and(fd.deliverStatus.isNotAResultStatus()) })) {
+                            if (this.selfPickup.value) {
+                                if (fd.deliverStatus.value == DeliveryStatus.ReadyForDelivery)
+                                    fd.deliverStatus.value = DeliveryStatus.SelfPickup;
+
+                            }
+                            else
+                                if (fd.deliverStatus.value == DeliveryStatus.SelfPickup)
+                                    fd.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
+                            if (fd.wasChanged())
+                                await fd.save();
+                        }
+                    }
+                }
+            },
+        });
+        this.updateExistingDeliveries.value = true;
     }
 }
 
@@ -276,5 +309,5 @@ export class SelfPickupStrategyColumn extends ValueListColumn<SelfPickupStrategy
 
 
 
-export const familyActions = () => [NewDelivery, updateGroup, UpdateArea, UpdateStatus, UpdateBasketType, UpdateQuantity, UpdateFamilySource, FreezeDeliveriesForFamilies, UnfreezeDeliveriesForFamilies];
+export const familyActions = () => [NewDelivery, updateGroup, UpdateArea, UpdateStatus, UpdateSelfPickup, UpdateBasketType, UpdateQuantity, UpdateFamilySource, FreezeDeliveriesForFamilies, UnfreezeDeliveriesForFamilies];
 export const familyActionsForDelivery = () => [updateGroup, UpdateArea, UpdateStatus];
