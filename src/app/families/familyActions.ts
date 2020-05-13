@@ -110,6 +110,7 @@ export class updateGroup extends ActionOnRows<Families> {
             }
 
         });
+        this.group.value='';
     }
 }
 export class FreezeDeliveriesForFamilies extends ActionOnRows<Families> {
