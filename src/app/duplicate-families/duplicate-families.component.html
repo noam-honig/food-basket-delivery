@@ -1,16 +1,17 @@
+<h3>כתובות עם יותר ממשפחה אחת</h3>
 <table class="table table-bordered">
     <tr>
         <th></th>
-        <th>כתובת</th>
-        <th>מספר משפחות</th>
+        <th (click)="sortByAddress()">כתובת</th>
+        <th (click)="sortByCount()">מספר משפחות</th>
         <th>סה"כ {{duplicateFamilies.length}}</th>
-        <th>מיקום</th>
+        
     </tr>
     <tr *ngFor="let d of duplicateFamilies; let i=index">
         <td>{{i+1}}</td>
         <td> {{d.address}}</td>
         <td>{{d.count}}</td>
         <td><a (click)="showFamilies(d)">הצג משפחות</a></td>
-        <td>{{d.lat}},{{d.lng}}</td>
+        
     </tr>
 </table>

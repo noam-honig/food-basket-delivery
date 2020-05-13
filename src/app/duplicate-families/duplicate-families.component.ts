@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ServerFunction, Context, SqlDatabase, EntityWhere, AndFilter, packWhere, BusyService } from '@remult/core';
+import { ServerFunction, Context, SqlDatabase, EntityWhere, AndFilter, packWhere, BusyService, Column } from '@remult/core';
 import { SqlBuilder } from '../model-shared/types';
 import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
@@ -24,10 +24,20 @@ export class DuplicateFamiliesComponent implements OnInit {
   async ngOnInit() {
     try {
       this.duplicateFamilies = await DuplicateFamiliesComponent.familiesInSameAddress();
+      this.post();
     }
     catch (err) {
       this.dialog.Error(err);
     }
+  }
+  post=()=>{};
+  sortByAddress() {
+    this.duplicateFamilies.sort((a, b) => a.address.localeCompare(b.address));
+    this.post =()=> this.sortByAddress();
+  }
+  sortByCount() {
+    this.duplicateFamilies.sort((a, b) => b.count - a.count);
+    this.post =()=> this.sortByCount();
   }
   async showFamilies(d: duplicateFamilies) {
     await this.context.openDialog(GridDialogComponent, x => x.args = {
@@ -37,24 +47,31 @@ export class DuplicateFamiliesComponent implements OnInit {
         click: async () => { await this.mergeFamilies(x); }
       }],
       settings: this.context.for(Families).gridSettings({
-        columnSettings: f => [
-          f.name,
-          f.address,
-          f.status,
-          f.phone1,
-          f.previousDeliveryDate,
-          f.previousDeliveryStatus,
-          f.phone2,
-          f.phone3,
-          f.phone4,
-          f.addressByGoogle,
-          f.addressOk
+        columnSettings: f => {
+          let r = [
+            f.name,
+            f.address,
+            f.status,
+            f.phone1,
+            f.previousDeliveryDate,
+            f.previousDeliveryStatus,
+            f.phone2,
+            f.phone3,
+            f.phone4,
+            f.addressByGoogle,
+            f.addressOk
 
 
 
-        ],
-        numOfColumnsInGrid:6,
-        hideDataArea:true,
+          ] as Column<any>[];
+          for (const c of f.columns) {
+            if (!r.includes(c) && c != f.id)
+              r.push(c);
+          }
+          return r;
+        },
+        numOfColumnsInGrid: 6,
+        hideDataArea: true,
         gridButton: [
           ...buildGridButtonFromActions([UpdateStatus, updateGroup, FreezeDeliveriesForFamilies, UnfreezeDeliveriesForFamilies], this.context,
             {
