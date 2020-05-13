@@ -548,7 +548,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         name: 'משלוח חדש',
         click: async d => {
           let f = await this.context.for(Families).findId(d.family);
-          await f.showNewDeliveryDialog(this.dialog, this.settings, d, () => this.refresh());
+          await f.showNewDeliveryDialog(this.dialog, this.settings, d,async  () => this.refresh());
         },
         visible: d => this.context.isAllowed(Roles.admin)
       },

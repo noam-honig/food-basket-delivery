@@ -73,6 +73,7 @@ class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
             columns: () => [this.courier],
+            
 
             title: 'עדכן מתנדב למשלוחים',
             forEach: async fd => {
