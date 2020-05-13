@@ -114,7 +114,7 @@ export class UpdateDeliveriesStatus extends ActionOnRows<ActiveFamilyDeliveries>
 
     status = new DeliveryStatusColumn();
     comment = new StringColumn('הערה פנימית למשלוח - לא תופיע למתנדב');
-    deleteExistingComment = new BoolColumn("מחק הערה קודמת?");
+    deleteExistingComment = new BoolColumn("מחק הערה קודמת");
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,

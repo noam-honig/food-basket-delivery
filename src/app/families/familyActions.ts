@@ -157,10 +157,12 @@ export class UpdateStatus extends ActionOnRows<Families> {
     status = new FamilyStatusColumn();
     archiveFinshedDeliveries = new BoolColumn({ caption: "העבר משלוחים שהסתיימו לארכיון", defaultValue: true });
     deletePendingDeliveries = new BoolColumn({ caption: "מחק משלוחים שטרם נמסרו למשפחות אלו", defaultValue: true });
+    comment = new StringColumn('הערה פנימית - לא תופיע למתנדב');
+    deleteExistingComment = new BoolColumn("מחק הערה קודמת");
     constructor(context: Context) {
         super(context, Families, {
             allowed: Roles.admin,
-            columns: () => [this.status, this.archiveFinshedDeliveries, this.deletePendingDeliveries],
+            columns: () => [this.status, this.archiveFinshedDeliveries, this.deletePendingDeliveries,this.comment,this.deletePendingDeliveries],
             help: () => 'סטטוס הוצא מהרשימות - נועד כדי לסמן שהמשפחה לא אמורה לקבל מזון - אבל בניגוד לסטטוס למחיקה - אנחנו רוצים לשמור אותה בבסיס הנתונים כדי שאם הרווחה יביאו לנו אותה שוב, נדע להגיד שהם הוצאו מהרשימות. זה מתאים למשפחות שחס וחלילה נפתרו או שפשוט לא רוצים לקבל - או שהכתובת לא קיימת וכו...',
             dialogColumns: () => {
                 if (!this.status.value)
@@ -168,13 +170,24 @@ export class UpdateStatus extends ActionOnRows<Families> {
 
                 return [
                     this.status,
+                    this.comment,
+                    this.deleteExistingComment,
                     { column: this.archiveFinshedDeliveries, visible: () => this.status.value != FamilyStatus.Active },
-                    { column: this.deletePendingDeliveries, visible: () => this.status.value != FamilyStatus.Active }
+                    { column: this.deletePendingDeliveries, visible: () => this.status.value != FamilyStatus.Active },
+                    
                 ]
             },
             title: 'עדכן סטטוס משפחה ',
             forEach: async f => {
                 f.status.value = this.status.value;
+                if (this.deleteExistingComment) {
+                    f.internalComment.value = '';
+                }
+                if (this.comment.value) {
+                    if (f.internalComment.value)
+                        f.internalComment.value += ", ";
+                    f.internalComment.value += this.comment.value;
+                }
                 if (f.status.value != FamilyStatus.Active && (this.archiveFinshedDeliveries.value || this.deletePendingDeliveries.value)) {
                     for (const fd of await this.context.for(ActiveFamilyDeliveries).find({ where: fd => fd.family.isEqualTo(f.id) })) {
                         if (DeliveryStatus.IsAResultStatus(fd.deliverStatus.value)) {
