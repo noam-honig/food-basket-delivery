@@ -82,15 +82,26 @@ class UpdateFixedCourier extends ActionOnRows<FamilyDeliveries> {
 export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
 
     courier = new HelperId(this.context, 'מתנדב');
+    updateAlsoAsFixed = new BoolColumn('עדכן גם כמתנדב ברירת מחדל');
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
-            columns: () => [this.courier],
+            columns: () => [this.courier, this.updateAlsoAsFixed],
 
 
             title: 'עדכן מתנדב למשלוחים',
             forEach: async fd => {
                 fd.courier.value = this.courier.value;
+                if (this.updateAlsoAsFixed.value) {
+                    let f = await this.context.for(Families).findId(fd.family);
+                    if (f) {
+                        f.fixedCourier.value = this.courier.value;
+                        if (f.wasChanged()) {
+                            await f.save();
+                            f.updateDelivery(fd);
+                        }
+                    }
+                }
             },
             onEnd: async () => {
                 if (this.courier.value)
