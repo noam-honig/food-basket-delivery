@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Column, Entity, ServerFunction, IdColumn, SqlDatabase, StringColumn, DataAreaSettings, BoolColumn, DataArealColumnSetting, EntityWhere, AndFilter, RouteHelperService } from '@remult/core';
 import { Context } from '@remult/core';
 import { Helpers, HelperUserInfo } from '../helpers/helpers';
@@ -26,6 +26,7 @@ import { Sites } from '../sites/sites';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { leaveOnlyNumericChars } from '../shared/googleApiHelpers';
+import { SelectListComponent, selectListItem } from '../select-list/select-list.component';
 
 
 
@@ -263,7 +264,7 @@ export class ImportFromExcelComponent implements OnInit {
         }
         return i;
     }
-
+    sheet: string;
     async fileChange(eventArgs: any) {
 
         var files = eventArgs.target.files, file;
@@ -271,92 +272,117 @@ export class ImportFromExcelComponent implements OnInit {
         file = files[0];
         var fileReader = new FileReader();
         fileReader.onload = async (e: any) => {
-            await this.busy.doWhileShowingBusy(async () => {
-                this.filename = file.name;
-                // pre-process data
-                var binary = "";
-                var bytes = new Uint8Array(e.target.result);
-                var length = bytes.byteLength;
-                for (var i = 0; i < length; i++) {
-                    binary += String.fromCharCode(bytes[i]);
-                }
-                // call 'xlsx' to read the file
-                this.oFile = (await import('xlsx')).read(binary, { type: 'binary', cellDates: true, cellStyles: true });
-                this.worksheet = this.oFile.Sheets[this.oFile.SheetNames[0]];
-                let sRef = this.worksheet["!ref"];
-                let to = sRef.substr(sRef.indexOf(':') + 1);
-
-                let maxLetter = 'A';
-                for (let index = 0; index < to.length; index++) {
-                    const element = to[index];
-                    if ('1234567890'.indexOf(element) >= 0) {
-                        maxLetter = to.substring(0, index);
-                        this.totalRows = +to.substring(index, 20);
-                        break;
+            try {
+                await this.busy.doWhileShowingBusy(async () => {
+                    this.filename = file.name;
+                    // pre-process data
+                    var binary = "";
+                    var bytes = new Uint8Array(e.target.result);
+                    var length = bytes.byteLength;
+                    for (var i = 0; i < length; i++) {
+                        binary += String.fromCharCode(bytes[i]);
                     }
-
-                }
-
-                if (!this.totalRows) {
-                    debugger;
-                }
-                if (this.totalRows > 500000)
-                    this.totalRows = 0;
-                let colPrefix = '';
-                let colName = 'A';
-                let colIndex = 0;
-                this.excelColumns = [];
-                while (true) {
-                    this.excelColumns.push({
-                        excelColumn: colPrefix + colName,
-                        column: undefined,
-                        title: this.getTheData(colPrefix + colName + 1)
-                    });
-                    let done = false;
-                    if (colPrefix + colName == maxLetter)
-                        done = true;
-                    let j = colName.charCodeAt(0);
-                    j++;
-                    colName = String.fromCharCode(j);
-                    if (colName > 'Z') {
-                        colName = 'A';
-                        if (colPrefix == 'A')
-                            colPrefix = 'B';
-                        else
-                            colPrefix = 'A';
-                    }
-                    if (done) {
-
-                        break;
-                    }
-                    if (this.excelColumns.length > 100)
-                        break;
-                }
-                for (const col of this.excelColumns) {
-
-                    let searchName = col.title;
-                    switch (searchName) {
-                        case this.f.status.defs.caption:
-                        case this.f.fixedCourier.defs.caption:
-                            break;
-                        default:
-                            for (const up of this.columns) {
-                                if (searchName == up.name || (up.searchNames && up.searchNames.indexOf(searchName) >= 0)) {
-                                    col.column = up;
-                                    break;
-                                }
-
+                    // call 'xlsx' to read the file
+                    this.oFile = (await import('xlsx')).read(binary, { type: 'binary', cellDates: true, cellStyles: true });
+                    let sheets = this.oFile.SheetNames;
+                    let sheet = sheets[0];
+                    this.sheet = sheet;
+                    if (sheets.length > 1) {
+                        await new Promise(x => setTimeout(() => {
+                            x();
+                        }, 500));
+                        await this.context.openDialog(SelectListComponent, x => {
+                            x.args = {
+                                title: 'בחר גליון מהאקסל',
+                                options: sheets.map(x => ({ name: x, item: x } as selectListItem))
                             }
+                        }, y => sheet = y.selected.name);
+                    }
+                    this.worksheet = this.oFile.Sheets[sheet];
+                    let sRef = this.worksheet["!ref"];
+                    if (!sRef)
+                        throw `לשונית "${this.sheet}" ריקה`;
+                    let to = sRef.substr(sRef.indexOf(':') + 1);
+
+                    let maxLetter = 'A';
+                    for (let index = 0; index < to.length; index++) {
+                        const element = to[index];
+                        if ('1234567890'.indexOf(element) >= 0) {
+                            maxLetter = to.substring(0, index);
+                            this.totalRows = +to.substring(index, 20);
                             break;
+                        }
+
                     }
 
-                }
-                this.rows = [];
-                for (let index = 2; index <= this.totalRows; index++) {
-                    this.rows.push(index);
-                }
-            });
+                    if (!this.totalRows) {
+                        debugger;
+                    }
+                    if (this.totalRows > 500000)
+                        this.totalRows = 0;
+                    let colPrefix = '';
+                    let colName = 'A';
+                    let colIndex = 0;
+                    this.excelColumns = [];
+                    while (true) {
+                        this.excelColumns.push({
+                            excelColumn: colPrefix + colName,
+                            column: undefined,
+                            title: this.getTheData(colPrefix + colName + 1)
+                        });
+                        let done = false;
+                        if (colPrefix + colName == maxLetter)
+                            done = true;
+                        let j = colName.charCodeAt(0);
+                        j++;
+                        colName = String.fromCharCode(j);
+                        if (colName > 'Z') {
+                            colName = 'A';
+                            if (colPrefix == 'A')
+                                colPrefix = 'B';
+                            else
+                                colPrefix = 'A';
+                        }
+                        if (done) {
+
+                            break;
+                        }
+                        if (this.excelColumns.length > 100)
+                            break;
+                    }
+                    for (const col of this.excelColumns) {
+
+                        let searchName = col.title;
+                        switch (searchName) {
+                            case this.f.status.defs.caption:
+                            case this.f.fixedCourier.defs.caption:
+                                break;
+                            default:
+                                for (const up of this.columns) {
+                                    if (searchName == up.name || (up.searchNames && up.searchNames.indexOf(searchName) >= 0)) {
+                                        col.column = up;
+                                        break;
+                                    }
+
+                                }
+                                break;
+                        }
+
+                    }
+                    this.rows = [];
+                    for (let index = 2; index <= this.totalRows; index++) {
+                        this.rows.push(index);
+                    }
+                });
+            }
+            catch (err) {
+                this.fileInput.nativeElement.value = '';
+                this.dialog.Error("שגיאה בקליטת קובץ " + this.filename + ": " + extractError(err));
+                throw err;
+            }
+            this.fileInput.nativeElement.value = '';
             this.stepper.next();
+
         };
         fileReader.readAsArrayBuffer(file);
     }
@@ -450,6 +476,7 @@ export class ImportFromExcelComponent implements OnInit {
     f: Families;
     fd: ActiveFamilyDeliveries;
     @ViewChild("stepper", { static: true }) stepper: MatStepper;
+    @ViewChild("file", { static: true }) fileInput: ElementRef
     settings: ApplicationSettings;
     settingsArea: DataAreaSettings<any> = new DataAreaSettings();
     async ngOnInit() {
@@ -1107,7 +1134,7 @@ export class ImportFromExcelComponent implements OnInit {
     }
     clearSettings() {
         for (const excelItem of this.excelColumns) {
-            excelItem.column=undefined;
+            excelItem.column = undefined;
         }
     }
     async moveFromErrorToAdd(r: excelRowInfo) {

@@ -4,15 +4,13 @@
         <mat-step label="בחירת קובץ אקסל">
             <a href="https://youtu.be/Jtmhyf8-E4g" target="_blank" class="no-print"
                 style="margin-right:10px">{{'לסרטון הדרכה על קליטה מאקסל לחץ כאן'|translate}}</a>
-            <h3> בחר קובץ אקסל</h3> <input type="file" (input)="fileChange($event)" />
+            <h3> בחר קובץ אקסל</h3> <input type="file" #file (input)="fileChange($event)" />
         </mat-step>
         <mat-step label="הגדרת העמודות">
 
 
             <ng-container *ngIf="filename">
-
                 <button (click)="loadSettings()" mat-raised-button>טען הגדרות</button>
-                <button (click)="saveSettings()" mat-raised-button>שמור הגדרות</button>
                 <button (click)="clearSettings()" mat-raised-button>מחק הגדרות</button>
                 <button (click)="saveSettings(); moveToAdvancedSettings()" mat-raised-button color="accent">המשך לשלב
                     הבא</button>
@@ -39,7 +37,7 @@
                     </ng-container>
                 </table>-->
 
-                <h3>עמודות שלא מופיעות באקסל</h3>
+                <h4>הוספת עמודות שלא מופיעות באקסל</h4>
 
                 <ul>
                     <li *ngFor="let ac of additionalColumns; let i = index">
@@ -55,7 +53,7 @@
                     הוסף עמודה
                 </button>
 
-                <h3>בחירת עמודות מאקסל</h3>
+                <h4>בחירת עמודות בקובץ "{{this.filename}}", גליון: "{{sheet}}"</h4>
 
 
                 <div class="table-div">
@@ -295,7 +293,7 @@
 
 
             </mat-tab-group>
-            <button mat-raised-button (click)="createImportReport()" >שמור דוח מצב קליטה מאקסל</button>
+            <button mat-raised-button (click)="createImportReport()">שמור דוח מצב קליטה מאקסל</button>
         </mat-step>
     </mat-horizontal-stepper>
 
