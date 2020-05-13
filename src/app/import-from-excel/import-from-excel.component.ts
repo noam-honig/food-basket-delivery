@@ -1105,6 +1105,11 @@ export class ImportFromExcelComponent implements OnInit {
 
         }
     }
+    clearSettings() {
+        for (const excelItem of this.excelColumns) {
+            excelItem.column=undefined;
+        }
+    }
     async moveFromErrorToAdd(r: excelRowInfo) {
         let name = r.name;
         if (!name) {
