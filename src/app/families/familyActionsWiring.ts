@@ -65,7 +65,14 @@ export class ActionOnRows<T extends IdEntity> {
                         },
                         title: this.args.title,
                         helpText: this.args.help ? this.args.help() : undefined,
-                        validate: this.args.validate,
+                        validate: async () => {
+                            if (this.args.validate)
+                                await this.args.validate();
+                            if (this.args.validateInComponent) {
+                                await this.args.validateInComponent(component);
+                            }
+
+                        },
                         ok: async () => {
                             try {
                                 let info = await component.buildActionInfo(this.args.additionalWhere);
@@ -111,7 +118,8 @@ export interface ActionOnRowsArgs<T extends IdEntity> {
     dialogColumns?: (component: actionDialogNeeds<T>) => DataArealColumnSetting<any>[],
     forEach: (f: T) => Promise<void>
     columns: () => Column<any>[],
-    validate?: () => Promise<void>
+    validateInComponent?: (component: actionDialogNeeds<T>) => Promise<void>,
+    validate?: () => Promise<void>,
     title: string,
     help?: () => string,
     allowed: Allowed,

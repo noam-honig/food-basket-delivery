@@ -8,7 +8,7 @@ import { translate } from "../translate";
 import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer, serverUpdateInfo, pagedRowsIterator } from "../families/familyActionsWiring";
 import { async } from "@angular/core/testing";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
-import { DeliveryStatus } from "../families/DeliveryStatus";
+import { DeliveryStatus, DeliveryStatusColumn } from "../families/DeliveryStatus";
 import { Families } from "../families/families";
 import { BasketId, QuantityColumn } from "../families/BasketType";
 import { FamilyStatus } from "../families/FamilyStatus";
@@ -66,34 +66,51 @@ class UpdateFixedCourier extends ActionOnRows<FamilyDeliveries> {
         });
     }
 }
-export class FreezeDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
+export class UpdateDeliveriesStatus extends ActionOnRows<ActiveFamilyDeliveries> {
 
+    status = new DeliveryStatusColumn();
+    comment = new StringColumn('הערה פנימית למשלוח - לא תופיע למתנדב');
+    deleteExistingComment = new BoolColumn("מחק הערה קודמת?");
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
-            columns: () => [],
-            title: 'הקפא משלוחים',
-            help: () => `משלוח "קפוא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח.
+            columns: () => [this.status, this.comment, this.deleteExistingComment],
+            title: 'עדכן סטטוס למשלוחים',
+            help: () => `סטטוס "מוקפא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח.
             ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח.
             `,
-            forEach: async f => { f.deliverStatus.value = DeliveryStatus.Frozen; },
-            additionalWhere: f => f.readyFilter()
-        });
-    }
-}
-export class UnfreezeDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
+            validate: async () => {
+                if (this.status.value == undefined)
+                    throw "לא נבחר סטטוס";
 
-    constructor(context: Context) {
-        super(context, FamilyDeliveries, {
-            allowed: Roles.admin,
-            columns: () => [],
-            title: 'ביטול הקפאת משלוחים',
-            help: () => 'ביטול ההקפאה יחזיר משלוחים קפואים למוכן למשלוח',
-            forEach: async f => { f.deliverStatus.value = DeliveryStatus.ReadyForDelivery; },
-            additionalWhere: f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen)
+            },
+            validateInComponent: async c => {
+                if (this.status.value == DeliveryStatus.ReadyForDelivery || this.status.value == DeliveryStatus.SelfPickup) {
+                    if (await c.dialog.YesNoPromise("עדכון משלוחים שהסתיימו לסטטוס " + this.status.value.caption + " לא ישמור בהיסטוריה את הסטטוס של המשלוחים שהסתיימו - האם להפסיק את העדכון?"))
+                        throw "העדכון הופסק";
+                }
+            },
+            forEach: async f => {
+                if (!(this.status.value == DeliveryStatus.Frozen && f.deliverStatus.value != DeliveryStatus.ReadyForDelivery)) {
+                    f.deliverStatus.value = this.status.value;
+                    if (this.deleteExistingComment) {
+                        f.internalDeliveryComment.value = '';
+                    }
+                    if (this.comment.value) {
+                        if (f.internalDeliveryComment.value)
+                            f.internalDeliveryComment.value += ", ";
+                        f.internalDeliveryComment.value += this.comment.value;
+                    }
+
+                }
+            }
+
         });
+
     }
 }
+
+
 
 class ArchiveDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
 
@@ -295,8 +312,7 @@ export const delvieryActions = () => [
     UpdateQuantity,
     UpdateDistributionCenter,
     UpdateFixedCourier,
-    FreezeDeliveries,
-    UnfreezeDeliveries,
+    UpdateDeliveriesStatus,
     CancelAsignment,
     DeleteDeliveries
 ];
