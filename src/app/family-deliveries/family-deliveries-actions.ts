@@ -11,7 +11,7 @@ import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeli
 import { DeliveryStatus, DeliveryStatusColumn } from "../families/DeliveryStatus";
 import { Families } from "../families/families";
 import { BasketId, QuantityColumn } from "../families/BasketType";
-import { FamilyStatus } from "../families/FamilyStatus";
+import { FamilyStatus, FamilyStatusColumn } from "../families/FamilyStatus";
 import { SelfPickupStrategyColumn } from "../families/familyActions";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 
@@ -20,14 +20,26 @@ import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 
 
 class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
-
+    updateFamilyStatus = new BoolColumn("עדכן גם את סטטוס המשפחות");
+    status = new FamilyStatusColumn();
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
-            columns: () => [],
+            columns: () => [this.updateFamilyStatus, this.status],
+            dialogColumns: c => [
+                this.updateFamilyStatus,
+                { column: this.status, visible: () => this.updateFamilyStatus.value }
+            ],
             title: 'מחק משלוחים',
             help: () => 'שים לב - מחיקת המשלוח לא תוציא את המשפחה מהרשימות - כדי להוציא את המשפחה מהרשימות יש לבצע עדכון לסטטוס המשפחה. המחיקה תתבצע רק עבור משלוחים שטרם נמסרו',
-            forEach: async f => { f.delete(); },
+            forEach: async fd => {
+                fd.delete();
+                if (this.updateFamilyStatus.value) {
+                    let f = await this.context.for(Families).findId(fd.family);
+                    f.status.value = this.status.value;
+                    await f.save();
+                }
+            },
             additionalWhere: f => f.deliverStatus.isNotAResultStatus()
         });
     }
