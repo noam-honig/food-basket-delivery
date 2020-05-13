@@ -27,7 +27,7 @@ import { Sites } from '../sites/sites';
 import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser } from '../manage/distribution-centers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { translate } from '../translate';
-import { delvieryActions, UpdateDistributionCenter, NewDelivery, UpdateDeliveriesStatus } from '../family-deliveries/family-deliveries-actions';
+import { delvieryActions, UpdateDistributionCenter, NewDelivery, UpdateDeliveriesStatus, UpdateCourier } from '../family-deliveries/family-deliveries-actions';
 import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, actionDialogNeeds } from '../families/familyActionsWiring';
 import { familyActionsForDelivery, UpdateArea, updateGroup } from '../families/familyActions';
 import { Families } from '../families/families';
@@ -72,7 +72,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   buttons: GridButton[] = [
     ...buildGridButtonFromActions([UpdateArea], this.context, this.buttonFamilyHelper()),
-    ...buildGridButtonFromActions([UpdateDistributionCenter], this.context, this.buttonDeliveryHelper()),
+    ...buildGridButtonFromActions([UpdateDistributionCenter, UpdateCourier], this.context, this.buttonDeliveryHelper()),
     ...buildGridButtonFromActions([updateGroup], this.context, this.buttonFamilyHelper()),
     ...buildGridButtonFromActions([NewDelivery, UpdateDeliveriesStatus], this.context, this.buttonDeliveryHelper())
 

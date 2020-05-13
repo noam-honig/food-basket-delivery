@@ -13,6 +13,7 @@ import { Families } from "../families/families";
 import { BasketId, QuantityColumn } from "../families/BasketType";
 import { FamilyStatus } from "../families/FamilyStatus";
 import { SelfPickupStrategyColumn } from "../families/familyActions";
+import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 
 
 
@@ -66,19 +67,23 @@ class UpdateFixedCourier extends ActionOnRows<FamilyDeliveries> {
         });
     }
 }
-class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
+export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
 
     courier = new HelperId(this.context, 'מתנדב');
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
             columns: () => [this.courier],
-            
+
 
             title: 'עדכן מתנדב למשלוחים',
             forEach: async fd => {
                 fd.courier.value = this.courier.value;
             },
+            onEnd: async () => {
+                if (this.courier.value)
+                    await AsignFamilyComponent.RefreshRoute(this.courier.value, true);
+            }
         });
     }
 }

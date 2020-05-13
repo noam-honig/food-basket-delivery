@@ -6,7 +6,7 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
 
 import { Helpers } from '../helpers/helpers';
-import { DialogService, DestroyHelper,  extractError } from '../select-popup/dialog';
+import { DialogService, DestroyHelper, extractError } from '../select-popup/dialog';
 import { UserFamiliesList } from '../my-families/user-families';
 
 import { environment } from '../../environments/environment';
@@ -517,7 +517,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         return result;
     }
-    @ServerFunction({ allowed: Roles.distCenterAdmin })
+    @ServerFunction({ allowed: Roles.distCenterAdmin, blockUser: false })
     static async RefreshRoute(helperId: string, useGoogle: boolean, context?: Context) {
         let existingFamilies = await context.for(ActiveFamilyDeliveries).find({
             where: f => f.courier.isEqualTo(helperId).and(
