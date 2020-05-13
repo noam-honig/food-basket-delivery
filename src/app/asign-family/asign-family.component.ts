@@ -608,6 +608,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             let addFamilyToResult = async (id: string) => {
                 let family = await context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(id));
                 family.courier.value = info.helperId;
+                family._disableMessageToUsers = true;
                 await family.save();
                 if (family.addressOk.value) {
                     let sameLocationFamilies = await context.for(ActiveFamilyDeliveries).find({
