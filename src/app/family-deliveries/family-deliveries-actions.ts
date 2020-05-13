@@ -169,19 +169,6 @@ class ArchiveDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
         });
     }
 }
-class DeliveredForOnTheWay extends ActionOnRows<ActiveFamilyDeliveries> {
-
-    constructor(context: Context) {
-        super(context, FamilyDeliveries, {
-            allowed: Roles.distCenterAdmin,
-            columns: () => [],
-            title: 'עדכן נמסר בהצלחה',
-            help: () => 'פעולה זו תעדכן נמסר בהצלחה עבור משלוחים שבדרך',
-            forEach: async f => { f.deliverStatus.value = DeliveryStatus.Success },
-            additionalWhere: f => f.onTheWayFilter()
-        });
-    }
-}
 
 class UpdateBasketType extends ActionOnRows<ActiveFamilyDeliveries> {
     basketType = new BasketId(this.context);
@@ -337,13 +324,12 @@ class HelperStrategyColumn extends ValueListColumn<HelperStrategy>{
 
 export const delvieryActions = () => [
     NewDelivery,
-    DeliveredForOnTheWay,
     ArchiveDeliveries,
+    UpdateDeliveriesStatus,
     UpdateBasketType,
     UpdateQuantity,
     UpdateDistributionCenter,
     UpdateCourier,
     UpdateFixedCourier,
-    UpdateDeliveriesStatus,
     DeleteDeliveries
 ];
