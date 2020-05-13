@@ -10,6 +10,7 @@ import { BasketType } from './families/BasketType';
 import { fixPhone, processPhone, phoneResult, parseAndUpdatePhone } from './import-from-excel/import-from-excel.component';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from './families/FamilyDeliveries';
 import { validSchemaName } from './sites/sites';
+import { MergeFamiliesComponent } from './merge-families/merge-families.component';
 
 describe('AppComponent', () => {
   var context = new ServerContext();
@@ -268,7 +269,74 @@ describe('AppComponent', () => {
     expect(f.phone4.value).toBe(undefined);
     expect(f.phone4Description.value).toBe(undefined);
   });
+  it("properMerge4", () => {
+    let f = context.for(Families).create();
+    let f2 = context.for(Families).create();
+    let c = new MergeFamiliesComponent(context, undefined, undefined);
+    c.family = context.for(Families).create();
+    c.family.phone1.value = '0507330590';
+    c.families = [f, f2];
+    f.phone1.value = '0507330590';
+    f2.phone1.value = '0523307014';
+    f2.phone2.value = '3';
+    c.rebuildCompare(true);
+    expect(c.family.phone1.value).toBe('0507330590');
+    expect(c.family.phone2.value).toBe('0523307014');
+    expect(c.family.phone3.value).toBe('3');
+  });
+  it("properMerge", () => {
+    let f = context.for(Families).create();
+    let f2 = context.for(Families).create();
+    let c = new MergeFamiliesComponent(context, undefined, undefined);
+    c.family = context.for(Families).create();
+    c.families = [f, f2];
+    f.tz.value = '1';
+    f2.tz.value = '2';
+    c.rebuildCompare(true);
+    expect(c.family.tz.value).toBe('1');
+    expect(c.family.tz2.value).toBe('2');
+  });
+  it("properMerge1", () => {
+    let f = context.for(Families).create();
+    let f2 = context.for(Families).create();
+    let c = new MergeFamiliesComponent(context, undefined, undefined);
+    c.family = context.for(Families).create();
+    c.families = [f, f2];
 
+    f2.tz.value = '2';
+    c.rebuildCompare(true);
+    expect(c.family.tz.value).toBe('2');
+  });
+  it("properMerge2", () => {
+    let f = context.for(Families).create();
+    let f2 = context.for(Families).create();
+    let c = new MergeFamiliesComponent(context, undefined, undefined);
+    c.family = context.for(Families).create();
+    c.families = [f, f2];
+    f.tz.value = '1';
+    f2.tz.value = '01';
+    c.rebuildCompare(true);
+    expect(c.family.tz.value).toBe('1');
+
+  });
+  it("properMerge3", () => {
+    let f = context.for(Families).create();
+    let f2 = context.for(Families).create();
+    let c = new MergeFamiliesComponent(context, undefined, undefined);
+    c.family = context.for(Families).create();
+    c.families = [f, f2];
+    f.phone1.value = '1';
+    f.phone1Description.value = 'd1';
+    f2.phone1.value = '2';
+    f2.phone1Description.value = 'd2';
+    c.rebuildCompare(true);
+    expect(c.family.phone1.value).toBe('1');
+    expect(c.family.phone1Description.value).toBe('d1');
+    expect(c.family.phone2.value).toBe('2');
+    expect(c.family.phone2Description.value).toBe('d2');
+  });
+
+  
 
 });
 

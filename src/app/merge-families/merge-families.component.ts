@@ -25,8 +25,62 @@ export class MergeFamiliesComponent implements OnInit {
     this.family._disableAutoDuplicateCheck = true;
     this.rebuildCompare(true);
   }
+  updateSimilarColumns(getCols: (f: Families) => Column<any>[][]) {
+    let eCols = getCols(this.family);
+    for (const f of this.families) {
+      for (const c of getCols(f)) {
+        if (c[0].value) {
+          let digits = c[0].value.replace(/\D/g, '');
+          let found = false;
+          for (const ec of eCols) {
+            if (ec[0].value) {
+              let ecDigits = ec[0].value.replace(/\D/g, '');
+              
+              if (ecDigits == digits) {
+                found = true;
+                
+                for (let index = 1; index < c.length; index++) {
+                  const c2 = c[index];
+                  const ec2 = ec[index];
+                  if (c2.value && !ec2.value)
+                    ec2.value = c2.value;
+
+                }
+                break;
+                
+              }
+            }
+          }
+          if (!found) {
+            for (const ec of eCols) {
+              if (!ec[0].value) {
+                ec[0].value = c[0].value;
+
+                for (let index = 1; index < c.length; index++) {
+                  const c2 = c[index];
+                  const ec2 = ec[index];
+                  if (c2.value && !ec2.value)
+                    ec2.value = c2.value;
+
+                }
+                break;
+              }
+            }
+          }
+
+        }
+
+      }
+    }
+  }
   rebuildCompare(updateValue: boolean) {
     this.columnsToCompare.splice(0);
+    if (updateValue) {
+
+      this.updateSimilarColumns(f => [[f.tz], [f.tz2]]);
+      this.updateSimilarColumns(f => [[f.phone1, f.phone1Description], [f.phone2, f.phone2Description], [f.phone3, f.phone3Description], [f.phone4, f.phone4Description]]);
+    }
+
     for (const c of this.family.columns) {
       if (c.defs.allowApiUpdate === undefined || this.context.isAllowed(c.defs.allowApiUpdate)) {
         switch (c) {
