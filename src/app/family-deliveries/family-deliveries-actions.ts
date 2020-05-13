@@ -66,6 +66,21 @@ class UpdateFixedCourier extends ActionOnRows<FamilyDeliveries> {
         });
     }
 }
+class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
+
+    courier = new HelperId(this.context, 'מתנדב');
+    constructor(context: Context) {
+        super(context, FamilyDeliveries, {
+            allowed: Roles.admin,
+            columns: () => [this.courier],
+
+            title: 'עדכן מתנדב למשלוחים',
+            forEach: async fd => {
+                fd.courier.value = this.courier.value;
+            },
+        });
+    }
+}
 export class UpdateDeliveriesStatus extends ActionOnRows<ActiveFamilyDeliveries> {
 
     status = new DeliveryStatusColumn();
@@ -176,19 +191,6 @@ export class UpdateDistributionCenter extends ActionOnRows<ActiveFamilyDeliverie
     }
 }
 
-class CancelAsignment extends ActionOnRows<ActiveFamilyDeliveries> {
-
-    constructor(context: Context) {
-        super(context, FamilyDeliveries, {
-            allowed: Roles.distCenterAdmin,
-            columns: () => [],
-            title: 'בטל שיוך למתנדב',
-            help: () => 'פעולה זו תבטל את השיוך בין מתנדבים למשפחות, ותחזיר משלוחים המסומנים כ"בדרך" ל"טרם שויכו"',
-            forEach: async f => { f.courier.value = ''; },
-            additionalWhere: f => f.onTheWayFilter()
-        });
-    }
-}
 export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
     useExistingBasket = new BoolColumn({ caption: 'השתמש בסוג הסל המוגדר במשלוח הנוכחי', defaultValue: true });
     basketType = new BasketId(this.context);
@@ -311,8 +313,8 @@ export const delvieryActions = () => [
     UpdateBasketType,
     UpdateQuantity,
     UpdateDistributionCenter,
+    UpdateCourier,
     UpdateFixedCourier,
     UpdateDeliveriesStatus,
-    CancelAsignment,
     DeleteDeliveries
 ];
