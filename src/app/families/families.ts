@@ -10,7 +10,7 @@ import { HelperIdReadonly, HelperId, Helpers, HelperUserInfo } from "../helpers/
 
 import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress } from "../shared/googleApiHelpers";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
-import { FamilyDeliveries } from "./FamilyDeliveries";
+import { FamilyDeliveries, ActiveFamilyDeliveries } from "./FamilyDeliveries";
 import * as fetch from 'node-fetch';
 import { Roles } from "../auth/roles";
 
@@ -64,7 +64,7 @@ export class Families extends IdEntity {
       })
     });
   }
-  async showNewDeliveryDialog(dialog: DialogService, settings: ApplicationSettings, copyFrom?: FamilyDeliveries, aDeliveryWasAdded?: () => void) {
+  async showNewDeliveryDialog(dialog: DialogService, settings: ApplicationSettings, copyFrom?: FamilyDeliveries, aDeliveryWasAdded?: (newDeliveryId: string) => Promise<void>) {
     let newDelivery = this.createDelivery(dialog.distCenter.value);
     let arciveCurrentDelivery = new BoolColumn({ caption: 'העבר משלוח נוכחי לארכיב?', defaultValue: true });
     if (copyFrom != undefined) {
@@ -72,8 +72,11 @@ export class Families extends IdEntity {
 
     }
     let selfPickup = new BoolColumn({ caption: 'יבואו לקחת את המשלוח ואינם צריכים משלוח?', defaultValue: this.defaultSelfPickup.value });
-    if (copyFrom)
+    if (copyFrom) {
       selfPickup.value = copyFrom.deliverStatus.value == DeliveryStatus.SuccessPickedUp;
+      if (copyFrom.deliverStatus.value.isProblem)
+        newDelivery.courier.value = '';
+    }
 
 
     await this.context.openDialog(InputAreaComponent, x => {
@@ -108,7 +111,7 @@ export class Families extends IdEntity {
           }
         },
         ok: async () => {
-          await Families.addDelivery(newDelivery.family.value, {
+          let newId = await Families.addDelivery(newDelivery.family.value, {
             basketType: newDelivery.basketType.value,
             quantity: newDelivery.quantity.value,
             comment: newDelivery.courierComments.value,
@@ -117,12 +120,12 @@ export class Families extends IdEntity {
             selfPickup: selfPickup.value
 
           });
-          if (copyFrom != null && DeliveryStatus.IsAResultStatus(copyFrom.deliverStatus.value)) {
+          if (copyFrom != null && DeliveryStatus.IsAResultStatus(copyFrom.deliverStatus.value) && arciveCurrentDelivery.value) {
             copyFrom.archive.value = true;
             await copyFrom.save();
           }
           if (aDeliveryWasAdded)
-            aDeliveryWasAdded();
+            await aDeliveryWasAdded(newId);
           dialog.Info("משלוח נוצר בהצלחה");
         }
         , cancel: () => { }
@@ -150,9 +153,9 @@ export class Families extends IdEntity {
       if (settings.selfPickup)
         fd.deliverStatus.value = DeliveryStatus.SelfPickup;
       await fd.save();
-      return 1;
+      return fd.id.value;
     }
-    return 0;
+    throw "משפחה לא נמצאה";
 
   }
   createDelivery(distCenter: string) {

@@ -28,6 +28,7 @@ export class FamilyInfoComponent implements OnInit {
   }
   @Input() partOfAssign: Boolean;
   @Output() assignmentCanceled = new EventEmitter<void>();
+  @Output() refreshList = new EventEmitter<void>();
   
   showCancelAssign(f: ActiveFamilyDeliveries) {
     return this.partOfAssign && f.courier.value != '' && f.deliverStatus.value == DeliveryStatus.ReadyForDelivery;
@@ -74,7 +75,12 @@ export class FamilyInfoComponent implements OnInit {
 
   }
   udpateInfo(f: ActiveFamilyDeliveries) {
-    f.showDetailsDialog();
+    f.showDetailsDialog({
+      dialog:this.dialog,
+      refreshDeliveryStats:()=>{
+        this.refreshList.emit();
+      }
+    });
     
   }
   copyAddress(f: ActiveFamilyDeliveries) {

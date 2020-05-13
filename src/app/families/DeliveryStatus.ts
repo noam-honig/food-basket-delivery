@@ -23,13 +23,13 @@ export class DeliveryStatus {
   static Success: DeliveryStatus = new DeliveryStatus(11, 'נמסר בהצלחה');
   static SuccessPickedUp: DeliveryStatus = new DeliveryStatus(13, 'לקחו בעצמם');
   static SuccessLeftThere: DeliveryStatus = new DeliveryStatus(19, 'הושאר ליד הבית');
-  static FailedBadAddress: DeliveryStatus = new DeliveryStatus(21, 'לא נמסר, בעיה בכתובת');
-  static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, 'לא נמסר, לא היו בבית');
-  static FailedOther: DeliveryStatus = new DeliveryStatus(25, 'לא נמסר, אחר');
+  static FailedBadAddress: DeliveryStatus = new DeliveryStatus(21, 'לא נמסר, בעיה בכתובת', true);
+  static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, 'לא נמסר, לא היו בבית', true);
+  static FailedOther: DeliveryStatus = new DeliveryStatus(25, 'לא נמסר, אחר', true);
 
 
 
-  constructor(public id: number, public caption: string) {
+  constructor(public id: number, public caption: string, public isProblem = false) {
   }
 
 }

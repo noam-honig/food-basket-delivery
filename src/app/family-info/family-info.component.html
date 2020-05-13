@@ -13,8 +13,7 @@
     <button *ngIf="showCancelAssign(f)" mat-raised-button class=" badButton cancelAssignButton"
       (click)="cancelAssign(f)">בטל
       שיוך</button>
-    <button *ngIf="partOfAssign" mat-raised-button class="cancelAssignButton" (click)=" udpateInfo(f)">עדכן פרטי
-      {{'משפחה'|translate}}</button>
+    <button *ngIf="partOfAssign" mat-raised-button class="cancelAssignButton" (click)=" udpateInfo(f)">כרטיס משלוח</button>
   </div>
   <h4 style="display:inline">סל</h4> - {{f.basketType.displayValue}}
 
