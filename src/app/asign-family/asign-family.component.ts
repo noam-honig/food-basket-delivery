@@ -36,6 +36,7 @@ import { CommonQuestionsComponent } from '../common-questions/common-questions.c
 import { DistributionCenters, DistributionCenterId, allCentersToken } from '../manage/distribution-centers';
 import { CitiesStatsPerDistCenter } from '../family-deliveries/family-deliveries-stats';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { Families } from '../families/families';
 
 
 
@@ -686,7 +687,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         result.families = await context.for(ActiveFamilyDeliveries).toPojoArray(existingFamilies);
 
         result.familiesInSameAddress = result.familiesInSameAddress.filter((x, i) => !existingFamilies.find(f => f.id.value == x) && result.familiesInSameAddress.indexOf(x) == i);
-
+        Families.SendMessageToBrowsers("משלוחים שוייכו ", context, '');
         return result;
     }
 

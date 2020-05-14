@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
-import { BusyService } from '@remult/core';
+import { BusyService, ServerFunction } from '@remult/core';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';
@@ -14,11 +14,13 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Context } from '@remult/core';
 import { Column } from '@remult/core';
 import { translate } from '../translate';
-import { Helpers } from '../helpers/helpers';
+import { Helpers, HelperId } from '../helpers/helpers';
 import { UpdateCommentComponent } from '../update-comment/update-comment.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { isGpsAddress } from '../shared/googleApiHelpers';
+import { Roles } from '../auth/roles';
+import { pagedRowsIterator } from '../families/familyActionsWiring';
 
 @Component({
   selector: 'app-helper-families',
@@ -51,9 +53,11 @@ export class HelperFamiliesComponent implements OnInit {
       await this.busy.doWhileShowingBusy(async () => {
 
         this.dialog.analytics('cancel all');
-        for (const f of this.familyLists.toDeliver) {
-          f.courier.value = '';
-          await f.save();
+        try {
+          await HelperFamiliesComponent.cancelAssignAllForHelperOnServer(this.familyLists.helper.id.value);
+        }
+        catch (err) {
+          await this.dialog.exception('בטל שיוך כל המשלוחים למתנדב', err);
         }
         this.familyLists.reload();
         this.assignmentCanceled.emit();
@@ -61,14 +65,38 @@ export class HelperFamiliesComponent implements OnInit {
     });
 
   }
+  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  static async cancelAssignAllForHelperOnServer(id: string, context?: Context) {
+    await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
+      where: fd => fd.onTheWayFilter().and(fd.courier.isEqualTo(id)),
+      forEachRow: async fd => {
+        fd.courier.value = '';
+        fd._disableMessageToUsers = true;
+        await fd.save();
+      }
+    });
+  }
+  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  static async okAllForHelperOnServer(id: string, context?: Context) {
+    await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
+      where: fd => fd.onTheWayFilter().and(fd.courier.isEqualTo(id)),
+      forEachRow: async fd => {
+        fd.deliverStatus.value = DeliveryStatus.Success;
+        fd._disableMessageToUsers = true;
+        await fd.save();
+      }
+    });
+  }
   okAll() {
     this.dialog.YesNoQuestion("האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל" + this.familyLists.toDeliver.length + translate(" משפחות?"), async () => {
-      this.busy.doWhileShowingBusy(async () => {
+      await this.busy.doWhileShowingBusy(async () => {
 
         this.dialog.analytics('ok  all');
-        for (const f of this.familyLists.toDeliver) {
-          f.deliverStatus.value = DeliveryStatus.Success;
-          await f.save();
+        try {
+          await HelperFamiliesComponent.okAllForHelperOnServer(this.familyLists.helper.id.value);
+        }
+        catch (err) {
+          await this.dialog.exception('בטל שיוך כל המשלוחים למתנדב', err);
         }
         this.initFamilies();
       });

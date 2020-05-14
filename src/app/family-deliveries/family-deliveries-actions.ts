@@ -108,6 +108,7 @@ export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
                     await AsignFamilyComponent.RefreshRoute(this.courier.value, true);
             }
         });
+        this.courier.value = '';
     }
 }
 export class UpdateDeliveriesStatus extends ActionOnRows<ActiveFamilyDeliveries> {

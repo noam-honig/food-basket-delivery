@@ -20,6 +20,10 @@ declare var gtag;
 
 @Injectable()
 export class DialogService {
+    async exception(title: string, err: any): Promise<void> {
+        await this.Error(title + ": " + extractError(err));
+        throw err;
+    }
 
     onDistCenterChange(whatToDo: () => void, destroyHelper: DestroyHelper) {
         let y = this.refreshDistCenter.subscribe(() => {
@@ -173,7 +177,7 @@ export function extractError(err: any) {
     if (err.error)
         return extractError(err.error);
     if (err.message)
-        return  extractError(err.message);
+        return extractError(err.message);
 
     return JSON.stringify(err);
 }
