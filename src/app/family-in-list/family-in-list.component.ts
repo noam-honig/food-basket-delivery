@@ -13,8 +13,18 @@ export class FamilyInListComponent implements OnInit {
   constructor() { }
   @Input() f: ActiveFamilyDeliveries;
   @Input() i: number;
-  @Input() newAssign:boolean;
+  @Input() newAssign: boolean;
+  @Input() sameAddress: boolean;
   ngOnInit() {
+  }
+  getAddressDescription() {
+
+    let r = this.f.getAddressDescription();
+    if (this.sameAddress) {
+      r += " *";
+    }
+    return r;
+
   }
 
 }

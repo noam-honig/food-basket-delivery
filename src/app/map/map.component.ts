@@ -7,6 +7,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Context } from '@remult/core';
 import { BusyService } from '@remult/core';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import MarkerClusterer from '@google/markerclustererplus';
 
 //import 'googlemaps';
 
@@ -15,7 +16,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
     templateUrl: './map.component.html',
     styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit,OnDestroy {
+export class MapComponent implements OnInit, OnDestroy {
     async loadPotentialAsigment(city: string, group: string, distCenter: string, area: string) {
         await this.initMap();
         let families = await DistributionMap.GetDeliveriesLocation(true, city, group, distCenter, area);
@@ -139,6 +140,8 @@ export class MapComponent implements OnInit,OnDestroy {
         let i = 0;
         this.bounds = new google.maps.LatLngBounds();
         let secondaryBounds = new google.maps.LatLngBounds();
+        let prevMarker: google.maps.Marker;
+        let prevIndex: number;
         families.forEach(f => {
             let pi = prevFamilies.findIndex(x => x.id.value == f.id.value);
             if (pi >= 0)
@@ -153,12 +156,23 @@ export class MapComponent implements OnInit,OnDestroy {
                 console.log(err, marker);
             }
 
-            marker.setLabel(f.name.value + (f.isGpsAddress() ? '' : " - " + f.address.value) + '....');
+
 
             switch (f.deliverStatus.value) {
                 case DeliveryStatus.ReadyForDelivery:
-                    i++;
-                    marker.setIcon('/assets/map-markers/number_' + i + '.png');
+                    let currentIndex = ++i;
+                    if (prevMarker == undefined || JSON.stringify(prevMarker.getPosition()) != JSON.stringify(marker.getPosition())) {
+                        marker.setLabel((currentIndex).toString());
+                        marker.setIcon('/assets/map-markers/number.png');
+                        prevMarker = marker;
+                        prevIndex = currentIndex;
+                    }
+                    else {
+                        prevMarker.setLabel(prevIndex + '-' + currentIndex);
+                        prevMarker.setIcon('/assets/map-markers/number_long.png');
+                        marker.setMap(null);
+                    }
+
                     break;
                 case DeliveryStatus.Success:
                 case DeliveryStatus.SuccessLeftThere:

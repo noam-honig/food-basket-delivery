@@ -1,6 +1,6 @@
 <mat-card class="no-print" *ngIf="familyLists.toDeliver.length>0">
   <mat-card-title>
-    {{familyLists.getLeftFamiliesDescription()}} 
+    {{familyLists.getLeftFamiliesDescription()}}
     <div>
       <mat-menu #appMenu="matMenu">
         <button mat-menu-item (click)="cancelAll()" style="color:red;">{{'בטל שיוך לכל המשלוחים'|translate}}</button>
@@ -8,9 +8,9 @@
           class="primary-menu">{{'סמן נמסר בהצלחה לכל המשלוחים'|translate}}</button>
       </mat-menu>
       <button mat-icon-button (click)="familyLists.showBasketSummary()">
-      <mat-icon >assignment
-      </mat-icon>
-    </button>
+        <mat-icon>assignment
+        </mat-icon>
+      </button>
 
       <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="familyLists.toDeliver.length>0 && partOfAssign">
         <mat-icon>more_vert</mat-icon>
@@ -24,33 +24,39 @@
     סה"כ זמן נסיעה מוערך <span *ngIf="familyLists.routeStats"> {{familyLists.routeStats.totalTime}} דקות,
       {{familyLists.routeStats.totalKm}} ק"מ</span>
   </div>
-  <mat-accordion class="no-print" *ngIf="false">
-    <mat-expansion-panel #myPanel *ngFor="let f of familyLists.toDeliver;let i=index">
-      <mat-expansion-panel-header>
-        <app-family-in-list [f]="f" [i]="i+1" style="width:100%"
-          [newAssign]="familyLists.highlightNewFamilies&&!familyLists.familiesAlreadyAssigned.get(f.id.value)">
-        </app-family-in-list>
-      </mat-expansion-panel-header>
-      <ng-template matExpansionPanelContent>
+  <mat-accordion class="no-print">
+    <ng-container *ngFor="let f of familyLists.toDeliver;let i=index">
+      <mat-expansion-panel #myPanel *ngIf="limitReady.shouldShow(i)">
+        <mat-expansion-panel-header>
+          <app-family-in-list [f]="f" [i]="i+1" style="width:100%" [sameAddress]="sameAddress(f,i)"
+            [newAssign]="familyLists.highlightNewFamilies&&!familyLists.familiesAlreadyAssigned.get(f.id.value)">
+          </app-family-in-list>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
 
 
-        <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign" (assignmentCanceled)="cancelAssign(f)">
+          <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign"
+            (assignmentCanceled)="cancelAssign(f)">
 
 
-          <button mat-raised-button class="myButton" color="accent"
-            (click)="deliveredToFamily(f)">{{settings.deliveredButtonText.value}}</button>
-          <br *ngIf="settings.showLeftThereButton.value" />
-          <button *ngIf="settings.showLeftThereButton.value" mat-raised-button class="myButton"
-            (click)="leftThere(f)">השארתי ליד הבית
-          </button>
-          <br />
-          <button mat-raised-button class="myButton badButton" (click)="couldntDeliverToFamily(f)">נתקלתי בבעיה</button>
+            <button mat-raised-button class="myButton" color="accent"
+              (click)="deliveredToFamily(f)">{{settings.deliveredButtonText.value}}</button>
+            <br *ngIf="settings.showLeftThereButton.value" />
+            <button *ngIf="settings.showLeftThereButton.value" mat-raised-button class="myButton"
+              (click)="leftThere(f)">השארתי ליד הבית
+            </button>
+            <br />
+            <button mat-raised-button class="myButton badButton" (click)="couldntDeliverToFamily(f)">נתקלתי
+              בבעיה</button>
 
 
-        </app-family-info>
-      </ng-template>
-    </mat-expansion-panel>
+          </app-family-info>
+        </ng-template>
+      </mat-expansion-panel>
+    </ng-container>
   </mat-accordion>
+  <button mat-raised-button (click)="limitReady.showAll()" *ngIf="limitReady.showButton()" style="margin-top: 10px;">הצג
+    את כל המשלוחים לחלוקה</button>
 </mat-card>
 
 <div style="display:flex;flex-direction: column;">
@@ -178,7 +184,7 @@
             <button mat-raised-button class="myButton badButton"
               (click)="returnToDeliver(f)">{{'נלחץ בטעות - החזר למשלוחים'|translate}}
               לחלוקה</button>
-            
+
           </app-family-info>
         </ng-template>
       </mat-expansion-panel>
@@ -189,20 +195,24 @@
       {{'משלוחים שחולקו ביומיים האחרונים'|translate}} - {{familyLists.delivered.length}}
     </mat-card-title>
     <mat-accordion>
-      <mat-expansion-panel #myPanel *ngFor="let f of familyLists.delivered">
-        <mat-expansion-panel-header>
-          <app-family-in-list [f]="f" style="width:100%"></app-family-in-list>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
-          <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign"
-            (assignmentCanceled)="cancelAssign(f)">
-            <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
-            <button mat-raised-button class="myButton badButton"
-              (click)="returnToDeliver(f)">{{'נלחץ בטעות - החזר למשלוחים לחלוקה'|translate}}</button>
-          </app-family-info>
-        </ng-template>
-      </mat-expansion-panel>
+      <ng-container  *ngFor="let f of familyLists.delivered;let i=index">
+        <mat-expansion-panel #myPanel *ngIf="limitDelivered.shouldShow(i)">
+          <mat-expansion-panel-header>
+            <app-family-in-list [f]="f" style="width:100%"></app-family-in-list>
+          </mat-expansion-panel-header>
+          <ng-template matExpansionPanelContent>
+            <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign"
+              (assignmentCanceled)="cancelAssign(f)">
+              <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
+              <button mat-raised-button class="myButton badButton"
+                (click)="returnToDeliver(f)">{{'נלחץ בטעות - החזר למשלוחים לחלוקה'|translate}}</button>
+            </app-family-info>
+          </ng-template>
+        </mat-expansion-panel>
+      </ng-container>
     </mat-accordion>
+    <button mat-raised-button (click)="limitDelivered.showAll()" *ngIf="limitDelivered.showButton()" style="margin-top: 10px;">הצג
+      את כל המשלוחים שחולקו</button>
   </mat-card>
   <mat-card [class.hide]="partOfReview||preview">
 

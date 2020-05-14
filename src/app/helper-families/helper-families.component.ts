@@ -21,6 +21,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { isGpsAddress } from '../shared/googleApiHelpers';
 import { Roles } from '../auth/roles';
 import { pagedRowsIterator } from '../families/familyActionsWiring';
+import { Families } from '../families/families';
 
 @Component({
   selector: 'app-helper-families',
@@ -76,6 +77,17 @@ export class HelperFamiliesComponent implements OnInit {
       }
     });
   }
+  sameAddress(f: Families, i: number) {
+    if (i == 0)
+      return false;
+    if (!f.addressOk.value)
+      return false;
+    let of = this.familyLists.toDeliver[i - 1];
+    if (!of.addressOk.value)
+      return false;
+
+    return of.addressLatitude.value == f.addressLatitude.value && of.addressLongitude.value == f.addressLongitude.value;
+  }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async okAllForHelperOnServer(id: string, context?: Context) {
     await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
@@ -87,6 +99,9 @@ export class HelperFamiliesComponent implements OnInit {
       }
     });
   }
+
+  limitReady = new limitList(30, () => this.familyLists.toDeliver.length);
+  limitDelivered = new limitList(10, () => this.familyLists.delivered.length);
   okAll() {
     this.dialog.YesNoQuestion("האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל" + this.familyLists.toDeliver.length + translate(" משפחות?"), async () => {
       await this.busy.doWhileShowingBusy(async () => {
@@ -288,4 +303,20 @@ export class HelperFamiliesComponent implements OnInit {
   }
   @ViewChild("map", { static: true }) map: MapComponent;
 
+}
+
+class limitList {
+  constructor(public limit: number, private relevantCount: () => number) {
+
+  }
+  _showAll = false;
+  showButton() {
+    return !this._showAll && this.limit < this.relevantCount();
+  }
+  showAll() {
+    this._showAll = true;
+  }
+  shouldShow(i: number) {
+    return this._showAll || i < this.limit;
+  }
 }
