@@ -50,8 +50,8 @@ export class UserFamiliesList {
     private async  initHelper(h: Helpers) {
         this.helper = h;
         this.escort = undefined;
-        if (this.helper && h.escort) {
-            this.escort = await this.context.for(Helpers).findFirst(x => x.id.isEqualTo(h.escort));
+        if (this.helper && h.escort.value) {
+            this.escort = await this.context.for(Helpers).lookupAsync(x => x.id.isEqualTo(h.escort));
         }
 
     }

@@ -362,14 +362,14 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     getBasketsToClick() {
         return this.basketType.unassignedFamilies;
     }
-    lastAssign = Promise.resolve();
+    assigning = false;
     async assignItem(allRepeat?: boolean) {
+        this.assigning = true;
         let basket = this.basketType;
         if (this.allBaskets == basket)
             basket = undefined;
         await this.verifyHelperExistance();
-        this.lastAssign = this.lastAssign.then(async () => {
-
+        try { 
             let x = await AsignFamilyComponent.AddBox({
                 basketType: basket ? basket.id : undefined,
                 helperId: this.helper.id.value,
@@ -404,7 +404,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         this.repeatFamilies--;
                 }
                 else {
-                    await this.refreshBaskets();
+                    this.refreshBaskets();
                 }
 
 
@@ -423,7 +423,13 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 this.refreshList();
                 this.dialog.Info(translate("לא נמצאה משפחה מתאימה"));
             }
-        });
+            this.assigning = false;
+        }
+        catch (err) {
+            this.assigning = false;
+            await this.dialog.exception('שיוך משפחות', err);
+        }
+
     }
 
     @ServerFunction({ allowed: Roles.distCenterAdmin })

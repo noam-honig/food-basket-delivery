@@ -127,9 +127,9 @@
 
 
         <div class="no-print" style="display:flex;justify-content: center;">
-          <button mat-raised-button color="primary" (click)="assignItem()" [disabled]="basketType.unassignedFamilies==0"
+          <button mat-raised-button color="primary" (click)="assignItem()" [disabled]="basketType.unassignedFamilies==0 || assigning" 
             style="border-top-left-radius: 0px;border-bottom-left-radius:0px;">
-            {{translate( basketType.unassignedFamilies==0?'לא נותרו משלוחים מתאימים': familyLists.allFamilies.length>0?"שייך משלוח הכי קרוב":'שייך משלוח כלשהו')}}
+            {{translate(assigning?'עובד על זה...': basketType.unassignedFamilies==0?'לא נותרו משלוחים מתאימים': familyLists.allFamilies.length>0?"שייך משלוח הכי קרוב":'שייך משלוח כלשהו')}}
             -
             {{getBasketsToClick()}}</button>
           <button mat-button [matMenuTriggerFor]="basketMenu" mat-raised-button color="primary" style="border-top-right-radius: 0;
