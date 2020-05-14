@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { Location, GeocodeInformation, toLongLat } from '../shared/googleApiHelpers';
-import { UrlBuilder, FilterBase, ServerFunction, StringColumn, DataAreaSettings, BoolColumn, SqlDatabase, AndFilter } from '@remult/core';
+import { UrlBuilder, FilterBase, ServerFunction, StringColumn, DataAreaSettings, BoolColumn, SqlDatabase, AndFilter, FilterConsumerBridgeToSqlRequest } from '@remult/core';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
@@ -37,6 +37,7 @@ import { DistributionCenters, DistributionCenterId, allCentersToken } from '../m
 import { CitiesStatsPerDistCenter } from '../family-deliveries/family-deliveries-stats';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Families } from '../families/families';
+import { PromiseThrottle } from '../import-from-excel/import-from-excel.component';
 
 
 
@@ -556,15 +557,58 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
             orderBy: f => [{ column: f.routeOrder, descending: true }]
         });
-        let locationReferenceFamilies = [...existingFamilies];
-        if (locationReferenceFamilies.length == 0) {
-            let from = new Date();
-            from.setDate(from.getDate() - 1);
-            locationReferenceFamilies = await context.for(ActiveFamilyDeliveries).find({
-                where: f => f.courier.isEqualTo(info.helperId).and(f.deliverStatus.isAResultStatus()).and(f.deliveryStatusDate.isGreaterOrEqualTo(from)),
-                orderBy: f => [{ column: f.deliveryStatusDate, descending: true }],
-                limit: 1
-            });
+
+
+        let locationReferenceFamilies: Location[] = [];
+        let bounds: { lng1?: number, lng2?: number, lat1?: number, lat2?: number };
+        let boundsExtend = (l: Location) => {
+            if (!bounds) {
+                bounds = {
+                    lng1: l.lng,
+                    lng2: l.lng,
+                    lat1: l.lat,
+                    lat2: l.lat
+                }
+            }
+            else {
+                if (l.lng < bounds.lng1) {
+                    bounds.lng1 = l.lng;
+                }
+                if (l.lng > bounds.lng2) {
+                    bounds.lng2 = l.lng;
+                }
+                if (l.lat < bounds.lat1) {
+                    bounds.lat1 = l.lat;
+                }
+                if (l.lat > bounds.lat2) {
+                    bounds.lat2 = l.lat;
+                }
+            }
+        };
+        let boundsContains = (l: Location) => {
+            return (l.lng >= bounds.lng1 && l.lng <= bounds.lng2 && l.lat >= bounds.lat1 && l.lat <= bounds.lat2);
+        };
+        {
+
+            let refFam: ActiveFamilyDeliveries[] = [...existingFamilies];
+            if (refFam.length == 0) {
+                let from = new Date();
+                from.setDate(from.getDate() - 1);
+                refFam = await context.for(ActiveFamilyDeliveries).find({
+                    where: f => f.courier.isEqualTo(info.helperId).and(f.deliverStatus.isAResultStatus()).and(f.deliveryStatusDate.isGreaterOrEqualTo(from)),
+                    orderBy: f => [{ column: f.deliveryStatusDate, descending: true }],
+                    limit: 1
+                });
+            }
+            let m = new Map<string, boolean>();
+            for (const f of refFam) {
+                let x = JSON.stringify(f.getDrivingLocation());
+                if (!m.get(x)) {
+                    m.set(x, true);
+                    locationReferenceFamilies.push(f.getDrivingLocation());
+                    boundsExtend(f.getDrivingLocation());
+                }
+            }
         }
         function buildWhere(f: ActiveFamilyDeliveries) {
             let where = f.readyFilter(info.city, info.group, info.area).and(
@@ -575,62 +619,77 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                     f.basketType.isEqualTo(info.basketType));
             return where;
         }
-        for (let i = 0; i < info.numOfBaskets; i++) {
 
-            let getFamilies = async () => {
+        let getFamilies = async () => {
 
-                let f = context.for(ActiveFamilyDeliveries).create();
-                let sql = new SqlBuilder();
-                sql.addEntity(f, 'Families');
-                let r = (await db.execute(sql.query({
-                    select: () => [f.id, f.addressLatitude, f.addressLongitude],
-                    from: f,
-                    where: () => {
-                        let where = buildWhere(f);
-                        let res = [];
-                        res.push(where);
-                        if (info.preferRepeatFamilies)
-                            res.push(filterRepeatFamilies(sql, f, context.for(FamilyDeliveries).create(), info.helperId));
-                        return res;
-                    }
-                })));
+            let f = context.for(ActiveFamilyDeliveries).create();
+            let sql = new SqlBuilder();
+            sql.addEntity(f, 'Families');
+            let r = (await db.execute(sql.query({
+                select: () => [sql.build('distinct ', [f.addressLatitude, f.addressLongitude])],
+                from: f,
+                where: () => {
+                    let where = buildWhere(f);
+                    let res = [];
+                    res.push(where);
+                    if (info.preferRepeatFamilies)
+                        res.push(filterRepeatFamilies(sql, f, context.for(FamilyDeliveries).create(), info.helperId));
+                    return res;
+                }
+            })));
 
-                return r.rows.map(x => {
-                    return {
-                        id: x[r.getColumnKeyInResultForIndexInSelect(0)],
-                        addressLatitude: +x[r.getColumnKeyInResultForIndexInSelect(1)],
-                        addressLongitude: +x[r.getColumnKeyInResultForIndexInSelect(2)]
-                    } as familyQueryResult;
+            return r.rows.map(x => {
+                return {
 
-                }) as familyQueryResult[];
+                    lat: +x[r.getColumnKeyInResultForIndexInSelect(0)],
+                    lng: +x[r.getColumnKeyInResultForIndexInSelect(1)]
+                } as Location;
+
+            }) as Location[];
 
 
-            }
+        }
 
-            let waitingFamilies = await getFamilies();
+        let waitingFamilies = await getFamilies();
+        let i = 0;
+        while (i < info.numOfBaskets) {
             if (info.preferRepeatFamilies && waitingFamilies.length == 0 && !info.allRepeat) {
                 info.preferRepeatFamilies = false;
                 waitingFamilies = await getFamilies();
-            }
 
-            let addFamilyToResult = async (id: string) => {
-                let family = await context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(id));
-                family.courier.value = info.helperId;
-                family._disableMessageToUsers = true;
-                family.routeOrder.value = existingFamilies.length + 1;
-                await family.save();
-                if (family.addressOk.value) {
-                    let sameLocationFamilies = await context.for(ActiveFamilyDeliveries).find({
-                        where: f => buildWhere(f).and(f.addressLongitude.isEqualTo(family.addressLongitude).and(f.addressLatitude.isEqualTo(family.addressLatitude)))
-                            .and(f.filterDistCenterAndAllowed(info.distCenter))
-                    });
-                    if (sameLocationFamilies.length > 0) {
-                        result.familiesInSameAddress.push(...(sameLocationFamilies).map(x => x.id.value));
+            }
+            if (waitingFamilies.length == 0)
+                break;
+
+
+
+            let addFamilyToResult = async (fqr: Location) => {
+                waitingFamilies.splice(waitingFamilies.indexOf(fqr), 1);
+                locationReferenceFamilies.push(fqr);
+                boundsExtend(fqr);
+                for (const family of await context.for(ActiveFamilyDeliveries).find({
+                    where: f => buildWhere(f).and(f.addressLongitude.isEqualTo(fqr.lng).and(f.addressLatitude.isEqualTo(fqr.lat)))
+                        .and(f.filterDistCenterAndAllowed(info.distCenter))
+                })) {
+                    if (i < info.numOfBaskets) {
+                        family.courier.value = info.helperId;
+                        family._disableMessageToUsers = true;
+                        family.routeOrder.value = existingFamilies.length + 1;
+                        await family.save();
+                        result.addedBoxes++;
+                        existingFamilies.push(family);
+
+                        i++;
+
+
+                    }
+                    else {
+                        if (family.addressOk.value) {
+                            result.familiesInSameAddress.push(family.id.value);
+                        }
                     }
                 }
-                result.addedBoxes++;
-                existingFamilies.push(family);
-                locationReferenceFamilies.push(family);
+
             }
 
             if (waitingFamilies.length > 0) {
@@ -641,27 +700,29 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                     let lastFamiliy = waitingFamilies[0];
                     let lastDist = 0;
                     for (const f of waitingFamilies) {
-                        let dist = GeocodeInformation.GetDistanceBetweenPoints({ lng: f.addressLongitude, lat: f.addressLatitude }, distCenter);
+                        let dist = GeocodeInformation.GetDistanceBetweenPoints({ lng: f.lng, lat: f.lat }, distCenter);
                         if (dist > lastDist) {
                             lastFamiliy = f;
                             lastDist = dist;
                         }
                     }
-                    await addFamilyToResult(lastFamiliy.id);
+                    await addFamilyToResult(lastFamiliy);
                 }
                 else {
 
                     let getDistance = (x: Location) => {
+                        if (boundsContains(x))
+                            return 0;
                         let r = 1000000;
                         if (!x)
                             return r;
-                        let start = locationReferenceFamilies.length;
-                        if (start < 5)
+                        let start = locationReferenceFamilies.length - 1;
+                        if (start < 25)
                             start = 0;
-                        else start -= 5;
+                        else start -= 25;
                         for (let index = start; index < locationReferenceFamilies.length; index++) {
                             const ef = locationReferenceFamilies[index];
-                            let loc = ef.getDrivingLocation();
+                            let loc = ef;
                             if (loc) {
                                 let dis = GeocodeInformation.GetDistanceBetweenPoints(x, loc);
                                 if (dis < r)
@@ -676,18 +737,23 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
                     let smallFamily = waitingFamilies[0];
                     let dist = getDistance({
-                        lat: smallFamily.addressLatitude,
-                        lng: smallFamily.addressLongitude
+                        lat: smallFamily.lat,
+                        lng: smallFamily.lng
                     });
                     for (let i = 1; i < waitingFamilies.length; i++) {
                         let f = waitingFamilies[i];
-                        let myDist = getDistance({ lng: f.addressLongitude, lat: f.addressLatitude });
+                        let myDist = getDistance({ lng: f.lng, lat: f.lat });
                         if (myDist < dist) {
                             dist = myDist;
                             smallFamily = waitingFamilies[i]
+                            if (myDist == 0) {
+                                break;
+                            }
                         }
+
                     }
-                    await addFamilyToResult(smallFamily.id);
+                    await addFamilyToResult(smallFamily);
+
 
 
                 }
@@ -934,7 +1000,6 @@ export interface AddBoxResponse {
 
 }
 interface familyQueryResult {
-    id: string;
     addressLatitude: number;
     addressLongitude: number;
 }
