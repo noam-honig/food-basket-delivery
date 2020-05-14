@@ -711,8 +711,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 else {
 
                     let getDistance = (x: Location) => {
-                        if (boundsContains(x))
-                            return 0;
+                        let inBounds = boundsContains(x);
+
                         let r = 1000000;
                         if (!x)
                             return r;
@@ -725,6 +725,9 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                             let loc = ef;
                             if (loc) {
                                 let dis = GeocodeInformation.GetDistanceBetweenPoints(x, loc);
+                                if (inBounds) {
+                                    dis /= 3;
+                                }
                                 if (dis < r)
                                     r = dis;
                             }
