@@ -24,7 +24,7 @@
     סה"כ זמן נסיעה מוערך <span *ngIf="familyLists.routeStats"> {{familyLists.routeStats.totalTime}} דקות,
       {{familyLists.routeStats.totalKm}} ק"מ</span>
   </div>
-  <mat-accordion class="no-print">
+  <mat-accordion class="no-print" *ngIf="false">
     <mat-expansion-panel #myPanel *ngFor="let f of familyLists.toDeliver;let i=index">
       <mat-expansion-panel-header>
         <app-family-in-list [f]="f" [i]="i+1" style="width:100%"

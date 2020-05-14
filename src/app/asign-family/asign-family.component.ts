@@ -369,7 +369,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         if (this.allBaskets == basket)
             basket = undefined;
         await this.verifyHelperExistance();
-        try { 
+        try {
             let x = await AsignFamilyComponent.AddBox({
                 basketType: basket ? basket.id : undefined,
                 helperId: this.helper.id.value,
@@ -553,7 +553,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         let existingFamilies = await context.for(ActiveFamilyDeliveries).find({
             where: f => f.courier.isEqualTo(info.helperId).and(
-                f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))
+                f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
+            orderBy: f => [{ column: f.routeOrder, descending: true }]
         });
         let locationReferenceFamilies = [...existingFamilies];
         if (locationReferenceFamilies.length == 0) {
@@ -653,14 +654,21 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         let r = 1000000;
                         if (!x)
                             return r;
-                        locationReferenceFamilies.forEach(ef => {
+                        let start = locationReferenceFamilies.length;
+                        if (start < 5)
+                            start = 0;
+                        else start -= 5;
+                        for (let index = start; index < locationReferenceFamilies.length; index++) {
+                            const ef = locationReferenceFamilies[index];
                             let loc = ef.getDrivingLocation();
                             if (loc) {
                                 let dis = GeocodeInformation.GetDistanceBetweenPoints(x, loc);
                                 if (dis < r)
                                     r = dis;
                             }
-                        });
+
+                        }
+
                         return r;
 
                     }
