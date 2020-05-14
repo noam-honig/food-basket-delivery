@@ -22,13 +22,13 @@ export class MapComponent implements OnInit, OnDestroy {
         let families = await DistributionMap.GetDeliveriesLocation(true, city, group, distCenter, area);
         let closeBusy = this.busy.showBusy();
         try {
-            console.time('load families to map');
+            // console.time('load families to map');
             families.forEach(f => {
                 let marker = this.setFamilyOnMap(f.id, f.lat, f.lng);
                 if (marker && marker.getPosition().lat() > 0)
                     this.bounds.extend(marker.getPosition());
             });
-            console.timeEnd('load families to map');
+            // console.timeEnd('load families to map');
 
             this.fitBounds();
             if (this.map.getZoom() > 13)
@@ -41,6 +41,8 @@ export class MapComponent implements OnInit, OnDestroy {
     userClickedOnFamilyOnMap: (familyId: string[]) => void = () => { };
     setFamilyOnMap(familyId: string, lat: number, lng: number) {
         let marker = this.dict.get(familyId);
+        if (marker && marker.getMap() == null)
+            marker = undefined;
         if (!marker) {
             marker = new google.maps.Marker({ map: this.map, position: { lat: +lat, lng: +lng }, icon: 'https://maps.google.com/mapfiles/ms/micons/yellow-dot.png' })
             google.maps.event.addListener(marker, 'click', async () => {
@@ -142,6 +144,7 @@ export class MapComponent implements OnInit, OnDestroy {
         let secondaryBounds = new google.maps.LatLngBounds();
         let prevMarker: google.maps.Marker;
         let prevIndex: number;
+        
         families.forEach(f => {
             let pi = prevFamilies.findIndex(x => x.id.value == f.id.value);
             if (pi >= 0)
@@ -166,9 +169,11 @@ export class MapComponent implements OnInit, OnDestroy {
                         marker.setIcon('/assets/map-markers/number.png');
                         prevMarker = marker;
                         prevIndex = currentIndex;
+                        // console.log(i.toString() + ' ' + f.address.value);
                     }
                     else {
                         prevMarker.setLabel(prevIndex + '-' + currentIndex);
+                        // console.log(prevIndex + '-' + i.toString() + ' ' + f.address.value);
                         prevMarker.setIcon('/assets/map-markers/number_long.png');
                         marker.setMap(null);
                     }
