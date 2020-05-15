@@ -1,4 +1,4 @@
-<button style="position:fixed;" mat-raised-button color="accent" *ngIf="swipe&&delivered.observers.length"
+<button style="position: absolute;;" mat-raised-button color="accent" *ngIf="swipe&&delivered.observers.length"
   (click)="doDelivered($event)">נמסר</button>
 <div class="swipingItem" (swipeleft)="swipe=true" (swiperight)="swipe=false"
   [class.swipeleft]="swipe&&delivered.observers.length">
