@@ -1,9 +1,17 @@
 .familyLine {
   display: flex;
+  
+}
+.swipingItem {
+  
+  transition: all 100ms;
 }
 
-.mat-icon{
-    font-size:21px;
-    height:21px;
-    margin-right:3px;
+.mat-icon {
+  font-size: 21px;
+  height: 21px;
+  margin-right: 3px;
+}
+.swipeleft {
+  transform: translateX(-100px);
 }

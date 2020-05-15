@@ -1,20 +1,25 @@
-<mat-panel-title style="justify-content: space-between">
-  <div class="familyLine">
-    <span *ngIf="i">{{i}}.&nbsp;</span>{{f.name.value}}
-    <mat-icon color="accent" *ngIf="f.deliveryComments.value"> comment</mat-icon>
-    <mat-icon color="accent" *ngIf="!f.addressOk.value">warning</mat-icon>
-    <mat-icon color="green" *ngIf="f.courierBeenHereBefore.value">repeat</mat-icon>
-  </div>
-  <div>
-    <span *ngIf="f.quantity.value>1">{{f.quantity.value}} x </span> {{f.basketType.displayValue}}
-  </div>
-</mat-panel-title>
+<button style="position:fixed;" mat-raised-button color="accent" *ngIf="swipe&&delivered.observers.length"
+  (click)="doDelivered($event)">נמסר</button>
+<div class="swipingItem" (swipeleft)="swipe=true" (swiperight)="swipe=false"
+  [class.swipeleft]="swipe&&delivered.observers.length">
+  <mat-panel-title style="justify-content: space-between">
+    <div class="familyLine">
+      <span *ngIf="i">{{i}}.&nbsp;</span>{{f.name.value}}
+      <mat-icon color="accent" *ngIf="f.deliveryComments.value"> comment</mat-icon>
+      <mat-icon color="accent" *ngIf="!f.addressOk.value">warning</mat-icon>
+      <mat-icon color="green" *ngIf="f.courierBeenHereBefore.value">repeat</mat-icon>
+    </div>
+    <div>
+      <span *ngIf="f.quantity.value>1">{{f.quantity.value}} x </span> {{f.basketType.displayValue}}
+    </div>
+  </mat-panel-title>
 
-<mat-panel-description style="justify-content: space-between">
+  <mat-panel-description style="justify-content: space-between">
 
-  <div>
-    {{getAddressDescription() }}
-  </div>
-  <div *ngIf="newAssign" style="font-size: 11px;">(שוייכה עכשיו)</div>
+    <div>
+      {{getAddressDescription() }}
+    </div>
+    <div *ngIf="newAssign" style="font-size: 11px;">(שוייכה עכשיו)</div>
 
-</mat-panel-description>
+  </mat-panel-description>
+</div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 
 
@@ -15,7 +15,9 @@ export class FamilyInListComponent implements OnInit {
   @Input() i: number;
   @Input() newAssign: boolean;
   @Input() sameAddress: boolean;
+  @Output() delivered =  new EventEmitter<void>();
   ngOnInit() {
+    
   }
   getAddressDescription() {
 
@@ -25,6 +27,15 @@ export class FamilyInListComponent implements OnInit {
     }
     return r;
 
+  }
+ 
+  swipe = false;
+  doDelivered(e:MouseEvent){
+    console.log(e);
+    e.cancelBubble = true;
+    this.delivered.emit();
+    this.swipe = false;
+    return false;
   }
 
 }
