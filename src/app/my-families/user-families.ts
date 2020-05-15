@@ -100,7 +100,7 @@ export class UserFamiliesList {
     lastHelperId = undefined;
     async reload() {
         if (this.helper.id) {
-            this.allFamilies = await this.context.for(ActiveFamilyDeliveries).find({ where: f => f.courier.isEqualTo(this.helper.id).and(f.deliverStatus.isActiveDelivery()).and(f.visibleToCourier.isEqualTo(true)), orderBy: f => [f.deliverStatus, f.routeOrder, f.address], limit: 3000 });
+            this.allFamilies = await this.context.for(ActiveFamilyDeliveries).find({ where: f => f.courier.isEqualTo(this.helper.id).and(f.deliverStatus.isActiveDelivery()).and(f.visibleToCourier.isEqualTo(true)), orderBy: f => [f.deliverStatus, f.routeOrder, f.address], limit: 1000 });
             if (this.lastHelperId != this.helper.id) {
                 this.lastHelperId = this.helper.id;
                 this.familiesAlreadyAssigned = new Map<string, boolean>();
