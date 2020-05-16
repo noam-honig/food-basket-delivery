@@ -68,14 +68,17 @@ export class HelperFamiliesComponent implements OnInit {
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async cancelAssignAllForHelperOnServer(id: string, context?: Context) {
+    let dist = '';
     await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
       where: fd => fd.onTheWayFilter().and(fd.courier.isEqualTo(id)),
       forEachRow: async fd => {
         fd.courier.value = '';
         fd._disableMessageToUsers = true;
+        dist = fd.distributionCenter.value;
         await fd.save();
       }
     });
+    await Families.SendMessageToBrowsers('בוטל שיוך כל המשלוחים למתנדב ', context, dist);
   }
   sameAddress(f: Families, i: number) {
     if (i == 0)
@@ -90,14 +93,17 @@ export class HelperFamiliesComponent implements OnInit {
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async okAllForHelperOnServer(id: string, context?: Context) {
+    let dist = '';
     await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
       where: fd => fd.onTheWayFilter().and(fd.courier.isEqualTo(id)),
       forEachRow: async fd => {
+        dist = fd.distributionCenter.value;
         fd.deliverStatus.value = DeliveryStatus.Success;
         fd._disableMessageToUsers = true;
         await fd.save();
       }
     });
+    await Families.SendMessageToBrowsers('סומן נמסר בהצלחה לכל המשלוחים של מתנדב ', context, dist);
   }
 
   limitReady = new limitList(30, () => this.familyLists.toDeliver.length);
