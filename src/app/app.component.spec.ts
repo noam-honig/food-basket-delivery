@@ -284,6 +284,10 @@ describe('AppComponent', () => {
     expect(c.family.phone2.value).toBe('0523307014');
     expect(c.family.phone3.value).toBe('3');
   });
+  it("worksWithUndefined", () => {
+    expect(processPhone(undefined).length).toBe(0);
+    expect(processPhone('-').length).toBe(1);
+  });
   it("properMerge", () => {
     let f = context.for(Families).create();
     let f2 = context.for(Families).create();
@@ -336,7 +340,7 @@ describe('AppComponent', () => {
     expect(c.family.phone2Description.value).toBe('d2');
   });
 
-  
+
 
 });
 

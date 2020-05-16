@@ -1458,6 +1458,8 @@ export function fixPhone(phone: string, defaultPrefix: string) {
     return phone;
 }
 export function processPhone(input: string): phoneResult[] {
+    if (!input)
+        return [];
     let result = [];
     let temp: string[] = [];
     let currentText = '';
@@ -1480,7 +1482,9 @@ export function processPhone(input: string): phoneResult[] {
                         currentText = '';
                     }
                     else if (char == '-') {
-                        temp.push(temp.pop().trim() + char);
+                        if (temp.length > 0)
+                            temp.push(temp.pop().trim() + char);
+                        else temp.push(char);
                     }
                 break;
             default:
