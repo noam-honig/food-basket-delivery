@@ -131,12 +131,12 @@
                                                     {{f.name}} - {{displayDupInfo(f)}} - <a
                                                         (click)="updateFamily(f)">{{'הצג פרטי משפחה'|translate}}</a>
                                                     <br>
-                                                    <a (click)="moveFromErrorToUpdate(i,f)">השווה מול משפחה זו והעבר
+                                                    <a (click)="moveFromErrorToUpdate(i,f)"><span *ngIf="i.duplicateFamilyInfo.length>1">השווה מול משפחה זו ו</span>העבר
                                                         למשפחות
                                                         עדכון</a>
                                                 </li>
                                             </ul>
-                                            <a (click)="moveFromErrorToAdd(i)"><span *ngIf="i.duplicateFamilyInfo">
+                                            <a (click)="moveFromErrorToAdd(i)"><span *ngIf="i.duplicateFamilyInfo&&i.duplicateFamilyInfo.length>1">
                                                     אף אחת מהמשפחות הללו אינה מתאימה לשורה באקסל, </span>
                                                 העבר למשפחות חדשות</a>
                                         </td>

@@ -237,12 +237,18 @@ export class ImportFromExcelComponent implements OnInit {
         let val = c.newValue;
         if (val === null)
             val = '';
-        columnFromKey(f, fd, entityAndColumnName).value = val;
+        let col = columnFromKey(f, fd, entityAndColumnName);
+        col.value = val;
 
         await f.save();
         f.updateDelivery(fd);
         if (addDelivery) {
-            await fd.save();
+            for (const c of fd.columns) {
+                if (c == col) {
+                    await fd.save();
+                    break;
+                }
+            }
         }
 
         c.existingDisplayValue = await getColumnDisplayValue(columnFromKey(f, fd, entityAndColumnName));
@@ -381,6 +387,9 @@ export class ImportFromExcelComponent implements OnInit {
                 throw err;
             }
             this.fileInput.nativeElement.value = '';
+            let prevName = localStorage.getItem(excelLastFileName);
+            if (prevName == this.filename)
+                this.loadSettings();
             this.stepper.next();
 
         };
@@ -393,6 +402,7 @@ export class ImportFromExcelComponent implements OnInit {
         let fd = this.context.for(ActiveFamilyDeliveries).create();
         fd.basketType.value = this.defaultBasketType.value;
         fd.distributionCenter.value = this.distributionCenter.value;
+        f.status.value = FamilyStatus.Active;
 
         fd.quantity.value = 1;
         f._disableAutoDuplicateCheck = true;
@@ -827,6 +837,7 @@ export class ImportFromExcelComponent implements OnInit {
                     updatedColumns.set(iterator, false);
                 }
             }
+            updatedColumns.set(this.f.status, true);
             this.columnsInCompare = [];
             this.columnsInCompareMemberName = [];
             for (let e of [this.f, this.fd]) {
@@ -1101,6 +1112,7 @@ export class ImportFromExcelComponent implements OnInit {
             });
         }
         localStorage.setItem(excelSettingsSave, JSON.stringify(save));
+        localStorage.setItem(excelLastFileName, this.filename);
     }
     loadSettings() {
         let loaded = JSON.parse(localStorage.getItem(excelSettingsSave)) as storedInfo;
@@ -1281,6 +1293,7 @@ interface importReportRow {
 
 
 const excelSettingsSave = 'excelSettingsSave';
+const excelLastFileName = 'excelLastFileName';
 
 
 interface excelColumn {
