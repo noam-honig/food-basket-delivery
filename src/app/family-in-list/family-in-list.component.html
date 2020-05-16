@@ -1,7 +1,7 @@
 <button style="position: absolute;;" mat-raised-button color="accent" *ngIf="swipe&&delivered.observers.length"
   (click)="doDelivered($event)">נמסר</button>
-<div class="swipingItem" (swipeleft)="swipe=true" (swiperight)="swipe=false"
-  [class.swipeleft]="swipe&&delivered.observers.length">
+<div class="swipingItem"  [style.transform]="offsetX()"
+  [class.swipeleft]="swipe&&delivered.observers.length" (panleft)="horizontalPan($event)" (panright)="horizontalPan($event)" (panend)="panend($event)" >
   <mat-panel-title style="justify-content: space-between">
     <div class="familyLine">
       <span *ngIf="i">{{i}}.&nbsp;</span>{{f.name.value}}

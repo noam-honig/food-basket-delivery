@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { DomSanitizer } from '@angular/platform-browser';
 
 
 
@@ -10,15 +11,19 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 })
 export class FamilyInListComponent implements OnInit {
 
-  constructor() { }
+  constructor(private sanitization: DomSanitizer) { }
   @Input() f: ActiveFamilyDeliveries;
   @Input() i: number;
   @Input() newAssign: boolean;
   @Input() sameAddress: boolean;
-  @Output() delivered =  new EventEmitter<void>();
+  @Output() delivered = new EventEmitter<void>();
   ngOnInit() {
-    
+
   }
+  offsetX() {
+    return this.sanitization.bypassSecurityTrustStyle('translateX(' + this.offsetXValue + 'px)');
+  }
+  offsetXValue = 0;
   getAddressDescription() {
 
     let r = this.f.getAddressDescription();
@@ -28,9 +33,22 @@ export class FamilyInListComponent implements OnInit {
     return r;
 
   }
- 
+  horizontalPan(e: any) {
+    if (Math.abs(e.overallVelocityX) < 1) {
+
+      this.offsetXValue = Math.max(-100,Math.min(0, e.deltaX));
+
+      this.swipe = this.offsetXValue <= -85;
+
+
+    }
+  }
+  panend(e: any) {
+    this.offsetXValue = this.swipe ? -100 : 0;
+  }
+
   swipe = false;
-  doDelivered(e:MouseEvent){
+  doDelivered(e: MouseEvent) {
     console.log(e);
     e.cancelBubble = true;
     this.delivered.emit();

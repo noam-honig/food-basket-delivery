@@ -1,6 +1,6 @@
 
 
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
@@ -40,7 +40,7 @@ import { ImportFromExcelComponent } from './import-from-excel/import-from-excel.
 import { NewsComponent } from './news/news.component';
 import { NewsFilterService } from "./news/news-filter-service";
 
-
+import * as Hammer from 'hammerjs';
 import { UpdateFamilyDialogComponent } from './update-family-dialog/update-family-dialog.component';
 
 
@@ -84,7 +84,20 @@ import { DuplicateFamiliesComponent } from './duplicate-families/duplicate-famil
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref();
 
-
+export class MyHammerConfig extends HammerGestureConfig {
+  overrides = <any>{
+    swipe: { direction: Hammer.DIRECTION_HORIZONTAL },
+    pan: {
+      direction: 6
+    },
+    pinch: {
+      enable: false
+    },
+    rotate: {
+      enable: false
+    }
+  };
+}
 
 
 
@@ -185,6 +198,10 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
       useFactory: initApp,
       multi: true,
 
+    },
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: MyHammerConfig,
     }
     , SettingsService
 
@@ -203,7 +220,7 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
     HelperAssignmentComponent,
     MergeFamiliesComponent,
     SiteOverviewComponent,
-    UpdateCommentComponent, UpdateGroupDialogComponent,BasketSummaryComponent]
+    UpdateCommentComponent, UpdateGroupDialogComponent, BasketSummaryComponent]
 })
 export class AppModule { }
 
