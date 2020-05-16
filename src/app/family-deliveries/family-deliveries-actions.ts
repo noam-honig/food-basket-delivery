@@ -80,25 +80,36 @@ class UpdateFixedCourier extends ActionOnRows<FamilyDeliveries> {
     }
 }
 export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
-
+    clearVoulenteer = new BoolColumn('בטל שיוך למתנדב');
     courier = new HelperId(this.context, 'מתנדב');
     updateAlsoAsFixed = new BoolColumn('עדכן גם כמתנדב ברירת מחדל');
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
-            columns: () => [this.courier, this.updateAlsoAsFixed],
+            help: () => 'בכדי לעדכן מתנדב מ"בדרך" ל"מוכן למשלוח" יש לסמן את "בטל שיוך למתנדב". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו',
+            columns: () => [this.clearVoulenteer, this.courier, this.updateAlsoAsFixed],
+            dialogColumns: () => [
+                this.clearVoulenteer,
+                { column: this.courier, visible: () => !this.clearVoulenteer.value },
+                { column: this.updateAlsoAsFixed, visible: () => !this.clearVoulenteer.value }
 
-
+            ],
+            additionalWhere: fd => fd.deliverStatus.isNotAResultStatus(),
             title: 'עדכן מתנדב למשלוחים',
             forEach: async fd => {
-                fd.courier.value = this.courier.value;
-                if (this.updateAlsoAsFixed.value) {
-                    let f = await this.context.for(Families).findId(fd.family);
-                    if (f) {
-                        f.fixedCourier.value = this.courier.value;
-                        if (f.wasChanged()) {
-                            await f.save();
-                            f.updateDelivery(fd);
+                if (this.clearVoulenteer.value) {
+                    fd.courier.value = '';
+                }
+                else {
+                    fd.courier.value = this.courier.value;
+                    if (this.updateAlsoAsFixed.value) {
+                        let f = await this.context.for(Families).findId(fd.family);
+                        if (f) {
+                            f.fixedCourier.value = this.courier.value;
+                            if (f.wasChanged()) {
+                                await f.save();
+                                f.updateDelivery(fd);
+                            }
                         }
                     }
                 }
