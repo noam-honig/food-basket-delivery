@@ -40,7 +40,7 @@ import { ImportFromExcelComponent } from './import-from-excel/import-from-excel.
 import { NewsComponent } from './news/news.component';
 import { NewsFilterService } from "./news/news-filter-service";
 
-import * as Hammer from 'hammerjs';
+
 import { UpdateFamilyDialogComponent } from './update-family-dialog/update-family-dialog.component';
 
 
@@ -86,7 +86,7 @@ var site = Sites.initOnBrowserAndReturnAngularBaseHref();
 
 export class MyHammerConfig extends HammerGestureConfig {
   overrides = <any>{
-    swipe: { direction: Hammer.DIRECTION_HORIZONTAL },
+    swipe: { direction: 6 },
     pan: {
       direction: 6
     },

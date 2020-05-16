@@ -36,7 +36,7 @@ export class FamilyInListComponent implements OnInit {
   horizontalPan(e: any) {
     if (Math.abs(e.overallVelocityX) < 1) {
 
-      this.offsetXValue = Math.max(-100,Math.min(0, e.deltaX));
+      this.offsetXValue = Math.max(-100, Math.min(0, e.deltaX));
 
       this.swipe = this.offsetXValue <= -85;
 
