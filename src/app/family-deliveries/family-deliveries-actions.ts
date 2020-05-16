@@ -142,6 +142,8 @@ export class UpdateDeliveriesStatus extends ActionOnRows<ActiveFamilyDeliveries>
             },
             validateInComponent: async c => {
                 if (this.status.value == DeliveryStatus.ReadyForDelivery || this.status.value == DeliveryStatus.SelfPickup) {
+                    if (await c.dialog.YesNoPromise("בחרת לעדכן סטטוס " + this.status.value.caption + " - אם את/ה מעוניין ליצור משלוח חדש, יש לעשות זאת בתפריט 'משלוח חדש'."))
+                        throw "העדכון הופסק";
                     if (await c.dialog.YesNoPromise("עדכון משלוחים שהסתיימו לסטטוס " + this.status.value.caption + " לא ישמור בהיסטוריה את הסטטוס של המשלוחים שהסתיימו - האם להפסיק את העדכון?"))
                         throw "העדכון הופסק";
                 }
