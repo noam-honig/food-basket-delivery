@@ -163,7 +163,7 @@ export class FamiliesComponent implements OnInit {
     }
     stats = new Stats();
     async saveToExcel() {
-        await saveFamiliesToExcel(this.context,this.families,this.busy);
+        await saveFamiliesToExcel(this.context, this.families, this.busy);
     }
 
 
@@ -255,12 +255,12 @@ export class FamiliesComponent implements OnInit {
                     }
                 },
                 families.phone1,
-
-                { column: families.groups },
-
+                {
+                    column: families.groups,
+                    caption: translate('קבוצות שיוך משפחה')
+                },
                 families.familyMembers,
                 families.familySource,
-
                 {
                     column: families.internalComment,
                     width: '300'
@@ -359,14 +359,14 @@ export class FamiliesComponent implements OnInit {
                             actionRowsFilterInfo: packWhere(this.context.for(Families).create(), where)
                         };
                     }, settings: this.settings,
-                    groupName: 'משפחות'
+                    groupName: translate('משפחות')
                 })
             , {
                 name: 'יצוא לאקסל',
                 click: () => this.saveToExcel(),
                 visible: () => this.isAdmin
             }, {
-                name: 'מיזוג משפחות',
+                name: translate('מיזוג משפחות'),
                 click: async () => {
                     await this.context.openDialog(MergeFamiliesComponent, x => x.families = [...this.families.selectedRows], y => {
                         if (y.merged)
@@ -385,7 +385,7 @@ export class FamiliesComponent implements OnInit {
                 click: async f => {
                     await f.showFamilyDialog();
                 }
-                , textInMenu: () => 'פרטי משפחה'
+                , textInMenu: () => translate('פרטי משפחה')
             },
 
             {
@@ -398,7 +398,7 @@ export class FamiliesComponent implements OnInit {
             }
             ,
             {
-                name: 'משלוחים למשפחה',
+                name: translate('משלוחים למשפחה'),
                 click: async f => {
                     f.showDeliveryHistoryDialog();
                 }
@@ -495,7 +495,7 @@ export class FamiliesComponent implements OnInit {
         {
             rule: f => undefined,
             showTotal: true,
-            name: 'כל המשפחות',
+            name: translate('כל המשפחות'),
             stats: [
                 this.stats.active,
                 this.stats.outOfList,
@@ -693,7 +693,7 @@ interface statsOnTab {
     rule: (f: Families) => FilterBase
 
 }
-export async function saveFamiliesToExcel(context:Context,gs:GridSettings<Families>,busy:BusyService,name='משפחות') {
+export async function saveFamiliesToExcel(context: Context, gs: GridSettings<Families>, busy: BusyService, name = 'משפחות') {
     await saveToExcel<Families, GridSettings<Families>>(context.for(Families), gs, translate(name), busy, (f, c) => c == f.id || c == f.addressApiResult, (f, c) => false, async (f, addColumn) => {
         let x = f.getGeocodeInformation();
         let street = f.address.value;
