@@ -913,7 +913,7 @@ export class ImportFromExcelComponent implements OnInit {
                             rows.push(f);
                     }
 
-                    if (rows.length == 200) {
+                    if (rows.length == 50) {
                         this.dialog.Info((index - 1) + ' ' + (f.name ? f.name : 'ללא שם') + ' ' + (f.error ? f.error : ''));
                         await this.processExcelRowsAndCheckOnServer(rows);
                         rows = [];
