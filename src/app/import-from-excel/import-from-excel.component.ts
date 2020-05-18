@@ -1252,11 +1252,11 @@ export class ImportFromExcelComponent implements OnInit {
             for (const f of from) {
                 let r: importReportRow = {
                     "שורה באקסל המקורי": f.rowInExcel,
-                    סטטוס: status,
+                    סטטוס_קליטה: status,
                     "שגיאה": f.error
                 };
                 if (f.created) {
-                    r.סטטוס = 'נוספה לאתר';
+                    r.סטטוס_קליטה = 'נוספה לאתר';
                     f.error = '';
                 }
                 for (const col of this.columnsInCompare) {
@@ -1286,7 +1286,7 @@ export class ImportFromExcelComponent implements OnInit {
 }
 interface importReportRow {
     "שורה באקסל המקורי": number;
-    "סטטוס": string;
+    "סטטוס_קליטה": string;
     "שגיאה"?: string;
     [caption: string]: any;
 }
