@@ -100,6 +100,7 @@ export class ApplicationSettings extends Entity<number>  {
   message2Link = new StringColumn('כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב');
   message2OnlyWhenDone = new BoolColumn('להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים');
   forWho = new TranslationOptionsColumn();
+  _old_for_soliders = new BoolColumn({ dbName: 'forSoldiers' });
 
   usingSelfPickupModule = new BoolColumn('ישנן משפחות שבאות לקחת ממרכז החלוקה');
   showCompanies = new BoolColumn('שמור מטעם איזה חברה הגיע המתנדב');
