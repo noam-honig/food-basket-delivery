@@ -18,7 +18,8 @@ export class UpdateCommentComponent implements OnInit {
     family: ActiveFamilyDeliveries,
     showFailStatus?: boolean,
     helpText: (s: ApplicationSettings) => Column<any>
-
+    hideLocation?:boolean,
+    title?:string,
     comment: string,
     ok: (comment: string, failStatusId: DeliveryStatus) => void,
     cancel: () => void
@@ -59,6 +60,8 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
   }
 
   async ngOnInit() {
+    if (!this.args.title)
+      this.args.title = 'תודה';
     if (this.args.showFailStatus) {
       
       this.phoneOptions = await ApplicationSettings.getPhoneOptions(this.args.family.id.value);

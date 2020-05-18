@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef, MatDialogActions } from '@angular/material/dialog';
 import { Families, duplicateFamilyInfo, displayDupInfo } from '../families/families';
 
-import { Context, DialogConfig, DataControlSettings, DataAreaSettings, GridSettings } from '@remult/core';
+import { Context, DialogConfig, DataControlSettings, DataAreaSettings, GridSettings, StringColumn } from '@remult/core';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyDeliveryStats } from '../family-deliveries/family-deliveries-stats';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -12,6 +12,8 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { PreviewFamilyComponent } from '../preview-family/preview-family.component';
 import { DialogService } from '../select-popup/dialog';
 import { wasChanged } from '../model-shared/types';
+import { UpdateCommentComponent } from '../update-comment/update-comment.component';
+import { Helpers } from '../helpers/helpers';
 
 @Component({
   selector: 'app-update-family-dialog',
@@ -43,8 +45,30 @@ export class UpdateFamilyDialogComponent implements OnInit {
   ) {
 
   }
+  async sendSmsToCourier() {
+    let h = await this.context.for(Helpers).findId(this.args.familyDelivery.courier);
+    let phone = h.phone.value;
+    if (phone.startsWith('0')) {
+      phone = '972' + phone.substr(1);
+    }
+    await this.context.openDialog(UpdateCommentComponent, x => x.args = {
+      helpText: () => new StringColumn(),
+      ok: (comment) => {
+        let url = 'https://wa.me/' + phone + '?text=' + encodeURI(comment);
+        console.log(url);
+        window.open(url, '_blank');
+      },
+      cancel: () => { },
+      hideLocation: true,
+      title: 'שלח הודעת ל' + h.name.value,
+      family: this.args.familyDelivery,
+      comment: 'שלום ' + h.name.value + '\n בקשר למשפחת "' + this.args.familyDelivery.name.value + '" מ ' + this.args.familyDelivery.address.value + '\n'
+    });
+  }
   preview() {
-    let fd = this.args.family.createDelivery(this.dialog.distCenter.value);
+    let fd = this.args.familyDelivery;
+    if (!fd)
+      fd = this.args.family.createDelivery(this.dialog.distCenter.value);
     this.context.openDialog(PreviewFamilyComponent, x => { x.argsFamily = fd });
   }
   updateInfo() {

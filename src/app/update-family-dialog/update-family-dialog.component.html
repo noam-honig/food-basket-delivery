@@ -9,6 +9,8 @@
                 *ngIf="!this.families.currentRow.isNew()">משלוחים</button>
             <button mat-menu-item (click)="updateInfo()" *ngIf="!this.families.currentRow.isNew()">פרטי
                 עדכונים</button>
+            <button mat-menu-item (click)="sendSmsToCourier()" *ngIf="args.familyDelivery&&args.familyDelivery.courier.value">שלח
+                הודעה למתנדב</button>
 
         </mat-menu>
 
@@ -39,7 +41,8 @@
 
                     </mat-expansion-panel-header>
                     <ng-template matExpansionPanelContent>
-                        <button mat-raised-button color="primary" style="margin-bottom:5px" *ngIf="showNewDelivery()" (click)="newDelivery()">משלוח חדש</button>
+                        <button mat-raised-button color="primary" style="margin-bottom:5px" *ngIf="showNewDelivery()"
+                            (click)="newDelivery()">משלוח חדש</button>
                         <data-area [settings]="deliverInfo"></data-area>
                     </ng-template>
                 </mat-expansion-panel>
