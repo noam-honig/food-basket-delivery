@@ -13,7 +13,8 @@ import { SqlBuilder } from '../model-shared/types';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { pagedRowsIterator, iterateRowsActionOnServer } from '../families/familyActionsWiring';
-import { TranslationOptions } from '../manage/TranslationOptions';
+import { TranslationOptions } from '../translate';
+
 
 export async function initSchema(pool1: PostgresPool, org: string) {
 

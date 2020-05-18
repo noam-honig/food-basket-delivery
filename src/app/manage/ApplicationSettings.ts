@@ -4,13 +4,13 @@ import { Entity, Context, EntityClass } from '@remult/core';
 import { PhoneColumn } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { DeliveryStatusColumn, DeliveryStatus } from "../families/DeliveryStatus";
-import { translate, translationConfig } from "../translate";
+import { translate, translationConfig, TranslationOptionsColumn } from "../translate";
 
 import { FamilySources } from "../families/FamilySources";
 import { Injectable } from '@angular/core';
 import { Helpers } from '../helpers/helpers';
 import { BasketType } from '../families/BasketType';
-import { TranslationOptions, TranslationOptionsColumn } from "./TranslationOptions";
+
 
 @EntityClass
 export class ApplicationSettings extends Entity<number>  {
@@ -241,7 +241,7 @@ export class SettingsService {
   instance: ApplicationSettings;
   async init() {
     this.instance = await ApplicationSettings.getAsync(this.context);
-    translationConfig.forWho = this.instance.forWho.value.id;
+    translationConfig.forWho = this.instance.forWho.value;
     DeliveryStatus.usingSelfPickupModule = this.instance.usingSelfPickupModule.value;
     Helpers.usingCompanyModule = this.instance.showCompanies.value;
 
