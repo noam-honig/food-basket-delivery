@@ -10,7 +10,7 @@ import { FamilySources } from "../families/FamilySources";
 import { Injectable } from '@angular/core';
 import { Helpers } from '../helpers/helpers';
 import { BasketType } from '../families/BasketType';
-
+import { TranslationOptions, TranslationOptionsColumn } from "./TranslationOptions";
 
 @EntityClass
 export class ApplicationSettings extends Entity<number>  {
@@ -99,7 +99,7 @@ export class ApplicationSettings extends Entity<number>  {
   message2Text = new StringColumn('מלל חופשי 2 למתנדב');
   message2Link = new StringColumn('כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב');
   message2OnlyWhenDone = new BoolColumn('להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים');
-  forSoldiers = new BoolColumn('המערכת היא עבור חיילים לא משפחות');
+  forWho = new TranslationOptionsColumn();
 
   usingSelfPickupModule = new BoolColumn('ישנן משפחות שבאות לקחת ממרכז החלוקה');
   showCompanies = new BoolColumn('שמור מטעם איזה חברה הגיע המתנדב');
@@ -240,7 +240,7 @@ export class SettingsService {
   instance: ApplicationSettings;
   async init() {
     this.instance = await ApplicationSettings.getAsync(this.context);
-    translationConfig.activateTranslation = this.instance.forSoldiers.value;
+    translationConfig.forWho = this.instance.forWho.value.id;
     DeliveryStatus.usingSelfPickupModule = this.instance.usingSelfPickupModule.value;
     Helpers.usingCompanyModule = this.instance.showCompanies.value;
 

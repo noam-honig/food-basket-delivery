@@ -22,6 +22,7 @@ import { familyActionsForDelivery } from '../families/familyActions';
 import { async } from '@angular/core/testing';
 import { saveToExcel } from '../shared/saveToExcel';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import {translate} from '../translate'
 
 @Component({
   selector: 'app-family-deliveries',
@@ -517,7 +518,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           return await this.buildWhereForAction(actionWhere);
         },
         settings: this.settings,
-        groupName: 'משפחות'
+        groupName: translate('משפחות')
       }),
       {
         name: 'יצוא לאקסל',
@@ -565,7 +566,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         visible: d => d.deliverStatus.value == DeliveryStatus.ReadyForDelivery && d.courier.value != ''
       },
       {
-        name: 'משלוחים למשפחה',
+        name: translate('משלוחים למשפחה'),
         click: async fd => {
           let f = await this.context.for(Families).findId(fd.family);
           f.showDeliveryHistoryDialog();

@@ -31,7 +31,7 @@ class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
                 { column: this.status, visible: () => this.updateFamilyStatus.value }
             ],
             title: 'מחק משלוחים',
-            help: () => 'שים לב - מחיקת המשלוח לא תוציא את המשפחה מהרשימות - כדי להוציא את המשפחה מהרשימות יש לבצע עדכון לסטטוס המשפחה. המחיקה תתבצע רק עבור משלוחים שטרם נמסרו',
+            help: () => translate('שים לב - מחיקת המשלוח לא תוציא את המשפחה מהרשימות - כדי להוציא את המשפחה מהרשימות יש לבצע עדכון לסטטוס המשפחה. המחיקה תתבצע רק עבור משלוחים שטרם נמסרו'),
             forEach: async fd => {
                 fd.delete();
                 if (this.updateFamilyStatus.value) {
@@ -46,7 +46,7 @@ class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
 }
 class UpdateFixedCourier extends ActionOnRows<FamilyDeliveries> {
     byCurrentCourier = new BoolColumn('עדכן את המתנדב מהמשלוח הנוכחי');
-    courier = new HelperId(this.context, 'מתנדב ברירת מחדל למשפחה');
+    courier = new HelperId(this.context, translate('מתנדב ברירת מחדל למשפחה'));
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
@@ -58,7 +58,7 @@ class UpdateFixedCourier extends ActionOnRows<FamilyDeliveries> {
                     { column: this.courier, visible: () => !this.byCurrentCourier.value }
                 ]
             },
-            title: 'עדכן מתנדב ברירת מחדל למשפחה',
+            title: translate('עדכן מתנדב ברירת מחדל למשפחה'),
             forEach: async fd => {
 
 
@@ -308,7 +308,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
     }
 }
 class HelperStrategy {
-    static familyDefault = new HelperStrategy(0, 'הגדר מתנדב לפי מתנדב ברירת מחדל המוגדר למשפחה', x => { });
+    static familyDefault = new HelperStrategy(0, translate('הגדר מתנדב לפי מתנדב ברירת מחדל המוגדר למשפחה'), x => { });
     static currentHelper = new HelperStrategy(1, 'הגדר מתנדב לפי המתנדב במשלוח הנוכחי', x => {
         x.newDelivery.courier.value = x.existingDelivery.courier.value;
     });
