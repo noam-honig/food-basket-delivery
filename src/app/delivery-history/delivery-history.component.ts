@@ -18,7 +18,7 @@ import { ServerFunction } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DistributionCenterId } from '../manage/distribution-centers';
-import { translate } from '../translate'
+
 
 var fullDayValue = 24 * 60 * 60 * 1000;
 
@@ -95,7 +95,6 @@ export class DeliveryHistoryComponent implements OnInit {
         },
         {
           column: h.families,
-          caption: translate('משפחות'),
           width: '75'
         },
         {

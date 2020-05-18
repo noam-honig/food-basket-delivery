@@ -215,7 +215,7 @@ export class ManageComponent implements OnInit {
       this.settings.showHelperComment,
       this.settings.defaultPrefixForExcelImport,
       this.settings.redTitleBar,
-      this.settings.forWho,
+      this.settings.forSoldiers,
       this.settings.manageEscorts
     ]
   });
