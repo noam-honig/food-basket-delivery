@@ -7,6 +7,7 @@ import { SqlBuilder } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DateRangeComponent } from '../date-range/date-range.component';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-playback',
@@ -15,7 +16,7 @@ import { DateRangeComponent } from '../date-range/date-range.component';
 })
 export class PlaybackComponent implements OnInit {
 
-  constructor() { }
+  constructor(public settings:ApplicationSettings) { }
   public pieChartLabels: string[] = [];
   public pieChartData: number[] = [];
   public colors: Array<any> = [
@@ -173,6 +174,10 @@ export class PlaybackComponent implements OnInit {
   position = 0;
   zoom=0;
   speed=5;
+  showOnLeft = false;
+  showOrgTitle = false;
+  showOrgLogo = false;
+  showHagaiLogo = false;
   next() {
 
     let now = this.timeline[this.position].timeline.valueOf();
