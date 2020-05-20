@@ -146,6 +146,7 @@ export class PlaybackComponent implements OnInit {
     });
 
     this.updateChart();
+    this.zoom = this.map.getZoom();
   }
   height = 600;
   getHeight() {
@@ -170,6 +171,8 @@ export class PlaybackComponent implements OnInit {
     }
   }
   position = 0;
+  zoom=0;
+  speed=5;
   next() {
 
     let now = this.timeline[this.position].timeline.valueOf();
@@ -180,7 +183,7 @@ export class PlaybackComponent implements OnInit {
       let x = this.timeline[this.position];
       x.do();
     }
-    while (this.timeline[this.position].timeline.valueOf() < now + 60 * 1000);
+    while (this.timeline[this.position].timeline.valueOf() < now + 1 * 1000);
 
     this.updateChart();
   }
@@ -205,7 +208,7 @@ export class PlaybackComponent implements OnInit {
       this.next();
       if (this.position < this.timeline.length - 1)
         this.animate();
-    }, 250);
+    }, this.speed);
   }
 
   currentTime() {

@@ -13,4 +13,8 @@
 </div>
 
 <div [hidden]="!ready" #gmap style="width:100%;" [style.height]="getHeight()"></div>
+<div *ngIf="ready">
 <input [(ngModel)]="height" *ngIf="ready">
+{{map.getZoom()}} <input [(ngModel)]="zoom" *ngIf="ready"><button (click)="map.setZoom(+this.zoom)">set</button>
+<input [(ngModel)]="speed" *ngIf="ready">
+</div>
