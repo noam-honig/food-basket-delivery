@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { infoOnMap, statusClass, Statuses } from '../distribution-map/distribution-map.component';
 import * as chart from 'chart.js';
-import { ServerFunction, Context, DateTimeColumn, SqlDatabase } from '@remult/core';
+import { ServerFunction, Context, DateTimeColumn, SqlDatabase, DateColumn } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { SqlBuilder } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
+import { DateRangeComponent } from '../date-range/date-range.component';
 
 @Component({
   selector: 'app-playback',
@@ -43,8 +44,13 @@ export class PlaybackComponent implements OnInit {
   @ViewChild('gmap', { static: true }) gmapElement: any;
 
   statuses = new Statuses();
+  @ViewChild(DateRangeComponent, { static: false }) dateRange;
+  ready = false;
+  async select() {
+    this.ready = true;
+    let from = this.dateRange.fromDate.rawValue;
+    let to = this.dateRange.toDate.rawValue;
 
-  async ngOnInit() {
 
     var mapProp: google.maps.MapOptions = {
       center: new google.maps.LatLng(32.3215, 34.8532),
@@ -61,7 +67,7 @@ export class PlaybackComponent implements OnInit {
 
 
     }
-    let families = await PlaybackComponent.GetTimeline();
+    let families = await PlaybackComponent.GetTimeline(from, to);
     for (const f of families) {
       let familyOnMap = {
         marker: new google.maps.Marker({
@@ -141,6 +147,24 @@ export class PlaybackComponent implements OnInit {
 
     this.updateChart();
   }
+  async ngOnInit() {
+
+    var mapProp: google.maps.MapOptions = {
+      center: new google.maps.LatLng(32.3215, 34.8532),
+      zoom: 17,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+
+    };
+
+
+    if (!this.mapInit) {
+
+      this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
+      this.mapInit = true;
+
+
+    }
+  }
   position = 0;
   next() {
 
@@ -204,8 +228,11 @@ export class PlaybackComponent implements OnInit {
   timeline: timelineStep[] = [];
 
   @ServerFunction({ allowed: Roles.admin })
-  static async GetTimeline(context?: Context, db?: SqlDatabase) {
-    let f = context.for(ActiveFamilyDeliveries).create();
+  static async GetTimeline(fromDate: string, toDate: string, context?: Context, db?: SqlDatabase) {
+    let f = context.for(FamilyDeliveries).create();
+    var fromDateDate = DateColumn.stringToDate(fromDate);
+    var toDateDate = DateColumn.stringToDate(toDate);
+    toDateDate = new Date(toDateDate.getFullYear(), toDateDate.getMonth(), toDateDate.getDate() + 1);
 
     let sql = new SqlBuilder();
     sql.addEntity(f, "Families");
@@ -213,8 +240,7 @@ export class PlaybackComponent implements OnInit {
       select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier, f.courierAssingTime, f.deliveryStatusDate],
       from: f,
       where: () => {
-        let where = [f.deliverStatus.isActiveDelivery().and(f.deliverStatus.isDifferentFrom(DeliveryStatus.Frozen))];
-
+        let where = [f.deliverStatus.isActiveDelivery().and(f.deliverStatus.isDifferentFrom(DeliveryStatus.Frozen).and(f.deliveryStatusDate.isGreaterOrEqualTo(fromDateDate).and(f.deliveryStatusDate.isLessThan(toDateDate))))];
         return where;
       },
       orderBy: [f.addressLatitude, f.addressLongitude]

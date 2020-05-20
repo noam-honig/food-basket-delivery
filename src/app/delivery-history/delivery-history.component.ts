@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { EntityClass, Context, StringColumn, IdColumn, SpecificEntityHelper, SqlDatabase, Column, DataControlInfo } from '@remult/core';
 import { FamilyId } from '../families/families';
 import { changeDate, SqlBuilder, PhoneColumn } from '../model-shared/types';
@@ -19,8 +19,9 @@ import { Roles, AdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DistributionCenterId } from '../manage/distribution-centers';
 import { translate } from '../translate'
+import { DateRangeComponent } from '../date-range/date-range.component';
 
-var fullDayValue = 24 * 60 * 60 * 1000;
+
 
 @Component({
   selector: 'app-delivery-history',
@@ -29,28 +30,11 @@ var fullDayValue = 24 * 60 * 60 * 1000;
 })
 export class DeliveryHistoryComponent implements OnInit {
 
-  fromDate = new DateColumn({
-    caption: 'מתאריך',
-    valueChange: () => {
-
-      if (this.toDate.value < this.fromDate.value) {
-        this.toDate.value = this.getEndOfMonth();
-      }
-
-    }
-  });
-  toDate = new DateColumn('עד תאריך');
-  rangeArea = new DataAreaSettings({
-    columnSettings: () => [this.fromDate, this.toDate],
-    numberOfColumnAreas: 2
-  });
 
   helperInfo: GridSettings<helperHistoryInfo>;
 
 
-  private getEndOfMonth(): Date {
-    return new Date(this.fromDate.value.getFullYear(), this.fromDate.value.getMonth() + 1, 0);
-  }
+  @ViewChild(DateRangeComponent, { static: true }) dateRange;
 
   async refresh() {
     this.deliveries.getRecords();
@@ -110,14 +94,11 @@ export class DeliveryHistoryComponent implements OnInit {
       knowTotalRows: true
     });
 
-    let today = new Date();
 
-    this.fromDate.value = new Date(today.getFullYear(), today.getMonth(), 1);
-    this.toDate.value = this.getEndOfMonth();
   }
   private async refreshHelpers() {
 
-    var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.fromDate.rawValue, this.toDate.rawValue);
+    var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue);
     let rows: any[] = this.helperStorage.rows[this.context.for(helperHistoryInfo).create().defs.dbName];
     x = x.map(x => {
       x.deliveries = +x.deliveries;
@@ -129,35 +110,6 @@ export class DeliveryHistoryComponent implements OnInit {
     this.helperInfo.getRecords();
   }
 
-  today() {
-    this.fromDate.value = new Date();
-    this.toDate.value = new Date();
-    this.refresh();
-
-  }
-  next() {
-    this.setRange(+1);
-  }
-  previous() {
-
-    this.setRange(-1);
-  }
-  private setRange(delta: number) {
-    if (this.fromDate.value.getDate() == 1 && this.toDate.value.toDateString() == this.getEndOfMonth().toDateString()) {
-      this.fromDate.value = new Date(this.fromDate.value.getFullYear(), this.fromDate.value.getMonth() + delta, 1);
-      this.toDate.value = this.getEndOfMonth();
-    } else {
-      let difference = Math.abs(this.toDate.value.getTime() - this.fromDate.value.getTime());
-      if (difference < fullDayValue)
-        difference = fullDayValue;
-      difference *= delta;
-      let to = this.toDate.value;
-      this.fromDate.value = new Date(this.fromDate.value.getTime() + difference);
-      this.toDate.value = new Date(to.getTime() + difference);
-
-    }
-    this.refresh();
-  }
 
 
 
@@ -206,9 +158,9 @@ export class DeliveryHistoryComponent implements OnInit {
     get: {
       limit: 50,
       where: d => {
-        var toDate = this.toDate.value;
+        var toDate = this.dateRange.toDate.value;
         toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
-        return d.deliveryStatusDate.isGreaterOrEqualTo(this.fromDate.value).and(d.deliveryStatusDate.isLessThan(toDate))
+        return d.deliveryStatusDate.isGreaterOrEqualTo(this.dateRange.fromDate.value).and(d.deliveryStatusDate.isLessThan(toDate))
       }
     }
   });
