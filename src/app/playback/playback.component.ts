@@ -147,6 +147,10 @@ export class PlaybackComponent implements OnInit {
 
     this.updateChart();
   }
+  height = 600;
+  getHeight() {
+    return this.height.toString() + "px";
+  }
   async ngOnInit() {
 
     var mapProp: google.maps.MapOptions = {
