@@ -524,11 +524,11 @@ export class Statuses {
         break;
     }
   }
-  ready = new statusClass('טרם שויכו', '/assets/yellow.png', colors.yellow);
-  selfPickup = new statusClass('באים לקחת', '/assets/orange.png', colors.orange);
-  onTheWay = new statusClass('בדרך', '/assets/blue.png', colors.blue);
-  problem = new statusClass('בעיות', '/assets/red.png', colors.red);
-  success = new statusClass('הגיעו', '/assets/green.png', colors.green);
+  ready = new statusClass('טרם שויכו', '/assets/yellow2.png', colors.yellow);
+  selfPickup = new statusClass('באים לקחת', '/assets/orange2.png', colors.orange);
+  onTheWay = new statusClass('בדרך', '/assets/blue2.png', colors.blue);
+  problem = new statusClass('בעיות', '/assets/red2.png', colors.red);
+  success = new statusClass('הגיעו', '/assets/green2.png', colors.green);
   statuses: statusClass[] = [];
 
 
