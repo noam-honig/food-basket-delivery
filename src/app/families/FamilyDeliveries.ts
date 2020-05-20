@@ -17,6 +17,35 @@ import { DialogService } from "../select-popup/dialog";
 
 @EntityClass
 export class FamilyDeliveries extends IdEntity {
+    addStatusExcelColumn(addColumn: (caption: string, v: string, t: import("xlsx/types").ExcelDataType) => void) {
+        addColumn("סיכום סטטוס", this.statusSammary(), "s");
+    }
+    statusSammary() {
+        var status = this.deliverStatus.displayValue;
+        switch (this.deliverStatus.value) {
+            case DeliveryStatus.ReadyForDelivery:
+                if (this.courier.value)
+                    status = "בדרך";
+                else
+                    status = "טרם שוייכו";
+                break;
+            case DeliveryStatus.SelfPickup:
+            case DeliveryStatus.Frozen:
+                break;
+            case DeliveryStatus.Success:
+            case DeliveryStatus.SuccessPickedUp:
+            case DeliveryStatus.SuccessLeftThere:
+                status = "נמסר";
+                break;
+            case DeliveryStatus.FailedBadAddress:
+            case DeliveryStatus.FailedNotHome:
+            case DeliveryStatus.FailedOther:
+                status = "בעייה";
+                break;
+        }
+        return status;
+    }
+
     changeRequireStatsRefresh() {
         return wasChanged(this.deliverStatus, this.courier, this.basketType, this.quantity);
     }

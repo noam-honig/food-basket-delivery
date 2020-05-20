@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { EntityClass, Context, StringColumn, IdColumn, SpecificEntityHelper, SqlDatabase, Column } from '@remult/core';
+import { EntityClass, Context, StringColumn, IdColumn, SpecificEntityHelper, SqlDatabase, Column, DataControlInfo } from '@remult/core';
 import { FamilyId } from '../families/families';
 import { changeDate, SqlBuilder, PhoneColumn } from '../model-shared/types';
 import { BasketId } from '../families/BasketType';
@@ -166,15 +166,24 @@ export class DeliveryHistoryComponent implements OnInit {
       name: 'יצוא לאקסל',
       click: async () => {
         await saveToExcel(this.context.for(FamilyDeliveries), this.deliveries, "משלוחים", this.busy, (d: FamilyDeliveries, c) => c == d.id || c == d.family, undefined,
-          async (f, addColumn) => await f.basketType.addBasketTypes(f.quantity, addColumn));
+          async (f, addColumn) => {
+            await f.basketType.addBasketTypes(f.quantity, addColumn);
+            f.addStatusExcelColumn(addColumn);
+          });
       }, visible: () => this.context.isAllowed(Roles.admin)
     }],
     columnSettings: d => {
-      let r: Column<any>[] = [
+      let r: DataControlInfo<FamilyDeliveries>[] = [
         d.name,
-        d.courier,
-        d.deliveryStatusDate,
-        d.deliverStatus,
+        {
+          caption: 'סיכום משלוח',
+          column: d.deliverStatus,
+          readOnly: true,
+          valueList: d.deliverStatus.getOptions()
+          ,
+          getValue: f => f.getShortDeliveryDescription(),
+          width: '300'
+        },
         d.basketType,
         d.quantity,
         d.city,
@@ -195,7 +204,7 @@ export class DeliveryHistoryComponent implements OnInit {
     numOfColumnsInGrid: 6,
     knowTotalRows: true,
     get: {
-      limit: 20,
+      limit: 50,
       where: d => {
         var toDate = this.toDate.value;
         toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
@@ -251,6 +260,9 @@ export class DeliveryHistoryComponent implements OnInit {
 }
 @EntityClass
 export class helperHistoryInfo extends Entity<string>{
+  addStatusExcelColumn(addColumn: (caption: string, v: string, t: import("xlsx/types").ExcelDataType) => void) {
+    throw new Error("Method not implemented.");
+  }
   courier = new StringColumn();
   name = new StringColumn('שם');
   phone = new PhoneColumn("טלפון");
