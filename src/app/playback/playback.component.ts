@@ -213,7 +213,7 @@ export class PlaybackComponent implements OnInit {
       this.next();
       if (this.position < this.timeline.length - 1)
         this.animate();
-    }, this.speed);
+    }, +this.speed);
   }
 
   currentTime() {
