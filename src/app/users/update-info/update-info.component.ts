@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+/// <reference types="@types/googlemaps" />
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { StringColumn } from '@remult/core';
 import { Helpers } from '../../helpers/helpers';
 import { DialogService } from '../../select-popup/dialog';
@@ -7,21 +8,25 @@ import { SignedInGuard } from '@remult/core';
 import { Route } from '@angular/router';
 import { Context } from '@remult/core';
 
+
+
+
 @Component({
   selector: 'app-update-info',
   templateUrl: './update-info.component.html',
   styleUrls: ['./update-info.component.scss']
 })
-export class UpdateInfoComponent implements OnInit {
+export class UpdateInfoComponent implements OnInit,AfterViewInit  {
   constructor(private dialog: DialogService,
     private auth: AuthService,
     private context: Context) {
-    
+
 
   }
+  
   static route: Route = { path: 'update-info', component: UpdateInfoComponent, data: { name: 'הגדרות אישיות' }, canActivate: [SignedInGuard] };
 
-  confirmPassword = new StringColumn({ caption: 'אישור סיסמה', dataControlSettings: () => ({inputType: 'password'}), defaultValue: Helpers.emptyPassword });
+  confirmPassword = new StringColumn({ caption: 'אישור סיסמה', dataControlSettings: () => ({ inputType: 'password' }), defaultValue: Helpers.emptyPassword });
   helpers = this.context.for(Helpers).gridSettings({
     numOfColumnsInGrid: 0,
     allowUpdate: true,
@@ -32,12 +37,24 @@ export class UpdateInfoComponent implements OnInit {
       //h.userName,
       h.password,
       { column: this.confirmPassword },
-      
+
       //h.address
     ],
 
   });
-
+  @ViewChild("address", { static: true }) addressElement;
+  ngAfterViewInit(): void {
+  //   const autocomplete = new google.maps.places.Autocomplete(this.addressElement.nativeElement,
+  //     {
+  //   //     componentRestrictions: { country: 'US' }
+  //       //  ,
+  //       //  types: [this.adressType]  // 'establishment' / 'address' / 'geocode'
+  //     });
+  // google.maps.event.addListener(autocomplete, 'place_changed', () => {
+  //     const place = autocomplete.getPlace();
+  //     console.log(place);
+  // });
+  }
 
 
 
