@@ -1,0 +1,8 @@
+.container {
+    @media screen and (min-width: 600px) {
+        display: flex;
+        > div:nth-child(1) > div{
+            flex-direction: column;
+        }
+    }
+}

@@ -230,12 +230,13 @@ export class HelpersComponent implements OnInit, OnDestroy {
       r.push(helpers.distributionCenter);
     }
 
-    if (this.settings.manageEscorts.value)
-      r.push(helpers.company);
+
+    r.push(helpers.company);
     if (this.settings.manageEscorts.value) {
       r.push(helpers.escort, helpers.theHelperIAmEscorting, helpers.needEscort);
     }
     r.push(helpers.createDate);
+
     return r;
   }
 

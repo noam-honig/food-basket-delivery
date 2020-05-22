@@ -1,5 +1,5 @@
 <div dir="rtl">
-  <mat-card-title>תודה</mat-card-title>
+  <mat-card-title>{{this.args.title}}</mat-card-title>
 
 
   <div [class.hide]="!args.showFailStatus">
@@ -17,7 +17,7 @@
   <mat-dialog-content>
     {{helpText()}}
     <textarea class="form-control" rows="3" [(ngModel)]="args.comment" class="comment-text-area"></textarea>
-    <a (click)="addLocationToComment()" style="display:block">הוסף מיקום נוכחי להערה</a>
+    <a (click)="addLocationToComment()" style="display:block" *ngIf="!args.hideLocation">הוסף מיקום נוכחי להערה</a>
   </mat-dialog-content>
 
   <mat-dialog-actions>
@@ -29,7 +29,7 @@
         <button mat-raised-button color="accent" (click)="confirm()">
           {{args.showFailStatus?'הסל לא נמסר':'אשר'}}
         </button>
-       
+
       </div>
       <div class="button-line" [class.hide]="!args.showFailStatus">
         <a href="tel:{{phoneOptions[0].phone}}" *ngIf="phoneOptions.length==1">

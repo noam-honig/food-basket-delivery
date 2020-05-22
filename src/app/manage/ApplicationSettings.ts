@@ -4,7 +4,7 @@ import { Entity, Context, EntityClass } from '@remult/core';
 import { PhoneColumn } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { DeliveryStatusColumn, DeliveryStatus } from "../families/DeliveryStatus";
-import { translate, translationConfig } from "../translate";
+import { translate, translationConfig, TranslationOptionsColumn } from "../translate";
 
 import { FamilySources } from "../families/FamilySources";
 import { Injectable } from '@angular/core';
@@ -99,7 +99,8 @@ export class ApplicationSettings extends Entity<number>  {
   message2Text = new StringColumn('מלל חופשי 2 למתנדב');
   message2Link = new StringColumn('כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב');
   message2OnlyWhenDone = new BoolColumn('להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים');
-  forSoldiers = new BoolColumn('המערכת היא עבור חיילים לא משפחות');
+  forWho = new TranslationOptionsColumn();
+  _old_for_soliders = new BoolColumn({ dbName: 'forSoldiers' });
 
   usingSelfPickupModule = new BoolColumn('ישנן משפחות שבאות לקחת ממרכז החלוקה');
   showCompanies = new BoolColumn('שמור מטעם איזה חברה הגיע המתנדב');
@@ -240,7 +241,7 @@ export class SettingsService {
   instance: ApplicationSettings;
   async init() {
     this.instance = await ApplicationSettings.getAsync(this.context);
-    translationConfig.activateTranslation = this.instance.forSoldiers.value;
+    translationConfig.forWho = this.instance.forWho.value;
     DeliveryStatus.usingSelfPickupModule = this.instance.usingSelfPickupModule.value;
     Helpers.usingCompanyModule = this.instance.showCompanies.value;
 

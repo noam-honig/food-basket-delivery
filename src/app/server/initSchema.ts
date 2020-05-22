@@ -13,6 +13,8 @@ import { SqlBuilder } from '../model-shared/types';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { pagedRowsIterator, iterateRowsActionOnServer } from '../families/familyActionsWiring';
+import { TranslationOptions } from '../translate';
+
 
 export async function initSchema(pool1: PostgresPool, org: string) {
 
@@ -379,6 +381,10 @@ export async function initSchema(pool1: PostgresPool, org: string) {
             f.updateDelivery(fd);
             await fd.save();
         }
+    });
+    await version(24, async () => {
+        settings.forWho.value = settings._old_for_soliders.value ? TranslationOptions.Soldiers : TranslationOptions.Families;
+        await settings.save();
     });
 
 

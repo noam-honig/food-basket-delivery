@@ -338,7 +338,7 @@ export class Families extends IdEntity {
   groups = new GroupsColumn(this.context);
   special = new YesNoColumn({ caption: 'שיוך מיוחד' });
   defaultSelfPickup = new BoolColumn('באים לקחת ברירת מחדל');
-  iDinExcel = new StringColumn({ caption: 'מזהה חד ערכי למשפחה' });
+  iDinExcel = new StringColumn({ caption: translate('מזהה חד ערכי למשפחה') });
   internalComment = new StringColumn({ caption: 'הערה פנימית - לא תופיע למתנדב' });
 
 
@@ -822,7 +822,7 @@ export class GroupsColumn extends StringColumn {
   }
   constructor(private context: Context, settingsOrCaption?: ColumnOptions<string>) {
     super({
-      caption: 'קבוצות שיוך משפחה',
+      caption: translate('קבוצות שיוך משפחה'),
 
       dataControlSettings: () => ({
         width: '300',

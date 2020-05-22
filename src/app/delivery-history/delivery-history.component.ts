@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { EntityClass, Context, StringColumn, IdColumn, SpecificEntityHelper, SqlDatabase, Column } from '@remult/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { EntityClass, Context, StringColumn, IdColumn, SpecificEntityHelper, SqlDatabase, Column, DataControlInfo } from '@remult/core';
 import { FamilyId } from '../families/families';
 import { changeDate, SqlBuilder, PhoneColumn } from '../model-shared/types';
 import { BasketId } from '../families/BasketType';
@@ -18,9 +18,10 @@ import { ServerFunction } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DistributionCenterId } from '../manage/distribution-centers';
+import { translate } from '../translate'
+import { DateRangeComponent } from '../date-range/date-range.component';
 
 
-var fullDayValue = 24 * 60 * 60 * 1000;
 
 @Component({
   selector: 'app-delivery-history',
@@ -29,28 +30,11 @@ var fullDayValue = 24 * 60 * 60 * 1000;
 })
 export class DeliveryHistoryComponent implements OnInit {
 
-  fromDate = new DateColumn({
-    caption: 'מתאריך',
-    valueChange: () => {
-
-      if (this.toDate.value < this.fromDate.value) {
-        this.toDate.value = this.getEndOfMonth();
-      }
-
-    }
-  });
-  toDate = new DateColumn('עד תאריך');
-  rangeArea = new DataAreaSettings({
-    columnSettings: () => [this.fromDate, this.toDate],
-    numberOfColumnAreas: 2
-  });
 
   helperInfo: GridSettings<helperHistoryInfo>;
 
 
-  private getEndOfMonth(): Date {
-    return new Date(this.fromDate.value.getFullYear(), this.fromDate.value.getMonth() + 1, 0);
-  }
+  @ViewChild(DateRangeComponent, { static: true }) dateRange;
 
   async refresh() {
     this.deliveries.getRecords();
@@ -95,6 +79,7 @@ export class DeliveryHistoryComponent implements OnInit {
         },
         {
           column: h.families,
+          caption: translate('משפחות'),
           width: '75'
         },
         {
@@ -109,14 +94,11 @@ export class DeliveryHistoryComponent implements OnInit {
       knowTotalRows: true
     });
 
-    let today = new Date();
 
-    this.fromDate.value = new Date(today.getFullYear(), today.getMonth(), 1);
-    this.toDate.value = this.getEndOfMonth();
   }
   private async refreshHelpers() {
 
-    var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.fromDate.rawValue, this.toDate.rawValue);
+    var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue);
     let rows: any[] = this.helperStorage.rows[this.context.for(helperHistoryInfo).create().defs.dbName];
     x = x.map(x => {
       x.deliveries = +x.deliveries;
@@ -128,35 +110,6 @@ export class DeliveryHistoryComponent implements OnInit {
     this.helperInfo.getRecords();
   }
 
-  today() {
-    this.fromDate.value = new Date();
-    this.toDate.value = new Date();
-    this.refresh();
-
-  }
-  next() {
-    this.setRange(+1);
-  }
-  previous() {
-
-    this.setRange(-1);
-  }
-  private setRange(delta: number) {
-    if (this.fromDate.value.getDate() == 1 && this.toDate.value.toDateString() == this.getEndOfMonth().toDateString()) {
-      this.fromDate.value = new Date(this.fromDate.value.getFullYear(), this.fromDate.value.getMonth() + delta, 1);
-      this.toDate.value = this.getEndOfMonth();
-    } else {
-      let difference = Math.abs(this.toDate.value.getTime() - this.fromDate.value.getTime());
-      if (difference < fullDayValue)
-        difference = fullDayValue;
-      difference *= delta;
-      let to = this.toDate.value;
-      this.fromDate.value = new Date(this.fromDate.value.getTime() + difference);
-      this.toDate.value = new Date(to.getTime() + difference);
-
-    }
-    this.refresh();
-  }
 
 
 
@@ -165,15 +118,24 @@ export class DeliveryHistoryComponent implements OnInit {
       name: 'יצוא לאקסל',
       click: async () => {
         await saveToExcel(this.context.for(FamilyDeliveries), this.deliveries, "משלוחים", this.busy, (d: FamilyDeliveries, c) => c == d.id || c == d.family, undefined,
-          async (f, addColumn) => await f.basketType.addBasketTypes(f.quantity, addColumn));
+          async (f, addColumn) => {
+            await f.basketType.addBasketTypes(f.quantity, addColumn);
+            f.addStatusExcelColumn(addColumn);
+          });
       }, visible: () => this.context.isAllowed(Roles.admin)
     }],
     columnSettings: d => {
-      let r: Column<any>[] = [
+      let r: DataControlInfo<FamilyDeliveries>[] = [
         d.name,
-        d.courier,
-        d.deliveryStatusDate,
-        d.deliverStatus,
+        {
+          caption: 'סיכום משלוח',
+          column: d.deliverStatus,
+          readOnly: true,
+          valueList: d.deliverStatus.getOptions()
+          ,
+          getValue: f => f.getShortDeliveryDescription(),
+          width: '300'
+        },
         d.basketType,
         d.quantity,
         d.city,
@@ -194,11 +156,11 @@ export class DeliveryHistoryComponent implements OnInit {
     numOfColumnsInGrid: 6,
     knowTotalRows: true,
     get: {
-      limit: 20,
+      limit: 50,
       where: d => {
-        var toDate = this.toDate.value;
+        var toDate = this.dateRange.toDate.value;
         toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
-        return d.deliveryStatusDate.isGreaterOrEqualTo(this.fromDate.value).and(d.deliveryStatusDate.isLessThan(toDate)).and(d.deliverStatus.isAResultStatus())
+        return d.deliveryStatusDate.isGreaterOrEqualTo(this.dateRange.fromDate.value).and(d.deliveryStatusDate.isLessThan(toDate))
       }
     }
   });
@@ -241,7 +203,7 @@ export class DeliveryHistoryComponent implements OnInit {
           sql.build("count (distinct date (", fd.courierAssingTime.defs.dbName, ")) dates"),
           sql.build("count (distinct ", fd.family.defs.dbName, ") families")],
           ' from ', fd.defs.dbName,
-          ' where ', sql.and(fd.deliveryStatusDate.isGreaterOrEqualTo(fromDateDate).and(fd.deliveryStatusDate.isLessThan(toDateDate).and(fd.deliverStatus.isAResultStatus()))))
+          ' where ', sql.and(fd.deliveryStatusDate.isGreaterOrEqualTo(fromDateDate).and(fd.deliveryStatusDate.isLessThan(toDateDate))))
 
         + sql.build(' group by ', fd.courier.defs.dbName), ") x"))).rows;
 
@@ -250,6 +212,9 @@ export class DeliveryHistoryComponent implements OnInit {
 }
 @EntityClass
 export class helperHistoryInfo extends Entity<string>{
+  addStatusExcelColumn(addColumn: (caption: string, v: string, t: import("xlsx/types").ExcelDataType) => void) {
+    throw new Error("Method not implemented.");
+  }
   courier = new StringColumn();
   name = new StringColumn('שם');
   phone = new PhoneColumn("טלפון");

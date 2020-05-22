@@ -11,7 +11,7 @@ import { FamilySourceId } from "./FamilySources";
 import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer, serverUpdateInfo, pagedRowsIterator } from "./familyActionsWiring";
 import { DeliveryStatus } from "./DeliveryStatus";
 import { ActiveFamilyDeliveries } from "./FamilyDeliveries";
-
+import { translate } from "../translate";
 
 class NewDelivery extends ActionOnRows<Families> {
     useFamilyBasket = new BoolColumn({ caption: 'השתמש בסוג הסל המוגדר למשפחה', defaultValue: false });
@@ -94,7 +94,7 @@ export class updateGroup extends ActionOnRows<Families> {
         super(context, Families, {
             columns: () => [this.group, this.action],
             confirmQuestion: () => 'האם ' + this.action.value + ' את השיוך לקבוצה "' + this.group.value + '"',
-            title: 'שיוך לקבוצת משפחות',
+            title: translate('שיוך לקבוצת משפחות'),
             allowed: Roles.admin,
             forEach: async f => {
                 if (this.action.value == addGroupAction) {
@@ -163,7 +163,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
         super(context, Families, {
             allowed: Roles.admin,
             columns: () => [this.status, this.archiveFinshedDeliveries, this.deletePendingDeliveries,this.comment,this.deletePendingDeliveries],
-            help: () => 'סטטוס הוצא מהרשימות - נועד כדי לסמן שהמשפחה לא אמורה לקבל מזון - אבל בניגוד לסטטוס למחיקה - אנחנו רוצים לשמור אותה בבסיס הנתונים כדי שאם הרווחה יביאו לנו אותה שוב, נדע להגיד שהם הוצאו מהרשימות. זה מתאים למשפחות שחס וחלילה נפתרו או שפשוט לא רוצים לקבל - או שהכתובת לא קיימת וכו...',
+            help: () => translate('סטטוס הוצא מהרשימות - נועד כדי לסמן שהמשפחה לא אמורה לקבל מזון - אבל בניגוד לסטטוס למחיקה - אנחנו רוצים לשמור אותה בבסיס הנתונים כדי שאם הרווחה יביאו לנו אותה שוב, נדע להגיד שהם הוצאו מהרשימות. זה מתאים למשפחות שחס וחלילה נפתרו או שפשוט לא רוצים לקבל - או שהכתובת לא קיימת וכו...'),
             dialogColumns: () => {
                 if (!this.status.value)
                     this.status.value = FamilyStatus.Active;
@@ -177,7 +177,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
                     
                 ]
             },
-            title: 'עדכן סטטוס משפחה ',
+            title: translate('עדכן סטטוס משפחה '),
             forEach: async f => {
                 f.status.value = this.status.value;
                 if (this.deleteExistingComment) {
@@ -257,7 +257,7 @@ export class UpdateArea extends ActionOnRows<Families> {
         super(context, Families, {
             allowed: Roles.admin,
             columns: () => [this.area],
-            title: 'עדכן אזור למשפחות',
+            title: translate('עדכן אזור למשפחות'),
             forEach: async f => { f.area.value = this.area.value },
         });
     }
