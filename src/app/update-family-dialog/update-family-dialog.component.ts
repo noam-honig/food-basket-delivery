@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef, MatDialogActions } from '@angular/material/dialog';
 import { Families, duplicateFamilyInfo, displayDupInfo } from '../families/families';
 
-import { Context, DialogConfig, DataControlSettings, DataAreaSettings, GridSettings, StringColumn } from '@remult/core';
+import { Context, DialogConfig, DataControlSettings, DataAreaSettings, GridSettings, StringColumn, ServerFunction, ServerContext } from '@remult/core';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyDeliveryStats } from '../family-deliveries/family-deliveries-stats';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -14,6 +14,10 @@ import { DialogService } from '../select-popup/dialog';
 import { wasChanged } from '../model-shared/types';
 import { UpdateCommentComponent } from '../update-comment/update-comment.component';
 import { Helpers } from '../helpers/helpers';
+import { Roles } from '../auth/roles';
+import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
+import { Sites } from '../sites/sites';
+import { async } from '@angular/core/testing';
 
 @Component({
   selector: 'app-update-family-dialog',
@@ -53,17 +57,27 @@ export class UpdateFamilyDialogComponent implements OnInit {
     }
     await this.context.openDialog(UpdateCommentComponent, x => x.args = {
       helpText: () => new StringColumn(),
-      ok: (comment) => {
-        let url = 'https://wa.me/' + phone + '?text=' + encodeURI(comment);
-        console.log(url);
-        window.open(url, '_blank');
+      ok: async (comment) => {
+        try {
+          await UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.args.familyDelivery.courier.value, comment);
+          this.dialog.Info("הודעה נשלחה");
+        }
+        catch (err) {
+          this.dialog.exception("שליחת הודעה למתנדב ", err);
+        }
       },
       cancel: () => { },
       hideLocation: true,
       title: 'שלח הודעת ל' + h.name.value,
       family: this.args.familyDelivery,
-      comment: 'שלום ' + h.name.value + '\n בקשר למשפחת "' + this.args.familyDelivery.name.value + '" מ ' + this.args.familyDelivery.address.value + '\n'
+      comment: 'שלום ' + h.name.value + '\nבקשר למשפחת "' + this.args.familyDelivery.name.value + '" מ "' + this.args.familyDelivery.address.value + '"\n'
     });
+  }
+  @ServerFunction({ allowed: Roles.admin })
+  static async SendCustomMessageToCourier(courier: string, message: string, context?: ServerContext) {
+    let h = await context.for(Helpers).findId(courier);
+    await new SendSmsUtils().sendSms(h.phone.value, await SendSmsAction.getSenderPhone(context), message, context.getOrigin(), Sites.getOrganizationFromContext(context));
+
   }
   preview() {
     let fd = this.args.familyDelivery;
