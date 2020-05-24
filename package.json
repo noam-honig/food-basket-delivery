@@ -40,6 +40,7 @@
     "@remult/core": "^1.0.52",
     "@remult/server": "^1.0.52",
     "@remult/server-postgres": "^1.0.52",
+    "aws-sdk": "^2.683.0",
     "body-parser": "^1.19.0",
     "chart.js": "^2.8.0",
     "compression": "^1.7.4",
