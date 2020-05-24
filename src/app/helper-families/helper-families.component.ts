@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
-import { BusyService, ServerFunction } from '@remult/core';
+import { BusyService, ServerFunction, StringColumn } from '@remult/core';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';
@@ -22,6 +22,7 @@ import { isGpsAddress } from '../shared/googleApiHelpers';
 import { Roles } from '../auth/roles';
 import { pagedRowsIterator } from '../families/familyActionsWiring';
 import { Families } from '../families/families';
+import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 
 @Component({
   selector: 'app-helper-families',
@@ -224,6 +225,30 @@ export class HelperFamiliesComponent implements OnInit {
     }
     window.open('https://wa.me/' + phone + '?text=' + encodeURI(this.smsMessage), '_blank');
     await this.updateMessageSent();
+  }
+  async customSms(){
+    let h = this.familyLists.helper;
+    let phone = h.phone.value;
+    if (phone.startsWith('0')) {
+      phone = '972' + phone.substr(1);
+    }
+    await this.context.openDialog(UpdateCommentComponent, x => x.args = {
+      helpText: () => new StringColumn(),
+      ok: async (comment) => {
+        try {
+          await UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.familyLists.helper.id.value, comment);
+          this.dialog.Info("הודעה נשלחה");
+        }
+        catch (err) {
+          this.dialog.exception("שליחת הודעה למתנדב ", err);
+        }
+      },
+      cancel: () => { },
+      hideLocation: true,
+      title: 'שלח הודעת ל' + h.name.value,
+      family: undefined,
+      comment: this.smsMessage
+    });
   }
   smsMessage: string = '';
   smsPhone: string = '';
