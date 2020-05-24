@@ -14,7 +14,7 @@ import { FamilyDeliveries, ActiveFamilyDeliveries } from "./FamilyDeliveries";
 import * as fetch from 'node-fetch';
 import { Roles } from "../auth/roles";
 
-import { translate } from "../translate";
+import { translate, getLang } from "../translate";
 import { UpdateGroupDialogComponent } from "../update-group-dialog/update-group-dialog.component";
 import { FamilyStatusColumn, FamilyStatus } from "./FamilyStatus";
 
@@ -346,7 +346,7 @@ export class Families extends IdEntity {
   internalComment = new StringColumn({ caption: 'הערה פנימית - לא תופיע למתנדב' });
 
 
-  address = new StringColumn("כתובת", {
+  address = new StringColumn(getLang(this.context).address , {
     valueChange: () => {
       if (!this.address.value)
         return;

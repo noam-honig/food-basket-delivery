@@ -3,8 +3,8 @@
 import { BrowserModule, HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule, APP_INITIALIZER } from '@angular/core';
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+import { AppRoutingModule, routes } from './app-routing.module';
+import { AppComponent, routeMap } from './app.component';
 import { RemultModule, Context, JwtSessionManager } from '@remult/core';
 import { MaterialModule } from './shared/material.module';
 import { ChartsModule } from 'ng2-charts';
@@ -226,11 +226,41 @@ export class MyHammerConfig extends HammerGestureConfig {
 })
 export class AppModule { }
 
+
 export function initApp(session: JwtSessionManager, settings: SettingsService) {
   return async () => {
     session.loadSessionFromCookie();
     try {
+      
+      
       await settings.init();
+      let l = settings.instance.lang;
+      routeMap.set(AsignFamilyComponent,l.assignDeliveryMenu);
+      routeMap.set(AssignEscortComponent,l.AssignEscortComponent);
+      routeMap.set(SelfPickupComponent,l.SelfPickupComponent);
+      routeMap.set(FamilyDeliveriesComponent,l.FamilyDeliveriesComponent);
+      routeMap.set(FamiliesComponent,l.FamiliesComponent);
+      routeMap.set(DeliveryFollowUpComponent,l.DeliveryFollowUpComponent);
+      routeMap.set(NewsComponent,l.NewsComponent);
+      routeMap.set(DistributionMap,l.DistributionMapComponent);
+      routeMap.set(OverviewComponent,l.OverviewComponent);
+      routeMap.set(HelpersComponent,l.HelpersComponent);
+      routeMap.set(DeliveryHistoryComponent,l.DeliveryHistoryComponent);
+      routeMap.set(PlaybackComponent,l.PlaybackComponent);
+      routeMap.set(GeocodeComponent,l.GeocodeComponent);
+      routeMap.set(ImportFromExcelComponent,l.ImportFromExcelComponent);
+      routeMap.set(ImportHelpersFromExcelComponent,l.ImportHelpersFromExcelComponent);
+      routeMap.set(DuplicateFamiliesComponent,l.DuplicateFamiliesComponent);
+      routeMap.set(ManageComponent,l.ManageComponent);
+      routeMap.set(MyFamiliesComponent,l.MyFamiliesComponent);
+      routeMap.set(UpdateInfoComponent,l.UpdateInfoComponent);
+      routeMap.set(LoginComponent,l.LoginComponent);
+      routeMap.set(RegisterComponent,l.RegisterComponent);
+      
+      
+      
+
+      
     }
     catch (err) {
       console.error('failed to get settings ', err);

@@ -19,6 +19,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { SqlBuilder, relativeDateName } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { colors } from '../families/stats-action';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 
 @Component({
@@ -31,7 +32,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
     path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [distCenterAdminGuard], data: { name: 'מעקב מתנדבים' }
   }
 
-  familyLists = new UserFamiliesList(this.context);
+  familyLists = new UserFamiliesList(this.context,this.settings);
   currentlHelper: helperFollowupInfo;
   async selectCourier(c: helperFollowupInfo) {
     this.currentlHelper = c;
@@ -140,7 +141,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
 
 
-  constructor(private busy: BusyService, private context: Context, private dialog: DialogService) {
+  constructor(private busy: BusyService, private context: Context, private dialog: DialogService,public settings:ApplicationSettings) {
 
     dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
   }

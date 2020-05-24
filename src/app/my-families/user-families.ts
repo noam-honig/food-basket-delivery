@@ -11,6 +11,7 @@ import { ElementRef } from '@angular/core';
 import { PhoneColumn } from '../model-shared/types';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { BasketSummaryComponent } from "../basket-summary/basket-summary.component";
+import { ApplicationSettings } from "../manage/ApplicationSettings";
 
 export class UserFamiliesList {
     map: MapComponent;
@@ -26,7 +27,7 @@ export class UserFamiliesList {
         }, 100);
     }
 
-    constructor(private context: Context) { }
+    constructor(private context: Context, private settings: ApplicationSettings) { }
     toDeliver: ActiveFamilyDeliveries[] = [];
     delivered: ActiveFamilyDeliveries[] = [];
     problem: ActiveFamilyDeliveries[] = [];
@@ -71,10 +72,10 @@ export class UserFamiliesList {
             return 'שומר מקום';
         let r = '';
         if (this.toDeliver.length == 1) {
-            r = translate('משלוח אחד לחלוקה');
+            r = translate(this.settings.lang.oneDeliveryToDistribute);
         }
         else
-            r = this.toDeliver.length + translate(' משלוחים לחלוקה');
+            r = this.toDeliver.length + ' ' + translate(this.settings.lang.deliveriesToDistribute);
 
         let boxesText = '';
         if (boxes != this.toDeliver.length || boxes2 != 0)
@@ -137,10 +138,10 @@ export class UserFamiliesList {
         if (this.map)
             this.map.test(this.allFamilies);
         let hash: any = {};
-      
+
 
     }
-    
+
     remove(f: ActiveFamilyDeliveries) {
         this.allFamilies.splice(this.allFamilies.indexOf(f), 1);
         this.initFamilies();

@@ -10,6 +10,7 @@ import { UpdateCommentComponent } from '../update-comment/update-comment.compone
 
 
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-family-info',
@@ -18,7 +19,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 })
 export class FamilyInfoComponent implements OnInit {
 
-  constructor(private dialog: DialogService, private context: Context) { }
+  constructor(private dialog: DialogService, private context: Context, public settings: ApplicationSettings) { }
   @Input() f: ActiveFamilyDeliveries;
   @Input() showHelp = false;
   ngOnInit() {
@@ -29,7 +30,7 @@ export class FamilyInfoComponent implements OnInit {
   @Input() partOfAssign: Boolean;
   @Output() assignmentCanceled = new EventEmitter<void>();
   @Output() refreshList = new EventEmitter<void>();
-  
+
   showCancelAssign(f: ActiveFamilyDeliveries) {
     return this.partOfAssign && f.courier.value != '' && f.deliverStatus.value == DeliveryStatus.ReadyForDelivery;
   }
@@ -51,7 +52,7 @@ export class FamilyInfoComponent implements OnInit {
           this.dialog.analytics('Self Pickup');
         }
         catch (err) {
-          this.dialog.Error( err);
+          this.dialog.Error(err);
         }
       },
       cancel: () => { }
@@ -76,12 +77,12 @@ export class FamilyInfoComponent implements OnInit {
   }
   udpateInfo(f: ActiveFamilyDeliveries) {
     f.showDetailsDialog({
-      dialog:this.dialog,
-      refreshDeliveryStats:()=>{
+      dialog: this.dialog,
+      refreshDeliveryStats: () => {
         this.refreshList.emit();
       }
     });
-    
+
   }
   copyAddress(f: ActiveFamilyDeliveries) {
     copy(f.address.value);

@@ -1,0 +1,394 @@
+שיוך משלוחים למתנדב
+Associate volunteer shipments
+שם הארגון שלי
+My organization's name
+שלום !מתנדב!
+Hello! Volunteer!
+לחלוקת חבילות !ארגון! לחץ על: !אתר! 
+Package Sharing! Organization! Click:! Site!
+תודה !שולח!
+Thanks! Sending!
+שלום !מתנדב!, 
+Hello! Volunteer !,
+נשמח אם תעדכן את המערכת במצב המסירה של הסלים. לעדכון לחץ על:  !אתר!
+We would be happy to update the system in the delivery mode of the baskets. To update click on: Site!
+בתודה !ארגון!
+Thank you! Organization!
+נשמח אם תכתוב לנו הערה על מה שראית והיה
+We'd love to write a comment about what you saw and were
+אנא פרט היכן השארת את הסל ועם מי דיברת
+Please specify where you left the basket and with whom you spoke
+נשמח אם תכתוב לנו הערה על מה שראית והיה
+We'd love to write a comment about what you saw and were
+תודה על כל העזרה, נשמח אם תתנדבו שוב
+Thanks for all the help, we'd love to volunteer again
+מסרתי את החבילה בהצלחה
+I delivered the package successfully
+מנות
+Dishes
+משהו אחר
+Something else
+חלוקת מזון
+Food Distribution
+שיוך מלווים
+Escort affiliation
+משלוחים
+Shipments
+משפחות
+Families
+מעקב מתנדבים
+Volunteer Follow-up
+מצריך טיפול
+Care needs
+Overview
+Overview
+מתנדבים
+Volunteers
+היסטורית משלוחים
+Shipping history
+סרטון חלוקה
+A distribution video
+GEOCODE
+GEOCODE
+קליטת משפחות מאקסל
+Absorption of families from Axel
+קליטת מתנדבים מאקסל
+Absorption of volunteers from Excel
+חיפוש משפחות כפולות
+Search for duplicate families
+הגדרות מערכת
+System settings
+משפחות שלי
+My families
+הגדרות אישיות
+Personal settings
+כניסה
+Entrance
+הרשמה
+registration
+מפת הפצה
+Distribution map
+ חגי - אפליקציה לחלוקת סלי מזון
+ Hagai - an app for distributing food baskets
+יציאה
+Sign Out
+שלום
+Hello
+מלווה את
+Accompanied by
+לסרטון הדרכה קצר, לחצו כאן
+For a short tutorial video, click here
+בטל שיוך לכל המשלוחים
+Unassign all shipments
+סמן נמסר בהצלחה לכל המשלוחים
+Marker successfully delivered to all shipments
+סה"כ זמן נסיעה מוערך
+Estimated total travel time
+דקות
+minutes
+ק"מ
+km
+השארתי ליד הבית
+I left by the house
+משלוחים שנתקלתי בבעיה
+Shipments I encountered a problem
+נתקלתי בבעיה
+I have a problem
+הצג את כל המשלוחים לחלוקה
+View all deliveries for distribution
+שלח הודעת SMS עם קישור
+Send an SMS with a link
+שלח קישור ב whatsapp
+Send a link in whatsapp
+העתק הודעה עם קישור
+Copy message with link
+העתק קישור
+Copy link
+שלח קישור בSMS מהטלפון
+Send an SMS link from your phone
+תזכורת נשלחה
+Reminder sent
+שלח שוב
+send again
+שלחי SMS לתזכורת
+SMS reminders
+התקשר ל
+Call
+התקשר למלווה
+Call the lender
+משפחה
+Family
+כתובת
+Address
+טלפונים
+phones
+טלפון
+phone
+יש
+there is
+סל
+basket
+שים לב!
+Note!
+קומה
+floor
+דירה
+Apartment
+עדכן הערה
+Update note
+נלחץ בטעות - החזר למשלוחים לחלוקה
+Accidentally clicked - Return shipping to distribution
+משלוחים שחולקו ביומיים האחרונים
+Deliveries distributed over the last two days
+הצג את כל המשלוחים שחולקו
+View all shipped shipments
+הצג מסלול ב - google maps
+View route on google maps
+הערת מתנדב
+Volunteer comment
+אספו את החבילה
+Collect the package
+בטל שיוך
+Unpair
+כרטיס משלוח
+Shipping card
+הייתם אצל המשפחה הזו גם פעם קודמת
+You've been to this family before too
+שימו לב, כתובת לא מדוייקת!
+Notice, Inaccurate Address!
+העתק כתובת
+Copy address
+באים לקחת
+Come and take
+משלוח אחד לחלוקה
+One delivery for distribution
+משלוחים לחלוקה
+Distributed deliveries
+פרטי מתנדב
+Volunteer details
+לא ניתן לשייך מתנדבים מכיוון שלא נבחרה רשימת חלוקה. אנא בחרו רשימת חלוקה (למעלה מצד שמאל איפה שכתוב "כל הרשימות")
+Volunteers cannot be associated because a distribution list is not selected. Please select a distribution list (top left where "All Lists" is written)
+חפש מתנדב לפי שם
+Look for a volunteer by name
+נקה פרטי מתנדב
+Clear volunteer information
+שמור פרטי מתנדב ועבור למתנדב הבא
+Save volunteer information and go to the next volunteer
+הצג חברה למתנדב
+View a volunteer company
+הסתר חברה למתנדב
+Hide a volunteer company
+מספר הטלפון של המתנדב
+Volunteer's phone number
+אנא הזיני את הטלפון של המתנדב ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים לשייך
+Please enter the volunteer's phone and name, and then you can choose a group, city and baskets to associate
+לסרטון הדרכה על שיוך משלוחים ויום האירוע לחצו כאן
+For a tutorial on shipping association and event day click here
+שיוך משלוחים ל
+Associate shipments to
+קבוצות שיוך משפחה
+Family affiliation groups
+כל הקבוצות
+All teams
+עיר לחלוקה
+A city for distribution
+כל הערים
+All cities
+אזור
+Area
+כל האזורים
+All areas
+סוג סל
+Basket type
+מספר משפחות
+Several families
+עדיפות למשפחות חוזרות
+Priority for returning families
+עובד על זה...
+working on it...
+לא נותרו משלוחים מתאימים
+No suitable shipments left
+שייך משלוח הכי קרוב
+Belongs to the nearest shipping
+שייך משלוח כלשהו
+Belongs to some shipping
+הוסף את כל המשפחות החוזרות
+Add all returning families
+משפחות מיוחדות
+Special families
+בחירת משפחה לפי שם
+Choosing a family by name
+בחירת משפחה על המפה
+Family selection on the map
+בחירת משפחה לפי רחוב
+Family selection by street
+העבר משפחות ממתנדב אחר
+Transfer families from another volunteer
+חשב מסלול מחדש
+Recalculate route
+מוגדר כמלווה של
+Defined as a lender of
+האם להציג את המשפחות של
+Will showcase the families of
+כל הסלים
+All the baskets
+להעביר
+to convey
+משלוחים מ
+Shipments from
+למתנדב
+To the volunteer
+בנקודה זו יש
+At this point there is
+ משלוחים - לשייך את כולם?
+ Deliveries - associate them all?
+ישנן עוד 
+There are more
+משלוחים באותה הכתובת, האם לשייך גם אותם?
+Shipping at the same address, do they also belong?
+לא נמצאה משפחה מתאימה
+No suitable family found
+משלוחים שוייכו 
+Shipments are associated
+אישור סיסמה
+password verification
+הסיסמה אינה תואמת את אישור הסיסמה
+The password does not match the password confirmation
+העדכון נשמר, תודה
+The update was saved, thanks
+שם
+Name
+השם קצר מידי
+The name is too short
+מועד משלוח SMS
+SMS delivery date
+הערה
+Note
+צריך מלווה
+Need a companion
+נהג משוייך
+Associated driver
+מלווה
+accompanied
+כבר קיים במערכת
+Already exists in the system
+סיסמה
+password
+מועד הוספה
+Date added
+מועד משלוח תזכורת SMS
+Date of delivery of SMS reminder
+מנהל כלל המערכת
+System Rule Manager
+משייך מתנדבים לרשימת חלוקה
+Associates volunteers with a distribution list
+אינך רשאי לעדכן עבור מתנדב זה
+You may not update for this volunteer
+חברה
+Society
+עדכון פרטים
+Update details
+שם הארגון
+The organization name
+תוכן הודעת SMS
+SMS message content
+תוכן הודעת תזכורת SMS
+SMS reminder content
+ חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור
+ Must contain!
+לוגו URL
+URL logo
+כתובת מרכז השילוח
+Shipping center address
+הודעה למתנדב כאשר נמסר בהצלחה
+Message to volunteer when delivered successfully
+הודעה למתנדב כאשר הושאר ליד הבית
+Message to volunteer when left at home
+הודעה למתנדב כאשר יש בעיה
+Notify the volunteer when there is a problem
+הודעה למתנדב כאשר סיים את כל המשפחות
+Notification to volunteer when all families are finished
+שם חלופי
+alternative name
+טלפון חלופי
+Alternate Phone
+מלל כפתור נמסר בהצלחה
+Button text delivered successfully
+מלל חופשי 1 למתנדב
+Free text 1 for volunteer
+כתובת אינטרנט ללחיצה על מלל חופשי 1 למתנדב
+Free volunteer 1 web address for volunteer
+להציג מלל חופשי 1 רק כאשר המתנדב סיים אל כל הסלים
+Display free text 1 only when the volunteer has finished all baskets
+מלל חופשי 2 למתנדב
+Free text 2 for volunteer
+כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב
+Free volunteer text URL 2 for volunteer
+להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים
+Display free text 2 only when the volunteer has finished all baskets
+ישנן משפחות שבאות לקחת ממרכז החלוקה
+There are families who come to take from the division center
+שמור מטעם איזה חברה הגיע המתנדב
+Save on behalf of which company the volunteer came from
+הפעל ניהול מלווים לנהגים
+Enable driver escort management
+שמור הערה למתנדב
+Save note to volunteer
+סינון קבוצת משפחה
+Filtering a family group
+סינון עיר
+City filtering
+סינון אזור
+Area filtering
+סינון סוג סל
+Basket type filtering
+בחירת מספר משפחות
+Choosing multiple families
+הצג למתנדב כפתור השארתי ליד הבית
+Show volunteer button I left at home
+כותרת דף בצבע אדום
+Red page title
+קידומת טלפון ברירת מחדל בקליטה מאקסל
+Default reception phone prefix from Excel
+בדוק אם משפחה כבר קיימת במאגר הנתונים
+Check if a family already exists in the database
+בדוק אם משפחה כבר קיימת בקובץ האקסל
+Check if a family already exists in the Excel file
+הוסף בלי לשאול ערכים לטבלאות התשתית
+Add values to the infrastructure tables without asking
+בדוק טלפונים כפולים
+Check out dual phones
+סטטוס משלוח ברירת מחדל למשפחות חדשות
+Default shipping status for new families
+שם כמות 1 בסוגי סלים
+Name quantity 1 in basket types
+שם כמות 2 בסוגי סלים
+Name quantity 2 in basket types
+הטלפון ממנו יצא הSMS
+The phone from which the SMS came out
+איש קשר לבירור כפי שמוגדר למשפחה
+Contact for clarification as defined for the family
+טלפון גורם מפנה
+Telephone turning point
+טלפון אחר
+another phone
+הצג כשגיאה
+View as error
+הצג במשפחות לעדכון
+View in families for update
+התעלם והוסף משפחה חדשה
+Ignore and add a new family
+מה לעשות אם נמצאה משפחה תואמת המסומנת כהוצא מהרשימות
+What to do if a matching family is found to be excluded from the lists
+פרטי הארגון
+Organization details
+כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את המשפחות ולחץ על הכפתור שלח SMS. ניתן להגדיר כאן שם חלופי וטלפון חלופי
+When a text message is sent to a volunteer, it appears as if it came out of the phone of the family member and clicked the Send SMS button. You can set up an alternate name and phone here
+הודעה זו תשלח למתנדב ממסך שיוך משלוחים - עם הקישור למשפחות להן הוא מתבקש לחלק.
+This message will be sent to a volunteer from a shipping association screen - with the link to the families it is asked to share.
+יוחלף בשם המתנדב
+The name of the volunteer will be replaced
+יוחלף בשם השולח
+The sender's name will be replaced
+יוחלף בשם הארגון
+Will be replaced on behalf of the organization

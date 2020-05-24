@@ -7,6 +7,7 @@ import { AuthService } from '../../auth/auth-service';
 import { SignedInGuard } from '@remult/core';
 import { Route } from '@angular/router';
 import { Context } from '@remult/core';
+import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
 
 
@@ -19,14 +20,15 @@ import { Context } from '@remult/core';
 export class UpdateInfoComponent implements OnInit,AfterViewInit  {
   constructor(private dialog: DialogService,
     private auth: AuthService,
-    private context: Context) {
+    private context: Context,
+    public settings:ApplicationSettings) {
 
 
   }
   
-  static route: Route = { path: 'update-info', component: UpdateInfoComponent, data: { name: 'הגדרות אישיות' }, canActivate: [SignedInGuard] };
+  static route: Route = { path: 'update-info', component: UpdateInfoComponent, canActivate: [SignedInGuard] };
 
-  confirmPassword = new StringColumn({ caption: 'אישור סיסמה', dataControlSettings: () => ({ inputType: 'password' }), defaultValue: Helpers.emptyPassword });
+  confirmPassword = new StringColumn({ caption: this.settings.lang.confirmPassword, dataControlSettings: () => ({ inputType: 'password' }), defaultValue: Helpers.emptyPassword });
   helpers = this.context.for(Helpers).gridSettings({
     numOfColumnsInGrid: 0,
     allowUpdate: true,
@@ -69,12 +71,12 @@ export class UpdateInfoComponent implements OnInit,AfterViewInit  {
       let passwordChanged = this.helpers.currentRow.password.value != this.helpers.currentRow.password.originalValue;
       let thePassword = this.helpers.currentRow.password.value;
       if (this.helpers.currentRow.password.value != this.confirmPassword.value) {
-        this.dialog.Error('הסיסמה אינה תואמת את אישור הסיסמה');
+        this.dialog.Error(this.settings.lang.passwordDoesntMatchConfirmPassword);
       }
       else {
 
         await this.helpers.items[0].save();
-        this.dialog.Info("העדכון נשמר, תודה");
+        this.dialog.Info(this.settings.lang.updateSaved);
         this.confirmPassword.value = this.helpers.currentRow.password.value ? Helpers.emptyPassword : '';
         if (passwordChanged) {
           this.auth.login(this.helpers.currentRow.phone.value, thePassword, false, () => { });

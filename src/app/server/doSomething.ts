@@ -4,6 +4,7 @@
 import { readFileSync } from "fs";
 import { SqlDatabase, Column } from '@remult/core';
 import * as AWS from 'aws-sdk';
+import * as request from 'request';
 
 
 
@@ -17,6 +18,7 @@ import { GeocodeCache, GeocodeInformation } from "../shared/googleApiHelpers";
 import { Sites } from "../sites/sites";
 import * as fs from 'fs';
 import { processPhone } from "../import-from-excel/import-from-excel.component";
+import { Language } from "../translate";
 
 
 
@@ -24,18 +26,48 @@ let match = 0;
 export async function DoIt() {
     try {
         await serverInit();
-        let r = await new AWS.SNS({ apiVersion: '2010-03-31' }).publish({
-            Message: 'בדיקה ראשונה שלי',
-            PhoneNumber: '+972507330590',
-            MessageAttributes: {
-                'AWS.SNS.SMS.SenderID': {
-                    'DataType': 'String',
-                    'StringValue': '972507330590'
-                }
-            }
-        }).promise();
-        console.log(r);
 
+
+        let data = fs.readFileSync('./languages/en.txt');
+        let lines = data.toString().split('\r\n');
+        let knownTranslations = new Map<string, string>();
+        for (let index = 0; index < lines.length; index += 2) {
+            knownTranslations.set(lines[index], lines[index + 1]);
+        }
+        if (lines.length % 2 == 1) {
+            lines.splice(lines.length - 1, 1);
+        }
+        
+        let result = '';
+
+        let l = new Language();
+        for (const key in l) {
+            if (l.hasOwnProperty(key)) {
+                const element: string[] = l[key].split('\n');
+                for (let index = 0; index < element.length; index++) {
+                    const term = element[index];
+                    var trans = knownTranslations.get(term);
+                    if (!trans) {
+                        trans = await translate(term);
+                        knownTranslations.set(term, trans);
+                        lines.push(term);
+                        lines.push(trans);
+                    }
+                    element[index] = trans;
+                }
+                let r = element.join('\\n');
+                if (r.includes('\''))
+                    r = '"' + r + '"';
+                else
+                    r = "'" + r + "'";
+                result += key + " = " + r + ';\r\n';
+            }
+        }
+
+
+        //        let result = await translate('שלום לכם');
+        console.log(result);
+        fs.writeFileSync('./languages/en.txt', lines.join('\r\n'));
 
 
 
@@ -51,6 +83,19 @@ export async function DoIt() {
 
 }
 DoIt();
+async function sendMessagE() {
+    let r = await new AWS.SNS({ apiVersion: '2010-03-31' }).publish({
+        Message: 'בדיקה ראשונה שלי',
+        PhoneNumber: '+972507330590',
+        MessageAttributes: {
+            'AWS.SNS.SMS.SenderID': {
+                'DataType': 'String',
+                'StringValue': '972507330590'
+            }
+        }
+    }).promise();
+    console.log(r);
+}
 
 function workOnPhones() {
     let data = fs.readFileSync('c:/temp/test.txt');
@@ -83,6 +128,26 @@ function workOnPhones() {
         }
     }
     fs.writeFileSync('c:/temp/result.html', result + "</table></body></html>");
+}
+
+async function translate(s: string) {
+    let fromLang = 'he';
+    let toLang = "en";
+    return new Promise<string>((resolve, reject) => {
+        request("https://www.googleapis.com/language/translate/v2?key=" + process.env.google_key + "&source=" + fromLang + "&target=" + toLang + "&format=text", {
+            method: 'post',
+            body: JSON.stringify({ q: s })
+        }, (err, res, body) => {
+            let theBody = JSON.parse(body);
+            let x = theBody.data;
+            if (x)
+                resolve(x.translations[0].translatedText);
+            else {
+                console.error(theBody, err);
+                reject(err);
+            };
+        });
+    });
 }
 
 class htmlReport {

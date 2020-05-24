@@ -17,6 +17,8 @@ import { dataMigration } from "./dataMigration";
 import { GeoCodeOptions } from "../shared/googleApiHelpers";
 import { Families } from "../families/families";
 import { OverviewComponent } from "../overview/overview.component";
+import { environment } from "../../environments/environment";
+import * as request from 'request';
 
 
 serverInit().then(async (dataSource) => {
@@ -154,6 +156,40 @@ serverInit().then(async (dataSource) => {
 
             sendIndex(res, req);
         });
+        if (!environment.production) {
+            
+            app.post('/api/terms',async  (req, res) => {
+
+                let fromLang = 'he';
+                let toLang = "en";
+                var term = req.body.term;
+                var trans = await new Promise<string>((resolve, reject) => {
+                    request("https://www.googleapis.com/language/translate/v2?key=" + process.env.google_key + "&source=" + fromLang + "&target=" + toLang + "&format=text", {
+                        method: 'post',
+                        body: JSON.stringify({ q: term })
+                    }, (err, res, body) => {
+                        let theBody = JSON.parse(body);
+                        let x = theBody.data;
+                        if (x)
+                            resolve(x.translations[0].translatedText);
+                        else {
+                            console.error(theBody, err);
+                            reject(err);
+                        };
+                    });
+                });
+                let data = fs.readFileSync('./src/assets/languages/en.txt');
+                let lines = data.toString().split('\r\n');
+                if (lines.length % 2 == 1) {
+                    lines.splice(lines.length - 1, 1);
+                }
+                lines.push(term);
+                lines.push(trans);
+                fs.writeFileSync('./src/assets/languages/en.txt', lines.join('\r\n'));
+
+                res.json(trans);
+            });
+        }
         app.get('/index.html', (req, res) => {
 
             sendIndex(res, req);

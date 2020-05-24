@@ -44,7 +44,7 @@ import { DuplicateFamiliesComponent } from './duplicate-families/duplicate-famil
 
 
 
-const routes: Routes = [
+export const routes: Routes = [
 
   AsignFamilyComponent.route,
   {

@@ -12,7 +12,7 @@
     <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title>
-                פרטי הארגון - {{settings.organisationName.value}}
+                {{settings.lang.organizationInfo}} - {{settings.organisationName.value}}
             </mat-panel-title>
 
         </mat-expansion-panel-header>
@@ -22,23 +22,20 @@
         <data-area [settings]="settingsArea"></data-area>
         <mat-card>
             <mat-card-title>
-                הטלפון ממנו יצא הSMS
+                {{settings.lang.defaultHelpPhone}}
             </mat-card-title>
-            כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את המשפחות ולחץ על הכפתור שלח
-            SMS.
-            ניתן להגדיר כאן שם חלופי וטלפון חלופי
-            <br />
+            {{settings.lang.defaulyHelpPhoneExplanation}}  <br />
             <data-area [settings]="settingsMore"></data-area>
         </mat-card>
         <mat-card>
             <mat-card-title>
                 {{settings.smsText.defs.caption}}
             </mat-card-title>
-            הודעה זו תשלח למתנדב ממסך שיוך משלוחים - עם הקישור למשפחות להן הוא מתבקש לחלק.
+            {{settings.lang.smsTextHelpTitle}}
             <ul>
-                <li>!מתנדב! - יוחלף בשם המתנדב</li>
-                <li>!שולח! - יוחלף בשם השולח</li>
-                <li>!ארגון! - יוחלף בשם הארגון</li>
+                <li>!מתנדב! - {{settings.lang.replacedByVolunteerName}}</li>
+                <li>!שולח! - {{settings.lang.replcaedBySenderName}}</li>
+                <li>!ארגון! - {{settings.lang.replacedByOrgName}}</li>
                 <li>!אתר! - יוחלף בכתובת האתר</li>
             </ul>
             <textarea [(ngModel)]="settings.smsText.value" class="form-control"></textarea>

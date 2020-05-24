@@ -1,23 +1,23 @@
 <div *ngIf="disableAll()">
-  <h3>לא ניתן לשייך מתנדבים מכיוון שלא נבחרה רשימת חלוקה. אנא בחרו רשימת חלוקה (למעלה מצד שמאל איפה שכתוב "כל הרשימות")</h3>
+  <h3>{{settings.lang.assignRequiresADistributionList}}</h3>
 </div>
 <div class="myDiv" *ngIf="!disableAll()">
   <div class="no-print" *ngIf="showHelperInput">
 
     <mat-card>
       <mat-card-title>
-        פרטי מתנדב
+        {{settings.lang.volunteerInfo}}
         <div>
 
           <mat-menu #appMenu77>
-            <button mat-menu-item (click)="findHelper()">{{'חפש מתנדב לפי שם'|translate}}</button>
-            <button mat-menu-item (click)="clearHelperInfo()">{{'נקה פרטי מתנדב'|translate}}</button>
+            <button mat-menu-item (click)="findHelper()">{{settings.lang.findHelperByName|translate}}</button>
+            <button mat-menu-item (click)="clearHelperInfo()">{{settings.lang.clearHelperInfo|translate}}</button>
             <button mat-menu-item (click)="saveHelper()"
-              *ngIf="showSave()">{{'שמור פרטי מתנדב ועבור למתנדב הבא'|translate}}</button>
+              *ngIf="showSave()">{{settings.lang.saveHelperInfoAndMoveToNextHelper|translate}}</button>
             <button *ngIf="!settings.showCompanies.value" mat-menu-item
-              (click)="settings.showCompanies.value= true; changeShowCompany()">{{'הצג חברה למתנדב'|translate}}</button>
+              (click)="settings.showCompanies.value= true; changeShowCompany()">{{settings.lang.showHelperCompany|translate}}</button>
             <button *ngIf="settings.showCompanies.value" mat-menu-item
-              (click)="settings.showCompanies.value= false; changeShowCompany()">{{'הסתר חברה למתנדב'|translate}}</button>
+              (click)="settings.showCompanies.value= false; changeShowCompany()">{{settings.lang.hideHelperCompany|translate}}</button>
 
           </mat-menu>
 
@@ -26,9 +26,9 @@
           </button>
         </div>
       </mat-card-title>
-      
+
       <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
-        <mat-label>מספר הטלפון של המתנדב</mat-label>
+        <mat-label>{{settings.lang.volunteerPhoneNumber}}</mat-label>
         <input matInput [(ngModel)]="phone" (input)="searchPhone()" type="tel" #phoneInput>
         <div matSuffix style="display:flex">
           <mat-icon (click)="clearHelperInfo()">clear</mat-icon>
@@ -40,18 +40,14 @@
   </div>
 
 
-  <span *ngIf="showHelperInput&&(!helper||!helper.name.value)" class="help no-print">אנא הזיני את הטלפון של המתנדב ושמו,
-    ואז תוכלי לבחור
-    קבוצה, עיר ואילו
-    סלים
-    לשייך</span>
+  <span *ngIf="showHelperInput&&(!helper||!helper.name.value)" class="help no-print">{{settings.lang.assignHelpText}}</span>
   <br>
   <a href="https://youtu.be/8LCeQRQPL1U" *ngIf="showHelperInput&&(!helper||!helper.name.value)"
-    class="help no-print">לסרטון הדרכה על שיוך משלוחים ויום האירוע לחצו כאן</a>
+    class="help no-print">{{settings.lang.asignVideoHelp}}</a>
   <div *ngIf="helper&&helper. name.value&&helper.name.value.length>=2">
     <mat-card class="no-print">
       <mat-card-title>
-        {{'שיוך משלוחים ל'|translate}}{{helper.name.value}}
+        {{settings.lang.asignDeliveriesTo|translate}}{{helper.name.value}}
         <div>
 
           <mat-menu #filterOptionsMenu="matMenu">
@@ -70,9 +66,9 @@
         <div class="filter-div">
           <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
             *ngIf="settings.showGroupsOnAssing.value">
-            <mat-label>קבוצות שיוך משפחה</mat-label>
+            <mat-label>{{settings.lang.familyGroups}}</mat-label>
             <select matNativeControl class="form-control" #lang (change)="refreshBaskets()" [(ngModel)]="filterGroup">
-              <option value="">כל הקבוצות</option>
+              <option value="">{{settings.lang.allGroups}}</option>
               <option *ngFor="let g of groups" value="{{g.name.value}}">{{g.name.value}} - {{g.familiesCount.value}}
               </option>
             </select>
@@ -80,23 +76,23 @@
 
           <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
             *ngIf="settings.showCityOnAssing.value">
-            <mat-label>עיר לחלוקה</mat-label>
+            <mat-label>{{settings.lang.distributionCity}}</mat-label>
             <select matNativeControl class="form-control" #city (change)="selectCity()" [(ngModel)]="filterCity">
-              <option value="">כל הערים</option>
+              <option value="">{{settings.lang.allCities}}</option>
               <option *ngFor="let c of cities" value="{{c.name}}">{{c.name}} - {{c.unassignedFamilies}}</option>
             </select>
           </mat-form-field>
           <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
             *ngIf="settings.showAreaOnAssing.value">
-            <mat-label>אזור לחלוקה</mat-label>
+            <mat-label>{{settings.lang.region}}</mat-label>
             <select matNativeControl class="form-control" #city (change)="selectCity()" [(ngModel)]="filterArea">
-              <option value="">כל האזורים</option>
+              <option value="">{{settings.lang.allRegions}}</option>
               <option *ngFor="let c of areas" value="{{c.name}}">{{c.name}} - {{c.unassignedFamilies}}</option>
             </select>
           </mat-form-field>
           <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
             *ngIf="settings.showBasketOnAssing.value">
-            <mat-label>סוג סל</mat-label>
+            <mat-label>{{settings.lang.basketType}}</mat-label>
             <select matNativeControl class="form-control" #lang [(ngModel)]="basketType">
               <option *ngFor="let b of baskets" [ngValue]="b">{{b.name}} <span *ngIf="b!=allBaskets">-
                   {{b.unassignedFamilies}}</span></option>
@@ -105,7 +101,7 @@
 
           <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
             *ngIf="settings.showNumOfBoxesOnAssing.value">
-            <mat-label>{{'מספר משפחות'|translate}}</mat-label>
+            <mat-label>{{settings.lang.numOfFamilies|translate}}</mat-label>
             <input matInput type="number" id="numOfBaskets" [(ngModel)]="numOfBaskets">
             <div matSuffix style="display:flex">
               <button mat-icon-button (click)="add(1)">
@@ -118,7 +114,7 @@
           </mat-form-field>
 
           <mat-checkbox [(ngModel)]="preferRepeatFamilies" style="width:auto" *ngIf="showRepeatFamilies">
-            {{'עדיפות למשפחות חוזרות'|translate}} ({{repeatFamilies}})
+            {{settings.lang.prioritizeRepeatFamilies|translate}} ({{repeatFamilies}})
           </mat-checkbox>
 
         </div>
@@ -127,9 +123,10 @@
 
 
         <div class="no-print" style="display:flex;justify-content: center;">
-          <button mat-raised-button color="primary" (click)="assignItem()" [disabled]="basketType.unassignedFamilies==0 || assigning" 
+          <button mat-raised-button color="primary" (click)="assignItem()"
+            [disabled]="basketType.unassignedFamilies==0 || assigning"
             style="border-top-left-radius: 0px;border-bottom-left-radius:0px;">
-            {{translate(assigning?'עובד על זה...': basketType.unassignedFamilies==0?'לא נותרו משלוחים מתאימים': familyLists.allFamilies.length>0?"שייך משלוח הכי קרוב":'שייך משלוח כלשהו')}}
+            {{translate(assigning?settings.lang.inProgress: basketType.unassignedFamilies==0?settings.lang.noDeliveriesLeft: familyLists.allFamilies.length>0?settings.lang.asignClosestDelivery:settings.lang.asignAnyDelivery)}}
             -
             {{getBasketsToClick()}}</button>
           <button mat-button [matMenuTriggerFor]="basketMenu" mat-raised-button color="primary" style="border-top-right-radius: 0;
@@ -141,16 +138,16 @@
           </button>
           <mat-menu #basketMenu="matMenu">
             <button mat-menu-item (click)="assignItem(true)"
-              *ngIf="preferRepeatFamilies&&repeatFamilies>0">{{'הוסף את כל המשפחות החוזרות'|translate}}</button>
+              *ngIf="preferRepeatFamilies&&repeatFamilies>0">{{settings.lang.addAllRepeatFamilies|translate}}</button>
             <button mat-menu-item (click)="addSpecial()"
-              *ngIf="specialFamilies">{{'משפחות מיוחדות - '|translate}}{{specialFamilies}}</button>
-            <button mat-menu-item (click)="addSpecific()">{{'בחירת משפחה לפי שם'|translate}}</button>
-            <button mat-menu-item (click)="assignOnMap()">{{'בחירת משפחה על המפה'|translate}}</button>
-            <button mat-menu-item (click)="addStreet()">{{'בחירת משפחה לפי רחוב'|translate}}</button>
+              *ngIf="specialFamilies">{{settings.lang.specialFamilies|translate}} - {{specialFamilies}}</button>
+            <button mat-menu-item (click)="addSpecific()">{{settings.lang.selectDeliveryByName|translate}}</button>
+            <button mat-menu-item (click)="assignOnMap()">{{settings.lang.selectDeliveryOnMap|translate}}</button>
+            <button mat-menu-item (click)="addStreet()">{{settings.lang.selectDeliveryByStreet|translate}}</button>
 
 
-            <button mat-menu-item (click)="moveBasktesFromOtherHelper()">{{'העבר משפחות ממתנדב אחר'|translate}}</button>
-            <button mat-menu-item (click)="doRefreshRoute()">{{'חשב מסלול מחדש'|translate}}</button>
+            <button mat-menu-item (click)="moveBasktesFromOtherHelper()">{{settings.lang.transferDeliveriesFromOtherVolunteer|translate}}</button>
+            <button mat-menu-item (click)="doRefreshRoute()">{{settings.lang.replanRoute|translate}}</button>
 
           </mat-menu>
 
@@ -167,6 +164,6 @@
     <button (click)="doRefreshRoute()">Run Refresh Route</button>-->
     <app-helper-families [familyLists]="familyLists" [partOfAssign]="true" (assignmentCanceled)="assignmentCanceled()"
       (assignSmsSent)="smsSent()"></app-helper-families>
-      
+
   </div>
 </div>
