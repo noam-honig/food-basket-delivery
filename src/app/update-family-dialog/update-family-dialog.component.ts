@@ -154,6 +154,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
   deliverInfo = new DataAreaSettings<Families>();
   extraFamilyInfo = new DataAreaSettings<Families>();
   deliveryDefaults = new DataAreaSettings<Families>();
+  familyDeliveries: GridSettings<FamilyDeliveries>;
   async ngOnInit() {
     if (!this.args.familyDelivery) {
       if (this.args.deliveryId) {
@@ -254,8 +255,13 @@ export class UpdateFamilyDialogComponent implements OnInit {
           f.special
         ].filter(x => this.settings.usingSelfPickupModule.value ? true : x != f.defaultSelfPickup)
     });
-    if (this.delivery)
+    if (this.delivery) {
       this.deliverInfo = new DataAreaSettings(this.delivery.deilveryDetailsAreaSettings(this.dialog));
+
+
+    }
+    this.familyDeliveries = this.args.family.deliveriesGridSettings();
+
   }
 
 
