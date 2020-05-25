@@ -1,10 +1,10 @@
 <mat-card>
   <app-date-range (dateChanged)="refresh()"></app-date-range>
   <br>
-  <h4> סה"כ משלוחים {{deliveries.totalRows}}</h4>
+  <h4> {{settings.lang.deliveries}} {{deliveries.totalRows}}</h4>
   <data-grid [settings]="deliveries" [height]="400"></data-grid>
   
-  <h4> סה"כ מתנדבים {{helperInfo.totalRows}}</h4>
+  <h4> {{settings.lang.volunteers}} {{helperInfo.totalRows}}</h4>
   <data-grid [settings]="helperInfo" [height]="400"></data-grid>
   
 </mat-card>

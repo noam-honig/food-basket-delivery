@@ -143,7 +143,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
     this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { family: f });
   }
   displayDupInfo(info: duplicateFamilyInfo) {
-    return displayDupInfo(info);
+    return displayDupInfo(info,this.context);
   }
 
 

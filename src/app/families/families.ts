@@ -37,7 +37,7 @@ export class Families extends IdEntity {
   }
   showDeliveryHistoryDialog() {
     this.context.openDialog(GridDialogComponent, x => x.args = {
-      title: 'משלוחים עבור ' + this.name.value,
+      title: getLang(this.context).deliveriesFor + ' ' + this.name.value,
       settings: this.deliveriesGridSettings()
     });
   }
@@ -70,12 +70,12 @@ export class Families extends IdEntity {
 
   async showNewDeliveryDialog(dialog: DialogService, settings: ApplicationSettings, copyFrom?: FamilyDeliveries, aDeliveryWasAdded?: (newDeliveryId: string) => Promise<void>) {
     let newDelivery = this.createDelivery(dialog.distCenter.value);
-    let arciveCurrentDelivery = new BoolColumn({ caption: 'העבר משלוח נוכחי לארכיב?', defaultValue: true });
+    let arciveCurrentDelivery = new BoolColumn({ caption: getLang(this.context).archiveCurrentDelivery, defaultValue: true });
     if (copyFrom != undefined) {
       newDelivery.copyFrom(copyFrom);
 
     }
-    let selfPickup = new BoolColumn({ caption: 'יבואו לקחת את המשלוח ואינם צריכים משלוח?', defaultValue: this.defaultSelfPickup.value });
+    let selfPickup = new BoolColumn({ caption: getLang(this.context).familySelfPickup, defaultValue: this.defaultSelfPickup.value });
     if (copyFrom) {
       selfPickup.value = copyFrom.deliverStatus.value == DeliveryStatus.SuccessPickedUp;
       if (copyFrom.deliverStatus.value.isProblem)
@@ -102,15 +102,15 @@ export class Families extends IdEntity {
             return r;
           }
         },
-        title: 'משלוח חדש ל' + this.name.value,
+        title: getLang(this.context).newDeliveryFor + this.name.value,
         validate: async () => {
           let count = await newDelivery.duplicateCount();
           if (count > 0) {
-            if (await dialog.YesNoPromise("למשפחה זו כבר קיים משלוח מאותו סוג האם להוסיף עוד אחד?")) {
+            if (await dialog.YesNoPromise(getLang(this.context).familyAlreadyHasAnActiveDelivery)) {
               return;
             }
             else {
-              throw 'לא תקין';
+              throw getLang(this.context).notOk;
             }
           }
         },
@@ -130,7 +130,7 @@ export class Families extends IdEntity {
           }
           if (aDeliveryWasAdded)
             await aDeliveryWasAdded(newId);
-          dialog.Info("משלוח נוצר בהצלחה");
+          dialog.Info(getLang(this.context).deliveryCreatedSuccesfully);
         }
         , cancel: () => { }
 
@@ -159,7 +159,7 @@ export class Families extends IdEntity {
       await fd.save();
       return fd.id.value;
     }
-    throw "משפחה לא נמצאה";
+    throw getLang(context).familyWasNotFound;
 
   }
   createDelivery(distCenter: string) {
@@ -209,10 +209,8 @@ export class Families extends IdEntity {
   }
   getAddressDescription() {
     if (this.isGpsAddress()) {
-      let r = 'נקודת GPS ';
-      r += 'ליד ' + this.addressByGoogle.value;
+      return getLang(this.context).gpsLocationNear + ' ' + this.addressByGoogle.value;
 
-      return r;
     }
     return this.address.value;
   }
@@ -292,7 +290,7 @@ export class Families extends IdEntity {
         }
 
       });
-    this.id.defs.caption = 'id של המשפחה באפליקצית חגי';
+    this.id.defs.caption = getLang(this.context).familyIdInHagaiApp;
   }
   disableChangeLogging = false;
   disableOnSavingRow = false;
@@ -300,25 +298,25 @@ export class Families extends IdEntity {
 
 
   name = new StringColumn({
-    caption: "שם",
+    caption: getLang(this.context).familyName,
     valueChange: () => this.delayCheckDuplicateFamilies(),
     validate: () => {
       if (!this.name.value || this.name.value.length < 2)
-        this.name.validationError = 'השם קצר מידי';
+        this.name.validationError = getLang(this.context).nameIsTooShort;
     }
   });
 
   tz = new StringColumn({
-    caption: 'מספר זהות', valueChange: () => this.delayCheckDuplicateFamilies()
+    caption: getLang(this.context).socialSecurityNumber, valueChange: () => this.delayCheckDuplicateFamilies()
   });
   tz2 = new StringColumn({
-    caption: 'מספר זהות בן/בת הזוג', valueChange: () => this.delayCheckDuplicateFamilies()
+    caption: getLang(this.context).spouceSocialSecurityNumber, valueChange: () => this.delayCheckDuplicateFamilies()
   });
-  familyMembers = new NumberColumn({ caption: 'מספר נפשות' });
-  birthDate = new DateColumn({ caption: 'תאריך לידה' });
+  familyMembers = new NumberColumn({ caption: getLang(this.context).familyMembers });
+  birthDate = new DateColumn({ caption: getLang(this.context).birthDate });
   nextBirthday = new DateColumn({
 
-    caption: 'יומולדת הבא',
+    caption: getLang(this.context).nextBirthDay,
     sqlExpression: () => "cast(birthDate + ((extract(year from age(birthDate)) + 1) * interval '1' year) as date) as nextBirthday",
     allowApiUpdate: false,
     dataControlSettings: () => ({
@@ -327,26 +325,26 @@ export class Families extends IdEntity {
       getValue: () => {
         if (!this.nextBirthday.value)
           return;
-        return this.nextBirthday.displayValue + " - גיל " + (this.nextBirthday.value.getFullYear() - this.birthDate.value.getFullYear())
+        return this.nextBirthday.displayValue + " - " + getLang(this.context).age + " " + (this.nextBirthday.value.getFullYear() - this.birthDate.value.getFullYear())
       }
     })
 
   })
-  basketType = new BasketId(this.context, 'סוג סל ברירת מחדל');
-  quantity = new QuantityColumn({ caption: 'מספר סלים ברירת מחדל', allowApiUpdate: Roles.admin });
+  basketType = new BasketId(this.context, getLang(this.context).defaultBasketType);
+  quantity = new QuantityColumn({ caption: getLang(this.context).defaultQuantity, allowApiUpdate: Roles.admin });
 
-  familySource = new FamilySourceId(this.context, { includeInApi: true, caption: 'גורם מפנה' });
-  socialWorker = new StringColumn('איש קשר לבירור פרטים (עו"ס)');
-  socialWorkerPhone1 = new PhoneColumn('עו"ס טלפון 1');
-  socialWorkerPhone2 = new PhoneColumn('עו"ס טלפון 2');
+  familySource = new FamilySourceId(this.context, { includeInApi: true, caption: getLang(this.context).familySource });
+  socialWorker = new StringColumn(getLang(this.context).familyHelpContact);
+  socialWorkerPhone1 = new PhoneColumn(getLang(this.context).familyHelpPhone1);
+  socialWorkerPhone2 = new PhoneColumn(getLang(this.context).familyHelpPhone2);
   groups = new GroupsColumn(this.context);
-  special = new YesNoColumn({ caption: 'שיוך מיוחד' });
-  defaultSelfPickup = new BoolColumn('באים לקחת ברירת מחדל');
-  iDinExcel = new StringColumn({ caption: translate('מזהה חד ערכי למשפחה') });
-  internalComment = new StringColumn({ caption: 'הערה פנימית - לא תופיע למתנדב' });
+  special = new YesNoColumn({ caption: getLang(this.context).specialAsignment });
+  defaultSelfPickup = new BoolColumn(getLang(this.context).defaultSelfPickup);
+  iDinExcel = new StringColumn({ caption: translate(getLang(this.context).familyUniqueId) });
+  internalComment = new StringColumn({ caption: getLang(this.context).internalComment });
 
 
-  address = new StringColumn(getLang(this.context).address , {
+  address = new StringColumn(getLang(this.context).address, {
     valueChange: () => {
       if (!this.address.value)
         return;
@@ -356,29 +354,29 @@ export class Families extends IdEntity {
     }
   });
 
-  floor = new StringColumn('קומה');
-  appartment = new StringColumn('דירה');
-  entrance = new StringColumn('כניסה');
-  city = new StringColumn({ caption: "עיר (מתעדכן אוטומטית)" });
-  area = new StringColumn({ caption: 'אזור' });
-  addressComment = new StringColumn('הנחיות נוספות לכתובת');
-  postalCode = new NumberColumn('מיקוד');
-  deliveryComments = new StringColumn('הערה שתופיע למתנדב');
+  floor = new StringColumn(getLang(this.context).floor);
+  appartment = new StringColumn(getLang(this.context).appartment);
+  entrance = new StringColumn(getLang(this.context).entrance);
+  city = new StringColumn({ caption: getLang(this.context).cityAutomaticallyUpdatedByGoogle });
+  area = new StringColumn({ caption: getLang(this.context).region });
+  addressComment = new StringColumn(getLang(this.context).addressComment);
+  postalCode = new NumberColumn(getLang(this.context).postalCode);
+  deliveryComments = new StringColumn(getLang(this.context).commentForVolunteer);
   addressApiResult = new StringColumn();
 
-  phone1 = new PhoneColumn({ caption: "טלפון 1", dbName: 'phone', valueChange: () => this.delayCheckDuplicateFamilies() });
-  phone1Description = new StringColumn('הערות לטלפון 1');
-  phone2 = new PhoneColumn({ caption: "טלפון 2", valueChange: () => this.delayCheckDuplicateFamilies() });
-  phone2Description = new StringColumn('הערות לטלפון 2');
-  phone3 = new PhoneColumn({ caption: "טלפון 3", valueChange: () => this.delayCheckDuplicateFamilies() });
-  phone3Description = new StringColumn('הערות לטלפון 3');
-  phone4 = new PhoneColumn({ caption: "טלפון 4", valueChange: () => this.delayCheckDuplicateFamilies() });
-  phone4Description = new StringColumn('הערות לטלפון 4');
+  phone1 = new PhoneColumn({ caption: getLang(this.context).phone1, dbName: 'phone', valueChange: () => this.delayCheckDuplicateFamilies() });
+  phone1Description = new StringColumn(getLang(this.context).phone1Description);
+  phone2 = new PhoneColumn({ caption: getLang(this.context).phone2, valueChange: () => this.delayCheckDuplicateFamilies() });
+  phone2Description = new StringColumn(getLang(this.context).phone2Description);
+  phone3 = new PhoneColumn({ caption: getLang(this.context).phone3, valueChange: () => this.delayCheckDuplicateFamilies() });
+  phone3Description = new StringColumn(getLang(this.context).phone3Description);
+  phone4 = new PhoneColumn({ caption: getLang(this.context).phone4, valueChange: () => this.delayCheckDuplicateFamilies() });
+  phone4Description = new StringColumn(getLang(this.context).phone4Description);
 
   status = new FamilyStatusColumn();
-  statusDate = new changeDate('סטטוס: תאריך שינוי');
-  statusUser = new HelperIdReadonly(this.context, 'סטטוס: מי עדכן');
-  fixedCourier = new HelperId(this.context, "מתנדב ברירת מחדל");
+  statusDate = new changeDate(getLang(this.context).statusChangeDate);
+  statusUser = new HelperIdReadonly(this.context, getLang(this.context).statusChangeUser);
+  fixedCourier = new HelperId(this.context, getLang(this.context).defaultVolunteer);
   async reloadGeoCoding() {
 
     let geo = new GeocodeInformation();
@@ -443,20 +441,20 @@ export class Families extends IdEntity {
 
 
   previousDeliveryStatus = new DeliveryStatusColumn({
-    caption: 'סטטוס משלוח קודם',
+    caption: getLang(this.context).previousDeliveryStatus,
     sqlExpression: () => {
       return this.dbNameFromLastDelivery(fde => fde.deliverStatus, "prevStatus");
     }
   });
   previousDeliveryDate = new changeDate({
-    caption: 'תאריך משלוח קודם',
+    caption: getLang(this.context).previousDeliveryDate,
 
     sqlExpression: () => {
       return this.dbNameFromLastDelivery(fde => fde.deliveryStatusDate, "prevDate");
     }
   });
   previousDeliveryComment = new StringColumn({
-    caption: 'הערת משלוח קודם',
+    caption: getLang(this.context).previousDeliveryNotes,
     sqlExpression: () => {
       return this.dbNameFromLastDelivery(fde => fde.courierComments, "prevComment");
     }
@@ -471,8 +469,8 @@ export class Families extends IdEntity {
   //זו התוצאה שחזרה מהGEOCODING כך שהיא מכוונת לכביש הקרוב
   drivingLongitude = new NumberColumn({ decimalDigits: 8 });
   drivingLatitude = new NumberColumn({ decimalDigits: 8 });
-  addressByGoogle = new StringColumn({ caption: "כתובת כפי שגוגל הבין", allowApiUpdate: false });
-  addressOk = new BoolColumn({ caption: 'כתובת תקינה' });
+  addressByGoogle = new StringColumn({ caption: getLang(this.context).addressByGoogle, allowApiUpdate: false });
+  addressOk = new BoolColumn({ caption: getLang(this.context).addressOk });
 
   private dbNameFromLastDelivery(col: (fd: FamilyDeliveries) => Column<any>, alias: string) {
 
@@ -492,7 +490,7 @@ export class Families extends IdEntity {
 
   getPreviousDeliveryColumn() {
     return {
-      caption: 'סיכום משלוח קודם',
+      caption: getLang(this.context).previousDeliverySummary,
       readonly: true,
       column: this.previousDeliveryStatus,
       dropDown: {
@@ -517,10 +515,10 @@ export class Families extends IdEntity {
 
 
 
-  createDate = new changeDate({ caption: 'מועד הוספה' });
-  createUser = new HelperIdReadonly(this.context, { caption: 'משתמש מוסיף' });
-  lastUpdateDate = new changeDate({ caption: 'מועד עדכון אחרון' });
-  lastUpdateUser = new HelperIdReadonly(this.context, { caption: 'משתמש מעדכן' });
+  createDate = new changeDate({ caption: getLang(this.context).createDate });
+  createUser = new HelperIdReadonly(this.context, { caption: getLang(this.context).createUser });
+  lastUpdateDate = new changeDate({ caption: getLang(this.context).lastUpdateDate });
+  lastUpdateUser = new HelperIdReadonly(this.context, { caption: getLang(this.context).lastUpdateUser });
 
 
 
@@ -552,7 +550,7 @@ export class Families extends IdEntity {
   }
 
   static SendMessageToBrowsers = (s: string, context: Context, distCenter: string) => { };
-  static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string) {
+  static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string, context: Context) {
     switch (updateType) {
       case 1:
         switch (n.deliverStatus.value) {
@@ -565,15 +563,15 @@ export class Families extends IdEntity {
           case DeliveryStatus.FailedOther:
             let duration = '';
             if (n.courierAssingTime.value && n.deliveryStatusDate.value)
-              duration = ' תוך ' + Math.round((n.deliveryStatusDate.value.valueOf() - n.courierAssingTime.value.valueOf()) / 60000) + " דק'";
-            return n.deliverStatus.displayValue + (n.courierComments.value ? ", " + n.courierComments.value + " - " : '') + translate(' למשפחת ') + n.name.value +' '+( courierName?('על ידי ' + courierName):'') + duration + "!";
+              duration = ' ' + getLang(context).within + ' ' + Math.round((n.deliveryStatusDate.value.valueOf() - n.courierAssingTime.value.valueOf()) / 60000) + " " + getLang(context).minutes;
+            return n.deliverStatus.displayValue + (n.courierComments.value ? ", " + n.courierComments.value + " - " : '') + translate(' ' + getLang(context).forFamily + ' ') + n.name.value + ' ' + (courierName ? (getLang(context).by + ' ' + courierName) : '') + duration + "!";
         }
-        return translate('משפחת ') + n.name.value + ' עודכנה ל' + n.deliverStatus.displayValue;
+        return translate(getLang(context).theFamily + ' ') + n.name.value + ' ' + getLang(context).wasUpdatedTo + ' ' + n.deliverStatus.displayValue;
       case 2:
         if (n.courier.value)
-          return translate('משפחת ') + n.name.value + ' שוייכה ל' + courierName;
+          return translate(getLang(context).theFamily + ' ') + n.name.value + ' ' + getLang(context).wasAssignedTo + ' ' + courierName;
         else
-          return translate("בוטל השיוך למשפחת ") + n.name.value;
+          return translate(getLang(context).assignmentCanceledFor + " ") + n.name.value;
     }
     return n.deliverStatus.displayValue;
   }
@@ -598,16 +596,16 @@ export class Families extends IdEntity {
       return;
     if (col.displayValue.startsWith("05") || col.displayValue.startsWith("07")) {
       if (col.displayValue.length != 12) {
-        col.validationError = 'מספר טלפון אינו תקין';
+        col.validationError = getLang(this.context).invalidPhoneNumber;
       }
 
     } else if (col.displayValue.startsWith('0')) {
       if (col.displayValue.length != 11) {
-        col.validationError = 'מספר טלפון אינו תקין';
+        col.validationError = getLang(this.context).invalidPhoneNumber;
       }
     }
     else {
-      col.validationError = 'מספר טלפון אינו תקין';
+      col.validationError = getLang(this.context).invalidPhoneNumber;
     }
   }
   async checkDuplicateFamilies() {
@@ -621,7 +619,7 @@ export class Families extends IdEntity {
     this.name.validationError = undefined;
     let foundExactName = false;
     for (const d of this.duplicateFamilies) {
-      let errorText = translate('ערך כבר קיים למשפחת "') + d.name + '" בכתובת ' + d.address;
+      let errorText = translate(getLang(this.context).valueAlreadyExistsFor+' "') + d.name + '" '+getLang(this.context).atAddress+' ' + d.address;
       if (d.tz)
         this.tz.validationError = errorText;
       if (d.tz2)
@@ -729,10 +727,10 @@ export class Families extends IdEntity {
 
 
 export class FamilyId extends IdColumn {
-  constructor(settingsOrCaption?: ColumnOptions<string>) {
+  constructor(context:Context, settingsOrCaption?: ColumnOptions<string>) {
     super(settingsOrCaption);
     if (!this.defs.caption)
-      this.defs.caption = 'id של המשפחה באפליקצית חגי'
+      this.defs.caption = getLang(context).familyIdInHagaiApp
   }
 }
 
@@ -826,7 +824,7 @@ export class GroupsColumn extends StringColumn {
   }
   constructor(private context: Context, settingsOrCaption?: ColumnOptions<string>) {
     super({
-      caption: translate('קבוצות שיוך משפחה'),
+      caption: translate(getLang(context).familyGroup),
 
       dataControlSettings: () => ({
         width: '300',
@@ -896,21 +894,21 @@ export function parseUrlInAddress(address: string) {
 
 
 
-export function displayDupInfo(info: duplicateFamilyInfo) {
+export function displayDupInfo(info: duplicateFamilyInfo,context:Context) {
   let r = [];
 
 
   if (info.tz) {
-    r.push(' מספר זהות זהה');
+    r.push(getLang(context).identicalSocialSecurityNumber+' ');
   }
   if (info.sameAddress) {
-    r.push("כתובת זהה ");
+    r.push(getLang(context).sameAddress+ " ");
   }
   if (info.phone1 || info.phone2 || info.phone3 || info.phone4) {
-    r.push(' מספר טלפון זהה');
+    r.push(getLang(context).identicalPhone);
   }
   if (info.nameDup) {
-    r.push(" שם דומה");
+    r.push(getLang(context).similarName);
   }
   return info.address + ": " + r.join(', ');
 }

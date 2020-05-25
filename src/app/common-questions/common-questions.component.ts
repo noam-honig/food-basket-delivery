@@ -17,7 +17,7 @@ export class CommonQuestionsComponent implements OnInit {
     family:ActiveFamilyDeliveries
   };
   phoneOptions: phoneOption[]=[];
-  constructor(private settings: ApplicationSettings, private dialog: MatDialogRef<any>,private context:Context) { 
+  constructor(public settings: ApplicationSettings, private dialog: MatDialogRef<any>,private context:Context) { 
     this.questions = settings.getQuestions();
 
   }

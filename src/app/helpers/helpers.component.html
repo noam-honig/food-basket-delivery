@@ -1,7 +1,7 @@
 <div style="display:flex;justify-content: space-between">
   <div>
     <mat-form-field>
-      <input matInput [(ngModel)]="searchString" (input)="doSearch()" placeholder="{{'חיפוש משפחה'|translate}}"
+      <input matInput [(ngModel)]="searchString" (input)="doSearch()" placeholder="{{settings.lang.searchVolunteer|translate}}"
         [ngModelOptions]="{standalone: true}">
       <mat-icon matSuffix (click)="clearSearch()">clear</mat-icon>
     </mat-form-field>
@@ -10,7 +10,7 @@
 
   </div>
   <div>
-    <button mat-raised-button color="primary" (click)="quickAdd()" >{{'הוסף מתנדב/מנהל'|translate}}</button>
+    <button mat-raised-button color="primary" (click)="quickAdd()" >{{settings.lang.addVolunteer|translate}}</button>
   </div>
 </div>
 

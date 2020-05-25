@@ -1,6 +1,6 @@
 <div>
 
-    <h3 matDialogHeader> {{families.toDeliver.length}} משלוחים לחלוקה</h3>
+    <h3 matDialogHeader> {{families.toDeliver.length}} {{settings.lang.deliveriesToDistribute}}</h3>
 
     <div mat-dialog-content>
         <table class="table table-bordered" style="width: 100%;">
@@ -22,7 +22,7 @@
                 <th *ngIf="boxes2">{{b.boxes2}}</th>
             </tr>
             <tr>
-                <td>סה"כ</td>
+                <td>{{settings.lang.total}}</td>
                 <td>{{boxes1}}
                 </td>
                 <td *ngIf="boxes2">{{boxes2}}</td>
@@ -35,7 +35,7 @@
     <mat-dialog-actions>
 
         <button mat-raised-button color="accent" [mat-dialog-close]>
-            סגור
+            {{settings.lang.close}}
         </button>
 
     </mat-dialog-actions>

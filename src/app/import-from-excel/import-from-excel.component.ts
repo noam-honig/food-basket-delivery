@@ -1013,7 +1013,7 @@ export class ImportFromExcelComponent implements OnInit {
         if (info.removedFromList) {
             r = 'הוצא מהרשימות! ';
         }
-        return r + displayDupInfo(info);
+        return r + displayDupInfo(info,this.context);
     }
 
     @ServerFunction({ allowed: Roles.admin })

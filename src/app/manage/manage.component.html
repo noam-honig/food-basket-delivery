@@ -36,20 +36,20 @@
                 <li>!מתנדב! - {{settings.lang.replacedByVolunteerName}}</li>
                 <li>!שולח! - {{settings.lang.replcaedBySenderName}}</li>
                 <li>!ארגון! - {{settings.lang.replacedByOrgName}}</li>
-                <li>!אתר! - יוחלף בכתובת האתר</li>
+                <li>!אתר! - {{settings.lang.replaceBySiteUrl}}</li>
             </ul>
             <textarea [(ngModel)]="settings.smsText.value" class="form-control"></textarea>
-            <strong>הודעה לדוגמא</strong>
+            <strong>{{settings.lang.sampleMessage}}</strong>
             <pre>{{testSms()}}</pre>
         </mat-card>
         <mat-card>
             <mat-card-title>
                 {{settings.reminderSmsText.defs.caption}}
             </mat-card-title>
-            הודעה זו תשלח למתנדב שמתעכב ממסך מעקב מתנדבים
+            {{settings.lang.reminderSmsTextHelp}}
             <textarea [(ngModel)]="settings.reminderSmsText.value" class="form-control" lines=3></textarea>
 
-            <h4>הודעת תזכורת לדוגמא</h4>
+            <h4>{{settings.lang.sampleReminderSms}}</h4>
             <pre>{{testSmsReminder()}}</pre>
         </mat-card>
 
@@ -58,7 +58,7 @@
     <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title>
-                סוגי סלים
+                {{settings.lang.basketTypes}}
             </mat-panel-title>
         </mat-expansion-panel-header>
         <data-grid [settings]="basketType" height="300"></data-grid>
@@ -68,7 +68,7 @@
     <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title>
-                רשימות חלוקה
+                {{settings.lang.distributionLists}}
             </mat-panel-title>
         </mat-expansion-panel-header>
         <data-grid [settings]="distributionCenters" height="300"></data-grid>
@@ -78,7 +78,7 @@
     <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title>
-                {{'גורמים מפנים'|translate}}
+                {{settings.lang.familySources|translate}}
             </mat-panel-title>
         </mat-expansion-panel-header>
         <data-grid [settings]="sources" height="300"></data-grid>
@@ -88,19 +88,19 @@
     <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title>
-                {{'קבוצות משפחות'|translate}}
+                {{settings.lang.familyGroups|translate}}
             </mat-panel-title>
 
         </mat-expansion-panel-header>
 
-        {{'קבוצות אלו יוצגו בשיוך משפחות ויאפשרו סינון מהיר'|translate}}
+        {{settings.lang.distributionListsHelp|translate}}
         <data-grid [settings]="groups" height="300"></data-grid>
 
     </mat-expansion-panel>
     <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title>
-                הודעות למתנדב
+                {{settings.lang.volunteerTexts}}
             </mat-panel-title>
 
         </mat-expansion-panel-header>
@@ -109,11 +109,11 @@
     <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title>
-                שאלות ותשובות למתנדב
+                {{settings.lang.volunteerQAndA}}
             </mat-panel-title>
 
         </mat-expansion-panel-header>
-        כאשר המתנדב לוחץ על הכפתור "נתקלתי בבעיה" מופע לו מסך עם רשימה זו של שאלות ותשובות לעזרה
+        {{settings.lang.volunteerQAndAHelp}}
 
         <table>
             <tr *ngFor="let p of qaItems; let i = index" style="border-bottom: solid;
@@ -123,11 +123,11 @@
                 padding: 9px;">{{i+1}}.</td>
                 <td style="    padding-bottom: 9px;padding-top:9px;">
                     <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
-                        <mat-label>שאלה</mat-label>
+                        <mat-label>{{settings.lang.question}}</mat-label>
                         <input matInput [(ngModel)]="p.question">
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
-                        <mat-label>תשובה</mat-label>
+                        <mat-label>{{settings.lang.answer}}</mat-label>
                         <textarea matInput [(ngModel)]="p.answer" style="height:50px;"></textarea>
                     </mat-form-field>
                 </td>
@@ -150,13 +150,13 @@
     <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title>
-                טלפונים לעזרה למתנדב
+                {{settings.lang.voluntreeHelpPhones}}
             </mat-panel-title>
 
         </mat-expansion-panel-header>
-        כאשר המתנדב לוחץ על הכפתור "נתקלתי בבעיה" מופע לו מסך אם אפשרות להתקשר לעזרה או לעדכן שלא מסר.
+        {{settings.lang.volunteerHelpPhonesHelpLine1}}
         <br>
-        כאן ניתן לעדכן אילו טלפונים יופיעו לו לעזרה, אפשר לעדכן אחד או יותר.
+        {{settings.lang.volunteerHelpPhonesHelpLine2}}
 
         <table>
             <tr *ngFor="let p of helpPhones; let i = index" style="border-bottom: solid;
@@ -169,7 +169,7 @@
                         <option *ngFor="let c of phoneOptions" [ngValue]="c">{{c.name}}</option>
                     </select>
                     <input [(ngModel)]="p.name" placeholder="שם" *ngIf="showNameAndPhone(p)" class="form-control">
-                    <input [(ngModel)]="p.phone" input="tel" placeholder="טלפון" *ngIf="showNameAndPhone(p)"
+                    <input [(ngModel)]="p.phone" input="tel" placeholder="{{settings.lang.phone}}" *ngIf="showNameAndPhone(p)"
                         class="form-control">
                 </td>
                 <td><button mat-icon-button (click)="delete(p)">
@@ -191,7 +191,7 @@
     <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title>
-                העדפות
+                {{settings.lang.preferences}}
             </mat-panel-title>
 
         </mat-expansion-panel-header>
@@ -202,16 +202,14 @@
     <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title>
-                לוגו וצלמיות
+                {{settings.lang.logoAndIcons}}
             </mat-panel-title>
 
         </mat-expansion-panel-header>
         <data-area [settings]="settingsLogo"></data-area>
 
-         אנו ממליצים ליצור את האייקונים בעזרת
-            <a href="https://www.favicon-generator.org/">Favicon generator</a> ומהתוצאה שהוא יוצר להשתמש favicon.ico
-            עבור
-            האייקון - וב apple-icon-120x120.png עבור הלוגו
+         {{settings.lang.logoRecommendTool}}
+            <a href="https://www.favicon-generator.org/">Favicon generator</a> {{settings.lang.logoRecommendAfter}}
         
         <mat-card>
             <mat-card-title>אייקון לאתר (favicon.ico)</mat-card-title>

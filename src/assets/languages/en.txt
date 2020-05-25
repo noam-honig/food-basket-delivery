@@ -392,3 +392,591 @@ The name of the volunteer will be replaced
 The sender's name will be replaced
 יוחלף בשם הארגון
 Will be replaced on behalf of the organization
+משלוחים עבור
+Shipments for
+משלוחים עבור
+Shipments for
+העבר משלוח נוכחי לארכיב?
+Move current shipment to archive?
+יבואו לקחת את המשלוח ואינם צריכים משלוח?
+Come and take the shipment and don't need shipping?
+יבואו לקחת את המשלוח ואינם צריכים משלוח?
+Come and take the shipment and don't need shipping?
+משלוח חדש ל
+New shipping to
+למשפחה זו כבר קיים משלוח מאותו סוג האם להוסיף עוד אחד?
+This family already has shipping of the same type.
+למשפחה זו כבר קיים משלוח מאותו סוג האם להוסיף עוד אחד?
+This family already has shipping of the same type.
+לא תקין
+Invalid
+למשפחה זו כבר קיים משלוח מאותו סוג האם להוסיף עוד אחד?
+This family already has shipping of the same type.
+לא תקין
+Invalid
+משלוח נוצר בהצלחה
+Delivery successfully created
+משפחה לא נמצאה
+No family found
+נקודת GPS ליד
+GPS spot near
+נקודת GPS ליד
+GPS spot near
+id של המשפחה באפליקצית חגי
+family id in the holiday app
+מספר זהות
+ID number
+מספר זהות בן/בת הזוג
+Spouse Identity Number
+מספר זהות
+ID number
+מספר זהות בן/בת הזוג
+Spouse Identity Number
+מספר נפשות
+Number of persons
+מספר זהות
+ID number
+מספר זהות בן/בת הזוג
+Spouse Identity Number
+מספר נפשות
+Number of persons
+תאריך לידה
+Date of birth
+יומולדת הבא
+Next birthday
+יומולדת הבא
+Next birthday
+גיל
+age
+סוג סל ברירת מחדל
+Default basket type
+סוג סל ברירת מחדל
+Default basket type
+מספר סלים ברירת מחדל
+Number of default baskets
+סוג סל ברירת מחדל
+Default basket type
+מספר סלים ברירת מחדל
+Number of default baskets
+גורם מפנה
+Referrer
+איש קשר לבירור פרטים (עו"ס)
+Contact details for details (COO)
+איש קשר לבירור פרטים (עו"ס)
+Contact details for details (COO)
+עו"ס טלפון 1
+Phone Attorney 1
+איש קשר לבירור פרטים (עו"ס)
+Contact details for details (COO)
+עו"ס טלפון 1
+Phone Attorney 1
+עו"ס טלפון 2
+Phone Attorney 2
+שיוך מיוחד
+Special affiliation
+שיוך מיוחד
+Special affiliation
+באים לקחת ברירת מחדל
+Come take a default
+שיוך מיוחד
+Special affiliation
+באים לקחת ברירת מחדל
+Come take a default
+מזהה חד ערכי למשפחה
+A single-family ID
+הערה פנימית - לא תופיע למתנדב
+Internal Note - Will not appear for volunteer
+עיר (מתעדכן אוטומטית)
+City (automatically updated)
+הנחיות נוספות לכתובת
+Additional directions to the address
+עיר (מתעדכן אוטומטית)
+City (automatically updated)
+הנחיות נוספות לכתובת
+Additional directions to the address
+מיקוד
+Postal Code
+הערה שתופיע למתנדב
+A note to appear to the volunteer
+טלפון 1
+Phone 1
+הערות לטלפון 1
+Phone Notes 1
+טלפון 2
+Phone 2
+הערות לטלפון 2
+Phone Notes 2
+טלפון 3
+Phone 3
+הערות לטלפון 3
+Phone Notes 3
+טלפון 4
+Phone 4
+הערות לטלפון 4
+Phone Notes 4
+סטטוס: תאריך שינוי
+Status: Date changed
+סטטוס: תאריך שינוי
+Status: Date changed
+סטטוס: מי עדכן
+Status: Who's updating
+סטטוס: תאריך שינוי
+Status: Date changed
+סטטוס: מי עדכן
+Status: Who's updating
+מתנדב ברירת מחדל
+Default volunteer
+סטטוס: תאריך שינוי
+Status: Date changed
+סטטוס: מי עדכן
+Status: Who's updating
+מתנדב ברירת מחדל
+Default volunteer
+סטטוס משלוח קודם
+Previous shipping status
+סטטוס משלוח קודם
+Previous shipping status
+תאריך משלוח קודם
+Previous delivery date
+סטטוס משלוח קודם
+Previous shipping status
+תאריך משלוח קודם
+Previous delivery date
+הערת משלוח קודם
+Previous delivery note
+סטטוס משלוח קודם
+Previous shipping status
+תאריך משלוח קודם
+Previous delivery date
+הערת משלוח קודם
+Previous delivery note
+כתובת כפי שגוגל הבין
+Address as Google understood
+כתובת תקינה
+Good address
+כתובת תקינה
+Good address
+סיכום משלוח קודם
+Previous delivery summary
+משתמש מוסיף
+User Adds
+משתמש מוסיף
+User Adds
+מועד עדכון אחרון
+Deadline
+משתמש מוסיף
+User Adds
+מועד עדכון אחרון
+Deadline
+משתמש מעדכן
+Updating user
+תוך
+within
+תוך
+within
+למשפחת
+For the family
+למשפחת
+For the family
+על ידי
+By
+משפחת
+The family
+משפחת
+The family
+עודכנה ל
+Updated to
+שוייכה ל
+Associated with
+שוייכה ל
+Associated with
+בוטל השיוך למשפחת
+Family affiliation was abolished
+שוייכה ל
+Associated with
+בוטל השיוך למשפחת
+Family affiliation was abolished
+מספר טלפון אינו תקין
+Phone number is incorrect
+מספר טלפון אינו תקין
+Phone number is incorrect
+ערך כבר קיים למשפחת
+Value already exists for the family
+בכתובת
+At
+בכתובת
+At
+מספר זהות זהה
+Same identity number
+כתובת זהה
+Same address
+כתובת זהה
+Same address
+ מספר טלפון זהה
+ Same phone number
+ שם דומה
+ A similar name
+סיכום סטטוס
+Status summary
+סיכום סטטוס
+Status summary
+סיכום סטטוס
+Status summary
+בדרך
+through
+סיכום סטטוס
+Status summary
+בדרך
+through
+טרם שוייכו
+Not yet associated
+סיכום סטטוס
+Status summary
+בדרך
+through
+טרם שוייכו
+Not yet associated
+נמסר
+Delivered
+בעייה
+problem
+בעייה
+problem
+מספר סלים
+Number of baskets
+בעייה
+problem
+מספר סלים
+Number of baskets
+מתנדב
+volunteer
+הערות שכתב המתנדב כשמסר
+Comments written by the volunteer when he delivered
+הערות שכתב המתנדב כשמסר
+Comments written by the volunteer when he delivered
+מתי
+When
+הערות שכתב המתנדב כשמסר
+Comments written by the volunteer when he delivered
+מתי
+When
+מי שייכה למתנדב
+Who belongs to the volunteer
+מועד שיוך למתנדב
+Volunteer date
+מועד שיוך למתנדב
+Volunteer date
+מועד שיוך למתנדב
+Volunteer date
+מועד הקצאה
+Assignment date
+משתמש מקצה
+End User
+צריך טיפול/מעקב
+Needs treatment / follow up
+צריך טיפול/מעקב
+Needs treatment / follow up
+צריך טיפול - מי עדכן
+Need Care - Who Updated
+צריך טיפול/מעקב
+Needs treatment / follow up
+צריך טיפול - מי עדכן
+Need Care - Who Updated
+צריך טיפול - מתי עודכן
+Needs Care - When Updated
+פרטי משלוח עבור
+Shipping details for
+פרטי משלוח עבור
+Shipping details for
+נותרו לפי סלים
+Remained by baskets
+נותרו לפי סלים
+Remained by baskets
+לפי סלים
+By baskets
+נותרו לפי סלים
+Remained by baskets
+לפי סלים
+By baskets
+נמסרו לפי סלים
+Delivered by baskets
+נותרו לפי סלים
+Remained by baskets
+לפי סלים
+By baskets
+נמסרו לפי סלים
+Delivered by baskets
+נותרו לפי ערים
+Remained by cities
+נותרו לפי קבוצות
+Remained by groups
+נותרו לפי קבוצות
+Remained by groups
+נותרו לפי קבוצות
+Remained by groups
+ריק
+blank
+ריק
+blank
+כל השאר
+Everything Else
+ריק
+blank
+כל השאר
+Everything Else
+סה"כ
+Total
+סיכום משלוח
+Shipping Summary
+יצוא לאקסל
+Export to Excel
+יצוא לאקסל
+Export to Excel
+משלוח חדש
+new delivery
+האם לבטל שיוך מתנדב ל
+Do cancel a volunteer affiliation to
+האם לבטל שיוך מתנדב ל
+Do cancel a volunteer affiliation to
+משלוחים למשפחה
+Family shipments
+הקפא משלוח
+Freeze Shipping
+משלוח "קפוא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל
+"Frozen" delivery is a delivery that will not be associated with any volunteer until the "delivery" is dispatched. Freezing is used to temporarily stop certain shipments until they can be thawed and shipped. Do freeze shipping to
+הפשר משלוח
+Allow shipping
+מחק משלוח
+Delete shipping
+משלוח "קפוא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל
+"Frozen" delivery is a delivery that will not be associated with any volunteer until the "delivery" is dispatched. Freezing is used to temporarily stop certain shipments until they can be thawed and shipped. Do freeze shipping to
+הפשר משלוח
+Allow shipping
+מחק משלוח
+Delete shipping
+האם למחוק את המשלוח ל
+Do delete shipping to
+משלוח "קפוא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל
+"Frozen" delivery is a delivery that will not be associated with any volunteer until the "delivery" is dispatched. Freezing is used to temporarily stop certain shipments until they can be thawed and shipped. Do freeze shipping to
+הפשר משלוח
+Allow shipping
+מחק משלוח
+Delete shipping
+האם למחוק את המשלוח ל
+Do delete shipping to
+העבר לארכיון
+Archive
+האם להעביר את המשלוח לארכיון?
+Archive the shipment?
+האם להעביר את המשלוח לארכיון?
+Archive the shipment?
+משלוחים עודכנו
+Shipments updated
+האם להעביר את המשלוח לארכיון?
+Archive the shipment?
+משלוחים עודכנו
+Shipments updated
+הצג הכל
+Show all
+חיפוש משפחה
+Family Search
+חיפוש משפחה
+Family Search
+משפחה חדשה
+A new family
+חיפוש משפחה
+Family Search
+משפחה חדשה
+A new family
+מה הבעיה של גוגל
+What is Google's problem
+מיזוג משפחות
+Merge families
+פרטי משפחה
+Family information
+חפש כתובת בגוגל
+Search Google for an address
+משפחות עודכנו
+Families have been updated
+לפי קבוצות
+By groups
+כתובות בעיתיות
+Problematic addresses
+פעילות
+activity
+כל המשפחות
+All families
+שם משפחה
+Last Name
+שם פרטי
+First name
+רחוב
+Street
+מספר בית
+House number
+לסרטוני הדרכה על מסך משפחות, לחצו כאן
+For tutorial videos on a family screen, click here
+סגור
+closed
+שאלות ותשובות
+Questions and Answers
+חייג ל
+Dial to
+לקבלת עזרה
+For help
+חייג לקבלת עזרה
+Call for help
+בטל
+void
+עדכן אי מסירה
+Update delivery failure
+כולם
+Everyone
+חיפוש מתנדב
+Volunteer search
+שלח הודעת SMS למתנדבים שטרם קיבלו
+Send an SMS to volunteers who have not yet received
+הושלמו
+Completed
+לא נמסרו
+Not delivered
+יצא
+came out
+טרם נשלח SMS
+SMS has not yet been sent
+בחר משפחות על המפה
+Select families on the map
+אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום
+Please click on the map at several points to highlight the area you want, and double-click to finish
+משלוחים סומנו
+Shipments marked
+הצג מתנדבים
+Show volunteers
+כתובות עם יותר ממשפחה אחת
+Addresses with more than one family
+הצג משפחות
+View families
+שוייכו עכשיו
+Associate now
+הוסף מתנדב/מנהל
+Add a volunteer / manager
+בחירת קובץ אקסל
+Excel file selection
+לסרטון הדרכה על קליטה מאקסל לחץ כאן
+For a tutorial on Absorption from Excel click here
+בחר קובץ אקסל
+Select an Excel file
+הגדרת העמודות
+Define the columns
+טען הגדרות
+Load settings
+מחק הגדרות
+Delete settings
+המשך לשלב הבא
+Proceed to the next step
+הוספת עמודות שלא מופיעות באקסל
+Add columns that do not appear in Excel
+לא לקלוט
+Do not absorb
+הסר
+Remove
+הוסף עמודה
+Add a column
+בחירת עמודות בקובץ
+Choose columns in a file
+גליון
+sheet
+שורות באקסל
+Lines in the axle
+הגדרות אחרונות
+Recent Settings
+ביצוע הקליטה
+Making the absorption
+תוצאות
+Results
+שגיאות
+Errors
+השווה מול משפחה זו ו
+Compare with this family and
+העבר למשפחות עדכון
+Forward to families update
+ אף אחת מהמשפחות הללו אינה מתאימה לשורה באקסל, 
+ None of these families fit in the line at Axel,
+העבר למשפחות חדשות
+Move to new families
+קלוט את שורה
+Get the line
+בכל זאת
+even though
+קודם
+previous
+הבא
+the next
+הפסק לשאול האם מסכים לפני כל דבר
+Stop asking if you agree to anything
+משפחות לעדכון
+Families to update
+הסר ממשפחות לעדכן
+Remove from families to update
+משפחות חדשות
+New families
+הוסף את כל המשפחות
+Add all families
+משפחות קיימות
+Existing families
+שמור דוח מצב קליטה מאקסל
+Save Absorption Status Report from Excel
+שמור הגדרות
+Save settings
+מתנדבים חדשים
+New volunteers
+הוסף את כל המתנדבים
+Add all volunteers
+מתנדבים לעדכון
+Volunteers to update
+מתנדבים קיימים
+Existing volunteers
+העבר למתנדבים להוספה
+Forward volunteers to add
+אנא המתן - מוודא פרטים
+Please wait - verify details
+יוחלף בכתובת האתר
+The URL will be replaced
+הודעה לדוגמא
+Sample message
+הודעה זו תשלח למתנדב שמתעכב ממסך מעקב מתנדבים
+This message will be sent to a volunteer who is delayed from a volunteer tracking screen
+הודעת תזכורת לדוגמא
+Sample reminder message
+סוגי סלים
+Types of baskets
+רשימות חלוקה
+Distribution lists
+גורמים מפנים
+Referring factors
+קבוצות אלו יוצגו בשיוך משפחות ויאפשרו סינון מהיר
+These groups will be presented with family affiliation and will allow for quick filtering
+הודעות למתנדב
+Volunteer messages
+שאלות ותשובות למתנדב
+Volunteer questions and answers
+כאשר המתנדב לוחץ על הכפתור "נתקלתי בבעיה" מופע לו מסך עם רשימה זו של שאלות ותשובות לעזרה
+When the volunteer presses the "I have a problem" button, a screen appears with this list of FAQs for help
+שאלה
+a question
+תשובה
+Answer
+טלפונים לעזרה למתנדב
+Phones for volunteer help
+כאשר המתנדב לוחץ על הכפתור "נתקלתי בבעיה" מופע לו מסך אם אפשרות להתקשר לעזרה או לעדכן שלא מסר.
+When the volunteer presses the "I have a problem" button, a screen will appear if you can call for help or update without giving a message.
+כאן ניתן לעדכן אילו טלפונים יופיעו לו לעזרה, אפשר לעדכן אחד או יותר.
+Here you can update which phones will show him help, you can update one or more.
+העדפות
+Preferences
+לוגו וצלמיות
+Logos and figurines
+אנו ממליצים ליצור את האייקונים בעזרת
+We recommend using the icons
+ומהתוצאה שהוא יוצר להשתמש favicon.ico עבור האייקון - וב apple-icon-120x120.png עבור הלוגו
+And the result it creates using favicon.ico for the icon - and in apple-icon-120x120.png for the logo

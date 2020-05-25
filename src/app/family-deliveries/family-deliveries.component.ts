@@ -22,7 +22,7 @@ import { familyActionsForDelivery } from '../families/familyActions';
 import { async } from '@angular/core/testing';
 import { saveToExcel } from '../shared/saveToExcel';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import {translate} from '../translate'
+import { translate, getLang } from '../translate'
 
 @Component({
   selector: 'app-family-deliveries',
@@ -70,7 +70,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   stats = new FamilyDeliveryStats();
   @ViewChild('myTab', { static: false }) myTab: MatTabGroup;
   basketStats: statsOnTabBasket = {
-    name: 'נותרו לפי סלים',
+    name: getLang(this.context).remainingByBaskets,
     rule: f => f.readyAndSelfPickup(),
     stats: [
       this.stats.ready,
@@ -81,7 +81,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   };
 
   basketsInEvent: statsOnTabBasket = {
-    name: 'לפי סלים',
+    name: getLang(this.context).byBaskets,
     rule: f => undefined,
     stats: [
       this.stats.ready,
@@ -91,7 +91,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     fourthColumn: () => this.statusColumn
   };
   basketsDelivered: statsOnTabBasket = {
-    name: 'נמסרו לפי סלים',
+    name: getLang(this.context).deliveredByBaskets,
     rule: f => f.deliverStatus.isSuccess(),
     stats: [
       this.stats.ready,
@@ -102,7 +102,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   };
 
   cityStats: statsOnTab = {
-    name: 'נותרו לפי ערים',
+    name: getLang(this.context).remainingByCities,
     showTotal: true,
     rule: f => f.readyFilter(),
     stats: [
@@ -113,7 +113,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     fourthColumn: () => this.statusColumn
   };
   groupsReady: statsOnTab = {
-    name: 'נותרו לפי קבוצות',
+    name: getLang(this.context).remainingByGroups,
     rule: f => f.readyFilter(),
     stats: [
       this.stats.ready,
@@ -124,7 +124,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   };
   statTabs: statsOnTab[] = [
     {
-      name: 'משלוחים',
+      name: getLang(this.context).deliveries,
       showTotal: true,
       rule: f => undefined,
       stats: [
@@ -147,7 +147,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     this.groupsReady,
     this.cityStats,
     {
-      name: 'מצריך טיפול',
+      name: getLang(this.context).requireFollowUp,
       showTotal: true,
       rule: f => f.needsWork.isEqualTo(true),
       stats: [
@@ -235,7 +235,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     });
     if (this.pieChartData.length == 0) {
       this.pieChartData.push(0);
-      this.pieChartLabels.push('ריק');
+      this.pieChartLabels.push(getLang(this.context).empty);
     }
     if (this.colors[0].backgroundColor.length == 0) {
       this.colors[0].backgroundColor.push(colors.green, colors.blue, colors.yellow, colors.red, colors.orange, colors.gray);
@@ -336,7 +336,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         if (!lastFs) {
           let x = stats.stats.pop();
           firstCities.pop();
-          lastFs = new FamilyDeliveresStatistics('כל השאר', f => {
+          lastFs = new FamilyDeliveresStatistics(getLang(this.context).allOthers, f => {
             let r = differentFromFilter(f, firstCities[0]);
             for (let index = 1; index < firstCities.length; index++) {
               r = r.and(differentFromFilter(f, firstCities[index]));
@@ -359,10 +359,10 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   showTotalBoxes() {
     let x: statsOnTabBasket = this.currentTabStats;
     if (x && (x.totalBoxes1 + x.totalBoxes2)) {
-      let r = 'סה"כ ' + BasketType.boxes1Name + ': ' + x.totalBoxes1;
+      let r = getLang(this.context).total + ' ' + BasketType.boxes1Name + ': ' + x.totalBoxes1;
 
       if (x.totalBoxes2)
-        r += ', סה"כ ' + BasketType.boxes2Name + ': ' + x.totalBoxes2;
+        r += ', ' + getLang(this.context).total + ' ' + BasketType.boxes2Name + ': ' + x.totalBoxes2;
 
       return r;
     }
@@ -372,7 +372,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     private context: Context,
     public dialog: DialogService,
     private busy: BusyService,
-    private settings: ApplicationSettings
+    public settings: ApplicationSettings
   ) {
 
 
@@ -440,7 +440,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.quantity,
 
         {
-          caption: 'סיכום משלוח',
+          caption: getLang(this.context).deliverySummary,
           column: deliveries.deliverStatus,
           readOnly: true,
           valueList: deliveries.deliverStatus.getOptions()
@@ -508,7 +508,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
             return await this.buildWhereForAction(actionWhere);
           },
           settings: this.settings,
-          groupName: 'משלוחים'
+          groupName: getLang(this.context).deliveries
         }),
       ...buildGridButtonFromActions(familyActionsForDelivery(), this.context, {
         afterAction: async () => await this.refresh(),
@@ -518,12 +518,12 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           return await this.buildWhereForAction(actionWhere);
         },
         settings: this.settings,
-        groupName: translate('משפחות')
+        groupName: getLang(this.context).families
       }),
       {
-        name: 'יצוא לאקסל',
+        name: getLang(this.context).exportToExcel,
         click: async () => {
-          await saveToExcel(this.context.for(ActiveFamilyDeliveries), this.deliveries, "משלוחים", this.busy, (d: ActiveFamilyDeliveries, c) => c == d.id || c == d.family, undefined,
+          await saveToExcel(this.context.for(ActiveFamilyDeliveries), this.deliveries, getLang(this.context).deliveries, this.busy, (d: ActiveFamilyDeliveries, c) => c == d.id || c == d.family, undefined,
             async (f, addColumn) => {
               await f.basketType.addBasketTypes(f.quantity, addColumn);
             });
@@ -543,20 +543,20 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
             dialog: this.dialog
           });
         }
-        , textInMenu: () => 'כרטיס משלוח'
+        , textInMenu: () => getLang(this.context).deliveryDetails
       },
       {
-        name: 'משלוח חדש',
+        name: getLang(this.context).newDelivery,
         click: async d => {
           let f = await this.context.for(Families).findId(d.family);
-          await f.showNewDeliveryDialog(this.dialog, this.settings, d,async  () => this.refresh());
+          await f.showNewDeliveryDialog(this.dialog, this.settings, d, async () => this.refresh());
         },
         visible: d => this.context.isAllowed(Roles.admin)
       },
       {
-        name: 'בטל שיוך',
+        name: getLang(this.context).cancelAsignment,
         click: async d => {
-          if (await this.dialog.YesNoPromise("האם לבטל שיוך מתנדב ל" + d.name.value)) {
+          if (await this.dialog.YesNoPromise(getLang(this.context).cancelAssignmentFor + d.name.value)) {
             {
               d.courier.value = '';
               await d.save();
@@ -566,7 +566,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         visible: d => d.deliverStatus.value == DeliveryStatus.ReadyForDelivery && d.courier.value != ''
       },
       {
-        name: translate('משלוחים למשפחה'),
+        name: translate(getLang(this.context).familyDeliveries),
         click: async fd => {
           let f = await this.context.for(Families).findId(fd.family);
           f.showDeliveryHistoryDialog();
@@ -574,9 +574,9 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         , visible: f => !f.isNew()
       },
       {
-        name: 'הקפא משלוח',
+        name: getLang(this.context).freezeDelivery,
         click: async d => {
-          if (await this.dialog.YesNoPromise(`משלוח "קפוא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל` + d.name.value + "?")) {
+          if (await this.dialog.YesNoPromise(getLang(this.context).freezeDeliveryHelp + d.name.value + "?")) {
             {
               d.deliverStatus.value = DeliveryStatus.Frozen;
               await d.save();
@@ -586,7 +586,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         visible: d => d.deliverStatus.value == DeliveryStatus.ReadyForDelivery && d.courier.value == ''
       },
       {
-        name: 'הפשר משלוח',
+        name: getLang(this.context).unFreezeDelivery,
         click: async d => {
           {
             d.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
@@ -596,9 +596,9 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         visible: d => d.deliverStatus.value == DeliveryStatus.Frozen
       },
       {
-        name: 'מחק משלוח',
+        name: getLang(this.context).deleteDelivery,
         click: async d => {
-          if (await this.dialog.YesNoPromise("האם למחוק את המשלוח ל" + d.name.value)) {
+          if (await this.dialog.YesNoPromise(getLang(this.context).shouldDeleteDeliveryFor + d.name.value)) {
             {
               let fd = await this.context.for(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
               await fd.delete();
@@ -609,9 +609,9 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         visible: d => d.deliverStatus.value == DeliveryStatus.ReadyForDelivery && d.courier.value == '' && this.context.isAllowed(Roles.admin)
       },
       {
-        name: 'העבר לארכיון',
+        name: getLang(this.context).archiveDelivery,
         click: async d => {
-          if (await this.dialog.YesNoPromise("האם להעביר את המשלוח לארכיון?")) {
+          if (await this.dialog.YesNoPromise(getLang(this.context).shouldArchiveDelivery)) {
             {
               let fd = await this.context.for(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
               fd.archive.value = true;
@@ -656,8 +656,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           fd => fd.isAllowedForUser(),
       });
     }, action, args);
-    Families.SendMessageToBrowsers('משלוחים עודכנו', context, '');
-    return "עודכנו " + r + " משלוחים";
+    Families.SendMessageToBrowsers(getLang(context).deliveriesUpdated, context, '');
+    return r+getLang(context).deliveriesUpdated;
   }
   @ServerFunction({ allowed: Roles.admin })
   static async FamilyInDeliveryActionOnServer(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
@@ -682,8 +682,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         additionalWhere: fd => fd.isAllowedForUser()
       });
     }, action, args);
-    Families.SendMessageToBrowsers('משלוחים עודכנו', context, '');
-    return "עודכנו " + r + " משלוחים";
+    Families.SendMessageToBrowsers(getLang(context).deliveriesUpdated, context, '');
+    return getLang(context).deliveriesUpdated;
   }
 
 

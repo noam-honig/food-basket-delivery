@@ -19,7 +19,7 @@ import { Roles } from '../auth/roles';
 })
 export class DuplicateFamiliesComponent implements OnInit {
 
-  constructor(private context: Context, private dialog: DialogService, private settings: ApplicationSettings, private busy: BusyService) { }
+  constructor(private context: Context, private dialog: DialogService, public settings: ApplicationSettings, private busy: BusyService) { }
   duplicateFamilies: duplicateFamilies[] = [];
   async ngOnInit() {
     try {
@@ -102,7 +102,7 @@ export class DuplicateFamiliesComponent implements OnInit {
           }, {
             name: 'יצוא לאקסל',
             click: async () => {
-              await saveFamiliesToExcel(this.context, x.args.settings, this.busy)
+              await saveFamiliesToExcel(this.context, x.args.settings, this.busy,this.settings.lang.families)
             }
           }],
         allowSelection: true,

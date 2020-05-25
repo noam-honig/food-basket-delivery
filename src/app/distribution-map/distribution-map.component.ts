@@ -39,7 +39,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
   styleUrls: ['./distribution-map.component.scss']
 })
 export class DistributionMap implements OnInit, OnDestroy {
-  constructor(private context: Context, private dialog: DialogService, busy: BusyService, private settings: ApplicationSettings) {
+  constructor(private context: Context, private dialog: DialogService, busy: BusyService, public settings: ApplicationSettings) {
 
     dialog.onStatusChange(() => {
       busy.donotWait(async () => {

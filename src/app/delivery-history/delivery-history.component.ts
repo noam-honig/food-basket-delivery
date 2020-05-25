@@ -46,7 +46,7 @@ export class DeliveryHistoryComponent implements OnInit {
     data: { name: 'היסטורית משלוחים' }, canActivate: [AdminGuard]
   }
   helperStorage: InMemoryDataProvider;
-  constructor(private context: Context, private busy: BusyService) {
+  constructor(private context: Context, private busy: BusyService,public settings:ApplicationSettings) {
     this.helperStorage = new InMemoryDataProvider();
 
 

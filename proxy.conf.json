@@ -39,6 +39,13 @@
       "changeOrigin": true
     }
     ,
+    "/test3/assets": {
+      "target": "http://localhost:3000",
+      "secure": true,
+      "logLevel":"debug",
+      "changeOrigin": true
+    }
+    ,
     "/guest/api": {
       "target": "http://localhost:3000",
       "secure": true,
