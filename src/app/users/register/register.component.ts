@@ -5,6 +5,7 @@ import { AuthService } from '../../auth/auth-service';
 
 import { Route } from '@angular/router';
 import { Context } from '@remult/core';
+import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-register',
@@ -12,7 +13,7 @@ import { Context } from '@remult/core';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
-  constructor(private auth: AuthService, private context: Context) {
+  constructor(private auth: AuthService, private context: Context,public settings:ApplicationSettings) {
 
 
   }

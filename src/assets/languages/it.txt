@@ -1,0 +1,790 @@
+שיוך משלוחים למתנדב
+Spedizioni di volontari associati
+שם הארגון שלי
+Il nome della mia organizzazione
+שלום !מתנדב!
+Ciao! Volontario!
+לחלוקת חבילות !ארגון! לחץ על: !אתר! 
+Condivisione dei pacchetti! Organizzazione! Clicca:! Sito!
+תודה !שולח!
+Grazie! Invio!
+שלום !מתנדב!, 
+Ciao! Volontario!,
+נשמח אם תעדכן את המערכת במצב המסירה של הסלים. לעדכון לחץ על:  !אתר!
+Saremo lieti di aggiornare il sistema nella modalità di consegna dei cestini. Per aggiornare clicca su: Sito!
+בתודה !ארגון!
+Grazie! Organizzazione!
+נשמח אם תכתוב לנו הערה על מה שראית והיה
+Ci piacerebbe scrivere un commento su ciò che hai visto ed eri
+אנא פרט היכן השארת את הסל ועם מי דיברת
+Specifica dove hai lasciato il carrello e con chi hai parlato
+תודה על כל העזרה, נשמח אם תתנדבו שוב
+Grazie per tutto l'aiuto, ci piacerebbe fare di nuovo volontariato
+מסרתי את החבילה בהצלחה
+Ho consegnato il pacco con successo
+מנות
+Piatti
+משהו אחר
+Qualcos'altro
+חלוקת מזון
+Distribuzione Alimentare
+שיוך מלווים
+Escort affiliazione
+משלוחים
+Spedizioni
+משפחות
+famiglie
+מעקב מתנדבים
+Tracciamento volontario
+מצריך טיפול
+Bisogni di cura
+מפת הפצה
+Mappa di distribuzione
+Overview
+Panoramica
+מתנדבים
+I volontari
+היסטורית משלוחים
+Cronologia delle spedizioni
+סרטון חלוקה
+Un video di distribuzione
+GEOCODE
+geocode
+קליטת משפחות מאקסל
+Assorbimento di famiglie da Axel
+קליטת מתנדבים מאקסל
+Assorbimento di volontari da Excel
+חיפוש משפחות כפולות
+Cerca famiglie duplicate
+הגדרות מערכת
+Impostazioni di sistema
+משפחות שלי
+Le mie famiglie
+הגדרות אישיות
+Impostazioni personali
+כניסה
+Entrata
+הרשמה
+registrazione
+ חגי - אפליקציה לחלוקת סלי מזון
+ Hagai - un'app per la distribuzione di cestini alimentari
+יציאה
+Produzione
+שלום
+Pace
+מלווה את
+Accompagnato da
+לסרטון הדרכה קצר, לחצו כאן
+Per un breve video tutorial, clicca qui
+בטל שיוך לכל המשלוחים
+Annulla l'assegnazione di tutte le spedizioni
+סמן נמסר בהצלחה לכל המשלוחים
+Indicatore consegnato con successo a tutte le spedizioni
+סה"כ זמן נסיעה מוערך
+Tempo di percorrenza totale stimato
+דקות
+sottigliezza
+ק"מ
+km
+השארתי ליד הבית
+Sono partito da casa
+משלוחים שנתקלתי בבעיה
+Spedizioni Ho riscontrato un problema
+נתקלתי בבעיה
+ho un problema
+הצג את כל המשלוחים לחלוקה
+Visualizza tutte le consegne per la distribuzione
+שלח הודעת SMS עם קישור
+Invia un SMS con un link
+שלח קישור ב whatsapp
+Invia un link in whatsapp
+העתק הודעה עם קישור
+Copia il messaggio con il link
+העתק קישור
+Copia link
+שלח קישור בSMS מהטלפון
+Invia un collegamento SMS dal tuo telefono
+תזכורת נשלחה
+promemoria inviato
+שלח שוב
+invia di nuovo
+שלחי SMS לתזכורת
+Promemoria via SMS
+התקשר ל
+Chiamata
+התקשר למלווה
+Chiama il prestatore
+משפחה
+Famiglia
+כתובת
+Indirizzo
+טלפונים
+telefoni
+טלפון
+Telefono
+יש
+c'è
+סל
+cestino
+שים לב!
+Nota!
+קומה
+pavimento
+דירה
+Appartamento
+עדכן הערה
+Nota di aggiornamento
+נלחץ בטעות - החזר למשלוחים לחלוקה
+Clic accidentale - Ritorno alla spedizione
+משלוחים שחולקו ביומיים האחרונים
+Consegne distribuite negli ultimi due giorni
+הצג את כל המשלוחים שחולקו
+Visualizza tutte le spedizioni spedite
+הצג מסלול ב - google maps
+Visualizza il percorso su google maps
+אספו את החבילה
+Raccogli il pacchetto
+בטל שיוך
+Disaccoppia
+כרטיס משלוח
+Carta di spedizione
+הייתם אצל המשפחה הזו גם פעם קודמת
+Anche tu sei stato in questa famiglia
+שימו לב, כתובת לא מדוייקת!
+Avviso, indirizzo impreciso!
+העתק כתובת
+Copia indirizzo
+באים לקחת
+Vieni e prendi
+משלוח אחד לחלוקה
+Una consegna per la distribuzione
+משלוחים לחלוקה
+Consegne distribuite
+פרטי מתנדב
+Dettagli volontari
+לא ניתן לשייך מתנדבים מכיוון שלא נבחרה רשימת חלוקה. אנא בחרו רשימת חלוקה (למעלה מצד שמאל איפה שכתוב "כל הרשימות")
+I volontari non possono essere associati perché non è stata selezionata una lista di distribuzione. Seleziona una lista di distribuzione (in alto a sinistra dove è scritto "Tutti gli elenchi")
+חפש מתנדב לפי שם
+Cerca un volontario per nome
+נקה פרטי מתנדב
+Cancella informazioni sui volontari
+שמור פרטי מתנדב ועבור למתנדב הבא
+Salva le informazioni sui volontari e vai al prossimo volontario
+הצג חברה למתנדב
+Visualizza un'azienda di volontariato
+הסתר חברה למתנדב
+Nascondere una società di volontariato
+מספר הטלפון של המתנדב
+Numero di telefono del volontario
+אנא הזיני את הטלפון של המתנדב ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים לשייך
+Inserisci il telefono e il nome del volontario, quindi puoi scegliere un gruppo, una città e dei cestini da associare
+לסרטון הדרכה על שיוך משלוחים ויום האירוע לחצו כאן
+Per un'esercitazione sull'associazione di spedizioni e il giorno dell'evento, fai clic qui
+שיוך משלוחים ל
+Spedizioni associate a
+קבוצות שיוך משפחה
+Gruppi di affiliazione familiare
+כל הקבוצות
+Tutte le squadre
+עיר לחלוקה
+Una città per la distribuzione
+כל הערים
+Tutte le città
+אזור
+La zona
+כל האזורים
+Tutte le aree
+סוג סל
+Tipo di cestino
+מספר משפחות
+Diverse famiglie
+עדיפות למשפחות חוזרות
+Priorità per il ritorno delle famiglie
+עובד על זה...
+lavorando su di esso...
+לא נותרו משלוחים מתאימים
+Non sono rimaste spedizioni idonee
+שייך משלוח הכי קרוב
+Appartiene alla spedizione più vicina
+שייך משלוח כלשהו
+Appartiene ad alcune spedizioni
+הוסף את כל המשפחות החוזרות
+Aggiungi tutte le famiglie di ritorno
+משפחות מיוחדות
+Famiglie speciali
+בחירת משפחה לפי שם
+Scegliere una famiglia per nome
+בחירת משפחה על המפה
+Selezione della famiglia sulla mappa
+בחירת משפחה לפי רחוב
+Selezione della famiglia per strada
+העבר משפחות ממתנדב אחר
+Trasferisci le famiglie da un altro volontario
+חשב מסלול מחדש
+Ricalcola percorso
+מוגדר כמלווה של
+Definito come finanziatore di
+האם להציג את המשפחות של
+Mostrerà le famiglie di
+כל הסלים
+Tutti i cestini
+להעביר
+trasmettere
+משלוחים מ
+Spedizioni da
+למתנדב
+Al volontario
+בנקודה זו יש
+A questo punto c'è
+ משלוחים - לשייך את כולם?
+ Consegne - associarle tutte?
+ישנן עוד 
+Ci sono più
+משלוחים באותה הכתובת, האם לשייך גם אותם?
+Spedizione allo stesso indirizzo, appartengono anche?
+לא נמצאה משפחה מתאימה
+Nessuna famiglia adatta trovata
+משלוחים שוייכו 
+Le spedizioni sono associate
+אישור סיסמה
+verifica password
+הסיסמה אינה תואמת את אישור הסיסמה
+La password non corrisponde alla conferma della password
+העדכון נשמר, תודה
+L'aggiornamento è stato salvato, grazie
+שם
+Nome
+השם קצר מידי
+Il nome è troppo corto
+מועד משלוח SMS
+Data di consegna SMS
+הערה
+Nota
+צריך מלווה
+Hai bisogno di un compagno
+נהג משוייך
+Autista associato
+מלווה
+accompagnati
+כבר קיים במערכת
+Esiste già nel sistema
+סיסמה
+parola d'ordine
+מועד הוספה
+Data aggiunta
+מועד משלוח תזכורת SMS
+Data di consegna del promemoria via SMS
+מנהל כלל המערכת
+Gestore regole di sistema
+משייך מתנדבים לרשימת חלוקה
+Associa volontari a una lista di distribuzione
+אינך רשאי לעדכן עבור מתנדב זה
+Non è possibile aggiornare per questo volontario
+חברה
+Società
+עדכון פרטים
+Dettagli di aggiornamento
+שם הארגון
+Il nome dell'organizzazione
+תוכן הודעת SMS
+Contenuto del messaggio SMS
+תוכן הודעת תזכורת SMS
+Contenuto del promemoria via SMS
+ חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור
+ Deve contenere il testo! Sito! Altrimenti non invierà un collegamento
+לוגו URL
+Logo URL
+כתובת מרכז השילוח
+Indirizzo del centro di spedizione
+הודעה למתנדב כאשר נמסר בהצלחה
+Messaggio al volontario quando consegnato con successo
+הודעה למתנדב כאשר הושאר ליד הבית
+Messaggio ai volontari quando lasciato a casa
+הודעה למתנדב כאשר יש בעיה
+Avvisare il volontario in caso di problemi
+הודעה למתנדב כאשר סיים את כל המשפחות
+Notifica al volontariato al termine di tutte le famiglie
+שם חלופי
+Nome alternativo
+טלפון חלופי
+Telefono alternativo
+מלל כפתור נמסר בהצלחה
+Testo del pulsante consegnato correttamente
+מלל חופשי 1 למתנדב
+Testo libero 1 per volontari
+כתובת אינטרנט ללחיצה על מלל חופשי 1 למתנדב
+Indirizzo web volontario gratuito 1 per volontario
+להציג מלל חופשי 1 רק כאשר המתנדב סיים אל כל הסלים
+Mostra il testo libero 1 solo quando il volontario ha terminato tutti i cestini
+מלל חופשי 2 למתנדב
+Testo libero 2 per volontari
+כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב
+Testo volontario gratuito URL 2 per volontari
+להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים
+Mostra testo libero 2 solo quando il volontario ha terminato tutti i cestini
+ישנן משפחות שבאות לקחת ממרכז החלוקה
+Ci sono famiglie che vengono a prendere dal centro di divisione
+שמור מטעם איזה חברה הגיע המתנדב
+Risparmia per conto di quale compagnia proviene il volontario
+הפעל ניהול מלווים לנהגים
+Abilita la gestione della scorta conducente
+שמור הערה למתנדב
+Salva nota come volontario
+סינון קבוצת משפחה
+Filtraggio di un gruppo familiare
+סינון עיר
+Filtraggio della città
+סינון אזור
+Filtro area
+סינון סוג סל
+Filtraggio del tipo di cestino
+בחירת מספר משפחות
+Scegliere più famiglie
+הצג למתנדב כפתור השארתי ליד הבית
+Mostra pulsante volontario che ho lasciato a casa
+כותרת דף בצבע אדום
+Titolo della pagina rossa
+קידומת טלפון ברירת מחדל בקליטה מאקסל
+Prefisso del telefono di ricezione predefinito da Excel
+בדוק אם משפחה כבר קיימת במאגר הנתונים
+Controlla se esiste già una famiglia nel database
+בדוק אם משפחה כבר קיימת בקובץ האקסל
+Controlla se esiste già una famiglia nel file Excel
+הוסף בלי לשאול ערכים לטבלאות התשתית
+Aggiungi valori alle tabelle dell'infrastruttura senza chiedere
+בדוק טלפונים כפולים
+Guarda i telefoni doppi
+סטטוס משלוח ברירת מחדל למשפחות חדשות
+Stato di spedizione predefinito per le nuove famiglie
+שם כמות 1 בסוגי סלים
+Nome quantità 1 nei tipi di cestino
+שם כמות 2 בסוגי סלים
+Denominazione quantità 2 nei tipi di cestino
+הטלפון ממנו יצא הSMS
+Il telefono da cui è uscito l'SMS
+איש קשר לבירור כפי שמוגדר למשפחה
+Contattare per chiarimenti come definito per la famiglia
+טלפון גורם מפנה
+Punto di svolta del telefono
+טלפון אחר
+un altro telefono
+הצג כשגיאה
+Visualizza come errore
+הצג במשפחות לעדכון
+Visualizza in famiglie per l'aggiornamento
+התעלם והוסף משפחה חדשה
+Ignora e aggiungi una nuova famiglia
+מה לעשות אם נמצאה משפחה תואמת המסומנת כהוצא מהרשימות
+Cosa fare se una famiglia corrispondente viene esclusa dagli elenchi
+פרטי הארגון
+Dettagli dell'organizzazione
+כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את המשפחות ולחץ על הכפתור שלח SMS. ניתן להגדיר כאן שם חלופי וטלפון חלופי
+Quando un messaggio di testo viene inviato a un volontario, sembra uscito dal telefono del membro della famiglia e fatto clic sul pulsante Invia SMS. Puoi impostare un nome e un telefono alternativi qui
+הודעה זו תשלח למתנדב ממסך שיוך משלוחים - עם הקישור למשפחות להן הוא מתבקש לחלק.
+Questo messaggio verrà inviato a un volontario dalla schermata di un'associazione di spedizioni - con il link alle famiglie che viene chiesto di condividere.
+יוחלף בשם המתנדב
+Il nome del volontario verrà sostituito
+יוחלף בשם השולח
+Il nome del mittente verrà sostituito
+יוחלף בשם הארגון
+Il nome dell'organizzazione verrà sostituito
+משלוחים עבור
+Spedizioni per
+העבר משלוח נוכחי לארכיב?
+Sposta la spedizione corrente in archivio?
+יבואו לקחת את המשלוח ואינם צריכים משלוח?
+Vieni a prendere la spedizione e non hai bisogno di spedizione?
+משלוח חדש ל
+Nuova spedizione a
+למשפחה זו כבר קיים משלוח מאותו סוג האם להוסיף עוד אחד?
+Questa famiglia ha già spedizioni dello stesso tipo.
+לא תקין
+Non valido
+משלוח נוצר בהצלחה
+Consegna creata con successo
+משפחה לא נמצאה
+Nessuna famiglia trovata
+נקודת GPS ליד
+Punto GPS vicino
+id של המשפחה באפליקצית חגי
+ID famiglia nell'app per le vacanze
+מספר זהות
+Numero identificativo
+מספר זהות בן/בת הזוג
+Numero identificativo del coniuge
+מספר נפשות
+Numero di persone
+תאריך לידה
+Data di nascita
+יומולדת הבא
+Il prossimo compleanno
+גיל
+età
+סוג סל ברירת מחדל
+Tipo di cestino predefinito
+מספר סלים ברירת מחדל
+Numero di cestini predefiniti
+גורם מפנה
+Referente
+איש קשר לבירור פרטים (עו"ס)
+Dettagli di contatto per i dettagli (COO)
+עו"ס טלפון 1
+Avvocato telefonico 1
+עו"ס טלפון 2
+Avvocato telefonico 2
+שיוך מיוחד
+Affiliazione speciale
+באים לקחת ברירת מחדל
+Vieni a prendere un valore predefinito
+מזהה חד ערכי למשפחה
+Un ID monofamiliare
+הערה פנימית - לא תופיע למתנדב
+Nota interna - Non verrà visualizzato per il volontario
+עיר (מתעדכן אוטומטית)
+Città (aggiornata automaticamente)
+הנחיות נוספות לכתובת
+Ulteriori indicazioni per l'indirizzo
+מיקוד
+codice postale
+הערה שתופיע למתנדב
+Una nota da presentare al volontario
+טלפון 1
+Telefono 1
+הערות לטלפון 1
+Note sul telefono 1
+טלפון 2
+Telefono 2
+הערות לטלפון 2
+Note sul telefono 2
+טלפון 3
+Telefono 3
+הערות לטלפון 3
+Note sul telefono 3
+טלפון 4
+Telefono 4
+הערות לטלפון 4
+Note sul telefono 4
+סטטוס: תאריך שינוי
+Stato: data modificata
+סטטוס: מי עדכן
+Stato: chi sta aggiornando
+מתנדב ברירת מחדל
+Volontario predefinito
+סטטוס משלוח קודם
+Stato di spedizione precedente
+תאריך משלוח קודם
+Data di consegna precedente
+הערת משלוח קודם
+Nota di consegna precedente
+כתובת כפי שגוגל הבין
+Indirizzo come capito da Google
+כתובת תקינה
+Buon indirizzo
+סיכום משלוח קודם
+Riepilogo consegna precedente
+משתמש מוסיף
+L'utente aggiunge
+מועד עדכון אחרון
+Scadenza
+משתמש מעדכן
+Aggiornamento utente
+תוך
+entro
+למשפחת
+Per la famiglia
+על ידי
+Di
+משפחת
+La famiglia
+עודכנה ל
+Aggiornato a
+שוייכה ל
+Associato a
+בוטל השיוך למשפחת
+L'affiliazione familiare è stata abolita
+מספר טלפון אינו תקין
+Il numero di telefono non è corretto
+ערך כבר קיים למשפחת
+Il valore esiste già per la famiglia
+בכתובת
+A
+מספר זהות זהה
+Stesso numero identificativo
+כתובת זהה
+Stesso indirizzo
+ מספר טלפון זהה
+ Stesso numero di telefono
+ שם דומה
+ Un nome simile
+סיכום סטטוס
+Riepilogo dello stato
+בדרך
+attraverso
+טרם שוייכו
+Non ancora associato
+נמסר
+consegnato
+בעייה
+problema
+מספר סלים
+Numero di cestini
+מתנדב
+volontario
+הערות שכתב המתנדב כשמסר
+Commenti scritti dal volontario quando ha consegnato
+מתי
+quando
+מי שייכה למתנדב
+Chi appartiene al volontario
+מועד שיוך למתנדב
+Data volontaria
+מועד הקצאה
+Data di assegnazione
+משתמש מקצה
+Utente finale
+צריך טיפול/מעקב
+Richiede trattamento / follow-up
+צריך טיפול - מי עדכן
+Bisogno di cure - Chi ha aggiornato
+צריך טיפול - מתי עודכן
+Bisogno di cure - Quando aggiornato
+פרטי משלוח עבור
+Dettagli di spedizione per
+נותרו לפי סלים
+Restato dai cestini
+לפי סלים
+Per cestini
+נמסרו לפי סלים
+Fornito da cestini
+נותרו לפי ערים
+Restato dalle città
+נותרו לפי קבוצות
+Restato da gruppi
+ריק
+vuoto
+כל השאר
+Tutto il resto
+סה"כ
+Totale
+סיכום משלוח
+Riepilogo spedizione
+יצוא לאקסל
+esportare in Excel
+משלוח חדש
+nuova consegna
+האם לבטל שיוך מתנדב ל
+Annullare un'affiliazione volontaria a
+משלוחים למשפחה
+Spedizioni familiari
+הקפא משלוח
+Spedizione gratuita
+משלוח "קפוא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל
+La consegna "Frozen" è una consegna che non sarà associata a nessun volontario fino alla spedizione della "consegna". Il congelamento viene utilizzato per interrompere temporaneamente determinate spedizioni fino a quando non possono essere scongelate e spedite. Congela la spedizione a
+הפשר משלוח
+Consenti la spedizione
+מחק משלוח
+Elimina la spedizione
+האם למחוק את המשלוח ל
+Elimina la spedizione a
+העבר לארכיון
+Archivio
+האם להעביר את המשלוח לארכיון?
+Archivia la spedizione?
+משלוחים עודכנו
+Spedizioni aggiornate
+הצג הכל
+Mostra tutto
+חיפוש משפחה
+Ricerca familiare
+משפחה חדשה
+Una nuova famiglia
+מה הבעיה של גוגל
+Qual è il problema di Google
+מיזוג משפחות
+Unisci famiglie
+פרטי משפחה
+Informazioni sulla famiglia
+חפש כתובת בגוגל
+Cerca in Google un indirizzo
+משפחות עודכנו
+Le famiglie sono state aggiornate
+לפי קבוצות
+Per gruppi
+כתובות בעיתיות
+Indirizzi problematici
+פעילות
+attività
+כל המשפחות
+Tutte le famiglie
+שם משפחה
+Cognome
+שם פרטי
+nome di battesimo
+רחוב
+strada
+מספר בית
+numero di casa
+לסרטוני הדרכה על מסך משפחות, לחצו כאן
+Per i video tutorial su una schermata di famiglia, fai clic qui
+סגור
+chiuso
+שאלות ותשובות
+Domande e risposte
+חייג ל
+Chiama per
+לקבלת עזרה
+Per un aiuto
+חייג לקבלת עזרה
+Chiamare per aiuto
+בטל
+vuoto
+עדכן אי מסירה
+Aggiornamento non riuscito
+כולם
+Tutti
+חיפוש מתנדב
+Ricerca volontaria
+שלח הודעת SMS למתנדבים שטרם קיבלו
+Invia un SMS ai volontari che non hanno ancora ricevuto
+הושלמו
+Completato
+לא נמסרו
+Non consegnato
+יצא
+venne fuori
+טרם נשלח SMS
+SMS non è stato ancora inviato
+בחר משפחות על המפה
+Seleziona le famiglie sulla mappa
+אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום
+Fare clic sulla mappa in diversi punti per evidenziare l'area desiderata e fare doppio clic per terminare
+משלוחים סומנו
+Spedizioni contrassegnate
+הצג מתנדבים
+Mostra volontari
+כתובות עם יותר ממשפחה אחת
+Indirizzi con più di una famiglia
+הצג משפחות
+Visualizza le famiglie
+שוייכו עכשיו
+Associa adesso
+הוסף מתנדב/מנהל
+Aggiungi un volontario / manager
+בחר קובץ אקסל
+Seleziona un file Excel
+לסרטון הדרכה על קליטה מאקסל לחץ כאן
+Per un tutorial sull'assorbimento da Excel, fai clic qui
+הגדרת העמודות
+Definisci le colonne
+טען הגדרות
+Carica impostazioni
+מחק הגדרות
+Elimina impostazioni
+המשך לשלב הבא
+Procedere con il passaggio successivo
+הוספת עמודות שלא מופיעות באקסל
+Aggiungi colonne che non compaiono in Excel
+לא לקלוט
+Non assorbire
+הסר
+Rimuovere
+הוסף עמודה
+Aggiungi una colonna
+בחירת עמודות בקובץ
+Scegli le colonne in un file
+גליון
+foglio
+שורות באקסל
+Linee nell'asse
+הגדרות אחרונות
+Impostazioni recenti
+ביצוע הקליטה
+Fare l'assorbimento
+תוצאות
+risultati
+שגיאות
+Errori
+השווה מול משפחה זו ו
+Confronta con questa famiglia e
+העבר למשפחות עדכון
+Inoltra all'aggiornamento delle famiglie
+ אף אחת מהמשפחות הללו אינה מתאימה לשורה באקסל, 
+ Nessuna di queste famiglie rientrava nella linea di Axel,
+העבר למשפחות חדשות
+Passa a nuove famiglie
+קלוט את שורה
+Prendi la linea
+בכל זאת
+nonostante
+קודם
+precedente
+הבא
+il prossimo
+הפסק לשאול האם מסכים לפני כל דבר
+Smetti di chiedere se accetti qualcosa
+משפחות לעדכון
+Famiglie da aggiornare
+הסר ממשפחות לעדכן
+Rimuovi dalle famiglie per aggiornare
+משפחות חדשות
+Nuove famiglie
+הוסף את כל המשפחות
+Aggiungi tutte le famiglie
+משפחות קיימות
+Famiglie esistenti
+שמור דוח מצב קליטה מאקסל
+Salva rapporto stato assorbimento da Excel
+שמור הגדרות
+Salva le impostazioni
+מתנדבים חדשים
+Nuovi volontari
+הוסף את כל המתנדבים
+Aggiungi tutti i volontari
+מתנדבים לעדכון
+Volontari da aggiornare
+מתנדבים קיימים
+Volontari esistenti
+העבר למתנדבים להוספה
+Inoltra volontari da aggiungere
+אנא המתן - מוודא פרטים
+Attendere: verificare i dettagli
+יוחלף בכתובת האתר
+L'URL verrà sostituito
+הודעה לדוגמא
+Messaggio di esempio
+הודעה זו תשלח למתנדב שמתעכב ממסך מעקב מתנדבים
+Questo messaggio verrà inviato a un volontario ritardato da una schermata di monitoraggio del volontario
+הודעת תזכורת לדוגמא
+Messaggio di promemoria di esempio
+סוגי סלים
+Tipi di cestini
+רשימות חלוקה
+Liste di distribuzione
+גורמים מפנים
+Fattori di riferimento
+קבוצות אלו יוצגו בשיוך משפחות ויאפשרו סינון מהיר
+Questi gruppi saranno presentati con affiliazione familiare e consentiranno un rapido filtraggio
+הודעות למתנדב
+Messaggi volontari
+שאלות ותשובות למתנדב
+Domande e risposte volontarie
+כאשר המתנדב לוחץ על הכפתור "נתקלתי בבעיה" מופע לו מסך עם רשימה זו של שאלות ותשובות לעזרה
+Quando il volontario preme il pulsante "Ho un problema", viene visualizzata una schermata con questo elenco di domande frequenti
+שאלה
+una domanda
+תשובה
+Risposta
+טלפונים לעזרה למתנדב
+Telefoni di aiuto volontari
+כאשר המתנדב לוחץ על הכפתור "נתקלתי בבעיה" מופע לו מסך אם אפשרות להתקשר לעזרה או לעדכן שלא מסר.
+Quando il volontario preme il pulsante "Ho un problema", viene visualizzata una schermata se è possibile chiamare aiuto o aggiornare senza dare un messaggio.
+כאן ניתן לעדכן אילו טלפונים יופיעו לו לעזרה, אפשר לעדכן אחד או יותר.
+Qui è possibile aggiornare quali telefoni verranno visualizzati per assistenza, è possibile aggiornare uno o più.
+העדפות
+Preferenze
+לוגו וצלמיות
+Loghi e figurine
+אנו ממליצים ליצור את האייקונים בעזרת
+Si consiglia di utilizzare le icone
+ומהתוצאה שהוא יוצר להשתמש favicon.ico עבור האייקון - וב apple-icon-120x120.png עבור הלוגו
+E il risultato che crea usando favicon.ico per l'icona - e in apple-icon-120x120.png per il logo

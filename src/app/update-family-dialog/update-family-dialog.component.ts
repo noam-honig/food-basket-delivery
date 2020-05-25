@@ -43,7 +43,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<any>,
 
     private context: Context,
-    private settings: ApplicationSettings,
+    public settings: ApplicationSettings,
     private dialog: DialogService
 
   ) {

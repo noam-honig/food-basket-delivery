@@ -428,7 +428,7 @@ export class Language {
   addColumnsThatAreNotInTheFile = 'הוספת עמודות שלא מופיעות באקסל';
   excelColumnIgnore = 'לא לקלוט';
   remove = 'הסר';
-  addExcelColumn ='הוסף עמודה';
+  addExcelColumn = 'הוסף עמודה';
   columnSelectionInFile = 'בחירת עמודות בקובץ';
   excelSheet = 'גליון';
   linesInExcel = 'שורות באקסל';
@@ -452,7 +452,7 @@ export class Language {
   existingFamilies = 'משפחות קיימות';
   saveExcelImportReport = 'שמור דוח מצב קליטה מאקסל';
   saveExcelSettings = 'שמור הגדרות';
-  newVolunteers ='מתנדבים חדשים';
+  newVolunteers = 'מתנדבים חדשים';
   addAllVolunteers = 'הוסף את כל המתנדבים';
   updateVolunteers = 'מתנדבים לעדכון';
   existingVolunteers = 'מתנדבים קיימים';
@@ -460,7 +460,7 @@ export class Language {
   pleaseWaitVerifyingDetails = 'אנא המתן - מוודא פרטים';
   replaceBySiteUrl = 'יוחלף בכתובת האתר';
   sampleMessage = 'הודעה לדוגמא';
-  reminderSmsTextHelp ='הודעה זו תשלח למתנדב שמתעכב ממסך מעקב מתנדבים';
+  reminderSmsTextHelp = 'הודעה זו תשלח למתנדב שמתעכב ממסך מעקב מתנדבים';
   sampleReminderSms = 'הודעת תזכורת לדוגמא';
   basketTypes = 'סוגי סלים';
   distributionLists = 'רשימות חלוקה';
@@ -471,14 +471,59 @@ export class Language {
   volunteerQAndAHelp = 'כאשר המתנדב לוחץ על הכפתור "נתקלתי בבעיה" מופע לו מסך עם רשימה זו של שאלות ותשובות לעזרה';
   question = 'שאלה';
   answer = 'תשובה';
-  voluntreeHelpPhones  ='טלפונים לעזרה למתנדב';
-  volunteerHelpPhonesHelpLine1  ='כאשר המתנדב לוחץ על הכפתור "נתקלתי בבעיה" מופע לו מסך אם אפשרות להתקשר לעזרה או לעדכן שלא מסר.';
+  voluntreeHelpPhones = 'טלפונים לעזרה למתנדב';
+  volunteerHelpPhonesHelpLine1 = 'כאשר המתנדב לוחץ על הכפתור "נתקלתי בבעיה" מופע לו מסך אם אפשרות להתקשר לעזרה או לעדכן שלא מסר.';
   volunteerHelpPhonesHelpLine2 = 'כאן ניתן לעדכן אילו טלפונים יופיעו לו לעזרה, אפשר לעדכן אחד או יותר.';
   preferences = 'העדפות';
   logoAndIcons = 'לוגו וצלמיות';
-  logoRecommendTool='אנו ממליצים ליצור את האייקונים בעזרת';
+  logoRecommendTool = 'אנו ממליצים ליצור את האייקונים בעזרת';
   logoRecommendAfter = 'ומהתוצאה שהוא יוצר להשתמש favicon.ico עבור האייקון - וב apple-icon-120x120.png עבור הלוגו';
+  iconForWebSite = 'אייקון לאתר';
+  logoForWebsiteAndPhone = 'לוגו לאתר ולטלפון';
+  deleteFamilies = 'מחיקת נתונים';
+  deleteFamiliesHelp = 'לחיצה על הכפתור תמחוק את כל המשפחות בסטטוס "למחיקה" מהמערכת. היסטורית המשלוחים שלהן תישמרנה.';
+  deleteFamiliesButton = 'מחק את כל המשפחות בסטטוס "למחיקה"';
+  mergeForFamily = 'מיזוג למשפחת';
+  merge = 'שמור מיזוג';
+  volunteerFeedbackVideo = 'לסרטון הדרכה על משוב המתנדבים לחץ כאן';
+  updatedBy = 'עודכן על ידי';
+  showAsignDeliveryFor = 'הצג שיוך משלוחים ל';
+  moreNews = 'עוד חדשות';
+  filter = 'סינון';
+  deliveryDetailsAsDisplayedToVolunteer = 'פרטי המשפחה כפי שיופיעו למתנדב';
+  assign = 'שייכי';
+  familesOnStreet = 'משפחות ברחוב';
+  moreFamilies = 'עוד משפחות';
+  recentVolunteers = 'מתנדבים אחרונים';
+  moreVolunteers = 'עוד מתנדבים';
+  showAllFamilies = 'הצג את כל המשפחות';
+  whatWentWrong = 'מה לא הסתדר?';
+  addCurrentLocationToNote = 'הוסף מיקום נוכחי להערה';
+  basketNotDelivered = 'הסל לא נמסר';
+  confirm = 'אשר';
+  displayFamilyAsVolunteerWillSeeIt = 'הצג משפחה כפי שתנדב יראה אותה';
+  infoAboutUpdates = 'פרטי עדכונים';
+  sendMessageToVolunteer = 'שלח הודעה למתנדב';
+  deliveryInfo = 'פרטי משלוח';
+  checkAddress = 'בדוק כתובת';
+  showOnGovMap = 'הצג ב govmap';
+  showOnGoogleMap = 'הצג בגוגל';
+  openWaze = 'פתח WAZE';
+  badAddressTitle = 'שים לב, כתובת לא מדוייקת';
+  badAddressHelpStart = 'גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת';
+  badAddressHelpLine1 = 'יש להשוות בין השדה "כתובת" לשדה "כתובת כפי שגוגל הבין".'
+  badAddressHelpLine2 = 'כתובת לא מדוייקת עלולה להוביל המתנדב למקום לא נכון בוייז.';
+  familyAdditionalInfo = 'פרטים נוספים';
+  deliveryDefaults = 'ברירות מחדל למשלוח';
+  familiesWithSimilarInfo = 'משפחות עם פרטים דומים';
+  save = 'שמור';
+  rememberMeOnThisDevice = 'זכור אותי במכשיר זה';
+  signIn = 'כניסה';
+  pleaseRegister = 'אם אינך רשומה, אנא הרשמי כאן';
+  register = 'הרשמה';
+
 }
+
 
 export var use = { language: new Language() };
 // for (const key in lang) {

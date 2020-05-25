@@ -7,6 +7,7 @@ import { DialogService, extractError } from '../select-popup/dialog';
 import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-merge-families',
@@ -15,7 +16,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 })
 export class MergeFamiliesComponent implements OnInit {
 
-  constructor(private context: Context, private dialogRef: MatDialogRef<any>, private dialog: DialogService) { }
+  constructor(private context: Context, private dialogRef: MatDialogRef<any>, private dialog: DialogService,public settings:ApplicationSettings) { }
   families: Families[] = [];
   family: Families;
   async ngOnInit() {

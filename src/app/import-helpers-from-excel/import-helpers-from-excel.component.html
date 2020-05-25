@@ -24,7 +24,7 @@
                           <option *ngFor="let c of columns" [ngValue]="c">{{c.name}}</option>
                       </select>
                       <input [(ngModel)]="ac.value">
-                      <button (click)="additionalColumns.splice(i,1)">{{setings.lang.remove}}</button>
+                      <button (click)="additionalColumns.splice(i,1)">{{settings.lang.remove}}</button>
                   </li>
               </ul>
               <button (click)="additionalColumns.push({})" mat-raised-button>

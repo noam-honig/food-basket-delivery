@@ -27,7 +27,8 @@ export class UpdateCommentComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<any>,
     private context: Context,
-    private dialog: DialogService
+    private dialog: DialogService,
+    public settings:ApplicationSettings
   ) {
 
   }

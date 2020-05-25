@@ -10,8 +10,8 @@
           <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
         </mat-form-field>
         <button mat-raised-button color="accent" *ngIf="args.selectStreet&&families.totalRows>1&&searchString"
-          (click)="selectAllInStreet()">שייכי {{families.totalRows}}
-          משפחות ברחוב: {{searchString}}</button>
+          (click)="selectAllInStreet()">{{settings.lang.assign}} {{families.totalRows}}
+          {{settings.lang.familesOnStreet}}: {{searchString}}</button>
         <div>
           <div *ngFor="let f of families.items" (click)="select(f)">
             <div>
@@ -20,10 +20,10 @@
             <div *ngIf="showStatus(f)" class="red">
               <h5>{{showStatus(f)}}</h5>
             </div>
-            <h5 style="display: inline-block"> סל</h5> - {{f.basketType.displayValue}}
+            <h5 style="display: inline-block"> {{settings.lang.basket}}</h5> - {{f.basketType.displayValue}}
             
             <div *ngIf="f.deliveryComments.value">
-              <h5 style="display: inline-block"> הערה למתנדב</h5>- {{f.deliveryComments.value}}
+              <h5 style="display: inline-block"> {{settings.lang.commentForVolunteer}}</h5>- {{f.deliveryComments.value}}
             </div>
             <h5>{{f.address.value}}</h5>
 
@@ -33,8 +33,7 @@
 
       </form>
       <button mat-raised-button color="accent" (click)="moreFamilies()"
-        *ngIf=" families.items.length!=families.totalRows">עוד
-        {{'משפחות'|translate}}
+        *ngIf=" families.items.length!=families.totalRows">{{settings.lang.moreFamilies|translate}}
       </button>
     </div>
   </mat-card>

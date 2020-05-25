@@ -18,22 +18,22 @@
   </div>
  
   <mat-form-field class="example-full-width">
-    <input matInput placeholder="טלפון" [(ngModel)]="user" type="tel">
+    <input matInput placeholder="{{settings.lang.phone}}" [(ngModel)]="user" type="tel">
   </mat-form-field>
 
   <mat-form-field class="example-full-width">
-    <input matInput placeholder="סיסמה" [(ngModel)]="password" type="password">
+    <input matInput placeholder="{{settings.lang.password}}" [(ngModel)]="password" type="password">
   </mat-form-field>
 
-  <mat-checkbox [(ngModel)]="remember">זכור אותי במכשיר זה</mat-checkbox>
+  <mat-checkbox [(ngModel)]="remember">{{settings.lang.rememberMeOnThisDevice}}</mat-checkbox>
 
   <button mat-raised-button color="accent" (click)="login()">
-    כניסה
+    {{settings.lang.signIn}}
   </button>
 
   <br />
-  <br /> אם אינך רשומה, אנא הרשמי כאן
+  <br /> {{settings.lang.pleaseRegister}}
   <button mat-raised-button color="accent" (click)="register()">
-    הרשמה
+    {{settings.lang.register}}
   </button>
 </div>

@@ -980,3 +980,151 @@ Logos and figurines
 We recommend using the icons
 ומהתוצאה שהוא יוצר להשתמש favicon.ico עבור האייקון - וב apple-icon-120x120.png עבור הלוגו
 And the result it creates using favicon.ico for the icon - and in apple-icon-120x120.png for the logo
+אייקון לאתר
+Website Icon
+אייקון לאתר
+Website Icon
+לוגו לאתר ולטלפון
+Website and phone logos
+לוגו לאתר ולטלפון
+Website and phone logos
+מחיקת נתונים
+Deleting data
+מחיקת נתונים
+Deleting data
+לחיצה על הכפתור תמחוק את כל המשפחות בסטטוס "למחיקה" מהמערכת. היסטורית המשלוחים שלהן תישמרנה.
+Clicking this button will erase all families in the "delete" status from the system. Their shipping history will be preserved.
+לחיצה על הכפתור תמחוק את כל המשפחות בסטטוס "למחיקה" מהמערכת. היסטורית המשלוחים שלהן תישמרנה.
+Clicking this button will erase all families in the "delete" status from the system. Their shipping history will be preserved.
+מחק את כל המשפחות בסטטוס "למחיקה"
+Delete all families in "delete" status
+מחק את כל המשפחות בסטטוס "למחיקה"
+Delete all families in "delete" status
+מיזוג למשפחת
+Air conditioning for the family
+מיזוג למשפחת
+Air conditioning for the family
+שמור מיזוג
+Keep conditioning
+שמור מיזוג
+Keep conditioning
+לסרטון הדרכה על משוב המתנדבים לחץ כאן
+For a tutorial on volunteer feedback click here
+לסרטון הדרכה על משוב המתנדבים לחץ כאן
+For a tutorial on volunteer feedback click here
+עודכן על ידי
+Updated by
+עודכן על ידי
+Updated by
+הצג שיוך משלוחים ל
+Show shipping association to
+עוד חדשות
+More news
+עוד חדשות
+More news
+סינון
+filtering
+סינון
+filtering
+פרטי המשפחה כפי שיופיעו למתנדב
+Family details as they appear to the volunteer
+פרטי המשפחה כפי שיופיעו למתנדב
+Family details as they appear to the volunteer
+שייכי
+Belong
+שייכי
+Belong
+משפחות ברחוב
+Families on the street
+משפחות ברחוב
+Families on the street
+עוד משפחות
+More families
+עוד משפחות
+More families
+מתנדבים אחרונים
+Recent volunteers
+עוד מתנדבים
+More volunteers
+עוד מתנדבים
+More volunteers
+הצג את כל המשפחות
+View all families
+הצג את כל המשפחות
+View all families
+מה לא הסתדר?
+What didn't work out?
+מה לא הסתדר?
+What didn't work out?
+הוסף מיקום נוכחי להערה
+Add current location for comment
+הוסף מיקום נוכחי להערה
+Add current location for comment
+הסל לא נמסר
+The basket was not delivered
+אשר
+which
+הצג משפחה כפי שתנדב יראה אותה
+View a family as a volunteer will see her
+הצג משפחה כפי שתנדב יראה אותה
+View a family as a volunteer will see her
+פרטי עדכונים
+Update details
+פרטי עדכונים
+Update details
+שלח הודעה למתנדב
+Send a message to the volunteer
+שלח הודעה למתנדב
+Send a message to the volunteer
+פרטי משלוח
+delivery details
+פרטי משלוח
+delivery details
+בדוק כתובת
+Check address
+בדוק כתובת
+Check address
+הצג ב govmap
+View in govmap
+הצג ב govmap
+View in govmap
+הצג בגוגל
+View on Google
+הצג בגוגל
+View on Google
+פתח WAZE
+Open WAZE
+פתח WAZE
+Open WAZE
+שים לב, כתובת לא מדוייקת
+Please note, inaccurate address
+גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת
+Google couldn't find the address exactly
+גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת
+Google couldn't find the address exactly
+יש להשוות בין השדה "כתובת" לשדה "כתובת כפי שגוגל הבין".
+The "Address" field must be compared with the "Address as Google understands" field.
+כתובת לא מדוייקת עלולה להוביל המתנדב למקום לא נכון בוייז.
+An inaccurate address could lead the volunteer to a wrong place in Waze.
+כתובת לא מדוייקת עלולה להוביל המתנדב למקום לא נכון בוייז.
+An inaccurate address could lead the volunteer to a wrong place in Waze.
+פרטים נוספים
+More details
+פרטים נוספים
+More details
+ברירות מחדל למשלוח
+Delivery defaults
+ברירות מחדל למשלוח
+Delivery defaults
+משפחות עם פרטים דומים
+Families with similar details
+משפחות עם פרטים דומים
+Families with similar details
+שמור
+Save
+זכור אותי במכשיר זה
+Remember me on this device
+אם אינך רשומה, אנא הרשמי כאן
+If you are not registered, please register here
+אם אינך רשומה, אנא הרשמי כאן
+If you are not registered, please register here

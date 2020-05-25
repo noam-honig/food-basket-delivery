@@ -2,15 +2,12 @@
     <data-area [settings]="familiesInfo"></data-area>
     <div *ngIf="this.families.currentRow">
         <mat-menu #appMenu77>
-            <button mat-menu-item (click)="newDelivery()" *ngIf="!this.families.currentRow.isNew()">משלוח
-                חדש</button>
-            <button mat-menu-item (click)="preview()">הצג משפחה כפי שתנדב יראה אותה</button>
+            <button mat-menu-item (click)="newDelivery()" *ngIf="!this.families.currentRow.isNew()">{{settings.lang.newDelivery}}</button>
+            <button mat-menu-item (click)="preview()">{{settings.lang.displayFamilyAsVolunteerWillSeeIt}}</button>
             <button mat-menu-item (click)="families.currentRow.showDeliveryHistoryDialog()"
-                *ngIf="!this.families.currentRow.isNew()">משלוחים</button>
-            <button mat-menu-item (click)="updateInfo()" *ngIf="!this.families.currentRow.isNew()">פרטי
-                עדכונים</button>
-            <button mat-menu-item (click)="sendSmsToCourier()" *ngIf="args.familyDelivery&&args.familyDelivery.courier.value">שלח
-                הודעה למתנדב</button>
+                *ngIf="!this.families.currentRow.isNew()">{{settings.lang.deliveries}}</button>
+            <button mat-menu-item (click)="updateInfo()" *ngIf="!this.families.currentRow.isNew()">{{settings.lang.infoAboutUpdates}}</button>
+            <button mat-menu-item (click)="sendSmsToCourier()" *ngIf="args.familyDelivery&&args.familyDelivery.courier.value">{{settings.lang.sendMessageToVolunteer}}</button>
 
         </mat-menu>
 
@@ -30,7 +27,7 @@
                     <mat-expansion-panel-header>
                         <div>
                             <mat-panel-title>
-                                פרטי משלוח
+                                {{settings.lang.deliveryInfo}}
                             </mat-panel-title>
                         </div>
                         <div>
@@ -42,7 +39,7 @@
                     </mat-expansion-panel-header>
                     <ng-template matExpansionPanelContent>
                         <button mat-raised-button color="primary" style="margin-bottom:5px" *ngIf="showNewDelivery()"
-                            (click)="newDelivery()">משלוח חדש</button>
+                            (click)="newDelivery()">{{settings.lang.newDelivery}}</button>
                         <data-area [settings]="deliverInfo"></data-area>
                     </ng-template>
                 </mat-expansion-panel>
@@ -55,7 +52,7 @@
                                     *ngIf="!families.currentRow.addressOk.value&&!families.currentRow.isNew()">
                                     warning
                                 </mat-icon>
-                                כתובת
+                                {{settings.lang.address}}
                             </mat-panel-title>
                         </div>
                         <div>
@@ -69,23 +66,19 @@
 
 
                         <span *ngIf="families.currentRow.address.value!=families.currentRow.address.originalValue"><a
-                                (click)="families.currentRow.save()" target="_blank">בדוק כתובת</a></span>
+                                (click)="families.currentRow.save()" target="_blank">{{settings.lang.checkAddress}}</a></span>
                         <ng-container
                             *ngIf="families.currentRow.address.value==families.currentRow.address.originalValue">
-                            <a (click)="families.currentRow.showOnGovMap()" target="_blank">הצג ב govmap</a> |
-                            <a (click)="families.currentRow.showOnGoogleMaps()" target="_blank">הצג בגוגל</a> |
-                            <a (click)="families.currentRow.openWaze()" target="_blank">פתח WAZE</a>
+                            <a (click)="families.currentRow.showOnGovMap()" target="_blank">{{settings.lang.showOnGovMap}}</a> |
+                            <a (click)="families.currentRow.showOnGoogleMaps()" target="_blank">{{settings.lang.showOnGoogleMap}}</a> |
+                            <a (click)="families.currentRow.openWaze()" target="_blank">{{settings.lang.openWaze}}</a>
                         </ng-container>
                         <data-area [settings]="familiesAddress"></data-area>
                         <div class="addressProblem"
                             *ngIf="!families.currentRow.addressOk.value&&!families.currentRow.isNew()">
-                            <span class="badAddressTitle">שים
-                                לב, כתובת לא מדוייקת</span>
-                            גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת
-                            ({{families.currentRow.getGeocodeInformation().whyProblem()}}). יש להשוות בין השדה
-                            "כתובת"
-                            לשדה "כתובת כפי שגוגל הבין".
-                            <br> כתובת לא מדוייקת עלולה להוביל המתנדב למקום לא נכון בוייז.
+                            <span class="badAddressTitle">{{settings.lang.badAddressTitle}}</span>
+                            {{settings.lang.badAddressHelpStart}}
+                            ({{families.currentRow.getGeocodeInformation().whyProblem()}}). {{settings.lang.badAddressHelpLine1}}<br> {{settings.lang.badAddressHelpLine2}}
 
                         </div>
                     </ng-template>
@@ -94,7 +87,7 @@
                     <mat-expansion-panel-header>
                         <div>
                             <mat-panel-title>
-                                טלפונים
+                                {{settings.lang.phones}}
                             </mat-panel-title>
                         </div>
                         <div>
@@ -113,7 +106,7 @@
                     <mat-expansion-panel-header>
                         <div>
                             <mat-panel-title>
-                                פרטים נוספים
+                                {{settings.lang.familyAdditionalInfo}}
                             </mat-panel-title>
                         </div>
                     </mat-expansion-panel-header>
@@ -126,7 +119,7 @@
                     <mat-expansion-panel-header>
                         <div>
                             <mat-panel-title>
-                                ברירות מחדל למשלוח
+                                {{settings.lang.deliveryDefaults}}
                             </mat-panel-title>
                         </div>
                     </mat-expansion-panel-header>
@@ -139,7 +132,7 @@
                     <mat-expansion-panel-header>
                         <div>
                             <mat-panel-title style="color:red">
-                                משפחות עם פרטים דומים {{families.currentRow.duplicateFamilies.length}}
+                                {{settings.lang.familiesWithSimilarInfo}} {{families.currentRow.duplicateFamilies.length}}
                             </mat-panel-title>
                         </div>
                     </mat-expansion-panel-header>
@@ -163,7 +156,7 @@
                     <mat-expansion-panel-header>
                         <div>
                             <mat-panel-title>
-                                משלוחים למשפחה
+                                {{settings.lang.familyDeliveries}}
                             </mat-panel-title>
                         </div>
                     </mat-expansion-panel-header>
@@ -182,13 +175,13 @@
 
 <mat-dialog-actions>
     <button mat-raised-button color="warning" (click)="cancel()" *ngIf="!args.disableSave">
-        בטל
+        {{settings.lang.cancel}}
     </button>
     <button mat-raised-button color="accent" (click)="confirm()" *ngIf="!args.disableSave">
-        שמור
+        {{settings.lang.save}}
     </button>
     <button mat-raised-button color="accent" (click)="cancel()" *ngIf="args.disableSave">
-        סגור
+        {{settings.lang.close}}
     </button>
 
 </mat-dialog-actions>
