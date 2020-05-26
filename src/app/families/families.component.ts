@@ -672,7 +672,7 @@ export class FamiliesComponent implements OnInit {
     static route: Route = {
         path: 'families',
         component: FamiliesComponent,
-        data: { name: 'משפחות' }, canActivate: [AdminGuard]
+         canActivate: [AdminGuard]
     }
 
 }

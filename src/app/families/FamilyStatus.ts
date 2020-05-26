@@ -1,13 +1,14 @@
 import { ColumnOptions, ValueListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings, ValueListItem } from '@remult/core';
 import { HelperId } from '../helpers/helpers';
+import { use } from '../translate';
 
 
 export class FamilyStatus {
 
 
-  static Active: FamilyStatus = new FamilyStatus(0, 'פעיל');
-  static RemovedFromList: FamilyStatus = new FamilyStatus(99, 'הוצא מהרשימות');
-  static ToDelete: FamilyStatus = new FamilyStatus(98, 'למחיקה');
+  static Active: FamilyStatus = new FamilyStatus(0, use.language.active );
+  static RemovedFromList: FamilyStatus = new FamilyStatus(99, use.language.removedFromList);
+  static ToDelete: FamilyStatus = new FamilyStatus(98, use.language.toDelete);
   familyStatus() {
 
   }
@@ -53,7 +54,7 @@ export class FamilyStatusColumn extends ValueListColumn<FamilyStatus> {
       }
     }, settingsOrCaption);
     if (!this.defs.caption)
-      this.defs.caption = 'סטטוס';
+      this.defs.caption = use.language.familyStatus;
   }
 
 }

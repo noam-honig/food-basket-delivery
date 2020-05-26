@@ -26,7 +26,7 @@ import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeli
 import { Sites } from '../sites/sites';
 import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser } from '../manage/distribution-centers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import { translate } from '../translate';
+import { translate, getLang } from '../translate';
 import { delvieryActions, UpdateDistributionCenter, NewDelivery, UpdateDeliveriesStatus, UpdateCourier } from '../family-deliveries/family-deliveries-actions';
 import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, actionDialogNeeds } from '../families/familyActionsWiring';
 import { familyActionsForDelivery, UpdateArea, updateGroup } from '../families/familyActions';
@@ -89,7 +89,7 @@ export class DistributionMap implements OnInit, OnDestroy {
         };
       },
       settings: this.settings,
-      groupName: 'משלוחים'
+      groupName: this.settings.lang.deliveries
     };
   }
 
@@ -105,7 +105,7 @@ export class DistributionMap implements OnInit, OnDestroy {
         };
       },
       settings: this.settings,
-      groupName: 'משלוחים'
+      groupName: this.settings.lang.deliveries
     };
   }
 
@@ -118,9 +118,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.destroyHelper.destroy();
   }
   static route: Route = {
-    path: 'addresses',
-    component: DistributionMap,
-    data: { name: 'מפת הפצה' }, canActivate: [distCenterOrOverviewOrAdmin]
+    path: 'addresses', component: DistributionMap, canActivate: [distCenterOrOverviewOrAdmin]
   };
 
   gridView = true;
@@ -182,7 +180,7 @@ export class DistributionMap implements OnInit, OnDestroy {
       }
       return i;
     }, action, args);
-    return 'עודכנו ' + r + ' משלוחים';
+    return  r + getLang(context).deliveriesUpdated;
 
   }
   @ServerFunction({ allowed: Roles.admin })
@@ -203,7 +201,7 @@ export class DistributionMap implements OnInit, OnDestroy {
       }
       return i;
     }, action, args);
-    return 'עודכנו ' + r + ' משלוחים';
+    return  r + getLang(context).deliveriesUpdated;
 
   }
 
@@ -239,7 +237,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   statuses = new Statuses();
   selectedStatus: statusClass;
   filterCourier = new HelperId(this.context, {
-    caption: 'מתנדב לסינון',
+    caption: this.settings.lang.volunteer,
     valueChange: () => this.refreshDeliveries()
   }, h => h.allDeliveires.isGreaterThan(0));
 
@@ -494,7 +492,7 @@ export class statusClass {
 }
 
 export class Statuses {
-  constructor() {
+  constructor(private settings:ApplicationSettings) {
     this.statuses.push(this.ready);
     if (DeliveryStatus.usingSelfPickupModule)
       this.statuses.push(this.selfPickup);
@@ -524,11 +522,11 @@ export class Statuses {
         break;
     }
   }
-  ready = new statusClass('טרם שויכו', '/assets/yellow2.png', colors.yellow);
-  selfPickup = new statusClass('באים לקחת', '/assets/orange2.png', colors.orange);
-  onTheWay = new statusClass('בדרך', '/assets/blue2.png', colors.blue);
-  problem = new statusClass('בעיות', '/assets/red2.png', colors.red);
-  success = new statusClass('הגיעו', '/assets/green2.png', colors.green);
+  ready = new statusClass(this.settings.lang.unAsigned, '/assets/yellow2.png', colors.yellow);
+  selfPickup = new statusClass(this.settings.lang.selfPickup, '/assets/orange2.png', colors.orange);
+  onTheWay = new statusClass(this.settings.lang.onTheWay, '/assets/blue2.png', colors.blue);
+  problem = new statusClass(this.settings.lang.problems, '/assets/red2.png', colors.red);
+  success = new statusClass(this.settings.lang.delveriesSuccesfull, '/assets/green2.png', colors.green);
   statuses: statusClass[] = [];
 
 

@@ -33,7 +33,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   static route: Route = {
     path: 'deliveries',
     component: FamilyDeliveriesComponent,
-    data: { name: 'משלוחים' }, canActivate: [distCenterAdminGuard]
+     canActivate: [distCenterAdminGuard]
   }
   limit = 50;
   groupsColumn: DataControlSettings<ActiveFamilyDeliveries>;

@@ -18,7 +18,7 @@ import { ServerFunction } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DistributionCenterId } from '../manage/distribution-centers';
-import { translate } from '../translate'
+import { translate, getLang } from '../translate'
 import { DateRangeComponent } from '../date-range/date-range.component';
 
 
@@ -128,7 +128,7 @@ export class DeliveryHistoryComponent implements OnInit {
       let r: DataControlInfo<FamilyDeliveries>[] = [
         d.name,
         {
-          caption: 'סיכום משלוח',
+          caption: this.settings.lang.deliverySummary,
           column: d.deliverStatus,
           readOnly: true,
           valueList: d.deliverStatus.getOptions()
@@ -212,16 +212,14 @@ export class DeliveryHistoryComponent implements OnInit {
 }
 @EntityClass
 export class helperHistoryInfo extends Entity<string>{
-  addStatusExcelColumn(addColumn: (caption: string, v: string, t: import("xlsx/types").ExcelDataType) => void) {
-    throw new Error("Method not implemented.");
-  }
+  
   courier = new StringColumn();
-  name = new StringColumn('שם');
-  phone = new PhoneColumn("טלפון");
+  name = new StringColumn(getLang(this.context).volunteerName);
+  phone = new PhoneColumn(getLang(this.context).phone);
   company = new CompanyColumn(this.context);
-  deliveries = new NumberColumn('משלוחים');
-  families = new NumberColumn('משפחות');
-  dates = new NumberColumn("תאריכים");
+  deliveries = new NumberColumn(getLang(this.context).deliveries);
+  families = new NumberColumn(getLang(this.context).families);
+  dates = new NumberColumn(getLang(this.context).dates);
   constructor(private context: Context) {
     super({ name: 'helperHistoryInfo', allowApiRead: false, allowApiCRUD: false });
 

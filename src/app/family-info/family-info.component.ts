@@ -5,7 +5,7 @@ import { DialogService } from '../select-popup/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Context } from '@remult/core';
 
-import { translate } from '../translate';
+import { translate, use } from '../translate';
 import { UpdateCommentComponent } from '../update-comment/update-comment.component';
 
 
@@ -66,7 +66,7 @@ export class FamilyInfoComponent implements OnInit {
   }
   openWaze(f: ActiveFamilyDeliveries) {
     if (!f.addressOk.value) {
-      this.dialog.YesNoQuestion(translate("הכתובת אינה מדוייקת. בדקו בגוגל או התקשרו למשפחה. נשמח אם תעדכנו את הכתובת שמצאתם בהערות. האם לפתוח וייז?"), () => {
+      this.dialog.YesNoQuestion(translate(use.language.addressNotOkOpenWaze), () => {
         f.openWaze();
       });
     }
@@ -86,7 +86,7 @@ export class FamilyInfoComponent implements OnInit {
   }
   copyAddress(f: ActiveFamilyDeliveries) {
     copy(f.address.value);
-    this.dialog.Info("הכתובת " + f.address.value + " הועתקה בהצלחה");
+    this.dialog.Info(use.language.address + " " + f.address.value + " " + use.language.wasCopiedSuccefully);
   }
   showStatus() {
     return this.f.deliverStatus.value != DeliveryStatus.ReadyForDelivery && this.f.deliverStatus.value != DeliveryStatus.SelfPickup;

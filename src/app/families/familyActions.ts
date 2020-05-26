@@ -11,15 +11,16 @@ import { FamilySourceId } from "./FamilySources";
 import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer, serverUpdateInfo, pagedRowsIterator } from "./familyActionsWiring";
 import { DeliveryStatus } from "./DeliveryStatus";
 import { ActiveFamilyDeliveries } from "./FamilyDeliveries";
-import { translate } from "../translate";
+import { translate, use, getLang } from "../translate";
+import { settings } from "cluster";
 
 class NewDelivery extends ActionOnRows<Families> {
-    useFamilyBasket = new BoolColumn({ caption: 'השתמש בסוג הסל המוגדר למשפחה', defaultValue: false });
+    useFamilyBasket = new BoolColumn({ caption: use.language.useFamilyDefaultBasketType, defaultValue: true });
     basketType = new BasketId(this.context);
-    quantity = new QuantityColumn();
+    quantity = new QuantityColumn(this.context);
 
     distributionCenter = new DistributionCenterId(this.context);
-    determineCourier = new BoolColumn('הגדר מתנדב');
+    determineCourier = new BoolColumn(use.language.volunteer);
     courier = new HelperId(this.context);
     selfPickup = new SelfPickupStrategyColumn(false);
     constructor(context: Context) {
@@ -37,7 +38,7 @@ class NewDelivery extends ActionOnRows<Families> {
             validate: async () => {
                 let x = await context.for(DistributionCenters).findId(this.distributionCenter);
                 if (!x) {
-                    this.distributionCenter.validationError = 'חובה לבחור רשימת חלוקה';
+                    this.distributionCenter.validationError = use.language.mustSelectDistributionList;
                     throw this.distributionCenter.validationError;
                 }
             },
@@ -56,7 +57,7 @@ class NewDelivery extends ActionOnRows<Families> {
             },
             additionalWhere: f => f.status.isEqualTo(FamilyStatus.Active),
 
-            title: 'משלוח חדש',
+            title: use.language.newDelivery,
             forEach: async f => {
                 let fd = f.createDelivery(this.distributionCenter.value);
                 if (!this.useFamilyBasket.value) {
@@ -78,13 +79,13 @@ const replaceGroupAction = ' להחליף ';
 export class updateGroup extends ActionOnRows<Families> {
 
     group = new StringColumn({
-        caption: 'שיוך לקבוצה',
+        caption: getLang(this.context).familyGroup,
         dataControlSettings: () => ({
             valueList: this.context.for(Groups).getValueList({ idColumn: x => x.name, captionColumn: x => x.name })
         })
     });
     action = new StringColumn({
-        caption: 'פעולה',
+        caption: getLang(this.context).action,
         defaultValue: addGroupAction,
         dataControlSettings: () => ({
             valueList: [{ id: addGroupAction, caption: 'הוסף שיוך לקבוצה' }, { id: 'להסיר', caption: 'הסר שיוך לקבוצה' }, { id: replaceGroupAction, caption: 'החלף שיוך לקבוצה' }]
@@ -94,7 +95,7 @@ export class updateGroup extends ActionOnRows<Families> {
         super(context, Families, {
             columns: () => [this.group, this.action],
             confirmQuestion: () => 'האם ' + this.action.value + ' את השיוך לקבוצה "' + this.group.value + '"',
-            title: translate('שיוך לקבוצת משפחות'),
+            title: translate(getLang(context).assignAFamilyGroup),
             allowed: Roles.admin,
             forEach: async f => {
                 if (this.action.value == addGroupAction) {
@@ -110,7 +111,7 @@ export class updateGroup extends ActionOnRows<Families> {
             }
 
         });
-        this.group.value='';
+        this.group.value = '';
     }
 }
 export class FreezeDeliveriesForFamilies extends ActionOnRows<Families> {
@@ -119,10 +120,8 @@ export class FreezeDeliveriesForFamilies extends ActionOnRows<Families> {
         super(context, Families, {
             allowed: Roles.admin,
             columns: () => [],
-            title: 'הקפא משלוחים',
-            help: () => `משלוח "קפוא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח.
-            ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח.
-            `,
+            title: getLang(context).freezeDeliveries,
+            help: () => getLang(context).freezeDeliveriesHelp,
             forEach: async f => {
                 for (const fd of await this.context.for(ActiveFamilyDeliveries).find({ where: fd => fd.family.isEqualTo(f.id).and(fd.readyFilter()) })) {
                     fd.deliverStatus.value = DeliveryStatus.Frozen;
@@ -140,8 +139,8 @@ export class UnfreezeDeliveriesForFamilies extends ActionOnRows<Families> {
         super(context, Families, {
             allowed: Roles.admin,
             columns: () => [],
-            title: 'ביטול הקפאת משלוחים',
-            help: () => 'ביטול ההקפאה יחזיר משלוחים קפואים למוכן למשלוח',
+            title: use.language.unfreezeDeliveries,
+            help: () => use.language.unfreezeDeliveriesHelp,
             forEach: async f => {
                 for (const fd of await this.context.for(ActiveFamilyDeliveries).find({ where: fd => fd.family.isEqualTo(f.id).and(fd.deliverStatus.isEqualTo(DeliveryStatus.Frozen)) })) {
                     fd.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
@@ -155,15 +154,15 @@ export class UnfreezeDeliveriesForFamilies extends ActionOnRows<Families> {
 
 export class UpdateStatus extends ActionOnRows<Families> {
     status = new FamilyStatusColumn();
-    archiveFinshedDeliveries = new BoolColumn({ caption: "העבר משלוחים שהסתיימו לארכיון", defaultValue: true });
-    deletePendingDeliveries = new BoolColumn({ caption: "מחק משלוחים שטרם נמסרו למשפחות אלו", defaultValue: true });
-    comment = new StringColumn('הערה פנימית - לא תופיע למתנדב');
-    deleteExistingComment = new BoolColumn("מחק הערה קודמת");
+    archiveFinshedDeliveries = new BoolColumn({ caption: use.language.archiveFinishedDeliveries, defaultValue: true });
+    deletePendingDeliveries = new BoolColumn({ caption: use.language.deletePendingDeliveries, defaultValue: true });
+    comment = new StringColumn(use.language.internalComment);
+    deleteExistingComment = new BoolColumn(use.language.deleteExistingComment);
     constructor(context: Context) {
         super(context, Families, {
             allowed: Roles.admin,
-            columns: () => [this.status, this.archiveFinshedDeliveries, this.deletePendingDeliveries,this.comment,this.deletePendingDeliveries],
-            help: () => translate('סטטוס הוצא מהרשימות - נועד כדי לסמן שהמשפחה לא אמורה לקבל מזון - אבל בניגוד לסטטוס למחיקה - אנחנו רוצים לשמור אותה בבסיס הנתונים כדי שאם הרווחה יביאו לנו אותה שוב, נדע להגיד שהם הוצאו מהרשימות. זה מתאים למשפחות שחס וחלילה נפתרו או שפשוט לא רוצים לקבל - או שהכתובת לא קיימת וכו...'),
+            columns: () => [this.status, this.archiveFinshedDeliveries, this.deletePendingDeliveries, this.comment, this.deletePendingDeliveries],
+            help: () => translate(use.language.updateStatusHelp),
             dialogColumns: () => {
                 if (!this.status.value)
                     this.status.value = FamilyStatus.Active;
@@ -174,10 +173,10 @@ export class UpdateStatus extends ActionOnRows<Families> {
                     this.deleteExistingComment,
                     { column: this.archiveFinshedDeliveries, visible: () => this.status.value != FamilyStatus.Active },
                     { column: this.deletePendingDeliveries, visible: () => this.status.value != FamilyStatus.Active },
-                    
+
                 ]
             },
-            title: translate('עדכן סטטוס משפחה '),
+            title: translate(use.language.updateFamilyStatus),
             forEach: async f => {
                 f.status.value = this.status.value;
                 if (this.deleteExistingComment) {
@@ -213,20 +212,20 @@ class UpdateBasketType extends ActionOnRows<Families> {
         super(context, Families, {
             allowed: Roles.admin,
             columns: () => [this.basket],
-            title: 'עדכן סוג סל ברירת מחדל',
+            title: use.language.updateDefaultBasket,
             forEach: async f => { f.basketType.value = this.basket.value },
         });
     }
 }
 
 class UpdateSelfPickup extends ActionOnRows<Families> {
-    selfPickup = new BoolColumn("באים לקחת");
-    updateExistingDeliveries = new BoolColumn("שנה גם עבור משלוחים שטרם נמסרו");
+    selfPickup = new BoolColumn(use.language.selfPickup);
+    updateExistingDeliveries = new BoolColumn(use.language.updateExistingDeliveries);
     constructor(context: Context) {
         super(context, Families, {
             allowed: Roles.admin,
             columns: () => [this.selfPickup, this.updateExistingDeliveries],
-            title: 'עדכן באים לקחת ברירת מחדל',
+            title: use.language.updateDefaultSelfPickup,
             forEach: async f => {
                 {
                     f.defaultSelfPickup.value = this.selfPickup.value;
@@ -252,24 +251,24 @@ class UpdateSelfPickup extends ActionOnRows<Families> {
 }
 
 export class UpdateArea extends ActionOnRows<Families> {
-    area = new StringColumn('אזור');
+    area = new StringColumn(use.language.region);
     constructor(context: Context) {
         super(context, Families, {
             allowed: Roles.admin,
             columns: () => [this.area],
-            title: translate('עדכן אזור למשפחות'),
+            title: translate(use.language.updateArea),
             forEach: async f => { f.area.value = this.area.value },
         });
     }
 }
 
 class UpdateQuantity extends ActionOnRows<Families> {
-    quantity = new QuantityColumn();
+    quantity = new QuantityColumn(this.context);
     constructor(context: Context) {
         super(context, Families, {
             allowed: Roles.admin,
             columns: () => [this.quantity],
-            title: 'עדכן כמות סלים ברירת מחדל',
+            title: use.language.updateDefaultQuantity,
             forEach: async f => { f.quantity.value = this.quantity.value },
         });
     }
@@ -280,26 +279,26 @@ class UpdateFamilySource extends ActionOnRows<Families> {
         super(context, Families, {
             allowed: Roles.admin,
             columns: () => [this.familySource],
-            title: 'עדכן גורם מפנה ',
+            title: use.language.updateFamilySource,
             forEach: async f => { f.familySource.value = this.familySource.value }
         });
     }
 }
 
 export class SelfPickupStrategy {
-    static familyDefault = new SelfPickupStrategy(0, "באים לקחת בהתאם להגדרת הברירת מחדל למשפחה", x => {
+    static familyDefault = new SelfPickupStrategy(0, use.language.selfPickupStrategy_familyDefault, x => {
         x.newDelivery.deliverStatus.value = x.family.defaultSelfPickup.value ? DeliveryStatus.SelfPickup : DeliveryStatus.ReadyForDelivery;
     });
-    static byCurrentDelivery = new SelfPickupStrategy(1, "באים לקחת בהתאם להגדרת המשלוח הנוכחי", x => {
+    static byCurrentDelivery = new SelfPickupStrategy(1, use.language.selfpickupStrategy_byCurrentDelivery, x => {
         x.newDelivery.deliverStatus.value =
             x.existingDelivery.deliverStatus.value == DeliveryStatus.SuccessPickedUp || x.existingDelivery.deliverStatus.value == DeliveryStatus.SelfPickup
                 ? DeliveryStatus.SelfPickup
                 : DeliveryStatus.ReadyForDelivery;
     });
-    static yes = new SelfPickupStrategy(2, "יבואו לקחת את המשלוח ואינם צריכים משלוח", x => {
+    static yes = new SelfPickupStrategy(2, use.language.selfPickupStrategy_yes, x => {
         x.newDelivery.deliverStatus.value = DeliveryStatus.SelfPickup
     });
-    static no = new SelfPickupStrategy(3, "משלוח עד הבית", x => {
+    static no = new SelfPickupStrategy(3, use.language.selfpickupStrategy_no, x => {
         x.newDelivery.deliverStatus.value = DeliveryStatus.ReadyForDelivery
     });
 
@@ -309,7 +308,7 @@ export class SelfPickupStrategy {
 }
 export class SelfPickupStrategyColumn extends ValueListColumn<SelfPickupStrategy>{
     constructor(private showByCurrentDeliery = true) {
-        super(SelfPickupStrategy, { caption: 'הגדרת באים לקחת' })
+        super(SelfPickupStrategy, { caption: use.language.selfPickupStrategy })
     }
     getDispaySettings(allowSelfPickup: boolean) {
         this.value = allowSelfPickup ? this.showByCurrentDeliery ? SelfPickupStrategy.byCurrentDelivery : SelfPickupStrategy.familyDefault : SelfPickupStrategy.no;

@@ -13,6 +13,7 @@ import { Roles } from "../auth/roles";
 import { Groups } from "../manage/manage.component";
 import { DistributionCenterId } from '../manage/distribution-centers';
 import { FamilyStatusColumn, FamilyStatus } from './FamilyStatus';
+import { use } from '../translate';
 
 
 export interface OutArgs {
@@ -29,10 +30,10 @@ export const colors = {
     , gray: 'gray'
 };
 export class Stats {
-    outOfList = new FaimilyStatistics('הוצאו מהרשימות', f => f.status.isEqualTo(FamilyStatus.RemovedFromList), colors.gray);
-    toDelete = new FaimilyStatistics('למחיקה', f => f.status.isEqualTo(FamilyStatus.ToDelete), colors.red);
-    active = new FaimilyStatistics('פעילות', f => f.status.isEqualTo(FamilyStatus.Active), colors.green);
-    problem = new FaimilyStatistics('כתובות בעיתיות', f => f.status.isEqualTo(FamilyStatus.Active).and(f.addressOk.isEqualTo(false)), colors.orange);
+    outOfList = new FaimilyStatistics(use.language.removedFromList, f => f.status.isEqualTo(FamilyStatus.RemovedFromList), colors.gray);
+    toDelete = new FaimilyStatistics(use.language.toDelete, f => f.status.isEqualTo(FamilyStatus.ToDelete), colors.red);
+    active = new FaimilyStatistics(use.language.active, f => f.status.isEqualTo(FamilyStatus.Active), colors.green);
+    problem = new FaimilyStatistics(use.language.adderssProblems, f => f.status.isEqualTo(FamilyStatus.Active).and(f.addressOk.isEqualTo(false)), colors.orange);
 
     async getData(distCenter: string) {
         let r = await Stats.getFamilyStats(distCenter);

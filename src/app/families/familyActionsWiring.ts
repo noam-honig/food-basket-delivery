@@ -3,6 +3,7 @@ import { InputAreaComponent } from "../select-popup/input-area/input-area.compon
 import { DialogService, extractError } from "../select-popup/dialog";
 import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
+import { getLang } from "../translate";
 
 
 
@@ -144,11 +145,11 @@ export async function filterActionOnServer<T extends IdEntity>(actions: {
                 return await x.doWorkOnServer(doWork, args);
             }
             else {
-                return "!פעולה לא מורשת";
+                return getLang(context).notAthorized;
             }
         }
     }
-    throw "פעולה לא נמצאה בשרת";
+    throw getLang(context).actionNotFound;
 }
 
 export function buildGridButtonFromActions<T extends IdEntity>(actions: {

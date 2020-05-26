@@ -10,23 +10,26 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { DistributionCenterId, allCentersToken } from "../manage/distribution-centers";
 import { Groups } from "../manage/manage.component";
 import { colors } from "../families/stats-action";
+import { getLang } from "../translate";
 
 export class FamilyDeliveryStats {
-    ready = new FamilyDeliveresStatistics('טרם שוייכו',
+    constructor(private context:Context)
+    {}
+    ready = new FamilyDeliveresStatistics(getLang(this.context).unAsigned,
         f => f.readyFilter().and(
             f.special.isDifferentFrom(YesNo.Yes))
         , colors.yellow);
-    selfPickup = new FamilyDeliveresStatistics('באים לקחת', f => f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup), colors.orange);
-    special = new FamilyDeliveresStatistics('מיוחדים שטרם שוייכו',
+    selfPickup = new FamilyDeliveresStatistics(getLang(this.context).selfPickup, f => f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup), colors.orange);
+    special = new FamilyDeliveresStatistics(getLang(this.context).specialUnasigned,
         f => f.readyFilter().and(
             f.special.isEqualTo(YesNo.Yes))
         , colors.orange);
 
-    onTheWay = new FamilyDeliveresStatistics('בדרך', f => f.onTheWayFilter(), colors.blue);
-    delivered = new FamilyDeliveresStatistics('הגיעו', f => f.deliverStatus.isSuccess(), colors.green);
-    problem = new FamilyDeliveresStatistics('בעיות', f => f.deliverStatus.isProblem(), colors.red);
-    frozen = new FamilyDeliveresStatistics('קפואים', f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen), colors.gray);
-    needWork = new FamilyDeliveresStatistics('מצריך טיפול', f => f.needsWork.isEqualTo(true), colors.yellow);
+    onTheWay = new FamilyDeliveresStatistics(getLang(this.context).onTheWay, f => f.onTheWayFilter(), colors.blue);
+    delivered = new FamilyDeliveresStatistics(getLang(this.context).delveriesSuccesfull, f => f.deliverStatus.isSuccess(), colors.green);
+    problem = new FamilyDeliveresStatistics(getLang(this.context).problems, f => f.deliverStatus.isProblem(), colors.red);
+    frozen = new FamilyDeliveresStatistics(getLang(this.context).frozens, f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen), colors.gray);
+    needWork = new FamilyDeliveresStatistics(getLang(this.context).requireFollowUp, f => f.needsWork.isEqualTo(true), colors.yellow);
 
 
     async getData(distCenter: string) {
@@ -52,7 +55,7 @@ export class FamilyDeliveryStats {
                 successDeliveries: number
             }[], cities: [], groups: [] as groupStats[]
         };
-        let stats = new FamilyDeliveryStats();
+        let stats = new FamilyDeliveryStats(context);
         let pendingStats = [];
         for (let s in stats) {
             let x = stats[s];

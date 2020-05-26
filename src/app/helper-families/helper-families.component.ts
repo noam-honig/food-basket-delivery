@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Context } from '@remult/core';
 import { Column } from '@remult/core';
-import { translate } from '../translate';
+import { translate, use, getLang } from '../translate';
 import { Helpers, HelperId } from '../helpers/helpers';
 import { UpdateCommentComponent } from '../update-comment/update-comment.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
@@ -50,7 +50,7 @@ export class HelperFamiliesComponent implements OnInit {
     this.assignmentCanceled.emit();
   }
   cancelAll() {
-    this.dialog.YesNoQuestion("האם אתה בטוח שאתה רוצה לבטל שיוך ל" + this.familyLists.toDeliver.length + translate(" משפחות?"), async () => {
+    this.dialog.YesNoQuestion(use.language.areYouSureYouWantToCancelAssignmentTo + " " + this.familyLists.toDeliver.length + " " + translate(use.language.families + "?"), async () => {
       await this.busy.doWhileShowingBusy(async () => {
 
         this.dialog.analytics('cancel all');
@@ -58,7 +58,7 @@ export class HelperFamiliesComponent implements OnInit {
           await HelperFamiliesComponent.cancelAssignAllForHelperOnServer(this.familyLists.helper.id.value);
         }
         catch (err) {
-          await this.dialog.exception('בטל שיוך כל המשלוחים למתנדב', err);
+          await this.dialog.exception(use.language.cancelAssignmentForHelperFamilies, err);
         }
         this.familyLists.reload();
         this.assignmentCanceled.emit();
@@ -78,7 +78,7 @@ export class HelperFamiliesComponent implements OnInit {
         await fd.save();
       }
     });
-    await Families.SendMessageToBrowsers('בוטל שיוך כל המשלוחים למתנדב ', context, dist);
+    await Families.SendMessageToBrowsers(getLang(context).cancelAssignmentForHelperFamilies, context, dist);
   }
   sameAddress(f: Families, i: number) {
     if (i == 0)
@@ -103,21 +103,21 @@ export class HelperFamiliesComponent implements OnInit {
         await fd.save();
       }
     });
-    await Families.SendMessageToBrowsers('סומן נמסר בהצלחה לכל המשלוחים של מתנדב ', context, dist);
+    await Families.SendMessageToBrowsers(use.language.markAllDeliveriesAsSuccesfull, context, dist);
   }
 
   limitReady = new limitList(30, () => this.familyLists.toDeliver.length);
   limitDelivered = new limitList(10, () => this.familyLists.delivered.length);
   okAll() {
-    this.dialog.YesNoQuestion("האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל" + this.familyLists.toDeliver.length + translate(" משפחות?"), async () => {
+    this.dialog.YesNoQuestion(use.language.areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies + this.familyLists.toDeliver.length + " " + translate(use.language.families + "?"), async () => {
       await this.busy.doWhileShowingBusy(async () => {
 
-        this.dialog.analytics('ok  all');
+        this.dialog.analytics('ok all');
         try {
           await HelperFamiliesComponent.okAllForHelperOnServer(this.familyLists.helper.id.value);
         }
         catch (err) {
-          await this.dialog.exception('בטל שיוך כל המשלוחים למתנדב', err);
+          await this.dialog.exception(use.language.markDeliveredToAllHelprFamilies, err);
         }
         this.initFamilies();
       });
@@ -212,7 +212,7 @@ export class HelperFamiliesComponent implements OnInit {
       to += ' ול' + this.familyLists.escort.name.value;
       await SendSmsAction.SendSms(this.familyLists.helper.escort.value, reminder);
     }
-    this.dialog.Info("הודעת SMS נשלחה ל" + to);
+    this.dialog.Info(use.language.smsMessageSentTo+" " + to);
     this.assignSmsSent.emit();
     if (reminder)
       this.familyLists.helper.reminderSmsDate.value = new Date();
@@ -258,12 +258,12 @@ export class HelperFamiliesComponent implements OnInit {
   }
   async copyMessage() {
     copy(this.smsMessage);
-    this.dialog.Info("הודעה הועתקה");
+    this.dialog.Info(use.language.messageCopied);
     await this.updateMessageSent();
   }
   async copyLink() {
     copy(this.smsLink);
-    this.dialog.Info("קישור הועתק");
+    this.dialog.Info(use.language.linkCopied);
     await this.updateMessageSent();
   }
 

@@ -1164,3 +1164,253 @@ Boll
 Families are waiting
 משפחות מחכות
 Families are waiting
+תאריכים
+Dates
+נמסרו
+Delivered
+משפחות ב
+Families b
+לא נבחרו משפחות
+No families were selected
+אין מה למזג משפחה אחת
+There is nothing to merge one family
+יותר מידי משפחות בבת אחת
+Too many families at once
+מוכן למשלוח
+Ready for shipment
+מוקפא
+frozen
+נמסר בהצלחה
+Successfully delivered
+הושאר ליד הבית
+Was left by the house
+לא נמסר, בעיה בכתובת
+Not delivered, address issue
+לא נמסר, לא היו בבית
+Not delivered, were not at home
+לא נמסר, אחר
+Not delivered, other
+סטטוס משלוח
+Shipping status
+השתמש בסוג הסל המוגדר למשפחה
+Use the family type basket set
+חובה לבחור רשימת חלוקה
+Must select a distribution list
+שיוך לקבוצת משפחות
+Affiliation with a family group
+פעולה
+action
+הקפא משלוחים
+Freeze shipments
+משלוח "קפוא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח. 
+"Frozen" delivery is a delivery that will not be associated with any volunteer until the "delivery" is dispatched. Freezing is used to temporarily stop certain shipments until they can be thawed and shipped. The freeze will only be carried out for shipments that are ready for delivery.
+ביטול הקפאת משלוחים
+Cancellation of delivery free
+ביטול ההקפאה יחזיר משלוחים קפואים למוכן למשלוח
+Canceling the freeze will return frozen shipments ready for delivery
+העבר משלוחים שהסתיימו לארכיון
+Migrate completed archives
+מחק משלוחים שטרם נמסרו למשפחות אלו
+Delete unposted shipments to these families
+מחק הערה קודמת
+Delete a previous note
+סטטוס הוצא מהרשימות - נועד כדי לסמן שהמשפחה לא אמורה לקבל מזון - אבל בניגוד לסטטוס למחיקה - אנחנו רוצים לשמור אותה בבסיס הנתונים כדי שאם הרווחה יביאו לנו אותה שוב, נדע להגיד שהם הוצאו מהרשימות. זה מתאים למשפחות שחס וחלילה נפתרו או שפשוט לא רוצים לקבל - או שהכתובת לא קיימת וכו...
+Status has been removed from the lists - designed to signal that the family should not receive food - but unlike the deletion status - we want to keep it in the database so that if welfare brings it to us again, we will know that they have been removed from the lists. It is suitable for families who have been resolved or who simply do not want to receive - or the address does not exist etc ...
+עדכן סטטוס משפחה
+Update family status
+עדכן סוג סל ברירת מחדל
+Update default basket type
+שנה גם עבור משלוחים שטרם נמסרו
+Change also for unposted shipments
+עדכן באים לקחת ברירת מחדל
+Update are coming by default
+עדכן אזור למשפחות
+Update area for families
+עדכן כמות סלים ברירת מחדל
+Update default basket amount
+עדכן גורם מפנה 
+Update Referrer
+באים לקחת בהתאם להגדרת הברירת מחדל למשפחה
+Come take according to the default family setting
+יבואו לקחת את המשלוח ואינם צריכים משלוח
+Come and take the shipment and do not need shipping
+באים לקחת בהתאם להגדרת המשלוח הנוכחי
+Come take according to the current shipping definition
+משלוח עד הבית
+Home delivery
+הגדרת באים לקחת
+Set up come take
+!פעולה לא מורשת
+No legacy!
+פעולה לא נמצאה בשרת
+Action not found on server
+פעיל
+active
+הוצא מהרשימות
+Take out the lists
+למחיקה
+To delete
+סטטוס
+status
+מחק משלוחים
+Delete shipments
+שים לב - מחיקת המשלוח לא תוציא את המשפחה מהרשימות - כדי להוציא את המשפחה מהרשימות יש לבצע עדכון לסטטוס המשפחה. המחיקה תתבצע רק עבור משלוחים שטרם נמסרו
+Note - Deleting the shipment will not remove the family from the lists - To remove the family from the lists, update the family status. The deletion will only be performed for unposted shipments
+עדכן את המתנדב מהמשלוח הנוכחי
+Update the volunteer from the current shipment
+עדכן מתנדב ברירת מחדל למשפחה
+Update a default family volunteer
+בטל שיוך למתנדב
+Unassign a volunteer
+עדכן גם כמתנדב ברירת מחדל
+Also update as a default volunteer
+בכדי לעדכן מתנדב מ"בדרך" ל"מוכן למשלוח" יש לסמן את "בטל שיוך למתנדב". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו
+To update a volunteer on the way to "ready to ship", select "Unsubscribe from a volunteer". In any case, a volunteer update will only be made to unpublished shipments
+עדכן מתנדב למשלוחים
+Update volunteer shipper
+עדכן סטטוס למשלוחים
+Update shipping status
+סטטוס "מוקפא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח.             ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח. 
+The status of "frozen" is a shipment that will not be associated with any volunteer until the shipment is "enabled". Freezing is used to temporarily stop certain shipments until they can be thawed and shipped. The freeze will only be carried out for shipments that are ready for delivery.
+לא נבחר סטטוס
+No status selected
+העדכון הופסק
+Update stopped
+בחרת לעדכן סטטוס
+You have chosen to update status
+ - אם את/ה מעוניין ליצור משלוח חדש, יש לעשות זאת בתפריט 'משלוח חדש'.
+ - If you want to create a new shipment, do so in the New Shipment menu.
+עדכון משלוחים שהסתיימו לסטטוס
+Update shipments that have ended status
+ לא ישמור בהיסטוריה את הסטטוס של המשלוחים שהסתיימו - האם להפסיק את העדכון?
+ Will not keep track of the status of completed shipments in history - stop updating?
+העברה לארכיב
+Archive transfer
+העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים
+Moving to the archive will only make shipments delivered or encountered a problem. The archive can be viewed at any time on the Shipping History screen
+עדכן סוג סל
+Update basket type
+עדכן כמות סלים
+Update amount of baskets
+עדכן רשימת חלוקה
+Update distribution list
+השתמש בסוג הסל המוגדר במשלוח הנוכחי
+Use the basket type defined in the current shipment
+משלוח חדש לכל המשלוחים ולא רק לאלו שהסתיימו בהצלחה
+New delivery for all shipments and not just for those that ended successfully
+רשימת חלוקה כמו במשלוח הנוכחי
+Distribution list as in current delivery
+משלוח חדש יוגדר עבור כל המשלוחים המסומנים שהם בסטטוס נמסר בהצלחה, או בעיה כלשהי, אלא אם תבחרו לסמן את השדה 
+A new shipment will be set for all statuses that have been successfully delivered, or any problem, unless you choose to select the field
+הגדר מתנדב לפי מתנדב ברירת מחדל המוגדר למשפחה
+Set up a volunteer by default family-defined volunteer
+הגדר מתנדב לפי המתנדב במשלוח הנוכחי
+Set up a volunteer according to the volunteer in the current shipment
+ללא מתנדב
+No volunteer
+מיוחדים שטרם שוייכו
+Specials not yet associated
+בחר מתנדב
+Choose a volunteer
+קפואים
+Frozen
+הכתובת אינה מדוייקת. בדקו בגוגל או התקשרו למשפחה. נשמח אם תעדכנו את הכתובת שמצאתם בהערות. האם לפתוח וייז?
+The address is inaccurate. Check Google or call family. We'd love to update your address in the comments. Open Wise?
+ הועתקה בהצלחה
+ Successfully copied
+האם אתה בטוח שאתה רוצה לבטל שיוך ל
+Are you sure you want to unpair
+בטל שיוך כל המשלוחים למתנדב
+Unassign all shipments to a volunteer
+האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל
+Are you sure you want to mark successfully delivered to
+הודעת SMS נשלחה ל
+SMS message sent to
+הודעה הועתקה
+Message copied
+קישור הועתק
+Link copied
+נקה הערות לכל המתנדבים
+Clear notes for all volunteers
+האם אתה בטוח שברצונך לנקות את כל ההערות למתנדבים?
+Are you sure you want to clear all notes for volunteers?
+נקה נתוני ליווי לכל המתנדבים
+Clear escort information for all volunteers
+האם אתה בטוח שברצונך לנקות את נתוני המלווים לכל המתנדבים?
+Are you sure you want to clear lender data for all volunteers?
+אתחל סיסמה
+Reset password
+האם את בטוחה שאת רוצה למחוק את הסיסמה של
+Are you sure you want to delete password
+הסיסמה נמחקה
+Password deleted
+שלח הזמנה בSMS למנהל
+Send invitation by SMS to manager
+לא מתאים להזמנה
+Not suitable for order
+ברוך הבא לסביבה של
+Welcome to the environment of
+אנא הכנס למערכת באמצעות הקישור:
+Please log in with the link:
+מכיוון שלא מוגדרת לך סיסמה עדיין - אנא הכנס בפעם הראשונה, על ידי הקלדת מספר הטלפון שלך ללא סיסמה ולחיצה על הכפתור "כניסה". המערכת תבקש שתגדיר סיסמה וזו תהיה סיסמתך.
+Because you do not have a password set yet - please enter for the first time, by typing in your phone number without a password and clicking the "Login" button. The system will ask you to set a password and that will be your password.
+  בהצלחה
+  Successfully
+הזמנה נשלחה בהצלחה
+Invitation sent successfully
+האם להוסיף
+Do add
+דקות נשארו
+Minutes remained
+הוספת השורות הסתיימה בהצלחה
+Successfully added the rows
+האם לעבור למסך משלוחים או להשאר במסך זה?
+Do you switch to a shipping screen or stay on that screen?
+האם לעדכן את השדה
+Do update the field
+למשפחות
+For families
+ל
+To
+שים לב- עדכון של שדה כתובת יכול לקחת יותר זמן משדות אחרים
+Note - Updating an address field can take longer than other fields
+בחר גליון מהאקסל
+Select an excel sheet
+פרטי
+Private
+עיר
+City
+הערה שתופיע לכל המשלוחים
+Note to appear for all shipments
+הגדר משלוחים לכל המשפחות מהאקסל
+Set up shipments for all families from Axel
+אם קיים משלוח למשפחה עם סוג סל שונה, הוסף משלוח חדש
+If there is a shipment for a family with a different basket type, add a new one
+השתמש במספר נפשות גם ככמות מנות
+Use a number of souls also as a portion
+שורות עובדו
+Rows were processed
+כבר קיים בקובץ בשורה
+A file already exists in a row
+ללא שם
+unnamed
+אותה משפחה באתר מתאימה למספר שורות באקסל: 
+The same family on the site fits several lines in Excel:
+מהכתובות ריקות או מסתיימות בספרה - יתכן שלא קלטתם את הישוב של הכתובת. לחזור להגדרת עמודות?
+From the addresses are empty or ending in the book - you may not have noticed the settlement of the address. Go back to column definition?
+נמצאה יותר ממשפחה אחת באתר המתאימה לשורה הזו מהאקסל. אנא בחר איזו מהמשפחות הבאות מתאימה לשורה מהאקסל והעבר אותה למשפחות לעדכון
+More than one family was found on the site corresponding to this line from Axel. Please select which of the following families fits the row from the excel and pass it on
+משפחה מעודכנת בבסיס הנתונים כהוצא מהרשימות
+Updated family in database as removed from lists
+להעביר את משפחת
+To move the family
+למשפחות חדשות
+For new families
+לקלוט את משפחת
+To absorb the family
+האם להשוות את
+Do compare the
+מול
+Opposite
+ולהעביר למשפחות לעדכון
+And forward to families for update

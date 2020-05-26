@@ -1,5 +1,6 @@
-import { ColumnOptions, ValueListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings, ValueListItem } from '@remult/core';
+import { ColumnOptions, ValueListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings, ValueListItem, Context } from '@remult/core';
 import { HelperId } from '../helpers/helpers';
+import { use, getLang } from '../translate';
 
 
 export class DeliveryStatus {
@@ -16,16 +17,16 @@ export class DeliveryStatus {
     }
     return false;
   }
-  static ReadyForDelivery: DeliveryStatus = new DeliveryStatus(0, 'מוכן למשלוח');
-  static SelfPickup: DeliveryStatus = new DeliveryStatus(2, 'באים לקחת');
-  static Frozen: DeliveryStatus = new DeliveryStatus(9, 'מוקפא');
+  static ReadyForDelivery: DeliveryStatus = new DeliveryStatus(0, use.language.readyForDelivery);
+  static SelfPickup: DeliveryStatus = new DeliveryStatus(2, use.language.selfPickup);
+  static Frozen: DeliveryStatus = new DeliveryStatus(9, use.language.frozen);
 
-  static Success: DeliveryStatus = new DeliveryStatus(11, 'נמסר בהצלחה');
-  static SuccessPickedUp: DeliveryStatus = new DeliveryStatus(13, 'לקחו בעצמם');
-  static SuccessLeftThere: DeliveryStatus = new DeliveryStatus(19, 'הושאר ליד הבית');
-  static FailedBadAddress: DeliveryStatus = new DeliveryStatus(21, 'לא נמסר, בעיה בכתובת', true);
-  static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, 'לא נמסר, לא היו בבית', true);
-  static FailedOther: DeliveryStatus = new DeliveryStatus(25, 'לא נמסר, אחר', true);
+  static Success: DeliveryStatus = new DeliveryStatus(11, use.language.deliveredSuccessfully);
+  static SuccessPickedUp: DeliveryStatus = new DeliveryStatus(13, use.language.packageWasPickedUp);
+  static SuccessLeftThere: DeliveryStatus = new DeliveryStatus(19, use.language.leftByHouse);
+  static FailedBadAddress: DeliveryStatus = new DeliveryStatus(21, use.language.notDeliveredBadAddress, true);
+  static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, use.language.notDeliveredNotHome, true);
+  static FailedOther: DeliveryStatus = new DeliveryStatus(25, use.language.notDeliveredOther, true);
 
 
 
@@ -50,7 +51,7 @@ export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
     return where;
   }
 
-  constructor(settingsOrCaption?: ColumnOptions<DeliveryStatus>, chooseFrom?: DeliveryStatus[]) {
+  constructor(context:Context, settingsOrCaption?: ColumnOptions<DeliveryStatus>, chooseFrom?: DeliveryStatus[]) {
     super(DeliveryStatus, {
       dataControlSettings: () => {
         let op = this.getOptions();
@@ -72,7 +73,7 @@ export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
       }
     }, settingsOrCaption);
     if (!this.defs.caption)
-      this.defs.caption = 'סטטוס משלוח';
+      this.defs.caption = getLang(context).deliveryStatus ;
   }
 
   isSuccess() {

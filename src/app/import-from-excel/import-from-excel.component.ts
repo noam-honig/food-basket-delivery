@@ -17,7 +17,7 @@ import { Roles } from '../auth/roles';
 import { MatStepper } from '@angular/material';
 
 import { ApplicationSettings, RemovedFromListExcelImportStrategy } from '../manage/ApplicationSettings';
-import { translate } from '../translate';
+import { translate, use, Language, getLang } from '../translate';
 
 import { Groups } from '../manage/manage.component';
 import { DistributionCenters, DistributionCenterId, allCentersToken } from '../manage/distribution-centers';
@@ -91,7 +91,7 @@ export class ImportFromExcelComponent implements OnInit {
 
     async addAll() {
         let count = this.newRows.length;
-        if (await this.dialog.YesNoPromise("האם להוסיף " + count + translate(" משפחות?"))) {
+        if (await this.dialog.YesNoPromise(use.language.shouldAdd + " " + count + translate(use.language.families + "?"))) {
 
 
             this.busy.doWhileShowingBusy(async () => {
@@ -110,7 +110,7 @@ export class ImportFromExcelComponent implements OnInit {
 
                             if (new Date().valueOf() - lastDate > 10000) {
                                 let timeLeft = ((new Date().valueOf() - start) / index) * (this.newRows.length - index) / 1000 / 60;
-                                this.dialog.Info(i.rowInExcel + ' ' + (i.name) + " נשאר עוד " + timeLeft.toFixed(1) + " דקות");
+                                this.dialog.Info(i.rowInExcel + ' ' + (i.name) + " " + timeLeft.toFixed(1) + " " + use.language.minutesRemaining);
                             }
                             await ImportFromExcelComponent.insertRows(rowsToInsert, this.addDelivery.value);
                             for (const r of rowsToInsert) {
@@ -132,14 +132,14 @@ export class ImportFromExcelComponent implements OnInit {
                     }
                     this.newRows = [];
                     this.sortRows();
-                    this.dialog.Info("הוספת השורות הסתיימה בהצלחה");
+                    this.dialog.Info(use.language.familiesAddedSuccesfull);
                 }
                 catch (err) {
-                    await this.dialog.Error("הוספה נכשלה:" + extractError(err));
+                    await this.dialog.exception("Excel Import", err);
                     this.newRows = this.newRows.filter(x => this.identicalRows.indexOf(x) < 0);
                 }
                 this.createImportReport();
-                if (await this.dialog.YesNoPromise("האם לעבור למסך משלוחים או להשאר במסך זה?"))
+                if (await this.dialog.YesNoPromise(use.language.gotoDeliveriesScreen))
                     this.routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
 
             });
@@ -167,14 +167,14 @@ export class ImportFromExcelComponent implements OnInit {
             await t.push(save());
         }
         await t.done();
-        //Families.SendMessageToBrowsers("משפחות נקלטו מאקסל ", context, '');
+
 
     }
     async updateAllCol(col: columnInCompare) {
         let count = this.getColUpdateCount(col);
-        let message = "האם לעדכן את השדה " + col.c.defs.caption + " ל" + count + translate(" משפחות?");
+        let message = use.language.shouldUpdateColumn + " " + col.c.defs.caption + " " + use.language.for + " " + count + translate(use.language.families + "?");
         if (col.c == this.f.address)
-            message += 'שים לב- עדכון של שדה כתובת יכול לקחת יותר זמן משדות אחרים';
+            message += use.language.updateOfAddressMayTakeLonger;
         this.dialog.YesNoQuestion(message, () => {
             this.busy.doWhileShowingBusy(async () => {
                 let rowsToUpdate: excelRowInfo[] = [];
@@ -299,7 +299,7 @@ export class ImportFromExcelComponent implements OnInit {
                         }, 500));
                         await this.context.openDialog(SelectListComponent, x => {
                             x.args = {
-                                title: 'בחר גליון מהאקסל',
+                                title: use.language.selectExcelSheet,
                                 options: sheets.map(x => ({ name: x, item: x } as selectListItem))
                             }
                         }, y => sheet = y.selected.name);
@@ -307,7 +307,7 @@ export class ImportFromExcelComponent implements OnInit {
                     this.worksheet = this.oFile.Sheets[sheet];
                     let sRef = this.worksheet["!ref"];
                     if (!sRef)
-                        throw `לשונית "${this.sheet}" ריקה`;
+                        throw use.language.excelSheel + ' "' + this.sheet + '" ' + use.language.excelSheetIsEmpty;
                     let to = sRef.substr(sRef.indexOf(':') + 1);
 
                     let maxLetter = 'A';
@@ -383,7 +383,7 @@ export class ImportFromExcelComponent implements OnInit {
             }
             catch (err) {
                 this.fileInput.nativeElement.value = '';
-                this.dialog.Error("שגיאה בקליטת קובץ " + this.filename + ": " + extractError(err));
+                this.dialog.exception("Excel Import Error " + this.filename + ": ", err);
                 throw err;
             }
             this.fileInput.nativeElement.value = '';
@@ -546,14 +546,14 @@ export class ImportFromExcelComponent implements OnInit {
                 addColumn(col);
             }
         };
-        addColumn(this.f.name, ["משפחה", "שם משפחה"]);
+        addColumn(this.f.name, [use.language.lastName, use.language.family]);
         addColumn(this.f.area);
         this.columns.push({
             key: 'firstName',
-            name: 'שם פרטי',
+            name: use.language.firstName,
             updateFamily: async (v, f, h) => { h.laterSteps.push({ step: 2, what: async () => updateCol(f.name, v) }) },
             columns: [this.f.name],
-            searchNames: ["פרטי"]
+            searchNames: [use.language.firstNameShort]
         });
         addColumns([
 
@@ -562,8 +562,8 @@ export class ImportFromExcelComponent implements OnInit {
         addColumn(this.f.id);
         this.columns.push({
             key: 'address',
-            name: 'כתובת',
-            searchNames: ['רחוב'],
+            name: use.language.address,
+            searchNames: [use.language.streetName],
             updateFamily: async (v, f) => {
                 let r = parseAddress(v);
                 if (r.address)
@@ -579,7 +579,7 @@ export class ImportFromExcelComponent implements OnInit {
         });
         this.columns.push({
             key: 'city',
-            name: 'עיר',
+            name: use.language.city,
             searchNames: ['ישוב', 'יישוב'],
             updateFamily: async (v, f, h) => {
                 h.laterSteps.push({
@@ -591,7 +591,7 @@ export class ImportFromExcelComponent implements OnInit {
         });
         this.columns.push({
             key: 'houseNum',
-            name: 'מספר בית',
+            name: use.language.houseNumber,
             searchNames: ["בית", "מס' בית", "מס בית"],
             updateFamily: async (v, f, h) => {
                 h.laterSteps.push({
@@ -614,7 +614,7 @@ export class ImportFromExcelComponent implements OnInit {
         });
         this.columns.push({
             key: 'boxes',
-            name: 'מספר סלים',
+            name: use.language.quantity,
             updateFamily: async (v, f, h) => {
                 let val = +leaveOnlyNumericChars(v);
                 if (val < 1)
@@ -625,7 +625,7 @@ export class ImportFromExcelComponent implements OnInit {
         });
         this.columns.push({
             key: 'defaultBoxes',
-            name: 'מספר סלים ברירת מחדל למשפחה',
+            name: use.language.defaultQuantity,
             updateFamily: async (v, f, h) => {
                 let val = +leaveOnlyNumericChars(v);
                 if (val < 1)
@@ -636,7 +636,7 @@ export class ImportFromExcelComponent implements OnInit {
         });
         this.columns.push({
             key: 'defaultDeliveryComments',
-            name: 'הערה שתופיע לכל המשלוחים',
+            name: use.language.commentForAllDeliveries,
             updateFamily: async (v, f, h) => {
                 updateCol(f.deliveryComments, v);
             },
@@ -644,7 +644,7 @@ export class ImportFromExcelComponent implements OnInit {
         });
         this.columns.push({
             key: 'deliveryComments',
-            name: 'הערה למשלוח',
+            name: this.fd.deliveryComments.defs.caption,
             updateFamily: async (v, f, h) => {
                 updateCol(h.fd.deliveryComments, v);
             },
@@ -652,14 +652,14 @@ export class ImportFromExcelComponent implements OnInit {
         });
         this.columns.push({
             key: 'defaultBasketType',
-            name: 'סוג סל ברירת מחדל למשפחה',
+            name: this.f.basketType.defs.caption,
             updateFamily: async (v, f, h) => {
                 await h.lookupAndInsert(BasketType, b => b.name, v, b => b.id, f.basketType);
             }, columns: [this.f.basketType]
         });
         this.columns.push({
             key: 'basketType',
-            name: 'סוג סל',
+            name: this.fd.basketType.defs.caption,
             updateFamily: async (v, f, h) => {
                 await h.lookupAndInsert(BasketType, b => b.name, v, b => b.id, h.fd.basketType);
             }, columns: [this.fd.basketType]
@@ -668,7 +668,7 @@ export class ImportFromExcelComponent implements OnInit {
 
         this.columns.push({
             key: 'distCenterName',
-            name: 'רשימת חלוקה',
+            name: this.fd.distributionCenter.defs.caption,
             updateFamily: async (v, f, h) => {
                 await h.lookupAndInsert(DistributionCenters, b => b.name, v, b => b.id, h.fd.distributionCenter);
             }, columns: [this.fd.distributionCenter]
@@ -683,7 +683,7 @@ export class ImportFromExcelComponent implements OnInit {
 
         this.columns.push({
             key: 'fixedCourier',
-            name: this.f.fixedCourier.defs.caption + ' שם',
+            name: this.f.fixedCourier.defs.caption + ' ' + use.language.volunteerName,
             updateFamily: async (v, f, h) => {
                 h.laterSteps.push({
                     step: 3, what: async () => {
@@ -701,7 +701,7 @@ export class ImportFromExcelComponent implements OnInit {
         });
         this.columns.push({
             key: 'fixedCourierPhone',
-            name: this.f.fixedCourier.defs.caption + ' טלפון',
+            name: this.f.fixedCourier.defs.caption + " " + use.language.phone,
 
             updateFamily: async (v, f, h) => {
                 v = PhoneColumn.fixPhoneInput(v);
@@ -763,7 +763,7 @@ export class ImportFromExcelComponent implements OnInit {
         });
         this.columns.push({
             key: 'phone_complex',
-            name: 'טלפון',
+            name: use.language.phone,
             updateFamily: async (v, f, h) => {
                 h.laterSteps.push({
                     step: 2, what: async () => {
@@ -782,11 +782,11 @@ export class ImportFromExcelComponent implements OnInit {
     newRows: excelRowInfo[] = [];
     identicalRows: excelRowInfo[] = [];
     updateRows: excelRowInfo[] = [];
-    addDelivery = new BoolColumn('הגדר משלוחים לכל המשפחות מהאקסל');
-    compareBasketType = new BoolColumn('אם קיים משלוח למשפחה עם סוג סל שונה, הוסף משלוח חדש');
+    addDelivery = new BoolColumn(use.language.defineDeliveriesForFamiliesInExcel);
+    compareBasketType = new BoolColumn(use.language.ifBasketTypeInExcelIsDifferentFromExistingOneCreateNewDelivery);
     defaultBasketType = new BasketId(this.context);
     distributionCenter = new DistributionCenterId(this.context);
-    useFamilyMembersAsNumOfBaskets = new BoolColumn('השתמש במספר נפשות גם ככמות מנות');
+    useFamilyMembersAsNumOfBaskets = new BoolColumn(use.language.useFamilyMembersAsQuantity);
 
     moveToAdvancedSettings() {
 
@@ -862,7 +862,7 @@ export class ImportFromExcelComponent implements OnInit {
                     if (index % 10000 == 0) {
                         var timeLeft = ((new Date().valueOf() - start) / index * (this.totalRows - index)) / 1000 / 60;
 
-                        this.dialog.Info(index + " שורות עובדו, נשאר עוד  " + timeLeft.toFixed(1) + " דקות");
+                        this.dialog.Info(index + " " + use.language.linesProcessed + " " + timeLeft.toFixed(1) + " " + use.language.minutesRemaining);
                         await new Promise(r => {
                             setTimeout(() => {
                                 r();
@@ -886,7 +886,7 @@ export class ImportFromExcelComponent implements OnInit {
                                 return false;
                             let x = map.get(+val);
                             if (x > 0 && x < index) {
-                                f.error = caption + ' - ' + origVal + ' - כבר קיים בקובץ בשורה ' + x;
+                                f.error = caption + ' - ' + origVal + ' - ' + use.language.alreadyExistsInLine + ' ' + x;
                                 f.otherExcelRow = rows.find(y => y.rowInExcel == x);
                                 return true;
                             }
@@ -900,11 +900,11 @@ export class ImportFromExcelComponent implements OnInit {
                             f.phone4ForDuplicateCheck = '';
                         }
 
-                        if (this.settings.checkIfFamilyExistsInFile.value && (exists(f.tz, usedTz, 'תעודת זהות') || this.settings.checkDuplicatePhones.value &&
-                            (exists(f.phone1ForDuplicateCheck, usedPhone, 'טלפון 1')
-                                || exists(f.phone2ForDuplicateCheck, usedPhone, 'טלפון 2')
-                                || exists(f.phone3ForDuplicateCheck, usedPhone, 'טלפון 3')
-                                || exists(f.phone4ForDuplicateCheck, usedPhone, 'טלפון 4')
+                        if (this.settings.checkIfFamilyExistsInFile.value && (exists(f.tz, usedTz, use.language.socialSecurityNumber) || this.settings.checkDuplicatePhones.value &&
+                            (exists(f.phone1ForDuplicateCheck, usedPhone, use.language.phone1)
+                                || exists(f.phone2ForDuplicateCheck, usedPhone, use.language.phone2)
+                                || exists(f.phone3ForDuplicateCheck, usedPhone, use.language.phone3)
+                                || exists(f.phone4ForDuplicateCheck, usedPhone, use.language.phone4)
                             ))) {
                             this.errorRows.push(f);
                         }
@@ -914,7 +914,7 @@ export class ImportFromExcelComponent implements OnInit {
                     }
 
                     if (rows.length == 50) {
-                        this.dialog.Info((index - 1) + ' ' + (f.name ? f.name : 'ללא שם') + ' ' + (f.error ? f.error : ''));
+                        this.dialog.Info((index - 1) + ' ' + (f.name ? f.name : use.language.unnamed) + ' ' + (f.error ? f.error : ''));
                         await this.processExcelRowsAndCheckOnServer(rows);
                         rows = [];
                     }
@@ -944,7 +944,7 @@ export class ImportFromExcelComponent implements OnInit {
                 for (const iterator of collected) {
                     if (iterator.length > 1) {
                         for (const row of iterator) {
-                            row.error = translate('אותה משפחה באתר מתאימה למספר שורות באקסל: ') + iterator.map(x => x.rowInExcel.toString()).join(', ');
+                            row.error = translate(use.language.sameLineExcelMatchesSeveralRowsInTheDatabase + ' ') + iterator.map(x => x.rowInExcel.toString()).join(', ');
                             this.errorRows.push(row);
                             this.updateRows.splice(this.updateRows.indexOf(row), 1);
                         }
@@ -958,7 +958,7 @@ export class ImportFromExcelComponent implements OnInit {
                     }
                     let precent = (suspectAddress * 100 / rows.length);
                     if (precent > 30 && updatedColumns.get(this.f.addressLatitude)) {
-                        if (await this.dialog.YesNoPromise("כ" + precent.toFixed() + "% מהכתובות ריקות או מסתיימות בספרה - יתכן שלא קלטתם את הישוב של הכתובת. לחזור להגדרת עמודות??")) {
+                        if (await this.dialog.YesNoPromise(precent.toFixed() + "% " + use.language.manyAddressesEndWithNumber)) {
                             this.stepper.previous();
                             this.stepper.previous();
                         }
@@ -976,7 +976,7 @@ export class ImportFromExcelComponent implements OnInit {
             }
             catch (err) {
                 this.stepper.previous();
-                this.dialog.Error("הקליטה הופסקה בשורה - " + index + ": " + extractError(err));
+                this.dialog.exception("import aborted in line - " + index + ": ", err);
             }
         });
 
@@ -1011,9 +1011,9 @@ export class ImportFromExcelComponent implements OnInit {
     displayDupInfo(info: duplicateFamilyInfo) {
         let r = '';
         if (info.removedFromList) {
-            r = 'הוצא מהרשימות! ';
+            r = use.language.removedFromList + '! ';
         }
-        return r + displayDupInfo(info,this.context);
+        return r + displayDupInfo(info, this.context);
     }
 
     @ServerFunction({ allowed: Roles.admin })
@@ -1063,7 +1063,7 @@ export class ImportFromExcelComponent implements OnInit {
             if (!info.duplicateFamilyInfo || info.duplicateFamilyInfo.length == 0) {
                 result.newRows.push(info);
             } else if (info.duplicateFamilyInfo.length > 1) {
-                info.error = translate('נמצאה יותר ממשפחה אחת באתר המתאימה לשורה הזו מהאקסל. אנא בחר איזו מהמשפחות הבאות מתאימה לשורה מהאקסל והעבר אותה למשפחות לעדכון');
+                info.error = translate(getLang(context).moreThanOneRowInDbMatchesExcel);
                 result.errorRows.push(info);
             } else {
                 let hasDifference = false;
@@ -1072,7 +1072,7 @@ export class ImportFromExcelComponent implements OnInit {
                 if (existingFamily.status.value == FamilyStatus.RemovedFromList) {
                     switch (settings.removedFromListStrategy.value) {
                         case RemovedFromListExcelImportStrategy.displayAsError:
-                            info.error = 'משפחה מעודכנת בבסיס הנתונים כהוצא מהרשימות';
+                            info.error = use.language.familyAlreadyRemovedFromList;
                             result.errorRows.push(info);
                             break;
                         case RemovedFromListExcelImportStrategy.showInUpdate:
@@ -1152,9 +1152,9 @@ export class ImportFromExcelComponent implements OnInit {
     async moveFromErrorToAdd(r: excelRowInfo) {
         let name = r.name;
         if (!name) {
-            name = "ללא שם";
+            name = use.language.unnamed;
         }
-        if (await this.ask(translate("להעביר את משפחת ") + name + translate(" למשפחות חדשות?"))) {
+        if (await this.ask(translate(use.language.moveTheFamily + " ") + name + translate(" " + use.language.toNewFamilies + "?"))) {
             if (!r.name) {
                 r.name = name;
                 r.values[keyFromColumnInCompare({ e: this.f, c: this.f.name })] = { newValue: r.name, newDisplayValue: r.name };
@@ -1174,9 +1174,9 @@ export class ImportFromExcelComponent implements OnInit {
     async moveFromErrorToProcess(r: excelRowInfo) {
         let name = r.name;
         if (!name) {
-            name = "ללא שם";
+            name = use.language.unnamed;
         }
-        if (await this.ask(translate("לקלוט את משפחת ") + name + translate("?"))) {
+        if (await this.ask(translate(use.language.importFamily + " ") + name + translate("?"))) {
             if (!r.name) {
                 r.name = name;
                 r.values[keyFromColumnInCompare({ e: this.f, c: this.f.name })] = { newValue: r.name, newDisplayValue: r.name };
@@ -1190,7 +1190,7 @@ export class ImportFromExcelComponent implements OnInit {
 
     }
     async moveFromErrorToUpdate(i: excelRowInfo, f: duplicateFamilyInfo) {
-        if (await this.ask(`האם להשוות את "${i.name}" מול "${f.name}" ולהעביר למשפחות לעדכון?`)) {
+        if (await this.ask(use.language.shouldCompare + ` "${i.name}" ` + use.language.compareTo + `" ${f.name}" ` + use.language.andMoveToUpdateFamilies)) {
             await this.actualMoveFromErrorToUpdate(i, f);
         }
 
@@ -1225,7 +1225,7 @@ export class ImportFromExcelComponent implements OnInit {
     }
 
     moveFromUpdateToAdd(r: excelRowInfo) {
-        this.dialog.YesNoQuestion(translate("להעביר את משפחת ") + r.name + translate(" למשפחות להוספה?"), () => {
+        this.dialog.YesNoQuestion(translate(use.language.moveTheFamily + " ") + r.name + translate(" " + use.language.toNewFamilies + "?"), () => {
             let x = this.updateRows.indexOf(r);
             this.updateRows.splice(x, 1);
             this.newRows.push(r);
@@ -1251,12 +1251,12 @@ export class ImportFromExcelComponent implements OnInit {
         let addRows = (from: excelRowInfo[], status: string, updateRows?: boolean) => {
             for (const f of from) {
                 let r: importReportRow = {
-                    "שורה באקסל המקורי": f.rowInExcel,
-                    סטטוס_קליטה: status,
-                    "שגיאה": f.error
+                    "excelLine": f.rowInExcel,
+                    "import-status": status,
+                    "error": f.error
                 };
                 if (f.created) {
-                    r.סטטוס_קליטה = 'נוספה לאתר';
+                    r["import-status"] = use.language.addedToDb;
                     f.error = '';
                 }
                 for (const col of this.columnsInCompare) {
@@ -1270,12 +1270,12 @@ export class ImportFromExcelComponent implements OnInit {
                 rows.push(r);
             }
         };
-        addRows(this.newRows, 'לא נקלטה');
-        addRows(this.updateRows, 'קיימת עם עדכון', true);
-        addRows(this.identicalRows, 'קיימת זהה');
-        addRows(this.errorRows, 'שגיאה');
-        rows.sort((a, b) => a["שורה באקסל המקורי"] - b["שורה באקסל המקורי"]);
-        await jsonToXlsx(this.busy, rows, Sites.getOrganizationFromContext(this.context) + ' סיכום קליטה ' + new Date().toLocaleString('he').replace(/:/g, '-').replace(/\./g, '-').replace(/,/g, '') + this.filename);
+        addRows(this.newRows, use.language.notImported);
+        addRows(this.updateRows, use.language.existsWithAnUpdate, true);
+        addRows(this.identicalRows, use.language.existsIdenticat);
+        addRows(this.errorRows, use.language.error);
+        rows.sort((a, b) => a["excelLine"] - b["excelLine"]);
+        await jsonToXlsx(this.busy, rows, Sites.getOrganizationFromContext(this.context) + ' import summary ' + new Date().toLocaleString('he').replace(/:/g, '-').replace(/\./g, '-').replace(/,/g, '') + this.filename);
     }
 
     async updateFamily(i: duplicateFamilyInfo) {
@@ -1285,9 +1285,9 @@ export class ImportFromExcelComponent implements OnInit {
     }
 }
 interface importReportRow {
-    "שורה באקסל המקורי": number;
-    "סטטוס_קליטה": string;
-    "שגיאה"?: string;
+    "excelLine": number;
+    "import-status": string;
+    "error"?: string;
     [caption: string]: any;
 }
 

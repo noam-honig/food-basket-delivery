@@ -41,9 +41,9 @@ export class DuplicateFamiliesComponent implements OnInit {
   }
   async showFamilies(d: duplicateFamilies) {
     await this.context.openDialog(GridDialogComponent, x => x.args = {
-      title: 'משפחות ב' + d.address,
+      title: this.settings.lang.familiesAt + d.address,
       buttons: [{
-        text: 'מזג משפחות',
+        text: this.settings.lang.mergeFamilies,
         click: async () => { await this.mergeFamilies(x); }
       }],
       settings: this.context.for(Families).gridSettings({
@@ -90,17 +90,17 @@ export class DuplicateFamiliesComponent implements OnInit {
                   actionRowsFilterInfo: packWhere(this.context.for(Families).create(), where)
                 };
               }, settings: this.settings,
-              groupName: 'משפחות'
+              groupName: this.settings.lang.families
             })
           , {
-            name: 'מיזוג משפחות',
+            name: this.settings.lang.mergeFamilies,
             click: async () => {
               await this.mergeFamilies(x);
 
             },
             visible: () => this.context.isAllowed(Roles.admin) && (x.args.settings.selectedRows.length > 1 || x.args.settings.totalRows < 10)
           }, {
-            name: 'יצוא לאקסל',
+            name: this.settings.lang.exportToExcel,
             click: async () => {
               await saveFamiliesToExcel(this.context, x.args.settings, this.busy,this.settings.lang.families)
             }
@@ -109,11 +109,11 @@ export class DuplicateFamiliesComponent implements OnInit {
         knowTotalRows: true,
         rowButtons: [
           {
-            name: 'פרטי משפחה',
+            name: this.settings.lang.familyDetails,
             click: f => f.showFamilyDialog()
           },
           {
-            name: 'משלוחים',
+            name: this.settings.lang.deliveries,
             click: f => f.showDeliveryHistoryDialog()
           }
         ],
@@ -132,15 +132,15 @@ export class DuplicateFamiliesComponent implements OnInit {
   private async mergeFamilies(x: GridDialogComponent) {
     let items = x.args.settings.selectedRows.length > 0 ? [...x.args.settings.selectedRows] : [...x.args.settings.items];
     if (items.length == 0) {
-      await this.dialog.Error('לא נבחרו משפחות');
+      await this.dialog.Error(this.settings.lang.noFamiliesSelected);
       return;
     }
     if (items.length == 1) {
-      await this.dialog.Error('אין מה למזג משפחה אחת');
+      await this.dialog.Error(this.settings.lang.cantMergeOneFamily);
       return;
     }
     if (items.length > 10) {
-      await this.dialog.Error('יותר מידי משפחות בבת אחת');
+      await this.dialog.Error(this.settings.lang.tooManyFamiliesForMerge);
       return;
     }
     await this.context.openDialog(MergeFamiliesComponent, y => y.families = items, y => {
