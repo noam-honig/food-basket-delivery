@@ -1128,3 +1128,39 @@ Remember me on this device
 If you are not registered, please register here
 אם אינך רשומה, אנא הרשמי כאן
 If you are not registered, please register here
+ כבר משוייכת ל
+ Already associated with
+ כבר משוייכת ל
+ Already associated with
+בסטטוס
+Status
+האם לשייך אותו למתנדב
+Do associate it with a volunteer
+האם לשייך אותו למתנדב
+Do associate it with a volunteer
+שמירת פרטי מתנדב:
+Saving volunteer information:
+ אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועבר למסך עדכון פרטים לעדכון סיסמה.
+ You are set as administrator but you do not have a password set for you. To use the management capabilities, it is mandatory to protect the details with a password. You are taken to a password update screen to update information.
+משתמשת לא נמצאה או סיסמה שגויה
+User not found or password incorrect
+מתאריך
+Dated
+מתאריך
+Dated
+עד תאריך
+Until
+עד תאריך
+Until
+האם לשלוח הודעת SMS ל
+Send a text message to
+מתעכבים
+Are delayed
+סיימו
+Finish
+בעיות
+Boll
+משפחות מחכות
+Families are waiting
+משפחות מחכות
+Families are waiting

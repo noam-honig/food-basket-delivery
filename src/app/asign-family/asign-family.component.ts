@@ -927,9 +927,9 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                     if (selectStreet)
                         return;
                     let c = await f.courier.getTheName();
-                    this.dialog.YesNoQuestion(translate('משפחת ') +
-                        f.name.value + ' כבר משוייכת ל' + c + ' בסטטוס ' +
-                        f.deliverStatus.displayValue + '. האם לשייך אותו למתנדב ' + this.helper.name.value + '?', () => {
+                    this.dialog.YesNoQuestion(translate(this.settings.lang.theFamily)+' ' +
+                        f.name.value + this.settings.lang.isAlreadyAsignedTo+' ' + c + ' '+this.settings.lang.onStatus+' ' +
+                        f.deliverStatus.displayValue + '. '+this.settings.lang.shouldAssignTo+' ' + this.helper.name.value + '?', () => {
                             ok();
                         });
 
@@ -964,7 +964,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             try {
                 await this.helper.save();
             } catch (err) {
-                await this.dialog.Error('שמירת פרטי מתנדב: ' + extractError(err));
+                await this.dialog.exception(this.settings.lang.saveVolunteerInfo,err);
                 throw err;
 
             }

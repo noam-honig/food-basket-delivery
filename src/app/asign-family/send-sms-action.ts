@@ -5,6 +5,7 @@ import * as fetch from 'node-fetch';
 import { Context, ServerContext } from '@remult/core';
 import { Roles } from "../auth/roles";
 import { Sites } from '../sites/sites';
+import { getLang } from '../translate';
 
 
 
@@ -57,7 +58,7 @@ export class SendSmsAction {
 
                 message = settings.smsText.value;
                 if (!message || message.trim().length == 0) {
-                    message = 'שלום !מתנדב! לחלוקת חבילות !ארגון! לחץ על: !אתר! תודה !שולח!';
+                    message = getLang(ds).defaultSmsText;
                 }
             }
             let url = origin + '/x/' + helper.shortUrlKey.value;

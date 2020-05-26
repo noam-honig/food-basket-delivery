@@ -43,7 +43,7 @@ export class DeliveryHistoryComponent implements OnInit {
   static route: Route = {
     path: 'history',
     component: DeliveryHistoryComponent,
-    data: { name: 'היסטורית משלוחים' }, canActivate: [AdminGuard]
+     canActivate: [AdminGuard]
   }
   helperStorage: InMemoryDataProvider;
   constructor(private context: Context, private busy: BusyService,public settings:ApplicationSettings) {
@@ -54,10 +54,10 @@ export class DeliveryHistoryComponent implements OnInit {
       hideDataArea: true,
       numOfColumnsInGrid: 6,
       gridButton: [{
-        name: 'יצוא לאקסל',
+        name: this.settings.lang.exportToExcel,
         visible: () => this.context.isAllowed(Roles.admin),
         click: async () => {
-          await saveToExcel(this.context.for(helperHistoryInfo), this.helperInfo, "מתנדבים", this.busy, (d: helperHistoryInfo, c) => c == d.courier);
+          await saveToExcel(this.context.for(helperHistoryInfo), this.helperInfo, this.settings.lang.volunteers, this.busy, (d: helperHistoryInfo, c) => c == d.courier);
         }
       }],
       columnSettings: h => [
@@ -79,7 +79,7 @@ export class DeliveryHistoryComponent implements OnInit {
         },
         {
           column: h.families,
-          caption: translate('משפחות'),
+          
           width: '75'
         },
         {
@@ -115,9 +115,9 @@ export class DeliveryHistoryComponent implements OnInit {
 
   deliveries = this.context.for(FamilyDeliveries).gridSettings({
     gridButton: [{
-      name: 'יצוא לאקסל',
+      name: this.settings.lang.exportToExcel,
       click: async () => {
-        await saveToExcel(this.context.for(FamilyDeliveries), this.deliveries, "משלוחים", this.busy, (d: FamilyDeliveries, c) => c == d.id || c == d.family, undefined,
+        await saveToExcel(this.context.for(FamilyDeliveries), this.deliveries, this.settings.lang.deliveries, this.busy, (d: FamilyDeliveries, c) => c == d.id || c == d.family, undefined,
           async (f, addColumn) => {
             await f.basketType.addBasketTypes(f.quantity, addColumn);
             f.addStatusExcelColumn(addColumn);
