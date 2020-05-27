@@ -76,7 +76,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
   @ServerFunction({ allowed: Roles.admin })
   static async SendCustomMessageToCourier(courier: string, message: string, context?: ServerContext) {
     let h = await context.for(Helpers).findId(courier);
-    await new SendSmsUtils().sendSms(h.phone.value, await SendSmsAction.getSenderPhone(context), message, context.getOrigin(), Sites.getOrganizationFromContext(context));
+    await new SendSmsUtils().sendSms(h.phone.value, await SendSmsAction.getSenderPhone(context), message, context.getOrigin(), Sites.getOrganizationFromContext(context), await ApplicationSettings.getAsync(context));
 
   }
   preview() {
@@ -143,7 +143,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
     this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { family: f });
   }
   displayDupInfo(info: duplicateFamilyInfo) {
-    return displayDupInfo(info,this.context);
+    return displayDupInfo(info, this.context);
   }
 
 

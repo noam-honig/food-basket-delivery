@@ -280,7 +280,7 @@ ${url}
       message += getLang(context).enterFirstTime
     }
     let from = await context.for(Helpers).findFirst(h => h.id.isEqualTo(context.user.id));
-    await new SendSmsUtils().sendSms(h.phone.value, from.phone.value, message, context.getOrigin(), Sites.getOrganizationFromContext(context));
+    await new SendSmsUtils().sendSms(h.phone.value, from.phone.value, message, context.getOrigin(), Sites.getOrganizationFromContext(context),await ApplicationSettings.getAsync(context));
     return getLang(context).inviteSentSuccesfully
 
 

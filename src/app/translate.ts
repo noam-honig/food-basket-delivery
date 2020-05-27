@@ -55,7 +55,8 @@ export class TranslationOptions {
   });
   static southAfrica: TranslationOptions = new TranslationOptions(3, 'South Africa', {
     leftToRight: true,
-    languageCode: 'en'
+    languageCode: 'en',
+    internationalPrefixForSmsAndAws:'+27'
   });
   static italy: TranslationOptions = new TranslationOptions(4, 'Italy', {
     leftToRight: true,
@@ -72,7 +73,8 @@ export class TranslationOptions {
   constructor(public id: number, public caption: string, public args: {
     leftToRight?: boolean,
     languageCode?: string,
-    translateFunction?: (s: string) => string
+    translateFunction?: (s: string) => string,
+    internationalPrefixForSmsAndAws?:string
   }) {
     if (args.translateFunction)
       this.translate = args.translateFunction;

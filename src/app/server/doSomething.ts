@@ -27,7 +27,7 @@ export async function DoIt() {
         await serverInit();
 
 
-        await buildLanguageFiles();
+        await sendMessagE();
 
 
 
@@ -49,12 +49,14 @@ DoIt();
 
 async function sendMessagE() {
     let r = await new AWS.SNS({ apiVersion: '2010-03-31' }).publish({
-        Message: 'בדיקה ראשונה שלי',
+        Message: `Hello Noam Honig
+To deliver packages for Milano Helpers Click on :http://localhost:4200/test3/x/Ad6tTwFCpb
+Thanks Noam Honig`,
         PhoneNumber: '+972507330590',
         MessageAttributes: {
             'AWS.SNS.SMS.SenderID': {
                 'DataType': 'String',
-                'StringValue': '972507330590'
+                'StringValue': 'FOODBANK'
             }
         }
     }).promise();
