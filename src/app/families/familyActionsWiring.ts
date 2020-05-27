@@ -31,8 +31,8 @@ export class ActionOnRows<T extends IdEntity> {
         if (!args.additionalWhere) {
             args.additionalWhere = x => undefined;
         }
-        if (!args.onEnd){
-            args.onEnd = async()=>{};
+        if (!args.onEnd) {
+            args.onEnd = async () => { };
         }
 
 
@@ -89,14 +89,14 @@ export class ActionOnRows<T extends IdEntity> {
 
                                     let r = await component.callServer(info, this.args.title, args);
                                     component.dialog.Info(r);
-                                    
+
                                     this.args.onEnd();
                                     component.afterAction();
                                 }
                             }
                             catch (err) {
                                 console.log(err);
-                                component.dialog.Error(this.args.title + ":" + extractError(err));
+                                component.dialog.exception(this.args.title, err);
 
                             }
                         }
@@ -123,7 +123,7 @@ export interface actionDialogNeeds<T extends IdEntity> {
 export interface ActionOnRowsArgs<T extends IdEntity> {
     dialogColumns?: (component: actionDialogNeeds<T>) => DataArealColumnSetting<any>[],
     forEach: (f: T) => Promise<void>,
-    onEnd?: ()=>Promise<void>,
+    onEnd?: () => Promise<void>,
     columns: () => Column<any>[],
     validateInComponent?: (component: actionDialogNeeds<T>) => Promise<void>,
     validate?: () => Promise<void>,

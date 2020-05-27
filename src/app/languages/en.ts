@@ -324,7 +324,7 @@ export class en implements Language {
   dialTo = 'Dial to';
   forHelp = 'For help';
   dialForHelp = 'Call for help';
-  cancel = 'void';
+  cancel = 'cancel';
   updateDeliveryFailure = 'Update delivery failure';
   all = 'Everyone';
   searchVolunteer = 'Volunteer search';
@@ -423,7 +423,7 @@ export class en implements Language {
   whatWentWrong = "What didn't work out?";
   addCurrentLocationToNote = 'Add current location for comment';
   basketNotDelivered = 'The basket was not delivered';
-  confirm = 'which';
+  confirm = 'Confirm';
   displayFamilyAsVolunteerWillSeeIt = 'View a family as a volunteer will see her';
   infoAboutUpdates = 'Update details';
   sendMessageToVolunteer = 'Send a message to the volunteer';
@@ -593,4 +593,25 @@ export class en implements Language {
   error = 'Error';
   languageCode = 'en';
   resetTextsToLanguageDefaults = 'Return texts to default settings';
+  no = 'No';
+  yes = 'Yes';
+  search = 'Search';
+  assigned = 'Belongs';
+  familySourceName = 'Name';
+  contactPersonName = 'contact';
+  lineWithNoName = 'Untitled line';
+  smsLoginFailed = "Something didn't work out with the link, you are taken to a login screen - please enter with your phone number";
+  aMinuteAgo = 'A minute ago';
+  before = 'before';
+  anHour = 'hour';
+  twoHours = 'Two hours';
+  hours = 'Hours';
+  andAQuater = 'And a quarter';
+  andThreeQuaters = 'And three-quarters';
+  andAHalf = 'And a half';
+  on = 'B';
+  days = 'Days';
+  yesterday = 'Yesterday';
+  twoDaysAgo = 'the day before yesterday';
+  thankYou = 'Thanks';
 }

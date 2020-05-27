@@ -160,10 +160,30 @@
     "orig": "כבר קיים בקובץ בשורה",
     "valueInCode": "כבר קיים בקובץ בשורה"
   },
+  "aMinuteAgo": {
+    "google": "A minute ago",
+    "valueInCode": "לפני דקה"
+  },
+  "andAHalf": {
+    "google": "And a half",
+    "valueInCode": "וחצי"
+  },
+  "andAQuater": {
+    "google": "And a quarter",
+    "valueInCode": "ורבע"
+  },
   "andMoveToUpdateFamilies": {
     "google": "And forward to families for update",
     "orig": "ולהעביר למשפחות לעדכון",
     "valueInCode": "ולהעביר למשפחות לעדכון"
+  },
+  "andThreeQuaters": {
+    "google": "And three-quarters",
+    "valueInCode": "ושלושת רבעי"
+  },
+  "anHour": {
+    "google": "hour",
+    "valueInCode": "שעה"
   },
   "answer": {
     "google": "Answer",
@@ -244,6 +264,10 @@
     "google": "Associate volunteer shipments",
     "orig": "שיוך משלוחים למתנדב",
     "valueInCode": "שיוך משלוחים למתנדב"
+  },
+  "assigned": {
+    "google": "Belongs",
+    "valueInCode": "שוייך"
   },
   "assignedDriver": {
     "google": "Associated driver",
@@ -330,6 +354,10 @@
     "orig": "סוגי סלים",
     "valueInCode": "סוגי סלים"
   },
+  "before": {
+    "google": "before",
+    "valueInCode": "לפני"
+  },
   "birthDate": {
     "google": "Date of birth",
     "orig": "תאריך לידה",
@@ -383,6 +411,7 @@
   "cancel": {
     "google": "void",
     "orig": "בטל",
+    "custom": "cancel",
     "valueInCode": "בטל"
   },
   "cancelAllAssignments": {
@@ -537,6 +566,7 @@
   },
   "confirm": {
     "google": "which",
+    "custom": "Confirm",
     "orig": "אשר",
     "valueInCode": "אשר"
   },
@@ -544,6 +574,10 @@
     "google": "password verification",
     "orig": "אישור סיסמה",
     "valueInCode": "אישור סיסמה"
+  },
+  "contactPersonName": {
+    "google": "contact",
+    "valueInCode": "איש קשר"
   },
   "copyAddress": {
     "google": "Copy address",
@@ -589,6 +623,10 @@
     "google": "Dates",
     "orig": "תאריכים",
     "valueInCode": "תאריכים"
+  },
+  "days": {
+    "google": "Days",
+    "valueInCode": "ימים"
   },
   "defaultBasketType": {
     "google": "Default basket type",
@@ -1186,6 +1224,10 @@
     "orig": "גורם מפנה",
     "valueInCode": "גורם מפנה"
   },
+  "familySourceName": {
+    "google": "Name",
+    "valueInCode": "שם"
+  },
   "familySourcePhone": {
     "google": "Telephone turning point",
     "orig": "טלפון גורם מפנה",
@@ -1376,6 +1418,10 @@
     "orig": "הסתר חברה למתנדב",
     "valueInCode": "הסתר חברה למתנדב"
   },
+  "hours": {
+    "google": "Hours",
+    "valueInCode": "שעות"
+  },
   "houseNumber": {
     "google": "House number",
     "orig": "מספר בית",
@@ -1509,6 +1555,10 @@
     "google": "Rows were processed",
     "orig": "שורות עובדו",
     "valueInCode": "שורות עובדו"
+  },
+  "lineWithNoName": {
+    "google": "Untitled line",
+    "valueInCode": "שורה ללא שם"
   },
   "linkCopied": {
     "google": "Link copied",
@@ -1735,6 +1785,10 @@
     "orig": "המשך לשלב הבא",
     "valueInCode": "המשך לשלב הבא"
   },
+  "no": {
+    "google": "No",
+    "valueInCode": "לא"
+  },
   "noDeliveriesLeft": {
     "google": "No suitable shipments left",
     "orig": "לא נותרו משלוחים מתאימים",
@@ -1804,6 +1858,10 @@
     "google": "Several families",
     "orig": "מספר משפחות",
     "valueInCode": "מספר משפחות"
+  },
+  "on": {
+    "google": "B",
+    "valueInCode": "ב"
   },
   "oneDeliveryToDistribute": {
     "google": "One delivery for distribution",
@@ -2239,6 +2297,10 @@
     "orig": "שמירת פרטי מתנדב:",
     "valueInCode": "שמירת פרטי מתנדב:"
   },
+  "search": {
+    "google": "Search",
+    "valueInCode": "חיפוש"
+  },
   "searchFamily": {
     "google": "Family Search",
     "orig": "חיפוש משפחה",
@@ -2504,6 +2566,10 @@
     "orig": "מועד משלוח SMS",
     "valueInCode": "מועד משלוח SMS"
   },
+  "smsLoginFailed": {
+    "google": "Something didn't work out with the link, you are taken to a login screen - please enter with your phone number",
+    "valueInCode": "משהו לא הסתדר עם הקישור, הנך מועבר למסך כניסה - אנא הכנס עם מספר הטלפון שלך"
+  },
   "smsMessageContentCaption": {
     "google": "SMS message content",
     "orig": "תוכן הודעת SMS",
@@ -2594,6 +2660,10 @@
     "orig": "הודעה למתנדב כאשר נמסר בהצלחה",
     "valueInCode": "הודעה למתנדב כאשר נמסר בהצלחה"
   },
+  "thankYou": {
+    "google": "Thanks",
+    "valueInCode": "תודה"
+  },
   "theFamily": {
     "google": "The family",
     "orig": "משפחת",
@@ -2648,6 +2718,14 @@
     "google": "Transfer families from another volunteer",
     "orig": "העבר משפחות ממתנדב אחר",
     "valueInCode": "העבר משפחות ממתנדב אחר"
+  },
+  "twoDaysAgo": {
+    "google": "the day before yesterday",
+    "valueInCode": "שלשום"
+  },
+  "twoHours": {
+    "google": "Two hours",
+    "valueInCode": "שעתיים"
   },
   "unAsigned": {
     "google": "Not yet associated",
@@ -2953,6 +3031,14 @@
     "google": "within",
     "orig": "תוך",
     "valueInCode": "תוך"
+  },
+  "yes": {
+    "google": "Yes",
+    "valueInCode": "כן"
+  },
+  "yesterday": {
+    "google": "Yesterday",
+    "valueInCode": "אתמול"
   },
   "youveProbablyMeantNewDelivery": {
     "google": " - If you want to create a new shipment, do so in the New Shipment menu.",

@@ -1,4 +1,4 @@
-<div dir="rtl">
+
   <mat-card>
     <div class="fullSize">
 
@@ -6,7 +6,7 @@
 
         <mat-form-field class="full-width">
           <input matInput [(ngModel)]="searchString" (input)="doFilter()"
-            placeholder="חפש {{args.selectStreet?'רחוב':'שם'}}" #search [ngModelOptions]="{standalone: true}">
+            placeholder="{{settings.lang.search}} {{args.selectStreet?settings.lang.address:settings.lang.familyName}}" #search [ngModelOptions]="{standalone: true}">
           <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
         </mat-form-field>
         <button mat-raised-button color="accent" *ngIf="args.selectStreet&&families.totalRows>1&&searchString"
@@ -38,4 +38,3 @@
     </div>
   </mat-card>
 
-</div>

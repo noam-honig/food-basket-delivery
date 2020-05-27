@@ -34,7 +34,7 @@ export class LoginFromSmsComponent implements OnInit {
 
       let result = await this.authServer.loginFromSms(id);
       if (!result) {
-        await this.dialog.YesNoPromise("משהו לא הסתדר עם הקישור, הנך מועבר למסך כניסה - אנא הכנס עם מספר הטלפון שלך");
+        await this.dialog.YesNoPromise(this.settings.lang.smsLoginFailed);
         this.routeHelper.navigateToComponent(LoginComponent);
       }
 

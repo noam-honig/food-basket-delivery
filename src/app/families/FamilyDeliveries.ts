@@ -14,7 +14,7 @@ import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
 import { UpdateFamilyDialogComponent } from "../update-family-dialog/update-family-dialog.component";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService } from "../select-popup/dialog";
-import { getLang } from "../translate";
+import { getLang, use } from "../translate";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 
 @EntityClass
@@ -335,7 +335,7 @@ export class FamilyDeliveries extends IdEntity {
             case DeliveryStatus.ReadyForDelivery:
                 if (this.courier.value) {
                     let c = this.context.for(Helpers).lookup(this.courier);
-                    return 'בדרך: ' + c.name.value + (c.eventComment.value ? ' (' + c.eventComment.value + ')' : '') + ', שוייך ' + this.courierAssingTime.relativeDateName();
+                    return use.language.onTheWay+ ': ' + c.name.value + (c.eventComment.value ? ' (' + c.eventComment.value + ')' : '') + ', '+use.language.assigned+' ' + this.courierAssingTime.relativeDateName();
                 }
                 break;
             case DeliveryStatus.Success:

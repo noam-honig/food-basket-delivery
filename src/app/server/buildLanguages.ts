@@ -7,12 +7,12 @@ export async function buildLanguageFiles() {
 
     for (const lang of ["en", "es", "it"]) {
         let fileAndClassName = lang;
-        if (lang=='it'){
+        if (lang == 'it') {
             fileAndClassName = 'italy';
         }
         let known = {};
         try { known = JSON.parse(fs.readFileSync('./src/app/languages/' + fileAndClassName + '.json').toString()); }
-        catch{}
+        catch{ }
         let result = '';
         let l = new Language();
         let keys: translationEntry[] = [];
@@ -33,7 +33,7 @@ export async function buildLanguageFiles() {
                 let v = knownVal.google;
                 if (knownVal.custom)
                     v = knownVal.custom;
-                if (key=='languageCode')
+                if (key == 'languageCode')
                     v = lang;
                 let r = v;
                 if (r.includes('\''))
@@ -56,8 +56,8 @@ export async function buildLanguageFiles() {
             json[x.key] = known[x.key];
         }
         ;
-        fs.writeFileSync('./src/app/languages/' + lang + '.json', JSON.stringify(json, undefined, 2));
-        fs.writeFileSync('./src/app/languages/' + lang + '.ts', 'import { Language } from "../translate";\nexport class ' + fileAndClassName + ' implements Language {\n' + result + '}');
+        fs.writeFileSync('./src/app/languages/' + fileAndClassName + '.json', JSON.stringify(json, undefined, 2));
+        fs.writeFileSync('./src/app/languages/' + fileAndClassName + '.ts', 'import { Language } from "../translate";\nexport class ' + fileAndClassName + ' implements Language {\n' + result + '}');
     }
 
 

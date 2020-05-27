@@ -4,7 +4,7 @@ import { DistributionCenterId, DistributionCenters, allCentersToken } from "../m
 import { HelperId } from "../helpers/helpers";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { Groups } from "../manage/manage.component";
-import { translate, use } from "../translate";
+import { translate, use, getLang } from "../translate";
 import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer, serverUpdateInfo, pagedRowsIterator } from "../families/familyActionsWiring";
 import { async } from "@angular/core/testing";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
@@ -20,7 +20,7 @@ import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 
 
 class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
-    updateFamilyStatus = new BoolColumn(use.language.updateFamilyStatus);
+    updateFamilyStatus = new BoolColumn(getLang(this.context).updateFamilyStatus);
     status = new FamilyStatusColumn();
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
@@ -30,8 +30,8 @@ class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
                 this.updateFamilyStatus,
                 { column: this.status, visible: () => this.updateFamilyStatus.value }
             ],
-            title: use.language.deleteDeliveries,
-            help: () => translate(use.language.deleteDeliveriesHelp),
+            title: getLang(context).deleteDeliveries,
+            help: () => translate(getLang(this.context).deleteDeliveriesHelp),
             forEach: async fd => {
                 fd.delete();
                 if (this.updateFamilyStatus.value) {
@@ -58,7 +58,7 @@ class UpdateFixedCourier extends ActionOnRows<FamilyDeliveries> {
                     { column: this.courier, visible: () => !this.byCurrentCourier.value }
                 ]
             },
-            title: translate(use.language.updateDefaultVolunteer),
+            title: translate(getLang(context).updateDefaultVolunteer),
             forEach: async fd => {
 
 
@@ -80,13 +80,13 @@ class UpdateFixedCourier extends ActionOnRows<FamilyDeliveries> {
     }
 }
 export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
-    clearVoulenteer = new BoolColumn(use.language.clearVolunteer);
-    courier = new HelperId(this.context, use.language.volunteer);
-    updateAlsoAsFixed = new BoolColumn(use.language.setAsDefaultVolunteer);
+    clearVoulenteer = new BoolColumn(getLang(this.context).clearVolunteer);
+    courier = new HelperId(this.context, getLang(this.context).volunteer);
+    updateAlsoAsFixed = new BoolColumn(getLang(this.context).setAsDefaultVolunteer);
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
-            help: () => use.language.updateVolunteerHelp,
+            help: () => getLang(this.context).updateVolunteerHelp,
             columns: () => [this.clearVoulenteer, this.courier, this.updateAlsoAsFixed],
             dialogColumns: () => [
                 this.clearVoulenteer,
@@ -95,7 +95,7 @@ export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
 
             ],
             additionalWhere: fd => fd.deliverStatus.isNotAResultStatus(),
-            title: use.language.updateVolunteer,
+            title: getLang(context).updateVolunteer,
             forEach: async fd => {
                 if (this.clearVoulenteer.value) {
                     fd.courier.value = '';
@@ -125,25 +125,25 @@ export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
 export class UpdateDeliveriesStatus extends ActionOnRows<ActiveFamilyDeliveries> {
 
     status = new DeliveryStatusColumn(this.context);
-    comment = new StringColumn(use.language.internalComment);
-    deleteExistingComment = new BoolColumn(use.language.deleteExistingComment);
+    comment = new StringColumn(getLang(this.context).internalComment);
+    deleteExistingComment = new BoolColumn(getLang(this.context).deleteExistingComment);
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
             columns: () => [this.status, this.comment, this.deleteExistingComment],
-            title: use.language.updateDeliveriesStatus,
-            help: () => use.language.updateDeliveriesStatusHelp,
+            title: getLang(context).updateDeliveriesStatus,
+            help: () => getLang(this.context).updateDeliveriesStatusHelp,
             validate: async () => {
                 if (this.status.value == undefined)
-                    throw use.language.statusNotSelected;
+                    throw getLang(this.context).statusNotSelected;
 
             },
             validateInComponent: async c => {
                 if (this.status.value == DeliveryStatus.ReadyForDelivery || this.status.value == DeliveryStatus.SelfPickup) {
-                    if (await c.dialog.YesNoPromise(use.language.youveSelectedToUpdateStatus +" " + this.status.value.caption +" "+ use.language.youveProbablyMeantNewDelivery))
-                        throw use.language.updateCanceled;
-                    if (await c.dialog.YesNoPromise(use.language.updateDeliveredStatusesTo+" " + this.status.value.caption + use.language.willNotSaveHistoryDoYouWantToStop))
-                        throw use.language .updateCanceled;
+                    if (await c.dialog.YesNoPromise(getLang(this.context).youveSelectedToUpdateStatus +" " + this.status.value.caption +" "+ getLang(this.context).youveProbablyMeantNewDelivery))
+                        throw getLang(this.context).updateCanceled;
+                    if (await c.dialog.YesNoPromise(getLang(this.context).updateDeliveredStatusesTo+" " + this.status.value.caption + getLang(this.context).willNotSaveHistoryDoYouWantToStop))
+                        throw getLang(this.context) .updateCanceled;
                 }
             },
             forEach: async f => {
@@ -174,8 +174,8 @@ class ArchiveDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
             columns: () => [],
-            title: use.language.archiveDeliveries,
-            help: () => use.language.archiveDeliveriesHelp,
+            title: getLang(context).archiveDeliveries,
+            help: () => getLang(this.context).archiveDeliveriesHelp,
             forEach: async f => { f.archive.value = true; },
             additionalWhere: f => f.deliverStatus.isAResultStatus()
         });
@@ -188,7 +188,7 @@ class UpdateBasketType extends ActionOnRows<ActiveFamilyDeliveries> {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
             columns: () => [this.basketType],
-            title: use.language.updateBasketType,
+            title: getLang(context).updateBasketType,
             forEach: async f => { f.basketType.value = this.basketType.value },
 
         });
@@ -200,7 +200,7 @@ class UpdateQuantity extends ActionOnRows<ActiveFamilyDeliveries> {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
             columns: () => [this.quantity],
-            title: use.language.updateBasketQuantity,
+            title: getLang(context).updateBasketQuantity,
             forEach: async f => { f.quantity.value = this.quantity.value },
         });
     }
@@ -212,7 +212,7 @@ export class UpdateDistributionCenter extends ActionOnRows<ActiveFamilyDeliverie
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
             columns: () => [this.distributionCenter],
-            title: use.language.updateDistributionList,
+            title: getLang(context).updateDistributionList,
             forEach: async f => { f.distributionCenter.value = this.distributionCenter.value },
 
         });
@@ -220,17 +220,17 @@ export class UpdateDistributionCenter extends ActionOnRows<ActiveFamilyDeliverie
 }
 
 export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
-    useExistingBasket = new BoolColumn({ caption: use.language.useBusketTypeFromCurrentDelivery, defaultValue: true });
+    useExistingBasket = new BoolColumn({ caption: getLang(this.context).useBusketTypeFromCurrentDelivery, defaultValue: true });
     basketType = new BasketId(this.context);
     quantity = new QuantityColumn(this.context);
     helperStrategy = new HelperStrategyColumn();
     helper = new HelperId(this.context);
-    autoArchive = new BoolColumn({ caption: use.language.archiveCurrentDelivery, defaultValue: true });
-    newDeliveryForAll = new BoolColumn(use.language.newDeliveryForAll);
+    autoArchive = new BoolColumn({ caption: getLang(this.context).archiveCurrentDelivery, defaultValue: true });
+    newDeliveryForAll = new BoolColumn(getLang(this.context).newDeliveryForAll);
     selfPickup = new SelfPickupStrategyColumn(true);
 
     distributionCenter = new DistributionCenterId(this.context);
-    useCurrentDistributionCenter = new BoolColumn(use.language.distributionListAsCurrentDelivery);
+    useCurrentDistributionCenter = new BoolColumn(getLang(this.context).distributionListAsCurrentDelivery);
 
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
@@ -268,7 +268,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                 if (!this.useCurrentDistributionCenter.value) {
                     let dc = await this.context.for(DistributionCenters).findId(this.distributionCenter.value);
                     if (!dc)
-                        throw use.language.pleaseSelectDistributionList;
+                        throw getLang(this.context).pleaseSelectDistributionList;
                 }
             },
             additionalWhere: f => {
@@ -276,8 +276,8 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                     return undefined;
                 f.deliverStatus.isAResultStatus();
             },
-            title: use.language.newDelivery,
-            help: () => use.language.newDeliveryForDeliveriesHelp +' ' + this.newDeliveryForAll.defs.caption,
+            title: getLang(context).newDelivery,
+            help: () => getLang(this.context).newDeliveryForDeliveriesHelp +' ' + this.newDeliveryForAll.defs.caption,
             forEach: async existingDelivery => {
                 let f = await this.context.for(Families).findId(existingDelivery.family);
                 if (!f || f.status.value != FamilyStatus.Active)

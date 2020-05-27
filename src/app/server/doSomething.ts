@@ -27,7 +27,7 @@ export async function DoIt() {
         await serverInit();
 
 
-        await sendMessagE();
+        await buildLanguageFiles();
 
 
 

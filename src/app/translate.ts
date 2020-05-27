@@ -711,6 +711,27 @@ export class Language {
   error = 'שגיאה';
   languageCode = 'iw';
   resetTextsToLanguageDefaults = 'החזר טקסטים להגדרות ברירת מחדל';
+  no = 'לא';
+  yes = 'כן';
+  search = 'חיפוש';
+  assigned = 'שוייך';
+  familySourceName =  "שם";
+  contactPersonName = "איש קשר";
+  lineWithNoName = 'שורה ללא שם';
+  smsLoginFailed = "משהו לא הסתדר עם הקישור, הנך מועבר למסך כניסה - אנא הכנס עם מספר הטלפון שלך";
+  aMinuteAgo = 'לפני דקה';
+  before = 'לפני';
+  anHour = 'שעה';
+  twoHours = "שעתיים";
+  hours = "שעות";
+  andAQuater = "ורבע";
+  andThreeQuaters = 'ושלושת רבעי';
+  andAHalf = 'וחצי';
+  on= 'ב';
+  days = 'ימים';
+  yesterday = 'אתמול';
+  twoDaysAgo = 'שלשום';
+  thankYou= 'תודה';
 }
 
 const defaultLang = new Language();

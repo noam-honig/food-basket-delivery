@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-select-list',
@@ -8,7 +9,7 @@ import { MatDialogRef } from '@angular/material';
 })
 export class SelectListComponent implements OnInit {
 
-  constructor(private d: MatDialogRef<any>) { }
+  constructor(private d: MatDialogRef<any>,public settings:ApplicationSettings) { }
   args: {
     options: selectListItem[];
 

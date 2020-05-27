@@ -11,6 +11,7 @@ import { UpdateCommentComponent } from '../update-comment/update-comment.compone
 
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { createElementCssSelector } from '@angular/compiler';
 
 @Component({
   selector: 'app-family-info',
@@ -30,6 +31,9 @@ export class FamilyInfoComponent implements OnInit {
   @Input() partOfAssign: Boolean;
   @Output() assignmentCanceled = new EventEmitter<void>();
   @Output() refreshList = new EventEmitter<void>();
+  useWaze() {
+    return this.settings.lang.languageCode == 'iw';
+  }
 
   showCancelAssign(f: ActiveFamilyDeliveries) {
     return this.partOfAssign && f.courier.value != '' && f.deliverStatus.value == DeliveryStatus.ReadyForDelivery;
@@ -67,11 +71,18 @@ export class FamilyInfoComponent implements OnInit {
   openWaze(f: ActiveFamilyDeliveries) {
     if (!f.addressOk.value) {
       this.dialog.YesNoQuestion(translate(use.language.addressNotOkOpenWaze), () => {
-        f.openWaze();
+        if (this.useWaze())
+          f.openWaze();
+        else
+          f.openGoogleMaps();
       });
     }
     else
-      f.openWaze();
+      if (this.useWaze())
+        f.openWaze();
+      else
+        f.openGoogleMaps();
+
 
 
   }

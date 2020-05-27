@@ -2,12 +2,13 @@ import { HasAsyncGetTheValue, PhoneColumn } from "../model-shared/types";
 
 import { Context, EntityClass, IdEntity, StringColumn, IdColumn, ColumnOptions, DecorateDataColumnSettings } from '@remult/core';
 import { Roles } from "../auth/roles";
+import { getLang } from "../translate";
 
 @EntityClass
 export class FamilySources extends IdEntity {
-  name = new StringColumn({ caption: "שם" });
-  contactPerson = new StringColumn({ caption: "איש קשר" });
-  phone = new PhoneColumn({ caption: 'טלפון' });
+  name = new StringColumn({ caption: getLang(this.context).familySourceName });
+  contactPerson = new StringColumn({ caption: getLang(this.context).contactPersonName });
+  phone = new PhoneColumn({ caption: getLang(this.context).phone });
   constructor(private context: Context) {
     super({
       name: "FamilySources",
@@ -21,13 +22,13 @@ export class FamilySourceId extends IdColumn implements HasAsyncGetTheValue {
     super({
       dataControlSettings: () =>
         ({
-          valueList: 
-             this.context.for(FamilySources).getValueList({
+          valueList:
+            this.context.for(FamilySources).getValueList({
               orderBy: (f: FamilySources) => {
                 return [{ column: f.name }];
-              
-            }
-          })
+
+              }
+            })
         })
     }, settingsOrCaption);
   }

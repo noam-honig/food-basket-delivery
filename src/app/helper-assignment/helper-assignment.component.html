@@ -9,11 +9,11 @@
 
 
     <button mat-raised-button color="accent" (click)="close()">
-      סגור
+    {{settings.lang.close}}
     </button>
     <a href="tel:{{argsHelper.phone.displayValue}}" style="padding-right:15px;">
       <button mat-raised-button  class="dial-for-help">
-        <mat-icon>phone</mat-icon> חייג ל{{argsHelper.name.value}} {{argsHelper.phone.displayValue}}
+        <mat-icon>phone</mat-icon> {{settings.lang.dialTo}} {{argsHelper.name.value}} {{argsHelper.phone.displayValue}}
       </button>
     </a>
   </mat-dialog-actions>

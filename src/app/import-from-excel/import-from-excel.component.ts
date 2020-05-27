@@ -456,7 +456,7 @@ export class ImportFromExcelComponent implements OnInit {
             values: {}
         };
         if (!f.name.value) {
-            info.error = 'שורה ללא שם';
+            info.error = this.settings.lang.lineWithNoName;
         }
         for (const e of [f, fd]) {
             for (const c of e.columns) {

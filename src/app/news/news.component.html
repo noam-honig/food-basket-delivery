@@ -27,8 +27,8 @@
     <mat-card-title class="newsHeader">
       <div>
         {{n.describe()}}
-        <div style="color: darkorange" *ngIf="n.needsWork.value" (click)="cancelNeedWork(n)">צריך
-          טיפול</div>
+        <div style="color: darkorange" *ngIf="n.needsWork.value" (click)="cancelNeedWork(n)">
+          {{settings.lang.requireFollowUp}}</div>
       </div>
     </mat-card-title>
     <mat-card-subtitle>{{n.deliveryStatusDate.relativeDateName()}}, {{settings.lang.updatedBy}}

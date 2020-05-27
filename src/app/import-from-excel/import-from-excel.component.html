@@ -62,7 +62,7 @@
                         </ng-container>
                     </table>
                 </div>
-                <pagination-controls (pageChange)="excelPage = $event" previousLabel="קודם" nextLabel="הבא"
+                <pagination-controls (pageChange)="excelPage = $event" previousLabel="{{settings.lang.previous}}" nextLabel="{{settings.lang.next}}"
                     id="excelPage"></pagination-controls> {{settings.lang.total}} {{rows.length}} {{settings.lang.linesInExcel}}
             </ng-container>
         </mat-step>

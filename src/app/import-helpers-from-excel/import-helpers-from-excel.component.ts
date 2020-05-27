@@ -297,7 +297,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
       values: {}
     };
     if (!f.name.value) {
-      info.error = 'שורה ללא שם';
+      info.error = this.settings.lang.lineWithNoName;
     }
     for (const c of f.columns) {
       if (c.validationError) {

@@ -1,5 +1,6 @@
 import * as radweb from '@remult/core';
 import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, ColumnOptions, SqlCommand, SqlResult, AndFilter } from '@remult/core';
+import { use } from '../translate';
 
 
 
@@ -539,10 +540,10 @@ export function relativeDateName(args: { d?: Date, now?: Date, dontShowTimeForOl
   }
   let diffInMinues = Math.ceil((now.valueOf() - d.valueOf()) / 60000);
   if (diffInMinues <= 1)
-    return 'לפני דקה';
+    return use.language.aMinuteAgo;
   if (diffInMinues < 60) {
 
-    return 'לפני ' + diffInMinues + ' דקות';
+    return use.language.before + ' ' + diffInMinues + ' ' + use.language.minutes;
   }
   if (diffInMinues < 60 * 10 || sameDay(d, now)) {
     let hours = Math.floor(diffInMinues / 60);
@@ -554,43 +555,43 @@ export function relativeDateName(args: { d?: Date, now?: Date, dontShowTimeForOl
     let r: string;
     switch (hours) {
       case 1:
-        r = 'שעה';
+        r = use.language.anHour;
         break
       case 2:
-        r = "שעתיים";
+        r = use.language.twoHours;
         break;
       default:
-        r = hours + ' שעות';
+        r = hours + ' ' + use.language.hours;
     }
 
     if (min > 35)
-      r += ' ושלושת רבעי';
+      r += ' ' + use.language.andThreeQuaters;
     else if (min > 22) {
-      r += ' וחצי';
+      r += ' '+use.language.andAHalf ;
     }
     else if (min > 7) {
-      r += ' ורבע ';
+      r += ' ' + use.language.andAQuater ;
     }
     return 'לפני ' + r;
 
   }
   let r = ''
   if (sameDay(d, new Date(now.valueOf() - 86400 * 1000))) {
-    r = 'אתמול';
+    r = use.language.yesterday;
   }
   else if (sameDay(d, new Date(now.valueOf() - 86400 * 1000 * 2))) {
-    r = 'שלשום';
+    r = use.language.twoDaysAgo;
   }
   else {
     let days = (Math.trunc(now.valueOf() / (86400 * 1000)) - Math.trunc(d.valueOf() / (86400 * 1000)));
-    r = 'לפני ' + days + ' ימים';
+    r = use.language.before +' ' + days + ' '+use.language.days;
   }
   let t = d.getMinutes().toString();
   if (t.length == 1)
     t = '0' + t;
   if (args.dontShowTimeForOlderDates)
     return r;
-  return r += ' ב' + d.getHours() + ':' + t;
+  return r += use.language.on+ ' ' + d.getHours() + ':' + t;
 }
 export function wasChanged(...columns: Column<any>[]) {
   for (const c of columns) {

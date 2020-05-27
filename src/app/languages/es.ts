@@ -593,4 +593,25 @@ export class es implements Language {
   error = 'Error';
   languageCode = 'es';
   resetTextsToLanguageDefaults = 'Devolver textos a la configuración predeterminada';
+  no = 'No';
+  yes = 'si';
+  search = 'Buscar';
+  assigned = 'Pertenece';
+  familySourceName = 'Nombre';
+  contactPersonName = 'contacto';
+  lineWithNoName = 'Línea sin título';
+  smsLoginFailed = 'Algo no funcionó con el enlace, te llevará a una pantalla de inicio de sesión; ingresa con tu número de teléfono';
+  aMinuteAgo = 'Hace un minuto';
+  before = 'antes de';
+  anHour = 'hora';
+  twoHours = 'Dos horas';
+  hours = 'Horas';
+  andAQuater = 'Y un cuarto';
+  andThreeQuaters = 'Y tres cuartos';
+  andAHalf = 'Y medio';
+  on = 'si';
+  days = 'Dias';
+  yesterday = 'Ayer';
+  twoDaysAgo = 'antier';
+  thankYou = 'Gracias';
 }

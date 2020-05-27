@@ -28,7 +28,8 @@
   <h4>{{settings.lang.address}}</h4>
   <div class="address-container">
     <span (click)="openWaze(f)">
-      <img src="assets/waze.png">
+      <img src="assets/waze.png" *ngIf="useWaze()">
+      <img src="assets/google_maps_icon.png" *ngIf="!useWaze()">
     </span>
     <div style="flex-grow:1;padding-right:10px;">
       <ng-container *ngIf="!f.addressOk.value">
@@ -66,7 +67,7 @@
       </ng-container>
     </div>
 
-    <div style="float:left;text-align: left">
+    <div style="float:left;text-align: left" *ngIf="useWaze()">
       <a (click)="f.openGoogleMaps()">google map</a>
       <br />
       <a (click)="f.showOnGovMap()">govmap</a>

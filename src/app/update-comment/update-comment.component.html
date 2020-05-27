@@ -1,4 +1,4 @@
-<div dir="rtl">
+
   <mat-card-title>{{this.args.title}}</mat-card-title>
 
 
@@ -34,12 +34,12 @@
       <div class="button-line" [class.hide]="!args.showFailStatus">
         <a href="tel:{{phoneOptions[0].phone}}" *ngIf="phoneOptions.length==1">
           <button mat-raised-button color="accent" class="dial-for-help">
-            <mat-icon>phone</mat-icon> חייג ל{{phoneOptions[0].name}} לקבלת עזרה
+            <mat-icon>phone</mat-icon> {{settings.lang.dialTo}} {{phoneOptions[0].name}} {{settings.lang.forHelp}}
           </button>
         </a>
         <button mat-raised-button color="accent" class="dial-for-help" [matMenuTriggerFor]="menu"
           *ngIf="phoneOptions.length>1">
-          <mat-icon>phone</mat-icon> חייג לקבלת עזרה
+          <mat-icon>phone</mat-icon> {{settings.lang.dialForHelp}}
         </button>
 
         <mat-menu #menu="matMenu">
@@ -58,4 +58,3 @@
 
 
 
-</div>
