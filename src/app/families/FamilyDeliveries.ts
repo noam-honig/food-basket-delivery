@@ -113,10 +113,12 @@ export class FamilyDeliveries extends IdEntity {
 
     familySource = new FamilySourceId(this.context, {
         includeInApi: Roles.admin,
+        allowApiUpdate: false,
         caption: 'גורם מפנה'
     });
     groups = new GroupsColumn(this.context, {
-        includeInApi: Roles.distCenterAdmin
+        includeInApi: Roles.distCenterAdmin,
+        allowApiUpdate: false
     });
 
 

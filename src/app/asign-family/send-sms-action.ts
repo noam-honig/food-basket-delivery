@@ -62,11 +62,7 @@ export class SendSmsAction {
             }
             let url = origin + '/x/' + helper.shortUrlKey.value;
             message = SendSmsAction.getMessage(message, settings.organisationName.value, helper.name.value, senderName, url);
-            let sender = settings.helpPhone.value;
-            if (!sender || sender.length < 3) {
-                let currentUser = await (ds.for(Helpers).findFirst(h => h.id.isEqualTo(ds.user.id)));
-                sender = currentUser.phone.value;
-            }
+            let sender = await SendSmsAction.getSenderPhone(ds);
 
             then(helper.phone.value, message, sender, url);
             await helper.save();
@@ -74,6 +70,15 @@ export class SendSmsAction {
 
         }
     }
+    public static async getSenderPhone(context: Context) {
+        let sender = (await ApplicationSettings.getAsync(context)).helpPhone.value;
+        if (!sender || sender.length < 3) {
+            let currentUser = await (context.for(Helpers).findFirst(h => h.id.isEqualTo(context.user.id)));
+            sender = currentUser.phone.value;
+        }
+        return sender;
+    }
+
     static getMessage(template: string, orgName: string, courier: string, sender: string, url: string) {
         return template.replace('!מתנדב!', courier).replace('!משנע!', courier).replace('!שולח!', sender).replace('!ארגון!', orgName).replace('!אתר!', url)
 

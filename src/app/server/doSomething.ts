@@ -3,6 +3,7 @@
 
 import { readFileSync } from "fs";
 import { SqlDatabase, Column } from '@remult/core';
+import * as AWS from 'aws-sdk';
 
 
 
@@ -23,15 +24,18 @@ let match = 0;
 export async function DoIt() {
     try {
         await serverInit();
+        let r = await new AWS.SNS({ apiVersion: '2010-03-31' }).publish({
+            Message: 'בדיקה ראשונה שלי',
+            PhoneNumber: '+972507330590',
+            MessageAttributes: {
+                'AWS.SNS.SMS.SenderID': {
+                    'DataType': 'String',
+                    'StringValue': '972507330590'
+                }
+            }
+        }).promise();
+        console.log(r);
 
-        let dp = Sites.getDataProviderForOrg('test2');
-        let context = new ServerContext(dp);
-        let r = new htmlReport();
-        for (const gCache of await context.for(GeocodeCache).find()) {
-            let g = GeocodeInformation.fromString(gCache.googleApiResult.value);
-            r.addRow(gCache.id, g.getAddress(), g.whyProblem());
-        }
-        r.writeToFile();
 
 
 

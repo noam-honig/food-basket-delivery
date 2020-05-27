@@ -38,32 +38,36 @@ export class Families extends IdEntity {
   showDeliveryHistoryDialog() {
     this.context.openDialog(GridDialogComponent, x => x.args = {
       title: 'משלוחים עבור ' + this.name.value,
-      settings: this.context.for(FamilyDeliveries).gridSettings({
-        numOfColumnsInGrid: 7,
-        hideDataArea: true,
-        rowCssClass: fd => fd.deliverStatus.getCss(),
-        columnSettings: fd => {
-          let r: Column<any>[] = [
-            fd.deliverStatus,
-            fd.deliveryStatusDate,
-            fd.basketType,
-            fd.quantity,
-            fd.courier,
-            fd.courierComments,
-            fd.internalDeliveryComment,
-            fd.distributionCenter
-          ]
-          r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
-          return r;
-        },
-        get: {
-          where: fd => fd.family.isEqualTo(this.id),
-          orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
-          limit: 25
-        }
-      })
+      settings: this.deliveriesGridSettings()
     });
   }
+  public deliveriesGridSettings() {
+    return this.context.for(FamilyDeliveries).gridSettings({
+      numOfColumnsInGrid: 7,
+      hideDataArea: true,
+      rowCssClass: fd => fd.deliverStatus.getCss(),
+      columnSettings: fd => {
+        let r: Column<any>[] = [
+          fd.deliverStatus,
+          fd.deliveryStatusDate,
+          fd.basketType,
+          fd.quantity,
+          fd.courier,
+          fd.courierComments,
+          fd.internalDeliveryComment,
+          fd.distributionCenter
+        ];
+        r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
+        return r;
+      },
+      get: {
+        where: fd => fd.family.isEqualTo(this.id),
+        orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
+        limit: 25
+      }
+    });
+  }
+
   async showNewDeliveryDialog(dialog: DialogService, settings: ApplicationSettings, copyFrom?: FamilyDeliveries, aDeliveryWasAdded?: (newDeliveryId: string) => Promise<void>) {
     let newDelivery = this.createDelivery(dialog.distCenter.value);
     let arciveCurrentDelivery = new BoolColumn({ caption: 'העבר משלוח נוכחי לארכיב?', defaultValue: true });

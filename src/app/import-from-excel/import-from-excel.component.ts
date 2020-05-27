@@ -824,8 +824,8 @@ export class ImportFromExcelComponent implements OnInit {
         let usedTz = new Map<number, number>();
         let usedPhone = new Map<number, number>();
         this.stepper.next();
+        let updatedColumns = this.buildUpdatedColumns();
         await this.busy.doWhileShowingBusy(async () => {
-            let updatedColumns = this.buildUpdatedColumns();
             let originalUpdateFields = this.buildUpdatedColumns();
             if (this.addDelivery.value) {
                 updatedColumns.set(this.fd.basketType, true);
@@ -957,7 +957,7 @@ export class ImportFromExcelComponent implements OnInit {
                             suspectAddress++;
                     }
                     let precent = (suspectAddress * 100 / rows.length);
-                    if (precent > 30) {
+                    if (precent > 30 && updatedColumns.get(this.f.addressLatitude)) {
                         if (await this.dialog.YesNoPromise("כ" + precent.toFixed() + "% מהכתובות ריקות או מסתיימות בספרה - יתכן שלא קלטתם את הישוב של הכתובת. לחזור להגדרת עמודות??")) {
                             this.stepper.previous();
                             this.stepper.previous();

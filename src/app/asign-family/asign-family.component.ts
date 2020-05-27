@@ -215,7 +215,16 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
 
             this.cities = r.cities;
+            if (this.filterCity != '' && !this.cities.find(x => x.name == this.filterCity)) {
+
+                this.cities.push({ name: this.filterCity, unassignedFamilies: 0 });
+            }
             this.areas = r.areas;
+            if (this.filterArea != '' && !this.areas.find(x => x.name == this.filterArea)) {
+
+                this.areas.push({ name: this.filterArea, unassignedFamilies: 0 });
+            }
+
             this.specialFamilies = +r.special;
             this.repeatFamilies = +r.repeatFamilies;
             if (this.repeatFamilies)
