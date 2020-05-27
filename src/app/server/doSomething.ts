@@ -29,59 +29,10 @@ export async function DoIt() {
         await serverInit();
 
 
-        let data = fs.readFileSync('./src/assets/languages/en.txt');
-        let lines = data.toString().split('\r\n');
-        let knownTranslations = new Map<string, string>();
-        for (let index = 0; index < lines.length; index += 2) {
-            knownTranslations.set(lines[index], lines[index + 1]);
-        }
-        if (lines.length % 2 == 1) {
-            lines.splice(lines.length - 1, 1);
-        }
+        await buildLanguageFiles();
+        
+        
 
-        let result = '';
-
-        let l = new Language();
-        let keys: translationEntry[] = [];
-        for (const key in l) {
-            if (l.hasOwnProperty(key)) {
-                const element: string[] = l[key].split('\n');
-                for (let index = 0; index < element.length; index++) {
-                    const term = element[index];
-                    var trans = knownTranslations.get(term);
-                    if (!trans) {
-                        trans = await translate(term);
-                        knownTranslations.set(term, trans);
-                        lines.push(term);
-                        lines.push(trans);
-                    }
-                    element[index] = trans;
-                }
-                let r = element.join('\\n');
-                let v = r;
-                if (r.includes('\''))
-                    r = '"' + r + '"';
-                else
-                    r = "'" + r + "'";
-                result += '  ' + key + " = " + r + ';\n';
-                keys.push({ key: key, value: v, valueInHebrew: l[key] });
-            }
-        }
-        keys.sort((a, b) => a.key.localeCompare(b.key));
-        let XLSX = await import('xlsx');
-        let wb = XLSX.utils.book_new();
-        wb.Workbook = { Views: [{ RTL: true }] };
-        let ws = XLSX.utils.json_to_sheet(keys);
-        XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
-        XLSX.writeFile(wb, './src/app/languages/en.xlsx');
-        fs.writeFileSync('./src/app/languages/en.json', JSON.stringify(keys.map(x => ({ [x.key]: { google: x.value, orig: x.valueInHebrew } })), undefined, 2))
-
-
-        fs.writeFileSync('./src/app/languages/en.ts',
-            'import { Language } from "../translate";\nexport class en implements Language {\n' + result + '}');
-        //        let result = await translate('שלום לכם');
-        console.log(result);
-        fs.writeFileSync('./src/assets/languages/en.txt', lines.join('\r\n'));
 
 
 
@@ -97,6 +48,53 @@ export async function DoIt() {
 
 }
 DoIt();
+async function buildLanguageFiles() {
+    let known = JSON.parse(fs.readFileSync('./src/app/languages/en.json').toString());
+    let result = '';
+    let l = new Language();
+    let keys: translationEntry[] = [];
+    for (const key in l) {
+        if (l.hasOwnProperty(key)) {
+            let knownVal: translation = known[key];
+            if (!knownVal) {
+                const element: string[] = l[key].split('\n');
+                for (let index = 0; index < element.length; index++) {
+                    const term = element[index];
+                    let trans = await translate(term);
+                    element[index] = trans;
+                }
+                knownVal = { google: element.join('\\n'), valueInCode: l[key] };
+                known[key] = knownVal;
+            }
+            knownVal.valueInCode = l[key];
+            let v = knownVal.google;
+            if (knownVal.custom)
+                v = knownVal.custom;
+            let r = v;
+            if (r.includes('\''))
+                r = '"' + r + '"';
+            else
+                r = "'" + r + "'";
+            result += '  ' + key + " = " + r + ';\n';
+            keys.push({ key: key, value: v, valueInHebrew: l[key] });
+        }
+    }
+    keys.sort((a, b) => a.key.localeCompare(b.key));
+    let XLSX = await import('xlsx');
+    let wb = XLSX.utils.book_new();
+    wb.Workbook = { Views: [{ RTL: true }] };
+    let ws = XLSX.utils.json_to_sheet(keys);
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
+    XLSX.writeFile(wb, './src/app/languages/en.xlsx');
+    let json = {};
+    for (const x of keys) {
+        json[x.key] = known[x.key];
+    }
+    ;
+    fs.writeFileSync('./src/app/languages/en.json', JSON.stringify(json, undefined, 2));
+    fs.writeFileSync('./src/app/languages/en.ts', 'import { Language } from "../translate";\nexport class en implements Language {\n' + result + '}');
+}
+
 async function sendMessagE() {
     let r = await new AWS.SNS({ apiVersion: '2010-03-31' }).publish({
         Message: 'בדיקה ראשונה שלי',
@@ -186,4 +184,9 @@ interface translationEntry {
     key: string;
     value: string;
     valueInHebrew: string;
+}
+interface translation {
+    google: string;
+    custom?: string;
+    valueInCode: string;
 }
