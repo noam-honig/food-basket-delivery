@@ -44,7 +44,7 @@ export class ApplicationSettings extends Entity<number>  {
   organisationName = new StringColumn('שם הארגון');
   smsText = new StringColumn({
     caption: 'תוכן הודעת SMS', validate: () => {
-      if (this.smsText.value && this.smsText.value.indexOf("!אתר!") < 0)
+      if (false&&this.smsText.value && this.smsText.value.indexOf("!אתר!") < 0)
         this.smsText.validationError = " חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור";
 
     }
@@ -52,7 +52,7 @@ export class ApplicationSettings extends Entity<number>  {
   reminderSmsText = new StringColumn({
     caption: 'תוכן הודעת תזכורת SMS',
     validate: () => {
-      if (this.reminderSmsText.value && this.reminderSmsText.value.indexOf("!אתר!") < 0)
+      if (false&&this.reminderSmsText.value && this.reminderSmsText.value.indexOf("!אתר!") < 0)
         this.reminderSmsText.validationError = " חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור";
     }
   });
