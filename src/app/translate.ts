@@ -1,6 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { ValueListColumn, ColumnOptions, Context } from '@remult/core';
 import { en } from './languages/en';
+import { es } from './languages/es';
+import { italy } from './languages/italy';
 
 @Pipe({ name: 'translate' })
 export class TranslatePipe implements PipeTransform {
@@ -26,9 +28,9 @@ export function translate(s: string) {
 export class TranslationOptions {
 
 
-  static Families: TranslationOptions = new TranslationOptions(0, 'משפחות', s => s);
-  static Donors: TranslationOptions = new TranslationOptions(1, 'תורמים',
-    s => s.replace(/משפחה אחת/g, "תורם אחד")
+  static Families: TranslationOptions = new TranslationOptions(0, 'משפחות', {});
+  static Donors: TranslationOptions = new TranslationOptions(1, 'תורמים', {
+    translateFunction: s => s.replace(/משפחה אחת/g, "תורם אחד")
       .replace(/משפחות חוזרות/g, 'תורמים חוזרים')
       .replace(/משפחות מיוחדות/g, "תורמים מיוחדים")
       .replace(/מש' הכי קרובה/g, 'תורם הכי קרוב')
@@ -36,21 +38,43 @@ export class TranslationOptions {
       .replace(/משפחות/g, "תורמים")
       .replace(/משפחה/g, 'תורם')
       .replace(/חדשה/g, 'חדש')
-      .replace(/כפולות/g, 'כפולים'));
-  static Soldiers: TranslationOptions = new TranslationOptions(2, 'חיילים', s =>
-    s.replace(/משפחה אחת/g, "חייל אחד")
-      .replace(/משפחות חוזרות/g, 'חיילים חוזרים')
-      .replace(/משפחות מיוחדות/g, "חיילים מיוחדים")
-      .replace(/מש' הכי קרובה/g, 'חייל הכי קרוב')
-      .replace(/משפחה כלשהי/g, 'חייל כלשהו')
-      .replace(/משפחות/g, "חיילים")
-      .replace(/משפחה/g, 'חייל')
-      .replace(/חדשה/g, 'חדש')
-      .replace(/כפולות/g, 'כפולים'));
+      .replace(/כפולות/g, 'כפולים')
+  });
+  static Soldiers: TranslationOptions = new TranslationOptions(2, 'חיילים', {
+    translateFunction: s =>
+      s.replace(/משפחה אחת/g, "חייל אחד")
+        .replace(/משפחות חוזרות/g, 'חיילים חוזרים')
+        .replace(/משפחות מיוחדות/g, "חיילים מיוחדים")
+        .replace(/מש' הכי קרובה/g, 'חייל הכי קרוב')
+        .replace(/משפחה כלשהי/g, 'חייל כלשהו')
+        .replace(/משפחות/g, "חיילים")
+        .replace(/משפחה/g, 'חייל')
+        .replace(/חדשה/g, 'חדש')
+        .replace(/כפולות/g, 'כפולים')
+  });
+  static southAfrica: TranslationOptions = new TranslationOptions(3, 'South Africa', {
+    leftToRight: true,
+    translationFile: 'en'
+  });
+  static italy: TranslationOptions = new TranslationOptions(4, 'Italy', {
+    leftToRight: true,
+    translationFile: 'it'
+  });
+  static chile: TranslationOptions = new TranslationOptions(5, 'Chile', {
+    leftToRight: true,
+    translationFile: 'es'
+  });
   TranslateOption() {
 
   }
-  constructor(public id: number, public caption: string, public translate: (s: string) => string) {
+  translate: (s: string) => string = s => s;
+  constructor(public id: number, public caption: string, public args: {
+    leftToRight?: boolean,
+    translationFile?: string,
+    translateFunction?: (s: string) => string
+  }) {
+    if (args.translateFunction)
+      this.translate = args.translateFunction;
   }
 
 }
@@ -682,5 +706,14 @@ export var use = { language: new Language() };
 
 declare const lang;
 if (typeof (lang) !== 'undefined')
-  if (lang == 'en')
-    use.language = new en();
+  switch (lang) {
+    case 'en':
+      use.language = new en();
+      break;
+    case 'es':
+      use.language = new es();
+      break;
+    case 'it':
+      use.language = new italy();
+      break;
+  }

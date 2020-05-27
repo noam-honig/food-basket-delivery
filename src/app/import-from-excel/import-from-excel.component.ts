@@ -39,7 +39,7 @@ export class ImportFromExcelComponent implements OnInit {
 
 
 
-    constructor(private context: Context, private dialog: DialogService, private busy: BusyService, private routeHelper: RouteHelperService) {
+    constructor(private context: Context, private dialog: DialogService, private busy: BusyService, private routeHelper: RouteHelperService, public settings: ApplicationSettings) {
 
     }
     updateRowsPage: number;
@@ -487,7 +487,7 @@ export class ImportFromExcelComponent implements OnInit {
     fd: ActiveFamilyDeliveries;
     @ViewChild("stepper", { static: true }) stepper: MatStepper;
     @ViewChild("file", { static: true }) fileInput: ElementRef
-    settings: ApplicationSettings;
+    
     settingsArea: DataAreaSettings<any> = new DataAreaSettings();
     async ngOnInit() {
         this.addDelivery.value = true;
@@ -495,7 +495,7 @@ export class ImportFromExcelComponent implements OnInit {
         this.distributionCenter.value = this.dialog.distCenter.value;
         if (this.distributionCenter.value == allCentersToken)
             this.distributionCenter.value = (<HelperUserInfo>this.context.user).distributionCenter;
-        this.settings = await ApplicationSettings.getAsync(this.context);
+        
 
 
 

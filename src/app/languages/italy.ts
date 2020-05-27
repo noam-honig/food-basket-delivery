@@ -1,5 +1,5 @@
 import { Language } from "../translate";
-export class it implements Language {
+export class italy implements Language {
   assignDeliveryMenu = 'Spedizioni di volontari associati';
   defaultOrgName = 'Il nome della mia organizzazione';
   defaultSmsText = 'Ciao! Volontario!\nCondivisione dei pacchetti! Organizzazione! Clicca:! Sito!\nGrazie! Invio!';
