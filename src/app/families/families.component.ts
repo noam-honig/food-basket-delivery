@@ -33,7 +33,7 @@ import { Roles, distCenterAdminGuard, AdminGuard } from '../auth/roles';
 import { MatTabGroup } from '@angular/material/tabs';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { translate, getLang } from '../translate';
+import { translate, getLang, use } from '../translate';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 import { FamilyStatus, FamilyStatusColumn } from './FamilyStatus';
@@ -714,24 +714,24 @@ export async function saveFamiliesToExcel(context: Context, gs: GridSettings<Fam
             }
             catch { }
         }
-        addColumn("X" + this.settings.lang.lastName, lastName, 's');
-        addColumn("X" + this.settings.lang.firstName, firstName, 's');
-        addColumn("X" + this.settings.lang.streetName, street, 's');
-        addColumn("X" + this.settings.lang.houseNumber, house, 's');
+        addColumn("X" + use.language.lastName, lastName, 's');
+        addColumn("X" + use.language.firstName, firstName, 's');
+        addColumn("X" + use.language.streetName, street, 's');
+        addColumn("X" + use.language.houseNumber, house, 's');
         function fixPhone(p: PhoneColumn) {
             if (!p.value)
                 return '';
             else
                 return p.value.replace(/\D/g, '');
         }
-        addColumn("X" + this.settings.lang.phone1, fixPhone(f.phone1), 's');
-        addColumn("X" + this.settings.lang.phone2, fixPhone(f.phone2), 's');
-        addColumn("X" + this.settings.lang.phone3, fixPhone(f.phone3), 's');
-        addColumn("X" + this.settings.lang.phone4, fixPhone(f.phone4), 's');
-        addColumn("X" + this.settings.lang.phone1+'orig', f.phone1.value, 's');
-        addColumn("X" + this.settings.lang.phone2+'orig', f.phone2.value, 's');
-        addColumn("X" + this.settings.lang.phone3+'orig', f.phone3.value, 's');
-        addColumn("X" + this.settings.lang.phone4+'orig', f.phone4.value, 's');
+        addColumn("X" + use.language.phone1, fixPhone(f.phone1), 's');
+        addColumn("X" + use.language.phone2, fixPhone(f.phone2), 's');
+        addColumn("X" + use.language.phone3, fixPhone(f.phone3), 's');
+        addColumn("X" + use.language.phone4, fixPhone(f.phone4), 's');
+        addColumn("X" + use.language.phone1+'orig', f.phone1.value, 's');
+        addColumn("X" + use.language.phone2+'orig', f.phone2.value, 's');
+        addColumn("X" + use.language.phone3+'orig', f.phone3.value, 's');
+        addColumn("X" + use.language.phone4+'orig', f.phone4.value, 's');
         await f.basketType.addBasketTypes(f.quantity, addColumn);
     });
 }
