@@ -47,7 +47,8 @@ export class ApplicationSettings extends Entity<number>  {
   id = new NumberColumn();
   organisationName = new StringColumn(this.lang.organizationName);
   validateSmsContent(c: StringColumn) {
-    if (c.value && c.value.indexOf("!אתר!") < 0 && c.value.indexOf("!URL!"))
+    return;
+    if (c.value && c.value.indexOf("!אתר!") < 0 && c.value.indexOf("!URL!") < 0)
       c.validationError = this.lang.mustIncludeUrlKeyError;
   }
   smsText = new StringColumn({

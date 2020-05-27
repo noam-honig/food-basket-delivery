@@ -1167,6 +1167,10 @@
     "google": "km",
     "valueInCode": "ק\"מ"
   },
+  "languageCode": {
+    "google": "IW",
+    "valueInCode": "iw"
+  },
   "lastName": {
     "google": "Cognome",
     "valueInCode": "שם משפחה"

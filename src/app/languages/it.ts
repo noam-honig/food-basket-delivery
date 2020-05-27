@@ -591,6 +591,7 @@ export class italy implements Language {
   existsWithAnUpdate = 'Esistente con aggiornamento';
   existsIdenticat = "C'è lo stesso";
   error = 'Errore';
+  languageCode = 'it';
   resetTextsToLanguageDefaults = 'Return texts to default settings';
-  languageCode='it';
+  
 }

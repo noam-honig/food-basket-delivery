@@ -358,6 +358,19 @@ export class ManageComponent implements OnInit {
     let r = await ManageComponent.deleteFamiliesOnServer();
     this.dialog.Info('נמחקו ' + r + ' משפחות');
   }
+  resetToDefault() {
+    this.settings.id.value = 1;
+    
+    this.settings.smsText.value = this.settings.lang.defaultSmsText;
+    this.settings.reminderSmsText.value = this.settings.lang.reminderSmsText;
+    this.settings.commentForSuccessDelivery.value = this.settings.lang.commentForSuccessDelivery;
+    this.settings.commentForSuccessLeft.value = this.settings.lang.commentForSuccessLeft;
+    this.settings.commentForProblem.value = this.settings.lang.commentForProblem;
+    this.settings.messageForDoneDelivery.value = this.settings.lang.messageForDoneDelivery;
+    this.settings.deliveredButtonText.value = this.settings.lang.deliveredButtonText;
+    this.settings.boxes1Name.value = this.settings.lang.boxes1Name;
+    this.settings.boxes2Name.value = this.settings.lang.boxes2Name;
+  }
   @ServerFunction({ allowed: Roles.admin })
   static async deleteFamiliesOnServer(context?: Context) {
     let count = await pagedRowsIterator(context.for(Families),

@@ -81,7 +81,10 @@ export class SendSmsAction {
     }
 
     static getMessage(template: string, orgName: string, courier: string, sender: string, url: string) {
-        return template.replace('!מתנדב!', courier).replace('!משנע!', courier).replace('!שולח!', sender).replace('!ארגון!', orgName).replace('!אתר!', url)
+        return template.replace('!מתנדב!', courier).replace('!משנע!', courier).replace('!VOLUNTEER!', courier)
+            .replace('!שולח!', sender).replace('!SENDER!', sender)
+            .replace('!ארגון!', orgName).replace("!ORG!", orgName)
+            .replace('!אתר!', url).replace('!URL!', url)
 
     }
 }

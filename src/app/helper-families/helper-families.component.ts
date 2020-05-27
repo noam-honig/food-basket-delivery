@@ -212,7 +212,7 @@ export class HelperFamiliesComponent implements OnInit {
       to += ' ול' + this.familyLists.escort.name.value;
       await SendSmsAction.SendSms(this.familyLists.helper.escort.value, reminder);
     }
-    this.dialog.Info(use.language.smsMessageSentTo+" " + to);
+    this.dialog.Info(use.language.smsMessageSentTo + " " + to);
     this.assignSmsSent.emit();
     if (reminder)
       this.familyLists.helper.reminderSmsDate.value = new Date();
@@ -292,7 +292,7 @@ export class HelperFamiliesComponent implements OnInit {
       for (const f of this.familyLists.toDeliver) {
         url += '/' + encodeURI(isGpsAddress(f.address.value) ? f.address.value : f.addressByGoogle.value);
       }
-      window.open(url + "?hl=iw", '_blank');
+      window.open(url + "?hl=" + getLang(this.context).languageCode , '_blank');
     }
     //window.open(url,'_blank');
   }

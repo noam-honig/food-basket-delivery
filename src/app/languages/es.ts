@@ -591,4 +591,6 @@ export class es implements Language {
   existsWithAnUpdate = 'Existente con actualización';
   existsIdenticat = 'Hay lo mismo';
   error = 'Error';
+  languageCode = 'es';
+  resetTextsToLanguageDefaults = 'Devolver textos a la configuración predeterminada';
 }

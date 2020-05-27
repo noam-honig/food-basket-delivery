@@ -528,10 +528,10 @@ export class Families extends IdEntity {
     window.open('waze://?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + '&navigate=yes');
   }
   openGoogleMaps() {
-    window.open('https://www.google.com/maps/search/?api=1&hl=iw&query=' + this.address.value, '_blank');
+    window.open('https://www.google.com/maps/search/?api=1&hl='+getLang(this.context).languageCode +'&query=' + this.address.value, '_blank');
   }
   showOnGoogleMaps() {
-    window.open('https://maps.google.com/maps?q=' + this.getGeocodeInformation().getlonglat() + '&hl=iw', '_blank');
+    window.open('https://maps.google.com/maps?q=' + this.getGeocodeInformation().getlonglat() + '&hl='+getLang(this.context).languageCode , '_blank');
   }
   showOnGovMap() {
     let x = this.getGeocodeInformation().location();

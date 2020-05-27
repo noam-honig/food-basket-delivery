@@ -1,6 +1,7 @@
 import * as fetch from 'node-fetch';
 import { UrlBuilder, EntityClass, IdEntity, StringColumn, Entity, DateTimeColumn, Context } from '@remult/core';
 import { extractError } from '../select-popup/dialog';
+import { getLang } from '../translate';
 
 
 
@@ -28,7 +29,7 @@ export async function GetGeoInformation(address: string, context: Context) {
         u.addObject({
             key: process.env.GOOGLE_GECODE_API_KEY,
             address: address,
-            language: 'HE'
+            language: getLang(context).languageCode
         });
         try {
             let r = fetch.default(u.url).then(async x => await x.json().then(async (r: GeocodeResult) => {

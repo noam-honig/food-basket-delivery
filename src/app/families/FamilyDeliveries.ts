@@ -15,6 +15,7 @@ import { UpdateFamilyDialogComponent } from "../update-family-dialog/update-fami
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService } from "../select-popup/dialog";
 import { getLang } from "../translate";
+import { ApplicationSettings } from "../manage/ApplicationSettings";
 
 @EntityClass
 export class FamilyDeliveries extends IdEntity {
@@ -344,8 +345,8 @@ export class FamilyDeliveries extends IdEntity {
             case DeliveryStatus.FailedOther:
                 let duration = '';
                 if (this.courierAssingTime.value && this.deliveryStatusDate.value)
-                    duration = ' '+getLang(this.context).within+' ' + Math.round((this.deliveryStatusDate.value.valueOf() - this.courierAssingTime.value.valueOf()) / 60000) + " "+getLang(this.context).minutes;
-                return this.deliverStatus.displayValue + (this.courierComments.value ? ", " + this.courierComments.value + " - " : '') + (this.courier.value ? ' '+getLang(this.context).by+' ' + this.courier.getValue() : '') + ' ' + this.deliveryStatusDate.relativeDateName() + duration;
+                    duration = ' ' + getLang(this.context).within + ' ' + Math.round((this.deliveryStatusDate.value.valueOf() - this.courierAssingTime.value.valueOf()) / 60000) + " " + getLang(this.context).minutes;
+                return this.deliverStatus.displayValue + (this.courierComments.value ? ", " + this.courierComments.value + " - " : '') + (this.courier.value ? ' ' + getLang(this.context).by + ' ' + this.courier.getValue() : '') + ' ' + this.deliveryStatusDate.relativeDateName() + duration;
 
         }
         return this.deliverStatus.displayValue;
@@ -390,10 +391,10 @@ export class FamilyDeliveries extends IdEntity {
         window.open('waze://?ll=' + toLongLat(this.getDrivingLocation()) + "&q=" + encodeURI(this.address.value) + '&navigate=yes');
     }
     openGoogleMaps() {
-        window.open('https://www.google.com/maps/search/?api=1&hl=iw&query=' + this.address.value, '_blank');
+        window.open('https://www.google.com/maps/search/?api=1&hl=' + getLang(this.context).languageCode + '&query=' + this.address.value, '_blank');
     }
     showOnGoogleMaps() {
-        window.open('https://maps.google.com/maps?q=' + toLongLat(this.getDrivingLocation()) + '&hl=iw', '_blank');
+        window.open('https://maps.google.com/maps?q=' + toLongLat(this.getDrivingLocation()) + '&hl=' + getLang(this.context).languageCode , '_blank');
     }
     showOnGovMap() {
         window.open('https://www.govmap.gov.il/?q=' + this.address.value + '&z=10', '_blank');
@@ -454,7 +455,7 @@ export class FamilyDeliveries extends IdEntity {
         if (!showFamilyDetails) {
             await this.context.openDialog(InputAreaComponent, x => {
                 x.args = {
-                    title: getLang(this.context).deliveryDetailsFor+ ' ' + this.name.value,
+                    title: getLang(this.context).deliveryDetailsFor + ' ' + this.name.value,
                     ok:
                         () => {
                             this.save();

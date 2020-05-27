@@ -1167,6 +1167,10 @@
     "google": "km",
     "valueInCode": "ק\"מ"
   },
+  "languageCode": {
+    "google": "iw",
+    "valueInCode": "iw"
+  },
   "lastName": {
     "google": "Apellido",
     "valueInCode": "שם משפחה"
@@ -1742,6 +1746,10 @@
   "resetPasswordAreYouSureFor": {
     "google": "¿Estás seguro de que quieres eliminar la contraseña?",
     "valueInCode": "האם את בטוחה שאת רוצה למחוק את הסיסמה של"
+  },
+  "resetTextsToLanguageDefaults": {
+    "google": "Devolver textos a la configuración predeterminada",
+    "valueInCode": "החזר טקסטים להגדרות ברירת מחדל"
   },
   "responsibleForAssign": {
     "google": "Asocia voluntarios con una lista de distribución",

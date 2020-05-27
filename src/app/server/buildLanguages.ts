@@ -6,8 +6,12 @@ import * as request from 'request';
 export async function buildLanguageFiles() {
 
     for (const lang of ["en", "es", "it"]) {
+        let fileAndClassName = lang;
+        if (lang=='it'){
+            fileAndClassName = 'italy';
+        }
         let known = {};
-        try { known = JSON.parse(fs.readFileSync('./src/app/languages/' + lang + '.json').toString()); }
+        try { known = JSON.parse(fs.readFileSync('./src/app/languages/' + fileAndClassName + '.json').toString()); }
         catch{}
         let result = '';
         let l = new Language();
@@ -29,6 +33,8 @@ export async function buildLanguageFiles() {
                 let v = knownVal.google;
                 if (knownVal.custom)
                     v = knownVal.custom;
+                if (key=='languageCode')
+                    v = lang;
                 let r = v;
                 if (r.includes('\''))
                     r = '"' + r + '"';
@@ -44,14 +50,14 @@ export async function buildLanguageFiles() {
         wb.Workbook = { Views: [{ RTL: true }] };
         let ws = XLSX.utils.json_to_sheet(keys);
         XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
-        XLSX.writeFile(wb, '/temp/' + lang + '.xlsx');
+        XLSX.writeFile(wb, '/temp/' + fileAndClassName + '.xlsx');
         let json = {};
         for (const x of keys) {
             json[x.key] = known[x.key];
         }
         ;
         fs.writeFileSync('./src/app/languages/' + lang + '.json', JSON.stringify(json, undefined, 2));
-        fs.writeFileSync('./src/app/languages/' + lang + '.ts', 'import { Language } from "../translate";\nexport class ' + lang + ' implements Language {\n' + result + '}');
+        fs.writeFileSync('./src/app/languages/' + lang + '.ts', 'import { Language } from "../translate";\nexport class ' + fileAndClassName + ' implements Language {\n' + result + '}');
     }
 
 
@@ -69,7 +75,7 @@ interface translation {
 }
 
 async function translate(s: string, toLang: string) {
-    let fromLang = 'he';
+    let fromLang = 'iw';
 
     return new Promise<string>((resolve, reject) => {
         request("https://www.googleapis.com/language/translate/v2?key=" + process.env.google_key + "&source=" + fromLang + "&target=" + toLang + "&format=text", {

@@ -26,7 +26,7 @@ import { BusyService } from '@remult/core';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { Groups, GroupsStats } from '../manage/manage.component';
 import { SendSmsAction } from './send-sms-action';
-import { translate } from '../translate';
+import { translate, getLang } from '../translate';
 import { SelectCompanyComponent } from '../select-company/select-company.component';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -1043,7 +1043,7 @@ async function getRouteInfo(families: familiesInRoute[], optimize: boolean, star
         origin: startAndEnd,
         destination: toLongLat(families[families.length - 1].location),
         waypoints: waypoints,
-        language: 'he',
+        language: getLang(context).languageCode,
         key: process.env.GOOGLE_GECODE_API_KEY
     };
     u.addObject(args);

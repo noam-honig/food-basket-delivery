@@ -2,7 +2,7 @@ import { Language } from "../translate";
 export class en implements Language {
   assignDeliveryMenu = 'Associate volunteer shipments';
   defaultOrgName = "My organization's name";
-  defaultSmsText = 'Hello! Volunteer!\nPackage Sharing! Organization! Click:! Site!\nThanks! Sending!';
+  defaultSmsText = 'Hello !VOLUNTEER!\nTo deliver packages for !ORG! Click on: !URL!\nThanks !SENDER!';
   reminderSmsText = 'Hello! Volunteer !,\nWe would be happy to update the system in the delivery mode of the baskets. To update click on: Site!\nThank you! Organization!';
   commentForSuccessDelivery = "We'd love to write a comment about what you saw and were";
   commentForSuccessLeft = 'Please specify where you left the basket and with whom you spoke';
@@ -591,4 +591,6 @@ export class en implements Language {
   existsWithAnUpdate = 'Existing with update';
   existsIdenticat = 'There is the same';
   error = 'Error';
+  languageCode = 'en';
+  resetTextsToLanguageDefaults = 'Return texts to default settings';
 }

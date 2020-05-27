@@ -628,7 +628,8 @@
   "defaultSmsText": {
     "google": "Hello! Volunteer!\\nPackage Sharing! Organization! Click:! Site!\\nThanks! Sending!",
     "orig": "שלום !מתנדב!\nלחלוקת חבילות !ארגון! לחץ על: !אתר! \nתודה !שולח!",
-    "valueInCode": "שלום !מתנדב!\nלחלוקת חבילות !ארגון! לחץ על: !אתר! \nתודה !שולח!"
+    "valueInCode": "שלום !מתנדב!\nלחלוקת חבילות !ארגון! לחץ על: !אתר! \nתודה !שולח!",
+    "custom": "Hello !VOLUNTEER!\\nTo deliver packages for !ORG! Click on: !URL!\\nThanks !SENDER!"
   },
   "defaultStatusType": {
     "google": "Default shipping status for new families",
@@ -1460,6 +1461,10 @@
     "orig": "ק\"מ",
     "valueInCode": "ק\"מ"
   },
+  "languageCode": {
+    "google": "iw",
+    "valueInCode": "iw"
+  },
   "lastName": {
     "google": "Last Name",
     "orig": "שם משפחה",
@@ -2179,6 +2184,10 @@
     "google": "Are you sure you want to delete password",
     "orig": "האם את בטוחה שאת רוצה למחוק את הסיסמה של",
     "valueInCode": "האם את בטוחה שאת רוצה למחוק את הסיסמה של"
+  },
+  "resetTextsToLanguageDefaults": {
+    "google": "Return texts to default settings",
+    "valueInCode": "החזר טקסטים להגדרות ברירת מחדל"
   },
   "responsibleForAssign": {
     "google": "Associates volunteers with a distribution list",

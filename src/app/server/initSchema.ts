@@ -13,7 +13,8 @@ import { SqlBuilder } from '../model-shared/types';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { pagedRowsIterator, iterateRowsActionOnServer } from '../families/familyActionsWiring';
-import { TranslationOptions, getLang } from '../translate';
+import { TranslationOptions, getLang, setLangForSite } from '../translate';
+import { Sites } from '../sites/sites';
 
 
 export async function initSchema(pool1: PostgresPool, org: string) {
@@ -393,7 +394,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
 
 
-
+    setLangForSite(org,settings.forWho.value.args.languageCode);
 
 }
 

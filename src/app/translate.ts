@@ -3,6 +3,7 @@ import { ValueListColumn, ColumnOptions, Context } from '@remult/core';
 import { en } from './languages/en';
 import { es } from './languages/es';
 import { italy } from './languages/italy';
+import { Sites } from './sites/sites';
 
 @Pipe({ name: 'translate' })
 export class TranslatePipe implements PipeTransform {
@@ -54,15 +55,15 @@ export class TranslationOptions {
   });
   static southAfrica: TranslationOptions = new TranslationOptions(3, 'South Africa', {
     leftToRight: true,
-    translationFile: 'en'
+    languageCode: 'en'
   });
   static italy: TranslationOptions = new TranslationOptions(4, 'Italy', {
     leftToRight: true,
-    translationFile: 'it'
+    languageCode: 'it'
   });
   static chile: TranslationOptions = new TranslationOptions(5, 'Chile', {
     leftToRight: true,
-    translationFile: 'es'
+    languageCode: 'es'
   });
   TranslateOption() {
 
@@ -70,7 +71,7 @@ export class TranslationOptions {
   translate: (s: string) => string = s => s;
   constructor(public id: number, public caption: string, public args: {
     leftToRight?: boolean,
-    translationFile?: string,
+    languageCode?: string,
     translateFunction?: (s: string) => string
   }) {
     if (args.translateFunction)
@@ -95,7 +96,14 @@ export class TranslationOptionsColumn extends ValueListColumn<TranslationOptions
 export const translationConfig = { activateTranslation: false, forWho: TranslationOptions.Families };
 
 
+const langForSite = new Map<string, Language>();
+export function setLangForSite(site: string, lang: string) {
+  langForSite.set(site, langByCode(lang));
+}
 export function getLang(context: Context) {
+  let r = langForSite.get(Sites.getValidSchemaFromContext(context));
+  if (r)
+    return r;
   return use.language;
 }
 
@@ -699,21 +707,24 @@ export class Language {
   existsWithAnUpdate = 'קיימת עם עדכון';
   existsIdenticat = 'קיימת זהה';
   error = 'שגיאה';
+  languageCode = 'iw';
+  resetTextsToLanguageDefaults = 'החזר טקסטים להגדרות ברירת מחדל';
 }
 
+const defaultLang = new Language();
+export var use = { language: defaultLang };
 
-export var use = { language: new Language() };
 
+const langMap = new Map<string, Language>();
+langMap.set('en', new en());
+langMap.set('es', new es());
+langMap.set('it', new italy());
+function langByCode(lang: string) {
+  let r = langMap.get(lang);
+  if (!r)
+    r = defaultLang;
+  return r;
+}
 declare const lang;
 if (typeof (lang) !== 'undefined')
-  switch (lang) {
-    case 'en':
-      use.language = new en();
-      break;
-    case 'es':
-      use.language = new es();
-      break;
-    case 'it':
-      use.language = new italy();
-      break;
-  }
+  use.language = langByCode(lang);
