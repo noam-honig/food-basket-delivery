@@ -67,7 +67,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     this.searchString = '';
     this.doSearch();
   }
-  stats = new FamilyDeliveryStats();
+  stats = new FamilyDeliveryStats(this.context);
   @ViewChild('myTab', { static: false }) myTab: MatTabGroup;
   basketStats: statsOnTabBasket = {
     name: getLang(this.context).remainingByBaskets,

@@ -331,7 +331,7 @@ export class Families extends IdEntity {
 
   })
   basketType = new BasketId(this.context, getLang(this.context).defaultBasketType);
-  quantity = new QuantityColumn({ caption: getLang(this.context).defaultQuantity, allowApiUpdate: Roles.admin });
+  quantity = new QuantityColumn(this.context,{ caption: getLang(this.context).defaultQuantity, allowApiUpdate: Roles.admin });
 
   familySource = new FamilySourceId(this.context, { includeInApi: true, caption: getLang(this.context).familySource });
   socialWorker = new StringColumn(getLang(this.context).familyHelpContact);
@@ -440,7 +440,7 @@ export class Families extends IdEntity {
   }
 
 
-  previousDeliveryStatus = new DeliveryStatusColumn({
+  previousDeliveryStatus = new DeliveryStatusColumn(this.context,{
     caption: getLang(this.context).previousDeliveryStatus,
     sqlExpression: () => {
       return this.dbNameFromLastDelivery(fde => fde.deliverStatus, "prevStatus");

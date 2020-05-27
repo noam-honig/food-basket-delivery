@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { ValueListColumn, ColumnOptions, Context } from '@remult/core';
+import { en } from './languages/en';
 
 @Pipe({ name: 'translate' })
 export class TranslatePipe implements PipeTransform {
@@ -615,7 +616,7 @@ export class Language {
   selectVolunteer = 'בחר מתנדב';
   frozens = 'קפואים';
   addressNotOkOpenWaze = "הכתובת אינה מדוייקת. בדקו בגוגל או התקשרו למשפחה. נשמח אם תעדכנו את הכתובת שמצאתם בהערות. האם לפתוח וייז?";
-  wasCopiedSuccefully =  " הועתקה בהצלחה";
+  wasCopiedSuccefully = " הועתקה בהצלחה";
   areYouSureYouWantToCancelAssignmentTo = "האם אתה בטוח שאתה רוצה לבטל שיוך ל";
   cancelAssignmentForHelperFamilies = 'בטל שיוך כל המשלוחים למתנדב';
   areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies = "האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל";
@@ -624,7 +625,7 @@ export class Language {
   messageCopied = "הודעה הועתקה";
   linkCopied = "קישור הועתק";
   clearAllVolunteerComments = 'נקה הערות לכל המתנדבים';
-  clearAllVolunteerCommentsAreYouSure = 'האם אתה בטוח שברצונך לנקות את כל ההערות למתנדבים?' ;
+  clearAllVolunteerCommentsAreYouSure = 'האם אתה בטוח שברצונך לנקות את כל ההערות למתנדבים?';
   clearEscortInfo = 'נקה נתוני ליווי לכל המתנדבים';
   clearEscortInfoAreYouSure = 'האם אתה בטוח שברצונך לנקות את נתוני המלווים לכל המתנדבים?';
   resetPassword = 'אתחל סיסמה';
@@ -632,7 +633,7 @@ export class Language {
   passwordWasReset = "הסיסמה נמחקה";
   sendInviteBySms = 'שלח הזמנה בSMS למנהל';
   unfitForInvite = 'לא מתאים להזמנה';
-  welcomeTo =  'ברוך הבא לסביבה של';
+  welcomeTo = 'ברוך הבא לסביבה של';
   pleaseEnterUsing = 'אנא הכנס למערכת באמצעות הקישור:';
   enterFirstTime = `מכיוון שלא מוגדרת לך סיסמה עדיין - אנא הכנס בפעם הראשונה, על ידי הקלדת מספר הטלפון שלך ללא סיסמה ולחיצה על הכפתור "כניסה". המערכת תבקש שתגדיר סיסמה וזו תהיה סיסמתך.
   בהצלחה`;
@@ -679,3 +680,7 @@ export class Language {
 
 export var use = { language: new Language() };
 
+declare const lang;
+if (typeof (lang) !== 'undefined')
+  if (lang == 'en')
+    use.language = new en();

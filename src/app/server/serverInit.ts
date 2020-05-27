@@ -16,7 +16,7 @@ import { Sites } from '../sites/sites';
 import { OverviewComponent } from '../overview/overview.component';
 import { wasChanged } from '../model-shared/types';
 
-
+declare const lang='';
 
 export async function serverInit() {
     try {

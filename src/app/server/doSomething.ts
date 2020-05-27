@@ -19,6 +19,7 @@ import { Sites } from "../sites/sites";
 import * as fs from 'fs';
 import { processPhone } from "../import-from-excel/import-from-excel.component";
 import { Language } from "../translate";
+import { jsonToXlsx } from "../shared/saveToExcel";
 
 
 
@@ -28,7 +29,7 @@ export async function DoIt() {
         await serverInit();
 
 
-        let data = fs.readFileSync('./languages/en.txt');
+        let data = fs.readFileSync('./src/assets/languages/en.txt');
         let lines = data.toString().split('\r\n');
         let knownTranslations = new Map<string, string>();
         for (let index = 0; index < lines.length; index += 2) {
@@ -37,10 +38,11 @@ export async function DoIt() {
         if (lines.length % 2 == 1) {
             lines.splice(lines.length - 1, 1);
         }
-        
+
         let result = '';
 
         let l = new Language();
+        let keys: translationEntry[] = [];
         for (const key in l) {
             if (l.hasOwnProperty(key)) {
                 const element: string[] = l[key].split('\n');
@@ -56,18 +58,30 @@ export async function DoIt() {
                     element[index] = trans;
                 }
                 let r = element.join('\\n');
+                let v = r;
                 if (r.includes('\''))
                     r = '"' + r + '"';
                 else
                     r = "'" + r + "'";
-                result += key + " = " + r + ';\r\n';
+                result += '  ' + key + " = " + r + ';\n';
+                keys.push({ key: key, value: v, valueInHebrew: l[key] });
             }
         }
+        keys.sort((a, b) => a.key.localeCompare(b.key));
+        let XLSX = await import('xlsx');
+        let wb = XLSX.utils.book_new();
+        wb.Workbook = { Views: [{ RTL: true }] };
+        let ws = XLSX.utils.json_to_sheet(keys);
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
+        XLSX.writeFile(wb, './src/app/languages/en.xlsx');
+        fs.writeFileSync('./src/app/languages/en.json', JSON.stringify(keys.map(x => ({ [x.key]: { google: x.value, orig: x.valueInHebrew } })), undefined, 2))
 
 
+        fs.writeFileSync('./src/app/languages/en.ts',
+            'import { Language } from "../translate";\nexport class en implements Language {\n' + result + '}');
         //        let result = await translate('שלום לכם');
         console.log(result);
-        fs.writeFileSync('./languages/en.txt', lines.join('\r\n'));
+        fs.writeFileSync('./src/assets/languages/en.txt', lines.join('\r\n'));
 
 
 
@@ -166,4 +180,10 @@ class htmlReport {
     writeToFile() {
         fs.writeFileSync('c:/temp/result.html', this.result + "</table></body></html>");
     }
+}
+
+interface translationEntry {
+    key: string;
+    value: string;
+    valueInHebrew: string;
 }

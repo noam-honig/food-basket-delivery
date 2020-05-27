@@ -44,7 +44,7 @@ export class PlaybackComponent implements OnInit {
 
   @ViewChild('gmap', { static: true }) gmapElement: any;
 
-  statuses = new Statuses();
+  statuses = new Statuses(this.settings);
   @ViewChild(DateRangeComponent, { static: false }) dateRange;
   ready = false;
   async select() {

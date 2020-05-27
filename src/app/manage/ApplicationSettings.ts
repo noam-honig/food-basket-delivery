@@ -128,7 +128,7 @@ export class ApplicationSettings extends Entity<number>  {
 
 
   addressApiResult = new StringColumn();
-  defaultStatusType = new DeliveryStatusColumn({
+  defaultStatusType = new DeliveryStatusColumn(this.context,{
     caption: translate(this.lang.defaultStatusType)
   }, [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup]);
   private _lastString: string;
@@ -240,7 +240,7 @@ export interface phoneBuildArgs {
   addPhone: (name: string, value: string) => void
 }
 
-declare const lang;
+
 @Injectable()
 export class SettingsService {
   constructor(private context: Context, private http: HttpClient) {

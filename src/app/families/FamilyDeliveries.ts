@@ -79,12 +79,12 @@ export class FamilyDeliveries extends IdEntity {
         caption: getLang(this.context).basketType,
         allowApiUpdate: Roles.admin
     });
-    quantity = new QuantityColumn({ caption: getLang(this.context).quantity, allowApiUpdate: Roles.admin, dataControlSettings: () => ({ width: '100', inputType: 'number' }) });
+    quantity = new QuantityColumn(this.context, { caption: getLang(this.context).quantity, allowApiUpdate: Roles.admin, dataControlSettings: () => ({ width: '100', inputType: 'number' }) });
 
     distributionCenter = new DistributionCenterId(this.context, {
         allowApiUpdate: Roles.admin
     });
-    deliverStatus = new DeliveryStatusColumn();
+    deliverStatus = new DeliveryStatusColumn(this.context);
     courier = new HelperId(this.context, {
         caption: getLang(this.context).volunteer,
         allowApiUpdate: Roles.distCenterAdmin

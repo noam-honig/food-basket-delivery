@@ -234,7 +234,7 @@ export class DistributionMap implements OnInit, OnDestroy {
 
 
   }
-  statuses = new Statuses();
+  statuses = new Statuses(this.settings);
   selectedStatus: statusClass;
   filterCourier = new HelperId(this.context, {
     caption: this.settings.lang.volunteer,
