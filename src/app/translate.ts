@@ -748,6 +748,12 @@ function langByCode(lang: string) {
     r = defaultLang;
   return r;
 }
-declare const lang;
-if (typeof (lang) !== 'undefined')
-  use.language = langByCode(lang);
+
+if (typeof (document) !== 'undefined'){
+  //@ts-ignore
+  use.language = langByCode(document.lang);
+}
+else
+{
+  
+}

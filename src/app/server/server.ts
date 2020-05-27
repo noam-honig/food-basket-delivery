@@ -57,7 +57,7 @@ serverInit().then(async (dataSource) => {
             }
             if (settings.forWho.value.args.languageCode) {
                 let lang = settings.forWho.value.args.languageCode;
-                result = result.replace(/const lang = '';/g, `const lang = '${lang}';`)
+                result = result.replace(/document.lang = '';/g, `document.lang = '${lang}';`)
                     .replace(/&language=iw&/, `&language=${lang}&`)
                     .replace(/טוען/g, 'Loading');
 
