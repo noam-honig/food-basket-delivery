@@ -4,7 +4,7 @@ import { Entity, Context, EntityClass } from '@remult/core';
 import { PhoneColumn } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { DeliveryStatusColumn, DeliveryStatus } from "../families/DeliveryStatus";
-import { translate, translationConfig, TranslationOptionsColumn, Language,  getLang, use } from "../translate";
+import { translate, translationConfig, TranslationOptionsColumn, Language, getLang, use } from "../translate";
 
 import { FamilySources } from "../families/FamilySources";
 import { Injectable } from '@angular/core';
@@ -128,7 +128,7 @@ export class ApplicationSettings extends Entity<number>  {
 
 
   addressApiResult = new StringColumn();
-  defaultStatusType = new DeliveryStatusColumn(this.context,{
+  defaultStatusType = new DeliveryStatusColumn(this.context, {
     caption: translate(this.lang.defaultStatusType)
   }, [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup]);
   private _lastString: string;
@@ -248,37 +248,6 @@ export class SettingsService {
   }
   instance: ApplicationSettings;
   async init() {
-
-    if (lang == 'en' && !environment.production) {
-      let r = await this.http.get('/assets/languages/'+lang+'.txt', { responseType: 'text' }).toPromise();
-      let lines = r.split('\r\n');
-      let knownTranslations = new Map<string, string>();
-      for (let index = 0; index < lines.length; index += 2) {
-        knownTranslations.set(lines[index], lines[index + 1]);
-      }
-      if (lines.length % 2 == 1) {
-        lines.splice(lines.length - 1, 1);
-      }
-      let l = new Language();
-      for (const key in l) {
-        if (l.hasOwnProperty(key)) {
-          const element: string[] = l[key].split('\n');
-          for (let index = 0; index < element.length; index++) {
-            const term = element[index];
-            var trans = knownTranslations.get(term);
-            if (!trans) {
-              trans = await this.http.post<string>('/api/terms', { term: term }).toPromise();
-              knownTranslations.set(term, trans);
-            }
-            element[index] = trans;
-          }
-          l[key] = element.join('\\n');
-
-        }
-      }
-      use.language = l;
-    }
-
 
     this.instance = await ApplicationSettings.getAsync(this.context);
 
