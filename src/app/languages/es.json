@@ -1,0 +1,2366 @@
+{
+  "action": {
+    "google": "acción",
+    "valueInCode": "פעולה"
+  },
+  "actionNotFound": {
+    "google": "Acción no encontrada en el servidor",
+    "valueInCode": "פעולה לא נמצאה בשרת"
+  },
+  "activateEscort": {
+    "google": "Habilitar la gestión de acompañantes",
+    "valueInCode": "הפעל ניהול מלווים לנהגים"
+  },
+  "active": {
+    "google": "activo",
+    "valueInCode": "פעיל"
+  },
+  "activeFamilies": {
+    "google": "actividad",
+    "valueInCode": "פעילות"
+  },
+  "addAllFamilies": {
+    "google": "Agregar todas las familias",
+    "valueInCode": "הוסף את כל המשפחות"
+  },
+  "addAllRepeatFamilies": {
+    "google": "Agregar todas las familias que regresan",
+    "valueInCode": "הוסף את כל המשפחות החוזרות"
+  },
+  "addAllVolunteers": {
+    "google": "Agregar todos los voluntarios",
+    "valueInCode": "הוסף את כל המתנדבים"
+  },
+  "addColumnsThatAreNotInTheFile": {
+    "google": "Agregar columnas que no aparecen en Excel",
+    "valueInCode": "הוספת עמודות שלא מופיעות באקסל"
+  },
+  "addCurrentLocationToNote": {
+    "google": "Agregar ubicación actual para comentario",
+    "valueInCode": "הוסף מיקום נוכחי להערה"
+  },
+  "addedToDb": {
+    "google": "Agregado al sitio",
+    "valueInCode": "נוספה לאתר"
+  },
+  "adderssProblems": {
+    "google": "Direcciones problemáticas",
+    "valueInCode": "כתובות בעיתיות"
+  },
+  "addExcelColumn": {
+    "google": "Agregar una columna",
+    "valueInCode": "הוסף עמודה"
+  },
+  "address": {
+    "google": "Habla a",
+    "valueInCode": "כתובת"
+  },
+  "addressByGoogle": {
+    "google": "Dirección tal como la entendió Google",
+    "valueInCode": "כתובת כפי שגוגל הבין"
+  },
+  "addressComment": {
+    "google": "Direcciones adicionales a la dirección",
+    "valueInCode": "הנחיות נוספות לכתובת"
+  },
+  "addressesWithMoreThanOneFamily": {
+    "google": "Direcciones con más de una familia",
+    "valueInCode": "כתובות עם יותר ממשפחה אחת"
+  },
+  "addressNotOkOpenWaze": {
+    "google": "La dirección es inexacta. Consulte Google o llame a la familia. Nos encantaría actualizar su dirección en los comentarios. ¿Sabio abierto?",
+    "valueInCode": "הכתובת אינה מדוייקת. בדקו בגוגל או התקשרו למשפחה. נשמח אם תעדכנו את הכתובת שמצאתם בהערות. האם לפתוח וייז?"
+  },
+  "addressOk": {
+    "google": "Buena direccion",
+    "valueInCode": "כתובת תקינה"
+  },
+  "addVolunteer": {
+    "google": "Agregar un voluntario / gerente",
+    "valueInCode": "הוסף מתנדב/מנהל"
+  },
+  "admin": {
+    "google": "Administrador de reglas del sistema",
+    "valueInCode": "מנהל כלל המערכת"
+  },
+  "adminRequireToSetPassword": {
+    "google": " Está configurado como administrador pero no tiene una contraseña establecida para usted. Para usar las capacidades de administración, es obligatorio proteger los detalles con una contraseña. Accederá a una pantalla de actualización de contraseña para actualizar la información.",
+    "valueInCode": " אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועבר למסך עדכון פרטים לעדכון סיסמה."
+  },
+  "age": {
+    "google": "años",
+    "valueInCode": "גיל"
+  },
+  "all": {
+    "google": "Todos",
+    "valueInCode": "כולם"
+  },
+  "allBaskets": {
+    "google": "Todas las cestas",
+    "valueInCode": "כל הסלים"
+  },
+  "allCities": {
+    "google": "Todas las ciudades",
+    "valueInCode": "כל הערים"
+  },
+  "allFamilies": {
+    "google": "Todas las familias",
+    "valueInCode": "כל המשפחות"
+  },
+  "allGroups": {
+    "google": "Todos los equipos",
+    "valueInCode": "כל הקבוצות"
+  },
+  "allOthers": {
+    "google": "Todo lo demas",
+    "valueInCode": "כל השאר"
+  },
+  "allRegions": {
+    "google": "Todas las areas",
+    "valueInCode": "כל האזורים"
+  },
+  "alreadyExist": {
+    "google": "Ya existe en el sistema.",
+    "valueInCode": "כבר קיים במערכת"
+  },
+  "alreadyExistsInLine": {
+    "google": "Ya existe un archivo en una fila",
+    "valueInCode": "כבר קיים בקובץ בשורה"
+  },
+  "andMoveToUpdateFamilies": {
+    "google": "Y pasar a las familias para una actualización",
+    "valueInCode": "ולהעביר למשפחות לעדכון"
+  },
+  "answer": {
+    "google": "Responder",
+    "valueInCode": "תשובה"
+  },
+  "appartment": {
+    "google": "Departamento",
+    "valueInCode": "דירה"
+  },
+  "archiveCurrentDelivery": {
+    "google": "¿Mover el envío actual al archivo?",
+    "valueInCode": "העבר משלוח נוכחי לארכיב?"
+  },
+  "archiveDeliveries": {
+    "google": "Transferencia de archivo",
+    "valueInCode": "העברה לארכיב"
+  },
+  "archiveDeliveriesHelp": {
+    "google": "Pasar al archivo solo hará entregas que se hayan entregado o que hayan encontrado un problema. El archivo se puede ver en cualquier momento en la pantalla Historial de envío",
+    "valueInCode": "העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים"
+  },
+  "archiveDelivery": {
+    "google": "Archivo",
+    "valueInCode": "העבר לארכיון"
+  },
+  "archiveFinishedDeliveries": {
+    "google": "Migrar archivos completados",
+    "valueInCode": "העבר משלוחים שהסתיימו לארכיון"
+  },
+  "areYouSureYouWantToCancelAssignmentTo": {
+    "google": "¿Estás seguro de que quieres desvincular?",
+    "valueInCode": "האם אתה בטוח שאתה רוצה לבטל שיוך ל"
+  },
+  "areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies": {
+    "google": "¿Está seguro de que desea marcar como entregado con éxito a",
+    "valueInCode": "האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל"
+  },
+  "asignAnyDelivery": {
+    "google": "Pertenece a algún envío",
+    "valueInCode": "שייך משלוח כלשהו"
+  },
+  "asignClosestDelivery": {
+    "google": "Pertenece al envío más cercano",
+    "valueInCode": "שייך משלוח הכי קרוב"
+  },
+  "asignDeliveriesTo": {
+    "google": "Envíos asociados a",
+    "valueInCode": "שיוך משלוחים ל"
+  },
+  "asignVideoHelp": {
+    "google": "Para obtener un tutorial sobre la asociación de envío y el día del evento, haga clic aquí",
+    "valueInCode": "לסרטון הדרכה על שיוך משלוחים ויום האירוע לחצו כאן"
+  },
+  "assign": {
+    "google": "Pertenecer a",
+    "valueInCode": "שייכי"
+  },
+  "assignAFamilyGroup": {
+    "google": "Afiliación con un grupo familiar",
+    "valueInCode": "שיוך לקבוצת משפחות"
+  },
+  "assignDeliveryMenu": {
+    "google": "Envíos voluntarios asociados",
+    "valueInCode": "שיוך משלוחים למתנדב"
+  },
+  "assignedDriver": {
+    "google": "Conductor asociado",
+    "valueInCode": "נהג משוייך"
+  },
+  "assignerOrOrg": {
+    "google": "El teléfono del que salió el SMS",
+    "valueInCode": "הטלפון ממנו יצא הSMS"
+  },
+  "AssignEscortComponent": {
+    "google": "Afiliación de acompañantes",
+    "valueInCode": "שיוך מלווים"
+  },
+  "assignHelpText": {
+    "google": "Ingrese el teléfono y el nombre del voluntario, y luego puede elegir un grupo, ciudad y canastas para asociar",
+    "valueInCode": "אנא הזיני את הטלפון של המתנדב ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים לשייך"
+  },
+  "assignmentCanceledFor": {
+    "google": "La afiliación familiar fue abolida",
+    "valueInCode": "בוטל השיוך למשפחת"
+  },
+  "assignRequiresADistributionList": {
+    "google": "Los voluntarios no pueden asociarse porque no se ha seleccionado una lista de distribución. Seleccione una lista de distribución (arriba a la izquierda donde está escrita \"Todas las listas\")",
+    "valueInCode": "לא ניתן לשייך מתנדבים מכיוון שלא נבחרה רשימת חלוקה. אנא בחרו רשימת חלוקה (למעלה מצד שמאל איפה שכתוב \"כל הרשימות\")"
+  },
+  "atAddress": {
+    "google": "A",
+    "valueInCode": "בכתובת"
+  },
+  "atThisLocationThereAre": {
+    "google": "En este punto hay",
+    "valueInCode": "בנקודה זו יש"
+  },
+  "badAddressHelpLine1": {
+    "google": "El campo \"Dirección\" debe compararse con el campo \"Dirección tal como lo entiende Google\".",
+    "valueInCode": "יש להשוות בין השדה \"כתובת\" לשדה \"כתובת כפי שגוגל הבין\"."
+  },
+  "badAddressHelpLine2": {
+    "google": "Una dirección inexacta podría llevar al voluntario a un lugar equivocado en Waze.",
+    "valueInCode": "כתובת לא מדוייקת עלולה להוביל המתנדב למקום לא נכון בוייז."
+  },
+  "badAddressHelpStart": {
+    "google": "Google no pudo encontrar la dirección exactamente",
+    "valueInCode": "גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת"
+  },
+  "badAddressTitle": {
+    "google": "Tenga en cuenta, dirección inexacta",
+    "valueInCode": "שים לב, כתובת לא מדוייקת"
+  },
+  "basket": {
+    "google": "cesta",
+    "valueInCode": "סל"
+  },
+  "basketNotDelivered": {
+    "google": "La cesta no fue entregada",
+    "valueInCode": "הסל לא נמסר"
+  },
+  "basketType": {
+    "google": "Tipo de cesta",
+    "valueInCode": "סוג סל"
+  },
+  "basketTypeName": {
+    "google": "Nombre",
+    "valueInCode": "שם"
+  },
+  "basketTypes": {
+    "google": "Tipos de cestas",
+    "valueInCode": "סוגי סלים"
+  },
+  "birthDate": {
+    "google": "Fecha de nacimiento",
+    "valueInCode": "תאריך לידה"
+  },
+  "boxes1Name": {
+    "google": "Platos",
+    "valueInCode": "מנות"
+  },
+  "boxes1NameCaption": {
+    "google": "Nombre cantidad 1 en tipos de cesta",
+    "valueInCode": "שם כמות 1 בסוגי סלים"
+  },
+  "boxes2Name": {
+    "google": "Algo más",
+    "valueInCode": "משהו אחר"
+  },
+  "boxes2NameCaption": {
+    "google": "Nombre cantidad 2 en tipos de cesta",
+    "valueInCode": "שם כמות 2 בסוגי סלים"
+  },
+  "by": {
+    "google": "Por",
+    "valueInCode": "על ידי"
+  },
+  "byBaskets": {
+    "google": "Por cestas",
+    "valueInCode": "לפי סלים"
+  },
+  "byGroups": {
+    "google": "Por grupos",
+    "valueInCode": "לפי קבוצות"
+  },
+  "callEscort": {
+    "google": "Llamar al prestamista",
+    "valueInCode": "התקשר למלווה"
+  },
+  "callPerson": {
+    "google": "Llamada",
+    "valueInCode": "התקשר ל"
+  },
+  "cancel": {
+    "google": "vacío",
+    "valueInCode": "בטל"
+  },
+  "cancelAllAssignments": {
+    "google": "Anular la asignación de todos los envíos",
+    "valueInCode": "בטל שיוך לכל המשלוחים"
+  },
+  "cancelAsignment": {
+    "google": "Desvincular",
+    "valueInCode": "בטל שיוך"
+  },
+  "cancelAssignmentFor": {
+    "google": "Cancelar una afiliación voluntaria a",
+    "valueInCode": "האם לבטל שיוך מתנדב ל"
+  },
+  "cancelAssignmentForHelperFamilies": {
+    "google": "Anular la asignación de todos los envíos a un voluntario",
+    "valueInCode": "בטל שיוך כל המשלוחים למתנדב"
+  },
+  "cantMergeOneFamily": {
+    "google": "No hay nada para fusionar una familia",
+    "valueInCode": "אין מה למזג משפחה אחת"
+  },
+  "checkAddress": {
+    "google": "Comprobar dirección",
+    "valueInCode": "בדוק כתובת"
+  },
+  "checkDuplicatePhones": {
+    "google": "Mira los teléfonos duales",
+    "valueInCode": "בדוק טלפונים כפולים"
+  },
+  "checkIfFamilyExistsInDb": {
+    "google": "Compruebe si ya existe una familia en la base de datos",
+    "valueInCode": "בדוק אם משפחה כבר קיימת במאגר הנתונים"
+  },
+  "checkIfFamilyExistsInFile": {
+    "google": "Compruebe si ya existe una familia en el archivo de Excel",
+    "valueInCode": "בדוק אם משפחה כבר קיימת בקובץ האקסל"
+  },
+  "city": {
+    "google": "Ciudad",
+    "valueInCode": "עיר"
+  },
+  "cityAutomaticallyUpdatedByGoogle": {
+    "google": "Ciudad (actualizada automáticamente)",
+    "valueInCode": "עיר (מתעדכן אוטומטית)"
+  },
+  "clearAllVolunteerComments": {
+    "google": "Notas claras para todos los voluntarios.",
+    "valueInCode": "נקה הערות לכל המתנדבים"
+  },
+  "clearAllVolunteerCommentsAreYouSure": {
+    "google": "¿Estás seguro de que deseas borrar todas las notas para los voluntarios?",
+    "valueInCode": "האם אתה בטוח שברצונך לנקות את כל ההערות למתנדבים?"
+  },
+  "clearEscortInfo": {
+    "google": "Información clara de acompañantes para todos los voluntarios.",
+    "valueInCode": "נקה נתוני ליווי לכל המתנדבים"
+  },
+  "clearEscortInfoAreYouSure": {
+    "google": "¿Está seguro de que desea borrar los datos del prestamista para todos los voluntarios?",
+    "valueInCode": "האם אתה בטוח שברצונך לנקות את נתוני המלווים לכל המתנדבים?"
+  },
+  "clearHelperInfo": {
+    "google": "Borrar información voluntaria",
+    "valueInCode": "נקה פרטי מתנדב"
+  },
+  "clearVolunteer": {
+    "google": "Anular la asignación de un voluntario",
+    "valueInCode": "בטל שיוך למתנדב"
+  },
+  "clickedByMistake": {
+    "google": "Se hace clic accidentalmente - Devolver el envío a distribución",
+    "valueInCode": "נלחץ בטעות - החזר למשלוחים לחלוקה"
+  },
+  "clickForTutorialVideo": {
+    "google": "Para ver un breve video tutorial, haga clic aquí",
+    "valueInCode": "לסרטון הדרכה קצר, לחצו כאן"
+  },
+  "close": {
+    "google": "cerrado",
+    "valueInCode": "סגור"
+  },
+  "columnSelectionInFile": {
+    "google": "Elegir columnas en un archivo",
+    "valueInCode": "בחירת עמודות בקובץ"
+  },
+  "commentForAllDeliveries": {
+    "google": "Nota para aparecer para todos los envíos",
+    "valueInCode": "הערה שתופיע לכל המשלוחים"
+  },
+  "commentForProblem": {
+    "google": "Nos encantaría escribir un comentario sobre lo que viste y fuiste",
+    "valueInCode": "נשמח אם תכתוב לנו הערה על מה שראית והיה"
+  },
+  "commentForSuccessDelivery": {
+    "google": "Nos encantaría escribir un comentario sobre lo que viste y fuiste",
+    "valueInCode": "נשמח אם תכתוב לנו הערה על מה שראית והיה"
+  },
+  "commentForSuccessLeft": {
+    "google": "Especifique dónde dejó la canasta y con quién habló",
+    "valueInCode": "אנא פרט היכן השארת את הסל ועם מי דיברת"
+  },
+  "commentForVolunteer": {
+    "google": "Una nota para presentarse al voluntario",
+    "valueInCode": "הערה שתופיע למתנדב"
+  },
+  "commentsWritteByVolunteer": {
+    "google": "Comentarios escritos por el voluntario cuando entregó",
+    "valueInCode": "הערות שכתב המתנדב כשמסר"
+  },
+  "company": {
+    "google": "Sociedad",
+    "valueInCode": "חברה"
+  },
+  "compareTo": {
+    "google": "Opuesto",
+    "valueInCode": "מול"
+  },
+  "completed": {
+    "google": "Terminado",
+    "valueInCode": "הושלמו"
+  },
+  "confirm": {
+    "google": "cuales",
+    "valueInCode": "אשר"
+  },
+  "confirmPassword": {
+    "google": "verificación de contraseña",
+    "valueInCode": "אישור סיסמה"
+  },
+  "copyAddress": {
+    "google": "Dirección de copia",
+    "valueInCode": "העתק כתובת"
+  },
+  "copyLink": {
+    "google": "Copiar link",
+    "valueInCode": "העתק קישור"
+  },
+  "copyMessageWithLink": {
+    "google": "Copiar mensaje con enlace",
+    "valueInCode": "העתק הודעה עם קישור"
+  },
+  "copyright": {
+    "google": " Hagai - una aplicación para distribuir cestas de comida",
+    "valueInCode": " חגי - אפליקציה לחלוקת סלי מזון"
+  },
+  "courierAsignDate": {
+    "google": "Fecha de voluntariado",
+    "valueInCode": "מועד שיוך למתנדב"
+  },
+  "courierAsignUser": {
+    "google": "¿Quién pertenece al voluntario?",
+    "valueInCode": "מי שייכה למתנדב"
+  },
+  "createDate": {
+    "google": "Fecha de adición",
+    "valueInCode": "מועד הוספה"
+  },
+  "createUser": {
+    "google": "Usuario agrega",
+    "valueInCode": "משתמש מוסיף"
+  },
+  "dates": {
+    "google": "fechas",
+    "valueInCode": "תאריכים"
+  },
+  "defaultBasketType": {
+    "google": "Tipo de cesta predeterminado",
+    "valueInCode": "סוג סל ברירת מחדל"
+  },
+  "defaultDistributionListName": {
+    "google": "Distribucion de comida",
+    "valueInCode": "חלוקת מזון"
+  },
+  "defaultHelpPhone": {
+    "google": "El teléfono del que salió el SMS",
+    "valueInCode": "הטלפון ממנו יצא הSMS"
+  },
+  "defaultOrgName": {
+    "google": "El nombre de mi organización",
+    "valueInCode": "שם הארגון שלי"
+  },
+  "defaultPhonePrefixForExcelImport": {
+    "google": "Prefijo predeterminado del teléfono de recepción de Excel",
+    "valueInCode": "קידומת טלפון ברירת מחדל בקליטה מאקסל"
+  },
+  "defaultQuantity": {
+    "google": "Número de cestas predeterminadas",
+    "valueInCode": "מספר סלים ברירת מחדל"
+  },
+  "defaultSelfPickup": {
+    "google": "Ven a tomar un default",
+    "valueInCode": "באים לקחת ברירת מחדל"
+  },
+  "defaultSmsText": {
+    "google": "Hola, voluntario!\\n¡Paquete compartido! ¡Organización! Haga clic en: ¡Sitio!\\nGracias enviando!",
+    "valueInCode": "שלום !מתנדב!\nלחלוקת חבילות !ארגון! לחץ על: !אתר! \nתודה !שולח!"
+  },
+  "defaultStatusType": {
+    "google": "Estado de envío predeterminado para nuevas familias",
+    "valueInCode": "סטטוס משלוח ברירת מחדל למשפחות חדשות"
+  },
+  "defaultVolunteer": {
+    "google": "Voluntario predeterminado",
+    "valueInCode": "מתנדב ברירת מחדל"
+  },
+  "defaulyHelpPhoneExplanation": {
+    "google": "Cuando se envía un mensaje de texto a un voluntario, se muestra como si viniera del teléfono de alguien que pertenece a las familias y hace clic en el botón Enviar SMS. Puede configurar un nombre y teléfono alternativos aquí",
+    "valueInCode": "כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את המשפחות ולחץ על הכפתור שלח SMS. ניתן להגדיר כאן שם חלופי וטלפון חלופי"
+  },
+  "defineDeliveriesForFamiliesInExcel": {
+    "google": "Configurar envíos para todas las familias de Axel",
+    "valueInCode": "הגדר משלוחים לכל המשפחות מהאקסל"
+  },
+  "delayed": {
+    "google": "Se retrasan",
+    "valueInCode": "מתעכבים"
+  },
+  "deleteDeliveries": {
+    "google": "Eliminar envíos",
+    "valueInCode": "מחק משלוחים"
+  },
+  "deleteDeliveriesHelp": {
+    "google": "Nota: Al eliminar el envío no se eliminará la familia de las listas. Para eliminar la familia de las listas, actualice el estado de la familia. La eliminación solo se realizará para envíos no publicados",
+    "valueInCode": "שים לב - מחיקת המשלוח לא תוציא את המשפחה מהרשימות - כדי להוציא את המשפחה מהרשימות יש לבצע עדכון לסטטוס המשפחה. המחיקה תתבצע רק עבור משלוחים שטרם נמסרו"
+  },
+  "deleteDelivery": {
+    "google": "Eliminar envío",
+    "valueInCode": "מחק משלוח"
+  },
+  "deleteExcelSettings": {
+    "google": "Eliminar configuración",
+    "valueInCode": "מחק הגדרות"
+  },
+  "deleteExistingComment": {
+    "google": "Eliminar una nota anterior",
+    "valueInCode": "מחק הערה קודמת"
+  },
+  "deleteFamilies": {
+    "google": "Eliminar datos",
+    "valueInCode": "מחיקת נתונים"
+  },
+  "deleteFamiliesButton": {
+    "google": "Eliminar todas las familias en estado \"eliminar\"",
+    "valueInCode": "מחק את כל המשפחות בסטטוס \"למחיקה\""
+  },
+  "deleteFamiliesHelp": {
+    "google": "Al hacer clic en este botón, se borrarán del sistema todas las familias con el estado \"eliminar\". Se preservará su historial de envíos.",
+    "valueInCode": "לחיצה על הכפתור תמחוק את כל המשפחות בסטטוס \"למחיקה\" מהמערכת. היסטורית המשלוחים שלהן תישמרנה."
+  },
+  "deletePendingDeliveries": {
+    "google": "Eliminar envíos no publicados a estas familias",
+    "valueInCode": "מחק משלוחים שטרם נמסרו למשפחות אלו"
+  },
+  "delivered": {
+    "google": "Entregado",
+    "valueInCode": "נמסר"
+  },
+  "deliveredButtonText": {
+    "google": "Entregué el paquete con éxito",
+    "valueInCode": "מסרתי את החבילה בהצלחה"
+  },
+  "deliveredByBaskets": {
+    "google": "Entregado por cestas",
+    "valueInCode": "נמסרו לפי סלים"
+  },
+  "deliveredSuccessfully": {
+    "google": "Entregado exitosamente",
+    "valueInCode": "נמסר בהצלחה"
+  },
+  "deliveries": {
+    "google": "Envíos",
+    "valueInCode": "משלוחים"
+  },
+  "deliveriesAssignAllOfThem": {
+    "google": " Entregas: ¿asociarlas a todas?",
+    "valueInCode": " משלוחים - לשייך את כולם?"
+  },
+  "deliveriesAssigned": {
+    "google": "Los envíos están asociados",
+    "valueInCode": "משלוחים שוייכו "
+  },
+  "deliveriesAtSameAddress": {
+    "google": "Envíos a la misma dirección, ¿también pertenecen?",
+    "valueInCode": "משלוחים באותה הכתובת, האם לשייך גם אותם?"
+  },
+  "deliveriesDoneInTheLastTwoDays": {
+    "google": "Entregas distribuidas en los últimos dos días.",
+    "valueInCode": "משלוחים שחולקו ביומיים האחרונים"
+  },
+  "deliveriesFor": {
+    "google": "Envíos para",
+    "valueInCode": "משלוחים עבור"
+  },
+  "deliveriesFrom": {
+    "google": "Envíos desde",
+    "valueInCode": "משלוחים מ"
+  },
+  "deliveriesToDistribute": {
+    "google": "Entregas distribuidas",
+    "valueInCode": "משלוחים לחלוקה"
+  },
+  "deliveriesUpdated": {
+    "google": "Envíos actualizados",
+    "valueInCode": "משלוחים עודכנו"
+  },
+  "deliveryCenterAddress": {
+    "google": "Dirección del centro de envío",
+    "valueInCode": "כתובת מרכז השילוח"
+  },
+  "deliveryCreateDate": {
+    "google": "Fecha de asignación",
+    "valueInCode": "מועד הקצאה"
+  },
+  "deliveryCreatedSuccesfully": {
+    "google": "Entrega creada con éxito",
+    "valueInCode": "משלוח נוצר בהצלחה"
+  },
+  "deliveryCreateUser": {
+    "google": "Usuario final",
+    "valueInCode": "משתמש מקצה"
+  },
+  "deliveryDefaults": {
+    "google": "Valores predeterminados de entrega",
+    "valueInCode": "ברירות מחדל למשלוח"
+  },
+  "deliveryDetails": {
+    "google": "Tarjeta de embarque",
+    "valueInCode": "כרטיס משלוח"
+  },
+  "deliveryDetailsAsDisplayedToVolunteer": {
+    "google": "Detalles de la familia tal como se le presentan al voluntario",
+    "valueInCode": "פרטי המשפחה כפי שיופיעו למתנדב"
+  },
+  "deliveryDetailsFor": {
+    "google": "Detalles de envío para",
+    "valueInCode": "פרטי משלוח עבור"
+  },
+  "DeliveryFollowUpComponent": {
+    "google": "Seguimiento voluntario",
+    "valueInCode": "מעקב מתנדבים"
+  },
+  "DeliveryHistoryComponent": {
+    "google": "Historial de envío",
+    "valueInCode": "היסטורית משלוחים"
+  },
+  "deliveryInfo": {
+    "google": "detalles de la entrega",
+    "valueInCode": "פרטי משלוח"
+  },
+  "deliveryStatus": {
+    "google": "Estado del envío",
+    "valueInCode": "סטטוס משלוח"
+  },
+  "deliveryStatusDate": {
+    "google": "Cuando",
+    "valueInCode": "מתי"
+  },
+  "deliverySummary": {
+    "google": "Resumen de envío",
+    "valueInCode": "סיכום משלוח"
+  },
+  "delveriesInProgress": {
+    "google": "Las familias estan esperando",
+    "valueInCode": "משפחות מחכות"
+  },
+  "delveriesSuccesfull": {
+    "google": "Entregado",
+    "valueInCode": "נמסרו"
+  },
+  "dialForHelp": {
+    "google": "Llamar por ayuda",
+    "valueInCode": "חייג לקבלת עזרה"
+  },
+  "dialTo": {
+    "google": "Marcar a",
+    "valueInCode": "חייג ל"
+  },
+  "displayFamiliesOf": {
+    "google": "Exhibirá a las familias de",
+    "valueInCode": "האם להציג את המשפחות של"
+  },
+  "displayFamilyAsVolunteerWillSeeIt": {
+    "google": "Ver a una familia como voluntaria la verá",
+    "valueInCode": "הצג משפחה כפי שתנדב יראה אותה"
+  },
+  "distributionCity": {
+    "google": "Una ciudad para distribuir",
+    "valueInCode": "עיר לחלוקה"
+  },
+  "distributionListAsCurrentDelivery": {
+    "google": "Lista de distribución como en entrega actual",
+    "valueInCode": "רשימת חלוקה כמו במשלוח הנוכחי"
+  },
+  "distributionLists": {
+    "google": "Listas de distribución",
+    "valueInCode": "רשימות חלוקה"
+  },
+  "distributionListsHelp": {
+    "google": "Estos grupos se presentarán con afiliación familiar y permitirán un filtrado rápido",
+    "valueInCode": "קבוצות אלו יוצגו בשיוך משפחות ויאפשרו סינון מהיר"
+  },
+  "DistributionMapComponent": {
+    "google": "Mapa de distribución",
+    "valueInCode": "מפת הפצה"
+  },
+  "doneVolunteers": {
+    "google": "Terminar",
+    "valueInCode": "סיימו"
+  },
+  "drawingHelpText": {
+    "google": "Haga clic en el mapa en varios puntos para resaltar el área que desea y haga doble clic para finalizar",
+    "valueInCode": "אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום"
+  },
+  "DuplicateFamiliesComponent": {
+    "google": "Buscar familias duplicadas",
+    "valueInCode": "חיפוש משפחות כפולות"
+  },
+  "empty": {
+    "google": "blanco",
+    "valueInCode": "ריק"
+  },
+  "enableSelfPickupModule": {
+    "google": "Hay familias que vienen a sacar del centro de división.",
+    "valueInCode": "ישנן משפחות שבאות לקחת ממרכז החלוקה"
+  },
+  "enterFirstTime": {
+    "google": "Debido a que aún no tiene una contraseña establecida, ingrese por primera vez, ingrese su número de teléfono sin contraseña y haga clic en el botón \"Iniciar sesión\". El sistema le pedirá que establezca una contraseña y esa será su contraseña.\\n  Exitosamente",
+    "valueInCode": "מכיוון שלא מוגדרת לך סיסמה עדיין - אנא הכנס בפעם הראשונה, על ידי הקלדת מספר הטלפון שלך ללא סיסמה ולחיצה על הכפתור \"כניסה\". המערכת תבקש שתגדיר סיסמה וזו תהיה סיסמתך.\n  בהצלחה"
+  },
+  "entrance": {
+    "google": "Entrada",
+    "valueInCode": "כניסה"
+  },
+  "error": {
+    "google": "Error",
+    "valueInCode": "שגיאה"
+  },
+  "errors": {
+    "google": "Errores",
+    "valueInCode": "שגיאות"
+  },
+  "escoring": {
+    "google": "Acompañado por",
+    "valueInCode": "מלווה את"
+  },
+  "escort": {
+    "google": "acompañado",
+    "valueInCode": "מלווה"
+  },
+  "estimatedTravelTime": {
+    "google": "Tiempo total de viaje estimado",
+    "valueInCode": "סה\"כ זמן נסיעה מוערך"
+  },
+  "excelColumnIgnore": {
+    "google": "No absorber",
+    "valueInCode": "לא לקלוט"
+  },
+  "excelCompareToThisFamilyAnd": {
+    "google": "Compare con esta familia y",
+    "valueInCode": "השווה מול משפחה זו ו"
+  },
+  "excelImportAutoAddValues": {
+    "google": "Agregue valores a las tablas de infraestructura sin preguntar",
+    "valueInCode": "הוסף בלי לשאול ערכים לטבלאות התשתית"
+  },
+  "excelImportFinalSettings": {
+    "google": "Configuraciones recientes",
+    "valueInCode": "הגדרות אחרונות"
+  },
+  "excelImportResults": {
+    "google": "Resultados",
+    "valueInCode": "תוצאות"
+  },
+  "excelImportVideo": {
+    "google": "Para un tutorial sobre Absorción de Excel, haga clic aquí",
+    "valueInCode": "לסרטון הדרכה על קליטה מאקסל לחץ כאן"
+  },
+  "excelNoneOfTheseFamiliesMatch": {
+    "google": " Ninguna de estas familias encaja en la línea de Axel,",
+    "valueInCode": " אף אחת מהמשפחות הללו אינה מתאימה לשורה באקסל, "
+  },
+  "excelReadLineAnyhow": {
+    "google": "aunque",
+    "valueInCode": "בכל זאת"
+  },
+  "excelSheel": {
+    "google": "sábana",
+    "valueInCode": "גליון"
+  },
+  "excelSheet": {
+    "google": "sábana",
+    "valueInCode": "גליון"
+  },
+  "excelSheetIsEmpty": {
+    "google": "blanco",
+    "valueInCode": "ריק"
+  },
+  "executeExcelImport": {
+    "google": "Haciendo la absorción",
+    "valueInCode": "ביצוע הקליטה"
+  },
+  "existingFamilies": {
+    "google": "Familias existentes",
+    "valueInCode": "משפחות קיימות"
+  },
+  "existingVolunteers": {
+    "google": "Voluntarios existentes",
+    "valueInCode": "מתנדבים קיימים"
+  },
+  "existsIdenticat": {
+    "google": "Hay lo mismo",
+    "valueInCode": "קיימת זהה"
+  },
+  "existsInRemovedFromListStrategy": {
+    "google": "Qué hacer si se descubre que una familia coincidente está excluida de las listas",
+    "valueInCode": "מה לעשות אם נמצאה משפחה תואמת המסומנת כהוצא מהרשימות"
+  },
+  "existsWithAnUpdate": {
+    "google": "Existente con actualización",
+    "valueInCode": "קיימת עם עדכון"
+  },
+  "exit": {
+    "google": "Salida",
+    "valueInCode": "יציאה"
+  },
+  "exportToExcel": {
+    "google": "Exportar a Excel",
+    "valueInCode": "יצוא לאקסל"
+  },
+  "failedDeliveries": {
+    "google": "Envíos encontré un problema",
+    "valueInCode": "משלוחים שנתקלתי בבעיה"
+  },
+  "familesOnStreet": {
+    "google": "Familias en la calle",
+    "valueInCode": "משפחות ברחוב"
+  },
+  "families": {
+    "google": "Familias",
+    "valueInCode": "משפחות"
+  },
+  "familiesAddedSuccesfull": {
+    "google": "Se agregaron exitosamente las filas",
+    "valueInCode": "הוספת השורות הסתיימה בהצלחה"
+  },
+  "familiesAt": {
+    "google": "Familias b",
+    "valueInCode": "משפחות ב"
+  },
+  "FamiliesComponent": {
+    "google": "Familias",
+    "valueInCode": "משפחות"
+  },
+  "familiesForUpdate": {
+    "google": "Familias para actualizar",
+    "valueInCode": "משפחות לעדכון"
+  },
+  "familiesUpdated": {
+    "google": "Las familias han sido actualizadas",
+    "valueInCode": "משפחות עודכנו"
+  },
+  "familiesWithSimilarInfo": {
+    "google": "Familias con detalles similares",
+    "valueInCode": "משפחות עם פרטים דומים"
+  },
+  "family": {
+    "google": "Familia",
+    "valueInCode": "משפחה"
+  },
+  "familyAdditionalInfo": {
+    "google": "Más detalles",
+    "valueInCode": "פרטים נוספים"
+  },
+  "familyAlreadyHasAnActiveDelivery": {
+    "google": "Esta familia ya tiene envíos del mismo tipo.",
+    "valueInCode": "למשפחה זו כבר קיים משלוח מאותו סוג האם להוסיף עוד אחד?"
+  },
+  "familyAlreadyRemovedFromList": {
+    "google": "Familia actualizada en la base de datos como eliminada de las listas",
+    "valueInCode": "משפחה מעודכנת בבסיס הנתונים כהוצא מהרשימות"
+  },
+  "familyComponentVideos": {
+    "google": "Para ver videos tutoriales en una pantalla familiar, haga clic aquí",
+    "valueInCode": "לסרטוני הדרכה על מסך משפחות, לחצו כאן"
+  },
+  "familyDeliveries": {
+    "google": "Envíos familiares",
+    "valueInCode": "משלוחים למשפחה"
+  },
+  "FamilyDeliveriesComponent": {
+    "google": "Envíos",
+    "valueInCode": "משלוחים"
+  },
+  "familyDetails": {
+    "google": "Información familiar",
+    "valueInCode": "פרטי משפחה"
+  },
+  "familyGroup": {
+    "google": "Grupos de afiliación familiar",
+    "valueInCode": "קבוצות שיוך משפחה"
+  },
+  "familyGroups": {
+    "google": "Grupos de afiliación familiar",
+    "valueInCode": "קבוצות שיוך משפחה"
+  },
+  "familyHelpContact": {
+    "google": "Datos de contacto para más detalles (COO)",
+    "valueInCode": "איש קשר לבירור פרטים (עו\"ס)"
+  },
+  "familyHelpPhone": {
+    "google": "Contacto para aclaraciones según lo definido para la familia",
+    "valueInCode": "איש קשר לבירור כפי שמוגדר למשפחה"
+  },
+  "familyHelpPhone1": {
+    "google": "Abogado telefónico 1",
+    "valueInCode": "עו\"ס טלפון 1"
+  },
+  "familyHelpPhone2": {
+    "google": "Abogado telefónico 2",
+    "valueInCode": "עו\"ס טלפון 2"
+  },
+  "familyIdInHagaiApp": {
+    "google": "ID de familia en la aplicación de vacaciones",
+    "valueInCode": "id של המשפחה באפליקצית חגי"
+  },
+  "familyMembers": {
+    "google": "Número de personas",
+    "valueInCode": "מספר נפשות"
+  },
+  "familyName": {
+    "google": "Nombre",
+    "valueInCode": "שם"
+  },
+  "familySelfPickup": {
+    "google": "¿Ven y toma el envío y no necesitas envío?",
+    "valueInCode": "יבואו לקחת את המשלוח ואינם צריכים משלוח?"
+  },
+  "familySource": {
+    "google": "Referencia",
+    "valueInCode": "גורם מפנה"
+  },
+  "familySourcePhone": {
+    "google": "Punto de inflexión del teléfono",
+    "valueInCode": "טלפון גורם מפנה"
+  },
+  "familySources": {
+    "google": "Factores referentes",
+    "valueInCode": "גורמים מפנים"
+  },
+  "familyStatus": {
+    "google": "estado",
+    "valueInCode": "סטטוס"
+  },
+  "familyUniqueId": {
+    "google": "Una identificación unifamiliar",
+    "valueInCode": "מזהה חד ערכי למשפחה"
+  },
+  "familyWasNotFound": {
+    "google": "No se encontró familia",
+    "valueInCode": "משפחה לא נמצאה"
+  },
+  "filter": {
+    "google": "filtración",
+    "valueInCode": "סינון"
+  },
+  "filterBasketType": {
+    "google": "Filtro tipo cesta",
+    "valueInCode": "סינון סוג סל"
+  },
+  "filterCity": {
+    "google": "Filtrado de la ciudad",
+    "valueInCode": "סינון עיר"
+  },
+  "filterFamilyGroups": {
+    "google": "Filtrando un grupo familiar",
+    "valueInCode": "סינון קבוצת משפחה"
+  },
+  "filterRegion": {
+    "google": "Filtrado de área",
+    "valueInCode": "סינון אזור"
+  },
+  "findHelperByName": {
+    "google": "Busque un voluntario por su nombre",
+    "valueInCode": "חפש מתנדב לפי שם"
+  },
+  "firstName": {
+    "google": "Nombre de pila",
+    "valueInCode": "שם פרטי"
+  },
+  "firstNameShort": {
+    "google": "Privado",
+    "valueInCode": "פרטי"
+  },
+  "floor": {
+    "google": "suelo",
+    "valueInCode": "קומה"
+  },
+  "for": {
+    "google": "A",
+    "valueInCode": "ל"
+  },
+  "forFamilies": {
+    "google": "Para familias",
+    "valueInCode": "למשפחות"
+  },
+  "forFamily": {
+    "google": "Para la familia",
+    "valueInCode": "למשפחת"
+  },
+  "forHelp": {
+    "google": "Por ayuda",
+    "valueInCode": "לקבלת עזרה"
+  },
+  "freeText1ForVolunteer": {
+    "google": "Texto libre 1 para voluntario",
+    "valueInCode": "מלל חופשי 1 למתנדב"
+  },
+  "freeText2ForVolunteer": {
+    "google": "Texto libre 2 para voluntario",
+    "valueInCode": "מלל חופשי 2 למתנדב"
+  },
+  "freezeDeliveries": {
+    "google": "Congelar envíos",
+    "valueInCode": "הקפא משלוחים"
+  },
+  "freezeDeliveriesHelp": {
+    "google": "La entrega \"congelada\" es una entrega que no se asociará con ningún voluntario hasta que se envíe la \"entrega\". La congelación se usa para detener temporalmente ciertos envíos hasta que puedan descongelarse y enviarse. La congelación solo se realizará para envíos que estén listos para la entrega.",
+    "valueInCode": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח. "
+  },
+  "freezeDelivery": {
+    "google": "Envío congelado",
+    "valueInCode": "הקפא משלוח"
+  },
+  "freezeDeliveryHelp": {
+    "google": "La entrega \"congelada\" es una entrega que no se asociará con ningún voluntario hasta que se envíe la \"entrega\". La congelación se usa para detener temporalmente ciertos envíos hasta que puedan descongelarse y enviarse. Congelar el envío a",
+    "valueInCode": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל"
+  },
+  "fromDate": {
+    "google": "Con fecha de",
+    "valueInCode": "מתאריך"
+  },
+  "frozen": {
+    "google": "congelado",
+    "valueInCode": "מוקפא"
+  },
+  "frozens": {
+    "google": "Congelado",
+    "valueInCode": "קפואים"
+  },
+  "GeocodeComponent": {
+    "google": "GEOCODE",
+    "valueInCode": "GEOCODE"
+  },
+  "googleApiProblem": {
+    "google": "¿Cuál es el problema de Google?",
+    "valueInCode": "מה הבעיה של גוגל"
+  },
+  "googleSearchAddress": {
+    "google": "Busca en Google una dirección",
+    "valueInCode": "חפש כתובת בגוגל"
+  },
+  "gotoDeliveriesScreen": {
+    "google": "¿Cambia a una pantalla de envío o permanece en esa pantalla?",
+    "valueInCode": "האם לעבור למסך משלוחים או להשאר במסך זה?"
+  },
+  "gpsLocationNear": {
+    "google": "Punto GPS cerca",
+    "valueInCode": "נקודת GPS ליד"
+  },
+  "hello": {
+    "google": "Paz",
+    "valueInCode": "שלום"
+  },
+  "helperComment": {
+    "google": "Nota",
+    "valueInCode": "הערה"
+  },
+  "HelpersComponent": {
+    "google": "Voluntarios",
+    "valueInCode": "מתנדבים"
+  },
+  "helpName": {
+    "google": "nombre alternativo",
+    "valueInCode": "שם חלופי"
+  },
+  "helpPhone": {
+    "google": "Teléfono alternativo",
+    "valueInCode": "טלפון חלופי"
+  },
+  "hideHelperCompany": {
+    "google": "Ocultar una empresa voluntaria",
+    "valueInCode": "הסתר חברה למתנדב"
+  },
+  "houseNumber": {
+    "google": "número de casa",
+    "valueInCode": "מספר בית"
+  },
+  "iconForWebSite": {
+    "google": "Ícono del sitio web",
+    "valueInCode": "אייקון לאתר"
+  },
+  "identicalPhone": {
+    "google": " El mismo número de teléfono",
+    "valueInCode": " מספר טלפון זהה"
+  },
+  "identicalSocialSecurityNumber": {
+    "google": "Mismo número de identidad",
+    "valueInCode": "מספר זהות זהה"
+  },
+  "ifBasketTypeInExcelIsDifferentFromExistingOneCreateNewDelivery": {
+    "google": "Si hay un envío para una familia con un tipo de cesta diferente, agregue uno nuevo",
+    "valueInCode": "אם קיים משלוח למשפחה עם סוג סל שונה, הוסף משלוח חדש"
+  },
+  "importFamily": {
+    "google": "Para absorber a la familia",
+    "valueInCode": "לקלוט את משפחת"
+  },
+  "ImportFromExcelComponent": {
+    "google": "Absorción de familias de Axel",
+    "valueInCode": "קליטת משפחות מאקסל"
+  },
+  "ImportHelpersFromExcelComponent": {
+    "google": "Absorción de voluntarios de Excel",
+    "valueInCode": "קליטת מתנדבים מאקסל"
+  },
+  "inacurateAddress": {
+    "google": "Aviso, dirección inexacta!",
+    "valueInCode": "שימו לב, כתובת לא מדוייקת!"
+  },
+  "infoAboutUpdates": {
+    "google": "Detalles de actualización",
+    "valueInCode": "פרטי עדכונים"
+  },
+  "inProgress": {
+    "google": "trabajando en ello...",
+    "valueInCode": "עובד על זה..."
+  },
+  "internalComment": {
+    "google": "Nota interna: no aparecerá para voluntario",
+    "valueInCode": "הערה פנימית - לא תופיע למתנדב"
+  },
+  "invalidPhoneNumber": {
+    "google": "El número de teléfono es incorrecto.",
+    "valueInCode": "מספר טלפון אינו תקין"
+  },
+  "inviteSentSuccesfully": {
+    "google": "Invitación enviada con éxito",
+    "valueInCode": "הזמנה נשלחה בהצלחה"
+  },
+  "isAlreadyAsignedTo": {
+    "google": " Ya asociado con",
+    "valueInCode": " כבר משוייכת ל"
+  },
+  "isDefinedAsEscortOf": {
+    "google": "Definido como un prestamista de",
+    "valueInCode": "מוגדר כמלווה של"
+  },
+  "km": {
+    "google": "km",
+    "valueInCode": "ק\"מ"
+  },
+  "lastName": {
+    "google": "Apellido",
+    "valueInCode": "שם משפחה"
+  },
+  "lastUpdateDate": {
+    "google": "Fecha límite",
+    "valueInCode": "מועד עדכון אחרון"
+  },
+  "lastUpdateUser": {
+    "google": "Actualizando usuario",
+    "valueInCode": "משתמש מעדכן"
+  },
+  "left": {
+    "google": "salió",
+    "valueInCode": "יצא"
+  },
+  "leftByDoorMessageColumnName": {
+    "google": "Mensaje para ser voluntario cuando se quede en casa",
+    "valueInCode": "הודעה למתנדב כאשר הושאר ליד הבית"
+  },
+  "leftByHouse": {
+    "google": "Dejado por la casa",
+    "valueInCode": "הושאר ליד הבית"
+  },
+  "leftDeliveryNextToHouse": {
+    "google": "Me fui por la casa",
+    "valueInCode": "השארתי ליד הבית"
+  },
+  "linesInExcel": {
+    "google": "Líneas en el eje",
+    "valueInCode": "שורות באקסל"
+  },
+  "linesProcessed": {
+    "google": "Las filas fueron procesadas",
+    "valueInCode": "שורות עובדו"
+  },
+  "linkCopied": {
+    "google": "Enlace copiado",
+    "valueInCode": "קישור הועתק"
+  },
+  "loadExcelSettings": {
+    "google": "Configuraciones de carga",
+    "valueInCode": "טען הגדרות"
+  },
+  "LoginComponent": {
+    "google": "Entrada",
+    "valueInCode": "כניסה"
+  },
+  "logoAndIcons": {
+    "google": "Logos y figuritas",
+    "valueInCode": "לוגו וצלמיות"
+  },
+  "logoForWebsiteAndPhone": {
+    "google": "Logotipos de sitios web y teléfonos",
+    "valueInCode": "לוגו לאתר ולטלפון"
+  },
+  "logoRecommendAfter": {
+    "google": "Y el resultado que crea usando favicon.ico para el icono, y en apple-icon-120x120.png para el logotipo",
+    "valueInCode": "ומהתוצאה שהוא יוצר להשתמש favicon.ico עבור האייקון - וב apple-icon-120x120.png עבור הלוגו"
+  },
+  "logoRecommendTool": {
+    "google": "Recomendamos usar los íconos",
+    "valueInCode": "אנו ממליצים ליצור את האייקונים בעזרת"
+  },
+  "logoUrl": {
+    "google": "Logotipo de URL",
+    "valueInCode": "לוגו URL"
+  },
+  "ManageComponent": {
+    "google": "Ajustes del sistema",
+    "valueInCode": "הגדרות מערכת"
+  },
+  "manyAddressesEndWithNumber": {
+    "google": "Las direcciones están vacías o terminan en el libro; es posible que no haya notado la liquidación de la dirección. ¿Volver a la definición de columna?",
+    "valueInCode": "מהכתובות ריקות או מסתיימות בספרה - יתכן שלא קלטתם את הישוב של הכתובת. לחזור להגדרת עמודות?"
+  },
+  "mapExcelColumns": {
+    "google": "Definir las columnas.",
+    "valueInCode": "הגדרת העמודות"
+  },
+  "markAllDeliveriesAsSuccesfull": {
+    "google": "Marcador entregado con éxito a todos los envíos",
+    "valueInCode": "סמן נמסר בהצלחה לכל המשלוחים"
+  },
+  "markDeliveredToAllHelprFamilies": {
+    "google": "Anular la asignación de todos los envíos a un voluntario",
+    "valueInCode": "בטל שיוך כל המשלוחים למתנדב"
+  },
+  "merge": {
+    "google": "Mantener el acondicionamiento",
+    "valueInCode": "שמור מיזוג"
+  },
+  "mergeFamilies": {
+    "google": "Fusionar familias",
+    "valueInCode": "מיזוג משפחות"
+  },
+  "mergeForFamily": {
+    "google": "Aire acondicionado para la familia.",
+    "valueInCode": "מיזוג למשפחת"
+  },
+  "messageCopied": {
+    "google": "Mensaje copiado",
+    "valueInCode": "הודעה הועתקה"
+  },
+  "messageForDoneDelivery": {
+    "google": "Gracias por toda la ayuda, nos encantaría ser voluntario nuevamente",
+    "valueInCode": "תודה על כל העזרה, נשמח אם תתנדבו שוב"
+  },
+  "messageForVolunteerWhenDoneCaption": {
+    "google": "Notificación para ser voluntario cuando todas las familias hayan terminado",
+    "valueInCode": "הודעה למתנדב כאשר סיים את כל המשפחות"
+  },
+  "minutes": {
+    "google": "sutileza",
+    "valueInCode": "דקות"
+  },
+  "minutesRemaining": {
+    "google": "Minutos restantes",
+    "valueInCode": "דקות נשארו"
+  },
+  "moreFamilies": {
+    "google": "Mas familias",
+    "valueInCode": "עוד משפחות"
+  },
+  "moreNews": {
+    "google": "Mas noticias",
+    "valueInCode": "עוד חדשות"
+  },
+  "moreThanOneRowInDbMatchesExcel": {
+    "google": "Se encontró más de una familia en el sitio correspondiente a esta línea de Axel. Seleccione cuál de las siguientes familias se ajusta a la fila de Excel y páselo a las familias para actualizar",
+    "valueInCode": "נמצאה יותר ממשפחה אחת באתר המתאימה לשורה הזו מהאקסל. אנא בחר איזו מהמשפחות הבאות מתאימה לשורה מהאקסל והעבר אותה למשפחות לעדכון"
+  },
+  "moreVolunteers": {
+    "google": "Mas voluntarios",
+    "valueInCode": "עוד מתנדבים"
+  },
+  "moveTheFamily": {
+    "google": "Para mover a la familia",
+    "valueInCode": "להעביר את משפחת"
+  },
+  "moveToNewFamilies": {
+    "google": "Mudarse a nuevas familias",
+    "valueInCode": "העבר למשפחות חדשות"
+  },
+  "moveToNewVolunteers": {
+    "google": "Reenviar voluntarios para agregar",
+    "valueInCode": "העבר למתנדבים להוספה"
+  },
+  "moveToUpdateFamilies": {
+    "google": "Actualización a las familias",
+    "valueInCode": "העבר למשפחות עדכון"
+  },
+  "mustIncludeUrlKeyError": {
+    "google": " ¡Debe contener!",
+    "valueInCode": " חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור"
+  },
+  "mustSelectDistributionList": {
+    "google": "Debe seleccionar una lista de distribución.",
+    "valueInCode": "חובה לבחור רשימת חלוקה"
+  },
+  "MyFamiliesComponent": {
+    "google": "Mis familias",
+    "valueInCode": "משפחות שלי"
+  },
+  "nameIsTooShort": {
+    "google": "El nombre es muy corto",
+    "valueInCode": "השם קצר מידי"
+  },
+  "needEscort": {
+    "google": "Necesito un compañero",
+    "valueInCode": "צריך מלווה"
+  },
+  "newDelivery": {
+    "google": "nueva entrega",
+    "valueInCode": "משלוח חדש"
+  },
+  "newDeliveryFor": {
+    "google": "Nuevo envío a",
+    "valueInCode": "משלוח חדש ל"
+  },
+  "newDeliveryForAll": {
+    "google": "Nueva entrega para todos los envíos y no solo para aquellos que terminaron con éxito",
+    "valueInCode": "משלוח חדש לכל המשלוחים ולא רק לאלו שהסתיימו בהצלחה"
+  },
+  "newDeliveryForDeliveriesHelp": {
+    "google": "Se establecerá un nuevo envío para todos los estados que se hayan entregado con éxito, o cualquier problema, a menos que elija seleccionar el campo",
+    "valueInCode": "משלוח חדש יוגדר עבור כל המשלוחים המסומנים שהם בסטטוס נמסר בהצלחה, או בעיה כלשהי, אלא אם תבחרו לסמן את השדה "
+  },
+  "newFamilies": {
+    "google": "Nuevas familias",
+    "valueInCode": "משפחות חדשות"
+  },
+  "newFamily": {
+    "google": "Una nueva familia",
+    "valueInCode": "משפחה חדשה"
+  },
+  "NewsComponent": {
+    "google": "Necesidades de cuidado",
+    "valueInCode": "מצריך טיפול"
+  },
+  "newVolunteers": {
+    "google": "Nuevos voluntarios",
+    "valueInCode": "מתנדבים חדשים"
+  },
+  "next": {
+    "google": "el siguiente",
+    "valueInCode": "הבא"
+  },
+  "nextBirthDay": {
+    "google": "Próximo cumpleaños",
+    "valueInCode": "יומולדת הבא"
+  },
+  "nextStep": {
+    "google": "Continuar con el siguiente paso",
+    "valueInCode": "המשך לשלב הבא"
+  },
+  "noDeliveriesLeft": {
+    "google": "No quedan envíos adecuados",
+    "valueInCode": "לא נותרו משלוחים מתאימים"
+  },
+  "noFamiliesSelected": {
+    "google": "No se seleccionaron familias",
+    "valueInCode": "לא נבחרו משפחות"
+  },
+  "noMatchingDelivery": {
+    "google": "No se ha encontrado una familia adecuada.",
+    "valueInCode": "לא נמצאה משפחה מתאימה"
+  },
+  "notAllowedToUpdateVolunteer": {
+    "google": "No puede actualizar para este voluntario",
+    "valueInCode": "אינך רשאי לעדכן עבור מתנדב זה"
+  },
+  "notAthorized": {
+    "google": "No hay legado!",
+    "valueInCode": "!פעולה לא מורשת"
+  },
+  "notDelivered": {
+    "google": "No entregado",
+    "valueInCode": "לא נמסרו"
+  },
+  "notDeliveredBadAddress": {
+    "google": "No entregado, problema de dirección",
+    "valueInCode": "לא נמסר, בעיה בכתובת"
+  },
+  "notDeliveredNotHome": {
+    "google": "No entregado, no estaban en casa",
+    "valueInCode": "לא נמסר, לא היו בבית"
+  },
+  "notDeliveredOther": {
+    "google": "No entregado, otro",
+    "valueInCode": "לא נמסר, אחר"
+  },
+  "notice": {
+    "google": "¡Nota!",
+    "valueInCode": "שים לב!"
+  },
+  "notImported": {
+    "google": "No absorbido",
+    "valueInCode": "לא נקלטה"
+  },
+  "notOk": {
+    "google": "Inválido",
+    "valueInCode": "לא תקין"
+  },
+  "noVolunteer": {
+    "google": "No voluntario",
+    "valueInCode": "ללא מתנדב"
+  },
+  "numOfFamilies": {
+    "google": "Varias familias",
+    "valueInCode": "מספר משפחות"
+  },
+  "oneDeliveryToDistribute": {
+    "google": "Una entrega para distribución",
+    "valueInCode": "משלוח אחד לחלוקה"
+  },
+  "onStatus": {
+    "google": "Estado",
+    "valueInCode": "בסטטוס"
+  },
+  "onTheWay": {
+    "google": "mediante",
+    "valueInCode": "בדרך"
+  },
+  "openWaze": {
+    "google": "WAZE abierto",
+    "valueInCode": "פתח WAZE"
+  },
+  "organizationInfo": {
+    "google": "Detalles de la organización",
+    "valueInCode": "פרטי הארגון"
+  },
+  "organizationName": {
+    "google": "El nombre de la organización",
+    "valueInCode": "שם הארגון"
+  },
+  "otherPhone": {
+    "google": "otro telefono",
+    "valueInCode": "טלפון אחר"
+  },
+  "OverviewComponent": {
+    "google": "Visión general",
+    "valueInCode": "Overview"
+  },
+  "packageWasPickedUp": {
+    "google": "Recoge el paquete",
+    "valueInCode": "אספו את החבילה"
+  },
+  "password": {
+    "google": "contraseña",
+    "valueInCode": "סיסמה"
+  },
+  "passwordDoesntMatchConfirmPassword": {
+    "google": "La contraseña no coincide con la confirmación de la contraseña.",
+    "valueInCode": "הסיסמה אינה תואמת את אישור הסיסמה"
+  },
+  "passwordWasReset": {
+    "google": "Contraseña eliminada",
+    "valueInCode": "הסיסמה נמחקה"
+  },
+  "phone": {
+    "google": "teléfono",
+    "valueInCode": "טלפון"
+  },
+  "phone1": {
+    "google": "Teléfono 1",
+    "valueInCode": "טלפון 1"
+  },
+  "phone1Description": {
+    "google": "Notas telefónicas 1",
+    "valueInCode": "הערות לטלפון 1"
+  },
+  "phone2": {
+    "google": "Teléfono 2",
+    "valueInCode": "טלפון 2"
+  },
+  "phone2Description": {
+    "google": "Notas telefónicas 2",
+    "valueInCode": "הערות לטלפון 2"
+  },
+  "phone3": {
+    "google": "Teléfono 3",
+    "valueInCode": "טלפון 3"
+  },
+  "phone3Description": {
+    "google": "Notas telefónicas 3",
+    "valueInCode": "הערות לטלפון 3"
+  },
+  "phone4": {
+    "google": "Teléfono 4",
+    "valueInCode": "טלפון 4"
+  },
+  "phone4Description": {
+    "google": "Notas telefónicas 4",
+    "valueInCode": "הערות לטלפון 4"
+  },
+  "phones": {
+    "google": "Los telefonos",
+    "valueInCode": "טלפונים"
+  },
+  "PlaybackComponent": {
+    "google": "Un video de distribución",
+    "valueInCode": "סרטון חלוקה"
+  },
+  "pleaseEnterUsing": {
+    "google": "Inicia sesión con el enlace:",
+    "valueInCode": "אנא הכנס למערכת באמצעות הקישור:"
+  },
+  "pleaseRegister": {
+    "google": "Si no está registrado, regístrese aquí",
+    "valueInCode": "אם אינך רשומה, אנא הרשמי כאן"
+  },
+  "pleaseSelectDistributionList": {
+    "google": "Debe seleccionar una lista de distribución.",
+    "valueInCode": "חובה לבחור רשימת חלוקה"
+  },
+  "pleaseWaitVerifyingDetails": {
+    "google": "Por favor espere - verifique los detalles",
+    "valueInCode": "אנא המתן - מוודא פרטים"
+  },
+  "postalCode": {
+    "google": "Código postal",
+    "valueInCode": "מיקוד"
+  },
+  "preferences": {
+    "google": "Preferencias",
+    "valueInCode": "העדפות"
+  },
+  "previous": {
+    "google": "anterior",
+    "valueInCode": "קודם"
+  },
+  "previousDeliveryDate": {
+    "google": "Fecha de entrega anterior",
+    "valueInCode": "תאריך משלוח קודם"
+  },
+  "previousDeliveryNotes": {
+    "google": "Albarán previo",
+    "valueInCode": "הערת משלוח קודם"
+  },
+  "previousDeliveryStatus": {
+    "google": "Estado de envío anterior",
+    "valueInCode": "סטטוס משלוח קודם"
+  },
+  "previousDeliverySummary": {
+    "google": "Resumen de entrega anterior",
+    "valueInCode": "סיכום משלוח קודם"
+  },
+  "prioritizeRepeatFamilies": {
+    "google": "Prioridad para familias que regresan",
+    "valueInCode": "עדיפות למשפחות חוזרות"
+  },
+  "problem": {
+    "google": "problema",
+    "valueInCode": "בעייה"
+  },
+  "problemCommentColumnName": {
+    "google": "Notificar al voluntario cuando haya un problema",
+    "valueInCode": "הודעה למתנדב כאשר יש בעיה"
+  },
+  "problems": {
+    "google": "Cápsula",
+    "valueInCode": "בעיות"
+  },
+  "quantity": {
+    "google": "Numero de cestas",
+    "valueInCode": "מספר סלים"
+  },
+  "question": {
+    "google": "una pregunta",
+    "valueInCode": "שאלה"
+  },
+  "questionsAndAnswers": {
+    "google": "Preguntas y respuestas",
+    "valueInCode": "שאלות ותשובות"
+  },
+  "ranIntoAProblem": {
+    "google": "tengo un problema",
+    "valueInCode": "נתקלתי בבעיה"
+  },
+  "readExcelRow": {
+    "google": "Obtener la línea",
+    "valueInCode": "קלוט את שורה"
+  },
+  "readyForDelivery": {
+    "google": "Listo para enviar",
+    "valueInCode": "מוכן למשלוח"
+  },
+  "recentlyAssigned": {
+    "google": "Asociarse ahora",
+    "valueInCode": "שוייכו עכשיו"
+  },
+  "recentVolunteers": {
+    "google": "Voluntarios recientes",
+    "valueInCode": "מתנדבים אחרונים"
+  },
+  "redTitleBar": {
+    "google": "Título de la página roja",
+    "valueInCode": "כותרת דף בצבע אדום"
+  },
+  "region": {
+    "google": "Zona",
+    "valueInCode": "אזור"
+  },
+  "register": {
+    "google": "registro",
+    "valueInCode": "הרשמה"
+  },
+  "RegisterComponent": {
+    "google": "registro",
+    "valueInCode": "הרשמה"
+  },
+  "remainingByBaskets": {
+    "google": "Permanecido por cestas",
+    "valueInCode": "נותרו לפי סלים"
+  },
+  "remainingByCities": {
+    "google": "Restante por ciudades",
+    "valueInCode": "נותרו לפי ערים"
+  },
+  "remainingByGroups": {
+    "google": "Restantes por grupos",
+    "valueInCode": "נותרו לפי קבוצות"
+  },
+  "rememberMeOnThisDevice": {
+    "google": "Recuérdame en este dispositivo",
+    "valueInCode": "זכור אותי במכשיר זה"
+  },
+  "remiderSmsDate": {
+    "google": "Fecha de entrega del recordatorio de SMS",
+    "valueInCode": "מועד משלוח תזכורת SMS"
+  },
+  "reminderSent": {
+    "google": "Recordatorio enviado",
+    "valueInCode": "תזכורת נשלחה"
+  },
+  "reminderSmsText": {
+    "google": "¡Hola, voluntario!\\nEstaremos encantados de actualizar el sistema en el modo de entrega de las cestas. Para actualizar, haga clic en: ¡Sitio!\\nGracias Organización!",
+    "valueInCode": "שלום !מתנדב!, \nנשמח אם תעדכן את המערכת במצב המסירה של הסלים. לעדכון לחץ על:  !אתר!\nבתודה !ארגון!"
+  },
+  "reminderSmsTextHelp": {
+    "google": "Este mensaje se enviará a un voluntario retrasado desde una pantalla de seguimiento de voluntarios.",
+    "valueInCode": "הודעה זו תשלח למתנדב שמתעכב ממסך מעקב מתנדבים"
+  },
+  "remove": {
+    "google": "Eliminar",
+    "valueInCode": "הסר"
+  },
+  "removedFromList": {
+    "google": "Saca las listas",
+    "valueInCode": "הוצא מהרשימות"
+  },
+  "RemovedFromListExcelImportStrategy_displayAsError": {
+    "google": "Ver como error",
+    "valueInCode": "הצג כשגיאה"
+  },
+  "RemovedFromListExcelImportStrategy_ignore": {
+    "google": "Ignorar y agregar una nueva familia",
+    "valueInCode": "התעלם והוסף משפחה חדשה"
+  },
+  "RemovedFromListExcelImportStrategy_showInUpdate": {
+    "google": "Ver en familias para actualización",
+    "valueInCode": "הצג במשפחות לעדכון"
+  },
+  "removeFromFamiliesToUpdate": {
+    "google": "Eliminar de las familias para actualizar",
+    "valueInCode": "הסר ממשפחות לעדכן"
+  },
+  "repeatFamilyNotice": {
+    "google": "También has estado en esta familia antes",
+    "valueInCode": "הייתם אצל המשפחה הזו גם פעם קודמת"
+  },
+  "replaceBySiteUrl": {
+    "google": "La URL será reemplazada",
+    "valueInCode": "יוחלף בכתובת האתר"
+  },
+  "replacedByOrgName": {
+    "google": "El nombre de la organización será reemplazado.",
+    "valueInCode": "יוחלף בשם הארגון"
+  },
+  "replacedByVolunteerName": {
+    "google": "El nombre del voluntario será reemplazado",
+    "valueInCode": "יוחלף בשם המתנדב"
+  },
+  "replanRoute": {
+    "google": "Recalcular ruta",
+    "valueInCode": "חשב מסלול מחדש"
+  },
+  "replcaedBySenderName": {
+    "google": "El nombre del remitente será reemplazado",
+    "valueInCode": "יוחלף בשם השולח"
+  },
+  "requireFollowUp": {
+    "google": "Necesita tratamiento / seguimiento",
+    "valueInCode": "צריך טיפול/מעקב"
+  },
+  "requireFollowUpUpdateDate": {
+    "google": "Necesita atención: cuando se actualiza",
+    "valueInCode": "צריך טיפול - מתי עודכן"
+  },
+  "requireFollowUpUpdateUser": {
+    "google": "Necesita atención - Quién actualizó",
+    "valueInCode": "צריך טיפול - מי עדכן"
+  },
+  "resendReminder": {
+    "google": "enviar de nuevo",
+    "valueInCode": "שלח שוב"
+  },
+  "resetPassword": {
+    "google": "Restablecer la contraseña",
+    "valueInCode": "אתחל סיסמה"
+  },
+  "resetPasswordAreYouSureFor": {
+    "google": "¿Estás seguro de que quieres eliminar la contraseña?",
+    "valueInCode": "האם את בטוחה שאת רוצה למחוק את הסיסמה של"
+  },
+  "responsibleForAssign": {
+    "google": "Asocia voluntarios con una lista de distribución",
+    "valueInCode": "משייך מתנדבים לרשימת חלוקה"
+  },
+  "sameAddress": {
+    "google": "Misma dirección",
+    "valueInCode": "כתובת זהה"
+  },
+  "sameLineExcelMatchesSeveralRowsInTheDatabase": {
+    "google": "La misma familia en el sitio se ajusta a varias líneas en Excel:",
+    "valueInCode": "אותה משפחה באתר מתאימה למספר שורות באקסל: "
+  },
+  "sampleMessage": {
+    "google": "Mensaje de muestra",
+    "valueInCode": "הודעה לדוגמא"
+  },
+  "sampleReminderSms": {
+    "google": "Mensaje recordatorio de muestra",
+    "valueInCode": "הודעת תזכורת לדוגמא"
+  },
+  "save": {
+    "google": "Salvar",
+    "valueInCode": "שמור"
+  },
+  "saveExcelImportReport": {
+    "google": "Guardar informe de estado de absorción de Excel",
+    "valueInCode": "שמור דוח מצב קליטה מאקסל"
+  },
+  "saveExcelSettings": {
+    "google": "Guardar ajustes",
+    "valueInCode": "שמור הגדרות"
+  },
+  "saveHelperInfoAndMoveToNextHelper": {
+    "google": "Guarde la información del voluntario y vaya al próximo voluntario",
+    "valueInCode": "שמור פרטי מתנדב ועבור למתנדב הבא"
+  },
+  "saveVolunteerInfo": {
+    "google": "Guardar información del voluntario:",
+    "valueInCode": "שמירת פרטי מתנדב:"
+  },
+  "searchFamily": {
+    "google": "Búsqueda familiar",
+    "valueInCode": "חיפוש משפחה"
+  },
+  "searchVolunteer": {
+    "google": "Búsqueda de voluntarios",
+    "valueInCode": "חיפוש מתנדב"
+  },
+  "selectDeliveriesOnMap": {
+    "google": "Seleccionar familias en el mapa",
+    "valueInCode": "בחר משפחות על המפה"
+  },
+  "selectDeliveryByName": {
+    "google": "Elegir una familia por nombre",
+    "valueInCode": "בחירת משפחה לפי שם"
+  },
+  "selectDeliveryByStreet": {
+    "google": "Selección familiar por calle",
+    "valueInCode": "בחירת משפחה לפי רחוב"
+  },
+  "selectDeliveryOnMap": {
+    "google": "Selección familiar en el mapa",
+    "valueInCode": "בחירת משפחה על המפה"
+  },
+  "selectedDeliveries": {
+    "google": "Envíos marcados",
+    "valueInCode": "משלוחים סומנו"
+  },
+  "selectExcelFile": {
+    "google": "Seleccione un archivo de Excel",
+    "valueInCode": "בחר קובץ אקסל"
+  },
+  "selectExcelSheet": {
+    "google": "Seleccione una hoja de Excel",
+    "valueInCode": "בחר גליון מהאקסל"
+  },
+  "selectNumberOfFamilies": {
+    "google": "Elegir múltiples familias",
+    "valueInCode": "בחירת מספר משפחות"
+  },
+  "selectVolunteer": {
+    "google": "Elige un voluntario",
+    "valueInCode": "בחר מתנדב"
+  },
+  "selfPickup": {
+    "google": "Venir y tomar",
+    "valueInCode": "באים לקחת"
+  },
+  "SelfPickupComponent": {
+    "google": "Venir y tomar",
+    "valueInCode": "באים לקחת"
+  },
+  "selfPickupStrategy": {
+    "google": "Configurar ven a tomar",
+    "valueInCode": "הגדרת באים לקחת"
+  },
+  "selfpickupStrategy_byCurrentDelivery": {
+    "google": "Venga a tomar de acuerdo con la definición de envío actual",
+    "valueInCode": "באים לקחת בהתאם להגדרת המשלוח הנוכחי"
+  },
+  "selfPickupStrategy_familyDefault": {
+    "google": "Venga a tomar de acuerdo con la configuración familiar predeterminada",
+    "valueInCode": "באים לקחת בהתאם להגדרת הברירת מחדל למשפחה"
+  },
+  "selfpickupStrategy_no": {
+    "google": "Entrega a domicilio",
+    "valueInCode": "משלוח עד הבית"
+  },
+  "selfPickupStrategy_yes": {
+    "google": "Ven y toma el envío y no necesita envío",
+    "valueInCode": "יבואו לקחת את המשלוח ואינם צריכים משלוח"
+  },
+  "selfPuckupSuccess": {
+    "google": "Recoge el paquete",
+    "valueInCode": "אספו את החבילה"
+  },
+  "sendInviteBySms": {
+    "google": "Enviar invitación por SMS al gerente",
+    "valueInCode": "שלח הזמנה בSMS למנהל"
+  },
+  "sendLinkOnWhatsapp": {
+    "google": "Enviar un enlace en whatsapp",
+    "valueInCode": "שלח קישור ב whatsapp"
+  },
+  "sendMessageToVolunteer": {
+    "google": "Enviar un mensaje al voluntario",
+    "valueInCode": "שלח הודעה למתנדב"
+  },
+  "sendReminderSms": {
+    "google": "Recordatorios SMS",
+    "valueInCode": "שלחי SMS לתזכורת"
+  },
+  "sendSmsFromDevice": {
+    "google": "Envía un enlace de SMS desde tu teléfono",
+    "valueInCode": "שלח קישור בSMS מהטלפון"
+  },
+  "sendSmsToAllVolunteersThatDidntGetOne": {
+    "google": "Enviar un SMS a los voluntarios que aún no han recibido",
+    "valueInCode": "שלח הודעת SMS למתנדבים שטרם קיבלו"
+  },
+  "sendSmsWithLink": {
+    "google": "Enviar un SMS con un enlace",
+    "valueInCode": "שלח הודעת SMS עם קישור"
+  },
+  "setAsDefaultVolunteer": {
+    "google": "También actualizar como voluntario predeterminado",
+    "valueInCode": "עדכן גם כמתנדב ברירת מחדל"
+  },
+  "shouldAdd": {
+    "google": "Agregar",
+    "valueInCode": "האם להוסיף"
+  },
+  "shouldArchiveDelivery": {
+    "google": "Archivar el envío?",
+    "valueInCode": "האם להעביר את המשלוח לארכיון?"
+  },
+  "shouldAssignTo": {
+    "google": "Asociarlo con un voluntario",
+    "valueInCode": "האם לשייך אותו למתנדב"
+  },
+  "shouldCompare": {
+    "google": "Compara el",
+    "valueInCode": "האם להשוות את"
+  },
+  "shouldDeleteDeliveryFor": {
+    "google": "Eliminar el envío a",
+    "valueInCode": "האם למחוק את המשלוח ל"
+  },
+  "shouldSendSmsTo": {
+    "google": "Enviar un mensaje de texto a",
+    "valueInCode": "האם לשלוח הודעת SMS ל"
+  },
+  "shouldUpdateColumn": {
+    "google": "Actualiza el campo",
+    "valueInCode": "האם לעדכן את השדה"
+  },
+  "showAll": {
+    "google": "Mostrar todo",
+    "valueInCode": "הצג הכל"
+  },
+  "showAllCompletedDeliveries": {
+    "google": "Ver todos los envíos enviados",
+    "valueInCode": "הצג את כל המשלוחים שחולקו"
+  },
+  "showAllDeliveries": {
+    "google": "Ver todas las entregas para distribución",
+    "valueInCode": "הצג את כל המשלוחים לחלוקה"
+  },
+  "showAllFamilies": {
+    "google": "Ver todas las familias",
+    "valueInCode": "הצג את כל המשפחות"
+  },
+  "showAsignDeliveryFor": {
+    "google": "Mostrar asociación de envío a",
+    "valueInCode": "הצג שיוך משלוחים ל"
+  },
+  "showFamilies": {
+    "google": "Ver familias",
+    "valueInCode": "הצג משפחות"
+  },
+  "showHelperComment": {
+    "google": "Guardar nota para ser voluntario",
+    "valueInCode": "שמור הערה למתנדב"
+  },
+  "showHelperCompany": {
+    "google": "Ver una empresa voluntaria",
+    "valueInCode": "הצג חברה למתנדב"
+  },
+  "showLeftByHouseButton": {
+    "google": "Mostrar botón de voluntario que dejé en casa",
+    "valueInCode": "הצג למתנדב כפתור השארתי ליד הבית"
+  },
+  "showOnGoogleMap": {
+    "google": "Ver en Google",
+    "valueInCode": "הצג בגוגל"
+  },
+  "showOnGovMap": {
+    "google": "Ver en govmap",
+    "valueInCode": "הצג ב govmap"
+  },
+  "showRouteOnGoogleMaps": {
+    "google": "Ver ruta en google maps",
+    "valueInCode": "הצג מסלול ב - google maps"
+  },
+  "showText1OnlyWhenDone": {
+    "google": "Mostrar texto libre 1 solo cuando el voluntario haya terminado todas las cestas",
+    "valueInCode": "להציג מלל חופשי 1 רק כאשר המתנדב סיים אל כל הסלים"
+  },
+  "showText2OnlyWhenDone": {
+    "google": "Mostrar texto libre 2 solo cuando el voluntario haya terminado todas las cestas",
+    "valueInCode": "להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים"
+  },
+  "showVolunteerCompany": {
+    "google": "Ahorre en nombre de qué compañía vino el voluntario",
+    "valueInCode": "שמור מטעם איזה חברה הגיע המתנדב"
+  },
+  "showVolunteers": {
+    "google": "Mostrar voluntarios",
+    "valueInCode": "הצג מתנדבים"
+  },
+  "signIn": {
+    "google": "Entrada",
+    "valueInCode": "כניסה"
+  },
+  "similarName": {
+    "google": " Un nombre similar",
+    "valueInCode": " שם דומה"
+  },
+  "smsDate": {
+    "google": "Fecha de entrega de SMS",
+    "valueInCode": "מועד משלוח SMS"
+  },
+  "smsMessageContentCaption": {
+    "google": "Contenido del mensaje SMS",
+    "valueInCode": "תוכן הודעת SMS"
+  },
+  "smsMessageSentTo": {
+    "google": "Mensaje SMS enviado a",
+    "valueInCode": "הודעת SMS נשלחה ל"
+  },
+  "smsNotSent": {
+    "google": "SMS aún no ha sido enviado",
+    "valueInCode": "טרם נשלח SMS"
+  },
+  "smsReminderMessageContentCaption": {
+    "google": "Contenido recordatorio SMS",
+    "valueInCode": "תוכן הודעת תזכורת SMS"
+  },
+  "smsTextHelpTitle": {
+    "google": "Este mensaje se enviará a un voluntario desde una pantalla de asociación de envío, con el enlace a las familias que se le pide que comparta.",
+    "valueInCode": "הודעה זו תשלח למתנדב ממסך שיוך משלוחים - עם הקישור למשפחות להן הוא מתבקש לחלק."
+  },
+  "socialSecurityNumber": {
+    "google": "número de identificación",
+    "valueInCode": "מספר זהות"
+  },
+  "specialAsignment": {
+    "google": "Afiliación especial",
+    "valueInCode": "שיוך מיוחד"
+  },
+  "specialFamilies": {
+    "google": "Familias especiales",
+    "valueInCode": "משפחות מיוחדות"
+  },
+  "specialUnasigned": {
+    "google": "Especiales aún no asociados",
+    "valueInCode": "מיוחדים שטרם שוייכו"
+  },
+  "spouceSocialSecurityNumber": {
+    "google": "Número de identidad del cónyuge",
+    "valueInCode": "מספר זהות בן/בת הזוג"
+  },
+  "statusChangeDate": {
+    "google": "Estado: fecha modificada",
+    "valueInCode": "סטטוס: תאריך שינוי"
+  },
+  "statusChangeUser": {
+    "google": "Estado: quién está actualizando",
+    "valueInCode": "סטטוס: מי עדכן"
+  },
+  "statusNotSelected": {
+    "google": "Ningún estado seleccionado",
+    "valueInCode": "לא נבחר סטטוס"
+  },
+  "statusSummary": {
+    "google": "Resumen de estado",
+    "valueInCode": "סיכום סטטוס"
+  },
+  "stopAskingForConfirmation": {
+    "google": "Deja de preguntar si estás de acuerdo con algo",
+    "valueInCode": "הפסק לשאול האם מסכים לפני כל דבר"
+  },
+  "streetName": {
+    "google": "Calle",
+    "valueInCode": "רחוב"
+  },
+  "successButtonSettingName": {
+    "google": "Texto del botón entregado con éxito",
+    "valueInCode": "מלל כפתור נמסר בהצלחה"
+  },
+  "successMessageColumnName": {
+    "google": "Mensaje para ser voluntario cuando se entregue con éxito",
+    "valueInCode": "הודעה למתנדב כאשר נמסר בהצלחה"
+  },
+  "theFamily": {
+    "google": "La familia",
+    "valueInCode": "משפחת"
+  },
+  "thereAre": {
+    "google": "Ahi esta",
+    "valueInCode": "יש"
+  },
+  "thereAreAdditional": {
+    "google": "Hay mas",
+    "valueInCode": "ישנן עוד "
+  },
+  "toDate": {
+    "google": "Hasta",
+    "valueInCode": "עד תאריך"
+  },
+  "toDelete": {
+    "google": "Borrar",
+    "valueInCode": "למחיקה"
+  },
+  "toNewFamilies": {
+    "google": "Para nuevas familias",
+    "valueInCode": "למשפחות חדשות"
+  },
+  "tooManyFamiliesForMerge": {
+    "google": "Demasiadas familias a la vez",
+    "valueInCode": "יותר מידי משפחות בבת אחת"
+  },
+  "total": {
+    "google": "Total",
+    "valueInCode": "סה\"כ"
+  },
+  "toVolunteer": {
+    "google": "Al voluntario",
+    "valueInCode": "למתנדב"
+  },
+  "transfer": {
+    "google": "para transmitir",
+    "valueInCode": "להעביר"
+  },
+  "transferDeliveriesFromOtherVolunteer": {
+    "google": "Transferir familias de otro voluntario",
+    "valueInCode": "העבר משפחות ממתנדב אחר"
+  },
+  "unAsigned": {
+    "google": "Aún no asociado",
+    "valueInCode": "טרם שוייכו"
+  },
+  "unfitForInvite": {
+    "google": "No apto para pedido",
+    "valueInCode": "לא מתאים להזמנה"
+  },
+  "unfreezeDeliveries": {
+    "google": "Cancelación de entrega gratuita",
+    "valueInCode": "ביטול הקפאת משלוחים"
+  },
+  "unfreezeDeliveriesHelp": {
+    "google": "Cancelar el congelamiento devolverá los envíos congelados listos para la entrega",
+    "valueInCode": "ביטול ההקפאה יחזיר משלוחים קפואים למוכן למשלוח"
+  },
+  "unFreezeDelivery": {
+    "google": "Permitir envío",
+    "valueInCode": "הפשר משלוח"
+  },
+  "unnamed": {
+    "google": "sin nombre",
+    "valueInCode": "ללא שם"
+  },
+  "updateArea": {
+    "google": "Área de actualización para familias",
+    "valueInCode": "עדכן אזור למשפחות"
+  },
+  "updateBasketQuantity": {
+    "google": "Actualizar cantidad de cestas",
+    "valueInCode": "עדכן כמות סלים"
+  },
+  "updateBasketType": {
+    "google": "Actualizar tipo de cesta",
+    "valueInCode": "עדכן סוג סל"
+  },
+  "updateCanceled": {
+    "google": "Actualización detenida",
+    "valueInCode": "העדכון הופסק"
+  },
+  "updateComment": {
+    "google": "Nota de actualización",
+    "valueInCode": "עדכן הערה"
+  },
+  "updateCourierByCurrentCourier": {
+    "google": "Actualizar al voluntario del envío actual",
+    "valueInCode": "עדכן את המתנדב מהמשלוח הנוכחי"
+  },
+  "updatedBy": {
+    "google": "Actualizado por",
+    "valueInCode": "עודכן על ידי"
+  },
+  "updateDefaultBasket": {
+    "google": "Actualizar tipo de cesta predeterminado",
+    "valueInCode": "עדכן סוג סל ברירת מחדל"
+  },
+  "updateDefaultQuantity": {
+    "google": "Actualizar el monto predeterminado de la canasta",
+    "valueInCode": "עדכן כמות סלים ברירת מחדל"
+  },
+  "updateDefaultSelfPickup": {
+    "google": "Las actualizaciones vienen por defecto",
+    "valueInCode": "עדכן באים לקחת ברירת מחדל"
+  },
+  "updateDefaultVolunteer": {
+    "google": "Actualizar un voluntario familiar predeterminado",
+    "valueInCode": "עדכן מתנדב ברירת מחדל למשפחה"
+  },
+  "updateDeliveredStatusesTo": {
+    "google": "Actualizar envíos que han finalizado el estado",
+    "valueInCode": "עדכון משלוחים שהסתיימו לסטטוס"
+  },
+  "updateDeliveriesStatus": {
+    "google": "Actualizar estado de envío",
+    "valueInCode": "עדכן סטטוס למשלוחים"
+  },
+  "updateDeliveriesStatusHelp": {
+    "google": "El estado de \"congelado\" es un envío que no se asociará con ningún voluntario hasta que el envío esté \"habilitado\". La congelación se usa para detener temporalmente ciertos envíos hasta que puedan descongelarse y enviarse. La congelación solo se realizará para envíos que estén listos para la entrega.",
+    "valueInCode": "סטטוס \"מוקפא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח.             ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח. "
+  },
+  "updateDeliveryFailure": {
+    "google": "Error de entrega de actualización",
+    "valueInCode": "עדכן אי מסירה"
+  },
+  "updateDistributionList": {
+    "google": "Actualizar lista de distribución",
+    "valueInCode": "עדכן רשימת חלוקה"
+  },
+  "updateExistingDeliveries": {
+    "google": "Cambiar también para envíos no publicados",
+    "valueInCode": "שנה גם עבור משלוחים שטרם נמסרו"
+  },
+  "updateFamilySource": {
+    "google": "Actualizar referencia",
+    "valueInCode": "עדכן גורם מפנה "
+  },
+  "updateFamilyStatus": {
+    "google": "Actualizar estado familiar",
+    "valueInCode": "עדכן סטטוס משפחה"
+  },
+  "updateInfo": {
+    "google": "Detalles de actualización",
+    "valueInCode": "עדכון פרטים"
+  },
+  "UpdateInfoComponent": {
+    "google": "Configuraciones personales",
+    "valueInCode": "הגדרות אישיות"
+  },
+  "updateOfAddressMayTakeLonger": {
+    "google": "Nota: actualizar un campo de dirección puede llevar más tiempo que otros campos",
+    "valueInCode": "שים לב- עדכון של שדה כתובת יכול לקחת יותר זמן משדות אחרים"
+  },
+  "updateSaved": {
+    "google": "La actualización se guardó, gracias",
+    "valueInCode": "העדכון נשמר, תודה"
+  },
+  "updateStatusHelp": {
+    "google": "El estado se ha eliminado de las listas, diseñado para indicar que la familia no debe recibir alimentos, pero a diferencia del estado de eliminación, queremos mantenerlo en la base de datos para que si el bienestar nos lo devuelve, sabremos que se han eliminado de las listas. Es adecuado para familias que han sido resueltas o que simplemente no quieren recibir, o la dirección no existe, etc.",
+    "valueInCode": "סטטוס הוצא מהרשימות - נועד כדי לסמן שהמשפחה לא אמורה לקבל מזון - אבל בניגוד לסטטוס למחיקה - אנחנו רוצים לשמור אותה בבסיס הנתונים כדי שאם הרווחה יביאו לנו אותה שוב, נדע להגיד שהם הוצאו מהרשימות. זה מתאים למשפחות שחס וחלילה נפתרו או שפשוט לא רוצים לקבל - או שהכתובת לא קיימת וכו..."
+  },
+  "updateVolunteer": {
+    "google": "Actualizar remitente voluntario",
+    "valueInCode": "עדכן מתנדב למשלוחים"
+  },
+  "updateVolunteerHelp": {
+    "google": "Para actualizar un voluntario en el camino a \"listo para enviar\", seleccione \"Cancelar suscripción de un voluntario\". En cualquier caso, solo se realizará una actualización voluntaria para envíos no publicados",
+    "valueInCode": "בכדי לעדכן מתנדב מ\"בדרך\" ל\"מוכן למשלוח\" יש לסמן את \"בטל שיוך למתנדב\". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו"
+  },
+  "updateVolunteers": {
+    "google": "Voluntarios para actualizar",
+    "valueInCode": "מתנדבים לעדכון"
+  },
+  "urlFreeText1": {
+    "google": "Voluntario gratuito 1 dirección web para voluntario",
+    "valueInCode": "כתובת אינטרנט ללחיצה על מלל חופשי 1 למתנדב"
+  },
+  "urlFreeText2": {
+    "google": "Texto voluntario gratuito URL 2 para voluntario",
+    "valueInCode": "כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב"
+  },
+  "useBusketTypeFromCurrentDelivery": {
+    "google": "Use el tipo de cesta definido en el envío actual",
+    "valueInCode": "השתמש בסוג הסל המוגדר במשלוח הנוכחי"
+  },
+  "useFamilyDefaultBasketType": {
+    "google": "Utilice el conjunto de cestas de tipo familiar",
+    "valueInCode": "השתמש בסוג הסל המוגדר למשפחה"
+  },
+  "useFamilyMembersAsQuantity": {
+    "google": "Usa una cantidad de almas también como una porción",
+    "valueInCode": "השתמש במספר נפשות גם ככמות מנות"
+  },
+  "userNotFoundOrWrongPassword": {
+    "google": "Usuario no encontrado o contraseña incorrecta",
+    "valueInCode": "משתמשת לא נמצאה או סיסמה שגויה"
+  },
+  "valueAlreadyExistsFor": {
+    "google": "El valor ya existe para la familia.",
+    "valueInCode": "ערך כבר קיים למשפחת"
+  },
+  "volunteer": {
+    "google": "voluntario",
+    "valueInCode": "מתנדב"
+  },
+  "volunteerByCrrentDelivery": {
+    "google": "Configurar un voluntario de acuerdo con el voluntario en el envío actual",
+    "valueInCode": "הגדר מתנדב לפי המתנדב במשלוח הנוכחי"
+  },
+  "volunteerByFamilyDefault": {
+    "google": "Configurar un voluntario por defecto voluntario definido por la familia",
+    "valueInCode": "הגדר מתנדב לפי מתנדב ברירת מחדל המוגדר למשפחה"
+  },
+  "volunteerFeedbackVideo": {
+    "google": "Para un tutorial sobre comentarios voluntarios, haga clic aquí",
+    "valueInCode": "לסרטון הדרכה על משוב המתנדבים לחץ כאן"
+  },
+  "volunteerHelpPhonesHelpLine1": {
+    "google": "Cuando el voluntario presiona el botón \"Me encontré con un problema\", aparecerá una pantalla si puede pedir ayuda o actualizar sin mensaje.",
+    "valueInCode": "כאשר המתנדב לוחץ על הכפתור \"נתקלתי בבעיה\" מופע לו מסך אם אפשרות להתקשר לעזרה או לעדכן שלא מסר."
+  },
+  "volunteerHelpPhonesHelpLine2": {
+    "google": "Aquí puede actualizar qué teléfonos aparecerán en busca de ayuda, puede actualizar uno o más.",
+    "valueInCode": "כאן ניתן לעדכן אילו טלפונים יופיעו לו לעזרה, אפשר לעדכן אחד או יותר."
+  },
+  "volunteerInfo": {
+    "google": "Detalles del voluntario",
+    "valueInCode": "פרטי מתנדב"
+  },
+  "volunteerName": {
+    "google": "Nombre",
+    "valueInCode": "שם"
+  },
+  "volunteerPhoneNumber": {
+    "google": "Número de teléfono del voluntario",
+    "valueInCode": "מספר הטלפון של המתנדב"
+  },
+  "volunteerQAndA": {
+    "google": "Preguntas y respuestas voluntarias",
+    "valueInCode": "שאלות ותשובות למתנדב"
+  },
+  "volunteerQAndAHelp": {
+    "google": "Cuando el voluntario presiona el botón \"Tengo un problema\", aparece una pantalla con esta lista de preguntas frecuentes para obtener ayuda",
+    "valueInCode": "כאשר המתנדב לוחץ על הכפתור \"נתקלתי בבעיה\" מופע לו מסך עם רשימה זו של שאלות ותשובות לעזרה"
+  },
+  "volunteers": {
+    "google": "Voluntarios",
+    "valueInCode": "מתנדבים"
+  },
+  "volunteerTexts": {
+    "google": "Mensajes voluntarios",
+    "valueInCode": "הודעות למתנדב"
+  },
+  "voluntreeHelpPhones": {
+    "google": "Teléfonos para ayuda voluntaria",
+    "valueInCode": "טלפונים לעזרה למתנדב"
+  },
+  "wasAssignedTo": {
+    "google": "Asociado con",
+    "valueInCode": "שוייכה ל"
+  },
+  "wasCopiedSuccefully": {
+    "google": " Copiado exitosamente",
+    "valueInCode": " הועתקה בהצלחה"
+  },
+  "wasUpdatedTo": {
+    "google": "Actualizado a",
+    "valueInCode": "עודכנה ל"
+  },
+  "welcomeTo": {
+    "google": "Bienvenido al entorno de",
+    "valueInCode": "ברוך הבא לסביבה של"
+  },
+  "whatWentWrong": {
+    "google": "¿Qué no funcionó?",
+    "valueInCode": "מה לא הסתדר?"
+  },
+  "willNotSaveHistoryDoYouWantToStop": {
+    "google": " No realizará un seguimiento del estado de los envíos completados en el historial: ¿dejará de actualizarse?",
+    "valueInCode": " לא ישמור בהיסטוריה את הסטטוס של המשלוחים שהסתיימו - האם להפסיק את העדכון?"
+  },
+  "within": {
+    "google": "dentro",
+    "valueInCode": "תוך"
+  },
+  "youveProbablyMeantNewDelivery": {
+    "google": " - Si desea crear un nuevo envío, hágalo en el menú Nuevo envío.",
+    "valueInCode": " - אם את/ה מעוניין ליצור משלוח חדש, יש לעשות זאת בתפריט 'משלוח חדש'."
+  },
+  "youveSelectedToUpdateStatus": {
+    "google": "Has elegido actualizar el estado",
+    "valueInCode": "בחרת לעדכן סטטוס"
+  }
+}

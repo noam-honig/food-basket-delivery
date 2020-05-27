@@ -30,8 +30,8 @@ export async function DoIt() {
 
 
         await buildLanguageFiles();
-        
-        
+
+
 
 
 
@@ -49,50 +49,57 @@ export async function DoIt() {
 }
 DoIt();
 async function buildLanguageFiles() {
-    let known = JSON.parse(fs.readFileSync('./src/app/languages/en.json').toString());
-    let result = '';
-    let l = new Language();
-    let keys: translationEntry[] = [];
-    for (const key in l) {
-        if (l.hasOwnProperty(key)) {
-            let knownVal: translation = known[key];
-            if (!knownVal) {
-                const element: string[] = l[key].split('\n');
-                for (let index = 0; index < element.length; index++) {
-                    const term = element[index];
-                    let trans = await translate(term);
-                    element[index] = trans;
+
+    for (const lang of ["en", "es", "it"]) {
+        let known = {};
+        try { known = JSON.parse(fs.readFileSync('./src/app/languages/' + lang + '.json').toString()); }
+        catch{}
+        let result = '';
+        let l = new Language();
+        let keys: translationEntry[] = [];
+        for (const key in l) {
+            if (l.hasOwnProperty(key)) {
+                let knownVal: translation = known[key];
+                if (!knownVal) {
+                    const element: string[] = l[key].split('\n');
+                    for (let index = 0; index < element.length; index++) {
+                        const term = element[index];
+                        let trans = await translate(term, lang);
+                        element[index] = trans;
+                    }
+                    knownVal = { google: element.join('\\n'), valueInCode: l[key] };
+                    known[key] = knownVal;
                 }
-                knownVal = { google: element.join('\\n'), valueInCode: l[key] };
-                known[key] = knownVal;
+                knownVal.valueInCode = l[key];
+                let v = knownVal.google;
+                if (knownVal.custom)
+                    v = knownVal.custom;
+                let r = v;
+                if (r.includes('\''))
+                    r = '"' + r + '"';
+                else
+                    r = "'" + r + "'";
+                result += '  ' + key + " = " + r + ';\n';
+                keys.push({ key: key, value: v, valueInHebrew: l[key] });
             }
-            knownVal.valueInCode = l[key];
-            let v = knownVal.google;
-            if (knownVal.custom)
-                v = knownVal.custom;
-            let r = v;
-            if (r.includes('\''))
-                r = '"' + r + '"';
-            else
-                r = "'" + r + "'";
-            result += '  ' + key + " = " + r + ';\n';
-            keys.push({ key: key, value: v, valueInHebrew: l[key] });
         }
+        keys.sort((a, b) => a.key.localeCompare(b.key));
+        let XLSX = await import('xlsx');
+        let wb = XLSX.utils.book_new();
+        wb.Workbook = { Views: [{ RTL: true }] };
+        let ws = XLSX.utils.json_to_sheet(keys);
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
+        XLSX.writeFile(wb, '/temp/' + lang + '.xlsx');
+        let json = {};
+        for (const x of keys) {
+            json[x.key] = known[x.key];
+        }
+        ;
+        fs.writeFileSync('./src/app/languages/' + lang + '.json', JSON.stringify(json, undefined, 2));
+        fs.writeFileSync('./src/app/languages/' + lang + '.ts', 'import { Language } from "../translate";\nexport class ' + lang + ' implements Language {\n' + result + '}');
     }
-    keys.sort((a, b) => a.key.localeCompare(b.key));
-    let XLSX = await import('xlsx');
-    let wb = XLSX.utils.book_new();
-    wb.Workbook = { Views: [{ RTL: true }] };
-    let ws = XLSX.utils.json_to_sheet(keys);
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
-    XLSX.writeFile(wb, './src/app/languages/en.xlsx');
-    let json = {};
-    for (const x of keys) {
-        json[x.key] = known[x.key];
-    }
-    ;
-    fs.writeFileSync('./src/app/languages/en.json', JSON.stringify(json, undefined, 2));
-    fs.writeFileSync('./src/app/languages/en.ts', 'import { Language } from "../translate";\nexport class en implements Language {\n' + result + '}');
+
+
 }
 
 async function sendMessagE() {
@@ -142,9 +149,9 @@ function workOnPhones() {
     fs.writeFileSync('c:/temp/result.html', result + "</table></body></html>");
 }
 
-async function translate(s: string) {
+async function translate(s: string, toLang: string) {
     let fromLang = 'he';
-    let toLang = "en";
+
     return new Promise<string>((resolve, reject) => {
         request("https://www.googleapis.com/language/translate/v2?key=" + process.env.google_key + "&source=" + fromLang + "&target=" + toLang + "&format=text", {
             method: 'post',

@@ -312,7 +312,7 @@ export class en implements Language {
   familiesUpdated = 'Families have been updated';
   byGroups = 'By groups';
   adderssProblems = 'Problematic addresses';
-  activeFamilies = 'activity';
+  activeFamilies = 'Active';
   allFamilies = 'All families';
   lastName = 'Last Name';
   firstName = 'First name';
