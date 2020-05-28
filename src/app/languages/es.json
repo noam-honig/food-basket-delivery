@@ -459,6 +459,10 @@
     "google": "cuales",
     "valueInCode": "אשר"
   },
+  "confirmDeleteOf": {
+    "google": "Certificado de borrado para",
+    "valueInCode": "אישור מחיקה עבור "
+  },
   "confirmPassword": {
     "google": "verificación de contraseña",
     "valueInCode": "אישור סיסמה"

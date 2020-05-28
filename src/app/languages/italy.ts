@@ -615,4 +615,5 @@ export class italy implements Language {
   twoDaysAgo = "l'altro ieri";
   thankYou = 'Grazie';
   searchCompanyName = 'Cerca un nome di società';
+  confirmDeleteOf = 'Certificato di cancellazione per';
 }

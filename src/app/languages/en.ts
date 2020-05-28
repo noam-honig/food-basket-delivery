@@ -615,4 +615,5 @@ export class en implements Language {
   twoDaysAgo = 'the day before yesterday';
   thankYou = 'Thanks';
   searchCompanyName = 'Search for a company name';
+  confirmDeleteOf = 'Deletion certificate for';
 }

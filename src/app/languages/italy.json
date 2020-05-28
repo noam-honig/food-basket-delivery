@@ -459,6 +459,10 @@
     "google": "quale",
     "valueInCode": "אשר"
   },
+  "confirmDeleteOf": {
+    "google": "Certificato di cancellazione per",
+    "valueInCode": "אישור מחיקה עבור "
+  },
   "confirmPassword": {
     "google": "verifica password",
     "valueInCode": "אישור סיסמה"

@@ -570,6 +570,10 @@
     "orig": "אשר",
     "valueInCode": "אשר"
   },
+  "confirmDeleteOf": {
+    "google": "Deletion certificate for",
+    "valueInCode": "אישור מחיקה עבור "
+  },
   "confirmPassword": {
     "google": "password verification",
     "orig": "אישור סיסמה",
