@@ -2,13 +2,12 @@
   margin-bottom: 3px;
 }
 .map-button {
-  margin-top:10px;
-  
+  margin-top: 10px;
 }
 .sendSmsButtonLine {
   margin-bottom: 5px;
-  display:flex;
-  
+  display: flex;
+
   justify-content: center;
 }
 
@@ -28,12 +27,17 @@
 h3 {
   margin-top: 5px;
 }
+[dir="rtl"] .printTable {
+  th,
+  td {
+    text-align: right;
+  }
+}
 .printTable {
   -webkit-print-color-adjust: exact;
   width: 100%;
   th,
   td {
-    text-align: right;
     border: 1px solid #ddd !important;
     padding: 8px !important;
   }

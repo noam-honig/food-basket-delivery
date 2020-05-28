@@ -44,7 +44,7 @@ export class DialogService {
         if (info.indexOf('!!') >= 0) {
             //new Audio('http://www.orangefreesounds.com/wp-content/uploads/2019/02/Ping-tone.mp3').play();
         }
-        this.snackBar.open(info, use.language.close, { duration: 4000 });
+        this.snackBar.open(info, use.language.close, { duration: 400000 });
     }
 
     Error(err: string): any {
