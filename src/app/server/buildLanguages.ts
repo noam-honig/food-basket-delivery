@@ -3,6 +3,50 @@ import { Language } from "../translate";
 import { jsonToXlsx } from "../shared/saveToExcel";
 import * as request from 'request';
 
+
+export async function loadTranslationXlsx(fileName: string, language: string) {
+    let XLSX = await import('xlsx');
+    var wb = XLSX.readFile(fileName);
+    var sheet = wb.Sheets[wb.SheetNames[0]];
+    let data = XLSX.utils.sheet_to_json(sheet, {
+        raw: false,
+        dateNF: "DD-MMM-YYYY",
+        header: 1,
+        defval: ""
+    });
+    let known = loadLangFile(language);
+    for (let index = 1; index < data.length; index++) {
+        const row = data[index];
+        let key = row[0];
+        let k = known[key];
+        k["orig"] = undefined;
+        if (k) {
+            let val = row[1].trim();
+            if (val != k.google && val) {
+         //       k.custom = val;
+            }
+            else {
+                
+            }
+        }
+        else {
+            console.error(key + ' not found');
+        }
+
+
+        
+
+    }
+    saveLangFile(language,known);
+
+
+}
+function loadLangFile(filename: string) {
+    return JSON.parse(fs.readFileSync('./src/app/languages/' + filename + '.json').toString());
+}
+function saveLangFile(filename: string, data: any) {
+    fs.writeFileSync('./src/app/languages/' + filename + '.json', JSON.stringify(data, undefined, 2));
+}
 export async function buildLanguageFiles() {
 
     for (const lang of ["en", "es", "it"]) {
@@ -11,7 +55,7 @@ export async function buildLanguageFiles() {
             fileAndClassName = 'italy';
         }
         let known = {};
-        try { known = JSON.parse(fs.readFileSync('./src/app/languages/' + fileAndClassName + '.json').toString()); }
+        try { known = loadLangFile(fileAndClassName); }
         catch{ }
         let result = '';
         let l = new Language();
@@ -56,7 +100,7 @@ export async function buildLanguageFiles() {
             json[x.key] = known[x.key];
         }
         ;
-        fs.writeFileSync('./src/app/languages/' + fileAndClassName + '.json', JSON.stringify(json, undefined, 2));
+        saveLangFile(fileAndClassName, json);
         fs.writeFileSync('./src/app/languages/' + fileAndClassName + '.ts', 'import { Language } from "../translate";\nexport class ' + fileAndClassName + ' implements Language {\n' + result + '}');
     }
 

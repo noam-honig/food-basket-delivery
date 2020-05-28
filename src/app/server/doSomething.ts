@@ -17,7 +17,7 @@ import { GeocodeCache, GeocodeInformation } from "../shared/googleApiHelpers";
 import { Sites } from "../sites/sites";
 import * as fs from 'fs';
 import { processPhone } from "../import-from-excel/import-from-excel.component";
-import { buildLanguageFiles } from "./buildLanguages";
+import { buildLanguageFiles, loadTranslationXlsx } from "./buildLanguages";
 
 
 
@@ -26,7 +26,7 @@ export async function DoIt() {
     try {
         await serverInit();
 
-
+        await loadTranslationXlsx('c:/temp/newen.xlsx','en');
         await buildLanguageFiles();
 
 
