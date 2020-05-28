@@ -26,7 +26,7 @@ export async function DoIt() {
     try {
         await serverInit();
 
-        await loadTranslationXlsx('c:/temp/newen.xlsx','en');
+     //   await loadTranslationXlsx('c:/temp/newen.xlsx','en');
         await buildLanguageFiles();
 
 

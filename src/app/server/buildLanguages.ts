@@ -19,11 +19,10 @@ export async function loadTranslationXlsx(fileName: string, language: string) {
         const row = data[index];
         let key = row[0];
         let k = known[key];
-        k["orig"] = undefined;
         if (k) {
             let val = row[1].trim();
-            if (val != k.google && val) {
-         //       k.custom = val;
+            if (val != k.google.trim() && val) {
+                k.custom = val;
             }
             else {
                 

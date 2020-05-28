@@ -13,7 +13,8 @@
   },
   "active": {
     "google": "active",
-    "valueInCode": "פעיל"
+    "valueInCode": "פעיל",
+    "custom": "Active"
   },
   "activeFamilies": {
     "google": "activity",
@@ -26,7 +27,8 @@
   },
   "addAllRepeatFamilies": {
     "google": "Add all returning families",
-    "valueInCode": "הוסף את כל המשפחות החוזרות"
+    "valueInCode": "הוסף את כל המשפחות החוזרות",
+    "custom": "Add all repeat families"
   },
   "addAllVolunteers": {
     "google": "Add all volunteers",
@@ -34,19 +36,23 @@
   },
   "addColumnsThatAreNotInTheFile": {
     "google": "Add columns that do not appear in Excel",
-    "valueInCode": "הוספת עמודות שלא מופיעות באקסל"
+    "valueInCode": "הוספת עמודות שלא מופיעות באקסל",
+    "custom": "Add columns not found in imported file"
   },
   "addCurrentLocationToNote": {
     "google": "Add current location for comment",
-    "valueInCode": "הוסף מיקום נוכחי להערה"
+    "valueInCode": "הוסף מיקום נוכחי להערה",
+    "custom": "Add current location to comment"
   },
   "addedToDb": {
     "google": "Added to site",
-    "valueInCode": "נוספה לאתר"
+    "valueInCode": "נוספה לאתר",
+    "custom": "Added to data store"
   },
   "adderssProblems": {
     "google": "Problematic addresses",
-    "valueInCode": "כתובות בעיתיות"
+    "valueInCode": "כתובות בעיתיות",
+    "custom": "Addresses with issues"
   },
   "addExcelColumn": {
     "google": "Add a column",
@@ -58,11 +64,13 @@
   },
   "addressByGoogle": {
     "google": "Address as Google understood",
-    "valueInCode": "כתובת כפי שגוגל הבין"
+    "valueInCode": "כתובת כפי שגוגל הבין",
+    "custom": "Address in Google Maps"
   },
   "addressComment": {
     "google": "Additional directions to the address",
-    "valueInCode": "הנחיות נוספות לכתובת"
+    "valueInCode": "הנחיות נוספות לכתובת",
+    "custom": "Additional directions for address"
   },
   "addressesWithMoreThanOneFamily": {
     "google": "Addresses with more than one family",
@@ -70,11 +78,13 @@
   },
   "addressNotOkOpenWaze": {
     "google": "The address is inaccurate. Check Google or call family. We'd love to update your address in the comments. Open Wise?",
-    "valueInCode": "הכתובת אינה מדוייקת. בדקו בגוגל או התקשרו למשפחה. נשמח אם תעדכנו את הכתובת שמצאתם בהערות. האם לפתוח וייז?"
+    "valueInCode": "הכתובת אינה מדוייקת. בדקו בגוגל או התקשרו למשפחה. נשמח אם תעדכנו את הכתובת שמצאתם בהערות. האם לפתוח וייז?",
+    "custom": "The address is inaccurate. Please check Google Maps or call family and kindly update the correct address in the comments section. Would you like to open Maps?"
   },
   "addressOk": {
     "google": "Good address",
-    "valueInCode": "כתובת תקינה"
+    "valueInCode": "כתובת תקינה",
+    "custom": "Correct Address"
   },
   "addVolunteer": {
     "google": "Add a volunteer / manager",
@@ -82,11 +92,13 @@
   },
   "admin": {
     "google": "System Rule Manager",
-    "valueInCode": "מנהל כלל המערכת"
+    "valueInCode": "מנהל כלל המערכת",
+    "custom": "System administrator"
   },
   "adminRequireToSetPassword": {
     "google": " You are set as administrator but you do not have a password set for you. To use the management capabilities, it is mandatory to protect the details with a password. You are taken to a password update screen to update information.",
-    "valueInCode": " אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועבר למסך עדכון פרטים לעדכון סיסמה."
+    "valueInCode": " אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועבר למסך עדכון פרטים לעדכון סיסמה.",
+    "custom": "You are a manager user without a required password defined. Please set a password in the following user details screen."
   },
   "age": {
     "google": "age",
@@ -94,11 +106,13 @@
   },
   "all": {
     "google": "Everyone",
-    "valueInCode": "כולם"
+    "valueInCode": "כולם",
+    "custom": "All"
   },
   "allBaskets": {
     "google": "All the baskets",
-    "valueInCode": "כל הסלים"
+    "valueInCode": "כל הסלים",
+    "custom": "All parcels"
   },
   "allCities": {
     "google": "All cities",
@@ -110,23 +124,28 @@
   },
   "allGroups": {
     "google": "All teams",
-    "valueInCode": "כל הקבוצות"
+    "valueInCode": "כל הקבוצות",
+    "custom": "All family groups"
   },
   "allOthers": {
     "google": "Everything Else",
-    "valueInCode": "כל השאר"
+    "valueInCode": "כל השאר",
+    "custom": "All others"
   },
   "allRegions": {
     "google": "All areas",
-    "valueInCode": "כל האזורים"
+    "valueInCode": "כל האזורים",
+    "custom": "All Areas"
   },
   "alreadyExist": {
     "google": "Already exists in the system",
-    "valueInCode": "כבר קיים במערכת"
+    "valueInCode": "כבר קיים במערכת",
+    "custom": "Already exists"
   },
   "alreadyExistsInLine": {
     "google": "A file already exists in a row",
-    "valueInCode": "כבר קיים בקובץ בשורה"
+    "valueInCode": "כבר קיים בקובץ בשורה",
+    "custom": "Already exists in line"
   },
   "aMinuteAgo": {
     "google": "A minute ago",
@@ -142,7 +161,8 @@
   },
   "andMoveToUpdateFamilies": {
     "google": "And forward to families for update",
-    "valueInCode": "ולהעביר למשפחות לעדכון"
+    "valueInCode": "ולהעביר למשפחות לעדכון",
+    "custom": "and move to update families"
   },
   "andThreeQuaters": {
     "google": "And three-quarters",
@@ -162,15 +182,18 @@
   },
   "archiveCurrentDelivery": {
     "google": "Move current shipment to archive?",
-    "valueInCode": "העבר משלוח נוכחי לארכיב?"
+    "valueInCode": "העבר משלוח נוכחי לארכיב?",
+    "custom": "Archive current delivery"
   },
   "archiveDeliveries": {
     "google": "Archive transfer",
-    "valueInCode": "העברה לארכיב"
+    "valueInCode": "העברה לארכיב",
+    "custom": "Archive deliveries"
   },
   "archiveDeliveriesHelp": {
     "google": "Moving to the archive will only make shipments delivered or encountered a problem. The archive can be viewed at any time on the Shipping History screen",
-    "valueInCode": "העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים"
+    "valueInCode": "העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים",
+    "custom": "Only deliveries marked as 'delivered' or 'failed' are archived . The archive can be viewed at any time under delivery History."
   },
   "archiveDelivery": {
     "google": "Archive",
@@ -178,11 +201,13 @@
   },
   "archiveFinishedDeliveries": {
     "google": "Migrate completed archives",
-    "valueInCode": "העבר משלוחים שהסתיימו לארכיון"
+    "valueInCode": "העבר משלוחים שהסתיימו לארכיון",
+    "custom": "Archive completed deliveries"
   },
   "areYouSureYouWantToCancelAssignmentTo": {
     "google": "Are you sure you want to unpair",
-    "valueInCode": "האם אתה בטוח שאתה רוצה לבטל שיוך ל"
+    "valueInCode": "האם אתה בטוח שאתה רוצה לבטל שיוך ל",
+    "custom": "Are you sure you want to cancel assignment to"
   },
   "areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies": {
     "google": "Are you sure you want to mark successfully delivered to",
@@ -190,31 +215,38 @@
   },
   "asignAnyDelivery": {
     "google": "Belongs to some shipping",
-    "valueInCode": "שייך משלוח כלשהו"
+    "valueInCode": "שייך משלוח כלשהו",
+    "custom": "Assign any Delivery"
   },
   "asignClosestDelivery": {
     "google": "Belongs to the nearest shipping",
-    "valueInCode": "שייך משלוח הכי קרוב"
+    "valueInCode": "שייך משלוח הכי קרוב",
+    "custom": "Assign Nearest Delivery"
   },
   "asignDeliveriesTo": {
     "google": "Associate shipments to",
-    "valueInCode": "שיוך משלוחים ל"
+    "valueInCode": "שיוך משלוחים ל",
+    "custom": "Assign Deliveries to"
   },
   "asignVideoHelp": {
     "google": "For a tutorial on shipping association and event day click here",
-    "valueInCode": "לסרטון הדרכה על שיוך משלוחים ויום האירוע לחצו כאן"
+    "valueInCode": "לסרטון הדרכה על שיוך משלוחים ויום האירוע לחצו כאן",
+    "custom": "For a tutorial on delivery assignment and distribution event click here"
   },
   "assign": {
     "google": "Belong",
-    "valueInCode": "שייכי"
+    "valueInCode": "שייכי",
+    "custom": "Assign"
   },
   "assignAFamilyGroup": {
     "google": "Affiliation with a family group",
-    "valueInCode": "שיוך לקבוצת משפחות"
+    "valueInCode": "שיוך לקבוצת משפחות",
+    "custom": "Assignment to a family group"
   },
   "assignDeliveryMenu": {
     "google": "Associate volunteer shipments",
-    "valueInCode": "שיוך משלוחים למתנדב"
+    "valueInCode": "שיוך משלוחים למתנדב",
+    "custom": "Assign Volunteer"
   },
   "assigned": {
     "google": "Belongs",
@@ -222,47 +254,58 @@
   },
   "assignedDriver": {
     "google": "Associated driver",
-    "valueInCode": "נהג משוייך"
+    "valueInCode": "נהג משוייך",
+    "custom": "assigned driver"
   },
   "assignerOrOrg": {
     "google": "The phone from which the SMS came out",
-    "valueInCode": "הטלפון ממנו יצא הSMS"
+    "valueInCode": "הטלפון ממנו יצא הSMS",
+    "custom": "Help phone"
   },
   "AssignEscortComponent": {
     "google": "Escort affiliation",
-    "valueInCode": "שיוך מלווים"
+    "valueInCode": "שיוך מלווים",
+    "custom": "Escort assignment"
   },
   "assignHelpText": {
     "google": "Please enter the volunteer's phone and name, and then you can choose a group, city and baskets to associate",
-    "valueInCode": "אנא הזיני את הטלפון של המתנדב ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים לשייך"
+    "valueInCode": "אנא הזיני את הטלפון של המתנדב ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים לשייך",
+    "custom": "Please enter volunteer phone number and name, and begin assigning deliveries for your chosen cities or family groups"
   },
   "assignmentCanceledFor": {
     "google": "Family affiliation was abolished",
-    "valueInCode": "בוטל השיוך למשפחת"
+    "valueInCode": "בוטל השיוך למשפחת",
+    "custom": "Assignment cancelled for"
   },
   "assignRequiresADistributionList": {
     "google": "Volunteers cannot be associated because a distribution list is not selected. Please select a distribution list (top left where \"All Lists\" is written)",
-    "valueInCode": "לא ניתן לשייך מתנדבים מכיוון שלא נבחרה רשימת חלוקה. אנא בחרו רשימת חלוקה (למעלה מצד שמאל איפה שכתוב \"כל הרשימות\")"
+    "valueInCode": "לא ניתן לשייך מתנדבים מכיוון שלא נבחרה רשימת חלוקה. אנא בחרו רשימת חלוקה (למעלה מצד שמאל איפה שכתוב \"כל הרשימות\")",
+    "custom": "Please select a distribution list (from the selection box at the top right corner) before assigning deliveries."
   },
   "atAddress": {
     "google": "At",
-    "valueInCode": "בכתובת"
+    "valueInCode": "בכתובת",
+    "custom": "at"
   },
   "atThisLocationThereAre": {
     "google": "At this point there is",
-    "valueInCode": "בנקודה זו יש"
+    "valueInCode": "בנקודה זו יש",
+    "custom": "This location has"
   },
   "badAddressHelpLine1": {
     "google": "The \"Address\" field must be compared with the \"Address as Google understands\" field.",
-    "valueInCode": "יש להשוות בין השדה \"כתובת\" לשדה \"כתובת כפי שגוגל הבין\"."
+    "valueInCode": "יש להשוות בין השדה \"כתובת\" לשדה \"כתובת כפי שגוגל הבין\".",
+    "custom": "Please compare the 'Address' field with the 'Address on  Google Maps' field."
   },
   "badAddressHelpLine2": {
     "google": "An inaccurate address could lead the volunteer to a wrong place in Waze.",
-    "valueInCode": "כתובת לא מדוייקת עלולה להוביל המתנדב למקום לא נכון בוייז."
+    "valueInCode": "כתובת לא מדוייקת עלולה להוביל המתנדב למקום לא נכון בוייז.",
+    "custom": "Note that an inaccurate address may cause the volunteer to navigate to a completely different place."
   },
   "badAddressHelpStart": {
     "google": "Google couldn't find the address exactly",
-    "valueInCode": "גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת"
+    "valueInCode": "גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת",
+    "custom": "Google Maps did not find an accurate address"
   },
   "badAddressTitle": {
     "google": "Please note, inaccurate address",
@@ -270,15 +313,18 @@
   },
   "basket": {
     "google": "basket",
-    "valueInCode": "סל"
+    "valueInCode": "סל",
+    "custom": "parcel"
   },
   "basketNotDelivered": {
     "google": "The basket was not delivered",
-    "valueInCode": "הסל לא נמסר"
+    "valueInCode": "הסל לא נמסר",
+    "custom": "The parcel was not delivered"
   },
   "basketType": {
     "google": "Basket type",
-    "valueInCode": "סוג סל"
+    "valueInCode": "סוג סל",
+    "custom": "Parcel type"
   },
   "basketTypeName": {
     "google": "Name",
@@ -286,7 +332,8 @@
   },
   "basketTypes": {
     "google": "Types of baskets",
-    "valueInCode": "סוגי סלים"
+    "valueInCode": "סוגי סלים",
+    "custom": "Parcel types"
   },
   "before": {
     "google": "before",
@@ -298,27 +345,33 @@
   },
   "boxes1Name": {
     "google": "Dishes",
-    "valueInCode": "מנות"
+    "valueInCode": "מנות",
+    "custom": "Boxes"
   },
   "boxes1NameCaption": {
     "google": "Name quantity 1 in basket types",
-    "valueInCode": "שם כמות 1 בסוגי סלים"
+    "valueInCode": "שם כמות 1 בסוגי סלים",
+    "custom": "Parcel type name for boxes"
   },
   "boxes2Name": {
     "google": "Something else",
-    "valueInCode": "משהו אחר"
+    "valueInCode": "משהו אחר",
+    "custom": "Other unit"
   },
   "boxes2NameCaption": {
     "google": "Name quantity 2 in basket types",
-    "valueInCode": "שם כמות 2 בסוגי סלים"
+    "valueInCode": "שם כמות 2 בסוגי סלים",
+    "custom": "Parcel type name for other unit"
   },
   "by": {
     "google": "By",
-    "valueInCode": "על ידי"
+    "valueInCode": "על ידי",
+    "custom": "by"
   },
   "byBaskets": {
     "google": "By baskets",
-    "valueInCode": "לפי סלים"
+    "valueInCode": "לפי סלים",
+    "custom": "By parcels"
   },
   "byGroups": {
     "google": "By groups",
@@ -326,7 +379,8 @@
   },
   "callEscort": {
     "google": "Call the lender",
-    "valueInCode": "התקשר למלווה"
+    "valueInCode": "התקשר למלווה",
+    "custom": "Call escort"
   },
   "callPerson": {
     "google": "Call",
@@ -334,28 +388,33 @@
   },
   "cancel": {
     "google": "void",
-    "custom": "cancel",
+    "custom": "Cancel",
     "valueInCode": "בטל"
   },
   "cancelAllAssignments": {
     "google": "Unassign all shipments",
-    "valueInCode": "בטל שיוך לכל המשלוחים"
+    "valueInCode": "בטל שיוך לכל המשלוחים",
+    "custom": "Cancel all assignments"
   },
   "cancelAsignment": {
     "google": "Unpair",
-    "valueInCode": "בטל שיוך"
+    "valueInCode": "בטל שיוך",
+    "custom": "Cancel assignment"
   },
   "cancelAssignmentFor": {
     "google": "Do cancel a volunteer affiliation to",
-    "valueInCode": "האם לבטל שיוך מתנדב ל"
+    "valueInCode": "האם לבטל שיוך מתנדב ל",
+    "custom": "Cancel volunteer assignment to"
   },
   "cancelAssignmentForHelperFamilies": {
     "google": "Unassign all shipments to a volunteer",
-    "valueInCode": "בטל שיוך כל המשלוחים למתנדב"
+    "valueInCode": "בטל שיוך כל המשלוחים למתנדב",
+    "custom": "Cancel all deliveries assigned to volunteer"
   },
   "cantMergeOneFamily": {
     "google": "There is nothing to merge one family",
-    "valueInCode": "אין מה למזג משפחה אחת"
+    "valueInCode": "אין מה למזג משפחה אחת",
+    "custom": "Cannot merge only one family"
   },
   "checkAddress": {
     "google": "Check address",
@@ -363,7 +422,8 @@
   },
   "checkDuplicatePhones": {
     "google": "Check out dual phones",
-    "valueInCode": "בדוק טלפונים כפולים"
+    "valueInCode": "בדוק טלפונים כפולים",
+    "custom": "Check duplicate phone numbers"
   },
   "checkIfFamilyExistsInDb": {
     "google": "Check if a family already exists in the database",
@@ -383,31 +443,38 @@
   },
   "clearAllVolunteerComments": {
     "google": "Clear notes for all volunteers",
-    "valueInCode": "נקה הערות לכל המתנדבים"
+    "valueInCode": "נקה הערות לכל המתנדבים",
+    "custom": "Clear all volunteer comments"
   },
   "clearAllVolunteerCommentsAreYouSure": {
     "google": "Are you sure you want to clear all notes for volunteers?",
-    "valueInCode": "האם אתה בטוח שברצונך לנקות את כל ההערות למתנדבים?"
+    "valueInCode": "האם אתה בטוח שברצונך לנקות את כל ההערות למתנדבים?",
+    "custom": "Are you sure you want to clear all volunteer comments?"
   },
   "clearEscortInfo": {
     "google": "Clear escort information for all volunteers",
-    "valueInCode": "נקה נתוני ליווי לכל המתנדבים"
+    "valueInCode": "נקה נתוני ליווי לכל המתנדבים",
+    "custom": "Clear escort details for all volunteers"
   },
   "clearEscortInfoAreYouSure": {
     "google": "Are you sure you want to clear lender data for all volunteers?",
-    "valueInCode": "האם אתה בטוח שברצונך לנקות את נתוני המלווים לכל המתנדבים?"
+    "valueInCode": "האם אתה בטוח שברצונך לנקות את נתוני המלווים לכל המתנדבים?",
+    "custom": "Are you sure you want to clear escort details for all volunteers?"
   },
   "clearHelperInfo": {
     "google": "Clear volunteer information",
-    "valueInCode": "נקה פרטי מתנדב"
+    "valueInCode": "נקה פרטי מתנדב",
+    "custom": "Clear volunteer details"
   },
   "clearVolunteer": {
     "google": "Unassign a volunteer",
-    "valueInCode": "בטל שיוך למתנדב"
+    "valueInCode": "בטל שיוך למתנדב",
+    "custom": "Cancel volunteer assignment"
   },
   "clickedByMistake": {
     "google": "Accidentally clicked - Return shipping to distribution",
-    "valueInCode": "נלחץ בטעות - החזר למשלוחים לחלוקה"
+    "valueInCode": "נלחץ בטעות - החזר למשלוחים לחלוקה",
+    "custom": "Accidentally clicked - return to Assigned Deliveries"
   },
   "clickForTutorialVideo": {
     "google": "For a short tutorial video, click here",
@@ -415,43 +482,53 @@
   },
   "close": {
     "google": "closed",
-    "valueInCode": "סגור"
+    "valueInCode": "סגור",
+    "custom": "close"
   },
   "columnSelectionInFile": {
     "google": "Choose columns in a file",
-    "valueInCode": "בחירת עמודות בקובץ"
+    "valueInCode": "בחירת עמודות בקובץ",
+    "custom": "Columns in file selection"
   },
   "commentForAllDeliveries": {
     "google": "Note to appear for all shipments",
-    "valueInCode": "הערה שתופיע לכל המשלוחים"
+    "valueInCode": "הערה שתופיע לכל המשלוחים",
+    "custom": "Comment for all deliveries"
   },
   "commentForProblem": {
     "google": "We'd love to write a comment about what you saw and were",
-    "valueInCode": "נשמח אם תכתוב לנו הערה על מה שראית והיה"
+    "valueInCode": "נשמח אם תכתוב לנו הערה על מה שראית והיה",
+    "custom": "Kindly describe your experience"
   },
   "commentForSuccessDelivery": {
     "google": "We'd love to write a comment about what you saw and were",
-    "valueInCode": "נשמח אם תכתוב לנו הערה על מה שראית והיה"
+    "valueInCode": "נשמח אם תכתוב לנו הערה על מה שראית והיה",
+    "custom": "Kindly describe your experience"
   },
   "commentForSuccessLeft": {
     "google": "Please specify where you left the basket and with whom you spoke",
-    "valueInCode": "אנא פרט היכן השארת את הסל ועם מי דיברת"
+    "valueInCode": "אנא פרט היכן השארת את הסל ועם מי דיברת",
+    "custom": "Please specify where you left the parcel and with whom you spoke"
   },
   "commentForVolunteer": {
     "google": "A note to appear to the volunteer",
-    "valueInCode": "הערה שתופיע למתנדב"
+    "valueInCode": "הערה שתופיע למתנדב",
+    "custom": "Comment for volunteer"
   },
   "commentsWritteByVolunteer": {
     "google": "Comments written by the volunteer when he delivered",
-    "valueInCode": "הערות שכתב המתנדב כשמסר"
+    "valueInCode": "הערות שכתב המתנדב כשמסר",
+    "custom": "Comments entered by the volunteer upon delivery"
   },
   "company": {
     "google": "Society",
-    "valueInCode": "חברה"
+    "valueInCode": "חברה",
+    "custom": "Company"
   },
   "compareTo": {
     "google": "Opposite",
-    "valueInCode": "מול"
+    "valueInCode": "מול",
+    "custom": "compared to"
   },
   "completed": {
     "google": "Completed",
@@ -468,7 +545,8 @@
   },
   "confirmPassword": {
     "google": "password verification",
-    "valueInCode": "אישור סיסמה"
+    "valueInCode": "אישור סיסמה",
+    "custom": "Confirm password"
   },
   "contactPersonName": {
     "google": "contact",
@@ -488,23 +566,28 @@
   },
   "copyright": {
     "google": " Hagai - an app for distributing food baskets",
-    "valueInCode": " חגי - אפליקציה לחלוקת סלי מזון"
+    "valueInCode": " חגי - אפליקציה לחלוקת סלי מזון",
+    "custom": "Hagai - an app for distributing food parcels"
   },
   "courierAsignDate": {
     "google": "Volunteer date",
-    "valueInCode": "מועד שיוך למתנדב"
+    "valueInCode": "מועד שיוך למתנדב",
+    "custom": "Volunteer assignment date"
   },
   "courierAsignUser": {
     "google": "Who belongs to the volunteer",
-    "valueInCode": "מי שייכה למתנדב"
+    "valueInCode": "מי שייכה למתנדב",
+    "custom": "Volunteer assigning user"
   },
   "createDate": {
     "google": "Date added",
-    "valueInCode": "מועד הוספה"
+    "valueInCode": "מועד הוספה",
+    "custom": "Creation Date"
   },
   "createUser": {
     "google": "User Adds",
-    "valueInCode": "משתמש מוסיף"
+    "valueInCode": "משתמש מוסיף",
+    "custom": "Creating user"
   },
   "dates": {
     "google": "Dates",
@@ -516,15 +599,18 @@
   },
   "defaultBasketType": {
     "google": "Default basket type",
-    "valueInCode": "סוג סל ברירת מחדל"
+    "valueInCode": "סוג סל ברירת מחדל",
+    "custom": "Default parcel type"
   },
   "defaultDistributionListName": {
     "google": "Food Distribution",
-    "valueInCode": "חלוקת מזון"
+    "valueInCode": "חלוקת מזון",
+    "custom": "Food Distribution List"
   },
   "defaultHelpPhone": {
     "google": "The phone from which the SMS came out",
-    "valueInCode": "הטלפון ממנו יצא הSMS"
+    "valueInCode": "הטלפון ממנו יצא הSMS",
+    "custom": "Help Phone Name"
   },
   "defaultOrgName": {
     "google": "My organization's name",
@@ -532,24 +618,28 @@
   },
   "defaultPhonePrefixForExcelImport": {
     "google": "Default reception phone prefix from Excel",
-    "valueInCode": "קידומת טלפון ברירת מחדל בקליטה מאקסל"
+    "valueInCode": "קידומת טלפון ברירת מחדל בקליטה מאקסל",
+    "custom": "Default phone prefix for import from Excel"
   },
   "defaultQuantity": {
     "google": "Number of default baskets",
-    "valueInCode": "מספר סלים ברירת מחדל"
+    "valueInCode": "מספר סלים ברירת מחדל",
+    "custom": "Default number of parcels"
   },
   "defaultSelfPickup": {
     "google": "Come take a default",
-    "valueInCode": "באים לקחת ברירת מחדל"
+    "valueInCode": "באים לקחת ברירת מחדל",
+    "custom": "Default self pickup"
   },
   "defaultSmsText": {
     "google": "Hello! Volunteer!\\nPackage Sharing! Organization! Click:! Site!\\nThanks! Sending!",
     "valueInCode": "שלום !מתנדב!\nלחלוקת חבילות !ארגון! לחץ על: !אתר! \nתודה !שולח!",
-    "custom": "Hello !VOLUNTEER!\\nTo deliver packages for !ORG! Click on: !URL!\\nThanks !SENDER!"
+    "custom": "Hello !VOLUNTEER!\\nTo deliver parcels for !ORG! Click:!URL!\\nThanks !SENDER!"
   },
   "defaultStatusType": {
     "google": "Default shipping status for new families",
-    "valueInCode": "סטטוס משלוח ברירת מחדל למשפחות חדשות"
+    "valueInCode": "סטטוס משלוח ברירת מחדל למשפחות חדשות",
+    "custom": "Default delivery status for new families"
   },
   "defaultVolunteer": {
     "google": "Default volunteer",
@@ -557,27 +647,33 @@
   },
   "defaulyHelpPhoneExplanation": {
     "google": "When a text message is sent to a volunteer, it appears as if it came out of the phone of the family member and clicked the Send SMS button. You can set up an alternate name and phone here",
-    "valueInCode": "כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את המשפחות ולחץ על הכפתור שלח SMS. ניתן להגדיר כאן שם חלופי וטלפון חלופי"
+    "valueInCode": "כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את המשפחות ולחץ על הכפתור שלח SMS. ניתן להגדיר כאן שם חלופי וטלפון חלופי",
+    "custom": "By default, the person who assigned the delivery, will be the person that the volunteer can call for help. Specify a different value here, if you prefer another help phone number"
   },
   "defineDeliveriesForFamiliesInExcel": {
     "google": "Set up shipments for all families from Axel",
-    "valueInCode": "הגדר משלוחים לכל המשפחות מהאקסל"
+    "valueInCode": "הגדר משלוחים לכל המשפחות מהאקסל",
+    "custom": "Define deliveries for all families imported from Excel file"
   },
   "delayed": {
     "google": "Are delayed",
-    "valueInCode": "מתעכבים"
+    "valueInCode": "מתעכבים",
+    "custom": "Delayed"
   },
   "deleteDeliveries": {
     "google": "Delete shipments",
-    "valueInCode": "מחק משלוחים"
+    "valueInCode": "מחק משלוחים",
+    "custom": "Delete deliveries"
   },
   "deleteDeliveriesHelp": {
     "google": "Note - Deleting the shipment will not remove the family from the lists - To remove the family from the lists, update the family status. The deletion will only be performed for unposted shipments",
-    "valueInCode": "שים לב - מחיקת המשלוח לא תוציא את המשפחה מהרשימות - כדי להוציא את המשפחה מהרשימות יש לבצע עדכון לסטטוס המשפחה. המחיקה תתבצע רק עבור משלוחים שטרם נמסרו"
+    "valueInCode": "שים לב - מחיקת המשלוח לא תוציא את המשפחה מהרשימות - כדי להוציא את המשפחה מהרשימות יש לבצע עדכון לסטטוס המשפחה. המחיקה תתבצע רק עבור משלוחים שטרם נמסרו",
+    "custom": "Deleting undelivered deliveries only. Please note that recipient families are not removed from distribution lists. To remove a family from the lists you should update the family status."
   },
   "deleteDelivery": {
     "google": "Delete shipping",
-    "valueInCode": "מחק משלוח"
+    "valueInCode": "מחק משלוח",
+    "custom": "Delete delivery"
   },
   "deleteExcelSettings": {
     "google": "Delete settings",
@@ -585,11 +681,13 @@
   },
   "deleteExistingComment": {
     "google": "Delete a previous note",
-    "valueInCode": "מחק הערה קודמת"
+    "valueInCode": "מחק הערה קודמת",
+    "custom": "Delete existing comment"
   },
   "deleteFamilies": {
     "google": "Deleting data",
-    "valueInCode": "מחיקת נתונים"
+    "valueInCode": "מחיקת נתונים",
+    "custom": "Delete families"
   },
   "deleteFamiliesButton": {
     "google": "Delete all families in \"delete\" status",
@@ -597,11 +695,13 @@
   },
   "deleteFamiliesHelp": {
     "google": "Clicking this button will erase all families in the \"delete\" status from the system. Their shipping history will be preserved.",
-    "valueInCode": "לחיצה על הכפתור תמחוק את כל המשפחות בסטטוס \"למחיקה\" מהמערכת. היסטורית המשלוחים שלהן תישמרנה."
+    "valueInCode": "לחיצה על הכפתור תמחוק את כל המשפחות בסטטוס \"למחיקה\" מהמערכת. היסטורית המשלוחים שלהן תישמרנה.",
+    "custom": "Clicking this button will delete all families in the \"delete\" status from the system. Their delivery history will be preserved."
   },
   "deletePendingDeliveries": {
     "google": "Delete unposted shipments to these families",
-    "valueInCode": "מחק משלוחים שטרם נמסרו למשפחות אלו"
+    "valueInCode": "מחק משלוחים שטרם נמסרו למשפחות אלו",
+    "custom": "Delete undelivered deliveries to these families"
   },
   "delivered": {
     "google": "Delivered",
@@ -609,11 +709,13 @@
   },
   "deliveredButtonText": {
     "google": "I delivered the package successfully",
-    "valueInCode": "מסרתי את החבילה בהצלחה"
+    "valueInCode": "מסרתי את החבילה בהצלחה",
+    "custom": "Parcel Delivered Successfully"
   },
   "deliveredByBaskets": {
     "google": "Delivered by baskets",
-    "valueInCode": "נמסרו לפי סלים"
+    "valueInCode": "נמסרו לפי סלים",
+    "custom": "Delivered by parcels"
   },
   "deliveredSuccessfully": {
     "google": "Successfully delivered",
@@ -621,43 +723,53 @@
   },
   "deliveries": {
     "google": "Shipments",
-    "valueInCode": "משלוחים"
+    "valueInCode": "משלוחים",
+    "custom": "Deliveries"
   },
   "deliveriesAssignAllOfThem": {
     "google": " Deliveries - associate them all?",
-    "valueInCode": " משלוחים - לשייך את כולם?"
+    "valueInCode": " משלוחים - לשייך את כולם?",
+    "custom": "Deliveries - assign them all?"
   },
   "deliveriesAssigned": {
     "google": "Shipments are associated",
-    "valueInCode": "משלוחים שוייכו "
+    "valueInCode": "משלוחים שוייכו ",
+    "custom": "deliveries are assigned"
   },
   "deliveriesAtSameAddress": {
     "google": "Shipping at the same address, do they also belong?",
-    "valueInCode": "משלוחים באותה הכתובת, האם לשייך גם אותם?"
+    "valueInCode": "משלוחים באותה הכתובת, האם לשייך גם אותם?",
+    "custom": "delivery at the same address, do they also belong?"
   },
   "deliveriesDoneInTheLastTwoDays": {
     "google": "Deliveries distributed over the last two days",
-    "valueInCode": "משלוחים שחולקו ביומיים האחרונים"
+    "valueInCode": "משלוחים שחולקו ביומיים האחרונים",
+    "custom": "Delivered over the last two days"
   },
   "deliveriesFor": {
     "google": "Shipments for",
-    "valueInCode": "משלוחים עבור"
+    "valueInCode": "משלוחים עבור",
+    "custom": "deliveries for"
   },
   "deliveriesFrom": {
     "google": "Shipments from",
-    "valueInCode": "משלוחים מ"
+    "valueInCode": "משלוחים מ",
+    "custom": "deliveries from"
   },
   "deliveriesToDistribute": {
     "google": "Distributed deliveries",
-    "valueInCode": "משלוחים לחלוקה"
+    "valueInCode": "משלוחים לחלוקה",
+    "custom": "Assigned Deliveries"
   },
   "deliveriesUpdated": {
     "google": "Shipments updated",
-    "valueInCode": "משלוחים עודכנו"
+    "valueInCode": "משלוחים עודכנו",
+    "custom": "deliveries updated"
   },
   "deliveryCenterAddress": {
     "google": "Shipping center address",
-    "valueInCode": "כתובת מרכז השילוח"
+    "valueInCode": "כתובת מרכז השילוח",
+    "custom": "delivery center address"
   },
   "deliveryCreateDate": {
     "google": "Assignment date",
@@ -677,7 +789,8 @@
   },
   "deliveryDetails": {
     "google": "Shipping card",
-    "valueInCode": "כרטיס משלוח"
+    "valueInCode": "כרטיס משלוח",
+    "custom": "Delivery Details"
   },
   "deliveryDetailsAsDisplayedToVolunteer": {
     "google": "Family details as they appear to the volunteer",
@@ -685,7 +798,8 @@
   },
   "deliveryDetailsFor": {
     "google": "Shipping details for",
-    "valueInCode": "פרטי משלוח עבור"
+    "valueInCode": "פרטי משלוח עבור",
+    "custom": "delivery details for"
   },
   "DeliveryFollowUpComponent": {
     "google": "Volunteer Follow-up",
@@ -693,15 +807,18 @@
   },
   "DeliveryHistoryComponent": {
     "google": "Shipping history",
-    "valueInCode": "היסטורית משלוחים"
+    "valueInCode": "היסטורית משלוחים",
+    "custom": "Delivery History"
   },
   "deliveryInfo": {
     "google": "delivery details",
-    "valueInCode": "פרטי משלוח"
+    "valueInCode": "פרטי משלוח",
+    "custom": "Delivery Details"
   },
   "deliveryStatus": {
     "google": "Shipping status",
-    "valueInCode": "סטטוס משלוח"
+    "valueInCode": "סטטוס משלוח",
+    "custom": "delivery status"
   },
   "deliveryStatusDate": {
     "google": "When",
@@ -709,7 +826,8 @@
   },
   "deliverySummary": {
     "google": "Shipping Summary",
-    "valueInCode": "סיכום משלוח"
+    "valueInCode": "סיכום משלוח",
+    "custom": "delivery Summary"
   },
   "delveriesInProgress": {
     "google": "Families are waiting",
@@ -725,7 +843,8 @@
   },
   "dialTo": {
     "google": "Dial to",
-    "valueInCode": "חייג ל"
+    "valueInCode": "חייג ל",
+    "custom": "Dial"
   },
   "displayFamiliesOf": {
     "google": "Will showcase the families of",
@@ -765,7 +884,8 @@
   },
   "DuplicateFamiliesComponent": {
     "google": "Search for duplicate families",
-    "valueInCode": "חיפוש משפחות כפולות"
+    "valueInCode": "חיפוש משפחות כפולות",
+    "custom": "Possible Duplicates"
   },
   "empty": {
     "google": "blank",
@@ -780,8 +900,9 @@
     "valueInCode": "מכיוון שלא מוגדרת לך סיסמה עדיין - אנא הכנס בפעם הראשונה, על ידי הקלדת מספר הטלפון שלך ללא סיסמה ולחיצה על הכפתור \"כניסה\". המערכת תבקש שתגדיר סיסמה וזו תהיה סיסמתך.\n  בהצלחה"
   },
   "entrance": {
-    "google": "Entrance",
-    "valueInCode": "כניסה"
+    "google": "Sign in",
+    "valueInCode": "כניסה",
+    "custom": "Sign in"
   },
   "error": {
     "google": "Error",
@@ -829,7 +950,8 @@
   },
   "excelNoneOfTheseFamiliesMatch": {
     "google": " None of these families fit in the line at Axel,",
-    "valueInCode": " אף אחת מהמשפחות הללו אינה מתאימה לשורה באקסל, "
+    "valueInCode": " אף אחת מהמשפחות הללו אינה מתאימה לשורה באקסל, ",
+    "custom": "None of these families fit in the line at Excel,"
   },
   "excelReadLineAnyhow": {
     "google": "even though",
@@ -849,7 +971,8 @@
   },
   "executeExcelImport": {
     "google": "Making the absorption",
-    "valueInCode": "ביצוע הקליטה"
+    "valueInCode": "ביצוע הקליטה",
+    "custom": "Importing"
   },
   "existingFamilies": {
     "google": "Existing families",
@@ -881,7 +1004,8 @@
   },
   "failedDeliveries": {
     "google": "Shipments I encountered a problem",
-    "valueInCode": "משלוחים שנתקלתי בבעיה"
+    "valueInCode": "משלוחים שנתקלתי בבעיה",
+    "custom": "Not Delivered"
   },
   "familesOnStreet": {
     "google": "Families on the street",
@@ -925,7 +1049,8 @@
   },
   "familyAlreadyHasAnActiveDelivery": {
     "google": "This family already has shipping of the same type.",
-    "valueInCode": "למשפחה זו כבר קיים משלוח מאותו סוג האם להוסיף עוד אחד?"
+    "valueInCode": "למשפחה זו כבר קיים משלוח מאותו סוג האם להוסיף עוד אחד?",
+    "custom": "This family already has delivery of the same type."
   },
   "familyAlreadyRemovedFromList": {
     "google": "Updated family in database as removed from lists",
@@ -937,15 +1062,18 @@
   },
   "familyDeliveries": {
     "google": "Family shipments",
-    "valueInCode": "משלוחים למשפחה"
+    "valueInCode": "משלוחים למשפחה",
+    "custom": "Family deliveries"
   },
   "FamilyDeliveriesComponent": {
     "google": "Shipments",
-    "valueInCode": "משלוחים"
+    "valueInCode": "משלוחים",
+    "custom": "Deliveries"
   },
   "familyDetails": {
     "google": "Family information",
-    "valueInCode": "פרטי משפחה"
+    "valueInCode": "פרטי משפחה",
+    "custom": "Family details"
   },
   "familyGroup": {
     "google": "Family affiliation groups",
@@ -985,7 +1113,8 @@
   },
   "familySelfPickup": {
     "google": "Come and take the shipment and don't need shipping?",
-    "valueInCode": "יבואו לקחת את המשלוח ואינם צריכים משלוח?"
+    "valueInCode": "יבואו לקחת את המשלוח ואינם צריכים משלוח?",
+    "custom": "Self Pickup, no delivery required?"
   },
   "familySource": {
     "google": "Referrer",
@@ -1021,7 +1150,8 @@
   },
   "filterBasketType": {
     "google": "Basket type filtering",
-    "valueInCode": "סינון סוג סל"
+    "valueInCode": "סינון סוג סל",
+    "custom": "Parcel Type Filtering"
   },
   "filterCity": {
     "google": "City filtering",
@@ -1029,7 +1159,8 @@
   },
   "filterFamilyGroups": {
     "google": "Filtering a family group",
-    "valueInCode": "סינון קבוצת משפחה"
+    "valueInCode": "סינון קבוצת משפחה",
+    "custom": "Group Filtering"
   },
   "filterRegion": {
     "google": "Area filtering",
@@ -1037,7 +1168,8 @@
   },
   "findHelperByName": {
     "google": "Look for a volunteer by name",
-    "valueInCode": "חפש מתנדב לפי שם"
+    "valueInCode": "חפש מתנדב לפי שם",
+    "custom": "Search by Name"
   },
   "firstName": {
     "google": "First name",
@@ -1077,19 +1209,23 @@
   },
   "freezeDeliveries": {
     "google": "Freeze shipments",
-    "valueInCode": "הקפא משלוחים"
+    "valueInCode": "הקפא משלוחים",
+    "custom": "Freeze deliveries"
   },
   "freezeDeliveriesHelp": {
     "google": "\"Frozen\" delivery is a delivery that will not be associated with any volunteer until the \"delivery\" is dispatched. Freezing is used to temporarily stop certain shipments until they can be thawed and shipped. The freeze will only be carried out for shipments that are ready for delivery.",
-    "valueInCode": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח. "
+    "valueInCode": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח. ",
+    "custom": "\"Frozen\" delivery is a delivery that will not be assigned with any volunteer until the \"delivery\" is dispatched. Freezing is used to temporarily stop certain deliveries until they can be thawed and shipped. The freeze will only be carried out for deliveries that are ready for delivery."
   },
   "freezeDelivery": {
     "google": "Freeze Shipping",
-    "valueInCode": "הקפא משלוח"
+    "valueInCode": "הקפא משלוח",
+    "custom": "Freeze delivery"
   },
   "freezeDeliveryHelp": {
     "google": "\"Frozen\" delivery is a delivery that will not be associated with any volunteer until the \"delivery\" is dispatched. Freezing is used to temporarily stop certain shipments until they can be thawed and shipped. Do freeze shipping to",
-    "valueInCode": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל"
+    "valueInCode": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל",
+    "custom": "\"Frozen\" delivery is a delivery that will not be assigned with any volunteer until the \"delivery\" is dispatched. Freezing is used to temporarily stop certain deliveries until they can be thawed and shipped. Do freeze delivery to"
   },
   "fromDate": {
     "google": "Dated",
@@ -1117,7 +1253,8 @@
   },
   "gotoDeliveriesScreen": {
     "google": "Do you switch to a shipping screen or stay on that screen?",
-    "valueInCode": "האם לעבור למסך משלוחים או להשאר במסך זה?"
+    "valueInCode": "האם לעבור למסך משלוחים או להשאר במסך זה?",
+    "custom": "Switch to a delivery screen or stay on this one?"
   },
   "gpsLocationNear": {
     "google": "GPS spot near",
@@ -1169,19 +1306,23 @@
   },
   "ifBasketTypeInExcelIsDifferentFromExistingOneCreateNewDelivery": {
     "google": "If there is a shipment for a family with a different basket type, add a new one",
-    "valueInCode": "אם קיים משלוח למשפחה עם סוג סל שונה, הוסף משלוח חדש"
+    "valueInCode": "אם קיים משלוח למשפחה עם סוג סל שונה, הוסף משלוח חדש",
+    "custom": "If there is a delivery for a family with a different parcel type, add a new one"
   },
   "importFamily": {
     "google": "To absorb the family",
-    "valueInCode": "לקלוט את משפחת"
+    "valueInCode": "לקלוט את משפחת",
+    "custom": "Import"
   },
   "ImportFromExcelComponent": {
     "google": "Absorption of families from Axel",
-    "valueInCode": "קליטת משפחות מאקסל"
+    "valueInCode": "קליטת משפחות מאקסל",
+    "custom": "Families Excel Import"
   },
   "ImportHelpersFromExcelComponent": {
     "google": "Absorption of volunteers from Excel",
-    "valueInCode": "קליטת מתנדבים מאקסל"
+    "valueInCode": "קליטת מתנדבים מאקסל",
+    "custom": "Volunteers Excel Import"
   },
   "inacurateAddress": {
     "google": "Notice, Inaccurate Address!",
@@ -1209,7 +1350,8 @@
   },
   "isAlreadyAsignedTo": {
     "google": " Already associated with",
-    "valueInCode": " כבר משוייכת ל"
+    "valueInCode": " כבר משוייכת ל",
+    "custom": "Already assigned with"
   },
   "isDefinedAsEscortOf": {
     "google": "Defined as a lender of",
@@ -1249,7 +1391,8 @@
   },
   "leftDeliveryNextToHouse": {
     "google": "I left by the house",
-    "valueInCode": "השארתי ליד הבית"
+    "valueInCode": "השארתי ליד הבית",
+    "custom": "Parcel left outside"
   },
   "linesInExcel": {
     "google": "Lines in the axle",
@@ -1273,7 +1416,8 @@
   },
   "LoginComponent": {
     "google": "Entrance",
-    "valueInCode": "כניסה"
+    "valueInCode": "כניסה",
+    "custom": "Sign in"
   },
   "logoAndIcons": {
     "google": "Logos and figurines",
@@ -1309,11 +1453,13 @@
   },
   "markAllDeliveriesAsSuccesfull": {
     "google": "Marker successfully delivered to all shipments",
-    "valueInCode": "סמן נמסר בהצלחה לכל המשלוחים"
+    "valueInCode": "סמן נמסר בהצלחה לכל המשלוחים",
+    "custom": "Mark \"successfully delivered\" to all deliveries"
   },
   "markDeliveredToAllHelprFamilies": {
     "google": "Unassign all shipments to a volunteer",
-    "valueInCode": "בטל שיוך כל המשלוחים למתנדב"
+    "valueInCode": "בטל שיוך כל המשלוחים למתנדב",
+    "custom": "Unassign all deliveries"
   },
   "merge": {
     "google": "Keep conditioning",
@@ -1357,7 +1503,8 @@
   },
   "moreThanOneRowInDbMatchesExcel": {
     "google": "More than one family was found on the site corresponding to this line from Axel. Please select which of the following families fits the row from the excel and pass it on",
-    "valueInCode": "נמצאה יותר ממשפחה אחת באתר המתאימה לשורה הזו מהאקסל. אנא בחר איזו מהמשפחות הבאות מתאימה לשורה מהאקסל והעבר אותה למשפחות לעדכון"
+    "valueInCode": "נמצאה יותר ממשפחה אחת באתר המתאימה לשורה הזו מהאקסל. אנא בחר איזו מהמשפחות הבאות מתאימה לשורה מהאקסל והעבר אותה למשפחות לעדכון",
+    "custom": "More than one family was found on the site corresponding to this line from Excel. Please select which of the following families fits the row from the excel and pass it on"
   },
   "moreVolunteers": {
     "google": "More volunteers",
@@ -1405,15 +1552,18 @@
   },
   "newDeliveryFor": {
     "google": "New shipping to",
-    "valueInCode": "משלוח חדש ל"
+    "valueInCode": "משלוח חדש ל",
+    "custom": "New delivery to"
   },
   "newDeliveryForAll": {
     "google": "New delivery for all shipments and not just for those that ended successfully",
-    "valueInCode": "משלוח חדש לכל המשלוחים ולא רק לאלו שהסתיימו בהצלחה"
+    "valueInCode": "משלוח חדש לכל המשלוחים ולא רק לאלו שהסתיימו בהצלחה",
+    "custom": "New delivery for all deliveries and not just for those that ended successfully"
   },
   "newDeliveryForDeliveriesHelp": {
     "google": "A new shipment will be set for all statuses that have been successfully delivered, or any problem, unless you choose to select the field",
-    "valueInCode": "משלוח חדש יוגדר עבור כל המשלוחים המסומנים שהם בסטטוס נמסר בהצלחה, או בעיה כלשהי, אלא אם תבחרו לסמן את השדה "
+    "valueInCode": "משלוח חדש יוגדר עבור כל המשלוחים המסומנים שהם בסטטוס נמסר בהצלחה, או בעיה כלשהי, אלא אם תבחרו לסמן את השדה ",
+    "custom": "A new delivery will be set for all statuses that have been successfully delivered, or any problem, unless you choose to select the field"
   },
   "newFamilies": {
     "google": "New families",
@@ -1425,7 +1575,8 @@
   },
   "NewsComponent": {
     "google": "Care needs",
-    "valueInCode": "מצריך טיפול"
+    "valueInCode": "מצריך טיפול",
+    "custom": "Requires Followup"
   },
   "newVolunteers": {
     "google": "New volunteers",
@@ -1449,7 +1600,8 @@
   },
   "noDeliveriesLeft": {
     "google": "No suitable shipments left",
-    "valueInCode": "לא נותרו משלוחים מתאימים"
+    "valueInCode": "לא נותרו משלוחים מתאימים",
+    "custom": "No suitable deliveries left"
   },
   "noFamiliesSelected": {
     "google": "No families were selected",
@@ -1637,7 +1789,8 @@
   },
   "previousDeliveryStatus": {
     "google": "Previous shipping status",
-    "valueInCode": "סטטוס משלוח קודם"
+    "valueInCode": "סטטוס משלוח קודם",
+    "custom": "Previous delivery status"
   },
   "previousDeliverySummary": {
     "google": "Previous delivery summary",
@@ -1661,7 +1814,8 @@
   },
   "quantity": {
     "google": "Number of baskets",
-    "valueInCode": "מספר סלים"
+    "valueInCode": "מספר סלים",
+    "custom": "Quantity"
   },
   "question": {
     "google": "a question",
@@ -1673,7 +1827,8 @@
   },
   "ranIntoAProblem": {
     "google": "I have a problem",
-    "valueInCode": "נתקלתי בבעיה"
+    "valueInCode": "נתקלתי בבעיה",
+    "custom": "Problem Encountered"
   },
   "readExcelRow": {
     "google": "Get the line",
@@ -1681,11 +1836,13 @@
   },
   "readyForDelivery": {
     "google": "Ready for shipment",
-    "valueInCode": "מוכן למשלוח"
+    "valueInCode": "מוכן למשלוח",
+    "custom": "Ready for delivery"
   },
   "recentlyAssigned": {
     "google": "Associate now",
-    "valueInCode": "שוייכו עכשיו"
+    "valueInCode": "שוייכו עכשיו",
+    "custom": "Assigned now"
   },
   "recentVolunteers": {
     "google": "Recent volunteers",
@@ -1701,15 +1858,18 @@
   },
   "register": {
     "google": "registration",
-    "valueInCode": "הרשמה"
+    "valueInCode": "הרשמה",
+    "custom": "Register"
   },
   "RegisterComponent": {
     "google": "registration",
-    "valueInCode": "הרשמה"
+    "valueInCode": "הרשמה",
+    "custom": "Register"
   },
   "remainingByBaskets": {
     "google": "Remained by baskets",
-    "valueInCode": "נותרו לפי סלים"
+    "valueInCode": "נותרו לפי סלים",
+    "custom": "Remained by parcels"
   },
   "remainingByCities": {
     "google": "Remained by cities",
@@ -1733,7 +1893,8 @@
   },
   "reminderSmsText": {
     "google": "Hello! Volunteer !,\\nWe would be happy to update the system in the delivery mode of the baskets. To update click on: Site!\\nThank you! Organization!",
-    "valueInCode": "שלום !מתנדב!, \nנשמח אם תעדכן את המערכת במצב המסירה של הסלים. לעדכון לחץ על:  !אתר!\nבתודה !ארגון!"
+    "valueInCode": "שלום !מתנדב!, \nנשמח אם תעדכן את המערכת במצב המסירה של הסלים. לעדכון לחץ על:  !אתר!\nבתודה !ארגון!",
+    "custom": "Hello! Volunteer !,\\nWe would be happy to update the system in the delivery mode of the parcels. To update click on: Site!\\nThank you! Organization!"
   },
   "reminderSmsTextHelp": {
     "google": "This message will be sent to a volunteer who is delayed from a volunteer tracking screen",
@@ -1793,11 +1954,13 @@
   },
   "requireFollowUpUpdateDate": {
     "google": "Needs Care - When Updated",
-    "valueInCode": "צריך טיפול - מתי עודכן"
+    "valueInCode": "צריך טיפול - מתי עודכן",
+    "custom": "Requires Followup Update Date"
   },
   "requireFollowUpUpdateUser": {
     "google": "Need Care - Who Updated",
-    "valueInCode": "צריך טיפול - מי עדכן"
+    "valueInCode": "צריך טיפול - מי עדכן",
+    "custom": "Requires Followup Update User"
   },
   "resendReminder": {
     "google": "send again",
@@ -1817,7 +1980,8 @@
   },
   "responsibleForAssign": {
     "google": "Associates volunteers with a distribution list",
-    "valueInCode": "משייך מתנדבים לרשימת חלוקה"
+    "valueInCode": "משייך מתנדבים לרשימת חלוקה",
+    "custom": "Only Assigns Deliveries"
   },
   "sameAddress": {
     "google": "Same address",
@@ -1849,11 +2013,13 @@
   },
   "saveHelperInfoAndMoveToNextHelper": {
     "google": "Save volunteer information and go to the next volunteer",
-    "valueInCode": "שמור פרטי מתנדב ועבור למתנדב הבא"
+    "valueInCode": "שמור פרטי מתנדב ועבור למתנדב הבא",
+    "custom": "Save volunteer details and go to the next volunteer"
   },
   "saveVolunteerInfo": {
     "google": "Saving volunteer information:",
-    "valueInCode": "שמירת פרטי מתנדב:"
+    "valueInCode": "שמירת פרטי מתנדב:",
+    "custom": "Saving volunteer details:"
   },
   "search": {
     "google": "Search",
@@ -1877,19 +2043,23 @@
   },
   "selectDeliveryByName": {
     "google": "Choosing a family by name",
-    "valueInCode": "בחירת משפחה לפי שם"
+    "valueInCode": "בחירת משפחה לפי שם",
+    "custom": "Assign Delivery by Name"
   },
   "selectDeliveryByStreet": {
     "google": "Family selection by street",
-    "valueInCode": "בחירת משפחה לפי רחוב"
+    "valueInCode": "בחירת משפחה לפי רחוב",
+    "custom": "Assign Delivery by Address"
   },
   "selectDeliveryOnMap": {
     "google": "Family selection on the map",
-    "valueInCode": "בחירת משפחה על המפה"
+    "valueInCode": "בחירת משפחה על המפה",
+    "custom": "Assign Delivery on Map"
   },
   "selectedDeliveries": {
     "google": "Shipments marked",
-    "valueInCode": "משלוחים סומנו"
+    "valueInCode": "משלוחים סומנו",
+    "custom": "deliveries marked"
   },
   "selectExcelFile": {
     "google": "Select an Excel file",
@@ -1901,7 +2071,8 @@
   },
   "selectNumberOfFamilies": {
     "google": "Choosing multiple families",
-    "valueInCode": "בחירת מספר משפחות"
+    "valueInCode": "בחירת מספר משפחות",
+    "custom": "Set Number of Delivery"
   },
   "selectVolunteer": {
     "google": "Choose a volunteer",
@@ -1921,7 +2092,8 @@
   },
   "selfpickupStrategy_byCurrentDelivery": {
     "google": "Come take according to the current shipping definition",
-    "valueInCode": "באים לקחת בהתאם להגדרת המשלוח הנוכחי"
+    "valueInCode": "באים לקחת בהתאם להגדרת המשלוח הנוכחי",
+    "custom": "Self Pickup according to the current delivery"
   },
   "selfPickupStrategy_familyDefault": {
     "google": "Come take according to the default family setting",
@@ -1933,7 +2105,8 @@
   },
   "selfPickupStrategy_yes": {
     "google": "Come and take the shipment and do not need shipping",
-    "valueInCode": "יבואו לקחת את המשלוח ואינם צריכים משלוח"
+    "valueInCode": "יבואו לקחת את המשלוח ואינם צריכים משלוח",
+    "custom": "Self Pickup"
   },
   "selfPuckupSuccess": {
     "google": "Collect the package",
@@ -1977,11 +2150,13 @@
   },
   "shouldArchiveDelivery": {
     "google": "Archive the shipment?",
-    "valueInCode": "האם להעביר את המשלוח לארכיון?"
+    "valueInCode": "האם להעביר את המשלוח לארכיון?",
+    "custom": "Archive the delivery?"
   },
   "shouldAssignTo": {
     "google": "Do associate it with a volunteer",
-    "valueInCode": "האם לשייך אותו למתנדב"
+    "valueInCode": "האם לשייך אותו למתנדב",
+    "custom": "Assign to"
   },
   "shouldCompare": {
     "google": "Do compare the",
@@ -1989,7 +2164,8 @@
   },
   "shouldDeleteDeliveryFor": {
     "google": "Do delete shipping to",
-    "valueInCode": "האם למחוק את המשלוח ל"
+    "valueInCode": "האם למחוק את המשלוח ל",
+    "custom": "Delete Delivery for"
   },
   "shouldSendSmsTo": {
     "google": "Send a text message to",
@@ -2005,7 +2181,8 @@
   },
   "showAllCompletedDeliveries": {
     "google": "View all shipped shipments",
-    "valueInCode": "הצג את כל המשלוחים שחולקו"
+    "valueInCode": "הצג את כל המשלוחים שחולקו",
+    "custom": "View all successful deliveries"
   },
   "showAllDeliveries": {
     "google": "View all deliveries for distribution",
@@ -2017,7 +2194,8 @@
   },
   "showAsignDeliveryFor": {
     "google": "Show shipping association to",
-    "valueInCode": "הצג שיוך משלוחים ל"
+    "valueInCode": "הצג שיוך משלוחים ל",
+    "custom": "Show delivery association to"
   },
   "showFamilies": {
     "google": "View families",
@@ -2029,7 +2207,8 @@
   },
   "showHelperCompany": {
     "google": "View a volunteer company",
-    "valueInCode": "הצג חברה למתנדב"
+    "valueInCode": "הצג חברה למתנדב",
+    "custom": "Display Volunteer Company"
   },
   "showLeftByHouseButton": {
     "google": "Show volunteer button I left at home",
@@ -2049,11 +2228,13 @@
   },
   "showText1OnlyWhenDone": {
     "google": "Display free text 1 only when the volunteer has finished all baskets",
-    "valueInCode": "להציג מלל חופשי 1 רק כאשר המתנדב סיים אל כל הסלים"
+    "valueInCode": "להציג מלל חופשי 1 רק כאשר המתנדב סיים אל כל הסלים",
+    "custom": "Display free text 1 only when the volunteer has finished all parcels"
   },
   "showText2OnlyWhenDone": {
     "google": "Display free text 2 only when the volunteer has finished all baskets",
-    "valueInCode": "להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים"
+    "valueInCode": "להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים",
+    "custom": "Display free text 2 only when the volunteer has finished all parcels"
   },
   "showVolunteerCompany": {
     "google": "Save on behalf of which company the volunteer came from",
@@ -2065,7 +2246,8 @@
   },
   "signIn": {
     "google": "Entrance",
-    "valueInCode": "כניסה"
+    "valueInCode": "כניסה",
+    "custom": "Sign in"
   },
   "similarName": {
     "google": " A similar name",
@@ -2097,7 +2279,8 @@
   },
   "smsTextHelpTitle": {
     "google": "This message will be sent to a volunteer from a shipping association screen - with the link to the families it is asked to share.",
-    "valueInCode": "הודעה זו תשלח למתנדב ממסך שיוך משלוחים - עם הקישור למשפחות להן הוא מתבקש לחלק."
+    "valueInCode": "הודעה זו תשלח למתנדב ממסך שיוך משלוחים - עם הקישור למשפחות להן הוא מתבקש לחלק.",
+    "custom": "This message will be sent to a volunteer from a delivery association screen - with the link to the families it is asked to share."
   },
   "socialSecurityNumber": {
     "google": "ID number",
@@ -2113,7 +2296,8 @@
   },
   "specialUnasigned": {
     "google": "Specials not yet associated",
-    "valueInCode": "מיוחדים שטרם שוייכו"
+    "valueInCode": "מיוחדים שטרם שוייכו",
+    "custom": "Specials not yet assigned"
   },
   "spouceSocialSecurityNumber": {
     "google": "Spouse Identity Number",
@@ -2209,7 +2393,8 @@
   },
   "unAsigned": {
     "google": "Not yet associated",
-    "valueInCode": "טרם שוייכו"
+    "valueInCode": "טרם שוייכו",
+    "custom": "Not yet assigned"
   },
   "unfitForInvite": {
     "google": "Not suitable for order",
@@ -2221,11 +2406,13 @@
   },
   "unfreezeDeliveriesHelp": {
     "google": "Canceling the freeze will return frozen shipments ready for delivery",
-    "valueInCode": "ביטול ההקפאה יחזיר משלוחים קפואים למוכן למשלוח"
+    "valueInCode": "ביטול ההקפאה יחזיר משלוחים קפואים למוכן למשלוח",
+    "custom": "Canceling the freeze will return frozen deliveries ready for delivery"
   },
   "unFreezeDelivery": {
     "google": "Allow shipping",
-    "valueInCode": "הפשר משלוח"
+    "valueInCode": "הפשר משלוח",
+    "custom": "Unfreeze Delivery"
   },
   "unnamed": {
     "google": "unnamed",
@@ -2237,11 +2424,13 @@
   },
   "updateBasketQuantity": {
     "google": "Update amount of baskets",
-    "valueInCode": "עדכן כמות סלים"
+    "valueInCode": "עדכן כמות סלים",
+    "custom": "Update Quantity"
   },
   "updateBasketType": {
     "google": "Update basket type",
-    "valueInCode": "עדכן סוג סל"
+    "valueInCode": "עדכן סוג סל",
+    "custom": "Update parcel type"
   },
   "updateCanceled": {
     "google": "Update stopped",
@@ -2249,11 +2438,13 @@
   },
   "updateComment": {
     "google": "Update note",
-    "valueInCode": "עדכן הערה"
+    "valueInCode": "עדכן הערה",
+    "custom": "Update Comment"
   },
   "updateCourierByCurrentCourier": {
     "google": "Update the volunteer from the current shipment",
-    "valueInCode": "עדכן את המתנדב מהמשלוח הנוכחי"
+    "valueInCode": "עדכן את המתנדב מהמשלוח הנוכחי",
+    "custom": "Volunteer by current delivery"
   },
   "updatedBy": {
     "google": "Updated by",
@@ -2261,11 +2452,13 @@
   },
   "updateDefaultBasket": {
     "google": "Update default basket type",
-    "valueInCode": "עדכן סוג סל ברירת מחדל"
+    "valueInCode": "עדכן סוג סל ברירת מחדל",
+    "custom": "Update default parcel type"
   },
   "updateDefaultQuantity": {
     "google": "Update default basket amount",
-    "valueInCode": "עדכן כמות סלים ברירת מחדל"
+    "valueInCode": "עדכן כמות סלים ברירת מחדל",
+    "custom": "Update default quantity"
   },
   "updateDefaultSelfPickup": {
     "google": "Update are coming by default",
@@ -2277,15 +2470,18 @@
   },
   "updateDeliveredStatusesTo": {
     "google": "Update shipments that have ended status",
-    "valueInCode": "עדכון משלוחים שהסתיימו לסטטוס"
+    "valueInCode": "עדכון משלוחים שהסתיימו לסטטוס",
+    "custom": "Update deliveries that have ended status"
   },
   "updateDeliveriesStatus": {
     "google": "Update shipping status",
-    "valueInCode": "עדכן סטטוס למשלוחים"
+    "valueInCode": "עדכן סטטוס למשלוחים",
+    "custom": "Update delivery status"
   },
   "updateDeliveriesStatusHelp": {
     "google": "The status of \"frozen\" is a shipment that will not be associated with any volunteer until the shipment is \"enabled\". Freezing is used to temporarily stop certain shipments until they can be thawed and shipped. The freeze will only be carried out for shipments that are ready for delivery.",
-    "valueInCode": "סטטוס \"מוקפא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח.             ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח. "
+    "valueInCode": "סטטוס \"מוקפא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח.             ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח. ",
+    "custom": "The status of \"frozen\" is a delivery that will not be assigned with any volunteer until the delivery is \"enabled\". Freezing is used to temporarily stop certain deliveries until they can be thawed and shipped. The freeze will only be carried out for deliveries that are ready for delivery."
   },
   "updateDeliveryFailure": {
     "google": "Update delivery failure",
@@ -2297,7 +2493,8 @@
   },
   "updateExistingDeliveries": {
     "google": "Change also for unposted shipments",
-    "valueInCode": "שנה גם עבור משלוחים שטרם נמסרו"
+    "valueInCode": "שנה גם עבור משלוחים שטרם נמסרו",
+    "custom": "Change also for ongoing deliveries"
   },
   "updateFamilySource": {
     "google": "Update Referrer",
@@ -2333,7 +2530,8 @@
   },
   "updateVolunteerHelp": {
     "google": "To update a volunteer on the way to \"ready to ship\", select \"Unsubscribe from a volunteer\". In any case, a volunteer update will only be made to unpublished shipments",
-    "valueInCode": "בכדי לעדכן מתנדב מ\"בדרך\" ל\"מוכן למשלוח\" יש לסמן את \"בטל שיוך למתנדב\". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו"
+    "valueInCode": "בכדי לעדכן מתנדב מ\"בדרך\" ל\"מוכן למשלוח\" יש לסמן את \"בטל שיוך למתנדב\". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו",
+    "custom": "To update a volunteer on the way to \"ready to ship\", select \"Unsubscribe from a volunteer\". In any case, a volunteer update will only be made to unpublished deliveries"
   },
   "updateVolunteers": {
     "google": "Volunteers to update",
@@ -2349,15 +2547,18 @@
   },
   "useBusketTypeFromCurrentDelivery": {
     "google": "Use the basket type defined in the current shipment",
-    "valueInCode": "השתמש בסוג הסל המוגדר במשלוח הנוכחי"
+    "valueInCode": "השתמש בסוג הסל המוגדר במשלוח הנוכחי",
+    "custom": "Parcel type by current delivery"
   },
   "useFamilyDefaultBasketType": {
     "google": "Use the family type basket set",
-    "valueInCode": "השתמש בסוג הסל המוגדר למשפחה"
+    "valueInCode": "השתמש בסוג הסל המוגדר למשפחה",
+    "custom": "Parcel type by family default"
   },
   "useFamilyMembersAsQuantity": {
     "google": "Use a number of souls also as a portion",
-    "valueInCode": "השתמש במספר נפשות גם ככמות מנות"
+    "valueInCode": "השתמש במספר נפשות גם ככמות מנות",
+    "custom": "Determine Quantity by Family Members"
   },
   "userNotFoundOrWrongPassword": {
     "google": "User not found or password incorrect",
@@ -2373,7 +2574,8 @@
   },
   "volunteerByCrrentDelivery": {
     "google": "Set up a volunteer according to the volunteer in the current shipment",
-    "valueInCode": "הגדר מתנדב לפי המתנדב במשלוח הנוכחי"
+    "valueInCode": "הגדר מתנדב לפי המתנדב במשלוח הנוכחי",
+    "custom": "Volunteer by current delivery"
   },
   "volunteerByFamilyDefault": {
     "google": "Set up a volunteer by default family-defined volunteer",
@@ -2425,7 +2627,8 @@
   },
   "wasAssignedTo": {
     "google": "Associated with",
-    "valueInCode": "שוייכה ל"
+    "valueInCode": "שוייכה ל",
+    "custom": "assigned with"
   },
   "wasCopiedSuccefully": {
     "google": " Successfully copied",
@@ -2445,7 +2648,8 @@
   },
   "willNotSaveHistoryDoYouWantToStop": {
     "google": " Will not keep track of the status of completed shipments in history - stop updating?",
-    "valueInCode": " לא ישמור בהיסטוריה את הסטטוס של המשלוחים שהסתיימו - האם להפסיק את העדכון?"
+    "valueInCode": " לא ישמור בהיסטוריה את הסטטוס של המשלוחים שהסתיימו - האם להפסיק את העדכון?",
+    "custom": "Will not keep track of the status of completed deliveries in history - stop updating?"
   },
   "within": {
     "google": "within",
@@ -2461,7 +2665,8 @@
   },
   "youveProbablyMeantNewDelivery": {
     "google": " - If you want to create a new shipment, do so in the New Shipment menu.",
-    "valueInCode": " - אם את/ה מעוניין ליצור משלוח חדש, יש לעשות זאת בתפריט 'משלוח חדש'."
+    "valueInCode": " - אם את/ה מעוניין ליצור משלוח חדש, יש לעשות זאת בתפריט 'משלוח חדש'.",
+    "custom": "- If you want to create a new delivery, do so in the New delivery menu."
   },
   "youveSelectedToUpdateStatus": {
     "google": "You have chosen to update status",

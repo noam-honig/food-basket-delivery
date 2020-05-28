@@ -207,7 +207,7 @@
           <ng-template matExpansionPanelContent>
             <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign"
               (assignmentCanceled)="cancelAssign(f)">
-              <button mat-raised-button class="myButton" (click)="updateComment(f)">עדכן הערה</button>
+              <button mat-raised-button class="myButton" (click)="updateComment(f)">{{settings.lang.updateComment}}</button>
               <button mat-raised-button class="myButton badButton"
                 (click)="returnToDeliver(f)">{{settings.lang.clickedByMistake|translate}}</button>
             </app-family-info>
