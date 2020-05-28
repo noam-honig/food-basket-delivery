@@ -60,7 +60,8 @@
     </div>
     <footer style="text-align:center;font-size:70%;height:100px">
       <hr>
-      <a href="https://noam-honig.github.io/salmaz" target="_blank">{{lang.copyright}}</a>
+      <a *ngIf="!showEnglishUrl()" href="https://noam-honig.github.io/salmaz" target="_blank">{{lang.copyright}}</a>
+      <a *ngIf="showEnglishUrl()" href="https://noam-honig.github.io/salmaz/en.html" target="_blank">{{lang.copyright}}</a>
     </footer>
   </div>
 

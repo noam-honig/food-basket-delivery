@@ -732,6 +732,8 @@ export class Language {
   yesterday = 'אתמול';
   twoDaysAgo = 'שלשום';
   thankYou= 'תודה';
+  searchCompanyName = 'חיפוש שם חברה';
+  confirmDeleteOf = "אישור מחיקה עבור ";
 }
 
 const defaultLang = new Language();

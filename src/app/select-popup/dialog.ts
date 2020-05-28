@@ -2,7 +2,7 @@ import { Injectable, NgZone } from "@angular/core";
 import { MatSnackBar } from "@angular/material";
 import { Context, DataAreaSettings } from '@remult/core';
 
-import { YesNoQuestionComponent } from "./yes-no-question/yes-no-question.component";
+
 import { BusyService } from '@remult/core';
 import { ServerEventAuthorizeAction } from "../server/server-event-authorize-action";
 import { Subject } from "rxjs";
@@ -14,6 +14,7 @@ import { HelperUserInfo } from "../helpers/helpers";
 import { RouteReuseStrategy } from "@angular/router";
 import { CustomReuseStrategy } from "../custom-reuse-controller-router-strategy";
 import { isString } from "util";
+import { use } from "../translate";
 
 
 declare var gtag;
@@ -152,23 +153,23 @@ export class DialogService {
         }
     }
     async messageDialog(what: string) {
-        return await this.context.openDialog(YesNoQuestionComponent, y => {
+        return await this.context.openDialog(await (await import("./yes-no-question/yes-no-question.component")).YesNoQuestionComponent, y => {
             y.question = what;
             y.confirmOnly = true;
         }, x => x.yes);
     }
-    YesNoQuestion(question: string, onYes: () => void) {
-        this.context.openDialog(YesNoQuestionComponent, x => x.args = {
+    async YesNoQuestion(question: string, onYes: () => void) {
+        this.context.openDialog(await (await import("./yes-no-question/yes-no-question.component")).YesNoQuestionComponent, x => x.args = {
             question: question,
             onYes: onYes,
             showOnlyConfirm: !onYes
         });
     }
     async YesNoPromise(question: string) {
-        return await this.context.openDialog(YesNoQuestionComponent, y => y.args = { question: question }, x => x.yes);
+        return await this.context.openDialog(await (await import("./yes-no-question/yes-no-question.component")).YesNoQuestionComponent, y => y.args = { question: question }, x => x.yes);
     }
     confirmDelete(of: string, onOk: () => void) {
-        this.YesNoQuestion("האם את בטוחה שאת מעוניית למחוק את " + of + "?", onOk);
+        this.YesNoQuestion(use.language.confirmDeleteOf+ " " + of + "?", onOk);
     }
 }
 export function extractError(err: any) {

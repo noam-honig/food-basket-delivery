@@ -1851,6 +1851,10 @@
     "google": "Ricerca",
     "valueInCode": "חיפוש"
   },
+  "searchCompanyName": {
+    "google": "Cerca un nome di società",
+    "valueInCode": "חיפוש שם חברה"
+  },
   "searchFamily": {
     "google": "Ricerca familiare",
     "valueInCode": "חיפוש משפחה"

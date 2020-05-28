@@ -614,4 +614,5 @@ export class en implements Language {
   yesterday = 'Yesterday';
   twoDaysAgo = 'the day before yesterday';
   thankYou = 'Thanks';
+  searchCompanyName = 'Search for a company name';
 }

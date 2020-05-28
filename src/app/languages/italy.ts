@@ -614,4 +614,5 @@ export class italy implements Language {
   yesterday = 'Ieri';
   twoDaysAgo = "l'altro ieri";
   thankYou = 'Grazie';
+  searchCompanyName = 'Cerca un nome di società';
 }

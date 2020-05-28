@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { IDataAreaSettings, DataAreaSettings } from '@remult/core';
 import { DialogService } from '../dialog';
+import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
 
 @Component({
@@ -22,7 +23,8 @@ export class InputAreaComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<any>,
-    private dialog: DialogService
+    private dialog: DialogService,
+    public settings:ApplicationSettings
 
   ) {
 

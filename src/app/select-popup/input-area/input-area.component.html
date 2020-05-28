@@ -1,24 +1,20 @@
+<h3 matDialogHeader>{{args.title}}</h3>
+<div class="help-text" *ngIf="args.helpText">
+  {{args.helpText}}
+</div>
+<data-area [settings]="area"> </data-area>
 
+<mat-dialog-actions>
 
-  <h3 matDialogHeader>{{args.title}}</h3>
-  <div class="help-text" *ngIf="args.helpText">
-    {{args.helpText}}
-  </div>
-  <data-area [settings]="area"> </data-area>
+  <button mat-raised-button *ngFor="let b of args.buttons" (click)="buttonClick(b,$event)">
+    {{b.text}}
+  </button>
+  <button type="button" mat-raised-button color="warning" (click)="this.dialogRef.close()" *ngIf="this.args.cancel">
+    {{settings.lang.cancel}}
+  </button>
 
-  <mat-dialog-actions>
+  <button mat-raised-button color="accent" (click)="confirm()">
+    {{settings.lang.confirm}}
+  </button>
 
-    <button mat-raised-button *ngFor="let b of args.buttons" (click)="buttonClick(b,$event)">
-      {{b.text}}
-    </button>
-    <button type="button" mat-raised-button color="warning" (click)="this.dialogRef.close()" *ngIf="this.args.cancel">
-      בטל
-    </button>
-
-    <button mat-raised-button color="accent" (click)="confirm()">
-      אשר
-    </button>
-
-  </mat-dialog-actions>
-
-
+</mat-dialog-actions>

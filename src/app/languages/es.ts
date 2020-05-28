@@ -77,7 +77,7 @@ export class es implements Language {
   repeatFamilyNotice = 'También has estado en esta familia antes';
   inacurateAddress = 'Aviso, dirección inexacta!';
   copyAddress = 'Dirección de copia';
-  SelfPickupComponent = 'Venir y tomar';
+  SelfPickupComponent = 'Venir y tomar'; 
   oneDeliveryToDistribute = 'Una entrega para distribución';
   deliveriesToDistribute = 'Entregas distribuidas';
   volunteerInfo = 'Detalles del voluntario';
@@ -614,4 +614,5 @@ export class es implements Language {
   yesterday = 'Ayer';
   twoDaysAgo = 'antier';
   thankYou = 'Gracias';
+  searchCompanyName = 'Busca el nombre de una empresa';
 }

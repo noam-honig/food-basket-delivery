@@ -161,7 +161,7 @@ export class FamiliesComponent implements OnInit {
         this.searchString = '';
         this.doSearch();
     }
-    stats = new Stats();
+    stats = new Stats(this.context);
     async saveToExcel() {
         await saveFamiliesToExcel(this.context, this.families, this.busy, this.settings.lang.families);
     }

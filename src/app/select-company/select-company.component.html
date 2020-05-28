@@ -5,7 +5,7 @@
         <form (submit)="selectFirst()">
   
           <mat-form-field class="full-width">
-            <input matInput [(ngModel)]="searchString"  placeholder="חפש שם חברה" [ngModelOptions]="{standalone: true}">
+            <input matInput [(ngModel)]="searchString"  placeholder="{{settings.lang.searchCompanyName}}" [ngModelOptions]="{standalone: true}">
             <mat-icon matSuffix (click)="clearCity()">clear</mat-icon>
           </mat-form-field>
           

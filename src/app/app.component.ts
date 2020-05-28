@@ -78,7 +78,7 @@ export class AppComponent {
   }
   currentTitle() {
     if (this.activeRoute && this.activeRoute.snapshot && this.activeRoute.firstChild) {
-      let c = this.activeRoute.component;
+      let c = this.activeRoute.firstChild.component;
       if (c) {
         let s = routeMap.get(c);
         if (s)
@@ -116,7 +116,9 @@ export class AppComponent {
   test() {
 
   }
-
+  showEnglishUrl() {
+    return this.settings.lang.languageCode != 'iw';
+  }
 
 
 }

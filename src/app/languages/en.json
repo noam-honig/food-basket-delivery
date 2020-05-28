@@ -2301,6 +2301,10 @@
     "google": "Search",
     "valueInCode": "חיפוש"
   },
+  "searchCompanyName": {
+    "google": "Search for a company name",
+    "valueInCode": "חיפוש שם חברה"
+  },
   "searchFamily": {
     "google": "Family Search",
     "orig": "חיפוש משפחה",

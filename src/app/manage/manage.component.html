@@ -168,7 +168,7 @@
                     <select [(ngModel)]="p.option" class="form-control">
                         <option *ngFor="let c of phoneOptions" [ngValue]="c">{{c.name}}</option>
                     </select>
-                    <input [(ngModel)]="p.name" placeholder="שם" *ngIf="showNameAndPhone(p)" class="form-control">
+                    <input [(ngModel)]="p.name" placeholder="{{settings.lang.volunteerName}}" *ngIf="showNameAndPhone(p)" class="form-control">
                     <input [(ngModel)]="p.phone" input="tel" placeholder="{{settings.lang.phone}}" *ngIf="showNameAndPhone(p)"
                         class="form-control">
                 </td>

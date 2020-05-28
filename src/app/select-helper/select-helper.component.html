@@ -5,7 +5,7 @@
       <form (submit)="selectFirst()">
 
         <mat-form-field class="full-width">
-          <input matInput [(ngModel)]="searchString" (input)="doFilter()" placeholder="חפשי שם" [ngModelOptions]="{standalone: true}">
+          <input matInput [(ngModel)]="searchString" (input)="doFilter()" placeholder="{{settings.lang.searchVolunteer}}" [ngModelOptions]="{standalone: true}">
           <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
         </mat-form-field>
         <h4 *ngIf="showingRecentHelpers">{{settings.lang.recentVolunteers}}</h4>
