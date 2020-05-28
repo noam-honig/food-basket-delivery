@@ -30,7 +30,7 @@ import { Families } from '../families/families';
 })
 export class HelperFamiliesComponent implements OnInit {
 
-  constructor(public auth: AuthService, private dialog: DialogService, private context: Context, private busy: BusyService) { }
+  constructor(public auth: AuthService, private dialog: DialogService, private context: Context, private busy: BusyService, public settings: ApplicationSettings) { }
   @Input() familyLists: UserFamiliesList;
   @Input() partOfAssign = false;
   @Input() partOfReview = false;
@@ -123,7 +123,7 @@ export class HelperFamiliesComponent implements OnInit {
       });
     });
   }
-  get settings() { return ApplicationSettings.get(this.context); }
+
   allDoneMessage() { return ApplicationSettings.get(this.context).messageForDoneDelivery.value; };
   async deliveredToFamily(f: ActiveFamilyDeliveries) {
     this.deliveredToFamilyOk(f, DeliveryStatus.Success, s => s.commentForSuccessDelivery);
@@ -161,6 +161,8 @@ export class HelperFamiliesComponent implements OnInit {
   }
   initFamilies() {
     this.familyLists.initFamilies();
+    if (this.familyLists.toDeliver.length > 0)
+      this.familyLists.toDeliver[0].distributionCenter.getRouteStartGeo().then(x => this.routeStart = x);
 
   }
   showLeftFamilies() {
@@ -284,15 +286,16 @@ export class HelperFamiliesComponent implements OnInit {
       cancel: () => { }
     });
   }
+  routeStart = this.settings.getGeocodeInformation();
   async showRouteOnGoogleMaps() {
 
     if (this.familyLists.toDeliver.length > 0) {
-      let url = 'https://www.google.com/maps/dir/' + encodeURI((await this.familyLists.toDeliver[0].distributionCenter.getRouteStartGeo()).getAddress());
+      let url = 'https://www.google.com/maps/dir/' + encodeURI((this.routeStart).getAddress());
 
       for (const f of this.familyLists.toDeliver) {
         url += '/' + encodeURI(isGpsAddress(f.address.value) ? f.address.value : f.addressByGoogle.value);
       }
-      window.open(url + "?hl=" + getLang(this.context).languageCode , '_blank');
+      window.open(url + "?hl=" + getLang(this.context).languageCode, '_blank');
     }
     //window.open(url,'_blank');
   }

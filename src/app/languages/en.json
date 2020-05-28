@@ -715,7 +715,7 @@
   "deliveredByBaskets": {
     "google": "Delivered by baskets",
     "valueInCode": "נמסרו לפי סלים",
-    "custom": "Delivered by parcels"
+    "custom": "Parcels Delivered"
   },
   "deliveredSuccessfully": {
     "google": "Successfully delivered",
@@ -1181,7 +1181,8 @@
   },
   "floor": {
     "google": "floor",
-    "valueInCode": "קומה"
+    "valueInCode": "קומה",
+    "custom": "Floor"
   },
   "for": {
     "google": "To",
@@ -1670,7 +1671,7 @@
   "onTheWay": {
     "google": "through",
     "valueInCode": "בדרך",
-    "custom":"Assigned"
+    "custom": "Assigned"
   },
   "openWaze": {
     "google": "Open WAZE",
@@ -1710,7 +1711,8 @@
   },
   "phone": {
     "google": "phone",
-    "valueInCode": "טלפון"
+    "valueInCode": "טלפון",
+    "custom": "Phone"
   },
   "phone1": {
     "google": "Phone 1",
@@ -2571,7 +2573,8 @@
   },
   "volunteer": {
     "google": "volunteer",
-    "valueInCode": "מתנדב"
+    "valueInCode": "מתנדב",
+    "custom": "Volunteer"
   },
   "volunteerByCrrentDelivery": {
     "google": "Set up a volunteer according to the volunteer in the current shipment",
