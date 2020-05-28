@@ -1669,7 +1669,8 @@
   },
   "onTheWay": {
     "google": "through",
-    "valueInCode": "בדרך"
+    "valueInCode": "בדרך",
+    "custom":"Assigned"
   },
   "openWaze": {
     "google": "Open WAZE",

@@ -67,10 +67,10 @@
       </ng-container>
     </div>
 
-    <div style="float:left;text-align: left" *ngIf="useWaze()">
-      <a (click)="f.openGoogleMaps()">google map</a>
+    <div style="float:left;text-align: left">
+      <a (click)="f.openGoogleMaps()"  *ngIf="useWaze()">google map</a>
       <br />
-      <a (click)="f.showOnGovMap()">govmap</a>
+      <a (click)="f.showOnGovMap()"  *ngIf="useWaze()">govmap</a>
       <br />
       <a (click)="copyAddress(f)">{{settings.lang.copyAddress}}</a>
     </div>
