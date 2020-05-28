@@ -2,7 +2,7 @@
 
     <mat-horizontal-stepper #stepper>
         <mat-step label="{{settings.lang.selectExcelFile}}">
-            <a href="https://youtu.be/Jtmhyf8-E4g" target="_blank" class="no-print"
+            <a href="https://youtu.be/Jtmhyf8-E4g" target="_blank" class="no-print" *ngIf="settings.showVideo()"
                 style="margin-right:10px">{{settings.lang.excelImportVideo|translate}}</a>
             <h3> {{settings.lang.selectExcelFile}}</h3> <input type="file" #file (input)="fileChange($event)" />
         </mat-step>

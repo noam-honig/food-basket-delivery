@@ -4,7 +4,7 @@
 
         <H4 *ngIf="user.escortedHelperName">{{settings.lang.escoring}} {{user.escortedHelperName}}</H4>
         <a href="https://youtu.be/PHwTzaQN87g" target="_blank" class="no-print"
-            *ngIf="familyLists.toDeliver.length">{{settings.lang.clickForTutorialVideo}}</a>
+            *ngIf="familyLists.toDeliver.length&&settings.showVideo()" >{{settings.lang.clickForTutorialVideo}}</a>
         <a href="{{settings.message1Link.value}}" target="_blank" class="no-print" style="display: block"
             *ngIf="!settings.message1OnlyWhenDone.value || familyLists.toDeliver.length==0">{{settings.message1Text.value}}</a>
         <a href="{{settings.message2Link.value}}" target="_blank" class="no-print" style="display: block"

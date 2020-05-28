@@ -1,7 +1,7 @@
 <button mat-mini-fab style="margin-bottom:5px" (click)="refresh()" color="primary">
   <mat-icon>refresh</mat-icon>
 </button>
-<a href="https://youtu.be/Pa7QJTE3cqo" target="_blank" class="no-print"
+<a href="https://youtu.be/Pa7QJTE3cqo" target="_blank" class="no-print" *ngIf="settings.showVideo()"
   style="margin-right:10px">{{settings.lang.volunteerFeedbackVideo|translate}}</a>
 <div style="display:flex">
   <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">

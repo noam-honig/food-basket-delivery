@@ -260,7 +260,8 @@ export class UpdateFamilyDialogComponent implements OnInit {
 
 
     }
-    this.familyDeliveries = this.args.family.deliveriesGridSettings();
+    if (!this.families.currentRow.isNew())
+      this.familyDeliveries = this.args.family.deliveriesGridSettings();
 
   }
 

@@ -43,6 +43,9 @@ export class ApplicationSettings extends Entity<number>  {
     }
     return r;
   }
+  showVideo() {
+    return this.lang.languageCode == 'iw';
+  }
 
   id = new NumberColumn();
   organisationName = new StringColumn(this.lang.organizationName);
