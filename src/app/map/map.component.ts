@@ -25,7 +25,6 @@ export class MapComponent implements OnInit, OnDestroy {
             // console.time('load families to map');
             families.forEach(f => {
                 let marker = this.setFamilyOnMap(f.id, f.lat, f.lng);
-                if (marker && marker.getPosition().lat() > 0)
                     this.bounds.extend(marker.getPosition());
             });
             // console.timeEnd('load families to map');

@@ -16,7 +16,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 })
 export class PlaybackComponent implements OnInit {
 
-  constructor(public settings:ApplicationSettings) { }
+  constructor(public settings: ApplicationSettings) { }
   public pieChartLabels: string[] = [];
   public pieChartData: number[] = [];
   public colors: Array<any> = [
@@ -79,12 +79,7 @@ export class PlaybackComponent implements OnInit {
         prevCourier: undefined
       };
 
-      if (familyOnMap.marker.getPosition().lat() > 0 && familyOnMap.marker.getPosition().lng() > 0) {
-
-        this.bounds.extend(familyOnMap.marker.getPosition());
-
-
-      }
+      this.bounds.extend(familyOnMap.marker.getPosition());
       let startStatus = this.statuses.ready;
       if (f.status == DeliveryStatus.SelfPickup.id || f.status == DeliveryStatus.SuccessPickedUp.id)
         startStatus = this.statuses.selfPickup;
@@ -172,8 +167,8 @@ export class PlaybackComponent implements OnInit {
     }
   }
   position = 0;
-  zoom=0;
-  speed=5;
+  zoom = 0;
+  speed = 5;
   showOnLeft = false;
   showOrgTitle = false;
   showOrgLogo = false;

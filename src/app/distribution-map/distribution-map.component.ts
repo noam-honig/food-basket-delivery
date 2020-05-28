@@ -180,7 +180,7 @@ export class DistributionMap implements OnInit, OnDestroy {
       }
       return i;
     }, action, args);
-    return  r + getLang(context).deliveriesUpdated;
+    return r + getLang(context).deliveriesUpdated;
 
   }
   @ServerFunction({ allowed: Roles.admin })
@@ -201,7 +201,7 @@ export class DistributionMap implements OnInit, OnDestroy {
       }
       return i;
     }, action, args);
-    return  r + getLang(context).deliveriesUpdated;
+    return r + getLang(context).deliveriesUpdated;
 
   }
 
@@ -315,8 +315,8 @@ export class DistributionMap implements OnInit, OnDestroy {
 
 
 
-      if (familyOnMap.marker.getPosition().lat() > 0)
-        this.bounds.extend(familyOnMap.marker.getPosition());
+
+      this.bounds.extend(familyOnMap.marker.getPosition());
 
     });
     if (allInAlll || markers.length > 7000)
@@ -492,7 +492,7 @@ export class statusClass {
 }
 
 export class Statuses {
-  constructor(private settings:ApplicationSettings) {
+  constructor(private settings: ApplicationSettings) {
     this.statuses.push(this.ready);
     if (DeliveryStatus.usingSelfPickupModule)
       this.statuses.push(this.selfPickup);
