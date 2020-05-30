@@ -40,9 +40,12 @@ export class PhoneColumn extends radweb.StringColumn {
     let x = s.replace(/\D/g, '');
     if (x.length < 9 || x.length > 10)
       return s;
+    if (x.length < 10 && !x.startsWith('0'))
+      x = '0' + x;
     x = x.substring(0, x.length - 4) + '-' + x.substring(x.length - 4, x.length);
 
     x = x.substring(0, x.length - 8) + '-' + x.substring(x.length - 8, x.length);
+
     return x;
   }
 }
@@ -567,10 +570,10 @@ export function relativeDateName(args: { d?: Date, now?: Date, dontShowTimeForOl
     if (min > 35)
       r += ' ' + use.language.andThreeQuaters;
     else if (min > 22) {
-      r += ' '+use.language.andAHalf ;
+      r += ' ' + use.language.andAHalf;
     }
     else if (min > 7) {
-      r += ' ' + use.language.andAQuater ;
+      r += ' ' + use.language.andAQuater;
     }
     return 'לפני ' + r;
 
@@ -584,14 +587,14 @@ export function relativeDateName(args: { d?: Date, now?: Date, dontShowTimeForOl
   }
   else {
     let days = (Math.trunc(now.valueOf() / (86400 * 1000)) - Math.trunc(d.valueOf() / (86400 * 1000)));
-    r = use.language.before +' ' + days + ' '+use.language.days;
+    r = use.language.before + ' ' + days + ' ' + use.language.days;
   }
   let t = d.getMinutes().toString();
   if (t.length == 1)
     t = '0' + t;
   if (args.dontShowTimeForOlderDates)
     return r;
-  return r += use.language.on+ ' ' + d.getHours() + ':' + t;
+  return r += use.language.on + ' ' + d.getHours() + ':' + t;
 }
 export function wasChanged(...columns: Column<any>[]) {
   for (const c of columns) {

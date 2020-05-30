@@ -1505,6 +1505,8 @@ export function processPhone(input: string): phoneResult[] {
                 break;
             default:
                 let d = isDigit(char);
+                if (d && (currentText == 'o' || currentText == 'O'))
+                    currentText = '0';
                 let only = onlyDigits(currentText);
                 if (d == only || currentText == '')
                     currentText += char;

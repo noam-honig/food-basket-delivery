@@ -3,7 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 
 import { ServerContext, EntityClass, IdEntity, StringColumn, NumberColumn, Context } from '@remult/core';
-import { SqlBuilder, QueryBuilder } from './model-shared/types';
+import { SqlBuilder, QueryBuilder, PhoneColumn } from './model-shared/types';
 import { WebDriverProxy } from 'blocking-proxy/built/lib/webdriver_proxy';
 import { parseAddress, Families, parseUrlInAddress } from './families/families';
 import { BasketType } from './families/BasketType';
@@ -191,6 +191,10 @@ describe('AppComponent', () => {
     expect(parseUrlInAddress("נועם")).toBe("נועם");
 
   });
+  it("format phone", () => {
+
+    expect(PhoneColumn.formatPhone("214,391,757")).toBe("021-439-1757");
+  });
   it("test schema name", () => {
     expect(validSchemaName("abc")).toBe("abc");
     expect(validSchemaName("1abc")).toBe("abc");
@@ -213,6 +217,7 @@ describe('AppComponent', () => {
       }
     });
   }
+  testPhone("o532777561", [{ phone: '0532777561', comment: '' }]);
   testPhone("050-7330590 (noam)", [{ phone: '050-7330590', comment: '(noam)' }]);
   testPhone("0532777561 // 0532777561", [{ phone: '0532777561', comment: '' }, { phone: '0532777561', comment: '' }]);
   testPhone("04-8767772 / 050-7467774 (לריסה)", [{ phone: '04-8767772', comment: '' }, { phone: '050-7467774', comment: '(לריסה)' }]);
@@ -236,6 +241,7 @@ describe('AppComponent', () => {
   testPhone("7322575 – 057", [{ phone: '057-7322575', comment: '' }]);
   testPhone("050-7330590 | 050-7953019", [{ phone: '050-7330590', comment: '' }, { phone: '050-7953019', comment: '' }]);
   testPhone("0532777561 // 0532777561", [{ phone: '0532777561', comment: '' }, { phone: '0532777561', comment: '' }]);
+  
   //testPhone("0507330590 / 1", [{ phone: '0507330590', comment: '' }, { phone: '0507330591', comment: '' }]);
   //testPhone("0507330590 / 81", [{ phone: '0507330590', comment: '' }, { phone: '0507330581', comment: '' }]);
   it("updatePhone", () => {
