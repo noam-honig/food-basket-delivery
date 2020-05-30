@@ -91,7 +91,7 @@ export class ImportFromExcelComponent implements OnInit {
 
     async addAll() {
         let count = this.newRows.length;
-        if (await this.dialog.YesNoPromise(use.language.shouldAdd + " " + count +" "+ translate(use.language.families + "?"))) {
+        if (await this.dialog.YesNoPromise(use.language.shouldAdd + " " + count + " " + translate(use.language.families + "?"))) {
 
 
             this.busy.doWhileShowingBusy(async () => {
@@ -172,7 +172,7 @@ export class ImportFromExcelComponent implements OnInit {
     }
     async updateAllCol(col: columnInCompare) {
         let count = this.getColUpdateCount(col);
-        let message = use.language.shouldUpdateColumn + " " + col.c.defs.caption + " " + use.language.for + " " + count + translate(use.language.families + "?");
+        let message = use.language.shouldUpdateColumn + " " + col.c.defs.caption + " " + use.language.for + " " + count + " " + translate(use.language.families + "?");
         if (col.c == this.f.address)
             message += use.language.updateOfAddressMayTakeLonger;
         this.dialog.YesNoQuestion(message, () => {
