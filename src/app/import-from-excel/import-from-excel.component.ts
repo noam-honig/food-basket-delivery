@@ -292,7 +292,7 @@ export class ImportFromExcelComponent implements OnInit {
                     this.oFile = (await import('xlsx')).read(binary, { type: 'binary', cellDates: true, cellStyles: true });
                     let sheets = this.oFile.SheetNames;
                     let sheet = sheets[0];
-                    this.sheet = sheet;
+
                     if (sheets.length > 1) {
                         await new Promise(x => setTimeout(() => {
                             x();
@@ -304,6 +304,7 @@ export class ImportFromExcelComponent implements OnInit {
                             }
                         }, y => sheet = y.selected.name);
                     }
+                    this.sheet = sheet;
                     this.worksheet = this.oFile.Sheets[sheet];
                     let sRef = this.worksheet["!ref"];
                     if (!sRef)
@@ -487,7 +488,7 @@ export class ImportFromExcelComponent implements OnInit {
     fd: ActiveFamilyDeliveries;
     @ViewChild("stepper", { static: true }) stepper: MatStepper;
     @ViewChild("file", { static: true }) fileInput: ElementRef
-    
+
     settingsArea: DataAreaSettings<any> = new DataAreaSettings();
     async ngOnInit() {
         this.addDelivery.value = true;
@@ -495,7 +496,7 @@ export class ImportFromExcelComponent implements OnInit {
         this.distributionCenter.value = this.dialog.distCenter.value;
         if (this.distributionCenter.value == allCentersToken)
             this.distributionCenter.value = (<HelperUserInfo>this.context.user).distributionCenter;
-        
+
 
 
 
@@ -1464,6 +1465,8 @@ export function fixPhone(phone: string, defaultPrefix: string) {
         return phone;
     if (phone.startsWith('0'))
         return phone;
+    if ((phone.startsWith('o') || phone.startsWith('O')) && phone[1] >= '0' && phone[1] <= '9')
+        return '0' + phone.substring(1, 100);
     if (phone.length == 8 || phone.length == 9)
         return '0' + phone;
     if (phone.length == 7 && defaultPrefix && defaultPrefix.length > 0)

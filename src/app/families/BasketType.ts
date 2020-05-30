@@ -26,8 +26,8 @@ export class BasketType extends IdEntity {
       }
     });
   }
-  static boxes1Name = use.language.boxes1Name;
-  static boxes2Name = use.language.boxes2Name;
+  static boxes1Name = !use?'':use.language.boxes1Name;
+  static boxes2Name = !use?'':use.language.boxes2Name;
 }
 export class BasketId extends IdColumn implements HasAsyncGetTheValue {
   async addBasketTypes(quantity: NumberColumn, addColumn: (caption: string, v: string, t: import("xlsx/types").ExcelDataType) => void) {

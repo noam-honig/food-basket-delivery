@@ -176,6 +176,9 @@ describe('AppComponent', () => {
     expect(fixPhone("36733059", "03")).toBe("036733059");
     expect(fixPhone("6733059", "03")).toBe("036733059");
     expect(fixPhone("733059", "03")).toBe("733059");
+    expect(fixPhone("o507330590", "03")).toBe("0507330590");
+    expect(fixPhone("O507330590", "03")).toBe("0507330590");
+    expect(fixPhone("ox07330590", "03")).toBe("ox07330590");
 
   });
   it("test address parser", () => {
@@ -272,7 +275,7 @@ describe('AppComponent', () => {
   it("properMerge4", () => {
     let f = context.for(Families).create();
     let f2 = context.for(Families).create();
-    let c = new MergeFamiliesComponent(context, undefined, undefined);
+    let c = new MergeFamiliesComponent(context, undefined, undefined, undefined);
     c.family = context.for(Families).create();
     c.family.phone1.value = '0507330590';
     c.families = [f, f2];
@@ -291,7 +294,7 @@ describe('AppComponent', () => {
   it("properMerge", () => {
     let f = context.for(Families).create();
     let f2 = context.for(Families).create();
-    let c = new MergeFamiliesComponent(context, undefined, undefined);
+    let c = new MergeFamiliesComponent(context, undefined, undefined, undefined);
     c.family = context.for(Families).create();
     c.families = [f, f2];
     f.tz.value = '1';
@@ -303,7 +306,7 @@ describe('AppComponent', () => {
   it("properMerge1", () => {
     let f = context.for(Families).create();
     let f2 = context.for(Families).create();
-    let c = new MergeFamiliesComponent(context, undefined, undefined);
+    let c = new MergeFamiliesComponent(context, undefined, undefined, undefined);
     c.family = context.for(Families).create();
     c.families = [f, f2];
 
@@ -314,7 +317,7 @@ describe('AppComponent', () => {
   it("properMerge2", () => {
     let f = context.for(Families).create();
     let f2 = context.for(Families).create();
-    let c = new MergeFamiliesComponent(context, undefined, undefined);
+    let c = new MergeFamiliesComponent(context, undefined, undefined, undefined);
     c.family = context.for(Families).create();
     c.families = [f, f2];
     f.tz.value = '1';
@@ -326,7 +329,7 @@ describe('AppComponent', () => {
   it("properMerge3", () => {
     let f = context.for(Families).create();
     let f2 = context.for(Families).create();
-    let c = new MergeFamiliesComponent(context, undefined, undefined);
+    let c = new MergeFamiliesComponent(context, undefined, undefined, undefined);
     c.family = context.for(Families).create();
     c.families = [f, f2];
     f.phone1.value = '1';
