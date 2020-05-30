@@ -634,7 +634,7 @@
   "defaultSmsText": {
     "google": "Hello! Volunteer!\\nPackage Sharing! Organization! Click:! Site!\\nThanks! Sending!",
     "valueInCode": "שלום !מתנדב!\nלחלוקת חבילות !ארגון! לחץ על: !אתר! \nתודה !שולח!",
-    "custom": "Hello !VOLUNTEER!\\nTo deliver parcels for !ORG! Click:!URL!\\nThanks !SENDER!"
+    "custom": "Hello !VOLUNTEER!\\nTo deliver parcels for !ORG! Click: !URL!\\nThanks !SENDER!"
   },
   "defaultStatusType": {
     "google": "Default shipping status for new families",
@@ -1573,7 +1573,8 @@
   },
   "newFamily": {
     "google": "A new family",
-    "valueInCode": "משפחה חדשה"
+    "valueInCode": "משפחה חדשה",
+    "custom":"Add Family"
   },
   "NewsComponent": {
     "google": "Care needs",
@@ -2122,7 +2123,8 @@
   },
   "sendLinkOnWhatsapp": {
     "google": "Send a link in whatsapp",
-    "valueInCode": "שלח קישור ב whatsapp"
+    "valueInCode": "שלח קישור ב whatsapp",
+    "custom":"Send on WhatsApp"
   },
   "sendMessageToVolunteer": {
     "google": "Send a message to the volunteer",
@@ -2150,7 +2152,8 @@
   },
   "shouldAdd": {
     "google": "Do add",
-    "valueInCode": "האם להוסיף"
+    "valueInCode": "האם להוסיף",
+    "customer":"Add"
   },
   "shouldArchiveDelivery": {
     "google": "Archive the shipment?",
@@ -2301,7 +2304,7 @@
   "specialUnasigned": {
     "google": "Specials not yet associated",
     "valueInCode": "מיוחדים שטרם שוייכו",
-    "custom": "Specials not yet assigned"
+    "custom": "UnAssigned Specials"
   },
   "spouceSocialSecurityNumber": {
     "google": "Spouse Identity Number",
@@ -2398,7 +2401,7 @@
   "unAsigned": {
     "google": "Not yet associated",
     "valueInCode": "טרם שוייכו",
-    "custom": "Not yet assigned"
+    "custom": "Unassigned"
   },
   "unfitForInvite": {
     "google": "Not suitable for order",

@@ -16,6 +16,12 @@ import { HttpClient } from '@angular/common/http';
 
 @EntityClass
 export class ApplicationSettings extends Entity<number>  {
+  getInternationalPhonePrefix() {
+    let r = this.forWho.value.args.internationalPrefixForSmsAndAws;
+    if (!r)
+      r = '+972';
+    return r;
+  }
 
   lang = getLang(this.context);
   @ServerFunction({ allowed: c => c.isSignedIn() })

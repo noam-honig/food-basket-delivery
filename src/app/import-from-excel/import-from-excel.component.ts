@@ -91,7 +91,7 @@ export class ImportFromExcelComponent implements OnInit {
 
     async addAll() {
         let count = this.newRows.length;
-        if (await this.dialog.YesNoPromise(use.language.shouldAdd + " " + count + translate(use.language.families + "?"))) {
+        if (await this.dialog.YesNoPromise(use.language.shouldAdd + " " + count +" "+ translate(use.language.families + "?"))) {
 
 
             this.busy.doWhileShowingBusy(async () => {

@@ -179,6 +179,7 @@ describe('AppComponent', () => {
     expect(fixPhone("o507330590", "03")).toBe("0507330590");
     expect(fixPhone("O507330590", "03")).toBe("0507330590");
     expect(fixPhone("ox07330590", "03")).toBe("ox07330590");
+    expect(fixPhone("+972507330590", "")).toBe("+972507330590");
 
   });
   it("test address parser", () => {
@@ -194,6 +195,10 @@ describe('AppComponent', () => {
   it("format phone", () => {
 
     expect(PhoneColumn.formatPhone("214,391,757")).toBe("021-439-1757");
+  });
+  it("fix phone input", () => {
+
+    expect(PhoneColumn.fixPhoneInput("+972507330590")).toBe("+972507330590");
   });
   it("test schema name", () => {
     expect(validSchemaName("abc")).toBe("abc");
@@ -241,7 +246,7 @@ describe('AppComponent', () => {
   testPhone("7322575 – 057", [{ phone: '057-7322575', comment: '' }]);
   testPhone("050-7330590 | 050-7953019", [{ phone: '050-7330590', comment: '' }, { phone: '050-7953019', comment: '' }]);
   testPhone("0532777561 // 0532777561", [{ phone: '0532777561', comment: '' }, { phone: '0532777561', comment: '' }]);
-  
+
   //testPhone("0507330590 / 1", [{ phone: '0507330590', comment: '' }, { phone: '0507330591', comment: '' }]);
   //testPhone("0507330590 / 81", [{ phone: '0507330590', comment: '' }, { phone: '0507330581', comment: '' }]);
   it("updatePhone", () => {

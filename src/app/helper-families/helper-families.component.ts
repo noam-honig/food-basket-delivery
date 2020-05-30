@@ -222,8 +222,11 @@ export class HelperFamiliesComponent implements OnInit {
   async sendWhatsapp() {
     let phone = this.smsPhone;
     if (phone.startsWith('0')) {
-      phone = '972' + phone.substr(1);
+      phone = this.settings.getInternationalPhonePrefix() + phone.substr(1);
     }
+    if (phone.startsWith('+'))
+      phone = phone.substr(1);
+
     window.open('https://wa.me/' + phone + '?text=' + encodeURI(this.smsMessage), '_blank');
     await this.updateMessageSent();
   }

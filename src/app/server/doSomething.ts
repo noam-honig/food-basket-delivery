@@ -25,9 +25,9 @@ let match = 0;
 export async function DoIt() {
     try {
         await serverInit();
-
+await sendMessagE();
      //   await loadTranslationXlsx('c:/temp/newen.xlsx','en');
-        await buildLanguageFiles();
+       // await buildLanguageFiles();
 
 
 
@@ -58,6 +58,11 @@ Thanks Noam Honig`,
                 'DataType': 'String',
                 'StringValue': 'FOODBANK'
             }
+            // ,
+            // 'AWS.SNS.SMS.SMSType': {
+            //     'DataType': 'String',
+            //     'StringValue': 'Transactional'
+            // }
         }
     }).promise();
     console.log(r);

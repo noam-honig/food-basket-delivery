@@ -51,10 +51,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
   }
   async sendSmsToCourier() {
     let h = await this.context.for(Helpers).findId(this.args.familyDelivery.courier);
-    let phone = h.phone.value;
-    if (phone.startsWith('0')) {
-      phone = '972' + phone.substr(1);
-    }
+    
     await this.context.openDialog(UpdateCommentComponent, x => x.args = {
       helpText: () => new StringColumn(),
       ok: async (comment) => {

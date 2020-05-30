@@ -35,7 +35,7 @@
           <mat-icon (click)="findHelper()">search</mat-icon>
         </div>
       </mat-form-field>
-      <data-area [settings]="area" *ngIf="phone&& phone.length==10&&showHelperInput&&helper"></data-area>
+      <data-area [settings]="area" *ngIf="phone&& isValidPhone()&&showHelperInput&&helper"></data-area>
     </mat-card>
   </div>
 

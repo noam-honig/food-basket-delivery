@@ -18,7 +18,7 @@ export class SendSmsAction {
             let h = await context.for(Helpers).findId(helperId);
             await SendSmsAction.generateMessage(context, h, context.getOrigin(), reminder, context.user.name, async (phone, message, sender) => {
 
-                new SendSmsUtils().sendSms(phone, sender, message, context.getOrigin(), Sites.getOrganizationFromContext(context),await ApplicationSettings.getAsync(context));
+                new SendSmsUtils().sendSms(phone, sender, message, context.getOrigin(), Sites.getOrganizationFromContext(context), await ApplicationSettings.getAsync(context));
                 if (reminder)
                     h.reminderSmsDate.value = new Date();
                 else
@@ -136,7 +136,8 @@ export class SendSmsUtils {
                 let prefix = settings.forWho.value.args.internationalPrefixForSmsAndAws;
                 if (phone.startsWith('0'))
                     phone = phone.substring(1, 1000);
-                phone = prefix+phone;
+                if (!phone.startsWith('+'))
+                    phone = prefix + phone;
                 let f = "+972507330590";
                 let AWS = await import('aws-sdk');
                 let r = await new AWS.SNS({ apiVersion: '2010-03-31' }).publish({
@@ -145,11 +146,11 @@ export class SendSmsUtils {
                     MessageAttributes: {
                         'AWS.SNS.SMS.SenderID': {
                             'DataType': 'String',
-                            'StringValue': 'FOODBANK'
+                            'StringValue': 'HAGAI'
                         }
                     }
                 }).promise();
-                console.log(phone,r);
+                console.log(phone, r);
 
             } else {
                 let h = new fetch.Headers();

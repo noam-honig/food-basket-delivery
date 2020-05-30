@@ -64,7 +64,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.clearHelperInfo(false);
         let cleanPhone = PhoneColumn.fixPhoneInput(this.phone);
 
-        if (cleanPhone.length == 10) {
+        if (this.isValidPhone()) {
             this.phone = cleanPhone;
             let helper = await this.context.for(Helpers).findFirst(h => h.phone.isEqualTo(this.phone));
             if (helper) {
@@ -79,11 +79,16 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         }
     }
+    isValidPhone() {
+        let cleanPhone = PhoneColumn.fixPhoneInput(this.phone);
+
+        return (cleanPhone.length == 10 || cleanPhone.startsWith('+') && cleanPhone.length > 12);
+    }
     async initHelper(helper: Helpers) {
         if (helper.theHelperIAmEscorting.value) {
             let other = await this.context.for(Helpers).findFirst(x => x.id.isEqualTo(helper.theHelperIAmEscorting));
             if (await this.context.openDialog(YesNoQuestionComponent, q => q.args = {
-                question: helper.name.value + ' ' + this.settings.lang.isDefinedAsEscortOf + ' ' + other.name.value + '. '+this.settings.lang.displayFamiliesOf+' ' + other.name.value + '?'
+                question: helper.name.value + ' ' + this.settings.lang.isDefinedAsEscortOf + ' ' + other.name.value + '. ' + this.settings.lang.displayFamiliesOf + ' ' + other.name.value + '?'
             }, q => q.yes)) {
                 this.initHelper(other);
             }
@@ -141,7 +146,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 onSelect: async h => {
                     if (h) {
                         let families = await this.context.for(ActiveFamilyDeliveries).find({ where: f => f.courier.isEqualTo(h.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)), limit: 1000 });
-                        this.dialog.YesNoQuestion(this.settings.lang.transfer+" " + families.length +" "+ this.settings.lang.deliveriesFrom + '"' + h.name.value + '"' + " "+this.settings.lang.toVolunteer+" " + '"' + this.helper.name.value + '"', async () => {
+                        this.dialog.YesNoQuestion(this.settings.lang.transfer + " " + families.length + " " + this.settings.lang.deliveriesFrom + '"' + h.name.value + '"' + " " + this.settings.lang.toVolunteer + " " + '"' + this.helper.name.value + '"', async () => {
                             await this.busy.doWhileShowingBusy(async () => {
                                 await this.verifyHelperExistance();
                                 for (const f of families) {
@@ -322,7 +327,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 if (families.length == 1)
                     await this.assignFamilyBasedOnIdFromMap(families[0]);
                 else if (families.length > 1) {
-                    this.dialog.YesNoQuestion(this.settings.lang.atThisLocationThereAre+" " + families.length + translate(this.settings.lang.deliveriesAssignAllOfThem), async () => {
+                    this.dialog.YesNoQuestion(this.settings.lang.atThisLocationThereAre + " " + families.length + translate(this.settings.lang.deliveriesAssignAllOfThem), async () => {
                         await this.busy.doWhileShowingBusy(async () => {
                             for (const iterator of families) {
                                 await this.assignFamilyBasedOnIdFromMap(iterator);
@@ -385,7 +390,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
                 let refreshBaskets = basket == undefined;
                 if (x.familiesInSameAddress.length > 0) {
-                    if (await this.dialog.YesNoPromise(this.settings.lang.thereAreAdditional+" " + x.familiesInSameAddress.length +" "+ this.settings.lang.deliveriesAtSameAddress)) {
+                    if (await this.dialog.YesNoPromise(this.settings.lang.thereAreAdditional + " " + x.familiesInSameAddress.length + " " + this.settings.lang.deliveriesAtSameAddress)) {
                         await this.busy.doWhileShowingBusy(async () => {
                             this.dialog.analytics('More families in same address');
                             for (const id of x.familiesInSameAddress) {
@@ -660,7 +665,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             if (waitingFamilies.length == 0)
                 break;
 
-            
+
 
             let addFamilyToResult = async (fqr: Location) => {
                 waitingFamilies.splice(waitingFamilies.indexOf(fqr), 1);
@@ -927,9 +932,9 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                     if (selectStreet)
                         return;
                     let c = await f.courier.getTheName();
-                    this.dialog.YesNoQuestion(translate(this.settings.lang.theFamily)+' ' +
-                        f.name.value + this.settings.lang.isAlreadyAsignedTo+' ' + c + ' '+this.settings.lang.onStatus+' ' +
-                        f.deliverStatus.displayValue + '. '+this.settings.lang.shouldAssignTo+' ' + this.helper.name.value + '?', () => {
+                    this.dialog.YesNoQuestion(translate(this.settings.lang.theFamily) + ' ' +
+                        f.name.value + this.settings.lang.isAlreadyAsignedTo + ' ' + c + ' ' + this.settings.lang.onStatus + ' ' +
+                        f.deliverStatus.displayValue + '. ' + this.settings.lang.shouldAssignTo + ' ' + this.helper.name.value + '?', () => {
                             ok();
                         });
 
@@ -964,7 +969,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             try {
                 await this.helper.save();
             } catch (err) {
-                await this.dialog.exception(this.settings.lang.saveVolunteerInfo,err);
+                await this.dialog.exception(this.settings.lang.saveVolunteerInfo, err);
                 throw err;
 
             }

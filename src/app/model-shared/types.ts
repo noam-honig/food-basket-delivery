@@ -28,7 +28,10 @@ export class PhoneColumn extends radweb.StringColumn {
   static fixPhoneInput(s: string) {
     if (!s)
       return s;
+    let orig = s;
     s = s.replace(/\D/g, '');
+    if (orig.startsWith('+'))
+      return '+' + s;
     if (s.length == 9 && s[0] != '0')
       s = '0' + s;
     return s;
