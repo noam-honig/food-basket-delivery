@@ -331,7 +331,7 @@ export class Families extends IdEntity {
 
   })
   basketType = new BasketId(this.context, getLang(this.context).defaultBasketType);
-  quantity = new QuantityColumn(this.context,{ caption: getLang(this.context).defaultQuantity, allowApiUpdate: Roles.admin });
+  quantity = new QuantityColumn(this.context, { caption: getLang(this.context).defaultQuantity, allowApiUpdate: Roles.admin });
 
   familySource = new FamilySourceId(this.context, { includeInApi: true, caption: getLang(this.context).familySource });
   socialWorker = new StringColumn(getLang(this.context).familyHelpContact);
@@ -440,7 +440,7 @@ export class Families extends IdEntity {
   }
 
 
-  previousDeliveryStatus = new DeliveryStatusColumn(this.context,{
+  previousDeliveryStatus = new DeliveryStatusColumn(this.context, {
     caption: getLang(this.context).previousDeliveryStatus,
     sqlExpression: () => {
       return this.dbNameFromLastDelivery(fde => fde.deliverStatus, "prevStatus");
@@ -528,10 +528,10 @@ export class Families extends IdEntity {
     window.open('waze://?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + '&navigate=yes');
   }
   openGoogleMaps() {
-    window.open('https://www.google.com/maps/search/?api=1&hl='+getLang(this.context).languageCode +'&query=' + this.address.value, '_blank');
+    window.open('https://www.google.com/maps/search/?api=1&hl=' + getLang(this.context).languageCode + '&query=' + this.address.value, '_blank');
   }
   showOnGoogleMaps() {
-    window.open('https://maps.google.com/maps?q=' + this.getGeocodeInformation().getlonglat() + '&hl='+getLang(this.context).languageCode , '_blank');
+    window.open('https://maps.google.com/maps?q=' + this.getGeocodeInformation().getlonglat() + '&hl=' + getLang(this.context).languageCode, '_blank');
   }
   showOnGovMap() {
     let x = this.getGeocodeInformation().location();
@@ -594,6 +594,11 @@ export class Families extends IdEntity {
   validatePhone(col: PhoneColumn) {
     if (!col.value || col.value == '')
       return;
+    if (getLang(this.context).languageCode != 'iw')
+      if (col.value.length < 10)
+        col.validationError = getLang(this.context).invalidPhoneNumber;
+      else
+        return;
     if (col.displayValue.startsWith("05") || col.displayValue.startsWith("07")) {
       if (col.displayValue.length != 12) {
         col.validationError = getLang(this.context).invalidPhoneNumber;
@@ -619,7 +624,7 @@ export class Families extends IdEntity {
     this.name.validationError = undefined;
     let foundExactName = false;
     for (const d of this.duplicateFamilies) {
-      let errorText = translate(getLang(this.context).valueAlreadyExistsFor+' "') + d.name + '" '+getLang(this.context).atAddress+' ' + d.address;
+      let errorText = translate(getLang(this.context).valueAlreadyExistsFor + ' "') + d.name + '" ' + getLang(this.context).atAddress + ' ' + d.address;
       if (d.tz)
         this.tz.validationError = errorText;
       if (d.tz2)
@@ -727,7 +732,7 @@ export class Families extends IdEntity {
 
 
 export class FamilyId extends IdColumn {
-  constructor(context:Context, settingsOrCaption?: ColumnOptions<string>) {
+  constructor(context: Context, settingsOrCaption?: ColumnOptions<string>) {
     super(settingsOrCaption);
     if (!this.defs.caption)
       this.defs.caption = getLang(context).familyIdInHagaiApp
@@ -894,15 +899,15 @@ export function parseUrlInAddress(address: string) {
 
 
 
-export function displayDupInfo(info: duplicateFamilyInfo,context:Context) {
+export function displayDupInfo(info: duplicateFamilyInfo, context: Context) {
   let r = [];
 
 
   if (info.tz) {
-    r.push(getLang(context).identicalSocialSecurityNumber+' ');
+    r.push(getLang(context).identicalSocialSecurityNumber + ' ');
   }
   if (info.sameAddress) {
-    r.push(getLang(context).sameAddress+ " ");
+    r.push(getLang(context).sameAddress + " ");
   }
   if (info.phone1 || info.phone2 || info.phone3 || info.phone4) {
     r.push(getLang(context).identicalPhone);
