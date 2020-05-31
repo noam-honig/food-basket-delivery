@@ -75,10 +75,10 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       return;
     this.initAddressAutoComplete = true;
     const autocomplete = new google.maps.places.SearchBox(this.addressInput.nativeElement);//,
-      //{
-        //  componentRestrictions: { country: this.settings.googleMapCountry() }
-        //,types: ["establishment","address","geocode"]  // 'establishment' / 'address' / 'geocode'
-      //});
+    //{
+    //  componentRestrictions: { country: this.settings.googleMapCountry() }
+    //,types: ["establishment","address","geocode"]  // 'establishment' / 'address' / 'geocode'
+    //});
     google.maps.event.addListener(autocomplete, 'places_changed', () => {
       if (autocomplete.getPlaces().length == 0)
         return;
@@ -92,6 +92,10 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
           lng: place.geometry.location.lng()
         };
         this.families.currentRow.addressByGoogle.value = getAddress(place);
+        this.families.currentRow.address.value = getAddress({
+          formatted_address: this.families.currentRow.address.value,
+          address_components: place.address_components
+        });
         this.families.currentRow.city.value = getCity(place.address_components);
         this.families.currentRow.addressOk.value = true;
       });

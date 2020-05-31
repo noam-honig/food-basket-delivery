@@ -13,7 +13,7 @@ import { serverInit } from "./serverInit";
 
 
 import { ServerContext, allEntities } from '@remult/core';
-import { GeocodeCache, GeocodeInformation } from "../shared/googleApiHelpers";
+import { GeocodeCache, GeocodeInformation, getAddress } from "../shared/googleApiHelpers";
 import { Sites } from "../sites/sites";
 import * as fs from 'fs';
 import { processPhone } from "../import-from-excel/import-from-excel.component";
@@ -25,10 +25,28 @@ let match = 0;
 export async function DoIt() {
     try {
         await serverInit();
-//await sendMessagE();
-     //   await loadTranslationXlsx('c:/temp/newen.xlsx','en');
-       
-      await buildLanguageFiles();
+        //await sendMessagE();
+        //   await loadTranslationXlsx('c:/temp/newen.xlsx','en');
+
+        // await buildLanguageFiles();
+        let h = new htmlReport();
+        var dp = Sites.getDataProviderForOrg('test3');
+        var context = new ServerContext(dp);
+        for (const g of await context.for(GeocodeCache).find()) {
+            let geo = GeocodeInformation.fromString(g.googleApiResult.value);
+            if (geo.info.results[0]) {
+                let r = [];
+                r.push(g.id.value);
+                if (g.id.value.includes('Upperbuitenkant')) {
+                    ''.toString();
+                }
+                r.push(geo.info.results[0].formatted_address);
+                r.push(getAddress(geo.info.results[0]));
+                //r.push(...geo.info.results[0].address_components.map(y => { return '[' + y.types.join(',') + '] ' + y.short_name }))
+                h.addRow(...r);
+            }
+        }
+        h.writeToFile();
 
 
 
@@ -104,7 +122,7 @@ function workOnPhones() {
 
 
 class htmlReport {
-    result = '<html><body dir=rtl style="font-family:\'Segoe UI\';"><table border=1>';
+    result = '<html><body dir=tl style="font-family:\'Segoe UI\';"><table border=1>';
     addRow(...what: any[]) {
         this.result += "\r\n<tr>";
         for (let v of what) {
