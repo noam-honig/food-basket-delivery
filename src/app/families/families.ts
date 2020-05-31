@@ -373,7 +373,7 @@ export class Families extends IdEntity {
   phone4 = new PhoneColumn({ caption: getLang(this.context).phone4, valueChange: () => this.delayCheckDuplicateFamilies() });
   phone4Description = new StringColumn(getLang(this.context).phone4Description);
 
-  status = new FamilyStatusColumn();
+  status = new FamilyStatusColumn(this.context);
   statusDate = new changeDate(getLang(this.context).statusChangeDate);
   statusUser = new HelperIdReadonly(this.context, getLang(this.context).statusChangeUser);
   fixedCourier = new HelperId(this.context, getLang(this.context).defaultVolunteer);

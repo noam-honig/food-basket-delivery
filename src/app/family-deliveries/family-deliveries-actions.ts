@@ -21,7 +21,7 @@ import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 
 class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
     updateFamilyStatus = new BoolColumn(getLang(this.context).updateFamilyStatus);
-    status = new FamilyStatusColumn();
+    status = new FamilyStatusColumn(this.context);
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,

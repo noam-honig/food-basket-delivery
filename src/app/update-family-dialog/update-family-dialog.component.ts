@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, AfterViewInit, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, AfterViewInit, NgZone, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { MatDialogRef, MatDialogActions } from '@angular/material/dialog';
 import { Families, duplicateFamilyInfo, displayDupInfo } from '../families/families';
 
@@ -31,7 +31,7 @@ import { Location, getAddress, getCity } from '../shared/googleApiHelpers';
 
   minWidth: '90vw'
 })
-export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, AfterViewInit {
+export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, AfterViewInit, OnDestroy {
   public args: {
     family?: Families,
     familyDelivery?: FamilyDeliveries,
@@ -52,6 +52,14 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     private zone: NgZone
 
   ) {
+    dialogRef.afterClosed().toPromise().then(() => {
+      if (!this.confirmed)
+        if (!this.args.userCanUpdateButDontSave)
+          this.families.currentRow.undoChanges();
+    });
+  }
+  ngOnDestroy(): void {
+    this.destroyMe.remove();
 
   }
   ngAfterViewInit(): void {
@@ -70,6 +78,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     return f.address.originalValue;
   }
   initAddressAutoComplete = false;
+  destroyMe: google.maps.MapsEventListener;
   addressOpen() {
     if (this.initAddressAutoComplete)
       return;
@@ -79,7 +88,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     //  componentRestrictions: { country: this.settings.googleMapCountry() }
     //,types: ["establishment","address","geocode"]  // 'establishment' / 'address' / 'geocode'
     //});
-    google.maps.event.addListener(autocomplete, 'places_changed', () => {
+    this.destroyMe = google.maps.event.addListener(autocomplete, 'places_changed', () => {
       if (autocomplete.getPlaces().length == 0)
         return;
       const place = autocomplete.getPlaces()[0];
@@ -101,6 +110,8 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       });
 
     });
+
+
   }
   @ViewChild('addressPanel', { static: false }) addressPanel: MatExpansionPanel;
   @ViewChild('addressInput', { static: false }) addressInput: ElementRef;
@@ -153,11 +164,12 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   }
   refreshDeliveryStatistics = false;
   cancel() {
-    if (!this.args.userCanUpdateButDontSave)
-      this.families.currentRow.undoChanges();
+
     this.dialogRef.close();
   }
+  confirmed = false;
   async confirm() {
+    this.confirmed = true;
     await this.families.currentRow.save();
     if (this.delivery) {
       let d = this.delivery;

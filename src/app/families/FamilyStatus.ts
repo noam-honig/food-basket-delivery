@@ -1,20 +1,21 @@
-import { ColumnOptions, ValueListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings, ValueListItem } from '@remult/core';
+import { ColumnOptions, ValueListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings, ValueListItem, Context } from '@remult/core';
 import { HelperId } from '../helpers/helpers';
-import { use } from '../translate';
+import { use, Language, getLang } from '../translate';
 
 
 export class FamilyStatus {
 
 
-  static Active: FamilyStatus = new FamilyStatus(0, use.language.active );
-  static RemovedFromList: FamilyStatus = new FamilyStatus(99, use.language.removedFromList);
-  static ToDelete: FamilyStatus = new FamilyStatus(98, use.language.toDelete);
+  static Active: FamilyStatus = new FamilyStatus(0, l => l.active);
+  static RemovedFromList: FamilyStatus = new FamilyStatus(99, l => l.removedFromList);
+  static ToDelete: FamilyStatus = new FamilyStatus(98, l => l.toDelete);
   familyStatus() {
 
   }
 
-
-  constructor(public id: number, public caption: string) {
+  caption: string;
+  constructor(public id: number, public getCaption: (lang: Language) => string) {
+    this.caption = getCaption(use.language);
   }
 
 }
@@ -33,8 +34,13 @@ export class FamilyStatusColumn extends ValueListColumn<FamilyStatus> {
         return '';
     }
   }
+  get displayValue() {
+    if (this.value)
+      return this.value.getCaption(getLang( this.context));
+    return '';
+  }
 
-  constructor(settingsOrCaption?: ColumnOptions<FamilyStatus>, chooseFrom?: FamilyStatus[]) {
+  constructor(private context: Context, settingsOrCaption?: ColumnOptions<FamilyStatus>, chooseFrom?: FamilyStatus[]) {
     super(FamilyStatus, {
       dataControlSettings: () => {
         let op = this.getOptions();
@@ -42,7 +48,7 @@ export class FamilyStatusColumn extends ValueListColumn<FamilyStatus> {
           op = chooseFrom.map(x => {
             return {
               id: x.id,
-              caption: x.caption
+              caption: x.getCaption(getLang(context))
             } as ValueListItem
           });
 

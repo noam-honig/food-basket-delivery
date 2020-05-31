@@ -153,7 +153,7 @@ export class UnfreezeDeliveriesForFamilies extends ActionOnRows<Families> {
 }
 
 export class UpdateStatus extends ActionOnRows<Families> {
-    status = new FamilyStatusColumn();
+    status = new FamilyStatusColumn(this.context);
     archiveFinshedDeliveries = new BoolColumn({ caption: getLang(this.context).archiveFinishedDeliveries, defaultValue: true });
     deletePendingDeliveries = new BoolColumn({ caption: getLang(this.context).deletePendingDeliveries, defaultValue: true });
     comment = new StringColumn(getLang(this.context).internalComment);
