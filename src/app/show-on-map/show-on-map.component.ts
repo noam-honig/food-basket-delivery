@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Location } from '../shared/googleApiHelpers';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-show-on-map',
@@ -8,7 +9,7 @@ import { Location } from '../shared/googleApiHelpers';
 })
 export class ShowOnMapComponent implements OnInit {
 
-  constructor() { }
+  constructor(public settings:ApplicationSettings) { }
   args: {
     location: Location
   };
