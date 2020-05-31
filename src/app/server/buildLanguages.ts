@@ -2,6 +2,7 @@ import * as fs from "fs";
 import { Language } from "../translate";
 import { jsonToXlsx } from "../shared/saveToExcel";
 import * as request from 'request';
+import { getMultipleValuesInSingleSelectionError } from "@angular/cdk/collections";
 
 
 export async function loadTranslationXlsx(fileName: string, language: string) {
@@ -25,7 +26,7 @@ export async function loadTranslationXlsx(fileName: string, language: string) {
                 k.custom = val;
             }
             else {
-                
+
             }
         }
         else {
@@ -33,10 +34,10 @@ export async function loadTranslationXlsx(fileName: string, language: string) {
         }
 
 
-        
+
 
     }
-    saveLangFile(language,known);
+    saveLangFile(language, known);
 
 
 }
@@ -56,23 +57,42 @@ export async function buildLanguageFiles() {
         let known = {};
         try { known = loadLangFile(fileAndClassName); }
         catch{ }
+        let knownEnglish = {};
+        if (lang != "en") {
+            knownEnglish = loadLangFile("en");
+        }
         let result = '';
         let l = new Language();
         let keys: translationEntry[] = [];
         for (const key in l) {
             if (l.hasOwnProperty(key)) {
                 let knownVal: translation = known[key];
+                let knownEnglishItem: translation = knownEnglish[key];
+                let valueInEnglish: string = undefined;
+                if (knownEnglishItem) {
+                    valueInEnglish = knownEnglishItem.custom;
+                    if (!valueInEnglish)
+                        valueInEnglish = knownEnglishItem.google;
+                    //If has no custom and english has custom and was changed
+                    if (!knownVal.custom && knownEnglishItem.custom && knownEnglishItem.custom != knownVal.valueInEnglish)
+                        knownVal = undefined;
+                }
                 if (!knownVal) {
-                    const element: string[] = l[key].split('\n');
+                    let val = l[key];
+                    if (valueInEnglish)
+                        val = valueInEnglish;
+
+                    const element: string[] = val.split('\n');
                     for (let index = 0; index < element.length; index++) {
                         const term = element[index];
                         let trans = await translate(term, lang);
                         element[index] = trans;
                     }
-                    knownVal = { google: element.join('\\n'), valueInCode: l[key] };
+                    knownVal = { google: element.join('\\n'), valueInCode: l[key], valueInEnglish };
                     known[key] = knownVal;
                 }
                 knownVal.valueInCode = l[key];
+                knownVal.valueInEnglish = valueInEnglish;
                 let v = knownVal.google;
                 if (knownVal.custom)
                     v = knownVal.custom;
@@ -80,7 +100,7 @@ export async function buildLanguageFiles() {
                     v = lang;
                 let r = v;
                 if (r.includes('\''))
-                    r = '"' + r + '"';
+                    r = '"' + r.replace(/"/g, '\\"') + '"';
                 else
                     r = "'" + r + "'";
                 result += '  ' + key + " = " + r + ';\n';
@@ -115,6 +135,7 @@ interface translation {
     google: string;
     custom?: string;
     valueInCode: string;
+    valueInEnglish: string;
 }
 
 async function translate(s: string, toLang: string) {

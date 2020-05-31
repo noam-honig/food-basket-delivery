@@ -32,7 +32,7 @@ export async function GetGeoInformation(address: string, context: Context) {
         u.addObject({
             key: process.env.GOOGLE_GECODE_API_KEY,
             address: address,
-            language: getLang(context).languageCode,
+            language: settings.lang.languageCode,
             components: 'country:' + settings.googleMapCountry()
         });
         try {

@@ -3,7 +3,7 @@ export class en implements Language {
   assignDeliveryMenu = 'Assign Volunteer';
   defaultOrgName = "My organization's name";
   defaultSmsText = 'Hello !VOLUNTEER!\nTo deliver parcels for !ORG! Click: !URL!\nThanks !SENDER!';
-  reminderSmsText = 'Hello! Volunteer !,\nWe would be happy to update the system in the delivery mode of the parcels. To update click on: Site!\nThank you! Organization!';
+  reminderSmsText = 'Hello !VOLUNTEER!,\nPlease update the Application with the Delivery status of the parcels. To update click on: !URL!\nThank you !ORG!';
   commentForSuccessDelivery = 'Kindly describe your experience';
   commentForSuccessLeft = 'Please specify where you left the parcel and with whom you spoke';
   commentForProblem = 'Kindly describe your experience';
@@ -64,7 +64,7 @@ export class en implements Language {
   notice = 'Note!';
   floor = 'Floor';
   appartment = 'Apartment';
-  entrance = 'Sign in';
+  entrance = 'Entrance';
   updateComment = 'Update Comment';
   clickedByMistake = 'Accidentally clicked - return to Assigned Deliveries';
   deliveriesDoneInTheLastTwoDays = 'Delivered over the last two days';
@@ -430,7 +430,7 @@ export class en implements Language {
   deliveryInfo = 'Delivery Details';
   checkAddress = 'Check address';
   showOnGovMap = 'View in govmap';
-  showOnGoogleMap = 'View on Google';
+  showOnGoogleMap = 'View on Google Maps';
   openWaze = 'Open WAZE';
   badAddressTitle = 'Please note, inaccurate address';
   badAddressHelpStart = 'Google Maps did not find an accurate address';

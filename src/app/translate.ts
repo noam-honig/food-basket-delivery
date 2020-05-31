@@ -66,7 +66,8 @@ export class TranslationOptions {
   static italy: TranslationOptions = new TranslationOptions(4, 'Italy', {
     googleMapCountry:'IT',
     leftToRight: true,
-    languageCode: 'it'
+    languageCode: 'it',
+    internationalPrefixForSmsAndAws:'+39'
   });
   static chile: TranslationOptions = new TranslationOptions(5, 'Chile', {
     googleMapCountry:'CL',

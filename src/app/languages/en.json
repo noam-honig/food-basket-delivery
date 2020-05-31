@@ -1903,7 +1903,7 @@
   "reminderSmsText": {
     "google": "Hello! Volunteer !,\\nWe would be happy to update the system in the delivery mode of the baskets. To update click on: Site!\\nThank you! Organization!",
     "valueInCode": "שלום !מתנדב!, \nנשמח אם תעדכן את המערכת במצב המסירה של הסלים. לעדכון לחץ על:  !אתר!\nבתודה !ארגון!",
-    "custom": "Hello! Volunteer !,\\nWe would be happy to update the system in the delivery mode of the parcels. To update click on: Site!\\nThank you! Organization!"
+    "custom": "Hello !VOLUNTEER!,\\nPlease update the Application with the Delivery status of the parcels. To update click on: !URL!\\nThank you !ORG!"
   },
   "reminderSmsTextHelp": {
     "google": "This message will be sent to a volunteer who is delayed from a volunteer tracking screen",
@@ -2227,7 +2227,7 @@
   },
   "showOnGoogleMap": {
     "google": "View on Google Maps",
-    "valueInCode": "הצג בגוגל"
+    "valueInCode": "הצג בגוגל MAPS"
   },
   "showOnGovMap": {
     "google": "View in govmap",
