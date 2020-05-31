@@ -32,7 +32,7 @@ export class PhoneColumn extends radweb.StringColumn {
     s = s.replace(/\D/g, '');
     if (orig.startsWith('+'))
       return '+' + s;
-    if (s.length == 9 && s[0] != '0')
+    if (s.length == 9 && s[0] != '0' && s[0] != '3')
       s = '0' + s;
     return s;
   }
