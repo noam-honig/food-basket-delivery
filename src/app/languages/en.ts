@@ -57,10 +57,10 @@ export class en implements Language {
   callEscort = 'Call escort';
   family = 'Family';
   address = 'Address';
-  phones = 'phones';
+  phones = 'Phones';
   phone = 'Phone';
   thereAre = 'there is';
-  basket = 'parcel';
+  basket = 'Parcel';
   notice = 'Note!';
   floor = 'Floor';
   appartment = 'Apartment';
@@ -562,7 +562,7 @@ export class en implements Language {
   gotoDeliveriesScreen = 'Switch to a delivery screen or stay on this one?';
   shouldUpdateColumn = 'Do update the field';
   forFamilies = 'For families';
-  for = 'To';
+  for = 'for';
   updateOfAddressMayTakeLonger = 'Note - Updating an address field can take longer than other fields';
   selectExcelSheet = 'Select an excel sheet';
   excelSheel = 'sheet';
@@ -617,4 +617,7 @@ export class en implements Language {
   searchCompanyName = 'Search for a company name';
   confirmDeleteOf = 'Deletion certificate for';
   originalAddress = 'Original address';
+  addGroupAssignmentVerb = 'Add affiliation to the group';
+  removeGroupAssignmentVerb = 'Remove grouping association';
+  replaceGroupAssignmentVerb = 'Replace affiliation with the group';
 }

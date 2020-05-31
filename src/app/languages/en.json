@@ -58,6 +58,10 @@
     "google": "Add a column",
     "valueInCode": "הוסף עמודה"
   },
+  "addGroupAssignmentVerb": {
+    "google": "Add affiliation to the group",
+    "valueInCode": "להוסיף שיוך לקבוצה"
+  },
   "address": {
     "google": "Address",
     "valueInCode": "כתובת"
@@ -1755,7 +1759,7 @@
   "phones": {
     "google": "phones",
     "valueInCode": "טלפונים",
-    "custom":"Phones"
+    "custom": "Phones"
   },
   "PlaybackComponent": {
     "google": "A distribution video",
@@ -1934,6 +1938,10 @@
     "google": "Remove from families to update",
     "valueInCode": "הסר ממשפחות לעדכן"
   },
+  "removeGroupAssignmentVerb": {
+    "google": "Remove grouping association",
+    "valueInCode": "להסיר שיוך לקבצה"
+  },
   "repeatFamilyNotice": {
     "google": "You've been to this family before too",
     "valueInCode": "הייתם אצל המשפחה הזו גם פעם קודמת"
@@ -1949,6 +1957,10 @@
   "replacedByVolunteerName": {
     "google": "The name of the volunteer will be replaced",
     "valueInCode": "יוחלף בשם המתנדב"
+  },
+  "replaceGroupAssignmentVerb": {
+    "google": "Replace affiliation with the group",
+    "valueInCode": "להחליף שיוך לקבוצה"
   },
   "replanRoute": {
     "google": "Recalculate route",

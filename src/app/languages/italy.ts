@@ -57,7 +57,7 @@ export class italy implements Language {
   callEscort = 'Chiama la scorta';
   family = 'Famiglia';
   address = 'Indirizzo';
-  phones = 'telefoni';
+  phones = 'Cellulari';
   phone = 'Telefono';
   thereAre = "c'è";
   basket = 'pacco';
@@ -617,4 +617,7 @@ export class italy implements Language {
   searchCompanyName = 'Cerca un nome di società';
   confirmDeleteOf = 'Certificato di cancellazione per';
   originalAddress = 'Indirizzo originale';
+  addGroupAssignmentVerb = 'Aggiungi affiliazione al gruppo';
+  removeGroupAssignmentVerb = 'Rimuovi associazione di raggruppamento';
+  replaceGroupAssignmentVerb = "Sostituisci l'affiliazione con il gruppo";
 }

@@ -3,7 +3,7 @@ import { InputAreaComponent } from "../select-popup/input-area/input-area.compon
 import { DialogService, extractError } from "../select-popup/dialog";
 import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
-import { getLang } from "../translate";
+import { getLang, use } from "../translate";
 
 
 
@@ -81,7 +81,7 @@ export class ActionOnRows<T extends IdEntity> {
                         ok: async () => {
                             try {
                                 let info = await component.buildActionInfo(this.args.additionalWhere);
-                                if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + ' ל-' + info.count + ' ' + component.groupName + '?')) {
+                                if (await component.dialog.YesNoPromise(this.args.confirmQuestion()  +" " + use.language.for + " " + info.count + ' ' + component.groupName + '?')) {
                                     let args = [];
                                     for (const c of this.args.columns()) {
                                         args.push(c.rawValue);

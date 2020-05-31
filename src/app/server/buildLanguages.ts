@@ -74,7 +74,7 @@ export async function buildLanguageFiles() {
                     if (!valueInEnglish)
                         valueInEnglish = knownEnglishItem.google;
                     //If has no custom and english has custom and was changed
-                    if (!knownVal.custom && knownEnglishItem.custom && knownEnglishItem.custom != knownVal.valueInEnglish)
+                    if (knownVal && !knownVal.custom && knownEnglishItem.custom && knownEnglishItem.custom != knownVal.valueInEnglish)
                         knownVal = undefined;
                 }
                 if (!knownVal) {

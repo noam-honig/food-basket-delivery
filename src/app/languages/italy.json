@@ -64,6 +64,11 @@
     "valueInCode": "הוסף עמודה",
     "valueInEnglish": "Add a column"
   },
+  "addGroupAssignmentVerb": {
+    "google": "Aggiungi affiliazione al gruppo",
+    "valueInCode": "להוסיף שיוך לקבוצה",
+    "valueInEnglish": "Add affiliation to the group"
+  },
   "address": {
     "google": "Indirizzo",
     "valueInCode": "כתובת",
@@ -337,7 +342,7 @@
   "basket": {
     "google": "pacco",
     "valueInCode": "סל",
-    "valueInEnglish": "parcel"
+    "valueInEnglish": "Parcel"
   },
   "basketNotDelivered": {
     "google": "Il pacco non è stato consegnato",
@@ -1991,9 +1996,9 @@
     "valueInEnglish": "Phone Notes 4"
   },
   "phones": {
-    "google": "telefoni",
+    "google": "Cellulari",
     "valueInCode": "טלפונים",
-    "valueInEnglish": "phones"
+    "valueInEnglish": "Phones"
   },
   "PlaybackComponent": {
     "google": "Un video di distribuzione",
@@ -2206,6 +2211,11 @@
     "valueInCode": "הסר ממשפחות לעדכן",
     "valueInEnglish": "Remove from families to update"
   },
+  "removeGroupAssignmentVerb": {
+    "google": "Rimuovi associazione di raggruppamento",
+    "valueInCode": "להסיר שיוך לקבצה",
+    "valueInEnglish": "Remove grouping association"
+  },
   "repeatFamilyNotice": {
     "google": "Anche tu sei stato in questa famiglia",
     "valueInCode": "הייתם אצל המשפחה הזו גם פעם קודמת",
@@ -2225,6 +2235,11 @@
     "google": "Il nome del volontario verrà sostituito",
     "valueInCode": "יוחלף בשם המתנדב",
     "valueInEnglish": "The name of the volunteer will be replaced"
+  },
+  "replaceGroupAssignmentVerb": {
+    "google": "Sostituisci l'affiliazione con il gruppo",
+    "valueInCode": "להחליף שיוך לקבוצה",
+    "valueInEnglish": "Replace affiliation with the group"
   },
   "replanRoute": {
     "google": "Ricalcola percorso",

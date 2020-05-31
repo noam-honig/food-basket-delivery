@@ -60,7 +60,7 @@ export class es implements Language {
   phones = 'Los telefonos';
   phone = 'Teléfono';
   thereAre = 'Ahi esta';
-  basket = 'paquete o empaquetar';
+  basket = 'Paquete o empaquetar';
   notice = '¡Nota!';
   floor = 'Suelo';
   appartment = 'Departamento';
@@ -617,4 +617,7 @@ export class es implements Language {
   searchCompanyName = 'Busca el nombre de una empresa';
   confirmDeleteOf = 'Certificado de borrado para';
   originalAddress = 'direccion original';
+  addGroupAssignmentVerb = 'Agregar afiliación al grupo';
+  removeGroupAssignmentVerb = 'Eliminar asociación de agrupación';
+  replaceGroupAssignmentVerb = 'Reemplazar afiliación con el grupo';
 }

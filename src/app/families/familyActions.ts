@@ -1,6 +1,6 @@
 import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, ValueListColumn, DataControlInfo } from "@remult/core";
 import { FamiliesComponent } from "./families.component";
-import { Families } from "./families";
+import { Families, GroupsColumn } from "./families";
 import { Roles } from "../auth/roles";
 import { BasketId, QuantityColumn } from "./BasketType";
 import { DistributionCenterId, DistributionCenters } from "../manage/distribution-centers";
@@ -74,8 +74,6 @@ class NewDelivery extends ActionOnRows<Families> {
         });
     }
 }
-const addGroupAction = ' להוסיף ';
-const replaceGroupAction = ' להחליף ';
 export class updateGroup extends ActionOnRows<Families> {
 
     group = new StringColumn({
@@ -84,34 +82,46 @@ export class updateGroup extends ActionOnRows<Families> {
             valueList: this.context.for(Groups).getValueList({ idColumn: x => x.name, captionColumn: x => x.name })
         })
     });
-    action = new StringColumn({
-        caption: getLang(this.context).action,
-        defaultValue: addGroupAction,
-        dataControlSettings: () => ({
-            valueList: [{ id: addGroupAction, caption: 'הוסף שיוך לקבוצה' }, { id: 'להסיר', caption: 'הסר שיוך לקבוצה' }, { id: replaceGroupAction, caption: 'החלף שיוך לקבוצה' }]
-        })
-    });
+    action = new UpdateGroupStrategyColumn();
     constructor(context: Context) {
         super(context, Families, {
             columns: () => [this.group, this.action],
-            confirmQuestion: () => 'האם ' + this.action.value + ' את השיוך לקבוצה "' + this.group.value + '"',
+            confirmQuestion: () => this.action.value.caption + ' "' + this.group.value + '"',
             title: translate(getLang(context).assignAFamilyGroup),
             allowed: Roles.admin,
             forEach: async f => {
-                if (this.action.value == addGroupAction) {
-                    if (!f.groups.selected(this.group.value))
-                        f.groups.addGroup(this.group.value);
-                } else if (this.action.value == replaceGroupAction) {
-                    f.groups.value = this.group.value;
-                }
-                else {
-                    if (f.groups.selected(this.group.value))
-                        f.groups.removeGroup(this.group.value);
-                }
+                this.action.value.whatToDo(f.groups, this.group.value);
             }
 
         });
         this.group.value = '';
+    }
+}
+class UpdateGroupStrategy {
+    static add = new UpdateGroupStrategy(0, use.language.addGroupAssignmentVerb, (col, val) => {
+        if (!col.selected(val))
+            col.addGroup(val);
+    });
+    static remove = new UpdateGroupStrategy(1, use.language.removeGroupAssignmentVerb, (col, val) => {
+        if (col.selected(val))
+            col.removeGroup(val);
+    });
+    static replace = new UpdateGroupStrategy(2, use.language.replaceGroupAssignmentVerb, (col, val) => {
+        col.value = val;
+    });
+    
+    constructor(public id: number, public caption: string, public whatToDo: (col: GroupsColumn, val: string) => void) {
+
+    }
+}
+class UpdateGroupStrategyColumn extends ValueListColumn<UpdateGroupStrategy>
+{
+    constructor() {
+        super(UpdateGroupStrategy, {
+            caption: use.language.action,
+            defaultValue: UpdateGroupStrategy.add,
+            dataControlSettings: () => ({ valueList: this.getOptions() })
+        });
     }
 }
 export class FreezeDeliveriesForFamilies extends ActionOnRows<Families> {

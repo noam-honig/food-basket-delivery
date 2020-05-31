@@ -744,6 +744,9 @@ export class Language {
   searchCompanyName = 'חיפוש שם חברה';
   confirmDeleteOf = "אישור מחיקה עבור ";
   originalAddress = 'כתובת מקורית';
+  addGroupAssignmentVerb='להוסיף שיוך לקבוצה';
+  removeGroupAssignmentVerb='להסיר שיוך לקבצה';
+  replaceGroupAssignmentVerb='להחליף שיוך לקבוצה';
 }
 
 const defaultLang = new Language();
