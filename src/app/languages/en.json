@@ -314,7 +314,7 @@
   "basket": {
     "google": "basket",
     "valueInCode": "סל",
-    "custom": "parcel"
+    "custom": "Parcel"
   },
   "basketNotDelivered": {
     "google": "The basket was not delivered",
@@ -1754,7 +1754,8 @@
   },
   "phones": {
     "google": "phones",
-    "valueInCode": "טלפונים"
+    "valueInCode": "טלפונים",
+    "custom":"Phones"
   },
   "PlaybackComponent": {
     "google": "A distribution video",

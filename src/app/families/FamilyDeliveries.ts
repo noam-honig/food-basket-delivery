@@ -137,7 +137,7 @@ export class FamilyDeliveries extends IdEntity {
         allowApiUpdate: false
     });
     entrance = new StringColumn({
-        caption: getLang(this.context).address,
+        caption: getLang(this.context).entrance,
         allowApiUpdate: false
     });
     city = new StringColumn({
