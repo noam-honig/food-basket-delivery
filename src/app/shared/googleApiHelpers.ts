@@ -164,7 +164,7 @@ export function getAddress(result: { formatted_address?: string, address_compone
                 if (i > 0)
                     r = r.substring(0, i) + r.substring(i + x.long_name.length + 2);
             }
-            if (x.types[0] == "administrative_area_level_2"&&x.short_name.length==2) {
+            if (x.types[0] == "administrative_area_level_2" && x.short_name.length == 2) {
                 let i = r.lastIndexOf(' ' + x.short_name);
                 if (i > 0)
                     r = r.substring(0, i) + r.substring(i + x.long_name.length + 1);
@@ -172,7 +172,10 @@ export function getAddress(result: { formatted_address?: string, address_compone
             }
         };
 
-
+    r = r.trim();
+    if (r.endsWith(',')) {
+        r = r.substring(0, r.length - 1);
+    }
     return r;
 }
 export function getCity(address_component: AddressComponent[]) {
