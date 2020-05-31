@@ -29,7 +29,7 @@ import { Location, getAddress, getCity } from '../shared/googleApiHelpers';
 })
 @DialogConfig({
 
-  minWidth: '90vw'
+  minWidth: '95vw'
 })
 export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, AfterViewInit, OnDestroy {
   public args: {
