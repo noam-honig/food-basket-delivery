@@ -74,11 +74,11 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     if (this.initAddressAutoComplete)
       return;
     this.initAddressAutoComplete = true;
-    const autocomplete = new google.maps.places.SearchBox(this.addressInput.nativeElement,
-      {
+    const autocomplete = new google.maps.places.SearchBox(this.addressInput.nativeElement);//,
+      //{
         //  componentRestrictions: { country: this.settings.googleMapCountry() }
         //,types: ["establishment","address","geocode"]  // 'establishment' / 'address' / 'geocode'
-      });
+      //});
     google.maps.event.addListener(autocomplete, 'places_changed', () => {
       if (autocomplete.getPlaces().length == 0)
         return;
