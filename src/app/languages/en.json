@@ -903,7 +903,7 @@
   "entrance": {
     "google": "Sign in",
     "valueInCode": "כניסה",
-    "custom": "Sign in"
+    "custom": "Entrance"
   },
   "error": {
     "google": "Error",
@@ -1574,7 +1574,7 @@
   "newFamily": {
     "google": "A new family",
     "valueInCode": "משפחה חדשה",
-    "custom":"Add Family"
+    "custom": "Add Family"
   },
   "NewsComponent": {
     "google": "Care needs",
@@ -1686,6 +1686,10 @@
   "organizationName": {
     "google": "The organization name",
     "valueInCode": "שם הארגון"
+  },
+  "originalAddress": {
+    "google": "Original address",
+    "valueInCode": "כתובת מקורית"
   },
   "otherPhone": {
     "google": "another phone",
@@ -2124,7 +2128,7 @@
   "sendLinkOnWhatsapp": {
     "google": "Send a link in whatsapp",
     "valueInCode": "שלח קישור ב whatsapp",
-    "custom":"Send on WhatsApp"
+    "custom": "Send on WhatsApp"
   },
   "sendMessageToVolunteer": {
     "google": "Send a message to the volunteer",
@@ -2153,7 +2157,7 @@
   "shouldAdd": {
     "google": "Do add",
     "valueInCode": "האם להוסיף",
-    "customer":"Add"
+    "customer": "Add"
   },
   "shouldArchiveDelivery": {
     "google": "Archive the shipment?",
@@ -2222,7 +2226,7 @@
     "valueInCode": "הצג למתנדב כפתור השארתי ליד הבית"
   },
   "showOnGoogleMap": {
-    "google": "View on Google",
+    "google": "View on Google Maps",
     "valueInCode": "הצג בגוגל"
   },
   "showOnGovMap": {

@@ -81,6 +81,7 @@ import { BasketSummaryComponent } from './basket-summary/basket-summary.componen
 import { MergeFamiliesComponent } from './merge-families/merge-families.component';
 import { DuplicateFamiliesComponent } from './duplicate-families/duplicate-families.component';
 import { DateRangeComponent } from './date-range/date-range.component';
+import { ShowOnMapComponent } from './show-on-map/show-on-map.component';
 
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref();
@@ -159,7 +160,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     BasketSummaryComponent,
     MergeFamiliesComponent,
     DuplicateFamiliesComponent,
-    DateRangeComponent
+    DateRangeComponent,
+    ShowOnMapComponent
 
   ],
   imports: [
@@ -222,6 +224,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     HelperAssignmentComponent,
     MergeFamiliesComponent,
     SiteOverviewComponent,
+    ShowOnMapComponent,
     UpdateCommentComponent, UpdateGroupDialogComponent, BasketSummaryComponent]
 })
 export class AppModule { }

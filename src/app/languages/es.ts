@@ -616,4 +616,5 @@ export class es implements Language {
   thankYou = 'Gracias';
   searchCompanyName = 'Busca el nombre de una empresa';
   confirmDeleteOf = 'Certificado de borrado para';
+  originalAddress = 'direccion original';
 }

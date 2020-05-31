@@ -22,6 +22,12 @@ export class ApplicationSettings extends Entity<number>  {
       r = '+972';
     return r;
   }
+  googleMapCountry() {
+    let r = this.forWho.value.args.googleMapCountry;
+    if (!r)
+      r = 'IL';
+    return r;
+  }
 
   lang = getLang(this.context);
   @ServerFunction({ allowed: c => c.isSignedIn() })

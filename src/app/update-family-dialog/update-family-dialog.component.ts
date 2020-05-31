@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, AfterViewInit, NgZone, ChangeDetectorRef } from '@angular/core';
 import { MatDialogRef, MatDialogActions } from '@angular/material/dialog';
 import { Families, duplicateFamilyInfo, displayDupInfo } from '../families/families';
 
@@ -18,6 +18,9 @@ import { Roles } from '../auth/roles';
 import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 import { Sites } from '../sites/sites';
 import { async } from '@angular/core/testing';
+import { MatExpansionPanel } from '@angular/material';
+import { ShowOnMapComponent } from '../show-on-map/show-on-map.component';
+import { Location, getAddress, getCity } from '../shared/googleApiHelpers';
 
 @Component({
   selector: 'app-update-family-dialog',
@@ -28,7 +31,7 @@ import { async } from '@angular/core/testing';
 
   minWidth: '90vw'
 })
-export class UpdateFamilyDialogComponent implements OnInit {
+export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, AfterViewInit {
   public args: {
     family?: Families,
     familyDelivery?: FamilyDeliveries,
@@ -44,14 +47,62 @@ export class UpdateFamilyDialogComponent implements OnInit {
 
     private context: Context,
     public settings: ApplicationSettings,
-    private dialog: DialogService
+    private dialog: DialogService,
+    private cd: ChangeDetectorRef,
+    private zone: NgZone
 
   ) {
 
   }
+  ngAfterViewInit(): void {
+    this.addressPanel.open();
+    this.cd.detectChanges();
+
+  }
+
+  ngAfterViewChecked(): void {
+
+  }
+  getAddressDescription() {
+    let f = this.families.currentRow;
+    if (f.address.value == f.address.originalValue)
+      return f.getAddressDescription();
+    return f.address.originalValue;
+  }
+  initAddressAutoComplete = false;
+  addressOpen() {
+    if (this.initAddressAutoComplete)
+      return;
+    this.initAddressAutoComplete = true;
+    const autocomplete = new google.maps.places.SearchBox(this.addressInput.nativeElement,
+      {
+        //  componentRestrictions: { country: this.settings.googleMapCountry() }
+        //,types: ["establishment","address","geocode"]  // 'establishment' / 'address' / 'geocode'
+      });
+    google.maps.event.addListener(autocomplete, 'places_changed', () => {
+      if (autocomplete.getPlaces().length == 0)
+        return;
+      const place = autocomplete.getPlaces()[0];
+
+
+      this.zone.run(() => {
+        this.families.currentRow.address.value = this.addressInput.nativeElement.value;
+        this.onMapLocation = {
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng()
+        };
+        this.families.currentRow.addressByGoogle.value = getAddress(place);
+        this.families.currentRow.city.value = getCity(place.address_components);
+        this.families.currentRow.addressOk.value = true;
+      });
+
+    });
+  }
+  @ViewChild('addressPanel', { static: false }) addressPanel: MatExpansionPanel;
+  @ViewChild('addressInput', { static: false }) addressInput: ElementRef;
   async sendSmsToCourier() {
     let h = await this.context.for(Helpers).findId(this.args.familyDelivery.courier);
-    
+
     await this.context.openDialog(UpdateCommentComponent, x => x.args = {
       helpText: () => new StringColumn(),
       ok: async (comment) => {
@@ -152,6 +203,14 @@ export class UpdateFamilyDialogComponent implements OnInit {
   extraFamilyInfo = new DataAreaSettings<Families>();
   deliveryDefaults = new DataAreaSettings<Families>();
   familyDeliveries: GridSettings<FamilyDeliveries>;
+  onMapLocation: Location;
+  showOnMap() {
+    if (!this.onMapLocation)
+      this.onMapLocation = this.families.currentRow.getGeocodeInformation().location();
+    this.context.openDialog(ShowOnMapComponent, x => x.args = {
+      location: this.onMapLocation
+    });
+  }
   async ngOnInit() {
     if (!this.args.familyDelivery) {
       if (this.args.deliveryId) {
@@ -213,7 +272,6 @@ export class UpdateFamilyDialogComponent implements OnInit {
     this.familiesAddress = this.families.addArea({
       columnSettings: families => [
 
-        families.address,
         [
           families.appartment,
           families.floor,

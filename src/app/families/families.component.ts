@@ -41,6 +41,7 @@ import { familyActions } from './familyActions';
 import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, iterateRowsActionOnServer } from './familyActionsWiring';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
+import { MatAccordion } from '@angular/material/expansion';
 
 
 
@@ -625,7 +626,7 @@ export class FamiliesComponent implements OnInit {
     @ViewChild('myTab', { static: false }) myTab: MatTabGroup;
 
     ngOnInit() {
-
+     
         this.refreshStats();
         this.sortColumns(this.normalColumns);
         //  debugger;
@@ -672,7 +673,7 @@ export class FamiliesComponent implements OnInit {
     static route: Route = {
         path: 'families',
         component: FamiliesComponent,
-         canActivate: [AdminGuard]
+        canActivate: [AdminGuard]
     }
 
 }
@@ -728,10 +729,10 @@ export async function saveFamiliesToExcel(context: Context, gs: GridSettings<Fam
         addColumn("X" + use.language.phone2, fixPhone(f.phone2), 's');
         addColumn("X" + use.language.phone3, fixPhone(f.phone3), 's');
         addColumn("X" + use.language.phone4, fixPhone(f.phone4), 's');
-        addColumn("X" + use.language.phone1+'orig', f.phone1.value, 's');
-        addColumn("X" + use.language.phone2+'orig', f.phone2.value, 's');
-        addColumn("X" + use.language.phone3+'orig', f.phone3.value, 's');
-        addColumn("X" + use.language.phone4+'orig', f.phone4.value, 's');
+        addColumn("X" + use.language.phone1 + 'orig', f.phone1.value, 's');
+        addColumn("X" + use.language.phone2 + 'orig', f.phone2.value, 's');
+        addColumn("X" + use.language.phone3 + 'orig', f.phone3.value, 's');
+        addColumn("X" + use.language.phone4 + 'orig', f.phone4.value, 's');
         await f.basketType.addBasketTypes(f.quantity, addColumn);
     });
 }

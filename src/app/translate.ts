@@ -29,8 +29,11 @@ export function translate(s: string) {
 export class TranslationOptions {
 
 
-  static Families: TranslationOptions = new TranslationOptions(0, 'משפחות', {});
+  static Families: TranslationOptions = new TranslationOptions(0, 'משפחות', {
+    googleMapCountry:'IL'
+  });
   static Donors: TranslationOptions = new TranslationOptions(1, 'תורמים', {
+    googleMapCountry:'IL',
     translateFunction: s => s.replace(/משפחה אחת/g, "תורם אחד")
       .replace(/משפחות חוזרות/g, 'תורמים חוזרים')
       .replace(/משפחות מיוחדות/g, "תורמים מיוחדים")
@@ -42,6 +45,7 @@ export class TranslationOptions {
       .replace(/כפולות/g, 'כפולים')
   });
   static Soldiers: TranslationOptions = new TranslationOptions(2, 'חיילים', {
+    googleMapCountry:'IL',
     translateFunction: s =>
       s.replace(/משפחה אחת/g, "חייל אחד")
         .replace(/משפחות חוזרות/g, 'חיילים חוזרים')
@@ -54,15 +58,18 @@ export class TranslationOptions {
         .replace(/כפולות/g, 'כפולים')
   });
   static southAfrica: TranslationOptions = new TranslationOptions(3, 'South Africa', {
+    googleMapCountry:'ZA',
     leftToRight: true,
     languageCode: 'en',
     internationalPrefixForSmsAndAws:'+27'
   });
   static italy: TranslationOptions = new TranslationOptions(4, 'Italy', {
+    googleMapCountry:'IT',
     leftToRight: true,
     languageCode: 'it'
   });
   static chile: TranslationOptions = new TranslationOptions(5, 'Chile', {
+    googleMapCountry:'CL',
     leftToRight: true,
     languageCode: 'es'
   });
@@ -73,6 +80,7 @@ export class TranslationOptions {
   constructor(public id: number, public caption: string, public args: {
     leftToRight?: boolean,
     languageCode?: string,
+    googleMapCountry:string,
     translateFunction?: (s: string) => string,
     internationalPrefixForSmsAndAws?:string
   }) {
@@ -544,7 +552,7 @@ export class Language {
   deliveryInfo = 'פרטי משלוח';
   checkAddress = 'בדוק כתובת';
   showOnGovMap = 'הצג ב govmap';
-  showOnGoogleMap = 'הצג בגוגל';
+  showOnGoogleMap = 'הצג בגוגל MAPS';
   openWaze = 'פתח WAZE';
   badAddressTitle = 'שים לב, כתובת לא מדוייקת';
   badAddressHelpStart = 'גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת';
@@ -734,6 +742,7 @@ export class Language {
   thankYou= 'תודה';
   searchCompanyName = 'חיפוש שם חברה';
   confirmDeleteOf = "אישור מחיקה עבור ";
+  originalAddress = 'כתובת מקורית';
 }
 
 const defaultLang = new Language();

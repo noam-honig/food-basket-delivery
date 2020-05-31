@@ -1527,6 +1527,10 @@
     "google": "El nombre de la organización",
     "valueInCode": "שם הארגון"
   },
+  "originalAddress": {
+    "google": "direccion original",
+    "valueInCode": "כתובת מקורית"
+  },
   "otherPhone": {
     "google": "otro telefono",
     "valueInCode": "טלפון אחר"

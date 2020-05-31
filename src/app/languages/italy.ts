@@ -616,4 +616,5 @@ export class italy implements Language {
   thankYou = 'Grazie';
   searchCompanyName = 'Cerca un nome di società';
   confirmDeleteOf = 'Certificato di cancellazione per';
+  originalAddress = 'Indirizzo originale';
 }

@@ -2,7 +2,7 @@ import { Language } from "../translate";
 export class en implements Language {
   assignDeliveryMenu = 'Assign Volunteer';
   defaultOrgName = "My organization's name";
-  defaultSmsText = 'Hello !VOLUNTEER!\nTo deliver parcels for !ORG! Click:!URL!\nThanks !SENDER!';
+  defaultSmsText = 'Hello !VOLUNTEER!\nTo deliver parcels for !ORG! Click: !URL!\nThanks !SENDER!';
   reminderSmsText = 'Hello! Volunteer !,\nWe would be happy to update the system in the delivery mode of the parcels. To update click on: Site!\nThank you! Organization!';
   commentForSuccessDelivery = 'Kindly describe your experience';
   commentForSuccessLeft = 'Please specify where you left the parcel and with whom you spoke';
@@ -15,7 +15,7 @@ export class en implements Language {
   AssignEscortComponent = 'Escort assignment';
   FamilyDeliveriesComponent = 'Deliveries';
   FamiliesComponent = 'Families';
-  DeliveryFollowUpComponent = 'Volunteer Follow-up';
+  DeliveryFollowUpComponent = 'Volunteer Tracking';
   NewsComponent = 'Requires Followup';
   DistributionMapComponent = 'Distribution map';
   OverviewComponent = 'Overview';
@@ -46,7 +46,7 @@ export class en implements Language {
   ranIntoAProblem = 'Problem Encountered';
   showAllDeliveries = 'View all deliveries for distribution';
   sendSmsWithLink = 'Send an SMS with a link';
-  sendLinkOnWhatsapp = 'Send a link in whatsapp';
+  sendLinkOnWhatsapp = 'Send on WhatsApp';
   copyMessageWithLink = 'Copy message with link';
   copyLink = 'Copy link';
   sendSmsFromDevice = 'Send an SMS link from your phone';
@@ -263,8 +263,8 @@ export class en implements Language {
   similarName = ' A similar name';
   statusSummary = 'Status summary';
   onTheWay = 'Assigned';
-  unAsigned = 'Not yet assigned';
-  specialUnasigned = 'Specials not yet assigned';
+  unAsigned = 'Unassigned';
+  specialUnasigned = 'UnAssigned Specials';
   delivered = 'Delivered';
   problem = 'problem';
   quantity = 'Quantity';
@@ -304,7 +304,7 @@ export class en implements Language {
   deliveriesUpdated = 'deliveries updated';
   showAll = 'Show all';
   searchFamily = 'Family Search';
-  newFamily = 'A new family';
+  newFamily = 'Add Family';
   googleApiProblem = "What is Google's problem";
   mergeFamilies = 'Merge families';
   familyDetails = 'Family details';
@@ -616,4 +616,5 @@ export class en implements Language {
   thankYou = 'Thanks';
   searchCompanyName = 'Search for a company name';
   confirmDeleteOf = 'Deletion certificate for';
+  originalAddress = 'Original address';
 }

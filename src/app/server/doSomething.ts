@@ -25,9 +25,10 @@ let match = 0;
 export async function DoIt() {
     try {
         await serverInit();
-await sendMessagE();
+//await sendMessagE();
      //   await loadTranslationXlsx('c:/temp/newen.xlsx','en');
-       // await buildLanguageFiles();
+       
+      await buildLanguageFiles();
 
 
 

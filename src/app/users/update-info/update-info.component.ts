@@ -46,16 +46,16 @@ export class UpdateInfoComponent implements OnInit,AfterViewInit  {
   });
   @ViewChild("address", { static: true }) addressElement;
   ngAfterViewInit(): void {
-  //   const autocomplete = new google.maps.places.Autocomplete(this.addressElement.nativeElement,
-  //     {
-  //   //     componentRestrictions: { country: 'US' }
-  //       //  ,
-  //       //  types: [this.adressType]  // 'establishment' / 'address' / 'geocode'
-  //     });
-  // google.maps.event.addListener(autocomplete, 'place_changed', () => {
-  //     const place = autocomplete.getPlace();
-  //     console.log(place);
-  // });
+    const autocomplete = new google.maps.places.Autocomplete(this.addressElement.nativeElement,
+      {
+    //     componentRestrictions: { country: 'US' }
+        //  ,
+        //  types: [this.adressType]  // 'establishment' / 'address' / 'geocode'
+      });
+  google.maps.event.addListener(autocomplete, 'place_changed', () => {
+      const place = autocomplete.getPlace();
+      console.log(place);
+  });
   }
 
 
