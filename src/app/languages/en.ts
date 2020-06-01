@@ -562,7 +562,7 @@ export class en implements Language {
   gotoDeliveriesScreen = 'Switch to a delivery screen or stay on this one?';
   shouldUpdateColumn = 'Do update the field';
   forFamilies = 'For families';
-  for = 'for';
+  for = 'To';
   updateOfAddressMayTakeLonger = 'Note - Updating an address field can take longer than other fields';
   selectExcelSheet = 'Select an excel sheet';
   excelSheel = 'sheet';

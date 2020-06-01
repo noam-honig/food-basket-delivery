@@ -9,7 +9,7 @@ import { Context } from '@remult/core';
 import { LoginResponse } from "./login-response";
 import { Roles } from "./roles";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
-import { MyFamiliesComponent } from "../my-families/my-families.component";
+
 import { LoginComponent } from "../users/login/login.component";
 import { Sites } from "../sites/sites";
 import { OverviewComponent } from "../overview/overview.component";
@@ -25,7 +25,7 @@ export class AuthService {
         if (response.valid) {
             this.setToken(response.authToken, false);
             this.dialog.analytics('login from sms');
-            this.routeHelper.navigateToComponent(MyFamiliesComponent);
+            this.routeHelper.navigateToComponent((await import("../my-families/my-families.component")).MyFamiliesComponent);
             return true;
         }
         else {
@@ -65,7 +65,7 @@ export class AuthService {
         private tokenHelper: JwtSessionManager,
         private context: Context,
         private routeHelper: RouteHelperService,
-        public settings:ApplicationSettings
+        public settings: ApplicationSettings
     ) {
 
         tokenHelper.loadSessionFromCookie();
@@ -89,7 +89,7 @@ export class AuthService {
             this.setToken(loginResponse.authToken, remember);
             this.dialog.analytics('login ' + (this.context.isAllowed(Roles.admin) ? 'delivery admin' : ''));
             if (loginResponse.requirePassword) {
-                this.dialog.YesNoQuestion(this.settings.lang.hello+' ' + this.context.user.name + ' ' +this.settings.lang.adminRequireToSetPassword, () => {
+                this.dialog.YesNoQuestion(this.settings.lang.hello + ' ' + this.context.user.name + ' ' + this.settings.lang.adminRequireToSetPassword, () => {
                     this.routeHelper.navigateToComponent(AuthService.UpdateInfoComponent);//changing this caused a crash
                 });
             }
@@ -99,7 +99,7 @@ export class AuthService {
                 else if (this.context.isAllowed(Roles.overview))
                     this.routeHelper.navigateToComponent(OverviewComponent);
                 else
-                    this.routeHelper.navigateToComponent(MyFamiliesComponent);
+                    this.routeHelper.navigateToComponent((await import("../my-families/my-families.component")).MyFamiliesComponent);
             }
 
         }
