@@ -182,7 +182,8 @@ export class ApplicationSettings extends Entity<number>  {
             }
           }
           this.helpPhone.value = PhoneColumn.fixPhoneInput(this.helpPhone.value);
-          setLangForSite(Sites.getValidSchemaFromContext(context), this.forWho.value.args.languageCode);
+          if (this.forWho.value)
+            setLangForSite(Sites.getValidSchemaFromContext(context), this.forWho.value.args.languageCode);
         }
       }
     })
