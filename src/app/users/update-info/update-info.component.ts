@@ -17,15 +17,15 @@ import { ApplicationSettings } from '../../manage/ApplicationSettings';
   templateUrl: './update-info.component.html',
   styleUrls: ['./update-info.component.scss']
 })
-export class UpdateInfoComponent implements OnInit,AfterViewInit  {
+export class UpdateInfoComponent implements OnInit, AfterViewInit {
   constructor(private dialog: DialogService,
     private auth: AuthService,
     private context: Context,
-    public settings:ApplicationSettings) {
+    public settings: ApplicationSettings) {
 
 
   }
-  
+
   static route: Route = { path: 'update-info', component: UpdateInfoComponent, canActivate: [SignedInGuard] };
 
   confirmPassword = new StringColumn({ caption: this.settings.lang.confirmPassword, dataControlSettings: () => ({ inputType: 'password' }), defaultValue: Helpers.emptyPassword });
@@ -36,7 +36,9 @@ export class UpdateInfoComponent implements OnInit,AfterViewInit  {
     columnSettings: h => [
       h.name,
       h.phone,
-      //h.userName,
+      h.email,
+      { column: h.preferredDistributionAreaAddress, visible: () => this.settings.volunteerCanUpdatePreferredDistributionAddress.value },
+      { column: h.eventComment, visible: () => this.settings.volunteerCanUpdateComment.value },
       h.password,
       { column: this.confirmPassword },
 
@@ -44,18 +46,9 @@ export class UpdateInfoComponent implements OnInit,AfterViewInit  {
     ],
 
   });
-  @ViewChild("address", { static: true }) addressElement;
+
   ngAfterViewInit(): void {
-    const autocomplete = new google.maps.places.Autocomplete(this.addressElement.nativeElement,
-      {
-    //     componentRestrictions: { country: 'US' }
-        //  ,
-        //  types: [this.adressType]  // 'establishment' / 'address' / 'geocode'
-      });
-  google.maps.event.addListener(autocomplete, 'place_changed', () => {
-      const place = autocomplete.getPlace();
-      console.log(place);
-  });
+
   }
 
 

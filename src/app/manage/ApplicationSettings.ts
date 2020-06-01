@@ -142,6 +142,8 @@ export class ApplicationSettings extends Entity<number>  {
   checkIfFamilyExistsInFile = new BoolColumn(this.lang.checkIfFamilyExistsInFile);
   excelImportAutoAddValues = new BoolColumn(this.lang.excelImportAutoAddValues);
   checkDuplicatePhones = new BoolColumn(this.lang.checkDuplicatePhones);
+  volunteerCanUpdateComment = new BoolColumn(this.lang.volunteerCanUpdateComment);
+  volunteerCanUpdatePreferredDistributionAddress = new BoolColumn(this.lang.volunteerCanUpdatePreferredDistributionAddress);
 
 
   addressApiResult = new StringColumn();

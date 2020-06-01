@@ -286,7 +286,7 @@ export class Language {
   enableSelfPickupModule = 'ישנן משפחות שבאות לקחת ממרכז החלוקה';
   showVolunteerCompany = 'שמור מטעם איזה חברה הגיע המתנדב';
   activateEscort = 'הפעל ניהול מלווים לנהגים';
-  showHelperComment = 'שמור הערה למתנדב';
+  showHelperComment = 'הצג הערה בשיוך למתנדב';
   filterFamilyGroups = 'סינון קבוצת משפחה';
   filterCity = 'סינון עיר';
   filterRegion = 'סינון אזור';
@@ -747,6 +747,10 @@ export class Language {
   addGroupAssignmentVerb='להוסיף שיוך לקבוצה';
   removeGroupAssignmentVerb='להסיר שיוך לקבצה';
   replaceGroupAssignmentVerb='להחליף שיוך לקבוצה';
+  volunteerCanUpdateComment= 'מתנדב יכול לעדכן לעצמו הערה';
+  volunteerCanUpdatePreferredDistributionAddress = 'מתנדב יכול לעדכן אזור חלוקה מועדף';
+  email = 'eMail';
+  preferredDistributionArea = 'כתובת אזור חלוקה מועדף';
 }
 
 const defaultLang = new Language();

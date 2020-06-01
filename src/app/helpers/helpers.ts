@@ -11,6 +11,7 @@ import { SelectCompanyComponent } from "../select-company/select-company.compone
 import { DistributionCenterId } from '../manage/distribution-centers';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 import { getLang } from '../translate';
+import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 
 
 
@@ -23,13 +24,14 @@ export abstract class HelpersBase extends IdEntity {
     }
 
     name = new StringColumn({
-        caption: getLang(this.context).volunteerName ,
+        caption: getLang(this.context).volunteerName,
         validate: () => {
             if (!this.name.value || this.name.value.length < 2)
                 this.name.validationError = getLang(this.context).nameIsTooShort;
         }
     });
-    phone = new PhoneColumn(getLang(this.context).phone );
+
+    phone = new PhoneColumn(getLang(this.context).phone);
     smsDate = new DateTimeColumn(getLang(this.context).smsDate);
     company = new CompanyColumn(this.context);
     totalKm = new NumberColumn({ allowApiUpdate: Roles.distCenterAdmin });
@@ -39,7 +41,7 @@ export abstract class HelpersBase extends IdEntity {
         allowApiUpdate: Roles.admin
     });
     eventComment = new StringColumn({
-        caption:getLang(this.context).helperComment ,
+        caption: getLang(this.context).helperComment,
         allowApiUpdate: Roles.admin
     });
     needEscort = new BoolColumn({
@@ -149,6 +151,14 @@ export class Helpers extends HelpersBase {
                             await h.save();
                         }
                     }
+                    if (context.onServer) {
+                        if (this.preferredDistributionAreaAddress.value != this.preferredDistributionAreaAddress.originalValue || !this.getGeocodeInformation().ok()) {
+                            let geo = await GetGeoInformation(this.preferredDistributionAreaAddress.value, context);
+                            this.addressApiResult.value = geo.saveToString();
+                            if (geo.ok()) {
+                            }
+                        }
+                    }
 
                 }
 
@@ -176,6 +186,17 @@ export class Helpers extends HelpersBase {
         dbName: 'password',
         includeInApi: false
     });
+    email = new StringColumn(getLang(this.context).email);
+    preferredDistributionAreaAddress = new StringColumn(getLang(this.context).preferredDistributionArea);
+    addressApiResult = new StringColumn();
+    private _lastString: string;
+    private _lastGeo: GeocodeInformation;
+    getGeocodeInformation() {
+        if (this._lastString == this.addressApiResult.value)
+            return this._lastGeo ? this._lastGeo : new GeocodeInformation();
+        this._lastString = this.addressApiResult.value;
+        return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
+    }
 
     password = new StringColumn({ caption: getLang(this.context).password, dataControlSettings: () => ({ inputType: 'password' }), serverExpression: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
 

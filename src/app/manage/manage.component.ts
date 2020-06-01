@@ -213,6 +213,8 @@ export class ManageComponent implements OnInit {
       this.settings.boxes2Name,
       this.settings.showCompanies,
       this.settings.showHelperComment,
+      this.settings.volunteerCanUpdateComment,
+      this.settings.volunteerCanUpdatePreferredDistributionAddress,
       this.settings.defaultPrefixForExcelImport,
       this.settings.redTitleBar,
       this.settings.forWho,

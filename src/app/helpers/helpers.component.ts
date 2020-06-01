@@ -90,7 +90,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
             this.helpers.getRecords();
           }
         },
-        visible: () => this.settings.showHelperComment.value && this.context.isAllowed(Roles.admin)
+        visible: () => this.context.isAllowed(Roles.admin)
       }
 
     ],
@@ -188,7 +188,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
   private editHelper(f: Helpers) {
     this.context.openDialog(InputAreaComponent, x => x.args = {
-      title: f.isNew() ? use.language.newVolunteers :  f.name.value,
+      title: f.isNew() ? use.language.newVolunteers : f.name.value,
       ok: () => {
         f.save();
       },
@@ -231,7 +231,8 @@ export class HelpersComponent implements OnInit, OnDestroy {
       r.push(helpers.distributionCenter);
     }
 
-
+    r.push(helpers.email);
+    r.push(helpers.preferredDistributionAreaAddress);
     r.push(helpers.company);
     if (this.settings.manageEscorts.value) {
       r.push(helpers.escort, helpers.theHelperIAmEscorting, helpers.needEscort);
@@ -271,16 +272,16 @@ export class HelpersComponent implements OnInit, OnDestroy {
     let url = context.getOrigin() + '/' + Sites.getOrganizationFromContext(context);
     let s = await ApplicationSettings.getAsync(context);
     let hasPassword = h.password.value && h.password.value.length > 0;
-    let message = getLang(context).hello+` ${h.name.value}
-`+getLang(context).welcomeTo+` ${s.organisationName.value}.
-`+getLang(context).pleaseEnterUsing+`
+    let message = getLang(context).hello + ` ${h.name.value}
+`+ getLang(context).welcomeTo + ` ${s.organisationName.value}.
+`+ getLang(context).pleaseEnterUsing + `
 ${url}
 `;
     if (!hasPassword) {
       message += getLang(context).enterFirstTime
     }
     let from = await context.for(Helpers).findFirst(h => h.id.isEqualTo(context.user.id));
-    await new SendSmsUtils().sendSms(h.phone.value, from.phone.value, message, context.getOrigin(), Sites.getOrganizationFromContext(context),await ApplicationSettings.getAsync(context));
+    await new SendSmsUtils().sendSms(h.phone.value, from.phone.value, message, context.getOrigin(), Sites.getOrganizationFromContext(context), await ApplicationSettings.getAsync(context));
     return getLang(context).inviteSentSuccesfully
 
 
