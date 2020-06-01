@@ -945,6 +945,11 @@
     "valueInCode": "מפת הפצה",
     "valueInEnglish": "Distribution map"
   },
+  "doesNotExist": {
+    "google": "Non esiste",
+    "valueInCode": "לא קיים",
+    "valueInEnglish": "Does not exist"
+  },
   "doneVolunteers": {
     "google": "finire",
     "valueInCode": "סיימו",
@@ -1036,9 +1041,9 @@
     "valueInEnglish": "Results"
   },
   "excelImportVideo": {
-    "google": "Per un tutorial sull'assorbimento da Excel, fai clic qui",
+    "google": "Per un'esercitazione sull'importazione di Excel, fai clic qui",
     "valueInCode": "לסרטון הדרכה על קליטה מאקסל לחץ כאן",
-    "valueInEnglish": "For a tutorial on Absorption from Excel click here"
+    "valueInEnglish": "For a Tutorial on Excel Import, Click here"
   },
   "excelNoneOfTheseFamiliesMatch": {
     "google": "Nessuna di queste famiglie si adatta alla linea di Excel,",
@@ -1756,9 +1761,9 @@
     "valueInEnglish": "Need a companion"
   },
   "newDelivery": {
-    "google": "nuova consegna",
+    "google": "Nuova consegna",
     "valueInCode": "משלוח חדש",
-    "valueInEnglish": "new delivery"
+    "valueInEnglish": "New Delivery"
   },
   "newDeliveryFor": {
     "google": "Nuova consegna a",
@@ -1866,9 +1871,9 @@
     "valueInEnglish": "Note!"
   },
   "notImported": {
-    "google": "Non assorbito",
+    "google": "Non aggiunto",
     "valueInCode": "לא נקלטה",
-    "valueInEnglish": "Not absorbed"
+    "valueInEnglish": "Not Added"
   },
   "notOk": {
     "google": "Non valido",
@@ -2100,6 +2105,11 @@
     "valueInCode": "שאלה",
     "valueInEnglish": "a question"
   },
+  "questionAddToApplication": {
+    "google": "Aggiungi",
+    "valueInCode": "האם להוסיף",
+    "valueInEnglish": "Do add"
+  },
   "questionsAndAnswers": {
     "google": "Domande e risposte",
     "valueInCode": "שאלות ותשובות",
@@ -2327,9 +2337,9 @@
     "valueInEnglish": "Save"
   },
   "saveExcelImportReport": {
-    "google": "Salva rapporto stato assorbimento da Excel",
+    "google": "Salva rapporto di importazione Excel",
     "valueInCode": "שמור דוח מצב קליטה מאקסל",
-    "valueInEnglish": "Save Absorption Status Report from Excel"
+    "valueInEnglish": "Save Excel Import Report"
   },
   "saveExcelSettings": {
     "google": "Salva le impostazioni",

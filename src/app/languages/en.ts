@@ -291,7 +291,7 @@ export class en implements Language {
   deliverySummary = 'delivery Summary';
   families = 'Families';
   exportToExcel = 'Export to Excel';
-  newDelivery = 'new delivery';
+  newDelivery = 'New Delivery';
   cancelAssignmentFor = 'Cancel volunteer assignment to';
   familyDeliveries = 'Family deliveries';
   freezeDelivery = 'Freeze delivery';
@@ -343,7 +343,7 @@ export class en implements Language {
   recentlyAssigned = 'Assigned now';
   addVolunteer = 'Add a volunteer / manager';
   selectExcelFile = 'Select an Excel file';
-  excelImportVideo = 'For a tutorial on Absorption from Excel click here';
+  excelImportVideo = 'For a Tutorial on Excel Import, Click here';
   mapExcelColumns = 'Define the columns';
   loadExcelSettings = 'Load settings';
   deleteExcelSettings = 'Delete settings';
@@ -373,7 +373,7 @@ export class en implements Language {
   newFamilies = 'New families';
   addAllFamilies = 'Add all families';
   existingFamilies = 'Existing families';
-  saveExcelImportReport = 'Save Absorption Status Report from Excel';
+  saveExcelImportReport = 'Save Excel Import Report';
   saveExcelSettings = 'Save settings';
   newVolunteers = 'New volunteers';
   addAllVolunteers = 'Add all volunteers';
@@ -587,7 +587,7 @@ export class en implements Language {
   shouldCompare = 'Do compare the';
   compareTo = 'compared to';
   andMoveToUpdateFamilies = 'and move to update families';
-  notImported = 'Not absorbed';
+  notImported = 'Not Added';
   existsWithAnUpdate = 'Existing with update';
   existsIdenticat = 'There is the same';
   error = 'Error';
@@ -624,4 +624,6 @@ export class en implements Language {
   volunteerCanUpdatePreferredDistributionAddress = 'A volunteer can update a preferred division area';
   email = 'eMail';
   preferredDistributionArea = 'Preferred distribution area address';
+  doesNotExist = 'Does not exist';
+  questionAddToApplication = 'Do add';
 }

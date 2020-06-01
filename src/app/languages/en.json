@@ -879,6 +879,10 @@
     "google": "Distribution map",
     "valueInCode": "מפת הפצה"
   },
+  "doesNotExist": {
+    "google": "Does not exist",
+    "valueInCode": "לא קיים"
+  },
   "doneVolunteers": {
     "google": "Finish",
     "valueInCode": "סיימו"
@@ -957,7 +961,7 @@
   "excelImportVideo": {
     "google": "For a tutorial on Absorption from Excel click here",
     "valueInCode": "לסרטון הדרכה על קליטה מאקסל לחץ כאן",
-    "custom":"For a Tutorial on Excel Import, Click here"
+    "custom": "For a Tutorial on Excel Import, Click here"
   },
   "excelNoneOfTheseFamiliesMatch": {
     "google": " None of these families fit in the line at Axel,",
@@ -1562,8 +1566,7 @@
   "newDelivery": {
     "google": "new delivery",
     "valueInCode": "משלוח חדש",
-    "custom":"New Delivery"
-
+    "custom": "New Delivery"
   },
   "newDeliveryFor": {
     "google": "New shipping to",
@@ -1658,8 +1661,7 @@
   "notImported": {
     "google": "Not absorbed",
     "valueInCode": "לא נקלטה",
-    "custom":"Not Added"
-
+    "custom": "Not Added"
   },
   "notOk": {
     "google": "Invalid",
@@ -1849,6 +1851,10 @@
   "question": {
     "google": "a question",
     "valueInCode": "שאלה"
+  },
+  "questionAddToApplication": {
+    "google": "Do add",
+    "valueInCode": "האם להוסיף"
   },
   "questionsAndAnswers": {
     "google": "Questions and Answers",
@@ -2042,9 +2048,8 @@
   },
   "saveExcelImportReport": {
     "google": "Save Absorption Status Report from Excel",
-    "valueInCode": "שמור דוח מצב קליטה מאקסל"
-    ,
-    "custom":"Save Excel Import Report"
+    "valueInCode": "שמור דוח מצב קליטה מאקסל",
+    "custom": "Save Excel Import Report"
   },
   "saveExcelSettings": {
     "google": "Save settings",

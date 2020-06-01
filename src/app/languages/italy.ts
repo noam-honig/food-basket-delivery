@@ -291,7 +291,7 @@ export class italy implements Language {
   deliverySummary = 'Riepilogo consegna';
   families = 'famiglie';
   exportToExcel = 'esportare in Excel';
-  newDelivery = 'nuova consegna';
+  newDelivery = 'Nuova consegna';
   cancelAssignmentFor = "Annulla l'assegnazione di volontari a";
   familyDeliveries = 'Consegne in famiglia';
   freezeDelivery = 'Congelare la consegna';
@@ -343,7 +343,7 @@ export class italy implements Language {
   recentlyAssigned = 'Assegnato ora';
   addVolunteer = 'Aggiungi un volontario / manager';
   selectExcelFile = 'Seleziona un file Excel';
-  excelImportVideo = "Per un tutorial sull'assorbimento da Excel, fai clic qui";
+  excelImportVideo = "Per un'esercitazione sull'importazione di Excel, fai clic qui";
   mapExcelColumns = 'Definisci le colonne';
   loadExcelSettings = 'Carica impostazioni';
   deleteExcelSettings = 'Elimina impostazioni';
@@ -373,7 +373,7 @@ export class italy implements Language {
   newFamilies = 'Nuove famiglie';
   addAllFamilies = 'Aggiungi tutte le famiglie';
   existingFamilies = 'Famiglie esistenti';
-  saveExcelImportReport = 'Salva rapporto stato assorbimento da Excel';
+  saveExcelImportReport = 'Salva rapporto di importazione Excel';
   saveExcelSettings = 'Salva le impostazioni';
   newVolunteers = 'Nuovi volontari';
   addAllVolunteers = 'Aggiungi tutti i volontari';
@@ -587,7 +587,7 @@ export class italy implements Language {
   shouldCompare = 'Confronta il';
   compareTo = 'rispetto a';
   andMoveToUpdateFamilies = 'e passa ad aggiornare le famiglie';
-  notImported = 'Non assorbito';
+  notImported = 'Non aggiunto';
   existsWithAnUpdate = 'Esistente con aggiornamento';
   existsIdenticat = "C'è lo stesso";
   error = 'Errore';
@@ -624,4 +624,6 @@ export class italy implements Language {
   volunteerCanUpdatePreferredDistributionAddress = "Un volontario può aggiornare un'area di divisione preferita";
   email = 'e-mail';
   preferredDistributionArea = 'Indirizzo area di distribuzione preferita';
+  doesNotExist = 'Non esiste';
+  questionAddToApplication = 'Aggiungi';
 }

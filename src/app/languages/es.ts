@@ -291,7 +291,7 @@ export class es implements Language {
   deliverySummary = 'Resumen de entrega';
   families = 'Familias';
   exportToExcel = 'Exportar a Excel';
-  newDelivery = 'nueva entrega';
+  newDelivery = 'Nueva entrega';
   cancelAssignmentFor = 'Cancelar la asignación de voluntario a';
   familyDeliveries = 'Entregas familiares';
   freezeDelivery = 'Congelar la entrega';
@@ -343,7 +343,7 @@ export class es implements Language {
   recentlyAssigned = 'Asignado ahora';
   addVolunteer = 'Agregar un voluntario / gerente';
   selectExcelFile = 'Seleccione un archivo de Excel';
-  excelImportVideo = 'Para un tutorial sobre Absorción de Excel, haga clic aquí';
+  excelImportVideo = 'Para un tutorial sobre Importación de Excel, haga clic aquí.';
   mapExcelColumns = 'Definir las columnas.';
   loadExcelSettings = 'Configuraciones de carga';
   deleteExcelSettings = 'Eliminar configuración';
@@ -373,7 +373,7 @@ export class es implements Language {
   newFamilies = 'Nuevas familias';
   addAllFamilies = 'Agregar todas las familias';
   existingFamilies = 'Familias existentes';
-  saveExcelImportReport = 'Guardar informe de estado de absorción de Excel';
+  saveExcelImportReport = 'Guardar informe de importación de Excel';
   saveExcelSettings = 'Guardar ajustes';
   newVolunteers = 'Nuevos voluntarios';
   addAllVolunteers = 'Agregar todos los voluntarios';
@@ -587,7 +587,7 @@ export class es implements Language {
   shouldCompare = 'Compara el';
   compareTo = 'comparado con';
   andMoveToUpdateFamilies = 'y pasar a actualizar familias';
-  notImported = 'No absorbido';
+  notImported = 'No añadido';
   existsWithAnUpdate = 'Existente con actualización';
   existsIdenticat = 'Hay lo mismo';
   error = 'Error';
@@ -624,4 +624,6 @@ export class es implements Language {
   volunteerCanUpdatePreferredDistributionAddress = 'Un voluntario puede actualizar un área de división preferida';
   email = 'correo electrónico';
   preferredDistributionArea = 'Dirección de área de distribución preferida';
+  doesNotExist = 'No existe';
+  questionAddToApplication = 'Agregar';
 }
