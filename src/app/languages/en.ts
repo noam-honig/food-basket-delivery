@@ -220,7 +220,7 @@ export class en implements Language {
   familyHelpPhone2 = 'Phone Attorney 2';
   specialAsignment = 'Special affiliation';
   defaultSelfPickup = 'Default self pickup';
-  familyUniqueId = 'A single-family ID';
+  familyUniqueId = 'Family Unique Id';
   internalComment = 'Internal Note - Will not appear for volunteer';
   cityAutomaticallyUpdatedByGoogle = 'City (automatically updated)';
   addressComment = 'Additional directions for address';
@@ -349,7 +349,7 @@ export class en implements Language {
   deleteExcelSettings = 'Delete settings';
   nextStep = 'Proceed to the next step';
   addColumnsThatAreNotInTheFile = 'Add columns not found in imported file';
-  excelColumnIgnore = 'Do not absorb';
+  excelColumnIgnore = "Don't Import";
   remove = 'Remove';
   addExcelColumn = 'Add a column';
   columnSelectionInFile = 'Columns in file selection';

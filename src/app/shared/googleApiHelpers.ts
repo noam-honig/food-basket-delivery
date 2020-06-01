@@ -42,7 +42,9 @@ export async function GetGeoInformation(address: string, context: Context) {
                 cacheEntry.id.value = address;
                 cacheEntry.googleApiResult.value = JSON.stringify(r);
                 cacheEntry.createDate.value = new Date();
+                try{
                 await cacheEntry.save();
+                }catch{}
                 let g = new GeocodeInformation(r as GeocodeResult);
                 if (!g.ok())
                     console.log('api error:' + g.info.status + ' for ' + address);

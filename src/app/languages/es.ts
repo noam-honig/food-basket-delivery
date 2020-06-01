@@ -220,7 +220,7 @@ export class es implements Language {
   familyHelpPhone2 = 'Abogado telefónico 2';
   specialAsignment = 'Afiliación especial';
   defaultSelfPickup = 'Recogida automática predeterminada';
-  familyUniqueId = 'Una identificación unifamiliar';
+  familyUniqueId = 'ID único familiar';
   internalComment = 'Nota interna: no aparecerá para voluntario';
   cityAutomaticallyUpdatedByGoogle = 'Ciudad (actualizada automáticamente)';
   addressComment = 'Direcciones adicionales para la dirección';
@@ -349,7 +349,7 @@ export class es implements Language {
   deleteExcelSettings = 'Eliminar configuración';
   nextStep = 'Continuar con el siguiente paso';
   addColumnsThatAreNotInTheFile = 'Agregar columnas que no se encuentran en el archivo importado';
-  excelColumnIgnore = 'No absorber';
+  excelColumnIgnore = 'No importar';
   remove = 'Eliminar';
   addExcelColumn = 'Agregar una columna';
   columnSelectionInFile = 'Columnas en la selección de archivos';

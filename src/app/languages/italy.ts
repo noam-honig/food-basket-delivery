@@ -220,7 +220,7 @@ export class italy implements Language {
   familyHelpPhone2 = 'Avvocato telefonico 2';
   specialAsignment = 'Affiliazione speciale';
   defaultSelfPickup = 'Auto pickup predefinito';
-  familyUniqueId = 'Un ID monofamiliare';
+  familyUniqueId = 'ID univoco della famiglia';
   internalComment = 'Nota interna - Non verrà visualizzato per il volontario';
   cityAutomaticallyUpdatedByGoogle = 'Città (aggiornata automaticamente)';
   addressComment = "Indicazioni aggiuntive per l'indirizzo";
@@ -349,7 +349,7 @@ export class italy implements Language {
   deleteExcelSettings = 'Elimina impostazioni';
   nextStep = 'Procedere con il passaggio successivo';
   addColumnsThatAreNotInTheFile = 'Aggiungi colonne non trovate nel file importato';
-  excelColumnIgnore = 'Non assorbire';
+  excelColumnIgnore = 'Non importare';
   remove = 'Rimuovere';
   addExcelColumn = 'Aggiungi una colonna';
   columnSelectionInFile = 'Colonne nella selezione dei file';

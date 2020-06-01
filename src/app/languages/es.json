@@ -1011,9 +1011,9 @@
     "valueInEnglish": "Estimated total travel time"
   },
   "excelColumnIgnore": {
-    "google": "No absorber",
+    "google": "No importar",
     "valueInCode": "לא לקלוט",
-    "valueInEnglish": "Do not absorb"
+    "valueInEnglish": "Don't Import"
   },
   "excelCompareToThisFamilyAnd": {
     "google": "Compare con esta familia y",
@@ -1266,9 +1266,9 @@
     "valueInEnglish": "status"
   },
   "familyUniqueId": {
-    "google": "Una identificación unifamiliar",
+    "google": "ID único familiar",
     "valueInCode": "מזהה חד ערכי למשפחה",
-    "valueInEnglish": "A single-family ID"
+    "valueInEnglish": "Family Unique Id"
   },
   "familyWasNotFound": {
     "google": "No se encontró familia",

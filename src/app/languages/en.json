@@ -935,7 +935,8 @@
   },
   "excelColumnIgnore": {
     "google": "Do not absorb",
-    "valueInCode": "לא לקלוט"
+    "valueInCode": "לא לקלוט",
+    "custom": "Don't Import"
   },
   "excelCompareToThisFamilyAnd": {
     "google": "Compare with this family and",
@@ -1147,7 +1148,8 @@
   },
   "familyUniqueId": {
     "google": "A single-family ID",
-    "valueInCode": "מזהה חד ערכי למשפחה"
+    "valueInCode": "מזהה חד ערכי למשפחה",
+    "custom": "Family Unique Id"
   },
   "familyWasNotFound": {
     "google": "No family found",

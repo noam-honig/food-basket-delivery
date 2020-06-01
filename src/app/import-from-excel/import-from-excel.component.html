@@ -110,7 +110,7 @@
                                                     {{f.name}} - {{displayDupInfo(f)}} - <a
                                                         (click)="updateFamily(f)">{{settings.lang.familyDetails|translate}}</a>
                                                     <br>
-                                                    <a (click)="moveFromErrorToUpdate(i,f)"><span *ngIf="i.duplicateFamilyInfo.length>1">{{settings.lang.excelCompareToThisFamilyAnd}}</span>{{settings.lang.moveToUpdateFamilies}}</a>
+                                                    <a (click)="moveFromErrorToUpdate(i,f)"><span *ngIf="i.duplicateFamilyInfo.length>1">{{settings.lang.excelCompareToThisFamilyAnd}}</span> {{settings.lang.moveToUpdateFamilies}}</a>
                                                 </li>
                                             </ul>
                                             <a (click)="moveFromErrorToAdd(i)"><span *ngIf="i.duplicateFamilyInfo&&i.duplicateFamilyInfo.length>1">
