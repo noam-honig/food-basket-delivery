@@ -1340,8 +1340,8 @@ class columnUpdateHelper {
         additionalUpdates?: ((entity: T) => void)) {
         let x = await this.context.for(c).lookupAsync(e => (getSearchColumn(e).isEqualTo(val)));
         if (x.isNew()) {
-            let s = updateResultTo.defs.caption + " \"" + val + "\" לא קיים";
-            if (this.autoAdd || await this.dialog.YesNoPromise(s + ", האם להוסיף?")) {
+            let s = updateResultTo.defs.caption + " \"" + val + "\" "+use.language.doesNotExist;
+            if (this.autoAdd || await this.dialog.YesNoPromise(s + ", "+use.language.questionAddToApplication+"?")) {
                 getSearchColumn(x).value = val;
                 if (additionalUpdates)
                     additionalUpdates(x);

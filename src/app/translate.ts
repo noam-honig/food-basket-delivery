@@ -751,6 +751,8 @@ export class Language {
   volunteerCanUpdatePreferredDistributionAddress = 'מתנדב יכול לעדכן אזור חלוקה מועדף';
   email = 'eMail';
   preferredDistributionArea = 'כתובת אזור חלוקה מועדף';
+  doesNotExist="לא קיים";
+  questionAddToApplication = "האם להוסיף";
 }
 
 const defaultLang = new Language();

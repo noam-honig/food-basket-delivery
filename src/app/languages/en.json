@@ -956,7 +956,8 @@
   },
   "excelImportVideo": {
     "google": "For a tutorial on Absorption from Excel click here",
-    "valueInCode": "לסרטון הדרכה על קליטה מאקסל לחץ כאן"
+    "valueInCode": "לסרטון הדרכה על קליטה מאקסל לחץ כאן",
+    "custom":"For a Tutorial on Excel Import, Click here"
   },
   "excelNoneOfTheseFamiliesMatch": {
     "google": " None of these families fit in the line at Axel,",
@@ -1560,7 +1561,9 @@
   },
   "newDelivery": {
     "google": "new delivery",
-    "valueInCode": "משלוח חדש"
+    "valueInCode": "משלוח חדש",
+    "custom":"New Delivery"
+
   },
   "newDeliveryFor": {
     "google": "New shipping to",
@@ -1654,7 +1657,9 @@
   },
   "notImported": {
     "google": "Not absorbed",
-    "valueInCode": "לא נקלטה"
+    "valueInCode": "לא נקלטה",
+    "custom":"Not Added"
+
   },
   "notOk": {
     "google": "Invalid",
@@ -2038,6 +2043,8 @@
   "saveExcelImportReport": {
     "google": "Save Absorption Status Report from Excel",
     "valueInCode": "שמור דוח מצב קליטה מאקסל"
+    ,
+    "custom":"Save Excel Import Report"
   },
   "saveExcelSettings": {
     "google": "Save settings",
