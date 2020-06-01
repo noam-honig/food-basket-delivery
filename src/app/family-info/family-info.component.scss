@@ -20,3 +20,9 @@ h4 {
     align-self: center;
   }
 }
+.address-links {
+  text-align: end;
+  > a {
+    display: block;
+  }
+}
