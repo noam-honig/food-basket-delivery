@@ -13,6 +13,8 @@ import { DeliveryStatus } from "./DeliveryStatus";
 import { ActiveFamilyDeliveries } from "./FamilyDeliveries";
 import { translate, use, getLang } from "../translate";
 import { settings } from "cluster";
+import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
+import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 
 class NewDelivery extends ActionOnRows<Families> {
     useFamilyBasket = new BoolColumn({ caption: getLang(this.context).useFamilyDefaultBasketType, defaultValue: true });
@@ -23,6 +25,7 @@ class NewDelivery extends ActionOnRows<Families> {
     determineCourier = new BoolColumn(getLang(this.context).volunteer);
     courier = new HelperId(this.context);
     selfPickup = new SelfPickupStrategyColumn(false);
+    usedCouriers: string[] = [];
     constructor(context: Context) {
         super(context, Families, {
             allowed: Roles.admin,
@@ -57,6 +60,7 @@ class NewDelivery extends ActionOnRows<Families> {
             },
             additionalWhere: f => f.status.isEqualTo(FamilyStatus.Active),
 
+
             title: getLang(context).newDelivery,
             forEach: async f => {
                 let fd = f.createDelivery(this.distributionCenter.value);
@@ -70,6 +74,16 @@ class NewDelivery extends ActionOnRows<Families> {
                 }
                 if ((await fd.duplicateCount()) == 0)
                     await fd.save();
+                if (fd.courier.value && !this.usedCouriers.includes(fd.courier.value)) {
+                    this.usedCouriers.push(fd.courier.value);
+                }
+            },
+            onEnd: async () => {
+                let t = new PromiseThrottle(10);
+                for (const c of this.usedCouriers) {
+                    await t.push(AsignFamilyComponent.RefreshRoute(c, true, this.context));
+                }
+                await t.done();
             }
         });
     }
@@ -109,7 +123,7 @@ class UpdateGroupStrategy {
     static replace = new UpdateGroupStrategy(2, use.language.replaceGroupAssignmentVerb, (col, val) => {
         col.value = val;
     });
-    
+
     constructor(public id: number, public caption: string, public whatToDo: (col: GroupsColumn, val: string) => void) {
 
     }

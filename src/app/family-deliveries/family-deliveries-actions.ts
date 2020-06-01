@@ -14,6 +14,7 @@ import { BasketId, QuantityColumn } from "../families/BasketType";
 import { FamilyStatus, FamilyStatusColumn } from "../families/FamilyStatus";
 import { SelfPickupStrategyColumn } from "../families/familyActions";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
+import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
 
 
 
@@ -83,6 +84,7 @@ export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
     clearVoulenteer = new BoolColumn(getLang(this.context).clearVolunteer);
     courier = new HelperId(this.context, getLang(this.context).volunteer);
     updateAlsoAsFixed = new BoolColumn(getLang(this.context).setAsDefaultVolunteer);
+    usedCouriers: string[] = [];
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
@@ -140,10 +142,10 @@ export class UpdateDeliveriesStatus extends ActionOnRows<ActiveFamilyDeliveries>
             },
             validateInComponent: async c => {
                 if (this.status.value == DeliveryStatus.ReadyForDelivery || this.status.value == DeliveryStatus.SelfPickup) {
-                    if (await c.dialog.YesNoPromise(getLang(this.context).youveSelectedToUpdateStatus +" " + this.status.value.caption +" "+ getLang(this.context).youveProbablyMeantNewDelivery))
+                    if (await c.dialog.YesNoPromise(getLang(this.context).youveSelectedToUpdateStatus + " " + this.status.value.caption + " " + getLang(this.context).youveProbablyMeantNewDelivery))
                         throw getLang(this.context).updateCanceled;
-                    if (await c.dialog.YesNoPromise(getLang(this.context).updateDeliveredStatusesTo+" " + this.status.value.caption + getLang(this.context).willNotSaveHistoryDoYouWantToStop))
-                        throw getLang(this.context) .updateCanceled;
+                    if (await c.dialog.YesNoPromise(getLang(this.context).updateDeliveredStatusesTo + " " + this.status.value.caption + getLang(this.context).willNotSaveHistoryDoYouWantToStop))
+                        throw getLang(this.context).updateCanceled;
                 }
             },
             forEach: async f => {
@@ -231,7 +233,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
 
     distributionCenter = new DistributionCenterId(this.context);
     useCurrentDistributionCenter = new BoolColumn(getLang(this.context).distributionListAsCurrentDelivery);
-
+    usedCouriers: string[] = [];
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
@@ -277,7 +279,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                 f.deliverStatus.isAResultStatus();
             },
             title: getLang(context).newDelivery,
-            help: () => getLang(this.context).newDeliveryForDeliveriesHelp +' ' + this.newDeliveryForAll.defs.caption,
+            help: () => getLang(this.context).newDeliveryForDeliveriesHelp + ' ' + this.newDeliveryForAll.defs.caption,
             forEach: async existingDelivery => {
                 let f = await this.context.for(Families).findId(existingDelivery.family);
                 if (!f || f.status.value != FamilyStatus.Active)
@@ -293,7 +295,9 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                     newDelivery.distributionCenter.value = existingDelivery.distributionCenter.value;
                 this.helperStrategy.value.applyTo({ existingDelivery, newDelivery, helper: this.helper.value });
                 this.selfPickup.value.applyTo({ existingDelivery, newDelivery, family: f });
-
+                if (newDelivery.courier.value && !this.usedCouriers.includes(newDelivery.courier.value)) {
+                    this.usedCouriers.push(newDelivery.courier.value);
+                }
                 if ((await newDelivery.duplicateCount()) == 0)
                     await newDelivery.save();
                 if (this.autoArchive) {
@@ -301,7 +305,15 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                         existingDelivery.archive.value = true;
                     await existingDelivery.save();
                 }
+            },
+            onEnd: async () => {
+                let t = new PromiseThrottle(10);
+                for (const c of this.usedCouriers) {
+                    await t.push(AsignFamilyComponent.RefreshRoute(c, true, this.context));
+                }
+                await t.done();
             }
+
         });
     }
 }

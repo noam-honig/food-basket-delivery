@@ -46,13 +46,16 @@ export class ActionOnRows<T extends IdEntity> {
         }
         if (this.args.validate)
             await this.args.validate();
-        return await doWork({
+        let r = await doWork({
             actionWhere: x => {
                 if (this.args.additionalWhere)
                     return this.args.additionalWhere(x);
             },
             forEach: this.args.forEach
         });
+        if (this.args.onEnd)
+            await this.args.onEnd();
+        return r;
 
 
     }
@@ -81,7 +84,7 @@ export class ActionOnRows<T extends IdEntity> {
                         ok: async () => {
                             try {
                                 let info = await component.buildActionInfo(this.args.additionalWhere);
-                                if (await component.dialog.YesNoPromise(this.args.confirmQuestion()  +" " + use.language.for + " " + info.count + ' ' + component.groupName + '?')) {
+                                if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + " " + use.language.for + " " + info.count + ' ' + component.groupName + '?')) {
                                     let args = [];
                                     for (const c of this.args.columns()) {
                                         args.push(c.rawValue);
@@ -90,7 +93,7 @@ export class ActionOnRows<T extends IdEntity> {
                                     let r = await component.callServer(info, this.args.title, args);
                                     component.dialog.Info(r);
 
-                                    this.args.onEnd();
+
                                     component.afterAction();
                                 }
                             }
