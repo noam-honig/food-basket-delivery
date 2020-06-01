@@ -892,6 +892,10 @@
     "valueInCode": "חיפוש משפחות כפולות",
     "custom": "Possible Duplicates"
   },
+  "email": {
+    "google": "eMail",
+    "valueInCode": "eMail"
+  },
   "empty": {
     "google": "blank",
     "valueInCode": "ריק"
@@ -1789,6 +1793,10 @@
     "google": "Preferences",
     "valueInCode": "העדפות"
   },
+  "preferredDistributionArea": {
+    "google": "Preferred distribution area address",
+    "valueInCode": "כתובת אזור חלוקה מועדף"
+  },
   "previous": {
     "google": "previous",
     "valueInCode": "קודם"
@@ -2227,7 +2235,7 @@
   },
   "showHelperComment": {
     "google": "Save note to volunteer",
-    "valueInCode": "שמור הערה למתנדב"
+    "valueInCode": "הצג הערה בשיוך למתנדב"
   },
   "showHelperCompany": {
     "google": "View a volunteer company",
@@ -2605,6 +2613,14 @@
   "volunteerByFamilyDefault": {
     "google": "Set up a volunteer by default family-defined volunteer",
     "valueInCode": "הגדר מתנדב לפי מתנדב ברירת מחדל המוגדר למשפחה"
+  },
+  "volunteerCanUpdateComment": {
+    "google": "A volunteer can make a note for himself",
+    "valueInCode": "מתנדב יכול לעדכן לעצמו הערה"
+  },
+  "volunteerCanUpdatePreferredDistributionAddress": {
+    "google": "A volunteer can update a preferred division area",
+    "valueInCode": "מתנדב יכול לעדכן אזור חלוקה מועדף"
   },
   "volunteerFeedbackVideo": {
     "google": "For a tutorial on volunteer feedback click here",

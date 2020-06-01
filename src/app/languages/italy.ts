@@ -620,4 +620,8 @@ export class italy implements Language {
   addGroupAssignmentVerb = 'Aggiungi affiliazione al gruppo';
   removeGroupAssignmentVerb = 'Rimuovi associazione di raggruppamento';
   replaceGroupAssignmentVerb = "Sostituisci l'affiliazione con il gruppo";
+  volunteerCanUpdateComment = 'Un volontario può prendere nota per se stesso';
+  volunteerCanUpdatePreferredDistributionAddress = "Un volontario può aggiornare un'area di divisione preferita";
+  email = 'e-mail';
+  preferredDistributionArea = 'Indirizzo area di distribuzione preferita';
 }

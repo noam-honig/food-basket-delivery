@@ -960,6 +960,11 @@
     "valueInCode": "חיפוש משפחות כפולות",
     "valueInEnglish": "Possible Duplicates"
   },
+  "email": {
+    "google": "e-mail",
+    "valueInCode": "eMail",
+    "valueInEnglish": "eMail"
+  },
   "empty": {
     "google": "vuoto",
     "valueInCode": "ריק",
@@ -2035,6 +2040,11 @@
     "valueInCode": "העדפות",
     "valueInEnglish": "Preferences"
   },
+  "preferredDistributionArea": {
+    "google": "Indirizzo area di distribuzione preferita",
+    "valueInCode": "כתובת אזור חלוקה מועדף",
+    "valueInEnglish": "Preferred distribution area address"
+  },
   "previous": {
     "google": "precedente",
     "valueInCode": "קודם",
@@ -2548,7 +2558,7 @@
   },
   "showHelperComment": {
     "google": "Salva nota come volontario",
-    "valueInCode": "שמור הערה למתנדב",
+    "valueInCode": "הצג הערה בשיוך למתנדב",
     "valueInEnglish": "Save note to volunteer"
   },
   "showHelperCompany": {
@@ -2990,6 +3000,16 @@
     "google": "Crea un volontario di default definito volontario familiare",
     "valueInCode": "הגדר מתנדב לפי מתנדב ברירת מחדל המוגדר למשפחה",
     "valueInEnglish": "Set up a volunteer by default family-defined volunteer"
+  },
+  "volunteerCanUpdateComment": {
+    "google": "Un volontario può prendere nota per se stesso",
+    "valueInCode": "מתנדב יכול לעדכן לעצמו הערה",
+    "valueInEnglish": "A volunteer can make a note for himself"
+  },
+  "volunteerCanUpdatePreferredDistributionAddress": {
+    "google": "Un volontario può aggiornare un'area di divisione preferita",
+    "valueInCode": "מתנדב יכול לעדכן אזור חלוקה מועדף",
+    "valueInEnglish": "A volunteer can update a preferred division area"
   },
   "volunteerFeedbackVideo": {
     "google": "Per un tutorial sul feedback dei volontari clicca qui",

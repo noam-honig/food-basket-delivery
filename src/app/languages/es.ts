@@ -620,4 +620,8 @@ export class es implements Language {
   addGroupAssignmentVerb = 'Agregar afiliación al grupo';
   removeGroupAssignmentVerb = 'Eliminar asociación de agrupación';
   replaceGroupAssignmentVerb = 'Reemplazar afiliación con el grupo';
+  volunteerCanUpdateComment = 'Un voluntario puede tomar nota por sí mismo.';
+  volunteerCanUpdatePreferredDistributionAddress = 'Un voluntario puede actualizar un área de división preferida';
+  email = 'correo electrónico';
+  preferredDistributionArea = 'Dirección de área de distribución preferida';
 }

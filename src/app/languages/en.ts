@@ -620,4 +620,8 @@ export class en implements Language {
   addGroupAssignmentVerb = 'Add affiliation to the group';
   removeGroupAssignmentVerb = 'Remove grouping association';
   replaceGroupAssignmentVerb = 'Replace affiliation with the group';
+  volunteerCanUpdateComment = 'A volunteer can make a note for himself';
+  volunteerCanUpdatePreferredDistributionAddress = 'A volunteer can update a preferred division area';
+  email = 'eMail';
+  preferredDistributionArea = 'Preferred distribution area address';
 }
