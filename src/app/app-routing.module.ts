@@ -44,13 +44,11 @@ import { DuplicateFamiliesComponent } from './duplicate-families/duplicate-famil
 
 
 
-const routes: Routes = [
+export const routes: Routes = [
 
   AsignFamilyComponent.route,
   {
-    path: 'assign-escort', component: AssignEscortComponent, canActivate: [AdminGuard], data: {
-      name: 'שיוך מלווים'
-    }
+    path: 'assign-escort', component: AssignEscortComponent, canActivate: [AdminGuard]
   },
   SelfPickupComponent.route,
   FamilyDeliveriesComponent.route,
@@ -61,17 +59,17 @@ const routes: Routes = [
   DistributionMap.route,
   
   HelpersComponent.route,
-  { path: 'tr', component: TokenReplacerComponent, canActivate: [OverviewGuard], data: { name: 'בונה שאילתות', hide: true }  },
+  { path: 'tr', component: TokenReplacerComponent, canActivate: [OverviewGuard], data: {  hide: true }  },
 
   DeliveryHistoryComponent.route,
-  { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { name: 'סרטון החלוקה', hide: true } },
+  { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { hide: true } },
   { path: 'geocode', component: GeocodeComponent, canActivate: [AdminGuard], data: { name: 'geocode', hide: true } },
   { path: 'testmap', component: TestMapComponent, canActivate: [AdminGuard], data: {  hide: true } },
 
   
-  { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard], data: { name: 'קליטת משפחות מאקסל' } },
-  { path: 'import-helpers-from-excel', component: ImportHelpersFromExcelComponent, canActivate: [AdminGuard], data: { name: 'קליטת מתנדבים מאקסל' } },
-   { path: 'duplicate-families', component: DuplicateFamiliesComponent, canActivate: [AdminGuard], data: { name: 'חיפוש משפחות כפולות' } },
+  { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard]},
+  { path: 'import-helpers-from-excel', component: ImportHelpersFromExcelComponent, canActivate: [AdminGuard]},
+   { path: 'duplicate-families', component: DuplicateFamiliesComponent, canActivate: [AdminGuard] },
   ManageComponent.route,
   
   LoginFromSmsComponent.route,

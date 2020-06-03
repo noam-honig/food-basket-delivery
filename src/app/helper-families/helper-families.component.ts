@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Context } from '@remult/core';
 import { Column } from '@remult/core';
-import { translate } from '../translate';
+import { translate, use, getLang } from '../translate';
 import { Helpers, HelperId } from '../helpers/helpers';
 import { UpdateCommentComponent } from '../update-comment/update-comment.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
@@ -31,7 +31,7 @@ import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-fami
 })
 export class HelperFamiliesComponent implements OnInit {
 
-  constructor(public auth: AuthService, private dialog: DialogService, private context: Context, private busy: BusyService) { }
+  constructor(public auth: AuthService, private dialog: DialogService, private context: Context, private busy: BusyService, public settings: ApplicationSettings) { }
   @Input() familyLists: UserFamiliesList;
   @Input() partOfAssign = false;
   @Input() partOfReview = false;
@@ -51,7 +51,7 @@ export class HelperFamiliesComponent implements OnInit {
     this.assignmentCanceled.emit();
   }
   cancelAll() {
-    this.dialog.YesNoQuestion("האם אתה בטוח שאתה רוצה לבטל שיוך ל" + this.familyLists.toDeliver.length + translate(" משפחות?"), async () => {
+    this.dialog.YesNoQuestion(use.language.areYouSureYouWantToCancelAssignmentTo + " " + this.familyLists.toDeliver.length + " " + translate(use.language.families + "?"), async () => {
       await this.busy.doWhileShowingBusy(async () => {
 
         this.dialog.analytics('cancel all');
@@ -59,7 +59,7 @@ export class HelperFamiliesComponent implements OnInit {
           await HelperFamiliesComponent.cancelAssignAllForHelperOnServer(this.familyLists.helper.id.value);
         }
         catch (err) {
-          await this.dialog.exception('בטל שיוך כל המשלוחים למתנדב', err);
+          await this.dialog.exception(use.language.cancelAssignmentForHelperFamilies, err);
         }
         this.familyLists.reload();
         this.assignmentCanceled.emit();
@@ -79,7 +79,7 @@ export class HelperFamiliesComponent implements OnInit {
         await fd.save();
       }
     });
-    await Families.SendMessageToBrowsers('בוטל שיוך כל המשלוחים למתנדב ', context, dist);
+    await Families.SendMessageToBrowsers(getLang(context).cancelAssignmentForHelperFamilies, context, dist);
   }
   sameAddress(f: Families, i: number) {
     if (i == 0)
@@ -104,27 +104,27 @@ export class HelperFamiliesComponent implements OnInit {
         await fd.save();
       }
     });
-    await Families.SendMessageToBrowsers('סומן נמסר בהצלחה לכל המשלוחים של מתנדב ', context, dist);
+    await Families.SendMessageToBrowsers(use.language.markAllDeliveriesAsSuccesfull, context, dist);
   }
 
   limitReady = new limitList(30, () => this.familyLists.toDeliver.length);
   limitDelivered = new limitList(10, () => this.familyLists.delivered.length);
   okAll() {
-    this.dialog.YesNoQuestion("האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל" + this.familyLists.toDeliver.length + translate(" משפחות?"), async () => {
+    this.dialog.YesNoQuestion(use.language.areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies + this.familyLists.toDeliver.length + " " + translate(use.language.families + "?"), async () => {
       await this.busy.doWhileShowingBusy(async () => {
 
-        this.dialog.analytics('ok  all');
+        this.dialog.analytics('ok all');
         try {
           await HelperFamiliesComponent.okAllForHelperOnServer(this.familyLists.helper.id.value);
         }
         catch (err) {
-          await this.dialog.exception('בטל שיוך כל המשלוחים למתנדב', err);
+          await this.dialog.exception(use.language.markDeliveredToAllHelprFamilies, err);
         }
         this.initFamilies();
       });
     });
   }
-  get settings() { return ApplicationSettings.get(this.context); }
+
   allDoneMessage() { return ApplicationSettings.get(this.context).messageForDoneDelivery.value; };
   async deliveredToFamily(f: ActiveFamilyDeliveries) {
     this.deliveredToFamilyOk(f, DeliveryStatus.Success, s => s.commentForSuccessDelivery);
@@ -162,6 +162,8 @@ export class HelperFamiliesComponent implements OnInit {
   }
   initFamilies() {
     this.familyLists.initFamilies();
+    if (this.familyLists.toDeliver.length > 0)
+      this.familyLists.toDeliver[0].distributionCenter.getRouteStartGeo().then(x => this.routeStart = x);
 
   }
   showLeftFamilies() {
@@ -213,7 +215,7 @@ export class HelperFamiliesComponent implements OnInit {
       to += ' ול' + this.familyLists.escort.name.value;
       await SendSmsAction.SendSms(this.familyLists.helper.escort.value, reminder);
     }
-    this.dialog.Info("הודעת SMS נשלחה ל" + to);
+    this.dialog.Info(use.language.smsMessageSentTo + " " + to);
     this.assignSmsSent.emit();
     if (reminder)
       this.familyLists.helper.reminderSmsDate.value = new Date();
@@ -221,8 +223,11 @@ export class HelperFamiliesComponent implements OnInit {
   async sendWhatsapp() {
     let phone = this.smsPhone;
     if (phone.startsWith('0')) {
-      phone = '972' + phone.substr(1);
+      phone = this.settings.getInternationalPhonePrefix() + phone.substr(1);
     }
+    if (phone.startsWith('+'))
+      phone = phone.substr(1);
+
     window.open('https://wa.me/' + phone + '?text=' + encodeURI(this.smsMessage), '_blank');
     await this.updateMessageSent();
   }
@@ -283,12 +288,12 @@ export class HelperFamiliesComponent implements OnInit {
   }
   async copyMessage() {
     copy(this.smsMessage);
-    this.dialog.Info("הודעה הועתקה");
+    this.dialog.Info(use.language.messageCopied);
     await this.updateMessageSent();
   }
   async copyLink() {
     copy(this.smsLink);
-    this.dialog.Info("קישור הועתק");
+    this.dialog.Info(use.language.linkCopied);
     await this.updateMessageSent();
   }
 
@@ -309,15 +314,16 @@ export class HelperFamiliesComponent implements OnInit {
       cancel: () => { }
     });
   }
+  routeStart = this.settings.getGeocodeInformation();
   async showRouteOnGoogleMaps() {
 
     if (this.familyLists.toDeliver.length > 0) {
-      let url = 'https://www.google.com/maps/dir/' + encodeURI((await this.familyLists.toDeliver[0].distributionCenter.getRouteStartGeo()).getAddress());
+      let url = 'https://www.google.com/maps/dir/' + encodeURI((this.routeStart).getAddress());
 
       for (const f of this.familyLists.toDeliver) {
         url += '/' + encodeURI(isGpsAddress(f.address.value) ? f.address.value : f.addressByGoogle.value);
       }
-      window.open(url + "?hl=iw", '_blank');
+      window.open(url + "?hl=" + getLang(this.context).languageCode, '_blank');
     }
     //window.open(url,'_blank');
   }

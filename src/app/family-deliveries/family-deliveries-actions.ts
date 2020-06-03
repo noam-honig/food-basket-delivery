@@ -4,7 +4,7 @@ import { DistributionCenterId, DistributionCenters, allCentersToken } from "../m
 import { HelperId } from "../helpers/helpers";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { Groups } from "../manage/manage.component";
-import { translate } from "../translate";
+import { translate, use, getLang } from "../translate";
 import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer, serverUpdateInfo, pagedRowsIterator } from "../families/familyActionsWiring";
 import { async } from "@angular/core/testing";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
@@ -14,14 +14,15 @@ import { BasketId, QuantityColumn } from "../families/BasketType";
 import { FamilyStatus, FamilyStatusColumn } from "../families/FamilyStatus";
 import { SelfPickupStrategyColumn } from "../families/familyActions";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
+import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
 
 
 
 
 
 class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
-    updateFamilyStatus = new BoolColumn("עדכן גם את סטטוס המשפחות");
-    status = new FamilyStatusColumn();
+    updateFamilyStatus = new BoolColumn(getLang(this.context).updateFamilyStatus);
+    status = new FamilyStatusColumn(this.context);
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
@@ -30,8 +31,8 @@ class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
                 this.updateFamilyStatus,
                 { column: this.status, visible: () => this.updateFamilyStatus.value }
             ],
-            title: 'מחק משלוחים',
-            help: () => translate('שים לב - מחיקת המשלוח לא תוציא את המשפחה מהרשימות - כדי להוציא את המשפחה מהרשימות יש לבצע עדכון לסטטוס המשפחה. המחיקה תתבצע רק עבור משלוחים שטרם נמסרו'),
+            title: getLang(context).deleteDeliveries,
+            help: () => translate(getLang(this.context).deleteDeliveriesHelp),
             forEach: async fd => {
                 fd.delete();
                 if (this.updateFamilyStatus.value) {
@@ -45,8 +46,8 @@ class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
     }
 }
 class UpdateFixedCourier extends ActionOnRows<FamilyDeliveries> {
-    byCurrentCourier = new BoolColumn('עדכן את המתנדב מהמשלוח הנוכחי');
-    courier = new HelperId(this.context, translate('מתנדב ברירת מחדל למשפחה'));
+    byCurrentCourier = new BoolColumn(use.language.updateCourierByCurrentCourier);
+    courier = new HelperId(this.context, translate(use.language.defaultVolunteer));
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
@@ -58,7 +59,7 @@ class UpdateFixedCourier extends ActionOnRows<FamilyDeliveries> {
                     { column: this.courier, visible: () => !this.byCurrentCourier.value }
                 ]
             },
-            title: translate('עדכן מתנדב ברירת מחדל למשפחה'),
+            title: translate(getLang(context).updateDefaultVolunteer),
             forEach: async fd => {
 
 
@@ -80,13 +81,14 @@ class UpdateFixedCourier extends ActionOnRows<FamilyDeliveries> {
     }
 }
 export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
-    clearVoulenteer = new BoolColumn('בטל שיוך למתנדב');
-    courier = new HelperId(this.context, 'מתנדב');
-    updateAlsoAsFixed = new BoolColumn('עדכן גם כמתנדב ברירת מחדל');
+    clearVoulenteer = new BoolColumn(getLang(this.context).clearVolunteer);
+    courier = new HelperId(this.context, getLang(this.context).volunteer);
+    updateAlsoAsFixed = new BoolColumn(getLang(this.context).setAsDefaultVolunteer);
+    usedCouriers: string[] = [];
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
-            help: () => 'בכדי לעדכן מתנדב מ"בדרך" ל"מוכן למשלוח" יש לסמן את "בטל שיוך למתנדב". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו',
+            help: () => getLang(this.context).updateVolunteerHelp,
             columns: () => [this.clearVoulenteer, this.courier, this.updateAlsoAsFixed],
             dialogColumns: () => [
                 this.clearVoulenteer,
@@ -95,7 +97,7 @@ export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
 
             ],
             additionalWhere: fd => fd.deliverStatus.isNotAResultStatus(),
-            title: 'עדכן מתנדב למשלוחים',
+            title: getLang(context).updateVolunteer,
             forEach: async fd => {
                 if (this.clearVoulenteer.value) {
                     fd.courier.value = '';
@@ -124,28 +126,26 @@ export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
 }
 export class UpdateDeliveriesStatus extends ActionOnRows<ActiveFamilyDeliveries> {
 
-    status = new DeliveryStatusColumn();
-    comment = new StringColumn('הערה פנימית למשלוח - לא תופיע למתנדב');
-    deleteExistingComment = new BoolColumn("מחק הערה קודמת");
+    status = new DeliveryStatusColumn(this.context);
+    comment = new StringColumn(getLang(this.context).internalComment);
+    deleteExistingComment = new BoolColumn(getLang(this.context).deleteExistingComment);
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
             columns: () => [this.status, this.comment, this.deleteExistingComment],
-            title: 'עדכן סטטוס למשלוחים',
-            help: () => `סטטוס "מוקפא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח.
-            ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח.
-            `,
+            title: getLang(context).updateDeliveriesStatus,
+            help: () => getLang(this.context).updateDeliveriesStatusHelp,
             validate: async () => {
                 if (this.status.value == undefined)
-                    throw "לא נבחר סטטוס";
+                    throw getLang(this.context).statusNotSelected;
 
             },
             validateInComponent: async c => {
                 if (this.status.value == DeliveryStatus.ReadyForDelivery || this.status.value == DeliveryStatus.SelfPickup) {
-                    if (await c.dialog.YesNoPromise("בחרת לעדכן סטטוס " + this.status.value.caption + " - אם את/ה מעוניין ליצור משלוח חדש, יש לעשות זאת בתפריט 'משלוח חדש'."))
-                        throw "העדכון הופסק";
-                    if (await c.dialog.YesNoPromise("עדכון משלוחים שהסתיימו לסטטוס " + this.status.value.caption + " לא ישמור בהיסטוריה את הסטטוס של המשלוחים שהסתיימו - האם להפסיק את העדכון?"))
-                        throw "העדכון הופסק";
+                    if (await c.dialog.YesNoPromise(getLang(this.context).youveSelectedToUpdateStatus + " " + this.status.value.caption + " " + getLang(this.context).youveProbablyMeantNewDelivery))
+                        throw getLang(this.context).updateCanceled;
+                    if (await c.dialog.YesNoPromise(getLang(this.context).updateDeliveredStatusesTo + " " + this.status.value.caption + getLang(this.context).willNotSaveHistoryDoYouWantToStop))
+                        throw getLang(this.context).updateCanceled;
                 }
             },
             forEach: async f => {
@@ -176,8 +176,8 @@ class ArchiveDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
             columns: () => [],
-            title: 'העברה לארכיב',
-            help: () => 'העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים',
+            title: getLang(context).archiveDeliveries,
+            help: () => getLang(this.context).archiveDeliveriesHelp,
             forEach: async f => { f.archive.value = true; },
             additionalWhere: f => f.deliverStatus.isAResultStatus()
         });
@@ -190,19 +190,19 @@ class UpdateBasketType extends ActionOnRows<ActiveFamilyDeliveries> {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
             columns: () => [this.basketType],
-            title: 'עדכן סוג סל',
+            title: getLang(context).updateBasketType,
             forEach: async f => { f.basketType.value = this.basketType.value },
 
         });
     }
 }
 class UpdateQuantity extends ActionOnRows<ActiveFamilyDeliveries> {
-    quantity = new QuantityColumn();
+    quantity = new QuantityColumn(this.context);
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
             columns: () => [this.quantity],
-            title: 'עדכן כמות סלים',
+            title: getLang(context).updateBasketQuantity,
             forEach: async f => { f.quantity.value = this.quantity.value },
         });
     }
@@ -214,7 +214,7 @@ export class UpdateDistributionCenter extends ActionOnRows<ActiveFamilyDeliverie
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
             columns: () => [this.distributionCenter],
-            title: 'עדכן רשימת חלוקה',
+            title: getLang(context).updateDistributionList,
             forEach: async f => { f.distributionCenter.value = this.distributionCenter.value },
 
         });
@@ -222,18 +222,18 @@ export class UpdateDistributionCenter extends ActionOnRows<ActiveFamilyDeliverie
 }
 
 export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
-    useExistingBasket = new BoolColumn({ caption: 'השתמש בסוג הסל המוגדר במשלוח הנוכחי', defaultValue: true });
+    useExistingBasket = new BoolColumn({ caption: getLang(this.context).useBusketTypeFromCurrentDelivery, defaultValue: true });
     basketType = new BasketId(this.context);
-    quantity = new QuantityColumn();
+    quantity = new QuantityColumn(this.context);
     helperStrategy = new HelperStrategyColumn();
     helper = new HelperId(this.context);
-    autoArchive = new BoolColumn({ caption: 'העבר את המשלוח שהסתיים לארכיון', defaultValue: true });
-    newDeliveryForAll = new BoolColumn('משלוח חדש לכל המשלוחים ולא רק לאלו שהסתיימו בהצלחה');
+    autoArchive = new BoolColumn({ caption: getLang(this.context).archiveCurrentDelivery, defaultValue: true });
+    newDeliveryForAll = new BoolColumn(getLang(this.context).newDeliveryForAll);
     selfPickup = new SelfPickupStrategyColumn(true);
 
     distributionCenter = new DistributionCenterId(this.context);
-    useCurrentDistributionCenter = new BoolColumn('רשימת חלוקה כמו במשלוח הנוכחי');
-
+    useCurrentDistributionCenter = new BoolColumn(getLang(this.context).distributionListAsCurrentDelivery);
+    usedCouriers: string[] = [];
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
@@ -270,7 +270,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                 if (!this.useCurrentDistributionCenter.value) {
                     let dc = await this.context.for(DistributionCenters).findId(this.distributionCenter.value);
                     if (!dc)
-                        throw 'חובה לבחור רשימת חלוקה';
+                        throw getLang(this.context).pleaseSelectDistributionList;
                 }
             },
             additionalWhere: f => {
@@ -278,8 +278,8 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                     return undefined;
                 f.deliverStatus.isAResultStatus();
             },
-            title: 'משלוח חדש',
-            help: () => 'משלוח חדש יוגדר עבור כל המשלוחים המסומנים שהם בסטטוס נמסר בהצלחה, או בעיה כלשהי, אלא אם תבחרו לסמן את השדה ' + this.newDeliveryForAll.defs.caption,
+            title: getLang(context).newDelivery,
+            help: () => getLang(this.context).newDeliveryForDeliveriesHelp + ' ' + this.newDeliveryForAll.defs.caption,
             forEach: async existingDelivery => {
                 let f = await this.context.for(Families).findId(existingDelivery.family);
                 if (!f || f.status.value != FamilyStatus.Active)
@@ -295,7 +295,9 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                     newDelivery.distributionCenter.value = existingDelivery.distributionCenter.value;
                 this.helperStrategy.value.applyTo({ existingDelivery, newDelivery, helper: this.helper.value });
                 this.selfPickup.value.applyTo({ existingDelivery, newDelivery, family: f });
-
+                if (newDelivery.courier.value && !this.usedCouriers.includes(newDelivery.courier.value)) {
+                    this.usedCouriers.push(newDelivery.courier.value);
+                }
                 if ((await newDelivery.duplicateCount()) == 0)
                     await newDelivery.save();
                 if (this.autoArchive) {
@@ -303,19 +305,27 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                         existingDelivery.archive.value = true;
                     await existingDelivery.save();
                 }
+            },
+            onEnd: async () => {
+                let t = new PromiseThrottle(10);
+                for (const c of this.usedCouriers) {
+                    await t.push(AsignFamilyComponent.RefreshRoute(c, true, this.context));
+                }
+                await t.done();
             }
+
         });
     }
 }
 class HelperStrategy {
-    static familyDefault = new HelperStrategy(0, translate('הגדר מתנדב לפי מתנדב ברירת מחדל המוגדר למשפחה'), x => { });
-    static currentHelper = new HelperStrategy(1, 'הגדר מתנדב לפי המתנדב במשלוח הנוכחי', x => {
+    static familyDefault = new HelperStrategy(0, translate(use.language.volunteerByFamilyDefault), x => { });
+    static currentHelper = new HelperStrategy(1, use.language.volunteerByCrrentDelivery, x => {
         x.newDelivery.courier.value = x.existingDelivery.courier.value;
     });
-    static noHelper = new HelperStrategy(2, 'ללא מתנדב', x => {
+    static noHelper = new HelperStrategy(2, use.language.noVolunteer, x => {
         x.newDelivery.courier.value = '';
     });
-    static selectHelper = new HelperStrategy(3, 'בחר מתנדב', x => {
+    static selectHelper = new HelperStrategy(3, use.language.selectVolunteer, x => {
         x.newDelivery.courier.value = x.helper;
     });
     constructor(public id: number, public caption: string, public applyTo: (args: { existingDelivery: ActiveFamilyDeliveries, newDelivery: ActiveFamilyDeliveries, helper: string }) => void) {
@@ -325,7 +335,7 @@ class HelperStrategy {
 class HelperStrategyColumn extends ValueListColumn<HelperStrategy>{
     constructor() {
         super(HelperStrategy, {
-            caption: 'הגדרת מתנדב',
+            caption: use.language.volunteer,
             defaultValue: HelperStrategy.familyDefault,
             dataControlSettings: () => ({
                 valueList: this.getOptions()

@@ -1,7 +1,7 @@
 //import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModuleLoader';
 //let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
 
-import { readFileSync } from "fs";
+
 import { SqlDatabase, Column } from '@remult/core';
 import * as AWS from 'aws-sdk';
 
@@ -13,10 +13,11 @@ import { serverInit } from "./serverInit";
 
 
 import { ServerContext, allEntities } from '@remult/core';
-import { GeocodeCache, GeocodeInformation } from "../shared/googleApiHelpers";
+import { GeocodeCache, GeocodeInformation, getAddress } from "../shared/googleApiHelpers";
 import { Sites } from "../sites/sites";
 import * as fs from 'fs';
 import { processPhone } from "../import-from-excel/import-from-excel.component";
+import { buildLanguageFiles, loadTranslationXlsx } from "./buildLanguages";
 
 
 
@@ -24,17 +25,13 @@ let match = 0;
 export async function DoIt() {
     try {
         await serverInit();
-        let r = await new AWS.SNS({ apiVersion: '2010-03-31' }).publish({
-            Message: 'בדיקה ראשונה שלי',
-            PhoneNumber: '+972507330590',
-            MessageAttributes: {
-                'AWS.SNS.SMS.SenderID': {
-                    'DataType': 'String',
-                    'StringValue': '972507330590'
-                }
-            }
-        }).promise();
-        console.log(r);
+        //await sendMessagE();
+        //   await loadTranslationXlsx('c:/temp/newen.xlsx','en');
+
+         await buildLanguageFiles();
+       
+
+
 
 
 
@@ -51,6 +48,27 @@ export async function DoIt() {
 
 }
 DoIt();
+
+async function sendMessagE() {
+    let r = await new AWS.SNS({ apiVersion: '2010-03-31' }).publish({
+        Message: `Hello Noam Honig
+To deliver packages for Milano Helpers Click on :http://localhost:4200/test3/x/Ad6tTwFCpb
+Thanks Noam Honig`,
+        PhoneNumber: '+972507330590',
+        MessageAttributes: {
+            'AWS.SNS.SMS.SenderID': {
+                'DataType': 'String',
+                'StringValue': 'FOODBANK'
+            }
+            // ,
+            // 'AWS.SNS.SMS.SMSType': {
+            //     'DataType': 'String',
+            //     'StringValue': 'Transactional'
+            // }
+        }
+    }).promise();
+    console.log(r);
+}
 
 function workOnPhones() {
     let data = fs.readFileSync('c:/temp/test.txt');
@@ -85,8 +103,9 @@ function workOnPhones() {
     fs.writeFileSync('c:/temp/result.html', result + "</table></body></html>");
 }
 
+
 class htmlReport {
-    result = '<html><body dir=rtl style="font-family:\'Segoe UI\';"><table border=1>';
+    result = '<html><body dir=tl style="font-family:\'Segoe UI\';"><table border=1>';
     addRow(...what: any[]) {
         this.result += "\r\n<tr>";
         for (let v of what) {
@@ -102,3 +121,4 @@ class htmlReport {
         fs.writeFileSync('c:/temp/result.html', this.result + "</table></body></html>");
     }
 }
+

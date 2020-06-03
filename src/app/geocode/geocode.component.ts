@@ -6,6 +6,7 @@ import { PromiseThrottle } from '../import-from-excel/import-from-excel.componen
 import { DialogService } from '../select-popup/dialog';
 import { DistributionCenterId, allCentersToken } from '../manage/distribution-centers';
 import { GeocodeInformation } from '../shared/googleApiHelpers';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 
 @Component({
@@ -18,7 +19,7 @@ export class GeocodeComponent implements OnInit {
     valueChange:()=>this.ngOnInit()
   }, true);
   distCenterArea = new DataAreaSettings({ columnSettings: () => [this.distCenter] });
-  constructor(private context: Context, private dialog: DialogService) {
+  constructor(private context: Context, private dialog: DialogService,public settings:ApplicationSettings) {
     this.distCenter.value = allCentersToken;
   }
   families = 0;

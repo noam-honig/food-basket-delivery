@@ -69,10 +69,15 @@ export class Sites extends Entity<string> {
     static getValidSchemaFromContext(y: Context) {
         if (!Sites.multipleSites)
             return '';
-        let org = Sites.getOrganizationFromContext(y);
-        if (!Sites.isValidOrganization(org))
+        try {
+            let org = Sites.getOrganizationFromContext(y);
+            if (!Sites.isValidOrganization(org))
+                return Sites.guestSchema;
+            return org;
+        }
+        catch{
             return Sites.guestSchema;
-        return org;
+        }
     }
 
     static getOrganizationFromContext(y: Context) {

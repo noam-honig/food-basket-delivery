@@ -33,7 +33,7 @@ import { Roles, distCenterAdminGuard, AdminGuard } from '../auth/roles';
 import { MatTabGroup } from '@angular/material/tabs';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { translate } from '../translate';
+import { translate, getLang, use } from '../translate';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 import { FamilyStatus, FamilyStatusColumn } from './FamilyStatus';
@@ -41,6 +41,7 @@ import { familyActions } from './familyActions';
 import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, iterateRowsActionOnServer } from './familyActionsWiring';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
+import { MatAccordion } from '@angular/material/expansion';
 
 
 
@@ -56,7 +57,7 @@ export class FamiliesComponent implements OnInit {
 
     showHoverButton: boolean = false;
 
-    constructor(public dialog: DialogService, private san: DomSanitizer, public busy: BusyService, public context: Context, private settings: ApplicationSettings) {
+    constructor(public dialog: DialogService, private san: DomSanitizer, public busy: BusyService, public context: Context, public settings: ApplicationSettings) {
 
     }
 
@@ -161,9 +162,9 @@ export class FamiliesComponent implements OnInit {
         this.searchString = '';
         this.doSearch();
     }
-    stats = new Stats();
+    stats = new Stats(this.context);
     async saveToExcel() {
-        await saveFamiliesToExcel(this.context, this.families, this.busy);
+        await saveFamiliesToExcel(this.context, this.families, this.busy, this.settings.lang.families);
     }
 
 
@@ -237,7 +238,7 @@ export class FamiliesComponent implements OnInit {
         knowTotalRows: true,
 
 
-        confirmDelete: (h, yes) => this.dialog.confirmDelete(translate('משפחת ') + h.name.value, yes),
+
         columnSettings: families => {
             let r = [
 
@@ -255,10 +256,7 @@ export class FamiliesComponent implements OnInit {
                     }
                 },
                 families.phone1,
-                {
-                    column: families.groups,
-                    caption: translate('קבוצות שיוך משפחה')
-                },
+                families.groups,
                 families.familyMembers,
                 families.familySource,
                 {
@@ -284,7 +282,7 @@ export class FamiliesComponent implements OnInit {
                 families.postalCode,
                 families.addressByGoogle,
                 {
-                    caption: 'מה הבעיה של גוגל',
+                    caption: this.settings.lang.googleApiProblem,
                     getValue: f => f.getGeocodeInformation().whyProblem()
                 },
                 families.phone1Description,
@@ -294,11 +292,6 @@ export class FamiliesComponent implements OnInit {
                 families.phone3Description,
                 families.phone4,
                 families.phone4Description,
-
-                {
-                    caption: 'טלפון מתנדב',
-                    getValue: f => this.context.for(Helpers).lookup(f.courier).phone.value
-                },
 
 
 
@@ -359,14 +352,14 @@ export class FamiliesComponent implements OnInit {
                             actionRowsFilterInfo: packWhere(this.context.for(Families).create(), where)
                         };
                     }, settings: this.settings,
-                    groupName: translate('משפחות')
+                    groupName: translate(this.settings.lang.families)
                 })
             , {
-                name: 'יצוא לאקסל',
+                name: this.settings.lang.exportToExcel,
                 click: () => this.saveToExcel(),
                 visible: () => this.isAdmin
             }, {
-                name: translate('מיזוג משפחות'),
+                name: translate(this.settings.lang.mergeFamilies),
                 click: async () => {
                     await this.context.openDialog(MergeFamiliesComponent, x => x.families = [...this.families.selectedRows], y => {
                         if (y.merged)
@@ -385,11 +378,11 @@ export class FamiliesComponent implements OnInit {
                 click: async f => {
                     await f.showFamilyDialog();
                 }
-                , textInMenu: () => translate('פרטי משפחה')
+                , textInMenu: () => translate(this.settings.lang.familyDetails)
             },
 
             {
-                name: 'משלוח חדש',
+                name: this.settings.lang.newDelivery,
                 click: async f => {
                     await f.showNewDeliveryDialog(this.dialog, this.settings);
                 }
@@ -398,14 +391,14 @@ export class FamiliesComponent implements OnInit {
             }
             ,
             {
-                name: translate('משלוחים למשפחה'),
+                name: translate(this.settings.lang.familyDeliveries),
                 click: async f => {
                     f.showDeliveryHistoryDialog();
                 }
                 , visible: f => !f.isNew()
             },
             {
-                name: 'חפש כתובת בגוגל',
+                name: this.settings.lang.googleSearchAddress,
                 cssClass: 'btn btn-success',
                 click: f => f.openGoogleMaps(),
                 visible: f => this.problemOnly
@@ -429,7 +422,7 @@ export class FamiliesComponent implements OnInit {
                 info
             })
             , action, args);
-        return r + ' משפחות עודכנו';
+        return r + ' ' + getLang(context).familiesUpdated;
     }
 
 
@@ -461,7 +454,7 @@ export class FamiliesComponent implements OnInit {
     }
 
     groupsTotals: statsOnTab = {
-        name: translate('לפי קבוצות'),
+        name: translate(this.settings.lang.byGroups),
         rule: f => f.status.isEqualTo(FamilyStatus.Active),
         stats: [
         ],
@@ -470,7 +463,7 @@ export class FamiliesComponent implements OnInit {
     addressProblem: statsOnTab = {
         rule: f => f.addressOk.isEqualTo(false).and(f.status.isEqualTo(FamilyStatus.Active)),
         moreStats: [],
-        name: 'כתובות בעיתיות',
+        name: this.settings.lang.adderssProblems,
         stats: [
             this.stats.problem
         ],
@@ -482,7 +475,7 @@ export class FamiliesComponent implements OnInit {
         {
             rule: f => f.status.isEqualTo(FamilyStatus.Active),
             showTotal: true,
-            name: translate('פעילות'),
+            name: translate(this.settings.lang.activeFamilies),
             stats: [
                 this.stats.active,
 
@@ -495,7 +488,7 @@ export class FamiliesComponent implements OnInit {
         {
             rule: f => undefined,
             showTotal: true,
-            name: translate('כל המשפחות'),
+            name: translate(this.settings.lang.allFamilies),
             stats: [
                 this.stats.active,
                 this.stats.outOfList,
@@ -609,7 +602,7 @@ export class FamiliesComponent implements OnInit {
                 if (!lastFs) {
                     let x = stats.stats.pop();
                     firstCities.pop();
-                    lastFs = new FaimilyStatistics('כל השאר', f => {
+                    lastFs = new FaimilyStatistics(this.settings.lang.allOthers, f => {
                         let r = differentFromFilter(f, firstCities[0]);
                         for (let index = 1; index < firstCities.length; index++) {
                             r = r.and(differentFromFilter(f, firstCities[index]));
@@ -633,7 +626,7 @@ export class FamiliesComponent implements OnInit {
     @ViewChild('myTab', { static: false }) myTab: MatTabGroup;
 
     ngOnInit() {
-
+     
         this.refreshStats();
         this.sortColumns(this.normalColumns);
         //  debugger;
@@ -680,7 +673,7 @@ export class FamiliesComponent implements OnInit {
     static route: Route = {
         path: 'families',
         component: FamiliesComponent,
-        data: { name: 'משפחות' }, canActivate: [AdminGuard]
+        canActivate: [AdminGuard]
     }
 
 }
@@ -693,7 +686,7 @@ interface statsOnTab {
     rule: (f: Families) => FilterBase
 
 }
-export async function saveFamiliesToExcel(context: Context, gs: GridSettings<Families>, busy: BusyService, name = 'משפחות') {
+export async function saveFamiliesToExcel(context: Context, gs: GridSettings<Families>, busy: BusyService, name) {
     await saveToExcel<Families, GridSettings<Families>>(context.for(Families), gs, translate(name), busy, (f, c) => c == f.id || c == f.addressApiResult, (f, c) => false, async (f, addColumn) => {
         let x = f.getGeocodeInformation();
         let street = f.address.value;
@@ -722,24 +715,24 @@ export async function saveFamiliesToExcel(context: Context, gs: GridSettings<Fam
             }
             catch { }
         }
-        addColumn("Xשם משפחה", lastName, 's');
-        addColumn("Xשם פרטי", firstName, 's');
-        addColumn("Xרחוב", street, 's');
-        addColumn("Xמספר בית", house, 's');
+        addColumn("X" + use.language.lastName, lastName, 's');
+        addColumn("X" + use.language.firstName, firstName, 's');
+        addColumn("X" + use.language.streetName, street, 's');
+        addColumn("X" + use.language.houseNumber, house, 's');
         function fixPhone(p: PhoneColumn) {
             if (!p.value)
                 return '';
             else
                 return p.value.replace(/\D/g, '');
         }
-        addColumn("טלפון1X", fixPhone(f.phone1), 's');
-        addColumn("טלפון2X", fixPhone(f.phone2), 's');
-        addColumn("טלפון3X", fixPhone(f.phone3), 's');
-        addColumn("טלפון4X", fixPhone(f.phone4), 's');
-        addColumn("טלפון 1 מקור", f.phone1.value, 's');
-        addColumn("טלפון 2 מקור", f.phone2.value, 's');
-        addColumn("טלפון 3 מקור", f.phone3.value, 's');
-        addColumn("טלפון 4 מקור", f.phone4.value, 's');
+        addColumn("X" + use.language.phone1, fixPhone(f.phone1), 's');
+        addColumn("X" + use.language.phone2, fixPhone(f.phone2), 's');
+        addColumn("X" + use.language.phone3, fixPhone(f.phone3), 's');
+        addColumn("X" + use.language.phone4, fixPhone(f.phone4), 's');
+        addColumn("X" + use.language.phone1 + 'orig', f.phone1.value, 's');
+        addColumn("X" + use.language.phone2 + 'orig', f.phone2.value, 's');
+        addColumn("X" + use.language.phone3 + 'orig', f.phone3.value, 's');
+        addColumn("X" + use.language.phone4 + 'orig', f.phone4.value, 's');
         await f.basketType.addBasketTypes(f.quantity, addColumn);
     });
 }

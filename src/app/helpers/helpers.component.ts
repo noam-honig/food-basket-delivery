@@ -23,6 +23,7 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { visitAll } from '@angular/compiler';
+import { use, getLang } from '../translate';
 
 @Component({
   selector: 'app-helpers',
@@ -48,7 +49,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   static route: Route = {
     path: 'helpers',
     component: HelpersComponent,
-    data: { name: 'מתנדבים' }, canActivate: [distCenterAdminGuard]
+    canActivate: [distCenterAdminGuard]
   };
   clearSearch() {
     this.searchString = '';
@@ -64,16 +65,16 @@ export class HelpersComponent implements OnInit, OnDestroy {
     hideDataArea: true,
     gridButton: [
       {
-        name: 'יצוא לאקסל',
+        name: use.language.exportToExcel,
         click: async () => {
-          await saveToExcel(this.context.for(Helpers), this.helpers, "מתנדבים", this.busy, (d: Helpers, c) => c == d.id || c == d.password || c == d.totalKm || c == d.totalTime || c == d.smsDate || c == d.reminderSmsDate || c == d.realStoredPassword || c == d.shortUrlKey || c == d.admin);
+          await saveToExcel(this.context.for(Helpers), this.helpers, use.language.volunteer, this.busy, (d: Helpers, c) => c == d.id || c == d.password || c == d.totalKm || c == d.totalTime || c == d.smsDate || c == d.reminderSmsDate || c == d.realStoredPassword || c == d.shortUrlKey || c == d.admin);
         }
         , visible: () => this.context.isAllowed(Roles.admin)
       },
       {
-        name: 'נקה הערות לכל המתנדבים',
+        name: use.language.clearAllVolunteerComments,
         click: async () => {
-          if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: 'האם אתה בטוח שברצונך לנקות את כל ההערות למתנדבים?' }, x => x.yes)) {
+          if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: use.language.clearAllVolunteerCommentsAreYouSure }, x => x.yes)) {
             await HelpersComponent.clearCommentsOnServer();
             this.helpers.getRecords();
           }
@@ -82,14 +83,14 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
       },
       {
-        name: 'נקה נתוני ליווי לכל המתנדבים',
+        name: use.language.clearEscortInfo,
         click: async () => {
-          if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: 'האם אתה בטוח שברצונך לנקות את נתוני המלווים לכל המתנדבים?' }, x => x.yes)) {
+          if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: use.language.clearEscortInfoAreYouSure }, x => x.yes)) {
             await HelpersComponent.clearEscortsOnServer();
             this.helpers.getRecords();
           }
         },
-        visible: () => this.settings.showHelperComment.value && this.context.isAllowed(Roles.admin)
+        visible: () => this.context.isAllowed(Roles.admin)
       }
 
     ],
@@ -98,13 +99,13 @@ export class HelpersComponent implements OnInit, OnDestroy {
         name: '',
         icon: 'edit',
         showInLine: true,
-        textInMenu: () => 'כרטיס מתנדב',
+        textInMenu: () => use.language.volunteerInfo,
         click: async f => {
           this.editHelper(f);
         }
       },
       {
-        name: 'שיוך משלוחים',
+        name: use.language.assignDeliveryMenu,
         visible: h => !h.isNew(),
         click: async h =>
           this.context.openDialog(
@@ -112,17 +113,17 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
       },
       {
-        name: 'אתחל סיסמה',
+        name: use.language.resetPassword,
         click: async h => {
-          this.dialog.YesNoQuestion("האם את בטוחה שאת רוצה למחוק את הסיסמה של " + h.name.value, async () => {
+          this.dialog.YesNoQuestion(use.language.resetPasswordAreYouSureFor + " " + h.name.value, async () => {
             await HelpersComponent.resetPassword(h.id.value);
-            this.dialog.Info("הסיסמה נמחקה");
+            this.dialog.Info(use.language.passwordWasReset);
           });
         },
         visible: h => (this.context.isAllowed(Roles.admin) || !h.admin.value)
       },
       {
-        name: 'שלח הזמנה בSMS למנהל',
+        name: use.language.sendInviteBySms,
         click: async h => {
           let r = await HelpersComponent.sendInvite(h.id.value);
           this.dialog.Info(r);
@@ -131,11 +132,11 @@ export class HelpersComponent implements OnInit, OnDestroy {
       }
       ,
       {
-        name: 'היסטורית משלוחים',
+        name: use.language.deliveries,
         visible: h => !h.isNew(),
         click: async h => {
           this.context.openDialog(GridDialogComponent, x => x.args = {
-            title: 'משלוחים עבור ' + h.name.value,
+            title: use.language.deliveriesFor + ' ' + h.name.value,
             settings: this.context.for(FamilyDeliveries).gridSettings({
               numOfColumnsInGrid: 6,
               hideDataArea: true,
@@ -187,7 +188,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
   private editHelper(f: Helpers) {
     this.context.openDialog(InputAreaComponent, x => x.args = {
-      title: f.isNew() ? 'הוסף מתנדב' : 'עדכן פרטי ' + f.name.value,
+      title: f.isNew() ? use.language.newVolunteers : f.name.value,
       ok: () => {
         f.save();
       },
@@ -230,7 +231,8 @@ export class HelpersComponent implements OnInit, OnDestroy {
       r.push(helpers.distributionCenter);
     }
 
-
+    r.push(helpers.email);
+    r.push(helpers.preferredDistributionAreaAddress);
     r.push(helpers.company);
     if (this.settings.manageEscorts.value) {
       r.push(helpers.escort, helpers.theHelperIAmEscorting, helpers.needEscort);
@@ -264,24 +266,23 @@ export class HelpersComponent implements OnInit, OnDestroy {
   static async sendInvite(helperId: string, context?: ServerContext) {
     let h = await context.for(Helpers).findFirst(x => x.id.isEqualTo(helperId));
     if (!h)
-      return 'לא מתאים להזמנה';
+      return getLang(context).unfitForInvite;
     if (!(h.admin.value || h.distCenterAdmin.value))
-      return 'לא מתאים להזמנה';
+      return getLang(context).unfitForInvite;
     let url = context.getOrigin() + '/' + Sites.getOrganizationFromContext(context);
     let s = await ApplicationSettings.getAsync(context);
     let hasPassword = h.password.value && h.password.value.length > 0;
-    let message = `שלום ${h.name.value}
-ברוך הבא לסביבה של ${s.organisationName.value}.
-אנא הכנס למערכת באמצעות הקישור:
+    let message = getLang(context).hello + ` ${h.name.value}
+`+ getLang(context).welcomeTo + ` ${s.organisationName.value}.
+`+ getLang(context).pleaseEnterUsing + `
 ${url}
 `;
     if (!hasPassword) {
-      message += `מכיוון שלא מוגדרת לך סיסמה עדיין - אנא הכנס בפעם הראשונה, על ידי הקלדת מספר הטלפון שלך ללא סיסמה ולחיצה על הכפתור "כניסה". המערכת תבקש שתגדיר סיסמה וזו תהיה סיסמתך.
-בהצלחה`
+      message += getLang(context).enterFirstTime
     }
     let from = await context.for(Helpers).findFirst(h => h.id.isEqualTo(context.user.id));
-    await new SendSmsUtils().sendSms(h.phone.value, from.phone.value, message, context.getOrigin(), Sites.getOrganizationFromContext(context));
-    return 'הזמנה נשלחה בהצלחה'
+    await new SendSmsUtils().sendSms(h.phone.value, from.phone.value, message, context.getOrigin(), Sites.getOrganizationFromContext(context), await ApplicationSettings.getAsync(context));
+    return getLang(context).inviteSentSuccesfully
 
 
 
@@ -299,7 +300,7 @@ ${url}
 
   }
   fromDate = new DateColumn({
-    caption: 'מתאריך',
+    caption: use.language.fromDate,
     valueChange: () => {
 
       if (this.toDate.value < this.fromDate.value) {
@@ -308,7 +309,7 @@ ${url}
 
     }
   });
-  toDate = new DateColumn('עד תאריך');
+  toDate = new DateColumn(use.language.toDate);
   rangeArea = new DataAreaSettings({
     columnSettings: () => [this.fromDate, this.toDate],
     numberOfColumnAreas: 2

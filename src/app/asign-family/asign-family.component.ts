@@ -26,7 +26,7 @@ import { BusyService } from '@remult/core';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { Groups, GroupsStats } from '../manage/manage.component';
 import { SendSmsAction } from './send-sms-action';
-import { translate } from '../translate';
+import { translate, getLang } from '../translate';
 import { SelectCompanyComponent } from '../select-company/select-company.component';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -49,9 +49,7 @@ import { PromiseThrottle } from '../import-from-excel/import-from-excel.componen
 
 export class AsignFamilyComponent implements OnInit, OnDestroy {
     static route: Route = {
-        path: 'assign-families', component: AsignFamilyComponent, canActivate: [distCenterAdminGuard], data: {
-            name: 'שיוך משלוחים למתנדב'
-        }
+        path: 'assign-families', component: AsignFamilyComponent, canActivate: [distCenterAdminGuard]
     };
     @ViewChild("phoneInput", { static: false }) phoneInput: ElementRef;
 
@@ -66,7 +64,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.clearHelperInfo(false);
         let cleanPhone = PhoneColumn.fixPhoneInput(this.phone);
 
-        if (cleanPhone.length == 10) {
+        if (this.isValidPhone()) {
             this.phone = cleanPhone;
             let helper = await this.context.for(Helpers).findFirst(h => h.phone.isEqualTo(this.phone));
             if (helper) {
@@ -81,11 +79,16 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         }
     }
+    isValidPhone() {
+        let cleanPhone = PhoneColumn.fixPhoneInput(this.phone);
+
+        return (cleanPhone.length == 10 || cleanPhone.startsWith('+') && cleanPhone.length > 12);
+    }
     async initHelper(helper: Helpers) {
         if (helper.theHelperIAmEscorting.value) {
             let other = await this.context.for(Helpers).findFirst(x => x.id.isEqualTo(helper.theHelperIAmEscorting));
             if (await this.context.openDialog(YesNoQuestionComponent, q => q.args = {
-                question: helper.name.value + ' מוגדר כמלווה של ' + other.name.value + '. האם להציג את המשפחות של ' + other.name.value + '?'
+                question: helper.name.value + ' ' + this.settings.lang.isDefinedAsEscortOf + ' ' + other.name.value + '. ' + this.settings.lang.displayFamiliesOf + ' ' + other.name.value + '?'
             }, q => q.yes)) {
                 this.initHelper(other);
             }
@@ -123,7 +126,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
     filterCity = '';
     filterArea = '';
-    allBaskets: BasketInfo = { id: 'undefined', name: 'כל הסלים', unassignedFamilies: 0 };
+    allBaskets: BasketInfo = { id: 'undefined', name: this.settings.lang.allBaskets, unassignedFamilies: 0 };
     basketType: BasketInfo = this.allBaskets;
     selectCity() {
         this.refreshBaskets();
@@ -143,7 +146,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 onSelect: async h => {
                     if (h) {
                         let families = await this.context.for(ActiveFamilyDeliveries).find({ where: f => f.courier.isEqualTo(h.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)), limit: 1000 });
-                        this.dialog.YesNoQuestion("להעביר " + families.length + translate(" משלוחים מ") + '"' + h.name.value + '"' + " למתנדב " + '"' + this.helper.name.value + '"', async () => {
+                        this.dialog.YesNoQuestion(this.settings.lang.transfer + " " + families.length + " " + this.settings.lang.deliveriesFrom + '"' + h.name.value + '"' + " " + this.settings.lang.toVolunteer + " " + '"' + this.helper.name.value + '"', async () => {
                             await this.busy.doWhileShowingBusy(async () => {
                                 await this.verifyHelperExistance();
                                 for (const f of families) {
@@ -246,7 +249,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         await this.familyLists.initForHelper(this.helper);
 
     }
-    familyLists = new UserFamiliesList(this.context);
+    familyLists = new UserFamiliesList(this.context, this.settings);
     filterGroup = '';
     groups: GroupsStats[] = [];
     phone: string;
@@ -333,7 +336,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 if (families.length == 1)
                     await this.assignFamilyBasedOnIdFromMap(families[0]);
                 else if (families.length > 1) {
-                    this.dialog.YesNoQuestion("בנקודה זו יש " + families.length + translate(" משלוחים - לשייך את כולם?"), async () => {
+                    this.dialog.YesNoQuestion(this.settings.lang.atThisLocationThereAre + " " + families.length + translate(this.settings.lang.deliveriesAssignAllOfThem), async () => {
                         await this.busy.doWhileShowingBusy(async () => {
                             for (const iterator of families) {
                                 await this.assignFamilyBasedOnIdFromMap(iterator);
@@ -396,7 +399,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
                 let refreshBaskets = basket == undefined;
                 if (x.familiesInSameAddress.length > 0) {
-                    if (await this.dialog.YesNoPromise("ישנן עוד " + x.familiesInSameAddress.length + " משלוחים באותה הכתובת, האם לשייך גם אותם?")) {
+                    if (await this.dialog.YesNoPromise(this.settings.lang.thereAreAdditional + " " + x.familiesInSameAddress.length + " " + this.settings.lang.deliveriesAtSameAddress)) {
                         await this.busy.doWhileShowingBusy(async () => {
                             this.dialog.analytics('More families in same address');
                             for (const id of x.familiesInSameAddress) {
@@ -431,13 +434,13 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             }
             else {
                 this.refreshList();
-                this.dialog.Info(translate("לא נמצאה משפחה מתאימה"));
+                this.dialog.Info(translate(this.settings.lang.noMatchingDelivery));
             }
             this.assigning = false;
         }
         catch (err) {
             this.assigning = false;
-            await this.dialog.exception('שיוך משפחות', err);
+            await this.dialog.exception(this.settings.lang.assignDeliveryMenu, err);
         }
 
     }
@@ -661,6 +664,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         let waitingFamilies = await getFamilies();
         let i = 0;
+        let settings = await ApplicationSettings.getAsync(context);
         while (i < info.numOfBaskets) {
             if (info.preferRepeatFamilies && waitingFamilies.length == 0 && !info.allRepeat) {
                 info.preferRepeatFamilies = false;
@@ -705,7 +709,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
                 if (locationReferenceFamilies.length == 0) {
                     let position = Math.trunc(Math.random() * waitingFamilies.length);
-                    let distCenter = (await ApplicationSettings.getAsync(context)).getGeocodeInformation().location();
+                    let distCenter = settings.getGeocodeInformation().location();
                     let lastFamiliy = waitingFamilies[0];
                     let lastDist = 0;
                     for (const f of waitingFamilies) {
@@ -780,7 +784,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         result.families = await context.for(ActiveFamilyDeliveries).toPojoArray(existingFamilies);
 
         result.familiesInSameAddress = result.familiesInSameAddress.filter((x, i) => !existingFamilies.find(f => f.id.value == x) && result.familiesInSameAddress.indexOf(x) == i);
-        Families.SendMessageToBrowsers("משלוחים שוייכו ", context, '');
+        Families.SendMessageToBrowsers(settings.lang.deliveriesAssigned, context, '');
         return result;
     }
 
@@ -937,9 +941,9 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                     if (selectStreet)
                         return;
                     let c = await f.courier.getTheName();
-                    this.dialog.YesNoQuestion(translate('משפחת ') +
-                        f.name.value + ' כבר משוייכת ל' + c + ' בסטטוס ' +
-                        f.deliverStatus.displayValue + '. האם לשייך אותו למתנדב ' + this.helper.name.value + '?', () => {
+                    this.dialog.YesNoQuestion(translate(this.settings.lang.theFamily) + ' ' +
+                        f.name.value + this.settings.lang.isAlreadyAsignedTo + ' ' + c + ' ' + this.settings.lang.onStatus + ' ' +
+                        f.deliverStatus.displayValue + '. ' + this.settings.lang.shouldAssignTo + ' ' + this.helper.name.value + '?', () => {
                             ok();
                         });
 
@@ -974,7 +978,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             try {
                 await this.helper.save();
             } catch (err) {
-                await this.dialog.Error('שמירת פרטי מתנדב: ' + extractError(err));
+                await this.dialog.exception(this.settings.lang.saveVolunteerInfo, err);
                 throw err;
 
             }
@@ -1053,7 +1057,7 @@ async function getRouteInfo(families: familiesInRoute[], optimize: boolean, star
         origin: startAndEnd,
         destination: toLongLat(families[families.length - 1].location),
         waypoints: waypoints,
-        language: 'he',
+        language: getLang(context).languageCode,
         key: process.env.GOOGLE_GECODE_API_KEY
     };
     u.addObject(args);

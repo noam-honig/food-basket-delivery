@@ -19,6 +19,8 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { SqlBuilder, relativeDateName } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { colors } from '../families/stats-action';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { Language, getLang } from '../translate';
 
 
 @Component({
@@ -28,10 +30,10 @@ import { colors } from '../families/stats-action';
 })
 export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
   static route: Route = {
-    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [distCenterAdminGuard], data: { name: 'מעקב מתנדבים' }
+    path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [distCenterAdminGuard]
   }
 
-  familyLists = new UserFamiliesList(this.context);
+  familyLists = new UserFamiliesList(this.context, this.settings);
   currentlHelper: helperFollowupInfo;
   async selectCourier(c: helperFollowupInfo) {
     this.currentlHelper = c;
@@ -90,7 +92,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
   }
   helpers: helperFollowupInfo[] = [];
   async sendSmsToAll() {
-    if (await this.dialog.YesNoPromise("האם לשלוח הודעת SMS ל" + this.stats.notOutYet.value + " מתנדבים?")) {
+    if (await this.dialog.YesNoPromise(this.settings.lang.shouldSendSmsTo + " " + this.stats.notOutYet.value + " " + this.settings.lang.volunteers + "?")) {
       await this.busy.doWhileShowingBusy(async () => {
 
         for (const h of this.helpers) {
@@ -102,9 +104,9 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
       this.refresh();
     }
   }
-  stats = new DeliveryStats();
+  stats = new DeliveryStats(this.context);
   updateChart() {
-    this.stats = new DeliveryStats();
+    this.stats = new DeliveryStats(this.context);
 
     for (const h of this.helpers) {
       this.stats.process(h);
@@ -140,7 +142,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
 
 
-  constructor(private busy: BusyService, private context: Context, private dialog: DialogService) {
+  constructor(private busy: BusyService, private context: Context, private dialog: DialogService, public settings: ApplicationSettings) {
 
     dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
   }
@@ -210,11 +212,14 @@ export class DeliveryStats {
       }
     }
   }
-  notOutYet = new DeliveryStatistic('טרם נשלח SMS', f => f.inProgress >= 1 && !f.gotSms, colors.blue);
-  onTheWay = new DeliveryStatistic('בדרך', f => f.inProgress >= 1 && f.gotSms && !f.late, colors.blue);
-  late = new DeliveryStatistic('מתעכבים', f => f.inProgress >= 1 && f.gotSms && f.late, colors.yellow);
-  delivered = new DeliveryStatistic('סיימו', f => f.inProgress == 0 && f.problem == 0, colors.green);
-  problem = new DeliveryStatistic('בעיות', f => f.problem > 0, colors.red);
+  constructor(private context: Context) {
+
+  }
+  notOutYet = new DeliveryStatistic(getLang(this.context).smsNotSent, f => f.inProgress >= 1 && !f.gotSms, colors.blue);
+  onTheWay = new DeliveryStatistic(getLang(this.context).onTheWay, f => f.inProgress >= 1 && f.gotSms && !f.late, colors.blue);
+  late = new DeliveryStatistic(getLang(this.context).delayed, f => f.inProgress >= 1 && f.gotSms && f.late, colors.yellow);
+  delivered = new DeliveryStatistic(getLang(this.context).doneVolunteers, f => f.inProgress == 0 && f.problem == 0, colors.green);
+  problem = new DeliveryStatistic(getLang(this.context).problems, f => f.problem > 0, colors.red);
 }
 export class DeliveryStatistic {
   constructor(public name: string, public rule: (f: helperFollowupInfo) => boolean, public color: string) {

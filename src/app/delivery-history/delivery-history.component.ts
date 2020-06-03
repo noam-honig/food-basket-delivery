@@ -18,7 +18,7 @@ import { ServerFunction } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DistributionCenterId } from '../manage/distribution-centers';
-import { translate } from '../translate'
+import { translate, getLang } from '../translate'
 import { DateRangeComponent } from '../date-range/date-range.component';
 
 
@@ -43,10 +43,10 @@ export class DeliveryHistoryComponent implements OnInit {
   static route: Route = {
     path: 'history',
     component: DeliveryHistoryComponent,
-    data: { name: 'היסטורית משלוחים' }, canActivate: [AdminGuard]
+     canActivate: [AdminGuard]
   }
   helperStorage: InMemoryDataProvider;
-  constructor(private context: Context, private busy: BusyService) {
+  constructor(private context: Context, private busy: BusyService,public settings:ApplicationSettings) {
     this.helperStorage = new InMemoryDataProvider();
 
 
@@ -54,10 +54,10 @@ export class DeliveryHistoryComponent implements OnInit {
       hideDataArea: true,
       numOfColumnsInGrid: 6,
       gridButton: [{
-        name: 'יצוא לאקסל',
+        name: this.settings.lang.exportToExcel,
         visible: () => this.context.isAllowed(Roles.admin),
         click: async () => {
-          await saveToExcel(this.context.for(helperHistoryInfo), this.helperInfo, "מתנדבים", this.busy, (d: helperHistoryInfo, c) => c == d.courier);
+          await saveToExcel(this.context.for(helperHistoryInfo), this.helperInfo, this.settings.lang.volunteers, this.busy, (d: helperHistoryInfo, c) => c == d.courier);
         }
       }],
       columnSettings: h => [
@@ -79,7 +79,7 @@ export class DeliveryHistoryComponent implements OnInit {
         },
         {
           column: h.families,
-          caption: translate('משפחות'),
+          
           width: '75'
         },
         {
@@ -115,9 +115,9 @@ export class DeliveryHistoryComponent implements OnInit {
 
   deliveries = this.context.for(FamilyDeliveries).gridSettings({
     gridButton: [{
-      name: 'יצוא לאקסל',
+      name: this.settings.lang.exportToExcel,
       click: async () => {
-        await saveToExcel(this.context.for(FamilyDeliveries), this.deliveries, "משלוחים", this.busy, (d: FamilyDeliveries, c) => c == d.id || c == d.family, undefined,
+        await saveToExcel(this.context.for(FamilyDeliveries), this.deliveries, this.settings.lang.deliveries, this.busy, (d: FamilyDeliveries, c) => c == d.id || c == d.family, undefined,
           async (f, addColumn) => {
             await f.basketType.addBasketTypes(f.quantity, addColumn);
             f.addStatusExcelColumn(addColumn);
@@ -128,7 +128,7 @@ export class DeliveryHistoryComponent implements OnInit {
       let r: DataControlInfo<FamilyDeliveries>[] = [
         d.name,
         {
-          caption: 'סיכום משלוח',
+          caption: this.settings.lang.deliverySummary,
           column: d.deliverStatus,
           readOnly: true,
           valueList: d.deliverStatus.getOptions()
@@ -212,16 +212,14 @@ export class DeliveryHistoryComponent implements OnInit {
 }
 @EntityClass
 export class helperHistoryInfo extends Entity<string>{
-  addStatusExcelColumn(addColumn: (caption: string, v: string, t: import("xlsx/types").ExcelDataType) => void) {
-    throw new Error("Method not implemented.");
-  }
+  
   courier = new StringColumn();
-  name = new StringColumn('שם');
-  phone = new PhoneColumn("טלפון");
+  name = new StringColumn(getLang(this.context).volunteerName);
+  phone = new PhoneColumn(getLang(this.context).phone);
   company = new CompanyColumn(this.context);
-  deliveries = new NumberColumn('משלוחים');
-  families = new NumberColumn('משפחות');
-  dates = new NumberColumn("תאריכים");
+  deliveries = new NumberColumn(getLang(this.context).deliveries);
+  families = new NumberColumn(getLang(this.context).families);
+  dates = new NumberColumn(getLang(this.context).dates);
   constructor(private context: Context) {
     super({ name: 'helperHistoryInfo', allowApiRead: false, allowApiCRUD: false });
 

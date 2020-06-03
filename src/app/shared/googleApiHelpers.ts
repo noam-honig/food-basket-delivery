@@ -1,6 +1,9 @@
 import * as fetch from 'node-fetch';
 import { UrlBuilder, EntityClass, IdEntity, StringColumn, Entity, DateTimeColumn, Context } from '@remult/core';
 import { extractError } from '../select-popup/dialog';
+import { getLang } from '../translate';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { getRtlScrollAxisType } from '@angular/cdk/platform';
 
 
 
@@ -25,10 +28,12 @@ export async function GetGeoInformation(address: string, context: Context) {
     let x = pendingRequests.get(address);
     if (!x) {
         let u = new UrlBuilder('https://maps.googleapis.com/maps/api/geocode/json');
+        let settings = await ApplicationSettings.getAsync(context);
         u.addObject({
             key: process.env.GOOGLE_GECODE_API_KEY,
             address: address,
-            language: 'HE'
+            language: settings.lang.languageCode,
+            components: 'country:' + settings.googleMapCountry()
         });
         try {
             let r = fetch.default(u.url).then(async x => await x.json().then(async (r: GeocodeResult) => {
@@ -37,7 +42,9 @@ export async function GetGeoInformation(address: string, context: Context) {
                 cacheEntry.id.value = address;
                 cacheEntry.googleApiResult.value = JSON.stringify(r);
                 cacheEntry.createDate.value = new Date();
+                try{
                 await cacheEntry.save();
+                }catch{}
                 let g = new GeocodeInformation(r as GeocodeResult);
                 if (!g.ok())
                     console.log('api error:' + g.info.status + ' for ' + address);
@@ -88,12 +95,9 @@ export class GeocodeInformation {
     }
     getAddress() {
         if (!this.ok())
-            return 'יש לעדכן כתובת ולשמור את הרשומה.';
-        let r = this.info.results[0].formatted_address;
-        let i = r.lastIndexOf(', ישראל');
-        if (i > 0)
-            r = r.substring(0, i);
-        return r;
+            return 'INVALID ADDRESS';
+        return getAddress(this.info.results[0]);
+
     }
     public saveToString() {
         return JSON.stringify(this.info);
@@ -128,6 +132,7 @@ export class GeocodeInformation {
             && this.info.results[0].types[0] != "subpremise"
             && this.info.results[0].types[0] != "premise"
             && this.info.results[0].types[0] != "route"
+            && this.info.results[0].types[0] != "intersection"
             && this.info.results[0].types[0] != "establishment")
             return this.info.results[0].types.join(',');
         return undefined;
@@ -141,17 +146,47 @@ export class GeocodeInformation {
         return toLongLat(this.location());
     }
     getCity() {
-        let r = 'לא ידוע';
         if (this.ok())
-            this.info.results[0].address_components.forEach(x => {
-                if (x.types[0] == "locality")
-                    r = x.long_name;
-            });
-        return r;
+            return getCity(this.info.results[0].address_components);
     }
     static GetDistanceBetweenPoints(x: Location, center: Location) {
         return Math.abs(((x.lat - center.lat) * (x.lat - center.lat)) + Math.abs((x.lng - center.lng) * (x.lng - center.lng))) * 10000000
     }
+}
+
+export function getAddress(result: { formatted_address?: string, address_components?: AddressComponent[] }) {
+    let r = result.formatted_address;
+    if (!r)
+        return "UNKNOWN";
+    if (result.address_components)
+        for (let index = result.address_components.length - 1; index >= 0; index--) {
+            const x = result.address_components[index];
+            if (x.types[0] == "country" || x.types[0] == "postal_code") {
+                let i = r.lastIndexOf(', ' + x.long_name);
+                if (i > 0)
+                    r = r.substring(0, i) + r.substring(i + x.long_name.length + 2);
+            }
+            if (x.types[0] == "administrative_area_level_2" && x.short_name.length == 2) {
+                let i = r.lastIndexOf(' ' + x.short_name);
+                if (i > 0)
+                    r = r.substring(0, i) + r.substring(i + x.long_name.length + 1);
+
+            }
+        };
+
+    r = r.trim();
+    if (r.endsWith(',')) {
+        r = r.substring(0, r.length - 1);
+    }
+    return r;
+}
+export function getCity(address_component: AddressComponent[]) {
+    let r = 'UNKNOWN';
+    address_component.forEach(x => {
+        if (x.types[0] == "locality")
+            r = x.long_name;
+    });
+    return r;
 }
 // Polygon getBounds extension - google-maps-extensions
 // https://github.com/tparkin/Google-Maps-Point-in-Polygon

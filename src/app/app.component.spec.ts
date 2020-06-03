@@ -3,7 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 
 import { ServerContext, EntityClass, IdEntity, StringColumn, NumberColumn, Context } from '@remult/core';
-import { SqlBuilder, QueryBuilder } from './model-shared/types';
+import { SqlBuilder, QueryBuilder, PhoneColumn } from './model-shared/types';
 import { WebDriverProxy } from 'blocking-proxy/built/lib/webdriver_proxy';
 import { parseAddress, Families, parseUrlInAddress } from './families/families';
 import { BasketType } from './families/BasketType';
@@ -176,6 +176,10 @@ describe('AppComponent', () => {
     expect(fixPhone("36733059", "03")).toBe("036733059");
     expect(fixPhone("6733059", "03")).toBe("036733059");
     expect(fixPhone("733059", "03")).toBe("733059");
+    expect(fixPhone("o507330590", "03")).toBe("0507330590");
+    expect(fixPhone("O507330590", "03")).toBe("0507330590");
+    expect(fixPhone("ox07330590", "03")).toBe("ox07330590");
+    expect(fixPhone("+972507330590", "")).toBe("+972507330590");
 
   });
   it("test address parser", () => {
@@ -187,6 +191,14 @@ describe('AppComponent', () => {
     expect(parseUrlInAddress('32.267417990635636,34.878578873069586')).toBe('32.267418,34.878579')
     expect(parseUrlInAddress("נועם")).toBe("נועם");
 
+  });
+  it("format phone", () => {
+
+    expect(PhoneColumn.formatPhone("214,391,757")).toBe("021-439-1757");
+  });
+  it("fix phone input", () => {
+
+    expect(PhoneColumn.fixPhoneInput("+972507330590")).toBe("+972507330590");
   });
   it("test schema name", () => {
     expect(validSchemaName("abc")).toBe("abc");
@@ -210,6 +222,7 @@ describe('AppComponent', () => {
       }
     });
   }
+  testPhone("o532777561", [{ phone: '0532777561', comment: '' }]);
   testPhone("050-7330590 (noam)", [{ phone: '050-7330590', comment: '(noam)' }]);
   testPhone("0532777561 // 0532777561", [{ phone: '0532777561', comment: '' }, { phone: '0532777561', comment: '' }]);
   testPhone("04-8767772 / 050-7467774 (לריסה)", [{ phone: '04-8767772', comment: '' }, { phone: '050-7467774', comment: '(לריסה)' }]);
@@ -233,6 +246,7 @@ describe('AppComponent', () => {
   testPhone("7322575 – 057", [{ phone: '057-7322575', comment: '' }]);
   testPhone("050-7330590 | 050-7953019", [{ phone: '050-7330590', comment: '' }, { phone: '050-7953019', comment: '' }]);
   testPhone("0532777561 // 0532777561", [{ phone: '0532777561', comment: '' }, { phone: '0532777561', comment: '' }]);
+
   //testPhone("0507330590 / 1", [{ phone: '0507330590', comment: '' }, { phone: '0507330591', comment: '' }]);
   //testPhone("0507330590 / 81", [{ phone: '0507330590', comment: '' }, { phone: '0507330581', comment: '' }]);
   it("updatePhone", () => {
@@ -272,7 +286,7 @@ describe('AppComponent', () => {
   it("properMerge4", () => {
     let f = context.for(Families).create();
     let f2 = context.for(Families).create();
-    let c = new MergeFamiliesComponent(context, undefined, undefined);
+    let c = new MergeFamiliesComponent(context, undefined, undefined, undefined);
     c.family = context.for(Families).create();
     c.family.phone1.value = '0507330590';
     c.families = [f, f2];
@@ -291,7 +305,7 @@ describe('AppComponent', () => {
   it("properMerge", () => {
     let f = context.for(Families).create();
     let f2 = context.for(Families).create();
-    let c = new MergeFamiliesComponent(context, undefined, undefined);
+    let c = new MergeFamiliesComponent(context, undefined, undefined, undefined);
     c.family = context.for(Families).create();
     c.families = [f, f2];
     f.tz.value = '1';
@@ -303,7 +317,7 @@ describe('AppComponent', () => {
   it("properMerge1", () => {
     let f = context.for(Families).create();
     let f2 = context.for(Families).create();
-    let c = new MergeFamiliesComponent(context, undefined, undefined);
+    let c = new MergeFamiliesComponent(context, undefined, undefined, undefined);
     c.family = context.for(Families).create();
     c.families = [f, f2];
 
@@ -314,7 +328,7 @@ describe('AppComponent', () => {
   it("properMerge2", () => {
     let f = context.for(Families).create();
     let f2 = context.for(Families).create();
-    let c = new MergeFamiliesComponent(context, undefined, undefined);
+    let c = new MergeFamiliesComponent(context, undefined, undefined, undefined);
     c.family = context.for(Families).create();
     c.families = [f, f2];
     f.tz.value = '1';
@@ -326,7 +340,7 @@ describe('AppComponent', () => {
   it("properMerge3", () => {
     let f = context.for(Families).create();
     let f2 = context.for(Families).create();
-    let c = new MergeFamiliesComponent(context, undefined, undefined);
+    let c = new MergeFamiliesComponent(context, undefined, undefined, undefined);
     c.family = context.for(Families).create();
     c.families = [f, f2];
     f.phone1.value = '1';

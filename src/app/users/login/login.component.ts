@@ -24,7 +24,8 @@ export class LoginComponent implements OnInit {
     private auth: AuthService,
     private router: RouteHelperService,
     private context: Context,
-    private routeReuseStrategy:RouteReuseStrategy
+    private routeReuseStrategy:RouteReuseStrategy,
+    public settings:ApplicationSettings
   ) { }
   isguest = Sites.getOrganizationFromContext(this.context) == Sites.guestSchema;
   user: string;

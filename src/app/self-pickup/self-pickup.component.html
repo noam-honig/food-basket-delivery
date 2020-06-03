@@ -1,9 +1,9 @@
 <mat-form-field class="full-width">
-  <input matInput [(ngModel)]="searchString" (input)="doFilter()" placeholder="חפשי שם" #search
+  <input matInput [(ngModel)]="searchString" (input)="doFilter()" placeholder="{{settings.lang.searchFamily}}" #search
     [ngModelOptions]="{standalone: true}">
   <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
 </mat-form-field>
-<mat-checkbox [(ngModel)]="showAllFamilies" (change)="doFilter()">{{'הצג את כל המשפחות'|translate}}
+<mat-checkbox [(ngModel)]="showAllFamilies" (change)="doFilter()">{{settings.lang.showAllFamilies|translate}}
 </mat-checkbox>
 <mat-accordion class="no-print">
   <mat-expansion-panel #myPanel *ngFor="let f of families.items;let i=index">
@@ -19,6 +19,6 @@
 </mat-accordion>
 <br>
 <button mat-raised-button color="accent" (click)="moreFamilies()"
-  *ngIf=" families.items.length!=families.totalRows">עוד
-  {{'משפחות'|translate}}
+  *ngIf=" families.items.length!=families.totalRows">
+  {{settings.lang.moreFamilies|translate}}
 </button>

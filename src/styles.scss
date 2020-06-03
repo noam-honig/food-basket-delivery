@@ -89,7 +89,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-th {
+[dir="rtl"] th {
   text-align: right;
 }
 
@@ -117,14 +117,14 @@ th {
   font-weight: 400 !important;
 }
 // solution for the table responsive rtl bug in IOS
-.table-responsive {
+[dir="rtl"] .table-responsive {
   direction: ltr;
 }
-.table-responsive table {
+[dir="rtl"] .table-responsive table {
   direction: rtl;
 }
 
-.mat-snack-bar-container {
+[dir="rtl"] .mat-snack-bar-container {
   direction: rtl;
 }
 
@@ -209,10 +209,7 @@ text-area {
 .primary-menu:hover {
   background-color: #ff4050 !important;
 }
-input[type="tel"] {
-  direction: ltr;
-  text-align: end;
-}
+
 
 .one-line {
   display: flex;

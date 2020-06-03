@@ -18,8 +18,8 @@ export class UpdateCommentComponent implements OnInit {
     family: ActiveFamilyDeliveries,
     showFailStatus?: boolean,
     helpText: (s: ApplicationSettings) => Column<any>
-    hideLocation?:boolean,
-    title?:string,
+    hideLocation?: boolean,
+    title?: string,
     comment: string,
     ok: (comment: string, failStatusId: DeliveryStatus) => void,
     cancel: () => void
@@ -27,7 +27,8 @@ export class UpdateCommentComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<any>,
     private context: Context,
-    private dialog: DialogService
+    private dialog: DialogService,
+    public settings: ApplicationSettings
   ) {
 
   }
@@ -61,9 +62,9 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
 
   async ngOnInit() {
     if (!this.args.title)
-      this.args.title = 'תודה';
+      this.args.title = this.settings.lang.thankYou;
     if (this.args.showFailStatus) {
-      
+
       this.phoneOptions = await ApplicationSettings.getPhoneOptions(this.args.family.id.value);
 
     }

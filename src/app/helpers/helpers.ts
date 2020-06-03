@@ -10,6 +10,8 @@ import { JWTCookieAuthorizationHelper } from '@remult/server';
 import { SelectCompanyComponent } from "../select-company/select-company.component";
 import { DistributionCenterId } from '../manage/distribution-centers';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
+import { getLang } from '../translate';
+import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
 
 
 
@@ -22,14 +24,15 @@ export abstract class HelpersBase extends IdEntity {
     }
 
     name = new StringColumn({
-        caption: "שם",
+        caption: getLang(this.context).volunteerName,
         validate: () => {
             if (!this.name.value || this.name.value.length < 2)
-                this.name.validationError = 'השם קצר מידי';
+                this.name.validationError = getLang(this.context).nameIsTooShort;
         }
     });
-    phone = new PhoneColumn("טלפון");
-    smsDate = new DateTimeColumn('מועד משלוח SMS');
+
+    phone = new PhoneColumn(getLang(this.context).phone);
+    smsDate = new DateTimeColumn(getLang(this.context).smsDate);
     company = new CompanyColumn(this.context);
     totalKm = new NumberColumn({ allowApiUpdate: Roles.distCenterAdmin });
     totalTime = new NumberColumn({ allowApiUpdate: Roles.distCenterAdmin });
@@ -38,19 +41,19 @@ export abstract class HelpersBase extends IdEntity {
         allowApiUpdate: Roles.admin
     });
     eventComment = new StringColumn({
-        caption: 'הערה',
+        caption: getLang(this.context).helperComment,
         allowApiUpdate: Roles.admin
     });
     needEscort = new BoolColumn({
-        caption: 'צריך מלווה',
+        caption: getLang(this.context).needEscort,
         allowApiUpdate: Roles.admin
     });
     theHelperIAmEscorting = new HelperIdReadonly(this.context, {
-        caption: 'נהג משוייך',
+        caption: getLang(this.context).assignedDriver,
         allowApiUpdate: Roles.admin
     });
     escort = new HelperId(this.context, {
-        caption: 'מלווה'
+        caption: getLang(this.context).escort
         , allowApiUpdate: Roles.admin
     });
 
@@ -130,7 +133,7 @@ export class Helpers extends HelpersBase {
                         this.admin.value = true;
                     }
                     this.phone.value = PhoneColumn.fixPhoneInput(this.phone.value);
-                    await checkForDuplicateValue(this, this.phone, context.for(Helpers), 'כבר קיים במערכת');
+                    await checkForDuplicateValue(this, this.phone, context.for(Helpers), getLang(this.context).alreadyExist);
                     if (this.isNew())
                         this.createDate.value = new Date();
                     this.veryUrlKeyAndReturnTrueIfSaveRequired();
@@ -146,6 +149,14 @@ export class Helpers extends HelpersBase {
                             let h = await context.for(Helpers).lookupAsync(this.escort);
                             h.theHelperIAmEscorting.value = this.id.value;
                             await h.save();
+                        }
+                    }
+                    if (context.onServer) {
+                        if (this.preferredDistributionAreaAddress.value != this.preferredDistributionAreaAddress.originalValue || !this.getGeocodeInformation().ok()) {
+                            let geo = await GetGeoInformation(this.preferredDistributionAreaAddress.value, context);
+                            this.addressApiResult.value = geo.saveToString();
+                            if (geo.ok()) {
+                            }
                         }
                     }
 
@@ -170,27 +181,38 @@ export class Helpers extends HelpersBase {
     _disableOnSavingRow = false;
     public static emptyPassword = 'password';
 
-    phone = new PhoneColumn("טלפון");
+    phone = new PhoneColumn(getLang(this.context).phone);
     realStoredPassword = new StringColumn({
         dbName: 'password',
         includeInApi: false
     });
+    email = new StringColumn(getLang(this.context).email);
+    preferredDistributionAreaAddress = new StringColumn(getLang(this.context).preferredDistributionArea);
+    addressApiResult = new StringColumn();
+    private _lastString: string;
+    private _lastGeo: GeocodeInformation;
+    getGeocodeInformation() {
+        if (this._lastString == this.addressApiResult.value)
+            return this._lastGeo ? this._lastGeo : new GeocodeInformation();
+        this._lastString = this.addressApiResult.value;
+        return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
+    }
 
-    password = new StringColumn({ caption: 'סיסמה', dataControlSettings: () => ({ inputType: 'password' }), serverExpression: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
+    password = new StringColumn({ caption: getLang(this.context).password, dataControlSettings: () => ({ inputType: 'password' }), serverExpression: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
 
-    createDate = new changeDate({ caption: 'מועד הוספה' });
+    createDate = new changeDate({ caption: getLang(this.context).createDate });
 
     reminderSmsDate = new DateTimeColumn({
-        caption: 'מועד משלוח תזכורת SMS'
+        caption: getLang(this.context).remiderSmsDate
     });
     admin = new BoolColumn({
-        caption: 'מנהל כלל המערכת',
+        caption: getLang(this.context).admin,
         allowApiUpdate: Roles.admin,
         includeInApi: Roles.admin,
         dbName: 'isAdmin'
     });
     distCenterAdmin = new BoolColumn({
-        caption: 'משייך מתנדבים לרשימת חלוקה',
+        caption: getLang(this.context).responsibleForAssign,
         allowApiUpdate: Roles.distCenterAdmin,
         includeInApi: Roles.distCenterAdmin,
         dbName: 'distCenterAdmin',
@@ -200,10 +222,10 @@ export class Helpers extends HelpersBase {
             }
             if (wasChanged(this.distCenterAdmin))
                 if (this.admin.originalValue) {
-                    this.distCenterAdmin.validationError = 'אינך רשאי לעדכן עבור מתנדב זה';
+                    this.distCenterAdmin.validationError = getLang(this.context).notAllowedToUpdateVolunteer;
                 }
                 else if (this.distributionCenter.value != (<HelperUserInfo>this.context.user).distributionCenter) {
-                    this.distributionCenter.validationError = 'אינך רשאי לעדכן עבור מתנדב זה';
+                    this.distributionCenter.validationError = getLang(this.context).notAllowedToUpdateVolunteer;
                 }
 
         }
@@ -294,7 +316,7 @@ export class CompanyColumn extends StringColumn {
 
     constructor(context: Context) {
         super({
-            caption: "חברה",
+            caption: getLang(context).company,
             dataControlSettings: () =>
                 ({
                     width: '300',

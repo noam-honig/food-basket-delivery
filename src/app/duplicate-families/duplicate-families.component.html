@@ -1,9 +1,9 @@
-<h3>כתובות עם יותר ממשפחה אחת</h3>
+<h3>{{settings.lang.addressesWithMoreThanOneFamily}}</h3>
 <table class="table table-bordered">
     <tr>
         <th></th>
-        <th (click)="sortByAddress()">כתובת</th>
-        <th (click)="sortByCount()">מספר משפחות</th>
+        <th (click)="sortByAddress()">{{settings.lang.address}}</th>
+        <th (click)="sortByCount()">{{settings.lang.families}}</th>
         <th>סה"כ {{duplicateFamilies.length}}</th>
         
     </tr>
@@ -11,7 +11,7 @@
         <td>{{i+1}}</td>
         <td> {{d.address}}</td>
         <td>{{d.count}}</td>
-        <td><a (click)="showFamilies(d)">הצג משפחות</a></td>
+        <td><a (click)="showFamilies(d)">{{settings.lang.showFamilies}}</a></td>
         
     </tr>
 </table>

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-yes-no-question',
@@ -16,7 +17,8 @@ export class YesNoQuestionComponent implements OnInit {
   confirmOnly = false;
   question: string;
   constructor(
-    private dialogRef: MatDialogRef<any>
+    private dialogRef: MatDialogRef<any>,
+    public settings:ApplicationSettings
 
   ) {
     dialogRef.afterClosed().subscribe(s => {

@@ -1,37 +1,37 @@
 <mat-card>
    
   <mat-horizontal-stepper #stepper>
-      <mat-step label="בחירת קובץ אקסל">
-          <h3> בחר קובץ אקסל</h3> <input type="file" (change)="fileChange($event)" />
+      <mat-step label="{{settings.lang.selectExcelFile}}">
+          <h3> {{settings.lang.selectExcelFile}}</h3> <input type="file" (change)="fileChange($event)" />
       </mat-step>
-      <mat-step label="הגדרת העמודות">
+      <mat-step label="{{settings.lang.mapExcelColumns}}">
 
 
           <ng-container *ngIf="filename">
 
-              <button (click)="loadSettings()" mat-raised-button>טען הגדרות</button>
-              <button (click)="saveSettings()" mat-raised-button>שמור הגדרות</button>
-              <button (click)="testImport()" mat-raised-button  color="accent">המשך לשלב הבא</button>
+              <button (click)="loadSettings()" mat-raised-button>{{settings.lang.loadExcelSettings}}</button>
+              <button (click)="saveSettings()" mat-raised-button>{{settings.lang.saveExcelSettings}}</button>
+              <button (click)="testImport()" mat-raised-button  color="accent">{{settings.lang.nextStep}}</button>
 
             
 
-              <h3>עמודות שלא מופיעות באקסל</h3>
+              <h3>{{settings.lang.addColumnsThatAreNotInTheFile}}</h3>
 
               <ul>
                   <li *ngFor="let ac of additionalColumns; let i = index">
                       <select [(ngModel)]="ac.column">
-                          <option value="">לא לקלוט</option>
+                          <option value="">{{settings.lang.excelColumnIgnore}}</option>
                           <option *ngFor="let c of columns" [ngValue]="c">{{c.name}}</option>
                       </select>
                       <input [(ngModel)]="ac.value">
-                      <button (click)="additionalColumns.splice(i,1)">הסר</button>
+                      <button (click)="additionalColumns.splice(i,1)">{{settings.lang.remove}}</button>
                   </li>
               </ul>
               <button (click)="additionalColumns.push({})" mat-raised-button>
-                  הוסף עמודה
+                  {{settings.lang.addExcelColumn}}
               </button>
 
-              <h3>בחירת עמודות מאקסל</h3>
+              <h3>{{settings.lang.mapExcelColumns}}</h3>
 
 
               <div class="table-div">
@@ -43,7 +43,7 @@
                               {{ec.title}}
                               <br>
                               <select [(ngModel)]="ec.column">
-                                  <option value="">לא לקלוט</option>
+                                  <option value="">{{settings.lang.excelColumnIgnore}}</option>
                                   <option *ngFor="let c of columns" [ngValue]="c">{{c.name}}</option>
                               </select>
                           </th>
@@ -60,14 +60,14 @@
                       </ng-container>
                   </table>
               </div>
-              <pagination-controls (pageChange)="excelPage = $event" previousLabel="קודם" nextLabel="הבא"
-                  id="excelPage"></pagination-controls> סה"כ {{rows.length}} שורות באקסל
+              <pagination-controls (pageChange)="excelPage = $event" previousLabel="{{settings.lang.previous}}" nextLabel="{{settings.lang.next}}"
+                  id="excelPage"></pagination-controls>{{settings.lang.total}} {{rows.length}} {{settings.lang.linesInExcel}}
           </ng-container>
       </mat-step>
-      <mat-step label="ביצוע הקליטה">
-          <h3>תוצאות</h3>
+      <mat-step label="{{settings.lang.executeExcelImport}}">
+          <h3>{{settings.lang.excelImportResults}}</h3>
           <mat-tab-group>
-              <mat-tab label="{{'מתנדבים חדשים'|translate}} - {{newRows.length}}" *ngIf="newRows&&newRows.length">
+              <mat-tab label="{{settings.lang.newVolunteers|translate}} - {{newRows.length}}" *ngIf="newRows&&newRows.length">
                   
                   <div class="table-div">
 
@@ -96,12 +96,12 @@
                           </ng-container>
                       </table>
                   </div>
-                  <pagination-controls (pageChange)="newRowsPage = $event" previousLabel="קודם" nextLabel="הבא"
+                  <pagination-controls (pageChange)="newRowsPage = $event" previousLabel="{{settings.lang.previous}}" nextLabel="{{settings.lang.next}}"
                       id="newRows">
                   </pagination-controls>
-                  <button (click)="addAll()" mat-raised-button  color="accent">{{'הוסף את כל המתנדבים'|translate}}</button>
+                  <button (click)="addAll()" mat-raised-button  color="accent">{{settings.lang.addAllVolunteers|translate}}</button>
               </mat-tab>
-              <mat-tab label="{{'מתנדבים לעדכון'|translate}} - {{updateRows.length}}" *ngIf="updateRows&&updateRows.length">
+              <mat-tab label="{{settings.lang.updateVolunteers|translate}} - {{updateRows.length}}" *ngIf="updateRows&&updateRows.length">
                   <div class="table-div">
                       <table class="table table-bordered" style="white-space: nowrap;">
                           <tr>
@@ -140,10 +140,10 @@
                           </ng-container>
                       </table>
                   </div>
-                  <pagination-controls (pageChange)="updateRowsPage = $event" previousLabel="קודם" nextLabel="הבא"
+                  <pagination-controls (pageChange)="updateRowsPage = $event" previousLabel="{{settings.lang.previous}}" nextLabel="{{settings.lang.next}}"
                       id="updateRows"></pagination-controls>
               </mat-tab>
-              <mat-tab label="{{'מתנדבים קיימים'|translate}} - {{identicalRows.length}}" *ngIf="identicalRows&&identicalRows.length">
+              <mat-tab label="{{settings.lang.existingVolunteers|translate}} - {{identicalRows.length}}" *ngIf="identicalRows&&identicalRows.length">
                   <div class="table-div">
                       <table class="table table-bordered" style="white-space: nowrap;">
                           <tr>
@@ -166,10 +166,10 @@
                           </ng-container>
                       </table>
                   </div>
-                  <pagination-controls (pageChange)="existingFamiliesPage = $event" previousLabel="קודם" nextLabel="הבא"
+                  <pagination-controls (pageChange)="existingFamiliesPage = $event" previousLabel="{{settings.lang.previous}}" nextLabel="{{settings.lang.next}}"
                   id="existingFamiliesPage"></pagination-controls>
               </mat-tab>
-              <mat-tab label="שגיאות -  {{errorRows.length}}" *ngIf="errorRows&&errorRows.length">
+              <mat-tab label="{{settings.lang.errors}} -  {{errorRows.length}}" *ngIf="errorRows&&errorRows.length">
                   <div class="table-div">
                       <table class="table table-bordered" style="white-space: nowrap;">
                           <tr>
@@ -199,13 +199,13 @@
                                               {{f.name}} - {{displayDupInfo(f)}} 
                                           </li>
                                       </ul>
-                                      <a (click)="moveFromErrorToAdd(i)">העבר למתנדבים להוספה</a>
+                                      <a (click)="moveFromErrorToAdd(i)">{{settings.lang.moveToNewVolunteers}}</a>
                                   </td>
                               </tr>
                           </ng-container>
                       </table>
                   </div>
-                  <pagination-controls (pageChange)="errorRowsPage = $event" previousLabel="קודם" nextLabel="הבא"
+                  <pagination-controls (pageChange)="errorRowsPage = $event" previousLabel="{{settings.lang.previous}}" nextLabel="{{settings.lang.next}}"
                       id="errorRows">
                   </pagination-controls>
               </mat-tab>

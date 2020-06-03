@@ -17,6 +17,9 @@ import { dataMigration } from "./dataMigration";
 import { GeoCodeOptions } from "../shared/googleApiHelpers";
 import { Families } from "../families/families";
 import { OverviewComponent } from "../overview/overview.component";
+import { environment } from "../../environments/environment";
+import * as request from 'request';
+import { setLangForSite } from "../translate";
 
 
 serverInit().then(async (dataSource) => {
@@ -45,8 +48,21 @@ serverInit().then(async (dataSource) => {
 
         if (fs.existsSync(index)) {
             let x = '';
-            x = (await ApplicationSettings.getAsync(context)).organisationName.value;
+            let settings = (await ApplicationSettings.getAsync(context));
+            setLangForSite(Sites.getValidSchemaFromContext(context),settings.forWho.value.args.languageCode);
+            x = settings.organisationName.value;
             let result = fs.readFileSync(index).toString().replace(/!TITLE!/g, x).replace("/*!SITE!*/", "multiSite=" + Sites.multipleSites);
+            if (settings.forWho.value.args.leftToRight) {
+                result = result.replace(/<body dir="rtl">/g, '<body dir="ltr">');
+            }
+            if (settings.forWho.value.args.languageCode) {
+                let lang = settings.forWho.value.args.languageCode;
+                result = result.replace(/document.lang = '';/g, `document.lang = '${lang}';`)
+                    .replace(/&language=iw&/, `&language=${lang}&`)
+                    .replace(/טוען/g, 'Loading');
+
+
+            }
             if (Sites.multipleSites) {
                 result = result.replace('"favicon.ico', '"/' + org + '/favicon.ico')
                     .replace('"/assets/apple-touch-icon.png"', '"/' + org + '/assets/apple-touch-icon.png"');
@@ -154,6 +170,7 @@ serverInit().then(async (dataSource) => {
 
             sendIndex(res, req);
         });
+
         app.get('/index.html', (req, res) => {
 
             sendIndex(res, req);

@@ -3,6 +3,7 @@ import { UserFamiliesList } from '../my-families/user-families';
 import { Context, DialogConfig } from '@remult/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 
 @Component({
@@ -13,10 +14,10 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 @DialogConfig({minWidth:350})
 export class PreviewFamilyComponent implements OnInit {
 
-  familyLists = new UserFamiliesList(this.context);
+  familyLists = new UserFamiliesList(this.context,this.settings);
   public argsFamily: ActiveFamilyDeliveries;
   constructor(public context: Context, private dialogRef: MatDialogRef<any>
-  ) { }
+  ,public settings:ApplicationSettings) { }
   async ngOnInit() {
 
     this.familyLists.toDeliver = [this.argsFamily];

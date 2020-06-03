@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, AfterViewInit, NgZone, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { MatDialogRef, MatDialogActions } from '@angular/material/dialog';
 import { Families, duplicateFamilyInfo, displayDupInfo } from '../families/families';
 
@@ -18,6 +18,9 @@ import { Roles } from '../auth/roles';
 import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 import { Sites } from '../sites/sites';
 import { async } from '@angular/core/testing';
+import { MatExpansionPanel } from '@angular/material';
+import { ShowOnMapComponent } from '../show-on-map/show-on-map.component';
+import { Location, getAddress, getCity } from '../shared/googleApiHelpers';
 
 @Component({
   selector: 'app-update-family-dialog',
@@ -26,9 +29,9 @@ import { async } from '@angular/core/testing';
 })
 @DialogConfig({
 
-  minWidth: '90vw'
+  minWidth: '95vw'
 })
-export class UpdateFamilyDialogComponent implements OnInit {
+export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, AfterViewInit, OnDestroy {
   public args: {
     family?: Families,
     familyDelivery?: FamilyDeliveries,
@@ -43,18 +46,78 @@ export class UpdateFamilyDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<any>,
 
     private context: Context,
-    private settings: ApplicationSettings,
-    private dialog: DialogService
+    public settings: ApplicationSettings,
+    private dialog: DialogService,
+    private cd: ChangeDetectorRef,
+    private zone: NgZone
 
   ) {
+    dialogRef.afterClosed().toPromise().then(() => {
+      if (!this.confirmed)
+        if (!this.args.userCanUpdateButDontSave)
+          this.families.currentRow.undoChanges();
+    });
+  }
+  ngOnDestroy(): void {
+    this.destroyMe.remove();
 
   }
+  ngAfterViewInit(): void {
+    this.addressPanel.open();
+    this.cd.detectChanges();
+
+  }
+
+  ngAfterViewChecked(): void {
+
+  }
+  getAddressDescription() {
+    let f = this.families.currentRow;
+    if (f.address.value == f.address.originalValue)
+      return f.getAddressDescription();
+    return f.address.originalValue;
+  }
+  initAddressAutoComplete = false;
+  destroyMe: google.maps.MapsEventListener;
+  addressOpen() {
+    if (this.initAddressAutoComplete)
+      return;
+    this.initAddressAutoComplete = true;
+    const autocomplete = new google.maps.places.SearchBox(this.addressInput.nativeElement);//,
+    //{
+    //  componentRestrictions: { country: this.settings.googleMapCountry() }
+    //,types: ["establishment","address","geocode"]  // 'establishment' / 'address' / 'geocode'
+    //});
+    this.destroyMe = google.maps.event.addListener(autocomplete, 'places_changed', () => {
+      if (autocomplete.getPlaces().length == 0)
+        return;
+      const place = autocomplete.getPlaces()[0];
+
+
+      this.zone.run(() => {
+        this.families.currentRow.address.value = this.addressInput.nativeElement.value;
+        this.onMapLocation = {
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng()
+        };
+        this.families.currentRow.addressByGoogle.value = getAddress(place);
+        this.families.currentRow.address.value = getAddress({
+          formatted_address: this.families.currentRow.address.value,
+          address_components: place.address_components
+        });
+        this.families.currentRow.city.value = getCity(place.address_components);
+        this.families.currentRow.addressOk.value = true;
+      });
+
+    });
+
+
+  }
+  @ViewChild('addressPanel', { static: false }) addressPanel: MatExpansionPanel;
+  @ViewChild('addressInput', { static: false }) addressInput: ElementRef;
   async sendSmsToCourier() {
     let h = await this.context.for(Helpers).findId(this.args.familyDelivery.courier);
-    let phone = h.phone.value;
-    if (phone.startsWith('0')) {
-      phone = '972' + phone.substr(1);
-    }
+
     await this.context.openDialog(UpdateCommentComponent, x => x.args = {
       helpText: () => new StringColumn(),
       ok: async (comment) => {
@@ -76,7 +139,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
   @ServerFunction({ allowed: Roles.admin })
   static async SendCustomMessageToCourier(courier: string, message: string, context?: ServerContext) {
     let h = await context.for(Helpers).findId(courier);
-    await new SendSmsUtils().sendSms(h.phone.value, await SendSmsAction.getSenderPhone(context), message, context.getOrigin(), Sites.getOrganizationFromContext(context));
+    await new SendSmsUtils().sendSms(h.phone.value, await SendSmsAction.getSenderPhone(context), message, context.getOrigin(), Sites.getOrganizationFromContext(context), await ApplicationSettings.getAsync(context));
 
   }
   preview() {
@@ -101,11 +164,12 @@ export class UpdateFamilyDialogComponent implements OnInit {
   }
   refreshDeliveryStatistics = false;
   cancel() {
-    if (!this.args.userCanUpdateButDontSave)
-      this.families.currentRow.undoChanges();
+
     this.dialogRef.close();
   }
+  confirmed = false;
   async confirm() {
+    this.confirmed = true;
     await this.families.currentRow.save();
     if (this.delivery) {
       let d = this.delivery;
@@ -143,7 +207,7 @@ export class UpdateFamilyDialogComponent implements OnInit {
     this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { family: f });
   }
   displayDupInfo(info: duplicateFamilyInfo) {
-    return displayDupInfo(info);
+    return displayDupInfo(info, this.context);
   }
 
 
@@ -155,6 +219,14 @@ export class UpdateFamilyDialogComponent implements OnInit {
   extraFamilyInfo = new DataAreaSettings<Families>();
   deliveryDefaults = new DataAreaSettings<Families>();
   familyDeliveries: GridSettings<FamilyDeliveries>;
+  onMapLocation: Location;
+  showOnMap() {
+    if (!this.onMapLocation)
+      this.onMapLocation = this.families.currentRow.getGeocodeInformation().location();
+    this.context.openDialog(ShowOnMapComponent, x => x.args = {
+      location: this.onMapLocation
+    });
+  }
   async ngOnInit() {
     if (!this.args.familyDelivery) {
       if (this.args.deliveryId) {
@@ -216,7 +288,6 @@ export class UpdateFamilyDialogComponent implements OnInit {
     this.familiesAddress = this.families.addArea({
       columnSettings: families => [
 
-        families.address,
         [
           families.appartment,
           families.floor,
@@ -260,7 +331,8 @@ export class UpdateFamilyDialogComponent implements OnInit {
 
 
     }
-    this.familyDeliveries = this.args.family.deliveriesGridSettings();
+    if (!this.families.currentRow.isNew())
+      this.familyDeliveries = this.args.family.deliveriesGridSettings();
 
   }
 

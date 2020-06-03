@@ -3,6 +3,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Helpers } from '../helpers/helpers';
 
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-helper-assignment',
@@ -12,7 +13,8 @@ import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 export class HelperAssignmentComponent implements OnInit {
   public argsHelper: Helpers;
   constructor(
-    private dialogRef: MatDialogRef<any>
+    private dialogRef: MatDialogRef<any>,
+    public settings:ApplicationSettings
   ) {
   }
   @ViewChild("assign", { static: true }) asign: AsignFamilyComponent;

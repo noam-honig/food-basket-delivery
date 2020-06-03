@@ -8,7 +8,7 @@ import { ApplicationSettings, SettingsService } from './manage/ApplicationSettin
 import { FamiliesComponent } from './families/families.component';
 import { Context, RouteHelperService, JwtSessionManager, DataAreaSettings } from '@remult/core';
 import { Roles } from './auth/roles';
-import { translate, translationConfig } from './translate';
+import { translate, translationConfig, Language } from './translate';
 
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { DeliveryStatus } from './families/DeliveryStatus';
@@ -28,7 +28,7 @@ import { InputAreaComponent } from './select-popup/input-area/input-area.compone
 
 })
 export class AppComponent {
-
+  lang: Language;
   isEdge = /msie\s|trident\/|edge\//i.test(window.navigator.userAgent);
   constructor(
     public sessionManager: AuthService,
@@ -38,17 +38,17 @@ export class AppComponent {
     private helper: RouteHelperService,
     public context: Context,
     public settings: ApplicationSettings) {
-
+    this.lang = settings.lang;
     this.toolbarColor = 'primary';
 
     if (settings.redTitleBar.value) {
       this.toolbarColor = 'accent';
     }
-    
+
 
 
   }
-  
+
 
 
   showSeperator(route: Route) {
@@ -57,6 +57,12 @@ export class AppComponent {
     return false;
   }
   routeName(route: Route) {
+    let c = route.component;
+    if (c) {
+      let s = routeMap.get(c);
+      if (s)
+        return s;
+    }
     let name = route.path;
     if (route.data && route.data.name)
       name = route.data.name;
@@ -71,8 +77,16 @@ export class AppComponent {
     return this.prevLogoUrl;
   }
   currentTitle() {
-    if (this.activeRoute && this.activeRoute.snapshot && this.activeRoute.firstChild && this.activeRoute.firstChild.data && this.activeRoute.snapshot.firstChild.data.name)
-      return translate(this.activeRoute.snapshot.firstChild.data.name);
+    if (this.activeRoute && this.activeRoute.snapshot && this.activeRoute.firstChild) {
+      let c = this.activeRoute.firstChild.component;
+      if (c) {
+        let s = routeMap.get(c);
+        if (s)
+          return s;
+      }
+      if (this.activeRoute.firstChild.data && this.activeRoute.snapshot.firstChild.data.name)
+        return translate(this.activeRoute.snapshot.firstChild.data.name);
+    }
     return ApplicationSettings.get(this.context).organisationName.value;
   }
   toolbarColor = 'primary';
@@ -102,7 +116,11 @@ export class AppComponent {
   test() {
 
   }
+  showEnglishUrl() {
+    return this.settings.lang.languageCode != 'iw';
+  }
 
-  
 
 }
+
+export const routeMap = new Map<any, string>();

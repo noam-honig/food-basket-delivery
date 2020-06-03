@@ -5,6 +5,7 @@ import * as fetch from 'node-fetch';
 import { Context, ServerContext } from '@remult/core';
 import { Roles } from "../auth/roles";
 import { Sites } from '../sites/sites';
+import { getLang } from '../translate';
 
 
 
@@ -17,7 +18,7 @@ export class SendSmsAction {
             let h = await context.for(Helpers).findId(helperId);
             await SendSmsAction.generateMessage(context, h, context.getOrigin(), reminder, context.user.name, async (phone, message, sender) => {
 
-                new SendSmsUtils().sendSms(phone, sender, message, context.getOrigin(), Sites.getOrganizationFromContext(context));
+                new SendSmsUtils().sendSms(phone, sender, message, context.getOrigin(), Sites.getOrganizationFromContext(context), await ApplicationSettings.getAsync(context));
                 if (reminder)
                     h.reminderSmsDate.value = new Date();
                 else
@@ -57,7 +58,7 @@ export class SendSmsAction {
 
                 message = settings.smsText.value;
                 if (!message || message.trim().length == 0) {
-                    message = 'שלום !מתנדב! לחלוקת חבילות !ארגון! לחץ על: !אתר! תודה !שולח!';
+                    message = getLang(ds).defaultSmsText;
                 }
             }
             let url = origin + '/x/' + helper.shortUrlKey.value;
@@ -80,7 +81,10 @@ export class SendSmsAction {
     }
 
     static getMessage(template: string, orgName: string, courier: string, sender: string, url: string) {
-        return template.replace('!מתנדב!', courier).replace('!משנע!', courier).replace('!שולח!', sender).replace('!ארגון!', orgName).replace('!אתר!', url)
+        return template.replace('!מתנדב!', courier).replace('!משנע!', courier).replace('!VOLUNTEER!', courier)
+            .replace('!שולח!', sender).replace('!SENDER!', sender)
+            .replace('!ארגון!', orgName).replace("!ORG!", orgName)
+            .replace('!אתר!', url).replace('!URL!', url)
 
     }
 }
@@ -101,7 +105,7 @@ export class SendSmsUtils {
     accid = process.env.SMS_ACCID;
 
 
-    async sendSms(phone: string, from: string, text: string, org: string, schema: string) {
+    async sendSms(phone: string, from: string, text: string, org: string, schema: string, settings: ApplicationSettings) {
 
         var t = new Date();
         var date = t.getFullYear() + '/' + (t.getMonth() + 1) + '/' + t.getDate() + ' ' + t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds();
@@ -128,25 +132,46 @@ export class SendSmsUtils {
 
 
         try {
-            let h = new fetch.Headers();
-            h.append('Content-Type', 'text/xml; charset=utf-8');
-            h.append('SOAPAction', 'apiItnewsletter/sendSmsToRecipients');
-            let r = await fetch.default('https://sapi.itnewsletter.co.il/webservices/webservicesms.asmx', {
-                method: 'POST',
-                headers: h,
-                body: data
-            });
+            if (settings.forWho.value.args.internationalPrefixForSmsAndAws) {
+                let prefix = settings.forWho.value.args.internationalPrefixForSmsAndAws;
+                if (phone.startsWith('0'))
+                    phone = phone.substring(1, 1000);
+                if (!phone.startsWith('+'))
+                    phone = prefix + phone;
+                let f = "+972507330590";
+                let AWS = await import('aws-sdk');
+                let r = await new AWS.SNS({ apiVersion: '2010-03-31' }).publish({
+                    Message: text,
+                    PhoneNumber: phone,
+                    MessageAttributes: {
+                        'AWS.SNS.SMS.SenderID': {
+                            'DataType': 'String',
+                            'StringValue': 'HAGAI'
+                        }
+                    }
+                }).promise();
+                console.log(phone, r);
 
-            let res = await r.text();
-            let orig = res;
-            let t = '<sendSmsToRecipientsResult>';
-            let i = res.indexOf(t);
-            if (i >= 0) {
-                res = res.substring(i + t.length);
-                res = res.substring(0, res.indexOf('<'));
+            } else {
+                let h = new fetch.Headers();
+                h.append('Content-Type', 'text/xml; charset=utf-8');
+                h.append('SOAPAction', 'apiItnewsletter/sendSmsToRecipients');
+                let r = await fetch.default('https://sapi.itnewsletter.co.il/webservices/webservicesms.asmx', {
+                    method: 'POST',
+                    headers: h,
+                    body: data
+                });
+
+                let res = await r.text();
+                let orig = res;
+                let t = '<sendSmsToRecipientsResult>';
+                let i = res.indexOf(t);
+                if (i >= 0) {
+                    res = res.substring(i + t.length);
+                    res = res.substring(0, res.indexOf('<'));
+                }
+                console.log('sms response for:' + schema + ' - ' + res);
             }
-            console.log('sms response for:' + schema + ' - ' + res);
-
 
         }
         catch (err) {

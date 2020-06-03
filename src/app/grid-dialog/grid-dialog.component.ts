@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { IDataAreaSettings, DataAreaSettings, GridSettings } from '@remult/core';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-grid-dialog',
@@ -19,7 +20,8 @@ export class GridDialogComponent implements OnInit {
   };
 
   constructor(
-    public dialogRef: MatDialogRef<any>
+    public dialogRef: MatDialogRef<any>,
+    public settings:ApplicationSettings
 
   ) {
 

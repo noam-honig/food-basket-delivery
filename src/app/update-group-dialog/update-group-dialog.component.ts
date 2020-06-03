@@ -4,6 +4,7 @@ import { Groups } from '../manage/manage.component';
 import { DialogService } from '../select-popup/dialog';
 import { MatDialogRef } from '@angular/material/dialog';
 import { GroupsColumn } from '../families/families';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-update-group-dialog',
@@ -14,7 +15,7 @@ import { GroupsColumn } from '../families/families';
 export class UpdateGroupDialogComponent implements OnInit {
 
   constructor(private context: Context, private dialog: DialogService,
-    private dialogRef: MatDialogRef<any>) {
+    private dialogRef: MatDialogRef<any>,public settings:ApplicationSettings) {
 
 
   }

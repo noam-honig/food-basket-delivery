@@ -1,14 +1,14 @@
-<div dir="rtl">
+
   <mat-card>
     <div class="fullSize">
       
       <form (submit)="selectFirst()">
 
         <mat-form-field class="full-width">
-          <input matInput [(ngModel)]="searchString" (input)="doFilter()" placeholder="חפשי שם" [ngModelOptions]="{standalone: true}">
+          <input matInput [(ngModel)]="searchString" (input)="doFilter()" placeholder="{{settings.lang.searchVolunteer}}" [ngModelOptions]="{standalone: true}">
           <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
         </mat-form-field>
-        <h4 *ngIf="showingRecentHelpers">מתנדבים אחרונים</h4>
+        <h4 *ngIf="showingRecentHelpers">{{settings.lang.recentVolunteers}}</h4>
         <mat-nav-list role="list">
           <mat-list-item *ngFor="let h of filteredHelpers" (click)="select(h)">
 
@@ -26,10 +26,8 @@
         </mat-nav-list>
        
       </form>
-      <button mat-raised-button color="accent" (click)="moreHelpers()" *ngIf="showingRecentHelpers|| filteredHelpers.length==findOptions.limit">עוד
-        מתנדבים
+      <button mat-raised-button color="accent" (click)="moreHelpers()" *ngIf="showingRecentHelpers|| filteredHelpers.length==findOptions.limit">{{settings.lang.moreVolunteers}}
       </button>
     </div>
   </mat-card>
 
-</div>

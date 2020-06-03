@@ -13,6 +13,7 @@ import { Roles } from "../auth/roles";
 import { Groups } from "../manage/manage.component";
 import { DistributionCenterId } from '../manage/distribution-centers';
 import { FamilyStatusColumn, FamilyStatus } from './FamilyStatus';
+import { use, getLang } from '../translate';
 
 
 export interface OutArgs {
@@ -29,10 +30,13 @@ export const colors = {
     , gray: 'gray'
 };
 export class Stats {
-    outOfList = new FaimilyStatistics('הוצאו מהרשימות', f => f.status.isEqualTo(FamilyStatus.RemovedFromList), colors.gray);
-    toDelete = new FaimilyStatistics('למחיקה', f => f.status.isEqualTo(FamilyStatus.ToDelete), colors.red);
-    active = new FaimilyStatistics('פעילות', f => f.status.isEqualTo(FamilyStatus.Active), colors.green);
-    problem = new FaimilyStatistics('כתובות בעיתיות', f => f.status.isEqualTo(FamilyStatus.Active).and(f.addressOk.isEqualTo(false)), colors.orange);
+    constructor(private context:Context){
+
+    }
+    outOfList = new FaimilyStatistics(getLang(this.context).removedFromList, f => f.status.isEqualTo(FamilyStatus.RemovedFromList), colors.gray);
+    toDelete = new FaimilyStatistics(getLang(this.context).toDelete, f => f.status.isEqualTo(FamilyStatus.ToDelete), colors.red);
+    active = new FaimilyStatistics(getLang(this.context).active, f => f.status.isEqualTo(FamilyStatus.Active), colors.green);
+    problem = new FaimilyStatistics(getLang(this.context).adderssProblems, f => f.status.isEqualTo(FamilyStatus.Active).and(f.addressOk.isEqualTo(false)), colors.orange);
 
     async getData(distCenter: string) {
         let r = await Stats.getFamilyStats(distCenter);
@@ -47,7 +51,7 @@ export class Stats {
     @ServerFunction({ allowed: Roles.admin })
     static async getFamilyStats(distCenter: string, context?: Context) {
         let result = { data: {}, groups: [] as groupStats[] };
-        let stats = new Stats();
+        let stats = new Stats(context);
         let pendingStats = [];
         for (let s in stats) {
             let x = stats[s];

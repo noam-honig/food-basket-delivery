@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 
 
@@ -11,7 +12,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class FamilyInListComponent implements OnInit {
 
-  constructor(private sanitization: DomSanitizer) { }
+  constructor(private sanitization: DomSanitizer,public settings:ApplicationSettings) { }
   @Input() f: ActiveFamilyDeliveries;
   @Input() i: number;
   @Input() newAssign: boolean;

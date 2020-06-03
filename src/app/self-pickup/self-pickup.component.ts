@@ -8,6 +8,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-self-pickup',
@@ -25,7 +26,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
   };
 
   constructor(private busy: BusyService
-    , private context: Context, private dialog: DialogService) {
+    , private context: Context, private dialog: DialogService, public   settings: ApplicationSettings) {
     this.dialog.onDistCenterChange(async () => {
       this.families.getRecords();
     }, this.destroyHelper);

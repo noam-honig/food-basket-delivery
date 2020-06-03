@@ -29,7 +29,8 @@ export class SelectHelperComponent implements OnInit {
     private dialogRef: MatDialogRef<any>,
 
     private context: Context,
-    private busy: BusyService
+    private busy: BusyService,
+    public settings:ApplicationSettings
 
   ) {
 

@@ -5,11 +5,13 @@ import { DialogService } from '../select-popup/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Context } from '@remult/core';
 
-import { translate } from '../translate';
+import { translate, use } from '../translate';
 import { UpdateCommentComponent } from '../update-comment/update-comment.component';
 
 
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { createElementCssSelector } from '@angular/compiler';
 
 @Component({
   selector: 'app-family-info',
@@ -18,7 +20,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 })
 export class FamilyInfoComponent implements OnInit {
 
-  constructor(private dialog: DialogService, private context: Context) { }
+  constructor(private dialog: DialogService, private context: Context, public settings: ApplicationSettings) { }
   @Input() f: ActiveFamilyDeliveries;
   @Input() showHelp = false;
   ngOnInit() {
@@ -29,7 +31,10 @@ export class FamilyInfoComponent implements OnInit {
   @Input() partOfAssign: Boolean;
   @Output() assignmentCanceled = new EventEmitter<void>();
   @Output() refreshList = new EventEmitter<void>();
-  
+  useWaze() {
+    return this.settings.lang.languageCode == 'iw';
+  }
+
   showCancelAssign(f: ActiveFamilyDeliveries) {
     return this.partOfAssign && f.courier.value != '' && f.deliverStatus.value == DeliveryStatus.ReadyForDelivery;
   }
@@ -51,7 +56,7 @@ export class FamilyInfoComponent implements OnInit {
           this.dialog.analytics('Self Pickup');
         }
         catch (err) {
-          this.dialog.Error( err);
+          this.dialog.Error(err);
         }
       },
       cancel: () => { }
@@ -65,27 +70,34 @@ export class FamilyInfoComponent implements OnInit {
   }
   openWaze(f: ActiveFamilyDeliveries) {
     if (!f.addressOk.value) {
-      this.dialog.YesNoQuestion(translate("הכתובת אינה מדוייקת. בדקו בגוגל או התקשרו למשפחה. נשמח אם תעדכנו את הכתובת שמצאתם בהערות. האם לפתוח וייז?"), () => {
-        f.openWaze();
+      this.dialog.YesNoQuestion(translate(use.language.addressNotOkOpenWaze), () => {
+        if (this.useWaze())
+          f.openWaze();
+        else
+          f.openGoogleMaps();
       });
     }
     else
-      f.openWaze();
+      if (this.useWaze())
+        f.openWaze();
+      else
+        f.openGoogleMaps();
+
 
 
   }
   udpateInfo(f: ActiveFamilyDeliveries) {
     f.showDetailsDialog({
-      dialog:this.dialog,
-      refreshDeliveryStats:()=>{
+      dialog: this.dialog,
+      refreshDeliveryStats: () => {
         this.refreshList.emit();
       }
     });
-    
+
   }
   copyAddress(f: ActiveFamilyDeliveries) {
     copy(f.address.value);
-    this.dialog.Info("הכתובת " + f.address.value + " הועתקה בהצלחה");
+    this.dialog.Info(use.language.address + " " + f.address.value + " " + use.language.wasCopiedSuccefully);
   }
   showStatus() {
     return this.f.deliverStatus.value != DeliveryStatus.ReadyForDelivery && this.f.deliverStatus.value != DeliveryStatus.SelfPickup;

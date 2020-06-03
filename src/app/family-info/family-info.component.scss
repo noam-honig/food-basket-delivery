@@ -6,6 +6,23 @@
   margin-bottom: 15px;
 }
 .address-container {
-    display:flex;
-    
+  display: flex;
+}
+h4 {
+  margin-block-start: 0.6em;
+  margin-block-end: 0.3em;
+}
+.phone-container {
+  display: flex;
+  padding-bottom: 10px;
+  > div {
+    padding: 0 5px;
+    align-self: center;
+  }
+}
+.address-links {
+  text-align: end;
+  > a {
+    display: block;
+  }
 }

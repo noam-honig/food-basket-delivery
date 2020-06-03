@@ -1,4 +1,4 @@
-<h1 mat-dialog-title *ngIf="family">מיזוג למשפחת {{family.name.value}}</h1>
+<h1 mat-dialog-title *ngIf="family">{{settings.lang.mergeForFamily}} {{family.name.value}}</h1>
 <div mat-dialog-content>
     <table class="table table-bordered my-table" *ngIf="gs">
         <tr *ngFor="let c of gs.columns.items">
@@ -18,21 +18,21 @@
         </tr>
         <tr>
             <td>
-                <a (click)="updateCurrentFamily()">כרטיס המשפחה</a>
+                <a (click)="updateCurrentFamily()">{{settings.lang.familyDetails}}</a>
             </td>
             <td *ngFor="let f of families">
-                <a (click)="updateFamily(f)">כרטיס המשפחה</a><br>
-                <a (click)="f.showDeliveryHistoryDialog()">משלוחים</a>
+                <a (click)="updateFamily(f)">{{settings.lang.familyDetails}}</a><br>
+                <a (click)="f.showDeliveryHistoryDialog()">{{settings.lang.deliveries}}</a>
             </td>
         </tr>
     </table>
 </div>
 <mat-dialog-actions>
     <button mat-raised-button color="warning" (click)="cancel()">
-        בטל
+        {{settings.lang.cancel}}
     </button>
     <button mat-raised-button color="accent" (click)="confirm()">
-        שמור מיזוג
+        {{settings.lang.merge}}
     </button>
 
 

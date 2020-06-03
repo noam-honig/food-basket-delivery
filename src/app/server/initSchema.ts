@@ -13,7 +13,8 @@ import { SqlBuilder } from '../model-shared/types';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { pagedRowsIterator, iterateRowsActionOnServer } from '../families/familyActionsWiring';
-import { TranslationOptions } from '../translate';
+import { TranslationOptions, getLang, setLangForSite } from '../translate';
+import { Sites } from '../sites/sites';
 
 
 export async function initSchema(pool1: PostgresPool, org: string) {
@@ -56,31 +57,32 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     });*/
 
     let settings = await context.for(ApplicationSettings).lookupAsync(s => s.id.isEqualTo(1));
+    let l = getLang(context);
     if (settings.isNew()) {
         settings.id.value = 1;
-        settings.organisationName.value = 'שם הארגון שלי';
+        settings.organisationName.value = l.defaultOrgName;;
         settings.logoUrl.value = '/assets/apple-touch-icon.png';
-        settings.smsText.value = 'שלום !מתנדב!\nלחלוקת חבילות !ארגון! לחץ על: !אתר! \nתודה !שולח!';
+        settings.smsText.value = l.defaultSmsText;
     }
     if (!settings.reminderSmsText.value)
-        settings.reminderSmsText.value = 'שלום !מתנדב!, \nנשמח אם תעדכן את המערכת במצב המסירה של הסלים. לעדכון לחץ על:  !אתר!\nבתודה !ארגון!';
+        settings.reminderSmsText.value = l.reminderSmsText;
 
     if (!settings.commentForSuccessDelivery.value)
-        settings.commentForSuccessDelivery.value = 'נשמח אם תכתוב לנו הערה על מה שראית והיה';
+        settings.commentForSuccessDelivery.value = l.commentForSuccessDelivery;
     if (!settings.commentForSuccessLeft.value)
-        settings.commentForSuccessLeft.value = 'אנא פרט היכן השארת את הסל ועם מי דיברת';
+        settings.commentForSuccessLeft.value = l.commentForSuccessLeft;
     if (!settings.commentForProblem.value)
-        settings.commentForProblem.value = 'נשמח אם תכתוב לנו הערה על מה שראית והיה';
+        settings.commentForProblem.value =l.commentForProblem;
     if (!settings.messageForDoneDelivery.value) {
-        settings.messageForDoneDelivery.value = 'תודה על כל העזרה, נשמח אם תתנדבו שוב';
+        settings.messageForDoneDelivery.value =l.messageForDoneDelivery;
     }
     if (!settings.deliveredButtonText.value) {
-        settings.deliveredButtonText.value = 'מסרתי את החבילה בהצלחה';
+        settings.deliveredButtonText.value =l.deliveredButtonText;
     }
     if (!settings.boxes1Name.value)
-        settings.boxes1Name.value = 'מנות';
+        settings.boxes1Name.value =l.boxes1Name;
     if (!settings.boxes2Name.value)
-        settings.boxes2Name.value = 'משהו אחר';
+        settings.boxes2Name.value =l.boxes2Name;
     await settings.save();
 
 
@@ -93,7 +95,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     if ((await context.for(DistributionCenters).count() == 0)) {
         let h = context.for(DistributionCenters).create();
         h.setEmptyIdForNewRow();
-        h.name.value = 'חלוקת מזון';
+        h.name.value = l.defaultDistributionListName;
         h.address.value = settings.address.value;
         await h.save();
     }
@@ -392,7 +394,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
 
 
-
+    setLangForSite(org,settings.forWho.value.args.languageCode);
 
 }
 

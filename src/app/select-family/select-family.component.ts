@@ -6,6 +6,7 @@ import { FilterBase } from '@remult/core';
 import { Context } from '@remult/core';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 
 @Component({
@@ -22,7 +23,7 @@ export class SelectFamilyComponent implements OnInit {
     distCenter: string
   };
   @ViewChild("search", { static: true }) search: ElementRef;
-  constructor(private busy: BusyService, private dialogRef: MatDialogRef<any>, private context: Context) { }
+  constructor(private busy: BusyService, private dialogRef: MatDialogRef<any>, private context: Context,public settings:ApplicationSettings) { }
   searchString: string = '';
   families = this.context.for(ActiveFamilyDeliveries).gridSettings({ knowTotalRows: true });
   pageSize = 7;

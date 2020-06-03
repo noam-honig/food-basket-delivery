@@ -9,15 +9,15 @@
   </div>
 </div>
 <h4 *ngIf="currentStatFilter">{{currentStatFilter.name}} - {{currentStatFilter.value}}</h4>
-<a *ngIf="currentStatFilter" (click)="clearFilter()">הצג הכל</a>
-<h4 *ngIf="!currentStatFilter">כולם - {{helpers.length}}</h4>
+<a *ngIf="currentStatFilter" (click)="clearFilter()">{{settings.lang.showAll}}</a>
+<h4 *ngIf="!currentStatFilter">{{settings.lang.all}} - {{helpers.length}}</h4>
 <div style="width:100%;display:flex;justify-content: space-between;">
   <mat-form-field class="full-width">
-    <input matInput [(ngModel)]="searchString" placeholder="חיפוש מתנדב" [ngModelOptions]="{standalone: true}">
+    <input matInput [(ngModel)]="searchString" placeholder="{{settings.lang.searchVolunteer}}" [ngModelOptions]="{standalone: true}">
     <mat-icon matSuffix (click)="searchString=''">clear</mat-icon>
   </mat-form-field>
   <mat-menu #appMenu="matMenu">
-    <button mat-menu-item (click)="sendSmsToAll()">{{'שלח הודעת SMS למתנדבים שטרם קיבלו'|translate}}</button>
+    <button mat-menu-item (click)="sendSmsToAll()">{{settings.lang.sendSmsToAllVolunteersThatDidntGetOne|translate}}</button>
 
   </mat-menu>
 
@@ -35,11 +35,10 @@
               {{c.name}}
             </mat-panel-title>
             <mat-panel-description>
-              הושלמו {{c.deliveries - c.inProgress}}/{{c.deliveries}} <span *ngIf="c.problem>0">&nbsp; ({{c.problem}}
-                לא נמסרו)</span>
-              <span *ngIf="c.gotSms">, יצא {{c.smsDateName}}</span> <span *ngIf="!c.gotSms">,
-                טרם
-                נשלח SMS</span>
+              {{settings.lang.completed}} {{c.deliveries - c.inProgress}}/{{c.deliveries}} <span *ngIf="c.problem>0">&nbsp; ({{c.problem}}
+                {{settings.lang.notDelivered}})</span>
+              <span *ngIf="c.gotSms">, {{settings.lang.left}} {{c.smsDateName}}</span> <span *ngIf="!c.gotSms">,
+                {{settings.lang.smsNotSent}}</span>
             </mat-panel-description>
           </div>
           <div *ngIf="c.eventComment">

@@ -3,38 +3,39 @@
     <h4>{{f.deliverStatus.displayValue}}</h4>
     {{f.deliveryStatusDate.displayValue}}
     <div *ngIf="f.courierComments.value">
-      <h5 style="display:inline">הערת מתנדב</h5> - {{f.courierComments.value}}
+      <h5 style="display:inline">{{settings.lang.notice}}</h5> - {{f.courierComments.value}}
 
     </div>
   </div>
   <div>
     <button mat-raised-button class="cancelAssignButton" color="accent" *ngIf="showFamilyPickedUp(f)"
-      (click)="familiyPickedUp(f)">אספו את החבילה</button>
+      (click)="familiyPickedUp(f)">{{settings.lang.packageWasPickedUp}}</button>
     <button *ngIf="showCancelAssign(f)" mat-raised-button class=" badButton cancelAssignButton"
-      (click)="cancelAssign(f)">בטל
-      שיוך</button>
-    <button *ngIf="partOfAssign" mat-raised-button class="cancelAssignButton" (click)=" udpateInfo(f)">כרטיס משלוח</button>
+      (click)="cancelAssign(f)">{{settings.lang.cancelAsignment}}</button>
+    <button *ngIf="partOfAssign" mat-raised-button class="cancelAssignButton"
+      (click)=" udpateInfo(f)">{{settings.lang.deliveryDetails}}</button>
   </div>
-  <h4 style="display:inline">סל</h4> - {{f.basketType.displayValue}}
+  <h4 style="display:inline">{{settings.lang.basket}}</h4> - {{f.basketType.displayValue}}
 
   <div *ngIf="f.deliveryComments.value">
     <mat-icon color="accent" style="vertical-align: middle">comment</mat-icon>
-    <strong style="color:red">שימו לב! </strong> {{f.deliveryComments.value}}
+    <strong style="color:red">{{settings.lang.notice}} </strong> {{f.deliveryComments.value}}
   </div>
   <div *ngIf="f.courierBeenHereBefore.value">
-    <mat-icon color="green">repeat</mat-icon>
-    {{'הייתם אצל המשפחה הזו גם פעם קודמת'|translate}}
+    <mat-icon color="green" style="vertical-align: middle">repeat</mat-icon>
+    {{settings.lang.repeatFamilyNotice|translate}}
   </div>
-  <h4>כתובת</h4>
+  <h4>{{settings.lang.address}}</h4>
   <div class="address-container">
     <span (click)="openWaze(f)">
-      <img src="assets/waze.png">
+      <img src="assets/waze.png" *ngIf="useWaze()">
+      <img src="assets/google_maps_icon.png" *ngIf="!useWaze()">
     </span>
-    <div style="flex-grow:1;padding-right:10px;">
+    <div style="flex-grow:1;padding:0 5px;">
       <ng-container *ngIf="!f.addressOk.value">
         <mat-icon style="margin-right:5px" color="accent">warning
         </mat-icon>
-        שימו לב, כתובת לא מדוייקת!
+        {{settings.lang.inacurateAddress}}
         <br />
         <br />
       </ng-container>
@@ -42,18 +43,18 @@
 
 
 
-        {{f.getAddressDescription()}}
+        <span style="display:block"> {{f.getAddressDescription()}} </span>
         <ng-container *ngIf="f.floor.value||f.appartment.value">
-          <br />
+
         </ng-container>
         <ng-container *ngIf="f.floor.value">
-          קומה {{f.floor.value}}
+          {{f.floor.defs.caption}} {{f.floor.value}}
         </ng-container>
         <ng-container *ngIf="f.appartment.value">
-          דירה {{f.appartment.value}}
+          {{f.appartment.defs.caption}} {{f.appartment.value}}
         </ng-container>
         <ng-container *ngIf="f.entrance.value">
-          כניסה {{f.entrance.value}}
+          {{f.entrance.defs.caption}} {{f.entrance.value}}
         </ng-container>
 
 
@@ -61,73 +62,67 @@
 
       </a>
       <ng-container *ngIf="f.addressComment.value">
-        <br />
-        <br /><strong style="color:red">שימו לב! </strong> {{f.addressComment.value}}
+        <div>
+          <strong style="color:red;">{{settings.lang.notice}} </strong> {{f.addressComment.value}}
+        </div>
       </ng-container>
     </div>
 
-    <div style="float:left;text-align: left">
-      <a (click)="f.openGoogleMaps()">google map</a>
-      <br />
-      <a (click)="f.showOnGovMap()">govmap</a>
-      <br />
-      <a (click)="copyAddress(f)">העתק כתובת</a>
+    <div class="address-links">
+      <a (click)="f.openGoogleMaps()" *ngIf="useWaze()">google map</a>
+
+      <a (click)="f.showOnGovMap()" *ngIf="useWaze()">govmap</a>
+
+      <a (click)="copyAddress(f)">{{settings.lang.copyAddress}}</a>
     </div>
 
   </div>
 
-  <h4 *ngIf="f.phone1.value || f.phone2.value||f.phone3.value||f.phone4.value">טלפונים:</h4>
-  <div *ngIf="f.phone1.value">
+  <h4 *ngIf="f.phone1.value || f.phone2.value||f.phone3.value||f.phone4.value">{{settings.lang.phones}}:</h4>
+  <div *ngIf="f.phone1.value" class="phone-container">
     <a href="tel:{{f.phone1.value}}">
-      <button mat-mini-fab style="margin-left:10px;vertical-align: middle" color="primary">
+      <button mat-mini-fab style="vertical-align: middle" color="primary">
         <mat-icon>call</mat-icon>
       </button>
     </a>
-    <div style="display:inline-block">
+    <div>
       <a href="tel:{{f.phone1.value}}">{{f.phone1.displayValue}}</a>,
       {{f.phone1Description.value?f.phone1Description.value:f.name.value}}
-
     </div>
-
   </div>
-  <div style="margin-top:5px" *ngIf="f.phone2.value">
+
+  <div *ngIf="f.phone2.value" class="phone-container">
     <a href="tel:{{f.phone2.value}}">
-      <button mat-mini-fab style="margin-left:10px;vertical-align: middle" color="primary">
+      <button mat-mini-fab style="vertical-align: middle" color="primary">
         <mat-icon>call</mat-icon>
       </button>
     </a>
-    <div style="display:inline-block">
+    <div>
       <a href="tel:{{f.phone2.value}}">{{f.phone2.displayValue}}</a>,
       {{f.phone2Description.value?f.phone2Description.value:f.name.value}}
-
     </div>
-
   </div>
-  <div style="margin-top:5px" *ngIf="f.phone3.value">
+  <div *ngIf="f.phone3.value" class="phone-container">
     <a href="tel:{{f.phone3.value}}">
-      <button mat-mini-fab style="margin-left:10px;vertical-align: middle" color="primary">
+      <button mat-mini-fab style="vertical-align: middle" color="primary">
         <mat-icon>call</mat-icon>
       </button>
     </a>
-    <div style="display:inline-block">
+    <div>
       <a href="tel:{{f.phone3.value}}">{{f.phone3.displayValue}}</a>,
       {{f.phone3Description.value?f.phone3Description.value:f.name.value}}
-
     </div>
-
   </div>
-  <div style="margin-top:5px" *ngIf="f.phone4.value">
+  <div *ngIf="f.phone4.value" class="phone-container">
     <a href="tel:{{f.phone4.value}}">
-      <button mat-mini-fab style="margin-left:10px;vertical-align: middle" color="primary">
+      <button mat-mini-fab style="vertical-align: middle" color="primary">
         <mat-icon>call</mat-icon>
       </button>
     </a>
-    <div style="display:inline-block">
+    <div>
       <a href="tel:{{f.phone4.value}}">{{f.phone4.displayValue}}</a>,
       {{f.phone4Description.value?f.phone4Description.value:f.name.value}}
-
     </div>
-
   </div>
 
 </div>

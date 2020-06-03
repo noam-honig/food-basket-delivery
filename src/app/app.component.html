@@ -11,7 +11,7 @@
       </p>
       <p style="text-align: center">{{dialog.dc.getGeocodeInformation().getAddress()}}</p>
     </div>
-    <h4 *ngIf="context.user">שלום {{context.user.name}}</h4>
+    <h4 *ngIf="context.user">{{lang.hello}} {{context.user.name}}</h4>
     <mat-nav-list role="list">
       <ng-container *ngFor="let m of router.config">
         <mat-list-item *ngIf="shouldDisplayRoute(m)" routerLinkActive="active-route">
@@ -23,7 +23,7 @@
       </ng-container>
 
       <mat-list-item *ngIf="context.user">
-        <a matLine (click)="signOut()">יציאה</a>
+        <a matLine (click)="signOut()">{{lang.exit}}</a>
       </mat-list-item>
     </mat-nav-list>
 
@@ -60,8 +60,8 @@
     </div>
     <footer style="text-align:center;font-size:70%;height:100px">
       <hr>
-      <a href="https://noam-honig.github.io/salmaz" target="_blank"> חגי - אפליקציה לחלוקת
-        סלי מזון</a>
+      <a *ngIf="!showEnglishUrl()" href="https://noam-honig.github.io/salmaz" target="_blank">{{lang.copyright}}</a>
+      <a *ngIf="showEnglishUrl()" href="https://noam-honig.github.io/salmaz/en.html" target="_blank">{{lang.copyright}}</a>
     </footer>
   </div>
 

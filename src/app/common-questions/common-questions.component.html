@@ -1,5 +1,5 @@
-<div dir="rtl">
-    <mat-card-title>שאלות ותשובות</mat-card-title>
+
+    <mat-card-title>{{settings.lang.questionsAndAnswers}}</mat-card-title>
     <mat-dialog-content class="dialog-content-fixer">
         <mat-accordion>
             <mat-expansion-panel *ngFor="let f of questions">
@@ -15,12 +15,12 @@
         <div class="button-line">
             <a href="tel:{{phoneOptions[0].phone}}" *ngIf="phoneOptions.length==1">
                 <button mat-raised-button color="accent" class="dial-for-help">
-                    <mat-icon>phone</mat-icon> חייג ל{{phoneOptions[0].name}} לקבלת עזרה
+                    <mat-icon>phone</mat-icon> {{settings.lang.dialTo}} {{phoneOptions[0].name}} {{settings.lang.forHelp}}
                 </button>
             </a>
             <button mat-raised-button color="accent" class="dial-for-help" [matMenuTriggerFor]="menu"
                 *ngIf="phoneOptions.length>1">
-                <mat-icon>phone</mat-icon> חייג לקבלת עזרה
+                <mat-icon>phone</mat-icon> {{settings.lang.dialForHelp}}
             </button>
 
             <mat-menu #menu="matMenu">
@@ -34,13 +34,12 @@
         <div class="button-container">
             <div class="button-line">
                 <button mat-raised-button color="warning" (click)="cancel()">
-                    בטל
+                    {{settings.lang.cancel}}
                 </button>
                 <button mat-raised-button color="accent" (click)="confirm()">
-                    {{'עדכן אי מסירה'}}
+                    {{settings.lang.updateDeliveryFailure}}
                 </button>
             </div>
             
         </div>
     </mat-dialog-actions>
-</div>

@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import {  Column, Entity, ServerFunction,  IdColumn } from '@remult/core';
+import { Column, Entity, ServerFunction, IdColumn } from '@remult/core';
 import { Context } from '@remult/core';
 
-import {  HasAsyncGetTheValue } from '../model-shared/types';
+import { HasAsyncGetTheValue } from '../model-shared/types';
 
 
 
@@ -26,7 +26,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
 
 
-  constructor(private context: Context, private dialog: DialogService, private busy: BusyService) {
+  constructor(private context: Context, private dialog: DialogService, private busy: BusyService, public settings: ApplicationSettings) {
 
   }
 
@@ -267,7 +267,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
   async readLine(row: number): Promise<excelRowInfo> {
     let f = this.context.for(Helpers).create();
-    
+
 
     let helper = new columnUpdateHelper(this.context, this.dialog);
     for (const c of this.excelColumns) {
@@ -291,13 +291,13 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     let info: excelRowInfo = {
       name: f.name.value,
       phone: f.phone.value,
-      
+
       valid: true,
       rowInExcel: row,
       values: {}
     };
     if (!f.name.value) {
-      info.error = 'שורה ללא שם';
+      info.error = this.settings.lang.lineWithNoName;
     }
     for (const c of f.columns) {
       if (c.validationError) {
@@ -319,16 +319,16 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     return info;
 
   }
-  excelPage:number;
-  newRowsPage:number;
-  updateRowsPage:number;
-  existingFamiliesPage:number;
-  errorRowsPage:number;
+  excelPage: number;
+  newRowsPage: number;
+  updateRowsPage: number;
+  existingFamiliesPage: number;
+  errorRowsPage: number;
   helper: Helpers;
   @ViewChild("stepper", { static: true }) stepper: MatStepper;
-  settings: ApplicationSettings;
+  
   async ngOnInit() {
-    this.settings = await ApplicationSettings.getAsync(this.context);
+    
 
 
 
@@ -375,6 +375,9 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     }
 
     addColumn(this.helper.name);
+    addColumn(this.helper.eventComment);
+    addColumn(this.helper.preferredDistributionAreaAddress);
+    addColumn(this.helper.email);
     addColumn(this.helper.eventComment);
     addColumn(this.helper.company);
     this.columns.push({

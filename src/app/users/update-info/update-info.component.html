@@ -1,7 +1,9 @@
-<data-area [settings]="helpers"></data-area>
+<mat-card>
+  <data-area [settings]="helpers"></data-area>
 
-<button mat-raised-button color="accent" (click)="register()">
-  עדכון פרטים
-</button>
+  <button mat-raised-button color="accent" (click)="register()">
+    {{settings.lang.updateInfo}}
+  </button>
+</mat-card>
 
 <!-- <input #address>  -->

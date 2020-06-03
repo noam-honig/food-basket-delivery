@@ -4,16 +4,33 @@ import { Entity, Context, EntityClass } from '@remult/core';
 import { PhoneColumn } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { DeliveryStatusColumn, DeliveryStatus } from "../families/DeliveryStatus";
-import { translate, translationConfig, TranslationOptionsColumn } from "../translate";
+import { translate, translationConfig, TranslationOptionsColumn, Language, getLang, use, setLangForSite } from "../translate";
 
 import { FamilySources } from "../families/FamilySources";
 import { Injectable } from '@angular/core';
 import { Helpers } from '../helpers/helpers';
 import { BasketType } from '../families/BasketType';
+import { environment } from '../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Sites } from '../sites/sites';
 
 
 @EntityClass
 export class ApplicationSettings extends Entity<number>  {
+  getInternationalPhonePrefix() {
+    let r = this.forWho.value.args.internationalPrefixForSmsAndAws;
+    if (!r)
+      r = '+972';
+    return r;
+  }
+  googleMapCountry() {
+    let r = this.forWho.value.args.googleMapCountry;
+    if (!r)
+      r = 'IL';
+    return r;
+  }
+
+  lang = getLang(this.context);
   @ServerFunction({ allowed: c => c.isSignedIn() })
   static async getPhoneOptions(deliveryId: string, context?: Context) {
     let ActiveFamilyDeliveries = await (await import('../families/FamilyDeliveries')).ActiveFamilyDeliveries;
@@ -39,32 +56,38 @@ export class ApplicationSettings extends Entity<number>  {
     }
     return r;
   }
+  showVideo() {
+    return this.lang.languageCode == 'iw';
+  }
 
   id = new NumberColumn();
-  organisationName = new StringColumn('שם הארגון');
+  organisationName = new StringColumn(this.lang.organizationName);
+  validateSmsContent(c: StringColumn) {
+    return;
+    if (c.value && c.value.indexOf("!אתר!") < 0 && c.value.indexOf("!URL!") < 0)
+      c.validationError = this.lang.mustIncludeUrlKeyError;
+  }
   smsText = new StringColumn({
-    caption: 'תוכן הודעת SMS', validate: () => {
-      if (false&&this.smsText.value && this.smsText.value.indexOf("!אתר!") < 0)
-        this.smsText.validationError = " חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור";
+    caption: this.lang.smsMessageContentCaption, validate: () => {
+      this.validateSmsContent(this.smsText);
 
     }
   });
   reminderSmsText = new StringColumn({
-    caption: 'תוכן הודעת תזכורת SMS',
+    caption: this.lang.smsReminderMessageContentCaption,
     validate: () => {
-      if (false&&this.reminderSmsText.value && this.reminderSmsText.value.indexOf("!אתר!") < 0)
-        this.reminderSmsText.validationError = " חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור";
+      this.validateSmsContent(this.reminderSmsText);
     }
   });
-  logoUrl = new StringColumn('לוגו URL');
-  address = new StringColumn("כתובת מרכז השילוח");
-  commentForSuccessDelivery = new StringColumn('הודעה למתנדב כאשר נמסר בהצלחה');
-  commentForSuccessLeft = new StringColumn('הודעה למתנדב כאשר הושאר ליד הבית');
-  commentForProblem = new StringColumn('הודעה למתנדב כאשר יש בעיה');
-  messageForDoneDelivery = new StringColumn(translate('הודעה למתנדב כאשר סיים את כל המשפחות'));
+  logoUrl = new StringColumn(this.lang.logoUrl);
+  address = new StringColumn(this.lang.deliveryCenterAddress);
+  commentForSuccessDelivery = new StringColumn(this.lang.successMessageColumnName);
+  commentForSuccessLeft = new StringColumn(this.lang.leftByDoorMessageColumnName);
+  commentForProblem = new StringColumn(this.lang.problemCommentColumnName);
+  messageForDoneDelivery = new StringColumn(translate(this.lang.messageForVolunteerWhenDoneCaption));
 
-  helpText = new StringColumn('שם חלופי');
-  helpPhone = new PhoneColumn('טלפון חלופי');
+  helpText = new StringColumn(this.lang.helpName);
+  helpPhone = new PhoneColumn(this.lang.helpPhone);
   phoneStrategy = new StringColumn();
   getPhoneStrategy(): PhoneItem[] {
     try {
@@ -92,38 +115,40 @@ export class ApplicationSettings extends Entity<number>  {
   }
   commonQuestions = new StringColumn();
   dataStructureVersion = new NumberColumn({ allowApiUpdate: false });
-  deliveredButtonText = new StringColumn("מלל כפתור נמסר בהצלחה");
-  message1Text = new StringColumn('מלל חופשי 1 למתנדב');
-  message1Link = new StringColumn('כתובת אינטרנט ללחיצה על מלל חופשי 1 למתנדב');
-  message1OnlyWhenDone = new BoolColumn('להציג מלל חופשי 1 רק כאשר המתנדב סיים אל כל הסלים');
-  message2Text = new StringColumn('מלל חופשי 2 למתנדב');
-  message2Link = new StringColumn('כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב');
-  message2OnlyWhenDone = new BoolColumn('להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים');
+  deliveredButtonText = new StringColumn(this.lang.successButtonSettingName);
+  message1Text = new StringColumn(this.lang.freeText1ForVolunteer);
+  message1Link = new StringColumn(this.lang.urlFreeText1);
+  message1OnlyWhenDone = new BoolColumn(this.lang.showText1OnlyWhenDone);
+  message2Text = new StringColumn(this.lang.freeText2ForVolunteer);
+  message2Link = new StringColumn(this.lang.urlFreeText2);
+  message2OnlyWhenDone = new BoolColumn(this.lang.showText2OnlyWhenDone);
   forWho = new TranslationOptionsColumn();
   _old_for_soliders = new BoolColumn({ dbName: 'forSoldiers' });
 
-  usingSelfPickupModule = new BoolColumn('ישנן משפחות שבאות לקחת ממרכז החלוקה');
-  showCompanies = new BoolColumn('שמור מטעם איזה חברה הגיע המתנדב');
-  manageEscorts = new BoolColumn('הפעל ניהול מלווים לנהגים');
-  showHelperComment = new BoolColumn('שמור הערה למתנדב');
-  showGroupsOnAssing = new BoolColumn('סינון קבוצת משפחה');
-  showCityOnAssing = new BoolColumn('סינון עיר');
-  showAreaOnAssing = new BoolColumn('סינון אזור');
-  showBasketOnAssing = new BoolColumn('סינון סוג סל');
-  showNumOfBoxesOnAssing = new BoolColumn('בחירת מספר משפחות');
-  showLeftThereButton = new BoolColumn('הצג למתנדב כפתור השארתי ליד הבית');
-  redTitleBar = new BoolColumn("כותרת דף בצבע אדום");
-  defaultPrefixForExcelImport = new StringColumn("קידומת טלפון ברירת מחדל בקליטה מאקסל");
-  checkIfFamilyExistsInDb = new BoolColumn("בדוק אם משפחה כבר קיימת במאגר הנתונים");
-  removedFromListStrategy = new RemovedFromListExcelImportStrategyColumn();
-  checkIfFamilyExistsInFile = new BoolColumn("בדוק אם משפחה כבר קיימת בקובץ האקסל");
-  excelImportAutoAddValues = new BoolColumn("הוסף בלי לשאול ערכים לטבלאות התשתית");
-  checkDuplicatePhones = new BoolColumn("בדוק טלפונים כפולים");
+  usingSelfPickupModule = new BoolColumn(this.lang.enableSelfPickupModule);
+  showCompanies = new BoolColumn(this.lang.showVolunteerCompany);
+  manageEscorts = new BoolColumn(this.lang.activateEscort);
+  showHelperComment = new BoolColumn(this.lang.showHelperComment);
+  showGroupsOnAssing = new BoolColumn(this.lang.filterFamilyGroups);
+  showCityOnAssing = new BoolColumn(this.lang.filterCity);
+  showAreaOnAssing = new BoolColumn(this.lang.filterRegion);
+  showBasketOnAssing = new BoolColumn(this.lang.filterBasketType);
+  showNumOfBoxesOnAssing = new BoolColumn(this.lang.selectNumberOfFamilies);
+  showLeftThereButton = new BoolColumn(this.lang.showLeftByHouseButton);
+  redTitleBar = new BoolColumn(this.lang.redTitleBar);
+  defaultPrefixForExcelImport = new StringColumn(this.lang.defaultPhonePrefixForExcelImport);
+  checkIfFamilyExistsInDb = new BoolColumn(this.lang.checkIfFamilyExistsInDb);
+  removedFromListStrategy = new RemovedFromListExcelImportStrategyColumn(this.context);
+  checkIfFamilyExistsInFile = new BoolColumn(this.lang.checkIfFamilyExistsInFile);
+  excelImportAutoAddValues = new BoolColumn(this.lang.excelImportAutoAddValues);
+  checkDuplicatePhones = new BoolColumn(this.lang.checkDuplicatePhones);
+  volunteerCanUpdateComment = new BoolColumn(this.lang.volunteerCanUpdateComment);
+  volunteerCanUpdatePreferredDistributionAddress = new BoolColumn(this.lang.volunteerCanUpdatePreferredDistributionAddress);
 
 
   addressApiResult = new StringColumn();
-  defaultStatusType = new DeliveryStatusColumn({
-    caption: translate('סטטוס משלוח ברירת מחדל למשפחות חדשות')
+  defaultStatusType = new DeliveryStatusColumn(this.context, {
+    caption: translate(this.lang.defaultStatusType)
   }, [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup]);
   private _lastString: string;
   private _lastGeo: GeocodeInformation;
@@ -133,11 +158,11 @@ export class ApplicationSettings extends Entity<number>  {
     this._lastString = this.addressApiResult.value;
     return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
   }
-  boxes1Name = new StringColumn("שם כמות 1 בסוגי סלים");
-  boxes2Name = new StringColumn("שם כמות 2 בסוגי סלים");
+  boxes1Name = new StringColumn(this.lang.boxes1NameCaption);
+  boxes2Name = new StringColumn(this.lang.boxes2NameCaption);
 
 
-  constructor(context: Context) {
+  constructor(private context: Context) {
     super({
       name: 'ApplicationSettings',
       allowApiRead: true,
@@ -157,6 +182,8 @@ export class ApplicationSettings extends Entity<number>  {
             }
           }
           this.helpPhone.value = PhoneColumn.fixPhoneInput(this.helpPhone.value);
+          if (this.forWho.value)
+            setLangForSite(Sites.getValidSchemaFromContext(context), this.forWho.value.args.languageCode);
         }
       }
     })
@@ -233,20 +260,35 @@ export interface phoneBuildArgs {
   settings: ApplicationSettings,
   addPhone: (name: string, value: string) => void
 }
+
+
 @Injectable()
 export class SettingsService {
-  constructor(private context: Context) {
+  constructor(private context: Context, private http: HttpClient) {
 
   }
   instance: ApplicationSettings;
   async init() {
+
     this.instance = await ApplicationSettings.getAsync(this.context);
+
     translationConfig.forWho = this.instance.forWho.value;
     DeliveryStatus.usingSelfPickupModule = this.instance.usingSelfPickupModule.value;
     Helpers.usingCompanyModule = this.instance.showCompanies.value;
 
+    PhoneOption.assignerOrOrg.name = this.instance.lang.assignerOrOrg;
+    PhoneOption.familyHelpPhone.name = this.instance.lang.familyHelpPhone;
+    PhoneOption.familySource.name = this.instance.lang.familySourcePhone;
+    PhoneOption.otherPhone.name = this.instance.lang.otherPhone;
+
+    RemovedFromListExcelImportStrategy.displayAsError.caption = this.instance.lang.RemovedFromListExcelImportStrategy_displayAsError;
+    RemovedFromListExcelImportStrategy.showInUpdate.caption = this.instance.lang.RemovedFromListExcelImportStrategy_showInUpdate;
+    RemovedFromListExcelImportStrategy.ignore.caption = this.instance.lang.RemovedFromListExcelImportStrategy_ignore;
+
+
     BasketType.boxes1Name = this.instance.boxes1Name.value;
     BasketType.boxes2Name = this.instance.boxes2Name.value;
+
 
   }
 
@@ -258,9 +300,9 @@ export class RemovedFromListExcelImportStrategy {
   constructor(public id: number, public caption: string) { }
 }
 class RemovedFromListExcelImportStrategyColumn extends ValueListColumn<RemovedFromListExcelImportStrategy>{
-  constructor() {
+  constructor(context: Context) {
     super(RemovedFromListExcelImportStrategy, {
-      caption: 'מה לעשות אם נמצאה משפחה תואמת המסומנת כהוצא מהרשימות'
+      caption: getLang(context).existsInRemovedFromListStrategy
       , dataControlSettings: () => ({
         valueList: this.getOptions(),
 

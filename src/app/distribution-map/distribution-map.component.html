@@ -1,15 +1,13 @@
-<a [style.visibility]="selectedStatus?'visible':'hidden'" (click)="selectedStatus = undefined;refreshDeliveries()">הצג
-  את
-  כל המשפחות</a>
+<a [style.visibility]="selectedStatus?'visible':'hidden'" (click)="selectedStatus = undefined;refreshDeliveries()">{{settings.lang.showAll}}</a>
 <div style="display: block;width:350px;">
   <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType" [options]="options"
     [colors]="colors" (chartClick)="chartClicked($event)"></canvas>
 </div>
-<h4>{{selectedStatus? selectedStatus.name:'משפחות באירוע'}} </h4>
+<h4>{{selectedStatus? selectedStatus.name:settings.lang.deliveries}} </h4>
 <div style="display:flex;justify-content: space-between;margin-bottom: 5px;height:37px;width:100%;">
   <div>
-    <button mat-raised-button (click)="selectDeliveries()" *ngIf="!drawing">בחר משפחות על המפה </button>
-    <span *ngIf="drawing">אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום</span>
+    <button mat-raised-button (click)="selectDeliveries()" *ngIf="!drawing">{{settings.lang.selectDeliveriesOnMap}} </button>
+    <span *ngIf="drawing">{{settings.lang.drawingHelpText}}</span>
     <br>
 
 
@@ -17,7 +15,7 @@
 
   <div>
     <div *ngIf="!drawing&& selectedDeliveries.length">
-      <strong *ngIf="!drawing&& selectedDeliveries.length">{{selectedDeliveries.length}} משלוחים סומנו</strong>
+      <strong *ngIf="!drawing&& selectedDeliveries.length">{{selectedDeliveries.length}} {{settings.lang.selectedDeliveries}}</strong>
       <mat-menu #appMenu77>
         <ng-container *ngFor="let b of buttons">
           <button mat-menu-item (click)="b.click()"
@@ -44,8 +42,7 @@
   <mat-icon>refresh</mat-icon>
 </button>
 <mat-checkbox (change)="refreshDeliveries()" [(ngModel)]="showHelper" style="margin-right: 10px;" *ngIf="!overviewMap">
-  הצג
-  מתנדבים</mat-checkbox>
+  {{settings.lang.showVolunteers}}</mat-checkbox>
 <data-control [column]="filterCourier" style="display: inline-block;
 width: 200px;
 margin-right: 10px;"></data-control>

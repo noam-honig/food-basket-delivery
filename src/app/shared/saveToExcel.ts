@@ -3,6 +3,7 @@ import { BusyService } from '@remult/core';
 
 import { HasAsyncGetTheValue, DateTimeColumn } from "../model-shared/types";
 import { foreachSync } from "./utils";
+import { use } from '../translate';
 
 export async function saveToExcel<E extends Entity<any>, T extends GridSettings<E>>(
   context: SpecificEntityHelper<any, E>,
@@ -21,7 +22,7 @@ export async function saveToExcel<E extends Entity<any>, T extends GridSettings<
 
     let wb = XLSX.utils.book_new();
 
-    wb.Workbook = { Views: [{ RTL: true }] };
+    wb.Workbook = { Views: [{ RTL: use.language.languageCode=='iw' }] };
     let ws = {
 
     } as import('xlsx').WorkSheet;
@@ -142,7 +143,7 @@ export async function jsonToXlsx(busy: BusyService, rows: any[], fileName: strin
 
     let wb = XLSX.utils.book_new();
 
-    wb.Workbook = { Views: [{ RTL: true }] };
+    wb.Workbook = { Views: [{ RTL: use.language.languageCode=='iw' }] };
     let ws = XLSX.utils.json_to_sheet(rows);
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
     XLSX.writeFile(wb, fileName + '.xlsx');

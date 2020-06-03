@@ -1,5 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { DateColumn, DataAreaSettings } from '@remult/core';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 var fullDayValue = 24 * 60 * 60 * 1000;
 @Component({
   selector: 'app-date-range',
@@ -9,7 +10,7 @@ var fullDayValue = 24 * 60 * 60 * 1000;
 export class DateRangeComponent implements OnInit {
   @Output()  dateChanged=new EventEmitter<void>();
   fromDate = new DateColumn({
-    caption: 'מתאריך',
+    caption: this.settings.lang.fromDate,
     valueChange: () => {
 
       if (this.toDate.value < this.fromDate.value) {
@@ -18,7 +19,7 @@ export class DateRangeComponent implements OnInit {
 
     }
   });
-  toDate = new DateColumn('עד תאריך');
+  toDate = new DateColumn(this.settings.lang.toDate);
   rangeArea = new DataAreaSettings({
     columnSettings: () => [this.fromDate, this.toDate],
     numberOfColumnAreas: 2
@@ -56,7 +57,7 @@ export class DateRangeComponent implements OnInit {
     }
     this.dateChanged.emit();
   }
-  constructor() {
+  constructor(public settings:ApplicationSettings) {
     let today = new Date();
 
     this.fromDate.value = new Date(today.getFullYear(), today.getMonth(), 1);

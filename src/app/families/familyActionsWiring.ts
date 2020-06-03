@@ -3,6 +3,7 @@ import { InputAreaComponent } from "../select-popup/input-area/input-area.compon
 import { DialogService, extractError } from "../select-popup/dialog";
 import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
+import { getLang, use } from "../translate";
 
 
 
@@ -30,8 +31,8 @@ export class ActionOnRows<T extends IdEntity> {
         if (!args.additionalWhere) {
             args.additionalWhere = x => undefined;
         }
-        if (!args.onEnd){
-            args.onEnd = async()=>{};
+        if (!args.onEnd) {
+            args.onEnd = async () => { };
         }
 
 
@@ -45,13 +46,16 @@ export class ActionOnRows<T extends IdEntity> {
         }
         if (this.args.validate)
             await this.args.validate();
-        return await doWork({
+        let r = await doWork({
             actionWhere: x => {
                 if (this.args.additionalWhere)
                     return this.args.additionalWhere(x);
             },
             forEach: this.args.forEach
         });
+        if (this.args.onEnd)
+            await this.args.onEnd();
+        return r;
 
 
     }
@@ -80,7 +84,7 @@ export class ActionOnRows<T extends IdEntity> {
                         ok: async () => {
                             try {
                                 let info = await component.buildActionInfo(this.args.additionalWhere);
-                                if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + ' ל-' + info.count + ' ' + component.groupName + '?')) {
+                                if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + " " + use.language.for + " " + info.count + ' ' + component.groupName + '?')) {
                                     let args = [];
                                     for (const c of this.args.columns()) {
                                         args.push(c.rawValue);
@@ -88,14 +92,14 @@ export class ActionOnRows<T extends IdEntity> {
 
                                     let r = await component.callServer(info, this.args.title, args);
                                     component.dialog.Info(r);
-                                    
-                                    this.args.onEnd();
+
+
                                     component.afterAction();
                                 }
                             }
                             catch (err) {
                                 console.log(err);
-                                component.dialog.Error(this.args.title + ":" + extractError(err));
+                                component.dialog.exception(this.args.title, err);
 
                             }
                         }
@@ -122,7 +126,7 @@ export interface actionDialogNeeds<T extends IdEntity> {
 export interface ActionOnRowsArgs<T extends IdEntity> {
     dialogColumns?: (component: actionDialogNeeds<T>) => DataArealColumnSetting<any>[],
     forEach: (f: T) => Promise<void>,
-    onEnd?: ()=>Promise<void>,
+    onEnd?: () => Promise<void>,
     columns: () => Column<any>[],
     validateInComponent?: (component: actionDialogNeeds<T>) => Promise<void>,
     validate?: () => Promise<void>,
@@ -144,11 +148,11 @@ export async function filterActionOnServer<T extends IdEntity>(actions: {
                 return await x.doWorkOnServer(doWork, args);
             }
             else {
-                return "!פעולה לא מורשת";
+                return getLang(context).notAthorized;
             }
         }
     }
-    throw "פעולה לא נמצאה בשרת";
+    throw getLang(context).actionNotFound;
 }
 
 export function buildGridButtonFromActions<T extends IdEntity>(actions: {

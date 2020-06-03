@@ -4,6 +4,7 @@ import { Context, ServerFunction, SqlDatabase } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { SqlBuilder } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-select-company',
@@ -19,7 +20,8 @@ export class SelectCompanyComponent implements OnInit {
 
 
   constructor(
-    private dialogRef: MatDialogRef<any>
+    private dialogRef: MatDialogRef<any>,
+    public settings : ApplicationSettings
   ) {
 
   }

@@ -7,6 +7,7 @@ import { changeDate, DateTimeColumn, SqlBuilder } from '../model-shared/types';
 import { Context, EntityClass } from '@remult/core';
 import { Roles } from "../auth/roles";
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { getLang } from "../translate";
 
 
 
@@ -20,11 +21,11 @@ export class HelpersAndStats extends HelpersBase {
 
     deliveriesInProgress = new NumberColumn({
         dbReadOnly: true,
-        caption: 'משפחות מחכות'
+        caption: getLang(this.context).delveriesInProgress
     });
     allDeliveires = new NumberColumn({
         dbReadOnly: true,
-        caption: 'משפחות'
+        caption: getLang(this.context).families
     });
   
   

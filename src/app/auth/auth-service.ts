@@ -9,11 +9,12 @@ import { Context } from '@remult/core';
 import { LoginResponse } from "./login-response";
 import { Roles } from "./roles";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
-import { MyFamiliesComponent } from "../my-families/my-families.component";
+
 import { LoginComponent } from "../users/login/login.component";
 import { Sites } from "../sites/sites";
 import { OverviewComponent } from "../overview/overview.component";
 import { SelectListComponent } from "../select-list/select-list.component";
+import { ApplicationSettings } from "../manage/ApplicationSettings";
 
 
 @Injectable()
@@ -24,7 +25,7 @@ export class AuthService {
         if (response.valid) {
             this.setToken(response.authToken, false);
             this.dialog.analytics('login from sms');
-            this.routeHelper.navigateToComponent(MyFamiliesComponent);
+            this.routeHelper.navigateToComponent((await import("../my-families/my-families.component")).MyFamiliesComponent);
             return true;
         }
         else {
@@ -63,7 +64,8 @@ export class AuthService {
 
         private tokenHelper: JwtSessionManager,
         private context: Context,
-        private routeHelper: RouteHelperService
+        private routeHelper: RouteHelperService,
+        public settings: ApplicationSettings
     ) {
 
         tokenHelper.loadSessionFromCookie();
@@ -87,7 +89,7 @@ export class AuthService {
             this.setToken(loginResponse.authToken, remember);
             this.dialog.analytics('login ' + (this.context.isAllowed(Roles.admin) ? 'delivery admin' : ''));
             if (loginResponse.requirePassword) {
-                this.dialog.YesNoQuestion('שלום ' + this.context.user.name + ' אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועבר למסך עדכון פרטים לעדכון סיסמה.', () => {
+                this.dialog.YesNoQuestion(this.settings.lang.hello + ' ' + this.context.user.name + ' ' + this.settings.lang.adminRequireToSetPassword, () => {
                     this.routeHelper.navigateToComponent(AuthService.UpdateInfoComponent);//changing this caused a crash
                 });
             }
@@ -97,13 +99,13 @@ export class AuthService {
                 else if (this.context.isAllowed(Roles.overview))
                     this.routeHelper.navigateToComponent(OverviewComponent);
                 else
-                    this.routeHelper.navigateToComponent(MyFamiliesComponent);
+                    this.routeHelper.navigateToComponent((await import("../my-families/my-families.component")).MyFamiliesComponent);
             }
 
         }
         else {
             this.tokenHelper.signout('/' + Sites.getOrganizationFromContext(this.context));
-            this.dialog.Error("משתמשת לא נמצאה או סיסמה שגויה");
+            this.dialog.Error(this.settings.lang.userNotFoundOrWrongPassword);
             fail();
 
         }

@@ -1,5 +1,5 @@
 <button style="position: absolute;;" mat-raised-button color="accent" *ngIf="swipe&&delivered.observers.length"
-  (click)="doDelivered($event)">נמסר</button>
+  (click)="doDelivered($event)">{{settings.lang.delivered}}</button>
 <div class="swipingItem"  [style.transform]="offsetX()"
   [class.swipeleft]="swipe&&delivered.observers.length" (panleft)="horizontalPan($event)" (panright)="horizontalPan($event)" (panend)="panend($event)" >
   <mat-panel-title style="justify-content: space-between">
@@ -16,10 +16,10 @@
 
   <mat-panel-description style="justify-content: space-between">
 
-    <div>
+    <div style="white-space: nowrap;">
       {{getAddressDescription() }}
     </div>
-    <div *ngIf="newAssign" style="font-size: 11px;">(שוייכה עכשיו)</div>
+    <div *ngIf="newAssign" style="font-size: 11px;">({{settings.lang.recentlyAssigned}})</div>
 
   </mat-panel-description>
 </div>

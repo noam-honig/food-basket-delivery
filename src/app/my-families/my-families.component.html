@@ -1,11 +1,10 @@
 <div style="display:flex;justify-content: space-between;">
     <div>
-        <h3 class="no-print">שלום {{user.name}}</h3>
+        <h3 class="no-print">{{settings.lang.hello}} {{user.name}}</h3>
 
-        <H4 *ngIf="user.escortedHelperName">מלווה את {{user.escortedHelperName}}</H4>
+        <H4 *ngIf="user.escortedHelperName">{{settings.lang.escoring}} {{user.escortedHelperName}}</H4>
         <a href="https://youtu.be/PHwTzaQN87g" target="_blank" class="no-print"
-            *ngIf="familyLists.toDeliver.length">לסרטון
-            הדרכה קצר, לחצו כאן</a>
+            *ngIf="familyLists.toDeliver.length&&settings.showVideo()" >{{settings.lang.clickForTutorialVideo}}</a>
         <a href="{{settings.message1Link.value}}" target="_blank" class="no-print" style="display: block"
             *ngIf="!settings.message1OnlyWhenDone.value || familyLists.toDeliver.length==0">{{settings.message1Text.value}}</a>
         <a href="{{settings.message2Link.value}}" target="_blank" class="no-print" style="display: block"

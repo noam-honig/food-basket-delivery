@@ -5,6 +5,7 @@ import { AuthService } from '../../auth/auth-service';
 
 import { Route } from '@angular/router';
 import { Context } from '@remult/core';
+import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-register',
@@ -12,13 +13,13 @@ import { Context } from '@remult/core';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
-  constructor(private auth: AuthService, private context: Context) {
+  constructor(private auth: AuthService, private context: Context,public settings:ApplicationSettings) {
 
 
   }
-  static route: Route = { path: 'register', component: RegisterComponent, data: { name: 'הרשמה' }, canActivate: [NotSignedInGuard] };
+  static route: Route = { path: 'register', component: RegisterComponent, canActivate: [NotSignedInGuard] };
 
-  confirmPassword = new StringColumn({ caption: 'אישור סיסמה', dataControlSettings: () => ({ inputType: 'password' }) });
+  confirmPassword = new StringColumn({ caption: this.settings.lang.confirmPassword, dataControlSettings: () => ({ inputType: 'password' }) });
   helpers = this.context.for(Helpers).gridSettings({
     numOfColumnsInGrid: 0,
     allowUpdate: true,
@@ -31,7 +32,7 @@ export class RegisterComponent implements OnInit {
     onValidate: h => {
       if (h)
         if (h.password.value != this.confirmPassword.value) {
-          h.password.validationError = "הסיסמה אינה תואמת את אישור הסיסמה";
+          h.password.validationError = this.settings.lang.passwordDoesntMatchConfirmPassword;
         }
     }
   });

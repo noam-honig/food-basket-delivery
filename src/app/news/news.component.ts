@@ -20,6 +20,7 @@ import { NewsFilterService } from './news-filter-service';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Families } from '../families/families';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 @Component({
     selector: 'app-news',
     templateUrl: './news.component.html',
@@ -36,7 +37,7 @@ export class NewsComponent implements OnInit, OnDestroy {
         this.refresh();
     }
 
-    constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public filters: NewsFilterService, private activatedRoute: ActivatedRoute) {
+    constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public filters: NewsFilterService, private activatedRoute: ActivatedRoute,public settings:ApplicationSettings) {
         dialog.onStatusChange(() => this.refresh(), this.destroyHelper);
         dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
 
