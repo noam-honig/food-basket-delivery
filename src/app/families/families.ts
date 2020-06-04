@@ -118,7 +118,7 @@ export class Families extends IdEntity {
           let newId = await Families.addDelivery(newDelivery.family.value, {
             basketType: newDelivery.basketType.value,
             quantity: newDelivery.quantity.value,
-            comment: newDelivery.courierComments.value,
+            comment: newDelivery.deliveryComments.value,
             courier: newDelivery.courier.value,
             distCenter: newDelivery.distributionCenter.value,
             selfPickup: selfPickup.value
@@ -151,7 +151,7 @@ export class Families extends IdEntity {
       let fd = f.createDelivery(settings.distCenter);
       fd.basketType.value = settings.basketType;
       fd.quantity.value = settings.quantity;
-      fd.courierComments.value = settings.comment;
+      fd.deliveryComments.value = settings.comment;
       fd.distributionCenter.value = settings.distCenter;
       fd.courier.value = settings.courier;
       if (settings.selfPickup)
