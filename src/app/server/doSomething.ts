@@ -17,7 +17,7 @@ import { GeocodeCache, GeocodeInformation, getAddress } from "../shared/googleAp
 import { Sites } from "../sites/sites";
 import * as fs from 'fs';
 import { processPhone } from "../import-from-excel/import-from-excel.component";
-import { buildLanguageFiles, loadTranslationXlsx } from "./buildLanguages";
+import { buildLanguageFiles } from "./buildLanguages";
 
 
 

@@ -78,7 +78,7 @@ export class SelectFamilyComponent implements OnInit {
   showStatus(f: ActiveFamilyDeliveries) {
     if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery) {
       if (f.courier.value) {
-        return this.settings.assignedToVolunteer;
+        return this.settings.lang.assignedToVolunteer;
       } else {
         return '';
       }
