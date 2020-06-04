@@ -627,4 +627,5 @@ export class en implements Language {
   doesNotExist = 'Does not exist';
   questionAddToApplication = 'Do add';
   customSmsMessage = 'Personalized SMS';
+  assignedToVolunteer = 'Associated with a volunteer';
 }

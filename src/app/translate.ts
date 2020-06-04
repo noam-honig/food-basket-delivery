@@ -754,6 +754,7 @@ export class Language {
   doesNotExist="לא קיים";
   questionAddToApplication = "האם להוסיף";
   customSmsMessage = 'הודעת SMS מותאמת';
+  assignedToVolunteer = "משוייך למתנדב";
 }
 
 const defaultLang = new Language();

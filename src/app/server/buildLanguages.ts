@@ -1,11 +1,12 @@
 import * as fs from "fs";
 import { Language } from "../translate";
+import { config } from 'dotenv';
 import { jsonToXlsx } from "../shared/saveToExcel";
 import * as request from 'request';
 import { getMultipleValuesInSingleSelectionError } from "@angular/cdk/collections";
 
 
-export async function loadTranslationXlsx(fileName: string, language: string) {
+async function loadTranslationXlsx(fileName: string, language: string) {
     let XLSX = await import('xlsx');
     var wb = XLSX.readFile(fileName);
     var sheet = wb.Sheets[wb.SheetNames[0]];
@@ -48,6 +49,7 @@ function saveLangFile(filename: string, data: any) {
     fs.writeFileSync('./src/app/languages/' + filename + '.json', JSON.stringify(data, undefined, 2));
 }
 export async function buildLanguageFiles() {
+    config();
 
     for (const lang of ["en", "es", "it"]) {
         let fileAndClassName = lang;
@@ -157,3 +159,5 @@ async function translate(s: string, toLang: string) {
         });
     });
 }
+
+buildLanguageFiles();

@@ -261,6 +261,10 @@
     "valueInCode": "נהג משוייך",
     "custom": "assigned driver"
   },
+  "assignedToVolunteer": {
+    "google": "Associated with a volunteer",
+    "valueInCode": "משוייך למתנדב"
+  },
   "assignerOrOrg": {
     "google": "The phone from which the SMS came out",
     "valueInCode": "הטלפון ממנו יצא הSMS",

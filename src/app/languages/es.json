@@ -284,6 +284,11 @@
     "valueInCode": "נהג משוייך",
     "valueInEnglish": "assigned driver"
   },
+  "assignedToVolunteer": {
+    "google": "Asociado con un voluntario",
+    "valueInCode": "משוייך למתנדב",
+    "valueInEnglish": "Associated with a volunteer"
+  },
   "assignerOrOrg": {
     "google": "Teléfono de ayuda",
     "valueInCode": "הטלפון ממנו יצא הSMS",

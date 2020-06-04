@@ -44,6 +44,16 @@
             "skipFiles": [
                 "<node_internals>/**"
             ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "build languages ",
+            "program": "${workspaceFolder}/dist-server/app/server/buildLanguages.js",
+            "args": [],
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
         }
       
     ]

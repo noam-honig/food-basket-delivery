@@ -627,4 +627,5 @@ export class italy implements Language {
   doesNotExist = 'Non esiste';
   questionAddToApplication = 'Aggiungi';
   customSmsMessage = 'SMS personalizzati';
+  assignedToVolunteer = 'Associato a un volontario';
 }

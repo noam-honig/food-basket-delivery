@@ -20,6 +20,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "server:execute": "node dist-server/app/server/server.js",
+    "build-languages": "node dist-server/app/server/buildLanguages.js",
     "build:stats": "ng build  --stats-json",
     "bundle-report": "webpack-bundle-analyzer dist/stats.json"
   },
