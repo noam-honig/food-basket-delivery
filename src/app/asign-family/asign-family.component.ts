@@ -300,6 +300,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.context.openDialog(SelectHelperComponent, s => s.args = {
             onSelect: async h => {
                 if (h) {
+                    this.clearHelperInfo(false);
                     this.initHelper(await this.context.for(Helpers).findFirst(hh => hh.id.isEqualTo(h.id)));
                 }
                 else {

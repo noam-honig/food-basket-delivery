@@ -118,7 +118,7 @@ export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
             },
             onEnd: async () => {
                 if (this.courier.value)
-                    await AsignFamilyComponent.RefreshRoute(this.courier.value, true);
+                    await AsignFamilyComponent.RefreshRoute(this.courier.value, true,this.context);
             }
         });
         this.courier.value = '';
