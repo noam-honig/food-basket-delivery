@@ -82,7 +82,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     isValidPhone() {
         let cleanPhone = PhoneColumn.fixPhoneInput(this.phone);
 
-        return (cleanPhone.length == 10 || cleanPhone.startsWith('+') && cleanPhone.length > 12);
+        return (cleanPhone.length == 10 || cleanPhone.startsWith('+') && cleanPhone.length > 11);
     }
     async initHelper(helper: Helpers) {
         if (helper.theHelperIAmEscorting.value) {
