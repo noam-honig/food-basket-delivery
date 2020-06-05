@@ -4,6 +4,7 @@ import { HasAsyncGetTheValue } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { HelperUserInfo } from "../helpers/helpers";
 import { ApplicationSettings } from "./ApplicationSettings";
+import { getLang } from "../translate";
 
 
 
@@ -98,7 +99,7 @@ export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValu
       defaultValue: context.user ? (<HelperUserInfo>context.user).distributionCenter : ''
     });
     if (!this.defs.caption)
-      this.defs.caption = 'רשימת חלוקה';
+      this.defs.caption = getLang(this.context).distributionList ;
   }
   get displayValue() {
     return this.context.for(DistributionCenters).lookup(this).name.value;

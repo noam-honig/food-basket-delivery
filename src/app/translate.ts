@@ -756,6 +756,12 @@ export class Language {
   customSmsMessage = 'הודעת SMS מותאמת';
   assignedToVolunteer = "משוייך למתנדב";
   languageCodeHe = 'he';
+  removeFollowUpFor = 'לבטל את הסימון "מצריך טיפול" למשפחת';
+  allFamilySources = "כל הגורמים מפנים";
+  allNew = 'כל החדשות';
+  problemsThatRequireFollowup = 'בעיות המצריכות טיפול';
+  commentsWrittenByVolunteers = 'הערות שכתבו מתנדבים';
+  distributionList = 'רשימת חלוקה';
 }
 
 const defaultLang = new Language();

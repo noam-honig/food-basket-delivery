@@ -88,7 +88,7 @@ export class italy implements Language {
   showHelperCompany = 'Display Volunteer Company';
   hideHelperCompany = 'Nascondere una società di volontariato';
   volunteerPhoneNumber = 'Numero di telefono del volontario';
-  assignHelpText = 'Inserisci il numero di telefono e il nome volontari e inizia ad assegnare consegne per le città o i gruppi familiari scelti';
+  assignHelpText = "Digita il numero e il nome del volontario per iniziare l'assegnazione della consegna, puoi anche cercare il volontario per nome, facendo clic su";
   asignVideoHelp = "Per un'esercitazione sull'assegnazione della consegna e l'evento di distribuzione, fare clic qui";
   asignDeliveriesTo = 'Assegna consegne a';
   familyGroups = 'Gruppi di affiliazione familiare';
@@ -191,7 +191,7 @@ export class italy implements Language {
   organizationInfo = "Dettagli dell'organizzazione";
   defaultHelpPhone = 'Aiuto Nome del telefono';
   defaulyHelpPhoneExplanation = 'Per impostazione predefinita, la persona che ha assegnato la consegna sarà la persona che il volontario può richiedere aiuto. Specificare qui un valore diverso se si preferisce un altro numero di telefono della guida';
-  smsTextHelpTitle = "Questo messaggio verrà inviato a un volontario da una schermata dell'associazione di consegna - con il collegamento alle famiglie che viene chiesto di condividere.";
+  smsTextHelpTitle = 'Questo messaggio verrà inviato a un volontario dalla schermata Assegna volontario - con il collegamento alle famiglie che gli viene chiesto di condividere.';
   replacedByVolunteerName = 'Il nome del volontario verrà sostituito';
   replcaedBySenderName = 'Il nome del mittente verrà sostituito';
   replacedByOrgName = "Il nome dell'organizzazione verrà sostituito";
@@ -275,7 +275,7 @@ export class italy implements Language {
   courierAsignDate = 'Data di assegnazione volontaria';
   deliveryCreateDate = 'Data di assegnazione';
   deliveryCreateUser = 'Utente finale';
-  requireFollowUp = 'Richiede trattamento / follow-up';
+  requireFollowUp = 'Richiede follow-up';
   requireFollowUpUpdateUser = 'Richiede un aggiornamento utente di follow-up';
   requireFollowUpUpdateDate = 'Richiede la data di aggiornamento di follow-up';
   deliveryDetailsFor = 'dettagli di consegna per';
@@ -387,7 +387,7 @@ export class italy implements Language {
   sampleReminderSms = 'Messaggio di promemoria di esempio';
   basketTypes = 'Tipi di pacchi';
   distributionLists = 'Liste di distribuzione';
-  familySources = 'Fattori di riferimento';
+  familySources = 'Fonti familiari';
   distributionListsHelp = 'Questi gruppi saranno presentati con affiliazione familiare e consentiranno un rapido filtraggio';
   volunteerTexts = 'Messaggi volontari';
   volunteerQAndA = 'Domande e risposte volontarie';
@@ -410,7 +410,7 @@ export class italy implements Language {
   merge = 'Mantieni il condizionamento';
   volunteerFeedbackVideo = 'Per un tutorial sul feedback dei volontari clicca qui';
   updatedBy = 'Aggiornato da';
-  showAsignDeliveryFor = 'Mostra associazione di consegna a';
+  showAsignDeliveryFor = 'Mostra consegne per';
   moreNews = 'Più notizie';
   filter = 'filtraggio';
   deliveryDetailsAsDisplayedToVolunteer = 'Dettagli della famiglia così come appaiono al volontario';
@@ -618,7 +618,7 @@ export class italy implements Language {
   confirmDeleteOf = 'Certificato di cancellazione per';
   originalAddress = 'Indirizzo originale';
   addGroupAssignmentVerb = 'Aggiungi affiliazione al gruppo';
-  removeGroupAssignmentVerb = 'Rimuovi associazione di raggruppamento';
+  removeGroupAssignmentVerb = 'Rimuovi gruppo';
   replaceGroupAssignmentVerb = "Sostituisci l'affiliazione con il gruppo";
   volunteerCanUpdateComment = 'Un volontario può prendere nota per se stesso';
   volunteerCanUpdatePreferredDistributionAddress = "Un volontario può aggiornare un'area di divisione preferita";
@@ -629,4 +629,10 @@ export class italy implements Language {
   customSmsMessage = 'SMS personalizzati';
   assignedToVolunteer = 'Associato a un volontario';
   languageCodeHe = 'it';
+  removeFollowUpFor = 'Rimuovere "Richiede follow-up" per';
+  allFamilySources = 'Tutte le fonti familiari';
+  allNew = 'Tutte le notizie';
+  problemsThatRequireFollowup = 'Follow-up dei problemi';
+  commentsWrittenByVolunteers = 'Commenti scritti da volontari';
+  distributionList = 'Lista di distribuzione';
 }

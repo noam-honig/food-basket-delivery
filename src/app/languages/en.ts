@@ -88,7 +88,7 @@ export class en implements Language {
   showHelperCompany = 'Display Volunteer Company';
   hideHelperCompany = 'Hide a volunteer company';
   volunteerPhoneNumber = "Volunteer's phone number";
-  assignHelpText = 'Please enter volunteer phone number and name, and begin assigning deliveries for your chosen cities or family groups';
+  assignHelpText = "Please type volunteer's phone and name to start delivery assignment, you can also search volunteer by name, by clicking on ";
   asignVideoHelp = 'For a tutorial on delivery assignment and distribution event click here';
   asignDeliveriesTo = 'Assign Deliveries to';
   familyGroups = 'Family affiliation groups';
@@ -191,7 +191,7 @@ export class en implements Language {
   organizationInfo = 'Organization details';
   defaultHelpPhone = 'Help Phone Name';
   defaulyHelpPhoneExplanation = 'By default, the person who assigned the delivery, will be the person that the volunteer can call for help. Specify a different value here, if you prefer another help phone number';
-  smsTextHelpTitle = 'This message will be sent to a volunteer from a delivery association screen - with the link to the families it is asked to share.';
+  smsTextHelpTitle = 'This message will be sent to a volunteer from the Assign Volunteer screen - with the link to the families it is asked to share.';
   replacedByVolunteerName = 'The name of the volunteer will be replaced';
   replcaedBySenderName = "The sender's name will be replaced";
   replacedByOrgName = 'Will be replaced on behalf of the organization';
@@ -275,7 +275,7 @@ export class en implements Language {
   courierAsignDate = 'Volunteer assignment date';
   deliveryCreateDate = 'Assignment date';
   deliveryCreateUser = 'End User';
-  requireFollowUp = 'Needs treatment / follow up';
+  requireFollowUp = 'Requires Followup';
   requireFollowUpUpdateUser = 'Requires Followup Update User';
   requireFollowUpUpdateDate = 'Requires Followup Update Date';
   deliveryDetailsFor = 'delivery details for';
@@ -387,7 +387,7 @@ export class en implements Language {
   sampleReminderSms = 'Sample reminder message';
   basketTypes = 'Parcel types';
   distributionLists = 'Distribution lists';
-  familySources = 'Referring factors';
+  familySources = 'Family Sources';
   distributionListsHelp = 'These groups will be presented with family affiliation and will allow for quick filtering';
   volunteerTexts = 'Volunteer messages';
   volunteerQAndA = 'Volunteer questions and answers';
@@ -410,7 +410,7 @@ export class en implements Language {
   merge = 'Keep conditioning';
   volunteerFeedbackVideo = 'For a tutorial on volunteer feedback click here';
   updatedBy = 'Updated by';
-  showAsignDeliveryFor = 'Show delivery association to';
+  showAsignDeliveryFor = 'Show deliveries for';
   moreNews = 'More news';
   filter = 'filtering';
   deliveryDetailsAsDisplayedToVolunteer = 'Family details as they appear to the volunteer';
@@ -618,7 +618,7 @@ export class en implements Language {
   confirmDeleteOf = 'Deletion certificate for';
   originalAddress = 'Original address';
   addGroupAssignmentVerb = 'Add affiliation to the group';
-  removeGroupAssignmentVerb = 'Remove grouping association';
+  removeGroupAssignmentVerb = 'Remove Group';
   replaceGroupAssignmentVerb = 'Replace affiliation with the group';
   volunteerCanUpdateComment = 'A volunteer can make a note for himself';
   volunteerCanUpdatePreferredDistributionAddress = 'A volunteer can update a preferred division area';
@@ -629,4 +629,10 @@ export class en implements Language {
   customSmsMessage = 'Personalized SMS';
   assignedToVolunteer = 'Associated with a volunteer';
   languageCodeHe = 'en';
+  removeFollowUpFor = 'Remove "Requires Followup" for ';
+  allFamilySources = 'All Family Sources';
+  allNew = 'All the news';
+  problemsThatRequireFollowup = 'Problems Followup';
+  commentsWrittenByVolunteers = 'Comments written by volunteers';
+  distributionList = 'Distribution list';
 }

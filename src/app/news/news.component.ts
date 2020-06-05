@@ -29,7 +29,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 export class NewsComponent implements OnInit, OnDestroy {
 
     static needsWorkRoute: Route = {
-        path: 'needsWork', component: NewsComponent, canActivate: [distCenterAdminGuard], data: { name: 'מצריך טיפול' }
+        path: 'needsWork', component: NewsComponent, canActivate: [distCenterAdminGuard]
     };
 
     filterChange() {
@@ -48,7 +48,7 @@ export class NewsComponent implements OnInit, OnDestroy {
 
     }
     cancelNeedWork(n: ActiveFamilyDeliveries) {
-        this.dialog.YesNoQuestion(translate('לבטל את הסימון "מצריך טיפול" למשפחת "') + n.name.value + '"?', async () => {
+        this.dialog.YesNoQuestion(translate(this.settings.lang.removeFollowUpFor)+' "' + n.name.value + '"?', async () => {
             let f = await this.context.for(ActiveFamilyDeliveries).findFirst(fam => fam.id.isEqualTo(n.id));
             f.needsWork.value = false;
             await f.save();
@@ -65,7 +65,7 @@ export class NewsComponent implements OnInit, OnDestroy {
         this.destroyHelper.destroy();
     }
     news: ActiveFamilyDeliveries[] = [];
-    familySources: familySource[] = [{ id: undefined, name: "כל הגורמים מפנים" }];
+    familySources: familySource[] = [{ id: undefined, name: this.settings.lang.allFamilySources }];
 
     async ngOnInit() {
         if (this.activatedRoute.routeConfig.path == NewsComponent.needsWorkRoute.path) {

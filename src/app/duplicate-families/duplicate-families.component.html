@@ -4,7 +4,7 @@
         <th></th>
         <th (click)="sortByAddress()">{{settings.lang.address}}</th>
         <th (click)="sortByCount()">{{settings.lang.families}}</th>
-        <th>סה"כ {{duplicateFamilies.length}}</th>
+        <th>{{settings.lang.total}} {{duplicateFamilies.length}}</th>
         
     </tr>
     <tr *ngFor="let d of duplicateFamilies; let i=index">

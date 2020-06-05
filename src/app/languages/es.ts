@@ -88,7 +88,7 @@ export class es implements Language {
   showHelperCompany = 'Empresa de voluntariado';
   hideHelperCompany = 'Ocultar una empresa voluntaria';
   volunteerPhoneNumber = 'Número de teléfono del voluntario';
-  assignHelpText = 'Ingrese el número de teléfono y el nombre del voluntario, y comience a asignar entregas para las ciudades o grupos familiares que haya elegido.';
+  assignHelpText = 'Escriba el nombre y el teléfono del voluntario para comenzar la tarea de entrega, también puede buscar el voluntario por nombre, haciendo clic';
   asignVideoHelp = 'Para un tutorial sobre asignación de entrega y evento de distribución, haga clic aquí';
   asignDeliveriesTo = 'Asignar entregas a';
   familyGroups = 'Grupos de afiliación familiar';
@@ -191,7 +191,7 @@ export class es implements Language {
   organizationInfo = 'Detalles de la organización';
   defaultHelpPhone = 'Nombre del teléfono de ayuda';
   defaulyHelpPhoneExplanation = 'Por defecto, la persona que asignó la entrega será la persona a la que el voluntario puede llamar para pedir ayuda. Especifique un valor diferente aquí si prefiere otro número de teléfono de ayuda';
-  smsTextHelpTitle = 'Este mensaje se enviará a un voluntario desde una pantalla de asociación de entrega, con el enlace a las familias que se le pide que comparta.';
+  smsTextHelpTitle = 'Este mensaje se enviará a un voluntario desde la pantalla Asignar voluntario, con el enlace a las familias que se le pide que comparta.';
   replacedByVolunteerName = 'El nombre del voluntario será reemplazado';
   replcaedBySenderName = 'El nombre del remitente será reemplazado';
   replacedByOrgName = 'El nombre de la organización será reemplazado.';
@@ -275,7 +275,7 @@ export class es implements Language {
   courierAsignDate = 'Fecha de asignación voluntaria';
   deliveryCreateDate = 'Fecha de asignación';
   deliveryCreateUser = 'Usuario final';
-  requireFollowUp = 'Necesita tratamiento / seguimiento';
+  requireFollowUp = 'Requiere seguimiento';
   requireFollowUpUpdateUser = 'Requiere actualización de usuario de seguimiento';
   requireFollowUpUpdateDate = 'Requiere fecha de actualización de seguimiento';
   deliveryDetailsFor = 'detalles de entrega para';
@@ -387,7 +387,7 @@ export class es implements Language {
   sampleReminderSms = 'Mensaje recordatorio de muestra';
   basketTypes = 'Tipos de parcelas';
   distributionLists = 'Listas de distribución';
-  familySources = 'Factores referentes';
+  familySources = 'Fuentes familiares';
   distributionListsHelp = 'Estos grupos se presentarán con afiliación familiar y permitirán un filtrado rápido';
   volunteerTexts = 'Mensajes voluntarios';
   volunteerQAndA = 'Preguntas y respuestas voluntarias';
@@ -410,7 +410,7 @@ export class es implements Language {
   merge = 'Mantener el acondicionamiento';
   volunteerFeedbackVideo = 'Para un tutorial sobre comentarios voluntarios, haga clic aquí';
   updatedBy = 'Actualizado por';
-  showAsignDeliveryFor = 'Mostrar asociación de entrega a';
+  showAsignDeliveryFor = 'Mostrar entregas para';
   moreNews = 'Mas noticias';
   filter = 'filtración';
   deliveryDetailsAsDisplayedToVolunteer = 'Detalles de la familia tal como se le presentan al voluntario';
@@ -618,7 +618,7 @@ export class es implements Language {
   confirmDeleteOf = 'Certificado de borrado para';
   originalAddress = 'direccion original';
   addGroupAssignmentVerb = 'Agregar afiliación al grupo';
-  removeGroupAssignmentVerb = 'Eliminar asociación de agrupación';
+  removeGroupAssignmentVerb = 'Eliminar grupo';
   replaceGroupAssignmentVerb = 'Reemplazar afiliación con el grupo';
   volunteerCanUpdateComment = 'Un voluntario puede tomar nota por sí mismo.';
   volunteerCanUpdatePreferredDistributionAddress = 'Un voluntario puede actualizar un área de división preferida';
@@ -629,4 +629,10 @@ export class es implements Language {
   customSmsMessage = 'SMS personalizado';
   assignedToVolunteer = 'Asociado con un voluntario';
   languageCodeHe = 'es';
+  removeFollowUpFor = 'Eliminar "Requiere seguimiento" para';
+  allFamilySources = 'Todas las fuentes familiares';
+  allNew = 'Todas las noticias';
+  problemsThatRequireFollowup = 'Seguimiento de problemas';
+  commentsWrittenByVolunteers = 'Comentarios escritos por voluntarios';
+  distributionList = 'Lista de distribucion';
 }

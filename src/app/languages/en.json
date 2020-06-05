@@ -126,10 +126,19 @@
     "google": "All families",
     "valueInCode": "כל המשפחות"
   },
+  "allFamilySources": {
+    "google": "All the factors are turning",
+    "valueInCode": "כל הגורמים מפנים",
+    "custom": "All Family Sources"
+  },
   "allGroups": {
     "google": "All teams",
     "valueInCode": "כל הקבוצות",
     "custom": "All family groups"
+  },
+  "allNew": {
+    "google": "All the news",
+    "valueInCode": "כל החדשות"
   },
   "allOthers": {
     "google": "Everything Else",
@@ -278,7 +287,7 @@
   "assignHelpText": {
     "google": "Please enter the volunteer's phone and name, and then you can choose a group, city and baskets to associate",
     "valueInCode": "אנא הזיני את הטלפון של המתנדב ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים לשייך",
-    "custom": "Please enter volunteer phone number and name, and begin assigning deliveries for your chosen cities or family groups"
+    "custom": "Please type volunteer's phone and name to start delivery assignment, you can also search volunteer by name, by clicking on "
   },
   "assignmentCanceledFor": {
     "google": "Family affiliation was abolished",
@@ -527,6 +536,10 @@
     "google": "Comments written by the volunteer when he delivered",
     "valueInCode": "הערות שכתב המתנדב כשמסר",
     "custom": "Comments entered by the volunteer upon delivery"
+  },
+  "commentsWrittenByVolunteers": {
+    "google": "Comments written by volunteers",
+    "valueInCode": "הערות שכתבו מתנדבים"
   },
   "company": {
     "google": "Society",
@@ -871,6 +884,10 @@
     "google": "A city for distribution",
     "valueInCode": "עיר לחלוקה"
   },
+  "distributionList": {
+    "google": "Distribution list",
+    "valueInCode": "רשימת חלוקה"
+  },
   "distributionListAsCurrentDelivery": {
     "google": "Distribution list as in current delivery",
     "valueInCode": "רשימת חלוקה כמו במשלוח הנוכחי"
@@ -1153,7 +1170,8 @@
   },
   "familySources": {
     "google": "Referring factors",
-    "valueInCode": "גורמים מפנים"
+    "valueInCode": "גורמים מפנים",
+    "custom": "Family Sources"
   },
   "familyStatus": {
     "google": "status",
@@ -1855,6 +1873,11 @@
     "google": "Boll",
     "valueInCode": "בעיות"
   },
+  "problemsThatRequireFollowup": {
+    "google": "Problems requiring treatment",
+    "valueInCode": "בעיות המצריכות טיפול",
+    "custom": "Problems Followup"
+  },
   "quantity": {
     "google": "Number of baskets",
     "valueInCode": "מספר סלים",
@@ -1967,13 +1990,19 @@
     "google": "View in families for update",
     "valueInCode": "הצג במשפחות לעדכון"
   },
+  "removeFollowUpFor": {
+    "google": "Uncheck \"Requires Care\" for the family",
+    "valueInCode": "לבטל את הסימון \"מצריך טיפול\" למשפחת",
+    "custom": "Remove \"Requires Followup\" for "
+  },
   "removeFromFamiliesToUpdate": {
     "google": "Remove from families to update",
     "valueInCode": "הסר ממשפחות לעדכן"
   },
   "removeGroupAssignmentVerb": {
     "google": "Remove grouping association",
-    "valueInCode": "להסיר שיוך לקבצה"
+    "valueInCode": "להסיר שיוך לקבצה",
+    "custom": "Remove Group"
   },
   "repeatFamilyNotice": {
     "google": "You've been to this family before too",
@@ -2005,7 +2034,8 @@
   },
   "requireFollowUp": {
     "google": "Needs treatment / follow up",
-    "valueInCode": "צריך טיפול/מעקב"
+    "valueInCode": "צריך טיפול/מעקב",
+    "custom": "Requires Followup"
   },
   "requireFollowUpUpdateDate": {
     "google": "Needs Care - When Updated",
@@ -2253,7 +2283,7 @@
   "showAsignDeliveryFor": {
     "google": "Show shipping association to",
     "valueInCode": "הצג שיוך משלוחים ל",
-    "custom": "Show delivery association to"
+    "custom": "Show deliveries for"
   },
   "showFamilies": {
     "google": "View families",
@@ -2338,7 +2368,7 @@
   "smsTextHelpTitle": {
     "google": "This message will be sent to a volunteer from a shipping association screen - with the link to the families it is asked to share.",
     "valueInCode": "הודעה זו תשלח למתנדב ממסך שיוך משלוחים - עם הקישור למשפחות להן הוא מתבקש לחלק.",
-    "custom": "This message will be sent to a volunteer from a delivery association screen - with the link to the families it is asked to share."
+    "custom": "This message will be sent to a volunteer from the Assign Volunteer screen - with the link to the families it is asked to share."
   },
   "socialSecurityNumber": {
     "google": "ID number",

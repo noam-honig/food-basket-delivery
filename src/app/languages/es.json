@@ -139,10 +139,20 @@
     "valueInCode": "כל המשפחות",
     "valueInEnglish": "All families"
   },
+  "allFamilySources": {
+    "google": "Todas las fuentes familiares",
+    "valueInCode": "כל הגורמים מפנים",
+    "valueInEnglish": "All Family Sources"
+  },
   "allGroups": {
     "google": "Todos los grupos familiares",
     "valueInCode": "כל הקבוצות",
     "valueInEnglish": "All family groups"
+  },
+  "allNew": {
+    "google": "Todas las noticias",
+    "valueInCode": "כל החדשות",
+    "valueInEnglish": "All the news"
   },
   "allOthers": {
     "google": "Todos los otros",
@@ -300,9 +310,9 @@
     "valueInEnglish": "Escort assignment"
   },
   "assignHelpText": {
-    "google": "Ingrese el número de teléfono y el nombre del voluntario, y comience a asignar entregas para las ciudades o grupos familiares que haya elegido.",
+    "google": "Escriba el nombre y el teléfono del voluntario para comenzar la tarea de entrega, también puede buscar el voluntario por nombre, haciendo clic",
     "valueInCode": "אנא הזיני את הטלפון של המתנדב ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים לשייך",
-    "valueInEnglish": "Please enter volunteer phone number and name, and begin assigning deliveries for your chosen cities or family groups"
+    "valueInEnglish": "Please type volunteer's phone and name to start delivery assignment, you can also search volunteer by name, by clicking on "
   },
   "assignmentCanceledFor": {
     "google": "Asignación cancelada por",
@@ -563,6 +573,11 @@
     "google": "Comentarios ingresados por el voluntario al momento de la entrega",
     "valueInCode": "הערות שכתב המתנדב כשמסר",
     "valueInEnglish": "Comments entered by the volunteer upon delivery"
+  },
+  "commentsWrittenByVolunteers": {
+    "google": "Comentarios escritos por voluntarios",
+    "valueInCode": "הערות שכתבו מתנדבים",
+    "valueInEnglish": "Comments written by volunteers"
   },
   "company": {
     "google": "Empresa",
@@ -935,6 +950,11 @@
     "valueInCode": "עיר לחלוקה",
     "valueInEnglish": "A city for distribution"
   },
+  "distributionList": {
+    "google": "Lista de distribucion",
+    "valueInCode": "רשימת חלוקה",
+    "valueInEnglish": "Distribution list"
+  },
   "distributionListAsCurrentDelivery": {
     "google": "Lista de distribución como en entrega actual",
     "valueInCode": "רשימת חלוקה כמו במשלוח הנוכחי",
@@ -1271,9 +1291,9 @@
     "valueInEnglish": "Telephone turning point"
   },
   "familySources": {
-    "google": "Factores referentes",
+    "google": "Fuentes familiares",
     "valueInCode": "גורמים מפנים",
-    "valueInEnglish": "Referring factors"
+    "valueInEnglish": "Family Sources"
   },
   "familyStatus": {
     "google": "estado",
@@ -2110,6 +2130,11 @@
     "valueInCode": "בעיות",
     "valueInEnglish": "Boll"
   },
+  "problemsThatRequireFollowup": {
+    "google": "Seguimiento de problemas",
+    "valueInCode": "בעיות המצריכות טיפול",
+    "valueInEnglish": "Problems Followup"
+  },
   "quantity": {
     "google": "Cantidad",
     "valueInCode": "מספר סלים",
@@ -2241,15 +2266,20 @@
     "valueInCode": "הצג במשפחות לעדכון",
     "valueInEnglish": "View in families for update"
   },
+  "removeFollowUpFor": {
+    "google": "Eliminar \"Requiere seguimiento\" para",
+    "valueInCode": "לבטל את הסימון \"מצריך טיפול\" למשפחת",
+    "valueInEnglish": "Remove \"Requires Followup\" for "
+  },
   "removeFromFamiliesToUpdate": {
     "google": "Eliminar de las familias para actualizar",
     "valueInCode": "הסר ממשפחות לעדכן",
     "valueInEnglish": "Remove from families to update"
   },
   "removeGroupAssignmentVerb": {
-    "google": "Eliminar asociación de agrupación",
+    "google": "Eliminar grupo",
     "valueInCode": "להסיר שיוך לקבצה",
-    "valueInEnglish": "Remove grouping association"
+    "valueInEnglish": "Remove Group"
   },
   "repeatFamilyNotice": {
     "google": "También has estado en esta familia antes",
@@ -2287,9 +2317,9 @@
     "valueInEnglish": "The sender's name will be replaced"
   },
   "requireFollowUp": {
-    "google": "Necesita tratamiento / seguimiento",
+    "google": "Requiere seguimiento",
     "valueInCode": "צריך טיפול/מעקב",
-    "valueInEnglish": "Needs treatment / follow up"
+    "valueInEnglish": "Requires Followup"
   },
   "requireFollowUpUpdateDate": {
     "google": "Requiere fecha de actualización de seguimiento",
@@ -2572,9 +2602,9 @@
     "valueInEnglish": "View all families"
   },
   "showAsignDeliveryFor": {
-    "google": "Mostrar asociación de entrega a",
+    "google": "Mostrar entregas para",
     "valueInCode": "הצג שיוך משלוחים ל",
-    "valueInEnglish": "Show delivery association to"
+    "valueInEnglish": "Show deliveries for"
   },
   "showFamilies": {
     "google": "Ver familias",
@@ -2672,9 +2702,9 @@
     "valueInEnglish": "SMS reminder content"
   },
   "smsTextHelpTitle": {
-    "google": "Este mensaje se enviará a un voluntario desde una pantalla de asociación de entrega, con el enlace a las familias que se le pide que comparta.",
+    "google": "Este mensaje se enviará a un voluntario desde la pantalla Asignar voluntario, con el enlace a las familias que se le pide que comparta.",
     "valueInCode": "הודעה זו תשלח למתנדב ממסך שיוך משלוחים - עם הקישור למשפחות להן הוא מתבקש לחלק.",
-    "valueInEnglish": "This message will be sent to a volunteer from a delivery association screen - with the link to the families it is asked to share."
+    "valueInEnglish": "This message will be sent to a volunteer from the Assign Volunteer screen - with the link to the families it is asked to share."
   },
   "socialSecurityNumber": {
     "google": "número de identificación",

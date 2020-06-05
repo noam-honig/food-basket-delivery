@@ -87,7 +87,9 @@ export async function buildLanguageFiles() {
                     const element: string[] = val.split('\n');
                     for (let index = 0; index < element.length; index++) {
                         const term = element[index];
-                        let trans = await translate(term, lang);
+                        let trans = await translate(term, lang, lang == 'en' ? 'iw' : 'en');
+                        console.log(term);
+                        console.log(trans);
                         element[index] = trans;
                     }
                     knownVal = { google: element.join('\\n'), valueInCode: l[key], valueInEnglish };
@@ -98,7 +100,7 @@ export async function buildLanguageFiles() {
                 let v = knownVal.google;
                 if (knownVal.custom)
                     v = knownVal.custom;
-                if (key == 'languageCode'||key=='languageCodeHe')
+                if (key == 'languageCode' || key == 'languageCodeHe')
                     v = lang;
                 let r = v;
                 if (r.includes('\''))
@@ -140,8 +142,8 @@ interface translation {
     valueInEnglish: string;
 }
 
-async function translate(s: string, toLang: string) {
-    let fromLang = 'iw';
+async function translate(s: string, toLang: string, fromLang: string) {
+
 
     return new Promise<string>((resolve, reject) => {
         request("https://www.googleapis.com/language/translate/v2?key=" + process.env.google_key + "&source=" + fromLang + "&target=" + toLang + "&format=text", {

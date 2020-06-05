@@ -35,7 +35,7 @@
       {{n.deliveryStatusUser.getValue()}}
       <br><a (click)="updateFamily(n)">{{settings.lang.deliveryDetails|translate}}</a>
       <br *ngIf="n.courier.value"><a (click)="showHelper(n)"
-        *ngIf="n.courier.value">{{settings.lang.showAsignDeliveryFor|translate}}{{n.courier.getValue()}} </a>
+        *ngIf="n.courier.value">{{settings.lang.showAsignDeliveryFor|translate}} {{n.courier.getValue()}} </a>
     </mat-card-subtitle>
 
   </mat-card-header>

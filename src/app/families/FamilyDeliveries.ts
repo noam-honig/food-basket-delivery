@@ -313,14 +313,14 @@ export class FamilyDeliveries extends IdEntity {
         let r = deliverStatus.displayValue + " ";
         if (DeliveryStatus.IsAResultStatus(deliverStatus.value)) {
             if (deliveryStatusDate.value.valueOf() < new Date().valueOf() - 7 * 86400 * 1000)
-                r += "ב " + deliveryStatusDate.value.toLocaleDateString("he-il");
+                r += getLang(this.context).on + " " + deliveryStatusDate.value.toLocaleDateString("he-il");
             else
-                r += deliveryStatusDate.relativeDateName();
+                r += deliveryStatusDate.relativeDateName(this.context);
             if (courierComments.value) {
                 r += ": " + courierComments.value;
             }
             if (courier.value && deliverStatus.value != DeliveryStatus.SelfPickup && deliverStatus.value != DeliveryStatus.SuccessPickedUp)
-                r += ' ע"י ' + courier.getValue();
+                r += ' '+getLang(this.context).by+' ' + courier.getValue();
         }
         return r;
     }
@@ -335,7 +335,7 @@ export class FamilyDeliveries extends IdEntity {
             case DeliveryStatus.ReadyForDelivery:
                 if (this.courier.value) {
                     let c = this.context.for(Helpers).lookup(this.courier);
-                    return use.language.onTheWay+ ': ' + c.name.value + (c.eventComment.value ? ' (' + c.eventComment.value + ')' : '') + ', '+use.language.assigned+' ' + this.courierAssingTime.relativeDateName();
+                    return use.language.onTheWay + ': ' + c.name.value + (c.eventComment.value ? ' (' + c.eventComment.value + ')' : '') + ', ' + use.language.assigned + ' ' + this.courierAssingTime.relativeDateName(this.context);
                 }
                 break;
             case DeliveryStatus.Success:
@@ -346,7 +346,7 @@ export class FamilyDeliveries extends IdEntity {
                 let duration = '';
                 if (this.courierAssingTime.value && this.deliveryStatusDate.value)
                     duration = ' ' + getLang(this.context).within + ' ' + Math.round((this.deliveryStatusDate.value.valueOf() - this.courierAssingTime.value.valueOf()) / 60000) + " " + getLang(this.context).minutes;
-                return this.deliverStatus.displayValue + (this.courierComments.value ? ", " + this.courierComments.value + " - " : '') + (this.courier.value ? ' ' + getLang(this.context).by + ' ' + this.courier.getValue() : '') + ' ' + this.deliveryStatusDate.relativeDateName() + duration;
+                return this.deliverStatus.displayValue + (this.courierComments.value ? ", " + this.courierComments.value + " - " : '') + (this.courier.value ? ' ' + getLang(this.context).by + ' ' + this.courier.getValue() : '') + ' ' + this.deliveryStatusDate.relativeDateName(this.context) + duration;
 
         }
         return this.deliverStatus.displayValue;
@@ -394,7 +394,7 @@ export class FamilyDeliveries extends IdEntity {
         window.open('https://www.google.com/maps/search/?api=1&hl=' + getLang(this.context).languageCode + '&query=' + this.addressByGoogle.value, '_blank');
     }
     showOnGoogleMaps() {
-        window.open('https://maps.google.com/maps?q=' + toLongLat(this.getDrivingLocation()) + '&hl=' + getLang(this.context).languageCode , '_blank');
+        window.open('https://maps.google.com/maps?q=' + toLongLat(this.getDrivingLocation()) + '&hl=' + getLang(this.context).languageCode, '_blank');
     }
     showOnGovMap() {
         window.open('https://www.govmap.gov.il/?q=' + this.address.value + '&z=10', '_blank');
@@ -482,7 +482,7 @@ export class FamilyDeliveries extends IdEntity {
             columnSettings: () =>
                 [
                     [this.basketType, this.quantity],
-                    [this.deliverStatus,this.deliveryStatusDate],
+                    [this.deliverStatus, this.deliveryStatusDate],
                     this.deliveryComments,
                     this.courier,
                     { column: this.distributionCenter, visible: () => dialog.hasManyCenters },
