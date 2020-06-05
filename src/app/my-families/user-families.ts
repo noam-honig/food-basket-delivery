@@ -9,7 +9,7 @@ import { routeStats } from '../asign-family/asign-family.component';
 import { translate } from '../translate';
 import { ElementRef } from '@angular/core';
 import { PhoneColumn } from '../model-shared/types';
-import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { BasketSummaryComponent } from "../basket-summary/basket-summary.component";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 
@@ -94,6 +94,10 @@ export class UserFamiliesList {
         newFamilies.push(...this.delivered);
         newFamilies.push(...this.problem);
         this.allFamilies = newFamilies;
+        this.initFamilies();
+    }
+    addFamily(d:FamilyDeliveries){
+        this.allFamilies.push(d);
         this.initFamilies();
     }
     familiesAlreadyAssigned = new Map<string, boolean>();

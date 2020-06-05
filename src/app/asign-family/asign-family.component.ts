@@ -245,8 +245,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
     preferRepeatFamilies = true;
     async refreshList() {
-        await this.refreshBaskets();
-        await this.familyLists.initForHelper(this.helper);
+        Promise.all([this.refreshBaskets(),
+        this.familyLists.initForHelper(this.helper)]);
 
     }
     familyLists = new UserFamiliesList(this.context, this.settings);
@@ -359,7 +359,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }
     numOfBaskets: number = 1;
     private async assignFamilyBasedOnIdFromMap(familyId: string) {
-        await this.busy.doWhileShowingBusy(async () => {
+        await this.busy.donotWait(async () => {
             let f = await this.context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(familyId));
             if (f && f.deliverStatus.value == DeliveryStatus.ReadyForDelivery && f.courier.value == "") {
                 this.performSepcificFamilyAssignment(f, 'assign based on map');
@@ -962,9 +962,12 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         f.courier.value = this.helper.id.value;
         f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
         this.dialog.analytics(analyticsName);
+        this.familyLists.addFamily(f);
         await f.save();
-        this.refreshList();
-        this.doRefreshRoute();
+        setTimeout(() => {
+            this.refreshBaskets();
+            this.doRefreshRoute();
+        }, 300);
     }
     showSave() {
         return this.helper && this.helper.wasChanged();
