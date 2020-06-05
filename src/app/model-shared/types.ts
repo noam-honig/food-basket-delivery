@@ -1,6 +1,7 @@
 import * as radweb from '@remult/core';
-import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, ColumnOptions, SqlCommand, SqlResult, AndFilter } from '@remult/core';
-import { use } from '../translate';
+import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, ColumnOptions, SqlCommand, SqlResult, AndFilter, Context } from '@remult/core';
+import { use, getLang } from '../translate';
+import * as moment from 'moment';
 
 
 
@@ -56,7 +57,7 @@ export class PhoneColumn extends radweb.StringColumn {
 
 export class DateTimeColumn extends radweb.DateTimeColumn {
 
-  dontShowTimeForOlderDates = false;
+
   getStringForInputTime() {
     if (!this.value)
       return '';
@@ -101,10 +102,10 @@ export class DateTimeColumn extends radweb.DateTimeColumn {
     this.value = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate(), hours, minutes);
 
   }
-  relativeDateName(d?: Date, now?: Date) {
+  relativeDateName(context: Context, d?: Date) {
     if (!d)
       d = this.value;
-    return relativeDateName({ d, now, dontShowTimeForOlderDates: this.dontShowTimeForOlderDates });
+    return relativeDateName(context, { d });
   }
   get displayValue() {
     if (this.value)
@@ -533,71 +534,12 @@ export interface CaseWhenItemHelper {
   when: any[];
   then: any;
 }
-export function relativeDateName(args: { d?: Date, now?: Date, dontShowTimeForOlderDates?: boolean }) {
-
+export function relativeDateName(context: Context, args: { d?: Date, dontShowTimeForOlderDates?: boolean }) {
   let d = args.d;
-  let now = args.now;
   if (!d)
     return '';
-  if (!now)
-    now = new Date();
-  let sameDay = (x: Date, y: Date) => {
-    return x.getFullYear() == y.getFullYear() && x.getMonth() == y.getMonth() && x.getDate() == y.getDate()
-  }
-  let diffInMinues = Math.ceil((now.valueOf() - d.valueOf()) / 60000);
-  if (diffInMinues <= 1)
-    return use.language.aMinuteAgo;
-  if (diffInMinues < 60) {
+  return moment(d).locale(getLang(context).languageCodeHe).fromNow();
 
-    return use.language.before + ' ' + diffInMinues + ' ' + use.language.minutes;
-  }
-  if (diffInMinues < 60 * 10 || sameDay(d, now)) {
-    let hours = Math.floor(diffInMinues / 60);
-    let min = diffInMinues % 60;
-    if (min > 50) {
-      hours += 1;
-      min = 0;
-    }
-    let r: string;
-    switch (hours) {
-      case 1:
-        r = use.language.anHour;
-        break
-      case 2:
-        r = use.language.twoHours;
-        break;
-      default:
-        r = hours + ' ' + use.language.hours;
-    }
-
-    if (min > 35)
-      r += ' ' + use.language.andThreeQuaters;
-    else if (min > 22) {
-      r += ' ' + use.language.andAHalf;
-    }
-    else if (min > 7) {
-      r += ' ' + use.language.andAQuater;
-    }
-    return 'לפני ' + r;
-
-  }
-  let r = ''
-  if (sameDay(d, new Date(now.valueOf() - 86400 * 1000))) {
-    r = use.language.yesterday;
-  }
-  else if (sameDay(d, new Date(now.valueOf() - 86400 * 1000 * 2))) {
-    r = use.language.twoDaysAgo;
-  }
-  else {
-    let days = (Math.trunc(now.valueOf() / (86400 * 1000)) - Math.trunc(d.valueOf() / (86400 * 1000)));
-    r = use.language.before + ' ' + days + ' ' + use.language.days;
-  }
-  let t = d.getMinutes().toString();
-  if (t.length == 1)
-    t = '0' + t;
-  if (args.dontShowTimeForOlderDates)
-    return r;
-  return r += use.language.on + ' ' + d.getHours() + ':' + t;
 }
 export function wasChanged(...columns: Column<any>[]) {
   for (const c of columns) {

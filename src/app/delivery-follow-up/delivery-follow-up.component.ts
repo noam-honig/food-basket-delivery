@@ -192,7 +192,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
         inProgress: +r['inprogress'],
         problem: +r['problem'],
         late: smsDate && smsDate.valueOf() <= new Date().valueOf() - 3600000 * 1.5,
-        smsDateName: smsDate ? relativeDateName({ d: smsDate }) : '',
+        smsDateName: smsDate ? relativeDateName(context,{ d: smsDate }) : '',
         gotSms: smsDate && smsDate > maxAsign,
         eventComment: r['comment1']
       };

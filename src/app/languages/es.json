@@ -1550,6 +1550,11 @@
     "valueInCode": "iw",
     "valueInEnglish": "iw"
   },
+  "languageCodeHe": {
+    "google": "Oye",
+    "valueInCode": "he",
+    "valueInEnglish": "hey"
+  },
   "lastName": {
     "google": "Apellido",
     "valueInCode": "שם משפחה",

@@ -755,6 +755,7 @@ export class Language {
   questionAddToApplication = "האם להוסיף";
   customSmsMessage = 'הודעת SMS מותאמת';
   assignedToVolunteer = "משוייך למתנדב";
+  languageCodeHe = 'he';
 }
 
 const defaultLang = new Language();

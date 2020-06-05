@@ -482,7 +482,7 @@ export class FamilyDeliveries extends IdEntity {
             columnSettings: () =>
                 [
                     [this.basketType, this.quantity],
-                    this.deliverStatus,
+                    [this.deliverStatus,this.deliveryStatusDate],
                     this.deliveryComments,
                     this.courier,
                     { column: this.distributionCenter, visible: () => dialog.hasManyCenters },

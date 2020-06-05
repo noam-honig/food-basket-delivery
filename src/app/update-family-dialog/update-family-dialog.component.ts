@@ -54,22 +54,34 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   ) {
     dialogRef.afterClosed().toPromise().then(() => {
       if (!this.confirmed)
-        if (!this.args.userCanUpdateButDontSave)
+        if (!this.args.userCanUpdateButDontSave) {
           this.families.currentRow.undoChanges();
+          if (this.delivery)
+            this.delivery.undoChanges();
+        }
     });
   }
   ngOnDestroy(): void {
-    this.destroyMe.remove();
+    if (this.destroyMe)
+      this.destroyMe.remove();
 
   }
   ngAfterViewInit(): void {
-    this.addressPanel.open();
-    this.cd.detectChanges();
 
   }
+  init = false;
 
   ngAfterViewChecked(): void {
+    if (!this.init && this.addressPanel) {
+      if (this.delivery) {
+        this.deliveryPanel.open();
+      }
+      else
+        this.addressPanel.open();
+      this.init = true;
+      this.cd.detectChanges();
 
+    }
   }
   getAddressDescription() {
     let f = this.families.currentRow;
@@ -113,6 +125,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
 
 
   }
+  @ViewChild('deliveryPanel', { static: false }) deliveryPanel: MatExpansionPanel;
   @ViewChild('addressPanel', { static: false }) addressPanel: MatExpansionPanel;
   @ViewChild('addressInput', { static: false }) addressInput: ElementRef;
   async sendSmsToCourier() {

@@ -98,7 +98,7 @@ export async function buildLanguageFiles() {
                 let v = knownVal.google;
                 if (knownVal.custom)
                     v = knownVal.custom;
-                if (key == 'languageCode')
+                if (key == 'languageCode'||key=='languageCodeHe')
                     v = lang;
                 let r = v;
                 if (r.includes('\''))

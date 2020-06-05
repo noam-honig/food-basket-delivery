@@ -628,4 +628,5 @@ export class italy implements Language {
   questionAddToApplication = 'Aggiungi';
   customSmsMessage = 'SMS personalizzati';
   assignedToVolunteer = 'Associato a un volontario';
+  languageCodeHe = 'it';
 }

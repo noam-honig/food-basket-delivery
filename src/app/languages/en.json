@@ -1390,6 +1390,10 @@
     "google": "iw",
     "valueInCode": "iw"
   },
+  "languageCodeHe": {
+    "google": "hey",
+    "valueInCode": "he"
+  },
   "lastName": {
     "google": "Last Name",
     "valueInCode": "שם משפחה"

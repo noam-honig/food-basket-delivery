@@ -26,7 +26,7 @@
         <div *ngIf="families.currentRow">
 
             <mat-accordion *ngIf="familiesInfo" [multi]="true">
-                <mat-expansion-panel *ngIf="delivery">
+                <mat-expansion-panel *ngIf="delivery" #deliveryPanel>
                     <mat-expansion-panel-header>
                         <div>
                             <mat-panel-title>
@@ -191,7 +191,7 @@
     <button mat-raised-button color="accent" (click)="cancel()" *ngIf="args.disableSave">
         {{settings.lang.close}}
     </button>
-    &nbsp; <a *ngIf="families.currentRow.address.value!=families.currentRow.address.originalValue"
+    &nbsp; <a *ngIf="families.currentRow&&families.currentRow.address.value!=families.currentRow.address.originalValue"
         (click)="families.currentRow.save()" target="_blank">{{settings.lang.checkAddress}}</a>
 
 </mat-dialog-actions>

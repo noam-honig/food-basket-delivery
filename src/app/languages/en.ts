@@ -628,4 +628,5 @@ export class en implements Language {
   questionAddToApplication = 'Do add';
   customSmsMessage = 'Personalized SMS';
   assignedToVolunteer = 'Associated with a volunteer';
+  languageCodeHe = 'en';
 }
