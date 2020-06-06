@@ -25,10 +25,12 @@ export async function GetGeoInformation(address: string, context: Context) {
         //console.log('cache:' + address);
         return new GeocodeInformation(JSON.parse(cacheEntry.googleApiResult.value) as GeocodeResult);
     }
+    let settings = await ApplicationSettings.getAsync(context);
     let x = pendingRequests.get(address);
     if (!x) {
         let u = new UrlBuilder('https://maps.googleapis.com/maps/api/geocode/json');
-        let settings = await ApplicationSettings.getAsync(context);
+        
+        
         u.addObject({
             key: process.env.GOOGLE_GECODE_API_KEY,
             address: address,
@@ -38,13 +40,15 @@ export async function GetGeoInformation(address: string, context: Context) {
         try {
             let r = fetch.default(u.url).then(async x => await x.json().then(async (r: GeocodeResult) => {
 
-                //console.log('google:' + address);
+                
                 cacheEntry.id.value = address;
                 cacheEntry.googleApiResult.value = JSON.stringify(r);
                 cacheEntry.createDate.value = new Date();
-                try{
-                await cacheEntry.save();
-                }catch{}
+                try {
+                    await cacheEntry.save();
+                } catch{
+                    
+                }
                 let g = new GeocodeInformation(r as GeocodeResult);
                 if (!g.ok())
                     console.log('api error:' + g.info.status + ' for ' + address);
@@ -63,7 +67,7 @@ export async function GetGeoInformation(address: string, context: Context) {
         }
     }
     else {
-        //console.log('reuse: ' + address);
+        
     }
     return await x;
 
