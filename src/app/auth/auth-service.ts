@@ -163,7 +163,7 @@ export class AuthService {
         r.sort((a, b) => a.sort - b.sort);
         return r[0];
     }
-    async signout(): any {
+    async signout() {
         this.tokenHelper.signout('/' + Sites.getOrganizationFromContext(this.context));
         this.routeHelper.navigateToComponent((await import ("../users/login/login.component")).LoginComponent);
     }
