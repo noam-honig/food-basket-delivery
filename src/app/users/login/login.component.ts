@@ -7,7 +7,6 @@ import { Router, Route, RouteReuseStrategy } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
 import { Context, RouteHelperService, NotSignedInGuard } from '@remult/core';
-import { RegisterComponent } from '../register/register.component';
 import { AdminGuard } from '../../auth/roles';
 import { Sites } from '../../sites/sites';
 import { CustomReuseStrategy } from 'src/app/custom-reuse-controller-router-strategy';
@@ -39,8 +38,8 @@ export class LoginComponent implements OnInit {
   login() {
     this.auth.login(this.user, this.password, this.remember, () => this.password = '');
   }
-  register() {
-    this.router.navigateToComponent(RegisterComponent);
+  async register() {
+    this.router.navigateToComponent( (await import ('../register/register.component')).RegisterComponent);
   }
   orgName() {
     return ApplicationSettings.get(this.context).organisationName.value;

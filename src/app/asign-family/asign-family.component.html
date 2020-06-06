@@ -162,7 +162,7 @@
     <!--
     <input type="checkbox" [(ngModel)]="this.useGoogleOptimization">
     <button (click)="doRefreshRoute()">Run Refresh Route</button>-->
-    <app-helper-families [familyLists]="familyLists" [partOfAssign]="true" (assignmentCanceled)="assignmentCanceled()"
+    <app-helper-families #helperFamilies [familyLists]="familyLists" [partOfAssign]="true" (assignmentCanceled)="assignmentCanceled()"
       (assignSmsSent)="smsSent()"></app-helper-families>
 
   </div>

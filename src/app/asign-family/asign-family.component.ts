@@ -38,6 +38,7 @@ import { CitiesStatsPerDistCenter } from '../family-deliveries/family-deliveries
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Families } from '../families/families';
 import { PromiseThrottle } from '../import-from-excel/import-from-excel.component';
+import { HelperFamiliesComponent } from '../helper-families/helper-families.component';
 
 
 
@@ -57,8 +58,17 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         return this.context.isAllowed(Roles.admin);
     }
     assignOnMap() {
-        this.familyLists.startAssignByMap(this.filterCity, this.filterGroup, this.dialog.distCenter.value, this.filterArea);
+        this.familyLists.forceShowMap = true;
+        setTimeout(() => {
+            this.helperFamilies.switchToMap();
+
+            setTimeout(() => {
+                this.familyLists.startAssignByMap(this.filterCity, this.filterGroup, this.dialog.distCenter.value, this.filterArea);
+            }, 50);
+        }, 50);
+
     }
+    @ViewChild("helperFamilies", { static: false }) helperFamilies: HelperFamiliesComponent;
     translate = translate;
     async searchPhone() {
         this.clearHelperInfo(false);

@@ -18,6 +18,8 @@ export class UserFamiliesList {
     setMap(map: MapComponent): any {
         this.map = map;
         this.map.userClickedOnFamilyOnMap = (f) => this.userClickedOnFamilyOnMap(f);
+        if (this.allFamilies)
+            this.map.test(this.allFamilies);
     }
     startAssignByMap(city: string, group: string, distCenter: string, area: string) {
 
@@ -26,6 +28,7 @@ export class UserFamiliesList {
             this.map.gmapElement.nativeElement.scrollIntoView();
         }, 100);
     }
+    forceShowMap = false;
 
     constructor(private context: Context, private settings: ApplicationSettings) { }
     toDeliver: ActiveFamilyDeliveries[] = [];
@@ -69,7 +72,7 @@ export class UserFamiliesList {
             boxes2 += this.context.for(BasketType).lookup(iterator.basketType).boxes2.value * iterator.quantity.value;
         }
         if (this.toDeliver.length == 0)
-            return 'שומר מקום';
+            return this.settings.lang.noDeliveries;
         let r = '';
         if (this.toDeliver.length == 1) {
             r = translate(this.settings.lang.oneDeliveryToDistribute);
@@ -96,7 +99,7 @@ export class UserFamiliesList {
         this.allFamilies = newFamilies;
         this.initFamilies();
     }
-    addFamily(d:FamilyDeliveries){
+    addFamily(d: FamilyDeliveries) {
         this.allFamilies.push(d);
         this.initFamilies();
     }
@@ -157,6 +160,7 @@ export class UserFamiliesList {
         this.toDeliver = [];
         if (this.map)
             this.map.clear();
+        this.forceShowMap = false;
 
 
 

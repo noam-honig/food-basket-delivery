@@ -23,6 +23,7 @@ import { Roles } from '../auth/roles';
 import { pagedRowsIterator } from '../families/familyActionsWiring';
 import { Families } from '../families/families';
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
+import { MatTabGroup } from '@angular/material';
 
 @Component({
   selector: 'app-helper-families',
@@ -30,6 +31,9 @@ import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-fami
   styleUrls: ['./helper-families.component.scss']
 })
 export class HelperFamiliesComponent implements OnInit {
+  switchToMap() {
+    this.tab.selectedIndex = 1;
+  }
 
   constructor(public auth: AuthService, private dialog: DialogService, private context: Context, private busy: BusyService, public settings: ApplicationSettings) { }
   @Input() familyLists: UserFamiliesList;
@@ -39,8 +43,25 @@ export class HelperFamiliesComponent implements OnInit {
   @Output() assignmentCanceled = new EventEmitter<void>();
   @Output() assignSmsSent = new EventEmitter<void>();
   @Input() preview = false;
+  @ViewChild("theTab", { static: false }) tab: MatTabGroup;
   ngOnInit() {
-    this.familyLists.setMap(this.map);//123
+
+
+  }
+  prevMap: MapComponent;
+  lastBounds: string;
+  mapTabClicked() {
+    if (this.map && this.map != this.prevMap) {
+      this.familyLists.setMap(this.map);
+      this.prevMap = this.map;
+    }
+    if (this.map) {
+      if (this.tab.selectedIndex == 1 && this.lastBounds != this.map.lastBounds) {
+        this.map.lastBounds = '';
+        this.map.fitBounds();
+      }
+      this.lastBounds = this.map.lastBounds;
+    }
 
   }
   async cancelAssign(f: ActiveFamilyDeliveries) {
@@ -231,7 +252,7 @@ export class HelperFamiliesComponent implements OnInit {
     window.open('https://wa.me/' + phone + '?text=' + encodeURI(this.smsMessage), '_blank');
     await this.updateMessageSent();
   }
-  async customSms(){
+  async customSms() {
     let h = this.familyLists.helper;
     let phone = h.phone.value;
     if (phone.startsWith('0')) {
@@ -338,7 +359,7 @@ export class HelperFamiliesComponent implements OnInit {
       this.dialog.Error(err);
     }
   }
-  @ViewChild("map", { static: true }) map: MapComponent;
+  @ViewChild("map", { static: false }) map: MapComponent;
 
 }
 

@@ -1457,6 +1457,10 @@
     "google": "Link copied",
     "valueInCode": "קישור הועתק"
   },
+  "list": {
+    "google": "list",
+    "valueInCode": "רשימה"
+  },
   "loadExcelSettings": {
     "google": "Load settings",
     "valueInCode": "טען הגדרות"
@@ -1493,6 +1497,10 @@
   "manyAddressesEndWithNumber": {
     "google": "From the addresses are empty or ending in the book - you may not have noticed the settlement of the address. Go back to column definition?",
     "valueInCode": "מהכתובות ריקות או מסתיימות בספרה - יתכן שלא קלטתם את הישוב של הכתובת. לחזור להגדרת עמודות?"
+  },
+  "map": {
+    "google": "from here",
+    "valueInCode": "מפה"
   },
   "mapExcelColumns": {
     "google": "Define the columns",
@@ -1646,6 +1654,10 @@
   "no": {
     "google": "No",
     "valueInCode": "לא"
+  },
+  "noDeliveries": {
+    "google": "No deliveries for distribution",
+    "valueInCode": "אין משלוחים לחלוקה"
   },
   "noDeliveriesLeft": {
     "google": "No suitable shipments left",

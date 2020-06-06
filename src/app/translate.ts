@@ -762,6 +762,9 @@ export class Language {
   problemsThatRequireFollowup = 'בעיות המצריכות טיפול';
   commentsWrittenByVolunteers = 'הערות שכתבו מתנדבים';
   distributionList = 'רשימת חלוקה';
+  list = "רשימה";
+  map = "מפה";
+  noDeliveries = "אין משלוחים לחלוקה";
 }
 
 const defaultLang = new Language();

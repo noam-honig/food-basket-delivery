@@ -10,7 +10,7 @@ import { LoginResponse } from "./login-response";
 import { Roles } from "./roles";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 
-import { LoginComponent } from "../users/login/login.component";
+
 import { Sites } from "../sites/sites";
 import { OverviewComponent } from "../overview/overview.component";
 import { SelectListComponent } from "../select-list/select-list.component";
@@ -163,9 +163,9 @@ export class AuthService {
         r.sort((a, b) => a.sort - b.sort);
         return r[0];
     }
-    signout(): any {
+    async signout(): any {
         this.tokenHelper.signout('/' + Sites.getOrganizationFromContext(this.context));
-        this.routeHelper.navigateToComponent(LoginComponent);
+        this.routeHelper.navigateToComponent((await import ("../users/login/login.component")).LoginComponent);
     }
 
 

@@ -1630,6 +1630,11 @@
     "valueInCode": "קישור הועתק",
     "valueInEnglish": "Link copied"
   },
+  "list": {
+    "google": "elenco",
+    "valueInCode": "רשימה",
+    "valueInEnglish": "list"
+  },
   "loadExcelSettings": {
     "google": "Carica impostazioni",
     "valueInCode": "טען הגדרות",
@@ -1674,6 +1679,11 @@
     "google": "Gli indirizzi sono vuoti o terminano nel libro - potresti non aver notato l'insediamento dell'indirizzo. Torna alla definizione di colonna?",
     "valueInCode": "מהכתובות ריקות או מסתיימות בספרה - יתכן שלא קלטתם את הישוב של הכתובת. לחזור להגדרת עמודות?",
     "valueInEnglish": "From the addresses are empty or ending in the book - you may not have noticed the settlement of the address. Go back to column definition?"
+  },
+  "map": {
+    "google": "da qui",
+    "valueInCode": "מפה",
+    "valueInEnglish": "from here"
   },
   "mapExcelColumns": {
     "google": "Definisci le colonne",
@@ -1854,6 +1864,11 @@
     "google": "No",
     "valueInCode": "לא",
     "valueInEnglish": "No"
+  },
+  "noDeliveries": {
+    "google": "Nessuna consegna per la distribuzione",
+    "valueInCode": "אין משלוחים לחלוקה",
+    "valueInEnglish": "No deliveries for distribution"
   },
   "noDeliveriesLeft": {
     "google": "Non sono rimaste consegne adeguate",

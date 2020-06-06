@@ -1,4 +1,4 @@
-<mat-card class="no-print" *ngIf="familyLists.toDeliver.length>0">
+<mat-card class="no-print" *ngIf="familyLists.toDeliver.length>0||familyLists.forceShowMap">
   <mat-card-title>
     {{familyLists.getLeftFamiliesDescription()}}
     <div>
@@ -8,7 +8,7 @@
         <button mat-menu-item (click)="okAll()"
           class="primary-menu">{{settings.lang.markAllDeliveriesAsSuccesfull|translate}}</button>
       </mat-menu>
-      <button mat-icon-button (click)="familyLists.showBasketSummary()">
+      <button mat-icon-button (click)="familyLists.showBasketSummary()" *ngIf="familyLists.toDeliver.length>0">
         <mat-icon>assignment
         </mat-icon>
       </button>
@@ -26,40 +26,48 @@
       {{settings.lang.minutes}},
       {{familyLists.routeStats.totalKm}} {{settings.lang.km}}</span>
   </div>
-  <mat-accordion class="no-print">
-    <ng-container *ngFor="let f of familyLists.toDeliver;let i=index">
-      <mat-expansion-panel #myPanel *ngIf="limitReady.shouldShow(i)">
-        <mat-expansion-panel-header>
-          <app-family-in-list [f]="f" [i]="i+1" style="width:100%" [sameAddress]="sameAddress(f,i)"
-            (delivered)="deliveredToFamily(f)"
-            [newAssign]="familyLists.highlightNewFamilies&&!familyLists.familiesAlreadyAssigned.get(f.id.value)">
-          </app-family-in-list>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
-
-
-          <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign"
-            (assignmentCanceled)="cancelAssign(f)">
-
-
-            <button mat-raised-button class="myButton" color="accent"
-              (click)="deliveredToFamily(f)">{{settings.deliveredButtonText.value}}</button>
-            <br *ngIf="settings.showLeftThereButton.value" />
-            <button *ngIf="settings.showLeftThereButton.value" mat-raised-button class="myButton"
-              (click)="leftThere(f)">{{settings.lang.leftDeliveryNextToHouse}}
-            </button>
-            <br />
-            <button mat-raised-button class="myButton badButton"
-              (click)="couldntDeliverToFamily(f)">{{settings.lang.ranIntoAProblem}}</button>
-
-
-          </app-family-info>
-        </ng-template>
-      </mat-expansion-panel>
-    </ng-container>
-  </mat-accordion>
-  <button mat-raised-button (click)="limitReady.showAll()" *ngIf="limitReady.showButton()"
-    style="margin-top: 10px;">{{settings.lang.showAllDeliveries}}</button>
+  <mat-tab-group (selectedTabChange)="mapTabClicked()" #theTab> 
+    <mat-tab [label]="settings.lang.list" >
+      <mat-accordion class="no-print">
+        <ng-container *ngFor="let f of familyLists.toDeliver;let i=index">
+          <mat-expansion-panel #myPanel *ngIf="limitReady.shouldShow(i)">
+            <mat-expansion-panel-header>
+              <app-family-in-list [f]="f" [i]="i+1" style="width:100%" [sameAddress]="sameAddress(f,i)"
+                (delivered)="deliveredToFamily(f)"
+                [newAssign]="familyLists.highlightNewFamilies&&!familyLists.familiesAlreadyAssigned.get(f.id.value)">
+              </app-family-in-list>
+            </mat-expansion-panel-header>
+            <ng-template matExpansionPanelContent>
+    
+    
+              <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign"
+                (assignmentCanceled)="cancelAssign(f)">
+    
+    
+                <button mat-raised-button class="myButton" color="accent"
+                  (click)="deliveredToFamily(f)">{{settings.deliveredButtonText.value}}</button>
+                <br *ngIf="settings.showLeftThereButton.value" />
+                <button *ngIf="settings.showLeftThereButton.value" mat-raised-button class="myButton"
+                  (click)="leftThere(f)">{{settings.lang.leftDeliveryNextToHouse}}
+                </button>
+                <br />
+                <button mat-raised-button class="myButton badButton"
+                  (click)="couldntDeliverToFamily(f)">{{settings.lang.ranIntoAProblem}}</button>
+    
+    
+              </app-family-info>
+            </ng-template>
+          </mat-expansion-panel>
+        </ng-container>
+      </mat-accordion>
+      <button mat-raised-button (click)="limitReady.showAll()" *ngIf="limitReady.showButton()"
+        style="margin-top: 10px;">{{settings.lang.showAllDeliveries}}</button>
+    </mat-tab>
+    <mat-tab [label]="settings.lang.map" >
+      <app-map #map> </app-map>
+    </mat-tab>
+  </mat-tab-group>
+ 
 </mat-card>
 
 <div style="display:flex;flex-direction: column;">
@@ -219,11 +227,6 @@
     <button mat-raised-button (click)="limitDelivered.showAll()" *ngIf="limitDelivered.showButton()"
       style="margin-top: 10px;">{{settings.lang.showAllCompletedDeliveries}}</button>
   </mat-card>
-  <mat-card [class.hide]="partOfReview||preview">
-
-    <app-map #map> </app-map>
-    <button mat-raised-button *ngIf="!preview&&familyLists.toDeliver.length>0" (click)="showRouteOnGoogleMaps()"
-      class="map-button no-print">{{settings.lang.showRouteOnGoogleMaps}}</button>
-  </mat-card>
+  
 
 </div>
