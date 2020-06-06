@@ -101,7 +101,7 @@
 
     <span
       *ngIf="familyLists&&familyLists.helper&&familyLists.helper.reminderSmsDate.value; else elseContent">{{settings.lang.reminderSent}}
-      {{familyLists.helper.reminderSmsDate.relativeDateName()}} {{settings.lang.resendReminder}}
+      {{familyLists.helper.reminderSmsDate.relativeDateName(context)}} {{settings.lang.resendReminder}}
 
     </span>
 

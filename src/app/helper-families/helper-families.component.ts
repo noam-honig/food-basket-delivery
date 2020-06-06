@@ -35,7 +35,7 @@ export class HelperFamiliesComponent implements OnInit {
     this.tab.selectedIndex = 1;
   }
 
-  constructor(public auth: AuthService, private dialog: DialogService, private context: Context, private busy: BusyService, public settings: ApplicationSettings) { }
+  constructor(public auth: AuthService, private dialog: DialogService, public context: Context, private busy: BusyService, public settings: ApplicationSettings) { }
   @Input() familyLists: UserFamiliesList;
   @Input() partOfAssign = false;
   @Input() partOfReview = false;
