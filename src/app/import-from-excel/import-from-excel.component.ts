@@ -101,7 +101,8 @@ export class ImportFromExcelComponent implements OnInit {
                     let lastDate = new Date().valueOf();
                     let start = lastDate;
                     let index = 0;
-                    for (const i of this.newRows) {
+                    let rows = [...this.newRows];
+                    for (const i of rows) {
 
                         rowsToInsert.push(i);
                         index++;
@@ -117,6 +118,9 @@ export class ImportFromExcelComponent implements OnInit {
                                 r.created = true;
                             }
                             this.identicalRows.push(...rowsToInsert);
+                            for (const r of rowsToInsert) {
+                                this.newRows.splice(this.newRows.indexOf(r), 1);
+                            }
                             rowsToInsert = [];
                         }
 
@@ -1340,8 +1344,8 @@ class columnUpdateHelper {
         additionalUpdates?: ((entity: T) => void)) {
         let x = await this.context.for(c).lookupAsync(e => (getSearchColumn(e).isEqualTo(val)));
         if (x.isNew()) {
-            let s = updateResultTo.defs.caption + " \"" + val + "\" "+use.language.doesNotExist;
-            if (this.autoAdd || await this.dialog.YesNoPromise(s + ", "+use.language.questionAddToApplication+"?")) {
+            let s = updateResultTo.defs.caption + " \"" + val + "\" " + use.language.doesNotExist;
+            if (this.autoAdd || await this.dialog.YesNoPromise(s + ", " + use.language.questionAddToApplication + "?")) {
                 getSearchColumn(x).value = val;
                 if (additionalUpdates)
                     additionalUpdates(x);
