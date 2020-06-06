@@ -320,7 +320,7 @@ export class FamilyDeliveries extends IdEntity {
                 r += ": " + courierComments.value;
             }
             if (courier.value && deliverStatus.value != DeliveryStatus.SelfPickup && deliverStatus.value != DeliveryStatus.SuccessPickedUp)
-                r += ' '+getLang(this.context).by+' ' + courier.getValue();
+                r += ' ' + getLang(this.context).by + ' ' + courier.getValue();
         }
         return r;
     }
@@ -426,6 +426,7 @@ export class FamilyDeliveries extends IdEntity {
     async showDetailsDialog(callerHelper?: {
         refreshDeliveryStats?: () => void,
         onSave?: () => Promise<void>,
+        focusOnDelivery?: boolean,
         dialog: DialogService
     }) {
 
@@ -436,6 +437,7 @@ export class FamilyDeliveries extends IdEntity {
 
                 this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = {
                     familyDelivery: this,
+                    focusOnDelivery: callerHelper.focusOnDelivery,
                     onSave: async () => {
                         if (callerHelper && callerHelper.onSave)
                             await callerHelper.onSave();

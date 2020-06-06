@@ -37,6 +37,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     familyDelivery?: FamilyDeliveries,
     familyId?: string,
     deliveryId?: string,
+    focusOnDelivery?: boolean,
     message?: string,
     disableSave?: boolean,
     userCanUpdateButDontSave?: boolean,
@@ -73,7 +74,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
 
   ngAfterViewChecked(): void {
     if (!this.init && this.addressPanel) {
-      if (this.delivery) {
+      if (this.delivery && this.args.focusOnDelivery) {
         this.deliveryPanel.open();
       }
       else
