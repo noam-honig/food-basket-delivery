@@ -591,6 +591,9 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         }
         if (!info.helperId)
             throw 'invalid helper';
+        let helper = await context.for(Helpers).findId(info.helperId);
+        if (!helper)
+            throw "helper does not exist";
 
         let existingFamilies = await context.for(ActiveFamilyDeliveries).find({
             where: f => f.courier.isEqualTo(info.helperId).and(
@@ -661,7 +664,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         }
 
         let getFamilies = async () => {
-            if (locationReferenceFamilies.length>0&&info.preferRepeatFamilies&&!info.allRepeat){
+            if (locationReferenceFamilies.length > 0 && info.preferRepeatFamilies && !info.allRepeat) {
                 info.preferRepeatFamilies = false;
             }
             let f = context.for(ActiveFamilyDeliveries).create();
@@ -738,15 +741,29 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             if (waitingFamilies.length > 0) {
 
                 if (locationReferenceFamilies.length == 0) {
-                    let position = Math.trunc(Math.random() * waitingFamilies.length);
+
                     let distCenter = settings.getGeocodeInformation().location();
                     let lastFamiliy = waitingFamilies[0];
-                    let lastDist = 0;
-                    for (const f of waitingFamilies) {
-                        let dist = GeocodeInformation.GetDistanceBetweenPoints({ lng: f.lng, lat: f.lat }, distCenter);
-                        if (dist > lastDist) {
-                            lastFamiliy = f;
-                            lastDist = dist;
+                    if (helper.getGeocodeInformation().ok()) {
+                        lastFamiliy = undefined;
+                        var lastDist: number;
+                        for (const f of waitingFamilies) {
+
+                            let dist = GeocodeInformation.GetDistanceBetweenPoints(f, helper.getGeocodeInformation().location());
+                            if (!lastFamiliy || dist < lastDist) {
+                                lastFamiliy = f;
+                                lastDist = dist;
+                            }
+                        }
+
+                    } else {
+                        let lastDist = 0;
+                        for (const f of waitingFamilies) {
+                            let dist = GeocodeInformation.GetDistanceBetweenPoints(f, distCenter);
+                            if (dist > lastDist) {
+                                lastFamiliy = f;
+                                lastDist = dist;
+                            }
                         }
                     }
                     await addFamilyToResult(lastFamiliy);
