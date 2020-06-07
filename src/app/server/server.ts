@@ -37,9 +37,20 @@ serverInit().then(async (dataSource) => {
             sendDs(ds);
         return context;
     }
+    let redirect: string[] = [];
+    {
+        let x = process.env.REDIRECT;
+        if (x)
+            redirect = x.split(',');
+    }
+
     async function sendIndex(res: express.Response, req: express.Request) {
         let context = getContext(req);
         let org = Sites.getOrganizationFromContext(context);
+        if (redirect.includes(org)) {
+            res.redirect('https://salmaz.herokuapp.com/' + org);
+            return;
+        }
         if (!Sites.isValidOrganization(org)) {
             res.redirect('/' + Sites.guestSchema + '/');
             return;
@@ -49,7 +60,7 @@ serverInit().then(async (dataSource) => {
         if (fs.existsSync(index)) {
             let x = '';
             let settings = (await ApplicationSettings.getAsync(context));
-            setLangForSite(Sites.getValidSchemaFromContext(context),settings.forWho.value.args.languageCode);
+            setLangForSite(Sites.getValidSchemaFromContext(context), settings.forWho.value.args.languageCode);
             x = settings.organisationName.value;
             let result = fs.readFileSync(index).toString().replace(/!TITLE!/g, x).replace("/*!SITE!*/", "multiSite=" + Sites.multipleSites);
             if (settings.forWho.value.args.leftToRight) {
@@ -78,109 +89,104 @@ serverInit().then(async (dataSource) => {
         GeoCodeOptions.disableGeocode = true;
     }
 
-    let redirect = process.env.REDIRECT;
-    if (redirect) {
-        app.use('/*', async (req, res) => {
-            let to = redirect + req.originalUrl;
-            await res.redirect(to);
-        });
-    } else {
-
-        let addServerEvent = x => { };
-        if (!process.env.DISABLE_SERVER_EVENTS) {
-            let serverEvents = new ServerEvents(app);
-            addServerEvent = async (s) => serverEvents.registerPath('/' + s + '/api');;
-            if (Sites.multipleSites) {
-                for (const s of Sites.schemas) {
-                    addServerEvent(s);
-                }
-            }
-            else {
-                serverEvents.registerPath('/api');
-            }
-
-            let lastMessage = new Date();
-            Families.SendMessageToBrowsers = (x, c, distCenter) => {
-                if (new Date().valueOf() - lastMessage.valueOf() > 1000) {
-                    lastMessage = new Date();
-                    serverEvents.SendMessage(x, c, distCenter)
-                }
-            };
-        }
-        app.get('/data-migration', async (req, res) => {
-            await dataMigration(res);
-        });
-
-        let eb = new ExpressBridge(
-            //@ts-ignore
-            app,
-            dataSource, process.env.DISABLE_HTTPS == "true", !Sites.multipleSites);
-        if (process.env.logUrls != "true")
-            eb.logApiEndPoints = false;
-        Helpers.helper = new JWTCookieAuthorizationHelper(eb, process.env.TOKEN_SIGN_KEY);
 
 
+
+    let addServerEvent = x => { };
+    if (!process.env.DISABLE_SERVER_EVENTS) {
+        let serverEvents = new ServerEvents(app);
+        addServerEvent = async (s) => serverEvents.registerPath('/' + s + '/api');;
         if (Sites.multipleSites) {
-            let createSchemaApi = async schema => {
-                let area = eb.addArea('/' + schema + '/api', async req => {
-                    if (req.user) {
-                        let context = new ServerContext();
-                        context.setReq(req);
-                        if (!context.isAllowed(Sites.getOrgRole(context)))
-                            req.user = undefined;
-                    }
-                });
-                registerActionsOnServer(area, dataSource);
-                registerEntitiesOnServer(area, dataSource);
-                registerImageUrls(app, getContext, '/' + schema);
-            };
-            for (const schema of Sites.schemas) {
-                createSchemaApi(schema);
-            }
-            OverviewComponent.createSchemaApi = async schema => {
-                let stack: [] = app._router.stack;
-                stack.splice(stack.length - 1, 1);
-                addServerEvent(schema);
-                createSchemaApi(schema);
-                app.use('/*', async (req, res) => {
-                    await sendIndex(res, req);
-                });
-
-            };
-            {
-                let area = eb.addArea('/' + Sites.guestSchema + '/api', async req => {
-                    if (req.user) {
-                        let context = new ServerContext();
-                        context.setReq(req);
-                        if (!context.isAllowed(Sites.getOrgRole(context)))
-                            req.user = undefined;
-                    }
-                });
-                registerActionsOnServer(area, dataSource);
-                registerEntitiesOnServer(area, dataSource);
+            for (const s of Sites.schemas) {
+                addServerEvent(s);
             }
         }
         else {
-            registerImageUrls(app, getContext, '');
+            serverEvents.registerPath('/api');
         }
 
-
-
-        app.get('', (req, res) => {
-
-            sendIndex(res, req);
-        });
-
-        app.get('/index.html', (req, res) => {
-
-            sendIndex(res, req);
-        });
-        app.use(express.static('dist'));
-
-        app.use('/*', async (req, res) => {
-            await sendIndex(res, req);
-        });
+        let lastMessage = new Date();
+        Families.SendMessageToBrowsers = (x, c, distCenter) => {
+            if (new Date().valueOf() - lastMessage.valueOf() > 1000) {
+                lastMessage = new Date();
+                serverEvents.SendMessage(x, c, distCenter)
+            }
+        };
     }
+    app.get('/data-migration', async (req, res) => {
+        await dataMigration(res);
+    });
+
+    let eb = new ExpressBridge(
+        //@ts-ignore
+        app,
+        dataSource, process.env.DISABLE_HTTPS == "true", !Sites.multipleSites);
+    if (process.env.logUrls != "true")
+        eb.logApiEndPoints = false;
+    Helpers.helper = new JWTCookieAuthorizationHelper(eb, process.env.TOKEN_SIGN_KEY);
+
+
+    if (Sites.multipleSites) {
+        let createSchemaApi = async schema => {
+            let area = eb.addArea('/' + schema + '/api', async req => {
+                if (req.user) {
+                    let context = new ServerContext();
+                    context.setReq(req);
+                    if (!context.isAllowed(Sites.getOrgRole(context)))
+                        req.user = undefined;
+                }
+            });
+            registerActionsOnServer(area, dataSource);
+            registerEntitiesOnServer(area, dataSource);
+            registerImageUrls(app, getContext, '/' + schema);
+        };
+        for (const schema of Sites.schemas) {
+            createSchemaApi(schema);
+        }
+        OverviewComponent.createSchemaApi = async schema => {
+            let stack: [] = app._router.stack;
+            stack.splice(stack.length - 1, 1);
+            addServerEvent(schema);
+            createSchemaApi(schema);
+            app.use('/*', async (req, res) => {
+                await sendIndex(res, req);
+            });
+
+        };
+        {
+            let area = eb.addArea('/' + Sites.guestSchema + '/api', async req => {
+                if (req.user) {
+                    let context = new ServerContext();
+                    context.setReq(req);
+                    if (!context.isAllowed(Sites.getOrgRole(context)))
+                        req.user = undefined;
+                }
+            });
+            registerActionsOnServer(area, dataSource);
+            registerEntitiesOnServer(area, dataSource);
+        }
+    }
+    else {
+        registerImageUrls(app, getContext, '');
+    }
+
+
+
+    app.get('', (req, res) => {
+
+        sendIndex(res, req);
+    });
+
+    app.get('/index.html', (req, res) => {
+
+        sendIndex(res, req);
+    });
+    app.use(express.static('dist'));
+
+    app.use('/*', async (req, res) => {
+        await sendIndex(res, req);
+    });
+
     let port = process.env.PORT || 3000;
     app.listen(port);
 });
