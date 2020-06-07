@@ -661,7 +661,9 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         }
 
         let getFamilies = async () => {
-
+            if (locationReferenceFamilies.length>0&&info.preferRepeatFamilies&&!info.allRepeat){
+                info.preferRepeatFamilies = false;
+            }
             let f = context.for(ActiveFamilyDeliveries).create();
             let sql = new SqlBuilder();
             sql.addEntity(f, 'Families');
