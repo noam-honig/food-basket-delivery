@@ -21,6 +21,7 @@ import { async } from '@angular/core/testing';
 import { MatExpansionPanel } from '@angular/material';
 import { ShowOnMapComponent } from '../show-on-map/show-on-map.component';
 import { Location, getAddress, getCity } from '../shared/googleApiHelpers';
+import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 
 @Component({
   selector: 'app-update-family-dialog',
@@ -189,12 +190,18 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       let d = this.delivery;
       if (d.changeRequireStatsRefresh())
         this.refreshDeliveryStatistics = true;
+      let courierChanged = wasChanged(d.courier) && d.courier.value;
 
       await this.delivery.save();
+      if (courierChanged)
+        await AsignFamilyComponent.RefreshRoute(this.delivery.courier.value, {});
+
     }
+
     this.dialogRef.close();
     if (this.args && this.args.onSave)
       this.args.onSave();
+
   }
   async newDelivery() {
     if (this.delivery && this.delivery.wasChanged())
