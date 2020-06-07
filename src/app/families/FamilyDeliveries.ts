@@ -16,6 +16,7 @@ import { InputAreaComponent } from "../select-popup/input-area/input-area.compon
 import { DialogService } from "../select-popup/dialog";
 import { getLang, use } from "../translate";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
+import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 
 @EntityClass
 export class FamilyDeliveries extends IdEntity {
@@ -459,8 +460,11 @@ export class FamilyDeliveries extends IdEntity {
                 x.args = {
                     title: getLang(this.context).deliveryDetailsFor + ' ' + this.name.value,
                     ok:
-                        () => {
+                        async () => {
+                            let courierChanged = wasChanged(this.courier) && this.courier.value;
                             this.save();
+                            if (courierChanged)
+                                await AsignFamilyComponent.RefreshRoute(this.courier.value, {});
                             if (callerHelper) {
                                 if (this.changeRequireStatsRefresh() && callerHelper.refreshDeliveryStats)
                                     callerHelper.refreshDeliveryStats();

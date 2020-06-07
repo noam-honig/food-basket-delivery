@@ -191,7 +191,6 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       if (d.changeRequireStatsRefresh())
         this.refreshDeliveryStatistics = true;
       let courierChanged = wasChanged(d.courier) && d.courier.value;
-
       await this.delivery.save();
       if (courierChanged)
         await AsignFamilyComponent.RefreshRoute(this.delivery.courier.value, {});
