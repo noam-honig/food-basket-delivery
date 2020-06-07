@@ -5,7 +5,7 @@
       <mat-menu #appMenu="matMenu">
         <button mat-menu-item (click)="cancelAll()" *ngIf="partOfAssign"
           style="color:red;">{{settings.lang.cancelAllAssignments|translate}}</button>
-        <button mat-menu-item (click)="okAll()"  *ngIf="partOfAssign"
+        <button mat-menu-item (click)="okAll()" *ngIf="partOfAssign"
           class="primary-menu">{{settings.lang.markAllDeliveriesAsSuccesfull|translate}}</button>
         <button mat-menu-item
           (click)="familyLists.showBasketSummary()">{{settings.lang.parcelSummary|translate}}</button>
@@ -63,7 +63,7 @@
             </ng-template>
           </mat-expansion-panel>
         </ng-container>
-        <mat-expansion-panel *ngIf="familyLists.distCenter">
+        <mat-expansion-panel *ngIf="familyLists.distCenter&&!partOfAssign&&!partOfReview">
           <mat-expansion-panel-header>
             <div>
               <mat-panel-title>{{familyLists.distCenter.name.value}} </mat-panel-title>

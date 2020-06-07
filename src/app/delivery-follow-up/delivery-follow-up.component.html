@@ -13,11 +13,13 @@
 <h4 *ngIf="!currentStatFilter">{{settings.lang.all}} - {{helpers.length}}</h4>
 <div style="width:100%;display:flex;justify-content: space-between;">
   <mat-form-field class="full-width">
-    <input matInput [(ngModel)]="searchString" placeholder="{{settings.lang.searchVolunteer}}" [ngModelOptions]="{standalone: true}">
+    <input matInput [(ngModel)]="searchString" placeholder="{{settings.lang.searchVolunteer}}"
+      [ngModelOptions]="{standalone: true}">
     <mat-icon matSuffix (click)="searchString=''">clear</mat-icon>
   </mat-form-field>
   <mat-menu #appMenu="matMenu">
-    <button mat-menu-item (click)="sendSmsToAll()">{{settings.lang.sendSmsToAllVolunteersThatDidntGetOne|translate}}</button>
+    <button mat-menu-item
+      (click)="sendSmsToAll()">{{settings.lang.sendSmsToAllVolunteersThatDidntGetOne|translate}}</button>
 
   </mat-menu>
 
@@ -25,34 +27,24 @@
     <mat-icon>more_vert</mat-icon>
   </button>
 </div>
-<mat-accordion>
-  <ng-container *ngFor="let c of helpers">
-    <mat-expansion-panel #myPanel *ngIf="showHelper(c)" (opened)="selectCourier(c)">
-      <mat-expansion-panel-header>
-        <div style="display:flex;flex-direction: column;">
-          <div style="display:flex;">
-            <mat-panel-title>
-              {{c.name}}
-            </mat-panel-title>
-            <mat-panel-description>
-              {{settings.lang.completed}} {{c.deliveries - c.inProgress}}/{{c.deliveries}} <span *ngIf="c.problem>0">&nbsp; ({{c.problem}}
-                {{settings.lang.notDelivered}})</span>
-              <span *ngIf="c.gotSms">, {{settings.lang.left}} {{c.smsDateName}}</span> <span *ngIf="!c.gotSms">,
-                {{settings.lang.smsNotSent}}</span>
-            </mat-panel-description>
-          </div>
-          <div *ngIf="c.eventComment">
-            {{c.eventComment}}
+<mat-card>
+  <mat-nav-list>
+    <ng-container *ngFor="let c of helpers">
+      <mat-list-item class="followup-list-item" (click)="deliveryDetails(c)">
+        <a matLine>{{c.name}} <mat-panel-description>
+            {{settings.lang.completed}} {{c.deliveries - c.inProgress}}/{{c.deliveries}} <span
+              *ngIf="c.problem>0">&nbsp;
+              ({{c.problem}}
+              {{settings.lang.notDelivered}})</span>
+            <span *ngIf="c.gotSms">, {{settings.lang.left}} {{c.smsDateName}}</span> <span *ngIf="!c.gotSms">,
+              {{settings.lang.smsNotSent}}</span>
+          </mat-panel-description></a>
+      </mat-list-item>
+      <mat-divider></mat-divider>
 
-          </div>
-        </div>
-      </mat-expansion-panel-header>
 
-      <div *ngIf="currentlHelper==c">
+    </ng-container>
 
-        <app-helper-families [familyLists]="familyLists" [partOfAssign]="true" [partOfReview]="true"
-          [helperGotSms]="c.gotSms"></app-helper-families>
-      </div>
-    </mat-expansion-panel>
-  </ng-container>
-</mat-accordion>
+
+  </mat-nav-list>
+</mat-card>

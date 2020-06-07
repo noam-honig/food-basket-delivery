@@ -4,11 +4,15 @@ import { Helpers } from '../helpers/helpers';
 
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { DialogConfig } from '@remult/core';
 
 @Component({
   selector: 'app-helper-assignment',
   templateUrl: './helper-assignment.component.html',
   styleUrls: ['./helper-assignment.component.scss']
+})
+@DialogConfig({
+  minWidth:'95%'
 })
 export class HelperAssignmentComponent implements OnInit {
   public argsHelper: Helpers;

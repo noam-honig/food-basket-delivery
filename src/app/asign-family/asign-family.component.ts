@@ -178,7 +178,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     specificToHelper(h: Helpers) {
         this.showHelperInput = false;
         this.phone = h.phone.value;
-        this.searchPhone();
+        this.initHelper(h);
     }
     lastRefreshRoute = Promise.resolve();
     useGoogleOptimization = true;
@@ -256,8 +256,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
     preferRepeatFamilies = true;
     async refreshList() {
-        Promise.all([this.refreshBaskets(),
-        this.familyLists.initForHelper(this.helper)]);
+        Promise.all([
+            this.familyLists.initForHelper(this.helper), this.refreshBaskets()]);
 
     }
     familyLists = new UserFamiliesList(this.context, this.settings);

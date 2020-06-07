@@ -342,3 +342,10 @@ textarea {
   border: 10px solid transparent;
   border-top: 17px solid #fff;
 }
+
+.followup-list-item{
+  .mat-list-item-content {
+    padding: 0px!important;
+    
+}
+}

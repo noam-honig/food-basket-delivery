@@ -21,6 +21,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { colors } from '../families/stats-action';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Language, getLang } from '../translate';
+import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 
 
 @Component({
@@ -31,6 +32,11 @@ import { Language, getLang } from '../translate';
 export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
   static route: Route = {
     path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [distCenterAdminGuard]
+  }
+  async deliveryDetails(c: helperFollowupInfo) {
+    let h = await this.context.for(Helpers).findId(c.id);
+    await this.context.openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
+    this.refresh();
   }
 
   familyLists = new UserFamiliesList(this.context, this.settings);
@@ -192,7 +198,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
         inProgress: +r['inprogress'],
         problem: +r['problem'],
         late: smsDate && smsDate.valueOf() <= new Date().valueOf() - 3600000 * 1.5,
-        smsDateName: smsDate ? relativeDateName(context,{ d: smsDate }) : '',
+        smsDateName: smsDate ? relativeDateName(context, { d: smsDate }) : '',
         gotSms: smsDate && smsDate > maxAsign,
         eventComment: r['comment1']
       };
