@@ -638,4 +638,5 @@ export class es implements Language {
   list = 'Lista';
   map = 'Mapa';
   noDeliveries = 'No hay entregas para distribución';
+  showDistCenterAsEndAddressForVolunteer = 'Ver las direcciones de la lista de distribución como punto final voluntario';
 }

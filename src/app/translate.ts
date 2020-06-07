@@ -765,6 +765,7 @@ export class Language {
   list = "רשימה";
   map = "מפה";
   noDeliveries = "אין משלוחים לחלוקה";
+  showDistCenterAsEndAddressForVolunteer  = "הצג כתובות רשימת חלוקה כנקודת סיום למתנדב";
 }
 
 const defaultLang = new Language();

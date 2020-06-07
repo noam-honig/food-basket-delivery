@@ -144,6 +144,7 @@ export class ApplicationSettings extends Entity<number>  {
   checkDuplicatePhones = new BoolColumn(this.lang.checkDuplicatePhones);
   volunteerCanUpdateComment = new BoolColumn(this.lang.volunteerCanUpdateComment);
   volunteerCanUpdatePreferredDistributionAddress = new BoolColumn(this.lang.volunteerCanUpdatePreferredDistributionAddress);
+  showDistCenterAsEndAddressForVolunteer = new BoolColumn(this.lang.showDistCenterAsEndAddressForVolunteer);
 
 
   addressApiResult = new StringColumn();

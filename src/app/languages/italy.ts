@@ -638,4 +638,5 @@ export class italy implements Language {
   list = 'Elenco';
   map = 'Carta geografica';
   noDeliveries = 'Nessuna consegna per la distribuzione';
+  showDistCenterAsEndAddressForVolunteer = "Visualizza gli indirizzi dell'elenco di distribuzione come endpoint volontario";
 }

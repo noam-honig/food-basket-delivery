@@ -638,4 +638,5 @@ export class en implements Language {
   list = 'List';
   map = 'Map';
   noDeliveries = 'No deliveries for distribution';
+  showDistCenterAsEndAddressForVolunteer = 'View distribution list addresses as a volunteer endpoint';
 }

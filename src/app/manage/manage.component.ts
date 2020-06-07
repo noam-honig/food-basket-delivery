@@ -215,6 +215,7 @@ export class ManageComponent implements OnInit {
       this.settings.showHelperComment,
       this.settings.volunteerCanUpdateComment,
       this.settings.volunteerCanUpdatePreferredDistributionAddress,
+      this.settings.showDistCenterAsEndAddressForVolunteer,
       this.settings.defaultPrefixForExcelImport,
       this.settings.redTitleBar,
       this.settings.forWho,

@@ -12,6 +12,7 @@ import { PhoneColumn } from '../model-shared/types';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { BasketSummaryComponent } from "../basket-summary/basket-summary.component";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
+import { DistributionCenters } from "../manage/distribution-centers";
 
 export class UserFamiliesList {
     map: MapComponent;
@@ -127,9 +128,16 @@ export class UserFamiliesList {
         this.initFamilies();
     }
 
+    distCenter: DistributionCenters;
 
     initFamilies() {
 
+        if (this.allFamilies.length > 0 && this.settings.showDistCenterAsEndAddressForVolunteer.value) {
+            this.context.for(DistributionCenters).lookupAsync(this.allFamilies[0].distributionCenter).then(x => this.distCenter = x);
+        }
+        else {
+            this.distCenter = undefined;
+        }
         this.toDeliver = this.allFamilies.filter(f => f.deliverStatus.value == DeliveryStatus.ReadyForDelivery);
         this.delivered = this.allFamilies.filter(f => f.deliverStatus.value == DeliveryStatus.Success || f.deliverStatus.value == DeliveryStatus.SuccessLeftThere);
         this.problem = this.allFamilies.filter(f => {

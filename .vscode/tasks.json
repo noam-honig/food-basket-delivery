@@ -261,14 +261,6 @@
             "type": "npm",
             "script": "publish-to-mshz",
             "problemMatcher": []
-        },
-        {
-            "type": "npm",
-            "script": "build-languages",
-            "group": "build",
-            "problemMatcher": [],
-            "label": "npm: build-languages",
-            "detail": "node dist-server/app/server/buildLanguages.js"
         }
     ]
 }

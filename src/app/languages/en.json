@@ -2299,6 +2299,10 @@
     "valueInCode": "הצג שיוך משלוחים ל",
     "custom": "Show deliveries for"
   },
+  "showDistCenterAsEndAddressForVolunteer": {
+    "google": "View distribution list addresses as a volunteer endpoint",
+    "valueInCode": "הצג כתובות רשימת חלוקה כנקודת סיום למתנדב"
+  },
   "showFamilies": {
     "google": "View families",
     "valueInCode": "הצג משפחות"
