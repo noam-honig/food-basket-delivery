@@ -1459,7 +1459,8 @@
   },
   "list": {
     "google": "list",
-    "valueInCode": "רשימה"
+    "valueInCode": "רשימה",
+    "custom": "List"
   },
   "loadExcelSettings": {
     "google": "Load settings",
@@ -1500,7 +1501,8 @@
   },
   "map": {
     "google": "from here",
-    "valueInCode": "מפה"
+    "valueInCode": "מפה",
+    "custom": "Map"
   },
   "mapExcelColumns": {
     "google": "Define the columns",

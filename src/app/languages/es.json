@@ -1631,9 +1631,9 @@
     "valueInEnglish": "Link copied"
   },
   "list": {
-    "google": "lista",
+    "google": "Lista",
     "valueInCode": "רשימה",
-    "valueInEnglish": "list"
+    "valueInEnglish": "List"
   },
   "loadExcelSettings": {
     "google": "Configuraciones de carga",
@@ -1681,9 +1681,9 @@
     "valueInEnglish": "From the addresses are empty or ending in the book - you may not have noticed the settlement of the address. Go back to column definition?"
   },
   "map": {
-    "google": "de aquí",
+    "google": "Mapa",
     "valueInCode": "מפה",
-    "valueInEnglish": "from here"
+    "valueInEnglish": "Map"
   },
   "mapExcelColumns": {
     "google": "Definir las columnas.",

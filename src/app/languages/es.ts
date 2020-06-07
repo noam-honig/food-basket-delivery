@@ -635,7 +635,7 @@ export class es implements Language {
   problemsThatRequireFollowup = 'Seguimiento de problemas';
   commentsWrittenByVolunteers = 'Comentarios escritos por voluntarios';
   distributionList = 'Lista de distribucion';
-  list = 'lista';
-  map = 'de aquí';
+  list = 'Lista';
+  map = 'Mapa';
   noDeliveries = 'No hay entregas para distribución';
 }
