@@ -118,7 +118,7 @@ export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
             },
             onEnd: async () => {
                 if (this.courier.value)
-                    await AsignFamilyComponent.RefreshRoute(this.courier.value, true,this.context);
+                    await AsignFamilyComponent.RefreshRoute(this.courier.value, undefined,this.context);
             }
         });
         this.courier.value = '';
@@ -309,7 +309,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
             onEnd: async () => {
                 let t = new PromiseThrottle(10);
                 for (const c of this.usedCouriers) {
-                    await t.push(AsignFamilyComponent.RefreshRoute(c, true, this.context));
+                    await t.push(AsignFamilyComponent.RefreshRoute(c, undefined, this.context));
                 }
                 await t.done();
             }

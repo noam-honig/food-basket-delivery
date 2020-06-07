@@ -639,4 +639,10 @@ export class en implements Language {
   map = 'Map';
   noDeliveries = 'No deliveries for distribution';
   showDistCenterAsEndAddressForVolunteer = 'View distribution list addresses as a volunteer endpoint';
+  endOnFar = 'End at the farthest Address';
+  startAtDistributionCenterAndEndOnRemoteFamily = 'End at the most isolated address';
+  circularRoute = 'Start and Finish at the Distribution Center';
+  endsOnDistributionCenter = 'End at the distribution center';
+  parcelSummary = 'Show Parcel Summary';
+  useCurrentLocationForStart = 'Calculate route based on current location';
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
-import { BusyService, ServerFunction, StringColumn } from '@remult/core';
+import { BusyService, ServerFunction, StringColumn, GridButton, BoolColumn } from '@remult/core';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';
@@ -18,12 +18,15 @@ import { Helpers, HelperId } from '../helpers/helpers';
 import { UpdateCommentComponent } from '../update-comment/update-comment.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { isGpsAddress } from '../shared/googleApiHelpers';
+import { isGpsAddress, Location, toLongLat } from '../shared/googleApiHelpers';
 import { Roles } from '../auth/roles';
 import { pagedRowsIterator } from '../families/familyActionsWiring';
 import { Families } from '../families/families';
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 import { MatTabGroup } from '@angular/material';
+import { AsignFamilyComponent } from '../asign-family/asign-family.component';
+import { routeStrategyColumn } from '../asign-family/route-strategy';
+import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 @Component({
   selector: 'app-helper-families',
@@ -48,6 +51,60 @@ export class HelperFamiliesComponent implements OnInit {
 
 
   }
+  volunteerLocation: Location = undefined;;
+  async refreshRoute() {
+    var useCurrentLocation = new BoolColumn(use.language.useCurrentLocationForStart);
+    var strategy = new routeStrategyColumn();
+    strategy.value = this.settings.routeStrategy.value;
+    await this.context.openDialog(InputAreaComponent, x => x.args = {
+      title: use.language.replanRoute,
+      settings: {
+        columnSettings: () => [
+          { column: useCurrentLocation, visible: () => !this.partOfAssign && !this.partOfReview && !!navigator.geolocation },
+          strategy
+        ]
+      },
+      ok: async () => {
+
+        this.volunteerLocation = undefined;
+
+
+        if (useCurrentLocation.value) {
+          await new Promise((res, rej) => {
+            navigator.geolocation.getCurrentPosition(x => {
+              this.volunteerLocation = {
+                lat: x.coords.latitude,
+                lng: x.coords.longitude
+              };
+              res();
+
+            }, error => {
+              this.dialog.exception("שליפת מיקום נכשלה", error);
+              rej(error);
+            });
+          });
+
+        }
+
+
+        await AsignFamilyComponent.RefreshRoute(this.familyLists.helper.id.value, {
+          strategyId: strategy.value.id,
+          volunteerLocation: this.volunteerLocation
+        }).then(r => {
+
+          if (r && r.ok && r.families.length == this.familyLists.toDeliver.length) {
+            this.familyLists.routeStats = r.stats;
+            this.familyLists.initForFamilies(this.familyLists.helper, r.families);
+          }
+
+        });
+      }
+    });
+
+
+  }
+
+  buttons: GridButton[] = [];
   prevMap: MapComponent;
   lastBounds: string;
   mapTabClicked() {
@@ -339,11 +396,21 @@ export class HelperFamiliesComponent implements OnInit {
   async showRouteOnGoogleMaps() {
 
     if (this.familyLists.toDeliver.length > 0) {
-      let url = 'https://www.google.com/maps/dir/' + encodeURI((this.routeStart).getAddress());
+
+      let endOnDist = this.settings.routeStrategy.value.args.endOnDistributionCenter;
+      let url = 'https://www.google.com/maps/dir';
+      if (!endOnDist)
+        if (this.volunteerLocation) {
+          url += "/" + encodeURI(toLongLat(this.volunteerLocation));
+        }
+        else
+          url += "/" + encodeURI((this.routeStart).getAddress());
 
       for (const f of this.familyLists.toDeliver) {
         url += '/' + encodeURI(isGpsAddress(f.address.value) ? f.address.value : f.addressByGoogle.value);
       }
+      if (endOnDist)
+        url += "/" + encodeURI((this.routeStart).getAddress());
       window.open(url + "?hl=" + getLang(this.context).languageCode, '_blank');
     }
     //window.open(url,'_blank');

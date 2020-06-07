@@ -306,7 +306,7 @@
   },
   "atThisLocationThereAre": {
     "google": "At this point there is",
-    "valueInCode": "בנקודה זו יש",
+    "valueInCode": "בכתובת זו יש",
     "custom": "This location has"
   },
   "badAddressHelpLine1": {
@@ -449,6 +449,11 @@
   "checkIfFamilyExistsInFile": {
     "google": "Check if a family already exists in the Excel file",
     "valueInCode": "בדוק אם משפחה כבר קיימת בקובץ האקסל"
+  },
+  "circularRoute": {
+    "google": "Start and end at the division center",
+    "valueInCode": "התחל וסיים במרכז החלוקה",
+    "custom": "Start and Finish at the Distribution Center"
   },
   "city": {
     "google": "City",
@@ -932,6 +937,16 @@
   "enableSelfPickupModule": {
     "google": "There are families who come to take from the division center",
     "valueInCode": "ישנן משפחות שבאות לקחת ממרכז החלוקה"
+  },
+  "endOnFar": {
+    "google": "Start at the division center and end at the farthest address",
+    "valueInCode": "סיים בכתובת הרחוקה ביותר",
+    "custom": "End at the farthest Address"
+  },
+  "endsOnDistributionCenter": {
+    "google": "Start at the farthest address and end at a distribution center",
+    "valueInCode": "סיים במרכז החלוקה",
+    "custom": "End at the distribution center"
   },
   "enterFirstTime": {
     "google": "Because you do not have a password set yet - please enter for the first time, by typing in your phone number without a password and clicking the \"Login\" button. The system will ask you to set a password and that will be your password.\\n  Successfully",
@@ -1764,6 +1779,11 @@
     "google": "Collect the package",
     "valueInCode": "אספו את החבילה"
   },
+  "parcelSummary": {
+    "google": "View summary types of baskets",
+    "valueInCode": "הצג סיכום סוגי סלים",
+    "custom": "Show Parcel Summary"
+  },
   "password": {
     "google": "password",
     "valueInCode": "סיסמה"
@@ -2330,7 +2350,7 @@
   },
   "showRouteOnGoogleMaps": {
     "google": "View route on google maps",
-    "valueInCode": "הצג מסלול ב - google maps"
+    "valueInCode": "הצג מסלול ב Google Maps"
   },
   "showText1OnlyWhenDone": {
     "google": "Display free text 1 only when the volunteer has finished all baskets",
@@ -2408,6 +2428,11 @@
   "spouceSocialSecurityNumber": {
     "google": "Spouse Identity Number",
     "valueInCode": "מספר זהות בן/בת הזוג"
+  },
+  "startAtDistributionCenterAndEndOnRemoteFamily": {
+    "google": "Start at the division center and end with the most isolated family",
+    "valueInCode": "סיים בכתובת המבודדת ביותר",
+    "custom": "End at the most isolated address"
   },
   "statusChangeDate": {
     "google": "Status: Date changed",
@@ -2655,6 +2680,11 @@
     "google": "Use the basket type defined in the current shipment",
     "valueInCode": "השתמש בסוג הסל המוגדר במשלוח הנוכחי",
     "custom": "Parcel type by current delivery"
+  },
+  "useCurrentLocationForStart": {
+    "google": "Calculate route from current location",
+    "valueInCode": "חשב מסלול ממיקום נוכחי",
+    "custom": "Calculate route based on current location"
   },
   "useFamilyDefaultBasketType": {
     "google": "Use the family type basket set",

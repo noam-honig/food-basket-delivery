@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { Location, GeocodeInformation, toLongLat } from '../shared/googleApiHelpers';
-import { UrlBuilder, FilterBase, ServerFunction, StringColumn, DataAreaSettings, BoolColumn, SqlDatabase, AndFilter, FilterConsumerBridgeToSqlRequest } from '@remult/core';
+import { UrlBuilder, FilterBase, ServerFunction, StringColumn, DataAreaSettings, BoolColumn, SqlDatabase, AndFilter, FilterConsumerBridgeToSqlRequest, ValueListColumn } from '@remult/core';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
@@ -14,7 +14,7 @@ import { Route } from '@angular/router';
 
 import { foreachSync } from '../shared/utils';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import * as fetch from 'node-fetch';
+
 
 import { Context } from '@remult/core';
 
@@ -26,7 +26,7 @@ import { BusyService } from '@remult/core';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { Groups, GroupsStats } from '../manage/manage.component';
 import { SendSmsAction } from './send-sms-action';
-import { translate, getLang } from '../translate';
+import { translate, getLang, use } from '../translate';
 import { SelectCompanyComponent } from '../select-company/select-company.component';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -39,6 +39,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Families } from '../families/families';
 import { PromiseThrottle } from '../import-from-excel/import-from-excel.component';
 import { HelperFamiliesComponent } from '../helper-families/helper-families.component';
+import { familiesInRoute, optimizeRoute, routeStats, routeStrategyColumn } from './route-strategy';
 
 
 
@@ -185,7 +186,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         this.lastRefreshRoute = this.lastRefreshRoute.then(
             async () => await this.busy.donotWait(
-                async () => await AsignFamilyComponent.RefreshRoute(this.helper.id.value, this.useGoogleOptimization).then(r => {
+                async () => await AsignFamilyComponent.RefreshRoute(this.helper.id.value, { doNotUseGoogle: !this.useGoogleOptimization }).then(r => {
 
                     if (r && r.ok && r.families.length == this.familyLists.toDeliver.length) {
                         this.familyLists.routeStats = r.stats;
@@ -548,14 +549,30 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         return result;
     }
-    @ServerFunction({ allowed: Roles.distCenterAdmin, blockUser: false })
-    static async RefreshRoute(helperId: string, useGoogle: boolean, context?: Context) {
+    @ServerFunction({ allowed: c => c.isSignedIn(), blockUser: false })
+    static async RefreshRoute(helperId: string, args: {
+        doNotUseGoogle?: boolean,
+        strategyId?: number,
+        volunteerLocation?: Location
+    }, context?: Context) {
+
+        if (!context.isAllowed(Roles.distCenterAdmin)) {
+            if (helperId != context.user.id) {
+                throw "Not Allowed";
+            }
+        }
         let existingFamilies = await context.for(ActiveFamilyDeliveries).find({
             where: f => f.courier.isEqualTo(helperId).and(
                 f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))
         });
         let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
-        let r = await AsignFamilyComponent.optimizeRoute(h, existingFamilies, context, useGoogle);
+        let strategy = new routeStrategyColumn();
+        strategy.value = (await ApplicationSettings.getAsync(context)).routeStrategy.value;
+        if (args.strategyId)
+            strategy.rawValue = args.strategyId;
+        if (!strategy.value)
+            throw "Invalid Strategy";
+        let r = await optimizeRoute(h, existingFamilies, context, !args.doNotUseGoogle, strategy.value, args.volunteerLocation);
         r.families = r.families.filter(f => f.checkAllowedForUser());
         r.families = await context.for(ActiveFamilyDeliveries).toPojoArray(r.families);
         return r;
@@ -799,132 +816,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         return result;
     }
 
-    static async optimizeRoute(helper: Helpers, families: ActiveFamilyDeliveries[], context: Context, useGoogle: boolean) {
 
-
-        let result: {
-            families: ActiveFamilyDeliveries[],
-            stats: {
-                totalKm: number,
-                totalTime: number
-            }
-            ok: boolean
-        } = {
-            stats: {
-                totalKm: 0,
-                totalTime: 0
-            },
-            families: [],
-            ok: false
-        } as optimizeRouteResult;
-        if (families.length < 1)
-            return result;
-        var fams: familiesInRoute[] = [];
-        {
-            var map = new Map<string, familiesInRoute>();
-            for (const f of families) {
-                let location = f.getDrivingLocation();
-                let longlat = toLongLat(location);
-                let loc: familiesInRoute = map.get(longlat);
-                if (!loc) {
-                    loc = {
-                        families: [],
-                        location: location,
-                        longlat: longlat,
-                        address: f.address.value
-                    };
-                    map.set(longlat, loc);
-                    fams.push(loc);
-                }
-                loc.families.push(f);
-            }
-        }
-        let startPoint = await (await families[0].distributionCenter.getRouteStartGeo());
-        //manual sorting of the list from closest to farthest
-        {
-            let temp = fams;
-            let sorted = [];
-            let lastLoc = startPoint.location();
-
-
-            let total = temp.length;
-            for (let i = 0; i < total; i++) {
-                let closest = temp[0];
-                let closestIndex = 0;
-                let closestDist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, closest.location);
-                for (let j = 0; j < temp.length; j++) {
-                    let dist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, temp[j].location);
-                    if (dist < closestDist) {
-                        closestDist = dist;
-                        closestIndex = j;
-                        closest = temp[j];
-                    }
-
-                }
-                lastLoc = closest.location;
-                sorted.push(temp.splice(closestIndex, 1)[0]);
-
-            }
-
-            fams = sorted;
-
-        }
-        for (const f of fams) {
-            if (f.families.length > 0)
-                f.families.sort((a, b) => { return (+a.appartment.value) - (+b.appartment.value) });
-        }
-
-
-        let r = await getRouteInfo(fams, useGoogle, startPoint, context);
-        if (r.status == 'OK' && r.routes && r.routes.length > 0 && r.routes[0].waypoint_order) {
-            result.ok = true;
-            let i = 1;
-
-            await foreachSync(r.routes[0].waypoint_order, async (p: number) => {
-                let waypoint = fams[p];
-                for (const f of waypoint.families) {
-                    if (f.routeOrder.value != i) {
-                        f.routeOrder.value = i;
-                        f.save();
-                    }
-                    i++;
-                }
-
-
-
-            });
-
-            for (let i = 0; i < r.routes[0].legs.length; i++) {
-                let l = r.routes[0].legs[i];
-                result.stats.totalKm += l.distance.value;
-                result.stats.totalTime += l.duration.value;
-            }
-            result.stats.totalKm = Math.round(result.stats.totalKm / 1000);
-            result.stats.totalTime = Math.round(result.stats.totalTime / 60);
-            helper.totalKm.value = result.stats.totalKm;
-            helper.totalTime.value = result.stats.totalTime;
-        }
-        else {
-            result.ok = true;
-            let i = 1;
-            for (const addre of fams) {
-                for (const f of addre.families) {
-                    f.routeOrder.value = i++;
-                    if (wasChanged(f.routeOrder))
-                        await f.save();
-                }
-            }
-
-        }
-        families.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
-        result.families = families;
-
-        helper.save();
-
-
-        return result;
-
-    }
     addSpecial() {
         this.addFamily(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
             f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes))), 'special');
@@ -1033,15 +925,8 @@ interface familyQueryResult {
     addressLatitude: number;
     addressLongitude: number;
 }
-export interface routeStats {
-    totalKm: number;
-    totalTime: number;
-}
-export interface optimizeRouteResult {
-    stats: routeStats;
-    families: ActiveFamilyDeliveries[];
-    ok: boolean;
-}
+
+
 
 function getInfo(r: any) {
     let dist = 0;
@@ -1054,39 +939,7 @@ function getInfo(r: any) {
         dist, duration
     }
 }
-async function getRouteInfo(families: familiesInRoute[], optimize: boolean, start: GeocodeInformation, context: Context) {
-    if (families.length > 25)
-        return {};
-    let u = new UrlBuilder('https://maps.googleapis.com/maps/api/directions/json');
 
-    let startAndEnd = start.getlonglat();
-    let waypoints = 'optimize:' + (optimize ? 'true' : 'false');
-    let addresses = [];
-    families.forEach(f => {
-        if (f.location)
-            waypoints += '|' + toLongLat(f.location);
-        addresses.push(f.address);
-    });
-    let args = {
-        origin: startAndEnd,
-        destination: toLongLat(families[families.length - 1].location),
-        waypoints: waypoints,
-        language: getLang(context).languageCode,
-        key: process.env.GOOGLE_GECODE_API_KEY
-    };
-    u.addObject(args);
-
-
-    let r = await (await fetch.default(u.url)).json();
-    if (!r || r.status != "OK") {
-        let status = 'no response';
-        if (r && r.status) {
-            status = r.status;
-        }
-        console.error("error in google route api", status, r, u.url);
-    }
-    return r;
-}
 export interface GetBasketStatusActionInfo {
     filterGroup: string;
     filterCity: string;
@@ -1115,9 +968,5 @@ export interface CityInfo {
     name: string;
     unassignedFamilies: number;
 }
-interface familiesInRoute {
-    location: Location;
-    longlat: string;
-    families: ActiveFamilyDeliveries[];
-    address: string;
-}
+
+

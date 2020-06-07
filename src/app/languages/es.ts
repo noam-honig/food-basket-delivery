@@ -639,4 +639,10 @@ export class es implements Language {
   map = 'Mapa';
   noDeliveries = 'No hay entregas para distribución';
   showDistCenterAsEndAddressForVolunteer = 'Ver las direcciones de la lista de distribución como punto final voluntario';
+  endOnFar = 'Terminar en la dirección más lejana';
+  startAtDistributionCenterAndEndOnRemoteFamily = 'Terminar en la dirección más aislada';
+  circularRoute = 'Comience y termine en el Centro de distribución';
+  endsOnDistributionCenter = 'Terminar en el centro de distribución.';
+  parcelSummary = 'Mostrar resumen de parcela';
+  useCurrentLocationForStart = 'Calcular ruta basada en la ubicación actual';
 }

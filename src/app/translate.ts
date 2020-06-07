@@ -191,7 +191,7 @@ export class Language {
   clickedByMistake = 'נלחץ בטעות - החזר למשלוחים לחלוקה';
   deliveriesDoneInTheLastTwoDays = 'משלוחים שחולקו ביומיים האחרונים';
   showAllCompletedDeliveries = 'הצג את כל המשלוחים שחולקו';
-  showRouteOnGoogleMaps = 'הצג מסלול ב - google maps';
+  showRouteOnGoogleMaps = 'הצג מסלול ב Google Maps';
   selfPuckupSuccess = 'אספו את החבילה';
   packageWasPickedUp = 'אספו את החבילה';
   cancelAsignment = 'בטל שיוך';
@@ -239,7 +239,7 @@ export class Language {
   transfer = 'להעביר';
   deliveriesFrom = "משלוחים מ";
   toVolunteer = "למתנדב";
-  atThisLocationThereAre = "בנקודה זו יש";
+  atThisLocationThereAre = "בכתובת זו יש";
   deliveriesAssignAllOfThem = " משלוחים - לשייך את כולם?";
   thereAreAdditional = "ישנן עוד ";
   deliveriesAtSameAddress = "משלוחים באותה הכתובת, האם לשייך גם אותם?";
@@ -766,6 +766,12 @@ export class Language {
   map = "מפה";
   noDeliveries = "אין משלוחים לחלוקה";
   showDistCenterAsEndAddressForVolunteer  = "הצג כתובות רשימת חלוקה כנקודת סיום למתנדב";
+  endOnFar = "סיים בכתובת הרחוקה ביותר";
+  startAtDistributionCenterAndEndOnRemoteFamily = "סיים בכתובת המבודדת ביותר";
+  circularRoute = "התחל וסיים במרכז החלוקה";
+  endsOnDistributionCenter = "סיים במרכז החלוקה";
+  parcelSummary = 'הצג סיכום סוגי סלים';
+  useCurrentLocationForStart = "חשב מסלול ממיקום נוכחי";
 }
 
 const defaultLang = new Language();

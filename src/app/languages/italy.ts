@@ -639,4 +639,10 @@ export class italy implements Language {
   map = 'Carta geografica';
   noDeliveries = 'Nessuna consegna per la distribuzione';
   showDistCenterAsEndAddressForVolunteer = "Visualizza gli indirizzi dell'elenco di distribuzione come endpoint volontario";
+  endOnFar = "Termina all'indirizzo più lontano";
+  startAtDistributionCenterAndEndOnRemoteFamily = "Termina all'indirizzo più isolato";
+  circularRoute = 'Inizia e termina nel centro di distribuzione';
+  endsOnDistributionCenter = 'Termina al centro di distribuzione';
+  parcelSummary = 'Mostra riepilogo pacchi';
+  useCurrentLocationForStart = 'Calcola il percorso in base alla posizione corrente';
 }

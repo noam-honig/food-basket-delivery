@@ -3,17 +3,21 @@
     {{familyLists.getLeftFamiliesDescription()}}
     <div>
       <mat-menu #appMenu="matMenu">
-        <button mat-menu-item (click)="cancelAll()"
+        <button mat-menu-item (click)="cancelAll()" *ngIf="partOfAssign"
           style="color:red;">{{settings.lang.cancelAllAssignments|translate}}</button>
-        <button mat-menu-item (click)="okAll()"
+        <button mat-menu-item (click)="okAll()"  *ngIf="partOfAssign"
           class="primary-menu">{{settings.lang.markAllDeliveriesAsSuccesfull|translate}}</button>
-      </mat-menu>
-      <button mat-icon-button (click)="familyLists.showBasketSummary()" *ngIf="familyLists.toDeliver.length>0">
-        <mat-icon>assignment
-        </mat-icon>
-      </button>
+        <button mat-menu-item
+          (click)="familyLists.showBasketSummary()">{{settings.lang.parcelSummary|translate}}</button>
+        <button mat-menu-item (click)="refreshRoute()">{{settings.lang.replanRoute|translate}}</button>
+        <button mat-menu-item (click)="showRouteOnGoogleMaps()">
+          {{settings.lang.showRouteOnGoogleMaps|translate}}</button>
 
-      <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="familyLists.toDeliver.length>0 && partOfAssign">
+      </mat-menu>
+
+
+
+      <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="familyLists.toDeliver.length>0">
         <mat-icon>more_vert</mat-icon>
       </button>
 

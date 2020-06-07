@@ -84,6 +84,7 @@ import { DateRangeComponent } from './date-range/date-range.component';
 import { ShowOnMapComponent } from './show-on-map/show-on-map.component';
 
 
+
 var site = Sites.initOnBrowserAndReturnAngularBaseHref();
 
 export class MyHammerConfig extends HammerGestureConfig {
@@ -162,6 +163,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     DuplicateFamiliesComponent,
     DateRangeComponent,
     ShowOnMapComponent
+    
 
   ],
   imports: [

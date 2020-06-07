@@ -3,7 +3,7 @@ import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, 
 import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, SqlBuilder, wasChanged } from '../model-shared/types';
 
 
-import { routeStats } from '../asign-family/asign-family.component';
+
 import { helpers } from 'chart.js';
 import { Roles, distCenterAdminGuard } from "../auth/roles";
 import { JWTCookieAuthorizationHelper } from '@remult/server';
@@ -12,6 +12,8 @@ import { DistributionCenterId } from '../manage/distribution-centers';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 import { getLang } from '../translate';
 import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
+import { routeStats } from '../asign-family/route-strategy';
+
 
 
 
@@ -99,6 +101,8 @@ export class Helpers extends HelpersBase {
                             if (this.distCenterAdmin.originalValue && context.isAllowed(Roles.distCenterAdmin))
                                 canUpdate = true;
                             if (!this.realStoredPassword.value && this.realStoredPassword.value.length == 0) //it's the first time I'm setting the password
+                                canUpdate = true;
+                            if (!wasChanged(this.admin, this.distCenterAdmin,this.password))
                                 canUpdate = true;
                         }
                         else {

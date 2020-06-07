@@ -13,6 +13,8 @@ import { BasketType } from '../families/BasketType';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Sites } from '../sites/sites';
+import { routeStrategyColumn } from '../asign-family/route-strategy';
+
 
 
 @EntityClass
@@ -145,6 +147,7 @@ export class ApplicationSettings extends Entity<number>  {
   volunteerCanUpdateComment = new BoolColumn(this.lang.volunteerCanUpdateComment);
   volunteerCanUpdatePreferredDistributionAddress = new BoolColumn(this.lang.volunteerCanUpdatePreferredDistributionAddress);
   showDistCenterAsEndAddressForVolunteer = new BoolColumn(this.lang.showDistCenterAsEndAddressForVolunteer);
+  routeStrategy = new routeStrategyColumn();
 
 
   addressApiResult = new StringColumn();
@@ -312,3 +315,5 @@ class RemovedFromListExcelImportStrategyColumn extends ValueListColumn<RemovedFr
   }
 
 }
+
+

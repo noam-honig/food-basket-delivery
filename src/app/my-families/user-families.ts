@@ -5,7 +5,7 @@ import { Helpers } from '../helpers/helpers';
 import { MapComponent } from '../map/map.component';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
 import { Context } from '@remult/core';
-import { routeStats } from '../asign-family/asign-family.component';
+
 import { translate } from '../translate';
 import { ElementRef } from '@angular/core';
 import { PhoneColumn } from '../model-shared/types';
@@ -13,6 +13,7 @@ import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeli
 import { BasketSummaryComponent } from "../basket-summary/basket-summary.component";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { DistributionCenters } from "../manage/distribution-centers";
+import { routeStats } from "../asign-family/route-strategy";
 
 export class UserFamiliesList {
     map: MapComponent;

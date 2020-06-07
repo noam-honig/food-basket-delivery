@@ -331,7 +331,7 @@
   },
   "atThisLocationThereAre": {
     "google": "Questa posizione ha",
-    "valueInCode": "בנקודה זו יש",
+    "valueInCode": "בכתובת זו יש",
     "valueInEnglish": "This location has"
   },
   "badAddressHelpLine1": {
@@ -483,6 +483,11 @@
     "google": "Controlla se esiste già una famiglia nel file Excel",
     "valueInCode": "בדוק אם משפחה כבר קיימת בקובץ האקסל",
     "valueInEnglish": "Check if a family already exists in the Excel file"
+  },
+  "circularRoute": {
+    "google": "Inizia e termina nel centro di distribuzione",
+    "valueInCode": "התחל וסיים במרכז החלוקה",
+    "valueInEnglish": "Start and Finish at the Distribution Center"
   },
   "city": {
     "google": "Città",
@@ -1009,6 +1014,16 @@
     "google": "Ci sono famiglie che vengono a prendere dal centro di divisione",
     "valueInCode": "ישנן משפחות שבאות לקחת ממרכז החלוקה",
     "valueInEnglish": "There are families who come to take from the division center"
+  },
+  "endOnFar": {
+    "google": "Termina all'indirizzo più lontano",
+    "valueInCode": "סיים בכתובת הרחוקה ביותר",
+    "valueInEnglish": "End at the farthest Address"
+  },
+  "endsOnDistributionCenter": {
+    "google": "Termina al centro di distribuzione",
+    "valueInCode": "סיים במרכז החלוקה",
+    "valueInEnglish": "End at the distribution center"
   },
   "enterFirstTime": {
     "google": "Poiché non hai ancora impostato una password, inserisci per la prima volta, digitando il tuo numero di telefono senza password e facendo clic sul pulsante \"Accedi\". Il sistema ti chiederà di impostare una password e questa sarà la tua password.\\n  Con successo",
@@ -1995,6 +2010,11 @@
     "valueInCode": "אספו את החבילה",
     "valueInEnglish": "Collect the package"
   },
+  "parcelSummary": {
+    "google": "Mostra riepilogo pacchi",
+    "valueInCode": "הצג סיכום סוגי סלים",
+    "valueInEnglish": "Show Parcel Summary"
+  },
   "password": {
     "google": "parola d'ordine",
     "valueInCode": "סיסמה",
@@ -2658,7 +2678,7 @@
   },
   "showRouteOnGoogleMaps": {
     "google": "Visualizza il percorso su google maps",
-    "valueInCode": "הצג מסלול ב - google maps",
+    "valueInCode": "הצג מסלול ב Google Maps",
     "valueInEnglish": "View route on google maps"
   },
   "showText1OnlyWhenDone": {
@@ -2750,6 +2770,11 @@
     "google": "Numero identificativo del coniuge",
     "valueInCode": "מספר זהות בן/בת הזוג",
     "valueInEnglish": "Spouse Identity Number"
+  },
+  "startAtDistributionCenterAndEndOnRemoteFamily": {
+    "google": "Termina all'indirizzo più isolato",
+    "valueInCode": "סיים בכתובת המבודדת ביותר",
+    "valueInEnglish": "End at the most isolated address"
   },
   "statusChangeDate": {
     "google": "Stato: data modificata",
@@ -3040,6 +3065,11 @@
     "google": "Tipo di pacco alla consegna attuale",
     "valueInCode": "השתמש בסוג הסל המוגדר במשלוח הנוכחי",
     "valueInEnglish": "Parcel type by current delivery"
+  },
+  "useCurrentLocationForStart": {
+    "google": "Calcola il percorso in base alla posizione corrente",
+    "valueInCode": "חשב מסלול ממיקום נוכחי",
+    "valueInEnglish": "Calculate route based on current location"
   },
   "useFamilyDefaultBasketType": {
     "google": "Tipo di pacco per impostazione predefinita della famiglia",

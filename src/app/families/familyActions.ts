@@ -81,7 +81,7 @@ class NewDelivery extends ActionOnRows<Families> {
             onEnd: async () => {
                 let t = new PromiseThrottle(10);
                 for (const c of this.usedCouriers) {
-                    await t.push(AsignFamilyComponent.RefreshRoute(c, true, this.context));
+                    await t.push(AsignFamilyComponent.RefreshRoute(c,undefined, this.context));
                 }
                 await t.done();
             }
