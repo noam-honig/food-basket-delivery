@@ -30,7 +30,7 @@
 <mat-card>
   <mat-nav-list>
     <ng-container *ngFor="let c of helpers">
-      <mat-list-item class="followup-list-item" (click)="deliveryDetails(c)">
+      <mat-list-item class="followup-list-item" (click)="deliveryDetails(c)" *ngIf="showHelper(c)">
         <a matLine>{{c.name}} <mat-panel-description>
             {{settings.lang.completed}} {{c.deliveries - c.inProgress}}/{{c.deliveries}} <span
               *ngIf="c.problem>0">&nbsp;
