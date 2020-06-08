@@ -561,6 +561,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 throw "Not Allowed";
             }
         }
+        if (!args)
+            args = {};
         let existingFamilies = await context.for(ActiveFamilyDeliveries).find({
             where: f => f.courier.isEqualTo(helperId).and(
                 f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))
