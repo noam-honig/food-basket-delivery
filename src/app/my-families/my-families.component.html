@@ -4,7 +4,7 @@
 
         <H4 *ngIf="user.escortedHelperName">{{settings.lang.escoring}} {{user.escortedHelperName}}</H4>
         <a href="https://youtu.be/PHwTzaQN87g" target="_blank" class="no-print"
-            *ngIf="familyLists.toDeliver.length&&settings.showVideo()" >{{settings.lang.clickForTutorialVideo}}</a>
+            *ngIf="familyLists.toDeliver.length&&settings.showVideo()">{{settings.lang.clickForTutorialVideo}}</a>
         <a href="{{settings.message1Link.value}}" target="_blank" class="no-print" style="display: block"
             *ngIf="!settings.message1OnlyWhenDone.value || familyLists.toDeliver.length==0">{{settings.message1Text.value}}</a>
         <a href="{{settings.message2Link.value}}" target="_blank" class="no-print" style="display: block"
@@ -15,3 +15,35 @@
     </button>
 </div>
 <app-helper-families [familyLists]="familyLists"></app-helper-families>
+
+<mat-card *ngIf="this.events">
+    <h3>{{settings.lang.pleaseRegisterToTheFollowingEvents}}</h3>
+    <mat-accordion>
+        <mat-expansion-panel *ngFor="let e of events">
+            <mat-expansion-panel-header>
+                <div style="display:flex;flex-direction: column;">
+                    <mat-panel-title> {{e.name.value}} <mat-icon *ngIf="!volunteerInEvent(e).isNew()"
+                            style="color:green">done</mat-icon>
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        {{e.eventDate.displayValue}}, {{e.startTime.value}} - {{e.endTime.value}}
+                    </mat-panel-description>
+
+                </div>
+            </mat-expansion-panel-header>
+            <div>
+                {{e.description.value}}
+            </div>
+            <div>{{settings.lang.volunteers}}: {{e.registeredVolunteers.value}}/{{e.requiredVolunteers.value}}</div>
+            <button mat-raised-button color="primary" *ngIf="volunteerInEvent(e).isNew()"
+                (click)="registerToEvent(e)">{{settings.lang.illBeThere}}
+            </button>
+            <span *ngIf="!volunteerInEvent(e).isNew()">
+                {{settings.lang.registeredToEvent}} <a (click)="cancelEvent(e)">{{settings.lang.iCantMakeIt}}</a>
+            </span>
+
+
+        </mat-expansion-panel>
+    </mat-accordion>
+
+</mat-card>

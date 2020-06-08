@@ -30,10 +30,10 @@ export class TranslationOptions {
 
 
   static Families: TranslationOptions = new TranslationOptions(0, 'משפחות', {
-    googleMapCountry:'IL'
+    googleMapCountry: 'IL'
   });
   static Donors: TranslationOptions = new TranslationOptions(1, 'תורמים', {
-    googleMapCountry:'IL',
+    googleMapCountry: 'IL',
     translateFunction: s => s.replace(/משפחה אחת/g, "תורם אחד")
       .replace(/משפחות חוזרות/g, 'תורמים חוזרים')
       .replace(/משפחות מיוחדות/g, "תורמים מיוחדים")
@@ -45,7 +45,7 @@ export class TranslationOptions {
       .replace(/כפולות/g, 'כפולים')
   });
   static Soldiers: TranslationOptions = new TranslationOptions(2, 'חיילים', {
-    googleMapCountry:'IL',
+    googleMapCountry: 'IL',
     translateFunction: s =>
       s.replace(/משפחה אחת/g, "חייל אחד")
         .replace(/משפחות חוזרות/g, 'חיילים חוזרים')
@@ -58,19 +58,19 @@ export class TranslationOptions {
         .replace(/כפולות/g, 'כפולים')
   });
   static southAfrica: TranslationOptions = new TranslationOptions(3, 'South Africa', {
-    googleMapCountry:'ZA',
+    googleMapCountry: 'ZA',
     leftToRight: true,
     languageCode: 'en',
-    internationalPrefixForSmsAndAws:'+27'
+    internationalPrefixForSmsAndAws: '+27'
   });
   static italy: TranslationOptions = new TranslationOptions(4, 'Italy', {
-    googleMapCountry:'IT',
+    googleMapCountry: 'IT',
     leftToRight: true,
     languageCode: 'it',
-    internationalPrefixForSmsAndAws:'+39'
+    internationalPrefixForSmsAndAws: '+39'
   });
   static chile: TranslationOptions = new TranslationOptions(5, 'Chile', {
-    googleMapCountry:'CL',
+    googleMapCountry: 'CL',
     leftToRight: true,
     languageCode: 'es'
   });
@@ -81,9 +81,9 @@ export class TranslationOptions {
   constructor(public id: number, public caption: string, public args: {
     leftToRight?: boolean,
     languageCode?: string,
-    googleMapCountry:string,
+    googleMapCountry: string,
     translateFunction?: (s: string) => string,
-    internationalPrefixForSmsAndAws?:string
+    internationalPrefixForSmsAndAws?: string
   }) {
     if (args.translateFunction)
       this.translate = args.translateFunction;
@@ -149,7 +149,7 @@ export class Language {
   ImportHelpersFromExcelComponent = 'קליטת מתנדבים מאקסל';
   DuplicateFamiliesComponent = 'חיפוש משפחות כפולות';
   ManageComponent = 'הגדרות מערכת';
-  MyFamiliesComponent = 'משפחות שלי';
+  MyFamiliesComponent = 'משלוחים שלי';
   UpdateInfoComponent = 'הגדרות אישיות';
   LoginComponent = 'כניסה';
   RegisterComponent = 'הרשמה';
@@ -724,7 +724,7 @@ export class Language {
   yes = 'כן';
   search = 'חיפוש';
   assigned = 'שוייך';
-  familySourceName =  "שם";
+  familySourceName = "שם";
   contactPersonName = "איש קשר";
   lineWithNoName = 'שורה ללא שם';
   smsLoginFailed = "משהו לא הסתדר עם הקישור, הנך מועבר למסך כניסה - אנא הכנס עם מספר הטלפון שלך";
@@ -736,22 +736,22 @@ export class Language {
   andAQuater = "ורבע";
   andThreeQuaters = 'ושלושת רבעי';
   andAHalf = 'וחצי';
-  on= 'ב';
+  on = 'ב';
   days = 'ימים';
   yesterday = 'אתמול';
   twoDaysAgo = 'שלשום';
-  thankYou= 'תודה';
+  thankYou = 'תודה';
   searchCompanyName = 'חיפוש שם חברה';
   confirmDeleteOf = "אישור מחיקה עבור ";
   originalAddress = 'כתובת מקורית';
-  addGroupAssignmentVerb='להוסיף שיוך לקבוצה';
-  removeGroupAssignmentVerb='להסיר שיוך לקבצה';
-  replaceGroupAssignmentVerb='להחליף שיוך לקבוצה';
-  volunteerCanUpdateComment= 'מתנדב יכול לעדכן לעצמו הערה';
+  addGroupAssignmentVerb = 'להוסיף שיוך לקבוצה';
+  removeGroupAssignmentVerb = 'להסיר שיוך לקבצה';
+  replaceGroupAssignmentVerb = 'להחליף שיוך לקבוצה';
+  volunteerCanUpdateComment = 'מתנדב יכול לעדכן לעצמו הערה';
   volunteerCanUpdatePreferredDistributionAddress = 'מתנדב יכול לעדכן אזור חלוקה מועדף';
   email = 'eMail';
   preferredDistributionArea = 'כתובת אזור חלוקה מועדף';
-  doesNotExist="לא קיים";
+  doesNotExist = "לא קיים";
   questionAddToApplication = "האם להוסיף";
   customSmsMessage = 'הודעת SMS מותאמת';
   assignedToVolunteer = "משוייך למתנדב";
@@ -765,13 +765,29 @@ export class Language {
   list = "רשימה";
   map = "מפה";
   noDeliveries = "אין משלוחים לחלוקה";
-  showDistCenterAsEndAddressForVolunteer  = "הצג כתובות רשימת חלוקה כנקודת סיום למתנדב";
+  showDistCenterAsEndAddressForVolunteer = "הצג כתובות רשימת חלוקה כנקודת סיום למתנדב";
   endOnFar = "סיים בכתובת הרחוקה ביותר";
   startAtDistributionCenterAndEndOnRemoteFamily = "סיים בכתובת המבודדת ביותר";
   circularRoute = "התחל וסיים במרכז החלוקה";
   endsOnDistributionCenter = "סיים במרכז החלוקה";
   parcelSummary = 'הצג סיכום סוגי סלים';
   useCurrentLocationForStart = "חשב מסלול ממיקום נוכחי";
+  eventName = "שם ארוע";
+  eventDescription = "תאור";
+  eventDate = "תאריך";
+  eventTime = "שעה";
+  eventEndTime = "עד שעה";
+  eventPreparation = "טיוטא";
+  activeEventStatus = "פתוח לרישום";
+  archiveEventStatus = "ארכיון";
+  requiredVolunteers = "מספר מתנדבים נדרש";
+  attendingVolunteers = "מספר מתנדבים שנרשמו";
+  eventStatus = "סטטוס";
+  eventsComponent = "ארועים";
+  pleaseRegisterToTheFollowingEvents = "אנא הרשמו לאירועים הקרובים";
+  illBeThere = "רשום אותי לארוע זה";
+  registeredToEvent = "הנך רשום לארוע זה";
+  iCantMakeIt = "לא אוכל להגיע לארוע";
 }
 
 const defaultLang = new Language();
@@ -789,11 +805,10 @@ function langByCode(lang: string) {
   return r;
 }
 
-if (typeof (document) !== 'undefined'){
+if (typeof (document) !== 'undefined') {
   //@ts-ignore
   use.language = langByCode(document.lang);
 }
-else
-{
-  
+else {
+
 }

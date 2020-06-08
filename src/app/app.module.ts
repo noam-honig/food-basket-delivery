@@ -82,6 +82,7 @@ import { MergeFamiliesComponent } from './merge-families/merge-families.componen
 import { DuplicateFamiliesComponent } from './duplicate-families/duplicate-families.component';
 import { DateRangeComponent } from './date-range/date-range.component';
 import { ShowOnMapComponent } from './show-on-map/show-on-map.component';
+import { EventsComponent } from './events/events.component';
 
 
 
@@ -162,7 +163,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     MergeFamiliesComponent,
     DuplicateFamiliesComponent,
     DateRangeComponent,
-    ShowOnMapComponent
+    ShowOnMapComponent,
+    EventsComponent
     
 
   ],
@@ -261,6 +263,7 @@ export function initApp(session: JwtSessionManager, settings: SettingsService) {
       routeMap.set(UpdateInfoComponent, translate(l.UpdateInfoComponent));
       routeMap.set(LoginComponent, translate(l.LoginComponent));
       routeMap.set(RegisterComponent, translate(l.RegisterComponent));
+      routeMap.set(EventsComponent, translate(l.eventsComponent));
 
 
 

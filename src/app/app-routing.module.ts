@@ -24,7 +24,7 @@ import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 
-import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin,OverviewOrAdminGuard } from './auth/roles';
+import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard } from './auth/roles';
 
 import { SignedInGuard } from '@remult/core';
 
@@ -39,6 +39,7 @@ import { TokenReplacerComponent } from './token-replacer/token-replacer.componen
 import { TestMapComponent } from './test-map/test-map.component';
 import { FamilyDeliveriesComponent } from './family-deliveries/family-deliveries.component';
 import { DuplicateFamiliesComponent } from './duplicate-families/duplicate-families.component';
+import { EventsComponent } from './events/events.component';
 
 
 
@@ -57,20 +58,21 @@ export const routes: Routes = [
   NewsComponent.needsWorkRoute,
   { path: 'overview', component: OverviewComponent, canActivate: [OverviewGuard] },
   DistributionMap.route,
-  
-  HelpersComponent.route,
-  { path: 'tr', component: TokenReplacerComponent, canActivate: [OverviewGuard], data: {  hide: true }  },
 
+  HelpersComponent.route,
+  { path: 'tr', component: TokenReplacerComponent, canActivate: [OverviewGuard], data: { hide: true } },
+  
   DeliveryHistoryComponent.route,
   { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { hide: true } },
   { path: 'geocode', component: GeocodeComponent, canActivate: [AdminGuard], data: { name: 'geocode', hide: true } },
-  { path: 'testmap', component: TestMapComponent, canActivate: [AdminGuard], data: {  hide: true } },
-
+  { path: 'testmap', component: TestMapComponent, canActivate: [AdminGuard], data: { hide: true } },
   
-  { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard]},
-  { path: 'import-helpers-from-excel', component: ImportHelpersFromExcelComponent, canActivate: [AdminGuard]},
-   { path: 'duplicate-families', component: DuplicateFamiliesComponent, canActivate: [AdminGuard] },
+  
+  { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard] },
+  { path: 'import-helpers-from-excel', component: ImportHelpersFromExcelComponent, canActivate: [AdminGuard] },
+  { path: 'duplicate-families', component: DuplicateFamiliesComponent, canActivate: [AdminGuard] },
   ManageComponent.route,
+  { path: 'events', component: EventsComponent, canActivate: [AdminGuard] },
   
   LoginFromSmsComponent.route,
 
@@ -92,7 +94,7 @@ export const routes: Routes = [
   ],
   declarations: [],
   exports: [RouterModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard,  OverviewGuard,distCenterAdminGuard,distCenterOrOverviewOrAdmin,OverviewOrAdminGuard]
+  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard]
 
 })
 
