@@ -16,6 +16,10 @@
     "valueInCode": "פעיל",
     "custom": "Active"
   },
+  "activeEventStatus": {
+    "google": "Open to registration",
+    "valueInCode": "פתוח לרישום"
+  },
   "activeFamilies": {
     "google": "activity",
     "custom": "Active",
@@ -212,6 +216,10 @@
     "google": "Archive",
     "valueInCode": "העבר לארכיון"
   },
+  "archiveEventStatus": {
+    "google": "archives",
+    "valueInCode": "ארכיון"
+  },
   "archiveFinishedDeliveries": {
     "google": "Migrate completed archives",
     "valueInCode": "העבר משלוחים שהסתיימו לארכיון",
@@ -303,6 +311,10 @@
     "google": "At",
     "valueInCode": "בכתובת",
     "custom": "at"
+  },
+  "attendingVolunteers": {
+    "google": "Number of volunteers signed up",
+    "valueInCode": "מספר מתנדבים שנרשמו"
   },
   "atThisLocationThereAre": {
     "google": "At this point there is",
@@ -977,6 +989,38 @@
     "google": "Estimated total travel time",
     "valueInCode": "סה\"כ זמן נסיעה מוערך"
   },
+  "eventDate": {
+    "google": "date",
+    "valueInCode": "תאריך"
+  },
+  "eventDescription": {
+    "google": "description",
+    "valueInCode": "תאור"
+  },
+  "eventEndTime": {
+    "google": "To an hour",
+    "valueInCode": "עד שעה"
+  },
+  "eventName": {
+    "google": "Event name",
+    "valueInCode": "שם ארוע"
+  },
+  "eventPreparation": {
+    "google": "Draft",
+    "valueInCode": "טיוטא"
+  },
+  "eventsComponent": {
+    "google": "Events",
+    "valueInCode": "ארועים"
+  },
+  "eventStatus": {
+    "google": "status",
+    "valueInCode": "סטטוס"
+  },
+  "eventTime": {
+    "google": "hour",
+    "valueInCode": "שעה"
+  },
   "excelColumnIgnore": {
     "google": "Do not absorb",
     "valueInCode": "לא לקלוט",
@@ -1350,6 +1394,10 @@
     "google": "House number",
     "valueInCode": "מספר בית"
   },
+  "iCantMakeIt": {
+    "google": "I can't go to the event",
+    "valueInCode": "לא אוכל להגיע לארוע"
+  },
   "iconForWebSite": {
     "google": "Website Icon",
     "valueInCode": "אייקון לאתר"
@@ -1366,6 +1414,10 @@
     "google": "If there is a shipment for a family with a different basket type, add a new one",
     "valueInCode": "אם קיים משלוח למשפחה עם סוג סל שונה, הוסף משלוח חדש",
     "custom": "If there is a delivery for a family with a different parcel type, add a new one"
+  },
+  "illBeThere": {
+    "google": "Sign me up for this event",
+    "valueInCode": "רשום אותי לארוע זה"
   },
   "importFamily": {
     "google": "To absorb the family",
@@ -1608,7 +1660,7 @@
   },
   "MyFamiliesComponent": {
     "google": "My families",
-    "valueInCode": "משפחות שלי"
+    "valueInCode": "משלוחים שלי"
   },
   "nameIsTooShort": {
     "google": "The name is too short",
@@ -1850,6 +1902,10 @@
     "google": "If you are not registered, please register here",
     "valueInCode": "אם אינך רשומה, אנא הרשמי כאן"
   },
+  "pleaseRegisterToTheFollowingEvents": {
+    "google": "Please sign up for upcoming events",
+    "valueInCode": "אנא הרשמו לאירועים הקרובים"
+  },
   "pleaseSelectDistributionList": {
     "google": "Must select a distribution list",
     "valueInCode": "חובה לבחור רשימת חלוקה"
@@ -1970,6 +2026,10 @@
     "valueInCode": "הרשמה",
     "custom": "Register"
   },
+  "registeredToEvent": {
+    "google": "You are registered for this event",
+    "valueInCode": "הנך רשום לארוע זה"
+  },
   "remainingByBaskets": {
     "google": "Remained by baskets",
     "valueInCode": "נותרו לפי סלים",
@@ -2065,6 +2125,10 @@
   "replcaedBySenderName": {
     "google": "The sender's name will be replaced",
     "valueInCode": "יוחלף בשם השולח"
+  },
+  "requiredVolunteers": {
+    "google": "A number of volunteers is required",
+    "valueInCode": "מספר מתנדבים נדרש"
   },
   "requireFollowUp": {
     "google": "Needs treatment / follow up",

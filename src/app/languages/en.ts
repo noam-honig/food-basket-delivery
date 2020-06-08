@@ -645,4 +645,20 @@ export class en implements Language {
   endsOnDistributionCenter = 'End at the distribution center';
   parcelSummary = 'Show Parcel Summary';
   useCurrentLocationForStart = 'Calculate route based on current location';
+  eventName = 'Event name';
+  eventDescription = 'description';
+  eventDate = 'date';
+  eventTime = 'hour';
+  eventEndTime = 'To an hour';
+  eventPreparation = 'Draft';
+  activeEventStatus = 'Open to registration';
+  archiveEventStatus = 'archives';
+  requiredVolunteers = 'A number of volunteers is required';
+  attendingVolunteers = 'Number of volunteers signed up';
+  eventStatus = 'status';
+  eventsComponent = 'Events';
+  pleaseRegisterToTheFollowingEvents = 'Please sign up for upcoming events';
+  illBeThere = 'Sign me up for this event';
+  registeredToEvent = 'You are registered for this event';
+  iCantMakeIt = "I can't go to the event";
 }

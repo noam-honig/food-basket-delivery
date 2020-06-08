@@ -19,6 +19,11 @@
     "valueInCode": "פעיל",
     "valueInEnglish": "Active"
   },
+  "activeEventStatus": {
+    "google": "Abierto a registro",
+    "valueInCode": "פתוח לרישום",
+    "valueInEnglish": "Open to registration"
+  },
   "activeFamilies": {
     "google": "Activo",
     "valueInCode": "פעילות",
@@ -234,6 +239,11 @@
     "valueInCode": "העבר לארכיון",
     "valueInEnglish": "Archive"
   },
+  "archiveEventStatus": {
+    "google": "archivo",
+    "valueInCode": "ארכיון",
+    "valueInEnglish": "archives"
+  },
   "archiveFinishedDeliveries": {
     "google": "Archivar entregas completadas",
     "valueInCode": "העבר משלוחים שהסתיימו לארכיון",
@@ -328,6 +338,11 @@
     "google": "a",
     "valueInCode": "בכתובת",
     "valueInEnglish": "at"
+  },
+  "attendingVolunteers": {
+    "google": "Número de voluntarios inscritos",
+    "valueInCode": "מספר מתנדבים שנרשמו",
+    "valueInEnglish": "Number of volunteers signed up"
   },
   "atThisLocationThereAre": {
     "google": "Esta ubicación tiene",
@@ -1060,6 +1075,46 @@
     "valueInCode": "סה\"כ זמן נסיעה מוערך",
     "valueInEnglish": "Estimated total travel time"
   },
+  "eventDate": {
+    "google": "fecha",
+    "valueInCode": "תאריך",
+    "valueInEnglish": "date"
+  },
+  "eventDescription": {
+    "google": "descripción",
+    "valueInCode": "תאור",
+    "valueInEnglish": "description"
+  },
+  "eventEndTime": {
+    "google": "A una hora",
+    "valueInCode": "עד שעה",
+    "valueInEnglish": "To an hour"
+  },
+  "eventName": {
+    "google": "Nombre del evento",
+    "valueInCode": "שם ארוע",
+    "valueInEnglish": "Event name"
+  },
+  "eventPreparation": {
+    "google": "Sequía",
+    "valueInCode": "טיוטא",
+    "valueInEnglish": "Draft"
+  },
+  "eventsComponent": {
+    "google": "Eventos",
+    "valueInCode": "ארועים",
+    "valueInEnglish": "Events"
+  },
+  "eventStatus": {
+    "google": "estado",
+    "valueInCode": "סטטוס",
+    "valueInEnglish": "status"
+  },
+  "eventTime": {
+    "google": "hora",
+    "valueInCode": "שעה",
+    "valueInEnglish": "hour"
+  },
   "excelColumnIgnore": {
     "google": "No importar",
     "valueInCode": "לא לקלוט",
@@ -1500,6 +1555,11 @@
     "valueInCode": "מספר בית",
     "valueInEnglish": "House number"
   },
+  "iCantMakeIt": {
+    "google": "No puedo ir al evento",
+    "valueInCode": "לא אוכל להגיע לארוע",
+    "valueInEnglish": "I can't go to the event"
+  },
   "iconForWebSite": {
     "google": "Ícono del sitio web",
     "valueInCode": "אייקון לאתר",
@@ -1519,6 +1579,11 @@
     "google": "Si hay una entrega para una familia con un tipo de paquete diferente, agregue una nueva",
     "valueInCode": "אם קיים משלוח למשפחה עם סוג סל שונה, הוסף משלוח חדש",
     "valueInEnglish": "If there is a delivery for a family with a different parcel type, add a new one"
+  },
+  "illBeThere": {
+    "google": "Inscríbeme para este evento",
+    "valueInCode": "רשום אותי לארוע זה",
+    "valueInEnglish": "Sign me up for this event"
   },
   "importFamily": {
     "google": "Importar",
@@ -1807,7 +1872,7 @@
   },
   "MyFamiliesComponent": {
     "google": "Mis familias",
-    "valueInCode": "משפחות שלי",
+    "valueInCode": "משלוחים שלי",
     "valueInEnglish": "My families"
   },
   "nameIsTooShort": {
@@ -2095,6 +2160,11 @@
     "valueInCode": "אם אינך רשומה, אנא הרשמי כאן",
     "valueInEnglish": "If you are not registered, please register here"
   },
+  "pleaseRegisterToTheFollowingEvents": {
+    "google": "Por favor regístrese para los próximos eventos",
+    "valueInCode": "אנא הרשמו לאירועים הקרובים",
+    "valueInEnglish": "Please sign up for upcoming events"
+  },
   "pleaseSelectDistributionList": {
     "google": "Debe seleccionar una lista de distribución.",
     "valueInCode": "חובה לבחור רשימת חלוקה",
@@ -2235,6 +2305,11 @@
     "valueInCode": "הרשמה",
     "valueInEnglish": "Register"
   },
+  "registeredToEvent": {
+    "google": "Estás registrado para este evento",
+    "valueInCode": "הנך רשום לארוע זה",
+    "valueInEnglish": "You are registered for this event"
+  },
   "remainingByBaskets": {
     "google": "Permanecido por parcelas",
     "valueInCode": "נותרו לפי סלים",
@@ -2350,6 +2425,11 @@
     "google": "El nombre del remitente será reemplazado",
     "valueInCode": "יוחלף בשם השולח",
     "valueInEnglish": "The sender's name will be replaced"
+  },
+  "requiredVolunteers": {
+    "google": "Se requiere una cantidad de voluntarios",
+    "valueInCode": "מספר מתנדבים נדרש",
+    "valueInEnglish": "A number of volunteers is required"
   },
   "requireFollowUp": {
     "google": "Requiere seguimiento",

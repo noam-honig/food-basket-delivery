@@ -645,4 +645,20 @@ export class italy implements Language {
   endsOnDistributionCenter = 'Termina al centro di distribuzione';
   parcelSummary = 'Mostra riepilogo pacchi';
   useCurrentLocationForStart = 'Calcola il percorso in base alla posizione corrente';
+  eventName = "Nome dell'evento";
+  eventDescription = 'descrizione';
+  eventDate = 'Data';
+  eventTime = 'ora';
+  eventEndTime = "A un'ora";
+  eventPreparation = 'Bozza';
+  activeEventStatus = 'Aperto alla registrazione';
+  archiveEventStatus = 'archivio';
+  requiredVolunteers = 'È richiesto un numero di volontari';
+  attendingVolunteers = 'Numero di volontari iscritti';
+  eventStatus = 'stato';
+  eventsComponent = 'eventi';
+  pleaseRegisterToTheFollowingEvents = 'Si prega di iscriversi per i prossimi eventi';
+  illBeThere = 'Registrami per questo evento';
+  registeredToEvent = 'Sei registrato per questo evento';
+  iCantMakeIt = "Non posso andare all'evento";
 }

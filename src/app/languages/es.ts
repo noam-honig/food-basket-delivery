@@ -645,4 +645,20 @@ export class es implements Language {
   endsOnDistributionCenter = 'Terminar en el centro de distribución.';
   parcelSummary = 'Mostrar resumen de parcela';
   useCurrentLocationForStart = 'Calcular ruta basada en la ubicación actual';
+  eventName = 'Nombre del evento';
+  eventDescription = 'descripción';
+  eventDate = 'fecha';
+  eventTime = 'hora';
+  eventEndTime = 'A una hora';
+  eventPreparation = 'Sequía';
+  activeEventStatus = 'Abierto a registro';
+  archiveEventStatus = 'archivo';
+  requiredVolunteers = 'Se requiere una cantidad de voluntarios';
+  attendingVolunteers = 'Número de voluntarios inscritos';
+  eventStatus = 'estado';
+  eventsComponent = 'Eventos';
+  pleaseRegisterToTheFollowingEvents = 'Por favor regístrese para los próximos eventos';
+  illBeThere = 'Inscríbeme para este evento';
+  registeredToEvent = 'Estás registrado para este evento';
+  iCantMakeIt = 'No puedo ir al evento';
 }
