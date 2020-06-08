@@ -1,8 +1,9 @@
 import { IdEntity, StringColumn, Context, DateColumn, NumberColumn, IdColumn, ValueListColumn, EntityClass } from "@remult/core";
 import { getLang, use } from "../translate";
 import { Roles } from "../auth/roles";
-import { HelperId } from "../helpers/helpers";
-import { SqlBuilder } from "../model-shared/types";
+import { HelperId, Helpers } from "../helpers/helpers";
+import { SqlBuilder, PhoneColumn } from "../model-shared/types";
+import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
 
 @EntityClass
 export class Event extends IdEntity {
@@ -30,7 +31,7 @@ export class Event extends IdEntity {
             name: 'events',
             allowApiCRUD: Roles.admin,
             allowApiRead: c => c.isSignedIn(),
-            
+
             apiDataFilter: () => {
                 if (context.isAllowed(Roles.admin))
                     return undefined;
@@ -44,6 +45,36 @@ export class Event extends IdEntity {
 export class volunteersInEvent extends IdEntity {
     eventId = new IdColumn();
     helper = new HelperId(this.context);
+    helperName = new StringColumn({
+        caption: getLang(this.context).volunteerName, sqlExpression: () => {
+            let sql = new SqlBuilder();
+            let h = this.context.for(Helpers).create();
+            return sql.columnInnerSelect(this, {
+                from: h,
+                select: () => [h.name],
+                where: () => [sql.eq(h.id, this.helper)]
+            });
+        }
+    })
+    helperPhone = new PhoneColumn({
+        caption: getLang(this.context).volunteerPhoneNumber, sqlExpression: () => {
+            let sql = new SqlBuilder();
+            let h = this.context.for(Helpers).create();
+            return sql.columnInnerSelect(this, {
+                from: h,
+                select: () => [h.phone],
+                where: () => [sql.eq(h.id, this.helper)]
+            });
+        }
+    })
+    assignedDeliveries = new NumberColumn({
+        caption: getLang(this.context).deliveriesAssigned,
+        sqlExpression: () => {
+            let sql = new SqlBuilder();
+            let d = this.context.for(ActiveFamilyDeliveries).create();
+            return sql.columnCount(this, { from: d, where: () => [sql.eq(this.helper, d.courier)] })
+        }
+    })
     constructor(private context: Context) {
         super({
             name: 'volunteersInEvent',
