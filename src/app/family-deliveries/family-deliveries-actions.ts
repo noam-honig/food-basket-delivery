@@ -4,7 +4,7 @@ import { DistributionCenterId, DistributionCenters, allCentersToken } from "../m
 import { HelperId } from "../helpers/helpers";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { Groups } from "../manage/manage.component";
-import { translate, use, getLang } from "../translate";
+import {  use, getLang } from "../translate";
 import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer, serverUpdateInfo, pagedRowsIterator } from "../families/familyActionsWiring";
 import { async } from "@angular/core/testing";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
@@ -32,7 +32,7 @@ class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
                 { column: this.status, visible: () => this.updateFamilyStatus.value }
             ],
             title: getLang(context).deleteDeliveries,
-            help: () => translate(getLang(this.context).deleteDeliveriesHelp),
+            help: () => getLang(this.context).deleteDeliveriesHelp,
             forEach: async fd => {
                 fd.delete();
                 if (this.updateFamilyStatus.value) {
@@ -47,7 +47,7 @@ class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
 }
 class UpdateFixedCourier extends ActionOnRows<FamilyDeliveries> {
     byCurrentCourier = new BoolColumn(use.language.updateCourierByCurrentCourier);
-    courier = new HelperId(this.context, translate(use.language.defaultVolunteer));
+    courier = new HelperId(this.context, use.language.defaultVolunteer);
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
@@ -59,7 +59,7 @@ class UpdateFixedCourier extends ActionOnRows<FamilyDeliveries> {
                     { column: this.courier, visible: () => !this.byCurrentCourier.value }
                 ]
             },
-            title: translate(getLang(context).updateDefaultVolunteer),
+            title: getLang(context).updateDefaultVolunteer,
             forEach: async fd => {
 
 
@@ -318,7 +318,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
     }
 }
 class HelperStrategy {
-    static familyDefault = new HelperStrategy(0, translate(use.language.volunteerByFamilyDefault), x => { });
+    static familyDefault = new HelperStrategy(0, use.language.volunteerByFamilyDefault, x => { });
     static currentHelper = new HelperStrategy(1, use.language.volunteerByCrrentDelivery, x => {
         x.newDelivery.courier.value = x.existingDelivery.courier.value;
     });

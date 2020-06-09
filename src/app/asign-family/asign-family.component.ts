@@ -26,7 +26,7 @@ import { BusyService } from '@remult/core';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { Groups, GroupsStats } from '../manage/manage.component';
 import { SendSmsAction } from './send-sms-action';
-import { translate, getLang, use } from '../translate';
+
 import { SelectCompanyComponent } from '../select-company/select-company.component';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -70,7 +70,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
     }
     @ViewChild("helperFamilies", { static: false }) helperFamilies: HelperFamiliesComponent;
-    translate = translate;
+    
     async searchPhone() {
         this.clearHelperInfo(false);
         let cleanPhone = PhoneColumn.fixPhoneInput(this.phone);
@@ -348,7 +348,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 if (families.length == 1)
                     await this.assignFamilyBasedOnIdFromMap(families[0]);
                 else if (families.length > 1) {
-                    this.dialog.YesNoQuestion(this.settings.lang.atThisLocationThereAre + " " + families.length + translate(this.settings.lang.deliveriesAssignAllOfThem), async () => {
+                    this.dialog.YesNoQuestion(this.settings.lang.atThisLocationThereAre + " " + families.length + this.settings.lang.deliveriesAssignAllOfThem, async () => {
                         await this.busy.doWhileShowingBusy(async () => {
                             for (const iterator of families) {
                                 await this.assignFamilyBasedOnIdFromMap(iterator);
@@ -446,7 +446,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             }
             else {
                 this.refreshList();
-                this.dialog.Info(translate(this.settings.lang.noMatchingDelivery));
+                this.dialog.Info(this.settings.lang.noMatchingDelivery);
             }
             this.assigning = false;
         }
@@ -865,7 +865,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                     if (selectStreet)
                         return;
                     let c = await f.courier.getTheName();
-                    this.dialog.YesNoQuestion(translate(this.settings.lang.theFamily) + ' ' +
+                    this.dialog.YesNoQuestion(this.settings.lang.theFamily + ' ' +
                         f.name.value + this.settings.lang.isAlreadyAsignedTo + ' ' + c + ' ' + this.settings.lang.onStatus + ' ' +
                         f.deliverStatus.displayValue + '. ' + this.settings.lang.shouldAssignTo + ' ' + this.helper.name.value + '?', () => {
                             ok();

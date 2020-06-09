@@ -14,7 +14,6 @@ import { Roles } from '../auth/roles';
 import { MatStepper } from '@angular/material';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { translate } from '../translate';
 import { Helpers } from '../helpers/helpers';
 import { fixPhone } from '../import-from-excel/import-from-excel.component';
 @Component({
@@ -62,7 +61,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
   async addAll() {
     let count = this.newRows.length;
-    this.dialog.YesNoQuestion("האם להוסיף " + count + translate(" מתנדבים?"), () => {
+    this.dialog.YesNoQuestion("האם להוסיף " + count + " מתנדבים?", () => {
       this.busy.doWhileShowingBusy(async () => {
         let rowsToInsert: excelRowInfo[] = [];
 
@@ -106,7 +105,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
   }
   async updateAllCol(col: Column<any>) {
     let count = this.getColUpdateCount(col);
-    let message = "האם לעדכן את השדה " + col.defs.caption + " ל" + count + translate(" מתנדבים?");
+    let message = "האם לעדכן את השדה " + col.defs.caption + " ל" + count + " מתנדבים?";
 
     this.dialog.YesNoQuestion(message, () => {
       this.busy.doWhileShowingBusy(async () => {
@@ -404,7 +403,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
   }
   async doImport() {
-    this.dialog.YesNoQuestion("האם אתה בטוח שאתה מעוניין לקלוט " + (this.totalRows - 1) + translate(" משפחות מאקסל?"), async () => {
+    this.dialog.YesNoQuestion("האם אתה בטוח שאתה מעוניין לקלוט " + (this.totalRows - 1) + " משפחות מאקסל?", async () => {
       await this.iterateExcelFile(true);
     });
   }
@@ -515,7 +514,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
         for (const iterator of collected) {
           if (iterator.length > 1) {
             for (const row of iterator) {
-              row.error = translate('אותה משפחה באתר מתאימה למספר שורות באקסל: ') + iterator.map(x => x.rowInExcel.toString()).join(', ');
+              row.error = 'אותה משפחה באתר מתאימה למספר שורות באקסל: ' + iterator.map(x => x.rowInExcel.toString()).join(', ');
               this.errorRows.push(row);
               this.updateRows.splice(this.updateRows.indexOf(row), 1);
             }
@@ -561,7 +560,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
       if (!info.duplicateHelperInfo || info.duplicateHelperInfo.length == 0) {
         result.newRows.push(info);
       } else if (info.duplicateHelperInfo.length > 1) {
-        info.error = translate('מתנדב קיים יותר מפעם אחת בבסיס הנתונים');
+        info.error = 'מתנדב קיים יותר מפעם אחת בבסיס הנתונים';
         result.errorRows.push(info);
       } else {
         let ef = await context.for(Helpers).findFirst(f => f.id.isEqualTo(info.duplicateHelperInfo[0].id));
@@ -646,7 +645,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     }
   }
   moveFromErrorToAdd(r: excelRowInfo) {
-    this.dialog.YesNoQuestion(translate("להעביר את המתנדב ") + r.name + translate(" למתנדבים להוספה?"), () => {
+    this.dialog.YesNoQuestion("להעביר את המתנדב " + r.name + " למתנדבים להוספה?", () => {
       let x = this.errorRows.indexOf(r);
       this.errorRows.splice(x, 1);
       this.newRows.push(r);

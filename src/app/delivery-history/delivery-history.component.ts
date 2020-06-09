@@ -18,7 +18,7 @@ import { ServerFunction } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DistributionCenterId } from '../manage/distribution-centers';
-import { translate, getLang } from '../translate'
+import {  getLang } from '../translate'
 import { DateRangeComponent } from '../date-range/date-range.component';
 
 

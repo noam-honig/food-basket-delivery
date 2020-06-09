@@ -67,7 +67,7 @@
       <mat-step label="{{settings.lang.executeExcelImport}}">
           <h3>{{settings.lang.excelImportResults}}</h3>
           <mat-tab-group>
-              <mat-tab label="{{settings.lang.newVolunteers|translate}} - {{newRows.length}}" *ngIf="newRows&&newRows.length">
+              <mat-tab label="{{settings.lang.newVolunteers}} - {{newRows.length}}" *ngIf="newRows&&newRows.length">
                   
                   <div class="table-div">
 
@@ -99,9 +99,9 @@
                   <pagination-controls (pageChange)="newRowsPage = $event" previousLabel="{{settings.lang.previous}}" nextLabel="{{settings.lang.next}}"
                       id="newRows">
                   </pagination-controls>
-                  <button (click)="addAll()" mat-raised-button  color="accent">{{settings.lang.addAllVolunteers|translate}}</button>
+                  <button (click)="addAll()" mat-raised-button  color="accent">{{settings.lang.addAllVolunteers}}</button>
               </mat-tab>
-              <mat-tab label="{{settings.lang.updateVolunteers|translate}} - {{updateRows.length}}" *ngIf="updateRows&&updateRows.length">
+              <mat-tab label="{{settings.lang.updateVolunteers}} - {{updateRows.length}}" *ngIf="updateRows&&updateRows.length">
                   <div class="table-div">
                       <table class="table table-bordered" style="white-space: nowrap;">
                           <tr>
@@ -143,7 +143,7 @@
                   <pagination-controls (pageChange)="updateRowsPage = $event" previousLabel="{{settings.lang.previous}}" nextLabel="{{settings.lang.next}}"
                       id="updateRows"></pagination-controls>
               </mat-tab>
-              <mat-tab label="{{settings.lang.existingVolunteers|translate}} - {{identicalRows.length}}" *ngIf="identicalRows&&identicalRows.length">
+              <mat-tab label="{{settings.lang.existingVolunteers}} - {{identicalRows.length}}" *ngIf="identicalRows&&identicalRows.length">
                   <div class="table-div">
                       <table class="table table-bordered" style="white-space: nowrap;">
                           <tr>

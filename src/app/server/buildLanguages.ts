@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { Language } from "../translate";
+import { Language, TranslationOptions } from "../translate";
 import { config } from 'dotenv';
 import { jsonToXlsx } from "../shared/saveToExcel";
 import * as request from 'request';
@@ -51,7 +51,9 @@ function saveLangFile(filename: string, data: any) {
 export async function buildLanguageFiles() {
     config();
 
-    for (const lang of ["en", "es", "it"]) {
+
+
+    for (const lang of ["en", "es", "it", "donor", "soldier"]) {
         let fileAndClassName = lang;
         if (lang == 'it') {
             fileAndClassName = 'italy';
@@ -60,9 +62,21 @@ export async function buildLanguageFiles() {
         try { known = loadLangFile(fileAndClassName); }
         catch{ }
         let knownEnglish = {};
-        if (lang != "en") {
+        if (lang == "es" || lang == "it") {
             knownEnglish = loadLangFile("en");
         }
+        let translate = async (term: string) => {
+            return await googleTranslate(term, lang, lang == 'en' ? 'iw' : 'en');
+        }
+        switch (lang) {
+            case "donor":
+                translate = async  x => TranslationOptions.Donors.translate(x);
+                break;
+            case "soldier":
+                translate = async  x => TranslationOptions.Soldiers.translate(x);
+                break;
+        }
+
         let result = '';
         let l = new Language();
         let keys: translationEntry[] = [];
@@ -87,7 +101,7 @@ export async function buildLanguageFiles() {
                     const element: string[] = val.split('\n');
                     for (let index = 0; index < element.length; index++) {
                         const term = element[index];
-                        let trans = await translate(term, lang, lang == 'en' ? 'iw' : 'en');
+                        let trans = await translate(term);
                         console.log(term);
                         console.log(trans);
                         element[index] = trans;
@@ -100,8 +114,15 @@ export async function buildLanguageFiles() {
                 let v = knownVal.google;
                 if (knownVal.custom)
                     v = knownVal.custom;
-                if (key == 'languageCode' || key == 'languageCodeHe')
+                if (key == 'languageCode' || key == 'languageCodeHe') {
                     v = lang;
+                    switch (lang) {
+                        case "donor":
+                        case "soldier":
+                            v = l[key];
+
+                    }
+                }
                 let r = v;
                 if (r.includes('\''))
                     r = '"' + r.replace(/"/g, '\\"') + '"';
@@ -142,7 +163,7 @@ interface translation {
     valueInEnglish: string;
 }
 
-async function translate(s: string, toLang: string, fromLang: string) {
+async function googleTranslate(s: string, toLang: string, fromLang: string) {
 
 
     return new Promise<string>((resolve, reject) => {

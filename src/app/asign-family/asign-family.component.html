@@ -10,14 +10,14 @@
         <div>
 
           <mat-menu #appMenu77>
-            <button mat-menu-item (click)="findHelper()">{{settings.lang.findHelperByName|translate}}</button>
-            <button mat-menu-item (click)="clearHelperInfo()">{{settings.lang.clearHelperInfo|translate}}</button>
+            <button mat-menu-item (click)="findHelper()">{{settings.lang.findHelperByName}}</button>
+            <button mat-menu-item (click)="clearHelperInfo()">{{settings.lang.clearHelperInfo}}</button>
             <button mat-menu-item (click)="saveHelper()"
-              *ngIf="showSave()">{{settings.lang.saveHelperInfoAndMoveToNextHelper|translate}}</button>
+              *ngIf="showSave()">{{settings.lang.saveHelperInfoAndMoveToNextHelper}}</button>
             <button *ngIf="!settings.showCompanies.value" mat-menu-item
-              (click)="settings.showCompanies.value= true; changeShowCompany()">{{settings.lang.showHelperCompany|translate}}</button>
+              (click)="settings.showCompanies.value= true; changeShowCompany()">{{settings.lang.showHelperCompany}}</button>
             <button *ngIf="settings.showCompanies.value" mat-menu-item
-              (click)="settings.showCompanies.value= false; changeShowCompany()">{{settings.lang.hideHelperCompany|translate}}</button>
+              (click)="settings.showCompanies.value= false; changeShowCompany()">{{settings.lang.hideHelperCompany}}</button>
 
           </mat-menu>
 
@@ -47,7 +47,7 @@
   <div *ngIf="helper&&helper. name.value&&helper.name.value.length>=2">
     <mat-card class="no-print">
       <mat-card-title>
-        {{settings.lang.asignDeliveriesTo|translate}} {{helper.name.value}}
+        {{settings.lang.asignDeliveriesTo}} {{helper.name.value}}
         <div>
 
           <mat-menu #filterOptionsMenu="matMenu">
@@ -101,7 +101,7 @@
 
           <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
             *ngIf="settings.showNumOfBoxesOnAssing.value">
-            <mat-label>{{settings.lang.numOfFamilies|translate}}</mat-label>
+            <mat-label>{{settings.lang.numOfFamilies}}</mat-label>
             <input matInput type="number" id="numOfBaskets" [(ngModel)]="numOfBaskets">
             <div matSuffix style="display:flex">
               <button mat-icon-button (click)="add(1)">
@@ -114,7 +114,7 @@
           </mat-form-field>
 
           <mat-checkbox [(ngModel)]="preferRepeatFamilies" style="width:auto" *ngIf="showRepeatFamilies">
-            {{settings.lang.prioritizeRepeatFamilies|translate}} ({{repeatFamilies}})
+            {{settings.lang.prioritizeRepeatFamilies}} ({{repeatFamilies}})
           </mat-checkbox>
 
         </div>
@@ -126,7 +126,7 @@
           <button mat-raised-button color="primary" (click)="assignItem()"
             [disabled]="basketType.unassignedFamilies==0 || assigning"
             style="border-top-left-radius: 0px;border-bottom-left-radius:0px;">
-            {{translate(assigning?settings.lang.inProgress: basketType.unassignedFamilies==0?settings.lang.noDeliveriesLeft: familyLists.allFamilies.length>0?settings.lang.asignClosestDelivery:settings.lang.asignAnyDelivery)}}
+            {{assigning?settings.lang.inProgress: basketType.unassignedFamilies==0?settings.lang.noDeliveriesLeft: familyLists.allFamilies.length>0?settings.lang.asignClosestDelivery:settings.lang.asignAnyDelivery}}
             -
             {{getBasketsToClick()}}</button>
           <button mat-button [matMenuTriggerFor]="basketMenu" mat-raised-button color="primary" style="border-top-right-radius: 0;
@@ -138,15 +138,15 @@
           </button>
           <mat-menu #basketMenu="matMenu">
             <button mat-menu-item (click)="assignItem(true)"
-              *ngIf="preferRepeatFamilies&&repeatFamilies>0">{{settings.lang.addAllRepeatFamilies|translate}}</button>
+              *ngIf="preferRepeatFamilies&&repeatFamilies>0">{{settings.lang.addAllRepeatFamilies}}</button>
             <button mat-menu-item (click)="addSpecial()"
-              *ngIf="specialFamilies">{{settings.lang.specialFamilies|translate}} - {{specialFamilies}}</button>
-            <button mat-menu-item (click)="addSpecific()">{{settings.lang.selectDeliveryByName|translate}}</button>
-            <button mat-menu-item (click)="assignOnMap()">{{settings.lang.selectDeliveryOnMap|translate}}</button>
-            <button mat-menu-item (click)="addStreet()">{{settings.lang.selectDeliveryByStreet|translate}}</button>
+              *ngIf="specialFamilies">{{settings.lang.specialFamilies}} - {{specialFamilies}}</button>
+            <button mat-menu-item (click)="addSpecific()">{{settings.lang.selectDeliveryByName}}</button>
+            <button mat-menu-item (click)="assignOnMap()">{{settings.lang.selectDeliveryOnMap}}</button>
+            <button mat-menu-item (click)="addStreet()">{{settings.lang.selectDeliveryByStreet}}</button>
 
 
-            <button mat-menu-item (click)="moveBasktesFromOtherHelper()">{{settings.lang.transferDeliveriesFromOtherVolunteer|translate}}</button>
+            <button mat-menu-item (click)="moveBasktesFromOtherHelper()">{{settings.lang.transferDeliveriesFromOtherVolunteer}}</button>
             
 
           </mat-menu>

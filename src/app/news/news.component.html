@@ -2,7 +2,7 @@
   <mat-icon>refresh</mat-icon>
 </button>
 <a href="https://youtu.be/Pa7QJTE3cqo" target="_blank" class="no-print" *ngIf="settings.showVideo()"
-  style="margin-right:10px">{{settings.lang.volunteerFeedbackVideo|translate}}</a>
+  style="margin-right:10px">{{settings.lang.volunteerFeedbackVideo}}</a>
 <div style="display:flex">
   <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
     <mat-label>{{settings.lang.filter}}</mat-label>
@@ -33,9 +33,9 @@
     </mat-card-title>
     <mat-card-subtitle>{{n.deliveryStatusDate.relativeDateName()}}, {{settings.lang.updatedBy}}
       {{n.deliveryStatusUser.getValue()}}
-      <br><a (click)="updateFamily(n)">{{settings.lang.deliveryDetails|translate}}</a>
+      <br><a (click)="updateFamily(n)">{{settings.lang.deliveryDetails}}</a>
       <br *ngIf="n.courier.value"><a (click)="showHelper(n)"
-        *ngIf="n.courier.value">{{settings.lang.showAsignDeliveryFor|translate}} {{n.courier.getValue()}} </a>
+        *ngIf="n.courier.value">{{settings.lang.showAsignDeliveryFor}} {{n.courier.getValue()}} </a>
     </mat-card-subtitle>
 
   </mat-card-header>

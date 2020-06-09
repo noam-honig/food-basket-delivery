@@ -3,7 +3,7 @@
     [ngModelOptions]="{standalone: true}">
   <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
 </mat-form-field>
-<mat-checkbox [(ngModel)]="showAllFamilies" (change)="doFilter()">{{settings.lang.showAllFamilies|translate}}
+<mat-checkbox [(ngModel)]="showAllFamilies" (change)="doFilter()">{{settings.lang.showAllFamilies}}
 </mat-checkbox>
 <mat-accordion class="no-print">
   <mat-expansion-panel #myPanel *ngFor="let f of families.items;let i=index">
@@ -20,5 +20,5 @@
 <br>
 <button mat-raised-button color="accent" (click)="moreFamilies()"
   *ngIf=" families.items.length!=families.totalRows">
-  {{settings.lang.moreFamilies|translate}}
+  {{settings.lang.moreFamilies}}
 </button>

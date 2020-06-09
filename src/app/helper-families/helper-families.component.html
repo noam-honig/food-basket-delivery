@@ -4,14 +4,14 @@
     <div>
       <mat-menu #appMenu="matMenu">
         <button mat-menu-item (click)="cancelAll()" *ngIf="partOfAssign"
-          style="color:red;">{{settings.lang.cancelAllAssignments|translate}}</button>
+          style="color:red;">{{settings.lang.cancelAllAssignments}}</button>
         <button mat-menu-item (click)="okAll()" *ngIf="partOfAssign"
-          class="primary-menu">{{settings.lang.markAllDeliveriesAsSuccesfull|translate}}</button>
+          class="primary-menu">{{settings.lang.markAllDeliveriesAsSuccesfull}}</button>
         <button mat-menu-item
-          (click)="familyLists.showBasketSummary()">{{settings.lang.parcelSummary|translate}}</button>
-        <button mat-menu-item (click)="refreshRoute()">{{settings.lang.replanRoute|translate}}</button>
+          (click)="familyLists.showBasketSummary()">{{settings.lang.parcelSummary}}</button>
+        <button mat-menu-item (click)="refreshRoute()">{{settings.lang.replanRoute}}</button>
         <button mat-menu-item (click)="showRouteOnGoogleMaps()">
-          {{settings.lang.showRouteOnGoogleMaps|translate}}</button>
+          {{settings.lang.showRouteOnGoogleMaps}}</button>
 
       </mat-menu>
 
@@ -159,7 +159,7 @@
 
     <table class="printTable">
       <tr>
-        <th>{{settings.lang.family|translate}}</th>
+        <th>{{settings.lang.family}}</th>
         <th>{{settings.lang.address}}</th>
         <th>{{settings.lang.phones}}</th>
         <th>{{settings.lang.basket}}</th>
@@ -214,7 +214,7 @@
   </div>
 
   <mat-card *ngIf="familyLists.problem.length>0" class="no-print">
-    <mat-card-title>{{settings.lang.failedDeliveries|translate}} - {{familyLists.problem.length}}
+    <mat-card-title>{{settings.lang.failedDeliveries}} - {{familyLists.problem.length}}
     </mat-card-title>
     <mat-accordion>
       <mat-expansion-panel #myPanel *ngFor="let f of familyLists.problem">
@@ -227,7 +227,7 @@
             <button mat-raised-button class="myButton"
               (click)="updateComment(f)">{{settings.lang.updateComment}}</button>
             <button mat-raised-button class="myButton badButton"
-              (click)="returnToDeliver(f)">{{settings.lang.clickedByMistake|translate}}</button>
+              (click)="returnToDeliver(f)">{{settings.lang.clickedByMistake}}</button>
 
           </app-family-info>
         </ng-template>
@@ -236,7 +236,7 @@
   </mat-card>
   <mat-card *ngIf="familyLists.delivered.length>0" class="no-print">
     <mat-card-title>
-      {{settings.lang.deliveriesDoneInTheLastTwoDays|translate}} - {{familyLists.delivered.length}}
+      {{settings.lang.deliveriesDoneInTheLastTwoDays}} - {{familyLists.delivered.length}}
     </mat-card-title>
     <mat-accordion>
       <ng-container *ngFor="let f of familyLists.delivered;let i=index">
@@ -250,7 +250,7 @@
               <button mat-raised-button class="myButton"
                 (click)="updateComment(f)">{{settings.lang.updateComment}}</button>
               <button mat-raised-button class="myButton badButton"
-                (click)="returnToDeliver(f)">{{settings.lang.clickedByMistake|translate}}</button>
+                (click)="returnToDeliver(f)">{{settings.lang.clickedByMistake}}</button>
             </app-family-info>
           </ng-template>
         </mat-expansion-panel>

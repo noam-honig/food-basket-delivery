@@ -4,7 +4,7 @@ import { Entity, Context, EntityClass } from '@remult/core';
 import { PhoneColumn } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { DeliveryStatusColumn, DeliveryStatus } from "../families/DeliveryStatus";
-import { translate, translationConfig, TranslationOptionsColumn, Language, getLang, use, setLangForSite } from "../translate";
+import { translationConfig, TranslationOptionsColumn, Language, getLang, use, setLangForSite } from "../translate";
 
 import { FamilySources } from "../families/FamilySources";
 import { Injectable } from '@angular/core';
@@ -86,7 +86,7 @@ export class ApplicationSettings extends Entity<number>  {
   commentForSuccessDelivery = new StringColumn(this.lang.successMessageColumnName);
   commentForSuccessLeft = new StringColumn(this.lang.leftByDoorMessageColumnName);
   commentForProblem = new StringColumn(this.lang.problemCommentColumnName);
-  messageForDoneDelivery = new StringColumn(translate(this.lang.messageForVolunteerWhenDoneCaption));
+  messageForDoneDelivery = new StringColumn(this.lang.messageForVolunteerWhenDoneCaption);
 
   helpText = new StringColumn(this.lang.helpName);
   helpPhone = new PhoneColumn(this.lang.helpPhone);
@@ -152,7 +152,7 @@ export class ApplicationSettings extends Entity<number>  {
 
   addressApiResult = new StringColumn();
   defaultStatusType = new DeliveryStatusColumn(this.context, {
-    caption: translate(this.lang.defaultStatusType)
+    caption: this.lang.defaultStatusType
   }, [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup]);
   private _lastString: string;
   private _lastGeo: GeocodeInformation;
@@ -187,7 +187,7 @@ export class ApplicationSettings extends Entity<number>  {
           }
           this.helpPhone.value = PhoneColumn.fixPhoneInput(this.helpPhone.value);
           if (this.forWho.value)
-            setLangForSite(Sites.getValidSchemaFromContext(context), this.forWho.value.args.languageCode);
+            setLangForSite(Sites.getValidSchemaFromContext(context), this.forWho.value);
         }
       }
     })

@@ -1,0 +1,2646 @@
+{
+  "action": {
+    "google": "פעולה",
+    "valueInCode": "פעולה"
+  },
+  "actionNotFound": {
+    "google": "פעולה לא נמצאה בשרת",
+    "valueInCode": "פעולה לא נמצאה בשרת"
+  },
+  "activateEscort": {
+    "google": "הפעל ניהול מלווים לנהגים",
+    "valueInCode": "הפעל ניהול מלווים לנהגים"
+  },
+  "active": {
+    "google": "פעיל",
+    "valueInCode": "פעיל"
+  },
+  "activeEventStatus": {
+    "google": "פתוח לרישום",
+    "valueInCode": "פתוח לרישום"
+  },
+  "activeFamilies": {
+    "google": "פעילות",
+    "valueInCode": "פעילות"
+  },
+  "addAllFamilies": {
+    "google": "הוסף את כל החיילים",
+    "valueInCode": "הוסף את כל המשפחות"
+  },
+  "addAllRepeatFamilies": {
+    "google": "הוסף את כל החיילים החוזרות",
+    "valueInCode": "הוסף את כל המשפחות החוזרות"
+  },
+  "addAllVolunteers": {
+    "google": "הוסף את כל המתנדבים",
+    "valueInCode": "הוסף את כל המתנדבים"
+  },
+  "addColumnsThatAreNotInTheFile": {
+    "google": "הוספת עמודות שלא מופיעות באקסל",
+    "valueInCode": "הוספת עמודות שלא מופיעות באקסל"
+  },
+  "addCurrentLocationToNote": {
+    "google": "הוסף מיקום נוכחי להערה",
+    "valueInCode": "הוסף מיקום נוכחי להערה"
+  },
+  "addedToDb": {
+    "google": "נוספה לאתר",
+    "valueInCode": "נוספה לאתר"
+  },
+  "adderssProblems": {
+    "google": "כתובות בעיתיות",
+    "valueInCode": "כתובות בעיתיות"
+  },
+  "addExcelColumn": {
+    "google": "הוסף עמודה",
+    "valueInCode": "הוסף עמודה"
+  },
+  "addGroupAssignmentVerb": {
+    "google": "להוסיף שיוך לקבוצה",
+    "valueInCode": "להוסיף שיוך לקבוצה"
+  },
+  "address": {
+    "google": "כתובת",
+    "valueInCode": "כתובת"
+  },
+  "addressByGoogle": {
+    "google": "כתובת כפי שגוגל הבין",
+    "valueInCode": "כתובת כפי שגוגל הבין"
+  },
+  "addressComment": {
+    "google": "הנחיות נוספות לכתובת",
+    "valueInCode": "הנחיות נוספות לכתובת"
+  },
+  "addressesWithMoreThanOneFamily": {
+    "google": "כתובות עם יותר מחייל אחד",
+    "valueInCode": "כתובות עם יותר ממשפחה אחת"
+  },
+  "addressNotOkOpenWaze": {
+    "google": "הכתובת אינה מדוייקת. בדקו בגוגל או התקשרו לחייל. נשמח אם תעדכנו את הכתובת שמצאתם בהערות. האם לפתוח וייז?",
+    "valueInCode": "הכתובת אינה מדוייקת. בדקו בגוגל או התקשרו למשפחה. נשמח אם תעדכנו את הכתובת שמצאתם בהערות. האם לפתוח וייז?"
+  },
+  "addressOk": {
+    "google": "כתובת תקינה",
+    "valueInCode": "כתובת תקינה"
+  },
+  "addVolunteer": {
+    "google": "הוסף מתנדב/מנהל",
+    "valueInCode": "הוסף מתנדב/מנהל"
+  },
+  "admin": {
+    "google": "מנהל כלל המערכת",
+    "valueInCode": "מנהל כלל המערכת"
+  },
+  "adminRequireToSetPassword": {
+    "google": " אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועבר למסך עדכון פרטים לעדכון סיסמה.",
+    "valueInCode": " אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועבר למסך עדכון פרטים לעדכון סיסמה."
+  },
+  "age": {
+    "google": "גיל",
+    "valueInCode": "גיל"
+  },
+  "all": {
+    "google": "כולם",
+    "valueInCode": "כולם"
+  },
+  "allBaskets": {
+    "google": "כל הסלים",
+    "valueInCode": "כל הסלים"
+  },
+  "allCities": {
+    "google": "כל הערים",
+    "valueInCode": "כל הערים"
+  },
+  "allFamilies": {
+    "google": "כל החיילים",
+    "valueInCode": "כל המשפחות"
+  },
+  "allFamilySources": {
+    "google": "כל הגורמים מפנים",
+    "valueInCode": "כל הגורמים מפנים"
+  },
+  "allGroups": {
+    "google": "כל הקבוצות",
+    "valueInCode": "כל הקבוצות"
+  },
+  "allNew": {
+    "google": "כל החדשות",
+    "valueInCode": "כל החדשות"
+  },
+  "allOthers": {
+    "google": "כל השאר",
+    "valueInCode": "כל השאר"
+  },
+  "allRegions": {
+    "google": "כל האזורים",
+    "valueInCode": "כל האזורים"
+  },
+  "alreadyExist": {
+    "google": "כבר קיים במערכת",
+    "valueInCode": "כבר קיים במערכת"
+  },
+  "alreadyExistsInLine": {
+    "google": "כבר קיים בקובץ בשורה",
+    "valueInCode": "כבר קיים בקובץ בשורה"
+  },
+  "aMinuteAgo": {
+    "google": "לפני דקה",
+    "valueInCode": "לפני דקה"
+  },
+  "andAHalf": {
+    "google": "וחצי",
+    "valueInCode": "וחצי"
+  },
+  "andAQuater": {
+    "google": "ורבע",
+    "valueInCode": "ורבע"
+  },
+  "andMoveToUpdateFamilies": {
+    "google": "ולהעביר לחיילים לעדכון",
+    "valueInCode": "ולהעביר למשפחות לעדכון"
+  },
+  "andThreeQuaters": {
+    "google": "ושלושת רבעי",
+    "valueInCode": "ושלושת רבעי"
+  },
+  "anHour": {
+    "google": "שעה",
+    "valueInCode": "שעה"
+  },
+  "answer": {
+    "google": "תשובה",
+    "valueInCode": "תשובה"
+  },
+  "appartment": {
+    "google": "דירה",
+    "valueInCode": "דירה"
+  },
+  "archiveCurrentDelivery": {
+    "google": "העבר משלוח נוכחי לארכיב?",
+    "valueInCode": "העבר משלוח נוכחי לארכיב?"
+  },
+  "archiveDeliveries": {
+    "google": "העברה לארכיב",
+    "valueInCode": "העברה לארכיב"
+  },
+  "archiveDeliveriesHelp": {
+    "google": "העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים",
+    "valueInCode": "העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים"
+  },
+  "archiveDelivery": {
+    "google": "העבר לארכיון",
+    "valueInCode": "העבר לארכיון"
+  },
+  "archiveEventStatus": {
+    "google": "ארכיון",
+    "valueInCode": "ארכיון"
+  },
+  "archiveFinishedDeliveries": {
+    "google": "העבר משלוחים שהסתיימו לארכיון",
+    "valueInCode": "העבר משלוחים שהסתיימו לארכיון"
+  },
+  "areYouSureYouWantToCancelAssignmentTo": {
+    "google": "האם אתה בטוח שאתה רוצה לבטל שיוך ל",
+    "valueInCode": "האם אתה בטוח שאתה רוצה לבטל שיוך ל"
+  },
+  "areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies": {
+    "google": "האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל",
+    "valueInCode": "האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל"
+  },
+  "asignAnyDelivery": {
+    "google": "שייך משלוח כלשהו",
+    "valueInCode": "שייך משלוח כלשהו"
+  },
+  "asignClosestDelivery": {
+    "google": "שייך משלוח הכי קרוב",
+    "valueInCode": "שייך משלוח הכי קרוב"
+  },
+  "asignDeliveriesTo": {
+    "google": "שיוך משלוחים ל",
+    "valueInCode": "שיוך משלוחים ל"
+  },
+  "asignVideoHelp": {
+    "google": "לסרטון הדרכה על שיוך משלוחים ויום האירוע לחצו כאן",
+    "valueInCode": "לסרטון הדרכה על שיוך משלוחים ויום האירוע לחצו כאן"
+  },
+  "assign": {
+    "google": "שייכי",
+    "valueInCode": "שייכי"
+  },
+  "assignAFamilyGroup": {
+    "google": "שיוך לקבוצת חיילים",
+    "valueInCode": "שיוך לקבוצת משפחות"
+  },
+  "assignDeliveryMenu": {
+    "google": "שיוך משלוחים למתנדב",
+    "valueInCode": "שיוך משלוחים למתנדב"
+  },
+  "assigned": {
+    "google": "שוייך",
+    "valueInCode": "שוייך"
+  },
+  "assignedDriver": {
+    "google": "נהג משוייך",
+    "valueInCode": "נהג משוייך"
+  },
+  "assignedToVolunteer": {
+    "google": "משוייך למתנדב",
+    "valueInCode": "משוייך למתנדב"
+  },
+  "assignerOrOrg": {
+    "google": "הטלפון ממנו יצא הSMS",
+    "valueInCode": "הטלפון ממנו יצא הSMS"
+  },
+  "AssignEscortComponent": {
+    "google": "שיוך מלווים",
+    "valueInCode": "שיוך מלווים"
+  },
+  "assignHelpText": {
+    "google": "אנא הזיני את הטלפון של המתנדב ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים לשייך",
+    "valueInCode": "אנא הזיני את הטלפון של המתנדב ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים לשייך"
+  },
+  "assignmentCanceledFor": {
+    "google": "בוטל השיוך למשפחת",
+    "valueInCode": "בוטל השיוך למשפחת"
+  },
+  "assignRequiresADistributionList": {
+    "google": "לא ניתן לשייך מתנדבים מכיוון שלא נבחרה רשימת חלוקה. אנא בחרו רשימת חלוקה (למעלה מצד שמאל איפה שכתוב \"כל הרשימות\")",
+    "valueInCode": "לא ניתן לשייך מתנדבים מכיוון שלא נבחרה רשימת חלוקה. אנא בחרו רשימת חלוקה (למעלה מצד שמאל איפה שכתוב \"כל הרשימות\")"
+  },
+  "atAddress": {
+    "google": "בכתובת",
+    "valueInCode": "בכתובת"
+  },
+  "attendingVolunteers": {
+    "google": "מספר מתנדבים שנרשמו",
+    "valueInCode": "מספר מתנדבים שנרשמו"
+  },
+  "atThisLocationThereAre": {
+    "google": "בכתובת זו יש",
+    "valueInCode": "בכתובת זו יש"
+  },
+  "badAddressHelpLine1": {
+    "google": "יש להשוות בין השדה \"כתובת\" לשדה \"כתובת כפי שגוגל הבין\".",
+    "valueInCode": "יש להשוות בין השדה \"כתובת\" לשדה \"כתובת כפי שגוגל הבין\"."
+  },
+  "badAddressHelpLine2": {
+    "google": "כתובת לא מדוייקת עלולה להוביל המתנדב למקום לא נכון בוייז.",
+    "valueInCode": "כתובת לא מדוייקת עלולה להוביל המתנדב למקום לא נכון בוייז."
+  },
+  "badAddressHelpStart": {
+    "google": "גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת",
+    "valueInCode": "גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת"
+  },
+  "badAddressTitle": {
+    "google": "שים לב, כתובת לא מדוייקת",
+    "valueInCode": "שים לב, כתובת לא מדוייקת"
+  },
+  "basket": {
+    "google": "סל",
+    "valueInCode": "סל"
+  },
+  "basketNotDelivered": {
+    "google": "הסל לא נמסר",
+    "valueInCode": "הסל לא נמסר"
+  },
+  "basketType": {
+    "google": "סוג סל",
+    "valueInCode": "סוג סל"
+  },
+  "basketTypeName": {
+    "google": "שם",
+    "valueInCode": "שם"
+  },
+  "basketTypes": {
+    "google": "סוגי סלים",
+    "valueInCode": "סוגי סלים"
+  },
+  "before": {
+    "google": "לפני",
+    "valueInCode": "לפני"
+  },
+  "birthDate": {
+    "google": "תאריך לידה",
+    "valueInCode": "תאריך לידה"
+  },
+  "boxes1Name": {
+    "google": "מנות",
+    "valueInCode": "מנות"
+  },
+  "boxes1NameCaption": {
+    "google": "שם כמות 1 בסוגי סלים",
+    "valueInCode": "שם כמות 1 בסוגי סלים"
+  },
+  "boxes2Name": {
+    "google": "משהו אחר",
+    "valueInCode": "משהו אחר"
+  },
+  "boxes2NameCaption": {
+    "google": "שם כמות 2 בסוגי סלים",
+    "valueInCode": "שם כמות 2 בסוגי סלים"
+  },
+  "by": {
+    "google": "על ידי",
+    "valueInCode": "על ידי"
+  },
+  "byBaskets": {
+    "google": "לפי סלים",
+    "valueInCode": "לפי סלים"
+  },
+  "byGroups": {
+    "google": "לפי קבוצות",
+    "valueInCode": "לפי קבוצות"
+  },
+  "callEscort": {
+    "google": "התקשר למלווה",
+    "valueInCode": "התקשר למלווה"
+  },
+  "callPerson": {
+    "google": "התקשר ל",
+    "valueInCode": "התקשר ל"
+  },
+  "cancel": {
+    "google": "בטל",
+    "valueInCode": "בטל"
+  },
+  "cancelAllAssignments": {
+    "google": "בטל שיוך לכל המשלוחים",
+    "valueInCode": "בטל שיוך לכל המשלוחים"
+  },
+  "cancelAsignment": {
+    "google": "בטל שיוך",
+    "valueInCode": "בטל שיוך"
+  },
+  "cancelAssignmentFor": {
+    "google": "האם לבטל שיוך מתנדב ל",
+    "valueInCode": "האם לבטל שיוך מתנדב ל"
+  },
+  "cancelAssignmentForHelperFamilies": {
+    "google": "בטל שיוך כל המשלוחים למתנדב",
+    "valueInCode": "בטל שיוך כל המשלוחים למתנדב"
+  },
+  "cantMergeOneFamily": {
+    "google": "אין מה למזג חייל אחד",
+    "valueInCode": "אין מה למזג משפחה אחת"
+  },
+  "checkAddress": {
+    "google": "בדוק כתובת",
+    "valueInCode": "בדוק כתובת"
+  },
+  "checkDuplicatePhones": {
+    "google": "בדוק טלפונים כפולים",
+    "valueInCode": "בדוק טלפונים כפולים"
+  },
+  "checkIfFamilyExistsInDb": {
+    "google": "בדוק אם חייל כבר קיימת במאגר הנתונים",
+    "valueInCode": "בדוק אם משפחה כבר קיימת במאגר הנתונים"
+  },
+  "checkIfFamilyExistsInFile": {
+    "google": "בדוק אם חייל כבר קיימת בקובץ האקסל",
+    "valueInCode": "בדוק אם משפחה כבר קיימת בקובץ האקסל"
+  },
+  "circularRoute": {
+    "google": "התחל וסיים במרכז החלוקה",
+    "valueInCode": "התחל וסיים במרכז החלוקה"
+  },
+  "city": {
+    "google": "עיר",
+    "valueInCode": "עיר"
+  },
+  "cityAutomaticallyUpdatedByGoogle": {
+    "google": "עיר (מתעדכן אוטומטית)",
+    "valueInCode": "עיר (מתעדכן אוטומטית)"
+  },
+  "clearAllVolunteerComments": {
+    "google": "נקה הערות לכל המתנדבים",
+    "valueInCode": "נקה הערות לכל המתנדבים"
+  },
+  "clearAllVolunteerCommentsAreYouSure": {
+    "google": "האם אתה בטוח שברצונך לנקות את כל ההערות למתנדבים?",
+    "valueInCode": "האם אתה בטוח שברצונך לנקות את כל ההערות למתנדבים?"
+  },
+  "clearEscortInfo": {
+    "google": "נקה נתוני ליווי לכל המתנדבים",
+    "valueInCode": "נקה נתוני ליווי לכל המתנדבים"
+  },
+  "clearEscortInfoAreYouSure": {
+    "google": "האם אתה בטוח שברצונך לנקות את נתוני המלווים לכל המתנדבים?",
+    "valueInCode": "האם אתה בטוח שברצונך לנקות את נתוני המלווים לכל המתנדבים?"
+  },
+  "clearHelperInfo": {
+    "google": "נקה פרטי מתנדב",
+    "valueInCode": "נקה פרטי מתנדב"
+  },
+  "clearVolunteer": {
+    "google": "בטל שיוך למתנדב",
+    "valueInCode": "בטל שיוך למתנדב"
+  },
+  "clickedByMistake": {
+    "google": "נלחץ בטעות - החזר למשלוחים לחלוקה",
+    "valueInCode": "נלחץ בטעות - החזר למשלוחים לחלוקה"
+  },
+  "clickForTutorialVideo": {
+    "google": "לסרטון הדרכה קצר, לחצו כאן",
+    "valueInCode": "לסרטון הדרכה קצר, לחצו כאן"
+  },
+  "close": {
+    "google": "סגור",
+    "valueInCode": "סגור"
+  },
+  "columnSelectionInFile": {
+    "google": "בחירת עמודות בקובץ",
+    "valueInCode": "בחירת עמודות בקובץ"
+  },
+  "commentForAllDeliveries": {
+    "google": "הערה שתופיע לכל המשלוחים",
+    "valueInCode": "הערה שתופיע לכל המשלוחים"
+  },
+  "commentForProblem": {
+    "google": "נשמח אם תכתוב לנו הערה על מה שראית והיה",
+    "valueInCode": "נשמח אם תכתוב לנו הערה על מה שראית והיה"
+  },
+  "commentForSuccessDelivery": {
+    "google": "נשמח אם תכתוב לנו הערה על מה שראית והיה",
+    "valueInCode": "נשמח אם תכתוב לנו הערה על מה שראית והיה"
+  },
+  "commentForSuccessLeft": {
+    "google": "אנא פרט היכן השארת את הסל ועם מי דיברת",
+    "valueInCode": "אנא פרט היכן השארת את הסל ועם מי דיברת"
+  },
+  "commentForVolunteer": {
+    "google": "הערה שתופיע למתנדב",
+    "valueInCode": "הערה שתופיע למתנדב"
+  },
+  "commentsWritteByVolunteer": {
+    "google": "הערות שכתב המתנדב כשמסר",
+    "valueInCode": "הערות שכתב המתנדב כשמסר"
+  },
+  "commentsWrittenByVolunteers": {
+    "google": "הערות שכתבו מתנדבים",
+    "valueInCode": "הערות שכתבו מתנדבים"
+  },
+  "company": {
+    "google": "חברה",
+    "valueInCode": "חברה"
+  },
+  "compareTo": {
+    "google": "מול",
+    "valueInCode": "מול"
+  },
+  "completed": {
+    "google": "הושלמו",
+    "valueInCode": "הושלמו"
+  },
+  "confirm": {
+    "google": "אשר",
+    "valueInCode": "אשר"
+  },
+  "confirmDeleteOf": {
+    "google": "אישור מחיקה עבור ",
+    "valueInCode": "אישור מחיקה עבור "
+  },
+  "confirmPassword": {
+    "google": "אישור סיסמה",
+    "valueInCode": "אישור סיסמה"
+  },
+  "contactPersonName": {
+    "google": "איש קשר",
+    "valueInCode": "איש קשר"
+  },
+  "copyAddress": {
+    "google": "העתק כתובת",
+    "valueInCode": "העתק כתובת"
+  },
+  "copyLink": {
+    "google": "העתק קישור",
+    "valueInCode": "העתק קישור"
+  },
+  "copyMessageWithLink": {
+    "google": "העתק הודעה עם קישור",
+    "valueInCode": "העתק הודעה עם קישור"
+  },
+  "copyright": {
+    "google": " חגי - אפליקציה לחלוקת סלי מזון",
+    "valueInCode": " חגי - אפליקציה לחלוקת סלי מזון"
+  },
+  "courierAsignDate": {
+    "google": "מועד שיוך למתנדב",
+    "valueInCode": "מועד שיוך למתנדב"
+  },
+  "courierAsignUser": {
+    "google": "מי שייכה למתנדב",
+    "valueInCode": "מי שייכה למתנדב"
+  },
+  "createDate": {
+    "google": "מועד הוספה",
+    "valueInCode": "מועד הוספה"
+  },
+  "createUser": {
+    "google": "משתמש מוסיף",
+    "valueInCode": "משתמש מוסיף"
+  },
+  "customSmsMessage": {
+    "google": "הודעת SMS מותאמת",
+    "valueInCode": "הודעת SMS מותאמת"
+  },
+  "dates": {
+    "google": "תאריכים",
+    "valueInCode": "תאריכים"
+  },
+  "days": {
+    "google": "ימים",
+    "valueInCode": "ימים"
+  },
+  "defaultBasketType": {
+    "google": "סוג סל ברירת מחדל",
+    "valueInCode": "סוג סל ברירת מחדל"
+  },
+  "defaultDistributionListName": {
+    "google": "חלוקת מזון",
+    "valueInCode": "חלוקת מזון"
+  },
+  "defaultHelpPhone": {
+    "google": "הטלפון ממנו יצא הSMS",
+    "valueInCode": "הטלפון ממנו יצא הSMS"
+  },
+  "defaultOrgName": {
+    "google": "שם הארגון שלי",
+    "valueInCode": "שם הארגון שלי"
+  },
+  "defaultPhonePrefixForExcelImport": {
+    "google": "קידומת טלפון ברירת מחדל בקליטה מאקסל",
+    "valueInCode": "קידומת טלפון ברירת מחדל בקליטה מאקסל"
+  },
+  "defaultQuantity": {
+    "google": "מספר סלים ברירת מחדל",
+    "valueInCode": "מספר סלים ברירת מחדל"
+  },
+  "defaultSelfPickup": {
+    "google": "באים לקחת ברירת מחדל",
+    "valueInCode": "באים לקחת ברירת מחדל"
+  },
+  "defaultSmsText": {
+    "google": "שלום !מתנדב!\\nלחלוקת חבילות !ארגון! לחץ על: !אתר! \\nתודה !שולח!",
+    "valueInCode": "שלום !מתנדב!\nלחלוקת חבילות !ארגון! לחץ על: !אתר! \nתודה !שולח!"
+  },
+  "defaultStatusType": {
+    "google": "סטטוס משלוח ברירת מחדל לחיילים חדשות",
+    "valueInCode": "סטטוס משלוח ברירת מחדל למשפחות חדשות"
+  },
+  "defaultVolunteer": {
+    "google": "מתנדב ברירת מחדל",
+    "valueInCode": "מתנדב ברירת מחדל"
+  },
+  "defaulyHelpPhoneExplanation": {
+    "google": "כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את החיילים ולחץ על הכפתור שלח SMS. ניתן להגדיר כאן שם חלופי וטלפון חלופי",
+    "valueInCode": "כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את המשפחות ולחץ על הכפתור שלח SMS. ניתן להגדיר כאן שם חלופי וטלפון חלופי"
+  },
+  "defineDeliveriesForFamiliesInExcel": {
+    "google": "הגדר משלוחים לכל החיילים מהאקסל",
+    "valueInCode": "הגדר משלוחים לכל המשפחות מהאקסל"
+  },
+  "delayed": {
+    "google": "מתעכבים",
+    "valueInCode": "מתעכבים"
+  },
+  "deleteDeliveries": {
+    "google": "מחק משלוחים",
+    "valueInCode": "מחק משלוחים"
+  },
+  "deleteDeliveriesHelp": {
+    "google": "שים לב - מחיקת המשלוח לא תוציא את החייל מהרשימות - כדי להוציא את החייל מהרשימות יש לבצע עדכון לסטטוס החייל. המחיקה תתבצע רק עבור משלוחים שטרם נמסרו",
+    "valueInCode": "שים לב - מחיקת המשלוח לא תוציא את המשפחה מהרשימות - כדי להוציא את המשפחה מהרשימות יש לבצע עדכון לסטטוס המשפחה. המחיקה תתבצע רק עבור משלוחים שטרם נמסרו"
+  },
+  "deleteDelivery": {
+    "google": "מחק משלוח",
+    "valueInCode": "מחק משלוח"
+  },
+  "deleteExcelSettings": {
+    "google": "מחק הגדרות",
+    "valueInCode": "מחק הגדרות"
+  },
+  "deleteExistingComment": {
+    "google": "מחק הערה קודמת",
+    "valueInCode": "מחק הערה קודמת"
+  },
+  "deleteFamilies": {
+    "google": "מחיקת נתונים",
+    "valueInCode": "מחיקת נתונים"
+  },
+  "deleteFamiliesButton": {
+    "google": "מחק את כל החיילים בסטטוס \"למחיקה\"",
+    "valueInCode": "מחק את כל המשפחות בסטטוס \"למחיקה\""
+  },
+  "deleteFamiliesHelp": {
+    "google": "לחיצה על הכפתור תמחוק את כל החיילים בסטטוס \"למחיקה\" מהמערכת. היסטורית המשלוחים שלהן תישמרנה.",
+    "valueInCode": "לחיצה על הכפתור תמחוק את כל המשפחות בסטטוס \"למחיקה\" מהמערכת. היסטורית המשלוחים שלהן תישמרנה."
+  },
+  "deletePendingDeliveries": {
+    "google": "מחק משלוחים שטרם נמסרו לחיילים אלו",
+    "valueInCode": "מחק משלוחים שטרם נמסרו למשפחות אלו"
+  },
+  "delivered": {
+    "google": "נמסר",
+    "valueInCode": "נמסר"
+  },
+  "deliveredButtonText": {
+    "google": "מסרתי את החבילה בהצלחה",
+    "valueInCode": "מסרתי את החבילה בהצלחה"
+  },
+  "deliveredByBaskets": {
+    "google": "נמסרו לפי סלים",
+    "valueInCode": "נמסרו לפי סלים"
+  },
+  "deliveredSuccessfully": {
+    "google": "נמסר בהצלחה",
+    "valueInCode": "נמסר בהצלחה"
+  },
+  "deliveries": {
+    "google": "משלוחים",
+    "valueInCode": "משלוחים"
+  },
+  "deliveriesAssignAllOfThem": {
+    "google": " משלוחים - לשייך את כולם?",
+    "valueInCode": " משלוחים - לשייך את כולם?"
+  },
+  "deliveriesAssigned": {
+    "google": "משלוחים שוייכו ",
+    "valueInCode": "משלוחים שוייכו "
+  },
+  "deliveriesAtSameAddress": {
+    "google": "משלוחים באותה הכתובת, האם לשייך גם אותם?",
+    "valueInCode": "משלוחים באותה הכתובת, האם לשייך גם אותם?"
+  },
+  "deliveriesDoneInTheLastTwoDays": {
+    "google": "משלוחים שחולקו ביומיים האחרונים",
+    "valueInCode": "משלוחים שחולקו ביומיים האחרונים"
+  },
+  "deliveriesFor": {
+    "google": "משלוחים עבור",
+    "valueInCode": "משלוחים עבור"
+  },
+  "deliveriesFrom": {
+    "google": "משלוחים מ",
+    "valueInCode": "משלוחים מ"
+  },
+  "deliveriesToDistribute": {
+    "google": "משלוחים לחלוקה",
+    "valueInCode": "משלוחים לחלוקה"
+  },
+  "deliveriesUpdated": {
+    "google": "משלוחים עודכנו",
+    "valueInCode": "משלוחים עודכנו"
+  },
+  "deliveryCenterAddress": {
+    "google": "כתובת מרכז השילוח",
+    "valueInCode": "כתובת מרכז השילוח"
+  },
+  "deliveryCreateDate": {
+    "google": "מועד הקצאה",
+    "valueInCode": "מועד הקצאה"
+  },
+  "deliveryCreatedSuccesfully": {
+    "google": "משלוח נוצר בהצלחה",
+    "valueInCode": "משלוח נוצר בהצלחה"
+  },
+  "deliveryCreateUser": {
+    "google": "משתמש מקצה",
+    "valueInCode": "משתמש מקצה"
+  },
+  "deliveryDefaults": {
+    "google": "ברירות מחדל למשלוח",
+    "valueInCode": "ברירות מחדל למשלוח"
+  },
+  "deliveryDetails": {
+    "google": "כרטיס משלוח",
+    "valueInCode": "כרטיס משלוח"
+  },
+  "deliveryDetailsAsDisplayedToVolunteer": {
+    "google": "פרטי החייל כפי שיופיעו למתנדב",
+    "valueInCode": "פרטי המשפחה כפי שיופיעו למתנדב"
+  },
+  "deliveryDetailsFor": {
+    "google": "פרטי משלוח עבור",
+    "valueInCode": "פרטי משלוח עבור"
+  },
+  "DeliveryFollowUpComponent": {
+    "google": "מעקב מתנדבים",
+    "valueInCode": "מעקב מתנדבים"
+  },
+  "DeliveryHistoryComponent": {
+    "google": "היסטורית משלוחים",
+    "valueInCode": "היסטורית משלוחים"
+  },
+  "deliveryInfo": {
+    "google": "פרטי משלוח",
+    "valueInCode": "פרטי משלוח"
+  },
+  "deliveryStatus": {
+    "google": "סטטוס משלוח",
+    "valueInCode": "סטטוס משלוח"
+  },
+  "deliveryStatusDate": {
+    "google": "מתי",
+    "valueInCode": "מתי"
+  },
+  "deliverySummary": {
+    "google": "סיכום משלוח",
+    "valueInCode": "סיכום משלוח"
+  },
+  "delveriesInProgress": {
+    "google": "חיילים מחכות",
+    "valueInCode": "משפחות מחכות"
+  },
+  "delveriesSuccesfull": {
+    "google": "נמסרו",
+    "valueInCode": "נמסרו"
+  },
+  "dialForHelp": {
+    "google": "חייג לקבלת עזרה",
+    "valueInCode": "חייג לקבלת עזרה"
+  },
+  "dialTo": {
+    "google": "חייג ל",
+    "valueInCode": "חייג ל"
+  },
+  "displayFamiliesOf": {
+    "google": "האם להציג את החיילים של",
+    "valueInCode": "האם להציג את המשפחות של"
+  },
+  "displayFamilyAsVolunteerWillSeeIt": {
+    "google": "הצג חייל כפי שתנדב יראה אותה",
+    "valueInCode": "הצג משפחה כפי שתנדב יראה אותה"
+  },
+  "distributionCity": {
+    "google": "עיר לחלוקה",
+    "valueInCode": "עיר לחלוקה"
+  },
+  "distributionList": {
+    "google": "רשימת חלוקה",
+    "valueInCode": "רשימת חלוקה"
+  },
+  "distributionListAsCurrentDelivery": {
+    "google": "רשימת חלוקה כמו במשלוח הנוכחי",
+    "valueInCode": "רשימת חלוקה כמו במשלוח הנוכחי"
+  },
+  "distributionLists": {
+    "google": "רשימות חלוקה",
+    "valueInCode": "רשימות חלוקה"
+  },
+  "distributionListsHelp": {
+    "google": "קבוצות אלו יוצגו בשיוך חיילים ויאפשרו סינון מהיר",
+    "valueInCode": "קבוצות אלו יוצגו בשיוך משפחות ויאפשרו סינון מהיר"
+  },
+  "DistributionMapComponent": {
+    "google": "מפת הפצה",
+    "valueInCode": "מפת הפצה"
+  },
+  "doesNotExist": {
+    "google": "לא קיים",
+    "valueInCode": "לא קיים"
+  },
+  "doneVolunteers": {
+    "google": "סיימו",
+    "valueInCode": "סיימו"
+  },
+  "drawingHelpText": {
+    "google": "אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום",
+    "valueInCode": "אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום"
+  },
+  "DuplicateFamiliesComponent": {
+    "google": "חיפוש חיילים כפולים",
+    "valueInCode": "חיפוש משפחות כפולות"
+  },
+  "email": {
+    "google": "eMail",
+    "valueInCode": "eMail"
+  },
+  "empty": {
+    "google": "ריק",
+    "valueInCode": "ריק"
+  },
+  "enableSelfPickupModule": {
+    "google": "ישנן חיילים שבאות לקחת ממרכז החלוקה",
+    "valueInCode": "ישנן משפחות שבאות לקחת ממרכז החלוקה"
+  },
+  "endOnFar": {
+    "google": "סיים בכתובת הרחוקה ביותר",
+    "valueInCode": "סיים בכתובת הרחוקה ביותר"
+  },
+  "endsOnDistributionCenter": {
+    "google": "סיים במרכז החלוקה",
+    "valueInCode": "סיים במרכז החלוקה"
+  },
+  "enterFirstTime": {
+    "google": "מכיוון שלא מוגדרת לך סיסמה עדיין - אנא הכנס בפעם הראשונה, על ידי הקלדת מספר הטלפון שלך ללא סיסמה ולחיצה על הכפתור \"כניסה\". המערכת תבקש שתגדיר סיסמה וזו תהיה סיסמתך.\\n  בהצלחה",
+    "valueInCode": "מכיוון שלא מוגדרת לך סיסמה עדיין - אנא הכנס בפעם הראשונה, על ידי הקלדת מספר הטלפון שלך ללא סיסמה ולחיצה על הכפתור \"כניסה\". המערכת תבקש שתגדיר סיסמה וזו תהיה סיסמתך.\n  בהצלחה"
+  },
+  "entrance": {
+    "google": "כניסה",
+    "valueInCode": "כניסה"
+  },
+  "error": {
+    "google": "שגיאה",
+    "valueInCode": "שגיאה"
+  },
+  "errors": {
+    "google": "שגיאות",
+    "valueInCode": "שגיאות"
+  },
+  "escoring": {
+    "google": "מלווה את",
+    "valueInCode": "מלווה את"
+  },
+  "escort": {
+    "google": "מלווה",
+    "valueInCode": "מלווה"
+  },
+  "estimatedTravelTime": {
+    "google": "סה\"כ זמן נסיעה מוערך",
+    "valueInCode": "סה\"כ זמן נסיעה מוערך"
+  },
+  "eventDate": {
+    "google": "תאריך",
+    "valueInCode": "תאריך"
+  },
+  "eventDescription": {
+    "google": "תאור",
+    "valueInCode": "תאור"
+  },
+  "eventEndTime": {
+    "google": "עד שעה",
+    "valueInCode": "עד שעה"
+  },
+  "eventName": {
+    "google": "שם ארוע",
+    "valueInCode": "שם ארוע"
+  },
+  "eventPreparation": {
+    "google": "טיוטא",
+    "valueInCode": "טיוטא"
+  },
+  "eventsComponent": {
+    "google": "ארועים",
+    "valueInCode": "ארועים"
+  },
+  "eventStatus": {
+    "google": "סטטוס",
+    "valueInCode": "סטטוס"
+  },
+  "eventTime": {
+    "google": "שעה",
+    "valueInCode": "שעה"
+  },
+  "excelColumnIgnore": {
+    "google": "לא לקלוט",
+    "valueInCode": "לא לקלוט"
+  },
+  "excelCompareToThisFamilyAnd": {
+    "google": "השווה מול חייל זו ו",
+    "valueInCode": "השווה מול משפחה זו ו"
+  },
+  "excelImportAutoAddValues": {
+    "google": "הוסף בלי לשאול ערכים לטבלאות התשתית",
+    "valueInCode": "הוסף בלי לשאול ערכים לטבלאות התשתית"
+  },
+  "excelImportFinalSettings": {
+    "google": "הגדרות אחרונות",
+    "valueInCode": "הגדרות אחרונות"
+  },
+  "excelImportResults": {
+    "google": "תוצאות",
+    "valueInCode": "תוצאות"
+  },
+  "excelImportVideo": {
+    "google": "לסרטון הדרכה על קליטה מאקסל לחץ כאן",
+    "valueInCode": "לסרטון הדרכה על קליטה מאקסל לחץ כאן"
+  },
+  "excelNoneOfTheseFamiliesMatch": {
+    "google": " אף אחת מהחיילים הללו אינה מתאימה לשורה באקסל, ",
+    "valueInCode": " אף אחת מהמשפחות הללו אינה מתאימה לשורה באקסל, "
+  },
+  "excelReadLineAnyhow": {
+    "google": "בכל זאת",
+    "valueInCode": "בכל זאת"
+  },
+  "excelSheel": {
+    "google": "גליון",
+    "valueInCode": "גליון"
+  },
+  "excelSheet": {
+    "google": "גליון",
+    "valueInCode": "גליון"
+  },
+  "excelSheetIsEmpty": {
+    "google": "ריק",
+    "valueInCode": "ריק"
+  },
+  "executeExcelImport": {
+    "google": "ביצוע הקליטה",
+    "valueInCode": "ביצוע הקליטה"
+  },
+  "existingFamilies": {
+    "google": "חיילים קיימות",
+    "valueInCode": "משפחות קיימות"
+  },
+  "existingVolunteers": {
+    "google": "מתנדבים קיימים",
+    "valueInCode": "מתנדבים קיימים"
+  },
+  "existsIdenticat": {
+    "google": "קיימת זהה",
+    "valueInCode": "קיימת זהה"
+  },
+  "existsInRemovedFromListStrategy": {
+    "google": "מה לעשות אם נמצאה חייל תואמת המסומנת כהוצא מהרשימות",
+    "valueInCode": "מה לעשות אם נמצאה משפחה תואמת המסומנת כהוצא מהרשימות"
+  },
+  "existsWithAnUpdate": {
+    "google": "קיימת עם עדכון",
+    "valueInCode": "קיימת עם עדכון"
+  },
+  "exit": {
+    "google": "יציאה",
+    "valueInCode": "יציאה"
+  },
+  "exportToExcel": {
+    "google": "יצוא לאקסל",
+    "valueInCode": "יצוא לאקסל"
+  },
+  "failedDeliveries": {
+    "google": "משלוחים שנתקלתי בבעיה",
+    "valueInCode": "משלוחים שנתקלתי בבעיה"
+  },
+  "familesOnStreet": {
+    "google": "חיילים ברחוב",
+    "valueInCode": "משפחות ברחוב"
+  },
+  "families": {
+    "google": "חיילים",
+    "valueInCode": "משפחות"
+  },
+  "familiesAddedSuccesfull": {
+    "google": "הוספת השורות הסתיימה בהצלחה",
+    "valueInCode": "הוספת השורות הסתיימה בהצלחה"
+  },
+  "familiesAt": {
+    "google": "חיילים ב",
+    "valueInCode": "משפחות ב"
+  },
+  "FamiliesComponent": {
+    "google": "חיילים",
+    "valueInCode": "משפחות"
+  },
+  "familiesForUpdate": {
+    "google": "חיילים לעדכון",
+    "valueInCode": "משפחות לעדכון"
+  },
+  "familiesUpdated": {
+    "google": "חיילים עודכנו",
+    "valueInCode": "משפחות עודכנו"
+  },
+  "familiesWithSimilarInfo": {
+    "google": "חיילים עם פרטים דומים",
+    "valueInCode": "משפחות עם פרטים דומים"
+  },
+  "family": {
+    "google": "חייל",
+    "valueInCode": "משפחה"
+  },
+  "familyAdditionalInfo": {
+    "google": "פרטים נוספים",
+    "valueInCode": "פרטים נוספים"
+  },
+  "familyAlreadyHasAnActiveDelivery": {
+    "google": "לחייל זו כבר קיים משלוח מאותו סוג האם להוסיף עוד אחד?",
+    "valueInCode": "למשפחה זו כבר קיים משלוח מאותו סוג האם להוסיף עוד אחד?"
+  },
+  "familyAlreadyRemovedFromList": {
+    "google": "חייל מעודכנת בבסיס הנתונים כהוצא מהרשימות",
+    "valueInCode": "משפחה מעודכנת בבסיס הנתונים כהוצא מהרשימות"
+  },
+  "familyComponentVideos": {
+    "google": "לסרטוני הדרכה על מסך חיילים, לחצו כאן",
+    "valueInCode": "לסרטוני הדרכה על מסך משפחות, לחצו כאן"
+  },
+  "familyDeliveries": {
+    "google": "משלוחים לחייל",
+    "valueInCode": "משלוחים למשפחה"
+  },
+  "FamilyDeliveriesComponent": {
+    "google": "משלוחים",
+    "valueInCode": "משלוחים"
+  },
+  "familyDetails": {
+    "google": "פרטי חייל",
+    "valueInCode": "פרטי משפחה"
+  },
+  "familyGroup": {
+    "google": "קבוצות שיוך חייל",
+    "valueInCode": "קבוצות שיוך משפחה"
+  },
+  "familyGroups": {
+    "google": "קבוצות שיוך חייל",
+    "valueInCode": "קבוצות שיוך משפחה"
+  },
+  "familyHelpContact": {
+    "google": "איש קשר לבירור פרטים (עו\"ס)",
+    "valueInCode": "איש קשר לבירור פרטים (עו\"ס)"
+  },
+  "familyHelpPhone": {
+    "google": "איש קשר לבירור כפי שמוגדר לחייל",
+    "valueInCode": "איש קשר לבירור כפי שמוגדר למשפחה"
+  },
+  "familyHelpPhone1": {
+    "google": "עו\"ס טלפון 1",
+    "valueInCode": "עו\"ס טלפון 1"
+  },
+  "familyHelpPhone2": {
+    "google": "עו\"ס טלפון 2",
+    "valueInCode": "עו\"ס טלפון 2"
+  },
+  "familyIdInHagaiApp": {
+    "google": "id של החייל באפליקצית חגי",
+    "valueInCode": "id של המשפחה באפליקצית חגי"
+  },
+  "familyMembers": {
+    "google": "מספר נפשות",
+    "valueInCode": "מספר נפשות"
+  },
+  "familyName": {
+    "google": "שם",
+    "valueInCode": "שם"
+  },
+  "familySelfPickup": {
+    "google": "יבואו לקחת את המשלוח ואינם צריכים משלוח?",
+    "valueInCode": "יבואו לקחת את המשלוח ואינם צריכים משלוח?"
+  },
+  "familySource": {
+    "google": "גורם מפנה",
+    "valueInCode": "גורם מפנה"
+  },
+  "familySourceName": {
+    "google": "שם",
+    "valueInCode": "שם"
+  },
+  "familySourcePhone": {
+    "google": "טלפון גורם מפנה",
+    "valueInCode": "טלפון גורם מפנה"
+  },
+  "familySources": {
+    "google": "גורמים מפנים",
+    "valueInCode": "גורמים מפנים"
+  },
+  "familyStatus": {
+    "google": "סטטוס",
+    "valueInCode": "סטטוס"
+  },
+  "familyUniqueId": {
+    "google": "מזהה חד ערכי לחייל",
+    "valueInCode": "מזהה חד ערכי למשפחה"
+  },
+  "familyWasNotFound": {
+    "google": "חייל לא נמצאה",
+    "valueInCode": "משפחה לא נמצאה"
+  },
+  "filter": {
+    "google": "סינון",
+    "valueInCode": "סינון"
+  },
+  "filterBasketType": {
+    "google": "סינון סוג סל",
+    "valueInCode": "סינון סוג סל"
+  },
+  "filterCity": {
+    "google": "סינון עיר",
+    "valueInCode": "סינון עיר"
+  },
+  "filterFamilyGroups": {
+    "google": "סינון קבוצת חייל",
+    "valueInCode": "סינון קבוצת משפחה"
+  },
+  "filterRegion": {
+    "google": "סינון אזור",
+    "valueInCode": "סינון אזור"
+  },
+  "findHelperByName": {
+    "google": "חפש מתנדב לפי שם",
+    "valueInCode": "חפש מתנדב לפי שם"
+  },
+  "firstName": {
+    "google": "שם פרטי",
+    "valueInCode": "שם פרטי"
+  },
+  "firstNameShort": {
+    "google": "פרטי",
+    "valueInCode": "פרטי"
+  },
+  "floor": {
+    "google": "קומה",
+    "valueInCode": "קומה"
+  },
+  "for": {
+    "google": "ל",
+    "valueInCode": "ל"
+  },
+  "forFamilies": {
+    "google": "לחיילים",
+    "valueInCode": "למשפחות"
+  },
+  "forFamily": {
+    "google": "למשפחת",
+    "valueInCode": "למשפחת"
+  },
+  "forHelp": {
+    "google": "לקבלת עזרה",
+    "valueInCode": "לקבלת עזרה"
+  },
+  "freeText1ForVolunteer": {
+    "google": "מלל חופשי 1 למתנדב",
+    "valueInCode": "מלל חופשי 1 למתנדב"
+  },
+  "freeText2ForVolunteer": {
+    "google": "מלל חופשי 2 למתנדב",
+    "valueInCode": "מלל חופשי 2 למתנדב"
+  },
+  "freezeDeliveries": {
+    "google": "הקפא משלוחים",
+    "valueInCode": "הקפא משלוחים"
+  },
+  "freezeDeliveriesHelp": {
+    "google": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח. ",
+    "valueInCode": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח. "
+  },
+  "freezeDelivery": {
+    "google": "הקפא משלוח",
+    "valueInCode": "הקפא משלוח"
+  },
+  "freezeDeliveryHelp": {
+    "google": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל",
+    "valueInCode": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל"
+  },
+  "fromDate": {
+    "google": "מתאריך",
+    "valueInCode": "מתאריך"
+  },
+  "frozen": {
+    "google": "מוקפא",
+    "valueInCode": "מוקפא"
+  },
+  "frozens": {
+    "google": "קפואים",
+    "valueInCode": "קפואים"
+  },
+  "GeocodeComponent": {
+    "google": "GEOCODE",
+    "valueInCode": "GEOCODE"
+  },
+  "googleApiProblem": {
+    "google": "מה הבעיה של גוגל",
+    "valueInCode": "מה הבעיה של גוגל"
+  },
+  "googleSearchAddress": {
+    "google": "חפש כתובת בגוגל",
+    "valueInCode": "חפש כתובת בגוגל"
+  },
+  "gotoDeliveriesScreen": {
+    "google": "האם לעבור למסך משלוחים או להשאר במסך זה?",
+    "valueInCode": "האם לעבור למסך משלוחים או להשאר במסך זה?"
+  },
+  "gpsLocationNear": {
+    "google": "נקודת GPS ליד",
+    "valueInCode": "נקודת GPS ליד"
+  },
+  "hello": {
+    "google": "שלום",
+    "valueInCode": "שלום"
+  },
+  "helperComment": {
+    "google": "הערה",
+    "valueInCode": "הערה"
+  },
+  "HelpersComponent": {
+    "google": "מתנדבים",
+    "valueInCode": "מתנדבים"
+  },
+  "helpName": {
+    "google": "שם חלופי",
+    "valueInCode": "שם חלופי"
+  },
+  "helpPhone": {
+    "google": "טלפון חלופי",
+    "valueInCode": "טלפון חלופי"
+  },
+  "hideHelperCompany": {
+    "google": "הסתר חברה למתנדב",
+    "valueInCode": "הסתר חברה למתנדב"
+  },
+  "hours": {
+    "google": "שעות",
+    "valueInCode": "שעות"
+  },
+  "houseNumber": {
+    "google": "מספר בית",
+    "valueInCode": "מספר בית"
+  },
+  "iCantMakeIt": {
+    "google": "לא אוכל להגיע לארוע",
+    "valueInCode": "לא אוכל להגיע לארוע"
+  },
+  "iconForWebSite": {
+    "google": "אייקון לאתר",
+    "valueInCode": "אייקון לאתר"
+  },
+  "identicalPhone": {
+    "google": " מספר טלפון זהה",
+    "valueInCode": " מספר טלפון זהה"
+  },
+  "identicalSocialSecurityNumber": {
+    "google": "מספר זהות זהה",
+    "valueInCode": "מספר זהות זהה"
+  },
+  "ifBasketTypeInExcelIsDifferentFromExistingOneCreateNewDelivery": {
+    "google": "אם קיים משלוח לחייל עם סוג סל שונה, הוסף משלוח חדש",
+    "valueInCode": "אם קיים משלוח למשפחה עם סוג סל שונה, הוסף משלוח חדש"
+  },
+  "illBeThere": {
+    "google": "רשום אותי לארוע זה",
+    "valueInCode": "רשום אותי לארוע זה"
+  },
+  "importFamily": {
+    "google": "לקלוט את משפחת",
+    "valueInCode": "לקלוט את משפחת"
+  },
+  "ImportFromExcelComponent": {
+    "google": "קליטת חיילים מאקסל",
+    "valueInCode": "קליטת משפחות מאקסל"
+  },
+  "ImportHelpersFromExcelComponent": {
+    "google": "קליטת מתנדבים מאקסל",
+    "valueInCode": "קליטת מתנדבים מאקסל"
+  },
+  "inacurateAddress": {
+    "google": "שימו לב, כתובת לא מדוייקת!",
+    "valueInCode": "שימו לב, כתובת לא מדוייקת!"
+  },
+  "infoAboutUpdates": {
+    "google": "פרטי עדכונים",
+    "valueInCode": "פרטי עדכונים"
+  },
+  "inProgress": {
+    "google": "עובד על זה...",
+    "valueInCode": "עובד על זה..."
+  },
+  "internalComment": {
+    "google": "הערה פנימית - לא תופיע למתנדב",
+    "valueInCode": "הערה פנימית - לא תופיע למתנדב"
+  },
+  "invalidPhoneNumber": {
+    "google": "מספר טלפון אינו תקין",
+    "valueInCode": "מספר טלפון אינו תקין"
+  },
+  "inviteSentSuccesfully": {
+    "google": "הזמנה נשלחה בהצלחה",
+    "valueInCode": "הזמנה נשלחה בהצלחה"
+  },
+  "isAlreadyAsignedTo": {
+    "google": " כבר משוייכת ל",
+    "valueInCode": " כבר משוייכת ל"
+  },
+  "isDefinedAsEscortOf": {
+    "google": "מוגדר כמלווה של",
+    "valueInCode": "מוגדר כמלווה של"
+  },
+  "km": {
+    "google": "ק\"מ",
+    "valueInCode": "ק\"מ"
+  },
+  "languageCode": {
+    "google": "iw",
+    "valueInCode": "iw"
+  },
+  "languageCodeHe": {
+    "google": "he",
+    "valueInCode": "he"
+  },
+  "lastName": {
+    "google": "שם חייל",
+    "valueInCode": "שם משפחה"
+  },
+  "lastUpdateDate": {
+    "google": "מועד עדכון אחרון",
+    "valueInCode": "מועד עדכון אחרון"
+  },
+  "lastUpdateUser": {
+    "google": "משתמש מעדכן",
+    "valueInCode": "משתמש מעדכן"
+  },
+  "left": {
+    "google": "יצא",
+    "valueInCode": "יצא"
+  },
+  "leftByDoorMessageColumnName": {
+    "google": "הודעה למתנדב כאשר הושאר ליד הבית",
+    "valueInCode": "הודעה למתנדב כאשר הושאר ליד הבית"
+  },
+  "leftByHouse": {
+    "google": "הושאר ליד הבית",
+    "valueInCode": "הושאר ליד הבית"
+  },
+  "leftDeliveryNextToHouse": {
+    "google": "השארתי ליד הבית",
+    "valueInCode": "השארתי ליד הבית"
+  },
+  "linesInExcel": {
+    "google": "שורות באקסל",
+    "valueInCode": "שורות באקסל"
+  },
+  "linesProcessed": {
+    "google": "שורות עובדו",
+    "valueInCode": "שורות עובדו"
+  },
+  "lineWithNoName": {
+    "google": "שורה ללא שם",
+    "valueInCode": "שורה ללא שם"
+  },
+  "linkCopied": {
+    "google": "קישור הועתק",
+    "valueInCode": "קישור הועתק"
+  },
+  "list": {
+    "google": "רשימה",
+    "valueInCode": "רשימה"
+  },
+  "loadExcelSettings": {
+    "google": "טען הגדרות",
+    "valueInCode": "טען הגדרות"
+  },
+  "LoginComponent": {
+    "google": "כניסה",
+    "valueInCode": "כניסה"
+  },
+  "logoAndIcons": {
+    "google": "לוגו וצלמיות",
+    "valueInCode": "לוגו וצלמיות"
+  },
+  "logoForWebsiteAndPhone": {
+    "google": "לוגו לאתר ולטלפון",
+    "valueInCode": "לוגו לאתר ולטלפון"
+  },
+  "logoRecommendAfter": {
+    "google": "ומהתוצאה שהוא יוצר להשתמש favicon.ico עבור האייקון - וב apple-icon-120x120.png עבור הלוגו",
+    "valueInCode": "ומהתוצאה שהוא יוצר להשתמש favicon.ico עבור האייקון - וב apple-icon-120x120.png עבור הלוגו"
+  },
+  "logoRecommendTool": {
+    "google": "אנו ממליצים ליצור את האייקונים בעזרת",
+    "valueInCode": "אנו ממליצים ליצור את האייקונים בעזרת"
+  },
+  "logoUrl": {
+    "google": "לוגו URL",
+    "valueInCode": "לוגו URL"
+  },
+  "ManageComponent": {
+    "google": "הגדרות מערכת",
+    "valueInCode": "הגדרות מערכת"
+  },
+  "manyAddressesEndWithNumber": {
+    "google": "מהכתובות ריקות או מסתיימות בספרה - יתכן שלא קלטתם את הישוב של הכתובת. לחזור להגדרת עמודות?",
+    "valueInCode": "מהכתובות ריקות או מסתיימות בספרה - יתכן שלא קלטתם את הישוב של הכתובת. לחזור להגדרת עמודות?"
+  },
+  "map": {
+    "google": "מפה",
+    "valueInCode": "מפה"
+  },
+  "mapExcelColumns": {
+    "google": "הגדרת העמודות",
+    "valueInCode": "הגדרת העמודות"
+  },
+  "markAllDeliveriesAsSuccesfull": {
+    "google": "סמן נמסר בהצלחה לכל המשלוחים",
+    "valueInCode": "סמן נמסר בהצלחה לכל המשלוחים"
+  },
+  "markDeliveredToAllHelprFamilies": {
+    "google": "בטל שיוך כל המשלוחים למתנדב",
+    "valueInCode": "בטל שיוך כל המשלוחים למתנדב"
+  },
+  "merge": {
+    "google": "שמור מיזוג",
+    "valueInCode": "שמור מיזוג"
+  },
+  "mergeFamilies": {
+    "google": "מיזוג חיילים",
+    "valueInCode": "מיזוג משפחות"
+  },
+  "mergeForFamily": {
+    "google": "מיזוג למשפחת",
+    "valueInCode": "מיזוג למשפחת"
+  },
+  "messageCopied": {
+    "google": "הודעה הועתקה",
+    "valueInCode": "הודעה הועתקה"
+  },
+  "messageForDoneDelivery": {
+    "google": "תודה על כל העזרה, נשמח אם תתנדבו שוב",
+    "valueInCode": "תודה על כל העזרה, נשמח אם תתנדבו שוב"
+  },
+  "messageForVolunteerWhenDoneCaption": {
+    "google": "הודעה למתנדב כאשר סיים את כל החיילים",
+    "valueInCode": "הודעה למתנדב כאשר סיים את כל המשפחות"
+  },
+  "minutes": {
+    "google": "דקות",
+    "valueInCode": "דקות"
+  },
+  "minutesRemaining": {
+    "google": "דקות נשארו",
+    "valueInCode": "דקות נשארו"
+  },
+  "moreFamilies": {
+    "google": "עוד חיילים",
+    "valueInCode": "עוד משפחות"
+  },
+  "moreNews": {
+    "google": "עוד חדשות",
+    "valueInCode": "עוד חדשות"
+  },
+  "moreThanOneRowInDbMatchesExcel": {
+    "google": "נמצאה יותר מחייל אחד באתר המתאימה לשורה הזו מהאקסל. אנא בחר איזו מהחיילים הבאות מתאימה לשורה מהאקסל והעבר אותה לחיילים לעדכון",
+    "valueInCode": "נמצאה יותר ממשפחה אחת באתר המתאימה לשורה הזו מהאקסל. אנא בחר איזו מהמשפחות הבאות מתאימה לשורה מהאקסל והעבר אותה למשפחות לעדכון"
+  },
+  "moreVolunteers": {
+    "google": "עוד מתנדבים",
+    "valueInCode": "עוד מתנדבים"
+  },
+  "moveTheFamily": {
+    "google": "להעביר את משפחת",
+    "valueInCode": "להעביר את משפחת"
+  },
+  "moveToNewFamilies": {
+    "google": "העבר לחיילים חדשות",
+    "valueInCode": "העבר למשפחות חדשות"
+  },
+  "moveToNewVolunteers": {
+    "google": "העבר למתנדבים להוספה",
+    "valueInCode": "העבר למתנדבים להוספה"
+  },
+  "moveToUpdateFamilies": {
+    "google": "העבר לחיילים עדכון",
+    "valueInCode": "העבר למשפחות עדכון"
+  },
+  "mustIncludeUrlKeyError": {
+    "google": " חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור",
+    "valueInCode": " חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור"
+  },
+  "mustSelectDistributionList": {
+    "google": "חובה לבחור רשימת חלוקה",
+    "valueInCode": "חובה לבחור רשימת חלוקה"
+  },
+  "MyFamiliesComponent": {
+    "google": "משלוחים שלי",
+    "valueInCode": "משלוחים שלי"
+  },
+  "nameIsTooShort": {
+    "google": "השם קצר מידי",
+    "valueInCode": "השם קצר מידי"
+  },
+  "needEscort": {
+    "google": "צריך מלווה",
+    "valueInCode": "צריך מלווה"
+  },
+  "newDelivery": {
+    "google": "משלוח חדש",
+    "valueInCode": "משלוח חדש"
+  },
+  "newDeliveryFor": {
+    "google": "משלוח חדש ל",
+    "valueInCode": "משלוח חדש ל"
+  },
+  "newDeliveryForAll": {
+    "google": "משלוח חדש לכל המשלוחים ולא רק לאלו שהסתיימו בהצלחה",
+    "valueInCode": "משלוח חדש לכל המשלוחים ולא רק לאלו שהסתיימו בהצלחה"
+  },
+  "newDeliveryForDeliveriesHelp": {
+    "google": "משלוח חדש יוגדר עבור כל המשלוחים המסומנים שהם בסטטוס נמסר בהצלחה, או בעיה כלשהי, אלא אם תבחרו לסמן את השדה ",
+    "valueInCode": "משלוח חדש יוגדר עבור כל המשלוחים המסומנים שהם בסטטוס נמסר בהצלחה, או בעיה כלשהי, אלא אם תבחרו לסמן את השדה "
+  },
+  "newFamilies": {
+    "google": "חיילים חדשות",
+    "valueInCode": "משפחות חדשות"
+  },
+  "newFamily": {
+    "google": "חייל חדש",
+    "valueInCode": "משפחה חדשה"
+  },
+  "NewsComponent": {
+    "google": "מצריך טיפול",
+    "valueInCode": "מצריך טיפול"
+  },
+  "newVolunteers": {
+    "google": "מתנדבים חדשים",
+    "valueInCode": "מתנדבים חדשים"
+  },
+  "next": {
+    "google": "הבא",
+    "valueInCode": "הבא"
+  },
+  "nextBirthDay": {
+    "google": "יומולדת הבא",
+    "valueInCode": "יומולדת הבא"
+  },
+  "nextStep": {
+    "google": "המשך לשלב הבא",
+    "valueInCode": "המשך לשלב הבא"
+  },
+  "no": {
+    "google": "לא",
+    "valueInCode": "לא"
+  },
+  "noDeliveries": {
+    "google": "אין משלוחים לחלוקה",
+    "valueInCode": "אין משלוחים לחלוקה"
+  },
+  "noDeliveriesLeft": {
+    "google": "לא נותרו משלוחים מתאימים",
+    "valueInCode": "לא נותרו משלוחים מתאימים"
+  },
+  "noFamiliesSelected": {
+    "google": "לא נבחרו חיילים",
+    "valueInCode": "לא נבחרו משפחות"
+  },
+  "noMatchingDelivery": {
+    "google": "לא נמצאה חייל מתאימה",
+    "valueInCode": "לא נמצאה משפחה מתאימה"
+  },
+  "notAllowedToUpdateVolunteer": {
+    "google": "אינך רשאי לעדכן עבור מתנדב זה",
+    "valueInCode": "אינך רשאי לעדכן עבור מתנדב זה"
+  },
+  "notAthorized": {
+    "google": "!פעולה לא מורשת",
+    "valueInCode": "!פעולה לא מורשת"
+  },
+  "notDelivered": {
+    "google": "לא נמסרו",
+    "valueInCode": "לא נמסרו"
+  },
+  "notDeliveredBadAddress": {
+    "google": "לא נמסר, בעיה בכתובת",
+    "valueInCode": "לא נמסר, בעיה בכתובת"
+  },
+  "notDeliveredNotHome": {
+    "google": "לא נמסר, לא היו בבית",
+    "valueInCode": "לא נמסר, לא היו בבית"
+  },
+  "notDeliveredOther": {
+    "google": "לא נמסר, אחר",
+    "valueInCode": "לא נמסר, אחר"
+  },
+  "notice": {
+    "google": "שים לב!",
+    "valueInCode": "שים לב!"
+  },
+  "notImported": {
+    "google": "לא נקלטה",
+    "valueInCode": "לא נקלטה"
+  },
+  "notOk": {
+    "google": "לא תקין",
+    "valueInCode": "לא תקין"
+  },
+  "noVolunteer": {
+    "google": "ללא מתנדב",
+    "valueInCode": "ללא מתנדב"
+  },
+  "numOfFamilies": {
+    "google": "מספר חיילים",
+    "valueInCode": "מספר משפחות"
+  },
+  "on": {
+    "google": "ב",
+    "valueInCode": "ב"
+  },
+  "oneDeliveryToDistribute": {
+    "google": "משלוח אחד לחלוקה",
+    "valueInCode": "משלוח אחד לחלוקה"
+  },
+  "onStatus": {
+    "google": "בסטטוס",
+    "valueInCode": "בסטטוס"
+  },
+  "onTheWay": {
+    "google": "בדרך",
+    "valueInCode": "בדרך"
+  },
+  "openWaze": {
+    "google": "פתח WAZE",
+    "valueInCode": "פתח WAZE"
+  },
+  "organizationInfo": {
+    "google": "פרטי הארגון",
+    "valueInCode": "פרטי הארגון"
+  },
+  "organizationName": {
+    "google": "שם הארגון",
+    "valueInCode": "שם הארגון"
+  },
+  "originalAddress": {
+    "google": "כתובת מקורית",
+    "valueInCode": "כתובת מקורית"
+  },
+  "otherPhone": {
+    "google": "טלפון אחר",
+    "valueInCode": "טלפון אחר"
+  },
+  "OverviewComponent": {
+    "google": "Overview",
+    "valueInCode": "Overview"
+  },
+  "packageWasPickedUp": {
+    "google": "אספו את החבילה",
+    "valueInCode": "אספו את החבילה"
+  },
+  "parcelSummary": {
+    "google": "הצג סיכום סוגי סלים",
+    "valueInCode": "הצג סיכום סוגי סלים"
+  },
+  "password": {
+    "google": "סיסמה",
+    "valueInCode": "סיסמה"
+  },
+  "passwordDoesntMatchConfirmPassword": {
+    "google": "הסיסמה אינה תואמת את אישור הסיסמה",
+    "valueInCode": "הסיסמה אינה תואמת את אישור הסיסמה"
+  },
+  "passwordWasReset": {
+    "google": "הסיסמה נמחקה",
+    "valueInCode": "הסיסמה נמחקה"
+  },
+  "phone": {
+    "google": "טלפון",
+    "valueInCode": "טלפון"
+  },
+  "phone1": {
+    "google": "טלפון 1",
+    "valueInCode": "טלפון 1"
+  },
+  "phone1Description": {
+    "google": "הערות לטלפון 1",
+    "valueInCode": "הערות לטלפון 1"
+  },
+  "phone2": {
+    "google": "טלפון 2",
+    "valueInCode": "טלפון 2"
+  },
+  "phone2Description": {
+    "google": "הערות לטלפון 2",
+    "valueInCode": "הערות לטלפון 2"
+  },
+  "phone3": {
+    "google": "טלפון 3",
+    "valueInCode": "טלפון 3"
+  },
+  "phone3Description": {
+    "google": "הערות לטלפון 3",
+    "valueInCode": "הערות לטלפון 3"
+  },
+  "phone4": {
+    "google": "טלפון 4",
+    "valueInCode": "טלפון 4"
+  },
+  "phone4Description": {
+    "google": "הערות לטלפון 4",
+    "valueInCode": "הערות לטלפון 4"
+  },
+  "phones": {
+    "google": "טלפונים",
+    "valueInCode": "טלפונים"
+  },
+  "PlaybackComponent": {
+    "google": "סרטון חלוקה",
+    "valueInCode": "סרטון חלוקה"
+  },
+  "pleaseEnterUsing": {
+    "google": "אנא הכנס למערכת באמצעות הקישור:",
+    "valueInCode": "אנא הכנס למערכת באמצעות הקישור:"
+  },
+  "pleaseRegister": {
+    "google": "אם אינך רשומה, אנא הרשמי כאן",
+    "valueInCode": "אם אינך רשומה, אנא הרשמי כאן"
+  },
+  "pleaseRegisterToTheFollowingEvents": {
+    "google": "אנא הרשמו לאירועים הקרובים",
+    "valueInCode": "אנא הרשמו לאירועים הקרובים"
+  },
+  "pleaseSelectDistributionList": {
+    "google": "חובה לבחור רשימת חלוקה",
+    "valueInCode": "חובה לבחור רשימת חלוקה"
+  },
+  "pleaseWaitVerifyingDetails": {
+    "google": "אנא המתן - מוודא פרטים",
+    "valueInCode": "אנא המתן - מוודא פרטים"
+  },
+  "postalCode": {
+    "google": "מיקוד",
+    "valueInCode": "מיקוד"
+  },
+  "preferences": {
+    "google": "העדפות",
+    "valueInCode": "העדפות"
+  },
+  "preferredDistributionArea": {
+    "google": "כתובת אזור חלוקה מועדף",
+    "valueInCode": "כתובת אזור חלוקה מועדף"
+  },
+  "previous": {
+    "google": "קודם",
+    "valueInCode": "קודם"
+  },
+  "previousDeliveryDate": {
+    "google": "תאריך משלוח קודם",
+    "valueInCode": "תאריך משלוח קודם"
+  },
+  "previousDeliveryNotes": {
+    "google": "הערת משלוח קודם",
+    "valueInCode": "הערת משלוח קודם"
+  },
+  "previousDeliveryStatus": {
+    "google": "סטטוס משלוח קודם",
+    "valueInCode": "סטטוס משלוח קודם"
+  },
+  "previousDeliverySummary": {
+    "google": "סיכום משלוח קודם",
+    "valueInCode": "סיכום משלוח קודם"
+  },
+  "prioritizeRepeatFamilies": {
+    "google": "עדיפות לחיילים חוזרים",
+    "valueInCode": "עדיפות למשפחות חוזרות"
+  },
+  "problem": {
+    "google": "בעייה",
+    "valueInCode": "בעייה"
+  },
+  "problemCommentColumnName": {
+    "google": "הודעה למתנדב כאשר יש בעיה",
+    "valueInCode": "הודעה למתנדב כאשר יש בעיה"
+  },
+  "problems": {
+    "google": "בעיות",
+    "valueInCode": "בעיות"
+  },
+  "problemsThatRequireFollowup": {
+    "google": "בעיות המצריכות טיפול",
+    "valueInCode": "בעיות המצריכות טיפול"
+  },
+  "quantity": {
+    "google": "מספר סלים",
+    "valueInCode": "מספר סלים"
+  },
+  "question": {
+    "google": "שאלה",
+    "valueInCode": "שאלה"
+  },
+  "questionAddToApplication": {
+    "google": "האם להוסיף",
+    "valueInCode": "האם להוסיף"
+  },
+  "questionsAndAnswers": {
+    "google": "שאלות ותשובות",
+    "valueInCode": "שאלות ותשובות"
+  },
+  "ranIntoAProblem": {
+    "google": "נתקלתי בבעיה",
+    "valueInCode": "נתקלתי בבעיה"
+  },
+  "readExcelRow": {
+    "google": "קלוט את שורה",
+    "valueInCode": "קלוט את שורה"
+  },
+  "readyForDelivery": {
+    "google": "מוכן למשלוח",
+    "valueInCode": "מוכן למשלוח"
+  },
+  "recentlyAssigned": {
+    "google": "שוייכו עכשיו",
+    "valueInCode": "שוייכו עכשיו"
+  },
+  "recentVolunteers": {
+    "google": "מתנדבים אחרונים",
+    "valueInCode": "מתנדבים אחרונים"
+  },
+  "redTitleBar": {
+    "google": "כותרת דף בצבע אדום",
+    "valueInCode": "כותרת דף בצבע אדום"
+  },
+  "region": {
+    "google": "אזור",
+    "valueInCode": "אזור"
+  },
+  "register": {
+    "google": "הרשמה",
+    "valueInCode": "הרשמה"
+  },
+  "RegisterComponent": {
+    "google": "הרשמה",
+    "valueInCode": "הרשמה"
+  },
+  "registeredToEvent": {
+    "google": "הנך רשום לארוע זה",
+    "valueInCode": "הנך רשום לארוע זה"
+  },
+  "remainingByBaskets": {
+    "google": "נותרו לפי סלים",
+    "valueInCode": "נותרו לפי סלים"
+  },
+  "remainingByCities": {
+    "google": "נותרו לפי ערים",
+    "valueInCode": "נותרו לפי ערים"
+  },
+  "remainingByGroups": {
+    "google": "נותרו לפי קבוצות",
+    "valueInCode": "נותרו לפי קבוצות"
+  },
+  "rememberMeOnThisDevice": {
+    "google": "זכור אותי במכשיר זה",
+    "valueInCode": "זכור אותי במכשיר זה"
+  },
+  "remiderSmsDate": {
+    "google": "מועד משלוח תזכורת SMS",
+    "valueInCode": "מועד משלוח תזכורת SMS"
+  },
+  "reminderSent": {
+    "google": "תזכורת נשלחה",
+    "valueInCode": "תזכורת נשלחה"
+  },
+  "reminderSmsText": {
+    "google": "שלום !מתנדב!, \\nנשמח אם תעדכן את המערכת במצב המסירה של הסלים. לעדכון לחץ על:  !אתר!\\nבתודה !ארגון!",
+    "valueInCode": "שלום !מתנדב!, \nנשמח אם תעדכן את המערכת במצב המסירה של הסלים. לעדכון לחץ על:  !אתר!\nבתודה !ארגון!"
+  },
+  "reminderSmsTextHelp": {
+    "google": "הודעה זו תשלח למתנדב שמתעכב ממסך מעקב מתנדבים",
+    "valueInCode": "הודעה זו תשלח למתנדב שמתעכב ממסך מעקב מתנדבים"
+  },
+  "remove": {
+    "google": "הסר",
+    "valueInCode": "הסר"
+  },
+  "removedFromList": {
+    "google": "הוצא מהרשימות",
+    "valueInCode": "הוצא מהרשימות"
+  },
+  "RemovedFromListExcelImportStrategy_displayAsError": {
+    "google": "הצג כשגיאה",
+    "valueInCode": "הצג כשגיאה"
+  },
+  "RemovedFromListExcelImportStrategy_ignore": {
+    "google": "התעלם והוסף חייל חדש",
+    "valueInCode": "התעלם והוסף משפחה חדשה"
+  },
+  "RemovedFromListExcelImportStrategy_showInUpdate": {
+    "google": "הצג בחיילים לעדכון",
+    "valueInCode": "הצג במשפחות לעדכון"
+  },
+  "removeFollowUpFor": {
+    "google": "לבטל את הסימון \"מצריך טיפול\" למשפחת",
+    "valueInCode": "לבטל את הסימון \"מצריך טיפול\" למשפחת"
+  },
+  "removeFromFamiliesToUpdate": {
+    "google": "הסר מחיילים לעדכן",
+    "valueInCode": "הסר ממשפחות לעדכן"
+  },
+  "removeGroupAssignmentVerb": {
+    "google": "להסיר שיוך לקבצה",
+    "valueInCode": "להסיר שיוך לקבצה"
+  },
+  "repeatFamilyNotice": {
+    "google": "הייתם אצל החייל הזו גם פעם קודמת",
+    "valueInCode": "הייתם אצל המשפחה הזו גם פעם קודמת"
+  },
+  "replaceBySiteUrl": {
+    "google": "יוחלף בכתובת האתר",
+    "valueInCode": "יוחלף בכתובת האתר"
+  },
+  "replacedByOrgName": {
+    "google": "יוחלף בשם הארגון",
+    "valueInCode": "יוחלף בשם הארגון"
+  },
+  "replacedByVolunteerName": {
+    "google": "יוחלף בשם המתנדב",
+    "valueInCode": "יוחלף בשם המתנדב"
+  },
+  "replaceGroupAssignmentVerb": {
+    "google": "להחליף שיוך לקבוצה",
+    "valueInCode": "להחליף שיוך לקבוצה"
+  },
+  "replanRoute": {
+    "google": "חשב מסלול מחדש",
+    "valueInCode": "חשב מסלול מחדש"
+  },
+  "replcaedBySenderName": {
+    "google": "יוחלף בשם השולח",
+    "valueInCode": "יוחלף בשם השולח"
+  },
+  "requiredVolunteers": {
+    "google": "מספר מתנדבים נדרש",
+    "valueInCode": "מספר מתנדבים נדרש"
+  },
+  "requireFollowUp": {
+    "google": "צריך טיפול/מעקב",
+    "valueInCode": "צריך טיפול/מעקב"
+  },
+  "requireFollowUpUpdateDate": {
+    "google": "צריך טיפול - מתי עודכן",
+    "valueInCode": "צריך טיפול - מתי עודכן"
+  },
+  "requireFollowUpUpdateUser": {
+    "google": "צריך טיפול - מי עדכן",
+    "valueInCode": "צריך טיפול - מי עדכן"
+  },
+  "resendReminder": {
+    "google": "שלח שוב",
+    "valueInCode": "שלח שוב"
+  },
+  "resetPassword": {
+    "google": "אתחל סיסמה",
+    "valueInCode": "אתחל סיסמה"
+  },
+  "resetPasswordAreYouSureFor": {
+    "google": "האם את בטוחה שאת רוצה למחוק את הסיסמה של",
+    "valueInCode": "האם את בטוחה שאת רוצה למחוק את הסיסמה של"
+  },
+  "resetTextsToLanguageDefaults": {
+    "google": "החזר טקסטים להגדרות ברירת מחדל",
+    "valueInCode": "החזר טקסטים להגדרות ברירת מחדל"
+  },
+  "responsibleForAssign": {
+    "google": "משייך מתנדבים לרשימת חלוקה",
+    "valueInCode": "משייך מתנדבים לרשימת חלוקה"
+  },
+  "sameAddress": {
+    "google": "כתובת זהה",
+    "valueInCode": "כתובת זהה"
+  },
+  "sameLineExcelMatchesSeveralRowsInTheDatabase": {
+    "google": "אותה חייל באתר מתאימה למספר שורות באקסל: ",
+    "valueInCode": "אותה משפחה באתר מתאימה למספר שורות באקסל: "
+  },
+  "sampleMessage": {
+    "google": "הודעה לדוגמא",
+    "valueInCode": "הודעה לדוגמא"
+  },
+  "sampleReminderSms": {
+    "google": "הודעת תזכורת לדוגמא",
+    "valueInCode": "הודעת תזכורת לדוגמא"
+  },
+  "save": {
+    "google": "שמור",
+    "valueInCode": "שמור"
+  },
+  "saveExcelImportReport": {
+    "google": "שמור דוח מצב קליטה מאקסל",
+    "valueInCode": "שמור דוח מצב קליטה מאקסל"
+  },
+  "saveExcelSettings": {
+    "google": "שמור הגדרות",
+    "valueInCode": "שמור הגדרות"
+  },
+  "saveHelperInfoAndMoveToNextHelper": {
+    "google": "שמור פרטי מתנדב ועבור למתנדב הבא",
+    "valueInCode": "שמור פרטי מתנדב ועבור למתנדב הבא"
+  },
+  "saveVolunteerInfo": {
+    "google": "שמירת פרטי מתנדב:",
+    "valueInCode": "שמירת פרטי מתנדב:"
+  },
+  "search": {
+    "google": "חיפוש",
+    "valueInCode": "חיפוש"
+  },
+  "searchCompanyName": {
+    "google": "חיפוש שם חברה",
+    "valueInCode": "חיפוש שם חברה"
+  },
+  "searchFamily": {
+    "google": "חיפוש חייל",
+    "valueInCode": "חיפוש משפחה"
+  },
+  "searchVolunteer": {
+    "google": "חיפוש מתנדב",
+    "valueInCode": "חיפוש מתנדב"
+  },
+  "selectDeliveriesOnMap": {
+    "google": "בחר חיילים על המפה",
+    "valueInCode": "בחר משפחות על המפה"
+  },
+  "selectDeliveryByName": {
+    "google": "בחירת חייל לפי שם",
+    "valueInCode": "בחירת משפחה לפי שם"
+  },
+  "selectDeliveryByStreet": {
+    "google": "בחירת חייל לפי רחוב",
+    "valueInCode": "בחירת משפחה לפי רחוב"
+  },
+  "selectDeliveryOnMap": {
+    "google": "בחירת חייל על המפה",
+    "valueInCode": "בחירת משפחה על המפה"
+  },
+  "selectedDeliveries": {
+    "google": "משלוחים סומנו",
+    "valueInCode": "משלוחים סומנו"
+  },
+  "selectExcelFile": {
+    "google": "בחר קובץ אקסל",
+    "valueInCode": "בחר קובץ אקסל"
+  },
+  "selectExcelSheet": {
+    "google": "בחר גליון מהאקסל",
+    "valueInCode": "בחר גליון מהאקסל"
+  },
+  "selectNumberOfFamilies": {
+    "google": "בחירת מספר חיילים",
+    "valueInCode": "בחירת מספר משפחות"
+  },
+  "selectVolunteer": {
+    "google": "בחר מתנדב",
+    "valueInCode": "בחר מתנדב"
+  },
+  "selfPickup": {
+    "google": "באים לקחת",
+    "valueInCode": "באים לקחת"
+  },
+  "SelfPickupComponent": {
+    "google": "באים לקחת",
+    "valueInCode": "באים לקחת"
+  },
+  "selfPickupStrategy": {
+    "google": "הגדרת באים לקחת",
+    "valueInCode": "הגדרת באים לקחת"
+  },
+  "selfpickupStrategy_byCurrentDelivery": {
+    "google": "באים לקחת בהתאם להגדרת המשלוח הנוכחי",
+    "valueInCode": "באים לקחת בהתאם להגדרת המשלוח הנוכחי"
+  },
+  "selfPickupStrategy_familyDefault": {
+    "google": "באים לקחת בהתאם להגדרת הברירת מחדל לחייל",
+    "valueInCode": "באים לקחת בהתאם להגדרת הברירת מחדל למשפחה"
+  },
+  "selfpickupStrategy_no": {
+    "google": "משלוח עד הבית",
+    "valueInCode": "משלוח עד הבית"
+  },
+  "selfPickupStrategy_yes": {
+    "google": "יבואו לקחת את המשלוח ואינם צריכים משלוח",
+    "valueInCode": "יבואו לקחת את המשלוח ואינם צריכים משלוח"
+  },
+  "selfPuckupSuccess": {
+    "google": "אספו את החבילה",
+    "valueInCode": "אספו את החבילה"
+  },
+  "sendInviteBySms": {
+    "google": "שלח הזמנה בSMS למנהל",
+    "valueInCode": "שלח הזמנה בSMS למנהל"
+  },
+  "sendLinkOnWhatsapp": {
+    "google": "שלח קישור ב whatsapp",
+    "valueInCode": "שלח קישור ב whatsapp"
+  },
+  "sendMessageToVolunteer": {
+    "google": "שלח הודעה למתנדב",
+    "valueInCode": "שלח הודעה למתנדב"
+  },
+  "sendReminderSms": {
+    "google": "שלחי SMS לתזכורת",
+    "valueInCode": "שלחי SMS לתזכורת"
+  },
+  "sendSmsFromDevice": {
+    "google": "שלח קישור בSMS מהטלפון",
+    "valueInCode": "שלח קישור בSMS מהטלפון"
+  },
+  "sendSmsToAllVolunteersThatDidntGetOne": {
+    "google": "שלח הודעת SMS למתנדבים שטרם קיבלו",
+    "valueInCode": "שלח הודעת SMS למתנדבים שטרם קיבלו"
+  },
+  "sendSmsWithLink": {
+    "google": "שלח הודעת SMS עם קישור",
+    "valueInCode": "שלח הודעת SMS עם קישור"
+  },
+  "setAsDefaultVolunteer": {
+    "google": "עדכן גם כמתנדב ברירת מחדל",
+    "valueInCode": "עדכן גם כמתנדב ברירת מחדל"
+  },
+  "shouldAdd": {
+    "google": "האם להוסיף",
+    "valueInCode": "האם להוסיף"
+  },
+  "shouldArchiveDelivery": {
+    "google": "האם להעביר את המשלוח לארכיון?",
+    "valueInCode": "האם להעביר את המשלוח לארכיון?"
+  },
+  "shouldAssignTo": {
+    "google": "האם לשייך אותו למתנדב",
+    "valueInCode": "האם לשייך אותו למתנדב"
+  },
+  "shouldCompare": {
+    "google": "האם להשוות את",
+    "valueInCode": "האם להשוות את"
+  },
+  "shouldDeleteDeliveryFor": {
+    "google": "האם למחוק את המשלוח ל",
+    "valueInCode": "האם למחוק את המשלוח ל"
+  },
+  "shouldSendSmsTo": {
+    "google": "האם לשלוח הודעת SMS ל",
+    "valueInCode": "האם לשלוח הודעת SMS ל"
+  },
+  "shouldUpdateColumn": {
+    "google": "האם לעדכן את השדה",
+    "valueInCode": "האם לעדכן את השדה"
+  },
+  "showAll": {
+    "google": "הצג הכל",
+    "valueInCode": "הצג הכל"
+  },
+  "showAllCompletedDeliveries": {
+    "google": "הצג את כל המשלוחים שחולקו",
+    "valueInCode": "הצג את כל המשלוחים שחולקו"
+  },
+  "showAllDeliveries": {
+    "google": "הצג את כל המשלוחים לחלוקה",
+    "valueInCode": "הצג את כל המשלוחים לחלוקה"
+  },
+  "showAllFamilies": {
+    "google": "הצג את כל החיילים",
+    "valueInCode": "הצג את כל המשפחות"
+  },
+  "showAsignDeliveryFor": {
+    "google": "הצג שיוך משלוחים ל",
+    "valueInCode": "הצג שיוך משלוחים ל"
+  },
+  "showDistCenterAsEndAddressForVolunteer": {
+    "google": "הצג כתובות רשימת חלוקה כנקודת סיום למתנדב",
+    "valueInCode": "הצג כתובות רשימת חלוקה כנקודת סיום למתנדב"
+  },
+  "showFamilies": {
+    "google": "הצג חיילים",
+    "valueInCode": "הצג משפחות"
+  },
+  "showHelperComment": {
+    "google": "הצג הערה בשיוך למתנדב",
+    "valueInCode": "הצג הערה בשיוך למתנדב"
+  },
+  "showHelperCompany": {
+    "google": "הצג חברה למתנדב",
+    "valueInCode": "הצג חברה למתנדב"
+  },
+  "showLeftByHouseButton": {
+    "google": "הצג למתנדב כפתור השארתי ליד הבית",
+    "valueInCode": "הצג למתנדב כפתור השארתי ליד הבית"
+  },
+  "showOnGoogleMap": {
+    "google": "הצג בגוגל MAPS",
+    "valueInCode": "הצג בגוגל MAPS"
+  },
+  "showOnGovMap": {
+    "google": "הצג ב govmap",
+    "valueInCode": "הצג ב govmap"
+  },
+  "showRouteOnGoogleMaps": {
+    "google": "הצג מסלול ב Google Maps",
+    "valueInCode": "הצג מסלול ב Google Maps"
+  },
+  "showText1OnlyWhenDone": {
+    "google": "להציג מלל חופשי 1 רק כאשר המתנדב סיים אל כל הסלים",
+    "valueInCode": "להציג מלל חופשי 1 רק כאשר המתנדב סיים אל כל הסלים"
+  },
+  "showText2OnlyWhenDone": {
+    "google": "להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים",
+    "valueInCode": "להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים"
+  },
+  "showVolunteerCompany": {
+    "google": "שמור מטעם איזה חברה הגיע המתנדב",
+    "valueInCode": "שמור מטעם איזה חברה הגיע המתנדב"
+  },
+  "showVolunteers": {
+    "google": "הצג מתנדבים",
+    "valueInCode": "הצג מתנדבים"
+  },
+  "signIn": {
+    "google": "כניסה",
+    "valueInCode": "כניסה"
+  },
+  "similarName": {
+    "google": " שם דומה",
+    "valueInCode": " שם דומה"
+  },
+  "smsDate": {
+    "google": "מועד משלוח SMS",
+    "valueInCode": "מועד משלוח SMS"
+  },
+  "smsLoginFailed": {
+    "google": "משהו לא הסתדר עם הקישור, הנך מועבר למסך כניסה - אנא הכנס עם מספר הטלפון שלך",
+    "valueInCode": "משהו לא הסתדר עם הקישור, הנך מועבר למסך כניסה - אנא הכנס עם מספר הטלפון שלך"
+  },
+  "smsMessageContentCaption": {
+    "google": "תוכן הודעת SMS",
+    "valueInCode": "תוכן הודעת SMS"
+  },
+  "smsMessageSentTo": {
+    "google": "הודעת SMS נשלחה ל",
+    "valueInCode": "הודעת SMS נשלחה ל"
+  },
+  "smsNotSent": {
+    "google": "טרם נשלח SMS",
+    "valueInCode": "טרם נשלח SMS"
+  },
+  "smsReminderMessageContentCaption": {
+    "google": "תוכן הודעת תזכורת SMS",
+    "valueInCode": "תוכן הודעת תזכורת SMS"
+  },
+  "smsTextHelpTitle": {
+    "google": "הודעה זו תשלח למתנדב ממסך שיוך משלוחים - עם הקישור לחיילים להן הוא מתבקש לחלק.",
+    "valueInCode": "הודעה זו תשלח למתנדב ממסך שיוך משלוחים - עם הקישור למשפחות להן הוא מתבקש לחלק."
+  },
+  "socialSecurityNumber": {
+    "google": "מספר זהות",
+    "valueInCode": "מספר זהות"
+  },
+  "specialAsignment": {
+    "google": "שיוך מיוחד",
+    "valueInCode": "שיוך מיוחד"
+  },
+  "specialFamilies": {
+    "google": "חיילים מיוחדים",
+    "valueInCode": "משפחות מיוחדות"
+  },
+  "specialUnasigned": {
+    "google": "מיוחדים שטרם שוייכו",
+    "valueInCode": "מיוחדים שטרם שוייכו"
+  },
+  "spouceSocialSecurityNumber": {
+    "google": "מספר זהות בן/בת הזוג",
+    "valueInCode": "מספר זהות בן/בת הזוג"
+  },
+  "startAtDistributionCenterAndEndOnRemoteFamily": {
+    "google": "סיים בכתובת המבודדת ביותר",
+    "valueInCode": "סיים בכתובת המבודדת ביותר"
+  },
+  "statusChangeDate": {
+    "google": "סטטוס: תאריך שינוי",
+    "valueInCode": "סטטוס: תאריך שינוי"
+  },
+  "statusChangeUser": {
+    "google": "סטטוס: מי עדכן",
+    "valueInCode": "סטטוס: מי עדכן"
+  },
+  "statusNotSelected": {
+    "google": "לא נבחר סטטוס",
+    "valueInCode": "לא נבחר סטטוס"
+  },
+  "statusSummary": {
+    "google": "סיכום סטטוס",
+    "valueInCode": "סיכום סטטוס"
+  },
+  "stopAskingForConfirmation": {
+    "google": "הפסק לשאול האם מסכים לפני כל דבר",
+    "valueInCode": "הפסק לשאול האם מסכים לפני כל דבר"
+  },
+  "streetName": {
+    "google": "רחוב",
+    "valueInCode": "רחוב"
+  },
+  "successButtonSettingName": {
+    "google": "מלל כפתור נמסר בהצלחה",
+    "valueInCode": "מלל כפתור נמסר בהצלחה"
+  },
+  "successMessageColumnName": {
+    "google": "הודעה למתנדב כאשר נמסר בהצלחה",
+    "valueInCode": "הודעה למתנדב כאשר נמסר בהצלחה"
+  },
+  "thankYou": {
+    "google": "תודה",
+    "valueInCode": "תודה"
+  },
+  "theFamily": {
+    "google": "משפחת",
+    "valueInCode": "משפחת"
+  },
+  "thereAre": {
+    "google": "יש",
+    "valueInCode": "יש"
+  },
+  "thereAreAdditional": {
+    "google": "ישנן עוד ",
+    "valueInCode": "ישנן עוד "
+  },
+  "toDate": {
+    "google": "עד תאריך",
+    "valueInCode": "עד תאריך"
+  },
+  "toDelete": {
+    "google": "למחיקה",
+    "valueInCode": "למחיקה"
+  },
+  "toNewFamilies": {
+    "google": "לחיילים חדשות",
+    "valueInCode": "למשפחות חדשות"
+  },
+  "tooManyFamiliesForMerge": {
+    "google": "יותר מידי חיילים בבת אחת",
+    "valueInCode": "יותר מידי משפחות בבת אחת"
+  },
+  "total": {
+    "google": "סה\"כ",
+    "valueInCode": "סה\"כ"
+  },
+  "toVolunteer": {
+    "google": "למתנדב",
+    "valueInCode": "למתנדב"
+  },
+  "transfer": {
+    "google": "להעביר",
+    "valueInCode": "להעביר"
+  },
+  "transferDeliveriesFromOtherVolunteer": {
+    "google": "העבר חיילים ממתנדב אחר",
+    "valueInCode": "העבר משפחות ממתנדב אחר"
+  },
+  "twoDaysAgo": {
+    "google": "שלשום",
+    "valueInCode": "שלשום"
+  },
+  "twoHours": {
+    "google": "שעתיים",
+    "valueInCode": "שעתיים"
+  },
+  "unAsigned": {
+    "google": "טרם שוייכו",
+    "valueInCode": "טרם שוייכו"
+  },
+  "unfitForInvite": {
+    "google": "לא מתאים להזמנה",
+    "valueInCode": "לא מתאים להזמנה"
+  },
+  "unfreezeDeliveries": {
+    "google": "ביטול הקפאת משלוחים",
+    "valueInCode": "ביטול הקפאת משלוחים"
+  },
+  "unfreezeDeliveriesHelp": {
+    "google": "ביטול ההקפאה יחזיר משלוחים קפואים למוכן למשלוח",
+    "valueInCode": "ביטול ההקפאה יחזיר משלוחים קפואים למוכן למשלוח"
+  },
+  "unFreezeDelivery": {
+    "google": "הפשר משלוח",
+    "valueInCode": "הפשר משלוח"
+  },
+  "unnamed": {
+    "google": "ללא שם",
+    "valueInCode": "ללא שם"
+  },
+  "updateArea": {
+    "google": "עדכן אזור לחיילים",
+    "valueInCode": "עדכן אזור למשפחות"
+  },
+  "updateBasketQuantity": {
+    "google": "עדכן כמות סלים",
+    "valueInCode": "עדכן כמות סלים"
+  },
+  "updateBasketType": {
+    "google": "עדכן סוג סל",
+    "valueInCode": "עדכן סוג סל"
+  },
+  "updateCanceled": {
+    "google": "העדכון הופסק",
+    "valueInCode": "העדכון הופסק"
+  },
+  "updateComment": {
+    "google": "עדכן הערה",
+    "valueInCode": "עדכן הערה"
+  },
+  "updateCourierByCurrentCourier": {
+    "google": "עדכן את המתנדב מהמשלוח הנוכחי",
+    "valueInCode": "עדכן את המתנדב מהמשלוח הנוכחי"
+  },
+  "updatedBy": {
+    "google": "עודכן על ידי",
+    "valueInCode": "עודכן על ידי"
+  },
+  "updateDefaultBasket": {
+    "google": "עדכן סוג סל ברירת מחדל",
+    "valueInCode": "עדכן סוג סל ברירת מחדל"
+  },
+  "updateDefaultQuantity": {
+    "google": "עדכן כמות סלים ברירת מחדל",
+    "valueInCode": "עדכן כמות סלים ברירת מחדל"
+  },
+  "updateDefaultSelfPickup": {
+    "google": "עדכן באים לקחת ברירת מחדל",
+    "valueInCode": "עדכן באים לקחת ברירת מחדל"
+  },
+  "updateDefaultVolunteer": {
+    "google": "עדכן מתנדב ברירת מחדל לחייל",
+    "valueInCode": "עדכן מתנדב ברירת מחדל למשפחה"
+  },
+  "updateDeliveredStatusesTo": {
+    "google": "עדכון משלוחים שהסתיימו לסטטוס",
+    "valueInCode": "עדכון משלוחים שהסתיימו לסטטוס"
+  },
+  "updateDeliveriesStatus": {
+    "google": "עדכן סטטוס למשלוחים",
+    "valueInCode": "עדכן סטטוס למשלוחים"
+  },
+  "updateDeliveriesStatusHelp": {
+    "google": "סטטוס \"מוקפא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח.             ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח. ",
+    "valueInCode": "סטטוס \"מוקפא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח.             ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח. "
+  },
+  "updateDeliveryFailure": {
+    "google": "עדכן אי מסירה",
+    "valueInCode": "עדכן אי מסירה"
+  },
+  "updateDistributionList": {
+    "google": "עדכן רשימת חלוקה",
+    "valueInCode": "עדכן רשימת חלוקה"
+  },
+  "updateExistingDeliveries": {
+    "google": "שנה גם עבור משלוחים שטרם נמסרו",
+    "valueInCode": "שנה גם עבור משלוחים שטרם נמסרו"
+  },
+  "updateFamilySource": {
+    "google": "עדכן גורם מפנה ",
+    "valueInCode": "עדכן גורם מפנה "
+  },
+  "updateFamilyStatus": {
+    "google": "עדכן סטטוס חייל",
+    "valueInCode": "עדכן סטטוס משפחה"
+  },
+  "updateInfo": {
+    "google": "עדכון פרטים",
+    "valueInCode": "עדכון פרטים"
+  },
+  "UpdateInfoComponent": {
+    "google": "הגדרות אישיות",
+    "valueInCode": "הגדרות אישיות"
+  },
+  "updateOfAddressMayTakeLonger": {
+    "google": "שים לב- עדכון של שדה כתובת יכול לקחת יותר זמן משדות אחרים",
+    "valueInCode": "שים לב- עדכון של שדה כתובת יכול לקחת יותר זמן משדות אחרים"
+  },
+  "updateSaved": {
+    "google": "העדכון נשמר, תודה",
+    "valueInCode": "העדכון נשמר, תודה"
+  },
+  "updateStatusHelp": {
+    "google": "סטטוס הוצא מהרשימות - נועד כדי לסמן שהחייל לא אמורה לקבל מזון - אבל בניגוד לסטטוס למחיקה - אנחנו רוצים לשמור אותה בבסיס הנתונים כדי שאם הרווחה יביאו לנו אותה שוב, נדע להגיד שהם הוצאו מהרשימות. זה מתאים לחיילים שחס וחלילה נפתרו או שפשוט לא רוצים לקבל - או שהכתובת לא קיימת וכו...",
+    "valueInCode": "סטטוס הוצא מהרשימות - נועד כדי לסמן שהמשפחה לא אמורה לקבל מזון - אבל בניגוד לסטטוס למחיקה - אנחנו רוצים לשמור אותה בבסיס הנתונים כדי שאם הרווחה יביאו לנו אותה שוב, נדע להגיד שהם הוצאו מהרשימות. זה מתאים למשפחות שחס וחלילה נפתרו או שפשוט לא רוצים לקבל - או שהכתובת לא קיימת וכו..."
+  },
+  "updateVolunteer": {
+    "google": "עדכן מתנדב למשלוחים",
+    "valueInCode": "עדכן מתנדב למשלוחים"
+  },
+  "updateVolunteerHelp": {
+    "google": "בכדי לעדכן מתנדב מ\"בדרך\" ל\"מוכן למשלוח\" יש לסמן את \"בטל שיוך למתנדב\". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו",
+    "valueInCode": "בכדי לעדכן מתנדב מ\"בדרך\" ל\"מוכן למשלוח\" יש לסמן את \"בטל שיוך למתנדב\". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו"
+  },
+  "updateVolunteers": {
+    "google": "מתנדבים לעדכון",
+    "valueInCode": "מתנדבים לעדכון"
+  },
+  "urlFreeText1": {
+    "google": "כתובת אינטרנט ללחיצה על מלל חופשי 1 למתנדב",
+    "valueInCode": "כתובת אינטרנט ללחיצה על מלל חופשי 1 למתנדב"
+  },
+  "urlFreeText2": {
+    "google": "כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב",
+    "valueInCode": "כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב"
+  },
+  "useBusketTypeFromCurrentDelivery": {
+    "google": "השתמש בסוג הסל המוגדר במשלוח הנוכחי",
+    "valueInCode": "השתמש בסוג הסל המוגדר במשלוח הנוכחי"
+  },
+  "useCurrentLocationForStart": {
+    "google": "חשב מסלול ממיקום נוכחי",
+    "valueInCode": "חשב מסלול ממיקום נוכחי"
+  },
+  "useFamilyDefaultBasketType": {
+    "google": "השתמש בסוג הסל המוגדר לחייל",
+    "valueInCode": "השתמש בסוג הסל המוגדר למשפחה"
+  },
+  "useFamilyMembersAsQuantity": {
+    "google": "השתמש במספר נפשות גם ככמות מנות",
+    "valueInCode": "השתמש במספר נפשות גם ככמות מנות"
+  },
+  "userNotFoundOrWrongPassword": {
+    "google": "משתמשת לא נמצאה או סיסמה שגויה",
+    "valueInCode": "משתמשת לא נמצאה או סיסמה שגויה"
+  },
+  "valueAlreadyExistsFor": {
+    "google": "ערך כבר קיים למשפחת",
+    "valueInCode": "ערך כבר קיים למשפחת"
+  },
+  "volunteer": {
+    "google": "מתנדב",
+    "valueInCode": "מתנדב"
+  },
+  "volunteerByCrrentDelivery": {
+    "google": "הגדר מתנדב לפי המתנדב במשלוח הנוכחי",
+    "valueInCode": "הגדר מתנדב לפי המתנדב במשלוח הנוכחי"
+  },
+  "volunteerByFamilyDefault": {
+    "google": "הגדר מתנדב לפי מתנדב ברירת מחדל המוגדר לחייל",
+    "valueInCode": "הגדר מתנדב לפי מתנדב ברירת מחדל המוגדר למשפחה"
+  },
+  "volunteerCanUpdateComment": {
+    "google": "מתנדב יכול לעדכן לעצמו הערה",
+    "valueInCode": "מתנדב יכול לעדכן לעצמו הערה"
+  },
+  "volunteerCanUpdatePreferredDistributionAddress": {
+    "google": "מתנדב יכול לעדכן אזור חלוקה מועדף",
+    "valueInCode": "מתנדב יכול לעדכן אזור חלוקה מועדף"
+  },
+  "volunteerFeedbackVideo": {
+    "google": "לסרטון הדרכה על משוב המתנדבים לחץ כאן",
+    "valueInCode": "לסרטון הדרכה על משוב המתנדבים לחץ כאן"
+  },
+  "volunteerHelpPhonesHelpLine1": {
+    "google": "כאשר המתנדב לוחץ על הכפתור \"נתקלתי בבעיה\" מופע לו מסך אם אפשרות להתקשר לעזרה או לעדכן שלא מסר.",
+    "valueInCode": "כאשר המתנדב לוחץ על הכפתור \"נתקלתי בבעיה\" מופע לו מסך אם אפשרות להתקשר לעזרה או לעדכן שלא מסר."
+  },
+  "volunteerHelpPhonesHelpLine2": {
+    "google": "כאן ניתן לעדכן אילו טלפונים יופיעו לו לעזרה, אפשר לעדכן אחד או יותר.",
+    "valueInCode": "כאן ניתן לעדכן אילו טלפונים יופיעו לו לעזרה, אפשר לעדכן אחד או יותר."
+  },
+  "volunteerInfo": {
+    "google": "פרטי מתנדב",
+    "valueInCode": "פרטי מתנדב"
+  },
+  "volunteerName": {
+    "google": "שם",
+    "valueInCode": "שם"
+  },
+  "volunteerPhoneNumber": {
+    "google": "מספר הטלפון של המתנדב",
+    "valueInCode": "מספר הטלפון של המתנדב"
+  },
+  "volunteerQAndA": {
+    "google": "שאלות ותשובות למתנדב",
+    "valueInCode": "שאלות ותשובות למתנדב"
+  },
+  "volunteerQAndAHelp": {
+    "google": "כאשר המתנדב לוחץ על הכפתור \"נתקלתי בבעיה\" מופע לו מסך עם רשימה זו של שאלות ותשובות לעזרה",
+    "valueInCode": "כאשר המתנדב לוחץ על הכפתור \"נתקלתי בבעיה\" מופע לו מסך עם רשימה זו של שאלות ותשובות לעזרה"
+  },
+  "volunteers": {
+    "google": "מתנדבים",
+    "valueInCode": "מתנדבים"
+  },
+  "volunteerTexts": {
+    "google": "הודעות למתנדב",
+    "valueInCode": "הודעות למתנדב"
+  },
+  "voluntreeHelpPhones": {
+    "google": "טלפונים לעזרה למתנדב",
+    "valueInCode": "טלפונים לעזרה למתנדב"
+  },
+  "wasAssignedTo": {
+    "google": "שוייכה ל",
+    "valueInCode": "שוייכה ל"
+  },
+  "wasCopiedSuccefully": {
+    "google": " הועתקה בהצלחה",
+    "valueInCode": " הועתקה בהצלחה"
+  },
+  "wasUpdatedTo": {
+    "google": "עודכנה ל",
+    "valueInCode": "עודכנה ל"
+  },
+  "welcomeTo": {
+    "google": "ברוך הבא לסביבה של",
+    "valueInCode": "ברוך הבא לסביבה של"
+  },
+  "whatWentWrong": {
+    "google": "מה לא הסתדר?",
+    "valueInCode": "מה לא הסתדר?"
+  },
+  "willNotSaveHistoryDoYouWantToStop": {
+    "google": " לא ישמור בהיסטוריה את הסטטוס של המשלוחים שהסתיימו - האם להפסיק את העדכון?",
+    "valueInCode": " לא ישמור בהיסטוריה את הסטטוס של המשלוחים שהסתיימו - האם להפסיק את העדכון?"
+  },
+  "within": {
+    "google": "תוך",
+    "valueInCode": "תוך"
+  },
+  "yes": {
+    "google": "כן",
+    "valueInCode": "כן"
+  },
+  "yesterday": {
+    "google": "אתמול",
+    "valueInCode": "אתמול"
+  },
+  "youveProbablyMeantNewDelivery": {
+    "google": " - אם את/ה מעוניין ליצור משלוח חדש, יש לעשות זאת בתפריט 'משלוח חדש'.",
+    "valueInCode": " - אם את/ה מעוניין ליצור משלוח חדש, יש לעשות זאת בתפריט 'משלוח חדש'."
+  },
+  "youveSelectedToUpdateStatus": {
+    "google": "בחרת לעדכן סטטוס",
+    "valueInCode": "בחרת לעדכן סטטוס"
+  }
+}

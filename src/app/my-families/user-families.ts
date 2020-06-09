@@ -6,7 +6,6 @@ import { MapComponent } from '../map/map.component';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
 import { Context } from '@remult/core';
 
-import { translate } from '../translate';
 import { ElementRef } from '@angular/core';
 import { PhoneColumn } from '../model-shared/types';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -77,10 +76,10 @@ export class UserFamiliesList {
             return this.settings.lang.noDeliveries;
         let r = '';
         if (this.toDeliver.length == 1) {
-            r = translate(this.settings.lang.oneDeliveryToDistribute);
+            r = this.settings.lang.oneDeliveryToDistribute;
         }
         else
-            r = this.toDeliver.length + ' ' + translate(this.settings.lang.deliveriesToDistribute);
+            r = this.toDeliver.length + ' ' + this.settings.lang.deliveriesToDistribute;
 
         let boxesText = '';
         if (boxes != this.toDeliver.length || boxes2 != 0)

@@ -5,7 +5,7 @@ import { DialogService } from '../select-popup/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Context } from '@remult/core';
 
-import { translate, use } from '../translate';
+import { use } from '../translate';
 import { UpdateCommentComponent } from '../update-comment/update-comment.component';
 
 
@@ -70,7 +70,7 @@ export class FamilyInfoComponent implements OnInit {
   }
   openWaze(f: ActiveFamilyDeliveries) {
     if (!f.addressOk.value) {
-      this.dialog.YesNoQuestion(translate(use.language.addressNotOkOpenWaze), () => {
+      this.dialog.YesNoQuestion(use.language.addressNotOkOpenWaze, () => {
         if (this.useWaze())
           f.openWaze();
         else

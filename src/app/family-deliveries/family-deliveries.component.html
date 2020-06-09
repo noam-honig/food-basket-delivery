@@ -16,14 +16,14 @@
 </div>
 <a *ngFor="let s of currentTabStats.moreStats" (click)="setCurrentStat(s)">{{s.name }} - {{s.value}}, </a>
 <div *ngIf="showTotalBoxes()">{{showTotalBoxes()}}</div>
-<strong>{{deliveries.totalRows}} {{settings.lang.deliveries|translate}} </strong> <strong *ngIf="currentStatFilter"> -
+<strong>{{deliveries.totalRows}} {{settings.lang.deliveries}} </strong> <strong *ngIf="currentStatFilter"> -
     {{currentStatFilter.name}} - </strong> <a *ngIf="currentStatFilter" (click)="clearStat()">{{settings.lang.showAll}}</a>
 
 
 <div style="display:flex;justify-content: space-between">
     <div>
         <mat-form-field>
-            <input matInput [(ngModel)]="searchString" (input)="doSearch()" placeholder="{{settings.lang.searchFamily|translate}}"
+            <input matInput [(ngModel)]="searchString" (input)="doSearch()" placeholder="{{settings.lang.searchFamily}}"
                 [ngModelOptions]="{standalone: true}">
             <mat-icon matSuffix (click)="clearSearch()">clear</mat-icon>
         </mat-form-field>
@@ -34,7 +34,7 @@
     <div>
        
         <button mat-raised-button color="primary" (click)="newFamily()"
-            *ngIf="isAdmin">{{settings.lang.newFamily|translate}}</button>
+            *ngIf="isAdmin">{{settings.lang.newFamily}}</button>
 
 
     </div>

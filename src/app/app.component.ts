@@ -8,7 +8,7 @@ import { ApplicationSettings, SettingsService } from './manage/ApplicationSettin
 import { FamiliesComponent } from './families/families.component';
 import { Context, RouteHelperService, JwtSessionManager, DataAreaSettings } from '@remult/core';
 import { Roles } from './auth/roles';
-import { translate, translationConfig, Language } from './translate';
+import {  translationConfig, Language } from './translate';
 
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { DeliveryStatus } from './families/DeliveryStatus';
@@ -66,7 +66,7 @@ export class AppComponent {
     let name = route.path;
     if (route.data && route.data.name)
       name = route.data.name;
-    return translate(name);
+    return name;
   }
   prevLogoUrl = '';
   getLogo() {
@@ -85,7 +85,7 @@ export class AppComponent {
           return s;
       }
       if (this.activeRoute.firstChild.data && this.activeRoute.snapshot.firstChild.data.name)
-        return translate(this.activeRoute.snapshot.firstChild.data.name);
+        return this.activeRoute.snapshot.firstChild.data.name;
     }
     return ApplicationSettings.get(this.context).organisationName.value;
   }

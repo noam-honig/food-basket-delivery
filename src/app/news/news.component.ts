@@ -3,7 +3,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Context, AndFilter } from '@remult/core';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
-import { translate } from '../translate';
 
 import { Route, ActivatedRoute } from '@angular/router';
 
@@ -37,18 +36,18 @@ export class NewsComponent implements OnInit, OnDestroy {
         this.refresh();
     }
 
-    constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public filters: NewsFilterService, private activatedRoute: ActivatedRoute,public settings:ApplicationSettings) {
+    constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public filters: NewsFilterService, private activatedRoute: ActivatedRoute, public settings: ApplicationSettings) {
         dialog.onStatusChange(() => this.refresh(), this.destroyHelper);
         dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
 
     }
     async updateFamily(n: ActiveFamilyDeliveries) {
         n.showDetailsDialog();
-        
+
 
     }
     cancelNeedWork(n: ActiveFamilyDeliveries) {
-        this.dialog.YesNoQuestion(translate(this.settings.lang.removeFollowUpFor)+' "' + n.name.value + '"?', async () => {
+        this.dialog.YesNoQuestion(this.settings.lang.removeFollowUpFor + ' "' + n.name.value + '"?', async () => {
             let f = await this.context.for(ActiveFamilyDeliveries).findFirst(fam => fam.id.isEqualTo(n.id));
             f.needsWork.value = false;
             await f.save();

@@ -60,7 +60,7 @@ serverInit().then(async (dataSource) => {
         if (fs.existsSync(index)) {
             let x = '';
             let settings = (await ApplicationSettings.getAsync(context));
-            setLangForSite(Sites.getValidSchemaFromContext(context), settings.forWho.value.args.languageCode);
+            setLangForSite(Sites.getValidSchemaFromContext(context), settings.forWho.value);
             x = settings.organisationName.value;
             let result = fs.readFileSync(index).toString().replace(/!TITLE!/g, x).replace("/*!SITE!*/", "multiSite=" + Sites.multipleSites);
             if (settings.forWho.value.args.leftToRight) {
@@ -68,10 +68,12 @@ serverInit().then(async (dataSource) => {
             }
             if (settings.forWho.value.args.languageCode) {
                 let lang = settings.forWho.value.args.languageCode;
-                result = result.replace(/document.lang = '';/g, `document.lang = '${lang}';`)
-                    .replace(/&language=iw&/, `&language=${lang}&`)
+                result = result.replace(/&language=iw&/, `&language=${lang}&`)
                     .replace(/טוען/g, 'Loading');
-
+            }
+            if (settings.forWho.value.args.languageFile) {
+                let lang = settings.forWho.value.args.languageFile;
+                result = result.replace(/document.lang = '';/g, `document.lang = '${lang}';`);
 
             }
             if (Sites.multipleSites) {

@@ -33,7 +33,7 @@ import { Roles, distCenterAdminGuard, AdminGuard } from '../auth/roles';
 import { MatTabGroup } from '@angular/material/tabs';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { translate, getLang, use } from '../translate';
+import {  getLang, use } from '../translate';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 import { FamilyStatus, FamilyStatusColumn } from './FamilyStatus';
@@ -352,14 +352,14 @@ export class FamiliesComponent implements OnInit {
                             actionRowsFilterInfo: packWhere(this.context.for(Families).create(), where)
                         };
                     }, settings: this.settings,
-                    groupName: translate(this.settings.lang.families)
+                    groupName: this.settings.lang.families
                 })
             , {
                 name: this.settings.lang.exportToExcel,
                 click: () => this.saveToExcel(),
                 visible: () => this.isAdmin
             }, {
-                name: translate(this.settings.lang.mergeFamilies),
+                name: this.settings.lang.mergeFamilies,
                 click: async () => {
                     await this.context.openDialog(MergeFamiliesComponent, x => x.families = [...this.families.selectedRows], y => {
                         if (y.merged)
@@ -378,7 +378,7 @@ export class FamiliesComponent implements OnInit {
                 click: async f => {
                     await f.showFamilyDialog();
                 }
-                , textInMenu: () => translate(this.settings.lang.familyDetails)
+                , textInMenu: () => this.settings.lang.familyDetails
             },
 
             {
@@ -391,7 +391,7 @@ export class FamiliesComponent implements OnInit {
             }
             ,
             {
-                name: translate(this.settings.lang.familyDeliveries),
+                name: this.settings.lang.familyDeliveries,
                 click: async f => {
                     f.showDeliveryHistoryDialog();
                 }
@@ -454,7 +454,7 @@ export class FamiliesComponent implements OnInit {
     }
 
     groupsTotals: statsOnTab = {
-        name: translate(this.settings.lang.byGroups),
+        name: this.settings.lang.byGroups,
         rule: f => f.status.isEqualTo(FamilyStatus.Active),
         stats: [
         ],
@@ -475,7 +475,7 @@ export class FamiliesComponent implements OnInit {
         {
             rule: f => f.status.isEqualTo(FamilyStatus.Active),
             showTotal: true,
-            name: translate(this.settings.lang.activeFamilies),
+            name: this.settings.lang.activeFamilies,
             stats: [
                 this.stats.active,
 
@@ -488,7 +488,7 @@ export class FamiliesComponent implements OnInit {
         {
             rule: f => undefined,
             showTotal: true,
-            name: translate(this.settings.lang.allFamilies),
+            name: this.settings.lang.allFamilies,
             stats: [
                 this.stats.active,
                 this.stats.outOfList,
@@ -687,7 +687,7 @@ interface statsOnTab {
 
 }
 export async function saveFamiliesToExcel(context: Context, gs: GridSettings<Families>, busy: BusyService, name) {
-    await saveToExcel<Families, GridSettings<Families>>(context.for(Families), gs, translate(name), busy, (f, c) => c == f.id || c == f.addressApiResult, (f, c) => false, async (f, addColumn) => {
+    await saveToExcel<Families, GridSettings<Families>>(context.for(Families), gs, name, busy, (f, c) => c == f.id || c == f.addressApiResult, (f, c) => false, async (f, addColumn) => {
         let x = f.getGeocodeInformation();
         let street = f.address.value;
         let house = '';

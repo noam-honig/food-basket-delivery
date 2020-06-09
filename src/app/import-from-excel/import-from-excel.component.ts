@@ -17,7 +17,7 @@ import { Roles } from '../auth/roles';
 import { MatStepper } from '@angular/material';
 
 import { ApplicationSettings, RemovedFromListExcelImportStrategy } from '../manage/ApplicationSettings';
-import { translate, use, Language, getLang } from '../translate';
+import { use, Language, getLang } from '../translate';
 
 import { Groups } from '../manage/manage.component';
 import { DistributionCenters, DistributionCenterId, allCentersToken } from '../manage/distribution-centers';
@@ -91,7 +91,7 @@ export class ImportFromExcelComponent implements OnInit {
 
     async addAll() {
         let count = this.newRows.length;
-        if (await this.dialog.YesNoPromise(use.language.shouldAdd + " " + count + " " + translate(use.language.families + "?"))) {
+        if (await this.dialog.YesNoPromise(use.language.shouldAdd + " " + count + " " + use.language.families + "?")) {
 
 
             this.busy.doWhileShowingBusy(async () => {
@@ -176,7 +176,7 @@ export class ImportFromExcelComponent implements OnInit {
     }
     async updateAllCol(col: columnInCompare) {
         let count = this.getColUpdateCount(col);
-        let message = use.language.shouldUpdateColumn + " " + col.c.defs.caption + " " + use.language.for + " " + count + " " + translate(use.language.families + "?");
+        let message = use.language.shouldUpdateColumn + " " + col.c.defs.caption + " " + use.language.for + " " + count + " " + use.language.families + "?";
         if (col.c == this.f.address)
             message += use.language.updateOfAddressMayTakeLonger;
         this.dialog.YesNoQuestion(message, () => {
@@ -949,7 +949,7 @@ export class ImportFromExcelComponent implements OnInit {
                 for (const iterator of collected) {
                     if (iterator.length > 1) {
                         for (const row of iterator) {
-                            row.error = translate(use.language.sameLineExcelMatchesSeveralRowsInTheDatabase + ' ') + iterator.map(x => x.rowInExcel.toString()).join(', ');
+                            row.error = use.language.sameLineExcelMatchesSeveralRowsInTheDatabase + ' ' + iterator.map(x => x.rowInExcel.toString()).join(', ');
                             this.errorRows.push(row);
                             this.updateRows.splice(this.updateRows.indexOf(row), 1);
                         }
@@ -1068,7 +1068,7 @@ export class ImportFromExcelComponent implements OnInit {
             if (!info.duplicateFamilyInfo || info.duplicateFamilyInfo.length == 0) {
                 result.newRows.push(info);
             } else if (info.duplicateFamilyInfo.length > 1) {
-                info.error = translate(getLang(context).moreThanOneRowInDbMatchesExcel);
+                info.error = getLang(context).moreThanOneRowInDbMatchesExcel;
                 result.errorRows.push(info);
             } else {
                 let hasDifference = false;
@@ -1159,7 +1159,7 @@ export class ImportFromExcelComponent implements OnInit {
         if (!name) {
             name = use.language.unnamed;
         }
-        if (await this.ask(translate(use.language.moveTheFamily + " ") + name + translate(" " + use.language.toNewFamilies + "?"))) {
+        if (await this.ask(use.language.moveTheFamily + " " + name + " " + use.language.toNewFamilies + "?")) {
             if (!r.name) {
                 r.name = name;
                 r.values[keyFromColumnInCompare({ e: this.f, c: this.f.name })] = { newValue: r.name, newDisplayValue: r.name };
@@ -1181,7 +1181,7 @@ export class ImportFromExcelComponent implements OnInit {
         if (!name) {
             name = use.language.unnamed;
         }
-        if (await this.ask(translate(use.language.importFamily + " ") + name + translate("?"))) {
+        if (await this.ask(use.language.importFamily + " " + name + "?")) {
             if (!r.name) {
                 r.name = name;
                 r.values[keyFromColumnInCompare({ e: this.f, c: this.f.name })] = { newValue: r.name, newDisplayValue: r.name };
@@ -1230,7 +1230,7 @@ export class ImportFromExcelComponent implements OnInit {
     }
 
     moveFromUpdateToAdd(r: excelRowInfo) {
-        this.dialog.YesNoQuestion(translate(use.language.moveTheFamily + " ") + r.name + translate(" " + use.language.toNewFamilies + "?"), () => {
+        this.dialog.YesNoQuestion(use.language.moveTheFamily + " " + r.name + " " + use.language.toNewFamilies + "?", () => {
             let x = this.updateRows.indexOf(r);
             this.updateRows.splice(x, 1);
             this.newRows.push(r);

@@ -14,7 +14,7 @@ import { FamilyDeliveries, ActiveFamilyDeliveries } from "./FamilyDeliveries";
 import * as fetch from 'node-fetch';
 import { Roles } from "../auth/roles";
 
-import { translate, getLang } from "../translate";
+import {  getLang } from "../translate";
 import { UpdateGroupDialogComponent } from "../update-group-dialog/update-group-dialog.component";
 import { FamilyStatusColumn, FamilyStatus } from "./FamilyStatus";
 
@@ -340,7 +340,7 @@ export class Families extends IdEntity {
   groups = new GroupsColumn(this.context);
   special = new YesNoColumn({ caption: getLang(this.context).specialAsignment });
   defaultSelfPickup = new BoolColumn(getLang(this.context).defaultSelfPickup);
-  iDinExcel = new StringColumn({ caption: translate(getLang(this.context).familyUniqueId) });
+  iDinExcel = new StringColumn({ caption: getLang(this.context).familyUniqueId });
   internalComment = new StringColumn({ caption: getLang(this.context).internalComment });
 
 
@@ -564,14 +564,14 @@ export class Families extends IdEntity {
             let duration = '';
             if (n.courierAssingTime.value && n.deliveryStatusDate.value)
               duration = ' ' + getLang(context).within + ' ' + Math.round((n.deliveryStatusDate.value.valueOf() - n.courierAssingTime.value.valueOf()) / 60000) + " " + getLang(context).minutes;
-            return n.deliverStatus.displayValue + (n.courierComments.value ? ", " + n.courierComments.value + " - " : '') + translate(' ' + getLang(context).forFamily + ' ') + n.name.value + ' ' + (courierName ? (getLang(context).by + ' ' + courierName) : '') + duration + "!";
+            return n.deliverStatus.displayValue + (n.courierComments.value ? ", " + n.courierComments.value + " - " : '') + ' ' + getLang(context).forFamily + ' ' + n.name.value + ' ' + (courierName ? (getLang(context).by + ' ' + courierName) : '') + duration + "!";
         }
-        return translate(getLang(context).theFamily + ' ') + n.name.value + ' ' + getLang(context).wasUpdatedTo + ' ' + n.deliverStatus.displayValue;
+        return getLang(context).theFamily + ' ' + n.name.value + ' ' + getLang(context).wasUpdatedTo + ' ' + n.deliverStatus.displayValue;
       case 2:
         if (n.courier.value)
-          return translate(getLang(context).theFamily + ' ') + n.name.value + ' ' + getLang(context).wasAssignedTo + ' ' + courierName;
+          return getLang(context).theFamily + ' ' + n.name.value + ' ' + getLang(context).wasAssignedTo + ' ' + courierName;
         else
-          return translate(getLang(context).assignmentCanceledFor + " ") + n.name.value;
+          return getLang(context).assignmentCanceledFor + " " + n.name.value;
     }
     return n.deliverStatus.displayValue;
   }
@@ -624,7 +624,7 @@ export class Families extends IdEntity {
     this.name.validationError = undefined;
     let foundExactName = false;
     for (const d of this.duplicateFamilies) {
-      let errorText = translate(getLang(this.context).valueAlreadyExistsFor + ' "') + d.name + '" ' + getLang(this.context).atAddress + ' ' + d.address;
+      let errorText = getLang(this.context).valueAlreadyExistsFor + ' "' + d.name + '" ' + getLang(this.context).atAddress + ' ' + d.address;
       if (d.tz)
         this.tz.validationError = errorText;
       if (d.tz2)
@@ -829,7 +829,7 @@ export class GroupsColumn extends StringColumn {
   }
   constructor(private context: Context, settingsOrCaption?: ColumnOptions<string>) {
     super({
-      caption: translate(getLang(context).familyGroup),
+      caption: getLang(context).familyGroup,
 
       dataControlSettings: () => ({
         width: '300',

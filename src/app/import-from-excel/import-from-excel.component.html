@@ -3,7 +3,7 @@
     <mat-horizontal-stepper #stepper>
         <mat-step label="{{settings.lang.selectExcelFile}}">
             <a href="https://youtu.be/Jtmhyf8-E4g" target="_blank" class="no-print" *ngIf="settings.showVideo()"
-                style="margin-right:10px">{{settings.lang.excelImportVideo|translate}}</a>
+                style="margin-right:10px">{{settings.lang.excelImportVideo}}</a>
             <h3> {{settings.lang.selectExcelFile}}</h3> <input type="file" #file (input)="fileChange($event)" />
         </mat-step>
         <mat-step label="{{settings.lang.mapExcelColumns}}">
@@ -108,7 +108,7 @@
                                                 <li *ngFor="let f of i.duplicateFamilyInfo"
                                                     [class.error]="f.removedFromList">
                                                     {{f.name}} - {{displayDupInfo(f)}} - <a
-                                                        (click)="updateFamily(f)">{{settings.lang.familyDetails|translate}}</a>
+                                                        (click)="updateFamily(f)">{{settings.lang.familyDetails}}</a>
                                                     <br>
                                                     <a (click)="moveFromErrorToUpdate(i,f)"><span *ngIf="i.duplicateFamilyInfo.length>1">{{settings.lang.excelCompareToThisFamilyAnd}}</span> {{settings.lang.moveToUpdateFamilies}}</a>
                                                 </li>
@@ -148,7 +148,7 @@
                         <mat-checkbox [(ngModel)]="stopAskingQuestions">{{settings.lang.stopAskingForConfirmation}}</mat-checkbox>
                     </div>
                 </mat-tab>
-                <mat-tab label="{{settings.lang.familiesForUpdate|translate}} - {{updateRows.length}}"
+                <mat-tab label="{{settings.lang.familiesForUpdate}} - {{updateRows.length}}"
                     *ngIf="updateRows&&updateRows.length">
                     <div class="table-div">
                         <table class="table table-bordered" style="white-space: nowrap;">
@@ -168,11 +168,11 @@
                                     <td>
                                         <mat-menu #updatedRowOptions="matMenu">
                                             <button mat-menu-item
-                                                (click)="openFamilyInfo(i)">{{settings.lang.familyDetails|translate}}</button>
+                                                (click)="openFamilyInfo(i)">{{settings.lang.familyDetails}}</button>
                                             <button mat-menu-item
-                                                (click)="updateRows.splice(updateRows.indexOf(i),1)">{{settings.lang.removeFromFamiliesToUpdate|translate}}</button>
+                                                (click)="updateRows.splice(updateRows.indexOf(i),1)">{{settings.lang.removeFromFamiliesToUpdate}}</button>
                                             <button mat-menu-item
-                                                (click)="moveFromUpdateToAdd(i)">{{settings.lang.moveToNewFamilies|translate}}</button>
+                                                (click)="moveFromUpdateToAdd(i)">{{settings.lang.moveToNewFamilies}}</button>
                                         </mat-menu>
 
                                         <button mat-icon-button [matMenuTriggerFor]="updatedRowOptions">
@@ -201,9 +201,9 @@
                     <pagination-controls (pageChange)="updateRowsPage = $event" previousLabel="{{settings.lang.previous}}" nextLabel="{{settings.lang.next}}"
                         id="updateRows"></pagination-controls>
                 </mat-tab>
-                <mat-tab label="{{settings.lang.newFamilies|translate}} - {{newRows.length}}" *ngIf="newRows&&newRows.length">
+                <mat-tab label="{{settings.lang.newFamilies}} - {{newRows.length}}" *ngIf="newRows&&newRows.length">
                     <button (click)="addAll()" mat-raised-button
-                        color="accent">{{settings.lang.addAllFamilies|translate}}</button>
+                        color="accent">{{settings.lang.addAllFamilies}}</button>
                     <div class="table-div">
 
                         <table class="table table-bordered" style="white-space: nowrap;">
@@ -237,7 +237,7 @@
 
                 </mat-tab>
 
-                <mat-tab label="{{settings.lang.existingFamilies|translate}} - {{identicalRows.length}}"
+                <mat-tab label="{{settings.lang.existingFamilies}} - {{identicalRows.length}}"
                     *ngIf="identicalRows&&identicalRows.length">
                     <div class="table-div">
                         <table class="table table-bordered" style="white-space: nowrap;">

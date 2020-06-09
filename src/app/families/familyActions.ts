@@ -11,7 +11,7 @@ import { FamilySourceId } from "./FamilySources";
 import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer, serverUpdateInfo, pagedRowsIterator } from "./familyActionsWiring";
 import { DeliveryStatus } from "./DeliveryStatus";
 import { ActiveFamilyDeliveries } from "./FamilyDeliveries";
-import { translate, use, getLang } from "../translate";
+import { use, getLang } from "../translate";
 import { settings } from "cluster";
 import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
@@ -81,7 +81,7 @@ class NewDelivery extends ActionOnRows<Families> {
             onEnd: async () => {
                 let t = new PromiseThrottle(10);
                 for (const c of this.usedCouriers) {
-                    await t.push(AsignFamilyComponent.RefreshRoute(c,undefined, this.context));
+                    await t.push(AsignFamilyComponent.RefreshRoute(c, undefined, this.context));
                 }
                 await t.done();
             }
@@ -101,7 +101,7 @@ export class updateGroup extends ActionOnRows<Families> {
         super(context, Families, {
             columns: () => [this.group, this.action],
             confirmQuestion: () => this.action.value.caption + ' "' + this.group.value + '"',
-            title: translate(getLang(context).assignAFamilyGroup),
+            title: getLang(context).assignAFamilyGroup,
             allowed: Roles.admin,
             forEach: async f => {
                 this.action.value.whatToDo(f.groups, this.group.value);
@@ -186,7 +186,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
         super(context, Families, {
             allowed: Roles.admin,
             columns: () => [this.status, this.archiveFinshedDeliveries, this.deletePendingDeliveries, this.comment, this.deletePendingDeliveries],
-            help: () => translate(getLang(this.context).updateStatusHelp),
+            help: () => getLang(this.context).updateStatusHelp,
             dialogColumns: () => {
                 if (!this.status.value)
                     this.status.value = FamilyStatus.Active;
@@ -200,7 +200,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
 
                 ]
             },
-            title: translate(getLang(context).updateFamilyStatus),
+            title: getLang(context).updateFamilyStatus,
             forEach: async f => {
                 f.status.value = this.status.value;
                 if (this.deleteExistingComment) {
@@ -280,7 +280,7 @@ export class UpdateArea extends ActionOnRows<Families> {
         super(context, Families, {
             allowed: Roles.admin,
             columns: () => [this.area],
-            title: translate(getLang(context).updateArea),
+            title: getLang(context).updateArea,
             forEach: async f => { f.area.value = this.area.value },
         });
     }

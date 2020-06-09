@@ -394,7 +394,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
 
 
-    setLangForSite(org,settings.forWho.value.args.languageCode);
+    setLangForSite(org,settings.forWho.value);
 
 }
 

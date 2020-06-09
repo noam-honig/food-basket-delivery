@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Context } from '@remult/core';
 import { Column } from '@remult/core';
-import { translate, use, getLang } from '../translate';
+import { use, getLang } from '../translate';
 import { Helpers, HelperId } from '../helpers/helpers';
 import { UpdateCommentComponent } from '../update-comment/update-comment.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
@@ -129,7 +129,7 @@ export class HelperFamiliesComponent implements OnInit {
     this.assignmentCanceled.emit();
   }
   cancelAll() {
-    this.dialog.YesNoQuestion(use.language.areYouSureYouWantToCancelAssignmentTo + " " + this.familyLists.toDeliver.length + " " + translate(use.language.families + "?"), async () => {
+    this.dialog.YesNoQuestion(use.language.areYouSureYouWantToCancelAssignmentTo + " " + this.familyLists.toDeliver.length + " " + use.language.families + "?", async () => {
       await this.busy.doWhileShowingBusy(async () => {
 
         this.dialog.analytics('cancel all');
@@ -188,7 +188,7 @@ export class HelperFamiliesComponent implements OnInit {
   limitReady = new limitList(30, () => this.familyLists.toDeliver.length);
   limitDelivered = new limitList(10, () => this.familyLists.delivered.length);
   okAll() {
-    this.dialog.YesNoQuestion(use.language.areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies + this.familyLists.toDeliver.length + " " + translate(use.language.families + "?"), async () => {
+    this.dialog.YesNoQuestion(use.language.areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies + this.familyLists.toDeliver.length + " " + use.language.families + "?", async () => {
       await this.busy.doWhileShowingBusy(async () => {
 
         this.dialog.analytics('ok all');

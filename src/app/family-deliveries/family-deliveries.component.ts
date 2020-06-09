@@ -22,7 +22,7 @@ import { familyActionsForDelivery } from '../families/familyActions';
 import { async } from '@angular/core/testing';
 import { saveToExcel } from '../shared/saveToExcel';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { translate, getLang } from '../translate'
+import { getLang } from '../translate'
 
 @Component({
   selector: 'app-family-deliveries',
@@ -567,7 +567,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         visible: d => d.deliverStatus.value == DeliveryStatus.ReadyForDelivery && d.courier.value != ''
       },
       {
-        name: translate(getLang(this.context).familyDeliveries),
+        name: getLang(this.context).familyDeliveries,
         click: async fd => {
           let f = await this.context.for(Families).findId(fd.family);
           f.showDeliveryHistoryDialog();

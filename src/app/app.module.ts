@@ -57,7 +57,7 @@ import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-d
 
 
 import { ScrollDispatchModule } from '@angular/cdk/scrolling';
-import { TranslatePipe, translate } from './translate';
+
 import { SelectCompanyComponent } from './select-company/select-company.component';
 import { HelperAssignmentComponent } from './helper-assignment/helper-assignment.component';
 import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';
@@ -142,7 +142,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     UpdateGroupDialogComponent,
 
 
-    TranslatePipe,
+    
     SelectCompanyComponent,
     HelperAssignmentComponent,
     ImportHelpersFromExcelComponent,
@@ -184,7 +184,7 @@ export class MyHammerConfig extends HammerGestureConfig {
 
     DialogService,
 
-    TranslatePipe,
+    
     NewsFilterService,
     AuthService,
     {
@@ -242,28 +242,28 @@ export function initApp(session: JwtSessionManager, settings: SettingsService) {
 
       await settings.init();
       let l = settings.instance.lang;
-      routeMap.set(AsignFamilyComponent, translate(l.assignDeliveryMenu));
-      routeMap.set(AssignEscortComponent, translate(l.AssignEscortComponent));
-      routeMap.set(SelfPickupComponent, translate(l.SelfPickupComponent));
-      routeMap.set(FamilyDeliveriesComponent, translate(l.FamilyDeliveriesComponent));
-      routeMap.set(FamiliesComponent, translate(l.FamiliesComponent));
-      routeMap.set(DeliveryFollowUpComponent, translate(l.DeliveryFollowUpComponent));
-      routeMap.set(NewsComponent, translate(l.NewsComponent));
-      routeMap.set(DistributionMap, translate(l.DistributionMapComponent));
-      routeMap.set(OverviewComponent, translate(l.OverviewComponent));
-      routeMap.set(HelpersComponent, translate(l.HelpersComponent));
-      routeMap.set(DeliveryHistoryComponent, translate(l.DeliveryHistoryComponent));
-      routeMap.set(PlaybackComponent, translate(l.PlaybackComponent));
-      routeMap.set(GeocodeComponent, translate(l.GeocodeComponent));
-      routeMap.set(ImportFromExcelComponent, translate(l.ImportFromExcelComponent));
-      routeMap.set(ImportHelpersFromExcelComponent, translate(l.ImportHelpersFromExcelComponent));
-      routeMap.set(DuplicateFamiliesComponent, translate(l.DuplicateFamiliesComponent));
-      routeMap.set(ManageComponent, translate(l.ManageComponent));
-      routeMap.set(MyFamiliesComponent, translate(l.MyFamiliesComponent));
-      routeMap.set(UpdateInfoComponent, translate(l.UpdateInfoComponent));
-      routeMap.set(LoginComponent, translate(l.LoginComponent));
-      routeMap.set(RegisterComponent, translate(l.RegisterComponent));
-      routeMap.set(EventsComponent, translate(l.eventsComponent));
+      routeMap.set(AsignFamilyComponent, l.assignDeliveryMenu);
+      routeMap.set(AssignEscortComponent, l.AssignEscortComponent);
+      routeMap.set(SelfPickupComponent, l.SelfPickupComponent);
+      routeMap.set(FamilyDeliveriesComponent, l.FamilyDeliveriesComponent);
+      routeMap.set(FamiliesComponent, l.FamiliesComponent);
+      routeMap.set(DeliveryFollowUpComponent, l.DeliveryFollowUpComponent);
+      routeMap.set(NewsComponent, l.NewsComponent);
+      routeMap.set(DistributionMap, l.DistributionMapComponent);
+      routeMap.set(OverviewComponent, l.OverviewComponent);
+      routeMap.set(HelpersComponent, l.HelpersComponent);
+      routeMap.set(DeliveryHistoryComponent, l.DeliveryHistoryComponent);
+      routeMap.set(PlaybackComponent, l.PlaybackComponent);
+      routeMap.set(GeocodeComponent, l.GeocodeComponent);
+      routeMap.set(ImportFromExcelComponent, l.ImportFromExcelComponent);
+      routeMap.set(ImportHelpersFromExcelComponent, l.ImportHelpersFromExcelComponent);
+      routeMap.set(DuplicateFamiliesComponent, l.DuplicateFamiliesComponent);
+      routeMap.set(ManageComponent, l.ManageComponent);
+      routeMap.set(MyFamiliesComponent, l.MyFamiliesComponent);
+      routeMap.set(UpdateInfoComponent, l.UpdateInfoComponent);
+      routeMap.set(LoginComponent, l.LoginComponent);
+      routeMap.set(RegisterComponent, l.RegisterComponent);
+      routeMap.set(EventsComponent, l.eventsComponent);
 
 
 
