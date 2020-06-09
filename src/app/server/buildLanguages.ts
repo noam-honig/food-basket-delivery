@@ -53,29 +53,30 @@ export async function buildLanguageFiles() {
 
 
 
-    for (const lang of ["en", "es", "it", "donor", "soldier"]) {
-        let fileAndClassName = lang;
-        if (lang == 'it') {
-            fileAndClassName = 'italy';
-        }
+    for (const lang of [
+        TranslationOptions.southAfrica,
+        TranslationOptions.chile,
+        TranslationOptions.italy,
+        TranslationOptions.donors,
+        TranslationOptions.soldiers,
+    ]) {
+        let fileAndClassName = lang.args.languageCode;
+        if (lang.args.languageFile)
+            fileAndClassName = lang.args.languageFile;
+
         let known = {};
         try { known = loadLangFile(fileAndClassName); }
         catch{ }
         let knownEnglish = {};
-        if (lang == "es" || lang == "it") {
-            knownEnglish = loadLangFile("en");
+        if (lang.args.basedOnLang) {
+            knownEnglish = loadLangFile(lang.args.basedOnLang);
         }
         let translate = async (term: string) => {
-            return await googleTranslate(term, lang, lang == 'en' ? 'iw' : 'en');
+            return await googleTranslate(term, lang.args.languageCode, !lang.args.basedOnLang ? 'iw' : lang.args.basedOnLang);
         }
-        switch (lang) {
-            case "donor":
-                translate = async  x => TranslationOptions.Donors.translate(x);
-                break;
-            case "soldier":
-                translate = async  x => TranslationOptions.Soldiers.translate(x);
-                break;
-        }
+        if (lang.args.translateFunction)
+            translate = async x => lang.args.translateFunction(x);
+
 
         let result = '';
         let l = new Language();
@@ -115,13 +116,8 @@ export async function buildLanguageFiles() {
                 if (knownVal.custom)
                     v = knownVal.custom;
                 if (key == 'languageCode' || key == 'languageCodeHe') {
-                    v = lang;
-                    switch (lang) {
-                        case "donor":
-                        case "soldier":
-                            v = l[key];
-
-                    }
+                    if (lang.args.languageCode)
+                        v = lang.args.languageCode;
                 }
                 let r = v;
                 if (r.includes('\''))

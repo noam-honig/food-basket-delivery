@@ -14,9 +14,9 @@ export class TranslationOptions {
   static Families: TranslationOptions = new TranslationOptions(0, 'משפחות', {
     googleMapCountry: 'IL'
   });
-  static Donors: TranslationOptions = new TranslationOptions(1, 'תורמים', {
+  static donors: TranslationOptions = new TranslationOptions(1, 'תורמים', {
     googleMapCountry: 'IL',
-    languageFile:'donor',
+    languageFile: 'donor',
     translateFunction: s => s.replace(/משפחה אחת/g, "תורם אחד")
       .replace(/משפחות חוזרות/g, 'תורמים חוזרים')
       .replace(/משפחות מיוחדות/g, "תורמים מיוחדים")
@@ -27,9 +27,9 @@ export class TranslationOptions {
       .replace(/חדשה/g, 'חדש')
       .replace(/כפולות/g, 'כפולים')
   });
-  static Soldiers: TranslationOptions = new TranslationOptions(2, 'חיילים', {
+  static soldiers: TranslationOptions = new TranslationOptions(2, 'חיילים', {
     googleMapCountry: 'IL',
-    languageFile:'soldier',
+    languageFile: 'soldier',
     translateFunction: s =>
       s.replace(/משפחה אחת/g, "חייל אחד")
         .replace(/משפחות חוזרות/g, 'חיילים חוזרים')
@@ -45,36 +45,38 @@ export class TranslationOptions {
     googleMapCountry: 'ZA',
     leftToRight: true,
     languageCode: 'en',
-    languageFile:'en',
+    languageFile: 'en',
     internationalPrefixForSmsAndAws: '+27'
   });
   static italy: TranslationOptions = new TranslationOptions(4, 'Italy', {
     googleMapCountry: 'IT',
     leftToRight: true,
     languageCode: 'it',
-    languageFile:'it',
-    internationalPrefixForSmsAndAws: '+39'
+    languageFile: 'italy',
+    internationalPrefixForSmsAndAws: '+39',
+    basedOnLang: 'en'
   });
   static chile: TranslationOptions = new TranslationOptions(5, 'Chile', {
     googleMapCountry: 'CL',
     leftToRight: true,
-    languageFile:'es',
-    languageCode: 'es'
+    languageFile: 'es',
+    languageCode: 'es',
+    basedOnLang: 'en'
   });
   TranslateOption() {
 
   }
-  translate: (s: string) => string = s => s;
+  
   constructor(public id: number, public caption: string, public args: {
     leftToRight?: boolean,
     languageCode?: string,
     languageFile?: string,
     googleMapCountry: string,
+    basedOnLang?: string,
     translateFunction?: (s: string) => string,
     internationalPrefixForSmsAndAws?: string
   }) {
-    if (args.translateFunction)
-      this.translate = args.translateFunction;
+    
   }
 
 }
