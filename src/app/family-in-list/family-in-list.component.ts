@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { TranslationOptions } from '../translate';
 
 
 
@@ -12,7 +13,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 })
 export class FamilyInListComponent implements OnInit {
 
-  constructor(private sanitization: DomSanitizer,public settings:ApplicationSettings) { }
+  constructor(private sanitization: DomSanitizer, public settings: ApplicationSettings) { }
   @Input() f: ActiveFamilyDeliveries;
   @Input() i: number;
   @Input() newAssign: boolean;
@@ -21,6 +22,7 @@ export class FamilyInListComponent implements OnInit {
   ngOnInit() {
 
   }
+
   offsetX() {
     return this.sanitization.bypassSecurityTrustStyle('translateX(' + this.offsetXValue + 'px)');
   }
@@ -35,14 +37,15 @@ export class FamilyInListComponent implements OnInit {
 
   }
   horizontalPan(e: any) {
-    if (Math.abs(e.overallVelocityX) < 1) {
+    if (this.settings.forWho.value == TranslationOptions.Families)
+      if (Math.abs(e.overallVelocityX) < 1) {
 
-      this.offsetXValue = Math.max(-100, Math.min(0, e.deltaX));
+        this.offsetXValue = Math.max(-100, Math.min(0, e.deltaX));
 
-      this.swipe = this.offsetXValue <= -85;
+        this.swipe = this.offsetXValue <= -85;
 
 
-    }
+      }
   }
   panend(e: any) {
     this.offsetXValue = this.swipe ? -100 : 0;
