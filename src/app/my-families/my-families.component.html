@@ -16,7 +16,7 @@
 </div>
 <app-helper-families [familyLists]="familyLists"></app-helper-families>
 
-<mat-card *ngIf="this.events">
+<mat-card *ngIf="this.events&&this.events.length>0">
     <h3>{{settings.lang.pleaseRegisterToTheFollowingEvents}}</h3>
     <mat-accordion>
         <mat-expansion-panel *ngFor="let e of events">
