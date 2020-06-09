@@ -36,8 +36,10 @@ export async function GetGeoInformation(address: string, context: Context) {
             address: address,
             language: settings.lang.languageCode,
             components: 'country:' + settings.googleMapCountry()
+            // bounds:'32.196323,34.653055|32.354234,35.139650'
         });
         try {
+            // console.log(u.url);
             let r = fetch.default(u.url).then(async x => await x.json().then(async (r: GeocodeResult) => {
 
                 

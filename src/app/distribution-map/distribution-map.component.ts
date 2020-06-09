@@ -4,7 +4,7 @@ import { Component, OnInit, ViewChild, Sanitizer, OnDestroy } from '@angular/cor
 
 
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
-import { GeocodeInformation, GetGeoInformation, polygonContains } from '../shared/googleApiHelpers';
+import { GeocodeInformation, GetGeoInformation, polygonContains, polygonGetBounds } from '../shared/googleApiHelpers';
 
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
@@ -26,12 +26,13 @@ import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeli
 import { Sites } from '../sites/sites';
 import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser } from '../manage/distribution-centers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import {  getLang } from '../translate';
+import { getLang } from '../translate';
 import { delvieryActions, UpdateDistributionCenter, NewDelivery, UpdateDeliveriesStatus, UpdateCourier } from '../family-deliveries/family-deliveries-actions';
 import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, actionDialogNeeds } from '../families/familyActionsWiring';
 import { familyActionsForDelivery, UpdateArea, updateGroup } from '../families/familyActions';
 import { Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-distribution-map',
@@ -140,6 +141,11 @@ export class DistributionMap implements OnInit, OnDestroy {
 
     google.maps.event.addListener(dm, 'polygoncomplete', (polygon: google.maps.Polygon) => {
       this.activePolygon = polygon;
+      // let bounds = polygonGetBounds(polygon);
+      // let j = bounds.toJSON();
+      // console.log(j, bounds);
+
+
       this.drawing = false;
       let calcDeliveries = () => {
 
@@ -222,6 +228,17 @@ export class DistributionMap implements OnInit, OnDestroy {
       this.dict = new Map<string, infoOnMap>();
       this.bounds = new google.maps.LatLngBounds();
       this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
+      // var r = new google.maps.Rectangle({
+      //   map:this.map,
+      //   fillColor:'#FF0000',
+      //   fillOpacity:0.35,
+      //   bounds:{
+      //     north:32.246437,
+      //     south:32.382410,
+      //     west:34.790203,
+      //     east:34.897927
+      //   }
+      // });
       this.mapInit = true;
       await this.refreshDeliveries();
       this.map.fitBounds(this.bounds);
