@@ -424,12 +424,13 @@ export class FamilyDeliveries extends IdEntity {
                 break;
         }
     }
-    async showDetailsDialog(callerHelper?: {
+    async showDetailsDialog(callerHelper: {
         refreshDeliveryStats?: () => void,
         onSave?: () => Promise<void>,
         focusOnDelivery?: boolean,
         dialog: DialogService
     }) {
+        
 
         let showFamilyDetails = this.context.isAllowed(Roles.admin);
         if (showFamilyDetails) {

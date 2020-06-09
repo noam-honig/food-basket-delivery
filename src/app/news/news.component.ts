@@ -42,7 +42,7 @@ export class NewsComponent implements OnInit, OnDestroy {
 
     }
     async updateFamily(n: ActiveFamilyDeliveries) {
-        n.showDetailsDialog();
+        n.showDetailsDialog({dialog:this.dialog});
 
 
     }
