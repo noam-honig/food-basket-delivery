@@ -34,8 +34,8 @@ export async function GetGeoInformation(address: string, context: Context) {
         u.addObject({
             key: process.env.GOOGLE_GECODE_API_KEY,
             address: address,
-            language: settings.lang.languageCode,
-            components: 'country:' + settings.googleMapCountry()
+            language: settings.lang.languageCode
+            //,            components: 'country:' + settings.googleMapCountry()
             // bounds:'32.196323,34.653055|32.354234,35.139650'
         });
         try {
