@@ -145,7 +145,7 @@ export class ApplicationSettings extends Entity<number>  {
   excelImportAutoAddValues = new BoolColumn(this.lang.excelImportAutoAddValues);
   checkDuplicatePhones = new BoolColumn(this.lang.checkDuplicatePhones);
   volunteerCanUpdateComment = new BoolColumn(this.lang.volunteerCanUpdateComment);
-  volunteerCanUpdatePreferredDistributionAddress = new BoolColumn(this.lang.volunteerCanUpdatePreferredDistributionAddress);
+  
   showDistCenterAsEndAddressForVolunteer = new BoolColumn(this.lang.showDistCenterAsEndAddressForVolunteer);
   routeStrategy = new routeStrategyColumn();
 

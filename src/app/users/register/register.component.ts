@@ -26,6 +26,9 @@ export class RegisterComponent implements OnInit {
     columnSettings: h => [
       h.name,
       h.phone,
+      h.email,
+      { column: h.preferredDistributionAreaAddress },
+      { column: h.eventComment, visible: () => this.settings.volunteerCanUpdateComment.value },
       h.password,
       { column: this.confirmPassword },
     ],

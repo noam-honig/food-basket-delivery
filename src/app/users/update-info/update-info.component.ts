@@ -37,7 +37,7 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
       h.name,
       h.phone,
       h.email,
-      { column: h.preferredDistributionAreaAddress, visible: () => this.settings.volunteerCanUpdatePreferredDistributionAddress.value },
+      { column: h.preferredDistributionAreaAddress },
       { column: h.eventComment, visible: () => this.settings.volunteerCanUpdateComment.value },
       h.password,
       { column: this.confirmPassword },
