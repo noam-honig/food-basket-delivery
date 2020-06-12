@@ -87,13 +87,13 @@ export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
     usedCouriers: string[] = [];
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
-            allowed: Roles.admin,
+            allowed: Roles.distCenterAdmin,
             help: () => getLang(this.context).updateVolunteerHelp,
             columns: () => [this.clearVoulenteer, this.courier, this.updateAlsoAsFixed],
             dialogColumns: () => [
                 this.clearVoulenteer,
                 { column: this.courier, visible: () => !this.clearVoulenteer.value },
-                { column: this.updateAlsoAsFixed, visible: () => !this.clearVoulenteer.value }
+                { column: this.updateAlsoAsFixed, visible: () => !this.clearVoulenteer.value&&this.context.isAllowed(Roles.admin) }
 
             ],
             additionalWhere: fd => fd.deliverStatus.isNotAResultStatus(),
@@ -131,7 +131,7 @@ export class UpdateDeliveriesStatus extends ActionOnRows<ActiveFamilyDeliveries>
     deleteExistingComment = new BoolColumn(getLang(this.context).deleteExistingComment);
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
-            allowed: Roles.admin,
+            allowed: Roles.distCenterAdmin,
             columns: () => [this.status, this.comment, this.deleteExistingComment],
             title: getLang(context).updateDeliveriesStatus,
             help: () => getLang(this.context).updateDeliveriesStatusHelp,
@@ -188,7 +188,7 @@ class UpdateBasketType extends ActionOnRows<ActiveFamilyDeliveries> {
     basketType = new BasketId(this.context);
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
-            allowed: Roles.admin,
+            allowed: Roles.distCenterAdmin,
             columns: () => [this.basketType],
             title: getLang(context).updateBasketType,
             forEach: async f => { f.basketType.value = this.basketType.value },
@@ -200,7 +200,7 @@ class UpdateQuantity extends ActionOnRows<ActiveFamilyDeliveries> {
     quantity = new QuantityColumn(this.context);
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
-            allowed: Roles.admin,
+            allowed: Roles.distCenterAdmin,
             columns: () => [this.quantity],
             title: getLang(context).updateBasketQuantity,
             forEach: async f => { f.quantity.value = this.quantity.value },
