@@ -661,4 +661,8 @@ export class donor implements Language {
   illBeThere = 'רשום אותי לארוע זה';
   registeredToEvent = 'הנך רשום לארוע זה';
   iCantMakeIt = 'לא אוכל להגיע לארוע';
+  distributionCenterComment = 'הערה';
+  distributionCenterName = 'שם';
+  distributionCenterUniqueId = 'סמל';
+  distributionCenterDetails = 'פרטים';
 }

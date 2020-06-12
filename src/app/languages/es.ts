@@ -661,4 +661,8 @@ export class es implements Language {
   illBeThere = 'Inscríbeme para este evento';
   registeredToEvent = 'Estás registrado para este evento';
   iCantMakeIt = 'No puedo ir al evento';
+  distributionCenterComment = 'Nota';
+  distributionCenterName = 'Nombre';
+  distributionCenterUniqueId = 'símbolo';
+  distributionCenterDetails = 'Detalles';
 }

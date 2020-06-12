@@ -771,6 +771,22 @@
     "google": "הצג חייל כפי שתנדב יראה אותה",
     "valueInCode": "הצג משפחה כפי שתנדב יראה אותה"
   },
+  "distributionCenterComment": {
+    "google": "הערה",
+    "valueInCode": "הערה"
+  },
+  "distributionCenterDetails": {
+    "google": "פרטים",
+    "valueInCode": "פרטים"
+  },
+  "distributionCenterName": {
+    "google": "שם",
+    "valueInCode": "שם"
+  },
+  "distributionCenterUniqueId": {
+    "google": "סמל",
+    "valueInCode": "סמל"
+  },
   "distributionCity": {
     "google": "עיר לחלוקה",
     "valueInCode": "עיר לחלוקה"

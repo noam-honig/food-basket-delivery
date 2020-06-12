@@ -1,6 +1,6 @@
-import { IdEntity, EntityClass, StringColumn, Context, IdColumn, ColumnOptions, AndFilter } from "@remult/core";
+import { IdEntity, EntityClass, StringColumn, Context, IdColumn, ColumnOptions, AndFilter, BoolColumn } from "@remult/core";
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
-import { HasAsyncGetTheValue } from "../model-shared/types";
+import { HasAsyncGetTheValue, PhoneColumn } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { HelperUserInfo } from "../helpers/helpers";
 import { ApplicationSettings } from "./ApplicationSettings";
@@ -12,10 +12,18 @@ import { getLang } from "../translate";
 export class DistributionCenters extends IdEntity {
 
 
-  name = new StringColumn({ caption: "שם" });
-  semel = new StringColumn({ caption: "סמל", allowApiUpdate: Roles.admin });
-  address = new StringColumn("כתובת מרכז השילוח");
+  name = new StringColumn({ caption: getLang(this.context).distributionCenterName });
+  semel = new StringColumn({ caption: getLang(this.context).distributionCenterUniqueId});
+  address = new StringColumn(getLang(this.context).deliveryCenterAddress);
   addressApiResult = new StringColumn();
+  comments = new StringColumn(getLang(this.context).distributionCenterComment);
+  phone1 = new PhoneColumn(getLang(this.context).phone1);
+  phone1Description = new StringColumn(getLang(this.context).phone1Description);
+  phone2 = new PhoneColumn(getLang(this.context).phone2);
+  phone2Description = new StringColumn(getLang(this.context).phone2Description);
+  
+  
+
   private _lastString: string;
   private _lastGeo: GeocodeInformation;
   getGeocodeInformation() {
@@ -30,7 +38,7 @@ export class DistributionCenters extends IdEntity {
   }
 
 
-  constructor(context: Context) {
+  constructor(private context: Context) {
     super({
       name: "DistributionCenters",
       allowApiRead: context.isSignedIn(),

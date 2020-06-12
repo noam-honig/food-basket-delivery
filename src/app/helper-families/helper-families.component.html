@@ -7,8 +7,7 @@
           style="color:red;">{{settings.lang.cancelAllAssignments}}</button>
         <button mat-menu-item (click)="okAll()" *ngIf="partOfAssign"
           class="primary-menu">{{settings.lang.markAllDeliveriesAsSuccesfull}}</button>
-        <button mat-menu-item
-          (click)="familyLists.showBasketSummary()">{{settings.lang.parcelSummary}}</button>
+        <button mat-menu-item (click)="familyLists.showBasketSummary()">{{settings.lang.parcelSummary}}</button>
         <button mat-menu-item (click)="refreshRoute()">{{settings.lang.replanRoute}}</button>
         <button mat-menu-item (click)="showRouteOnGoogleMaps()">
           {{settings.lang.showRouteOnGoogleMaps}}</button>
@@ -70,6 +69,10 @@
               <mat-panel-description>{{familyLists.distCenter.address.value}}</mat-panel-description>
             </div>
           </mat-expansion-panel-header>
+          <div *ngIf="familyLists.distCenter.comments.value">
+            <mat-icon color="accent" style="vertical-align: middle">comment</mat-icon>
+            <strong style="color:red">{{settings.lang.notice}} </strong> {{familyLists.distCenter.comments.value}}
+          </div>
           <h4>{{settings.lang.address}}</h4>
           <div style="display:flex">
             <span (click)="familyLists.distCenter.openWaze()">
@@ -78,15 +81,34 @@
             </span>
             <div style="flex-grow:1;padding:0 5px;">
               <a (click)="familyLists.distCenter.openWaze()">
-
-
-
                 <span style="display:block"> {{familyLists.distCenter.address.value}} </span>
-
               </a>
-
             </div>
+          </div>
 
+          <h4 *ngIf="familyLists.distCenter.phone1.value || familyLists.distCenter.phone2.value">{{settings.lang.phones}}:</h4>
+          <div *ngIf="familyLists.distCenter.phone1.value" class="phone-container">
+            <a href="tel:{{familyLists.distCenter.phone1.value}}">
+              <button mat-mini-fab style="vertical-align: middle" color="primary">
+                <mat-icon>call</mat-icon>
+              </button>
+            </a>
+            <div>
+              <a href="tel:{{familyLists.distCenter.phone1.value}}">{{familyLists.distCenter.phone1.displayValue}}</a>,
+              {{familyLists.distCenter.phone1Description.value?familyLists.distCenter.phone1Description.value:familyLists.distCenter.name.value}}
+            </div>
+          </div>
+        
+          <div *ngIf="familyLists.distCenter.phone2.value" class="phone-container">
+            <a href="tel:{{familyLists.distCenter.phone2.value}}">
+              <button mat-mini-fab style="vertical-align: middle" color="primary">
+                <mat-icon>call</mat-icon>
+              </button>
+            </a>
+            <div>
+              <a href="tel:{{familyLists.distCenter.phone2.value}}">{{familyLists.distCenter.phone2.displayValue}}</a>,
+              {{familyLists.distCenter.phone2Description.value?familyLists.distCenter.phone2Description.value:familyLists.distCenter.name.value}}
+            </div>
           </div>
         </mat-expansion-panel>
       </mat-accordion>

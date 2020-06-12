@@ -96,18 +96,48 @@ export class ManageComponent implements OnInit {
   });
   distributionCenters = this.context.for(DistributionCenters).gridSettings({
     hideDataArea: true,
+    rowButtons: [{
+      name: this.settings.lang.distributionCenterDetails,
+      click: async d => {
+        this.context.openDialog(InputAreaComponent, x => x.args = {
+          title: d.name.value,
+          ok: async () => await d.save(),
+          settings: {
+            columnSettings: () => [
+              d.name,
+              d.address,
+              {
+                caption: this.settings.lang.addressByGoogle,
+                getValue: () => d.getGeocodeInformation().getAddress()
+              },
+              d.comments,
+              [d.phone1, d.phone1Description],
+              [d.phone2, d.phone2Description],
+              d.semel
+            ]
+          }
+        });
+      }
+    }
+    ],
     columnSettings: x => [
       x.name,
-      {
-        column: x.semel,
-        width: '100px'
-      },
+
       {
         column: x.address,
       },
       {
-        caption: 'כתובת כפי שגוגל הבין',
+        caption: this.settings.lang.addressByGoogle,
         getValue: s => s.getGeocodeInformation().getAddress()
+      },
+      x.comments,
+      x.phone1,
+      x.phone1Description,
+      x.phone2,
+      x.phone2Description,
+      {
+        column: x.semel,
+        width: '100px'
       }
     ],
     get: {
@@ -117,7 +147,7 @@ export class ManageComponent implements OnInit {
       this.refreshEnvironmentAfterSave();
 
     },
-
+    numOfColumnsInGrid:4,
     allowUpdate: true,
     allowInsert: true,
 
@@ -363,7 +393,7 @@ export class ManageComponent implements OnInit {
   }
   resetToDefault() {
     this.settings.id.value = 1;
-    
+
     this.settings.smsText.value = this.settings.lang.defaultSmsText;
     this.settings.reminderSmsText.value = this.settings.lang.reminderSmsText;
     this.settings.commentForSuccessDelivery.value = this.settings.lang.commentForSuccessDelivery;

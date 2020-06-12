@@ -661,4 +661,8 @@ export class en implements Language {
   illBeThere = 'Sign me up for this event';
   registeredToEvent = 'You are registered for this event';
   iCantMakeIt = "I can't go to the event";
+  distributionCenterComment = 'Note';
+  distributionCenterName = 'Name';
+  distributionCenterUniqueId = 'symbol';
+  distributionCenterDetails = 'Details';
 }

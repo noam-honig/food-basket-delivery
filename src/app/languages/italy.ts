@@ -661,4 +661,8 @@ export class italy implements Language {
   illBeThere = 'Registrami per questo evento';
   registeredToEvent = 'Sei registrato per questo evento';
   iCantMakeIt = "Non posso andare all'evento";
+  distributionCenterComment = 'Nota';
+  distributionCenterName = 'Nome';
+  distributionCenterUniqueId = 'simbolo';
+  distributionCenterDetails = 'Dettagli';
 }

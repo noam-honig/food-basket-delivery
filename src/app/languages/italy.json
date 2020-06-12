@@ -965,6 +965,26 @@
     "valueInCode": "הצג משפחה כפי שתנדב יראה אותה",
     "valueInEnglish": "View a family as a volunteer will see her"
   },
+  "distributionCenterComment": {
+    "google": "Nota",
+    "valueInCode": "הערה",
+    "valueInEnglish": "Note"
+  },
+  "distributionCenterDetails": {
+    "google": "Dettagli",
+    "valueInCode": "פרטים",
+    "valueInEnglish": "Details"
+  },
+  "distributionCenterName": {
+    "google": "Nome",
+    "valueInCode": "שם",
+    "valueInEnglish": "Name"
+  },
+  "distributionCenterUniqueId": {
+    "google": "simbolo",
+    "valueInCode": "סמל",
+    "valueInEnglish": "symbol"
+  },
   "distributionCity": {
     "google": "Una città per la distribuzione",
     "valueInCode": "עיר לחלוקה",

@@ -962,7 +962,7 @@ export class ImportFromExcelComponent implements OnInit {
                             suspectAddress++;
                     }
                     let precent = (suspectAddress * 100 / rows.length);
-                    if (precent > 30 && updatedColumns.get(this.f.addressLatitude)) {
+                    if (precent > 30 && updatedColumns.get(this.f.address)) {
                         if (await this.dialog.YesNoPromise(precent.toFixed() + "% " + use.language.manyAddressesEndWithNumber)) {
                             this.stepper.previous();
                             this.stepper.previous();

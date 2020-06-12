@@ -897,6 +897,22 @@
     "google": "View a family as a volunteer will see her",
     "valueInCode": "הצג משפחה כפי שתנדב יראה אותה"
   },
+  "distributionCenterComment": {
+    "google": "Note",
+    "valueInCode": "הערה"
+  },
+  "distributionCenterDetails": {
+    "google": "Details",
+    "valueInCode": "פרטים"
+  },
+  "distributionCenterName": {
+    "google": "Name",
+    "valueInCode": "שם"
+  },
+  "distributionCenterUniqueId": {
+    "google": "symbol",
+    "valueInCode": "סמל"
+  },
   "distributionCity": {
     "google": "A city for distribution",
     "valueInCode": "עיר לחלוקה"
