@@ -8,7 +8,7 @@ import { ServerEventAuthorizeAction } from "../server/server-event-authorize-act
 import { Subject } from "rxjs";
 import { myThrottle } from "../model-shared/types";
 import { TestComponentRenderer } from "@angular/core/testing";
-import { DistributionCenterId, DistributionCenters } from "../manage/distribution-centers";
+import { DistributionCenterId, DistributionCenters, allCentersToken } from "../manage/distribution-centers";
 import { Roles } from "../auth/roles";
 import { HelperUserInfo } from "../helpers/helpers";
 import { RouteReuseStrategy } from "@angular/router";
@@ -67,7 +67,7 @@ export class DialogService {
     constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private context: Context, private routeReuseStrategy: RouteReuseStrategy) {
         this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));
         if (this.distCenter.value === undefined)
-            this.distCenter.value = "";
+            this.distCenter.value = allCentersToken;
 
     }
     refreshFamiliesAndDistributionCenters() {
