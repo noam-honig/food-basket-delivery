@@ -665,4 +665,6 @@ export class donor implements Language {
   distributionCenterName = 'שם';
   distributionCenterUniqueId = 'סמל';
   distributionCenterDetails = 'פרטים';
+  thisFamilyHas = 'לתורם זה יש';
+  deliveries_ShouldWeDeleteThem = 'משלוחים פעילים - האם למחוק אותם?';
 }

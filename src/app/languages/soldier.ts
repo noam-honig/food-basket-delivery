@@ -665,4 +665,6 @@ export class soldier implements Language {
   distributionCenterName = 'שם';
   distributionCenterUniqueId = 'סמל';
   distributionCenterDetails = 'פרטים';
+  thisFamilyHas = 'לחייל זה יש';
+  deliveries_ShouldWeDeleteThem = 'משלוחים פעילים - האם למחוק אותם?';
 }

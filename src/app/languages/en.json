@@ -768,6 +768,11 @@
     "valueInCode": "משלוחים",
     "custom": "Deliveries"
   },
+  "deliveries_ShouldWeDeleteThem": {
+    "google": "Active shipments - delete them?",
+    "valueInCode": "משלוחים פעילים - האם למחוק אותם?",
+    "custom": "Active Deliveries, do you want to Delete them?"
+  },
   "deliveriesAssignAllOfThem": {
     "google": " Deliveries - associate them all?",
     "valueInCode": " משלוחים - לשייך את כולם?",
@@ -2561,6 +2566,10 @@
   "thereAreAdditional": {
     "google": "There are more",
     "valueInCode": "ישנן עוד "
+  },
+  "thisFamilyHas": {
+    "google": "This family has",
+    "valueInCode": "למשפחה זו יש"
   },
   "toDate": {
     "google": "Until",

@@ -825,6 +825,11 @@
     "valueInCode": "משלוחים",
     "valueInEnglish": "Deliveries"
   },
+  "deliveries_ShouldWeDeleteThem": {
+    "google": "Consegne attive, vuoi cancellarle?",
+    "valueInCode": "משלוחים פעילים - האם למחוק אותם?",
+    "valueInEnglish": "Active Deliveries, do you want to Delete them?"
+  },
   "deliveriesAssignAllOfThem": {
     "google": "Consegne - assegnale tutte?",
     "valueInCode": " משלוחים - לשייך את כולם?",
@@ -2935,6 +2940,11 @@
     "google": "Ci sono più",
     "valueInCode": "ישנן עוד ",
     "valueInEnglish": "There are more"
+  },
+  "thisFamilyHas": {
+    "google": "Questa famiglia ha",
+    "valueInCode": "למשפחה זו יש",
+    "valueInEnglish": "This family has"
   },
   "toDate": {
     "google": "Fino a",

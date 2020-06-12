@@ -22,6 +22,7 @@ import { MatExpansionPanel } from '@angular/material';
 import { ShowOnMapComponent } from '../show-on-map/show-on-map.component';
 import { Location, getAddress, getCity } from '../shared/googleApiHelpers';
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
+import { FamilyStatus } from '../families/FamilyStatus';
 
 @Component({
   selector: 'app-update-family-dialog',
@@ -185,6 +186,8 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   confirmed = false;
   async confirm() {
     this.confirmed = true;
+    let status = this.families.currentRow.status;
+    let statusChangedOutOfActive = wasChanged(status) && status.value != FamilyStatus.Active;
     await this.families.currentRow.save();
     if (this.delivery) {
       let d = this.delivery;
@@ -195,6 +198,17 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       if (courierChanged)
         await AsignFamilyComponent.RefreshRoute(this.delivery.courier.value, {});
 
+    }
+    if (statusChangedOutOfActive) {
+      let activeDeliveries = await this.context.for(ActiveFamilyDeliveries).find({ where: fd => fd.family.isEqualTo(this.families.currentRow.id).and(fd.deliverStatus.isActiveDelivery()) });
+      if (activeDeliveries.length > 0) {
+        if (await this.dialog.YesNoPromise(this.settings.lang.thisFamilyHas + " " + activeDeliveries.length + " " + this.settings.lang.deliveries_ShouldWeDeleteThem)) {
+          for (const d of activeDeliveries) {
+            await d.delete();
+            this.refreshDeliveryStatistics = true;
+          }
+        }
+      }
     }
 
     this.dialogRef.close();

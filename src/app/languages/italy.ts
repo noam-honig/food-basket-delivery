@@ -665,4 +665,6 @@ export class italy implements Language {
   distributionCenterName = 'Nome';
   distributionCenterUniqueId = 'simbolo';
   distributionCenterDetails = 'Dettagli';
+  thisFamilyHas = 'Questa famiglia ha';
+  deliveries_ShouldWeDeleteThem = 'Consegne attive, vuoi cancellarle?';
 }

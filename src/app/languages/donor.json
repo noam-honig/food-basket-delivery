@@ -659,6 +659,10 @@
     "google": "משלוחים",
     "valueInCode": "משלוחים"
   },
+  "deliveries_ShouldWeDeleteThem": {
+    "google": "משלוחים פעילים - האם למחוק אותם?",
+    "valueInCode": "משלוחים פעילים - האם למחוק אותם?"
+  },
   "deliveriesAssignAllOfThem": {
     "google": " משלוחים - לשייך את כולם?",
     "valueInCode": " משלוחים - לשייך את כולם?"
@@ -2346,6 +2350,10 @@
   "thereAreAdditional": {
     "google": "ישנן עוד ",
     "valueInCode": "ישנן עוד "
+  },
+  "thisFamilyHas": {
+    "google": "לתורם זה יש",
+    "valueInCode": "למשפחה זו יש"
   },
   "toDate": {
     "google": "עד תאריך",

@@ -782,6 +782,8 @@ export class Language {
   distributionCenterName = "שם";
   distributionCenterUniqueId = "סמל";
   distributionCenterDetails = "פרטים";
+  thisFamilyHas="למשפחה זו יש";
+  deliveries_ShouldWeDeleteThem= 'משלוחים פעילים - האם למחוק אותם?';
 }
 
 const defaultLang = new Language();

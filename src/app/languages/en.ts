@@ -665,4 +665,6 @@ export class en implements Language {
   distributionCenterName = 'Name';
   distributionCenterUniqueId = 'symbol';
   distributionCenterDetails = 'Details';
+  thisFamilyHas = 'This family has';
+  deliveries_ShouldWeDeleteThem = 'Active Deliveries, do you want to Delete them?';
 }
