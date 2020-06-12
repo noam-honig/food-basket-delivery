@@ -328,14 +328,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.destroyHelper.destroy();
     }
     constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public settings: ApplicationSettings) {
-        if (this.dialog.distCenter.value === undefined) {
-            this.dialog.distCenter.value = '';
-        }
-        this.dialog.onDistCenterChange(() => this.clearHelperInfo(), this.destroyHelper);
+        
 
-    }
-    disableAll() {
-        return this.dialog.distCenter.value == allCentersToken;
     }
     filterOptions: BoolColumn[] = [];
     async ngOnInit() {
@@ -486,7 +480,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         let f = context.for(ActiveFamilyDeliveries).create();
         let fd = context.for(FamilyDeliveries).create();
         if (info.helperId) {
-            let r = await db.execute(sql.build('select count(*) from ', f, ' where ', f.active().and(f.distributionCenter.filter(info.distCenter)).and(f.readyFilter(info.filterCity, info.filterGroup, info.filterArea).and(f.special.isEqualTo(YesNo.No))), ' and ',
+            let r = await db.execute(sql.build('select count(*) from ', f, ' where ', f.active().and(f.filterDistCenterAndAllowed(info.distCenter)).and(f.readyFilter(info.filterCity, info.filterGroup, info.filterArea).and(f.special.isEqualTo(YesNo.No))), ' and ',
                 filterRepeatFamilies(sql, f, fd, info.helperId)));
             result.repeatFamilies = r.rows[0][r.getColumnKeyInResultForIndexInSelect(0)];
         }
