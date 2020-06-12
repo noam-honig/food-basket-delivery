@@ -826,8 +826,8 @@ export class ImportFromExcelComponent implements OnInit {
         this.updateRows = [];
         this.identicalRows = [];
         let rows: excelRowInfo[] = [];
-        let usedTz = new Map<number, number>();
-        let usedPhone = new Map<number, number>();
+        let usedTz = new Map<number, excelRowInfo>();
+        let usedPhone = new Map<number, excelRowInfo>();
         this.stepper.next();
         let updatedColumns = this.buildUpdatedColumns();
         await this.busy.doWhileShowingBusy(async () => {
@@ -880,7 +880,7 @@ export class ImportFromExcelComponent implements OnInit {
                     }
                     else {
 
-                        let exists = (val: string, map: Map<number, number>, caption: string) => {
+                        let exists = (val: string, map: Map<number, excelRowInfo>, caption: string) => {
                             let origVal = val;
                             if (!val)
                                 return false;
@@ -890,12 +890,12 @@ export class ImportFromExcelComponent implements OnInit {
                             if (+val == 0)
                                 return false;
                             let x = map.get(+val);
-                            if (x > 0 && x < index) {
-                                f.error = caption + ' - ' + origVal + ' - ' + use.language.alreadyExistsInLine + ' ' + x;
-                                f.otherExcelRow = rows.find(y => y.rowInExcel == x);
+                            if (x && x.rowInExcel < index) {
+                                f.error = caption + ' - ' + origVal + ' - ' + use.language.alreadyExistsInLine + ' ' + x.rowInExcel;
+                                f.otherExcelRow = x;
                                 return true;
                             }
-                            map.set(+val, index);
+                            map.set(+val, f);
                             return false;
                         };
                         if (!this.settings.checkDuplicatePhones.value) {
