@@ -50,7 +50,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
 
     private context: Context,
     public settings: ApplicationSettings,
-    private dialog: DialogService,
+    public dialog: DialogService,
     private cd: ChangeDetectorRef,
     private zone: NgZone
 
