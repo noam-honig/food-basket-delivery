@@ -266,7 +266,7 @@ export class FamiliesComponent implements OnInit {
                 families.tz,
                 families.tz2,
                 families.iDinExcel,
-                families.deliveryComments,
+                
                 families.special,
                 families.createUser,
                 families.createDate,
