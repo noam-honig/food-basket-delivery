@@ -210,7 +210,6 @@ text-area {
   background-color: #ff4050 !important;
 }
 
-
 .one-line {
   display: flex;
   justify-content: space-between;
@@ -343,9 +342,14 @@ textarea {
   border-top: 17px solid #fff;
 }
 
-.followup-list-item{
+.followup-list-item {
   .mat-list-item-content {
-    padding: 0px!important;
-    
+    padding: 0px !important;
+  }
 }
+.select-helper-dialog {
+  .mat-dialog-container {
+    
+  //  padding: 25px 5px;
+  }
 }

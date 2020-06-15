@@ -256,7 +256,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   filterCourier = new HelperId(this.context, {
     caption: this.settings.lang.volunteer,
     valueChange: () => this.refreshDeliveries()
-  }, h => h.allDeliveires.isGreaterThan(0));
+  }, {filter:h => h.allDeliveires.isGreaterThan(0)});
 
   overviewMap = false;
   async refreshDeliveries() {

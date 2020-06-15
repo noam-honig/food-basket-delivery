@@ -90,6 +90,8 @@ export class FamilyDeliveries extends IdEntity {
     courier = new HelperId(this.context, {
         caption: getLang(this.context).volunteer,
         allowApiUpdate: Roles.distCenterAdmin
+    },{
+        location:()=>this.getDrivingLocation()
     });
     courierComments = new StringColumn(getLang(this.context).commentsWritteByVolunteer);
     internalDeliveryComment = new StringColumn({ caption: getLang(this.context).internalComment, includeInApi: Roles.admin });

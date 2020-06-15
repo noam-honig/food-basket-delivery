@@ -29,8 +29,8 @@ export async function GetGeoInformation(address: string, context: Context) {
     let x = pendingRequests.get(address);
     if (!x) {
         let u = new UrlBuilder('https://maps.googleapis.com/maps/api/geocode/json');
-        
-        
+
+
         u.addObject({
             key: process.env.GOOGLE_GECODE_API_KEY,
             address: address,
@@ -42,14 +42,14 @@ export async function GetGeoInformation(address: string, context: Context) {
             // console.log(u.url);
             let r = fetch.default(u.url).then(async x => await x.json().then(async (r: GeocodeResult) => {
 
-                
+
                 cacheEntry.id.value = address;
                 cacheEntry.googleApiResult.value = JSON.stringify(r);
                 cacheEntry.createDate.value = new Date();
                 try {
                     await cacheEntry.save();
                 } catch{
-                    
+
                 }
                 let g = new GeocodeInformation(r as GeocodeResult);
                 if (!g.ok())
@@ -69,7 +69,7 @@ export async function GetGeoInformation(address: string, context: Context) {
         }
     }
     else {
-        
+
     }
     return await x;
 
@@ -340,4 +340,7 @@ export function leaveOnlyNumericChars(x: string) {
         }
     }
     return x;
+}
+export function GetDistanceBetween(a: Location, b: Location) {
+    return google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(a.lat, a.lng), new google.maps.LatLng(b.lat, b.lng))/1000;
 }

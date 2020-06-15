@@ -2,17 +2,25 @@ import { Component, OnInit } from '@angular/core';
 
 import { MatDialogRef } from '@angular/material/dialog';
 import { Helpers, HelpersBase } from '../helpers/helpers';
-import { Context, FindOptions } from '@remult/core';
+import { Context, FindOptions, ServerFunction, DialogConfig } from '@remult/core';
 import { FilterBase } from '@remult/core';
 
 import { BusyService } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
+import { Location, GetDistanceBetween } from '../shared/googleApiHelpers';
+import { Roles } from '../auth/roles';
 
 @Component({
   selector: 'app-select-helper',
   templateUrl: './select-helper.component.html',
   styleUrls: ['./select-helper.component.scss']
+})
+@DialogConfig({
+  minWidth: '330px',
+
+  maxWidth: '90vw',
+  panelClass: 'select-helper-dialog'
 })
 export class SelectHelperComponent implements OnInit {
 
@@ -20,17 +28,18 @@ export class SelectHelperComponent implements OnInit {
   lastFilter: string = undefined;
   public args: {
     hideRecent?: boolean,
+    location?: Location,
     onSelect: (selectedValue: HelpersBase) => void,
     filter?: (helper: HelpersAndStats) => FilterBase
 
   };
-  filteredHelpers: HelpersBase[] = [];
+  filteredHelpers: helperInList[] = [];
   constructor(
     private dialogRef: MatDialogRef<any>,
 
     private context: Context,
     private busy: BusyService,
-    public settings:ApplicationSettings
+    public settings: ApplicationSettings
 
   ) {
 
@@ -38,7 +47,33 @@ export class SelectHelperComponent implements OnInit {
   clearHelper() {
     this.select(undefined);
   }
+  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  static async getHelpersByLocation(location: Location, context?: Context) {
+    let helpers = new Map<string, helperInList>();
+    await (await context.for(Helpers).find()).forEach(h => {
+      helpers.set(h.id.value, {
+        helperId: h.id.value,
+        name: h.name.value,
+        phone: h.phone.displayValue,
+        distance: 99999999
+      });
+      if (h.getGeocodeInformation().ok()) {
+        helpers.get(h.id.value).distance = GetDistanceBetween(h.getGeocodeInformation().location(), location);
+      }
 
+    });
+    return [...helpers.values()].sort((a, b) => a.distance - b.distance);;
+
+
+
+
+  }
+  close() {
+    this.dialogRef.close();
+  }
+  async byLocation(){
+      this.filteredHelpers = await SelectHelperComponent.getHelpersByLocation(this.args.location);
+  }
 
   findOptions = {
     orderBy: h => [h.name], limit: 25
@@ -58,7 +93,7 @@ export class SelectHelperComponent implements OnInit {
     if (Helpers.recentHelpers.length == 0 || this.args.hideRecent)
       this.getHelpers();
     else {
-      this.filteredHelpers = [...Helpers.recentHelpers];
+      this.filteredHelpers = mapHelpers(Helpers.recentHelpers);
       this.showingRecentHelpers = true;
     }
 
@@ -71,7 +106,7 @@ export class SelectHelperComponent implements OnInit {
   async getHelpers() {
 
     await this.busy.donotWait(async () => {
-      this.filteredHelpers = await this.context.for(HelpersAndStats).find(this.findOptions);
+      this.filteredHelpers = mapHelpers(await this.context.for(HelpersAndStats).find(this.findOptions));
       this.showingRecentHelpers = false;
     });
 
@@ -90,10 +125,29 @@ export class SelectHelperComponent implements OnInit {
     if (this.filteredHelpers.length > 0)
       this.select(this.filteredHelpers[0]);
   }
-  select(h: HelpersBase) {
-    this.args.onSelect(h);
-    if (h && !h.isNew())
-      Helpers.addToRecent(h);
+  select(h: helperInList) {
+    this.args.onSelect(h.helper);
+    if (h && !h.helper.isNew())
+      Helpers.addToRecent(h.helper);
     this.dialogRef.close();
   }
+}
+
+interface helperInList {
+  helper?: HelpersBase,
+  helperId: string,
+  name: string,
+  phone: string,
+  distance?: number,
+  asignedFamilies?: number,
+  fixedFamilies?: number
+}
+function mapHelpers(helpers: HelpersBase[]): helperInList[] {
+  return helpers.map(h => ({
+    helper: h,
+    helperId: h.id.value,
+    name: h.name.value,
+    phone: h.phone.displayValue
+
+  } as helperInList));
 }

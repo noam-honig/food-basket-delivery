@@ -318,6 +318,7 @@ export class FamiliesComponent implements OnInit {
             ];
             this.normalColumns = [
                 families.name,
+                families.fixedCourier,
                 families.address,
                 families.phone1,
                 families.groups

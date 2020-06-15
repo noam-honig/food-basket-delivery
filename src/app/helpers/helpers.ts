@@ -11,7 +11,7 @@ import { SelectCompanyComponent } from "../select-company/select-company.compone
 import { DistributionCenterId } from '../manage/distribution-centers';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 import { getLang } from '../translate';
-import { GeocodeInformation, GetGeoInformation } from '../shared/googleApiHelpers';
+import { GeocodeInformation, GetGeoInformation, Location } from '../shared/googleApiHelpers';
 import { routeStats } from '../asign-family/route-strategy';
 
 
@@ -102,7 +102,7 @@ export class Helpers extends HelpersBase {
                                 canUpdate = true;
                             if (!this.realStoredPassword.value && this.realStoredPassword.value.length == 0) //it's the first time I'm setting the password
                                 canUpdate = true;
-                            if (!wasChanged(this.admin, this.distCenterAdmin,this.password))
+                            if (!wasChanged(this.admin, this.distCenterAdmin, this.password))
                                 canUpdate = true;
                         }
                         else {
@@ -283,7 +283,10 @@ export class Helpers extends HelpersBase {
 
 export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 
-    constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>, filter?: (helper: HelpersAndStats) => FilterBase) {
+    constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>, args?: {
+        filter?: (helper: HelpersAndStats) => FilterBase,
+        location?: () => Location
+    }) {
         super({
             dataControlSettings: () =>
                 ({
@@ -291,7 +294,7 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
                     hideDataOnInput: true,
                     width: '200',
                     click: async () => this.context.openDialog((await import('../select-helper/select-helper.component')).SelectHelperComponent,
-                        x => x.args = { filter, onSelect: s => this.value = (s ? s.id.value : '') })
+                        x => x.args = { filter: args.filter, location: args.location ? args.location() : undefined, onSelect: s => this.value = (s ? s.id.value : '') })
                 })
         }, settingsOrCaption);
     }
@@ -331,7 +334,7 @@ export class CompanyColumn extends StringColumn {
 }
 export class HelperIdReadonly extends HelperId {
     constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>, filter?: (helper: HelpersAndStats) => FilterBase) {
-        super(context, settingsOrCaption, filter);
+        super(context, settingsOrCaption, {filter});
         this.defs.allowApiUpdate = false;
     }
     get displayValue() {
