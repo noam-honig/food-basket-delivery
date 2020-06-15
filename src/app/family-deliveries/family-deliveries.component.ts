@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import { Context, DataControlSettings, FilterBase, AndFilter, BusyService, packWhere, ServerFunction, unpackWhere, EntityWhere } from '@remult/core';
+import { Context, DataControlSettings, FilterBase, AndFilter, BusyService, packWhere, ServerFunction, unpackWhere, EntityWhere, GridButton, RowButton, GridSettings } from '@remult/core';
 
 import { FamilyDeliveresStatistics, FamilyDeliveryStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
@@ -33,7 +33,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   static route: Route = {
     path: 'deliveries',
     component: FamilyDeliveriesComponent,
-     canActivate: [distCenterAdminGuard]
+    canActivate: [distCenterAdminGuard]
   }
   limit = 50;
   groupsColumn: DataControlSettings<ActiveFamilyDeliveries>;
@@ -541,74 +541,18 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           fd.showDetailsDialog({
             refreshDeliveryStats: () => this.refreshStats(),
             dialog: this.dialog,
-            focusOnDelivery:true
+            focusOnDelivery: true
           });
         }
         , textInMenu: () => getLang(this.context).deliveryDetails
       },
-      {
-        name: getLang(this.context).newDelivery,
-        click: async d => {
-          let f = await this.context.for(Families).findId(d.family);
-          await f.showNewDeliveryDialog(this.dialog, this.settings, d, async () => this.refresh());
-        },
-        visible: d => this.context.isAllowed(Roles.admin)
-      },
-      {
-        name: getLang(this.context).cancelAsignment,
-        click: async d => {
-          if (await this.dialog.YesNoPromise(getLang(this.context).cancelAssignmentFor + d.name.value)) {
-            {
-              d.courier.value = '';
-              await d.save();
-            }
-          }
-        },
-        visible: d => d.deliverStatus.value == DeliveryStatus.ReadyForDelivery && d.courier.value != ''
-      },
-      {
-        name: getLang(this.context).familyDeliveries,
-        click: async fd => {
-          let f = await this.context.for(Families).findId(fd.family);
-          f.showDeliveryHistoryDialog();
-        }
-        , visible: f => !f.isNew()
-      },
-      {
-        name: getLang(this.context).freezeDelivery,
-        click: async d => {
-          if (await this.dialog.YesNoPromise(getLang(this.context).freezeDeliveryHelp + d.name.value + "?")) {
-            {
-              d.deliverStatus.value = DeliveryStatus.Frozen;
-              await d.save();
-            }
-          }
-        },
-        visible: d => d.deliverStatus.value == DeliveryStatus.ReadyForDelivery && d.courier.value == ''
-      },
-      {
-        name: getLang(this.context).unFreezeDelivery,
-        click: async d => {
-          {
-            d.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
-            await d.save();
-          }
-        },
-        visible: d => d.deliverStatus.value == DeliveryStatus.Frozen
-      },
-      {
-        name: getLang(this.context).deleteDelivery,
-        click: async d => {
-          if (await this.dialog.YesNoPromise(getLang(this.context).shouldDeleteDeliveryFor + d.name.value)) {
-            {
-              let fd = await this.context.for(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
-              await fd.delete();
-              this.deliveries.items.splice(this.deliveries.items.indexOf(d), 1);
-            }
-          }
-        },
-        visible: d => d.deliverStatus.value == DeliveryStatus.ReadyForDelivery && d.courier.value == '' && this.context.isAllowed(Roles.admin)
-      },
+      ...getDeliveryGridButtons({
+        context: this.context,
+        deliveries: () => this.deliveries,
+        dialog: this.dialog,
+        refresh: () => this.refresh(),
+        settings: this.settings
+      }),
       {
         name: getLang(this.context).archiveDelivery,
         click: async d => {
@@ -658,7 +602,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       });
     }, action, args);
     Families.SendMessageToBrowsers(getLang(context).deliveriesUpdated, context, '');
-    return r+getLang(context).deliveriesUpdated;
+    return r + getLang(context).deliveriesUpdated;
   }
   @ServerFunction({ allowed: Roles.admin })
   static async FamilyInDeliveryActionOnServer(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
@@ -729,4 +673,83 @@ interface statsOnTab {
   fourthColumn: () => DataControlSettings<any>
 }
 
+export interface deliveryButtonsHelper {
+  context: Context,
+  dialog: DialogService,
+  settings: ApplicationSettings,
+  refresh: () => void,
+  deliveries: () => GridSettings<FamilyDeliveries>
+}
+export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
+
+  return [
+    {
+      name: getLang(args.context).newDelivery,
+      click: async d => {
+        let f = await args.context.for(Families).findId(d.family);
+        await f.showNewDeliveryDialog(args.dialog, args.settings, d, async () => args.refresh());
+      },
+      visible: d => args.context.isAllowed(Roles.admin)
+    },
+    {
+      name: getLang(args.context).cancelAsignment,
+      click: async d => {
+        if (await args.dialog.YesNoPromise(getLang(args.context).cancelAssignmentFor + d.name.value)) {
+          {
+            d.courier.value = '';
+            await d.save();
+          }
+        }
+      },
+      visible: d => d.deliverStatus.value == DeliveryStatus.ReadyForDelivery && d.courier.value != ''
+    },
+    {
+      name: getLang(args.context).familyDeliveries,
+      click: async fd => {
+        let f = await args.context.for(Families).findId(fd.family);
+        f.showDeliveryHistoryDialog({
+          settings: args.settings,
+          dialog: args.dialog
+        });
+      }
+      , visible: f => !f.isNew()
+    },
+    {
+      name: getLang(args.context).freezeDelivery,
+      click: async d => {
+        if (await args.dialog.YesNoPromise(getLang(args.context).freezeDeliveryHelp + d.name.value + "?")) {
+          {
+            d.deliverStatus.value = DeliveryStatus.Frozen;
+            await d.save();
+          }
+        }
+      },
+      visible: d => d.deliverStatus.value == DeliveryStatus.ReadyForDelivery && d.courier.value == ''
+    },
+    {
+      name: getLang(args.context).unFreezeDelivery,
+      click: async d => {
+        {
+          d.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
+          await d.save();
+        }
+      },
+      visible: d => d.deliverStatus.value == DeliveryStatus.Frozen
+    },
+    {
+      name: getLang(args.context).deleteDelivery,
+      click: async d => {
+        if (await args.dialog.YesNoPromise(getLang(args.context).shouldDeleteDeliveryFor + d.name.value)) {
+          {
+            let fd = await args.context.for(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
+            await fd.delete();
+            args.deliveries().items.splice(args.deliveries().items.indexOf(d), 1);
+          }
+        }
+      },
+      visible: d => (d.deliverStatus.value == DeliveryStatus.ReadyForDelivery && d.courier.value == '' || d.deliverStatus.value == DeliveryStatus.SelfPickup) && args.context.isAllowed(Roles.admin)
+    }
+  ] as RowButton<FamilyDeliveries>[]
+
+}
 

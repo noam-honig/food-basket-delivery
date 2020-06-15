@@ -667,4 +667,6 @@ export class soldier implements Language {
   distributionCenterDetails = 'פרטים';
   thisFamilyHas = 'לחייל זה יש';
   deliveries_ShouldWeDeleteThem = 'משלוחים פעילים - האם למחוק אותם?';
+  excludeGroups = 'למעט קבוצות אלו';
+  useFamilyQuantity = 'מספר סלים ברירת מחדל';
 }

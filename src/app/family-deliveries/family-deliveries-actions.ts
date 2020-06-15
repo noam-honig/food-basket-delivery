@@ -20,7 +20,7 @@ import { PromiseThrottle } from "../import-from-excel/import-from-excel.componen
 
 
 
-class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
+export class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
     updateFamilyStatus = new BoolColumn(getLang(this.context).updateFamilyStatus);
     status = new FamilyStatusColumn(this.context);
     constructor(context: Context) {

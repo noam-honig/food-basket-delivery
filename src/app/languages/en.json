@@ -1089,6 +1089,11 @@
     "google": "blank",
     "valueInCode": "ריק"
   },
+  "excludeGroups": {
+    "google": "Except for these groups",
+    "valueInCode": "למעט קבוצות אלו",
+    "custom":"Excluded Groups"
+  },
   "executeExcelImport": {
     "google": "Making the absorption",
     "valueInCode": "ביצוע הקליטה",
@@ -2777,13 +2782,18 @@
   },
   "useFamilyDefaultBasketType": {
     "google": "Use the family type basket set",
-    "valueInCode": "השתמש בסוג הסל המוגדר למשפחה",
-    "custom": "Parcel type by family default"
+    "valueInCode": "סל ברירת מחדל",
+    "custom": "Default Parcel Type"
   },
   "useFamilyMembersAsQuantity": {
     "google": "Use a number of souls also as a portion",
     "valueInCode": "השתמש במספר נפשות גם ככמות מנות",
     "custom": "Determine Quantity by Family Members"
+  },
+  "useFamilyQuantity": {
+    "google": "Number of default baskets",
+    "valueInCode": "מספר סלים ברירת מחדל",
+    "custom":"Default Quantity"
   },
   "userNotFoundOrWrongPassword": {
     "google": "User not found or password incorrect",

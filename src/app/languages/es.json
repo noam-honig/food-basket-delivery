@@ -1195,6 +1195,11 @@
     "valueInCode": "ריק",
     "valueInEnglish": "blank"
   },
+  "excludeGroups": {
+    "google": "Excepto por estos grupos",
+    "valueInCode": "למעט קבוצות אלו",
+    "valueInEnglish": "Except for these groups"
+  },
   "executeExcelImport": {
     "google": "Importador",
     "valueInCode": "ביצוע הקליטה",
@@ -3183,13 +3188,18 @@
   },
   "useFamilyDefaultBasketType": {
     "google": "Tipo de parcela por defecto familiar",
-    "valueInCode": "השתמש בסוג הסל המוגדר למשפחה",
+    "valueInCode": "סל ברירת מחדל",
     "valueInEnglish": "Parcel type by family default"
   },
   "useFamilyMembersAsQuantity": {
     "google": "Determinar la cantidad por miembros de la familia",
     "valueInCode": "השתמש במספר נפשות גם ככמות מנות",
     "valueInEnglish": "Determine Quantity by Family Members"
+  },
+  "useFamilyQuantity": {
+    "google": "Número de cestas predeterminadas",
+    "valueInCode": "מספר סלים ברירת מחדל",
+    "valueInEnglish": "Number of default baskets"
   },
   "userNotFoundOrWrongPassword": {
     "google": "Usuario no encontrado o contraseña incorrecta",

@@ -667,4 +667,6 @@ export class en implements Language {
   distributionCenterDetails = 'Details';
   thisFamilyHas = 'This family has';
   deliveries_ShouldWeDeleteThem = 'Active Deliveries, do you want to Delete them?';
+  excludeGroups = 'Except for these groups';
+  useFamilyQuantity = 'Number of default baskets';
 }

@@ -19,24 +19,32 @@ import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 class NewDelivery extends ActionOnRows<Families> {
     useFamilyBasket = new BoolColumn({ caption: getLang(this.context).useFamilyDefaultBasketType, defaultValue: true });
     basketType = new BasketId(this.context);
+    useFamilyQuantity = new BoolColumn({ caption: getLang(this.context).useFamilyQuantity, defaultValue: true });
+    useFamilyMembersAsQuantity = new BoolColumn({ caption: getLang(this.context).useFamilyMembersAsQuantity });
     quantity = new QuantityColumn(this.context);
 
     distributionCenter = new DistributionCenterId(this.context);
-    determineCourier = new BoolColumn(getLang(this.context).volunteer);
+    useDefaultVolunteer = new BoolColumn({ caption: getLang(this.context).defaultVolunteer, defaultValue: true });
     courier = new HelperId(this.context);
     selfPickup = new SelfPickupStrategyColumn(false);
     usedCouriers: string[] = [];
+    excludeGroups = new GroupsColumn(this.context, {
+        caption: getLang(this.context).excludeGroups
+    })
     constructor(context: Context) {
         super(context, Families, {
             allowed: Roles.admin,
             columns: () => [
                 this.useFamilyBasket,
                 this.basketType,
+                this.useFamilyQuantity,
+                this.useFamilyMembersAsQuantity,
                 this.quantity,
                 this.distributionCenter,
-                this.determineCourier,
+                this.useDefaultVolunteer,
                 this.courier,
-                this.selfPickup
+                this.selfPickup,
+                this.excludeGroups
             ],
             validate: async () => {
                 let x = await context.for(DistributionCenters).findId(this.distributionCenter);
@@ -50,12 +58,16 @@ class NewDelivery extends ActionOnRows<Families> {
                 this.quantity.value = 1;
                 this.distributionCenter.value = component.dialog.distCenter.value;
                 return [
-                    [{ column: this.basketType, visible: () => !this.useFamilyBasket.value }, { column: this.quantity, visible: () => !this.useFamilyBasket.value }],
                     this.useFamilyBasket,
+                    { column: this.basketType, visible: () => !this.useFamilyBasket.value },
+                    this.useFamilyQuantity,
+                    { column: this.useFamilyMembersAsQuantity, visible: () => !this.useFamilyQuantity.value },
+                    { column: this.quantity, visible: () => !this.useFamilyQuantity.value && !this.useFamilyMembersAsQuantity.value },
                     { column: this.distributionCenter, visible: () => component.dialog.hasManyCenters },
-                    this.determineCourier,
-                    { column: this.courier, visible: () => this.determineCourier.value },
-                    this.selfPickup.getDispaySettings(component.settings.usingSelfPickupModule.value)
+                    this.useDefaultVolunteer,
+                    { column: this.courier, visible: () => !this.useDefaultVolunteer.value },
+                    this.selfPickup.getDispaySettings(component.settings.usingSelfPickupModule.value),
+                    this.excludeGroups
                 ]
             },
             additionalWhere: f => f.status.isEqualTo(FamilyStatus.Active),
@@ -63,13 +75,26 @@ class NewDelivery extends ActionOnRows<Families> {
 
             title: getLang(context).newDelivery,
             forEach: async f => {
+                if (this.excludeGroups.value) {
+                    for (let g of this.excludeGroups.listGroups()) {
+                        if (f.groups.selected(g.trim())) {
+                            return;
+                        }
+
+                    }
+                }
                 let fd = f.createDelivery(this.distributionCenter.value);
                 if (!this.useFamilyBasket.value) {
                     fd.basketType.value = this.basketType.value;
-                    fd.quantity.value = this.quantity.value;
+                }
+                if (!this.useFamilyQuantity.value) {
+                    if (this.useFamilyMembersAsQuantity.value)
+                        fd.quantity.value = f.familyMembers.value;
+                    else
+                        fd.quantity.value = this.quantity.value;
                 }
                 this.selfPickup.value.applyTo({ existingDelivery: undefined, newDelivery: fd, family: f });
-                if (this.determineCourier.value) {
+                if (!this.useDefaultVolunteer.value) {
                     fd.courier.value = this.courier.value;
                 }
                 if ((await fd.duplicateCount()) == 0)

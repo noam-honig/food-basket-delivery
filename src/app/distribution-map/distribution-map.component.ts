@@ -27,7 +27,7 @@ import { Sites } from '../sites/sites';
 import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser } from '../manage/distribution-centers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { getLang } from '../translate';
-import { delvieryActions, UpdateDistributionCenter, NewDelivery, UpdateDeliveriesStatus, UpdateCourier } from '../family-deliveries/family-deliveries-actions';
+import { delvieryActions, UpdateDistributionCenter, NewDelivery, UpdateDeliveriesStatus, UpdateCourier, DeleteDeliveries } from '../family-deliveries/family-deliveries-actions';
 import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, actionDialogNeeds } from '../families/familyActionsWiring';
 import { familyActionsForDelivery, UpdateArea, updateGroup } from '../families/familyActions';
 import { Families } from '../families/families';
@@ -75,7 +75,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     ...buildGridButtonFromActions([UpdateArea], this.context, this.buttonFamilyHelper()),
     ...buildGridButtonFromActions([UpdateDistributionCenter, UpdateCourier], this.context, this.buttonDeliveryHelper()),
     ...buildGridButtonFromActions([updateGroup], this.context, this.buttonFamilyHelper()),
-    ...buildGridButtonFromActions([NewDelivery, UpdateDeliveriesStatus], this.context, this.buttonDeliveryHelper())
+    ...buildGridButtonFromActions([NewDelivery, UpdateDeliveriesStatus, DeleteDeliveries], this.context, this.buttonDeliveryHelper())
 
   ];
   private buttonFamilyHelper(): actionDialogNeeds<Families> {
@@ -273,9 +273,9 @@ export class DistributionMap implements OnInit, OnDestroy {
       element.value = 0;
     });
     let markers: google.maps.Marker[] = []
-
+    let newIds = new Map<string, boolean>();
     deliveries.forEach(f => {
-
+      newIds.set(f.id, true);
       let familyOnMap = this.dict.get(f.id);
       let isnew = false;
       if (!familyOnMap) {
@@ -307,7 +307,13 @@ export class DistributionMap implements OnInit, OnDestroy {
       }
       else
         familyOnMap.marker.setPosition({ lat: f.lat, lng: f.lng });
-
+      for (const id of this.dict.keys()) {
+        if (!newIds.get(id)) {
+          let f = this.dict.get(id);
+          f.marker.setMap(null);
+          this.dict.delete(id);
+        }
+      }
       let status: statusClass = this.statuses.getBy(f.status, f.courier);
 
       if (status)

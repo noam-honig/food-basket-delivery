@@ -14,7 +14,7 @@ import { FamilyDeliveries, ActiveFamilyDeliveries } from "./FamilyDeliveries";
 import * as fetch from 'node-fetch';
 import { Roles } from "../auth/roles";
 
-import {  getLang } from "../translate";
+import { getLang, use } from "../translate";
 import { UpdateGroupDialogComponent } from "../update-group-dialog/update-group-dialog.component";
 import { FamilyStatusColumn, FamilyStatus } from "./FamilyStatus";
 
@@ -22,6 +22,7 @@ import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { DialogService } from "../select-popup/dialog";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { UpdateFamilyDialogComponent } from "../update-family-dialog/update-family-dialog.component";
+import { deliveryButtonsHelper, getDeliveryGridButtons } from "../family-deliveries/family-deliveries.component";
 
 
 @EntityClass
@@ -35,17 +36,34 @@ export class Families extends IdEntity {
       }
     });
   }
-  showDeliveryHistoryDialog() {
+  showDeliveryHistoryDialog(args: { dialog: DialogService, settings: ApplicationSettings }) {
     this.context.openDialog(GridDialogComponent, x => x.args = {
       title: getLang(this.context).deliveriesFor + ' ' + this.name.value,
-      settings: this.deliveriesGridSettings()
+      settings: this.deliveriesGridSettings(args)
     });
   }
-  public deliveriesGridSettings() {
-    return this.context.for(FamilyDeliveries).gridSettings({
+  public deliveriesGridSettings(args: { dialog: DialogService, settings: ApplicationSettings }) {
+    let result = this.context.for(FamilyDeliveries).gridSettings({
       numOfColumnsInGrid: 7,
       hideDataArea: true,
       rowCssClass: fd => fd.deliverStatus.getCss(),
+      rowButtons: [
+        {
+          name: use.language.deliveryDetails,
+          click: async fd => fd.showDeliveryOnlyDetail({
+            dialog: args.dialog,
+            refreshDeliveryStats: () => result.getRecords()
+          })
+        },
+        ...getDeliveryGridButtons({
+          context: this.context,
+          refresh: () => result.getRecords(),
+          deliveries: () => result,
+          dialog: args.dialog,
+          settings: args.settings
+
+        })
+      ],
       columnSettings: fd => {
         let r: Column<any>[] = [
           fd.deliverStatus,
@@ -66,6 +84,7 @@ export class Families extends IdEntity {
         limit: 25
       }
     });
+    return result;
   }
 
   async showNewDeliveryDialog(dialog: DialogService, settings: ApplicationSettings, copyFrom?: FamilyDeliveries, aDeliveryWasAdded?: (newDeliveryId: string) => Promise<void>) {
@@ -220,7 +239,7 @@ export class Families extends IdEntity {
       fd.columns.find(col).value = col.value;
     }
   }
-  
+
 
 
   getDeliveries() {
@@ -812,6 +831,11 @@ export interface parseAddressResult {
   knisa?: string;
 }
 export class GroupsColumn extends StringColumn {
+  listGroups() {
+    if (!this.value)
+      return [];
+    return this.value.split(',');
+  }
   removeGroup(group: string) {
     let groups = this.value.split(",").map(x => x.trim());
     let index = groups.indexOf(group);

@@ -457,33 +457,37 @@ export class FamilyDeliveries extends IdEntity {
             }
         }
         if (!showFamilyDetails) {
-            await this.context.openDialog(InputAreaComponent, x => {
-                x.args = {
-                    title: getLang(this.context).deliveryDetailsFor + ' ' + this.name.value,
-                    ok:
-                        async () => {
-                            let courierChanged = wasChanged(this.courier) && this.courier.value;
-                            this.save();
-                            if (courierChanged)
-                                await AsignFamilyComponent.RefreshRoute(this.courier.value, {});
-                            if (callerHelper) {
-                                if (this.changeRequireStatsRefresh() && callerHelper.refreshDeliveryStats)
-                                    callerHelper.refreshDeliveryStats();
-                                if (callerHelper.onSave)
-                                    callerHelper.onSave();
-                            }
-                        },
-                    cancel: () => {
-                        this.undoChanges();
-                    },
-                    settings: this.deilveryDetailsAreaSettings(callerHelper.dialog)
-                }
-            });
+            await this.showDeliveryOnlyDetail(callerHelper);
         }
 
 
 
     }
+    async showDeliveryOnlyDetail(callerHelper: { refreshDeliveryStats?: () => void; onSave?: () => Promise<void>; focusOnDelivery?: boolean; dialog: DialogService; }) {
+        await this.context.openDialog(InputAreaComponent, x => {
+            x.args = {
+                title: getLang(this.context).deliveryDetailsFor + ' ' + this.name.value,
+                ok:
+                    async () => {
+                        let courierChanged = wasChanged(this.courier) && this.courier.value;
+                        this.save();
+                        if (courierChanged)
+                            await AsignFamilyComponent.RefreshRoute(this.courier.value, {});
+                        if (callerHelper) {
+                            if (this.changeRequireStatsRefresh() && callerHelper.refreshDeliveryStats)
+                                callerHelper.refreshDeliveryStats();
+                            if (callerHelper.onSave)
+                                callerHelper.onSave();
+                        }
+                    },
+                cancel: () => {
+                    this.undoChanges();
+                },
+                settings: this.deilveryDetailsAreaSettings(callerHelper.dialog)
+            };
+        });
+    }
+
     deilveryDetailsAreaSettings(dialog: DialogService): IDataAreaSettings<any> {
         return {
             columnSettings: () =>

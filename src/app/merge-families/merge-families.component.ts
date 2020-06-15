@@ -143,7 +143,10 @@ export class MergeFamiliesComponent implements OnInit {
       let deliveries = await this.context.for(ActiveFamilyDeliveries).count(fd => fd.family.isEqualTo(this.family.id).and(fd.deliverStatus.isNotAResultStatus()))
       if (deliveries > 1) {
         if (await this.dialog.YesNoPromise("יש " + deliveries + " משלוחים פעילים למשפחה - להציג אותם?"))
-          await this.family.showDeliveryHistoryDialog();
+          await this.family.showDeliveryHistoryDialog({
+            settings:this.settings,
+            dialog:this.dialog
+          });
       }
     }
     catch (err) {

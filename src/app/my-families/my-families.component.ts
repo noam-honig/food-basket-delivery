@@ -31,7 +31,11 @@ export class MyFamiliesComponent implements OnInit {
   }
   async ngOnInit() {
     try {
-      await this.familyLists.initForHelper(await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(this.user.theHelperIAmEscortingId ? this.user.theHelperIAmEscortingId : this.context.user.id)));
+      let id = this.context.user.id;
+      if (this.user.theHelperIAmEscortingId && this.user.theHelperIAmEscortingId.trim().length > 0)
+        id = this.user.theHelperIAmEscortingId;
+      let helper = await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(id));
+      await this.familyLists.initForHelper(helper);
     }
     catch (err) {
       this.dialog.exception("My Families: " + this.settings.lang.smsLoginFailed, err);

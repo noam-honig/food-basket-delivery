@@ -955,6 +955,10 @@
     "google": "ריק",
     "valueInCode": "ריק"
   },
+  "excludeGroups": {
+    "google": "למעט קבוצות אלו",
+    "valueInCode": "למעט קבוצות אלו"
+  },
   "executeExcelImport": {
     "google": "ביצוע הקליטה",
     "valueInCode": "ביצוע הקליטה"
@@ -2545,11 +2549,15 @@
   },
   "useFamilyDefaultBasketType": {
     "google": "השתמש בסוג הסל המוגדר לתורם",
-    "valueInCode": "השתמש בסוג הסל המוגדר למשפחה"
+    "valueInCode": "סל ברירת מחדל"
   },
   "useFamilyMembersAsQuantity": {
     "google": "השתמש במספר נפשות גם ככמות מנות",
     "valueInCode": "השתמש במספר נפשות גם ככמות מנות"
+  },
+  "useFamilyQuantity": {
+    "google": "מספר סלים ברירת מחדל",
+    "valueInCode": "מספר סלים ברירת מחדל"
   },
   "userNotFoundOrWrongPassword": {
     "google": "משתמשת לא נמצאה או סיסמה שגויה",

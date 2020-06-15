@@ -33,7 +33,7 @@ import { Roles, distCenterAdminGuard, AdminGuard } from '../auth/roles';
 import { MatTabGroup } from '@angular/material/tabs';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import {  getLang, use } from '../translate';
+import { getLang, use } from '../translate';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 import { FamilyStatus, FamilyStatusColumn } from './FamilyStatus';
@@ -393,7 +393,7 @@ export class FamiliesComponent implements OnInit {
             {
                 name: this.settings.lang.familyDeliveries,
                 click: async f => {
-                    f.showDeliveryHistoryDialog();
+                    f.showDeliveryHistoryDialog({ settings: this.settings, dialog: this.dialog });
                 }
                 , visible: f => !f.isNew()
             },
@@ -409,7 +409,7 @@ export class FamiliesComponent implements OnInit {
 
     @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async FamilyActionOnServer(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
-        let r = await filterActionOnServer(familyActions(), context, async  h =>
+        let r = await filterActionOnServer(familyActions(), context, async h =>
             await iterateRowsActionOnServer({
                 context: context.for(Families),
                 h: {
@@ -626,7 +626,7 @@ export class FamiliesComponent implements OnInit {
     @ViewChild('myTab', { static: false }) myTab: MatTabGroup;
 
     ngOnInit() {
-     
+
         this.refreshStats();
         this.sortColumns(this.normalColumns);
         //  debugger;

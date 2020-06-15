@@ -667,4 +667,6 @@ export class es implements Language {
   distributionCenterDetails = 'Detalles';
   thisFamilyHas = 'Esta familia tiene';
   deliveries_ShouldWeDeleteThem = 'Entregas activas, ¿quieres eliminarlas?';
+  excludeGroups = 'Excepto por estos grupos';
+  useFamilyQuantity = 'Número de cestas predeterminadas';
 }

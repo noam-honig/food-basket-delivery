@@ -30,14 +30,14 @@ export class DuplicateFamiliesComponent implements OnInit {
       this.dialog.Error(err);
     }
   }
-  post=()=>{};
+  post = () => { };
   sortByAddress() {
     this.duplicateFamilies.sort((a, b) => a.address.localeCompare(b.address));
-    this.post =()=> this.sortByAddress();
+    this.post = () => this.sortByAddress();
   }
   sortByCount() {
     this.duplicateFamilies.sort((a, b) => b.count - a.count);
-    this.post =()=> this.sortByCount();
+    this.post = () => this.sortByCount();
   }
   async showFamilies(d: duplicateFamilies) {
     await this.context.openDialog(GridDialogComponent, x => x.args = {
@@ -102,7 +102,7 @@ export class DuplicateFamiliesComponent implements OnInit {
           }, {
             name: this.settings.lang.exportToExcel,
             click: async () => {
-              await saveFamiliesToExcel(this.context, x.args.settings, this.busy,this.settings.lang.families)
+              await saveFamiliesToExcel(this.context, x.args.settings, this.busy, this.settings.lang.families)
             }
           }],
         allowSelection: true,
@@ -114,7 +114,7 @@ export class DuplicateFamiliesComponent implements OnInit {
           },
           {
             name: this.settings.lang.deliveries,
-            click: f => f.showDeliveryHistoryDialog()
+            click: f => f.showDeliveryHistoryDialog({ settings: this.settings, dialog: this.dialog })
           }
         ],
         get: {

@@ -293,7 +293,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     this.extraFamilyInfo = this.families.addArea({
       columnSettings: families => [
         families.groups,
-        [families.familyMembers, families.status],
+        [families.status, families.familyMembers],
         families.internalComment,
         [
           families.tz,
@@ -366,7 +366,10 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
 
     }
     if (!this.families.currentRow.isNew())
-      this.familyDeliveries = this.args.family.deliveriesGridSettings();
+      this.familyDeliveries = this.args.family.deliveriesGridSettings({
+        settings: this.settings,
+        dialog: this.dialog
+      });
 
   }
 

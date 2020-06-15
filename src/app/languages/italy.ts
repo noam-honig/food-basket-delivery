@@ -667,4 +667,6 @@ export class italy implements Language {
   distributionCenterDetails = 'Dettagli';
   thisFamilyHas = 'Questa famiglia ha';
   deliveries_ShouldWeDeleteThem = 'Consegne attive, vuoi cancellarle?';
+  excludeGroups = 'Tranne questi gruppi';
+  useFamilyQuantity = 'Numero di cestini predefiniti';
 }

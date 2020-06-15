@@ -586,7 +586,7 @@ export class Language {
   notDeliveredNotHome = 'לא נמסר, לא היו בבית';
   notDeliveredOther = 'לא נמסר, אחר';
   deliveryStatus = 'סטטוס משלוח';
-  useFamilyDefaultBasketType = 'השתמש בסוג הסל המוגדר למשפחה';
+  useFamilyDefaultBasketType = 'סל ברירת מחדל';
   mustSelectDistributionList = 'חובה לבחור רשימת חלוקה';
   assignAFamilyGroup = 'שיוך לקבוצת משפחות';
   action = 'פעולה';
@@ -687,7 +687,7 @@ export class Language {
   commentForAllDeliveries = 'הערה שתופיע לכל המשלוחים';
   defineDeliveriesForFamiliesInExcel = 'הגדר משלוחים לכל המשפחות מהאקסל';
   ifBasketTypeInExcelIsDifferentFromExistingOneCreateNewDelivery = 'אם קיים משלוח למשפחה עם סוג סל שונה, הוסף משלוח חדש';
-  useFamilyMembersAsQuantity = 'השתמש במספר נפשות גם ככמות מנות';
+  useFamilyMembersAsQuantity = 'השתמש במספר נפשות גם כמספר מנות';
   linesProcessed = 'שורות עובדו';
   alreadyExistsInLine = 'כבר קיים בקובץ בשורה';
   unnamed = 'ללא שם';
@@ -784,6 +784,8 @@ export class Language {
   distributionCenterDetails = "פרטים";
   thisFamilyHas="למשפחה זו יש";
   deliveries_ShouldWeDeleteThem= 'משלוחים פעילים - האם למחוק אותם?';
+  excludeGroups = "למעט קבוצות אלו";
+  useFamilyQuantity = "מספר סלים ברירת מחדל";
 }
 
 const defaultLang = new Language();
