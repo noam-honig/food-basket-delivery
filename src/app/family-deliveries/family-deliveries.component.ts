@@ -22,7 +22,7 @@ import { familyActionsForDelivery } from '../families/familyActions';
 import { async } from '@angular/core/testing';
 import { saveToExcel } from '../shared/saveToExcel';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { getLang } from '../translate'
+import { getLang, TranslationOptions } from '../translate'
 
 @Component({
   selector: 'app-family-deliveries',
@@ -448,7 +448,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           getValue: f => f.getDeliveryDescription(),
           width: '300'
         },
-
+        deliveries.createDate,
+        deliveries.distributionCenter,
         this.statusColumn = { column: deliveries.deliverStatus },
 
 
@@ -460,7 +461,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.internalDeliveryComment,
         deliveries.special,
         deliveries.createUser,
-        deliveries.createDate,
+        
         deliveries.familySource,
 
         { column: deliveries.addressOk, width: '110' },
@@ -642,6 +643,10 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       cols.items[3],
       cols.items[4]
     ];
+    if (this.settings.forWho.value == TranslationOptions.donors){
+      firstColumns.push(cols.items[5],cols.items[6]);
+      this.deliveries.columns.numOfColumnsInGrid = firstColumns.length;
+    }
 
     cols.items.sort((a, b) => a.caption > b.caption ? 1 : a.caption < b.caption ? -1 : 0);
 
