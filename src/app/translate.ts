@@ -788,6 +788,8 @@ export class Language {
   useFamilyQuantity = "מספר סלים ברירת מחדל";
   clear="נקה";
   byLocation = "לפי מרחק";
+  from = "מ";
+  delivery = "משלוח";
 }
 
 const defaultLang = new Language();

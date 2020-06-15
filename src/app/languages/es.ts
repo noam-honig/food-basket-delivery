@@ -473,7 +473,7 @@ export class es implements Language {
   notDeliveredNotHome = 'No entregado, no estaban en casa';
   notDeliveredOther = 'No entregado, otro';
   deliveryStatus = 'estado de entrega';
-  useFamilyDefaultBasketType = 'Tipo de parcela por defecto familiar';
+  useFamilyDefaultBasketType = 'Tipo de parcela predeterminado';
   mustSelectDistributionList = 'Debe seleccionar una lista de distribución.';
   assignAFamilyGroup = 'Asignación a un grupo familiar';
   action = 'acción';
@@ -667,6 +667,10 @@ export class es implements Language {
   distributionCenterDetails = 'Detalles';
   thisFamilyHas = 'Esta familia tiene';
   deliveries_ShouldWeDeleteThem = 'Entregas activas, ¿quieres eliminarlas?';
-  excludeGroups = 'Excepto por estos grupos';
-  useFamilyQuantity = 'Número de cestas predeterminadas';
+  excludeGroups = 'Grupos excluidos';
+  useFamilyQuantity = 'Cantidad predeterminada';
+  clear = 'Claro';
+  byLocation = 'A distancia';
+  from = 'desde';
+  delivery = 'Entrega';
 }

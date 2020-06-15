@@ -2,14 +2,19 @@ import { Component, OnInit } from '@angular/core';
 
 import { MatDialogRef } from '@angular/material/dialog';
 import { Helpers, HelpersBase } from '../helpers/helpers';
-import { Context, FindOptions, ServerFunction, DialogConfig } from '@remult/core';
+import { Context, FindOptions, ServerFunction, DialogConfig, SqlDatabase } from '@remult/core';
 import { FilterBase } from '@remult/core';
 
 import { BusyService } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
-import { Location, GetDistanceBetween } from '../shared/googleApiHelpers';
+import { Location, GetDistanceBetween, GeocodeInformation } from '../shared/googleApiHelpers';
 import { Roles } from '../auth/roles';
+import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { getLang } from '../translate';
+import { Families } from '../families/families';
+import { FamilyStatus } from '../families/FamilyStatus';
+import { SqlBuilder } from '../model-shared/types';
 
 @Component({
   selector: 'app-select-helper',
@@ -48,8 +53,19 @@ export class SelectHelperComponent implements OnInit {
     this.select(undefined);
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
-  static async getHelpersByLocation(location: Location, context?: Context) {
+  static async getHelpersByLocation(deliveryLocation: Location, context?: Context, db?: SqlDatabase) {
     let helpers = new Map<string, helperInList>();
+
+
+    let check = (h: helperInList, location: Location, from: string) => {
+      let dist = GetDistanceBetween(location, deliveryLocation);
+      if (dist < h.distance) {
+        h.distance = dist;
+        h.location = location;
+        h.distanceFrom = from;
+      }
+    }
+
     await (await context.for(Helpers).find()).forEach(h => {
       helpers.set(h.id.value, {
         helperId: h.id.value,
@@ -58,11 +74,61 @@ export class SelectHelperComponent implements OnInit {
         distance: 99999999
       });
       if (h.getGeocodeInformation().ok()) {
-        helpers.get(h.id.value).distance = GetDistanceBetween(h.getGeocodeInformation().location(), location);
-      }
+        let theH = helpers.get(h.id.value);
+        check(theH, h.getGeocodeInformation().location(), getLang(context).preferredDistributionArea + ": " + h.preferredDistributionAreaAddress.value);
 
+      }
     });
-    return [...helpers.values()].sort((a, b) => a.distance - b.distance);;
+    let sql = new SqlBuilder();
+    {
+      let afd = context.for(ActiveFamilyDeliveries).create();
+
+
+
+      for (const d of (await db.execute(sql.query({
+        from: afd,
+        where: () => [afd.courier.isDifferentFrom('').and(afd.deliverStatus.isActiveDelivery())],
+        select: () => [
+          sql.columnWithAlias(afd.courier, "courier"),
+          sql.columnWithAlias(afd.addressLongitude, "lng"),
+          sql.columnWithAlias(afd.addressLatitude, "lat"),
+          sql.columnWithAlias(afd.address, 'address')]
+      }))).rows) {
+        let h = helpers.get(d.courier);
+        if (!h.assignedDeliveries)
+          h.assignedDeliveries = 1;
+        else
+          h.assignedDeliveries++;
+        check(h, { lat: d.lat, lng: d.lng }, getLang(context).delivery + ": " + d.address);
+      }
+    }
+    {
+      let afd = context.for(Families).create();
+      for (const d of (await db.execute(sql.query({
+        from: afd,
+        where: () => [afd.fixedCourier.isDifferentFrom('').and(afd.status.isEqualTo(FamilyStatus.Active))],
+        select: () => [
+          sql.columnWithAlias(afd.fixedCourier, "courier"),
+          sql.columnWithAlias(afd.addressLongitude, "lng"),
+          sql.columnWithAlias(afd.addressLatitude, "lat"),
+          sql.columnWithAlias(afd.address, 'address')]
+      }))).rows) {
+        let h = helpers.get(d.courier);
+        if (!h.fixedFamilies)
+          h.fixedFamilies = 1;
+        else
+          h.fixedFamilies++;
+
+        check(h, { lat: d.lat, lng: d.lng }, getLang(context).family + ": " + d.address);
+      }
+    }
+
+    return [...helpers.values()].sort((a, b) => {
+      let r = a.distance - b.distance;
+      if (r != 0)
+        return r;
+      return a.name.localeCompare(b.name);
+    });
 
 
 
@@ -71,8 +137,8 @@ export class SelectHelperComponent implements OnInit {
   close() {
     this.dialogRef.close();
   }
-  async byLocation(){
-      this.filteredHelpers = await SelectHelperComponent.getHelpersByLocation(this.args.location);
+  async byLocation() {
+    this.filteredHelpers = await SelectHelperComponent.getHelpersByLocation(this.args.location);
   }
 
   findOptions = {
@@ -125,8 +191,14 @@ export class SelectHelperComponent implements OnInit {
     if (this.filteredHelpers.length > 0)
       this.select(this.filteredHelpers[0]);
   }
-  select(h: helperInList) {
-    this.args.onSelect(h.helper);
+  async select(h: helperInList) {
+    let helper: HelpersBase;
+    if (h) {
+      if (!h.helper)
+        h.helper = await this.context.for(Helpers).findId(h.helperId);
+      helper = h.helper;
+    }
+    this.args.onSelect(helper);
     if (h && !h.helper.isNew())
       Helpers.addToRecent(h.helper);
     this.dialogRef.close();
@@ -139,8 +211,10 @@ interface helperInList {
   name: string,
   phone: string,
   distance?: number,
-  asignedFamilies?: number,
-  fixedFamilies?: number
+  location?: Location,
+  assignedDeliveries?: number,
+  fixedFamilies?: number,
+  distanceFrom?: string
 }
 function mapHelpers(helpers: HelpersBase[]): helperInList[] {
   return helpers.map(h => ({

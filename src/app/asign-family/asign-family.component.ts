@@ -1,5 +1,5 @@
 import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
-import { Location, GeocodeInformation, toLongLat } from '../shared/googleApiHelpers';
+import { Location, GeocodeInformation, toLongLat, GetDistanceBetween } from '../shared/googleApiHelpers';
 import { UrlBuilder, FilterBase, ServerFunction, StringColumn, DataAreaSettings, BoolColumn, SqlDatabase, AndFilter, FilterConsumerBridgeToSqlRequest, ValueListColumn } from '@remult/core';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
@@ -745,7 +745,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         var lastDist: number;
                         for (const f of waitingFamilies) {
 
-                            let dist = GeocodeInformation.GetDistanceBetweenPoints(f, helper.getGeocodeInformation().location());
+                            let dist = GetDistanceBetween(f, helper.getGeocodeInformation().location());
                             if (!lastFamiliy || dist < lastDist) {
                                 lastFamiliy = f;
                                 lastDist = dist;
@@ -755,7 +755,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                     } else {
                         let lastDist = 0;
                         for (const f of waitingFamilies) {
-                            let dist = GeocodeInformation.GetDistanceBetweenPoints(f, distCenter);
+                            let dist = GetDistanceBetween(f, distCenter);
                             if (dist > lastDist) {
                                 lastFamiliy = f;
                                 lastDist = dist;
@@ -780,7 +780,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                             const ef = locationReferenceFamilies[index];
                             let loc = ef;
                             if (loc) {
-                                let dis = GeocodeInformation.GetDistanceBetweenPoints(x, loc);
+                                let dis = GetDistanceBetween(x, loc);
                                 if (inBounds) {
                                     dis /= 3;
                                 }

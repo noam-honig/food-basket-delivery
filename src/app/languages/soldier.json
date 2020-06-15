@@ -351,6 +351,10 @@
     "google": "לפי קבוצות",
     "valueInCode": "לפי קבוצות"
   },
+  "byLocation": {
+    "google": "לפי מרחק",
+    "valueInCode": "לפי מרחק"
+  },
   "callEscort": {
     "google": "התקשר למלווה",
     "valueInCode": "התקשר למלווה"
@@ -410,6 +414,10 @@
   "cityAutomaticallyUpdatedByGoogle": {
     "google": "עיר (מתעדכן אוטומטית)",
     "valueInCode": "עיר (מתעדכן אוטומטית)"
+  },
+  "clear": {
+    "google": "נקה",
+    "valueInCode": "נקה"
   },
   "clearAllVolunteerComments": {
     "google": "נקה הערות לכל המתנדבים",
@@ -694,6 +702,10 @@
   "deliveriesUpdated": {
     "google": "משלוחים עודכנו",
     "valueInCode": "משלוחים עודכנו"
+  },
+  "delivery": {
+    "google": "משלוח",
+    "valueInCode": "משלוח"
   },
   "deliveryCenterAddress": {
     "google": "כתובת מרכז השילוח",
@@ -1202,6 +1214,10 @@
   "freezeDeliveryHelp": {
     "google": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל",
     "valueInCode": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל"
+  },
+  "from": {
+    "google": "מ",
+    "valueInCode": "מ"
   },
   "fromDate": {
     "google": "מתאריך",
@@ -2553,7 +2569,7 @@
   },
   "useFamilyMembersAsQuantity": {
     "google": "השתמש במספר נפשות גם ככמות מנות",
-    "valueInCode": "השתמש במספר נפשות גם ככמות מנות"
+    "valueInCode": "השתמש במספר נפשות גם כמספר מנות"
   },
   "useFamilyQuantity": {
     "google": "מספר סלים ברירת מחדל",

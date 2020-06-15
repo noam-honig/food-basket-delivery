@@ -473,7 +473,7 @@ export class en implements Language {
   notDeliveredNotHome = 'Not delivered, were not at home';
   notDeliveredOther = 'Not delivered, other';
   deliveryStatus = 'delivery status';
-  useFamilyDefaultBasketType = 'Parcel type by family default';
+  useFamilyDefaultBasketType = 'Default Parcel Type';
   mustSelectDistributionList = 'Must select a distribution list';
   assignAFamilyGroup = 'Assignment to a family group';
   action = 'action';
@@ -667,6 +667,10 @@ export class en implements Language {
   distributionCenterDetails = 'Details';
   thisFamilyHas = 'This family has';
   deliveries_ShouldWeDeleteThem = 'Active Deliveries, do you want to Delete them?';
-  excludeGroups = 'Except for these groups';
-  useFamilyQuantity = 'Number of default baskets';
+  excludeGroups = 'Excluded Groups';
+  useFamilyQuantity = 'Default Quantity';
+  clear = 'Clear';
+  byLocation = 'By distance';
+  from = 'from';
+  delivery = 'Delivery';
 }
