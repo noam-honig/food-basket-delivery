@@ -480,7 +480,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.phone4,
         deliveries.phone4Description,
         deliveries.courier,
-        deliveries.distributionCenter,
+        
         deliveries.courierAssignUser,
         deliveries.courierAssingTime,
 
