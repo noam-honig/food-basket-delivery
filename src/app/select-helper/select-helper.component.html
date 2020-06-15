@@ -13,8 +13,8 @@
       <div style="display:flex;justify-content: space-between;">
         {{h.name}}
         <div style="text-align: end;" class="secondary-text">
-          <div *ngIf="h.assignedDeliveries"> {{h.assignedDeliveries}} {{settings.lang.deliveries}}</div>
-          <div *ngIf="h.fixedFamilies"> {{h.fixedFamilies}} {{settings.lang.families}}</div>
+          <div *ngIf="h.assignedDeliveries>0"> {{h.assignedDeliveries}} {{settings.lang.deliveries}}</div>
+          <div *ngIf="h.fixedFamilies>0"> {{h.fixedFamilies}} {{settings.lang.families}}</div>
         </div>
       </div>
 

@@ -159,7 +159,7 @@ export class SelectHelperComponent implements OnInit {
     if (Helpers.recentHelpers.length == 0 || this.args.hideRecent)
       this.getHelpers();
     else {
-      this.filteredHelpers = mapHelpers(Helpers.recentHelpers);
+      this.filteredHelpers = mapHelpers(Helpers.recentHelpers, x => undefined);
       this.showingRecentHelpers = true;
     }
 
@@ -172,7 +172,7 @@ export class SelectHelperComponent implements OnInit {
   async getHelpers() {
 
     await this.busy.donotWait(async () => {
-      this.filteredHelpers = mapHelpers(await this.context.for(HelpersAndStats).find(this.findOptions));
+      this.filteredHelpers = mapHelpers(await this.context.for(HelpersAndStats).find(this.findOptions), x => x.deliveriesInProgress.value);
       this.showingRecentHelpers = false;
     });
 
@@ -216,12 +216,13 @@ interface helperInList {
   fixedFamilies?: number,
   distanceFrom?: string
 }
-function mapHelpers(helpers: HelpersBase[]): helperInList[] {
+function mapHelpers<hType extends HelpersBase>(helpers: hType[], getFamilies: (h: hType) => number): helperInList[] {
   return helpers.map(h => ({
     helper: h,
     helperId: h.id.value,
     name: h.name.value,
-    phone: h.phone.displayValue
+    phone: h.phone.displayValue,
+    assignedDeliveries: getFamilies(h)
 
   } as helperInList));
 }
