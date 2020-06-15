@@ -4,6 +4,7 @@ import { extractError } from '../select-popup/dialog';
 import { getLang } from '../translate';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { getRtlScrollAxisType } from '@angular/cdk/platform';
+import * as geometry from 'spherical-geometry-js';
 
 
 
@@ -29,8 +30,8 @@ export async function GetGeoInformation(address: string, context: Context) {
     let x = pendingRequests.get(address);
     if (!x) {
         let u = new UrlBuilder('https://maps.googleapis.com/maps/api/geocode/json');
-        
-        
+
+
         u.addObject({
             key: process.env.GOOGLE_GECODE_API_KEY,
             address: address,
@@ -42,14 +43,14 @@ export async function GetGeoInformation(address: string, context: Context) {
             // console.log(u.url);
             let r = fetch.default(u.url).then(async x => await x.json().then(async (r: GeocodeResult) => {
 
-                
+
                 cacheEntry.id.value = address;
                 cacheEntry.googleApiResult.value = JSON.stringify(r);
                 cacheEntry.createDate.value = new Date();
                 try {
                     await cacheEntry.save();
                 } catch{
-                    
+
                 }
                 let g = new GeocodeInformation(r as GeocodeResult);
                 if (!g.ok())
@@ -69,7 +70,7 @@ export async function GetGeoInformation(address: string, context: Context) {
         }
     }
     else {
-        
+
     }
     return await x;
 
@@ -155,9 +156,7 @@ export class GeocodeInformation {
         if (this.ok())
             return getCity(this.info.results[0].address_components);
     }
-    static GetDistanceBetweenPoints(x: Location, center: Location) {
-        return Math.abs(((x.lat - center.lat) * (x.lat - center.lat)) + Math.abs((x.lng - center.lng) * (x.lng - center.lng))) * 10000000
-    }
+    
 }
 
 export function getAddress(result: { formatted_address?: string, address_components?: AddressComponent[] }) {
@@ -340,4 +339,7 @@ export function leaveOnlyNumericChars(x: string) {
         }
     }
     return x;
+}
+export function GetDistanceBetween(a: Location, b: Location) {
+    return geometry.computeDistanceBetween(a, b)/1000;
 }

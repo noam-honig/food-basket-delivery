@@ -2,17 +2,30 @@ import { Component, OnInit } from '@angular/core';
 
 import { MatDialogRef } from '@angular/material/dialog';
 import { Helpers, HelpersBase } from '../helpers/helpers';
-import { Context, FindOptions } from '@remult/core';
+import { Context, FindOptions, ServerFunction, DialogConfig, SqlDatabase } from '@remult/core';
 import { FilterBase } from '@remult/core';
 
 import { BusyService } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
+import { Location, GetDistanceBetween, GeocodeInformation } from '../shared/googleApiHelpers';
+import { Roles } from '../auth/roles';
+import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { getLang } from '../translate';
+import { Families } from '../families/families';
+import { FamilyStatus } from '../families/FamilyStatus';
+import { SqlBuilder } from '../model-shared/types';
 
 @Component({
   selector: 'app-select-helper',
   templateUrl: './select-helper.component.html',
   styleUrls: ['./select-helper.component.scss']
+})
+@DialogConfig({
+  minWidth: '330px',
+
+  maxWidth: '90vw',
+  panelClass: 'select-helper-dialog'
 })
 export class SelectHelperComponent implements OnInit {
 
@@ -20,17 +33,18 @@ export class SelectHelperComponent implements OnInit {
   lastFilter: string = undefined;
   public args: {
     hideRecent?: boolean,
+    location?: Location,
     onSelect: (selectedValue: HelpersBase) => void,
     filter?: (helper: HelpersAndStats) => FilterBase
 
   };
-  filteredHelpers: HelpersBase[] = [];
+  filteredHelpers: helperInList[] = [];
   constructor(
     private dialogRef: MatDialogRef<any>,
 
     private context: Context,
     private busy: BusyService,
-    public settings:ApplicationSettings
+    public settings: ApplicationSettings
 
   ) {
 
@@ -38,7 +52,94 @@ export class SelectHelperComponent implements OnInit {
   clearHelper() {
     this.select(undefined);
   }
+  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  static async getHelpersByLocation(deliveryLocation: Location, context?: Context, db?: SqlDatabase) {
+    let helpers = new Map<string, helperInList>();
 
+
+    let check = (h: helperInList, location: Location, from: string) => {
+      let dist = GetDistanceBetween(location, deliveryLocation);
+      if (dist < h.distance) {
+        h.distance = dist;
+        h.location = location;
+        h.distanceFrom = from;
+      }
+    }
+
+    await (await context.for(Helpers).find()).forEach(h => {
+      helpers.set(h.id.value, {
+        helperId: h.id.value,
+        name: h.name.value,
+        phone: h.phone.displayValue,
+        distance: 99999999
+      });
+      if (h.getGeocodeInformation().ok()) {
+        let theH = helpers.get(h.id.value);
+        check(theH, h.getGeocodeInformation().location(), getLang(context).preferredDistributionArea + ": " + h.preferredDistributionAreaAddress.value);
+
+      }
+    });
+    let sql = new SqlBuilder();
+    {
+      let afd = context.for(ActiveFamilyDeliveries).create();
+
+
+
+      for (const d of (await db.execute(sql.query({
+        from: afd,
+        where: () => [afd.courier.isDifferentFrom('').and(afd.deliverStatus.isActiveDelivery())],
+        select: () => [
+          sql.columnWithAlias(afd.courier, "courier"),
+          sql.columnWithAlias(afd.addressLongitude, "lng"),
+          sql.columnWithAlias(afd.addressLatitude, "lat"),
+          sql.columnWithAlias(afd.address, 'address')]
+      }))).rows) {
+        let h = helpers.get(d.courier);
+        if (!h.assignedDeliveries)
+          h.assignedDeliveries = 1;
+        else
+          h.assignedDeliveries++;
+        check(h, { lat: d.lat, lng: d.lng }, getLang(context).delivery + ": " + d.address);
+      }
+    }
+    {
+      let afd = context.for(Families).create();
+      for (const d of (await db.execute(sql.query({
+        from: afd,
+        where: () => [afd.fixedCourier.isDifferentFrom('').and(afd.status.isEqualTo(FamilyStatus.Active))],
+        select: () => [
+          sql.columnWithAlias(afd.fixedCourier, "courier"),
+          sql.columnWithAlias(afd.addressLongitude, "lng"),
+          sql.columnWithAlias(afd.addressLatitude, "lat"),
+          sql.columnWithAlias(afd.address, 'address')]
+      }))).rows) {
+        let h = helpers.get(d.courier);
+        if (!h.fixedFamilies)
+          h.fixedFamilies = 1;
+        else
+          h.fixedFamilies++;
+
+        check(h, { lat: d.lat, lng: d.lng }, getLang(context).family + ": " + d.address);
+      }
+    }
+
+    return [...helpers.values()].sort((a, b) => {
+      let r = a.distance - b.distance;
+      if (r != 0)
+        return r;
+      return a.name.localeCompare(b.name);
+    });
+
+
+
+
+  }
+  close() {
+    this.dialogRef.close();
+  }
+  async byLocation() {
+    this.filteredHelpers = await SelectHelperComponent.getHelpersByLocation(this.args.location);
+  }
 
   findOptions = {
     orderBy: h => [h.name], limit: 25
@@ -58,7 +159,7 @@ export class SelectHelperComponent implements OnInit {
     if (Helpers.recentHelpers.length == 0 || this.args.hideRecent)
       this.getHelpers();
     else {
-      this.filteredHelpers = [...Helpers.recentHelpers];
+      this.filteredHelpers = mapHelpers(Helpers.recentHelpers);
       this.showingRecentHelpers = true;
     }
 
@@ -71,7 +172,7 @@ export class SelectHelperComponent implements OnInit {
   async getHelpers() {
 
     await this.busy.donotWait(async () => {
-      this.filteredHelpers = await this.context.for(HelpersAndStats).find(this.findOptions);
+      this.filteredHelpers = mapHelpers(await this.context.for(HelpersAndStats).find(this.findOptions));
       this.showingRecentHelpers = false;
     });
 
@@ -90,10 +191,37 @@ export class SelectHelperComponent implements OnInit {
     if (this.filteredHelpers.length > 0)
       this.select(this.filteredHelpers[0]);
   }
-  select(h: HelpersBase) {
-    this.args.onSelect(h);
-    if (h && !h.isNew())
-      Helpers.addToRecent(h);
+  async select(h: helperInList) {
+    let helper: HelpersBase;
+    if (h) {
+      if (!h.helper)
+        h.helper = await this.context.for(Helpers).findId(h.helperId);
+      helper = h.helper;
+    }
+    this.args.onSelect(helper);
+    if (h && !h.helper.isNew())
+      Helpers.addToRecent(h.helper);
     this.dialogRef.close();
   }
+}
+
+interface helperInList {
+  helper?: HelpersBase,
+  helperId: string,
+  name: string,
+  phone: string,
+  distance?: number,
+  location?: Location,
+  assignedDeliveries?: number,
+  fixedFamilies?: number,
+  distanceFrom?: string
+}
+function mapHelpers(helpers: HelpersBase[]): helperInList[] {
+  return helpers.map(h => ({
+    helper: h,
+    helperId: h.id.value,
+    name: h.name.value,
+    phone: h.phone.displayValue
+
+  } as helperInList));
 }

@@ -669,4 +669,8 @@ export class donor implements Language {
   deliveries_ShouldWeDeleteThem = 'משלוחים פעילים - האם למחוק אותם?';
   excludeGroups = 'למעט קבוצות אלו';
   useFamilyQuantity = 'מספר סלים ברירת מחדל';
+  clear = 'נקה';
+  byLocation = 'לפי מרחק';
+  from = 'מ';
+  delivery = 'משלוח';
 }

@@ -1,7 +1,7 @@
 import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
 import { ValueListColumn, UrlBuilder, Context } from "@remult/core";
 import { use, getLang } from "../translate";
-import { Location, toLongLat, GeocodeInformation } from "../shared/googleApiHelpers"
+import { Location, toLongLat, GeocodeInformation, GetDistanceBetween } from "../shared/googleApiHelpers"
 import * as fetch from 'node-fetch';
 import { wasChanged } from "../model-shared/types";
 import { foreachSync } from "../shared/utils";
@@ -59,7 +59,7 @@ function getFarthest(fromPoint: Location, addresses: familiesInRoute[]) {
     let farthest = fromPoint;
     let lastDist: number = 0;
     for (const f of addresses) {
-        let dist = GeocodeInformation.GetDistanceBetweenPoints(fromPoint, f.location);
+        let dist = GetDistanceBetween(fromPoint, f.location);
         if (dist > lastDist) {
             farthest = f.location;
             lastDist = dist;
@@ -159,9 +159,9 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
         for (let i = 0; i < total; i++) {
             let closest = temp[0];
             let closestIndex = 0;
-            let closestDist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, closest.location);
+            let closestDist = GetDistanceBetween(lastLoc, closest.location);
             for (let j = 0; j < temp.length; j++) {
-                let dist = GeocodeInformation.GetDistanceBetweenPoints(lastLoc, temp[j].location);
+                let dist = GetDistanceBetween(lastLoc, temp[j].location);
                 if (dist < closestDist) {
                     closestDist = dist;
                     closestIndex = j;

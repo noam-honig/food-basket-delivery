@@ -473,7 +473,7 @@ export class italy implements Language {
   notDeliveredNotHome = 'Non consegnato, non erano a casa';
   notDeliveredOther = 'Non consegnato, altro';
   deliveryStatus = 'stato della consegna';
-  useFamilyDefaultBasketType = 'Tipo di pacco per impostazione predefinita della famiglia';
+  useFamilyDefaultBasketType = 'Tipo di pacco predefinito';
   mustSelectDistributionList = 'È necessario selezionare un elenco di distribuzione';
   assignAFamilyGroup = 'Assegnazione a un gruppo familiare';
   action = 'azione';
@@ -667,6 +667,10 @@ export class italy implements Language {
   distributionCenterDetails = 'Dettagli';
   thisFamilyHas = 'Questa famiglia ha';
   deliveries_ShouldWeDeleteThem = 'Consegne attive, vuoi cancellarle?';
-  excludeGroups = 'Tranne questi gruppi';
-  useFamilyQuantity = 'Numero di cestini predefiniti';
+  excludeGroups = 'Gruppi esclusi';
+  useFamilyQuantity = 'Quantità predefinita';
+  clear = 'Chiaro';
+  byLocation = 'Per distanza';
+  from = 'a partire dal';
+  delivery = 'Consegna';
 }

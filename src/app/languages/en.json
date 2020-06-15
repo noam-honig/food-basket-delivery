@@ -406,6 +406,10 @@
     "google": "By groups",
     "valueInCode": "לפי קבוצות"
   },
+  "byLocation": {
+    "google": "By distance",
+    "valueInCode": "לפי מרחק"
+  },
   "callEscort": {
     "google": "Call the lender",
     "valueInCode": "התקשר למלווה",
@@ -474,6 +478,10 @@
   "cityAutomaticallyUpdatedByGoogle": {
     "google": "City (automatically updated)",
     "valueInCode": "עיר (מתעדכן אוטומטית)"
+  },
+  "clear": {
+    "google": "Clear",
+    "valueInCode": "נקה"
   },
   "clearAllVolunteerComments": {
     "google": "Clear notes for all volunteers",
@@ -813,6 +821,11 @@
     "valueInCode": "משלוחים עודכנו",
     "custom": "deliveries updated"
   },
+  "delivery": {
+    "google": "Shipping",
+    "valueInCode": "משלוח",
+    "custom": "Delivery"
+  },
   "deliveryCenterAddress": {
     "google": "Shipping center address",
     "valueInCode": "כתובת מרכז השילוח",
@@ -1092,7 +1105,7 @@
   "excludeGroups": {
     "google": "Except for these groups",
     "valueInCode": "למעט קבוצות אלו",
-    "custom":"Excluded Groups"
+    "custom": "Excluded Groups"
   },
   "executeExcelImport": {
     "google": "Making the absorption",
@@ -1354,6 +1367,11 @@
     "google": "\"Frozen\" delivery is a delivery that will not be associated with any volunteer until the \"delivery\" is dispatched. Freezing is used to temporarily stop certain shipments until they can be thawed and shipped. Do freeze shipping to",
     "valueInCode": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל",
     "custom": "\"Frozen\" delivery is a delivery that will not be assigned with any volunteer until the \"delivery\" is dispatched. Freezing is used to temporarily stop certain deliveries until they can be thawed and shipped. Do freeze delivery to"
+  },
+  "from": {
+    "google": "M",
+    "valueInCode": "מ",
+    "custom": "from"
   },
   "fromDate": {
     "google": "Dated",
@@ -2787,13 +2805,13 @@
   },
   "useFamilyMembersAsQuantity": {
     "google": "Use a number of souls also as a portion",
-    "valueInCode": "השתמש במספר נפשות גם ככמות מנות",
+    "valueInCode": "השתמש במספר נפשות גם כמספר מנות",
     "custom": "Determine Quantity by Family Members"
   },
   "useFamilyQuantity": {
     "google": "Number of default baskets",
     "valueInCode": "מספר סלים ברירת מחדל",
-    "custom":"Default Quantity"
+    "custom": "Default Quantity"
   },
   "userNotFoundOrWrongPassword": {
     "google": "User not found or password incorrect",

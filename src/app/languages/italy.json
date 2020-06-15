@@ -439,6 +439,11 @@
     "valueInCode": "לפי קבוצות",
     "valueInEnglish": "By groups"
   },
+  "byLocation": {
+    "google": "Per distanza",
+    "valueInCode": "לפי מרחק",
+    "valueInEnglish": "By distance"
+  },
   "callEscort": {
     "google": "Chiama la scorta",
     "valueInCode": "התקשר למלווה",
@@ -513,6 +518,11 @@
     "google": "Città (aggiornata automaticamente)",
     "valueInCode": "עיר (מתעדכן אוטומטית)",
     "valueInEnglish": "City (automatically updated)"
+  },
+  "clear": {
+    "google": "Chiaro",
+    "valueInCode": "נקה",
+    "valueInEnglish": "Clear"
   },
   "clearAllVolunteerComments": {
     "google": "Cancella tutti i commenti volontari",
@@ -870,6 +880,11 @@
     "valueInCode": "משלוחים עודכנו",
     "valueInEnglish": "deliveries updated"
   },
+  "delivery": {
+    "google": "Consegna",
+    "valueInCode": "משלוח",
+    "valueInEnglish": "Delivery"
+  },
   "deliveryCenterAddress": {
     "google": "indirizzo del centro di consegna",
     "valueInCode": "כתובת מרכז השילוח",
@@ -1196,9 +1211,9 @@
     "valueInEnglish": "blank"
   },
   "excludeGroups": {
-    "google": "Tranne questi gruppi",
+    "google": "Gruppi esclusi",
     "valueInCode": "למעט קבוצות אלו",
-    "valueInEnglish": "Except for these groups"
+    "valueInEnglish": "Excluded Groups"
   },
   "executeExcelImport": {
     "google": "Importazione",
@@ -1504,6 +1519,11 @@
     "google": "La consegna \"Frozen\" è una consegna che non verrà assegnata a nessun volontario fino alla spedizione della \"consegna\". Il congelamento viene utilizzato per interrompere temporaneamente determinate consegne fino a quando non possono essere scongelate e spedite. Effettua la consegna gratuita a",
     "valueInCode": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל",
     "valueInEnglish": "\"Frozen\" delivery is a delivery that will not be assigned with any volunteer until the \"delivery\" is dispatched. Freezing is used to temporarily stop certain deliveries until they can be thawed and shipped. Do freeze delivery to"
+  },
+  "from": {
+    "google": "a partire dal",
+    "valueInCode": "מ",
+    "valueInEnglish": "from"
   },
   "fromDate": {
     "google": "Datato",
@@ -3187,19 +3207,19 @@
     "valueInEnglish": "Calculate route based on current location"
   },
   "useFamilyDefaultBasketType": {
-    "google": "Tipo di pacco per impostazione predefinita della famiglia",
+    "google": "Tipo di pacco predefinito",
     "valueInCode": "סל ברירת מחדל",
-    "valueInEnglish": "Parcel type by family default"
+    "valueInEnglish": "Default Parcel Type"
   },
   "useFamilyMembersAsQuantity": {
     "google": "Determinare la quantità per i membri della famiglia",
-    "valueInCode": "השתמש במספר נפשות גם ככמות מנות",
+    "valueInCode": "השתמש במספר נפשות גם כמספר מנות",
     "valueInEnglish": "Determine Quantity by Family Members"
   },
   "useFamilyQuantity": {
-    "google": "Numero di cestini predefiniti",
+    "google": "Quantità predefinita",
     "valueInCode": "מספר סלים ברירת מחדל",
-    "valueInEnglish": "Number of default baskets"
+    "valueInEnglish": "Default Quantity"
   },
   "userNotFoundOrWrongPassword": {
     "google": "Utente non trovato o password errata",

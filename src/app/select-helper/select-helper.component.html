@@ -1,33 +1,49 @@
+<div mat-dialog-content style="height:65vh">
+  <form (submit)="selectFirst()">
 
-  <mat-card>
-    <div class="fullSize">
-      
-      <form (submit)="selectFirst()">
+    <mat-form-field style="width:100%">
+      <input matInput [(ngModel)]="searchString" (input)="doFilter()" placeholder="{{settings.lang.searchVolunteer}}"
+        [ngModelOptions]="{standalone: true}">
+      <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
+    </mat-form-field>
+    <h4 *ngIf="showingRecentHelpers">{{settings.lang.recentVolunteers}}</h4>
 
-        <mat-form-field class="full-width">
-          <input matInput [(ngModel)]="searchString" (input)="doFilter()" placeholder="{{settings.lang.searchVolunteer}}" [ngModelOptions]="{standalone: true}">
-          <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
-        </mat-form-field>
-        <h4 *ngIf="showingRecentHelpers">{{settings.lang.recentVolunteers}}</h4>
-        <mat-nav-list role="list">
-          <mat-list-item *ngFor="let h of filteredHelpers" (click)="select(h)">
+    <div *ngFor="let h of filteredHelpers" (click)="select(h)" style="display:flex;flex-direction: column;">
 
-            <span style="min-width:100px;"> {{h.name.value}}
-            
-            </span>
+      <div style="display:flex;justify-content: space-between;">
+        {{h.name}}
+        <div style="text-align: end;" class="secondary-text">
+          <div *ngIf="h.assignedDeliveries"> {{h.assignedDeliveries}} {{settings.lang.deliveries}}</div>
+          <div *ngIf="h.fixedFamilies"> {{h.fixedFamilies}} {{settings.lang.families}}</div>
+        </div>
+      </div>
 
-            {{h.phone.displayValue}}
-            <ng-container *ngIf="showCompany()&&h.company.value">
-                <br/>
-                {{h.company.value}}
-              </ng-container>
-            <mat-divider></mat-divider>
-          </mat-list-item>
-        </mat-nav-list>
-       
-      </form>
-      <button mat-raised-button color="accent" (click)="moreHelpers()" *ngIf="showingRecentHelpers|| filteredHelpers.length==findOptions.limit">{{settings.lang.moreVolunteers}}
-      </button>
+      <div class="secondary-text">
+        {{h.phone}}
+      </div>
+      <div *ngIf="h.location" class="secondary-text">
+        {{h.distance.toFixed(1)}} {{settings.lang.km}} {{settings.lang.from}} {{h.distanceFrom}}
+      </div>
+      <mat-divider></mat-divider>
     </div>
-  </mat-card>
 
+
+
+
+  </form>
+  <button mat-raised-button color="accent" (click)="moreHelpers()"
+    *ngIf="showingRecentHelpers|| filteredHelpers.length==findOptions.limit">{{settings.lang.moreVolunteers}}
+  </button>
+</div>
+<mat-dialog-actions>
+  <button mat-raised-button color="warning" (click)="close()">
+    {{settings.lang.cancel}}
+  </button>
+  <button mat-raised-button style="color:red" (click)="clearHelper()">
+    {{settings.lang.clear}}
+  </button>
+  <button mat-raised-button color="accent" (click)="byLocation()" *ngIf="args.location">
+    {{settings.lang.byLocation}}
+  </button>
+
+</mat-dialog-actions>

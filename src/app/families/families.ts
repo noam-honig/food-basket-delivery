@@ -395,7 +395,7 @@ export class Families extends IdEntity {
   status = new FamilyStatusColumn(this.context);
   statusDate = new changeDate(getLang(this.context).statusChangeDate);
   statusUser = new HelperIdReadonly(this.context, getLang(this.context).statusChangeUser);
-  fixedCourier = new HelperId(this.context, getLang(this.context).defaultVolunteer);
+  fixedCourier = new HelperId(this.context, getLang(this.context).defaultVolunteer, { location: () => this.getGeocodeInformation().location() });
   async reloadGeoCoding() {
 
     let geo = new GeocodeInformation();
