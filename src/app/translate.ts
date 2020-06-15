@@ -795,7 +795,7 @@ export var use = { language: defaultLang };
 const langMap = new Map<string, Language>();
 langMap.set('en', new en());
 langMap.set('es', new es());
-langMap.set('it', new italy());
+langMap.set('italy', new italy());
 langMap.set('donor', new donor());
 langMap.set('soldier', new soldier());
 function langByCode(lang: string) {
