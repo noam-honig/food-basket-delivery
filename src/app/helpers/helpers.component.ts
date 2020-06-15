@@ -56,7 +56,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
     this.helpers.getRecords();
   }
   searchString: string = '';
-  numOfColsInGrid = 6;
+  numOfColsInGrid = 4;
   helpers = this.context.for(Helpers).gridSettings({
     allowDelete: false,
     allowInsert: true,
@@ -138,7 +138,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
           this.context.openDialog(GridDialogComponent, x => x.args = {
             title: use.language.deliveriesFor + ' ' + h.name.value,
             settings: this.context.for(FamilyDeliveries).gridSettings({
-              numOfColumnsInGrid: 4,
+              numOfColumnsInGrid: 6,
               hideDataArea: true,
               knowTotalRows: true,
               rowCssClass: fd => fd.deliverStatus.getCss(),
