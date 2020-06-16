@@ -46,7 +46,7 @@ class NewDelivery extends ActionOnRows<Families> {
                 this.selfPickup,
                 this.excludeGroups
             ],
-            validate: async (c) => {
+            validate: async () => {
                 let x = await context.for(DistributionCenters).findId(this.distributionCenter);
                 if (!x&&false) {
                     this.distributionCenter.validationError = getLang(this.context).mustSelectDistributionList;
