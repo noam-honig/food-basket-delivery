@@ -23,7 +23,7 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { visitAll } from '@angular/compiler';
-import { use, getLang } from '../translate';
+import { use, getLang, TranslationOptions } from '../translate';
 
 @Component({
   selector: 'app-helpers',
@@ -179,6 +179,9 @@ export class HelpersComponent implements OnInit, OnDestroy {
       this.numOfColsInGrid = 4;
       if (this.context.isAllowed(Roles.admin))
         this.numOfColsInGrid++;
+      if (this.settings.forWho.value == TranslationOptions.donors)
+        this.numOfColsInGrid+=2;
+
       return this.selectColumns(helpers);
     },
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes),
@@ -227,13 +230,18 @@ export class HelpersComponent implements OnInit, OnDestroy {
         column: helpers.distCenterAdmin, width: '160'
       });
     }
+
+    r.push({
+      column: helpers.preferredDistributionAreaAddress, width: '120'
+    });
+    r.push({
+      column: helpers.company, width: '120'
+    });
+
     if (this.context.isAllowed(Roles.admin)) {
       r.push(helpers.distributionCenter);
     }
-
     r.push(helpers.email);
-    r.push(helpers.preferredDistributionAreaAddress);
-    r.push(helpers.company);
     if (this.settings.manageEscorts.value) {
       r.push(helpers.escort, helpers.theHelperIAmEscorting, helpers.needEscort);
     }
