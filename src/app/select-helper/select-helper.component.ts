@@ -87,7 +87,7 @@ export class SelectHelperComponent implements OnInit {
 
       for (const d of (await db.execute(sql.query({
         from: afd,
-        where: () => [afd.courier.isDifferentFrom('').and(afd.deliverStatus.isActiveDelivery())],
+        where: () => [afd.courier.isDifferentFrom('').and(afd.deliverStatus.isNotAResultStatus())],
         select: () => [
           sql.columnWithAlias(afd.courier, "courier"),
           sql.columnWithAlias(afd.addressLongitude, "lng"),
