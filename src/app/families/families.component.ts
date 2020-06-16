@@ -632,7 +632,8 @@ export class FamiliesComponent implements OnInit {
         //  debugger;
     }
     sortColumns(columns: DataControlInfo<Families>[]) {
-
+        if (this.families.origList.length>0)
+            this.families.resetColumns();
         this.families.columns.items.sort((a, b) => a.caption > b.caption ? 1 : a.caption < b.caption ? -1 : 0);
         this.families.columns.numOfColumnsInGrid = columns.length;
         for (let index = 0; index < columns.length; index++) {
@@ -645,6 +646,7 @@ export class FamiliesComponent implements OnInit {
             let origIndex = this.families.columns.items.indexOf(item);
             this.families.columns.moveCol(item, -origIndex + index);
         }
+        console.log(this.families.columns.items);
 
     }
     statTotal(t: statsOnTab) {
