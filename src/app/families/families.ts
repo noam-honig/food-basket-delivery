@@ -4,7 +4,7 @@ import { YesNoColumn } from "./YesNo";
 
 import { FamilySourceId } from "./FamilySources";
 import { BasketId, BasketType, QuantityColumn } from "./BasketType";
-import { changeDate, DateTimeColumn, SqlBuilder, PhoneColumn, delayWhileTyping } from "../model-shared/types";
+import { changeDate, DateTimeColumn, SqlBuilder, PhoneColumn, delayWhileTyping, wasChanged } from "../model-shared/types";
 import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, FilterBase, ColumnOptions, SpecificEntityHelper, Entity, DataArealColumnSetting } from '@remult/core';
 import { HelperIdReadonly, HelperId, Helpers, HelperUserInfo } from "../helpers/helpers";
 
@@ -23,6 +23,7 @@ import { DialogService } from "../select-popup/dialog";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { UpdateFamilyDialogComponent } from "../update-family-dialog/update-family-dialog.component";
 import { deliveryButtonsHelper, getDeliveryGridButtons } from "../family-deliveries/family-deliveries.component";
+import { YesNoQuestionComponent } from "../select-popup/yes-no-question/yes-no-question.component";
 
 
 @EntityClass
@@ -305,6 +306,22 @@ export class Families extends IdEntity {
               }
             }
 
+          }
+          else if (!this.context.onServer) {
+            let statusChangedOutOfActive = wasChanged(this.status) && this.status.value != FamilyStatus.Active;
+            if (statusChangedOutOfActive) {
+              let activeDeliveries = await this.context.for(ActiveFamilyDeliveries).find({ where: fd => fd.family.isEqualTo(this.id).and(fd.deliverStatus.isActiveDelivery()) });
+              if (activeDeliveries.length > 0) {
+                if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
+                  question: getLang(this.context).thisFamilyHas + " " + activeDeliveries.length + " " + getLang(this.context).deliveries_ShouldWeDeleteThem
+                }, y => y.yes)) {
+                  for (const d of activeDeliveries) {
+                    await d.delete();
+
+                  }
+                }
+              }
+            }
           }
         }
 

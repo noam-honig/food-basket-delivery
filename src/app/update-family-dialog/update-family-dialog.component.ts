@@ -186,30 +186,15 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   confirmed = false;
   async confirm() {
     this.confirmed = true;
-    let status = this.families.currentRow.status;
-    let statusChangedOutOfActive = wasChanged(status) && status.value != FamilyStatus.Active;
+    this.refreshDeliveryStatistics = wasChanged(this.families.currentRow.status);
     await this.families.currentRow.save();
     if (this.delivery) {
       let d = this.delivery;
       if (d.changeRequireStatsRefresh())
         this.refreshDeliveryStatistics = true;
-      let courierChanged = wasChanged(d.courier) && d.courier.value;
       await this.delivery.save();
-      if (courierChanged)
-        await AsignFamilyComponent.RefreshRoute(this.delivery.courier.value, {});
+    }
 
-    }
-    if (statusChangedOutOfActive) {
-      let activeDeliveries = await this.context.for(ActiveFamilyDeliveries).find({ where: fd => fd.family.isEqualTo(this.families.currentRow.id).and(fd.deliverStatus.isActiveDelivery()) });
-      if (activeDeliveries.length > 0) {
-        if (await this.dialog.YesNoPromise(this.settings.lang.thisFamilyHas + " " + activeDeliveries.length + " " + this.settings.lang.deliveries_ShouldWeDeleteThem)) {
-          for (const d of activeDeliveries) {
-            await d.delete();
-            this.refreshDeliveryStatistics = true;
-          }
-        }
-      }
-    }
 
     this.dialogRef.close();
     if (this.args && this.args.onSave)
