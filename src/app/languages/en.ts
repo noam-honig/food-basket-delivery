@@ -505,7 +505,6 @@ export class en implements Language {
   familyStatus = 'status';
   deleteDeliveries = 'Delete deliveries';
   deleteDeliveriesHelp = 'Deleting undelivered deliveries only. Please note that recipient families are not removed from distribution lists. To remove a family from the lists you should update the family status.';
-  updateCourierByCurrentCourier = 'Volunteer by current delivery';
   updateDefaultVolunteer = 'Update a default family volunteer';
   clearVolunteer = 'Cancel volunteer assignment';
   setAsDefaultVolunteer = 'Also update as a default volunteer';
@@ -673,4 +672,6 @@ export class en implements Language {
   byLocation = 'By distance';
   from = 'from';
   delivery = 'Delivery';
+  updateFamilyDefaults = 'Update family defaults';
+  updateFamilyDefaultsHelp = 'Update family defaults based on current delivery. Please select which columns to update';
 }

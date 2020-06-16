@@ -619,7 +619,7 @@ export class Language {
   familyStatus = 'סטטוס';
   deleteDeliveries = 'מחק משלוחים';
   deleteDeliveriesHelp = 'שים לב - מחיקת המשלוח לא תוציא את המשפחה מהרשימות - כדי להוציא את המשפחה מהרשימות יש לבצע עדכון לסטטוס המשפחה. המחיקה תתבצע רק עבור משלוחים שטרם נמסרו';
-  updateCourierByCurrentCourier = 'עדכן את המתנדב מהמשלוח הנוכחי';
+  
   updateDefaultVolunteer = 'עדכן מתנדב ברירת מחדל למשפחה';
   clearVolunteer = 'בטל שיוך למתנדב';
   setAsDefaultVolunteer = 'עדכן גם כמתנדב ברירת מחדל';
@@ -790,6 +790,8 @@ export class Language {
   byLocation = "לפי מרחק";
   from = "מ";
   delivery = "משלוח";
+  updateFamilyDefaults="עדכון ברירות מחדל למשפחות";
+  updateFamilyDefaultsHelp = "פעולה זו מאפשרת לעדכן את הברירות מחדל למשפחה בהתאם למשלוחים המסומנים. בחרו אילו שדות לעדכן";
 }
 
 const defaultLang = new Language();

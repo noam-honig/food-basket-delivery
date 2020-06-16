@@ -505,7 +505,6 @@ export class donor implements Language {
   familyStatus = 'סטטוס';
   deleteDeliveries = 'מחק משלוחים';
   deleteDeliveriesHelp = 'שים לב - מחיקת המשלוח לא תוציא את התורם מהרשימות - כדי להוציא את התורם מהרשימות יש לבצע עדכון לסטטוס התורם. המחיקה תתבצע רק עבור משלוחים שטרם נמסרו';
-  updateCourierByCurrentCourier = 'עדכן את המתנדב מהמשלוח הנוכחי';
   updateDefaultVolunteer = 'עדכן מתנדב ברירת מחדל לתורם';
   clearVolunteer = 'בטל שיוך למתנדב';
   setAsDefaultVolunteer = 'עדכן גם כמתנדב ברירת מחדל';
@@ -673,4 +672,6 @@ export class donor implements Language {
   byLocation = 'לפי מרחק';
   from = 'מ';
   delivery = 'משלוח';
+  updateFamilyDefaults = 'עדכון ברירות מחדל לתורמים';
+  updateFamilyDefaultsHelp = 'פעולה זו מאפשרת לעדכן את הברירות מחדל לתורם בהתאם למשלוחים המסומנים. בחרו אילו שדות לעדכן';
 }

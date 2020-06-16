@@ -505,7 +505,6 @@ export class italy implements Language {
   familyStatus = 'stato';
   deleteDeliveries = 'Elimina consegne';
   deleteDeliveriesHelp = 'Eliminazione solo di consegne non consegnate. Si noti che le famiglie di destinatari non vengono rimosse dalle liste di distribuzione. Per rimuovere una famiglia dagli elenchi è necessario aggiornare lo stato della famiglia.';
-  updateCourierByCurrentCourier = 'Volontario alla consegna attuale';
   updateDefaultVolunteer = 'Aggiorna un volontario familiare predefinito';
   clearVolunteer = "Annulla l'assegnazione di volontari";
   setAsDefaultVolunteer = 'Aggiorna anche come volontario predefinito';
@@ -673,4 +672,6 @@ export class italy implements Language {
   byLocation = 'Per distanza';
   from = 'a partire dal';
   delivery = 'Consegna';
+  updateFamilyDefaults = 'Aggiorna i valori predefiniti della famiglia';
+  updateFamilyDefaultsHelp = 'Aggiorna i valori predefiniti della famiglia in base alla consegna corrente. Seleziona le colonne da aggiornare';
 }

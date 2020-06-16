@@ -3076,11 +3076,6 @@
     "valueInCode": "עדכן הערה",
     "valueInEnglish": "Update Comment"
   },
-  "updateCourierByCurrentCourier": {
-    "google": "Voluntario en la entrega actual",
-    "valueInCode": "עדכן את המתנדב מהמשלוח הנוכחי",
-    "valueInEnglish": "Volunteer by current delivery"
-  },
   "updatedBy": {
     "google": "Actualizado por",
     "valueInCode": "עודכן על ידי",
@@ -3135,6 +3130,16 @@
     "google": "Cambio también para entregas en curso",
     "valueInCode": "שנה גם עבור משלוחים שטרם נמסרו",
     "valueInEnglish": "Change also for ongoing deliveries"
+  },
+  "updateFamilyDefaults": {
+    "google": "Actualizar valores predeterminados de familia",
+    "valueInCode": "עדכון ברירות מחדל למשפחות",
+    "valueInEnglish": "Update family defaults"
+  },
+  "updateFamilyDefaultsHelp": {
+    "google": "Actualice los valores predeterminados de la familia según la entrega actual. Seleccione qué columnas actualizar",
+    "valueInCode": "פעולה זו מאפשרת לעדכן את הברירות מחדל למשפחה בהתאם למשלוחים המסומנים. בחרו אילו שדות לעדכן",
+    "valueInEnglish": "Update family defaults based on current delivery. Please select which columns to update"
   },
   "updateFamilySource": {
     "google": "Actualizar referencia",

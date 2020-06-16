@@ -505,7 +505,6 @@ export class es implements Language {
   familyStatus = 'estado';
   deleteDeliveries = 'Eliminar entregas';
   deleteDeliveriesHelp = 'Eliminar solo entregas no entregadas. Tenga en cuenta que las familias receptoras no se eliminan de las listas de distribución. Para eliminar una familia de las listas, debe actualizar el estado de la familia.';
-  updateCourierByCurrentCourier = 'Voluntario en la entrega actual';
   updateDefaultVolunteer = 'Actualizar un voluntario familiar predeterminado';
   clearVolunteer = 'Cancelar la asignación de voluntario';
   setAsDefaultVolunteer = 'También actualizar como voluntario predeterminado';
@@ -673,4 +672,6 @@ export class es implements Language {
   byLocation = 'A distancia';
   from = 'desde';
   delivery = 'Entrega';
+  updateFamilyDefaults = 'Actualizar valores predeterminados de familia';
+  updateFamilyDefaultsHelp = 'Actualice los valores predeterminados de la familia según la entrega actual. Seleccione qué columnas actualizar';
 }

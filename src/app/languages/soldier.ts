@@ -505,7 +505,6 @@ export class soldier implements Language {
   familyStatus = 'סטטוס';
   deleteDeliveries = 'מחק משלוחים';
   deleteDeliveriesHelp = 'שים לב - מחיקת המשלוח לא תוציא את החייל מהרשימות - כדי להוציא את החייל מהרשימות יש לבצע עדכון לסטטוס החייל. המחיקה תתבצע רק עבור משלוחים שטרם נמסרו';
-  updateCourierByCurrentCourier = 'עדכן את המתנדב מהמשלוח הנוכחי';
   updateDefaultVolunteer = 'עדכן מתנדב ברירת מחדל לחייל';
   clearVolunteer = 'בטל שיוך למתנדב';
   setAsDefaultVolunteer = 'עדכן גם כמתנדב ברירת מחדל';
@@ -673,4 +672,6 @@ export class soldier implements Language {
   byLocation = 'לפי מרחק';
   from = 'מ';
   delivery = 'משלוח';
+  updateFamilyDefaults = 'עדכון ברירות מחדל לחיילים';
+  updateFamilyDefaultsHelp = 'פעולה זו מאפשרת לעדכן את הברירות מחדל לחייל בהתאם למשלוחים המסומנים. בחרו אילו שדות לעדכן';
 }

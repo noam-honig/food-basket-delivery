@@ -2684,11 +2684,6 @@
     "valueInCode": "עדכן הערה",
     "custom": "Update Comment"
   },
-  "updateCourierByCurrentCourier": {
-    "google": "Update the volunteer from the current shipment",
-    "valueInCode": "עדכן את המתנדב מהמשלוח הנוכחי",
-    "custom": "Volunteer by current delivery"
-  },
   "updatedBy": {
     "google": "Updated by",
     "valueInCode": "עודכן על ידי"
@@ -2738,6 +2733,16 @@
     "google": "Change also for unposted shipments",
     "valueInCode": "שנה גם עבור משלוחים שטרם נמסרו",
     "custom": "Change also for ongoing deliveries"
+  },
+  "updateFamilyDefaults": {
+    "google": "Update defaults for families",
+    "valueInCode": "עדכון ברירות מחדל למשפחות",
+    "custom": "Update family defaults"
+  },
+  "updateFamilyDefaultsHelp": {
+    "google": "This allows you to update your family defaults based on the marked shipments. Choose which fields to update",
+    "valueInCode": "פעולה זו מאפשרת לעדכן את הברירות מחדל למשפחה בהתאם למשלוחים המסומנים. בחרו אילו שדות לעדכן",
+    "custom": "Update family defaults based on current delivery. Please select which columns to update"
   },
   "updateFamilySource": {
     "google": "Update Referrer",

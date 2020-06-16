@@ -2459,10 +2459,6 @@
     "google": "עדכן הערה",
     "valueInCode": "עדכן הערה"
   },
-  "updateCourierByCurrentCourier": {
-    "google": "עדכן את המתנדב מהמשלוח הנוכחי",
-    "valueInCode": "עדכן את המתנדב מהמשלוח הנוכחי"
-  },
   "updatedBy": {
     "google": "עודכן על ידי",
     "valueInCode": "עודכן על ידי"
@@ -2506,6 +2502,14 @@
   "updateExistingDeliveries": {
     "google": "שנה גם עבור משלוחים שטרם נמסרו",
     "valueInCode": "שנה גם עבור משלוחים שטרם נמסרו"
+  },
+  "updateFamilyDefaults": {
+    "google": "עדכון ברירות מחדל לתורמים",
+    "valueInCode": "עדכון ברירות מחדל למשפחות"
+  },
+  "updateFamilyDefaultsHelp": {
+    "google": "פעולה זו מאפשרת לעדכן את הברירות מחדל לתורם בהתאם למשלוחים המסומנים. בחרו אילו שדות לעדכן",
+    "valueInCode": "פעולה זו מאפשרת לעדכן את הברירות מחדל למשפחה בהתאם למשלוחים המסומנים. בחרו אילו שדות לעדכן"
   },
   "updateFamilySource": {
     "google": "עדכן גורם מפנה ",

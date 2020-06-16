@@ -4,7 +4,7 @@ import { DistributionCenterId, DistributionCenters, allCentersToken } from "../m
 import { HelperId } from "../helpers/helpers";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { Groups } from "../manage/manage.component";
-import {  use, getLang } from "../translate";
+import { use, getLang } from "../translate";
 import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer, serverUpdateInfo, pagedRowsIterator } from "../families/familyActionsWiring";
 import { async } from "@angular/core/testing";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
@@ -45,21 +45,20 @@ export class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
         });
     }
 }
-class UpdateFixedCourier extends ActionOnRows<FamilyDeliveries> {
-    byCurrentCourier = new BoolColumn(use.language.updateCourierByCurrentCourier);
-    courier = new HelperId(this.context, use.language.defaultVolunteer);
+class UpdateFamilyDefaults extends ActionOnRows<FamilyDeliveries> {
+    byCurrentCourier = new BoolColumn(use.language.defaultVolunteer);
+    basketType = new BoolColumn(use.language.defaultBasketType);
+    quantity = new BoolColumn(use.language.defaultQuantity);
+    comment = new BoolColumn(use.language.commentForVolunteer);
+
+
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
-            columns: () => [this.courier, this.byCurrentCourier],
-            dialogColumns: () => {
-                this.courier.value = '';
-                return [
-                    this.byCurrentCourier,
-                    { column: this.courier, visible: () => !this.byCurrentCourier.value }
-                ]
-            },
-            title: getLang(context).updateDefaultVolunteer,
+            help: () => use.language.updateFamilyDefaultsHelp,
+            columns: () => [this.basketType, this.quantity, this.byCurrentCourier, this.comment],
+
+            title: getLang(context).updateFamilyDefaults,
             forEach: async fd => {
 
 
@@ -69,8 +68,14 @@ class UpdateFixedCourier extends ActionOnRows<FamilyDeliveries> {
                         if (fd.courier.value)
                             f.fixedCourier.value = fd.courier.value;
                     }
-                    else
-                        f.fixedCourier.value = this.courier.value;
+                    if (this.basketType.value)
+                        f.basketType.value = fd.basketType.value;
+                    if (this.quantity.value)
+                        f.quantity.value = fd.quantity.value;
+                    if (this.comment.value)
+                        f.deliveryComments.value = fd.deliveryComments.value;
+
+
                     if (f.wasChanged()) {
                         await f.save();
                         f.updateDelivery(fd);
@@ -93,7 +98,7 @@ export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
             dialogColumns: () => [
                 this.clearVoulenteer,
                 { column: this.courier, visible: () => !this.clearVoulenteer.value },
-                { column: this.updateAlsoAsFixed, visible: () => !this.clearVoulenteer.value&&this.context.isAllowed(Roles.admin) }
+                { column: this.updateAlsoAsFixed, visible: () => !this.clearVoulenteer.value && this.context.isAllowed(Roles.admin) }
 
             ],
             additionalWhere: fd => fd.deliverStatus.isNotAResultStatus(),
@@ -118,7 +123,7 @@ export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
             },
             onEnd: async () => {
                 if (this.courier.value)
-                    await AsignFamilyComponent.RefreshRoute(this.courier.value, undefined,this.context);
+                    await AsignFamilyComponent.RefreshRoute(this.courier.value, undefined, this.context);
             }
         });
         this.courier.value = '';
@@ -354,6 +359,6 @@ export const delvieryActions = () => [
     UpdateQuantity,
     UpdateDistributionCenter,
     UpdateCourier,
-    UpdateFixedCourier,
+    UpdateFamilyDefaults,
     DeleteDeliveries
 ];
