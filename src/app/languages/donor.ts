@@ -674,4 +674,5 @@ export class donor implements Language {
   delivery = 'משלוח';
   updateFamilyDefaults = 'עדכון ברירות מחדל לתורמים';
   updateFamilyDefaultsHelp = 'פעולה זו מאפשרת לעדכן את הברירות מחדל לתורם בהתאם למשלוחים המסומנים. בחרו אילו שדות לעדכן';
+  updateBasedOnTheChangesIn = 'האם לעדכנם בהתאם לשינויים ב';
 }

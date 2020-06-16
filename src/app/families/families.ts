@@ -310,7 +310,7 @@ export class Families extends IdEntity {
           else if (!this.context.onServer) {
             let statusChangedOutOfActive = wasChanged(this.status) && this.status.value != FamilyStatus.Active;
             if (statusChangedOutOfActive) {
-              let activeDeliveries = await this.context.for(ActiveFamilyDeliveries).find({ where: fd => fd.family.isEqualTo(this.id).and(fd.deliverStatus.isActiveDelivery()) });
+              let activeDeliveries = await this.context.for(ActiveFamilyDeliveries).find({ where: fd => fd.family.isEqualTo(this.id).and(fd.deliverStatus.isNotAResultStatus()) });
               if (activeDeliveries.length > 0) {
                 if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
                   question: getLang(this.context).thisFamilyHas + " " + activeDeliveries.length + " " + getLang(this.context).deliveries_ShouldWeDeleteThem
@@ -319,6 +319,45 @@ export class Families extends IdEntity {
                     await d.delete();
 
                   }
+                }
+              }
+            }
+            let deliveryDefaults = '';
+            for (const c of [this.basketType, this.quantity, this.deliveryComments, this.defaultSelfPickup]) {
+              if (wasChanged(c)) {
+                if (deliveryDefaults.length > 0)
+                  deliveryDefaults += ", ";
+                deliveryDefaults += c.defs.caption;
+              }
+            }
+            if (deliveryDefaults.length > 0) {
+              let activeDeliveries = await this.context.for(ActiveFamilyDeliveries).find({ where: fd => fd.family.isEqualTo(this.id).and(fd.deliverStatus.isNotAResultStatus()) });
+              if (activeDeliveries.length > 0) {
+                let l = getLang(this.context);
+                let q = getLang(this.context).thisFamilyHas + " " + activeDeliveries.length + " " + getLang(this.context).deliveries + " " + getLang(this.context).updateBasedOnTheChangesIn + " " + deliveryDefaults;
+                if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
+                  question: q
+
+                }, y => y.yes)) {
+                  for (const d of activeDeliveries) {
+                    if (wasChanged(this.basketType))
+                      d.basketType.value = this.basketType.value;
+                    if (wasChanged(this.quantity))
+                      d.quantity.value = this.quantity.value;
+                    if (wasChanged(this.deliveryComments))
+                      d.deliveryComments.value = this.deliveryComments.value;
+                    if (wasChanged(this.defaultSelfPickup))
+                      if (this.defaultSelfPickup.value)
+                        if (d.deliverStatus.value == DeliveryStatus.ReadyForDelivery)
+                          d.deliverStatus.value = DeliveryStatus.SelfPickup;
+                        else if (d.deliverStatus.value == DeliveryStatus.SelfPickup)
+                          d.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
+
+
+                      await d.save();
+                  }
+
+
                 }
               }
             }

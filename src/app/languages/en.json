@@ -2665,6 +2665,11 @@
     "google": "Update area for families",
     "valueInCode": "עדכן אזור למשפחות"
   },
+  "updateBasedOnTheChangesIn": {
+    "google": "Do update according to changes b",
+    "valueInCode": "האם לעדכנם בהתאם לשינויים ב",
+    "custom": ", update them based on changes in"
+  },
   "updateBasketQuantity": {
     "google": "Update amount of baskets",
     "valueInCode": "עדכן כמות סלים",

@@ -66,7 +66,7 @@ export class TranslationOptions {
   TranslateOption() {
 
   }
-  
+
   constructor(public id: number, public caption: string, public args: {
     leftToRight?: boolean,
     languageCode?: string,
@@ -76,7 +76,7 @@ export class TranslationOptions {
     translateFunction?: (s: string) => string,
     internationalPrefixForSmsAndAws?: string
   }) {
-    
+
   }
 
 }
@@ -619,7 +619,7 @@ export class Language {
   familyStatus = 'סטטוס';
   deleteDeliveries = 'מחק משלוחים';
   deleteDeliveriesHelp = 'שים לב - מחיקת המשלוח לא תוציא את המשפחה מהרשימות - כדי להוציא את המשפחה מהרשימות יש לבצע עדכון לסטטוס המשפחה. המחיקה תתבצע רק עבור משלוחים שטרם נמסרו';
-  
+
   updateDefaultVolunteer = 'עדכן מתנדב ברירת מחדל למשפחה';
   clearVolunteer = 'בטל שיוך למתנדב';
   setAsDefaultVolunteer = 'עדכן גם כמתנדב ברירת מחדל';
@@ -782,16 +782,17 @@ export class Language {
   distributionCenterName = "שם";
   distributionCenterUniqueId = "סמל";
   distributionCenterDetails = "פרטים";
-  thisFamilyHas="למשפחה זו יש";
-  deliveries_ShouldWeDeleteThem= 'משלוחים פעילים - האם למחוק אותם?';
+  thisFamilyHas = "למשפחה זו יש";
+  deliveries_ShouldWeDeleteThem = 'משלוחים פעילים - האם למחוק אותם?';
   excludeGroups = "למעט קבוצות אלו";
   useFamilyQuantity = "מספר סלים ברירת מחדל";
-  clear="נקה";
+  clear = "נקה";
   byLocation = "לפי מרחק";
   from = "מ";
   delivery = "משלוח";
-  updateFamilyDefaults="עדכון ברירות מחדל למשפחות";
+  updateFamilyDefaults = "עדכון ברירות מחדל למשפחות";
   updateFamilyDefaultsHelp = "פעולה זו מאפשרת לעדכן את הברירות מחדל למשפחה בהתאם למשלוחים המסומנים. בחרו אילו שדות לעדכן";
+  updateBasedOnTheChangesIn = "האם לעדכנם בהתאם לשינויים ב";
 }
 
 const defaultLang = new Language();

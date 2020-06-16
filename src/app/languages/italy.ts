@@ -674,4 +674,5 @@ export class italy implements Language {
   delivery = 'Consegna';
   updateFamilyDefaults = 'Aggiorna i valori predefiniti della famiglia';
   updateFamilyDefaultsHelp = 'Aggiorna i valori predefiniti della famiglia in base alla consegna corrente. Seleziona le colonne da aggiornare';
+  updateBasedOnTheChangesIn = ', aggiornali in base alle modifiche in';
 }

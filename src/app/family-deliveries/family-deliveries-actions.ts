@@ -50,6 +50,7 @@ class UpdateFamilyDefaults extends ActionOnRows<FamilyDeliveries> {
     basketType = new BoolColumn(use.language.defaultBasketType);
     quantity = new BoolColumn(use.language.defaultQuantity);
     comment = new BoolColumn(use.language.commentForVolunteer);
+    selfPickup = new BoolColumn(use.language.selfPickup);
 
 
     constructor(context: Context) {
@@ -57,6 +58,11 @@ class UpdateFamilyDefaults extends ActionOnRows<FamilyDeliveries> {
             allowed: Roles.admin,
             help: () => use.language.updateFamilyDefaultsHelp,
             columns: () => [this.basketType, this.quantity, this.byCurrentCourier, this.comment],
+            dialogColumns: (c) => [
+                this.basketType, this.quantity, this.byCurrentCourier, this.comment, {
+                    column: this.selfPickup, visible: () => c.settings.usingSelfPickupModule.value
+                }
+            ],
 
             title: getLang(context).updateFamilyDefaults,
             forEach: async fd => {
@@ -74,6 +80,8 @@ class UpdateFamilyDefaults extends ActionOnRows<FamilyDeliveries> {
                         f.quantity.value = fd.quantity.value;
                     if (this.comment.value)
                         f.deliveryComments.value = fd.deliveryComments.value;
+                    if (this.selfPickup.value)
+                        f.defaultSelfPickup.value = fd.deliverStatus.value == DeliveryStatus.SelfPickup || fd.deliverStatus.value == DeliveryStatus.SuccessPickedUp
 
 
                     if (f.wasChanged()) {

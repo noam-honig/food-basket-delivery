@@ -2443,6 +2443,10 @@
     "google": "עדכן אזור לחיילים",
     "valueInCode": "עדכן אזור למשפחות"
   },
+  "updateBasedOnTheChangesIn": {
+    "google": "האם לעדכנם בהתאם לשינויים ב",
+    "valueInCode": "האם לעדכנם בהתאם לשינויים ב"
+  },
   "updateBasketQuantity": {
     "google": "עדכן כמות סלים",
     "valueInCode": "עדכן כמות סלים"

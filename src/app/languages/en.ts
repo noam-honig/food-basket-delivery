@@ -674,4 +674,5 @@ export class en implements Language {
   delivery = 'Delivery';
   updateFamilyDefaults = 'Update family defaults';
   updateFamilyDefaultsHelp = 'Update family defaults based on current delivery. Please select which columns to update';
+  updateBasedOnTheChangesIn = ', update them based on changes in';
 }

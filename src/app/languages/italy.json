@@ -3056,6 +3056,11 @@
     "valueInCode": "עדכן אזור למשפחות",
     "valueInEnglish": "Update area for families"
   },
+  "updateBasedOnTheChangesIn": {
+    "google": ", aggiornali in base alle modifiche in",
+    "valueInCode": "האם לעדכנם בהתאם לשינויים ב",
+    "valueInEnglish": ", update them based on changes in"
+  },
   "updateBasketQuantity": {
     "google": "Quantità di aggiornamento",
     "valueInCode": "עדכן כמות סלים",

@@ -674,4 +674,5 @@ export class es implements Language {
   delivery = 'Entrega';
   updateFamilyDefaults = 'Actualizar valores predeterminados de familia';
   updateFamilyDefaultsHelp = 'Actualice los valores predeterminados de la familia según la entrega actual. Seleccione qué columnas actualizar';
+  updateBasedOnTheChangesIn = ', actualícelos según los cambios en';
 }

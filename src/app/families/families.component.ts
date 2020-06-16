@@ -632,7 +632,7 @@ export class FamiliesComponent implements OnInit {
         //  debugger;
     }
     sortColumns(columns: DataControlInfo<Families>[]) {
-        if (this.families.origList.length>0)
+        if (this.families.origList&&this.families.origList.length>0)
             this.families.resetColumns();
         this.families.columns.items.sort((a, b) => a.caption > b.caption ? 1 : a.caption < b.caption ? -1 : 0);
         this.families.columns.numOfColumnsInGrid = columns.length;
