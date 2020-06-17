@@ -7,15 +7,23 @@ import { Sites } from './sites/sites';
 import { donor } from './languages/donor';
 import { soldier } from './languages/soldier';
 
+export class myBounds {
+  constructor(public west: number, public south: number,public  east: number,public north: number) {
 
+  }
+}
+
+const israel = new myBounds(34.2654333839, 29.5013261988, 35.8363969256, 33.2774264593);
 export class TranslationOptions {
 
 
   static Families: TranslationOptions = new TranslationOptions(0, 'משפחות', {
-    googleMapCountry: 'IL'
+    googleMapCountry: 'IL',
+    bounds: israel
   });
   static donors: TranslationOptions = new TranslationOptions(1, 'תורמים', {
     googleMapCountry: 'IL',
+    bounds: israel,
     languageFile: 'donor',
     translateFunction: s => s.replace(/משפחה אחת/g, "תורם אחד")
       .replace(/משפחות חוזרות/g, 'תורמים חוזרים')
@@ -29,6 +37,7 @@ export class TranslationOptions {
   });
   static soldiers: TranslationOptions = new TranslationOptions(2, 'חיילים', {
     googleMapCountry: 'IL',
+    bounds: israel,
     languageFile: 'soldier',
     translateFunction: s =>
       s.replace(/משפחה אחת/g, "חייל אחד")
@@ -43,12 +52,14 @@ export class TranslationOptions {
   });
   static southAfrica: TranslationOptions = new TranslationOptions(3, 'South Africa', {
     googleMapCountry: 'ZA',
+    bounds: new myBounds(16.3449768409, -34.8191663551, 32.830120477, -22.0913127581),
     leftToRight: true,
     languageCode: 'en',
     languageFile: 'en',
     internationalPrefixForSmsAndAws: '+27'
   });
   static italy: TranslationOptions = new TranslationOptions(4, 'Italy', {
+    bounds: new myBounds(6.7499552751, 36.619987291, 18.4802470232, 47.1153931748),
     googleMapCountry: 'IT',
     leftToRight: true,
     languageCode: 'it',
@@ -57,6 +68,7 @@ export class TranslationOptions {
     basedOnLang: 'en'
   });
   static chile: TranslationOptions = new TranslationOptions(5, 'Chile', {
+    bounds: new myBounds(-75.6443953112, -55.61183, -66.95992, -17.5800118954),
     googleMapCountry: 'CL',
     leftToRight: true,
     languageFile: 'es',
@@ -72,6 +84,8 @@ export class TranslationOptions {
     languageCode?: string,
     languageFile?: string,
     googleMapCountry: string,
+    bounds: myBounds,
+
     basedOnLang?: string,
     translateFunction?: (s: string) => string,
     internationalPrefixForSmsAndAws?: string
@@ -107,6 +121,7 @@ export function getLang(context: Context) {
     return r;
   return use.language;
 }
+
 
 
 

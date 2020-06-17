@@ -23,6 +23,7 @@ import { ShowOnMapComponent } from '../show-on-map/show-on-map.component';
 import { Location, getAddress, getCity } from '../shared/googleApiHelpers';
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 import { FamilyStatus } from '../families/FamilyStatus';
+import { LatLng } from 'spherical-geometry-js';
 
 @Component({
   selector: 'app-update-family-dialog',
@@ -98,11 +99,10 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     if (this.initAddressAutoComplete)
       return;
     this.initAddressAutoComplete = true;
-    const autocomplete = new google.maps.places.SearchBox(this.addressInput.nativeElement);//,
-    //{
-    //  componentRestrictions: { country: this.settings.googleMapCountry() }
-    //,types: ["establishment","address","geocode"]  // 'establishment' / 'address' / 'geocode'
-    //});
+    let b = this.settings.forWho.value.args.bounds;
+    let bounds = new google.maps.LatLngBounds(new google.maps.LatLng(b.west, b.south), new google.maps.LatLng(b.east, b.north));
+    const autocomplete = new google.maps.places.SearchBox(this.addressInput.nativeElement, {bounds: bounds}
+      );
     this.destroyMe = google.maps.event.addListener(autocomplete, 'places_changed', () => {
       if (autocomplete.getPlaces().length == 0)
         return;

@@ -1,7 +1,7 @@
 import * as fetch from 'node-fetch';
 import { UrlBuilder, EntityClass, IdEntity, StringColumn, Entity, DateTimeColumn, Context } from '@remult/core';
 import { extractError } from '../select-popup/dialog';
-import { getLang } from '../translate';
+
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { getRtlScrollAxisType } from '@angular/cdk/platform';
 import * as geometry from 'spherical-geometry-js';
@@ -27,6 +27,7 @@ export async function GetGeoInformation(address: string, context: Context) {
         return new GeocodeInformation(JSON.parse(cacheEntry.googleApiResult.value) as GeocodeResult);
     }
     let settings = await ApplicationSettings.getAsync(context);
+    let b = settings.forWho.value.args.bounds;
     let x = pendingRequests.get(address);
     if (!x) {
         let u = new UrlBuilder('https://maps.googleapis.com/maps/api/geocode/json');
@@ -35,9 +36,9 @@ export async function GetGeoInformation(address: string, context: Context) {
         u.addObject({
             key: process.env.GOOGLE_GECODE_API_KEY,
             address: address,
-            language: settings.lang.languageCode
+            language: settings.lang.languageCode,
             //,            components: 'country:' + settings.googleMapCountry()
-            // bounds:'32.196323,34.653055|32.354234,35.139650'
+            bounds: b.south + "," + b.west + "|" + b.north + "," + b.east
         });
         try {
             // console.log(u.url);
@@ -156,7 +157,7 @@ export class GeocodeInformation {
         if (this.ok())
             return getCity(this.info.results[0].address_components);
     }
-    
+
 }
 
 export function getAddress(result: { formatted_address?: string, address_components?: AddressComponent[] }) {
@@ -341,5 +342,5 @@ export function leaveOnlyNumericChars(x: string) {
     return x;
 }
 export function GetDistanceBetween(a: Location, b: Location) {
-    return geometry.computeDistanceBetween(a, b)/1000;
+    return geometry.computeDistanceBetween(a, b) / 1000;
 }

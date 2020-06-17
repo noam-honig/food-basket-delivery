@@ -228,17 +228,17 @@ export class DistributionMap implements OnInit, OnDestroy {
       this.dict = new Map<string, infoOnMap>();
       this.bounds = new google.maps.LatLngBounds();
       this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
-      // var r = new google.maps.Rectangle({
-      //   map:this.map,
-      //   fillColor:'#FF0000',
-      //   fillOpacity:0.35,
-      //   bounds:{
-      //     north:32.246437,
-      //     south:32.382410,
-      //     west:34.790203,
-      //     east:34.897927
-      //   }
-      // });
+      var r = new google.maps.Rectangle({
+        map:this.map,
+        fillColor:'#FF0000',
+        fillOpacity:0.35,
+        bounds:{
+          west:34.2654333839,
+          south:29.5013261988,
+          east:35.8363969256,
+          north:33.2774264593
+        }
+      });
       this.mapInit = true;
       await this.refreshDeliveries();
       this.map.fitBounds(this.bounds);
