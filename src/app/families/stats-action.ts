@@ -36,7 +36,7 @@ export class Stats {
     outOfList = new FaimilyStatistics(getLang(this.context).removedFromList, f => f.status.isEqualTo(FamilyStatus.RemovedFromList), colors.gray);
     toDelete = new FaimilyStatistics(getLang(this.context).toDelete, f => f.status.isEqualTo(FamilyStatus.ToDelete), colors.red);
     active = new FaimilyStatistics(getLang(this.context).active, f => f.status.isEqualTo(FamilyStatus.Active), colors.green);
-    problem = new FaimilyStatistics(getLang(this.context).adderssProblems, f => f.status.isEqualTo(FamilyStatus.Active).and(f.addressOk.isEqualTo(false)), colors.orange);
+    problem = new FaimilyStatistics(getLang(this.context).adderssProblems, f => f.status.isEqualTo(FamilyStatus.Active).and(f.addressOk.isEqualTo(false).and(f.defaultSelfPickup.isEqualTo(false))), colors.orange);
 
     async getData(distCenter: string) {
         let r = await Stats.getFamilyStats(distCenter);

@@ -461,7 +461,7 @@ export class FamiliesComponent implements OnInit {
         moreStats: []
     };
     addressProblem: statsOnTab = {
-        rule: f => f.addressOk.isEqualTo(false).and(f.status.isEqualTo(FamilyStatus.Active)),
+        rule: f => f.addressOk.isEqualTo(false).and(f.status.isEqualTo(FamilyStatus.Active)).and(f.defaultSelfPickup.isEqualTo(false)),
         moreStats: [],
         name: this.settings.lang.adderssProblems,
         stats: [
