@@ -1,8 +1,20 @@
 <div mat-dialog-content style="height:65vh">
+  <button mat-raised-button color="warning" (click)="close()">
+    {{settings.lang.close}}
+  </button>
+  <button mat-raised-button style="color:red" (click)="clearHelper()">
+    {{settings.lang.clear}}
+  </button>
+  <button mat-raised-button color="accent" (click)="byLocation()" *ngIf="args.location">
+    {{settings.lang.byLocation}}
+  </button>
   <form (submit)="selectFirst()">
-
+    
+    
+    
+    
     <mat-form-field style="width:100%">
-      <input matInput [(ngModel)]="searchString" (input)="doFilter()" placeholder="{{settings.lang.searchVolunteer}}"
+      <input matInput [(ngModel)]="searchString" cdk-focus (input)="doFilter()" placeholder="{{settings.lang.searchVolunteer}}"
         [ngModelOptions]="{standalone: true}">
       <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
     </mat-form-field>
@@ -35,15 +47,3 @@
     *ngIf="showingRecentHelpers|| filteredHelpers.length==findOptions.limit">{{settings.lang.moreVolunteers}}
   </button>
 </div>
-<mat-dialog-actions>
-  <button mat-raised-button color="warning" (click)="close()">
-    {{settings.lang.cancel}}
-  </button>
-  <button mat-raised-button style="color:red" (click)="clearHelper()">
-    {{settings.lang.clear}}
-  </button>
-  <button mat-raised-button color="accent" (click)="byLocation()" *ngIf="args.location">
-    {{settings.lang.byLocation}}
-  </button>
-
-</mat-dialog-actions>
