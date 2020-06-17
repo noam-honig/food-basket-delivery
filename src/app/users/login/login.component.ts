@@ -11,7 +11,8 @@ import { AdminGuard } from '../../auth/roles';
 import { Sites } from '../../sites/sites';
 import { CustomReuseStrategy } from 'src/app/custom-reuse-controller-router-strategy';
 import { MatStepper } from '@angular/material';
-import { Helpers } from 'src/app/helpers/helpers';
+import { Helpers } from '../../helpers/helpers';
+
 
 
 @Component({
