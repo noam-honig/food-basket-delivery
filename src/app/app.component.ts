@@ -107,7 +107,7 @@ export class AppComponent {
       return false;
     return this.helper.canNavigateToRoute(route);
   }
-  @ViewChild('sidenav', { static: true }) sidenav: MatSidenav;
+  @ViewChild('sidenav', { static: false }) sidenav: MatSidenav;
   routeClicked() {
     if (this.dialog.isScreenSmall())
       this.sidenav.close();

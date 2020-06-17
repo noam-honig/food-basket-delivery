@@ -15,7 +15,7 @@ import { HelpersComponent } from './helpers/helpers.component';
 import { DialogService } from './select-popup/dialog';
 import { YesNoQuestionComponent } from './select-popup/yes-no-question/yes-no-question.component';
 import { LoginComponent } from './users/login/login.component';
-import { RegisterComponent } from './users/register/register.component';
+
 import { AuthService } from './auth/auth-service';
 
 import { InputAreaComponent } from './select-popup/input-area/input-area.component';
@@ -112,7 +112,7 @@ export class MyHammerConfig extends HammerGestureConfig {
 
     YesNoQuestionComponent,
     LoginComponent,
-    RegisterComponent,
+    
     InputAreaComponent,
     UpdateInfoComponent,
     FamiliesComponent,
@@ -262,7 +262,7 @@ export function initApp(session: JwtSessionManager, settings: SettingsService) {
       routeMap.set(MyFamiliesComponent, l.MyFamiliesComponent);
       routeMap.set(UpdateInfoComponent, l.UpdateInfoComponent);
       routeMap.set(LoginComponent, l.LoginComponent);
-      routeMap.set(RegisterComponent, l.RegisterComponent);
+      
       routeMap.set(EventsComponent, l.eventsComponent);
 
 

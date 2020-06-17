@@ -4,7 +4,7 @@ import { RouterModule, Routes, RouteReuseStrategy } from '@angular/router';
 
 import { HelpersComponent } from './helpers/helpers.component';
 import { LoginComponent } from './users/login/login.component';
-import { RegisterComponent } from './users/register/register.component';
+
 
 import { UpdateInfoComponent } from './users/update-info/update-info.component';
 import { FamiliesComponent } from './families/families.component';
@@ -80,7 +80,7 @@ export const routes: Routes = [
   MyFamiliesComponent.route,
   UpdateInfoComponent.route,
   LoginComponent.route,
-  RegisterComponent.route,
+  
 
   { path: '', redirectTo: '/assign-families', pathMatch: 'full' },
   { path: '**', redirectTo: '/assign-families', pathMatch: 'full' }

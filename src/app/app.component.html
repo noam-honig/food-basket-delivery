@@ -1,5 +1,5 @@
 <mat-sidenav-container class="app-sidenav-container">
-  <mat-sidenav #sidenav class="app-sidenav mat-elevation-z10 no-print" [opened]="!dialog.isScreenSmall()"
+  <mat-sidenav #sidenav class="app-sidenav mat-elevation-z10 no-print" [opened]="!dialog.isScreenSmall()" *ngIf="this.context.isSignedIn()"
     [mode]="dialog.isScreenSmall()?'over':'side'">
 
     <div style="width:100%;text-align: center">
@@ -28,7 +28,7 @@
     </mat-nav-list>
 
   </mat-sidenav>
-  <mat-toolbar color="{{toolbarColor}}" class="no-print" style="justify-content: space-between;">
+  <mat-toolbar color="{{toolbarColor}}" class="no-print" style="justify-content: space-between;" *ngIf="this.context.isSignedIn()">
     <div style="    display: flex;
     
     align-items: center;">

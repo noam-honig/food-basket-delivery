@@ -1,39 +1,52 @@
 <div *ngIf="isguest">
-<h1>
-  חגי - אפליקציה לחלוקת סלי מזון
-<br>
-  <a href="https://noam-honig.github.io/salmaz">לפרטים נוספים, לחצו כאן</a>
-</h1>
+  <h1>
+    חגי - אפליקציה לחלוקת סלי מזון
+    <br>
+    <a href="https://noam-honig.github.io/salmaz">לפרטים נוספים, לחצו כאן</a>
+  </h1>
 
 
-<button mat-button style="position:absolute;bottom:0px;left:0;" (click)="isguest = false">overview</button>
+
+
+  <button mat-button style="position:absolute;bottom:0px;left:0;" (click)="isguest = false">overview</button>
 </div>
 <div class="myDiv" *ngIf="!isguest">
-  <div style="width:100%;text-align: center">
-    <img src="{{getLogo()}}" />
-  </div>
-  <div style="width:100%;text-align: center">
-    {{orgName()}}
+  <mat-card style="max-width: 300px;
+  align-self: center;margin-top:70px">
+    <div style="width:100%;text-align: center">
+      <img src="{{getLogo()}}" />
+    </div>
+    <div style="width:100%;text-align: center">
+      {{orgName()}}
 
-  </div>
- 
-  <mat-form-field class="example-full-width">
-    <input matInput placeholder="{{settings.lang.phone}}" [(ngModel)]="user" type="tel">
-  </mat-form-field>
+    </div>
+    <mat-horizontal-stepper #stepper [tabIndex]="999">
+      <mat-step>
+        <form #phoneForm>
+          <ng-template matStepLabel>{{settings.lang.phone}}</ng-template>
+          <data-area [settings]="phoneArea"></data-area>
+          <div style="width:100%;text-align: end;margin-top:10px">
+            <button mat-raised-button color="accent" (click)="phoneState.nextStep()">{{settings.lang.signIn}}</button>
+          </div>
+        </form>
+      </mat-step>
+      <mat-step>
+        <form #passwordForm>
+          <div *ngIf="loginState==passwordState">
+            <data-area [settings]="passwordArea"></data-area>
+          </div>
+          <div *ngIf="loginState==nameState">
+            <data-control [column]="name"></data-control>
+          </div>
+          <div style="width:100%;text-align: end;margin-top:10px">
+            <button mat-raised-button color="accent" (click)="loginState.nextStep()">{{settings.lang.signIn}}</button>
+          </div>
 
-  <mat-form-field class="example-full-width">
-    <input matInput placeholder="{{settings.lang.password}}" [(ngModel)]="password" type="password">
-  </mat-form-field>
+        </form>
+      </mat-step>
 
-  <mat-checkbox [(ngModel)]="remember">{{settings.lang.rememberMeOnThisDevice}}</mat-checkbox>
+    </mat-horizontal-stepper>
 
-  <button mat-raised-button color="accent" (click)="login()">
-    {{settings.lang.signIn}}
-  </button>
+  </mat-card>
 
-  <br />
-  <br /> {{settings.lang.pleaseRegister}}
-  <button mat-raised-button color="accent" (click)="register()">
-    {{settings.lang.register}}
-  </button>
 </div>

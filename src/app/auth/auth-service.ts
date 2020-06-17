@@ -76,12 +76,15 @@ export class AuthService {
         tokenHelper.tokenInfoChanged();
     }
     static UpdateInfoComponent: { new(...args: any[]): any };
-    async login(user: string, password: string, remember: boolean, fail: () => void) {
+    async login(user: string, password: string, remember: boolean, fail: () => void, askForPassword: () => void){
 
         let options = await AuthService.login(user, password);
 
         if (options) {
-
+            if (options.askForPassword) {
+                askForPassword();
+                return;
+            }
             let loginResponse = options;
 
 
@@ -105,7 +108,7 @@ export class AuthService {
         }
         else {
             this.tokenHelper.signout('/' + Sites.getOrganizationFromContext(this.context));
-            this.dialog.Error(this.settings.lang.userNotFoundOrWrongPassword);
+            //this.dialog.Error(this.settings.lang.userNotFoundOrWrongPassword);
             fail();
 
         }
@@ -113,15 +116,25 @@ export class AuthService {
 
     @ServerFunction({ allowed: true })
     static async login(user: string, password: string, context?: Context): Promise<loginResult> {
-        let r: loginResult[] = [];
+        let r: loginResult = undefined;
 
 
         await context.for(Helpers).foreach(h => h.phone.isEqualTo(user), async h => {
             let sort = 9;
-            let noPassword = h.realStoredPassword.value.length == 0;
-            if (noPassword || Helpers.passwordHelper.verify(password, h.realStoredPassword.value)) {
+            let helperHasPassword = h.realStoredPassword.value.length > 0;
+            let noPasswordInput = !password || password.trim().length == 0;
+            if (noPasswordInput && helperHasPassword) {
+                r = {
+                    authToken: undefined,
+                    askForPassword: true,
+                    requirePassword: false,
+                    sort
+                };
+            }
+            else if (!helperHasPassword || Helpers.passwordHelper.verify(password, h.realStoredPassword.value)) {
                 let result: HelperUserInfo;
                 let requirePassword = false;
+
                 result = {
 
                     id: h.id.value,
@@ -131,7 +144,7 @@ export class AuthService {
                     theHelperIAmEscortingId: h.theHelperIAmEscorting.value,
                     escortedHelperName: h.theHelperIAmEscorting.value ? (await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value : ''
                 };
-                if (noPassword && (h.admin.value || h.distCenterAdmin.value)) {
+                if (!helperHasPassword && (h.admin.value || h.distCenterAdmin.value)) {
                     requirePassword = true;
                 }
                 else {
@@ -152,20 +165,21 @@ export class AuthService {
 
 
                 }
-                r.push({
+                r = {
                     authToken: Helpers.helper.createSecuredTokenBasedOn(result),
                     requirePassword,
-                    sort
-                });
+                    sort,
+                    askForPassword: false
+                };
 
             }
         });
-        r.sort((a, b) => a.sort - b.sort);
-        return r[0];
+
+        return r;
     }
     async signout() {
         this.tokenHelper.signout('/' + Sites.getOrganizationFromContext(this.context));
-        this.routeHelper.navigateToComponent((await import ("../users/login/login.component")).LoginComponent);
+        this.routeHelper.navigateToComponent((await import("../users/login/login.component")).LoginComponent);
     }
 
 
@@ -174,5 +188,7 @@ export interface loginResult {
 
     authToken: string,
     requirePassword: boolean,
+    askForPassword: boolean,
+
     sort: number
 }
