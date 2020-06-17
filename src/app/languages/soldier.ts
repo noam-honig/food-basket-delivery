@@ -675,4 +675,5 @@ export class soldier implements Language {
   updateFamilyDefaults = 'עדכון ברירות מחדל לחיילים';
   updateFamilyDefaultsHelp = 'פעולה זו מאפשרת לעדכן את הברירות מחדל לחייל בהתאם למשלוחים המסומנים. בחרו אילו שדות לעדכן';
   updateBasedOnTheChangesIn = 'האם לעדכנם בהתאם לשינויים ב';
+  familyHasExistingDeliveriesDoYouWantToViewThem = 'לחייל זו יש משלוחים פעילים, האם אתה להציג אותם?';
 }

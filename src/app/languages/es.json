@@ -1350,6 +1350,11 @@
     "valueInCode": "קבוצות שיוך משפחה",
     "valueInEnglish": "Family affiliation groups"
   },
+  "familyHasExistingDeliveriesDoYouWantToViewThem": {
+    "google": "Esta familia tiene envíos activos, ¿los ves?",
+    "valueInCode": "למשפחה זו יש משלוחים פעילים, האם אתה להציג אותם?",
+    "valueInEnglish": "This family has active shipments, do you view them?"
+  },
   "familyHelpContact": {
     "google": "Datos de contacto para más detalles (COO)",
     "valueInCode": "איש קשר לבירור פרטים (עו\"ס)",

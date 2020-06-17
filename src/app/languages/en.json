@@ -1221,6 +1221,11 @@
     "google": "Family affiliation groups",
     "valueInCode": "קבוצות שיוך משפחה"
   },
+  "familyHasExistingDeliveriesDoYouWantToViewThem": {
+    "google": "This family has active shipments, do you view them?",
+    "valueInCode": "למשפחה זו יש משלוחים פעילים, האם אתה להציג אותם?",
+    "custom":"This family has active deliveries, display them?"
+  },
   "familyHelpContact": {
     "google": "Contact details for details (COO)",
     "valueInCode": "איש קשר לבירור פרטים (עו\"ס)"

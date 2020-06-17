@@ -15,6 +15,7 @@ import { RouteReuseStrategy } from "@angular/router";
 import { CustomReuseStrategy } from "../custom-reuse-controller-router-strategy";
 import { isString } from "util";
 import { use } from "../translate";
+import { Location, GetDistanceBetween } from "../shared/googleApiHelpers";
 
 
 declare var gtag;
@@ -86,6 +87,25 @@ export class DialogService {
 
 
     }
+    async getDistCenter(loc: Location) {
+        if (this.distCenter.value != allCentersToken)
+            return this.distCenter.value;
+        if (!this.allCenters)
+            this.allCenters = await this.context.for(DistributionCenters).find({});
+        let result: string;
+        let dist: number;
+        for (const c of this.allCenters) {
+            let myDist = GetDistanceBetween(c.getGeocodeInformation().location(), loc);
+            if (!result || myDist < dist) {
+                result = c.id.value;
+                dist = myDist;
+
+            }
+        }
+        return result;
+
+    }
+    private allCenters: DistributionCenters[];
 
 
     distCenter = new DistributionCenterId(this.context, {
@@ -169,7 +189,7 @@ export class DialogService {
         return await this.context.openDialog(await (await import("./yes-no-question/yes-no-question.component")).YesNoQuestionComponent, y => y.args = { question: question }, x => x.yes);
     }
     confirmDelete(of: string, onOk: () => void) {
-        this.YesNoQuestion(use.language.confirmDeleteOf+ " " + of + "?", onOk);
+        this.YesNoQuestion(use.language.confirmDeleteOf + " " + of + "?", onOk);
     }
 }
 export function extractError(err: any) {

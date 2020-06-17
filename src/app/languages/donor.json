@@ -1079,6 +1079,10 @@
     "google": "קבוצות שיוך תורם",
     "valueInCode": "קבוצות שיוך משפחה"
   },
+  "familyHasExistingDeliveriesDoYouWantToViewThem": {
+    "google": "לתורם זו יש משלוחים פעילים, האם אתה להציג אותם?",
+    "valueInCode": "למשפחה זו יש משלוחים פעילים, האם אתה להציג אותם?"
+  },
   "familyHelpContact": {
     "google": "איש קשר לבירור פרטים (עו\"ס)",
     "valueInCode": "איש קשר לבירור פרטים (עו\"ס)"

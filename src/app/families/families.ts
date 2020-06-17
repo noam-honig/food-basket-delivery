@@ -40,7 +40,11 @@ export class Families extends IdEntity {
   showDeliveryHistoryDialog(args: { dialog: DialogService, settings: ApplicationSettings }) {
     this.context.openDialog(GridDialogComponent, x => x.args = {
       title: getLang(this.context).deliveriesFor + ' ' + this.name.value,
-      settings: this.deliveriesGridSettings(args)
+      settings: this.deliveriesGridSettings(args),
+      buttons: [{
+        text: use.language.newDelivery,
+        click: () => this.showNewDeliveryDialog(args.dialog, args.settings, { doNotCheckIfHasExistingDeliveries: true })
+      }]
     });
   }
   public deliveriesGridSettings(args: { dialog: DialogService, settings: ApplicationSettings }) {
@@ -48,6 +52,10 @@ export class Families extends IdEntity {
       numOfColumnsInGrid: 7,
       hideDataArea: true,
       rowCssClass: fd => fd.deliverStatus.getCss(),
+      gridButton: [{
+        name: use.language.newDelivery,
+        click: () => this.showNewDeliveryDialog(args.dialog, args.settings, { doNotCheckIfHasExistingDeliveries: true })
+      }],
       rowButtons: [
         {
           name: use.language.deliveryDetails,
@@ -72,6 +80,7 @@ export class Families extends IdEntity {
           fd.basketType,
           fd.quantity,
           fd.courier,
+          fd.deliveryComments,
           fd.courierComments,
           fd.internalDeliveryComment,
           fd.distributionCenter
@@ -88,17 +97,33 @@ export class Families extends IdEntity {
     return result;
   }
 
-  async showNewDeliveryDialog(dialog: DialogService, settings: ApplicationSettings, copyFrom?: FamilyDeliveries, aDeliveryWasAdded?: (newDeliveryId: string) => Promise<void>) {
-    let newDelivery = this.createDelivery(dialog.distCenter.value);
+  async showNewDeliveryDialog(dialog: DialogService, settings: ApplicationSettings, args?: {
+    copyFrom?: FamilyDeliveries,
+    aDeliveryWasAdded?: (newDeliveryId: string) => Promise<void>,
+    doNotCheckIfHasExistingDeliveries?: boolean
+  }) {
+    if (!args)
+      args = {};
+    if (!args.doNotCheckIfHasExistingDeliveries) {
+      let hasExisting = await this.context.for(ActiveFamilyDeliveries).count(d => d.family.isEqualTo(this.id).and(d.deliverStatus.isNotAResultStatus()));
+      if (hasExisting > 0) {
+        if (await dialog.YesNoPromise(settings.lang.familyHasExistingDeliveriesDoYouWantToViewThem)) {
+          this.showDeliveryHistoryDialog({ dialog, settings });
+          return;
+        }
+      }
+    }
+
+    let newDelivery = this.createDelivery(await dialog.getDistCenter(this.getGeocodeInformation().location()));
     let arciveCurrentDelivery = new BoolColumn({ caption: getLang(this.context).archiveCurrentDelivery, defaultValue: true });
-    if (copyFrom != undefined) {
-      newDelivery.copyFrom(copyFrom);
+    if (args.copyFrom != undefined) {
+      newDelivery.copyFrom(args.copyFrom);
 
     }
     let selfPickup = new BoolColumn({ caption: getLang(this.context).familySelfPickup, defaultValue: this.defaultSelfPickup.value });
-    if (copyFrom) {
-      selfPickup.value = copyFrom.deliverStatus.value == DeliveryStatus.SuccessPickedUp;
-      if (copyFrom.deliverStatus.value.isProblem)
+    if (args.copyFrom) {
+      selfPickup.value = args.copyFrom.deliverStatus.value == DeliveryStatus.SuccessPickedUp;
+      if (args.copyFrom.deliverStatus.value.isProblem)
         newDelivery.courier.value = '';
     }
 
@@ -114,7 +139,7 @@ export class Families extends IdEntity {
             if (dialog.hasManyCenters)
               r.push(newDelivery.distributionCenter);
             r.push(newDelivery.courier);
-            if (copyFrom != null && DeliveryStatus.IsAResultStatus(copyFrom.deliverStatus.value)) {
+            if (args.copyFrom != null && DeliveryStatus.IsAResultStatus(args.copyFrom.deliverStatus.value)) {
               r.push(arciveCurrentDelivery);
             }
             r.push({ column: selfPickup, visible: () => settings.usingSelfPickupModule.value })
@@ -144,12 +169,12 @@ export class Families extends IdEntity {
             selfPickup: selfPickup.value
 
           });
-          if (copyFrom != null && DeliveryStatus.IsAResultStatus(copyFrom.deliverStatus.value) && arciveCurrentDelivery.value) {
-            copyFrom.archive.value = true;
-            await copyFrom.save();
+          if (args.copyFrom != null && DeliveryStatus.IsAResultStatus(args.copyFrom.deliverStatus.value) && arciveCurrentDelivery.value) {
+            args.copyFrom.archive.value = true;
+            await args.copyFrom.save();
           }
-          if (aDeliveryWasAdded)
-            await aDeliveryWasAdded(newId);
+          if (args.aDeliveryWasAdded)
+            await args.aDeliveryWasAdded(newId);
           dialog.Info(getLang(this.context).deliveryCreatedSuccesfully);
         }
         , cancel: () => { }
@@ -354,7 +379,7 @@ export class Families extends IdEntity {
                           d.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
 
 
-                      await d.save();
+                    await d.save();
                   }
 
 

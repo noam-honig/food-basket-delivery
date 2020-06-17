@@ -101,8 +101,8 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     this.initAddressAutoComplete = true;
     let b = this.settings.forWho.value.args.bounds;
     let bounds = new google.maps.LatLngBounds(new google.maps.LatLng(b.west, b.south), new google.maps.LatLng(b.east, b.north));
-    const autocomplete = new google.maps.places.SearchBox(this.addressInput.nativeElement, {bounds: bounds}
-      );
+    const autocomplete = new google.maps.places.SearchBox(this.addressInput.nativeElement, { bounds: bounds }
+    );
     this.destroyMe = google.maps.event.addListener(autocomplete, 'places_changed', () => {
       if (autocomplete.getPlaces().length == 0)
         return;
@@ -204,11 +204,13 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   async newDelivery() {
     if (this.delivery && this.delivery.wasChanged())
       this.delivery.save();
-    await this.args.family.showNewDeliveryDialog(this.dialog, this.settings, this.delivery, async (id) => {
-      if (this.delivery)
-        this.refreshDeliveryStatistics = true;
-      this.delivery = await this.context.for(ActiveFamilyDeliveries).findId(id);
-
+    await this.args.family.showNewDeliveryDialog(this.dialog, this.settings, {
+      copyFrom: this.delivery,
+      aDeliveryWasAdded: async (id) => {
+        if (this.delivery)
+          this.refreshDeliveryStatistics = true;
+        this.delivery = await this.context.for(ActiveFamilyDeliveries).findId(id);
+      }
     });
   }
   showNewDelivery() {
