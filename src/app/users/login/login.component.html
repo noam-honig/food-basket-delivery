@@ -23,7 +23,7 @@
     <mat-horizontal-stepper #stepper [tabIndex]="999">
       <mat-step>
         <form #phoneForm>
-          <ng-template matStepLabel>{{settings.lang.phone}}</ng-template>
+          <ng-template matStepLabel>{{settings.lang.signIn}}</ng-template>
           <data-area [settings]="phoneArea"></data-area>
           <div style="width:100%;text-align: end;margin-top:10px">
             <button mat-raised-button color="accent" (click)="phoneState.nextStep()">{{settings.lang.signIn}}</button>

@@ -150,8 +150,13 @@ export class FamilyDeliveresStatistics {
 
     value = 0;
     async saveTo(distCenter: string, data: any, context: Context) {
+        try{
 
         data[this.name] = await context.for(ActiveFamilyDeliveries).count(f => new AndFilter(this.rule(f), f.filterDistCenterAndAllowed(distCenter))).then(c => this.value = c);
+        }
+        catch(err){
+            console.error(this.name,err);
+        }
     }
     async loadFrom(data: any) {
         this.value = data[this.name];

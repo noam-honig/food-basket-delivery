@@ -21,7 +21,7 @@ import { Helpers } from '../../helpers/helpers';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit, AfterViewInit {
-  static route: Route = { path: 'login', component: LoginComponent, canActivate: [NotSignedInGuard], data: { name: 'כניסה' } };
+  static route: Route = { path: 'login', component: LoginComponent, canActivate: [NotSignedInGuard] };
   phone = new StringColumn(this.settings.lang.phone);
   password = new StringColumn(this.settings.lang.password);
   name = new StringColumn(this.settings.lang.volunteerName);
