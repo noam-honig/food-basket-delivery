@@ -12,7 +12,7 @@ import { DeliveryStatus, DeliveryStatusColumn } from "../families/DeliveryStatus
 import { Families } from "../families/families";
 import { BasketId, QuantityColumn } from "../families/BasketType";
 import { FamilyStatus, FamilyStatusColumn } from "../families/FamilyStatus";
-import { SelfPickupStrategyColumn } from "../families/familyActions";
+import { SelfPickupStrategyColumn, updateGroup, UpdateArea, UpdateStatus, bridge } from "../families/familyActions";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
 
@@ -368,5 +368,6 @@ export const delvieryActions = () => [
     UpdateDistributionCenter,
     UpdateCourier,
     UpdateFamilyDefaults,
-    DeleteDeliveries
+    DeleteDeliveries,
+    bridge(updateGroup), bridge(UpdateArea), bridge(UpdateStatus)
 ];

@@ -17,8 +17,8 @@ import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeli
 import { Families } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { delvieryActions } from './family-deliveries-actions';
-import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, pagedRowsIterator, iterateRowsActionOnServer } from '../families/familyActionsWiring';
-import { familyActionsForDelivery } from '../families/familyActions';
+import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, pagedRowsIterator, iterateRowsActionOnServer, packetServerUpdateInfo } from '../families/familyActionsWiring';
+
 import { async } from '@angular/core/testing';
 import { saveToExcel } from '../shared/saveToExcel';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -511,16 +511,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           settings: this.settings,
           groupName: getLang(this.context).deliveries
         }),
-      ...buildGridButtonFromActions(familyActionsForDelivery(), this.context, {
-        afterAction: async () => await this.refresh(),
-        dialog: this.dialog,
-        callServer: async (info, action, args) => await FamilyDeliveriesComponent.FamilyInDeliveryActionOnServer(info, action, args),
-        buildActionInfo: async actionWhere => {
-          return await this.buildWhereForAction(actionWhere);
-        },
-        settings: this.settings,
-        groupName: getLang(this.context).families
-      }),
+     
       {
         name: getLang(this.context).exportToExcel,
         click: async () => {
@@ -580,12 +571,12 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     };
     return {
       count: await this.context.for(ActiveFamilyDeliveries).count(where),
-      actionRowsFilterInfo: packWhere(this.context.for(ActiveFamilyDeliveries).create(), where)
+      where:  where
     };
   }
 
   @ServerFunction({ allowed: Roles.distCenterAdmin })
-  static async DeliveriesActionOnServer(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
+  static async DeliveriesActionOnServer(info: packetServerUpdateInfo, action: string, args: any[], context?: Context) {
     let r = await filterActionOnServer(delvieryActions(), context, async (h) => {
       return await iterateRowsActionOnServer({
         context: context.for(ActiveFamilyDeliveries),
@@ -605,32 +596,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     Families.SendMessageToBrowsers(getLang(context).deliveriesUpdated, context, '');
     return r + getLang(context).deliveriesUpdated;
   }
-  @ServerFunction({ allowed: Roles.admin })
-  static async FamilyInDeliveryActionOnServer(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
-    let processedFamilies = new Map<string, boolean>();
-    let r = await filterActionOnServer(familyActionsForDelivery(), context, async (h) => {
-      return await iterateRowsActionOnServer({
-        context: context.for(ActiveFamilyDeliveries),
-        h: {
-          actionWhere: x => undefined,
-          forEach: async fd => {
-            if (processedFamilies.get(fd.family.value))
-              return;
-            processedFamilies.set(fd.family.value, true);
-            let f = await context.for(Families).findFirst(x => new AndFilter(h.actionWhere(x), x.id.isEqualTo(fd.family.value)))
-            if (f) {
-              await h.forEach(f);
-              await f.save();
-            }
-          }
-        },
-        info,
-        additionalWhere: fd => fd.isAllowedForUser()
-      });
-    }, action, args);
-    Families.SendMessageToBrowsers(getLang(context).deliveriesUpdated, context, '');
-    return getLang(context).deliveriesUpdated;
-  }
+  
 
 
   ngOnInit() {

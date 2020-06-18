@@ -29,10 +29,11 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { getLang } from '../translate';
 import { delvieryActions, UpdateDistributionCenter, NewDelivery, UpdateDeliveriesStatus, UpdateCourier, DeleteDeliveries } from '../family-deliveries/family-deliveries-actions';
 import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, actionDialogNeeds } from '../families/familyActionsWiring';
-import { familyActionsForDelivery, UpdateArea, updateGroup } from '../families/familyActions';
+import { UpdateArea, updateGroup, bridge } from '../families/familyActions';
 import { Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FamilyDeliveriesComponent } from '../family-deliveries/family-deliveries.component';
 
 @Component({
   selector: 'app-distribution-map',
@@ -72,37 +73,26 @@ export class DistributionMap implements OnInit, OnDestroy {
 
   }
   buttons: GridButton[] = [
-    ...buildGridButtonFromActions([UpdateArea], this.context, this.buttonFamilyHelper()),
-    ...buildGridButtonFromActions([UpdateDistributionCenter, UpdateCourier], this.context, this.buttonDeliveryHelper()),
-    ...buildGridButtonFromActions([updateGroup], this.context, this.buttonFamilyHelper()),
-    ...buildGridButtonFromActions([NewDelivery, UpdateDeliveriesStatus, DeleteDeliveries], this.context, this.buttonDeliveryHelper())
-
+    ...buildGridButtonFromActions([
+      bridge(UpdateArea)
+      , UpdateDistributionCenter,
+      UpdateCourier,
+      bridge(updateGroup),
+      NewDelivery,
+      UpdateDeliveriesStatus,
+      DeleteDeliveries], this.context, this.buttonDeliveryHelper()),
   ];
-  private buttonFamilyHelper(): actionDialogNeeds<Families> {
-    return {
-      afterAction: async () => await this.refreshDeliveries(),
-      dialog: this.dialog,
-      callServer: async (info, action, args) => await DistributionMap.updateFamiliesBasedOnMap(info, action, args),
-      buildActionInfo: async (actionWhere) => {
-        return {
-          count: this.selectedDeliveries.length,
-          actionRowsFilterInfo: this.selectedDeliveries.map(x => x.id)
-        };
-      },
-      settings: this.settings,
-      groupName: this.settings.lang.deliveries
-    };
-  }
+
 
   private buttonDeliveryHelper(): actionDialogNeeds<ActiveFamilyDeliveries> {
     return {
       afterAction: async () => await this.refreshDeliveries(),
       dialog: this.dialog,
-      callServer: async (info, action, args) => await DistributionMap.updateDeliveriesBasedOnMap(info, action, args),
+      callServer: async (info, action, args) => await FamilyDeliveriesComponent.DeliveriesActionOnServer(info, action, args),
       buildActionInfo: async (actionWhere) => {
         return {
           count: this.selectedDeliveries.length,
-          actionRowsFilterInfo: this.selectedDeliveries.map(x => x.id)
+          where: x => x.id.isIn(...this.selectedDeliveries.map(x => x.id))
         };
       },
       settings: this.settings,
@@ -171,46 +161,6 @@ export class DistributionMap implements OnInit, OnDestroy {
   activePolygon: google.maps.Polygon;
 
 
-  @ServerFunction({ allowed: Roles.admin })
-  static async updateDeliveriesBasedOnMap(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
-    let r = await filterActionOnServer(delvieryActions(), context, async (h) => {
-      let deliveries: string[] = info.actionRowsFilterInfo;
-      let i = 0;
-      for (const id of deliveries) {
-        let f = await context.for(ActiveFamilyDeliveries).findFirst(f => new AndFilter(h.actionWhere(f), f.id.isEqualTo(id).and(f.distributionCenter.isAllowedForUser())));
-        if (f) {
-          i++;
-          await h.forEach(f);
-          await f.save();
-        }
-      }
-      return i;
-    }, action, args);
-    return r + getLang(context).deliveriesUpdated;
-
-  }
-  @ServerFunction({ allowed: Roles.admin })
-  static async updateFamiliesBasedOnMap(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
-    let r = await filterActionOnServer(familyActionsForDelivery(), context, async (h) => {
-      let deliveries: string[] = info.actionRowsFilterInfo;
-      let i = 0;
-      for (const id of deliveries) {
-        let fd = await context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(id).and(f.distributionCenter.isAllowedForUser()));
-        if (fd) {
-          i++;
-          let f = await context.for(Families).findFirst(f => f.id.isEqualTo(fd.family).and(h.actionWhere(f)));
-          if (f) {
-            await h.forEach(f);
-            await f.save();
-          }
-        }
-      }
-      return i;
-    }, action, args);
-    return r + getLang(context).deliveriesUpdated;
-
-  }
-
 
   mapVisible = true;
   mapInit = false;
@@ -228,17 +178,17 @@ export class DistributionMap implements OnInit, OnDestroy {
       this.dict = new Map<string, infoOnMap>();
       this.bounds = new google.maps.LatLngBounds();
       this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
-      var r = new google.maps.Rectangle({
-        map:this.map,
-        fillColor:'#FF0000',
-        fillOpacity:0.35,
-        bounds:{
-          west:34.2654333839,
-          south:29.5013261988,
-          east:35.8363969256,
-          north:33.2774264593
-        }
-      });
+      // var r = new google.maps.Rectangle({
+      //   map: this.map,
+      //   fillColor: '#FF0000',
+      //   fillOpacity: 0.35,
+      //   bounds: {
+      //     west: 34.2654333839,
+      //     south: 29.5013261988,
+      //     east: 35.8363969256,
+      //     north: 33.2774264593
+      //   }
+      // });
       this.mapInit = true;
       await this.refreshDeliveries();
       this.map.fitBounds(this.bounds);
@@ -256,7 +206,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   filterCourier = new HelperId(this.context, {
     caption: this.settings.lang.volunteer,
     valueChange: () => this.refreshDeliveries()
-  }, {filter:h => h.allDeliveires.isGreaterThan(0)});
+  }, { filter: h => h.allDeliveires.isGreaterThan(0) });
 
   overviewMap = false;
   async refreshDeliveries() {

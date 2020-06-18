@@ -38,7 +38,7 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 
 import { FamilyStatus, FamilyStatusColumn } from './FamilyStatus';
 import { familyActions } from './familyActions';
-import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, iterateRowsActionOnServer } from './familyActionsWiring';
+import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, iterateRowsActionOnServer, packetServerUpdateInfo } from './familyActionsWiring';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
 import { MatAccordion } from '@angular/material/expansion';
@@ -349,7 +349,7 @@ export class FamiliesComponent implements OnInit {
                         };
                         return {
                             count: await this.context.for(Families).count(where),
-                            actionRowsFilterInfo: packWhere(this.context.for(Families).create(), where)
+                            where
                         };
                     }, settings: this.settings,
                     groupName: this.settings.lang.families
@@ -408,7 +408,7 @@ export class FamiliesComponent implements OnInit {
     });
 
     @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async FamilyActionOnServer(info: serverUpdateInfo, action: string, args: any[], context?: Context) {
+    static async FamilyActionOnServer(info: packetServerUpdateInfo, action: string, args: any[], context?: Context) {
         let r = await filterActionOnServer(familyActions(), context, async h =>
             await iterateRowsActionOnServer({
                 context: context.for(Families),

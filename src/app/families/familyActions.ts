@@ -10,7 +10,7 @@ import { FamilyStatusColumn, FamilyStatus } from "./FamilyStatus";
 import { FamilySourceId } from "./FamilySources";
 import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer, serverUpdateInfo, pagedRowsIterator } from "./familyActionsWiring";
 import { DeliveryStatus } from "./DeliveryStatus";
-import { ActiveFamilyDeliveries } from "./FamilyDeliveries";
+import { ActiveFamilyDeliveries, FamilyDeliveries } from "./FamilyDeliveries";
 import { use, getLang } from "../translate";
 import { settings } from "cluster";
 import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
@@ -48,7 +48,7 @@ class NewDelivery extends ActionOnRows<Families> {
             ],
             validate: async () => {
                 let x = await context.for(DistributionCenters).findId(this.distributionCenter);
-                if (!x&&false) {
+                if (!x && false) {
                     this.distributionCenter.validationError = getLang(this.context).mustSelectDistributionList;
                     throw this.distributionCenter.validationError;
                 }
@@ -370,6 +370,58 @@ export class SelfPickupStrategyColumn extends ValueListColumn<SelfPickupStrategy
 }
 
 
+export class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<ActiveFamilyDeliveries>{
+    processedFamilies = new Map<string, boolean>();
+    constructor(context: Context, orig: ActionOnRows<Families>) {
+        super(context, FamilyDeliveries, {
+            allowed: orig.args.allowed,
+            columns: orig.args.columns,
+            forEach: async fd => {
+                if (this.processedFamilies.get(fd.family.value))
+                    return;
+                this.processedFamilies.set(fd.family.value, true);
+                let f = await context.for(Families).findFirst(x => new AndFilter(orig.args.additionalWhere(x), x.id.isEqualTo(fd.family.value)))
+                if (f) {
+                    await orig.args.forEach(f);
+                    await f.save();
+                }
+            },
+            title: orig.args.title,
+            confirmQuestion: orig.args.confirmQuestion,
+            dialogColumns: x => orig.args.dialogColumns({
+                afterAction: x.afterAction,
+                buildActionInfo: () => { throw 'err' },
+                callServer: () => { throw 'err' },
+                dialog: x.dialog,
+                groupName: x.groupName,
+                settings: x.settings
+            }),
+            help: orig.args.help,
+            onEnd: orig.args.onEnd,
+            validate: orig.args.validate,
+            additionalWhere: undefined,
+            validateInComponent: x => orig.args.validateInComponent({
+                afterAction: x.afterAction,
+                buildActionInfo: () => { throw 'err' },
+                callServer: () => { throw 'err' },
+                dialog: x.dialog,
+                groupName: x.groupName,
+                settings: x.settings
+            })
+        });
+    }
+}
+export function bridge(what: {
+    new(context: Context): ActionOnRows<Families>;
+}) {
+    return class extends bridgeFamilyDeliveriesToFamilies{
+        constructor(context:Context){
+            super(context,new what(context));
+        }
+    }
+   
+}
+
+
 
 export const familyActions = () => [NewDelivery, updateGroup, UpdateArea, UpdateStatus, UpdateSelfPickup, UpdateBasketType, UpdateQuantity, UpdateFamilySource, FreezeDeliveriesForFamilies, UnfreezeDeliveriesForFamilies];
-export const familyActionsForDelivery = () => [updateGroup, UpdateArea, UpdateStatus];

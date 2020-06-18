@@ -7,7 +7,7 @@ import { HelperId, HelperIdReadonly, Helpers, HelperUserInfo } from "../helpers/
 import { Entity, CompoundIdColumn } from '@remult/core';
 import { FamilySourceId } from "./FamilySources";
 import { Roles } from "../auth/roles";
-import { DistributionCenters, DistributionCenterId as DistributionCenterId } from "../manage/distribution-centers";
+import { DistributionCenters, DistributionCenterId as DistributionCenterId, allCentersToken } from "../manage/distribution-centers";
 import { YesNoColumn } from "./YesNo";
 
 import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
@@ -272,6 +272,8 @@ export class FamilyDeliveries extends IdEntity {
                 }
                 if (this.quantity.value < 1)
                     this.quantity.value = 1;
+                    if (this.distributionCenter.value==allCentersToken) 
+                    this.distributionCenter.value = '';
 
 
                 if (!this.disableChangeLogging) {

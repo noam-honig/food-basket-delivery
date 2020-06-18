@@ -8,8 +8,12 @@ import { getLang, use } from "../translate";
 
 
 
-export interface serverUpdateInfo {
-    actionRowsFilterInfo: any;
+export interface serverUpdateInfo<T extends IdEntity> {
+    where: EntityWhere<T>;
+    count: number;
+}
+export interface packetServerUpdateInfo {
+    packedWhere: any;
     count: number;
 }
 export interface DoWorkOnServerHelper<T extends IdEntity> {
@@ -34,6 +38,10 @@ export class ActionOnRows<T extends IdEntity> {
         if (!args.onEnd) {
             args.onEnd = async () => { };
         }
+        if (!args.dialogColumns)
+            args.dialogColumns = x => args.columns();
+            if (!args.validateInComponent)
+                args.validateInComponent =async  x=>{};
 
 
     }
@@ -69,16 +77,16 @@ export class ActionOnRows<T extends IdEntity> {
                 await this.context.openDialog(InputAreaComponent, x => {
                     x.args = {
                         settings: {
-                            columnSettings: () => this.args.dialogColumns ? this.args.dialogColumns(component) : this.args.columns()
+                            columnSettings: () => this.args.dialogColumns(component)
                         },
                         title: this.args.title,
                         helpText: this.args.help ? this.args.help() : undefined,
                         validate: async () => {
                             if (this.args.validate)
                                 await this.args.validate();
-                            if (this.args.validateInComponent) {
-                                await this.args.validateInComponent(component);
-                            }
+
+                            await this.args.validateInComponent(component);
+
 
                         },
                         ok: async () => {
@@ -90,7 +98,10 @@ export class ActionOnRows<T extends IdEntity> {
                                         args.push(c.rawValue);
                                     }
 
-                                    let r = await component.callServer(info, this.args.title, args);
+                                    let r = await component.callServer({
+                                        count: info.count,
+                                        packedWhere: packWhere(this.context.for(this.entity).create(), info.where)
+                                    }, this.args.title, args);
                                     component.dialog.Info(r);
 
 
@@ -117,8 +128,8 @@ export interface actionDialogNeeds<T extends IdEntity> {
     dialog: DialogService,
     settings: ApplicationSettings,
     afterAction: () => {},
-    buildActionInfo: (actionWhere: EntityWhere<T>) => Promise<serverUpdateInfo>,
-    callServer: (info: serverUpdateInfo, action: string, columns: any[]) => Promise<string>,
+    buildActionInfo: (actionWhere: EntityWhere<T>) => Promise<serverUpdateInfo<T>>,
+    callServer: (info: packetServerUpdateInfo, action: string, columns: any[]) => Promise<string>,
     groupName: string
 }
 
@@ -194,11 +205,11 @@ export async function iterateRowsActionOnServer<T extends IdEntity>(
     args: {
         context: SpecificEntityHelper<string, T>,
         h: DoWorkOnServerHelper<T>,
-        info: serverUpdateInfo,
+        info: packetServerUpdateInfo,
         additionalWhere?: EntityWhere<T>
 
     }) {
-    let where = x => new AndFilter(args.h.actionWhere(x), unpackWhere(x, args.info.actionRowsFilterInfo));
+    let where = x => new AndFilter(args.h.actionWhere(x), unpackWhere(x, args.info.packedWhere));
     if (args.additionalWhere) {
         let w = where;
         where = x => new AndFilter(w(x), args.additionalWhere(x));
