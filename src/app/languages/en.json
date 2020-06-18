@@ -168,6 +168,10 @@
     "google": "A minute ago",
     "valueInCode": "לפני דקה"
   },
+  "and": {
+    "google": "and",
+    "valueInCode": "ו"
+  },
   "andAHalf": {
     "google": "And a half",
     "valueInCode": "וחצי"
@@ -1223,8 +1227,8 @@
   },
   "familyHasExistingDeliveriesDoYouWantToViewThem": {
     "google": "This family has active shipments, do you view them?",
-    "valueInCode": "למשפחה זו יש משלוחים פעילים, האם אתה להציג אותם?",
-    "custom":"This family has active deliveries, display them?"
+    "valueInCode": "למשפחה זו יש משלוחים פעילים, האם להציג אותם?",
+    "custom": "This family has active deliveries, display them?"
   },
   "familyHelpContact": {
     "google": "Contact details for details (COO)",
@@ -1232,15 +1236,18 @@
   },
   "familyHelpPhone": {
     "google": "Contact for clarification as defined for the family",
-    "valueInCode": "איש קשר לבירור כפי שמוגדר למשפחה"
+    "valueInCode": "איש קשר לבירור כפי שמוגדר למשפחה",
+    "custom": "Clarification Contact"
   },
   "familyHelpPhone1": {
     "google": "Phone Attorney 1",
-    "valueInCode": "עו\"ס טלפון 1"
+    "valueInCode": "עו\"ס טלפון 1",
+    "custom": "Clarification phone 1"
   },
   "familyHelpPhone2": {
     "google": "Phone Attorney 2",
-    "valueInCode": "עו\"ס טלפון 2"
+    "valueInCode": "עו\"ס טלפון 2",
+    "custom": "Clarification phone 2"
   },
   "familyIdInHagaiApp": {
     "google": "family id in the holiday app",
@@ -2010,7 +2017,8 @@
   },
   "problems": {
     "google": "Boll",
-    "valueInCode": "בעיות"
+    "valueInCode": "בעיות",
+    "custom": "Problems"
   },
   "problemsThatRequireFollowup": {
     "google": "Problems requiring treatment",
@@ -2119,7 +2127,8 @@
   },
   "removedFromList": {
     "google": "Take out the lists",
-    "valueInCode": "הוצא מהרשימות"
+    "valueInCode": "הוצא מהרשימות",
+    "custom": "Removed from list"
   },
   "RemovedFromListExcelImportStrategy_displayAsError": {
     "google": "View as error",

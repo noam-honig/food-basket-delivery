@@ -181,7 +181,7 @@ export class italy implements Language {
   boxes1NameCaption = 'Nome del tipo di pacco per scatole';
   boxes2NameCaption = 'Nome del tipo di pacco per altra unità';
   assignerOrOrg = 'Aiuta il telefono';
-  familyHelpPhone = 'Contattare per chiarimenti come definito per la famiglia';
+  familyHelpPhone = 'Contatto di chiarimento';
   familySourcePhone = 'Punto di svolta del telefono';
   otherPhone = 'un altro telefono';
   RemovedFromListExcelImportStrategy_displayAsError = 'Visualizza come errore';
@@ -216,8 +216,8 @@ export class italy implements Language {
   defaultQuantity = 'Numero predefinito di pacchi';
   familySource = 'Referente';
   familyHelpContact = 'Dettagli di contatto per i dettagli (COO)';
-  familyHelpPhone1 = 'Avvocato telefonico 1';
-  familyHelpPhone2 = 'Avvocato telefonico 2';
+  familyHelpPhone1 = 'Chiarificazione del telefono 1';
+  familyHelpPhone2 = 'Chiarificazione del telefono 2';
   specialAsignment = 'Affiliazione speciale';
   defaultSelfPickup = 'Auto pickup predefinito';
   familyUniqueId = 'ID univoco della famiglia';
@@ -455,7 +455,7 @@ export class italy implements Language {
   shouldSendSmsTo = 'Invia un messaggio di testo a';
   delayed = 'Ritardato';
   doneVolunteers = 'finire';
-  problems = 'Capsula';
+  problems = 'I problemi';
   delveriesInProgress = 'Le famiglie stanno aspettando';
   dates = 'Date';
   selfPickup = 'Vieni e prendi';
@@ -500,7 +500,7 @@ export class italy implements Language {
   notAthorized = 'Nessuna eredità!';
   actionNotFound = 'Azione non trovata sul server';
   active = 'Attivo';
-  removedFromList = 'Elimina le liste';
+  removedFromList = "Rimosso dall'elenco";
   toDelete = 'Cancellare';
   familyStatus = 'stato';
   deleteDeliveries = 'Elimina consegne';
@@ -675,5 +675,6 @@ export class italy implements Language {
   updateFamilyDefaults = 'Aggiorna i valori predefiniti della famiglia';
   updateFamilyDefaultsHelp = 'Aggiorna i valori predefiniti della famiglia in base alla consegna corrente. Seleziona le colonne da aggiornare';
   updateBasedOnTheChangesIn = ', aggiornali in base alle modifiche in';
-  familyHasExistingDeliveriesDoYouWantToViewThem = 'Questa famiglia ha spedizioni attive, le vedi?';
+  familyHasExistingDeliveriesDoYouWantToViewThem = 'Questa famiglia ha consegne attive, le mostra?';
+  and = 'e';
 }

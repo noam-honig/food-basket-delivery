@@ -85,7 +85,7 @@ export class UserFamiliesList {
         if (boxes != this.toDeliver.length || boxes2 != 0)
             boxesText += + boxes + ' ' + BasketType.boxes1Name;
         if (boxes2 != 0) {
-            boxesText += ' ו-' + boxes2 + ' ' + BasketType.boxes2Name;
+            boxesText += ' '+this.settings.lang.and+" " + boxes2 + ' ' + BasketType.boxes2Name;
         }
         if (boxesText != '')
             r += ' (' + boxesText + ')';

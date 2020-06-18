@@ -676,4 +676,5 @@ export class donor implements Language {
   updateFamilyDefaultsHelp = 'פעולה זו מאפשרת לעדכן את הברירות מחדל לתורם בהתאם למשלוחים המסומנים. בחרו אילו שדות לעדכן';
   updateBasedOnTheChangesIn = 'האם לעדכנם בהתאם לשינויים ב';
   familyHasExistingDeliveriesDoYouWantToViewThem = 'לתורם זו יש משלוחים פעילים, האם אתה להציג אותם?';
+  and = 'ו';
 }

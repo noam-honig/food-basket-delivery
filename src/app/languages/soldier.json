@@ -147,6 +147,10 @@
     "google": "לפני דקה",
     "valueInCode": "לפני דקה"
   },
+  "and": {
+    "google": "ו",
+    "valueInCode": "ו"
+  },
   "andAHalf": {
     "google": "וחצי",
     "valueInCode": "וחצי"
@@ -1081,7 +1085,7 @@
   },
   "familyHasExistingDeliveriesDoYouWantToViewThem": {
     "google": "לחייל זו יש משלוחים פעילים, האם אתה להציג אותם?",
-    "valueInCode": "למשפחה זו יש משלוחים פעילים, האם אתה להציג אותם?"
+    "valueInCode": "למשפחה זו יש משלוחים פעילים, האם להציג אותם?"
   },
   "familyHelpContact": {
     "google": "איש קשר לבירור פרטים (עו\"ס)",

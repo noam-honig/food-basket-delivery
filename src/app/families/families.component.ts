@@ -549,7 +549,7 @@ export class FamiliesComponent implements OnInit {
         });
         if (this.pieChartData.length == 0) {
             this.pieChartData.push(0);
-            this.pieChartLabels.push('ריק');
+            this.pieChartLabels.push(use.language.empty);
         }
         if (this.colors[0].backgroundColor.length == 0) {
             this.colors[0].backgroundColor.push(colors.green, colors.blue, colors.yellow, colors.red, colors.orange, colors.gray);

@@ -809,6 +809,7 @@ export class Language {
   updateFamilyDefaultsHelp = "פעולה זו מאפשרת לעדכן את הברירות מחדל למשפחה בהתאם למשלוחים המסומנים. בחרו אילו שדות לעדכן";
   updateBasedOnTheChangesIn = "האם לעדכנם בהתאם לשינויים ב";
   familyHasExistingDeliveriesDoYouWantToViewThem = "למשפחה זו יש משלוחים פעילים, האם להציג אותם?";
+  and = "ו";
 }
 
 const defaultLang = new Language();

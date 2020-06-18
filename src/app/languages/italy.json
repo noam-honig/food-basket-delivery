@@ -184,6 +184,11 @@
     "valueInCode": "לפני דקה",
     "valueInEnglish": "A minute ago"
   },
+  "and": {
+    "google": "e",
+    "valueInCode": "ו",
+    "valueInEnglish": "and"
+  },
   "andAHalf": {
     "google": "E mezzo",
     "valueInCode": "וחצי",
@@ -1351,9 +1356,9 @@
     "valueInEnglish": "Family affiliation groups"
   },
   "familyHasExistingDeliveriesDoYouWantToViewThem": {
-    "google": "Questa famiglia ha spedizioni attive, le vedi?",
-    "valueInCode": "למשפחה זו יש משלוחים פעילים, האם אתה להציג אותם?",
-    "valueInEnglish": "This family has active shipments, do you view them?"
+    "google": "Questa famiglia ha consegne attive, le mostra?",
+    "valueInCode": "למשפחה זו יש משלוחים פעילים, האם להציג אותם?",
+    "valueInEnglish": "This family has active deliveries, display them?"
   },
   "familyHelpContact": {
     "google": "Dettagli di contatto per i dettagli (COO)",
@@ -1361,19 +1366,19 @@
     "valueInEnglish": "Contact details for details (COO)"
   },
   "familyHelpPhone": {
-    "google": "Contattare per chiarimenti come definito per la famiglia",
+    "google": "Contatto di chiarimento",
     "valueInCode": "איש קשר לבירור כפי שמוגדר למשפחה",
-    "valueInEnglish": "Contact for clarification as defined for the family"
+    "valueInEnglish": "Clarification Contact"
   },
   "familyHelpPhone1": {
-    "google": "Avvocato telefonico 1",
+    "google": "Chiarificazione del telefono 1",
     "valueInCode": "עו\"ס טלפון 1",
-    "valueInEnglish": "Phone Attorney 1"
+    "valueInEnglish": "Clarification phone 1"
   },
   "familyHelpPhone2": {
-    "google": "Avvocato telefonico 2",
+    "google": "Chiarificazione del telefono 2",
     "valueInCode": "עו\"ס טלפון 2",
-    "valueInEnglish": "Phone Attorney 2"
+    "valueInEnglish": "Clarification phone 2"
   },
   "familyIdInHagaiApp": {
     "google": "ID famiglia nell'app per le vacanze",
@@ -2286,9 +2291,9 @@
     "valueInEnglish": "Notify the volunteer when there is a problem"
   },
   "problems": {
-    "google": "Capsula",
+    "google": "I problemi",
     "valueInCode": "בעיות",
-    "valueInEnglish": "Boll"
+    "valueInEnglish": "Problems"
   },
   "problemsThatRequireFollowup": {
     "google": "Follow-up dei problemi",
@@ -2412,9 +2417,9 @@
     "valueInEnglish": "Remove"
   },
   "removedFromList": {
-    "google": "Elimina le liste",
+    "google": "Rimosso dall'elenco",
     "valueInCode": "הוצא מהרשימות",
-    "valueInEnglish": "Take out the lists"
+    "valueInEnglish": "Removed from list"
   },
   "RemovedFromListExcelImportStrategy_displayAsError": {
     "google": "Visualizza come errore",

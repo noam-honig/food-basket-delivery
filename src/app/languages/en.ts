@@ -181,7 +181,7 @@ export class en implements Language {
   boxes1NameCaption = 'Parcel type name for boxes';
   boxes2NameCaption = 'Parcel type name for other unit';
   assignerOrOrg = 'Help phone';
-  familyHelpPhone = 'Contact for clarification as defined for the family';
+  familyHelpPhone = 'Clarification Contact';
   familySourcePhone = 'Telephone turning point';
   otherPhone = 'another phone';
   RemovedFromListExcelImportStrategy_displayAsError = 'View as error';
@@ -216,8 +216,8 @@ export class en implements Language {
   defaultQuantity = 'Default number of parcels';
   familySource = 'Referrer';
   familyHelpContact = 'Contact details for details (COO)';
-  familyHelpPhone1 = 'Phone Attorney 1';
-  familyHelpPhone2 = 'Phone Attorney 2';
+  familyHelpPhone1 = 'Clarification phone 1';
+  familyHelpPhone2 = 'Clarification phone 2';
   specialAsignment = 'Special affiliation';
   defaultSelfPickup = 'Default self pickup';
   familyUniqueId = 'Family Unique Id';
@@ -455,7 +455,7 @@ export class en implements Language {
   shouldSendSmsTo = 'Send a text message to';
   delayed = 'Delayed';
   doneVolunteers = 'Finish';
-  problems = 'Boll';
+  problems = 'Problems';
   delveriesInProgress = 'Families are waiting';
   dates = 'Dates';
   selfPickup = 'Come and take';
@@ -500,7 +500,7 @@ export class en implements Language {
   notAthorized = 'No legacy!';
   actionNotFound = 'Action not found on server';
   active = 'Active';
-  removedFromList = 'Take out the lists';
+  removedFromList = 'Removed from list';
   toDelete = 'To delete';
   familyStatus = 'status';
   deleteDeliveries = 'Delete deliveries';
@@ -675,5 +675,6 @@ export class en implements Language {
   updateFamilyDefaults = 'Update family defaults';
   updateFamilyDefaultsHelp = 'Update family defaults based on current delivery. Please select which columns to update';
   updateBasedOnTheChangesIn = ', update them based on changes in';
-  familyHasExistingDeliveriesDoYouWantToViewThem = 'This family has active shipments, do you view them?';
+  familyHasExistingDeliveriesDoYouWantToViewThem = 'This family has active deliveries, display them?';
+  and = 'and';
 }
