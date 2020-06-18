@@ -90,8 +90,8 @@ export class FamilyDeliveries extends IdEntity {
     courier = new HelperId(this.context, {
         caption: getLang(this.context).volunteer,
         allowApiUpdate: Roles.distCenterAdmin
-    },{
-        location:()=>this.getDrivingLocation()
+    }, {
+        location: () => this.getDrivingLocation()
     });
     courierComments = new StringColumn(getLang(this.context).commentsWritteByVolunteer);
     internalDeliveryComment = new StringColumn({ caption: getLang(this.context).internalComment, includeInApi: Roles.admin });
@@ -257,12 +257,12 @@ export class FamilyDeliveries extends IdEntity {
             },
 
             savingRow: () => {
-                if (!this.context.onServer){
+                if (!this.context.onServer) {
                     if (wasChanged(this.courier) && this.courier.value)
-                    setTimeout(() => {//using it to run after the row is saved
-                        AsignFamilyComponent.RefreshRoute(this.courier.value, {});
-                    }, 500);
-                    
+                        setTimeout(() => {//using it to run after the row is saved
+                            AsignFamilyComponent.RefreshRoute(this.courier.value, {});
+                        }, 500);
+
                 }
                 if (this.isNew()) {
                     this.createDate.value = new Date();
@@ -272,7 +272,7 @@ export class FamilyDeliveries extends IdEntity {
                 }
                 if (this.quantity.value < 1)
                     this.quantity.value = 1;
-                    if (this.distributionCenter.value==allCentersToken) 
+                if (this.distributionCenter.value == allCentersToken)
                     this.distributionCenter.value = '';
 
 
@@ -441,7 +441,7 @@ export class FamilyDeliveries extends IdEntity {
         focusOnDelivery?: boolean,
         dialog: DialogService
     }) {
-        
+
 
         let showFamilyDetails = this.context.isAllowed(Roles.admin);
         if (showFamilyDetails) {

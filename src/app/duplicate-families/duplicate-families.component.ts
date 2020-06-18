@@ -87,7 +87,7 @@ export class DuplicateFamiliesComponent implements OnInit {
                 };
                 return {
                   count: await this.context.for(Families).count(where),
-                  actionRowsFilterInfo: packWhere(this.context.for(Families).create(), where)
+                   where
                 };
               }, settings: this.settings,
               groupName: this.settings.lang.families
