@@ -5,7 +5,7 @@
   <button mat-raised-button style="color:red" (click)="clearHelper()">
     {{settings.lang.clear}}
   </button>
-  <button mat-raised-button color="accent" (click)="byLocation()" *ngIf="args.location">
+  <button mat-raised-button color="accent" (click)="byLocation()" *ngIf="args&&args.location">
     {{settings.lang.byLocation}}
   </button>
   <form (submit)="selectFirst()">

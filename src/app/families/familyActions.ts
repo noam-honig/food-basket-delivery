@@ -53,7 +53,7 @@ class NewDelivery extends ActionOnRows<Families> {
                     throw this.distributionCenter.validationError;
                 }
             },
-            dialogColumns:async (component) => {
+            dialogColumns: async (component) => {
                 this.basketType.value = '';
                 this.quantity.value = 1;
                 this.distributionCenter.value = component.dialog.distCenter.value;
@@ -333,6 +333,36 @@ class UpdateFamilySource extends ActionOnRows<Families> {
         });
     }
 }
+export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
+    clearVoulenteer = new BoolColumn(getLang(this.context).clearVolunteer);
+    courier = new HelperId(this.context, getLang(this.context).volunteer);
+    constructor(context: Context) {
+        super(context, Families, {
+            allowed: Roles.admin,
+
+            columns: () => [this.clearVoulenteer, this.courier],
+            dialogColumns: async () => [
+                this.clearVoulenteer,
+                { column: this.courier, visible: () => !this.clearVoulenteer.value }
+            ],
+
+            title: getLang(context).updateDefaultVolunteer,
+            forEach: async fd => {
+                if (this.clearVoulenteer.value) {
+                    fd.fixedCourier.value = '';
+                }
+                else {
+                    fd.fixedCourier.value = this.courier.value;
+                }
+            },
+            onEnd: async () => {
+                if (this.courier.value)
+                    await AsignFamilyComponent.RefreshRoute(this.courier.value, undefined, this.context);
+            }
+        });
+        this.courier.value = '';
+    }
+}
 
 export class SelfPickupStrategy {
     static familyDefault = new SelfPickupStrategy(0, use.language.selfPickupStrategy_familyDefault, x => {
@@ -414,14 +444,14 @@ export class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<ActiveFamilyD
 export function bridge(what: {
     new(context: Context): ActionOnRows<Families>;
 }) {
-    return class extends bridgeFamilyDeliveriesToFamilies{
-        constructor(context:Context){
-            super(context,new what(context));
+    return class extends bridgeFamilyDeliveriesToFamilies {
+        constructor(context: Context) {
+            super(context, new what(context));
         }
     }
-   
+
 }
 
 
 
-export const familyActions = () => [NewDelivery, updateGroup, UpdateArea, UpdateStatus, UpdateSelfPickup, UpdateBasketType, UpdateQuantity, UpdateFamilySource, FreezeDeliveriesForFamilies, UnfreezeDeliveriesForFamilies];
+export const familyActions = () => [NewDelivery, updateGroup, UpdateArea, UpdateStatus, UpdateSelfPickup, UpdateDefaultVolunteer, UpdateBasketType, UpdateQuantity, UpdateFamilySource, FreezeDeliveriesForFamilies, UnfreezeDeliveriesForFamilies];

@@ -283,10 +283,10 @@ export class Helpers extends HelpersBase {
 
 export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 
-    constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>, args?: {
+    constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>, args: {
         filter?: (helper: HelpersAndStats) => FilterBase,
         location?: () => Location
-    }) {
+    } = {}) {
         super({
             dataControlSettings: () =>
                 ({
@@ -334,7 +334,7 @@ export class CompanyColumn extends StringColumn {
 }
 export class HelperIdReadonly extends HelperId {
     constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>, filter?: (helper: HelpersAndStats) => FilterBase) {
-        super(context, settingsOrCaption, {filter});
+        super(context, settingsOrCaption, { filter });
         this.defs.allowApiUpdate = false;
     }
     get displayValue() {
