@@ -215,7 +215,7 @@ class ArchiveHelper {
     async forEach(f: ActiveFamilyDeliveries) {
         if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery && f.courier.value != '' && this.markOnTheWayAsDelivered.value)
             f.deliverStatus.value = DeliveryStatus.Success;
-        if (f.deliverStatus.value == DeliveryStatus.SelfPickup && this.markSelfPickupAsDelivered)
+        if (f.deliverStatus.value == DeliveryStatus.SelfPickup && this.markSelfPickupAsDelivered.value)
             f.deliverStatus.value = DeliveryStatus.SuccessPickedUp;
     }
 
