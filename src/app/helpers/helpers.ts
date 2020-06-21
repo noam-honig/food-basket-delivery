@@ -285,7 +285,8 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 
     constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>, args: {
         filter?: (helper: HelpersAndStats) => FilterBase,
-        location?: () => Location
+        location?: () => Location,
+        searchClosestDefaultFamily?: boolean
     } = {}) {
         super({
             dataControlSettings: () =>
@@ -294,7 +295,11 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
                     hideDataOnInput: true,
                     width: '200',
                     click: async () => this.context.openDialog((await import('../select-helper/select-helper.component')).SelectHelperComponent,
-                        x => x.args = { filter: args.filter, location: args.location ? args.location() : undefined, onSelect: s => this.value = (s ? s.id.value : '') })
+                        x => x.args = {
+                            filter: args.filter, location: args.location ? args.location() : undefined,
+                            searchClosestDefaultFamily: args.searchClosestDefaultFamily
+                            , onSelect: s => this.value = (s ? s.id.value : '')
+                        })
                 })
         }, settingsOrCaption);
     }

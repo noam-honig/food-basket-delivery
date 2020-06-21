@@ -34,6 +34,7 @@ export class SelectHelperComponent implements OnInit {
   public args: {
     hideRecent?: boolean,
     location?: Location,
+    searchClosestDefaultFamily?: boolean,
     onSelect: (selectedValue: HelpersBase) => void,
     filter?: (helper: HelpersAndStats) => FilterBase
 
@@ -53,7 +54,7 @@ export class SelectHelperComponent implements OnInit {
     this.select(undefined);
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
-  static async getHelpersByLocation(deliveryLocation: Location, context?: Context, db?: SqlDatabase) {
+  static async getHelpersByLocation(deliveryLocation: Location, selectDefaultVolunteer: boolean, context?: Context, db?: SqlDatabase) {
     let helpers = new Map<string, helperInList>();
 
 
@@ -80,7 +81,7 @@ export class SelectHelperComponent implements OnInit {
       }
     });
     let sql = new SqlBuilder();
-    {
+    if (!selectDefaultVolunteer) {
       let afd = context.for(ActiveFamilyDeliveries).create();
 
 
@@ -101,8 +102,7 @@ export class SelectHelperComponent implements OnInit {
           h.assignedDeliveries++;
         check(h, { lat: d.lat, lng: d.lng }, getLang(context).delivery + ": " + d.address);
       }
-    }
-    {
+    } else {
       let afd = context.for(Families).create();
       for (const d of (await db.execute(sql.query({
         from: afd,
@@ -138,7 +138,7 @@ export class SelectHelperComponent implements OnInit {
     this.dialogRef.close();
   }
   async byLocation() {
-    this.filteredHelpers = await SelectHelperComponent.getHelpersByLocation(this.args.location);
+    this.filteredHelpers = await SelectHelperComponent.getHelpersByLocation(this.args.location,this.args.searchClosestDefaultFamily);
   }
 
   findOptions = {

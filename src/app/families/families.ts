@@ -452,7 +452,7 @@ export class Families extends IdEntity {
   status = new FamilyStatusColumn(this.context);
   statusDate = new changeDate(getLang(this.context).statusChangeDate);
   statusUser = new HelperIdReadonly(this.context, getLang(this.context).statusChangeUser);
-  fixedCourier = new HelperId(this.context, getLang(this.context).defaultVolunteer, { location: () => this.getGeocodeInformation().location() });
+  fixedCourier = new HelperId(this.context, getLang(this.context).defaultVolunteer, { location: () => this.getGeocodeInformation().location(), searchClosestDefaultFamily: true });
   async reloadGeoCoding() {
 
     let geo = new GeocodeInformation();
@@ -914,8 +914,8 @@ export class GroupsColumn extends StringColumn {
 
       dataControlSettings: () => ({
         width: '300',
-        
-        forceEqualFilter : false,
+
+        forceEqualFilter: false,
         click: () => {
           this.context.openDialog(UpdateGroupDialogComponent, s => {
             s.init({
