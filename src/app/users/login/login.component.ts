@@ -25,6 +25,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   phone = new StringColumn(this.settings.lang.phone);
   password = new StringColumn(this.settings.lang.password);
   name = new StringColumn(this.settings.lang.volunteerName);
+  preferredDistributionArea = new StringColumn(this.settings.lang.preferredDistributionArea);
   remember = new BoolColumn(this.settings.lang.rememberMeOnThisDevice);
   passwordArea = new DataAreaSettings<any>({
     columnSettings: () => [{ column: this.password, inputType: 'password' }]
@@ -33,6 +34,9 @@ export class LoginComponent implements OnInit, AfterViewInit {
     columnSettings: () => [{ column: this.phone, inputType: 'tel' }, this.remember]
   });
 
+  nameArea = new DataAreaSettings<any>({
+    columnSettings: () => [this.name, this.preferredDistributionArea]
+  });
   constructor(
     private dialog: DialogService,
     private auth: AuthService,
@@ -70,7 +74,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   phoneState = new loginState(async () => {
     this.phone.value = (await import('src/app/model-shared/types')).PhoneColumn.fixPhoneInput(this.phone.value);
-    if (!this.phone.value||this.phone.value.length<10){
+    if (!this.phone.value || this.phone.value.length < 10) {
       this.dialog.Error(this.settings.lang.invalidPhoneNumber);
       return;
     }
@@ -94,6 +98,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
       let h = this.context.for(Helpers).create();
       h.phone.value = this.phone.value;
       h.name.value = this.name.value;
+      h.preferredDistributionAreaAddress.value = this.preferredDistributionArea.value;
       await h.save();
       this.auth.login(this.phone.value, '', this.remember.value,
         () => {
@@ -123,7 +128,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     this.loginState.nextStep();
 
   }
-  
+
   orgName() {
     return ApplicationSettings.get(this.context).organisationName.value;
   }

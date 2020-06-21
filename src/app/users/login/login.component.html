@@ -36,7 +36,7 @@
             <data-area [settings]="passwordArea"></data-area>
           </div>
           <div *ngIf="loginState==nameState">
-            <data-control [column]="name"></data-control>
+            <data-area [settings]="nameArea"></data-area>
           </div>
           <div style="width:100%;text-align: end;margin-top:10px">
             <button mat-raised-button color="accent" (click)="loginState.nextStep()">{{settings.lang.signIn}}</button>
