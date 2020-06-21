@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Column, Entity, ServerFunction, IdColumn, SqlDatabase, StringColumn, DataAreaSettings, BoolColumn, DataArealColumnSetting, EntityWhere, AndFilter, RouteHelperService } from '@remult/core';
 import { Context } from '@remult/core';
 import { Helpers, HelperUserInfo } from '../helpers/helpers';
-import { HasAsyncGetTheValue, PhoneColumn } from '../model-shared/types';
+import { HasAsyncGetTheValue, PhoneColumn, wasChanged } from '../model-shared/types';
 
 import { Families, parseAddress, duplicateFamilyInfo, displayDupInfo } from '../families/families';
 
@@ -429,14 +429,24 @@ export class ImportFromExcelComponent implements OnInit {
         for (const s of helper.laterSteps) {
             await s.what();
         }
-        if (updatedFields.get(this.f.basketType) && !updatedFields.get(this.fd.basketType)) {
-            fd.basketType.value = f.basketType.value;
-        }
-        if (updatedFields.get(this.f.quantity) && !updatedFields.get(this.fd.quantity)) {
-            fd.quantity.value = f.quantity.value;
-        }
+
+
         if (this.useFamilyMembersAsNumOfBaskets.value && !updatedFields.get(this.fd.quantity)) {
             fd.quantity.value = f.familyMembers.value;
+        }
+        if (this.settings.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery) {
+            if (wasChanged(fd.basketType)) {
+                f.basketType.value = fd.basketType.value;
+            }
+            if (wasChanged(fd.quantity)) {
+                f.quantity.value = fd.quantity.value;
+            }
+            if (wasChanged(fd.deliveryComments)) {
+                f.deliveryComments.value = fd.deliveryComments.value;
+            }
+            if (wasChanged(fd.courier)) {
+                f.fixedCourier.value = fd.courier.value;
+            }
         }
 
         if (f.phone1.displayValue == f.phone2.displayValue)
@@ -628,25 +638,25 @@ export class ImportFromExcelComponent implements OnInit {
 
             }, columns: [this.fd.quantity]
         });
-        this.columns.push({
-            key: 'defaultBoxes',
-            name: use.language.defaultQuantity,
-            updateFamily: async (v, f, h) => {
-                let val = +leaveOnlyNumericChars(v);
-                if (val < 1)
-                    val = 1;
-                f.quantity.value = val;
+        // this.columns.push({
+        //     key: 'defaultBoxes',
+        //     name: use.language.defaultQuantity,
+        //     updateFamily: async (v, f, h) => {
+        //         let val = +leaveOnlyNumericChars(v);
+        //         if (val < 1)
+        //             val = 1;
+        //         f.quantity.value = val;
 
-            }, columns: [this.f.quantity]
-        });
-        this.columns.push({
-            key: 'defaultDeliveryComments',
-            name: use.language.commentForAllDeliveries,
-            updateFamily: async (v, f, h) => {
-                updateCol(f.deliveryComments, v);
-            },
-            columns: [this.f.deliveryComments]
-        });
+        //     }, columns: [this.f.quantity]
+        // });
+        // this.columns.push({
+        //     key: 'defaultDeliveryComments',
+        //     name: use.language.commentForAllDeliveries,
+        //     updateFamily: async (v, f, h) => {
+        //         updateCol(f.deliveryComments, v);
+        //     },
+        //     columns: [this.f.deliveryComments]
+        // });
         this.columns.push({
             key: 'deliveryComments',
             name: this.fd.deliveryComments.defs.caption,
@@ -655,13 +665,13 @@ export class ImportFromExcelComponent implements OnInit {
             },
             columns: [this.fd.deliveryComments]
         });
-        this.columns.push({
-            key: 'defaultBasketType',
-            name: this.f.basketType.defs.caption,
-            updateFamily: async (v, f, h) => {
-                await h.lookupAndInsert(BasketType, b => b.name, v, b => b.id, f.basketType);
-            }, columns: [this.f.basketType]
-        });
+        // this.columns.push({
+        //     key: 'defaultBasketType',
+        //     name: this.f.basketType.defs.caption,
+        //     updateFamily: async (v, f, h) => {
+        //         await h.lookupAndInsert(BasketType, b => b.name, v, b => b.id, f.basketType);
+        //     }, columns: [this.f.basketType]
+        // });
         this.columns.push({
             key: 'basketType',
             name: this.fd.basketType.defs.caption,
@@ -687,33 +697,33 @@ export class ImportFromExcelComponent implements OnInit {
         });
 
         this.columns.push({
-            key: 'fixedCourier',
-            name: this.f.fixedCourier.defs.caption + ' ' + use.language.volunteerName,
+            key: 'volunteer',
+            name: this.fd.courier.defs.caption + ' ' + use.language.volunteerName,
             updateFamily: async (v, f, h) => {
                 h.laterSteps.push({
                     step: 3, what: async () => {
-                        if (f.fixedCourier.value) {
-                            let h = await this.context.for(Helpers).lookupAsync(f.fixedCourier);
-                            if (!h.isNew()) {
-                                h.name.value = v;
-                                if (h.wasChanged())
-                                    await h.save();
+                        if (h.fd.courier.value) {
+                            let help = await this.context.for(Helpers).lookupAsync(h.fd.courier);
+                            if (!help.isNew()) {
+                                help.name.value = v;
+                                if (help.wasChanged())
+                                    await help.save();
                             }
                         }
                     }
                 });
-            }, columns: [this.f.fixedCourier]
+            }, columns: [this.fd.courier]
         });
         this.columns.push({
-            key: 'fixedCourierPhone',
-            name: this.f.fixedCourier.defs.caption + " " + use.language.phone,
+            key: 'volunteerPhone',
+            name: this.fd.courier.defs.caption + " " + use.language.phone,
 
             updateFamily: async (v, f, h) => {
                 v = PhoneColumn.fixPhoneInput(v);
-                await h.lookupAndInsert(Helpers, h => h.phone, v, h => h.id, f.fixedCourier, x => {
+                await h.lookupAndInsert(Helpers, h => h.phone, v, h => h.id, h.fd.courier, x => {
                     x.name.value = 'מתנדב ' + v;
                 });
-            }, columns: [this.f.fixedCourier]
+            }, columns: [this.fd.courier]
         });
 
 
@@ -805,6 +815,7 @@ export class ImportFromExcelComponent implements OnInit {
                 return [
                     this.addDelivery,
                     { column: this.defaultBasketType, visible: () => this.addDelivery.value && !updateColumns.get(this.fd.basketType) && !updateColumns.get(this.f.basketType) },
+                    { column: s.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery, visible: () => this.addDelivery.value },
                     { column: this.compareBasketType, visible: () => this.addDelivery.value },
                     { column: this.distributionCenter, visible: () => this.addDelivery.value && !updateColumns.get(this.fd.distributionCenter) && this.dialog.hasManyCenters },
                     { column: this.useFamilyMembersAsNumOfBaskets, visible: () => this.addDelivery.value && !updateColumns.get(this.fd.quantity) && updateColumns.get(this.f.familyMembers) },
@@ -845,15 +856,25 @@ export class ImportFromExcelComponent implements OnInit {
             updatedColumns.set(this.f.status, true);
             this.columnsInCompare = [];
             this.columnsInCompareMemberName = [];
+            var laterColumnsInCompare = [];
             for (let e of [this.f, this.fd]) {
                 for (let c of e.columns) {
                     if (updatedColumns.get(c)) {
                         if (c == this.fd.distributionCenter && !this.dialog.hasManyCenters)
                             continue;
-                        this.columnsInCompare.push({ c, e });
-                        this.columnsInCompareMemberName.push(keyFromColumnInCompare({ e, c }));
+                        if (c == this.f.basketType || c == this.f.quantity || c == this.f.deliveryComments || c == this.f.fixedCourier) {
+                            laterColumnsInCompare.push(c);
+                        }
+                        else {
+                            this.columnsInCompare.push({ c, e });
+                            this.columnsInCompareMemberName.push(keyFromColumnInCompare({ e, c }));
+                        }
                     }
                 }
+            }
+            for (const c of laterColumnsInCompare) {
+                this.columnsInCompare.push({ c, e: this.f });
+                this.columnsInCompareMemberName.push(keyFromColumnInCompare({ e: this.f, c }));
             }
 
 
@@ -1009,6 +1030,20 @@ export class ImportFromExcelComponent implements OnInit {
                 for (const c of cu.columns) {
                     updatedColumns.set(c, true);
                 }
+        }
+        if (this.settings.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery) {
+            if (updatedColumns.get(this.fd.basketType)) {
+                updatedColumns.set(this.f.basketType, true);
+            }
+            if (updatedColumns.get(this.fd.courier)) {
+                updatedColumns.set(this.f.fixedCourier, true);
+            }
+            if (updatedColumns.get(this.fd.quantity)) {
+                updatedColumns.set(this.f.quantity, true);
+            }
+            if (updatedColumns.get(this.fd.deliveryComments)) {
+                updatedColumns.set(this.f.deliveryComments, true);
+            }
         }
         return updatedColumns;
     }

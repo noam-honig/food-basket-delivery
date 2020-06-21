@@ -536,11 +536,6 @@
     "valueInCode": "בחירת עמודות בקובץ",
     "custom": "Columns in file selection"
   },
-  "commentForAllDeliveries": {
-    "google": "Note to appear for all shipments",
-    "valueInCode": "הערה שתופיע לכל המשלוחים",
-    "custom": "Comment for all deliveries"
-  },
   "commentForProblem": {
     "google": "We'd love to write a comment about what you saw and were",
     "valueInCode": "נשמח אם תכתוב לנו הערה על מה שראית והיה",
@@ -656,6 +651,11 @@
     "valueInCode": "סוג סל ברירת מחדל",
     "custom": "Default parcel type"
   },
+  "defaultDeliveryComment": {
+    "google": "Default note for volunteer",
+    "valueInCode": "הערה ברירת מחדל למתנדב",
+    "custom": "Default Comment for Volunteer"
+  },
   "defaultDistributionListName": {
     "google": "Food Distribution",
     "valueInCode": "חלוקת מזון",
@@ -677,7 +677,7 @@
   },
   "defaultQuantity": {
     "google": "Number of default baskets",
-    "valueInCode": "מספר סלים ברירת מחדל",
+    "valueInCode": "כמות ברירת מחדל",
     "custom": "Default number of parcels"
   },
   "defaultSelfPickup": {
@@ -1084,6 +1084,11 @@
   "excelImportResults": {
     "google": "Results",
     "valueInCode": "תוצאות"
+  },
+  "excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery": {
+    "google": "Update family defaults according to this shipment",
+    "valueInCode": "עדכן ברירות מחדל למשפחה בהתאם למשלוח זה",
+    "custom": "Update family defaults according to this delivery"
   },
   "excelImportVideo": {
     "google": "For a tutorial on Absorption from Excel click here",
@@ -2047,7 +2052,7 @@
   },
   "quantity": {
     "google": "Number of baskets",
-    "valueInCode": "מספר סלים",
+    "valueInCode": "כמות",
     "custom": "Quantity"
   },
   "question": {

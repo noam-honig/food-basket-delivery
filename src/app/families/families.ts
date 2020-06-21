@@ -437,7 +437,7 @@ export class Families extends IdEntity {
   area = new StringColumn({ caption: getLang(this.context).region });
   addressComment = new StringColumn(getLang(this.context).addressComment);
   postalCode = new NumberColumn(getLang(this.context).postalCode);
-  deliveryComments = new StringColumn(getLang(this.context).commentForVolunteer);
+  deliveryComments = new StringColumn(getLang(this.context).defaultDeliveryComment);
   addressApiResult = new StringColumn();
 
   phone1 = new PhoneColumn({ caption: getLang(this.context).phone1, dbName: 'phone', valueChange: () => this.delayCheckDuplicateFamilies() });

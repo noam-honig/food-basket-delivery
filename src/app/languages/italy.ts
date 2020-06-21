@@ -564,7 +564,7 @@ export class italy implements Language {
   excelSheetIsEmpty = 'vuoto';
   firstNameShort = 'Privato';
   city = 'Città';
-  commentForAllDeliveries = 'Commento per tutte le consegne';
+  defaultDeliveryComment = 'Commento predefinito per il volontario';
   defineDeliveriesForFamiliesInExcel = 'Definire le consegne per tutte le famiglie importate dal file Excel';
   ifBasketTypeInExcelIsDifferentFromExistingOneCreateNewDelivery = 'Se è prevista una consegna per una famiglia con un diverso tipo di pacco, aggiungine una nuova';
   useFamilyMembersAsQuantity = 'Determinare la quantità per i membri della famiglia';
@@ -678,4 +678,5 @@ export class italy implements Language {
   markAsSelfPickupFor = 'marchio';
   selfPickupDeliveries = 'Consegne con ritiro automatico';
   deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort = "Consegne completate. L'aggiornamento del loro stato cancellerà il valore esistente e le consegne non verranno salvate nella cronologia. Se si desidera creare una nuova consegna, interrompere questo aggiornamento e selezionare l'opzione Nuova consegna dal menu. Annullare questo aggiornamento?";
+  excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = 'Aggiorna le impostazioni predefinite della famiglia in base a questa consegna';
 }

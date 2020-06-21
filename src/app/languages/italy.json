@@ -579,11 +579,6 @@
     "valueInCode": "בחירת עמודות בקובץ",
     "valueInEnglish": "Columns in file selection"
   },
-  "commentForAllDeliveries": {
-    "google": "Commento per tutte le consegne",
-    "valueInCode": "הערה שתופיע לכל המשלוחים",
-    "valueInEnglish": "Comment for all deliveries"
-  },
   "commentForProblem": {
     "google": "Descrivi gentilmente la tua esperienza",
     "valueInCode": "נשמח אם תכתוב לנו הערה על מה שראית והיה",
@@ -709,6 +704,11 @@
     "valueInCode": "סוג סל ברירת מחדל",
     "valueInEnglish": "Default parcel type"
   },
+  "defaultDeliveryComment": {
+    "google": "Commento predefinito per il volontario",
+    "valueInCode": "הערה ברירת מחדל למתנדב",
+    "valueInEnglish": "Default Comment for Volunteer"
+  },
   "defaultDistributionListName": {
     "google": "Elenco di distribuzione alimentare",
     "valueInCode": "חלוקת מזון",
@@ -731,7 +731,7 @@
   },
   "defaultQuantity": {
     "google": "Numero predefinito di pacchi",
-    "valueInCode": "מספר סלים ברירת מחדל",
+    "valueInCode": "כמות ברירת מחדל",
     "valueInEnglish": "Default number of parcels"
   },
   "defaultSelfPickup": {
@@ -1189,6 +1189,11 @@
     "google": "risultati",
     "valueInCode": "תוצאות",
     "valueInEnglish": "Results"
+  },
+  "excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery": {
+    "google": "Aggiorna le impostazioni predefinite della famiglia in base a questa consegna",
+    "valueInCode": "עדכן ברירות מחדל למשפחה בהתאם למשלוח זה",
+    "valueInEnglish": "Update family defaults according to this delivery"
   },
   "excelImportVideo": {
     "google": "Per un'esercitazione sull'importazione di Excel, fai clic qui",
@@ -2322,7 +2327,7 @@
   },
   "quantity": {
     "google": "Quantità",
-    "valueInCode": "מספר סלים",
+    "valueInCode": "כמות",
     "valueInEnglish": "Quantity"
   },
   "question": {

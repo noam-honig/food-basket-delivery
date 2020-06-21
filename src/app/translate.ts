@@ -341,7 +341,7 @@ export class Language {
   nextBirthDay = 'יומולדת הבא';
   age = 'גיל';
   defaultBasketType = 'סוג סל ברירת מחדל';
-  defaultQuantity = 'מספר סלים ברירת מחדל';
+  defaultQuantity = 'כמות ברירת מחדל';
   familySource = 'גורם מפנה';
   familyHelpContact = 'איש קשר לבירור פרטים (עו"ס)';
   familyHelpPhone1 = 'עו"ס טלפון 1';
@@ -395,7 +395,7 @@ export class Language {
   specialUnasigned = 'מיוחדים שטרם שוייכו';
   delivered = "נמסר";
   problem = "בעייה";
-  quantity = 'מספר סלים';
+  quantity = 'כמות';
   volunteer = "מתנדב";
   commentsWritteByVolunteer = 'הערות שכתב המתנדב כשמסר';
   deliveryStatusDate = 'מתי';
@@ -696,7 +696,7 @@ export class Language {
   excelSheetIsEmpty = 'ריק';
   firstNameShort = 'פרטי';
   city = 'עיר';
-  commentForAllDeliveries = 'הערה שתופיע לכל המשלוחים';
+  defaultDeliveryComment = 'הערה ברירת מחדל למתנדב';
   defineDeliveriesForFamiliesInExcel = 'הגדר משלוחים לכל המשפחות מהאקסל';
   ifBasketTypeInExcelIsDifferentFromExistingOneCreateNewDelivery = 'אם קיים משלוח למשפחה עם סוג סל שונה, הוסף משלוח חדש';
   useFamilyMembersAsQuantity = 'השתמש במספר נפשות גם כמספר מנות';
@@ -812,6 +812,7 @@ export class Language {
   markAsSelfPickupFor = "סמן אספו את החבילה ל";
   selfPickupDeliveries = "משלוחים שמוגדרים כבאים לקחת";
   deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort="משלוחים שהסתיימו. עדכון הסטטוס שלהם ימחק את הערך הקיים והמשלוח לא ישמר בהיסטוריה. אם אתם רוצים ליצור משלוח חדש, הפסיקו פעולה זו ובחרו באפשרות משלוח חדש בתפריט. לבטל פעולה זו?";
+  excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = "עדכן ברירות מחדל למשפחה בהתאם למשלוח זה";
 }
 
 const defaultLang = new Language();

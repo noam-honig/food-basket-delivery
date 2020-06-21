@@ -564,7 +564,7 @@ export class en implements Language {
   excelSheetIsEmpty = 'blank';
   firstNameShort = 'Private';
   city = 'City';
-  commentForAllDeliveries = 'Comment for all deliveries';
+  defaultDeliveryComment = 'Default Comment for Volunteer';
   defineDeliveriesForFamiliesInExcel = 'Define deliveries for all families imported from Excel file';
   ifBasketTypeInExcelIsDifferentFromExistingOneCreateNewDelivery = 'If there is a delivery for a family with a different parcel type, add a new one';
   useFamilyMembersAsQuantity = 'Determine Quantity by Family Members';
@@ -678,4 +678,5 @@ export class en implements Language {
   markAsSelfPickupFor = 'Mark ';
   selfPickupDeliveries = 'Self Pickup Deliveries';
   deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort = 'Completed deliveries. Updating their status will erase the existing value and the deliveries will not be saved in history. If you want to create a new delivery, abort this update and select the New Delivery option from the menu. Abort this update?';
+  excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = 'Update family defaults according to this delivery';
 }

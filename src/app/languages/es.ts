@@ -564,7 +564,7 @@ export class es implements Language {
   excelSheetIsEmpty = 'blanco';
   firstNameShort = 'Privado';
   city = 'Ciudad';
-  commentForAllDeliveries = 'Comentario para todas las entregas';
+  defaultDeliveryComment = 'Comentario predeterminado para voluntario';
   defineDeliveriesForFamiliesInExcel = 'Definir entregas para todas las familias importadas del archivo Excel';
   ifBasketTypeInExcelIsDifferentFromExistingOneCreateNewDelivery = 'Si hay una entrega para una familia con un tipo de paquete diferente, agregue una nueva';
   useFamilyMembersAsQuantity = 'Determinar la cantidad por miembros de la familia';
@@ -678,4 +678,5 @@ export class es implements Language {
   markAsSelfPickupFor = 'marca';
   selfPickupDeliveries = 'Entregas de recogida automática';
   deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort = 'Entregas completadas. Actualizar su estado borrará el valor existente y las entregas no se guardarán en el historial. Si desea crear una nueva entrega, cancele esta actualización y seleccione la opción Nueva entrega en el menú. ¿Abortar esta actualización?';
+  excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = 'Actualizar los valores predeterminados de la familia de acuerdo con esta entrega';
 }

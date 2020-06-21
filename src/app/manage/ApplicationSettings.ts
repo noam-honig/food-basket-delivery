@@ -143,6 +143,7 @@ export class ApplicationSettings extends Entity<number>  {
   removedFromListStrategy = new RemovedFromListExcelImportStrategyColumn(this.context);
   checkIfFamilyExistsInFile = new BoolColumn(this.lang.checkIfFamilyExistsInFile);
   excelImportAutoAddValues = new BoolColumn(this.lang.excelImportAutoAddValues);
+  excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = new BoolColumn(this.lang.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery);
   checkDuplicatePhones = new BoolColumn(this.lang.checkDuplicatePhones);
   volunteerCanUpdateComment = new BoolColumn(this.lang.volunteerCanUpdateComment);
   

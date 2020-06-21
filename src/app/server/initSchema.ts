@@ -388,6 +388,10 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         settings.forWho.value = settings._old_for_soliders.value ? TranslationOptions.soldiers : TranslationOptions.Families;
         await settings.save();
     });
+    await version(25, async () => {
+        settings.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery.value = true;
+        await settings.save();
+    });
 
 
 

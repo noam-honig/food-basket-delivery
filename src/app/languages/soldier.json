@@ -463,10 +463,6 @@
     "google": "בחירת עמודות בקובץ",
     "valueInCode": "בחירת עמודות בקובץ"
   },
-  "commentForAllDeliveries": {
-    "google": "הערה שתופיע לכל המשלוחים",
-    "valueInCode": "הערה שתופיע לכל המשלוחים"
-  },
   "commentForProblem": {
     "google": "נשמח אם תכתוב לנו הערה על מה שראית והיה",
     "valueInCode": "נשמח אם תכתוב לנו הערה על מה שראית והיה"
@@ -567,6 +563,10 @@
     "google": "סוג סל ברירת מחדל",
     "valueInCode": "סוג סל ברירת מחדל"
   },
+  "defaultDeliveryComment": {
+    "google": "הערה ברירת מחדל למתנדב",
+    "valueInCode": "הערה ברירת מחדל למתנדב"
+  },
   "defaultDistributionListName": {
     "google": "חלוקת מזון",
     "valueInCode": "חלוקת מזון"
@@ -585,7 +585,7 @@
   },
   "defaultQuantity": {
     "google": "מספר סלים ברירת מחדל",
-    "valueInCode": "מספר סלים ברירת מחדל"
+    "valueInCode": "כמות ברירת מחדל"
   },
   "defaultSelfPickup": {
     "google": "באים לקחת ברירת מחדל",
@@ -950,6 +950,10 @@
   "excelImportResults": {
     "google": "תוצאות",
     "valueInCode": "תוצאות"
+  },
+  "excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery": {
+    "google": "עדכן ברירות מחדל לחייל בהתאם למשלוח זה",
+    "valueInCode": "עדכן ברירות מחדל למשפחה בהתאם למשלוח זה"
   },
   "excelImportVideo": {
     "google": "לסרטון הדרכה על קליטה מאקסל לחץ כאן",
@@ -1857,7 +1861,7 @@
   },
   "quantity": {
     "google": "מספר סלים",
-    "valueInCode": "מספר סלים"
+    "valueInCode": "כמות"
   },
   "question": {
     "google": "שאלה",

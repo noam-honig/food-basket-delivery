@@ -564,7 +564,7 @@ export class donor implements Language {
   excelSheetIsEmpty = 'ריק';
   firstNameShort = 'פרטי';
   city = 'עיר';
-  commentForAllDeliveries = 'הערה שתופיע לכל המשלוחים';
+  defaultDeliveryComment = 'הערה ברירת מחדל למתנדב';
   defineDeliveriesForFamiliesInExcel = 'הגדר משלוחים לכל התורמים מהאקסל';
   ifBasketTypeInExcelIsDifferentFromExistingOneCreateNewDelivery = 'אם קיים משלוח לתורם עם סוג סל שונה, הוסף משלוח חדש';
   useFamilyMembersAsQuantity = 'השתמש במספר נפשות גם ככמות מנות';
@@ -678,4 +678,5 @@ export class donor implements Language {
   markAsSelfPickupFor = 'סמן אספו את החבילה ל';
   selfPickupDeliveries = 'משלוחים שמוגדרים כבאים לקחת';
   deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort = 'משלוחים שהסתיימו. עדכון הסטטוס שלהם ימחק את הערך הקיים והמשלוח לא ישמר בהיסטוריה. אם אתם רוצים ליצור משלוח חדש, הפסיקו פעולה זו ובחרו באפשרות משלוח חדש בתפריט. לבטל פעולה זו?';
+  excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = 'עדכן ברירות מחדל לתורם בהתאם למשלוח זה';
 }
