@@ -110,7 +110,7 @@ export class ImportFromExcelComponent implements OnInit {
                         if (rowsToInsert.length == 35) {
 
                             if (new Date().valueOf() - lastDate > 10000) {
-                                let timeLeft = ((new Date().valueOf() - start) / index) * (this.newRows.length - index) / 1000 / 60;
+                                let timeLeft = ((new Date().valueOf() - start) / index) * (count - index) / 1000 / 60;
                                 this.dialog.Info(i.rowInExcel + ' ' + (i.name) + " " + timeLeft.toFixed(1) + " " + use.language.minutesRemaining);
                             }
                             await ImportFromExcelComponent.insertRows(rowsToInsert, this.addDelivery.value);
