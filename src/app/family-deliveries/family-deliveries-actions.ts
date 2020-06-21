@@ -181,44 +181,57 @@ export class UpdateDeliveriesStatus extends ActionOnRows<ActiveFamilyDeliveries>
     }
 }
 
-
-
-class ArchiveDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
+class ArchiveHelper {
     markOnTheWayAsDelivered = new BoolColumn();
     markSelfPickupAsDelivered = new BoolColumn();
+    constructor(private context: Context) { }
+    getColumns() {
+        return [this.markOnTheWayAsDelivered, this.markSelfPickupAsDelivered];
+    }
+    async getDialogColumns(c: actionDialogNeeds<ActiveFamilyDeliveries>) {
+        let result = [];
+        let filter = await c.buildActionInfo(undefined);
+        let onTheWay = await this.context.for(ActiveFamilyDeliveries).count(d => d.onTheWayFilter().and(filter.where(d)));
+
+        if (onTheWay > 0) {
+
+            this.markOnTheWayAsDelivered.defs.caption = use.language.markAsDeliveredFor + " " + onTheWay + " " + use.language.onTheWayDeliveries;
+            result.push(this.markOnTheWayAsDelivered);
+        }
+
+        if (c.settings.usingSelfPickupModule) {
+            let selfPickup = await this.context.for(ActiveFamilyDeliveries).count(d => d.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup).and(filter.where(d)));
+            if (selfPickup > 0) {
+                this.markSelfPickupAsDelivered.defs.caption = use.language.markAsSelfPickupFor + " " + selfPickup + " " + use.language.selfPickupDeliveries;
+                result.push(this.markSelfPickupAsDelivered);
+            }
+        }
+
+        return result;
+    }
+    async forEach(f: ActiveFamilyDeliveries) {
+        if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery && f.courier.value != '' && this.markOnTheWayAsDelivered.value)
+            f.deliverStatus.value = DeliveryStatus.Success;
+        if (f.deliverStatus.value == DeliveryStatus.SelfPickup && this.markSelfPickupAsDelivered)
+            f.deliverStatus.value = DeliveryStatus.SuccessPickedUp;
+    }
+
+}
+
+class ArchiveDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
+    archiveHelper = new ArchiveHelper(this.context);
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
-            columns: () => [this.markOnTheWayAsDelivered, this.markSelfPickupAsDelivered],
+            columns: () => this.archiveHelper.getColumns(),
             dialogColumns: async c => {
-                let result = [];
-                let filter = await c.buildActionInfo(undefined);
-                let onTheWay = await this.context.for(ActiveFamilyDeliveries).count(d => d.onTheWayFilter().and(filter.where(d)));
-
-                if (onTheWay > 0) {
-
-                    this.markOnTheWayAsDelivered.defs.caption = use.language.markAsDeliveredFor + " " + onTheWay + " " + use.language.onTheWayDeliveries;
-                    result.push(this.markOnTheWayAsDelivered);
-                }
-
-                if (c.settings.usingSelfPickupModule) {
-                    let selfPickup = await this.context.for(ActiveFamilyDeliveries).count(d => d.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup).and(filter.where(d)));
-                    if (selfPickup > 0) {
-                        this.markSelfPickupAsDelivered.defs.caption = use.language.markAsSelfPickupFor + " " + selfPickup + " " + use.language.selfPickupDeliveries;
-                        result.push(this.markSelfPickupAsDelivered);
-                    }
-                }
-
-                return result;
+                return await this.archiveHelper.getDialogColumns(c);
             },
 
             title: getLang(context).archiveDeliveries,
             help: () => getLang(this.context).archiveDeliveriesHelp,
             forEach: async f => {
-                if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery && f.courier.value != '' && this.markOnTheWayAsDelivered.value)
-                    f.deliverStatus.value = DeliveryStatus.Success;
-                if (f.deliverStatus.value == DeliveryStatus.SelfPickup && this.markSelfPickupAsDelivered)
-                    f.deliverStatus.value = DeliveryStatus.SuccessPickedUp;
+                await this.archiveHelper.forEach(f);
                 if (DeliveryStatus.IsAResultStatus(f.deliverStatus.value))
                     f.archive.value = true;
             },
@@ -273,6 +286,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
     autoArchive = new BoolColumn({ caption: getLang(this.context).archiveCurrentDelivery, defaultValue: true });
     newDeliveryForAll = new BoolColumn(getLang(this.context).newDeliveryForAll);
     selfPickup = new SelfPickupStrategyColumn(true);
+    archiveHelper = new ArchiveHelper(this.context);
 
     distributionCenter = new DistributionCenterId(this.context);
     useCurrentDistributionCenter = new BoolColumn(getLang(this.context).distributionListAsCurrentDelivery);
@@ -290,7 +304,8 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                 this.autoArchive,
                 this.newDeliveryForAll,
                 this.selfPickup,
-                this.useCurrentDistributionCenter
+                this.useCurrentDistributionCenter,
+                ...this.archiveHelper.getColumns()
             ],
             dialogColumns: async (component) => {
                 this.basketType.value = '';
@@ -304,6 +319,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                     { column: this.distributionCenter, visible: () => component.dialog.hasManyCenters && !this.useCurrentDistributionCenter.value },
                     this.helperStrategy,
                     { column: this.helper, visible: () => this.helperStrategy.value == HelperStrategy.selectHelper },
+                    ...await this.archiveHelper.getDialogColumns(component),
                     this.autoArchive,
                     this.newDeliveryForAll,
                     this.selfPickup.getDispaySettings(component.settings.usingSelfPickupModule.value)
@@ -341,13 +357,17 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                 if (newDelivery.courier.value && !this.usedCouriers.includes(newDelivery.courier.value)) {
                     this.usedCouriers.push(newDelivery.courier.value);
                 }
-                if ((await newDelivery.duplicateCount()) == 0)
-                    await newDelivery.save();
+                this.archiveHelper.forEach(existingDelivery);
                 if (this.autoArchive) {
                     if (DeliveryStatus.IsAResultStatus(existingDelivery.deliverStatus.value))
                         existingDelivery.archive.value = true;
-                    await existingDelivery.save();
                 }
+                if (existingDelivery.wasChanged())
+                    await existingDelivery.save();
+
+                if ((await newDelivery.duplicateCount()) == 0)
+                    await newDelivery.save();
+
             },
             onEnd: async () => {
                 let t = new PromiseThrottle(10);
