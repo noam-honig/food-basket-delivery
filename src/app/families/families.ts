@@ -914,6 +914,8 @@ export class GroupsColumn extends StringColumn {
 
       dataControlSettings: () => ({
         width: '300',
+        
+        forceEqualFilter : false,
         click: () => {
           this.context.openDialog(UpdateGroupDialogComponent, s => {
             s.init({
