@@ -1,20 +1,21 @@
 <div class="myDiv">
 
-  <div mat-dialog-content>
+  <div style="flex-grow: 1;overflow-y: auto;">
     <div class="dialog-content-fixer">
       <app-asign-family #assign></app-asign-family>
     </div>
   </div>
-  <mat-dialog-actions>
 
 
+  <div style="height:30px">
     <button mat-raised-button color="accent" (click)="close()">
-    {{settings.lang.close}}
+      {{settings.lang.close}}
     </button>
     <a href="tel:{{argsHelper.phone.displayValue}}" style="padding-right:15px;">
-      <button mat-raised-button  class="dial-for-help">
+      <button mat-raised-button class="dial-for-help">
         <mat-icon>phone</mat-icon> {{settings.lang.dialTo}} {{argsHelper.name.value}} {{argsHelper.phone.displayValue}}
       </button>
     </a>
-  </mat-dialog-actions>
+  </div>
+
 </div>

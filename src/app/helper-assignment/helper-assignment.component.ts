@@ -12,7 +12,11 @@ import { DialogConfig } from '@remult/core';
   styleUrls: ['./helper-assignment.component.scss']
 })
 @DialogConfig({
-  minWidth:'95%'
+  minWidth:'95%',
+  height:'98%',
+  panelClass:'assign-volunteer-dialog'
+
+
 })
 export class HelperAssignmentComponent implements OnInit {
   public argsHelper: Helpers;
