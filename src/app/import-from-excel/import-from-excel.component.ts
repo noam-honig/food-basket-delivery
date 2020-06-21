@@ -401,7 +401,7 @@ export class ImportFromExcelComponent implements OnInit {
         fileReader.readAsArrayBuffer(file);
     }
 
-    async readLine(row: number, updatedFields: Map<Column<any>, boolean>): Promise<excelRowInfo> {
+    async readLine(row: number, updatedFields: Map<Column, boolean>): Promise<excelRowInfo> {
 
         let f = this.context.for(Families).create();
         let fd = this.context.for(ActiveFamilyDeliveries).create();
@@ -503,7 +503,7 @@ export class ImportFromExcelComponent implements OnInit {
     @ViewChild("stepper", { static: true }) stepper: MatStepper;
     @ViewChild("file", { static: true }) fileInput: ElementRef
 
-    settingsArea: DataAreaSettings<any> = new DataAreaSettings();
+    settingsArea: DataAreaSettings = new DataAreaSettings();
     async ngOnInit() {
         this.addDelivery.value = true;
         this.defaultBasketType.value = '';
@@ -516,7 +516,7 @@ export class ImportFromExcelComponent implements OnInit {
 
 
 
-        let updateCol = (col: Column<any>, val: string, seperator: string = ' ') => {
+        let updateCol = (col: Column, val: string, seperator: string = ' ') => {
 
             if (col.value) {
                 col.value = (col.value + seperator + val).trim();
@@ -545,7 +545,7 @@ export class ImportFromExcelComponent implements OnInit {
             }
         }
 
-        let addColumn = (col: Column<any>, searchNames?: string[]) => {
+        let addColumn = (col: Column, searchNames?: string[]) => {
             this.columns.push({
                 key: col.defs.key,
                 name: col.defs.caption,
@@ -556,7 +556,7 @@ export class ImportFromExcelComponent implements OnInit {
                 columns: [col]
             });
         }
-        let addColumns = (cols: Column<any>[]) => {
+        let addColumns = (cols: Column[]) => {
             for (const col of cols) {
                 addColumn(col);
             }
@@ -1023,7 +1023,7 @@ export class ImportFromExcelComponent implements OnInit {
     }
 
     private buildUpdatedColumns() {
-        let updatedColumns = new Map<Column<any>, boolean>();
+        let updatedColumns = new Map<Column, boolean>();
         //updatedColumns.set(this.f.status, true);
         for (const cu of [...this.excelColumns.map(f => f.column), ...this.additionalColumns.map(f => f.column)]) {
             if (cu)
@@ -1362,7 +1362,7 @@ interface columnUpdater {
     name: string;
     searchNames?: string[];
     updateFamily: (val: string, f: Families, h: columnUpdateHelper) => Promise<void>;
-    columns: Column<any>[];
+    columns: Column[];
 }
 class columnUpdateHelper {
     constructor(private context: Context, private dialog: DialogService, private autoAdd: boolean, public fd: ActiveFamilyDeliveries) {
@@ -1370,7 +1370,7 @@ class columnUpdateHelper {
     }
     laterSteps: laterSteps[] = [];
 
-    async lookupAndInsert<T extends Entity<any>, dataType>(
+    async lookupAndInsert<T extends Entity, dataType>(
         c: { new(...args: any[]): T; },
         getSearchColumn: ((entity: T) => Column<dataType>),
         val: dataType,
@@ -1486,7 +1486,7 @@ async function compareValuesWithRow(context: Context, info: excelRowInfo, withFa
     return { ef, hasDifference };
 }
 
-async function getColumnDisplayValue(c: Column<any>) {
+async function getColumnDisplayValue(c: Column) {
     let v = c.displayValue;
     let getv: HasAsyncGetTheValue = <any>c as HasAsyncGetTheValue;
     if (getv && getv.getTheValue) {
@@ -1716,8 +1716,8 @@ export class PromiseThrottle {
 }
 interface columnInCompare {
 
-    e: Entity<any>,
-    c: Column<any>
+    e: Entity,
+    c: Column
 
 }
 function keyFromColumnInCompare(c: columnInCompare) {

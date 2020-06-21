@@ -74,7 +74,7 @@ export class Families extends IdEntity {
         })
       ],
       columnSettings: fd => {
-        let r: Column<any>[] = [
+        let r: Column[] = [
           fd.deliverStatus,
           fd.deliveryStatusDate,
           fd.basketType,
@@ -548,7 +548,7 @@ export class Families extends IdEntity {
   addressByGoogle = new StringColumn({ caption: getLang(this.context).addressByGoogle, allowApiUpdate: false });
   addressOk = new BoolColumn({ caption: getLang(this.context).addressOk });
 
-  private dbNameFromLastDelivery(col: (fd: FamilyDeliveries) => Column<any>, alias: string) {
+  private dbNameFromLastDelivery(col: (fd: FamilyDeliveries) => Column, alias: string) {
 
     let fd = this.context.for(FamilyDeliveries).create();
     let sql = new SqlBuilder();

@@ -14,7 +14,7 @@ export class InputAreaComponent implements OnInit {
   args: {
     title: string,
     helpText?: string,
-    settings: IDataAreaSettings<any>,
+    settings: IDataAreaSettings,
     ok: () => void,
     cancel?: () => void,
     validate?: () => Promise<void>,
@@ -30,7 +30,7 @@ export class InputAreaComponent implements OnInit {
 
     dialogRef.afterClosed().toPromise().then(x => this.cancel());
   }
-  area: DataAreaSettings<any>;
+  area: DataAreaSettings;
 
   ngOnInit() {
     this.area = new DataAreaSettings(this.args.settings, null, null);

@@ -388,7 +388,7 @@ export class SelfPickupStrategyColumn extends ValueListColumn<SelfPickupStrategy
             column: this,
             valueList: this.getOptions().filter(x => this.showByCurrentDeliery || x.id != SelfPickupStrategy.byCurrentDelivery.id),
             visible: () => allowSelfPickup
-        } as DataControlInfo<any>
+        } as DataControlInfo
     }
 }
 

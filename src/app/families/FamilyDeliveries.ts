@@ -494,7 +494,7 @@ export class FamilyDeliveries extends IdEntity {
         });
     }
 
-    deilveryDetailsAreaSettings(dialog: DialogService): IDataAreaSettings<any> {
+    deilveryDetailsAreaSettings(dialog: DialogService): IDataAreaSettings {
         return {
             columnSettings: () =>
                 [
@@ -526,7 +526,7 @@ export class ActiveFamilyDeliveries extends FamilyDeliveries {
 
 }
 
-function logChanged(context: Context, col: Column<any>, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) {
+function logChanged(context: Context, col: Column, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) {
     if (col.value != col.originalValue) {
         dateCol.value = new Date();
         user.value = context.user.id;

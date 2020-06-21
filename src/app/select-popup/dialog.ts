@@ -115,7 +115,7 @@ export class DialogService {
                 this.refreshDistCenter.next();
         }
     }, true);
-    distCenterArea: DataAreaSettings<any>;
+    distCenterArea: DataAreaSettings;
     hasManyCenters = false;
     canSeeCenter() {
         var dist = '';

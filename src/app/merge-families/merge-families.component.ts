@@ -26,7 +26,7 @@ export class MergeFamiliesComponent implements OnInit {
     this.family._disableAutoDuplicateCheck = true;
     this.rebuildCompare(true);
   }
-  updateSimilarColumns(getCols: (f: Families) => Column<any>[][]) {
+  updateSimilarColumns(getCols: (f: Families) => Column[][]) {
     let eCols = getCols(this.family);
     for (const f of this.families) {
       for (const c of getCols(f)) {
@@ -115,8 +115,8 @@ export class MergeFamiliesComponent implements OnInit {
     }
 
   }
-  gs: GridSettings<any>;
-  getColWidth(c: Column<any>) {
+  gs: GridSettings;
+  getColWidth(c: Column) {
     let x = this.width.get(c);
     if (!x)
       x = '200px';
@@ -174,7 +174,7 @@ export class MergeFamiliesComponent implements OnInit {
   }
 
 
-  columnsToCompare: Column<any>[] = [];
-  width = new Map<Column<any>, string>();
+  columnsToCompare: Column[] = [];
+  width = new Map<Column, string>();
 
 }

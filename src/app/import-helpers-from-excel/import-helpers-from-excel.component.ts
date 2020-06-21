@@ -49,13 +49,13 @@ export class ImportHelpersFromExcelComponent implements OnInit {
       return '';
     return val.w.trim();
   }
-  columnsInCompare: Column<any>[] = [];
+  columnsInCompare: Column[] = [];
 
   totalRows: number;
   filename: string;
 
 
-  getColInfo(i: excelRowInfo, col: Column<any>) {
+  getColInfo(i: excelRowInfo, col: Column) {
     return ExcelHelper.actualGetColInfo(i, col.defs.key);
   }
 
@@ -103,7 +103,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     }
 
   }
-  async updateAllCol(col: Column<any>) {
+  async updateAllCol(col: Column) {
     let count = this.getColUpdateCount(col);
     let message = "האם לעדכן את השדה " + col.defs.caption + " ל" + count + " מתנדבים?";
 
@@ -147,7 +147,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     }
     return rowsToUpdate;
   }
-  async updateCol(i: excelRowInfo, col: Column<any>) {
+  async updateCol(i: excelRowInfo, col: Column) {
     await ImportHelpersFromExcelComponent.actualUpdateCol(i, col.defs.key, this.context);
   }
   static async actualUpdateCol(i: excelRowInfo, colMemberName: string, context: Context) {
@@ -163,13 +163,13 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     c.existingDisplayValue = await getColumnDisplayValue(f.columns.find(colMemberName));
     c.existingValue = f.columns.find(colMemberName).value;
   }
-  async clearColumnUpdate(i: excelRowInfo, col: Column<any>) {
+  async clearColumnUpdate(i: excelRowInfo, col: Column) {
     let c = this.getColInfo(i, col);
     c.newDisplayValue = c.existingDisplayValue;
     c.newValue = c.existingValue;
   }
 
-  getColUpdateCount(col: Column<any>) {
+  getColUpdateCount(col: Column) {
     let i = 0;
     let key = col.defs.key;
     for (const r of this.updateRows) {
@@ -333,7 +333,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
 
 
-    let updateCol = (col: Column<any>, val: string, seperator: string = ' ') => {
+    let updateCol = (col: Column, val: string, seperator: string = ' ') => {
 
       if (col.value) {
         col.value = (col.value + seperator + val).trim();
@@ -361,7 +361,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
       }
     }
 
-    let addColumn = (col: Column<any>, searchNames?: string[]) => {
+    let addColumn = (col: Column, searchNames?: string[]) => {
       this.columns.push({
         key: col.defs.key,
         name: col.defs.caption,
@@ -424,7 +424,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     let usedPhone = new Map<number, number>();
     this.stepper.next();
     await this.busy.doWhileShowingBusy(async () => {
-      let updatedColumns = new Map<Column<any>, boolean>();
+      let updatedColumns = new Map<Column, boolean>();
 
       for (const cu of [...this.excelColumns.map(f => f.column), ...this.additionalColumns.map(f => f.column)]) {
         if (cu)
@@ -691,7 +691,7 @@ interface columnUpdater {
   name: string;
   searchNames?: string[];
   updateFamily: (val: string, f: Helpers, h: columnUpdateHelper) => Promise<void>;
-  columns: Column<any>[];
+  columns: Column[];
 }
 class columnUpdateHelper {
   constructor(private context: Context, private dialog: DialogService) {
@@ -699,7 +699,7 @@ class columnUpdateHelper {
   }
   laterSteps: laterSteps[] = [];
 
-  async lookupAndInsert<T extends Entity<any>, dataType>(
+  async lookupAndInsert<T extends Entity, dataType>(
     c: { new(...args: any[]): T; },
     getSearchColumn: ((entity: T) => Column<dataType>),
     val: dataType,
@@ -745,7 +745,7 @@ interface serverCheckResults {
   updateRows: excelRowInfo[],
   errorRows: excelRowInfo[]
 }
-async function getColumnDisplayValue(c: Column<any>) {
+async function getColumnDisplayValue(c: Column) {
   let v = c.displayValue;
   let getv: HasAsyncGetTheValue = <any>c as HasAsyncGetTheValue;
   if (getv && getv.getTheValue) {

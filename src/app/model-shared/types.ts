@@ -138,10 +138,10 @@ export class SqlBuilder {
       val = '';
     return '\'' + val.replace(/'/g, '\'\'') + '\'';
   }
-  private dict = new Map<Column<any>, string>();
+  private dict = new Map<Column, string>();
 
 
-  private entites = new Map<Entity<any>, string>();
+  private entites = new Map<Entity, string>();
 
   sumWithAlias(what: any, alias: string, ...when: any[]) {
     if (when && when.length > 0) {
@@ -152,7 +152,7 @@ export class SqlBuilder {
     }
   }
 
-  addEntity(e: Entity<any>, alias?: string) {
+  addEntity(e: Entity, alias?: string) {
     if (alias) {
       for (const c of e.columns) {
         this.dict.set(c, alias);
@@ -206,7 +206,7 @@ export class SqlBuilder {
   ne<T>(a: Column<T>, b: T | Column<T>) {
     return this.build(a, ' <> ', b);
   }
-  notNull(col: Column<any>) {
+  notNull(col: Column) {
     return this.build(col, ' is not null');
   }
 
@@ -214,7 +214,7 @@ export class SqlBuilder {
   gt<T>(a: Column<T>, b: T | Column<T>) {
     return this.build(a, ' > ', b);
   }
-  gtAny(a: Column<any>, b: any | any) {
+  gtAny(a: Column, b: any | any) {
     return this.build(a, ' > ', b);
   }
   and(...args: any[]): string {
@@ -224,7 +224,7 @@ export class SqlBuilder {
     return "(" + args.map(x => this.getItemSql(x)).join(' or ') + ")";
   }
   private last = 1;
-  getEntityAlias(e: Entity<any>) {
+  getEntityAlias(e: Entity) {
     let result = this.entites.get(e);
     if (result)
       return result;
@@ -235,7 +235,7 @@ export class SqlBuilder {
 
 
   }
-  columnSumInnerSelect(rootEntity: Entity<any>, col: Column<Number>, query: FromAndWhere) {
+  columnSumInnerSelect(rootEntity: Entity, col: Column<Number>, query: FromAndWhere) {
     return this.columnDbName(rootEntity, {
       select: () => [this.build("sum(", col, ")")],
       from: query.from,
@@ -245,7 +245,7 @@ export class SqlBuilder {
       where: query.where
     });
   }
-  columnCount(rootEntity: Entity<any>, query: FromAndWhere) {
+  columnCount(rootEntity: Entity, query: FromAndWhere) {
     return this.columnDbName(rootEntity, {
       select: () => [this.build("count(*)")],
       from: query.from,
@@ -255,7 +255,7 @@ export class SqlBuilder {
       where: query.where
     });
   }
-  columnInnerSelect(rootEntity: Entity<any>, query: QueryBuilder) {
+  columnInnerSelect(rootEntity: Entity, query: QueryBuilder) {
     this.addEntity(rootEntity, rootEntity.defs.dbName);
     return '(' + this.query(query) + ' limit 1)';
   }
@@ -271,13 +271,13 @@ export class SqlBuilder {
   }
 
 
-  countDistinct(col: Column<any>, mappedColumn: Column<number>) {
+  countDistinct(col: Column, mappedColumn: Column<number>) {
     return this.build("count (distinct ", col, ") ", mappedColumn)
   }
   count() {
     return this.func('count', '*');
   }
-  minInnerSelect(col: Column<any>, query: FromAndWhere, mappedColumn: Column<any>) {
+  minInnerSelect(col: Column, query: FromAndWhere, mappedColumn: Column) {
     return this.build('(', this.query({
       select: () => [this.build("min(", col, ")")],
       from: query.from,
@@ -287,7 +287,7 @@ export class SqlBuilder {
       where: query.where
     }), ") ", mappedColumn);
   }
-  maxInnerSelect(col: Column<any>, query: FromAndWhere, mappedColumn: Column<any>) {
+  maxInnerSelect(col: Column, query: FromAndWhere, mappedColumn: Column) {
     return this.build('(', this.query({
       select: () => [this.build("max(", col, ")")],
       from: query.from,
@@ -297,7 +297,7 @@ export class SqlBuilder {
       where: query.where
     }), ") ", mappedColumn);
   }
-  columnDbName(rootEntity: Entity<any>, query: QueryBuilder) {
+  columnDbName(rootEntity: Entity, query: QueryBuilder) {
     this.addEntity(rootEntity, rootEntity.defs.dbName);
     return '(' + this.query(query) + ')';
   }
@@ -314,16 +314,16 @@ export class SqlBuilder {
     return '(' + this.query(query1) + ' union  all ' + this.query(query2) + ')';
   }
 
-  in(col: Column<any>, ...values: any[]) {
+  in(col: Column, ...values: any[]) {
     return this.build(col, ' in (', values, ')');
   }
   not(arg0: string): any {
     return this.build(' not (', arg0, ')');
   }
-  delete(e: Entity<any>, ...where: string[]) {
+  delete(e: Entity, ...where: string[]) {
     return this.build('delete from ', e, ' where ', this.and(...where));
   }
-  update(e: Entity<any>, info: UpdateInfo) {
+  update(e: Entity, info: UpdateInfo) {
     let result = [];
     result.push('update ', e, ' ', this.getEntityAlias(e), ' set ');
 
@@ -436,7 +436,7 @@ export class SqlBuilder {
 
   }
 
-  innerSelect(builder: QueryBuilder, col: Column<any>) {
+  innerSelect(builder: QueryBuilder, col: Column) {
     return this.build('(', this.query(builder), ' limit 1) ', col);
   }
 }
@@ -498,35 +498,35 @@ export class delayWhileTyping {
 
 export interface QueryBuilder {
   select: () => any[];
-  from: Entity<any>;
-  crossJoin?: () => Entity<any>[];
+  from: Entity;
+  crossJoin?: () => Entity[];
   innerJoin?: () => JoinInfo[];
   outerJoin?: () => JoinInfo[];
   where?: () => any[];
-  orderBy?: (Column<any> | SortSegment)[];
+  orderBy?: (Column | SortSegment)[];
   groupBy?: () => any[];
   having?: () => any[];
 }
 export interface FromAndWhere {
-  from: Entity<any>;
-  crossJoin?: () => Entity<any>[];
+  from: Entity;
+  crossJoin?: () => Entity[];
   innerJoin?: () => JoinInfo[];
   outerJoin?: () => JoinInfo[];
   where?: () => any[];
 }
 export interface UpdateInfo {
-  set: () => [Column<any>, any][],
+  set: () => [Column, any][],
   where?: () => any[];
-  from?: Entity<any>;
+  from?: Entity;
 }
 export interface InsertInfo {
-  into: Entity<any>;
-  set: () => [Column<any>, any][];
-  from: Entity<any>;
+  into: Entity;
+  set: () => [Column, any][];
+  from: Entity;
   where?: () => any[];
 }
 export interface JoinInfo {
-  to: Entity<any>;
+  to: Entity;
   on: () => any[];
 }
 
@@ -541,7 +541,7 @@ export function relativeDateName(context: Context, args: { d?: Date, dontShowTim
   return moment(d).locale(getLang(context).languageCodeHe).fromNow();
 
 }
-export function wasChanged(...columns: Column<any>[]) {
+export function wasChanged(...columns: Column[]) {
   for (const c of columns) {
     if (c.value != c.originalValue)
       return true;

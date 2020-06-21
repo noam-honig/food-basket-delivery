@@ -5,13 +5,13 @@ import { HasAsyncGetTheValue, DateTimeColumn } from "../model-shared/types";
 import { foreachSync } from "./utils";
 import { use } from '../translate';
 
-export async function saveToExcel<E extends Entity<any>, T extends GridSettings<E>>(
+export async function saveToExcel<E extends Entity, T extends GridSettings<E>>(
   context: SpecificEntityHelper<any, E>,
   grid: T,
   fileName: string,
   busy: BusyService,
-  hideColumn?: (e: E, c: Column<any>) => boolean,
-  excludeColumn?: (e: E, c: Column<any>) => boolean,
+  hideColumn?: (e: E, c: Column) => boolean,
+  excludeColumn?: (e: E, c: Column) => boolean,
   moreColumns?: (e: E, addColumn: (caption: string, v: string, t: import('xlsx').ExcelDataType) => void) => void) {
   await busy.doWhileShowingBusy(async () => {
     let XLSX = await import('xlsx');

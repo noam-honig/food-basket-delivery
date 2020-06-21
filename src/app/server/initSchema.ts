@@ -24,10 +24,10 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     let context = new ServerContext();
     context.setDataProvider(dataSource);
     let sql = new SqlBuilder();
-    let createFamilyIndex = async (name: string, ...columns: Column<any>[]) => {
+    let createFamilyIndex = async (name: string, ...columns: Column[]) => {
         await dataSource.execute(sql.build("create index if not exists ", name, " on ", f, "  (", columns, ")"));
     }
-    let createDeliveryIndex = async (name: string, ...columns: Column<any>[]) => {
+    let createDeliveryIndex = async (name: string, ...columns: Column[]) => {
         await dataSource.execute(sql.build("create index if not exists ", name, " on ", fd, "  (", columns, ")"));
     }
 
@@ -240,8 +240,8 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     }
 
     await version(15, async () => {
-        let fromArchive = (col: Column<any>) =>
-            [col, 'archive_' + col.defs.dbName] as [Column<any>, any];
+        let fromArchive = (col: Column) =>
+            [col, 'archive_' + col.defs.dbName] as [Column, any];
         if ((await context.for(Families).count()) > 0)
             await dataSource.execute(sql.update(fd, {
                 set: () => [
@@ -279,7 +279,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
                 into: fd,
                 from: f,
                 set: () => {
-                    let r: [Column<any>, any][] = [
+                    let r: [Column, any][] = [
                         [fd.id, f.id],
                         [fd.family, f.id],
                         [fd.createDate, sql.case([{ when: ['deliverStatus in (0,2)'], then: 'deliveryStatusDate' }], 'courierAssingTime')],

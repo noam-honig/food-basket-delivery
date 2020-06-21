@@ -236,7 +236,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   familiesAddress = new DataAreaSettings<Families>();
   phones = new DataAreaSettings<Families>();
   callInfo = new DataAreaSettings<Families>();
-  deliverInfo = new DataAreaSettings<Families>();
+  deliverInfo = new DataAreaSettings();
   extraFamilyInfo = new DataAreaSettings<Families>();
   deliveryDefaults = new DataAreaSettings<Families>();
   familyDeliveries: GridSettings<FamilyDeliveries>;

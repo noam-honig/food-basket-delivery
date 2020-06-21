@@ -143,7 +143,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
               knowTotalRows: true,
               rowCssClass: fd => fd.deliverStatus.getCss(),
               columnSettings: fd => {
-                let r: Column<any>[] = [
+                let r: Column[] = [
                   fd.deliverStatus,
                   fd.deliveryStatusDate,
                   fd.basketType,

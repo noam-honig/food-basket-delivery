@@ -27,14 +27,14 @@ export class LoginComponent implements OnInit, AfterViewInit {
   name = new StringColumn(this.settings.lang.volunteerName);
   preferredDistributionArea = new StringColumn(this.settings.lang.preferredDistributionArea);
   remember = new BoolColumn(this.settings.lang.rememberMeOnThisDevice);
-  passwordArea = new DataAreaSettings<any>({
+  passwordArea = new DataAreaSettings({
     columnSettings: () => [{ column: this.password, inputType: 'password' }]
   });
-  phoneArea = new DataAreaSettings<any>({
+  phoneArea = new DataAreaSettings({
     columnSettings: () => [{ column: this.phone, inputType: 'tel' }, this.remember]
   });
 
-  nameArea = new DataAreaSettings<any>({
+  nameArea = new DataAreaSettings({
     columnSettings: () => [this.name, this.preferredDistributionArea]
   });
   constructor(

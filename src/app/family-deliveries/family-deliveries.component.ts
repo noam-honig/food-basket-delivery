@@ -638,7 +638,7 @@ interface statsOnTab {
   moreStats: FamilyDeliveresStatistics[],
   showTotal?: boolean,
   rule: (f: ActiveFamilyDeliveries) => FilterBase,
-  fourthColumn: () => DataControlSettings<any>
+  fourthColumn: () => DataControlSettings
 }
 
 export interface deliveryButtonsHelper {

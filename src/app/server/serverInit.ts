@@ -61,7 +61,7 @@ export async function serverInit() {
             context.setDataProvider(dp)
 
             let builder = new PostgresSchemaBuilder(dp, Sites.guestSchema);
-            for (const entity of <{ new(...args: any[]): Entity<any>; }[]>[
+            for (const entity of <{ new(...args: any[]): Entity; }[]>[
                 ApplicationSettings,
                 ApplicationImages,
                 Helpers, Sites]) {

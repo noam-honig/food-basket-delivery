@@ -263,7 +263,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     phone: string;
     helper: Helpers;
 
-    area: DataAreaSettings<any> = new DataAreaSettings<any>({});
+    area: DataAreaSettings = new DataAreaSettings({});
     changeShowCompany() {
         this.initArea();
         this.settings.save();

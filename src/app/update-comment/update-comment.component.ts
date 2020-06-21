@@ -17,7 +17,7 @@ export class UpdateCommentComponent implements OnInit {
   public args: {
     family: ActiveFamilyDeliveries,
     showFailStatus?: boolean,
-    helpText: (s: ApplicationSettings) => Column<any>
+    helpText: (s: ApplicationSettings) => Column
     hideLocation?: boolean,
     title?: string,
     comment: string,

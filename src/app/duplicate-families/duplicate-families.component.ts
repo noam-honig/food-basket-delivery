@@ -63,7 +63,7 @@ export class DuplicateFamiliesComponent implements OnInit {
 
 
 
-          ] as Column<any>[];
+          ] as Column[];
           for (const c of f.columns) {
             if (!r.includes(c) && c != f.id)
               r.push(c);

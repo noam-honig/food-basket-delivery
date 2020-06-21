@@ -141,7 +141,7 @@ export interface ActionOnRowsArgs<T extends IdEntity> {
     dialogColumns?: (component: actionDialogNeeds<T>) => Promise< DataArealColumnSetting<any>[]>,
     forEach: (f: T) => Promise<void>,
     onEnd?: () => Promise<void>,
-    columns: () => Column<any>[],
+    columns: () => Column[],
     validateInComponent?: (component: actionDialogNeeds<T>) => Promise<void>,
     validate?: () => Promise<void>,
     title: string,
