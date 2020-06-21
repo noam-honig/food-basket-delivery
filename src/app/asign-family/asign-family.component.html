@@ -38,7 +38,7 @@
 
 
   <span *ngIf="showHelperInput&&(!helper||!helper.name.value)" class="help no-print">{{settings.lang.assignHelpText}} <mat-icon (click)="findHelper()" class="clickable-icon">search</mat-icon></span>
-  <br>
+  <br *ngIf="showHelperInput&&(!helper||!helper.name.value)">
   <a href="https://youtu.be/8LCeQRQPL1U" *ngIf="showHelperInput&&(!helper||!helper.name.value)&&settings.showVideo()"
     class="help no-print">{{settings.lang.asignVideoHelp}}</a>
   <div *ngIf="helper&&helper. name.value&&helper.name.value.length>=2">
