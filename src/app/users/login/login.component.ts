@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     columnSettings: () => [{ column: this.password, inputType: 'password' }]
   });
   phoneArea = new DataAreaSettings<any>({
-    columnSettings: () => [{ column: this.phone, inputType: 'phone' }, this.remember]
+    columnSettings: () => [{ column: this.phone, inputType: 'tel' }, this.remember]
   });
 
   constructor(
