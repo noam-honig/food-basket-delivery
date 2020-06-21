@@ -129,7 +129,7 @@ export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
                     }
                 }
             },
-         
+
         });
         this.courier.value = '';
     }
@@ -155,9 +155,9 @@ export class UpdateDeliveriesStatus extends ActionOnRows<ActiveFamilyDeliveries>
                 let deliveriesWithResultStatus = await this.context.for(ActiveFamilyDeliveries).count(x => x.deliverStatus.isAResultStatus().and(info.where(x)))
                 if (deliveriesWithResultStatus > 0 && (this.status.value == DeliveryStatus.ReadyForDelivery || this.status.value == DeliveryStatus.SelfPickup)) {
                     if (await c.dialog.YesNoPromise(
-                        getLang(this.context).thereAre+" " +deliveriesWithResultStatus+" "+getLang(this.context).deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort)
-                        
-                        )
+                        getLang(this.context).thereAre + " " + deliveriesWithResultStatus + " " + getLang(this.context).deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort)
+
+                    )
                         throw getLang(this.context).updateCanceled;
                 }
             },
@@ -192,7 +192,7 @@ class ArchiveHelper {
         let result = [];
         let filter = await c.buildActionInfo(undefined);
         let onTheWay = await this.context.for(ActiveFamilyDeliveries).count(d => d.onTheWayFilter().and(filter.where(d)));
-
+        this.markOnTheWayAsDelivered.value = onTheWay > 0;
         if (onTheWay > 0) {
 
             this.markOnTheWayAsDelivered.defs.caption = use.language.markAsDeliveredFor + " " + onTheWay + " " + use.language.onTheWayDeliveries;
@@ -201,6 +201,7 @@ class ArchiveHelper {
 
         if (c.settings.usingSelfPickupModule) {
             let selfPickup = await this.context.for(ActiveFamilyDeliveries).count(d => d.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup).and(filter.where(d)));
+            this.markSelfPickupAsDelivered.value = selfPickup > 0;
             if (selfPickup > 0) {
                 this.markSelfPickupAsDelivered.defs.caption = use.language.markAsSelfPickupFor + " " + selfPickup + " " + use.language.selfPickupDeliveries;
                 result.push(this.markSelfPickupAsDelivered);
@@ -290,7 +291,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
 
     distributionCenter = new DistributionCenterId(this.context);
     useCurrentDistributionCenter = new BoolColumn(getLang(this.context).distributionListAsCurrentDelivery);
-    
+
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
@@ -354,7 +355,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                     newDelivery.distributionCenter.value = existingDelivery.distributionCenter.value;
                 this.helperStrategy.value.applyTo({ existingDelivery, newDelivery, helper: this.helper.value });
                 this.selfPickup.value.applyTo({ existingDelivery, newDelivery, family: f });
-                
+
                 this.archiveHelper.forEach(existingDelivery);
                 if (this.autoArchive) {
                     if (DeliveryStatus.IsAResultStatus(existingDelivery.deliverStatus.value))
@@ -367,7 +368,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                     await newDelivery.save();
 
             }
-         
+
 
         });
     }
