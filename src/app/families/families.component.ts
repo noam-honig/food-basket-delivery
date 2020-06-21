@@ -335,7 +335,7 @@ export class FamiliesComponent implements OnInit {
             ]
             return r;
         },
-        gridButton: [
+        gridButtons: [
             ...buildGridButtonFromActions(familyActions(), this.context,
                 {
                     afterAction: async () => await this.refresh(),

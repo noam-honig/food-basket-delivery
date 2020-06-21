@@ -63,7 +63,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
     allowUpdate: true,
     knowTotalRows: true,
     hideDataArea: true,
-    gridButton: [
+    gridButtons: [
       {
         name: use.language.exportToExcel,
         click: async () => {

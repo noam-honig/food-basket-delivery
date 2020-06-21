@@ -52,7 +52,7 @@ export class Families extends IdEntity {
       numOfColumnsInGrid: 7,
       hideDataArea: true,
       rowCssClass: fd => fd.deliverStatus.getCss(),
-      gridButton: [{
+      gridButtons: [{
         name: use.language.newDelivery,
         click: () => this.showNewDeliveryDialog(args.dialog, args.settings, { doNotCheckIfHasExistingDeliveries: true })
       }],
@@ -289,7 +289,7 @@ export class Families extends IdEntity {
             return this.id.isEqualTo('no rows');
           }
         },
-        savingRow: async () => {
+        saving: async () => {
           if (this.disableOnSavingRow)
             return;
           if (this.context.onServer) {

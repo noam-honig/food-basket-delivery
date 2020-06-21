@@ -80,7 +80,7 @@ export class Helpers extends HelpersBase {
             allowApiDelete: context.isSignedIn(),
             allowApiUpdate: context.isSignedIn(),
             allowApiInsert: true,
-            savingRow: async () => {
+            saving: async () => {
                 if (this._disableOnSavingRow) return;
                 if (this.escort.value == this.id.value) {
                     this.escort.value = '';

@@ -46,7 +46,7 @@ export class DistributionCenters extends IdEntity {
       allowApiUpdate: Roles.admin,
       
 
-      savingRow: async () => {
+      saving: async () => {
         if (context.onServer) {
           if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
             let geo = await GetGeoInformation(this.address.value, context);

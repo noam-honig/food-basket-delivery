@@ -53,7 +53,7 @@ export class DeliveryHistoryComponent implements OnInit {
     this.helperInfo = context.for(helperHistoryInfo, this.helperStorage).gridSettings({
       hideDataArea: true,
       numOfColumnsInGrid: 6,
-      gridButton: [{
+      gridButtons: [{
         name: this.settings.lang.exportToExcel,
         visible: () => this.context.isAllowed(Roles.admin),
         click: async () => {
@@ -114,7 +114,7 @@ export class DeliveryHistoryComponent implements OnInit {
 
 
   deliveries = this.context.for(FamilyDeliveries).gridSettings({
-    gridButton: [{
+    gridButtons: [{
       name: this.settings.lang.exportToExcel,
       click: async () => {
         await saveToExcel(this.context.for(FamilyDeliveries), this.deliveries, this.settings.lang.deliveries, this.busy, (d: FamilyDeliveries, c) => c == d.id || c == d.family, undefined,

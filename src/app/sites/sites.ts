@@ -99,7 +99,7 @@ export class Sites extends Entity<string> {
         super({
             name: 'Sites',
             allowApiRead: Roles.overview,
-            savingRow: () => {
+            saving: () => {
                 this.id.value = this.id.value.toLowerCase().trim();
                 if (this.isNew()) {
                     this.createDate.value = new Date();

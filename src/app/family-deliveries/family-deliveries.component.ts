@@ -500,7 +500,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       return r;
     },
     allowSelection: true,
-    gridButton: [
+    gridButtons: [
       ...buildGridButtonFromActions(delvieryActions(), this.context,
         {
           afterAction: async () => await this.refresh(),
