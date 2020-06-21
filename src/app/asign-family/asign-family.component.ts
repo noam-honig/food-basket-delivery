@@ -165,7 +165,6 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                                     await f.save();
                                 }
                                 await this.familyLists.reload();
-                                this.doRefreshRoute();
                             });
                         });
                     }
@@ -425,7 +424,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 }
 
 
-                this.doRefreshRoute();
+                
                 this.dialog.analytics('Assign Family');
                 if (this.baskets == undefined)
                     this.dialog.analytics('Assign any Family (no box)');
@@ -877,7 +876,6 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         await f.save();
         setTimeout(() => {
             this.refreshBaskets();
-            this.doRefreshRoute();
         }, 300);
     }
     showSave() {

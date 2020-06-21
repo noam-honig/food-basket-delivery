@@ -31,7 +31,7 @@ export class FamilyInListComponent implements OnInit {
 
     let r = this.f.getAddressDescription();
     if (this.sameAddress) {
-      r += " *";
+       r="* "+r;
     }
     return r;
 
