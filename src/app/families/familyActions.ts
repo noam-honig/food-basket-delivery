@@ -53,7 +53,7 @@ class NewDelivery extends ActionOnRows<Families> {
                     throw this.distributionCenter.validationError;
                 }
             },
-            dialogColumns: (component) => {
+            dialogColumns:async (component) => {
                 this.basketType.value = '';
                 this.quantity.value = 1;
                 this.distributionCenter.value = component.dialog.distCenter.value;
@@ -212,7 +212,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
             allowed: Roles.admin,
             columns: () => [this.status, this.archiveFinshedDeliveries, this.deletePendingDeliveries, this.comment, this.deletePendingDeliveries],
             help: () => getLang(this.context).updateStatusHelp,
-            dialogColumns: () => {
+            dialogColumns: async () => {
                 if (!this.status.value)
                     this.status.value = FamilyStatus.Active;
 

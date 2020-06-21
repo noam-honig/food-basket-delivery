@@ -71,7 +71,7 @@ export class en implements Language {
   showAllCompletedDeliveries = 'View all successful deliveries';
   showRouteOnGoogleMaps = 'View route on google maps';
   selfPuckupSuccess = 'Collect the package';
-  packageWasPickedUp = 'Collect the package';
+  packageWasPickedUp = 'Collected';
   cancelAsignment = 'Cancel assignment';
   deliveryDetails = 'Delivery Details';
   repeatFamilyNotice = "You've been to this family before too";
@@ -677,4 +677,8 @@ export class en implements Language {
   updateBasedOnTheChangesIn = ', update them based on changes in';
   familyHasExistingDeliveriesDoYouWantToViewThem = 'This family has active deliveries, display them?';
   and = 'and';
+  markAsDeliveredFor = 'Mark Successful Delivery for';
+  onTheWayDeliveries = 'On-the-go deliveries';
+  markAsSelfPickupFor = 'Mark ';
+  selfPickupDeliveries = 'Self Pickup Deliveries';
 }

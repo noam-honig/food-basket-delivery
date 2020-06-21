@@ -511,7 +511,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           settings: this.settings,
           groupName: getLang(this.context).deliveries
         }),
-     
+
       {
         name: getLang(this.context).exportToExcel,
         click: async () => {
@@ -563,7 +563,10 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   });
   private async buildWhereForAction(actionWhere) {
     let where: EntityWhere<ActiveFamilyDeliveries> = f => {
-      let r = new AndFilter(actionWhere(f), this.deliveries.buildFindOptions().where(f));
+      let r = this.deliveries.buildFindOptions().where(f);
+      if (actionWhere) {
+        r = new AndFilter(actionWhere(f), r);
+      }
       if (this.deliveries.selectedRows.length > 0)
         r = new AndFilter(r, f.id.isIn(...this.deliveries.selectedRows.map(x => x.id.value)));
       return r;
@@ -571,7 +574,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     };
     return {
       count: await this.context.for(ActiveFamilyDeliveries).count(where),
-      where:  where
+      where: where
     };
   }
 
@@ -596,7 +599,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     Families.SendMessageToBrowsers(getLang(context).deliveriesUpdated, context, '');
     return r + getLang(context).deliveriesUpdated;
   }
-  
+
 
 
   ngOnInit() {

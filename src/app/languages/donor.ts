@@ -677,4 +677,8 @@ export class donor implements Language {
   updateBasedOnTheChangesIn = 'האם לעדכנם בהתאם לשינויים ב';
   familyHasExistingDeliveriesDoYouWantToViewThem = 'לתורם זו יש משלוחים פעילים, האם אתה להציג אותם?';
   and = 'ו';
+  markAsDeliveredFor = 'סמן נמסר בהצלחה ל';
+  onTheWayDeliveries = 'משלוחים שבדרך';
+  markAsSelfPickupFor = 'סמן אספו את החבילה ל';
+  selfPickupDeliveries = 'משלוחים שמוגדרים כבאים לקחת';
 }

@@ -32,16 +32,17 @@ export class ActionOnRows<T extends IdEntity> {
     ) {
         if (!args.confirmQuestion)
             args.confirmQuestion = () => args.title;
-        if (!args.additionalWhere) {
-            args.additionalWhere = x => undefined;
-        }
+       
         if (!args.onEnd) {
             args.onEnd = async () => { };
         }
         if (!args.dialogColumns)
-            args.dialogColumns = x => args.columns();
+            args.dialogColumns =async  x => args.columns();
             if (!args.validateInComponent)
                 args.validateInComponent =async  x=>{};
+        if (!args.additionalWhere){
+            args.additionalWhere =  x=>{return undefined;};
+        }
 
 
     }
@@ -74,10 +75,12 @@ export class ActionOnRows<T extends IdEntity> {
             name: this.args.title,
             visible: () => this.context.isAllowed(this.args.allowed),
             click: async () => {
+
+                let cols = await this.args.dialogColumns(component);
                 await this.context.openDialog(InputAreaComponent, x => {
                     x.args = {
                         settings: {
-                            columnSettings: () => this.args.dialogColumns(component)
+                            columnSettings: () => cols
                         },
                         title: this.args.title,
                         helpText: this.args.help ? this.args.help() : undefined,
@@ -135,7 +138,7 @@ export interface actionDialogNeeds<T extends IdEntity> {
 
 
 export interface ActionOnRowsArgs<T extends IdEntity> {
-    dialogColumns?: (component: actionDialogNeeds<T>) => DataArealColumnSetting<any>[],
+    dialogColumns?: (component: actionDialogNeeds<T>) => Promise< DataArealColumnSetting<any>[]>,
     forEach: (f: T) => Promise<void>,
     onEnd?: () => Promise<void>,
     columns: () => Column<any>[],

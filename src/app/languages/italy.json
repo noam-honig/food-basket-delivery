@@ -1835,6 +1835,16 @@
     "valueInCode": "סמן נמסר בהצלחה לכל המשלוחים",
     "valueInEnglish": "Mark \"successfully delivered\" to all deliveries"
   },
+  "markAsDeliveredFor": {
+    "google": "Contrassegna consegna riuscita per",
+    "valueInCode": "סמן נמסר בהצלחה ל",
+    "valueInEnglish": "Mark Successful Delivery for"
+  },
+  "markAsSelfPickupFor": {
+    "google": "marchio",
+    "valueInCode": "סמן אספו את החבילה ל",
+    "valueInEnglish": "Mark "
+  },
   "markDeliveredToAllHelprFamilies": {
     "google": "Annulla l'assegnazione di tutte le consegne",
     "valueInCode": "בטל שיוך כל המשלוחים למתנדב",
@@ -2100,6 +2110,11 @@
     "valueInCode": "בדרך",
     "valueInEnglish": "Assigned"
   },
+  "onTheWayDeliveries": {
+    "google": "Consegne in movimento",
+    "valueInCode": "משלוחים שבדרך",
+    "valueInEnglish": "On-the-go deliveries"
+  },
   "openWaze": {
     "google": "Apri WAZE",
     "valueInCode": "פתח WAZE",
@@ -2131,9 +2146,9 @@
     "valueInEnglish": "Overview"
   },
   "packageWasPickedUp": {
-    "google": "Raccogli il pacchetto",
+    "google": "Raccolto",
     "valueInCode": "אספו את החבילה",
-    "valueInEnglish": "Collect the package"
+    "valueInEnglish": "Collected"
   },
   "parcelSummary": {
     "google": "Mostra riepilogo pacchi",
@@ -2650,6 +2665,11 @@
     "google": "Vieni e prendi",
     "valueInCode": "באים לקחת",
     "valueInEnglish": "Come and take"
+  },
+  "selfPickupDeliveries": {
+    "google": "Consegne con ritiro automatico",
+    "valueInCode": "משלוחים שמוגדרים כבאים לקחת",
+    "valueInEnglish": "Self Pickup Deliveries"
   },
   "selfPickupStrategy": {
     "google": "Impostare come take take",

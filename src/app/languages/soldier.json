@@ -1467,6 +1467,14 @@
     "google": "סמן נמסר בהצלחה לכל המשלוחים",
     "valueInCode": "סמן נמסר בהצלחה לכל המשלוחים"
   },
+  "markAsDeliveredFor": {
+    "google": "סמן נמסר בהצלחה ל",
+    "valueInCode": "סמן נמסר בהצלחה ל"
+  },
+  "markAsSelfPickupFor": {
+    "google": "סמן אספו את החבילה ל",
+    "valueInCode": "סמן אספו את החבילה ל"
+  },
   "markDeliveredToAllHelprFamilies": {
     "google": "בטל שיוך כל המשלוחים למתנדב",
     "valueInCode": "בטל שיוך כל המשלוחים למתנדב"
@@ -1678,6 +1686,10 @@
   "onTheWay": {
     "google": "בדרך",
     "valueInCode": "בדרך"
+  },
+  "onTheWayDeliveries": {
+    "google": "משלוחים שבדרך",
+    "valueInCode": "משלוחים שבדרך"
   },
   "openWaze": {
     "google": "פתח WAZE",
@@ -2118,6 +2130,10 @@
   "SelfPickupComponent": {
     "google": "באים לקחת",
     "valueInCode": "באים לקחת"
+  },
+  "selfPickupDeliveries": {
+    "google": "משלוחים שמוגדרים כבאים לקחת",
+    "valueInCode": "משלוחים שמוגדרים כבאים לקחת"
   },
   "selfPickupStrategy": {
     "google": "הגדרת באים לקחת",

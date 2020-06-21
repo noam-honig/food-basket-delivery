@@ -27,7 +27,7 @@ export class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
             columns: () => [this.updateFamilyStatus, this.status],
-            dialogColumns: c => [
+            dialogColumns: async c => [
                 this.updateFamilyStatus,
                 { column: this.status, visible: () => this.updateFamilyStatus.value }
             ],
@@ -58,7 +58,7 @@ class UpdateFamilyDefaults extends ActionOnRows<FamilyDeliveries> {
             allowed: Roles.admin,
             help: () => use.language.updateFamilyDefaultsHelp,
             columns: () => [this.basketType, this.quantity, this.byCurrentCourier, this.comment],
-            dialogColumns: (c) => [
+            dialogColumns: async (c) => [
                 this.basketType, this.quantity, this.byCurrentCourier, this.comment, {
                     column: this.selfPickup, visible: () => c.settings.usingSelfPickupModule.value
                 }
@@ -103,7 +103,7 @@ export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
             allowed: Roles.distCenterAdmin,
             help: () => getLang(this.context).updateVolunteerHelp,
             columns: () => [this.clearVoulenteer, this.courier, this.updateAlsoAsFixed],
-            dialogColumns: () => [
+            dialogColumns: async () => [
                 this.clearVoulenteer,
                 { column: this.courier, visible: () => !this.clearVoulenteer.value },
                 { column: this.updateAlsoAsFixed, visible: () => !this.clearVoulenteer.value && this.context.isAllowed(Roles.admin) }
@@ -184,15 +184,45 @@ export class UpdateDeliveriesStatus extends ActionOnRows<ActiveFamilyDeliveries>
 
 
 class ArchiveDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
-
+    markOnTheWayAsDelivered = new BoolColumn();
+    markSelfPickupAsDelivered = new BoolColumn();
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
-            columns: () => [],
+            columns: () => [this.markOnTheWayAsDelivered, this.markSelfPickupAsDelivered],
+            dialogColumns: async c => {
+                let result = [];
+                let filter = await c.buildActionInfo(undefined);
+                let onTheWay = await this.context.for(ActiveFamilyDeliveries).count(d => d.onTheWayFilter().and(filter.where(d)));
+
+                if (onTheWay > 0) {
+
+                    this.markOnTheWayAsDelivered.defs.caption = use.language.markAsDeliveredFor + " " + onTheWay + " " + use.language.onTheWayDeliveries;
+                    result.push(this.markOnTheWayAsDelivered);
+                }
+
+                if (c.settings.usingSelfPickupModule) {
+                    let selfPickup = await this.context.for(ActiveFamilyDeliveries).count(d => d.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup).and(filter.where(d)));
+                    if (selfPickup > 0) {
+                        this.markSelfPickupAsDelivered.defs.caption = use.language.markAsSelfPickupFor + " " + selfPickup + " " + use.language.selfPickupDeliveries;
+                        result.push(this.markSelfPickupAsDelivered);
+                    }
+                }
+
+                return result;
+            },
+
             title: getLang(context).archiveDeliveries,
             help: () => getLang(this.context).archiveDeliveriesHelp,
-            forEach: async f => { f.archive.value = true; },
-            additionalWhere: f => f.deliverStatus.isAResultStatus()
+            forEach: async f => {
+                if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery && f.courier.value != '' && this.markOnTheWayAsDelivered.value)
+                    f.deliverStatus.value = DeliveryStatus.Success;
+                if (f.deliverStatus.value == DeliveryStatus.SelfPickup && this.markSelfPickupAsDelivered)
+                    f.deliverStatus.value = DeliveryStatus.SuccessPickedUp;
+                if (DeliveryStatus.IsAResultStatus(f.deliverStatus.value))
+                    f.archive.value = true;
+            },
+
         });
     }
 }
@@ -262,7 +292,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                 this.selfPickup,
                 this.useCurrentDistributionCenter
             ],
-            dialogColumns: (component) => {
+            dialogColumns: async (component) => {
                 this.basketType.value = '';
                 this.quantity.value = 1;
                 this.distributionCenter.value = component.dialog.distCenter.value;

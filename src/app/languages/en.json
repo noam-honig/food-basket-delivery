@@ -1636,6 +1636,16 @@
     "valueInCode": "סמן נמסר בהצלחה לכל המשלוחים",
     "custom": "Mark \"successfully delivered\" to all deliveries"
   },
+  "markAsDeliveredFor": {
+    "google": "Marker successfully delivered to",
+    "valueInCode": "סמן נמסר בהצלחה ל",
+    "custom": "Mark Successful Delivery for"
+  },
+  "markAsSelfPickupFor": {
+    "google": "Marker collected the package for",
+    "valueInCode": "סמן אספו את החבילה ל",
+    "custom": "Mark "
+  },
   "markDeliveredToAllHelprFamilies": {
     "google": "Unassign all shipments to a volunteer",
     "valueInCode": "בטל שיוך כל המשלוחים למתנדב",
@@ -1859,6 +1869,10 @@
     "valueInCode": "בדרך",
     "custom": "Assigned"
   },
+  "onTheWayDeliveries": {
+    "google": "On-the-go deliveries",
+    "valueInCode": "משלוחים שבדרך"
+  },
   "openWaze": {
     "google": "Open WAZE",
     "valueInCode": "פתח WAZE"
@@ -1885,7 +1899,8 @@
   },
   "packageWasPickedUp": {
     "google": "Collect the package",
-    "valueInCode": "אספו את החבילה"
+    "valueInCode": "אספו את החבילה",
+    "custom": "Collected"
   },
   "parcelSummary": {
     "google": "View summary types of baskets",
@@ -2327,6 +2342,11 @@
   "SelfPickupComponent": {
     "google": "Come and take",
     "valueInCode": "באים לקחת"
+  },
+  "selfPickupDeliveries": {
+    "google": "Deliveries defined by firefighters to take",
+    "valueInCode": "משלוחים שמוגדרים כבאים לקחת",
+    "custom": "Self Pickup Deliveries"
   },
   "selfPickupStrategy": {
     "google": "Set up come take",

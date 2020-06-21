@@ -810,6 +810,10 @@ export class Language {
   updateBasedOnTheChangesIn = "האם לעדכנם בהתאם לשינויים ב";
   familyHasExistingDeliveriesDoYouWantToViewThem = "למשפחה זו יש משלוחים פעילים, האם להציג אותם?";
   and = "ו";
+  markAsDeliveredFor = "סמן נמסר בהצלחה ל";
+  onTheWayDeliveries = "משלוחים שבדרך";
+  markAsSelfPickupFor = "סמן אספו את החבילה ל";
+  selfPickupDeliveries = "משלוחים שמוגדרים כבאים לקחת";
 }
 
 const defaultLang = new Language();

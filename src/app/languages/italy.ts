@@ -71,7 +71,7 @@ export class italy implements Language {
   showAllCompletedDeliveries = 'Visualizza tutte le consegne riuscite';
   showRouteOnGoogleMaps = 'Visualizza il percorso su google maps';
   selfPuckupSuccess = 'Raccogli il pacchetto';
-  packageWasPickedUp = 'Raccogli il pacchetto';
+  packageWasPickedUp = 'Raccolto';
   cancelAsignment = 'Annulla incarico';
   deliveryDetails = 'dettagli di spedizione';
   repeatFamilyNotice = 'Anche tu sei stato in questa famiglia';
@@ -677,4 +677,8 @@ export class italy implements Language {
   updateBasedOnTheChangesIn = ', aggiornali in base alle modifiche in';
   familyHasExistingDeliveriesDoYouWantToViewThem = 'Questa famiglia ha consegne attive, le mostra?';
   and = 'e';
+  markAsDeliveredFor = 'Contrassegna consegna riuscita per';
+  onTheWayDeliveries = 'Consegne in movimento';
+  markAsSelfPickupFor = 'marchio';
+  selfPickupDeliveries = 'Consegne con ritiro automatico';
 }

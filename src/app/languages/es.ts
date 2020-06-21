@@ -71,7 +71,7 @@ export class es implements Language {
   showAllCompletedDeliveries = 'Ver todas las entregas exitosas';
   showRouteOnGoogleMaps = 'Ver ruta en google maps';
   selfPuckupSuccess = 'Recoge el paquete';
-  packageWasPickedUp = 'Recoge el paquete';
+  packageWasPickedUp = 'Recogido';
   cancelAsignment = 'Cancelar asignación';
   deliveryDetails = 'detalles de la entrega';
   repeatFamilyNotice = 'También has estado en esta familia antes';
@@ -677,4 +677,8 @@ export class es implements Language {
   updateBasedOnTheChangesIn = ', actualícelos según los cambios en';
   familyHasExistingDeliveriesDoYouWantToViewThem = 'Esta familia tiene entregas activas, ¿mostrarlas?';
   and = 'y';
+  markAsDeliveredFor = 'Marcar entrega exitosa para';
+  onTheWayDeliveries = 'Entregas sobre la marcha';
+  markAsSelfPickupFor = 'marca';
+  selfPickupDeliveries = 'Entregas de recogida automática';
 }
