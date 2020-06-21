@@ -317,7 +317,10 @@ export class Families extends IdEntity {
               this.lastUpdateDate.value = new Date();
               this.lastUpdateUser.value = context.user.id;
             }
-            if (this.sharedColumns().find(x => x.value != x.originalValue)) {
+
+
+
+            if (this.sharedColumns().find(x => x.value != x.originalValue) || [this.basketType, this.quantity, this.deliveryComments, this.defaultSelfPickup].find(x => wasChanged(x))) {
               for (const fd of await context.for(FamilyDeliveries).find({
                 where: fd =>
                   fd.family.isEqualTo(this.id).and(
@@ -327,6 +330,18 @@ export class Families extends IdEntity {
                       )))
               })) {
                 this.updateDelivery(fd);
+                if (wasChanged(this.basketType) && fd.basketType.value == this.basketType.originalValue)
+                  fd.basketType.value = this.basketType.value;
+                if (wasChanged(this.quantity) && fd.quantity.value == this.quantity.originalValue)
+                  fd.quantity.value = this.quantity.value;
+                if (wasChanged(this.deliveryComments) || fd.deliveryComments.value == this.deliveryComments.originalValue)
+                  fd.deliveryComments.value = this.deliveryComments.value;
+                if (wasChanged(this.defaultSelfPickup))
+                  if (this.defaultSelfPickup.value)
+                    if (fd.deliverStatus.value == DeliveryStatus.ReadyForDelivery)
+                      fd.deliverStatus.value = DeliveryStatus.SelfPickup;
+                    else if (fd.deliverStatus.value == DeliveryStatus.SelfPickup)
+                      fd.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
                 await fd.save();
               }
             }
@@ -344,45 +359,6 @@ export class Families extends IdEntity {
                     await d.delete();
 
                   }
-                }
-              }
-            }
-            let deliveryDefaults = '';
-            for (const c of [this.basketType, this.quantity, this.deliveryComments, this.defaultSelfPickup]) {
-              if (wasChanged(c)) {
-                if (deliveryDefaults.length > 0)
-                  deliveryDefaults += ", ";
-                deliveryDefaults += c.defs.caption;
-              }
-            }
-            if (deliveryDefaults.length > 0) {
-              let activeDeliveries = await this.context.for(ActiveFamilyDeliveries).find({ where: fd => fd.family.isEqualTo(this.id).and(fd.deliverStatus.isNotAResultStatus()) });
-              if (activeDeliveries.length > 0) {
-                let l = getLang(this.context);
-                let q = getLang(this.context).thisFamilyHas + " " + activeDeliveries.length + " " + getLang(this.context).deliveries + " " + getLang(this.context).updateBasedOnTheChangesIn + " " + deliveryDefaults;
-                if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
-                  question: q
-
-                }, y => y.yes)) {
-                  for (const d of activeDeliveries) {
-                    if (wasChanged(this.basketType))
-                      d.basketType.value = this.basketType.value;
-                    if (wasChanged(this.quantity))
-                      d.quantity.value = this.quantity.value;
-                    if (wasChanged(this.deliveryComments))
-                      d.deliveryComments.value = this.deliveryComments.value;
-                    if (wasChanged(this.defaultSelfPickup))
-                      if (this.defaultSelfPickup.value)
-                        if (d.deliverStatus.value == DeliveryStatus.ReadyForDelivery)
-                          d.deliverStatus.value = DeliveryStatus.SelfPickup;
-                        else if (d.deliverStatus.value == DeliveryStatus.SelfPickup)
-                          d.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
-
-
-                    await d.save();
-                  }
-
-
                 }
               }
             }
