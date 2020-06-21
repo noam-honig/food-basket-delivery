@@ -13,6 +13,7 @@ import { BasketSummaryComponent } from "../basket-summary/basket-summary.compone
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { routeStats } from "../asign-family/route-strategy";
+import { AsignFamilyComponent, refreshRouteArgs } from "../asign-family/asign-family.component";
 
 export class UserFamiliesList {
     map: MapComponent;
@@ -52,7 +53,7 @@ export class UserFamiliesList {
         await this.reload();
 
     }
-    private async  initHelper(h: Helpers) {
+    private async initHelper(h: Helpers) {
         this.helper = h;
         this.escort = undefined;
         if (this.helper && h.escort.value) {
@@ -85,7 +86,7 @@ export class UserFamiliesList {
         if (boxes != this.toDeliver.length || boxes2 != 0)
             boxesText += + boxes + ' ' + BasketType.boxes1Name;
         if (boxes2 != 0) {
-            boxesText += ' '+this.settings.lang.and+" " + boxes2 + ' ' + BasketType.boxes2Name;
+            boxesText += ' ' + this.settings.lang.and + " " + boxes2 + ' ' + BasketType.boxes2Name;
         }
         if (boxesText != '')
             r += ' (' + boxesText + ')';
@@ -130,6 +131,16 @@ export class UserFamiliesList {
 
     distCenter: DistributionCenters;
 
+    async refreshRoute(args: refreshRouteArgs) {
+        await AsignFamilyComponent.RefreshRoute(this.helper.id.value, args).then(r => {
+
+            if (r && r.ok && r.families.length == this.toDeliver.length) {
+                this.routeStats = r.stats;
+                this.initForFamilies(this.helper, r.families);
+            }
+        });
+    }
+
     initFamilies() {
 
         if (this.allFamilies.length > 0 && this.settings.showDistCenterAsEndAddressForVolunteer.value) {
@@ -139,6 +150,9 @@ export class UserFamiliesList {
             this.distCenter = undefined;
         }
         this.toDeliver = this.allFamilies.filter(f => f.deliverStatus.value == DeliveryStatus.ReadyForDelivery);
+        if (this.toDeliver.find(f => f.routeOrder.value == 0) && this.toDeliver.length > 1) {
+            this.refreshRoute({});
+        }
         this.delivered = this.allFamilies.filter(f => f.deliverStatus.value == DeliveryStatus.Success || f.deliverStatus.value == DeliveryStatus.SuccessLeftThere);
         this.problem = this.allFamilies.filter(f => {
             switch (f.deliverStatus.value) {

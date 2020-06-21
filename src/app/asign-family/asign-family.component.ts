@@ -70,7 +70,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
     }
     @ViewChild("helperFamilies", { static: false }) helperFamilies: HelperFamiliesComponent;
-    
+
     async searchPhone() {
         this.clearHelperInfo(false);
         let cleanPhone = PhoneColumn.fixPhoneInput(this.phone);
@@ -186,14 +186,12 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         this.lastRefreshRoute = this.lastRefreshRoute.then(
             async () => await this.busy.donotWait(
-                async () => await AsignFamilyComponent.RefreshRoute(this.helper.id.value, { doNotUseGoogle: !this.useGoogleOptimization }).then(r => {
 
-                    if (r && r.ok && r.families.length == this.familyLists.toDeliver.length) {
-                        this.familyLists.routeStats = r.stats;
-                        this.familyLists.initForFamilies(this.helper, r.families);
-                    }
+                async () =>
+                    await this.familyLists.refreshRoute({ doNotUseGoogle: !this.useGoogleOptimization })
 
-                }))).catch(x => this.lastRefreshRoute = Promise.resolve());
+
+            )).catch(x => this.lastRefreshRoute = Promise.resolve());
 
     }
     smsSent() {
@@ -328,7 +326,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.destroyHelper.destroy();
     }
     constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public settings: ApplicationSettings) {
-        
+
 
     }
     filterOptions: BoolColumn[] = [];
@@ -338,7 +336,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.filterOptions.push(this.settings.showGroupsOnAssing, this.settings.showCityOnAssing, this.settings.showAreaOnAssing, this.settings.showBasketOnAssing, this.settings.showNumOfBoxesOnAssing);
         this.initArea();
         this.familyLists.userClickedOnFamilyOnMap =
-            async  families => {
+            async families => {
                 if (families.length == 1)
                     await this.assignFamilyBasedOnIdFromMap(families[0]);
                 else if (families.length > 1) {
@@ -544,11 +542,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         return result;
     }
     @ServerFunction({ allowed: c => c.isSignedIn(), blockUser: false })
-    static async RefreshRoute(helperId: string, args: {
-        doNotUseGoogle?: boolean,
-        strategyId?: number,
-        volunteerLocation?: Location
-    }, context?: Context) {
+    static async RefreshRoute(helperId: string, args: refreshRouteArgs, context?: Context) {
 
         if (!context.isAllowed(Roles.distCenterAdmin)) {
             if (helperId != context.user.id) {
@@ -985,3 +979,9 @@ export interface CityInfo {
 }
 
 
+
+export interface refreshRouteArgs {
+    doNotUseGoogle?: boolean,
+    strategyId?: number,
+    volunteerLocation?: Location
+}

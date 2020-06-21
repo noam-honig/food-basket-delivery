@@ -27,7 +27,7 @@ class NewDelivery extends ActionOnRows<Families> {
     useDefaultVolunteer = new BoolColumn({ caption: getLang(this.context).defaultVolunteer, defaultValue: true });
     courier = new HelperId(this.context);
     selfPickup = new SelfPickupStrategyColumn(false);
-    usedCouriers: string[] = [];
+    
     excludeGroups = new GroupsColumn(this.context, {
         caption: getLang(this.context).excludeGroups
     })
@@ -99,16 +99,9 @@ class NewDelivery extends ActionOnRows<Families> {
                 }
                 if ((await fd.duplicateCount()) == 0)
                     await fd.save();
-                if (fd.courier.value && !this.usedCouriers.includes(fd.courier.value)) {
-                    this.usedCouriers.push(fd.courier.value);
-                }
             },
             onEnd: async () => {
-                let t = new PromiseThrottle(10);
-                for (const c of this.usedCouriers) {
-                    await t.push(AsignFamilyComponent.RefreshRoute(c, undefined, this.context));
-                }
-                await t.done();
+              
             }
         });
     }
@@ -355,10 +348,7 @@ export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
                     fd.fixedCourier.value = this.courier.value;
                 }
             },
-            onEnd: async () => {
-                if (this.courier.value)
-                    await AsignFamilyComponent.RefreshRoute(this.courier.value, undefined, this.context);
-            }
+         
         });
         this.courier.value = '';
     }

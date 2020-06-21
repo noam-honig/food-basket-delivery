@@ -129,10 +129,7 @@ export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
                     }
                 }
             },
-            onEnd: async () => {
-                if (this.courier.value)
-                    await AsignFamilyComponent.RefreshRoute(this.courier.value, undefined, this.context);
-            }
+         
         });
         this.courier.value = '';
     }
@@ -293,7 +290,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
 
     distributionCenter = new DistributionCenterId(this.context);
     useCurrentDistributionCenter = new BoolColumn(getLang(this.context).distributionListAsCurrentDelivery);
-    usedCouriers: string[] = [];
+    
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
             allowed: Roles.admin,
@@ -357,9 +354,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                     newDelivery.distributionCenter.value = existingDelivery.distributionCenter.value;
                 this.helperStrategy.value.applyTo({ existingDelivery, newDelivery, helper: this.helper.value });
                 this.selfPickup.value.applyTo({ existingDelivery, newDelivery, family: f });
-                if (newDelivery.courier.value && !this.usedCouriers.includes(newDelivery.courier.value)) {
-                    this.usedCouriers.push(newDelivery.courier.value);
-                }
+                
                 this.archiveHelper.forEach(existingDelivery);
                 if (this.autoArchive) {
                     if (DeliveryStatus.IsAResultStatus(existingDelivery.deliverStatus.value))
@@ -371,14 +366,8 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                 if ((await newDelivery.duplicateCount()) == 0)
                     await newDelivery.save();
 
-            },
-            onEnd: async () => {
-                let t = new PromiseThrottle(10);
-                for (const c of this.usedCouriers) {
-                    await t.push(AsignFamilyComponent.RefreshRoute(c, undefined, this.context));
-                }
-                await t.done();
             }
+         
 
         });
     }

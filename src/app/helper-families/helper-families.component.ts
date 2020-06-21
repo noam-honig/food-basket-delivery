@@ -87,16 +87,9 @@ export class HelperFamiliesComponent implements OnInit {
         }
 
 
-        await AsignFamilyComponent.RefreshRoute(this.familyLists.helper.id.value, {
+        await this.familyLists.refreshRoute( {
           strategyId: strategy.value.id,
           volunteerLocation: this.volunteerLocation
-        }).then(r => {
-
-          if (r && r.ok && r.families.length == this.familyLists.toDeliver.length) {
-            this.familyLists.routeStats = r.stats;
-            this.familyLists.initForFamilies(this.familyLists.helper, r.families);
-          }
-
         });
       }
     });

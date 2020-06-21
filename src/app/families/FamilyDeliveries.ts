@@ -257,13 +257,7 @@ export class FamilyDeliveries extends IdEntity {
             },
 
             savingRow: () => {
-                if (!this.context.onServer) {
-                    if (wasChanged(this.courier) && this.courier.value)
-                        setTimeout(() => {//using it to run after the row is saved
-                            AsignFamilyComponent.RefreshRoute(this.courier.value, {});
-                        }, 500);
 
-                }
                 if (this.isNew()) {
                     this.createDate.value = new Date();
                     this.createUser.value = context.user.id;
@@ -274,6 +268,8 @@ export class FamilyDeliveries extends IdEntity {
                     this.quantity.value = 1;
                 if (this.distributionCenter.value == allCentersToken)
                     this.distributionCenter.value = '';
+                if (wasChanged(this.courier))
+                    this.routeOrder.value = 0;
 
 
                 if (!this.disableChangeLogging) {
@@ -480,10 +476,9 @@ export class FamilyDeliveries extends IdEntity {
                 title: getLang(this.context).deliveryDetailsFor + ' ' + this.name.value,
                 ok:
                     async () => {
-                        let courierChanged = wasChanged(this.courier) && this.courier.value;
+
                         this.save();
-                        if (courierChanged)
-                            await AsignFamilyComponent.RefreshRoute(this.courier.value, {});
+
                         if (callerHelper) {
                             if (this.changeRequireStatsRefresh() && callerHelper.refreshDeliveryStats)
                                 callerHelper.refreshDeliveryStats();
