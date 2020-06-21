@@ -644,10 +644,7 @@ export class Language {
   updateDeliveriesStatusHelp = `סטטוס "מוקפא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח.             ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח. `;
   statusNotSelected = "לא נבחר סטטוס";
   updateCanceled = "העדכון הופסק";
-  youveSelectedToUpdateStatus = 'בחרת לעדכן סטטוס';
-  youveProbablyMeantNewDelivery = " - אם את/ה מעוניין ליצור משלוח חדש, יש לעשות זאת בתפריט 'משלוח חדש'.";
-  updateDeliveredStatusesTo = "עדכון משלוחים שהסתיימו לסטטוס";
-  willNotSaveHistoryDoYouWantToStop = " לא ישמור בהיסטוריה את הסטטוס של המשלוחים שהסתיימו - האם להפסיק את העדכון?";
+  
   archiveDeliveries = 'העברה לארכיב';
   archiveDeliveriesHelp = 'העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים';
   updateBasketType = 'עדכן סוג סל';
@@ -814,6 +811,7 @@ export class Language {
   onTheWayDeliveries = "משלוחים שבדרך";
   markAsSelfPickupFor = "סמן אספו את החבילה ל";
   selfPickupDeliveries = "משלוחים שמוגדרים כבאים לקחת";
+  deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort="משלוחים שהסתיימו. עדכון הסטטוס שלהם ימחק את הערך הקיים והמשלוח לא ישמר בהיסטוריה. אם אתם רוצים ליצור משלוח חדש, הפסיקו פעולה זו ובחרו באפשרות משלוח חדש בתפריט. לבטל פעולה זו?";
 }
 
 const defaultLang = new Language();

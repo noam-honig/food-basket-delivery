@@ -514,10 +514,6 @@ export class en implements Language {
   updateDeliveriesStatusHelp = 'The status of "frozen" is a delivery that will not be assigned with any volunteer until the delivery is "enabled". Freezing is used to temporarily stop certain deliveries until they can be thawed and shipped. The freeze will only be carried out for deliveries that are ready for delivery.';
   statusNotSelected = 'No status selected';
   updateCanceled = 'Update stopped';
-  youveSelectedToUpdateStatus = 'You have chosen to update status';
-  youveProbablyMeantNewDelivery = '- If you want to create a new delivery, do so in the New delivery menu.';
-  updateDeliveredStatusesTo = 'Update deliveries that have ended status';
-  willNotSaveHistoryDoYouWantToStop = 'Will not keep track of the status of completed deliveries in history - stop updating?';
   archiveDeliveries = 'Archive deliveries';
   archiveDeliveriesHelp = "Only deliveries marked as 'delivered' or 'failed' are archived . The archive can be viewed at any time under delivery History.";
   updateBasketType = 'Update parcel type';
@@ -681,4 +677,5 @@ export class en implements Language {
   onTheWayDeliveries = 'On-the-go deliveries';
   markAsSelfPickupFor = 'Mark ';
   selfPickupDeliveries = 'Self Pickup Deliveries';
+  deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort = 'Completed deliveries. Updating their status will erase the existing value and the deliveries will not be saved in history. If you want to create a new delivery, abort this update and select the New Delivery option from the menu. Abort this update?';
 }

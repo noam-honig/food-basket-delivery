@@ -514,10 +514,6 @@ export class italy implements Language {
   updateDeliveriesStatusHelp = 'Lo stato di "congelato" è una consegna che non verrà assegnata a nessun volontario fino a quando la consegna non sarà "abilitata". Il congelamento viene utilizzato per interrompere temporaneamente determinate consegne fino a quando non possono essere scongelate e spedite. Il blocco verrà effettuato solo per consegne pronte per la consegna.';
   statusNotSelected = 'Nessuno stato selezionato';
   updateCanceled = 'Aggiornamento interrotto';
-  youveSelectedToUpdateStatus = 'Hai scelto di aggiornare lo stato';
-  youveProbablyMeantNewDelivery = '- Se si desidera creare una nuova consegna, farlo nel menu Nuova consegna.';
-  updateDeliveredStatusesTo = 'Aggiorna consegne che hanno terminato lo stato';
-  willNotSaveHistoryDoYouWantToStop = "Non tenere traccia dello stato delle consegne completate nella cronologia - interrompere l'aggiornamento?";
   archiveDeliveries = 'Consegne in archivio';
   archiveDeliveriesHelp = "Vengono archiviate solo le consegne contrassegnate come \"consegnate\" o \"non riuscite\". L'archivio può essere visualizzato in qualsiasi momento durante la cronologia delle consegne.";
   updateBasketType = 'Aggiorna tipo di pacco';
@@ -681,4 +677,5 @@ export class italy implements Language {
   onTheWayDeliveries = 'Consegne in movimento';
   markAsSelfPickupFor = 'marchio';
   selfPickupDeliveries = 'Consegne con ritiro automatico';
+  deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort = "Consegne completate. L'aggiornamento del loro stato cancellerà il valore esistente e le consegne non verranno salvate nella cronologia. Se si desidera creare una nuova consegna, interrompere questo aggiornamento e selezionare l'opzione Nuova consegna dal menu. Annullare questo aggiornamento?";
 }

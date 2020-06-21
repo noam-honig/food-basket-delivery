@@ -707,6 +707,10 @@
     "google": "משלוחים עודכנו",
     "valueInCode": "משלוחים עודכנו"
   },
+  "deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort": {
+    "google": "משלוחים שהסתיימו. עדכון הסטטוס שלהם ימחק את הערך הקיים והמשלוח לא ישמר בהיסטוריה. אם אתם רוצים ליצור משלוח חדש, הפסיקו פעולה זו ובחרו באפשרות משלוח חדש בתפריט. לבטל פעולה זו?",
+    "valueInCode": "משלוחים שהסתיימו. עדכון הסטטוס שלהם ימחק את הערך הקיים והמשלוח לא ישמר בהיסטוריה. אם אתם רוצים ליצור משלוח חדש, הפסיקו פעולה זו ובחרו באפשרות משלוח חדש בתפריט. לבטל פעולה זו?"
+  },
   "delivery": {
     "google": "משלוח",
     "valueInCode": "משלוח"
@@ -2507,10 +2511,6 @@
     "google": "עדכן מתנדב ברירת מחדל לתורם",
     "valueInCode": "עדכן מתנדב ברירת מחדל למשפחה"
   },
-  "updateDeliveredStatusesTo": {
-    "google": "עדכון משלוחים שהסתיימו לסטטוס",
-    "valueInCode": "עדכון משלוחים שהסתיימו לסטטוס"
-  },
   "updateDeliveriesStatus": {
     "google": "עדכן סטטוס למשלוחים",
     "valueInCode": "עדכן סטטוס למשלוחים"
@@ -2699,10 +2699,6 @@
     "google": "מה לא הסתדר?",
     "valueInCode": "מה לא הסתדר?"
   },
-  "willNotSaveHistoryDoYouWantToStop": {
-    "google": " לא ישמור בהיסטוריה את הסטטוס של המשלוחים שהסתיימו - האם להפסיק את העדכון?",
-    "valueInCode": " לא ישמור בהיסטוריה את הסטטוס של המשלוחים שהסתיימו - האם להפסיק את העדכון?"
-  },
   "within": {
     "google": "תוך",
     "valueInCode": "תוך"
@@ -2714,13 +2710,5 @@
   "yesterday": {
     "google": "אתמול",
     "valueInCode": "אתמול"
-  },
-  "youveProbablyMeantNewDelivery": {
-    "google": " - אם את/ה מעוניין ליצור משלוח חדש, יש לעשות זאת בתפריט 'משלוח חדש'.",
-    "valueInCode": " - אם את/ה מעוניין ליצור משלוח חדש, יש לעשות זאת בתפריט 'משלוח חדש'."
-  },
-  "youveSelectedToUpdateStatus": {
-    "google": "בחרת לעדכן סטטוס",
-    "valueInCode": "בחרת לעדכן סטטוס"
   }
 }

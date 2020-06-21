@@ -825,6 +825,11 @@
     "valueInCode": "משלוחים עודכנו",
     "custom": "deliveries updated"
   },
+  "deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort": {
+    "google": "Ended shipments. Updating their status will erase the existing value and shipping will not be saved in history. If you want to create a new shipment, stop this operation and select New Shipment from the menu. Cancel this?",
+    "valueInCode": "משלוחים שהסתיימו. עדכון הסטטוס שלהם ימחק את הערך הקיים והמשלוח לא ישמר בהיסטוריה. אם אתם רוצים ליצור משלוח חדש, הפסיקו פעולה זו ובחרו באפשרות משלוח חדש בתפריט. לבטל פעולה זו?",
+    "custom": "Completed deliveries. Updating their status will erase the existing value and the deliveries will not be saved in history. If you want to create a new delivery, abort this update and select the New Delivery option from the menu. Abort this update?"
+  },
   "delivery": {
     "google": "Shipping",
     "valueInCode": "משלוח",
@@ -2745,11 +2750,6 @@
     "google": "Update a default family volunteer",
     "valueInCode": "עדכן מתנדב ברירת מחדל למשפחה"
   },
-  "updateDeliveredStatusesTo": {
-    "google": "Update shipments that have ended status",
-    "valueInCode": "עדכון משלוחים שהסתיימו לסטטוס",
-    "custom": "Update deliveries that have ended status"
-  },
   "updateDeliveriesStatus": {
     "google": "Update shipping status",
     "valueInCode": "עדכן סטטוס למשלוחים",
@@ -2952,11 +2952,6 @@
     "google": "What didn't work out?",
     "valueInCode": "מה לא הסתדר?"
   },
-  "willNotSaveHistoryDoYouWantToStop": {
-    "google": " Will not keep track of the status of completed shipments in history - stop updating?",
-    "valueInCode": " לא ישמור בהיסטוריה את הסטטוס של המשלוחים שהסתיימו - האם להפסיק את העדכון?",
-    "custom": "Will not keep track of the status of completed deliveries in history - stop updating?"
-  },
   "within": {
     "google": "within",
     "valueInCode": "תוך"
@@ -2968,14 +2963,5 @@
   "yesterday": {
     "google": "Yesterday",
     "valueInCode": "אתמול"
-  },
-  "youveProbablyMeantNewDelivery": {
-    "google": " - If you want to create a new shipment, do so in the New Shipment menu.",
-    "valueInCode": " - אם את/ה מעוניין ליצור משלוח חדש, יש לעשות זאת בתפריט 'משלוח חדש'.",
-    "custom": "- If you want to create a new delivery, do so in the New delivery menu."
-  },
-  "youveSelectedToUpdateStatus": {
-    "google": "You have chosen to update status",
-    "valueInCode": "בחרת לעדכן סטטוס"
   }
 }

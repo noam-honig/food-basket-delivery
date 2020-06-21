@@ -514,10 +514,6 @@ export class es implements Language {
   updateDeliveriesStatusHelp = 'El estado de "congelado" es una entrega que no se asignará a ningún voluntario hasta que la entrega esté "habilitada". La congelación se utiliza para detener temporalmente ciertas entregas hasta que puedan descongelarse y enviarse. La congelación solo se realizará para entregas que estén listas para la entrega.';
   statusNotSelected = 'Ningún estado seleccionado';
   updateCanceled = 'Actualización detenida';
-  youveSelectedToUpdateStatus = 'Has elegido actualizar el estado';
-  youveProbablyMeantNewDelivery = '- Si desea crear una nueva entrega, hágalo en el menú Nueva entrega.';
-  updateDeliveredStatusesTo = 'Actualizar entregas que han finalizado el estado';
-  willNotSaveHistoryDoYouWantToStop = 'No hará un seguimiento del estado de las entregas completadas en el historial: ¿dejará de actualizarse?';
   archiveDeliveries = 'Archivo de entregas';
   archiveDeliveriesHelp = "Solo se archivan las entregas marcadas como 'entregadas' o 'fallidas'. El archivo se puede ver en cualquier momento durante el Historial de entrega.";
   updateBasketType = 'Actualizar tipo de paquete';
@@ -681,4 +677,5 @@ export class es implements Language {
   onTheWayDeliveries = 'Entregas sobre la marcha';
   markAsSelfPickupFor = 'marca';
   selfPickupDeliveries = 'Entregas de recogida automática';
+  deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort = 'Entregas completadas. Actualizar su estado borrará el valor existente y las entregas no se guardarán en el historial. Si desea crear una nueva entrega, cancele esta actualización y seleccione la opción Nueva entrega en el menú. ¿Abortar esta actualización?';
 }

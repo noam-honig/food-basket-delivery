@@ -885,6 +885,11 @@
     "valueInCode": "משלוחים עודכנו",
     "valueInEnglish": "deliveries updated"
   },
+  "deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort": {
+    "google": "Entregas completadas. Actualizar su estado borrará el valor existente y las entregas no se guardarán en el historial. Si desea crear una nueva entrega, cancele esta actualización y seleccione la opción Nueva entrega en el menú. ¿Abortar esta actualización?",
+    "valueInCode": "משלוחים שהסתיימו. עדכון הסטטוס שלהם ימחק את הערך הקיים והמשלוח לא ישמר בהיסטוריה. אם אתם רוצים ליצור משלוח חדש, הפסיקו פעולה זו ובחרו באפשרות משלוח חדש בתפריט. לבטל פעולה זו?",
+    "valueInEnglish": "Completed deliveries. Updating their status will erase the existing value and the deliveries will not be saved in history. If you want to create a new delivery, abort this update and select the New Delivery option from the menu. Abort this update?"
+  },
   "delivery": {
     "google": "Entrega",
     "valueInCode": "משלוח",
@@ -3136,11 +3141,6 @@
     "valueInCode": "עדכן מתנדב ברירת מחדל למשפחה",
     "valueInEnglish": "Update a default family volunteer"
   },
-  "updateDeliveredStatusesTo": {
-    "google": "Actualizar entregas que han finalizado el estado",
-    "valueInCode": "עדכון משלוחים שהסתיימו לסטטוס",
-    "valueInEnglish": "Update deliveries that have ended status"
-  },
   "updateDeliveriesStatus": {
     "google": "Actualizar estado de entrega",
     "valueInCode": "עדכן סטטוס למשלוחים",
@@ -3376,11 +3376,6 @@
     "valueInCode": "מה לא הסתדר?",
     "valueInEnglish": "What didn't work out?"
   },
-  "willNotSaveHistoryDoYouWantToStop": {
-    "google": "No hará un seguimiento del estado de las entregas completadas en el historial: ¿dejará de actualizarse?",
-    "valueInCode": " לא ישמור בהיסטוריה את הסטטוס של המשלוחים שהסתיימו - האם להפסיק את העדכון?",
-    "valueInEnglish": "Will not keep track of the status of completed deliveries in history - stop updating?"
-  },
   "within": {
     "google": "dentro",
     "valueInCode": "תוך",
@@ -3395,15 +3390,5 @@
     "google": "Ayer",
     "valueInCode": "אתמול",
     "valueInEnglish": "Yesterday"
-  },
-  "youveProbablyMeantNewDelivery": {
-    "google": "- Si desea crear una nueva entrega, hágalo en el menú Nueva entrega.",
-    "valueInCode": " - אם את/ה מעוניין ליצור משלוח חדש, יש לעשות זאת בתפריט 'משלוח חדש'.",
-    "valueInEnglish": "- If you want to create a new delivery, do so in the New delivery menu."
-  },
-  "youveSelectedToUpdateStatus": {
-    "google": "Has elegido actualizar el estado",
-    "valueInCode": "בחרת לעדכן סטטוס",
-    "valueInEnglish": "You have chosen to update status"
   }
 }

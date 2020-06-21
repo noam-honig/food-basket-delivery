@@ -154,10 +154,13 @@ export class UpdateDeliveriesStatus extends ActionOnRows<ActiveFamilyDeliveries>
 
             },
             validateInComponent: async c => {
-                if (this.status.value == DeliveryStatus.ReadyForDelivery || this.status.value == DeliveryStatus.SelfPickup) {
-                    if (await c.dialog.YesNoPromise(getLang(this.context).youveSelectedToUpdateStatus + " " + this.status.value.caption + " " + getLang(this.context).youveProbablyMeantNewDelivery))
-                        throw getLang(this.context).updateCanceled;
-                    if (await c.dialog.YesNoPromise(getLang(this.context).updateDeliveredStatusesTo + " " + this.status.value.caption + getLang(this.context).willNotSaveHistoryDoYouWantToStop))
+                let info = await c.buildActionInfo(undefined);
+                let deliveriesWithResultStatus = await this.context.for(ActiveFamilyDeliveries).count(x => x.deliverStatus.isAResultStatus().and(info.where(x)))
+                if (deliveriesWithResultStatus > 0 && (this.status.value == DeliveryStatus.ReadyForDelivery || this.status.value == DeliveryStatus.SelfPickup)) {
+                    if (await c.dialog.YesNoPromise(
+                        getLang(this.context).thereAre+" " +deliveriesWithResultStatus+" "+getLang(this.context).deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort)
+                        
+                        )
                         throw getLang(this.context).updateCanceled;
                 }
             },
