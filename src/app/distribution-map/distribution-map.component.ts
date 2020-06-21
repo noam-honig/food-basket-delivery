@@ -92,7 +92,7 @@ export class DistributionMap implements OnInit, OnDestroy {
       buildActionInfo: async (actionWhere) => {
         return {
           count: this.selectedDeliveries.length,
-          where: x => x.id.isIn(...this.selectedDeliveries.map(x => x.id))
+          where: x => x.id.isIn(this.selectedDeliveries.map(x => x.id))
         };
       },
       settings: this.settings,

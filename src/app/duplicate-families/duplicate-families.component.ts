@@ -80,9 +80,7 @@ export class DuplicateFamiliesComponent implements OnInit {
               callServer: async (info, action, args) => await FamiliesComponent.FamilyActionOnServer(info, action, args),
               buildActionInfo: async actionWhere => {
                 let where: EntityWhere<Families> = f => {
-                  let r = new AndFilter(actionWhere(f), x.args.settings.buildFindOptions().where(f));
-                  if (x.args.settings.selectedRows.length >= 1)
-                    r = new AndFilter(r, f.id.isIn(...x.args.settings.selectedRows.map(x => x.id.value)));
+                  let r = new AndFilter(actionWhere(f), x.args.settings.getFilterWithSelectedRows().where(f));
                   return r;
                 };
                 return {

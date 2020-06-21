@@ -343,9 +343,7 @@ export class FamiliesComponent implements OnInit {
                     callServer: async (info, action, args) => await FamiliesComponent.FamilyActionOnServer(info, action, args),
                     buildActionInfo: async actionWhere => {
                         let where: EntityWhere<Families> = f => {
-                            let r = new AndFilter(actionWhere(f), this.families.buildFindOptions().where(f));
-                            if (this.families.selectedRows.length >= 1)
-                                r = new AndFilter(r, f.id.isIn(...this.families.selectedRows.map(x => x.id.value)));
+                            let r = new AndFilter(actionWhere(f), this.families.getFilterWithSelectedRows().where(f));
                             return r;
                         };
                         return {
@@ -426,28 +424,7 @@ export class FamiliesComponent implements OnInit {
         return r + ' ' + getLang(context).familiesUpdated;
     }
 
-
-
-
-    packWhere() {
-        return {
-            where: packWhere(this.context.for(Families).create(), this.families.buildFindOptions().where),
-            count: this.families.totalRows
-        };
-    }
-
-
-
-
-
-
     gridView = true;
-
-
-
-
-
-
 
     destroyHelper = new DestroyHelper();
     ngOnDestroy(): void {

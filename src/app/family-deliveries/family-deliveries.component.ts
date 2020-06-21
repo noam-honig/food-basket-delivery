@@ -564,12 +564,10 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   });
   private async buildWhereForAction(actionWhere) {
     let where: EntityWhere<ActiveFamilyDeliveries> = f => {
-      let r = this.deliveries.buildFindOptions().where(f);
+      let r = this.deliveries.getFilterWithSelectedRows().where(f);
       if (actionWhere) {
         r = new AndFilter(actionWhere(f), r);
       }
-      if (this.deliveries.selectedRows.length > 0)
-        r = new AndFilter(r, f.id.isIn(...this.deliveries.selectedRows.map(x => x.id.value)));
       return r;
 
     };
@@ -627,12 +625,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     }
 
   }
-  packWhere() {
-    return {
-      where: packWhere(this.context.for(FamilyDeliveries).create(), this.deliveries.buildFindOptions().where),
-      count: this.deliveries.totalRows
-    };
-  }
+  
 }
 
 interface statsOnTabBasket extends statsOnTab {

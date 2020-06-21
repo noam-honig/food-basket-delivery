@@ -3,7 +3,7 @@ import { FamiliesComponent } from "./families.component";
 import { Families, GroupsColumn } from "./families";
 import { Roles } from "../auth/roles";
 import { BasketId, QuantityColumn } from "./BasketType";
-import { DistributionCenterId, DistributionCenters } from "../manage/distribution-centers";
+import { DistributionCenterId, DistributionCenters, allCentersToken } from "../manage/distribution-centers";
 import { HelperId } from "../helpers/helpers";
 import { Groups } from "../manage/manage.component";
 import { FamilyStatusColumn, FamilyStatus } from "./FamilyStatus";
@@ -27,7 +27,7 @@ class NewDelivery extends ActionOnRows<Families> {
     useDefaultVolunteer = new BoolColumn({ caption: getLang(this.context).defaultVolunteer, defaultValue: true });
     courier = new HelperId(this.context);
     selfPickup = new SelfPickupStrategyColumn(false);
-    
+
     excludeGroups = new GroupsColumn(this.context, {
         caption: getLang(this.context).excludeGroups
     })
@@ -57,6 +57,8 @@ class NewDelivery extends ActionOnRows<Families> {
                 this.basketType.value = '';
                 this.quantity.value = 1;
                 this.distributionCenter.value = component.dialog.distCenter.value;
+                if (this.distributionCenter.value == allCentersToken)
+                    this.distributionCenter.value = '';
                 return [
                     this.useFamilyBasket,
                     { column: this.basketType, visible: () => !this.useFamilyBasket.value },
@@ -97,11 +99,12 @@ class NewDelivery extends ActionOnRows<Families> {
                 if (!this.useDefaultVolunteer.value) {
                     fd.courier.value = this.courier.value;
                 }
-                if ((await fd.duplicateCount()) == 0)
+                let count = (await fd.duplicateCount());
+                if (count == 0)
                     await fd.save();
             },
             onEnd: async () => {
-              
+
             }
         });
     }
@@ -348,7 +351,7 @@ export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
                     fd.fixedCourier.value = this.courier.value;
                 }
             },
-         
+
         });
         this.courier.value = '';
     }
