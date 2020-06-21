@@ -53,6 +53,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   }
   async newFamily() {
     let f = this.context.for(Families).create();
+    f.name.value = this.searchString;
     f.showFamilyDialog({
       onSave: async () => {
         await f.showNewDeliveryDialog(this.dialog, this.settings);

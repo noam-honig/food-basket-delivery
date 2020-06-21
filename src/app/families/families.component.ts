@@ -85,6 +85,7 @@ export class FamiliesComponent implements OnInit {
     }
     quickAdd() {
         this.families.addNewRow();
+        this.families.currentRow.name.value = this.searchString;
         this.families.currentRow.showFamilyDialog({
             onSave: async () => {
                 await this.families.currentRow.showNewDeliveryDialog(this.dialog, this.settings);
