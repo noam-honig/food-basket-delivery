@@ -44,7 +44,7 @@
 
 
               <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign"
-                (assignmentCanceled)="cancelAssign(f)">
+                (assignmentCanceled)="cancelAssign(f)"  (refreshList)="familyLists.reload()">
 
 
                 <button mat-raised-button class="myButton" color="accent"
@@ -268,7 +268,7 @@
           </mat-expansion-panel-header>
           <ng-template matExpansionPanelContent>
             <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign"
-              (assignmentCanceled)="cancelAssign(f)">
+              (assignmentCanceled)="cancelAssign(f)"  (refreshList)="familyLists.reload()">
               <button mat-raised-button class="myButton"
                 (click)="updateComment(f)">{{settings.lang.updateComment}}</button>
               <button mat-raised-button class="myButton badButton"
