@@ -359,7 +359,8 @@ export class FamilyDeliveries extends IdEntity {
             case DeliveryStatus.ReadyForDelivery:
                 if (this.courier.value) {
                     let c = this.context.for(Helpers).lookup(this.courier);
-                    return use.language.onTheWay + ': ' + c.name.value + (c.eventComment.value ? ' (' + c.eventComment.value + ')' : '') + ', ' + use.language.assigned + ' ' + this.courierAssingTime.relativeDateName(this.context);
+
+                    return (this.courierReceivedSms.value ? use.language.onTheWay : use.language.assigned) + ': ' + c.name.value + (c.eventComment.value ? ' (' + c.eventComment.value + ')' : '') + ', ' + use.language.assigned + ' ' + this.courierAssingTime.relativeDateName(this.context);
                 }
                 break;
             case DeliveryStatus.Success:
