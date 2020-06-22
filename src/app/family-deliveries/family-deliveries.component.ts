@@ -35,7 +35,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     component: FamilyDeliveriesComponent,
     canActivate: [distCenterAdminGuard]
   }
-  limit = 50;
+  limit = 25;
   groupsColumn: DataControlSettings<ActiveFamilyDeliveries>;
   statusColumn: DataControlSettings<ActiveFamilyDeliveries>;
   deliverySummary: DataControlSettings<ActiveFamilyDeliveries>;
@@ -73,6 +73,26 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   basketStats: statsOnTabBasket = {
     name: getLang(this.context).remainingByBaskets,
     rule: f => f.readyAndSelfPickup(),
+    stats: [
+      this.stats.ready,
+      this.stats.special
+    ],
+    moreStats: [],
+    fourthColumn: () => this.statusColumn
+  };
+  assignedButNotOutBaskets: statsOnTabBasket = {
+    name: getLang(this.context).assignedButNotOutBaskets,
+    rule: f => f.onTheWayFilter().and(f.courierReceivedSms.isEqualTo(false)),
+    stats: [
+      this.stats.ready,
+      this.stats.special
+    ],
+    moreStats: [],
+    fourthColumn: () => this.statusColumn
+  };
+  selfPickupBaskets: statsOnTabBasket = {
+    name: getLang(this.context).selfPickupByBaskets,
+    rule: f => f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup),
     stats: [
       this.stats.ready,
       this.stats.special
@@ -144,6 +164,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
     this.basketsInEvent,
     this.basketStats,
+    this.assignedButNotOutBaskets,
+    this.selfPickupBaskets,
     this.basketsDelivered,
     this.groupsReady,
     this.cityStats,
@@ -281,6 +303,10 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         f.readyFilter().and(f.basketType.isEqualTo(id)));
       this.basketStatsCalc(st.baskets, this.basketsInEvent, b => b.inEventDeliveries, (f, id) =>
         f.basketType.isEqualTo(id));
+      this.basketStatsCalc(st.baskets, this.assignedButNotOutBaskets, b => b.assigned, (f, id) =>
+        f.basketType.isEqualTo(id).and(this.assignedButNotOutBaskets.rule(f)));
+      this.basketStatsCalc(st.baskets, this.selfPickupBaskets, b => b.selfPickup, (f, id) =>
+        f.basketType.isEqualTo(id).and(this.selfPickupBaskets.rule(f)));
       this.basketStatsCalc(st.baskets, this.basketsDelivered, b => b.successDeliveries, (f, id) =>
         f.deliverStatus.isSuccess().and(f.basketType.isEqualTo(id)));
       this.prepComplexStats(st.cities, this.cityStats,
@@ -376,7 +402,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     public settings: ApplicationSettings
   ) {
 
-
+    if (!settings.usingSelfPickupModule.value)
+      this.statTabs.splice(this.statTabs.indexOf(this.selfPickupBaskets), 1);
     dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
     dialog.onStatusChange(() => this.refreshStats(), this.destroyHelper);
   }
@@ -625,7 +652,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     }
 
   }
-  
+
 }
 
 interface statsOnTabBasket extends statsOnTab {

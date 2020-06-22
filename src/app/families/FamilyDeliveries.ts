@@ -232,6 +232,22 @@ export class FamilyDeliveries extends IdEntity {
 
         }
     });
+    courierReceivedSms = new BoolColumn({
+        sqlExpression: () => {
+            var sql = new SqlBuilder();
+
+            var helper = this.context.for(Helpers).create();
+            let f = this;
+            sql.addEntity(f, "FamilyDeliveries");
+            sql.addEntity(helper, 'h');
+            return sql.case([{
+                when: [sql.ne(f.courier, "''")],
+                then: sql.build("COALESCE ((select ", helper.smsDate, ">", f.courierAssingTime, " from ", helper.defs.dbName, " as h where ", sql.eq(helper.id, f.courier), "), false)")
+            }], false);
+        }
+    });
+
+
 
     active() {
         return this.archive.isEqualTo(false);

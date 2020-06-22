@@ -407,11 +407,11 @@ export class Language {
   requireFollowUpUpdateUser = 'צריך טיפול - מי עדכן';
   requireFollowUpUpdateDate = 'צריך טיפול - מתי עודכן';
   deliveryDetailsFor = 'פרטי משלוח עבור';
-  remainingByBaskets = 'נותרו לפי סלים';
+  remainingByBaskets = 'טרם שוייכו לפי סלים';
   byBaskets = 'לפי סלים';
   deliveredByBaskets = 'נמסרו לפי סלים';
-  remainingByCities = 'נותרו לפי ערים';
-  remainingByGroups = 'נותרו לפי קבוצות';
+  remainingByCities = 'טרם שוייכו לפי ערים';
+  remainingByGroups = 'טרם שוייכו לפי קבוצות';
   deliveries = 'משלוחים';
   empty = 'ריק';
   allOthers = 'כל השאר';
@@ -813,6 +813,8 @@ export class Language {
   selfPickupDeliveries = "משלוחים שמוגדרים כבאים לקחת";
   deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort="משלוחים שהסתיימו. עדכון הסטטוס שלהם ימחק את הערך הקיים והמשלוח לא ישמר בהיסטוריה. אם אתם רוצים ליצור משלוח חדש, הפסיקו פעולה זו ובחרו באפשרות משלוח חדש בתפריט. לבטל פעולה זו?";
   excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = "עדכן ברירות מחדל למשפחה בהתאם למשלוח זה";
+  assignedButNotOutBaskets = "שוייכו וטרם יצאו לפי סלים";
+  selfPickupByBaskets = "באים לקחת לפי סלים";
 }
 
 const defaultLang = new Language();

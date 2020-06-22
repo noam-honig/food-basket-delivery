@@ -52,7 +52,7 @@ import { MatAccordion } from '@angular/material/expansion';
 })
 export class FamiliesComponent implements OnInit {
     @Input() problemOnly = false;
-    limit = 50;
+    limit = 25;
 
 
     showHoverButton: boolean = false;

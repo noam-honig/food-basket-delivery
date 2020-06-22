@@ -52,7 +52,9 @@ export class FamilyDeliveryStats {
                 boxes2: number,
                 unassignedDeliveries: number,
                 inEventDeliveries: number,
-                successDeliveries: number
+                successDeliveries: number,
+                assigned:number,
+                selfPickup:number,
             }[], cities: [], groups: [] as groupStats[]
         };
         let stats = new FamilyDeliveryStats(context);
@@ -66,11 +68,14 @@ export class FamilyDeliveryStats {
 
         let f = context.for(ActiveFamilyDeliveries).create();
         let sql = new SqlBuilder();
+        sql.addEntity(f,"FamilyDeliveries")
         let baskets = await db.execute(sql.build(sql.query({
             select: () => [f.basketType,
             sql.build('sum (', sql.case([{ when: [f.readyAndSelfPickup()], then: f.quantity }], 0), ') a'),
             sql.build('sum (', f.quantity, ') b'),
-            sql.build('sum (', sql.case([{ when: [f.deliverStatus.isSuccess()], then: f.quantity }], 0), ') c')
+            sql.build('sum (', sql.case([{ when: [f.deliverStatus.isSuccess()], then: f.quantity }], 0), ') c'),
+            sql.build('sum (', sql.case([{ when: [f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup)], then: f.quantity }], 0), ') d'),
+            sql.build('sum (', sql.case([{ when: [f.onTheWayFilter().and(f.courierReceivedSms.isEqualTo(false))], then: f.quantity }], 0), ') e')
             ],
             from: f,
             where: () => [f.filterDistCenterAndAllowed(distCenter)]
@@ -85,7 +90,9 @@ export class FamilyDeliveryStats {
                 boxes2: b.boxes2.value,
                 unassignedDeliveries: +r['a'],
                 inEventDeliveries: +r['b'],
-                successDeliveries: +r['c']
+                successDeliveries: +r['c'],
+                selfPickup:+r['d'],
+                assigned:+r['e']
             });
         }
 
