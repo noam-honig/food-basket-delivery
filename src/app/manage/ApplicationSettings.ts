@@ -146,7 +146,7 @@ export class ApplicationSettings extends Entity<number>  {
   excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = new BoolColumn(this.lang.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery);
   checkDuplicatePhones = new BoolColumn(this.lang.checkDuplicatePhones);
   volunteerCanUpdateComment = new BoolColumn(this.lang.volunteerCanUpdateComment);
-  
+
   showDistCenterAsEndAddressForVolunteer = new BoolColumn(this.lang.showDistCenterAsEndAddressForVolunteer);
   routeStrategy = new routeStrategyColumn();
 
@@ -222,6 +222,13 @@ export class PhoneOption {
       args.addPhone(args.family.socialWorker.value, args.family.socialWorkerPhone2.displayValue);
     }
   });
+  static defaultVolunteer = new PhoneOption("defaultVolunteer", use.language.defaultVolunteer, async args => {
+    if (args.family.fixedCourier.value && args.d.courier.value != args.family.fixedCourier.value) {
+      let h = await args.context.for(Helpers).findId(args.family.fixedCourier.value);
+      args.addPhone(getLang(args.context).defaultVolunteer + ": " + h.name.value, h.phone.displayValue);
+    }
+  });
+
 
   static familySource = new PhoneOption("familySource", "טלפון גורם מפנה", async args => {
     if (args.family.familySource.value) {

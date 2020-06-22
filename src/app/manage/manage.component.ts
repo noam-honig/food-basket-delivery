@@ -290,7 +290,7 @@ export class ManageComponent implements OnInit {
   phoneOptions = [
     PhoneOption.assignerOrOrg
     , PhoneOption.familyHelpPhone
-
+    ,PhoneOption.defaultVolunteer
     , PhoneOption.familySource
     , PhoneOption.otherPhone
   ];
