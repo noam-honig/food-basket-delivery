@@ -279,11 +279,11 @@ export class es implements Language {
   requireFollowUpUpdateUser = 'Requiere actualización de usuario de seguimiento';
   requireFollowUpUpdateDate = 'Requiere fecha de actualización de seguimiento';
   deliveryDetailsFor = 'detalles de entrega para';
-  remainingByBaskets = 'Permanecido por parcelas';
+  remainingByBaskets = 'No asignado por parcelas';
   byBaskets = 'Por parcelas';
   deliveredByBaskets = 'Paquetes entregados';
-  remainingByCities = 'Restante por ciudades';
-  remainingByGroups = 'Restantes por grupos';
+  remainingByCities = 'Sin asignar por ciudades';
+  remainingByGroups = 'Sin asignar por grupos';
   deliveries = 'Entregas';
   empty = 'blanco';
   allOthers = 'Todos los otros';
@@ -679,4 +679,6 @@ export class es implements Language {
   selfPickupDeliveries = 'Entregas de recogida automática';
   deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort = 'Entregas completadas. Actualizar su estado borrará el valor existente y las entregas no se guardarán en el historial. Si desea crear una nueva entrega, cancele esta actualización y seleccione la opción Nueva entrega en el menú. ¿Abortar esta actualización?';
   excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = 'Actualizar los valores predeterminados de la familia de acuerdo con esta entrega';
+  assignedButNotOutBaskets = 'Asignado pero no fuera por Parcels';
+  selfPickupByBaskets = 'Self Pickup by Parcels';
 }

@@ -679,4 +679,6 @@ export class donor implements Language {
   selfPickupDeliveries = 'משלוחים שמוגדרים כבאים לקחת';
   deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort = 'משלוחים שהסתיימו. עדכון הסטטוס שלהם ימחק את הערך הקיים והמשלוח לא ישמר בהיסטוריה. אם אתם רוצים ליצור משלוח חדש, הפסיקו פעולה זו ובחרו באפשרות משלוח חדש בתפריט. לבטל פעולה זו?';
   excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = 'עדכן ברירות מחדל לתורם בהתאם למשלוח זה';
+  assignedButNotOutBaskets = 'שוייכו וטרם יצאו לפי סלים';
+  selfPickupByBaskets = 'באים לקחת לפי סלים';
 }

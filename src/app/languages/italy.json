@@ -304,6 +304,11 @@
     "valueInCode": "שוייך",
     "valueInEnglish": "Belongs"
   },
+  "assignedButNotOutBaskets": {
+    "google": "Assegnato ma non escluso da Parcels",
+    "valueInCode": "שוייכו וטרם יצאו לפי סלים",
+    "valueInEnglish": "Assigned but not out by Parcels"
+  },
   "assignedDriver": {
     "google": "autista assegnato",
     "valueInCode": "נהג משוייך",
@@ -2396,19 +2401,19 @@
     "valueInEnglish": "You are registered for this event"
   },
   "remainingByBaskets": {
-    "google": "Restato da pacchi",
-    "valueInCode": "נותרו לפי סלים",
-    "valueInEnglish": "Remained by parcels"
+    "google": "Non assegnato da pacchi",
+    "valueInCode": "טרם שוייכו לפי סלים",
+    "valueInEnglish": "UnAssigned by parcels"
   },
   "remainingByCities": {
-    "google": "Restato dalle città",
-    "valueInCode": "נותרו לפי ערים",
-    "valueInEnglish": "Remained by cities"
+    "google": "Non assegnato da Città",
+    "valueInCode": "טרם שוייכו לפי ערים",
+    "valueInEnglish": "UnAssigned by Cities"
   },
   "remainingByGroups": {
-    "google": "Restato da gruppi",
-    "valueInCode": "נותרו לפי קבוצות",
-    "valueInEnglish": "Remained by groups"
+    "google": "Non assegnato da gruppi",
+    "valueInCode": "טרם שוייכו לפי קבוצות",
+    "valueInEnglish": "UnAssigned by Groups"
   },
   "rememberMeOnThisDevice": {
     "google": "Ricordami su questo dispositivo",
@@ -2670,6 +2675,11 @@
     "google": "Vieni e prendi",
     "valueInCode": "באים לקחת",
     "valueInEnglish": "Come and take"
+  },
+  "selfPickupByBaskets": {
+    "google": "Self Pickup di Parcels",
+    "valueInCode": "באים לקחת לפי סלים",
+    "valueInEnglish": "Self Pickup by Parcels"
   },
   "SelfPickupComponent": {
     "google": "Vieni e prendi",

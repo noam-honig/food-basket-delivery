@@ -279,11 +279,11 @@ export class italy implements Language {
   requireFollowUpUpdateUser = 'Richiede un aggiornamento utente di follow-up';
   requireFollowUpUpdateDate = 'Richiede la data di aggiornamento di follow-up';
   deliveryDetailsFor = 'dettagli di consegna per';
-  remainingByBaskets = 'Restato da pacchi';
+  remainingByBaskets = 'Non assegnato da pacchi';
   byBaskets = 'Dai pacchi';
   deliveredByBaskets = 'Pacchi consegnati';
-  remainingByCities = 'Restato dalle città';
-  remainingByGroups = 'Restato da gruppi';
+  remainingByCities = 'Non assegnato da Città';
+  remainingByGroups = 'Non assegnato da gruppi';
   deliveries = 'Le consegne';
   empty = 'vuoto';
   allOthers = 'Tutti gli altri';
@@ -679,4 +679,6 @@ export class italy implements Language {
   selfPickupDeliveries = 'Consegne con ritiro automatico';
   deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort = "Consegne completate. L'aggiornamento del loro stato cancellerà il valore esistente e le consegne non verranno salvate nella cronologia. Se si desidera creare una nuova consegna, interrompere questo aggiornamento e selezionare l'opzione Nuova consegna dal menu. Annullare questo aggiornamento?";
   excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = 'Aggiorna le impostazioni predefinite della famiglia in base a questa consegna';
+  assignedButNotOutBaskets = 'Assegnato ma non escluso da Parcels';
+  selfPickupByBaskets = 'Self Pickup di Parcels';
 }

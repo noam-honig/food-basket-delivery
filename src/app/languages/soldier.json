@@ -243,6 +243,10 @@
     "google": "שוייך",
     "valueInCode": "שוייך"
   },
+  "assignedButNotOutBaskets": {
+    "google": "שוייכו וטרם יצאו לפי סלים",
+    "valueInCode": "שוייכו וטרם יצאו לפי סלים"
+  },
   "assignedDriver": {
     "google": "נהג משוייך",
     "valueInCode": "נהג משוייך"
@@ -1917,15 +1921,15 @@
   },
   "remainingByBaskets": {
     "google": "נותרו לפי סלים",
-    "valueInCode": "נותרו לפי סלים"
+    "valueInCode": "טרם שוייכו לפי סלים"
   },
   "remainingByCities": {
     "google": "נותרו לפי ערים",
-    "valueInCode": "נותרו לפי ערים"
+    "valueInCode": "טרם שוייכו לפי ערים"
   },
   "remainingByGroups": {
     "google": "נותרו לפי קבוצות",
-    "valueInCode": "נותרו לפי קבוצות"
+    "valueInCode": "טרם שוייכו לפי קבוצות"
   },
   "rememberMeOnThisDevice": {
     "google": "זכור אותי במכשיר זה",
@@ -2134,6 +2138,10 @@
   "selfPickup": {
     "google": "באים לקחת",
     "valueInCode": "באים לקחת"
+  },
+  "selfPickupByBaskets": {
+    "google": "באים לקחת לפי סלים",
+    "valueInCode": "באים לקחת לפי סלים"
   },
   "SelfPickupComponent": {
     "google": "באים לקחת",

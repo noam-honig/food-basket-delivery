@@ -277,6 +277,11 @@
     "google": "Belongs",
     "valueInCode": "שוייך"
   },
+  "assignedButNotOutBaskets": {
+    "google": "Sheiku and not yet out by baskets",
+    "valueInCode": "שוייכו וטרם יצאו לפי סלים",
+    "custom": "Assigned but not out by Parcels"
+  },
   "assignedDriver": {
     "google": "Associated driver",
     "valueInCode": "נהג משוייך",
@@ -2114,16 +2119,18 @@
   },
   "remainingByBaskets": {
     "google": "Remained by baskets",
-    "valueInCode": "נותרו לפי סלים",
-    "custom": "Remained by parcels"
+    "valueInCode": "טרם שוייכו לפי סלים",
+    "custom": "UnAssigned by parcels"
   },
   "remainingByCities": {
     "google": "Remained by cities",
-    "valueInCode": "נותרו לפי ערים"
+    "valueInCode": "טרם שוייכו לפי ערים",
+    "custom": "UnAssigned by Cities"
   },
   "remainingByGroups": {
     "google": "Remained by groups",
-    "valueInCode": "נותרו לפי קבוצות"
+    "valueInCode": "טרם שוייכו לפי קבוצות",
+    "custom": "UnAssigned by Groups"
   },
   "rememberMeOnThisDevice": {
     "google": "Remember me on this device",
@@ -2348,6 +2355,11 @@
   "selfPickup": {
     "google": "Come and take",
     "valueInCode": "באים לקחת"
+  },
+  "selfPickupByBaskets": {
+    "google": "Come to pick by baskets",
+    "valueInCode": "באים לקחת לפי סלים",
+    "custom": "Self Pickup by Parcels"
   },
   "SelfPickupComponent": {
     "google": "Come and take",

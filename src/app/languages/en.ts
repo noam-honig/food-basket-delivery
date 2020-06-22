@@ -279,11 +279,11 @@ export class en implements Language {
   requireFollowUpUpdateUser = 'Requires Followup Update User';
   requireFollowUpUpdateDate = 'Requires Followup Update Date';
   deliveryDetailsFor = 'delivery details for';
-  remainingByBaskets = 'Remained by parcels';
+  remainingByBaskets = 'UnAssigned by parcels';
   byBaskets = 'By parcels';
   deliveredByBaskets = 'Parcels Delivered';
-  remainingByCities = 'Remained by cities';
-  remainingByGroups = 'Remained by groups';
+  remainingByCities = 'UnAssigned by Cities';
+  remainingByGroups = 'UnAssigned by Groups';
   deliveries = 'Deliveries';
   empty = 'blank';
   allOthers = 'All others';
@@ -679,4 +679,6 @@ export class en implements Language {
   selfPickupDeliveries = 'Self Pickup Deliveries';
   deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort = 'Completed deliveries. Updating their status will erase the existing value and the deliveries will not be saved in history. If you want to create a new delivery, abort this update and select the New Delivery option from the menu. Abort this update?';
   excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = 'Update family defaults according to this delivery';
+  assignedButNotOutBaskets = 'Assigned but not out by Parcels';
+  selfPickupByBaskets = 'Self Pickup by Parcels';
 }
