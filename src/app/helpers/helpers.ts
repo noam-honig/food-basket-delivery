@@ -1,6 +1,6 @@
 
 import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, FilterBase, Entity, Column, EntityProvider, checkForDuplicateValue } from '@remult/core';
-import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, SqlBuilder, wasChanged } from '../model-shared/types';
+import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, EmailColumn, SqlBuilder, wasChanged } from '../model-shared/types';
 
 
 
@@ -190,7 +190,7 @@ export class Helpers extends HelpersBase {
         dbName: 'password',
         includeInApi: false
     });
-    email = new StringColumn(getLang(this.context).email);
+    email = new EmailColumn(getLang(this.context).email);
     preferredDistributionAreaAddress = new StringColumn(getLang(this.context).preferredDistributionArea);
     addressApiResult = new StringColumn();
     private _lastString: string;

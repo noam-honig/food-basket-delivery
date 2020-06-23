@@ -279,7 +279,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     });
     this.extraFamilyInfo = this.families.addArea({
       columnSettings: families => [
-        families.groups,
+        [families.email, families.groups],
         [families.status, families.familyMembers],
         families.internalComment,
         [

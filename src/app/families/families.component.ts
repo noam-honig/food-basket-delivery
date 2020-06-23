@@ -33,7 +33,7 @@ import { Roles, distCenterAdminGuard, AdminGuard } from '../auth/roles';
 import { MatTabGroup } from '@angular/material/tabs';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { getLang, use } from '../translate';
+import { getLang, TranslationOptions, use } from '../translate';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 import { FamilyStatus, FamilyStatusColumn } from './FamilyStatus';
@@ -323,9 +323,18 @@ export class FamiliesComponent implements OnInit {
             this.normalColumns = [
                 families.name,
                 families.address,
-                families.phone1,
-                families.groups
+                families.phone1
             ];
+            if (this.settings.forWho.value == TranslationOptions.donors) {
+                this.normalColumns.push(
+                    families.email,
+                    families.createDate
+                );
+            } else {
+                this.normalColumns.push(
+                    families.groups
+                );
+            }
             this.addressProblemColumns = [
                 families.name,
                 families.addressByGoogle,
@@ -708,6 +717,7 @@ export async function saveFamiliesToExcel(context: Context, gs: GridSettings<Fam
             else
                 return p.value.replace(/\D/g, '');
         }
+        addColumn("X" + use.language.email, f.email.value, 's');
         addColumn("X" + use.language.phone1, fixPhone(f.phone1), 's');
         addColumn("X" + use.language.phone2, fixPhone(f.phone2), 's');
         addColumn("X" + use.language.phone3, fixPhone(f.phone3), 's');

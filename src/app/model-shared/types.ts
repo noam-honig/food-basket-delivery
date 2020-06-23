@@ -11,7 +11,18 @@ export interface HasAsyncGetTheValue {
   getTheValue(): Promise<string>;
 }
 
-
+export class EmailColumn extends radweb.StringColumn {
+  constructor(settingsOrCaption?: ColumnOptions<string>) {
+    super({
+      dataControlSettings: () => ({
+        click: () => window.open('mailto:' + this.displayValue),
+        allowClick: () => !!this.displayValue,
+        clickIcon: 'email',
+        inputType: 'email'
+      })
+    }, settingsOrCaption);
+  }
+}
 export class PhoneColumn extends radweb.StringColumn {
   constructor(settingsOrCaption?: ColumnOptions<string>) {
     super({
