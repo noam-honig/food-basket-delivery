@@ -258,6 +258,9 @@ export class FamiliesComponent implements OnInit {
                 },
                 families.phone1,
                 families.groups,
+
+                families.email,
+
                 families.familyMembers,
                 families.familySource,
                 {
