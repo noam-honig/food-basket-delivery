@@ -4,7 +4,7 @@ import { YesNoColumn } from "./YesNo";
 
 import { FamilySourceId } from "./FamilySources";
 import { BasketId, BasketType, QuantityColumn } from "./BasketType";
-import { changeDate, DateTimeColumn, SqlBuilder, PhoneColumn, delayWhileTyping, wasChanged } from "../model-shared/types";
+import { changeDate, DateTimeColumn, SqlBuilder, PhoneColumn, EmailColumn, delayWhileTyping, wasChanged } from "../model-shared/types";
 import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, FilterBase, ColumnOptions, SpecificEntityHelper, Entity, DataArealColumnSetting } from '@remult/core';
 import { HelperIdReadonly, HelperId, Helpers, HelperUserInfo } from "../helpers/helpers";
 
@@ -448,6 +448,8 @@ export class Families extends IdEntity {
   phone3Description = new StringColumn(getLang(this.context).phone3Description);
   phone4 = new PhoneColumn({ caption: getLang(this.context).phone4, valueChange: () => this.delayCheckDuplicateFamilies() });
   phone4Description = new StringColumn(getLang(this.context).phone4Description);
+
+  email = new EmailColumn();
 
   status = new FamilyStatusColumn(this.context);
   statusDate = new changeDate(getLang(this.context).statusChangeDate);
