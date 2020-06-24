@@ -18,9 +18,12 @@ export class EmailColumn extends radweb.StringColumn {
         click: () => window.open('mailto:' + this.displayValue),
         allowClick: () => !!this.displayValue,
         clickIcon: 'email',
-        inputType: 'email'
+        inputType: 'email',
+        width:'250'
       })
     }, settingsOrCaption);
+    if (!this.defs.caption)
+      use.language.email;
   }
 }
 export class PhoneColumn extends radweb.StringColumn {

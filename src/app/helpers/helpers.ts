@@ -190,7 +190,7 @@ export class Helpers extends HelpersBase {
         dbName: 'password',
         includeInApi: false
     });
-    email = new EmailColumn(getLang(this.context).email);
+    email = new EmailColumn();
     preferredDistributionAreaAddress = new StringColumn(getLang(this.context).preferredDistributionArea);
     addressApiResult = new StringColumn();
     private _lastString: string;

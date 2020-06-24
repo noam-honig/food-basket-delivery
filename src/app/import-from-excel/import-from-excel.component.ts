@@ -748,7 +748,8 @@ export class ImportFromExcelComponent implements OnInit {
             this.f.floor,
             this.f.appartment,
             this.f.entrance,
-            this.f.socialWorker
+            this.f.socialWorker,
+            this.f.email
 
         ]);
         for (const col of [this.f.phone1Description,

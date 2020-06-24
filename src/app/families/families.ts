@@ -449,7 +449,7 @@ export class Families extends IdEntity {
   phone4 = new PhoneColumn({ caption: getLang(this.context).phone4, valueChange: () => this.delayCheckDuplicateFamilies() });
   phone4Description = new StringColumn(getLang(this.context).phone4Description);
 
-  email = new EmailColumn(getLang(this.context).email);
+  email = new EmailColumn();
 
   status = new FamilyStatusColumn(this.context);
   statusDate = new changeDate(getLang(this.context).statusChangeDate);

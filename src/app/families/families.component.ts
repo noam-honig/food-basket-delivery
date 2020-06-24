@@ -717,7 +717,6 @@ export async function saveFamiliesToExcel(context: Context, gs: GridSettings<Fam
             else
                 return p.value.replace(/\D/g, '');
         }
-        addColumn("X" + use.language.email, f.email.value, 's');
         addColumn("X" + use.language.phone1, fixPhone(f.phone1), 's');
         addColumn("X" + use.language.phone2, fixPhone(f.phone2), 's');
         addColumn("X" + use.language.phone3, fixPhone(f.phone3), 's');
