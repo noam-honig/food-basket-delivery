@@ -219,8 +219,10 @@ export class ImportFromExcelComponent implements OnInit {
         }
         return rowsToUpdate;
     }
+    
     async updateCol(i: excelRowInfo, col: columnInCompare) {
-        await ImportFromExcelComponent.actualUpdateCol(i, keyFromColumnInCompare(col), this.addDelivery.value, this.compareBasketType.value, this.context);
+        let r = await ImportFromExcelComponent.updateColsOnServer([i], keyFromColumnInCompare(col), this.addDelivery.value, this.compareBasketType.value);
+        i.values = r[0].values;
     }
     static async actualUpdateCol(i: excelRowInfo, entityAndColumnName: string, addDelivery: boolean, compareBasketType: boolean, context: Context) {
         let c = ImportFromExcelComponent.actualGetColInfo(i, entityAndColumnName);
