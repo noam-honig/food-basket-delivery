@@ -1081,19 +1081,21 @@ export class ImportFromExcelComponent implements OnInit {
                             rank: 9
                         }));
             }
-            if (info.idInHagai && info.duplicateFamilyInfo.length == 0)
+            if (info.idInHagai)
                 await findDuplicate(f => f.id.isEqualTo(info.idInHagai));
-            if (info.iDinExcel && info.duplicateFamilyInfo.length == 0)
-                await findDuplicate(f => f.iDinExcel.isEqualTo(info.iDinExcel));
-            if (info.tz && info.duplicateFamilyInfo.length == 0)
-                await findDuplicate(f => f.tz.isEqualTo(info.tz));
+            else {
+                if (info.iDinExcel && info.duplicateFamilyInfo.length == 0)
+                    await findDuplicate(f => f.iDinExcel.isEqualTo(info.iDinExcel));
+                if (info.tz && info.duplicateFamilyInfo.length == 0)
+                    await findDuplicate(f => f.tz.isEqualTo(info.tz));
 
-            if (info.duplicateFamilyInfo.length == 0) {
-                info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz, info.tz2, info.phone1ForDuplicateCheck, info.phone2ForDuplicateCheck, info.phone3ForDuplicateCheck, info.phone4ForDuplicateCheck, undefined, true, info.address, context, db);
-                if (info.duplicateFamilyInfo.length > 1) {
-                    if (info.duplicateFamilyInfo.find(f => f.nameDup && f.sameAddress)) {
-                        info.duplicateFamilyInfo = info.duplicateFamilyInfo.filter(f => !onlyNameMatch(f)
-                        )
+                if (info.duplicateFamilyInfo.length == 0) {
+                    info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz, info.tz2, info.phone1ForDuplicateCheck, info.phone2ForDuplicateCheck, info.phone3ForDuplicateCheck, info.phone4ForDuplicateCheck, undefined, true, info.address, context, db);
+                    if (info.duplicateFamilyInfo.length > 1) {
+                        if (info.duplicateFamilyInfo.find(f => f.nameDup && f.sameAddress)) {
+                            info.duplicateFamilyInfo = info.duplicateFamilyInfo.filter(f => !onlyNameMatch(f)
+                            )
+                        }
                     }
                 }
             }
