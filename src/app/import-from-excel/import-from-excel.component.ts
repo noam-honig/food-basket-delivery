@@ -702,13 +702,21 @@ export class ImportFromExcelComponent implements OnInit {
             updateFamily: async (v, f, h) => {
                 h.laterSteps.push({
                     step: 3, what: async () => {
-                        if (h.fd.courier.value) {
-                            let help = await this.context.for(Helpers).lookupAsync(h.fd.courier);
-                            if (!help.isNew()) {
-                                help.name.value = v;
-                                if (help.wasChanged())
-                                    await help.save();
+                        if (h.gotVolunteerPhone) {
+                            if (h.fd.courier.value) {
+                                let help = await this.context.for(Helpers).lookupAsync(h.fd.courier);
+                                if (!help.isNew()) {
+                                    help.name.value = v;
+                                    if (help.wasChanged())
+                                        await help.save();
+                                }
                             }
+                        }
+                        else {
+                            
+                            await h.lookupAndInsert(Helpers, h => h.name, v, h => h.id, h.fd.courier, x => {
+                                x._disableOnSavingRow = true;
+                            });
                         }
                     }
                 });
@@ -719,6 +727,7 @@ export class ImportFromExcelComponent implements OnInit {
             name: this.fd.courier.defs.caption + " " + use.language.phone,
 
             updateFamily: async (v, f, h) => {
+                h.gotVolunteerPhone = true;
                 v = PhoneColumn.fixPhoneInput(v);
                 await h.lookupAndInsert(Helpers, h => h.phone, v, h => h.id, h.fd.courier, x => {
                     x.name.value = 'מתנדב ' + v;
@@ -1372,6 +1381,7 @@ class columnUpdateHelper {
 
     }
     laterSteps: laterSteps[] = [];
+    gotVolunteerPhone = false;
 
     async lookupAndInsert<T extends Entity, dataType>(
         c: { new(...args: any[]): T; },
