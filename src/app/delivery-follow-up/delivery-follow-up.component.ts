@@ -179,7 +179,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
         sql.columnWithAlias(h.smsDate, 'smsdate'),
         sql.columnWithAlias(h.eventComment, 'comment1'),
         sql.columnWithAlias(sql.func('max', fd.courierAssingTime), 'maxasign'),
-        sql.sumWithAlias(1, 'deliveries'),
+        sql.sumWithAlias(1, 'deliveries',fd.deliverStatus.isDifferentFrom(DeliveryStatus.SelfPickup).and(fd.deliverStatus.isDifferentFrom(DeliveryStatus.SuccessPickedUp))),
         sql.sumWithAlias(1, 'inprogress', fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
         sql.sumWithAlias(1, 'problem', fd.deliverStatus.isProblem())
 
