@@ -139,7 +139,7 @@ export class Language {
   boxes2Name = 'משהו אחר';
   defaultDistributionListName = 'חלוקת מזון';
   AssignEscortComponent = 'שיוך מלווים';
-  FamilyDeliveriesComponent = 'משלוחים';
+  FamilyDeliveriesComponent = 'משלוחים פעילים';
   FamiliesComponent = 'משפחות';
   DeliveryFollowUpComponent = 'מעקב מתנדבים';
   NewsComponent = 'מצריך טיפול';

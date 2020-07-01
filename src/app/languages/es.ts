@@ -13,7 +13,7 @@ export class es implements Language {
   boxes2Name = 'Otra unidad';
   defaultDistributionListName = 'Lista de distribución de alimentos';
   AssignEscortComponent = 'Asignación de acompañante';
-  FamilyDeliveriesComponent = 'Entregas';
+  FamilyDeliveriesComponent = 'Entregas activas';
   FamiliesComponent = 'Familias';
   DeliveryFollowUpComponent = 'Seguimiento voluntario';
   NewsComponent = 'Requiere seguimiento';

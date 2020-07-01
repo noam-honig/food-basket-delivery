@@ -13,7 +13,7 @@ export class italy implements Language {
   boxes2Name = 'Altra unità';
   defaultDistributionListName = 'Elenco di distribuzione alimentare';
   AssignEscortComponent = 'Incarico di scorta';
-  FamilyDeliveriesComponent = 'Le consegne';
+  FamilyDeliveriesComponent = 'Consegne attive';
   FamiliesComponent = 'famiglie';
   DeliveryFollowUpComponent = 'Monitoraggio volontario';
   NewsComponent = 'Richiede follow-up';

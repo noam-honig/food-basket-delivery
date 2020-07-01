@@ -13,7 +13,7 @@ export class en implements Language {
   boxes2Name = 'Other unit';
   defaultDistributionListName = 'Food Distribution List';
   AssignEscortComponent = 'Escort assignment';
-  FamilyDeliveriesComponent = 'Deliveries';
+  FamilyDeliveriesComponent = 'Active Deliveries';
   FamiliesComponent = 'Families';
   DeliveryFollowUpComponent = 'Volunteer Tracking';
   NewsComponent = 'Requires Followup';

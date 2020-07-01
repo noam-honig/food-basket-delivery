@@ -1224,8 +1224,8 @@
   },
   "FamilyDeliveriesComponent": {
     "google": "Shipments",
-    "valueInCode": "משלוחים",
-    "custom": "Deliveries"
+    "valueInCode": "משלוחים פעילים",
+    "custom": "Active Deliveries"
   },
   "familyDetails": {
     "google": "Family information",

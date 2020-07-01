@@ -1351,9 +1351,9 @@
     "valueInEnglish": "Family deliveries"
   },
   "FamilyDeliveriesComponent": {
-    "google": "Le consegne",
-    "valueInCode": "משלוחים",
-    "valueInEnglish": "Deliveries"
+    "google": "Consegne attive",
+    "valueInCode": "משלוחים פעילים",
+    "valueInEnglish": "Active Deliveries"
   },
   "familyDetails": {
     "google": "Dettagli familiari",

@@ -1081,7 +1081,7 @@
   },
   "FamilyDeliveriesComponent": {
     "google": "משלוחים",
-    "valueInCode": "משלוחים"
+    "valueInCode": "משלוחים פעילים"
   },
   "familyDetails": {
     "google": "פרטי תורם",
