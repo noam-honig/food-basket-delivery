@@ -2561,6 +2561,11 @@
     "valueInCode": "משייך מתנדבים לרשימת חלוקה",
     "valueInEnglish": "Only Assigns Deliveries"
   },
+  "routeOptimization": {
+    "google": "Pianificazione del percorso",
+    "valueInCode": "תכנון מסלול",
+    "valueInEnglish": "Route planning"
+  },
   "sameAddress": {
     "google": "Stesso indirizzo",
     "valueInCode": "כתובת זהה",

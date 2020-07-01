@@ -681,4 +681,5 @@ export class italy implements Language {
   excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = 'Aggiorna le impostazioni predefinite della famiglia in base a questa consegna';
   assignedButNotOutBaskets = 'Assegnato ma non escluso da Parcels';
   selfPickupByBaskets = 'Self Pickup di Parcels';
+  routeOptimization = 'Pianificazione del percorso';
 }

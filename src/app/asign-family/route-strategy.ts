@@ -42,7 +42,7 @@ export class routeStrategyColumn extends ValueListColumn<routeStrategy>{
 
     constructor() {
         super(routeStrategy, {
-            caption: 'תכנון מסלול',
+            caption: use.language.routeOptimization,
             dataControlSettings: () => ({
                 valueList: this.getOptions()
             })

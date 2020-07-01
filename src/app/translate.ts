@@ -814,6 +814,7 @@ export class Language {
   excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = "עדכן ברירות מחדל למשפחה בהתאם למשלוח זה";
   assignedButNotOutBaskets = "שוייכו וטרם יצאו לפי סלים";
   selfPickupByBaskets = "באים לקחת לפי סלים";
+  routeOptimization = "תכנון מסלול";
 }
 
 const defaultLang = new Language();

@@ -681,4 +681,5 @@ export class es implements Language {
   excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = 'Actualizar los valores predeterminados de la familia de acuerdo con esta entrega';
   assignedButNotOutBaskets = 'Asignado pero no fuera por Parcels';
   selfPickupByBaskets = 'Self Pickup by Parcels';
+  routeOptimization = 'Planificacion de la ruta';
 }

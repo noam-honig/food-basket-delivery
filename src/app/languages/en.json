@@ -2256,6 +2256,10 @@
     "valueInCode": "משייך מתנדבים לרשימת חלוקה",
     "custom": "Only Assigns Deliveries"
   },
+  "routeOptimization": {
+    "google": "Route planning",
+    "valueInCode": "תכנון מסלול"
+  },
   "sameAddress": {
     "google": "Same address",
     "valueInCode": "כתובת זהה"

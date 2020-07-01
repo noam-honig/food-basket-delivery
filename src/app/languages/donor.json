@@ -2047,6 +2047,10 @@
     "google": "משייך מתנדבים למעבדה",
     "valueInCode": "משייך מתנדבים לרשימת חלוקה"
   },
+  "routeOptimization": {
+    "google": "תכנון מסלול",
+    "valueInCode": "תכנון מסלול"
+  },
   "sameAddress": {
     "google": "כתובת זהה",
     "valueInCode": "כתובת זהה"

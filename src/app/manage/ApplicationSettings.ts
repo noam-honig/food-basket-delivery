@@ -222,7 +222,7 @@ export class PhoneOption {
       args.addPhone(args.family.socialWorker.value, args.family.socialWorkerPhone2.displayValue);
     }
   });
-  static defaultVolunteer = new PhoneOption("defaultVolunteer", use.language.defaultVolunteer, async args => {
+  static defaultVolunteer = new PhoneOption("defaultVolunteer", use? use.language.defaultVolunteer:'', async args => {
     if (args.family.fixedCourier.value && args.d.courier.value != args.family.fixedCourier.value) {
       let h = await args.context.for(Helpers).findId(args.family.fixedCourier.value);
       args.addPhone(getLang(args.context).defaultVolunteer + ": " + h.name.value, h.phone.displayValue);

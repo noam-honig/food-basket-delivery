@@ -681,4 +681,5 @@ export class soldier implements Language {
   excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = 'עדכן ברירות מחדל לחייל בהתאם למשלוח זה';
   assignedButNotOutBaskets = 'שוייכו וטרם יצאו לפי סלים';
   selfPickupByBaskets = 'באים לקחת לפי סלים';
+  routeOptimization = 'תכנון מסלול';
 }
