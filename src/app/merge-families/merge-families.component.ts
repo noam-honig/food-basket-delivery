@@ -16,7 +16,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 })
 export class MergeFamiliesComponent implements OnInit {
 
-  constructor(private context: Context, private dialogRef: MatDialogRef<any>, private dialog: DialogService,public settings:ApplicationSettings) { }
+  constructor(public context: Context, private dialogRef: MatDialogRef<any>, public dialog: DialogService,public settings:ApplicationSettings) { }
   families: Families[] = [];
   family: Families;
   async ngOnInit() {
