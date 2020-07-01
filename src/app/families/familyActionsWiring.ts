@@ -32,16 +32,16 @@ export class ActionOnRows<T extends IdEntity> {
     ) {
         if (!args.confirmQuestion)
             args.confirmQuestion = () => args.title;
-       
+
         if (!args.onEnd) {
             args.onEnd = async () => { };
         }
         if (!args.dialogColumns)
-            args.dialogColumns =async  x => args.columns();
-            if (!args.validateInComponent)
-                args.validateInComponent =async  x=>{};
-        if (!args.additionalWhere){
-            args.additionalWhere =  x=>{return undefined;};
+            args.dialogColumns = async x => args.columns();
+        if (!args.validateInComponent)
+            args.validateInComponent = async x => { };
+        if (!args.additionalWhere) {
+            args.additionalWhere = x => { return undefined; };
         }
 
 
@@ -138,7 +138,7 @@ export interface actionDialogNeeds<T extends IdEntity> {
 
 
 export interface ActionOnRowsArgs<T extends IdEntity> {
-    dialogColumns?: (component: actionDialogNeeds<T>) => Promise< DataArealColumnSetting<any>[]>,
+    dialogColumns?: (component: actionDialogNeeds<T>) => Promise<DataArealColumnSetting<any>[]>,
     forEach: (f: T) => Promise<void>,
     onEnd?: () => Promise<void>,
     columns: () => Column[],
@@ -188,18 +188,10 @@ export async function pagedRowsIterator<T extends IdEntity>(context: SpecificEnt
     count?: number
 }) {
     let updated = 0;
-    let pageSize = 200;
-    if (args.count === undefined) {
-        args.count = await context.count(args.where);
-    }
     let pt = new PromiseThrottle(10);
-    for (let index = (args.count / pageSize); index >= 0; index--) {
-        let rows = await context.find({ where: args.where, limit: pageSize, page: index, orderBy: f => [f.id] });
-        //console.log(rows.length);
-        for (const f of rows) {
-            await pt.push(args.forEachRow(f));
-            updated++;
-        }
+    for await (const f of context.iterate({ where: args.where })) {
+        await pt.push(args.forEachRow(f));
+        updated++;
     }
     await pt.done();
     return updated;

@@ -164,7 +164,7 @@ export class MergeFamiliesComponent implements OnInit {
     let newFamily = await context.for(Families).findId(id);
 
     for (const oldId of ids) {
-      for (const fd of await context.for(FamilyDeliveries).find({ where: fd => fd.family.isEqualTo(oldId) })) {
+      for await (const fd of context.for(FamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(oldId) })) {
         fd.family.value = id;
         newFamily.updateDelivery(fd);
         await fd.save();

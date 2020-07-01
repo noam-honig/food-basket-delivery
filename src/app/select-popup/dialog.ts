@@ -91,7 +91,7 @@ export class DialogService {
         if (this.distCenter.value != allCentersToken)
             return this.distCenter.value;
         if (!this.allCenters)
-            this.allCenters = await this.context.for(DistributionCenters).find({});
+            this.allCenters = await this.context.for(DistributionCenters).find();
         let result: string;
         let dist: number;
         for (const c of this.allCenters) {

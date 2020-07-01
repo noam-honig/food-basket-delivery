@@ -168,7 +168,7 @@ export class FreezeDeliveriesForFamilies extends ActionOnRows<Families> {
             title: getLang(context).freezeDeliveries,
             help: () => getLang(context).freezeDeliveriesHelp,
             forEach: async f => {
-                for (const fd of await this.context.for(ActiveFamilyDeliveries).find({ where: fd => fd.family.isEqualTo(f.id).and(fd.readyFilter()) })) {
+                for await (const fd of this.context.for(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id).and(fd.readyFilter()) })) {
                     fd.deliverStatus.value = DeliveryStatus.Frozen;
                     await fd.save();
                 }
@@ -187,7 +187,7 @@ export class UnfreezeDeliveriesForFamilies extends ActionOnRows<Families> {
             title: getLang(context).unfreezeDeliveries,
             help: () => getLang(this.context).unfreezeDeliveriesHelp,
             forEach: async f => {
-                for (const fd of await this.context.for(ActiveFamilyDeliveries).find({ where: fd => fd.family.isEqualTo(f.id).and(fd.deliverStatus.isEqualTo(DeliveryStatus.Frozen)) })) {
+                for await (const fd of this.context.for(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id).and(fd.deliverStatus.isEqualTo(DeliveryStatus.Frozen)) })) {
                     fd.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
                     await fd.save();
                 }
@@ -233,7 +233,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
                     f.internalComment.value += this.comment.value;
                 }
                 if (f.status.value != FamilyStatus.Active && (this.archiveFinshedDeliveries.value || this.deletePendingDeliveries.value)) {
-                    for (const fd of await this.context.for(ActiveFamilyDeliveries).find({ where: fd => fd.family.isEqualTo(f.id) })) {
+                    for await (const fd of this.context.for(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id) })) {
                         if (DeliveryStatus.IsAResultStatus(fd.deliverStatus.value)) {
                             if (this.archiveFinshedDeliveries) {
                                 fd.archive.value = true;
@@ -275,7 +275,7 @@ class UpdateSelfPickup extends ActionOnRows<Families> {
                 {
                     f.defaultSelfPickup.value = this.selfPickup.value;
                     if (this.updateExistingDeliveries.value) {
-                        for (const fd of await this.context.for(ActiveFamilyDeliveries).find({ where: fd => fd.family.isEqualTo(f.id).and(fd.deliverStatus.isNotAResultStatus()) })) {
+                        for await (const fd of this.context.for(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id).and(fd.deliverStatus.isNotAResultStatus()) })) {
                             if (this.selfPickup.value) {
                                 if (fd.deliverStatus.value == DeliveryStatus.ReadyForDelivery)
                                     fd.deliverStatus.value = DeliveryStatus.SelfPickup;

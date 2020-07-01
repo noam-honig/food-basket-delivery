@@ -21,7 +21,7 @@ export class EventsComponent implements OnInit {
       limit: 25,
       orderBy: e => [e.eventStatus, e.eventDate, e.startTime]
     },
-    hideDataArea: true,
+    
     numOfColumnsInGrid: 100,
     rowButtons: [
       {

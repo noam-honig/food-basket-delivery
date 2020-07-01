@@ -41,7 +41,7 @@ export class FamilyStatusColumn extends ValueListColumn<FamilyStatus> {
   }
 
   constructor(private context: Context, settingsOrCaption?: ColumnOptions<FamilyStatus>, chooseFrom?: FamilyStatus[]) {
-    super(FamilyStatus, {
+    super(FamilyStatus,Column.consolidateOptions( {
       dataControlSettings: () => {
         let op = this.getOptions();
         if (chooseFrom)
@@ -58,7 +58,7 @@ export class FamilyStatusColumn extends ValueListColumn<FamilyStatus> {
         };
 
       }
-    }, settingsOrCaption);
+    }, settingsOrCaption));
     if (!this.defs.caption)
       this.defs.caption = use.language.familyStatus;
   }

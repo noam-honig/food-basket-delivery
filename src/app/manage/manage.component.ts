@@ -71,7 +71,7 @@ export class ManageComponent implements OnInit {
   constructor(private dialog: DialogService, private context: Context, private sanitization: DomSanitizer, public settings: ApplicationSettings) { }
 
   basketType = this.context.for(BasketType).gridSettings({
-    hideDataArea: true,
+    
     columnSettings: x => [
       x.name,
       {
@@ -95,7 +95,7 @@ export class ManageComponent implements OnInit {
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
   });
   distributionCenters = this.context.for(DistributionCenters).gridSettings({
-    hideDataArea: true,
+    
     rowButtons: [{
       name: this.settings.lang.distributionCenterDetails,
       click: async d => {
@@ -160,7 +160,7 @@ export class ManageComponent implements OnInit {
     }, 1000);
   }
   sources = this.context.for(FamilySources).gridSettings({
-    hideDataArea: true,
+    
     columnSettings: s => [
       s.name,
       s.phone,
@@ -176,7 +176,7 @@ export class ManageComponent implements OnInit {
   });
   groups = this.context.for(Groups).gridSettings({
     onSavingRow: () => this.refreshEnvironmentAfterSave(),
-    hideDataArea: true,
+    
     columnSettings: s => [
       s.name,
     ], allowUpdate: true,

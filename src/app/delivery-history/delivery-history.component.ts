@@ -51,7 +51,7 @@ export class DeliveryHistoryComponent implements OnInit {
 
 
     this.helperInfo = context.for(helperHistoryInfo, this.helperStorage).gridSettings({
-      hideDataArea: true,
+      
       numOfColumnsInGrid: 6,
       gridButtons: [{
         name: this.settings.lang.exportToExcel,
@@ -152,7 +152,7 @@ export class DeliveryHistoryComponent implements OnInit {
       return r;
     },
 
-    hideDataArea: true,
+    
     numOfColumnsInGrid: 6,
     knowTotalRows: true,
     get: {

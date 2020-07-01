@@ -45,10 +45,10 @@ export async function dataMigration(res: Response) {
                     if (x.defs.dbName.toLowerCase().indexOf('from ') < 0) {
                         await builder.createIfNotExist(x);
 
-                        let rows = await source.for(entity).find();
-                        console.log(x.defs.dbName + ": " + rows.length);
-                        r += x.defs.dbName + ": " + rows.length + "\r\n";
-                        for (const r of rows) {
+                        let rows = await source.for(entity).iterate();
+                        console.log(x.defs.dbName + ": " + await rows.count());
+                        r += x.defs.dbName + ": " +await  rows.count() + "\r\n";
+                        for await (const r of rows) {
                             let tr = target.for(entity).create();
                             if (tr instanceof IdEntity)
                                 tr.setEmptyIdForNewRow();

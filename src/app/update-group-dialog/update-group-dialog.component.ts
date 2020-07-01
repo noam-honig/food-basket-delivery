@@ -15,7 +15,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 export class UpdateGroupDialogComponent implements OnInit {
 
   constructor(private context: Context, private dialog: DialogService,
-    private dialogRef: MatDialogRef<any>,public settings:ApplicationSettings) {
+    private dialogRef: MatDialogRef<any>, public settings: ApplicationSettings) {
 
 
   }
@@ -32,9 +32,9 @@ export class UpdateGroupDialogComponent implements OnInit {
 
   availableGroups: Groups[] = [];
   async ngOnInit() {
-    this.availableGroups = await this.context.for(Groups).find({limit:1000});
+    this.availableGroups = await this.context.for(Groups).find({ limit: 1000 });
   }
-  
+
   groups = new GroupsColumn(this.context);
   selected(group: string) {
     return this.groups.selected(group);

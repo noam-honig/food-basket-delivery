@@ -96,13 +96,12 @@ export class TranslationOptions {
 }
 export class TranslationOptionsColumn extends ValueListColumn<TranslationOptions> {
 
-  constructor(settingsOrCaption?: ColumnOptions<TranslationOptions>) {
+  constructor() {
     super(TranslationOptions, {
       dataControlSettings: () => ({
-        valueList: this.getOptions(),
         width: '150'
       })
-    }, settingsOrCaption);
+    });
     if (!this.defs.caption)
       this.defs.caption = 'המערכת היא עבור';
   }

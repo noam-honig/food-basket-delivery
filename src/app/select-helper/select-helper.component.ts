@@ -67,7 +67,7 @@ export class SelectHelperComponent implements OnInit {
       }
     }
 
-    await (await context.for(Helpers).find()).forEach(h => {
+    await (await context.for(Helpers).find()).forEach(async h => {
       helpers.set(h.id.value, {
         helperId: h.id.value,
         name: h.name.value,

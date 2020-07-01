@@ -16,10 +16,10 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 })
 export class GeocodeComponent implements OnInit {
   distCenter = new DistributionCenterId(this.context, {
-    valueChange:()=>this.ngOnInit()
+    valueChange: () => this.ngOnInit()
   }, true);
   distCenterArea = new DataAreaSettings({ columnSettings: () => [this.distCenter] });
-  constructor(private context: Context, private dialog: DialogService,public settings:ApplicationSettings) {
+  constructor(private context: Context, private dialog: DialogService, public settings: ApplicationSettings) {
     this.distCenter.value = allCentersToken;
   }
   families = 0;
@@ -53,7 +53,7 @@ export class GeocodeComponent implements OnInit {
   static async geocodeOnServer(distCenter: string, context?: Context) {
     let p = new PromiseThrottle(10);
     let start = new Date().valueOf();
-    for (const f of await context.for(Families).find({ where: f => filterBadGeocoding(f, distCenter), limit: 1000 })) {
+    for await (const f of await context.for(Families).find({ where: f => filterBadGeocoding(f, distCenter)})) {
       await p.push(f.reloadGeoCoding().then(() => f.save()));
       if (new Date().valueOf() - start > 20000)
         break;

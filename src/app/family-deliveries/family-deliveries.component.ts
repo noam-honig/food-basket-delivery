@@ -416,7 +416,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     allowUpdate: true,
     rowCssClass: f => f.deliverStatus.getCss(),
     numOfColumnsInGrid: 5,
-    hideDataArea: true,
+    
     knowTotalRows: true,
     get: {
       limit: this.limit,

@@ -97,7 +97,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }
     async initHelper(helper: Helpers) {
         if (helper.theHelperIAmEscorting.value) {
-            let other = await this.context.for(Helpers).findFirst(x => x.id.isEqualTo(helper.theHelperIAmEscorting));
+            let other = await this.context.for(Helpers).findId(helper.theHelperIAmEscorting);
             if (await this.context.openDialog(YesNoQuestionComponent, q => q.args = {
                 question: helper.name.value + ' ' + this.settings.lang.isDefinedAsEscortOf + ' ' + other.name.value + '. ' + this.settings.lang.displayFamiliesOf + ' ' + other.name.value + '?'
             }, q => q.yes)) {
@@ -156,11 +156,11 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 hideRecent: true,
                 onSelect: async h => {
                     if (h) {
-                        let families = await this.context.for(ActiveFamilyDeliveries).find({ where: f => f.courier.isEqualTo(h.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)), limit: 1000 });
-                        this.dialog.YesNoQuestion(this.settings.lang.transfer + " " + families.length + " " + this.settings.lang.deliveriesFrom + '"' + h.name.value + '"' + " " + this.settings.lang.toVolunteer + " " + '"' + this.helper.name.value + '"', async () => {
+                        let families = this.context.for(ActiveFamilyDeliveries).iterate({ where: f => f.courier.isEqualTo(h.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
+                        this.dialog.YesNoQuestion(this.settings.lang.transfer + " " + await families.count() + " " + this.settings.lang.deliveriesFrom + '"' + h.name.value + '"' + " " + this.settings.lang.toVolunteer + " " + '"' + this.helper.name.value + '"', async () => {
                             await this.busy.doWhileShowingBusy(async () => {
                                 await this.verifyHelperExistance();
-                                for (const f of families) {
+                                for await (const f of families) {
                                     f.courier.value = this.helper.id.value;
                                     await f.save();
                                 }
@@ -202,7 +202,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     async refreshBaskets() {
         await this.busy.donotWait(async () => {
 
-            this.context.for(GroupsStats).find({ limit: 1000, orderBy: f => f.name, where: f => f.familiesCount.isGreaterThan(0).and(f.distCenter.isEqualTo(this.dialog.distCenter)) }).then(g => this.groups = g);
+            this.context.for(GroupsStats).find({ orderBy: f => f.name, where: f => f.familiesCount.isGreaterThan(0).and(f.distCenter.filter(this.dialog.distCenter.value)), limit: 1000 }).then(g => this.groups = g);
             let r = (await AsignFamilyComponent.getBasketStatus({
                 filterGroup: this.filterGroup,
                 filterCity: this.filterCity,
@@ -309,7 +309,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             onSelect: async h => {
                 if (h) {
                     this.clearHelperInfo(false);
-                    this.initHelper(await this.context.for(Helpers).findFirst(hh => hh.id.isEqualTo(h.id)));
+                    this.initHelper(await this.context.for(Helpers).findId(h.id));
                 }
                 else {
                     this.clearHelperInfo();
@@ -362,7 +362,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     numOfBaskets: number = 1;
     private async assignFamilyBasedOnIdFromMap(familyId: string) {
         await this.busy.donotWait(async () => {
-            let f = await this.context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(familyId));
+            let f = await this.context.for(ActiveFamilyDeliveries).findId(familyId);
             if (f && f.deliverStatus.value == DeliveryStatus.ReadyForDelivery && f.courier.value == "") {
                 this.performSepcificFamilyAssignment(f, 'assign based on map');
             }
@@ -424,7 +424,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 }
 
 
-                
+
                 this.dialog.analytics('Assign Family');
                 if (this.baskets == undefined)
                     this.dialog.analytics('Assign any Family (no box)');
@@ -483,7 +483,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         }
 
 
-        for (let c of await context.for(CitiesStatsPerDistCenter).find({
+        for await (let c of context.for(CitiesStatsPerDistCenter).iterate({
             orderBy: ff => [{ column: ff.city }],
             where: ff => ff.distributionCenter.filter(info.distCenter)
         })) {
@@ -554,7 +554,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             where: f => f.courier.isEqualTo(helperId).and(
                 f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))
         });
-        let h = await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId));
+        let h = await context.for(Helpers).findId(helperId);
         let strategy = new routeStrategyColumn();
         strategy.value = (await ApplicationSettings.getAsync(context)).routeStrategy.value;
         if (args.strategyId)

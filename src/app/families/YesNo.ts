@@ -7,17 +7,15 @@ export class YesNo {
   static No = new YesNo(0, 'לא');
   constructor(public id: number, public caption: string) {
   }
-  
+
 }
 export class YesNoColumn extends ValueListColumn<YesNo>{
   constructor(caption: ColumnOptions<YesNo>) {
-    super(YesNo, {
+    super(YesNo, Column.consolidateOptions({
       dataControlSettings: () => ({
-        valueList:this.getOptions(),
         width: '100'
       })
-    }
-      , caption);
+    }, caption));
   }
 
 }

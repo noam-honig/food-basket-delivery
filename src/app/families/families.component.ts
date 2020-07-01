@@ -170,11 +170,8 @@ export class FamiliesComponent implements OnInit {
 
 
 
-    currentFamilyDeliveries: FamilyDeliveries[] = [];
-    async saveCurrentFamilies() {
-        await this.families.currentRow.save();
-        this.currentFamilyDeliveries = await this.families.currentRow.getDeliveries();
-    }
+    
+    
     normalColumns: DataControlInfo<Families>[];
     addressProblemColumns: DataControlInfo<Families>[];
     addressByGoogle: DataControlInfo<Families>;
@@ -192,12 +189,8 @@ export class FamiliesComponent implements OnInit {
                 f.quantity.value = 1;
 
                 f.special.value = YesNo.No;
-                this.currentFamilyDeliveries = [];
             } else {
-                if (!this.gridView) {
-                    this.currentFamilyDeliveries = [];
-                    this.busy.donotWait(async () => this.currentFamilyDeliveries = await this.families.currentRow.getDeliveries());
-                }
+               
             }
         },
 
@@ -235,7 +228,7 @@ export class FamiliesComponent implements OnInit {
             }
             , orderBy: f => f.name
         },
-        hideDataArea: true,
+        
         knowTotalRows: true,
 
 
@@ -436,7 +429,7 @@ export class FamiliesComponent implements OnInit {
         return r + ' ' + getLang(context).familiesUpdated;
     }
 
-    gridView = true;
+    
 
     destroyHelper = new DestroyHelper();
     ngOnDestroy(): void {

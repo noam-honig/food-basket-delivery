@@ -119,7 +119,7 @@ export class AuthService {
         let r: loginResult = undefined;
 
 
-        await context.for(Helpers).foreach(h => h.phone.isEqualTo(user), async h => {
+        await context.for(Helpers).iterate(h => h.phone.isEqualTo(user)).forEach(async h => {
             let sort = 9;
             let helperHasPassword = h.realStoredPassword.value.length > 0;
             let noPasswordInput = !password || password.trim().length == 0;

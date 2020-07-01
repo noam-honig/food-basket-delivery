@@ -71,7 +71,7 @@ export class DuplicateFamiliesComponent implements OnInit {
           return r;
         },
         numOfColumnsInGrid: 6,
-        hideDataArea: true,
+        
         gridButtons: [
           ...buildGridButtonFromActions([UpdateStatus, updateGroup, FreezeDeliveriesForFamilies, UnfreezeDeliveriesForFamilies], this.context,
             {

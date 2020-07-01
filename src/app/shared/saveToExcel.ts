@@ -41,17 +41,17 @@ export async function saveToExcel<E extends Entity, T extends GridSettings<E>>(
     ws["!cols"] = [];
 
 
-    let findOptions = grid.getFilterWithSelectedRows();
-    findOptions.page = 1;
+     
+    
 
     let rowNum = 2;
     let maxChar = 'A';
 
-    let rows = await context.find(findOptions);
+    let rows = context.iterate(grid.getFilterWithSelectedRows());
 
-    while (rows.length > 0) {
+    
 
-      for (const f of rows) {
+      for await (const f of rows) {
         let colPrefix = '';
         let colName = 'A';
         let colIndex = 0;
@@ -124,9 +124,8 @@ export async function saveToExcel<E extends Entity, T extends GridSettings<E>>(
 
       }
 
-      findOptions.page++;
-      rows = await context.find(findOptions);
-    }
+  
+    
 
     ws["!ref"] = "A1:" + maxChar + rowNum;
     ws["!autofilter"] = { ref: ws["!ref"] };

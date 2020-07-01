@@ -52,7 +52,7 @@ export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
   }
 
   constructor(context: Context, settingsOrCaption?: ColumnOptions<DeliveryStatus>, chooseFrom?: DeliveryStatus[]) {
-    super(DeliveryStatus, {
+    super(DeliveryStatus,Column.consolidateOptions( {
       dataControlSettings: () => {
         let op = this.getOptions();
         if (chooseFrom)
@@ -71,7 +71,7 @@ export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
         };
 
       }
-    }, settingsOrCaption);
+    }, settingsOrCaption));
     if (!this.defs.caption)
       this.defs.caption = getLang(context).deliveryStatus;
   }

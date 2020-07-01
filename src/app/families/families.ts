@@ -50,7 +50,7 @@ export class Families extends IdEntity {
   public deliveriesGridSettings(args: { dialog: DialogService, settings: ApplicationSettings }) {
     let result = this.context.for(FamilyDeliveries).gridSettings({
       numOfColumnsInGrid: 7,
-      hideDataArea: true,
+      
       rowCssClass: fd => fd.deliverStatus.getCss(),
       gridButtons: [{
         name: use.language.newDelivery,
@@ -266,12 +266,6 @@ export class Families extends IdEntity {
     }
   }
 
-
-
-  getDeliveries() {
-    return this.context.for(FamilyDeliveries).find({ where: d => d.family.isEqualTo(this.id), orderBy: d => [{ column: d.deliveryStatusDate, descending: true }] });
-  }
-
   __disableGeocoding = false;
 
   constructor(private context: Context) {
@@ -321,7 +315,7 @@ export class Families extends IdEntity {
 
 
             if (this.sharedColumns().find(x => x.value != x.originalValue) || [this.basketType, this.quantity, this.deliveryComments, this.defaultSelfPickup].find(x => wasChanged(x))) {
-              for (const fd of await context.for(FamilyDeliveries).find({
+              for await (const fd of await context.for(FamilyDeliveries).find({
                 where: fd =>
                   fd.family.isEqualTo(this.id).and(
                     fd.archive.isEqualTo(false).and(
@@ -350,12 +344,12 @@ export class Families extends IdEntity {
           else if (!this.context.onServer) {
             let statusChangedOutOfActive = wasChanged(this.status) && this.status.value != FamilyStatus.Active;
             if (statusChangedOutOfActive) {
-              let activeDeliveries = await this.context.for(ActiveFamilyDeliveries).find({ where: fd => fd.family.isEqualTo(this.id).and(fd.deliverStatus.isNotAResultStatus()) });
-              if (activeDeliveries.length > 0) {
-                if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
-                  question: getLang(this.context).thisFamilyHas + " " + activeDeliveries.length + " " + getLang(this.context).deliveries_ShouldWeDeleteThem
+              let activeDeliveries = this.context.for(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(this.id).and(fd.deliverStatus.isNotAResultStatus()) });
+              if ( await activeDeliveries.count() > 0) {
+                if (await this.context.openDialog(YesNoQuestionComponent, async x => x.args = {
+                  question: getLang(this.context).thisFamilyHas + " " +( await  activeDeliveries.count()) + " " + getLang(this.context).deliveries_ShouldWeDeleteThem
                 }, y => y.yes)) {
-                  for (const d of activeDeliveries) {
+                  for await (const d of activeDeliveries) {
                     await d.delete();
 
                   }

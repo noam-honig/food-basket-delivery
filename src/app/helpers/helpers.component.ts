@@ -62,7 +62,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
     allowInsert: true,
     allowUpdate: true,
     knowTotalRows: true,
-    hideDataArea: true,
+    
     gridButtons: [
       {
         name: use.language.exportToExcel,
@@ -139,7 +139,6 @@ export class HelpersComponent implements OnInit, OnDestroy {
             title: use.language.deliveriesFor + ' ' + h.name.value,
             settings: this.context.for(FamilyDeliveries).gridSettings({
               numOfColumnsInGrid: 6,
-              hideDataArea: true,
               knowTotalRows: true,
               rowCssClass: fd => fd.deliverStatus.getCss(),
               columnSettings: fd => {
@@ -264,7 +263,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async resetPassword(helperId: string, context?: Context) {
 
-    await context.for(Helpers).foreach(h => h.id.isEqualTo(helperId), async h => {
+    await context.for(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach( async h => {
       h.realStoredPassword.value = '';
       await h.save();
     });
@@ -325,7 +324,7 @@ ${url}
 
   @ServerFunction({ allowed: Roles.admin })
   static async clearCommentsOnServer(context?: Context) {
-    for (const h of await context.for(Helpers).find({ where: h => h.eventComment.isDifferentFrom('') })) {
+    for await  (const h of context.for(Helpers).iterate({ where: h => h.eventComment.isDifferentFrom('') })) {
       h.eventComment.value = '';
       await h.save();
     }
@@ -333,7 +332,7 @@ ${url}
 
   @ServerFunction({ allowed: Roles.admin })
   static async clearEscortsOnServer(context?: Context) {
-    for (const h of await context.for(Helpers).find()) {
+    for await  (const h of context.for(Helpers).iterate()) {
       h.escort.value = '';
       h.needEscort.value = false;
       h.theHelperIAmEscorting.value = '';
