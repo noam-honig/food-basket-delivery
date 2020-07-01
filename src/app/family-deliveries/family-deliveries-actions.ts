@@ -316,7 +316,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                 return [
                     this.useExistingBasket,
                     [{ column: this.basketType, visible: () => !this.useExistingBasket.value }, { column: this.quantity, visible: () => !this.useExistingBasket.value }],
-                    { column: this.useCurrentDistributionCenter, visible: () => component.dialog.distCenter.value == allCentersToken },
+                    { column: this.useCurrentDistributionCenter, visible: () => component.dialog.distCenter.value == allCentersToken && component.dialog.hasManyCenters },
                     { column: this.distributionCenter, visible: () => component.dialog.hasManyCenters && !this.useCurrentDistributionCenter.value },
                     this.helperStrategy,
                     { column: this.helper, visible: () => this.helperStrategy.value == HelperStrategy.selectHelper },
