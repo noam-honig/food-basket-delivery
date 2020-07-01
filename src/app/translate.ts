@@ -817,6 +817,7 @@ export class Language {
   routeOptimization = "תכנון מסלול";
   assignVolunteer = "שייך מתנדב";
   group = "קבוצה";
+  showOnlyCompletedDeliveries = "הצג רק משלוחים שהסתיימו";
 }
 
 const defaultLang = new Language();

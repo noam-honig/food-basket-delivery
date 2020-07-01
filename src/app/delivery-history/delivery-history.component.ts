@@ -18,8 +18,9 @@ import { ServerFunction } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DistributionCenterId } from '../manage/distribution-centers';
-import {  getLang } from '../translate'
+import { getLang } from '../translate'
 import { DateRangeComponent } from '../date-range/date-range.component';
+import { DestroyHelper, DialogService } from '../select-popup/dialog';
 
 
 
@@ -43,15 +44,19 @@ export class DeliveryHistoryComponent implements OnInit {
   static route: Route = {
     path: 'history',
     component: DeliveryHistoryComponent,
-     canActivate: [AdminGuard]
+    canActivate: [AdminGuard]
+  }
+  destroyHelper = new DestroyHelper();
+  ngOnDestroy(): void {
+    this.destroyHelper.destroy();
   }
   helperStorage: InMemoryDataProvider;
-  constructor(private context: Context, private busy: BusyService,public settings:ApplicationSettings) {
+  constructor(private context: Context, private busy: BusyService, public settings: ApplicationSettings, public dialog: DialogService) {
     this.helperStorage = new InMemoryDataProvider();
-
+    this.dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
 
     this.helperInfo = context.for(helperHistoryInfo, this.helperStorage).gridSettings({
-      
+
       numOfColumnsInGrid: 6,
       gridButtons: [{
         name: this.settings.lang.exportToExcel,
@@ -79,7 +84,7 @@ export class DeliveryHistoryComponent implements OnInit {
         },
         {
           column: h.families,
-          
+
           width: '75'
         },
         {
@@ -98,7 +103,7 @@ export class DeliveryHistoryComponent implements OnInit {
   }
   private async refreshHelpers() {
 
-    var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue);
+    var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue, this.dialog.distCenter.value, this.dateRange.onlyDone.value);
     let rows: any[] = this.helperStorage.rows[this.context.for(helperHistoryInfo).create().defs.dbName];
     x = x.map(x => {
       x.deliveries = +x.deliveries;
@@ -114,6 +119,7 @@ export class DeliveryHistoryComponent implements OnInit {
 
 
   deliveries = this.context.for(FamilyDeliveries).gridSettings({
+    rowCssClass:d=>d.deliverStatus.getCss(),
     gridButtons: [{
       name: this.settings.lang.exportToExcel,
       click: async () => {
@@ -152,7 +158,7 @@ export class DeliveryHistoryComponent implements OnInit {
       return r;
     },
 
-    
+
     numOfColumnsInGrid: 6,
     knowTotalRows: true,
     get: {
@@ -160,7 +166,10 @@ export class DeliveryHistoryComponent implements OnInit {
       where: d => {
         var toDate = this.dateRange.toDate.value;
         toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
-        return d.deliveryStatusDate.isGreaterOrEqualTo(this.dateRange.fromDate.value).and(d.deliveryStatusDate.isLessThan(toDate))
+        let r = d.deliveryStatusDate.isGreaterOrEqualTo(this.dateRange.fromDate.value).and(d.deliveryStatusDate.isLessThan(toDate)).and(d.distributionCenter.filter(this.dialog.distCenter.value))
+        if (this.dateRange.onlyDone.value)
+          r = r.and(d.deliverStatus.isAResultStatus());
+        return r;
       }
     }
   });
@@ -170,13 +179,19 @@ export class DeliveryHistoryComponent implements OnInit {
 
   }
   @ServerFunction({ allowed: Roles.admin })
-  static async  getHelperHistoryInfo(fromDate: string, toDate: string, context?: Context, db?: SqlDatabase) {
+  static async getHelperHistoryInfo(fromDate: string, toDate: string, distCenter: string, onlyDone: boolean, context?: Context, db?: SqlDatabase) {
     var fromDateDate = DateColumn.stringToDate(fromDate);
     var toDateDate = DateColumn.stringToDate(toDate);
     toDateDate = new Date(toDateDate.getFullYear(), toDateDate.getMonth(), toDateDate.getDate() + 1);
     var sql = new SqlBuilder();
     var fd = context.for(FamilyDeliveries).create();
     var h = context.for(Helpers).create();
+
+    let r = fd.deliveryStatusDate.isGreaterOrEqualTo(fromDateDate).and(
+      fd.deliveryStatusDate.isLessThan(toDateDate)).and(fd.distributionCenter.filter(distCenter));
+    if (onlyDone)
+      r = r.and(fd.deliverStatus.isAResultStatus());
+
 
     return (await db.execute(
       sql.build("select ", [
@@ -203,7 +218,7 @@ export class DeliveryHistoryComponent implements OnInit {
           sql.build("count (distinct date (", fd.courierAssingTime.defs.dbName, ")) dates"),
           sql.build("count (distinct ", fd.family.defs.dbName, ") families")],
           ' from ', fd.defs.dbName,
-          ' where ', sql.and(fd.deliveryStatusDate.isGreaterOrEqualTo(fromDateDate).and(fd.deliveryStatusDate.isLessThan(toDateDate))))
+          ' where ', sql.and(r))
 
         + sql.build(' group by ', fd.courier.defs.dbName), ") x"))).rows;
 
@@ -212,7 +227,7 @@ export class DeliveryHistoryComponent implements OnInit {
 }
 @EntityClass
 export class helperHistoryInfo extends Entity<string>{
-  
+
   courier = new StringColumn();
   name = new StringColumn(getLang(this.context).volunteerName);
   phone = new PhoneColumn(getLang(this.context).phone);

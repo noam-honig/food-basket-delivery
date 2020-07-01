@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { DateColumn, DataAreaSettings } from '@remult/core';
+import { DateColumn, DataAreaSettings, BoolColumn } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 var fullDayValue = 24 * 60 * 60 * 1000;
 @Component({
@@ -8,7 +8,7 @@ var fullDayValue = 24 * 60 * 60 * 1000;
   styleUrls: ['./date-range.component.scss']
 })
 export class DateRangeComponent implements OnInit {
-  @Output()  dateChanged=new EventEmitter<void>();
+  @Output() dateChanged = new EventEmitter<void>();
   fromDate = new DateColumn({
     caption: this.settings.lang.fromDate,
     valueChange: () => {
@@ -20,14 +20,15 @@ export class DateRangeComponent implements OnInit {
     }
   });
   toDate = new DateColumn(this.settings.lang.toDate);
+  onlyDone = new BoolColumn({ caption: this.settings.lang.showOnlyCompletedDeliveries, defaultValue: true })
   rangeArea = new DataAreaSettings({
-    columnSettings: () => [this.fromDate, this.toDate],
-    numberOfColumnAreas: 2
+    columnSettings: () => [[this.fromDate, this.toDate],this.onlyDone],
+    
   });
   private getEndOfMonth(): Date {
     return new Date(this.fromDate.value.getFullYear(), this.fromDate.value.getMonth() + 1, 0);
   }
-  
+
   today() {
     this.fromDate.value = new Date();
     this.toDate.value = new Date();
@@ -57,12 +58,12 @@ export class DateRangeComponent implements OnInit {
     }
     this.dateChanged.emit();
   }
-  constructor(public settings:ApplicationSettings) {
+  constructor(public settings: ApplicationSettings) {
     let today = new Date();
 
     this.fromDate.value = new Date(today.getFullYear(), today.getMonth(), 1);
     this.toDate.value = this.getEndOfMonth();
-   }
+  }
 
   ngOnInit() {
   }
