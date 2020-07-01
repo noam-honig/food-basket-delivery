@@ -318,7 +318,7 @@
   },
   "assignVolunteer": {
     "google": "Belongs to a volunteer",
-    "valueInCode": "שייך למתנדב",
+    "valueInCode": "שייך מתנדב",
     "custom": "Assign Volunteer"
   },
   "atAddress": {
@@ -1438,6 +1438,10 @@
     "google": "GPS spot near",
     "valueInCode": "נקודת GPS ליד"
   },
+  "group": {
+    "google": "Group",
+    "valueInCode": "קבוצה"
+  },
   "hello": {
     "google": "Hello",
     "valueInCode": "שלום"
@@ -1573,7 +1577,8 @@
   },
   "leftByDoorMessageColumnName": {
     "google": "Message to volunteer when left at home",
-    "valueInCode": "הודעה למתנדב כאשר הושאר ליד הבית"
+    "valueInCode": "הודעה למתנדב כאשר הושאר ליד הבית",
+    "custom": "Message for volunteer that has left outside"
   },
   "leftByHouse": {
     "google": "Was left by the house",
@@ -2511,7 +2516,8 @@
   },
   "showLeftByHouseButton": {
     "google": "Show volunteer button I left at home",
-    "valueInCode": "הצג למתנדב כפתור השארתי ליד הבית"
+    "valueInCode": "הצג למתנדב כפתור השארתי ליד הבית",
+    "custom": "Show 'left outside' button to volunteer"
   },
   "showOnGoogleMap": {
     "google": "View on Google Maps",

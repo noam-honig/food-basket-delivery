@@ -149,7 +149,7 @@ export class es implements Language {
   logoUrl = 'Logotipo de URL';
   deliveryCenterAddress = 'dirección del centro de entrega';
   successMessageColumnName = 'Mensaje para ser voluntario cuando se entregue con éxito';
-  leftByDoorMessageColumnName = 'Mensaje para ser voluntario cuando se quede en casa';
+  leftByDoorMessageColumnName = 'Mensaje para el voluntario que se fue afuera';
   problemCommentColumnName = 'Notificar al voluntario cuando haya un problema';
   messageForVolunteerWhenDoneCaption = 'Notificación para ser voluntario cuando todas las familias hayan terminado';
   helpName = 'nombre alternativo';
@@ -170,7 +170,7 @@ export class es implements Language {
   filterRegion = 'Filtrado de área';
   filterBasketType = 'Filtrado de tipo de parcela';
   selectNumberOfFamilies = 'Establecer número de entrega';
-  showLeftByHouseButton = 'Mostrar botón de voluntario que dejé en casa';
+  showLeftByHouseButton = "Mostrar el botón 'izquierda afuera' para ser voluntario";
   redTitleBar = 'Título de la página roja';
   defaultPhonePrefixForExcelImport = 'Prefijo de teléfono predeterminado para importar desde Excel';
   checkIfFamilyExistsInDb = 'Compruebe si ya existe una familia en la base de datos';
@@ -683,4 +683,5 @@ export class es implements Language {
   selfPickupByBaskets = 'Self Pickup by Parcels';
   routeOptimization = 'Planificacion de la ruta';
   assignVolunteer = 'Asignar voluntario';
+  group = 'Grupo';
 }

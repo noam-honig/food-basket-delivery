@@ -277,7 +277,7 @@
   },
   "assignVolunteer": {
     "google": "שייך למתנדב",
-    "valueInCode": "שייך למתנדב"
+    "valueInCode": "שייך מתנדב"
   },
   "atAddress": {
     "google": "בכתובת",
@@ -1274,6 +1274,10 @@
   "gpsLocationNear": {
     "google": "נקודת GPS ליד",
     "valueInCode": "נקודת GPS ליד"
+  },
+  "group": {
+    "google": "קבוצה",
+    "valueInCode": "קבוצה"
   },
   "hello": {
     "google": "שלום",

@@ -683,4 +683,5 @@ export class donor implements Language {
   selfPickupByBaskets = 'באים לקחת לפי סלים';
   routeOptimization = 'תכנון מסלול';
   assignVolunteer = 'שייך למתנדב';
+  group = 'קבוצה';
 }

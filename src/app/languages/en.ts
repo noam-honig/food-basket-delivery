@@ -149,7 +149,7 @@ export class en implements Language {
   logoUrl = 'URL logo';
   deliveryCenterAddress = 'delivery center address';
   successMessageColumnName = 'Message to volunteer when delivered successfully';
-  leftByDoorMessageColumnName = 'Message to volunteer when left at home';
+  leftByDoorMessageColumnName = 'Message for volunteer that has left outside';
   problemCommentColumnName = 'Notify the volunteer when there is a problem';
   messageForVolunteerWhenDoneCaption = 'Notification to volunteer when all families are finished';
   helpName = 'alternative name';
@@ -170,7 +170,7 @@ export class en implements Language {
   filterRegion = 'Area filtering';
   filterBasketType = 'Parcel Type Filtering';
   selectNumberOfFamilies = 'Set Number of Delivery';
-  showLeftByHouseButton = 'Show volunteer button I left at home';
+  showLeftByHouseButton = "Show 'left outside' button to volunteer";
   redTitleBar = 'Red page title';
   defaultPhonePrefixForExcelImport = 'Default phone prefix for import from Excel';
   checkIfFamilyExistsInDb = 'Check if a family already exists in the database';
@@ -683,4 +683,5 @@ export class en implements Language {
   selfPickupByBaskets = 'Self Pickup by Parcels';
   routeOptimization = 'Route planning';
   assignVolunteer = 'Assign Volunteer';
+  group = 'Group';
 }

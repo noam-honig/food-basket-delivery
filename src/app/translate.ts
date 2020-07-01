@@ -816,6 +816,7 @@ export class Language {
   selfPickupByBaskets = "באים לקחת לפי סלים";
   routeOptimization = "תכנון מסלול";
   assignVolunteer = "שייך מתנדב";
+  group = "קבוצה";
 }
 
 const defaultLang = new Language();

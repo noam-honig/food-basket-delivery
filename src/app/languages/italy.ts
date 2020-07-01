@@ -149,7 +149,7 @@ export class italy implements Language {
   logoUrl = 'Logo URL';
   deliveryCenterAddress = 'indirizzo del centro di consegna';
   successMessageColumnName = 'Messaggio al volontario quando consegnato con successo';
-  leftByDoorMessageColumnName = 'Messaggio ai volontari quando lasciato a casa';
+  leftByDoorMessageColumnName = 'Messaggio per il volontario che ha lasciato fuori';
   problemCommentColumnName = 'Avvisare il volontario in caso di problemi';
   messageForVolunteerWhenDoneCaption = 'Notifica al volontariato al termine di tutte le famiglie';
   helpName = 'Nome alternativo';
@@ -170,7 +170,7 @@ export class italy implements Language {
   filterRegion = 'Filtro area';
   filterBasketType = 'Filtro tipo pacchi';
   selectNumberOfFamilies = 'Imposta il numero di consegna';
-  showLeftByHouseButton = 'Mostra pulsante volontario che ho lasciato a casa';
+  showLeftByHouseButton = "Mostra il pulsante 'lasciato fuori' per fare volontariato";
   redTitleBar = 'Titolo della pagina rossa';
   defaultPhonePrefixForExcelImport = "Prefisso telefonico predefinito per l'importazione da Excel";
   checkIfFamilyExistsInDb = 'Controlla se esiste già una famiglia nel database';
@@ -683,4 +683,5 @@ export class italy implements Language {
   selfPickupByBaskets = 'Self Pickup di Parcels';
   routeOptimization = 'Pianificazione del percorso';
   assignVolunteer = 'Assegna volontario';
+  group = 'Gruppo';
 }
