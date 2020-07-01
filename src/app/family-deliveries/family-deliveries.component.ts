@@ -23,6 +23,7 @@ import { async } from '@angular/core/testing';
 import { saveToExcel } from '../shared/saveToExcel';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { getLang, TranslationOptions } from '../translate'
+import { SelectHelperComponent } from '../select-helper/select-helper.component';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -416,7 +417,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     allowUpdate: true,
     rowCssClass: f => f.deliverStatus.getCss(),
     numOfColumnsInGrid: 5,
-    
+
     knowTotalRows: true,
     get: {
       limit: this.limit,
@@ -687,6 +688,13 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
       visible: d => args.context.isAllowed(Roles.admin)
     },
     {
+      name: getLang(args.context).assignVolunteer,
+      click: async d => {
+        await d.courier.showSelectDialog(async () => await d.save());
+      },
+      visible: d => !DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)
+    },
+    {
       name: getLang(args.context).cancelAsignment,
       click: async d => {
         if (await args.dialog.YesNoPromise(getLang(args.context).cancelAssignmentFor + d.name.value)) {
@@ -742,7 +750,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
           }
         }
       },
-      visible: d => (d.deliverStatus.value == DeliveryStatus.ReadyForDelivery && d.courier.value == '' || d.deliverStatus.value == DeliveryStatus.SelfPickup) && args.context.isAllowed(Roles.admin)
+      visible: d => !DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)
     }
   ] as RowButton<FamilyDeliveries>[]
 

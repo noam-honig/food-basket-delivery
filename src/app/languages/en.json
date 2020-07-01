@@ -274,7 +274,7 @@
     "custom": "Assign Volunteer"
   },
   "assigned": {
-    "google": "Belongs",
+    "google": "Assigned",
     "valueInCode": "שוייך"
   },
   "assignedButNotOutBaskets": {
@@ -315,6 +315,11 @@
     "google": "Volunteers cannot be associated because a distribution list is not selected. Please select a distribution list (top left where \"All Lists\" is written)",
     "valueInCode": "לא ניתן לשייך מתנדבים מכיוון שלא נבחרה רשימת חלוקה. אנא בחרו רשימת חלוקה (למעלה מצד שמאל איפה שכתוב \"כל הרשימות\")",
     "custom": "Please select a distribution list (from the selection box at the top right corner) before assigning deliveries."
+  },
+  "assignVolunteer": {
+    "google": "Belongs to a volunteer",
+    "valueInCode": "שייך למתנדב",
+    "custom": "Assign Volunteer"
   },
   "atAddress": {
     "google": "At",

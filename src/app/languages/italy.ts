@@ -682,4 +682,5 @@ export class italy implements Language {
   assignedButNotOutBaskets = 'Assegnato ma non escluso da Parcels';
   selfPickupByBaskets = 'Self Pickup di Parcels';
   routeOptimization = 'Pianificazione del percorso';
+  assignVolunteer = 'Assegna volontario';
 }

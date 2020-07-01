@@ -591,7 +591,7 @@ export class en implements Language {
   no = 'No';
   yes = 'Yes';
   search = 'Search';
-  assigned = 'Belongs';
+  assigned = 'Assigned';
   familySourceName = 'Name';
   contactPersonName = 'contact';
   lineWithNoName = 'Untitled line';
@@ -682,4 +682,5 @@ export class en implements Language {
   assignedButNotOutBaskets = 'Assigned but not out by Parcels';
   selfPickupByBaskets = 'Self Pickup by Parcels';
   routeOptimization = 'Route planning';
+  assignVolunteer = 'Assign Volunteer';
 }

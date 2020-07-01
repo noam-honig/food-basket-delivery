@@ -682,4 +682,5 @@ export class es implements Language {
   assignedButNotOutBaskets = 'Asignado pero no fuera por Parcels';
   selfPickupByBaskets = 'Self Pickup by Parcels';
   routeOptimization = 'Planificacion de la ruta';
+  assignVolunteer = 'Asignar voluntario';
 }

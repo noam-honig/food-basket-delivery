@@ -302,7 +302,7 @@
   "assigned": {
     "google": "Pertenece",
     "valueInCode": "שוייך",
-    "valueInEnglish": "Belongs"
+    "valueInEnglish": "Assigned"
   },
   "assignedButNotOutBaskets": {
     "google": "Asignado pero no fuera por Parcels",
@@ -343,6 +343,11 @@
     "google": "Seleccione una lista de distribución (del cuadro de selección en la esquina superior derecha) antes de asignar entregas.",
     "valueInCode": "לא ניתן לשייך מתנדבים מכיוון שלא נבחרה רשימת חלוקה. אנא בחרו רשימת חלוקה (למעלה מצד שמאל איפה שכתוב \"כל הרשימות\")",
     "valueInEnglish": "Please select a distribution list (from the selection box at the top right corner) before assigning deliveries."
+  },
+  "assignVolunteer": {
+    "google": "Asignar voluntario",
+    "valueInCode": "שייך למתנדב",
+    "valueInEnglish": "Assign Volunteer"
   },
   "atAddress": {
     "google": "a",

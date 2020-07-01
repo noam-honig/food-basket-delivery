@@ -283,7 +283,7 @@ export class Helpers extends HelpersBase {
 
 export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 
-    constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>, args: {
+    constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>, private args: {
         filter?: (helper: HelpersAndStats) => FilterBase,
         location?: () => Location,
         searchClosestDefaultFamily?: boolean
@@ -294,14 +294,21 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
                     getValue: () => this.getValue(),
                     hideDataOnInput: true,
                     width: '200',
-                    click: async () => this.context.openDialog((await import('../select-helper/select-helper.component')).SelectHelperComponent,
-                        x => x.args = {
-                            filter: args.filter, location: args.location ? args.location() : undefined,
-                            searchClosestDefaultFamily: args.searchClosestDefaultFamily
-                            , onSelect: s => this.value = (s ? s.id.value : '')
-                        })
+                    click: async () =>this.showSelectDialog()
                 })
         }, settingsOrCaption);
+    }
+    async showSelectDialog(onSelect?: () => void) {
+        this.context.openDialog((await import('../select-helper/select-helper.component')).SelectHelperComponent,
+            x => x.args = {
+                filter: this.args.filter, location: this.args.location ? this.args.location() : undefined,
+                searchClosestDefaultFamily: this.args.searchClosestDefaultFamily
+                , onSelect: s => {
+                    this.value = (s ? s.id.value : '');
+                    if (onSelect)
+                        onSelect();
+                }
+            })
     }
 
 
