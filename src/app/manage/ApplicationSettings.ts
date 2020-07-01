@@ -4,7 +4,7 @@ import { Entity, Context, EntityClass } from '@remult/core';
 import { PhoneColumn } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { DeliveryStatusColumn, DeliveryStatus } from "../families/DeliveryStatus";
-import { translationConfig, TranslationOptionsColumn, Language, getLang, use, setLangForSite } from "../translate";
+import { translationConfig, TranslationOptionsColumn, Language, getLang, use, setLangForSite, TranslationOptions } from "../translate";
 
 import { FamilySources } from "../families/FamilySources";
 import { Injectable } from '@angular/core';
@@ -59,7 +59,7 @@ export class ApplicationSettings extends Entity<number>  {
     return r;
   }
   showVideo() {
-    return this.lang.languageCode == 'iw';
+    return this.lang.languageCode == 'iw' && this.forWho.value != TranslationOptions.donors;
   }
 
   id = new NumberColumn();
@@ -222,7 +222,7 @@ export class PhoneOption {
       args.addPhone(args.family.socialWorker.value, args.family.socialWorkerPhone2.displayValue);
     }
   });
-  static defaultVolunteer = new PhoneOption("defaultVolunteer", use? use.language.defaultVolunteer:'', async args => {
+  static defaultVolunteer = new PhoneOption("defaultVolunteer", use ? use.language.defaultVolunteer : '', async args => {
     if (args.family.fixedCourier.value && args.d.courier.value != args.family.fixedCourier.value) {
       let h = await args.context.for(Helpers).findId(args.family.fixedCourier.value);
       args.addPhone(getLang(args.context).defaultVolunteer + ": " + h.name.value, h.phone.displayValue);
