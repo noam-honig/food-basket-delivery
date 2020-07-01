@@ -24,7 +24,7 @@ import { BasketType } from '../families/BasketType';
 import { SqlBuilder, wasChanged, PhoneColumn } from '../model-shared/types';
 import { BusyService } from '@remult/core';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
-import { Groups, GroupsStats } from '../manage/manage.component';
+import { Groups, GroupsStatsPerDistributionCenter, GroupsStats, GroupsStatsForAllDeliveryCenters } from '../manage/manage.component';
 import { SendSmsAction } from './send-sms-action';
 
 import { SelectCompanyComponent } from '../select-company/select-company.component';
@@ -201,8 +201,14 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
     async refreshBaskets() {
         await this.busy.donotWait(async () => {
-
-            this.context.for(GroupsStats).find({ orderBy: f => f.name, where: f => f.familiesCount.isGreaterThan(0).and(f.distCenter.filter(this.dialog.distCenter.value)), limit: 1000 }).then(g => this.groups = g);
+            let groups: Promise<GroupsStats[]>;
+            if (this.dialog.distCenter.value == allCentersToken) {
+                groups = this.context.for(GroupsStatsForAllDeliveryCenters).find({ where: f => f.familiesCount.isGreaterThan(0), limit: 1000 });
+                console.log('all');
+            }
+            else
+                groups = this.context.for(GroupsStatsPerDistributionCenter).find({ where: f => f.familiesCount.isGreaterThan(0).and(f.distCenter.filter(this.dialog.distCenter.value)), limit: 1000 });
+            groups.then(g => this.groups = g);
             let r = (await AsignFamilyComponent.getBasketStatus({
                 filterGroup: this.filterGroup,
                 filterCity: this.filterCity,
@@ -325,9 +331,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.destroyHelper.destroy();
     }
     constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public settings: ApplicationSettings) {
-
+        this.dialog.onDistCenterChange(()=>this.refreshBaskets(),this.destroyHelper);
 
     }
+    
     filterOptions: BoolColumn[] = [];
     async ngOnInit() {
 

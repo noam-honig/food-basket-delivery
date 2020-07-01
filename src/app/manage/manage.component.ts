@@ -71,7 +71,7 @@ export class ManageComponent implements OnInit {
   constructor(private dialog: DialogService, private context: Context, private sanitization: DomSanitizer, public settings: ApplicationSettings) { }
 
   basketType = this.context.for(BasketType).gridSettings({
-    
+
     columnSettings: x => [
       x.name,
       {
@@ -95,7 +95,7 @@ export class ManageComponent implements OnInit {
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
   });
   distributionCenters = this.context.for(DistributionCenters).gridSettings({
-    
+
     rowButtons: [{
       name: this.settings.lang.distributionCenterDetails,
       click: async d => {
@@ -147,7 +147,7 @@ export class ManageComponent implements OnInit {
       this.refreshEnvironmentAfterSave();
 
     },
-    numOfColumnsInGrid:4,
+    numOfColumnsInGrid: 4,
     allowUpdate: true,
     allowInsert: true,
 
@@ -160,7 +160,7 @@ export class ManageComponent implements OnInit {
     }, 1000);
   }
   sources = this.context.for(FamilySources).gridSettings({
-    
+
     columnSettings: s => [
       s.name,
       s.phone,
@@ -176,7 +176,7 @@ export class ManageComponent implements OnInit {
   });
   groups = this.context.for(Groups).gridSettings({
     onSavingRow: () => this.refreshEnvironmentAfterSave(),
-    
+
     columnSettings: s => [
       s.name,
     ], allowUpdate: true,
@@ -290,7 +290,7 @@ export class ManageComponent implements OnInit {
   phoneOptions = [
     PhoneOption.assignerOrOrg
     , PhoneOption.familyHelpPhone
-    ,PhoneOption.defaultVolunteer
+    , PhoneOption.defaultVolunteer
     , PhoneOption.familySource
     , PhoneOption.otherPhone
   ];
@@ -433,14 +433,15 @@ export class Groups extends IdEntity {
 }
 
 @EntityClass
-export class GroupsStats extends Entity<string> {
+export class GroupsStatsPerDistributionCenter extends Entity<string> implements GroupsStats {
   name = new StringColumn();
   distCenter = new DistributionCenterId(this.context);
   familiesCount = new NumberColumn();
   constructor(private context: Context) {
     super({
       allowApiRead: Roles.distCenterAdmin,
-      name: 'groupsStats',
+      defaultOrderBy: () => [this.name],
+      name: 'GroupsStatsPerDistributionCenter',
       dbName: () => {
         let f = context.for(ActiveFamilyDeliveries).create();
         let g = context.for(Groups).create();
@@ -466,4 +467,44 @@ export class GroupsStats extends Entity<string> {
       }
     });
   }
+
+}
+@EntityClass
+export class GroupsStatsForAllDeliveryCenters extends Entity<string> implements GroupsStats {
+  name = new StringColumn();
+  familiesCount = new NumberColumn();
+  constructor(private context: Context) {
+    super({
+      allowApiRead: Roles.distCenterAdmin,
+      name: 'GroupsStatsForAllDeliveryCenters',
+      defaultOrderBy: () => [this.name],
+      dbName: () => {
+        let f = context.for(ActiveFamilyDeliveries).create();
+        let g = context.for(Groups).create();
+
+        let sql = new SqlBuilder();
+        sql.addEntity(f, 'Families');
+        sql.addEntity(g, 'groups');
+        return sql.entityDbName(
+          {
+            select: () => [g.name, sql.countInnerSelect({
+              from: f,
+
+              where: () => [
+                sql.build(f.groups, ' like \'%\'||', g.name, '||\'%\''),
+                f.readyFilter().and(f.distributionCenter.isAllowedForUser())]
+
+
+            }, this.familiesCount)],
+            from: g
+
+
+          })
+      }
+    });
+  }
+}
+export interface GroupsStats {
+  name: StringColumn;
+  familiesCount: NumberColumn;
 }
