@@ -474,6 +474,7 @@ export class FamiliesComponent implements OnInit {
             name: this.settings.lang.allFamilies,
             stats: [
                 this.stats.active,
+                this.stats.frozen,
                 this.stats.outOfList,
                 this.stats.toDelete
 

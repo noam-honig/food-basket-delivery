@@ -7,6 +7,7 @@ export class FamilyStatus {
 
 
   static Active: FamilyStatus = new FamilyStatus(0, l => l.active);
+  static Frozen: FamilyStatus = new FamilyStatus(100, l => l.frozen);
   static RemovedFromList: FamilyStatus = new FamilyStatus(99, l => l.removedFromList);
   static ToDelete: FamilyStatus = new FamilyStatus(98, l => l.toDelete);
   familyStatus() {
