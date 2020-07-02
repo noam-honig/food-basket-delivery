@@ -102,7 +102,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
       await this.busy.doWhileShowingBusy(async () => {
 
         for (const h of this.helpers) {
-          if (!h.gotSms) {
+          if (!h.smsWasSent) {
             await SendSmsAction.SendSms(h.id, false);
           }
         }
@@ -126,7 +126,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
     [
       this.stats.notOutYet,
       this.stats.onTheWay,
-      this.stats.late,
+      this.stats.smsNotOpenedYet,
       this.stats.problem,
       this.stats.delivered
     ].forEach(s => {
@@ -177,19 +177,21 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
         sql.columnWithAlias(h.name, 'couriername'),
         sql.columnWithAlias(h.phone, 'phone'),
         sql.columnWithAlias(h.smsDate, 'smsdate'),
+        sql.columnWithAlias(h.lastSignInDate, 'signindate'),
         sql.columnWithAlias(h.eventComment, 'comment1'),
         sql.columnWithAlias(sql.func('max', fd.courierAssingTime), 'maxasign'),
-        sql.sumWithAlias(1, 'deliveries',fd.deliverStatus.isDifferentFrom(DeliveryStatus.SelfPickup).and(fd.deliverStatus.isDifferentFrom(DeliveryStatus.SuccessPickedUp))),
+        sql.sumWithAlias(1, 'deliveries', fd.deliverStatus.isDifferentFrom(DeliveryStatus.SelfPickup).and(fd.deliverStatus.isDifferentFrom(DeliveryStatus.SuccessPickedUp))),
         sql.sumWithAlias(1, 'inprogress', fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
         sql.sumWithAlias(1, 'problem', fd.deliverStatus.isProblem())
 
       ],
       where: () => [fd.courier.isDifferentFrom('').and(fd.distributionCenter.filter(distCenter))],
 
-    }).replace(/distributionCenter/g, 'e1.distributionCenter'), ' group by ', [fd.courier, h.name, h.phone, h.smsDate, h.eventComment], ' order by ', sql.func('max', fd.courierAssingTime)));
+    }).replace(/distributionCenter/g, 'e1.distributionCenter'), ' group by ', [fd.courier, h.name, h.phone, h.smsDate, h.eventComment,h.lastSignInDate], ' order by ', sql.func('max', fd.courierAssingTime)));
     return r.rows.map(r => {
       let smsDate = r['smsdate'];
       let maxAsign = r['maxasign'];
+      let signindate = r['signindate'];
       let res: helperFollowupInfo = {
         id: r['id'],
         name: r['couriername'],
@@ -197,9 +199,10 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
         deliveries: +r['deliveries'],
         inProgress: +r['inprogress'],
         problem: +r['problem'],
-        late: smsDate && smsDate.valueOf() <= new Date().valueOf() - 3600000 * 1.5,
+        viewedSms: signindate && smsDate && signindate > smsDate,
         smsDateName: smsDate ? relativeDateName(context, { d: smsDate }) : '',
-        gotSms: smsDate && smsDate > maxAsign,
+        smsWasSent: smsDate && smsDate > maxAsign,
+
         eventComment: r['comment1']
       };
       return res;
@@ -221,9 +224,9 @@ export class DeliveryStats {
   constructor(private context: Context) {
 
   }
-  notOutYet = new DeliveryStatistic(getLang(this.context).smsNotSent, f => f.inProgress >= 1 && !f.gotSms, colors.blue);
-  onTheWay = new DeliveryStatistic(getLang(this.context).onTheWay, f => f.inProgress >= 1 && f.gotSms && !f.late, colors.blue);
-  late = new DeliveryStatistic(getLang(this.context).delayed, f => f.inProgress >= 1 && f.gotSms && f.late, colors.yellow);
+  notOutYet = new DeliveryStatistic(getLang(this.context).smsNotSent, f => f.inProgress >= 1 && !f.smsWasSent, colors.blue);
+  onTheWay = new DeliveryStatistic(getLang(this.context).onTheWay, f => f.inProgress >= 1 && f.smsWasSent && f.viewedSms, colors.blue);
+  smsNotOpenedYet = new DeliveryStatistic(getLang(this.context).smsNotOpened, f => f.inProgress >= 1 && f.smsWasSent && !f.viewedSms, colors.yellow);
   delivered = new DeliveryStatistic(getLang(this.context).doneVolunteers, f => f.inProgress == 0 && f.problem == 0, colors.green);
   problem = new DeliveryStatistic(getLang(this.context).problems, f => f.problem > 0, colors.red);
 }
@@ -248,9 +251,9 @@ export interface helperFollowupInfo {
   deliveries: number,
   inProgress: number,
   problem: number,
-  gotSms: boolean,
+  smsWasSent: boolean,
   eventComment: string,
   smsDateName: string,
-  late: boolean
+  viewedSms: boolean
 
 }

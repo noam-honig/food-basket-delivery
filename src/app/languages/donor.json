@@ -619,10 +619,6 @@
     "google": "הגדר משלוחים לכל התורמים מהאקסל",
     "valueInCode": "הגדר משלוחים לכל המשפחות מהאקסל"
   },
-  "delayed": {
-    "google": "מתעכבים",
-    "valueInCode": "מתעכבים"
-  },
   "deleteDeliveries": {
     "google": "מחק משלוחים",
     "valueInCode": "מחק משלוחים"
@@ -1363,6 +1359,10 @@
     "google": "הערה פנימית - לא תופיע למתנדב",
     "valueInCode": "הערה פנימית - לא תופיע למתנדב"
   },
+  "internalDeliveryComment": {
+    "google": "הערה פנימית למשלוח - לא תוצג למתנדב",
+    "valueInCode": "הערה פנימית למשלוח - לא תוצג למתנדב"
+  },
   "invalidPhoneNumber": {
     "google": "מספר טלפון אינו תקין",
     "valueInCode": "מספר טלפון אינו תקין"
@@ -1523,6 +1523,10 @@
     "google": "הודעה למתנדב כאשר סיים את כל התורמים",
     "valueInCode": "הודעה למתנדב כאשר סיים את כל המשפחות"
   },
+  "messageStatus": {
+    "google": "סטטוס הודעה",
+    "valueInCode": "סטטוס הודעה"
+  },
   "minutes": {
     "google": "דקות",
     "valueInCode": "דקות"
@@ -1630,6 +1634,10 @@
   "no": {
     "google": "לא",
     "valueInCode": "לא"
+  },
+  "noAssignedVolunteer": {
+    "google": "לא משוייך מתנדב",
+    "valueInCode": "לא משוייך מתנדב"
   },
   "noDeliveries": {
     "google": "אין משלוחים לאיסוף",
@@ -2295,6 +2303,10 @@
     "google": "הצג ב govmap",
     "valueInCode": "הצג ב govmap"
   },
+  "showOnlyCompletedDeliveries": {
+    "google": "הצג רק משלוחים שהסתיימו",
+    "valueInCode": "הצג רק משלוחים שהסתיימו"
+  },
   "showRouteOnGoogleMaps": {
     "google": "הצג מסלול ב Google Maps",
     "valueInCode": "הצג מסלול ב Google Maps"
@@ -2339,13 +2351,25 @@
     "google": "הודעת SMS נשלחה ל",
     "valueInCode": "הודעת SMS נשלחה ל"
   },
+  "smsNotOpened": {
+    "google": "SMS טרם נפתח",
+    "valueInCode": "SMS טרם נפתח"
+  },
   "smsNotSent": {
     "google": "טרם נשלח SMS",
     "valueInCode": "טרם נשלח SMS"
   },
+  "smsOpened": {
+    "google": "SMS נפתח",
+    "valueInCode": "SMS נפתח"
+  },
   "smsReminderMessageContentCaption": {
     "google": "תוכן הודעת תזכורת SMS",
     "valueInCode": "תוכן הודעת תזכורת SMS"
+  },
+  "smsSent": {
+    "google": "SMS נשלח",
+    "valueInCode": "SMS נשלח"
   },
   "smsTextHelpTitle": {
     "google": "הודעה זו תשלח למתנדב ממסך שיוך משלוחים - עם הקישור לתורמים להן הוא מתבקש לחלק.",

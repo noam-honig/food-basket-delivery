@@ -35,6 +35,7 @@ export abstract class HelpersBase extends IdEntity {
 
     phone = new PhoneColumn(getLang(this.context).phone);
     smsDate = new DateTimeColumn(getLang(this.context).smsDate);
+    lastSignInDate = new changeDate();
     company = new CompanyColumn(this.context);
     totalKm = new NumberColumn({ allowApiUpdate: Roles.distCenterAdmin });
     totalTime = new NumberColumn({ allowApiUpdate: Roles.distCenterAdmin });

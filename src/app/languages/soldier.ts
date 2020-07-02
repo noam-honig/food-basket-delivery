@@ -453,7 +453,7 @@ export class soldier implements Language {
   fromDate = 'מתאריך';
   toDate = 'עד תאריך';
   shouldSendSmsTo = 'האם לשלוח הודעת SMS ל';
-  delayed = 'מתעכבים';
+  smsNotOpened = 'SMS טרם נפתח';
   doneVolunteers = 'סיימו';
   problems = 'בעיות';
   delveriesInProgress = 'חיילים מחכות';
@@ -684,4 +684,10 @@ export class soldier implements Language {
   routeOptimization = 'תכנון מסלול';
   assignVolunteer = 'שייך למתנדב';
   group = 'קבוצה';
+  showOnlyCompletedDeliveries = 'הצג רק משלוחים שהסתיימו';
+  smsSent = 'SMS נשלח';
+  noAssignedVolunteer = 'לא משוייך מתנדב';
+  smsOpened = 'SMS נפתח';
+  messageStatus = 'סטטוס הודעה';
+  internalDeliveryComment = 'הערה פנימית למשלוח - לא תוצג למתנדב';
 }

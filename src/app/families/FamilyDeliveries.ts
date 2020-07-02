@@ -1,5 +1,5 @@
 import { PhoneColumn, changeDate, SqlBuilder, DateTimeColumn, wasChanged } from "../model-shared/types";
-import { EntityClass, Context, IdColumn, IdEntity, StringColumn, NumberColumn, BoolColumn, FilterBase, AndFilter, Column, DataAreaSettings, IDataAreaSettings } from '@remult/core';
+import { EntityClass, Context, IdColumn, IdEntity, StringColumn, NumberColumn, BoolColumn, FilterBase, AndFilter, Column, DataAreaSettings, IDataAreaSettings, ValueListColumn, ColumnOptions } from '@remult/core';
 import { BasketId, QuantityColumn } from "./BasketType";
 import { FamilyId, Families, GroupsColumn } from "./families";
 import { DeliveryStatusColumn, DeliveryStatus } from "./DeliveryStatus";
@@ -94,7 +94,7 @@ export class FamilyDeliveries extends IdEntity {
         location: () => this.getDrivingLocation()
     });
     courierComments = new StringColumn(getLang(this.context).commentsWritteByVolunteer);
-    internalDeliveryComment = new StringColumn({ caption: getLang(this.context).internalComment, includeInApi: Roles.admin });
+    internalDeliveryComment = new StringColumn({ caption: getLang(this.context).internalDeliveryComment, includeInApi: Roles.admin });
     routeOrder = new NumberColumn({
         allowApiUpdate: Roles.distCenterAdmin
     });
@@ -232,7 +232,7 @@ export class FamilyDeliveries extends IdEntity {
 
         }
     });
-    courierReceivedSms = new BoolColumn({
+    messageStatus = new MessageStatusColumn({
         sqlExpression: () => {
             var sql = new SqlBuilder();
 
@@ -242,8 +242,17 @@ export class FamilyDeliveries extends IdEntity {
             sql.addEntity(helper, 'h');
             return sql.case([{
                 when: [sql.ne(f.courier, "''")],
-                then: sql.build("COALESCE ((select ", helper.smsDate, ">", f.courierAssingTime, " from ", helper.defs.dbName, " as h where ", sql.eq(helper.id, f.courier), "), false)")
-            }], false);
+                then: sql.build("COALESCE ((select ",
+                    sql.case([{
+                        when: [sql.gt(helper.lastSignInDate, f.courierAssingTime)],
+                        then: MessageStatus.opened.id
+                    }, {
+                        when: [sql.gt(helper.smsDate, f.courierAssingTime)],
+                        then: MessageStatus.notOpened
+                    }
+                    ], MessageStatus.notSent.id)
+                    , " from ", helper.defs.dbName, " as h where ", sql.eq(helper.id, f.courier), "), " + MessageStatus.noVolunteer.id + ")")
+            }], MessageStatus.noVolunteer.id);
         }
     });
 
@@ -360,7 +369,16 @@ export class FamilyDeliveries extends IdEntity {
                 if (this.courier.value) {
                     let c = this.context.for(Helpers).lookup(this.courier);
 
-                    return (this.courierReceivedSms.value ? use.language.onTheWay : use.language.assigned) + ': ' + c.name.value + (c.eventComment.value ? ' (' + c.eventComment.value + ')' : '') + ', ' + use.language.assigned + ' ' + this.courierAssingTime.relativeDateName(this.context);
+                    let r = ((this.messageStatus.value == MessageStatus.opened ? use.language.onTheWay : use.language.assigned) + ': ' + c.name.value + (c.eventComment.value ? ' (' + c.eventComment.value + ')' : '') + ', ' + use.language.assigned + ' ' + this.courierAssingTime.relativeDateName(this.context)) + " ";
+                    switch (this.messageStatus.value) {
+                        case MessageStatus.notSent:
+                            r += use.language.smsNotSent;
+                            break;
+                        case MessageStatus.notOpened:
+                            r += use.language.smsNotOpened;
+                            break;
+
+                    }
                 }
                 break;
             case DeliveryStatus.Success:
@@ -549,4 +567,23 @@ function logChanged(context: Context, col: Column, dateCol: DateTimeColumn, user
         user.value = context.user.id;
         wasChanged();
     }
+}
+
+
+export class MessageStatus {
+    static noVolunteer = new MessageStatus(0, use.language.noAssignedVolunteer);
+    static notSent = new MessageStatus(1, use.language.smsNotSent);
+    static notOpened = new MessageStatus(2, use.language.smsNotOpened);
+    static opened = new MessageStatus(3, use.language.smsOpened);
+    constructor(public id: number, public caption: string) {
+
+    }
+}
+export class MessageStatusColumn extends ValueListColumn<MessageStatus>{
+    constructor(settingsOrCaption?: ColumnOptions<MessageStatus>) {
+        super(MessageStatusColumn);
+        if (!this.defs.caption)
+            this.defs.caption = use.language.messageStatus;
+    }
+
 }

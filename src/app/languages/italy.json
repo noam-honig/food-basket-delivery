@@ -775,11 +775,6 @@
     "valueInCode": "הגדר משלוחים לכל המשפחות מהאקסל",
     "valueInEnglish": "Define deliveries for all families imported from Excel file"
   },
-  "delayed": {
-    "google": "Ritardato",
-    "valueInCode": "מתעכבים",
-    "valueInEnglish": "Delayed"
-  },
   "deleteDeliveries": {
     "google": "Elimina consegne",
     "valueInCode": "מחק משלוחים",
@@ -1705,6 +1700,11 @@
     "valueInCode": "הערה פנימית - לא תופיע למתנדב",
     "valueInEnglish": "Internal Note - Will not appear for volunteer"
   },
+  "internalDeliveryComment": {
+    "google": "Nota di consegna interna - non visibile al volontario",
+    "valueInCode": "הערה פנימית למשלוח - לא תוצג למתנדב",
+    "valueInEnglish": "Internal deliver note - not visible to volunteer"
+  },
   "invalidPhoneNumber": {
     "google": "Il numero di telefono non è corretto",
     "valueInCode": "מספר טלפון אינו תקין",
@@ -1905,6 +1905,11 @@
     "valueInCode": "הודעה למתנדב כאשר סיים את כל המשפחות",
     "valueInEnglish": "Notification to volunteer when all families are finished"
   },
+  "messageStatus": {
+    "google": "Stato del messaggio",
+    "valueInCode": "סטטוס הודעה",
+    "valueInEnglish": "Message status"
+  },
   "minutes": {
     "google": "sottigliezza",
     "valueInCode": "דקות",
@@ -2039,6 +2044,11 @@
     "google": "No",
     "valueInCode": "לא",
     "valueInEnglish": "No"
+  },
+  "noAssignedVolunteer": {
+    "google": "Nessun volontario assegnato",
+    "valueInCode": "לא משוייך מתנדב",
+    "valueInEnglish": "No assigned volunteer"
   },
   "noDeliveries": {
     "google": "Nessuna consegna per la distribuzione",
@@ -2871,6 +2881,11 @@
     "valueInCode": "הצג ב govmap",
     "valueInEnglish": "View in govmap"
   },
+  "showOnlyCompletedDeliveries": {
+    "google": "Mostra solo consegne completate",
+    "valueInCode": "הצג רק משלוחים שהסתיימו",
+    "valueInEnglish": "Show only completed deliveries"
+  },
   "showRouteOnGoogleMaps": {
     "google": "Visualizza il percorso su google maps",
     "valueInCode": "הצג מסלול ב Google Maps",
@@ -2926,15 +2941,30 @@
     "valueInCode": "הודעת SMS נשלחה ל",
     "valueInEnglish": "SMS message sent to"
   },
+  "smsNotOpened": {
+    "google": "SMS non aperto",
+    "valueInCode": "SMS טרם נפתח",
+    "valueInEnglish": "SMS not opened"
+  },
   "smsNotSent": {
     "google": "SMS non è stato ancora inviato",
     "valueInCode": "טרם נשלח SMS",
     "valueInEnglish": "SMS has not yet been sent"
   },
+  "smsOpened": {
+    "google": "SMS visualizzato",
+    "valueInCode": "SMS נפתח",
+    "valueInEnglish": "SMS viewed"
+  },
   "smsReminderMessageContentCaption": {
     "google": "Contenuto del promemoria via SMS",
     "valueInCode": "תוכן הודעת תזכורת SMS",
     "valueInEnglish": "SMS reminder content"
+  },
+  "smsSent": {
+    "google": "SMS inviato",
+    "valueInCode": "SMS נשלח",
+    "valueInEnglish": "SMS sent"
   },
   "smsTextHelpTitle": {
     "google": "Questo messaggio verrà inviato a un volontario dalla schermata Assegna volontario - con il collegamento alle famiglie che gli viene chiesto di condividere.",

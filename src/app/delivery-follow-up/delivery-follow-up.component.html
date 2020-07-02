@@ -18,8 +18,7 @@
     <mat-icon matSuffix (click)="searchString=''">clear</mat-icon>
   </mat-form-field>
   <mat-menu #appMenu="matMenu">
-    <button mat-menu-item
-      (click)="sendSmsToAll()">{{settings.lang.sendSmsToAllVolunteersThatDidntGetOne}}</button>
+    <button mat-menu-item (click)="sendSmsToAll()">{{settings.lang.sendSmsToAllVolunteersThatDidntGetOne}}</button>
 
   </mat-menu>
 
@@ -36,8 +35,9 @@
               *ngIf="c.problem>0">&nbsp;
               ({{c.problem}}
               {{settings.lang.notDelivered}})</span>
-            <span *ngIf="c.gotSms">, {{settings.lang.left}} {{c.smsDateName}}</span> <span *ngIf="!c.gotSms">,
-              {{settings.lang.smsNotSent}}</span>
+            <span *ngIf="c.viewedSms">, {{settings.lang.smsSent}} {{c.smsDateName}}</span>
+            <span *ngIf="!c.viewedSms&&c.smsWasSent">,{{settings.lang.smsNotOpened}}</span>
+            <span *ngIf="!c.smsWasSent">,{{settings.lang.smsNotSent}}</span>
           </mat-panel-description></a>
       </mat-list-item>
       <mat-divider></mat-divider>

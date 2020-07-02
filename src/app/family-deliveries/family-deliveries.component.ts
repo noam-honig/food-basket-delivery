@@ -13,7 +13,7 @@ import { colors } from '../families/stats-action';
 import { BasketType } from '../families/BasketType';
 
 
-import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { FamilyDeliveries, ActiveFamilyDeliveries, MessageStatus } from '../families/FamilyDeliveries';
 import { Families } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { delvieryActions } from './family-deliveries-actions';
@@ -83,7 +83,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   };
   assignedButNotOutBaskets: statsOnTabBasket = {
     name: getLang(this.context).assignedButNotOutBaskets,
-    rule: f => f.onTheWayFilter().and(f.courierReceivedSms.isEqualTo(false)),
+    rule: f => f.onTheWayFilter().and(f.messageStatus.isEqualTo(MessageStatus.notSent)),
     stats: [
       this.stats.ready,
       this.stats.special
@@ -304,7 +304,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         f.readyFilter().and(f.basketType.isEqualTo(id)));
       this.basketStatsCalc(st.baskets, this.basketsInEvent, b => b.inEventDeliveries, (f, id) =>
         f.basketType.isEqualTo(id));
-      this.basketStatsCalc(st.baskets, this.assignedButNotOutBaskets, b => b.assigned, (f, id) =>
+      this.basketStatsCalc(st.baskets, this.assignedButNotOutBaskets, b => b.smsNotSent, (f, id) =>
         f.basketType.isEqualTo(id).and(this.assignedButNotOutBaskets.rule(f)));
       this.basketStatsCalc(st.baskets, this.selfPickupBaskets, b => b.selfPickup, (f, id) =>
         f.basketType.isEqualTo(id).and(this.selfPickupBaskets.rule(f)));
@@ -468,7 +468,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.basketType,
         deliveries.quantity,
 
-        {
+        this.deliverySummary = {
           caption: getLang(this.context).deliverySummary,
           column: deliveries.deliverStatus,
           readOnly: true,
@@ -522,7 +522,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.needsWorkDate,
         deliveries.needsWorkUser,
         deliveries.fixedCourier,
-        deliveries.familyMembers
+        deliveries.familyMembers,
+        deliveries.messageStatus
 
       ];
       return r;

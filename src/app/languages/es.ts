@@ -453,7 +453,7 @@ export class es implements Language {
   fromDate = 'Con fecha de';
   toDate = 'Hasta';
   shouldSendSmsTo = 'Enviar un mensaje de texto a';
-  delayed = 'Retrasado';
+  smsNotOpened = 'SMS no abierto';
   doneVolunteers = 'Terminar';
   problems = 'Problemas';
   delveriesInProgress = 'Las familias estan esperando';
@@ -684,4 +684,10 @@ export class es implements Language {
   routeOptimization = 'Planificacion de la ruta';
   assignVolunteer = 'Asignar voluntario';
   group = 'Grupo';
+  showOnlyCompletedDeliveries = 'Mostrar solo entregas completadas';
+  smsSent = 'SMS enviado';
+  noAssignedVolunteer = 'No hay voluntario asignado';
+  smsOpened = 'SMS visto';
+  messageStatus = 'Estado del mensaje';
+  internalDeliveryComment = 'Nota de entrega interna: no visible para el voluntario';
 }

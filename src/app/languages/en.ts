@@ -453,7 +453,7 @@ export class en implements Language {
   fromDate = 'Dated';
   toDate = 'Until';
   shouldSendSmsTo = 'Send a text message to';
-  delayed = 'Delayed';
+  smsNotOpened = 'SMS not opened';
   doneVolunteers = 'Finish';
   problems = 'Problems';
   delveriesInProgress = 'Families are waiting';
@@ -684,4 +684,10 @@ export class en implements Language {
   routeOptimization = 'Route planning';
   assignVolunteer = 'Assign Volunteer';
   group = 'Group';
+  showOnlyCompletedDeliveries = 'Show only completed deliveries';
+  smsSent = 'SMS sent';
+  noAssignedVolunteer = 'No assigned volunteer';
+  smsOpened = 'SMS viewed';
+  messageStatus = 'Message status';
+  internalDeliveryComment = 'Internal deliver note - not visible to volunteer';
 }

@@ -580,7 +580,7 @@ export class Language {
   fromDate = 'מתאריך';
   toDate = 'עד תאריך';
   shouldSendSmsTo = 'האם לשלוח הודעת SMS ל';
-  delayed = 'מתעכבים';
+  smsNotOpened = 'SMS טרם נפתח';
   doneVolunteers = 'סיימו';
   problems = 'בעיות';
   delveriesInProgress = 'משפחות מחכות';
@@ -818,6 +818,11 @@ export class Language {
   assignVolunteer = "שייך מתנדב";
   group = "קבוצה";
   showOnlyCompletedDeliveries = "הצג רק משלוחים שהסתיימו";
+  smsSent = "SMS נשלח";
+  noAssignedVolunteer = "לא משוייך מתנדב";
+  smsOpened = "SMS נפתח";
+  messageStatus = "סטטוס הודעה";
+  internalDeliveryComment = "הערה פנימית למשלוח - לא תוצג למתנדב";
 }
 
 const defaultLang = new Language();

@@ -44,6 +44,10 @@ export class AuthService {
 
         let h = await context.for(Helpers).findFirst(h => h.shortUrlKey.isEqualTo(key));
         if (h) {
+
+            h.lastSignInDate.value = new Date();
+            h._disableOnSavingRow = true;
+            await h.save();
             return {
                 valid: true,
                 authToken: Helpers.helper.createSecuredTokenBasedOn({
@@ -76,7 +80,7 @@ export class AuthService {
         tokenHelper.tokenInfoChanged();
     }
     static UpdateInfoComponent: { new(...args: any[]): any };
-    async login(user: string, password: string, remember: boolean, fail: () => void, askForPassword: () => void){
+    async login(user: string, password: string, remember: boolean, fail: () => void, askForPassword: () => void) {
 
         let options = await AuthService.login(user, password);
 
@@ -164,6 +168,11 @@ export class AuthService {
                     }
 
 
+                }
+                if (!requirePassword) {
+                    h._disableOnSavingRow = true;
+                    h.lastSignInDate.value = new Date();
+                    await h.save();
                 }
                 r = {
                     authToken: Helpers.helper.createSecuredTokenBasedOn(result),

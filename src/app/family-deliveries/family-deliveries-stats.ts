@@ -3,7 +3,7 @@ import { FilterBase, AndFilter, Context, ServerFunction, EntityClass, Entity, St
 import { Roles } from "../auth/roles";
 import { YesNo } from "../families/YesNo";
 import { BasketType } from "../families/BasketType";
-import { FamilyDeliveries, ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
+import { FamilyDeliveries, ActiveFamilyDeliveries, MessageStatus } from "../families/FamilyDeliveries";
 import { Families } from "../families/families";
 import { SqlBuilder } from "../model-shared/types";
 import { DeliveryStatus } from "../families/DeliveryStatus";
@@ -53,7 +53,8 @@ export class FamilyDeliveryStats {
                 unassignedDeliveries: number,
                 inEventDeliveries: number,
                 successDeliveries: number,
-                assigned:number,
+                smsNotSent:number,
+                
                 selfPickup:number,
             }[], cities: [], groups: [] as groupStats[]
         };
@@ -75,7 +76,8 @@ export class FamilyDeliveryStats {
             sql.build('sum (', f.quantity, ') b'),
             sql.build('sum (', sql.case([{ when: [f.deliverStatus.isSuccess()], then: f.quantity }], 0), ') c'),
             sql.build('sum (', sql.case([{ when: [f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup)], then: f.quantity }], 0), ') d'),
-            sql.build('sum (', sql.case([{ when: [f.onTheWayFilter().and(f.courierReceivedSms.isEqualTo(false))], then: f.quantity }], 0), ') e')
+            sql.build('sum (', sql.case([{ when: [f.onTheWayFilter().and(f.messageStatus.isEqualTo(MessageStatus.notSent))], then: f.quantity }], 0), ') e')
+            
             ],
             from: f,
             where: () => [f.filterDistCenterAndAllowed(distCenter)]
@@ -92,7 +94,8 @@ export class FamilyDeliveryStats {
                 inEventDeliveries: +r['b'],
                 successDeliveries: +r['c'],
                 selfPickup:+r['d'],
-                assigned:+r['e']
+                smsNotSent:+r['e']
+                
             });
         }
 

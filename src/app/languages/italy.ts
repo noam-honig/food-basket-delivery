@@ -453,7 +453,7 @@ export class italy implements Language {
   fromDate = 'Datato';
   toDate = 'Fino a';
   shouldSendSmsTo = 'Invia un messaggio di testo a';
-  delayed = 'Ritardato';
+  smsNotOpened = 'SMS non aperto';
   doneVolunteers = 'finire';
   problems = 'I problemi';
   delveriesInProgress = 'Le famiglie stanno aspettando';
@@ -684,4 +684,10 @@ export class italy implements Language {
   routeOptimization = 'Pianificazione del percorso';
   assignVolunteer = 'Assegna volontario';
   group = 'Gruppo';
+  showOnlyCompletedDeliveries = 'Mostra solo consegne completate';
+  smsSent = 'SMS inviato';
+  noAssignedVolunteer = 'Nessun volontario assegnato';
+  smsOpened = 'SMS visualizzato';
+  messageStatus = 'Stato del messaggio';
+  internalDeliveryComment = 'Nota di consegna interna - non visibile al volontario';
 }
