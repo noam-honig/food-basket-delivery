@@ -63,6 +63,10 @@ serverInit().then(async (dataSource) => {
             setLangForSite(Sites.getValidSchemaFromContext(context), settings.forWho.value);
             x = settings.organisationName.value;
             let result = fs.readFileSync(index).toString().replace(/!TITLE!/g, x).replace("/*!SITE!*/", "multiSite=" + Sites.multipleSites);
+            let key = process.env.GOOGLE_MAP_JAVASCRIPT_KEY;
+            if (!key)
+                key = 'AIzaSyDbGtO6VwaRqGoduRaGjSAB15mZPiPt9mM'//default key to use only for development
+            result = result.replace(/GOOGLE_MAP_JAVASCRIPT_KEY/g, key);
             if (settings.forWho.value.args.leftToRight) {
                 result = result.replace(/<body dir="rtl">/g, '<body dir="ltr">');
             }

@@ -705,8 +705,10 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
       showInLine:true,
       click: async d => {
         let h = await args.context.for(Helpers).findId(d.courier);
-        args.context.openDialog(
-          HelperAssignmentComponent, s => s.argsHelper = h)
+        await args.context.openDialog(
+          HelperAssignmentComponent, s => s.argsHelper = h);
+          this.refresh();
+
 
 
       },
