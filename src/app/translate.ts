@@ -823,6 +823,7 @@ export class Language {
   smsOpened = "SMS נפתח";
   messageStatus = "סטטוס הודעה";
   internalDeliveryComment = "הערה פנימית למשלוח - לא תוצג למתנדב";
+  
 }
 
 const defaultLang = new Language();

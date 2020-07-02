@@ -106,6 +106,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       },
       {
         name: use.language.assignDeliveryMenu,
+        icon:'list_alt',
         visible: h => !h.isNew(),
         click: async h =>
           this.context.openDialog(

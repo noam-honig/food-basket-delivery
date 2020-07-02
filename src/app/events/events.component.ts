@@ -37,6 +37,7 @@ export class EventsComponent implements OnInit {
               rowButtons: [
                 {
                   name: this.settings.lang.assignDeliveryMenu,
+                  icon:'list_alt',
                   click: async (ev) => {
                     let h = await this.context.for(Helpers).findId(ev.helper);
                     await this.context.openDialog(HelperAssignmentComponent, x => x.argsHelper = h);

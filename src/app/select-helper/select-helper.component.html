@@ -16,7 +16,7 @@
     <mat-form-field style="width:100%">
       <input matInput [(ngModel)]="searchString" cdk-focus (input)="doFilter()" placeholder="{{settings.lang.searchVolunteer}}"
         [ngModelOptions]="{standalone: true}">
-      <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
+      <mat-icon matSuffix (click)="searchString=''">clear</mat-icon>
     </mat-form-field>
     <h4 *ngIf="showingRecentHelpers">{{settings.lang.recentVolunteers}}</h4>
 

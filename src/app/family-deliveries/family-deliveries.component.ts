@@ -24,6 +24,8 @@ import { saveToExcel } from '../shared/saveToExcel';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { getLang, TranslationOptions } from '../translate'
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
+import { Helpers } from '../helpers/helpers';
+import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -689,14 +691,31 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
       visible: d => args.context.isAllowed(Roles.admin)
     },
     {
-      name: getLang(args.context).assignVolunteer,
+      textInMenu:()=> getLang(args.context).assignVolunteer,
+      icon:'person_search',
+      showInLine:true,
       click: async d => {
         await d.courier.showSelectDialog(async () => await d.save());
       },
       visible: d => !DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)
     },
     {
-      name: getLang(args.context).cancelAsignment,
+      textInMenu:()=> getLang(args.context).assignDeliveryMenu,
+      icon:'list_alt',
+      showInLine:true,
+      click: async d => {
+        let h = await args.context.for(Helpers).findId(d.courier);
+        args.context.openDialog(
+          HelperAssignmentComponent, s => s.argsHelper = h)
+
+
+      },
+      visible: d => d.courier.value && args.context.isAllowed(Roles.distCenterAdmin)
+    },
+    {
+      textInMenu:()=> getLang(args.context).cancelAsignment,
+      showInLine:true,
+      icon:'person_add_disabled',
       click: async d => {
         if (await args.dialog.YesNoPromise(getLang(args.context).cancelAssignmentFor + d.name.value)) {
           {

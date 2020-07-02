@@ -379,6 +379,7 @@ export class FamilyDeliveries extends IdEntity {
                             break;
 
                     }
+                    return r;
                 }
                 break;
             case DeliveryStatus.Success:
