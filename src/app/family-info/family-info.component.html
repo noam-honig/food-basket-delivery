@@ -19,7 +19,9 @@
 
   <div *ngIf="f.deliveryComments.value">
     <mat-icon color="accent" style="vertical-align: middle">comment</mat-icon>
-    <strong style="color:red">{{settings.lang.notice}} </strong> {{f.deliveryComments.value}}
+    <div class="emphesize-comment">
+      <strong style="color:red">{{settings.lang.notice}} </strong> {{f.deliveryComments.value}}
+    </div>
   </div>
   <div *ngIf="f.courierBeenHereBefore.value">
     <mat-icon color="green" style="vertical-align: middle">repeat</mat-icon>
@@ -62,7 +64,7 @@
 
       </a>
       <ng-container *ngIf="f.addressComment.value">
-        <div>
+        <div class="emphesize-comment">
           <strong style="color:red;">{{settings.lang.notice}} </strong> {{f.addressComment.value}}
         </div>
       </ng-container>
