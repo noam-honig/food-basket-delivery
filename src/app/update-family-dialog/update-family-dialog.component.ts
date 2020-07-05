@@ -162,6 +162,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     let fd = this.args.familyDelivery;
     if (!fd)
       fd = this.args.family.createDelivery(this.dialog.distCenter.value);
+    this.args.family.updateDelivery(fd);
     this.context.openDialog(PreviewFamilyComponent, x => { x.argsFamily = fd });
   }
   updateInfo() {
