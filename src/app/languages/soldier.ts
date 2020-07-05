@@ -691,4 +691,5 @@ export class soldier implements Language {
   messageStatus = 'סטטוס הודעה';
   internalDeliveryComment = 'הערה פנימית למשלוח - לא תוצג למתנדב';
   numOfActiveReadyDeliveries = 'מספר משלוחים פעילים שטרם נמסרו';
+  volunteerAssignments = 'שיוך משלוחים למתנדב';
 }

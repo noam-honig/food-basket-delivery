@@ -927,7 +927,7 @@
   },
   "displayFamilyAsVolunteerWillSeeIt": {
     "google": "View a family as a volunteer will see her",
-    "valueInCode": "הצג משפחה כפי שתנדב יראה אותה"
+    "valueInCode": "הצג משפחה כפי שמתנדב יראה אותה"
   },
   "distributionCenterComment": {
     "google": "Note",
@@ -2934,6 +2934,11 @@
     "google": "volunteer",
     "valueInCode": "מתנדב",
     "custom": "Volunteer"
+  },
+  "volunteerAssignments": {
+    "google": "Associate volunteer shipments",
+    "valueInCode": "שיוך משלוחים למתנדב",
+    "custom": "Volunteer Assignments"
   },
   "volunteerByCrrentDelivery": {
     "google": "Set up a volunteer according to the volunteer in the current shipment",

@@ -797,7 +797,7 @@
   },
   "displayFamilyAsVolunteerWillSeeIt": {
     "google": "הצג תורם כפי שתנדב יראה אותה",
-    "valueInCode": "הצג משפחה כפי שתנדב יראה אותה"
+    "valueInCode": "הצג משפחה כפי שמתנדב יראה אותה"
   },
   "distributionCenterComment": {
     "google": "הערה",
@@ -2670,6 +2670,10 @@
   "volunteer": {
     "google": "מתנדב",
     "valueInCode": "מתנדב"
+  },
+  "volunteerAssignments": {
+    "google": "שיוך משלוחים למתנדב",
+    "valueInCode": "שיוך משלוחים למתנדב"
   },
   "volunteerByCrrentDelivery": {
     "google": "הגדר מתנדב לפי המתנדב במשלוח הנוכחי",

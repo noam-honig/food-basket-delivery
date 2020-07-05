@@ -700,7 +700,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
       visible: d => !DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)
     },
     {
-      textInMenu:()=> getLang(args.context).assignDeliveryMenu,
+      textInMenu:()=> getLang(args.context).volunteerAssignments,
       icon:'list_alt',
       showInLine:true,
       click: async d => {

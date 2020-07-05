@@ -691,4 +691,5 @@ export class italy implements Language {
   messageStatus = 'Stato del messaggio';
   internalDeliveryComment = 'Nota di consegna interna - non visibile al volontario';
   numOfActiveReadyDeliveries = 'Numero di consegne attive non completate';
+  volunteerAssignments = 'Compiti volontari';
 }
