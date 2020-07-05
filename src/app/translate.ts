@@ -551,7 +551,7 @@ export class Language {
   addCurrentLocationToNote = 'הוסף מיקום נוכחי להערה';
   basketNotDelivered = 'הסל לא נמסר';
   confirm = 'אשר';
-  displayFamilyAsVolunteerWillSeeIt = 'הצג משפחה כפי שתנדב יראה אותה';
+  displayFamilyAsVolunteerWillSeeIt = 'הצג משפחה כפי שמתנדב יראה אותה';
   infoAboutUpdates = 'פרטי עדכונים';
   sendMessageToVolunteer = 'שלח הודעה למתנדב';
   deliveryInfo = 'פרטי משלוח';
