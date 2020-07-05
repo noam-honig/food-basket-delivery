@@ -1,18 +1,19 @@
-<div style="display:flex;justify-content: space-between">
-  <div>
-    <mat-form-field>
-      <input matInput [(ngModel)]="searchString" (input)="doSearch()" placeholder="{{settings.lang.searchVolunteer}}"
-        [ngModelOptions]="{standalone: true}">
-      <mat-icon matSuffix (click)="clearSearch()">clear</mat-icon>
-    </mat-form-field>
-    <br>
+<div class="full-page">
+  <div style="display:flex;justify-content: space-between">
+    <div>
+      <mat-form-field>
+        <input matInput [(ngModel)]="searchString" (input)="doSearch()" placeholder="{{settings.lang.searchVolunteer}}"
+          [ngModelOptions]="{standalone: true}">
+        <mat-icon matSuffix (click)="clearSearch()">clear</mat-icon>
+      </mat-form-field>
+      <br>
 
 
+    </div>
+    <div>
+      <button mat-raised-button color="primary" (click)="quickAdd()">{{settings.lang.addVolunteer}}</button>
+    </div>
   </div>
-  <div>
-    <button mat-raised-button color="primary" (click)="quickAdd()" >{{settings.lang.addVolunteer}}</button>
-  </div>
+
+    <data-grid [settings]="helpers" class="grow-item"></data-grid>
 </div>
-
-
-<data-grid [settings]="helpers" height="300"></data-grid>

@@ -1,12 +1,13 @@
 <mat-sidenav-container class="app-sidenav-container">
-  <mat-sidenav #sidenav class="app-sidenav mat-elevation-z10 no-print" [opened]="!dialog.isScreenSmall()" *ngIf="this.context.isSignedIn()"
-    [mode]="dialog.isScreenSmall()?'over':'side'">
+
+  <mat-sidenav #sidenav class="app-sidenav mat-elevation-z10 no-print" [opened]="!dialog.isScreenSmall()"
+    *ngIf="this.context.isSignedIn()" [mode]="dialog.isScreenSmall()?'over':'side'">
 
     <div style="width:100%;text-align: center">
       <img src="{{getLogo()}}" />
     </div>
     <p style="text-align: center" *ngIf="!dialog.dc">{{settings.organisationName.value}}</p>
-    <div *ngIf="dialog.dc" >
+    <div *ngIf="dialog.dc">
       <p style="text-align: center">{{dialog.dc.name.value}}
       </p>
       <p style="text-align: center">{{dialog.dc.getGeocodeInformation().getAddress()}}</p>
@@ -28,41 +29,43 @@
     </mat-nav-list>
 
   </mat-sidenav>
-  <mat-toolbar color="{{toolbarColor}}" class="no-print" style="justify-content: space-between;" *ngIf="this.context.isSignedIn()">
-    <div style="    display: flex;
+  <div class="full-page">
+    <mat-toolbar color="{{toolbarColor}}" class="no-print" style="justify-content: space-between;"
+      *ngIf="this.context.isSignedIn()">
+      <div style="    display: flex;
     
     align-items: center;">
-      <button mat-button class="sidenav-toggle" (click)="sidenav.toggle()">
-        <mat-icon>menu</mat-icon>
-      </button>
-      <span style="padding-left: 10px;">{{currentTitle()}}</span>
-    </div>
-    <div style="background-color: white;color: rgba(0, 0, 0, 0.87); border-radius: 10px;
+        <button mat-button class="sidenav-toggle" (click)="sidenav.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <span style="padding-left: 10px;">{{currentTitle()}}</span>
+      </div>
+      <div style="background-color: white;color: rgba(0, 0, 0, 0.87); border-radius: 10px;
     height: 3em;
     padding-top: 4px;
     padding-left: 6px;
     padding-right: 6px;" *ngIf="this.dialog.canSeeCenter()&&dialog.distCenterArea">
 
-      <data-area [settings]="dialog.distCenterArea" *ngIf="dialog.distCenterArea&&dialog.canSeeCenter()"></data-area>
+        <data-area [settings]="dialog.distCenterArea" *ngIf="dialog.distCenterArea&&dialog.canSeeCenter()"></data-area>
 
-    </div>
+      </div>
 
-  </mat-toolbar>
+    </mat-toolbar>
 
-  <div class="app-sidenav-content " style="justify-content: space-between;">
+    <div class="app-sidenav-content " style="justify-content: space-between;">
 
 
-    <div class="wrapper" [class.edge-fix]="isEdge">
-      <router-outlet></router-outlet>
-      <div class="footer">
+      <div class="wrapper" [class.edge-fix]="isEdge">
+        <router-outlet></router-outlet>
         
       </div>
+ 
     </div>
-    <footer style="text-align:center;font-size:70%;height:100px">
+    <footer style="text-align:center;font-size:70%">
       <hr>
       <a *ngIf="!showEnglishUrl()" href="https://noam-honig.github.io/salmaz" target="_blank">{{lang.copyright}}</a>
-      <a *ngIf="showEnglishUrl()" href="https://noam-honig.github.io/salmaz/en.html" target="_blank">{{lang.copyright}}</a>
+      <a *ngIf="showEnglishUrl()" href="https://noam-honig.github.io/salmaz/en.html"
+        target="_blank">{{lang.copyright}}</a>
     </footer>
   </div>
-
 </mat-sidenav-container>

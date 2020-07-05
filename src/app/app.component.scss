@@ -21,9 +21,13 @@
 .app-sidenav {
   width: 240px;
 }
+@media not print {
 .wrapper {
   margin: 5px 10px 0px;
-}
+  height:10px;
+  flex-grow:1;
+  overflow-x: auto;
+}}
 
 $iconWidth: 56px;
 

@@ -87,7 +87,7 @@ export class HelperFamiliesComponent implements OnInit {
         }
 
 
-        await this.familyLists.refreshRoute( {
+        await this.familyLists.refreshRoute({
           strategyId: strategy.value.id,
           volunteerLocation: this.volunteerLocation
         });
@@ -95,6 +95,16 @@ export class HelperFamiliesComponent implements OnInit {
     });
 
 
+  }
+  getHelpText() {
+    var r = this.settings.lang.ifYouNeedAnyHelpPleaseCall;
+    r += " ";
+    if (this.settings.helpText.value && this.settings.helpPhone.value)
+      return r + this.settings.helpText.value + ", " + this.settings.helpPhone.displayValue;
+    else {
+      var h = this.context.for(Helpers).lookup(h => h.id.isEqualTo(this.context.user.id));
+      return r + h.name.value + ", " + h.phone.displayValue;
+    }
   }
 
   buttons: GridButton[] = [];
