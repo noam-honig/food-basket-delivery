@@ -692,4 +692,5 @@ export class donor implements Language {
   internalDeliveryComment = 'הערה פנימית למשלוח - לא תוצג למתנדב';
   numOfActiveReadyDeliveries = 'מספר משלוחים פעילים שטרם נמסרו';
   volunteerAssignments = 'שיוך משלוחים למתנדב';
+  ifYouNeedAnyHelpPleaseCall = 'לעזרה התקשר ל';
 }

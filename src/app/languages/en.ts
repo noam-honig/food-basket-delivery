@@ -692,4 +692,5 @@ export class en implements Language {
   internalDeliveryComment = 'Internal deliver note - not visible to volunteer';
   numOfActiveReadyDeliveries = 'Num of Active non completed deliveries';
   volunteerAssignments = 'Volunteer Assignments';
+  ifYouNeedAnyHelpPleaseCall = 'For help call';
 }

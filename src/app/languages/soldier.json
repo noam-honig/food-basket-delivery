@@ -1327,6 +1327,10 @@
     "google": "אם קיים משלוח לחייל עם סוג סל שונה, הוסף משלוח חדש",
     "valueInCode": "אם קיים משלוח למשפחה עם סוג סל שונה, הוסף משלוח חדש"
   },
+  "ifYouNeedAnyHelpPleaseCall": {
+    "google": "לעזרה התקשר ל",
+    "valueInCode": "לעזרה התקשר ל"
+  },
   "illBeThere": {
     "google": "רשום אותי לארוע זה",
     "valueInCode": "רשום אותי לארוע זה"

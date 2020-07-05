@@ -692,4 +692,5 @@ export class es implements Language {
   internalDeliveryComment = 'Nota de entrega interna: no visible para el voluntario';
   numOfActiveReadyDeliveries = 'Número de entregas activas no completadas';
   volunteerAssignments = 'Asignaciones voluntarias';
+  ifYouNeedAnyHelpPleaseCall = 'Para ayuda llame';
 }

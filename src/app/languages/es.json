@@ -1660,6 +1660,11 @@
     "valueInCode": "אם קיים משלוח למשפחה עם סוג סל שונה, הוסף משלוח חדש",
     "valueInEnglish": "If there is a delivery for a family with a different parcel type, add a new one"
   },
+  "ifYouNeedAnyHelpPleaseCall": {
+    "google": "Para ayuda llame",
+    "valueInCode": "לעזרה התקשר ל",
+    "valueInEnglish": "For help call"
+  },
   "illBeThere": {
     "google": "Inscríbeme para este evento",
     "valueInCode": "רשום אותי לארוע זה",
