@@ -1,4 +1,4 @@
-<div [class.container]="showOnLeft">
+<div class="full-page" [class.container]="showOnLeft" >
   <div>
     <ng-container *ngIf="!ready">
       <app-date-range></app-date-range>
@@ -26,8 +26,9 @@
       </div>
     </div>
   </div>
-  <div style="flex-grow:1;">
-    <div [hidden]="!ready" #gmap [style.height]="getHeight()"></div>
+  <div class="full-page">
+
+    <div [hidden]="!ready" #gmap class="grow-item"></div>
     <div *ngIf="ready">
       <input [(ngModel)]="height" *ngIf="ready">
       {{map.getZoom()}} <input [(ngModel)]="zoom" *ngIf="ready"><button (click)="map.setZoom(+this.zoom)">set</button>
