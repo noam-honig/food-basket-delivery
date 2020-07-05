@@ -309,7 +309,8 @@ export class FamiliesComponent implements OnInit {
                 families.quantity,
                 families.deliveryComments,
                 families.fixedCourier,
-                families.special
+                families.special,
+                families.numOfActiveReadyDeliveries
 
 
             ];

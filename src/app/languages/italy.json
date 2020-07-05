@@ -2120,6 +2120,11 @@
     "valueInCode": "ללא מתנדב",
     "valueInEnglish": "No volunteer"
   },
+  "numOfActiveReadyDeliveries": {
+    "google": "Numero di consegne attive non completate",
+    "valueInCode": "מספר משלוחים פעילים שטרם נמסרו",
+    "valueInEnglish": "Num of Active non completed deliveries"
+  },
   "numOfFamilies": {
     "google": "Diverse famiglie",
     "valueInCode": "מספר משפחות",

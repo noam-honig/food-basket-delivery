@@ -1882,6 +1882,11 @@
     "google": "No volunteer",
     "valueInCode": "ללא מתנדב"
   },
+  "numOfActiveReadyDeliveries": {
+    "google": "A number of active deliveries that have not yet been delivered",
+    "valueInCode": "מספר משלוחים פעילים שטרם נמסרו",
+    "custom": "Num of Active non completed deliveries"
+  },
   "numOfFamilies": {
     "google": "Several families",
     "valueInCode": "מספר משפחות"

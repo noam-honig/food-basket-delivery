@@ -35,7 +35,7 @@
               *ngIf="c.problem>0">&nbsp;
               ({{c.problem}}
               {{settings.lang.notDelivered}})</span>
-            <span *ngIf="c.viewedSms">, {{settings.lang.smsSent}} {{c.smsDateName}}</span>
+            <span *ngIf="c.viewedSms&&c.smsWasSent">, {{settings.lang.smsSent}} {{c.smsDateName}}</span>
             <span *ngIf="!c.viewedSms&&c.smsWasSent">,{{settings.lang.smsNotOpened}}</span>
             <span *ngIf="!c.smsWasSent">,{{settings.lang.smsNotSent}}</span>
           </mat-panel-description></a>

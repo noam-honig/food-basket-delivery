@@ -50,7 +50,7 @@ export class Families extends IdEntity {
   public deliveriesGridSettings(args: { dialog: DialogService, settings: ApplicationSettings }) {
     let result = this.context.for(FamilyDeliveries).gridSettings({
       numOfColumnsInGrid: 7,
-      
+
       rowCssClass: fd => fd.deliverStatus.getCss(),
       gridButtons: [{
         name: use.language.newDelivery,
@@ -345,9 +345,9 @@ export class Families extends IdEntity {
             let statusChangedOutOfActive = wasChanged(this.status) && this.status.value != FamilyStatus.Active;
             if (statusChangedOutOfActive) {
               let activeDeliveries = this.context.for(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(this.id).and(fd.deliverStatus.isNotAResultStatus()) });
-              if ( await activeDeliveries.count() > 0) {
+              if (await activeDeliveries.count() > 0) {
                 if (await this.context.openDialog(YesNoQuestionComponent, async x => x.args = {
-                  question: getLang(this.context).thisFamilyHas + " " +( await  activeDeliveries.count()) + " " + getLang(this.context).deliveries_ShouldWeDeleteThem
+                  question: getLang(this.context).thisFamilyHas + " " + (await activeDeliveries.count()) + " " + getLang(this.context).deliveries_ShouldWeDeleteThem
                 }, y => y.yes)) {
                   for await (const d of activeDeliveries) {
                     await d.delete();
@@ -532,6 +532,19 @@ export class Families extends IdEntity {
     }
   });
 
+  numOfActiveReadyDeliveries = new NumberColumn({
+    caption: getLang(this.context).numOfActiveReadyDeliveries,
+    sqlExpression: () => {
+      let fd = this.context.for(FamilyDeliveries).create();
+      let sql = new SqlBuilder();
+      return sql.columnCount(this, {
+        from: fd,
+        where: () => [sql.eq(fd.family, this.id),
+        fd.archive.isEqualTo(false).and(fd.deliverStatus.isNotAResultStatus())]
+      });
+
+    }
+  });
 
 
 

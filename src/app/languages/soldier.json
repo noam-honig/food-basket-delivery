@@ -1695,6 +1695,10 @@
     "google": "ללא מתנדב",
     "valueInCode": "ללא מתנדב"
   },
+  "numOfActiveReadyDeliveries": {
+    "google": "מספר משלוחים פעילים שטרם נמסרו",
+    "valueInCode": "מספר משלוחים פעילים שטרם נמסרו"
+  },
   "numOfFamilies": {
     "google": "מספר חיילים",
     "valueInCode": "מספר משפחות"

@@ -690,4 +690,5 @@ export class en implements Language {
   smsOpened = 'SMS viewed';
   messageStatus = 'Message status';
   internalDeliveryComment = 'Internal deliver note - not visible to volunteer';
+  numOfActiveReadyDeliveries = 'Num of Active non completed deliveries';
 }

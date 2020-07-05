@@ -690,4 +690,5 @@ export class es implements Language {
   smsOpened = 'SMS visto';
   messageStatus = 'Estado del mensaje';
   internalDeliveryComment = 'Nota de entrega interna: no visible para el voluntario';
+  numOfActiveReadyDeliveries = 'Número de entregas activas no completadas';
 }
