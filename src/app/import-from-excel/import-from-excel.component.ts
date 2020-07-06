@@ -988,13 +988,13 @@ export class ImportFromExcelComponent implements OnInit {
                         }
                     }
                 }
-                if (rows.length > 0) {
+                if (this.newRows.length > 0) {
                     let suspectAddress = 0;
-                    for (const r of rows) {
+                    for (const r of this.newRows) {
                         if (!r.address || r.address.match(/[0-9]$/))
                             suspectAddress++;
                     }
-                    let precent = (suspectAddress * 100 / rows.length);
+                    let precent = (suspectAddress * 100 / this.newRows.length);
                     if (precent > 30 && updatedColumns.get(this.f.address)) {
                         if (await this.dialog.YesNoPromise(precent.toFixed() + "% " + use.language.manyAddressesEndWithNumber)) {
                             this.stepper.previous();

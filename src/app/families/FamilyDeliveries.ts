@@ -248,7 +248,7 @@ export class FamilyDeliveries extends IdEntity {
                         then: MessageStatus.opened.id
                     }, {
                         when: [sql.gt(helper.smsDate, f.courierAssingTime)],
-                        then: MessageStatus.notOpened
+                        then: MessageStatus.notOpened.id
                     }
                     ], MessageStatus.notSent.id)
                     , " from ", helper.defs.dbName, " as h where ", sql.eq(helper.id, f.courier), "), " + MessageStatus.noVolunteer.id + ")")
@@ -582,7 +582,7 @@ export class MessageStatus {
 }
 export class MessageStatusColumn extends ValueListColumn<MessageStatus>{
     constructor(settingsOrCaption?: ColumnOptions<MessageStatus>) {
-        super(MessageStatusColumn);
+        super(MessageStatus, settingsOrCaption);
         if (!this.defs.caption)
             this.defs.caption = use.language.messageStatus;
     }

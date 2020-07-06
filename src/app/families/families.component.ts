@@ -631,7 +631,7 @@ export class FamiliesComponent implements OnInit {
             let origIndex = this.families.columns.items.indexOf(item);
             this.families.columns.moveCol(item, -origIndex + index);
         }
-        console.log(this.families.columns.items);
+        
 
     }
     statTotal(t: statsOnTab) {
