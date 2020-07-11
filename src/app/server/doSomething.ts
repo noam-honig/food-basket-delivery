@@ -18,18 +18,24 @@ import { Sites } from "../sites/sites";
 import * as fs from 'fs';
 import { processPhone } from "../import-from-excel/import-from-excel.component";
 import { buildLanguageFiles } from "./buildLanguages";
+import { buildGridButtonFromActions } from '../families/familyActionsWiring';
+import { Helpers } from '../helpers/helpers';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
+
+import { Families } from '../families/families';
+import { FamilyDeliveries } from '../families/FamilyDeliveries';
+import { volunteersInEvent,Event } from '../events/events';
 
 
 
 let match = 0;
 export async function DoIt() {
     try {
-        await serverInit();
+        var x = await serverInit();
         //await sendMessagE();
         //   await loadTranslationXlsx('c:/temp/newen.xlsx','en');
+        await buildDocs();
 
-         await buildLanguageFiles();
-       
 
 
 
@@ -122,3 +128,34 @@ class htmlReport {
     }
 }
 
+async function buildDocs() {
+    var c = new ServerContext();
+    c.setReq({
+        getBaseUrl:()=>'',
+        clientIp:'',
+        user:undefined,
+        get:undefined,
+        getHeader:undefined
+    });
+    var s = "";
+    let list:any[] = [Families,FamilyDeliveries,Helpers,Event,volunteersInEvent,ApplicationSettings];
+    for (const iterator of allEntities) {
+        if (!list.includes(iterator)&&iterator)
+            list.push(iterator);
+
+    }
+
+
+    for (const type of list) {
+        
+        var e = c.for(type).create();
+        s += "\n\n## " + e.defs.name +"\n";
+        for (const c of e.columns) {
+            let extra='';
+            if (c.defs.allowApiUpdate===false)
+                extra+=" - readonly";
+            s += "* " + c.defs.key + " (" + c.defs.caption + ")"+extra+"\n";
+        }
+    }
+    fs.writeFileSync("./docs/model.md",s);
+}

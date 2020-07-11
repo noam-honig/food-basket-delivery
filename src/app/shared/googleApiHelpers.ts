@@ -41,7 +41,7 @@ export async function GetGeoInformation(address: string, context: Context) {
             bounds: b.south + "," + b.west + "|" + b.north + "," + b.east
         });
         try {
-            // console.log(u.url);
+              console.log(u.url);
             let r = fetch.default(u.url).then(async x => await x.json().then(async (r: GeocodeResult) => {
 
 
