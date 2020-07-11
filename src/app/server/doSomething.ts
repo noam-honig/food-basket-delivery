@@ -150,7 +150,7 @@ async function buildDocs() {
 
         var e = c.for(type).create();
         s += "\n\n## " + e.defs.name + `
-| name | caption |  | extra info |
+| name | caption | type | extra info |
 | --- | --- | --- | --- |
 `;
         for (const c of e.columns) {
@@ -158,7 +158,7 @@ async function buildDocs() {
             if (c.defs.allowApiUpdate === false)
                 extra += " readonly";
             
-            s += "| " + c.defs.key + " | " + c.defs.caption + " | " + c.constructor.name + " | " + extra + " |\n";
+            s += "| " + c.defs.key + " | " + c.defs.caption + " | " + c.constructor.name.replace(/Column/g,'') + " | " + extra + " |\n";
         }
     }
     fs.writeFileSync("./docs/model.md", s);
