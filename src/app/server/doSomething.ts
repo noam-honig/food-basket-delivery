@@ -137,7 +137,7 @@ async function buildDocs() {
         get:undefined,
         getHeader:undefined
     });
-    var s = "";
+    var s = "## Data Model\n Here's a detailed list of all the entities used in the rest api";
     let list:any[] = [Families,FamilyDeliveries,Helpers,Event,volunteersInEvent,ApplicationSettings];
     for (const iterator of allEntities) {
         if (!list.includes(iterator)&&iterator)
@@ -149,12 +149,15 @@ async function buildDocs() {
     for (const type of list) {
         
         var e = c.for(type).create();
-        s += "\n\n## " + e.defs.name +"\n";
+        s += "\n\n## " + e.defs.name +`
+| name | caption | extra info |
+| --- | --- | --- |
+`;
         for (const c of e.columns) {
             let extra='';
             if (c.defs.allowApiUpdate===false)
                 extra+=" - readonly";
-            s += "* " + c.defs.key + " (" + c.defs.caption + ")"+extra+"\n";
+            s += "| " + c.defs.key + " | " + c.defs.caption + " | "+extra+" |\n";
         }
     }
     fs.writeFileSync("./docs/model.md",s);
