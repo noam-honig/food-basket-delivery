@@ -2,406 +2,406 @@
  Here's a detailed list of all the entities used in the rest api
 
 ## Families
-| name | caption | extra info |
-| --- | --- | --- |
-| id | id של המשפחה באפליקצית חגי |  - readonly |
-| name | שם |  |
-| tz | מספר זהות |  |
-| tz2 | מספר זהות בן/בת הזוג |  |
-| familyMembers | מספר נפשות |  |
-| birthDate | תאריך לידה |  |
-| nextBirthday | יומולדת הבא |  - readonly |
-| basketType | סוג סל ברירת מחדל |  |
-| quantity | כמות ברירת מחדל |  |
-| familySource | גורם מפנה |  |
-| socialWorker | איש קשר לבירור פרטים (עו"ס) |  |
-| socialWorkerPhone1 | עו"ס טלפון 1 |  |
-| socialWorkerPhone2 | עו"ס טלפון 2 |  |
-| groups | קבוצות שיוך משפחה |  |
-| special | שיוך מיוחד |  |
-| defaultSelfPickup | באים לקחת ברירת מחדל |  |
-| iDinExcel | מזהה חד ערכי למשפחה |  |
-| internalComment | הערה פנימית - לא תופיע למתנדב |  |
-| address | כתובת |  |
-| floor | קומה |  |
-| appartment | דירה |  |
-| entrance | כניסה |  |
-| city | עיר (מתעדכן אוטומטית) |  |
-| area | אזור |  |
-| addressComment | הנחיות נוספות לכתובת |  |
-| postalCode | מיקוד |  |
-| deliveryComments | הערה ברירת מחדל למתנדב |  |
-| addressApiResult | Address Api Result |  |
-| phone1 | טלפון 1 |  |
-| phone1Description | הערות לטלפון 1 |  |
-| phone2 | טלפון 2 |  |
-| phone2Description | הערות לטלפון 2 |  |
-| phone3 | טלפון 3 |  |
-| phone3Description | הערות לטלפון 3 |  |
-| phone4 | טלפון 4 |  |
-| phone4Description | הערות לטלפון 4 |  |
-| email | eMail |  |
-| status | סטטוס |  |
-| statusDate | סטטוס: תאריך שינוי |  - readonly |
-| statusUser | סטטוס: מי עדכן |  - readonly |
-| fixedCourier | מתנדב ברירת מחדל |  |
-| previousDeliveryStatus | סטטוס משלוח קודם |  |
-| previousDeliveryDate | תאריך משלוח קודם |  - readonly |
-| previousDeliveryComment | הערת משלוח קודם |  |
-| numOfActiveReadyDeliveries | מספר משלוחים פעילים שטרם נמסרו |  |
-| addressLongitude | Address Longitude |  |
-| addressLatitude | Address Latitude |  |
-| drivingLongitude | Driving Longitude |  |
-| drivingLatitude | Driving Latitude |  |
-| addressByGoogle | כתובת כפי שגוגל הבין |  - readonly |
-| addressOk | כתובת תקינה |  |
-| createDate | מועד הוספה |  - readonly |
-| createUser | משתמש מוסיף |  - readonly |
-| lastUpdateDate | מועד עדכון אחרון |  - readonly |
-| lastUpdateUser | משתמש מעדכן |  - readonly |
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
+| id | id של המשפחה באפליקצית חגי | IdColumn |  readonly |
+| name | שם | StringColumn |  |
+| tz | מספר זהות | StringColumn |  |
+| tz2 | מספר זהות בן/בת הזוג | StringColumn |  |
+| familyMembers | מספר נפשות | NumberColumn |  |
+| birthDate | תאריך לידה | DateColumn |  |
+| nextBirthday | יומולדת הבא | DateColumn |  readonly |
+| basketType | סוג סל ברירת מחדל | BasketId |  |
+| quantity | כמות ברירת מחדל | QuantityColumn |  |
+| familySource | גורם מפנה | FamilySourceId |  |
+| socialWorker | איש קשר לבירור פרטים (עו"ס) | StringColumn |  |
+| socialWorkerPhone1 | עו"ס טלפון 1 | PhoneColumn |  |
+| socialWorkerPhone2 | עו"ס טלפון 2 | PhoneColumn |  |
+| groups | קבוצות שיוך משפחה | GroupsColumn |  |
+| special | שיוך מיוחד | YesNoColumn |  |
+| defaultSelfPickup | באים לקחת ברירת מחדל | BoolColumn |  |
+| iDinExcel | מזהה חד ערכי למשפחה | StringColumn |  |
+| internalComment | הערה פנימית - לא תופיע למתנדב | StringColumn |  |
+| address | כתובת | StringColumn |  |
+| floor | קומה | StringColumn |  |
+| appartment | דירה | StringColumn |  |
+| entrance | כניסה | StringColumn |  |
+| city | עיר (מתעדכן אוטומטית) | StringColumn |  |
+| area | אזור | StringColumn |  |
+| addressComment | הנחיות נוספות לכתובת | StringColumn |  |
+| postalCode | מיקוד | NumberColumn |  |
+| deliveryComments | הערה ברירת מחדל למתנדב | StringColumn |  |
+| addressApiResult | Address Api Result | StringColumn |  |
+| phone1 | טלפון 1 | PhoneColumn |  |
+| phone1Description | הערות לטלפון 1 | StringColumn |  |
+| phone2 | טלפון 2 | PhoneColumn |  |
+| phone2Description | הערות לטלפון 2 | StringColumn |  |
+| phone3 | טלפון 3 | PhoneColumn |  |
+| phone3Description | הערות לטלפון 3 | StringColumn |  |
+| phone4 | טלפון 4 | PhoneColumn |  |
+| phone4Description | הערות לטלפון 4 | StringColumn |  |
+| email | eMail | EmailColumn |  |
+| status | סטטוס | FamilyStatusColumn |  |
+| statusDate | סטטוס: תאריך שינוי | changeDate |  readonly |
+| statusUser | סטטוס: מי עדכן | HelperIdReadonly |  readonly |
+| fixedCourier | מתנדב ברירת מחדל | HelperId |  |
+| previousDeliveryStatus | סטטוס משלוח קודם | DeliveryStatusColumn |  |
+| previousDeliveryDate | תאריך משלוח קודם | changeDate |  readonly |
+| previousDeliveryComment | הערת משלוח קודם | StringColumn |  |
+| numOfActiveReadyDeliveries | מספר משלוחים פעילים שטרם נמסרו | NumberColumn |  |
+| addressLongitude | Address Longitude | NumberColumn |  |
+| addressLatitude | Address Latitude | NumberColumn |  |
+| drivingLongitude | Driving Longitude | NumberColumn |  |
+| drivingLatitude | Driving Latitude | NumberColumn |  |
+| addressByGoogle | כתובת כפי שגוגל הבין | StringColumn |  readonly |
+| addressOk | כתובת תקינה | BoolColumn |  |
+| createDate | מועד הוספה | changeDate |  readonly |
+| createUser | משתמש מוסיף | HelperIdReadonly |  readonly |
+| lastUpdateDate | מועד עדכון אחרון | changeDate |  readonly |
+| lastUpdateUser | משתמש מעדכן | HelperIdReadonly |  readonly |
 
 
 ## FamilyDeliveries
-| name | caption | extra info |
-| --- | --- | --- |
-| id | Id |  - readonly |
-| family | id של המשפחה באפליקצית חגי |  - readonly |
-| name | שם |  - readonly |
-| basketType | סוג סל |  |
-| quantity | כמות |  |
-| distributionCenter | רשימת חלוקה |  |
-| deliverStatus | סטטוס משלוח |  |
-| courier | מתנדב |  |
-| courierComments | הערות שכתב המתנדב כשמסר |  |
-| internalDeliveryComment | הערה פנימית למשלוח - לא תוצג למתנדב |  |
-| routeOrder | Route Order |  |
-| special | שיוך מיוחד |  |
-| deliveryStatusDate | מתי |  - readonly |
-| courierAssignUser | מי שייכה למתנדב |  - readonly |
-| courierAssingTime | מועד שיוך למתנדב |  - readonly |
-| deliveryStatusUser | סטטוס: מי עדכן |  - readonly |
-| createDate | מועד הקצאה |  - readonly |
-| createUser | משתמש מקצה |  - readonly |
-| needsWork | צריך טיפול/מעקב |  |
-| needsWorkUser | צריך טיפול - מי עדכן |  - readonly |
-| needsWorkDate | צריך טיפול - מתי עודכן |  - readonly |
-| deliveryComments | הערה שתופיע למתנדב |  |
-| familySource | גורם מפנה |  - readonly |
-| groups | קבוצות שיוך משפחה |  - readonly |
-| address | כתובת |  - readonly |
-| floor | קומה |  - readonly |
-| appartment | דירה |  - readonly |
-| entrance | כניסה |  - readonly |
-| city | עיר (מתעדכן אוטומטית) |  - readonly |
-| area | אזור |  - readonly |
-| addressComment | הנחיות נוספות לכתובת |  - readonly |
-| addressLongitude | Address Longitude |  - readonly |
-| addressLatitude | Address Latitude |  - readonly |
-| drivingLongitude | Driving Longitude |  - readonly |
-| drivingLatitude | Driving Latitude |  - readonly |
-| addressByGoogle | כתובת כפי שגוגל הבין |  - readonly |
-| addressOk | כתובת תקינה |  - readonly |
-| fixedCourier | מתנדב ברירת מחדל |  - readonly |
-| familyMembers | מספר נפשות |  - readonly |
-| phone1 | טלפון 1 |  - readonly |
-| phone1Description | הערות לטלפון 1 |  - readonly |
-| phone2 | טלפון 2 |  - readonly |
-| phone2Description | הערות לטלפון 2 |  - readonly |
-| phone3 | טלפון 3 |  - readonly |
-| phone3Description | הערות לטלפון 3 |  - readonly |
-| phone4 | טלפון 4 |  - readonly |
-| phone4Description | הערות לטלפון 4 |  - readonly |
-| courierBeenHereBefore | Courier Been Here Before |  |
-| archive | Archive |  |
-| visibleToCourier | Visible To Courier |  |
-| messageStatus | סטטוס הודעה |  |
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
+| id | Id | IdColumn |  readonly |
+| family | id של המשפחה באפליקצית חגי | FamilyId |  readonly |
+| name | שם | StringColumn |  readonly |
+| basketType | סוג סל | BasketId |  |
+| quantity | כמות | QuantityColumn |  |
+| distributionCenter | רשימת חלוקה | DistributionCenterId |  |
+| deliverStatus | סטטוס משלוח | DeliveryStatusColumn |  |
+| courier | מתנדב | HelperId |  |
+| courierComments | הערות שכתב המתנדב כשמסר | StringColumn |  |
+| internalDeliveryComment | הערה פנימית למשלוח - לא תוצג למתנדב | StringColumn |  |
+| routeOrder | Route Order | NumberColumn |  |
+| special | שיוך מיוחד | YesNoColumn |  |
+| deliveryStatusDate | מתי | changeDate |  readonly |
+| courierAssignUser | מי שייכה למתנדב | HelperIdReadonly |  readonly |
+| courierAssingTime | מועד שיוך למתנדב | changeDate |  readonly |
+| deliveryStatusUser | סטטוס: מי עדכן | HelperIdReadonly |  readonly |
+| createDate | מועד הקצאה | changeDate |  readonly |
+| createUser | משתמש מקצה | HelperIdReadonly |  readonly |
+| needsWork | צריך טיפול/מעקב | BoolColumn |  |
+| needsWorkUser | צריך טיפול - מי עדכן | HelperIdReadonly |  readonly |
+| needsWorkDate | צריך טיפול - מתי עודכן | changeDate |  readonly |
+| deliveryComments | הערה שתופיע למתנדב | StringColumn |  |
+| familySource | גורם מפנה | FamilySourceId |  readonly |
+| groups | קבוצות שיוך משפחה | GroupsColumn |  readonly |
+| address | כתובת | StringColumn |  readonly |
+| floor | קומה | StringColumn |  readonly |
+| appartment | דירה | StringColumn |  readonly |
+| entrance | כניסה | StringColumn |  readonly |
+| city | עיר (מתעדכן אוטומטית) | StringColumn |  readonly |
+| area | אזור | StringColumn |  readonly |
+| addressComment | הנחיות נוספות לכתובת | StringColumn |  readonly |
+| addressLongitude | Address Longitude | NumberColumn |  readonly |
+| addressLatitude | Address Latitude | NumberColumn |  readonly |
+| drivingLongitude | Driving Longitude | NumberColumn |  readonly |
+| drivingLatitude | Driving Latitude | NumberColumn |  readonly |
+| addressByGoogle | כתובת כפי שגוגל הבין | StringColumn |  readonly |
+| addressOk | כתובת תקינה | BoolColumn |  readonly |
+| fixedCourier | מתנדב ברירת מחדל | HelperId |  readonly |
+| familyMembers | מספר נפשות | NumberColumn |  readonly |
+| phone1 | טלפון 1 | PhoneColumn |  readonly |
+| phone1Description | הערות לטלפון 1 | StringColumn |  readonly |
+| phone2 | טלפון 2 | PhoneColumn |  readonly |
+| phone2Description | הערות לטלפון 2 | StringColumn |  readonly |
+| phone3 | טלפון 3 | PhoneColumn |  readonly |
+| phone3Description | הערות לטלפון 3 | StringColumn |  readonly |
+| phone4 | טלפון 4 | PhoneColumn |  readonly |
+| phone4Description | הערות לטלפון 4 | StringColumn |  readonly |
+| courierBeenHereBefore | Courier Been Here Before | BoolColumn |  |
+| archive | Archive | BoolColumn |  |
+| visibleToCourier | Visible To Courier | BoolColumn |  |
+| messageStatus | סטטוס הודעה | MessageStatusColumn |  |
 
 
 ## Helpers
-| name | caption | extra info |
-| --- | --- | --- |
-| id | Id |  - readonly |
-| name | שם |  |
-| phone | טלפון |  |
-| smsDate | מועד משלוח SMS |  |
-| company | חברה |  |
-| totalKm | Total Km |  |
-| totalTime | Total Time |  |
-| shortUrlKey | Short Url Key |  |
-| distributionCenter | רשימת חלוקה |  |
-| eventComment | הערה |  |
-| needEscort | צריך מלווה |  |
-| theHelperIAmEscorting | נהג משוייך |  - readonly |
-| escort | מלווה |  |
-| allowedIds | Allowed Ids |  |
-| lastSignInDate | Last Sign In Date |  - readonly |
-| realStoredPassword | Real Stored Password |  |
-| email | eMail |  |
-| preferredDistributionAreaAddress | כתובת אזור חלוקה מועדף |  |
-| addressApiResult | Address Api Result |  |
-| password | סיסמה |  |
-| createDate | מועד הוספה |  - readonly |
-| reminderSmsDate | מועד משלוח תזכורת SMS |  |
-| admin | מנהל כלל המערכת |  |
-| distCenterAdmin | משייך מתנדבים לרשימת חלוקה |  |
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
+| id | Id | IdColumn |  readonly |
+| name | שם | StringColumn |  |
+| phone | טלפון | PhoneColumn |  |
+| smsDate | מועד משלוח SMS | DateTimeColumn |  |
+| company | חברה | CompanyColumn |  |
+| totalKm | Total Km | NumberColumn |  |
+| totalTime | Total Time | NumberColumn |  |
+| shortUrlKey | Short Url Key | StringColumn |  |
+| distributionCenter | רשימת חלוקה | DistributionCenterId |  |
+| eventComment | הערה | StringColumn |  |
+| needEscort | צריך מלווה | BoolColumn |  |
+| theHelperIAmEscorting | נהג משוייך | HelperIdReadonly |  readonly |
+| escort | מלווה | HelperId |  |
+| allowedIds | Allowed Ids | StringColumn |  |
+| lastSignInDate | Last Sign In Date | changeDate |  readonly |
+| realStoredPassword | Real Stored Password | StringColumn |  |
+| email | eMail | EmailColumn |  |
+| preferredDistributionAreaAddress | כתובת אזור חלוקה מועדף | StringColumn |  |
+| addressApiResult | Address Api Result | StringColumn |  |
+| password | סיסמה | StringColumn |  |
+| createDate | מועד הוספה | changeDate |  readonly |
+| reminderSmsDate | מועד משלוח תזכורת SMS | DateTimeColumn |  |
+| admin | מנהל כלל המערכת | BoolColumn |  |
+| distCenterAdmin | משייך מתנדבים לרשימת חלוקה | BoolColumn |  |
 
 
 ## events
-| name | caption | extra info |
-| --- | --- | --- |
-| id | Id |  - readonly |
-| name | שם ארוע |  |
-| eventStatus | סטטוס |  |
-| description | תאור |  |
-| eventDate | תאריך |  |
-| startTime | שעה |  |
-| endTime | עד שעה |  |
-| requiredVolunteers | מספר מתנדבים נדרש |  |
-| registeredVolunteers | מספר מתנדבים שנרשמו |  |
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
+| id | Id | IdColumn |  readonly |
+| name | שם ארוע | StringColumn |  |
+| eventStatus | סטטוס | eventStatusColumn |  |
+| description | תאור | StringColumn |  |
+| eventDate | תאריך | DateColumn |  |
+| startTime | שעה | StringColumn |  |
+| endTime | עד שעה | StringColumn |  |
+| requiredVolunteers | מספר מתנדבים נדרש | NumberColumn |  |
+| registeredVolunteers | מספר מתנדבים שנרשמו | NumberColumn |  |
 
 
 ## volunteersInEvent
-| name | caption | extra info |
-| --- | --- | --- |
-| id | Id |  - readonly |
-| eventId | Event Id |  |
-| helper | Helper |  |
-| helperName | שם |  |
-| helperPhone | מספר הטלפון של המתנדב |  |
-| assignedDeliveries | משלוחים שוייכו  |  |
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
+| id | Id | IdColumn |  readonly |
+| eventId | Event Id | IdColumn |  |
+| helper | Helper | HelperId |  |
+| helperName | שם | StringColumn |  |
+| helperPhone | מספר הטלפון של המתנדב | PhoneColumn |  |
+| assignedDeliveries | משלוחים שוייכו  | NumberColumn |  |
 
 
 ## ApplicationSettings
-| name | caption | extra info |
-| --- | --- | --- |
-| id | Id |  |
-| organisationName | שם הארגון |  |
-| smsText | תוכן הודעת SMS |  |
-| reminderSmsText | תוכן הודעת תזכורת SMS |  |
-| logoUrl | לוגו URL |  |
-| address | כתובת מרכז השילוח |  |
-| commentForSuccessDelivery | הודעה למתנדב כאשר נמסר בהצלחה |  |
-| commentForSuccessLeft | הודעה למתנדב כאשר הושאר ליד הבית |  |
-| commentForProblem | הודעה למתנדב כאשר יש בעיה |  |
-| messageForDoneDelivery | הודעה למתנדב כאשר סיים את כל המשפחות |  |
-| helpText | שם חלופי |  |
-| helpPhone | טלפון חלופי |  |
-| phoneStrategy | Phone Strategy |  |
-| commonQuestions | Common Questions |  |
-| dataStructureVersion | Data Structure Version |  - readonly |
-| deliveredButtonText | מלל כפתור נמסר בהצלחה |  |
-| message1Text | מלל חופשי 1 למתנדב |  |
-| message1Link | כתובת אינטרנט ללחיצה על מלל חופשי 1 למתנדב |  |
-| message1OnlyWhenDone | להציג מלל חופשי 1 רק כאשר המתנדב סיים אל כל הסלים |  |
-| message2Text | מלל חופשי 2 למתנדב |  |
-| message2Link | כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב |  |
-| message2OnlyWhenDone | להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים |  |
-| forWho | המערכת היא עבור |  |
-| _old_for_soliders | _old_for_soliders |  |
-| usingSelfPickupModule | ישנן משפחות שבאות לקחת ממרכז החלוקה |  |
-| showCompanies | שמור מטעם איזה חברה הגיע המתנדב |  |
-| manageEscorts | הפעל ניהול מלווים לנהגים |  |
-| showHelperComment | הצג הערה בשיוך למתנדב |  |
-| showGroupsOnAssing | סינון קבוצת משפחה |  |
-| showCityOnAssing | סינון עיר |  |
-| showAreaOnAssing | סינון אזור |  |
-| showBasketOnAssing | סינון סוג סל |  |
-| showNumOfBoxesOnAssing | בחירת מספר משפחות |  |
-| showLeftThereButton | הצג למתנדב כפתור השארתי ליד הבית |  |
-| redTitleBar | כותרת דף בצבע אדום |  |
-| defaultPrefixForExcelImport | קידומת טלפון ברירת מחדל בקליטה מאקסל |  |
-| checkIfFamilyExistsInDb | בדוק אם משפחה כבר קיימת במאגר הנתונים |  |
-| removedFromListStrategy | מה לעשות אם נמצאה משפחה תואמת המסומנת כהוצא מהרשימות |  |
-| checkIfFamilyExistsInFile | בדוק אם משפחה כבר קיימת בקובץ האקסל |  |
-| excelImportAutoAddValues | הוסף בלי לשאול ערכים לטבלאות התשתית |  |
-| excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery | עדכן ברירות מחדל למשפחה בהתאם למשלוח זה |  |
-| checkDuplicatePhones | בדוק טלפונים כפולים |  |
-| volunteerCanUpdateComment | מתנדב יכול לעדכן לעצמו הערה |  |
-| showDistCenterAsEndAddressForVolunteer | הצג כתובות רשימת חלוקה כנקודת סיום למתנדב |  |
-| routeStrategy | תכנון מסלול |  |
-| addressApiResult | Address Api Result |  |
-| defaultStatusType | סטטוס משלוח ברירת מחדל למשפחות חדשות |  |
-| boxes1Name | שם כמות 1 בסוגי סלים |  |
-| boxes2Name | שם כמות 2 בסוגי סלים |  |
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
+| id | Id | NumberColumn |  |
+| organisationName | שם הארגון | StringColumn |  |
+| smsText | תוכן הודעת SMS | StringColumn |  |
+| reminderSmsText | תוכן הודעת תזכורת SMS | StringColumn |  |
+| logoUrl | לוגו URL | StringColumn |  |
+| address | כתובת מרכז השילוח | StringColumn |  |
+| commentForSuccessDelivery | הודעה למתנדב כאשר נמסר בהצלחה | StringColumn |  |
+| commentForSuccessLeft | הודעה למתנדב כאשר הושאר ליד הבית | StringColumn |  |
+| commentForProblem | הודעה למתנדב כאשר יש בעיה | StringColumn |  |
+| messageForDoneDelivery | הודעה למתנדב כאשר סיים את כל המשפחות | StringColumn |  |
+| helpText | שם חלופי | StringColumn |  |
+| helpPhone | טלפון חלופי | PhoneColumn |  |
+| phoneStrategy | Phone Strategy | StringColumn |  |
+| commonQuestions | Common Questions | StringColumn |  |
+| dataStructureVersion | Data Structure Version | NumberColumn |  readonly |
+| deliveredButtonText | מלל כפתור נמסר בהצלחה | StringColumn |  |
+| message1Text | מלל חופשי 1 למתנדב | StringColumn |  |
+| message1Link | כתובת אינטרנט ללחיצה על מלל חופשי 1 למתנדב | StringColumn |  |
+| message1OnlyWhenDone | להציג מלל חופשי 1 רק כאשר המתנדב סיים אל כל הסלים | BoolColumn |  |
+| message2Text | מלל חופשי 2 למתנדב | StringColumn |  |
+| message2Link | כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב | StringColumn |  |
+| message2OnlyWhenDone | להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים | BoolColumn |  |
+| forWho | המערכת היא עבור | TranslationOptionsColumn |  |
+| _old_for_soliders | _old_for_soliders | BoolColumn |  |
+| usingSelfPickupModule | ישנן משפחות שבאות לקחת ממרכז החלוקה | BoolColumn |  |
+| showCompanies | שמור מטעם איזה חברה הגיע המתנדב | BoolColumn |  |
+| manageEscorts | הפעל ניהול מלווים לנהגים | BoolColumn |  |
+| showHelperComment | הצג הערה בשיוך למתנדב | BoolColumn |  |
+| showGroupsOnAssing | סינון קבוצת משפחה | BoolColumn |  |
+| showCityOnAssing | סינון עיר | BoolColumn |  |
+| showAreaOnAssing | סינון אזור | BoolColumn |  |
+| showBasketOnAssing | סינון סוג סל | BoolColumn |  |
+| showNumOfBoxesOnAssing | בחירת מספר משפחות | BoolColumn |  |
+| showLeftThereButton | הצג למתנדב כפתור השארתי ליד הבית | BoolColumn |  |
+| redTitleBar | כותרת דף בצבע אדום | BoolColumn |  |
+| defaultPrefixForExcelImport | קידומת טלפון ברירת מחדל בקליטה מאקסל | StringColumn |  |
+| checkIfFamilyExistsInDb | בדוק אם משפחה כבר קיימת במאגר הנתונים | BoolColumn |  |
+| removedFromListStrategy | מה לעשות אם נמצאה משפחה תואמת המסומנת כהוצא מהרשימות | RemovedFromListExcelImportStrategyColumn |  |
+| checkIfFamilyExistsInFile | בדוק אם משפחה כבר קיימת בקובץ האקסל | BoolColumn |  |
+| excelImportAutoAddValues | הוסף בלי לשאול ערכים לטבלאות התשתית | BoolColumn |  |
+| excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery | עדכן ברירות מחדל למשפחה בהתאם למשלוח זה | BoolColumn |  |
+| checkDuplicatePhones | בדוק טלפונים כפולים | BoolColumn |  |
+| volunteerCanUpdateComment | מתנדב יכול לעדכן לעצמו הערה | BoolColumn |  |
+| showDistCenterAsEndAddressForVolunteer | הצג כתובות רשימת חלוקה כנקודת סיום למתנדב | BoolColumn |  |
+| routeStrategy | תכנון מסלול | routeStrategyColumn |  |
+| addressApiResult | Address Api Result | StringColumn |  |
+| defaultStatusType | סטטוס משלוח ברירת מחדל למשפחות חדשות | DeliveryStatusColumn |  |
+| boxes1Name | שם כמות 1 בסוגי סלים | StringColumn |  |
+| boxes2Name | שם כמות 2 בסוגי סלים | StringColumn |  |
 
 
 ## DistributionCenters
-| name | caption | extra info |
-| --- | --- | --- |
-| id | Id |  - readonly |
-| name | שם |  |
-| semel | סמל |  |
-| address | כתובת מרכז השילוח |  |
-| addressApiResult | Address Api Result |  |
-| comments | הערה |  |
-| phone1 | טלפון 1 |  |
-| phone1Description | הערות לטלפון 1 |  |
-| phone2 | טלפון 2 |  |
-| phone2Description | הערות לטלפון 2 |  |
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
+| id | Id | IdColumn |  readonly |
+| name | שם | StringColumn |  |
+| semel | סמל | StringColumn |  |
+| address | כתובת מרכז השילוח | StringColumn |  |
+| addressApiResult | Address Api Result | StringColumn |  |
+| comments | הערה | StringColumn |  |
+| phone1 | טלפון 1 | PhoneColumn |  |
+| phone1Description | הערות לטלפון 1 | StringColumn |  |
+| phone2 | טלפון 2 | PhoneColumn |  |
+| phone2Description | הערות לטלפון 2 | StringColumn |  |
 
 
 ## Sites
-| name | caption | extra info |
-| --- | --- | --- |
-| id | מזהה הסביבה |  |
-| createDate | מועד הוספה |  - readonly |
-| createUser | משתמש מוסיף |  - readonly |
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
+| id | מזהה הסביבה | SchemaIdColumn |  |
+| createDate | מועד הוספה | changeDate |  readonly |
+| createUser | משתמש מוסיף | HelperIdReadonly |  readonly |
 
 
 ## GeocodeCache
-| name | caption | extra info |
-| --- | --- | --- |
-| id | Id |  |
-| googleApiResult | Google Api Result |  |
-| createDate | Create Date |  |
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
+| id | Id | StringColumn |  |
+| googleApiResult | Google Api Result | StringColumn |  |
+| createDate | Create Date | DateTimeColumn |  |
 
 
 ## FamilySources
-| name | caption | extra info |
-| --- | --- | --- |
-| id | Id |  - readonly |
-| name | שם |  |
-| contactPerson | איש קשר |  |
-| phone | טלפון |  |
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
+| id | Id | IdColumn |  readonly |
+| name | שם | StringColumn |  |
+| contactPerson | איש קשר | StringColumn |  |
+| phone | טלפון | PhoneColumn |  |
 
 
 ## BasketType
-| name | caption | extra info |
-| --- | --- | --- |
-| id | Id |  - readonly |
-| name | שם |  |
-| boxes | מנות |  |
-| boxes2 | משהו אחר |  |
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
+| id | Id | IdColumn |  readonly |
+| name | שם | StringColumn |  |
+| boxes | מנות | NumberColumn |  |
+| boxes2 | משהו אחר | NumberColumn |  |
 
 
 ## ApplicationImages
-| name | caption | extra info |
-| --- | --- | --- |
-| id | Id |  |
-| base64Icon | איקון דף base64 |  |
-| base64PhoneHomeImage | איקון דף הבית בטלפון base64 |  |
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
+| id | Id | NumberColumn |  |
+| base64Icon | איקון דף base64 | StringColumn |  |
+| base64PhoneHomeImage | איקון דף הבית בטלפון base64 | StringColumn |  |
 
 
 ## groups
-| name | caption | extra info |
-| --- | --- | --- |
-| id | Id |  - readonly |
-| name | קבוצה |  |
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
+| id | Id | IdColumn |  readonly |
+| name | קבוצה | StringColumn |  |
 
 
 ## GroupsStatsPerDistributionCenter
-| name | caption | extra info |
-| --- | --- | --- |
-| name | Name |  |
-| distCenter | רשימת חלוקה |  |
-| familiesCount | Families Count |  |
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
+| name | Name | StringColumn |  |
+| distCenter | רשימת חלוקה | DistributionCenterId |  |
+| familiesCount | Families Count | NumberColumn |  |
 
 
 ## GroupsStatsForAllDeliveryCenters
-| name | caption | extra info |
-| --- | --- | --- |
-| name | Name |  |
-| familiesCount | Families Count |  |
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
+| name | Name | StringColumn |  |
+| familiesCount | Families Count | NumberColumn |  |
 
 
 ## citiesStats
-| name | caption | extra info |
-| --- | --- | --- |
-| city | City |  |
-| deliveries | Deliveries |  |
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
+| city | City | StringColumn |  |
+| deliveries | Deliveries | NumberColumn |  |
 
 
 ## citiesStats
-| name | caption | extra info |
-| --- | --- | --- |
-| city | City |  |
-| distributionCenter | רשימת חלוקה |  |
-| families | Families |  |
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
+| city | City | StringColumn |  |
+| distributionCenter | רשימת חלוקה | DistributionCenterId |  |
+| families | Families | NumberColumn |  |
 
 
 ## ActiveFamilyDeliveries
-| name | caption | extra info |
-| --- | --- | --- |
-| id | Id |  - readonly |
-| family | id של המשפחה באפליקצית חגי |  - readonly |
-| name | שם |  - readonly |
-| basketType | סוג סל |  |
-| quantity | כמות |  |
-| distributionCenter | רשימת חלוקה |  |
-| deliverStatus | סטטוס משלוח |  |
-| courier | מתנדב |  |
-| courierComments | הערות שכתב המתנדב כשמסר |  |
-| internalDeliveryComment | הערה פנימית למשלוח - לא תוצג למתנדב |  |
-| routeOrder | Route Order |  |
-| special | שיוך מיוחד |  |
-| deliveryStatusDate | מתי |  - readonly |
-| courierAssignUser | מי שייכה למתנדב |  - readonly |
-| courierAssingTime | מועד שיוך למתנדב |  - readonly |
-| deliveryStatusUser | סטטוס: מי עדכן |  - readonly |
-| createDate | מועד הקצאה |  - readonly |
-| createUser | משתמש מקצה |  - readonly |
-| needsWork | צריך טיפול/מעקב |  |
-| needsWorkUser | צריך טיפול - מי עדכן |  - readonly |
-| needsWorkDate | צריך טיפול - מתי עודכן |  - readonly |
-| deliveryComments | הערה שתופיע למתנדב |  |
-| familySource | גורם מפנה |  - readonly |
-| groups | קבוצות שיוך משפחה |  - readonly |
-| address | כתובת |  - readonly |
-| floor | קומה |  - readonly |
-| appartment | דירה |  - readonly |
-| entrance | כניסה |  - readonly |
-| city | עיר (מתעדכן אוטומטית) |  - readonly |
-| area | אזור |  - readonly |
-| addressComment | הנחיות נוספות לכתובת |  - readonly |
-| addressLongitude | Address Longitude |  - readonly |
-| addressLatitude | Address Latitude |  - readonly |
-| drivingLongitude | Driving Longitude |  - readonly |
-| drivingLatitude | Driving Latitude |  - readonly |
-| addressByGoogle | כתובת כפי שגוגל הבין |  - readonly |
-| addressOk | כתובת תקינה |  - readonly |
-| fixedCourier | מתנדב ברירת מחדל |  - readonly |
-| familyMembers | מספר נפשות |  - readonly |
-| phone1 | טלפון 1 |  - readonly |
-| phone1Description | הערות לטלפון 1 |  - readonly |
-| phone2 | טלפון 2 |  - readonly |
-| phone2Description | הערות לטלפון 2 |  - readonly |
-| phone3 | טלפון 3 |  - readonly |
-| phone3Description | הערות לטלפון 3 |  - readonly |
-| phone4 | טלפון 4 |  - readonly |
-| phone4Description | הערות לטלפון 4 |  - readonly |
-| courierBeenHereBefore | Courier Been Here Before |  |
-| archive | Archive |  |
-| visibleToCourier | Visible To Courier |  |
-| messageStatus | סטטוס הודעה |  |
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
+| id | Id | IdColumn |  readonly |
+| family | id של המשפחה באפליקצית חגי | FamilyId |  readonly |
+| name | שם | StringColumn |  readonly |
+| basketType | סוג סל | BasketId |  |
+| quantity | כמות | QuantityColumn |  |
+| distributionCenter | רשימת חלוקה | DistributionCenterId |  |
+| deliverStatus | סטטוס משלוח | DeliveryStatusColumn |  |
+| courier | מתנדב | HelperId |  |
+| courierComments | הערות שכתב המתנדב כשמסר | StringColumn |  |
+| internalDeliveryComment | הערה פנימית למשלוח - לא תוצג למתנדב | StringColumn |  |
+| routeOrder | Route Order | NumberColumn |  |
+| special | שיוך מיוחד | YesNoColumn |  |
+| deliveryStatusDate | מתי | changeDate |  readonly |
+| courierAssignUser | מי שייכה למתנדב | HelperIdReadonly |  readonly |
+| courierAssingTime | מועד שיוך למתנדב | changeDate |  readonly |
+| deliveryStatusUser | סטטוס: מי עדכן | HelperIdReadonly |  readonly |
+| createDate | מועד הקצאה | changeDate |  readonly |
+| createUser | משתמש מקצה | HelperIdReadonly |  readonly |
+| needsWork | צריך טיפול/מעקב | BoolColumn |  |
+| needsWorkUser | צריך טיפול - מי עדכן | HelperIdReadonly |  readonly |
+| needsWorkDate | צריך טיפול - מתי עודכן | changeDate |  readonly |
+| deliveryComments | הערה שתופיע למתנדב | StringColumn |  |
+| familySource | גורם מפנה | FamilySourceId |  readonly |
+| groups | קבוצות שיוך משפחה | GroupsColumn |  readonly |
+| address | כתובת | StringColumn |  readonly |
+| floor | קומה | StringColumn |  readonly |
+| appartment | דירה | StringColumn |  readonly |
+| entrance | כניסה | StringColumn |  readonly |
+| city | עיר (מתעדכן אוטומטית) | StringColumn |  readonly |
+| area | אזור | StringColumn |  readonly |
+| addressComment | הנחיות נוספות לכתובת | StringColumn |  readonly |
+| addressLongitude | Address Longitude | NumberColumn |  readonly |
+| addressLatitude | Address Latitude | NumberColumn |  readonly |
+| drivingLongitude | Driving Longitude | NumberColumn |  readonly |
+| drivingLatitude | Driving Latitude | NumberColumn |  readonly |
+| addressByGoogle | כתובת כפי שגוגל הבין | StringColumn |  readonly |
+| addressOk | כתובת תקינה | BoolColumn |  readonly |
+| fixedCourier | מתנדב ברירת מחדל | HelperId |  readonly |
+| familyMembers | מספר נפשות | NumberColumn |  readonly |
+| phone1 | טלפון 1 | PhoneColumn |  readonly |
+| phone1Description | הערות לטלפון 1 | StringColumn |  readonly |
+| phone2 | טלפון 2 | PhoneColumn |  readonly |
+| phone2Description | הערות לטלפון 2 | StringColumn |  readonly |
+| phone3 | טלפון 3 | PhoneColumn |  readonly |
+| phone3Description | הערות לטלפון 3 | StringColumn |  readonly |
+| phone4 | טלפון 4 | PhoneColumn |  readonly |
+| phone4Description | הערות לטלפון 4 | StringColumn |  readonly |
+| courierBeenHereBefore | Courier Been Here Before | BoolColumn |  |
+| archive | Archive | BoolColumn |  |
+| visibleToCourier | Visible To Courier | BoolColumn |  |
+| messageStatus | סטטוס הודעה | MessageStatusColumn |  |
 
 
 ## helpersAndStats
-| name | caption | extra info |
-| --- | --- | --- |
-| id | Id |  - readonly |
-| name | שם |  |
-| phone | טלפון |  |
-| smsDate | מועד משלוח SMS |  |
-| company | חברה |  |
-| totalKm | Total Km |  |
-| totalTime | Total Time |  |
-| shortUrlKey | Short Url Key |  |
-| distributionCenter | רשימת חלוקה |  |
-| eventComment | הערה |  |
-| needEscort | צריך מלווה |  |
-| theHelperIAmEscorting | נהג משוייך |  - readonly |
-| escort | מלווה |  |
-| deliveriesInProgress | משפחות מחכות |  |
-| allDeliveires | משפחות |  |
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
+| id | Id | IdColumn |  readonly |
+| name | שם | StringColumn |  |
+| phone | טלפון | PhoneColumn |  |
+| smsDate | מועד משלוח SMS | DateTimeColumn |  |
+| company | חברה | CompanyColumn |  |
+| totalKm | Total Km | NumberColumn |  |
+| totalTime | Total Time | NumberColumn |  |
+| shortUrlKey | Short Url Key | StringColumn |  |
+| distributionCenter | רשימת חלוקה | DistributionCenterId |  |
+| eventComment | הערה | StringColumn |  |
+| needEscort | צריך מלווה | BoolColumn |  |
+| theHelperIAmEscorting | נהג משוייך | HelperIdReadonly |  readonly |
+| escort | מלווה | HelperId |  |
+| deliveriesInProgress | משפחות מחכות | NumberColumn |  |
+| allDeliveires | משפחות | NumberColumn |  |
 
 
 ## helperHistoryInfo
-| name | caption | extra info |
-| --- | --- | --- |
-| courier | Courier |  |
-| name | שם |  |
-| phone | טלפון |  |
-| company | חברה |  |
-| deliveries | משלוחים |  |
-| families | משפחות |  |
-| dates | תאריכים |  |
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
+| courier | Courier | StringColumn |  |
+| name | שם | StringColumn |  |
+| phone | טלפון | PhoneColumn |  |
+| company | חברה | CompanyColumn |  |
+| deliveries | משלוחים | NumberColumn |  |
+| families | משפחות | NumberColumn |  |
+| dates | תאריכים | NumberColumn |  |

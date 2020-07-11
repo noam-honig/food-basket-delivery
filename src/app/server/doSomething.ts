@@ -24,7 +24,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 import { Families } from '../families/families';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
-import { volunteersInEvent,Event } from '../events/events';
+import { volunteersInEvent, Event } from '../events/events';
 
 
 
@@ -131,34 +131,35 @@ class htmlReport {
 async function buildDocs() {
     var c = new ServerContext();
     c.setReq({
-        getBaseUrl:()=>'',
-        clientIp:'',
-        user:undefined,
-        get:undefined,
-        getHeader:undefined
+        getBaseUrl: () => '',
+        clientIp: '',
+        user: undefined,
+        get: undefined,
+        getHeader: undefined
     });
     var s = "## Data Model\n Here's a detailed list of all the entities used in the rest api";
-    let list:any[] = [Families,FamilyDeliveries,Helpers,Event,volunteersInEvent,ApplicationSettings];
+    let list: any[] = [Families, FamilyDeliveries, Helpers, Event, volunteersInEvent, ApplicationSettings];
     for (const iterator of allEntities) {
-        if (!list.includes(iterator)&&iterator)
+        if (!list.includes(iterator) && iterator)
             list.push(iterator);
 
     }
 
 
     for (const type of list) {
-        
+
         var e = c.for(type).create();
-        s += "\n\n## " + e.defs.name +`
-| name | caption | extra info |
-| --- | --- | --- |
+        s += "\n\n## " + e.defs.name + `
+| name | caption |  | extra info |
+| --- | --- | --- | --- |
 `;
         for (const c of e.columns) {
-            let extra='';
-            if (c.defs.allowApiUpdate===false)
-                extra+=" - readonly";
-            s += "| " + c.defs.key + " | " + c.defs.caption + " | "+extra+" |\n";
+            let extra = '';
+            if (c.defs.allowApiUpdate === false)
+                extra += " readonly";
+            
+            s += "| " + c.defs.key + " | " + c.defs.caption + " | " + c.constructor.name + " | " + extra + " |\n";
         }
     }
-    fs.writeFileSync("./docs/model.md",s);
+    fs.writeFileSync("./docs/model.md", s);
 }
