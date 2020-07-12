@@ -1,5 +1,5 @@
 import { IdEntity, EntityClass, StringColumn, Context, IdColumn, ColumnOptions, AndFilter, BoolColumn } from "@remult/core";
-import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
+import { GeocodeInformation, GetGeoInformation, GetDistanceBetween, Location } from "../shared/googleApiHelpers";
 import { HasAsyncGetTheValue, PhoneColumn } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { HelperUserInfo } from "../helpers/helpers";
@@ -13,7 +13,7 @@ export class DistributionCenters extends IdEntity {
 
 
   name = new StringColumn({ caption: getLang(this.context).distributionCenterName });
-  semel = new StringColumn({ caption: getLang(this.context).distributionCenterUniqueId});
+  semel = new StringColumn({ caption: getLang(this.context).distributionCenterUniqueId });
   address = new StringColumn(getLang(this.context).deliveryCenterAddress);
   addressApiResult = new StringColumn();
   comments = new StringColumn(getLang(this.context).distributionCenterComment);
@@ -21,8 +21,8 @@ export class DistributionCenters extends IdEntity {
   phone1Description = new StringColumn(getLang(this.context).phone1Description);
   phone2 = new PhoneColumn(getLang(this.context).phone2);
   phone2Description = new StringColumn(getLang(this.context).phone2Description);
-  
-  
+
+
 
   private _lastString: string;
   private _lastGeo: GeocodeInformation;
@@ -44,7 +44,7 @@ export class DistributionCenters extends IdEntity {
       allowApiRead: context.isSignedIn(),
       allowApiInsert: Roles.admin,
       allowApiUpdate: Roles.admin,
-      
+
 
       saving: async () => {
         if (context.onServer) {
@@ -111,7 +111,7 @@ export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValu
       defaultValue: context.user ? (<HelperUserInfo>context.user).distributionCenter : ''
     });
     if (!this.defs.caption)
-      this.defs.caption = getLang(this.context).distributionList ;
+      this.defs.caption = getLang(this.context).distributionList;
   }
   get displayValue() {
     return this.context.for(DistributionCenters).lookup(this).name.value;
@@ -122,4 +122,20 @@ export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValu
       return r.name.value;
     return '';
   }
+}
+
+export async function findClosestDistCenter(loc: Location, context: Context, centers?: DistributionCenters[]) {
+  let result: string;
+  let dist: number;
+  if (!centers)
+    centers = await context.for(DistributionCenters).find();
+  for (const c of centers) {
+    let myDist = GetDistanceBetween(c.getGeocodeInformation().location(), loc);
+    if (!result || myDist < dist) {
+      result = c.id.value;
+      dist = myDist;
+
+    }
+  }
+  return result;
 }

@@ -8,7 +8,7 @@ import { ServerEventAuthorizeAction } from "../server/server-event-authorize-act
 import { Subject } from "rxjs";
 import { myThrottle } from "../model-shared/types";
 import { TestComponentRenderer } from "@angular/core/testing";
-import { DistributionCenterId, DistributionCenters, allCentersToken } from "../manage/distribution-centers";
+import { DistributionCenterId, DistributionCenters, allCentersToken, findClosestDistCenter } from "../manage/distribution-centers";
 import { Roles } from "../auth/roles";
 import { HelperUserInfo } from "../helpers/helpers";
 import { RouteReuseStrategy } from "@angular/router";
@@ -92,17 +92,7 @@ export class DialogService {
             return this.distCenter.value;
         if (!this.allCenters)
             this.allCenters = await this.context.for(DistributionCenters).find();
-        let result: string;
-        let dist: number;
-        for (const c of this.allCenters) {
-            let myDist = GetDistanceBetween(c.getGeocodeInformation().location(), loc);
-            if (!result || myDist < dist) {
-                result = c.id.value;
-                dist = myDist;
-
-            }
-        }
-        return result;
+        return findClosestDistCenter(loc, this.context, this.allCenters);
 
     }
     private allCenters: DistributionCenters[];

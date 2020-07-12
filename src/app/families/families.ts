@@ -24,6 +24,7 @@ import { InputAreaComponent } from "../select-popup/input-area/input-area.compon
 import { UpdateFamilyDialogComponent } from "../update-family-dialog/update-family-dialog.component";
 import { deliveryButtonsHelper, getDeliveryGridButtons } from "../family-deliveries/family-deliveries.component";
 import { YesNoQuestionComponent } from "../select-popup/yes-no-question/yes-no-question.component";
+import { allCentersToken, findClosestDistCenter } from "../manage/distribution-centers";
 
 
 @EntityClass
@@ -193,6 +194,8 @@ export class Families extends IdEntity {
   }, context?: Context) {
     let f = await context.for(Families).findId(familyId);
     if (f) {
+      if (settings.distCenter == allCentersToken)
+        settings.distCenter = await findClosestDistCenter(f.getGeocodeInformation().location(), context);
       let fd = f.createDelivery(settings.distCenter);
       fd.basketType.value = settings.basketType;
       fd.quantity.value = settings.quantity;
