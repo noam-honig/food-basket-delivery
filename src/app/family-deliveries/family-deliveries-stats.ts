@@ -208,7 +208,7 @@ export class CitiesStatsPerDistCenter extends Entity<string> {
     constructor(private context: Context) {
         super({
             allowApiRead: false,
-            name: 'citiesStats',
+            name: 'citiesStatsPerDistCenter',
             dbName: () => {
                 let f = context.for(ActiveFamilyDeliveries).create();
                 let sql = new SqlBuilder();
