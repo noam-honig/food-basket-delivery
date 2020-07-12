@@ -694,4 +694,7 @@ export class donor implements Language {
   numOfActiveReadyDeliveries = 'מספר משלוחים פעילים שטרם נמסרו';
   volunteerAssignments = 'שיוך משלוחים למתנדב';
   ifYouNeedAnyHelpPleaseCall = 'לעזרה התקשר ל';
+  customColumn = 'שדה נוסף לתורם';
+  caption = 'תאור';
+  optionalValues = 'ערכים אפשריים מופרד בפסיקים';
 }

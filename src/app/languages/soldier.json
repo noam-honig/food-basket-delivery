@@ -399,6 +399,10 @@
     "google": "אין מה למזג חייל אחד",
     "valueInCode": "אין מה למזג משפחה אחת"
   },
+  "caption": {
+    "google": "תאור",
+    "valueInCode": "תאור"
+  },
   "checkAddress": {
     "google": "בדוק כתובת",
     "valueInCode": "בדוק כתובת"
@@ -554,6 +558,10 @@
   "createUser": {
     "google": "משתמש מוסיף",
     "valueInCode": "משתמש מוסיף"
+  },
+  "customColumn": {
+    "google": "שדה נוסף לחייל",
+    "valueInCode": "שדה נוסף למשפחה"
   },
   "customSmsMessage": {
     "google": "הודעת SMS מותאמת",
@@ -1730,6 +1738,10 @@
   "openWaze": {
     "google": "פתח WAZE",
     "valueInCode": "פתח WAZE"
+  },
+  "optionalValues": {
+    "google": "ערכים אפשריים מופרד בפסיקים",
+    "valueInCode": "ערכים אפשריים מופרד בפסיקים"
   },
   "organizationInfo": {
     "google": "פרטי הארגון",

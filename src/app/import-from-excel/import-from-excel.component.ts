@@ -219,7 +219,7 @@ export class ImportFromExcelComponent implements OnInit {
         }
         return rowsToUpdate;
     }
-    
+
     async updateCol(i: excelRowInfo, col: columnInCompare) {
         let r = await ImportFromExcelComponent.updateColsOnServer([i], keyFromColumnInCompare(col), this.addDelivery.value, this.compareBasketType.value);
         i.values = r[0].values;
@@ -715,7 +715,7 @@ export class ImportFromExcelComponent implements OnInit {
                             }
                         }
                         else {
-                            
+
                             await h.lookupAndInsert(Helpers, h => h.name, v, h => h.id, h.fd.courier, x => {
                                 x._disableDuplicateCheck = true;
                             });
@@ -752,6 +752,10 @@ export class ImportFromExcelComponent implements OnInit {
         addColumn(this.f.familyMembers, ["נפשות", "מס נפשות"]);
         addColumn(this.f.tz, ["ת.ז.", "ת\"ז"]);
         addColumn(this.f.tz2);
+        for (const c of [this.f.custom1, this.f.custom2, this.f.custom3, this.f.custom4]) {
+            if (c.visible)
+                addColumn(c);
+        }
         addColumns([
 
             this.f.iDinExcel,

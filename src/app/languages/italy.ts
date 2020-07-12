@@ -694,4 +694,7 @@ export class italy implements Language {
   numOfActiveReadyDeliveries = 'Numero di consegne attive non completate';
   volunteerAssignments = 'Compiti volontari';
   ifYouNeedAnyHelpPleaseCall = 'Per aiuto chiama';
+  customColumn = 'Un altro campo per la famiglia';
+  caption = 'descrizione';
+  optionalValues = 'Possibili valori separati da virgola';
 }

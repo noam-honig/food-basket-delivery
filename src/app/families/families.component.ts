@@ -170,8 +170,8 @@ export class FamiliesComponent implements OnInit {
 
 
 
-    
-    
+
+
     normalColumns: DataControlInfo<Families>[];
     addressProblemColumns: DataControlInfo<Families>[];
     addressByGoogle: DataControlInfo<Families>;
@@ -190,7 +190,7 @@ export class FamiliesComponent implements OnInit {
 
                 f.special.value = YesNo.No;
             } else {
-               
+
             }
         },
 
@@ -228,7 +228,7 @@ export class FamiliesComponent implements OnInit {
             }
             , orderBy: f => f.name
         },
-        
+
         knowTotalRows: true,
 
 
@@ -263,7 +263,7 @@ export class FamiliesComponent implements OnInit {
                 families.tz,
                 families.tz2,
                 families.iDinExcel,
-                
+
                 families.special,
                 families.createUser,
                 families.createDate,
@@ -314,6 +314,11 @@ export class FamiliesComponent implements OnInit {
 
 
             ];
+            for (const c of [families.custom1, families.custom2, families.custom3, families.custom4]) {
+                if (c.visible) {
+                    r.push(c);
+                }
+            }
             this.normalColumns = [
                 families.name,
                 families.address,
@@ -430,7 +435,7 @@ export class FamiliesComponent implements OnInit {
         return r + ' ' + getLang(context).familiesUpdated;
     }
 
-    
+
 
     destroyHelper = new DestroyHelper();
     ngOnDestroy(): void {
@@ -617,7 +622,7 @@ export class FamiliesComponent implements OnInit {
         //  debugger;
     }
     sortColumns(columns: DataControlInfo<Families>[]) {
-        if (this.families.origList&&this.families.origList.length>0)
+        if (this.families.origList && this.families.origList.length > 0)
             this.families.resetColumns();
         this.families.columns.items.sort((a, b) => a.caption > b.caption ? 1 : a.caption < b.caption ? -1 : 0);
         this.families.columns.numOfColumnsInGrid = columns.length;
@@ -631,7 +636,7 @@ export class FamiliesComponent implements OnInit {
             let origIndex = this.families.columns.items.indexOf(item);
             this.families.columns.moveCol(item, -origIndex + index);
         }
-        
+
 
     }
     statTotal(t: statsOnTab) {

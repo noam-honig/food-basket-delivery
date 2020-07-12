@@ -294,6 +294,14 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
           families.socialWorkerPhone1,
           families.socialWorkerPhone2
         ],
+        [
+          families.custom1,
+          families.custom2
+        ],
+        [
+          families.custom3,
+          families.custom4
+        ],
         families.numOfActiveReadyDeliveries,
 
 

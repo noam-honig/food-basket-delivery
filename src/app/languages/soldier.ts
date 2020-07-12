@@ -694,4 +694,7 @@ export class soldier implements Language {
   numOfActiveReadyDeliveries = 'מספר משלוחים פעילים שטרם נמסרו';
   volunteerAssignments = 'שיוך משלוחים למתנדב';
   ifYouNeedAnyHelpPleaseCall = 'לעזרה התקשר ל';
+  customColumn = 'שדה נוסף לחייל';
+  caption = 'תאור';
+  optionalValues = 'ערכים אפשריים מופרד בפסיקים';
 }

@@ -694,4 +694,7 @@ export class en implements Language {
   numOfActiveReadyDeliveries = 'Num of Active non completed deliveries';
   volunteerAssignments = 'Volunteer Assignments';
   ifYouNeedAnyHelpPleaseCall = 'For help call';
+  customColumn = 'Another field for the family';
+  caption = 'description';
+  optionalValues = 'Possible comma-separated values';
 }

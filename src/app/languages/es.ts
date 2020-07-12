@@ -694,4 +694,7 @@ export class es implements Language {
   numOfActiveReadyDeliveries = 'Número de entregas activas no completadas';
   volunteerAssignments = 'Asignaciones voluntarias';
   ifYouNeedAnyHelpPleaseCall = 'Para ayuda llame';
+  customColumn = 'Otro campo para la familia';
+  caption = 'descripción';
+  optionalValues = 'Posibles valores separados por comas';
 }

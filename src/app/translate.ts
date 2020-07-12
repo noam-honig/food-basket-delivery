@@ -8,7 +8,7 @@ import { donor } from './languages/donor';
 import { soldier } from './languages/soldier';
 
 export class myBounds {
-  constructor(public west: number, public south: number,public  east: number,public north: number) {
+  constructor(public west: number, public south: number, public east: number, public north: number) {
 
   }
 }
@@ -643,7 +643,7 @@ export class Language {
   updateDeliveriesStatusHelp = `סטטוס "מוקפא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח.             ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח. `;
   statusNotSelected = "לא נבחר סטטוס";
   updateCanceled = "העדכון הופסק";
-  
+
   archiveDeliveries = 'העברה לארכיב';
   archiveDeliveriesHelp = 'העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים';
   updateBasketType = 'עדכן סוג סל';
@@ -811,7 +811,7 @@ export class Language {
   onTheWayDeliveries = "משלוחים שבדרך";
   markAsSelfPickupFor = "סמן אספו את החבילה ל";
   selfPickupDeliveries = "משלוחים שמוגדרים כבאים לקחת";
-  deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort="משלוחים שהסתיימו. עדכון הסטטוס שלהם ימחק את הערך הקיים והמשלוח לא ישמר בהיסטוריה. אם אתם רוצים ליצור משלוח חדש, הפסיקו פעולה זו ובחרו באפשרות משלוח חדש בתפריט. לבטל פעולה זו?";
+  deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort = "משלוחים שהסתיימו. עדכון הסטטוס שלהם ימחק את הערך הקיים והמשלוח לא ישמר בהיסטוריה. אם אתם רוצים ליצור משלוח חדש, הפסיקו פעולה זו ובחרו באפשרות משלוח חדש בתפריט. לבטל פעולה זו?";
   excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = "עדכן ברירות מחדל למשפחה בהתאם למשלוח זה";
   assignedButNotOutBaskets = "שוייכו וטרם יצאו לפי סלים";
   selfPickupByBaskets = "באים לקחת לפי סלים";
@@ -824,9 +824,13 @@ export class Language {
   smsOpened = "SMS נפתח";
   messageStatus = "סטטוס הודעה";
   internalDeliveryComment = "הערה פנימית למשלוח - לא תוצג למתנדב";
-  numOfActiveReadyDeliveries ="מספר משלוחים פעילים שטרם נמסרו";
-  volunteerAssignments = "שיוך משלוחים למתנדב" ;
+  numOfActiveReadyDeliveries = "מספר משלוחים פעילים שטרם נמסרו";
+  volunteerAssignments = "שיוך משלוחים למתנדב";
   ifYouNeedAnyHelpPleaseCall = "לעזרה התקשר ל";
+  customColumn = "שדה נוסף למשפחה";
+  caption = "תאור";
+  optionalValues = "ערכים אפשריים מופרד בפסיקים";
+  
 }
 
 const defaultLang = new Language();

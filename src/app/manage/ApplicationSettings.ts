@@ -165,6 +165,14 @@ export class ApplicationSettings extends Entity<number>  {
   }
   boxes1Name = new StringColumn(this.lang.boxes1NameCaption);
   boxes2Name = new StringColumn(this.lang.boxes2NameCaption);
+  familyCustom1Caption = new StringColumn({ caption: this.lang.customColumn + " 1 " + this.lang.caption, includeInApi: Roles.admin });
+  familyCustom1Values = new StringColumn({ caption: this.lang.customColumn + " 1 " + this.lang.optionalValues, includeInApi: Roles.admin });
+  familyCustom2Caption = new StringColumn({ caption: this.lang.customColumn + " 2 " + this.lang.caption, includeInApi: Roles.admin });
+  familyCustom2Values = new StringColumn({ caption: this.lang.customColumn + " 2 " + this.lang.optionalValues, includeInApi: Roles.admin });
+  familyCustom3Caption = new StringColumn({ caption: this.lang.customColumn + " 3 " + this.lang.caption, includeInApi: Roles.admin });
+  familyCustom3Values = new StringColumn({ caption: this.lang.customColumn + " 3 " + this.lang.optionalValues, includeInApi: Roles.admin });
+  familyCustom4Caption = new StringColumn({ caption: this.lang.customColumn + " 4 " + this.lang.caption, includeInApi: Roles.admin });
+  familyCustom4Values = new StringColumn({ caption: this.lang.customColumn + " 4 " + this.lang.optionalValues, includeInApi: Roles.admin });
 
 
   constructor(private context: Context) {
@@ -301,6 +309,10 @@ export class SettingsService {
 
     BasketType.boxes1Name = this.instance.boxes1Name.value;
     BasketType.boxes2Name = this.instance.boxes2Name.value;
+    setCustomColumnInfo(1, this.instance.familyCustom1Caption, this.instance.familyCustom1Values);
+    setCustomColumnInfo(2, this.instance.familyCustom2Caption, this.instance.familyCustom2Values);
+    setCustomColumnInfo(3, this.instance.familyCustom3Caption, this.instance.familyCustom3Values);
+    setCustomColumnInfo(4, this.instance.familyCustom4Caption, this.instance.familyCustom4Values);
 
 
   }
@@ -326,3 +338,32 @@ class RemovedFromListExcelImportStrategyColumn extends ValueListColumn<RemovedFr
 }
 
 
+const customColumnInfo: customColumnInfo[] = [{}, {}, {}, {}, {}];
+export class CustomColumn extends StringColumn {
+
+  constructor(private num: number) {
+    super({
+      caption: customColumnInfo[num].caption,
+      allowApiUpdate: Roles.admin,
+      dataControlSettings: () => ({
+        valueList: customColumnInfo[num].values,
+        visible: () => customColumnInfo[num].visible
+      })
+    });
+  }
+  visible = customColumnInfo[this.num].visible;
+}
+export function setCustomColumnInfo(num: number, caption: StringColumn, values: StringColumn) {
+  let v = customColumnInfo[num];
+  v.visible = !!caption.value;
+  v.caption = caption.value;
+  v.values = undefined;
+  if (values.value) {
+    v.values = values.value.split(',').map(x => x.trim());
+  }
+}
+interface customColumnInfo {
+  caption?: string,
+  visible?: boolean,
+  values?: string[]
+}

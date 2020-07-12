@@ -463,6 +463,10 @@
     "valueInCode": "אין מה למזג משפחה אחת",
     "custom": "Cannot merge only one family"
   },
+  "caption": {
+    "google": "description",
+    "valueInCode": "תאור"
+  },
   "checkAddress": {
     "google": "Check address",
     "valueInCode": "בדוק כתובת"
@@ -643,6 +647,10 @@
     "google": "User Adds",
     "valueInCode": "משתמש מוסיף",
     "custom": "Creating user"
+  },
+  "customColumn": {
+    "google": "Another field for the family",
+    "valueInCode": "שדה נוסף למשפחה"
   },
   "customSmsMessage": {
     "google": "Personalized SMS",
@@ -1919,6 +1927,10 @@
   "openWaze": {
     "google": "Open WAZE",
     "valueInCode": "פתח WAZE"
+  },
+  "optionalValues": {
+    "google": "Possible comma-separated values",
+    "valueInCode": "ערכים אפשריים מופרד בפסיקים"
   },
   "organizationInfo": {
     "google": "Organization details",

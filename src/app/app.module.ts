@@ -83,6 +83,7 @@ import { DuplicateFamiliesComponent } from './duplicate-families/duplicate-famil
 import { DateRangeComponent } from './date-range/date-range.component';
 import { ShowOnMapComponent } from './show-on-map/show-on-map.component';
 import { EventsComponent } from './events/events.component';
+import { setCustomColumnInfo } from './families/families';
 
 
 
@@ -112,7 +113,7 @@ export class MyHammerConfig extends HammerGestureConfig {
 
     YesNoQuestionComponent,
     LoginComponent,
-    
+
     InputAreaComponent,
     UpdateInfoComponent,
     FamiliesComponent,
@@ -142,7 +143,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     UpdateGroupDialogComponent,
 
 
-    
+
     SelectCompanyComponent,
     HelperAssignmentComponent,
     ImportHelpersFromExcelComponent,
@@ -165,7 +166,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     DateRangeComponent,
     ShowOnMapComponent,
     EventsComponent
-    
+
 
   ],
   imports: [
@@ -184,7 +185,7 @@ export class MyHammerConfig extends HammerGestureConfig {
 
     DialogService,
 
-    
+
     NewsFilterService,
     AuthService,
     {
@@ -241,6 +242,8 @@ export function initApp(session: JwtSessionManager, settings: SettingsService) {
 
 
       await settings.init();
+      var s = settings.instance;
+      
       let l = settings.instance.lang;
       routeMap.set(AsignFamilyComponent, l.assignDeliveryMenu);
       routeMap.set(AssignEscortComponent, l.AssignEscortComponent);
@@ -262,7 +265,7 @@ export function initApp(session: JwtSessionManager, settings: SettingsService) {
       routeMap.set(MyFamiliesComponent, l.MyFamiliesComponent);
       routeMap.set(UpdateInfoComponent, l.UpdateInfoComponent);
       routeMap.set(LoginComponent, l.LoginComponent);
-      
+
       routeMap.set(EventsComponent, l.eventsComponent);
 
 
