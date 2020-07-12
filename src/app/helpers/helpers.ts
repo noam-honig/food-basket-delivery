@@ -158,31 +158,32 @@ export class Helpers extends HelpersBase {
                             await h.save();
                         }
                     }
-                    if (context.onServer) {
-                        if (this.preferredDistributionAreaAddress.value != this.preferredDistributionAreaAddress.originalValue || !this.getGeocodeInformation().ok()) {
-                            let geo = await GetGeoInformation(this.preferredDistributionAreaAddress.value, context);
-                            this.addressApiResult.value = geo.saveToString();
-                            if (geo.ok()) {
-                            }
-                        }
+                    if (wasChanged( this.preferredDistributionAreaAddress) || !this.getGeocodeInformation().ok()) {
+                        let geo = await GetGeoInformation(this.preferredDistributionAreaAddress.value, context);
+                        this.addressApiResult.value = geo.saveToString();
                     }
-
+                    if (wasChanged( this.preferredDistributionAreaAddress2) || !this.getGeocodeInformation2().ok()) {
+                        let geo = await GetGeoInformation(this.preferredDistributionAreaAddress2.value, context);
+                        this.addressApiResult2.value = geo.saveToString();
+                    }
+                    logChanges(this, this.context, {
+                        excludeColumns: [
+                            this.smsDate,
+                            this.createDate,
+                            this.lastSignInDate,
+                            this.reminderSmsDate,
+                            this.totalKm,
+                            this.totalTime,
+                            this.allowedIds,
+                            this.addressApiResult,
+                            this.addressApiResult2,
+                            this.password,
+                            this.shortUrlKey
+                        ],
+                        excludeValues: [this.realStoredPassword]
+                    })
                 }
-                logChanges(this, this.context, {
-                    excludeColumns: [
-                        this.smsDate,
-                        this.createDate,
-                        this.lastSignInDate,
-                        this.reminderSmsDate,
-                        this.totalKm,
-                        this.totalTime,
-                        this.allowedIds,
-                        this.addressApiResult,
-                        this.password,
-                        this.shortUrlKey
-                    ],
-                    excludeValues: [this.realStoredPassword]
-                })
+
 
             },
             apiDataFilter: () => {
@@ -220,6 +221,16 @@ export class Helpers extends HelpersBase {
             return this._lastGeo ? this._lastGeo : new GeocodeInformation();
         this._lastString = this.addressApiResult.value;
         return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
+    }
+    preferredDistributionAreaAddress2 = new StringColumn(getLang(this.context).preferredDistributionArea2);
+    addressApiResult2 = new StringColumn();
+    private _lastString2: string;
+    private _lastGeo2: GeocodeInformation;
+    getGeocodeInformation2() {
+        if (this._lastString2 == this.addressApiResult2.value)
+            return this._lastGeo2 ? this._lastGeo2 : new GeocodeInformation();
+        this._lastString2 = this.addressApiResult2.value;
+        return this._lastGeo2 = GeocodeInformation.fromString(this.addressApiResult2.value);
     }
 
     password = new StringColumn({ caption: getLang(this.context).password, dataControlSettings: () => ({ inputType: 'password' }), serverExpression: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });

@@ -77,7 +77,10 @@ export class SelectHelperComponent implements OnInit {
       if (h.getGeocodeInformation().ok()) {
         let theH = helpers.get(h.id.value);
         check(theH, h.getGeocodeInformation().location(), getLang(context).preferredDistributionArea + ": " + h.preferredDistributionAreaAddress.value);
-
+      }
+      if (h.getGeocodeInformation2().ok()) {
+        let theH = helpers.get(h.id.value);
+        check(theH, h.getGeocodeInformation2().location(), getLang(context).preferredDistributionArea + ": " + h.preferredDistributionAreaAddress2.value);
       }
     });
     let sql = new SqlBuilder();

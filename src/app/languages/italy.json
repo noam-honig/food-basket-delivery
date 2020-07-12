@@ -2307,8 +2307,13 @@
   },
   "preferredDistributionArea": {
     "google": "Indirizzo area di distribuzione preferita",
-    "valueInCode": "כתובת אזור חלוקה מועדף",
+    "valueInCode": "כתובת אזור חלוקה מועדף 1",
     "valueInEnglish": "Preferred distribution area address"
+  },
+  "preferredDistributionArea2": {
+    "google": "Indirizzo area di distribuzione preferita 2",
+    "valueInCode": "כתובת אזור חלוקה מועדף 2",
+    "valueInEnglish": "Preferred Distribution Area Address 2"
   },
   "previous": {
     "google": "precedente",

@@ -751,7 +751,8 @@ export class Language {
   volunteerCanUpdateComment = 'מתנדב יכול לעדכן לעצמו הערה';
   volunteerCanUpdatePreferredDistributionAddress = 'מתנדב יכול לעדכן אזור חלוקה מועדף';
   email = 'eMail';
-  preferredDistributionArea = 'כתובת אזור חלוקה מועדף';
+  preferredDistributionArea = 'כתובת אזור חלוקה מועדף 1';
+  preferredDistributionArea2 = 'כתובת אזור חלוקה מועדף 2';
   doesNotExist = "לא קיים";
   questionAddToApplication = "האם להוסיף";
   customSmsMessage = 'הודעת SMS מותאמת';

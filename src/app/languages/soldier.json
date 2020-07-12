@@ -1845,7 +1845,11 @@
   },
   "preferredDistributionArea": {
     "google": "כתובת אזור חלוקה מועדף",
-    "valueInCode": "כתובת אזור חלוקה מועדף"
+    "valueInCode": "כתובת אזור חלוקה מועדף 1"
+  },
+  "preferredDistributionArea2": {
+    "google": "כתובת אזור חלוקה מועדף 2",
+    "valueInCode": "כתובת אזור חלוקה מועדף 2"
   },
   "previous": {
     "google": "קודם",

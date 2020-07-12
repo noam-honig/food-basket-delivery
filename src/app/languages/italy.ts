@@ -619,6 +619,7 @@ export class italy implements Language {
   volunteerCanUpdatePreferredDistributionAddress = "Un volontario può aggiornare un'area di divisione preferita";
   email = 'e-mail';
   preferredDistributionArea = 'Indirizzo area di distribuzione preferita';
+  preferredDistributionArea2 = 'Indirizzo area di distribuzione preferita 2';
   doesNotExist = 'Non esiste';
   questionAddToApplication = 'Aggiungi';
   customSmsMessage = 'SMS personalizzati';

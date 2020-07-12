@@ -619,6 +619,7 @@ export class donor implements Language {
   volunteerCanUpdatePreferredDistributionAddress = 'מתנדב יכול לעדכן אזור איסוף מועדף';
   email = 'eMail';
   preferredDistributionArea = 'כתובת אזור איסוף מועדף';
+  preferredDistributionArea2 = 'כתובת אזור חלוקה מועדף 2';
   doesNotExist = 'לא קיים';
   questionAddToApplication = 'האם להוסיף';
   customSmsMessage = 'הודעת SMS מותאמת';

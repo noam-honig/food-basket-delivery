@@ -232,7 +232,10 @@ export class HelpersComponent implements OnInit, OnDestroy {
     }
 
     r.push({
-      column: helpers.preferredDistributionAreaAddress, width: '120'
+      column: helpers.preferredDistributionAreaAddress, width: '120',
+    });
+    r.push({
+      column: helpers.preferredDistributionAreaAddress2, width: '120',
     });
     r.push({
       column: helpers.company, width: '120'
