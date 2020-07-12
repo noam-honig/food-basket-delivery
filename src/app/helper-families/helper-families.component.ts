@@ -201,7 +201,7 @@ export class HelperFamiliesComponent implements OnInit {
         catch (err) {
           await this.dialog.exception(use.language.markDeliveredToAllHelprFamilies, err);
         }
-        this.initFamilies();
+        this.familyLists.reload();
       });
     });
   }

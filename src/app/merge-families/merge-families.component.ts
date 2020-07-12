@@ -16,7 +16,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 })
 export class MergeFamiliesComponent implements OnInit {
 
-  constructor(public context: Context, private dialogRef: MatDialogRef<any>, public dialog: DialogService,public settings:ApplicationSettings) { }
+  constructor(public context: Context, private dialogRef: MatDialogRef<any>, public dialog: DialogService, public settings: ApplicationSettings) { }
   families: Families[] = [];
   family: Families;
   async ngOnInit() {
@@ -36,10 +36,10 @@ export class MergeFamiliesComponent implements OnInit {
           for (const ec of eCols) {
             if (ec[0].value) {
               let ecDigits = ec[0].value.replace(/\D/g, '');
-              
+
               if (ecDigits == digits) {
                 found = true;
-                
+
                 for (let index = 1; index < c.length; index++) {
                   const c2 = c[index];
                   const ec2 = ec[index];
@@ -48,7 +48,7 @@ export class MergeFamiliesComponent implements OnInit {
 
                 }
                 break;
-                
+
               }
             }
           }
@@ -96,6 +96,8 @@ export class MergeFamiliesComponent implements OnInit {
           case this.family.previousDeliveryDate:
           case this.family.previousDeliveryStatus:
           case this.family.nextBirthday:
+          case this.family.city:
+          case this.family.numOfActiveReadyDeliveries:
             continue;
 
         }
@@ -144,8 +146,8 @@ export class MergeFamiliesComponent implements OnInit {
       if (deliveries > 1) {
         if (await this.dialog.YesNoPromise("יש " + deliveries + " משלוחים פעילים למשפחה - להציג אותם?"))
           await this.family.showDeliveryHistoryDialog({
-            settings:this.settings,
-            dialog:this.dialog
+            settings: this.settings,
+            dialog: this.dialog
           });
       }
     }
