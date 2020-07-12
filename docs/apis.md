@@ -16,6 +16,8 @@ These apis are used to query and update data on the server using Rest API, suppo
 * /{schema}/api/GroupsStatsForAllDeliveryCenters
 * /{schema}/api/citiesStats
 
+For a detailed break down see [model.md](model.md)
+
 
 ## Server functions, Apis used to perform a specific task
 
