@@ -1681,7 +1681,10 @@ export function parseAndUpdatePhone(input: string, f: Families, defaultPrefix: s
         if (i == 4)
             return;
         f.columns.find('phone' + i).value = fixPhone(p.phone, defaultPrefix);
-        f.columns.find('phone' + i + 'Description').value = p.comment;
+        let col = f.columns.find('phone' + i + 'Description');
+        if (col.value && p.comment)
+            col.value += ", ";
+        col.value += p.comment;
 
     }
 }
