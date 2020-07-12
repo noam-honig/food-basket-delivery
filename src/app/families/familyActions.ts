@@ -159,43 +159,7 @@ class UpdateGroupStrategyColumn extends ValueListColumn<UpdateGroupStrategy>
         });
     }
 }
-export class FreezeDeliveriesForFamilies extends ActionOnRows<Families> {
 
-    constructor(context: Context) {
-        super(context, Families, {
-            allowed: Roles.admin,
-            columns: () => [],
-            title: getLang(context).freezeDeliveries,
-            help: () => getLang(context).freezeDeliveriesHelp,
-            forEach: async f => {
-                for await (const fd of this.context.for(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id).and(fd.readyFilter()) })) {
-                    fd.deliverStatus.value = DeliveryStatus.Frozen;
-                    await fd.save();
-                }
-
-            }
-
-        });
-    }
-}
-export class UnfreezeDeliveriesForFamilies extends ActionOnRows<Families> {
-
-    constructor(context: Context) {
-        super(context, Families, {
-            allowed: Roles.admin,
-            columns: () => [],
-            title: getLang(context).unfreezeDeliveries,
-            help: () => getLang(this.context).unfreezeDeliveriesHelp,
-            forEach: async f => {
-                for await (const fd of this.context.for(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id).and(fd.deliverStatus.isEqualTo(DeliveryStatus.Frozen)) })) {
-                    fd.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
-                    await fd.save();
-                }
-            }
-        });
-
-    }
-}
 
 export class UpdateStatus extends ActionOnRows<Families> {
     status = new FamilyStatusColumn(this.context);
@@ -448,4 +412,4 @@ export function bridge(what: {
 
 
 
-export const familyActions = () => [NewDelivery, updateGroup, UpdateArea, UpdateStatus, UpdateSelfPickup, UpdateDefaultVolunteer, UpdateBasketType, UpdateQuantity, UpdateFamilySource, FreezeDeliveriesForFamilies, UnfreezeDeliveriesForFamilies];
+export const familyActions = () => [NewDelivery, updateGroup, UpdateArea, UpdateStatus, UpdateSelfPickup, UpdateDefaultVolunteer, UpdateBasketType, UpdateQuantity, UpdateFamilySource];
