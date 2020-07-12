@@ -20,7 +20,8 @@ export class EmailColumn extends radweb.StringColumn {
         allowClick: () => !!this.displayValue,
         clickIcon: 'email',
         inputType: 'email',
-        width: '250'
+        width: '250',
+        forceEqualFilter: false
       })
     }, settingsOrCaption);
     if (!this.defs.caption)
@@ -34,7 +35,8 @@ export class PhoneColumn extends radweb.StringColumn {
         click: () => window.open('tel:' + this.displayValue),
         allowClick: () => !!this.displayValue,
         clickIcon: 'phone',
-        inputType: 'phone'
+        inputType: 'phone',
+        forceEqualFilter: false
       })
     }, settingsOrCaption);
   }
