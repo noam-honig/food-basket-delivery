@@ -73,7 +73,15 @@ export class ActionOnRows<T extends IdEntity> {
     gridButton(component: actionDialogNeeds<T>) {
         return {
             name: this.args.title,
-            visible: () => this.context.isAllowed(this.args.allowed),
+            visible: () => {
+                let r = this.context.isAllowed(this.args.allowed);
+                if (!r)
+                    return false;
+                if (this.args.visible) {
+                    r = this.args.visible(component);
+                }
+                return r;
+            },
             click: async () => {
 
                 let cols = await this.args.dialogColumns(component);
@@ -139,6 +147,7 @@ export interface actionDialogNeeds<T extends IdEntity> {
 
 export interface ActionOnRowsArgs<T extends IdEntity> {
     dialogColumns?: (component: actionDialogNeeds<T>) => Promise<DataArealColumnSetting<any>[]>,
+    visible?: (component: actionDialogNeeds<T>) => boolean,
     forEach: (f: T) => Promise<void>,
     onEnd?: () => Promise<void>,
     columns: () => Column[],

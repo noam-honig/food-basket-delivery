@@ -233,6 +233,7 @@ class UpdateSelfPickup extends ActionOnRows<Families> {
     constructor(context: Context) {
         super(context, Families, {
             allowed: Roles.admin,
+            visible: c => c.settings.usingSelfPickupModule.value,
             columns: () => [this.selfPickup, this.updateExistingDeliveries],
             title: getLang(context).updateDefaultSelfPickup,
             forEach: async f => {
