@@ -83,7 +83,7 @@ import { DuplicateFamiliesComponent } from './duplicate-families/duplicate-famil
 import { DateRangeComponent } from './date-range/date-range.component';
 import { ShowOnMapComponent } from './show-on-map/show-on-map.component';
 import { EventsComponent } from './events/events.component';
-import { setCustomColumnInfo } from './families/families';
+
 
 
 
