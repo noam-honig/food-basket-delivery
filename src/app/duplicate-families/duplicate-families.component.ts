@@ -6,7 +6,7 @@ import { FamilyStatus } from '../families/FamilyStatus';
 import { DialogService } from '../select-popup/dialog';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { buildGridButtonFromActions } from '../families/familyActionsWiring';
-import { familyActions, UpdateStatus, FreezeDeliveriesForFamilies, UnfreezeDeliveriesForFamilies, updateGroup } from '../families/familyActions';
+import { familyActions, UpdateStatus,  updateGroup } from '../families/familyActions';
 import { FamiliesComponent, saveFamiliesToExcel } from '../families/families.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
@@ -73,7 +73,7 @@ export class DuplicateFamiliesComponent implements OnInit {
         numOfColumnsInGrid: 6,
         
         gridButtons: [
-          ...buildGridButtonFromActions([UpdateStatus, updateGroup, FreezeDeliveriesForFamilies, UnfreezeDeliveriesForFamilies], this.context,
+          ...buildGridButtonFromActions([UpdateStatus, updateGroup], this.context,
             {
               afterAction: async () => await x.args.settings.getRecords(),
               dialog: this.dialog,
