@@ -2,6 +2,7 @@ import * as radweb from '@remult/core';
 import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, ColumnOptions, SqlCommand, SqlResult, AndFilter, Context } from '@remult/core';
 import { use, getLang } from '../translate';
 import * as moment from 'moment';
+import { Sites } from '../sites/sites';
 
 
 
@@ -19,7 +20,7 @@ export class EmailColumn extends radweb.StringColumn {
         allowClick: () => !!this.displayValue,
         clickIcon: 'email',
         inputType: 'email',
-        width:'250'
+        width: '250'
       })
     }, settingsOrCaption);
     if (!this.defs.caption)
@@ -560,4 +561,51 @@ export function wasChanged(...columns: Column[]) {
     if (c.value != c.originalValue)
       return true;
   }
+}
+export function logChanges(e: Entity, context: Context, args?: {
+  excludeColumns?: Column[],
+  excludeValues?: Column[]
+}) {
+  if (!args) {
+    args = {};
+  }
+  if (!args.excludeColumns)
+    args.excludeColumns = [];
+  if (!args.excludeValues)
+    args.excludeValues = [];
+
+  let cols = '';
+  let vals = '';
+  for (const c of e.columns) {
+    if (wasChanged(c)) {
+      if (!args.excludeColumns.includes(c)) {
+        cols += c.defs.key + "|";
+        if (!args.excludeValues.includes(c)) {
+          vals += c.defs.key + "=" + c.value;
+          if (!e.isNew())
+            vals += " was (" + c.originalValue + ")";
+          vals += "|";
+        }
+      }
+    }
+  }
+
+
+  if (cols) {
+    var p = '';
+    try {
+      p = Sites.getOrganizationFromContext(context);
+    }
+    catch{
+    }
+    p += "/" + e.defs.name + "/" + e.columns.idColumn.value;
+    if (e.isNew()) {
+      p += "(new)";
+    }
+    if (context.user)
+      p += ", user=" + context.user.id;
+    p += ", cols=" + cols + ":" + vals;
+    console.log(p)
+  }
+
 }

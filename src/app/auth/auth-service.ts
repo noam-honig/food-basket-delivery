@@ -46,17 +46,20 @@ export class AuthService {
         if (h) {
 
             h.lastSignInDate.value = new Date();
-            h._disableOnSavingRow = true;
+            let info: HelperUserInfo = {
+                id: h.id.value,
+                name: h.name.value,
+                roles: [Sites.getOrgRole(context)],
+                theHelperIAmEscortingId: h.theHelperIAmEscorting.value,
+                escortedHelperName: h.theHelperIAmEscorting.value ? (await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value : '',
+                distributionCenter: undefined
+            };
+            context._setUser(info);
+            
             await h.save();
             return {
                 valid: true,
-                authToken: Helpers.helper.createSecuredTokenBasedOn({
-                    id: h.id.value,
-                    name: h.name.value,
-                    roles: [Sites.getOrgRole(context)],
-                    theHelperIAmEscortingId: h.theHelperIAmEscorting.value,
-                    escortedHelperName: h.theHelperIAmEscorting.value ? (await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value : ''
-                } as HelperUserInfo),
+                authToken: Helpers.helper.createSecuredTokenBasedOn(info),
                 requirePassword: false
             } as LoginResponse
 
@@ -170,7 +173,7 @@ export class AuthService {
 
                 }
                 if (!requirePassword) {
-                    h._disableOnSavingRow = true;
+                    context._setUser(result);
                     h.lastSignInDate.value = new Date();
                     await h.save();
                 }

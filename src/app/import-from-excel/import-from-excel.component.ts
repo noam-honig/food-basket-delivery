@@ -717,7 +717,7 @@ export class ImportFromExcelComponent implements OnInit {
                         else {
                             
                             await h.lookupAndInsert(Helpers, h => h.name, v, h => h.id, h.fd.courier, x => {
-                                x._disableOnSavingRow = true;
+                                x._disableDuplicateCheck = true;
                             });
                         }
                     }

@@ -1,7 +1,7 @@
 import { StringColumn, NumberColumn, BoolColumn, ValueListColumn, ServerFunction } from '@remult/core';
 import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
 import { Entity, Context, EntityClass } from '@remult/core';
-import { PhoneColumn } from "../model-shared/types";
+import { PhoneColumn, logChanges } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { DeliveryStatusColumn, DeliveryStatus } from "../families/DeliveryStatus";
 import { translationConfig, TranslationOptionsColumn, Language, getLang, use, setLangForSite, TranslationOptions } from "../translate";
@@ -189,6 +189,7 @@ export class ApplicationSettings extends Entity<number>  {
           this.helpPhone.value = PhoneColumn.fixPhoneInput(this.helpPhone.value);
           if (this.forWho.value)
             setLangForSite(Sites.getValidSchemaFromContext(context), this.forWho.value);
+          logChanges(this, context);
         }
       }
     })

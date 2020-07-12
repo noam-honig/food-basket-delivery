@@ -1,6 +1,6 @@
 
 import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, FilterBase, Entity, Column, EntityProvider, checkForDuplicateValue } from '@remult/core';
-import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, EmailColumn, SqlBuilder, wasChanged } from '../model-shared/types';
+import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, EmailColumn, SqlBuilder, wasChanged, logChanges } from '../model-shared/types';
 
 
 
@@ -13,6 +13,7 @@ import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 import { getLang } from '../translate';
 import { GeocodeInformation, GetGeoInformation, Location } from '../shared/googleApiHelpers';
 import { routeStats } from '../asign-family/route-strategy';
+import { Sites } from '../sites/sites';
 
 
 
@@ -35,7 +36,7 @@ export abstract class HelpersBase extends IdEntity {
 
     phone = new PhoneColumn(getLang(this.context).phone);
     smsDate = new DateTimeColumn(getLang(this.context).smsDate);
-    
+
     company = new CompanyColumn(this.context);
     totalKm = new NumberColumn({ allowApiUpdate: Roles.distCenterAdmin });
     totalTime = new NumberColumn({ allowApiUpdate: Roles.distCenterAdmin });
@@ -138,7 +139,8 @@ export class Helpers extends HelpersBase {
                         this.admin.value = true;
                     }
                     this.phone.value = PhoneColumn.fixPhoneInput(this.phone.value);
-                    await checkForDuplicateValue(this, this.phone, context.for(Helpers), getLang(this.context).alreadyExist);
+                    if (!this._disableDuplicateCheck)
+                        await checkForDuplicateValue(this, this.phone, context.for(Helpers), getLang(this.context).alreadyExist);
                     if (this.isNew())
                         this.createDate.value = new Date();
                     this.veryUrlKeyAndReturnTrueIfSaveRequired();
@@ -166,6 +168,21 @@ export class Helpers extends HelpersBase {
                     }
 
                 }
+                logChanges(this, this.context, {
+                    excludeColumns: [
+                        this.smsDate,
+                        this.createDate,
+                        this.lastSignInDate,
+                        this.reminderSmsDate,
+                        this.totalKm,
+                        this.totalTime,
+                        this.allowedIds,
+                        this.addressApiResult,
+                        this.password,
+                        this.shortUrlKey
+                    ],
+                    excludeValues: [this.realStoredPassword]
+                })
 
             },
             apiDataFilter: () => {
@@ -184,6 +201,7 @@ export class Helpers extends HelpersBase {
     });
 
     _disableOnSavingRow = false;
+    _disableDuplicateCheck = false;
     public static emptyPassword = 'password';
 
     phone = new PhoneColumn(getLang(this.context).phone);
@@ -296,7 +314,7 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
                     getValue: () => this.getValue(),
                     hideDataOnInput: true,
                     width: '200',
-                    click: async () =>this.showSelectDialog()
+                    click: async () => this.showSelectDialog()
                 })
         }, settingsOrCaption);
     }
