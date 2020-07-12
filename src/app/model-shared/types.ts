@@ -606,7 +606,7 @@ export function logChanges(e: Entity, context: Context, args?: {
     }
     if (context.user)
       p += ", user=" + context.user.id;
-    p += ", cols=" + cols + ":" + vals;
+    p += " :" + vals+"\t cols=" + cols ;
     console.log(p)
   }
 
