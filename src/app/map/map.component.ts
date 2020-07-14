@@ -103,7 +103,7 @@ export class MapComponent implements OnInit, OnDestroy {
         if (x == this.lastBounds)
             return;
         this.lastBounds = x;
-        if (this.bounds.isEmpty()) {
+        if (this.map&& this.bounds.isEmpty()) {
             this.map.setCenter(this.center);
         } else {
             this.map.fitBounds(this.bounds);
