@@ -456,7 +456,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
         {
           column: deliveries.name,
-          width: '200'
+          width: '160'
         },
         {
           column: deliveries.address,
@@ -468,7 +468,10 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           }
         },
         deliveries.basketType,
-        deliveries.quantity,
+        {
+          column: deliveries.quantity,
+          width: '50'
+        },
 
         this.deliverySummary = {
           caption: getLang(this.context).deliverySummary,
@@ -479,7 +482,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           getValue: f => f.getDeliveryDescription(),
           width: '300'
         },
-        deliveries.createDate,
+        { column: deliveries.createDate, width: '150' },
         deliveries.distributionCenter,
         this.statusColumn = { column: deliveries.deliverStatus },
 
@@ -489,7 +492,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
 
         deliveries.deliveryComments,
-        deliveries.internalDeliveryComment,
+        deliveries.internalDeliveryComment,  //10
         deliveries.special,
         deliveries.createUser,
 
@@ -500,7 +503,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.appartment,
         deliveries.entrance,
         { column: deliveries.addressComment },
-        deliveries.city,
+        { column: deliveries.city, width: '100' },
         deliveries.area,
         deliveries.phone1,
         deliveries.phone1Description,
@@ -510,23 +513,20 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.phone3Description,
         deliveries.phone4,
         deliveries.phone4Description,
-        deliveries.courier,
+        { column: deliveries.courier, width: '100' },
 
-        deliveries.courierAssignUser,
-        deliveries.courierAssingTime,
-
-
-        deliveries.deliveryStatusUser,
+        deliveries.courierAssignUser,  // 30
+        { column: deliveries.courierAssingTime, width: '150' },
+        { column: deliveries.deliveryStatusUser, width: '100' },
         deliveries.deliveryStatusDate,
-        deliveries.courierComments,
-        deliveries.internalDeliveryComment,
+        { column: deliveries.courierComments, width: '120' }, //34
+        { column: deliveries.internalDeliveryComment, width: '120' }, //35
         deliveries.needsWork,
         deliveries.needsWorkDate,
         deliveries.needsWorkUser,
         deliveries.fixedCourier,
         deliveries.familyMembers,
-        deliveries.messageStatus
-
+        { column: deliveries.messageStatus, width: '130' }
       ];
       return r;
     },
@@ -636,15 +636,29 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     this.refreshStats();
     let cols = this.deliveries.columns;
     let firstColumns = [
-      cols.items[0],
-      cols.items[1],
-      cols.items[2],
-      cols.items[3],
-      cols.items[4]
+      cols.items[0]  // name
     ];
     if (this.settings.forWho.value == TranslationOptions.donors) {
-      firstColumns.push(cols.items[5], cols.items[6]);
+      firstColumns.push(
+        cols.items[19], // city
+        cols.items[6], // distributionCenter
+        cols.items[3], // quantity
+        cols.items[5], // createDate
+        cols.items[29], // courier
+        cols.items[31], // courierAssingTime
+        cols.items[10], // internalDeliveryComment
+        cols.items[41], // messageStatus
+        cols.items[32], // message who updates    deliveryStatusUser
+        cols.items[34]  // courierComments
+      );    
       this.deliveries.columns.numOfColumnsInGrid = firstColumns.length;
+    } else {
+      firstColumns.push(
+        cols.items[1], // address
+        cols.items[2], // basket type
+        cols.items[3], // quantity
+        cols.items[4]  // deliverySummary
+      );  
     }
 
     cols.items.sort((a, b) => a.caption > b.caption ? 1 : a.caption < b.caption ? -1 : 0);
