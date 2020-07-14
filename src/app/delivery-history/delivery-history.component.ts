@@ -62,7 +62,7 @@ export class DeliveryHistoryComponent implements OnInit {
         name: this.settings.lang.exportToExcel,
         visible: () => this.context.isAllowed(Roles.admin),
         click: async () => {
-          await saveToExcel(this.context.for(helperHistoryInfo), this.helperInfo, this.settings.lang.volunteers, this.busy, (d: helperHistoryInfo, c) => c == d.courier);
+          await saveToExcel(this.context.for(helperHistoryInfo,this.helperStorage), this.helperInfo, this.settings.lang.volunteers, this.busy, (d: helperHistoryInfo, c) => c == d.courier);
         }
       }],
       columnSettings: h => [
