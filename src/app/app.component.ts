@@ -38,6 +38,7 @@ export class AppComponent {
     private helper: RouteHelperService,
     public context: Context,
     public settings: ApplicationSettings) {
+      console.log(settings)
     this.lang = settings.lang;
     this.toolbarColor = 'primary';
 
