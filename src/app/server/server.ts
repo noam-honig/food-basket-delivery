@@ -20,6 +20,7 @@ import { OverviewComponent } from "../overview/overview.component";
 import { environment } from "../../environments/environment";
 import * as request from 'request';
 import { setLangForSite } from "../translate";
+import { createDonor, createVolunteer } from "./mlt";
 
 
 serverInit().then(async (dataSource) => {
@@ -129,25 +130,11 @@ serverInit().then(async (dataSource) => {
         eb.logApiEndPoints = false;
     Helpers.helper = new JWTCookieAuthorizationHelper(eb, process.env.TOKEN_SIGN_KEY);
     app.post('/mlt/donorForm', async (req, res) => {
-        let db = await OverviewComponent.createDbSchema('mlt');
-        let c = new ServerContext();
-        c._setUser({
-            id: 'server',
-            name: 'server',
-            roles: []
-
-        });
-        c.setDataProvider(db);
-        let f = c.for(Families).create();
-        f.name.value = "test";
-        await f.save();
-        console.log(req.body);
-        console.log(JSON.stringify(req.body));
+        await createDonor(req.body);
         res.sendStatus(200);
     });
     app.post('/mlt/volunteerForm', async (req, res) => {
-        console.log(req.body);
-        console.log(JSON.stringify(req.body));
+        await createVolunteer(req.body);
         res.sendStatus(200);
     });
 
