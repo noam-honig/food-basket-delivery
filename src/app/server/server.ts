@@ -13,7 +13,7 @@ import '../app.module';
 import { ServerContext, DateColumn, SqlDatabase } from '@remult/core';
 import { Helpers } from '../helpers/helpers';
 import { Sites } from '../sites/sites';
-import { dataMigration } from "./dataMigration";
+
 import { GeoCodeOptions } from "../shared/googleApiHelpers";
 import { Families } from "../families/families";
 import { OverviewComponent } from "../overview/overview.component";
@@ -119,9 +119,7 @@ serverInit().then(async (dataSource) => {
             }
         };
     }
-    app.get('/data-migration', async (req, res) => {
-        await dataMigration(res);
-    });
+
 
     let eb = new ExpressBridge(
         //@ts-ignore
@@ -130,7 +128,28 @@ serverInit().then(async (dataSource) => {
     if (process.env.logUrls != "true")
         eb.logApiEndPoints = false;
     Helpers.helper = new JWTCookieAuthorizationHelper(eb, process.env.TOKEN_SIGN_KEY);
+    app.post('/mlt/donorForm', async (req, res) => {
+        let db = await OverviewComponent.createDbSchema('mlt');
+        let c = new ServerContext();
+        c._setUser({
+            id: 'server',
+            name: 'server',
+            roles: []
 
+        });
+        c.setDataProvider(db);
+        let f = c.for(Families).create();
+        f.name.value = "test";
+        await f.save();
+        console.log(req.body);
+        console.log(JSON.stringify(req.body));
+        res.sendStatus(200);
+    });
+    app.post('/mlt/volunteerForm', async (req, res) => {
+        console.log(req.body);
+        console.log(JSON.stringify(req.body));
+        res.sendStatus(200);
+    });
 
     if (Sites.multipleSites) {
         let createSchemaApi = async schema => {
