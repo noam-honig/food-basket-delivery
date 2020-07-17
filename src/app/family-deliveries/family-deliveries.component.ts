@@ -458,7 +458,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
         {
           column: deliveries.name,
-          width: '160'
+          width: '200'
         },
         {
           column: deliveries.address,
