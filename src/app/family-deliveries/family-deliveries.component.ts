@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import { Context, DataControlSettings, FilterBase, AndFilter, BusyService, packWhere, ServerFunction, unpackWhere, EntityWhere, GridButton, RowButton, GridSettings } from '@remult/core';
+import { Context, DataControlSettings, FilterBase, AndFilter, BusyService, packWhere, ServerFunction, unpackWhere, EntityWhere, GridButton, RowButton, GridSettings, DataControlInfo } from '@remult/core';
 
 import { FamilyDeliveresStatistics, FamilyDeliveryStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
@@ -26,6 +26,7 @@ import { getLang, TranslationOptions } from '../translate'
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { Helpers } from '../helpers/helpers';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
+import { sortColumns } from '../shared/utils';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -41,6 +42,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   limit = 25;
   groupsColumn: DataControlSettings<ActiveFamilyDeliveries>;
   statusColumn: DataControlSettings<ActiveFamilyDeliveries>;
+  normalColumns: DataControlInfo<ActiveFamilyDeliveries>[];
   deliverySummary: DataControlSettings<ActiveFamilyDeliveries>;
   currentStatFilter: FamilyDeliveresStatistics = undefined;
   searchString = '';
@@ -468,7 +470,10 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           }
         },
         deliveries.basketType,
-        deliveries.quantity,
+        {
+          column: deliveries.quantity,
+          width: '50'
+        },
 
         this.deliverySummary = {
           caption: getLang(this.context).deliverySummary,
@@ -479,7 +484,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           getValue: f => f.getDeliveryDescription(),
           width: '300'
         },
-        deliveries.createDate,
+        { column: deliveries.createDate, width: '150' },
         deliveries.distributionCenter,
         this.statusColumn = { column: deliveries.deliverStatus },
 
@@ -489,7 +494,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
 
         deliveries.deliveryComments,
-        deliveries.internalDeliveryComment,
+        deliveries.internalDeliveryComment,  
         deliveries.special,
         deliveries.createUser,
 
@@ -500,7 +505,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.appartment,
         deliveries.entrance,
         { column: deliveries.addressComment },
-        deliveries.city,
+        { column: deliveries.city, width: '100' },
         deliveries.area,
         deliveries.phone1,
         deliveries.phone1Description,
@@ -510,24 +515,46 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.phone3Description,
         deliveries.phone4,
         deliveries.phone4Description,
-        deliveries.courier,
+        { column: deliveries.courier, width: '100' },
 
-        deliveries.courierAssignUser,
-        deliveries.courierAssingTime,
-
-
-        deliveries.deliveryStatusUser,
+        deliveries.courierAssignUser,  
+        { column: deliveries.courierAssingTime, width: '150' },
+        { column: deliveries.deliveryStatusUser, width: '100' },
         deliveries.deliveryStatusDate,
-        deliveries.courierComments,
-        deliveries.internalDeliveryComment,
+        { column: deliveries.courierComments, width: '120' }, 
+        { column: deliveries.internalDeliveryComment, width: '120' }, 
         deliveries.needsWork,
         deliveries.needsWorkDate,
         deliveries.needsWorkUser,
         deliveries.fixedCourier,
         deliveries.familyMembers,
-        deliveries.messageStatus
-
+        { column: deliveries.messageStatus, width: '130' }
       ];
+
+      this.normalColumns = [
+        deliveries.name
+      ]
+      if (this.settings.forWho.value == TranslationOptions.donors) {
+        this.normalColumns.push(
+          deliveries.city,
+          deliveries.distributionCenter,
+          deliveries.quantity,
+          deliveries.createDate,
+          deliveries.courier,
+          deliveries.courierAssingTime,
+          deliveries.internalDeliveryComment,
+          deliveries.messageStatus,
+          deliveries.deliveryStatusUser,
+          deliveries.courierComments
+        );
+      } else {
+        this.normalColumns.push(
+          deliveries.address,
+          deliveries.basketType,
+          deliveries.quantity,
+          deliveries.deliverStatus
+        );
+      }
       return r;
     },
     allowSelection: true,
@@ -630,33 +657,11 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     return r + getLang(context).deliveriesUpdated;
   }
 
-
-
   ngOnInit() {
     this.refreshStats();
-    let cols = this.deliveries.columns;
-    let firstColumns = [
-      cols.items[0],
-      cols.items[1],
-      cols.items[2],
-      cols.items[3],
-      cols.items[4]
-    ];
-    if (this.settings.forWho.value == TranslationOptions.donors) {
-      firstColumns.push(cols.items[5], cols.items[6]);
-      this.deliveries.columns.numOfColumnsInGrid = firstColumns.length;
-    }
-
-    cols.items.sort((a, b) => a.caption > b.caption ? 1 : a.caption < b.caption ? -1 : 0);
-
-    for (let index = 0; index < firstColumns.length; index++) {
-      const item = firstColumns[index];
-      let origIndex = cols.items.indexOf(item);
-      cols.moveCol(item, -origIndex + index);
-    }
-
+    this.deliveries.columns.numOfColumnsInGrid = this.normalColumns.length;
+    sortColumns(this.deliveries, this.normalColumns)
   }
-
 }
 
 interface statsOnTabBasket extends statsOnTab {
@@ -691,23 +696,23 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
       visible: d => args.context.isAllowed(Roles.admin)
     },
     {
-      textInMenu:()=> getLang(args.context).assignVolunteer,
-      icon:'person_search',
-      showInLine:true,
+      textInMenu: () => getLang(args.context).assignVolunteer,
+      icon: 'person_search',
+      showInLine: true,
       click: async d => {
         await d.courier.showSelectDialog(async () => await d.save());
       },
       visible: d => !DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)
     },
     {
-      textInMenu:()=> getLang(args.context).volunteerAssignments,
-      icon:'list_alt',
-      showInLine:true,
+      textInMenu: () => getLang(args.context).volunteerAssignments,
+      icon: 'list_alt',
+      showInLine: true,
       click: async d => {
         let h = await args.context.for(Helpers).findId(d.courier);
         await args.context.openDialog(
           HelperAssignmentComponent, s => s.argsHelper = h);
-          this.refresh();
+        this.refresh();
 
 
 
@@ -715,9 +720,9 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
       visible: d => d.courier.value && args.context.isAllowed(Roles.distCenterAdmin)
     },
     {
-      textInMenu:()=> getLang(args.context).cancelAsignment,
-      showInLine:true,
-      icon:'person_add_disabled',
+      textInMenu: () => getLang(args.context).cancelAsignment,
+      showInLine: true,
+      icon: 'person_add_disabled',
       click: async d => {
         if (await args.dialog.YesNoPromise(getLang(args.context).cancelAssignmentFor + d.name.value)) {
           {

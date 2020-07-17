@@ -42,6 +42,8 @@ import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, ite
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
 import { MatAccordion } from '@angular/material/expansion';
+import { sortColumns } from '../shared/utils';
+
 
 
 
@@ -496,7 +498,7 @@ export class FamiliesComponent implements OnInit {
         await this.refreshFamilyGrid();
         this.updateChart();
         if (this.cols) {
-            this.sortColumns(this.cols);
+            sortColumns(this.families,this.cols);
             this.cols = undefined;
         }
         if (this.currentTabStats == this.addressProblem) {
@@ -504,7 +506,7 @@ export class FamiliesComponent implements OnInit {
             this.cols.splice(this.families.columns.numOfColumnsInGrid);
             this.prevNumOfCols = this.families.columns.numOfColumnsInGrid;
 
-            this.sortColumns(this.addressProblemColumns);
+            sortColumns(this.families,this.addressProblemColumns);
 
         }
 
@@ -618,27 +620,10 @@ export class FamiliesComponent implements OnInit {
     ngOnInit() {
 
         this.refreshStats();
-        this.sortColumns(this.normalColumns);
+        sortColumns(this.families,this.normalColumns);
         //  debugger;
     }
-    sortColumns(columns: DataControlInfo<Families>[]) {
-        if (this.families.origList && this.families.origList.length > 0)
-            this.families.resetColumns();
-        this.families.columns.items.sort((a, b) => a.caption > b.caption ? 1 : a.caption < b.caption ? -1 : 0);
-        this.families.columns.numOfColumnsInGrid = columns.length;
-        for (let index = 0; index < columns.length; index++) {
-            const origItem = columns[index];
-            let item: DataControlSettings<Families>;
-            if (origItem instanceof Column) {
-                item = this.families.columns.items.find(x => x.column == origItem);
-            }
-            else item = origItem;
-            let origIndex = this.families.columns.items.indexOf(item);
-            this.families.columns.moveCol(item, -origIndex + index);
-        }
 
-
-    }
     statTotal(t: statsOnTab) {
         if (!t.showTotal)
             return;
