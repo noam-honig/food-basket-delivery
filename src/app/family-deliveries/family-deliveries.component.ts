@@ -657,49 +657,11 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     return r + getLang(context).deliveriesUpdated;
   }
 
-
-
   ngOnInit() {
     this.refreshStats();
     this.deliveries.columns.numOfColumnsInGrid = this.normalColumns.length;
     sortColumns(this.deliveries, this.normalColumns)
-    // let cols = this.deliveries.columns;
-    // let firstColumns = [
-    //   cols.items[0]  // name
-    // ];
-    // if (this.settings.forWho.value == TranslationOptions.donors) {
-    //   firstColumns.push(
-    //     cols.items[19], // city
-    //     cols.items[6], // distributionCenter
-    //     cols.items[3], // quantity
-    //     cols.items[5], // createDate
-    //     cols.items[29], // courier
-    //     cols.items[31], // courierAssingTime
-    //     cols.items[10], // internalDeliveryComment
-    //     cols.items[41], // messageStatus
-    //     cols.items[32], // message who updates    deliveryStatusUser
-    //     cols.items[34]  // courierComments
-    //   );    
-    //   this.deliveries.columns.numOfColumnsInGrid = firstColumns.length;
-    // } else {
-    //   firstColumns.push(
-    //     cols.items[1], // address
-    //     cols.items[2], // basket type
-    //     cols.items[3], // quantity
-    //     cols.items[4]  // deliverySummary
-    //   );  
-    // }
-
-    // cols.items.sort((a, b) => a.caption > b.caption ? 1 : a.caption < b.caption ? -1 : 0);
-
-    // for (let index = 0; index < firstColumns.length; index++) {
-    //   const item = firstColumns[index];
-    //   let origIndex = cols.items.indexOf(item);
-    //   cols.moveCol(item, -origIndex + index);
-    // }
-
   }
-
 }
 
 interface statsOnTabBasket extends statsOnTab {
