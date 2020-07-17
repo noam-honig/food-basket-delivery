@@ -494,7 +494,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
 
         deliveries.deliveryComments,
-        deliveries.internalDeliveryComment,  //10
+        deliveries.internalDeliveryComment,  
         deliveries.special,
         deliveries.createUser,
 
@@ -517,12 +517,12 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.phone4Description,
         { column: deliveries.courier, width: '100' },
 
-        deliveries.courierAssignUser,  // 30
+        deliveries.courierAssignUser,  
         { column: deliveries.courierAssingTime, width: '150' },
         { column: deliveries.deliveryStatusUser, width: '100' },
         deliveries.deliveryStatusDate,
-        { column: deliveries.courierComments, width: '120' }, //34
-        { column: deliveries.internalDeliveryComment, width: '120' }, //35
+        { column: deliveries.courierComments, width: '120' }, 
+        { column: deliveries.internalDeliveryComment, width: '120' }, 
         deliveries.needsWork,
         deliveries.needsWorkDate,
         deliveries.needsWorkUser,
