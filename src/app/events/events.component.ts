@@ -23,6 +23,16 @@ export class EventsComponent implements OnInit {
     },
     
     numOfColumnsInGrid: 100,
+    columnSettings: e => [
+      e.name,
+      e.eventStatus,
+      e.eventDate,
+      e.startTime,
+      e.endTime,
+      e.requiredVolunteers,
+      e.registeredVolunteers,
+      e.description
+    ],
     rowButtons: [
       {
         name: this.settings.lang.volunteers,
@@ -34,6 +44,11 @@ export class EventsComponent implements OnInit {
                 limit: 50,
                 where: ve => ve.eventId.isEqualTo(e.id)
               },
+              columnSettings: ev => [
+                ev.helperName,
+                ev.helperPhone,
+                ev.assignedDeliveries
+              ],
               rowButtons: [
                 {
                   name: this.settings.lang.assignDeliveryMenu,
@@ -44,26 +59,11 @@ export class EventsComponent implements OnInit {
                     ev.save();
                   }
                 }
-              ],
-              columnSettings: ev => [
-                ev.helperName,
-                ev.helperPhone,
-                ev.assignedDeliveries
               ]
             })
           });
         }
       }
-    ],
-    columnSettings: e => [
-      e.name,
-      e.eventStatus,
-      e.eventDate,
-      e.startTime,
-      e.endTime,
-      e.requiredVolunteers,
-      e.registeredVolunteers,
-      e.description
     ]
   });
   ngOnInit() {

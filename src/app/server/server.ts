@@ -13,13 +13,14 @@ import '../app.module';
 import { ServerContext, DateColumn, SqlDatabase } from '@remult/core';
 import { Helpers } from '../helpers/helpers';
 import { Sites } from '../sites/sites';
-import { dataMigration } from "./dataMigration";
+
 import { GeoCodeOptions } from "../shared/googleApiHelpers";
 import { Families } from "../families/families";
 import { OverviewComponent } from "../overview/overview.component";
 import { environment } from "../../environments/environment";
 import * as request from 'request';
 import { setLangForSite } from "../translate";
+import { createDonor, createVolunteer } from "./mlt";
 
 
 serverInit().then(async (dataSource) => {
@@ -119,9 +120,7 @@ serverInit().then(async (dataSource) => {
             }
         };
     }
-    app.get('/data-migration', async (req, res) => {
-        await dataMigration(res);
-    });
+
 
     let eb = new ExpressBridge(
         //@ts-ignore
@@ -130,7 +129,14 @@ serverInit().then(async (dataSource) => {
     if (process.env.logUrls != "true")
         eb.logApiEndPoints = false;
     Helpers.helper = new JWTCookieAuthorizationHelper(eb, process.env.TOKEN_SIGN_KEY);
-
+    app.post('/mlt/donorForm', async (req, res) => {
+        await createDonor(req.body);
+        res.sendStatus(200);
+    });
+    app.post('/mlt/volunteerForm', async (req, res) => {
+        await createVolunteer(req.body);
+        res.sendStatus(200);
+    });
 
     if (Sites.multipleSites) {
         let createSchemaApi = async schema => {
