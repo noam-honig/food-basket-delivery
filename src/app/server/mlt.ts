@@ -7,8 +7,7 @@ import { Helpers } from "../helpers/helpers";
 
 export async function createDonor(d: donor) {
     let context = await getMltContext();
-    console.log(d);
-    console.log(JSON.stringify(d));
+    console.log("createDonor", JSON.stringify(d));
     let f = context.for(Families).create();
     f.name.value = d.FirstName;
     f.address.value = d.DonorStreet + " " + d.DonorCity;
@@ -66,8 +65,7 @@ export async function createDonor(d: donor) {
 }
 export async function createVolunteer(v: volunteer) {
     let context = await getMltContext();
-    console.log(v);
-    console.log(JSON.stringify(v));
+    console.log("createVolunteer", JSON.stringify(v));
     try {
         v.Telephone = PhoneColumn.fixPhoneInput(v.Telephone);
         let h = await context.for(Helpers).findFirst(h => h.phone.isEqualTo(v.Telephone));
