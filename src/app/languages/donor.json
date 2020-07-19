@@ -312,7 +312,7 @@
     "valueInCode": "סל"
   },
   "basketNotDelivered": {
-    "google": "הסל לא נמסר",
+    "google": "שלח\י",
     "valueInCode": "הסל לא נמסר"
   },
   "basketType": {
@@ -460,7 +460,7 @@
     "valueInCode": "בטל שיוך למתנדב"
   },
   "clickedByMistake": {
-    "google": "נלחץ בטעות - החזר למשלוחים לאיסוף",
+    "google": "נלחץ בטעות - החזר לתרומות לאיסוף",
     "valueInCode": "נלחץ בטעות - החזר למשלוחים לחלוקה"
   },
   "clickForTutorialVideo": {
@@ -712,7 +712,7 @@
     "valueInCode": "משלוחים מ"
   },
   "deliveriesToDistribute": {
-    "google": "משלוחים לאיסוף",
+    "google": "תרומות לאיסוף",
     "valueInCode": "משלוחים לחלוקה"
   },
   "deliveriesUpdated": {
@@ -1656,7 +1656,7 @@
     "valueInCode": "לא משוייך מתנדב"
   },
   "noDeliveries": {
-    "google": "אין משלוחים לאיסוף",
+    "google": "אין תרומות לאיסוף",
     "valueInCode": "אין משלוחים לחלוקה"
   },
   "noDeliveriesLeft": {
@@ -1724,7 +1724,7 @@
     "valueInCode": "ב"
   },
   "oneDeliveryToDistribute": {
-    "google": "משלוח אחד לאיסוף",
+    "google": "תרומה אחת לאיסוף",
     "valueInCode": "משלוח אחד לחלוקה"
   },
   "onStatus": {
@@ -1924,7 +1924,7 @@
     "valueInCode": "שאלות ותשובות"
   },
   "ranIntoAProblem": {
-    "google": "נתקלתי בבעיה",
+    "google": "דחיית האיסוף/דיווח על בעייה",
     "valueInCode": "נתקלתי בבעיה"
   },
   "readExcelRow": {
@@ -2292,7 +2292,7 @@
     "valueInCode": "הצג את כל המשלוחים שחולקו"
   },
   "showAllDeliveries": {
-    "google": "הצג את כל המשלוחים לאיסוף",
+    "google": "הצג את כל התרומות לאיסוף",
     "valueInCode": "הצג את כל המשלוחים לחלוקה"
   },
   "showAllFamilies": {
