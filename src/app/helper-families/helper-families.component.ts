@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Context } from '@remult/core';
 import { Column } from '@remult/core';
-import { use, getLang } from '../translate';
+import { use, getLang, TranslationOptions } from '../translate';
 import { Helpers, HelperId } from '../helpers/helpers';
 import { UpdateCommentComponent } from '../update-comment/update-comment.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
@@ -186,6 +186,9 @@ export class HelperFamiliesComponent implements OnInit {
       }
     });
     await Families.SendMessageToBrowsers(use.language.markAllDeliveriesAsSuccesfull, context, dist);
+  }
+  notDonor() {
+    return this.settings.forWho.value != TranslationOptions.donors;
   }
 
   limitReady = new limitList(30, () => this.familyLists.toDeliver.length);
