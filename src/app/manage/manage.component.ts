@@ -7,7 +7,7 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings, PhoneItem, PhoneOption, qaItem } from './ApplicationSettings';
 
 
-import { Context, IdEntity, IdColumn, StringColumn, EntityClass, Entity, NumberColumn, RouteHelperService, DataAreaSettings, ServerFunction } from '@remult/core';
+import { Context, IdEntity, IdColumn, StringColumn, EntityClass, Entity, NumberColumn, RouteHelperService, DataAreaSettings, ServerFunction, BusyService } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
@@ -22,6 +22,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyStatus, FamilyStatusColumn } from '../families/FamilyStatus';
 import { pagedRowsIterator } from '../families/familyActionsWiring';
 import { getLang } from '../translate';
+import { saveToExcel } from '../shared/saveToExcel';
 
 @Component({
   selector: 'app-manage',
@@ -69,7 +70,7 @@ export class ManageComponent implements OnInit {
     this.helpPhones = this.settings.getPhoneStrategy();
     this.qaItems = this.settings.getQuestions();
   }
-  constructor(private dialog: DialogService, private context: Context, private sanitization: DomSanitizer, public settings: ApplicationSettings) { }
+  constructor(private dialog: DialogService, private context: Context, private sanitization: DomSanitizer, public settings: ApplicationSettings,private busy:BusyService) { }
 
   basketType = this.context.for(BasketType).gridSettings({
 
@@ -96,7 +97,15 @@ export class ManageComponent implements OnInit {
     confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
   });
   distributionCenters = this.context.for(DistributionCenters).gridSettings({
-
+    gridButtons:[
+      {
+        name: this.settings.lang.exportToExcel,
+        click: async () => {
+          await saveToExcel(this.context.for(DistributionCenters), this.distributionCenters, this.settings.lang.distributionLists, this.busy, (d: DistributionCenters, c) => c == d.id );
+        }
+        , visible: () => this.context.isAllowed(Roles.admin)
+      },
+    ],
     rowButtons: [{
       name: this.settings.lang.distributionCenterDetails,
       click: async d => {
