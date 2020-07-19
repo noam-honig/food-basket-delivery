@@ -4,7 +4,7 @@ import { Entity, Context, EntityClass } from '@remult/core';
 import { PhoneColumn, logChanges } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { DeliveryStatusColumn, DeliveryStatus } from "../families/DeliveryStatus";
-import { translationConfig, TranslationOptionsColumn, Language, getLang, use, setLangForSite, TranslationOptions } from "../translate";
+import { translationConfig, TranslationOptionsColumn, Language, getLang, use, TranslationOptions, setLangForSite } from "../translate";
 
 import { FamilySources } from "../families/FamilySources";
 import { Injectable } from '@angular/core';
@@ -146,6 +146,7 @@ export class ApplicationSettings extends Entity<number>  {
   excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = new BoolColumn(this.lang.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery);
   checkDuplicatePhones = new BoolColumn(this.lang.checkDuplicatePhones);
   volunteerCanUpdateComment = new BoolColumn(this.lang.volunteerCanUpdateComment);
+  hideFamilyPhoneFromVolunteer = new BoolColumn(this.lang.hideFamilyPhoneFromVolunteer);
 
   showDistCenterAsEndAddressForVolunteer = new BoolColumn(this.lang.showDistCenterAsEndAddressForVolunteer);
   routeStrategy = new routeStrategyColumn();
@@ -197,6 +198,7 @@ export class ApplicationSettings extends Entity<number>  {
           this.helpPhone.value = PhoneColumn.fixPhoneInput(this.helpPhone.value);
           if (this.forWho.value)
             setLangForSite(Sites.getValidSchemaFromContext(context), this.forWho.value);
+          setSettingsForSite(Sites.getValidSchemaFromContext(context), this);
           logChanges(this, context);
         }
       }
@@ -204,6 +206,9 @@ export class ApplicationSettings extends Entity<number>  {
   }
 
   static get(context: Context) {
+    if (context.onServer) {
+
+    }
     return context.for(ApplicationSettings).lookup(app => app.id.isEqualTo(1));
 
   }
@@ -362,8 +367,26 @@ export function setCustomColumnInfo(num: number, caption: StringColumn, values: 
     v.values = values.value.split(',').map(x => x.trim());
   }
 }
+const settingsForSite = new Map<string, ApplicationSettings>();
+export function setSettingsForSite(site: string, lang: ApplicationSettings) {
+  settingsForSite.set(site, lang);
+}
+export function getSettings(context: Context) {
+  let r = settingsForSite.get(Sites.getValidSchemaFromContext(context));
+  if (r)
+    return r;
+  return ApplicationSettings.get(context);;
+}
+
 interface customColumnInfo {
   caption?: string,
   visible?: boolean,
   values?: string[]
+}
+export function includePhoneInApi(context: Context) {
+  var s = getSettings(context);
+  if (!s.hideFamilyPhoneFromVolunteer.value)
+    return true;
+  return Roles.distCenterAdmin;
+
 }

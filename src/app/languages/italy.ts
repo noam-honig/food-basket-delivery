@@ -697,4 +697,5 @@ export class italy implements Language {
   customColumn = 'Un altro campo per la famiglia';
   caption = 'descrizione';
   optionalValues = 'Possibili valori separati da virgola';
+  hideFamilyPhoneFromVolunteer = 'Non mostrare il telefono di famiglia a un volontario';
 }

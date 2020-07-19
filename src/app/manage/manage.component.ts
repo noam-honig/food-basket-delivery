@@ -240,6 +240,7 @@ export class ManageComponent implements OnInit {
       this.settings.defaultStatusType,
       this.settings.usingSelfPickupModule,
       this.settings.showLeftThereButton,
+      this.settings.hideFamilyPhoneFromVolunteer,
       this.settings.boxes1Name,
       this.settings.boxes2Name,
       this.settings.showCompanies,

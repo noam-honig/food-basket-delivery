@@ -1465,6 +1465,10 @@
     "google": "Alternate Phone",
     "valueInCode": "טלפון חלופי"
   },
+  "hideFamilyPhoneFromVolunteer": {
+    "google": "Do not show the family phone to a volunteer",
+    "valueInCode": "אל תציג את הטלפון של המשפחה למתנדב"
+  },
   "hideHelperCompany": {
     "google": "Hide a volunteer company",
     "valueInCode": "הסתר חברה למתנדב"

@@ -1303,6 +1303,10 @@
     "google": "טלפון חלופי",
     "valueInCode": "טלפון חלופי"
   },
+  "hideFamilyPhoneFromVolunteer": {
+    "google": "אל תציג את הטלפון של החייל למתנדב",
+    "valueInCode": "אל תציג את הטלפון של המשפחה למתנדב"
+  },
   "hideHelperCompany": {
     "google": "הסתר חברה למתנדב",
     "valueInCode": "הסתר חברה למתנדב"

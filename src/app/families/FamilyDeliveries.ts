@@ -15,7 +15,7 @@ import { UpdateFamilyDialogComponent } from "../update-family-dialog/update-fami
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService } from "../select-popup/dialog";
 import { getLang, use } from "../translate";
-import { ApplicationSettings } from "../manage/ApplicationSettings";
+import { ApplicationSettings, includePhoneInApi } from "../manage/ApplicationSettings";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 
 @EntityClass
@@ -181,34 +181,42 @@ export class FamilyDeliveries extends IdEntity {
 
     phone1 = new PhoneColumn({
         caption: getLang(this.context).phone1, dbName: 'phone',
+        includeInApi:includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone1Description = new StringColumn({
         caption: getLang(this.context).phone1Description,
+        includeInApi:includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone2 = new PhoneColumn({
         caption: getLang(this.context).phone2,
+        includeInApi:includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone2Description = new StringColumn({
         caption: getLang(this.context).phone2Description,
+        includeInApi:includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone3 = new PhoneColumn({
         caption: getLang(this.context).phone3,
+        includeInApi:includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone3Description = new StringColumn({
         caption: getLang(this.context).phone3Description,
+        includeInApi:includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone4 = new PhoneColumn({
         caption: getLang(this.context).phone4,
+        includeInApi:includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone4Description = new StringColumn({
         caption: getLang(this.context).phone4Description,
+        includeInApi:includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     courierBeenHereBefore = new BoolColumn({

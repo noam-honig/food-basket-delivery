@@ -697,4 +697,5 @@ export class donor implements Language {
   customColumn = 'שדה נוסף לתורם';
   caption = 'תאור';
   optionalValues = 'ערכים אפשריים מופרד בפסיקים';
+  hideFamilyPhoneFromVolunteer = 'אל תציג את הטלפון של התורם למתנדב';
 }

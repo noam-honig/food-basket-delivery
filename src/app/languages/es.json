@@ -1630,6 +1630,11 @@
     "valueInCode": "טלפון חלופי",
     "valueInEnglish": "Alternate Phone"
   },
+  "hideFamilyPhoneFromVolunteer": {
+    "google": "No muestre el teléfono familiar a un voluntario",
+    "valueInCode": "אל תציג את הטלפון של המשפחה למתנדב",
+    "valueInEnglish": "Do not show the family phone to a volunteer"
+  },
   "hideHelperCompany": {
     "google": "Ocultar una empresa voluntaria",
     "valueInCode": "הסתר חברה למתנדב",

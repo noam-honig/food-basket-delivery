@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import { serverInit } from './serverInit';
 import { ServerEvents } from './server-events';
 
-import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings, setSettingsForSite } from '../manage/ApplicationSettings';
 import "../helpers/helpers.component";
 import '../app.module';
 import { ServerContext, DateColumn, SqlDatabase } from '@remult/core';
@@ -62,6 +62,7 @@ serverInit().then(async (dataSource) => {
             let x = '';
             let settings = (await ApplicationSettings.getAsync(context));
             setLangForSite(Sites.getValidSchemaFromContext(context), settings.forWho.value);
+            setSettingsForSite(Sites.getValidSchemaFromContext(context), settings);
             x = settings.organisationName.value;
             let result = fs.readFileSync(index).toString().replace(/!TITLE!/g, x).replace("/*!SITE!*/", "multiSite=" + Sites.multipleSites);
             let key = process.env.GOOGLE_MAP_JAVASCRIPT_KEY;

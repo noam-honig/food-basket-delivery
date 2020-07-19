@@ -697,4 +697,5 @@ export class en implements Language {
   customColumn = 'Another field for the family';
   caption = 'description';
   optionalValues = 'Possible comma-separated values';
+  hideFamilyPhoneFromVolunteer = 'Do not show the family phone to a volunteer';
 }

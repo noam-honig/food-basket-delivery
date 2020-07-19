@@ -830,6 +830,7 @@ export class Language {
   customColumn = "שדה נוסף למשפחה";
   caption = "תאור";
   optionalValues = "ערכים אפשריים מופרד בפסיקים";
+  hideFamilyPhoneFromVolunteer = "אל תציג את הטלפון של המשפחה למתנדב";
   
 }
 

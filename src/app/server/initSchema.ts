@@ -2,7 +2,7 @@
 import { PostgresDataProvider, PostgresPool } from '@remult/server-postgres';
 import { Families } from '../families/families';
 import { BasketType } from "../families/BasketType";
-import { ApplicationSettings, RemovedFromListExcelImportStrategy } from '../manage/ApplicationSettings';
+import { ApplicationSettings, RemovedFromListExcelImportStrategy, setSettingsForSite } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
 import { ServerContext, SqlDatabase, Column } from '@remult/core';
 import '../app.module';
@@ -72,17 +72,17 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     if (!settings.commentForSuccessLeft.value)
         settings.commentForSuccessLeft.value = l.commentForSuccessLeft;
     if (!settings.commentForProblem.value)
-        settings.commentForProblem.value =l.commentForProblem;
+        settings.commentForProblem.value = l.commentForProblem;
     if (!settings.messageForDoneDelivery.value) {
-        settings.messageForDoneDelivery.value =l.messageForDoneDelivery;
+        settings.messageForDoneDelivery.value = l.messageForDoneDelivery;
     }
     if (!settings.deliveredButtonText.value) {
-        settings.deliveredButtonText.value =l.deliveredButtonText;
+        settings.deliveredButtonText.value = l.deliveredButtonText;
     }
     if (!settings.boxes1Name.value)
-        settings.boxes1Name.value =l.boxes1Name;
+        settings.boxes1Name.value = l.boxes1Name;
     if (!settings.boxes2Name.value)
-        settings.boxes2Name.value =l.boxes2Name;
+        settings.boxes2Name.value = l.boxes2Name;
     await settings.save();
 
 
@@ -398,7 +398,8 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
 
 
-    setLangForSite(org,settings.forWho.value);
+    setLangForSite(org, settings.forWho.value);
+    setSettingsForSite(org, settings);
 
 }
 /*
@@ -406,12 +407,12 @@ delete from haderamoadonit.families
 ;
 UPDATE haderamoadonit.familydeliveries
 	SET couriercomments='', archivefamilysource='', archivegroups='', archive_address='', archive_floor='', archive_appartment='', archive_entrance='', archive_postalcode=0
-	, archive_city='', archive_addresscomment='', archive_deliverycomments='', phone='', archive_phone1description='', archive_phone2='', archive_phone2description='', 
+	, archive_city='', archive_addresscomment='', archive_deliverycomments='', phone='', archive_phone1description='', archive_phone2='', archive_phone2description='',
 	familyname='', archive_phone4='', archive_phone3description='', archive_phone3='', archive_phone4description='', distributioncenter='', name='', address='', groups='',
-	deliverycomments='', familysource='', floor='', appartment='', city='', entrance='',  area='', phone2='',  phone2description='', addresscomment='', 
+	deliverycomments='', familysource='', floor='', appartment='', city='', entrance='',  area='', phone2='',  phone2description='', addresscomment='',
 	addressbygoogle='', phone1description='', phone4='', phone3='', phone4description='', archive=true, phone3description='', fixedcourier='', familymembers=0,
 	internaldeliverycomment='';
 update haderamoadonit.helpers set name='מתנדב', phone='0501234567' where isadmin=false;
-	
+
 ;
 select * from haderamoadonit.familydeliveries */
