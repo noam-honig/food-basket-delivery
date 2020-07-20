@@ -16,7 +16,7 @@ import { Sites } from '../sites/sites';
 import { OverviewComponent } from '../overview/overview.component';
 import { wasChanged } from '../model-shared/types';
 
-declare const lang='';
+declare const lang = '';
 
 export async function serverInit() {
     try {
@@ -153,10 +153,18 @@ export class PostgresSchemaWrapper implements PostgresPool {
         let r = await this.pool.connect();
 
         await r.query('set search_path to ' + this.schema);
-        return r;
+        return {
+
+            query: (x, y) => {
+                console.log(this.schema + ":" + x);
+                return r.query(x, y);
+            },
+            release: () => r.release()
+        };
     }
     async query(queryText: string, values?: any[]): Promise<QueryResult> {
         let c = await this.connect();
+
         try {
             return await c.query(queryText, values);
         }

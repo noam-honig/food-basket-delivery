@@ -1724,7 +1724,7 @@ export interface phoneResult {
 
 export class PromiseThrottle {
     constructor(private howMany: number) {
-
+        this.howMany = 0;
     }
     todo = [];
     async push(p: Promise<any>) {
