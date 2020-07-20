@@ -1685,6 +1685,7 @@ export function parseAndUpdatePhone(input: string, f: Families, defaultPrefix: s
         if (p.comment) {
             if (col.value)
                 col.value += ", ";
+            else col.value = '';
             col.value += p.comment;
         }
 
