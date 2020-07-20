@@ -552,7 +552,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           deliveries.address,
           deliveries.basketType,
           deliveries.quantity,
-          deliveries.deliverStatus
+          this.deliverySummary
         );
       }
       return r;
