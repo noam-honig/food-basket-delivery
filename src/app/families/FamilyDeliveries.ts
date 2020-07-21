@@ -181,42 +181,42 @@ export class FamilyDeliveries extends IdEntity {
 
     phone1 = new PhoneColumn({
         caption: getLang(this.context).phone1, dbName: 'phone',
-        includeInApi:includePhoneInApi(this.context),
+        includeInApi: includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone1Description = new StringColumn({
         caption: getLang(this.context).phone1Description,
-        includeInApi:includePhoneInApi(this.context),
+        includeInApi: includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone2 = new PhoneColumn({
         caption: getLang(this.context).phone2,
-        includeInApi:includePhoneInApi(this.context),
+        includeInApi: includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone2Description = new StringColumn({
         caption: getLang(this.context).phone2Description,
-        includeInApi:includePhoneInApi(this.context),
+        includeInApi: includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone3 = new PhoneColumn({
         caption: getLang(this.context).phone3,
-        includeInApi:includePhoneInApi(this.context),
+        includeInApi: includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone3Description = new StringColumn({
         caption: getLang(this.context).phone3Description,
-        includeInApi:includePhoneInApi(this.context),
+        includeInApi: includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone4 = new PhoneColumn({
         caption: getLang(this.context).phone4,
-        includeInApi:includePhoneInApi(this.context),
+        includeInApi: includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone4Description = new StringColumn({
         caption: getLang(this.context).phone4Description,
-        includeInApi:includePhoneInApi(this.context),
+        includeInApi: includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     courierBeenHereBefore = new BoolColumn({
@@ -312,14 +312,17 @@ export class FamilyDeliveries extends IdEntity {
                                 Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName(), this.context), this.context, this.distributionCenter.value)
                             }
                         }
-                        );//should be after succesfull save
-                    //logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
+                        );
                     logChanged(context, this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => {
                         if (!this._disableMessageToUsers) {
                             Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName(), this.context), this.context, this.distributionCenter.value);
                         }
-                    }); //should be after succesfull save
-                    logChanged(context, this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => { }); //should be after succesfull save
+                    });
+                    logChanged(context, this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => { });
+                }
+                if (context.onServer && this.isNew() && !this._disableMessageToUsers) {
+                    Families.SendMessageToBrowsers(getLang(this.context).newDelivery, this.context, this.distributionCenter.value)
+
                 }
             }
         });

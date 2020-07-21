@@ -494,7 +494,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
 
         deliveries.deliveryComments,
-        
+
         deliveries.special,
         deliveries.createUser,
 
@@ -517,12 +517,12 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.phone4Description,
         { column: deliveries.courier, width: '100' },
 
-        deliveries.courierAssignUser,  
+        deliveries.courierAssignUser,
         { column: deliveries.courierAssingTime, width: '150' },
         { column: deliveries.deliveryStatusUser, width: '100' },
         deliveries.deliveryStatusDate,
-        { column: deliveries.courierComments, width: '120' }, 
-        { column: deliveries.internalDeliveryComment, width: '120' }, 
+        { column: deliveries.courierComments, width: '120' },
+        { column: deliveries.internalDeliveryComment, width: '120' },
         deliveries.needsWork,
         deliveries.needsWorkDate,
         deliveries.needsWorkUser,
@@ -700,7 +700,33 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
       icon: 'person_search',
       showInLine: true,
       click: async d => {
-        await d.courier.showSelectDialog(async () => await d.save());
+        await d.courier.showSelectDialog(async () => {
+          await d.save();
+
+
+
+          var fd = await args.context.for(ActiveFamilyDeliveries).find({
+            where: fd => {
+              let f = fd.id.isDifferentFrom(d.id).and(
+                fd.readyFilter()).and(
+                  d.distributionCenter.filter(args.dialog.distCenter.value));
+              if (d.addressOk.value)
+                return fd.addressLongitude.isEqualTo(d.addressLongitude).and(fd.addressLatitude.isEqualTo(d.addressLatitude));
+              else
+                return fd.family.isEqualTo(d.family).and(f);
+            }
+          });
+          if (fd.length > 0) {
+            if (await args.dialog.YesNoPromise(args.settings.lang.thereAreAdditional + " " + fd.length + " " + args.settings.lang.deliveriesAtSameAddress)) {
+              for (const f of fd) {
+                f.courier.value = d.courier.value;
+                await f.save();
+              }
+              args.refresh();
+            }
+          }
+
+        });
       },
       visible: d => !DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)
     },

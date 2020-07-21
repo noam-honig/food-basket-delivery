@@ -136,5 +136,12 @@ async function getMltContext() {
         roles: []
     });
     c.setDataProvider(db);
+    c.setReq({
+        clientIp:'wix',
+        user:c.user,
+        get:()=>undefined,
+        getBaseUrl:()=>'/mlt',
+        getHeader:()=>undefined
+    });
     return c;
 }

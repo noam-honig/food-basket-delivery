@@ -78,10 +78,11 @@ export class ServerEvents {
 
         });
     }
-    SendMessage = (x: string, context: Context,distributionCenter:string) => {
+    SendMessage (x: string, context: Context,distributionCenter:string)  {
+        let z = this;
         setTimeout(() => {
             let org = Sites.getOrganizationFromContext(context);
-            let y = this.sites.get(org);
+            let y = z.sites.get(org);
             if (y)
                 y.forEach(y => y.write(distributionCenter, "data:" + x + "\n\n"));
         }, 250);
