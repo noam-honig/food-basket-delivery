@@ -61,7 +61,7 @@
     "node-fetch": "^2.6.0",
     "password-hash": "^1.2.2",
     "path": "^0.12.7",
-    "pg": "^7.12.1",
+    "pg": "^8.3.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "~6.5.3",
     "spherical-geometry-js": "^2.0.0",
