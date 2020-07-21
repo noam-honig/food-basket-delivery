@@ -418,7 +418,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   }
 
   deliveries = this.context.for(ActiveFamilyDeliveries).gridSettings({
-    showFilter:true,
+    showFilter: true,
     allowUpdate: true,
     rowCssClass: f => f.deliverStatus.getCss(),
     numOfColumnsInGrid: 5,
@@ -686,16 +686,27 @@ export interface deliveryButtonsHelper {
   deliveries: () => GridSettings<FamilyDeliveries>
 }
 export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
-
+  let newDelivery: (d: FamilyDeliveries) => void = async d => {
+    let f = await args.context.for(Families).findId(d.family);
+    await f.showNewDeliveryDialog(args.dialog, args.settings, { copyFrom: d, aDeliveryWasAdded: async () => args.refresh() });
+  };
   return [
     {
       name: getLang(args.context).newDelivery,
-      icon:'add_shopping_cart',
+      icon: 'add_shopping_cart',
       click: async d => {
-        let f = await args.context.for(Families).findId(d.family);
-        await f.showNewDeliveryDialog(args.dialog, args.settings, { copyFrom: d, aDeliveryWasAdded: async () => args.refresh() });
+        newDelivery(d)
       },
-      visible: d => args.context.isAllowed(Roles.admin)
+      visible: d => args.context.isAllowed(Roles.admin) && !DeliveryStatus.IsAResultStatus(d.deliverStatus.value)
+    },
+    {
+      textInMenu: () => getLang(args.context).newDelivery,
+      icon: 'add_shopping_cart',
+      showInLine: true,
+      click: async d => {
+        newDelivery(d)
+      },
+      visible: d => args.context.isAllowed(Roles.admin) && DeliveryStatus.IsAResultStatus(d.deliverStatus.value)
     },
     {
       textInMenu: () => getLang(args.context).assignVolunteer,
