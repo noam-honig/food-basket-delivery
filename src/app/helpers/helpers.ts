@@ -29,7 +29,7 @@ export abstract class HelpersBase extends IdEntity {
     name = new StringColumn({
         caption: getLang(this.context).volunteerName,
         validate: () => {
-            if (!this.name.value || this.name.value.length < 2)
+            if (!this.name.value )
                 this.name.validationError = getLang(this.context).nameIsTooShort;
         }
     });

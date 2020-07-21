@@ -370,7 +370,7 @@ export class Families extends IdEntity {
     caption: getLang(this.context).familyName,
     valueChange: () => this.delayCheckDuplicateFamilies(),
     validate: () => {
-      if (!this.name.value || this.name.value.length < 2)
+      if (!this.name.value )
         this.name.validationError = getLang(this.context).nameIsTooShort;
     }
   });
