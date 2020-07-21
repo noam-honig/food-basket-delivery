@@ -185,7 +185,7 @@ export class FamiliesComponent implements OnInit {
 
         rowCssClass: f => f.status.getCss(),
         numOfColumnsInGrid: 5,
-        onEnterRow: async f => {
+        enterRow: async f => {
             if (f.isNew()) {
                 f.basketType.value = '';
                 f.quantity.value = 1;

@@ -184,7 +184,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
       return this.selectColumns(helpers);
     },
-    confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes),
+    confirmDelete: (h) => this.dialog.confirmDelete(h.name.value),
 
 
   });

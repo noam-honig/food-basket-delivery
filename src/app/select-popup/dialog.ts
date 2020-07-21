@@ -178,8 +178,8 @@ export class DialogService {
     async YesNoPromise(question: string) {
         return await this.context.openDialog(await (await import("./yes-no-question/yes-no-question.component")).YesNoQuestionComponent, y => y.args = { question: question }, x => x.yes);
     }
-    confirmDelete(of: string, onOk: () => void) {
-        this.YesNoQuestion(use.language.confirmDeleteOf + " " + of + "?", onOk);
+    confirmDelete(of: string) {
+        return this.YesNoPromise(use.language.confirmDeleteOf + " " + of + "?");
     }
 }
 export function extractError(err: any) {

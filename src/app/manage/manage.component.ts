@@ -85,16 +85,16 @@ export class ManageComponent implements OnInit {
         width: '100px'
       }
     ],
-    onSavingRow: () => this.refreshEnvironmentAfterSave(),
+    saving: () => this.refreshEnvironmentAfterSave(),
     get: {
       limit: 25,
       orderBy: f => [f.name]
     },
-    onNewRow: b => b.boxes.value = 1,
+    newRow: b => b.boxes.value = 1,
     allowUpdate: true,
     allowInsert: true,
     allowDelete: true,
-    confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
+    confirmDelete: (h) => this.dialog.confirmDelete(h.name.value)
   });
   distributionCenters = this.context.for(DistributionCenters).gridSettings({
     gridButtons:[
@@ -153,7 +153,7 @@ export class ManageComponent implements OnInit {
     get: {
       limit: 25,
       orderBy: f => [f.name]
-    }, onSavingRow: f => {
+    }, saving: f => {
       this.refreshEnvironmentAfterSave();
 
     },
@@ -161,7 +161,7 @@ export class ManageComponent implements OnInit {
     allowUpdate: true,
     allowInsert: true,
 
-    confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
+    confirmDelete: (h) => this.dialog.confirmDelete(h.name.value)
   });
 
   refreshEnvironmentAfterSave() {
@@ -182,10 +182,10 @@ export class ManageComponent implements OnInit {
       limit: 25,
       orderBy: f => [f.name]
     },
-    confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
+    confirmDelete: (h) => this.dialog.confirmDelete(h.name.value)
   });
   groups = this.context.for(Groups).gridSettings({
-    onSavingRow: () => this.refreshEnvironmentAfterSave(),
+    saving: () => this.refreshEnvironmentAfterSave(),
 
     columnSettings: s => [
       s.name,
@@ -196,7 +196,7 @@ export class ManageComponent implements OnInit {
       limit: 25,
       orderBy: f => [f.name]
     },
-    confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
+    confirmDelete: (h) => this.dialog.confirmDelete(h.name.value)
   });
   settingsArea = new DataAreaSettings({
 

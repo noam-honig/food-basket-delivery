@@ -144,7 +144,6 @@ export async function verifySchemaExistance(pool: Pool, s: string) {
 }
 
 
-
 export class PostgresSchemaWrapper implements PostgresPool {
     constructor(private pool: Pool, private schema: string) {
 
@@ -153,18 +152,10 @@ export class PostgresSchemaWrapper implements PostgresPool {
         let r = await this.pool.connect();
 
         await r.query('set search_path to ' + this.schema);
-        return {
-
-            query: (x, y) => {
-                console.log(this.schema + ":" + x);
-                return r.query(x, y);
-            },
-            release: () => r.release()
-        };
+        return r;
     }
     async query(queryText: string, values?: any[]): Promise<QueryResult> {
         let c = await this.connect();
-
         try {
             return await c.query(queryText, values);
         }
