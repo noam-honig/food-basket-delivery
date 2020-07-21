@@ -82,6 +82,7 @@ export class ActionOnRows<T extends IdEntity> {
                 }
                 return r;
             },
+            icon: this.args.icon,
             click: async () => {
 
                 let cols = await this.args.dialogColumns(component);
@@ -154,6 +155,7 @@ export interface ActionOnRowsArgs<T extends IdEntity> {
     validateInComponent?: (component: actionDialogNeeds<T>) => Promise<void>,
     validate?: () => Promise<void>,
     title: string,
+    icon?: string,
     help?: () => string,
     allowed: Allowed,
     confirmQuestion?: () => string,

@@ -418,6 +418,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   }
 
   deliveries = this.context.for(ActiveFamilyDeliveries).gridSettings({
+    showFilter:true,
     allowUpdate: true,
     rowCssClass: f => f.deliverStatus.getCss(),
     numOfColumnsInGrid: 5,
@@ -689,6 +690,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
   return [
     {
       name: getLang(args.context).newDelivery,
+      icon:'add_shopping_cart',
       click: async d => {
         let f = await args.context.for(Families).findId(d.family);
         await f.showNewDeliveryDialog(args.dialog, args.settings, { copyFrom: d, aDeliveryWasAdded: async () => args.refresh() });

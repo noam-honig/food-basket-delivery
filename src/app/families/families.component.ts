@@ -179,7 +179,7 @@ export class FamiliesComponent implements OnInit {
     addressByGoogle: DataControlInfo<Families>;
 
     families = this.context.for(Families).gridSettings({
-
+        showFilter:true,
         allowUpdate: true,
         allowInsert: this.isAdmin,
 
@@ -395,6 +395,7 @@ export class FamiliesComponent implements OnInit {
 
             {
                 name: this.settings.lang.newDelivery,
+                icon:'add_shopping_cart',
                 click: async f => {
                     await f.showNewDeliveryDialog(this.dialog, this.settings);
                 }

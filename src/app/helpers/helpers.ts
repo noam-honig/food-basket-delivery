@@ -29,7 +29,7 @@ export abstract class HelpersBase extends IdEntity {
     name = new StringColumn({
         caption: getLang(this.context).volunteerName,
         validate: () => {
-            if (!this.name.value )
+            if (!this.name.value)
                 this.name.validationError = getLang(this.context).nameIsTooShort;
         }
     });
@@ -158,11 +158,11 @@ export class Helpers extends HelpersBase {
                             await h.save();
                         }
                     }
-                    if (wasChanged( this.preferredDistributionAreaAddress) || !this.getGeocodeInformation().ok()) {
+                    if (wasChanged(this.preferredDistributionAreaAddress) || !this.getGeocodeInformation().ok()) {
                         let geo = await GetGeoInformation(this.preferredDistributionAreaAddress.value, context);
                         this.addressApiResult.value = geo.saveToString();
                     }
-                    if (wasChanged( this.preferredDistributionAreaAddress2) || !this.getGeocodeInformation2().ok()) {
+                    if (wasChanged(this.preferredDistributionAreaAddress2) || !this.getGeocodeInformation2().ok()) {
                         let geo = await GetGeoInformation(this.preferredDistributionAreaAddress2.value, context);
                         this.addressApiResult2.value = geo.saveToString();
                     }
@@ -317,6 +317,7 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
     constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>, private args: {
         filter?: (helper: HelpersAndStats) => FilterBase,
         location?: () => Location,
+        familyId?: () => string
         searchClosestDefaultFamily?: boolean
     } = {}) {
         super({
@@ -333,6 +334,7 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
         this.context.openDialog((await import('../select-helper/select-helper.component')).SelectHelperComponent,
             x => x.args = {
                 filter: this.args.filter, location: this.args.location ? this.args.location() : undefined,
+                familyId: this.args.familyId ? this.args.familyId() : undefined,
                 searchClosestDefaultFamily: this.args.searchClosestDefaultFamily
                 , onSelect: s => {
                     this.value = (s ? s.id.value : '');

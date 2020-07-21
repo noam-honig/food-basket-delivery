@@ -76,6 +76,7 @@ class NewDelivery extends ActionOnRows<Families> {
 
 
             title: getLang(context).newDelivery,
+            icon:'add_shopping_cart',
             forEach: async f => {
                 if (this.excludeGroups.value) {
                     for (let g of this.excludeGroups.listGroups()) {

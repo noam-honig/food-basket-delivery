@@ -44,6 +44,7 @@ export class Families extends IdEntity {
       settings: this.deliveriesGridSettings(args),
       buttons: [{
         text: use.language.newDelivery,
+        
         click: () => this.showNewDeliveryDialog(args.dialog, args.settings, { doNotCheckIfHasExistingDeliveries: true })
       }]
     });
@@ -55,6 +56,7 @@ export class Families extends IdEntity {
       rowCssClass: fd => fd.deliverStatus.getCss(),
       gridButtons: [{
         name: use.language.newDelivery,
+        icon:'add_shopping_cart',
         click: () => this.showNewDeliveryDialog(args.dialog, args.settings, { doNotCheckIfHasExistingDeliveries: true })
       }],
       rowButtons: [

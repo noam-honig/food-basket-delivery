@@ -32,6 +32,7 @@ export class SelectHelperComponent implements OnInit {
   searchString: string = '';
   lastFilter: string = undefined;
   public args: {
+    familyId?: string,
     hideRecent?: boolean,
     location?: Location,
     searchClosestDefaultFamily?: boolean,
@@ -54,7 +55,7 @@ export class SelectHelperComponent implements OnInit {
     this.select(undefined);
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
-  static async getHelpersByLocation(deliveryLocation: Location, selectDefaultVolunteer: boolean, context?: Context, db?: SqlDatabase) {
+  static async getHelpersByLocation(deliveryLocation: Location, selectDefaultVolunteer: boolean, familyId: string, context?: Context, db?: SqlDatabase) {
     let helpers = new Map<string, helperInList>();
 
 
@@ -141,7 +142,7 @@ export class SelectHelperComponent implements OnInit {
     this.dialogRef.close();
   }
   async byLocation() {
-    this.filteredHelpers = await SelectHelperComponent.getHelpersByLocation(this.args.location,this.args.searchClosestDefaultFamily);
+    this.filteredHelpers = await SelectHelperComponent.getHelpersByLocation(this.args.location, this.args.searchClosestDefaultFamily,this.args.familyId);
   }
 
   findOptions = {
@@ -217,7 +218,8 @@ interface helperInList {
   location?: Location,
   assignedDeliveries?: number,
   fixedFamilies?: number,
-  distanceFrom?: string
+  distanceFrom?: string,
+  hadProblem?:boolean
 }
 function mapHelpers<hType extends HelpersBase>(helpers: hType[], getFamilies: (h: hType) => number): helperInList[] {
   return helpers.map(h => ({

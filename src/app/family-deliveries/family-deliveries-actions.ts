@@ -339,6 +339,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                 f.deliverStatus.isAResultStatus();
             },
             title: getLang(context).newDelivery,
+            icon:'add_shopping_cart',
             help: () => getLang(this.context).newDeliveryForDeliveriesHelp + ' ' + this.newDeliveryForAll.defs.caption,
             forEach: async existingDelivery => {
                 let f = await this.context.for(Families).findId(existingDelivery.family);

@@ -91,7 +91,8 @@ export class FamilyDeliveries extends IdEntity {
         caption: getLang(this.context).volunteer,
         allowApiUpdate: Roles.distCenterAdmin
     }, {
-        location: () => this.getDrivingLocation()
+        location: () => this.getDrivingLocation(),
+        familyId:()=>this.family.value
     });
     courierComments = new StringColumn(getLang(this.context).commentsWritteByVolunteer);
     internalDeliveryComment = new StringColumn({ caption: getLang(this.context).internalDeliveryComment, includeInApi: Roles.admin });
