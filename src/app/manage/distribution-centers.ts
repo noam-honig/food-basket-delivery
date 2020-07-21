@@ -131,10 +131,9 @@ export async function findClosestDistCenter(loc: Location, context: Context, cen
     centers = await context.for(DistributionCenters).find();
   for (const c of centers) {
     let myDist = GetDistanceBetween(c.getGeocodeInformation().location(), loc);
-    if (!result || myDist < dist) {
+    if (result===undefined || myDist < dist) {
       result = c.id.value;
       dist = myDist;
-
     }
   }
   return result;
