@@ -1605,6 +1605,11 @@
     "valueInCode": "קבוצה",
     "valueInEnglish": "Group"
   },
+  "hadProblemBefore": {
+    "google": "C'è stato un problema in passato",
+    "valueInCode": "היתה בעיה בעבר",
+    "valueInEnglish": "There has been a problem in the past"
+  },
   "hello": {
     "google": "Pace",
     "valueInCode": "שלום",

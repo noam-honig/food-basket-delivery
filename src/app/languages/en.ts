@@ -698,4 +698,5 @@ export class en implements Language {
   caption = 'description';
   optionalValues = 'Possible comma-separated values';
   hideFamilyPhoneFromVolunteer = 'Do not show the family phone to a volunteer';
+  hadProblemBefore = 'There has been a problem in the past';
 }

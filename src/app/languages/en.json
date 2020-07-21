@@ -1445,6 +1445,11 @@
     "google": "Group",
     "valueInCode": "קבוצה"
   },
+  "hadProblemBefore": {
+    "google": "There has been a problem in the past",
+    "valueInCode": "היתה בעיה בעבר",
+    "custom":"had problem"
+  },
   "hello": {
     "google": "Hello",
     "valueInCode": "שלום"

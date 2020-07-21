@@ -1283,6 +1283,10 @@
     "google": "קבוצה",
     "valueInCode": "קבוצה"
   },
+  "hadProblemBefore": {
+    "google": "היתה בעיה בעבר",
+    "valueInCode": "היתה בעיה בעבר"
+  },
   "hello": {
     "google": "שלום",
     "valueInCode": "שלום"

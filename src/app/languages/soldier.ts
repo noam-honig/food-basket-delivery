@@ -698,4 +698,5 @@ export class soldier implements Language {
   caption = 'תאור';
   optionalValues = 'ערכים אפשריים מופרד בפסיקים';
   hideFamilyPhoneFromVolunteer = 'אל תציג את הטלפון של החייל למתנדב';
+  hadProblemBefore = 'היתה בעיה בעבר';
 }

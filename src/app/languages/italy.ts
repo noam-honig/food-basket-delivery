@@ -698,4 +698,5 @@ export class italy implements Language {
   caption = 'descrizione';
   optionalValues = 'Possibili valori separati da virgola';
   hideFamilyPhoneFromVolunteer = 'Non mostrare il telefono di famiglia a un volontario';
+  hadProblemBefore = "C'è stato un problema in passato";
 }

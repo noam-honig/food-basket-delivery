@@ -9,13 +9,13 @@
     {{settings.lang.byLocation}}
   </button>
   <form (submit)="selectFirst()">
-    
-    
-    
-    
+
+
+
+
     <mat-form-field style="width:100%">
-      <input matInput [(ngModel)]="searchString" cdk-focus (input)="doFilter()" placeholder="{{settings.lang.searchVolunteer}}"
-        [ngModelOptions]="{standalone: true}">
+      <input matInput [(ngModel)]="searchString" cdk-focus (input)="doFilter()"
+        placeholder="{{settings.lang.searchVolunteer}}" [ngModelOptions]="{standalone: true}">
       <mat-icon matSuffix (click)="searchString=''">clear</mat-icon>
     </mat-form-field>
     <h4 *ngIf="showingRecentHelpers">{{settings.lang.recentVolunteers}}</h4>
@@ -27,6 +27,7 @@
         <div style="text-align: end;" class="secondary-text">
           <div *ngIf="h.assignedDeliveries>0"> {{h.assignedDeliveries}} {{settings.lang.deliveries}}</div>
           <div *ngIf="h.fixedFamilies>0"> {{h.fixedFamilies}} {{settings.lang.families}}</div>
+          <div *ngIf="h.hadProblem" style="color:red"> {{settings.lang.hadProblemBefore}} </div>
         </div>
       </div>
 
