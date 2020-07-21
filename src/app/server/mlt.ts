@@ -15,46 +15,46 @@ export async function createDonor(d: donor) {
     f.email.value = d.Email;
     try {
         await f.save();
-        var comment = '';
         var quantity = 0;
         if (d.Donation)
             for (const item of d.Donation) {
                 let q = +item.Quantity;
-                let asset = '';
+
                 if (q > 0) {
+                    quantity += q;
+                    let asset = '';
                     switch (item.AssetTypeID) {
                         case 1:
-                            asset = 'מחשבים';
+                            asset = 'מחשב';
                             break;
                         case 2:
-                            asset = 'לפטופים';
+                            asset = 'לפטופ';
                             break;
                         case 3:
-                            asset = 'מסכים';
-                            break;
-                        default:
-                            asset = 'פריט לא ידוע';
+                            asset = 'מסך';
                             break;
                     }
-                    if (comment)
-                        comment += ", ";
-                    comment += q + " " + asset;
-                    quantity += q;
-
+                    await Families.addDelivery(f.id.value, {
+                        comment: '',
+                        basketType: asset,
+                        courier: '',
+                        distCenter: allCentersToken,
+                        quantity: q,
+                        selfPickup: false
+                    }, context);
                 }
             }
-        if (!comment) {
-            comment = "לא פורטו הפריטים";
-            quantity = 1;
+        if (quantity == 0) {
+            await Families.addDelivery(f.id.value, {
+                comment: '',
+                basketType: 'לא פורט',
+                courier: '',
+                distCenter: allCentersToken,
+                quantity: 1,
+                selfPickup: false
+            }, context);
         }
-        await Families.addDelivery(f.id.value, {
-            comment: comment,
-            basketType: '',
-            courier: '',
-            distCenter: allCentersToken,
-            quantity,
-            selfPickup: false
-        }, context);
+
     }
     catch (err) {
         console.error('donor', err);
@@ -131,8 +131,8 @@ async function getMltContext() {
     let db = await OverviewComponent.createDbSchema('mlt');
     let c = new ServerContext();
     c._setUser({
-        id: 'server',
-        name: 'server',
+        id: 'WIX',
+        name: 'WIX',
         roles: []
     });
     c.setDataProvider(db);
