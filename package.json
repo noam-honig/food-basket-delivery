@@ -88,7 +88,7 @@
     "@types/node": "^8.9.5",
     "@types/node-fetch": "^2.5.2",
     "@types/password-hash": "^1.2.20",
-    "@types/pg": "^7.11.2",
+    "@types/pg": "^7.14.4",
     "@types/xlsx": "0.0.36",
     "codelyzer": "^5.0.1",
     "concurrently": "^4.1.2",
