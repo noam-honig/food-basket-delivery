@@ -168,7 +168,7 @@ export class PlaybackComponent implements OnInit {
   }
   position = 0;
   zoom = 0;
-  speed = 5;
+  speed = 30;
   showOnLeft = false;
   showOrgTitle = false;
   showOrgLogo = false;
@@ -208,7 +208,13 @@ export class PlaybackComponent implements OnInit {
       this.next();
       if (this.position < this.timeline.length - 1)
         this.animate();
-    }, +this.speed);
+    }, +(this.speed * 1000 / this.timeline.length));
+  }
+  reset() {
+    while (this.position > 0) {
+      this.prev();
+    }
+    this.playing = false;
   }
 
   currentTime() {
