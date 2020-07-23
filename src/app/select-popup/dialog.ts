@@ -23,7 +23,8 @@ declare var gtag;
 @Injectable()
 export class DialogService {
     async exception(title: string, err: any): Promise<void> {
-        this.log("Exception:"+title + ": " + extractError(err)+","+JSON.stringify(err));
+        this.log("Exception:" + title + ": " + extractError(err) + "," + JSON.stringify(err) + "cookies:" + document.cookie );
+        this.log("Exception..." + window.navigator.userAgent);
         await this.Error(title + ": " + extractError(err));
         throw err;
     }
@@ -186,15 +187,15 @@ export class DialogService {
         await DialogService.doLog(s);
     }
     @ServerFunction({ allowed: true })
-    static async doLog(s: string,context?:Context) {
+    static async doLog(s: string, context?: Context) {
         console.log(s);
-        if (context.user){
-            console.log("server context: "+JSON.stringify( context.user));
+        if (context.user) {
+            console.log("server context: " + JSON.stringify(context.user));
         }
         else
             console.log("server context has no user");
+        console.log("authorization cookie:", context.getCookie("authorization"));
 
-        
     }
 }
 export function extractError(err: any) {
