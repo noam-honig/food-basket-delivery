@@ -16,10 +16,12 @@
             <a mat-menu-item href="tel:{{args.familyDelivery.courier.getPhone()}}" style="padding-right:15px;"
                 *ngIf="args.familyDelivery&&args.familyDelivery.courier.value">
                 <button mat-menu-item *ngIf="args.familyDelivery&&args.familyDelivery.courier.value">
-                    <mat-icon>phone</mat-icon><span style="word-wrap: break-word;"> {{settings.lang.dialTo}} {{settings.lang.volunteer}}
-                        {{args.familyDelivery.courier.getValue()}}: 
+                    <mat-icon>phone</mat-icon>
+                    <div style="    display: inline-flex;line-height: 17px;"> {{settings.lang.dialTo}}
+                        {{settings.lang.volunteer}}
+                        {{args.familyDelivery.courier.getValue()}} <br>
                         {{args.familyDelivery.courier.getPhone()}}
-                    </span>
+                    </div>
                 </button>
             </a>
 

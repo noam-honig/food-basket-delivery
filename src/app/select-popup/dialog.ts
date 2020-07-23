@@ -23,7 +23,7 @@ declare var gtag;
 @Injectable()
 export class DialogService {
     async exception(title: string, err: any): Promise<void> {
-        this.log("Exception:"+title + ": " + extractError(err));
+        this.log("Exception:"+title + ": " + extractError(err)+","+JSON.stringify(err));
         await this.Error(title + ": " + extractError(err));
         throw err;
     }

@@ -38,18 +38,21 @@ export class MyFamiliesComponent implements OnInit {
         id = this.user.theHelperIAmEscortingId;
       done += '2';
       let helper = await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(id));
-      done += '3';
+      if (helper)
+        done += 'helper id:' + helper.id;
+      else done += "3";
+
       await this.familyLists.initForHelper(helper);
       done += '4';
     }
     catch (err) {
-      let info =done+=" - "+ checkCookie();
+      let info = done += " - " + checkCookie();
       if (this.context.user)
         info += " user: " + this.context.user.name;
       else
         info += " NO USER ";
 
-      this.dialog.exception("My Families: " + this.settings.lang.smsLoginFailed, info + " - " + err);
+      this.dialog.exception("My Families: " + this.settings.lang.smsLoginFailed+info,   err);
       this.sessionManager.signout();
       this.helper.navigateToComponent(LoginComponent);
 
