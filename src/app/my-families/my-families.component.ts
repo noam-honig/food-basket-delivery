@@ -43,7 +43,7 @@ export class MyFamiliesComponent implements OnInit {
         info += " user: " + this.context.user.name;
       else
         info += " NO USER ";
-      this.dialog.exception("My Families: " + this.settings.lang.smsLoginFailed, info + "- " + err);
+      this.dialog.exception("My Families: " + this.settings.lang.smsLoginFailed, info + " - " + err);
       this.sessionManager.signout();
       this.helper.navigateToComponent(LoginComponent);
 
