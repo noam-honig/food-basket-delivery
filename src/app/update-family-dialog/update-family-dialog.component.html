@@ -5,12 +5,24 @@
             <button mat-menu-item (click)="newDelivery()"
                 *ngIf="!this.families.currentRow.isNew()">{{settings.lang.newDelivery}}</button>
             <button mat-menu-item (click)="preview()">{{settings.lang.displayFamilyAsVolunteerWillSeeIt}}</button>
-            <button mat-menu-item (click)="families.currentRow.showDeliveryHistoryDialog({dialog:dialog,settings:settings})"
+            <button mat-menu-item
+                (click)="families.currentRow.showDeliveryHistoryDialog({dialog:dialog,settings:settings})"
                 *ngIf="!this.families.currentRow.isNew()">{{settings.lang.deliveries}}</button>
             <button mat-menu-item (click)="updateInfo()"
                 *ngIf="!this.families.currentRow.isNew()">{{settings.lang.infoAboutUpdates}}</button>
             <button mat-menu-item (click)="sendSmsToCourier()"
                 *ngIf="args.familyDelivery&&args.familyDelivery.courier.value">{{settings.lang.sendMessageToVolunteer}}</button>
+
+            <a mat-menu-item href="tel:{{args.familyDelivery.courier.getPhone()}}" style="padding-right:15px;"
+                *ngIf="args.familyDelivery&&args.familyDelivery.courier.value">
+                <button mat-menu-item *ngIf="args.familyDelivery&&args.familyDelivery.courier.value">
+                    <mat-icon>phone</mat-icon><span style="word-wrap: break-word;"> {{settings.lang.dialTo}} {{settings.lang.volunteer}}
+                        {{args.familyDelivery.courier.getValue()}}: 
+                        {{args.familyDelivery.courier.getPhone()}}
+                    </span>
+                </button>
+            </a>
+
 
         </mat-menu>
 

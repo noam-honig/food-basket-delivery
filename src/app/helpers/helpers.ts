@@ -349,7 +349,7 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
         return this.context.for(Helpers).lookup(this).name.value;
     }
     getPhone() {
-        return this.context.for(Helpers).lookup(this).phone.value;
+        return this.context.for(Helpers).lookup(this).phone.displayValue;
     }
     async getTheName() {
         let r = await this.context.for(Helpers).lookupAsync(this);
