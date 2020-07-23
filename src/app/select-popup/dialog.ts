@@ -186,8 +186,15 @@ export class DialogService {
         await DialogService.doLog(s);
     }
     @ServerFunction({ allowed: true })
-    static async doLog(s: string) {
+    static async doLog(s: string,context?:Context) {
         console.log(s);
+        if (context.user){
+            console.log("server context: "+JSON.stringify( context.user));
+        }
+        else
+            console.log("server context has no user");
+
+        
     }
 }
 export function extractError(err: any) {
