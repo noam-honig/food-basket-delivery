@@ -1,6 +1,6 @@
 import { Injectable, NgZone } from "@angular/core";
 import { MatSnackBar } from "@angular/material";
-import { Context, DataAreaSettings } from '@remult/core';
+import { Context, DataAreaSettings, ServerFunction } from '@remult/core';
 
 
 import { BusyService } from '@remult/core';
@@ -23,6 +23,7 @@ declare var gtag;
 @Injectable()
 export class DialogService {
     async exception(title: string, err: any): Promise<void> {
+        this.log("Exception:"+title + ": " + extractError(err));
         await this.Error(title + ": " + extractError(err));
         throw err;
     }
@@ -180,6 +181,13 @@ export class DialogService {
     }
     confirmDelete(of: string) {
         return this.YesNoPromise(use.language.confirmDeleteOf + " " + of + "?");
+    }
+    async log(s: string) {
+        await DialogService.doLog(s);
+    }
+    @ServerFunction({ allowed: true })
+    static async doLog(s: string) {
+        console.log(s);
     }
 }
 export function extractError(err: any) {

@@ -38,7 +38,12 @@ export class MyFamiliesComponent implements OnInit {
       await this.familyLists.initForHelper(helper);
     }
     catch (err) {
-      this.dialog.exception("My Families: " + this.settings.lang.smsLoginFailed, err);
+      let info = checkCookie();
+      if (this.context.user)
+        info += " user: " + this.context.user.name;
+      else
+        info += " NO USER ";
+      this.dialog.exception("My Families: " + this.settings.lang.smsLoginFailed, info + "- " + err);
       this.sessionManager.signout();
       this.helper.navigateToComponent(LoginComponent);
 
@@ -78,4 +83,16 @@ export class MyFamiliesComponent implements OnInit {
   events: Event[] = [];
 
 
+}
+
+
+function checkCookie() {
+  var cookieEnabled = navigator.cookieEnabled;
+  if (!cookieEnabled) {
+    document.cookie = "testcookie";
+    cookieEnabled = document.cookie.indexOf("testcookie") != -1;
+  }
+  if (cookieEnabled)
+    return "cookies are ok"
+  else return "cookies don't work";
 }
