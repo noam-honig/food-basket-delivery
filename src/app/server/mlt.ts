@@ -1,9 +1,10 @@
 import { OverviewComponent } from "../overview/overview.component";
-import { ServerContext } from "@remult/core";
+import { ServerContext, Column, Context } from "@remult/core";
 import { Families } from "../families/families";
 import { allCentersToken } from "../manage/distribution-centers";
 import { PhoneColumn } from "../model-shared/types";
 import { Helpers } from "../helpers/helpers";
+import { Sites } from "../sites/sites";
 
 export async function createDonor(d: donor) {
     let context = await getMltContext();
@@ -145,3 +146,35 @@ async function getMltContext() {
     });
     return c;
 }
+
+
+
+
+export async function executeOnServer(action: {
+    columns: Column[],
+    doWork: (context: Context) => Promise<void>
+  }, args: any[], context: Context) {
+    let x = Sites.getValidSchemaFromContext(context);
+    if (x != 'mlt') {
+      throw "not authorized";
+    }
+  
+    let i = 0;
+    for (const c of action.columns) {
+      c.rawValue = args[i++];
+    }
+    context._setUser({
+      id: 'WIX',
+      name: 'WIX',
+      roles: []
+    });
+    await action.doWork(context);
+  
+  }
+  export function pack(action: { columns: Column[] }) {
+    let args = [];
+    for (const c of action.columns) {
+      args.push(c.rawValue);
+    }
+    return args;
+  }

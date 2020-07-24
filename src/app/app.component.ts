@@ -8,7 +8,7 @@ import { ApplicationSettings, SettingsService } from './manage/ApplicationSettin
 import { FamiliesComponent } from './families/families.component';
 import { Context, RouteHelperService, JwtSessionManager, DataAreaSettings } from '@remult/core';
 import { Roles } from './auth/roles';
-import {  translationConfig, Language } from './translate';
+import { translationConfig, Language } from './translate';
 
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { DeliveryStatus } from './families/DeliveryStatus';
@@ -90,7 +90,9 @@ export class AppComponent {
     return ApplicationSettings.get(this.context).organisationName.value;
   }
   toolbarColor = 'primary';
-
+  showSideBar() {
+    return this.context.isSignedIn();
+  }
   signOut() {
 
     this.routeClicked();

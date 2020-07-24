@@ -1,0 +1,17 @@
+<div class="myDiv">
+    <mat-card style="overflow-y: auto;
+    max-width: 450px;
+    max-height: 100%;
+    background-image: url(/assets/mitchashvim-logo-new-colors.webp);
+    background-repeat: no-repeat;
+    background-position-x: right;
+    ">
+        <div style="color:#3753F6">
+            <h1>רוצה לתרום מחשב? מעולה!</h1>
+            <H3>כל מה שצריך לעשות זה למלא את הטופס הקצר הזה ואנחנו ניצור איתך קשר</H3>
+            <h5>*נא למלא את הטופס בעברית.</h5>
+        </div>
+        <data-area [settings]="area"></data-area>
+        <button mat-raised-button (click)="submit()" style="background-color:#3753F6;color:white">שליחה</button>
+    </mat-card>
+</div>

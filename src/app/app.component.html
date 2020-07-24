@@ -1,7 +1,7 @@
 <mat-sidenav-container class="app-sidenav-container">
 
   <mat-sidenav #sidenav class="app-sidenav mat-elevation-z10 no-print" [opened]="!dialog.isScreenSmall()"
-    *ngIf="this.context.isSignedIn()" [mode]="dialog.isScreenSmall()?'over':'side'">
+    *ngIf="showSideBar()" [mode]="dialog.isScreenSmall()?'over':'side'">
 
     <div style="width:100%;text-align: center">
       <img src="{{getLogo()}}" />
@@ -31,7 +31,7 @@
   </mat-sidenav>
   <div class="full-page">
     <mat-toolbar color="{{toolbarColor}}" class="no-print" style="justify-content: space-between;"
-      *ngIf="this.context.isSignedIn()">
+      *ngIf="showSideBar()">
       <div style="    display: flex;
     
     align-items: center;">

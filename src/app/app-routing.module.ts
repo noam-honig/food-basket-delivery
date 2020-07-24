@@ -24,7 +24,7 @@ import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 
-import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard } from './auth/roles';
+import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, MltOnly as MltOnlyGuard } from './auth/roles';
 
 import { SignedInGuard } from '@remult/core';
 
@@ -40,6 +40,7 @@ import { TestMapComponent } from './test-map/test-map.component';
 import { FamilyDeliveriesComponent } from './family-deliveries/family-deliveries.component';
 import { DuplicateFamiliesComponent } from './duplicate-families/duplicate-families.component';
 import { EventsComponent } from './events/events.component';
+import { RegisterDonorComponent } from './register-donor/register-donor.component';
 
 
 
@@ -66,6 +67,7 @@ export const routes: Routes = [
   { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { hide: true } },
   { path: 'geocode', component: GeocodeComponent, canActivate: [AdminGuard], data: { name: 'geocode', hide: true } },
   { path: 'testmap', component: TestMapComponent, canActivate: [AdminGuard], data: { hide: true } },
+  { path: 'register-donor', component: RegisterDonorComponent,canActivate:[MltOnlyGuard] , data: { hide: true } },
   
   
   { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard] },
@@ -94,7 +96,7 @@ export const routes: Routes = [
   ],
   declarations: [],
   exports: [RouterModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard]
+  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard,MltOnlyGuard]
 
 })
 
