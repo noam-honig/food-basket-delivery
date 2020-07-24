@@ -97,8 +97,8 @@ export class MyFamiliesComponent implements OnInit {
 function checkCookie() {
   var cookieEnabled = navigator.cookieEnabled;
   if (!cookieEnabled) {
-    document.cookie = "testcookie";
-    cookieEnabled = document.cookie.indexOf("testcookie") != -1;
+    document.cookie = "testcookie=1234";
+    cookieEnabled = document.cookie.indexOf("testcookie=1234") != -1;
   }
   if (cookieEnabled)
     return "cookies are ok"
