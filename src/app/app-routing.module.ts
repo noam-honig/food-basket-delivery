@@ -1,6 +1,6 @@
-import { NgModule } from '@angular/core';
+import { NgModule, Injectable } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Routes, RouteReuseStrategy } from '@angular/router';
+import { RouterModule, Routes, RouteReuseStrategy, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 import { HelpersComponent } from './helpers/helpers.component';
 import { LoginComponent } from './users/login/login.component';
@@ -24,9 +24,9 @@ import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 
-import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, MltOnly as MltOnlyGuard } from './auth/roles';
+import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard } from './auth/roles';
 
-import { SignedInGuard } from '@remult/core';
+import { SignedInGuard, Context } from '@remult/core';
 
 import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';
 import { PlaybackComponent } from './playback/playback.component';
@@ -41,8 +41,24 @@ import { FamilyDeliveriesComponent } from './family-deliveries/family-deliveries
 import { DuplicateFamiliesComponent } from './duplicate-families/duplicate-families.component';
 import { EventsComponent } from './events/events.component';
 import { RegisterDonorComponent } from './register-donor/register-donor.component';
+import { Sites } from './sites/sites';
 
 
+@Injectable()
+export class MltOnlyGuard implements CanActivate {
+    constructor(private context: Context) {
+
+    }
+    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | import("@angular/router").UrlTree | import("rxjs").Observable<boolean | import("@angular/router").UrlTree> | Promise<boolean | import("@angular/router").UrlTree> {
+        let site = Sites.getOrganizationFromContext(this.context);
+        console.log(site,this.context.getPathInUrl());
+        if (site == 'mlt')
+            return true;
+        return false;
+    }
+
+
+}
 
 
 
@@ -103,3 +119,4 @@ export const routes: Routes = [
 export class AppRoutingModule { }
 
 SignedInGuard.componentToNavigateIfNotAllowed = LoginComponent;
+

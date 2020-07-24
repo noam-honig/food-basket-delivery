@@ -1,7 +1,6 @@
 import { SignedInGuard, Context } from '@remult/core';
 import { Injectable } from "@angular/core";
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { Sites } from '../sites/sites';
+
 
 
 export class Roles {
@@ -41,21 +40,6 @@ export class OverviewGuard extends SignedInGuard {
     }
 }
 
-@Injectable()
-export class MltOnly implements CanActivate {
-    constructor(private context: Context) {
-
-    }
-    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | import("@angular/router").UrlTree | import("rxjs").Observable<boolean | import("@angular/router").UrlTree> | Promise<boolean | import("@angular/router").UrlTree> {
-        let site = Sites.getOrganizationFromContext(this.context);
-        console.log(site,this.context.getPathInUrl());
-        if (site == 'mlt')
-            return true;
-        return false;
-    }
-
-
-}
 
 
 
