@@ -138,11 +138,11 @@ async function getMltContext() {
     });
     c.setDataProvider(db);
     c.setReq({
-        clientIp:'wix',
-        user:c.user,
-        get:()=>undefined,
-        getBaseUrl:()=>'/mlt',
-        getHeader:()=>undefined
+        clientIp: 'wix',
+        user: c.user,
+        get: () => undefined,
+        getBaseUrl: () => '/mlt',
+        getHeader: () => undefined
     });
     return c;
 }
@@ -150,31 +150,35 @@ async function getMltContext() {
 
 
 
-export async function executeOnServer(action: {
-    columns: Column[],
-    doWork: (context: Context) => Promise<void>
-  }, args: any[], context: Context) {
+export async function executeOnServer(actionFactory: {
+    new(context: Context): {
+        columns: Column[],
+        doWork: (context: Context) => Promise<void>
+    }
+}, args: any[], context: Context) {
     let x = Sites.getValidSchemaFromContext(context);
     if (x != 'mlt') {
-      throw "not authorized";
-    }
-  
-    let i = 0;
-    for (const c of action.columns) {
-      c.rawValue = args[i++];
+        throw "not authorized";
     }
     context._setUser({
-      id: 'WIX',
-      name: 'WIX',
-      roles: []
+        id: 'WIX',
+        name: 'WIX',
+        roles: []
     });
+    let action = new actionFactory(context);
+
+    let i = 0;
+    for (const c of action.columns) {
+        c.rawValue = args[i++];
+    }
+
     await action.doWork(context);
-  
-  }
-  export function pack(action: { columns: Column[] }) {
+
+}
+export function pack(action: { columns: Column[] }) {
     let args = [];
     for (const c of action.columns) {
-      args.push(c.rawValue);
+        args.push(c.rawValue);
     }
     return args;
-  }
+}

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PhoneColumn } from '../model-shared/types';
+import { PhoneColumn, required } from '../model-shared/types';
 import { StringColumn, NumberColumn, DataAreaSettings, ServerFunction, Context, Column } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { Sites } from '../sites/sites';
@@ -7,6 +7,7 @@ import { Families } from '../families/families';
 import { allCentersToken } from '../manage/distribution-centers';
 import { executeOnServer, pack } from '../server/mlt';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
+import { RequiredValidator } from '@angular/forms';
 
 @Component({
   selector: 'app-register-donor',
@@ -16,12 +17,38 @@ import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-q
 export class RegisterDonorComponent implements OnInit {
 
   constructor(private dialog: DialogService, private context: Context) { }
-  donor = new donorForm();
-  area = new DataAreaSettings({ columnSettings: () => this.donor.columns });
+  donor = new donorForm(this.context);
+  area = new DataAreaSettings({ columnSettings: () => this.donor.columns.filter(c => c != this.donor.name && c != this.donor.address) });
   ngOnInit() {
   }
+  allowSubmit() {
+    return this.hasQuantity();
+  }
+
+  hasQuantity() {
+    return +this.donor.laptop.value > 0 || +this.donor.computer.value > 0 || +this.donor.screen.value > 0;
+  }
   async submit() {
+
+    if (!this.hasQuantity()) {
+      this.dialog.Error("אנא הזן מספר מחשבים, לפטופים או מסכים");
+      return;
+    }
     try {
+      let error = '';
+      for (const c of this.donor.columns) {
+        //@ts-ignore
+        c.__clearErrors();
+        //@ts-ignore
+        c.__performValidation();
+        if (!error && c.validationError) {
+          error = c.defs.caption + ": " + c.validationError;
+        }
+      }
+      if (error) {
+        this.dialog.Error(error);
+        return;
+      }
       await RegisterDonorComponent.doDonorForm(pack(this.donor));
       await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: "תודה על תרומך", showOnlyConfirm: true });
       window.location.href = "https://www.mitchashvim.org.il/";
@@ -32,27 +59,39 @@ export class RegisterDonorComponent implements OnInit {
   }
   @ServerFunction({ allowed: true })
   static async doDonorForm(args: any[], context?: Context) {
-    await executeOnServer(new donorForm(), args, context);
+    await executeOnServer(donorForm, args, context);
   }
 
 }
 
 class donorForm {
-  name = new StringColumn("שם מלא");
+  constructor(private context: Context) {
+
+  }
+  name = new StringColumn({
+    caption: "שם מלא", validate: () => {
+      required(this.name);
+
+    }
+  });
   phone = new StringColumn({
     caption: "טלפון",
-    dataControlSettings: () => ({ inputType: 'tel' })
+    dataControlSettings: () => ({ inputType: 'tel' }),
+    validate: () => {
+      required(this.phone);
+      PhoneColumn.validatePhone(this.phone, this.context);
+    }
   });
   email = new StringColumn({
     caption: "דואל",
     dataControlSettings: () => ({ inputType: 'email' })
   });
-  address = new StringColumn("כתובת");
-  city = new StringColumn("עיר");
+  address = new StringColumn({ caption: "כתובת", validate: () => required(this.address) });
+  
   computer = new NumberColumn("מספר מחשבים ניידים");
   laptop = new NumberColumn("מספר מחשבים נייחים");
   screen = new NumberColumn("מספר מסכים");
-  columns = [this.name, this.phone, this.email, this.address, this.city, this.computer, this.laptop, this.screen];
+  columns = [this.name, this.phone, this.email, this.address,  this.computer, this.laptop, this.screen];
 
 
   async doWork(context: Context) {
@@ -60,9 +99,7 @@ class donorForm {
     f.name.value = this.name.value;
     if (!this.address.value)
       this.address.value = '';
-    if (!this.city.value)
-      this.city.value = '';
-    f.address.value = this.address.value + " " + this.city.value;
+    f.address.value = this.address.value ;
     f.phone1.value = this.phone.value;
     f.email.value = this.email.value;
     await f.save();

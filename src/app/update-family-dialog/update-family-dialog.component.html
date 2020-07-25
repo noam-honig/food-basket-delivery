@@ -83,11 +83,8 @@
 
 
 
-
-                        <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
-                            <mat-label>{{families.currentRow.address.defs.caption}}</mat-label>
-                            <input matInput [(ngModel)]="families.currentRow.address.value" #addressInput>
-                        </mat-form-field>
+                        <app-address-input [column]="families.currentRow.address" #addressInput></app-address-input>
+                        
                         <a (click)="showOnMap()">{{settings.lang.showOnGoogleMap}}</a>
 
 

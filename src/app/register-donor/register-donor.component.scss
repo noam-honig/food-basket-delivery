@@ -9,3 +9,10 @@
        text-align: center;
    }
 }
+button{
+    color:white;
+    background-color: #3753F6;
+    [disabled]{
+        background-color: light-gray;
+    }
+}
