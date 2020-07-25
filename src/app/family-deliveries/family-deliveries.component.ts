@@ -724,9 +724,9 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
                 fd.readyFilter()).and(
                   d.distributionCenter.filter(args.dialog.distCenter.value));
               if (d.addressOk.value)
-                return fd.addressLongitude.isEqualTo(d.addressLongitude).and(fd.addressLatitude.isEqualTo(d.addressLatitude));
+                return f.and( fd.addressLongitude.isEqualTo(d.addressLongitude).and(fd.addressLatitude.isEqualTo(d.addressLatitude)));
               else
-                return fd.family.isEqualTo(d.family).and(f);
+                return f.and( fd.family.isEqualTo(d.family).and(f));
             }
           });
           if (fd.length > 0) {
