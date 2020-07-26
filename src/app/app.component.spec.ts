@@ -1,9 +1,9 @@
 import { TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { AppComponent } from './app.component';
+
 
 import { ServerContext, EntityClass, IdEntity, StringColumn, NumberColumn, Context } from '@remult/core';
-import { SqlBuilder, QueryBuilder, PhoneColumn } from './model-shared/types';
+import { SqlBuilder, QueryBuilder, PhoneColumn, isPhoneValidForIsrael } from './model-shared/types';
 import { WebDriverProxy } from 'blocking-proxy/built/lib/webdriver_proxy';
 import { parseAddress, Families, parseUrlInAddress } from './families/families';
 import { BasketType } from './families/BasketType';

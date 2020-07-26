@@ -7,7 +7,6 @@ import { Sites } from '../sites/sites';
 
 
 
-
 export interface HasAsyncGetTheValue {
   getTheValue(): Promise<string>;
 }
@@ -77,6 +76,11 @@ export class PhoneColumn extends radweb.StringColumn {
         col.validationError = getLang(context).invalidPhoneNumber;
       else
         return;
+
+    if (!isPhoneValidForIsrael(col.value)) {
+      col.validationError = getLang(context).invalidPhoneNumber;
+    } 
+/*
     if (col.displayValue.startsWith("05") || col.displayValue.startsWith("07")) {
       if (col.displayValue.length != 12) {
         col.validationError = getLang(context).invalidPhoneNumber;
@@ -90,11 +94,13 @@ export class PhoneColumn extends radweb.StringColumn {
     else {
       col.validationError = getLang(context).invalidPhoneNumber;
     }
+  */
   }
 }
-
-
-
+export function isPhoneValidForIsrael(input:string){
+  let  st1 = input.match(/^0(5\d|7\d|[2,4,6,8,9])(-{0,1}\d{3})(-*\d{4})$/);
+  return st1!=null;
+}
 export class DateTimeColumn extends radweb.DateTimeColumn {
 
 
