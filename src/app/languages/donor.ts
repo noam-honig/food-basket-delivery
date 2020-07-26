@@ -699,4 +699,5 @@ export class donor implements Language {
   optionalValues = 'ערכים אפשריים מופרד בפסיקים';
   hideFamilyPhoneFromVolunteer = 'אל תציג את הטלפון של התורם למתנדב';
   hadProblemBefore = 'היתה בעיה בעבר';
+  showOnlyLastNamePartToVolunteer = 'הצג רק מילה אחרונה למתנדב בשם התורם';
 }

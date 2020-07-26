@@ -15,7 +15,7 @@ import { UpdateFamilyDialogComponent } from "../update-family-dialog/update-fami
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService } from "../select-popup/dialog";
 import { getLang, use } from "../translate";
-import { ApplicationSettings, includePhoneInApi } from "../manage/ApplicationSettings";
+import { ApplicationSettings, includePhoneInApi, getSettings } from "../manage/ApplicationSettings";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 
 @EntityClass
@@ -75,7 +75,8 @@ export class FamilyDeliveries extends IdEntity {
 
     name = new StringColumn({
         allowApiUpdate: false,
-        caption: getLang(this.context).familyName
+        caption: getLang(this.context).familyName,
+        sqlExpression: this.context.isAllowed(Roles.admin)||!getSettings(this.context).showOnlyLastNamePartToVolunteer.value ? undefined : "regexp_replace(name, '^.* ', '')"
     });
     basketType = new BasketId(this.context, {
         caption: getLang(this.context).basketType,

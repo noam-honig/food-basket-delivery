@@ -1606,9 +1606,9 @@
     "valueInEnglish": "Group"
   },
   "hadProblemBefore": {
-    "google": "Ha habido un problema en el pasado",
+    "google": "tuvo un problema",
     "valueInCode": "היתה בעיה בעבר",
-    "valueInEnglish": "There has been a problem in the past"
+    "valueInEnglish": "had problem"
   },
   "hello": {
     "google": "Paz",
@@ -2925,6 +2925,11 @@
     "google": "Mostrar solo entregas completadas",
     "valueInCode": "הצג רק משלוחים שהסתיימו",
     "valueInEnglish": "Show only completed deliveries"
+  },
+  "showOnlyLastNamePartToVolunteer": {
+    "google": "Mostrar solo una última palabra al voluntario en nombre de la familia",
+    "valueInCode": "הצג רק מילה אחרונה למתנדב בשם המשפחה",
+    "valueInEnglish": "Show just one last word to the volunteer on behalf of the family"
   },
   "showRouteOnGoogleMaps": {
     "google": "Ver ruta en google maps",

@@ -2339,6 +2339,10 @@
     "google": "הצג רק משלוחים שהסתיימו",
     "valueInCode": "הצג רק משלוחים שהסתיימו"
   },
+  "showOnlyLastNamePartToVolunteer": {
+    "google": "הצג רק מילה אחרונה למתנדב בשם התורם",
+    "valueInCode": "הצג רק מילה אחרונה למתנדב בשם המשפחה"
+  },
   "showRouteOnGoogleMaps": {
     "google": "הצג מסלול ב Google Maps",
     "valueInCode": "הצג מסלול ב Google Maps"

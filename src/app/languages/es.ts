@@ -698,5 +698,6 @@ export class es implements Language {
   caption = 'descripción';
   optionalValues = 'Posibles valores separados por comas';
   hideFamilyPhoneFromVolunteer = 'No muestre el teléfono familiar a un voluntario';
-  hadProblemBefore = 'Ha habido un problema en el pasado';
+  hadProblemBefore = 'tuvo un problema';
+  showOnlyLastNamePartToVolunteer = 'Mostrar solo una última palabra al voluntario en nombre de la familia';
 }

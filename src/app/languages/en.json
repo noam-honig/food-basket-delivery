@@ -1448,7 +1448,7 @@
   "hadProblemBefore": {
     "google": "There has been a problem in the past",
     "valueInCode": "היתה בעיה בעבר",
-    "custom":"had problem"
+    "custom": "had problem"
   },
   "hello": {
     "google": "Hello",
@@ -2574,6 +2574,10 @@
     "google": "Show only completed shipments",
     "valueInCode": "הצג רק משלוחים שהסתיימו",
     "custom": "Show only completed deliveries"
+  },
+  "showOnlyLastNamePartToVolunteer": {
+    "google": "Show just one last word to the volunteer on behalf of the family",
+    "valueInCode": "הצג רק מילה אחרונה למתנדב בשם המשפחה"
   },
   "showRouteOnGoogleMaps": {
     "google": "View route on google maps",
