@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PhoneColumn, required } from '../model-shared/types';
+import { PhoneColumn, required, isPhoneValidForIsrael } from '../model-shared/types';
 import { StringColumn, NumberColumn, DataAreaSettings, ServerFunction, Context, Column } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { Sites } from '../sites/sites';
@@ -15,16 +15,19 @@ import { RequiredValidator } from '@angular/forms';
   styleUrls: ['./register-donor.component.scss']
 })
 export class RegisterDonorComponent implements OnInit {
-
   constructor(private dialog: DialogService, private context: Context) { }
   donor = new donorForm(this.context);
   area = new DataAreaSettings({ columnSettings: () => this.donor.columns.filter(c => c != this.donor.name && c != this.donor.address) });
   ngOnInit() {
   }
   allowSubmit() {
-    return this.hasQuantity();
+    return this.hasQuantity() && this.hasMandatoryFields();
   }
 
+  hasMandatoryFields() {
+    return (this.donor.name.value != null) && (this.donor.address.value != null) && 
+      (isPhoneValidForIsrael(this.donor.phone.value));
+  }
   hasQuantity() {
     return +this.donor.laptop.value > 0 || +this.donor.computer.value > 0 || +this.donor.screen.value > 0;
   }
@@ -32,6 +35,10 @@ export class RegisterDonorComponent implements OnInit {
 
     if (!this.hasQuantity()) {
       this.dialog.Error("אנא הזן מספר מחשבים, לפטופים או מסכים");
+      return;
+    }
+    if (!this.hasMandatoryFields()) {
+      this.dialog.Error("יש למלא שדות חובה");
       return;
     }
     try {
