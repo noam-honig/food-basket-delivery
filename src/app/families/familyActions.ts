@@ -87,6 +87,7 @@ class NewDelivery extends ActionOnRows<Families> {
                     }
                 }
                 let fd = f.createDelivery(this.distributionCenter.value);
+                fd._disableMessageToUsers = true;
                 if (!this.useFamilyBasket.value) {
                     fd.basketType.value = this.basketType.value;
                 }
