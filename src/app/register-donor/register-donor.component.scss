@@ -9,6 +9,11 @@
        text-align: center;
    }
 }
+.rowDiv{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
 button{
     color:white;
     background-color: #3753F6;
