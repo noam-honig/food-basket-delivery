@@ -2245,6 +2245,11 @@
     "valueInCode": "טלפון",
     "valueInEnglish": "Phone"
   },
+  "idNumber": {
+    "google": "número de identificación",
+    "valueInCode": "מספר תעודת זהות",
+    "valueInEnglish": "ID Number"
+  },
   "phone1": {
     "google": "Teléfono 1",
     "valueInCode": "טלפון 1",

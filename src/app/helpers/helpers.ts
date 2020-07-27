@@ -211,6 +211,7 @@ export class Helpers extends HelpersBase {
         dbName: 'password',
         includeInApi: false
     });
+    idNumber = new StringColumn(getLang(this.context).idNumber);
     email = new EmailColumn();
     preferredDistributionAreaAddress = new StringColumn(getLang(this.context).preferredDistributionArea);
     addressApiResult = new StringColumn();

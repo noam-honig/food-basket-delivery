@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PhoneColumn, required, isPhoneValidForIsrael } from '../model-shared/types';
-import { StringColumn, NumberColumn, DataAreaSettings, ServerFunction, Context, Column } from '@remult/core';
+import { StringColumn, NumberColumn, DataAreaSettings, ServerFunction, Context, Column, IdColumn } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { Sites } from '../sites/sites';
 import { Helpers } from '../helpers/helpers';
@@ -17,7 +17,7 @@ import { RequiredValidator } from '@angular/forms';
 export class RegisterHelperComponent implements OnInit {
   constructor(private dialog: DialogService, private context: Context) { }
   helper = new helperForm(this.context);
-  area = new DataAreaSettings({ columnSettings: () => this.helper.columns.filter(c => c != this.helper.name && c != this.helper.address1) });
+  area = new DataAreaSettings({ columnSettings: () => this.helper.columns.filter(c => c != this.helper.name && c != this.helper.address1 && c != this.helper.address2) });
   ngOnInit() {
   }
   allowSubmit() {
@@ -87,11 +87,13 @@ class helperForm {
     caption: "דואל",
     dataControlSettings: () => ({ inputType: 'email' })
   });
-  address1 = new StringColumn({ caption: "כתובת איזור חלוקה 1", validate: () => required(this.address1) });
-  address2 = new StringColumn({ caption: "כתובת איזור חלוקה 2", validate: () => required(this.address2) });
+  address1 = new StringColumn({ caption: "כתובת שנדע לחבר לך תורמים קרובים", validate: () => required(this.address1) });
+  address2 = new StringColumn({ caption: "איזור נוסף ממנו נח לך לאסוף תרומות?", validate: () => required(this.address2) });
   
+  idNumber = new StringColumn({ caption: "תעודת זהות (עבור ביטוח מתנדבים)", validate: () => required(this.idNumber) });
+  company = new StringColumn({ caption: "ארגון"});
 
-  columns = [this.name, this.phone, this.email, this.address1, this.address2];
+  columns = [this.name, this.idNumber, this.phone, this.email, this.address1, this.address2, this.company];
 
 
   async doWork(context: Context) {
@@ -105,6 +107,8 @@ class helperForm {
     h.preferredDistributionAreaAddress2.value = this.address2.value ;
     h.phone.value = this.phone.value;
     h.email.value = this.email.value;
+    h.idNumber.value = this.idNumber.value;
+    h.company.value = this.company.value;
     await h.save();
   }
 }

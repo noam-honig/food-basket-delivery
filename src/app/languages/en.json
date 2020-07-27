@@ -1988,6 +1988,10 @@
     "valueInCode": "טלפון",
     "custom": "Phone"
   },
+  "idNumber": {
+    "google": "ID Number",
+    "valueInCode": "מספר תעודת זהות",
+  },
   "phone1": {
     "google": "Phone 1",
     "valueInCode": "טלפון 1"

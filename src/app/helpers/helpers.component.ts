@@ -181,7 +181,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       if (this.context.isAllowed(Roles.admin))
         this.numOfColsInGrid++;
       if (this.settings.forWho.value == TranslationOptions.donors)
-        this.numOfColsInGrid+=2;
+        this.numOfColsInGrid+=4;
 
       return this.selectColumns(helpers);
     },
@@ -231,7 +231,6 @@ export class HelpersComponent implements OnInit, OnDestroy {
         column: helpers.distCenterAdmin, width: '160'
       });
     }
-
     r.push({
       column: helpers.preferredDistributionAreaAddress, width: '120',
     });
@@ -242,6 +241,8 @@ export class HelpersComponent implements OnInit, OnDestroy {
       column: helpers.company, width: '120'
     });
 
+    r.push(helpers.createDate);
+
     if (this.context.isAllowed(Roles.admin)) {
       r.push(helpers.distributionCenter);
     }
@@ -249,7 +250,10 @@ export class HelpersComponent implements OnInit, OnDestroy {
     if (this.settings.manageEscorts.value) {
       r.push(helpers.escort, helpers.theHelperIAmEscorting, helpers.needEscort);
     }
-    r.push(helpers.createDate);
+
+    r.push({
+      column: helpers.idNumber, width: '80'
+    });
 
     return r;
   }

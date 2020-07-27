@@ -59,6 +59,7 @@ export class italy implements Language {
   address = 'Indirizzo';
   phones = 'Cellulari';
   phone = 'Telefono';
+  idNumber = 'Numero identificativo';
   thereAre = "c'è";
   basket = 'pacco';
   notice = 'Nota!';
