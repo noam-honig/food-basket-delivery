@@ -59,7 +59,6 @@ export class es implements Language {
   address = 'Habla a';
   phones = 'Los telefonos';
   phone = 'Teléfono';
-  idNumber = 'número de identificación';
   thereAre = 'Ahi esta';
   basket = 'Paquete o empaquetar';
   notice = '¡Nota!';

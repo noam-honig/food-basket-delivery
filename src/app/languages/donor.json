@@ -1795,10 +1795,6 @@
     "google": "טלפון",
     "valueInCode": "טלפון"
   },
-  "idNumber": {
-    "google": "מספר תעודת זהות",
-    "valueInCode": "מספר תעודת זהות"
-  },
   "phone1": {
     "google": "טלפון 1",
     "valueInCode": "טלפון 1"

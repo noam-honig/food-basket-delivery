@@ -59,7 +59,6 @@ export class en implements Language {
   address = 'Address';
   phones = 'Phones';
   phone = 'Phone';
-  idNumber = 'Id Number';
   thereAre = 'there is';
   basket = 'Parcel';
   notice = 'Note!';

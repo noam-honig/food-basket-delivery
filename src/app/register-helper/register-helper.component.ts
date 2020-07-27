@@ -90,10 +90,10 @@ class helperForm {
   address1 = new StringColumn({ caption: "כתובת שנדע לחבר לך תורמים קרובים", validate: () => required(this.address1) });
   address2 = new StringColumn({ caption: "איזור נוסף ממנו נח לך לאסוף תרומות?", validate: () => required(this.address2) });
   
-  idNumber = new StringColumn({ caption: "תעודת זהות (עבור ביטוח מתנדבים)", validate: () => required(this.idNumber) });
+  socialSecurityNumber = new StringColumn({ caption: "תעודת זהות (עבור ביטוח מתנדבים)", validate: () => required(this.socialSecurityNumber) });
   company = new StringColumn({ caption: "ארגון"});
 
-  columns = [this.name, this.idNumber, this.phone, this.email, this.address1, this.address2, this.company];
+  columns = [this.name, this.socialSecurityNumber, this.phone, this.email, this.address1, this.address2, this.company];
 
 
   async doWork(context: Context) {
@@ -107,7 +107,7 @@ class helperForm {
     h.preferredDistributionAreaAddress2.value = this.address2.value ;
     h.phone.value = this.phone.value;
     h.email.value = this.email.value;
-    h.idNumber.value = this.idNumber.value;
+    h.socialSecurityNumber.value = this.socialSecurityNumber.value;
     h.company.value = this.company.value;
     await h.save();
   }

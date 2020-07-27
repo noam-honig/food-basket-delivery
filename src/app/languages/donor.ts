@@ -59,7 +59,6 @@ export class donor implements Language {
   address = 'כתובת';
   phones = 'טלפונים';
   phone = 'טלפון';
-  idNumber = 'מספר תעודת זהות';
   thereAre = 'יש';
   basket = 'סל';
   notice = 'שים לב!';

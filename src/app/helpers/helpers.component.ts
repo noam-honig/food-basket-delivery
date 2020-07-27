@@ -252,7 +252,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
     }
 
     r.push({
-      column: helpers.idNumber, width: '80'
+      column: helpers.socialSecurityNumber, width: '80'
     });
 
     return r;
