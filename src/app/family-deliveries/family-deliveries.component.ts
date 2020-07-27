@@ -643,6 +643,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         context: context.for(ActiveFamilyDeliveries),
         h: {
           actionWhere: x => h.actionWhere(x),
+          orderBy:x=>[{column:x.createDate,descending:true}],
           forEach: async fd => {
             fd._disableMessageToUsers = true;
             await h.forEach(fd);

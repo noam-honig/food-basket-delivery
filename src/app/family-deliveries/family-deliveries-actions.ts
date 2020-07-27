@@ -342,10 +342,19 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
             icon:'add_shopping_cart',
             help: () => getLang(this.context).newDeliveryForDeliveriesHelp + ' ' + this.newDeliveryForAll.defs.caption,
             forEach: async existingDelivery => {
+                this.archiveHelper.forEach(existingDelivery);
+                if (this.autoArchive) {
+                    if (DeliveryStatus.IsAResultStatus(existingDelivery.deliverStatus.value))
+                        existingDelivery.archive.value = true;
+                }
+                if (existingDelivery.wasChanged())
+                    await existingDelivery.save();
+
                 let f = await this.context.for(Families).findId(existingDelivery.family);
                 if (!f || f.status.value != FamilyStatus.Active)
                     return;
                 let newDelivery = f.createDelivery(existingDelivery.distributionCenter.value);
+                newDelivery._disableMessageToUsers = true;
                 newDelivery.copyFrom(existingDelivery);
                 if (!this.useExistingBasket.value) {
                     newDelivery.basketType.value = this.basketType.value;
@@ -356,14 +365,6 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                     newDelivery.distributionCenter.value = existingDelivery.distributionCenter.value;
                 this.helperStrategy.value.applyTo({ existingDelivery, newDelivery, helper: this.helper.value });
                 this.selfPickup.value.applyTo({ existingDelivery, newDelivery, family: f });
-
-                this.archiveHelper.forEach(existingDelivery);
-                if (this.autoArchive) {
-                    if (DeliveryStatus.IsAResultStatus(existingDelivery.deliverStatus.value))
-                        existingDelivery.archive.value = true;
-                }
-                if (existingDelivery.wasChanged())
-                    await existingDelivery.save();
 
                 if ((await newDelivery.duplicateCount()) == 0)
                     await newDelivery.save();
