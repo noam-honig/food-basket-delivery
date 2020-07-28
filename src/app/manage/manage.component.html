@@ -54,6 +54,19 @@
                 <h4>{{settings.lang.sampleReminderSms}}</h4>
                 <pre>{{testSmsReminder()}}</pre>
             </mat-card>
+            <mat-card *ngIf="settings.allowSendSuccessMessageOption.value&&settings.helpPhone.value">
+                <mat-card-title>
+                    הודעה למשפחה על מסירה מוצלחת
+                </mat-card-title>
+                <data-control [column]="settings.sendSuccessMessageToFamily"></data-control>
+                <ng-container *ngIf="settings.sendSuccessMessageToFamily.value">
+                    הודעה זו תשלח למשפחה כאשר התנדב לוחץ על כפתור נמסר בהצלחה
+                    <textarea [(ngModel)]="settings.successMessageText.value" class="form-control" lines=3></textarea>
+
+                    <h4>הודעה לדוגמא</h4>
+                    <pre>{{testSuccessSms()}}</pre>
+                </ng-container>
+            </mat-card>
 
 
         </mat-expansion-panel>

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
-import { BusyService, ServerFunction, StringColumn, GridButton, BoolColumn } from '@remult/core';
+import { BusyService, ServerFunction, StringColumn, GridButton, BoolColumn, ServerContext } from '@remult/core';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';
@@ -7,10 +7,10 @@ import { MapComponent } from '../map/map.component';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { AuthService } from '../auth/auth-service';
 import { DialogService } from '../select-popup/dialog';
-import { SendSmsAction } from '../asign-family/send-sms-action';
+import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 import { Router } from '@angular/router';
 
-import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { Context } from '@remult/core';
 import { Column } from '@remult/core';
 import { use, getLang, TranslationOptions } from '../translate';
@@ -27,6 +27,9 @@ import { MatTabGroup } from '@angular/material';
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 import { routeStrategyColumn } from '../asign-family/route-strategy';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
+import { FamilyDeliveresStatistics } from '../family-deliveries/family-deliveries-stats';
+import { PhoneColumn } from '../model-shared/types';
+import { Sites } from '../sites/sites';
 
 @Component({
   selector: 'app-helper-families',
@@ -216,6 +219,29 @@ export class HelperFamiliesComponent implements OnInit {
   async leftThere(f: ActiveFamilyDeliveries) {
     this.deliveredToFamilyOk(f, DeliveryStatus.SuccessLeftThere, s => s.commentForSuccessLeft);
   }
+  @ServerFunction({ allowed: c => c.isSignedIn() })
+  static async sendSuccessMessageToFamily(deliveryId: string, context?: ServerContext) {
+    var settings = getSettings(context);
+    if (!settings.allowSendSuccessMessageOption.value)
+      return;
+    if (!settings.sendSuccessMessageToFamily.value)
+      return;
+    let fd = await context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(deliveryId).and(f.visibleToCourier.isEqualTo(true)).and(f.deliverStatus.isIn([DeliveryStatus.Success, DeliveryStatus.SuccessLeftThere])));
+    if (!fd)
+      console.log("did not send sms to " + deliveryId + " failed to find delivery");
+    if (!fd.phone1.value)
+      return;
+    if (!fd.phone1.value.startsWith("05"))
+      return;
+    let phone = PhoneColumn.fixPhoneInput(fd.phone1.value);
+    if (phone.length != 10) {
+      console.log(phone + " doesn't match sms structure");
+      return;
+    }
+
+
+    await new SendSmsUtils().sendSms(phone, settings.helpPhone.value, SendSmsAction.getSuccessMessage(settings.successMessageText.value, settings.organisationName.value, fd.name.value), context.getOrigin(), Sites.getOrganizationFromContext(context), settings);
+  }
   async deliveredToFamilyOk(f: ActiveFamilyDeliveries, status: DeliveryStatus, helpText: (s: ApplicationSettings) => Column) {
     this.context.openDialog(UpdateCommentComponent, x => x.args = {
       family: f,
@@ -233,6 +259,8 @@ export class HelperFamiliesComponent implements OnInit {
             if (this.familyLists.toDeliver.length == 0) {
               this.dialog.messageDialog(this.allDoneMessage());
             }
+            if (this.settings.allowSendSuccessMessageOption.value && this.settings.sendSuccessMessageToFamily.value)
+              HelperFamiliesComponent.sendSuccessMessageToFamily(f.id.value);
 
           }
           catch (err) {

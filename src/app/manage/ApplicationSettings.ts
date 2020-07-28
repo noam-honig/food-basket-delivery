@@ -147,7 +147,10 @@ export class ApplicationSettings extends Entity<number>  {
   checkDuplicatePhones = new BoolColumn(this.lang.checkDuplicatePhones);
   volunteerCanUpdateComment = new BoolColumn(this.lang.volunteerCanUpdateComment);
   hideFamilyPhoneFromVolunteer = new BoolColumn(this.lang.hideFamilyPhoneFromVolunteer);
-  showOnlyLastNamePartToVolunteer = new BoolColumn(this.lang.showOnlyLastNamePartToVolunteer)
+  showOnlyLastNamePartToVolunteer = new BoolColumn(this.lang.showOnlyLastNamePartToVolunteer);
+  allowSendSuccessMessageOption = new BoolColumn({ caption: "הרשה אפשרות של שליחת הודעת SMS למשפחה", allowApiUpdate: false });
+  sendSuccessMessageToFamily = new BoolColumn("שלח הודעה למשפחה כאשר הסל נמסר");
+  successMessageText = new StringColumn("תוכן הודעת הצלחה למשפחה");
 
   showDistCenterAsEndAddressForVolunteer = new BoolColumn(this.lang.showDistCenterAsEndAddressForVolunteer);
   routeStrategy = new routeStrategyColumn();

@@ -125,9 +125,10 @@ export async function serverInit() {
             catch (err) {
                 console.error(err);
             }
-            await new Promise(x => setTimeout(() => {
-                x();
-            }, 1000));
+            if (!process.env.DISABLE_LOAD_DELAY)
+                await new Promise(x => setTimeout(() => {
+                    x();
+                }, 1000));
         }
     }
 }

@@ -11,6 +11,11 @@ import { getLang } from '../translate';
 
 
 export class SendSmsAction {
+    static getSuccessMessage(template: string, orgName: string, family: string) {
+        return template
+        .replace('!ארגון!', orgName).replace("!ORG!", orgName)
+            .replace('!משפחה!', family);
+    }
     @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async SendSms(helperId: string, reminder: Boolean, context?: ServerContext) {
 
@@ -34,7 +39,7 @@ export class SendSmsAction {
 
 
 
-    static async  generateMessage(ds: Context, helper: Helpers, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string, sender: string, url: string) => void) {
+    static async generateMessage(ds: Context, helper: Helpers, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string, sender: string, url: string) => void) {
 
         if (!origin) {
             throw 'Couldnt determine origin for sms';
@@ -84,7 +89,7 @@ export class SendSmsAction {
         return template.replace('!מתנדב!', courier).replace('!משנע!', courier).replace('!VOLUNTEER!', courier)
             .replace('!שולח!', sender).replace('!SENDER!', sender)
             .replace('!ארגון!', orgName).replace("!ORG!", orgName)
-            .replace('!אתר!', url).replace('!URL!', url)
+            .replace('!אתר!', url).replace('!URL!', url);
 
     }
 }
