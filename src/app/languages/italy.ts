@@ -697,4 +697,6 @@ export class italy implements Language {
   customColumn = 'Un altro campo per la famiglia';
   caption = 'descrizione';
   optionalValues = 'Possibili valori separati da virgola';
+  reciptionDone = "נמסר בהצלחה";
+  lab='מעבדה';
 }

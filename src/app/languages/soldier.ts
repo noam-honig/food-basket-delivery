@@ -697,4 +697,6 @@ export class soldier implements Language {
   customColumn = 'שדה נוסף לחייל';
   caption = 'תאור';
   optionalValues = 'ערכים אפשריים מופרד בפסיקים';
+  reciptionDone = "נמסר בהצלחה";
+  lab='מעבדה';
 }

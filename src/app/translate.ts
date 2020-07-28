@@ -264,6 +264,7 @@ export class Language {
   createDate = 'מועד הוספה';
   remiderSmsDate = 'מועד משלוח תזכורת SMS';
   admin = 'מנהל כלל המערכת';
+  lab='עובד מעבדה';
   responsibleForAssign = 'משייך מתנדבים לרשימת חלוקה';
   notAllowedToUpdateVolunteer = 'אינך רשאי לעדכן עבור מתנדב זה';
   company = "חברה";
@@ -829,6 +830,7 @@ export class Language {
   ifYouNeedAnyHelpPleaseCall = "לעזרה התקשר ל";
   customColumn = "שדה נוסף למשפחה";
   caption = "תאור";
+  reciptionDone = "נמסר בהצלחה";
   optionalValues = "ערכים אפשריים מופרד בפסיקים";
   
 }

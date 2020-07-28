@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy, Input } from '@angular/core';
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
 import { Context, DataControlSettings, FilterBase, AndFilter, BusyService, packWhere, ServerFunction, unpackWhere, EntityWhere, GridButton, RowButton, GridSettings, DataControlInfo } from '@remult/core';
@@ -34,6 +34,7 @@ import { sortColumns } from '../shared/utils';
   styleUrls: ['./family-deliveries.component.scss']
 })
 export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
+
   static route: Route = {
     path: 'deliveries',
     component: FamilyDeliveriesComponent,
@@ -597,7 +598,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         }
         , textInMenu: () => getLang(this.context).deliveryDetails
       },
-      ...getDeliveryGridButtons({
+      ...getDeliveryGridButtons.bind(this)({
         context: this.context,
         deliveries: () => this.deliveries,
         dialog: this.dialog,
@@ -723,7 +724,21 @@ export interface deliveryButtonsHelper {
   deliveries: () => GridSettings<FamilyDeliveries>
 }
 export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
-
+  console.log(this.receiptDeliveryMode)
+if(this.receiptDeliveryMode){
+  return[
+    {
+      textInMenu: () => getLang(args.context).volunteerAssignments,
+      icon: 'list_alt',
+      showInLine: true,
+      click: async d => {
+        let h = await args.context.for(Helpers).findId(d.courier);
+        await args.context.openDialog(
+          HelperAssignmentComponent, s => s.argsHelper = h);
+        this.refresh();
+      }
+    }]
+}
   return [
     {
       name: getLang(args.context).newDelivery,
@@ -731,7 +746,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
         let f = await args.context.for(Families).findId(d.family);
         await f.showNewDeliveryDialog(args.dialog, args.settings, { copyFrom: d, aDeliveryWasAdded: async () => args.refresh() });
       },
-      visible: d => args.context.isAllowed(Roles.admin)
+      visible: d => args.context.isAllowed(Roles.admin) 
     },
     {
       textInMenu: () => getLang(args.context).assignVolunteer,
@@ -740,7 +755,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
       click: async d => {
         await d.courier.showSelectDialog(async () => await d.save());
       },
-      visible: d => !DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)
+      visible: d => !DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)&& !this.receiptDeliveryMode
     },
     {
       textInMenu: () => getLang(args.context).volunteerAssignments,
@@ -751,9 +766,6 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
         await args.context.openDialog(
           HelperAssignmentComponent, s => s.argsHelper = h);
         this.refresh();
-
-
-
       },
       visible: d => d.courier.value && args.context.isAllowed(Roles.distCenterAdmin)
     },

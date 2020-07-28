@@ -51,6 +51,7 @@ export class donor implements Language {
   copyLink = 'העתק קישור';
   sendSmsFromDevice = 'שלח קישור בSMS מהטלפון';
   reminderSent = 'תזכורת נשלחה';
+  lab='מעבדה';
   resendReminder = 'שלח שוב';
   sendReminderSms = 'שלחי SMS לתזכורת';
   callPerson = 'התקשר ל';
@@ -697,4 +698,5 @@ export class donor implements Language {
   customColumn = 'שדה נוסף לתורם';
   caption = 'תאור';
   optionalValues = 'ערכים אפשריים מופרד בפסיקים';
+  reciptionDone = "נמסר בהצלחה";
 }

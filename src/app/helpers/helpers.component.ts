@@ -151,7 +151,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
                   fd.name,
                   fd.address,
                   fd.distributionCenter,
-                  fd.courierComments
+                  fd.courierComments,
                 ]
                 r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
                 return r;
@@ -230,7 +230,9 @@ export class HelpersComponent implements OnInit, OnDestroy {
         column: helpers.distCenterAdmin, width: '160'
       });
     }
-
+    r.push({
+      column:helpers.lab,width:'120'
+    })
     r.push({
       column: helpers.preferredDistributionAreaAddress, width: '120',
     });

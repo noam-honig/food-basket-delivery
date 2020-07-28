@@ -697,4 +697,6 @@ export class es implements Language {
   customColumn = 'Otro campo para la familia';
   caption = 'descripción';
   optionalValues = 'Posibles valores separados por comas';
+  reciptionDone = "נמסר בהצלחה";
+  lab='מעבדה';
 }
