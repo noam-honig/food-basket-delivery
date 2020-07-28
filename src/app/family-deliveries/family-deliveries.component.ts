@@ -459,7 +459,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
         {
           column: deliveries.name,
-          width: '160'
+          width: '200'
         },
         {
           column: deliveries.address,
@@ -495,7 +495,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
 
         deliveries.deliveryComments,
-        deliveries.internalDeliveryComment,  //10
+        deliveries.internalDeliveryComment,  
         deliveries.special,
         deliveries.createUser,
 
@@ -518,12 +518,12 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.phone4Description,
         { column: deliveries.courier, width: '100' },
 
-        deliveries.courierAssignUser,  // 30
+        deliveries.courierAssignUser,  
         { column: deliveries.courierAssingTime, width: '150' },
         { column: deliveries.deliveryStatusUser, width: '100' },
         deliveries.deliveryStatusDate,
-        { column: deliveries.courierComments, width: '120' }, //34
-        { column: deliveries.internalDeliveryComment, width: '120' }, //35
+        { column: deliveries.courierComments, width: '120' }, 
+        { column: deliveries.internalDeliveryComment, width: '120' }, 
         deliveries.needsWork,
         deliveries.needsWorkDate,
         deliveries.needsWorkUser,
@@ -658,49 +658,11 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     return r + getLang(context).deliveriesUpdated;
   }
 
-
-
   ngOnInit() {
     this.refreshStats();
     this.deliveries.columns.numOfColumnsInGrid = this.normalColumns.length;
     sortColumns(this.deliveries, this.normalColumns)
-    // let cols = this.deliveries.columns;
-    // let firstColumns = [
-    //   cols.items[0]  // name
-    // ];
-    // if (this.settings.forWho.value == TranslationOptions.donors) {
-    //   firstColumns.push(
-    //     cols.items[19], // city
-    //     cols.items[6], // distributionCenter
-    //     cols.items[3], // quantity
-    //     cols.items[5], // createDate
-    //     cols.items[29], // courier
-    //     cols.items[31], // courierAssingTime
-    //     cols.items[10], // internalDeliveryComment
-    //     cols.items[41], // messageStatus
-    //     cols.items[32], // message who updates    deliveryStatusUser
-    //     cols.items[34]  // courierComments
-    //   );    
-    //   this.deliveries.columns.numOfColumnsInGrid = firstColumns.length;
-    // } else {
-    //   firstColumns.push(
-    //     cols.items[1], // address
-    //     cols.items[2], // basket type
-    //     cols.items[3], // quantity
-    //     cols.items[4]  // deliverySummary
-    //   );  
-    // }
-
-    // cols.items.sort((a, b) => a.caption > b.caption ? 1 : a.caption < b.caption ? -1 : 0);
-
-    // for (let index = 0; index < firstColumns.length; index++) {
-    //   const item = firstColumns[index];
-    //   let origIndex = cols.items.indexOf(item);
-    //   cols.moveCol(item, -origIndex + index);
-    // }
-
   }
-
 }
 
 interface statsOnTabBasket extends statsOnTab {
