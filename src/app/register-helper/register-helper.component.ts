@@ -26,7 +26,7 @@ export class RegisterHelperComponent implements OnInit {
 
   hasMandatoryFields() {
     return (this.helper.name.value != null) && (this.helper.address1.value != null) 
-    && (isPhoneValidForIsrael(this.helper.phone.value)) && (this.helper.socialSecurityNumber != null);
+    && (isPhoneValidForIsrael(this.helper.phone.value)) && (this.helper.socialSecurityNumber.value != null);
   }
 
   async submit() {
