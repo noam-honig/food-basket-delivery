@@ -20,7 +20,7 @@ export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
 
 
   showData=false;
-  deliveries = this.context.for(Helpers).gridSettings({
+  deliveries = this.context.for(FamilyDeliveries).gridSettings({
     allowUpdate: false,
     numOfColumnsInGrid: 5,
 
@@ -36,37 +36,74 @@ export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
           else result = filter;
         }
         if (this.searchString) {
-          addFilter(f.phone.isContains(this.searchString));
+          addFilter(f.phone1.isContains(this.searchString));
         }
         return result;
       }
       
       , orderBy: f => f.name
     },
-    columnSettings: helpers => {
+    columnSettings: deliveries => {
       let r=[
-      {
-        column: helpers.name,
-        width: '150'
-      },
-      {
-        column: helpers.phone,
-        width: '150'
-      },
-    ];
-    r.push({
-      column: helpers.eventComment,
-      width: '120'
-    });    
-    r.push({
-      column: helpers.preferredDistributionAreaAddress, width: '120',
-    });
-    r.push({
-      column: helpers.preferredDistributionAreaAddress2, width: '120',
-    });
-    r.push({
-      column: helpers.company, width: '120'
-    });
+        {
+          column: deliveries.name,
+          width: '200'
+        },
+        {
+          column: deliveries.address,
+          width: '250',
+          cssClass: f => {
+            if (!f.addressOk.value)
+              return 'addressProblem';
+            return '';
+          }
+        },
+        deliveries.basketType,
+        {
+          column: deliveries.quantity,
+          width: '50'
+        },
+
+        { column: deliveries.createDate, width: '150' },
+        deliveries.distributionCenter,
+
+        deliveries.deliveryComments,
+        deliveries.internalDeliveryComment,  
+        deliveries.special,
+        deliveries.createUser,
+
+        deliveries.familySource,
+
+        { column: deliveries.addressOk, width: '110' },
+        deliveries.floor,
+        deliveries.appartment,
+        deliveries.entrance,
+        { column: deliveries.addressComment },
+        { column: deliveries.city, width: '100' },
+        deliveries.area,
+        deliveries.phone1,
+        deliveries.phone1Description,
+        deliveries.phone2,
+        deliveries.phone2Description,
+        deliveries.phone3,
+        deliveries.phone3Description,
+        deliveries.phone4,
+        deliveries.phone4Description,
+        { column: deliveries.courier, width: '100' },
+
+        deliveries.courierAssignUser,  
+        { column: deliveries.courierAssingTime, width: '150' },
+        { column: deliveries.deliveryStatusUser, width: '100' },
+        deliveries.deliveryStatusDate,
+        { column: deliveries.courierComments, width: '120' }, 
+        { column: deliveries.internalDeliveryComment, width: '120' }, 
+        deliveries.needsWork,
+        deliveries.needsWorkDate,
+        deliveries.needsWorkUser,
+        deliveries.fixedCourier,
+        deliveries.familyMembers,
+        { column: deliveries.messageStatus, width: '130' }
+      ]
 
     return r;
     }});

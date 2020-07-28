@@ -192,7 +192,7 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
             for (const f of waypoint.families) {
                 if (f.routeOrder.value != i) {
                     f.routeOrder.value = i;
-                    f.save();
+                    await f.save();
                 }
                 i++;
             }
@@ -226,7 +226,7 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
     families.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
     result.families = families;
 
-    helper.save();
+    await helper.save();
 
 
     return result;

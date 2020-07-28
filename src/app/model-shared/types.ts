@@ -1,9 +1,8 @@
 import * as radweb from '@remult/core';
-import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, ColumnOptions, SqlCommand, SqlResult, AndFilter, Context } from '@remult/core';
+import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, ColumnOptions, SqlCommand, SqlResult, AndFilter, Context, StringColumn } from '@remult/core';
 import { use, getLang } from '../translate';
 import * as moment from 'moment';
 import { Sites } from '../sites/sites';
-
 
 
 
@@ -69,9 +68,39 @@ export class PhoneColumn extends radweb.StringColumn {
 
     return x;
   }
+  static validatePhone(col: StringColumn, context: Context) {
+    if (!col.value || col.value == '')
+      return;
+    if (getLang(context).languageCode != 'iw')
+      if (col.value.length < 10)
+        col.validationError = getLang(context).invalidPhoneNumber;
+      else
+        return;
+
+    if (!isPhoneValidForIsrael(col.value)) {
+      col.validationError = getLang(context).invalidPhoneNumber;
+    } 
+/*
+    if (col.displayValue.startsWith("05") || col.displayValue.startsWith("07")) {
+      if (col.displayValue.length != 12) {
+        col.validationError = getLang(context).invalidPhoneNumber;
+      }
+
+    } else if (col.displayValue.startsWith('0')) {
+      if (col.displayValue.length != 11) {
+        col.validationError = getLang(context).invalidPhoneNumber;
+      }
+    }
+    else {
+      col.validationError = getLang(context).invalidPhoneNumber;
+    }
+  */
+  }
 }
-
-
+export function isPhoneValidForIsrael(input:string){
+  let  st1 = input.match(/^0(5\d|7\d|[2,4,6,8,9])(-{0,1}\d{3})(-*\d{4})$/);
+  return st1!=null;
+}
 export class DateTimeColumn extends radweb.DateTimeColumn {
 
 
@@ -610,4 +639,12 @@ export function logChanges(e: Entity, context: Context, args?: {
     console.log(p)
   }
 
+}
+export function required(col: StringColumn, message?: string) {
+  if (!col.value || col.value.length < 1) {
+    if (!message) {
+      message = "אנא הזן ערך";
+    }
+    col.validationError = message;
+  }
 }

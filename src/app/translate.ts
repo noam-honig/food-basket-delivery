@@ -832,6 +832,9 @@ export class Language {
   caption = "תאור";
   reciptionDone = "נמסר בהצלחה";
   optionalValues = "ערכים אפשריים מופרד בפסיקים";
+  hideFamilyPhoneFromVolunteer = "אל תציג את הטלפון של המשפחה למתנדב";
+  hadProblemBefore = "היתה בעיה בעבר";
+  showOnlyLastNamePartToVolunteer = "הצג רק מילה אחרונה למתנדב בשם המשפחה";
   
 }
 

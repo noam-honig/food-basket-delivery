@@ -699,4 +699,7 @@ export class en implements Language {
   optionalValues = 'Possible comma-separated values';
   reciptionDone = "recipted done";
   lab='מעבדה';
+  hideFamilyPhoneFromVolunteer = 'Do not show the family phone to a volunteer';
+  hadProblemBefore = 'had problem';
+  showOnlyLastNamePartToVolunteer = 'Show just one last word to the volunteer on behalf of the family';
 }

@@ -699,4 +699,7 @@ export class italy implements Language {
   optionalValues = 'Possibili valori separati da virgola';
   reciptionDone = "נמסר בהצלחה";
   lab='מעבדה';
+  hideFamilyPhoneFromVolunteer = 'Non mostrare il telefono di famiglia a un volontario';
+  hadProblemBefore = 'ha avuto problemi';
+  showOnlyLastNamePartToVolunteer = "Mostra solo un'ultima parola al volontario per conto della famiglia";
 }

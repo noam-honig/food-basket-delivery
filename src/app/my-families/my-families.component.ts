@@ -30,15 +30,28 @@ export class MyFamiliesComponent implements OnInit {
     this.user = context.user as HelperUserInfo;
   }
   async ngOnInit() {
+    let done = ''
     try {
+      done += '1';
       let id = this.context.user.id;
       if (this.user.theHelperIAmEscortingId && this.user.theHelperIAmEscortingId.trim().length > 0)
         id = this.user.theHelperIAmEscortingId;
+      done += '2';
       let helper = await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(id));
+      if (helper)
+        done += 'helper id:' + helper.id;
+      else done += "3";
+
       await this.familyLists.initForHelper(helper);
+      done += '4';
     }
     catch (err) {
-      this.dialog.exception("My Families: " + this.settings.lang.smsLoginFailed, err);
+      let info = done += " - " + checkCookie();
+      if (this.context.user)
+        info += " user: " + this.context.user.name;
+      else
+        info += " NO USER ";
+      this.dialog.exception("My Families: " + this.settings.lang.smsLoginFailed+info,   err);
       this.sessionManager.signout();
       this.helper.navigateToComponent(LoginComponent);
 
@@ -78,4 +91,16 @@ export class MyFamiliesComponent implements OnInit {
   events: Event[] = [];
 
 
+}
+
+
+function checkCookie() {
+  var cookieEnabled = navigator.cookieEnabled;
+  if (!cookieEnabled) {
+    document.cookie = "testcookie=1234";
+    cookieEnabled = document.cookie.indexOf("testcookie=1234") != -1;
+  }
+  if (cookieEnabled)
+    return "cookies are ok"
+  else return "cookies don't work";
 }

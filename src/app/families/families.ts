@@ -44,6 +44,7 @@ export class Families extends IdEntity {
       settings: this.deliveriesGridSettings(args),
       buttons: [{
         text: use.language.newDelivery,
+
         click: () => this.showNewDeliveryDialog(args.dialog, args.settings, { doNotCheckIfHasExistingDeliveries: true })
       }]
     });
@@ -55,6 +56,7 @@ export class Families extends IdEntity {
       rowCssClass: fd => fd.deliverStatus.getCss(),
       gridButtons: [{
         name: use.language.newDelivery,
+        icon: 'add_shopping_cart',
         click: () => this.showNewDeliveryDialog(args.dialog, args.settings, { doNotCheckIfHasExistingDeliveries: true })
       }],
       rowButtons: [
@@ -294,10 +296,6 @@ export class Families extends IdEntity {
               this.quantity.value = 1;
 
 
-
-
-
-
             if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
               await this.reloadGeoCoding();
             }
@@ -374,7 +372,7 @@ export class Families extends IdEntity {
     caption: getLang(this.context).familyName,
     valueChange: () => this.delayCheckDuplicateFamilies(),
     validate: () => {
-      if (!this.name.value || this.name.value.length < 2)
+      if (!this.name.value)
         this.name.validationError = getLang(this.context).nameIsTooShort;
     }
   });
@@ -683,28 +681,7 @@ export class Families extends IdEntity {
   }
   _disableAutoDuplicateCheck = false;
   duplicateFamilies: duplicateFamilyInfo[] = [];
-  validatePhone(col: PhoneColumn) {
-    if (!col.value || col.value == '')
-      return;
-    if (getLang(this.context).languageCode != 'iw')
-      if (col.value.length < 10)
-        col.validationError = getLang(this.context).invalidPhoneNumber;
-      else
-        return;
-    if (col.displayValue.startsWith("05") || col.displayValue.startsWith("07")) {
-      if (col.displayValue.length != 12) {
-        col.validationError = getLang(this.context).invalidPhoneNumber;
-      }
 
-    } else if (col.displayValue.startsWith('0')) {
-      if (col.displayValue.length != 11) {
-        col.validationError = getLang(this.context).invalidPhoneNumber;
-      }
-    }
-    else {
-      col.validationError = getLang(this.context).invalidPhoneNumber;
-    }
-  }
   async checkDuplicateFamilies() {
     this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name.value, this.tz.value, this.tz2.value, this.phone1.value, this.phone2.value, this.phone3.value, this.phone4.value, this.id.value, false, this.address.value);
     this.tz.validationError = undefined;
@@ -736,10 +713,10 @@ export class Families extends IdEntity {
           foundExactName = true;
       }
     }
-    this.validatePhone(this.phone1);
-    this.validatePhone(this.phone2);
-    this.validatePhone(this.phone3);
-    this.validatePhone(this.phone4);
+    PhoneColumn.validatePhone(this.phone1, this.context);
+    PhoneColumn.validatePhone(this.phone2, this.context);
+    PhoneColumn.validatePhone(this.phone3, this.context);
+    PhoneColumn.validatePhone(this.phone4, this.context);
 
 
   }

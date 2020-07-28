@@ -1,6 +1,6 @@
-import { NgModule } from '@angular/core';
+import { NgModule, Injectable } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Routes, RouteReuseStrategy } from '@angular/router';
+import { RouterModule, Routes, RouteReuseStrategy, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 import { HelpersComponent } from './helpers/helpers.component';
 import { LoginComponent } from './users/login/login.component';
@@ -26,7 +26,7 @@ import { DeliveryHistoryComponent } from './delivery-history/delivery-history.co
 
 import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard } from './auth/roles';
 
-import { SignedInGuard } from '@remult/core';
+import { SignedInGuard, Context } from '@remult/core';
 
 import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';
 import { PlaybackComponent } from './playback/playback.component';
@@ -41,8 +41,26 @@ import { FamilyDeliveriesComponent } from './family-deliveries/family-deliveries
 import { DuplicateFamiliesComponent } from './duplicate-families/duplicate-families.component';
 import { EventsComponent } from './events/events.component';
 import { DeliveryReceptionComponent } from './delivery-reception/delivery-reception.component';
+import { RegisterDonorComponent } from './register-donor/register-donor.component';
+import { RegisterHelperComponent } from './register-helper/register-helper.component';
+import { Sites } from './sites/sites';
 
 
+@Injectable()
+export class MltOnlyGuard implements CanActivate {
+    constructor(private context: Context) {
+
+    }
+    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | import("@angular/router").UrlTree | import("rxjs").Observable<boolean | import("@angular/router").UrlTree> | Promise<boolean | import("@angular/router").UrlTree> {
+        let site = Sites.getOrganizationFromContext(this.context);
+        console.log(site,this.context.getPathInUrl());
+        if (site == 'mlt')
+            return true;
+        return false;
+    }
+
+
+}
 
 
 
@@ -72,6 +90,8 @@ export const routes: Routes = [
   { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { hide: true } },
   { path: 'geocode', component: GeocodeComponent, canActivate: [AdminGuard], data: { name: 'geocode', hide: true } },
   { path: 'testmap', component: TestMapComponent, canActivate: [AdminGuard], data: { hide: true } },
+  { path: 'register-donor', component: RegisterDonorComponent,canActivate:[MltOnlyGuard] , data: { hide: true } },
+  { path: 'register-helper', component: RegisterHelperComponent,canActivate:[MltOnlyGuard] , data: { hide: true } },
   
   
   { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard] },
@@ -100,10 +120,11 @@ export const routes: Routes = [
   ],
   declarations: [],
   exports: [RouterModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard,LabGuard]
+  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard,LabGuard,MltOnlyGuard]
 
 })
 
 export class AppRoutingModule { }
 
 SignedInGuard.componentToNavigateIfNotAllowed = LoginComponent;
+

@@ -1,0 +1,23 @@
+
+.myDiv{
+    display:flex;
+    flex-direction: column;
+    height:100%;
+    justify-content: center; /*centers items on the line (the x-axis by default)*/
+    align-items: center; /*centers items on the cross-axis (y by default)*/
+   h1{
+       text-align: center;
+   }
+}
+.rowDiv{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+button{
+    color:white;
+    background-color: #3753F6;
+    [disabled]{
+        background-color: light-gray;
+    }
+}

@@ -7,7 +7,7 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings, PhoneItem, PhoneOption, qaItem } from './ApplicationSettings';
 
 
-import { Context, IdEntity, IdColumn, StringColumn, EntityClass, Entity, NumberColumn, RouteHelperService, DataAreaSettings, ServerFunction } from '@remult/core';
+import { Context, IdEntity, IdColumn, StringColumn, EntityClass, Entity, NumberColumn, RouteHelperService, DataAreaSettings, ServerFunction, BusyService } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
@@ -22,6 +22,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyStatus, FamilyStatusColumn } from '../families/FamilyStatus';
 import { pagedRowsIterator } from '../families/familyActionsWiring';
 import { getLang } from '../translate';
+import { saveToExcel } from '../shared/saveToExcel';
 
 @Component({
   selector: 'app-manage',
@@ -69,7 +70,7 @@ export class ManageComponent implements OnInit {
     this.helpPhones = this.settings.getPhoneStrategy();
     this.qaItems = this.settings.getQuestions();
   }
-  constructor(private dialog: DialogService, private context: Context, private sanitization: DomSanitizer, public settings: ApplicationSettings) { }
+  constructor(private dialog: DialogService, private context: Context, private sanitization: DomSanitizer, public settings: ApplicationSettings,private busy:BusyService) { }
 
   basketType = this.context.for(BasketType).gridSettings({
 
@@ -84,19 +85,27 @@ export class ManageComponent implements OnInit {
         width: '100px'
       }
     ],
-    onSavingRow: () => this.refreshEnvironmentAfterSave(),
+    saving: () => this.refreshEnvironmentAfterSave(),
     get: {
       limit: 25,
       orderBy: f => [f.name]
     },
-    onNewRow: b => b.boxes.value = 1,
+    newRow: b => b.boxes.value = 1,
     allowUpdate: true,
     allowInsert: true,
     allowDelete: true,
-    confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
+    confirmDelete: (h) => this.dialog.confirmDelete(h.name.value)
   });
   distributionCenters = this.context.for(DistributionCenters).gridSettings({
-
+    gridButtons:[
+      {
+        name: this.settings.lang.exportToExcel,
+        click: async () => {
+          await saveToExcel(this.context.for(DistributionCenters), this.distributionCenters, this.settings.lang.distributionLists, this.busy, (d: DistributionCenters, c) => c == d.id );
+        }
+        , visible: () => this.context.isAllowed(Roles.admin)
+      },
+    ],
     rowButtons: [{
       name: this.settings.lang.distributionCenterDetails,
       click: async d => {
@@ -144,7 +153,7 @@ export class ManageComponent implements OnInit {
     get: {
       limit: 25,
       orderBy: f => [f.name]
-    }, onSavingRow: f => {
+    }, saving: f => {
       this.refreshEnvironmentAfterSave();
 
     },
@@ -152,7 +161,7 @@ export class ManageComponent implements OnInit {
     allowUpdate: true,
     allowInsert: true,
 
-    confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
+    confirmDelete: (h) => this.dialog.confirmDelete(h.name.value)
   });
 
   refreshEnvironmentAfterSave() {
@@ -173,10 +182,10 @@ export class ManageComponent implements OnInit {
       limit: 25,
       orderBy: f => [f.name]
     },
-    confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
+    confirmDelete: (h) => this.dialog.confirmDelete(h.name.value)
   });
   groups = this.context.for(Groups).gridSettings({
-    onSavingRow: () => this.refreshEnvironmentAfterSave(),
+    saving: () => this.refreshEnvironmentAfterSave(),
 
     columnSettings: s => [
       s.name,
@@ -187,7 +196,7 @@ export class ManageComponent implements OnInit {
       limit: 25,
       orderBy: f => [f.name]
     },
-    confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes)
+    confirmDelete: (h) => this.dialog.confirmDelete(h.name.value)
   });
   settingsArea = new DataAreaSettings({
 
@@ -240,6 +249,8 @@ export class ManageComponent implements OnInit {
       this.settings.defaultStatusType,
       this.settings.usingSelfPickupModule,
       this.settings.showLeftThereButton,
+      this.settings.hideFamilyPhoneFromVolunteer,
+      this.settings.showOnlyLastNamePartToVolunteer,
       this.settings.boxes1Name,
       this.settings.boxes2Name,
       this.settings.showCompanies,

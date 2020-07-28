@@ -1283,6 +1283,10 @@
     "google": "קבוצה",
     "valueInCode": "קבוצה"
   },
+  "hadProblemBefore": {
+    "google": "היתה בעיה בעבר",
+    "valueInCode": "היתה בעיה בעבר"
+  },
   "hello": {
     "google": "שלום",
     "valueInCode": "שלום"
@@ -1302,6 +1306,10 @@
   "helpPhone": {
     "google": "טלפון חלופי",
     "valueInCode": "טלפון חלופי"
+  },
+  "hideFamilyPhoneFromVolunteer": {
+    "google": "אל תציג את הטלפון של החייל למתנדב",
+    "valueInCode": "אל תציג את הטלפון של המשפחה למתנדב"
   },
   "hideHelperCompany": {
     "google": "הסתר חברה למתנדב",
@@ -2330,6 +2338,10 @@
   "showOnlyCompletedDeliveries": {
     "google": "הצג רק משלוחים שהסתיימו",
     "valueInCode": "הצג רק משלוחים שהסתיימו"
+  },
+  "showOnlyLastNamePartToVolunteer": {
+    "google": "הצג רק מילה אחרונה למתנדב בשם החייל",
+    "valueInCode": "הצג רק מילה אחרונה למתנדב בשם המשפחה"
   },
   "showRouteOnGoogleMaps": {
     "google": "הצג מסלול ב Google Maps",

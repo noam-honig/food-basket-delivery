@@ -15,13 +15,16 @@ import { initSchema } from './initSchema';
 import { Sites } from '../sites/sites';
 import { OverviewComponent } from '../overview/overview.component';
 import { wasChanged } from '../model-shared/types';
+import { ConnectionOptions } from 'tls';
 
-declare const lang='';
+declare const lang = '';
 
 export async function serverInit() {
     try {
         config();
-        let ssl = true;
+        let ssl: boolean | ConnectionOptions = {
+            rejectUnauthorized: false
+        };
         if (process.env.DISABLE_POSTGRES_SSL)
             ssl = false;
 
@@ -44,7 +47,9 @@ export async function serverInit() {
 
         const pool = new Pool({
             connectionString: dbUrl,
-            ssl: ssl
+            ssl: ssl,
+
+
         });
         Helpers.passwordHelper = {
             generateHash: p => passwordHash.generate(p),
@@ -142,7 +147,6 @@ export async function verifySchemaExistance(pool: Pool, s: string) {
         await db.createCommand().execute('create schema ' + s);
     }
 }
-
 
 
 export class PostgresSchemaWrapper implements PostgresPool {

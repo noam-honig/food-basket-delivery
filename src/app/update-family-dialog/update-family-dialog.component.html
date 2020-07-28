@@ -5,12 +5,26 @@
             <button mat-menu-item (click)="newDelivery()"
                 *ngIf="!this.families.currentRow.isNew()">{{settings.lang.newDelivery}}</button>
             <button mat-menu-item (click)="preview()">{{settings.lang.displayFamilyAsVolunteerWillSeeIt}}</button>
-            <button mat-menu-item (click)="families.currentRow.showDeliveryHistoryDialog({dialog:dialog,settings:settings})"
+            <button mat-menu-item
+                (click)="families.currentRow.showDeliveryHistoryDialog({dialog:dialog,settings:settings})"
                 *ngIf="!this.families.currentRow.isNew()">{{settings.lang.deliveries}}</button>
             <button mat-menu-item (click)="updateInfo()"
                 *ngIf="!this.families.currentRow.isNew()">{{settings.lang.infoAboutUpdates}}</button>
             <button mat-menu-item (click)="sendSmsToCourier()"
                 *ngIf="args.familyDelivery&&args.familyDelivery.courier.value">{{settings.lang.sendMessageToVolunteer}}</button>
+
+            <a mat-menu-item href="tel:{{args.familyDelivery.courier.getPhone()}}" style="padding-right:15px;"
+                *ngIf="args.familyDelivery&&args.familyDelivery.courier.value">
+                <button mat-menu-item *ngIf="args.familyDelivery&&args.familyDelivery.courier.value">
+                    <mat-icon>phone</mat-icon>
+                    <div style="    display: inline-flex;line-height: 17px;"> {{settings.lang.dialTo}}
+                        {{settings.lang.volunteer}}
+                        {{args.familyDelivery.courier.getValue()}} <br>
+                        {{args.familyDelivery.courier.getPhone()}}
+                    </div>
+                </button>
+            </a>
+
 
         </mat-menu>
 
@@ -69,11 +83,8 @@
 
 
 
-
-                        <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
-                            <mat-label>{{families.currentRow.address.defs.caption}}</mat-label>
-                            <input matInput [(ngModel)]="families.currentRow.address.value" #addressInput>
-                        </mat-form-field>
+                        <app-address-input [column]="families.currentRow.address" #addressInput></app-address-input>
+                        
                         <a (click)="showOnMap()">{{settings.lang.showOnGoogleMap}}</a>
 
 

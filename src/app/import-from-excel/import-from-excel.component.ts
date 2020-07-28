@@ -1682,9 +1682,12 @@ export function parseAndUpdatePhone(input: string, f: Families, defaultPrefix: s
             return;
         f.columns.find('phone' + i).value = fixPhone(p.phone, defaultPrefix);
         let col = f.columns.find('phone' + i + 'Description');
-        if (col.value && p.comment)
-            col.value += ", ";
-        col.value += p.comment;
+        if (p.comment) {
+            if (col.value)
+                col.value += ", ";
+            else col.value = '';
+            col.value += p.comment;
+        }
 
     }
 }
@@ -1721,7 +1724,7 @@ export interface phoneResult {
 
 export class PromiseThrottle {
     constructor(private howMany: number) {
-
+        //this.howMany = 0;
     }
     todo = [];
     async push(p: Promise<any>) {

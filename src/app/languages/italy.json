@@ -1605,6 +1605,11 @@
     "valueInCode": "קבוצה",
     "valueInEnglish": "Group"
   },
+  "hadProblemBefore": {
+    "google": "ha avuto problemi",
+    "valueInCode": "היתה בעיה בעבר",
+    "valueInEnglish": "had problem"
+  },
   "hello": {
     "google": "Pace",
     "valueInCode": "שלום",
@@ -1629,6 +1634,11 @@
     "google": "Telefono alternativo",
     "valueInCode": "טלפון חלופי",
     "valueInEnglish": "Alternate Phone"
+  },
+  "hideFamilyPhoneFromVolunteer": {
+    "google": "Non mostrare il telefono di famiglia a un volontario",
+    "valueInCode": "אל תציג את הטלפון של המשפחה למתנדב",
+    "valueInEnglish": "Do not show the family phone to a volunteer"
   },
   "hideHelperCompany": {
     "google": "Nascondere una società di volontariato",
@@ -2915,6 +2925,11 @@
     "google": "Mostra solo consegne completate",
     "valueInCode": "הצג רק משלוחים שהסתיימו",
     "valueInEnglish": "Show only completed deliveries"
+  },
+  "showOnlyLastNamePartToVolunteer": {
+    "google": "Mostra solo un'ultima parola al volontario per conto della famiglia",
+    "valueInCode": "הצג רק מילה אחרונה למתנדב בשם המשפחה",
+    "valueInEnglish": "Show just one last word to the volunteer on behalf of the family"
   },
   "showRouteOnGoogleMaps": {
     "google": "Visualizza il percorso su google maps",

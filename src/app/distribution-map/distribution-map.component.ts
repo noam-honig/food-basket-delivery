@@ -109,7 +109,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.destroyHelper.destroy();
   }
   static route: Route = {
-    path: 'addresses', component: DistributionMap, canActivate: [distCenterOrOverviewOrAdmin]
+    path: 'addresses', component: DistributionMap, canActivate: [distCenterAdminGuard]
   };
 
   gridView = true;

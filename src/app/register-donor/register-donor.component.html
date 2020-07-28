@@ -1,0 +1,23 @@
+<div class="myDiv">
+    <mat-card style="overflow-y: auto;
+    max-width: 450px;
+    max-height: 100%;
+   ">
+        <img src="/assets/mitchashvim-logo-new-colors.webp">
+
+        <div style="color:#3753F6">
+            <h1>רוצה לתרום מחשב? מעולה!</h1>
+            <H3>כל מה שצריך לעשות זה למלא את הטופס הקצר הזה ואנחנו ניצור איתך קשר</H3>
+            <h5>*נא למלא את הטופס בעברית.</h5>
+        </div>
+        <data-control [column]="donor.name"></data-control>
+        <h5 style="color:#3753F6">אנו נשלח מתנדב לאסוף את הציוד - לחלופין ניתן למסור ישירות במעבדה</h5>
+        <div class="rowDiv">
+            <data-control [column]="donor.selfDeliver"></data-control>
+            <a mat-raised-button href="https://www.mitchashvim.org.il/labs" target="_blank">רשימת מעבדות</a>
+        </div>
+        <app-address-input [column]="donor.address" [autoInit]="true"></app-address-input>
+        <data-area [settings]="area"></data-area>
+        <button mat-raised-button (click)="submit()" [disabled]="!allowSubmit()">שליחה</button>
+    </mat-card>
+</div>

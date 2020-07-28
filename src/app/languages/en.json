@@ -1445,6 +1445,11 @@
     "google": "Group",
     "valueInCode": "קבוצה"
   },
+  "hadProblemBefore": {
+    "google": "There has been a problem in the past",
+    "valueInCode": "היתה בעיה בעבר",
+    "custom": "had problem"
+  },
   "hello": {
     "google": "Hello",
     "valueInCode": "שלום"
@@ -1464,6 +1469,10 @@
   "helpPhone": {
     "google": "Alternate Phone",
     "valueInCode": "טלפון חלופי"
+  },
+  "hideFamilyPhoneFromVolunteer": {
+    "google": "Do not show the family phone to a volunteer",
+    "valueInCode": "אל תציג את הטלפון של המשפחה למתנדב"
   },
   "hideHelperCompany": {
     "google": "Hide a volunteer company",
@@ -2565,6 +2574,10 @@
     "google": "Show only completed shipments",
     "valueInCode": "הצג רק משלוחים שהסתיימו",
     "custom": "Show only completed deliveries"
+  },
+  "showOnlyLastNamePartToVolunteer": {
+    "google": "Show just one last word to the volunteer on behalf of the family",
+    "valueInCode": "הצג רק מילה אחרונה למתנדב בשם המשפחה"
   },
   "showRouteOnGoogleMaps": {
     "google": "View route on google maps",

@@ -1,0 +1,19 @@
+<div class="myDiv">
+    <mat-card style="overflow-y: auto;
+    max-width: 450px;
+    max-height: 100%;
+   ">
+        <img src="/assets/mitchashvim-logo-new-colors.webp">
+
+        <div style="color:#3753F6">
+            <h1>רוצה להתנדב? מעולה!</h1>
+            <H3>כל מה שצריך לעשות זה למלא את הטופס הקצר הזה ואנחנו ניצור איתך קשר</H3>
+            <h5>*נא למלא את הטופס בעברית.</h5>
+        </div>
+        <data-control [column]="helper.name"></data-control>
+        <app-address-input [column]="helper.address1" [autoInit]="true"></app-address-input>
+        <app-address-input [column]="helper.address2" [autoInit]="true"></app-address-input>
+        <data-area [settings]="area"></data-area>
+        <button mat-raised-button (click)="submit()" [disabled]="!allowSubmit()">שליחה</button>
+    </mat-card>
+</div>

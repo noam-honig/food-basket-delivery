@@ -1,4 +1,4 @@
-import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, IdEntity, SpecificEntityHelper, FilterBase, EntityWhere, packWhere } from "@remult/core";
+import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, IdEntity, SpecificEntityHelper, FilterBase, EntityWhere, packWhere, EntityOrderBy } from "@remult/core";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService, extractError } from "../select-popup/dialog";
 import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
@@ -19,6 +19,7 @@ export interface packetServerUpdateInfo {
 export interface DoWorkOnServerHelper<T extends IdEntity> {
     actionWhere: EntityWhere<T>;
     forEach: (f: T) => Promise<void>;
+    orderBy?: EntityOrderBy<T>
 }
 
 
@@ -82,6 +83,7 @@ export class ActionOnRows<T extends IdEntity> {
                 }
                 return r;
             },
+            icon: this.args.icon,
             click: async () => {
 
                 let cols = await this.args.dialogColumns(component);
@@ -154,6 +156,7 @@ export interface ActionOnRowsArgs<T extends IdEntity> {
     validateInComponent?: (component: actionDialogNeeds<T>) => Promise<void>,
     validate?: () => Promise<void>,
     title: string,
+    icon?: string,
     help?: () => string,
     allowed: Allowed,
     confirmQuestion?: () => string,
@@ -194,11 +197,12 @@ export async function pagedRowsIterator<T extends IdEntity>(context: SpecificEnt
 
     where: (f: T) => FilterBase,
     forEachRow: (f: T) => Promise<void>,
+    orderBy?:EntityOrderBy<T>,
     count?: number
 }) {
     let updated = 0;
     let pt = new PromiseThrottle(10);
-    for await (const f of context.iterate({ where: args.where })) {
+    for await (const f of context.iterate({ where: args.where,orderBy:args.orderBy })) {
         await pt.push(args.forEachRow(f));
         updated++;
     }
@@ -224,6 +228,7 @@ export async function iterateRowsActionOnServer<T extends IdEntity>(
     }
     return await pagedRowsIterator<T>(args.context, {
         where,
+        orderBy:args.h.orderBy,
         forEachRow: async (f) => await args.h.forEach(f),
         count,
 

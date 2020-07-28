@@ -22,6 +22,12 @@ export class FamilyInListComponent implements OnInit {
   ngOnInit() {
 
   }
+  getName() {
+    if (this.settings.showOnlyLastNamePartToVolunteer.value)
+      return this.f.name.value.replace(/^.* /g, '');
+    return this.f.name.value;
+
+  }
 
   offsetX() {
     return this.sanitization.bypassSecurityTrustStyle('translateX(' + this.offsetXValue + 'px)');
@@ -31,7 +37,7 @@ export class FamilyInListComponent implements OnInit {
 
     let r = this.f.getAddressDescription();
     if (this.sameAddress) {
-       r="* "+r;
+      r = "* " + r;
     }
     return r;
 

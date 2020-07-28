@@ -276,7 +276,7 @@
     "valueInCode": "לא ניתן לשייך מתנדבים מכיוון שלא נבחרה רשימת חלוקה. אנא בחרו רשימת חלוקה (למעלה מצד שמאל איפה שכתוב \"כל הרשימות\")"
   },
   "assignVolunteer": {
-    "google": "שייך למתנדב",
+    "google": "שייך מתנדב",
     "valueInCode": "שייך מתנדב"
   },
   "atAddress": {
@@ -420,7 +420,7 @@
     "valueInCode": "בדוק אם משפחה כבר קיימת בקובץ האקסל"
   },
   "circularRoute": {
-    "google": "התחל וסיים במעבדה",
+    "google": "התחל וסיים במרכז החלוקה",
     "valueInCode": "התחל וסיים במרכז החלוקה"
   },
   "city": {
@@ -460,7 +460,7 @@
     "valueInCode": "בטל שיוך למתנדב"
   },
   "clickedByMistake": {
-    "google": "נלחץ בטעות - החזר למשלוחים לאיסוף",
+    "google": "נלחץ בטעות - החזר למשלוחים לחלוקה",
     "valueInCode": "נלחץ בטעות - החזר למשלוחים לחלוקה"
   },
   "clickForTutorialVideo": {
@@ -600,7 +600,7 @@
     "valueInCode": "קידומת טלפון ברירת מחדל בקליטה מאקסל"
   },
   "defaultQuantity": {
-    "google": "מספר סלים ברירת מחדל",
+    "google": "כמות ברירת מחדל",
     "valueInCode": "כמות ברירת מחדל"
   },
   "defaultSelfPickup": {
@@ -712,7 +712,7 @@
     "valueInCode": "משלוחים מ"
   },
   "deliveriesToDistribute": {
-    "google": "משלוחים לאיסוף",
+    "google": "משלוחים לחלוקה",
     "valueInCode": "משלוחים לחלוקה"
   },
   "deliveriesUpdated": {
@@ -804,7 +804,7 @@
     "valueInCode": "האם להציג את המשפחות של"
   },
   "displayFamilyAsVolunteerWillSeeIt": {
-    "google": "הצג תורם כפי שתנדב יראה אותה",
+    "google": "הצג תורם כפי שמתנדב יראה אותה",
     "valueInCode": "הצג משפחה כפי שמתנדב יראה אותה"
   },
   "distributionCenterComment": {
@@ -824,7 +824,7 @@
     "valueInCode": "סמל"
   },
   "distributionCity": {
-    "google": "עיר לאיסוף",
+    "google": "עיר לחלוקה",
     "valueInCode": "עיר לחלוקה"
   },
   "distributionList": {
@@ -872,7 +872,7 @@
     "valueInCode": "ריק"
   },
   "enableSelfPickupModule": {
-    "google": "ישנם תורמים שמגיעים למעבדה",
+    "google": "ישנן תורמים שבאות לקחת ממרכז החלוקה",
     "valueInCode": "ישנן משפחות שבאות לקחת ממרכז החלוקה"
   },
   "endOnFar": {
@@ -880,7 +880,7 @@
     "valueInCode": "סיים בכתובת הרחוקה ביותר"
   },
   "endsOnDistributionCenter": {
-    "google": "סיים במעבדה",
+    "google": "סיים במרכז החלוקה",
     "valueInCode": "סיים במרכז החלוקה"
   },
   "enterFirstTime": {
@@ -1088,7 +1088,7 @@
     "valueInCode": "משלוחים למשפחה"
   },
   "FamilyDeliveriesComponent": {
-    "google": "משלוחים",
+    "google": "משלוחים פעילים",
     "valueInCode": "משלוחים פעילים"
   },
   "familyDetails": {
@@ -1104,7 +1104,7 @@
     "valueInCode": "קבוצות שיוך משפחה"
   },
   "familyHasExistingDeliveriesDoYouWantToViewThem": {
-    "google": "לתורם זו יש משלוחים פעילים, האם אתה להציג אותם?",
+    "google": "לתורם זו יש משלוחים פעילים, האם להציג אותם?",
     "valueInCode": "למשפחה זו יש משלוחים פעילים, האם להציג אותם?"
   },
   "familyHelpContact": {
@@ -1283,6 +1283,10 @@
     "google": "קבוצה",
     "valueInCode": "קבוצה"
   },
+  "hadProblemBefore": {
+    "google": "היתה בעיה בעבר",
+    "valueInCode": "היתה בעיה בעבר"
+  },
   "hello": {
     "google": "שלום",
     "valueInCode": "שלום"
@@ -1302,6 +1306,10 @@
   "helpPhone": {
     "google": "טלפון חלופי",
     "valueInCode": "טלפון חלופי"
+  },
+  "hideFamilyPhoneFromVolunteer": {
+    "google": "אל תציג את הטלפון של התורם למתנדב",
+    "valueInCode": "אל תציג את הטלפון של המשפחה למתנדב"
   },
   "hideHelperCompany": {
     "google": "הסתר חברה למתנדב",
@@ -1652,7 +1660,7 @@
     "valueInCode": "לא משוייך מתנדב"
   },
   "noDeliveries": {
-    "google": "אין משלוחים לאיסוף",
+    "google": "אין משלוחים לחלוקה",
     "valueInCode": "אין משלוחים לחלוקה"
   },
   "noDeliveriesLeft": {
@@ -1720,7 +1728,7 @@
     "valueInCode": "ב"
   },
   "oneDeliveryToDistribute": {
-    "google": "משלוח אחד לאיסוף",
+    "google": "משלוח אחד לחלוקה",
     "valueInCode": "משלוח אחד לחלוקה"
   },
   "onStatus": {
@@ -1824,7 +1832,7 @@
     "valueInCode": "טלפונים"
   },
   "PlaybackComponent": {
-    "google": "סרטון איסוף",
+    "google": "סרטון חלוקה",
     "valueInCode": "סרטון חלוקה"
   },
   "pleaseEnterUsing": {
@@ -1856,7 +1864,7 @@
     "valueInCode": "העדפות"
   },
   "preferredDistributionArea": {
-    "google": "כתובת אזור איסוף מועדף",
+    "google": "כתובת אזור חלוקה מועדף 1",
     "valueInCode": "כתובת אזור חלוקה מועדף 1"
   },
   "preferredDistributionArea2": {
@@ -1904,7 +1912,7 @@
     "valueInCode": "בעיות המצריכות טיפול"
   },
   "quantity": {
-    "google": "מספר סלים",
+    "google": "כמות",
     "valueInCode": "כמות"
   },
   "question": {
@@ -1960,15 +1968,15 @@
     "valueInCode": "הנך רשום לארוע זה"
   },
   "remainingByBaskets": {
-    "google": "נותרו לפי סלים",
+    "google": "טרם שוייכו לפי סלים",
     "valueInCode": "טרם שוייכו לפי סלים"
   },
   "remainingByCities": {
-    "google": "נותרו לפי ערים",
+    "google": "טרם שוייכו לפי ערים",
     "valueInCode": "טרם שוייכו לפי ערים"
   },
   "remainingByGroups": {
-    "google": "נותרו לפי קבוצות",
+    "google": "טרם שוייכו לפי קבוצות",
     "valueInCode": "טרם שוייכו לפי קבוצות"
   },
   "rememberMeOnThisDevice": {
@@ -2084,7 +2092,7 @@
     "valueInCode": "החזר טקסטים להגדרות ברירת מחדל"
   },
   "responsibleForAssign": {
-    "google": "משייך מתנדבים למעבדה",
+    "google": "משייך מתנדבים לרשימת חלוקה",
     "valueInCode": "משייך מתנדבים לרשימת חלוקה"
   },
   "routeOptimization": {
@@ -2288,7 +2296,7 @@
     "valueInCode": "הצג את כל המשלוחים שחולקו"
   },
   "showAllDeliveries": {
-    "google": "הצג את כל המשלוחים לאיסוף",
+    "google": "הצג את כל המשלוחים לחלוקה",
     "valueInCode": "הצג את כל המשלוחים לחלוקה"
   },
   "showAllFamilies": {
@@ -2330,6 +2338,10 @@
   "showOnlyCompletedDeliveries": {
     "google": "הצג רק משלוחים שהסתיימו",
     "valueInCode": "הצג רק משלוחים שהסתיימו"
+  },
+  "showOnlyLastNamePartToVolunteer": {
+    "google": "הצג רק מילה אחרונה למתנדב בשם התורם",
+    "valueInCode": "הצג רק מילה אחרונה למתנדב בשם המשפחה"
   },
   "showRouteOnGoogleMaps": {
     "google": "הצג מסלול ב Google Maps",
@@ -2472,7 +2484,7 @@
     "valueInCode": "ישנן עוד "
   },
   "thisFamilyHas": {
-    "google": "לתורם זה יש",
+    "google": "לתורם זו יש",
     "valueInCode": "למשפחה זו יש"
   },
   "toDate": {
@@ -2668,11 +2680,11 @@
     "valueInCode": "חשב מסלול ממיקום נוכחי"
   },
   "useFamilyDefaultBasketType": {
-    "google": "השתמש בסוג הסל המוגדר לתורם",
+    "google": "סל ברירת מחדל",
     "valueInCode": "סל ברירת מחדל"
   },
   "useFamilyMembersAsQuantity": {
-    "google": "השתמש במספר נפשות גם ככמות מנות",
+    "google": "השתמש במספר נפשות גם כמספר מנות",
     "valueInCode": "השתמש במספר נפשות גם כמספר מנות"
   },
   "useFamilyQuantity": {
@@ -2708,7 +2720,7 @@
     "valueInCode": "מתנדב יכול לעדכן לעצמו הערה"
   },
   "volunteerCanUpdatePreferredDistributionAddress": {
-    "google": "מתנדב יכול לעדכן אזור איסוף מועדף",
+    "google": "מתנדב יכול לעדכן אזור חלוקה מועדף",
     "valueInCode": "מתנדב יכול לעדכן אזור חלוקה מועדף"
   },
   "volunteerFeedbackVideo": {

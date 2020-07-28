@@ -699,4 +699,7 @@ export class es implements Language {
   optionalValues = 'Posibles valores separados por comas';
   reciptionDone = "נמסר בהצלחה";
   lab='מעבדה';
+  hideFamilyPhoneFromVolunteer = 'No muestre el teléfono familiar a un voluntario';
+  hadProblemBefore = 'tuvo un problema';
+  showOnlyLastNamePartToVolunteer = 'Mostrar solo una última palabra al voluntario en nombre de la familia';
 }

@@ -20,10 +20,11 @@ import { Sites } from '../sites/sites';
 import { async } from '@angular/core/testing';
 import { MatExpansionPanel } from '@angular/material';
 import { ShowOnMapComponent } from '../show-on-map/show-on-map.component';
-import { Location, getAddress, getCity } from '../shared/googleApiHelpers';
+import { Location } from '../shared/googleApiHelpers';
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { LatLng } from 'spherical-geometry-js';
+import { AddressInputComponent } from '../address-input/address-input.component';
 
 @Component({
   selector: 'app-update-family-dialog',
@@ -66,8 +67,6 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     });
   }
   ngOnDestroy(): void {
-    if (this.destroyMe)
-      this.destroyMe.remove();
 
   }
   ngAfterViewInit(): void {
@@ -93,44 +92,20 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       return f.getAddressDescription();
     return f.address.originalValue;
   }
-  initAddressAutoComplete = false;
-  destroyMe: google.maps.MapsEventListener;
+
   addressOpen() {
-    if (this.initAddressAutoComplete)
-      return;
-    this.initAddressAutoComplete = true;
-    let b = this.settings.forWho.value.args.bounds;
-    let bounds = new google.maps.LatLngBounds(new google.maps.LatLng(b.west, b.south), new google.maps.LatLng(b.east, b.north));
-    const autocomplete = new google.maps.places.SearchBox(this.addressInput.nativeElement, { bounds: bounds }
-    );
-    this.destroyMe = google.maps.event.addListener(autocomplete, 'places_changed', () => {
-      if (autocomplete.getPlaces().length == 0)
-        return;
-      const place = autocomplete.getPlaces()[0];
-
-
-      this.zone.run(() => {
-        this.families.currentRow.address.value = this.addressInput.nativeElement.value;
-        this.onMapLocation = {
-          lat: place.geometry.location.lat(),
-          lng: place.geometry.location.lng()
-        };
-        this.families.currentRow.addressByGoogle.value = getAddress(place);
-        this.families.currentRow.address.value = getAddress({
-          formatted_address: this.families.currentRow.address.value,
-          address_components: place.address_components
-        });
-        this.families.currentRow.city.value = getCity(place.address_components);
-        this.families.currentRow.addressOk.value = true;
-      });
-
+    this.addressInput.initAddress(x => {
+      this.onMapLocation = x.location;
+      this.families.currentRow.addressByGoogle.value = x.addressByGoogle;
+      this.families.currentRow.city.value = x.city;
+      this.families.currentRow.addressOk.value = true;
     });
-
 
   }
   @ViewChild('deliveryPanel', { static: false }) deliveryPanel: MatExpansionPanel;
   @ViewChild('addressPanel', { static: false }) addressPanel: MatExpansionPanel;
-  @ViewChild('addressInput', { static: false }) addressInput: ElementRef;
+  @ViewChild('addressInput', { static: false }) addressInput: AddressInputComponent;
+
   async sendSmsToCourier() {
     let h = await this.context.for(Helpers).findId(this.args.familyDelivery.courier);
 
@@ -280,7 +255,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     });
     this.extraFamilyInfo = this.families.addArea({
       columnSettings: families => [
-         families.groups,
+        families.groups,
         [families.status, families.familyMembers],
         families.internalComment,
         families.email,

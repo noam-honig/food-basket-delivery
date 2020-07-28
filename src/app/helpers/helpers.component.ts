@@ -58,6 +58,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   searchString: string = '';
   numOfColsInGrid = 4;
   helpers = this.context.for(Helpers).gridSettings({
+    showFilter:true,
     allowDelete: false,
     allowInsert: true,
     allowUpdate: true,
@@ -180,11 +181,11 @@ export class HelpersComponent implements OnInit, OnDestroy {
       if (this.context.isAllowed(Roles.admin))
         this.numOfColsInGrid++;
       if (this.settings.forWho.value == TranslationOptions.donors)
-        this.numOfColsInGrid+=2;
+        this.numOfColsInGrid+=4;
 
       return this.selectColumns(helpers);
     },
-    confirmDelete: (h, yes) => this.dialog.confirmDelete(h.name.value, yes),
+    confirmDelete: (h) => this.dialog.confirmDelete(h.name.value),
 
 
   });
@@ -243,6 +244,8 @@ export class HelpersComponent implements OnInit, OnDestroy {
       column: helpers.company, width: '120'
     });
 
+    r.push(helpers.createDate);
+
     if (this.context.isAllowed(Roles.admin)) {
       r.push(helpers.distributionCenter);
     }
@@ -250,7 +253,10 @@ export class HelpersComponent implements OnInit, OnDestroy {
     if (this.settings.manageEscorts.value) {
       r.push(helpers.escort, helpers.theHelperIAmEscorting, helpers.needEscort);
     }
-    r.push(helpers.createDate);
+
+    r.push({
+      column: helpers.socialSecurityNumber, width: '80'
+    });
 
     return r;
   }

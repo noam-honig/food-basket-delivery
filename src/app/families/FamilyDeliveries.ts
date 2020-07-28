@@ -15,7 +15,7 @@ import { UpdateFamilyDialogComponent } from "../update-family-dialog/update-fami
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService } from "../select-popup/dialog";
 import { getLang, use } from "../translate";
-import { ApplicationSettings } from "../manage/ApplicationSettings";
+import { ApplicationSettings, includePhoneInApi, getSettings } from "../manage/ApplicationSettings";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 
 @EntityClass
@@ -75,7 +75,8 @@ export class FamilyDeliveries extends IdEntity {
 
     name = new StringColumn({
         allowApiUpdate: false,
-        caption: getLang(this.context).familyName
+        caption: getLang(this.context).familyName,
+        sqlExpression: this.context.isAllowed(Roles.admin)||!getSettings(this.context).showOnlyLastNamePartToVolunteer.value ? undefined : "regexp_replace(name, '^.* ', '')"
     });
     basketType = new BasketId(this.context, {
         caption: getLang(this.context).basketType,
@@ -91,7 +92,8 @@ export class FamilyDeliveries extends IdEntity {
         caption: getLang(this.context).volunteer,
         allowApiUpdate: Roles.distCenterAdmin
     }, {
-        location: () => this.getDrivingLocation()
+        location: () => this.getDrivingLocation(),
+        familyId:()=>this.family.value
     });
     courierComments = new StringColumn(getLang(this.context).commentsWritteByVolunteer);
     internalDeliveryComment = new StringColumn({ caption: getLang(this.context).internalDeliveryComment, includeInApi: Roles.admin });
@@ -181,34 +183,42 @@ export class FamilyDeliveries extends IdEntity {
 
     phone1 = new PhoneColumn({
         caption: getLang(this.context).phone1, dbName: 'phone',
+        includeInApi: includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone1Description = new StringColumn({
         caption: getLang(this.context).phone1Description,
+        includeInApi: includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone2 = new PhoneColumn({
         caption: getLang(this.context).phone2,
+        includeInApi: includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone2Description = new StringColumn({
         caption: getLang(this.context).phone2Description,
+        includeInApi: includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone3 = new PhoneColumn({
         caption: getLang(this.context).phone3,
+        includeInApi: includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone3Description = new StringColumn({
         caption: getLang(this.context).phone3Description,
+        includeInApi: includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone4 = new PhoneColumn({
         caption: getLang(this.context).phone4,
+        includeInApi: includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     phone4Description = new StringColumn({
         caption: getLang(this.context).phone4Description,
+        includeInApi: includePhoneInApi(this.context),
         allowApiUpdate: false
     });
     courierBeenHereBefore = new BoolColumn({
@@ -304,14 +314,17 @@ export class FamilyDeliveries extends IdEntity {
                                 Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 2, await this.courier.getTheName(), this.context), this.context, this.distributionCenter.value)
                             }
                         }
-                        );//should be after succesfull save
-                    //logChanged(this.callStatus, this.callTime, this.callHelper, () => { });
+                        );
                     logChanged(context, this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => {
                         if (!this._disableMessageToUsers) {
                             Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName(), this.context), this.context, this.distributionCenter.value);
                         }
-                    }); //should be after succesfull save
-                    logChanged(context, this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => { }); //should be after succesfull save
+                    });
+                    logChanged(context, this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => { });
+                }
+                if (context.onServer && this.isNew() && !this._disableMessageToUsers) {
+                    Families.SendMessageToBrowsers(getLang(this.context).newDelivery, this.context, this.distributionCenter.value)
+
                 }
             }
         });

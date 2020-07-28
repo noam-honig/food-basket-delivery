@@ -56,13 +56,14 @@ export class DeliveryHistoryComponent implements OnInit {
     this.dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
 
     this.helperInfo = context.for(helperHistoryInfo, this.helperStorage).gridSettings({
+      showFilter: true,
 
       numOfColumnsInGrid: 6,
       gridButtons: [{
         name: this.settings.lang.exportToExcel,
         visible: () => this.context.isAllowed(Roles.admin),
         click: async () => {
-          await saveToExcel(this.context.for(helperHistoryInfo,this.helperStorage), this.helperInfo, this.settings.lang.volunteers, this.busy, (d: helperHistoryInfo, c) => c == d.courier);
+          await saveToExcel(this.context.for(helperHistoryInfo, this.helperStorage), this.helperInfo, this.settings.lang.volunteers, this.busy, (d: helperHistoryInfo, c) => c == d.courier);
         }
       }],
       columnSettings: h => [
@@ -119,7 +120,8 @@ export class DeliveryHistoryComponent implements OnInit {
 
 
   deliveries = this.context.for(FamilyDeliveries).gridSettings({
-    rowCssClass:d=>d.deliverStatus.getCss(),
+    showFilter: true,
+    rowCssClass: d => d.deliverStatus.getCss(),
     gridButtons: [{
       name: this.settings.lang.exportToExcel,
       click: async () => {

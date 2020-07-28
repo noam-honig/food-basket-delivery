@@ -419,6 +419,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   }
 
   deliveries = this.context.for(ActiveFamilyDeliveries).gridSettings({
+    showFilter: true,
     allowUpdate: true,
     rowCssClass: f => f.deliverStatus.getCss(),
     numOfColumnsInGrid: 5,
@@ -495,7 +496,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
 
         deliveries.deliveryComments,
-        deliveries.internalDeliveryComment,  
+
         deliveries.special,
         deliveries.createUser,
 
@@ -518,12 +519,12 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.phone4Description,
         { column: deliveries.courier, width: '100' },
 
-        deliveries.courierAssignUser,  
+        deliveries.courierAssignUser,
         { column: deliveries.courierAssingTime, width: '150' },
         { column: deliveries.deliveryStatusUser, width: '100' },
         deliveries.deliveryStatusDate,
-        { column: deliveries.courierComments, width: '120' }, 
-        { column: deliveries.internalDeliveryComment, width: '120' }, 
+        { column: deliveries.courierComments, width: '120' },
+        { column: deliveries.internalDeliveryComment, width: '120' },
         deliveries.needsWork,
         deliveries.needsWorkDate,
         deliveries.needsWorkUser,
@@ -553,7 +554,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           deliveries.address,
           deliveries.basketType,
           deliveries.quantity,
-          deliveries.deliverStatus
+          this.deliverySummary
         );
       }
       return r;
@@ -643,6 +644,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         context: context.for(ActiveFamilyDeliveries),
         h: {
           actionWhere: x => h.actionWhere(x),
+          orderBy:x=>[{column:x.createDate,descending:true}],
           forEach: async fd => {
             fd._disableMessageToUsers = true;
             await h.forEach(fd);
@@ -686,36 +688,60 @@ export interface deliveryButtonsHelper {
   deliveries: () => GridSettings<FamilyDeliveries>
 }
 export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
-  console.log(this.receiptDeliveryMode)
-if(this.receiptDeliveryMode){
-  return[
-    {
-      textInMenu: () => getLang(args.context).volunteerAssignments,
-      icon: 'list_alt',
-      showInLine: true,
-      click: async d => {
-        let h = await args.context.for(Helpers).findId(d.courier);
-        await args.context.openDialog(
-          HelperAssignmentComponent, s => s.argsHelper = h);
-        this.refresh();
-      }
-    }]
-}
+  let newDelivery: (d: FamilyDeliveries) => void = async d => {
+    let f = await args.context.for(Families).findId(d.family);
+    await f.showNewDeliveryDialog(args.dialog, args.settings, { copyFrom: d, aDeliveryWasAdded: async () => args.refresh() });
+  };
   return [
     {
       name: getLang(args.context).newDelivery,
+      icon: 'add_shopping_cart',
       click: async d => {
-        let f = await args.context.for(Families).findId(d.family);
-        await f.showNewDeliveryDialog(args.dialog, args.settings, { copyFrom: d, aDeliveryWasAdded: async () => args.refresh() });
+        newDelivery(d)
       },
-      visible: d => args.context.isAllowed(Roles.admin) 
+      visible: d => args.context.isAllowed(Roles.admin) && !DeliveryStatus.IsAResultStatus(d.deliverStatus.value)
+    },
+    {
+      textInMenu: () => getLang(args.context).newDelivery,
+      icon: 'add_shopping_cart',
+      showInLine: true,
+      click: async d => {
+        newDelivery(d)
+      },
+      visible: d => args.context.isAllowed(Roles.admin) && DeliveryStatus.IsAResultStatus(d.deliverStatus.value)
     },
     {
       textInMenu: () => getLang(args.context).assignVolunteer,
       icon: 'person_search',
       showInLine: true,
       click: async d => {
-        await d.courier.showSelectDialog(async () => await d.save());
+        await d.courier.showSelectDialog(async () => {
+          await d.save();
+
+
+
+          var fd = await args.context.for(ActiveFamilyDeliveries).find({
+            where: fd => {
+              let f = fd.id.isDifferentFrom(d.id).and(
+                fd.readyFilter()).and(
+                  d.distributionCenter.filter(args.dialog.distCenter.value));
+              if (d.addressOk.value)
+                return f.and( fd.addressLongitude.isEqualTo(d.addressLongitude).and(fd.addressLatitude.isEqualTo(d.addressLatitude)));
+              else
+                return f.and( fd.family.isEqualTo(d.family).and(f));
+            }
+          });
+          if (fd.length > 0) {
+            if (await args.dialog.YesNoPromise(args.settings.lang.thereAreAdditional + " " + fd.length + " " + args.settings.lang.deliveriesAtSameAddress)) {
+              for (const f of fd) {
+                f.courier.value = d.courier.value;
+                await f.save();
+              }
+              args.refresh();
+            }
+          }
+
+        });
       },
       visible: d => !DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)&& !this.receiptDeliveryMode
     },

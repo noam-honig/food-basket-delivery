@@ -1,6 +1,6 @@
 import { Injectable, NgZone } from "@angular/core";
 import { MatSnackBar } from "@angular/material";
-import { Context, DataAreaSettings } from '@remult/core';
+import { Context, DataAreaSettings, ServerFunction } from '@remult/core';
 
 
 import { BusyService } from '@remult/core';
@@ -23,6 +23,8 @@ declare var gtag;
 @Injectable()
 export class DialogService {
     async exception(title: string, err: any): Promise<void> {
+        this.log("Exception:" + title + ": " + extractError(err) + "," + JSON.stringify(err) + "cookies:" + document.cookie );
+        this.log("Exception..." + window.navigator.userAgent);
         await this.Error(title + ": " + extractError(err));
         throw err;
     }
@@ -178,8 +180,22 @@ export class DialogService {
     async YesNoPromise(question: string) {
         return await this.context.openDialog(await (await import("./yes-no-question/yes-no-question.component")).YesNoQuestionComponent, y => y.args = { question: question }, x => x.yes);
     }
-    confirmDelete(of: string, onOk: () => void) {
-        this.YesNoQuestion(use.language.confirmDeleteOf + " " + of + "?", onOk);
+    confirmDelete(of: string) {
+        return this.YesNoPromise(use.language.confirmDeleteOf + " " + of + "?");
+    }
+    async log(s: string) {
+        await DialogService.doLog(s);
+    }
+    @ServerFunction({ allowed: true })
+    static async doLog(s: string, context?: Context) {
+        console.log(s);
+        if (context.user) {
+            console.log("server context: " + JSON.stringify(context.user));
+        }
+        else
+            console.log("server context has no user");
+        console.log("authorization cookie:", context.getCookie("authorization"));
+
     }
 }
 export function extractError(err: any) {

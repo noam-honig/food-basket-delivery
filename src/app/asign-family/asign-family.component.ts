@@ -204,7 +204,6 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             let groups: Promise<GroupsStats[]>;
             if (this.dialog.distCenter.value == allCentersToken) {
                 groups = this.context.for(GroupsStatsForAllDeliveryCenters).find({ where: f => f.familiesCount.isGreaterThan(0), limit: 1000 });
-                console.log('all');
             }
             else
                 groups = this.context.for(GroupsStatsPerDistributionCenter).find({ where: f => f.familiesCount.isGreaterThan(0).and(f.distCenter.filter(this.dialog.distCenter.value)), limit: 1000 });

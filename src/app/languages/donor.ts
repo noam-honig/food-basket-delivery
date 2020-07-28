@@ -13,7 +13,7 @@ export class donor implements Language {
   boxes2Name = 'משהו אחר';
   defaultDistributionListName = 'חלוקת מזון';
   AssignEscortComponent = 'שיוך מלווים';
-  FamilyDeliveriesComponent = 'משלוחים';
+  FamilyDeliveriesComponent = 'משלוחים פעילים';
   FamiliesComponent = 'תורמים';
   DeliveryFollowUpComponent = 'מעקב מתנדבים';
   NewsComponent = 'מצריך טיפול';
@@ -21,7 +21,7 @@ export class donor implements Language {
   OverviewComponent = 'Overview';
   HelpersComponent = 'מתנדבים';
   DeliveryHistoryComponent = 'היסטורית משלוחים';
-  PlaybackComponent = 'סרטון איסוף';
+  PlaybackComponent = 'סרטון חלוקה';
   GeocodeComponent = 'GEOCODE';
   ImportFromExcelComponent = 'קליטת תורמים מאקסל';
   ImportHelpersFromExcelComponent = 'קליטת מתנדבים מאקסל';
@@ -44,7 +44,7 @@ export class donor implements Language {
   leftDeliveryNextToHouse = 'השארתי ליד הבית';
   failedDeliveries = 'משלוחים שנתקלתי בבעיה';
   ranIntoAProblem = 'נתקלתי בבעיה';
-  showAllDeliveries = 'הצג את כל המשלוחים לאיסוף';
+  showAllDeliveries = 'הצג את כל המשלוחים לחלוקה';
   sendSmsWithLink = 'שלח הודעת SMS עם קישור';
   sendLinkOnWhatsapp = 'שלח קישור ב whatsapp';
   copyMessageWithLink = 'העתק הודעה עם קישור';
@@ -67,7 +67,7 @@ export class donor implements Language {
   appartment = 'דירה';
   entrance = 'כניסה';
   updateComment = 'עדכן הערה';
-  clickedByMistake = 'נלחץ בטעות - החזר למשלוחים לאיסוף';
+  clickedByMistake = 'נלחץ בטעות - החזר למשלוחים לחלוקה';
   deliveriesDoneInTheLastTwoDays = 'משלוחים שחולקו ביומיים האחרונים';
   showAllCompletedDeliveries = 'הצג את כל המשלוחים שחולקו';
   showRouteOnGoogleMaps = 'הצג מסלול ב Google Maps';
@@ -79,10 +79,10 @@ export class donor implements Language {
   inacurateAddress = 'שימו לב, כתובת לא מדוייקת!';
   copyAddress = 'העתק כתובת';
   SelfPickupComponent = 'באים לקחת';
-  oneDeliveryToDistribute = 'משלוח אחד לאיסוף';
-  deliveriesToDistribute = 'משלוחים לאיסוף';
+  oneDeliveryToDistribute = 'משלוח אחד לחלוקה';
+  deliveriesToDistribute = 'משלוחים לחלוקה';
   volunteerInfo = 'פרטי מתנדב';
-  assignRequiresADistributionList = 'לא ניתן לשייך מתנדבים מכיוון שלא נבחרה מעבדה. אנא בחרו מעבדה (למעלה מצד שמאל איפה שכתוב "כל הרשימות")';
+  assignRequiresADistributionList = 'לא ניתן לשייך מתנדבים מכיוון שלא נבחרה רשימת חלוקה. אנא בחרו רשימת חלוקה (למעלה מצד שמאל איפה שכתוב "כל הרשימות")';
   findHelperByName = 'חפש מתנדב לפי שם';
   clearHelperInfo = 'נקה פרטי מתנדב';
   saveHelperInfoAndMoveToNextHelper = 'שמור פרטי מתנדב ועבור למתנדב הבא';
@@ -94,7 +94,7 @@ export class donor implements Language {
   asignDeliveriesTo = 'שיוך משלוחים ל';
   familyGroups = 'קבוצות שיוך תורם';
   allGroups = 'כל הקבוצות';
-  distributionCity = 'עיר לאיסוף';
+  distributionCity = 'עיר לחלוקה';
   allCities = 'כל הערים';
   region = 'אזור';
   allRegions = 'כל האזורים';
@@ -139,7 +139,7 @@ export class donor implements Language {
   createDate = 'מועד הוספה';
   remiderSmsDate = 'מועד משלוח תזכורת SMS';
   admin = 'מנהל כלל המערכת';
-  responsibleForAssign = 'משייך מתנדבים למעבדה';
+  responsibleForAssign = 'משייך מתנדבים לרשימת חלוקה';
   notAllowedToUpdateVolunteer = 'אינך רשאי לעדכן עבור מתנדב זה';
   company = 'חברה';
   updateInfo = 'עדכון פרטים';
@@ -162,7 +162,7 @@ export class donor implements Language {
   freeText2ForVolunteer = 'מלל חופשי 2 למתנדב';
   urlFreeText2 = 'כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב';
   showText2OnlyWhenDone = 'להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים';
-  enableSelfPickupModule = 'ישנם תורמים שמגיעים למעבדה';
+  enableSelfPickupModule = 'ישנן תורמים שבאות לקחת ממרכז החלוקה';
   showVolunteerCompany = 'שמור מטעם איזה חברה הגיע המתנדב';
   activateEscort = 'הפעל ניהול מלווים לנהגים';
   showHelperComment = 'הצג הערה בשיוך למתנדב';
@@ -214,7 +214,7 @@ export class donor implements Language {
   nextBirthDay = 'יומולדת הבא';
   age = 'גיל';
   defaultBasketType = 'סוג סל ברירת מחדל';
-  defaultQuantity = 'מספר סלים ברירת מחדל';
+  defaultQuantity = 'כמות ברירת מחדל';
   familySource = 'גורם מפנה';
   familyHelpContact = 'איש קשר לבירור פרטים (עו"ס)';
   familyHelpPhone1 = 'עו"ס טלפון 1';
@@ -268,7 +268,7 @@ export class donor implements Language {
   specialUnasigned = 'מיוחדים שטרם שוייכו';
   delivered = 'נמסר';
   problem = 'בעייה';
-  quantity = 'מספר סלים';
+  quantity = 'כמות';
   volunteer = 'מתנדב';
   commentsWritteByVolunteer = 'הערות שכתב המתנדב כשמסר';
   deliveryStatusDate = 'מתי';
@@ -280,11 +280,11 @@ export class donor implements Language {
   requireFollowUpUpdateUser = 'צריך טיפול - מי עדכן';
   requireFollowUpUpdateDate = 'צריך טיפול - מתי עודכן';
   deliveryDetailsFor = 'פרטי משלוח עבור';
-  remainingByBaskets = 'נותרו לפי סלים';
+  remainingByBaskets = 'טרם שוייכו לפי סלים';
   byBaskets = 'לפי סלים';
   deliveredByBaskets = 'נמסרו לפי סלים';
-  remainingByCities = 'נותרו לפי ערים';
-  remainingByGroups = 'נותרו לפי קבוצות';
+  remainingByCities = 'טרם שוייכו לפי ערים';
+  remainingByGroups = 'טרם שוייכו לפי קבוצות';
   deliveries = 'משלוחים';
   empty = 'ריק';
   allOthers = 'כל השאר';
@@ -387,7 +387,7 @@ export class donor implements Language {
   reminderSmsTextHelp = 'הודעה זו תשלח למתנדב שמתעכב ממסך מעקב מתנדבים';
   sampleReminderSms = 'הודעת תזכורת לדוגמא';
   basketTypes = 'סוגי סלים';
-  distributionLists = 'מעבדות';
+  distributionLists = 'רשימות חלוקה';
   familySources = 'גורמים מפנים';
   distributionListsHelp = 'קבוצות אלו יוצגו בשיוך תורמים ויאפשרו סינון מהיר';
   volunteerTexts = 'הודעות למתנדב';
@@ -425,7 +425,7 @@ export class donor implements Language {
   addCurrentLocationToNote = 'הוסף מיקום נוכחי להערה';
   basketNotDelivered = 'הסל לא נמסר';
   confirm = 'אשר';
-  displayFamilyAsVolunteerWillSeeIt = 'הצג תורם כפי שתנדב יראה אותה';
+  displayFamilyAsVolunteerWillSeeIt = 'הצג תורם כפי שמתנדב יראה אותה';
   infoAboutUpdates = 'פרטי עדכונים';
   sendMessageToVolunteer = 'שלח הודעה למתנדב';
   deliveryInfo = 'פרטי משלוח';
@@ -474,8 +474,8 @@ export class donor implements Language {
   notDeliveredNotHome = 'לא נמסר, לא היו בבית';
   notDeliveredOther = 'לא נמסר, אחר';
   deliveryStatus = 'סטטוס משלוח';
-  useFamilyDefaultBasketType = 'השתמש בסוג הסל המוגדר לתורם';
-  mustSelectDistributionList = 'חובה לבחור מעבדה';
+  useFamilyDefaultBasketType = 'סל ברירת מחדל';
+  mustSelectDistributionList = 'חובה לבחור רשימת חלוקה';
   assignAFamilyGroup = 'שיוך לקבוצת תורמים';
   action = 'פעולה';
   freezeDeliveries = 'הקפא משלוחים';
@@ -519,11 +519,11 @@ export class donor implements Language {
   archiveDeliveriesHelp = 'העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים';
   updateBasketType = 'עדכן סוג סל';
   updateBasketQuantity = 'עדכן כמות סלים';
-  updateDistributionList = 'עדכן מעבדה';
+  updateDistributionList = 'עדכן רשימת חלוקה';
   useBusketTypeFromCurrentDelivery = 'השתמש בסוג הסל המוגדר במשלוח הנוכחי';
   newDeliveryForAll = 'משלוח חדש לכל המשלוחים ולא רק לאלו שהסתיימו בהצלחה';
-  distributionListAsCurrentDelivery = 'מעבדה כמו במשלוח הנוכחי';
-  pleaseSelectDistributionList = 'חובה לבחור מעבדה';
+  distributionListAsCurrentDelivery = 'רשימת חלוקה כמו במשלוח הנוכחי';
+  pleaseSelectDistributionList = 'חובה לבחור רשימת חלוקה';
   newDeliveryForDeliveriesHelp = 'משלוח חדש יוגדר עבור כל המשלוחים המסומנים שהם בסטטוס נמסר בהצלחה, או בעיה כלשהי, אלא אם תבחרו לסמן את השדה ';
   volunteerByFamilyDefault = 'הגדר מתנדב לפי מתנדב ברירת מחדל המוגדר לתורם';
   volunteerByCrrentDelivery = 'הגדר מתנדב לפי המתנדב במשלוח הנוכחי';
@@ -568,7 +568,7 @@ export class donor implements Language {
   defaultDeliveryComment = 'הערה ברירת מחדל למתנדב';
   defineDeliveriesForFamiliesInExcel = 'הגדר משלוחים לכל התורמים מהאקסל';
   ifBasketTypeInExcelIsDifferentFromExistingOneCreateNewDelivery = 'אם קיים משלוח לתורם עם סוג סל שונה, הוסף משלוח חדש';
-  useFamilyMembersAsQuantity = 'השתמש במספר נפשות גם ככמות מנות';
+  useFamilyMembersAsQuantity = 'השתמש במספר נפשות גם כמספר מנות';
   linesProcessed = 'שורות עובדו';
   alreadyExistsInLine = 'כבר קיים בקובץ בשורה';
   unnamed = 'ללא שם';
@@ -617,9 +617,9 @@ export class donor implements Language {
   removeGroupAssignmentVerb = 'להסיר שיוך לקבצה';
   replaceGroupAssignmentVerb = 'להחליף שיוך לקבוצה';
   volunteerCanUpdateComment = 'מתנדב יכול לעדכן לעצמו הערה';
-  volunteerCanUpdatePreferredDistributionAddress = 'מתנדב יכול לעדכן אזור איסוף מועדף';
+  volunteerCanUpdatePreferredDistributionAddress = 'מתנדב יכול לעדכן אזור חלוקה מועדף';
   email = 'eMail';
-  preferredDistributionArea = 'כתובת אזור איסוף מועדף';
+  preferredDistributionArea = 'כתובת אזור חלוקה מועדף 1';
   preferredDistributionArea2 = 'כתובת אזור חלוקה מועדף 2';
   doesNotExist = 'לא קיים';
   questionAddToApplication = 'האם להוסיף';
@@ -631,15 +631,15 @@ export class donor implements Language {
   allNew = 'כל החדשות';
   problemsThatRequireFollowup = 'בעיות המצריכות טיפול';
   commentsWrittenByVolunteers = 'הערות שכתבו מתנדבים';
-  distributionList = 'מעבדה';
+  distributionList = 'רשימת חלוקה';
   list = 'רשימה';
   map = 'מפה';
-  noDeliveries = 'אין משלוחים לאיסוף';
-  showDistCenterAsEndAddressForVolunteer = 'הצג כתובות מעבדה כנקודת סיום למתנדב';
+  noDeliveries = 'אין משלוחים לחלוקה';
+  showDistCenterAsEndAddressForVolunteer = 'הצג כתובות רשימת חלוקה כנקודת סיום למתנדב';
   endOnFar = 'סיים בכתובת הרחוקה ביותר';
   startAtDistributionCenterAndEndOnRemoteFamily = 'סיים בכתובת המבודדת ביותר';
-  circularRoute = 'התחל וסיים במעבדה';
-  endsOnDistributionCenter = 'סיים במעבדה';
+  circularRoute = 'התחל וסיים במרכז החלוקה';
+  endsOnDistributionCenter = 'סיים במרכז החלוקה';
   parcelSummary = 'הצג סיכום סוגי סלים';
   useCurrentLocationForStart = 'חשב מסלול ממיקום נוכחי';
   eventName = 'שם ארוע';
@@ -662,7 +662,7 @@ export class donor implements Language {
   distributionCenterName = 'שם';
   distributionCenterUniqueId = 'סמל';
   distributionCenterDetails = 'פרטים';
-  thisFamilyHas = 'לתורם זה יש';
+  thisFamilyHas = 'לתורם זו יש';
   deliveries_ShouldWeDeleteThem = 'משלוחים פעילים - האם למחוק אותם?';
   excludeGroups = 'למעט קבוצות אלו';
   useFamilyQuantity = 'מספר סלים ברירת מחדל';
@@ -673,7 +673,7 @@ export class donor implements Language {
   updateFamilyDefaults = 'עדכון ברירות מחדל לתורמים';
   updateFamilyDefaultsHelp = 'פעולה זו מאפשרת לעדכן את הברירות מחדל לתורם בהתאם למשלוחים המסומנים. בחרו אילו שדות לעדכן';
   updateBasedOnTheChangesIn = 'האם לעדכנם בהתאם לשינויים ב';
-  familyHasExistingDeliveriesDoYouWantToViewThem = 'לתורם זו יש משלוחים פעילים, האם אתה להציג אותם?';
+  familyHasExistingDeliveriesDoYouWantToViewThem = 'לתורם זו יש משלוחים פעילים, האם להציג אותם?';
   and = 'ו';
   markAsDeliveredFor = 'סמן נמסר בהצלחה ל';
   onTheWayDeliveries = 'משלוחים שבדרך';
@@ -684,7 +684,7 @@ export class donor implements Language {
   assignedButNotOutBaskets = 'שוייכו וטרם יצאו לפי סלים';
   selfPickupByBaskets = 'באים לקחת לפי סלים';
   routeOptimization = 'תכנון מסלול';
-  assignVolunteer = 'שייך למתנדב';
+  assignVolunteer = 'שייך מתנדב';
   group = 'קבוצה';
   showOnlyCompletedDeliveries = 'הצג רק משלוחים שהסתיימו';
   smsSent = 'SMS נשלח';
@@ -699,4 +699,7 @@ export class donor implements Language {
   caption = 'תאור';
   optionalValues = 'ערכים אפשריים מופרד בפסיקים';
   reciptionDone = "נמסר בהצלחה";
+  hideFamilyPhoneFromVolunteer = 'אל תציג את הטלפון של התורם למתנדב';
+  hadProblemBefore = 'היתה בעיה בעבר';
+  showOnlyLastNamePartToVolunteer = 'הצג רק מילה אחרונה למתנדב בשם התורם';
 }

@@ -76,6 +76,7 @@ class NewDelivery extends ActionOnRows<Families> {
 
 
             title: getLang(context).newDelivery,
+            icon:'add_shopping_cart',
             forEach: async f => {
                 if (this.excludeGroups.value) {
                     for (let g of this.excludeGroups.listGroups()) {
@@ -86,6 +87,7 @@ class NewDelivery extends ActionOnRows<Families> {
                     }
                 }
                 let fd = f.createDelivery(this.distributionCenter.value);
+                fd._disableMessageToUsers = true;
                 if (!this.useFamilyBasket.value) {
                     fd.basketType.value = this.basketType.value;
                 }
