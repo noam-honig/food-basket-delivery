@@ -25,14 +25,17 @@ export class RegisterHelperComponent implements OnInit {
   }
 
   hasMandatoryFields() {
-    return (this.helper.name.value != null) && (this.helper.address1.value != null) && 
-    (this.helper.address2.value != null) && (isPhoneValidForIsrael(this.helper.phone.value));
+    return (this.helper.name.value != null) && (this.helper.address1.value != null) 
+    && (isPhoneValidForIsrael(this.helper.phone.value)) && (this.helper.socialSecurityNumber != null);
   }
 
   async submit() {
 
     if (!this.hasMandatoryFields()) {
-      this.dialog.Error("יש למלא שדות חובה");
+      this.dialog.Error(
+        "יש למלא שדות חובה" +
+        "(שם, כתובת, טלפון ות.ז.)"
+      );
       return;
     }
     try {
@@ -88,7 +91,7 @@ class helperForm {
     dataControlSettings: () => ({ inputType: 'email' })
   });
   address1 = new StringColumn({ caption: "כתובת שנדע לחבר לך תורמים קרובים", validate: () => required(this.address1) });
-  address2 = new StringColumn({ caption: "איזור נוסף ממנו נח לך לאסוף תרומות?", validate: () => required(this.address2) });
+  address2 = new StringColumn({ caption: "איזור נוסף ממנו נח לך לאסוף תרומות?"});
   
   socialSecurityNumber = new StringColumn({ caption: "תעודת זהות (עבור ביטוח מתנדבים)", validate: () => required(this.socialSecurityNumber) });
   company = new StringColumn({ caption: "ארגון"});
