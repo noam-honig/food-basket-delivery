@@ -84,6 +84,7 @@ import { DateRangeComponent } from './date-range/date-range.component';
 import { ShowOnMapComponent } from './show-on-map/show-on-map.component';
 import { EventsComponent } from './events/events.component';
 import { RegisterDonorComponent } from './register-donor/register-donor.component';
+import { RegisterHelperComponent } from './register-helper/register-helper.component';
 import { AddressInputComponent } from './address-input/address-input.component';
 
 
@@ -169,6 +170,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     ShowOnMapComponent,
     EventsComponent,
     RegisterDonorComponent,
+    RegisterHelperComponent,
     AddressInputComponent
 
 

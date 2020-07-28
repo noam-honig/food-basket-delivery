@@ -272,7 +272,7 @@
     "valueInCode": "בוטל השיוך למשפחת"
   },
   "assignRequiresADistributionList": {
-    "google": "לא ניתן לשייך מתנדבים מכיוון שלא נבחרה רשימת חלוקה. אנא בחרו רשימת חלוקה (למעלה מצד שמאל איפה שכתוב \"כל הרשימות\")",
+    "google": "לא ניתן לשייך מתנדבים מכיוון שלא נבחרה מעבדה. אנא בחרו מעבדה (למעלה מצד שמאל איפה שכתוב \"כל הרשימות\")",
     "valueInCode": "לא ניתן לשייך מתנדבים מכיוון שלא נבחרה רשימת חלוקה. אנא בחרו רשימת חלוקה (למעלה מצד שמאל איפה שכתוב \"כל הרשימות\")"
   },
   "assignVolunteer": {
@@ -828,15 +828,15 @@
     "valueInCode": "עיר לחלוקה"
   },
   "distributionList": {
-    "google": "רשימת חלוקה",
+    "google": "מעבדה",
     "valueInCode": "רשימת חלוקה"
   },
   "distributionListAsCurrentDelivery": {
-    "google": "רשימת חלוקה כמו במשלוח הנוכחי",
+    "google": "מעבדה כמו במשלוח הנוכחי",
     "valueInCode": "רשימת חלוקה כמו במשלוח הנוכחי"
   },
   "distributionLists": {
-    "google": "רשימות חלוקה",
+    "google": "מעבדות",
     "valueInCode": "רשימות חלוקה"
   },
   "distributionListsHelp": {
@@ -1592,7 +1592,7 @@
     "valueInCode": " חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור"
   },
   "mustSelectDistributionList": {
-    "google": "חובה לבחור רשימת חלוקה",
+    "google": "חובה לבחור מעבדה",
     "valueInCode": "חובה לבחור רשימת חלוקה"
   },
   "MyFamiliesComponent": {
@@ -1848,7 +1848,7 @@
     "valueInCode": "אנא הרשמו לאירועים הקרובים"
   },
   "pleaseSelectDistributionList": {
-    "google": "חובה לבחור רשימת חלוקה",
+    "google": "חובה לבחור מעבדה",
     "valueInCode": "חובה לבחור רשימת חלוקה"
   },
   "pleaseWaitVerifyingDetails": {
@@ -2308,7 +2308,7 @@
     "valueInCode": "הצג שיוך משלוחים ל"
   },
   "showDistCenterAsEndAddressForVolunteer": {
-    "google": "הצג כתובות רשימת חלוקה כנקודת סיום למתנדב",
+    "google": "הצג כתובות מעבדה כנקודת סיום למתנדב",
     "valueInCode": "הצג כתובות רשימת חלוקה כנקודת סיום למתנדב"
   },
   "showFamilies": {
@@ -2608,7 +2608,7 @@
     "valueInCode": "עדכן אי מסירה"
   },
   "updateDistributionList": {
-    "google": "עדכן רשימת חלוקה",
+    "google": "עדכן מעבדה",
     "valueInCode": "עדכן רשימת חלוקה"
   },
   "updateExistingDeliveries": {

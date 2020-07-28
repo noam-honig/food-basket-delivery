@@ -41,6 +41,7 @@ import { FamilyDeliveriesComponent } from './family-deliveries/family-deliveries
 import { DuplicateFamiliesComponent } from './duplicate-families/duplicate-families.component';
 import { EventsComponent } from './events/events.component';
 import { RegisterDonorComponent } from './register-donor/register-donor.component';
+import { RegisterHelperComponent } from './register-helper/register-helper.component';
 import { Sites } from './sites/sites';
 
 
@@ -84,6 +85,7 @@ export const routes: Routes = [
   { path: 'geocode', component: GeocodeComponent, canActivate: [AdminGuard], data: { name: 'geocode', hide: true } },
   { path: 'testmap', component: TestMapComponent, canActivate: [AdminGuard], data: { hide: true } },
   { path: 'register-donor', component: RegisterDonorComponent,canActivate:[MltOnlyGuard] , data: { hide: true } },
+  { path: 'register-helper', component: RegisterHelperComponent,canActivate:[MltOnlyGuard] , data: { hide: true } },
   
   
   { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard] },

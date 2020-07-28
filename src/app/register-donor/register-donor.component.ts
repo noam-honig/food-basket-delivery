@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PhoneColumn, required, isPhoneValidForIsrael } from '../model-shared/types';
-import { StringColumn, NumberColumn, DataAreaSettings, ServerFunction, Context, Column } from '@remult/core';
+import { StringColumn, NumberColumn, BoolColumn, DataAreaSettings, ServerFunction, Context, Column } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { Sites } from '../sites/sites';
 import { Families } from '../families/families';
@@ -17,7 +17,8 @@ import { RequiredValidator } from '@angular/forms';
 export class RegisterDonorComponent implements OnInit {
   constructor(private dialog: DialogService, private context: Context) { }
   donor = new donorForm(this.context);
-  area = new DataAreaSettings({ columnSettings: () => this.donor.columns.filter(c => c != this.donor.name && c != this.donor.address) });
+  area = new DataAreaSettings({ columnSettings: () => 
+    this.donor.columns.filter(c => c != this.donor.name && c != this.donor.address && c != this.donor.selfDeliver) });
   ngOnInit() {
   }
   allowSubmit() {
@@ -25,8 +26,9 @@ export class RegisterDonorComponent implements OnInit {
   }
 
   hasMandatoryFields() {
-    return (this.donor.name.value != null) && (this.donor.address.value != null) && 
-      (isPhoneValidForIsrael(this.donor.phone.value));
+    return (this.donor.name.value != null) && (isPhoneValidForIsrael(this.donor.phone.value)
+      && ((this.donor.selfDeliver.value) || (this.donor.address.value != null))
+    );
   }
   hasQuantity() {
     return +this.donor.laptop.value > 0 || +this.donor.computer.value > 0 || +this.donor.screen.value > 0;
@@ -93,12 +95,22 @@ class donorForm {
     caption: "דואל",
     dataControlSettings: () => ({ inputType: 'email' })
   });
-  address = new StringColumn({ caption: "כתובת", validate: () => required(this.address) });
+
+  selfDeliver = new BoolColumn("אגיע עצמאית למעבדה");
+  address = new StringColumn({ 
+    caption: "כתובת",
+    validate: () => {
+      if (!this.selfDeliver.value)
+        required(this.address); 
+    }
+  });
   
   computer = new NumberColumn("מספר מחשבים ניידים");
   laptop = new NumberColumn("מספר מחשבים נייחים");
   screen = new NumberColumn("מספר מסכים");
-  columns = [this.name, this.phone, this.email, this.address,  this.computer, this.laptop, this.screen];
+
+  
+  columns = [this.name, this.selfDeliver, this.address, this.phone, this.email, this.computer, this.laptop, this.screen];
 
 
   async doWork(context: Context) {
@@ -111,7 +123,7 @@ class donorForm {
     f.email.value = this.email.value;
     await f.save();
     var quantity = 0;
-    async function addDelivery(type: string, q: number) {
+    async function addDelivery(type: string, q: number, isSelfDeliver: boolean) {
       if (q > 0) {
         quantity += q;
         await Families.addDelivery(f.id.value, {
@@ -120,13 +132,13 @@ class donorForm {
           courier: '',
           distCenter: allCentersToken,
           quantity: q,
-          selfPickup: false
+          selfPickup: isSelfDeliver,
         }, context);
       }
     }
-    await addDelivery('מחשב', this.computer.value);
-    await addDelivery('לפטופ', this.laptop.value);
-    await addDelivery('מסך', this.screen.value);
+    await addDelivery('מחשב', this.computer.value, this.selfDeliver.value);
+    await addDelivery('לפטופ', this.laptop.value, this.selfDeliver.value);
+    await addDelivery('מסך', this.screen.value, this.selfDeliver.value);
 
     if (quantity == 0) {
       await Families.addDelivery(f.id.value, {
