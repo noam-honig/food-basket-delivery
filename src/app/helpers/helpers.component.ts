@@ -115,6 +115,16 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
       },
       {
+        name: use.language.toDelete,
+        click: async h => {
+          this.dialog.YesNoQuestion(use.language.confirmDeleteOf + " " + h.name.value, async () => {
+            await HelpersComponent.markDeleted(h.id.value);
+            this.helpers.getRecords();
+          });
+        },
+        visible: h => (this.context.isAllowed(Roles.admin) || !h.admin.value)
+      },
+      {
         name: use.language.resetPassword,
         click: async h => {
           this.dialog.YesNoQuestion(use.language.resetPasswordAreYouSureFor + " " + h.name.value, async () => {
@@ -173,7 +183,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       orderBy: h => [h.name],
       limit: 25,
       where: h => {
-        return h.name.isContains(this.searchString);
+        return h.name.isContains(this.searchString) && h.isDeleted.isEqualTo(false); 
       }
     },
     columnSettings: helpers => {
@@ -267,6 +277,14 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
 
 
+  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  static async markDeleted(helperId: string, context?: Context) {
+
+    await context.for(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach( async h => {
+      h.isDeleted.value = true;
+      await h.save();
+    });
+  }
 
 
   @ServerFunction({ allowed: Roles.distCenterAdmin })

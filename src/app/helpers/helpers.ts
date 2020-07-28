@@ -266,6 +266,13 @@ export class Helpers extends HelpersBase {
 
         }
     });
+    isDeleted = new BoolColumn({
+        caption: getLang(this.context).toDelete,
+        allowApiUpdate: false,
+        includeInApi: false,
+        dbName: 'isDeleted'
+    });    
+    
     getRouteStats(): routeStats {
         return {
             totalKm: this.totalKm.value,
