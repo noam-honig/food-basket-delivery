@@ -10,6 +10,7 @@ import { FamilyDeliveriesComponent, getDeliveryGridButtons } from '../family-del
 import { saveToExcel } from '../shared/saveToExcel';
 import { Roles } from '../auth/roles';
 import { Helpers } from '../helpers/helpers';
+import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 
 @Component({
   selector: 'app-delivery-reception',
@@ -18,11 +19,11 @@ import { Helpers } from '../helpers/helpers';
 })
 export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
 
-
+  courierId;
   showData=false;
   deliveries = this.context.for(FamilyDeliveries).gridSettings({
     allowUpdate: false,
-    numOfColumnsInGrid: 5,
+    numOfColumnsInGrid: 7,
 
     knowTotalRows: true,
     get: {
@@ -36,7 +37,8 @@ export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
           else result = filter;
         }
         if (this.searchString) {
-          addFilter(f.phone1.isContains(this.searchString));
+          console.log(this.courierId)
+          addFilter(f.courier.isEqualTo(this.courierId));
         }
         return result;
       }
@@ -62,6 +64,9 @@ export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
         {
           column: deliveries.quantity,
           width: '50'
+        },
+        {
+          column:deliveries.deliverStatus,width:'110'
         },
 
         { column: deliveries.createDate, width: '150' },
@@ -102,7 +107,16 @@ export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
         deliveries.needsWorkUser,
         deliveries.fixedCourier,
         deliveries.familyMembers,
-        { column: deliveries.messageStatus, width: '130' }
+        { column: deliveries.messageStatus, width: '130' },
+        deliveries.city,
+        deliveries.distributionCenter,
+        deliveries.quantity,
+        deliveries.createDate,
+        deliveries.courier,
+        deliveries.courierAssingTime,
+        deliveries.internalDeliveryComment,
+        deliveries.messageStatus,        
+        deliveries.courierComments,
       ]
 
     return r;
@@ -115,17 +129,19 @@ export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
     public settings: ApplicationSettings
   ) { }
   
-  ngOnInit() {
+  async ngOnInit() {    
     
   }
   ngAfterViewInit(){
 
   }
 
-  search(form)
+  async search(form)
   {
     try{
       this.searchString=form.value.phoneNumber;
+      this.courierId=await (await this.context.for(Helpers).findFirst(i=>i.phone.isEqualTo(this.searchString)));
+      this.courierId=this.courierId? this.courierId.id.value : ""
       this.showData=true;
     }catch(err){
       
@@ -151,5 +167,16 @@ export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
     this.busy.donotWait(async () =>
       await this.refreshFamilyGrid());
   }
+  // showDeliveryHistoryDialog(args: { dialog: DialogService, settings: ApplicationSettings }) {
+  //   this.context.openDialog(GridDialogComponent, x => x.args = {
+  //     title: getLang(this.context).deliveriesFor + ' ' + this.name.value,
+  //     settings: this.deliveriesGridSettings(args),
+  //     buttons: [{
+  //       text: use.language.newDelivery,
+
+  //       click: () => this.showNewDeliveryDialog(args.dialog, args.settings, { doNotCheckIfHasExistingDeliveries: true })
+  //     }]
+  //   });
+  // }
 
 }
