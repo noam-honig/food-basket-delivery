@@ -154,7 +154,7 @@
     </mat-menu>
 
   </div>
-  <button *ngIf="partOfReview&&helperGotSms&&familyLists.toDeliver.length>0" mat-raised-button class="myButton no-print"
+  <button *ngIf="partOfReview&&familyLists.toDeliver.length>0" mat-raised-button class="myButton no-print"
     color="accent" (click)="sendSms(true)">
 
     <span
@@ -168,7 +168,8 @@
     </ng-template>
   </button>
   <button mat-raised-button class="myButton no-print" *ngIf="partOfReview&&familyLists.helper" (click)="callHelper()">
-    {{settings.lang.callPerson}}{{familyLists.helper.name.value}}
+    <mat-icon>phone</mat-icon> 
+    {{settings.lang.dialTo}}{{familyLists.helper.name.value}}
     {{familyLists.helper.phone.displayValue}}
 
   </button>
