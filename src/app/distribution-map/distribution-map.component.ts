@@ -487,6 +487,9 @@ export class Statuses {
       case DeliveryStatus.SuccessPickedUp.id:
         return this.success;
         break;
+      case DeliveryStatus.LabReception.id:
+        return this.success;
+        break;
       case DeliveryStatus.FailedBadAddress.id:
       case DeliveryStatus.FailedNotHome.id:
       case DeliveryStatus.FailedOther.id:

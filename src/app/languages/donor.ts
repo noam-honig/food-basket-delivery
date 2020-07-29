@@ -162,7 +162,8 @@ export class donor implements Language {
   freeText2ForVolunteer = 'מלל חופשי 2 למתנדב';
   urlFreeText2 = 'כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב';
   showText2OnlyWhenDone = 'להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים';
-  enableSelfPickupModule = 'ישנן תורמים שבאות לקחת ממרכז החלוקה';
+  enableSelfPickupModule = 'ישנן תורמים שבאים לקחת ממרכז החלוקה';
+  enableLabReception = 'משלוח מסתיים אחרי קליטה במעבדה';
   showVolunteerCompany = 'שמור מטעם איזה חברה הגיע המתנדב';
   activateEscort = 'הפעל ניהול מלווים לנהגים';
   showHelperComment = 'הצג הערה בשיוך למתנדב';
@@ -235,6 +236,7 @@ export class donor implements Language {
   phone3Description = 'הערות לטלפון 3';
   phone4 = 'טלפון 4';
   phone4Description = 'הערות לטלפון 4';
+  commentForReception = 'הערות קליטה במעבדה';
   statusChangeDate = 'סטטוס: תאריך שינוי';
   statusChangeUser = 'סטטוס: מי עדכן';
   defaultVolunteer = 'מתנדב ברירת מחדל';
@@ -631,7 +633,7 @@ export class donor implements Language {
   allNew = 'כל החדשות';
   problemsThatRequireFollowup = 'בעיות המצריכות טיפול';
   commentsWrittenByVolunteers = 'הערות שכתבו מתנדבים';
-  distributionList = 'רשימת חלוקה';
+  distributionList = 'מעבדה';
   list = 'רשימה';
   map = 'מפה';
   noDeliveries = 'אין משלוחים לחלוקה';
@@ -698,7 +700,7 @@ export class donor implements Language {
   customColumn = 'שדה נוסף לתורם';
   caption = 'תאור';
   optionalValues = 'ערכים אפשריים מופרד בפסיקים';
-  reciptionDone = "נמסר בהצלחה";
+  receptionDone = "נקלט במעבדה";
   hideFamilyPhoneFromVolunteer = 'אל תציג את הטלפון של התורם למתנדב';
   hadProblemBefore = 'היתה בעיה בעבר';
   showOnlyLastNamePartToVolunteer = 'הצג רק מילה אחרונה למתנדב בשם התורם';

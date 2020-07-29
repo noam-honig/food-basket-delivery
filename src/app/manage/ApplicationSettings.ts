@@ -128,6 +128,7 @@ export class ApplicationSettings extends Entity<number>  {
   _old_for_soliders = new BoolColumn({ dbName: 'forSoldiers' });
 
   usingSelfPickupModule = new BoolColumn(this.lang.enableSelfPickupModule);
+  usingLabReception = new BoolColumn(this.lang.enableLabReception);
   showCompanies = new BoolColumn(this.lang.showVolunteerCompany);
   manageEscorts = new BoolColumn(this.lang.activateEscort);
   showHelperComment = new BoolColumn(this.lang.showHelperComment);
@@ -301,6 +302,8 @@ export class SettingsService {
 
     translationConfig.forWho = this.instance.forWho.value;
     DeliveryStatus.usingSelfPickupModule = this.instance.usingSelfPickupModule.value;
+    DeliveryStatus.usingLabReception = this.instance.usingLabReception.value;
+    
     Helpers.usingCompanyModule = this.instance.showCompanies.value;
 
     PhoneOption.assignerOrOrg.name = this.instance.lang.assignerOrOrg;

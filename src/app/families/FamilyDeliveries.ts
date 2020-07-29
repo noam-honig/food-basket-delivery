@@ -45,6 +45,9 @@ export class FamilyDeliveries extends IdEntity {
             case DeliveryStatus.FailedOther:
                 status = getLang(this.context).problem;
                 break;
+            case DeliveryStatus.LabReception:
+                status = getLang(this.context).receptionDone;
+                break;
         }
         return status;
     }
@@ -117,6 +120,10 @@ export class FamilyDeliveries extends IdEntity {
         caption: getLang(this.context).commentForVolunteer,
         allowApiUpdate: Roles.admin
     });
+
+    receptionComments = new StringColumn({
+        caption: getLang(this.context).commentForReception
+    })
 
     familySource = new FamilySourceId(this.context, {
         includeInApi: Roles.admin,

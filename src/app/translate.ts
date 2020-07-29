@@ -289,6 +289,7 @@ export class Language {
   urlFreeText2 = 'כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב';
   showText2OnlyWhenDone = 'להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים';
   enableSelfPickupModule = 'ישנן משפחות שבאות לקחת ממרכז החלוקה';
+  enableLabReception = 'משלוח מסתיים אחרי קליטה במעבדה';
   showVolunteerCompany = 'שמור מטעם איזה חברה הגיע המתנדב';
   activateEscort = 'הפעל ניהול מלווים לנהגים';
   showHelperComment = 'הצג הערה בשיוך למתנדב';
@@ -362,6 +363,7 @@ export class Language {
   phone3Description = 'הערות לטלפון 3';
   phone4 = "טלפון 4";
   phone4Description = 'הערות לטלפון 4';
+  commentForReception = 'הערות קליטה במעבדה';
   statusChangeDate = 'סטטוס: תאריך שינוי';
   statusChangeUser = 'סטטוס: מי עדכן';
   defaultVolunteer = "מתנדב ברירת מחדל";
@@ -830,7 +832,7 @@ export class Language {
   ifYouNeedAnyHelpPleaseCall = "לעזרה התקשר ל";
   customColumn = "שדה נוסף למשפחה";
   caption = "תאור";
-  reciptionDone = "נקלט במעבדה";
+  receptionDone = "נקלט במעבדה";
   optionalValues = "ערכים אפשריים מופרד בפסיקים";
   hideFamilyPhoneFromVolunteer = "אל תציג את הטלפון של המשפחה למתנדב";
   hadProblemBefore = "היתה בעיה בעבר";

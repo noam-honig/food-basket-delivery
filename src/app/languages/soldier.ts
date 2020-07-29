@@ -162,6 +162,7 @@ export class soldier implements Language {
   urlFreeText2 = 'כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב';
   showText2OnlyWhenDone = 'להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים';
   enableSelfPickupModule = 'ישנן חיילים שבאות לקחת ממרכז החלוקה';
+  enableLabReception = 'משלוח מסתיים אחרי קליטה במעבדה';
   showVolunteerCompany = 'שמור מטעם איזה חברה הגיע המתנדב';
   activateEscort = 'הפעל ניהול מלווים לנהגים';
   showHelperComment = 'הצג הערה בשיוך למתנדב';
@@ -234,6 +235,7 @@ export class soldier implements Language {
   phone3Description = 'הערות לטלפון 3';
   phone4 = 'טלפון 4';
   phone4Description = 'הערות לטלפון 4';
+  commentForReception = 'הערות קליטה במעבדה';
   statusChangeDate = 'סטטוס: תאריך שינוי';
   statusChangeUser = 'סטטוס: מי עדכן';
   defaultVolunteer = 'מתנדב ברירת מחדל';
@@ -697,8 +699,8 @@ export class soldier implements Language {
   customColumn = 'שדה נוסף לחייל';
   caption = 'תאור';
   optionalValues = 'ערכים אפשריים מופרד בפסיקים';
-  reciptionDone = "נמסר בהצלחה";
-  lab='מעבדה';
+  receptionDone = "Received in lab";
+  lab='Lab';
   hideFamilyPhoneFromVolunteer = 'אל תציג את הטלפון של החייל למתנדב';
   hadProblemBefore = 'היתה בעיה בעבר';
   showOnlyLastNamePartToVolunteer = 'הצג רק מילה אחרונה למתנדב בשם החייל';

@@ -162,6 +162,7 @@ export class italy implements Language {
   urlFreeText2 = 'Testo volontario gratuito URL 2 per volontari';
   showText2OnlyWhenDone = 'Visualizza testo libero 2 solo quando il volontario ha completato tutti i pacchi';
   enableSelfPickupModule = 'Ci sono famiglie che vengono a prendere dal centro di divisione';
+  enableLabReception = 'Delivery ends with reception';
   showVolunteerCompany = 'Risparmia per conto di quale compagnia proviene il volontario';
   activateEscort = 'Abilita la gestione della scorta conducente';
   showHelperComment = 'Salva nota come volontario';
@@ -234,6 +235,7 @@ export class italy implements Language {
   phone3Description = 'Note sul telefono 3';
   phone4 = 'Telefono 4';
   phone4Description = 'Note sul telefono 4';
+  commentForReception = '';
   statusChangeDate = 'Stato: data modificata';
   statusChangeUser = 'Stato: chi sta aggiornando';
   defaultVolunteer = 'Volontario predefinito';
@@ -697,8 +699,8 @@ export class italy implements Language {
   customColumn = 'Un altro campo per la famiglia';
   caption = 'descrizione';
   optionalValues = 'Possibili valori separati da virgola';
-  reciptionDone = "נמסר בהצלחה";
-  lab='מעבדה';
+  receptionDone = "Received in Lab";
+  lab='Lab';
   hideFamilyPhoneFromVolunteer = 'Non mostrare il telefono di famiglia a un volontario';
   hadProblemBefore = 'ha avuto problemi';
   showOnlyLastNamePartToVolunteer = "Mostra solo un'ultima parola al volontario per conto della famiglia";

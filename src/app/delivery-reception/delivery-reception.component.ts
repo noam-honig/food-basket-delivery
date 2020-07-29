@@ -22,7 +22,7 @@ export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
   courierId;
   showData=false;
   deliveries = this.context.for(FamilyDeliveries).gridSettings({
-    allowUpdate: false,
+    allowUpdate: true,
     numOfColumnsInGrid: 7,
 
     knowTotalRows: true,
@@ -65,12 +65,12 @@ export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
           column: deliveries.quantity,
           width: '50'
         },
-        {
-          column:deliveries.deliverStatus,width:'110'
-        },
+        deliveries.distributionCenter,
+        { column:deliveries.deliverStatus,width:'110' },
+
+        { column: deliveries.receptionComments, width: '200'},
 
         { column: deliveries.createDate, width: '150' },
-        deliveries.distributionCenter,
 
         deliveries.deliveryComments,
         deliveries.internalDeliveryComment,  

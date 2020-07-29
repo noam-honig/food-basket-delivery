@@ -162,6 +162,7 @@ export class en implements Language {
   urlFreeText2 = 'Free volunteer text URL 2 for volunteer';
   showText2OnlyWhenDone = 'Display free text 2 only when the volunteer has finished all parcels';
   enableSelfPickupModule = 'There are families who come to take from the division center';
+  enableLabReception = 'Delivery ends with reception';
   showVolunteerCompany = 'Save on behalf of which company the volunteer came from';
   activateEscort = 'Enable driver escort management';
   showHelperComment = 'Save note to volunteer';
@@ -234,6 +235,7 @@ export class en implements Language {
   phone3Description = 'Phone Notes 3';
   phone4 = 'Phone 4';
   phone4Description = 'Phone Notes 4';
+  commentForReception = '';
   statusChangeDate = 'Status: Date changed';
   statusChangeUser = "Status: Who's updating";
   defaultVolunteer = 'Default volunteer';
@@ -697,8 +699,8 @@ export class en implements Language {
   customColumn = 'Another field for the family';
   caption = 'description';
   optionalValues = 'Possible comma-separated values';
-  reciptionDone = "recipted done";
-  lab='מעבדה';
+  receptionDone = "Received in lab";
+  lab='Lab';
   hideFamilyPhoneFromVolunteer = 'Do not show the family phone to a volunteer';
   hadProblemBefore = 'had problem';
   showOnlyLastNamePartToVolunteer = 'Show just one last word to the volunteer on behalf of the family';

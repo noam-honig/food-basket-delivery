@@ -162,6 +162,7 @@ export class es implements Language {
   urlFreeText2 = 'Texto voluntario gratuito URL 2 para voluntario';
   showText2OnlyWhenDone = 'Mostrar texto libre 2 solo cuando el voluntario haya terminado todos los paquetes';
   enableSelfPickupModule = 'Hay familias que vienen a sacar del centro de división.';
+  enableLabReception = 'Delivery ends with reception';
   showVolunteerCompany = 'Ahorre en nombre de qué compañía vino el voluntario';
   activateEscort = 'Habilitar la gestión de acompañantes';
   showHelperComment = 'Guardar nota para ser voluntario';
@@ -234,6 +235,7 @@ export class es implements Language {
   phone3Description = 'Notas telefónicas 3';
   phone4 = 'Teléfono 4';
   phone4Description = 'Notas telefónicas 4';
+  commentForReception = '';
   statusChangeDate = 'Estado: fecha modificada';
   statusChangeUser = 'Estado: quién está actualizando';
   defaultVolunteer = 'Voluntario predeterminado';
@@ -697,8 +699,8 @@ export class es implements Language {
   customColumn = 'Otro campo para la familia';
   caption = 'descripción';
   optionalValues = 'Posibles valores separados por comas';
-  reciptionDone = "נמסר בהצלחה";
-  lab='מעבדה';
+  receptionDone = "Received in lab";
+  lab='Lab';
   hideFamilyPhoneFromVolunteer = 'No muestre el teléfono familiar a un voluntario';
   hadProblemBefore = 'tuvo un problema';
   showOnlyLastNamePartToVolunteer = 'Mostrar solo una última palabra al voluntario en nombre de la familia';
