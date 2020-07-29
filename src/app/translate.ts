@@ -178,7 +178,7 @@ export class Language {
   sendSmsFromDevice = 'שלח קישור בSMS מהטלפון';
   reminderSent = 'תזכורת נשלחה';
   resendReminder = 'שלח שוב';
-  sendReminderSms = 'שלחי SMS לתזכורת';
+  sendReminderSms = 'שלח SMS לתזכורת';
   callPerson = 'התקשר ל';
   callEscort = 'התקשר למלווה';
   family = 'משפחה';
