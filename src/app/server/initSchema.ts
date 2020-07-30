@@ -392,7 +392,10 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         settings.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery.value = true;
         await settings.save();
     });
+    await version(26,async()=>{
+            settings.successMessageText.value = "שלום !משפחה!, אחד המתנדבים שלנו מסר לכם סל. בברכה !ארגון!";
 
+    });
 
 
 
