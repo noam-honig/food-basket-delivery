@@ -249,8 +249,8 @@ export class Helpers extends HelpersBase {
     });
     lab = new BoolColumn({
         caption: getLang(this.context).lab,
-        allowApiUpdate: Roles.lab,
-        includeInApi: Roles.lab,
+        allowApiUpdate: Roles.admin,
+        includeInApi: Roles.admin,
         dbName: 'isLab'
     });
     distCenterAdmin = new BoolColumn({

@@ -82,7 +82,7 @@ export const routes: Routes = [
   HelpersComponent.route,
   { path: 'tr', component: TokenReplacerComponent, canActivate: [OverviewGuard], data: { hide: true } },
 
-  {path: 'reception', component: DeliveryReceptionComponent, canActivate: [LabGuard], data: { name: 'קליטת משלוח' }},
+  {path: 'reception', component: DeliveryReceptionComponent, canActivate: [LabGuard, AdminGuard], data: { name: 'קליטת משלוח' }},
 
   
   
