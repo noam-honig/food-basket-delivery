@@ -149,11 +149,23 @@ export class UserFamiliesList {
         else {
             this.distCenter = undefined;
         }
-        this.toDeliver = this.allFamilies.filter(f => f.deliverStatus.value == DeliveryStatus.ReadyForDelivery);
+        
+        if (DeliveryStatus.usingLabReception) {
+            this.toDeliver = this.allFamilies.filter(f => f.deliverStatus.value == DeliveryStatus.ReadyForDelivery ||
+                f.deliverStatus.value == DeliveryStatus.Success || f.deliverStatus.value == DeliveryStatus.SuccessLeftThere);
+            this.delivered = this.allFamilies.filter(f => f.deliverStatus.value == DeliveryStatus.LabReception);
+        } else {
+            this.toDeliver = this.allFamilies.filter(f => f.deliverStatus.value == DeliveryStatus.ReadyForDelivery);
+            this.delivered = this.allFamilies.filter(f => f.deliverStatus.value == DeliveryStatus.Success || f.deliverStatus.value == DeliveryStatus.SuccessLeftThere);
+        }
+
+
+
         if (this.toDeliver.find(f => f.routeOrder.value == 0) && this.toDeliver.length > 1) {
             this.refreshRoute({});
         }
-        this.delivered = this.allFamilies.filter(f => f.deliverStatus.value == DeliveryStatus.Success || f.deliverStatus.value == DeliveryStatus.SuccessLeftThere);
+
+
         this.problem = this.allFamilies.filter(f => {
             switch (f.deliverStatus.value) {
                 case DeliveryStatus.FailedBadAddress:

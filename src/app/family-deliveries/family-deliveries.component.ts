@@ -540,13 +540,15 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         this.normalColumns.push(
           deliveries.city,
           deliveries.distributionCenter,
+          deliveries.basketType,
+          deliveries.deliverStatus,
           deliveries.quantity,
           deliveries.createDate,
           deliveries.courier,
-          deliveries.courierAssingTime,
+//          deliveries.courierAssingTime,
           deliveries.internalDeliveryComment,
           deliveries.messageStatus,
-          deliveries.deliveryStatusUser,
+//          deliveries.deliveryStatusUser,
           deliveries.courierComments
         );
       } else {

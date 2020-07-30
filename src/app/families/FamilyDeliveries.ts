@@ -434,9 +434,13 @@ export class FamilyDeliveries extends IdEntity {
         return where;
     }
     onTheWayFilter() {
-        return this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(this.courier.isDifferentFrom(''));
-    }
+        let onTheWayGroup = [DeliveryStatus.ReadyForDelivery];
+        
+        if (DeliveryStatus.usingLabReception)
+            onTheWayGroup.push(DeliveryStatus.Success);
 
+        return this.deliverStatus.isIn(onTheWayGroup).and(this.courier.isDifferentFrom(''));
+    }
 
     getDrivingLocation(): Location {
         if (this.drivingLatitude.value != 0)
