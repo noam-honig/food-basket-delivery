@@ -600,7 +600,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         }
         , textInMenu: () => getLang(this.context).deliveryDetails
       },
-      ...getDeliveryGridButtons({ //.bind(this)({
+      ...getDeliveryGridButtons({
         context: this.context,
         deliveries: () => this.deliveries,
         dialog: this.dialog,
@@ -744,7 +744,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
 
         });
       },
-      visible: d => !DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)//&& !this.receiptDeliveryMode
+      visible: d => !DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)
     },
     {
       textInMenu: () => getLang(args.context).volunteerAssignments,
