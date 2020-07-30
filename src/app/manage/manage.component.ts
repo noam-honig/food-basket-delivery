@@ -248,7 +248,7 @@ export class ManageComponent implements OnInit {
     columnSettings: s => [
       this.settings.defaultStatusType,
       this.settings.usingSelfPickupModule,
-      this.settings.usingLabReception,
+      //this.settings.usingLabReception,
       this.settings.showLeftThereButton,
       this.settings.hideFamilyPhoneFromVolunteer,
       this.settings.showOnlyLastNamePartToVolunteer,

@@ -78,11 +78,10 @@ export const routes: Routes = [
   { path: 'overview', component: OverviewComponent, canActivate: [OverviewGuard] },
   DistributionMap.route,
 
-
   HelpersComponent.route,
   { path: 'tr', component: TokenReplacerComponent, canActivate: [OverviewGuard], data: { hide: true } },
 
-  {path: 'reception', component: DeliveryReceptionComponent, canActivate: [LabGuard, AdminGuard], data: { name: 'קליטת משלוח' }},
+  {path: 'reception', component: DeliveryReceptionComponent, canActivate: [LabGuard], data: { name: 'קליטת משלוח' }},
 
   
   

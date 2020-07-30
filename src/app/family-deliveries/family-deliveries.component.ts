@@ -34,7 +34,6 @@ import { sortColumns } from '../shared/utils';
   styleUrls: ['./family-deliveries.component.scss']
 })
 export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
-
   static route: Route = {
     path: 'deliveries',
     component: FamilyDeliveriesComponent,
@@ -601,7 +600,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         }
         , textInMenu: () => getLang(this.context).deliveryDetails
       },
-      ...getDeliveryGridButtons.bind(this)({
+      ...getDeliveryGridButtons({ //.bind(this)({
         context: this.context,
         deliveries: () => this.deliveries,
         dialog: this.dialog,
@@ -745,7 +744,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
 
         });
       },
-      visible: d => !DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)&& !this.receiptDeliveryMode
+      visible: d => !DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)//&& !this.receiptDeliveryMode
     },
     {
       textInMenu: () => getLang(args.context).volunteerAssignments,
@@ -756,6 +755,9 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
         await args.context.openDialog(
           HelperAssignmentComponent, s => s.argsHelper = h);
         this.refresh();
+
+
+
       },
       visible: d => d.courier.value && args.context.isAllowed(Roles.distCenterAdmin)
     },

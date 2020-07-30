@@ -1,16 +1,14 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { ApplicationSettings } from '../manage/ApplicationSettings';
+//import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DataAreaSettings, DataControlInfo, StringColumn, BoolColumn, Context, BusyService, FilterBase, AndFilter, EntityWhere, Column } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
-import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
+import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { getLang } from '../translate';
-import { buildGridButtonFromActions } from '../families/familyActionsWiring';
-import { delvieryActions } from '../family-deliveries/family-deliveries-actions';
-import { FamilyDeliveriesComponent, getDeliveryGridButtons } from '../family-deliveries/family-deliveries.component';
-import { saveToExcel } from '../shared/saveToExcel';
-import { Roles } from '../auth/roles';
-import { Helpers } from '../helpers/helpers';
-import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
+//import { buildGridButtonFromActions } from '../families/familyActionsWiring';
+//import { delvieryActions } from '../family-deliveries/family-deliveries-actions';
+//import { Roles } from '../auth/roles';
+import { Helpers, HelperUserInfo } from '../helpers/helpers';
+//import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 
@@ -26,6 +24,7 @@ export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
   deliveries = this.context.for(FamilyDeliveries).gridSettings({
     allowUpdate: true,
     numOfColumnsInGrid: 3,
+    rowCssClass: f => f.deliverStatus.getCss(),
 
     knowTotalRows: true,
     get: {
@@ -95,11 +94,11 @@ export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
         click: async d => {
           if (await this.dialog.YesNoPromise(getLang(this.context).shouldArchiveDelivery)) {
             {
-              let fd = await this.context.for(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
-              fd.archive.value = true;
-              await fd.save();
+              d.archive.value = true;
+              let user = <HelperUserInfo>this.context.user;
+              d.distributionCenter.value = user.distributionCenter;
+              await d.save();
               this.refresh();
-//              this.deliveries.items.splice(this.deliveries.items.indexOf(d), 1);
             }
           }
         }
@@ -111,6 +110,8 @@ export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
         showInLine: true,
         click: async d => {
           d.deliverStatus.value = DeliveryStatus.FailedOther;
+          let user = <HelperUserInfo>this.context.user;
+          d.distributionCenter.value = user.distributionCenter;
           this.editComment(d);
         }
         , textInMenu: () => getLang(this.context).notDelivered
@@ -123,7 +124,7 @@ export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
     private context: Context,
     public dialog: DialogService,
     private busy: BusyService,
-    public settings: ApplicationSettings
+//    public settings: ApplicationSettings
   ) { }
   
   private selectColumns(deliveries: FamilyDeliveries) {

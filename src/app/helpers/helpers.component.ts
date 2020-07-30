@@ -152,7 +152,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
                   fd.name,
                   fd.address,
                   fd.distributionCenter,
-                  fd.courierComments,
+                  fd.courierComments
                 ]
                 r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
                 return r;

@@ -125,6 +125,7 @@ export class AuthService {
     static async login(user: string, password: string, context?: Context): Promise<loginResult> {
         let r: loginResult = undefined;
 
+
         await context.for(Helpers).iterate(h => h.phone.isEqualTo(user)).forEach(async h => {
             let sort = 9;
             let helperHasPassword = h.realStoredPassword.value.length > 0;
@@ -162,14 +163,16 @@ export class AuthService {
                         else {
                             result.roles.push(Roles.admin);
                             result.roles.push(Roles.distCenterAdmin);
-                        }
-                        if(h.lab.value){                            
                             result.roles.push(Roles.lab);
                         }
                     }
                     if (h.distCenterAdmin.value) {
                         sort = 5;
                         result.roles.push(Roles.distCenterAdmin);
+                    }
+                    if(h.lab.value){                            
+		                sort = 3;
+                        result.roles.push(Roles.lab);
                     }
 
 

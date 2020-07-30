@@ -5,7 +5,7 @@ import { use, getLang } from '../translate';
 
 export class DeliveryStatus {
   static usingSelfPickupModule: boolean = true;
-  static usingLabReception: boolean = true;
+//  static usingLabReception: boolean = false;
   static IsAResultStatus(value: DeliveryStatus) {
     switch (value) {
       case this.Success:
@@ -14,7 +14,6 @@ export class DeliveryStatus {
       case this.FailedBadAddress:
       case this.FailedNotHome:
       case this.FailedOther:
-      case this.LabReception:
         return true;
     }
     return false;
@@ -26,7 +25,7 @@ export class DeliveryStatus {
   static Success: DeliveryStatus = new DeliveryStatus(11, !use ? '' : use.language.deliveredSuccessfully);
   static SuccessPickedUp: DeliveryStatus = new DeliveryStatus(13, !use ? '' : use.language.packageWasPickedUp);
   static SuccessLeftThere: DeliveryStatus = new DeliveryStatus(19, !use ? '' : use.language.leftByHouse);
-  static LabReception: DeliveryStatus = new DeliveryStatus(20, !use ? '' : use.language.receptionDone, true);
+//  static LabReception: DeliveryStatus = new DeliveryStatus(20, !use ? '' : use.language.receptionDone, true);
 
   static FailedBadAddress: DeliveryStatus = new DeliveryStatus(21, !use ? '' : use.language.notDeliveredBadAddress, true);
   static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, !use ? '' : use.language.notDeliveredNotHome, true);
@@ -81,8 +80,7 @@ export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
   }
 
   isSuccess() {
-    return this.isGreaterOrEqualTo(DeliveryStatus.Success).and//(this.isLessOrEqualTo(DeliveryStatus.SuccessLeftThere));
-          (this.isLessOrEqualTo(DeliveryStatus.LabReception));
+    return this.isGreaterOrEqualTo(DeliveryStatus.Success).and(this.isLessOrEqualTo(DeliveryStatus.SuccessLeftThere));
   }
   isProblem() {
     return this.isGreaterOrEqualTo(DeliveryStatus.FailedBadAddress).and(this.isLessOrEqualTo(DeliveryStatus.FailedOther));
@@ -92,11 +90,6 @@ export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
       case DeliveryStatus.Success:
       case DeliveryStatus.SuccessLeftThere:
       case DeliveryStatus.SuccessPickedUp:
-        if (DeliveryStatus.usingLabReception)
-          return 'active';
-        else 
-          return 'deliveredOk';     
-      case DeliveryStatus.LabReception:
         return 'deliveredOk';
       case DeliveryStatus.FailedBadAddress:
       case DeliveryStatus.FailedNotHome:

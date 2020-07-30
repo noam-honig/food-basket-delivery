@@ -485,12 +485,6 @@ export class Statuses {
       case DeliveryStatus.Success.id:
       case DeliveryStatus.SuccessLeftThere.id:
       case DeliveryStatus.SuccessPickedUp.id:
-        if (DeliveryStatus.usingLabReception) 
-            return this.onTheWay;
-        else
-            return this.success;
-        break;
-      case DeliveryStatus.LabReception.id:
         return this.success;
         break;
       case DeliveryStatus.FailedBadAddress.id:

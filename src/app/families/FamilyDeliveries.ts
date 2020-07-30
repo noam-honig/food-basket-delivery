@@ -17,6 +17,7 @@ import { DialogService } from "../select-popup/dialog";
 import { getLang, use } from "../translate";
 import { ApplicationSettings, includePhoneInApi, getSettings } from "../manage/ApplicationSettings";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
+import { Boolean } from "aws-sdk/clients/apigateway";
 
 @EntityClass
 export class FamilyDeliveries extends IdEntity {
@@ -44,9 +45,6 @@ export class FamilyDeliveries extends IdEntity {
             case DeliveryStatus.FailedNotHome:
             case DeliveryStatus.FailedOther:
                 status = getLang(this.context).problem;
-                break;
-            case DeliveryStatus.LabReception:
-                status = getLang(this.context).receptionDone;
                 break;
         }
         return status;
@@ -434,13 +432,9 @@ export class FamilyDeliveries extends IdEntity {
         return where;
     }
     onTheWayFilter() {
-        let onTheWayGroup = [DeliveryStatus.ReadyForDelivery];
-        
-        if (DeliveryStatus.usingLabReception)
-            onTheWayGroup.push(DeliveryStatus.Success);
-
-        return this.deliverStatus.isIn(onTheWayGroup).and(this.courier.isDifferentFrom(''));
+        return this.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(this.courier.isDifferentFrom(''));
     }
+
 
     getDrivingLocation(): Location {
         if (this.drivingLatitude.value != 0)
