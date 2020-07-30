@@ -231,9 +231,11 @@ export class HelpersComponent implements OnInit, OnDestroy {
         column: helpers.distCenterAdmin, width: '160'
       });
     }
-    r.push({
-      column:helpers.lab,width:'120'
-    })
+    if (this.context.isAllowed(Roles.lab)) {
+      r.push({
+        column:helpers.lab,width:'120'
+      });
+    }
     r.push({
       column: helpers.preferredDistributionAreaAddress, width: '120',
     });

@@ -128,7 +128,7 @@ export class ApplicationSettings extends Entity<number>  {
   _old_for_soliders = new BoolColumn({ dbName: 'forSoldiers' });
 
   usingSelfPickupModule = new BoolColumn(this.lang.enableSelfPickupModule);
-  //usingLabReception = new BoolColumn(this.lang.enableLabReception);
+  usingLabReception = new BoolColumn(this.lang.enableLabReception);
   showCompanies = new BoolColumn(this.lang.showVolunteerCompany);
   manageEscorts = new BoolColumn(this.lang.activateEscort);
   showHelperComment = new BoolColumn(this.lang.showHelperComment);
