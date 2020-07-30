@@ -79,27 +79,27 @@ export class PhoneColumn extends radweb.StringColumn {
 
     if (!isPhoneValidForIsrael(col.value)) {
       col.validationError = getLang(context).invalidPhoneNumber;
-    } 
-/*
-    if (col.displayValue.startsWith("05") || col.displayValue.startsWith("07")) {
-      if (col.displayValue.length != 12) {
-        col.validationError = getLang(context).invalidPhoneNumber;
-      }
-
-    } else if (col.displayValue.startsWith('0')) {
-      if (col.displayValue.length != 11) {
-        col.validationError = getLang(context).invalidPhoneNumber;
-      }
     }
-    else {
-      col.validationError = getLang(context).invalidPhoneNumber;
-    }
-  */
+    /*
+        if (col.displayValue.startsWith("05") || col.displayValue.startsWith("07")) {
+          if (col.displayValue.length != 12) {
+            col.validationError = getLang(context).invalidPhoneNumber;
+          }
+    
+        } else if (col.displayValue.startsWith('0')) {
+          if (col.displayValue.length != 11) {
+            col.validationError = getLang(context).invalidPhoneNumber;
+          }
+        }
+        else {
+          col.validationError = getLang(context).invalidPhoneNumber;
+        }
+      */
   }
 }
-export function isPhoneValidForIsrael(input:string){
-  let  st1 = input.match(/^0(5\d|7\d|[2,4,6,8,9])(-{0,1}\d{3})(-*\d{4})$/);
-  return st1!=null;
+export function isPhoneValidForIsrael(input: string) {
+  let st1 = input.match(/^0(5\d|7\d|[2,4,6,8,9])(-{0,1}\d{3})(-*\d{4})$/);
+  return st1 != null;
 }
 export class DateTimeColumn extends radweb.DateTimeColumn {
 
@@ -589,8 +589,13 @@ export function relativeDateName(context: Context, args: { d?: Date, dontShowTim
 }
 export function wasChanged(...columns: Column[]) {
   for (const c of columns) {
-    if (c.value != c.originalValue)
-      return true;
+    if (c.value != c.originalValue) {
+      if (c.value instanceof Date&&c.originalValue instanceof Date) {
+        if (c.value.valueOf() != c.originalValue.valueOf())
+          return true;
+      } else
+        return true;
+    }
   }
 }
 export function logChanges(e: Entity, context: Context, args?: {

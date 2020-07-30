@@ -148,9 +148,14 @@ export class ApplicationSettings extends Entity<number>  {
   volunteerCanUpdateComment = new BoolColumn(this.lang.volunteerCanUpdateComment);
   hideFamilyPhoneFromVolunteer = new BoolColumn(this.lang.hideFamilyPhoneFromVolunteer);
   showOnlyLastNamePartToVolunteer = new BoolColumn(this.lang.showOnlyLastNamePartToVolunteer);
-  allowSendSuccessMessageOption = new BoolColumn({ caption: "הרשה אפשרות של שליחת הודעת SMS למשפחה", allowApiUpdate: false });
-  sendSuccessMessageToFamily = new BoolColumn("שלח הודעה למשפחה כאשר הסל נמסר");
-  successMessageText = new StringColumn("תוכן הודעת הצלחה למשפחה");
+  allowSendSuccessMessageOption = new BoolColumn({ caption: this.lang.allowSendSuccessMessageOption, allowApiUpdate: false });
+  sendSuccessMessageToFamily = new BoolColumn(this.lang.sendSuccessMessageToFamily);
+  successMessageText = new StringColumn(this.lang.successMessageText);
+  requireEULA = new BoolColumn(this.lang.requireEULA);
+  requireConfidentialityApprove = new BoolColumn(this.lang.requireConfidentialityApprove);
+  requireComplexPassword = new BoolColumn(this.lang.requireComplexPassword);
+  timeToDisconnect = new NumberColumn(this.lang.timeToDisconnect);
+  daysToForcePasswordChange = new NumberColumn(this.lang.daysToForcePasswordChange);
 
   showDistCenterAsEndAddressForVolunteer = new BoolColumn(this.lang.showDistCenterAsEndAddressForVolunteer);
   routeStrategy = new routeStrategyColumn();
@@ -379,6 +384,8 @@ export function getSettings(context: Context) {
   let r = settingsForSite.get(Sites.getValidSchemaFromContext(context));
   if (r)
     return r;
+  if (context.onServer&&false)
+    throw "can't find application settings on server for this request";
   return ApplicationSettings.get(context);;
 }
 

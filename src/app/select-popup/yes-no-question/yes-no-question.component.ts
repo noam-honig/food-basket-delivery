@@ -11,6 +11,8 @@ export class YesNoQuestionComponent implements OnInit {
   public args: {
     onYes?: () => void;
     onNo?: () => void;
+    yesButtonText?: string,
+    noButtonText?: string,
     showOnlyConfirm?: boolean;
     question: string;
   };
@@ -18,7 +20,7 @@ export class YesNoQuestionComponent implements OnInit {
   question: string;
   constructor(
     private dialogRef: MatDialogRef<any>,
-    public settings:ApplicationSettings
+    public settings: ApplicationSettings
 
   ) {
     dialogRef.afterClosed().subscribe(s => {
@@ -28,10 +30,21 @@ export class YesNoQuestionComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (!this.args) {
+      this.args = {
+        question: 'q'
+      };
+    }
     if (this.args && this.args.showOnlyConfirm)
       this.confirmOnly = this.args.showOnlyConfirm;
     if (!this.question)
       this.question = this.args.question;
+    if (this.args) {
+      if (!this.args.yesButtonText)
+        this.args.yesButtonText = this.settings.lang.yes;
+      if (!this.args.noButtonText)
+        this.args.noButtonText = this.settings.lang.no;
+    }
   }
   close() {
     this.dialogRef.close();

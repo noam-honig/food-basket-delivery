@@ -52,7 +52,7 @@ export class italy implements Language {
   sendSmsFromDevice = 'Invia un collegamento SMS dal tuo telefono';
   reminderSent = 'promemoria inviato';
   resendReminder = 'invia di nuovo';
-  sendReminderSms = 'Promemoria via SMS';
+  sendReminderSms = 'Invia SMS promemoria';
   callPerson = 'Chiamata';
   callEscort = 'Chiama la scorta';
   family = 'Famiglia';
@@ -700,4 +700,22 @@ export class italy implements Language {
   hideFamilyPhoneFromVolunteer = 'Non mostrare il telefono di famiglia a un volontario';
   hadProblemBefore = 'ha avuto problemi';
   showOnlyLastNamePartToVolunteer = "Mostra solo un'ultima parola al volontario per conto della famiglia";
+  allowSendSuccessMessageOption = "Consenti l'opzione Invia SMS a famiglia";
+  sendSuccessMessageToFamily = 'Invia SMS alla famiglia alla consegna';
+  successMessageText = 'Consegna SMS alla famiglia';
+  requireEULA = 'richiedere EULA';
+  requireConfidentialityApprove = "Richiedi l'approvazione della riservatezza";
+  requireComplexPassword = 'Richiedi password complessa';
+  timeToDisconnect = 'Disconnetti timeout in minuti';
+  daysToForcePasswordChange = 'Giorni per forzare la modifica della password';
+  passwordTooShort = 'Password troppo corta';
+  passwordCharsRequirement = 'Sono necessarie almeno una cifra e una lettera';
+  passwordExpired = 'Password scaduta, si prega di impostare una nuova password';
+  infoIsConfidential = "Presenta sia al volontario che al gestore un messaggio sulla riservatezza delle informazioni \ n \"Le informazioni estratte dal sistema contengono informazioni protette ai sensi della legge sulla protezione della privacy. \ N Le informazioni devono essere conservate in un luogo protetto in modo tale che l'accesso non autorizzato a le informazioni non saranno consentite. \ n Nessuna parte di questo sito può essere copiata, ritrasmessa, ripubblicata, duplicata o utilizzata in altro modo. Chiunque invii le informazioni commette illegalmente un reato. \"\ n";
+  IConfirmEula = 'Accetto i Termini di Utilizzo';
+  mustConfirmEula = "L'applicazione non può essere utilizzata senza il consenso ai termini di utilizzo";
+  readEula = "Fare clic per leggere le condizioni d'uso del sito";
+  newPasswordMustBeNew = "La password nuova ed esistente è un'identità";
+  invalidatePassword = 'Disabilita la password';
+  passwordInvalidated = 'La password è stata revocata';
 }

@@ -72,9 +72,7 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
         await this.helpers.items[0].save();
         this.dialog.Info(this.settings.lang.updateSaved);
         this.confirmPassword.value = this.helpers.currentRow.password.value ? Helpers.emptyPassword : '';
-        if (passwordChanged) {
-          this.auth.login(this.helpers.currentRow.phone.value, thePassword, false, () => { },()=>{});
-        }
+        
       }
     }
     catch (err) {

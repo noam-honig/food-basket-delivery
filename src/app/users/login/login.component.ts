@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, NgZone, ElementRef, AfterContentInit, Aft
 
 
 import { DialogService } from '../../select-popup/dialog';
-import { AuthService } from '../../auth/auth-service';
+import { AuthService, loginResult } from '../../auth/auth-service';
 import { Router, Route, RouteReuseStrategy } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
@@ -24,11 +24,15 @@ export class LoginComponent implements OnInit, AfterViewInit {
   static route: Route = { path: 'login', component: LoginComponent, canActivate: [NotSignedInGuard] };
   phone = new StringColumn(this.settings.lang.phone);
   password = new StringColumn(this.settings.lang.password);
+  newPassword = new StringColumn(this.settings.lang.password);
+  confirmPassword = new StringColumn(this.settings.lang.confirmPassword);
+  confirmEula = new BoolColumn(this.settings.lang.IConfirmEula);
+
   name = new StringColumn(this.settings.lang.volunteerName);
   preferredDistributionArea = new StringColumn(this.settings.lang.preferredDistributionArea);
   remember = new BoolColumn(this.settings.lang.rememberMeOnThisDevice);
   passwordArea = new DataAreaSettings({
-    columnSettings: () => [{ column: this.password, inputType: 'password' }]
+    columnSettings: () => [{ column: this.password, inputType: 'password' }, this.remember]
   });
   phoneArea = new DataAreaSettings({
     columnSettings: () => [{ column: this.phone, inputType: 'tel' }, this.remember]
@@ -36,6 +40,13 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   nameArea = new DataAreaSettings({
     columnSettings: () => [this.name, this.preferredDistributionArea]
+  });
+  setPasswordArea = new DataAreaSettings({
+    columnSettings: () => [
+      { column: this.newPassword, inputType: 'password', visible: () => this.loginResult.requiredToSetPassword },
+      { column: this.confirmPassword, inputType: 'password', visible: () => this.loginResult.requiredToSetPassword },
+      { column: this.confirmEula, visible: () => this.loginResult.requiredToSignEULA }
+    ]
   });
   constructor(
     private dialog: DialogService,
@@ -71,6 +82,40 @@ export class LoginComponent implements OnInit, AfterViewInit {
     this.loginState = state;
     this.stepper.next();
   }
+  loginResult: loginResult = {};
+  async doLogin() {
+    this.loginResult = await this.auth.login({
+      phone: this.phone.value,
+      password: this.password.value,
+      newPassword: this.newPassword.value,
+      EULASigned: this.confirmEula.value
+
+    }, this.remember.value);
+    if (this.loginResult.newUser) {
+      this.setState(this.newUserState);
+      return;
+    }
+
+    if (this.loginResult.needPasswordToLogin) {
+      this.setState(this.passwordState);
+      return;
+    }
+    if (this.loginResult.invalidPassword) {
+      this.dialog.Error(this.settings.lang.userNotFoundOrWrongPassword);
+      if (this.loginState != this.passwordState) {
+        this.setState(this.phoneState);
+        this.stepper.previous();
+      }
+      return;
+    }
+    if (this.loginResult.requiredToSetPassword || this.loginResult.requiredToSignEULA) {
+      this.setState(this.updatePasswordAndEulaState);
+      return;
+    }
+    this.setState(this.phoneState);
+    this.stepper.previous();
+  }
+
 
   phoneState = new loginState(async () => {
     this.phone.value = (await import('src/app/model-shared/types')).PhoneColumn.fixPhoneInput(this.phone.value);
@@ -78,36 +123,45 @@ export class LoginComponent implements OnInit, AfterViewInit {
       this.dialog.Error(this.settings.lang.invalidPhoneNumber);
       return;
     }
-    this.auth.login(this.phone.value, '', this.remember.value,
-      () => {
-        this.setState(this.nameState);
-      }, () => {
-        this.setState(this.passwordState);
-      });
+    this.password.value = '';
+    this.newPassword.value = '';
+    this.confirmPassword.value = '';
+    this.confirmEula.value = false;
+    this.doLogin();
   });
   passwordState = new loginState(async () => {
-    this.auth.login(this.phone.value, this.password.value, this.remember.value,
-      () => {
-        this.dialog.Error(this.settings.lang.userNotFoundOrWrongPassword);
-      }, () => {
-        this.dialog.Error(this.settings.lang.userNotFoundOrWrongPassword);
-      });
+    this.doLogin();
   });
-  nameState = new loginState(async () => {
+  updatePasswordAndEulaState = new loginState(async () => {
+
+    if (this.loginResult.requiredToSetPassword) {
+      if (this.newPassword.value == this.password.value) {
+        this.newPassword.validationError = this.settings.lang.newPasswordMustBeNew;
+        this.dialog.Error(this.settings.lang.newPasswordMustBeNew);
+        return;
+
+      }
+      if (!this.newPassword.value || this.newPassword.value != this.confirmPassword.value) {
+        this.newPassword.validationError = this.settings.lang.passwordDoesntMatchConfirmPassword;
+        this.dialog.Error(this.settings.lang.passwordDoesntMatchConfirmPassword);
+        return;
+      }
+    }
+
+    if (this.loginResult.requiredToSignEULA && !this.confirmEula.value) {
+      this.dialog.Error(this.settings.lang.mustConfirmEula);
+      return;
+    }
+    this.doLogin();
+  });
+  newUserState = new loginState(async () => {
     try {
       let h = this.context.for(Helpers).create();
       h.phone.value = this.phone.value;
       h.name.value = this.name.value;
       h.preferredDistributionAreaAddress.value = this.preferredDistributionArea.value;
       await h.save();
-      this.auth.login(this.phone.value, '', this.remember.value,
-        () => {
-          this.dialog.Error(this.settings.lang.userNotFoundOrWrongPassword);
-          this.loginState = this.phoneState;
-        }, () => {
-          this.dialog.Error(this.settings.lang.userNotFoundOrWrongPassword);
-          this.loginState = this.phoneState;
-        });
+      this.doLogin();
 
     }
     catch (err) {
@@ -115,6 +169,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
       this.loginState = this.phoneState;
     }
   });
+
   loginState = this.phoneState;
 
 

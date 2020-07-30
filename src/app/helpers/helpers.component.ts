@@ -58,12 +58,12 @@ export class HelpersComponent implements OnInit, OnDestroy {
   searchString: string = '';
   numOfColsInGrid = 4;
   helpers = this.context.for(Helpers).gridSettings({
-    showFilter:true,
+    showFilter: true,
     allowDelete: false,
     allowInsert: true,
     allowUpdate: true,
     knowTotalRows: true,
-    
+
     gridButtons: [
       {
         name: use.language.exportToExcel,
@@ -107,7 +107,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       },
       {
         name: use.language.assignDeliveryMenu,
-        icon:'list_alt',
+        icon: 'list_alt',
         visible: h => !h.isNew(),
         click: async h =>
           this.context.openDialog(
@@ -123,6 +123,16 @@ export class HelpersComponent implements OnInit, OnDestroy {
           });
         },
         visible: h => (this.context.isAllowed(Roles.admin) || !h.admin.value)
+      },
+      {
+        name: use.language.invalidatePassword,
+        click: async h => {
+          this.dialog.YesNoQuestion(use.language.invalidatePassword + " " + h.name.value, async () => {
+            await HelpersComponent.invalidatePassword(h.id.value);
+            this.dialog.Info(use.language.passwordInvalidated);
+          });
+        },
+        visible: h => ((this.context.isAllowed(Roles.admin) || !h.admin.value) && this.settings.daysToForcePasswordChange.value > 0)
       },
       {
         name: use.language.sendInviteBySms,
@@ -181,7 +191,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       if (this.context.isAllowed(Roles.admin))
         this.numOfColsInGrid++;
       if (this.settings.forWho.value == TranslationOptions.donors)
-        this.numOfColsInGrid+=4;
+        this.numOfColsInGrid += 4;
 
       return this.selectColumns(helpers);
     },
@@ -272,8 +282,16 @@ export class HelpersComponent implements OnInit, OnDestroy {
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async resetPassword(helperId: string, context?: Context) {
 
-    await context.for(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach( async h => {
+    await context.for(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach(async h => {
       h.realStoredPassword.value = '';
+      await h.save();
+    });
+  }
+  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  static async invalidatePassword(helperId: string, context?: Context) {
+
+    await context.for(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach(async h => {
+      h.passwordChangeDate.value = new Date(1901, 1, 1);
       await h.save();
     });
   }
@@ -333,7 +351,7 @@ ${url}
 
   @ServerFunction({ allowed: Roles.admin })
   static async clearCommentsOnServer(context?: Context) {
-    for await  (const h of context.for(Helpers).iterate({ where: h => h.eventComment.isDifferentFrom('') })) {
+    for await (const h of context.for(Helpers).iterate({ where: h => h.eventComment.isDifferentFrom('') })) {
       h.eventComment.value = '';
       await h.save();
     }
@@ -341,7 +359,7 @@ ${url}
 
   @ServerFunction({ allowed: Roles.admin })
   static async clearEscortsOnServer(context?: Context) {
-    for await  (const h of context.for(Helpers).iterate()) {
+    for await (const h of context.for(Helpers).iterate()) {
       h.escort.value = '';
       h.needEscort.value = false;
       h.theHelperIAmEscorting.value = '';

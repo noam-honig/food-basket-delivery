@@ -52,7 +52,7 @@ export class en implements Language {
   sendSmsFromDevice = 'Send an SMS link from your phone';
   reminderSent = 'Reminder sent';
   resendReminder = 'send again';
-  sendReminderSms = 'SMS reminders';
+  sendReminderSms = 'Send Reminder SMS';
   callPerson = 'Call';
   callEscort = 'Call escort';
   family = 'Family';
@@ -700,4 +700,22 @@ export class en implements Language {
   hideFamilyPhoneFromVolunteer = 'Do not show the family phone to a volunteer';
   hadProblemBefore = 'had problem';
   showOnlyLastNamePartToVolunteer = 'Show just one last word to the volunteer on behalf of the family';
+  allowSendSuccessMessageOption = 'Allow Send SMS to family option';
+  sendSuccessMessageToFamily = 'Send SMS to Family on delivery';
+  successMessageText = 'Delivery SMS Message to Family';
+  requireEULA = 'require EULA';
+  requireConfidentialityApprove = 'Require Confidentiality Approval';
+  requireComplexPassword = 'Require complex password';
+  timeToDisconnect = 'Disconnect timeout in minutes';
+  daysToForcePasswordChange = 'Days to force password change';
+  passwordTooShort = 'Password too short';
+  passwordCharsRequirement = 'At least one digit and one letter are required';
+  passwordExpired = 'Password expired, please set a new password';
+  infoIsConfidential = 'Present both the volunteer and the manager with a message about the confidentiality of the information\n  "The information extracted from the system contains information protected under the Privacy Protection Act.\n  The information must be kept in a protected place so that unauthorized access to the information will not be allowed.\n  No part of this site may be copied, retransmitted, reposted, duplicated or otherwise used. Whoever submits the information illegally commits an offense. "\n  ';
+  IConfirmEula = 'I agree to the Terms of Use';
+  mustConfirmEula = 'The application cannot be used without consent to the terms of use';
+  readEula = 'Click to read the terms of use of the site';
+  newPasswordMustBeNew = 'The new and existing password is an identity';
+  invalidatePassword = 'Disable password';
+  passwordInvalidated = 'The password has been revoked';
 }

@@ -246,6 +246,11 @@ export class ManageComponent implements OnInit {
   });
   prefereces = new DataAreaSettings({
     columnSettings: s => [
+      this.settings.requireEULA,
+      this.settings.requireConfidentialityApprove,
+      this.settings.requireComplexPassword,
+      this.settings.daysToForcePasswordChange,
+      this.settings.timeToDisconnect,
       this.settings.defaultStatusType,
       this.settings.usingSelfPickupModule,
       this.settings.showLeftThereButton,

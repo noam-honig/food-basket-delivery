@@ -105,7 +105,7 @@
   },
   "adminRequireToSetPassword": {
     "google": " You are set as administrator but you do not have a password set for you. To use the management capabilities, it is mandatory to protect the details with a password. You are taken to a password update screen to update information.",
-    "valueInCode": " אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועבר למסך עדכון פרטים לעדכון סיסמה.",
+    "valueInCode": "אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה.",
     "custom": "You are a manager user without a required password defined. Please set a password in the following user details screen."
   },
   "age": {
@@ -148,6 +148,11 @@
     "google": "Everything Else",
     "valueInCode": "כל השאר",
     "custom": "All others"
+  },
+  "allowSendSuccessMessageOption": {
+    "google": "Allow the possibility of sending an SMS message to the family",
+    "valueInCode": "הרשה אפשרות של שליחת הודעת SMS למשפחה",
+    "custom": "Allow Send SMS to family option"
   },
   "allRegions": {
     "google": "All areas",
@@ -663,6 +668,11 @@
   "days": {
     "google": "Days",
     "valueInCode": "ימים"
+  },
+  "daysToForcePasswordChange": {
+    "google": "Days to change password change",
+    "valueInCode": "ימים לחיוב החלפת סיסמה",
+    "custom": "Days to force password change"
   },
   "defaultBasketType": {
     "google": "Default basket type",
@@ -1490,6 +1500,10 @@
     "google": "I can't go to the event",
     "valueInCode": "לא אוכל להגיע לארוע"
   },
+  "IConfirmEula": {
+    "google": "I agree to the Terms of Use",
+    "valueInCode": "אני מסכים לתנאי השימוש"
+  },
   "iconForWebSite": {
     "google": "Website Icon",
     "valueInCode": "אייקון לאתר"
@@ -1538,6 +1552,10 @@
     "google": "Update details",
     "valueInCode": "פרטי עדכונים"
   },
+  "infoIsConfidential": {
+    "google": "Present both the volunteer and the manager with a message about the confidentiality of the information\\n  \"The information extracted from the system contains information protected under the Privacy Protection Act.\\n  The information must be kept in a protected place so that unauthorized access to the information will not be allowed.\\n  No part of this site may be copied, retransmitted, reposted, duplicated or otherwise used. Whoever submits the information illegally commits an offense. \"\\n  ",
+    "valueInCode": "להציג גם למתנדב וגם למנהל הודעה על סודיות המידע\n  \"המידע המופק מתוך המערכת מכיל מידע המוגן על פי חוק הגנת הפרטיות.\n  יש לשמור את המידע במקום מוגן שלא תתאפשר גישה לא מורשית למידע.\n  אין להעתיק, להפיץ, להציג או למסור לצד שלישי את המידע או חלק ממנו. המוסר את המידע שלא כדין עובר עבירה.\"\n  "
+  },
   "inProgress": {
     "google": "working on it...",
     "valueInCode": "עובד על זה..."
@@ -1550,6 +1568,10 @@
     "google": "Internal note for shipping - Will not be shown to volunteer",
     "valueInCode": "הערה פנימית למשלוח - לא תוצג למתנדב",
     "custom": "Internal deliver note - not visible to volunteer"
+  },
+  "invalidatePassword": {
+    "google": "Disable password",
+    "valueInCode": "בטל תוקף סיסמה"
   },
   "invalidPhoneNumber": {
     "google": "Phone number is incorrect",
@@ -1766,6 +1788,10 @@
     "google": "Forward to families update",
     "valueInCode": "העבר למשפחות עדכון"
   },
+  "mustConfirmEula": {
+    "google": "The application cannot be used without consent to the terms of use",
+    "valueInCode": "לא ניתן להשתמש באפליקציה ללא הסכמה לתנאי השימוש"
+  },
   "mustIncludeUrlKeyError": {
     "google": " Must contain!",
     "valueInCode": " חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור"
@@ -1814,6 +1840,10 @@
     "google": "A new family",
     "valueInCode": "משפחה חדשה",
     "custom": "Add Family"
+  },
+  "newPasswordMustBeNew": {
+    "google": "The new and existing password is an identity",
+    "valueInCode": "הסיסמה החדשה והקיימת זהות"
   },
   "NewsComponent": {
     "google": "Care needs",
@@ -1975,9 +2005,25 @@
     "google": "password",
     "valueInCode": "סיסמה"
   },
+  "passwordCharsRequirement": {
+    "google": "At least one digit and one letter are required",
+    "valueInCode": "נדרשת לפחות ספרה אחת ואות אחת"
+  },
   "passwordDoesntMatchConfirmPassword": {
     "google": "The password does not match the password confirmation",
     "valueInCode": "הסיסמה אינה תואמת את אישור הסיסמה"
+  },
+  "passwordExpired": {
+    "google": "Password expired, please set a new password",
+    "valueInCode": "פג תוקף הסיסמה, אנא הגדר סיסמה חדשה"
+  },
+  "passwordInvalidated": {
+    "google": "The password has been revoked",
+    "valueInCode": "בוטל תוקף הסיסמה"
+  },
+  "passwordTooShort": {
+    "google": "Password too short",
+    "valueInCode": "סיסמה קצרה מידי"
   },
   "passwordWasReset": {
     "google": "Password deleted",
@@ -2130,6 +2176,10 @@
     "valueInCode": "נתקלתי בבעיה",
     "custom": "Problem Encountered"
   },
+  "readEula": {
+    "google": "Click to read the terms of use of the site",
+    "valueInCode": "לחץ לקריאת תנאי השימוש באתר"
+  },
   "readExcelRow": {
     "google": "Get the line",
     "valueInCode": "קלוט את שורה"
@@ -2269,9 +2319,24 @@
     "google": "The sender's name will be replaced",
     "valueInCode": "יוחלף בשם השולח"
   },
+  "requireComplexPassword": {
+    "google": "Must have a complex password",
+    "valueInCode": "חייב סיסמה מורכבת",
+    "custom": "Require complex password"
+  },
+  "requireConfidentialityApprove": {
+    "google": "Consent to notice of confidentiality of use",
+    "valueInCode": "חייב הסכמה להודעה על סודיות השימוש",
+    "custom": "Require Confidentiality Approval"
+  },
   "requiredVolunteers": {
     "google": "A number of volunteers is required",
     "valueInCode": "מספר מתנדבים נדרש"
+  },
+  "requireEULA": {
+    "google": "Must sign a usage agreement",
+    "valueInCode": "חייב חתימה על הסכם שימוש",
+    "custom": "require EULA"
   },
   "requireFollowUp": {
     "google": "Needs treatment / follow up",
@@ -2468,7 +2533,8 @@
   },
   "sendReminderSms": {
     "google": "SMS reminders",
-    "valueInCode": "שלחי SMS לתזכורת"
+    "valueInCode": "שלח SMS לתזכורת",
+    "custom": "Send Reminder SMS"
   },
   "sendSmsFromDevice": {
     "google": "Send an SMS link from your phone",
@@ -2481,6 +2547,11 @@
   "sendSmsWithLink": {
     "google": "Send an SMS with a link",
     "valueInCode": "שלח הודעת SMS עם קישור"
+  },
+  "sendSuccessMessageToFamily": {
+    "google": "Send a message to the family when the basket is delivered",
+    "valueInCode": "שלח הודעה למשפחה כאשר הסל נמסר",
+    "custom": "Send SMS to Family on delivery"
   },
   "setAsDefaultVolunteer": {
     "google": "Also update as a default volunteer",
@@ -2711,6 +2782,11 @@
     "google": "Message to volunteer when delivered successfully",
     "valueInCode": "הודעה למתנדב כאשר נמסר בהצלחה"
   },
+  "successMessageText": {
+    "google": "Content Success Message for Family",
+    "valueInCode": "תוכן הודעת הצלחה למשפחה",
+    "custom": "Delivery SMS Message to Family"
+  },
   "thankYou": {
     "google": "Thanks",
     "valueInCode": "תודה"
@@ -2730,6 +2806,11 @@
   "thisFamilyHas": {
     "google": "This family has",
     "valueInCode": "למשפחה זו יש"
+  },
+  "timeToDisconnect": {
+    "google": "Time in minutes for automatic disconnection",
+    "valueInCode": "זמן בדקות לניתוק אוטומטית",
+    "custom": "Disconnect timeout in minutes"
   },
   "toDate": {
     "google": "Until",
