@@ -70,7 +70,7 @@ export class ManageComponent implements OnInit {
     this.helpPhones = this.settings.getPhoneStrategy();
     this.qaItems = this.settings.getQuestions();
   }
-  constructor(private dialog: DialogService, private context: Context, private sanitization: DomSanitizer, public settings: ApplicationSettings,private busy:BusyService) { }
+  constructor(private dialog: DialogService, private context: Context, private sanitization: DomSanitizer, public settings: ApplicationSettings, private busy: BusyService) { }
 
   basketType = this.context.for(BasketType).gridSettings({
 
@@ -97,11 +97,11 @@ export class ManageComponent implements OnInit {
     confirmDelete: (h) => this.dialog.confirmDelete(h.name.value)
   });
   distributionCenters = this.context.for(DistributionCenters).gridSettings({
-    gridButtons:[
+    gridButtons: [
       {
         name: this.settings.lang.exportToExcel,
         click: async () => {
-          await saveToExcel(this.context.for(DistributionCenters), this.distributionCenters, this.settings.lang.distributionLists, this.busy, (d: DistributionCenters, c) => c == d.id );
+          await saveToExcel(this.settings, this.context.for(DistributionCenters), this.distributionCenters, this.settings.lang.distributionLists, this.busy, (d: DistributionCenters, c) => c == d.id);
         }
         , visible: () => this.context.isAllowed(Roles.admin)
       },

@@ -68,7 +68,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       {
         name: use.language.exportToExcel,
         click: async () => {
-          await saveToExcel(this.context.for(Helpers), this.helpers, use.language.volunteer, this.busy, (d: Helpers, c) => c == d.id || c == d.password || c == d.totalKm || c == d.totalTime || c == d.smsDate || c == d.reminderSmsDate || c == d.realStoredPassword || c == d.shortUrlKey || c == d.admin);
+          await saveToExcel(this.settings, this.context.for(Helpers), this.helpers, use.language.volunteer, this.busy, (d: Helpers, c) => c == d.id || c == d.password || c == d.totalKm || c == d.totalTime || c == d.smsDate || c == d.reminderSmsDate || c == d.realStoredPassword || c == d.shortUrlKey || c == d.admin);
         }
         , visible: () => this.context.isAllowed(Roles.admin)
       },

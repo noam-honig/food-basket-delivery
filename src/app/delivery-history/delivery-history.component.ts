@@ -63,7 +63,7 @@ export class DeliveryHistoryComponent implements OnInit {
         name: this.settings.lang.exportToExcel,
         visible: () => this.context.isAllowed(Roles.admin),
         click: async () => {
-          await saveToExcel(this.context.for(helperHistoryInfo, this.helperStorage), this.helperInfo, this.settings.lang.volunteers, this.busy, (d: helperHistoryInfo, c) => c == d.courier);
+          await saveToExcel(this.settings, this.context.for(helperHistoryInfo, this.helperStorage), this.helperInfo, this.settings.lang.volunteers, this.busy, (d: helperHistoryInfo, c) => c == d.courier);
         }
       }],
       columnSettings: h => [
@@ -125,7 +125,7 @@ export class DeliveryHistoryComponent implements OnInit {
     gridButtons: [{
       name: this.settings.lang.exportToExcel,
       click: async () => {
-        await saveToExcel(this.context.for(FamilyDeliveries), this.deliveries, this.settings.lang.deliveries, this.busy, (d: FamilyDeliveries, c) => c == d.id || c == d.family, undefined,
+        await saveToExcel(this.settings,this.context.for(FamilyDeliveries), this.deliveries, this.settings.lang.deliveries, this.busy, (d: FamilyDeliveries, c) => c == d.id || c == d.family, undefined,
           async (f, addColumn) => {
             await f.basketType.addBasketTypes(f.quantity, addColumn);
             f.addStatusExcelColumn(addColumn);

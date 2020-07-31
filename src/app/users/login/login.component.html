@@ -41,7 +41,7 @@
           <div *ngIf="loginState==updatePasswordAndEulaState">
             {{this.loginResult.requiredToSetPasswordReason}}
             <data-area [settings]="setPasswordArea"></data-area>
-            <a href="" *ngIf="this.loginResult.requiredToSignEULA">{{settings.lang.readEula}} </a>
+            <a href="https://www.we-tribu.com/hagai/terms-of-use" *ngIf="this.loginResult.requiredToSignEULA" target="_blank">{{settings.lang.readEula}} </a>
           </div>
           <div style="width:100%;text-align: end;margin-top:10px">
             <button mat-raised-button color="accent" (click)="loginState.nextStep()">{{settings.lang.signIn}}</button>

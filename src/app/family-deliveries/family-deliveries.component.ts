@@ -575,7 +575,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       {
         name: getLang(this.context).exportToExcel,
         click: async () => {
-          await saveToExcel(this.context.for(ActiveFamilyDeliveries), this.deliveries, getLang(this.context).deliveries, this.busy, (d: ActiveFamilyDeliveries, c) => c == d.id || c == d.family, undefined,
+          await saveToExcel(this.settings,this.context.for(ActiveFamilyDeliveries), this.deliveries, getLang(this.context).deliveries, this.busy, (d: ActiveFamilyDeliveries, c) => c == d.id || c == d.family, undefined,
             async (f, addColumn) => {
               await f.basketType.addBasketTypes(f.quantity, addColumn);
             });

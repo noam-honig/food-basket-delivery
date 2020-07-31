@@ -77,9 +77,16 @@ export class AuthService {
         private zone: NgZone
     ) {
 
-        AuthService.doSignOut = () => this.signout();
+        AuthService.doSignOut = () => {
+
+            this.signout();
+        }
+            ;
         if (settings.currentUserIsValidForAppLoadTest.value)
             tokenHelper.loadSessionFromCookie();
+        else {
+
+        }
 
         tokenHelper.tokenInfoChanged = () => {
             dialog.refreshEventListener(this.context.isAllowed(Roles.distCenterAdmin));
@@ -94,13 +101,15 @@ export class AuthService {
             if (this.context.isSignedIn()) {
                 this.dialog.Error(this.settings.lang.sessionExpiredPleaseRelogin);
                 this.signout();
+
             }
             this.inactiveTimeout();
         });
     }
     static UpdateInfoComponent: { new(...args: any[]): any };
+    remember: boolean;
     async login(args: loginArgs, remember: boolean) {
-
+        this.remember = remember;
         let loginResponse = await AuthService.login(args);
         if (loginResponse.authToken) {
             if (! await this.userAgreedToConfidentiality())
@@ -201,7 +210,7 @@ export class AuthService {
 
         if (h.admin.value || h.distCenterAdmin.value) {
             let ok = true;
-            if (!userHasPassword) {
+            if (!userHasPassword&&!args.newPassword) {
                 r.requiredToSetPassword = true;
                 r.requiredToSetPasswordReason = settings.lang.adminRequireToSetPassword;
                 ok = false;
@@ -247,21 +256,22 @@ export class AuthService {
         if (this.settings.timeToDisconnect.value > 0)
             this.userActivity = setTimeout(() => this.userInactive.next(undefined), this.settings.timeToDisconnect.value * 1000 * TIMEOUT_MULTIPLIER_IN_SECONDS);
     }
-    serverTokenRenewal() {
+    async serverTokenRenewal() {
         if (this.settings.timeToDisconnect.value > 0) {
-            setTimeout(async () => {
-                if (this.context.isSignedIn())
-                    try {
-                        let r = await AuthService.renewToken();
-                        if (!r)
-                            this.signout();
-                        else
-                            this.setToken(r, false);
-
-                    }
-                    catch{
+            if (this.context.isSignedIn())
+                try {
+                    let r = await AuthService.renewToken();
+                    if (!r)
                         this.signout();
-                    }
+                    else
+                        this.setToken(r, this.remember);
+
+                }
+                catch{
+                    this.signout();
+                }
+            setTimeout(async () => {
+
                 this.serverTokenRenewal();
             }, this.settings.timeToDisconnect.value * 1000 * TIMEOUT_MULTIPLIER_IN_SECONDS)
         }
@@ -326,7 +336,7 @@ async function buildHelperUserInfo(h: Helpers, context: Context) {
 }
 function buildToken(result: HelperUserInfo, settings: ApplicationSettings) {
     if (settings.timeToDisconnect.value) {
-        return Helpers.helper.createSecuredTokenBasedOn(result, { expiresIn: settings.timeToDisconnect.value + 60/*to have one more minute on top of the user disconnect time */ });
+        return Helpers.helper.createSecuredTokenBasedOn(result, { expiresIn: settings.timeToDisconnect.value * TIMEOUT_MULTIPLIER_IN_SECONDS + 60/*to have one more minute on top of the user disconnect time */ });
     }
     else
         return Helpers.helper.createSecuredTokenBasedOn(result);

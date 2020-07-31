@@ -4,8 +4,9 @@ import { BusyService } from '@remult/core';
 import { HasAsyncGetTheValue, DateTimeColumn } from "../model-shared/types";
 import { foreachSync } from "./utils";
 import { use } from '../translate';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
-export async function saveToExcel<E extends Entity, T extends GridSettings<E>>(
+export async function saveToExcel<E extends Entity, T extends GridSettings<E>>(settings: ApplicationSettings,
   context: SpecificEntityHelper<any, E>,
   grid: T,
   fileName: string,
@@ -26,30 +27,27 @@ export async function saveToExcel<E extends Entity, T extends GridSettings<E>>(
     let ws = {
 
     } as import('xlsx').WorkSheet;
-    var dc = new DateTimeColumn();
-    dc.value = new Date();
-    ws["A1"] = {
-      v: dc.displayValue,
-      t: "d",
-      w: "dd/mm/yyyy HH:MM"
-
-    } as import('xlsx').CellObject;
-    ws["A2"] = {
-      f: "year(A1)"
-
-    } as import('xlsx').CellObject;
     ws["!cols"] = [];
 
 
-     
-    
-
-    let rowNum = 2;
     let maxChar = 'A';
+    let titleRow = 1;
+    if (settings.requireConfidentialityApprove.value) {
+      titleRow = 2;
+      ws["C1"] = {
+        v: settings.lang.infoIsConfidential
+      };
+      ws["!merges"] = [{ s: { c: 2, r: 0 }, e: { c: 15, r: 0 } }]
+      maxChar = "C";
+      ws['!rows'] = [{ hpt: 50 }]
+
+    }
+    let rowNum = titleRow + 1;
+
 
     let rows = context.iterate(grid.getFilterWithSelectedRows());
 
-    
+    if (true)
 
       for await (const f of rows) {
         let colPrefix = '';
@@ -58,8 +56,8 @@ export async function saveToExcel<E extends Entity, T extends GridSettings<E>>(
 
         let addColumn = (caption: string, v: string, t: import('xlsx').ExcelDataType, hidden?: boolean) => {
 
-          if (rowNum == 2) {
-            ws[colPrefix + colName + "1"] = { v: caption };
+          if (rowNum == titleRow + 1) {
+            ws[colPrefix + colName + titleRow] = { v: caption };
             ws["!cols"].push({
               wch: caption.length,
               hidden: hidden
@@ -124,11 +122,11 @@ export async function saveToExcel<E extends Entity, T extends GridSettings<E>>(
 
       }
 
-  
-    
+
+
 
     ws["!ref"] = "A1:" + maxChar + rowNum;
-    ws["!autofilter"] = { ref: ws["!ref"] };
+    ws["!autofilter"] = { ref: "A" + titleRow + ":" + maxChar + rowNum };
 
 
     XLSX.utils.book_append_sheet(wb, ws, 'test');

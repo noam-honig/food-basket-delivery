@@ -32,7 +32,7 @@ import { saveToExcel } from '../shared/saveToExcel';
 import { Roles, distCenterAdminGuard, AdminGuard } from '../auth/roles';
 import { MatTabGroup } from '@angular/material/tabs';
 
-import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { getLang, TranslationOptions, use } from '../translate';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
@@ -665,7 +665,7 @@ interface statsOnTab {
 
 }
 export async function saveFamiliesToExcel(context: Context, gs: GridSettings<Families>, busy: BusyService, name) {
-    await saveToExcel<Families, GridSettings<Families>>(context.for(Families), gs, name, busy, (f, c) => c == f.id || c == f.addressApiResult, (f, c) => false, async (f, addColumn) => {
+    await saveToExcel<Families, GridSettings<Families>>(getSettings(context) ,context.for(Families), gs, name, busy, (f, c) => c == f.id || c == f.addressApiResult, (f, c) => false, async (f, addColumn) => {
         let x = f.getGeocodeInformation();
         let street = f.address.value;
         let house = '';

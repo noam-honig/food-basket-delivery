@@ -11,7 +11,7 @@ import { AdminGuard } from '../../auth/roles';
 import { Sites } from '../../sites/sites';
 import { CustomReuseStrategy } from 'src/app/custom-reuse-controller-router-strategy';
 import { MatStepper } from '@angular/material';
-import { Helpers } from '../../helpers/helpers';
+import { Helpers, validatePasswordColumn } from '../../helpers/helpers';
 
 
 
@@ -84,6 +84,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   }
   loginResult: loginResult = {};
   async doLogin() {
+    let prev = this.loginResult;
     this.loginResult = await this.auth.login({
       phone: this.phone.value,
       password: this.password.value,
@@ -91,6 +92,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
       EULASigned: this.confirmEula.value
 
     }, this.remember.value);
+    if (prev.requiredToSignEULA)
+      this.loginResult.requiredToSignEULA = true;
     if (this.loginResult.newUser) {
       this.setState(this.newUserState);
       return;
@@ -144,6 +147,11 @@ export class LoginComponent implements OnInit, AfterViewInit {
       if (!this.newPassword.value || this.newPassword.value != this.confirmPassword.value) {
         this.newPassword.validationError = this.settings.lang.passwordDoesntMatchConfirmPassword;
         this.dialog.Error(this.settings.lang.passwordDoesntMatchConfirmPassword);
+        return;
+      }
+      validatePasswordColumn(this.context,this.newPassword);
+      if (this.newPassword.validationError){
+        this.dialog.Error(this.newPassword.validationError);
         return;
       }
     }

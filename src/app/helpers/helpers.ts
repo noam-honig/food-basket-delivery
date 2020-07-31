@@ -133,18 +133,12 @@ export class Helpers extends HelpersBase {
                     if (!canUpdate)
                         throw "Not Allowed";
                     if (this.password.value && this.password.value != this.password.originalValue && this.password.value != Helpers.emptyPassword) {
-                        if (getSettings(this.context).requireComplexPassword.value) {
-                            var l = getLang(this.context);
-                            if (this.password.value.length < 8)
-                                this.password.validationError = l.passwordTooShort;
-                            if (!this.password.value.match(/^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/))
-                                this.password.validationError = l.passwordCharsRequirement;
-                            
-                            if (this.password.validationError)
+                        let context = this.context;
+                        let password =this.password;
+                        validatePasswordColumn(context, password);
+                        if (this.password.validationError)
                             return;
-                                //throw this.password.defs.caption + " - " + this.password.validationError;
-
-                        }
+                        //throw this.password.defs.caption + " - " + this.password.validationError;
                         this.realStoredPassword.value = Helpers.passwordHelper.generateHash(this.password.value);
                         this.passwordChangeDate.value = new Date();
                     }
@@ -254,7 +248,7 @@ export class Helpers extends HelpersBase {
     createDate = new changeDate({ caption: getLang(this.context).createDate });
     passwordChangeDate = new changeDate();
     EULASignDate = new changeDate();
-//    confidentialityConfirmDate = new changeDate();
+    //    confidentialityConfirmDate = new changeDate();
 
     reminderSmsDate = new DateTimeColumn({
         caption: getLang(this.context).remiderSmsDate
@@ -415,3 +409,13 @@ export interface HelperUserInfo extends UserInfo {
     escortedHelperName: string;
     distributionCenter: string;
 }
+export function validatePasswordColumn(context: Context, password: StringColumn) {
+    if (getSettings(context).requireComplexPassword.value) {
+        var l = getLang(context);
+        if (password.value.length < 8)
+            password.validationError = l.passwordTooShort;
+        if (!password.value.match(/^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/))
+            password.validationError = l.passwordCharsRequirement;
+    }
+}
+
