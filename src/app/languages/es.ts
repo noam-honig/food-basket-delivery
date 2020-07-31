@@ -718,4 +718,5 @@ export class es implements Language {
   newPasswordMustBeNew = 'La contraseña nueva y existente es una identidad';
   invalidatePassword = 'Deshabilitar contraseña';
   passwordInvalidated = 'La contraseña ha sido revocada';
+  sessionExpiredPleaseRelogin = 'La conexión con el servidor ha expirado, vuelva a iniciar sesión';
 }

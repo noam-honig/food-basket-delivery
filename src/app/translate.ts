@@ -854,6 +854,7 @@ export class Language {
   newPasswordMustBeNew = "הסיסמה החדשה והקיימת זהות";
   invalidatePassword="בטל תוקף סיסמה";
   passwordInvalidated = "בוטל תוקף הסיסמה";
+  sessionExpiredPleaseRelogin = "לצורך הגנה על פרטיות הנתונים, יש לבצע כניסה מחדש";
 }
 
 const defaultLang = new Language();

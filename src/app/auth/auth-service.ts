@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, HostListener, NgZone } from "@angular/core";
 
 import { DialogService, extractError } from "../select-popup/dialog";
 
@@ -13,18 +13,17 @@ import { AsignFamilyComponent } from "../asign-family/asign-family.component";
 
 import { Sites } from "../sites/sites";
 import { OverviewComponent } from "../overview/overview.component";
-import { SelectListComponent } from "../select-list/select-list.component";
 import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings";
-import { settings } from "cluster";
 import { YesNoQuestionComponent } from "../select-popup/yes-no-question/yes-no-question.component";
+import { Subject } from "rxjs";
 
-
+const TIMEOUT_MULTIPLIER_IN_SECONDS = 60;
 @Injectable()
 export class AuthService {
 
     async loginFromSms(key: string) {
         var response = await AuthService.loginFromSms(key);
-        if (response.valid) {
+        if (response.valid && await this.userAgreedToConfidentiality()) {
             this.setToken(response.authToken, false);
             this.dialog.analytics('login from sms');
             this.routeHelper.navigateToComponent((await import("../my-families/my-families.component")).MyFamiliesComponent);
@@ -61,7 +60,7 @@ export class AuthService {
             await h.save();
             return {
                 valid: true,
-                authToken: Helpers.helper.createSecuredTokenBasedOn(info),
+                authToken: buildToken(info, getSettings(context)),
                 requirePassword: false
             } as LoginResponse
 
@@ -74,30 +73,38 @@ export class AuthService {
         private tokenHelper: JwtSessionManager,
         private context: Context,
         private routeHelper: RouteHelperService,
-        public settings: ApplicationSettings
+        public settings: ApplicationSettings,
+        private zone: NgZone
     ) {
 
-        tokenHelper.loadSessionFromCookie();
+        AuthService.doSignOut = () => this.signout();
+        if (settings.currentUserIsValidForAppLoadTest.value)
+            tokenHelper.loadSessionFromCookie();
+
         tokenHelper.tokenInfoChanged = () => {
             dialog.refreshEventListener(this.context.isAllowed(Roles.distCenterAdmin));
             dialog.refreshFamiliesAndDistributionCenters();
         };
         tokenHelper.tokenInfoChanged();
+        window.onmousemove = () => this.refreshUserState();
+        window.onkeydown = () => this.refreshUserState();
+        this.inactiveTimeout();
+        this.serverTokenRenewal();
+        this.userInactive.subscribe(() => {
+            if (this.context.isSignedIn()) {
+                this.dialog.Error(this.settings.lang.sessionExpiredPleaseRelogin);
+                this.signout();
+            }
+            this.inactiveTimeout();
+        });
     }
     static UpdateInfoComponent: { new(...args: any[]): any };
     async login(args: loginArgs, remember: boolean) {
 
         let loginResponse = await AuthService.login(args);
         if (loginResponse.authToken) {
-            if (this.settings.requireConfidentialityApprove.value) {
-                if (! await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
-                    question: this.settings.lang.infoIsConfidential,
-                    yesButtonText: this.settings.lang.confirm
-
-                },y=>y.yes)) {
-                    loginResponse = {};
-                }
-            }
+            if (! await this.userAgreedToConfidentiality())
+                loginResponse = {};
         }
         if (loginResponse.authToken) {
             this.setToken(loginResponse.authToken, remember);
@@ -114,6 +121,18 @@ export class AuthService {
         }
         return loginResponse;
 
+    }
+
+    private async userAgreedToConfidentiality() {
+        if (this.settings.requireConfidentialityApprove.value) {
+            if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
+                question: this.settings.lang.infoIsConfidential,
+                yesButtonText: this.settings.lang.confirm
+            }, y => y.yes)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @ServerFunction({ allowed: true })
@@ -141,26 +160,9 @@ export class AuthService {
 
         }
 
-        let result: HelperUserInfo = {
+        let result: HelperUserInfo = await buildHelperUserInfo(h, context);
 
-            id: h.id.value,
-            roles: [Sites.getOrgRole(context)],
-            name: h.name.value,
-            distributionCenter: h.distributionCenter.value,
-            theHelperIAmEscortingId: h.theHelperIAmEscorting.value,
-            escortedHelperName: h.theHelperIAmEscorting.value ? (await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value : ''
-        };
-        if (h.admin.value) {
-            if (Sites.isOverviewSchema(context))
-                result.roles.push(Roles.overview)
-            else {
-                result.roles.push(Roles.admin);
-                result.roles.push(Roles.distCenterAdmin);
-            }
-        }
-        if (h.distCenterAdmin.value) {
-            result.roles.push(Roles.distCenterAdmin);
-        }
+
         context._setUser(result);
 
 
@@ -224,17 +226,62 @@ export class AuthService {
 
         h.lastSignInDate.value = new Date();
         await h.save();
-
-        r = {
-
-            authToken: Helpers.helper.createSecuredTokenBasedOn(result),
-        };
-        return r;
+        return { authToken: buildToken(result, settings) };
     }
+    static doSignOut: () => void;
+
+
     async signout() {
         this.tokenHelper.signout('/' + Sites.getOrganizationFromContext(this.context));
-        this.routeHelper.navigateToComponent((await import("../users/login/login.component")).LoginComponent);
+        setTimeout(async () => {
+            this.zone.run(async () =>
+                this.routeHelper.navigateToComponent((await import("../users/login/login.component")).LoginComponent));
+        }, 100);
     }
+
+    userActivity;
+    userInactive: Subject<any> = new Subject();
+
+
+    inactiveTimeout() {
+        if (this.settings.timeToDisconnect.value > 0)
+            this.userActivity = setTimeout(() => this.userInactive.next(undefined), this.settings.timeToDisconnect.value * 1000 * TIMEOUT_MULTIPLIER_IN_SECONDS);
+    }
+    serverTokenRenewal() {
+        if (this.settings.timeToDisconnect.value > 0) {
+            setTimeout(async () => {
+                if (this.context.isSignedIn())
+                    try {
+                        let r = await AuthService.renewToken();
+                        if (!r)
+                            this.signout();
+                        else
+                            this.setToken(r, false);
+
+                    }
+                    catch{
+                        this.signout();
+                    }
+                this.serverTokenRenewal();
+            }, this.settings.timeToDisconnect.value * 1000 * TIMEOUT_MULTIPLIER_IN_SECONDS)
+        }
+    }
+    @ServerFunction({ allowed: c => c.isSignedIn() })
+    static async renewToken(context?: Context) {
+        if (!context.isSignedIn())
+            return undefined;
+        let h = await context.for(Helpers).findId(context.user.id);
+        if (!h)
+            return undefined;
+        return buildToken(await buildHelperUserInfo(h, context), getSettings(context));
+
+    }
+
+    refreshUserState() {
+        clearTimeout(this.userActivity);
+        this.inactiveTimeout();
+    }
+
 
 
 }
@@ -252,5 +299,36 @@ export interface loginArgs {
     password: string,
     newPassword: string,
     EULASigned: boolean
+
+}
+
+async function buildHelperUserInfo(h: Helpers, context: Context) {
+    let result: HelperUserInfo = {
+        id: h.id.value,
+        roles: [Sites.getOrgRole(context)],
+        name: h.name.value,
+        distributionCenter: h.distributionCenter.value,
+        theHelperIAmEscortingId: h.theHelperIAmEscorting.value,
+        escortedHelperName: h.theHelperIAmEscorting.value ? (await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value : ''
+    };
+    if (h.admin.value) {
+        if (Sites.isOverviewSchema(context))
+            result.roles.push(Roles.overview);
+        else {
+            result.roles.push(Roles.admin);
+            result.roles.push(Roles.distCenterAdmin);
+        }
+    }
+    if (h.distCenterAdmin.value) {
+        result.roles.push(Roles.distCenterAdmin);
+    }
+    return result;
+}
+function buildToken(result: HelperUserInfo, settings: ApplicationSettings) {
+    if (settings.timeToDisconnect.value) {
+        return Helpers.helper.createSecuredTokenBasedOn(result, { expiresIn: settings.timeToDisconnect.value + 60/*to have one more minute on top of the user disconnect time */ });
+    }
+    else
+        return Helpers.helper.createSecuredTokenBasedOn(result);
 
 }

@@ -183,6 +183,7 @@ export class ApplicationSettings extends Entity<number>  {
   familyCustom3Values = new StringColumn({ caption: this.lang.customColumn + " 3 " + this.lang.optionalValues, includeInApi: Roles.admin });
   familyCustom4Caption = new StringColumn({ caption: this.lang.customColumn + " 4 " + this.lang.caption, includeInApi: Roles.admin });
   familyCustom4Values = new StringColumn({ caption: this.lang.customColumn + " 4 " + this.lang.optionalValues, includeInApi: Roles.admin });
+  currentUserIsValidForAppLoadTest = new BoolColumn({ serverExpression: () => this.context.isSignedIn() });
 
 
   constructor(private context: Context) {
@@ -384,7 +385,7 @@ export function getSettings(context: Context) {
   let r = settingsForSite.get(Sites.getValidSchemaFromContext(context));
   if (r)
     return r;
-  if (context.onServer&&false)
+  if (context.onServer && false)
     throw "can't find application settings on server for this request";
   return ApplicationSettings.get(context);;
 }

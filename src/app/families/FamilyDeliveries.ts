@@ -332,7 +332,7 @@ export class FamilyDeliveries extends IdEntity {
 
     isAllowedForUser() {
         if (!this.context.isSignedIn())
-            this.id.isEqualTo('no rows');
+            return this.id.isEqualTo('no rows');
         let user = <HelperUserInfo>this.context.user;
         let result: FilterBase;
         let add = (f: FilterBase) => result = new AndFilter(f, result);

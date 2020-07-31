@@ -718,4 +718,5 @@ export class soldier implements Language {
   newPasswordMustBeNew = 'הסיסמה החדש והקיימת זהות';
   invalidatePassword = 'בטל תוקף סיסמה';
   passwordInvalidated = 'בוטל תוקף הסיסמה';
+  sessionExpiredPleaseRelogin = 'פג תוקף החיבור לשרת, יש לבצע כניסה מחדש';
 }

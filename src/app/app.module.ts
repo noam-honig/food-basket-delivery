@@ -2,7 +2,7 @@
 
 import { BrowserModule, HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { NgModule, APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { AppRoutingModule, routes } from './app-routing.module';
 import { AppComponent, routeMap } from './app.component';
 import { RemultModule, Context, JwtSessionManager } from '@remult/core';
@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { HelpersComponent } from './helpers/helpers.component';
 
-import { DialogService } from './select-popup/dialog';
+import { DialogService, ShowDialogOnErrorErrorHandler } from './select-popup/dialog';
 import { YesNoQuestionComponent } from './select-popup/yes-no-question/yes-no-question.component';
 import { LoginComponent } from './users/login/login.component';
 
@@ -190,7 +190,7 @@ export class MyHammerConfig extends HammerGestureConfig {
   providers: [
 
     DialogService,
-
+    { provide: ErrorHandler, useClass: ShowDialogOnErrorErrorHandler },
 
     NewsFilterService,
     AuthService,
@@ -217,8 +217,9 @@ export class MyHammerConfig extends HammerGestureConfig {
     {
       provide: HAMMER_GESTURE_CONFIG,
       useClass: MyHammerConfig,
-    }
-    , SettingsService
+    },
+    
+     SettingsService
 
   ],
 
@@ -243,13 +244,14 @@ export class AppModule { }
 
 export function initApp(session: JwtSessionManager, settings: SettingsService) {
   return async () => {
-    session.loadSessionFromCookie();
+
     try {
 
 
       await settings.init();
-      var s = settings.instance;
       
+      var s = settings.instance;
+
       let l = settings.instance.lang;
       routeMap.set(AsignFamilyComponent, l.assignDeliveryMenu);
       routeMap.set(AssignEscortComponent, l.AssignEscortComponent);

@@ -1554,7 +1554,7 @@
   },
   "infoIsConfidential": {
     "google": "Present both the volunteer and the manager with a message about the confidentiality of the information\\n  \"The information extracted from the system contains information protected under the Privacy Protection Act.\\n  The information must be kept in a protected place so that unauthorized access to the information will not be allowed.\\n  No part of this site may be copied, retransmitted, reposted, duplicated or otherwise used. Whoever submits the information illegally commits an offense. \"\\n  ",
-    "valueInCode": "להציג גם למתנדב וגם למנהל הודעה על סודיות המידע\n  \"המידע המופק מתוך המערכת מכיל מידע המוגן על פי חוק הגנת הפרטיות.\n  יש לשמור את המידע במקום מוגן שלא תתאפשר גישה לא מורשית למידע.\n  אין להעתיק, להפיץ, להציג או למסור לצד שלישי את המידע או חלק ממנו. המוסר את המידע שלא כדין עובר עבירה.\"\n  "
+    "valueInCode": "המידע המופק מתוך המערכת מכיל מידע המוגן על פי חוק הגנת הפרטיות.\n  יש לשמור את המידע במקום מוגן שלא תתאפשר גישה לא מורשית למידע.\n  אין להעתיק, להפיץ, להציג או למסור לצד שלישי את המידע או חלק ממנו. המוסר את המידע שלא כדין עובר עבירה.\n  "
   },
   "inProgress": {
     "google": "working on it...",
@@ -2552,6 +2552,10 @@
     "google": "Send a message to the family when the basket is delivered",
     "valueInCode": "שלח הודעה למשפחה כאשר הסל נמסר",
     "custom": "Send SMS to Family on delivery"
+  },
+  "sessionExpiredPleaseRelogin": {
+    "google": "The connection to the server has expired, please log in again",
+    "valueInCode": "פג תוקף החיבור לשרת, יש לבצע כניסה מחדש"
   },
   "setAsDefaultVolunteer": {
     "google": "Also update as a default volunteer",

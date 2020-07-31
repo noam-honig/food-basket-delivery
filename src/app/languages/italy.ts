@@ -718,4 +718,5 @@ export class italy implements Language {
   newPasswordMustBeNew = "La password nuova ed esistente è un'identità";
   invalidatePassword = 'Disabilita la password';
   passwordInvalidated = 'La password è stata revocata';
+  sessionExpiredPleaseRelogin = 'La connessione al server è scaduta, accedi di nuovo';
 }

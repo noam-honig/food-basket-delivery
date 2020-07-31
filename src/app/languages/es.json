@@ -1732,7 +1732,7 @@
   },
   "infoIsConfidential": {
     "google": "Presente tanto al voluntario como al gerente un mensaje sobre la confidencialidad de la información \\ n \"La información extraída del sistema contiene información protegida por la Ley de Protección de Privacidad. \\ N La información debe mantenerse en un lugar protegido para que el acceso no autorizado a la información no será permitida. \\ n Ninguna parte de este sitio puede ser copiada, retransmitida, reenviada, duplicada o utilizada de otra manera. Quien envíe la información ilegalmente comete un delito \". \\ n",
-    "valueInCode": "להציג גם למתנדב וגם למנהל הודעה על סודיות המידע\n  \"המידע המופק מתוך המערכת מכיל מידע המוגן על פי חוק הגנת הפרטיות.\n  יש לשמור את המידע במקום מוגן שלא תתאפשר גישה לא מורשית למידע.\n  אין להעתיק, להפיץ, להציג או למסור לצד שלישי את המידע או חלק ממנו. המוסר את המידע שלא כדין עובר עבירה.\"\n  ",
+    "valueInCode": "המידע המופק מתוך המערכת מכיל מידע המוגן על פי חוק הגנת הפרטיות.\n  יש לשמור את המידע במקום מוגן שלא תתאפשר גישה לא מורשית למידע.\n  אין להעתיק, להפיץ, להציג או למסור לצד שלישי את המידע או חלק ממנו. המוסר את המידע שלא כדין עובר עבירה.\n  ",
     "valueInEnglish": "Present both the volunteer and the manager with a message about the confidentiality of the information\\n  \"The information extracted from the system contains information protected under the Privacy Protection Act.\\n  The information must be kept in a protected place so that unauthorized access to the information will not be allowed.\\n  No part of this site may be copied, retransmitted, reposted, duplicated or otherwise used. Whoever submits the information illegally commits an offense. \"\\n  "
   },
   "inProgress": {
@@ -2900,6 +2900,11 @@
     "google": "Enviar SMS a la familia en la entrega",
     "valueInCode": "שלח הודעה למשפחה כאשר הסל נמסר",
     "valueInEnglish": "Send SMS to Family on delivery"
+  },
+  "sessionExpiredPleaseRelogin": {
+    "google": "La conexión con el servidor ha expirado, vuelva a iniciar sesión",
+    "valueInCode": "פג תוקף החיבור לשרת, יש לבצע כניסה מחדש",
+    "valueInEnglish": "The connection to the server has expired, please log in again"
   },
   "setAsDefaultVolunteer": {
     "google": "También actualizar como voluntario predeterminado",

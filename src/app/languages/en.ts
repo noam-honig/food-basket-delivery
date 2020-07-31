@@ -718,4 +718,5 @@ export class en implements Language {
   newPasswordMustBeNew = 'The new and existing password is an identity';
   invalidatePassword = 'Disable password';
   passwordInvalidated = 'The password has been revoked';
+  sessionExpiredPleaseRelogin = 'The connection to the server has expired, please log in again';
 }
