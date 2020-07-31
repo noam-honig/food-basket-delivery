@@ -21,9 +21,15 @@ export class DateRangeComponent implements OnInit {
   });
   toDate = new DateColumn(this.settings.lang.toDate);
   onlyDone = new BoolColumn({ caption: this.settings.lang.showOnlyCompletedDeliveries, defaultValue: true })
+  onlyArchived = new BoolColumn({ caption: this.settings.lang.showOnlyArchivedDeliveries, defaultValue: this.settings.usingLabReception.value })
+  
   rangeArea = new DataAreaSettings({
-    columnSettings: () => [[this.fromDate, this.toDate],this.onlyDone],
-    
+    columnSettings: () => {
+      let r = [[this.fromDate, this.toDate],this.onlyDone];
+      if (this.settings.usingLabReception.value)
+        r.push(this.onlyArchived);
+      return r;
+    }
   });
   private getEndOfMonth(): Date {
     return new Date(this.fromDate.value.getFullYear(), this.fromDate.value.getMonth() + 1, 0);
@@ -66,6 +72,8 @@ export class DateRangeComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (!this.settings.usingLabReception)
+      this.onlyArchived.value = false;
   }
 
 }

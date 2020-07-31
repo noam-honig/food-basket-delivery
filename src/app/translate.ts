@@ -649,6 +649,7 @@ export class Language {
 
   archiveDeliveries = 'העברה לארכיב';
   archiveDeliveriesHelp = 'העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים';
+  revertArchive = 'החזר מארכיב';
   updateBasketType = 'עדכן סוג סל';
   updateBasketQuantity = 'עדכן כמות סלים';
   updateDistributionList = 'עדכן רשימת חלוקה';
@@ -822,6 +823,7 @@ export class Language {
   assignVolunteer = "שייך מתנדב";
   group = "קבוצה";
   showOnlyCompletedDeliveries = "הצג רק משלוחים שהסתיימו";
+  showOnlyArchivedDeliveries = "הצג רק משלוחים מארכיון";
   smsSent = "SMS נשלח";
   noAssignedVolunteer = "לא משוייך מתנדב";
   smsOpened = "SMS נפתח";

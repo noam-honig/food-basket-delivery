@@ -517,6 +517,7 @@ export class italy implements Language {
   statusNotSelected = 'Nessuno stato selezionato';
   updateCanceled = 'Aggiornamento interrotto';
   archiveDeliveries = 'Consegne in archivio';
+  revertArchive = 'ritorna dall\'archivio';
   archiveDeliveriesHelp = "Vengono archiviate solo le consegne contrassegnate come \"consegnate\" o \"non riuscite\". L'archivio può essere visualizzato in qualsiasi momento durante la cronologia delle consegne.";
   updateBasketType = 'Aggiorna tipo di pacco';
   updateBasketQuantity = 'Quantità di aggiornamento';
@@ -688,6 +689,7 @@ export class italy implements Language {
   assignVolunteer = 'Assegna volontario';
   group = 'Gruppo';
   showOnlyCompletedDeliveries = 'Mostra solo consegne completate';
+  showOnlyArchivedDeliveries = 'Mostra solo consegne archiviate';
   smsSent = 'SMS inviato';
   noAssignedVolunteer = 'Nessun volontario assegnato';
   smsOpened = 'SMS visualizzato';

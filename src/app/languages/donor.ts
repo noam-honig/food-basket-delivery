@@ -518,6 +518,7 @@ export class donor implements Language {
   statusNotSelected = 'לא נבחר סטטוס';
   updateCanceled = 'העדכון הופסק';
   archiveDeliveries = 'העברה לארכיב';
+  revertArchive = 'החזר מארכיב';
   archiveDeliveriesHelp = 'העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים';
   updateBasketType = 'עדכן סוג סל';
   updateBasketQuantity = 'עדכן כמות סלים';
@@ -689,6 +690,7 @@ export class donor implements Language {
   assignVolunteer = 'שייך מתנדב';
   group = 'קבוצה';
   showOnlyCompletedDeliveries = 'הצג רק משלוחים שהסתיימו';
+  showOnlyArchivedDeliveries = 'הצג רק משלוחים מארכיון';
   smsSent = 'SMS נשלח';
   noAssignedVolunteer = 'לא משוייך מתנדב';
   smsOpened = 'SMS נפתח';

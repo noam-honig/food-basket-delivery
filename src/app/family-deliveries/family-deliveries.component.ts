@@ -529,7 +529,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.needsWorkUser,
         deliveries.fixedCourier,
         deliveries.familyMembers,
-        { column: deliveries.messageStatus, width: '130' }
+        { column: deliveries.messageStatus, width: '130' },
+        deliveries.receptionComments
       ];
 
       this.normalColumns = [
@@ -558,6 +559,11 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           this.deliverySummary
         );
       }
+
+      if (this.settings.usingLabReception.value) {
+        this.normalColumns.push(deliveries.receptionComments);
+      } 
+
       return r;
     },
     allowSelection: true,

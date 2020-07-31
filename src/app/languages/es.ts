@@ -517,6 +517,7 @@ export class es implements Language {
   statusNotSelected = 'Ningún estado seleccionado';
   updateCanceled = 'Actualización detenida';
   archiveDeliveries = 'Archivo de entregas';
+  revertArchive = 'volver del archivo';
   archiveDeliveriesHelp = "Solo se archivan las entregas marcadas como 'entregadas' o 'fallidas'. El archivo se puede ver en cualquier momento durante el Historial de entrega.";
   updateBasketType = 'Actualizar tipo de paquete';
   updateBasketQuantity = 'Cantidad de actualización';
@@ -688,6 +689,7 @@ export class es implements Language {
   assignVolunteer = 'Asignar voluntario';
   group = 'Grupo';
   showOnlyCompletedDeliveries = 'Mostrar solo entregas completadas';
+  showOnlyArchivedDeliveries = 'Mostrar solo entregas archivadas';
   smsSent = 'SMS enviado';
   noAssignedVolunteer = 'No hay voluntario asignado';
   smsOpened = 'SMS visto';

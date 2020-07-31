@@ -4,11 +4,7 @@ import { DataAreaSettings, DataControlInfo, StringColumn, BoolColumn, Context, B
 import { DialogService } from '../select-popup/dialog';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { getLang } from '../translate';
-//import { buildGridButtonFromActions } from '../families/familyActionsWiring';
-//import { delvieryActions } from '../family-deliveries/family-deliveries-actions';
-//import { Roles } from '../auth/roles';
 import { Helpers, HelperUserInfo } from '../helpers/helpers';
-//import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 
@@ -22,7 +18,7 @@ export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
   courierId;
   showData=false;
   deliveries = this.context.for(FamilyDeliveries).gridSettings({
-    allowUpdate: true,
+    allowUpdate: false,
     numOfColumnsInGrid: 3,
     rowCssClass: f => f.deliverStatus.getCss(),
 
@@ -97,8 +93,9 @@ export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
               d.archive.value = true;
               let user = <HelperUserInfo>this.context.user;
               d.distributionCenter.value = user.distributionCenter;
+              d.deliverStatus.value = DeliveryStatus.Success;
               await d.save();
-              this.refresh();
+              this.refreshFamilyGrid();
             }
           }
         }
@@ -124,10 +121,9 @@ export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
     private context: Context,
     public dialog: DialogService,
     private busy: BusyService,
-//    public settings: ApplicationSettings
   ) { }
   
-  private selectColumns(deliveries: FamilyDeliveries) {
+  private receptionCommentEntry(deliveries: FamilyDeliveries) {
     let r: DataControlInfo<FamilyDeliveries>[] = [
       {
         column: deliveries.receptionComments,
@@ -139,7 +135,7 @@ export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
 
   private editComment(d: FamilyDeliveries) {
     this.context.openDialog(InputAreaComponent, x => x.args = {
-      title: 'הערת קליטה',
+      title: getLang(this.context).commentForReception,
       validate: async () => {
         if (d.receptionComments.value == '')
             throw getLang(this.context).updateComment;
@@ -150,7 +146,7 @@ export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
       cancel: () => {
       },
       settings: {
-        columnSettings: () => this.selectColumns(d)
+        columnSettings: () => this.receptionCommentEntry(d)
       }
     });
   }
@@ -172,26 +168,11 @@ export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
     }catch(err){
       
     }
-    this.refresh();
+    this.refreshFamilyGrid();
   }
 
-  refresh() {
-    this.refreshFamilyGrid();
-    // this.refreshStats();
-  }
   async refreshFamilyGrid() {
     this.deliveries.page = 1;
     await this.deliveries.getRecords();
-  }
-  
-  clearSearch() {
-    this.searchString = '';
-    this.doSearch();
-  }
-  async doSearch() {
-    if (this.deliveries.currentRow && this.deliveries.currentRow.wasChanged())
-      return;
-    this.busy.donotWait(async () =>
-      await this.refreshFamilyGrid());
   }
 }

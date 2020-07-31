@@ -517,6 +517,7 @@ export class en implements Language {
   statusNotSelected = 'No status selected';
   updateCanceled = 'Update stopped';
   archiveDeliveries = 'Archive deliveries';
+  revertArchive = 'return from archive';
   archiveDeliveriesHelp = "Only deliveries marked as 'delivered' or 'failed' are archived . The archive can be viewed at any time under delivery History.";
   updateBasketType = 'Update parcel type';
   updateBasketQuantity = 'Update Quantity';
@@ -688,6 +689,7 @@ export class en implements Language {
   assignVolunteer = 'Assign Volunteer';
   group = 'Group';
   showOnlyCompletedDeliveries = 'Show only completed deliveries';
+  showOnlyArchivedDeliveries = 'Show only archived deliveries';
   smsSent = 'SMS sent';
   noAssignedVolunteer = 'No assigned volunteer';
   smsOpened = 'SMS viewed';

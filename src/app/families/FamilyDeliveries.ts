@@ -354,6 +354,7 @@ export class FamilyDeliveries extends IdEntity {
                     add(this.courier.isEqualTo(user.id).and(this.visibleToCourier.isEqualTo(true)));
             }
         }
+
         return result;
     }
 
