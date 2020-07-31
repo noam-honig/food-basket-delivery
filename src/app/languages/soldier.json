@@ -2321,7 +2321,7 @@
   },
   "sessionExpiredPleaseRelogin": {
     "google": "פג תוקף החיבור לשרת, יש לבצע כניסה מחדש",
-    "valueInCode": "פג תוקף החיבור לשרת, יש לבצע כניסה מחדש"
+    "valueInCode": "לצורך הגנה על פרטיות הנתונים, יש לבצע כניסה מחדש"
   },
   "setAsDefaultVolunteer": {
     "google": "עדכן גם כמתנדב ברירת מחדל",

@@ -2903,7 +2903,7 @@
   },
   "sessionExpiredPleaseRelogin": {
     "google": "La connessione al server è scaduta, accedi di nuovo",
-    "valueInCode": "פג תוקף החיבור לשרת, יש לבצע כניסה מחדש",
+    "valueInCode": "לצורך הגנה על פרטיות הנתונים, יש לבצע כניסה מחדש",
     "valueInEnglish": "The connection to the server has expired, please log in again"
   },
   "setAsDefaultVolunteer": {

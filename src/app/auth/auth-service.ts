@@ -139,9 +139,11 @@ export class AuthService {
                 yesButtonText: this.settings.lang.confirm
             }, y => y.yes)) {
                 return true;
-            }
+            } else
+                return false;
         }
-        return false;
+        else return true;
+
     }
 
     @ServerFunction({ allowed: true })
@@ -210,7 +212,7 @@ export class AuthService {
 
         if (h.admin.value || h.distCenterAdmin.value) {
             let ok = true;
-            if (!userHasPassword&&!args.newPassword) {
+            if (!userHasPassword && !args.newPassword) {
                 r.requiredToSetPassword = true;
                 r.requiredToSetPasswordReason = settings.lang.adminRequireToSetPassword;
                 ok = false;

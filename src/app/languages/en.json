@@ -2555,7 +2555,7 @@
   },
   "sessionExpiredPleaseRelogin": {
     "google": "The connection to the server has expired, please log in again",
-    "valueInCode": "פג תוקף החיבור לשרת, יש לבצע כניסה מחדש"
+    "valueInCode": "לצורך הגנה על פרטיות הנתונים, יש לבצע כניסה מחדש"
   },
   "setAsDefaultVolunteer": {
     "google": "Also update as a default volunteer",
