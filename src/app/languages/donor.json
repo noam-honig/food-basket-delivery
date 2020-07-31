@@ -604,7 +604,7 @@
     "valueInCode": "כמות ברירת מחדל"
   },
   "defaultSelfPickup": {
-    "google": "באים לקחת ברירת מחדל",
+    "google": "באים למסור ברירת מחדל",
     "valueInCode": "באים לקחת ברירת מחדל"
   },
   "defaultSmsText": {
@@ -1512,7 +1512,7 @@
     "valueInCode": "סמן נמסר בהצלחה ל"
   },
   "markAsSelfPickupFor": {
-    "google": "סמן אספו את החבילה ל",
+    "google": "סמן הפריטים נקלטו ל",
     "valueInCode": "סמן אספו את החבילה ל"
   },
   "markDeliveredToAllHelprFamilies": {
@@ -1772,7 +1772,7 @@
     "valueInCode": "Overview"
   },
   "packageWasPickedUp": {
-    "google": "אספו את החבילה",
+    "google": "הפריטים נקלטו",
     "valueInCode": "אספו את החבילה"
   },
   "parcelSummary": {
@@ -2188,15 +2188,15 @@
     "valueInCode": "בחר מתנדב"
   },
   "selfPickup": {
-    "google": "באים לקחת",
+    "google": "באים למסור",
     "valueInCode": "באים לקחת"
   },
   "selfPickupByBaskets": {
-    "google": "באים לקחת לפי סלים",
+    "google": "באים למסור לפי סלים",
     "valueInCode": "באים לקחת לפי סלים"
   },
   "SelfPickupComponent": {
-    "google": "באים לקחת",
+    "google": "באים למסור",
     "valueInCode": "באים לקחת"
   },
   "selfPickupDeliveries": {
@@ -2204,15 +2204,15 @@
     "valueInCode": "משלוחים שמוגדרים כבאים לקחת"
   },
   "selfPickupStrategy": {
-    "google": "הגדרת באים לקחת",
+    "google": "הגדרת באים למסור",
     "valueInCode": "הגדרת באים לקחת"
   },
   "selfpickupStrategy_byCurrentDelivery": {
-    "google": "באים לקחת בהתאם להגדרת המשלוח הנוכחי",
+    "google": "באים למסור בהתאם להגדרת המשלוח הנוכחי",
     "valueInCode": "באים לקחת בהתאם להגדרת המשלוח הנוכחי"
   },
   "selfPickupStrategy_familyDefault": {
-    "google": "באים לקחת בהתאם להגדרת הברירת מחדל לתורם",
+    "google": "באים למסור בהתאם להגדרת הברירת מחדל לתורם",
     "valueInCode": "באים לקחת בהתאם להגדרת הברירת מחדל למשפחה"
   },
   "selfpickupStrategy_no": {
@@ -2224,7 +2224,7 @@
     "valueInCode": "יבואו לקחת את המשלוח ואינם צריכים משלוח"
   },
   "selfPuckupSuccess": {
-    "google": "אספו את החבילה",
+    "google": "הפריטים נקלטו",
     "valueInCode": "אספו את החבילה"
   },
   "sendInviteBySms": {
@@ -2588,7 +2588,7 @@
     "valueInCode": "עדכן כמות סלים ברירת מחדל"
   },
   "updateDefaultSelfPickup": {
-    "google": "עדכן באים לקחת ברירת מחדל",
+    "google": "עדכן באים למסור ברירת מחדל",
     "valueInCode": "עדכן באים לקחת ברירת מחדל"
   },
   "updateDefaultVolunteer": {
