@@ -235,7 +235,7 @@ export class en implements Language {
   phone3Description = 'Phone Notes 3';
   phone4 = 'Phone 4';
   phone4Description = 'Phone Notes 4';
-  commentForReception = '';
+  commentForReception = 'Reception comment';
   statusChangeDate = 'Status: Date changed';
   statusChangeUser = "Status: Who's updating";
   defaultVolunteer = 'Default volunteer';

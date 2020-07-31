@@ -237,8 +237,6 @@ export class HelpersComponent implements OnInit, OnDestroy {
       });
       r.push({
         column:helpers.distributionCenter, width: '150', 
-        
-        visible: () => helpers.lab.value
       });
     }
     r.push({

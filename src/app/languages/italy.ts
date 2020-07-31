@@ -235,7 +235,7 @@ export class italy implements Language {
   phone3Description = 'Note sul telefono 3';
   phone4 = 'Telefono 4';
   phone4Description = 'Note sul telefono 4';
-  commentForReception = '';
+  commentForReception = 'Commento di ricezione';
   statusChangeDate = 'Stato: data modificata';
   statusChangeUser = 'Stato: chi sta aggiornando';
   defaultVolunteer = 'Volontario predefinito';

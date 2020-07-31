@@ -17,7 +17,6 @@ import { DialogService } from "../select-popup/dialog";
 import { getLang, use } from "../translate";
 import { ApplicationSettings, includePhoneInApi, getSettings } from "../manage/ApplicationSettings";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
-import { Boolean } from "aws-sdk/clients/apigateway";
 
 @EntityClass
 export class FamilyDeliveries extends IdEntity {

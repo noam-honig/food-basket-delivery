@@ -235,7 +235,7 @@ export class es implements Language {
   phone3Description = 'Notas telefónicas 3';
   phone4 = 'Teléfono 4';
   phone4Description = 'Notas telefónicas 4';
-  commentForReception = '';
+  commentForReception = 'Comentario de recepción';
   statusChangeDate = 'Estado: fecha modificada';
   statusChangeUser = 'Estado: quién está actualizando';
   defaultVolunteer = 'Voluntario predeterminado';
