@@ -7,6 +7,7 @@ export class Roles {
     static admin = 'deliveryAdmin';
     static distCenterAdmin = 'distCenterAdmin';
     static overview = 'overview';
+    static lab = 'lab';
 }
 
 
@@ -48,5 +49,20 @@ export class OverviewOrAdminGuard extends SignedInGuard {
 
     isAllowed() {
         return c => c.isAllowed(Roles.admin) || c.isAllowed(Roles.overview);
+    }
+}
+
+@Injectable()
+export class LabGuard extends SignedInGuard {
+    isAllowed() {
+        return Roles.lab;
+    }
+}
+
+@Injectable()
+export class distCenterOrLabGuard extends SignedInGuard {
+
+    isAllowed() {
+        return c => c.isAllowed(Roles.admin) || c.isAllowed(Roles.lab) || c.isAllowed(Roles.distCenterAdmin);
     }
 }

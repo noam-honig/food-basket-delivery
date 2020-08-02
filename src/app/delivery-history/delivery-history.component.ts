@@ -7,6 +7,7 @@ import { DeliveryStatusColumn } from '../families/DeliveryStatus';
 import { HelperId, HelperIdReadonly, Helpers, CompanyColumn } from '../helpers/helpers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { CompoundIdColumn, DateColumn, DataAreaSettings, InMemoryDataProvider, Entity, GridSettings, NumberColumn } from '@remult/core';
+import { sortColumns } from '../shared/utils';
 
 import { Route } from '@angular/router';
 
@@ -104,7 +105,7 @@ export class DeliveryHistoryComponent implements OnInit {
   }
   private async refreshHelpers() {
 
-    var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue, this.dialog.distCenter.value, this.dateRange.onlyDone.value);
+    var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue, this.dialog.distCenter.value, this.dateRange.onlyDone.value, this.dateRange.onlyArchived.value);
     let rows: any[] = this.helperStorage.rows[this.context.for(helperHistoryInfo).create().defs.dbName];
     x = x.map(x => {
       x.deliveries = +x.deliveries;
@@ -116,9 +117,7 @@ export class DeliveryHistoryComponent implements OnInit {
     this.helperInfo.getRecords();
   }
 
-
-
-
+  mltColumns: DataControlInfo<FamilyDeliveries>[] = [];
   deliveries = this.context.for(FamilyDeliveries).gridSettings({
     showFilter: true,
     rowCssClass: d => d.deliverStatus.getCss(),
@@ -152,16 +151,28 @@ export class DeliveryHistoryComponent implements OnInit {
         d.courierAssignUser,
         d.courierAssingTime,
         d.deliveryStatusUser
-      ]
+      ];
       for (const c of d.columns) {
         if (!r.includes(c) && c != d.id && c != d.family)
           r.push(c);
       }
+
+
+      if (this.settings.isSytemForMlt()) {
+        this.mltColumns = [
+          d.name,
+          d.basketType,
+          d.quantity,
+          d.city,
+          d.distributionCenter,
+          d.receptionComments
+        ]
+      } else this.mltColumns = [];
       return r;
     },
 
 
-    numOfColumnsInGrid: 6,
+    numOfColumnsInGrid: (this.mltColumns.length ? this.mltColumns.length : 6),
     knowTotalRows: true,
     get: {
       limit: 50,
@@ -171,17 +182,46 @@ export class DeliveryHistoryComponent implements OnInit {
         let r = d.deliveryStatusDate.isGreaterOrEqualTo(this.dateRange.fromDate.value).and(d.deliveryStatusDate.isLessThan(toDate)).and(d.distributionCenter.filter(this.dialog.distCenter.value))
         if (this.dateRange.onlyDone.value)
           r = r.and(d.deliverStatus.isAResultStatus());
+        if (this.dateRange.onlyArchived.value)
+          r = r.and(d.archive.isEqualTo(true));
         return r;
       }
-    }
+    },
+    rowButtons: [
+      {
+        name: '',
+        icon: 'edit',
+        showInLine: true,
+        click: async fd => {
+          fd.showDetailsDialog({
+            dialog: this.dialog,
+            focusOnDelivery: true
+          });
+        }
+        , textInMenu: () => getLang(this.context).deliveryDetails
+      },
+      {
+        name: '',
+        icon: 'replay',
+        showInLine: true,
+        visible: x => (x.archive.value) && this.context.isAllowed(Roles.admin),
+        click: async fd => {
+          fd.archive.value = false;
+          await fd.save();
+          this.refresh();
+        }
+        , textInMenu: () => getLang(this.context).revertArchive
+      }
+    ]
   });
   async ngOnInit() {
-
+    if (this.mltColumns.length > 0)
+      sortColumns(this.deliveries, this.mltColumns);
     this.refreshHelpers();
 
   }
   @ServerFunction({ allowed: Roles.admin })
-  static async getHelperHistoryInfo(fromDate: string, toDate: string, distCenter: string, onlyDone: boolean, context?: Context, db?: SqlDatabase) {
+  static async getHelperHistoryInfo(fromDate: string, toDate: string, distCenter: string, onlyDone: boolean, onlyArchived: boolean, context?: Context, db?: SqlDatabase) {
     var fromDateDate = DateColumn.stringToDate(fromDate);
     var toDateDate = DateColumn.stringToDate(toDate);
     toDateDate = new Date(toDateDate.getFullYear(), toDateDate.getMonth(), toDateDate.getDate() + 1);
@@ -193,6 +233,8 @@ export class DeliveryHistoryComponent implements OnInit {
       fd.deliveryStatusDate.isLessThan(toDateDate)).and(fd.distributionCenter.filter(distCenter));
     if (onlyDone)
       r = r.and(fd.deliverStatus.isAResultStatus());
+    if (onlyArchived)
+      r = r.and(fd.archive.isEqualTo(true));
 
 
     return (await db.execute(

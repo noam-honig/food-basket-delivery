@@ -264,6 +264,7 @@ export class Language {
   createDate = 'מועד הוספה';
   remiderSmsDate = 'מועד משלוח תזכורת SMS';
   admin = 'מנהל כלל המערכת';
+  lab='עובד מעבדה';
   responsibleForAssign = 'משייך מתנדבים לרשימת חלוקה';
   notAllowedToUpdateVolunteer = 'אינך רשאי לעדכן עבור מתנדב זה';
   company = "חברה";
@@ -288,6 +289,7 @@ export class Language {
   urlFreeText2 = 'כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב';
   showText2OnlyWhenDone = 'להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים';
   enableSelfPickupModule = 'ישנן משפחות שבאות לקחת ממרכז החלוקה';
+  enableLabReception = 'משלוח מסתיים אחרי קליטה במעבדה';
   showVolunteerCompany = 'שמור מטעם איזה חברה הגיע המתנדב';
   activateEscort = 'הפעל ניהול מלווים לנהגים';
   showHelperComment = 'הצג הערה בשיוך למתנדב';
@@ -361,6 +363,7 @@ export class Language {
   phone3Description = 'הערות לטלפון 3';
   phone4 = "טלפון 4";
   phone4Description = 'הערות לטלפון 4';
+  commentForReception = 'הערות קליטה במעבדה';
   statusChangeDate = 'סטטוס: תאריך שינוי';
   statusChangeUser = 'סטטוס: מי עדכן';
   defaultVolunteer = "מתנדב ברירת מחדל";
@@ -646,6 +649,7 @@ export class Language {
 
   archiveDeliveries = 'העברה לארכיב';
   archiveDeliveriesHelp = 'העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים';
+  revertArchive = 'החזר מארכיב';
   updateBasketType = 'עדכן סוג סל';
   updateBasketQuantity = 'עדכן כמות סלים';
   updateDistributionList = 'עדכן רשימת חלוקה';
@@ -819,6 +823,7 @@ export class Language {
   assignVolunteer = "שייך מתנדב";
   group = "קבוצה";
   showOnlyCompletedDeliveries = "הצג רק משלוחים שהסתיימו";
+  showOnlyArchivedDeliveries = "הצג רק משלוחים מארכיון";
   smsSent = "SMS נשלח";
   noAssignedVolunteer = "לא משוייך מתנדב";
   smsOpened = "SMS נפתח";
@@ -829,6 +834,7 @@ export class Language {
   ifYouNeedAnyHelpPleaseCall = "לעזרה התקשר ל";
   customColumn = "שדה נוסף למשפחה";
   caption = "תאור";
+  receptionDone = "נקלט במעבדה";
   optionalValues = "ערכים אפשריים מופרד בפסיקים";
   hideFamilyPhoneFromVolunteer = "אל תציג את הטלפון של המשפחה למתנדב";
   hadProblemBefore = "היתה בעיה בעבר";

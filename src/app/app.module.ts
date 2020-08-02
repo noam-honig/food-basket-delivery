@@ -83,6 +83,7 @@ import { DuplicateFamiliesComponent } from './duplicate-families/duplicate-famil
 import { DateRangeComponent } from './date-range/date-range.component';
 import { ShowOnMapComponent } from './show-on-map/show-on-map.component';
 import { EventsComponent } from './events/events.component';
+import { DeliveryReceptionComponent } from './delivery-reception/delivery-reception.component';
 import { RegisterDonorComponent } from './register-donor/register-donor.component';
 import { RegisterHelperComponent } from './register-helper/register-helper.component';
 import { AddressInputComponent } from './address-input/address-input.component';
@@ -169,6 +170,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     DateRangeComponent,
     ShowOnMapComponent,
     EventsComponent,
+    DeliveryReceptionComponent,
     RegisterDonorComponent,
     RegisterHelperComponent,
     AddressInputComponent

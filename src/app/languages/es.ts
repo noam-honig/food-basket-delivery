@@ -138,6 +138,7 @@ export class es implements Language {
   createDate = 'Fecha de creación';
   remiderSmsDate = 'Fecha de entrega del recordatorio de SMS';
   admin = 'Administrador de sistema';
+  lab = 'Trabajador de laboratorio';
   responsibleForAssign = 'Solo asigna entregas';
   notAllowedToUpdateVolunteer = 'No puede actualizar para este voluntario';
   company = 'Empresa';
@@ -162,6 +163,7 @@ export class es implements Language {
   urlFreeText2 = 'Texto voluntario gratuito URL 2 para voluntario';
   showText2OnlyWhenDone = 'Mostrar texto libre 2 solo cuando el voluntario haya terminado todos los paquetes';
   enableSelfPickupModule = 'Hay familias que vienen a sacar del centro de división.';
+  enableLabReception = 'La entrega finaliza después de la absorción en el laboratorio.';
   showVolunteerCompany = 'Ahorre en nombre de qué compañía vino el voluntario';
   activateEscort = 'Habilitar la gestión de acompañantes';
   showHelperComment = 'Guardar nota para ser voluntario';
@@ -234,6 +236,7 @@ export class es implements Language {
   phone3Description = 'Notas telefónicas 3';
   phone4 = 'Teléfono 4';
   phone4Description = 'Notas telefónicas 4';
+  commentForReception = 'Notas de absorción en el laboratorio.';
   statusChangeDate = 'Estado: fecha modificada';
   statusChangeUser = 'Estado: quién está actualizando';
   defaultVolunteer = 'Voluntario predeterminado';
@@ -516,6 +519,7 @@ export class es implements Language {
   updateCanceled = 'Actualización detenida';
   archiveDeliveries = 'Archivo de entregas';
   archiveDeliveriesHelp = "Solo se archivan las entregas marcadas como 'entregadas' o 'fallidas'. El archivo se puede ver en cualquier momento durante el Historial de entrega.";
+  revertArchive = 'Regresar del archivo';
   updateBasketType = 'Actualizar tipo de paquete';
   updateBasketQuantity = 'Cantidad de actualización';
   updateDistributionList = 'Actualizar lista de distribución';
@@ -686,6 +690,7 @@ export class es implements Language {
   assignVolunteer = 'Asignar voluntario';
   group = 'Grupo';
   showOnlyCompletedDeliveries = 'Mostrar solo entregas completadas';
+  showOnlyArchivedDeliveries = 'Mostrar solo archivos';
   smsSent = 'SMS enviado';
   noAssignedVolunteer = 'No hay voluntario asignado';
   smsOpened = 'SMS visto';
@@ -696,6 +701,7 @@ export class es implements Language {
   ifYouNeedAnyHelpPleaseCall = 'Para ayuda llame';
   customColumn = 'Otro campo para la familia';
   caption = 'descripción';
+  receptionDone = 'Absorbido en el laboratorio.';
   optionalValues = 'Posibles valores separados por comas';
   hideFamilyPhoneFromVolunteer = 'No muestre el teléfono familiar a un voluntario';
   hadProblemBefore = 'tuvo un problema';

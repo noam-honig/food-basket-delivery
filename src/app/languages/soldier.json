@@ -479,6 +479,10 @@
     "google": "נשמח אם תכתוב לנו הערה על מה שראית והיה",
     "valueInCode": "נשמח אם תכתוב לנו הערה על מה שראית והיה"
   },
+  "commentForReception": {
+    "google": "הערות קליטה במעבדה",
+    "valueInCode": "הערות קליטה במעבדה"
+  },
   "commentForSuccessDelivery": {
     "google": "נשמח אם תכתוב לנו הערה על מה שראית והיה",
     "valueInCode": "נשמח אם תכתוב לנו הערה על מה שראית והיה"
@@ -870,6 +874,10 @@
   "empty": {
     "google": "ריק",
     "valueInCode": "ריק"
+  },
+  "enableLabReception": {
+    "google": "משלוח מסתיים אחרי קליטה במעבדה",
+    "valueInCode": "משלוח מסתיים אחרי קליטה במעבדה"
   },
   "enableSelfPickupModule": {
     "google": "ישנן חיילים שבאות לקחת ממרכז החלוקה",
@@ -1402,6 +1410,10 @@
   "km": {
     "google": "ק\"מ",
     "valueInCode": "ק\"מ"
+  },
+  "lab": {
+    "google": "עובד מעבדה",
+    "valueInCode": "עובד מעבדה"
   },
   "languageCode": {
     "google": "iw",
@@ -1947,6 +1959,10 @@
     "google": "מתנדבים אחרונים",
     "valueInCode": "מתנדבים אחרונים"
   },
+  "receptionDone": {
+    "google": "נקלט במעבדה",
+    "valueInCode": "נקלט במעבדה"
+  },
   "redTitleBar": {
     "google": "כותרת דף בצבע אדום",
     "valueInCode": "כותרת דף בצבע אדום"
@@ -2095,6 +2111,10 @@
     "google": "משייך מתנדבים לרשימת חלוקה",
     "valueInCode": "משייך מתנדבים לרשימת חלוקה"
   },
+  "revertArchive": {
+    "google": "החזר מארכיב",
+    "valueInCode": "החזר מארכיב"
+  },
   "routeOptimization": {
     "google": "תכנון מסלול",
     "valueInCode": "תכנון מסלול"
@@ -2241,7 +2261,7 @@
   },
   "sendReminderSms": {
     "google": "שלחי SMS לתזכורת",
-    "valueInCode": "שלחי SMS לתזכורת"
+    "valueInCode": "שלח SMS לתזכורת"
   },
   "sendSmsFromDevice": {
     "google": "שלח קישור בSMS מהטלפון",
@@ -2334,6 +2354,10 @@
   "showOnGovMap": {
     "google": "הצג ב govmap",
     "valueInCode": "הצג ב govmap"
+  },
+  "showOnlyArchivedDeliveries": {
+    "google": "הצג רק משלוחים מארכיון",
+    "valueInCode": "הצג רק משלוחים מארכיון"
   },
   "showOnlyCompletedDeliveries": {
     "google": "הצג רק משלוחים שהסתיימו",

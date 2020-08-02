@@ -12,6 +12,8 @@ import { UpdateCommentComponent } from '../update-comment/update-comment.compone
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { createElementCssSelector } from '@angular/compiler';
+import { getLang } from '../translate';
+import { HelperUserInfo } from '../helpers/helpers';
 
 @Component({
   selector: 'app-family-info',
@@ -41,28 +43,45 @@ export class FamilyInfoComponent implements OnInit {
   showFamilyPickedUp(f: ActiveFamilyDeliveries) {
     return f.deliverStatus.value == DeliveryStatus.SelfPickup;
   }
-  async familiyPickedUp(f: ActiveFamilyDeliveries) {
-    this.context.openDialog(UpdateCommentComponent, x => x.args =
-    {
-      family: f,
-      comment: f.courierComments.value,
-      helpText: s => s.commentForSuccessDelivery,
-      ok: async (comment) => {
-        f.deliverStatus.value = DeliveryStatus.SuccessPickedUp;
-        f.courierComments.value = comment;
-        f.checkNeedsWork();
-        try {
-          await f.save();
-          this.dialog.analytics('Self Pickup');
-        }
-        catch (err) {
-          this.dialog.Error(err);
-        }
-      },
-      cancel: () => { }
-    });
 
+  async getPickupComments(f: ActiveFamilyDeliveries) {
+    this.context.openDialog(UpdateCommentComponent, x => x.args =
+      {
+        family: f,
+        comment: f.courierComments.value,
+        helpText: s => s.commentForSuccessDelivery,
+        ok: async (comment) => {
+          f.deliverStatus.value = DeliveryStatus.SuccessPickedUp;
+          f.courierComments.value = comment;
+          f.checkNeedsWork();
+          try {
+            await f.save();
+            this.dialog.analytics('Self Pickup');
+          }
+          catch (err) {
+            this.dialog.Error(err);
+          }
+        },
+        cancel: () => { }
+      });
   }
+
+  async labSelfReception(d: ActiveFamilyDeliveries) {
+    if (await this.dialog.YesNoPromise(getLang(this.context).shouldArchiveDelivery)) {
+      {
+        d.archive.value = true;
+        let user = <HelperUserInfo>this.context.user;
+        d.distributionCenter.value = user.distributionCenter;
+        d.deliverStatus.value = DeliveryStatus.Success;
+        await d.save();
+      }
+    }
+  }
+
+  async familiyPickedUp(f: ActiveFamilyDeliveries) {
+    await (this.settings.isSytemForMlt()) ? this.labSelfReception(f) :this.getPickupComments(f);
+  }
+
   async cancelAssign(f: ActiveFamilyDeliveries) {
 
     this.assignmentCanceled.emit();

@@ -326,7 +326,7 @@ export class FamiliesComponent implements OnInit {
                 families.address,
                 families.phone1
             ];
-            if (this.settings.forWho.value == TranslationOptions.donors) {
+            if (this.settings.isSytemForMlt()) {
                 this.normalColumns.push(
                     families.email,
                     families.createDate

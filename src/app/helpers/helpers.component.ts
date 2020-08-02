@@ -180,7 +180,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       this.numOfColsInGrid = 4;
       if (this.context.isAllowed(Roles.admin))
         this.numOfColsInGrid++;
-      if (this.settings.forWho.value == TranslationOptions.donors)
+      if (this.settings.isSytemForMlt())
         this.numOfColsInGrid+=4;
 
       return this.selectColumns(helpers);
@@ -231,6 +231,16 @@ export class HelpersComponent implements OnInit, OnDestroy {
         column: helpers.distCenterAdmin, width: '160'
       });
     }
+    let hadCenter = false;
+    if (this.context.isAllowed(Roles.lab)&&this.settings.isSytemForMlt()) {
+      r.push({
+        column:helpers.labAdmin,width:'120'
+      });
+      hadCenter = true;
+      r.push({
+        column:helpers.distributionCenter, width: '150', 
+      });
+    }
     r.push({
       column: helpers.preferredDistributionAreaAddress, width: '120',
     });
@@ -243,7 +253,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
     r.push(helpers.createDate);
 
-    if (this.context.isAllowed(Roles.admin)) {
+    if (this.context.isAllowed(Roles.admin)&&!hadCenter) {
       r.push(helpers.distributionCenter);
     }
     r.push(helpers.email);

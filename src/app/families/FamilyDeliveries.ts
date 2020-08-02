@@ -118,6 +118,11 @@ export class FamilyDeliveries extends IdEntity {
         allowApiUpdate: Roles.admin
     });
 
+    receptionComments = new StringColumn({
+        caption: getLang(this.context).commentForReception,
+        allowApiUpdate: Roles.lab 
+    })
+
     familySource = new FamilySourceId(this.context, {
         includeInApi: Roles.admin,
         allowApiUpdate: false,
@@ -233,7 +238,7 @@ export class FamilyDeliveries extends IdEntity {
         }
     });
 
-    archive = new BoolColumn({ allowApiUpdate: Roles.admin });
+    archive = new BoolColumn({ allowApiUpdate: [Roles.admin,Roles.lab] });
 
     visibleToCourier = new BoolColumn({
         sqlExpression: () => {
@@ -338,7 +343,7 @@ export class FamilyDeliveries extends IdEntity {
         let add = (f: FilterBase) => result = new AndFilter(f, result);
         if (this.onlyActive)
             add(this.active());
-        if (!this.context.isAllowed(Roles.admin)) {
+        if (!this.context.isAllowed([Roles.admin,Roles.lab])) {
             add(this.active());
             if (this.context.isAllowed(Roles.distCenterAdmin))
                 add(this.distributionCenter.isAllowedForUser());

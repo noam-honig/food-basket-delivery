@@ -208,7 +208,7 @@
     "valueInCode": "האם אתה בטוח שאתה רוצה לבטל שיוך ל"
   },
   "areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies": {
-    "google": "האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל",
+    "google": "האם אתה בטוח שאתה רוצה לסמן תרומה נאספה ל",
     "valueInCode": "האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל"
   },
   "asignAnyDelivery": {
@@ -460,7 +460,7 @@
     "valueInCode": "בטל שיוך למתנדב"
   },
   "clickedByMistake": {
-    "google": "נלחץ בטעות - החזר למשלוחים לחלוקה",
+    "google": "נלחץ בטעות - החזר לתרומות לאיסוף",
     "valueInCode": "נלחץ בטעות - החזר למשלוחים לחלוקה"
   },
   "clickForTutorialVideo": {
@@ -478,6 +478,10 @@
   "commentForProblem": {
     "google": "נשמח אם תכתוב לנו הערה על מה שראית והיה",
     "valueInCode": "נשמח אם תכתוב לנו הערה על מה שראית והיה"
+  },
+  "commentForReception": {
+    "google": "הערות קליטה במעבדה",
+    "valueInCode": "הערות קליטה במעבדה"
   },
   "commentForSuccessDelivery": {
     "google": "נשמח אם תכתוב לנו הערה על מה שראית והיה",
@@ -604,7 +608,7 @@
     "valueInCode": "כמות ברירת מחדל"
   },
   "defaultSelfPickup": {
-    "google": "באים לקחת ברירת מחדל",
+    "google": "באים למסור ברירת מחדל",
     "valueInCode": "באים לקחת ברירת מחדל"
   },
   "defaultSmsText": {
@@ -676,7 +680,7 @@
     "valueInCode": "נמסרו לפי סלים"
   },
   "deliveredSuccessfully": {
-    "google": "נמסר בהצלחה",
+    "google": "תרומה נאספה",
     "valueInCode": "נמסר בהצלחה"
   },
   "deliveries": {
@@ -712,7 +716,7 @@
     "valueInCode": "משלוחים מ"
   },
   "deliveriesToDistribute": {
-    "google": "משלוחים לחלוקה",
+    "google": "תרומות לאיסוף",
     "valueInCode": "משלוחים לחלוקה"
   },
   "deliveriesUpdated": {
@@ -870,6 +874,10 @@
   "empty": {
     "google": "ריק",
     "valueInCode": "ריק"
+  },
+  "enableLabReception": {
+    "google": "משלוח מסתיים אחרי קליטה במעבדה",
+    "valueInCode": "משלוח מסתיים אחרי קליטה במעבדה"
   },
   "enableSelfPickupModule": {
     "google": "ישנן תורמים שבאות לקחת ממרכז החלוקה",
@@ -1403,6 +1411,10 @@
     "google": "ק\"מ",
     "valueInCode": "ק\"מ"
   },
+  "lab": {
+    "google": "עובד מעבדה",
+    "valueInCode": "עובד מעבדה"
+  },
   "languageCode": {
     "google": "iw",
     "valueInCode": "iw"
@@ -1504,15 +1516,15 @@
     "valueInCode": "הגדרת העמודות"
   },
   "markAllDeliveriesAsSuccesfull": {
-    "google": "סמן נמסר בהצלחה לכל המשלוחים",
+    "google": "סמן תרומה נאספה לכל המשלוחים",
     "valueInCode": "סמן נמסר בהצלחה לכל המשלוחים"
   },
   "markAsDeliveredFor": {
-    "google": "סמן נמסר בהצלחה ל",
+    "google": "סמן תרומה נאספה ל",
     "valueInCode": "סמן נמסר בהצלחה ל"
   },
   "markAsSelfPickupFor": {
-    "google": "סמן אספו את החבילה ל",
+    "google": "סמן הפריטים נקלטו ל",
     "valueInCode": "סמן אספו את החבילה ל"
   },
   "markDeliveredToAllHelprFamilies": {
@@ -1620,7 +1632,7 @@
     "valueInCode": "משלוח חדש לכל המשלוחים ולא רק לאלו שהסתיימו בהצלחה"
   },
   "newDeliveryForDeliveriesHelp": {
-    "google": "משלוח חדש יוגדר עבור כל המשלוחים המסומנים שהם בסטטוס נמסר בהצלחה, או בעיה כלשהי, אלא אם תבחרו לסמן את השדה ",
+    "google": "משלוח חדש יוגדר עבור כל המשלוחים המסומנים שהם בסטטוס תרומה נאספה, או בעיה כלשהי, אלא אם תבחרו לסמן את השדה ",
     "valueInCode": "משלוח חדש יוגדר עבור כל המשלוחים המסומנים שהם בסטטוס נמסר בהצלחה, או בעיה כלשהי, אלא אם תבחרו לסמן את השדה "
   },
   "newFamilies": {
@@ -1660,7 +1672,7 @@
     "valueInCode": "לא משוייך מתנדב"
   },
   "noDeliveries": {
-    "google": "אין משלוחים לחלוקה",
+    "google": "אין תרומות לאיסוף",
     "valueInCode": "אין משלוחים לחלוקה"
   },
   "noDeliveriesLeft": {
@@ -1772,7 +1784,7 @@
     "valueInCode": "Overview"
   },
   "packageWasPickedUp": {
-    "google": "אספו את החבילה",
+    "google": "הפריטים נקלטו",
     "valueInCode": "אספו את החבילה"
   },
   "parcelSummary": {
@@ -1947,6 +1959,10 @@
     "google": "מתנדבים אחרונים",
     "valueInCode": "מתנדבים אחרונים"
   },
+  "receptionDone": {
+    "google": "נקלט במעבדה",
+    "valueInCode": "נקלט במעבדה"
+  },
   "redTitleBar": {
     "google": "כותרת דף בצבע אדום",
     "valueInCode": "כותרת דף בצבע אדום"
@@ -2095,6 +2111,10 @@
     "google": "משייך מתנדבים לרשימת חלוקה",
     "valueInCode": "משייך מתנדבים לרשימת חלוקה"
   },
+  "revertArchive": {
+    "google": "החזר מארכיב",
+    "valueInCode": "החזר מארכיב"
+  },
   "routeOptimization": {
     "google": "תכנון מסלול",
     "valueInCode": "תכנון מסלול"
@@ -2188,15 +2208,15 @@
     "valueInCode": "בחר מתנדב"
   },
   "selfPickup": {
-    "google": "באים לקחת",
+    "google": "באים למסור",
     "valueInCode": "באים לקחת"
   },
   "selfPickupByBaskets": {
-    "google": "באים לקחת לפי סלים",
+    "google": "באים למסור לפי סלים",
     "valueInCode": "באים לקחת לפי סלים"
   },
   "SelfPickupComponent": {
-    "google": "באים לקחת",
+    "google": "באים למסור",
     "valueInCode": "באים לקחת"
   },
   "selfPickupDeliveries": {
@@ -2204,15 +2224,15 @@
     "valueInCode": "משלוחים שמוגדרים כבאים לקחת"
   },
   "selfPickupStrategy": {
-    "google": "הגדרת באים לקחת",
+    "google": "הגדרת באים למסור",
     "valueInCode": "הגדרת באים לקחת"
   },
   "selfpickupStrategy_byCurrentDelivery": {
-    "google": "באים לקחת בהתאם להגדרת המשלוח הנוכחי",
+    "google": "באים למסור בהתאם להגדרת המשלוח הנוכחי",
     "valueInCode": "באים לקחת בהתאם להגדרת המשלוח הנוכחי"
   },
   "selfPickupStrategy_familyDefault": {
-    "google": "באים לקחת בהתאם להגדרת הברירת מחדל לתורם",
+    "google": "באים למסור בהתאם להגדרת הברירת מחדל לתורם",
     "valueInCode": "באים לקחת בהתאם להגדרת הברירת מחדל למשפחה"
   },
   "selfpickupStrategy_no": {
@@ -2224,7 +2244,7 @@
     "valueInCode": "יבואו לקחת את המשלוח ואינם צריכים משלוח"
   },
   "selfPuckupSuccess": {
-    "google": "אספו את החבילה",
+    "google": "הפריטים נקלטו",
     "valueInCode": "אספו את החבילה"
   },
   "sendInviteBySms": {
@@ -2241,7 +2261,7 @@
   },
   "sendReminderSms": {
     "google": "שלחי SMS לתזכורת",
-    "valueInCode": "שלחי SMS לתזכורת"
+    "valueInCode": "שלח SMS לתזכורת"
   },
   "sendSmsFromDevice": {
     "google": "שלח קישור בSMS מהטלפון",
@@ -2296,7 +2316,7 @@
     "valueInCode": "הצג את כל המשלוחים שחולקו"
   },
   "showAllDeliveries": {
-    "google": "הצג את כל המשלוחים לחלוקה",
+    "google": "הצג את כל התרומות לאיסוף",
     "valueInCode": "הצג את כל המשלוחים לחלוקה"
   },
   "showAllFamilies": {
@@ -2334,6 +2354,10 @@
   "showOnGovMap": {
     "google": "הצג ב govmap",
     "valueInCode": "הצג ב govmap"
+  },
+  "showOnlyArchivedDeliveries": {
+    "google": "הצג רק משלוחים מארכיון",
+    "valueInCode": "הצג רק משלוחים מארכיון"
   },
   "showOnlyCompletedDeliveries": {
     "google": "הצג רק משלוחים שהסתיימו",
@@ -2460,11 +2484,11 @@
     "valueInCode": "רחוב"
   },
   "successButtonSettingName": {
-    "google": "מלל כפתור נמסר בהצלחה",
+    "google": "מלל כפתור תרומה נאספה",
     "valueInCode": "מלל כפתור נמסר בהצלחה"
   },
   "successMessageColumnName": {
-    "google": "הודעה למתנדב כאשר נמסר בהצלחה",
+    "google": "הודעה למתנדב כאשר תרומה נאספה",
     "valueInCode": "הודעה למתנדב כאשר נמסר בהצלחה"
   },
   "thankYou": {
@@ -2588,7 +2612,7 @@
     "valueInCode": "עדכן כמות סלים ברירת מחדל"
   },
   "updateDefaultSelfPickup": {
-    "google": "עדכן באים לקחת ברירת מחדל",
+    "google": "עדכן באים למסור ברירת מחדל",
     "valueInCode": "עדכן באים לקחת ברירת מחדל"
   },
   "updateDefaultVolunteer": {

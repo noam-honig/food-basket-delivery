@@ -529,23 +529,24 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.needsWorkUser,
         deliveries.fixedCourier,
         deliveries.familyMembers,
-        { column: deliveries.messageStatus, width: '130' }
+        { column: deliveries.messageStatus, width: '130' },
+        deliveries.receptionComments
       ];
 
       this.normalColumns = [
         deliveries.name
       ]
-      if (this.settings.forWho.value == TranslationOptions.donors) {
+      if (this.settings.isSytemForMlt()) {
         this.normalColumns.push(
           deliveries.city,
           deliveries.distributionCenter,
+          deliveries.basketType,
+          deliveries.deliverStatus,
           deliveries.quantity,
           deliveries.createDate,
           deliveries.courier,
-          deliveries.courierAssingTime,
           deliveries.internalDeliveryComment,
           deliveries.messageStatus,
-          deliveries.deliveryStatusUser,
           deliveries.courierComments
         );
       } else {
@@ -556,6 +557,11 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           this.deliverySummary
         );
       }
+
+      if (this.settings.isSytemForMlt()) {
+        this.normalColumns.push(deliveries.receptionComments);
+      } 
+
       return r;
     },
     allowSelection: true,

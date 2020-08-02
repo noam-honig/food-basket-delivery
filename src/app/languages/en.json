@@ -555,6 +555,10 @@
     "valueInCode": "נשמח אם תכתוב לנו הערה על מה שראית והיה",
     "custom": "Kindly describe your experience"
   },
+  "commentForReception": {
+    "google": "Absorption notes in the laboratory",
+    "valueInCode": "הערות קליטה במעבדה"
+  },
   "commentForSuccessDelivery": {
     "google": "We'd love to write a comment about what you saw and were",
     "valueInCode": "נשמח אם תכתוב לנו הערה על מה שראית והיה",
@@ -1001,6 +1005,10 @@
   "empty": {
     "google": "blank",
     "valueInCode": "ריק"
+  },
+  "enableLabReception": {
+    "google": "Delivery ends after absorption in the laboratory",
+    "valueInCode": "משלוח מסתיים אחרי קליטה במעבדה"
   },
   "enableSelfPickupModule": {
     "google": "There are families who come to take from the division center",
@@ -1571,6 +1579,10 @@
   "km": {
     "google": "km",
     "valueInCode": "ק\"מ"
+  },
+  "lab": {
+    "google": "Laboratory worker",
+    "valueInCode": "עובד מעבדה"
   },
   "languageCode": {
     "google": "iw",
@@ -2148,6 +2160,10 @@
     "google": "Recent volunteers",
     "valueInCode": "מתנדבים אחרונים"
   },
+  "receptionDone": {
+    "google": "Absorbed in the laboratory",
+    "valueInCode": "נקלט במעבדה"
+  },
   "redTitleBar": {
     "google": "Red page title",
     "valueInCode": "כותרת דף בצבע אדום"
@@ -2309,6 +2325,10 @@
     "valueInCode": "משייך מתנדבים לרשימת חלוקה",
     "custom": "Only Assigns Deliveries"
   },
+  "revertArchive": {
+    "google": "Return from archive",
+    "valueInCode": "החזר מארכיב"
+  },
   "routeOptimization": {
     "google": "Route planning",
     "valueInCode": "תכנון מסלול"
@@ -2468,7 +2488,7 @@
   },
   "sendReminderSms": {
     "google": "SMS reminders",
-    "valueInCode": "שלחי SMS לתזכורת"
+    "valueInCode": "שלח SMS לתזכורת"
   },
   "sendSmsFromDevice": {
     "google": "Send an SMS link from your phone",
@@ -2569,6 +2589,10 @@
   "showOnGovMap": {
     "google": "View in govmap",
     "valueInCode": "הצג ב govmap"
+  },
+  "showOnlyArchivedDeliveries": {
+    "google": "Show only archives",
+    "valueInCode": "הצג רק משלוחים מארכיון"
   },
   "showOnlyCompletedDeliveries": {
     "google": "Show only completed shipments",
