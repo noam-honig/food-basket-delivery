@@ -61,6 +61,15 @@ export abstract class HelpersBase extends IdEntity {
         caption: getLang(this.context).escort
         , allowApiUpdate: Roles.admin
     });
+    
+    archive = new BoolColumn({
+        allowApiUpdate: Roles.admin,
+        includeInApi: Roles.admin,
+    });
+
+    active() {
+        return this.archive.isEqualTo(false);
+    }
 
     getRouteStats(): routeStats {
         return {
@@ -283,6 +292,7 @@ export class Helpers extends HelpersBase {
 
         }
     });
+
     getRouteStats(): routeStats {
         return {
             totalKm: this.totalKm.value,
