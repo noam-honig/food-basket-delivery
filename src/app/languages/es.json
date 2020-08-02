@@ -254,6 +254,11 @@
     "valueInCode": "העבר משלוחים שהסתיימו לארכיון",
     "valueInEnglish": "Archive completed deliveries"
   },
+  "archiveHelper": {
+    "google": "Eliminar voluntario",
+    "valueInCode": "מחק מתנדב",
+    "valueInEnglish": "Delete Volunteer"
+  },
   "areYouSureYouWantToCancelAssignmentTo": {
     "google": "¿Estás seguro de que deseas cancelar la asignación a",
     "valueInCode": "האם אתה בטוח שאתה רוצה לבטל שיוך ל",

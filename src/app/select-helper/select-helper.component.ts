@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { MatDialogRef } from '@angular/material/dialog';
 import { Helpers, HelpersBase } from '../helpers/helpers';
-import { Context, FindOptions, ServerFunction, DialogConfig, SqlDatabase } from '@remult/core';
+import { Context, FindOptions, ServerFunction, DialogConfig, SqlDatabase, Filter } from '@remult/core';
 import { FilterBase } from '@remult/core';
 
 import { BusyService } from '@remult/core';
@@ -237,6 +237,7 @@ function mapHelpers<hType extends HelpersBase>(helpers: hType[], getFamilies: (h
     helperId: h.id.value,
     name: h.name.value,
     phone: h.phone.displayValue,
+    isActive: h.active(),
     assignedDeliveries: getFamilies(h)
 
   } as helperInList));

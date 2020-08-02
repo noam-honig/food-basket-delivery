@@ -325,7 +325,7 @@ export class Language {
   replacedByOrgName = 'יוחלף בשם הארגון';
   deliveriesFor = 'משלוחים עבור';
   archiveCurrentDelivery = 'העבר משלוח נוכחי לארכיב?';
-
+  archiveHelper = 'מחק מתנדב';
   familySelfPickup = 'יבואו לקחת את המשלוח ואינם צריכים משלוח?';
   newDeliveryFor = 'משלוח חדש ל';
   familyAlreadyHasAnActiveDelivery = "למשפחה זו כבר קיים משלוח מאותו סוג האם להוסיף עוד אחד?";

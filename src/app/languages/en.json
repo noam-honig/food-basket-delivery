@@ -229,6 +229,10 @@
     "valueInCode": "העבר משלוחים שהסתיימו לארכיון",
     "custom": "Archive completed deliveries"
   },
+  "archiveHelper": {
+    "google": "Delete Volunteer",
+    "valueInCode": "מחק מתנדב"
+  },
   "areYouSureYouWantToCancelAssignmentTo": {
     "google": "Are you sure you want to unpair",
     "valueInCode": "האם אתה בטוח שאתה רוצה לבטל שיוך ל",

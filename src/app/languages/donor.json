@@ -203,6 +203,10 @@
     "google": "העבר משלוחים שהסתיימו לארכיון",
     "valueInCode": "העבר משלוחים שהסתיימו לארכיון"
   },
+  "archiveHelper": {
+    "google": "מחק מתנדב",
+    "valueInCode": "מחק מתנדב"
+  },
   "areYouSureYouWantToCancelAssignmentTo": {
     "google": "האם אתה בטוח שאתה רוצה לבטל שיוך ל",
     "valueInCode": "האם אתה בטוח שאתה רוצה לבטל שיוך ל"
