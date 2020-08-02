@@ -599,6 +599,11 @@
     "valueInCode": "נשמח אם תכתוב לנו הערה על מה שראית והיה",
     "valueInEnglish": "Kindly describe your experience"
   },
+  "commentForReception": {
+    "google": "Note sull'assorbimento in laboratorio",
+    "valueInCode": "הערות קליטה במעבדה",
+    "valueInEnglish": "Absorption notes in the laboratory"
+  },
   "commentForSuccessDelivery": {
     "google": "Descrivi gentilmente la tua esperienza",
     "valueInCode": "נשמח אם תכתוב לנו הערה על מה שראית והיה",
@@ -1089,6 +1094,11 @@
     "google": "vuoto",
     "valueInCode": "ריק",
     "valueInEnglish": "blank"
+  },
+  "enableLabReception": {
+    "google": "La consegna termina dopo l'assorbimento in laboratorio",
+    "valueInCode": "משלוח מסתיים אחרי קליטה במעבדה",
+    "valueInEnglish": "Delivery ends after absorption in the laboratory"
   },
   "enableSelfPickupModule": {
     "google": "Ci sono famiglie che vengono a prendere dal centro di divisione",
@@ -1754,6 +1764,11 @@
     "google": "km",
     "valueInCode": "ק\"מ",
     "valueInEnglish": "km"
+  },
+  "lab": {
+    "google": "Operaio di laboratorio",
+    "valueInCode": "עובד מעבדה",
+    "valueInEnglish": "Laboratory worker"
   },
   "languageCode": {
     "google": "IW",
@@ -2435,6 +2450,11 @@
     "valueInCode": "מתנדבים אחרונים",
     "valueInEnglish": "Recent volunteers"
   },
+  "receptionDone": {
+    "google": "Assorbito in laboratorio",
+    "valueInCode": "נקלט במעבדה",
+    "valueInEnglish": "Absorbed in the laboratory"
+  },
   "redTitleBar": {
     "google": "Titolo della pagina rossa",
     "valueInCode": "כותרת דף בצבע אדום",
@@ -2621,6 +2641,11 @@
     "valueInCode": "משייך מתנדבים לרשימת חלוקה",
     "valueInEnglish": "Only Assigns Deliveries"
   },
+  "revertArchive": {
+    "google": "Ritorna dall'archivio",
+    "valueInCode": "החזר מארכיב",
+    "valueInEnglish": "Return from archive"
+  },
   "routeOptimization": {
     "google": "Pianificazione del percorso",
     "valueInCode": "תכנון מסלול",
@@ -2803,7 +2828,7 @@
   },
   "sendReminderSms": {
     "google": "Promemoria via SMS",
-    "valueInCode": "שלחי SMS לתזכורת",
+    "valueInCode": "שלח SMS לתזכורת",
     "valueInEnglish": "SMS reminders"
   },
   "sendSmsFromDevice": {
@@ -2920,6 +2945,11 @@
     "google": "Visualizza in govmap",
     "valueInCode": "הצג ב govmap",
     "valueInEnglish": "View in govmap"
+  },
+  "showOnlyArchivedDeliveries": {
+    "google": "Mostra solo archivi",
+    "valueInCode": "הצג רק משלוחים מארכיון",
+    "valueInEnglish": "Show only archives"
   },
   "showOnlyCompletedDeliveries": {
     "google": "Mostra solo consegne completate",

@@ -138,6 +138,7 @@ export class en implements Language {
   createDate = 'Creation Date';
   remiderSmsDate = 'Date of delivery of SMS reminder';
   admin = 'System administrator';
+  lab = 'Laboratory worker';
   responsibleForAssign = 'Only Assigns Deliveries';
   notAllowedToUpdateVolunteer = 'You may not update for this volunteer';
   company = 'Company';
@@ -162,7 +163,7 @@ export class en implements Language {
   urlFreeText2 = 'Free volunteer text URL 2 for volunteer';
   showText2OnlyWhenDone = 'Display free text 2 only when the volunteer has finished all parcels';
   enableSelfPickupModule = 'There are families who come to take from the division center';
-  enableLabReception = 'Delivery ends with reception';
+  enableLabReception = 'Delivery ends after absorption in the laboratory';
   showVolunteerCompany = 'Save on behalf of which company the volunteer came from';
   activateEscort = 'Enable driver escort management';
   showHelperComment = 'Save note to volunteer';
@@ -235,7 +236,7 @@ export class en implements Language {
   phone3Description = 'Phone Notes 3';
   phone4 = 'Phone 4';
   phone4Description = 'Phone Notes 4';
-  commentForReception = 'Reception comment';
+  commentForReception = 'Absorption notes in the laboratory';
   statusChangeDate = 'Status: Date changed';
   statusChangeUser = "Status: Who's updating";
   defaultVolunteer = 'Default volunteer';
@@ -517,8 +518,8 @@ export class en implements Language {
   statusNotSelected = 'No status selected';
   updateCanceled = 'Update stopped';
   archiveDeliveries = 'Archive deliveries';
-  revertArchive = 'return from archive';
   archiveDeliveriesHelp = "Only deliveries marked as 'delivered' or 'failed' are archived . The archive can be viewed at any time under delivery History.";
+  revertArchive = 'Return from archive';
   updateBasketType = 'Update parcel type';
   updateBasketQuantity = 'Update Quantity';
   updateDistributionList = 'Update distribution list';
@@ -689,7 +690,7 @@ export class en implements Language {
   assignVolunteer = 'Assign Volunteer';
   group = 'Group';
   showOnlyCompletedDeliveries = 'Show only completed deliveries';
-  showOnlyArchivedDeliveries = 'Show only archived deliveries';
+  showOnlyArchivedDeliveries = 'Show only archives';
   smsSent = 'SMS sent';
   noAssignedVolunteer = 'No assigned volunteer';
   smsOpened = 'SMS viewed';
@@ -700,9 +701,8 @@ export class en implements Language {
   ifYouNeedAnyHelpPleaseCall = 'For help call';
   customColumn = 'Another field for the family';
   caption = 'description';
+  receptionDone = 'Absorbed in the laboratory';
   optionalValues = 'Possible comma-separated values';
-  receptionDone = "Received in lab";
-  lab='Lab';
   hideFamilyPhoneFromVolunteer = 'Do not show the family phone to a volunteer';
   hadProblemBefore = 'had problem';
   showOnlyLastNamePartToVolunteer = 'Show just one last word to the volunteer on behalf of the family';

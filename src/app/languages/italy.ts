@@ -138,6 +138,7 @@ export class italy implements Language {
   createDate = 'Data di creazione';
   remiderSmsDate = 'Data di consegna del promemoria via SMS';
   admin = 'Amministratore di sistema';
+  lab = 'Operaio di laboratorio';
   responsibleForAssign = 'Assegna solo consegne';
   notAllowedToUpdateVolunteer = 'Non è possibile aggiornare per questo volontario';
   company = 'Azienda';
@@ -162,7 +163,7 @@ export class italy implements Language {
   urlFreeText2 = 'Testo volontario gratuito URL 2 per volontari';
   showText2OnlyWhenDone = 'Visualizza testo libero 2 solo quando il volontario ha completato tutti i pacchi';
   enableSelfPickupModule = 'Ci sono famiglie che vengono a prendere dal centro di divisione';
-  enableLabReception = 'Delivery ends with reception';
+  enableLabReception = "La consegna termina dopo l'assorbimento in laboratorio";
   showVolunteerCompany = 'Risparmia per conto di quale compagnia proviene il volontario';
   activateEscort = 'Abilita la gestione della scorta conducente';
   showHelperComment = 'Salva nota come volontario';
@@ -235,7 +236,7 @@ export class italy implements Language {
   phone3Description = 'Note sul telefono 3';
   phone4 = 'Telefono 4';
   phone4Description = 'Note sul telefono 4';
-  commentForReception = 'Commento di ricezione';
+  commentForReception = "Note sull'assorbimento in laboratorio";
   statusChangeDate = 'Stato: data modificata';
   statusChangeUser = 'Stato: chi sta aggiornando';
   defaultVolunteer = 'Volontario predefinito';
@@ -517,8 +518,8 @@ export class italy implements Language {
   statusNotSelected = 'Nessuno stato selezionato';
   updateCanceled = 'Aggiornamento interrotto';
   archiveDeliveries = 'Consegne in archivio';
-  revertArchive = 'ritorna dall\'archivio';
   archiveDeliveriesHelp = "Vengono archiviate solo le consegne contrassegnate come \"consegnate\" o \"non riuscite\". L'archivio può essere visualizzato in qualsiasi momento durante la cronologia delle consegne.";
+  revertArchive = "Ritorna dall'archivio";
   updateBasketType = 'Aggiorna tipo di pacco';
   updateBasketQuantity = 'Quantità di aggiornamento';
   updateDistributionList = 'Aggiorna la lista di distribuzione';
@@ -689,7 +690,7 @@ export class italy implements Language {
   assignVolunteer = 'Assegna volontario';
   group = 'Gruppo';
   showOnlyCompletedDeliveries = 'Mostra solo consegne completate';
-  showOnlyArchivedDeliveries = 'Mostra solo consegne archiviate';
+  showOnlyArchivedDeliveries = 'Mostra solo archivi';
   smsSent = 'SMS inviato';
   noAssignedVolunteer = 'Nessun volontario assegnato';
   smsOpened = 'SMS visualizzato';
@@ -700,9 +701,8 @@ export class italy implements Language {
   ifYouNeedAnyHelpPleaseCall = 'Per aiuto chiama';
   customColumn = 'Un altro campo per la famiglia';
   caption = 'descrizione';
+  receptionDone = 'Assorbito in laboratorio';
   optionalValues = 'Possibili valori separati da virgola';
-  receptionDone = "Received in Lab";
-  lab='Lab';
   hideFamilyPhoneFromVolunteer = 'Non mostrare il telefono di famiglia a un volontario';
   hadProblemBefore = 'ha avuto problemi';
   showOnlyLastNamePartToVolunteer = "Mostra solo un'ultima parola al volontario per conto della famiglia";

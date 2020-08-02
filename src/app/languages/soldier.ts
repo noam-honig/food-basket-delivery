@@ -138,6 +138,7 @@ export class soldier implements Language {
   createDate = 'מועד הוספה';
   remiderSmsDate = 'מועד משלוח תזכורת SMS';
   admin = 'מנהל כלל המערכת';
+  lab = 'עובד מעבדה';
   responsibleForAssign = 'משייך מתנדבים לרשימת חלוקה';
   notAllowedToUpdateVolunteer = 'אינך רשאי לעדכן עבור מתנדב זה';
   company = 'חברה';
@@ -517,8 +518,8 @@ export class soldier implements Language {
   statusNotSelected = 'לא נבחר סטטוס';
   updateCanceled = 'העדכון הופסק';
   archiveDeliveries = 'העברה לארכיב';
-  revertArchive = 'החזר מארכיב';
   archiveDeliveriesHelp = 'העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים';
+  revertArchive = 'החזר מארכיב';
   updateBasketType = 'עדכן סוג סל';
   updateBasketQuantity = 'עדכן כמות סלים';
   updateDistributionList = 'עדכן רשימת חלוקה';
@@ -700,9 +701,8 @@ export class soldier implements Language {
   ifYouNeedAnyHelpPleaseCall = 'לעזרה התקשר ל';
   customColumn = 'שדה נוסף לחייל';
   caption = 'תאור';
+  receptionDone = 'נקלט במעבדה';
   optionalValues = 'ערכים אפשריים מופרד בפסיקים';
-  receptionDone = "Received in lab";
-  lab='Lab';
   hideFamilyPhoneFromVolunteer = 'אל תציג את הטלפון של החייל למתנדב';
   hadProblemBefore = 'היתה בעיה בעבר';
   showOnlyLastNamePartToVolunteer = 'הצג רק מילה אחרונה למתנדב בשם החייל';
