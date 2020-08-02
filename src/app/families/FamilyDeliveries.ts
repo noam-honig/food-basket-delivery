@@ -83,6 +83,9 @@ export class FamilyDeliveries extends IdEntity {
         allowApiUpdate: Roles.admin
     });
     quantity = new QuantityColumn(this.context, { caption: getLang(this.context).quantity, allowApiUpdate: Roles.admin, dataControlSettings: () => ({ width: '100', inputType: 'number' }) });
+    isLargeQuantity() {
+        return this.quantity.value > 10;
+    }
 
     distributionCenter = new DistributionCenterId(this.context, {
         allowApiUpdate: Roles.admin
