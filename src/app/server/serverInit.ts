@@ -70,7 +70,7 @@ export async function serverInit() {
             for (const entity of <{ new(...args: any[]): Entity; }[]>[
                 ApplicationSettings,
                 ApplicationImages,
-                Helpers, Sites]) {
+                Helpers, SitesEntity]) {
                 await builder.createIfNotExist(context.for(entity).create());
                 await builder.verifyAllColumns(context.for(entity).create());
             }
