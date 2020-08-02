@@ -1,22 +1,23 @@
-import { PhoneColumn, changeDate, SqlBuilder, DateTimeColumn, wasChanged } from "../model-shared/types";
+import { changeDate, PhoneColumn, SqlBuilder, DateTimeColumn, wasChanged } from "../model-shared/types";
+
 import { EntityClass, Context, IdColumn, IdEntity, StringColumn, NumberColumn, BoolColumn, FilterBase, AndFilter, Column, DataAreaSettings, IDataAreaSettings, ValueListColumn, ColumnOptions } from '@remult/core';
 import { BasketId, QuantityColumn } from "./BasketType";
 import { FamilyId, Families, GroupsColumn } from "./families";
 import { DeliveryStatusColumn, DeliveryStatus } from "./DeliveryStatus";
 import { HelperId, HelperIdReadonly, Helpers, HelperUserInfo } from "../helpers/helpers";
-import { Entity, CompoundIdColumn } from '@remult/core';
 import { FamilySourceId } from "./FamilySources";
 import { Roles } from "../auth/roles";
-import { DistributionCenters, DistributionCenterId as DistributionCenterId, allCentersToken } from "../manage/distribution-centers";
+import { DistributionCenterId as DistributionCenterId, allCentersToken } from "../manage/distribution-centers";
 import { YesNoColumn } from "./YesNo";
 
 import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
-import { UpdateFamilyDialogComponent } from "../update-family-dialog/update-family-dialog.component";
+
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService } from "../select-popup/dialog";
-import { getLang, use } from "../translate";
-import { ApplicationSettings, includePhoneInApi, getSettings } from "../manage/ApplicationSettings";
-import { AsignFamilyComponent } from "../asign-family/asign-family.component";
+import { use } from "../translate";
+import { includePhoneInApi, getSettings } from "../manage/ApplicationSettings";
+import { getLang } from "../sites/sites";
+
 
 @EntityClass
 export class FamilyDeliveries extends IdEntity {
@@ -76,7 +77,7 @@ export class FamilyDeliveries extends IdEntity {
     name = new StringColumn({
         allowApiUpdate: false,
         caption: getLang(this.context).familyName,
-        sqlExpression: this.context.isAllowed(Roles.admin)||!getSettings(this.context).showOnlyLastNamePartToVolunteer.value ? undefined : "regexp_replace(name, '^.* ', '')"
+        sqlExpression: this.context.isAllowed(Roles.admin) || !getSettings(this.context).showOnlyLastNamePartToVolunteer.value ? undefined : "regexp_replace(name, '^.* ', '')"
     });
     basketType = new BasketId(this.context, {
         caption: getLang(this.context).basketType,
@@ -93,7 +94,7 @@ export class FamilyDeliveries extends IdEntity {
         allowApiUpdate: Roles.distCenterAdmin
     }, {
         location: () => this.getDrivingLocation(),
-        familyId:()=>this.family.value
+        familyId: () => this.family.value
     });
     courierComments = new StringColumn(getLang(this.context).commentsWritteByVolunteer);
     internalDeliveryComment = new StringColumn({ caption: getLang(this.context).internalDeliveryComment, includeInApi: Roles.admin });
@@ -337,7 +338,7 @@ export class FamilyDeliveries extends IdEntity {
 
     isAllowedForUser() {
         if (!this.context.isSignedIn())
-            this.id.isEqualTo('no rows');
+            return this.id.isEqualTo('no rows');
         let user = <HelperUserInfo>this.context.user;
         let result: FilterBase;
         let add = (f: FilterBase) => result = new AndFilter(f, result);
@@ -498,7 +499,7 @@ export class FamilyDeliveries extends IdEntity {
             let f = await this.context.for(Families).findId(this.family);
             if (f) {
 
-                this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = {
+                this.context.openDialog((await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent, x => x.args = {
                     familyDelivery: this,
                     focusOnDelivery: callerHelper.focusOnDelivery,
                     onSave: async () => {

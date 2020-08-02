@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from "@angular/core";
+import { Injectable, NgZone, ErrorHandler } from "@angular/core";
 import { MatSnackBar } from "@angular/material";
 import { Context, DataAreaSettings, ServerFunction } from '@remult/core';
 
@@ -23,8 +23,8 @@ declare var gtag;
 @Injectable()
 export class DialogService {
     async exception(title: string, err: any): Promise<void> {
-        this.log("Exception:" + title + ": " + extractError(err) + "," + JSON.stringify(err) + "cookies:" + document.cookie );
-        this.log("Exception..." + window.navigator.userAgent);
+
+        this.log("Exception:" + title + ": " + extractError(err) + "cookies:" + document.cookie);
         await this.Error(title + ": " + extractError(err));
         throw err;
     }
@@ -219,4 +219,34 @@ export class DestroyHelper {
         }
     }
 
+}
+@Injectable()
+export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
+    constructor(private dialog: DialogService, private zone: NgZone, private context: Context) {
+        super();
+    }
+    async handleError(error) {
+        super.handleError(error);
+        if (error.message.startsWith("ExpressionChangedAfterItHasBeenCheckedError"))
+            return;
+        try {
+            var s = await this.context.for((await import('../manage/ApplicationSettings')).ApplicationSettings).findId(1);
+            if (s && this.context.user && !s.currentUserIsValidForAppLoadTest.value) {
+                let AuthService = (await import("../auth/auth-service")).AuthService;
+                AuthService.doSignOut();
+                this.dialog.Error(s.lang.sessionExpiredPleaseRelogin);
+                return;
+            }
+
+        }
+        catch (err) {
+
+        }
+        // if (this.context.isSignedIn())
+        //     this.zone.run(() => {
+        //         this.dialog.log("Exception:" + extractError(error));
+        //         this.dialog.Error(extractError(error));
+        //     });
+
+    }
 }

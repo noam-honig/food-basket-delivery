@@ -1,5 +1,5 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import { ValueListColumn, ColumnOptions, Context } from '@remult/core';
+
+import { ValueListColumn, Context } from '@remult/core';
 import { en } from './languages/en';
 import { es } from './languages/es';
 import { italy } from './languages/italy';
@@ -108,18 +108,6 @@ export class TranslationOptionsColumn extends ValueListColumn<TranslationOptions
 
 }
 export const translationConfig = { activateTranslation: false, forWho: TranslationOptions.Families };
-
-
-const langForSite = new Map<string, Language>();
-export function setLangForSite(site: string, lang: TranslationOptions) {
-  langForSite.set(site, langByCode(lang.args.languageFile));
-}
-export function getLang(context: Context) {
-  let r = langForSite.get(Sites.getValidSchemaFromContext(context));
-  if (r)
-    return r;
-  return use.language;
-}
 
 
 
@@ -578,7 +566,7 @@ export class Language {
   onStatus = 'בסטטוס';
   shouldAssignTo = 'האם לשייך אותו למתנדב';
   saveVolunteerInfo = 'שמירת פרטי מתנדב:';
-  adminRequireToSetPassword = ' אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועבר למסך עדכון פרטים לעדכון סיסמה.';
+  adminRequireToSetPassword = 'אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה.';
   userNotFoundOrWrongPassword = "משתמשת לא נמצאה או סיסמה שגויה";
   fromDate = 'מתאריך';
   toDate = 'עד תאריך';
@@ -839,7 +827,28 @@ export class Language {
   hideFamilyPhoneFromVolunteer = "אל תציג את הטלפון של המשפחה למתנדב";
   hadProblemBefore = "היתה בעיה בעבר";
   showOnlyLastNamePartToVolunteer = "הצג רק מילה אחרונה למתנדב בשם המשפחה";
-  
+  allowSendSuccessMessageOption = "הרשה אפשרות של שליחת הודעת SMS למשפחה";
+  sendSuccessMessageToFamily = "שלח הודעה למשפחה כאשר הסל נמסר";
+  successMessageText = "תוכן הודעת הצלחה למשפחה";
+  requireEULA = "חייב חתימה על הסכם שימוש";
+  requireConfidentialityApprove = "חייב הסכמה להודעה על סודיות השימוש";
+  requireComplexPassword = "חייב סיסמה מורכבת";
+  timeToDisconnect = "זמן בדקות לניתוק אוטומטית";
+  daysToForcePasswordChange = "ימים לחיוב החלפת סיסמה";
+  passwordTooShort = "סיסמה קצרה מידי";
+  passwordCharsRequirement = "נדרשת לפחות ספרה אחת ואות אחת";
+  passwordExpired = "פג תוקף הסיסמה, אנא הגדר סיסמה חדשה";
+  infoIsConfidential = `המידע המופק מתוך המערכת מכיל מידע המוגן על פי חוק הגנת הפרטיות.
+  יש לשמור את המידע במקום מוגן שלא יאפשר גישה לא מורשית למידע.
+  אין להעתיק, להפיץ, להציג או למסור לצד שלישי את המידע או חלק ממנו. המוסר את המידע שלא כדין עובר עבירה.
+  `
+  IConfirmEula = "אני מסכים לתנאי השימוש";
+  mustConfirmEula = "לא ניתן להשתמש באפליקציה ללא הסכמה לתנאי השימוש";
+  readEula = "לחץ לקריאת תנאי השימוש באתר";
+  newPasswordMustBeNew = "הסיסמה החדשה והקיימת זהות";
+  invalidatePassword="בטל תוקף סיסמה";
+  passwordInvalidated = "בוטל תוקף הסיסמה";
+  sessionExpiredPleaseRelogin = "לצורך הגנה על פרטיות הנתונים, יש לבצע כניסה מחדש";
 }
 
 const defaultLang = new Language();
@@ -852,7 +861,7 @@ langMap.set('es', new es());
 langMap.set('italy', new italy());
 langMap.set('donor', new donor());
 langMap.set('soldier', new soldier());
-function langByCode(lang: string) {
+export function langByCode(lang: string) {
   let r = langMap.get(lang);
   if (!r)
     r = defaultLang;

@@ -3,12 +3,12 @@
 <mat-dialog-actions>
 
   <button mat-raised-button color="warning" (click)="close()" *ngIf="!confirmOnly">
-    {{settings.lang.no}}
+    {{args.noButtonText}}
   </button>
   <button mat-raised-button color="accent" (click)="close()" *ngIf="confirmOnly">
     {{settings.lang.confirm}}
   </button>
   <button mat-raised-button color="accent" (click)="select()" *ngIf="!confirmOnly">
-    {{settings.lang.yes}}
+    {{args.yesButtonText}}
   </button>
 </mat-dialog-actions>

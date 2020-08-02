@@ -1,9 +1,11 @@
 import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, IdEntity, SpecificEntityHelper, FilterBase, EntityWhere, packWhere, EntityOrderBy } from "@remult/core";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService, extractError } from "../select-popup/dialog";
-import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
+
 import { ApplicationSettings } from "../manage/ApplicationSettings";
-import { getLang, use } from "../translate";
+import {  use } from "../translate";
+import { getLang } from '../sites/sites';
+import { PromiseThrottle } from "../shared/utils";
 
 
 

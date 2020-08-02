@@ -16,6 +16,7 @@ import { Sites } from '../sites/sites';
 import { OverviewComponent } from '../overview/overview.component';
 import { wasChanged } from '../model-shared/types';
 import { ConnectionOptions } from 'tls';
+import { SitesEntity } from '../sites/sites.entity';
 
 declare const lang = '';
 
@@ -73,7 +74,7 @@ export async function serverInit() {
                 await builder.createIfNotExist(context.for(entity).create());
                 await builder.verifyAllColumns(context.for(entity).create());
             }
-            await Sites.completeInit(context);
+            await SitesEntity.completeInit(context);
             let settings = await context.for(ApplicationSettings).lookupAsync(s => s.id.isEqualTo(1));
             if (settings.isNew()) {
                 settings.organisationName.value = "מערכת חלוקה";

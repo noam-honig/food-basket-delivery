@@ -1,36 +1,52 @@
 import { DeliveryStatus, DeliveryStatusColumn } from "./DeliveryStatus";
-import { CallStatusColumn } from "./CallStatus";
 import { YesNoColumn } from "./YesNo";
 
 import { FamilySourceId } from "./FamilySources";
-import { BasketId, BasketType, QuantityColumn } from "./BasketType";
-import { changeDate, DateTimeColumn, SqlBuilder, PhoneColumn, EmailColumn, delayWhileTyping, wasChanged } from "../model-shared/types";
+import { BasketId, QuantityColumn } from "./BasketType";
+import { SqlBuilder, PhoneColumn, EmailColumn, delayWhileTyping, wasChanged, changeDate } from "../model-shared/types";
 import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, FilterBase, ColumnOptions, SpecificEntityHelper, Entity, DataArealColumnSetting } from '@remult/core';
-import { HelperIdReadonly, HelperId, Helpers, HelperUserInfo } from "../helpers/helpers";
+import { HelperIdReadonly, HelperId } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress } from "../shared/googleApiHelpers";
 import { ApplicationSettings, CustomColumn } from "../manage/ApplicationSettings";
-import { FamilyDeliveries, ActiveFamilyDeliveries } from "./FamilyDeliveries";
+
 import * as fetch from 'node-fetch';
 import { Roles } from "../auth/roles";
 
-import { getLang, use } from "../translate";
-import { UpdateGroupDialogComponent } from "../update-group-dialog/update-group-dialog.component";
+import { use } from "../translate";
 import { FamilyStatusColumn, FamilyStatus } from "./FamilyStatus";
 
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { DialogService } from "../select-popup/dialog";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
-import { UpdateFamilyDialogComponent } from "../update-family-dialog/update-family-dialog.component";
-import { deliveryButtonsHelper, getDeliveryGridButtons } from "../family-deliveries/family-deliveries.component";
+
+
 import { YesNoQuestionComponent } from "../select-popup/yes-no-question/yes-no-question.component";
 import { allCentersToken, findClosestDistCenter } from "../manage/distribution-centers";
+import { getLang } from "../sites/sites";
+
+var FamilyDeliveries: factoryFor<import("./FamilyDeliveries").FamilyDeliveries>;
+
+var ActiveFamilyDeliveries: factoryFor<import("./FamilyDeliveries").ActiveFamilyDeliveries>;
+
+export function iniFamilyDeliveriesInFamiliesCode(
+  fd: factoryFor<import("./FamilyDeliveries").FamilyDeliveries>,
+  activeFd: factoryFor<import("./FamilyDeliveries").ActiveFamilyDeliveries>) {
+  this.FamilyDeliveries = fd;
+  this.ActiveFamilyDeliveries = activeFd;
+
+}
+
+declare type factoryFor<T> = {
+  new(...args: any[]): T;
+}
+
 
 
 @EntityClass
 export class Families extends IdEntity {
-  showFamilyDialog(tools?: { onSave: () => Promise<void> }) {
-    this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = {
+  async showFamilyDialog(tools?: { onSave: () => Promise<void> }) {
+    this.context.openDialog((await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent, x => x.args = {
       family: this,
       onSave: async () => {
         if (tools)
@@ -38,10 +54,11 @@ export class Families extends IdEntity {
       }
     });
   }
-  showDeliveryHistoryDialog(args: { dialog: DialogService, settings: ApplicationSettings }) {
+  async showDeliveryHistoryDialog(args: { dialog: DialogService, settings: ApplicationSettings }) {
+    let gridDialogSettings = await this.deliveriesGridSettings(args);
     this.context.openDialog(GridDialogComponent, x => x.args = {
       title: getLang(this.context).deliveriesFor + ' ' + this.name.value,
-      settings: this.deliveriesGridSettings(args),
+      settings: gridDialogSettings,
       buttons: [{
         text: use.language.newDelivery,
 
@@ -49,7 +66,7 @@ export class Families extends IdEntity {
       }]
     });
   }
-  public deliveriesGridSettings(args: { dialog: DialogService, settings: ApplicationSettings }) {
+  public async deliveriesGridSettings(args: { dialog: DialogService, settings: ApplicationSettings }) {
     let result = this.context.for(FamilyDeliveries).gridSettings({
       numOfColumnsInGrid: 7,
 
@@ -67,7 +84,7 @@ export class Families extends IdEntity {
             refreshDeliveryStats: () => result.getRecords()
           })
         },
-        ...getDeliveryGridButtons({
+        ...(await import("../family-deliveries/family-deliveries.component")).getDeliveryGridButtons({
           context: this.context,
           refresh: () => result.getRecords(),
           deliveries: () => result,
@@ -101,7 +118,7 @@ export class Families extends IdEntity {
   }
 
   async showNewDeliveryDialog(dialog: DialogService, settings: ApplicationSettings, args?: {
-    copyFrom?: FamilyDeliveries,
+    copyFrom?: import("./FamilyDeliveries").FamilyDeliveries,
     aDeliveryWasAdded?: (newDeliveryId: string) => Promise<void>,
     doNotCheckIfHasExistingDeliveries?: boolean
   }) {
@@ -264,7 +281,7 @@ export class Families extends IdEntity {
     }
     return this.address.value;
   }
-  updateDelivery(fd: FamilyDeliveries) {
+  updateDelivery(fd: import("./FamilyDeliveries").FamilyDeliveries) {
     fd.family.value = this.id.value;
     for (const col of this.sharedColumns()) {
       fd.columns.find(col).value = col.value;
@@ -562,7 +579,7 @@ export class Families extends IdEntity {
   addressByGoogle = new StringColumn({ caption: getLang(this.context).addressByGoogle, allowApiUpdate: false });
   addressOk = new BoolColumn({ caption: getLang(this.context).addressOk });
 
-  private dbNameFromLastDelivery(col: (fd: FamilyDeliveries) => Column, alias: string) {
+  private dbNameFromLastDelivery(col: (fd: import("./FamilyDeliveries").FamilyDeliveries) => Column, alias: string) {
 
     let fd = this.context.for(FamilyDeliveries).create();
     let sql = new SqlBuilder();
@@ -909,8 +926,8 @@ export class GroupsColumn extends StringColumn {
         width: '300',
 
         forceEqualFilter: false,
-        click: () => {
-          this.context.openDialog(UpdateGroupDialogComponent, s => {
+        click: async () => {
+          this.context.openDialog((await import('../update-group-dialog/update-group-dialog.component')).UpdateGroupDialogComponent, s => {
             s.init({
               groups: this.value,
               ok: x => this.value = x

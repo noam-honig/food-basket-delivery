@@ -12,8 +12,9 @@ import { UpdateCommentComponent } from '../update-comment/update-comment.compone
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { createElementCssSelector } from '@angular/compiler';
-import { getLang } from '../translate';
+
 import { HelperUserInfo } from '../helpers/helpers';
+import { getLang } from '../sites/sites';
 
 @Component({
   selector: 'app-family-info',

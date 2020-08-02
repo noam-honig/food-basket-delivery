@@ -1,16 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Context, EntityClass, IdEntity, StringColumn, BoolColumn, NumberColumn, ServerFunction } from '@remult/core';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
-import { AsignFamilyComponent } from '../asign-family/asign-family.component';
-import { Families, FamilyId, GroupsColumn } from '../families/families';
-import { SqlBuilder, changeDate, PhoneColumn } from '../model-shared/types';
-import { FamilyDeliveries } from '../families/FamilyDeliveries';
-import { Roles } from '../auth/roles';
-import { BasketId } from '../families/BasketType';
-import { DistributionCenterId } from '../manage/distribution-centers';
-import { DeliveryStatusColumn } from '../families/DeliveryStatus';
-import { HelperId, HelperIdReadonly, Helpers } from '../helpers/helpers';
-import { YesNoColumn } from '../families/YesNo';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 
@@ -35,11 +25,7 @@ export class TestMapComponent implements OnInit {
   doIt() {
     return;
 
-    setTimeout(async () => {
-      if (this.run)
-        this.results = [await TestMapComponent.testtest(), ...this.results];
-      this.doIt();
-    }, 100);
+    
   }
   @ServerFunction({ allowed: true })
   static async testtest(context?: Context) {

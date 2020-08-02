@@ -706,4 +706,23 @@ export class donor implements Language {
   hideFamilyPhoneFromVolunteer = 'אל תציג את הטלפון של התורם למתנדב';
   hadProblemBefore = 'היתה בעיה בעבר';
   showOnlyLastNamePartToVolunteer = 'הצג רק מילה אחרונה למתנדב בשם התורם';
+  allowSendSuccessMessageOption = 'הרשה אפשרות של שליחת הודעת SMS לתורם';
+  sendSuccessMessageToFamily = 'שלח הודעה לתורם כאשר הסל נמסר';
+  successMessageText = 'תוכן הודעת הצלחה לתורם';
+  requireEULA = 'חייב חתימה על הסכם שימוש';
+  requireConfidentialityApprove = 'חייב הסכמה להודעה על סודיות השימוש';
+  requireComplexPassword = 'חייב סיסמה מורכבת';
+  timeToDisconnect = 'זמן בדקות לניתוק אוטומטית';
+  daysToForcePasswordChange = 'ימים לחיוב החלפת סיסמה';
+  passwordTooShort = 'סיסמה קצרה מידי';
+  passwordCharsRequirement = 'נדרשת לפחות ספרה אחת ואות אחת';
+  passwordExpired = 'פג תוקף הסיסמה, אנא הגדר סיסמה חדש';
+  infoIsConfidential = 'להציג גם למתנדב וגם למנהל הודעה על סודיות המידע\n  "המידע המופק מתוך המערכת מכיל מידע המוגן על פי חוק הגנת הפרטיות.\n  יש לשמור את המידע במקום מוגן שלא תתאפשר גישה לא מורשית למידע.\n  אין להעתיק, להפיץ, להציג או למסור לצד שלישי את המידע או חלק ממנו. המוסר את המידע שלא כדין עובר עבירה."\n  ';
+  IConfirmEula = 'אני מסכים לתנאי השימוש';
+  mustConfirmEula = 'לא ניתן להשתמש באפליקציה ללא הסכמה לתנאי השימוש';
+  readEula = 'לחץ לקריאת תנאי השימוש באתר';
+  newPasswordMustBeNew = 'הסיסמה החדש והקיימת זהות';
+  invalidatePassword = 'בטל תוקף סיסמה';
+  passwordInvalidated = 'בוטל תוקף הסיסמה';
+  sessionExpiredPleaseRelogin = 'פג תוקף החיבור לשרת, יש לבצע כניסה מחדש';
 }

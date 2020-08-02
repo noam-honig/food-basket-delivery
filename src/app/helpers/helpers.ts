@@ -7,13 +7,14 @@ import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, EmailColu
 import { helpers } from 'chart.js';
 import { Roles, distCenterAdminGuard } from "../auth/roles";
 import { JWTCookieAuthorizationHelper } from '@remult/server';
-import { SelectCompanyComponent } from "../select-company/select-company.component";
+
 import { DistributionCenterId } from '../manage/distribution-centers';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
-import { getLang } from '../translate';
+import { getLang } from '../sites/sites';
 import { GeocodeInformation, GetGeoInformation, Location } from '../shared/googleApiHelpers';
 import { routeStats } from '../asign-family/route-strategy';
 import { Sites } from '../sites/sites';
+import { getSettings } from '../manage/ApplicationSettings';
 
 
 
@@ -132,7 +133,14 @@ export class Helpers extends HelpersBase {
                     if (!canUpdate)
                         throw "Not Allowed";
                     if (this.password.value && this.password.value != this.password.originalValue && this.password.value != Helpers.emptyPassword) {
+                        let context = this.context;
+                        let password =this.password;
+                        validatePasswordColumn(context, password);
+                        if (this.password.validationError)
+                            return;
+                        //throw this.password.defs.caption + " - " + this.password.validationError;
                         this.realStoredPassword.value = Helpers.passwordHelper.generateHash(this.password.value);
+                        this.passwordChangeDate.value = new Date();
                     }
                     if ((await context.for(Helpers).count()) == 0) {
 
@@ -178,7 +186,8 @@ export class Helpers extends HelpersBase {
                             this.addressApiResult,
                             this.addressApiResult2,
                             this.password,
-                            this.shortUrlKey
+                            this.shortUrlKey,
+                            this.passwordChangeDate
                         ],
                         excludeValues: [this.realStoredPassword]
                     })
@@ -237,6 +246,9 @@ export class Helpers extends HelpersBase {
     password = new StringColumn({ caption: getLang(this.context).password, dataControlSettings: () => ({ inputType: 'password' }), serverExpression: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
 
     createDate = new changeDate({ caption: getLang(this.context).createDate });
+    passwordChangeDate = new changeDate();
+    EULASignDate = new changeDate();
+    //    confidentialityConfirmDate = new changeDate();
 
     reminderSmsDate = new DateTimeColumn({
         caption: getLang(this.context).remiderSmsDate
@@ -378,7 +390,7 @@ export class CompanyColumn extends StringColumn {
             dataControlSettings: () =>
                 ({
                     width: '300',
-                    click: () => context.openDialog(SelectCompanyComponent, s => s.argOnSelect = x => this.value = x)
+                    click: async () => context.openDialog((await import("../select-company/select-company.component")).SelectCompanyComponent, s => s.argOnSelect = x => this.value = x)
                 })
         });
     }
@@ -402,3 +414,13 @@ export interface HelperUserInfo extends UserInfo {
     escortedHelperName: string;
     distributionCenter: string;
 }
+export function validatePasswordColumn(context: Context, password: StringColumn) {
+    if (getSettings(context).requireComplexPassword.value) {
+        var l = getLang(context);
+        if (password.value.length < 8)
+            password.validationError = l.passwordTooShort;
+        if (!password.value.match(/^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/))
+            password.validationError = l.passwordCharsRequirement;
+    }
+}
+

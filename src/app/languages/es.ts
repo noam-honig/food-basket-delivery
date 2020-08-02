@@ -706,4 +706,23 @@ export class es implements Language {
   hideFamilyPhoneFromVolunteer = 'No muestre el teléfono familiar a un voluntario';
   hadProblemBefore = 'tuvo un problema';
   showOnlyLastNamePartToVolunteer = 'Mostrar solo una última palabra al voluntario en nombre de la familia';
+  allowSendSuccessMessageOption = 'Opción Permitir enviar SMS a familia';
+  sendSuccessMessageToFamily = 'Enviar SMS a la familia en la entrega';
+  successMessageText = 'Entrega de mensaje SMS a la familia';
+  requireEULA = 'requiere EULA';
+  requireConfidentialityApprove = 'Requerir aprobación de confidencialidad';
+  requireComplexPassword = 'Requerir contraseña compleja';
+  timeToDisconnect = 'Desconecte el tiempo de espera en minutos';
+  daysToForcePasswordChange = 'Días para forzar el cambio de contraseña';
+  passwordTooShort = 'Contraseña demasiado corta';
+  passwordCharsRequirement = 'Se requieren al menos un dígito y una letra';
+  passwordExpired = 'Contraseña caducada, establezca una nueva contraseña';
+  infoIsConfidential = 'Presente tanto al voluntario como al gerente un mensaje sobre la confidencialidad de la información \ n "La información extraída del sistema contiene información protegida por la Ley de Protección de Privacidad. \ N La información debe mantenerse en un lugar protegido para que el acceso no autorizado a la información no será permitida. \ n Ninguna parte de este sitio puede ser copiada, retransmitida, reenviada, duplicada o utilizada de otra manera. Quien envíe la información ilegalmente comete un delito ". \ n';
+  IConfirmEula = 'Estoy de acuerdo con los términos de uso';
+  mustConfirmEula = 'La aplicación no se puede usar sin el consentimiento de los términos de uso.';
+  readEula = 'Haga clic para leer los términos de uso del sitio';
+  newPasswordMustBeNew = 'La contraseña nueva y existente es una identidad';
+  invalidatePassword = 'Deshabilitar contraseña';
+  passwordInvalidated = 'La contraseña ha sido revocada';
+  sessionExpiredPleaseRelogin = 'La conexión con el servidor ha expirado, vuelva a iniciar sesión';
 }

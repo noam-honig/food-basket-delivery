@@ -1,6 +1,7 @@
 import { ColumnOptions, ValueListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings, ValueListItem, Context } from '@remult/core';
 import { HelperId } from '../helpers/helpers';
-import { use, getLang } from '../translate';
+import { use } from '../translate';
+import { getLang } from '../sites/sites';
 
 
 export class DeliveryStatus {
@@ -17,7 +18,7 @@ export class DeliveryStatus {
     }
     return false;
   }
-  static ReadyForDelivery: DeliveryStatus = new DeliveryStatus(0, !use ? '' : use.language.readyForDelivery);
+  static ReadyForDelivery: DeliveryStatus = new DeliveryStatus(0, use.language.readyForDelivery);
   static SelfPickup: DeliveryStatus = new DeliveryStatus(2, !use ? '' : use.language.selfPickup);
   static Frozen: DeliveryStatus = new DeliveryStatus(9, !use ? '' : use.language.frozen);
 

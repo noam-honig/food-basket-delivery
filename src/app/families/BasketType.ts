@@ -6,7 +6,8 @@ import { HasAsyncGetTheValue } from "../model-shared/types";
 import { Context, EntityClass } from '@remult/core';
 import { ColumnOptions } from '@remult/core';
 import { Roles } from "../auth/roles";
-import { use, getLang } from '../translate';
+import { use } from '../translate';
+import { getLang } from '../sites/sites';
 
 @EntityClass
 export class BasketType extends IdEntity {

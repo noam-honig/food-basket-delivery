@@ -2,11 +2,12 @@ import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angula
 import { DataAreaSettings, DataControlInfo, StringColumn, BoolColumn, Context, BusyService, FilterBase, AndFilter, EntityWhere, Column } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
-import { getLang } from '../translate';
+
 import { Helpers, HelperUserInfo } from '../helpers/helpers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { PhoneColumn } from '../model-shared/types';
+import { getLang } from '../sites/sites';
 
 @Component({
   selector: 'app-delivery-reception',

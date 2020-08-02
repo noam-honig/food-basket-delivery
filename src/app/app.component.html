@@ -1,3 +1,6 @@
+<div *ngIf="settings.requireConfidentialityApprove.value" class="print-only">
+  {{settings.lang.infoIsConfidential}}
+</div>
 <mat-sidenav-container class="app-sidenav-container">
 
   <mat-sidenav #sidenav class="app-sidenav mat-elevation-z10 no-print" [opened]="!dialog.isScreenSmall()"
@@ -57,15 +60,16 @@
 
       <div class="wrapper" [class.edge-fix]="isEdge">
         <router-outlet></router-outlet>
-        
+
       </div>
- 
+
     </div>
     <footer style="text-align:center;font-size:70%">
       <hr>
       <a *ngIf="!showEnglishUrl()" href="https://noam-honig.github.io/salmaz" target="_blank">{{lang.copyright}}</a>
       <a *ngIf="showEnglishUrl()" href="https://noam-honig.github.io/salmaz/en.html"
         target="_blank">{{lang.copyright}}</a>
+      
     </footer>
   </div>
 </mat-sidenav-container>

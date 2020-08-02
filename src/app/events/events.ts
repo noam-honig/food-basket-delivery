@@ -1,5 +1,6 @@
 import { IdEntity, StringColumn, Context, DateColumn, NumberColumn, IdColumn, ValueListColumn, EntityClass } from "@remult/core";
-import { getLang, use } from "../translate";
+import {  use } from "../translate";
+import { getLang } from '../sites/sites';
 import { Roles } from "../auth/roles";
 import { HelperId, Helpers } from "../helpers/helpers";
 import { SqlBuilder, PhoneColumn } from "../model-shared/types";

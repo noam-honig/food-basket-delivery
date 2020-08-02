@@ -12,14 +12,11 @@ import "../helpers/helpers.component";
 import '../app.module';
 import { ServerContext, DateColumn, SqlDatabase } from '@remult/core';
 import { Helpers } from '../helpers/helpers';
-import { Sites } from '../sites/sites';
+import { Sites, setLangForSite } from '../sites/sites';
 
 import { GeoCodeOptions } from "../shared/googleApiHelpers";
 import { Families } from "../families/families";
 import { OverviewComponent } from "../overview/overview.component";
-import { environment } from "../../environments/environment";
-import * as request from 'request';
-import { setLangForSite } from "../translate";
 import { createDonor, createVolunteer } from "./mlt";
 
 

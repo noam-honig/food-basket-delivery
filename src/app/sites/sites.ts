@@ -1,28 +1,17 @@
-import { Context, DataProvider, EntityClass, Entity, StringColumn } from "@remult/core";
-import { changeDate } from "../model-shared/types";
+import { Context, DataProvider, EntityClass, Entity, StringColumn, DateTimeColumn } from "@remult/core";
+
 import { HelperIdReadonly } from "../helpers/helpers";
 import { Roles } from "../auth/roles";
+import { Language, TranslationOptions, langByCode,use } from "../translate";
 
 declare var multiSite: boolean;
 
-@EntityClass
-export class Sites extends Entity<string> {
+
+export class Sites  {
     static addSchema(id: string) {
         this.schemas.push(id);
     }
-    static async completeInit(context: Context) {
-        let sites = await context.for(Sites).find();
-        let missingInDb = this.schemas.filter(siteFromEnv => !sites.find(y => y.id.value == siteFromEnv));
-        for (const s of missingInDb) {
-            let r = await context.for(Sites).create();
-            r.id.value = s;
-            await r.save();
-        }
-        for (const s of sites) {
-            if (!this.schemas.includes(s.id.value))
-                this.schemas.push(s.id.value);
-        }
-    }
+  
     static isOverviewSchema(context: Context) {
         return Sites.getOrganizationFromContext(context) == Sites.guestSchema;
     }
@@ -92,27 +81,7 @@ export class Sites extends Entity<string> {
     static getOrgRole(y: Context) {
         return 'org:' + Sites.getOrganizationFromContext(y);
     }
-    id = new SchemaIdColumn();
-    createDate = new changeDate({ caption: 'מועד הוספה' });
-    createUser = new HelperIdReadonly(this.context, { caption: 'משתמש מוסיף' });
-    constructor(private context: Context) {
-        super({
-            name: 'Sites',
-            allowApiRead: Roles.overview,
-            saving: () => {
-                this.id.value = this.id.value.toLowerCase().trim();
-                if (this.isNew()) {
-                    this.createDate.value = new Date();
-                    if (context.user)
-                        this.createUser.value = context.user.id;
-                }
-                else {
-                    if (this.id.value != this.id.originalValue)
-                        this.id.validationError = 'not allowed to change';
-                }
-            }
-        });
-    }
+  
 }
 
 
@@ -130,13 +99,16 @@ export function validSchemaName(x: string) {
     }
     return x;
 }
-export class SchemaIdColumn extends StringColumn {
-    constructor() {
-        super({
-            caption: 'מזהה הסביבה'
-        })
-    }
-    // __processValue(value: string) {
-    //     return validSchemaName(value);
-    // }
+
+
+const langForSite = new Map<string, Language>();
+export function setLangForSite(site: string, lang: TranslationOptions) {
+  langForSite.set(site, langByCode(lang.args.languageFile));
 }
+export function getLang(context: Context) {
+  let r = langForSite.get(Sites.getValidSchemaFromContext(context));
+  if (r)
+    return r;
+  return use.language;
+}
+
