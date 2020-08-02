@@ -63,6 +63,6 @@ export class LabGuard extends SignedInGuard {
 export class distCenterOrLabGuard extends SignedInGuard {
 
     isAllowed() {
-        return this.context.isAllowed([Roles.distCenterAdmin, Roles.lab]);
+        return c => c.isAllowed(Roles.admin) || c.isAllowed(Roles.lab) || c.isAllowed(Roles.distCenterAdmin);
     }
 }

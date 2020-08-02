@@ -536,7 +536,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       this.normalColumns = [
         deliveries.name
       ]
-      if (this.settings.forWho.value == TranslationOptions.donors) {
+      if (this.settings.isSytemForMlt()) {
         this.normalColumns.push(
           deliveries.city,
           deliveries.distributionCenter,
@@ -545,10 +545,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           deliveries.quantity,
           deliveries.createDate,
           deliveries.courier,
-//          deliveries.courierAssingTime,
           deliveries.internalDeliveryComment,
           deliveries.messageStatus,
-//          deliveries.deliveryStatusUser,
           deliveries.courierComments
         );
       } else {
@@ -560,7 +558,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         );
       }
 
-      if (this.settings.usingLabReception.value) {
+      if (this.settings.isSytemForMlt()) {
         this.normalColumns.push(deliveries.receptionComments);
       } 
 

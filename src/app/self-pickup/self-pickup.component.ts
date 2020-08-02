@@ -19,7 +19,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
 
 
   static route: Route = {
-    path: 'self-pickup-families', component: SelfPickupComponent, canActivate: [distCenterAdminGuard], data: {
+    path: 'self-pickup-families', component: SelfPickupComponent, canActivate: [distCenterOrLabGuard], data: {
       name: 'באים לקחת',
       seperator: true
     }

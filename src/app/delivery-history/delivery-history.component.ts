@@ -117,7 +117,7 @@ export class DeliveryHistoryComponent implements OnInit {
     this.helperInfo.getRecords();
   }
 
-  resortedColumns: DataControlInfo<FamilyDeliveries>[] = [];
+  mltColumns: DataControlInfo<FamilyDeliveries>[] = [];
   deliveries = this.context.for(FamilyDeliveries).gridSettings({
     showFilter: true,
     rowCssClass: d => d.deliverStatus.getCss(),
@@ -133,8 +133,8 @@ export class DeliveryHistoryComponent implements OnInit {
     }],
     columnSettings: d => {
       let r: DataControlInfo<FamilyDeliveries>[] = [
-        d.name, 
-      {
+        d.name,
+        {
           caption: this.settings.lang.deliverySummary,
           column: d.deliverStatus,
           readOnly: true,
@@ -158,21 +158,21 @@ export class DeliveryHistoryComponent implements OnInit {
       }
 
 
-      if (this.settings.usingLabReception.value) {
-        this.resortedColumns = [
-          d.name, 
+      if (this.settings.isSytemForMlt()) {
+        this.mltColumns = [
+          d.name,
           d.basketType,
           d.quantity,
           d.city,
           d.distributionCenter,
           d.receptionComments
         ]
-      } else this.resortedColumns = [];
+      } else this.mltColumns = [];
       return r;
     },
 
 
-    numOfColumnsInGrid: (this.resortedColumns.length ? this.resortedColumns.length : 6),
+    numOfColumnsInGrid: (this.mltColumns.length ? this.mltColumns.length : 6),
     knowTotalRows: true,
     get: {
       limit: 50,
@@ -192,7 +192,6 @@ export class DeliveryHistoryComponent implements OnInit {
         name: '',
         icon: 'edit',
         showInLine: true,
-        visible: () => {return this.settings.usingLabReception.value},
         click: async fd => {
           fd.showDetailsDialog({
             dialog: this.dialog,
@@ -205,7 +204,7 @@ export class DeliveryHistoryComponent implements OnInit {
         name: '',
         icon: 'replay',
         showInLine: true,
-        visible: () => {return (this.settings.usingLabReception.value && this.context.isAllowed(Roles.admin))},
+        visible: () => this.context.isAllowed(Roles.admin),
         click: async fd => {
           fd.archive.value = false;
           await fd.save();
@@ -216,11 +215,11 @@ export class DeliveryHistoryComponent implements OnInit {
     ]
   });
   async ngOnInit() {
-    if (this.resortedColumns.length > 0) 
-      sortColumns(this.deliveries,this.resortedColumns);
+    if (this.mltColumns.length > 0)
+      sortColumns(this.deliveries, this.mltColumns);
     this.refreshHelpers();
+
   }
-  
   @ServerFunction({ allowed: Roles.admin })
   static async getHelperHistoryInfo(fromDate: string, toDate: string, distCenter: string, onlyDone: boolean, onlyArchived: boolean, context?: Context, db?: SqlDatabase) {
     var fromDateDate = DateColumn.stringToDate(fromDate);
@@ -236,7 +235,7 @@ export class DeliveryHistoryComponent implements OnInit {
       r = r.and(fd.deliverStatus.isAResultStatus());
     if (onlyArchived)
       r = r.and(fd.archive.isEqualTo(true));
-      
+
 
     return (await db.execute(
       sql.build("select ", [

@@ -24,7 +24,7 @@ import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 
-import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard } from './auth/roles';
+import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard } from './auth/roles';
 
 import { SignedInGuard, Context } from '@remult/core';
 
@@ -119,7 +119,7 @@ export const routes: Routes = [
   ],
   declarations: [],
   exports: [RouterModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard,LabGuard,MltOnlyGuard]
+  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard,LabGuard,distCenterOrLabGuard,MltOnlyGuard]
 
 })
 

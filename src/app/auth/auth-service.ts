@@ -151,7 +151,7 @@ export class AuthService {
                     theHelperIAmEscortingId: h.theHelperIAmEscorting.value,
                     escortedHelperName: h.theHelperIAmEscorting.value ? (await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value : ''
                 };
-                if (!helperHasPassword && (h.admin.value || h.distCenterAdmin.value)) {
+                if (!helperHasPassword && (h.admin.value || h.distCenterAdmin.value || h.labAdmin.value)) {
                     requirePassword = true;
                 }
                 else {
@@ -170,8 +170,8 @@ export class AuthService {
                         sort = 5;
                         result.roles.push(Roles.distCenterAdmin);
                     }
-                    if(h.lab.value){                            
-		                sort = 3;
+                    if (h.labAdmin.value) {
+                        sort = 3;
                         result.roles.push(Roles.lab);
                     }
 

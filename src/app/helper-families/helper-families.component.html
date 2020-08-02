@@ -8,7 +8,7 @@
         <button mat-menu-item (click)="okAll()" *ngIf="partOfAssign"
           class="primary-menu">{{settings.lang.markAllDeliveriesAsSuccesfull}}</button>
         <button mat-menu-item (click)="familyLists.showBasketSummary()"
-          *ngIf="notDonor()">{{settings.lang.parcelSummary}}</button>
+          *ngIf="notMLT()">{{settings.lang.parcelSummary}}</button>
         <button mat-menu-item (click)="refreshRoute()">{{settings.lang.replanRoute}}</button>
         <button mat-menu-item (click)="showRouteOnGoogleMaps()">
           {{settings.lang.showRouteOnGoogleMaps}}</button>

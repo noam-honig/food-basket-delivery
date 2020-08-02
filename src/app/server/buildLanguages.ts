@@ -129,12 +129,12 @@ export async function buildLanguageFiles() {
             }
         }
         keys.sort((a, b) => a.key.localeCompare(b.key));
-        let XLSX = await import('xlsx');
+       /* let XLSX = await import('xlsx');
         let wb = XLSX.utils.book_new();
         wb.Workbook = { Views: [{ RTL: true }] };
         let ws = XLSX.utils.json_to_sheet(keys);
         XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
-        XLSX.writeFile(wb, '/temp/' + fileAndClassName + '.xlsx');
+        XLSX.writeFile(wb, '/temp/' + fileAndClassName + '.xlsx');*/
         let json = {};
         for (const x of keys) {
             json[x.key] = known[x.key];

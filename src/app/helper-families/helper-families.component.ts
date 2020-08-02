@@ -190,8 +190,8 @@ export class HelperFamiliesComponent implements OnInit {
     });
     await Families.SendMessageToBrowsers(use.language.markAllDeliveriesAsSuccesfull, context, dist);
   }
-  notDonor() {
-    return this.settings.forWho.value != TranslationOptions.donors;
+  notMLT() {
+    return !this.settings.isSytemForMlt();
   }
 
   limitReady = new limitList(30, () => this.familyLists.toDeliver.length);

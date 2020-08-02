@@ -181,7 +181,6 @@ export class MapComponent implements OnInit, OnDestroy {
                 case DeliveryStatus.Success:
                 case DeliveryStatus.SuccessLeftThere:
                 case DeliveryStatus.SuccessPickedUp:
-                //case DeliveryStatus.LabReception:
                     marker.setIcon('https://maps.google.com/mapfiles/ms/micons/green-dot.png');
                     break;
                 case DeliveryStatus.FailedBadAddress:

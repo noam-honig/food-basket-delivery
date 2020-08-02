@@ -5,7 +5,6 @@ import { use, getLang } from '../translate';
 
 export class DeliveryStatus {
   static usingSelfPickupModule: boolean = true;
-//  static usingLabReception: boolean = false;
   static IsAResultStatus(value: DeliveryStatus) {
     switch (value) {
       case this.Success:
@@ -25,8 +24,6 @@ export class DeliveryStatus {
   static Success: DeliveryStatus = new DeliveryStatus(11, !use ? '' : use.language.deliveredSuccessfully);
   static SuccessPickedUp: DeliveryStatus = new DeliveryStatus(13, !use ? '' : use.language.packageWasPickedUp);
   static SuccessLeftThere: DeliveryStatus = new DeliveryStatus(19, !use ? '' : use.language.leftByHouse);
-//  static LabReception: DeliveryStatus = new DeliveryStatus(20, !use ? '' : use.language.receptionDone, true);
-
   static FailedBadAddress: DeliveryStatus = new DeliveryStatus(21, !use ? '' : use.language.notDeliveredBadAddress, true);
   static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, !use ? '' : use.language.notDeliveredNotHome, true);
   static FailedOther: DeliveryStatus = new DeliveryStatus(25, !use ? '' : use.language.notDeliveredOther, true);

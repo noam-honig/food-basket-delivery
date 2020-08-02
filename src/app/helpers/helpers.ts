@@ -189,7 +189,7 @@ export class Helpers extends HelpersBase {
             apiDataFilter: () => {
                 if (!context.isSignedIn())
                     return this.id.isEqualTo("No User");
-                else if (!context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
+                else if (!context.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]))
                     return this.allowedIds.isContains(this.context.user.id);
             }
         });
@@ -247,17 +247,16 @@ export class Helpers extends HelpersBase {
         includeInApi: Roles.admin,
         dbName: 'isAdmin'
     });
-    lab = new BoolColumn({
+    labAdmin = new BoolColumn({
         caption: getLang(this.context).lab,
-        allowApiUpdate: Roles.admin,
-        includeInApi: Roles.admin,
-        dbName: 'isLab'
+        allowApiUpdate: Roles.lab,
+        includeInApi: Roles.lab
     });
     distCenterAdmin = new BoolColumn({
         caption: getLang(this.context).responsibleForAssign,
         allowApiUpdate: Roles.distCenterAdmin,
         includeInApi: Roles.distCenterAdmin,
-        dbName: 'distCenterAdmin',
+
         validate: () => {
             if (this.context.isAllowed(Roles.admin)) {
                 return;
