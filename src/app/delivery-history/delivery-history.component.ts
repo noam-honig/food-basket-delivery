@@ -204,7 +204,7 @@ export class DeliveryHistoryComponent implements OnInit {
         name: '',
         icon: 'replay',
         showInLine: true,
-        visible: () => this.context.isAllowed(Roles.admin),
+        visible: x => (x.archive.value) && this.context.isAllowed(Roles.admin),
         click: async fd => {
           fd.archive.value = false;
           await fd.save();
