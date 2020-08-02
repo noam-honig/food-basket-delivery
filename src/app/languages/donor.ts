@@ -78,7 +78,7 @@ export class donor implements Language {
   inacurateAddress = 'שימו לב, כתובת לא מדוייקת!';
   copyAddress = 'העתק כתובת';
   SelfPickupComponent = 'באים למסור';
-  oneDeliveryToDistribute = 'משלוח אחד לחלוקה';
+  oneDeliveryToDistribute = 'תרומה אחת לאיסוף';
   deliveriesToDistribute = 'תרומות לאיסוף';
   volunteerInfo = 'פרטי מתנדב';
   assignRequiresADistributionList = 'לא ניתן לשייך מתנדבים מכיוון שלא נבחרה מעבדה. אנא בחרו מעבדה (למעלה מצד שמאל איפה שכתוב "כל הרשימות")';

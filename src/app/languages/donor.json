@@ -1741,7 +1741,8 @@
   },
   "oneDeliveryToDistribute": {
     "google": "משלוח אחד לחלוקה",
-    "valueInCode": "משלוח אחד לחלוקה"
+    "valueInCode": "משלוח אחד לחלוקה",
+    "custom": "תרומה אחת לאיסוף"
   },
   "onStatus": {
     "google": "בסטטוס",
