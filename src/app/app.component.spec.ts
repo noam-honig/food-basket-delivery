@@ -253,7 +253,7 @@ describe('AppComponent', () => {
     let f = context.for(Families).create();
     parseAndUpdatePhone("04-8767772 / 050-7467774 (לריסה)", f, '');
     expect(f.phone1.value).toBe('04-8767772');
-    expect(f.phone1Description.value).toBe('');
+    expect(f.phone1Description.value).toBe(undefined);
     expect(f.phone2.value).toBe('050-7467774');
     expect(f.phone2Description.value).toBe('(לריסה)');
     expect(f.phone3.value).toBe(undefined);
@@ -265,7 +265,7 @@ describe('AppComponent', () => {
     parseAndUpdatePhone("04-8767772 / 050-7467774 (לריסה)", f, '');
     expect(f.phone1.value).toBe('0507330590');
     expect(f.phone2.value).toBe('04-8767772');
-    expect(f.phone2Description.value).toBe('');
+    expect(f.phone2Description.value).toBe(undefined);
     expect(f.phone3.value).toBe('050-7467774');
     expect(f.phone3Description.value).toBe('(לריסה)');
     expect(f.phone4.value).toBe(undefined);
@@ -276,7 +276,7 @@ describe('AppComponent', () => {
     f.phone2.value = '0507330590';
     parseAndUpdatePhone("04-8767772 / 050-7467774 (לריסה)", f, '');
     expect(f.phone1.value).toBe('04-8767772');
-    expect(f.phone1Description.value).toBe('');
+    expect(f.phone1Description.value).toBe(undefined);
     expect(f.phone2.value).toBe('0507330590');
     expect(f.phone3.value).toBe('050-7467774');
     expect(f.phone3Description.value).toBe('(לריסה)');

@@ -20,7 +20,7 @@ import { SqlBuilder, relativeDateName } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { colors } from '../families/stats-action';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Language, getLang } from '../translate';
+import { getLang } from '../sites/sites';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 
 

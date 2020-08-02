@@ -21,8 +21,9 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyStatus, FamilyStatusColumn } from '../families/FamilyStatus';
 import { pagedRowsIterator } from '../families/familyActionsWiring';
-import { getLang } from '../translate';
+import { getLang } from '../sites/sites';
 import { saveToExcel } from '../shared/saveToExcel';
+import { Groups } from './groups';
 
 @Component({
   selector: 'app-manage',
@@ -442,19 +443,6 @@ export class ManageComponent implements OnInit {
 
 
 
-}
-@EntityClass
-export class Groups extends IdEntity {
-
-  name = new StringColumn(getLang(this.context).group);
-
-  constructor(private context: Context) {
-    super({
-      name: "groups",
-      allowApiRead: Roles.admin,
-      allowApiCRUD: Roles.admin,
-    });
-  }
 }
 
 @EntityClass

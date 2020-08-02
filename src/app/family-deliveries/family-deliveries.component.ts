@@ -19,14 +19,13 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { delvieryActions } from './family-deliveries-actions';
 import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, pagedRowsIterator, iterateRowsActionOnServer, packetServerUpdateInfo } from '../families/familyActionsWiring';
 
-import { async } from '@angular/core/testing';
 import { saveToExcel } from '../shared/saveToExcel';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { getLang, TranslationOptions } from '../translate'
-import { SelectHelperComponent } from '../select-helper/select-helper.component';
+import {  TranslationOptions } from '../translate'
 import { Helpers } from '../helpers/helpers';
-import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
+
 import { sortColumns } from '../shared/utils';
+import { getLang } from '../sites/sites';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -751,7 +750,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
       click: async d => {
         let h = await args.context.for(Helpers).findId(d.courier);
         await args.context.openDialog(
-          HelperAssignmentComponent, s => s.argsHelper = h);
+          (await import ('../helper-assignment/helper-assignment.component')).HelperAssignmentComponent, s => s.argsHelper = h);
         this.refresh();
 
 

@@ -5,7 +5,7 @@ import * as fetch from 'node-fetch';
 import { Context, ServerContext } from '@remult/core';
 import { Roles } from "../auth/roles";
 import { Sites } from '../sites/sites';
-import { getLang } from '../translate';
+import { getLang } from '../sites/sites';
 
 
 

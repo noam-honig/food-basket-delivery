@@ -8,7 +8,7 @@ import { ServerFunction, UserInfo, JwtSessionManager, RouteHelperService, DataAp
 import { Context } from '@remult/core';
 import { LoginResponse } from "./login-response";
 import { Roles } from "./roles";
-import { AsignFamilyComponent } from "../asign-family/asign-family.component";
+
 
 
 import { Sites } from "../sites/sites";
@@ -119,7 +119,7 @@ export class AuthService {
             this.setToken(loginResponse.authToken, remember);
             this.dialog.analytics('login ' + (this.context.isAllowed(Roles.admin) ? 'delivery admin' : ''));
             if (this.context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
-                this.routeHelper.navigateToComponent(AsignFamilyComponent);
+                this.routeHelper.navigateToComponent((await import ("../asign-family/asign-family.component")). AsignFamilyComponent);
             else if (this.context.isAllowed(Roles.overview))
                 this.routeHelper.navigateToComponent(OverviewComponent);
             else

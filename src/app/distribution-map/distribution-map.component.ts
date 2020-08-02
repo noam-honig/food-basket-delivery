@@ -26,7 +26,7 @@ import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeli
 import { Sites } from '../sites/sites';
 import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser } from '../manage/distribution-centers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import { getLang } from '../translate';
+
 import { delvieryActions, UpdateDistributionCenter, NewDelivery, UpdateDeliveriesStatus, UpdateCourier, DeleteDeliveries } from '../family-deliveries/family-deliveries-actions';
 import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, actionDialogNeeds } from '../families/familyActionsWiring';
 import { UpdateArea, updateGroup, bridge } from '../families/familyActions';

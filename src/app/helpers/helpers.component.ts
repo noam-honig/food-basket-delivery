@@ -23,7 +23,8 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { visitAll } from '@angular/compiler';
-import { use, getLang, TranslationOptions } from '../translate';
+import { use,  TranslationOptions } from '../translate';
+import { getLang } from '../sites/sites';
 
 @Component({
   selector: 'app-helpers',

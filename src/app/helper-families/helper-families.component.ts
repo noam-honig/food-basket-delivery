@@ -8,12 +8,11 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { AuthService } from '../auth/auth-service';
 import { DialogService } from '../select-popup/dialog';
 import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
-import { Router } from '@angular/router';
 
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { Context } from '@remult/core';
 import { Column } from '@remult/core';
-import { use, getLang, TranslationOptions } from '../translate';
+import { use, TranslationOptions } from '../translate';
 import { Helpers, HelperId } from '../helpers/helpers';
 import { UpdateCommentComponent } from '../update-comment/update-comment.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
@@ -22,14 +21,11 @@ import { isGpsAddress, Location, toLongLat } from '../shared/googleApiHelpers';
 import { Roles } from '../auth/roles';
 import { pagedRowsIterator } from '../families/familyActionsWiring';
 import { Families } from '../families/families';
-import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 import { MatTabGroup } from '@angular/material';
-import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 import { routeStrategyColumn } from '../asign-family/route-strategy';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import { FamilyDeliveresStatistics } from '../family-deliveries/family-deliveries-stats';
 import { PhoneColumn } from '../model-shared/types';
-import { Sites } from '../sites/sites';
+import { Sites, getLang } from '../sites/sites';
 
 @Component({
   selector: 'app-helper-families',
@@ -353,7 +349,7 @@ export class HelperFamiliesComponent implements OnInit {
       helpText: () => new StringColumn(),
       ok: async (comment) => {
         try {
-          await UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.familyLists.helper.id.value, comment);
+          await (await import ("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.familyLists.helper.id.value, comment);
           this.dialog.Info("הודעה נשלחה");
         }
         catch (err) {

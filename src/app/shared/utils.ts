@@ -25,3 +25,21 @@ export function sortColumns(list: any, columns: DataControlInfo<any>[]) {
 
 }
 
+
+export class PromiseThrottle {
+  constructor(private howMany: number) {
+      //this.howMany = 0;
+  }
+  todo = [];
+  async push(p: Promise<any>) {
+      this.todo.push(p);
+      if (this.todo.length > this.howMany) {
+          await Promise.all(this.todo);
+          this.todo = [];
+      }
+
+  }
+  async done() {
+      await Promise.all(this.todo);
+  }
+}

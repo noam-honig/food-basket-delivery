@@ -2,7 +2,7 @@ import { HasAsyncGetTheValue, PhoneColumn } from "../model-shared/types";
 
 import { Context, EntityClass, IdEntity, StringColumn, IdColumn, ColumnOptions, DecorateDataColumnSettings } from '@remult/core';
 import { Roles } from "../auth/roles";
-import { getLang } from "../translate";
+import { getLang } from '../sites/sites';
 
 @EntityClass
 export class FamilySources extends IdEntity {

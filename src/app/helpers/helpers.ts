@@ -7,10 +7,10 @@ import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, EmailColu
 import { helpers } from 'chart.js';
 import { Roles, distCenterAdminGuard } from "../auth/roles";
 import { JWTCookieAuthorizationHelper } from '@remult/server';
-import { SelectCompanyComponent } from "../select-company/select-company.component";
+
 import { DistributionCenterId } from '../manage/distribution-centers';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
-import { getLang } from '../translate';
+import { getLang } from '../sites/sites';
 import { GeocodeInformation, GetGeoInformation, Location } from '../shared/googleApiHelpers';
 import { routeStats } from '../asign-family/route-strategy';
 import { Sites } from '../sites/sites';
@@ -385,7 +385,7 @@ export class CompanyColumn extends StringColumn {
             dataControlSettings: () =>
                 ({
                     width: '300',
-                    click: () => context.openDialog(SelectCompanyComponent, s => s.argOnSelect = x => this.value = x)
+                    click: async () => context.openDialog((await import("../select-company/select-company.component")).SelectCompanyComponent, s => s.argOnSelect = x => this.value = x)
                 })
         });
     }

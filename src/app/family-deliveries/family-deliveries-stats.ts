@@ -8,9 +8,9 @@ import { Families } from "../families/families";
 import { SqlBuilder } from "../model-shared/types";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { DistributionCenterId, allCentersToken } from "../manage/distribution-centers";
-import { Groups } from "../manage/manage.component";
+import { Groups } from "../manage/groups";
 import { colors } from "../families/stats-action";
-import { getLang } from "../translate";
+import { getLang } from '../sites/sites';
 
 export class FamilyDeliveryStats {
     constructor(private context:Context)

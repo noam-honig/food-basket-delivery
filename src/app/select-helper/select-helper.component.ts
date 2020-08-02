@@ -11,10 +11,11 @@ import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 import { Location, GetDistanceBetween, GeocodeInformation } from '../shared/googleApiHelpers';
 import { Roles } from '../auth/roles';
 import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { getLang } from '../translate';
+
 import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { SqlBuilder } from '../model-shared/types';
+import { getLang } from '../sites/sites';
 
 @Component({
   selector: 'app-select-helper',

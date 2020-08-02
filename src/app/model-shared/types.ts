@@ -1,8 +1,8 @@
 import * as radweb from '@remult/core';
 import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, ColumnOptions, SqlCommand, SqlResult, AndFilter, Context, StringColumn } from '@remult/core';
-import { use, getLang } from '../translate';
+import { use } from '../translate';
 import * as moment from 'moment';
-import { Sites } from '../sites/sites';
+import { Sites, getLang } from '../sites/sites';
 
 
 
@@ -162,7 +162,7 @@ export class DateTimeColumn extends radweb.DateTimeColumn {
 }
 
 export class changeDate extends DateTimeColumn {
-  allowApiUpdate = false;
+  
   constructor(settingsOrCaption?: ColumnOptions<Date>) {
     super(settingsOrCaption);
     this.defs.allowApiUpdate = false;
@@ -590,7 +590,7 @@ export function relativeDateName(context: Context, args: { d?: Date, dontShowTim
 export function wasChanged(...columns: Column[]) {
   for (const c of columns) {
     if (c.value != c.originalValue) {
-      if (c.value instanceof Date&&c.originalValue instanceof Date) {
+      if (c.value instanceof Date && c.originalValue instanceof Date) {
         if (c.value.valueOf() != c.originalValue.valueOf())
           return true;
       } else

@@ -4,7 +4,7 @@ import { HasAsyncGetTheValue, PhoneColumn } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { HelperUserInfo } from "../helpers/helpers";
 import { ApplicationSettings } from "./ApplicationSettings";
-import { getLang } from "../translate";
+import { getLang } from '../sites/sites';
 
 
 

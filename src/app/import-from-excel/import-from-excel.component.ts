@@ -17,9 +17,10 @@ import { Roles } from '../auth/roles';
 import { MatStepper } from '@angular/material';
 
 import { ApplicationSettings, RemovedFromListExcelImportStrategy } from '../manage/ApplicationSettings';
-import { use, Language, getLang } from '../translate';
+import { use } from '../translate';
+import { getLang } from '../sites/sites';
 
-import { Groups } from '../manage/manage.component';
+import { Groups } from '../manage/groups';
 import { DistributionCenters, DistributionCenterId, allCentersToken } from '../manage/distribution-centers';
 import { jsonToXlsx } from '../shared/saveToExcel';
 import { Sites } from '../sites/sites';
@@ -27,6 +28,7 @@ import { FamilyStatus } from '../families/FamilyStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { leaveOnlyNumericChars } from '../shared/googleApiHelpers';
 import { SelectListComponent, selectListItem } from '../select-list/select-list.component';
+import { PromiseThrottle } from '../shared/utils';
 
 
 
@@ -1722,23 +1724,7 @@ export interface phoneResult {
     comment: string
 }
 
-export class PromiseThrottle {
-    constructor(private howMany: number) {
-        //this.howMany = 0;
-    }
-    todo = [];
-    async push(p: Promise<any>) {
-        this.todo.push(p);
-        if (this.todo.length > this.howMany) {
-            await Promise.all(this.todo);
-            this.todo = [];
-        }
 
-    }
-    async done() {
-        await Promise.all(this.todo);
-    }
-}
 interface columnInCompare {
 
     e: Entity,

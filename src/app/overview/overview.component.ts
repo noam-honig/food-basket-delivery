@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Context, ServerFunction, DateColumn, Entity, SqlDatabase, StringColumn, ServerContext } from '@remult/core';
 import { Roles } from '../auth/roles';
-import { Sites, SchemaIdColumn, validSchemaName } from '../sites/sites';
+import { Sites,  validSchemaName } from '../sites/sites';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 import { SqlBuilder } from '../model-shared/types';
@@ -11,6 +11,7 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { DialogService, extractError } from '../select-popup/dialog';
 import { Helpers } from '../helpers/helpers';
 import { SiteOverviewComponent } from '../site-overview/site-overview.component';
+import { SitesEntity, SchemaIdColumn } from '../sites/sites.entity';
 
 @Component({
   selector: 'app-overview',
@@ -240,7 +241,7 @@ export class OverviewComponent implements OnInit {
       settings.organisationName.value = name;
       await settings.save();
 
-      let s = context.for(Sites).create();
+      let s = context.for(SitesEntity).create();
       s.id.value = id;
       await s.save();
 
@@ -260,7 +261,7 @@ export class OverviewComponent implements OnInit {
 
   @ServerFunction({ allowed: Roles.overview })
   static async validateNewSchema(id: string, context?: Context) {
-    let x = await context.for(Sites).lookupAsync(x => x.id.isEqualTo(id));
+    let x = await context.for(SitesEntity).lookupAsync(x => x.id.isEqualTo(id));
     if (!x.isNew()) {
       return "מזהה כבר קיים";
     }

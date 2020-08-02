@@ -1,5 +1,5 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import { ValueListColumn, ColumnOptions, Context } from '@remult/core';
+
+import { ValueListColumn, Context } from '@remult/core';
 import { en } from './languages/en';
 import { es } from './languages/es';
 import { italy } from './languages/italy';
@@ -108,18 +108,6 @@ export class TranslationOptionsColumn extends ValueListColumn<TranslationOptions
 
 }
 export const translationConfig = { activateTranslation: false, forWho: TranslationOptions.Families };
-
-
-const langForSite = new Map<string, Language>();
-export function setLangForSite(site: string, lang: TranslationOptions) {
-  langForSite.set(site, langByCode(lang.args.languageFile));
-}
-export function getLang(context: Context) {
-  let r = langForSite.get(Sites.getValidSchemaFromContext(context));
-  if (r)
-    return r;
-  return use.language;
-}
 
 
 
@@ -867,7 +855,7 @@ langMap.set('es', new es());
 langMap.set('italy', new italy());
 langMap.set('donor', new donor());
 langMap.set('soldier', new soldier());
-function langByCode(lang: string) {
+export function langByCode(lang: string) {
   let r = langMap.get(lang);
   if (!r)
     r = defaultLang;

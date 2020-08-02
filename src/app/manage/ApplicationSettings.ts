@@ -4,15 +4,14 @@ import { Entity, Context, EntityClass } from '@remult/core';
 import { PhoneColumn, logChanges } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { DeliveryStatusColumn, DeliveryStatus } from "../families/DeliveryStatus";
-import { translationConfig, TranslationOptionsColumn, Language, getLang, use, TranslationOptions, setLangForSite } from "../translate";
+import { translationConfig, TranslationOptionsColumn, Language, use, TranslationOptions } from "../translate";
 
 import { FamilySources } from "../families/FamilySources";
 import { Injectable } from '@angular/core';
-import { Helpers } from '../helpers/helpers';
+
 import { BasketType } from '../families/BasketType';
-import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { Sites } from '../sites/sites';
+import { Sites, getLang, setLangForSite } from '../sites/sites';
 import { routeStrategyColumn } from '../asign-family/route-strategy';
 
 
@@ -234,7 +233,7 @@ export class PhoneOption {
       args.addPhone(args.settings.helpText.value, args.settings.helpPhone.displayValue);
     }
     else {
-      let h = await args.context.for(Helpers).lookupAsync(args.d.courierAssignUser)
+      let h = await args.context.for((await import('../helpers/helpers')).Helpers).lookupAsync(args.d.courierAssignUser)
       args.addPhone(h.name.value, h.phone.displayValue);
     }
   });
@@ -248,7 +247,7 @@ export class PhoneOption {
   });
   static defaultVolunteer = new PhoneOption("defaultVolunteer", use ? use.language.defaultVolunteer : '', async args => {
     if (args.family.fixedCourier.value && args.d.courier.value != args.family.fixedCourier.value) {
-      let h = await args.context.for(Helpers).findId(args.family.fixedCourier.value);
+      let h = await args.context.for((await import('../helpers/helpers')).Helpers).findId(args.family.fixedCourier.value);
       args.addPhone(getLang(args.context).defaultVolunteer + ": " + h.name.value, h.phone.displayValue);
     }
   });
@@ -310,7 +309,7 @@ export class SettingsService {
 
     translationConfig.forWho = this.instance.forWho.value;
     DeliveryStatus.usingSelfPickupModule = this.instance.usingSelfPickupModule.value;
-    Helpers.usingCompanyModule = this.instance.showCompanies.value;
+    (await import('../helpers/helpers')).Helpers.usingCompanyModule = this.instance.showCompanies.value;
 
     PhoneOption.assignerOrOrg.name = this.instance.lang.assignerOrOrg;
     PhoneOption.familyHelpPhone.name = this.instance.lang.familyHelpPhone;
@@ -385,8 +384,10 @@ export function getSettings(context: Context) {
   let r = settingsForSite.get(Sites.getValidSchemaFromContext(context));
   if (r)
     return r;
-  if (context.onServer && false)
+  if (context.onServer) {
+    return new ApplicationSettings(context);
     throw "can't find application settings on server for this request";
+  }
   return ApplicationSettings.get(context);;
 }
 
