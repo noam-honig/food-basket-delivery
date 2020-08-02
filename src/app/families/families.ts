@@ -25,21 +25,20 @@ import { YesNoQuestionComponent } from "../select-popup/yes-no-question/yes-no-q
 import { allCentersToken, findClosestDistCenter } from "../manage/distribution-centers";
 import { getLang } from "../sites/sites";
 
-var FamilyDeliveries: {
-  new(...args: any[]): import("./FamilyDeliveries").FamilyDeliveries;
-};
-var ActiveFamilyDeliveries: {
-  new(...args: any[]): import("./FamilyDeliveries").ActiveFamilyDeliveries;
-};
-export function iniFamilyDeliveriesInFamiliesCode(fd: {
-  new(...args: any[]): import("./FamilyDeliveries").FamilyDeliveries;
-},
-  activeFd: {
-    new(...args: any[]): import("./FamilyDeliveries").ActiveFamilyDeliveries;
-  }) {
+var FamilyDeliveries: factoryFor<import("./FamilyDeliveries").FamilyDeliveries>;
+
+var ActiveFamilyDeliveries: factoryFor<import("./FamilyDeliveries").ActiveFamilyDeliveries>;
+
+export function iniFamilyDeliveriesInFamiliesCode(
+  fd: factoryFor<import("./FamilyDeliveries").FamilyDeliveries>,
+  activeFd: factoryFor<import("./FamilyDeliveries").ActiveFamilyDeliveries>) {
   this.FamilyDeliveries = fd;
   this.ActiveFamilyDeliveries = activeFd;
 
+}
+
+declare type factoryFor<T> = {
+  new(...args: any[]): T;
 }
 
 
