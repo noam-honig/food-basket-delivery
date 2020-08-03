@@ -79,7 +79,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         if (this.isValidPhone()) {
             this.phone = cleanPhone;
-            let helper = await this.context.for(Helpers).findFirst(h => h.phone.isEqualTo(this.phone).and(h.active()));
+            let helper = await this.context.for(Helpers).findFirst(h => h.phone.isEqualTo(this.phone));
             if (helper) {
 
                 this.initHelper(helper);

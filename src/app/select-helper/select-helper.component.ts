@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { MatDialogRef } from '@angular/material/dialog';
 import { Helpers, HelpersBase } from '../helpers/helpers';
-import { Context, FindOptions, ServerFunction, DialogConfig, SqlDatabase, Filter } from '@remult/core';
+import { Context, FindOptions, ServerFunction, DialogConfig, SqlDatabase } from '@remult/core';
 import { FilterBase } from '@remult/core';
 
 import { BusyService } from '@remult/core';

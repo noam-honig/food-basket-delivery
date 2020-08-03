@@ -19,6 +19,7 @@ import { includePhoneInApi, getSettings } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
 import { FamilyDeliveresStatistics } from "../family-deliveries/family-deliveries-stats";
 
+
 @EntityClass
 export class FamilyDeliveries extends IdEntity {
     addStatusExcelColumn(addColumn: (caption: string, v: string, t: import("xlsx/types").ExcelDataType) => void) {
