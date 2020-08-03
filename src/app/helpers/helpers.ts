@@ -70,6 +70,15 @@ export abstract class HelpersBase extends IdEntity {
     active() {
         return this.archive.isEqualTo(false);
     }
+    async deactivate() {
+        this.archive.value = true;
+        this.save();
+    }
+
+    async reactivate() {
+        this.archive.value = false;
+        this.save();
+    }
 
     getRouteStats(): routeStats {
         return {
