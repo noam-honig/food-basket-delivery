@@ -142,7 +142,7 @@ export async function serverInit() {
             return await InitSpecificSchema(pool, site);
         }
         //init application settings
-        if (true) {
+        if (false) {
             let i = 0;
             for (const s of Sites.schemas) {
                 if (s.toLowerCase() == Sites.guestSchema)
