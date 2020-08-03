@@ -285,7 +285,10 @@ export class AuthService {
         let h = await context.for(Helpers).findId(context.user.id);
         if (!h)
             return undefined;
-        return buildToken(await buildHelperUserInfo(h, context), getSettings(context));
+        let newInfo = await buildHelperUserInfo(h,context);
+        newInfo.roles = newInfo.roles.filter(x=>context.user.roles.includes(x));
+
+        return buildToken(newInfo, getSettings(context));
 
     }
 

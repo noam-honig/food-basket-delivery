@@ -1,9 +1,9 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, NgZone } from '@angular/core';
 
 import * as copy from 'copy-to-clipboard';
-import { DialogService } from '../select-popup/dialog';
+import { DialogService, extractError } from '../select-popup/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { Context } from '@remult/core';
+import { Context, ServerFunction } from '@remult/core';
 
 import { use } from '../translate';
 import { UpdateCommentComponent } from '../update-comment/update-comment.component';
@@ -13,8 +13,10 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { createElementCssSelector } from '@angular/compiler';
 
-import { HelperUserInfo } from '../helpers/helpers';
+import { HelperUserInfo, Helpers } from '../helpers/helpers';
 import { getLang } from '../sites/sites';
+import { Roles } from '../auth/roles';
+import { PhoneColumn } from '../model-shared/types';
 
 @Component({
   selector: 'app-family-info',
@@ -23,7 +25,9 @@ import { getLang } from '../sites/sites';
 })
 export class FamilyInfoComponent implements OnInit {
 
-  constructor(private dialog: DialogService, private context: Context, public settings: ApplicationSettings) { }
+  constructor(private dialog: DialogService, private context: Context, public settings: ApplicationSettings,private zone:NgZone) {
+
+   }
   @Input() f: ActiveFamilyDeliveries;
   @Input() showHelp = false;
   ngOnInit() {
@@ -47,24 +51,24 @@ export class FamilyInfoComponent implements OnInit {
 
   async getPickupComments(f: ActiveFamilyDeliveries) {
     this.context.openDialog(UpdateCommentComponent, x => x.args =
-      {
-        family: f,
-        comment: f.courierComments.value,
-        helpText: s => s.commentForSuccessDelivery,
-        ok: async (comment) => {
-          f.deliverStatus.value = DeliveryStatus.SuccessPickedUp;
-          f.courierComments.value = comment;
-          f.checkNeedsWork();
-          try {
-            await f.save();
-            this.dialog.analytics('Self Pickup');
-          }
-          catch (err) {
-            this.dialog.Error(err);
-          }
-        },
-        cancel: () => { }
-      });
+    {
+      family: f,
+      comment: f.courierComments.value,
+      helpText: s => s.commentForSuccessDelivery,
+      ok: async (comment) => {
+        f.deliverStatus.value = DeliveryStatus.SuccessPickedUp;
+        f.courierComments.value = comment;
+        f.checkNeedsWork();
+        try {
+          await f.save();
+          this.dialog.analytics('Self Pickup');
+        }
+        catch (err) {
+          this.dialog.Error(err);
+        }
+      },
+      cancel: () => { }
+    });
   }
 
   async labSelfReception(d: ActiveFamilyDeliveries) {
@@ -78,9 +82,65 @@ export class FamilyInfoComponent implements OnInit {
       }
     }
   }
+  async privateCall() {
+    try {
+      let r = await FamilyInfoComponent.privateCall(this.f.id.value);
+      if (r.error)
+        this.dialog.Error(r.error);
+      else
+        this.zone.run(() => {
+          
+          window.location.href = "tel:" + r.phone;
+        });
+
+    }
+    catch (err) {
+      this.dialog.exception("private clas", err);
+    }
+
+  }
+  static createPhoneProxyOnServer: (phone1: string, phone2: string) => Promise<{ phone: string }>;
+  @ServerFunction({ allowed: c => c.isSignedIn() })
+  static async privateCall(deliveryId: string, context?: Context): Promise<{
+    phone?: string,
+    error?: string
+  }> {
+    let cleanPhone = '';
+
+    try {
+      let settings = await ApplicationSettings.getAsync(context);
+      if (!settings.usePhoneProxy.value)
+        throw "פרוקסי לא מופעל לסביבה זו";
+      let fd = await context.for(ActiveFamilyDeliveries).findId(deliveryId);
+      if (!fd) throw "משלוח לא נמצא";
+      if (fd.courier.value != context.user.id && !context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
+        throw "אינך רשאי לחייג למשפחה זו";
+
+      cleanPhone = PhoneColumn.fixPhoneInput(fd.phone1.value);
+      if (!cleanPhone) return { error: "למשפחה זו לא מעודכן טלפון" };
+      if (cleanPhone.startsWith('0'))
+        cleanPhone = cleanPhone.substring(1);
+      cleanPhone = "+972" + cleanPhone;
+      let h = await context.for(Helpers).findId(context.user.id);
+      if (!h)
+        throw "מתנדב לא נמצא";
+      let vPhone = h.phone.value;
+      if (vPhone.startsWith('0'))
+        vPhone = vPhone.substring(1);
+      vPhone = "+972" + vPhone;
+
+
+      return FamilyInfoComponent.createPhoneProxyOnServer(cleanPhone, vPhone);
+    }
+    catch (err) {
+      console.error("twilio proxy", err, "phone:" + cleanPhone);
+      return { error: "תקלה בשירות הטלפונים: " + extractError(err) }
+    }
+
+  }
 
   async familiyPickedUp(f: ActiveFamilyDeliveries) {
-    await (this.settings.isSytemForMlt()) ? this.labSelfReception(f) :this.getPickupComments(f);
+    await (this.settings.isSytemForMlt()) ? this.labSelfReception(f) : this.getPickupComments(f);
   }
 
   async cancelAssign(f: ActiveFamilyDeliveries) {
