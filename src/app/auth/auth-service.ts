@@ -201,7 +201,7 @@ export class AuthService {
             }
         }
 
-        if (userHasPassword && settings.daysToForcePasswordChange.value > 0 && new Date().getTime() > h.passwordChangeDate.value.getTime() + 86400000 * settings.daysToForcePasswordChange.value) {
+        if (userHasPassword && settings.daysToForcePasswordChange.value > 0 && (!h.passwordChangeDate.value||new Date().getTime() > h.passwordChangeDate.value.getTime() + 86400000 * settings.daysToForcePasswordChange.value)) {
             r.requiredToSetPassword = true;
             r.requiredToSetPasswordReason = settings.lang.passwordExpired;
             return r;
