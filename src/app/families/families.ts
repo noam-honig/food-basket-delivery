@@ -4,7 +4,7 @@ import { YesNoColumn } from "./YesNo";
 import { FamilySourceId } from "./FamilySources";
 import { BasketId, QuantityColumn } from "./BasketType";
 import { SqlBuilder, PhoneColumn, EmailColumn, delayWhileTyping, wasChanged, changeDate } from "../model-shared/types";
-import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, FilterBase, ColumnOptions, SpecificEntityHelper, Entity, DataArealColumnSetting, InMemoryDataProvider, ServerContext } from '@remult/core';
+import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, FilterBase, ColumnOptions, SpecificEntityHelper, Entity, DataArealColumnSetting, InMemoryDataProvider, ServerContext, SelectValueDialogComponent } from '@remult/core';
 import { HelperIdReadonly, HelperId } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress } from "../shared/googleApiHelpers";
@@ -24,6 +24,7 @@ import { InputAreaComponent } from "../select-popup/input-area/input-area.compon
 import { YesNoQuestionComponent } from "../select-popup/yes-no-question/yes-no-question.component";
 import { allCentersToken, findClosestDistCenter } from "../manage/distribution-centers";
 import { getLang } from "../sites/sites";
+
 
 var FamilyDeliveries: factoryFor<import("./FamilyDeliveries").FamilyDeliveries>;
 
@@ -445,7 +446,7 @@ export class Families extends IdEntity {
   appartment = new StringColumn(getLang(this.context).appartment);
   entrance = new StringColumn(getLang(this.context).entrance);
   city = new StringColumn({ caption: getLang(this.context).cityAutomaticallyUpdatedByGoogle });
-  area = new StringColumn({ caption: getLang(this.context).region });
+  area = new AreaColumn(this.context);
   addressComment = new StringColumn(getLang(this.context).addressComment);
   postalCode = new NumberColumn(getLang(this.context).postalCode);
   deliveryComments = new StringColumn(getLang(this.context).defaultDeliveryComment);
@@ -895,6 +896,42 @@ export interface parseAddressResult {
   dira?: string;
   floor?: string;
   knisa?: string;
+}
+export class AreaColumn extends StringColumn {
+  constructor(context: Context, settingsOrCaption?: ColumnOptions<string>) {
+    super({
+      dataControlSettings: () => ({
+        click: async () => {
+          let areas = await AreaColumn.getAreas();
+          await context.openDialog(SelectValueDialogComponent, x => x.args({
+            values: areas.map(x => ({ caption: x.area })),
+            onSelect: area => {
+              this.value = area.caption;
+            }
+          }))
+        }
+      })
+    }, settingsOrCaption);
+    if (!this.defs.caption)
+      this.defs.caption = getLang(context).region;
+  }
+  @ServerFunction({ allowed: Roles.admin })
+  static async getAreas(context?: Context, db?: SqlDatabase): Promise<{ area: string, count: number }[]> {
+    var sql = new SqlBuilder();
+    let f = context.for(Families).create();
+    let r = await db.execute(sql.query({
+      from: f,
+      select: () => [f.area, 'count (*) as count'],
+      where: () => [f.status.isEqualTo(FamilyStatus.Active)],
+      groupBy: () => [f.area],
+      orderBy: [{ column: f.area, descending: false }]
+
+    }));
+    return r.rows.map(x => ({
+      area: x.area,
+      count: x.count
+    }));
+  }
 }
 export class GroupsColumn extends StringColumn {
   listGroups() {

@@ -201,7 +201,7 @@ export class AuthService {
             }
         }
 
-        if (userHasPassword && settings.daysToForcePasswordChange.value > 0 && new Date().getTime() > h.passwordChangeDate.value.getTime() + 86400000 * settings.daysToForcePasswordChange.value) {
+        if (userHasPassword && settings.daysToForcePasswordChange.value > 0 && (!h.passwordChangeDate.value || new Date().getTime() > h.passwordChangeDate.value.getTime() + 86400000 * settings.daysToForcePasswordChange.value)) {
             r.requiredToSetPassword = true;
             r.requiredToSetPasswordReason = settings.lang.passwordExpired;
             return r;
@@ -285,7 +285,10 @@ export class AuthService {
         let h = await context.for(Helpers).findId(context.user.id);
         if (!h)
             return undefined;
-        return buildToken(await buildHelperUserInfo(h, context), getSettings(context));
+        let newInfo = await buildHelperUserInfo(h, context);
+        newInfo.roles = newInfo.roles.filter(x => context.user.roles.includes(x));
+
+        return buildToken(newInfo, getSettings(context));
 
     }
 
@@ -329,14 +332,14 @@ async function buildHelperUserInfo(h: Helpers, context: Context) {
         else {
             result.roles.push(Roles.admin);
             result.roles.push(Roles.distCenterAdmin);
-            result.roles.push(Roles.lab);
         }
     }
     if (h.distCenterAdmin.value) {
         result.roles.push(Roles.distCenterAdmin);
     }
-    if (h.labAdmin.value)
-        result.roles.push(Roles.lab);
+    if (getSettings(context).isSytemForMlt())
+        if (h.labAdmin.value || h.admin.value)
+            result.roles.push(Roles.lab);
     return result;
 }
 function buildToken(result: HelperUserInfo, settings: ApplicationSettings) {

@@ -200,6 +200,7 @@ export class italy implements Language {
   replacedByOrgName = "Il nome dell'organizzazione verrà sostituito";
   deliveriesFor = 'consegne per';
   archiveCurrentDelivery = 'Archivia la consegna corrente';
+  archiveHelper = 'Elimina volontario';
   familySelfPickup = 'Ritiro automatico, nessuna consegna richiesta?';
   newDeliveryFor = 'Nuova consegna a';
   familyAlreadyHasAnActiveDelivery = 'Questa famiglia ha già consegne dello stesso tipo.';

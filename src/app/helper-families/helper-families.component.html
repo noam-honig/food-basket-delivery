@@ -31,7 +31,11 @@
       {{familyLists.routeStats.totalKm}} {{settings.lang.km}}</span>
   </div>
   <mat-tab-group (selectedTabChange)="mapTabClicked()" #theTab>
-    <mat-tab [label]="settings.lang.list">
+    <mat-tab >
+      <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">toc</mat-icon>
+        {{settings.lang.list}}
+      </ng-template>
       <mat-accordion class="no-print">
         <ng-container *ngFor="let f of familyLists.toDeliver;let i=index">
           <mat-expansion-panel #myPanel *ngIf="limitReady.shouldShow(i)">
@@ -68,7 +72,11 @@
         style="margin-top: 10px;">{{settings.lang.showAllDeliveries}}</button>
     </mat-tab>
 
-    <mat-tab [label]="settings.lang.map">
+    <mat-tab >
+      <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">room</mat-icon>
+        {{settings.lang.map}}
+      </ng-template>
       <app-map #map> </app-map>
     </mat-tab>
   </mat-tab-group>

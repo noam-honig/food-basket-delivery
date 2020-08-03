@@ -79,6 +79,7 @@
     </div>
 
   </div>
+
   <ng-container *ngIf="!settings.hideFamilyPhoneFromVolunteer.value">
     <h4 *ngIf="f.phone1.value || f.phone2.value||f.phone3.value||f.phone4.value">{{settings.lang.phones}}:</h4>
     <div *ngIf="f.phone1.value" class="phone-container">
@@ -124,6 +125,19 @@
       <div>
         <a href="tel:{{f.phone4.value}}">{{f.phone4.displayValue}}</a>,
         {{f.phone4Description.value?f.phone4Description.value:f.name.value}}
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="settings.usePhoneProxy.value">
+    <div  class="phone-container">
+      <a  (click)="privateCall()">
+        <button mat-mini-fab style="vertical-align: middle" color="primary">
+          <mat-icon>call</mat-icon>
+        </button>
+      </a>
+      <div>
+        <a  (click)="privateCall()">לחץ לחיוג מאובטח למשפחה</a>,
+        {{f.phone1Description.value?f.phone1Description.value:f.name.value}}
       </div>
     </div>
   </ng-container>

@@ -51,7 +51,7 @@ export class SelectCompanyComponent implements OnInit {
     }
 
   }
-  @ServerFunction({ allowed: Roles.admin })
+  @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async getCompanies(context?: Context, db?: SqlDatabase) {
     var sql = new SqlBuilder();
     let h = context.for(Helpers).create();

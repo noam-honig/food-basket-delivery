@@ -142,8 +142,15 @@ export class HelpersComponent implements OnInit, OnDestroy {
           this.dialog.Info(r);
         },
         visible: h => h.admin.value || h.distCenterAdmin.value
-      }
-      ,
+      },
+      {
+        name: use.language.archiveHelper,
+        visible: () => this.context.isAllowed(Roles.admin),
+        click: async h => {
+          await h.deactivate();
+          this.helpers.items.splice(this.helpers.items.indexOf(h), 1);
+        }
+      },
       {
         name: use.language.deliveries,
         visible: h => !h.isNew(),
@@ -184,7 +191,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       orderBy: h => [h.name],
       limit: 25,
       where: h => {
-        return h.name.isContains(this.searchString);
+        return h.name.isContains(this.searchString).and(h.active());
       }
     },
     columnSettings: helpers => {

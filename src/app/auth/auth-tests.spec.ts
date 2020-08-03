@@ -12,7 +12,7 @@ const PHONE = '0507330590';
 describe('users and security', () => {
     Helpers.passwordHelper = {
         generateHash: x => x,
-        verify: (a,b) => a==b
+        verify: (a, b) => a == b
     };
     Helpers.helper = new JWTCookieAuthorizationHelper({
         addAllowedHeader: (x) => { },
@@ -104,7 +104,7 @@ describe('users and security', () => {
     }));
     it("test login  with invalid password", async(async () => {
         let { c, context } = await getHelperContext({
-            setValues: h => {  h.password.value = '123'; }
+            setValues: h => { h.password.value = '123'; }
         });
 
         let r = await AuthService.login({
@@ -118,7 +118,7 @@ describe('users and security', () => {
     }));
     it("test login  with valid password", async(async () => {
         let { c, context } = await getHelperContext({
-            setValues: h => {  h.password.value = '123'; }
+            setValues: h => { h.password.value = '123'; }
         });
 
         let r = await AuthService.login({
@@ -133,7 +133,7 @@ describe('users and security', () => {
     }));
     it("change password to same password should fail", async(async () => {
         let { c, context } = await getHelperContext({
-            setValues: h => {  h.password.value = '123'; }
+            setValues: h => { h.password.value = '123'; }
         });
 
         let r = await AuthService.login({
@@ -147,7 +147,7 @@ describe('users and security', () => {
     }));
     it("change password should work", async(async () => {
         let { c, context } = await getHelperContext({
-            setValues: h => {  h.password.value = '123'; }
+            setValues: h => { h.password.value = '123'; }
         });
 
         let r = await AuthService.login({
@@ -159,6 +159,24 @@ describe('users and security', () => {
         if (!r.authToken) {
             throw r;
         }
+    }));
+    it("sign in from sms and renewLease should stay with no privileges or even fail", async(async () => {
+        let { c, context } = await getHelperContext({
+            setValues: h => { h.password.value = '123'; h.admin.value = true; h.shortUrlKey.value = '1234567890' }
+        });
+
+        let r = await AuthService.loginFromSms('1234567890', context);
+        if (!r.authToken) {
+            throw r;
+        }
+        let jwt = new JwtSessionManager(context);
+        jwt.setToken(r.authToken);
+        expect(context.user.name).toBe('test');
+        expect(context.isAllowed(Roles.admin)).toBe(false);
+        let r2 = await AuthService.renewToken(context);
+        jwt.setToken(r2);
+        expect(context.user.name).toBe('test');
+        expect(context.isAllowed(Roles.admin)).toBe(false);
     }));
 });
 async function getHelperContext(args?: { setValues?: (h: Helpers) => void }) {
