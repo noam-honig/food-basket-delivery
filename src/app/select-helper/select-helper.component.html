@@ -23,9 +23,12 @@
     <div *ngFor="let h of filteredHelpers" (click)="select(h)" style="display:flex;flex-direction: column;">
 
       <div style="display:flex;justify-content: space-between;">
-        {{h.name}}
+        {{h.name}} 
         <div style="text-align: end;" class="secondary-text">
-          <div *ngIf="h.assignedDeliveries>0"> {{h.assignedDeliveries}} {{settings.lang.deliveries}}</div>
+          <div *ngIf="h.assignedDeliveries>0"> {{h.assignedDeliveries}} {{settings.lang.ActiveDeliveries}}</div>
+          <div *ngIf="h.lastCompletedDeliveryString" class="{{h.isBusyVolunteer}}"> 
+            {{h.totalRecentDeliveries}} {{settings.lang.deliveriesCompleted}} ({{h.lastCompletedDeliveryString}})
+          </div>
           <div *ngIf="h.fixedFamilies>0"> {{h.fixedFamilies}} {{settings.lang.families}}</div>
           <div *ngIf="h.hadProblem" style="color:red"> {{settings.lang.hadProblemBefore}} </div>
         </div>

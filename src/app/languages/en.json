@@ -16,6 +16,10 @@
     "valueInCode": "פעיל",
     "custom": "Active"
   },
+  "ActiveDeliveries": {
+    "google": "Active deliveries",
+    "valueInCode": "משלוחים פעילים"
+  },
   "activeEventStatus": {
     "google": "Open to registration",
     "valueInCode": "פתוח לרישום"
@@ -827,6 +831,10 @@
     "valueInCode": "משלוחים באותה הכתובת, האם לשייך גם אותם?",
     "custom": "delivery at the same address, do they also belong?"
   },
+  "deliveriesCompleted": {
+    "google": "Shipments completed",
+    "valueInCode": "משלוחים הושלמו"
+  },
   "deliveriesDoneInTheLastTwoDays": {
     "google": "Deliveries distributed over the last two days",
     "valueInCode": "משלוחים שחולקו ביומיים האחרונים",
@@ -1613,6 +1621,10 @@
   "languageCodeHe": {
     "google": "hey",
     "valueInCode": "he"
+  },
+  "lastDelivery": {
+    "google": "Last shipment",
+    "valueInCode": "משלוח אחרון"
   },
   "lastName": {
     "google": "Last Name",
@@ -3065,7 +3077,7 @@
   },
   "userNotFoundOrWrongPassword": {
     "google": "User not found or password incorrect",
-    "valueInCode": "משתמשת לא נמצאה או סיסמה שגויה"
+    "valueInCode": "משתמש לא נמצא או סיסמה שגויה"
   },
   "valueAlreadyExistsFor": {
     "google": "Value already exists for the family",

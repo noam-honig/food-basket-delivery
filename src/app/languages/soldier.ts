@@ -14,6 +14,7 @@ export class soldier implements Language {
   defaultDistributionListName = 'חלוקת מזון';
   AssignEscortComponent = 'שיוך מלווים';
   FamilyDeliveriesComponent = 'משלוחים';
+  ActiveDeliveries = 'משלוחים פעילים';
   FamiliesComponent = 'חיילים';
   DeliveryFollowUpComponent = 'מעקב מתנדבים';
   NewsComponent = 'מצריך טיפול';
@@ -242,6 +243,7 @@ export class soldier implements Language {
   defaultVolunteer = 'מתנדב ברירת מחדל';
   previousDeliveryStatus = 'סטטוס משלוח קודם';
   previousDeliveryDate = 'תאריך משלוח קודם';
+  lastDelivery = 'משלוח אחרון';
   previousDeliveryNotes = 'הערת משלוח קודם';
   addressByGoogle = 'כתובת כפי שגוגל הבין';
   addressOk = 'כתובת תקינה';
@@ -288,6 +290,7 @@ export class soldier implements Language {
   remainingByCities = 'נותרו לפי ערים';
   remainingByGroups = 'נותרו לפי קבוצות';
   deliveries = 'משלוחים';
+  deliveriesCompleted = 'משלוחים הושלמו';
   empty = 'ריק';
   allOthers = 'כל השאר';
   total = 'סה"כ';

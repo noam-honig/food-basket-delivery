@@ -62,6 +62,11 @@ export abstract class HelpersBase extends IdEntity {
         , allowApiUpdate: Roles.admin
     });
 
+    // allowed frequency of deliveries (nom = total deliveries in denom=number of days)
+    // these might later become columns defined by the user
+    static allowedFreq_nom : number = 3;
+    static allowedFreq_denom : number = 10;
+
     getRouteStats(): routeStats {
         return {
             totalKm: this.totalKm.value,

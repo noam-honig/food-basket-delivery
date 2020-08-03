@@ -12,7 +12,6 @@ import { UserFamiliesList } from '../my-families/user-families';
 import { environment } from '../../environments/environment';
 import { Route } from '@angular/router';
 
-import { foreachSync } from '../shared/utils';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 
