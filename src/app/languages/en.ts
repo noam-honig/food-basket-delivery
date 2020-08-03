@@ -14,6 +14,7 @@ export class en implements Language {
   defaultDistributionListName = 'Food Distribution List';
   AssignEscortComponent = 'Escort assignment';
   FamilyDeliveriesComponent = 'Active Deliveries';
+  ActiveDeliveries = 'Active deliveries';
   FamiliesComponent = 'Families';
   DeliveryFollowUpComponent = 'Volunteer Tracking';
   NewsComponent = 'Requires Followup';
@@ -243,6 +244,7 @@ export class en implements Language {
   defaultVolunteer = 'Default volunteer';
   previousDeliveryStatus = 'Previous delivery status';
   previousDeliveryDate = 'Previous delivery date';
+  lastDelivery = 'Last shipment';
   previousDeliveryNotes = 'Previous delivery note';
   addressByGoogle = 'Address in Google Maps';
   addressOk = 'Correct Address';
@@ -289,6 +291,7 @@ export class en implements Language {
   remainingByCities = 'UnAssigned by Cities';
   remainingByGroups = 'UnAssigned by Groups';
   deliveries = 'Deliveries';
+  deliveriesCompleted = 'Shipments completed';
   empty = 'blank';
   allOthers = 'All others';
   total = 'Total';

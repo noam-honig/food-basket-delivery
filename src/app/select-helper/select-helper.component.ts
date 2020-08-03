@@ -14,8 +14,13 @@ import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeli
 
 import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
-import { SqlBuilder } from '../model-shared/types';
+import { SqlBuilder, changeDate } from '../model-shared/types';
 import { getLang } from '../sites/sites';
+import { dateType } from 'aws-sdk/clients/iam';
+import { DeliveryStatus } from '../families/DeliveryStatus';
+import { ValueTransformer } from '@angular/compiler/src/util';
+import { foreachSync, daysSince } from '../shared/utils';
+
 
 @Component({
   selector: 'app-select-helper',
@@ -93,18 +98,30 @@ export class SelectHelperComponent implements OnInit {
 
       for (const d of (await db.execute(sql.query({
         from: afd,
-        where: () => [afd.courier.isDifferentFrom('').and(afd.deliverStatus.isNotAResultStatus())],
+        where: () => [afd.courier.isDifferentFrom('')],//.and(afd.deliverStatus.isNotAResultStatus())],
         select: () => [
           sql.columnWithAlias(afd.courier, "courier"),
+          sql.columnWithAlias(afd.deliverStatus, "deliver_status"),
+          sql.columnWithAlias(afd.deliveryStatusDate, "delivery_date"),
           sql.columnWithAlias(afd.addressLongitude, "lng"),
           sql.columnWithAlias(afd.addressLatitude, "lat"),
           sql.columnWithAlias(afd.address, 'address')]
       }))).rows) {
         let h = helpers.get(d.courier);
-        if (!h.assignedDeliveries)
-          h.assignedDeliveries = 1;
-        else
-          h.assignedDeliveries++;
+        if (DeliveryStatus.IsAResultStatus(d.deliver_status)) {
+          let dDate = new Date(d.delivery_date);
+          let daysSinceLast = daysSince(dDate);
+          if (!h.daysSinceLast || h.daysSinceLast.valueOf() > daysSinceLast) 
+            h.daysSinceLast = daysSinceLast;
+            h.lastCompletedDeliveryString = " לפני " + daysSinceLast.toString() +" ימים";
+          if (daysSinceLast < HelpersBase.allowedFreq_denom) { 
+            h.totalRecentDeliveries = !h.totalRecentDeliveries ? 1 : h.totalRecentDeliveries++;
+            h.isBusyVolunteer = (h.totalRecentDeliveries > HelpersBase.allowedFreq_nom) ? "busyVolunteer" : "";
+          }
+        } else {
+          h.assignedDeliveries = !h.assignedDeliveries ? 1 : h.assignedDeliveries++;
+        }
+
         check(h, { lat: d.lat, lng: d.lng }, getLang(context).delivery + ": " + d.address);
       }
     } else {
@@ -228,6 +245,10 @@ interface helperInList {
   distance?: number,
   location?: Location,
   assignedDeliveries?: number,
+  totalRecentDeliveries?: number,
+  isBusyVolunteer?: string,
+  daysSinceLast?: number,
+  lastCompletedDeliveryString?: string,
   fixedFamilies?: number,
   distanceFrom?: string,
   hadProblem?: boolean
