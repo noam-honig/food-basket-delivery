@@ -160,7 +160,7 @@ describe('users and security', () => {
             throw r;
         }
     }));
-    it("signin from sms and renewLease should stay with no privliges or even fail", async(async () => {
+    it("sign in from sms and renewLease should stay with no privileges or even fail", async(async () => {
         let { c, context } = await getHelperContext({
             setValues: h => { h.password.value = '123'; h.admin.value = true; h.shortUrlKey.value = '1234567890' }
         });
