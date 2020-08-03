@@ -2,7 +2,7 @@ import { changeDate, PhoneColumn, SqlBuilder, DateTimeColumn, wasChanged } from 
 
 import { EntityClass, Context, IdColumn, IdEntity, StringColumn, NumberColumn, BoolColumn, FilterBase, AndFilter, Column, DataAreaSettings, IDataAreaSettings, ValueListColumn, ColumnOptions } from '@remult/core';
 import { BasketId, QuantityColumn } from "./BasketType";
-import { FamilyId, Families, GroupsColumn } from "./families";
+import { FamilyId, Families, GroupsColumn, iniFamilyDeliveriesInFamiliesCode } from "./families";
 import { DeliveryStatusColumn, DeliveryStatus } from "./DeliveryStatus";
 import { HelperId, HelperIdReadonly, Helpers, HelperUserInfo } from "../helpers/helpers";
 import { FamilySourceId } from "./FamilySources";
@@ -17,6 +17,7 @@ import { DialogService } from "../select-popup/dialog";
 import { use } from "../translate";
 import { includePhoneInApi, getSettings } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
+import { FamilyDeliveresStatistics } from "../family-deliveries/family-deliveries-stats";
 
 
 @EntityClass
@@ -580,6 +581,8 @@ export class ActiveFamilyDeliveries extends FamilyDeliveries {
     }
 
 }
+
+iniFamilyDeliveriesInFamiliesCode(FamilyDeliveries,ActiveFamilyDeliveries);
 
 function logChanged(context: Context, col: Column, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) {
     if (col.value != col.originalValue) {

@@ -567,7 +567,7 @@ export class Language {
   shouldAssignTo = 'האם לשייך אותו למתנדב';
   saveVolunteerInfo = 'שמירת פרטי מתנדב:';
   adminRequireToSetPassword = 'אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה.';
-  userNotFoundOrWrongPassword = "משתמשת לא נמצאה או סיסמה שגויה";
+  userNotFoundOrWrongPassword = "משתמש לא נמצא או סיסמה שגויה";
   fromDate = 'מתאריך';
   toDate = 'עד תאריך';
   shouldSendSmsTo = 'האם לשלוח הודעת SMS ל';

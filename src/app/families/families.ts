@@ -4,7 +4,7 @@ import { YesNoColumn } from "./YesNo";
 import { FamilySourceId } from "./FamilySources";
 import { BasketId, QuantityColumn } from "./BasketType";
 import { SqlBuilder, PhoneColumn, EmailColumn, delayWhileTyping, wasChanged, changeDate } from "../model-shared/types";
-import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, FilterBase, ColumnOptions, SpecificEntityHelper, Entity, DataArealColumnSetting } from '@remult/core';
+import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, FilterBase, ColumnOptions, SpecificEntityHelper, Entity, DataArealColumnSetting, InMemoryDataProvider, ServerContext } from '@remult/core';
 import { HelperIdReadonly, HelperId } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress } from "../shared/googleApiHelpers";
@@ -32,9 +32,8 @@ var ActiveFamilyDeliveries: factoryFor<import("./FamilyDeliveries").ActiveFamily
 export function iniFamilyDeliveriesInFamiliesCode(
   fd: factoryFor<import("./FamilyDeliveries").FamilyDeliveries>,
   activeFd: factoryFor<import("./FamilyDeliveries").ActiveFamilyDeliveries>) {
-  this.FamilyDeliveries = fd;
-  this.ActiveFamilyDeliveries = activeFd;
-
+  FamilyDeliveries = fd;
+  ActiveFamilyDeliveries = activeFd;
 }
 
 declare type factoryFor<T> = {
