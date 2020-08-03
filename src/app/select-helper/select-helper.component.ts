@@ -68,7 +68,7 @@ export class SelectHelperComponent implements OnInit {
       }
     }
 
-    await (await context.for(Helpers).find()).forEach(async h => {
+    await (await context.for(Helpers).find({ where: h => h.active()})).forEach(async h => {
       helpers.set(h.id.value, {
         helperId: h.id.value,
         name: h.name.value,
@@ -162,7 +162,7 @@ export class SelectHelperComponent implements OnInit {
 
 
     this.findOptions.where = h => {
-      let r = h.name.isContains(this.searchString);
+      let r = h.name.isContains(this.searchString).and(h.active());
       if (this.args.filter) {
         return r.and(this.args.filter(h));
       }
@@ -237,7 +237,6 @@ function mapHelpers<hType extends HelpersBase>(helpers: hType[], getFamilies: (h
     helperId: h.id.value,
     name: h.name.value,
     phone: h.phone.displayValue,
-    isActive: h.active(),
     assignedDeliveries: getFamilies(h)
 
   } as helperInList));

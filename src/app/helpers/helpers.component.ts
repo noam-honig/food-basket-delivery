@@ -136,8 +136,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
         name: use.language.archiveHelper,
         visible: () => this.context.isAllowed(Roles.admin),
         click: async h => {
-          h.archive.value = true;
-          await h.save();
+          await h.deactivate();
           this.helpers.items.splice(this.helpers.items.indexOf(h), 1);
         }
       },

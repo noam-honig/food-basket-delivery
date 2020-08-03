@@ -17,6 +17,7 @@ import { DialogService } from "../select-popup/dialog";
 import { getLang, use } from "../translate";
 import { ApplicationSettings, includePhoneInApi, getSettings } from "../manage/ApplicationSettings";
 import { AsignFamilyComponent } from "../asign-family/asign-family.component";
+import { settings } from "cluster";
 
 @EntityClass
 export class FamilyDeliveries extends IdEntity {
@@ -84,7 +85,7 @@ export class FamilyDeliveries extends IdEntity {
     });
     quantity = new QuantityColumn(this.context, { caption: getLang(this.context).quantity, allowApiUpdate: Roles.admin, dataControlSettings: () => ({ width: '100', inputType: 'number' }) });
     isLargeQuantity() {
-        return this.quantity.value > 10;
+        return getSettings(this.context).isSytemForMlt && (this.quantity.value > 10);
     }
 
     distributionCenter = new DistributionCenterId(this.context, {
