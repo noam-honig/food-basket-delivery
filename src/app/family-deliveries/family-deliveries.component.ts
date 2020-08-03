@@ -33,6 +33,7 @@ import { getLang } from '../sites/sites';
   styleUrls: ['./family-deliveries.component.scss']
 })
 export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
+  showChart = true;
   static route: Route = {
     path: 'deliveries',
     component: FamilyDeliveriesComponent,

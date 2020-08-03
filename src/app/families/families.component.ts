@@ -537,6 +537,7 @@ export class FamiliesComponent implements OnInit {
     prevNumOfCols = 5;
     currentTabStats: statsOnTab = { name: '', stats: [], moreStats: [], rule: undefined };
     previousTabStats: statsOnTab = this.currentTabStats;
+    showChart = true;
     async updateChart() {
 
         this.currentTabStats = this.statTabs[this.myTab.selectedIndex];
