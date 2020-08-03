@@ -199,6 +199,7 @@ export class donor implements Language {
   replacedByOrgName = 'יוחלף בשם הארגון';
   deliveriesFor = 'משלוחים עבור';
   archiveCurrentDelivery = 'העבר משלוח נוכחי לארכיב?';
+  archiveHelper = 'מחק מתנדב';
   familySelfPickup = 'יבואו לקחת את המשלוח ואינם צריכים משלוח?';
   newDeliveryFor = 'משלוח חדש ל';
   familyAlreadyHasAnActiveDelivery = 'לתורם זו כבר קיים משלוח מאותו סוג האם להוסיף עוד אחד?';
@@ -468,7 +469,7 @@ export class donor implements Language {
   cantMergeOneFamily = 'אין מה למזג תורם אחד';
   tooManyFamiliesForMerge = 'יותר מידי תורמים בבת אחת';
   basketTypeName = 'שם';
-  readyForDelivery = 'מוכן למשלוח';
+  readyForDelivery = 'מוכן לאיסוף';
   frozen = 'מוקפא';
   deliveredSuccessfully = 'תרומה נאספה';
   leftByHouse = 'הושאר ליד הבית';
@@ -483,7 +484,7 @@ export class donor implements Language {
   freezeDeliveries = 'הקפא משלוחים';
   freezeDeliveriesHelp = 'משלוח "קפוא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח. ';
   unfreezeDeliveries = 'ביטול הקפאת משלוחים';
-  unfreezeDeliveriesHelp = 'ביטול ההקפאה יחזיר משלוחים קפואים למוכן למשלוח';
+  unfreezeDeliveriesHelp = 'ביטול ההקפאה יחזיר משלוחים קפואים למוכן לאיסוף';
   archiveFinishedDeliveries = 'העבר משלוחים שהסתיימו לארכיון';
   deletePendingDeliveries = 'מחק משלוחים שטרם נמסרו לתורמים אלו';
   deleteExistingComment = 'מחק הערה קודמת';
@@ -511,7 +512,7 @@ export class donor implements Language {
   updateDefaultVolunteer = 'עדכן מתנדב ברירת מחדל לתורם';
   clearVolunteer = 'בטל שיוך למתנדב';
   setAsDefaultVolunteer = 'עדכן גם כמתנדב ברירת מחדל';
-  updateVolunteerHelp = 'בכדי לעדכן מתנדב מ"בדרך" ל"מוכן למשלוח" יש לסמן את "בטל שיוך למתנדב". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו';
+  updateVolunteerHelp = 'בכדי לעדכן מתנדב מ"בדרך" ל"מוכן לאיסוף" יש לסמן את "בטל שיוך למתנדב". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו';
   updateVolunteer = 'עדכן מתנדב למשלוחים';
   updateDeliveriesStatus = 'עדכן סטטוס למשלוחים';
   updateDeliveriesStatusHelp = 'סטטוס "מוקפא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח.             ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח. ';
