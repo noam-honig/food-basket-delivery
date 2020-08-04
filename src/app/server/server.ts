@@ -38,7 +38,7 @@ serverInit().then(async (dataSource) => {
     let redirect: string[] = [];
     {
         let x = process.env.REDIRECT;
-        if (x)
+        if (x && process.env.REDIRECT_TARGET)
             redirect = x.split(',');
     }
 
@@ -46,7 +46,7 @@ serverInit().then(async (dataSource) => {
         let context = getContext(req);
         let org = Sites.getOrganizationFromContext(context);
         if (redirect.includes(org)) {
-            res.redirect('https://salmaz.herokuapp.com/' + org);
+            res.redirect(process.env.REDIRECT_TARGET + org);
             return;
         }
         if (!Sites.isValidOrganization(org)) {

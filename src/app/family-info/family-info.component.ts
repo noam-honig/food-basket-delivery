@@ -14,7 +14,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { createElementCssSelector } from '@angular/compiler';
 
 import { HelperUserInfo, Helpers } from '../helpers/helpers';
-import { getLang } from '../sites/sites';
+import { getLang, Sites } from '../sites/sites';
 import { Roles } from '../auth/roles';
 import { PhoneColumn } from '../model-shared/types';
 
@@ -25,9 +25,9 @@ import { PhoneColumn } from '../model-shared/types';
 })
 export class FamilyInfoComponent implements OnInit {
 
-  constructor(private dialog: DialogService, private context: Context, public settings: ApplicationSettings,private zone:NgZone) {
+  constructor(private dialog: DialogService, private context: Context, public settings: ApplicationSettings, private zone: NgZone) {
 
-   }
+  }
   @Input() f: ActiveFamilyDeliveries;
   @Input() showHelp = false;
   ngOnInit() {
@@ -84,12 +84,13 @@ export class FamilyInfoComponent implements OnInit {
   }
   async privateCall() {
     try {
+      this.dialog.analytics("Private Call");
       let r = await FamilyInfoComponent.privateCall(this.f.id.value);
       if (r.error)
         this.dialog.Error(r.error);
       else
         this.zone.run(() => {
-          
+
           window.location.href = "tel:" + r.phone;
         });
 
@@ -99,14 +100,14 @@ export class FamilyInfoComponent implements OnInit {
     }
 
   }
-  static createPhoneProxyOnServer: (phone1: string, phone2: string) => Promise<{ phone: string }>;
+  static createPhoneProxyOnServer: (phone1: string, phone2: string) => Promise<{ phone: string, session: string }>;
   @ServerFunction({ allowed: c => c.isSignedIn() })
   static async privateCall(deliveryId: string, context?: Context): Promise<{
     phone?: string,
     error?: string
   }> {
     let cleanPhone = '';
-
+    let reqInfo = Sites.getOrganizationFromContext(context) + "/proxy/" + context.user.id + " => " + deliveryId;
     try {
       let settings = await ApplicationSettings.getAsync(context);
       if (!settings.usePhoneProxy.value)
@@ -130,10 +131,13 @@ export class FamilyInfoComponent implements OnInit {
       vPhone = "+972" + vPhone;
 
 
-      return FamilyInfoComponent.createPhoneProxyOnServer(cleanPhone, vPhone);
+      let r = await FamilyInfoComponent.createPhoneProxyOnServer(cleanPhone, vPhone);
+
+      console.log(reqInfo + " (" + r.phone + "," + r.session + ")");
+      return r;
     }
     catch (err) {
-      console.error("twilio proxy", err, "phone:" + cleanPhone);
+      console.error(reqInfo, err, "phone:" + cleanPhone);
       return { error: "תקלה בשירות הטלפונים: " + extractError(err) }
     }
 

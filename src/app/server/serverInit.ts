@@ -77,8 +77,7 @@ export async function serverInit() {
             let p = await session.participants();
             let p1 = await p.create({ friendlyName: 'volunteer', identifier: vPhone });
             let p2 = await p.create({ friendlyName: 'family', identifier: cleanPhone });
-            console.log(p1.proxyIdentifier,p2.proxyIdentifier);
-            return { phone: p1.proxyIdentifier }
+            return { phone: p1.proxyIdentifier,session:session.sid }
         }
         Sites.initOnServer();
         if (Sites.multipleSites) {
