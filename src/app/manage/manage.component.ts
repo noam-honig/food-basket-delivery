@@ -124,7 +124,7 @@ export class ManageComponent implements OnInit {
               d.comments,
               [d.phone1, d.phone1Description],
               [d.phone2, d.phone2Description],
-              d.isNotActive,
+              d.isFrozen,
               d.semel
             ]
           }
@@ -143,7 +143,7 @@ export class ManageComponent implements OnInit {
         getValue: s => s.getGeocodeInformation().getAddress()
       },
       x.comments,
-      x.isNotActive,
+      x.isFrozen,
       x.phone1,
       x.phone1Description,
       x.phone2,

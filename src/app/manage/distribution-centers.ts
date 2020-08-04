@@ -21,7 +21,7 @@ export class DistributionCenters extends IdEntity {
   phone1Description = new StringColumn(getLang(this.context).phone1Description);
   phone2 = new PhoneColumn(getLang(this.context).phone2);
   phone2Description = new StringColumn(getLang(this.context).phone2Description);
-  isNotActive = new BoolColumn(getLang(this.context).frozen);
+  isFrozen = new BoolColumn(getLang(this.context).frozen);
   
   private _lastString: string;
   private _lastGeo: GeocodeInformation;
@@ -127,7 +127,7 @@ export async function findClosestDistCenter(loc: Location, context: Context, cen
   let result: string;
   let dist: number;
   if (!centers)
-    centers = await context.for(DistributionCenters).find({where: c => c.isNotActive.isEqualTo(false)});
+    centers = await context.for(DistributionCenters).find({where: c => c.isFrozen.isEqualTo(false)});
   for (const c of centers) {
     let myDist = GetDistanceBetween(c.getGeocodeInformation().location(), loc);
     if (result===undefined || myDist < dist) {
