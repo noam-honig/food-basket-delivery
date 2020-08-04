@@ -14,12 +14,10 @@ import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeli
 
 import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
-import { SqlBuilder, changeDate } from '../model-shared/types';
+import { SqlBuilder } from '../model-shared/types';
 import { getLang } from '../sites/sites';
-import { dateType } from 'aws-sdk/clients/iam';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { ValueTransformer } from '@angular/compiler/src/util';
-import { foreachSync, daysSince } from '../shared/utils';
+import { daysSince } from '../shared/utils';
 
 
 @Component({
@@ -98,7 +96,7 @@ export class SelectHelperComponent implements OnInit {
 
       for (const d of (await db.execute(sql.query({
         from: afd,
-        where: () => [afd.courier.isDifferentFrom('')],//.and(afd.deliverStatus.isNotAResultStatus())],
+        where: () => [afd.courier.isDifferentFrom('')],
         select: () => [
           sql.columnWithAlias(afd.courier, "courier"),
           sql.columnWithAlias(afd.deliverStatus, "deliver_status"),
