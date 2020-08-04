@@ -7,7 +7,7 @@ import { DeliveryStatusColumn, DeliveryStatus } from "./DeliveryStatus";
 import { HelperId, HelperIdReadonly, Helpers, HelperUserInfo } from "../helpers/helpers";
 import { FamilySourceId } from "./FamilySources";
 import { Roles } from "../auth/roles";
-import { DistributionCenterId as DistributionCenterId, allCentersToken } from "../manage/distribution-centers";
+import { DistributionCenterId as DistributionCenterId, allCentersToken, DistributionCenters } from "../manage/distribution-centers";
 import { YesNoColumn } from "./YesNo";
 
 import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
@@ -92,6 +92,9 @@ export class FamilyDeliveries extends IdEntity {
     distributionCenter = new DistributionCenterId(this.context, {
         allowApiUpdate: Roles.admin
     });
+    isDistCenterInactive() {
+        return this.context.for(DistributionCenters).lookup(this.distributionCenter).isFrozen.value;
+    }
     deliverStatus = new DeliveryStatusColumn(this.context);
     courier = new HelperId(this.context, {
         caption: getLang(this.context).volunteer,

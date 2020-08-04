@@ -124,6 +124,7 @@ export class ManageComponent implements OnInit {
               d.comments,
               [d.phone1, d.phone1Description],
               [d.phone2, d.phone2Description],
+              d.isFrozen,
               d.semel
             ]
           }
@@ -142,6 +143,7 @@ export class ManageComponent implements OnInit {
         getValue: s => s.getGeocodeInformation().getAddress()
       },
       x.comments,
+      x.isFrozen,
       x.phone1,
       x.phone1Description,
       x.phone2,
@@ -158,7 +160,7 @@ export class ManageComponent implements OnInit {
       this.refreshEnvironmentAfterSave();
 
     },
-    numOfColumnsInGrid: 4,
+    numOfColumnsInGrid: this.settings.isSytemForMlt() ? 7 : 4,
     allowUpdate: true,
     allowInsert: true,
 
