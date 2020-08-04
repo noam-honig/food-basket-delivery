@@ -77,7 +77,7 @@ export async function serverInit() {
             let p = await session.participants();
             let p1 = await p.create({ friendlyName: 'volunteer', identifier: vPhone });
             let p2 = await p.create({ friendlyName: 'family', identifier: cleanPhone });
-            return { phone: p1.proxyIdentifier,session:session.sid }
+            return { phone: p1.proxyIdentifier, session: session.sid }
         }
         Sites.initOnServer();
         if (Sites.multipleSites) {
@@ -159,20 +159,23 @@ export async function serverInit() {
                     throw err;
                 }
             }
-        }
-        for (const s of Sites.schemas) {
-            if (s.toLowerCase() == Sites.guestSchema)
-                throw 'admin is an ivalid schema name';
-            try {
-                await InitSpecificSchema(pool, s);
+        } {
+            let i = 0;
+            for (const s of Sites.schemas) {
+                if (s.toLowerCase() == Sites.guestSchema)
+                    throw 'admin is an ivalid schema name';
+                try {
+                    console.log("init schema for "+ s + " - " + ++i + "/" + Sites.schemas.length);
+                    await InitSpecificSchema(pool, s);
+                }
+                catch (err) {
+                    console.error(err);
+                }
+                if (!process.env.DISABLE_LOAD_DELAY)
+                    await new Promise(x => setTimeout(() => {
+                        x();
+                    }, 1000));
             }
-            catch (err) {
-                console.error(err);
-            }
-            if (!process.env.DISABLE_LOAD_DELAY)
-                await new Promise(x => setTimeout(() => {
-                    x();
-                }, 1000));
         }
     }
 }

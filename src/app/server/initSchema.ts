@@ -19,7 +19,7 @@ import { Sites, getLang, setLangForSite } from '../sites/sites';
 
 export async function initSchema(pool1: PostgresPool, org: string) {
 
-    console.log("init schema for ", org);
+    
     var dataSource = new SqlDatabase(new PostgresDataProvider(pool1));
     let context = new ServerContext();
     context.setDataProvider(dataSource);
