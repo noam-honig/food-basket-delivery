@@ -152,7 +152,7 @@ export class ApplicationSettings extends Entity<number>  {
   volunteerCanUpdateComment = new BoolColumn(this.lang.volunteerCanUpdateComment);
   hideFamilyPhoneFromVolunteer = new BoolColumn(this.lang.hideFamilyPhoneFromVolunteer);
   static serverHasPhoneProxy = false;
-  usePhoneProxy = new BoolColumn();
+  usePhoneProxy = new BoolColumn({ allowApiUpdate: false });
   showOnlyLastNamePartToVolunteer = new BoolColumn(this.lang.showOnlyLastNamePartToVolunteer);
   allowSendSuccessMessageOption = new BoolColumn({ caption: this.lang.allowSendSuccessMessageOption, allowApiUpdate: false });
   sendSuccessMessageToFamily = new BoolColumn(this.lang.sendSuccessMessageToFamily);
@@ -407,7 +407,7 @@ export function includePhoneInApi(context: Context) {
   var s = getSettings(context);
   if (!s.hideFamilyPhoneFromVolunteer.value)
     return true;
-  if (context.isAllowed( Roles.distCenterAdmin))
+  if (context.isAllowed(Roles.distCenterAdmin))
     return true
   return false;
 
