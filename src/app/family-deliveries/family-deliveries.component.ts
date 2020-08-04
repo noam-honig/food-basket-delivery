@@ -498,7 +498,15 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           width: '300'
         },
         { column: deliveries.createDate, width: '150' },
-        deliveries.distributionCenter,
+        { 
+          column: deliveries.distributionCenter,
+          cssClass: f => {
+            if (f.isDistCenterInactive())
+              return 'addressProblem'
+            else
+              return '';
+          }
+        },
         this.statusColumn = { column: deliveries.deliverStatus },
 
 
