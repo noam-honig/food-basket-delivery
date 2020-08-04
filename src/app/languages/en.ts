@@ -200,6 +200,7 @@ export class en implements Language {
   replacedByOrgName = 'Will be replaced on behalf of the organization';
   deliveriesFor = 'deliveries for';
   archiveCurrentDelivery = 'Archive current delivery';
+  archiveHelper = 'Delete Volunteer';
   familySelfPickup = 'Self Pickup, no delivery required?';
   newDeliveryFor = 'New delivery to';
   familyAlreadyHasAnActiveDelivery = 'This family already has delivery of the same type.';

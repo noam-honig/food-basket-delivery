@@ -1,10 +1,15 @@
 <div class="full-page">
     <div>
         <div style="display:flex;justify-content: space-between">
-            <button mat-mini-fab style="margin-bottom:5px" (click)="refresh()" color="primary">
-                <mat-icon>refresh</mat-icon>
-            </button>
-
+            <div>
+                <button mat-mini-fab style="margin-bottom:5px" (click)="refresh()" color="primary">
+                    <mat-icon>refresh</mat-icon>
+                </button>
+                <button mat-mini-fab style="margin-bottom:5px" (click)="showChart = !showChart" color="primary">
+                    <mat-icon *ngIf="showChart">unfold_less</mat-icon>
+                    <mat-icon *ngIf="!showChart">unfold_more</mat-icon>
+                </button>
+            </div>
             <a href="https://www.youtube.com/watch?v=2FG05srq5uY&list=PLRxHq2rVTQWhe2MTYbMJbAY1EW6iXfjtK"
                 target="_blank" *ngIf="settings.showVideo()"
                 class="no-print">{{settings.lang.familyComponentVideos}}</a>
@@ -14,7 +19,7 @@
 
         </mat-tab-group>
         <br *ngIf="problemOnly" />
-        <div *ngIf="!problemOnly">
+        <div *ngIf="showChart">
             <div style="display: block;width:350px;height:188px;">
                 <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType"
                     [options]="options" [colors]="colors" (chartClick)="chartClicked($event)"></canvas>

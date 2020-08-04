@@ -353,6 +353,10 @@ describe('AppComponent', () => {
     expect(c.family.phone2.value).toBe('2');
     expect(c.family.phone2Description.value).toBe('d2');
   });
+  it("valid phoneb",()=>{
+    let test = (phone:string,expected:boolean)=>expect(isPhoneValidForIsrael(phone)).toBe(expected,phone);
+    test('039197373',true);
+  });
 
 
 

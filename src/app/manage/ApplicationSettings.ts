@@ -18,6 +18,7 @@ import { routeStrategyColumn } from '../asign-family/route-strategy';
 
 @EntityClass
 export class ApplicationSettings extends Entity<number>  {
+
   getInternationalPhonePrefix() {
     let r = this.forWho.value.args.internationalPrefixForSmsAndAws;
     if (!r)
@@ -127,10 +128,10 @@ export class ApplicationSettings extends Entity<number>  {
   _old_for_soliders = new BoolColumn({ dbName: 'forSoldiers' });
 
   usingSelfPickupModule = new BoolColumn(this.lang.enableSelfPickupModule);
-  isSytemForMlt(){
+  isSytemForMlt() {
     return this.forWho.value == TranslationOptions.donors;
   }
-  
+
   showCompanies = new BoolColumn(this.lang.showVolunteerCompany);
   manageEscorts = new BoolColumn(this.lang.activateEscort);
   showHelperComment = new BoolColumn(this.lang.showHelperComment);
@@ -150,6 +151,8 @@ export class ApplicationSettings extends Entity<number>  {
   checkDuplicatePhones = new BoolColumn(this.lang.checkDuplicatePhones);
   volunteerCanUpdateComment = new BoolColumn(this.lang.volunteerCanUpdateComment);
   hideFamilyPhoneFromVolunteer = new BoolColumn(this.lang.hideFamilyPhoneFromVolunteer);
+  static serverHasPhoneProxy = false;
+  usePhoneProxy = new BoolColumn();
   showOnlyLastNamePartToVolunteer = new BoolColumn(this.lang.showOnlyLastNamePartToVolunteer);
   allowSendSuccessMessageOption = new BoolColumn({ caption: this.lang.allowSendSuccessMessageOption, allowApiUpdate: false });
   sendSuccessMessageToFamily = new BoolColumn(this.lang.sendSuccessMessageToFamily);
@@ -404,6 +407,8 @@ export function includePhoneInApi(context: Context) {
   var s = getSettings(context);
   if (!s.hideFamilyPhoneFromVolunteer.value)
     return true;
-  return Roles.distCenterAdmin;
+  if (context.isAllowed( Roles.distCenterAdmin))
+    return true
+  return false;
 
 }

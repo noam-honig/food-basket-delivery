@@ -17,6 +17,7 @@ import { OverviewComponent } from '../overview/overview.component';
 import { wasChanged } from '../model-shared/types';
 import { ConnectionOptions } from 'tls';
 import { SitesEntity } from '../sites/sites.entity';
+import { FamilyInfoComponent } from '../family-info/family-info.component';
 
 declare const lang = '';
 
@@ -55,6 +56,29 @@ export async function serverInit() {
         Helpers.passwordHelper = {
             generateHash: p => passwordHash.generate(p),
             verify: (p, h) => passwordHash.verify(p, h)
+        }
+        FamilyInfoComponent.createPhoneProxyOnServer = async (cleanPhone, vPhone) => {
+            const accountSID = process.env.twilio_accountSID;
+            const authToken = process.env.twilio_authToken;
+            const proxyService = process.env.twilio_proxyService;
+            if (!accountSID)
+                throw "לא הוגדר שירות טלפונים";
+            let twilio = await import('twilio');
+            let client = twilio(accountSID, authToken);
+
+            let service = client.proxy.services(proxyService);
+
+            let session = await service.sessions.create({
+                mode: 'voice-only',
+                ttl: 60
+            });
+
+
+            let p = await session.participants();
+            let p1 = await p.create({ friendlyName: 'volunteer', identifier: vPhone });
+            let p2 = await p.create({ friendlyName: 'family', identifier: cleanPhone });
+            console.log(p1.proxyIdentifier,p2.proxyIdentifier);
+            return { phone: p1.proxyIdentifier }
         }
         Sites.initOnServer();
         if (Sites.multipleSites) {
@@ -116,6 +140,26 @@ export async function serverInit() {
     async function InitSchemas(pool: Pool) {
         OverviewComponent.createDbSchema = async site => {
             return await InitSpecificSchema(pool, site);
+        }
+        //init application settings
+        if (true) {
+            let i = 0;
+            for (const s of Sites.schemas) {
+                if (s.toLowerCase() == Sites.guestSchema)
+                    throw 'admin is an ivalid schema name';
+                try {
+                    console.log('verify app settings for ' + s + " - " + ++i + "/" + Sites.schemas.length)
+                    let schemaPool = new PostgresSchemaWrapper(pool, s);
+                    let db = new SqlDatabase(new PostgresDataProvider(schemaPool));
+                    let context = new ServerContext(db);
+                    var builder = new PostgresSchemaBuilder(db, s);
+                    await builder.createIfNotExist(context.for(ApplicationSettings).create());
+                    await builder.verifyAllColumns(context.for(ApplicationSettings).create());
+                }
+                catch (err) {
+                    throw err;
+                }
+            }
         }
         for (const s of Sites.schemas) {
             if (s.toLowerCase() == Sites.guestSchema)

@@ -33,6 +33,7 @@ import { getLang } from '../sites/sites';
   styleUrls: ['./family-deliveries.component.scss']
 })
 export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
+  showChart = true;
   static route: Route = {
     path: 'deliveries',
     component: FamilyDeliveriesComponent,
@@ -469,10 +470,22 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
             return '';
           }
         },
-        deliveries.basketType,
+        { 
+          column: deliveries.basketType,
+          cssClass: f => {
+            if (f.isLargeQuantity())
+                return 'largeDelivery';
+            return '';
+        }
+      },
         {
           column: deliveries.quantity,
-          width: '50'
+          width: '50',
+          cssClass: f => {
+              if (f.isLargeQuantity())
+                  return 'largeDelivery';
+              return '';
+          }
         },
 
         this.deliverySummary = {

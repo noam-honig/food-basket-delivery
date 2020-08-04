@@ -61,6 +61,24 @@ export abstract class HelpersBase extends IdEntity {
         caption: getLang(this.context).escort
         , allowApiUpdate: Roles.admin
     });
+    
+    archive = new BoolColumn({
+        allowApiUpdate: Roles.admin,
+        includeInApi: Roles.admin,
+    });
+
+    active() {
+        return this.archive.isEqualTo(false);
+    }
+    async deactivate() {
+        this.archive.value = true;
+        this.save();
+    }
+
+    async reactivate() {
+        this.archive.value = false;
+        this.save();
+    }
 
     // allowed frequency of deliveries (nom = total deliveries in denom=number of days)
     // these might later become columns defined by the user
@@ -288,6 +306,7 @@ export class Helpers extends HelpersBase {
 
         }
     });
+
     getRouteStats(): routeStats {
         return {
             totalKm: this.totalKm.value,

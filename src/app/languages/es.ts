@@ -200,6 +200,7 @@ export class es implements Language {
   replacedByOrgName = 'El nombre de la organización será reemplazado.';
   deliveriesFor = 'entregas para';
   archiveCurrentDelivery = 'Archivar entrega actual';
+  archiveHelper = 'Eliminar voluntario';
   familySelfPickup = 'Auto recogida, no se requiere entrega?';
   newDeliveryFor = 'Nueva entrega a';
   familyAlreadyHasAnActiveDelivery = 'Esta familia ya tiene entrega del mismo tipo.';

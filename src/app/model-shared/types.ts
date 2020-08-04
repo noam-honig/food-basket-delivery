@@ -34,7 +34,7 @@ export class PhoneColumn extends radweb.StringColumn {
         click: () => window.open('tel:' + this.displayValue),
         allowClick: () => !!this.displayValue,
         clickIcon: 'phone',
-        inputType: 'phone',
+        inputType: 'tel',
         forceEqualFilter: false
       })
     }, settingsOrCaption);
@@ -98,7 +98,7 @@ export class PhoneColumn extends radweb.StringColumn {
   }
 }
 export function isPhoneValidForIsrael(input: string) {
-  let st1 = input.match(/^0(5\d|7\d|[2,4,6,8,9])(-{0,1}\d{3})(-*\d{4})$/);
+  let st1 = input.match(/^0(5\d|7\d|[2,3,4,6,8,9])(-{0,1}\d{3})(-*\d{4})$/);
   return st1 != null;
 }
 export class DateTimeColumn extends radweb.DateTimeColumn {

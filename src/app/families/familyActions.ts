@@ -267,7 +267,7 @@ export class UpdateArea extends ActionOnRows<Families> {
             allowed: Roles.admin,
             columns: () => [this.area],
             title: getLang(context).updateArea,
-            forEach: async f => { f.area.value = this.area.value },
+            forEach: async f => { f.area.value = this.area.value.trim() },
         });
     }
 }
