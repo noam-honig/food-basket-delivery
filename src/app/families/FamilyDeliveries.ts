@@ -92,6 +92,9 @@ export class FamilyDeliveries extends IdEntity {
     distributionCenter = new DistributionCenterId(this.context, {
         allowApiUpdate: Roles.admin
     });
+    isDistCenterInactive() {
+        return true; // this.distributionCenter.isNotActive;
+    }
     deliverStatus = new DeliveryStatusColumn(this.context);
     courier = new HelperId(this.context, {
         caption: getLang(this.context).volunteer,
