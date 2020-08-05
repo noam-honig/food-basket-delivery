@@ -14,7 +14,7 @@ import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeli
 
 import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
-import { SqlBuilder } from '../model-shared/types';
+import { SqlBuilder, relativeDateName } from '../model-shared/types';
 import { getLang } from '../sites/sites';
 
 @Component({
@@ -87,6 +87,8 @@ export class SelectHelperComponent implements OnInit {
     });
     let sql = new SqlBuilder();
     if (!selectDefaultVolunteer) {
+
+      /* ----    calculate active deliveries and distances    ----*/
       let afd = context.for(ActiveFamilyDeliveries).create();
 
 
@@ -106,6 +108,32 @@ export class SelectHelperComponent implements OnInit {
         else
           h.assignedDeliveries++;
         check(h, { lat: d.lat, lng: d.lng }, getLang(context).delivery + ": " + d.address);
+      }
+
+      /*  ---------- calculate completed deliveries and "busy" status -------------*/
+      let sql1 = new SqlBuilder();
+      let fd = context.for(FamilyDeliveries).create();
+      let limitDate = new Date();
+      limitDate.setDate(limitDate.getDate() - HelpersBase.allowedFreq_denom);
+      
+      for (const d of (await db.execute(sql1.query({
+        from: fd,
+        where: () => [
+          fd.courier.isDifferentFrom('')
+          .and(fd.deliverStatus.isAResultStatus())
+          .and(fd.deliveryStatusDate.isGreaterOrEqualTo(limitDate))
+        ],
+        select: () => [
+          sql1.columnWithAlias(fd.courier, "courier"),
+          sql1.columnWithAlias(sql.max( fd.deliveryStatusDate), "delivery_date"),
+          sql1.columnWithAlias("count(*)","count")
+        ],
+        groupBy:()=>[fd.courier]
+      }))).rows) {
+        let h = helpers.get(d.courier);
+        h.lastCompletedDeliveryString = relativeDateName(context, { d:d.delivery_date });
+        h.totalRecentDeliveries = d.count;
+        h.isBusyVolunteer = (h.totalRecentDeliveries > HelpersBase.allowedFreq_nom) ? "busyVolunteer" : "";
       }
     } else {
       let afd = context.for(Families).create();
@@ -228,6 +256,9 @@ interface helperInList {
   distance?: number,
   location?: Location,
   assignedDeliveries?: number,
+  totalRecentDeliveries?: number,
+  isBusyVolunteer?: string,
+  lastCompletedDeliveryString?: string,
   fixedFamilies?: number,
   distanceFrom?: string,
   hadProblem?: boolean

@@ -14,6 +14,7 @@ export class donor implements Language {
   defaultDistributionListName = 'חלוקת מזון';
   AssignEscortComponent = 'שיוך מלווים';
   FamilyDeliveriesComponent = 'משלוחים פעילים';
+  ActiveDeliveries = 'משלוחים פעילים';
   FamiliesComponent = 'תורמים';
   DeliveryFollowUpComponent = 'מעקב מתנדבים';
   NewsComponent = 'מצריך טיפול';
@@ -289,6 +290,7 @@ export class donor implements Language {
   remainingByCities = 'טרם שוייכו לפי ערים';
   remainingByGroups = 'טרם שוייכו לפי קבוצות';
   deliveries = 'משלוחים';
+  deliveriesCompleted = 'משלוחים הושלמו';
   empty = 'ריק';
   allOthers = 'כל השאר';
   total = 'סה"כ';

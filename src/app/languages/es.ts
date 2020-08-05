@@ -14,6 +14,7 @@ export class es implements Language {
   defaultDistributionListName = 'Lista de distribución de alimentos';
   AssignEscortComponent = 'Asignación de acompañante';
   FamilyDeliveriesComponent = 'Entregas activas';
+  ActiveDeliveries = 'Entregas activas';
   FamiliesComponent = 'Familias';
   DeliveryFollowUpComponent = 'Seguimiento voluntario';
   NewsComponent = 'Requiere seguimiento';
@@ -289,6 +290,7 @@ export class es implements Language {
   remainingByCities = 'Sin asignar por ciudades';
   remainingByGroups = 'Sin asignar por grupos';
   deliveries = 'Entregas';
+  deliveriesCompleted = 'Envíos completados';
   empty = 'blanco';
   allOthers = 'Todos los otros';
   total = 'Total';

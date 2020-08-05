@@ -14,6 +14,7 @@ export class italy implements Language {
   defaultDistributionListName = 'Elenco di distribuzione alimentare';
   AssignEscortComponent = 'Incarico di scorta';
   FamilyDeliveriesComponent = 'Consegne attive';
+  ActiveDeliveries = 'Consegne attive';
   FamiliesComponent = 'famiglie';
   DeliveryFollowUpComponent = 'Monitoraggio volontario';
   NewsComponent = 'Richiede follow-up';
@@ -289,6 +290,7 @@ export class italy implements Language {
   remainingByCities = 'Non assegnato da Città';
   remainingByGroups = 'Non assegnato da gruppi';
   deliveries = 'Le consegne';
+  deliveriesCompleted = 'Spedizioni completate';
   empty = 'vuoto';
   allOthers = 'Tutti gli altri';
   total = 'Totale';
