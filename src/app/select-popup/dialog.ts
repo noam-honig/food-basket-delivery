@@ -16,6 +16,7 @@ import { CustomReuseStrategy } from "../custom-reuse-controller-router-strategy"
 import { isString } from "util";
 import { use } from "../translate";
 import { Location, GetDistanceBetween } from "../shared/googleApiHelpers";
+import { Sites } from "../sites/sites";
 
 
 declare var gtag;
@@ -82,9 +83,12 @@ export class DialogService {
         if (!value) {
             value = 1;
         }
+        let cat = Sites.getOrganizationFromContext(this.context);
+        if (!cat)
+            cat = '';
         gtag('event', action, {
             'event_category': 'delivery',
-            'event_label': action
+            'event_label': cat+"/"+action
         });
 
 

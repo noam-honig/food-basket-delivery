@@ -96,9 +96,13 @@ export class FamilyInfoComponent implements OnInit {
 
     }
     catch (err) {
-      this.dialog.exception("private clas", err);
+      this.dialog.exception("private call", err);
     }
 
+  }
+  callPhone(col:PhoneColumn) {
+    this.dialog.analytics("Call "+col.defs.key);
+    window.location.href = "tel:" + col.value;
   }
   static createPhoneProxyOnServer: (phone1: string, phone2: string) => Promise<{ phone: string, session: string }>;
   @ServerFunction({ allowed: c => c.isSignedIn() })
