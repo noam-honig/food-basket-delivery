@@ -88,7 +88,7 @@ export class DialogService {
             cat = '';
         gtag('event', action, {
             'event_category': 'delivery',
-            'event_label': cat+"/"+action
+            'event_label': action+"/"+cat
         });
 
 
