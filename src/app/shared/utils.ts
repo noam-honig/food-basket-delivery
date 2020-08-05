@@ -1,16 +1,9 @@
 import { DataControlInfo, DataControlSettings, Column } from "@remult/core";
-import { truncate } from "fs";
 
 export async function foreachSync<T>(array: T[], action: (item: T) => Promise<void>) {
   for (let i = 0; i < array.length; i++) {
     await action(array[i]);
   }
-}
-
-export function daysSince(dateValue: Date) : number {
-  let today = new Date();
-  let diff = Math.round((today.valueOf() - dateValue.valueOf()) / (1000 * 3600 * 24));
-  return diff;
 }
 
 export function sortColumns(list: any, columns: DataControlInfo<any>[]) {

@@ -244,7 +244,6 @@ export class en implements Language {
   defaultVolunteer = 'Default volunteer';
   previousDeliveryStatus = 'Previous delivery status';
   previousDeliveryDate = 'Previous delivery date';
-  lastDelivery = 'Last shipment';
   previousDeliveryNotes = 'Previous delivery note';
   addressByGoogle = 'Address in Google Maps';
   addressOk = 'Correct Address';

@@ -244,7 +244,6 @@ export class italy implements Language {
   defaultVolunteer = 'Volontario predefinito';
   previousDeliveryStatus = 'Stato di consegna precedente';
   previousDeliveryDate = 'Data di consegna precedente';
-  lastDelivery = 'Ultima spedizione';
   previousDeliveryNotes = 'Nota di consegna precedente';
   addressByGoogle = 'Indirizzo in Google Maps';
   addressOk = 'Indirizzo corretto';

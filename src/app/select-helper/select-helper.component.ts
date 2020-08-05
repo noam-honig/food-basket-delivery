@@ -16,9 +16,6 @@ import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { SqlBuilder } from '../model-shared/types';
 import { getLang } from '../sites/sites';
-import { DeliveryStatus } from '../families/DeliveryStatus';
-import { daysSince } from '../shared/utils';
-
 
 @Component({
   selector: 'app-select-helper',
@@ -90,37 +87,53 @@ export class SelectHelperComponent implements OnInit {
     });
     let sql = new SqlBuilder();
     if (!selectDefaultVolunteer) {
+
+      /* ----    calculate active deliveries and distances    ----*/
       let afd = context.for(ActiveFamilyDeliveries).create();
 
 
 
       for (const d of (await db.execute(sql.query({
         from: afd,
-        where: () => [afd.courier.isDifferentFrom('')],
+        where: () => [afd.courier.isDifferentFrom('').and(afd.deliverStatus.isNotAResultStatus())],
         select: () => [
           sql.columnWithAlias(afd.courier, "courier"),
-          sql.columnWithAlias(afd.deliverStatus, "deliver_status"),
-          sql.columnWithAlias(afd.deliveryStatusDate, "delivery_date"),
           sql.columnWithAlias(afd.addressLongitude, "lng"),
           sql.columnWithAlias(afd.addressLatitude, "lat"),
           sql.columnWithAlias(afd.address, 'address')]
       }))).rows) {
         let h = helpers.get(d.courier);
-        if (DeliveryStatus.IsAResultStatus(d.deliver_status)) {
-          let dDate = new Date(d.delivery_date);
-          let daysSinceLast = daysSince(dDate);
-          if (!h.daysSinceLast || h.daysSinceLast.valueOf() > daysSinceLast) 
-            h.daysSinceLast = daysSinceLast;
-            h.lastCompletedDeliveryString = " לפני " + daysSinceLast.toString() +" ימים";
-          if (daysSinceLast < HelpersBase.allowedFreq_denom) { 
-            h.totalRecentDeliveries = !h.totalRecentDeliveries ? 1 : h.totalRecentDeliveries++;
-            h.isBusyVolunteer = (h.totalRecentDeliveries > HelpersBase.allowedFreq_nom) ? "busyVolunteer" : "";
-          }
-        } else {
-          h.assignedDeliveries = !h.assignedDeliveries ? 1 : h.assignedDeliveries++;
-        }
-
+        if (!h.assignedDeliveries)
+          h.assignedDeliveries = 1;
+        else
+          h.assignedDeliveries++;
         check(h, { lat: d.lat, lng: d.lng }, getLang(context).delivery + ": " + d.address);
+      }
+
+      /*  ---------- calculate completed deliveries and "busy" status -------------*/
+      let sql1 = new SqlBuilder();
+      let fd = context.for(FamilyDeliveries).create();
+      let limitDate = new Date();
+      limitDate.setDate(limitDate.getDate() - HelpersBase.allowedFreq_denom);
+      
+      for (const d of (await db.execute(sql1.query({
+        from: fd,
+        where: () => [
+          fd.courier.isDifferentFrom('')
+          .and(fd.deliverStatus.isAResultStatus())
+          .and(fd.deliveryStatusDate.isGreaterOrEqualTo(limitDate))
+        ],
+        select: () => [
+          sql1.columnWithAlias(fd.courier, "courier"),
+          sql1.columnWithAlias(sql.max( fd.deliveryStatusDate), "delivery_date"),
+          sql1.columnWithAlias("count(*)","count")
+        ],
+        groupBy:()=>[fd.courier]
+      }))).rows) {
+        let h = helpers.get(d.courier);
+        h.lastCompletedDeliveryString = relativeDateName(context, { d:d.delivery_date });
+        h.totalRecentDeliveries = d.count;
+        h.isBusyVolunteer = (h.totalRecentDeliveries > HelpersBase.allowedFreq_nom) ? "busyVolunteer" : "";
       }
     } else {
       let afd = context.for(Families).create();
@@ -245,7 +258,6 @@ interface helperInList {
   assignedDeliveries?: number,
   totalRecentDeliveries?: number,
   isBusyVolunteer?: string,
-  daysSinceLast?: number,
   lastCompletedDeliveryString?: string,
   fixedFamilies?: number,
   distanceFrom?: string,

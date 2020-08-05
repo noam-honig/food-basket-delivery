@@ -358,7 +358,6 @@ export class Language {
   defaultVolunteer = "מתנדב ברירת מחדל";
   previousDeliveryStatus = 'סטטוס משלוח קודם';
   previousDeliveryDate = 'תאריך משלוח קודם';
-  lastDelivery = 'משלוח אחרון';
   previousDeliveryNotes = 'הערת משלוח קודם';
   addressByGoogle = "כתובת כפי שגוגל הבין";
   addressOk = 'כתובת תקינה';

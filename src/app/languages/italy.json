@@ -1820,11 +1820,6 @@
     "valueInCode": "he",
     "valueInEnglish": "hey"
   },
-  "lastDelivery": {
-    "google": "Ultima spedizione",
-    "valueInCode": "משלוח אחרון",
-    "valueInEnglish": "Last shipment"
-  },
   "lastName": {
     "google": "Cognome",
     "valueInCode": "שם משפחה",

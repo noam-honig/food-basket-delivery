@@ -6,16 +6,14 @@ import { getLang } from '../sites/sites';
 
 export class DeliveryStatus {
   static usingSelfPickupModule: boolean = true;
-  static IsAResultStatus(value) {
-    let val = (typeof(value) == 'object') ? value.id : value;
-
-    switch (val) {
-      case this.Success.id:
-      case this.SuccessPickedUp.id:
-      case this.SuccessLeftThere.id:
-      case this.FailedBadAddress.id:
-      case this.FailedNotHome.id:
-      case this.FailedOther.id:
+  static IsAResultStatus(value: DeliveryStatus) {
+    switch (value) {
+      case this.Success:
+      case this.SuccessPickedUp:
+      case this.SuccessLeftThere:
+      case this.FailedBadAddress:
+      case this.FailedNotHome:
+      case this.FailedOther:
         return true;
     }
     return false;

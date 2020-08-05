@@ -244,7 +244,6 @@ export class es implements Language {
   defaultVolunteer = 'Voluntario predeterminado';
   previousDeliveryStatus = 'Estado de entrega anterior';
   previousDeliveryDate = 'Fecha de entrega anterior';
-  lastDelivery = 'Último envío';
   previousDeliveryNotes = 'Albarán previo';
   addressByGoogle = 'Dirección en Google Maps';
   addressOk = 'Dirección correcta';

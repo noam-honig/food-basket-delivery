@@ -1626,10 +1626,6 @@
     "google": "hey",
     "valueInCode": "he"
   },
-  "lastDelivery": {
-    "google": "Last shipment",
-    "valueInCode": "משלוח אחרון"
-  },
   "lastName": {
     "google": "Last Name",
     "valueInCode": "שם משפחה"
