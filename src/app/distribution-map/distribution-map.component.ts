@@ -255,15 +255,10 @@ export class DistributionMap implements OnInit, OnDestroy {
 
           });
       }
-      else
-        familyOnMap.marker.setPosition({ lat: f.lat, lng: f.lng });
-      for (const id of this.dict.keys()) {
-        if (!newIds.get(id)) {
-          let f = this.dict.get(id);
-          f.marker.setMap(null);
-          this.dict.delete(id);
-        }
+      else {
+          familyOnMap.marker.setPosition({ lat: f.lat, lng: f.lng });
       }
+      
       let status: statusClass = this.statuses.getBy(f.status, f.courier);
 
       if (status)
@@ -292,6 +287,13 @@ export class DistributionMap implements OnInit, OnDestroy {
       this.bounds.extend(familyOnMap.marker.getPosition());
 
     });
+    for (const id of this.dict.keys()) {
+      if (!newIds.get(id)) {
+        let f = this.dict.get(id);
+        f.marker.setMap(null);
+        this.dict.delete(id);
+      }
+    }
     if (allInAlll || markers.length > 7000)
       var x = new MarkerClusterer(this.map, markers, {
         //imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
