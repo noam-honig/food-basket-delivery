@@ -29,9 +29,10 @@ When developing we run two servers:
    * we configure a proxy in the angular dev server to forward api calls to the api server, see `proxy.conf.json`
 
 ### To  run the dev environment
-1. Run Task `server:build-watch` to automatically build the api server code 
-2. F5 - Start Debugging - to run the api server code in debug (on port 3000)
-3. Run Task `ng-serve`  to run angular cli development server (on port 4200)
+1. Run Task `ng-serve`  to run angular cli development server (on port 4200)
+2. Run Task `node-serve` to build and run the `node js` server.
+
+* if you need to debug something, run the `Attach to Running Node Server` debug configuration
 
 
 ## Running the application for the first time

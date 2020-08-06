@@ -6,6 +6,12 @@
     "configurations": [
         {
             "type": "node",
+            "request": "attach",
+            "name": "Attach to Running Node Server",
+            "port": 9229
+        },
+        {
+            "type": "node",
             "request": "launch",
             "name": "debug node",
             "program": "${workspaceFolder}/dist-server/app/server/server.js",

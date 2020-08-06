@@ -80,6 +80,20 @@
             },
             "isBackground": true
         },
+        ,
+        {
+            "type": "npm",
+            "script": "node-serve",
+            "problemMatcher": [
+                "$tsc-watch"
+            ],
+            "presentation": {
+                "group": "groupA"
+            },
+            "label": "npm: node-serve",
+            "detail": "./node_modules/.bin/tsc-watch -p tsconfig.server.json --onSuccess \"npm run server:dev-run",
+            "isBackground": true
+        }
         {
             "type": "npm",
             "script": "publish-to-merkaz-mazon",

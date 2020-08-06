@@ -87,6 +87,7 @@ export class SelectHelperComponent implements OnInit {
         check(theH, h.getGeocodeInformation2().location(), getLang(context).preferredDistributionArea + ": " + h.preferredDistributionAreaAddress2.value);
       }
     });
+    
     let sql = new SqlBuilder();
     if (!selectDefaultVolunteer) {
 
