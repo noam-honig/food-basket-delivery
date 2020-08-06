@@ -150,7 +150,7 @@
       border-bottom-right-radius: 0;
       padding-left: 0;
       padding-right: 0;
-      min-width: 38px;" (click)="prepareMessage()">
+      min-width: 38px;" (click)="prepareMessage(false)">
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #appMenuSms="matMenu">
@@ -177,6 +177,21 @@
         <span>{{settings.lang.sendReminderSms}}</span>
       </ng-template>
     </button>
+
+    <button [matMenuTriggerFor]="appMenuSmsReminder" mat-raised-button color="primary" style="border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      padding-left: 0;
+      padding-right: 0;
+      min-width: 38px;" (click)="prepareMessage(true)">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #appMenuSmsReminder="matMenu">
+      <button mat-menu-item (click)="sendWhatsapp()">{{settings.lang.sendLinkOnWhatsapp}}</button>
+      <button mat-menu-item (click)="copyMessage()">{{settings.lang.copyMessageWithLink}}</button>
+      <button mat-menu-item (click)="copyLink()">{{settings.lang.copyLink}}</button>
+      <button mat-menu-item (click)="sendPhoneSms()">{{settings.lang.sendSmsFromDevice}}</button>
+      <button mat-menu-item (click)="customSms()">{{settings.lang.customSmsMessage}}</button>
+    </mat-menu>
   </div>
   <div class="sendSmsButtonLine no-print">
     <button mat-raised-button class="contact-helper-button no-print" *ngIf="partOfReview&&familyLists.helper" (click)="callHelper()">
