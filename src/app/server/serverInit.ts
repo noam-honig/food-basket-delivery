@@ -16,6 +16,7 @@ import { Sites } from '../sites/sites';
 import { OverviewComponent } from '../overview/overview.component';
 import { wasChanged } from '../model-shared/types';
 import { ConnectionOptions } from 'tls';
+import { RegisterDonorComponent } from '../register-donor/register-donor.component';
 
 declare const lang = '';
 
@@ -86,6 +87,35 @@ export async function serverInit() {
             }
 
             InitSchemas(pool);
+            RegisterDonorComponent.sendMail = async (subject: string, message: string, email: string) => {
+                var nodemailer = await import('nodemailer');
+
+                var transporter = nodemailer.createTransport({
+                    host: 'smtp.gmail.com',
+                    secure: true,
+                    port: 465,
+                    auth: {
+                        user: 'Hello@mitchashvim.org.il',
+                        pass: 'TAnwd1234'
+                    }
+                });
+
+                var mailOptions = {
+                    from: 'Hello@mitchashvim.org.il',
+                    to: email,
+                    subject: subject,
+                    text: message
+                };
+                transporter.sendMail(mailOptions, function (error, info) {
+                    debugger;
+                    if (error) {
+                        console.log(error);
+                    } else {
+                        console.log('Email sent: ' + info.response);
+                    }
+                });
+                return null;
+            }
             Sites.getDataProviderForOrg = org => new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, org)));
             return (y: Context) => {
                 let org = Sites.getValidSchemaFromContext(y);
@@ -149,6 +179,8 @@ export async function verifySchemaExistance(pool: Pool, s: string) {
 }
 
 
+
+
 export class PostgresSchemaWrapper implements PostgresPool {
     constructor(private pool: Pool, private schema: string) {
 
@@ -170,3 +202,4 @@ export class PostgresSchemaWrapper implements PostgresPool {
 
     }
 }
+
