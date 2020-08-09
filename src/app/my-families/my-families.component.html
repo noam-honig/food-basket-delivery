@@ -21,8 +21,9 @@
         {{settings.lang.doLabReception}}
     </button>
     <div>
-        <qr-code *ngIf="this.showQRCode" 
-            [value]="'https://mitchashvim.azurewebsites.net/?HelperId='+this.user.id" [size]="300" 
+            <!--'https://mitchashvim.azurewebsites.net/?HelperId='-->
+            <qr-code *ngIf="this.showQRCode" 
+            [value]="this.user.id" [size]="300" 
             (click)="this.showQRCode=false">
         </qr-code>
     </div>  
