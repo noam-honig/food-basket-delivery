@@ -239,6 +239,7 @@ export class es implements Language {
   phone4 = 'Teléfono 4';
   phone4Description = 'Notas telefónicas 4';
   commentForReception = 'Notas de absorción en el laboratorio.';
+  doLabReception = 'Realizar absorción en el laboratorio.';
   statusChangeDate = 'Estado: fecha modificada';
   statusChangeUser = 'Estado: quién está actualizando';
   defaultVolunteer = 'Voluntario predeterminado';

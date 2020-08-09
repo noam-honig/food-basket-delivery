@@ -87,7 +87,7 @@ import { DeliveryReceptionComponent } from './delivery-reception/delivery-recept
 import { RegisterDonorComponent } from './register-donor/register-donor.component';
 import { RegisterHelperComponent } from './register-helper/register-helper.component';
 import { AddressInputComponent } from './address-input/address-input.component';
-
+import { QRCodeModule } from 'angular2-qrcode';
 
 
 
@@ -186,7 +186,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     RemultModule,
     AppRoutingModule,
     ChartsModule,
-    ScrollDispatchModule
+    ScrollDispatchModule,
+    QRCodeModule
 
   ],
   providers: [

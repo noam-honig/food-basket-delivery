@@ -239,6 +239,7 @@ export class en implements Language {
   phone4 = 'Phone 4';
   phone4Description = 'Phone Notes 4';
   commentForReception = 'Absorption notes in the laboratory';
+  doLabReception = 'Perform absorption in the laboratory';
   statusChangeDate = 'Status: Date changed';
   statusChangeUser = "Status: Who's updating";
   defaultVolunteer = 'Default volunteer';

@@ -1007,6 +1007,10 @@
     "google": "Does not exist",
     "valueInCode": "לא קיים"
   },
+  "doLabReception": {
+    "google": "Perform absorption in the laboratory",
+    "valueInCode": "בצע קליטה במעבדה"
+  },
   "doneVolunteers": {
     "google": "Finish",
     "valueInCode": "סיימו"
