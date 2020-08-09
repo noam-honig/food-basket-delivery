@@ -366,9 +366,9 @@ export class HelperFamiliesComponent implements OnInit {
   smsMessage: string = '';
   smsPhone: string = '';
   smsLink: string = '';
-  prepareMessage() {
+  prepareMessage(reminder: Boolean) {
     this.busy.donotWait(async () => {
-      await SendSmsAction.generateMessage(this.context, this.familyLists.helper, window.origin, false, this.context.user.name, (phone, message, sender, link) => {
+      await SendSmsAction.generateMessage(this.context, this.familyLists.helper, window.origin, reminder, this.context.user.name, (phone, message, sender, link) => {
         this.smsMessage = message;
         this.smsPhone = phone;
         this.smsLink = link;
