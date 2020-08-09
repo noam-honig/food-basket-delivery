@@ -875,6 +875,10 @@
     "google": "לא קיים",
     "valueInCode": "לא קיים"
   },
+  "doLabReception": {
+    "google": "בצע קליטה במעבדה",
+    "valueInCode": "בצע קליטה במעבדה"
+  },
   "doneVolunteers": {
     "google": "סיימו",
     "valueInCode": "סיימו"

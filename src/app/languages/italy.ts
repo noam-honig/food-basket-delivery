@@ -239,6 +239,7 @@ export class italy implements Language {
   phone4 = 'Telefono 4';
   phone4Description = 'Note sul telefono 4';
   commentForReception = "Note sull'assorbimento in laboratorio";
+  doLabReception = "Eseguire l'assorbimento in laboratorio";
   statusChangeDate = 'Stato: data modificata';
   statusChangeUser = 'Stato: chi sta aggiornando';
   defaultVolunteer = 'Volontario predefinito';

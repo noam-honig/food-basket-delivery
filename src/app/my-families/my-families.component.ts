@@ -25,6 +25,7 @@ export class MyFamiliesComponent implements OnInit {
   };
   familyLists = new UserFamiliesList(this.context, this.settings);
   user: HelperUserInfo;
+  showQRCode: boolean = false;
 
   constructor(public context: Context, public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService) {
     this.user = context.user as HelperUserInfo;
