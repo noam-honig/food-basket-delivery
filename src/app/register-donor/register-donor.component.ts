@@ -114,7 +114,6 @@ class donorForm {
   docref = new StringColumn(); 
   columns = [this.name, this.selfDeliver, this.address, this.phone, this.email, this.computer, this.laptop, this.screen, this.docref];
 
-
   async doWork(context: Context) {
     let f = context.for(Families).create();
     f.name.value = this.name.value;
@@ -123,7 +122,6 @@ class donorForm {
     f.address.value = this.address.value ;
     f.phone1.value = this.phone.value;
     f.email.value = this.email.value;
-
     f.custom1.value = this.docref.value;
 
     await f.save();
