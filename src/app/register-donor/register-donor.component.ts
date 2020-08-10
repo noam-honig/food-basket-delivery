@@ -112,6 +112,7 @@ class donorForm {
   
   columns = [this.name, this.selfDeliver, this.address, this.phone, this.email, this.computer, this.laptop, this.screen];
 
+  docref = document.referrer;
 
   async doWork(context: Context) {
     let f = context.for(Families).create();
@@ -121,6 +122,7 @@ class donorForm {
     f.address.value = this.address.value ;
     f.phone1.value = this.phone.value;
     f.email.value = this.email.value;
+    f.referredBy.value = this.docref;
     await f.save();
     var quantity = 0;
     async function addDelivery(type: string, q: number, isSelfDeliver: boolean) {

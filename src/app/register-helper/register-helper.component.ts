@@ -98,6 +98,7 @@ class helperForm {
 
   columns = [this.name, this.socialSecurityNumber, this.phone, this.email, this.address1, this.address2, this.company];
 
+  docref = document.referrer;
 
   async doWork(context: Context) {
     let h = context.for(Helpers).create();
@@ -112,6 +113,7 @@ class helperForm {
     h.email.value = this.email.value;
     h.socialSecurityNumber.value = this.socialSecurityNumber.value;
     h.company.value = this.company.value;
+    h.referredBy.value = this.docref;
     await h.save();
   }
 }
