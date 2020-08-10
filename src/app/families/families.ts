@@ -471,8 +471,6 @@ export class Families extends IdEntity {
   custom2 = new CustomColumn(2);
   custom3 = new CustomColumn(3);
   custom4 = new CustomColumn(4);
-
-  referredBy = new StringColumn();
   
   async reloadGeoCoding() {
 
