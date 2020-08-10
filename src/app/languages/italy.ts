@@ -140,6 +140,7 @@ export class italy implements Language {
   remiderSmsDate = 'Data di consegna del promemoria via SMS';
   admin = 'Amministratore di sistema';
   lab = 'Operaio di laboratorio';
+  indie = 'Volontario indipendente';
   responsibleForAssign = 'Assegna solo consegne';
   notAllowedToUpdateVolunteer = 'Non è possibile aggiornare per questo volontario';
   company = 'Azienda';

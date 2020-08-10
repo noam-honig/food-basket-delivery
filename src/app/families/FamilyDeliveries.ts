@@ -351,7 +351,7 @@ export class FamilyDeliveries extends IdEntity {
         let add = (f: FilterBase) => result = new AndFilter(f, result);
         if (this.onlyActive)
             add(this.active());
-        if (!this.context.isAllowed([Roles.admin,Roles.lab])) {
+        if (!this.context.isAllowed([Roles.admin,Roles.lab,Roles.indie])) {
             add(this.active());
             if (this.context.isAllowed(Roles.distCenterAdmin))
                 add(this.distributionCenter.isAllowedForUser());

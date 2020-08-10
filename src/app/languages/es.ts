@@ -140,6 +140,7 @@ export class es implements Language {
   remiderSmsDate = 'Fecha de entrega del recordatorio de SMS';
   admin = 'Administrador de sistema';
   lab = 'Trabajador de laboratorio';
+  indie = 'Voluntario independiente';
   responsibleForAssign = 'Solo asigna entregas';
   notAllowedToUpdateVolunteer = 'No puede actualizar para este voluntario';
   company = 'Empresa';

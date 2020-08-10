@@ -1568,6 +1568,10 @@
     "google": "Notice, Inaccurate Address!",
     "valueInCode": "שימו לב, כתובת לא מדוייקת!"
   },
+  "indie": {
+    "google": "Independent volunteer",
+    "valueInCode": "מתנדב עצמאי"
+  },
   "infoAboutUpdates": {
     "google": "Update details",
     "valueInCode": "פרטי עדכונים"
