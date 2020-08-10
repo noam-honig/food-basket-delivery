@@ -178,7 +178,7 @@
       </ng-template>
     </button>
 
-    <button [matMenuTriggerFor]="appMenuSmsReminder" mat-raised-button color="primary" style="border-top-right-radius: 0;
+    <button *ngIf="partOfReview&&familyLists.toDeliver.length>0" [matMenuTriggerFor]="appMenuSmsReminder" mat-raised-button color="primary" style="border-top-right-radius: 0;
       border-bottom-right-radius: 0;
       padding-left: 0;
       padding-right: 0;
