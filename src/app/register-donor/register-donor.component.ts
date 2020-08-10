@@ -58,7 +58,7 @@ export class RegisterDonorComponent implements OnInit {
         this.dialog.Error(error);
         return;
       }
-      this.dialog.analytics("submit-donor-form");
+      this.dialog.analytics("submitDonorForm");
       await RegisterDonorComponent.doDonorForm(pack(this.donor));
       await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: "תודה על תרומך", showOnlyConfirm: true });
       window.location.href = "https://www.mitchashvim.org.il/";
