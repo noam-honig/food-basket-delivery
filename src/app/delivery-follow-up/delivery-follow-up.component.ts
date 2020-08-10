@@ -56,7 +56,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
   }
   searchString: string;
   showHelper(h: helperFollowupInfo) {
-    return ((!this.searchString || h.name.indexOf(this.searchString) >= 0) && (!this.currentStatFilter || this.currentStatFilter.rule(h)));
+    return ((!this.searchString || (h.name && h.name.indexOf(this.searchString) >= 0)) && (!this.currentStatFilter || this.currentStatFilter.rule(h)));
   }
   public pieChartLabels: string[] = [];
   public pieChartData: number[] = [];
