@@ -100,7 +100,6 @@ class helperForm {
 
   columns = [this.name, this.socialSecurityNumber, this.phone, this.email, this.address1, this.address2, this.company, this.docref];
 
-
   async doWork(context: Context) {
     let h = context.for(Helpers).create();
     h.name.value = this.name.value;
