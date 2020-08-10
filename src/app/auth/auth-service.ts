@@ -332,14 +332,20 @@ async function buildHelperUserInfo(h: Helpers, context: Context) {
         else {
             result.roles.push(Roles.admin);
             result.roles.push(Roles.distCenterAdmin);
+            result.roles.push(Roles.indie)
         }
     }
     if (h.distCenterAdmin.value) {
         result.roles.push(Roles.distCenterAdmin);
+        result.roles.push(Roles.indie);
     }
-    if (getSettings(context).isSytemForMlt())
+    if (getSettings(context).isSytemForMlt()){
         if (h.labAdmin.value || h.admin.value)
             result.roles.push(Roles.lab);
+        if (h.isIndependent.value)
+            result.roles.push(Roles.indie);
+    }
+        
     return result;
 }
 function buildToken(result: HelperUserInfo, settings: ApplicationSettings) {

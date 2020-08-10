@@ -290,6 +290,11 @@ export class Helpers extends HelpersBase {
         allowApiUpdate: Roles.lab,
         includeInApi: Roles.lab
     });
+    isIndependent = new BoolColumn({
+        caption: getLang(this.context).indie,
+        allowApiUpdate: Roles.distCenterAdmin,
+        includeInApi: Roles.distCenterAdmin
+    });
     distCenterAdmin = new BoolColumn({
         caption: getLang(this.context).responsibleForAssign,
         allowApiUpdate: Roles.distCenterAdmin,

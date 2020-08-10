@@ -140,6 +140,7 @@ export class en implements Language {
   remiderSmsDate = 'Date of delivery of SMS reminder';
   admin = 'System administrator';
   lab = 'Laboratory worker';
+  indie = 'Independent volunteer';
   responsibleForAssign = 'Only Assigns Deliveries';
   notAllowedToUpdateVolunteer = 'You may not update for this volunteer';
   company = 'Company';

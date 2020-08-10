@@ -1750,6 +1750,11 @@
     "valueInCode": "שימו לב, כתובת לא מדוייקת!",
     "valueInEnglish": "Notice, Inaccurate Address!"
   },
+  "indie": {
+    "google": "Voluntario independiente",
+    "valueInCode": "מתנדב עצמאי",
+    "valueInEnglish": "Independent volunteer"
+  },
   "infoAboutUpdates": {
     "google": "Detalles de actualización",
     "valueInCode": "פרטי עדכונים",
