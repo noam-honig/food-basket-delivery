@@ -281,6 +281,10 @@
     "valueInCode": "שיוך לקבוצת משפחות",
     "custom": "Assignment to a family group"
   },
+  "assignCloseDeliveries": {
+    "google": "Show donations around me",
+    "valueInCode": "הצג תרומות בסביבתי"
+  },
   "assignDeliveryMenu": {
     "google": "Associate volunteer shipments",
     "valueInCode": "שיוך משלוחים למתנדב",
@@ -557,6 +561,10 @@
     "google": "closed",
     "valueInCode": "סגור",
     "custom": "close"
+  },
+  "closestDeliveries": {
+    "google": "Donations in the near area",
+    "valueInCode": "תרומות באיזור הקרוב"
   },
   "columnSelectionInFile": {
     "google": "Choose columns in a file",

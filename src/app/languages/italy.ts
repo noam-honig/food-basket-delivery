@@ -71,6 +71,8 @@ export class italy implements Language {
   deliveriesDoneInTheLastTwoDays = 'Consegnato negli ultimi due giorni';
   showAllCompletedDeliveries = 'Visualizza tutte le consegne riuscite';
   showRouteOnGoogleMaps = 'Visualizza il percorso su google maps';
+  assignCloseDeliveries = 'Mostra donazioni intorno a me';
+  closestDeliveries = "Donazioni nell'area vicina";
   selfPuckupSuccess = 'Raccogli il pacchetto';
   packageWasPickedUp = 'Raccolto';
   cancelAsignment = 'Annulla incarico';

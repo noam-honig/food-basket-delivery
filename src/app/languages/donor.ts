@@ -71,6 +71,8 @@ export class donor implements Language {
   deliveriesDoneInTheLastTwoDays = 'משלוחים שחולקו ביומיים האחרונים';
   showAllCompletedDeliveries = 'הצג את כל המשלוחים שחולקו';
   showRouteOnGoogleMaps = 'הצג מסלול ב Google Maps';
+  assignCloseDeliveries = 'הצג תרומות בסביבתי';
+  closestDeliveries = 'תרומות באיזור הקרוב';
   selfPuckupSuccess = 'הפריטים נקלטו';
   packageWasPickedUp = 'הפריטים נקלטו';
   cancelAsignment = 'בטל שיוך';

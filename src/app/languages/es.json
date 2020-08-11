@@ -309,6 +309,11 @@
     "valueInCode": "שיוך לקבוצת משפחות",
     "valueInEnglish": "Assignment to a family group"
   },
+  "assignCloseDeliveries": {
+    "google": "Mostrar donaciones a mi alrededor",
+    "valueInCode": "הצג תרומות בסביבתי",
+    "valueInEnglish": "Show donations around me"
+  },
   "assignDeliveryMenu": {
     "google": "Asignar voluntario",
     "valueInCode": "שיוך משלוחים למתנדב",
@@ -603,6 +608,11 @@
     "google": "cerca",
     "valueInCode": "סגור",
     "valueInEnglish": "close"
+  },
+  "closestDeliveries": {
+    "google": "Donaciones en el área cercana",
+    "valueInCode": "תרומות באיזור הקרוב",
+    "valueInEnglish": "Donations in the near area"
   },
   "columnSelectionInFile": {
     "google": "Columnas en la selección de archivos",

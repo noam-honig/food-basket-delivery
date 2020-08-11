@@ -247,6 +247,10 @@
     "google": "שיוך לקבוצת תורמים",
     "valueInCode": "שיוך לקבוצת משפחות"
   },
+  "assignCloseDeliveries": {
+    "google": "הצג תרומות בסביבתי",
+    "valueInCode": "הצג תרומות בסביבתי"
+  },
   "assignDeliveryMenu": {
     "google": "שיוך משלוחים למתנדב",
     "valueInCode": "שיוך משלוחים למתנדב"
@@ -482,6 +486,10 @@
   "close": {
     "google": "סגור",
     "valueInCode": "סגור"
+  },
+  "closestDeliveries": {
+    "google": "תרומות באיזור הקרוב",
+    "valueInCode": "תרומות באיזור הקרוב"
   },
   "columnSelectionInFile": {
     "google": "בחירת עמודות בקובץ",

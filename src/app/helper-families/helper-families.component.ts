@@ -16,8 +16,8 @@ import { use, TranslationOptions } from '../translate';
 import { Helpers, HelperId } from '../helpers/helpers';
 import { UpdateCommentComponent } from '../update-comment/update-comment.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
-import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { isGpsAddress, Location, toLongLat } from '../shared/googleApiHelpers';
+import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
+import { isGpsAddress, Location, toLongLat, GetDistanceBetween } from '../shared/googleApiHelpers';
 import { Roles } from '../auth/roles';
 import { pagedRowsIterator } from '../families/familyActionsWiring';
 import { Families } from '../families/families';
@@ -26,6 +26,8 @@ import { routeStrategyColumn } from '../asign-family/route-strategy';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { PhoneColumn } from '../model-shared/types';
 import { Sites, getLang } from '../sites/sites';
+import { SelectListComponent, selectListItem } from '../select-list/select-list.component';
+import { lang } from 'moment';
 
 @Component({
   selector: 'app-helper-families',
@@ -50,11 +52,33 @@ export class HelperFamiliesComponent implements OnInit {
 
 
   }
-  volunteerLocation: Location = undefined;;
+  volunteerLocation: Location = undefined;
+  async updateCurrentLocation(useCurrentLocation: boolean) {
+
+    this.volunteerLocation = undefined;
+    if (useCurrentLocation) {
+      await new Promise((res, rej) => {
+        navigator.geolocation.getCurrentPosition(x => {
+          this.volunteerLocation = {
+            lat: x.coords.latitude,
+            lng: x.coords.longitude
+          };
+          res();
+
+        }, error => {
+          this.dialog.exception("שליפת מיקום נכשלה", error);
+          rej(error);
+        });
+      });
+
+    }
+  }
+
   async refreshRoute() {
     var useCurrentLocation = new BoolColumn(use.language.useCurrentLocationForStart);
     var strategy = new routeStrategyColumn();
     strategy.value = this.settings.routeStrategy.value;
+
     await this.context.openDialog(InputAreaComponent, x => x.args = {
       title: use.language.replanRoute,
       settings: {
@@ -64,28 +88,7 @@ export class HelperFamiliesComponent implements OnInit {
         ]
       },
       ok: async () => {
-
-        this.volunteerLocation = undefined;
-
-
-        if (useCurrentLocation.value) {
-          await new Promise((res, rej) => {
-            navigator.geolocation.getCurrentPosition(x => {
-              this.volunteerLocation = {
-                lat: x.coords.latitude,
-                lng: x.coords.longitude
-              };
-              res();
-
-            }, error => {
-              this.dialog.exception("שליפת מיקום נכשלה", error);
-              rej(error);
-            });
-          });
-
-        }
-
-
+        await this.updateCurrentLocation(useCurrentLocation.value);
         await this.familyLists.refreshRoute({
           strategyId: strategy.value.id,
           volunteerLocation: this.volunteerLocation
@@ -95,6 +98,65 @@ export class HelperFamiliesComponent implements OnInit {
 
 
   }
+
+  @ServerFunction({ allowed: Roles.indie })
+  static async assignFamilyDeliveryToIndie(deliveryId: string, context?: Context) {
+    let fd = await context.for(ActiveFamilyDeliveries).find({where : f=> f.id.isEqualTo(deliveryId), limit: 1});
+    fd[0].courier.value = context.user.id;
+    await fd[0].save();
+  }
+  
+  @ServerFunction({ allowed: Roles.indie })
+  static async getDeliveriesByLocation(pivotLocation: Location, context?: Context) {
+    let r: DeliveryInList[] = [];
+    for await (const d of  context.for(ActiveFamilyDeliveries).iterate({ where: f => f.readyFilter() })) {
+      r.push({
+        basketType: await (d.basketType.getTheValue()),
+        floor: d.floor.value,
+        quantity: d.quantity.value,
+        id: d.id.value,
+        distance: GetDistanceBetween(pivotLocation, d.getDrivingLocation())
+      });
+    }
+    r.sort((a, b) => a.distance - b.distance);
+    r.splice(10);
+    return r;
+  };
+  
+
+  showCloseDeliveries() {
+    return (this.context.user.roles.includes(Roles.indie) && this.settings.isSytemForMlt());
+  }
+  
+  async assignNewDelivery() {
+    await this.updateCurrentLocation(true);
+    let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(this.volunteerLocation));
+
+    var selectedFamilyToAdd: string;
+
+    await this.context.openDialog(SelectListComponent, x => {
+      x.args = {
+        title: use.language.closestDeliveries,
+        options: afdList.map(x => ({
+          item: x.id, name:
+            x.distance.toFixed(1) + use.language.km +
+            (x.floor ? ' [' + use.language.floor + ' ' + x.floor + ']' : '') +
+            ' : ' +
+            x.quantity + ' x ' + x.basketType
+        } as selectListItem))
+      }
+    }, y => selectedFamilyToAdd = y.selected.item);
+
+    if (selectedFamilyToAdd) {
+      await HelperFamiliesComponent.assignFamilyDeliveryToIndie(selectedFamilyToAdd);
+      await this.familyLists.refreshRoute({
+        strategyId: this.settings.routeStrategy.value.id,
+        volunteerLocation: this.volunteerLocation
+      });
+      this.familyLists.reload();
+    }
+  }
+
   getHelpText() {
     var r = this.settings.lang.ifYouNeedAnyHelpPleaseCall;
     r += " ";
@@ -349,7 +411,7 @@ export class HelperFamiliesComponent implements OnInit {
       helpText: () => new StringColumn(),
       ok: async (comment) => {
         try {
-          await (await import ("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.familyLists.helper.id.value, comment);
+          await (await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.familyLists.helper.id.value, comment);
           this.dialog.Info("הודעה נשלחה");
         }
         catch (err) {
@@ -458,6 +520,14 @@ export class HelperFamiliesComponent implements OnInit {
   }
   @ViewChild("map", { static: false }) map: MapComponent;
 
+}
+
+interface DeliveryInList {
+  id: string,
+  floor: string,
+  basketType: string,
+  quantity: number,
+  distance: number
 }
 
 class limitList {
