@@ -70,8 +70,8 @@ serverInit().then(async (dataSource) => {
             result = result.replace(/GOOGLE_MAP_JAVASCRIPT_KEY/g, key);
 
             result = result.replace(/DOCREF/g, docref);
-            settings.docref = docref;
-            
+            //settings.docref = docref;
+
             let tagid = process.env.GOOGLE_PIXEL_TAG_ID;
             if (!tagid) 
                 tagid = 'UA-121891791-1'; // default key for Google Analytics
