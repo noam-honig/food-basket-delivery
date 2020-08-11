@@ -112,3 +112,4 @@ export function getLang(context: Context) {
   return use.language;
 }
 
+//SELECT string_agg(id::text, ',') FROM guest.sites
