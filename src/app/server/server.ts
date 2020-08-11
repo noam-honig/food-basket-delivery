@@ -55,7 +55,7 @@ serverInit().then(async (dataSource) => {
         }
         const index = 'dist/index.html';
 
-        let docref = document.referrer;
+        //let docref = document.referrer;
 
         if (fs.existsSync(index)) {
             let x = '';
@@ -69,7 +69,7 @@ serverInit().then(async (dataSource) => {
                 key = 'AIzaSyDbGtO6VwaRqGoduRaGjSAB15mZPiPt9mM'//default key to use only for development
             result = result.replace(/GOOGLE_MAP_JAVASCRIPT_KEY/g, key);
 
-            result = result.replace(/DOCREF/g, docref);
+            //result = result.replace(/DOCREF/g, docref);
             //settings.docref = docref;
 
             let tagid = process.env.GOOGLE_PIXEL_TAG_ID;
