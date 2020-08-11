@@ -210,7 +210,7 @@ export class AuthService {
 
 
 
-        if (h.admin.value || h.distCenterAdmin.value) {
+        if (h.admin.value || h.distCenterAdmin.value || h.labAdmin.value) {
             let ok = true;
             if (!userHasPassword && !args.newPassword) {
                 r.requiredToSetPassword = true;
