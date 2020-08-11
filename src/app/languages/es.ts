@@ -71,6 +71,8 @@ export class es implements Language {
   deliveriesDoneInTheLastTwoDays = 'Entregado en los últimos dos días';
   showAllCompletedDeliveries = 'Ver todas las entregas exitosas';
   showRouteOnGoogleMaps = 'Ver ruta en google maps';
+  assignCloseDeliveries = 'Mostrar donaciones a mi alrededor';
+  closestDeliveries = 'Donaciones en el área cercana';
   selfPuckupSuccess = 'Recoge el paquete';
   packageWasPickedUp = 'Recogido';
   cancelAsignment = 'Cancelar asignación';

@@ -71,6 +71,8 @@ export class en implements Language {
   deliveriesDoneInTheLastTwoDays = 'Delivered over the last two days';
   showAllCompletedDeliveries = 'View all successful deliveries';
   showRouteOnGoogleMaps = 'View route on google maps';
+  assignCloseDeliveries = 'Show donations around me';
+  closestDeliveries = 'Donations in the near area';
   selfPuckupSuccess = 'Collect the package';
   packageWasPickedUp = 'Collected';
   cancelAsignment = 'Cancel assignment';
