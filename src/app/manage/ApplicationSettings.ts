@@ -32,8 +32,6 @@ export class ApplicationSettings extends Entity<number>  {
     return r;
   }
 
-  //docref : string = '';
-
   lang = getLang(this.context);
   @ServerFunction({ allowed: c => c.isSignedIn() })
   static async getPhoneOptions(deliveryId: string, context?: Context) {
