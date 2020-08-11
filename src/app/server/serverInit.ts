@@ -91,23 +91,23 @@ export async function serverInit() {
                 var nodemailer = await import('nodemailer');
 
                 var transporter = nodemailer.createTransport({
-                    host: 'smtp.gmail.com',
-                    secure: true,
-                    port: 465,
+                    service: 'gmail',
+                    port: 587,
+                    secure: false,
+                    requireTLS: true,
                     auth: {
-                        user: 'Hello@mitchashvim.org.il',
+                        user: 'hello@mitchashvim.org.il',
                         pass: 'TAnwd1234'
                     }
                 });
 
                 var mailOptions = {
-                    from: 'Hello@mitchashvim.org.il',
+                    from: 'hello@mitchashvim.org.il',
                     to: email,
                     subject: subject,
-                    text: message
+                    html: message
                 };
                 transporter.sendMail(mailOptions, function (error, info) {
-                    debugger;
                     if (error) {
                         console.log(error);
                     } else {

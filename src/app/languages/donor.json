@@ -2383,6 +2383,14 @@
     "google": "תוכן הודעת SMS",
     "valueInCode": "תוכן הודעת SMS"
   },
+  "emailDonorContentCaption": {
+    "google": "תוכן אימייל מתנדב",
+    "valueInCode": "תוכן אימייל מתנדב"
+  },
+  "emailHelperContentCaption": {
+    "google": "תוכן אימייל תורם",
+    "valueInCode": "תוכן אימייל תורם"
+  },
   "smsMessageSentTo": {
     "google": "הודעת SMS נשלחה ל",
     "valueInCode": "הודעת SMS נשלחה ל"

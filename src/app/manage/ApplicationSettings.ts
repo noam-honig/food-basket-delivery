@@ -81,6 +81,18 @@ export class ApplicationSettings extends Entity<number>  {
       this.validateSmsContent(this.reminderSmsText);
     }
   });
+  donorEmailText = new StringColumn({
+    caption: this.lang.emailDonorContentCaption,
+    validate: () => {
+      this.validateSmsContent(this.donorEmailText);
+    }
+  });
+  helperEmailText = new StringColumn({
+    caption: this.lang.emailHelperContentCaption,
+    validate: () => {
+      this.validateSmsContent(this.helperEmailText);
+    }
+  });
   logoUrl = new StringColumn(this.lang.logoUrl);
   address = new StringColumn(this.lang.deliveryCenterAddress);
   commentForSuccessDelivery = new StringColumn(this.lang.successMessageColumnName);

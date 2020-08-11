@@ -145,6 +145,8 @@ export class italy implements Language {
   organizationName = "Il nome dell'organizzazione";
   smsMessageContentCaption = 'Contenuto del messaggio SMS';
   smsReminderMessageContentCaption = 'Contenuto del promemoria via SMS';
+  emailDonorContentCaption = 'תוכן אימייל תורם';
+  emailHelperContentCaption = 'תוכן אימייל מתנדב';
   mustIncludeUrlKeyError = ' Deve contenere il testo! Sito! Altrimenti non invierà un collegamento';
   logoUrl = 'Logo URL';
   deliveryCenterAddress = 'indirizzo del centro di consegna';
@@ -385,6 +387,8 @@ export class italy implements Language {
   sampleMessage = 'Messaggio di esempio';
   reminderSmsTextHelp = 'Questo messaggio verrà inviato a un volontario ritardato da una schermata di monitoraggio del volontario';
   sampleReminderSms = 'Messaggio di promemoria di esempio';
+  emailTextDonor = 'הודעה זו תשלח לתורם אחרי שנרשם למערכת';
+  emailTextHelper = 'הודעה זו תשלח למתנדב אחרי שנרשם למערכת';
   basketTypes = 'Tipi di pacchi';
   distributionLists = 'Liste di distribuzione';
   familySources = 'Fonti familiari';

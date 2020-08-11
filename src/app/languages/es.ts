@@ -144,6 +144,8 @@ export class es implements Language {
   updateInfo = 'Detalles de actualización';
   organizationName = 'El nombre de la organización';
   smsMessageContentCaption = 'Contenido del mensaje SMS';
+  emailDonorContentCaption = 'תוכן אימייל תורם';
+  emailHelperContentCaption = 'תוכן אימייל מתנדב';
   smsReminderMessageContentCaption = 'Contenido recordatorio SMS';
   mustIncludeUrlKeyError = ' ¡Debe contener!';
   logoUrl = 'Logotipo de URL';
@@ -385,6 +387,8 @@ export class es implements Language {
   sampleMessage = 'Mensaje de muestra';
   reminderSmsTextHelp = 'Este mensaje se enviará a un voluntario retrasado desde una pantalla de seguimiento de voluntarios.';
   sampleReminderSms = 'Mensaje recordatorio de muestra';
+  emailTextDonor = 'הודעה זו תשלח לתורם אחרי שנרשם למערכת';
+  emailTextHelper = 'הודעה זו תשלח למתנדב אחרי שנרשם למערכת';
   basketTypes = 'Tipos de parcelas';
   distributionLists = 'Listas de distribución';
   familySources = 'Fuentes familiares';

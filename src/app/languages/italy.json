@@ -2981,6 +2981,14 @@
     "valueInCode": "תוכן הודעת SMS",
     "valueInEnglish": "SMS message content"
   },
+  "emailDonorContentCaption": {
+    "google": "תוכן אימייל מתנדב",
+    "valueInCode": "תוכן אימייל מתנדב"
+  },
+  "emailHelperContentCaption": {
+    "google": "תוכן אימייל תורם",
+    "valueInCode": "תוכן אימייל תורם"
+  },
   "smsMessageSentTo": {
     "google": "SMS inviato a",
     "valueInCode": "הודעת SMS נשלחה ל",

@@ -277,6 +277,14 @@ export class ManageComponent implements OnInit {
   testSmsReminder() {
     return SendSmsAction.getMessage(this.settings.reminderSmsText.value, this.settings.organisationName.value, 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
   }
+  testEmailHelper() {
+    if(this.settings.helperEmailText.value)
+    return SendSmsAction.getMessage(this.settings.helperEmailText.value, this.settings.organisationName.value, 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
+  }
+  testEmailDonor() {
+    if(this.settings.donorEmailText.value)
+    return SendSmsAction.getMessage(this.settings.donorEmailText.value, this.settings.organisationName.value, 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
+  }
   images = this.context.for(ApplicationImages).gridSettings({
     numOfColumnsInGrid: 0,
     allowUpdate: true,

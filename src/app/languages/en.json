@@ -2622,6 +2622,14 @@
     "google": "SMS message content",
     "valueInCode": "תוכן הודעת SMS"
   },
+  "emailDonorContentCaption": {
+    "google": "תוכן אימייל מתנדב",
+    "valueInCode": "תוכן אימייל מתנדב"
+  },
+  "emailHelperContentCaption": {
+    "google": "תוכן אימייל תורם",
+    "valueInCode": "תוכן אימייל תורם"
+  },
   "smsMessageSentTo": {
     "google": "SMS message sent to",
     "valueInCode": "הודעת SMS נשלחה ל"

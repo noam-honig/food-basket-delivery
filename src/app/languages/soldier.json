@@ -2387,6 +2387,14 @@
     "google": "הודעת SMS נשלחה ל",
     "valueInCode": "הודעת SMS נשלחה ל"
   },
+  "emailDonorContentCaption": {
+    "google": "תוכן אימייל מתנדב",
+    "valueInCode": "תוכן אימייל מתנדב"
+  },
+  "emailHelperContentCaption": {
+    "google": "תוכן אימייל תורם",
+    "valueInCode": "תוכן אימייל תורם"
+  },
   "smsNotOpened": {
     "google": "SMS טרם נפתח",
     "valueInCode": "SMS טרם נפתח"

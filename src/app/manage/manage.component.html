@@ -54,6 +54,26 @@
                 <h4>{{settings.lang.sampleReminderSms}}</h4>
                 <pre>{{testSmsReminder()}}</pre>
             </mat-card>
+            <mat-card>
+                <mat-card-title>
+                    {{settings.donorEmailText.defs.caption}}
+                </mat-card-title>
+                {{settings.lang.emailTextDonor}}
+                <textarea [(ngModel)]="settings.donorEmailText.value" class="form-control" lines=3></textarea>
+
+                <h4>{{settings.lang.sampleMessage}}</h4>
+                <pre [innerHTML]="testEmailDonor()"></pre>
+            </mat-card>
+            <mat-card>
+                <mat-card-title>
+                    {{settings.helperEmailText.defs.caption}}
+                </mat-card-title>
+                {{settings.lang.emailTextHelper}}
+                <textarea [(ngModel)]="settings.helperEmailText.value" class="form-control" lines=3></textarea>
+
+                <h4>{{settings.lang.sampleMessage}}</h4>
+                <pre [innerHTML]="testEmailHelper()"></pre>
+            </mat-card>
 
 
         </mat-expansion-panel>

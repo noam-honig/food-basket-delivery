@@ -9,6 +9,7 @@ import { executeOnServer, pack } from '../server/mlt';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { RequiredValidator } from '@angular/forms';
 import { RegisterDonorComponent } from '../register-donor/register-donor.component';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-register-helper',
@@ -16,7 +17,7 @@ import { RegisterDonorComponent } from '../register-donor/register-donor.compone
   styleUrls: ['./register-helper.component.scss']
 })
 export class RegisterHelperComponent implements OnInit {
-  constructor(private dialog: DialogService, private context: Context) { }
+  constructor(private dialog: DialogService, private context: Context,private settings:ApplicationSettings) { }
   helper = new helperForm(this.context);
   area = new DataAreaSettings({ columnSettings: () => this.helper.columns.filter(c => c != this.helper.name && c != this.helper.address1 && c != this.helper.address2) });
   ngOnInit() {
@@ -54,46 +55,8 @@ export class RegisterHelperComponent implements OnInit {
         this.dialog.Error(error);
         return;
       }
-      var message=`
-      הי 
-
-      נעים מאוד! שמי כרמל כהן
-      ואני מנהלת מערך ההתנדבות של "מתחשבים",
-      המיזם הלאומי לחלוקת מחשבים לתלמידים בפריפריה הגיאוגרפית-חברתית בישראל.
-      
-      ראשית, אני ממש מעריכה שהצטרפת להתנדבות איתנו.
-      יחד איתך ועם מאות מתנדבים נוספים, נצליח להגיע לעשרות אלפי תלמידים.
-      תודה!
-      
-      המתנדבים הם ❤ המיזם וחשוב לי להשאיר אותך בלופ על הפעילות ולהעביר לך עדכונים חשובים.
-      לכן אני מזמינה אותך להצטרף לקבוצת הווסטאפ של המתדנבים
-      בה רק אני כותבת (Admin only) ואין חפירות, מבטיחה!
-      https://chat.whatsapp.com/KqqnKiGDOsb9wwr0fT08k1
-      
-      אני רוצה להכיר אותך קצת יותר,
-      מבקשת לקבל ממך עוד 2 דקות לענות על כמה שאלות בסיסיות:
-      
-      יש לי 2 דקות. לשאלות >>
-      בינתיים אני מזמינה אותך לשמור ולעבור על המדריך למתחשב 👇🏼
-      (ככה אנחנו מכנים את המתנדבים שלנו 😄)
-      
-      
-      שוב- תודה ענקית!
-      זמינה במייל לכל עניין.
-      
-      נהיה בקשר,
-      
-      כרמל כהן
-      
-       
-       
-      חזרה לאתר מתחשבים 
-      Created with
-      Love it?
-      Discover more
-      
-      `
-      var subject="";
+      var message=this.settings.helperEmailText.value;
+      var subject = "מתחשבים";
       await RegisterHelperComponent.doHelperForm(pack(this.helper),subject,message);
       await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: "תודה על עזרתך", showOnlyConfirm: true });
       window.location.href = "https://www.mitchashvim.org.il/";
@@ -105,7 +68,7 @@ export class RegisterHelperComponent implements OnInit {
   @ServerFunction({ allowed: true })
   static async doHelperForm(args: any[],subject:string,message:string, context?: Context) {
     await executeOnServer(helperForm, args, context);
-    await RegisterDonorComponent.sendMail(subject,message,args[4]);
+    await RegisterDonorComponent.sendMail(subject,message,args[3]);
   }
 
 }

@@ -272,6 +272,8 @@ export class Language {
   organizationName = 'שם הארגון';
   smsMessageContentCaption = 'תוכן הודעת SMS';
   smsReminderMessageContentCaption = 'תוכן הודעת תזכורת SMS';
+  emailDonorContentCaption = 'תוכן אימייל תורם';
+  emailHelperContentCaption = 'תוכן אימייל מתנדב';
   mustIncludeUrlKeyError = " חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור";
   logoUrl = 'לוגו URL';
   deliveryCenterAddress = "כתובת מרכז השילוח";
@@ -513,6 +515,8 @@ export class Language {
   sampleMessage = 'הודעה לדוגמא';
   reminderSmsTextHelp = 'הודעה זו תשלח למתנדב שמתעכב ממסך מעקב מתנדבים';
   sampleReminderSms = 'הודעת תזכורת לדוגמא';
+  emailTextDonor = 'הודעה זו תשלח לתורם אחרי שנרשם למערכת';
+  emailTextHelper = 'הודעה זו תשלח למתנדב אחרי שנרשם למערכת';
   basketTypes = 'סוגי סלים';
   distributionLists = 'רשימות חלוקה';
   familySources = 'גורמים מפנים';
