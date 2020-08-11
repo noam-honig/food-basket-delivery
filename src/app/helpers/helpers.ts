@@ -67,6 +67,8 @@ export abstract class HelpersBase extends IdEntity {
         includeInApi: Roles.admin,
     });
 
+    referredBy = new StringColumn();
+
     active() {
         return this.archive.isEqualTo(false);
     }

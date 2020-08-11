@@ -55,6 +55,7 @@ serverInit().then(async (dataSource) => {
         }
         const index = 'dist/index.html';
 
+
         if (fs.existsSync(index)) {
             let x = '';
             let settings = (await ApplicationSettings.getAsync(context));
@@ -66,6 +67,13 @@ serverInit().then(async (dataSource) => {
             if (!key)
                 key = 'AIzaSyDbGtO6VwaRqGoduRaGjSAB15mZPiPt9mM'//default key to use only for development
             result = result.replace(/GOOGLE_MAP_JAVASCRIPT_KEY/g, key);
+
+            let tagid = process.env.GOOGLE_PIXEL_TAG_ID;
+            if (!tagid) 
+                tagid = 'UA-121891791-1'; // default key for Google Analytics
+            result = result.replace(/GOOGLE_PIXEL_TAG_ID/g, tagid);
+
+
             if (settings.forWho.value.args.leftToRight) {
                 result = result.replace(/<body dir="rtl">/g, '<body dir="ltr">');
             }
