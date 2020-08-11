@@ -18,7 +18,7 @@ export class RegisterDonorComponent implements OnInit {
   constructor(private dialog: DialogService, private context: Context) { }
   donor = new donorForm(this.context);
   area = new DataAreaSettings({ columnSettings: () => 
-    this.donor.columns.filter(c => c != this.donor.name && c != this.donor.address && c != this.donor.selfDeliver) });
+    this.donor.columns.filter(c => c != this.donor.name && c != this.donor.address && c != this.donor.selfDeliver && c != this.donor.docref) });
   ngOnInit() {
     this.donor.docref.value = document.referrer;
   }
