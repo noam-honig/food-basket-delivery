@@ -17,7 +17,7 @@ import { RequiredValidator } from '@angular/forms';
 export class RegisterHelperComponent implements OnInit {
   constructor(private dialog: DialogService, private context: Context) { }
   helper = new helperForm(this.context);
-  area = new DataAreaSettings({ columnSettings: () => this.helper.columns.filter(c => c != this.helper.name && c != this.helper.address1 && c != this.helper.address2) }); // && c != this.helper.docref) });
+  area = new DataAreaSettings({ columnSettings: () => this.helper.columns.filter(c => c != this.helper.name && c != this.helper.address1 && c != this.helper.address2 && c != this.helper.docref) });
   ngOnInit() {
     this.helper.docref.value = document.referrer;
   }
