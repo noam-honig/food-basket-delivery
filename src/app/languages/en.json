@@ -1580,6 +1580,10 @@
     "google": "Independent volunteer",
     "valueInCode": "מתנדב עצמאי"
   },
+  "indieRequireToSetPassword": {
+    "google": "An independent volunteer is required to enter the system with a password",
+    "valueInCode": "מתנדב עצמאי מחוייב בסיסמא לכניסה למערכת"
+  },
   "infoAboutUpdates": {
     "google": "Update details",
     "valueInCode": "פרטי עדכונים"

@@ -458,6 +458,7 @@ export class en implements Language {
   shouldAssignTo = 'Assign to';
   saveVolunteerInfo = 'Saving volunteer details:';
   adminRequireToSetPassword = 'You are a manager user without a required password defined. Please set a password in the following user details screen.';
+  indieRequireToSetPassword = 'An independent volunteer is required to enter the system with a password';
   userNotFoundOrWrongPassword = 'User not found or password incorrect';
   fromDate = 'Dated';
   toDate = 'Until';

@@ -16,6 +16,7 @@ import { OverviewComponent } from "../overview/overview.component";
 import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings";
 import { YesNoQuestionComponent } from "../select-popup/yes-no-question/yes-no-question.component";
 import { Subject } from "rxjs";
+import { DeliveryReceptionComponent } from "../delivery-reception/delivery-reception.component";
 
 const TIMEOUT_MULTIPLIER_IN_SECONDS = 60;
 @Injectable()
@@ -120,6 +121,8 @@ export class AuthService {
             this.dialog.analytics('login ' + (this.context.isAllowed(Roles.admin) ? 'delivery admin' : ''));
             if (this.context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
                 this.routeHelper.navigateToComponent((await import("../asign-family/asign-family.component")).AsignFamilyComponent);
+            else if (this.context.isAllowed(Roles.lab))
+                this.routeHelper.navigateToComponent(DeliveryReceptionComponent)
             else if (this.context.isAllowed(Roles.overview))
                 this.routeHelper.navigateToComponent(OverviewComponent);
             else
@@ -210,11 +213,13 @@ export class AuthService {
 
 
 
-        if (h.admin.value || h.distCenterAdmin.value || h.labAdmin.value) {
+        if (h.admin.value || h.distCenterAdmin.value || h.labAdmin.value || h.isIndependent) {
             let ok = true;
             if (!userHasPassword && !args.newPassword) {
                 r.requiredToSetPassword = true;
                 r.requiredToSetPasswordReason = settings.lang.adminRequireToSetPassword;
+                if (!(h.admin.value || h.distCenterAdmin.value || h.labAdmin.value))
+                    settings.lang.indieRequireToSetPassword;
                 ok = false;
 
             }

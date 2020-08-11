@@ -112,6 +112,7 @@ export class HelperFamiliesComponent implements OnInit {
     for await (const d of  context.for(ActiveFamilyDeliveries).iterate({ where: f => f.readyFilter() })) {
       r.push({
         basketType: await (d.basketType.getTheValue()),
+        city: d.city.value,
         floor: d.floor.value,
         quantity: d.quantity.value,
         id: d.id.value,
@@ -140,6 +141,7 @@ export class HelperFamiliesComponent implements OnInit {
         options: afdList.map(x => ({
           item: x.id, name:
             x.distance.toFixed(1) + use.language.km +
+            (x.city ? ' (' + x.city + ')' : '') +
             (x.floor ? ' [' + use.language.floor + ' ' + x.floor + ']' : '') +
             ' : ' +
             x.quantity + ' x ' + x.basketType
@@ -524,6 +526,7 @@ export class HelperFamiliesComponent implements OnInit {
 
 interface DeliveryInList {
   id: string,
+  city: string,
   floor: string,
   basketType: string,
   quantity: number,

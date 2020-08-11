@@ -458,6 +458,7 @@ export class es implements Language {
   shouldAssignTo = 'Asignar a';
   saveVolunteerInfo = 'Guardar detalles del voluntario:';
   adminRequireToSetPassword = 'Usted es un usuario administrador sin una contraseña requerida definida. Establezca una contraseña en la siguiente pantalla de detalles del usuario.';
+  indieRequireToSetPassword = 'Se requiere un voluntario independiente para ingresar al sistema con una contraseña';
   userNotFoundOrWrongPassword = 'Usuario no encontrado o contraseña incorrecta';
   fromDate = 'Con fecha de';
   toDate = 'Hasta';

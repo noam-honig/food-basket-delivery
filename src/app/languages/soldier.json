@@ -1411,6 +1411,10 @@
     "google": "מתנדב עצמאי",
     "valueInCode": "מתנדב עצמאי"
   },
+  "indieRequireToSetPassword": {
+    "google": "מתנדב עצמאי מחוייב בסיסמא לכניסה למערכת",
+    "valueInCode": "מתנדב עצמאי מחוייב בסיסמא לכניסה למערכת"
+  },
   "infoAboutUpdates": {
     "google": "פרטי עדכונים",
     "valueInCode": "פרטי עדכונים"

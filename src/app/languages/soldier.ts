@@ -458,6 +458,7 @@ export class soldier implements Language {
   shouldAssignTo = 'האם לשייך אותו למתנדב';
   saveVolunteerInfo = 'שמירת פרטי מתנדב:';
   adminRequireToSetPassword = ' אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועבר למסך עדכון פרטים לעדכון סיסמה.';
+  indieRequireToSetPassword = 'מתנדב עצמאי מחוייב בסיסמא לכניסה למערכת';
   userNotFoundOrWrongPassword = 'משתמשת לא נמצאה או סיסמה שגויה';
   fromDate = 'מתאריך';
   toDate = 'עד תאריך';

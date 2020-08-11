@@ -458,6 +458,7 @@ export class italy implements Language {
   shouldAssignTo = 'Assegnato a';
   saveVolunteerInfo = 'Salvataggio dei dettagli dei volontari:';
   adminRequireToSetPassword = "Sei un utente gestore senza una password richiesta definita. Si prega di impostare una password nella seguente schermata dei dettagli dell'utente.";
+  indieRequireToSetPassword = 'Un volontario indipendente deve accedere al sistema con una password';
   userNotFoundOrWrongPassword = 'Utente non trovato o password errata';
   fromDate = 'Datato';
   toDate = 'Fino a';

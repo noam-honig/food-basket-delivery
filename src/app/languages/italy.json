@@ -1765,6 +1765,11 @@
     "valueInCode": "מתנדב עצמאי",
     "valueInEnglish": "Independent volunteer"
   },
+  "indieRequireToSetPassword": {
+    "google": "Un volontario indipendente deve accedere al sistema con una password",
+    "valueInCode": "מתנדב עצמאי מחוייב בסיסמא לכניסה למערכת",
+    "valueInEnglish": "An independent volunteer is required to enter the system with a password"
+  },
   "infoAboutUpdates": {
     "google": "Dettagli di aggiornamento",
     "valueInCode": "פרטי עדכונים",
