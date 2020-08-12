@@ -187,7 +187,7 @@ export class HelperFamiliesComponent implements OnInit {
       strategyId: this.settings.routeStrategy.value.id,
       volunteerLocation: this.volunteerLocation
     });
-    this.familyLists.reload();
+    await this.familyLists.reload();
   }
 
   getHelpText() {
