@@ -136,7 +136,7 @@ export class HelperFamiliesComponent implements OnInit {
 
       return (a.distance - b.distance);
     });
-    r.splice(10);
+    r.splice(15);
     return r;
   };
   

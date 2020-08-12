@@ -2,6 +2,7 @@
 
     <h3 matDialogHeader>{{args.title}}</h3>
 
+    <mat-dialog-content>
     <mat-nav-list role="list">
         <mat-list-item *ngFor="let h of args.options" (click)="select(h)">
 
@@ -15,7 +16,8 @@
             <mat-divider></mat-divider>
         </mat-list-item>
     </mat-nav-list>
-    <mat-dialog-actions>
+    </mat-dialog-content>
+<mat-dialog-actions>
 
         <button mat-raised-button color="warning" (click)="close()">
             {{settings.lang.close}}
