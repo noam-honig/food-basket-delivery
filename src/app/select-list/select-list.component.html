@@ -5,7 +5,10 @@
     <mat-nav-list role="list">
         <mat-list-item *ngFor="let h of args.options" (click)="select(h)">
 
-            <span style="min-width:100px;"> {{h.name}}
+            <span style="min-width:100px;"> 
+                <mat-checkbox *ngIf="args.multiSelect" [(ngModel)]="h.selected" (ngModelChange)="onChange(h)">
+                {{h.name}}
+                </mat-checkbox>
 
             </span>
 

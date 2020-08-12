@@ -14,14 +14,26 @@ export class SelectListComponent implements OnInit {
     options: selectListItem[];
 
     title: string;
+    multiSelect?: boolean;
+    onSelect?: (selectedItem: selectListItem, selected?: boolean, list?: selectListItem[]) => void,
   }
   ngOnInit() {
   }
   selected: selectListItem;
   select(item: selectListItem) {
-    this.selected = item;
-    this.close();
+    if (!this.args.multiSelect) {
+      this.selected = item;
+      if (this.args.onSelect) 
+        this.args.onSelect(item, true);
+      this.close();
+    }
   }
+
+  onChange(item: selectListItem) {
+    if (this.args.onSelect) 
+      this.args.onSelect(item, item.selected, this.args.options);
+  }
+
 
   close() {
     this.d.close();
@@ -33,5 +45,6 @@ export class SelectListComponent implements OnInit {
 
 export interface selectListItem {
   name: string,
-  item: any
+  item: any,
+  selected?: boolean
 }
