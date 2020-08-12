@@ -19,8 +19,9 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 export class RegisterHelperComponent implements OnInit {
   constructor(private dialog: DialogService, private context: Context,private settings:ApplicationSettings) { }
   helper = new helperForm(this.context);
-  area = new DataAreaSettings({ columnSettings: () => this.helper.columns.filter(c => c != this.helper.name && c != this.helper.address1 && c != this.helper.address2) });
+  area = new DataAreaSettings({ columnSettings: () => this.helper.columns.filter(c => c != this.helper.name && c != this.helper.address1 && c != this.helper.address2 && c != this.helper.docref) });
   ngOnInit() {
+    this.helper.docref.value = document.referrer;
   }
   allowSubmit() {
     return true; //this.hasMandatoryFields();
@@ -99,10 +100,10 @@ class helperForm {
   address2 = new StringColumn({ caption: "איזור נוסף ממנו נח לך לאסוף תרומות?"});
   
   socialSecurityNumber = new StringColumn({ caption: "תעודת זהות (עבור ביטוח מתנדבים)", validate: () => required(this.socialSecurityNumber) });
-  company = new StringColumn({ caption: "ארגון"});
+  company = new StringColumn({ caption: "ארגון" });
+  docref = new StringColumn();
 
-  columns = [this.name, this.socialSecurityNumber, this.phone, this.email, this.address1, this.address2, this.company];
-
+  columns = [this.name, this.socialSecurityNumber, this.phone, this.email, this.address1, this.address2, this.company, this.docref];
 
   async doWork(context: Context) {
     let h = context.for(Helpers).create();
@@ -117,6 +118,7 @@ class helperForm {
     h.email.value = this.email.value;
     h.socialSecurityNumber.value = this.socialSecurityNumber.value;
     h.company.value = this.company.value;
+    h.referredBy.value = this.docref.value;
     await h.save();
   }
 }

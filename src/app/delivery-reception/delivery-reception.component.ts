@@ -1,90 +1,63 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { DataAreaSettings, StringColumn, BoolColumn, Context, BusyService, FilterBase, AndFilter, EntityWhere, Column } from '@remult/core';
+import { DataAreaSettings, DataControlInfo, StringColumn, BoolColumn, Context, BusyService, FilterBase, AndFilter, EntityWhere, Column } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
-import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
-import { getLang } from '../translate';
-import { buildGridButtonFromActions } from '../families/familyActionsWiring';
-import { delvieryActions } from '../family-deliveries/family-deliveries-actions';
-import { FamilyDeliveriesComponent, getDeliveryGridButtons } from '../family-deliveries/family-deliveries.component';
-import { saveToExcel } from '../shared/saveToExcel';
-import { Roles } from '../auth/roles';
-import { Helpers } from '../helpers/helpers';
-import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
+import { FamilyDeliveries } from '../families/FamilyDeliveries';
+
+import { Helpers, HelperUserInfo } from '../helpers/helpers';
+import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
+import { DeliveryStatus } from '../families/DeliveryStatus';
+import { PhoneColumn } from '../model-shared/types';
+import { getLang } from '../sites/sites';
 
 @Component({
   selector: 'app-delivery-reception',
   templateUrl: './delivery-reception.component.html',
   styleUrls: ['./delivery-reception.component.scss']
 })
-export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
+export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
 
-  courierId;
-  showData=false;
+  courier: Helpers;
+  showData = false;
   deliveries = this.context.for(FamilyDeliveries).gridSettings({
     allowUpdate: false,
-    numOfColumnsInGrid: 7,
+    numOfColumnsInGrid: 3,
+    rowCssClass: f => f.deliverStatus.getCss(),
 
     knowTotalRows: true,
     get: {
       limit: 25,
-      where: f => {
-        let index = 0;
-        let result: FilterBase = undefined;        
-        let addFilter = (filter: FilterBase) => {
-          if (result)
-            result = new AndFilter(result, filter);
-          else result = filter;
-        }
-        if (this.searchString) {
-          console.log(this.courierId)
-          addFilter(f.courier.isEqualTo(this.courierId));
-        }
-        return result;
-      }
-      
+      where: f =>
+        f.courier.isEqualTo(this.courier?  this.courier.id.value:"nobody").and(f.archive.isEqualTo(false))
+
+
+
       , orderBy: f => f.name
     },
     columnSettings: deliveries => {
-      let r=[
-        {
-          column: deliveries.name,
-          width: '200'
-        },
-        {
-          column: deliveries.address,
-          width: '250',
-          cssClass: f => {
-            if (!f.addressOk.value)
-              return 'addressProblem';
-            return '';
-          }
-        },
-        deliveries.basketType,
+      let r = [
+        { column: deliveries.name, width: '100' },
+        { column: deliveries.basketType, width: '80' },
         {
           column: deliveries.quantity,
           width: '50'
         },
-        {
-          column:deliveries.deliverStatus,width:'110'
-        },
-
-        { column: deliveries.createDate, width: '150' },
+        { column: deliveries.receptionComments, width: '100' },
         deliveries.distributionCenter,
+        { column: deliveries.deliverStatus, width: '110' },
 
         deliveries.deliveryComments,
-        deliveries.internalDeliveryComment,  
-        deliveries.special,
+        deliveries.internalDeliveryComment,
+        deliveries.courierComments,
+
+        deliveries.messageStatus,
+
         deliveries.createUser,
+        { column: deliveries.createDate, width: '150' },
 
-        deliveries.familySource,
-
-        { column: deliveries.addressOk, width: '110' },
         deliveries.floor,
         deliveries.appartment,
         deliveries.entrance,
         { column: deliveries.addressComment },
-        { column: deliveries.city, width: '100' },
         deliveries.area,
         deliveries.phone1,
         deliveries.phone1Description,
@@ -94,89 +67,103 @@ export class DeliveryReceptionComponent implements OnInit,AfterViewInit {
         deliveries.phone3Description,
         deliveries.phone4,
         deliveries.phone4Description,
-        { column: deliveries.courier, width: '100' },
-
-        deliveries.courierAssignUser,  
-        { column: deliveries.courierAssingTime, width: '150' },
-        { column: deliveries.deliveryStatusUser, width: '100' },
-        deliveries.deliveryStatusDate,
-        { column: deliveries.courierComments, width: '120' }, 
-        { column: deliveries.internalDeliveryComment, width: '120' }, 
-        deliveries.needsWork,
-        deliveries.needsWorkDate,
-        deliveries.needsWorkUser,
-        deliveries.fixedCourier,
-        deliveries.familyMembers,
-        { column: deliveries.messageStatus, width: '130' },
-        deliveries.city,
-        deliveries.distributionCenter,
-        deliveries.quantity,
-        deliveries.createDate,
-        deliveries.courier,
-        deliveries.courierAssingTime,
-        deliveries.internalDeliveryComment,
-        deliveries.messageStatus,        
-        deliveries.courierComments,
+        { column: deliveries.courier, width: '100' }
       ]
 
-    return r;
-    }});
-  searchString = '';
+      return r;
+    },
+
+    rowButtons: [
+      {
+        name: '',
+        icon: 'done_all',
+        showInLine: true,
+        click: async d => {
+          if (await this.dialog.YesNoPromise(getLang(this.context).shouldArchiveDelivery)) {
+            {
+              d.archive.value = true;
+              let user = <HelperUserInfo>this.context.user;
+              d.distributionCenter.value = user.distributionCenter;
+              d.deliverStatus.value = DeliveryStatus.Success;
+              await d.save();
+              this.refreshFamilyGrid();
+            }
+          }
+        }
+        , textInMenu: () => getLang(this.context).receptionDone
+      },
+      {
+        name: '',
+        icon: 'report_problem',
+        showInLine: true,
+        click: async d => {
+          d.deliverStatus.value = DeliveryStatus.FailedOther;
+          let user = <HelperUserInfo>this.context.user;
+          d.distributionCenter.value = user.distributionCenter;
+          this.editComment(d);
+        }
+        , textInMenu: () => getLang(this.context).notDelivered
+      }
+    ]
+  });
+
+  phone = new StringColumn({caption:"טלפון",dataControlSettings:()=>({inputType:'tel'}) });
+  
   constructor(
     private context: Context,
     public dialog: DialogService,
     private busy: BusyService,
-    public settings: ApplicationSettings
   ) { }
-  
-  async ngOnInit() {    
-    
+
+  private receptionCommentEntry(deliveries: FamilyDeliveries) {
+    let r: DataControlInfo<FamilyDeliveries>[] = [
+      {
+        column: deliveries.receptionComments,
+        width: '150'
+      },
+    ];
+    return r;
   }
-  ngAfterViewInit(){
+
+  private editComment(d: FamilyDeliveries) {
+    this.context.openDialog(InputAreaComponent, x => x.args = {
+      title: getLang(this.context).commentForReception,
+      validate: async () => {
+        if (d.receptionComments.value == '')
+          throw getLang(this.context).updateComment;
+      },
+      ok: () => {
+        d.save();
+      },
+      cancel: () => {
+      },
+      settings: {
+        columnSettings: () => this.receptionCommentEntry(d)
+      }
+    });
+  }
+
+  async ngOnInit() {
+
+  }
+  ngAfterViewInit() {
 
   }
 
-  async search(form)
-  {
-    try{
-      this.searchString=form.value.phoneNumber;
-      this.courierId=await (await this.context.for(Helpers).findFirst(i=>i.phone.isEqualTo(this.searchString)));
-      this.courierId=this.courierId? this.courierId.id.value : ""
-      this.showData=true;
-    }catch(err){
+  async search() {
+    try {
       
+      this.courier = await (await this.context.for(Helpers).findFirst(i => i.phone.isEqualTo(this.phone.value)));
+      
+      this.showData = this.courier!=undefined;
+    } catch (err) {
+
     }
+    this.refreshFamilyGrid();
   }
 
-  refresh() {
-    this.refreshFamilyGrid();
-    // this.refreshStats();
-  }
   async refreshFamilyGrid() {
     this.deliveries.page = 1;
     await this.deliveries.getRecords();
   }
-  
-  clearSearch() {
-    this.searchString = '';
-    this.doSearch();
-  }
-  async doSearch() {
-    if (this.deliveries.currentRow && this.deliveries.currentRow.wasChanged())
-      return;
-    this.busy.donotWait(async () =>
-      await this.refreshFamilyGrid());
-  }
-  // showDeliveryHistoryDialog(args: { dialog: DialogService, settings: ApplicationSettings }) {
-  //   this.context.openDialog(GridDialogComponent, x => x.args = {
-  //     title: getLang(this.context).deliveriesFor + ' ' + this.name.value,
-  //     settings: this.deliveriesGridSettings(args),
-  //     buttons: [{
-  //       text: use.language.newDelivery,
-
-  //       click: () => this.showNewDeliveryDialog(args.dialog, args.settings, { doNotCheckIfHasExistingDeliveries: true })
-  //     }]
-  //   });
-  // }
-
 }

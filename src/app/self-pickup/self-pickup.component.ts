@@ -6,7 +6,7 @@ import { Context } from '@remult/core';
 
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
+import { Roles, AdminGuard, distCenterAdminGuard, distCenterOrLabGuard } from '../auth/roles';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
@@ -19,7 +19,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
 
 
   static route: Route = {
-    path: 'self-pickup-families', component: SelfPickupComponent, canActivate: [distCenterAdminGuard], data: {
+    path: 'self-pickup-families', component: SelfPickupComponent, canActivate: [distCenterOrLabGuard], data: {
       name: 'באים לקחת',
       seperator: true
     }

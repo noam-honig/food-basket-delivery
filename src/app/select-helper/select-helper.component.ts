@@ -11,10 +11,11 @@ import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 import { Location, GetDistanceBetween, GeocodeInformation } from '../shared/googleApiHelpers';
 import { Roles } from '../auth/roles';
 import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { getLang } from '../translate';
+
 import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
-import { SqlBuilder } from '../model-shared/types';
+import { SqlBuilder, relativeDateName } from '../model-shared/types';
+import { getLang } from '../sites/sites';
 
 @Component({
   selector: 'app-select-helper',
@@ -60,6 +61,8 @@ export class SelectHelperComponent implements OnInit {
 
 
     let check = (h: helperInList, location: Location, from: string) => {
+      if (!h)
+        return;
       let dist = GetDistanceBetween(location, deliveryLocation);
       if (dist < h.distance) {
         h.distance = dist;
@@ -68,7 +71,7 @@ export class SelectHelperComponent implements OnInit {
       }
     }
 
-    await (await context.for(Helpers).find()).forEach(async h => {
+    await (await context.for(Helpers).find({ where: h => h.active() })).forEach(async h => {
       helpers.set(h.id.value, {
         helperId: h.id.value,
         name: h.name.value,
@@ -84,8 +87,11 @@ export class SelectHelperComponent implements OnInit {
         check(theH, h.getGeocodeInformation2().location(), getLang(context).preferredDistributionArea + ": " + h.preferredDistributionAreaAddress2.value);
       }
     });
+    
     let sql = new SqlBuilder();
     if (!selectDefaultVolunteer) {
+
+      /* ----    calculate active deliveries and distances    ----*/
       let afd = context.for(ActiveFamilyDeliveries).create();
 
 
@@ -100,11 +106,41 @@ export class SelectHelperComponent implements OnInit {
           sql.columnWithAlias(afd.address, 'address')]
       }))).rows) {
         let h = helpers.get(d.courier);
-        if (!h.assignedDeliveries)
-          h.assignedDeliveries = 1;
-        else
-          h.assignedDeliveries++;
-        check(h, { lat: d.lat, lng: d.lng }, getLang(context).delivery + ": " + d.address);
+        if (h) {
+          if (!h.assignedDeliveries)
+            h.assignedDeliveries = 1;
+          else
+            h.assignedDeliveries++;
+          check(h, { lat: d.lat, lng: d.lng }, getLang(context).delivery + ": " + d.address);
+        }
+      }
+
+      /*  ---------- calculate completed deliveries and "busy" status -------------*/
+      let sql1 = new SqlBuilder();
+      let fd = context.for(FamilyDeliveries).create();
+      let limitDate = new Date();
+      limitDate.setDate(limitDate.getDate() - HelpersBase.allowedFreq_denom);
+
+      for (const d of (await db.execute(sql1.query({
+        from: fd,
+        where: () => [
+          fd.courier.isDifferentFrom('')
+            .and(fd.deliverStatus.isAResultStatus())
+            .and(fd.deliveryStatusDate.isGreaterOrEqualTo(limitDate))
+        ],
+        select: () => [
+          sql1.columnWithAlias(fd.courier, "courier"),
+          sql1.columnWithAlias(sql.max(fd.deliveryStatusDate), "delivery_date"),
+          sql1.columnWithAlias("count(*)", "count")
+        ],
+        groupBy: () => [fd.courier]
+      }))).rows) {
+        let h = helpers.get(d.courier);
+        if (h) {
+          h.lastCompletedDeliveryString = relativeDateName(context, { d: d.delivery_date });
+          h.totalRecentDeliveries = d.count;
+          h.isBusyVolunteer = (h.totalRecentDeliveries > HelpersBase.allowedFreq_nom) ? "busyVolunteer" : "";
+        }
       }
     } else {
       let afd = context.for(Families).create();
@@ -118,12 +154,14 @@ export class SelectHelperComponent implements OnInit {
           sql.columnWithAlias(afd.address, 'address')]
       }))).rows) {
         let h = helpers.get(d.courier);
-        if (!h.fixedFamilies)
-          h.fixedFamilies = 1;
-        else
-          h.fixedFamilies++;
+        {
+          if (!h.fixedFamilies)
+            h.fixedFamilies = 1;
+          else
+            h.fixedFamilies++;
 
-        check(h, { lat: d.lat, lng: d.lng }, getLang(context).family + ": " + d.address);
+          check(h, { lat: d.lat, lng: d.lng }, getLang(context).family + ": " + d.address);
+        }
       }
     }
     if (familyId) {
@@ -162,7 +200,7 @@ export class SelectHelperComponent implements OnInit {
 
 
     this.findOptions.where = h => {
-      let r = h.name.isContains(this.searchString);
+      let r = h.name.isContains(this.searchString).and(h.active());
       if (this.args.filter) {
         return r.and(this.args.filter(h));
       }
@@ -227,6 +265,9 @@ interface helperInList {
   distance?: number,
   location?: Location,
   assignedDeliveries?: number,
+  totalRecentDeliveries?: number,
+  isBusyVolunteer?: string,
+  lastCompletedDeliveryString?: string,
   fixedFamilies?: number,
   distanceFrom?: string,
   hadProblem?: boolean

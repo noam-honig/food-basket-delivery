@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
 import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn, Filter, ServerFunction, unpackWhere, packWhere, Column, dataAreaSettings, IDataAreaSettings, DataArealColumnSetting, GridButton, Allowed, EntityWhere } from '@remult/core';
 
-import { Families } from './families';
+import { Families, AreaColumn } from './families';
 
 import { YesNo } from "./YesNo";
 
@@ -32,8 +32,8 @@ import { saveToExcel } from '../shared/saveToExcel';
 import { Roles, distCenterAdminGuard, AdminGuard } from '../auth/roles';
 import { MatTabGroup } from '@angular/material/tabs';
 
-import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { getLang, TranslationOptions, use } from '../translate';
+import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
+import { TranslationOptions, use } from '../translate';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 import { FamilyStatus, FamilyStatusColumn } from './FamilyStatus';
@@ -43,6 +43,7 @@ import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
 import { MatAccordion } from '@angular/material/expansion';
 import { sortColumns } from '../shared/utils';
+import { getLang } from '../sites/sites';
 
 
 
@@ -179,7 +180,7 @@ export class FamiliesComponent implements OnInit {
     addressByGoogle: DataControlInfo<Families>;
 
     families = this.context.for(Families).gridSettings({
-        showFilter:true,
+        showFilter: true,
         allowUpdate: true,
         allowInsert: this.isAdmin,
 
@@ -326,7 +327,7 @@ export class FamiliesComponent implements OnInit {
                 families.address,
                 families.phone1
             ];
-            if (this.settings.forWho.value == TranslationOptions.donors) {
+            if (this.settings.isSytemForMlt()) {
                 this.normalColumns.push(
                     families.email,
                     families.createDate
@@ -395,7 +396,7 @@ export class FamiliesComponent implements OnInit {
 
             {
                 name: this.settings.lang.newDelivery,
-                icon:'add_shopping_cart',
+                icon: 'add_shopping_cart',
                 click: async f => {
                     await f.showNewDeliveryDialog(this.dialog, this.settings);
                 }
@@ -478,6 +479,20 @@ export class FamiliesComponent implements OnInit {
         this.groupsTotals,
         this.addressProblem,
         {
+            rule: f => f.status.isEqualTo(FamilyStatus.Active),
+            showTotal: false,
+            name: this.settings.lang.region,
+            stats: [],
+            moreStats: [],
+            refreshStats: async x => {
+                let areas = await AreaColumn.getAreas();
+                this.prepComplexStats(areas.map(g => ({ name: g.area, count: g.count })),
+                    x,
+                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.area.isEqualTo(g)),
+                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.groups.isDifferentFrom(g)));
+            }
+        },
+        {
             rule: f => undefined,
             showTotal: true,
             name: this.settings.lang.allFamilies,
@@ -499,7 +514,7 @@ export class FamiliesComponent implements OnInit {
         await this.refreshFamilyGrid();
         this.updateChart();
         if (this.cols) {
-            sortColumns(this.families,this.cols);
+            sortColumns(this.families, this.cols);
             this.cols = undefined;
         }
         if (this.currentTabStats == this.addressProblem) {
@@ -507,7 +522,7 @@ export class FamiliesComponent implements OnInit {
             this.cols.splice(this.families.columns.numOfColumnsInGrid);
             this.prevNumOfCols = this.families.columns.numOfColumnsInGrid;
 
-            sortColumns(this.families,this.addressProblemColumns);
+            sortColumns(this.families, this.addressProblemColumns);
 
         }
 
@@ -522,12 +537,16 @@ export class FamiliesComponent implements OnInit {
     prevNumOfCols = 5;
     currentTabStats: statsOnTab = { name: '', stats: [], moreStats: [], rule: undefined };
     previousTabStats: statsOnTab = this.currentTabStats;
-    updateChart() {
+    showChart = true;
+    async updateChart() {
+
+        this.currentTabStats = this.statTabs[this.myTab.selectedIndex];
+        if (this.currentTabStats.refreshStats)
+            await this.currentTabStats.refreshStats(this.currentTabStats);
         this.pieChartData = [];
         this.pieChartStatObjects = [];
         this.pieChartLabels.splice(0);
         this.colors[0].backgroundColor.splice(0);
-        this.currentTabStats = this.statTabs[this.myTab.selectedIndex];
         let stats = this.currentTabStats.stats;
 
         stats.forEach(s => {
@@ -621,7 +640,7 @@ export class FamiliesComponent implements OnInit {
     ngOnInit() {
 
         this.refreshStats();
-        sortColumns(this.families,this.normalColumns);
+        sortColumns(this.families, this.normalColumns);
         //  debugger;
     }
 
@@ -661,11 +680,12 @@ interface statsOnTab {
     stats: FaimilyStatistics[],
     moreStats: FaimilyStatistics[],
     showTotal?: boolean,
-    rule: (f: Families) => FilterBase
+    rule: (f: Families) => FilterBase,
+    refreshStats?: (stats: statsOnTab) => Promise<void>
 
 }
 export async function saveFamiliesToExcel(context: Context, gs: GridSettings<Families>, busy: BusyService, name) {
-    await saveToExcel<Families, GridSettings<Families>>(context.for(Families), gs, name, busy, (f, c) => c == f.id || c == f.addressApiResult, (f, c) => false, async (f, addColumn) => {
+    await saveToExcel<Families, GridSettings<Families>>(getSettings(context), context.for(Families), gs, name, busy, (f, c) => c == f.id || c == f.addressApiResult, (f, c) => false, async (f, addColumn) => {
         let x = f.getGeocodeInformation();
         let street = f.address.value;
         let house = '';

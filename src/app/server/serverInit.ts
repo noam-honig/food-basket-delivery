@@ -17,6 +17,8 @@ import { OverviewComponent } from '../overview/overview.component';
 import { wasChanged } from '../model-shared/types';
 import { ConnectionOptions } from 'tls';
 import { RegisterDonorComponent } from '../register-donor/register-donor.component';
+import { SitesEntity } from '../sites/sites.entity';
+import { FamilyInfoComponent } from '../family-info/family-info.component';
 
 declare const lang = '';
 
@@ -56,6 +58,28 @@ export async function serverInit() {
             generateHash: p => passwordHash.generate(p),
             verify: (p, h) => passwordHash.verify(p, h)
         }
+        FamilyInfoComponent.createPhoneProxyOnServer = async (cleanPhone, vPhone) => {
+            const accountSID = process.env.twilio_accountSID;
+            const authToken = process.env.twilio_authToken;
+            const proxyService = process.env.twilio_proxyService;
+            if (!accountSID)
+                throw "לא הוגדר שירות טלפונים";
+            let twilio = await import('twilio');
+            let client = twilio(accountSID, authToken);
+
+            let service = client.proxy.services(proxyService);
+
+            let session = await service.sessions.create({
+                mode: 'voice-only',
+                ttl: 60
+            });
+
+
+            let p = await session.participants();
+            let p1 = await p.create({ friendlyName: 'volunteer', identifier: vPhone });
+            let p2 = await p.create({ friendlyName: 'family', identifier: cleanPhone });
+            return { phone: p1.proxyIdentifier, session: session.sid }
+        }
         Sites.initOnServer();
         if (Sites.multipleSites) {
 
@@ -70,11 +94,11 @@ export async function serverInit() {
             for (const entity of <{ new(...args: any[]): Entity; }[]>[
                 ApplicationSettings,
                 ApplicationImages,
-                Helpers, Sites]) {
+                Helpers, SitesEntity]) {
                 await builder.createIfNotExist(context.for(entity).create());
                 await builder.verifyAllColumns(context.for(entity).create());
             }
-            await Sites.completeInit(context);
+            await SitesEntity.completeInit(context);
             let settings = await context.for(ApplicationSettings).lookupAsync(s => s.id.isEqualTo(1));
             if (settings.isNew()) {
                 settings.organisationName.value = "מערכת חלוקה";
@@ -146,18 +170,42 @@ export async function serverInit() {
         OverviewComponent.createDbSchema = async site => {
             return await InitSpecificSchema(pool, site);
         }
-        for (const s of Sites.schemas) {
-            if (s.toLowerCase() == Sites.guestSchema)
-                throw 'admin is an ivalid schema name';
-            try {
-                await InitSpecificSchema(pool, s);
+        //init application settings
+        if (false) {
+            let i = 0;
+            for (const s of Sites.schemas) {
+                if (s.toLowerCase() == Sites.guestSchema)
+                    throw 'admin is an ivalid schema name';
+                try {
+                    console.log('verify app settings for ' + s + " - " + ++i + "/" + Sites.schemas.length)
+                    let schemaPool = new PostgresSchemaWrapper(pool, s);
+                    let db = new SqlDatabase(new PostgresDataProvider(schemaPool));
+                    let context = new ServerContext(db);
+                    var builder = new PostgresSchemaBuilder(db, s);
+                    await builder.createIfNotExist(context.for(ApplicationSettings).create());
+                    await builder.verifyAllColumns(context.for(ApplicationSettings).create());
+                }
+                catch (err) {
+                    throw err;
+                }
             }
-            catch (err) {
-                console.error(err);
+        } {
+            let i = 0;
+            for (const s of Sites.schemas) {
+                if (s.toLowerCase() == Sites.guestSchema)
+                    throw 'admin is an ivalid schema name';
+                try {
+                    console.log("init schema for "+ s + " - " + ++i + "/" + Sites.schemas.length);
+                    await InitSpecificSchema(pool, s);
+                }
+                catch (err) {
+                    console.error(err);
+                }
+                if (!process.env.DISABLE_LOAD_DELAY)
+                    await new Promise(x => setTimeout(() => {
+                        x();
+                    }, 1000));
             }
-            await new Promise(x => setTimeout(() => {
-                x();
-            }, 1000));
         }
     }
 }

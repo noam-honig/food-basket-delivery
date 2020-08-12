@@ -3,8 +3,8 @@ import { GeocodeInformation, GetGeoInformation, GetDistanceBetween, Location } f
 import { HasAsyncGetTheValue, PhoneColumn } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { HelperUserInfo } from "../helpers/helpers";
-import { ApplicationSettings } from "./ApplicationSettings";
-import { getLang } from "../translate";
+import { ApplicationSettings, getSettings } from "./ApplicationSettings";
+import { getLang } from '../sites/sites';
 
 
 
@@ -21,9 +21,8 @@ export class DistributionCenters extends IdEntity {
   phone1Description = new StringColumn(getLang(this.context).phone1Description);
   phone2 = new PhoneColumn(getLang(this.context).phone2);
   phone2Description = new StringColumn(getLang(this.context).phone2Description);
-
-
-
+  isFrozen = new BoolColumn(getLang(this.context).frozen);
+  
   private _lastString: string;
   private _lastGeo: GeocodeInformation;
   getGeocodeInformation() {
@@ -128,7 +127,7 @@ export async function findClosestDistCenter(loc: Location, context: Context, cen
   let result: string;
   let dist: number;
   if (!centers)
-    centers = await context.for(DistributionCenters).find();
+    centers = await context.for(DistributionCenters).find({where: c => c.isFrozen.isEqualTo(false)});
   for (const c of centers) {
     let myDist = GetDistanceBetween(c.getGeocodeInformation().location(), loc);
     if (result===undefined || myDist < dist) {

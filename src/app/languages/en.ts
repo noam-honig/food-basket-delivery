@@ -14,6 +14,7 @@ export class en implements Language {
   defaultDistributionListName = 'Food Distribution List';
   AssignEscortComponent = 'Escort assignment';
   FamilyDeliveriesComponent = 'Active Deliveries';
+  ActiveDeliveries = 'Active deliveries';
   FamiliesComponent = 'Families';
   DeliveryFollowUpComponent = 'Volunteer Tracking';
   NewsComponent = 'Requires Followup';
@@ -138,6 +139,7 @@ export class en implements Language {
   createDate = 'Creation Date';
   remiderSmsDate = 'Date of delivery of SMS reminder';
   admin = 'System administrator';
+  lab = 'Laboratory worker';
   responsibleForAssign = 'Only Assigns Deliveries';
   notAllowedToUpdateVolunteer = 'You may not update for this volunteer';
   company = 'Company';
@@ -145,8 +147,8 @@ export class en implements Language {
   organizationName = 'The organization name';
   smsMessageContentCaption = 'SMS message content';
   smsReminderMessageContentCaption = 'SMS reminder content';
-  emailDonorContentCaption = 'תוכן אימייל תורם';
-  emailHelperContentCaption = 'תוכן אימייל מתנדב';
+  emailDonorContentCaption = 'תוכן אימייל מתנדב';
+  emailHelperContentCaption = 'תוכן אימייל תורם';
   mustIncludeUrlKeyError = ' Must contain!';
   logoUrl = 'URL logo';
   deliveryCenterAddress = 'delivery center address';
@@ -164,6 +166,7 @@ export class en implements Language {
   urlFreeText2 = 'Free volunteer text URL 2 for volunteer';
   showText2OnlyWhenDone = 'Display free text 2 only when the volunteer has finished all parcels';
   enableSelfPickupModule = 'There are families who come to take from the division center';
+  enableLabReception = 'Delivery ends after absorption in the laboratory';
   showVolunteerCompany = 'Save on behalf of which company the volunteer came from';
   activateEscort = 'Enable driver escort management';
   showHelperComment = 'Save note to volunteer';
@@ -199,6 +202,7 @@ export class en implements Language {
   replacedByOrgName = 'Will be replaced on behalf of the organization';
   deliveriesFor = 'deliveries for';
   archiveCurrentDelivery = 'Archive current delivery';
+  archiveHelper = 'Delete Volunteer';
   familySelfPickup = 'Self Pickup, no delivery required?';
   newDeliveryFor = 'New delivery to';
   familyAlreadyHasAnActiveDelivery = 'This family already has delivery of the same type.';
@@ -236,6 +240,7 @@ export class en implements Language {
   phone3Description = 'Phone Notes 3';
   phone4 = 'Phone 4';
   phone4Description = 'Phone Notes 4';
+  commentForReception = 'Absorption notes in the laboratory';
   statusChangeDate = 'Status: Date changed';
   statusChangeUser = "Status: Who's updating";
   defaultVolunteer = 'Default volunteer';
@@ -287,6 +292,7 @@ export class en implements Language {
   remainingByCities = 'UnAssigned by Cities';
   remainingByGroups = 'UnAssigned by Groups';
   deliveries = 'Deliveries';
+  deliveriesCompleted = 'Shipments completed';
   empty = 'blank';
   allOthers = 'All others';
   total = 'Total';
@@ -387,8 +393,8 @@ export class en implements Language {
   sampleMessage = 'Sample message';
   reminderSmsTextHelp = 'This message will be sent to a volunteer who is delayed from a volunteer tracking screen';
   sampleReminderSms = 'Sample reminder message';
-  emailTextDonor = 'הודעה זו תשלח לתורם אחרי שנרשם למערכת';
-  emailTextHelper = 'הודעה זו תשלח למתנדב אחרי שנרשם למערכת';
+  emailTextDonor = 'This message will be sent to the donor after registering for the system';
+  emailTextHelper = 'This message will be sent to the volunteer after registering for the system';
   basketTypes = 'Parcel types';
   distributionLists = 'Distribution lists';
   familySources = 'Family Sources';
@@ -520,6 +526,7 @@ export class en implements Language {
   updateCanceled = 'Update stopped';
   archiveDeliveries = 'Archive deliveries';
   archiveDeliveriesHelp = "Only deliveries marked as 'delivered' or 'failed' are archived . The archive can be viewed at any time under delivery History.";
+  revertArchive = 'Return from archive';
   updateBasketType = 'Update parcel type';
   updateBasketQuantity = 'Update Quantity';
   updateDistributionList = 'Update distribution list';
@@ -613,6 +620,8 @@ export class en implements Language {
   yesterday = 'Yesterday';
   twoDaysAgo = 'the day before yesterday';
   thankYou = 'Thanks';
+  thankYouForDonation = 'Thank you for your contribution';
+  thankYouForHelp = 'Thank you for your help';
   searchCompanyName = 'Search for a company name';
   confirmDeleteOf = 'Deletion certificate for';
   originalAddress = 'Original address';
@@ -690,6 +699,7 @@ export class en implements Language {
   assignVolunteer = 'Assign Volunteer';
   group = 'Group';
   showOnlyCompletedDeliveries = 'Show only completed deliveries';
+  showOnlyArchivedDeliveries = 'Show only archives';
   smsSent = 'SMS sent';
   noAssignedVolunteer = 'No assigned volunteer';
   smsOpened = 'SMS viewed';
@@ -700,10 +710,28 @@ export class en implements Language {
   ifYouNeedAnyHelpPleaseCall = 'For help call';
   customColumn = 'Another field for the family';
   caption = 'description';
+  receptionDone = 'Absorbed in the laboratory';
   optionalValues = 'Possible comma-separated values';
-  reciptionDone = "recipted done";
-  lab='מעבדה';
   hideFamilyPhoneFromVolunteer = 'Do not show the family phone to a volunteer';
   hadProblemBefore = 'had problem';
   showOnlyLastNamePartToVolunteer = 'Show just one last word to the volunteer on behalf of the family';
+  allowSendSuccessMessageOption = 'Allow Send SMS to family option';
+  sendSuccessMessageToFamily = 'Send SMS to Family on delivery';
+  successMessageText = 'Delivery SMS Message to Family';
+  requireEULA = 'require EULA';
+  requireConfidentialityApprove = 'Require Confidentiality Approval';
+  requireComplexPassword = 'Require complex password';
+  timeToDisconnect = 'Disconnect timeout in minutes';
+  daysToForcePasswordChange = 'Days to force password change';
+  passwordTooShort = 'Password too short';
+  passwordCharsRequirement = 'At least one digit and one letter are required';
+  passwordExpired = 'Password expired, please set a new password';
+  infoIsConfidential = 'Present both the volunteer and the manager with a message about the confidentiality of the information\n  "The information extracted from the system contains information protected under the Privacy Protection Act.\n  The information must be kept in a protected place so that unauthorized access to the information will not be allowed.\n  No part of this site may be copied, retransmitted, reposted, duplicated or otherwise used. Whoever submits the information illegally commits an offense. "\n  ';
+  IConfirmEula = 'I agree to the Terms of Use';
+  mustConfirmEula = 'The application cannot be used without consent to the terms of use';
+  readEula = 'Click to read the terms of use of the site';
+  newPasswordMustBeNew = 'The new and existing password is an identity';
+  invalidatePassword = 'Disable password';
+  passwordInvalidated = 'The password has been revoked';
+  sessionExpiredPleaseRelogin = 'The connection to the server has expired, please log in again';
 }

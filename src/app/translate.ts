@@ -1,5 +1,5 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import { ValueListColumn, ColumnOptions, Context } from '@remult/core';
+
+import { ValueListColumn, Context } from '@remult/core';
 import { en } from './languages/en';
 import { es } from './languages/es';
 import { italy } from './languages/italy';
@@ -110,18 +110,6 @@ export class TranslationOptionsColumn extends ValueListColumn<TranslationOptions
 export const translationConfig = { activateTranslation: false, forWho: TranslationOptions.Families };
 
 
-const langForSite = new Map<string, Language>();
-export function setLangForSite(site: string, lang: TranslationOptions) {
-  langForSite.set(site, langByCode(lang.args.languageFile));
-}
-export function getLang(context: Context) {
-  let r = langForSite.get(Sites.getValidSchemaFromContext(context));
-  if (r)
-    return r;
-  return use.language;
-}
-
-
 
 
 
@@ -140,6 +128,7 @@ export class Language {
   defaultDistributionListName = 'חלוקת מזון';
   AssignEscortComponent = 'שיוך מלווים';
   FamilyDeliveriesComponent = 'משלוחים פעילים';
+  ActiveDeliveries = 'משלוחים פעילים';
   FamiliesComponent = 'משפחות';
   DeliveryFollowUpComponent = 'מעקב מתנדבים';
   NewsComponent = 'מצריך טיפול';
@@ -178,7 +167,7 @@ export class Language {
   sendSmsFromDevice = 'שלח קישור בSMS מהטלפון';
   reminderSent = 'תזכורת נשלחה';
   resendReminder = 'שלח שוב';
-  sendReminderSms = 'שלחי SMS לתזכורת';
+  sendReminderSms = 'שלח SMS לתזכורת';
   callPerson = 'התקשר ל';
   callEscort = 'התקשר למלווה';
   family = 'משפחה';
@@ -291,6 +280,7 @@ export class Language {
   urlFreeText2 = 'כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב';
   showText2OnlyWhenDone = 'להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים';
   enableSelfPickupModule = 'ישנן משפחות שבאות לקחת ממרכז החלוקה';
+  enableLabReception = 'משלוח מסתיים אחרי קליטה במעבדה';
   showVolunteerCompany = 'שמור מטעם איזה חברה הגיע המתנדב';
   activateEscort = 'הפעל ניהול מלווים לנהגים';
   showHelperComment = 'הצג הערה בשיוך למתנדב';
@@ -326,7 +316,7 @@ export class Language {
   replacedByOrgName = 'יוחלף בשם הארגון';
   deliveriesFor = 'משלוחים עבור';
   archiveCurrentDelivery = 'העבר משלוח נוכחי לארכיב?';
-
+  archiveHelper = 'מחק מתנדב';
   familySelfPickup = 'יבואו לקחת את המשלוח ואינם צריכים משלוח?';
   newDeliveryFor = 'משלוח חדש ל';
   familyAlreadyHasAnActiveDelivery = "למשפחה זו כבר קיים משלוח מאותו סוג האם להוסיף עוד אחד?";
@@ -364,6 +354,7 @@ export class Language {
   phone3Description = 'הערות לטלפון 3';
   phone4 = "טלפון 4";
   phone4Description = 'הערות לטלפון 4';
+  commentForReception = 'הערות קליטה במעבדה';
   statusChangeDate = 'סטטוס: תאריך שינוי';
   statusChangeUser = 'סטטוס: מי עדכן';
   defaultVolunteer = "מתנדב ברירת מחדל";
@@ -415,6 +406,7 @@ export class Language {
   remainingByCities = 'טרם שוייכו לפי ערים';
   remainingByGroups = 'טרם שוייכו לפי קבוצות';
   deliveries = 'משלוחים';
+  deliveriesCompleted = 'משלוחים הושלמו';
   empty = 'ריק';
   allOthers = 'כל השאר';
   total = 'סה"כ';
@@ -580,8 +572,8 @@ export class Language {
   onStatus = 'בסטטוס';
   shouldAssignTo = 'האם לשייך אותו למתנדב';
   saveVolunteerInfo = 'שמירת פרטי מתנדב:';
-  adminRequireToSetPassword = ' אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועבר למסך עדכון פרטים לעדכון סיסמה.';
-  userNotFoundOrWrongPassword = "משתמשת לא נמצאה או סיסמה שגויה";
+  adminRequireToSetPassword = 'אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה.';
+  userNotFoundOrWrongPassword = "משתמש לא נמצא או סיסמה שגויה";
   fromDate = 'מתאריך';
   toDate = 'עד תאריך';
   shouldSendSmsTo = 'האם לשלוח הודעת SMS ל';
@@ -651,6 +643,7 @@ export class Language {
 
   archiveDeliveries = 'העברה לארכיב';
   archiveDeliveriesHelp = 'העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים';
+  revertArchive = 'החזר מארכיב';
   updateBasketType = 'עדכן סוג סל';
   updateBasketQuantity = 'עדכן כמות סלים';
   updateDistributionList = 'עדכן רשימת חלוקה';
@@ -747,6 +740,8 @@ export class Language {
   yesterday = 'אתמול';
   twoDaysAgo = 'שלשום';
   thankYou = 'תודה';
+  thankYouForDonation = 'תודה על תרומתך';
+  thankYouForHelp = 'תודה על עזרתך';
   searchCompanyName = 'חיפוש שם חברה';
   confirmDeleteOf = "אישור מחיקה עבור ";
   originalAddress = 'כתובת מקורית';
@@ -824,6 +819,7 @@ export class Language {
   assignVolunteer = "שייך מתנדב";
   group = "קבוצה";
   showOnlyCompletedDeliveries = "הצג רק משלוחים שהסתיימו";
+  showOnlyArchivedDeliveries = "הצג רק משלוחים מארכיון";
   smsSent = "SMS נשלח";
   noAssignedVolunteer = "לא משוייך מתנדב";
   smsOpened = "SMS נפתח";
@@ -834,12 +830,33 @@ export class Language {
   ifYouNeedAnyHelpPleaseCall = "לעזרה התקשר ל";
   customColumn = "שדה נוסף למשפחה";
   caption = "תאור";
-  reciptionDone = "נקלט במעבדה";
+  receptionDone = "נקלט במעבדה";
   optionalValues = "ערכים אפשריים מופרד בפסיקים";
   hideFamilyPhoneFromVolunteer = "אל תציג את הטלפון של המשפחה למתנדב";
   hadProblemBefore = "היתה בעיה בעבר";
   showOnlyLastNamePartToVolunteer = "הצג רק מילה אחרונה למתנדב בשם המשפחה";
-  
+  allowSendSuccessMessageOption = "הרשה אפשרות של שליחת הודעת SMS למשפחה";
+  sendSuccessMessageToFamily = "שלח הודעה למשפחה כאשר הסל נמסר";
+  successMessageText = "תוכן הודעת הצלחה למשפחה";
+  requireEULA = "חייב חתימה על הסכם שימוש";
+  requireConfidentialityApprove = "חייב הסכמה להודעה על סודיות השימוש";
+  requireComplexPassword = "חייב סיסמה מורכבת";
+  timeToDisconnect = "זמן בדקות לניתוק אוטומטית";
+  daysToForcePasswordChange = "ימים לחיוב החלפת סיסמה";
+  passwordTooShort = "סיסמה קצרה מידי";
+  passwordCharsRequirement = "נדרשת לפחות ספרה אחת ואות אחת";
+  passwordExpired = "פג תוקף הסיסמה, אנא הגדר סיסמה חדשה";
+  infoIsConfidential = `המידע המופק מתוך המערכת מכיל מידע המוגן על פי חוק הגנת הפרטיות.
+  יש לשמור את המידע במקום מוגן שלא יאפשר גישה לא מורשית למידע.
+  אין להעתיק, להפיץ, להציג או למסור לצד שלישי את המידע או חלק ממנו. המוסר את המידע שלא כדין עובר עבירה.
+  `
+  IConfirmEula = "אני מסכים לתנאי השימוש";
+  mustConfirmEula = "לא ניתן להשתמש באפליקציה ללא הסכמה לתנאי השימוש";
+  readEula = "לחץ לקריאת תנאי השימוש באתר";
+  newPasswordMustBeNew = "הסיסמה החדשה והקיימת זהות";
+  invalidatePassword="בטל תוקף סיסמה";
+  passwordInvalidated = "בוטל תוקף הסיסמה";
+  sessionExpiredPleaseRelogin = "לצורך הגנה על פרטיות הנתונים, יש לבצע כניסה מחדש";
 }
 
 const defaultLang = new Language();
@@ -852,7 +869,7 @@ langMap.set('es', new es());
 langMap.set('italy', new italy());
 langMap.set('donor', new donor());
 langMap.set('soldier', new soldier());
-function langByCode(lang: string) {
+export function langByCode(lang: string) {
   let r = langMap.get(lang);
   if (!r)
     r = defaultLang;

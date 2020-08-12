@@ -12,14 +12,11 @@ import "../helpers/helpers.component";
 import '../app.module';
 import { ServerContext, DateColumn, SqlDatabase } from '@remult/core';
 import { Helpers } from '../helpers/helpers';
-import { Sites } from '../sites/sites';
+import { Sites, setLangForSite } from '../sites/sites';
 
 import { GeoCodeOptions } from "../shared/googleApiHelpers";
 import { Families } from "../families/families";
 import { OverviewComponent } from "../overview/overview.component";
-import { environment } from "../../environments/environment";
-import * as request from 'request';
-import { setLangForSite } from "../translate";
 import { createDonor, createVolunteer } from "./mlt";
 
 
@@ -41,7 +38,7 @@ serverInit().then(async (dataSource) => {
     let redirect: string[] = [];
     {
         let x = process.env.REDIRECT;
-        if (x)
+        if (x && process.env.REDIRECT_TARGET)
             redirect = x.split(',');
     }
 
@@ -49,7 +46,7 @@ serverInit().then(async (dataSource) => {
         let context = getContext(req);
         let org = Sites.getOrganizationFromContext(context);
         if (redirect.includes(org)) {
-            res.redirect('https://salmaz.herokuapp.com/' + org);
+            res.redirect(process.env.REDIRECT_TARGET + org);
             return;
         }
         if (!Sites.isValidOrganization(org)) {
@@ -58,6 +55,7 @@ serverInit().then(async (dataSource) => {
         }
         const index = 'dist/index.html';
 
+        
         if (fs.existsSync(index)) {
             let x = '';
             let settings = (await ApplicationSettings.getAsync(context));
@@ -69,6 +67,49 @@ serverInit().then(async (dataSource) => {
             if (!key)
                 key = 'AIzaSyDbGtO6VwaRqGoduRaGjSAB15mZPiPt9mM'//default key to use only for development
             result = result.replace(/GOOGLE_MAP_JAVASCRIPT_KEY/g, key);
+
+            let tagid = 'UA-121891791-1'; // default key for Google Analytics
+            if (settings.isSytemForMlt()) {
+                tagid =  'AW-607493389';
+                result = result.replace(/<!--FACEBOOK_AND_LINKEDIN_PLACEHOLDER-->/g,`
+<!-- Facebook Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1023424438076484');
+fbq('track', 'Lead');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1023424438076484&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Facebook Pixel Code -->
+
+    
+<script type="text/javascript">
+_linkedin_partner_id = "2525417";
+window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+</script><script type="text/javascript">
+(function(){var s = document.getElementsByTagName("script")[0];
+var b = document.createElement("script");
+b.type = "text/javascript";b.async = true;
+b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+s.parentNode.insertBefore(b, s);})();
+</script>
+<noscript>
+<img height="1" width="1" style="display:none;" alt="" src="https://px.ads.linkedin.com/collect/?pid=2525417&fmt=gif" />
+</noscript>
+                `);
+            }
+            result = result.replace(/GOOGLE_PIXEL_TAG_ID/g, tagid);
+
+
             if (settings.forWho.value.args.leftToRight) {
                 result = result.replace(/<body dir="rtl">/g, '<body dir="ltr">');
             }

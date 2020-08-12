@@ -14,6 +14,7 @@ export class es implements Language {
   defaultDistributionListName = 'Lista de distribución de alimentos';
   AssignEscortComponent = 'Asignación de acompañante';
   FamilyDeliveriesComponent = 'Entregas activas';
+  ActiveDeliveries = 'Entregas activas';
   FamiliesComponent = 'Familias';
   DeliveryFollowUpComponent = 'Seguimiento voluntario';
   NewsComponent = 'Requiere seguimiento';
@@ -138,15 +139,16 @@ export class es implements Language {
   createDate = 'Fecha de creación';
   remiderSmsDate = 'Fecha de entrega del recordatorio de SMS';
   admin = 'Administrador de sistema';
+  lab = 'Trabajador de laboratorio';
   responsibleForAssign = 'Solo asigna entregas';
   notAllowedToUpdateVolunteer = 'No puede actualizar para este voluntario';
   company = 'Empresa';
   updateInfo = 'Detalles de actualización';
   organizationName = 'El nombre de la organización';
   smsMessageContentCaption = 'Contenido del mensaje SMS';
-  emailDonorContentCaption = 'תוכן אימייל תורם';
-  emailHelperContentCaption = 'תוכן אימייל מתנדב';
   smsReminderMessageContentCaption = 'Contenido recordatorio SMS';
+  emailDonorContentCaption = 'תוכן אימייל מתנדב';
+  emailHelperContentCaption = 'תוכן אימייל תורם';
   mustIncludeUrlKeyError = ' ¡Debe contener!';
   logoUrl = 'Logotipo de URL';
   deliveryCenterAddress = 'dirección del centro de entrega';
@@ -164,6 +166,7 @@ export class es implements Language {
   urlFreeText2 = 'Texto voluntario gratuito URL 2 para voluntario';
   showText2OnlyWhenDone = 'Mostrar texto libre 2 solo cuando el voluntario haya terminado todos los paquetes';
   enableSelfPickupModule = 'Hay familias que vienen a sacar del centro de división.';
+  enableLabReception = 'La entrega finaliza después de la absorción en el laboratorio.';
   showVolunteerCompany = 'Ahorre en nombre de qué compañía vino el voluntario';
   activateEscort = 'Habilitar la gestión de acompañantes';
   showHelperComment = 'Guardar nota para ser voluntario';
@@ -199,6 +202,7 @@ export class es implements Language {
   replacedByOrgName = 'El nombre de la organización será reemplazado.';
   deliveriesFor = 'entregas para';
   archiveCurrentDelivery = 'Archivar entrega actual';
+  archiveHelper = 'Eliminar voluntario';
   familySelfPickup = 'Auto recogida, no se requiere entrega?';
   newDeliveryFor = 'Nueva entrega a';
   familyAlreadyHasAnActiveDelivery = 'Esta familia ya tiene entrega del mismo tipo.';
@@ -236,6 +240,7 @@ export class es implements Language {
   phone3Description = 'Notas telefónicas 3';
   phone4 = 'Teléfono 4';
   phone4Description = 'Notas telefónicas 4';
+  commentForReception = 'Notas de absorción en el laboratorio.';
   statusChangeDate = 'Estado: fecha modificada';
   statusChangeUser = 'Estado: quién está actualizando';
   defaultVolunteer = 'Voluntario predeterminado';
@@ -287,6 +292,7 @@ export class es implements Language {
   remainingByCities = 'Sin asignar por ciudades';
   remainingByGroups = 'Sin asignar por grupos';
   deliveries = 'Entregas';
+  deliveriesCompleted = 'Envíos completados';
   empty = 'blanco';
   allOthers = 'Todos los otros';
   total = 'Total';
@@ -387,8 +393,8 @@ export class es implements Language {
   sampleMessage = 'Mensaje de muestra';
   reminderSmsTextHelp = 'Este mensaje se enviará a un voluntario retrasado desde una pantalla de seguimiento de voluntarios.';
   sampleReminderSms = 'Mensaje recordatorio de muestra';
-  emailTextDonor = 'הודעה זו תשלח לתורם אחרי שנרשם למערכת';
-  emailTextHelper = 'הודעה זו תשלח למתנדב אחרי שנרשם למערכת';
+  emailTextDonor = 'Este mensaje se enviará al donante después de registrarse en el sistema.';
+  emailTextHelper = 'Este mensaje se enviará al voluntario después de registrarse en el sistema.';
   basketTypes = 'Tipos de parcelas';
   distributionLists = 'Listas de distribución';
   familySources = 'Fuentes familiares';
@@ -520,6 +526,7 @@ export class es implements Language {
   updateCanceled = 'Actualización detenida';
   archiveDeliveries = 'Archivo de entregas';
   archiveDeliveriesHelp = "Solo se archivan las entregas marcadas como 'entregadas' o 'fallidas'. El archivo se puede ver en cualquier momento durante el Historial de entrega.";
+  revertArchive = 'Regresar del archivo';
   updateBasketType = 'Actualizar tipo de paquete';
   updateBasketQuantity = 'Cantidad de actualización';
   updateDistributionList = 'Actualizar lista de distribución';
@@ -613,6 +620,8 @@ export class es implements Language {
   yesterday = 'Ayer';
   twoDaysAgo = 'antier';
   thankYou = 'Gracias';
+  thankYouForDonation = 'Gracias por tu contribución';
+  thankYouForHelp = 'Gracias por tu ayuda';
   searchCompanyName = 'Busca el nombre de una empresa';
   confirmDeleteOf = 'Certificado de borrado para';
   originalAddress = 'direccion original';
@@ -690,6 +699,7 @@ export class es implements Language {
   assignVolunteer = 'Asignar voluntario';
   group = 'Grupo';
   showOnlyCompletedDeliveries = 'Mostrar solo entregas completadas';
+  showOnlyArchivedDeliveries = 'Mostrar solo archivos';
   smsSent = 'SMS enviado';
   noAssignedVolunteer = 'No hay voluntario asignado';
   smsOpened = 'SMS visto';
@@ -700,10 +710,28 @@ export class es implements Language {
   ifYouNeedAnyHelpPleaseCall = 'Para ayuda llame';
   customColumn = 'Otro campo para la familia';
   caption = 'descripción';
+  receptionDone = 'Absorbido en el laboratorio.';
   optionalValues = 'Posibles valores separados por comas';
-  reciptionDone = "נמסר בהצלחה";
-  lab='מעבדה';
   hideFamilyPhoneFromVolunteer = 'No muestre el teléfono familiar a un voluntario';
   hadProblemBefore = 'tuvo un problema';
   showOnlyLastNamePartToVolunteer = 'Mostrar solo una última palabra al voluntario en nombre de la familia';
+  allowSendSuccessMessageOption = 'Opción Permitir enviar SMS a familia';
+  sendSuccessMessageToFamily = 'Enviar SMS a la familia en la entrega';
+  successMessageText = 'Entrega de mensaje SMS a la familia';
+  requireEULA = 'requiere EULA';
+  requireConfidentialityApprove = 'Requerir aprobación de confidencialidad';
+  requireComplexPassword = 'Requerir contraseña compleja';
+  timeToDisconnect = 'Desconecte el tiempo de espera en minutos';
+  daysToForcePasswordChange = 'Días para forzar el cambio de contraseña';
+  passwordTooShort = 'Contraseña demasiado corta';
+  passwordCharsRequirement = 'Se requieren al menos un dígito y una letra';
+  passwordExpired = 'Contraseña caducada, establezca una nueva contraseña';
+  infoIsConfidential = 'Presente tanto al voluntario como al gerente un mensaje sobre la confidencialidad de la información \ n "La información extraída del sistema contiene información protegida por la Ley de Protección de Privacidad. \ N La información debe mantenerse en un lugar protegido para que el acceso no autorizado a la información no será permitida. \ n Ninguna parte de este sitio puede ser copiada, retransmitida, reenviada, duplicada o utilizada de otra manera. Quien envíe la información ilegalmente comete un delito ". \ n';
+  IConfirmEula = 'Estoy de acuerdo con los términos de uso';
+  mustConfirmEula = 'La aplicación no se puede usar sin el consentimiento de los términos de uso.';
+  readEula = 'Haga clic para leer los términos de uso del sitio';
+  newPasswordMustBeNew = 'La contraseña nueva y existente es una identidad';
+  invalidatePassword = 'Deshabilitar contraseña';
+  passwordInvalidated = 'La contraseña ha sido revocada';
+  sessionExpiredPleaseRelogin = 'La conexión con el servidor ha expirado, vuelva a iniciar sesión';
 }

@@ -1,13 +1,13 @@
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { NumberColumn,  BoolColumn } from '@remult/core';
 import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
-import { changeDate, DateTimeColumn, SqlBuilder } from '../model-shared/types';
+import {  SqlBuilder } from '../model-shared/types';
 
 
 import { Context, EntityClass } from '@remult/core';
 import { Roles } from "../auth/roles";
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { getLang } from "../translate";
+import { getLang } from '../sites/sites';
 
 
 
@@ -60,6 +60,7 @@ export class HelpersAndStats extends HelpersBase {
                         h.theHelperIAmEscorting,
                         h.escort,
                         h.distributionCenter ,
+                        h.archive,
                         sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress),
                         sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isActiveDelivery()]), this.allDeliveires),
 

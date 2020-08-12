@@ -1,6 +1,7 @@
 import { ColumnOptions, ValueListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings, ValueListItem, Context } from '@remult/core';
 import { HelperId } from '../helpers/helpers';
-import { use, getLang } from '../translate';
+import { use } from '../translate';
+import { getLang } from '../sites/sites';
 
 
 export class DeliveryStatus {
@@ -13,12 +14,11 @@ export class DeliveryStatus {
       case this.FailedBadAddress:
       case this.FailedNotHome:
       case this.FailedOther:
-        case this.LabReciption:
         return true;
     }
     return false;
   }
-  static ReadyForDelivery: DeliveryStatus = new DeliveryStatus(0, !use ? '' : use.language.readyForDelivery);
+  static ReadyForDelivery: DeliveryStatus = new DeliveryStatus(0, use.language.readyForDelivery);
   static SelfPickup: DeliveryStatus = new DeliveryStatus(2, !use ? '' : use.language.selfPickup);
   static Frozen: DeliveryStatus = new DeliveryStatus(9, !use ? '' : use.language.frozen);
 
@@ -28,7 +28,6 @@ export class DeliveryStatus {
   static FailedBadAddress: DeliveryStatus = new DeliveryStatus(21, !use ? '' : use.language.notDeliveredBadAddress, true);
   static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, !use ? '' : use.language.notDeliveredNotHome, true);
   static FailedOther: DeliveryStatus = new DeliveryStatus(25, !use ? '' : use.language.notDeliveredOther, true);
-  static LabReciption: DeliveryStatus = new DeliveryStatus(25, !use ? '' : use.language.reciptionDone, true);
 
 
 

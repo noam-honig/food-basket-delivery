@@ -15,12 +15,12 @@ import { Route } from '@angular/router';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { allCentersToken } from '../manage/distribution-centers';
-import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { SqlBuilder, relativeDateName } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { colors } from '../families/stats-action';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Language, getLang } from '../translate';
+import { getLang } from '../sites/sites';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 
 
@@ -56,7 +56,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
   }
   searchString: string;
   showHelper(h: helperFollowupInfo) {
-    return ((!this.searchString || h.name.indexOf(this.searchString) >= 0) && (!this.currentStatFilter || this.currentStatFilter.rule(h)));
+    return ((!this.searchString || (h.name && h.name.indexOf(this.searchString) >= 0)) && (!this.currentStatFilter || this.currentStatFilter.rule(h)));
   }
   public pieChartLabels: string[] = [];
   public pieChartData: number[] = [];
@@ -166,9 +166,10 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async helpersStatus(distCenter: string, context?: Context, db?: SqlDatabase) {
-    let fd = context.for(ActiveFamilyDeliveries).create();
+    let fd = context.for(FamilyDeliveries).create();
     let h = context.for(Helpers).create();
     var sql = new SqlBuilder();
+    sql.addEntity(fd,'fd');
     let r = await db.execute(sql.build(sql.query({
       from: fd,
       outerJoin: () => [{ to: h, on: () => [sql.eq(fd.courier, h.id)] }],
@@ -185,9 +186,9 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
         sql.sumWithAlias(1, 'problem', fd.deliverStatus.isProblem())
 
       ],
-      where: () => [fd.courier.isDifferentFrom('').and(fd.distributionCenter.filter(distCenter))],
+      where: () => [ sql.eq(fd.archive,false),fd.courier.isDifferentFrom('').and(fd.distributionCenter.filter(distCenter))],
 
-    }).replace(/distributionCenter/g, 'e1.distributionCenter'), ' group by ', [fd.courier, h.name, h.phone, h.smsDate, h.eventComment,h.lastSignInDate], ' order by ', sql.func('max', fd.courierAssingTime)));
+    }).replace(/distributionCenter/g, 'e1.distributionCenter'), ' group by ', [fd.courier, h.name, h.phone, h.smsDate, h.eventComment,h.lastSignInDate], ' order by ', sql.func('max', fd.courierAssingTime),' desc'));
     return r.rows.map(r => {
       let smsDate = r['smsdate'];
       let maxAsign = r['maxasign'];

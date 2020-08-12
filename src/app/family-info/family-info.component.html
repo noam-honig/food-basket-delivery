@@ -79,51 +79,65 @@
     </div>
 
   </div>
+
   <ng-container *ngIf="!settings.hideFamilyPhoneFromVolunteer.value">
     <h4 *ngIf="f.phone1.value || f.phone2.value||f.phone3.value||f.phone4.value">{{settings.lang.phones}}:</h4>
     <div *ngIf="f.phone1.value" class="phone-container">
-      <a href="tel:{{f.phone1.value}}">
+      <a (click)="callPhone(f.phone1)">
         <button mat-mini-fab style="vertical-align: middle" color="primary">
           <mat-icon>call</mat-icon>
         </button>
       </a>
       <div>
-        <a href="tel:{{f.phone1.value}}">{{f.phone1.displayValue}}</a>,
+        <a (click)="callPhone(f.phone1)">{{f.phone1.displayValue}}</a>,
         {{f.phone1Description.value?f.phone1Description.value:f.name.value}}
       </div>
     </div>
 
     <div *ngIf="f.phone2.value" class="phone-container">
-      <a href="tel:{{f.phone2.value}}">
+      <a (click)="callPhone(f.phone2)">
         <button mat-mini-fab style="vertical-align: middle" color="primary">
           <mat-icon>call</mat-icon>
         </button>
       </a>
       <div>
-        <a href="tel:{{f.phone2.value}}">{{f.phone2.displayValue}}</a>,
+        <a (click)="callPhone(f.phone2)">{{f.phone2.displayValue}}</a>,
         {{f.phone2Description.value?f.phone2Description.value:f.name.value}}
       </div>
     </div>
     <div *ngIf="f.phone3.value" class="phone-container">
-      <a href="tel:{{f.phone3.value}}">
+      <a (click)="callPhone(f.phone3)">
         <button mat-mini-fab style="vertical-align: middle" color="primary">
           <mat-icon>call</mat-icon>
         </button>
       </a>
       <div>
-        <a href="tel:{{f.phone3.value}}">{{f.phone3.displayValue}}</a>,
+        <a (click)="callPhone(f.phone3)">{{f.phone3.displayValue}}</a>,
         {{f.phone3Description.value?f.phone3Description.value:f.name.value}}
       </div>
     </div>
     <div *ngIf="f.phone4.value" class="phone-container">
-      <a href="tel:{{f.phone4.value}}">
+      <a (click)="callPhone(f.phone4)">
         <button mat-mini-fab style="vertical-align: middle" color="primary">
           <mat-icon>call</mat-icon>
         </button>
       </a>
       <div>
-        <a href="tel:{{f.phone4.value}}">{{f.phone4.displayValue}}</a>,
+        <a (click)="callPhone(f.phone4)">{{f.phone4.displayValue}}</a>,
         {{f.phone4Description.value?f.phone4Description.value:f.name.value}}
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="settings.usePhoneProxy.value">
+    <div  class="phone-container">
+      <a  (click)="privateCall()">
+        <button mat-mini-fab style="vertical-align: middle" color="primary">
+          <mat-icon>call</mat-icon>
+        </button>
+      </a>
+      <div>
+        <a  (click)="privateCall()">לחץ לחיוג מאובטח למשפחה</a>,
+        {{f.phone1Description.value?f.phone1Description.value:f.name.value}}
       </div>
     </div>
   </ng-container>

@@ -1,9 +1,9 @@
 import * as fetch from 'node-fetch';
-import { UrlBuilder, EntityClass, IdEntity, StringColumn, Entity, DateTimeColumn, Context } from '@remult/core';
-import { extractError } from '../select-popup/dialog';
+import { UrlBuilder, EntityClass, StringColumn, Entity, DateTimeColumn, Context } from '@remult/core';
 
-import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { getRtlScrollAxisType } from '@angular/cdk/platform';
+
+
+
 import * as geometry from 'spherical-geometry-js';
 
 
@@ -26,7 +26,7 @@ export async function GetGeoInformation(address: string, context: Context) {
         //console.log('cache:' + address);
         return new GeocodeInformation(JSON.parse(cacheEntry.googleApiResult.value) as GeocodeResult);
     }
-    let settings = await ApplicationSettings.getAsync(context);
+    let settings = await (await import('../manage/ApplicationSettings')).ApplicationSettings.getAsync(context);
     let b = settings.forWho.value.args.bounds;
     let x = pendingRequests.get(address);
     if (!x) {
@@ -38,10 +38,16 @@ export async function GetGeoInformation(address: string, context: Context) {
             address: address,
             language: settings.lang.languageCode,
             //,            components: 'country:' + settings.googleMapCountry()
-            bounds: b.south + "," + b.west + "|" + b.north + "," + b.east
+            
         });
+        if (!isGpsAddress(address)) {
+            u.addObject({
+                bounds: b.south + "," + b.west + "|" + b.north + "," + b.east
+            });
+        }
         try {
-              //console.log(u.url);
+            if (process.env.LOG_GEOCODE)
+                console.log(u.url);
             let r = fetch.default(u.url).then(async x => await x.json().then(async (r: GeocodeResult) => {
 
 
@@ -64,7 +70,7 @@ export async function GetGeoInformation(address: string, context: Context) {
 
         }
         catch (err) {
-            return new GeocodeInformation({ results: [], status: extractError(err) });
+            return new GeocodeInformation({ results: [], status: (await import('../select-popup/dialog')).extractError(err) });
 
         }
         finally {

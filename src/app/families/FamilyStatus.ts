@@ -1,6 +1,7 @@
 import { ColumnOptions, ValueListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings, ValueListItem, Context } from '@remult/core';
 import { HelperId } from '../helpers/helpers';
-import { use, Language, getLang } from '../translate';
+import { use, Language } from '../translate';
+import { getLang } from '../sites/sites';
 
 
 export class FamilyStatus {

@@ -14,6 +14,7 @@ export class soldier implements Language {
   defaultDistributionListName = 'חלוקת מזון';
   AssignEscortComponent = 'שיוך מלווים';
   FamilyDeliveriesComponent = 'משלוחים';
+  ActiveDeliveries = 'משלוחים פעילים';
   FamiliesComponent = 'חיילים';
   DeliveryFollowUpComponent = 'מעקב מתנדבים';
   NewsComponent = 'מצריך טיפול';
@@ -138,15 +139,16 @@ export class soldier implements Language {
   createDate = 'מועד הוספה';
   remiderSmsDate = 'מועד משלוח תזכורת SMS';
   admin = 'מנהל כלל המערכת';
+  lab = 'עובד מעבדה';
   responsibleForAssign = 'משייך מתנדבים לרשימת חלוקה';
   notAllowedToUpdateVolunteer = 'אינך רשאי לעדכן עבור מתנדב זה';
   company = 'חברה';
   updateInfo = 'עדכון פרטים';
   organizationName = 'שם הארגון';
   smsMessageContentCaption = 'תוכן הודעת SMS';
-  emailDonorContentCaption = 'תוכן אימייל תורם';
-  emailHelperContentCaption = 'תוכן אימייל מתנדב';
   smsReminderMessageContentCaption = 'תוכן הודעת תזכורת SMS';
+  emailDonorContentCaption = 'תוכן אימייל מתנדב';
+  emailHelperContentCaption = 'תוכן אימייל תורם';
   mustIncludeUrlKeyError = ' חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור';
   logoUrl = 'לוגו URL';
   deliveryCenterAddress = 'כתובת מרכז השילוח';
@@ -164,6 +166,7 @@ export class soldier implements Language {
   urlFreeText2 = 'כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב';
   showText2OnlyWhenDone = 'להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים';
   enableSelfPickupModule = 'ישנן חיילים שבאות לקחת ממרכז החלוקה';
+  enableLabReception = 'משלוח מסתיים אחרי קליטה במעבדה';
   showVolunteerCompany = 'שמור מטעם איזה חברה הגיע המתנדב';
   activateEscort = 'הפעל ניהול מלווים לנהגים';
   showHelperComment = 'הצג הערה בשיוך למתנדב';
@@ -199,6 +202,7 @@ export class soldier implements Language {
   replacedByOrgName = 'יוחלף בשם הארגון';
   deliveriesFor = 'משלוחים עבור';
   archiveCurrentDelivery = 'העבר משלוח נוכחי לארכיב?';
+  archiveHelper = 'מחק מתנדב';
   familySelfPickup = 'יבואו לקחת את המשלוח ואינם צריכים משלוח?';
   newDeliveryFor = 'משלוח חדש ל';
   familyAlreadyHasAnActiveDelivery = 'לחייל זו כבר קיים משלוח מאותו סוג האם להוסיף עוד אחד?';
@@ -236,6 +240,7 @@ export class soldier implements Language {
   phone3Description = 'הערות לטלפון 3';
   phone4 = 'טלפון 4';
   phone4Description = 'הערות לטלפון 4';
+  commentForReception = 'הערות קליטה במעבדה';
   statusChangeDate = 'סטטוס: תאריך שינוי';
   statusChangeUser = 'סטטוס: מי עדכן';
   defaultVolunteer = 'מתנדב ברירת מחדל';
@@ -287,6 +292,7 @@ export class soldier implements Language {
   remainingByCities = 'נותרו לפי ערים';
   remainingByGroups = 'נותרו לפי קבוצות';
   deliveries = 'משלוחים';
+  deliveriesCompleted = 'משלוחים הושלמו';
   empty = 'ריק';
   allOthers = 'כל השאר';
   total = 'סה"כ';
@@ -520,6 +526,7 @@ export class soldier implements Language {
   updateCanceled = 'העדכון הופסק';
   archiveDeliveries = 'העברה לארכיב';
   archiveDeliveriesHelp = 'העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים';
+  revertArchive = 'החזר מארכיב';
   updateBasketType = 'עדכן סוג סל';
   updateBasketQuantity = 'עדכן כמות סלים';
   updateDistributionList = 'עדכן רשימת חלוקה';
@@ -613,6 +620,8 @@ export class soldier implements Language {
   yesterday = 'אתמול';
   twoDaysAgo = 'שלשום';
   thankYou = 'תודה';
+  thankYouForDonation = 'תודה על תרומתך';
+  thankYouForHelp = 'תודה על עזרתך';
   searchCompanyName = 'חיפוש שם חברה';
   confirmDeleteOf = 'אישור מחיקה עבור ';
   originalAddress = 'כתובת מקורית';
@@ -690,6 +699,7 @@ export class soldier implements Language {
   assignVolunteer = 'שייך למתנדב';
   group = 'קבוצה';
   showOnlyCompletedDeliveries = 'הצג רק משלוחים שהסתיימו';
+  showOnlyArchivedDeliveries = 'הצג רק משלוחים מארכיון';
   smsSent = 'SMS נשלח';
   noAssignedVolunteer = 'לא משוייך מתנדב';
   smsOpened = 'SMS נפתח';
@@ -700,10 +710,28 @@ export class soldier implements Language {
   ifYouNeedAnyHelpPleaseCall = 'לעזרה התקשר ל';
   customColumn = 'שדה נוסף לחייל';
   caption = 'תאור';
+  receptionDone = 'נקלט במעבדה';
   optionalValues = 'ערכים אפשריים מופרד בפסיקים';
-  reciptionDone = "נמסר בהצלחה";
-  lab='מעבדה';
   hideFamilyPhoneFromVolunteer = 'אל תציג את הטלפון של החייל למתנדב';
   hadProblemBefore = 'היתה בעיה בעבר';
   showOnlyLastNamePartToVolunteer = 'הצג רק מילה אחרונה למתנדב בשם החייל';
+  allowSendSuccessMessageOption = 'הרשה אפשרות של שליחת הודעת SMS לחייל';
+  sendSuccessMessageToFamily = 'שלח הודעה לחייל כאשר הסל נמסר';
+  successMessageText = 'תוכן הודעת הצלחה לחייל';
+  requireEULA = 'חייב חתימה על הסכם שימוש';
+  requireConfidentialityApprove = 'חייב הסכמה להודעה על סודיות השימוש';
+  requireComplexPassword = 'חייב סיסמה מורכבת';
+  timeToDisconnect = 'זמן בדקות לניתוק אוטומטית';
+  daysToForcePasswordChange = 'ימים לחיוב החלפת סיסמה';
+  passwordTooShort = 'סיסמה קצרה מידי';
+  passwordCharsRequirement = 'נדרשת לפחות ספרה אחת ואות אחת';
+  passwordExpired = 'פג תוקף הסיסמה, אנא הגדר סיסמה חדש';
+  infoIsConfidential = 'להציג גם למתנדב וגם למנהל הודעה על סודיות המידע\n  "המידע המופק מתוך המערכת מכיל מידע המוגן על פי חוק הגנת הפרטיות.\n  יש לשמור את המידע במקום מוגן שלא תתאפשר גישה לא מורשית למידע.\n  אין להעתיק, להפיץ, להציג או למסור לצד שלישי את המידע או חלק ממנו. המוסר את המידע שלא כדין עובר עבירה."\n  ';
+  IConfirmEula = 'אני מסכים לתנאי השימוש';
+  mustConfirmEula = 'לא ניתן להשתמש באפליקציה ללא הסכמה לתנאי השימוש';
+  readEula = 'לחץ לקריאת תנאי השימוש באתר';
+  newPasswordMustBeNew = 'הסיסמה החדש והקיימת זהות';
+  invalidatePassword = 'בטל תוקף סיסמה';
+  passwordInvalidated = 'בוטל תוקף הסיסמה';
+  sessionExpiredPleaseRelogin = 'פג תוקף החיבור לשרת, יש לבצע כניסה מחדש';
 }

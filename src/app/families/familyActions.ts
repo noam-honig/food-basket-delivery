@@ -1,20 +1,18 @@
 import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, ValueListColumn, DataControlInfo } from "@remult/core";
-import { FamiliesComponent } from "./families.component";
 import { Families, GroupsColumn } from "./families";
 import { Roles } from "../auth/roles";
 import { BasketId, QuantityColumn } from "./BasketType";
 import { DistributionCenterId, DistributionCenters, allCentersToken } from "../manage/distribution-centers";
 import { HelperId } from "../helpers/helpers";
-import { Groups } from "../manage/manage.component";
+import { Groups } from "../manage/groups";
 import { FamilyStatusColumn, FamilyStatus } from "./FamilyStatus";
 import { FamilySourceId } from "./FamilySources";
 import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer, serverUpdateInfo, pagedRowsIterator } from "./familyActionsWiring";
 import { DeliveryStatus } from "./DeliveryStatus";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "./FamilyDeliveries";
-import { use, getLang } from "../translate";
-import { settings } from "cluster";
-import { PromiseThrottle } from "../import-from-excel/import-from-excel.component";
-import { AsignFamilyComponent } from "../asign-family/asign-family.component";
+import { use } from "../translate";
+import { getLang } from '../sites/sites';
+
 
 class NewDelivery extends ActionOnRows<Families> {
     useFamilyBasket = new BoolColumn({ caption: getLang(this.context).useFamilyDefaultBasketType, defaultValue: true });
@@ -269,7 +267,7 @@ export class UpdateArea extends ActionOnRows<Families> {
             allowed: Roles.admin,
             columns: () => [this.area],
             title: getLang(context).updateArea,
-            forEach: async f => { f.area.value = this.area.value },
+            forEach: async f => { f.area.value = this.area.value.trim() },
         });
     }
 }

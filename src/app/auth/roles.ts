@@ -58,3 +58,11 @@ export class LabGuard extends SignedInGuard {
         return Roles.lab;
     }
 }
+
+@Injectable()
+export class distCenterOrLabGuard extends SignedInGuard {
+
+    isAllowed() {
+        return c => c.isAllowed(Roles.admin) || c.isAllowed(Roles.lab) || c.isAllowed(Roles.distCenterAdmin);
+    }
+}

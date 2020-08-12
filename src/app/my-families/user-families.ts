@@ -13,7 +13,7 @@ import { BasketSummaryComponent } from "../basket-summary/basket-summary.compone
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { routeStats } from "../asign-family/route-strategy";
-import { AsignFamilyComponent, refreshRouteArgs } from "../asign-family/asign-family.component";
+
 
 export class UserFamiliesList {
     map: MapComponent;
@@ -131,8 +131,8 @@ export class UserFamiliesList {
 
     distCenter: DistributionCenters;
 
-    async refreshRoute(args: refreshRouteArgs) {
-        await AsignFamilyComponent.RefreshRoute(this.helper.id.value, args).then(r => {
+    async refreshRoute(args: import ("../asign-family/asign-family.component").refreshRouteArgs) {
+        await (await import ("../asign-family/asign-family.component")).AsignFamilyComponent.RefreshRoute(this.helper.id.value, args).then(r => {
 
             if (r && r.ok && r.families.length == this.toDeliver.length) {
                 this.routeStats = r.stats;

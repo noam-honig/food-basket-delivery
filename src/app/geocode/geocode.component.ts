@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Context, ServerFunction, DataAreaSettings } from '@remult/core';
 import { Families } from '../families/families';
 import { Roles } from '../auth/roles';
-import { PromiseThrottle } from '../import-from-excel/import-from-excel.component';
+
 import { DialogService } from '../select-popup/dialog';
 import { DistributionCenterId, allCentersToken } from '../manage/distribution-centers';
 import { GeocodeInformation } from '../shared/googleApiHelpers';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { PromiseThrottle } from '../shared/utils';
 
 
 @Component({

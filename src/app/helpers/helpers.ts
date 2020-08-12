@@ -7,13 +7,14 @@ import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, EmailColu
 import { helpers } from 'chart.js';
 import { Roles, distCenterAdminGuard } from "../auth/roles";
 import { JWTCookieAuthorizationHelper } from '@remult/server';
-import { SelectCompanyComponent } from "../select-company/select-company.component";
+
 import { DistributionCenterId } from '../manage/distribution-centers';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
-import { getLang } from '../translate';
+import { getLang } from '../sites/sites';
 import { GeocodeInformation, GetGeoInformation, Location } from '../shared/googleApiHelpers';
 import { routeStats } from '../asign-family/route-strategy';
 import { Sites } from '../sites/sites';
+import { getSettings } from '../manage/ApplicationSettings';
 
 
 
@@ -60,6 +61,31 @@ export abstract class HelpersBase extends IdEntity {
         caption: getLang(this.context).escort
         , allowApiUpdate: Roles.admin
     });
+
+    archive = new BoolColumn({
+        allowApiUpdate: Roles.admin,
+        includeInApi: Roles.admin,
+    });
+
+
+
+    active() {
+        return this.archive.isEqualTo(false);
+    }
+    async deactivate() {
+        this.archive.value = true;
+        this.save();
+    }
+
+    async reactivate() {
+        this.archive.value = false;
+        this.save();
+    }
+
+    // allowed frequency of deliveries (nom = total deliveries in denom=number of days)
+    // these might later become columns defined by the user
+    static allowedFreq_nom: number = 3;
+    static allowedFreq_denom: number = 10;
 
     getRouteStats(): routeStats {
         return {
@@ -132,7 +158,14 @@ export class Helpers extends HelpersBase {
                     if (!canUpdate)
                         throw "Not Allowed";
                     if (this.password.value && this.password.value != this.password.originalValue && this.password.value != Helpers.emptyPassword) {
+                        let context = this.context;
+                        let password = this.password;
+                        validatePasswordColumn(context, password);
+                        if (this.password.validationError)
+                            return;
+                        //throw this.password.defs.caption + " - " + this.password.validationError;
                         this.realStoredPassword.value = Helpers.passwordHelper.generateHash(this.password.value);
+                        this.passwordChangeDate.value = new Date();
                     }
                     if ((await context.for(Helpers).count()) == 0) {
 
@@ -178,7 +211,8 @@ export class Helpers extends HelpersBase {
                             this.addressApiResult,
                             this.addressApiResult2,
                             this.password,
-                            this.shortUrlKey
+                            this.shortUrlKey,
+                            this.passwordChangeDate
                         ],
                         excludeValues: [this.realStoredPassword]
                     })
@@ -189,7 +223,7 @@ export class Helpers extends HelpersBase {
             apiDataFilter: () => {
                 if (!context.isSignedIn())
                     return this.id.isEqualTo("No User");
-                else if (!context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
+                else if (!context.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]))
                     return this.allowedIds.isContains(this.context.user.id);
             }
         });
@@ -237,27 +271,30 @@ export class Helpers extends HelpersBase {
     password = new StringColumn({ caption: getLang(this.context).password, dataControlSettings: () => ({ inputType: 'password' }), serverExpression: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
 
     createDate = new changeDate({ caption: getLang(this.context).createDate });
+    passwordChangeDate = new changeDate();
+    EULASignDate = new changeDate();
+    //    confidentialityConfirmDate = new changeDate();
 
     reminderSmsDate = new DateTimeColumn({
         caption: getLang(this.context).remiderSmsDate
     });
+    referredBy = new StringColumn({ includeInApi: Roles.admin });
     admin = new BoolColumn({
         caption: getLang(this.context).admin,
         allowApiUpdate: Roles.admin,
         includeInApi: Roles.admin,
         dbName: 'isAdmin'
     });
-    lab = new BoolColumn({
+    labAdmin = new BoolColumn({
         caption: getLang(this.context).lab,
         allowApiUpdate: Roles.lab,
-        includeInApi: Roles.lab,
-        dbName: 'isLab'
+        includeInApi: Roles.lab
     });
     distCenterAdmin = new BoolColumn({
         caption: getLang(this.context).responsibleForAssign,
         allowApiUpdate: Roles.distCenterAdmin,
         includeInApi: Roles.distCenterAdmin,
-        dbName: 'distCenterAdmin',
+
         validate: () => {
             if (this.context.isAllowed(Roles.admin)) {
                 return;
@@ -272,6 +309,7 @@ export class Helpers extends HelpersBase {
 
         }
     });
+
     getRouteStats(): routeStats {
         return {
             totalKm: this.totalKm.value,
@@ -379,7 +417,7 @@ export class CompanyColumn extends StringColumn {
             dataControlSettings: () =>
                 ({
                     width: '300',
-                    click: () => context.openDialog(SelectCompanyComponent, s => s.argOnSelect = x => this.value = x)
+                    click: async () => context.openDialog((await import("../select-company/select-company.component")).SelectCompanyComponent, s => s.argOnSelect = x => this.value = x)
                 })
         });
     }
@@ -403,3 +441,13 @@ export interface HelperUserInfo extends UserInfo {
     escortedHelperName: string;
     distributionCenter: string;
 }
+export function validatePasswordColumn(context: Context, password: StringColumn) {
+    if (getSettings(context).requireComplexPassword.value) {
+        var l = getLang(context);
+        if (password.value.length < 8)
+            password.validationError = l.passwordTooShort;
+        if (!password.value.match(/^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/))
+            password.validationError = l.passwordCharsRequirement;
+    }
+}
+

@@ -4,7 +4,7 @@ import { Helpers } from '../helpers/helpers';
 
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { DialogConfig } from '@remult/core';
+import { DialogConfig, Context } from '@remult/core';
 
 @Component({
   selector: 'app-helper-assignment',
@@ -22,7 +22,8 @@ export class HelperAssignmentComponent implements OnInit {
   public argsHelper: Helpers;
   constructor(
     private dialogRef: MatDialogRef<any>,
-    public settings:ApplicationSettings
+    public settings:ApplicationSettings,
+    public context:Context
   ) {
   }
   @ViewChild("assign", { static: true }) asign: AsignFamilyComponent;

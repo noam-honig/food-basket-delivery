@@ -14,6 +14,7 @@ export class italy implements Language {
   defaultDistributionListName = 'Elenco di distribuzione alimentare';
   AssignEscortComponent = 'Incarico di scorta';
   FamilyDeliveriesComponent = 'Consegne attive';
+  ActiveDeliveries = 'Consegne attive';
   FamiliesComponent = 'famiglie';
   DeliveryFollowUpComponent = 'Monitoraggio volontario';
   NewsComponent = 'Richiede follow-up';
@@ -138,6 +139,7 @@ export class italy implements Language {
   createDate = 'Data di creazione';
   remiderSmsDate = 'Data di consegna del promemoria via SMS';
   admin = 'Amministratore di sistema';
+  lab = 'Operaio di laboratorio';
   responsibleForAssign = 'Assegna solo consegne';
   notAllowedToUpdateVolunteer = 'Non è possibile aggiornare per questo volontario';
   company = 'Azienda';
@@ -145,8 +147,8 @@ export class italy implements Language {
   organizationName = "Il nome dell'organizzazione";
   smsMessageContentCaption = 'Contenuto del messaggio SMS';
   smsReminderMessageContentCaption = 'Contenuto del promemoria via SMS';
-  emailDonorContentCaption = 'תוכן אימייל תורם';
-  emailHelperContentCaption = 'תוכן אימייל מתנדב';
+  emailDonorContentCaption = 'תוכן אימייל מתנדב';
+  emailHelperContentCaption = 'תוכן אימייל תורם';
   mustIncludeUrlKeyError = ' Deve contenere il testo! Sito! Altrimenti non invierà un collegamento';
   logoUrl = 'Logo URL';
   deliveryCenterAddress = 'indirizzo del centro di consegna';
@@ -164,6 +166,7 @@ export class italy implements Language {
   urlFreeText2 = 'Testo volontario gratuito URL 2 per volontari';
   showText2OnlyWhenDone = 'Visualizza testo libero 2 solo quando il volontario ha completato tutti i pacchi';
   enableSelfPickupModule = 'Ci sono famiglie che vengono a prendere dal centro di divisione';
+  enableLabReception = "La consegna termina dopo l'assorbimento in laboratorio";
   showVolunteerCompany = 'Risparmia per conto di quale compagnia proviene il volontario';
   activateEscort = 'Abilita la gestione della scorta conducente';
   showHelperComment = 'Salva nota come volontario';
@@ -199,6 +202,7 @@ export class italy implements Language {
   replacedByOrgName = "Il nome dell'organizzazione verrà sostituito";
   deliveriesFor = 'consegne per';
   archiveCurrentDelivery = 'Archivia la consegna corrente';
+  archiveHelper = 'Elimina volontario';
   familySelfPickup = 'Ritiro automatico, nessuna consegna richiesta?';
   newDeliveryFor = 'Nuova consegna a';
   familyAlreadyHasAnActiveDelivery = 'Questa famiglia ha già consegne dello stesso tipo.';
@@ -236,6 +240,7 @@ export class italy implements Language {
   phone3Description = 'Note sul telefono 3';
   phone4 = 'Telefono 4';
   phone4Description = 'Note sul telefono 4';
+  commentForReception = "Note sull'assorbimento in laboratorio";
   statusChangeDate = 'Stato: data modificata';
   statusChangeUser = 'Stato: chi sta aggiornando';
   defaultVolunteer = 'Volontario predefinito';
@@ -287,6 +292,7 @@ export class italy implements Language {
   remainingByCities = 'Non assegnato da Città';
   remainingByGroups = 'Non assegnato da gruppi';
   deliveries = 'Le consegne';
+  deliveriesCompleted = 'Spedizioni completate';
   empty = 'vuoto';
   allOthers = 'Tutti gli altri';
   total = 'Totale';
@@ -387,8 +393,8 @@ export class italy implements Language {
   sampleMessage = 'Messaggio di esempio';
   reminderSmsTextHelp = 'Questo messaggio verrà inviato a un volontario ritardato da una schermata di monitoraggio del volontario';
   sampleReminderSms = 'Messaggio di promemoria di esempio';
-  emailTextDonor = 'הודעה זו תשלח לתורם אחרי שנרשם למערכת';
-  emailTextHelper = 'הודעה זו תשלח למתנדב אחרי שנרשם למערכת';
+  emailTextDonor = 'Questo messaggio verrà inviato al donatore dopo la registrazione al sistema';
+  emailTextHelper = 'Questo messaggio verrà inviato al volontario dopo la registrazione al sistema';
   basketTypes = 'Tipi di pacchi';
   distributionLists = 'Liste di distribuzione';
   familySources = 'Fonti familiari';
@@ -520,6 +526,7 @@ export class italy implements Language {
   updateCanceled = 'Aggiornamento interrotto';
   archiveDeliveries = 'Consegne in archivio';
   archiveDeliveriesHelp = "Vengono archiviate solo le consegne contrassegnate come \"consegnate\" o \"non riuscite\". L'archivio può essere visualizzato in qualsiasi momento durante la cronologia delle consegne.";
+  revertArchive = "Ritorna dall'archivio";
   updateBasketType = 'Aggiorna tipo di pacco';
   updateBasketQuantity = 'Quantità di aggiornamento';
   updateDistributionList = 'Aggiorna la lista di distribuzione';
@@ -613,6 +620,8 @@ export class italy implements Language {
   yesterday = 'Ieri';
   twoDaysAgo = "l'altro ieri";
   thankYou = 'Grazie';
+  thankYouForDonation = 'Grazie per il tuo contributo';
+  thankYouForHelp = "grazie per l'aiuto";
   searchCompanyName = 'Cerca un nome di società';
   confirmDeleteOf = 'Certificato di cancellazione per';
   originalAddress = 'Indirizzo originale';
@@ -690,6 +699,7 @@ export class italy implements Language {
   assignVolunteer = 'Assegna volontario';
   group = 'Gruppo';
   showOnlyCompletedDeliveries = 'Mostra solo consegne completate';
+  showOnlyArchivedDeliveries = 'Mostra solo archivi';
   smsSent = 'SMS inviato';
   noAssignedVolunteer = 'Nessun volontario assegnato';
   smsOpened = 'SMS visualizzato';
@@ -700,10 +710,28 @@ export class italy implements Language {
   ifYouNeedAnyHelpPleaseCall = 'Per aiuto chiama';
   customColumn = 'Un altro campo per la famiglia';
   caption = 'descrizione';
+  receptionDone = 'Assorbito in laboratorio';
   optionalValues = 'Possibili valori separati da virgola';
-  reciptionDone = "נמסר בהצלחה";
-  lab='מעבדה';
   hideFamilyPhoneFromVolunteer = 'Non mostrare il telefono di famiglia a un volontario';
   hadProblemBefore = 'ha avuto problemi';
   showOnlyLastNamePartToVolunteer = "Mostra solo un'ultima parola al volontario per conto della famiglia";
+  allowSendSuccessMessageOption = "Consenti l'opzione Invia SMS a famiglia";
+  sendSuccessMessageToFamily = 'Invia SMS alla famiglia alla consegna';
+  successMessageText = 'Consegna SMS alla famiglia';
+  requireEULA = 'richiedere EULA';
+  requireConfidentialityApprove = "Richiedi l'approvazione della riservatezza";
+  requireComplexPassword = 'Richiedi password complessa';
+  timeToDisconnect = 'Disconnetti timeout in minuti';
+  daysToForcePasswordChange = 'Giorni per forzare la modifica della password';
+  passwordTooShort = 'Password troppo corta';
+  passwordCharsRequirement = 'Sono necessarie almeno una cifra e una lettera';
+  passwordExpired = 'Password scaduta, si prega di impostare una nuova password';
+  infoIsConfidential = "Presenta sia al volontario che al gestore un messaggio sulla riservatezza delle informazioni \ n \"Le informazioni estratte dal sistema contengono informazioni protette ai sensi della legge sulla protezione della privacy. \ N Le informazioni devono essere conservate in un luogo protetto in modo tale che l'accesso non autorizzato a le informazioni non saranno consentite. \ n Nessuna parte di questo sito può essere copiata, ritrasmessa, ripubblicata, duplicata o utilizzata in altro modo. Chiunque invii le informazioni commette illegalmente un reato. \"\ n";
+  IConfirmEula = 'Accetto i Termini di Utilizzo';
+  mustConfirmEula = "L'applicazione non può essere utilizzata senza il consenso ai termini di utilizzo";
+  readEula = "Fare clic per leggere le condizioni d'uso del sito";
+  newPasswordMustBeNew = "La password nuova ed esistente è un'identità";
+  invalidatePassword = 'Disabilita la password';
+  passwordInvalidated = 'La password è stata revocata';
+  sessionExpiredPleaseRelogin = 'La connessione al server è scaduta, accedi di nuovo';
 }

@@ -19,11 +19,10 @@ export class RegisterDonorComponent implements OnInit {
   constructor(private dialog: DialogService, private context: Context,private settings:ApplicationSettings) { }
   donor = new donorForm(this.context);
   static sendMail: (subject: string, message: string, email: string) => Promise<boolean>;
-  area = new DataAreaSettings({
-    columnSettings: () =>
-      this.donor.columns.filter(c => c != this.donor.name && c != this.donor.address && c != this.donor.selfDeliver)
-  });
+  area = new DataAreaSettings({ columnSettings: () => 
+    this.donor.columns.filter(c => c != this.donor.name && c != this.donor.address && c != this.donor.selfDeliver && c != this.donor.docref) });
   ngOnInit() {
+    this.donor.docref.value = document.referrer;
   }
   allowSubmit() {
     return this.hasQuantity() && this.hasMandatoryFields();
@@ -62,10 +61,14 @@ export class RegisterDonorComponent implements OnInit {
         this.dialog.Error(error);
         return;
       }
-      var message=this.settings.donorEmailText.value
-      var subject = "מתחשבים";
-      await RegisterDonorComponent.doDonorForm(pack(this.donor), subject, message);
-      await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: "תודה על תרומך", showOnlyConfirm: true });
+      await RegisterDonorComponent.doDonorForm(pack(this.donor), 
+            this.settings.lang.thankYouForDonation,
+            this.settings.donorEmailText.value);
+      this.dialog.analytics("submitDonorForm");
+      await this.context.openDialog(YesNoQuestionComponent, x => x.args = { 
+        question: this.settings.lang.thankYouForDonation, 
+        showOnlyConfirm: true 
+      });
       window.location.href = "https://www.mitchashvim.org.il/";
     }
     catch (err) {
@@ -117,9 +120,8 @@ class donorForm {
   laptop = new NumberColumn("מספר מחשבים נייחים");
   screen = new NumberColumn("מספר מסכים");
 
-
-  columns = [this.name, this.selfDeliver, this.address, this.phone, this.email, this.computer, this.laptop, this.screen];
-
+  docref = new StringColumn(); 
+  columns = [this.name, this.selfDeliver, this.address, this.phone, this.email, this.computer, this.laptop, this.screen, this.docref];
 
   async doWork(context: Context) {
     let f = context.for(Families).create();
@@ -129,6 +131,8 @@ class donorForm {
     f.address.value = this.address.value;
     f.phone1.value = this.phone.value;
     f.email.value = this.email.value;
+    f.custom1.value = this.docref.value;
+
     await f.save();
     var quantity = 0;
     async function addDelivery(type: string, q: number, isSelfDeliver: boolean) {

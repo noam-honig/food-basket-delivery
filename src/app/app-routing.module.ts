@@ -1,4 +1,4 @@
-import { NgModule, Injectable } from '@angular/core';
+import { NgModule, Injectable, ErrorHandler } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes, RouteReuseStrategy, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
@@ -24,7 +24,7 @@ import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 
-import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard } from './auth/roles';
+import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard } from './auth/roles';
 
 import { SignedInGuard, Context } from '@remult/core';
 
@@ -44,6 +44,7 @@ import { DeliveryReceptionComponent } from './delivery-reception/delivery-recept
 import { RegisterDonorComponent } from './register-donor/register-donor.component';
 import { RegisterHelperComponent } from './register-helper/register-helper.component';
 import { Sites } from './sites/sites';
+
 
 
 @Injectable()
@@ -77,7 +78,6 @@ export const routes: Routes = [
   NewsComponent.needsWorkRoute,
   { path: 'overview', component: OverviewComponent, canActivate: [OverviewGuard] },
   DistributionMap.route,
-
 
   HelpersComponent.route,
   { path: 'tr', component: TokenReplacerComponent, canActivate: [OverviewGuard], data: { hide: true } },
@@ -120,7 +120,7 @@ export const routes: Routes = [
   ],
   declarations: [],
   exports: [RouterModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard,LabGuard,MltOnlyGuard]
+  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard,LabGuard,distCenterOrLabGuard,MltOnlyGuard]
 
 })
 
