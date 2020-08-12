@@ -11,6 +11,7 @@
     "server:dev-run": "node --inspect dist-server/app/server/server.js",
     "build": "npm run server:build && npm run ng-build",
     "ng-build": "ng build --prod",
+    "ng-build-watch": "ng build --prod --watch=true",
     "server:build": "tsc -p tsconfig.server.json",
     "server:build-watch": "tsc -p tsconfig.server.json --watch",
     "publish-to-heroku-test": "git push heroku master -f",

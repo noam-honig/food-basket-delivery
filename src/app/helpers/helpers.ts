@@ -61,11 +61,13 @@ export abstract class HelpersBase extends IdEntity {
         caption: getLang(this.context).escort
         , allowApiUpdate: Roles.admin
     });
-    
+
     archive = new BoolColumn({
         allowApiUpdate: Roles.admin,
         includeInApi: Roles.admin,
     });
+
+
 
     active() {
         return this.archive.isEqualTo(false);
@@ -82,8 +84,8 @@ export abstract class HelpersBase extends IdEntity {
 
     // allowed frequency of deliveries (nom = total deliveries in denom=number of days)
     // these might later become columns defined by the user
-    static allowedFreq_nom : number = 3;
-    static allowedFreq_denom : number = 10;
+    static allowedFreq_nom: number = 3;
+    static allowedFreq_denom: number = 10;
 
     getRouteStats(): routeStats {
         return {
@@ -157,7 +159,7 @@ export class Helpers extends HelpersBase {
                         throw "Not Allowed";
                     if (this.password.value && this.password.value != this.password.originalValue && this.password.value != Helpers.emptyPassword) {
                         let context = this.context;
-                        let password =this.password;
+                        let password = this.password;
                         validatePasswordColumn(context, password);
                         if (this.password.validationError)
                             return;
@@ -276,6 +278,7 @@ export class Helpers extends HelpersBase {
     reminderSmsDate = new DateTimeColumn({
         caption: getLang(this.context).remiderSmsDate
     });
+    referredBy = new StringColumn({ includeInApi: Roles.admin });
     admin = new BoolColumn({
         caption: getLang(this.context).admin,
         allowApiUpdate: Roles.admin,

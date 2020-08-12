@@ -265,6 +265,13 @@ export class HelpersComponent implements OnInit, OnDestroy {
     r.push({
       column: helpers.preferredDistributionAreaAddress2, width: '120',
     });
+
+    if (this.context.isAllowed(Roles.admin) && this.settings.isSytemForMlt()) {
+      r.push({
+        column: helpers.referredBy, width: '120'
+      });
+    }
+
     r.push({
       column: helpers.company, width: '120'
     });
