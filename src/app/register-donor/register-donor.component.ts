@@ -97,7 +97,7 @@ class donorForm {
     dataControlSettings: () => ({ inputType: 'email' })
   });
 
-  selfDeliver = new BoolColumn("אגיע עצמאית למעבדה");
+  selfDeliver = new BoolColumn("אגיע עצמאית לנקודת האיסוף");
   address = new StringColumn({ 
     caption: "כתובת",
     validate: () => {
@@ -111,7 +111,7 @@ class donorForm {
   screen = new NumberColumn("מספר מסכים");
 
   
-  columns = [this.name, this.selfDeliver, this.address, this.phone, this.email, this.computer, this.laptop, this.screen];
+  columns = [this.name, this.selfDeliver, this.computer, this.laptop, this.screen, this.address, this.phone, this.email];
 
 
   async doWork(context: Context) {
