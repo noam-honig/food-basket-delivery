@@ -110,16 +110,26 @@ export class HelperFamiliesComponent implements OnInit {
   static async getDeliveriesByLocation(pivotLocation: Location, context?: Context) {
     let r: DeliveryInList[] = [];
     for await (const d of  context.for(ActiveFamilyDeliveries).iterate({ where: f => f.readyFilter() })) {
+      let loc = d.getDrivingLocation();
+      let dist = GetDistanceBetween(pivotLocation, loc);
+
       r.push({
         basketType: await (d.basketType.getTheValue()),
         city: d.city.value,
         floor: d.floor.value,
         quantity: d.quantity.value,
         id: d.id.value,
-        distance: GetDistanceBetween(pivotLocation, d.getDrivingLocation())
+        location: loc,
+        distance: dist,
+        distanceFrom1st: 0
       });
     }
     r.sort((a, b) => a.distance - b.distance);
+
+    pivotLocation = r[0].location;
+    r.forEach((x,i) => {
+      if (i>0) x.distanceFrom1st = GetDistanceBetween(pivotLocation, x.location)
+    });
     r.splice(10);
     return r;
   };
@@ -530,7 +540,9 @@ interface DeliveryInList {
   floor: string,
   basketType: string,
   quantity: number,
-  distance: number
+  location: Location,
+  distance: number,
+  distanceFrom1st: number
 }
 
 class limitList {

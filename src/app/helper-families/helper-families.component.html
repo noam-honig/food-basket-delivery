@@ -1,4 +1,4 @@
-<button mat-raised-button (click)="assignNewDelivery()" *ngIf="showCloseDeliveries()&&!partOfAssign">
+<button mat-raised-button color="primary" (click)="assignNewDelivery()" *ngIf="showCloseDeliveries()&&!partOfAssign">
   {{settings.lang.assignCloseDeliveries}}</button>
 <mat-card class="no-print" *ngIf="familyLists.toDeliver.length>0||familyLists.forceShowMap">
   <mat-card-title>
