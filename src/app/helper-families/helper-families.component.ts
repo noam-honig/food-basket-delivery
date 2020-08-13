@@ -108,12 +108,11 @@ export class HelperFamiliesComponent implements OnInit {
   
   @ServerFunction({ allowed: Roles.indie })
   static async getDeliveriesByLocation(pivotLocation: Location, context?: Context) {
-    let r: DeliveryInList[] = [];
+    let r: selectListItem[] = [];
     for await (const d of  context.for(ActiveFamilyDeliveries).iterate({ where: f => f.readyFilter() })) {
       let loc = d.getDrivingLocation();
       let dist = GetDistanceBetween(pivotLocation, loc);
-
-      r.push({
+      let myItem : DeliveryInList = {
         basketType: await (d.basketType.getTheValue()),
         city: d.city.value,
         floor: d.floor.value,
@@ -122,19 +121,31 @@ export class HelperFamiliesComponent implements OnInit {
         familyId: d.family.value,
         location: loc,
         distance: dist
+      };
+      let itemString : string = 
+        myItem.distance.toFixed(1) + use.language.km +
+        (myItem.city ? ' (' + myItem.city + ')' : '') +
+        (myItem.floor ? ' [' + use.language.floor + ' ' + myItem.floor + ']' : '') +
+        ' : ' +
+        myItem.quantity + ' x ' + myItem.basketType;
+
+      r.push({
+        selected: false,
+        item: myItem,
+        name: itemString
       });
     }
     r.sort((a, b) => {
-      if (a.familyId == b.familyId)
+      if (a.item.familyId == b.item.familyId)
         return 0;
       
-      if (a.distance == b.distance)     
-        if (a.familyId <= b.familyId)
+      if (a.item.distance == b.item.distance)     
+        if (a.item.familyId <= b.item.familyId)
           return (-1)
         else 
           return 1;
 
-      return (a.distance - b.distance);
+      return (a.item.distance - b.item.distance);
     });
     r.splice(15);
     return r;
@@ -145,18 +156,14 @@ export class HelperFamiliesComponent implements OnInit {
     return (this.context.user.roles.includes(Roles.indie) && this.settings.isSytemForMlt());
   }
   
-  async checkCloseDeliveries(item: selectListItem, isSet: boolean, theList: selectListItem[], afdList: DeliveryInList[])  {
-    let d: DeliveryInList = afdList[item.item];
-    let pivotLocation = d.location;
-    let pivotFamily = d.familyId;
+  async checkCloseDeliveries(item: selectListItem, isSet: boolean, theList: selectListItem[])  {
+    let d: DeliveryInList = item.item;
     theList.forEach((x) => {
-      let distanceFromPivot = GetDistanceBetween(pivotLocation, afdList[x.item].location);
-      let isSameFamily = (pivotFamily == afdList[x.item].familyId);
-      if ((isSameFamily) || ((distanceFromPivot == 0) && isSet))
+      if ((d.familyId == x.item.familyId) || 
+         (( GetDistanceBetween(d.location, x.item.location) == 0) && isSet))
         x.selected = isSet;
     });
   }
-
 
   async assignNewDelivery() {
     await this.updateCurrentLocation(true);
@@ -166,20 +173,11 @@ export class HelperFamiliesComponent implements OnInit {
       x.args = {
         title: use.language.closestDeliveries + ' (' + use.language.mergeFamilies + ')',
         multiSelect: true,
-        onSelect: async (d, isSelected, theList) => this.checkCloseDeliveries(d, isSelected, theList, afdList),
-        options: afdList.map((x,i) => ({
-          item: i,
-          selected: false,
-          name:
-            x.distance.toFixed(1) + use.language.km +
-            (x.city ? ' (' + x.city + ')' : '') +
-            (x.floor ? ' [' + use.language.floor + ' ' + x.floor + ']' : '') +
-            ' : ' +
-            x.quantity + ' x ' + x.basketType
-        } as selectListItem))
+        onSelect: async (d, isSelected, theList) => this.checkCloseDeliveries(d, isSelected, theList),
+        options: afdList
       }
     }, y => y.args.options.forEach(async x => {
-      if (x.selected) await HelperFamiliesComponent.assignFamilyDeliveryToIndie(afdList[x.item].id);
+      if (x.selected) await HelperFamiliesComponent.assignFamilyDeliveryToIndie(x.item.id);
     })
     );
 
