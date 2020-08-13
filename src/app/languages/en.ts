@@ -642,6 +642,7 @@ export class en implements Language {
   problemsThatRequireFollowup = 'Problems Followup';
   commentsWrittenByVolunteers = 'Comments written by volunteers';
   distributionList = 'Distribution list';
+  thisIsTheDestination = 'Destination for delivery of equipment';
   list = 'List';
   map = 'Map';
   noDeliveries = 'No deliveries for distribution';

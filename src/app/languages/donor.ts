@@ -68,7 +68,7 @@ export class donor implements Language {
   entrance = 'כניסה';
   updateComment = 'עדכן הערה';
   clickedByMistake = 'נלחץ בטעות - החזר לתרומות לאיסוף';
-  deliveriesDoneInTheLastTwoDays = 'משלוחים שחולקו ביומיים האחרונים';
+  deliveriesDoneInTheLastTwoDays = 'משלוחים שנאספו ביומיים האחרונים';
   showAllCompletedDeliveries = 'הצג את כל המשלוחים שחולקו';
   showRouteOnGoogleMaps = 'הצג מסלול ב Google Maps';
   assignCloseDeliveries = 'הצג תרומות בסביבתי';
@@ -642,6 +642,7 @@ export class donor implements Language {
   problemsThatRequireFollowup = 'בעיות המצריכות טיפול';
   commentsWrittenByVolunteers = 'הערות שכתבו מתנדבים';
   distributionList = 'מעבדה';
+  thisIsTheDestination = 'יעד למסירת הציוד';
   list = 'רשימה';
   map = 'מפה';
   noDeliveries = 'אין תרומות לאיסוף';

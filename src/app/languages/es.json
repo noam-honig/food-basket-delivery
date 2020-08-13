@@ -3266,6 +3266,11 @@
     "valueInCode": "למשפחה זו יש",
     "valueInEnglish": "This family has"
   },
+  "thisIsTheDestination": {
+    "google": "Destino de entrega de equipos",
+    "valueInCode": "יעד למסירת הציוד",
+    "valueInEnglish": "Destination for delivery of equipment"
+  },
   "timeToDisconnect": {
     "google": "Desconecte el tiempo de espera en minutos",
     "valueInCode": "זמן בדקות לניתוק אוטומטית",

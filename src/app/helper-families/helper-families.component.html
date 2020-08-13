@@ -88,7 +88,7 @@
     <mat-expansion-panel *ngIf="familyLists.distCenter&&!partOfAssign&&!partOfReview">
       <mat-expansion-panel-header>
         <div>
-          <mat-panel-title>{{familyLists.distCenter.name.value}} </mat-panel-title>
+          <mat-panel-title>{{settings.lang.thisIsTheDestination}} : {{familyLists.distCenter.name.value}}</mat-panel-title>
           <mat-panel-description>{{familyLists.distCenter.address.value}}</mat-panel-description>
         </div>
       </mat-expansion-panel-header>

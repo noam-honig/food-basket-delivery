@@ -642,6 +642,7 @@ export class soldier implements Language {
   problemsThatRequireFollowup = 'בעיות המצריכות טיפול';
   commentsWrittenByVolunteers = 'הערות שכתבו מתנדבים';
   distributionList = 'רשימת חלוקה';
+  thisIsTheDestination = 'יעד למסירת הציוד';
   list = 'רשימה';
   map = 'מפה';
   noDeliveries = 'אין משלוחים לחלוקה';
