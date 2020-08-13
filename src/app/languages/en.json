@@ -2862,6 +2862,10 @@
     "google": "This family has",
     "valueInCode": "למשפחה זו יש"
   },
+  "thisIsTheDestination": {
+    "google": "Destination for delivery of equipment",
+    "valueInCode": "יעד למסירת הציוד"
+  },
   "timeToDisconnect": {
     "google": "Time in minutes for automatic disconnection",
     "valueInCode": "זמן בדקות לניתוק אוטומטית",

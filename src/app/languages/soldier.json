@@ -2611,6 +2611,10 @@
     "google": "לחייל זה יש",
     "valueInCode": "למשפחה זו יש"
   },
+  "thisIsTheDestination": {
+    "google": "יעד למסירת הציוד",
+    "valueInCode": "יעד למסירת הציוד"
+  },
   "timeToDisconnect": {
     "google": "זמן בדקות לניתוק אוטומטית",
     "valueInCode": "זמן בדקות לניתוק אוטומטית"

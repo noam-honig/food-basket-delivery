@@ -642,6 +642,7 @@ export class italy implements Language {
   problemsThatRequireFollowup = 'Follow-up dei problemi';
   commentsWrittenByVolunteers = 'Commenti scritti da volontari';
   distributionList = 'Lista di distribuzione';
+  thisIsTheDestination = "Destinazione per la consegna dell'attrezzatura";
   list = 'Elenco';
   map = 'Carta geografica';
   noDeliveries = 'Nessuna consegna per la distribuzione';

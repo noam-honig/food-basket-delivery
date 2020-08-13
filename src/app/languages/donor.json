@@ -732,7 +732,7 @@
     "valueInCode": "משלוחים הושלמו"
   },
   "deliveriesDoneInTheLastTwoDays": {
-    "google": "משלוחים שחולקו ביומיים האחרונים",
+    "google": "משלוחים שנאספו ביומיים האחרונים",
     "valueInCode": "משלוחים שחולקו ביומיים האחרונים"
   },
   "deliveriesFor": {
@@ -2611,6 +2611,10 @@
   "thisFamilyHas": {
     "google": "לתורם זו יש",
     "valueInCode": "למשפחה זו יש"
+  },
+  "thisIsTheDestination": {
+    "google": "יעד למסירת הציוד",
+    "valueInCode": "יעד למסירת הציוד"
   },
   "timeToDisconnect": {
     "google": "זמן בדקות לניתוק אוטומטית",
