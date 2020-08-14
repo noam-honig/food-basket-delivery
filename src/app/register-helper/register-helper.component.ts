@@ -8,8 +8,8 @@ import { allCentersToken } from '../manage/distribution-centers';
 import { executeOnServer, pack } from '../server/mlt';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { RequiredValidator } from '@angular/forms';
-import { RegisterDonorComponent } from '../register-donor/register-donor.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { EmailSvc } from '../shared/utils';
 
 @Component({
   selector: 'app-register-helper',
@@ -56,9 +56,9 @@ export class RegisterHelperComponent implements OnInit {
         this.dialog.Error(error);
         return;
       }
-      var message=this.settings.helperEmailText.value;
-      var subject = "מתחשבים";
-      await RegisterHelperComponent.doHelperForm(pack(this.helper),subject,message);
+    console.log(pack(this.helper))
+      await RegisterHelperComponent.doHelperForm(pack(this.helper),this.settings.lang.thankYouForHelp,
+      this.settings.helperEmailText.value);
       await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: "תודה על עזרתך", showOnlyConfirm: true });
       window.location.href = "https://www.mitchashvim.org.il/";
     }
@@ -68,8 +68,8 @@ export class RegisterHelperComponent implements OnInit {
   }
   @ServerFunction({ allowed: true })
   static async doHelperForm(args: any[],subject:string,message:string, context?: Context) {
-    await executeOnServer(helperForm, args, context);
-    await RegisterDonorComponent.sendMail(subject,message,args[3]);
+    await executeOnServer(helperForm, args, context);    
+    await EmailSvc.sendMail(subject, message.replace('!מתנדב!', args[0]), args[3]);
   }
 
 }

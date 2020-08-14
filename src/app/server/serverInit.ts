@@ -16,9 +16,9 @@ import { Sites } from '../sites/sites';
 import { OverviewComponent } from '../overview/overview.component';
 import { wasChanged } from '../model-shared/types';
 import { ConnectionOptions } from 'tls';
-import { RegisterDonorComponent } from '../register-donor/register-donor.component';
 import { SitesEntity } from '../sites/sites.entity';
 import { FamilyInfoComponent } from '../family-info/family-info.component';
+import { EmailSvc } from '../shared/utils';
 
 declare const lang = '';
 
@@ -111,7 +111,7 @@ export async function serverInit() {
             }
 
             InitSchemas(pool);
-            RegisterDonorComponent.sendMail = async (subject: string, message: string, email: string) => {
+            EmailSvc.sendMail = async (subject: string, message: string, email: string) => {
                 var nodemailer = await import('nodemailer');
 
                 var transporter = nodemailer.createTransport({

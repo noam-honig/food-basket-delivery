@@ -9,6 +9,7 @@ import { executeOnServer, pack } from '../server/mlt';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { RequiredValidator } from '@angular/forms';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { EmailSvc } from '../shared/utils';
 
 @Component({
   selector: 'app-register-donor',
@@ -18,7 +19,6 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 export class RegisterDonorComponent implements OnInit {
   constructor(private dialog: DialogService, private context: Context,private settings:ApplicationSettings) { }
   donor = new donorForm(this.context);
-  static sendMail: (subject: string, message: string, email: string) => Promise<boolean>;
   area = new DataAreaSettings({ columnSettings: () => 
     this.donor.columns.filter(c => c != this.donor.name && c != this.donor.address && c != this.donor.selfDeliver && c != this.donor.docref) });
   ngOnInit() {
@@ -79,7 +79,7 @@ export class RegisterDonorComponent implements OnInit {
   @ServerFunction({ allowed: true })
   static async doDonorForm(args: any[], subject: string, message: string, context?: Context) {
     await executeOnServer(donorForm, args, context);
-    await RegisterDonorComponent.sendMail(subject, message, args[4]);
+    await EmailSvc.sendMail(subject, message.replace('!תורם!', args[0]), args[4]);
   }
 }
 

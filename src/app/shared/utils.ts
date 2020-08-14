@@ -43,3 +43,12 @@ export class PromiseThrottle {
       await Promise.all(this.todo);
   }
 }
+
+export class EmailSvc{
+  
+  constructor() {
+    
+  }
+  static sendMail: (subject: string, message: string, email: string) => Promise<boolean>;
+
+}
