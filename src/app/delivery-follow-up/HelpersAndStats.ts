@@ -61,7 +61,7 @@ export class HelpersAndStats extends HelpersBase {
                         h.escort,
                         h.distributionCenter ,
                         h.archive,
-                        sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress),
+                        sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress), //TODO: this needs to be on DISTINCT FamilyID
                         sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isActiveDelivery()]), this.allDeliveires),
 
                     ],
