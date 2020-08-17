@@ -44,7 +44,7 @@ export class donor implements Language {
   km = 'ק"מ';
   leftDeliveryNextToHouse = 'השארתי ליד הבית';
   failedDeliveries = 'משלוחים שנתקלתי בבעיה';
-  ranIntoAProblem = 'נתקלתי בבעיה';
+  ranIntoAProblem = 'דחיית איסוף/בעיה';
   showAllDeliveries = 'הצג את כל התרומות לאיסוף';
   sendSmsWithLink = 'שלח הודעת SMS עם קישור';
   sendLinkOnWhatsapp = 'שלח קישור ב whatsapp';
@@ -428,7 +428,7 @@ export class donor implements Language {
   showAllFamilies = 'הצג את כל התורמים';
   whatWentWrong = 'מה לא הסתדר?';
   addCurrentLocationToNote = 'הוסף מיקום נוכחי להערה';
-  basketNotDelivered = 'הסל לא נמסר';
+  basketNotDelivered = 'שלח/י לנו מסר';
   confirm = 'אשר';
   displayFamilyAsVolunteerWillSeeIt = 'הצג תורם כפי שמתנדב יראה אותה';
   infoAboutUpdates = 'פרטי עדכונים';

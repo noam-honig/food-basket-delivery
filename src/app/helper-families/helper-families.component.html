@@ -82,12 +82,12 @@
   </mat-tab-group>
 
 </mat-card>
-<div>
+<div *ngIf="familyLists.distCenter&&!partOfAssign&&!partOfReview">
   <mat-accordion>
-    <mat-expansion-panel *ngIf="familyLists.distCenter&&!partOfAssign&&!partOfReview">
-      <mat-expansion-panel-header>
+    <mat-expansion-panel  style="background-color:lightgreen">
+      <mat-expansion-panel-header  style="background-color:lightgreen">
         <div>
-          <mat-panel-title>{{familyLists.distCenter.name.value}} </mat-panel-title>
+          <mat-panel-title><strong>נקודת מסירת ציוד: </strong>  {{familyLists.distCenter.name.value}}  </mat-panel-title>
           <mat-panel-description>{{familyLists.distCenter.address.value}}</mat-panel-description>
         </div>
       </mat-expansion-panel-header>
@@ -135,6 +135,7 @@
       </div>
     </mat-expansion-panel>
   </mat-accordion>
+  <a href="https://www.mitchashvim.org.il/labs">ניתן להביא את התרומה לנקודת מסירת ציוד אחרת - לחץ כאן לרשימת הנקודות</a>
 </div>
 
 <div style="display:flex;flex-direction: column;">

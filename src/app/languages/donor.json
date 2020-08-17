@@ -325,7 +325,8 @@
   },
   "basketNotDelivered": {
     "google": "הסל לא נמסר",
-    "valueInCode": "הסל לא נמסר"
+    "valueInCode": "הסל לא נמסר",
+    "custom": "שלח/י לנו מסר"
   },
   "basketType": {
     "google": "סוג סל",
@@ -1998,7 +1999,8 @@
   },
   "ranIntoAProblem": {
     "google": "נתקלתי בבעיה",
-    "valueInCode": "נתקלתי בבעיה"
+    "valueInCode": "נתקלתי בבעיה",
+    "custom": "דחיית איסוף/בעיה"
   },
   "readEula": {
     "google": "לחץ לקריאת תנאי השימוש באתר",

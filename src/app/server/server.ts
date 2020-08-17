@@ -71,7 +71,7 @@ serverInit().then(async (dataSource) => {
             let tagid = 'UA-121891791-1'; // default key for Google Analytics
             if (settings.isSytemForMlt()) {
                 //tagid = 'AW-607493389';
-                result = result.replace('/*ANOTHER_GTAG_CONFIG*/', "gtag('config', 'AW-607493389')");
+                result = result.replace('/*ANOTHER_GTAG_CONFIG*/', "gtag('config', 'AW-607493389');gtag('config', 'UA-174556479-1');");
                 result = result.replace(/<!--FACEBOOK_AND_LINKEDIN_PLACEHOLDER-->/g, `
 <!-- Facebook Pixel Code -->
 <script>
