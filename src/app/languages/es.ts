@@ -477,6 +477,7 @@ export class es implements Language {
   leftByHouse = 'Dejado por la casa';
   notDeliveredBadAddress = 'No entregado, problema de dirección';
   notDeliveredNotHome = 'No entregado, no estaban en casa';
+  notDeliveredDontWant = 'No entregado, no necesita paquete';
   notDeliveredOther = 'No entregado, otro';
   deliveryStatus = 'estado de entrega';
   useFamilyDefaultBasketType = 'Tipo de parcela predeterminado';

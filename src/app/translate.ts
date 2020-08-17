@@ -591,6 +591,7 @@ export class Language {
   leftByHouse = 'הושאר ליד הבית';
   notDeliveredBadAddress = 'לא נמסר, בעיה בכתובת';
   notDeliveredNotHome = 'לא נמסר, לא היו בבית';
+  notDeliveredDontWant = "לא נמסר, לא מעוניינים בחבילה";
   notDeliveredOther = 'לא נמסר, אחר';
   deliveryStatus = 'סטטוס משלוח';
   useFamilyDefaultBasketType = 'סל ברירת מחדל';
@@ -851,6 +852,7 @@ export class Language {
   invalidatePassword="בטל תוקף סיסמה";
   passwordInvalidated = "בוטל תוקף הסיסמה";
   sessionExpiredPleaseRelogin = "לצורך הגנה על פרטיות הנתונים, יש לבצע כניסה מחדש";
+  
 }
 
 const defaultLang = new Language();

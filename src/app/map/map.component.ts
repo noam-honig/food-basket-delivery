@@ -25,7 +25,7 @@ export class MapComponent implements OnInit, OnDestroy {
             // console.time('load families to map');
             families.forEach(f => {
                 let marker = this.setFamilyOnMap(f.id, f.lat, f.lng);
-                    this.bounds.extend(marker.getPosition());
+                this.bounds.extend(marker.getPosition());
             });
             // console.timeEnd('load families to map');
 
@@ -103,7 +103,7 @@ export class MapComponent implements OnInit, OnDestroy {
         if (x == this.lastBounds)
             return;
         this.lastBounds = x;
-        if (this.map&& this.bounds.isEmpty()) {
+        if (this.map && this.bounds.isEmpty()) {
             this.map.setCenter(this.center);
         } else {
             this.map.fitBounds(this.bounds);
@@ -143,7 +143,7 @@ export class MapComponent implements OnInit, OnDestroy {
         let secondaryBounds = new google.maps.LatLngBounds();
         let prevMarker: google.maps.Marker;
         let prevIndex: number;
-        
+
         families.forEach(f => {
             let pi = prevFamilies.findIndex(x => x.id.value == f.id.value);
             if (pi >= 0)
@@ -185,6 +185,7 @@ export class MapComponent implements OnInit, OnDestroy {
                     break;
                 case DeliveryStatus.FailedBadAddress:
                 case DeliveryStatus.FailedNotHome:
+                case DeliveryStatus.FailedDoNotWant:
                 case DeliveryStatus.FailedOther:
                     marker.setIcon('https://maps.google.com/mapfiles/ms/micons/red-pushpin.png');
                     break;

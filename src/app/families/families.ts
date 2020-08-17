@@ -471,7 +471,7 @@ export class Families extends IdEntity {
   custom2 = new CustomColumn(2);
   custom3 = new CustomColumn(3);
   custom4 = new CustomColumn(4);
-   
+
   async reloadGeoCoding() {
 
     let geo = new GeocodeInformation();
@@ -668,6 +668,7 @@ export class Families extends IdEntity {
           case DeliveryStatus.SuccessLeftThere:
           case DeliveryStatus.FailedBadAddress:
           case DeliveryStatus.FailedNotHome:
+          case DeliveryStatus.FailedDoNotWant:
           case DeliveryStatus.FailedOther:
             let duration = '';
             if (n.courierAssingTime.value && n.deliveryStatusDate.value)

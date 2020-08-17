@@ -1932,6 +1932,10 @@
     "google": "Not delivered, address issue",
     "valueInCode": "לא נמסר, בעיה בכתובת"
   },
+  "notDeliveredDontWant": {
+    "google": "Not delivered, do not need a package",
+    "valueInCode": "לא נמסר, לא צריכים חבילה"
+  },
   "notDeliveredNotHome": {
     "google": "Not delivered, were not at home",
     "valueInCode": "לא נמסר, לא היו בבית"

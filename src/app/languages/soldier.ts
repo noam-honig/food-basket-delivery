@@ -477,6 +477,7 @@ export class soldier implements Language {
   leftByHouse = 'הושאר ליד הבית';
   notDeliveredBadAddress = 'לא נמסר, בעיה בכתובת';
   notDeliveredNotHome = 'לא נמסר, לא היו בבית';
+  notDeliveredDontWant = 'לא נמסר, לא צריכים חבילה';
   notDeliveredOther = 'לא נמסר, אחר';
   deliveryStatus = 'סטטוס משלוח';
   useFamilyDefaultBasketType = 'השתמש בסוג הסל המוגדר לחייל';

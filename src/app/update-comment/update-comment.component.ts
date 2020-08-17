@@ -49,6 +49,7 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
   failOptions: DeliveryStatus[] = [
     DeliveryStatus.FailedBadAddress,
     DeliveryStatus.FailedNotHome,
+    DeliveryStatus.FailedDoNotWant,
     DeliveryStatus.FailedOther
   ];
   defaultFailStatus = DeliveryStatus.FailedBadAddress;

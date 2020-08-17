@@ -491,6 +491,7 @@ export class Statuses {
         break;
       case DeliveryStatus.FailedBadAddress.id:
       case DeliveryStatus.FailedNotHome.id:
+        case DeliveryStatus.FailedDoNotWant.id:
       case DeliveryStatus.FailedOther.id:
       case DeliveryStatus.Frozen.id:
         return this.problem;

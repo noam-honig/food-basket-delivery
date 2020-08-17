@@ -2180,6 +2180,11 @@
     "valueInCode": "לא נמסר, בעיה בכתובת",
     "valueInEnglish": "Not delivered, address issue"
   },
+  "notDeliveredDontWant": {
+    "google": "No entregado, no necesita paquete",
+    "valueInCode": "לא נמסר, לא צריכים חבילה",
+    "valueInEnglish": "Not delivered, do not need a package"
+  },
   "notDeliveredNotHome": {
     "google": "No entregado, no estaban en casa",
     "valueInCode": "לא נמסר, לא היו בבית",

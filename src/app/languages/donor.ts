@@ -475,8 +475,9 @@ export class donor implements Language {
   frozen = 'מוקפא';
   deliveredSuccessfully = 'תרומה נאספה';
   leftByHouse = 'הושאר ליד הבית';
-  notDeliveredBadAddress = 'לא נמסר, בעיה בכתובת';
-  notDeliveredNotHome = 'לא נמסר, לא היו בבית';
+  notDeliveredBadAddress = 'לא נמסר, רחוק מידי';
+  notDeliveredNotHome = 'לא נמסר, אני לא פנוי/ה';
+  notDeliveredDontWant = 'לא נמסר, בעיה אצל התורמ/ת';
   notDeliveredOther = 'לא נמסר, אחר';
   deliveryStatus = 'סטטוס משלוח';
   useFamilyDefaultBasketType = 'סל ברירת מחדל';

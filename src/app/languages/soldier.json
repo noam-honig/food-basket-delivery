@@ -1743,6 +1743,10 @@
     "google": "לא נמסר, בעיה בכתובת",
     "valueInCode": "לא נמסר, בעיה בכתובת"
   },
+  "notDeliveredDontWant": {
+    "google": "לא נמסר, לא צריכים חבילה",
+    "valueInCode": "לא נמסר, לא צריכים חבילה"
+  },
   "notDeliveredNotHome": {
     "google": "לא נמסר, לא היו בבית",
     "valueInCode": "לא נמסר, לא היו בבית"

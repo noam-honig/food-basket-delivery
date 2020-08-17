@@ -1742,11 +1742,18 @@
   },
   "notDeliveredBadAddress": {
     "google": "לא נמסר, בעיה בכתובת",
-    "valueInCode": "לא נמסר, בעיה בכתובת"
+    "valueInCode": "לא נמסר, בעיה בכתובת",
+    "custom": "לא נמסר, רחוק מידי"
+  },
+  "notDeliveredDontWant": {
+    "google": "לא נמסר, לא צריכים חבילה",
+    "valueInCode": "לא נמסר, לא צריכים חבילה",
+    "custom": "לא נמסר, בעיה אצל התורמ/ת"
   },
   "notDeliveredNotHome": {
     "google": "לא נמסר, לא היו בבית",
-    "valueInCode": "לא נמסר, לא היו בבית"
+    "valueInCode": "לא נמסר, לא היו בבית",
+    "custom": "לא נמסר, אני לא פנוי/ה"
   },
   "notDeliveredOther": {
     "google": "לא נמסר, אחר",

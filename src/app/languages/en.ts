@@ -477,6 +477,7 @@ export class en implements Language {
   leftByHouse = 'Was left by the house';
   notDeliveredBadAddress = 'Not delivered, address issue';
   notDeliveredNotHome = 'Not delivered, were not at home';
+  notDeliveredDontWant = 'Not delivered, do not need a package';
   notDeliveredOther = 'Not delivered, other';
   deliveryStatus = 'delivery status';
   useFamilyDefaultBasketType = 'Default Parcel Type';
