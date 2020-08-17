@@ -162,7 +162,7 @@ export class DateTimeColumn extends radweb.DateTimeColumn {
 }
 
 export class changeDate extends DateTimeColumn {
-  
+
   constructor(settingsOrCaption?: ColumnOptions<Date>) {
     super(settingsOrCaption);
     this.defs.allowApiUpdate = false;
@@ -308,6 +308,16 @@ export class SqlBuilder {
   countInnerSelect(query: FromAndWhere, mappedColumn: any) {
     return this.build("(", this.query({
       select: () => [this.build("count(*)")],
+      from: query.from,
+      innerJoin: query.innerJoin,
+      outerJoin: query.outerJoin,
+      crossJoin: query.crossJoin,
+      where: query.where
+    }), ") ", mappedColumn);
+  }
+  countDistinctInnerSelect(col: Column, query: FromAndWhere, mappedColumn: any) {
+    return this.build("(", this.query({
+      select: () => [this.build("count(distinct ", col, ")")],
       from: query.from,
       innerJoin: query.innerJoin,
       outerJoin: query.outerJoin,
@@ -498,7 +508,7 @@ class myDummySQLCommand implements SqlCommand {
     return val.toString();
   }
 
- 
+
 }
 export class myThrottle {
   constructor(private ms: number) {
