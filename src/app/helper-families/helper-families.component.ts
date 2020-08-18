@@ -17,7 +17,7 @@ import { Helpers, HelperId } from '../helpers/helpers';
 import { UpdateCommentComponent } from '../update-comment/update-comment.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { isGpsAddress, Location, toLongLat } from '../shared/googleApiHelpers';
+import { isGpsAddress, Location, toLongLat, GetDistanceBetween } from '../shared/googleApiHelpers';
 import { Roles } from '../auth/roles';
 import { pagedRowsIterator } from '../families/familyActionsWiring';
 import { Families } from '../families/families';
@@ -161,15 +161,15 @@ export class HelperFamiliesComponent implements OnInit {
     });
     await Families.SendMessageToBrowsers(getLang(context).cancelAssignmentForHelperFamilies, context, dist);
   }
-  sameAddress(f: Families, i: number) {
+  distanceFromPreviousLocation(f: ActiveFamilyDeliveries, i: number) {
     if (i == 0)
-      return false;
+      return undefined;
     if (!f.addressOk.value)
-      return false;
+      return undefined;
     let of = this.familyLists.toDeliver[i - 1];
     if (!of.addressOk.value)
-      return false;
-
+      return undefined;
+    return GetDistanceBetween(of.getDrivingLocation(), f.getDrivingLocation());
     return of.addressLatitude.value == f.addressLatitude.value && of.addressLongitude.value == f.addressLongitude.value;
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })

@@ -40,7 +40,7 @@
         <ng-container *ngFor="let f of familyLists.toDeliver;let i=index">
           <mat-expansion-panel #myPanel *ngIf="limitReady.shouldShow(i)">
             <mat-expansion-panel-header>
-              <app-family-in-list [f]="f" [i]="i+1" style="width:100%" [sameAddress]="sameAddress(f,i)"
+              <app-family-in-list [f]="f" [i]="i+1" style="width:100%" [distanceFromPreviousLocation]="distanceFromPreviousLocation(f,i)"
                 (delivered)="deliveredToFamily(f)"
                 [newAssign]="familyLists.highlightNewFamilies&&!familyLists.familiesAlreadyAssigned.get(f.id.value)">
               </app-family-in-list>
