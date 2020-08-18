@@ -481,7 +481,21 @@ export class FamiliesComponent implements OnInit {
         {
             rule: f => f.status.isEqualTo(FamilyStatus.Active),
             showTotal: false,
-            name: this.settings.lang.region,
+            name: this.settings.lang.by + " " + this.settings.lang.defaultVolunteer,
+            stats: [],
+            moreStats: [],
+            refreshStats: async x => {
+                let familiesByVolunteer = await Families.getDefaultVolunteers();
+                this.prepComplexStats(familiesByVolunteer.map(g => ({ name: g.name, count: g.count, id: g.id })),
+                    x,
+                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.fixedCourier.isEqualTo(g.id)),
+                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.fixedCourier.isDifferentFrom(g.id)));
+            }
+        },
+        {
+            rule: f => f.status.isEqualTo(FamilyStatus.Active),
+            showTotal: false,
+            name: this.settings.lang.by + " " + this.settings.lang.region,
             stats: [],
             moreStats: [],
             refreshStats: async x => {
@@ -492,20 +506,7 @@ export class FamiliesComponent implements OnInit {
                     (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.area.isDifferentFrom(g.name)));
             }
         },
-        {
-            rule: f => f.status.isEqualTo(FamilyStatus.Active),
-            showTotal: false,
-            name: this.settings.lang.defaultVolunteer,
-            stats: [],
-            moreStats: [],
-            refreshStats: async x => {
-                let familiesByVolunteer = await Families.getDefaultVolunteers();
-                this.prepComplexStats(familiesByVolunteer.map(g => ({ name: g.name, count: g.count,id:g.id })),
-                    x,
-                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.fixedCourier.isEqualTo(g.id)),
-                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.fixedCourier.isDifferentFrom(g.id)));
-            }
-        },
+
         {
             rule: f => undefined,
             showTotal: true,

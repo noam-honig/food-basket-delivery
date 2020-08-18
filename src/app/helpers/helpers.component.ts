@@ -162,69 +162,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
         name: use.language.deliveries,
         visible: h => !h.isNew(),
         click: async h => {
-          this.context.openDialog(GridDialogComponent, x => x.args = {
-            title: use.language.deliveriesFor + ' ' + h.name.value,
-            settings: this.context.for(FamilyDeliveries).gridSettings({
-              numOfColumnsInGrid: 6,
-              knowTotalRows: true,
-              allowSelection: true,
-              rowButtons: [{
-
-                name: '',
-                icon: 'edit',
-                showInLine: true,
-                click: async fd => {
-                  fd.showDetailsDialog({
-
-                    dialog: this.dialog,
-                    focusOnDelivery: true
-                  });
-                }
-                , textInMenu: () => getLang(this.context).deliveryDetails
-              }
-              ],
-              gridButtons: [{
-
-                name: this.settings.lang.updateDefaultVolunteer,
-                visible: () => x.args.settings.selectedRows.length > 0,
-                click: async () => {
-                  let map = new Map<string, boolean>();
-                  let i = 0;
-                  for (const stam of x.args.settings.selectedRows) {
-                    let fd: FamilyDeliveries = stam;
-                    if (map.get(fd.id.value))
-                      continue;
-                    map.set(fd.id.value, true);
-                    i++;
-                    let f = await this.context.for(Families).findId(fd.family);
-                    f.fixedCourier.value = fd.courier.value;
-                    await f.save();
-                  }
-                  this.dialog.Info(i + " " + this.settings.lang.familiesUpdated);
-                }
-              }],
-              rowCssClass: fd => fd.deliverStatus.getCss(),
-              columnSettings: fd => {
-                let r: Column[] = [
-                  fd.deliverStatus,
-                  fd.deliveryStatusDate,
-                  fd.basketType,
-                  fd.quantity,
-                  fd.name,
-                  fd.address,
-                  fd.distributionCenter,
-                  fd.courierComments
-                ]
-                r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
-                return r;
-              },
-              get: {
-                where: fd => fd.courier.isEqualTo(h.id),
-                orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
-                limit: 25
-              }
-            })
-          });
+          await h.showDeliveryHistory(this.dialog, this.busy);
         }
       }
 
