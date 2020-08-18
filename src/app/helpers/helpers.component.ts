@@ -205,7 +205,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       if (this.context.isAllowed(Roles.admin))
         this.numOfColsInGrid++;
       if (this.settings.isSytemForMlt())
-        this.numOfColsInGrid += 4;
+        this.numOfColsInGrid += 5;
 
       return this.selectColumns(helpers);
     },
@@ -271,6 +271,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
     r.push({
       column: helpers.preferredDistributionAreaAddress2, width: '120',
     });
+    r.push(helpers.createDate);
 
     if (this.context.isAllowed(Roles.admin) && this.settings.isSytemForMlt()) {
       r.push({
@@ -282,7 +283,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       column: helpers.company, width: '120'
     });
 
-    r.push(helpers.createDate);
+    
 
     if (this.context.isAllowed(Roles.admin) && !hadCenter) {
       r.push(helpers.distributionCenter);
