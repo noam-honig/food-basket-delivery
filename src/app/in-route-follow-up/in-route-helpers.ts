@@ -10,10 +10,10 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 @EntityClass
 export class InRouteHelpers extends IdEntity {
     name = new StringColumn(getLang(this.context).volunteerName);
-    deliveriesInProgress = new NumberColumn(getLang(this.context).delveriesInProgress);
-    minDeliveryCreateDate = new DateTimeColumn("תאריך הקצאה");
-    maxAssignDate = new DateTimeColumn("תאריך שיוך אחרון");
     messageStatus = new MessageStatusColumn();
+    minDeliveryCreateDate = new DateTimeColumn("תאריך הקצאה");
+    deliveriesInProgress = new NumberColumn(getLang(this.context).delveriesInProgress);
+    maxAssignDate = new DateTimeColumn("תאריך שיוך אחרון");
     constructor(private context: Context) {
         super({
             name: 'in-route-helpers',
@@ -48,7 +48,7 @@ export class InRouteHelpers extends IdEntity {
                         where: () => [h.archive.isEqualTo(false), sql.build(h.id, ' in (', sql.query({
                             select: () => [f.courier],
                             from: f,
-                            where: () => [f.deliverStatus.isNotAResultStatus()]
+                            where: () => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]
                         }), ')')]
                     }), ') result ) result');
     }
