@@ -7,11 +7,14 @@
           style="color:red;">{{settings.lang.cancelAllAssignments}}</button>
         <button mat-menu-item (click)="okAll()" *ngIf="partOfAssign"
           class="primary-menu">{{settings.lang.markAllDeliveriesAsSuccesfull}}</button>
+          
         <button mat-menu-item (click)="familyLists.showBasketSummary()"
           *ngIf="notMLT()">{{settings.lang.parcelSummary}}</button>
         <button mat-menu-item (click)="refreshRoute()">{{settings.lang.replanRoute}}</button>
         <button mat-menu-item (click)="showRouteOnGoogleMaps()">
           {{settings.lang.showRouteOnGoogleMaps}}</button>
+          <button mat-menu-item (click)="setDefaultCourier()" *ngIf="partOfAssign"
+          >{{settings.lang.setAsDefaultVolunteerForTheseFamilies}}</button>
 
       </mat-menu>
 

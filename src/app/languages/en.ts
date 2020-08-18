@@ -729,4 +729,7 @@ export class en implements Language {
   invalidatePassword = 'Disable password';
   passwordInvalidated = 'The password has been revoked';
   sessionExpiredPleaseRelogin = 'The connection to the server has expired, please log in again';
+  setAsDefaultVolunteerForTheseFamilies = 'Save as a default volunteer for these families';
+  thisVolunteerIsSetAsTheDefaultFor = 'This volunteer is defined as a default volunteer for more';
+  familiesDotCancelTheseAssignments = 'Families. Should it be canceled by default for these families?';
 }

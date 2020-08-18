@@ -729,4 +729,7 @@ export class soldier implements Language {
   invalidatePassword = 'בטל תוקף סיסמה';
   passwordInvalidated = 'בוטל תוקף הסיסמה';
   sessionExpiredPleaseRelogin = 'פג תוקף החיבור לשרת, יש לבצע כניסה מחדש';
+  setAsDefaultVolunteerForTheseFamilies = 'שמור כמתנדב ברירת מחדל לחיילים אלו';
+  thisVolunteerIsSetAsTheDefaultFor = 'מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד';
+  familiesDotCancelTheseAssignments = 'חיילים. האם לבטל אותו כברירת מחדל לחיילים אלו?';
 }

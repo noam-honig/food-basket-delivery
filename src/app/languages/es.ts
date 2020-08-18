@@ -729,4 +729,7 @@ export class es implements Language {
   invalidatePassword = 'Deshabilitar contraseña';
   passwordInvalidated = 'La contraseña ha sido revocada';
   sessionExpiredPleaseRelogin = 'La conexión con el servidor ha expirado, vuelva a iniciar sesión';
+  setAsDefaultVolunteerForTheseFamilies = 'Guardar como voluntario predeterminado para estas familias';
+  thisVolunteerIsSetAsTheDefaultFor = 'Este voluntario se define como voluntario predeterminado para más';
+  familiesDotCancelTheseAssignments = 'Familias. ¿Debería cancelarse por defecto para estas familias?';
 }

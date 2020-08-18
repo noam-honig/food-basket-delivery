@@ -147,6 +147,9 @@ export class HelperFamiliesComponent implements OnInit {
     });
 
   }
+  setDefaultCourier() {
+    this.familyLists.helper.setAsDefaultVolunteerToDeliveries(this.busy, this.familyLists.toDeliver, this.dialog);
+  }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async cancelAssignAllForHelperOnServer(id: string, context?: Context) {
     let dist = '';
@@ -161,7 +164,7 @@ export class HelperFamiliesComponent implements OnInit {
     });
     await Families.SendMessageToBrowsers(getLang(context).cancelAssignmentForHelperFamilies, context, dist);
   }
-  distanceFromPreviousLocation(f: ActiveFamilyDeliveries, i: number) {
+  distanceFromPreviousLocation(f: ActiveFamilyDeliveries, i: number) { 
     if (i == 0)
       return undefined;
     if (!f.addressOk.value)

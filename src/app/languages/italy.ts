@@ -729,4 +729,7 @@ export class italy implements Language {
   invalidatePassword = 'Disabilita la password';
   passwordInvalidated = 'La password è stata revocata';
   sessionExpiredPleaseRelogin = 'La connessione al server è scaduta, accedi di nuovo';
+  setAsDefaultVolunteerForTheseFamilies = 'Salva come volontario predefinito per queste famiglie';
+  thisVolunteerIsSetAsTheDefaultFor = 'Questo volontario è definito come volontario predefinito per di più';
+  familiesDotCancelTheseAssignments = 'Famiglie. Dovrebbe essere annullato di default per queste famiglie?';
 }

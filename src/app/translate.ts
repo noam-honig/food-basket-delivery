@@ -852,6 +852,9 @@ export class Language {
   invalidatePassword="בטל תוקף סיסמה";
   passwordInvalidated = "בוטל תוקף הסיסמה";
   sessionExpiredPleaseRelogin = "לצורך הגנה על פרטיות הנתונים, יש לבצע כניסה מחדש";
+  setAsDefaultVolunteerForTheseFamilies = "שמור כמתנדב ברירת מחדל למשפחות אלו";
+  thisVolunteerIsSetAsTheDefaultFor="מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד";
+  familiesDotCancelTheseAssignments = "משפחות. האם לבטל אותו כברירת מחדל למשפחות אלו?";
   
 }
 

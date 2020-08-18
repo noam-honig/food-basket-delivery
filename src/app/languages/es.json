@@ -1350,6 +1350,11 @@
     "valueInCode": "משפחות",
     "valueInEnglish": "Families"
   },
+  "familiesDotCancelTheseAssignments": {
+    "google": "Familias. ¿Debería cancelarse por defecto para estas familias?",
+    "valueInCode": "משפחות. האם לבטל אותו כברירת מחדל למשפחות אלו?",
+    "valueInEnglish": "Families. Should it be canceled by default for these families?"
+  },
   "familiesForUpdate": {
     "google": "Familias para actualizar",
     "valueInCode": "משפחות לעדכון",
@@ -2956,6 +2961,11 @@
     "valueInCode": "עדכן גם כמתנדב ברירת מחדל",
     "valueInEnglish": "Also update as a default volunteer"
   },
+  "setAsDefaultVolunteerForTheseFamilies": {
+    "google": "Guardar como voluntario predeterminado para estas familias",
+    "valueInCode": "שמור כמתנדב ברירת מחדל למשפחות אלו",
+    "valueInEnglish": "Save as a default volunteer for these families"
+  },
   "shouldAdd": {
     "google": "Agregar",
     "valueInCode": "האם להוסיף",
@@ -3250,6 +3260,11 @@
     "google": "Esta familia tiene",
     "valueInCode": "למשפחה זו יש",
     "valueInEnglish": "This family has"
+  },
+  "thisVolunteerIsSetAsTheDefaultFor": {
+    "google": "Este voluntario se define como voluntario predeterminado para más",
+    "valueInCode": "מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד",
+    "valueInEnglish": "This volunteer is defined as a default volunteer for more"
   },
   "timeToDisconnect": {
     "google": "Desconecte el tiempo de espera en minutos",

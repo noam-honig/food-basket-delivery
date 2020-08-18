@@ -1081,6 +1081,10 @@
     "google": "תורמים",
     "valueInCode": "משפחות"
   },
+  "familiesDotCancelTheseAssignments": {
+    "google": "תורמים. האם לבטל אותו כברירת מחדל לתורמים אלו?",
+    "valueInCode": "משפחות. האם לבטל אותו כברירת מחדל למשפחות אלו?"
+  },
   "familiesForUpdate": {
     "google": "תורמים לעדכון",
     "valueInCode": "משפחות לעדכון"
@@ -2370,6 +2374,10 @@
     "google": "עדכן גם כמתנדב ברירת מחדל",
     "valueInCode": "עדכן גם כמתנדב ברירת מחדל"
   },
+  "setAsDefaultVolunteerForTheseFamilies": {
+    "google": "שמור כמתנדב ברירת מחדל לתורמים אלו",
+    "valueInCode": "שמור כמתנדב ברירת מחדל למשפחות אלו"
+  },
   "shouldAdd": {
     "google": "האם להוסיף",
     "valueInCode": "האם להוסיף"
@@ -2605,6 +2613,10 @@
   "thisFamilyHas": {
     "google": "לתורם זו יש",
     "valueInCode": "למשפחה זו יש"
+  },
+  "thisVolunteerIsSetAsTheDefaultFor": {
+    "google": "מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד",
+    "valueInCode": "מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד"
   },
   "timeToDisconnect": {
     "google": "זמן בדקות לניתוק אוטומטית",

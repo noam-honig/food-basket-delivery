@@ -729,4 +729,7 @@ export class donor implements Language {
   invalidatePassword = 'בטל תוקף סיסמה';
   passwordInvalidated = 'בוטל תוקף הסיסמה';
   sessionExpiredPleaseRelogin = 'פג תוקף החיבור לשרת, יש לבצע כניסה מחדש';
+  setAsDefaultVolunteerForTheseFamilies = 'שמור כמתנדב ברירת מחדל לתורמים אלו';
+  thisVolunteerIsSetAsTheDefaultFor = 'מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד';
+  familiesDotCancelTheseAssignments = 'תורמים. האם לבטל אותו כברירת מחדל לתורמים אלו?';
 }

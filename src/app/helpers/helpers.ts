@@ -18,6 +18,8 @@ import { getSettings } from '../manage/ApplicationSettings';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 
 import { DialogService } from '../select-popup/dialog';
+import { DeliveryStatus } from '../families/DeliveryStatus';
+import { FamilyStatus } from '../families/FamilyStatus';
 
 
 
@@ -129,21 +131,8 @@ export class Helpers extends HelpersBase {
                     name: getLang(this.context).updateDefaultVolunteer,
                     visible: () => x.args.settings.selectedRows.length > 0,
                     click: async () => {
-                        let map = new Map<string, boolean>();
-                        let i = 0;
-                        await busy.doWhileShowingBusy(async () => {
-                            for (const stam of x.args.settings.selectedRows) {
-                                let fd: import('../families/FamilyDeliveries').FamilyDeliveries = stam;
-                                if (map.get(fd.id.value))
-                                    continue;
-                                map.set(fd.id.value, true);
-                                i++;
-                                let f = await this.context.for((await import('../families/families')).Families).findId(fd.family);
-                                f.fixedCourier.value = fd.courier.value;
-                                await f.save();
-                            }
-                        })
-                        dialog.Info(i + " " + getLang(this.context).familiesUpdated);
+                        let deliveries: import('../families/FamilyDeliveries').FamilyDeliveries[] = x.args.settings.selectedRows;
+                        await this.setAsDefaultVolunteerToDeliveries(busy, deliveries, dialog);
                     }
                 }],
                 rowCssClass: fd => fd.deliverStatus.getCss(),
@@ -324,6 +313,40 @@ export class Helpers extends HelpersBase {
     addressApiResult = new StringColumn();
     private _lastString: string;
     private _lastGeo: GeocodeInformation;
+    async setAsDefaultVolunteerToDeliveries(busy: BusyService, deliveries: import("../families/FamilyDeliveries").FamilyDeliveries[], dialog: DialogService) {
+        let ids: string[] = [];
+        let i = 0;
+
+        await busy.doWhileShowingBusy(async () => {
+            for (const fd of deliveries) {
+
+                if (ids.includes(fd.family.value))
+                    continue;
+                ids.push(fd.family.value);
+                i++;
+                let f = await this.context.for((await import('../families/families')).Families).findId(fd.family);
+                f.fixedCourier.value = fd.courier.value;
+                await f.save();
+            }
+        });
+
+        let otherFamilies = await this.context.for((await import('../families/families')).Families).find({
+            where: f => f.fixedCourier.isEqualTo(this.id)
+                .and(f.status.isEqualTo(FamilyStatus.Active)).and(f.id.isNotIn(ids))
+        });
+        if (otherFamilies.length > 0) {
+            if (await dialog.YesNoPromise(getLang(this.context).thisVolunteerIsSetAsTheDefaultFor + " " + otherFamilies.length + " " + getLang(this.context).familiesDotCancelTheseAssignments)) {
+                for (const f of otherFamilies) {
+                    f.fixedCourier.value = '';
+                    await f.save();
+                    i++;
+                }
+            }
+        }
+
+        dialog.Info(i + " " + getLang(this.context).familiesUpdated);
+    }
+
     getGeocodeInformation() {
         if (this._lastString == this.addressApiResult.value)
             return this._lastGeo ? this._lastGeo : new GeocodeInformation();
