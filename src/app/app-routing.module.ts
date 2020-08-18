@@ -55,7 +55,7 @@ export class MltOnlyGuard implements CanActivate {
     }
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | import("@angular/router").UrlTree | import("rxjs").Observable<boolean | import("@angular/router").UrlTree> | Promise<boolean | import("@angular/router").UrlTree> {
         let site = Sites.getOrganizationFromContext(this.context);
-        console.log(site,this.context.getPathInUrl());
+        
         if (site == 'mlt')
             return true;
         return false;
@@ -70,7 +70,7 @@ export class MltAdminGuard implements CanActivate {
     }
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | import("@angular/router").UrlTree | import("rxjs").Observable<boolean | import("@angular/router").UrlTree> | Promise<boolean | import("@angular/router").UrlTree> {
         let site = Sites.getOrganizationFromContext(this.context);
-        console.log(site,this.context.getPathInUrl());
+        
         if (site == 'mlt')
             return this.context.isAllowed(Roles.admin);
         return false;

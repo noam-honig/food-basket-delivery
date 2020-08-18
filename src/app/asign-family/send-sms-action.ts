@@ -6,7 +6,7 @@ import { Context, ServerContext } from '@remult/core';
 import { Roles } from "../auth/roles";
 import { Sites } from '../sites/sites';
 import { getLang } from '../sites/sites';
-import { HelperCommunicationHistory } from '../in-route-follow-up/in-route-helpers';
+
 
 
 
@@ -42,7 +42,7 @@ export class SendSmsAction {
         else
             h.smsDate.value = new Date();
         await h.save();
-        let hist = context.for(HelperCommunicationHistory).create();
+        let hist = context.for((await import ('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
         hist.volunteer.value = h.id.value;
         if (reminder) {
             hist.comment.value = 'Reminder ' + type;
