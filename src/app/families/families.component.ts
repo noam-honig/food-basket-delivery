@@ -481,7 +481,7 @@ export class FamiliesComponent implements OnInit {
         {
             rule: f => f.status.isEqualTo(FamilyStatus.Active),
             showTotal: false,
-            name: this.settings.lang.by + " " + this.settings.lang.defaultVolunteer,
+            name:  this.settings.lang.defaultVolunteer,
             stats: [],
             moreStats: [],
             refreshStats: async x => {
@@ -495,7 +495,7 @@ export class FamiliesComponent implements OnInit {
         {
             rule: f => f.status.isEqualTo(FamilyStatus.Active),
             showTotal: false,
-            name: this.settings.lang.by + " " + this.settings.lang.region,
+            name:  this.settings.lang.region,
             stats: [],
             moreStats: [],
             refreshStats: async x => {
