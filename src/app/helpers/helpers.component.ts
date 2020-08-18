@@ -20,11 +20,12 @@ import { HelperAssignmentComponent } from '../helper-assignment/helper-assignmen
 import { Sites } from '../sites/sites';
 import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import { FamilyDeliveries } from '../families/FamilyDeliveries';
+import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { visitAll } from '@angular/compiler';
 import { use, TranslationOptions } from '../translate';
 import { getLang } from '../sites/sites';
+import { FamilyDeliveresStatistics } from '../family-deliveries/family-deliveries-stats';
 
 @Component({
   selector: 'app-helpers',
@@ -69,7 +70,12 @@ export class HelpersComponent implements OnInit, OnDestroy {
       {
         name: use.language.exportToExcel,
         click: async () => {
-          await saveToExcel(this.settings, this.context.for(Helpers), this.helpers, use.language.volunteer, this.busy, (d: Helpers, c) => c == d.id || c == d.password || c == d.totalKm || c == d.totalTime || c == d.smsDate || c == d.reminderSmsDate || c == d.realStoredPassword || c == d.shortUrlKey || c == d.admin);
+          await saveToExcel(this.settings, this.context.for(Helpers), this.helpers, use.language.volunteer, this.busy, (d: Helpers, c) => c == d.id || c == d.password || c == d.totalKm || c == d.totalTime || c == d.smsDate || c == d.reminderSmsDate || c == d.realStoredPassword || c == d.shortUrlKey || c == d.admin, undefined,
+            async (h, addColumn) => {
+              addColumn(use.language.city, h.getGeocodeInformation().getCity(), 's');
+              addColumn(use.language.city+"2", h.getGeocodeInformation2().getCity(), 's');
+
+            });
         }
         , visible: () => this.context.isAllowed(Roles.admin)
       },
