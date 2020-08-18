@@ -810,7 +810,8 @@
   },
   "delveriesInProgress": {
     "google": "תורמים מחכות",
-    "valueInCode": "משפחות מחכות"
+    "valueInCode": "משפחות מחכות",
+    "custom": "תורמים מחכים"
   },
   "delveriesSuccesfull": {
     "google": "נמסרו",
@@ -1747,7 +1748,7 @@
   },
   "notDeliveredDontWant": {
     "google": "לא נמסר, לא צריכים חבילה",
-    "valueInCode": "לא נמסר, לא צריכים חבילה",
+    "valueInCode": "לא נמסר, לא מעוניינים בחבילה",
     "custom": "לא נמסר, בעיה אצל התורמ/ת"
   },
   "notDeliveredNotHome": {

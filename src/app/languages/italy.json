@@ -2182,7 +2182,7 @@
   },
   "notDeliveredDontWant": {
     "google": "Non consegnato, non serve pacco",
-    "valueInCode": "לא נמסר, לא צריכים חבילה",
+    "valueInCode": "לא נמסר, לא מעוניינים בחבילה",
     "valueInEnglish": "Not delivered, do not need a package"
   },
   "notDeliveredNotHome": {

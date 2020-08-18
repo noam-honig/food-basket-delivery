@@ -87,6 +87,7 @@ import { DeliveryReceptionComponent } from './delivery-reception/delivery-recept
 import { RegisterDonorComponent } from './register-donor/register-donor.component';
 import { RegisterHelperComponent } from './register-helper/register-helper.component';
 import { AddressInputComponent } from './address-input/address-input.component';
+import { InRouteFollowUpComponent } from './in-route-follow-up/in-route-follow-up.component';
 
 
 
@@ -173,7 +174,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     DeliveryReceptionComponent,
     RegisterDonorComponent,
     RegisterHelperComponent,
-    AddressInputComponent
+    AddressInputComponent,
+    InRouteFollowUpComponent
 
 
   ],

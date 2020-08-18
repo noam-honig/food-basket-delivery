@@ -1934,7 +1934,7 @@
   },
   "notDeliveredDontWant": {
     "google": "Not delivered, do not need a package",
-    "valueInCode": "לא נמסר, לא צריכים חבילה"
+    "valueInCode": "לא נמסר, לא מעוניינים בחבילה"
   },
   "notDeliveredNotHome": {
     "google": "Not delivered, were not at home",

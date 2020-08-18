@@ -462,7 +462,7 @@ export class donor implements Language {
   smsNotOpened = 'SMS טרם נפתח';
   doneVolunteers = 'סיימו';
   problems = 'בעיות';
-  delveriesInProgress = 'תורמים מחכות';
+  delveriesInProgress = 'תורמים מחכים';
   dates = 'תאריכים';
   selfPickup = 'באים למסור';
   delveriesSuccesfull = 'נמסרו';

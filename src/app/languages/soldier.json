@@ -1745,7 +1745,7 @@
   },
   "notDeliveredDontWant": {
     "google": "לא נמסר, לא צריכים חבילה",
-    "valueInCode": "לא נמסר, לא צריכים חבילה"
+    "valueInCode": "לא נמסר, לא מעוניינים בחבילה"
   },
   "notDeliveredNotHome": {
     "google": "לא נמסר, לא היו בבית",
