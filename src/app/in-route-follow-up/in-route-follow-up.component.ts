@@ -28,9 +28,7 @@ export class InRouteFollowUpComponent implements OnInit {
       showInLine: true,
       visible: h => !h.isNew(),
       click: async s => {
-        let h = await this.context.for(Helpers).findId(s.id);
-        this.context.openDialog(
-          HelperAssignmentComponent, s => s.argsHelper = h)
+        s.showAssignment();
       }
     }, {
       name: use.language.ActiveDeliveries,
@@ -38,10 +36,21 @@ export class InRouteFollowUpComponent implements OnInit {
       click: async h => {
         this.context.openDialog(GridDialogComponent, x => x.args = {
           title: use.language.deliveriesFor + ' ' + h.name.value,
+          buttons: [
+            {
+              text: 'תכתובות',
+              click: () => h.showHistory()
+            },
+            {
+              text: 'שיוך משלוחים',
+              click: () => h.showAssignment()
+            }
+          ],
           settings: this.context.for(ActiveFamilyDeliveries).gridSettings({
             numOfColumnsInGrid: 6,
             knowTotalRows: true,
             rowCssClass: fd => fd.deliverStatus.getCss(),
+
             columnSettings: fd => {
               let r: DataControlInfo[] = [
                 fd.name,
@@ -68,43 +77,9 @@ export class InRouteFollowUpComponent implements OnInit {
       }
     },
     {
-      name: 'היסטוריה',
-
+      name: 'תכתובות',
       click: async h => {
-        this.context.openDialog(GridDialogComponent, gridDialog => gridDialog.args = {
-          title: 'היסטוריה עבור ' + h.name.value,
-          buttons: [{
-            text: 'הוסף',
-            click: async () => {
-              let comment = new StringColumn("הערה");
-              await this.context.openDialog(InputAreaComponent, inputArea => inputArea.args = {
-                title: 'הוסף הערה',
-                ok: async () => {
-                  let hist = this.context.for(HelperCommunicationHistory).create();
-                  hist.volunteer.value = h.id.value;
-                  hist.comment.value = comment.value;
-                  await hist.save();
-                  gridDialog.args.settings.getRecords();
-                },
-                settings: {
-                  columnSettings: () => [comment]
-                }
-
-              });
-            }
-          }],
-          settings: this.context.for(HelperCommunicationHistory).gridSettings({
-            numOfColumnsInGrid: 6,
-            knowTotalRows: true,
-
-            columnSettings: hist => [hist.createDate, hist.comment, hist.createUser],
-            get: {
-              where: hist => hist.volunteer.isEqualTo(h.id),
-              orderBy: fd => [{ column: fd.createDate, descending: true }],
-              limit: 25
-            }
-          })
-        });
+        h.showHistory();
       }
     }]
   });

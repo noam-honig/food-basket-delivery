@@ -337,7 +337,7 @@ export class HelperFamiliesComponent implements OnInit {
       phone = phone.substr(1);
 
     window.open('https://wa.me/' + phone + '?text=' + encodeURI(this.smsMessage), '_blank');
-    await this.updateMessageSent();
+    await this.updateMessageSent("Whatsapp");
   }
   async customSms() {
     let h = this.familyLists.helper;
@@ -349,7 +349,7 @@ export class HelperFamiliesComponent implements OnInit {
       helpText: () => new StringColumn(),
       ok: async (comment) => {
         try {
-          await (await import ("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.familyLists.helper.id.value, comment);
+          await (await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.familyLists.helper.id.value, comment);
           this.dialog.Info("הודעה נשלחה");
         }
         catch (err) {
@@ -366,7 +366,9 @@ export class HelperFamiliesComponent implements OnInit {
   smsMessage: string = '';
   smsPhone: string = '';
   smsLink: string = '';
-  prepareMessage(reminder: Boolean) {
+  isReminderMessage: boolean = false;
+  prepareMessage(reminder: boolean) {
+    this.isReminderMessage = reminder;
     this.busy.donotWait(async () => {
       await SendSmsAction.generateMessage(this.context, this.familyLists.helper, window.origin, reminder, this.context.user.name, (phone, message, sender, link) => {
         this.smsMessage = message;
@@ -378,7 +380,7 @@ export class HelperFamiliesComponent implements OnInit {
   async sendPhoneSms() {
     try {
       window.open('sms:' + this.smsPhone + ';?&body=' + encodeURI(this.smsMessage), '_blank');
-      await this.updateMessageSent();
+      await this.updateMessageSent("Sms from user phone");
     } catch (err) {
       this.dialog.Error(err);
     }
@@ -389,20 +391,19 @@ export class HelperFamiliesComponent implements OnInit {
   callEscort() {
     window.open('tel:' + this.familyLists.escort.phone.value);
   }
-  async updateMessageSent() {
+  async updateMessageSent(type: string) {
 
-    this.familyLists.helper.smsDate.value = new Date();
-    await this.familyLists.helper.save();
+    SendSmsAction.documentHelperMessage(this.isReminderMessage, this.familyLists.helper, this.context, type);
   }
   async copyMessage() {
     copy(this.smsMessage);
     this.dialog.Info(use.language.messageCopied);
-    await this.updateMessageSent();
+    await this.updateMessageSent("Message Copied");
   }
   async copyLink() {
     copy(this.smsLink);
     this.dialog.Info(use.language.linkCopied);
-    await this.updateMessageSent();
+    await this.updateMessageSent("Link Copied");
   }
 
   updateComment(f: ActiveFamilyDeliveries) {
