@@ -488,8 +488,22 @@ export class FamiliesComponent implements OnInit {
                 let areas = await AreaColumn.getAreas();
                 this.prepComplexStats(areas.map(g => ({ name: g.area, count: g.count })),
                     x,
-                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.area.isEqualTo(g)),
-                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.groups.isDifferentFrom(g)));
+                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.area.isEqualTo(g.name)),
+                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.area.isDifferentFrom(g.name)));
+            }
+        },
+        {
+            rule: f => f.status.isEqualTo(FamilyStatus.Active),
+            showTotal: false,
+            name: this.settings.lang.defaultVolunteer,
+            stats: [],
+            moreStats: [],
+            refreshStats: async x => {
+                let familiesByVolunteer = await Families.getDefaultVolunteers();
+                this.prepComplexStats(familiesByVolunteer.map(g => ({ name: g.name, count: g.count,id:g.id })),
+                    x,
+                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.fixedCourier.isEqualTo(g.id)),
+                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.fixedCourier.isDifferentFrom(g.id)));
             }
         },
         {
@@ -578,8 +592,8 @@ export class FamiliesComponent implements OnInit {
                 this.groupsTotals.stats.splice(0);
                 this.prepComplexStats(st.groups.map(g => ({ name: g.name, count: g.total })),
                     this.groupsTotals,
-                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.groups.isContains(g)),
-                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.groups.isDifferentFrom(g)));
+                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.groups.isContains(g.name)),
+                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.groups.isDifferentFrom(g.name)));
 
 
 
@@ -591,8 +605,8 @@ export class FamiliesComponent implements OnInit {
     private prepComplexStats<type extends { name: string, count: number }>(
         cities: type[],
         stats: statsOnTab,
-        equalToFilter: (f: Families, item: string) => FilterBase,
-        differentFromFilter: (f: Families, item: string) => AndFilter
+        equalToFilter: (f: Families, item: type) => FilterBase,
+        differentFromFilter: (f: Families, item: type) => AndFilter
     ) {
         stats.stats.splice(0);
         stats.moreStats.splice(0);
@@ -603,12 +617,12 @@ export class FamiliesComponent implements OnInit {
         cities.forEach(b => {
             if (b.count == 0)
                 return;
-            let fs = new FaimilyStatistics(b.name, f => equalToFilter(f, b.name), undefined);
+            let fs = new FaimilyStatistics(b.name, f => equalToFilter(f, b), undefined);
             fs.value = +b.count;
             i++;
             if (i <= 8) {
                 stats.stats.push(fs);
-                firstCities.push(b.name);
+                firstCities.push(b);
             }
             if (i > 8) {
                 if (!lastFs) {

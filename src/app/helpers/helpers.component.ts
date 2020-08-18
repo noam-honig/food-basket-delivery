@@ -26,6 +26,7 @@ import { visitAll } from '@angular/compiler';
 import { use, TranslationOptions } from '../translate';
 import { getLang } from '../sites/sites';
 import { FamilyDeliveresStatistics } from '../family-deliveries/family-deliveries-stats';
+import { Families } from '../families/families';
 
 @Component({
   selector: 'app-helpers',
@@ -73,7 +74,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
           await saveToExcel(this.settings, this.context.for(Helpers), this.helpers, use.language.volunteer, this.busy, (d: Helpers, c) => c == d.id || c == d.password || c == d.totalKm || c == d.totalTime || c == d.smsDate || c == d.reminderSmsDate || c == d.realStoredPassword || c == d.shortUrlKey || c == d.admin, undefined,
             async (h, addColumn) => {
               addColumn(use.language.city, h.getGeocodeInformation().getCity(), 's');
-              addColumn(use.language.city+"2", h.getGeocodeInformation2().getCity(), 's');
+              addColumn(use.language.city + "2", h.getGeocodeInformation2().getCity(), 's');
 
             });
         }
@@ -166,6 +167,42 @@ export class HelpersComponent implements OnInit, OnDestroy {
             settings: this.context.for(FamilyDeliveries).gridSettings({
               numOfColumnsInGrid: 6,
               knowTotalRows: true,
+              allowSelection: true,
+              rowButtons: [{
+
+                name: '',
+                icon: 'edit',
+                showInLine: true,
+                click: async fd => {
+                  fd.showDetailsDialog({
+
+                    dialog: this.dialog,
+                    focusOnDelivery: true
+                  });
+                }
+                , textInMenu: () => getLang(this.context).deliveryDetails
+              }
+              ],
+              gridButtons: [{
+
+                name: this.settings.lang.updateDefaultVolunteer,
+                visible: () => x.args.settings.selectedRows.length > 0,
+                click: async () => {
+                  let map = new Map<string, boolean>();
+                  let i = 0;
+                  for (const stam of x.args.settings.selectedRows) {
+                    let fd: FamilyDeliveries = stam;
+                    if (map.get(fd.id.value))
+                      continue;
+                    map.set(fd.id.value, true);
+                    i++;
+                    let f = await this.context.for(Families).findId(fd.family);
+                    f.fixedCourier.value = fd.courier.value;
+                    await f.save();
+                  }
+                  this.dialog.Info(i + " " + this.settings.lang.familiesUpdated);
+                }
+              }],
               rowCssClass: fd => fd.deliverStatus.getCss(),
               columnSettings: fd => {
                 let r: Column[] = [
@@ -283,7 +320,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       column: helpers.company, width: '120'
     });
 
-    
+
 
     if (this.context.isAllowed(Roles.admin) && !hadCenter) {
       r.push(helpers.distributionCenter);

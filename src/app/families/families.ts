@@ -5,7 +5,7 @@ import { FamilySourceId } from "./FamilySources";
 import { BasketId, QuantityColumn } from "./BasketType";
 import { SqlBuilder, PhoneColumn, EmailColumn, delayWhileTyping, wasChanged, changeDate } from "../model-shared/types";
 import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, FilterBase, ColumnOptions, SpecificEntityHelper, Entity, DataArealColumnSetting, InMemoryDataProvider, ServerContext, SelectValueDialogComponent } from '@remult/core';
-import { HelperIdReadonly, HelperId } from "../helpers/helpers";
+import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress } from "../shared/googleApiHelpers";
 import { ApplicationSettings, CustomColumn } from "../manage/ApplicationSettings";
@@ -45,6 +45,30 @@ declare type factoryFor<T> = {
 
 @EntityClass
 export class Families extends IdEntity {
+  @ServerFunction({ allowed: Roles.admin })
+  static async getDefaultVolunteers(context?: Context, db?: SqlDatabase) {
+    var sql = new SqlBuilder();
+    let f = context.for(Families).create();
+    let r = await db.execute(sql.query({
+      from: f,
+      select: () => [f.fixedCourier, 'count (*) as count'],
+      where: () => [f.status.isEqualTo(FamilyStatus.Active)],
+      groupBy: () => [f.fixedCourier],
+      orderBy: [{ column: f.fixedCourier, descending: false }]
+
+    }));
+    let result = r.rows.map(x => ({
+      id: x.fixedcourier,
+      name: '',
+      count: x.count
+    }));
+    for (const r of result) {
+      let h = await context.for(Helpers).findId(r.id);
+      if (h)
+        r.name = h.name.value;
+    }
+    return result;
+  }
   async showFamilyDialog(tools?: { onSave: () => Promise<void> }) {
     this.context.openDialog((await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent, x => x.args = {
       family: this,
