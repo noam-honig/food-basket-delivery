@@ -1,9 +1,9 @@
 import { IdEntity, StringColumn, Context, EntityClass, NumberColumn } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { getSettings } from "../manage/ApplicationSettings";
-import { SqlBuilder, DateTimeColumn } from "../model-shared/types";
+import { SqlBuilder, DateTimeColumn, changeDate } from "../model-shared/types";
 import { getLang } from "../sites/sites";
-import { Helpers } from "../helpers/helpers";
+import { Helpers, HelperIdReadonly, HelperId } from "../helpers/helpers";
 import { ActiveFamilyDeliveries, MessageStatus, MessageStatusColumn } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 
@@ -51,7 +51,30 @@ export class InRouteHelpers extends IdEntity {
                             where: () => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]
                         }), ')')]
                     }), ') result ) result');
+            }
+        });
     }
-});
+}
+
+@EntityClass
+export class HelperCommunicationHistory extends IdEntity {
+    createDate = new changeDate({ caption: getLang(this.context).createDate });
+    createUser = new HelperIdReadonly(this.context, { caption: getLang(this.context).createUser });
+    volunteer = new HelperId(this.context, { caption: getLang(this.context).volunteer });
+    comment = new StringColumn("הערה");
+    constructor(private context: Context) {
+        super({
+            name: 'HelperCommunicationHistory',
+            allowApiCRUD: Roles.admin,
+            allowApiRead: Roles.admin,
+            saving: () => {
+                if (this.isNew()) {
+                    this.createDate.value = new Date();
+                    this.createUser.value = this.context.user.id;
+                }
+            }
+
+        })
     }
+
 }
