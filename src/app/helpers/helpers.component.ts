@@ -238,7 +238,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       width: '120'
     });
 
-    if (this.context.isAllowed(Roles.distCenterAdmin) && this.settings.isSytemForMlt()) {
+    if (this.context.isAllowed(Roles.admin) && this.settings.isSytemForMlt()) {
       r.push({
         column: helpers.isIndependent,
         width: '120'
