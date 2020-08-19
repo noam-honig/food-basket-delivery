@@ -9,6 +9,7 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { HelperAssignmentComponent } from "../helper-assignment/helper-assignment.component";
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
+import { EditCommentDialogComponent } from "../edit-comment-dialog/edit-comment-dialog.component";
 
 @EntityClass
 export class InRouteHelpers extends IdEntity {
@@ -16,42 +17,61 @@ export class InRouteHelpers extends IdEntity {
         this.context.openDialog(GridDialogComponent, gridDialog => gridDialog.args = {
             title: 'היסטוריה עבור ' + this.name.value,
             buttons: [{
-              text: 'הוסף',
-              click: async () => {
-                let comment = new StringColumn("הערה");
-                await this.context.openDialog(InputAreaComponent, inputArea => inputArea.args = {
-                  title: 'הוסף הערה',
-                  ok: async () => {
-                    let hist = this.context.for(HelperCommunicationHistory).create();
-                    hist.volunteer.value = this.id.value;
-                    hist.comment.value = comment.value;
-                    await hist.save();
-                    gridDialog.args.settings.getRecords();
-                  },
-                  settings: {
-                    columnSettings: () => [comment]
-                  }
-  
-                });
-              }
+                text: 'הוסף',
+                click: async () => {
+
+                    await this.context.openDialog(EditCommentDialogComponent, inputArea => inputArea.args = {
+                        title: 'הוסף הערה',
+
+                        save: async (comment) => {
+                            let hist = this.context.for(HelperCommunicationHistory).create();
+                            hist.volunteer.value = this.id.value;
+                            hist.comment.value = comment;
+                            await hist.save();
+                            gridDialog.args.settings.getRecords();
+                        },
+                        comment: ''
+
+
+                    });
+                }
             }],
             settings: this.context.for(HelperCommunicationHistory).gridSettings({
-              numOfColumnsInGrid: 6,
-              knowTotalRows: true,
-  
-              columnSettings: hist => [hist.createDate, hist.comment, hist.createUser],
-              get: {
-                where: hist => hist.volunteer.isEqualTo(this.id),
-                orderBy: fd => [{ column: fd.createDate, descending: true }],
-                limit: 25
-              }
+                numOfColumnsInGrid: 6,
+                knowTotalRows: true,
+                rowButtons: [
+                    {
+                        name: getLang(this.context).editComment,
+                        click: async (r) => {
+                            await this.context.openDialog(EditCommentDialogComponent, inputArea => inputArea.args = {
+                                title: 'הוסף הערה',
+
+                                save: async (comment) => {
+                                    r.comment.value = comment;
+                                    await r.save();
+                                },
+                                comment: r.comment.value
+
+
+                            });
+                        },
+                        visible:r=>r.createUser.value ==this.context.user.id
+                    }
+                ],
+
+                columnSettings: hist => [hist.createDate, hist.comment, hist.createUser],
+                get: {
+                    where: hist => hist.volunteer.isEqualTo(this.id),
+                    orderBy: fd => [{ column: fd.createDate, descending: true }],
+                    limit: 25
+                }
             })
-          });
+        });
     }
     async showAssignment() {
         let h = await this.context.for(Helpers).findId(this.id);
         this.context.openDialog(
-          HelperAssignmentComponent, s => s.argsHelper = h)
+            HelperAssignmentComponent, s => s.argsHelper = h)
     }
     name = new StringColumn(getLang(this.context).volunteerName);
     messageStatus = new MessageStatusColumn();
@@ -105,12 +125,18 @@ export class HelperCommunicationHistory extends IdEntity {
     createDate = new changeDate({ caption: getLang(this.context).createDate });
     createUser = new HelperIdReadonly(this.context, { caption: getLang(this.context).createUser });
     volunteer = new HelperId(this.context, { caption: getLang(this.context).volunteer });
-    comment = new StringColumn("הערה");
+    comment = new StringColumn({
+        caption: "הערה",
+        dataControlSettings: () => ({
+            width: '400'
+        })
+    });
     constructor(private context: Context) {
         super({
             name: 'HelperCommunicationHistory',
             allowApiInsert: Roles.admin,
             allowApiRead: Roles.admin,
+            allowApiUpdate:Roles.admin,
             saving: () => {
                 if (this.isNew()) {
                     this.createDate.value = new Date();

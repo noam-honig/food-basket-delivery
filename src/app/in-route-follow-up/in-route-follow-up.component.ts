@@ -8,6 +8,7 @@ import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { helperHistoryInfo } from '../delivery-history/delivery-history.component';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
+import { DeliveryStatus } from '../families/DeliveryStatus';
 
 @Component({
   selector: 'app-in-route-follow-up',
@@ -19,7 +20,7 @@ export class InRouteFollowUpComponent implements OnInit {
   constructor(private context: Context) { }
   helpers = this.context.for(InRouteHelpers).gridSettings({
     get: {
-      limit: 50
+      limit: 25
     },
     knowTotalRows: true,
     rowButtons: [{
@@ -47,7 +48,7 @@ export class InRouteFollowUpComponent implements OnInit {
             }
           ],
           settings: this.context.for(ActiveFamilyDeliveries).gridSettings({
-            numOfColumnsInGrid: 6,
+            numOfColumnsInGrid: 7,
             knowTotalRows: true,
             rowCssClass: fd => fd.deliverStatus.getCss(),
 
@@ -56,19 +57,21 @@ export class InRouteFollowUpComponent implements OnInit {
                 fd.name,
                 fd.address,
                 { column: fd.internalDeliveryComment, width: '400' },
-                { column: fd.courierComments, width: '400' },
+                
+                fd.courierAssingTime,
                 fd.deliverStatus,
                 fd.deliveryStatusDate,
                 fd.basketType,
                 fd.quantity,
                 fd.distributionCenter,
-                fd.courierComments
+                fd.courierComments,
+                { column: fd.courierComments, width: '400' }
               ]
               r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
               return r;
             },
             get: {
-              where: fd => fd.courier.isEqualTo(h.id),
+              where: fd => fd.courier.isEqualTo(h.id).and(fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
               orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
               limit: 25
             }

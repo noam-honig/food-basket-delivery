@@ -732,4 +732,5 @@ export class es implements Language {
   setAsDefaultVolunteerForTheseFamilies = 'Guardar como voluntario predeterminado para estas familias';
   thisVolunteerIsSetAsTheDefaultFor = 'Este voluntario se define como voluntario predeterminado para más';
   familiesDotCancelTheseAssignments = 'Familias. ¿Debería cancelarse por defecto para estas familias?';
+  editComment = 'Haz una nota';
 }

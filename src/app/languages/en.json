@@ -1020,6 +1020,10 @@
     "valueInCode": "חיפוש משפחות כפולות",
     "custom": "Possible Duplicates"
   },
+  "editComment": {
+    "google": "Make a note",
+    "valueInCode": "ערוך הערה"
+  },
   "email": {
     "google": "eMail",
     "valueInCode": "eMail"

@@ -855,6 +855,7 @@ export class Language {
   setAsDefaultVolunteerForTheseFamilies = "שמור כמתנדב ברירת מחדל למשפחות אלו";
   thisVolunteerIsSetAsTheDefaultFor="מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד";
   familiesDotCancelTheseAssignments = "משפחות. האם לבטל אותו כברירת מחדל למשפחות אלו?";
+  editComment = "ערוך הערה";
   
 }
 

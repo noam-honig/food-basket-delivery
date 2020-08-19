@@ -889,6 +889,10 @@
     "google": "חיפוש תורמים כפולים",
     "valueInCode": "חיפוש משפחות כפולות"
   },
+  "editComment": {
+    "google": "ערוך הערה",
+    "valueInCode": "ערוך הערה"
+  },
   "email": {
     "google": "eMail",
     "valueInCode": "eMail"

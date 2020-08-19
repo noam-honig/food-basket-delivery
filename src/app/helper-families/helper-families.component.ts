@@ -14,7 +14,7 @@ import { Context } from '@remult/core';
 import { Column } from '@remult/core';
 import { use, TranslationOptions } from '../translate';
 import { Helpers, HelperId } from '../helpers/helpers';
-import { UpdateCommentComponent } from '../update-comment/update-comment.component';
+import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { isGpsAddress, Location, toLongLat, GetDistanceBetween } from '../shared/googleApiHelpers';
@@ -26,6 +26,8 @@ import { routeStrategyColumn } from '../asign-family/route-strategy';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { PhoneColumn } from '../model-shared/types';
 import { Sites, getLang } from '../sites/sites';
+import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
+import { HelperCommunicationHistory } from '../in-route-follow-up/in-route-helpers';
 
 @Component({
   selector: 'app-helper-families',
@@ -164,7 +166,7 @@ export class HelperFamiliesComponent implements OnInit {
     });
     await Families.SendMessageToBrowsers(getLang(context).cancelAssignmentForHelperFamilies, context, dist);
   }
-  distanceFromPreviousLocation(f: ActiveFamilyDeliveries, i: number) { 
+  distanceFromPreviousLocation(f: ActiveFamilyDeliveries, i: number) {
     if (i == 0)
       return undefined;
     if (!f.addressOk.value)
@@ -242,7 +244,7 @@ export class HelperFamiliesComponent implements OnInit {
     await new SendSmsUtils().sendSms(phone, settings.helpPhone.value, SendSmsAction.getSuccessMessage(settings.successMessageText.value, settings.organisationName.value, fd.name.value), context.getOrigin(), Sites.getOrganizationFromContext(context), settings);
   }
   async deliveredToFamilyOk(f: ActiveFamilyDeliveries, status: DeliveryStatus, helpText: (s: ApplicationSettings) => Column) {
-    this.context.openDialog(UpdateCommentComponent, x => x.args = {
+    this.context.openDialog(GetVolunteerFeedback, x => x.args = {
       family: f,
       comment: f.courierComments.value,
       helpText,
@@ -289,7 +291,7 @@ export class HelperFamiliesComponent implements OnInit {
       showUpdateFail = await this.context.openDialog(CommonQuestionsComponent, x => x.init(this.familyLists.allFamilies[0]), x => x.updateFailedDelivery);
     }
     if (showUpdateFail)
-      this.context.openDialog(UpdateCommentComponent, x => x.args = {
+      this.context.openDialog(GetVolunteerFeedback, x => x.args = {
         family: f,
         comment: f.courierComments.value,
         showFailStatus: true,
@@ -348,7 +350,7 @@ export class HelperFamiliesComponent implements OnInit {
     if (phone.startsWith('0')) {
       phone = '972' + phone.substr(1);
     }
-    await this.context.openDialog(UpdateCommentComponent, x => x.args = {
+    await this.context.openDialog(GetVolunteerFeedback, x => x.args = {
       helpText: () => new StringColumn(),
       ok: async (comment) => {
         try {
@@ -388,8 +390,23 @@ export class HelperFamiliesComponent implements OnInit {
       this.dialog.Error(err);
     }
   }
-  callHelper() {
-    window.open('tel:' + this.familyLists.helper.phone.value);
+  async callHelper() {
+    location.href = 'tel:' + this.familyLists.helper.phone.value;
+    if (this.settings.isSytemForMlt()) {
+      await this.context.openDialog(EditCommentDialogComponent, inputArea => inputArea.args = {
+        title: 'הוסף הערה לתכתובות של המתנדב',
+
+        save: async (comment) => {
+          let hist = this.context.for(HelperCommunicationHistory).create();
+          hist.volunteer.value = this.familyLists.helper.id.value;
+          hist.comment.value = comment;
+          await hist.save();
+        },
+        comment: 'התקשרתי'
+
+
+      });
+    }
   }
   callEscort() {
     window.open('tel:' + this.familyLists.escort.phone.value);
@@ -410,7 +427,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
   updateComment(f: ActiveFamilyDeliveries) {
-    this.context.openDialog(UpdateCommentComponent, x => x.args = {
+    this.context.openDialog(GetVolunteerFeedback, x => x.args = {
       family: f,
       comment: f.courierComments.value,
       helpText: s => s.commentForSuccessDelivery,

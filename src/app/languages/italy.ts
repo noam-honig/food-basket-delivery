@@ -732,4 +732,5 @@ export class italy implements Language {
   setAsDefaultVolunteerForTheseFamilies = 'Salva come volontario predefinito per queste famiglie';
   thisVolunteerIsSetAsTheDefaultFor = 'Questo volontario è definito come volontario predefinito per di più';
   familiesDotCancelTheseAssignments = 'Famiglie. Dovrebbe essere annullato di default per queste famiglie?';
+  editComment = 'Prendi nota';
 }

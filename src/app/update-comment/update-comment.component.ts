@@ -13,7 +13,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
   templateUrl: './update-comment.component.html',
   styleUrls: ['./update-comment.component.scss']
 })
-export class UpdateCommentComponent implements OnInit {
+export class GetVolunteerFeedback implements OnInit {
   public args: {
     family: ActiveFamilyDeliveries,
     showFailStatus?: boolean,

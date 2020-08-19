@@ -1110,6 +1110,11 @@
     "valueInCode": "חיפוש משפחות כפולות",
     "valueInEnglish": "Possible Duplicates"
   },
+  "editComment": {
+    "google": "Prendi nota",
+    "valueInCode": "ערוך הערה",
+    "valueInEnglish": "Make a note"
+  },
   "email": {
     "google": "e-mail",
     "valueInCode": "eMail",

@@ -732,4 +732,5 @@ export class donor implements Language {
   setAsDefaultVolunteerForTheseFamilies = 'שמור כמתנדב ברירת מחדל לתורמים אלו';
   thisVolunteerIsSetAsTheDefaultFor = 'מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד';
   familiesDotCancelTheseAssignments = 'תורמים. האם לבטל אותו כברירת מחדל לתורמים אלו?';
+  editComment = 'ערוך הערה';
 }

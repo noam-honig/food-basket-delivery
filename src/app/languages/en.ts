@@ -732,4 +732,5 @@ export class en implements Language {
   setAsDefaultVolunteerForTheseFamilies = 'Save as a default volunteer for these families';
   thisVolunteerIsSetAsTheDefaultFor = 'This volunteer is defined as a default volunteer for more';
   familiesDotCancelTheseAssignments = 'Families. Should it be canceled by default for these families?';
+  editComment = 'Make a note';
 }

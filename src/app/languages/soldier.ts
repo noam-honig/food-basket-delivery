@@ -732,4 +732,5 @@ export class soldier implements Language {
   setAsDefaultVolunteerForTheseFamilies = 'שמור כמתנדב ברירת מחדל לחיילים אלו';
   thisVolunteerIsSetAsTheDefaultFor = 'מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד';
   familiesDotCancelTheseAssignments = 'חיילים. האם לבטל אותו כברירת מחדל לחיילים אלו?';
+  editComment = 'ערוך הערה';
 }
