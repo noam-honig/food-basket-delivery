@@ -341,7 +341,7 @@ export class HelperFamiliesComponent implements OnInit {
     if (phone.startsWith('+'))
       phone = phone.substr(1);
     if (isDesktop())
-      window.open('https://web.whatsapp.com/send?phone=+' + phone + '&text=' + encodeURI(this.smsMessage), '_blank');
+      window.open('https://web.whatsapp.com/send?phone=+' + phone + '&text=' + encodeURI(this.smsMessage), '_whatsapp');
     else
       window.open('https://wa.me/' + phone + '?text=' + encodeURI(this.smsMessage), '_blank');
     await this.updateMessageSent("Whatsapp");
