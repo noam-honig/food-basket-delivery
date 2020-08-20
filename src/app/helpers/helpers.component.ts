@@ -180,7 +180,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       if (this.context.isAllowed(Roles.admin))
         this.numOfColsInGrid++;
       if (this.settings.isSytemForMlt())
-        this.numOfColsInGrid += 5;
+        this.numOfColsInGrid += 6;
 
       return this.selectColumns(helpers);
     },
