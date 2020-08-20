@@ -56,7 +56,7 @@ export class AuthService {
                 escortedHelperName: h.theHelperIAmEscorting.value ? (await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value : '',
                 distributionCenter: undefined
             };
-            if (h.isIndependent.value || h.admin.value)
+            if (getSettings(context).isSytemForMlt() && (h.isIndependent.value || h.admin.value))
                 info.roles.push(Roles.indie);
 
             context._setUser(info);
@@ -340,17 +340,15 @@ async function buildHelperUserInfo(h: Helpers, context: Context) {
         else {
             result.roles.push(Roles.admin);
             result.roles.push(Roles.distCenterAdmin);
-            result.roles.push(Roles.indie)
         }
     }
     if (h.distCenterAdmin.value) {
         result.roles.push(Roles.distCenterAdmin);
-        result.roles.push(Roles.indie);
     }
     if (getSettings(context).isSytemForMlt()) {
         if (h.labAdmin.value || h.admin.value)
             result.roles.push(Roles.lab);
-        if (h.isIndependent.value)
+        if (h.isIndependent.value || h.admin.value || h.distCenterAdmin.value)
             result.roles.push(Roles.indie);
     }
 

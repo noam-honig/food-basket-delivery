@@ -113,6 +113,8 @@ export class HelperFamiliesComponent implements OnInit {
 
   @ServerFunction({ allowed: Roles.indie })
   static async getDeliveriesByLocation(pivotLocation: Location, context?: Context) {
+    if (!getSettings(context).isSytemForMlt())
+      throw "not allowed";
     let r: selectListItem<DeliveryInList>[] = [];
 
     for await (const d of context.for(ActiveFamilyDeliveries).iterate({ where: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(f.courier.isEqualTo('')) })) {
