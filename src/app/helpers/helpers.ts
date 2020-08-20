@@ -103,6 +103,9 @@ export abstract class HelpersBase extends IdEntity {
 
 @EntityClass
 export class Helpers extends HelpersBase {
+    userRequiresPassword() {
+        return this.admin.value || this.distCenterAdmin.value || this.labAdmin.value || this.isIndependent.value;
+    }
     async showDeliveryHistory(dialog: DialogService, busy: BusyService) {
         let ctx = this.context.for((await import('../families/FamilyDeliveries')).FamilyDeliveries);
         this.context.openDialog(GridDialogComponent, x => x.args = {

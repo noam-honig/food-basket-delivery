@@ -31,14 +31,14 @@ export class AuthService {
             return true;
         }
         else {
-            
-            this.routeHelper.navigateToComponent((await import('../users/login/login.component')).LoginComponent);
+
             this.tokenHelper.signout();
+            this.routeHelper.navigateToComponent((await import('../users/login/login.component')).LoginComponent);
+            this.failedSmsSignInPhone = response.phone;
             return false;
         }
-
-
     }
+    failedSmsSignInPhone: string = undefined;
     private setToken(token: string, remember: boolean) {
         let org = Sites.getOrganizationFromContext(this.context);
         this.tokenHelper.setToken(token, remember, '/' + org);
@@ -46,32 +46,34 @@ export class AuthService {
     @ServerFunction({ allowed: true })
     static async loginFromSms(key: string, context?: Context) {
 
+        let r: LoginResponse = { valid: false };
         let h = await context.for(Helpers).findFirst(h => h.shortUrlKey.isEqualTo(key));
+
         if (h) {
+            r.phone = h.phone.value;
+            let info = await buildHelperUserInfo(h, context);
+            let userIsOk = false;
+            if (context.user && JSON.stringify(context.user.roles) == JSON.stringify(info.roles) && context.user.id == info.id)
+                userIsOk = true;
+            if (!h.realStoredPassword.value && !h.userRequiresPassword())
+                userIsOk = true;
 
-            h.lastSignInDate.value = new Date();
-            let info: HelperUserInfo = {
-                id: h.id.value,
-                name: h.name.value,
-                roles: [Sites.getOrgRole(context)],
-                theHelperIAmEscortingId: h.theHelperIAmEscorting.value,
-                escortedHelperName: h.theHelperIAmEscorting.value ? (await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value : '',
-                distributionCenter: undefined
-            };
-            if (getSettings(context).isSytemForMlt() && (h.isIndependent.value || h.admin.value))
-                info.roles.push(Roles.indie);
 
-            context._setUser(info);
 
-            await h.save();
-            return {
-                valid: true,
-                authToken: buildToken(info, getSettings(context)),
-                requirePassword: false
-            } as LoginResponse
+            if (userIsOk) {
+                h.lastSignInDate.value = new Date();
+                context._setUser(info);
+
+                await h.save();
+                return {
+                    valid: true,
+                    authToken: buildToken(info, getSettings(context)),
+                    requirePassword: false
+                } as LoginResponse
+            }
 
         }
-        return { valid: false, requirePassword: false } as LoginResponse;
+        return r;
     }
     constructor(
         private dialog: DialogService,
@@ -218,7 +220,7 @@ export class AuthService {
 
 
 
-        if (h.admin.value || h.distCenterAdmin.value || h.labAdmin.value || h.isIndependent.value) {
+        if (h.userRequiresPassword()) {
             let ok = true;
             if (!userHasPassword && !args.newPassword) {
                 r.requiredToSetPassword = true;

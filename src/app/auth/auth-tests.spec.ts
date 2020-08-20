@@ -166,17 +166,46 @@ describe('users and security', () => {
         });
 
         let r = await AuthService.loginFromSms('1234567890', context);
-        if (!r.authToken) {
-            throw r;
-        }
+        expect(r.valid).toBe(false);
+        
+    }));
+    it("sign in from sms, for a user with a password or with privliges, should move to login screen", async(async () => {
+        let { c, context } = await getHelperContext({
+            setValues: h => { h.password.value = '123'; h.admin.value = true; h.shortUrlKey.value = '1234567890' }
+        });
+        let r = await AuthService.loginFromSms('1234567890', context);
+        expect(r.valid).toBe(false);
+    }));
+    it("helper can sign in from sms", async(async () => {
+        let { c, context } = await getHelperContext({
+            setValues: h => { h.admin.value = false; h.shortUrlKey.value = '1234567890' }
+        });
+        let r = await AuthService.loginFromSms('1234567890', context);
+        expect(r.valid).toBe(true);
+    }));
+    it("helper with password cannot sign in from sms", async(async () => {
+        let { c, context } = await getHelperContext({
+            setValues: h => { h.password.value = '123'; h.admin.value = false; h.shortUrlKey.value = '1234567890' }
+        });
+        let r = await AuthService.loginFromSms('1234567890', context);
+        expect(r.valid).toBe(false);
+    }));
+    it("signed in user should sign in ok", async(async () => {
+        let { c, context } = await getHelperContext({
+            setValues: h => { h.password.value = '123'; h.admin.value = true; h.shortUrlKey.value = '1234567890' }
+        });
+        let l = await AuthService.login({
+            phone: PHONE,
+            password: '123',
+            EULASigned: true,
+            newPassword: ''
+        }, context);
+        if (!l.authToken)
+            throw l;
         let jwt = new JwtSessionManager(context);
-        jwt.setToken(r.authToken);
-        expect(context.user.name).toBe('test');
-        expect(context.isAllowed(Roles.admin)).toBe(false);
-        let r2 = await AuthService.renewToken(context);
-        jwt.setToken(r2);
-        expect(context.user.name).toBe('test');
-        expect(context.isAllowed(Roles.admin)).toBe(false);
+        jwt.setToken(l.authToken);
+        let r = await AuthService.loginFromSms('1234567890', context);
+        expect(r.valid).toBe(true);
     }));
 });
 async function getHelperContext(args?: { setValues?: (h: Helpers) => void }) {
