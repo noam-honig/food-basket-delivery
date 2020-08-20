@@ -58,6 +58,8 @@ export class AuthService {
                 escortedHelperName: h.theHelperIAmEscorting.value ? (await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value : '',
                 distributionCenter: undefined
             };
+            if (getSettings(context).isSytemForMlt() && (h.isIndependent.value || h.admin.value))
+                info.roles.push(Roles.indie);
 
             context._setUser(info);
 
