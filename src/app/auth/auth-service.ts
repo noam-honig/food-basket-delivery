@@ -216,7 +216,7 @@ export class AuthService {
 
 
 
-        if (h.admin.value || h.distCenterAdmin.value || h.labAdmin.value || h.isIndependent) {
+        if (h.admin.value || h.distCenterAdmin.value || h.labAdmin.value || h.isIndependent.value) {
             let ok = true;
             if (!userHasPassword && !args.newPassword) {
                 r.requiredToSetPassword = true;
