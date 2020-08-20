@@ -101,8 +101,10 @@ export class HelperFamiliesComponent implements OnInit {
 
   @ServerFunction({ allowed: Roles.indie })
   static async assignFamilyDeliveryToIndie(deliveryIds: string[], context?: Context) {
+    if (!getSettings(context).isSytemForMlt())
+      throw "not allowed";
     for (const id of deliveryIds) {
-      console.log(deliveryIds);
+      
       let fd = await context.for(ActiveFamilyDeliveries).findId(id);
       if (fd.courier.value == "" && fd.deliverStatus.value == DeliveryStatus.ReadyForDelivery) {//in case the delivery was already assigned to someone else
         fd.courier.value = context.user.id;
