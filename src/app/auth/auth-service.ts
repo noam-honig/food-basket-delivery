@@ -31,6 +31,8 @@ export class AuthService {
             return true;
         }
         else {
+            
+            this.routeHelper.navigateToComponent((await import('../users/login/login.component')).LoginComponent);
             this.tokenHelper.signout();
             return false;
         }
@@ -56,8 +58,6 @@ export class AuthService {
                 escortedHelperName: h.theHelperIAmEscorting.value ? (await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value : '',
                 distributionCenter: undefined
             };
-            if (getSettings(context).isSytemForMlt() && (h.isIndependent.value || h.admin.value))
-                info.roles.push(Roles.indie);
 
             context._setUser(info);
 
