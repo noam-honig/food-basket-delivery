@@ -1028,6 +1028,10 @@
     "valueInCode": "חיפוש משפחות כפולות",
     "custom": "Possible Duplicates"
   },
+  "editComment": {
+    "google": "Make a note",
+    "valueInCode": "ערוך הערה"
+  },
   "email": {
     "google": "eMail",
     "valueInCode": "eMail"
@@ -1229,6 +1233,10 @@
   "FamiliesComponent": {
     "google": "Families",
     "valueInCode": "משפחות"
+  },
+  "familiesDotCancelTheseAssignments": {
+    "google": "Families. Should it be canceled by default for these families?",
+    "valueInCode": "משפחות. האם לבטל אותו כברירת מחדל למשפחות אלו?"
   },
   "familiesForUpdate": {
     "google": "Families to update",
@@ -1948,6 +1956,10 @@
     "google": "Not delivered, address issue",
     "valueInCode": "לא נמסר, בעיה בכתובת"
   },
+  "notDeliveredDontWant": {
+    "google": "Not delivered, do not need a package",
+    "valueInCode": "לא נמסר, לא מעוניינים בחבילה"
+  },
   "notDeliveredNotHome": {
     "google": "Not delivered, were not at home",
     "valueInCode": "לא נמסר, לא היו בבית"
@@ -2608,6 +2620,10 @@
     "google": "Also update as a default volunteer",
     "valueInCode": "עדכן גם כמתנדב ברירת מחדל"
   },
+  "setAsDefaultVolunteerForTheseFamilies": {
+    "google": "Save as a default volunteer for these families",
+    "valueInCode": "שמור כמתנדב ברירת מחדל למשפחות אלו"
+  },
   "shouldAdd": {
     "google": "Do add",
     "valueInCode": "האם להוסיף",
@@ -2865,6 +2881,10 @@
   "thisIsTheDestination": {
     "google": "Destination for delivery of equipment",
     "valueInCode": "יעד למסירת הציוד"
+  },
+  "thisVolunteerIsSetAsTheDefaultFor": {
+    "google": "This volunteer is defined as a default volunteer for more",
+    "valueInCode": "מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד"
   },
   "timeToDisconnect": {
     "google": "Time in minutes for automatic disconnection",

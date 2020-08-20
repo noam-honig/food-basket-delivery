@@ -10,10 +10,11 @@ import { getLang } from '../sites/sites';
 
 
 
+
 export class SendSmsAction {
     static getSuccessMessage(template: string, orgName: string, family: string) {
         return template
-        .replace('!ארגון!', orgName).replace("!ORG!", orgName)
+            .replace('!ארגון!', orgName).replace("!ORG!", orgName)
             .replace('!משפחה!', family);
     }
     @ServerFunction({ allowed: Roles.distCenterAdmin })
@@ -24,11 +25,7 @@ export class SendSmsAction {
             await SendSmsAction.generateMessage(context, h, context.getOrigin(), reminder, context.user.name, async (phone, message, sender) => {
 
                 new SendSmsUtils().sendSms(phone, sender, message, context.getOrigin(), Sites.getOrganizationFromContext(context), await ApplicationSettings.getAsync(context));
-                if (reminder)
-                    h.reminderSmsDate.value = new Date();
-                else
-                    h.smsDate.value = new Date();
-                await h.save();
+                await SendSmsAction.documentHelperMessage(reminder, h, context,"SMS");
             });
         }
         catch (err) {
@@ -38,6 +35,22 @@ export class SendSmsAction {
 
 
 
+
+    public static async documentHelperMessage(reminder: Boolean, h: Helpers, context: Context, type: string) {
+        if (reminder)
+            h.reminderSmsDate.value = new Date();
+        else
+            h.smsDate.value = new Date();
+        await h.save();
+        let hist = context.for((await import ('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
+        hist.volunteer.value = h.id.value;
+        if (reminder) {
+            hist.comment.value = 'Reminder ' + type;
+        }
+        else
+            hist.comment.value = 'Link ' + type;
+        await hist.save();
+    }
 
     static async generateMessage(ds: Context, helper: Helpers, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string, sender: string, url: string) => void) {
 

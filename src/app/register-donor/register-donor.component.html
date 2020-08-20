@@ -1,8 +1,5 @@
 <!-- Event snippet for Page view - donate conversion page -->
-<script>
-    gtag('event', 'conversion', {'send_to': 'AW-607493389/xIauCNGPlNoBEI261qEC'});
-</script> 
-  
+ 
 <div class="myDiv">
     <mat-card style="overflow-y: auto;
     max-width: 450px;
@@ -10,19 +7,20 @@
    ">
         <img src="/assets/mitchashvim-logo-new-colors.webp">
 
-        <div style="color:#3753F6">
-            <h1>רוצה לתרום מחשב? מעולה!</h1>
-            <H3>כל מה שצריך לעשות זה למלא את הטופס הקצר הזה ואנחנו ניצור איתך קשר</H3>
-            <h5>*נא למלא את הטופס בעברית.</h5>
+        <div style="text-align:center; color:#3753F6">
+            <H2>רוצה לתרום מחשב? מעולה!</H2>
+            <H3>כל מה שצריך זה למלא טופס זה</H3>
         </div>
         <data-control [column]="donor.name"></data-control>
-        <h5 style="color:#3753F6">אנו נשלח מתנדב לאסוף את הציוד - לחלופין ניתן למסור ישירות במעבדה</h5>
+        <h5 style="text-align:center; color:#3753F6">נקודות איסוף מחשבים של המיזם פרוסות בארץ מצפון עד דרום!
+        נשמח ממש אם יש באפשרותך להביא את הציוד לאחת מהן</h5>
         <div class="rowDiv">
-            <data-control [column]="donor.selfDeliver"></data-control>
-            <a mat-raised-button href="https://www.mitchashvim.org.il/labs" target="_blank">רשימת מעבדות</a>
+            <data-control style="color:#f66d37" [column]="donor.selfDeliver"></data-control>
+            <a mat-raised-button color="accent" href="https://www.mitchashvim.org.il/labs" target="_blank">רשימת מעבדות</a>
         </div>
-        <app-address-input [column]="donor.address" [autoInit]="true"></app-address-input>
+        <h5 style="text-align:center">אם אין באפשרותך להגיע למעבדה, מתנדבי המיזם יגיעו לאסוף הציוד ממך</h5>
         <data-area [settings]="area"></data-area>
+        <app-address-input [column]="donor.address" [autoInit]="true"></app-address-input>
         <button mat-raised-button (click)="submit()" [disabled]="!allowSubmit()">שליחה</button>
     </mat-card>
 </div>

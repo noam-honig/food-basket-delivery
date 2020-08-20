@@ -44,6 +44,7 @@ export class FamilyDeliveries extends IdEntity {
                 break;
             case DeliveryStatus.FailedBadAddress:
             case DeliveryStatus.FailedNotHome:
+            case DeliveryStatus.FailedDoNotWant:
             case DeliveryStatus.FailedOther:
                 status = getLang(this.context).problem;
                 break;
@@ -128,7 +129,7 @@ export class FamilyDeliveries extends IdEntity {
 
     receptionComments = new StringColumn({
         caption: getLang(this.context).commentForReception,
-        allowApiUpdate: Roles.lab 
+        allowApiUpdate: Roles.lab
     })
 
     familySource = new FamilySourceId(this.context, {
@@ -246,7 +247,7 @@ export class FamilyDeliveries extends IdEntity {
         }
     });
 
-    archive = new BoolColumn({ allowApiUpdate: [Roles.admin,Roles.lab] });
+    archive = new BoolColumn({ allowApiUpdate: [Roles.admin, Roles.lab] });
 
     visibleToCourier = new BoolColumn({
         sqlExpression: () => {
@@ -351,7 +352,7 @@ export class FamilyDeliveries extends IdEntity {
         let add = (f: FilterBase) => result = new AndFilter(f, result);
         if (this.onlyActive)
             add(this.active());
-        if (!this.context.isAllowed([Roles.admin,Roles.lab])) {
+        if (!this.context.isAllowed([Roles.admin, Roles.lab])) {
             add(this.active());
             if (this.context.isAllowed(Roles.distCenterAdmin))
                 add(this.distributionCenter.isAllowedForUser());
@@ -412,6 +413,7 @@ export class FamilyDeliveries extends IdEntity {
             case DeliveryStatus.SuccessLeftThere:
             case DeliveryStatus.FailedBadAddress:
             case DeliveryStatus.FailedNotHome:
+            case DeliveryStatus.FailedDoNotWant:
             case DeliveryStatus.FailedOther:
                 let duration = '';
                 if (this.courierAssingTime.value && this.deliveryStatusDate.value)
@@ -488,6 +490,7 @@ export class FamilyDeliveries extends IdEntity {
         switch (this.deliverStatus.value) {
             case DeliveryStatus.FailedBadAddress:
             case DeliveryStatus.FailedNotHome:
+            case DeliveryStatus.FailedDoNotWant:
             case DeliveryStatus.FailedOther:
                 this.needsWork.value = true;
                 break;
@@ -588,7 +591,7 @@ export class ActiveFamilyDeliveries extends FamilyDeliveries {
 
 }
 
-iniFamilyDeliveriesInFamiliesCode(FamilyDeliveries,ActiveFamilyDeliveries);
+iniFamilyDeliveriesInFamiliesCode(FamilyDeliveries, ActiveFamilyDeliveries);
 
 function logChanged(context: Context, col: Column, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) {
     if (col.value != col.originalValue) {

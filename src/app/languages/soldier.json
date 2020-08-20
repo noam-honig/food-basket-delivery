@@ -895,6 +895,10 @@
     "google": "חיפוש חיילים כפולים",
     "valueInCode": "חיפוש משפחות כפולות"
   },
+  "editComment": {
+    "google": "ערוך הערה",
+    "valueInCode": "ערוך הערה"
+  },
   "email": {
     "google": "eMail",
     "valueInCode": "eMail"
@@ -1086,6 +1090,10 @@
   "FamiliesComponent": {
     "google": "חיילים",
     "valueInCode": "משפחות"
+  },
+  "familiesDotCancelTheseAssignments": {
+    "google": "חיילים. האם לבטל אותו כברירת מחדל לחיילים אלו?",
+    "valueInCode": "משפחות. האם לבטל אותו כברירת מחדל למשפחות אלו?"
   },
   "familiesForUpdate": {
     "google": "חיילים לעדכון",
@@ -1759,6 +1767,10 @@
     "google": "לא נמסר, בעיה בכתובת",
     "valueInCode": "לא נמסר, בעיה בכתובת"
   },
+  "notDeliveredDontWant": {
+    "google": "לא נמסר, לא צריכים חבילה",
+    "valueInCode": "לא נמסר, לא מעוניינים בחבילה"
+  },
   "notDeliveredNotHome": {
     "google": "לא נמסר, לא היו בבית",
     "valueInCode": "לא נמסר, לא היו בבית"
@@ -2375,6 +2387,10 @@
     "google": "עדכן גם כמתנדב ברירת מחדל",
     "valueInCode": "עדכן גם כמתנדב ברירת מחדל"
   },
+  "setAsDefaultVolunteerForTheseFamilies": {
+    "google": "שמור כמתנדב ברירת מחדל לחיילים אלו",
+    "valueInCode": "שמור כמתנדב ברירת מחדל למשפחות אלו"
+  },
   "shouldAdd": {
     "google": "האם להוסיף",
     "valueInCode": "האם להוסיף"
@@ -2614,6 +2630,10 @@
   "thisIsTheDestination": {
     "google": "יעד למסירת הציוד",
     "valueInCode": "יעד למסירת הציוד"
+  },
+  "thisVolunteerIsSetAsTheDefaultFor": {
+    "google": "מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד",
+    "valueInCode": "מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד"
   },
   "timeToDisconnect": {
     "google": "זמן בדקות לניתוק אוטומטית",

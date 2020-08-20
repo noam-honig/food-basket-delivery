@@ -481,6 +481,7 @@ export class soldier implements Language {
   leftByHouse = 'הושאר ליד הבית';
   notDeliveredBadAddress = 'לא נמסר, בעיה בכתובת';
   notDeliveredNotHome = 'לא נמסר, לא היו בבית';
+  notDeliveredDontWant = 'לא נמסר, לא צריכים חבילה';
   notDeliveredOther = 'לא נמסר, אחר';
   deliveryStatus = 'סטטוס משלוח';
   useFamilyDefaultBasketType = 'השתמש בסוג הסל המוגדר לחייל';
@@ -733,4 +734,8 @@ export class soldier implements Language {
   invalidatePassword = 'בטל תוקף סיסמה';
   passwordInvalidated = 'בוטל תוקף הסיסמה';
   sessionExpiredPleaseRelogin = 'פג תוקף החיבור לשרת, יש לבצע כניסה מחדש';
+  setAsDefaultVolunteerForTheseFamilies = 'שמור כמתנדב ברירת מחדל לחיילים אלו';
+  thisVolunteerIsSetAsTheDefaultFor = 'מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד';
+  familiesDotCancelTheseAssignments = 'חיילים. האם לבטל אותו כברירת מחדל לחיילים אלו?';
+  editComment = 'ערוך הערה';
 }

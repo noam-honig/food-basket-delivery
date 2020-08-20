@@ -1,0 +1,31 @@
+<mat-card-title>{{this.args.title}}</mat-card-title>
+
+
+
+<mat-dialog-content>
+
+    <textarea class="form-control" rows="5" [(ngModel)]="args.comment" class="comment-text-area" style="box-sizing: border-box;
+    min-width: 240px;"
+      ></textarea>
+
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <div class="button-container">
+        <div class="button-line">
+            <button mat-raised-button color="warning" [mat-dialog-close] *ngIf="args.save">
+                {{settings.lang.cancel}}
+            </button>
+            <button mat-raised-button color="accent" (click)="confirm()">
+                {{settings.lang.confirm}}
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+
+
+</mat-dialog-actions>

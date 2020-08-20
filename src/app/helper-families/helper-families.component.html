@@ -9,11 +9,15 @@
           style="color:red;">{{settings.lang.cancelAllAssignments}}</button>
         <button mat-menu-item (click)="okAll()" *ngIf="partOfAssign"
           class="primary-menu">{{settings.lang.markAllDeliveriesAsSuccesfull}}</button>
+          
         <button mat-menu-item (click)="familyLists.showBasketSummary()"
           *ngIf="notMLT()">{{settings.lang.parcelSummary}}</button>
         <button mat-menu-item (click)="refreshRoute()">{{settings.lang.replanRoute}}</button>
         <button mat-menu-item (click)="showRouteOnGoogleMaps()">
           {{settings.lang.showRouteOnGoogleMaps}}</button>
+          <button mat-menu-item (click)="setDefaultCourier()" *ngIf="partOfAssign"
+          >{{settings.lang.setAsDefaultVolunteerForTheseFamilies}}</button>
+
       </mat-menu>
 
 
@@ -41,7 +45,7 @@
         <ng-container *ngFor="let f of familyLists.toDeliver;let i=index">
           <mat-expansion-panel #myPanel *ngIf="limitReady.shouldShow(i)">
             <mat-expansion-panel-header>
-              <app-family-in-list [f]="f" [i]="i+1" style="width:100%" [sameAddress]="sameAddress(f,i)"
+              <app-family-in-list [f]="f" [i]="i+1" style="width:100%" [distanceFromPreviousLocation]="distanceFromPreviousLocation(f,i)"
                 (delivered)="deliveredToFamily(f)"
                 [newAssign]="familyLists.highlightNewFamilies&&!familyLists.familiesAlreadyAssigned.get(f.id.value)">
               </app-family-in-list>
@@ -83,12 +87,12 @@
   </mat-tab-group>
 
 </mat-card>
-<div>
+<div *ngIf="familyLists.distCenter&&!partOfAssign&&!partOfReview">
   <mat-accordion>
-    <mat-expansion-panel *ngIf="familyLists.distCenter&&!partOfAssign&&!partOfReview">
-      <mat-expansion-panel-header>
+    <mat-expansion-panel  style="background-color:lightgreen">
+      <mat-expansion-panel-header  style="background-color:lightgreen">
         <div>
-          <mat-panel-title>{{settings.lang.thisIsTheDestination}} : {{familyLists.distCenter.name.value}}</mat-panel-title>
+          <mat-panel-title> <strong>{{settings.lang.thisIsTheDestination}}</strong> : {{familyLists.distCenter.name.value}}</mat-panel-title>
           <mat-panel-description>{{familyLists.distCenter.address.value}}</mat-panel-description>
         </div>
       </mat-expansion-panel-header>
@@ -136,6 +140,7 @@
       </div>
     </mat-expansion-panel>
   </mat-accordion>
+  <a href="https://www.mitchashvim.org.il/labs">ניתן להביא את התרומה לנקודת מסירת ציוד אחרת - לחץ כאן לרשימת הנקודות</a>
 </div>
 
 <div style="display:flex;flex-direction: column;">
@@ -165,7 +170,7 @@
 
   </div>
   <div class="sendSmsButtonLine no-print">
-    <button *ngIf="partOfReview&&familyLists.toDeliver.length>0" mat-raised-button class="contact-helper-button no-print" 
+    <button *ngIf="partOfReview&&familyLists.toDeliver.length>0" mat-raised-button class="contact-helper-button no-print" style="border-top-left-radius: 0px;border-bottom-left-radius:0px;width:270px"
       color="primary" (click)="sendSms(true)">
 
       <span

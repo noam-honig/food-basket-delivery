@@ -25,7 +25,7 @@ import { MyFamiliesComponent } from './my-families/my-families.component';
 import { AsignFamilyComponent } from './asign-family/asign-family.component';
 import { ManageComponent } from './manage/manage.component';
 import { FamilyInfoComponent } from './family-info/family-info.component';
-import { UpdateCommentComponent } from './update-comment/update-comment.component';
+import { GetVolunteerFeedback  } from './update-comment/update-comment.component';
 import { DistributionMap } from './distribution-map/distribution-map.component';
 import { SelectHelperComponent } from './select-helper/select-helper.component';
 import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component';
@@ -42,10 +42,6 @@ import { NewsFilterService } from "./news/news-filter-service";
 
 
 import { UpdateFamilyDialogComponent } from './update-family-dialog/update-family-dialog.component';
-
-
-
-
 
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 
@@ -87,6 +83,8 @@ import { DeliveryReceptionComponent } from './delivery-reception/delivery-recept
 import { RegisterDonorComponent } from './register-donor/register-donor.component';
 import { RegisterHelperComponent } from './register-helper/register-helper.component';
 import { AddressInputComponent } from './address-input/address-input.component';
+import { InRouteFollowUpComponent } from './in-route-follow-up/in-route-follow-up.component';
+import { EditCommentDialogComponent  } from './edit-comment-dialog/edit-comment-dialog.component';
 
 
 
@@ -125,7 +123,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     AsignFamilyComponent,
     ManageComponent,
     FamilyInfoComponent,
-    UpdateCommentComponent,
+    GetVolunteerFeedback,
     DistributionMap,
     SelectHelperComponent,
 
@@ -173,7 +171,9 @@ export class MyHammerConfig extends HammerGestureConfig {
     DeliveryReceptionComponent,
     RegisterDonorComponent,
     RegisterHelperComponent,
-    AddressInputComponent
+    AddressInputComponent,
+    InRouteFollowUpComponent,
+    EditCommentDialogComponent
 
 
   ],
@@ -220,8 +220,8 @@ export class MyHammerConfig extends HammerGestureConfig {
       provide: HAMMER_GESTURE_CONFIG,
       useClass: MyHammerConfig,
     },
-    
-     SettingsService
+
+    SettingsService
 
   ],
 
@@ -239,7 +239,10 @@ export class MyHammerConfig extends HammerGestureConfig {
     MergeFamiliesComponent,
     SiteOverviewComponent,
     ShowOnMapComponent,
-    UpdateCommentComponent, UpdateGroupDialogComponent, BasketSummaryComponent]
+    GetVolunteerFeedback,
+    UpdateGroupDialogComponent,
+    BasketSummaryComponent,
+    EditCommentDialogComponent]
 })
 export class AppModule { }
 
@@ -251,7 +254,7 @@ export function initApp(session: JwtSessionManager, settings: SettingsService) {
 
 
       await settings.init();
-      
+
       var s = settings.instance;
 
       let l = settings.instance.lang;

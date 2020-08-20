@@ -131,8 +131,8 @@ export class UserFamiliesList {
 
     distCenter: DistributionCenters;
 
-    async refreshRoute(args: import ("../asign-family/asign-family.component").refreshRouteArgs) {
-        await (await import ("../asign-family/asign-family.component")).AsignFamilyComponent.RefreshRoute(this.helper.id.value, args).then(r => {
+    async refreshRoute(args: import("../asign-family/asign-family.component").refreshRouteArgs) {
+        await (await import("../asign-family/asign-family.component")).AsignFamilyComponent.RefreshRoute(this.helper.id.value, args).then(r => {
 
             if (r && r.ok && r.families.length == this.toDeliver.length) {
                 this.routeStats = r.stats;
@@ -158,6 +158,7 @@ export class UserFamiliesList {
             switch (f.deliverStatus.value) {
                 case DeliveryStatus.FailedBadAddress:
                 case DeliveryStatus.FailedNotHome:
+                case DeliveryStatus.FailedDoNotWant:
                 case DeliveryStatus.FailedOther:
                     return true;
             }

@@ -481,6 +481,7 @@ export class italy implements Language {
   leftByHouse = 'È stato lasciato dalla casa';
   notDeliveredBadAddress = 'Non consegnato, risolto problema';
   notDeliveredNotHome = 'Non consegnato, non erano a casa';
+  notDeliveredDontWant = 'Non consegnato, non serve pacco';
   notDeliveredOther = 'Non consegnato, altro';
   deliveryStatus = 'stato della consegna';
   useFamilyDefaultBasketType = 'Tipo di pacco predefinito';
@@ -733,4 +734,8 @@ export class italy implements Language {
   invalidatePassword = 'Disabilita la password';
   passwordInvalidated = 'La password è stata revocata';
   sessionExpiredPleaseRelogin = 'La connessione al server è scaduta, accedi di nuovo';
+  setAsDefaultVolunteerForTheseFamilies = 'Salva come volontario predefinito per queste famiglie';
+  thisVolunteerIsSetAsTheDefaultFor = 'Questo volontario è definito come volontario predefinito per di più';
+  familiesDotCancelTheseAssignments = 'Famiglie. Dovrebbe essere annullato di default per queste famiglie?';
+  editComment = 'Prendi nota';
 }

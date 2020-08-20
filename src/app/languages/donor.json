@@ -329,7 +329,8 @@
   },
   "basketNotDelivered": {
     "google": "הסל לא נמסר",
-    "valueInCode": "הסל לא נמסר"
+    "valueInCode": "הסל לא נמסר",
+    "custom": "שלח/י לנו מסר"
   },
   "basketType": {
     "google": "סוג סל",
@@ -817,7 +818,8 @@
   },
   "delveriesInProgress": {
     "google": "תורמים מחכות",
-    "valueInCode": "משפחות מחכות"
+    "valueInCode": "משפחות מחכות",
+    "custom": "תורמים מחכים"
   },
   "delveriesSuccesfull": {
     "google": "נמסרו",
@@ -894,6 +896,10 @@
   "DuplicateFamiliesComponent": {
     "google": "חיפוש תורמים כפולים",
     "valueInCode": "חיפוש משפחות כפולות"
+  },
+  "editComment": {
+    "google": "ערוך הערה",
+    "valueInCode": "ערוך הערה"
   },
   "email": {
     "google": "eMail",
@@ -1086,6 +1092,10 @@
   "FamiliesComponent": {
     "google": "תורמים",
     "valueInCode": "משפחות"
+  },
+  "familiesDotCancelTheseAssignments": {
+    "google": "תורמים. האם לבטל אותו כברירת מחדל לתורמים אלו?",
+    "valueInCode": "משפחות. האם לבטל אותו כברירת מחדל למשפחות אלו?"
   },
   "familiesForUpdate": {
     "google": "תורמים לעדכון",
@@ -1757,11 +1767,18 @@
   },
   "notDeliveredBadAddress": {
     "google": "לא נמסר, בעיה בכתובת",
-    "valueInCode": "לא נמסר, בעיה בכתובת"
+    "valueInCode": "לא נמסר, בעיה בכתובת",
+    "custom": "לא נמסר, רחוק מידי"
+  },
+  "notDeliveredDontWant": {
+    "google": "לא נמסר, לא צריכים חבילה",
+    "valueInCode": "לא נמסר, לא מעוניינים בחבילה",
+    "custom": "לא נמסר, בעיה אצל התורמ/ת"
   },
   "notDeliveredNotHome": {
     "google": "לא נמסר, לא היו בבית",
-    "valueInCode": "לא נמסר, לא היו בבית"
+    "valueInCode": "לא נמסר, לא היו בבית",
+    "custom": "לא נמסר, אני לא פנוי/ה"
   },
   "notDeliveredOther": {
     "google": "לא נמסר, אחר",
@@ -2014,7 +2031,8 @@
   },
   "ranIntoAProblem": {
     "google": "נתקלתי בבעיה",
-    "valueInCode": "נתקלתי בבעיה"
+    "valueInCode": "נתקלתי בבעיה",
+    "custom": "דחיית איסוף/בעיה"
   },
   "readEula": {
     "google": "לחץ לקריאת תנאי השימוש באתר",
@@ -2376,6 +2394,10 @@
     "google": "עדכן גם כמתנדב ברירת מחדל",
     "valueInCode": "עדכן גם כמתנדב ברירת מחדל"
   },
+  "setAsDefaultVolunteerForTheseFamilies": {
+    "google": "שמור כמתנדב ברירת מחדל לתורמים אלו",
+    "valueInCode": "שמור כמתנדב ברירת מחדל למשפחות אלו"
+  },
   "shouldAdd": {
     "google": "האם להוסיף",
     "valueInCode": "האם להוסיף"
@@ -2615,6 +2637,10 @@
   "thisIsTheDestination": {
     "google": "יעד למסירת הציוד",
     "valueInCode": "יעד למסירת הציוד"
+  },
+  "thisVolunteerIsSetAsTheDefaultFor": {
+    "google": "מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד",
+    "valueInCode": "מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד"
   },
   "timeToDisconnect": {
     "google": "זמן בדקות לניתוק אוטומטית",

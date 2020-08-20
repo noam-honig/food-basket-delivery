@@ -1120,6 +1120,11 @@
     "valueInCode": "חיפוש משפחות כפולות",
     "valueInEnglish": "Possible Duplicates"
   },
+  "editComment": {
+    "google": "Prendi nota",
+    "valueInCode": "ערוך הערה",
+    "valueInEnglish": "Make a note"
+  },
   "email": {
     "google": "e-mail",
     "valueInCode": "eMail",
@@ -1359,6 +1364,11 @@
     "google": "famiglie",
     "valueInCode": "משפחות",
     "valueInEnglish": "Families"
+  },
+  "familiesDotCancelTheseAssignments": {
+    "google": "Famiglie. Dovrebbe essere annullato di default per queste famiglie?",
+    "valueInCode": "משפחות. האם לבטל אותו כברירת מחדל למשפחות אלו?",
+    "valueInEnglish": "Families. Should it be canceled by default for these families?"
   },
   "familiesForUpdate": {
     "google": "Famiglie da aggiornare",
@@ -2200,6 +2210,11 @@
     "valueInCode": "לא נמסר, בעיה בכתובת",
     "valueInEnglish": "Not delivered, address issue"
   },
+  "notDeliveredDontWant": {
+    "google": "Non consegnato, non serve pacco",
+    "valueInCode": "לא נמסר, לא מעוניינים בחבילה",
+    "valueInEnglish": "Not delivered, do not need a package"
+  },
   "notDeliveredNotHome": {
     "google": "Non consegnato, non erano a casa",
     "valueInCode": "לא נמסר, לא היו בבית",
@@ -2971,6 +2986,11 @@
     "valueInCode": "עדכן גם כמתנדב ברירת מחדל",
     "valueInEnglish": "Also update as a default volunteer"
   },
+  "setAsDefaultVolunteerForTheseFamilies": {
+    "google": "Salva come volontario predefinito per queste famiglie",
+    "valueInCode": "שמור כמתנדב ברירת מחדל למשפחות אלו",
+    "valueInEnglish": "Save as a default volunteer for these families"
+  },
   "shouldAdd": {
     "google": "Aggiungi",
     "valueInCode": "האם להוסיף",
@@ -3270,6 +3290,11 @@
     "google": "Destinazione per la consegna dell'attrezzatura",
     "valueInCode": "יעד למסירת הציוד",
     "valueInEnglish": "Destination for delivery of equipment"
+  },
+  "thisVolunteerIsSetAsTheDefaultFor": {
+    "google": "Questo volontario è definito come volontario predefinito per di più",
+    "valueInCode": "מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד",
+    "valueInEnglish": "This volunteer is defined as a default volunteer for more"
   },
   "timeToDisconnect": {
     "google": "Disconnetti timeout in minuti",

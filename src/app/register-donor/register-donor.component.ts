@@ -8,17 +8,21 @@ import { allCentersToken } from '../manage/distribution-centers';
 import { executeOnServer, pack } from '../server/mlt';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { RequiredValidator } from '@angular/forms';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
+declare var gtag;
 @Component({
   selector: 'app-register-donor',
   templateUrl: './register-donor.component.html',
   styleUrls: ['./register-donor.component.scss']
 })
 export class RegisterDonorComponent implements OnInit {
-  constructor(private dialog: DialogService, private context: Context) { }
+  constructor(private dialog: DialogService, private context: Context, private settings: ApplicationSettings) { }
   donor = new donorForm(this.context);
-  area = new DataAreaSettings({ columnSettings: () => 
-    this.donor.columns.filter(c => c != this.donor.name && c != this.donor.address && c != this.donor.selfDeliver && c != this.donor.docref) });
+  area = new DataAreaSettings({
+    columnSettings: () =>
+      this.donor.columns.filter(c => c != this.donor.name && c != this.donor.address && c != this.donor.selfDeliver && c != this.donor.docref)
+  });
   ngOnInit() {
     this.donor.docref.value = document.referrer;
   }
@@ -60,6 +64,17 @@ export class RegisterDonorComponent implements OnInit {
         return;
       }
       this.dialog.analytics("submitDonorForm");
+      {
+        var callback = function () {
+
+        };
+
+        gtag('event', 'conversion', {
+          'send_to': 'AW-607493389/xIauCNGPlNoBEI261qEC',
+          'event_callback': callback
+        });
+      }
+
       await RegisterDonorComponent.doDonorForm(pack(this.donor));
       await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: "תודה על תרומך", showOnlyConfirm: true });
       window.location.href = "https://www.mitchashvim.org.il/";
@@ -98,28 +113,28 @@ class donorForm {
     dataControlSettings: () => ({ inputType: 'email' })
   });
 
-  selfDeliver = new BoolColumn("אגיע עצמאית למעבדה");
-  address = new StringColumn({ 
+  selfDeliver = new BoolColumn("אגיע עצמאית לנקודת האיסוף");
+  address = new StringColumn({
     caption: "כתובת",
     validate: () => {
       if (!this.selfDeliver.value)
-        required(this.address); 
+        required(this.address);
     }
   });
-  
+
   computer = new NumberColumn("מספר מחשבים ניידים");
   laptop = new NumberColumn("מספר מחשבים נייחים");
   screen = new NumberColumn("מספר מסכים");
 
-  docref = new StringColumn(); 
-  columns = [this.name, this.selfDeliver, this.address, this.phone, this.email, this.computer, this.laptop, this.screen, this.docref];
+  docref = new StringColumn();
+  columns = [this.name, this.selfDeliver, this.computer, this.laptop, this.screen, this.address, this.phone, this.email, this.docref];
 
   async doWork(context: Context) {
     let f = context.for(Families).create();
     f.name.value = this.name.value;
     if (!this.address.value)
       this.address.value = '';
-    f.address.value = this.address.value ;
+    f.address.value = this.address.value;
     f.phone1.value = this.phone.value;
     f.email.value = this.email.value;
     f.custom1.value = this.docref.value;

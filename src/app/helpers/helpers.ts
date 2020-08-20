@@ -1,5 +1,5 @@
 
-import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, FilterBase, Entity, Column, EntityProvider, checkForDuplicateValue } from '@remult/core';
+import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, FilterBase, Entity, Column, EntityProvider, checkForDuplicateValue, BusyService } from '@remult/core';
 import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, EmailColumn, SqlBuilder, wasChanged, logChanges } from '../model-shared/types';
 
 
@@ -15,6 +15,12 @@ import { GeocodeInformation, GetGeoInformation, Location } from '../shared/googl
 import { routeStats } from '../asign-family/route-strategy';
 import { Sites } from '../sites/sites';
 import { getSettings } from '../manage/ApplicationSettings';
+import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
+
+import { DialogService } from '../select-popup/dialog';
+import { DeliveryStatus } from '../families/DeliveryStatus';
+import { FamilyStatus } from '../families/FamilyStatus';
+
 
 
 
@@ -97,6 +103,62 @@ export abstract class HelpersBase extends IdEntity {
 
 @EntityClass
 export class Helpers extends HelpersBase {
+    async showDeliveryHistory(dialog: DialogService, busy: BusyService) {
+        let ctx = this.context.for((await import('../families/FamilyDeliveries')).FamilyDeliveries);
+        this.context.openDialog(GridDialogComponent, x => x.args = {
+            title: getLang(this.context).deliveriesFor + ' ' + this.name.value,
+            settings: ctx.gridSettings({
+                numOfColumnsInGrid: 6,
+                knowTotalRows: true,
+                allowSelection: true,
+                rowButtons: [{
+
+                    name: '',
+                    icon: 'edit',
+                    showInLine: true,
+                    click: async fd => {
+                        fd.showDetailsDialog({
+
+                            dialog: dialog,
+                            focusOnDelivery: true
+                        });
+                    }
+                    , textInMenu: () => getLang(this.context).deliveryDetails
+                }
+                ],
+                gridButtons: [{
+
+                    name: getLang(this.context).updateDefaultVolunteer,
+                    visible: () => x.args.settings.selectedRows.length > 0,
+                    click: async () => {
+                        let deliveries: import('../families/FamilyDeliveries').FamilyDeliveries[] = x.args.settings.selectedRows;
+                        await this.setAsDefaultVolunteerToDeliveries(busy, deliveries, dialog);
+                    }
+                }],
+                rowCssClass: fd => fd.deliverStatus.getCss(),
+                columnSettings: fd => {
+                    let r: Column[] = [
+                        fd.deliverStatus,
+                        fd.deliveryStatusDate,
+                        fd.basketType,
+                        fd.quantity,
+                        fd.name,
+                        fd.address,
+                        fd.distributionCenter,
+                        fd.courierComments
+                    ]
+                    r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
+                    return r;
+                },
+                get: {
+                    where: fd => fd.courier.isEqualTo(this.id),
+                    orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
+                    limit: 25
+                }
+            })
+        });
+    }
+
 
     static usingCompanyModule: boolean;
 
@@ -251,6 +313,40 @@ export class Helpers extends HelpersBase {
     addressApiResult = new StringColumn();
     private _lastString: string;
     private _lastGeo: GeocodeInformation;
+    async setAsDefaultVolunteerToDeliveries(busy: BusyService, deliveries: import("../families/FamilyDeliveries").FamilyDeliveries[], dialog: DialogService) {
+        let ids: string[] = [];
+        let i = 0;
+
+        await busy.doWhileShowingBusy(async () => {
+            for (const fd of deliveries) {
+
+                if (ids.includes(fd.family.value))
+                    continue;
+                ids.push(fd.family.value);
+                i++;
+                let f = await this.context.for((await import('../families/families')).Families).findId(fd.family);
+                f.fixedCourier.value = fd.courier.value;
+                await f.save();
+            }
+        });
+
+        let otherFamilies = await this.context.for((await import('../families/families')).Families).find({
+            where: f => f.fixedCourier.isEqualTo(this.id)
+                .and(f.status.isEqualTo(FamilyStatus.Active)).and(f.id.isNotIn(ids))
+        });
+        if (otherFamilies.length > 0) {
+            if (await dialog.YesNoPromise(getLang(this.context).thisVolunteerIsSetAsTheDefaultFor + " " + otherFamilies.length + " " + getLang(this.context).familiesDotCancelTheseAssignments)) {
+                for (const f of otherFamilies) {
+                    f.fixedCourier.value = '';
+                    await f.save();
+                    i++;
+                }
+            }
+        }
+
+        dialog.Info(i + " " + getLang(this.context).familiesUpdated);
+    }
+
     getGeocodeInformation() {
         if (this._lastString == this.addressApiResult.value)
             return this._lastGeo ? this._lastGeo : new GeocodeInformation();

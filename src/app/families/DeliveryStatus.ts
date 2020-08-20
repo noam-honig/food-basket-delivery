@@ -13,6 +13,7 @@ export class DeliveryStatus {
       case this.SuccessLeftThere:
       case this.FailedBadAddress:
       case this.FailedNotHome:
+        case this.FailedDoNotWant:
       case this.FailedOther:
         return true;
     }
@@ -27,6 +28,7 @@ export class DeliveryStatus {
   static SuccessLeftThere: DeliveryStatus = new DeliveryStatus(19, !use ? '' : use.language.leftByHouse);
   static FailedBadAddress: DeliveryStatus = new DeliveryStatus(21, !use ? '' : use.language.notDeliveredBadAddress, true);
   static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, !use ? '' : use.language.notDeliveredNotHome, true);
+  static FailedDoNotWant: DeliveryStatus = new DeliveryStatus(24, !use ? '' : use.language.notDeliveredDontWant, true);
   static FailedOther: DeliveryStatus = new DeliveryStatus(25, !use ? '' : use.language.notDeliveredOther, true);
 
 
@@ -91,6 +93,7 @@ export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
         return 'deliveredOk';
       case DeliveryStatus.FailedBadAddress:
       case DeliveryStatus.FailedNotHome:
+        case DeliveryStatus.FailedDoNotWant:
       case DeliveryStatus.FailedOther:
         return 'deliveredProblem';
       case DeliveryStatus.Frozen:
