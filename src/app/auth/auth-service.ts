@@ -56,6 +56,9 @@ export class AuthService {
                 escortedHelperName: h.theHelperIAmEscorting.value ? (await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value : '',
                 distributionCenter: undefined
             };
+            if (h.isIndependent.value || h.admin.value)
+                info.roles.push(Roles.indie);
+
             context._setUser(info);
 
             await h.save();
@@ -344,13 +347,13 @@ async function buildHelperUserInfo(h: Helpers, context: Context) {
         result.roles.push(Roles.distCenterAdmin);
         result.roles.push(Roles.indie);
     }
-    if (getSettings(context).isSytemForMlt()){
+    if (getSettings(context).isSytemForMlt()) {
         if (h.labAdmin.value || h.admin.value)
             result.roles.push(Roles.lab);
         if (h.isIndependent.value)
             result.roles.push(Roles.indie);
     }
-        
+
     return result;
 }
 function buildToken(result: HelperUserInfo, settings: ApplicationSettings) {

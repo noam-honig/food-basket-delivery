@@ -9,29 +9,33 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 })
 export class SelectListComponent implements OnInit {
 
-  constructor(private d: MatDialogRef<any>,public settings:ApplicationSettings) { }
+  constructor(private d: MatDialogRef<any>, public settings: ApplicationSettings) { }
   args: {
     options: selectListItem[];
-
     title: string;
     multiSelect?: boolean;
-    onSelect?: (selectedItem: selectListItem, selected?: boolean, list?: selectListItem[]) => void,
+    onSelect: (selectedItems: selectListItem[]) => void
   }
   ngOnInit() {
   }
-  selected: selectListItem;
   select(item: selectListItem) {
     if (!this.args.multiSelect) {
-      this.selected = item;
-      if (this.args.onSelect) 
-        this.args.onSelect(item, true);
+
+      if (this.args.onSelect)
+        this.args.onSelect([item]);
       this.close();
     }
+    else {
+      if (item.selected)
+        item.selected = false;
+      else
+        item.selected = true;
+    }
+    return false;
   }
-
-  onChange(item: selectListItem) {
-    if (this.args.onSelect) 
-      this.args.onSelect(item, item.selected, this.args.options);
+  confirm() {
+    this.args.onSelect(this.args.options.filter(x => x.selected));
+    this.close();
   }
 
 
@@ -43,8 +47,8 @@ export class SelectListComponent implements OnInit {
 
 
 
-export interface selectListItem {
+export interface selectListItem<itemType = any> {
   name: string,
-  item: any,
+  item: itemType,
   selected?: boolean
 }

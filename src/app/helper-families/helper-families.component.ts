@@ -100,49 +100,63 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
   @ServerFunction({ allowed: Roles.indie })
-  static async assignFamilyDeliveryToIndie(deliveryId: string, context?: Context) {
-    let fd = await context.for(ActiveFamilyDeliveries).find({where : f=> f.id.isEqualTo(deliveryId), limit: 1});
-    fd[0].courier.value = context.user.id;
-    await fd[0].save();
+  static async assignFamilyDeliveryToIndie(deliveryIds: string[], context?: Context) {
+    for (const id of deliveryIds) {
+      console.log(deliveryIds);
+      let fd = await context.for(ActiveFamilyDeliveries).findId(id);
+      if (fd.courier.value == "" && fd.deliverStatus.value == DeliveryStatus.ReadyForDelivery) {//in case the delivery was already assigned to someone else
+        fd.courier.value = context.user.id;
+        await fd.save();
+      }
+    }
   }
-  
+
   @ServerFunction({ allowed: Roles.indie })
   static async getDeliveriesByLocation(pivotLocation: Location, context?: Context) {
-    let r: selectListItem[] = [];
-    for await (const d of  context.for(ActiveFamilyDeliveries).iterate({ where: f => f.readyFilter() })) {
-      let loc = d.getDrivingLocation();
-      let dist = GetDistanceBetween(pivotLocation, loc);
-      let myItem : DeliveryInList = {
-        basketType: await (d.basketType.getTheValue()),
-        city: d.city.value,
-        floor: d.floor.value,
-        quantity: d.quantity.value,
-        id: d.id.value,
-        familyId: d.family.value,
-        location: loc,
-        distance: dist
-      };
-      let itemString : string = 
-        myItem.distance.toFixed(1) + use.language.km +
-        (myItem.city ? ' (' + myItem.city + ')' : '') +
-        (myItem.floor ? ' [' + use.language.floor + ' ' + myItem.floor + ']' : '') +
-        ' : ' +
-        myItem.quantity + ' x ' + myItem.basketType;
+    let r: selectListItem<DeliveryInList>[] = [];
 
-      r.push({
-        selected: false,
-        item: myItem,
-        name: itemString
-      });
+    for await (const d of context.for(ActiveFamilyDeliveries).iterate({ where: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(f.courier.isEqualTo('')) })) {
+      let existing = r.find(x => x.item.familyId == d.family.value);
+      if (existing) {
+        existing.name += ", " + d.quantity.value + " X " + await (d.basketType.getTheValue());
+        existing.item.ids.push(d.id.value);
+
+      }
+      else {
+        let loc = d.getDrivingLocation();
+        let dist = GetDistanceBetween(pivotLocation, loc);
+        let myItem: DeliveryInList = {
+
+          city: d.city.value,
+          floor: d.floor.value,
+
+          ids: [d.id.value],
+          familyId: d.family.value,
+          location: loc,
+          distance: dist
+        };
+        let itemString: string =
+          myItem.distance.toFixed(1) + use.language.km +
+          (myItem.city ? ' (' + myItem.city + ')' : '') +
+          (myItem.floor ? ' [' + use.language.floor + ' ' + myItem.floor + ']' : '') +
+          ' : ' +
+          d.quantity.value + ' x ' + await (d.basketType.getTheValue());
+
+        r.push({
+          selected: false,
+          item: myItem,
+          name: itemString
+        });
+      }
     }
     r.sort((a, b) => {
       if (a.item.familyId == b.item.familyId)
         return 0;
-      
-      if (a.item.distance == b.item.distance)     
+
+      if (a.item.distance == b.item.distance)
         if (a.item.familyId <= b.item.familyId)
           return (-1)
-        else 
+        else
           return 1;
 
       return (a.item.distance - b.item.distance);
@@ -150,20 +164,13 @@ export class HelperFamiliesComponent implements OnInit {
     r.splice(15);
     return r;
   };
-  
+
 
   showCloseDeliveries() {
     return (this.context.user.roles.includes(Roles.indie) && this.settings.isSytemForMlt());
   }
-  
-  async checkCloseDeliveries(item: selectListItem, isSet: boolean, theList: selectListItem[])  {
-    let d: DeliveryInList = item.item;
-    theList.forEach((x) => {
-      if ((d.familyId == x.item.familyId) || 
-         (( GetDistanceBetween(d.location, x.item.location) == 0) && isSet))
-        x.selected = isSet;
-    });
-  }
+
+
 
   async assignNewDelivery() {
     await this.updateCurrentLocation(true);
@@ -173,19 +180,27 @@ export class HelperFamiliesComponent implements OnInit {
       x.args = {
         title: use.language.closestDeliveries + ' (' + use.language.mergeFamilies + ')',
         multiSelect: true,
-        onSelect: async (d, isSelected, theList) => this.checkCloseDeliveries(d, isSelected, theList),
+        onSelect: async (selectedItems) => {
+          if (selectedItems.length > 0)
+            this.busy.doWhileShowingBusy(async () => {
+              let ids: string[] = [];
+              for (const selectedItem of selectedItems) {
+                let d: DeliveryInList = selectedItem.item;
+                ids.push(...d.ids);
+              }
+              await HelperFamiliesComponent.assignFamilyDeliveryToIndie(ids);
+              await this.familyLists.refreshRoute({
+                strategyId: this.settings.routeStrategy.value.id,
+                volunteerLocation: this.volunteerLocation
+              });
+              await this.familyLists.reload();
+            });
+        },
         options: afdList
       }
-    }, y => y.args.options.forEach(async x => {
-      if (x.selected) await HelperFamiliesComponent.assignFamilyDeliveryToIndie(x.item.id);
-    })
-    );
-
-    await this.familyLists.refreshRoute({
-      strategyId: this.settings.routeStrategy.value.id,
-      volunteerLocation: this.volunteerLocation
     });
-    await this.familyLists.reload();
+
+
   }
 
   getHelpText() {
@@ -554,14 +569,12 @@ export class HelperFamiliesComponent implements OnInit {
 }
 
 interface DeliveryInList {
-  id: string,
+  ids: string[],
   familyId: string,
   city: string,
   floor: string,
-  basketType: string,
-  quantity: number,
   location: Location,
-  distance: number,
+  distance: number
 }
 
 class limitList {

@@ -308,9 +308,10 @@ export class ImportFromExcelComponent implements OnInit {
                         await this.context.openDialog(SelectListComponent, x => {
                             x.args = {
                                 title: use.language.selectExcelSheet,
-                                options: sheets.map(x => ({ name: x, item: x } as selectListItem))
+                                options: sheets.map(x => ({ name: x, item: x } as selectListItem)),
+                                onSelect: x => sheet = x[0].name
                             }
-                        }, y => sheet = y.selected.name);
+                        });
                     }
                     this.sheet = sheet;
                     this.worksheet = this.oFile.Sheets[sheet];
