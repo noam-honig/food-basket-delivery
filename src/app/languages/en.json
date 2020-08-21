@@ -3,6 +3,10 @@
     "google": "action",
     "valueInCode": "פעולה"
   },
+  "actionCanceled": {
+    "google": "Action canceled",
+    "valueInCode": "פעולה בוטלה"
+  },
   "actionNotFound": {
     "google": "Action not found on server",
     "valueInCode": "פעולה לא נמצאה בשרת"
@@ -655,10 +659,29 @@
     "valueInCode": "מי שייכה למתנדב",
     "custom": "Volunteer assigning user"
   },
+  "create": {
+    "google": "to create",
+    "valueInCode": "ליצור ",
+    "custom": "Create"
+  },
   "createDate": {
     "google": "Date added",
     "valueInCode": "מועד הוספה",
     "custom": "Creation Date"
+  },
+  "createNewDeliveryForAllFamilies": {
+    "google": "Create a new delivery for families",
+    "valueInCode": "צור משלוח חדש למשפחות"
+  },
+  "createNewEvent": {
+    "google": "Opening a new event",
+    "valueInCode": "פתיחת ארוע חדש",
+    "custom": "Create a new event"
+  },
+  "createNewEventHelp": {
+    "google": "This transfers the active shipments to the archive, allowing a new shipment to be opened for families",
+    "valueInCode": "פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשרת פתיחת משלוח חדש למשפחות",
+    "custom": "This action will archive all active deliveries, and help create new deliveries"
   },
   "createUser": {
     "google": "User Adds",
@@ -810,6 +833,11 @@
     "google": "Successfully delivered",
     "valueInCode": "נמסר בהצלחה"
   },
+  "deliveresOnTheWayAssignedInTheLast3Hours": {
+    "google": "Shipments on the way, which have been associated with the last three hours, should you continue to create a new shipment?",
+    "valueInCode": "משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך בפתיחת ארוע חדש?",
+    "custom": "Deliveries that were assigned in the last 3 hours and were not delivered yet, proceed with opening a new event?"
+  },
   "deliveries": {
     "google": "Shipments",
     "valueInCode": "משלוחים",
@@ -838,6 +866,11 @@
   "deliveriesCompleted": {
     "google": "Shipments completed",
     "valueInCode": "משלוחים הושלמו"
+  },
+  "deliveriesCreated": {
+    "google": "Shipments were created",
+    "valueInCode": "משלוחים נוצרו",
+    "custom": "Deliveries created"
   },
   "deliveriesDoneInTheLastTwoDays": {
     "google": "Deliveries distributed over the last two days",
@@ -1006,6 +1039,11 @@
   "doesNotExist": {
     "google": "Does not exist",
     "valueInCode": "לא קיים"
+  },
+  "doneDotGotoDeliveries": {
+    "google": "The process ended successfully, move to the Shipping screen?",
+    "valueInCode": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?",
+    "custom": "Done, proceed to Active deliveries?"
   },
   "doneVolunteers": {
     "google": "Finish",
@@ -1576,6 +1614,10 @@
     "google": "Notice, Inaccurate Address!",
     "valueInCode": "שימו לב, כתובת לא מדוייקת!"
   },
+  "includeGroups": {
+    "google": "Only for families in these groups",
+    "valueInCode": "רק עבור משפחות בקבוצות אלו"
+  },
   "infoAboutUpdates": {
     "google": "Update details",
     "valueInCode": "פרטי עדכונים"
@@ -1795,6 +1837,10 @@
     "google": "More news",
     "valueInCode": "עוד חדשות"
   },
+  "moreOptions": {
+    "google": "Other options",
+    "valueInCode": "אפשרויות מתקדמות למשלוחים החדשים"
+  },
   "moreThanOneRowInDbMatchesExcel": {
     "google": "More than one family was found on the site corresponding to this line from Axel. Please select which of the following families fits the row from the excel and pass it on",
     "valueInCode": "נמצאה יותר ממשפחה אחת באתר המתאימה לשורה הזו מהאקסל. אנא בחר איזו מהמשפחות הבאות מתאימה לשורה מהאקסל והעבר אותה למשפחות לעדכון",
@@ -1843,6 +1889,10 @@
   "needEscort": {
     "google": "Need a companion",
     "valueInCode": "צריך מלווה"
+  },
+  "newDeliveriesQM": {
+    "google": "New deliveries?",
+    "valueInCode": "משלוחים חדשים?"
   },
   "newDelivery": {
     "google": "new delivery",
@@ -1951,6 +2001,11 @@
   "notDeliveredOther": {
     "google": "Not delivered, other",
     "valueInCode": "לא נמסר, אחר"
+  },
+  "notDoneDeliveriesShouldArchiveThem": {
+    "google": "Deliveries that have not yet been associated, should they be archived?",
+    "valueInCode": "משלוחים פעילים שטרם שוייכו, האם להמשיך בפתיחת ארוע חדש?",
+    "custom": "Unassigned deliveries, proceed with creating a new event?"
   },
   "notice": {
     "google": "Note!",
@@ -2513,6 +2568,10 @@
     "google": "Choosing multiple families",
     "valueInCode": "בחירת מספר משפחות",
     "custom": "Set Number of Delivery"
+  },
+  "selectSomeOfTheFamilies": {
+    "google": "Select families by groups",
+    "valueInCode": "בחר משפחות לפי קבוצות"
   },
   "selectVolunteer": {
     "google": "Choose a volunteer",

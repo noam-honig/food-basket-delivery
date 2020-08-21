@@ -4,6 +4,11 @@
     "valueInCode": "פעולה",
     "valueInEnglish": "action"
   },
+  "actionCanceled": {
+    "google": "Acción cancelada",
+    "valueInCode": "פעולה בוטלה",
+    "valueInEnglish": "Action canceled"
+  },
   "actionNotFound": {
     "google": "Acción no encontrada en el servidor",
     "valueInCode": "פעולה לא נמצאה בשרת",
@@ -709,10 +714,30 @@
     "valueInCode": "מי שייכה למתנדב",
     "valueInEnglish": "Volunteer assigning user"
   },
+  "create": {
+    "google": "Crear",
+    "valueInCode": "ליצור ",
+    "valueInEnglish": "Create"
+  },
   "createDate": {
     "google": "Fecha de creación",
     "valueInCode": "מועד הוספה",
     "valueInEnglish": "Creation Date"
+  },
+  "createNewDeliveryForAllFamilies": {
+    "google": "Crea una nueva entrega para familias",
+    "valueInCode": "צור משלוח חדש למשפחות",
+    "valueInEnglish": "Create a new delivery for families"
+  },
+  "createNewEvent": {
+    "google": "Crea un nuevo evento",
+    "valueInCode": "פתיחת ארוע חדש",
+    "valueInEnglish": "Create a new event"
+  },
+  "createNewEventHelp": {
+    "google": "Esta acción archivará todas las entregas activas y ayudará a crear nuevas entregas.",
+    "valueInCode": "פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשרת פתיחת משלוח חדש למשפחות",
+    "valueInEnglish": "This action will archive all active deliveries, and help create new deliveries"
   },
   "createUser": {
     "google": "Creando usuario",
@@ -875,6 +900,11 @@
     "valueInCode": "נמסר בהצלחה",
     "valueInEnglish": "Successfully delivered"
   },
+  "deliveresOnTheWayAssignedInTheLast3Hours": {
+    "google": "Entregas que fueron asignadas en las últimas 3 horas y aún no se entregaron, ¿proceder con la apertura de un nuevo evento?",
+    "valueInCode": "משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך בפתיחת ארוע חדש?",
+    "valueInEnglish": "Deliveries that were assigned in the last 3 hours and were not delivered yet, proceed with opening a new event?"
+  },
   "deliveries": {
     "google": "Entregas",
     "valueInCode": "משלוחים",
@@ -904,6 +934,11 @@
     "google": "Envíos completados",
     "valueInCode": "משלוחים הושלמו",
     "valueInEnglish": "Shipments completed"
+  },
+  "deliveriesCreated": {
+    "google": "Entregas creadas",
+    "valueInCode": "משלוחים נוצרו",
+    "valueInEnglish": "Deliveries created"
   },
   "deliveriesDoneInTheLastTwoDays": {
     "google": "Entregado en los últimos dos días",
@@ -1094,6 +1129,11 @@
     "google": "No existe",
     "valueInCode": "לא קיים",
     "valueInEnglish": "Does not exist"
+  },
+  "doneDotGotoDeliveries": {
+    "google": "Listo, ¿pasar a entregas activas?",
+    "valueInCode": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?",
+    "valueInEnglish": "Done, proceed to Active deliveries?"
   },
   "doneVolunteers": {
     "google": "Terminar",
@@ -1760,6 +1800,11 @@
     "valueInCode": "שימו לב, כתובת לא מדוייקת!",
     "valueInEnglish": "Notice, Inaccurate Address!"
   },
+  "includeGroups": {
+    "google": "Solo para familias en estos grupos",
+    "valueInCode": "רק עבור משפחות בקבוצות אלו",
+    "valueInEnglish": "Only for families in these groups"
+  },
   "infoAboutUpdates": {
     "google": "Detalles de actualización",
     "valueInCode": "פרטי עדכונים",
@@ -2020,6 +2065,11 @@
     "valueInCode": "עוד חדשות",
     "valueInEnglish": "More news"
   },
+  "moreOptions": {
+    "google": "Otras opciones",
+    "valueInCode": "אפשרויות מתקדמות למשלוחים החדשים",
+    "valueInEnglish": "Other options"
+  },
   "moreThanOneRowInDbMatchesExcel": {
     "google": "Se encontró más de una familia en el sitio correspondiente a esta línea de Excel. Seleccione cuál de las siguientes familias se ajusta a la fila del Excel y páselo",
     "valueInCode": "נמצאה יותר ממשפחה אחת באתר המתאימה לשורה הזו מהאקסל. אנא בחר איזו מהמשפחות הבאות מתאימה לשורה מהאקסל והעבר אותה למשפחות לעדכון",
@@ -2079,6 +2129,11 @@
     "google": "Necesito un compañero",
     "valueInCode": "צריך מלווה",
     "valueInEnglish": "Need a companion"
+  },
+  "newDeliveriesQM": {
+    "google": "¿Nuevas entregas?",
+    "valueInCode": "משלוחים חדשים?",
+    "valueInEnglish": "New deliveries?"
   },
   "newDelivery": {
     "google": "Nueva entrega",
@@ -2204,6 +2259,11 @@
     "google": "No entregado, otro",
     "valueInCode": "לא נמסר, אחר",
     "valueInEnglish": "Not delivered, other"
+  },
+  "notDoneDeliveriesShouldArchiveThem": {
+    "google": "Entregas no asignadas, ¿continuar con la creación de un nuevo evento?",
+    "valueInCode": "משלוחים פעילים שטרם שוייכו, האם להמשיך בפתיחת ארוע חדש?",
+    "valueInEnglish": "Unassigned deliveries, proceed with creating a new event?"
   },
   "notice": {
     "google": "¡Nota!",
@@ -2860,6 +2920,11 @@
     "google": "Establecer número de entrega",
     "valueInCode": "בחירת מספר משפחות",
     "valueInEnglish": "Set Number of Delivery"
+  },
+  "selectSomeOfTheFamilies": {
+    "google": "Seleccionar familias por grupos",
+    "valueInCode": "בחר משפחות לפי קבוצות",
+    "valueInEnglish": "Select families by groups"
   },
   "selectVolunteer": {
     "google": "Elige un voluntario",

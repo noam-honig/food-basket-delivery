@@ -3,6 +3,10 @@
     "google": "פעולה",
     "valueInCode": "פעולה"
   },
+  "actionCanceled": {
+    "google": "פעולה בוטלה",
+    "valueInCode": "פעולה בוטלה"
+  },
   "actionNotFound": {
     "google": "פעולה לא נמצאה בשרת",
     "valueInCode": "פעולה לא נמצאה בשרת"
@@ -567,9 +571,25 @@
     "google": "מי שייכה למתנדב",
     "valueInCode": "מי שייכה למתנדב"
   },
+  "create": {
+    "google": "ליצור ",
+    "valueInCode": "ליצור "
+  },
   "createDate": {
     "google": "מועד הוספה",
     "valueInCode": "מועד הוספה"
+  },
+  "createNewDeliveryForAllFamilies": {
+    "google": "צור משלוח חדש לחיילים",
+    "valueInCode": "צור משלוח חדש למשפחות"
+  },
+  "createNewEvent": {
+    "google": "פתיחת ארוע חדש",
+    "valueInCode": "פתיחת ארוע חדש"
+  },
+  "createNewEventHelp": {
+    "google": "פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשר פתיחת משלוח חדש לחיילים",
+    "valueInCode": "פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשרת פתיחת משלוח חדש למשפחות"
   },
   "createUser": {
     "google": "משתמש מוסיף",
@@ -699,6 +719,10 @@
     "google": "נמסר בהצלחה",
     "valueInCode": "נמסר בהצלחה"
   },
+  "deliveresOnTheWayAssignedInTheLast3Hours": {
+    "google": "משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך ביצירת משלוח חדש?",
+    "valueInCode": "משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך בפתיחת ארוע חדש?"
+  },
   "deliveries": {
     "google": "משלוחים",
     "valueInCode": "משלוחים"
@@ -722,6 +746,10 @@
   "deliveriesCompleted": {
     "google": "משלוחים הושלמו",
     "valueInCode": "משלוחים הושלמו"
+  },
+  "deliveriesCreated": {
+    "google": "משלוחים נוצרו",
+    "valueInCode": "משלוחים נוצרו"
   },
   "deliveriesDoneInTheLastTwoDays": {
     "google": "משלוחים שחולקו ביומיים האחרונים",
@@ -874,6 +902,10 @@
   "doesNotExist": {
     "google": "לא קיים",
     "valueInCode": "לא קיים"
+  },
+  "doneDotGotoDeliveries": {
+    "google": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?",
+    "valueInCode": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?"
   },
   "doneVolunteers": {
     "google": "סיימו",
@@ -1407,6 +1439,10 @@
     "google": "שימו לב, כתובת לא מדוייקת!",
     "valueInCode": "שימו לב, כתובת לא מדוייקת!"
   },
+  "includeGroups": {
+    "google": "רק עבור חיילים בקבוצות אלו",
+    "valueInCode": "רק עבור משפחות בקבוצות אלו"
+  },
   "infoAboutUpdates": {
     "google": "פרטי עדכונים",
     "valueInCode": "פרטי עדכונים"
@@ -1615,6 +1651,10 @@
     "google": "עוד חדשות",
     "valueInCode": "עוד חדשות"
   },
+  "moreOptions": {
+    "google": "אפשרויות נוספות",
+    "valueInCode": "אפשרויות מתקדמות למשלוחים החדשים"
+  },
   "moreThanOneRowInDbMatchesExcel": {
     "google": "נמצאה יותר מחייל אחד באתר המתאימה לשורה הזו מהאקסל. אנא בחר איזו מהחיילים הבאות מתאימה לשורה מהאקסל והעבר אותה לחיילים לעדכון",
     "valueInCode": "נמצאה יותר ממשפחה אחת באתר המתאימה לשורה הזו מהאקסל. אנא בחר איזו מהמשפחות הבאות מתאימה לשורה מהאקסל והעבר אותה למשפחות לעדכון"
@@ -1662,6 +1702,10 @@
   "needEscort": {
     "google": "צריך מלווה",
     "valueInCode": "צריך מלווה"
+  },
+  "newDeliveriesQM": {
+    "google": "משלוחים חדשים?",
+    "valueInCode": "משלוחים חדשים?"
   },
   "newDelivery": {
     "google": "משלוח חדש",
@@ -1762,6 +1806,10 @@
   "notDeliveredOther": {
     "google": "לא נמסר, אחר",
     "valueInCode": "לא נמסר, אחר"
+  },
+  "notDoneDeliveriesShouldArchiveThem": {
+    "google": "משלוחים שטרם שוייכו, האם להעביר אותם לארכיב?",
+    "valueInCode": "משלוחים פעילים שטרם שוייכו, האם להמשיך בפתיחת ארוע חדש?"
   },
   "notice": {
     "google": "שים לב!",
@@ -2286,6 +2334,10 @@
   "selectNumberOfFamilies": {
     "google": "בחירת מספר חיילים",
     "valueInCode": "בחירת מספר משפחות"
+  },
+  "selectSomeOfTheFamilies": {
+    "google": "בחר חיילים לפי קבוצות",
+    "valueInCode": "בחר משפחות לפי קבוצות"
   },
   "selectVolunteer": {
     "google": "בחר מתנדב",

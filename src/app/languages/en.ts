@@ -733,4 +733,17 @@ export class en implements Language {
   thisVolunteerIsSetAsTheDefaultFor = 'This volunteer is defined as a default volunteer for more';
   familiesDotCancelTheseAssignments = 'Families. Should it be canceled by default for these families?';
   editComment = 'Make a note';
+  createNewEvent = 'Create a new event';
+  createNewEventHelp = 'This action will archive all active deliveries, and help create new deliveries';
+  createNewDeliveryForAllFamilies = 'Create a new delivery for families';
+  selectSomeOfTheFamilies = 'Select families by groups';
+  moreOptions = 'Other options';
+  includeGroups = 'Only for families in these groups';
+  create = 'Create';
+  newDeliveriesQM = 'New deliveries?';
+  actionCanceled = 'Action canceled';
+  deliveriesCreated = 'Deliveries created';
+  doneDotGotoDeliveries = 'Done, proceed to Active deliveries?';
+  notDoneDeliveriesShouldArchiveThem = 'Unassigned deliveries, proceed with creating a new event?';
+  deliveresOnTheWayAssignedInTheLast3Hours = 'Deliveries that were assigned in the last 3 hours and were not delivered yet, proceed with opening a new event?';
 }

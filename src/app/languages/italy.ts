@@ -733,4 +733,17 @@ export class italy implements Language {
   thisVolunteerIsSetAsTheDefaultFor = 'Questo volontario è definito come volontario predefinito per di più';
   familiesDotCancelTheseAssignments = 'Famiglie. Dovrebbe essere annullato di default per queste famiglie?';
   editComment = 'Prendi nota';
+  createNewEvent = 'Crea un nuovo evento';
+  createNewEventHelp = 'Questa azione archivierà tutte le consegne attive e aiuterà a creare nuove consegne';
+  createNewDeliveryForAllFamilies = 'Crea una nuova consegna per le famiglie';
+  selectSomeOfTheFamilies = 'Seleziona le famiglie per gruppi';
+  moreOptions = 'Altre opzioni';
+  includeGroups = 'Solo per famiglie in questi gruppi';
+  create = 'Creare';
+  newDeliveriesQM = 'Nuove consegne?';
+  actionCanceled = 'Azione annullata';
+  deliveriesCreated = 'Consegne create';
+  doneDotGotoDeliveries = 'Fatto, passare alle consegne attive?';
+  notDoneDeliveriesShouldArchiveThem = 'Consegne non assegnate, procedere con la creazione di un nuovo evento?';
+  deliveresOnTheWayAssignedInTheLast3Hours = "Consegne che sono state assegnate nelle ultime 3 ore e non sono state ancora consegnate, procedere con l'apertura di un nuovo evento?";
 }

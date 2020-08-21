@@ -856,6 +856,19 @@ export class Language {
   thisVolunteerIsSetAsTheDefaultFor="מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד";
   familiesDotCancelTheseAssignments = "משפחות. האם לבטל אותו כברירת מחדל למשפחות אלו?";
   editComment = "ערוך הערה";
+  createNewEvent = "פתיחת ארוע חדש";
+  createNewEventHelp = `פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשרת פתיחת משלוח חדש למשפחות`;
+  createNewDeliveryForAllFamilies="צור משלוח חדש למשפחות";
+  selectSomeOfTheFamilies = "בחר משפחות לפי קבוצות";
+  moreOptions = "אפשרויות מתקדמות למשלוחים החדשים";
+  includeGroups = "רק עבור משפחות בקבוצות אלו";
+  create = "ליצור ";
+  newDeliveriesQM = "משלוחים חדשים?";
+  actionCanceled="פעולה בוטלה";
+  deliveriesCreated = "משלוחים נוצרו";
+  doneDotGotoDeliveries = "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?";
+  notDoneDeliveriesShouldArchiveThem = "משלוחים פעילים שטרם שוייכו, האם להמשיך בפתיחת ארוע חדש?";
+  deliveresOnTheWayAssignedInTheLast3Hours = "משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך בפתיחת ארוע חדש?";
   
 }
 

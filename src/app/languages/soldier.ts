@@ -733,4 +733,17 @@ export class soldier implements Language {
   thisVolunteerIsSetAsTheDefaultFor = 'מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד';
   familiesDotCancelTheseAssignments = 'חיילים. האם לבטל אותו כברירת מחדל לחיילים אלו?';
   editComment = 'ערוך הערה';
+  createNewEvent = 'פתיחת ארוע חדש';
+  createNewEventHelp = 'פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשר פתיחת משלוח חדש לחיילים';
+  createNewDeliveryForAllFamilies = 'צור משלוח חדש לחיילים';
+  selectSomeOfTheFamilies = 'בחר חיילים לפי קבוצות';
+  moreOptions = 'אפשרויות נוספות';
+  includeGroups = 'רק עבור חיילים בקבוצות אלו';
+  create = 'ליצור ';
+  newDeliveriesQM = 'משלוחים חדשים?';
+  actionCanceled = 'פעולה בוטלה';
+  deliveriesCreated = 'משלוחים נוצרו';
+  doneDotGotoDeliveries = 'התהליך הסתיים בהצלחה, לעבור למסך משלוחים?';
+  notDoneDeliveriesShouldArchiveThem = 'משלוחים שטרם שוייכו, האם להעביר אותם לארכיב?';
+  deliveresOnTheWayAssignedInTheLast3Hours = 'משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך ביצירת משלוח חדש?';
 }

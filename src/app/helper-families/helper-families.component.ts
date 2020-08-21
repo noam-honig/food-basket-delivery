@@ -27,7 +27,7 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { PhoneColumn } from '../model-shared/types';
 import { Sites, getLang } from '../sites/sites';
 import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
-import { HelperCommunicationHistory } from '../in-route-follow-up/in-route-helpers';
+
 
 @Component({
   selector: 'app-helper-families',
@@ -399,7 +399,7 @@ export class HelperFamiliesComponent implements OnInit {
         title: 'הוסף הערה לתכתובות של המתנדב',
 
         save: async (comment) => {
-          let hist = this.context.for(HelperCommunicationHistory).create();
+          let hist = this.context.for((await import ('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
           hist.volunteer.value = this.familyLists.helper.id.value;
           hist.comment.value = comment;
           await hist.save();

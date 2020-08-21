@@ -17,6 +17,12 @@
     </div>
     <h4 *ngIf="context.user">{{lang.hello}} {{context.user.name}}</h4>
     <mat-nav-list role="list">
+      <mat-list-item  *ngIf="showCreateNewEvent()" >
+        <a  matLine (click)="createNewEvent()" >
+        {{settings.lang.createNewEvent}}
+      </a>
+      </mat-list-item>
+      <mat-divider></mat-divider>
       <ng-container *ngFor="let m of router.config">
         <mat-list-item *ngIf="shouldDisplayRoute(m)" routerLinkActive="active-route">
           <a matLine [routerLink]="m.path" (click)="routeClicked()">{{routeName(m)}}</a>

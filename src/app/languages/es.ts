@@ -733,4 +733,17 @@ export class es implements Language {
   thisVolunteerIsSetAsTheDefaultFor = 'Este voluntario se define como voluntario predeterminado para más';
   familiesDotCancelTheseAssignments = 'Familias. ¿Debería cancelarse por defecto para estas familias?';
   editComment = 'Haz una nota';
+  createNewEvent = 'Crea un nuevo evento';
+  createNewEventHelp = 'Esta acción archivará todas las entregas activas y ayudará a crear nuevas entregas.';
+  createNewDeliveryForAllFamilies = 'Crea una nueva entrega para familias';
+  selectSomeOfTheFamilies = 'Seleccionar familias por grupos';
+  moreOptions = 'Otras opciones';
+  includeGroups = 'Solo para familias en estos grupos';
+  create = 'Crear';
+  newDeliveriesQM = '¿Nuevas entregas?';
+  actionCanceled = 'Acción cancelada';
+  deliveriesCreated = 'Entregas creadas';
+  doneDotGotoDeliveries = 'Listo, ¿pasar a entregas activas?';
+  notDoneDeliveriesShouldArchiveThem = 'Entregas no asignadas, ¿continuar con la creación de un nuevo evento?';
+  deliveresOnTheWayAssignedInTheLast3Hours = 'Entregas que fueron asignadas en las últimas 3 horas y aún no se entregaron, ¿proceder con la apertura de un nuevo evento?';
 }

@@ -1,4 +1,4 @@
-import { Context,  BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, FilterBase, ValueListColumn } from "@remult/core";
+import { Context, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, FilterBase, ValueListColumn, EntityWhere } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { DistributionCenterId, DistributionCenters, allCentersToken } from "../manage/distribution-centers";
 import { HelperId } from "../helpers/helpers";
@@ -178,27 +178,30 @@ export class UpdateDeliveriesStatus extends ActionOnRows<ActiveFamilyDeliveries>
     }
 }
 
-class ArchiveHelper {
-    markOnTheWayAsDelivered = new BoolColumn();
-    markSelfPickupAsDelivered = new BoolColumn();
+export class ArchiveHelper {
+    showDelivered = false;
+    markOnTheWayAsDelivered = new BoolColumn({ dataControlSettings: () => ({ visible: () => this.showDelivered }) });
+    showSelfPickup = false;
+    markSelfPickupAsDelivered = new BoolColumn({ dataControlSettings: () => ({ visible: () => this.showSelfPickup }) });
     constructor(private context: Context) { }
     getColumns() {
         return [this.markOnTheWayAsDelivered, this.markSelfPickupAsDelivered];
     }
-    async getDialogColumns(c: actionDialogNeeds<ActiveFamilyDeliveries>) {
+    async initArchiveHelperBasedOnCurrentDeliveryInfo(where: EntityWhere<ActiveFamilyDeliveries>, usingSelfPickupModule: boolean) {
         let result = [];
-        let filter = await c.buildActionInfo(undefined);
-        let onTheWay = await this.context.for(ActiveFamilyDeliveries).count(d => d.onTheWayFilter().and(filter.where(d)));
-        this.markOnTheWayAsDelivered.value = onTheWay > 0;
+
+        let onTheWay = await this.context.for(ActiveFamilyDeliveries).count(d => d.onTheWayFilter().and(where(d)));
+        this.showDelivered = this.markOnTheWayAsDelivered.value = onTheWay > 0;
+
         if (onTheWay > 0) {
 
             this.markOnTheWayAsDelivered.defs.caption = use.language.markAsDeliveredFor + " " + onTheWay + " " + use.language.onTheWayDeliveries;
             result.push(this.markOnTheWayAsDelivered);
         }
 
-        if (c.settings.usingSelfPickupModule) {
-            let selfPickup = await this.context.for(ActiveFamilyDeliveries).count(d => d.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup).and(filter.where(d)));
-            this.markSelfPickupAsDelivered.value = selfPickup > 0;
+        if (usingSelfPickupModule) {
+            let selfPickup = await this.context.for(ActiveFamilyDeliveries).count(d => d.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup).and(where(d)));
+            this.showSelfPickup = this.markSelfPickupAsDelivered.value = selfPickup > 0;
             if (selfPickup > 0) {
                 this.markSelfPickupAsDelivered.defs.caption = use.language.markAsSelfPickupFor + " " + selfPickup + " " + use.language.selfPickupDeliveries;
                 result.push(this.markSelfPickupAsDelivered);
@@ -223,7 +226,7 @@ class ArchiveDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
             allowed: Roles.admin,
             columns: () => this.archiveHelper.getColumns(),
             dialogColumns: async c => {
-                return await this.archiveHelper.getDialogColumns(c);
+                return await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(await (await c.buildActionInfo(undefined)).where, c.settings.usingSelfPickupModule.value);
             },
 
             title: getLang(context).archiveDeliveries,
@@ -317,7 +320,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                     { column: this.distributionCenter, visible: () => component.dialog.hasManyCenters && !this.useCurrentDistributionCenter.value },
                     this.helperStrategy,
                     { column: this.helper, visible: () => this.helperStrategy.value == HelperStrategy.selectHelper },
-                    ...await this.archiveHelper.getDialogColumns(component),
+                    ...await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(await (await component.buildActionInfo(undefined)).where, component.settings.usingSelfPickupModule.value),
                     this.autoArchive,
                     this.newDeliveryForAll,
                     this.selfPickup.getDispaySettings(component.settings.usingSelfPickupModule.value)
@@ -336,7 +339,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                 f.deliverStatus.isAResultStatus();
             },
             title: getLang(context).newDelivery,
-            icon:'add_shopping_cart',
+            icon: 'add_shopping_cart',
             help: () => getLang(this.context).newDeliveryForDeliveriesHelp + ' ' + this.newDeliveryForAll.defs.caption,
             forEach: async existingDelivery => {
                 this.archiveHelper.forEach(existingDelivery);
