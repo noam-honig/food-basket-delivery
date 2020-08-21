@@ -377,7 +377,7 @@ export class HelperFamiliesComponent implements OnInit {
   prepareMessage(reminder: boolean) {
     this.isReminderMessage = reminder;
     this.busy.donotWait(async () => {
-      await SendSmsAction.generateMessage(this.context, this.familyLists.helper, window.origin, reminder, this.context.user.name, (phone, message, sender, link) => {
+      await SendSmsAction.generateMessage(this.context, this.familyLists.helper, window.origin, reminder, this.context.user.name,async (phone, message, sender, link) => {
         this.smsMessage = message;
         this.smsPhone = phone;
         this.smsLink = link;
@@ -415,7 +415,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
   async updateMessageSent(type: string) {
 
-    SendSmsAction.documentHelperMessage(this.isReminderMessage, this.familyLists.helper, this.context, type);
+    await SendSmsAction.documentHelperMessage(this.isReminderMessage, this.familyLists.helper, this.context, type);
   }
   async copyMessage() {
     copy(this.smsMessage);

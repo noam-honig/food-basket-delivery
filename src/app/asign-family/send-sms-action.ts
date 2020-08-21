@@ -52,7 +52,7 @@ export class SendSmsAction {
         await hist.save();
     }
 
-    static async generateMessage(ds: Context, helper: Helpers, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string, sender: string, url: string) => void) {
+    static async generateMessage(ds: Context, helper: Helpers, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string, sender: string, url: string) => Promise<void>) {
 
         if (!origin) {
             throw 'Couldnt determine origin for sms';
@@ -83,8 +83,7 @@ export class SendSmsAction {
             message = SendSmsAction.getMessage(message, settings.organisationName.value, helper.name.value, senderName, url);
             let sender = await SendSmsAction.getSenderPhone(ds);
 
-            then(helper.phone.value, message, sender, url);
-            await helper.save();
+            await then(helper.phone.value, message, sender, url);
             var x = 1 + 1;
 
         }
