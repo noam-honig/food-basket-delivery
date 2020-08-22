@@ -89,6 +89,7 @@ import { RegisterHelperComponent } from './register-helper/register-helper.compo
 import { AddressInputComponent } from './address-input/address-input.component';
 import { InRouteFollowUpComponent } from './in-route-follow-up/in-route-follow-up.component';
 import { EditCommentDialogComponent  } from './edit-comment-dialog/edit-comment-dialog.component';
+import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment-assign-screen.component';
 
 
 
@@ -177,7 +178,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     RegisterHelperComponent,
     AddressInputComponent,
     InRouteFollowUpComponent,
-    EditCommentDialogComponent
+    EditCommentDialogComponent,
+    ShipmentAssignScreenComponent
 
 
   ],

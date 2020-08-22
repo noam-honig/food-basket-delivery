@@ -1,0 +1,41 @@
+<table>
+    <thead>
+        <tr>
+            <th>שם תורם</th>
+            <th>כתובת</th>
+            <th>מתנדבים רלוונטים</th>
+        </tr>
+
+    </thead>
+    <ng-container *ngFor="let f of families">
+        <tr>
+            <td>{{f.name}}</td>
+            <td>{{f.address}}</td>
+            <td> <a (click)="togglerShowHelper(f)">{{f.relevantHelpers.length}}</a>
+            </td>
+        </tr>
+        <tr *ngIf="shouldShowHelper(f)">
+            <td colspan="3">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>מתנדב</th>
+                            <td>מרחק</td>
+                            <th>משפחות</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let h of f.relevantHelpers">
+                            <td>{{h.helper.name}}</td>
+                            <td>{{h.distance.toFixed(1)}} ק"מ מ{{h.referencePoint}}</td>
+                            <td>{{h.helper.families.length}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </ng-container>
+    <tbody>
+
+    </tbody>
+</table>
