@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Roles } from '../auth/roles';
-import { ServerFunction, Context } from '@remult/core';
+import { ServerFunction, Context, SqlDatabase } from '@remult/core';
 import { Helpers } from '../helpers/helpers';
-import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Location, GetDistanceBetween } from '../shared/googleApiHelpers';
+import { SqlBuilder } from '../model-shared/types';
 
 @Component({
   selector: 'app-shipment-assign-screen',
@@ -73,7 +74,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
   }
   @ServerFunction({ allowed: Roles.admin })
-  static async getShipmentAssignInfo(context?: Context) {
+  static async getShipmentAssignInfo(context?: Context, db?: SqlDatabase) {
     let result: data = {
       helpers: {},
       families: {}
@@ -82,13 +83,27 @@ export class ShipmentAssignScreenComponent implements OnInit {
       result.helpers[h.id.value] = {
         id: h.id.value,
         name: h.name.value,
-        location1: h.getGeocodeInformation().location(),
+        location1: h.getGeocodeInformation().ok() ? h.getGeocodeInformation().location() : undefined,
         address1: h.preferredDistributionAreaAddress.value,
         address2: h.preferredDistributionAreaAddress2.value,
-        location2: h.getGeocodeInformation().location(),
+        location2: h.getGeocodeInformation2().ok() ? h.getGeocodeInformation2().location() : undefined,
         families: []
       };
     }
+    {
+      let fd = context.for(FamilyDeliveries).create();
+      let sql = new SqlBuilder();
+      let tenDaysAgo = new Date();
+      tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
+      let busyHelpers = await db.execute(sql.query({
+        select: () => [fd.courier],
+        from: fd,
+        where: () => [fd.deliverStatus.isAResultStatus().and(fd.deliveryStatusDate.isLessOrEqualTo(tenDaysAgo))],
+        groupBy: () => [fd.courier],
+        having: () => [sql.build('count(distinct ', fd.family, ' )>3')]
+      }));
+    }
+
     for await (let d of context.for(ActiveFamilyDeliveries).iterate({ where: h => h.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery) })) {
 
       let f: familyInfo = {
