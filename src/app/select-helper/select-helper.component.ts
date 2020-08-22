@@ -34,6 +34,7 @@ export class SelectHelperComponent implements OnInit {
   lastFilter: string = undefined;
   public args: {
     familyId?: string,
+    searchByDistance?: boolean,
     hideRecent?: boolean,
     location?: Location,
     searchClosestDefaultFamily?: boolean,
@@ -87,7 +88,7 @@ export class SelectHelperComponent implements OnInit {
         check(theH, h.getGeocodeInformation2().location(), getLang(context).preferredDistributionArea + ": " + h.preferredDistributionAreaAddress2.value);
       }
     });
-    
+
     let sql = new SqlBuilder();
     if (!selectDefaultVolunteer) {
 
@@ -132,7 +133,7 @@ export class SelectHelperComponent implements OnInit {
         select: () => [
           sql1.columnWithAlias(fd.courier, "courier"),
           sql1.columnWithAlias(sql.max(fd.deliveryStatusDate), "delivery_date"),
-          sql1.columnWithAlias("count(distinct "+sql1.getItemSql(fd.family)+")", "count")
+          sql1.columnWithAlias("count(distinct " + sql1.getItemSql(fd.family) + ")", "count")
         ],
         groupBy: () => [fd.courier]
       }))).rows) {
@@ -208,13 +209,16 @@ export class SelectHelperComponent implements OnInit {
 
       return r;
     };
+    if (this.args.searchByDistance)
+      this.byLocation();
+    else
+      if (Helpers.recentHelpers.length == 0 || this.args.hideRecent)
+        this.getHelpers();
+      else {
+        this.filteredHelpers = mapHelpers(Helpers.recentHelpers, x => undefined);
+        this.showingRecentHelpers = true;
+      }
 
-    if (Helpers.recentHelpers.length == 0 || this.args.hideRecent)
-      this.getHelpers();
-    else {
-      this.filteredHelpers = mapHelpers(Helpers.recentHelpers, x => undefined);
-      this.showingRecentHelpers = true;
-    }
 
   }
   showingRecentHelpers = false;
