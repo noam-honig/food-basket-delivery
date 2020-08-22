@@ -857,7 +857,7 @@ export class Language {
   familiesDotCancelTheseAssignments = "משפחות. האם לבטל אותו כברירת מחדל למשפחות אלו?";
   editComment = "ערוך הערה";
   createNewEvent = "פתיחת ארוע חדש";
-  createNewEventHelp = `פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשרת פתיחת משלוח חדש למשפחות`;
+  createNewEventHelp = `פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשרת יצירת משלוח חדש למשפחות`;
   createNewDeliveryForAllFamilies="צור משלוח חדש למשפחות";
   selectSomeOfTheFamilies = "בחר משפחות לפי קבוצות";
   moreOptions = "אפשרויות מתקדמות למשלוחים החדשים";

@@ -680,7 +680,7 @@
   },
   "createNewEventHelp": {
     "google": "This transfers the active shipments to the archive, allowing a new shipment to be opened for families",
-    "valueInCode": "פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשרת פתיחת משלוח חדש למשפחות",
+    "valueInCode": "פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשרת יצירת משלוח חדש למשפחות",
     "custom": "This action will archive all active deliveries, and help create new deliveries"
   },
   "createUser": {

@@ -736,7 +736,7 @@
   },
   "createNewEventHelp": {
     "google": "Esta acción archivará todas las entregas activas y ayudará a crear nuevas entregas.",
-    "valueInCode": "פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשרת פתיחת משלוח חדש למשפחות",
+    "valueInCode": "פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשרת יצירת משלוח חדש למשפחות",
     "valueInEnglish": "This action will archive all active deliveries, and help create new deliveries"
   },
   "createUser": {
