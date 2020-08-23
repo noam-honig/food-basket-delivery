@@ -280,18 +280,18 @@ export class ManageComponent implements OnInit {
 
 
   testSms() {
-    return SendSmsAction.getMessage(this.settings.smsText.value, this.settings.organisationName.value, 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
+    return SendSmsAction.getMessage(this.settings.smsText.value, this.settings.organisationName.value, 'משפחת ישראלי' ,'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
   }
   testSmsReminder() {
-    return SendSmsAction.getMessage(this.settings.reminderSmsText.value, this.settings.organisationName.value, 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
+    return SendSmsAction.getMessage(this.settings.reminderSmsText.value, this.settings.organisationName.value, 'משפחת ישראלי' ,'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
   }
   testEmailHelper() {
-    if(this.settings.helperEmailText.value)
-    return SendSmsAction.getMessage(this.settings.helperEmailText.value, this.settings.organisationName.value, 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
+    if(this.settings.registerHelperReplyEmailText.value)
+    return SendSmsAction.getMessage(this.settings.registerHelperReplyEmailText.value, this.settings.organisationName.value, 'משפחת ישראלי' ,'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
   }
   testEmailDonor() {
-    if(this.settings.donorEmailText.value)
-    return SendSmsAction.getMessage(this.settings.donorEmailText.value, this.settings.organisationName.value, 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
+    if(this.settings.registerFamilyReplyEmailText.value)
+    return SendSmsAction.getMessage(this.settings.registerFamilyReplyEmailText.value, this.settings.organisationName.value, 'משפחת ישראלי' ,'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
   }
   testSuccessSms() {
     return SendSmsAction.getSuccessMessage(this.settings.successMessageText.value, this.settings.organisationName.value, 'ישראל ישראלי');

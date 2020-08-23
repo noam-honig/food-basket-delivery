@@ -892,20 +892,12 @@
     "valueInCode": "eMail"
   },
   "emailDonorContentCaption": {
-    "google": "תוכן אימייל מתנדב",
+    "google": "תוכן אימייל תורם",
     "valueInCode": "תוכן אימייל תורם"
   },
   "emailHelperContentCaption": {
-    "google": "תוכן אימייל תורם",
+    "google": "תוכן אימייל מתנדב",
     "valueInCode": "תוכן אימייל מתנדב"
-  },
-  "emailTextDonor": {
-    "google": "הודעה זו תשלח לתורם אחרי שנרשם למערכת",
-    "valueInCode": "הודעה זו תשלח לתורם אחרי שנרשם למערכת"
-  },
-  "emailTextHelper": {
-    "google": "הודעה זו תשלח למתנדב אחרי שנרשם למערכת",
-    "valueInCode": "הודעה זו תשלח למתנדב אחרי שנרשם למערכת"
   },
   "empty": {
     "google": "ריק",
@@ -2060,6 +2052,14 @@
     "google": "הנך רשום לארוע זה",
     "valueInCode": "הנך רשום לארוע זה"
   },
+  "registerFamilyReplyEmailText": {
+    "google": "הודעה זו תשלח לתורם אחרי שנרשם למערכת",
+    "valueInCode": "הודעה זו תשלח לתורם אחרי שנרשם למערכת"
+  },
+  "registerHelperReplyEmailText": {
+    "google": "הודעה זו תשלח למתנדב אחרי שנרשם למערכת",
+    "valueInCode": "הודעה זו תשלח למתנדב אחרי שנרשם למערכת"
+  },
   "remainingByBaskets": {
     "google": "טרם שוייכו לפי סלים",
     "valueInCode": "טרם שוייכו לפי סלים"
@@ -2131,6 +2131,10 @@
   "replaceBySiteUrl": {
     "google": "יוחלף בכתובת האתר",
     "valueInCode": "יוחלף בכתובת האתר"
+  },
+  "replacedByFamilyName": {
+    "google": "יוחלף בשם התורם",
+    "valueInCode": "יוחלף בשם המשפחה"
   },
   "replacedByOrgName": {
     "google": "יוחלף בשם הארגון",

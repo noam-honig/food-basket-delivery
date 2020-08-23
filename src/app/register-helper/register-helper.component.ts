@@ -10,6 +10,7 @@ import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-q
 import { RequiredValidator } from '@angular/forms';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { EmailSvc } from '../shared/utils';
+import { SendSmsAction } from '../asign-family/send-sms-action';
 
 @Component({
   selector: 'app-register-helper',
@@ -56,9 +57,7 @@ export class RegisterHelperComponent implements OnInit {
         this.dialog.Error(error);
         return;
       }
-    console.log(pack(this.helper))
-      await RegisterHelperComponent.doHelperForm(pack(this.helper),this.settings.lang.thankYouForHelp,
-      this.settings.helperEmailText.value);
+      await RegisterHelperComponent.doHelperForm(pack(this.helper));
       await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: "תודה על עזרתך", showOnlyConfirm: true });
       window.location.href = "https://www.mitchashvim.org.il/";
     }
@@ -67,11 +66,9 @@ export class RegisterHelperComponent implements OnInit {
     }
   }
   @ServerFunction({ allowed: true })
-  static async doHelperForm(args: any[],subject:string,message:string, context?: Context) {
+  static async doHelperForm(args: any[], context?: Context) {
     await executeOnServer(helperForm, args, context);    
-    await EmailSvc.sendMail(subject, message.replace('!מתנדב!', args[0]), args[3]);
   }
-
 }
 
 class helperForm {
@@ -120,6 +117,13 @@ class helperForm {
     h.company.value = this.company.value;
     h.referredBy.value = this.docref.value;
     await h.save();
+
+    let settings = await ApplicationSettings.getAsync(this.context);
+
+    let message = SendSmsAction.getMessage(settings.registerHelperReplyEmailText.value, 
+      settings.organisationName.value, '', h.name.value, context.user.name, '');
+
+    await EmailSvc.sendMail(settings.lang.thankYouForHelp, message, h.email.value);
   }
 }
 

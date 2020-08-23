@@ -198,6 +198,7 @@ export class es implements Language {
   defaulyHelpPhoneExplanation = 'Por defecto, la persona que asignó la entrega será la persona a la que el voluntario puede llamar para pedir ayuda. Especifique un valor diferente aquí si prefiere otro número de teléfono de ayuda';
   smsTextHelpTitle = 'Este mensaje se enviará a un voluntario desde la pantalla Asignar voluntario, con el enlace a las familias que se le pide que comparta.';
   replacedByVolunteerName = 'El nombre del voluntario será reemplazado';
+  replacedByFamilyName = 'Será reemplazado por el apellido';
   replcaedBySenderName = 'El nombre del remitente será reemplazado';
   replacedByOrgName = 'El nombre de la organización será reemplazado.';
   deliveriesFor = 'entregas para';
@@ -393,8 +394,8 @@ export class es implements Language {
   sampleMessage = 'Mensaje de muestra';
   reminderSmsTextHelp = 'Este mensaje se enviará a un voluntario retrasado desde una pantalla de seguimiento de voluntarios.';
   sampleReminderSms = 'Mensaje recordatorio de muestra';
-  emailTextDonor = 'Este mensaje se enviará al donante después de registrarse en el sistema.';
-  emailTextHelper = 'Este mensaje se enviará al voluntario después de registrarse en el sistema.';
+  registerFamilyReplyEmailText = 'Este mensaje se enviará al donante después de registrarse en el sistema.';
+  registerHelperReplyEmailText = 'Este mensaje se enviará al voluntario después de registrarse en el sistema.';
   basketTypes = 'Tipos de parcelas';
   distributionLists = 'Listas de distribución';
   familySources = 'Fuentes familiares';

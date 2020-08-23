@@ -36,7 +36,7 @@
                 {{settings.lang.smsTextHelpTitle}}
                 <ul>
                     <li>!מתנדב! - {{settings.lang.replacedByVolunteerName}}</li>
-                    <li>!תורם! - {{settings.lang.replacedByHelperName}}</li>
+                    <li>!משפחה! - {{settings.lang.replacedByFamilyName}}</li>
                     <li>!שולח! - {{settings.lang.replcaedBySenderName}}</li>
                     <li>!ארגון! - {{settings.lang.replacedByOrgName}}</li>
                     <li>!אתר! - {{settings.lang.replaceBySiteUrl}}</li>
@@ -55,22 +55,22 @@
                 <h4>{{settings.lang.sampleReminderSms}}</h4>
                 <pre>{{testSmsReminder()}}</pre>
             </mat-card>
-            <mat-card>
+            <mat-card *ngIf="settings.isSytemForMlt()">
                 <mat-card-title>
-                    {{settings.donorEmailText.defs.caption}}
+                    {{settings.registerFamilyReplyEmailText.defs.caption}}
                 </mat-card-title>
-                {{settings.lang.emailTextDonor}}
-                <textarea [(ngModel)]="settings.donorEmailText.value" class="form-control" lines=3></textarea>
+                {{settings.lang.registerFamilyReplyEmailText}}
+                <textarea [(ngModel)]="settings.registerFamilyReplyEmailText.value" class="form-control" lines=3></textarea>
 
                 <h4>{{settings.lang.sampleMessage}}</h4>
                 <pre [innerHTML]="testEmailDonor()"></pre>
             </mat-card>
-            <mat-card>
+            <mat-card *ngIf="settings.isSytemForMlt()">
                 <mat-card-title>
-                    {{settings.helperEmailText.defs.caption}}
+                    {{settings.registerHelperReplyEmailText.defs.caption}}
                 </mat-card-title>
-                {{settings.lang.emailTextHelper}}
-                <textarea [(ngModel)]="settings.helperEmailText.value" class="form-control" lines=3></textarea>
+                {{settings.lang.registerHelperReplyEmailText}}
+                <textarea [(ngModel)]="settings.registerHelperReplyEmailText.value" class="form-control" lines=3></textarea>
 
                 <h4>{{settings.lang.sampleMessage}}</h4>
                 <pre [innerHTML]="testEmailHelper()"></pre>

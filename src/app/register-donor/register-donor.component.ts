@@ -10,6 +10,7 @@ import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-q
 import { RequiredValidator } from '@angular/forms';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { EmailSvc } from '../shared/utils';
+import { SendSmsAction } from '../asign-family/send-sms-action';
 
 @Component({
   selector: 'app-register-donor',
@@ -61,9 +62,8 @@ export class RegisterDonorComponent implements OnInit {
         this.dialog.Error(error);
         return;
       }
-      await RegisterDonorComponent.doDonorForm(pack(this.donor), 
-            this.settings.lang.thankYouForDonation,
-            this.settings.donorEmailText.value);
+      await RegisterDonorComponent.doDonorForm(pack(this.donor));
+
       this.dialog.analytics("submitDonorForm");
       await this.context.openDialog(YesNoQuestionComponent, x => x.args = { 
         question: this.settings.lang.thankYouForDonation, 
@@ -77,12 +77,10 @@ export class RegisterDonorComponent implements OnInit {
   }
 
   @ServerFunction({ allowed: true })
-  static async doDonorForm(args: any[], subject: string, message: string, context?: Context) {
+  static async doDonorForm(args: any[], context?: Context) {
     await executeOnServer(donorForm, args, context);
-    await EmailSvc.sendMail(subject, message.replace('!תורם!', args[0]), args[4]);
   }
 }
-
 
 class donorForm {
   constructor(private context: Context) {
@@ -162,6 +160,14 @@ class donorForm {
         selfPickup: false
       }, context);
     }
+
+    let settings = await ApplicationSettings.getAsync(this.context);
+
+    let message = SendSmsAction.getMessage(settings.registerFamilyReplyEmailText.value, 
+      settings.organisationName.value, f.name.value, '', '', ''); 
+
+    await EmailSvc.sendMail(settings.lang.thankYouForDonation, message, f.email.value);
+
   }
 }
 

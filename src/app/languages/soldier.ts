@@ -198,6 +198,7 @@ export class soldier implements Language {
   defaulyHelpPhoneExplanation = 'כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את החיילים ולחץ על הכפתור שלח SMS. ניתן להגדיר כאן שם חלופי וטלפון חלופי';
   smsTextHelpTitle = 'הודעה זו תשלח למתנדב ממסך שיוך משלוחים - עם הקישור לחיילים להן הוא מתבקש לחלק.';
   replacedByVolunteerName = 'יוחלף בשם המתנדב';
+  replacedByFamilyName = 'יוחלף בשם החייל';
   replcaedBySenderName = 'יוחלף בשם השולח';
   replacedByOrgName = 'יוחלף בשם הארגון';
   deliveriesFor = 'משלוחים עבור';
@@ -393,8 +394,8 @@ export class soldier implements Language {
   sampleMessage = 'הודעה לדוגמא';
   reminderSmsTextHelp = 'הודעה זו תשלח למתנדב שמתעכב ממסך מעקב מתנדבים';
   sampleReminderSms = 'הודעת תזכורת לדוגמא';
-  emailTextDonor = 'הודעה זו תשלח לתורם אחרי שנרשם למערכת';
-  emailTextHelper = 'הודעה זו תשלח למתנדב אחרי שנרשם למערכת';
+  registerFamilyReplyEmailText = 'הודעה זו תשלח לתורם אחרי שנרשם למערכת';
+  registerHelperReplyEmailText = 'הודעה זו תשלח למתנדב אחרי שנרשם למערכת';
   basketTypes = 'סוגי סלים';
   distributionLists = 'רשימות חלוקה';
   familySources = 'גורמים מפנים';

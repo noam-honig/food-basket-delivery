@@ -67,7 +67,7 @@ export class SendSmsAction {
                 }
             }
             let url = origin + '/x/' + helper.shortUrlKey.value;
-            message = SendSmsAction.getMessage(message, settings.organisationName.value, helper.name.value, senderName, url);
+            message = SendSmsAction.getMessage(message, settings.organisationName.value, '', helper.name.value, senderName, url);
             let sender = await SendSmsAction.getSenderPhone(ds);
 
             then(helper.phone.value, message, sender, url);
@@ -85,8 +85,9 @@ export class SendSmsAction {
         return sender;
     }
 
-    static getMessage(template: string, orgName: string, courier: string, sender: string, url: string) {
+    static getMessage(template: string, orgName: string, family: string, courier: string, sender: string, url: string) {
         return template.replace('!מתנדב!', courier).replace('!משנע!', courier).replace('!VOLUNTEER!', courier)
+            .replace('!משפחה!', family).replace('!FAMILY!', family)
             .replace('!שולח!', sender).replace('!SENDER!', sender)
             .replace('!ארגון!', orgName).replace("!ORG!", orgName)
             .replace('!אתר!', url).replace('!URL!', url);

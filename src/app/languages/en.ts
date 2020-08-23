@@ -198,6 +198,7 @@ export class en implements Language {
   defaulyHelpPhoneExplanation = 'By default, the person who assigned the delivery, will be the person that the volunteer can call for help. Specify a different value here, if you prefer another help phone number';
   smsTextHelpTitle = 'This message will be sent to a volunteer from the Assign Volunteer screen - with the link to the families it is asked to share.';
   replacedByVolunteerName = 'The name of the volunteer will be replaced';
+  replacedByFamilyName = 'Will be replaced with the family name';
   replcaedBySenderName = "The sender's name will be replaced";
   replacedByOrgName = 'Will be replaced on behalf of the organization';
   deliveriesFor = 'deliveries for';
@@ -393,8 +394,8 @@ export class en implements Language {
   sampleMessage = 'Sample message';
   reminderSmsTextHelp = 'This message will be sent to a volunteer who is delayed from a volunteer tracking screen';
   sampleReminderSms = 'Sample reminder message';
-  emailTextDonor = 'This message will be sent to the donor after registering for the system';
-  emailTextHelper = 'This message will be sent to the volunteer after registering for the system';
+  registerFamilyReplyEmailText = 'This message will be sent to the donor after registering for the system';
+  registerHelperReplyEmailText = 'This message will be sent to the volunteer after registering for the system';
   basketTypes = 'Parcel types';
   distributionLists = 'Distribution lists';
   familySources = 'Family Sources';
