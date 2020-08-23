@@ -12,6 +12,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { EmailSvc } from '../shared/utils';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 
+declare var gtag;
 @Component({
   selector: 'app-register-helper',
   templateUrl: './register-helper.component.html',
@@ -57,6 +58,18 @@ export class RegisterHelperComponent implements OnInit {
         this.dialog.Error(error);
         return;
       }
+      this.dialog.analytics("submitVolunteerForm");
+      {
+        var callback = function () {
+
+        };
+
+        gtag('event', 'conversion', {
+          'send_to': 'AW-607493389/ngwkCLDhp9wBEI261qEC',
+          'event_callback': callback
+        });
+      }
+
       await RegisterHelperComponent.doHelperForm(pack(this.helper));
       await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: "תודה על עזרתך", showOnlyConfirm: true });
       window.location.href = "https://www.mitchashvim.org.il/";

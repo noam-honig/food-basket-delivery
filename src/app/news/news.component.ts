@@ -42,7 +42,7 @@ export class NewsComponent implements OnInit, OnDestroy {
 
     }
     async updateFamily(n: ActiveFamilyDeliveries) {
-        n.showDetailsDialog({dialog:this.dialog});
+        n.showDetailsDialog({ dialog: this.dialog });
 
 
     }
@@ -102,6 +102,7 @@ export class NewsComponent implements OnInit, OnDestroy {
                 return 'check';
             case DeliveryStatus.FailedBadAddress:
             case DeliveryStatus.FailedNotHome:
+            case DeliveryStatus.FailedDoNotWant:
             case DeliveryStatus.FailedOther:
                 return 'error';
 

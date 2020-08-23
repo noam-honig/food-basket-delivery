@@ -24,7 +24,7 @@ import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 
-import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard } from './auth/roles';
+import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, Roles } from './auth/roles';
 
 import { SignedInGuard, Context } from '@remult/core';
 
@@ -44,6 +44,8 @@ import { DeliveryReceptionComponent } from './delivery-reception/delivery-recept
 import { RegisterDonorComponent } from './register-donor/register-donor.component';
 import { RegisterHelperComponent } from './register-helper/register-helper.component';
 import { Sites } from './sites/sites';
+import { InRouteFollowUpComponent } from './in-route-follow-up/in-route-follow-up.component';
+import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment-assign-screen.component';
 
 
 
@@ -54,9 +56,24 @@ export class MltOnlyGuard implements CanActivate {
     }
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | import("@angular/router").UrlTree | import("rxjs").Observable<boolean | import("@angular/router").UrlTree> | Promise<boolean | import("@angular/router").UrlTree> {
         let site = Sites.getOrganizationFromContext(this.context);
-        console.log(site,this.context.getPathInUrl());
+        
         if (site == 'mlt')
             return true;
+        return false;
+    }
+
+
+}
+@Injectable()
+export class MltAdminGuard implements CanActivate {
+    constructor(private context: Context) {
+
+    }
+    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | import("@angular/router").UrlTree | import("rxjs").Observable<boolean | import("@angular/router").UrlTree> | Promise<boolean | import("@angular/router").UrlTree> {
+        let site = Sites.getOrganizationFromContext(this.context);
+        
+        if (site == 'mlt')
+            return this.context.isAllowed(Roles.admin);
         return false;
     }
 
@@ -73,8 +90,11 @@ export const routes: Routes = [
   },
   SelfPickupComponent.route,
   FamilyDeliveriesComponent.route,
+  { path: 'in-route-helpers', component: InRouteFollowUpComponent, canActivate: [MltAdminGuard],data: { name: 'מתנדבים בדרך' } },
+  { path: 'cross-assign', component: ShipmentAssignScreenComponent, canActivate: [MltAdminGuard],data: { name: 'טיפול בטרם שוייכו' } },
   FamiliesComponent.route,
   DeliveryFollowUpComponent.route,
+  
   NewsComponent.needsWorkRoute,
   { path: 'overview', component: OverviewComponent, canActivate: [OverviewGuard] },
   DistributionMap.route,
@@ -120,7 +140,8 @@ export const routes: Routes = [
   ],
   declarations: [],
   exports: [RouterModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard,LabGuard,distCenterOrLabGuard,MltOnlyGuard]
+  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard,LabGuard,distCenterOrLabGuard,MltOnlyGuard,
+    MltAdminGuard]
 
 })
 

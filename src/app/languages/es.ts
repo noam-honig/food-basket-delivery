@@ -71,6 +71,8 @@ export class es implements Language {
   deliveriesDoneInTheLastTwoDays = 'Entregado en los últimos dos días';
   showAllCompletedDeliveries = 'Ver todas las entregas exitosas';
   showRouteOnGoogleMaps = 'Ver ruta en google maps';
+  assignCloseDeliveries = 'Mostrar donaciones a mi alrededor';
+  closestDeliveries = 'Donaciones en el área cercana';
   selfPuckupSuccess = 'Recoge el paquete';
   packageWasPickedUp = 'Recogido';
   cancelAsignment = 'Cancelar asignación';
@@ -140,6 +142,7 @@ export class es implements Language {
   remiderSmsDate = 'Fecha de entrega del recordatorio de SMS';
   admin = 'Administrador de sistema';
   lab = 'Trabajador de laboratorio';
+  indie = 'Voluntario independiente';
   responsibleForAssign = 'Solo asigna entregas';
   notAllowedToUpdateVolunteer = 'No puede actualizar para este voluntario';
   company = 'Empresa';
@@ -460,6 +463,7 @@ export class es implements Language {
   shouldAssignTo = 'Asignar a';
   saveVolunteerInfo = 'Guardar detalles del voluntario:';
   adminRequireToSetPassword = 'Usted es un usuario administrador sin una contraseña requerida definida. Establezca una contraseña en la siguiente pantalla de detalles del usuario.';
+  indieRequireToSetPassword = 'Se requiere un voluntario independiente para ingresar al sistema con una contraseña';
   userNotFoundOrWrongPassword = 'Usuario no encontrado o contraseña incorrecta';
   fromDate = 'Con fecha de';
   toDate = 'Hasta';
@@ -482,6 +486,7 @@ export class es implements Language {
   leftByHouse = 'Dejado por la casa';
   notDeliveredBadAddress = 'No entregado, problema de dirección';
   notDeliveredNotHome = 'No entregado, no estaban en casa';
+  notDeliveredDontWant = 'No entregado, no necesita paquete';
   notDeliveredOther = 'No entregado, otro';
   deliveryStatus = 'estado de entrega';
   useFamilyDefaultBasketType = 'Tipo de parcela predeterminado';
@@ -645,6 +650,7 @@ export class es implements Language {
   problemsThatRequireFollowup = 'Seguimiento de problemas';
   commentsWrittenByVolunteers = 'Comentarios escritos por voluntarios';
   distributionList = 'Lista de distribucion';
+  thisIsTheDestination = 'Destino de entrega de equipos';
   list = 'Lista';
   map = 'Mapa';
   noDeliveries = 'No hay entregas para distribución';
@@ -735,4 +741,21 @@ export class es implements Language {
   invalidatePassword = 'Deshabilitar contraseña';
   passwordInvalidated = 'La contraseña ha sido revocada';
   sessionExpiredPleaseRelogin = 'La conexión con el servidor ha expirado, vuelva a iniciar sesión';
+  setAsDefaultVolunteerForTheseFamilies = 'Guardar como voluntario predeterminado para estas familias';
+  thisVolunteerIsSetAsTheDefaultFor = 'Este voluntario se define como voluntario predeterminado para más';
+  familiesDotCancelTheseAssignments = 'Familias. ¿Debería cancelarse por defecto para estas familias?';
+  editComment = 'Haz una nota';
+  createNewEvent = 'Crea un nuevo evento';
+  createNewEventHelp = 'Esta acción archivará todas las entregas activas y ayudará a crear nuevas entregas.';
+  createNewDeliveryForAllFamilies = 'Crea una nueva entrega para familias';
+  selectSomeOfTheFamilies = 'Seleccionar familias por grupos';
+  moreOptions = 'Otras opciones';
+  includeGroups = 'Solo para familias en estos grupos';
+  create = 'Crear';
+  newDeliveriesQM = '¿Nuevas entregas?';
+  actionCanceled = 'Acción cancelada';
+  deliveriesCreated = 'Entregas creadas';
+  doneDotGotoDeliveries = 'Listo, ¿pasar a entregas activas?';
+  notDoneDeliveriesShouldArchiveThem = 'Entregas no asignadas, ¿continuar con la creación de un nuevo evento?';
+  deliveresOnTheWayAssignedInTheLast3Hours = 'Entregas que fueron asignadas en las últimas 3 horas y aún no se entregaron, ¿proceder con la apertura de un nuevo evento?';
 }

@@ -182,6 +182,10 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
 
   ngOnInit() {
+    if (this.auth.failedSmsSignInPhone){
+      this.phone.value = this.auth.failedSmsSignInPhone;
+      this.doLogin();
+    }
   }
   getLogo() {
     return ApplicationSettings.get(this.context).logoUrl.value;

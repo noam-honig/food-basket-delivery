@@ -12,16 +12,19 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { EmailSvc } from '../shared/utils';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 
+declare var gtag;
 @Component({
   selector: 'app-register-donor',
   templateUrl: './register-donor.component.html',
   styleUrls: ['./register-donor.component.scss']
 })
 export class RegisterDonorComponent implements OnInit {
-  constructor(private dialog: DialogService, private context: Context,private settings:ApplicationSettings) { }
+  constructor(private dialog: DialogService, private context: Context, private settings: ApplicationSettings) { }
   donor = new donorForm(this.context);
-  area = new DataAreaSettings({ columnSettings: () => 
-    this.donor.columns.filter(c => c != this.donor.name && c != this.donor.address && c != this.donor.selfDeliver && c != this.donor.docref) });
+  area = new DataAreaSettings({
+    columnSettings: () =>
+      this.donor.columns.filter(c => c != this.donor.name && c != this.donor.address && c != this.donor.selfDeliver && c != this.donor.docref)
+  });
   ngOnInit() {
     this.donor.docref.value = document.referrer;
   }
@@ -62,6 +65,18 @@ export class RegisterDonorComponent implements OnInit {
         this.dialog.Error(error);
         return;
       }
+      this.dialog.analytics("submitDonorForm");
+      {
+        var callback = function () {
+
+        };
+
+        gtag('event', 'conversion', {
+          'send_to': 'AW-607493389/xIauCNGPlNoBEI261qEC',
+          'event_callback': callback
+        });
+      }
+
       await RegisterDonorComponent.doDonorForm(pack(this.donor));
 
       this.dialog.analytics("submitDonorForm");
@@ -105,7 +120,7 @@ class donorForm {
     dataControlSettings: () => ({ inputType: 'email' })
   });
 
-  selfDeliver = new BoolColumn("אגיע עצמאית למעבדה");
+  selfDeliver = new BoolColumn("אגיע עצמאית לנקודת האיסוף");
   address = new StringColumn({
     caption: "כתובת",
     validate: () => {
@@ -118,8 +133,8 @@ class donorForm {
   laptop = new NumberColumn("מספר מחשבים נייחים");
   screen = new NumberColumn("מספר מסכים");
 
-  docref = new StringColumn(); 
-  columns = [this.name, this.selfDeliver, this.address, this.phone, this.email, this.computer, this.laptop, this.screen, this.docref];
+  docref = new StringColumn();
+  columns = [this.name, this.selfDeliver, this.computer, this.laptop, this.screen, this.address, this.phone, this.email, this.docref];
 
   async doWork(context: Context) {
     let f = context.for(Families).create();

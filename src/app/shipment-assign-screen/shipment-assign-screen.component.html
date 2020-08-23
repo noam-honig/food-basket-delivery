@@ -1,0 +1,84 @@
+<button mat-mini-fab style="margin-bottom:5px" (click)="ngOnInit()" color="primary">
+    <mat-icon>refresh</mat-icon>
+
+</button>
+<table>
+    <thead>
+        <tr>
+            <th>שם תורם</th>
+            <th>פריטים</th>
+            <th>כתובת</th>
+            <th><span matTooltip="לחצו למיון" (click)="sortByVolunteers()"> מתנדבים רלוונטים</span></th>
+            <th>מועד הקצאה</th>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <data-control [column]="filterBasket"></data-control>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+
+    </thead>
+    <ng-container *ngFor="let f of families">
+        <ng-container *ngIf="matchesFilter(f)">
+            <tr [class.assigned]="f.assignedHelper">
+                <td style="max-width:150px">{{f.name}}</td>
+                <td>
+                    <ng-container *ngFor="let d of f.deliveries">{{d.quantity}} X {{d.basketTypeName}} </ng-container>
+                </td>
+                <td>{{f.address}}</td>
+                <td style="white-space: nowrap;" *ngIf="!f.assignedHelper">
+                    <a (click)="togglerShowHelper(f)" matTooltip="הצג מנתדבים רלוונטיים" style="width:40px"
+                        *ngIf="!f.assignedHelper">{{f.relevantHelpers.length}}</a>
+                    <button mat-icon-button matTooltip="חפש מתנדבים נוספים" (click)="searchHelper(f)">
+                        <mat-icon>person_search</mat-icon>
+                    </button>
+
+                </td>
+                <td *ngIf="f.assignedHelper" style="white-space: nowrap;">
+                    שוייך ל{{f.assignedHelper.name}}
+                    <button mat-icon-button matTooltip="בטל שיוך" (click)="cancelAssignHelper(f)">
+                        <mat-icon>person_remove</mat-icon>
+                    </button>
+                </td>
+                <td>
+                    {{f.createDateString}}
+                </td>
+            </tr>
+            <tr *ngIf="shouldShowHelper(f)&&!f.assignedHelper">
+                <td colspan="4">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th colspan="2">מתנדב</th>
+
+                                <th>מרחק</th>
+                                <th>משפחות</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let h of f.relevantHelpers">
+                                <td>{{h.helper.name}}</td>
+                                <td style="white-space: nowrap;">
+                                    <button mat-icon-button matTooltip="שייך מתנדב למשלוח"
+                                        (click)="assignHelper(h.helper,f)">
+                                        <mat-icon>person_add</mat-icon>
+                                    </button>
+                                </td>
+                                <td>{{h.distance.toFixed(1)}} ק"מ מ{{h.referencePoint}}</td>
+                                <td><a (click)="showAssignment(h)" matTooltip="הצג שייוכים למתנדב">
+                                        {{h.helper.families.length}} </a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </ng-container>
+    </ng-container>
+    <tbody>
+
+    </tbody>
+</table>

@@ -44,7 +44,7 @@ export class donor implements Language {
   km = 'ק"מ';
   leftDeliveryNextToHouse = 'השארתי ליד הבית';
   failedDeliveries = 'משלוחים שנתקלתי בבעיה';
-  ranIntoAProblem = 'נתקלתי בבעיה';
+  ranIntoAProblem = 'דחיית איסוף/בעיה';
   showAllDeliveries = 'הצג את כל התרומות לאיסוף';
   sendSmsWithLink = 'שלח הודעת SMS עם קישור';
   sendLinkOnWhatsapp = 'שלח קישור ב whatsapp';
@@ -68,9 +68,11 @@ export class donor implements Language {
   entrance = 'כניסה';
   updateComment = 'עדכן הערה';
   clickedByMistake = 'נלחץ בטעות - החזר לתרומות לאיסוף';
-  deliveriesDoneInTheLastTwoDays = 'משלוחים שחולקו ביומיים האחרונים';
+  deliveriesDoneInTheLastTwoDays = 'משלוחים שנאספו ביומיים האחרונים';
   showAllCompletedDeliveries = 'הצג את כל המשלוחים שחולקו';
   showRouteOnGoogleMaps = 'הצג מסלול ב Google Maps';
+  assignCloseDeliveries = 'הצג תרומות בסביבתי';
+  closestDeliveries = 'תרומות באיזור הקרוב';
   selfPuckupSuccess = 'הפריטים נקלטו';
   packageWasPickedUp = 'הפריטים נקלטו';
   cancelAsignment = 'בטל שיוך';
@@ -140,6 +142,7 @@ export class donor implements Language {
   remiderSmsDate = 'מועד משלוח תזכורת SMS';
   admin = 'מנהל כלל המערכת';
   lab = 'עובד מעבדה';
+  indie = 'מתנדב עצמאי';
   responsibleForAssign = 'משייך מתנדבים לרשימת חלוקה';
   notAllowedToUpdateVolunteer = 'אינך רשאי לעדכן עבור מתנדב זה';
   company = 'חברה';
@@ -433,7 +436,7 @@ export class donor implements Language {
   showAllFamilies = 'הצג את כל התורמים';
   whatWentWrong = 'מה לא הסתדר?';
   addCurrentLocationToNote = 'הוסף מיקום נוכחי להערה';
-  basketNotDelivered = 'הסל לא נמסר';
+  basketNotDelivered = 'שלח/י לנו מסר';
   confirm = 'אשר';
   displayFamilyAsVolunteerWillSeeIt = 'הצג תורם כפי שמתנדב יראה אותה';
   infoAboutUpdates = 'פרטי עדכונים';
@@ -460,6 +463,7 @@ export class donor implements Language {
   shouldAssignTo = 'האם לשייך אותו למתנדב';
   saveVolunteerInfo = 'שמירת פרטי מתנדב:';
   adminRequireToSetPassword = ' אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועבר למסך עדכון פרטים לעדכון סיסמה.';
+  indieRequireToSetPassword = 'מתנדב עצמאי מחוייב בסיסמא לכניסה למערכת';
   userNotFoundOrWrongPassword = 'משתמשת לא נמצאה או סיסמה שגויה';
   fromDate = 'מתאריך';
   toDate = 'עד תאריך';
@@ -467,7 +471,7 @@ export class donor implements Language {
   smsNotOpened = 'SMS טרם נפתח';
   doneVolunteers = 'סיימו';
   problems = 'בעיות';
-  delveriesInProgress = 'תורמים מחכות';
+  delveriesInProgress = 'תורמים מחכים';
   dates = 'תאריכים';
   selfPickup = 'באים למסור';
   delveriesSuccesfull = 'נמסרו';
@@ -480,8 +484,9 @@ export class donor implements Language {
   frozen = 'מוקפא';
   deliveredSuccessfully = 'תרומה נאספה';
   leftByHouse = 'הושאר ליד הבית';
-  notDeliveredBadAddress = 'לא נמסר, בעיה בכתובת';
-  notDeliveredNotHome = 'לא נמסר, לא היו בבית';
+  notDeliveredBadAddress = 'לא נמסר, רחוק מידי';
+  notDeliveredNotHome = 'לא נמסר, אני לא פנוי/ה';
+  notDeliveredDontWant = 'לא נמסר, בעיה אצל התורמ/ת';
   notDeliveredOther = 'לא נמסר, אחר';
   deliveryStatus = 'סטטוס משלוח';
   useFamilyDefaultBasketType = 'סל ברירת מחדל';
@@ -645,6 +650,7 @@ export class donor implements Language {
   problemsThatRequireFollowup = 'בעיות המצריכות טיפול';
   commentsWrittenByVolunteers = 'הערות שכתבו מתנדבים';
   distributionList = 'מעבדה';
+  thisIsTheDestination = 'יעד למסירת הציוד';
   list = 'רשימה';
   map = 'מפה';
   noDeliveries = 'אין תרומות לאיסוף';
@@ -735,4 +741,21 @@ export class donor implements Language {
   invalidatePassword = 'בטל תוקף סיסמה';
   passwordInvalidated = 'בוטל תוקף הסיסמה';
   sessionExpiredPleaseRelogin = 'פג תוקף החיבור לשרת, יש לבצע כניסה מחדש';
+  setAsDefaultVolunteerForTheseFamilies = 'שמור כמתנדב ברירת מחדל לתורמים אלו';
+  thisVolunteerIsSetAsTheDefaultFor = 'מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד';
+  familiesDotCancelTheseAssignments = 'תורמים. האם לבטל אותו כברירת מחדל לתורמים אלו?';
+  editComment = 'ערוך הערה';
+  createNewEvent = 'פתיחת ארוע חדש';
+  createNewEventHelp = 'פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשר פתיחת משלוח חדש לתורמים';
+  createNewDeliveryForAllFamilies = 'צור משלוח חדש לתורמים';
+  selectSomeOfTheFamilies = 'בחר תורמים לפי קבוצות';
+  moreOptions = 'אפשרויות נוספות';
+  includeGroups = 'רק עבור תורמים בקבוצות אלו';
+  create = 'ליצור ';
+  newDeliveriesQM = 'משלוחים חדשים?';
+  actionCanceled = 'פעולה בוטלה';
+  deliveriesCreated = 'משלוחים נוצרו';
+  doneDotGotoDeliveries = 'התהליך הסתיים בהצלחה, לעבור למסך משלוחים?';
+  notDoneDeliveriesShouldArchiveThem = 'משלוחים שטרם שוייכו, האם להעביר אותם לארכיב?';
+  deliveresOnTheWayAssignedInTheLast3Hours = 'משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך ביצירת משלוח חדש?';
 }

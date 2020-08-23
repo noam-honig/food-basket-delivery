@@ -21,7 +21,7 @@ import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, pag
 
 import { saveToExcel } from '../shared/saveToExcel';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import {  TranslationOptions } from '../translate'
+import { TranslationOptions } from '../translate'
 import { Helpers } from '../helpers/helpers';
 
 import { sortColumns } from '../shared/utils';
@@ -470,21 +470,21 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
             return '';
           }
         },
-        { 
+        {
           column: deliveries.basketType,
           cssClass: f => {
             if (f.isLargeQuantity())
-                return 'largeDelivery';
+              return 'largeDelivery';
             return '';
-        }
-      },
+          }
+        },
         {
           column: deliveries.quantity,
           width: '50',
           cssClass: f => {
-              if (f.isLargeQuantity())
-                  return 'largeDelivery';
-              return '';
+            if (f.isLargeQuantity())
+              return 'largeDelivery';
+            return '';
           }
         },
 
@@ -498,7 +498,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           width: '300'
         },
         { column: deliveries.createDate, width: '150' },
-        { 
+        {
           column: deliveries.distributionCenter,
           cssClass: f => {
             if (f.isDistCenterInactive())
@@ -542,8 +542,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         { column: deliveries.courierAssingTime, width: '150' },
         { column: deliveries.deliveryStatusUser, width: '100' },
         deliveries.deliveryStatusDate,
-        { column: deliveries.courierComments, width: '120' },
-        { column: deliveries.internalDeliveryComment, width: '120' },
+        { column: deliveries.courierComments, width: '400' },
+        { column: deliveries.internalDeliveryComment, width: '400' },
         deliveries.needsWork,
         deliveries.needsWorkDate,
         deliveries.needsWorkUser,
@@ -580,7 +580,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
       if (this.settings.isSytemForMlt()) {
         this.normalColumns.push(deliveries.receptionComments);
-      } 
+      }
 
       return r;
     },
@@ -601,7 +601,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       {
         name: getLang(this.context).exportToExcel,
         click: async () => {
-          await saveToExcel(this.settings,this.context.for(ActiveFamilyDeliveries), this.deliveries, getLang(this.context).deliveries, this.busy, (d: ActiveFamilyDeliveries, c) => c == d.id || c == d.family, undefined,
+          await saveToExcel(this.settings, this.context.for(ActiveFamilyDeliveries), this.deliveries, getLang(this.context).deliveries, this.busy, (d: ActiveFamilyDeliveries, c) => c == d.id || c == d.family, undefined,
             async (f, addColumn) => {
               await f.basketType.addBasketTypes(f.quantity, addColumn);
             });
@@ -669,7 +669,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         context: context.for(ActiveFamilyDeliveries),
         h: {
           actionWhere: x => h.actionWhere(x),
-          orderBy:x=>[{column:x.createDate,descending:true}],
+          orderBy: x => [{ column: x.createDate, descending: true }],
           forEach: async fd => {
             fd._disableMessageToUsers = true;
             await h.forEach(fd);
@@ -715,7 +715,34 @@ export interface deliveryButtonsHelper {
 export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
   let newDelivery: (d: FamilyDeliveries) => void = async d => {
     let f = await args.context.for(Families).findId(d.family);
-    await f.showNewDeliveryDialog(args.dialog, args.settings, { copyFrom: d, aDeliveryWasAdded: async () => args.refresh() });
+
+
+
+
+    await f.showNewDeliveryDialog(args.dialog, args.settings, {
+      copyFrom: d, aDeliveryWasAdded: async (newDeliveryId) => {
+        if (args.settings.isSytemForMlt()) {
+          if (d.deliverStatus.value.isProblem) {
+            let newDelivery = await args.context.for(ActiveFamilyDeliveries).findId(newDeliveryId);
+            for (const otherFailedDelivery of await args.context.for(ActiveFamilyDeliveries).find({
+              where: fd => fd.family.isEqualTo(newDelivery.family).and(fd.deliverStatus.isProblem())
+            })) {
+              await Families.addDelivery(otherFailedDelivery.family.value,{
+                basketType:otherFailedDelivery.basketType.value,
+                quantity:otherFailedDelivery.quantity.value,
+                courier:newDelivery.courier.value,
+                distCenter:newDelivery.distributionCenter.value,
+                selfPickup:false,
+                comment:otherFailedDelivery.deliveryComments.value
+              });
+              otherFailedDelivery.archive.value = true;
+              await otherFailedDelivery.save();
+            }
+          }
+        }
+        args.refresh();
+      }
+    });
   };
   return [
     {
@@ -751,9 +778,9 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
                 fd.readyFilter()).and(
                   d.distributionCenter.filter(args.dialog.distCenter.value));
               if (d.addressOk.value)
-                return f.and( fd.addressLongitude.isEqualTo(d.addressLongitude).and(fd.addressLatitude.isEqualTo(d.addressLatitude)));
+                return f.and(fd.addressLongitude.isEqualTo(d.addressLongitude).and(fd.addressLatitude.isEqualTo(d.addressLatitude)));
               else
-                return f.and( fd.family.isEqualTo(d.family).and(f));
+                return f.and(fd.family.isEqualTo(d.family).and(f));
             }
           });
           if (fd.length > 0) {
@@ -777,7 +804,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
       click: async d => {
         let h = await args.context.for(Helpers).findId(d.courier);
         await args.context.openDialog(
-          (await import ('../helper-assignment/helper-assignment.component')).HelperAssignmentComponent, s => s.argsHelper = h);
+          (await import('../helper-assignment/helper-assignment.component')).HelperAssignmentComponent, s => s.argsHelper = h);
         this.refresh();
 
 

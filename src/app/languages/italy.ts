@@ -71,6 +71,8 @@ export class italy implements Language {
   deliveriesDoneInTheLastTwoDays = 'Consegnato negli ultimi due giorni';
   showAllCompletedDeliveries = 'Visualizza tutte le consegne riuscite';
   showRouteOnGoogleMaps = 'Visualizza il percorso su google maps';
+  assignCloseDeliveries = 'Mostra donazioni intorno a me';
+  closestDeliveries = "Donazioni nell'area vicina";
   selfPuckupSuccess = 'Raccogli il pacchetto';
   packageWasPickedUp = 'Raccolto';
   cancelAsignment = 'Annulla incarico';
@@ -140,6 +142,7 @@ export class italy implements Language {
   remiderSmsDate = 'Data di consegna del promemoria via SMS';
   admin = 'Amministratore di sistema';
   lab = 'Operaio di laboratorio';
+  indie = 'Volontario indipendente';
   responsibleForAssign = 'Assegna solo consegne';
   notAllowedToUpdateVolunteer = 'Non è possibile aggiornare per questo volontario';
   company = 'Azienda';
@@ -460,6 +463,7 @@ export class italy implements Language {
   shouldAssignTo = 'Assegnato a';
   saveVolunteerInfo = 'Salvataggio dei dettagli dei volontari:';
   adminRequireToSetPassword = "Sei un utente gestore senza una password richiesta definita. Si prega di impostare una password nella seguente schermata dei dettagli dell'utente.";
+  indieRequireToSetPassword = 'Un volontario indipendente deve accedere al sistema con una password';
   userNotFoundOrWrongPassword = 'Utente non trovato o password errata';
   fromDate = 'Datato';
   toDate = 'Fino a';
@@ -482,6 +486,7 @@ export class italy implements Language {
   leftByHouse = 'È stato lasciato dalla casa';
   notDeliveredBadAddress = 'Non consegnato, risolto problema';
   notDeliveredNotHome = 'Non consegnato, non erano a casa';
+  notDeliveredDontWant = 'Non consegnato, non serve pacco';
   notDeliveredOther = 'Non consegnato, altro';
   deliveryStatus = 'stato della consegna';
   useFamilyDefaultBasketType = 'Tipo di pacco predefinito';
@@ -645,6 +650,7 @@ export class italy implements Language {
   problemsThatRequireFollowup = 'Follow-up dei problemi';
   commentsWrittenByVolunteers = 'Commenti scritti da volontari';
   distributionList = 'Lista di distribuzione';
+  thisIsTheDestination = "Destinazione per la consegna dell'attrezzatura";
   list = 'Elenco';
   map = 'Carta geografica';
   noDeliveries = 'Nessuna consegna per la distribuzione';
@@ -735,4 +741,21 @@ export class italy implements Language {
   invalidatePassword = 'Disabilita la password';
   passwordInvalidated = 'La password è stata revocata';
   sessionExpiredPleaseRelogin = 'La connessione al server è scaduta, accedi di nuovo';
+  setAsDefaultVolunteerForTheseFamilies = 'Salva come volontario predefinito per queste famiglie';
+  thisVolunteerIsSetAsTheDefaultFor = 'Questo volontario è definito come volontario predefinito per di più';
+  familiesDotCancelTheseAssignments = 'Famiglie. Dovrebbe essere annullato di default per queste famiglie?';
+  editComment = 'Prendi nota';
+  createNewEvent = 'Crea un nuovo evento';
+  createNewEventHelp = 'Questa azione archivierà tutte le consegne attive e aiuterà a creare nuove consegne';
+  createNewDeliveryForAllFamilies = 'Crea una nuova consegna per le famiglie';
+  selectSomeOfTheFamilies = 'Seleziona le famiglie per gruppi';
+  moreOptions = 'Altre opzioni';
+  includeGroups = 'Solo per famiglie in questi gruppi';
+  create = 'Creare';
+  newDeliveriesQM = 'Nuove consegne?';
+  actionCanceled = 'Azione annullata';
+  deliveriesCreated = 'Consegne create';
+  doneDotGotoDeliveries = 'Fatto, passare alle consegne attive?';
+  notDoneDeliveriesShouldArchiveThem = 'Consegne non assegnate, procedere con la creazione di un nuovo evento?';
+  deliveresOnTheWayAssignedInTheLast3Hours = "Consegne che sono state assegnate nelle ultime 3 ore e non sono state ancora consegnate, procedere con l'apertura di un nuovo evento?";
 }

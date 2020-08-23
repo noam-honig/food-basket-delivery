@@ -3,6 +3,10 @@
     "google": "פעולה",
     "valueInCode": "פעולה"
   },
+  "actionCanceled": {
+    "google": "פעולה בוטלה",
+    "valueInCode": "פעולה בוטלה"
+  },
   "actionNotFound": {
     "google": "פעולה לא נמצאה בשרת",
     "valueInCode": "פעולה לא נמצאה בשרת"
@@ -247,6 +251,10 @@
     "google": "שיוך לקבוצת תורמים",
     "valueInCode": "שיוך לקבוצת משפחות"
   },
+  "assignCloseDeliveries": {
+    "google": "הצג תרומות בסביבתי",
+    "valueInCode": "הצג תרומות בסביבתי"
+  },
   "assignDeliveryMenu": {
     "google": "שיוך משלוחים למתנדב",
     "valueInCode": "שיוך משלוחים למתנדב"
@@ -325,7 +333,8 @@
   },
   "basketNotDelivered": {
     "google": "הסל לא נמסר",
-    "valueInCode": "הסל לא נמסר"
+    "valueInCode": "הסל לא נמסר",
+    "custom": "שלח/י לנו מסר"
   },
   "basketType": {
     "google": "סוג סל",
@@ -483,6 +492,10 @@
     "google": "סגור",
     "valueInCode": "סגור"
   },
+  "closestDeliveries": {
+    "google": "תרומות באיזור הקרוב",
+    "valueInCode": "תרומות באיזור הקרוב"
+  },
   "columnSelectionInFile": {
     "google": "בחירת עמודות בקובץ",
     "valueInCode": "בחירת עמודות בקובץ"
@@ -567,9 +580,25 @@
     "google": "מי שייכה למתנדב",
     "valueInCode": "מי שייכה למתנדב"
   },
+  "create": {
+    "google": "ליצור ",
+    "valueInCode": "ליצור "
+  },
   "createDate": {
     "google": "מועד הוספה",
     "valueInCode": "מועד הוספה"
+  },
+  "createNewDeliveryForAllFamilies": {
+    "google": "צור משלוח חדש לתורמים",
+    "valueInCode": "צור משלוח חדש למשפחות"
+  },
+  "createNewEvent": {
+    "google": "פתיחת ארוע חדש",
+    "valueInCode": "פתיחת ארוע חדש"
+  },
+  "createNewEventHelp": {
+    "google": "פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשר פתיחת משלוח חדש לתורמים",
+    "valueInCode": "פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשרת יצירת משלוח חדש למשפחות"
   },
   "createUser": {
     "google": "משתמש מוסיף",
@@ -699,6 +728,10 @@
     "google": "תרומה נאספה",
     "valueInCode": "נמסר בהצלחה"
   },
+  "deliveresOnTheWayAssignedInTheLast3Hours": {
+    "google": "משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך ביצירת משלוח חדש?",
+    "valueInCode": "משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך בפתיחת ארוע חדש?"
+  },
   "deliveries": {
     "google": "משלוחים",
     "valueInCode": "משלוחים"
@@ -723,8 +756,12 @@
     "google": "משלוחים הושלמו",
     "valueInCode": "משלוחים הושלמו"
   },
+  "deliveriesCreated": {
+    "google": "משלוחים נוצרו",
+    "valueInCode": "משלוחים נוצרו"
+  },
   "deliveriesDoneInTheLastTwoDays": {
-    "google": "משלוחים שחולקו ביומיים האחרונים",
+    "google": "משלוחים שנאספו ביומיים האחרונים",
     "valueInCode": "משלוחים שחולקו ביומיים האחרונים"
   },
   "deliveriesFor": {
@@ -809,7 +846,8 @@
   },
   "delveriesInProgress": {
     "google": "תורמים מחכות",
-    "valueInCode": "משפחות מחכות"
+    "valueInCode": "משפחות מחכות",
+    "custom": "תורמים מחכים"
   },
   "delveriesSuccesfull": {
     "google": "נמסרו",
@@ -875,6 +913,10 @@
     "google": "לא קיים",
     "valueInCode": "לא קיים"
   },
+  "doneDotGotoDeliveries": {
+    "google": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?",
+    "valueInCode": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?"
+  },
   "doneVolunteers": {
     "google": "סיימו",
     "valueInCode": "סיימו"
@@ -886,6 +928,10 @@
   "DuplicateFamiliesComponent": {
     "google": "חיפוש תורמים כפולים",
     "valueInCode": "חיפוש משפחות כפולות"
+  },
+  "editComment": {
+    "google": "ערוך הערה",
+    "valueInCode": "ערוך הערה"
   },
   "email": {
     "google": "eMail",
@@ -1086,6 +1132,10 @@
   "FamiliesComponent": {
     "google": "תורמים",
     "valueInCode": "משפחות"
+  },
+  "familiesDotCancelTheseAssignments": {
+    "google": "תורמים. האם לבטל אותו כברירת מחדל לתורמים אלו?",
+    "valueInCode": "משפחות. האם לבטל אותו כברירת מחדל למשפחות אלו?"
   },
   "familiesForUpdate": {
     "google": "תורמים לעדכון",
@@ -1407,6 +1457,18 @@
     "google": "שימו לב, כתובת לא מדוייקת!",
     "valueInCode": "שימו לב, כתובת לא מדוייקת!"
   },
+  "includeGroups": {
+    "google": "רק עבור תורמים בקבוצות אלו",
+    "valueInCode": "רק עבור משפחות בקבוצות אלו"
+  },
+  "indie": {
+    "google": "מתנדב עצמאי",
+    "valueInCode": "מתנדב עצמאי"
+  },
+  "indieRequireToSetPassword": {
+    "google": "מתנדב עצמאי מחוייב בסיסמא לכניסה למערכת",
+    "valueInCode": "מתנדב עצמאי מחוייב בסיסמא לכניסה למערכת"
+  },
   "infoAboutUpdates": {
     "google": "פרטי עדכונים",
     "valueInCode": "פרטי עדכונים"
@@ -1615,6 +1677,10 @@
     "google": "עוד חדשות",
     "valueInCode": "עוד חדשות"
   },
+  "moreOptions": {
+    "google": "אפשרויות נוספות",
+    "valueInCode": "אפשרויות מתקדמות למשלוחים החדשים"
+  },
   "moreThanOneRowInDbMatchesExcel": {
     "google": "נמצאה יותר מתורם אחד באתר המתאימה לשורה הזו מהאקסל. אנא בחר איזו מהתורמים הבאות מתאימה לשורה מהאקסל והעבר אותה לתורמים לעדכון",
     "valueInCode": "נמצאה יותר ממשפחה אחת באתר המתאימה לשורה הזו מהאקסל. אנא בחר איזו מהמשפחות הבאות מתאימה לשורה מהאקסל והעבר אותה למשפחות לעדכון"
@@ -1662,6 +1728,10 @@
   "needEscort": {
     "google": "צריך מלווה",
     "valueInCode": "צריך מלווה"
+  },
+  "newDeliveriesQM": {
+    "google": "משלוחים חדשים?",
+    "valueInCode": "משלוחים חדשים?"
   },
   "newDelivery": {
     "google": "משלוח חדש",
@@ -1749,15 +1819,26 @@
   },
   "notDeliveredBadAddress": {
     "google": "לא נמסר, בעיה בכתובת",
-    "valueInCode": "לא נמסר, בעיה בכתובת"
+    "valueInCode": "לא נמסר, בעיה בכתובת",
+    "custom": "לא נמסר, רחוק מידי"
+  },
+  "notDeliveredDontWant": {
+    "google": "לא נמסר, לא צריכים חבילה",
+    "valueInCode": "לא נמסר, לא מעוניינים בחבילה",
+    "custom": "לא נמסר, בעיה אצל התורמ/ת"
   },
   "notDeliveredNotHome": {
     "google": "לא נמסר, לא היו בבית",
-    "valueInCode": "לא נמסר, לא היו בבית"
+    "valueInCode": "לא נמסר, לא היו בבית",
+    "custom": "לא נמסר, אני לא פנוי/ה"
   },
   "notDeliveredOther": {
     "google": "לא נמסר, אחר",
     "valueInCode": "לא נמסר, אחר"
+  },
+  "notDoneDeliveriesShouldArchiveThem": {
+    "google": "משלוחים שטרם שוייכו, האם להעביר אותם לארכיב?",
+    "valueInCode": "משלוחים פעילים שטרם שוייכו, האם להמשיך בפתיחת ארוע חדש?"
   },
   "notice": {
     "google": "שים לב!",
@@ -2006,7 +2087,8 @@
   },
   "ranIntoAProblem": {
     "google": "נתקלתי בבעיה",
-    "valueInCode": "נתקלתי בבעיה"
+    "valueInCode": "נתקלתי בבעיה",
+    "custom": "דחיית איסוף/בעיה"
   },
   "readEula": {
     "google": "לחץ לקריאת תנאי השימוש באתר",
@@ -2296,6 +2378,10 @@
     "google": "בחירת מספר תורמים",
     "valueInCode": "בחירת מספר משפחות"
   },
+  "selectSomeOfTheFamilies": {
+    "google": "בחר תורמים לפי קבוצות",
+    "valueInCode": "בחר משפחות לפי קבוצות"
+  },
   "selectVolunteer": {
     "google": "בחר מתנדב",
     "valueInCode": "בחר מתנדב"
@@ -2379,6 +2465,10 @@
   "setAsDefaultVolunteer": {
     "google": "עדכן גם כמתנדב ברירת מחדל",
     "valueInCode": "עדכן גם כמתנדב ברירת מחדל"
+  },
+  "setAsDefaultVolunteerForTheseFamilies": {
+    "google": "שמור כמתנדב ברירת מחדל לתורמים אלו",
+    "valueInCode": "שמור כמתנדב ברירת מחדל למשפחות אלו"
   },
   "shouldAdd": {
     "google": "האם להוסיף",
@@ -2623,6 +2713,14 @@
   "thisFamilyHas": {
     "google": "לתורם זו יש",
     "valueInCode": "למשפחה זו יש"
+  },
+  "thisIsTheDestination": {
+    "google": "יעד למסירת הציוד",
+    "valueInCode": "יעד למסירת הציוד"
+  },
+  "thisVolunteerIsSetAsTheDefaultFor": {
+    "google": "מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד",
+    "valueInCode": "מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד"
   },
   "timeToDisconnect": {
     "google": "זמן בדקות לניתוק אוטומטית",

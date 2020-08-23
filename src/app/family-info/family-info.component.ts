@@ -6,7 +6,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Context, ServerFunction } from '@remult/core';
 
 import { use } from '../translate';
-import { UpdateCommentComponent } from '../update-comment/update-comment.component';
+import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
 
 
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
@@ -50,7 +50,7 @@ export class FamilyInfoComponent implements OnInit {
   }
 
   async getPickupComments(f: ActiveFamilyDeliveries) {
-    this.context.openDialog(UpdateCommentComponent, x => x.args =
+    this.context.openDialog(GetVolunteerFeedback, x => x.args =
     {
       family: f,
       comment: f.courierComments.value,

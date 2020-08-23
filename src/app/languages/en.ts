@@ -71,6 +71,8 @@ export class en implements Language {
   deliveriesDoneInTheLastTwoDays = 'Delivered over the last two days';
   showAllCompletedDeliveries = 'View all successful deliveries';
   showRouteOnGoogleMaps = 'View route on google maps';
+  assignCloseDeliveries = 'Show donations around me';
+  closestDeliveries = 'Donations in the near area';
   selfPuckupSuccess = 'Collect the package';
   packageWasPickedUp = 'Collected';
   cancelAsignment = 'Cancel assignment';
@@ -140,6 +142,7 @@ export class en implements Language {
   remiderSmsDate = 'Date of delivery of SMS reminder';
   admin = 'System administrator';
   lab = 'Laboratory worker';
+  indie = 'Independent volunteer';
   responsibleForAssign = 'Only Assigns Deliveries';
   notAllowedToUpdateVolunteer = 'You may not update for this volunteer';
   company = 'Company';
@@ -460,6 +463,7 @@ export class en implements Language {
   shouldAssignTo = 'Assign to';
   saveVolunteerInfo = 'Saving volunteer details:';
   adminRequireToSetPassword = 'You are a manager user without a required password defined. Please set a password in the following user details screen.';
+  indieRequireToSetPassword = 'An independent volunteer is required to enter the system with a password';
   userNotFoundOrWrongPassword = 'User not found or password incorrect';
   fromDate = 'Dated';
   toDate = 'Until';
@@ -482,6 +486,7 @@ export class en implements Language {
   leftByHouse = 'Was left by the house';
   notDeliveredBadAddress = 'Not delivered, address issue';
   notDeliveredNotHome = 'Not delivered, were not at home';
+  notDeliveredDontWant = 'Not delivered, do not need a package';
   notDeliveredOther = 'Not delivered, other';
   deliveryStatus = 'delivery status';
   useFamilyDefaultBasketType = 'Default Parcel Type';
@@ -645,6 +650,7 @@ export class en implements Language {
   problemsThatRequireFollowup = 'Problems Followup';
   commentsWrittenByVolunteers = 'Comments written by volunteers';
   distributionList = 'Distribution list';
+  thisIsTheDestination = 'Destination for delivery of equipment';
   list = 'List';
   map = 'Map';
   noDeliveries = 'No deliveries for distribution';
@@ -735,4 +741,21 @@ export class en implements Language {
   invalidatePassword = 'Disable password';
   passwordInvalidated = 'The password has been revoked';
   sessionExpiredPleaseRelogin = 'The connection to the server has expired, please log in again';
+  setAsDefaultVolunteerForTheseFamilies = 'Save as a default volunteer for these families';
+  thisVolunteerIsSetAsTheDefaultFor = 'This volunteer is defined as a default volunteer for more';
+  familiesDotCancelTheseAssignments = 'Families. Should it be canceled by default for these families?';
+  editComment = 'Make a note';
+  createNewEvent = 'Create a new event';
+  createNewEventHelp = 'This action will archive all active deliveries, and help create new deliveries';
+  createNewDeliveryForAllFamilies = 'Create a new delivery for families';
+  selectSomeOfTheFamilies = 'Select families by groups';
+  moreOptions = 'Other options';
+  includeGroups = 'Only for families in these groups';
+  create = 'Create';
+  newDeliveriesQM = 'New deliveries?';
+  actionCanceled = 'Action canceled';
+  deliveriesCreated = 'Deliveries created';
+  doneDotGotoDeliveries = 'Done, proceed to Active deliveries?';
+  notDoneDeliveriesShouldArchiveThem = 'Unassigned deliveries, proceed with creating a new event?';
+  deliveresOnTheWayAssignedInTheLast3Hours = 'Deliveries that were assigned in the last 3 hours and were not delivered yet, proceed with opening a new event?';
 }

@@ -8,6 +8,7 @@ export class Roles {
     static distCenterAdmin = 'distCenterAdmin';
     static overview = 'overview';
     static lab = 'lab';
+    static indie = 'indie'
 }
 
 
@@ -52,6 +53,12 @@ export class OverviewOrAdminGuard extends SignedInGuard {
     }
 }
 
+@Injectable()
+export class IndieGuard extends SignedInGuard {
+    isAllowed() {
+        return Roles.indie;
+    }
+}
 @Injectable()
 export class LabGuard extends SignedInGuard {
     isAllowed() {

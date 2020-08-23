@@ -12,7 +12,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { PreviewFamilyComponent } from '../preview-family/preview-family.component';
 import { DialogService } from '../select-popup/dialog';
 import { wasChanged } from '../model-shared/types';
-import { UpdateCommentComponent } from '../update-comment/update-comment.component';
+import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
 import { Helpers } from '../helpers/helpers';
 import { Roles } from '../auth/roles';
 import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
@@ -109,7 +109,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   async sendSmsToCourier() {
     let h = await this.context.for(Helpers).findId(this.args.familyDelivery.courier);
 
-    await this.context.openDialog(UpdateCommentComponent, x => x.args = {
+    await this.context.openDialog(GetVolunteerFeedback, x => x.args = {
       helpText: () => new StringColumn(),
       ok: async (comment) => {
         try {

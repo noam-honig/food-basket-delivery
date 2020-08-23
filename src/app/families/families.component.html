@@ -10,9 +10,9 @@
                     <mat-icon *ngIf="!showChart">unfold_more</mat-icon>
                 </button>
             </div>
-            <a href="https://www.youtube.com/watch?v=2FG05srq5uY&list=PLRxHq2rVTQWhe2MTYbMJbAY1EW6iXfjtK"
+            <!-- <a href="https://www.youtube.com/watch?v=2FG05srq5uY&list=PLRxHq2rVTQWhe2MTYbMJbAY1EW6iXfjtK"
                 target="_blank" *ngIf="settings.showVideo()"
-                class="no-print">{{settings.lang.familyComponentVideos}}</a>
+                class="no-print">{{settings.lang.familyComponentVideos}}</a> -->
         </div>
         <mat-tab-group #myTab (selectedTabChange)="tabChanged()" [selectedIndex]="0" *ngIf="!problemOnly">
             <mat-tab *ngFor="let t of statTabs" label="{{t.name}} {{statTotal(t)}}"> </mat-tab>

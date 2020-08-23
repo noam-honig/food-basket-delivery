@@ -16,6 +16,7 @@ import { OverviewComponent } from "../overview/overview.component";
 import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings";
 import { YesNoQuestionComponent } from "../select-popup/yes-no-question/yes-no-question.component";
 import { Subject } from "rxjs";
+import { DeliveryReceptionComponent } from "../delivery-reception/delivery-reception.component";
 
 const TIMEOUT_MULTIPLIER_IN_SECONDS = 60;
 @Injectable()
@@ -30,12 +31,14 @@ export class AuthService {
             return true;
         }
         else {
+
             this.tokenHelper.signout();
+            this.routeHelper.navigateToComponent((await import('../users/login/login.component')).LoginComponent);
+            this.failedSmsSignInPhone = response.phone;
             return false;
         }
-
-
     }
+    failedSmsSignInPhone: string = undefined;
     private setToken(token: string, remember: boolean) {
         let org = Sites.getOrganizationFromContext(this.context);
         this.tokenHelper.setToken(token, remember, '/' + org);
@@ -43,29 +46,34 @@ export class AuthService {
     @ServerFunction({ allowed: true })
     static async loginFromSms(key: string, context?: Context) {
 
+        let r: LoginResponse = { valid: false };
         let h = await context.for(Helpers).findFirst(h => h.shortUrlKey.isEqualTo(key));
+
         if (h) {
+            r.phone = h.phone.value;
+            let info = await buildHelperUserInfo(h, context);
+            let userIsOk = false;
+            if (context.user && JSON.stringify(context.user.roles) == JSON.stringify(info.roles) && context.user.id == info.id)
+                userIsOk = true;
+            if (!h.realStoredPassword.value && !h.userRequiresPassword())
+                userIsOk = true;
 
-            h.lastSignInDate.value = new Date();
-            let info: HelperUserInfo = {
-                id: h.id.value,
-                name: h.name.value,
-                roles: [Sites.getOrgRole(context)],
-                theHelperIAmEscortingId: h.theHelperIAmEscorting.value,
-                escortedHelperName: h.theHelperIAmEscorting.value ? (await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value : '',
-                distributionCenter: undefined
-            };
-            context._setUser(info);
 
-            await h.save();
-            return {
-                valid: true,
-                authToken: buildToken(info, getSettings(context)),
-                requirePassword: false
-            } as LoginResponse
+
+            if (userIsOk) {
+                h.lastSignInDate.value = new Date();
+                context._setUser(info);
+
+                await h.save();
+                return {
+                    valid: true,
+                    authToken: buildToken(info, getSettings(context)),
+                    requirePassword: false
+                } as LoginResponse
+            }
 
         }
-        return { valid: false, requirePassword: false } as LoginResponse;
+        return r;
     }
     constructor(
         private dialog: DialogService,
@@ -120,6 +128,8 @@ export class AuthService {
             this.dialog.analytics('login ' + (this.context.isAllowed(Roles.admin) ? 'delivery admin' : ''));
             if (this.context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
                 this.routeHelper.navigateToComponent((await import("../asign-family/asign-family.component")).AsignFamilyComponent);
+            else if (this.context.isAllowed(Roles.lab))
+                this.routeHelper.navigateToComponent(DeliveryReceptionComponent)
             else if (this.context.isAllowed(Roles.overview))
                 this.routeHelper.navigateToComponent(OverviewComponent);
             else
@@ -210,11 +220,13 @@ export class AuthService {
 
 
 
-        if (h.admin.value || h.distCenterAdmin.value || h.labAdmin.value) {
+        if (h.userRequiresPassword()) {
             let ok = true;
             if (!userHasPassword && !args.newPassword) {
                 r.requiredToSetPassword = true;
                 r.requiredToSetPasswordReason = settings.lang.adminRequireToSetPassword;
+                if (!(h.admin.value || h.distCenterAdmin.value || h.labAdmin.value))
+                    settings.lang.indieRequireToSetPassword;
                 ok = false;
 
             }
@@ -337,9 +349,13 @@ async function buildHelperUserInfo(h: Helpers, context: Context) {
     if (h.distCenterAdmin.value) {
         result.roles.push(Roles.distCenterAdmin);
     }
-    if (getSettings(context).isSytemForMlt())
+    if (getSettings(context).isSytemForMlt()) {
         if (h.labAdmin.value || h.admin.value)
             result.roles.push(Roles.lab);
+        if (h.isIndependent.value || h.admin.value || h.distCenterAdmin.value)
+            result.roles.push(Roles.indie);
+    }
+
     return result;
 }
 function buildToken(result: HelperUserInfo, settings: ApplicationSettings) {

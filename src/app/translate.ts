@@ -185,6 +185,8 @@ export class Language {
   deliveriesDoneInTheLastTwoDays = 'משלוחים שחולקו ביומיים האחרונים';
   showAllCompletedDeliveries = 'הצג את כל המשלוחים שחולקו';
   showRouteOnGoogleMaps = 'הצג מסלול ב Google Maps';
+  assignCloseDeliveries = 'הצג תרומות בסביבתי';
+  closestDeliveries = 'תרומות באיזור הקרוב';
   selfPuckupSuccess = 'אספו את החבילה';
   packageWasPickedUp = 'אספו את החבילה';
   cancelAsignment = 'בטל שיוך';
@@ -254,6 +256,7 @@ export class Language {
   remiderSmsDate = 'מועד משלוח תזכורת SMS';
   admin = 'מנהל כלל המערכת';
   lab='עובד מעבדה';
+  indie = 'מתנדב עצמאי';
   responsibleForAssign = 'משייך מתנדבים לרשימת חלוקה';
   notAllowedToUpdateVolunteer = 'אינך רשאי לעדכן עבור מתנדב זה';
   company = "חברה";
@@ -574,6 +577,7 @@ export class Language {
   shouldAssignTo = 'האם לשייך אותו למתנדב';
   saveVolunteerInfo = 'שמירת פרטי מתנדב:';
   adminRequireToSetPassword = 'אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה.';
+  indieRequireToSetPassword = 'מתנדב עצמאי מחוייב בסיסמא לכניסה למערכת';
   userNotFoundOrWrongPassword = "משתמש לא נמצא או סיסמה שגויה";
   fromDate = 'מתאריך';
   toDate = 'עד תאריך';
@@ -596,6 +600,7 @@ export class Language {
   leftByHouse = 'הושאר ליד הבית';
   notDeliveredBadAddress = 'לא נמסר, בעיה בכתובת';
   notDeliveredNotHome = 'לא נמסר, לא היו בבית';
+  notDeliveredDontWant = "לא נמסר, לא מעוניינים בחבילה";
   notDeliveredOther = 'לא נמסר, אחר';
   deliveryStatus = 'סטטוס משלוח';
   useFamilyDefaultBasketType = 'סל ברירת מחדל';
@@ -765,6 +770,7 @@ export class Language {
   problemsThatRequireFollowup = 'בעיות המצריכות טיפול';
   commentsWrittenByVolunteers = 'הערות שכתבו מתנדבים';
   distributionList = 'רשימת חלוקה';
+  thisIsTheDestination = 'יעד למסירת הציוד';
   list = "רשימה";
   map = "מפה";
   noDeliveries = "אין משלוחים לחלוקה";
@@ -858,6 +864,24 @@ export class Language {
   invalidatePassword="בטל תוקף סיסמה";
   passwordInvalidated = "בוטל תוקף הסיסמה";
   sessionExpiredPleaseRelogin = "לצורך הגנה על פרטיות הנתונים, יש לבצע כניסה מחדש";
+  setAsDefaultVolunteerForTheseFamilies = "שמור כמתנדב ברירת מחדל למשפחות אלו";
+  thisVolunteerIsSetAsTheDefaultFor="מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד";
+  familiesDotCancelTheseAssignments = "משפחות. האם לבטל אותו כברירת מחדל למשפחות אלו?";
+  editComment = "ערוך הערה";
+  createNewEvent = "פתיחת ארוע חדש";
+  createNewEventHelp = `פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשרת יצירת משלוח חדש למשפחות`;
+  createNewDeliveryForAllFamilies="צור משלוח חדש למשפחות";
+  selectSomeOfTheFamilies = "בחר משפחות לפי קבוצות";
+  moreOptions = "אפשרויות מתקדמות למשלוחים החדשים";
+  includeGroups = "רק עבור משפחות בקבוצות אלו";
+  create = "ליצור ";
+  newDeliveriesQM = "משלוחים חדשים?";
+  actionCanceled="פעולה בוטלה";
+  deliveriesCreated = "משלוחים נוצרו";
+  doneDotGotoDeliveries = "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?";
+  notDoneDeliveriesShouldArchiveThem = "משלוחים פעילים שטרם שוייכו, האם להמשיך בפתיחת ארוע חדש?";
+  deliveresOnTheWayAssignedInTheLast3Hours = "משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך בפתיחת ארוע חדש?";
+  
 }
 
 const defaultLang = new Language();

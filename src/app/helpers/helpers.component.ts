@@ -20,11 +20,13 @@ import { HelperAssignmentComponent } from '../helper-assignment/helper-assignmen
 import { Sites } from '../sites/sites';
 import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import { FamilyDeliveries } from '../families/FamilyDeliveries';
+import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { visitAll } from '@angular/compiler';
 import { use, TranslationOptions } from '../translate';
 import { getLang } from '../sites/sites';
+import { FamilyDeliveresStatistics } from '../family-deliveries/family-deliveries-stats';
+import { Families } from '../families/families';
 
 @Component({
   selector: 'app-helpers',
@@ -69,7 +71,12 @@ export class HelpersComponent implements OnInit, OnDestroy {
       {
         name: use.language.exportToExcel,
         click: async () => {
-          await saveToExcel(this.settings, this.context.for(Helpers), this.helpers, use.language.volunteer, this.busy, (d: Helpers, c) => c == d.id || c == d.password || c == d.totalKm || c == d.totalTime || c == d.smsDate || c == d.reminderSmsDate || c == d.realStoredPassword || c == d.shortUrlKey || c == d.admin);
+          await saveToExcel(this.settings, this.context.for(Helpers), this.helpers, use.language.volunteer, this.busy, (d: Helpers, c) => c == d.id || c == d.password || c == d.totalKm || c == d.totalTime || c == d.smsDate || c == d.reminderSmsDate || c == d.realStoredPassword || c == d.shortUrlKey || c == d.admin, undefined,
+            async (h, addColumn) => {
+              addColumn(use.language.city, h.getGeocodeInformation().getCity(), 's');
+              addColumn(use.language.city + "2", h.getGeocodeInformation2().getCity(), 's');
+
+            });
         }
         , visible: () => this.context.isAllowed(Roles.admin)
       },
@@ -155,33 +162,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
         name: use.language.deliveries,
         visible: h => !h.isNew(),
         click: async h => {
-          this.context.openDialog(GridDialogComponent, x => x.args = {
-            title: use.language.deliveriesFor + ' ' + h.name.value,
-            settings: this.context.for(FamilyDeliveries).gridSettings({
-              numOfColumnsInGrid: 6,
-              knowTotalRows: true,
-              rowCssClass: fd => fd.deliverStatus.getCss(),
-              columnSettings: fd => {
-                let r: Column[] = [
-                  fd.deliverStatus,
-                  fd.deliveryStatusDate,
-                  fd.basketType,
-                  fd.quantity,
-                  fd.name,
-                  fd.address,
-                  fd.distributionCenter,
-                  fd.courierComments
-                ]
-                r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
-                return r;
-              },
-              get: {
-                where: fd => fd.courier.isEqualTo(h.id),
-                orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
-                limit: 25
-              }
-            })
-          });
+          await h.showDeliveryHistory(this.dialog, this.busy);
         }
       }
 
@@ -199,7 +180,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       if (this.context.isAllowed(Roles.admin))
         this.numOfColsInGrid++;
       if (this.settings.isSytemForMlt())
-        this.numOfColsInGrid += 4;
+        this.numOfColsInGrid += 6;
 
       return this.selectColumns(helpers);
     },
@@ -237,6 +218,14 @@ export class HelpersComponent implements OnInit, OnDestroy {
       column: helpers.eventComment,
       width: '120'
     });
+
+    if (this.context.isAllowed(Roles.admin) && this.settings.isSytemForMlt()) {
+      r.push({
+        column: helpers.isIndependent,
+        width: '120'
+      });
+    };
+
     if (this.context.isAllowed(Roles.admin)) {
       r.push({
         column: helpers.admin,
@@ -259,12 +248,14 @@ export class HelpersComponent implements OnInit, OnDestroy {
         column: helpers.distributionCenter, width: '150',
       });
     }
+
     r.push({
       column: helpers.preferredDistributionAreaAddress, width: '120',
     });
     r.push({
       column: helpers.preferredDistributionAreaAddress2, width: '120',
     });
+    r.push(helpers.createDate);
 
     if (this.context.isAllowed(Roles.admin) && this.settings.isSytemForMlt()) {
       r.push({
@@ -276,7 +267,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       column: helpers.company, width: '120'
     });
 
-    r.push(helpers.createDate);
+
 
     if (this.context.isAllowed(Roles.admin) && !hadCenter) {
       r.push(helpers.distributionCenter);

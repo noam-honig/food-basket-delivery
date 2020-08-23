@@ -13,7 +13,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
   templateUrl: './update-comment.component.html',
   styleUrls: ['./update-comment.component.scss']
 })
-export class UpdateCommentComponent implements OnInit {
+export class GetVolunteerFeedback implements OnInit { 
   public args: {
     family: ActiveFamilyDeliveries,
     showFailStatus?: boolean,
@@ -49,6 +49,7 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
   failOptions: DeliveryStatus[] = [
     DeliveryStatus.FailedBadAddress,
     DeliveryStatus.FailedNotHome,
+    DeliveryStatus.FailedDoNotWant,
     DeliveryStatus.FailedOther
   ];
   defaultFailStatus = DeliveryStatus.FailedBadAddress;

@@ -3,6 +3,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { TranslationOptions } from '../translate';
+import { Location } from '../shared/googleApiHelpers';
 
 
 
@@ -17,7 +18,7 @@ export class FamilyInListComponent implements OnInit {
   @Input() f: ActiveFamilyDeliveries;
   @Input() i: number;
   @Input() newAssign: boolean;
-  @Input() sameAddress: boolean;
+  @Input() distanceFromPreviousLocation: number;
   @Output() delivered = new EventEmitter<void>();
   ngOnInit() {
 
@@ -36,8 +37,11 @@ export class FamilyInListComponent implements OnInit {
   getAddressDescription() {
 
     let r = this.f.getAddressDescription();
-    if (this.sameAddress) {
+    if (this.distanceFromPreviousLocation === 0) {
       r = "* " + r;
+    }
+    if (this.distanceFromPreviousLocation > 0) {
+      r += ", " + this.distanceFromPreviousLocation.toFixed(1) + " " + this.settings.lang.km;
     }
     return r;
 

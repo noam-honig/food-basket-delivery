@@ -4,6 +4,11 @@
     "valueInCode": "פעולה",
     "valueInEnglish": "action"
   },
+  "actionCanceled": {
+    "google": "Azione annullata",
+    "valueInCode": "פעולה בוטלה",
+    "valueInEnglish": "Action canceled"
+  },
   "actionNotFound": {
     "google": "Azione non trovata sul server",
     "valueInCode": "פעולה לא נמצאה בשרת",
@@ -309,6 +314,11 @@
     "valueInCode": "שיוך לקבוצת משפחות",
     "valueInEnglish": "Assignment to a family group"
   },
+  "assignCloseDeliveries": {
+    "google": "Mostra donazioni intorno a me",
+    "valueInCode": "הצג תרומות בסביבתי",
+    "valueInEnglish": "Show donations around me"
+  },
   "assignDeliveryMenu": {
     "google": "Assegna volontario",
     "valueInCode": "שיוך משלוחים למתנדב",
@@ -604,6 +614,11 @@
     "valueInCode": "סגור",
     "valueInEnglish": "close"
   },
+  "closestDeliveries": {
+    "google": "Donazioni nell'area vicina",
+    "valueInCode": "תרומות באיזור הקרוב",
+    "valueInEnglish": "Donations in the near area"
+  },
   "columnSelectionInFile": {
     "google": "Colonne nella selezione dei file",
     "valueInCode": "בחירת עמודות בקובץ",
@@ -709,10 +724,30 @@
     "valueInCode": "מי שייכה למתנדב",
     "valueInEnglish": "Volunteer assigning user"
   },
+  "create": {
+    "google": "Creare",
+    "valueInCode": "ליצור ",
+    "valueInEnglish": "Create"
+  },
   "createDate": {
     "google": "Data di creazione",
     "valueInCode": "מועד הוספה",
     "valueInEnglish": "Creation Date"
+  },
+  "createNewDeliveryForAllFamilies": {
+    "google": "Crea una nuova consegna per le famiglie",
+    "valueInCode": "צור משלוח חדש למשפחות",
+    "valueInEnglish": "Create a new delivery for families"
+  },
+  "createNewEvent": {
+    "google": "Crea un nuovo evento",
+    "valueInCode": "פתיחת ארוע חדש",
+    "valueInEnglish": "Create a new event"
+  },
+  "createNewEventHelp": {
+    "google": "Questa azione archivierà tutte le consegne attive e aiuterà a creare nuove consegne",
+    "valueInCode": "פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשרת יצירת משלוח חדש למשפחות",
+    "valueInEnglish": "This action will archive all active deliveries, and help create new deliveries"
   },
   "createUser": {
     "google": "Creare un utente",
@@ -875,6 +910,11 @@
     "valueInCode": "נמסר בהצלחה",
     "valueInEnglish": "Successfully delivered"
   },
+  "deliveresOnTheWayAssignedInTheLast3Hours": {
+    "google": "Consegne che sono state assegnate nelle ultime 3 ore e non sono state ancora consegnate, procedere con l'apertura di un nuovo evento?",
+    "valueInCode": "משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך בפתיחת ארוע חדש?",
+    "valueInEnglish": "Deliveries that were assigned in the last 3 hours and were not delivered yet, proceed with opening a new event?"
+  },
   "deliveries": {
     "google": "Le consegne",
     "valueInCode": "משלוחים",
@@ -904,6 +944,11 @@
     "google": "Spedizioni completate",
     "valueInCode": "משלוחים הושלמו",
     "valueInEnglish": "Shipments completed"
+  },
+  "deliveriesCreated": {
+    "google": "Consegne create",
+    "valueInCode": "משלוחים נוצרו",
+    "valueInEnglish": "Deliveries created"
   },
   "deliveriesDoneInTheLastTwoDays": {
     "google": "Consegnato negli ultimi due giorni",
@@ -1095,6 +1140,11 @@
     "valueInCode": "לא קיים",
     "valueInEnglish": "Does not exist"
   },
+  "doneDotGotoDeliveries": {
+    "google": "Fatto, passare alle consegne attive?",
+    "valueInCode": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?",
+    "valueInEnglish": "Done, proceed to Active deliveries?"
+  },
   "doneVolunteers": {
     "google": "finire",
     "valueInCode": "סיימו",
@@ -1109,6 +1159,11 @@
     "google": "Possibili duplicati",
     "valueInCode": "חיפוש משפחות כפולות",
     "valueInEnglish": "Possible Duplicates"
+  },
+  "editComment": {
+    "google": "Prendi nota",
+    "valueInCode": "ערוך הערה",
+    "valueInEnglish": "Make a note"
   },
   "email": {
     "google": "e-mail",
@@ -1359,6 +1414,11 @@
     "google": "famiglie",
     "valueInCode": "משפחות",
     "valueInEnglish": "Families"
+  },
+  "familiesDotCancelTheseAssignments": {
+    "google": "Famiglie. Dovrebbe essere annullato di default per queste famiglie?",
+    "valueInCode": "משפחות. האם לבטל אותו כברירת מחדל למשפחות אלו?",
+    "valueInEnglish": "Families. Should it be canceled by default for these families?"
   },
   "familiesForUpdate": {
     "google": "Famiglie da aggiornare",
@@ -1760,6 +1820,21 @@
     "valueInCode": "שימו לב, כתובת לא מדוייקת!",
     "valueInEnglish": "Notice, Inaccurate Address!"
   },
+  "includeGroups": {
+    "google": "Solo per famiglie in questi gruppi",
+    "valueInCode": "רק עבור משפחות בקבוצות אלו",
+    "valueInEnglish": "Only for families in these groups"
+  },
+  "indie": {
+    "google": "Volontario indipendente",
+    "valueInCode": "מתנדב עצמאי",
+    "valueInEnglish": "Independent volunteer"
+  },
+  "indieRequireToSetPassword": {
+    "google": "Un volontario indipendente deve accedere al sistema con una password",
+    "valueInCode": "מתנדב עצמאי מחוייב בסיסמא לכניסה למערכת",
+    "valueInEnglish": "An independent volunteer is required to enter the system with a password"
+  },
   "infoAboutUpdates": {
     "google": "Dettagli di aggiornamento",
     "valueInCode": "פרטי עדכונים",
@@ -2020,6 +2095,11 @@
     "valueInCode": "עוד חדשות",
     "valueInEnglish": "More news"
   },
+  "moreOptions": {
+    "google": "Altre opzioni",
+    "valueInCode": "אפשרויות מתקדמות למשלוחים החדשים",
+    "valueInEnglish": "Other options"
+  },
   "moreThanOneRowInDbMatchesExcel": {
     "google": "Più di una famiglia è stata trovata sul sito corrispondente a questa riga da Excel. Seleziona quale delle seguenti famiglie si adatta alla riga da Excel e trasmetti",
     "valueInCode": "נמצאה יותר ממשפחה אחת באתר המתאימה לשורה הזו מהאקסל. אנא בחר איזו מהמשפחות הבאות מתאימה לשורה מהאקסל והעבר אותה למשפחות לעדכון",
@@ -2079,6 +2159,11 @@
     "google": "Hai bisogno di un compagno",
     "valueInCode": "צריך מלווה",
     "valueInEnglish": "Need a companion"
+  },
+  "newDeliveriesQM": {
+    "google": "Nuove consegne?",
+    "valueInCode": "משלוחים חדשים?",
+    "valueInEnglish": "New deliveries?"
   },
   "newDelivery": {
     "google": "Nuova consegna",
@@ -2190,6 +2275,11 @@
     "valueInCode": "לא נמסר, בעיה בכתובת",
     "valueInEnglish": "Not delivered, address issue"
   },
+  "notDeliveredDontWant": {
+    "google": "Non consegnato, non serve pacco",
+    "valueInCode": "לא נמסר, לא מעוניינים בחבילה",
+    "valueInEnglish": "Not delivered, do not need a package"
+  },
   "notDeliveredNotHome": {
     "google": "Non consegnato, non erano a casa",
     "valueInCode": "לא נמסר, לא היו בבית",
@@ -2199,6 +2289,11 @@
     "google": "Non consegnato, altro",
     "valueInCode": "לא נמסר, אחר",
     "valueInEnglish": "Not delivered, other"
+  },
+  "notDoneDeliveriesShouldArchiveThem": {
+    "google": "Consegne non assegnate, procedere con la creazione di un nuovo evento?",
+    "valueInCode": "משלוחים פעילים שטרם שוייכו, האם להמשיך בפתיחת ארוע חדש?",
+    "valueInEnglish": "Unassigned deliveries, proceed with creating a new event?"
   },
   "notice": {
     "google": "Nota!",
@@ -2871,6 +2966,11 @@
     "valueInCode": "בחירת מספר משפחות",
     "valueInEnglish": "Set Number of Delivery"
   },
+  "selectSomeOfTheFamilies": {
+    "google": "Seleziona le famiglie per gruppi",
+    "valueInCode": "בחר משפחות לפי קבוצות",
+    "valueInEnglish": "Select families by groups"
+  },
   "selectVolunteer": {
     "google": "Scegli un volontario",
     "valueInCode": "בחר מתנדב",
@@ -2975,6 +3075,11 @@
     "google": "Aggiorna anche come volontario predefinito",
     "valueInCode": "עדכן גם כמתנדב ברירת מחדל",
     "valueInEnglish": "Also update as a default volunteer"
+  },
+  "setAsDefaultVolunteerForTheseFamilies": {
+    "google": "Salva come volontario predefinito per queste famiglie",
+    "valueInCode": "שמור כמתנדב ברירת מחדל למשפחות אלו",
+    "valueInEnglish": "Save as a default volunteer for these families"
   },
   "shouldAdd": {
     "google": "Aggiungi",
@@ -3280,6 +3385,16 @@
     "google": "Questa famiglia ha",
     "valueInCode": "למשפחה זו יש",
     "valueInEnglish": "This family has"
+  },
+  "thisIsTheDestination": {
+    "google": "Destinazione per la consegna dell'attrezzatura",
+    "valueInCode": "יעד למסירת הציוד",
+    "valueInEnglish": "Destination for delivery of equipment"
+  },
+  "thisVolunteerIsSetAsTheDefaultFor": {
+    "google": "Questo volontario è definito come volontario predefinito per di più",
+    "valueInCode": "מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד",
+    "valueInEnglish": "This volunteer is defined as a default volunteer for more"
   },
   "timeToDisconnect": {
     "google": "Disconnetti timeout in minuti",
