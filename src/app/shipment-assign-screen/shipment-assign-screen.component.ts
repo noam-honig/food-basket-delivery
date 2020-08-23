@@ -30,7 +30,20 @@ export class ShipmentAssignScreenComponent implements OnInit {
   }
 
   private sortList() {
-    this.families.sort((a, b) => (b.relevantHelpers.length - a.relevantHelpers.length) * this.sortDir);
+    this.families.sort((a, b) => {
+      let res = 0;
+
+      if (a.relevantHelpers.length == 0)
+        return 1;
+      if (b.relevantHelpers.length == 0)
+        return -1;
+
+      res = (a.relevantHelpers.length - b.relevantHelpers.length) * this.sortDir;
+      if (res == 0)
+        res = b.totalItems - a.totalItems;
+
+      return res; 
+    });
   }
 
   async showAssignment(rh: relevantHelper) {
@@ -133,7 +146,11 @@ export class ShipmentAssignScreenComponent implements OnInit {
                   distance: d,
                   referencePoint: referencePoint
                 });
-                family.relevantHelpers.sort((a, b) => a.distance - b.distance);
+                family.relevantHelpers.sort((a, b) => {
+                  let res = a.helper.families.length - b.helper.families.length;
+                  if (res==0) res = a.distance - b.distance
+                  return res;
+                });
               }
             }
           }
@@ -164,7 +181,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
       for (let busy of (await db.execute(sql.query({
         select: () => [fd.courier],
         from: fd,
-        where: () => [fd.deliverStatus.isAResultStatus().and(fd.deliveryStatusDate.isLessOrEqualTo(tenDaysAgo))],
+        where: () => [fd.deliverStatus.isAResultStatus().and(fd.deliveryStatusDate.isGreaterThan(tenDaysAgo))],
         groupBy: () => [fd.courier],
         having: () => [sql.build('count(distinct ', fd.family, ' )>3')]
       }))).rows) {
@@ -195,14 +212,17 @@ export class ShipmentAssignScreenComponent implements OnInit {
           id: d.id.value
 
         }],
+        totalItems: d.quantity.value,
         relevantHelpers: []
       }
+
       if (d.courier.value) {
         let h = result.helpers[d.courier.value];
         if (h) {
           let fh = h.families.find(x => x.id == f.id);
           if (fh) {
             fh.deliveries.push(...f.deliveries);
+            fh.totalItems += f.totalItems;
           }
           else
             h.families.push(f);
@@ -212,6 +232,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
         let ef = result.unAssignedFamilies[f.id];
         if (ef) {
           ef.deliveries.push(...f.deliveries);
+          ef.totalItems += f.totalItems;
         }
         else
           result.unAssignedFamilies[f.id] = f;
@@ -242,6 +263,7 @@ interface familyInfo {
   location: Location,
   createDateString: string,
   deliveries: deliveryInfo[];
+  totalItems: number;
   relevantHelpers: relevantHelper[];
   assignedHelper?: helperInfo;
 }
