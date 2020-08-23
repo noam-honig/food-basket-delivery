@@ -18,6 +18,7 @@ import { BasketId } from '../families/BasketType';
 import { ArchiveHelper } from '../family-deliveries/family-deliveries-actions';
 import { PromiseThrottle } from '../shared/utils';
 import { async } from 'rxjs/internal/scheduler/async';
+import { FamilyStatus } from '../families/FamilyStatus';
 
 function visible(when: () => boolean, caption?: string) {
     return {
@@ -76,7 +77,7 @@ export class CreateNewEvent {
     async iterateFamilies(what: (f: Families) => Promise<any>) {
         let pt = new PromiseThrottle(10);
         let i = 0;
-        for await (let f of this.context.for(Families).iterate({})) {
+        for await (let f of this.context.for(Families).iterate({ where: f => f.status.isEqualTo(FamilyStatus.Active) })) {
             let match = true;
             if (this.moreOptions.value) {
                 if (this.includeGroups.value) {
@@ -139,7 +140,7 @@ export class CreateNewEvent {
                     dialog.distCenter.value = dialog.distCenter.value;
                     if (await dialog.YesNoPromise(settings.lang.doneDotGotoDeliveries)) {
                         routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
-                        
+
                     }
 
 
