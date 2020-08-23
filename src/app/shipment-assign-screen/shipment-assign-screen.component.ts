@@ -181,7 +181,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
       for (let busy of (await db.execute(sql.query({
         select: () => [fd.courier],
         from: fd,
-        where: () => [fd.deliverStatus.isAResultStatus().and(fd.deliveryStatusDate.isLessOrEqualTo(tenDaysAgo))],
+        where: () => [fd.deliverStatus.isAResultStatus().and(fd.deliveryStatusDate.isGreaterThan(tenDaysAgo))],
         groupBy: () => [fd.courier],
         having: () => [sql.build('count(distinct ', fd.family, ' )>3')]
       }))).rows) {
