@@ -40,7 +40,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
       res = (a.relevantHelpers.length - b.relevantHelpers.length) * this.sortDir;
       if (res == 0)
-        res = a.totalItems - b.totalItems;
+        res = b.totalItems - a.totalItems;
 
       return res; 
     });
@@ -146,7 +146,11 @@ export class ShipmentAssignScreenComponent implements OnInit {
                   distance: d,
                   referencePoint: referencePoint
                 });
-                family.relevantHelpers.sort((a, b) => a.distance - b.distance);
+                family.relevantHelpers.sort((a, b) => {
+                  let res = a.helper.families.length - b.helper.families.length;
+                  if (res==0) res = a.distance - b.distance
+                  return res;
+                });
               }
             }
           }
