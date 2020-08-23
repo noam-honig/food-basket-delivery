@@ -251,6 +251,10 @@
     "google": "שיוך לקבוצת תורמים",
     "valueInCode": "שיוך לקבוצת משפחות"
   },
+  "assignCloseDeliveries": {
+    "google": "הצג תרומות בסביבתי",
+    "valueInCode": "הצג תרומות בסביבתי"
+  },
   "assignDeliveryMenu": {
     "google": "שיוך משלוחים למתנדב",
     "valueInCode": "שיוך משלוחים למתנדב"
@@ -487,6 +491,10 @@
   "close": {
     "google": "סגור",
     "valueInCode": "סגור"
+  },
+  "closestDeliveries": {
+    "google": "תרומות באיזור הקרוב",
+    "valueInCode": "תרומות באיזור הקרוב"
   },
   "columnSelectionInFile": {
     "google": "בחירת עמודות בקובץ",
@@ -753,7 +761,7 @@
     "valueInCode": "משלוחים נוצרו"
   },
   "deliveriesDoneInTheLastTwoDays": {
-    "google": "משלוחים שחולקו ביומיים האחרונים",
+    "google": "משלוחים שנאספו ביומיים האחרונים",
     "valueInCode": "משלוחים שחולקו ביומיים האחרונים"
   },
   "deliveriesFor": {
@@ -1444,6 +1452,14 @@
   "includeGroups": {
     "google": "רק עבור תורמים בקבוצות אלו",
     "valueInCode": "רק עבור משפחות בקבוצות אלו"
+  },
+  "indie": {
+    "google": "מתנדב עצמאי",
+    "valueInCode": "מתנדב עצמאי"
+  },
+  "indieRequireToSetPassword": {
+    "google": "מתנדב עצמאי מחוייב בסיסמא לכניסה למערכת",
+    "valueInCode": "מתנדב עצמאי מחוייב בסיסמא לכניסה למערכת"
   },
   "infoAboutUpdates": {
     "google": "פרטי עדכונים",
@@ -2669,6 +2685,10 @@
   "thisFamilyHas": {
     "google": "לתורם זו יש",
     "valueInCode": "למשפחה זו יש"
+  },
+  "thisIsTheDestination": {
+    "google": "יעד למסירת הציוד",
+    "valueInCode": "יעד למסירת הציוד"
   },
   "thisVolunteerIsSetAsTheDefaultFor": {
     "google": "מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד",

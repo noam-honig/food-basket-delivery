@@ -180,7 +180,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       if (this.context.isAllowed(Roles.admin))
         this.numOfColsInGrid++;
       if (this.settings.isSytemForMlt())
-        this.numOfColsInGrid += 5;
+        this.numOfColsInGrid += 6;
 
       return this.selectColumns(helpers);
     },
@@ -218,6 +218,14 @@ export class HelpersComponent implements OnInit, OnDestroy {
       column: helpers.eventComment,
       width: '120'
     });
+
+    if (this.context.isAllowed(Roles.admin) && this.settings.isSytemForMlt()) {
+      r.push({
+        column: helpers.isIndependent,
+        width: '120'
+      });
+    };
+
     if (this.context.isAllowed(Roles.admin)) {
       r.push({
         column: helpers.admin,
@@ -240,6 +248,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
         column: helpers.distributionCenter, width: '150',
       });
     }
+
     r.push({
       column: helpers.preferredDistributionAreaAddress, width: '120',
     });

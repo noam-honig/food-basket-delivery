@@ -314,6 +314,11 @@
     "valueInCode": "שיוך לקבוצת משפחות",
     "valueInEnglish": "Assignment to a family group"
   },
+  "assignCloseDeliveries": {
+    "google": "Mostrar donaciones a mi alrededor",
+    "valueInCode": "הצג תרומות בסביבתי",
+    "valueInEnglish": "Show donations around me"
+  },
   "assignDeliveryMenu": {
     "google": "Asignar voluntario",
     "valueInCode": "שיוך משלוחים למתנדב",
@@ -608,6 +613,11 @@
     "google": "cerca",
     "valueInCode": "סגור",
     "valueInEnglish": "close"
+  },
+  "closestDeliveries": {
+    "google": "Donaciones en el área cercana",
+    "valueInCode": "תרומות באיזור הקרוב",
+    "valueInEnglish": "Donations in the near area"
   },
   "columnSelectionInFile": {
     "google": "Columnas en la selección de archivos",
@@ -1804,6 +1814,16 @@
     "google": "Solo para familias en estos grupos",
     "valueInCode": "רק עבור משפחות בקבוצות אלו",
     "valueInEnglish": "Only for families in these groups"
+  },
+  "indie": {
+    "google": "Voluntario independiente",
+    "valueInCode": "מתנדב עצמאי",
+    "valueInEnglish": "Independent volunteer"
+  },
+  "indieRequireToSetPassword": {
+    "google": "Se requiere un voluntario independiente para ingresar al sistema con una contraseña",
+    "valueInCode": "מתנדב עצמאי מחוייב בסיסמא לכניסה למערכת",
+    "valueInEnglish": "An independent volunteer is required to enter the system with a password"
   },
   "infoAboutUpdates": {
     "google": "Detalles de actualización",
@@ -3330,6 +3350,11 @@
     "google": "Esta familia tiene",
     "valueInCode": "למשפחה זו יש",
     "valueInEnglish": "This family has"
+  },
+  "thisIsTheDestination": {
+    "google": "Destino de entrega de equipos",
+    "valueInCode": "יעד למסירת הציוד",
+    "valueInEnglish": "Destination for delivery of equipment"
   },
   "thisVolunteerIsSetAsTheDefaultFor": {
     "google": "Este voluntario se define como voluntario predeterminado para más",

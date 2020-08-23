@@ -185,6 +185,8 @@ export class Language {
   deliveriesDoneInTheLastTwoDays = 'משלוחים שחולקו ביומיים האחרונים';
   showAllCompletedDeliveries = 'הצג את כל המשלוחים שחולקו';
   showRouteOnGoogleMaps = 'הצג מסלול ב Google Maps';
+  assignCloseDeliveries = 'הצג תרומות בסביבתי';
+  closestDeliveries = 'תרומות באיזור הקרוב';
   selfPuckupSuccess = 'אספו את החבילה';
   packageWasPickedUp = 'אספו את החבילה';
   cancelAsignment = 'בטל שיוך';
@@ -254,6 +256,7 @@ export class Language {
   remiderSmsDate = 'מועד משלוח תזכורת SMS';
   admin = 'מנהל כלל המערכת';
   lab='עובד מעבדה';
+  indie = 'מתנדב עצמאי';
   responsibleForAssign = 'משייך מתנדבים לרשימת חלוקה';
   notAllowedToUpdateVolunteer = 'אינך רשאי לעדכן עבור מתנדב זה';
   company = "חברה";
@@ -569,6 +572,7 @@ export class Language {
   shouldAssignTo = 'האם לשייך אותו למתנדב';
   saveVolunteerInfo = 'שמירת פרטי מתנדב:';
   adminRequireToSetPassword = 'אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה.';
+  indieRequireToSetPassword = 'מתנדב עצמאי מחוייב בסיסמא לכניסה למערכת';
   userNotFoundOrWrongPassword = "משתמש לא נמצא או סיסמה שגויה";
   fromDate = 'מתאריך';
   toDate = 'עד תאריך';
@@ -759,6 +763,7 @@ export class Language {
   problemsThatRequireFollowup = 'בעיות המצריכות טיפול';
   commentsWrittenByVolunteers = 'הערות שכתבו מתנדבים';
   distributionList = 'רשימת חלוקה';
+  thisIsTheDestination = 'יעד למסירת הציוד';
   list = "רשימה";
   map = "מפה";
   noDeliveries = "אין משלוחים לחלוקה";

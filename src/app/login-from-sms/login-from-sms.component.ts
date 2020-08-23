@@ -32,11 +32,8 @@ export class LoginFromSmsComponent implements OnInit {
       var id = x.get('id');
 
 
-      let result = await this.authServer.loginFromSms(id);
-      if (!result) {
-        await this.dialog.Error(this.settings.lang.smsLoginFailed);
-        this.routeHelper.navigateToComponent(LoginComponent);
-      }
+       await this.authServer.loginFromSms(id);
+      
 
     });
   }

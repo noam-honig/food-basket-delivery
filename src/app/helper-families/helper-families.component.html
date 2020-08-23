@@ -1,3 +1,5 @@
+<button mat-raised-button color="primary" (click)="assignNewDelivery()" *ngIf="showCloseDeliveries()&&!partOfAssign">
+  {{settings.lang.assignCloseDeliveries}}</button>
 <mat-card class="no-print" *ngIf="familyLists.toDeliver.length>0||familyLists.forceShowMap">
   <mat-card-title>
     {{familyLists.getLeftFamiliesDescription()}}
@@ -90,7 +92,7 @@
     <mat-expansion-panel  style="background-color:lightgreen">
       <mat-expansion-panel-header  style="background-color:lightgreen">
         <div>
-          <mat-panel-title><strong>נקודת מסירת ציוד: </strong>  {{familyLists.distCenter.name.value}}  </mat-panel-title>
+          <mat-panel-title> <strong>{{settings.lang.thisIsTheDestination}}</strong> : {{familyLists.distCenter.name.value}}</mat-panel-title>
           <mat-panel-description>{{familyLists.distCenter.address.value}}</mat-panel-description>
         </div>
       </mat-expansion-panel-header>

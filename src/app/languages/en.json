@@ -285,6 +285,10 @@
     "valueInCode": "שיוך לקבוצת משפחות",
     "custom": "Assignment to a family group"
   },
+  "assignCloseDeliveries": {
+    "google": "Show donations around me",
+    "valueInCode": "הצג תרומות בסביבתי"
+  },
   "assignDeliveryMenu": {
     "google": "Associate volunteer shipments",
     "valueInCode": "שיוך משלוחים למתנדב",
@@ -561,6 +565,10 @@
     "google": "closed",
     "valueInCode": "סגור",
     "custom": "close"
+  },
+  "closestDeliveries": {
+    "google": "Donations in the near area",
+    "valueInCode": "תרומות באיזור הקרוב"
   },
   "columnSelectionInFile": {
     "google": "Choose columns in a file",
@@ -1617,6 +1625,14 @@
   "includeGroups": {
     "google": "Only for families in these groups",
     "valueInCode": "רק עבור משפחות בקבוצות אלו"
+  },
+  "indie": {
+    "google": "Independent volunteer",
+    "valueInCode": "מתנדב עצמאי"
+  },
+  "indieRequireToSetPassword": {
+    "google": "An independent volunteer is required to enter the system with a password",
+    "valueInCode": "מתנדב עצמאי מחוייב בסיסמא לכניסה למערכת"
   },
   "infoAboutUpdates": {
     "google": "Update details",
@@ -2920,6 +2936,10 @@
   "thisFamilyHas": {
     "google": "This family has",
     "valueInCode": "למשפחה זו יש"
+  },
+  "thisIsTheDestination": {
+    "google": "Destination for delivery of equipment",
+    "valueInCode": "יעד למסירת הציוד"
   },
   "thisVolunteerIsSetAsTheDefaultFor": {
     "google": "This volunteer is defined as a default volunteer for more",

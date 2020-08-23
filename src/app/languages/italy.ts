@@ -71,6 +71,8 @@ export class italy implements Language {
   deliveriesDoneInTheLastTwoDays = 'Consegnato negli ultimi due giorni';
   showAllCompletedDeliveries = 'Visualizza tutte le consegne riuscite';
   showRouteOnGoogleMaps = 'Visualizza il percorso su google maps';
+  assignCloseDeliveries = 'Mostra donazioni intorno a me';
+  closestDeliveries = "Donazioni nell'area vicina";
   selfPuckupSuccess = 'Raccogli il pacchetto';
   packageWasPickedUp = 'Raccolto';
   cancelAsignment = 'Annulla incarico';
@@ -140,6 +142,7 @@ export class italy implements Language {
   remiderSmsDate = 'Data di consegna del promemoria via SMS';
   admin = 'Amministratore di sistema';
   lab = 'Operaio di laboratorio';
+  indie = 'Volontario indipendente';
   responsibleForAssign = 'Assegna solo consegne';
   notAllowedToUpdateVolunteer = 'Non è possibile aggiornare per questo volontario';
   company = 'Azienda';
@@ -455,6 +458,7 @@ export class italy implements Language {
   shouldAssignTo = 'Assegnato a';
   saveVolunteerInfo = 'Salvataggio dei dettagli dei volontari:';
   adminRequireToSetPassword = "Sei un utente gestore senza una password richiesta definita. Si prega di impostare una password nella seguente schermata dei dettagli dell'utente.";
+  indieRequireToSetPassword = 'Un volontario indipendente deve accedere al sistema con una password';
   userNotFoundOrWrongPassword = 'Utente non trovato o password errata';
   fromDate = 'Datato';
   toDate = 'Fino a';
@@ -639,6 +643,7 @@ export class italy implements Language {
   problemsThatRequireFollowup = 'Follow-up dei problemi';
   commentsWrittenByVolunteers = 'Commenti scritti da volontari';
   distributionList = 'Lista di distribuzione';
+  thisIsTheDestination = "Destinazione per la consegna dell'attrezzatura";
   list = 'Elenco';
   map = 'Carta geografica';
   noDeliveries = 'Nessuna consegna per la distribuzione';

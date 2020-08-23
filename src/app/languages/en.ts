@@ -71,6 +71,8 @@ export class en implements Language {
   deliveriesDoneInTheLastTwoDays = 'Delivered over the last two days';
   showAllCompletedDeliveries = 'View all successful deliveries';
   showRouteOnGoogleMaps = 'View route on google maps';
+  assignCloseDeliveries = 'Show donations around me';
+  closestDeliveries = 'Donations in the near area';
   selfPuckupSuccess = 'Collect the package';
   packageWasPickedUp = 'Collected';
   cancelAsignment = 'Cancel assignment';
@@ -140,6 +142,7 @@ export class en implements Language {
   remiderSmsDate = 'Date of delivery of SMS reminder';
   admin = 'System administrator';
   lab = 'Laboratory worker';
+  indie = 'Independent volunteer';
   responsibleForAssign = 'Only Assigns Deliveries';
   notAllowedToUpdateVolunteer = 'You may not update for this volunteer';
   company = 'Company';
@@ -455,6 +458,7 @@ export class en implements Language {
   shouldAssignTo = 'Assign to';
   saveVolunteerInfo = 'Saving volunteer details:';
   adminRequireToSetPassword = 'You are a manager user without a required password defined. Please set a password in the following user details screen.';
+  indieRequireToSetPassword = 'An independent volunteer is required to enter the system with a password';
   userNotFoundOrWrongPassword = 'User not found or password incorrect';
   fromDate = 'Dated';
   toDate = 'Until';
@@ -639,6 +643,7 @@ export class en implements Language {
   problemsThatRequireFollowup = 'Problems Followup';
   commentsWrittenByVolunteers = 'Comments written by volunteers';
   distributionList = 'Distribution list';
+  thisIsTheDestination = 'Destination for delivery of equipment';
   list = 'List';
   map = 'Map';
   noDeliveries = 'No deliveries for distribution';

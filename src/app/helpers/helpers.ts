@@ -103,6 +103,9 @@ export abstract class HelpersBase extends IdEntity {
 
 @EntityClass
 export class Helpers extends HelpersBase {
+    userRequiresPassword() {
+        return this.admin.value || this.distCenterAdmin.value || this.labAdmin.value || this.isIndependent.value;
+    }
     async showDeliveryHistory(dialog: DialogService, busy: BusyService) {
         let ctx = this.context.for((await import('../families/FamilyDeliveries')).FamilyDeliveries);
         this.context.openDialog(GridDialogComponent, x => x.args = {
@@ -385,6 +388,11 @@ export class Helpers extends HelpersBase {
         caption: getLang(this.context).lab,
         allowApiUpdate: Roles.lab,
         includeInApi: Roles.lab
+    });
+    isIndependent = new BoolColumn({
+        caption: getLang(this.context).indie,
+        allowApiUpdate: Roles.admin,
+        includeInApi: Roles.admin
     });
     distCenterAdmin = new BoolColumn({
         caption: getLang(this.context).responsibleForAssign,

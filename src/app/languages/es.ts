@@ -71,6 +71,8 @@ export class es implements Language {
   deliveriesDoneInTheLastTwoDays = 'Entregado en los últimos dos días';
   showAllCompletedDeliveries = 'Ver todas las entregas exitosas';
   showRouteOnGoogleMaps = 'Ver ruta en google maps';
+  assignCloseDeliveries = 'Mostrar donaciones a mi alrededor';
+  closestDeliveries = 'Donaciones en el área cercana';
   selfPuckupSuccess = 'Recoge el paquete';
   packageWasPickedUp = 'Recogido';
   cancelAsignment = 'Cancelar asignación';
@@ -140,6 +142,7 @@ export class es implements Language {
   remiderSmsDate = 'Fecha de entrega del recordatorio de SMS';
   admin = 'Administrador de sistema';
   lab = 'Trabajador de laboratorio';
+  indie = 'Voluntario independiente';
   responsibleForAssign = 'Solo asigna entregas';
   notAllowedToUpdateVolunteer = 'No puede actualizar para este voluntario';
   company = 'Empresa';
@@ -455,6 +458,7 @@ export class es implements Language {
   shouldAssignTo = 'Asignar a';
   saveVolunteerInfo = 'Guardar detalles del voluntario:';
   adminRequireToSetPassword = 'Usted es un usuario administrador sin una contraseña requerida definida. Establezca una contraseña en la siguiente pantalla de detalles del usuario.';
+  indieRequireToSetPassword = 'Se requiere un voluntario independiente para ingresar al sistema con una contraseña';
   userNotFoundOrWrongPassword = 'Usuario no encontrado o contraseña incorrecta';
   fromDate = 'Con fecha de';
   toDate = 'Hasta';
@@ -639,6 +643,7 @@ export class es implements Language {
   problemsThatRequireFollowup = 'Seguimiento de problemas';
   commentsWrittenByVolunteers = 'Comentarios escritos por voluntarios';
   distributionList = 'Lista de distribucion';
+  thisIsTheDestination = 'Destino de entrega de equipos';
   list = 'Lista';
   map = 'Mapa';
   noDeliveries = 'No hay entregas para distribución';

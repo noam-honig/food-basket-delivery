@@ -26,6 +26,8 @@ import { routeStrategyColumn } from '../asign-family/route-strategy';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { PhoneColumn } from '../model-shared/types';
 import { Sites, getLang } from '../sites/sites';
+import { SelectListComponent, selectListItem } from '../select-list/select-list.component';
+import { lang } from 'moment';
 import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
 
 
@@ -52,11 +54,33 @@ export class HelperFamiliesComponent implements OnInit {
 
 
   }
-  volunteerLocation: Location = undefined;;
+  volunteerLocation: Location = undefined;
+  async updateCurrentLocation(useCurrentLocation: boolean) {
+
+    this.volunteerLocation = undefined;
+    if (useCurrentLocation) {
+      await new Promise((res, rej) => {
+        navigator.geolocation.getCurrentPosition(x => {
+          this.volunteerLocation = {
+            lat: x.coords.latitude,
+            lng: x.coords.longitude
+          };
+          res();
+
+        }, error => {
+          this.dialog.exception("שליפת מיקום נכשלה", error);
+          rej(error);
+        });
+      });
+
+    }
+  }
+
   async refreshRoute() {
     var useCurrentLocation = new BoolColumn(use.language.useCurrentLocationForStart);
     var strategy = new routeStrategyColumn();
     strategy.value = this.settings.routeStrategy.value;
+
     await this.context.openDialog(InputAreaComponent, x => x.args = {
       title: use.language.replanRoute,
       settings: {
@@ -66,28 +90,7 @@ export class HelperFamiliesComponent implements OnInit {
         ]
       },
       ok: async () => {
-
-        this.volunteerLocation = undefined;
-
-
-        if (useCurrentLocation.value) {
-          await new Promise((res, rej) => {
-            navigator.geolocation.getCurrentPosition(x => {
-              this.volunteerLocation = {
-                lat: x.coords.latitude,
-                lng: x.coords.longitude
-              };
-              res();
-
-            }, error => {
-              this.dialog.exception("שליפת מיקום נכשלה", error);
-              rej(error);
-            });
-          });
-
-        }
-
-
+        await this.updateCurrentLocation(useCurrentLocation.value);
         await this.familyLists.refreshRoute({
           strategyId: strategy.value.id,
           volunteerLocation: this.volunteerLocation
@@ -97,6 +100,115 @@ export class HelperFamiliesComponent implements OnInit {
 
 
   }
+
+  @ServerFunction({ allowed: Roles.indie })
+  static async assignFamilyDeliveryToIndie(deliveryIds: string[], context?: Context) {
+    if (!getSettings(context).isSytemForMlt())
+      throw "not allowed";
+    for (const id of deliveryIds) {
+      
+      let fd = await context.for(ActiveFamilyDeliveries).findId(id);
+      if (fd.courier.value == "" && fd.deliverStatus.value == DeliveryStatus.ReadyForDelivery) {//in case the delivery was already assigned to someone else
+        fd.courier.value = context.user.id;
+        await fd.save();
+      }
+    }
+  }
+
+  @ServerFunction({ allowed: Roles.indie })
+  static async getDeliveriesByLocation(pivotLocation: Location, context?: Context) {
+    if (!getSettings(context).isSytemForMlt())
+      throw "not allowed";
+    let r: selectListItem<DeliveryInList>[] = [];
+
+    for await (const d of context.for(ActiveFamilyDeliveries).iterate({ where: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(f.courier.isEqualTo('')) })) {
+      let existing = r.find(x => x.item.familyId == d.family.value);
+      if (existing) {
+        existing.name += ", " + d.quantity.value + " X " + await (d.basketType.getTheValue());
+        existing.item.ids.push(d.id.value);
+
+      }
+      else {
+        let loc = d.getDrivingLocation();
+        let dist = GetDistanceBetween(pivotLocation, loc);
+        let myItem: DeliveryInList = {
+
+          city: d.city.value,
+          floor: d.floor.value,
+
+          ids: [d.id.value],
+          familyId: d.family.value,
+          location: loc,
+          distance: dist
+        };
+        let itemString: string =
+          myItem.distance.toFixed(1) + use.language.km +
+          (myItem.city ? ' (' + myItem.city + ')' : '') +
+          (myItem.floor ? ' [' + use.language.floor + ' ' + myItem.floor + ']' : '') +
+          ' : ' +
+          d.quantity.value + ' x ' + await (d.basketType.getTheValue());
+
+        r.push({
+          selected: false,
+          item: myItem,
+          name: itemString
+        });
+      }
+    }
+    r.sort((a, b) => {
+      if (a.item.familyId == b.item.familyId)
+        return 0;
+
+      if (a.item.distance == b.item.distance)
+        if (a.item.familyId <= b.item.familyId)
+          return (-1)
+        else
+          return 1;
+
+      return (a.item.distance - b.item.distance);
+    });
+    r.splice(15);
+    return r;
+  };
+
+
+  showCloseDeliveries() {
+    return (this.context.user.roles.includes(Roles.indie) && this.settings.isSytemForMlt());
+  }
+
+
+
+  async assignNewDelivery() {
+    await this.updateCurrentLocation(true);
+    let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(this.volunteerLocation));
+
+    await this.context.openDialog(SelectListComponent, x => {
+      x.args = {
+        title: use.language.closestDeliveries + ' (' + use.language.mergeFamilies + ')',
+        multiSelect: true,
+        onSelect: async (selectedItems) => {
+          if (selectedItems.length > 0)
+            this.busy.doWhileShowingBusy(async () => {
+              let ids: string[] = [];
+              for (const selectedItem of selectedItems) {
+                let d: DeliveryInList = selectedItem.item;
+                ids.push(...d.ids);
+              }
+              await HelperFamiliesComponent.assignFamilyDeliveryToIndie(ids);
+              await this.familyLists.refreshRoute({
+                strategyId: this.settings.routeStrategy.value.id,
+                volunteerLocation: this.volunteerLocation
+              });
+              await this.familyLists.reload();
+            });
+        },
+        options: afdList
+      }
+    });
+
+
+  }
+
   getHelpText() {
     var r = this.settings.lang.ifYouNeedAnyHelpPleaseCall;
     r += " ";
@@ -481,6 +593,15 @@ export class HelperFamiliesComponent implements OnInit {
   }
   @ViewChild("map", { static: false }) map: MapComponent;
 
+}
+
+interface DeliveryInList {
+  ids: string[],
+  familyId: string,
+  city: string,
+  floor: string,
+  location: Location,
+  distance: number
 }
 
 class limitList {
