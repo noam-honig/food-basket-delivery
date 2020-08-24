@@ -11,6 +11,9 @@ import { DialogService } from '../select-popup/dialog';
 import { LoginComponent } from '../users/login/login.component';
 import { AuthService } from '../auth/auth-service';
 import { Event, eventStatus, volunteersInEvent } from '../events/events';
+import { QRCodeModule } from 'angular2-qrcode';
+import { PhoneNumberContext } from 'twilio/lib/rest/lookups/v1/phoneNumber';
+
 
 
 @Component({
@@ -25,12 +28,22 @@ export class MyFamiliesComponent implements OnInit {
   };
   familyLists = new UserFamiliesList(this.context, this.settings);
   user: HelperUserInfo;
+  myPhoneNumber: string = '';
   showQRCode: boolean = false;
+
+  myQRCode() {
+    return 'https://salmaz.herokuapp.com/mlt/reception/?phone=' + this.myPhoneNumber;
+  }
+  
 
   constructor(public context: Context, public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService) {
     this.user = context.user as HelperUserInfo;
   }
   async ngOnInit() {
+
+    var h = this.context.for(Helpers).lookup(h => h.id.isEqualTo(this.context.user.id));
+    this.myPhoneNumber = h.phone.value;
+
     let done = ''
     try {
       done += '1';
