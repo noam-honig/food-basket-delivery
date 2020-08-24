@@ -1,5 +1,5 @@
 
-import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, FilterBase, Entity, Column, EntityProvider, checkForDuplicateValue, BusyService } from '@remult/core';
+import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, FilterBase, Entity, Column, EntityProvider, checkForDuplicateValue, BusyService, DateColumn } from '@remult/core';
 import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, EmailColumn, SqlBuilder, wasChanged, logChanges } from '../model-shared/types';
 
 
@@ -73,10 +73,28 @@ export abstract class HelpersBase extends IdEntity {
         includeInApi: Roles.admin,
     });
 
+    frozenTill = new DateColumn({
+        allowApiUpdate: Roles.admin,
+        includeInApi: Roles.admin,
+        caption: getLang(this.context).frozenTill
+    });
+
+    internalComment = new StringColumn({
+        allowApiUpdate: Roles.admin,
+        includeInApi: Roles.admin,
+        caption: getLang(this.context).helperInternalComment
+    });
+    isFrozen = new BoolColumn({
+        sqlExpression: () => {
+            let sql = new SqlBuilder();
+            return sql.case([{ when: [sql.or(sql.build(this.frozenTill, ' is null'), this.frozenTill.isLessOrEqualTo(new Date()))], then: false }], true);
+        }
+    });
+
 
 
     active() {
-        return this.archive.isEqualTo(false);
+        return this.archive.isEqualTo(false).and(this.isFrozen.isEqualTo(false));
     }
     async deactivate() {
         this.archive.value = true;
@@ -87,11 +105,6 @@ export abstract class HelpersBase extends IdEntity {
         this.archive.value = false;
         this.save();
     }
-
-    // allowed frequency of deliveries (nom = total deliveries in denom=number of days)
-    // these might later become columns defined by the user
-    static allowedFreq_nom: number = 3;
-    static allowedFreq_denom: number = 10;
 
     getRouteStats(): routeStats {
         return {

@@ -318,6 +318,11 @@ export class Language {
   deliveriesFor = 'משלוחים עבור';
   archiveCurrentDelivery = 'העבר משלוח נוכחי לארכיב?';
   archiveHelper = 'מחק מתנדב';
+  freezeHelper = 'עדכן נתוני הקפאת מתנדב';
+  helperInternalComment = 'הערה פנימית לגבי מתנדב';
+  frozenTill = 'מוקפא עד לתאריך';
+  maxDeliveriesBeforeBusy = 'מספר משלוחים להגדרת מתנדב עסוק';
+  daysCountForBusy = 'מספר ימים לקביעת מתנדב עסוק';
   familySelfPickup = 'יבואו לקחת את המשלוח ואינם צריכים משלוח?';
   newDeliveryFor = 'משלוח חדש ל';
   familyAlreadyHasAnActiveDelivery = "למשפחה זו כבר קיים משלוח מאותו סוג האם להוסיף עוד אחד?";

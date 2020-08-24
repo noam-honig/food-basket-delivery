@@ -204,6 +204,11 @@ export class en implements Language {
   deliveriesFor = 'deliveries for';
   archiveCurrentDelivery = 'Archive current delivery';
   archiveHelper = 'Delete Volunteer';
+  freezeHelper = 'Freeze Volunteer';
+  helperInternalComment = 'Internal comment about a volunteer';
+  frozenTill = 'Freeze end date';
+  maxDeliveriesBeforeBusy = 'Number of deliveries to define a busy volunteer';
+  daysCountForBusy = 'Several days to determine a busy volunteer';
   familySelfPickup = 'Self Pickup, no delivery required?';
   newDeliveryFor = 'New delivery to';
   familyAlreadyHasAnActiveDelivery = 'This family already has delivery of the same type.';

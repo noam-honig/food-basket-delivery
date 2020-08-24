@@ -204,6 +204,11 @@ export class es implements Language {
   deliveriesFor = 'entregas para';
   archiveCurrentDelivery = 'Archivar entrega actual';
   archiveHelper = 'Eliminar voluntario';
+  freezeHelper = 'Freeze Volunteer';
+  helperInternalComment = 'Comentario interno sobre un voluntario';
+  frozenTill = 'Congelar fecha de finalización';
+  maxDeliveriesBeforeBusy = 'Número de entregas para definir un voluntario ocupado';
+  daysCountForBusy = 'Varios días para determinar un voluntario ocupado';
   familySelfPickup = 'Auto recogida, no se requiere entrega?';
   newDeliveryFor = 'Nueva entrega a';
   familyAlreadyHasAnActiveDelivery = 'Esta familia ya tiene entrega del mismo tipo.';

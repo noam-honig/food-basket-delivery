@@ -66,6 +66,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
     allowInsert: true,
     allowUpdate: true,
     knowTotalRows: true,
+    rowCssClass: h => (h.isFrozen.value ? 'forzen' : '' ),
 
     gridButtons: [
       {
@@ -151,6 +152,11 @@ export class HelpersComponent implements OnInit, OnDestroy {
         visible: h => h.admin.value || h.distCenterAdmin.value
       },
       {
+        name: use.language.freezeHelper,
+        visible: () => this.context.isAllowed(Roles.admin),
+        click: async h => this.editFreezeDate(h)
+      },
+      {
         name: use.language.archiveHelper,
         visible: () => this.context.isAllowed(Roles.admin),
         click: async h => {
@@ -165,7 +171,6 @@ export class HelpersComponent implements OnInit, OnDestroy {
           await h.showDeliveryHistory(this.dialog, this.busy);
         }
       }
-
     ],
 
     get: {
@@ -188,6 +193,34 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
 
   });
+
+  private freezeDateEntry(h: Helpers) {
+    let r: DataControlInfo<Helpers>[] = [
+      {
+        column: h.frozenTill,
+        width: '150'
+      },
+      {
+        column: h.internalComment,
+        width: '150'
+      },
+    ];
+    return r;
+  }
+
+  private editFreezeDate(h: Helpers) {
+    this.context.openDialog(InputAreaComponent, x => x.args = {
+      title: getLang(this.context).freezeHelper,
+      ok: () => {
+        h.save();
+      },
+      cancel: () => {
+      },
+      settings: {
+        columnSettings: () => this.freezeDateEntry(h)
+      }
+    });
+  }
 
   private editHelper(f: Helpers) {
     this.context.openDialog(InputAreaComponent, x => x.args = {
@@ -256,6 +289,15 @@ export class HelpersComponent implements OnInit, OnDestroy {
       column: helpers.preferredDistributionAreaAddress2, width: '120',
     });
     r.push(helpers.createDate);
+
+    if (this.context.isAllowed(Roles.admin)) {
+      r.push({
+        column: helpers.frozenTill, width: '120'
+      });
+      r.push({
+        column: helpers.internalComment, width: '120'
+      });
+    }
 
     if (this.context.isAllowed(Roles.admin) && this.settings.isSytemForMlt()) {
       r.push({
