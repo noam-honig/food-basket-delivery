@@ -6,7 +6,7 @@ import { Context, FindOptions, ServerFunction, DialogConfig, SqlDatabase } from 
 import { FilterBase } from '@remult/core';
 
 import { BusyService } from '@remult/core';
-import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 import { Location, GetDistanceBetween, GeocodeInformation } from '../shared/googleApiHelpers';
 import { Roles } from '../auth/roles';
@@ -121,7 +121,7 @@ export class SelectHelperComponent implements OnInit {
       let sql1 = new SqlBuilder();
       let fd = context.for(FamilyDeliveries).create();
       let limitDate = new Date();
-      limitDate.setDate(limitDate.getDate() - HelpersBase.allowedFreq_denom);
+      limitDate.setDate(limitDate.getDate() - getSettings(context).BusyHelperAllowedFreq_denom.value);
 
       for (const d of (await db.execute(sql1.query({
         from: fd,
@@ -141,7 +141,7 @@ export class SelectHelperComponent implements OnInit {
         if (h) {
           h.lastCompletedDeliveryString = relativeDateName(context, { d: d.delivery_date });
           h.totalRecentDeliveries = d.count;
-          h.isBusyVolunteer = (h.totalRecentDeliveries > HelpersBase.allowedFreq_nom) ? "busyVolunteer" : "";
+          h.isBusyVolunteer = (h.totalRecentDeliveries > getSettings(context).BusyHelperAllowedFreq_nom.value) ? "busyVolunteer" : "";
         }
       }
     } else {

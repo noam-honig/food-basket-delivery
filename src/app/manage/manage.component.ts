@@ -7,7 +7,7 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings, PhoneItem, PhoneOption, qaItem } from './ApplicationSettings';
 
 
-import { Context, IdEntity, IdColumn, StringColumn, EntityClass, Entity, NumberColumn, RouteHelperService, DataAreaSettings, ServerFunction, BusyService } from '@remult/core';
+import { Context, IdEntity, IdColumn, StringColumn, EntityClass, Entity, NumberColumn, RouteHelperService, DataAreaSettings, ServerFunction, BusyService, DataControlInfo } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
@@ -248,34 +248,39 @@ export class ManageComponent implements OnInit {
     ]
   });
   prefereces = new DataAreaSettings({
-    columnSettings: s => [
-      this.settings.requireEULA,
-      this.settings.requireConfidentialityApprove,
-      this.settings.requireComplexPassword,
-      this.settings.daysToForcePasswordChange,
-      this.settings.timeToDisconnect,
-      this.settings.defaultStatusType,
-      this.settings.usingSelfPickupModule,
-      this.settings.showLeftThereButton,
-      this.settings.hideFamilyPhoneFromVolunteer,
-      this.settings.showOnlyLastNamePartToVolunteer,
-      this.settings.boxes1Name,
-      this.settings.boxes2Name,
-      this.settings.showCompanies,
-      this.settings.showHelperComment,
-      this.settings.volunteerCanUpdateComment,
-      this.settings.routeStrategy,
-      this.settings.showDistCenterAsEndAddressForVolunteer,
-      this.settings.defaultPrefixForExcelImport,
-      this.settings.redTitleBar,
-      this.settings.forWho,
-      this.settings.manageEscorts,
-      [this.settings.familyCustom1Caption, this.settings.familyCustom1Values],
-      [this.settings.familyCustom2Caption, this.settings.familyCustom2Values],
-      [this.settings.familyCustom3Caption, this.settings.familyCustom3Values],
-      [this.settings.familyCustom4Caption, this.settings.familyCustom4Values]
+    columnSettings: s => {
+      let r = [
+        this.settings.requireEULA,
+        this.settings.requireConfidentialityApprove,
+        this.settings.requireComplexPassword,
+        this.settings.daysToForcePasswordChange,
+        this.settings.timeToDisconnect,
+        this.settings.defaultStatusType,
+        this.settings.usingSelfPickupModule,
+        this.settings.showLeftThereButton,
+        this.settings.hideFamilyPhoneFromVolunteer,
+        this.settings.showOnlyLastNamePartToVolunteer,
+        this.settings.boxes1Name,
+        this.settings.boxes2Name,
+        this.settings.showCompanies,
+        this.settings.showHelperComment,
+        this.settings.volunteerCanUpdateComment,
+        this.settings.routeStrategy,
+        this.settings.showDistCenterAsEndAddressForVolunteer,
+        this.settings.defaultPrefixForExcelImport,
+        this.settings.redTitleBar,
+        this.settings.forWho,
+        this.settings.manageEscorts,
+        [this.settings.familyCustom1Caption, this.settings.familyCustom1Values],
+        [this.settings.familyCustom2Caption, this.settings.familyCustom2Values],
+        [this.settings.familyCustom3Caption, this.settings.familyCustom3Values],
+        [this.settings.familyCustom4Caption, this.settings.familyCustom4Values]
+      ];
 
-    ]
+      if (this.settings.isSytemForMlt()) 
+        r.push(this.settings.BusyHelperAllowedFreq_nom, this.settings.BusyHelperAllowedFreq_denom);
+      return r;
+    }
   });
 
 
