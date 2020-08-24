@@ -80,9 +80,9 @@ export class RegisterDonorComponent implements OnInit {
       await RegisterDonorComponent.doDonorForm(pack(this.donor));
 
       this.dialog.analytics("submitDonorForm");
-      await this.context.openDialog(YesNoQuestionComponent, x => x.args = { 
-        question: this.settings.lang.thankYouForDonation, 
-        showOnlyConfirm: true 
+      await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
+        question: this.settings.lang.thankYouForDonation,
+        showOnlyConfirm: true
       });
       window.location.href = "https://www.mitchashvim.org.il/";
     }
@@ -179,10 +179,13 @@ class donorForm {
     let settings = await ApplicationSettings.getAsync(this.context);
 
     if (settings.registerFamilyReplyEmailText.value && settings.registerFamilyReplyEmailText.value != '') {
-      let message = SendSmsAction.getMessage(settings.registerFamilyReplyEmailText.value, 
-        settings.organisationName.value, f.name.value, '', '', ''); 
-  
-      await EmailSvc.sendMail(settings.lang.thankYouForDonation, message, f.email.value);
+      let message = SendSmsAction.getMessage(settings.registerFamilyReplyEmailText.value,
+        settings.organisationName.value, f.name.value, '', '', '');
+      try {
+        await EmailSvc.sendMail(settings.lang.thankYouForDonation, message, f.email.value, this.context);
+      } catch (err) {
+        console.error('send mail', err);
+      }
     }
   }
 }

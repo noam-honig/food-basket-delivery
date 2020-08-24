@@ -1,17 +1,21 @@
 //import('nodemailer');
 import { EmailSvc } from '../shared/utils';
+import { Context } from '@remult/core';
+import { ApplicationSettings } from '../manage/ApplicationSettings'
 
-EmailSvc.sendMail = async (subject: string, message: string, email: string) => {
+EmailSvc.sendMail = async (subject: string, message: string, email: string, context: Context) => {
+    let settings = await ApplicationSettings.getAsync(context);
+    if (!settings.isSytemForMlt())
+        return;
     var nodemailer = await import('nodemailer');
-
     var transporter = nodemailer.createTransport({
         service: 'gmail',
         port: 587,
         secure: false,
         requireTLS: true,
         auth: {
-            user: 'hello@mitchashvim.org.il',
-            pass: 'TAnwd1234'
+            user: settings.gmailUserName.value,
+            pass: settings.gmailPassword.value
         }
     });
 
@@ -21,12 +25,15 @@ EmailSvc.sendMail = async (subject: string, message: string, email: string) => {
         subject: subject,
         html: message
     };
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Email sent: ' + info.response);
-        }
+    return await new Promise((res, rej) => {
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                rej(error);
+            } else {
+                res(true);
+                console.log('Email sent: ' + info.response);
+            }
+        });
     });
-    return null;
+
 }

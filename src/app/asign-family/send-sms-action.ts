@@ -100,6 +100,7 @@ export class SendSmsAction {
     static getMessage(template: string, orgName: string, family: string, courier: string, sender: string, url: string) {
         return template.replace('!מתנדב!', courier).replace('!משנע!', courier).replace('!VOLUNTEER!', courier)
             .replace('!משפחה!', family).replace('!FAMILY!', family)
+            .replace('!תורם!', family)
             .replace('!שולח!', sender).replace('!SENDER!', sender)
             .replace('!ארגון!', orgName).replace("!ORG!", orgName)
             .replace('!אתר!', url).replace('!URL!', url);

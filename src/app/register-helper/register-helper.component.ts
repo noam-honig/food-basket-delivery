@@ -19,7 +19,7 @@ declare var gtag;
   styleUrls: ['./register-helper.component.scss']
 })
 export class RegisterHelperComponent implements OnInit {
-  constructor(private dialog: DialogService, private context: Context,private settings:ApplicationSettings) { }
+  constructor(private dialog: DialogService, private context: Context, private settings: ApplicationSettings) { }
   helper = new helperForm(this.context);
   area = new DataAreaSettings({ columnSettings: () => this.helper.columns.filter(c => c != this.helper.name && c != this.helper.address1 && c != this.helper.address2 && c != this.helper.docref) });
   ngOnInit() {
@@ -30,8 +30,8 @@ export class RegisterHelperComponent implements OnInit {
   }
 
   hasMandatoryFields() {
-    return (this.helper.name.value != null) && (this.helper.address1.value != null) 
-    && (isPhoneValidForIsrael(this.helper.phone.value)) && (this.helper.socialSecurityNumber.value != null);
+    return (this.helper.name.value != null) && (this.helper.address1.value != null)
+      && (isPhoneValidForIsrael(this.helper.phone.value)) && (this.helper.socialSecurityNumber.value != null);
   }
 
   async submit() {
@@ -80,7 +80,7 @@ export class RegisterHelperComponent implements OnInit {
   }
   @ServerFunction({ allowed: true })
   static async doHelperForm(args: any[], context?: Context) {
-    await executeOnServer(helperForm, args, context);    
+    await executeOnServer(helperForm, args, context);
   }
 }
 
@@ -107,8 +107,8 @@ class helperForm {
     dataControlSettings: () => ({ inputType: 'email' })
   });
   address1 = new StringColumn({ caption: "כתובת שנדע לחבר לך תורמים קרובים", validate: () => required(this.address1) });
-  address2 = new StringColumn({ caption: "איזור נוסף ממנו נח לך לאסוף תרומות?"});
-  
+  address2 = new StringColumn({ caption: "איזור נוסף ממנו נח לך לאסוף תרומות?" });
+
   socialSecurityNumber = new StringColumn({ caption: "תעודת זהות (עבור ביטוח מתנדבים)", validate: () => required(this.socialSecurityNumber) });
   company = new StringColumn({ caption: "ארגון" });
   docref = new StringColumn();
@@ -122,8 +122,8 @@ class helperForm {
       this.address1.value = '';
     if (!this.address2.value)
       this.address2.value = '';
-    h.preferredDistributionAreaAddress.value = this.address1.value ;
-    h.preferredDistributionAreaAddress2.value = this.address2.value ;
+    h.preferredDistributionAreaAddress.value = this.address1.value;
+    h.preferredDistributionAreaAddress2.value = this.address2.value;
     h.phone.value = this.phone.value;
     h.email.value = this.email.value;
     h.socialSecurityNumber.value = this.socialSecurityNumber.value;
@@ -133,10 +133,14 @@ class helperForm {
 
     let settings = await ApplicationSettings.getAsync(this.context);
     if (settings.registerHelperReplyEmailText.value && settings.registerHelperReplyEmailText.value != '') {
-      let message = SendSmsAction.getMessage(settings.registerHelperReplyEmailText.value, 
+      let message = SendSmsAction.getMessage(settings.registerHelperReplyEmailText.value,
         settings.organisationName.value, '', h.name.value, context.user.name, '');
 
-      await EmailSvc.sendMail(settings.lang.thankYouForHelp, message, h.email.value);
+      try {
+        await EmailSvc.sendMail(settings.lang.thankYouForHelp, message, h.email.value, context);
+      } catch (err) {
+        console.error('send mail', err);
+      }
     }
   }
 }
