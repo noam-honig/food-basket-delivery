@@ -774,6 +774,11 @@
     "valueInCode": "ימים",
     "valueInEnglish": "Days"
   },
+  "daysCountForBusy": {
+    "google": "Varios días para determinar un voluntario ocupado",
+    "valueInCode": "מספר ימים לקביעת מתנדב עסוק",
+    "valueInEnglish": "Several days to determine a busy volunteer"
+  },
   "daysToForcePasswordChange": {
     "google": "Días para forzar el cambio de contraseña",
     "valueInCode": "ימים לחיוב החלפת סיסמה",
@@ -1650,6 +1655,11 @@
     "valueInCode": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל",
     "valueInEnglish": "\"Frozen\" delivery is a delivery that will not be assigned with any volunteer until the \"delivery\" is dispatched. Freezing is used to temporarily stop certain deliveries until they can be thawed and shipped. Do freeze delivery to"
   },
+  "freezeHelper": {
+    "google": "Freeze Volunteer",
+    "valueInCode": "עדכן נתוני הקפאת מתנדב",
+    "valueInEnglish": "Freeze Volunteer"
+  },
   "from": {
     "google": "desde",
     "valueInCode": "מ",
@@ -1669,6 +1679,11 @@
     "google": "Congelado",
     "valueInCode": "קפואים",
     "valueInEnglish": "Frozen"
+  },
+  "frozenTill": {
+    "google": "Congelar fecha de finalización",
+    "valueInCode": "תאריך סיום הקפאה",
+    "valueInEnglish": "Freeze end date"
   },
   "GeocodeComponent": {
     "google": "GEOCODE",
@@ -1714,6 +1729,11 @@
     "google": "Nota",
     "valueInCode": "הערה",
     "valueInEnglish": "Note"
+  },
+  "helperInternalComment": {
+    "google": "Comentario interno sobre un voluntario",
+    "valueInCode": "הערה פנימית לגבי מתנדב",
+    "valueInEnglish": "Internal comment about a volunteer"
   },
   "HelpersComponent": {
     "google": "Voluntarios",
@@ -2029,6 +2049,11 @@
     "google": "Anular la asignación de todas las entregas",
     "valueInCode": "בטל שיוך כל המשלוחים למתנדב",
     "valueInEnglish": "Unassign all deliveries"
+  },
+  "maxDeliveriesBeforeBusy": {
+    "google": "Número de entregas para definir un voluntario ocupado",
+    "valueInCode": "מספר משלוחים להגדרת מתנדב עסוק",
+    "valueInEnglish": "Number of deliveries to define a busy volunteer"
   },
   "merge": {
     "google": "Mantener el acondicionamiento",

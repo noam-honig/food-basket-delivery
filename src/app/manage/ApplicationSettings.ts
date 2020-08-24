@@ -13,6 +13,7 @@ import { BasketType } from '../families/BasketType';
 import { HttpClient } from '@angular/common/http';
 import { Sites, getLang, setLangForSite } from '../sites/sites';
 import { routeStrategyColumn } from '../asign-family/route-strategy';
+import { NumberContext } from 'twilio/lib/rest/pricing/v1/voice/number';
 
 
 
@@ -166,6 +167,8 @@ export class ApplicationSettings extends Entity<number>  {
   showDistCenterAsEndAddressForVolunteer = new BoolColumn(this.lang.showDistCenterAsEndAddressForVolunteer);
   routeStrategy = new routeStrategyColumn();
 
+  BusyHelperAllowedFreq_nom = new NumberColumn(this.lang.maxDeliveriesBeforeBusy);
+  BusyHelperAllowedFreq_denom = new NumberColumn(this.lang.daysCountForBusy);
 
   addressApiResult = new StringColumn();
   defaultStatusType = new DeliveryStatusColumn(this.context, {

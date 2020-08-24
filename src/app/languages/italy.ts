@@ -204,6 +204,11 @@ export class italy implements Language {
   deliveriesFor = 'consegne per';
   archiveCurrentDelivery = 'Archivia la consegna corrente';
   archiveHelper = 'Elimina volontario';
+  freezeHelper = 'Freeze Volunteer';
+  helperInternalComment = 'Commento interno su un volontario';
+  frozenTill = 'Blocca la data di fine';
+  maxDeliveriesBeforeBusy = 'Numero di consegne per definire un volontario impegnato';
+  daysCountForBusy = 'Diversi giorni per determinare un volontario impegnato';
   familySelfPickup = 'Ritiro automatico, nessuna consegna richiesta?';
   newDeliveryFor = 'Nuova consegna a';
   familyAlreadyHasAnActiveDelivery = 'Questa famiglia ha già consegne dello stesso tipo.';

@@ -712,6 +712,10 @@
     "google": "Days",
     "valueInCode": "ימים"
   },
+  "daysCountForBusy": {
+    "google": "Several days to determine a busy volunteer",
+    "valueInCode": "מספר ימים לקביעת מתנדב עסוק"
+  },
   "daysToForcePasswordChange": {
     "google": "Days to change password change",
     "valueInCode": "ימים לחיוב החלפת סיסמה",
@@ -1487,6 +1491,10 @@
     "valueInCode": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל",
     "custom": "\"Frozen\" delivery is a delivery that will not be assigned with any volunteer until the \"delivery\" is dispatched. Freezing is used to temporarily stop certain deliveries until they can be thawed and shipped. Do freeze delivery to"
   },
+  "freezeHelper": {
+    "google": "Freeze Volunteer",
+    "valueInCode": "עדכן נתוני הקפאת מתנדב"
+  },
   "from": {
     "google": "M",
     "valueInCode": "מ",
@@ -1503,6 +1511,10 @@
   "frozens": {
     "google": "Frozen",
     "valueInCode": "קפואים"
+  },
+  "frozenTill": {
+    "google": "Freeze end date",
+    "valueInCode": "תאריך סיום הקפאה"
   },
   "GeocodeComponent": {
     "google": "GEOCODE",
@@ -1541,6 +1553,10 @@
   "helperComment": {
     "google": "Note",
     "valueInCode": "הערה"
+  },
+  "helperInternalComment": {
+    "google": "Internal comment about a volunteer",
+    "valueInCode": "הערה פנימית לגבי מתנדב"
   },
   "HelpersComponent": {
     "google": "Volunteers",
@@ -1808,6 +1824,10 @@
     "google": "Unassign all shipments to a volunteer",
     "valueInCode": "בטל שיוך כל המשלוחים למתנדב",
     "custom": "Unassign all deliveries"
+  },
+  "maxDeliveriesBeforeBusy": {
+    "google": "Number of deliveries to define a busy volunteer",
+    "valueInCode": "מספר משלוחים להגדרת מתנדב עסוק"
   },
   "merge": {
     "google": "Keep conditioning",

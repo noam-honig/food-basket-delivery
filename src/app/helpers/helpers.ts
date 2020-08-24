@@ -73,7 +73,26 @@ export abstract class HelpersBase extends IdEntity {
         includeInApi: Roles.admin,
     });
 
+    frozenTill = new DateTimeColumn({
+        allowApiUpdate: Roles.admin,
+        includeInApi: Roles.admin,
+        caption: getLang(this.context).frozenTill
+    });
 
+    internalComment = new StringColumn({
+        allowApiUpdate: Roles.admin,
+        includeInApi: Roles.admin,
+        caption: getLang(this.context).helperInternalComment
+    });
+
+    isFrozen() {
+        let today = new Date();
+        return (this.frozenTill.value >= today);
+    }
+    notFrozen() {
+        let today = new Date();
+        return undefined; //this.frozenTill.isDifferentFrom(null).and(this.frozenTill.isLessOrEqualTo(today));
+    }
 
     active() {
         return this.archive.isEqualTo(false);
@@ -87,11 +106,6 @@ export abstract class HelpersBase extends IdEntity {
         this.archive.value = false;
         this.save();
     }
-
-    // allowed frequency of deliveries (nom = total deliveries in denom=number of days)
-    // these might later become columns defined by the user
-    static allowedFreq_nom: number = 3;
-    static allowedFreq_denom: number = 10;
 
     getRouteStats(): routeStats {
         return {

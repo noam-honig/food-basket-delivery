@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Roles } from '../auth/roles';
 import { ServerFunction, Context, SqlDatabase, BusyService, StringColumn } from '@remult/core';
-import { Helpers } from '../helpers/helpers';
+import { Helpers, HelpersBase } from '../helpers/helpers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Location, GetDistanceBetween } from '../shared/googleApiHelpers';
@@ -9,6 +9,7 @@ import { SqlBuilder } from '../model-shared/types';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { BasketType } from '../families/BasketType';
+import { getSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-shipment-assign-screen',
@@ -167,23 +168,23 @@ export class ShipmentAssignScreenComponent implements OnInit {
       unAssignedFamilies: {}
     };
     //collect helpers
-    for await (let h of context.for(Helpers).iterate({ where: h => h.archive.isEqualTo(false) })) {
+    for await (let h of context.for(Helpers).iterate({ where: h => h.active().and(h.notFrozen()) })) {
       result.helpers[h.id.value] = ShipmentAssignScreenComponent.helperInfoFromHelper(h);
     }
     //remove busy helpers
     {
       let fd = context.for(FamilyDeliveries).create();
       let sql = new SqlBuilder();
-      let tenDaysAgo = new Date();
-      tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
+      let busyLimitdate = new Date();
+      busyLimitdate.setDate(busyLimitdate.getDate() -  getSettings(context).BusyHelperAllowedFreq_denom.value);
 
 
       for (let busy of (await db.execute(sql.query({
         select: () => [fd.courier],
         from: fd,
-        where: () => [fd.deliverStatus.isAResultStatus().and(fd.deliveryStatusDate.isGreaterThan(tenDaysAgo))],
+        where: () => [fd.deliverStatus.isAResultStatus().and(fd.deliveryStatusDate.isGreaterThan(busyLimitdate))],
         groupBy: () => [fd.courier],
-        having: () => [sql.build('count(distinct ', fd.family, ' )>3')]
+        having: () => [sql.build('count(distinct ', fd.family, ' )>',   getSettings(context).BusyHelperAllowedFreq_nom.value)]
       }))).rows) {
         result.helpers[busy.courier] = undefined;
       }

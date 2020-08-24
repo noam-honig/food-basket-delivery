@@ -620,6 +620,10 @@
     "google": "ימים",
     "valueInCode": "ימים"
   },
+  "daysCountForBusy": {
+    "google": "מספר ימים לקביעת מתנדב עסוק",
+    "valueInCode": "מספר ימים לקביעת מתנדב עסוק"
+  },
   "daysToForcePasswordChange": {
     "google": "ימים לחיוב החלפת סיסמה",
     "valueInCode": "ימים לחיוב החלפת סיסמה"
@@ -1321,6 +1325,10 @@
     "google": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל",
     "valueInCode": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל"
   },
+  "freezeHelper": {
+    "google": "הקפא מתנדב",
+    "valueInCode": "עדכן נתוני הקפאת מתנדב"
+  },
   "from": {
     "google": "מ",
     "valueInCode": "מ"
@@ -1336,6 +1344,10 @@
   "frozens": {
     "google": "קפואים",
     "valueInCode": "קפואים"
+  },
+  "frozenTill": {
+    "google": "תאריך סיום הקפאה",
+    "valueInCode": "תאריך סיום הקפאה"
   },
   "GeocodeComponent": {
     "google": "GEOCODE",
@@ -1372,6 +1384,10 @@
   "helperComment": {
     "google": "הערה",
     "valueInCode": "הערה"
+  },
+  "helperInternalComment": {
+    "google": "הערה פנימית לגבי מתנדב",
+    "valueInCode": "הערה פנימית לגבי מתנדב"
   },
   "HelpersComponent": {
     "google": "מתנדבים",
@@ -1624,6 +1640,10 @@
   "markDeliveredToAllHelprFamilies": {
     "google": "בטל שיוך כל המשלוחים למתנדב",
     "valueInCode": "בטל שיוך כל המשלוחים למתנדב"
+  },
+  "maxDeliveriesBeforeBusy": {
+    "google": "מספר משלוחים להגדרת מתנדב עסוק",
+    "valueInCode": "מספר משלוחים להגדרת מתנדב עסוק"
   },
   "merge": {
     "google": "שמור מיזוג",
