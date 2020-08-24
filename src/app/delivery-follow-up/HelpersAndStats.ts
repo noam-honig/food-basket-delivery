@@ -63,6 +63,7 @@ export class HelpersAndStats extends HelpersBase {
                         h.archive,
                         h.frozenTill,
                         h.internalComment,
+                        
                         sql.countDistinctInnerSelect(f.family, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress), 
                         sql.countInnerSelect(helperFamilies(() => [f.deliverStatus.isActiveDelivery()]), this.allDeliveires),
 

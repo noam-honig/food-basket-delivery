@@ -66,7 +66,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
     allowInsert: true,
     allowUpdate: true,
     knowTotalRows: true,
-    rowCssClass: h => (h.isFrozen() ? 'frozenHelper' : '' ),
+    rowCssClass: h => (h.isFrozen.value ? 'forzen' : '' ),
 
     gridButtons: [
       {

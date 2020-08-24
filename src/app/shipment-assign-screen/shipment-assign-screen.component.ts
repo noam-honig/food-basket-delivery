@@ -172,7 +172,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
       unAssignedFamilies: {}
     };
     //collect helpers
-    for await (let h of context.for(Helpers).iterate({ where: h => h.active().and(h.notFrozen()) })) {
+    for await (let h of context.for(Helpers).iterate({ where: h => h.active() })) {
       result.helpers[h.id.value] = ShipmentAssignScreenComponent.helperInfoFromHelper(h);
     }
     //remove busy helpers

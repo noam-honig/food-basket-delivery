@@ -1,5 +1,5 @@
 
-import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, FilterBase, Entity, Column, EntityProvider, checkForDuplicateValue, BusyService } from '@remult/core';
+import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, FilterBase, Entity, Column, EntityProvider, checkForDuplicateValue, BusyService, DateColumn } from '@remult/core';
 import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, EmailColumn, SqlBuilder, wasChanged, logChanges } from '../model-shared/types';
 
 
@@ -73,7 +73,7 @@ export abstract class HelpersBase extends IdEntity {
         includeInApi: Roles.admin,
     });
 
-    frozenTill = new DateTimeColumn({
+    frozenTill = new DateColumn({
         allowApiUpdate: Roles.admin,
         includeInApi: Roles.admin,
         caption: getLang(this.context).frozenTill
@@ -84,18 +84,17 @@ export abstract class HelpersBase extends IdEntity {
         includeInApi: Roles.admin,
         caption: getLang(this.context).helperInternalComment
     });
+    isFrozen = new BoolColumn({
+        sqlExpression: () => {
+            let sql = new SqlBuilder();
+            return sql.case([{ when: [sql.or(sql.build(this.frozenTill, ' is null'), this.frozenTill.isLessOrEqualTo(new Date()))], then: false }], true);
+        }
+    });
 
-    isFrozen() {
-        let today = new Date();
-        return (this.frozenTill.value >= today);
-    }
-    notFrozen() {
-        let today = new Date();
-        return undefined; //this.frozenTill.isDifferentFrom(null).and(this.frozenTill.isLessOrEqualTo(today));
-    }
+
 
     active() {
-        return this.archive.isEqualTo(false);
+        return this.archive.isEqualTo(false).and(this.isFrozen.isEqualTo(false));
     }
     async deactivate() {
         this.archive.value = true;

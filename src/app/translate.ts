@@ -320,7 +320,7 @@ export class Language {
   archiveHelper = 'מחק מתנדב';
   freezeHelper = 'עדכן נתוני הקפאת מתנדב';
   helperInternalComment = 'הערה פנימית לגבי מתנדב';
-  frozenTill = 'תאריך סיום הקפאה';
+  frozenTill = 'מוקפא עד לתאריך';
   maxDeliveriesBeforeBusy = 'מספר משלוחים להגדרת מתנדב עסוק';
   daysCountForBusy = 'מספר ימים לקביעת מתנדב עסוק';
   familySelfPickup = 'יבואו לקחת את המשלוח ואינם צריכים משלוח?';

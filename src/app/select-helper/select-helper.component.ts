@@ -72,7 +72,7 @@ export class SelectHelperComponent implements OnInit {
       }
     }
 
-    await (await context.for(Helpers).find({ where: h => h.active().and(h.notFrozen()) })).forEach(async h => {
+    await (await context.for(Helpers).find({ where: h => h.active() })).forEach(async h => {
       helpers.set(h.id.value, {
         helperId: h.id.value,
         name: h.name.value,
@@ -202,7 +202,7 @@ export class SelectHelperComponent implements OnInit {
 
 
     this.findOptions.where = h => {
-      let r = h.name.isContains(this.searchString).and(h.active()).and(h.notFrozen());
+      let r = h.name.isContains(this.searchString).and(h.active());
       if (this.args.filter) {
         return r.and(this.args.filter(h));
       }
