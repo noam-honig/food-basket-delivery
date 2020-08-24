@@ -132,11 +132,12 @@ class helperForm {
     await h.save();
 
     let settings = await ApplicationSettings.getAsync(this.context);
+    if (settings.registerHelperReplyEmailText.value && settings.registerHelperReplyEmailText.value != '') {
+      let message = SendSmsAction.getMessage(settings.registerHelperReplyEmailText.value, 
+        settings.organisationName.value, '', h.name.value, context.user.name, '');
 
-    let message = SendSmsAction.getMessage(settings.registerHelperReplyEmailText.value, 
-      settings.organisationName.value, '', h.name.value, context.user.name, '');
-
-    await EmailSvc.sendMail(settings.lang.thankYouForHelp, message, h.email.value);
+      await EmailSvc.sendMail(settings.lang.thankYouForHelp, message, h.email.value);
+    }
   }
 }
 

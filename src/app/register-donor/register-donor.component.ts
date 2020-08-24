@@ -178,11 +178,12 @@ class donorForm {
 
     let settings = await ApplicationSettings.getAsync(this.context);
 
-    let message = SendSmsAction.getMessage(settings.registerFamilyReplyEmailText.value, 
-      settings.organisationName.value, f.name.value, '', '', ''); 
-
-    await EmailSvc.sendMail(settings.lang.thankYouForDonation, message, f.email.value);
-
+    if (settings.registerFamilyReplyEmailText.value && settings.registerFamilyReplyEmailText.value != '') {
+      let message = SendSmsAction.getMessage(settings.registerFamilyReplyEmailText.value, 
+        settings.organisationName.value, f.name.value, '', '', ''); 
+  
+      await EmailSvc.sendMail(settings.lang.thankYouForDonation, message, f.email.value);
+    }
   }
 }
 
