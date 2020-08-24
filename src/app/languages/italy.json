@@ -1150,6 +1150,11 @@
     "valueInCode": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?",
     "valueInEnglish": "Done, proceed to Active deliveries?"
   },
+  "doLabReception": {
+    "google": "Eseguire l'assorbimento in laboratorio",
+    "valueInCode": "בצע קליטה במעבדה",
+    "valueInEnglish": "Perform absorption in the laboratory"
+  },
   "doneVolunteers": {
     "google": "finire",
     "valueInCode": "סיימו",

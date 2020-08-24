@@ -87,6 +87,7 @@ import { InRouteFollowUpComponent } from './in-route-follow-up/in-route-follow-u
 import { EditCommentDialogComponent  } from './edit-comment-dialog/edit-comment-dialog.component';
 import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment-assign-screen.component';
 
+import { QRCodeModule } from 'angular2-qrcode';
 
 
 
@@ -188,7 +189,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     RemultModule,
     AppRoutingModule,
     ChartsModule,
-    ScrollDispatchModule
+    ScrollDispatchModule,
+    QRCodeModule
 
   ],
   providers: [

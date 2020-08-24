@@ -1,3 +1,4 @@
+
 <div style="display:flex;justify-content: space-between;">
     <div>
         <h3 class="no-print">{{settings.lang.hello}} {{user.name}}</h3>
@@ -14,6 +15,20 @@
         <mat-icon>refresh</mat-icon>
     </button>
 </div>
+
+<div *ngIf="settings.isSytemForMlt()" style="display:flex;justify-content: center;">
+    <button *ngIf="!this.showQRCode" mat-raised-button (click)="this.showQRCode=true" color="primary">
+        {{settings.lang.doLabReception}}
+    </button>
+    <div>
+            <!--'https://mitchashvim.azurewebsites.net/?HelperId='-->
+            <qr-code *ngIf="this.showQRCode" 
+            [value]="this.user.id" [size]="300" 
+            (click)="this.showQRCode=false">
+        </qr-code>
+    </div>  
+</div>
+
 <app-helper-families [familyLists]="familyLists"></app-helper-families>
 
 <mat-card *ngIf="this.events&&this.events.length>0">

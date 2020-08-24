@@ -919,6 +919,10 @@
     "google": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?",
     "valueInCode": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?"
   },
+  "doLabReception": {
+    "google": "בצע קליטה במעבדה",
+    "valueInCode": "בצע קליטה במעבדה"
+  },
   "doneVolunteers": {
     "google": "סיימו",
     "valueInCode": "סיימו"
