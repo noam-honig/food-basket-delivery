@@ -264,6 +264,8 @@ export class Language {
   organizationName = 'שם הארגון';
   smsMessageContentCaption = 'תוכן הודעת SMS';
   smsReminderMessageContentCaption = 'תוכן הודעת תזכורת SMS';
+  emailDonorContentCaption = 'תוכן אימייל תורם';
+  emailHelperContentCaption = 'תוכן אימייל מתנדב';
   mustIncludeUrlKeyError = " חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור";
   logoUrl = 'לוגו URL';
   deliveryCenterAddress = "כתובת מרכז השילוח";
@@ -313,6 +315,7 @@ export class Language {
   defaulyHelpPhoneExplanation = 'כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את המשפחות ולחץ על הכפתור שלח SMS. ניתן להגדיר כאן שם חלופי וטלפון חלופי';
   smsTextHelpTitle = 'הודעה זו תשלח למתנדב ממסך שיוך משלוחים - עם הקישור למשפחות להן הוא מתבקש לחלק.';
   replacedByVolunteerName = 'יוחלף בשם המתנדב';
+  replacedByFamilyName='יוחלף בשם המשפחה';
   replcaedBySenderName = 'יוחלף בשם השולח';
   replacedByOrgName = 'יוחלף בשם הארגון';
   deliveriesFor = 'משלוחים עבור';
@@ -513,6 +516,8 @@ export class Language {
   sampleMessage = 'הודעה לדוגמא';
   reminderSmsTextHelp = 'הודעה זו תשלח למתנדב שמתעכב ממסך מעקב מתנדבים';
   sampleReminderSms = 'הודעת תזכורת לדוגמא';
+  registerFamilyReplyEmailText = 'הודעה זו תשלח לתורם אחרי שנרשם למערכת';
+  registerHelperReplyEmailText = 'הודעה זו תשלח למתנדב אחרי שנרשם למערכת';
   basketTypes = 'סוגי סלים';
   distributionLists = 'רשימות חלוקה';
   familySources = 'גורמים מפנים';
@@ -746,6 +751,8 @@ export class Language {
   yesterday = 'אתמול';
   twoDaysAgo = 'שלשום';
   thankYou = 'תודה';
+  thankYouForDonation = 'תודה על תרומתך';
+  thankYouForHelp = 'תודה על עזרתך';
   searchCompanyName = 'חיפוש שם חברה';
   confirmDeleteOf = "אישור מחיקה עבור ";
   originalAddress = 'כתובת מקורית';

@@ -1,4 +1,4 @@
-import { DataControlInfo, DataControlSettings, Column } from "@remult/core";
+import { DataControlInfo, DataControlSettings, Column, Context } from "@remult/core";
 
 export async function foreachSync<T>(array: T[], action: (item: T) => Promise<void>) {
   for (let i = 0; i < array.length; i++) {
@@ -42,4 +42,13 @@ export class PromiseThrottle {
   async done() {
       await Promise.all(this.todo);
   }
+}
+
+export class EmailSvc{
+  
+  constructor() {
+    
+  }
+  static sendMail: (subject: string, message: string, email: string,context:Context) => Promise<boolean>;
+
 }

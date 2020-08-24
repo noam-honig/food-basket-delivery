@@ -150,6 +150,8 @@ export class italy implements Language {
   organizationName = "Il nome dell'organizzazione";
   smsMessageContentCaption = 'Contenuto del messaggio SMS';
   smsReminderMessageContentCaption = 'Contenuto del promemoria via SMS';
+  emailDonorContentCaption = 'תוכן אימייל מתנדב';
+  emailHelperContentCaption = 'תוכן אימייל תורם';
   mustIncludeUrlKeyError = ' Deve contenere il testo! Sito! Altrimenti non invierà un collegamento';
   logoUrl = 'Logo URL';
   deliveryCenterAddress = 'indirizzo del centro di consegna';
@@ -199,6 +201,7 @@ export class italy implements Language {
   defaulyHelpPhoneExplanation = 'Per impostazione predefinita, la persona che ha assegnato la consegna sarà la persona che il volontario può richiedere aiuto. Specificare qui un valore diverso se si preferisce un altro numero di telefono della guida';
   smsTextHelpTitle = 'Questo messaggio verrà inviato a un volontario dalla schermata Assegna volontario - con il collegamento alle famiglie che gli viene chiesto di condividere.';
   replacedByVolunteerName = 'Il nome del volontario verrà sostituito';
+  replacedByFamilyName = 'Verrà sostituito con il cognome';
   replcaedBySenderName = 'Il nome del mittente verrà sostituito';
   replacedByOrgName = "Il nome dell'organizzazione verrà sostituito";
   deliveriesFor = 'consegne per';
@@ -399,6 +402,8 @@ export class italy implements Language {
   sampleMessage = 'Messaggio di esempio';
   reminderSmsTextHelp = 'Questo messaggio verrà inviato a un volontario ritardato da una schermata di monitoraggio del volontario';
   sampleReminderSms = 'Messaggio di promemoria di esempio';
+  registerFamilyReplyEmailText = 'Questo messaggio verrà inviato al donatore dopo la registrazione al sistema';
+  registerHelperReplyEmailText = 'Questo messaggio verrà inviato al volontario dopo la registrazione al sistema';
   basketTypes = 'Tipi di pacchi';
   distributionLists = 'Liste di distribuzione';
   familySources = 'Fonti familiari';
@@ -626,6 +631,8 @@ export class italy implements Language {
   yesterday = 'Ieri';
   twoDaysAgo = "l'altro ieri";
   thankYou = 'Grazie';
+  thankYouForDonation = 'Grazie per il tuo contributo';
+  thankYouForHelp = "grazie per l'aiuto";
   searchCompanyName = 'Cerca un nome di società';
   confirmDeleteOf = 'Certificato di cancellazione per';
   originalAddress = 'Indirizzo originale';

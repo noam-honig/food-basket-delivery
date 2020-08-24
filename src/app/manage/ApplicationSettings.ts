@@ -82,6 +82,20 @@ export class ApplicationSettings extends Entity<number>  {
       this.validateSmsContent(this.reminderSmsText);
     }
   });
+  registerFamilyReplyEmailText = new StringColumn({
+    caption: this.lang.emailDonorContentCaption,
+    validate: () => {
+      this.validateSmsContent(this.registerFamilyReplyEmailText);
+    }
+  });
+  registerHelperReplyEmailText = new StringColumn({
+    caption: this.lang.emailHelperContentCaption,
+    validate: () => {
+      this.validateSmsContent(this.registerHelperReplyEmailText);
+    }
+  });
+  gmailUserName = new StringColumn({ caption: "gMail UserName", includeInApi: Roles.admin });
+  gmailPassword = new StringColumn({ caption: "gMail password", includeInApi: Roles.admin });
   logoUrl = new StringColumn(this.lang.logoUrl);
   address = new StringColumn(this.lang.deliveryCenterAddress);
   commentForSuccessDelivery = new StringColumn(this.lang.successMessageColumnName);
