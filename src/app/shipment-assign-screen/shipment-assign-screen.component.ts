@@ -33,15 +33,19 @@ export class ShipmentAssignScreenComponent implements OnInit {
   private sortList() {
     this.families.sort((a, b) => {
       let res = 0;
+      let itemsDiff =  b.totalItems - a.totalItems;
+      let alen = a.relevantHelpers.length;
+      let blen = b.relevantHelpers.length;
 
-      if (a.relevantHelpers.length == 0)
-        return 1;
-      if (b.relevantHelpers.length == 0)
-        return -1;
+      if (alen == 0 && blen==0)
+        return itemsDiff;
 
-      res = (a.relevantHelpers.length - b.relevantHelpers.length) * this.sortDir;
+      if (alen == 0) return 1;
+      if (blen == 0) return -1;
+
+      res = (alen - blen) * this.sortDir;
       if (res == 0)
-        res = b.totalItems - a.totalItems;
+        res = itemsDiff;
 
       return res; 
     });
