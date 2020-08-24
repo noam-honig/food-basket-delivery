@@ -55,7 +55,7 @@ export class InRouteHelpers extends IdEntity {
 
                             });
                         },
-                        visible:r=>r.createUser.value ==this.context.user.id
+                        visible: r => r.createUser.value == this.context.user.id
                     }
                 ],
 
@@ -76,6 +76,7 @@ export class InRouteHelpers extends IdEntity {
     name = new StringColumn(getLang(this.context).volunteerName);
     messageStatus = new MessageStatusColumn();
     minDeliveryCreateDate = new DateTimeColumn("תאריך הקצאה");
+    lastCommunicationDate = new DateTimeColumn("תאריך תקשורת אחרונה");
     deliveriesInProgress = new NumberColumn(getLang(this.context).delveriesInProgress);
     maxAssignDate = new DateTimeColumn("תאריך שיוך אחרון");
     constructor(private context: Context) {
@@ -85,6 +86,7 @@ export class InRouteHelpers extends IdEntity {
             dbName: () => {
                 let sql = new SqlBuilder();
                 let f = context.for(ActiveFamilyDeliveries).create();
+                let com = context.for(HelperCommunicationHistory).create();
                 let h = context.for(Helpers).create();
                 let helperFamilies = (where: () => any[]) => {
                     return {
@@ -106,6 +108,7 @@ export class InRouteHelpers extends IdEntity {
                         sql.countDistinctInnerSelect(f.family, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress)
                             , sql.minInnerSelect(f.createDate, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.minDeliveryCreateDate)
                             , sql.maxInnerSelect(f.courierAssingTime, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.maxAssignDate)
+                            , sql.maxInnerSelect(com.createDate, { from: com, where: () => [sql.eq(com.volunteer, h.id)] }, this.lastCommunicationDate)
                         ],
 
                         from: h,
@@ -136,7 +139,7 @@ export class HelperCommunicationHistory extends IdEntity {
             name: 'HelperCommunicationHistory',
             allowApiInsert: Roles.admin,
             allowApiRead: Roles.admin,
-            allowApiUpdate:Roles.admin,
+            allowApiUpdate: Roles.admin,
             saving: () => {
                 if (this.isNew()) {
                     this.createDate.value = new Date();
