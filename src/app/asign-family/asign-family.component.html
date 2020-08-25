@@ -19,7 +19,7 @@
           </mat-menu>
 
           <button mat-icon-button [matMenuTriggerFor]="appMenu77">
-            <mat-icon>more_vert</mat-icon>
+            <mat-icon>psychology</mat-icon>
           </button>
         </div>
       </mat-card-title>
@@ -29,7 +29,7 @@
         <input matInput [(ngModel)]="phone" (input)="searchPhone()" type="tel" #phoneInput>
         <div matSuffix style="display:flex">
           <mat-icon (click)="clearHelperInfo()" class="clickable-icon">clear</mat-icon>
-          <mat-icon (click)="findHelper()" class="clickable-icon">search</mat-icon>
+          <mat-icon (click)="findHelper()" class="clickable-icon">person_search</mat-icon>
         </div>
       </mat-form-field>
       <data-area [settings]="area" *ngIf="phone&& isValidPhone()&&showHelperInput&&helper"></data-area>
@@ -37,7 +37,7 @@
   </div>
 
 
-  <span *ngIf="showHelperInput&&(!helper||!helper.name.value)" class="help no-print">{{settings.lang.assignHelpText}} <mat-icon (click)="findHelper()" class="clickable-icon">search</mat-icon></span>
+  <span *ngIf="showHelperInput&&(!helper||!helper.name.value)" class="help no-print">{{settings.lang.assignHelpText}} <mat-icon (click)="findHelper()" class="clickable-icon">person_search</mat-icon></span>
   <br *ngIf="showHelperInput&&(!helper||!helper.name.value)">
   <a href="https://youtu.be/8LCeQRQPL1U" *ngIf="showHelperInput&&(!helper||!helper.name.value)&&settings.showVideo()"
     class="help no-print">{{settings.lang.asignVideoHelp}}</a>
@@ -54,7 +54,7 @@
           </mat-menu>
 
           <button mat-icon-button [matMenuTriggerFor]="filterOptionsMenu">
-            <mat-icon>more_vert</mat-icon>
+            <mat-icon>settings</mat-icon>
           </button>
         </div>
       </mat-card-title>
