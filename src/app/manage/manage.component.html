@@ -36,6 +36,8 @@
                 {{settings.lang.smsTextHelpTitle}}
                 <ul>
                     <li>!מתנדב! - {{settings.lang.replacedByVolunteerName}}</li>
+                    <li *ngIf="settings.isSytemForMlt()">!משפחה! - {{settings.lang.replacedByFamilyName}}</li>
+                    <li *ngIf="settings.isSytemForMlt()">!תורם! - {{settings.lang.replacedByFamilyName}}</li>
                     <li>!שולח! - {{settings.lang.replcaedBySenderName}}</li>
                     <li>!ארגון! - {{settings.lang.replacedByOrgName}}</li>
                     <li>!אתר! - {{settings.lang.replaceBySiteUrl}}</li>
@@ -53,6 +55,35 @@
 
                 <h4>{{settings.lang.sampleReminderSms}}</h4>
                 <pre>{{testSmsReminder()}}</pre>
+            </mat-card>
+            <mat-card *ngIf="settings.isSytemForMlt()">
+                <mat-card-title>
+                    {{settings.registerFamilyReplyEmailText.defs.caption}}
+                </mat-card-title>
+                {{settings.lang.registerFamilyReplyEmailText}}
+                <textarea [(ngModel)]="settings.registerFamilyReplyEmailText.value" class="form-control"
+                    lines=3></textarea>
+
+                <h4>{{settings.lang.sampleMessage}}</h4>
+                <pre [innerHTML]="testEmailDonor()"></pre>
+            </mat-card>
+            <mat-card *ngIf="settings.isSytemForMlt()">
+                <mat-card-title>
+                    {{settings.registerHelperReplyEmailText.defs.caption}}
+                </mat-card-title>
+                {{settings.lang.registerHelperReplyEmailText}}
+                <textarea [(ngModel)]="settings.registerHelperReplyEmailText.value" class="form-control"
+                    lines=3></textarea>
+
+                <h4>{{settings.lang.sampleMessage}}</h4>
+                <pre [innerHTML]="testEmailHelper()"></pre>
+            </mat-card>
+            <mat-card *ngIf="settings.isSytemForMlt()">
+                <mat-card-title>
+                    הגדרות מייל
+                </mat-card-title>
+                <data-area [settings]="emailConfiguration"></data-area>
+                <button mat-raised-button (click)="sendTestEmail()">שלח מייל נסיון</button>
             </mat-card>
             <mat-card *ngIf="settings.allowSendSuccessMessageOption.value&&settings.helpPhone.value">
                 <mat-card-title>

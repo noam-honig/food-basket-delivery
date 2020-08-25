@@ -4,7 +4,7 @@ import { getSettings } from "../manage/ApplicationSettings";
 import { SqlBuilder, DateTimeColumn, changeDate } from "../model-shared/types";
 import { getLang } from "../sites/sites";
 import { Helpers, HelperIdReadonly, HelperId } from "../helpers/helpers";
-import { ActiveFamilyDeliveries, MessageStatus, MessageStatusColumn } from "../families/FamilyDeliveries";
+import { ActiveFamilyDeliveries, MessageStatus, MessageStatusColumn, FamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { HelperAssignmentComponent } from "../helper-assignment/helper-assignment.component";
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
@@ -13,8 +13,8 @@ import { EditCommentDialogComponent } from "../edit-comment-dialog/edit-comment-
 
 @EntityClass
 export class InRouteHelpers extends IdEntity {
-    showHistory() {
-        this.context.openDialog(GridDialogComponent, gridDialog => gridDialog.args = {
+    async showHistory() {
+        await this.context.openDialog(GridDialogComponent, gridDialog => gridDialog.args = {
             title: 'היסטוריה עבור ' + this.name.value,
             buttons: [{
                 text: 'הוסף',
@@ -55,7 +55,7 @@ export class InRouteHelpers extends IdEntity {
 
                             });
                         },
-                        visible:r=>r.createUser.value ==this.context.user.id
+                        visible: r => r.createUser.value == this.context.user.id
                     }
                 ],
 
@@ -67,17 +67,22 @@ export class InRouteHelpers extends IdEntity {
                 }
             })
         });
+        this.reload();
     }
     async showAssignment() {
         let h = await this.context.for(Helpers).findId(this.id);
-        this.context.openDialog(
-            HelperAssignmentComponent, s => s.argsHelper = h)
+        await this.context.openDialog(
+            HelperAssignmentComponent, s => s.argsHelper = h);
+        this.reload();
+
     }
     name = new StringColumn(getLang(this.context).volunteerName);
-    messageStatus = new MessageStatusColumn();
-    minDeliveryCreateDate = new DateTimeColumn("תאריך הקצאה");
-    deliveriesInProgress = new NumberColumn(getLang(this.context).delveriesInProgress);
-    maxAssignDate = new DateTimeColumn("תאריך שיוך אחרון");
+    messageStatus = new MessageStatusColumn({ dataControlSettings: () => ({ width: '100' }) });
+    minDeliveryCreateDate = new DateTimeColumn({ caption: "תאריך הקצאה", dataControlSettings: () => ({ width: '100' }) });
+    lastCommunicationDate = new DateTimeColumn({ caption: "תאריך תקשורת אחרונה", dataControlSettings: () => ({ width: '100' }) });
+    deliveriesInProgress = new NumberColumn({ caption: getLang(this.context).delveriesInProgress, dataControlSettings: () => ({ width: '100' }) });
+    maxAssignDate = new DateTimeColumn({ caption: "תאריך שיוך אחרון", dataControlSettings: () => ({ width: '100' }) });
+    completedDeliveries = new NumberColumn({ caption: "איסופים מוצלחים", dataControlSettings: () => ({ width: '100' }) });
     constructor(private context: Context) {
         super({
             name: 'in-route-helpers',
@@ -85,6 +90,8 @@ export class InRouteHelpers extends IdEntity {
             dbName: () => {
                 let sql = new SqlBuilder();
                 let f = context.for(ActiveFamilyDeliveries).create();
+                let history = context.for(FamilyDeliveries).create();
+                let com = context.for(HelperCommunicationHistory).create();
                 let h = context.for(Helpers).create();
                 let helperFamilies = (where: () => any[]) => {
                     return {
@@ -106,6 +113,8 @@ export class InRouteHelpers extends IdEntity {
                         sql.countDistinctInnerSelect(f.family, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress)
                             , sql.minInnerSelect(f.createDate, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.minDeliveryCreateDate)
                             , sql.maxInnerSelect(f.courierAssingTime, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.maxAssignDate)
+                            , sql.maxInnerSelect(com.createDate, { from: com, where: () => [sql.eq(com.volunteer, h.id)] }, this.lastCommunicationDate)
+                            , sql.countDistinctInnerSelect(history.family, { from: history, where: () => [sql.eq(history.courier, h.id), history.deliverStatus.isSuccess()] }, this.completedDeliveries)
                         ],
 
                         from: h,
@@ -136,7 +145,7 @@ export class HelperCommunicationHistory extends IdEntity {
             name: 'HelperCommunicationHistory',
             allowApiInsert: Roles.admin,
             allowApiRead: Roles.admin,
-            allowApiUpdate:Roles.admin,
+            allowApiUpdate: Roles.admin,
             saving: () => {
                 if (this.isNew()) {
                     this.createDate.value = new Date();

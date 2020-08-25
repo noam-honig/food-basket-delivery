@@ -24,6 +24,7 @@ import { pagedRowsIterator } from '../families/familyActionsWiring';
 import { getLang } from '../sites/sites';
 import { saveToExcel } from '../shared/saveToExcel';
 import { Groups } from './groups';
+import { EmailSvc } from '../shared/utils';
 
 @Component({
   selector: 'app-manage',
@@ -242,11 +243,40 @@ export class ManageComponent implements OnInit {
       this.settings.commentForSuccessLeft,
       this.settings.commentForProblem,
 
-
-
-
     ]
   });
+
+  emailConfiguration = new DataAreaSettings({
+    columnSettings: () => [this.settings.gmailUserName, this.settings.gmailPassword]
+  });
+  async sendTestEmail() {
+    var sc = new StringColumn('email');
+    await this.context.openDialog(InputAreaComponent, x => x.args = {
+      settings: {
+        columnSettings: () => [sc]
+      },
+      title: 'בדיקת מייל',
+      ok: async () => {
+        try {
+          let x = await ManageComponent.TestSendEmail(sc.value, this.testEmailDonor());
+          if (x) {
+            this.dialog.Info('נשלח בהצלחה');
+          }
+          else
+            throw 'לא נשלח';
+        }
+        catch (err) {
+          this.dialog.exception("test email", err);
+        }
+
+      }
+    });
+  }
+  @ServerFunction({ allowed: Roles.admin })
+  static async TestSendEmail(to: string, text: string, context?: Context) {
+    return await EmailSvc.sendMail("test email", text, to, context);
+  }
+
   prefereces = new DataAreaSettings({
     columnSettings: s => {
       let r = [
@@ -285,10 +315,18 @@ export class ManageComponent implements OnInit {
 
 
   testSms() {
-    return SendSmsAction.getMessage(this.settings.smsText.value, this.settings.organisationName.value, 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
+    return SendSmsAction.getMessage(this.settings.smsText.value, this.settings.organisationName.value, 'משפחת ישראלי', 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
   }
   testSmsReminder() {
-    return SendSmsAction.getMessage(this.settings.reminderSmsText.value, this.settings.organisationName.value, 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
+    return SendSmsAction.getMessage(this.settings.reminderSmsText.value, this.settings.organisationName.value, 'משפחת ישראלי', 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
+  }
+  testEmailHelper() {
+    if (this.settings.registerHelperReplyEmailText.value)
+      return SendSmsAction.getMessage(this.settings.registerHelperReplyEmailText.value, this.settings.organisationName.value, 'משפחת ישראלי', 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
+  }
+  testEmailDonor() {
+    if (this.settings.registerFamilyReplyEmailText.value)
+      return SendSmsAction.getMessage(this.settings.registerFamilyReplyEmailText.value, this.settings.organisationName.value, 'משפחת ישראלי', 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
   }
   testSuccessSms() {
     return SendSmsAction.getSuccessMessage(this.settings.successMessageText.value, this.settings.organisationName.value, 'ישראל ישראלי');

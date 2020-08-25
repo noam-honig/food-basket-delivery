@@ -18,6 +18,7 @@ import { wasChanged } from '../model-shared/types';
 import { ConnectionOptions } from 'tls';
 import { SitesEntity } from '../sites/sites.entity';
 import { FamilyInfoComponent } from '../family-info/family-info.component';
+import './send-email';
 
 declare const lang = '';
 
@@ -110,6 +111,7 @@ export async function serverInit() {
             }
 
             InitSchemas(pool);
+
             Sites.getDataProviderForOrg = org => new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, org)));
             return (y: Context) => {
                 let org = Sites.getValidSchemaFromContext(y);
@@ -197,6 +199,8 @@ export async function verifySchemaExistance(pool: Pool, s: string) {
 }
 
 
+
+
 export class PostgresSchemaWrapper implements PostgresPool {
     constructor(private pool: Pool, private schema: string) {
 
@@ -218,3 +222,4 @@ export class PostgresSchemaWrapper implements PostgresPool {
 
     }
 }
+

@@ -23,6 +23,7 @@ export class InRouteFollowUpComponent implements OnInit {
       limit: 25
     },
     knowTotalRows: true,
+    numOfColumnsInGrid:99,
     rowButtons: [{
       textInMenu: () => use.language.assignDeliveryMenu,
       icon: 'list_alt',

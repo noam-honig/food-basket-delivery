@@ -1082,6 +1082,14 @@
     "google": "eMail",
     "valueInCode": "eMail"
   },
+  "emailDonorContentCaption": {
+    "google": "תוכן אימייל מתנדב",
+    "valueInCode": "תוכן אימייל תורם"
+  },
+  "emailHelperContentCaption": {
+    "google": "תוכן אימייל תורם",
+    "valueInCode": "תוכן אימייל מתנדב"
+  },
   "empty": {
     "google": "blank",
     "valueInCode": "ריק"
@@ -2355,6 +2363,14 @@
     "google": "You are registered for this event",
     "valueInCode": "הנך רשום לארוע זה"
   },
+  "registerFamilyReplyEmailText": {
+    "google": "This message will be sent to the donor after registering for the system",
+    "valueInCode": "הודעה זו תשלח לתורם אחרי שנרשם למערכת"
+  },
+  "registerHelperReplyEmailText": {
+    "google": "This message will be sent to the volunteer after registering for the system",
+    "valueInCode": "הודעה זו תשלח למתנדב אחרי שנרשם למערכת"
+  },
   "remainingByBaskets": {
     "google": "Remained by baskets",
     "valueInCode": "טרם שוייכו לפי סלים",
@@ -2433,6 +2449,10 @@
   "replaceBySiteUrl": {
     "google": "The URL will be replaced",
     "valueInCode": "יוחלף בכתובת האתר"
+  },
+  "replacedByFamilyName": {
+    "google": "Will be replaced with the family name",
+    "valueInCode": "יוחלף בשם המשפחה"
   },
   "replacedByOrgName": {
     "google": "Will be replaced on behalf of the organization",
@@ -2944,6 +2964,14 @@
   "thankYou": {
     "google": "Thanks",
     "valueInCode": "תודה"
+  },
+  "thankYouForDonation": {
+    "google": "Thank you for your contribution",
+    "valueInCode": "תודה על תרומתך"
+  },
+  "thankYouForHelp": {
+    "google": "Thank you for your help",
+    "valueInCode": "תודה על עזרתך"
   },
   "theFamily": {
     "google": "The family",

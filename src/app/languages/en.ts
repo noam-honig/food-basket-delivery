@@ -150,6 +150,8 @@ export class en implements Language {
   organizationName = 'The organization name';
   smsMessageContentCaption = 'SMS message content';
   smsReminderMessageContentCaption = 'SMS reminder content';
+  emailDonorContentCaption = 'תוכן אימייל מתנדב';
+  emailHelperContentCaption = 'תוכן אימייל תורם';
   mustIncludeUrlKeyError = ' Must contain!';
   logoUrl = 'URL logo';
   deliveryCenterAddress = 'delivery center address';
@@ -199,6 +201,7 @@ export class en implements Language {
   defaulyHelpPhoneExplanation = 'By default, the person who assigned the delivery, will be the person that the volunteer can call for help. Specify a different value here, if you prefer another help phone number';
   smsTextHelpTitle = 'This message will be sent to a volunteer from the Assign Volunteer screen - with the link to the families it is asked to share.';
   replacedByVolunteerName = 'The name of the volunteer will be replaced';
+  replacedByFamilyName = 'Will be replaced with the family name';
   replcaedBySenderName = "The sender's name will be replaced";
   replacedByOrgName = 'Will be replaced on behalf of the organization';
   deliveriesFor = 'deliveries for';
@@ -400,6 +403,8 @@ export class en implements Language {
   sampleMessage = 'Sample message';
   reminderSmsTextHelp = 'This message will be sent to a volunteer who is delayed from a volunteer tracking screen';
   sampleReminderSms = 'Sample reminder message';
+  registerFamilyReplyEmailText = 'This message will be sent to the donor after registering for the system';
+  registerHelperReplyEmailText = 'This message will be sent to the volunteer after registering for the system';
   basketTypes = 'Parcel types';
   distributionLists = 'Distribution lists';
   familySources = 'Family Sources';
@@ -627,6 +632,8 @@ export class en implements Language {
   yesterday = 'Yesterday';
   twoDaysAgo = 'the day before yesterday';
   thankYou = 'Thanks';
+  thankYouForDonation = 'Thank you for your contribution';
+  thankYouForHelp = 'Thank you for your help';
   searchCompanyName = 'Search for a company name';
   confirmDeleteOf = 'Deletion certificate for';
   originalAddress = 'Original address';

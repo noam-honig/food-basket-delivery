@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Injectable } from '@angular/core';
 import { PhoneColumn, required, isPhoneValidForIsrael } from '../model-shared/types';
 import { StringColumn, NumberColumn, BoolColumn, DataAreaSettings, ServerFunction, Context, Column } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
@@ -9,6 +9,8 @@ import { executeOnServer, pack } from '../server/mlt';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { RequiredValidator } from '@angular/forms';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { EmailSvc } from '../shared/utils';
+import { SendSmsAction } from '../asign-family/send-sms-action';
 
 declare var gtag;
 @Component({
@@ -76,18 +78,23 @@ export class RegisterDonorComponent implements OnInit {
       }
 
       await RegisterDonorComponent.doDonorForm(pack(this.donor));
-      await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: "תודה על תרומך", showOnlyConfirm: true });
+
+      this.dialog.analytics("submitDonorForm");
+      await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
+        question: this.settings.lang.thankYouForDonation,
+        showOnlyConfirm: true
+      });
       window.location.href = "https://www.mitchashvim.org.il/";
     }
     catch (err) {
       this.dialog.exception("donor form", err);
     }
   }
+
   @ServerFunction({ allowed: true })
   static async doDonorForm(args: any[], context?: Context) {
     await executeOnServer(donorForm, args, context);
   }
-
 }
 
 class donorForm {
@@ -167,6 +174,18 @@ class donorForm {
         quantity: 1,
         selfPickup: false
       }, context);
+    }
+
+    let settings = await ApplicationSettings.getAsync(this.context);
+
+    if (settings.registerFamilyReplyEmailText.value && settings.registerFamilyReplyEmailText.value != '') {
+      let message = SendSmsAction.getMessage(settings.registerFamilyReplyEmailText.value,
+        settings.organisationName.value, f.name.value, '', '', '');
+      try {
+        await EmailSvc.sendMail(settings.lang.thankYouForDonation, message, f.email.value, this.context);
+      } catch (err) {
+        console.error('send mail', err);
+      }
     }
   }
 }

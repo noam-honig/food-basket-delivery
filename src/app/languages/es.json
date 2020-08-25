@@ -1180,6 +1180,16 @@
     "valueInCode": "eMail",
     "valueInEnglish": "eMail"
   },
+  "emailDonorContentCaption": {
+    "google": "תוכן אימייל מתנדב",
+    "valueInCode": "תוכן אימייל תורם",
+    "valueInEnglish": "תוכן אימייל מתנדב"
+  },
+  "emailHelperContentCaption": {
+    "google": "תוכן אימייל תורם",
+    "valueInCode": "תוכן אימייל מתנדב",
+    "valueInEnglish": "תוכן אימייל תורם"
+  },
   "empty": {
     "google": "blanco",
     "valueInCode": "ריק",
@@ -2680,6 +2690,16 @@
     "valueInCode": "הנך רשום לארוע זה",
     "valueInEnglish": "You are registered for this event"
   },
+  "registerFamilyReplyEmailText": {
+    "google": "Este mensaje se enviará al donante después de registrarse en el sistema.",
+    "valueInCode": "הודעה זו תשלח לתורם אחרי שנרשם למערכת",
+    "valueInEnglish": "This message will be sent to the donor after registering for the system"
+  },
+  "registerHelperReplyEmailText": {
+    "google": "Este mensaje se enviará al voluntario después de registrarse en el sistema.",
+    "valueInCode": "הודעה זו תשלח למתנדב אחרי שנרשם למערכת",
+    "valueInEnglish": "This message will be sent to the volunteer after registering for the system"
+  },
   "remainingByBaskets": {
     "google": "No asignado por parcelas",
     "valueInCode": "טרם שוייכו לפי סלים",
@@ -2770,6 +2790,11 @@
     "google": "La URL será reemplazada",
     "valueInCode": "יוחלף בכתובת האתר",
     "valueInEnglish": "The URL will be replaced"
+  },
+  "replacedByFamilyName": {
+    "google": "Será reemplazado por el apellido",
+    "valueInCode": "יוחלף בשם המשפחה",
+    "valueInEnglish": "Will be replaced with the family name"
   },
   "replacedByOrgName": {
     "google": "El nombre de la organización será reemplazado.",
@@ -3360,6 +3385,16 @@
     "google": "Gracias",
     "valueInCode": "תודה",
     "valueInEnglish": "Thanks"
+  },
+  "thankYouForDonation": {
+    "google": "Gracias por tu contribución",
+    "valueInCode": "תודה על תרומתך",
+    "valueInEnglish": "Thank you for your contribution"
+  },
+  "thankYouForHelp": {
+    "google": "Gracias por tu ayuda",
+    "valueInCode": "תודה על עזרתך",
+    "valueInEnglish": "Thank you for your help"
   },
   "theFamily": {
     "google": "La familia",
