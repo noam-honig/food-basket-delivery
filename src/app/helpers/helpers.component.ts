@@ -177,7 +177,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       orderBy: h => [h.name],
       limit: 25,
       where: h => {
-        return h.name.isContains(this.searchString).and(h.active());
+        return h.name.isContains(this.searchString).and(h.archive.isEqualTo(false));
       }
     },
     columnSettings: helpers => {
