@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Context, Column, DataControlInfo, StringColumn } from '@remult/core';
+import { Context, Column, DataControlInfo, StringColumn, BusyService } from '@remult/core';
 import { InRouteHelpers, HelperCommunicationHistory } from './in-route-helpers';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { use } from '../translate';
@@ -9,6 +9,8 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { helperHistoryInfo } from '../delivery-history/delivery-history.component';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
+import { saveToExcel } from '../shared/saveToExcel';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-in-route-follow-up',
@@ -17,13 +19,17 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 })
 export class InRouteFollowUpComponent implements OnInit {
 
-  constructor(private context: Context) { }
+  constructor(private context: Context, private settings: ApplicationSettings, private busy: BusyService) { }
   helpers = this.context.for(InRouteHelpers).gridSettings({
     get: {
       limit: 25
     },
     knowTotalRows: true,
-    numOfColumnsInGrid:99,
+    numOfColumnsInGrid: 99,
+    gridButtons: [{
+      name: use.language.exportToExcel,
+      click: () => saveToExcel(this.settings, this.context.for(InRouteHelpers), this.helpers, "מתנדבים בדרך", this.busy)
+    }],
     rowButtons: [{
       textInMenu: () => use.language.assignDeliveryMenu,
       icon: 'list_alt',
@@ -58,7 +64,7 @@ export class InRouteFollowUpComponent implements OnInit {
                 fd.name,
                 fd.address,
                 { column: fd.internalDeliveryComment, width: '400' },
-                
+
                 fd.courierAssingTime,
                 fd.deliverStatus,
                 fd.deliveryStatusDate,
