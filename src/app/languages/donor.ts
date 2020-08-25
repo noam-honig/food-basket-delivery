@@ -207,7 +207,7 @@ export class donor implements Language {
   deliveriesFor = 'משלוחים עבור';
   archiveCurrentDelivery = 'העבר משלוח נוכחי לארכיב?';
   archiveHelper = 'מחק מתנדב';
-  freezeHelper = 'עדכן נתוני הקפאת מתנדב';
+  freezeHelper = 'הקפא מתנדב';
   helperInternalComment = 'הערה פנימית לגבי מתנדב';
   frozenTill = 'תאריך סיום הקפאה';
   maxDeliveriesBeforeBusy = 'מספר משלוחים להגדרת מתנדב עסוק';
@@ -251,6 +251,8 @@ export class donor implements Language {
   phone4Description = 'הערות לטלפון 4';
   commentForReception = 'הערות קליטה במעבדה';
   doLabReception = 'בצע קליטה במעבדה';
+  showQRCode = 'הצג לקליטה';
+  removeQRCode = 'הסתר ברקוד';
   statusChangeDate = 'סטטוס: תאריך שינוי';
   statusChangeUser = 'סטטוס: מי עדכן';
   defaultVolunteer = 'מתנדב ברירת מחדל';

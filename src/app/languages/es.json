@@ -1145,15 +1145,15 @@
     "valueInCode": "לא קיים",
     "valueInEnglish": "Does not exist"
   },
-  "doneDotGotoDeliveries": {
-    "google": "Listo, ¿pasar a entregas activas?",
-    "valueInCode": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?",
-    "valueInEnglish": "Done, proceed to Active deliveries?"
-  },
   "doLabReception": {
     "google": "Realizar absorción en el laboratorio.",
     "valueInCode": "בצע קליטה במעבדה",
     "valueInEnglish": "Perform absorption in the laboratory"
+  },
+  "doneDotGotoDeliveries": {
+    "google": "Listo, ¿pasar a entregas activas?",
+    "valueInCode": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?",
+    "valueInEnglish": "Done, proceed to Active deliveries?"
   },
   "doneVolunteers": {
     "google": "Terminar",
@@ -1697,7 +1697,7 @@
   },
   "frozenTill": {
     "google": "Congelar fecha de finalización",
-    "valueInCode": "תאריך סיום הקפאה",
+    "valueInCode": "מוקפא עד לתאריך",
     "valueInEnglish": "Freeze end date"
   },
   "GeocodeComponent": {
@@ -2781,6 +2781,11 @@
     "valueInCode": "להסיר שיוך לקבצה",
     "valueInEnglish": "Remove Group"
   },
+  "removeQRCode": {
+    "google": "Ocultar código de barras",
+    "valueInCode": "הסתר ברקוד",
+    "valueInEnglish": "Hide barcode"
+  },
   "repeatFamilyNotice": {
     "google": "También has estado en esta familia antes",
     "valueInCode": "הייתם אצל המשפחה הזו גם פעם קודמת",
@@ -3220,6 +3225,11 @@
     "google": "Mostrar solo una última palabra al voluntario en nombre de la familia",
     "valueInCode": "הצג רק מילה אחרונה למתנדב בשם המשפחה",
     "valueInEnglish": "Show just one last word to the volunteer on behalf of the family"
+  },
+  "showQRCode": {
+    "google": "Mostrar por absorción",
+    "valueInCode": "הצג לקליטה",
+    "valueInEnglish": "Show for absorption"
   },
   "showRouteOnGoogleMaps": {
     "google": "Ver ruta en google maps",

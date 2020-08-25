@@ -1052,14 +1052,14 @@
     "google": "Does not exist",
     "valueInCode": "לא קיים"
   },
+  "doLabReception": {
+    "google": "Perform absorption in the laboratory",
+    "valueInCode": "בצע קליטה במעבדה"
+  },
   "doneDotGotoDeliveries": {
     "google": "The process ended successfully, move to the Shipping screen?",
     "valueInCode": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?",
     "custom": "Done, proceed to Active deliveries?"
-  },
-  "doLabReception": {
-    "google": "Perform absorption in the laboratory",
-    "valueInCode": "בצע קליטה במעבדה"
   },
   "doneVolunteers": {
     "google": "Finish",
@@ -1526,7 +1526,7 @@
   },
   "frozenTill": {
     "google": "Freeze end date",
-    "valueInCode": "תאריך סיום הקפאה"
+    "valueInCode": "מוקפא עד לתאריך"
   },
   "GeocodeComponent": {
     "google": "GEOCODE",
@@ -2442,6 +2442,10 @@
     "valueInCode": "להסיר שיוך לקבצה",
     "custom": "Remove Group"
   },
+  "removeQRCode": {
+    "google": "Hide barcode",
+    "valueInCode": "הסתר ברקוד"
+  },
   "repeatFamilyNotice": {
     "google": "You've been to this family before too",
     "valueInCode": "הייתם אצל המשפחה הזו גם פעם קודמת"
@@ -2823,6 +2827,10 @@
   "showOnlyLastNamePartToVolunteer": {
     "google": "Show just one last word to the volunteer on behalf of the family",
     "valueInCode": "הצג רק מילה אחרונה למתנדב בשם המשפחה"
+  },
+  "showQRCode": {
+    "google": "Show for absorption",
+    "valueInCode": "הצג לקליטה"
   },
   "showRouteOnGoogleMaps": {
     "google": "View route on google maps",

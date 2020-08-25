@@ -251,6 +251,8 @@ export class es implements Language {
   phone4Description = 'Notas telefónicas 4';
   commentForReception = 'Notas de absorción en el laboratorio.';
   doLabReception = 'Realizar absorción en el laboratorio.';
+  showQRCode = 'Mostrar por absorción';
+  removeQRCode = 'Ocultar código de barras';
   statusChangeDate = 'Estado: fecha modificada';
   statusChangeUser = 'Estado: quién está actualizando';
   defaultVolunteer = 'Voluntario predeterminado';

@@ -251,6 +251,8 @@ export class italy implements Language {
   phone4Description = 'Note sul telefono 4';
   commentForReception = "Note sull'assorbimento in laboratorio";
   doLabReception = "Eseguire l'assorbimento in laboratorio";
+  showQRCode = 'Mostra per assorbimento';
+  removeQRCode = 'Nascondi codice a barre';
   statusChangeDate = 'Stato: data modificata';
   statusChangeUser = 'Stato: chi sta aggiornando';
   defaultVolunteer = 'Volontario predefinito';
