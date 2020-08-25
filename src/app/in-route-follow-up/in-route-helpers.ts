@@ -78,10 +78,11 @@ export class InRouteHelpers extends IdEntity {
     }
     name = new StringColumn(getLang(this.context).volunteerName);
     messageStatus = new MessageStatusColumn({ dataControlSettings: () => ({ width: '100' }) });
-    minDeliveryCreateDate = new DateTimeColumn({ caption: "תאריך הקצאה", dataControlSettings: () => ({ width: '100' }) });
-    lastCommunicationDate = new DateTimeColumn({ caption: "תאריך תקשורת אחרונה", dataControlSettings: () => ({ width: '100' }) });
+    minDeliveryCreateDate = new DateTimeColumn({ caption: " הקצאה", dataControlSettings: () => ({ width: '100' }) });
+    lastCommunicationDate = new DateTimeColumn({ caption: " תקשורת אחרונה", dataControlSettings: () => ({ width: '100' }) });
+    lastSignInDate = new DateTimeColumn({caption:'כניסה אחרונה למערכת', dataControlSettings: () => ({ width: '100' }) });
     deliveriesInProgress = new NumberColumn({ caption: getLang(this.context).delveriesInProgress, dataControlSettings: () => ({ width: '100' }) });
-    maxAssignDate = new DateTimeColumn({ caption: "תאריך שיוך אחרון", dataControlSettings: () => ({ width: '100' }) });
+    maxAssignDate = new DateTimeColumn({ caption: " שיוך אחרון", dataControlSettings: () => ({ width: '100' }) });
     completedDeliveries = new NumberColumn({ caption: "איסופים מוצלחים", dataControlSettings: () => ({ width: '100' }) });
     constructor(private context: Context) {
         super({
