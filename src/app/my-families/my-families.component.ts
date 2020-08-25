@@ -32,7 +32,7 @@ export class MyFamiliesComponent implements OnInit {
   showQRCode: boolean = false;
 
   myQRCode() {
-    return 'https://salmaz.herokuapp.com/mlt/reception/?phone=' + this.myPhoneNumber;
+    return window.location.hostname +  '/mlt/reception/?phone=' + this.myPhoneNumber;
   }
   
 
@@ -41,7 +41,8 @@ export class MyFamiliesComponent implements OnInit {
   }
   async ngOnInit() {
 
-    var h = this.context.for(Helpers).lookup(h => h.id.isEqualTo(this.context.user.id));
+    let h = await (await this.context.for(Helpers).findFirst(i => i.id.isEqualTo(this.context.user.id)));
+
     this.myPhoneNumber = h.phone.value;
 
     let done = ''
