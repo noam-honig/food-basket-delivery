@@ -1692,7 +1692,7 @@
   },
   "frozenTill": {
     "google": "Blocca la data di fine",
-    "valueInCode": "תאריך סיום הקפאה",
+    "valueInCode": "מוקפא עד לתאריך",
     "valueInEnglish": "Freeze end date"
   },
   "GeocodeComponent": {
@@ -1940,6 +1940,11 @@
     "valueInCode": "משתמש מעדכן",
     "valueInEnglish": "Updating user"
   },
+  "leadHelper": {
+    "google": "Volontario leader",
+    "valueInCode": "מתנדב מוביל",
+    "valueInEnglish": "Leading volunteer"
+  },
   "left": {
     "google": "venne fuori",
     "valueInCode": "יצא",
@@ -2134,6 +2139,21 @@
     "google": "Più volontari",
     "valueInCode": "עוד מתנדבים",
     "valueInEnglish": "More volunteers"
+  },
+  "moveDeliveriesTo": {
+    "google": "Spedizioni inoltrate a",
+    "valueInCode": "העבר משלוחים ל",
+    "valueInEnglish": "Forward shipments to"
+  },
+  "moveDeliveriesToAnotherVolunteer": {
+    "google": "Inoltra le consegne a un altro volontario",
+    "valueInCode": "העבר משלוחים למתנדב אחר",
+    "valueInEnglish": "Forward deliveries to another volunteer"
+  },
+  "movedFrom": {
+    "google": "Traslocato da",
+    "valueInCode": "הועברו מ",
+    "valueInEnglish": "Moved from"
   },
   "moveTheFamily": {
     "google": "Per spostare la famiglia",
@@ -3425,6 +3445,11 @@
     "google": "Disconnetti timeout in minuti",
     "valueInCode": "זמן בדקות לניתוק אוטומטית",
     "valueInEnglish": "Disconnect timeout in minutes"
+  },
+  "to": {
+    "google": "Per",
+    "valueInCode": "ל",
+    "valueInEnglish": "To"
   },
   "toDate": {
     "google": "Fino a",

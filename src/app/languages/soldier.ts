@@ -763,4 +763,9 @@ export class soldier implements Language {
   doneDotGotoDeliveries = 'התהליך הסתיים בהצלחה, לעבור למסך משלוחים?';
   notDoneDeliveriesShouldArchiveThem = 'משלוחים שטרם שוייכו, האם להעביר אותם לארכיב?';
   deliveresOnTheWayAssignedInTheLast3Hours = 'משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך ביצירת משלוח חדש?';
+  leadHelper = 'מתנדב מוביל';
+  movedFrom = 'הועברו מ';
+  to = 'ל';
+  moveDeliveriesToAnotherVolunteer = 'העבר משלוחים למתנדב אחר';
+  moveDeliveriesTo = 'העבר משלוחים ל';
 }

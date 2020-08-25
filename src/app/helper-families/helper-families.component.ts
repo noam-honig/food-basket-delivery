@@ -13,7 +13,7 @@ import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings'
 import { Context } from '@remult/core';
 import { Column } from '@remult/core';
 import { use, TranslationOptions } from '../translate';
-import { Helpers, HelperId } from '../helpers/helpers';
+import { Helpers, HelperId, HelpersBase } from '../helpers/helpers';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
@@ -29,6 +29,9 @@ import { Sites, getLang } from '../sites/sites';
 import { SelectListComponent, selectListItem } from '../select-list/select-list.component';
 import { lang } from 'moment';
 import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
+import { SelectHelperComponent } from '../select-helper/select-helper.component';
+import { AsignFamilyComponent } from '../asign-family/asign-family.component';
+import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 
 
 @Component({
@@ -106,7 +109,7 @@ export class HelperFamiliesComponent implements OnInit {
     if (!getSettings(context).isSytemForMlt())
       throw "not allowed";
     for (const id of deliveryIds) {
-      
+
       let fd = await context.for(ActiveFamilyDeliveries).findId(id);
       if (fd.courier.value == "" && fd.deliverStatus.value == DeliveryStatus.ReadyForDelivery) {//in case the delivery was already assigned to someone else
         fd.courier.value = context.user.id;
@@ -324,6 +327,41 @@ export class HelperFamiliesComponent implements OnInit {
       });
     });
   }
+  async moveBasketsTo(to: HelpersBase) {
+    let from = this.familyLists.helper;
+    let deliveries = this.context.for(ActiveFamilyDeliveries).count(f => f.courier.isEqualTo(from.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)));
+    this.dialog.YesNoQuestion(this.settings.lang.transfer + " " + await deliveries + " " + this.settings.lang.deliveriesFrom + '"' + from.name.value + '"' + " " + this.settings.lang.toVolunteer + " " + '"' + to.name.value + '"', async () => {
+      await this.busy.doWhileShowingBusy(async () => {
+        let message = await AsignFamilyComponent.moveDeliveriesBetweenVolunteers(from.id.value, to.id.value);
+        if (message) {
+          this.dialog.Info(message);
+          await this.familyLists.reload();
+          let h = await this.context.for(Helpers).lookupAsync(to.id);
+          await this.context.openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
+        }
+      });
+    });
+  }
+  moveBasketsToOtherVolunteer() {
+    this.context.openDialog(
+      SelectHelperComponent, s => s.args = {
+        filter: h => h.id.isDifferentFrom(this.familyLists.helper.id),
+        hideRecent: true,
+        onSelect: async to => {
+          if (to) {
+            this.moveBasketsTo(to);
+          }
+        }
+      });
+  }
+  async refreshDependentVolunteers() {
+    this.otherDependentVolunteers = [];
+    if (this.familyLists.helper.leadHelper.value) {
+      this.otherDependentVolunteers.push(this.context.for(Helpers).lookup(this.familyLists.helper.leadHelper));
+    }
+    this.otherDependentVolunteers.push(...await this.context.for(Helpers).find({ where: h => h.leadHelper.isEqualTo(this.familyLists.helper.id) }));
+  }
+  otherDependentVolunteers: Helpers[] = [];
 
   allDoneMessage() { return ApplicationSettings.get(this.context).messageForDoneDelivery.value; };
   async deliveredToFamily(f: ActiveFamilyDeliveries) {
@@ -489,7 +527,7 @@ export class HelperFamiliesComponent implements OnInit {
   prepareMessage(reminder: boolean) {
     this.isReminderMessage = reminder;
     this.busy.donotWait(async () => {
-      await SendSmsAction.generateMessage(this.context, this.familyLists.helper, window.origin, reminder, this.context.user.name,async (phone, message, sender, link) => {
+      await SendSmsAction.generateMessage(this.context, this.familyLists.helper, window.origin, reminder, this.context.user.name, async (phone, message, sender, link) => {
         this.smsMessage = message;
         this.smsPhone = phone;
         this.smsLink = link;
@@ -511,7 +549,7 @@ export class HelperFamiliesComponent implements OnInit {
         title: 'הוסף הערה לתכתובות של המתנדב',
 
         save: async (comment) => {
-          let hist = this.context.for((await import ('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
+          let hist = this.context.for((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
           hist.volunteer.value = this.familyLists.helper.id.value;
           hist.comment.value = comment;
           await hist.save();

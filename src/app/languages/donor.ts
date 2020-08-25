@@ -207,7 +207,7 @@ export class donor implements Language {
   deliveriesFor = 'משלוחים עבור';
   archiveCurrentDelivery = 'העבר משלוח נוכחי לארכיב?';
   archiveHelper = 'מחק מתנדב';
-  freezeHelper = 'עדכן נתוני הקפאת מתנדב';
+  freezeHelper = 'הקפא מתנדב';
   helperInternalComment = 'הערה פנימית לגבי מתנדב';
   frozenTill = 'תאריך סיום הקפאה';
   maxDeliveriesBeforeBusy = 'מספר משלוחים להגדרת מתנדב עסוק';
@@ -763,4 +763,9 @@ export class donor implements Language {
   doneDotGotoDeliveries = 'התהליך הסתיים בהצלחה, לעבור למסך משלוחים?';
   notDoneDeliveriesShouldArchiveThem = 'משלוחים שטרם שוייכו, האם להעביר אותם לארכיב?';
   deliveresOnTheWayAssignedInTheLast3Hours = 'משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך ביצירת משלוח חדש?';
+  leadHelper = 'מתנדב מוביל';
+  movedFrom = 'הועברו מ';
+  to = 'ל';
+  moveDeliveriesToAnotherVolunteer = 'העבר משלוחים למתנדב אחר';
+  moveDeliveriesTo = 'העבר משלוחים ל';
 }

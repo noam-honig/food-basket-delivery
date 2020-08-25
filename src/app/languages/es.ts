@@ -763,4 +763,9 @@ export class es implements Language {
   doneDotGotoDeliveries = 'Listo, ¿pasar a entregas activas?';
   notDoneDeliveriesShouldArchiveThem = 'Entregas no asignadas, ¿continuar con la creación de un nuevo evento?';
   deliveresOnTheWayAssignedInTheLast3Hours = 'Entregas que fueron asignadas en las últimas 3 horas y aún no se entregaron, ¿proceder con la apertura de un nuevo evento?';
+  leadHelper = 'Voluntario líder';
+  movedFrom = 'Movido de';
+  to = 'A';
+  moveDeliveriesToAnotherVolunteer = 'Reenviar las entregas a otro voluntario';
+  moveDeliveriesTo = 'Reenviar envíos a';
 }

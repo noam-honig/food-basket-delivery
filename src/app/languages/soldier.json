@@ -1353,7 +1353,7 @@
   },
   "frozenTill": {
     "google": "תאריך סיום הקפאה",
-    "valueInCode": "תאריך סיום הקפאה"
+    "valueInCode": "מוקפא עד לתאריך"
   },
   "GeocodeComponent": {
     "google": "GEOCODE",
@@ -1551,6 +1551,10 @@
     "google": "משתמש מעדכן",
     "valueInCode": "משתמש מעדכן"
   },
+  "leadHelper": {
+    "google": "מתנדב מוביל",
+    "valueInCode": "מתנדב מוביל"
+  },
   "left": {
     "google": "יצא",
     "valueInCode": "יצא"
@@ -1706,6 +1710,18 @@
   "moreVolunteers": {
     "google": "עוד מתנדבים",
     "valueInCode": "עוד מתנדבים"
+  },
+  "moveDeliveriesTo": {
+    "google": "העבר משלוחים ל",
+    "valueInCode": "העבר משלוחים ל"
+  },
+  "moveDeliveriesToAnotherVolunteer": {
+    "google": "העבר משלוחים למתנדב אחר",
+    "valueInCode": "העבר משלוחים למתנדב אחר"
+  },
+  "movedFrom": {
+    "google": "הועברו מ",
+    "valueInCode": "הועברו מ"
   },
   "moveTheFamily": {
     "google": "להעביר את משפחת",
@@ -2738,6 +2754,10 @@
   "timeToDisconnect": {
     "google": "זמן בדקות לניתוק אוטומטית",
     "valueInCode": "זמן בדקות לניתוק אוטומטית"
+  },
+  "to": {
+    "google": "ל",
+    "valueInCode": "ל"
   },
   "toDate": {
     "google": "עד תאריך",
