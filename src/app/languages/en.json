@@ -2793,6 +2793,10 @@
     "valueInCode": "הצג שיוך משלוחים ל",
     "custom": "Show deliveries for"
   },
+  "showDeletedHelpers": {
+    "google": "View deleted volunteers",
+    "valueInCode": "הצג מתנדבים מחוקים"
+  },
   "showDistCenterAsEndAddressForVolunteer": {
     "google": "View distribution list addresses as a volunteer endpoint",
     "valueInCode": "הצג כתובות רשימת חלוקה כנקודת סיום למתנדב"
@@ -3057,6 +3061,10 @@
   "twoHours": {
     "google": "Two hours",
     "valueInCode": "שעתיים"
+  },
+  "unArchiveHelper": {
+    "google": "Undelete a volunteer",
+    "valueInCode": "בטל מחיקת מתנדב"
   },
   "unAsigned": {
     "google": "Not yet associated",

@@ -58,6 +58,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
     this.searchString = '';
     this.helpers.getRecords();
   }
+  showDeleted = false;
   searchString: string = '';
   numOfColsInGrid = 4;
   helpers = this.context.for(Helpers).gridSettings({
@@ -66,7 +67,8 @@ export class HelpersComponent implements OnInit, OnDestroy {
     allowInsert: true,
     allowUpdate: true,
     knowTotalRows: true,
-    rowCssClass: h => (h.isFrozen.value ? 'forzen' : '' ),
+
+    rowCssClass: h => (h.archive.value ? 'deliveredProblem' : h.isFrozen.value ? 'forzen' : ''),
 
     gridButtons: [
       {
@@ -80,6 +82,13 @@ export class HelpersComponent implements OnInit, OnDestroy {
             });
         }
         , visible: () => this.context.isAllowed(Roles.admin)
+      },
+      {
+        name: use.language.showDeletedHelpers,
+        click: () => {
+          this.showDeleted = !this.showDeleted;
+          this.helpers.getRecords();
+        }
       },
       {
         name: use.language.clearAllVolunteerComments,
@@ -160,8 +169,12 @@ export class HelpersComponent implements OnInit, OnDestroy {
         name: use.language.archiveHelper,
         visible: () => this.context.isAllowed(Roles.admin),
         click: async h => {
-          await h.deactivate();
-          this.helpers.items.splice(this.helpers.items.indexOf(h), 1);
+          if (h.archive.value)
+            await h.reactivate();
+          else {
+            await h.deactivate();
+            this.helpers.items.splice(this.helpers.items.indexOf(h), 1);
+          }
         }
       },
       {
@@ -177,7 +190,10 @@ export class HelpersComponent implements OnInit, OnDestroy {
       orderBy: h => [h.name],
       limit: 25,
       where: h => {
-        return h.name.isContains(this.searchString).and(h.archive.isEqualTo(false));
+        let r = h.name.isContains(this.searchString);
+        if (this.showDeleted)
+          return r;
+        else return r.and(h.archive.isEqualTo(false));
       }
     },
     columnSettings: helpers => {

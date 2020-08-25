@@ -891,6 +891,8 @@ export class Language {
   to = "ל";
   moveDeliveriesToAnotherVolunteer = "העבר משלוחים למתנדב אחר";
   moveDeliveriesTo = "העבר משלוחים ל";
+  showDeletedHelpers = 'הצג מתנדבים מחוקים';
+  unArchiveHelper = "בטל מחיקת מתנדב";
 }
 
 const defaultLang = new Language();

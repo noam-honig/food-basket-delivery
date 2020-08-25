@@ -768,4 +768,6 @@ export class en implements Language {
   to = 'To';
   moveDeliveriesToAnotherVolunteer = 'Forward deliveries to another volunteer';
   moveDeliveriesTo = 'Forward shipments to';
+  showDeletedHelpers = 'View deleted volunteers';
+  unArchiveHelper = 'Undelete a volunteer';
 }

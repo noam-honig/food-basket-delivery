@@ -768,4 +768,6 @@ export class es implements Language {
   to = 'A';
   moveDeliveriesToAnotherVolunteer = 'Reenviar las entregas a otro voluntario';
   moveDeliveriesTo = 'Reenviar envíos a';
+  showDeletedHelpers = 'Ver voluntarios eliminados';
+  unArchiveHelper = 'Recuperar un voluntario';
 }

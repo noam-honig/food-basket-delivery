@@ -768,4 +768,6 @@ export class italy implements Language {
   to = 'Per';
   moveDeliveriesToAnotherVolunteer = 'Inoltra le consegne a un altro volontario';
   moveDeliveriesTo = 'Spedizioni inoltrate a';
+  showDeletedHelpers = 'Visualizza i volontari eliminati';
+  unArchiveHelper = "Annulla l'eliminazione di un volontario";
 }
