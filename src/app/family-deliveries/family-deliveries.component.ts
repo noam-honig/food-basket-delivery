@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import { Context, DataControlSettings, FilterBase, AndFilter, BusyService, packWhere, ServerFunction, unpackWhere, EntityWhere, GridButton, RowButton, GridSettings, DataControlInfo } from '@remult/core';
+import { Context, DataControlSettings, FilterBase, AndFilter, BusyService, packWhere, ServerFunction, unpackWhere, EntityWhere, GridButton, RowButton, GridSettings, DataControlInfo, SqlDatabase } from '@remult/core';
 
 import { FamilyDeliveresStatistics, FamilyDeliveryStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
@@ -26,6 +26,7 @@ import { Helpers } from '../helpers/helpers';
 
 import { sortColumns } from '../shared/utils';
 import { getLang } from '../sites/sites';
+import { SqlBuilder } from '../model-shared/types';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -660,6 +661,35 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       count: await this.context.for(ActiveFamilyDeliveries).count(where),
       where: where
     };
+  }
+
+  
+  @ServerFunction({ allowed: Roles.lab })
+  static async getDeliveriesByPhone(phoneNum: string, context?: Context, db?: SqlDatabase) {
+    let sql1 = new SqlBuilder();
+    let fd = context.for(FamilyDeliveries).create();
+    let result : string[] = [];
+    let courier = await (await context.for(Helpers).findFirst(i => i.phone.isEqualTo(phoneNum)));
+
+    for (const d of (await db.execute(sql1.query({
+      from: fd,
+      where: () => [
+        (courier != undefined ? fd.courier.isEqualTo(courier.id).and(fd.active()) :
+        sql1.or(
+          fd.phone1.isEqualTo(phoneNum).and(fd.active()),
+          fd.phone2.isEqualTo(phoneNum).and(fd.active()),
+          fd.phone3.isEqualTo(phoneNum).and(fd.active()),
+          fd.phone4.isEqualTo(phoneNum).and(fd.active()))
+        )
+      ],
+      select: () => [
+        sql1.columnWithAlias(fd.id, "id"),
+      ],
+    }))).rows) {
+      result.push(d.id)
+    }
+
+    return result;
   }
 
   @ServerFunction({ allowed: Roles.distCenterAdmin })
