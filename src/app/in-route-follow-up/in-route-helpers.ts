@@ -13,8 +13,8 @@ import { EditCommentDialogComponent } from "../edit-comment-dialog/edit-comment-
 
 @EntityClass
 export class InRouteHelpers extends IdEntity {
-    showHistory() {
-        this.context.openDialog(GridDialogComponent, gridDialog => gridDialog.args = {
+    async showHistory() {
+        await this.context.openDialog(GridDialogComponent, gridDialog => gridDialog.args = {
             title: 'היסטוריה עבור ' + this.name.value,
             buttons: [{
                 text: 'הוסף',
@@ -67,19 +67,22 @@ export class InRouteHelpers extends IdEntity {
                 }
             })
         });
+        this.reload();
     }
     async showAssignment() {
         let h = await this.context.for(Helpers).findId(this.id);
-        this.context.openDialog(
-            HelperAssignmentComponent, s => s.argsHelper = h)
+        await this.context.openDialog(
+            HelperAssignmentComponent, s => s.argsHelper = h);
+        this.reload();
+
     }
     name = new StringColumn(getLang(this.context).volunteerName);
     messageStatus = new MessageStatusColumn({ dataControlSettings: () => ({ width: '100' }) });
     minDeliveryCreateDate = new DateTimeColumn({ caption: "תאריך הקצאה", dataControlSettings: () => ({ width: '100' }) });
     lastCommunicationDate = new DateTimeColumn({ caption: "תאריך תקשורת אחרונה", dataControlSettings: () => ({ width: '100' }) });
-    deliveriesInProgress = new NumberColumn({caption:getLang(this.context).delveriesInProgress, dataControlSettings: () => ({ width: '100' }) });
+    deliveriesInProgress = new NumberColumn({ caption: getLang(this.context).delveriesInProgress, dataControlSettings: () => ({ width: '100' }) });
     maxAssignDate = new DateTimeColumn({ caption: "תאריך שיוך אחרון", dataControlSettings: () => ({ width: '100' }) });
-    completedDeliveries = new NumberColumn({caption:"איסופים מוצלחים", dataControlSettings: () => ({ width: '100' }) });
+    completedDeliveries = new NumberColumn({ caption: "איסופים מוצלחים", dataControlSettings: () => ({ width: '100' }) });
     constructor(private context: Context) {
         super({
             name: 'in-route-helpers',
