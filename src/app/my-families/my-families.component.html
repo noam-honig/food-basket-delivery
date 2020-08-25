@@ -12,7 +12,7 @@
         style="height: 35px;" color="primary">
         {{settings.lang.removeQRCode}}
     </button>
-    <button mat-mini-fab style="margin-bottom:5px" (click)="ngOnInit()" color="primary">
+    <button mat-mini-fab style="margin-bottom:5px" (click)="ngOnInit(); this.showQRCode=false" color="primary">
         <mat-icon>refresh</mat-icon>
     </button>
 </div>
