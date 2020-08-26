@@ -219,7 +219,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   onMapLocation: Location;
   showOnMap() {
     if (!this.onMapLocation)
-      this.onMapLocation = this.families.currentRow.getGeocodeInformation().location();
+      this.onMapLocation = this.families.currentRow.addressApiResult.location();
     this.context.openDialog(ShowOnMapComponent, x => x.args = {
       location: this.onMapLocation
     });

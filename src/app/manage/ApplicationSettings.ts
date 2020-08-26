@@ -1,5 +1,5 @@
 import { StringColumn, NumberColumn, BoolColumn, ValueListColumn, ServerFunction } from '@remult/core';
-import { GeocodeInformation, GetGeoInformation } from "../shared/googleApiHelpers";
+import { GeocodeInformation, GetGeoInformation, AddressApiResultColumn } from "../shared/googleApiHelpers";
 import { Entity, Context, EntityClass } from '@remult/core';
 import { PhoneColumn, logChanges } from "../model-shared/types";
 import { Roles } from "../auth/roles";
@@ -184,18 +184,11 @@ export class ApplicationSettings extends Entity<number>  {
   BusyHelperAllowedFreq_nom = new NumberColumn(this.lang.maxDeliveriesBeforeBusy);
   BusyHelperAllowedFreq_denom = new NumberColumn(this.lang.daysCountForBusy);
 
-  addressApiResult = new StringColumn();
+  addressApiResult = new AddressApiResultColumn();
   defaultStatusType = new DeliveryStatusColumn(this.context, {
     caption: this.lang.defaultStatusType
   }, [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup]);
-  private _lastString: string;
-  private _lastGeo: GeocodeInformation;
-  getGeocodeInformation() {
-    if (this._lastString == this.addressApiResult.value)
-      return this._lastGeo ? this._lastGeo : new GeocodeInformation();
-    this._lastString = this.addressApiResult.value;
-    return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
-  }
+
   boxes1Name = new StringColumn(this.lang.boxes1NameCaption);
   boxes2Name = new StringColumn(this.lang.boxes2NameCaption);
   familyCustom1Caption = new StringColumn({ caption: this.lang.customColumn + " 1 " + this.lang.caption, includeInApi: Roles.admin });
@@ -216,7 +209,7 @@ export class ApplicationSettings extends Entity<number>  {
       allowApiUpdate: Roles.admin,
       saving: async () => {
         if (context.onServer) {
-          if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
+          if (this.address.value != this.address.originalValue || !this.addressApiResult.ok()) {
             let geo = await GetGeoInformation(this.address.value, context);
             this.addressApiResult.value = geo.saveToString();
             if (geo.ok()) {

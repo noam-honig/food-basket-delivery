@@ -7,7 +7,7 @@ import { SqlBuilder, PhoneColumn, EmailColumn, delayWhileTyping, wasChanged, cha
 import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, FilterBase, ColumnOptions, SpecificEntityHelper, Entity, DataArealColumnSetting, InMemoryDataProvider, ServerContext, SelectValueDialogComponent } from '@remult/core';
 import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
 
-import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress } from "../shared/googleApiHelpers";
+import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress, AddressApiResultColumn } from "../shared/googleApiHelpers";
 import { ApplicationSettings, CustomColumn } from "../manage/ApplicationSettings";
 
 import * as fetch from 'node-fetch';
@@ -158,7 +158,7 @@ export class Families extends IdEntity {
       }
     }
 
-    let newDelivery = this.createDelivery(await dialog.getDistCenter(this.getGeocodeInformation().location()));
+    let newDelivery = this.createDelivery(await dialog.getDistCenter(this.addressApiResult.location()));
     let arciveCurrentDelivery = new BoolColumn({ caption: getLang(this.context).archiveCurrentDelivery, defaultValue: true });
     if (args.copyFrom != undefined) {
       newDelivery.copyFrom(args.copyFrom);
@@ -238,7 +238,7 @@ export class Families extends IdEntity {
     let f = await context.for(Families).findId(familyId);
     if (f) {
       if (settings.distCenter == allCentersToken)
-        settings.distCenter = await findClosestDistCenter(f.getGeocodeInformation().location(), context);
+        settings.distCenter = await findClosestDistCenter(f.addressApiResult.location(), context);
       let fd = f.createDelivery(settings.distCenter);
       fd.basketType.value = settings.basketType;
       fd.quantity.value = settings.quantity;
@@ -337,7 +337,7 @@ export class Families extends IdEntity {
               this.quantity.value = 1;
 
 
-            if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
+            if (this.address.value != this.address.originalValue || !this.addressApiResult.ok()) {
               await this.reloadGeoCoding();
             }
             if (this.isNew()) {
@@ -474,7 +474,7 @@ export class Families extends IdEntity {
   addressComment = new StringColumn(getLang(this.context).addressComment);
   postalCode = new NumberColumn(getLang(this.context).postalCode);
   deliveryComments = new StringColumn(getLang(this.context).defaultDeliveryComment);
-  addressApiResult = new StringColumn();
+  addressApiResult = new AddressApiResultColumn();
 
   phone1 = new PhoneColumn({ caption: getLang(this.context).phone1, dbName: 'phone', valueChange: () => this.delayCheckDuplicateFamilies() });
   phone1Description = new StringColumn(getLang(this.context).phone1Description);
@@ -490,7 +490,7 @@ export class Families extends IdEntity {
   status = new FamilyStatusColumn(this.context);
   statusDate = new changeDate(getLang(this.context).statusChangeDate);
   statusUser = new HelperIdReadonly(this.context, getLang(this.context).statusChangeUser);
-  fixedCourier = new HelperId(this.context, getLang(this.context).defaultVolunteer, { location: () => this.getGeocodeInformation().location(), searchClosestDefaultFamily: true });
+  fixedCourier = new HelperId(this.context, getLang(this.context).defaultVolunteer, { location: () => this.addressApiResult.location(), searchClosestDefaultFamily: true });
   custom1 = new CustomColumn(1);
   custom2 = new CustomColumn(2);
   custom3 = new CustomColumn(3);
@@ -523,7 +523,7 @@ export class Families extends IdEntity {
   async setPostalCodeServerOnly() {
     if (!process.env.AUTO_POSTAL_CODE)
       return;
-    var geo = this.getGeocodeInformation();
+    var geo = this.addressApiResult.getGeocodeInformation();
     var house = '';
     var streen = '';
     var location = '';
@@ -657,29 +657,21 @@ export class Families extends IdEntity {
 
   openWaze() {
     //window.open('https://waze.com/ul?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + 'export &navigate=yes', '_blank');
-    window.open('waze://?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + '&navigate=yes');
+    window.open('waze://?ll=' + this.addressApiResult.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + '&navigate=yes');
   }
   openGoogleMaps() {
     window.open('https://www.google.com/maps/search/?api=1&hl=' + getLang(this.context).languageCode + '&query=' + this.address.value, '_blank');
   }
   showOnGoogleMaps() {
-    window.open('https://maps.google.com/maps?q=' + this.getGeocodeInformation().getlonglat() + '&hl=' + getLang(this.context).languageCode, '_blank');
+    window.open('https://maps.google.com/maps?q=' + this.addressApiResult.getGeocodeInformation().getlonglat() + '&hl=' + getLang(this.context).languageCode, '_blank');
   }
   showOnGovMap() {
-    let x = this.getGeocodeInformation().location();
     window.open('https://www.govmap.gov.il/?q=' + this.address.value + '&z=10', '_blank');
   }
 
 
 
-  private _lastString: string;
-  private _lastGeo: GeocodeInformation;
-  getGeocodeInformation() {
-    if (this._lastString == this.addressApiResult.value)
-      return this._lastGeo ? this._lastGeo : new GeocodeInformation();
-    this._lastString = this.addressApiResult.value;
-    return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
-  }
+ 
 
   static SendMessageToBrowsers = (s: string, context: Context, distCenter: string) => { };
   static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string, context: Context) {

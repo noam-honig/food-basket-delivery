@@ -1,5 +1,5 @@
 import { IdEntity, EntityClass, StringColumn, Context, IdColumn, ColumnOptions, AndFilter, BoolColumn } from "@remult/core";
-import { GeocodeInformation, GetGeoInformation, GetDistanceBetween, Location } from "../shared/googleApiHelpers";
+import { GeocodeInformation, GetGeoInformation, GetDistanceBetween, Location, AddressApiResultColumn } from "../shared/googleApiHelpers";
 import { HasAsyncGetTheValue, PhoneColumn } from "../model-shared/types";
 import { Roles } from "../auth/roles";
 import { HelperUserInfo } from "../helpers/helpers";
@@ -15,7 +15,7 @@ export class DistributionCenters extends IdEntity {
   name = new StringColumn({ caption: getLang(this.context).distributionCenterName });
   semel = new StringColumn({ caption: getLang(this.context).distributionCenterUniqueId });
   address = new StringColumn(getLang(this.context).deliveryCenterAddress);
-  addressApiResult = new StringColumn();
+  addressApiResult = new AddressApiResultColumn();
   comments = new StringColumn(getLang(this.context).distributionCenterComment);
   phone1 = new PhoneColumn(getLang(this.context).phone1);
   phone1Description = new StringColumn(getLang(this.context).phone1Description);
@@ -23,17 +23,10 @@ export class DistributionCenters extends IdEntity {
   phone2Description = new StringColumn(getLang(this.context).phone2Description);
   isFrozen = new BoolColumn(getLang(this.context).frozen);
   
-  private _lastString: string;
-  private _lastGeo: GeocodeInformation;
-  getGeocodeInformation() {
-    if (this._lastString == this.addressApiResult.value)
-      return this._lastGeo ? this._lastGeo : new GeocodeInformation();
-    this._lastString = this.addressApiResult.value;
-    return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
-  }
+ 
   openWaze() {
     //window.open('https://waze.com/ul?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + 'export &navigate=yes', '_blank');
-    window.open('waze://?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + '&navigate=yes');
+    window.open('waze://?ll=' + this.addressApiResult.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + '&navigate=yes');
   }
 
 
@@ -47,7 +40,7 @@ export class DistributionCenters extends IdEntity {
 
       saving: async () => {
         if (context.onServer) {
-          if (this.address.value != this.address.originalValue || !this.getGeocodeInformation().ok()) {
+          if (this.address.value != this.address.originalValue || !this.addressApiResult.ok()) {
             let geo = await GetGeoInformation(this.address.value, context);
             this.addressApiResult.value = geo.saveToString();
             if (geo.ok()) {
@@ -87,9 +80,9 @@ export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValu
   }
   async getRouteStartGeo() {
     let d = await this.context.for(DistributionCenters).lookupAsync(this);
-    if (d.addressApiResult.value && d.address.value && d.getGeocodeInformation().ok())
-      return d.getGeocodeInformation();
-    return (await ApplicationSettings.getAsync(this.context)).getGeocodeInformation();
+    if (d.addressApiResult.value && d.address.value && d.addressApiResult.ok())
+      return d.addressApiResult.getGeocodeInformation();
+    return (await ApplicationSettings.getAsync(this.context)).addressApiResult.getGeocodeInformation();
   }
 
   constructor(private context: Context, settingsOrCaption?: ColumnOptions<string>, showAllOption?: boolean) {
@@ -129,7 +122,7 @@ export async function findClosestDistCenter(loc: Location, context: Context, cen
   if (!centers)
     centers = await context.for(DistributionCenters).find({where: c => c.isFrozen.isEqualTo(false)});
   for (const c of centers) {
-    let myDist = GetDistanceBetween(c.getGeocodeInformation().location(), loc);
+    let myDist = GetDistanceBetween(c.addressApiResult.location(), loc);
     if (result===undefined || myDist < dist) {
       result = c.id.value;
       dist = myDist;

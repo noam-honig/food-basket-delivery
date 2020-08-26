@@ -215,7 +215,7 @@ export class MapComponent implements OnInit, OnDestroy {
     private async initMap() {
         if (!this.mapInit) {
             if (!this.center) {
-                var x = (await ApplicationSettings.get(this.context)).getGeocodeInformation().location();
+                var x = (await ApplicationSettings.get(this.context)).addressApiResult.location();
                 this.center = new google.maps.LatLng(x.lat, x.lng);
             }
             var mapProp: google.maps.MapOptions = {

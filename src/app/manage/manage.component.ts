@@ -120,7 +120,7 @@ export class ManageComponent implements OnInit {
               d.address,
               {
                 caption: this.settings.lang.addressByGoogle,
-                getValue: () => d.getGeocodeInformation().getAddress()
+                getValue: () => d.addressApiResult.getGeocodeInformation().getAddress()
               },
               d.comments,
               [d.phone1, d.phone1Description],
@@ -141,7 +141,7 @@ export class ManageComponent implements OnInit {
       },
       {
         caption: this.settings.lang.addressByGoogle,
-        getValue: s => s.getGeocodeInformation().getAddress()
+        getValue: s => s.addressApiResult.getGeocodeInformation().getAddress()
       },
       x.comments,
       x.isFrozen,
@@ -211,7 +211,7 @@ export class ManageComponent implements OnInit {
       this.settings.address,
       {
         caption: 'כתובת כפי שגוגל הבין',
-        getValue: s => this.settings.getGeocodeInformation().getAddress()
+        getValue: s => this.settings.addressApiResult.getGeocodeInformation().getAddress()
       }
 
     ]

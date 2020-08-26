@@ -735,14 +735,14 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
                 if (locationReferenceFamilies.length == 0) {
 
-                    let distCenter = settings.getGeocodeInformation().location();
+                    let distCenter = settings.addressApiResult.location();
                     let lastFamiliy = waitingFamilies[0];
-                    if (helper.getGeocodeInformation().ok()) {
+                    if (helper.addressApiResult.ok()) {
                         lastFamiliy = undefined;
                         var lastDist: number;
                         for (const f of waitingFamilies) {
 
-                            let dist = GetDistanceBetween(f, helper.getGeocodeInformation().location());
+                            let dist = GetDistanceBetween(f, helper.addressApiResult.location());
                             if (!lastFamiliy || dist < lastDist) {
                                 lastFamiliy = f;
                                 lastDist = dist;

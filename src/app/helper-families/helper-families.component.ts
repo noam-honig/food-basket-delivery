@@ -590,7 +590,7 @@ export class HelperFamiliesComponent implements OnInit {
       cancel: () => { }
     });
   }
-  routeStart = this.settings.getGeocodeInformation();
+  routeStart = this.settings.addressApiResult.getGeocodeInformation();
   async showRouteOnGoogleMaps() {
 
     if (this.familyLists.toDeliver.length > 0) {

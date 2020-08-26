@@ -38,7 +38,7 @@ export async function GetGeoInformation(address: string, context: Context) {
             address: address,
             language: settings.lang.languageCode,
             //,            components: 'country:' + settings.googleMapCountry()
-            
+
         });
         if (!isGpsAddress(address)) {
             u.addObject({
@@ -349,4 +349,20 @@ export function leaveOnlyNumericChars(x: string) {
 }
 export function GetDistanceBetween(a: Location, b: Location) {
     return geometry.computeDistanceBetween(a, b) / 1000;
+}
+export class AddressApiResultColumn extends StringColumn {
+    private _lastString: string;
+    private _lastGeo: GeocodeInformation;
+    getGeocodeInformation() {
+        if (this._lastString == this.value)
+            return this._lastGeo ? this._lastGeo : new GeocodeInformation();
+        this._lastString = this.value;
+        return this._lastGeo = GeocodeInformation.fromString(this.value);
+    }
+    ok(){
+        return this.getGeocodeInformation().ok();
+    }
+    location(){
+        return this.getGeocodeInformation().location();
+    }
 }

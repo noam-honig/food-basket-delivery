@@ -11,7 +11,7 @@ import { JWTCookieAuthorizationHelper } from '@remult/server';
 import { DistributionCenterId } from '../manage/distribution-centers';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 import { getLang } from '../sites/sites';
-import { GeocodeInformation, GetGeoInformation, Location } from '../shared/googleApiHelpers';
+import { GeocodeInformation, GetGeoInformation, Location, AddressApiResultColumn } from '../shared/googleApiHelpers';
 import { routeStats } from '../asign-family/route-strategy';
 import { Sites } from '../sites/sites';
 import { getSettings } from '../manage/ApplicationSettings';
@@ -274,11 +274,11 @@ export class Helpers extends HelpersBase {
                             await h.save();
                         }
                     }
-                    if (wasChanged(this.preferredDistributionAreaAddress) || !this.getGeocodeInformation().ok()) {
+                    if (wasChanged(this.preferredDistributionAreaAddress) || !this.addressApiResult.ok()) {
                         let geo = await GetGeoInformation(this.preferredDistributionAreaAddress.value, context);
                         this.addressApiResult.value = geo.saveToString();
                     }
-                    if (wasChanged(this.preferredDistributionAreaAddress2) || !this.getGeocodeInformation2().ok()) {
+                    if (wasChanged(this.preferredDistributionAreaAddress2) || !this.addressApiResult2.ok()) {
                         let geo = await GetGeoInformation(this.preferredDistributionAreaAddress2.value, context);
                         this.addressApiResult2.value = geo.saveToString();
                     }
@@ -331,9 +331,8 @@ export class Helpers extends HelpersBase {
     socialSecurityNumber = new StringColumn(getLang(this.context).socialSecurityNumber);
     email = new EmailColumn();
     preferredDistributionAreaAddress = new StringColumn(getLang(this.context).preferredDistributionArea);
-    addressApiResult = new StringColumn();
-    private _lastString: string;
-    private _lastGeo: GeocodeInformation;
+    addressApiResult = new AddressApiResultColumn();
+    
     async setAsDefaultVolunteerToDeliveries(busy: BusyService, deliveries: import("../families/FamilyDeliveries").FamilyDeliveries[], dialog: DialogService) {
         let ids: string[] = [];
         let i = 0;
@@ -368,22 +367,10 @@ export class Helpers extends HelpersBase {
         dialog.Info(i + " " + getLang(this.context).familiesUpdated);
     }
 
-    getGeocodeInformation() {
-        if (this._lastString == this.addressApiResult.value)
-            return this._lastGeo ? this._lastGeo : new GeocodeInformation();
-        this._lastString = this.addressApiResult.value;
-        return this._lastGeo = GeocodeInformation.fromString(this.addressApiResult.value);
-    }
+   
     preferredDistributionAreaAddress2 = new StringColumn(getLang(this.context).preferredDistributionArea2);
-    addressApiResult2 = new StringColumn();
-    private _lastString2: string;
-    private _lastGeo2: GeocodeInformation;
-    getGeocodeInformation2() {
-        if (this._lastString2 == this.addressApiResult2.value)
-            return this._lastGeo2 ? this._lastGeo2 : new GeocodeInformation();
-        this._lastString2 = this.addressApiResult2.value;
-        return this._lastGeo2 = GeocodeInformation.fromString(this.addressApiResult2.value);
-    }
+    addressApiResult2 = new AddressApiResultColumn();
+   
 
     password = new StringColumn({ caption: getLang(this.context).password, dataControlSettings: () => ({ inputType: 'password' }), serverExpression: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
 
