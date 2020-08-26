@@ -20,6 +20,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Families } from '../families/families';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { MatCheckboxChange } from '@angular/material';
 @Component({
     selector: 'app-news',
     templateUrl: './news.component.html',
@@ -46,15 +47,19 @@ export class NewsComponent implements OnInit, OnDestroy {
 
 
     }
-    cancelNeedWork(n: ActiveFamilyDeliveries) {
-        this.dialog.YesNoQuestion(this.settings.lang.removeFollowUpFor + ' "' + n.name.value + '"?', async () => {
-            let f = await this.context.for(ActiveFamilyDeliveries).findFirst(fam => fam.id.isEqualTo(n.id));
-            f.needsWork.value = false;
-            await f.save();
-            n.needsWork.value = false;
+    shouldShowNeedsWork = new Map<string, boolean>();
+    showNeedsWork(n: ActiveFamilyDeliveries) {
+        if (!this.shouldShowNeedsWork.has(n.id.value)) {
+            this.shouldShowNeedsWork.set(n.id.value, n.needsWork.value);
+        }
+        return this.shouldShowNeedsWork.get(n.id.value);
 
-        });
     }
+    needWorkWasChanged(n: ActiveFamilyDeliveries, args: MatCheckboxChange) {
+        n.needsWork.value = !args.checked;
+        this.busy.donotWait(async ()=> await n.save());
+    }
+   
     async showHelper(n: ActiveFamilyDeliveries) {
         this.context.openDialog(
             HelperAssignmentComponent, s => s.argsHelper = this.context.for(Helpers).lookup(n.courier));
@@ -63,7 +68,7 @@ export class NewsComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.destroyHelper.destroy();
     }
-    news: ActiveFamilyDeliveries[] = [];
+    news: FamilyDeliveries[] = [];
     familySources: familySource[] = [{ id: undefined, name: this.settings.lang.allFamilySources }];
 
     async ngOnInit() {
@@ -78,7 +83,7 @@ export class NewsComponent implements OnInit, OnDestroy {
     async refresh() {
 
         this.busy.donotWait(async () => {
-            this.news = await this.context.for(ActiveFamilyDeliveries).find({
+            this.news = await this.context.for(FamilyDeliveries).find({
                 where: n => {
                     return new AndFilter(this.filters.where(n), n.distributionCenter.filter(this.dialog.distCenter.value));
 

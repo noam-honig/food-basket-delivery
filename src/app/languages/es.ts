@@ -102,7 +102,7 @@ export class es implements Language {
   allRegions = 'Todas las areas';
   basketType = 'Tipo de paquete';
   numOfFamilies = 'Varias familias';
-  prioritizeRepeatFamilies = 'Prioridad para familias que regresan';
+  prioritizeRepeatFamilies = 'Prefiero familias pasadas';
   inProgress = 'trabajando en ello...';
   noDeliveriesLeft = 'No quedan entregas adecuadas';
   asignClosestDelivery = 'Asignar entrega más cercana';
@@ -773,5 +773,6 @@ export class es implements Language {
   moveDeliveriesTo = 'Reenviar envíos a';
   showDeletedHelpers = 'Ver voluntarios eliminados';
   unArchiveHelper = 'Recuperar un voluntario';
-  addRepeatFamilies = 'Seleccionar familias que el voluntario ha tenido en el pasado';
+  addRepeatFamilies = 'Seleccionar de entregas pasadas';
+  isDefinedAsLeadVolunteerOf = 'Definido como el voluntario líder de';
 }

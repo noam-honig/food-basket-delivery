@@ -102,7 +102,7 @@ export class italy implements Language {
   allRegions = 'Tutte le aree';
   basketType = 'Tipo di pacco';
   numOfFamilies = 'Diverse famiglie';
-  prioritizeRepeatFamilies = 'Priorità per il ritorno delle famiglie';
+  prioritizeRepeatFamilies = 'Preferisci le famiglie del passato';
   inProgress = 'lavorando su di esso...';
   noDeliveriesLeft = 'Non sono rimaste consegne adeguate';
   asignClosestDelivery = 'Assegna la consegna più vicina';
@@ -773,5 +773,6 @@ export class italy implements Language {
   moveDeliveriesTo = 'Spedizioni inoltrate a';
   showDeletedHelpers = 'Visualizza i volontari eliminati';
   unArchiveHelper = "Annulla l'eliminazione di un volontario";
-  addRepeatFamilies = 'Selezione delle famiglie che il volontario ha avuto in passato';
+  addRepeatFamilies = 'Scegli tra le consegne precedenti';
+  isDefinedAsLeadVolunteerOf = 'Definito come il principale volontario di';
 }

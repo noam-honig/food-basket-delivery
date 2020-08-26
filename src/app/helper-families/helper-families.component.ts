@@ -32,6 +32,8 @@ import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
+import { PromiseThrottle } from '../shared/utils';
+import { moveDeliveriesHelper } from './move-deliveries-helper';
 
 
 @Component({
@@ -327,20 +329,10 @@ export class HelperFamiliesComponent implements OnInit {
     });
   }
   async moveBasketsTo(to: HelpersBase) {
-    let from = this.familyLists.helper;
-    let deliveries = this.context.for(ActiveFamilyDeliveries).count(f => f.courier.isEqualTo(from.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)));
-    this.dialog.YesNoQuestion(this.settings.lang.transfer + " " + await deliveries + " " + this.settings.lang.deliveriesFrom + '"' + from.name.value + '"' + " " + this.settings.lang.toVolunteer + " " + '"' + to.name.value + '"', async () => {
-      await this.busy.doWhileShowingBusy(async () => {
-        let message = await AsignFamilyComponent.moveDeliveriesBetweenVolunteers(from.id.value, to.id.value);
-        if (message) {
-          this.dialog.Info(message);
-          await this.familyLists.reload();
-          let h = await this.context.for(Helpers).lookupAsync(to.id);
-          await this.context.openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
-        }
-      });
-    });
+    await new moveDeliveriesHelper(this.context, this.settings, this.dialog,()=> this.familyLists.reload()).move(this.familyLists.helper, to, true);
+
   }
+
   moveBasketsToOtherVolunteer() {
     this.context.openDialog(
       SelectHelperComponent, s => s.args = {
@@ -356,10 +348,11 @@ export class HelperFamiliesComponent implements OnInit {
   async refreshDependentVolunteers() {
 
     this.otherDependentVolunteers = [];
-    if (this.familyLists.helper.leadHelper.value) {
-      this.otherDependentVolunteers.push(this.context.for(Helpers).lookup(this.familyLists.helper.leadHelper));
-    }
+
     this.busy.donotWaitNonAsync(async () => {
+      if (this.familyLists.helper.leadHelper.value) {
+        this.otherDependentVolunteers.push(await this.context.for(Helpers).lookupAsync(this.familyLists.helper.leadHelper));
+      }
       this.otherDependentVolunteers.push(...await this.context.for(Helpers).find({ where: h => h.leadHelper.isEqualTo(this.familyLists.helper.id) }));
     });
   }

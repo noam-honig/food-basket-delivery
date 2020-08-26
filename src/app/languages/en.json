@@ -77,7 +77,7 @@
   "addRepeatFamilies": {
     "google": "Selecting families that the volunteer has had in the past",
     "valueInCode": "בחירת משפחות שהמתנדב היה אצלהם בעבר",
-    "custom":"Select from past deliveries"
+    "custom": "Select from past deliveries"
   },
   "address": {
     "google": "Address",
@@ -1709,6 +1709,10 @@
     "google": "Defined as a lender of",
     "valueInCode": "מוגדר כמלווה של"
   },
+  "isDefinedAsLeadVolunteerOf": {
+    "google": "Defined as the Leading Volunteer of",
+    "valueInCode": "מוגדר המתנדב מוביל של"
+  },
   "km": {
     "google": "km",
     "valueInCode": "ק\"מ"
@@ -2294,8 +2298,8 @@
   },
   "prioritizeRepeatFamilies": {
     "google": "Priority for returning families",
-    "valueInCode": "עדיפות שהמנדב היה אצלהן",
-    "custom":"Prefer past families"
+    "valueInCode": "עדיפות למשפחות שהמנדב היה אצלהן",
+    "custom": "Prefer past families"
   },
   "problem": {
     "google": "problem",

@@ -40,6 +40,7 @@ import { Families } from '../families/families';
 
 import { HelperFamiliesComponent } from '../helper-families/helper-families.component';
 import { familiesInRoute, optimizeRoute, routeStats, routeStrategyColumn } from './route-strategy';
+import { moveDeliveriesHelper } from '../helper-families/move-deliveries-helper';
 
 
 
@@ -120,35 +121,13 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             this.familyLists.routeStats = helper.getRouteStats();
             await this.refreshList();
             if (helper.leadHelper.value && this.familyLists.toDeliver.length == 0) {
-                let message = await AsignFamilyComponent.moveDeliveriesBetweenVolunteers(helper.leadHelper.value, helper.id.value);
-                if (message) {
-                    this.dialog.Info(message);
-                    await this.familyLists.reload();
-                }
+                let from = await this.context.for(Helpers).lookupAsync(helper.leadHelper);
+                new moveDeliveriesHelper(this.context, this.settings, this.dialog, () => this.familyLists.reload()).move(from, this.familyLists.helper, false
+                    , this.settings.lang.for + " \"" + this.familyLists.helper.name.value + "\" " + this.settings.lang.isDefinedAsLeadVolunteerOf + " \"" + from.name.value + "\".")
             }
         }
     }
-    @ServerFunction({ allowed: Roles.admin })
-    static async moveDeliveriesBetweenVolunteers(from: string, to: string, context?: Context) {
-        let t = new PromiseThrottle(10);
-        let settings = getSettings(context);
-        let i = 0;
-        for await (const fd of context.for(ActiveFamilyDeliveries).iterate({ where: f => f.courier.isEqualTo(from).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) })) {
-            fd.courier.value = to;
-            fd._disableMessageToUsers = true;
-            await t.push(fd.save());
-            i++;
-        }
-        await t.done();
-        if (i) {
-            let m = i + " " + settings.lang.deliveries + " " + settings.lang.movedFrom + " " +
-                (await context.for(Helpers).lookupAsync(x => x.id.isEqualTo(from))).name.value + " " + settings.lang.to + " " +
-                (await context.for(Helpers).lookupAsync(x => x.id.isEqualTo(to))).name.value
-            Families.SendMessageToBrowsers(m, context, '');
-            return m;
-        }
-        return undefined;
-    }
+
     clearHelperInfo(clearPhone = true) {
         this.helper = undefined;
         this.area = undefined;
@@ -186,16 +165,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 hideRecent: true,
                 onSelect: async h => {
                     if (h) {
-                        let families = this.context.for(ActiveFamilyDeliveries).iterate({ where: f => f.courier.isEqualTo(h.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
-                        this.dialog.YesNoQuestion(this.settings.lang.transfer + " " + await families.count() + " " + this.settings.lang.deliveriesFrom + '"' + h.name.value + '"' + " " + this.settings.lang.toVolunteer + " " + '"' + this.helper.name.value + '"', async () => {
-                            await this.busy.doWhileShowingBusy(async () => {
-                                let message = await AsignFamilyComponent.moveDeliveriesBetweenVolunteers(h.id.value, this.helper.id.value);
-                                if (message) {
-                                    this.dialog.Info(message);
-                                    await this.familyLists.reload();
-                                }
-                            });
-                        });
+                        new moveDeliveriesHelper(this.context, this.settings, this.dialog, () => this.familyLists.reload()).move(h, this.familyLists.helper, false)
                     }
                 }
             });
@@ -286,7 +256,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
     preferRepeatFamilies = true;
     async refreshList() {
-        Promise.all([
+        await Promise.all([
             this.familyLists.initForHelper(this.helper), this.refreshBaskets()]);
 
     }
