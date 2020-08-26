@@ -123,7 +123,7 @@ class helperForm {
     if (!this.address2.value)
       this.address2.value = '';
     h.preferredDistributionAreaAddress.value = this.address1.value;
-    h.preferredDistributionAreaAddress2.value = this.address2.value;
+    h.preferredFinishAddress.value = this.address2.value;
     h.phone.value = this.phone.value;
     h.email.value = this.email.value;
     h.socialSecurityNumber.value = this.socialSecurityNumber.value;

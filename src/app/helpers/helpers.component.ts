@@ -77,7 +77,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
           await saveToExcel(this.settings, this.context.for(Helpers), this.helpers, use.language.volunteer, this.busy, (d: Helpers, c) => c == d.id || c == d.password || c == d.totalKm || c == d.totalTime || c == d.smsDate || c == d.reminderSmsDate || c == d.realStoredPassword || c == d.shortUrlKey || c == d.admin, undefined,
             async (h, addColumn) => {
               addColumn(use.language.city, h.preferredDistributionAreaAddress.getGeocodeInformation().getCity(), 's');
-              addColumn(use.language.city + "2", h.preferredDistributionAreaAddress2.getGeocodeInformation().getCity(), 's');
+              addColumn(use.language.city + "2", h.preferredFinishAddress.getGeocodeInformation().getCity(), 's');
 
             });
         }
@@ -302,7 +302,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       column: helpers.preferredDistributionAreaAddress, width: '120',
     });
     r.push({
-      column: helpers.preferredDistributionAreaAddress2, width: '120',
+      column: helpers.preferredFinishAddress, width: '120',
     });
     r.push(helpers.createDate);
 

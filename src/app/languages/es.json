@@ -1022,7 +1022,7 @@
   },
   "deliveryDetails": {
     "google": "detalles de la entrega",
-    "valueInCode": "כרטיס משלוח",
+    "valueInCode": "פרטי משלוח",
     "valueInEnglish": "Delivery Details"
   },
   "deliveryDetailsAsDisplayedToVolunteer": {
@@ -1917,7 +1917,7 @@
   },
   "isDefinedAsLeadVolunteerOf": {
     "google": "Definido como el voluntario líder de",
-    "valueInCode": "מוגדר המתנדב מוביל של",
+    "valueInCode": "מוגדר המתנדב מוביל",
     "valueInEnglish": "Defined as the Leading Volunteer of"
   },
   "km": {
@@ -2582,13 +2582,13 @@
   },
   "preferredDistributionArea": {
     "google": "Dirección de área de distribución preferida",
-    "valueInCode": "כתובת אזור חלוקה מועדף 1",
+    "valueInCode": "כתובת לאזור חלוקה",
     "valueInEnglish": "Preferred distribution area address"
   },
-  "preferredDistributionArea2": {
-    "google": "Área de distribución preferida Dirección 2",
-    "valueInCode": "כתובת אזור חלוקה מועדף 2",
-    "valueInEnglish": "Preferred Distribution Area Address 2"
+  "preferredFinishAddress": {
+    "google": "Dirección para finalizar la ruta",
+    "valueInCode": "כתובת לסיום המסלול",
+    "valueInEnglish": "Address to end the route"
   },
   "previous": {
     "google": "anterior",

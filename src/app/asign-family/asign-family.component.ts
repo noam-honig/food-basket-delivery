@@ -747,6 +747,11 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                                 lastFamiliy = f;
                                 lastDist = dist;
                             }
+                            dist = GetDistanceBetween(f, helper.preferredFinishAddress.location());
+                            if (!lastFamiliy || dist < lastDist) {
+                                lastFamiliy = f;
+                                lastDist = dist;
+                            }
                         }
 
                     } else {

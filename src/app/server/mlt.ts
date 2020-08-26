@@ -79,7 +79,7 @@ export async function createVolunteer(v: volunteer) {
             h.name.value = v.VolunteerName;
             h.phone.value = v.Telephone;
             h.preferredDistributionAreaAddress.value = v.VolunteerCity;
-            h.preferredDistributionAreaAddress2.value = v.VolunteerSecondCity;
+            h.preferredFinishAddress.value = v.VolunteerSecondCity;
             h.eventComment.value = v.SocialSecurityID;
             h.email.value = v.VolunteerEmail;
             await h.save();

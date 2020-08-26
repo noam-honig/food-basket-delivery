@@ -275,8 +275,8 @@ export class Helpers extends HelpersBase {
                         }
                     }
                     await this.preferredDistributionAreaAddress.updateApiResultIfChanged();
-                    await this.preferredDistributionAreaAddress2.updateApiResultIfChanged();
-                    
+                    await this.preferredFinishAddress.updateApiResultIfChanged();
+
                     logChanges(this, this.context, {
                         excludeColumns: [
                             this.smsDate,
@@ -326,8 +326,8 @@ export class Helpers extends HelpersBase {
     socialSecurityNumber = new StringColumn(getLang(this.context).socialSecurityNumber);
     email = new EmailColumn();
     addressApiResult = new StringColumn();
-    preferredDistributionAreaAddress = new AddressColumn(this.context,this.addressApiResult,getLang(this.context).preferredDistributionArea);
-    
+    preferredDistributionAreaAddress = new AddressColumn(this.context, this.addressApiResult, getLang(this.context).preferredDistributionArea);
+
     async setAsDefaultVolunteerToDeliveries(busy: BusyService, deliveries: import("../families/FamilyDeliveries").FamilyDeliveries[], dialog: DialogService) {
         let ids: string[] = [];
         let i = 0;
@@ -362,10 +362,17 @@ export class Helpers extends HelpersBase {
         dialog.Info(i + " " + getLang(this.context).familiesUpdated);
     }
 
-   
+
     addressApiResult2 = new StringColumn();
-    preferredDistributionAreaAddress2 = new AddressColumn(this.context,this.addressApiResult2,getLang(this.context).preferredDistributionArea2);
-   
+    preferredFinishAddress = new AddressColumn(this.context, this.addressApiResult2,
+        {
+            caption: getLang(this.context).preferredFinishAddress,
+            dbName:'preferredDistributionAreaAddress2'
+        });
+
+
+
+
 
     password = new StringColumn({ caption: getLang(this.context).password, dataControlSettings: () => ({ inputType: 'password' }), serverExpression: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
 

@@ -646,7 +646,7 @@ export class soldier implements Language {
   volunteerCanUpdatePreferredDistributionAddress = 'מתנדב יכול לעדכן אזור חלוקה מועדף';
   email = 'eMail';
   preferredDistributionArea = 'כתובת אזור חלוקה מועדף';
-  preferredDistributionArea2 = 'כתובת אזור חלוקה מועדף 2';
+  preferredFinishAddress = 'כתובת לסיום המסלול';
   doesNotExist = 'לא קיים';
   questionAddToApplication = 'האם להוסיף';
   customSmsMessage = 'הודעת SMS מותאמת';

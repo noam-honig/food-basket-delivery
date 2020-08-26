@@ -646,7 +646,7 @@ export class es implements Language {
   volunteerCanUpdatePreferredDistributionAddress = 'Un voluntario puede actualizar un área de división preferida';
   email = 'correo electrónico';
   preferredDistributionArea = 'Dirección de área de distribución preferida';
-  preferredDistributionArea2 = 'Área de distribución preferida Dirección 2';
+  preferredFinishAddress = 'Dirección para finalizar la ruta';
   doesNotExist = 'No existe';
   questionAddToApplication = 'Agregar';
   customSmsMessage = 'SMS personalizado';

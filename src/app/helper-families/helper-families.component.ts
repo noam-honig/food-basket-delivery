@@ -91,11 +91,14 @@ export class HelperFamiliesComponent implements OnInit {
       settings: {
         columnSettings: () => [
           { column: useCurrentLocation, visible: () => !this.partOfAssign && !this.partOfReview && !!navigator.geolocation },
-          strategy
+          { column: this.familyLists.helper.preferredFinishAddress, visible: () => !this.settings.isSytemForMlt() },
+          { column: strategy, visible: () => !this.familyLists.helper.preferredFinishAddress.value || this.familyLists.helper.preferredFinishAddress.value.trim().length == 0 || this.settings.isSytemForMlt() }
         ]
       },
       ok: async () => {
         await this.updateCurrentLocation(useCurrentLocation.value);
+        if (this.familyLists.helper.wasChanged())
+          await this.familyLists.helper.save();
         await this.familyLists.refreshRoute({
           strategyId: strategy.value.id,
           volunteerLocation: this.volunteerLocation
@@ -329,7 +332,7 @@ export class HelperFamiliesComponent implements OnInit {
     });
   }
   async moveBasketsTo(to: HelpersBase) {
-    await new moveDeliveriesHelper(this.context, this.settings, this.dialog,()=> this.familyLists.reload()).move(this.familyLists.helper, to, true);
+    await new moveDeliveriesHelper(this.context, this.settings, this.dialog, () => this.familyLists.reload()).move(this.familyLists.helper, to, true);
 
   }
 

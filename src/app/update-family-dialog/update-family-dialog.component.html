@@ -95,7 +95,7 @@
                             *ngIf="!families.currentRow.addressOk.value&&!families.currentRow.isNew()">
                             <span class="badAddressTitle">{{settings.lang.badAddressTitle}}</span>
                             {{settings.lang.badAddressHelpStart}}
-                            ({{families.currentRow.getGeocodeInformation().whyProblem()}}).
+                            ({{families.currentRow.address.getGeocodeInformation().whyProblem()}}).
                             {{settings.lang.badAddressHelpLine1}}<br> {{settings.lang.badAddressHelpLine2}}
 
                         </div>

@@ -376,7 +376,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     addColumn(this.helper.name);
     addColumn(this.helper.eventComment);
     addColumn(this.helper.preferredDistributionAreaAddress);
-    addColumn(this.helper.preferredDistributionAreaAddress2);
+    addColumn(this.helper.preferredFinishAddress);
     addColumn(this.helper.email);
     addColumn(this.helper.eventComment);
     addColumn(this.helper.company);

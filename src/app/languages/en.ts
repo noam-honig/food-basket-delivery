@@ -646,7 +646,7 @@ export class en implements Language {
   volunteerCanUpdatePreferredDistributionAddress = 'A volunteer can update a preferred division area';
   email = 'eMail';
   preferredDistributionArea = 'Preferred distribution area address';
-  preferredDistributionArea2 = 'Preferred Distribution Area Address 2';
+  preferredFinishAddress = 'Address to end the route';
   doesNotExist = 'Does not exist';
   questionAddToApplication = 'Do add';
   customSmsMessage = 'Personalized SMS';

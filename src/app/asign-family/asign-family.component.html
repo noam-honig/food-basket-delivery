@@ -123,7 +123,7 @@
           <button mat-raised-button color="primary" (click)="assignItem()"
             [disabled]="basketType.unassignedFamilies==0 || assigning"
             style="border-top-left-radius: 0px;border-bottom-left-radius:0px;">
-            {{assigning?settings.lang.inProgress: basketType.unassignedFamilies==0?settings.lang.noDeliveriesLeft: familyLists.allFamilies.length>0?settings.lang.asignClosestDelivery:settings.lang.asignAnyDelivery}}
+            {{assigning?settings.lang.inProgress: basketType.unassignedFamilies==0?settings.lang.noDeliveriesLeft: helper.preferredDistributionAreaAddress.value||helper.preferredFinishAddress.value|| familyLists.allFamilies.length>0?settings.lang.asignClosestDelivery:settings.lang.asignAnyDelivery}}
             -
             {{getBasketsToClick()}}</button>
           <button mat-button [matMenuTriggerFor]="basketMenu" mat-raised-button color="primary" style="border-top-right-radius: 0;

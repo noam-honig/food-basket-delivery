@@ -818,7 +818,7 @@
   },
   "deliveryDetails": {
     "google": "כרטיס משלוח",
-    "valueInCode": "כרטיס משלוח"
+    "valueInCode": "פרטי משלוח"
   },
   "deliveryDetailsAsDisplayedToVolunteer": {
     "google": "פרטי התורם כפי שיופיעו למתנדב",
@@ -1535,7 +1535,7 @@
   },
   "isDefinedAsLeadVolunteerOf": {
     "google": "מוגדר המתנדב מוביל של",
-    "valueInCode": "מוגדר המתנדב מוביל של"
+    "valueInCode": "מוגדר המתנדב מוביל"
   },
   "km": {
     "google": "ק\"מ",
@@ -2071,11 +2071,12 @@
   },
   "preferredDistributionArea": {
     "google": "כתובת אזור חלוקה מועדף 1",
-    "valueInCode": "כתובת אזור חלוקה מועדף 1"
+    "valueInCode": "כתובת לאזור חלוקה"
   },
-  "preferredDistributionArea2": {
-    "google": "כתובת אזור חלוקה מועדף 2",
-    "valueInCode": "כתובת אזור חלוקה מועדף 2"
+  "preferredFinishAddress": {
+    "google": "כתובת לסיום המסלול",
+    "valueInCode": "כתובת לסיום המסלול",
+    "custom":"כתובת לאזור חלוקה 2"
   },
   "previous": {
     "google": "קודם",

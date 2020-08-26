@@ -7,6 +7,7 @@ import { wasChanged } from "../model-shared/types";
 import { foreachSync } from "../shared/utils";
 import { Helpers } from "../helpers/helpers";
 import { getLang } from "../sites/sites";
+import { getSettings } from "../manage/ApplicationSettings";
 
 
 export class routeStrategy {
@@ -182,6 +183,9 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
 
 
     let destination = strategy.args.getRouteEnd(distCenterLocation, addresses);
+    if (!getSettings(context).isSytemForMlt()&&helper.preferredFinishAddress.ok()){
+        destination = helper.preferredFinishAddress.location();
+    }
 
     let r = await getRouteInfo(addresses, useGoogle, toLongLat(routeStart), toLongLat(destination), context);
     if (r.status == 'OK' && r.routes && r.routes.length > 0 && r.routes[0].waypoint_order) {

@@ -83,9 +83,9 @@ export class SelectHelperComponent implements OnInit {
         let theH = helpers.get(h.id.value);
         check(theH, h.preferredDistributionAreaAddress.location(), getLang(context).preferredDistributionArea + ": " + h.preferredDistributionAreaAddress.value);
       }
-      if (h.preferredDistributionAreaAddress2.ok()) {
+      if (h.preferredFinishAddress.ok()) {
         let theH = helpers.get(h.id.value);
-        check(theH, h.preferredDistributionAreaAddress2.location(), getLang(context).preferredDistributionArea + ": " + h.preferredDistributionAreaAddress2.value);
+        check(theH, h.preferredFinishAddress.location(), getLang(context).preferredDistributionArea + ": " + h.preferredFinishAddress.value);
       }
     });
 
