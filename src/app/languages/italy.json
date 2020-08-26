@@ -1150,6 +1150,11 @@
     "valueInCode": "לא קיים",
     "valueInEnglish": "Does not exist"
   },
+  "doLabReception": {
+    "google": "Eseguire l'assorbimento in laboratorio",
+    "valueInCode": "בצע קליטה במעבדה",
+    "valueInEnglish": "Perform absorption in the laboratory"
+  },
   "doneDotGotoDeliveries": {
     "google": "Fatto, passare alle consegne attive?",
     "valueInCode": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?",
@@ -2801,6 +2806,11 @@
     "valueInCode": "להסיר שיוך לקבצה",
     "valueInEnglish": "Remove Group"
   },
+  "removeQRCode": {
+    "google": "Nascondi codice a barre",
+    "valueInCode": "הסתר ברקוד",
+    "valueInEnglish": "Hide barcode"
+  },
   "repeatFamilyNotice": {
     "google": "Anche tu sei stato in questa famiglia",
     "valueInCode": "הייתם אצל המשפחה הזו גם פעם קודמת",
@@ -3245,6 +3255,11 @@
     "google": "Mostra solo un'ultima parola al volontario per conto della famiglia",
     "valueInCode": "הצג רק מילה אחרונה למתנדב בשם המשפחה",
     "valueInEnglish": "Show just one last word to the volunteer on behalf of the family"
+  },
+  "showQRCode": {
+    "google": "Mostra per assorbimento",
+    "valueInCode": "הצג לקליטה",
+    "valueInEnglish": "Show for absorption"
   },
   "showRouteOnGoogleMaps": {
     "google": "Visualizza il percorso su google maps",

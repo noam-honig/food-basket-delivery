@@ -250,6 +250,9 @@ export class en implements Language {
   phone4 = 'Phone 4';
   phone4Description = 'Phone Notes 4';
   commentForReception = 'Absorption notes in the laboratory';
+  doLabReception = 'Perform absorption in the laboratory';
+  showQRCode = 'Show for absorption';
+  removeQRCode = 'Hide barcode';
   statusChangeDate = 'Status: Date changed';
   statusChangeUser = "Status: Who's updating";
   defaultVolunteer = 'Default volunteer';

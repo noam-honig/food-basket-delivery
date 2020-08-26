@@ -921,6 +921,10 @@
     "google": "לא קיים",
     "valueInCode": "לא קיים"
   },
+  "doLabReception": {
+    "google": "בצע קליטה במעבדה",
+    "valueInCode": "בצע קליטה במעבדה"
+  },
   "doneDotGotoDeliveries": {
     "google": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?",
     "valueInCode": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?"
@@ -2246,6 +2250,10 @@
     "google": "להסיר שיוך לקבצה",
     "valueInCode": "להסיר שיוך לקבצה"
   },
+  "removeQRCode": {
+    "google": "הסתר ברקוד",
+    "valueInCode": "הסתר ברקוד"
+  },
   "repeatFamilyNotice": {
     "google": "הייתם אצל התורם הזו גם פעם קודמת",
     "valueInCode": "הייתם אצל המשפחה הזו גם פעם קודמת"
@@ -2601,6 +2609,10 @@
   "showOnlyLastNamePartToVolunteer": {
     "google": "הצג רק מילה אחרונה למתנדב בשם התורם",
     "valueInCode": "הצג רק מילה אחרונה למתנדב בשם המשפחה"
+  },
+  "showQRCode": {
+    "google": "הצג לקליטה",
+    "valueInCode": "הצג לקליטה"
   },
   "showRouteOnGoogleMaps": {
     "google": "הצג מסלול ב Google Maps",

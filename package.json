@@ -45,6 +45,7 @@
     "@remult/core": "^1.0.80",
     "@remult/server": "^1.0.80",
     "@remult/server-postgres": "^1.0.80",
+    "angular2-qrcode": "^2.0.3",
     "aws-sdk": "^2.683.0",
     "body-parser": "^1.19.0",
     "chart.js": "^2.8.0",

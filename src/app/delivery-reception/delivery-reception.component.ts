@@ -8,6 +8,7 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { PhoneColumn } from '../model-shared/types';
 import { getLang } from '../sites/sites';
+import { ActivatedRoute } from '@angular/router';
 import { FamilyDeliveriesComponent } from '../family-deliveries/family-deliveries.component';
 
 @Component({
@@ -19,6 +20,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
 
   courier: Helpers;
   showData = false;
+  urlParams = new URLSearchParams(window.location.search);
   deliveriesForPhone: string[] = [];
 
   deliveries = this.context.for(FamilyDeliveries).gridSettings({
@@ -113,6 +115,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
     private context: Context,
     public dialog: DialogService,
     private busy: BusyService,
+    private route: ActivatedRoute
   ) { }
 
   private receptionCommentEntry(deliveries: FamilyDeliveries) {
@@ -144,10 +147,17 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
   }
 
   async ngOnInit() {
-
+    this.checkUrlParams();
   }
   ngAfterViewInit() {
 
+  }
+
+  async checkUrlParams() {
+    if (this.urlParams.has('phone')) {
+      this.phone.value = this.urlParams.get('phone');
+      this.search();
+    }
   }
 
   async search() {

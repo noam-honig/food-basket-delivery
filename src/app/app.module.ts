@@ -86,7 +86,7 @@ import { AddressInputComponent } from './address-input/address-input.component';
 import { InRouteFollowUpComponent } from './in-route-follow-up/in-route-follow-up.component';
 import { EditCommentDialogComponent  } from './edit-comment-dialog/edit-comment-dialog.component';
 import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment-assign-screen.component';
-
+import { QRCodeModule } from 'angular2-qrcode';
 
 
 
@@ -188,7 +188,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     RemultModule,
     AppRoutingModule,
     ChartsModule,
-    ScrollDispatchModule
+    ScrollDispatchModule,
+    QRCodeModule
 
   ],
   providers: [

@@ -364,6 +364,9 @@ export class Language {
   phone4 = "טלפון 4";
   phone4Description = 'הערות לטלפון 4';
   commentForReception = 'הערות קליטה במעבדה';
+  doLabReception = 'בצע קליטה במעבדה';
+  showQRCode = 'הצג לקליטה';
+  removeQRCode = 'הסתר ברקוד';
   statusChangeDate = 'סטטוס: תאריך שינוי';
   statusChangeUser = 'סטטוס: מי עדכן';
   defaultVolunteer = "מתנדב ברירת מחדל";
