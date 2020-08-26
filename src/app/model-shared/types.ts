@@ -3,6 +3,8 @@ import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlReque
 import { use } from '../translate';
 import * as moment from 'moment';
 import { Sites, getLang } from '../sites/sites';
+import { isDesktop } from '../shared/utils';
+import { getSettings } from '../manage/ApplicationSettings';
 
 
 
@@ -54,6 +56,19 @@ export class PhoneColumn extends radweb.StringColumn {
     return s;
   }
 
+  static sendWhatsappToPhone(phone: string, smsMessage: string, context: Context) {
+    phone = PhoneColumn.fixPhoneInput(phone);
+    if (phone.startsWith('0')) {
+      phone = getSettings(context).getInternationalPhonePrefix() + phone.substr(1);
+    }
+    if (phone.startsWith('+'))
+      phone = phone.substr(1);
+    if (isDesktop())
+      window.open('https://web.whatsapp.com/send?phone=+' + phone + '&text=' + encodeURI(smsMessage), '_whatsapp');
+    else
+      window.open('https://wa.me/' + phone + '?text=' + encodeURI(smsMessage), '_blank');
+  }
+  
   static formatPhone(s: string) {
     if (!s)
       return s;

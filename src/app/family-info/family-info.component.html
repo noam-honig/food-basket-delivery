@@ -92,7 +92,10 @@
         <a (click)="callPhone(f.phone1)">{{f.phone1.displayValue}}</a>,
         {{f.phone1Description.value?f.phone1Description.value:f.name.value}}
       </div>
-    </div>
+      <span (click)="sendWhatsapp(f.phone1.value)">
+        <img src="assets/whatsapp.png">
+      </span>
+  </div>
 
     <div *ngIf="f.phone2.value" class="phone-container">
       <a (click)="callPhone(f.phone2)">
@@ -104,6 +107,9 @@
         <a (click)="callPhone(f.phone2)">{{f.phone2.displayValue}}</a>,
         {{f.phone2Description.value?f.phone2Description.value:f.name.value}}
       </div>
+      <span (click)="sendWhatsapp(f.phone2.value)">
+        <img src="assets/whatsapp.png">
+      </span>
     </div>
     <div *ngIf="f.phone3.value" class="phone-container">
       <a (click)="callPhone(f.phone3)">
@@ -115,6 +121,9 @@
         <a (click)="callPhone(f.phone3)">{{f.phone3.displayValue}}</a>,
         {{f.phone3Description.value?f.phone3Description.value:f.name.value}}
       </div>
+      <span (click)="sendWhatsapp(f.phone3.value)">
+        <img src="assets/whatsapp.png">
+      </span>
     </div>
     <div *ngIf="f.phone4.value" class="phone-container">
       <a (click)="callPhone(f.phone4)">
@@ -126,6 +135,9 @@
         <a (click)="callPhone(f.phone4)">{{f.phone4.displayValue}}</a>,
         {{f.phone4Description.value?f.phone4Description.value:f.name.value}}
       </div>
+      <span (click)="sendWhatsapp(f.phone4.value)">
+        <img src="assets/whatsapp.png">
+      </span>
     </div>
   </ng-container>
   <ng-container *ngIf="settings.usePhoneProxy.value">
