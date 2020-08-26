@@ -166,6 +166,7 @@ export class ImportFromExcelComponent implements OnInit {
 
                 await f.save();
                 if (createDelivery) {
+                    fd._disableMessageToUsers = true;
                     f.updateDelivery(fd);
                     await fd.save();
                 }
@@ -253,6 +254,7 @@ export class ImportFromExcelComponent implements OnInit {
         if (addDelivery) {
             for (const c of fd.columns) {
                 if (c == col) {
+                    fd._disableMessageToUsers = true;
                     await fd.save();
                     break;
                 }
