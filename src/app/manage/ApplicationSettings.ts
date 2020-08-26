@@ -1,5 +1,5 @@
 import { StringColumn, NumberColumn, BoolColumn, ValueListColumn, ServerFunction } from '@remult/core';
-import { GeocodeInformation, GetGeoInformation, AddressApiResultColumn } from "../shared/googleApiHelpers";
+import { GeocodeInformation, GetGeoInformation, AddressColumn } from "../shared/googleApiHelpers";
 import { Entity, Context, EntityClass } from '@remult/core';
 import { PhoneColumn, logChanges } from "../model-shared/types";
 import { Roles } from "../auth/roles";
@@ -97,7 +97,8 @@ export class ApplicationSettings extends Entity<number>  {
   gmailUserName = new StringColumn({ caption: "gMail UserName", includeInApi: Roles.admin });
   gmailPassword = new StringColumn({ caption: "gMail password", includeInApi: Roles.admin });
   logoUrl = new StringColumn(this.lang.logoUrl);
-  address = new StringColumn(this.lang.deliveryCenterAddress);
+  addressApiResult = new StringColumn();
+  address = new AddressColumn(this.context,this.addressApiResult,this.lang.deliveryCenterAddress);
   commentForSuccessDelivery = new StringColumn(this.lang.successMessageColumnName);
   commentForSuccessLeft = new StringColumn(this.lang.leftByDoorMessageColumnName);
   commentForProblem = new StringColumn(this.lang.problemCommentColumnName);
@@ -184,7 +185,6 @@ export class ApplicationSettings extends Entity<number>  {
   BusyHelperAllowedFreq_nom = new NumberColumn(this.lang.maxDeliveriesBeforeBusy);
   BusyHelperAllowedFreq_denom = new NumberColumn(this.lang.daysCountForBusy);
 
-  addressApiResult = new AddressApiResultColumn();
   defaultStatusType = new DeliveryStatusColumn(this.context, {
     caption: this.lang.defaultStatusType
   }, [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup]);
@@ -209,12 +209,9 @@ export class ApplicationSettings extends Entity<number>  {
       allowApiUpdate: Roles.admin,
       saving: async () => {
         if (context.onServer) {
-          if (this.address.value != this.address.originalValue || !this.addressApiResult.ok()) {
-            let geo = await GetGeoInformation(this.address.value, context);
-            this.addressApiResult.value = geo.saveToString();
-            if (geo.ok()) {
-            }
-          }
+          
+          await this.address.updateApiResultIfChanged();
+          
           for (const l of [this.message1Link, this.message2Link]) {
             if (l.value) {
               if (l.value.trim().indexOf(':') < 0)

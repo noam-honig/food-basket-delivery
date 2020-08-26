@@ -1,10 +1,11 @@
 import * as fetch from 'node-fetch';
-import { UrlBuilder, EntityClass, StringColumn, Entity, DateTimeColumn, Context } from '@remult/core';
+import { UrlBuilder, EntityClass, StringColumn, Entity, DateTimeColumn, Context, ColumnOptions } from '@remult/core';
 
 
 
 
 import * as geometry from 'spherical-geometry-js';
+import { wasChanged } from '../model-shared/types';
 
 
 
@@ -350,19 +351,32 @@ export function leaveOnlyNumericChars(x: string) {
 export function GetDistanceBetween(a: Location, b: Location) {
     return geometry.computeDistanceBetween(a, b) / 1000;
 }
-export class AddressApiResultColumn extends StringColumn {
+
+export class AddressColumn extends StringColumn {
+    constructor(private context: Context, private apiResultColumn: StringColumn, settingsOrCaption?: ColumnOptions<string>, settingsOrCaption1?: ColumnOptions<string>) {
+        super(settingsOrCaption, settingsOrCaption1);
+
+    }
+    async updateApiResultIfChanged() {
+        if (wasChanged(this) || !this.ok()) {
+            let geo = await GetGeoInformation(this.value, this.context);
+            this.apiResultColumn.value = geo.saveToString();
+        }
+    }
     private _lastString: string;
     private _lastGeo: GeocodeInformation;
+
     getGeocodeInformation() {
-        if (this._lastString == this.value)
+        if (this._lastString == this.apiResultColumn.value)
             return this._lastGeo ? this._lastGeo : new GeocodeInformation();
-        this._lastString = this.value;
-        return this._lastGeo = GeocodeInformation.fromString(this.value);
+        this._lastString = this.apiResultColumn.value;
+        return this._lastGeo = GeocodeInformation.fromString(this.apiResultColumn.value);
     }
-    ok(){
+    ok() {
         return this.getGeocodeInformation().ok();
     }
-    location(){
+    location() {
         return this.getGeocodeInformation().location();
     }
 }
+

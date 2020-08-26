@@ -226,7 +226,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await pagedRowsIterator(context.for(Families), {
             forEachRow: async f => {
                 f._suppressLastUpdateDuringSchemaInit = true;
-                let g = f.addressApiResult.getGeocodeInformation();
+                let g = f.address.getGeocodeInformation();
                 f.addressByGoogle.value = g.getAddress();
                 f.drivingLatitude.value = g.location().lat;
                 f.drivingLongitude.value = g.location().lng;
@@ -363,7 +363,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
             where: f => f.addressOk.isEqualTo(false),
             forEachRow: async f => {
                 f._suppressLastUpdateDuringSchemaInit = true;
-                f.addressOk.value = !f.addressApiResult.getGeocodeInformation().partialMatch();
+                f.addressOk.value = !f.address.getGeocodeInformation().partialMatch();
                 if (f.addressOk.value)
                     await f.save();
             }

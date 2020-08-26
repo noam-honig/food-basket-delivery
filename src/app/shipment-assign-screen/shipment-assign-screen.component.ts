@@ -252,10 +252,10 @@ export class ShipmentAssignScreenComponent implements OnInit {
     return {
       id: h.id.value,
       name: h.name.value,
-      location1: h.addressApiResult.ok() ? h.addressApiResult.location() : undefined,
+      location1: h.preferredDistributionAreaAddress.ok() ? h.preferredDistributionAreaAddress.location() : undefined,
       address1: h.preferredDistributionAreaAddress.value,
       address2: h.preferredDistributionAreaAddress2.value,
-      location2: h.addressApiResult2.ok() ? h.addressApiResult2.location() : undefined,
+      location2: h.preferredDistributionAreaAddress2.ok() ? h.preferredDistributionAreaAddress2.location() : undefined,
       families: [],
       problemFamilies: {}
     };

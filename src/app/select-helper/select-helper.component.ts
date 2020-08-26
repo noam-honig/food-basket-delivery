@@ -79,13 +79,13 @@ export class SelectHelperComponent implements OnInit {
         phone: h.phone.displayValue,
         distance: 99999999
       });
-      if (h.addressApiResult.ok()) {
+      if (h.preferredDistributionAreaAddress.ok()) {
         let theH = helpers.get(h.id.value);
-        check(theH, h.addressApiResult.location(), getLang(context).preferredDistributionArea + ": " + h.preferredDistributionAreaAddress.value);
+        check(theH, h.preferredDistributionAreaAddress.location(), getLang(context).preferredDistributionArea + ": " + h.preferredDistributionAreaAddress.value);
       }
-      if (h.addressApiResult2.ok()) {
+      if (h.preferredDistributionAreaAddress2.ok()) {
         let theH = helpers.get(h.id.value);
-        check(theH, h.addressApiResult2.location(), getLang(context).preferredDistributionArea + ": " + h.preferredDistributionAreaAddress2.value);
+        check(theH, h.preferredDistributionAreaAddress2.location(), getLang(context).preferredDistributionArea + ": " + h.preferredDistributionAreaAddress2.value);
       }
     });
 

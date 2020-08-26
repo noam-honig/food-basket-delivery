@@ -692,7 +692,7 @@ interface statsOnTab {
 }
 export async function saveFamiliesToExcel(context: Context, gs: GridSettings<Families>, busy: BusyService, name) {
     await saveToExcel<Families, GridSettings<Families>>(getSettings(context), context.for(Families), gs, name, busy, (f, c) => c == f.id || c == f.addressApiResult, (f, c) => false, async (f, addColumn) => {
-        let x = f.addressApiResult.getGeocodeInformation();
+        let x = f.address.getGeocodeInformation();
         let street = f.address.value;
         let house = '';
         let lastName = '';

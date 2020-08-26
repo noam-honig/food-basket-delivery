@@ -11,7 +11,7 @@ import { JWTCookieAuthorizationHelper } from '@remult/server';
 import { DistributionCenterId } from '../manage/distribution-centers';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 import { getLang } from '../sites/sites';
-import { GeocodeInformation, GetGeoInformation, Location, AddressApiResultColumn } from '../shared/googleApiHelpers';
+import { GeocodeInformation, GetGeoInformation, Location, AddressColumn } from '../shared/googleApiHelpers';
 import { routeStats } from '../asign-family/route-strategy';
 import { Sites } from '../sites/sites';
 import { getSettings } from '../manage/ApplicationSettings';
@@ -274,14 +274,9 @@ export class Helpers extends HelpersBase {
                             await h.save();
                         }
                     }
-                    if (wasChanged(this.preferredDistributionAreaAddress) || !this.addressApiResult.ok()) {
-                        let geo = await GetGeoInformation(this.preferredDistributionAreaAddress.value, context);
-                        this.addressApiResult.value = geo.saveToString();
-                    }
-                    if (wasChanged(this.preferredDistributionAreaAddress2) || !this.addressApiResult2.ok()) {
-                        let geo = await GetGeoInformation(this.preferredDistributionAreaAddress2.value, context);
-                        this.addressApiResult2.value = geo.saveToString();
-                    }
+                    await this.preferredDistributionAreaAddress.updateApiResultIfChanged();
+                    await this.preferredDistributionAreaAddress2.updateApiResultIfChanged();
+                    
                     logChanges(this, this.context, {
                         excludeColumns: [
                             this.smsDate,
@@ -330,8 +325,8 @@ export class Helpers extends HelpersBase {
     });
     socialSecurityNumber = new StringColumn(getLang(this.context).socialSecurityNumber);
     email = new EmailColumn();
-    preferredDistributionAreaAddress = new StringColumn(getLang(this.context).preferredDistributionArea);
-    addressApiResult = new AddressApiResultColumn();
+    addressApiResult = new StringColumn();
+    preferredDistributionAreaAddress = new AddressColumn(this.context,this.addressApiResult,getLang(this.context).preferredDistributionArea);
     
     async setAsDefaultVolunteerToDeliveries(busy: BusyService, deliveries: import("../families/FamilyDeliveries").FamilyDeliveries[], dialog: DialogService) {
         let ids: string[] = [];
@@ -368,8 +363,8 @@ export class Helpers extends HelpersBase {
     }
 
    
-    preferredDistributionAreaAddress2 = new StringColumn(getLang(this.context).preferredDistributionArea2);
-    addressApiResult2 = new AddressApiResultColumn();
+    addressApiResult2 = new StringColumn();
+    preferredDistributionAreaAddress2 = new AddressColumn(this.context,this.addressApiResult2,getLang(this.context).preferredDistributionArea2);
    
 
     password = new StringColumn({ caption: getLang(this.context).password, dataControlSettings: () => ({ inputType: 'password' }), serverExpression: () => this.realStoredPassword.value ? Helpers.emptyPassword : '' });
