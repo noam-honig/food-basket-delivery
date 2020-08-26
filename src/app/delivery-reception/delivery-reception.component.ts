@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { DataAreaSettings, DataControlInfo, StringColumn, BoolColumn, Context, BusyService, FilterBase, AndFilter, EntityWhere, Column } from '@remult/core';
+import { DataAreaSettings, DataControlInfo, StringColumn, BoolColumn, Context, BusyService, FilterBase, AndFilter, EntityWhere, Column, ServerFunction, SqlDatabase } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 
@@ -9,6 +9,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { PhoneColumn } from '../model-shared/types';
 import { getLang } from '../sites/sites';
 import { ActivatedRoute } from '@angular/router';
+import { FamilyDeliveriesComponent } from '../family-deliveries/family-deliveries.component';
 
 @Component({
   selector: 'app-delivery-reception',
@@ -20,6 +21,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
   courier: Helpers;
   showData = false;
   urlParams = new URLSearchParams(window.location.search);
+  deliveriesForPhone: string[] = [];
 
   deliveries = this.context.for(FamilyDeliveries).gridSettings({
     allowUpdate: false,
@@ -30,10 +32,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
     get: {
       limit: 25,
       where: f =>
-        f.courier.isEqualTo(this.courier?  this.courier.id.value:"nobody").and(f.archive.isEqualTo(false))
-
-
-
+        f.id.isIn(this.deliveriesForPhone)
       , orderBy: f => f.name
     },
     columnSettings: deliveries => {
@@ -163,10 +162,8 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
 
   async search() {
     try {
-      
-      this.courier = await (await this.context.for(Helpers).findFirst(i => i.phone.isEqualTo(this.phone.value)));
-      
-      this.showData = this.courier!=undefined;
+      this.deliveriesForPhone = await FamilyDeliveriesComponent.getDeliveriesByPhone(this.phone.value);
+      this.showData = (this.deliveriesForPhone.length > 0);
     } catch (err) {
 
     }

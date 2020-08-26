@@ -436,7 +436,7 @@ export class donor implements Language {
   moreNews = 'עוד חדשות';
   filter = 'סינון';
   deliveryDetailsAsDisplayedToVolunteer = 'פרטי התורם כפי שיופיעו למתנדב';
-  assign = 'שייכי';
+  assign = 'שייך';
   familesOnStreet = 'תורמים ברחוב';
   moreFamilies = 'עוד תורמים';
   recentVolunteers = 'מתנדבים אחרונים';
@@ -766,4 +766,12 @@ export class donor implements Language {
   doneDotGotoDeliveries = 'התהליך הסתיים בהצלחה, לעבור למסך משלוחים?';
   notDoneDeliveriesShouldArchiveThem = 'משלוחים שטרם שוייכו, האם להעביר אותם לארכיב?';
   deliveresOnTheWayAssignedInTheLast3Hours = 'משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך ביצירת משלוח חדש?';
+  leadHelper = 'מתנדב מוביל';
+  movedFrom = 'הועברו מ';
+  to = 'ל';
+  moveDeliveriesToAnotherVolunteer = 'העבר משלוחים למתנדב אחר';
+  moveDeliveriesTo = 'העבר משלוחים ל';
+  showDeletedHelpers = 'הצג מתנדבים מחוקים';
+  unArchiveHelper = 'בטל מחיקת מתנדב';
+  addRepeatFamilies = 'בחירת תורמים שהמתנדב היה אצלהם בעבר';
 }

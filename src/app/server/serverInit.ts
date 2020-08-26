@@ -14,7 +14,7 @@ import * as passwordHash from 'password-hash';
 import { initSchema } from './initSchema';
 import { Sites } from '../sites/sites';
 import { OverviewComponent } from '../overview/overview.component';
-import { wasChanged } from '../model-shared/types';
+import { wasChanged, SqlBuilder } from '../model-shared/types';
 import { ConnectionOptions } from 'tls';
 import { SitesEntity } from '../sites/sites.entity';
 import { FamilyInfoComponent } from '../family-info/family-info.component';
@@ -162,13 +162,41 @@ export async function serverInit() {
                 }
             }
         } {
-            let i = 0;
+            let sortedSchemas: { name: string, lastSignIn: Date }[] = [];
             for (const s of Sites.schemas) {
-                if (s.toLowerCase() == Sites.guestSchema)
+                try {
+                    let db = new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, s)));
+                    let context = new ServerContext();
+                    let h = context.for(Helpers).create();
+                    var sql = new SqlBuilder();
+                    let r = (await db.execute(sql.query({ from: h, select: () => [sql.max(h.lastSignInDate)] })));
+                    let d = r.rows[0]['max'];
+                    if (!d)
+                        d = new Date(1900, 1, 1);
+                    sortedSchemas.push({
+                        name: s,
+                        lastSignIn: d
+
+                    });
+                }
+                catch{
+                    sortedSchemas.push({
+                        name: s,
+                        lastSignIn: new Date(1900, 1, 1)
+                    });
+                }
+            }
+            sortedSchemas.sort((a, b) => b.lastSignIn.valueOf() - a.lastSignIn.valueOf());
+            
+
+
+            let i = 0;
+            for (const s of sortedSchemas) {
+                if (s.name.toLowerCase() == Sites.guestSchema)
                     throw 'admin is an ivalid schema name';
                 try {
-                    console.log("init schema for "+ s + " - " + ++i + "/" + Sites.schemas.length);
-                    await InitSpecificSchema(pool, s);
+                    console.log("init schema for " + s.name + " - " + ++i + "/" + Sites.schemas.length + " last-sign-in:" + s.lastSignIn);
+                    await InitSpecificSchema(pool, s.name);
                 }
                 catch (err) {
                     console.error(err);

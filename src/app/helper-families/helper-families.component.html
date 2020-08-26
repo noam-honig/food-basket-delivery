@@ -7,22 +7,28 @@
       <mat-menu #appMenu="matMenu">
         <button mat-menu-item (click)="cancelAll()" *ngIf="partOfAssign"
           style="color:red;">{{settings.lang.cancelAllAssignments}}</button>
+        <button mat-menu-item (click)="moveBasketsToOtherVolunteer()"
+          *ngIf="partOfAssign">{{settings.lang.moveDeliveriesToAnotherVolunteer}}</button>
+        <ng-container *ngFor="let h of otherDependentVolunteers">
+          <button mat-menu-item (click)="moveBasketsTo(h)" *ngIf="partOfAssign">{{settings.lang.moveDeliveriesTo}}
+            {{h.name.value}}</button>
+        </ng-container>
         <button mat-menu-item (click)="okAll()" *ngIf="partOfAssign"
           class="primary-menu">{{settings.lang.markAllDeliveriesAsSuccesfull}}</button>
-          
+
         <button mat-menu-item (click)="familyLists.showBasketSummary()"
           *ngIf="notMLT()">{{settings.lang.parcelSummary}}</button>
         <button mat-menu-item (click)="refreshRoute()">{{settings.lang.replanRoute}}</button>
         <button mat-menu-item (click)="showRouteOnGoogleMaps()">
           {{settings.lang.showRouteOnGoogleMaps}}</button>
-          <button mat-menu-item (click)="setDefaultCourier()" *ngIf="partOfAssign"
-          >{{settings.lang.setAsDefaultVolunteerForTheseFamilies}}</button>
+        <button mat-menu-item (click)="setDefaultCourier()"
+          *ngIf="partOfAssign">{{settings.lang.setAsDefaultVolunteerForTheseFamilies}}</button>
 
       </mat-menu>
 
 
 
-      <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="familyLists.toDeliver.length>0">
+      <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="familyLists.toDeliver.length>0"  (click)="refreshDependentVolunteers()">
         <mat-icon>more_vert</mat-icon>
       </button>
 
@@ -36,7 +42,7 @@
       {{familyLists.routeStats.totalKm}} {{settings.lang.km}}</span>
   </div>
   <mat-tab-group (selectedTabChange)="mapTabClicked()" #theTab>
-    <mat-tab >
+    <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="example-tab-icon">toc</mat-icon>
         {{settings.lang.list}}
@@ -45,8 +51,8 @@
         <ng-container *ngFor="let f of familyLists.toDeliver;let i=index">
           <mat-expansion-panel #myPanel *ngIf="limitReady.shouldShow(i)">
             <mat-expansion-panel-header>
-              <app-family-in-list [f]="f" [i]="i+1" style="width:100%" [distanceFromPreviousLocation]="distanceFromPreviousLocation(f,i)"
-                (delivered)="deliveredToFamily(f)"
+              <app-family-in-list [f]="f" [i]="i+1" style="width:100%"
+                [distanceFromPreviousLocation]="distanceFromPreviousLocation(f,i)" (delivered)="deliveredToFamily(f)"
                 [newAssign]="familyLists.highlightNewFamilies&&!familyLists.familiesAlreadyAssigned.get(f.id.value)">
               </app-family-in-list>
             </mat-expansion-panel-header>
@@ -77,7 +83,7 @@
         style="margin-top: 10px;">{{settings.lang.showAllDeliveries}}</button>
     </mat-tab>
 
-    <mat-tab >
+    <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="example-tab-icon">room</mat-icon>
         {{settings.lang.map}}
@@ -89,10 +95,11 @@
 </mat-card>
 <div *ngIf="familyLists.distCenter&&!partOfAssign&&!partOfReview">
   <mat-accordion>
-    <mat-expansion-panel  style="background-color:lightgreen">
-      <mat-expansion-panel-header  style="background-color:lightgreen">
+    <mat-expansion-panel style="background-color:lightgreen">
+      <mat-expansion-panel-header style="background-color:lightgreen">
         <div>
-          <mat-panel-title> <strong>{{settings.lang.thisIsTheDestination}}</strong> : {{familyLists.distCenter.name.value}}</mat-panel-title>
+          <mat-panel-title> <strong>{{settings.lang.thisIsTheDestination}}</strong> :
+            {{familyLists.distCenter.name.value}}</mat-panel-title>
           <mat-panel-description>{{familyLists.distCenter.address.value}}</mat-panel-description>
         </div>
       </mat-expansion-panel-header>
@@ -150,7 +157,8 @@
 
   <div class="sendSmsButtonLine no-print"
     *ngIf="familyLists.toDeliver.length &&(partOfAssign&&!partOfReview||partOfReview&&!helperGotSms)">
-    <button mat-raised-button color="accent" style="border-top-left-radius: 0px;border-bottom-left-radius:0px;width:270px"
+    <button mat-raised-button color="accent"
+      style="border-top-left-radius: 0px;border-bottom-left-radius:0px;width:270px"
       (click)="sendSms(false)">{{settings.lang.sendSmsWithLink}}</button>
     <button [matMenuTriggerFor]="appMenuSms" mat-raised-button color="accent" style="border-top-right-radius: 0;
       border-bottom-right-radius: 0;
@@ -170,8 +178,10 @@
 
   </div>
   <div class="sendSmsButtonLine no-print">
-    <button *ngIf="partOfReview&&familyLists.toDeliver.length>0" mat-raised-button class="contact-helper-button no-print" style="border-top-left-radius: 0px;border-bottom-left-radius:0px;width:270px"
-      color="primary" (click)="sendSms(true)">
+    <button *ngIf="partOfReview&&familyLists.toDeliver.length>0" mat-raised-button
+      class="contact-helper-button no-print"
+      style="border-top-left-radius: 0px;border-bottom-left-radius:0px;width:270px" color="primary"
+      (click)="sendSms(true)">
 
       <span
         *ngIf="familyLists&&familyLists.helper&&familyLists.helper.reminderSmsDate.value; else elseContent">{{settings.lang.reminderSent}}
@@ -184,7 +194,8 @@
       </ng-template>
     </button>
 
-    <button *ngIf="partOfReview&&familyLists.toDeliver.length>0" [matMenuTriggerFor]="appMenuSmsReminder" mat-raised-button color="primary" style="border-top-right-radius: 0;
+    <button *ngIf="partOfReview&&familyLists.toDeliver.length>0" [matMenuTriggerFor]="appMenuSmsReminder"
+      mat-raised-button color="primary" style="border-top-right-radius: 0;
       border-bottom-right-radius: 0;
       padding-left: 0;
       padding-right: 0;
@@ -200,7 +211,8 @@
     </mat-menu>
   </div>
   <div class="sendSmsButtonLine no-print">
-    <button mat-raised-button class="contact-helper-button no-print" *ngIf="partOfReview&&familyLists.helper" (click)="callHelper()">
+    <button mat-raised-button class="contact-helper-button no-print" *ngIf="partOfReview&&familyLists.helper"
+      (click)="callHelper()">
       <mat-icon>phone</mat-icon>
       {{settings.lang.dialTo}}{{familyLists.helper.name.value}}
       {{familyLists.helper.phone.displayValue}}
@@ -208,8 +220,8 @@
     </button>
   </div>
   <div class="sendSmsButtonLine no-print">
-    <button mat-raised-button class="contact-helper-button" *ngIf="partOfReview&&familyLists.helper && familyLists.escort"
-      (click)="callEscort()">
+    <button mat-raised-button class="contact-helper-button"
+      *ngIf="partOfReview&&familyLists.helper && familyLists.escort" (click)="callEscort()">
       {{settings.lang.callEscort}} {{familyLists.escort.name.value}}
       {{familyLists.escort.phone.displayValue}}
 
@@ -217,7 +229,7 @@
   </div>
   <div class="sendSmsButtonLine no-print" *ngIf="partOfAssign" style="height:50px">
   </div>
-  
+
   <div class="print-only">
     <h4 *ngIf="familyLists.helper">{{settings.lang.hello}}
       {{familyLists.helper.name.value +(familyLists.helper.eventComment.value?' ('+familyLists.helper.eventComment.value+')':'')}},

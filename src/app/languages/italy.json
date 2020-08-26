@@ -84,6 +84,11 @@
     "valueInCode": "להוסיף שיוך לקבוצה",
     "valueInEnglish": "Add affiliation to the group"
   },
+  "addRepeatFamilies": {
+    "google": "Selezione delle famiglie che il volontario ha avuto in passato",
+    "valueInCode": "בחירת משפחות שהמתנדב היה אצלהם בעבר",
+    "valueInEnglish": "Selecting families that the volunteer has had in the past"
+  },
   "address": {
     "google": "Indirizzo",
     "valueInCode": "כתובת",
@@ -306,7 +311,7 @@
   },
   "assign": {
     "google": "Assegnare",
-    "valueInCode": "שייכי",
+    "valueInCode": "שייך",
     "valueInEnglish": "Assign"
   },
   "assignAFamilyGroup": {
@@ -1945,6 +1950,11 @@
     "valueInCode": "משתמש מעדכן",
     "valueInEnglish": "Updating user"
   },
+  "leadHelper": {
+    "google": "Volontario leader",
+    "valueInCode": "מתנדב מוביל",
+    "valueInEnglish": "Leading volunteer"
+  },
   "left": {
     "google": "venne fuori",
     "valueInCode": "יצא",
@@ -2139,6 +2149,21 @@
     "google": "Più volontari",
     "valueInCode": "עוד מתנדבים",
     "valueInEnglish": "More volunteers"
+  },
+  "moveDeliveriesTo": {
+    "google": "Spedizioni inoltrate a",
+    "valueInCode": "העבר משלוחים ל",
+    "valueInEnglish": "Forward shipments to"
+  },
+  "moveDeliveriesToAnotherVolunteer": {
+    "google": "Inoltra le consegne a un altro volontario",
+    "valueInCode": "העבר משלוחים למתנדב אחר",
+    "valueInEnglish": "Forward deliveries to another volunteer"
+  },
+  "movedFrom": {
+    "google": "Traslocato da",
+    "valueInCode": "הועברו מ",
+    "valueInEnglish": "Moved from"
   },
   "moveTheFamily": {
     "google": "Per spostare la famiglia",
@@ -2587,7 +2612,7 @@
   },
   "prioritizeRepeatFamilies": {
     "google": "Priorità per il ritorno delle famiglie",
-    "valueInCode": "עדיפות למשפחות חוזרות",
+    "valueInCode": "עדיפות שהמנדב היה אצלהן",
     "valueInEnglish": "Priority for returning families"
   },
   "problem": {
@@ -3176,6 +3201,11 @@
     "valueInCode": "הצג שיוך משלוחים ל",
     "valueInEnglish": "Show deliveries for"
   },
+  "showDeletedHelpers": {
+    "google": "Visualizza i volontari eliminati",
+    "valueInCode": "הצג מתנדבים מחוקים",
+    "valueInEnglish": "View deleted volunteers"
+  },
   "showDistCenterAsEndAddressForVolunteer": {
     "google": "Visualizza gli indirizzi dell'elenco di distribuzione come endpoint volontario",
     "valueInCode": "הצג כתובות רשימת חלוקה כנקודת סיום למתנדב",
@@ -3441,6 +3471,11 @@
     "valueInCode": "זמן בדקות לניתוק אוטומטית",
     "valueInEnglish": "Disconnect timeout in minutes"
   },
+  "to": {
+    "google": "Per",
+    "valueInCode": "ל",
+    "valueInEnglish": "To"
+  },
   "toDate": {
     "google": "Fino a",
     "valueInCode": "עד תאריך",
@@ -3490,6 +3525,11 @@
     "google": "Due ore",
     "valueInCode": "שעתיים",
     "valueInEnglish": "Two hours"
+  },
+  "unArchiveHelper": {
+    "google": "Annulla l'eliminazione di un volontario",
+    "valueInCode": "בטל מחיקת מתנדב",
+    "valueInEnglish": "Undelete a volunteer"
   },
   "unAsigned": {
     "google": "Non assegnato",

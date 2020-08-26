@@ -766,4 +766,12 @@ export class italy implements Language {
   doneDotGotoDeliveries = 'Fatto, passare alle consegne attive?';
   notDoneDeliveriesShouldArchiveThem = 'Consegne non assegnate, procedere con la creazione di un nuovo evento?';
   deliveresOnTheWayAssignedInTheLast3Hours = "Consegne che sono state assegnate nelle ultime 3 ore e non sono state ancora consegnate, procedere con l'apertura di un nuovo evento?";
+  leadHelper = 'Volontario leader';
+  movedFrom = 'Traslocato da';
+  to = 'Per';
+  moveDeliveriesToAnotherVolunteer = 'Inoltra le consegne a un altro volontario';
+  moveDeliveriesTo = 'Spedizioni inoltrate a';
+  showDeletedHelpers = 'Visualizza i volontari eliminati';
+  unArchiveHelper = "Annulla l'eliminazione di un volontario";
+  addRepeatFamilies = 'Selezione delle famiglie che il volontario ha avuto in passato';
 }

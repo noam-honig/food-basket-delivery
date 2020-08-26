@@ -7,6 +7,7 @@ import { Context } from '@remult/core';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 
 
 @Component({
@@ -18,19 +19,42 @@ export class SelectFamilyComponent implements OnInit {
 
   public args: {
     where: (f: ActiveFamilyDeliveries) => FilterBase,
-    onSelect: (selectedValue: ActiveFamilyDeliveries) => void,
+    onSelect: (selectedValue: ActiveFamilyDeliveries[]) => void,
     selectStreet: boolean,
     distCenter: string
   };
   @ViewChild("search", { static: true }) search: ElementRef;
-  constructor(private busy: BusyService, private dialogRef: MatDialogRef<any>, private context: Context,public settings:ApplicationSettings) { }
+  constructor(private busy: BusyService, private dialogRef: MatDialogRef<any>, private context: Context, public settings: ApplicationSettings) { }
   searchString: string = '';
   families = this.context.for(ActiveFamilyDeliveries).gridSettings({ knowTotalRows: true });
   pageSize = 7;
   selectFirst() {
-    if (this.families.items.length > 0)
-      this.select(this.families.items[0]);
+
   }
+  selected: ActiveFamilyDeliveries[] = [];
+  countSelected() {
+    return this.selected.length;
+  }
+  getSelected(f: ActiveFamilyDeliveries): hasSelectState {
+    let x: any = f;
+    let self = this;
+    if (x.selectState === undefined) {
+      x.selectState = {
+        get selected() { return !!self.selected.find(y => y.id.value == f.id.value) },
+        set selected(value: boolean) {
+
+          if (value)
+            self.selected.push(f)
+          else
+            self.selected.splice(self.selected.findIndex(y => y.id.value == f.id.value), 1);
+          console.log(f.id.value, value, self.selected);
+        }
+      }
+    }
+    return x;
+
+  }
+
 
   async doFilter() {
     await this.busy.donotWait(async () => this.getRows());
@@ -59,19 +83,24 @@ export class SelectFamilyComponent implements OnInit {
 
 
   }
+
+
   clearHelper() {
     this.dialogRef.close();
   }
-  select(f: ActiveFamilyDeliveries) {
-    this.args.onSelect(f);
-    this.dialogRef.close();
-  }
-  async selectAllInStreet() {
-    this.pageSize = 1000;
-    await this.getRows();
-    for (const f of this.families.items) {
-      this.args.onSelect(f);
+
+  async doSelection() {
+    if (this.selected.length > 0) {
+      this.args.onSelect(this.selected);
     }
+    else if (this.searchString && this.searchString.length > 0) {
+
+      this.pageSize = 200;
+      await this.getRows();
+
+      this.args.onSelect(this.families.items);
+    }
+
     this.dialogRef.close();
 
   }
@@ -96,4 +125,11 @@ export class SelectFamilyComponent implements OnInit {
   }
 
 
+}
+
+interface selected {
+  selected: boolean;
+}
+interface hasSelectState {
+  selectState: selected;
 }

@@ -74,6 +74,11 @@
     "google": "Add affiliation to the group",
     "valueInCode": "להוסיף שיוך לקבוצה"
   },
+  "addRepeatFamilies": {
+    "google": "Selecting families that the volunteer has had in the past",
+    "valueInCode": "בחירת משפחות שהמתנדב היה אצלהם בעבר",
+    "custom":"Select from past deliveries"
+  },
   "address": {
     "google": "Address",
     "valueInCode": "כתובת"
@@ -277,7 +282,7 @@
   },
   "assign": {
     "google": "Belong",
-    "valueInCode": "שייכי",
+    "valueInCode": "שייך",
     "custom": "Assign"
   },
   "assignAFamilyGroup": {
@@ -1732,6 +1737,10 @@
     "google": "Updating user",
     "valueInCode": "משתמש מעדכן"
   },
+  "leadHelper": {
+    "google": "Leading volunteer",
+    "valueInCode": "מתנדב מוביל"
+  },
   "left": {
     "google": "came out",
     "valueInCode": "יצא"
@@ -1897,6 +1906,18 @@
   "moreVolunteers": {
     "google": "More volunteers",
     "valueInCode": "עוד מתנדבים"
+  },
+  "moveDeliveriesTo": {
+    "google": "Forward shipments to",
+    "valueInCode": "העבר משלוחים ל"
+  },
+  "moveDeliveriesToAnotherVolunteer": {
+    "google": "Forward deliveries to another volunteer",
+    "valueInCode": "העבר משלוחים למתנדב אחר"
+  },
+  "movedFrom": {
+    "google": "Moved from",
+    "valueInCode": "הועברו מ"
   },
   "moveTheFamily": {
     "google": "To move the family",
@@ -2273,7 +2294,8 @@
   },
   "prioritizeRepeatFamilies": {
     "google": "Priority for returning families",
-    "valueInCode": "עדיפות למשפחות חוזרות"
+    "valueInCode": "עדיפות שהמנדב היה אצלהן",
+    "custom":"Prefer past families"
   },
   "problem": {
     "google": "problem",
@@ -2785,6 +2807,10 @@
     "valueInCode": "הצג שיוך משלוחים ל",
     "custom": "Show deliveries for"
   },
+  "showDeletedHelpers": {
+    "google": "View deleted volunteers",
+    "valueInCode": "הצג מתנדבים מחוקים"
+  },
   "showDistCenterAsEndAddressForVolunteer": {
     "google": "View distribution list addresses as a volunteer endpoint",
     "valueInCode": "הצג כתובות רשימת חלוקה כנקודת סיום למתנדב"
@@ -3010,6 +3036,10 @@
     "valueInCode": "זמן בדקות לניתוק אוטומטית",
     "custom": "Disconnect timeout in minutes"
   },
+  "to": {
+    "google": "To",
+    "valueInCode": "ל"
+  },
   "toDate": {
     "google": "Until",
     "valueInCode": "עד תאריך"
@@ -3049,6 +3079,10 @@
   "twoHours": {
     "google": "Two hours",
     "valueInCode": "שעתיים"
+  },
+  "unArchiveHelper": {
+    "google": "Undelete a volunteer",
+    "valueInCode": "בטל מחיקת מתנדב"
   },
   "unAsigned": {
     "google": "Not yet associated",

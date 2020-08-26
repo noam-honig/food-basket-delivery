@@ -12,8 +12,8 @@ import { UserFamiliesList } from '../my-families/user-families';
 import { environment } from '../../environments/environment';
 import { Route } from '@angular/router';
 
-import { foreachSync } from '../shared/utils';
-import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { foreachSync, PromiseThrottle } from '../shared/utils';
+import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 
 
 import { Context } from '@remult/core';
@@ -72,7 +72,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     @ViewChild("helperFamilies", { static: false }) helperFamilies: HelperFamiliesComponent;
 
 
-    
+
     async searchPhone() {
         this.clearHelperInfo(false);
         let cleanPhone = PhoneColumn.fixPhoneInput(this.phone);
@@ -119,7 +119,35 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             Helpers.addToRecent(helper);
             this.familyLists.routeStats = helper.getRouteStats();
             await this.refreshList();
+            if (helper.leadHelper.value && this.familyLists.toDeliver.length == 0) {
+                let message = await AsignFamilyComponent.moveDeliveriesBetweenVolunteers(helper.leadHelper.value, helper.id.value);
+                if (message) {
+                    this.dialog.Info(message);
+                    await this.familyLists.reload();
+                }
+            }
         }
+    }
+    @ServerFunction({ allowed: Roles.admin })
+    static async moveDeliveriesBetweenVolunteers(from: string, to: string, context?: Context) {
+        let t = new PromiseThrottle(10);
+        let settings = getSettings(context);
+        let i = 0;
+        for await (const fd of context.for(ActiveFamilyDeliveries).iterate({ where: f => f.courier.isEqualTo(from).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) })) {
+            fd.courier.value = to;
+            fd._disableMessageToUsers = true;
+            await t.push(fd.save());
+            i++;
+        }
+        await t.done();
+        if (i) {
+            let m = i + " " + settings.lang.deliveries + " " + settings.lang.movedFrom + " " +
+                (await context.for(Helpers).lookupAsync(x => x.id.isEqualTo(from))).name.value + " " + settings.lang.to + " " +
+                (await context.for(Helpers).lookupAsync(x => x.id.isEqualTo(to))).name.value
+            Families.SendMessageToBrowsers(m, context, '');
+            return m;
+        }
+        return undefined;
     }
     clearHelperInfo(clearPhone = true) {
         this.helper = undefined;
@@ -161,20 +189,18 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         let families = this.context.for(ActiveFamilyDeliveries).iterate({ where: f => f.courier.isEqualTo(h.id).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) });
                         this.dialog.YesNoQuestion(this.settings.lang.transfer + " " + await families.count() + " " + this.settings.lang.deliveriesFrom + '"' + h.name.value + '"' + " " + this.settings.lang.toVolunteer + " " + '"' + this.helper.name.value + '"', async () => {
                             await this.busy.doWhileShowingBusy(async () => {
-                                await this.verifyHelperExistance();
-                                for await (const f of families) {
-                                    f.courier.value = this.helper.id.value;
-                                    await f.save();
+                                let message = await AsignFamilyComponent.moveDeliveriesBetweenVolunteers(h.id.value, this.helper.id.value);
+                                if (message) {
+                                    this.dialog.Info(message);
+                                    await this.familyLists.reload();
                                 }
-                                await this.familyLists.reload();
                             });
                         });
                     }
                 }
             });
-
-
     }
+
     showHelperInput = true;
     specificToHelper(h: Helpers) {
         this.showHelperInput = false;
@@ -244,8 +270,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             }
 
             this.specialFamilies = +r.special;
-            this.repeatFamilies = +r.repeatFamilies;
-            if (this.repeatFamilies)
+            this.repeatFamilies = r.repeatFamilies;
+            if (this.repeatFamilies.length > 0)
                 this.showRepeatFamilies = true;
 
         });
@@ -256,7 +282,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     areas: CityInfo[] = [];
     specialFamilies = 0;
     showRepeatFamilies = false;
-    repeatFamilies = 0;
+    repeatFamilies: string[] = [];
 
     preferRepeatFamilies = true;
     async refreshList() {
@@ -332,10 +358,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.destroyHelper.destroy();
     }
     constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public settings: ApplicationSettings) {
-        this.dialog.onDistCenterChange(()=>this.refreshBaskets(),this.destroyHelper);
+        this.dialog.onDistCenterChange(() => this.refreshBaskets(), this.destroyHelper);
 
     }
-    
+
     filterOptions: BoolColumn[] = [];
     async ngOnInit() {
 
@@ -360,6 +386,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         if (!environment.production && this.showHelperInput) {
             this.phone = '0507330590';
             await this.searchPhone();
+
         }
         setTimeout(() => {
             if (this.phoneInput)
@@ -400,8 +427,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 group: this.filterGroup,
                 city: this.filterCity,
                 area: this.filterArea,
-                numOfBaskets: allRepeat ? this.repeatFamilies : this.numOfBaskets,
-                preferRepeatFamilies: this.preferRepeatFamilies && this.repeatFamilies > 0,
+                numOfBaskets: allRepeat ? this.repeatFamilies.length : this.numOfBaskets,
+                preferRepeatFamilies: this.preferRepeatFamilies && this.repeatFamilies.length > 0,
                 allRepeat: allRepeat,
                 distCenter: this.dialog.distCenter.value
             });
@@ -424,8 +451,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 }
                 if (!refreshBaskets) {
                     basket.unassignedFamilies -= x.addedBoxes;
-                    if (this.preferRepeatFamilies && this.repeatFamilies > 0)
-                        this.repeatFamilies--;
+
                 }
                 else {
                     this.refreshBaskets();
@@ -464,7 +490,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             cities: [],
             areas: [],
             special: 0,
-            repeatFamilies: 0
+            repeatFamilies: []
         };
 
         let countFamilies = (additionalWhere?: (f: ActiveFamilyDeliveries) => FilterBase) => {
@@ -485,9 +511,9 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         let f = context.for(ActiveFamilyDeliveries).create();
         let fd = context.for(FamilyDeliveries).create();
         if (info.helperId) {
-            let r = await db.execute(sql.build('select count(*) from ', f, ' where ', f.active().and(f.filterDistCenterAndAllowed(info.distCenter)).and(f.readyFilter(info.filterCity, info.filterGroup, info.filterArea).and(f.special.isEqualTo(YesNo.No))), ' and ',
-                filterRepeatFamilies(sql, f, fd, info.helperId)));
-            result.repeatFamilies = r.rows[0][r.getColumnKeyInResultForIndexInSelect(0)];
+            let r = await db.execute(sql.build('select ', f.id, ' from ', f, ' where ', f.active().and(f.filterDistCenterAndAllowed(info.distCenter)).and(f.readyFilter(info.filterCity, info.filterGroup, info.filterArea).and(f.special.isEqualTo(YesNo.No))), ' and ',
+                filterRepeatFamilies(sql, f, fd, info.helperId), ' limit 30'));
+            result.repeatFamilies = r.rows.map(x => x[r.getColumnKeyInResultForIndexInSelect(0)]);
         }
 
 
@@ -849,27 +875,28 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             },
             selectStreet,
             distCenter: this.dialog.distCenter.value,
-            onSelect: async f => {
+            onSelect: async selectedDeliveries => {
 
+                for (const f of selectedDeliveries) {
 
-                let ok = async () => {
-                    await this.performSepcificFamilyAssignment(f, analyticsName);
-                };
+                    let ok = async () => {
+                        await this.performSepcificFamilyAssignment(f, analyticsName);
+                    };
 
-                if (f.courier.value) {
-                    if (selectStreet)
-                        return;
-                    let c = await f.courier.getTheName();
-                    this.dialog.YesNoQuestion(this.settings.lang.theFamily + ' ' +
-                        f.name.value + this.settings.lang.isAlreadyAsignedTo + ' ' + c + ' ' + this.settings.lang.onStatus + ' ' +
-                        f.deliverStatus.displayValue + '. ' + this.settings.lang.shouldAssignTo + ' ' + this.helper.name.value + '?', () => {
-                            ok();
-                        });
+                    if (f.courier.value) {
+                        if (selectStreet)
+                            return;
+                        let c = await f.courier.getTheName();
+                        this.dialog.YesNoQuestion(this.settings.lang.theFamily + ' ' +
+                            f.name.value + this.settings.lang.isAlreadyAsignedTo + ' ' + c + ' ' + this.settings.lang.onStatus + ' ' +
+                            f.deliverStatus.displayValue + '. ' + this.settings.lang.shouldAssignTo + ' ' + this.helper.name.value + '?', () => {
+                                ok();
+                            });
 
+                    }
+                    else
+                        ok();
                 }
-                else
-                    ok();
-
 
 
             }
@@ -906,7 +933,9 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         }
         Helpers.addToRecent(this.helper);
     }
-
+    addRepeat() {
+        this.addFamily(f => f.id.isIn(this.repeatFamilies), 'repeat-families')
+    }
     addSpecific() {
         this.addFamily(f => undefined, 'specific');
     }
@@ -967,7 +996,7 @@ export interface GetBasketStatusActionResponse {
     cities: CityInfo[];
     areas: CityInfo[];
     special: number;
-    repeatFamilies: number;
+    repeatFamilies: string[];
 }
 export interface BasketInfo {
     name: string;

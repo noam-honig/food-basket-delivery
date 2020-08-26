@@ -766,4 +766,12 @@ export class en implements Language {
   doneDotGotoDeliveries = 'Done, proceed to Active deliveries?';
   notDoneDeliveriesShouldArchiveThem = 'Unassigned deliveries, proceed with creating a new event?';
   deliveresOnTheWayAssignedInTheLast3Hours = 'Deliveries that were assigned in the last 3 hours and were not delivered yet, proceed with opening a new event?';
+  leadHelper = 'Leading volunteer';
+  movedFrom = 'Moved from';
+  to = 'To';
+  moveDeliveriesToAnotherVolunteer = 'Forward deliveries to another volunteer';
+  moveDeliveriesTo = 'Forward shipments to';
+  showDeletedHelpers = 'View deleted volunteers';
+  unArchiveHelper = 'Undelete a volunteer';
+  addRepeatFamilies = 'Selecting families that the volunteer has had in the past';
 }

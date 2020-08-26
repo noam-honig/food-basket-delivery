@@ -67,6 +67,11 @@ export abstract class HelpersBase extends IdEntity {
         caption: getLang(this.context).escort
         , allowApiUpdate: Roles.admin
     });
+    leadHelper = new HelperId(this.context, {
+        caption: getLang(this.context).leadHelper
+        , allowApiUpdate: Roles.admin
+    });
+
 
     archive = new BoolColumn({
         allowApiUpdate: Roles.admin,

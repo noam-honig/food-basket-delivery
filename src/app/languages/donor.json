@@ -67,6 +67,10 @@
     "google": "להוסיף שיוך לקבוצה",
     "valueInCode": "להוסיף שיוך לקבוצה"
   },
+  "addRepeatFamilies": {
+    "google": "בחירת תורמים שהמתנדב היה אצלהם בעבר",
+    "valueInCode": "בחירת משפחות שהמתנדב היה אצלהם בעבר"
+  },
   "address": {
     "google": "כתובת",
     "valueInCode": "כתובת"
@@ -244,8 +248,8 @@
     "valueInCode": "לסרטון הדרכה על שיוך משלוחים ויום האירוע לחצו כאן"
   },
   "assign": {
-    "google": "שייכי",
-    "valueInCode": "שייכי"
+    "google": "שייך",
+    "valueInCode": "שייך"
   },
   "assignAFamilyGroup": {
     "google": "שיוך לקבוצת תורמים",
@@ -1557,6 +1561,10 @@
     "google": "משתמש מעדכן",
     "valueInCode": "משתמש מעדכן"
   },
+  "leadHelper": {
+    "google": "מתנדב מוביל",
+    "valueInCode": "מתנדב מוביל"
+  },
   "left": {
     "google": "יצא",
     "valueInCode": "יצא"
@@ -1712,6 +1720,18 @@
   "moreVolunteers": {
     "google": "עוד מתנדבים",
     "valueInCode": "עוד מתנדבים"
+  },
+  "moveDeliveriesTo": {
+    "google": "העבר משלוחים ל",
+    "valueInCode": "העבר משלוחים ל"
+  },
+  "moveDeliveriesToAnotherVolunteer": {
+    "google": "העבר משלוחים למתנדב אחר",
+    "valueInCode": "העבר משלוחים למתנדב אחר"
+  },
+  "movedFrom": {
+    "google": "הועברו מ",
+    "valueInCode": "הועברו מ"
   },
   "moveTheFamily": {
     "google": "להעביר את משפחת",
@@ -2075,7 +2095,7 @@
   },
   "prioritizeRepeatFamilies": {
     "google": "עדיפות לתורמים חוזרים",
-    "valueInCode": "עדיפות למשפחות חוזרות"
+    "valueInCode": "עדיפות שהמנדב היה אצלהן"
   },
   "problem": {
     "google": "בעייה",
@@ -2546,6 +2566,10 @@
     "google": "הצג שיוך משלוחים ל",
     "valueInCode": "הצג שיוך משלוחים ל"
   },
+  "showDeletedHelpers": {
+    "google": "הצג מתנדבים מחוקים",
+    "valueInCode": "הצג מתנדבים מחוקים"
+  },
   "showDistCenterAsEndAddressForVolunteer": {
     "google": "הצג כתובות מעבדה כנקודת סיום למתנדב",
     "valueInCode": "הצג כתובות רשימת חלוקה כנקודת סיום למתנדב"
@@ -2758,6 +2782,10 @@
     "google": "זמן בדקות לניתוק אוטומטית",
     "valueInCode": "זמן בדקות לניתוק אוטומטית"
   },
+  "to": {
+    "google": "ל",
+    "valueInCode": "ל"
+  },
   "toDate": {
     "google": "עד תאריך",
     "valueInCode": "עד תאריך"
@@ -2797,6 +2825,10 @@
   "twoHours": {
     "google": "שעתיים",
     "valueInCode": "שעתיים"
+  },
+  "unArchiveHelper": {
+    "google": "בטל מחיקת מתנדב",
+    "valueInCode": "בטל מחיקת מתנדב"
   },
   "unAsigned": {
     "google": "טרם שוייכו",

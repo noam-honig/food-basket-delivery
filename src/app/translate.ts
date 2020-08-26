@@ -216,7 +216,7 @@ export class Language {
   allRegions = 'כל האזורים';
   basketType = 'סוג סל';
   numOfFamilies = 'מספר משפחות';
-  prioritizeRepeatFamilies = 'עדיפות למשפחות חוזרות';
+  prioritizeRepeatFamilies = 'עדיפות למשפחות שהמנדב היה אצלהן';
   inProgress = 'עובד על זה...';
   noDeliveriesLeft = 'לא נותרו משלוחים מתאימים';
   asignClosestDelivery = "שייך משלוח הכי קרוב";
@@ -255,7 +255,7 @@ export class Language {
   createDate = 'מועד הוספה';
   remiderSmsDate = 'מועד משלוח תזכורת SMS';
   admin = 'מנהל כלל המערכת';
-  lab='עובד מעבדה';
+  lab = 'עובד מעבדה';
   indie = 'מתנדב עצמאי';
   responsibleForAssign = 'משייך מתנדבים לרשימת חלוקה';
   notAllowedToUpdateVolunteer = 'אינך רשאי לעדכן עבור מתנדב זה';
@@ -315,7 +315,7 @@ export class Language {
   defaulyHelpPhoneExplanation = 'כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את המשפחות ולחץ על הכפתור שלח SMS. ניתן להגדיר כאן שם חלופי וטלפון חלופי';
   smsTextHelpTitle = 'הודעה זו תשלח למתנדב ממסך שיוך משלוחים - עם הקישור למשפחות להן הוא מתבקש לחלק.';
   replacedByVolunteerName = 'יוחלף בשם המתנדב';
-  replacedByFamilyName='יוחלף בשם המשפחה';
+  replacedByFamilyName = 'יוחלף בשם המשפחה';
   replcaedBySenderName = 'יוחלף בשם השולח';
   replacedByOrgName = 'יוחלף בשם הארגון';
   deliveriesFor = 'משלוחים עבור';
@@ -550,7 +550,7 @@ export class Language {
   moreNews = 'עוד חדשות';
   filter = 'סינון';
   deliveryDetailsAsDisplayedToVolunteer = 'פרטי המשפחה כפי שיופיעו למתנדב';
-  assign = 'שייכי';
+  assign = 'שייך';
   familesOnStreet = 'משפחות ברחוב';
   moreFamilies = 'עוד משפחות';
   recentVolunteers = 'מתנדבים אחרונים';
@@ -869,26 +869,34 @@ export class Language {
   mustConfirmEula = "לא ניתן להשתמש באפליקציה ללא הסכמה לתנאי השימוש";
   readEula = "לחץ לקריאת תנאי השימוש באתר";
   newPasswordMustBeNew = "הסיסמה החדשה והקיימת זהות";
-  invalidatePassword="בטל תוקף סיסמה";
+  invalidatePassword = "בטל תוקף סיסמה";
   passwordInvalidated = "בוטל תוקף הסיסמה";
   sessionExpiredPleaseRelogin = "לצורך הגנה על פרטיות הנתונים, יש לבצע כניסה מחדש";
   setAsDefaultVolunteerForTheseFamilies = "שמור כמתנדב ברירת מחדל למשפחות אלו";
-  thisVolunteerIsSetAsTheDefaultFor="מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד";
+  thisVolunteerIsSetAsTheDefaultFor = "מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד";
   familiesDotCancelTheseAssignments = "משפחות. האם לבטל אותו כברירת מחדל למשפחות אלו?";
   editComment = "ערוך הערה";
   createNewEvent = "פתיחת ארוע חדש";
   createNewEventHelp = `פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשרת יצירת משלוח חדש למשפחות`;
-  createNewDeliveryForAllFamilies="צור משלוח חדש למשפחות";
+  createNewDeliveryForAllFamilies = "צור משלוח חדש למשפחות";
   selectSomeOfTheFamilies = "בחר משפחות לפי קבוצות";
   moreOptions = "אפשרויות מתקדמות למשלוחים החדשים";
   includeGroups = "רק עבור משפחות בקבוצות אלו";
   create = "ליצור ";
   newDeliveriesQM = "משלוחים חדשים?";
-  actionCanceled="פעולה בוטלה";
+  actionCanceled = "פעולה בוטלה";
   deliveriesCreated = "משלוחים נוצרו";
   doneDotGotoDeliveries = "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?";
   notDoneDeliveriesShouldArchiveThem = "משלוחים פעילים שטרם שוייכו, האם להמשיך בפתיחת ארוע חדש?";
   deliveresOnTheWayAssignedInTheLast3Hours = "משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך בפתיחת ארוע חדש?";
+  leadHelper = "מתנדב מוביל";
+  movedFrom = "הועברו מ";
+  to = "ל";
+  moveDeliveriesToAnotherVolunteer = "העבר משלוחים למתנדב אחר";
+  moveDeliveriesTo = "העבר משלוחים ל";
+  showDeletedHelpers = 'הצג מתנדבים מחוקים';
+  unArchiveHelper = "בטל מחיקת מתנדב";
+  addRepeatFamilies = "בחירת משפחות שהמתנדב היה אצלהם בעבר";
   
 }
 
