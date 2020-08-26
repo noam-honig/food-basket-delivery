@@ -14,19 +14,20 @@
                 target="_blank" *ngIf="settings.showVideo()"
                 class="no-print">{{settings.lang.familyComponentVideos}}</a> -->
         </div>
-        <mat-tab-group #myTab (selectedTabChange)="tabChanged()" [selectedIndex]="0" *ngIf="!problemOnly">
-            <mat-tab *ngFor="let t of statTabs" label="{{t.name}} {{statTotal(t)}}"> </mat-tab>
+        <ng-container  *ngIf="showChart">
+            <mat-tab-group #myTab (selectedTabChange)="tabChanged()" [selectedIndex]="0" >
+                <mat-tab *ngFor="let t of statTabs" label="{{t.name}} {{statTotal(t)}}"> </mat-tab>
 
-        </mat-tab-group>
-        <br *ngIf="problemOnly" />
-        <div *ngIf="showChart">
-            <div style="display: block;width:350px;height:188px;">
-                <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType"
-                    [options]="options" [colors]="colors" (chartClick)="chartClicked($event)"></canvas>
+            </mat-tab-group>
+
+            <div>
+                <div style="display: block;width:350px;height:188px;">
+                    <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType"
+                        [options]="options" [colors]="colors" (chartClick)="chartClicked($event)"></canvas>
+                </div>
             </div>
-        </div>
-        <a *ngFor="let s of currentTabStats.moreStats" (click)="setCurrentStat(s)">{{s.name }} - {{s.value}}, </a>
-
+            <a *ngFor="let s of currentTabStats.moreStats" (click)="setCurrentStat(s)">{{s.name }} - {{s.value}}, </a>
+        </ng-container>
         <strong>{{families.totalRows}} {{settings.lang.families}} </strong> <strong *ngIf="currentStatFilter"> -
             {{currentStatFilter.name}} - </strong> <a *ngIf="currentStatFilter"
             (click)="clearStat()">{{settings.lang.showAll}}</a>

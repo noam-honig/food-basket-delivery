@@ -54,7 +54,7 @@ import { getLang } from '../sites/sites';
     styleUrls: ['./families.component.scss']
 })
 export class FamiliesComponent implements OnInit {
-    @Input() problemOnly = false;
+
     limit = 25;
 
 
@@ -222,9 +222,6 @@ export class FamiliesComponent implements OnInit {
                 }
                 if (this.searchString) {
                     addFilter(f.name.isContains(this.searchString));
-                }
-                if (this.problemOnly) {
-                    addFilter(f.addressOk.isEqualTo(false));
                 }
 
                 return result;
@@ -410,12 +407,6 @@ export class FamiliesComponent implements OnInit {
                     f.showDeliveryHistoryDialog({ settings: this.settings, dialog: this.dialog });
                 }
                 , visible: f => !f.isNew()
-            },
-            {
-                name: this.settings.lang.googleSearchAddress,
-                cssClass: 'btn btn-success',
-                click: f => f.openGoogleMaps(),
-                visible: f => this.problemOnly
             }
 
         ]
@@ -481,7 +472,7 @@ export class FamiliesComponent implements OnInit {
         {
             rule: f => f.status.isEqualTo(FamilyStatus.Active),
             showTotal: false,
-            name:  this.settings.lang.defaultVolunteer,
+            name: this.settings.lang.defaultVolunteer,
             stats: [],
             moreStats: [],
             refreshStats: async x => {
@@ -495,7 +486,7 @@ export class FamiliesComponent implements OnInit {
         {
             rule: f => f.status.isEqualTo(FamilyStatus.Active),
             showTotal: false,
-            name:  this.settings.lang.region,
+            name: this.settings.lang.region,
             stats: [],
             moreStats: [],
             refreshStats: async x => {
@@ -587,19 +578,19 @@ export class FamiliesComponent implements OnInit {
     refreshStats() {
         if (this.suspend)
             return;
-        if (!this.problemOnly)
-            this.busy.donotWait(async () => this.stats.getData(this.dialog.distCenter.value).then(st => {
 
-                this.groupsTotals.stats.splice(0);
-                this.prepComplexStats(st.groups.map(g => ({ name: g.name, count: g.total })),
-                    this.groupsTotals,
-                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.groups.isContains(g.name)),
-                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.groups.isDifferentFrom(g.name)));
+        this.busy.donotWait(async () => this.stats.getData(this.dialog.distCenter.value).then(st => {
+
+            this.groupsTotals.stats.splice(0);
+            this.prepComplexStats(st.groups.map(g => ({ name: g.name, count: g.total })),
+                this.groupsTotals,
+                (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.groups.isContains(g.name)),
+                (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.groups.isDifferentFrom(g.name)));
 
 
 
-                this.updateChart();
-            }));
+            this.updateChart();
+        }));
     }
 
 
