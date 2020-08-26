@@ -216,7 +216,7 @@ export class Language {
   allRegions = 'כל האזורים';
   basketType = 'סוג סל';
   numOfFamilies = 'מספר משפחות';
-  prioritizeRepeatFamilies = 'עדיפות למשפחות חוזרות';
+  prioritizeRepeatFamilies = 'עדיפות למשפחות שהמנדב היה אצלהן';
   inProgress = 'עובד על זה...';
   noDeliveriesLeft = 'לא נותרו משלוחים מתאימים';
   asignClosestDelivery = "שייך משלוח הכי קרוב";
@@ -547,7 +547,7 @@ export class Language {
   moreNews = 'עוד חדשות';
   filter = 'סינון';
   deliveryDetailsAsDisplayedToVolunteer = 'פרטי המשפחה כפי שיופיעו למתנדב';
-  assign = 'שייכי';
+  assign = 'שייך';
   familesOnStreet = 'משפחות ברחוב';
   moreFamilies = 'עוד משפחות';
   recentVolunteers = 'מתנדבים אחרונים';
@@ -893,6 +893,8 @@ export class Language {
   moveDeliveriesTo = "העבר משלוחים ל";
   showDeletedHelpers = 'הצג מתנדבים מחוקים';
   unArchiveHelper = "בטל מחיקת מתנדב";
+  addRepeatFamilies = "בחירת משפחות שהמתנדב היה אצלהם בעבר";
+  
 }
 
 const defaultLang = new Language();

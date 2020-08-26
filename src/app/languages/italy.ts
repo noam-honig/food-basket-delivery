@@ -770,4 +770,5 @@ export class italy implements Language {
   moveDeliveriesTo = 'Spedizioni inoltrate a';
   showDeletedHelpers = 'Visualizza i volontari eliminati';
   unArchiveHelper = "Annulla l'eliminazione di un volontario";
+  addRepeatFamilies = 'Selezione delle famiglie che il volontario ha avuto in passato';
 }

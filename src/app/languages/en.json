@@ -74,6 +74,11 @@
     "google": "Add affiliation to the group",
     "valueInCode": "להוסיף שיוך לקבוצה"
   },
+  "addRepeatFamilies": {
+    "google": "Selecting families that the volunteer has had in the past",
+    "valueInCode": "בחירת משפחות שהמתנדב היה אצלהם בעבר",
+    "custom":"Select from past deliveries"
+  },
   "address": {
     "google": "Address",
     "valueInCode": "כתובת"
@@ -277,7 +282,7 @@
   },
   "assign": {
     "google": "Belong",
-    "valueInCode": "שייכי",
+    "valueInCode": "שייך",
     "custom": "Assign"
   },
   "assignAFamilyGroup": {
@@ -2285,7 +2290,8 @@
   },
   "prioritizeRepeatFamilies": {
     "google": "Priority for returning families",
-    "valueInCode": "עדיפות למשפחות חוזרות"
+    "valueInCode": "עדיפות שהמנדב היה אצלהן",
+    "custom":"Prefer past families"
   },
   "problem": {
     "google": "problem",

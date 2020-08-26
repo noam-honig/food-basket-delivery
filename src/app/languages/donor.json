@@ -67,6 +67,10 @@
     "google": "להוסיף שיוך לקבוצה",
     "valueInCode": "להוסיף שיוך לקבוצה"
   },
+  "addRepeatFamilies": {
+    "google": "בחירת תורמים שהמתנדב היה אצלהם בעבר",
+    "valueInCode": "בחירת משפחות שהמתנדב היה אצלהם בעבר"
+  },
   "address": {
     "google": "כתובת",
     "valueInCode": "כתובת"
@@ -244,8 +248,8 @@
     "valueInCode": "לסרטון הדרכה על שיוך משלוחים ויום האירוע לחצו כאן"
   },
   "assign": {
-    "google": "שייכי",
-    "valueInCode": "שייכי"
+    "google": "שייך",
+    "valueInCode": "שייך"
   },
   "assignAFamilyGroup": {
     "google": "שיוך לקבוצת תורמים",
@@ -2087,7 +2091,7 @@
   },
   "prioritizeRepeatFamilies": {
     "google": "עדיפות לתורמים חוזרים",
-    "valueInCode": "עדיפות למשפחות חוזרות"
+    "valueInCode": "עדיפות שהמנדב היה אצלהן"
   },
   "problem": {
     "google": "בעייה",

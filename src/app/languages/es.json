@@ -84,6 +84,11 @@
     "valueInCode": "להוסיף שיוך לקבוצה",
     "valueInEnglish": "Add affiliation to the group"
   },
+  "addRepeatFamilies": {
+    "google": "Seleccionar familias que el voluntario ha tenido en el pasado",
+    "valueInCode": "בחירת משפחות שהמתנדב היה אצלהם בעבר",
+    "valueInEnglish": "Selecting families that the volunteer has had in the past"
+  },
   "address": {
     "google": "Habla a",
     "valueInCode": "כתובת",
@@ -306,7 +311,7 @@
   },
   "assign": {
     "google": "Asignar",
-    "valueInCode": "שייכי",
+    "valueInCode": "שייך",
     "valueInEnglish": "Assign"
   },
   "assignAFamilyGroup": {
@@ -2602,7 +2607,7 @@
   },
   "prioritizeRepeatFamilies": {
     "google": "Prioridad para familias que regresan",
-    "valueInCode": "עדיפות למשפחות חוזרות",
+    "valueInCode": "עדיפות שהמנדב היה אצלהן",
     "valueInEnglish": "Priority for returning families"
   },
   "problem": {

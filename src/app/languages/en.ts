@@ -770,4 +770,5 @@ export class en implements Language {
   moveDeliveriesTo = 'Forward shipments to';
   showDeletedHelpers = 'View deleted volunteers';
   unArchiveHelper = 'Undelete a volunteer';
+  addRepeatFamilies = 'Selecting families that the volunteer has had in the past';
 }

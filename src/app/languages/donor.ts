@@ -433,7 +433,7 @@ export class donor implements Language {
   moreNews = 'עוד חדשות';
   filter = 'סינון';
   deliveryDetailsAsDisplayedToVolunteer = 'פרטי התורם כפי שיופיעו למתנדב';
-  assign = 'שייכי';
+  assign = 'שייך';
   familesOnStreet = 'תורמים ברחוב';
   moreFamilies = 'עוד תורמים';
   recentVolunteers = 'מתנדבים אחרונים';
@@ -770,4 +770,5 @@ export class donor implements Language {
   moveDeliveriesTo = 'העבר משלוחים ל';
   showDeletedHelpers = 'הצג מתנדבים מחוקים';
   unArchiveHelper = 'בטל מחיקת מתנדב';
+  addRepeatFamilies = 'בחירת תורמים שהמתנדב היה אצלהם בעבר';
 }

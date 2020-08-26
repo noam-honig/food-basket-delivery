@@ -111,7 +111,7 @@
           </mat-form-field>
 
           <mat-checkbox [(ngModel)]="preferRepeatFamilies" style="width:auto" *ngIf="showRepeatFamilies">
-            {{settings.lang.prioritizeRepeatFamilies}} ({{repeatFamilies}})
+            {{settings.lang.prioritizeRepeatFamilies}} ({{repeatFamilies.length}})
           </mat-checkbox>
 
         </div>
@@ -134,8 +134,8 @@
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #basketMenu="matMenu">
-            <button mat-menu-item (click)="assignItem(true)"
-              *ngIf="preferRepeatFamilies&&repeatFamilies>0">{{settings.lang.addAllRepeatFamilies}}</button>
+            <button mat-menu-item (click)="addRepeat()"
+              *ngIf="preferRepeatFamilies&&repeatFamilies.length>0">{{settings.lang.addRepeatFamilies}}</button>
             <button mat-menu-item (click)="addSpecial()"
               *ngIf="specialFamilies">{{settings.lang.specialFamilies}} - {{specialFamilies}}</button>
             <button mat-menu-item (click)="addSpecific()">{{settings.lang.selectDeliveryByName}}</button>

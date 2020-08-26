@@ -770,4 +770,5 @@ export class soldier implements Language {
   moveDeliveriesTo = 'העבר משלוחים ל';
   showDeletedHelpers = 'הצג מתנדבים מחוקים';
   unArchiveHelper = 'בטל מחיקת מתנדב';
+  addRepeatFamilies = 'בחירת חיילים שהמתנדב היה אצלהם בעבר';
 }

@@ -770,4 +770,5 @@ export class es implements Language {
   moveDeliveriesTo = 'Reenviar envíos a';
   showDeletedHelpers = 'Ver voluntarios eliminados';
   unArchiveHelper = 'Recuperar un voluntario';
+  addRepeatFamilies = 'Seleccionar familias que el voluntario ha tenido en el pasado';
 }

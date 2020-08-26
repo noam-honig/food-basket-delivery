@@ -282,8 +282,7 @@ export class HelperFamiliesComponent implements OnInit {
     await Families.SendMessageToBrowsers(getLang(context).cancelAssignmentForHelperFamilies, context, dist);
   }
   distanceFromPreviousLocation(f: ActiveFamilyDeliveries, i: number) {
-    if (i == 0)
-      return undefined;
+    if (i == 0) { return undefined; }
     if (!f.addressOk.value)
       return undefined;
     let of = this.familyLists.toDeliver[i - 1];
@@ -355,11 +354,14 @@ export class HelperFamiliesComponent implements OnInit {
       });
   }
   async refreshDependentVolunteers() {
+
     this.otherDependentVolunteers = [];
     if (this.familyLists.helper.leadHelper.value) {
       this.otherDependentVolunteers.push(this.context.for(Helpers).lookup(this.familyLists.helper.leadHelper));
     }
-    this.otherDependentVolunteers.push(...await this.context.for(Helpers).find({ where: h => h.leadHelper.isEqualTo(this.familyLists.helper.id) }));
+    this.busy.donotWaitNonAsync(async () => {
+      this.otherDependentVolunteers.push(...await this.context.for(Helpers).find({ where: h => h.leadHelper.isEqualTo(this.familyLists.helper.id) }));
+    });
   }
   otherDependentVolunteers: Helpers[] = [];
 

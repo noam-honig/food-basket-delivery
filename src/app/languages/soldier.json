@@ -67,6 +67,10 @@
     "google": "להוסיף שיוך לקבוצה",
     "valueInCode": "להוסיף שיוך לקבוצה"
   },
+  "addRepeatFamilies": {
+    "google": "בחירת חיילים שהמתנדב היה אצלהם בעבר",
+    "valueInCode": "בחירת משפחות שהמתנדב היה אצלהם בעבר"
+  },
   "address": {
     "google": "כתובת",
     "valueInCode": "כתובת"
@@ -245,7 +249,7 @@
   },
   "assign": {
     "google": "שייכי",
-    "valueInCode": "שייכי"
+    "valueInCode": "שייך"
   },
   "assignAFamilyGroup": {
     "google": "שיוך לקבוצת חיילים",
@@ -2081,7 +2085,7 @@
   },
   "prioritizeRepeatFamilies": {
     "google": "עדיפות לחיילים חוזרים",
-    "valueInCode": "עדיפות למשפחות חוזרות"
+    "valueInCode": "עדיפות שהמנדב היה אצלהן"
   },
   "problem": {
     "google": "בעייה",

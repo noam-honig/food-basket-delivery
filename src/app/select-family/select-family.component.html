@@ -1,40 +1,53 @@
+<div matDialogHeader>
+  <form (submit)="selectFirst()">
 
-  <mat-card>
-    <div class="fullSize">
 
-      <form (submit)="selectFirst()">
+    <mat-form-field class="full-width">
+      <input matInput [(ngModel)]="searchString" (input)="doFilter()"
+        placeholder="{{settings.lang.search}} {{args.selectStreet?settings.lang.address:settings.lang.familyName}}"
+        #search [ngModelOptions]="{standalone: true}">
+      <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
+    </mat-form-field>
+  </form>
+</div>
+<mat-dialog-content>
+  <div>
 
-        <mat-form-field class="full-width">
-          <input matInput [(ngModel)]="searchString" (input)="doFilter()"
-            placeholder="{{settings.lang.search}} {{args.selectStreet?settings.lang.address:settings.lang.familyName}}" #search [ngModelOptions]="{standalone: true}">
-          <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
-        </mat-form-field>
-        <button mat-raised-button color="accent" *ngIf="args.selectStreet&&families.totalRows>1&&searchString"
-          (click)="selectAllInStreet()">{{settings.lang.assign}} {{families.totalRows}}
-          {{settings.lang.familesOnStreet}}: {{searchString}}</button>
+
+
+    <button mat-raised-button color="accent" *ngIf="countSelected()>0"
+      (click)="doSelection()">{{settings.lang.assign}} {{countSelected()}}
+      {{settings.lang.deliveries}}</button>
+    <button mat-raised-button color="accent"
+      *ngIf="args.selectStreet&&families.totalRows>1&&searchString&&countSelected()==0"
+      (click)="doSelection()">{{settings.lang.assign}} {{families.totalRows}}
+      {{settings.lang.familesOnStreet}}: {{searchString}}</button>
+    <div>
+      <div *ngFor="let f of families.items" (click)="getSelected(f).selectState.selected=!getSelected(f).selectState.selected">
         <div>
-          <div *ngFor="let f of families.items" (click)="select(f)">
-            <div>
-              <h4>{{f.name.value}}</h4>
-            </div>
-            <div *ngIf="showStatus(f)" class="red">
-              <h5>{{showStatus(f)}}</h5>
-            </div>
-            <h5 style="display: inline-block"> {{settings.lang.basket}}</h5> - {{f.basketType.displayValue}}
-            
-            <div *ngIf="f.deliveryComments.value">
-              <h5 style="display: inline-block"> {{settings.lang.commentForVolunteer}}</h5>- {{f.deliveryComments.value}}
-            </div>
-            <h5>{{f.address.value}}</h5>
-
-            <hr />
-          </div>
+          <h4>
+            <mat-checkbox [(ngModel)]="getSelected(f).selectState.selected" (click)="false">
+              {{f.name.value}}
+            </mat-checkbox>
+          </h4>
         </div>
+        <div *ngIf="showStatus(f)" class="red">
+          <h5>{{showStatus(f)}}</h5>
+        </div>
+        <h5 style="display: inline-block"> {{settings.lang.basket}}</h5> - {{f.basketType.displayValue}}
 
-      </form>
-      <button mat-raised-button color="accent" (click)="moreFamilies()"
-        *ngIf=" families.items.length!=families.totalRows">{{settings.lang.moreFamilies}}
-      </button>
+        <div *ngIf="f.deliveryComments.value">
+          <h5 style="display: inline-block"> {{settings.lang.commentForVolunteer}}</h5>- {{f.deliveryComments.value}}
+        </div>
+        <h5>{{f.address.value}}</h5>
+
+        <hr />
+      </div>
     </div>
-  </mat-card>
 
+
+    <button mat-raised-button color="accent" (click)="moreFamilies()"
+      *ngIf=" families.items.length!=families.totalRows">{{settings.lang.moreFamilies}}
+    </button>
+  </div>
+</mat-dialog-content>
