@@ -4,7 +4,7 @@ import { DialogService } from "../select-popup/dialog";
 import { Context, ServerFunction } from "@remult/core";
 import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { HelperAssignmentComponent } from "../helper-assignment/helper-assignment.component";
+
 import { Roles } from "../auth/roles";
 import { PromiseThrottle } from "../shared/utils";
 import { Families } from "../families/families";
@@ -24,7 +24,7 @@ export class moveDeliveriesHelper {
                     this.reload();
                     let h = await this.context.for(Helpers).lookupAsync(to.id);
                     if (showToHelperAssignmentWhenDone)
-                        await this.context.openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
+                        await this.context.openDialog((await import("../helper-assignment/helper-assignment.component")).HelperAssignmentComponent, x => x.argsHelper = h);
                 }
 
             });

@@ -22,20 +22,40 @@
 
     <div mat-card-avatar class="example-header-image">
       <mat-icon>{{icon(n)}}</mat-icon>
+
     </div>
 
     <mat-card-title class="newsHeader">
       <div>
         {{n.describe()}}
-        <div style="color: darkorange" *ngIf="n.needsWork.value" (click)="cancelNeedWork(n)">
-          {{settings.lang.requireFollowUp}}</div>
+
+        <div *ngIf="showNeedsWork(n)" style="margin-top:7px">
+          <mat-checkbox [checked]="!n.needsWork.value" (change)="needWorkWasChanged(n,$event)"
+            [class.handled]="!n.needsWork.value" style="
+          padding: 5px;
+          
+          border-radius: 7px;
+          border: solid 1px #2196f3;
+          padding-top: 2px;
+          /* display: flex; */
+      " color="primary">טופל</mat-checkbox>
+        </div>
       </div>
     </mat-card-title>
     <mat-card-subtitle>{{n.deliveryStatusDate.relativeDateName()}}, {{settings.lang.updatedBy}}
       {{n.deliveryStatusUser.getValue()}}
-      <br><a (click)="updateFamily(n)">{{settings.lang.deliveryDetails}}</a>
-      <br *ngIf="n.courier.value"><a (click)="showHelper(n)"
-        *ngIf="n.courier.value">{{settings.lang.showAsignDeliveryFor}} {{n.courier.getValue()}} </a>
+      <br>
+      <a (click)="updateFamily(n)">
+        <button mat-icon-button>
+          <mat-icon>edit</mat-icon>
+        </button>
+        {{settings.lang.deliveryDetails}}
+      </a>
+
+
+      <a (click)="showHelper(n)" *ngIf="n.courier.value" style="display:inline-block"> <button mat-icon-button>
+          <mat-icon>list_alt</mat-icon>
+        </button> {{settings.lang.deliveries}} {{settings.lang.for}} {{n.courier.getValue()}} </a>
     </mat-card-subtitle>
 
   </mat-card-header>

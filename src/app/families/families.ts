@@ -697,7 +697,7 @@ export class Families extends IdEntity {
             let duration = '';
             if (n.courierAssingTime.value && n.deliveryStatusDate.value)
               duration = ' ' + getLang(context).within + ' ' + Math.round((n.deliveryStatusDate.value.valueOf() - n.courierAssingTime.value.valueOf()) / 60000) + " " + getLang(context).minutes;
-            return n.deliverStatus.displayValue + (n.courierComments.value ? ", " + n.courierComments.value + " - " : '') + ' ' + getLang(context).forFamily + ' ' + n.name.value + ' ' + (courierName ? (getLang(context).by + ' ' + courierName) : '') + duration + "!";
+            return n.deliverStatus.displayValue + (n.courierComments.value ? ", \"" + n.courierComments.value + "\" - " : '') + ' ' + getLang(context).forFamily + ' ' + n.name.value + ' ' + (courierName ? (getLang(context).by + ' ' + courierName) : '') + duration + "!";
         }
         return getLang(context).theFamily + ' ' + n.name.value + ' ' + getLang(context).wasUpdatedTo + ' ' + n.deliverStatus.displayValue;
       case 2:

@@ -190,7 +190,7 @@ export class Language {
   selfPuckupSuccess = 'אספו את החבילה';
   packageWasPickedUp = 'אספו את החבילה';
   cancelAsignment = 'בטל שיוך';
-  deliveryDetails = 'כרטיס משלוח';
+  deliveryDetails = 'פרטי משלוח';
   repeatFamilyNotice = 'הייתם אצל המשפחה הזו גם פעם קודמת';
   inacurateAddress = 'שימו לב, כתובת לא מדוייקת!';
   copyAddress = 'העתק כתובת';
