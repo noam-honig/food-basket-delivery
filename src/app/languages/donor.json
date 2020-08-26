@@ -1533,6 +1533,10 @@
     "google": "מוגדר כמלווה של",
     "valueInCode": "מוגדר כמלווה של"
   },
+  "isDefinedAsLeadVolunteerOf": {
+    "google": "מוגדר המתנדב מוביל של",
+    "valueInCode": "מוגדר המתנדב מוביל של"
+  },
   "km": {
     "google": "ק\"מ",
     "valueInCode": "ק\"מ"
@@ -2095,7 +2099,7 @@
   },
   "prioritizeRepeatFamilies": {
     "google": "עדיפות לתורמים חוזרים",
-    "valueInCode": "עדיפות שהמנדב היה אצלהן"
+    "valueInCode": "עדיפות למשפחות שהמנדב היה אצלהן"
   },
   "problem": {
     "google": "בעייה",

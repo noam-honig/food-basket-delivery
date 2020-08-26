@@ -85,9 +85,9 @@
     "valueInEnglish": "Add affiliation to the group"
   },
   "addRepeatFamilies": {
-    "google": "Selezione delle famiglie che il volontario ha avuto in passato",
+    "google": "Scegli tra le consegne precedenti",
     "valueInCode": "בחירת משפחות שהמתנדב היה אצלהם בעבר",
-    "valueInEnglish": "Selecting families that the volunteer has had in the past"
+    "valueInEnglish": "Select from past deliveries"
   },
   "address": {
     "google": "Indirizzo",
@@ -1915,6 +1915,11 @@
     "valueInCode": "מוגדר כמלווה של",
     "valueInEnglish": "Defined as a lender of"
   },
+  "isDefinedAsLeadVolunteerOf": {
+    "google": "Definito come il principale volontario di",
+    "valueInCode": "מוגדר המתנדב מוביל של",
+    "valueInEnglish": "Defined as the Leading Volunteer of"
+  },
   "km": {
     "google": "km",
     "valueInCode": "ק\"מ",
@@ -2611,9 +2616,9 @@
     "valueInEnglish": "Previous delivery summary"
   },
   "prioritizeRepeatFamilies": {
-    "google": "Priorità per il ritorno delle famiglie",
-    "valueInCode": "עדיפות שהמנדב היה אצלהן",
-    "valueInEnglish": "Priority for returning families"
+    "google": "Preferisci le famiglie del passato",
+    "valueInCode": "עדיפות למשפחות שהמנדב היה אצלהן",
+    "valueInEnglish": "Prefer past families"
   },
   "problem": {
     "google": "problema",

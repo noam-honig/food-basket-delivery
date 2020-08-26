@@ -102,7 +102,7 @@ export class en implements Language {
   allRegions = 'All Areas';
   basketType = 'Parcel type';
   numOfFamilies = 'Several families';
-  prioritizeRepeatFamilies = 'Priority for returning families';
+  prioritizeRepeatFamilies = 'Prefer past families';
   inProgress = 'working on it...';
   noDeliveriesLeft = 'No suitable deliveries left';
   asignClosestDelivery = 'Assign Nearest Delivery';
@@ -773,5 +773,6 @@ export class en implements Language {
   moveDeliveriesTo = 'Forward shipments to';
   showDeletedHelpers = 'View deleted volunteers';
   unArchiveHelper = 'Undelete a volunteer';
-  addRepeatFamilies = 'Selecting families that the volunteer has had in the past';
+  addRepeatFamilies = 'Select from past deliveries';
+  isDefinedAsLeadVolunteerOf = 'Defined as the Leading Volunteer of';
 }

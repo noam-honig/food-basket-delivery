@@ -897,6 +897,7 @@ export class Language {
   showDeletedHelpers = 'הצג מתנדבים מחוקים';
   unArchiveHelper = "בטל מחיקת מתנדב";
   addRepeatFamilies = "בחירת משפחות שהמתנדב היה אצלהם בעבר";
+  isDefinedAsLeadVolunteerOf = "מוגדר המתנדב מוביל";
   
 }
 

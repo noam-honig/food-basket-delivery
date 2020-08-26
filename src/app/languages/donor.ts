@@ -774,4 +774,5 @@ export class donor implements Language {
   showDeletedHelpers = 'הצג מתנדבים מחוקים';
   unArchiveHelper = 'בטל מחיקת מתנדב';
   addRepeatFamilies = 'בחירת תורמים שהמתנדב היה אצלהם בעבר';
+  isDefinedAsLeadVolunteerOf = 'מוגדר המתנדב מוביל של';
 }
