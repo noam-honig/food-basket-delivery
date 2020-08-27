@@ -15,6 +15,7 @@ export class Event extends IdEntity {
     showVolunteers(): void {
         this.context.openDialog(GridDialogComponent, x => x.args = {
             title: this.name.value,
+
             buttons: [{
                 text: getLang(this.context).addVolunteer,
                 click: () => this.context.openDialog(SelectHelperComponent, x => x.args = {
@@ -32,6 +33,7 @@ export class Event extends IdEntity {
                     limit: 50,
                     where: ve => ve.eventId.isEqualTo(this.id)
                 },
+                knowTotalRows: true,
                 columnSettings: ev => [
                     ev.helperName,
                     ev.helperPhone,
