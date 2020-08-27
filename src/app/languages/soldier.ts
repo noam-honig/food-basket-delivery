@@ -776,4 +776,5 @@ export class soldier implements Language {
   addRepeatFamilies = 'בחירת חיילים שהמתנדב היה אצלהם בעבר';
   isDefinedAsLeadVolunteerOf = 'מוגדר המתנדב מוביל של';
   volunteerPreferences = 'העדפות מתנדב';
+  eventInfo = 'פרטי ארוע';
 }

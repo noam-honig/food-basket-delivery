@@ -776,4 +776,5 @@ export class italy implements Language {
   addRepeatFamilies = 'Scegli tra le consegne precedenti';
   isDefinedAsLeadVolunteerOf = 'Definito come il principale volontario di';
   volunteerPreferences = 'Preferenze dei volontari';
+  eventInfo = "Dettagli dell'evento";
 }

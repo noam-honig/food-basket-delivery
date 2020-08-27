@@ -1,12 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { IDataAreaSettings, DataAreaSettings, GridSettings } from '@remult/core';
+import { IDataAreaSettings, DataAreaSettings, GridSettings, DialogConfig } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-grid-dialog',
   templateUrl: './grid-dialog.component.html',
   styleUrls: ['./grid-dialog.component.scss']
+})
+@DialogConfig({
+
+  minWidth: '95vw'
 })
 export class GridDialogComponent implements OnInit {
 

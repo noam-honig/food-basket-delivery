@@ -475,7 +475,7 @@ export class Language {
   addressesWithMoreThanOneFamily = 'כתובות עם יותר ממשפחה אחת';
   showFamilies = 'הצג משפחות';
   recentlyAssigned = 'שוייכו עכשיו';
-  addVolunteer = 'הוסף מתנדב/מנהל';
+  addVolunteer = 'הוסף מתנדב';
   selectExcelFile = 'בחר קובץ אקסל';
   excelImportVideo = 'לסרטון הדרכה על קליטה מאקסל לחץ כאן';
   mapExcelColumns = 'הגדרת העמודות';
@@ -899,7 +899,7 @@ export class Language {
   addRepeatFamilies = "בחירת משפחות שהמתנדב היה אצלהם בעבר";
   isDefinedAsLeadVolunteerOf = "מוגדר המתנדב מוביל";
   volunteerPreferences="העדפות מתנדב";
-  
+  eventInfo="פרטי ארוע";
 }
 
 const defaultLang = new Language();

@@ -776,4 +776,5 @@ export class donor implements Language {
   addRepeatFamilies = 'בחירת תורמים שהמתנדב היה אצלהם בעבר';
   isDefinedAsLeadVolunteerOf = 'מוגדר המתנדב מוביל של';
   volunteerPreferences = 'העדפות מתנדב';
+  eventInfo = 'פרטי ארוע';
 }

@@ -1270,6 +1270,11 @@
     "valueInCode": "עד שעה",
     "valueInEnglish": "To an hour"
   },
+  "eventInfo": {
+    "google": "Dettagli dell'evento",
+    "valueInCode": "פרטי ארוע",
+    "valueInEnglish": "Event details"
+  },
   "eventName": {
     "google": "Nome dell'evento",
     "valueInCode": "שם ארוע",

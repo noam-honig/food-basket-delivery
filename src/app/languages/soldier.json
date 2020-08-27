@@ -1015,6 +1015,10 @@
     "google": "עד שעה",
     "valueInCode": "עד שעה"
   },
+  "eventInfo": {
+    "google": "פרטי ארוע",
+    "valueInCode": "פרטי ארוע"
+  },
   "eventName": {
     "google": "שם ארוע",
     "valueInCode": "שם ארוע"

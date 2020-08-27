@@ -776,4 +776,5 @@ export class es implements Language {
   addRepeatFamilies = 'Seleccionar de entregas pasadas';
   isDefinedAsLeadVolunteerOf = 'Definido como el voluntario líder de';
   volunteerPreferences = 'Preferencias de los voluntarios';
+  eventInfo = 'Detalles del evento';
 }

@@ -1,13 +1,63 @@
 import { IdEntity, StringColumn, Context, DateColumn, NumberColumn, IdColumn, ValueListColumn, EntityClass } from "@remult/core";
-import {  use } from "../translate";
+import { use } from "../translate";
 import { getLang } from '../sites/sites';
 import { Roles } from "../auth/roles";
 import { HelperId, Helpers } from "../helpers/helpers";
 import { SqlBuilder, PhoneColumn } from "../model-shared/types";
 import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
+import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
+import { HelperAssignmentComponent } from "../helper-assignment/helper-assignment.component";
+import { settings } from "cluster";
+import { SelectHelperComponent } from "../select-helper/select-helper.component";
 
 @EntityClass
 export class Event extends IdEntity {
+    showVolunteers(): void {
+        this.context.openDialog(GridDialogComponent, x => x.args = {
+            title: this.name.value,
+            buttons: [{
+                text: getLang(this.context).addVolunteer,
+                click: () => this.context.openDialog(SelectHelperComponent, x => x.args = {
+                    onSelect: async h => {
+                        let eh = this.context.for(volunteersInEvent).create();
+                        eh.helper.value = h.id.value;
+                        eh.eventId.value = this.id.value;
+                        await eh.save();
+                    }
+                })
+
+            }],
+            settings: this.context.for(volunteersInEvent).gridSettings({
+                get: {
+                    limit: 50,
+                    where: ve => ve.eventId.isEqualTo(this.id)
+                },
+                columnSettings: ev => [
+                    ev.helperName,
+                    ev.helperPhone,
+                    ev.assignedDeliveries
+                ],
+                rowButtons: [
+                    {
+                        name: getLang(this.context).assignDeliveryMenu,
+                        icon: 'list_alt',
+                        click: async (ev) => {
+                            let h = await this.context.for(Helpers).findId(ev.helper);
+                            await this.context.openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
+                            ev.save();
+                        }
+                    },
+                    {
+                        name: getLang(this.context).remove,
+                        click: async eh => {
+                            await eh.delete();
+                            x.args.settings.items.splice(x.args.settings.items.indexOf(eh))
+                        }
+                    }
+                ]
+            })
+        });
+    }
     name = new StringColumn(getLang(this.context).eventName);
     eventStatus = new eventStatusColumn();
     description = new StringColumn(getLang(this.context).eventDescription);
