@@ -104,6 +104,10 @@ export class FamilyInfoComponent implements OnInit {
     this.dialog.analytics("Call "+col.defs.key);
     window.location.href = "tel:" + col.value;
   }
+  async sendWhatsapp(phone:string) {
+    PhoneColumn.sendWhatsappToPhone(phone, 
+      this.settings.lang.hello + ' ' + this.f.name.value + ',', this.context);
+  }
   static createPhoneProxyOnServer: (phone1: string, phone2: string) => Promise<{ phone: string, session: string }>;
   @ServerFunction({ allowed: c => c.isSignedIn() })
   static async privateCall(deliveryId: string, context?: Context): Promise<{

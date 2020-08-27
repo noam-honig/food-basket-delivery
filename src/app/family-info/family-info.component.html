@@ -81,52 +81,25 @@
   </div>
 
   <ng-container *ngIf="!settings.hideFamilyPhoneFromVolunteer.value">
-    <h4 *ngIf="f.phone1.value || f.phone2.value||f.phone3.value||f.phone4.value">{{settings.lang.phones}}:</h4>
-    <div *ngIf="f.phone1.value" class="phone-container">
-      <a (click)="callPhone(f.phone1)">
-        <button mat-mini-fab style="vertical-align: middle" color="primary">
-          <mat-icon>call</mat-icon>
-        </button>
-      </a>
+   <h4 *ngIf="f.phone1.value || f.phone2.value||f.phone3.value||f.phone4.value">{{settings.lang.phones}}:</h4>
+   <ng-container *ngFor="let phone of [f.phone1, f.phone2, f.phone3, f.phone4]">
+    <div *ngIf="phone.value" class="phone-container">
+      <span mat-mini-fab style="vertical-align: middle" color="primary" 
+          (click)="sendWhatsapp(phone.value)" *ngIf="settings.isSytemForMlt() && phone.value.startsWith('05')">
+        <img src="assets/whatsapp.png">
+      </span>
+      <button mat-mini-fab style="vertical-align: middle" color="primary" (click)="callPhone(phone)">
+        <mat-icon>call</mat-icon>
+      </button>
       <div>
-        <a (click)="callPhone(f.phone1)">{{f.phone1.displayValue}}</a>,
-        {{f.phone1Description.value?f.phone1Description.value:f.name.value}}
+        <a (click)="callPhone(phone)">{{phone.displayValue}}</a>
+        <span *ngIf="phone==f.phone1 && f.phone1Description.value">{{', '+f.phone1Description.value}}</span>
+        <span *ngIf="phone==f.phone2 && f.phone2Description.value">{{', '+f.phone2Description.value}}</span>
+        <span *ngIf="phone==f.phone3 && f.phone3Description.value">{{', '+f.phone3Description.value}}</span>
+        <span *ngIf="phone==f.phone4 && f.phone4Description.value">{{', '+f.phone4Description.value}}</span>
       </div>
     </div>
-
-    <div *ngIf="f.phone2.value" class="phone-container">
-      <a (click)="callPhone(f.phone2)">
-        <button mat-mini-fab style="vertical-align: middle" color="primary">
-          <mat-icon>call</mat-icon>
-        </button>
-      </a>
-      <div>
-        <a (click)="callPhone(f.phone2)">{{f.phone2.displayValue}}</a>,
-        {{f.phone2Description.value?f.phone2Description.value:f.name.value}}
-      </div>
-    </div>
-    <div *ngIf="f.phone3.value" class="phone-container">
-      <a (click)="callPhone(f.phone3)">
-        <button mat-mini-fab style="vertical-align: middle" color="primary">
-          <mat-icon>call</mat-icon>
-        </button>
-      </a>
-      <div>
-        <a (click)="callPhone(f.phone3)">{{f.phone3.displayValue}}</a>,
-        {{f.phone3Description.value?f.phone3Description.value:f.name.value}}
-      </div>
-    </div>
-    <div *ngIf="f.phone4.value" class="phone-container">
-      <a (click)="callPhone(f.phone4)">
-        <button mat-mini-fab style="vertical-align: middle" color="primary">
-          <mat-icon>call</mat-icon>
-        </button>
-      </a>
-      <div>
-        <a (click)="callPhone(f.phone4)">{{f.phone4.displayValue}}</a>,
-        {{f.phone4Description.value?f.phone4Description.value:f.name.value}}
-      </div>
-    </div>
+   </ng-container>
   </ng-container>
   <ng-container *ngIf="settings.usePhoneProxy.value">
     <div  class="phone-container">
