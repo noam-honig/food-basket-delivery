@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { StringColumn, NumberColumn, DataAreaSettings, ServerFunction, Context, Column, IdColumn, BoolColumn, RouteHelperService } from '@remult/core';
+import { StringColumn, NumberColumn, DataAreaSettings, ServerFunction, Context, Column, IdColumn, BoolColumn, RouteHelperService, BusyService } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { Sites, getLang } from '../sites/sites';
 
@@ -109,58 +109,58 @@ export class CreateNewEvent {
 
     }
 
-    async show(dialog: DialogService, settings: ApplicationSettings, routeHelper: RouteHelperService) {
+    async show(dialog: DialogService, settings: ApplicationSettings, routeHelper: RouteHelperService, busy: BusyService) {
+        busy.doWhileShowingBusy(async () => {
+            let notDoneDeliveries = await this.context.for(ActiveFamilyDeliveries).count(x => x.readyFilter());
+            if (notDoneDeliveries > 0 && !await dialog.YesNoPromise(getLang(this.context).thereAre + " " + notDoneDeliveries + " " + getLang(this.context).notDoneDeliveriesShouldArchiveThem)) {
+                routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
+                return;
+            }
+            let threeHoursAgo = new Date();
+            threeHoursAgo.setHours(threeHoursAgo.getHours() - 3);
+            let recentOnTheWay = await this.context.for(ActiveFamilyDeliveries).count(x => x.onTheWayFilter().and(x.courierAssingTime.isGreaterOrEqualTo(threeHoursAgo)));
+            if (recentOnTheWay > 0 && !await dialog.YesNoPromise(getLang(this.context).thereAre + " " + recentOnTheWay + " " + getLang(this.context).deliveresOnTheWayAssignedInTheLast3Hours)) {
+                routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
+                return;
+            }
+            this.useFamilyBasket.value = true;
 
-        let notDoneDeliveries = await this.context.for(ActiveFamilyDeliveries).count(x => x.readyFilter());
-        if (notDoneDeliveries > 0 && !await dialog.YesNoPromise(getLang(this.context).thereAre + " " + notDoneDeliveries + " " + getLang(this.context).notDoneDeliveriesShouldArchiveThem)) {
-            routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
-            return;
-        }
-        let threeHoursAgo = new Date();
-        threeHoursAgo.setHours(threeHoursAgo.getHours() - 3);
-        let recentOnTheWay = await this.context.for(ActiveFamilyDeliveries).count(x => x.onTheWayFilter().and(x.courierAssingTime.isGreaterOrEqualTo(threeHoursAgo)));
-        if (recentOnTheWay > 0 && !await dialog.YesNoPromise(getLang(this.context).thereAre + " " + recentOnTheWay + " " + getLang(this.context).deliveresOnTheWayAssignedInTheLast3Hours)) {
-            routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
-            return;
-        }
-        this.useFamilyBasket.value = true;
-
-        await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(x => undefined, settings.usingSelfPickupModule.value);
+            await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(x => undefined, settings.usingSelfPickupModule.value);
 
 
-        this.context.openDialog(InputAreaComponent, x => x.args = {
-            title: settings.lang.createNewEvent,
-            helpText: settings.lang.createNewEventHelp,
-            settings: {
-                columnSettings: () => this.columns
-            },
-            ok: async () => {
-                try {
-                    let deliveriesCreated = await CreateNewEvent.createNewEvent(pack(this));
-                    dialog.distCenter.value = dialog.distCenter.value;
-                    if (await dialog.YesNoPromise(settings.lang.doneDotGotoDeliveries)) {
-                        routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
+            this.context.openDialog(InputAreaComponent, x => x.args = {
+                title: settings.lang.createNewEvent,
+                helpText: settings.lang.createNewEventHelp,
+                settings: {
+                    columnSettings: () => this.columns
+                },
+                ok: async () => {
+                    try {
+                        let deliveriesCreated = await CreateNewEvent.createNewEvent(pack(this));
+                        dialog.distCenter.value = dialog.distCenter.value;
+                        if (await dialog.YesNoPromise(settings.lang.doneDotGotoDeliveries)) {
+                            routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
+
+                        }
+
 
                     }
+                    catch (err) {
+                        dialog.exception("Create new event", err);
+                    }
+                },
+                cancel: () => { },
+                validate: async () => {
 
 
+                    if (this.createNewDelivery.value && !await dialog.YesNoPromise(getLang(this.context).create + " " + await CreateNewEvent.countNewDeliveries(pack(this)) + " " + getLang(this.context).newDeliveriesQM))
+                        throw getLang(this.context).actionCanceled;
                 }
-                catch (err) {
-                    dialog.exception("Create new event", err);
-                }
-            },
-            cancel: () => { },
-            validate: async () => {
-
-
-                if (this.createNewDelivery.value && !await dialog.YesNoPromise(getLang(this.context).create + " " + await CreateNewEvent.countNewDeliveries(pack(this)) + " " + getLang(this.context).newDeliveriesQM))
-                    throw getLang(this.context).actionCanceled;
-            }
 
 
 
+            });
         });
-
     }
     @ServerFunction({ allowed: Roles.admin })
     static async createNewEvent(args: any[], context?: Context) {

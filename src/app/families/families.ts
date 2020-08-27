@@ -262,6 +262,7 @@ export class Families extends IdEntity {
     fd.quantity.value = this.quantity.value;
     fd.deliveryComments.value = this.deliveryComments.value;
     fd.courier.value = this.fixedCourier.value;
+    fd.deliverStatus.value = this.defaultSelfPickup.value ? DeliveryStatus.SelfPickup : DeliveryStatus.ReadyForDelivery;
     this.updateDelivery(fd);
     return fd;
   }
@@ -455,9 +456,9 @@ export class Families extends IdEntity {
   iDinExcel = new StringColumn({ caption: getLang(this.context).familyUniqueId });
   internalComment = new StringColumn({ caption: getLang(this.context).internalComment });
 
-  
+
   addressApiResult = new StringColumn();
-  address = new AddressColumn(this.context,this.addressApiResult,getLang(this.context).address, {
+  address = new AddressColumn(this.context, this.addressApiResult, getLang(this.context).address, {
     valueChange: () => {
       if (!this.address.value)
         return;
@@ -671,7 +672,7 @@ export class Families extends IdEntity {
 
 
 
- 
+
 
   static SendMessageToBrowsers = (s: string, context: Context, distCenter: string) => { };
   static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string, context: Context) {

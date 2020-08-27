@@ -6,7 +6,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { DialogService } from './select-popup/dialog';
 import { ApplicationSettings, SettingsService } from './manage/ApplicationSettings';
 import { FamiliesComponent } from './families/families.component';
-import { Context, RouteHelperService, JwtSessionManager, DataAreaSettings } from '@remult/core';
+import { Context, RouteHelperService, JwtSessionManager, DataAreaSettings, BusyService } from '@remult/core';
 import { Roles } from './auth/roles';
 import { translationConfig, Language } from './translate';
 
@@ -38,7 +38,9 @@ export class AppComponent {
     public dialog: DialogService,
     private helper: RouteHelperService,
     public context: Context,
-    public settings: ApplicationSettings) {
+    public settings: ApplicationSettings,
+    private busy:BusyService
+    ) {
     this.lang = settings.lang;
     this.toolbarColor = 'primary';
 
@@ -53,7 +55,7 @@ export class AppComponent {
     return this.context.isAllowed(Roles.admin) && !this.settings.isSytemForMlt();
   }
   createNewEvent() {
-    new CreateNewEvent(this.context).show(this.dialog, this.settings, this.helper);
+    new CreateNewEvent(this.context).show(this.dialog, this.settings, this.helper,this.busy);
   }
 
 
