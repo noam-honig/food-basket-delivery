@@ -54,6 +54,7 @@ export class ManageComponent implements OnInit {
     this.settings.commonQuestions.value = this.serializeQa();
     try {
       await this.settings.save();
+      this.context.clearAllCache();
       this.dialog.refreshFamiliesAndDistributionCenters();
     } catch (err) {
       let x = "שגיאה בשמירה: ";

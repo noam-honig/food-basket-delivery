@@ -1,4 +1,4 @@
-import { IdEntity, StringColumn, Context, EntityClass, NumberColumn, Column } from "@remult/core";
+import { IdEntity, StringColumn, Context, EntityClass, NumberColumn, Column, BoolColumn } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { getSettings } from "../manage/ApplicationSettings";
 import { SqlBuilder, DateTimeColumn, changeDate } from "../model-shared/types";
@@ -88,10 +88,12 @@ export class InRouteHelpers extends IdEntity {
     deliveriesInProgress = new NumberColumn({ caption: getLang(this.context).delveriesInProgress, dataControlSettings: () => ({ width: '100' }) });
     maxAssignDate = new myDateTime(this.context, " שיוך אחרון");
     completedDeliveries = new NumberColumn({ caption: "איסופים מוצלחים", dataControlSettings: () => ({ width: '100' }) });
+    seenFirstAssign = new BoolColumn('ראה את השיוך הראשון');
     constructor(private context: Context) {
         super({
             name: 'in-route-helpers',
             allowApiRead: Roles.admin,
+            defaultOrderBy: () => [this.minAssignDate],
             dbName: () => {
                 let sql = new SqlBuilder();
                 let f = context.for(ActiveFamilyDeliveries).create();
@@ -112,7 +114,10 @@ export class InRouteHelpers extends IdEntity {
                         orderBy: [{ column: com.createDate, descending: true }]
                     }, toCol)
                 }
-                return sql.build('(select *',
+                return sql.build('(select *,',
+                    sql.case([{ when: [sql.build(this.lastSignInDate, ' is null or ', this.lastSignInDate, '<', this.minAssignDate)], then: false }], true)
+                    , ' ', this.seenFirstAssign
+                    ,
 
                     ' from (', sql.query({
                         select: () => [h.id, h.name, h.lastSignInDate, h.smsDate,

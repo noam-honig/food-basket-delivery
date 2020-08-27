@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Context, Column, DataControlInfo, StringColumn, BusyService } from '@remult/core';
+import { Context, Column, DataControlInfo, StringColumn, BusyService, EntityWhere } from '@remult/core';
 import { InRouteHelpers, HelperCommunicationHistory } from './in-route-helpers';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { use } from '../translate';
@@ -22,15 +22,22 @@ export class InRouteFollowUpComponent implements OnInit {
   constructor(private context: Context, private settings: ApplicationSettings, private busy: BusyService) { }
   helpers = this.context.for(InRouteHelpers).gridSettings({
     get: {
-      limit: 25
+      limit: 25,
+      where: x => this.currentOption.where(x)
     },
     knowTotalRows: true,
-    showFilter:true,
+    showFilter: true,
     numOfColumnsInGrid: 99,
     gridButtons: [{
       name: use.language.exportToExcel,
       click: () => saveToExcel(this.settings, this.context.for(InRouteHelpers), this.helpers, "מתנדבים בדרך", this.busy)
     }],
+    rowCssClass: x => {
+      if (!x.lastCommunicationDate.value || x.lastCommunicationDate.value < daysAgo(7))
+        return 'addressProblem';
+      else
+        return '';
+    },
     rowButtons: [{
       textInMenu: () => use.language.assignDeliveryMenu,
       icon: 'list_alt',
@@ -96,7 +103,7 @@ export class InRouteFollowUpComponent implements OnInit {
     {
       name: 'הוסף תכתובת',
       click: async s => {
-        s.addCommunication(()=>{});
+        s.addCommunication(() => { });
       }
     },
     {
@@ -111,4 +118,30 @@ export class InRouteFollowUpComponent implements OnInit {
   ngOnInit() {
   }
 
+  radioOption: filterOptions[] = [
+    {
+      text: 'כולם',
+      where: () => undefined
+    },
+    {
+      text: 'לא ראו את השיוך יותר מיומיים',
+      where: s => s.seenFirstAssign.isEqualTo(false).and(s.minAssignDate.isLessOrEqualTo(daysAgo(2)))
+    },
+    {
+      text: 'שיוך ראשון לפני יותר מ 7 ימים',
+      where: s => s.seenFirstAssign.isEqualTo(false).and(s.minAssignDate.isLessOrEqualTo(daysAgo(7)))
+    }
+  ]
+  currentOption = this.radioOption[0];
+
+}
+
+interface filterOptions {
+  text: string,
+  where: EntityWhere<InRouteHelpers>
+}
+function daysAgo(num: number) {
+  let d = new Date();
+  d.setDate(d.getDate() - num);
+  return d;
 }

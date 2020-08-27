@@ -843,6 +843,19 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
       visible: d => d.courier.value && args.context.isAllowed(Roles.distCenterAdmin)
     },
     {
+      textInMenu: () => getLang(args.context).volunteerInfo,
+      
+      
+      click: async d => {
+        let h = await args.context.for(Helpers).findId(d.courier);
+        h.displayEditDialog();
+
+
+
+      },
+      visible: d => d.courier.value && args.context.isAllowed(Roles.distCenterAdmin)
+    },
+    {
       textInMenu: () => getLang(args.context).cancelAsignment,
       showInLine: true,
       icon: 'person_add_disabled',
