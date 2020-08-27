@@ -129,7 +129,7 @@ export class InRouteFollowUpComponent implements OnInit {
     },
     {
       text: 'שיוך ראשון לפני יותר מ 7 ימים',
-      where: s => s.seenFirstAssign.isEqualTo(false).and(s.minAssignDate.isLessOrEqualTo(daysAgo(7)))
+      where: s => s.minAssignDate.isLessOrEqualTo(daysAgo(7))
     }
   ]
   currentOption = this.radioOption[0];
