@@ -106,8 +106,7 @@ export class FamilyInfoComponent implements OnInit {
   }
   async sendWhatsapp(phone:string) {
     PhoneColumn.sendWhatsappToPhone(phone, 
-      this.settings.lang.hello + ' ' + this.f.name.value + ',' + this.settings.lang.thankYouForDonation + '...', 
-      this.context);
+      this.settings.lang.hello + ' ' + this.f.name.value + ',', this.context);
   }
   static createPhoneProxyOnServer: (phone1: string, phone2: string) => Promise<{ phone: string, session: string }>;
   @ServerFunction({ allowed: c => c.isSignedIn() })
