@@ -25,6 +25,7 @@ export class InRouteFollowUpComponent implements OnInit {
       limit: 25
     },
     knowTotalRows: true,
+    showFilter:true,
     numOfColumnsInGrid: 99,
     gridButtons: [{
       name: use.language.exportToExcel,
@@ -90,6 +91,19 @@ export class InRouteFollowUpComponent implements OnInit {
       name: 'תכתובות',
       click: async h => {
         h.showHistory();
+      }
+    },
+    {
+      name: 'הוסף תכתובת',
+      click: async s => {
+        s.addCommunication(()=>{});
+      }
+    },
+    {
+      name: use.language.volunteerInfo,
+      click: async s => {
+        let h = await this.context.for(Helpers).findId(s.id);
+        h.displayEditDialog();
       }
     }]
   });

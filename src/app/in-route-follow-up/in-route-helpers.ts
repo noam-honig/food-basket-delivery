@@ -1,4 +1,4 @@
-import { IdEntity, StringColumn, Context, EntityClass, NumberColumn } from "@remult/core";
+import { IdEntity, StringColumn, Context, EntityClass, NumberColumn, Column } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { getSettings } from "../manage/ApplicationSettings";
 import { SqlBuilder, DateTimeColumn, changeDate } from "../model-shared/types";
@@ -20,20 +20,7 @@ export class InRouteHelpers extends IdEntity {
                 text: 'הוסף',
                 click: async () => {
 
-                    await this.context.openDialog(EditCommentDialogComponent, inputArea => inputArea.args = {
-                        title: 'הוסף הערה',
-
-                        save: async (comment) => {
-                            let hist = this.context.for(HelperCommunicationHistory).create();
-                            hist.volunteer.value = this.id.value;
-                            hist.comment.value = comment;
-                            await hist.save();
-                            gridDialog.args.settings.getRecords();
-                        },
-                        comment: ''
-
-
-                    });
+                    await this.addCommunication(() => gridDialog.args.settings.getRecords());
                 }
             }],
             settings: this.context.for(HelperCommunicationHistory).gridSettings({
@@ -69,6 +56,22 @@ export class InRouteHelpers extends IdEntity {
         });
         this.reload();
     }
+    async addCommunication(reload: () => void) {
+        await this.context.openDialog(EditCommentDialogComponent, inputArea => inputArea.args = {
+            title: 'הוסף תכתובת',
+
+            save: async (comment) => {
+                let hist = this.context.for(HelperCommunicationHistory).create();
+                hist.volunteer.value = this.id.value;
+                hist.comment.value = comment;
+                await hist.save();
+                this.reload();
+                reload();
+            },
+            comment: ''
+        });
+    }
+
     async showAssignment() {
         let h = await this.context.for(Helpers).findId(this.id);
         await this.context.openDialog(
@@ -77,12 +80,13 @@ export class InRouteHelpers extends IdEntity {
 
     }
     name = new StringColumn(getLang(this.context).volunteerName);
-    messageStatus = new MessageStatusColumn({ dataControlSettings: () => ({ width: '100' }) });
-    minDeliveryCreateDate = new DateTimeColumn({ caption: " הקצאה", dataControlSettings: () => ({ width: '100' }) });
-    lastCommunicationDate = new DateTimeColumn({ caption: " תקשורת אחרונה", dataControlSettings: () => ({ width: '100' }) });
-    lastSignInDate = new DateTimeColumn({caption:'כניסה אחרונה למערכת', dataControlSettings: () => ({ width: '100' }) });
+
+    minAssignDate = new myDateTime(this.context, "שיוך ראשון");
+    lastCommunicationDate = new myDateTime(this.context, " תקשורת אחרונה");
+    lastComment = new StringColumn("תקשורת אחרונה");
+    lastSignInDate = new myDateTime(this.context, 'כניסה אחרונה למערכת');
     deliveriesInProgress = new NumberColumn({ caption: getLang(this.context).delveriesInProgress, dataControlSettings: () => ({ width: '100' }) });
-    maxAssignDate = new DateTimeColumn({ caption: " שיוך אחרון", dataControlSettings: () => ({ width: '100' }) });
+    maxAssignDate = new myDateTime(this.context, " שיוך אחרון");
     completedDeliveries = new NumberColumn({ caption: "איסופים מוצלחים", dataControlSettings: () => ({ width: '100' }) });
     constructor(private context: Context) {
         super({
@@ -100,21 +104,23 @@ export class InRouteHelpers extends IdEntity {
                         where: () => [f.distributionCenter.isAllowedForUser(), sql.eq(f.courier, h.id), ...where()]
                     }
                 }
-                return sql.build('(select *,',
-                    sql.case([{
-                        when: [sql.gt(h.lastSignInDate, this.maxAssignDate)],
-                        then: MessageStatus.opened.id
-                    }, {
-                        when: [sql.gt(h.smsDate, this.maxAssignDate)],
-                        then: MessageStatus.notOpened.id
-                    }
-                    ], MessageStatus.notSent.id), ' ', this.messageStatus
-                    , ' from (', sql.query({
+                let comInnerSelect = (col: Column, toCol: Column) => {
+                    return sql.innerSelect({
+                        select: () => [col],
+                        from: com,
+                        where: () => [sql.eq(com.volunteer, h.id), sql.build(com.comment, ' not like \'%Link%\'')],
+                        orderBy: [{ column: com.createDate, descending: true }]
+                    }, toCol)
+                }
+                return sql.build('(select *',
+
+                    ' from (', sql.query({
                         select: () => [h.id, h.name, h.lastSignInDate, h.smsDate,
                         sql.countDistinctInnerSelect(f.family, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress)
-                            , sql.minInnerSelect(f.createDate, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.minDeliveryCreateDate)
+                            , sql.minInnerSelect(f.courierAssingTime, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.minAssignDate)
                             , sql.maxInnerSelect(f.courierAssingTime, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.maxAssignDate)
-                            , sql.maxInnerSelect(com.createDate, { from: com, where: () => [sql.eq(com.volunteer, h.id)] }, this.lastCommunicationDate)
+                            , comInnerSelect(com.createDate, this.lastCommunicationDate)
+                            , comInnerSelect(com.comment, this.lastComment)
                             , sql.countDistinctInnerSelect(history.family, { from: history, where: () => [sql.eq(history.courier, h.id), history.deliverStatus.isSuccess()] }, this.completedDeliveries)
                         ],
 
@@ -128,6 +134,12 @@ export class InRouteHelpers extends IdEntity {
             }
         });
     }
+}
+class myDateTime extends DateTimeColumn {
+    constructor(context: Context, caption: string) {
+        super({ caption: caption, dataControlSettings: () => ({ width: '120', getValue: () => this.relativeDateName(context) }) });
+    }
+
 }
 
 @EntityClass
