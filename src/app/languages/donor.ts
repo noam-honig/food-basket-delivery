@@ -646,7 +646,7 @@ export class donor implements Language {
   volunteerCanUpdatePreferredDistributionAddress = 'מתנדב יכול לעדכן אזור חלוקה מועדף';
   email = 'eMail';
   preferredDistributionArea = 'כתובת אזור חלוקה מועדף 1';
-  preferredFinishAddress = 'כתובת לסיום המסלול';
+  preferredFinishAddress = 'כתובת לאזור חלוקה 2';
   doesNotExist = 'לא קיים';
   questionAddToApplication = 'האם להוסיף';
   customSmsMessage = 'הודעת SMS מותאמת';
@@ -775,4 +775,5 @@ export class donor implements Language {
   unArchiveHelper = 'בטל מחיקת מתנדב';
   addRepeatFamilies = 'בחירת תורמים שהמתנדב היה אצלהם בעבר';
   isDefinedAsLeadVolunteerOf = 'מוגדר המתנדב מוביל של';
+  volunteerPreferences = 'העדפות מתנדב';
 }

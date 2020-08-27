@@ -3331,6 +3331,10 @@
     "google": "Volunteer's phone number",
     "valueInCode": "מספר הטלפון של המתנדב"
   },
+  "volunteerPreferences": {
+    "google": "Volunteer preferences",
+    "valueInCode": "העדפות מתנדב"
+  },
   "volunteerQAndA": {
     "google": "Volunteer questions and answers",
     "valueInCode": "שאלות ותשובות למתנדב"

@@ -3811,6 +3811,11 @@
     "valueInCode": "מספר הטלפון של המתנדב",
     "valueInEnglish": "Volunteer's phone number"
   },
+  "volunteerPreferences": {
+    "google": "Preferencias de los voluntarios",
+    "valueInCode": "העדפות מתנדב",
+    "valueInEnglish": "Volunteer preferences"
+  },
   "volunteerQAndA": {
     "google": "Preguntas y respuestas voluntarias",
     "valueInCode": "שאלות ותשובות למתנדב",

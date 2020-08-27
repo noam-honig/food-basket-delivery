@@ -353,6 +353,7 @@ export function GetDistanceBetween(a: Location, b: Location) {
 }
 
 export class AddressColumn extends StringColumn {
+    
     constructor(private context: Context, private apiResultColumn: StringColumn, settingsOrCaption?: ColumnOptions<string>, settingsOrCaption1?: ColumnOptions<string>) {
         super(settingsOrCaption, settingsOrCaption1);
 

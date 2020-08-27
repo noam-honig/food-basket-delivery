@@ -775,4 +775,5 @@ export class italy implements Language {
   unArchiveHelper = "Annulla l'eliminazione di un volontario";
   addRepeatFamilies = 'Scegli tra le consegne precedenti';
   isDefinedAsLeadVolunteerOf = 'Definito come il principale volontario di';
+  volunteerPreferences = 'Preferenze dei volontari';
 }

@@ -1,4 +1,4 @@
-<div class="myDiv" >
+<div class="myDiv">
   <div class="no-print" *ngIf="showHelperInput">
 
     <mat-card>
@@ -7,8 +7,10 @@
         <div>
 
           <mat-menu #appMenu77>
-            <button mat-menu-item (click)="findHelper()">{{settings.lang.findHelperByName}}</button>
-            <button mat-menu-item (click)="clearHelperInfo()">{{settings.lang.clearHelperInfo}}</button>
+            <button mat-menu-item *ngIf="familyLists.helper"
+              (click)="familyLists.helper.displayEditDialog()"><mat-icon>edit</mat-icon> {{settings.lang.volunteerInfo}}</button>
+            <button mat-menu-item (click)="findHelper()"><mat-icon>person_search</mat-icon> {{settings.lang.findHelperByName}}</button>
+            <button mat-menu-item (click)="clearHelperInfo()"><mat-icon>clear</mat-icon>{{settings.lang.clearHelperInfo}}</button>
             <button mat-menu-item (click)="saveHelper()"
               *ngIf="showSave()">{{settings.lang.saveHelperInfoAndMoveToNextHelper}}</button>
             <button *ngIf="!settings.showCompanies.value" mat-menu-item
@@ -37,7 +39,8 @@
   </div>
 
 
-  <span *ngIf="showHelperInput&&(!helper||!helper.name.value)" class="help no-print">{{settings.lang.assignHelpText}} <mat-icon (click)="findHelper()" class="clickable-icon">person_search</mat-icon></span>
+  <span *ngIf="showHelperInput&&(!helper||!helper.name.value)" class="help no-print">{{settings.lang.assignHelpText}}
+    <mat-icon (click)="findHelper()" class="clickable-icon">person_search</mat-icon></span>
   <br *ngIf="showHelperInput&&(!helper||!helper.name.value)">
   <a href="https://youtu.be/8LCeQRQPL1U" *ngIf="showHelperInput&&(!helper||!helper.name.value)&&settings.showVideo()"
     class="help no-print">{{settings.lang.asignVideoHelp}}</a>
@@ -113,7 +116,7 @@
           <mat-checkbox [(ngModel)]="preferRepeatFamilies" style="width:auto" *ngIf="showRepeatFamilies">
             {{settings.lang.prioritizeRepeatFamilies}} ({{repeatFamilies.length}})
           </mat-checkbox>
-
+          <div *ngIf="hasPreferred()" style="margin-bottom: 4px;">{{preferredText()}}</div>
         </div>
 
 
@@ -136,15 +139,16 @@
           <mat-menu #basketMenu="matMenu">
             <button mat-menu-item (click)="addRepeat()"
               *ngIf="preferRepeatFamilies&&repeatFamilies.length>0">{{settings.lang.addRepeatFamilies}}</button>
-            <button mat-menu-item (click)="addSpecial()"
-              *ngIf="specialFamilies">{{settings.lang.specialFamilies}} - {{specialFamilies}}</button>
+            <button mat-menu-item (click)="addSpecial()" *ngIf="specialFamilies">{{settings.lang.specialFamilies}} -
+              {{specialFamilies}}</button>
             <button mat-menu-item (click)="addSpecific()">{{settings.lang.selectDeliveryByName}}</button>
             <button mat-menu-item (click)="assignOnMap()">{{settings.lang.selectDeliveryOnMap}}</button>
             <button mat-menu-item (click)="addStreet()">{{settings.lang.selectDeliveryByStreet}}</button>
 
 
-            <button mat-menu-item (click)="moveBasktesFromOtherHelper()">{{settings.lang.transferDeliveriesFromOtherVolunteer}}</button>
-            
+            <button mat-menu-item
+              (click)="moveBasktesFromOtherHelper()">{{settings.lang.transferDeliveriesFromOtherVolunteer}}</button>
+
 
           </mat-menu>
 
@@ -159,8 +163,9 @@
     <!--
     <input type="checkbox" [(ngModel)]="this.useGoogleOptimization">
     <button (click)="doRefreshRoute()">Run Refresh Route</button>-->
-    <app-helper-families #helperFamilies [familyLists]="familyLists" [partOfAssign]="true" [partOfReview]="!showHelperInput" (assignmentCanceled)="assignmentCanceled()"
-      (assignSmsSent)="smsSent()"></app-helper-families>
+    <app-helper-families #helperFamilies [familyLists]="familyLists" [partOfAssign]="true"
+      [partOfReview]="!showHelperInput" (assignmentCanceled)="assignmentCanceled()" (assignSmsSent)="smsSent()">
+    </app-helper-families>
 
   </div>
 </div>

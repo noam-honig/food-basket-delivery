@@ -775,4 +775,5 @@ export class en implements Language {
   unArchiveHelper = 'Undelete a volunteer';
   addRepeatFamilies = 'Select from past deliveries';
   isDefinedAsLeadVolunteerOf = 'Defined as the Leading Volunteer of';
+  volunteerPreferences = 'Volunteer preferences';
 }

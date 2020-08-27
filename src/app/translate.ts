@@ -898,6 +898,7 @@ export class Language {
   unArchiveHelper = "בטל מחיקת מתנדב";
   addRepeatFamilies = "בחירת משפחות שהמתנדב היה אצלהם בעבר";
   isDefinedAsLeadVolunteerOf = "מוגדר המתנדב מוביל";
+  volunteerPreferences="העדפות מתנדב";
   
 }
 

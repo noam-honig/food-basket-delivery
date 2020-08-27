@@ -8,6 +8,10 @@ import { Context } from '@remult/core';
 import { BusyService } from '@remult/core';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import MarkerClusterer from '@google/markerclustererplus';
+import { Helpers } from '../helpers/helpers';
+import { DialogService } from '../select-popup/dialog';
+import { DistributionCenters } from '../manage/distribution-centers';
+import { Location } from '../shared/googleApiHelpers';
 
 //import 'googlemaps';
 
@@ -20,6 +24,7 @@ export class MapComponent implements OnInit, OnDestroy {
     async loadPotentialAsigment(city: string, group: string, distCenter: string, area: string) {
         await this.initMap();
         let families = await DistributionMap.GetDeliveriesLocation(true, city, group, distCenter, area);
+
         let closeBusy = this.busy.showBusy();
         try {
             // console.time('load families to map');
@@ -28,10 +33,16 @@ export class MapComponent implements OnInit, OnDestroy {
                 this.bounds.extend(marker.getPosition());
             });
             // console.timeEnd('load families to map');
-
-            this.fitBounds();
-            if (this.map.getZoom() > 13)
-                this.map.setZoom(13);
+            if (!this.hasFamilies) {
+                if (this.helper.preferredDistributionAreaAddress.ok())
+                    this.map.setCenter(this.helper.preferredDistributionAreaAddress.location())
+                else if (this.helper.preferredFinishAddress.ok())
+                    this.map.setCenter(this.helper.preferredFinishAddress.location())
+                else
+                    this.fitBounds();
+            }
+            if (this.map.getZoom() > 14)
+                this.map.setZoom(14);
         } finally {
             closeBusy();
         }
@@ -74,7 +85,7 @@ export class MapComponent implements OnInit, OnDestroy {
     }
     dict = new Map<string, google.maps.Marker>();
     disableMapBoundsRefrest = 0;
-    constructor(private context: Context, private busy: BusyService) {
+    constructor(private context: Context, private busy: BusyService, private settings: ApplicationSettings, private dialog: DialogService) {
         this.mediaMatcher.addListener((mql) => {
             if (mql.matches) {
                 let x = this.gmapElement.nativeElement.offsetWidth;
@@ -130,13 +141,33 @@ export class MapComponent implements OnInit, OnDestroy {
     bounds: google.maps.LatLngBounds = new google.maps.LatLngBounds();
     lastBounds: string;
     prevFamilies: ActiveFamilyDeliveries[] = [];
-    async test(families: ActiveFamilyDeliveries[]) {
+    helper: Helpers;
+    helperMarkers: google.maps.Marker[] = [];
+    async test(families: ActiveFamilyDeliveries[], helper: Helpers) {
         var prevFamilies = this.prevFamilies;
         this.prevFamilies = [...families];
         this.hasFamilies = families.length > 0;
 
-
         await this.initMap();
+        if (this.helper != helper) {
+            for (const m of this.helperMarkers) {
+                m.setMap(null);
+            }
+            let start: Location;
+            if (families.length > 0)
+                start = (await families[0].distributionCenter.getRouteStartGeo()).location();
+            else start = (await this.dialog.distCenter.getRouteStartGeo()).location();
+            this.helperMarkers = [];
+
+            this.helperMarkers.push(new google.maps.Marker({ map: this.map, position: start, icon: 'https://labs.google.com/ridefinder/images/mm_20_purple.png' }));
+            this.helper = helper;
+            if (helper.preferredDistributionAreaAddress.ok()) {
+                this.helperMarkers.push(new google.maps.Marker({ map: this.map, position: helper.preferredDistributionAreaAddress.location(), icon: 'https://maps.google.com/mapfiles/arrow.png' }));
+            }
+            if (helper.preferredFinishAddress.ok()) {
+                this.helperMarkers.push(new google.maps.Marker({ map: this.map, position: helper.preferredFinishAddress.location(), icon: 'https://maps.google.com/mapfiles/arrow.png' }))
+            }
+        }
 
         let i = 0;
         this.bounds = new google.maps.LatLngBounds();

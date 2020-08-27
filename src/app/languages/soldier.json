@@ -3047,6 +3047,10 @@
     "google": "מספר הטלפון של המתנדב",
     "valueInCode": "מספר הטלפון של המתנדב"
   },
+  "volunteerPreferences": {
+    "google": "העדפות מתנדב",
+    "valueInCode": "העדפות מתנדב"
+  },
   "volunteerQAndA": {
     "google": "שאלות ותשובות למתנדב",
     "valueInCode": "שאלות ותשובות למתנדב"

@@ -42,7 +42,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   quickAdd() {
     this.helpers.addNewRow();
 
-    this.editHelper(this.helpers.currentRow);
+    this.helpers.currentRow.displayEditDialog();
 
   }
   destroyHelper = new DestroyHelper();
@@ -120,7 +120,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
         showInLine: true,
         textInMenu: () => use.language.volunteerInfo,
         click: async f => {
-          this.editHelper(f);
+          f.displayEditDialog();
         }
       },
       {
@@ -203,7 +203,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       if (this.settings.isSytemForMlt())
         this.numOfColsInGrid += 6;
 
-      return this.selectColumns(helpers);
+      return helpers.selectColumns();
     },
     confirmDelete: (h) => this.dialog.confirmDelete(h.name.value),
 
@@ -238,110 +238,8 @@ export class HelpersComponent implements OnInit, OnDestroy {
     });
   }
 
-  private editHelper(f: Helpers) {
-    this.context.openDialog(InputAreaComponent, x => x.args = {
-      title: f.isNew() ? use.language.newVolunteers : f.name.value,
-      ok: () => {
-        f.save();
-      },
-      cancel: () => {
-      },
-      settings: {
-        columnSettings: () => this.selectColumns(f)
-      }
-    });
-  }
 
-  private selectColumns(helpers: Helpers) {
-    let r: DataControlInfo<Helpers>[] = [
-      {
-        column: helpers.name,
-        width: '150'
-      },
-      {
-        column: helpers.phone,
-        width: '150'
-      },
-    ];
-    r.push({
-      column: helpers.eventComment,
-      width: '120'
-    });
-
-    if (this.context.isAllowed(Roles.admin) && this.settings.isSytemForMlt()) {
-      r.push({
-        column: helpers.isIndependent,
-        width: '120'
-      });
-    };
-
-    if (this.context.isAllowed(Roles.admin)) {
-      r.push({
-        column: helpers.admin,
-        width: '160'
-      });
-
-    }
-    if (this.context.isAllowed(Roles.distCenterAdmin)) {
-      r.push({
-        column: helpers.distCenterAdmin, width: '160'
-      });
-    }
-    let hadCenter = false;
-    if (this.context.isAllowed(Roles.lab) && this.settings.isSytemForMlt()) {
-      r.push({
-        column: helpers.labAdmin, width: '120'
-      });
-      hadCenter = true;
-      r.push({
-        column: helpers.distributionCenter, width: '150',
-      });
-    }
-
-    r.push({
-      column: helpers.preferredDistributionAreaAddress, width: '120',
-    });
-    r.push({
-      column: helpers.preferredFinishAddress, width: '120',
-    });
-    r.push(helpers.createDate);
-
-    if (this.context.isAllowed(Roles.admin)) {
-      r.push({
-        column: helpers.frozenTill, width: '120'
-      });
-      r.push({
-        column: helpers.internalComment, width: '120'
-      });
-    }
-
-    if (this.context.isAllowed(Roles.admin) && this.settings.isSytemForMlt()) {
-      r.push({
-        column: helpers.referredBy, width: '120'
-      });
-    }
-
-    r.push({
-      column: helpers.company, width: '120'
-    });
-
-
-
-    if (this.context.isAllowed(Roles.admin) && !hadCenter) {
-      r.push(helpers.distributionCenter);
-    }
-    r.push(helpers.email);
-    if (this.settings.manageEscorts.value) {
-      r.push(helpers.escort, helpers.theHelperIAmEscorting, helpers.needEscort);
-    }
-
-    r.push({
-      column: helpers.socialSecurityNumber, width: '80'
-    });
-    r.push(helpers.leadHelper);
-
-    return r;
-  }
+ 
 
   async doSearch() {
     if (this.helpers.currentRow && this.helpers.currentRow.wasChanged())

@@ -1,7 +1,7 @@
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { BasketType } from "../families/BasketType";
-import { Helpers } from '../helpers/helpers';
+import { Helpers, HelpersBase } from '../helpers/helpers';
 import { MapComponent } from '../map/map.component';
 import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
 import { Context } from '@remult/core';
@@ -21,9 +21,9 @@ export class UserFamiliesList {
         this.map = map;
         this.map.userClickedOnFamilyOnMap = (f) => this.userClickedOnFamilyOnMap(f);
         if (this.allFamilies)
-            this.map.test(this.allFamilies);
+            this.map.test(this.allFamilies, this.helper);
     }
-    startAssignByMap(city: string, group: string, distCenter: string, area: string) {
+    startAssignByMap(city: string, group: string, distCenter: string, area: string, helper: Helpers) {
 
         this.map.loadPotentialAsigment(city, group, distCenter, area);
         setTimeout(() => {
@@ -166,7 +166,7 @@ export class UserFamiliesList {
 
         });
         if (this.map)
-            this.map.test(this.allFamilies);
+            this.map.test(this.allFamilies, this.helper);
         let hash: any = {};
 
 

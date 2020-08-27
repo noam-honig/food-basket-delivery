@@ -2076,7 +2076,7 @@
   "preferredFinishAddress": {
     "google": "כתובת לסיום המסלול",
     "valueInCode": "כתובת לסיום המסלול",
-    "custom":"כתובת לאזור חלוקה 2"
+    "custom": "כתובת לאזור חלוקה 2"
   },
   "previous": {
     "google": "קודם",
@@ -3054,6 +3054,10 @@
   "volunteerPhoneNumber": {
     "google": "מספר הטלפון של המתנדב",
     "valueInCode": "מספר הטלפון של המתנדב"
+  },
+  "volunteerPreferences": {
+    "google": "העדפות מתנדב",
+    "valueInCode": "העדפות מתנדב"
   },
   "volunteerQAndA": {
     "google": "שאלות ותשובות למתנדב",

@@ -1,5 +1,5 @@
 
-import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, FilterBase, Entity, Column, EntityProvider, checkForDuplicateValue, BusyService, DateColumn } from '@remult/core';
+import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, FilterBase, Entity, Column, EntityProvider, checkForDuplicateValue, BusyService, DateColumn, DataControlInfo } from '@remult/core';
 import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, EmailColumn, SqlBuilder, wasChanged, logChanges } from '../model-shared/types';
 
 
@@ -20,6 +20,7 @@ import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { DialogService } from '../select-popup/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { FamilyStatus } from '../families/FamilyStatus';
+import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 
 
@@ -121,6 +122,113 @@ export abstract class HelpersBase extends IdEntity {
 
 @EntityClass
 export class Helpers extends HelpersBase {
+    async displayEditDialog() {
+        let settings = getSettings(this.context);
+        this.context.openDialog(InputAreaComponent, x => x.args = {
+            title: this.isNew() ? settings.lang.newVolunteers : this.name.value,
+            ok: () => {
+                this.save();
+            },
+            cancel: () => {
+                this.undoChanges();
+            },
+            settings: {
+                columnSettings: () => this.selectColumns()
+            }
+        });
+    }
+    selectColumns() {
+        let settings = getSettings(this.context);
+        let r: DataControlInfo<Helpers>[] = [
+            {
+                column: this.name,
+                width: '150'
+            },
+            {
+                column: this.phone,
+                width: '150'
+            },
+        ];
+        r.push({
+            column: this.eventComment,
+            width: '120'
+        });
+
+        if (this.context.isAllowed(Roles.admin) && settings.isSytemForMlt()) {
+            r.push({
+                column: this.isIndependent,
+                width: '120'
+            });
+        };
+
+        if (this.context.isAllowed(Roles.admin)) {
+            r.push({
+                column: this.admin,
+                width: '160'
+            });
+
+        }
+        if (this.context.isAllowed(Roles.distCenterAdmin)) {
+            r.push({
+                column: this.distCenterAdmin, width: '160'
+            });
+        }
+        let hadCenter = false;
+        if (this.context.isAllowed(Roles.lab) && settings.isSytemForMlt()) {
+            r.push({
+                column: this.labAdmin, width: '120'
+            });
+            hadCenter = true;
+            r.push({
+                column: this.distributionCenter, width: '150',
+            });
+        }
+
+        r.push({
+            column: this.preferredDistributionAreaAddress, width: '120',
+        });
+        r.push({
+            column: this.preferredFinishAddress, width: '120',
+        });
+        r.push(this.createDate);
+
+        if (this.context.isAllowed(Roles.admin)) {
+            r.push({
+                column: this.frozenTill, width: '120'
+            });
+            r.push({
+                column: this.internalComment, width: '120'
+            });
+        }
+
+        if (this.context.isAllowed(Roles.admin) && settings.isSytemForMlt()) {
+            r.push({
+                column: this.referredBy, width: '120'
+            });
+        }
+
+        r.push({
+            column: this.company, width: '120'
+        });
+
+
+
+        if (this.context.isAllowed(Roles.admin) && !hadCenter) {
+            r.push(this.distributionCenter);
+        }
+        r.push(this.email);
+        if (settings.manageEscorts.value) {
+            r.push(this.escort, this.theHelperIAmEscorting, this.needEscort);
+        }
+
+        r.push({
+            column: this.socialSecurityNumber, width: '80'
+        });
+        r.push(this.leadHelper);
+
+        return r;
+    }
+
     userRequiresPassword() {
         return this.admin.value || this.distCenterAdmin.value || this.labAdmin.value || this.isIndependent.value;
     }
@@ -367,7 +475,7 @@ export class Helpers extends HelpersBase {
     preferredFinishAddress = new AddressColumn(this.context, this.addressApiResult2,
         {
             caption: getLang(this.context).preferredFinishAddress,
-            dbName:'preferredDistributionAreaAddress2'
+            dbName: 'preferredDistributionAreaAddress2'
         });
 
 

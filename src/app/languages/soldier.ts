@@ -775,4 +775,5 @@ export class soldier implements Language {
   unArchiveHelper = 'בטל מחיקת מתנדב';
   addRepeatFamilies = 'בחירת חיילים שהמתנדב היה אצלהם בעבר';
   isDefinedAsLeadVolunteerOf = 'מוגדר המתנדב מוביל של';
+  volunteerPreferences = 'העדפות מתנדב';
 }

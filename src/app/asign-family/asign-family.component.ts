@@ -65,14 +65,27 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             this.helperFamilies.switchToMap();
 
             setTimeout(() => {
-                this.familyLists.startAssignByMap(this.filterCity, this.filterGroup, this.dialog.distCenter.value, this.filterArea);
+                this.familyLists.startAssignByMap(this.filterCity, this.filterGroup, this.dialog.distCenter.value, this.filterArea, this.familyLists.helper);
             }, 50);
         }, 50);
 
     }
     @ViewChild("helperFamilies", { static: false }) helperFamilies: HelperFamiliesComponent;
 
-
+    hasPreferred() {
+        return this.familyLists.helper.preferredDistributionAreaAddress.value || this.familyLists.helper.preferredFinishAddress.value;
+    }
+    preferredText() {
+        if (this.hasPreferred()) {
+            let r = this.familyLists.helper.preferredDistributionAreaAddress.value;
+            if (this.familyLists.helper.preferredFinishAddress.value) {
+                if (r.length > 0)
+                    r += ", ";
+                r += this.familyLists.helper.preferredFinishAddress.value;
+            }
+            return this.settings.lang.volunteerPreferences + ": " + r;
+        }
+    }
 
     async searchPhone() {
         this.clearHelperInfo(false);
