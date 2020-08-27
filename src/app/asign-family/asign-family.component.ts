@@ -178,6 +178,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 hideRecent: true,
                 onSelect: async h => {
                     if (h) {
+                        await this.verifyHelperExistance();
                         new moveDeliveriesHelper(this.context, this.settings, this.dialog, () => this.familyLists.reload()).move(h, this.familyLists.helper, false)
                     }
                 }
