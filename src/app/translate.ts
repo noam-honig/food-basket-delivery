@@ -216,7 +216,7 @@ export class Language {
   allRegions = 'כל האזורים';
   basketType = 'סוג סל';
   numOfFamilies = 'מספר משפחות';
-  prioritizeRepeatFamilies = 'עדיפות למשפחות שהמנדב היה אצלהן';
+  prioritizeRepeatFamilies = 'עדיפות למשפחות שהמתנדב היה אצלהן';
   inProgress = 'עובד על זה...';
   noDeliveriesLeft = 'לא נותרו משלוחים מתאימים';
   asignClosestDelivery = "שייך משלוח הכי קרוב";
