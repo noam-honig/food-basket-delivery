@@ -98,7 +98,7 @@ export class ApplicationSettings extends Entity<number>  {
   gmailPassword = new StringColumn({ caption: "gMail password", includeInApi: Roles.admin });
   logoUrl = new StringColumn(this.lang.logoUrl);
   addressApiResult = new StringColumn();
-  address = new AddressColumn(this.context,this.addressApiResult,this.lang.deliveryCenterAddress);
+  address = new AddressColumn(this.context, this.addressApiResult, this.lang.deliveryCenterAddress);
   commentForSuccessDelivery = new StringColumn(this.lang.successMessageColumnName);
   commentForSuccessLeft = new StringColumn(this.lang.leftByDoorMessageColumnName);
   commentForProblem = new StringColumn(this.lang.problemCommentColumnName);
@@ -209,9 +209,9 @@ export class ApplicationSettings extends Entity<number>  {
       allowApiUpdate: Roles.admin,
       saving: async () => {
         if (context.onServer) {
-          
+
           await this.address.updateApiResultIfChanged();
-          
+
           for (const l of [this.message1Link, this.message2Link]) {
             if (l.value) {
               if (l.value.trim().indexOf(':') < 0)
@@ -222,7 +222,7 @@ export class ApplicationSettings extends Entity<number>  {
           if (this.forWho.value)
             setLangForSite(Sites.getValidSchemaFromContext(context), this.forWho.value);
           setSettingsForSite(Sites.getValidSchemaFromContext(context), this);
-          logChanges(this, context);
+          logChanges(this, context, { excludeColumns:[ this.currentUserIsValidForAppLoadTest ]});
         }
       }
     })
