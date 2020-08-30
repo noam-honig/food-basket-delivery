@@ -252,7 +252,11 @@ export class Families extends IdEntity {
       if (settings.selfPickup)
         fd.deliverStatus.value = DeliveryStatus.SelfPickup;
 
-      console.log("families.addDelivery: \nsettings = " + settings + "\nfd = " + fd);
+      console.log("families.addDelivery: \nfamilyID = " + familyId, 
+      '\nsettings.basketType: ' + settings.basketType, 
+      '\nsettings.quantity: ' + settings.quantity, 
+      '\nsettings.deliverStatus: ' + settings.deliverStatus, 
+      '\nsettings.archive: ' + settings.archive);
       await fd.save();
       return fd.id.value;
     }
