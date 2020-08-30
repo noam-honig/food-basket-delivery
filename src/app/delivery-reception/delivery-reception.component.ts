@@ -162,7 +162,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
 
   async search() {
     try {
-      this.deliveriesForPhone = await FamilyDeliveriesComponent.getDeliveriesByPhone(this.phone.value);
+      this.deliveriesForPhone = (await FamilyDeliveriesComponent.getDeliveriesByPhone(this.phone.value)).map(x=>x.id);
       this.showData = (this.deliveriesForPhone.length > 0);
     } catch (err) {
 

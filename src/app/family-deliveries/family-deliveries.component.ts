@@ -689,7 +689,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       result.push(d.id)
     }
 
-    return result;
+    return await context.for(FamilyDeliveries).toPojoArray(  await context.for(FamilyDeliveries).find({where:fd=>fd.id.isIn(result)}))
   }
 
   @ServerFunction({ allowed: Roles.distCenterAdmin })
