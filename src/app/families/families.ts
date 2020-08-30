@@ -233,7 +233,9 @@ export class Families extends IdEntity {
     comment: string,
     distCenter: string,
     courier: string,
-    selfPickup: boolean
+    selfPickup: boolean,
+    deliverStatus?: DeliveryStatus,
+    archive?: boolean
   }, context?: Context) {
     let f = await context.for(Families).findId(familyId);
     if (f) {
@@ -245,8 +247,12 @@ export class Families extends IdEntity {
       fd.deliveryComments.value = settings.comment;
       fd.distributionCenter.value = settings.distCenter;
       fd.courier.value = settings.courier;
+      if (settings.deliverStatus) fd.deliverStatus.value = settings.deliverStatus;
+      if (settings.archive) fd.archive.value = settings.archive;
       if (settings.selfPickup)
         fd.deliverStatus.value = DeliveryStatus.SelfPickup;
+
+      console.log("families.addDelivery: \nsettings = " + settings + "\nfd = " + fd);
       await fd.save();
       return fd.id.value;
     }
