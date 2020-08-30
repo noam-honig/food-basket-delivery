@@ -124,7 +124,7 @@ export class InRouteFollowUpComponent implements OnInit {
       where: () => undefined
     },
     {
-      text: 'לא ראו את השיוך יותר מיומיים',
+      text: 'לא ראו אף שיוך',
       where: s => s.seenFirstAssign.isEqualTo(false).and(s.minAssignDate.isLessOrEqualTo(daysAgo(2)))
     },
     {
