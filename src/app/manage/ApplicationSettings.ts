@@ -320,6 +320,7 @@ export class SettingsService {
   async init() {
 
     this.instance = await ApplicationSettings.getAsync(this.context);
+    setSettingsForSite(Sites.getValidSchemaFromContext(this.context),this.instance);
 
     translationConfig.forWho = this.instance.forWho.value;
     DeliveryStatus.usingSelfPickupModule = this.instance.usingSelfPickupModule.value;
