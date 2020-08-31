@@ -252,7 +252,6 @@ export class Families extends IdEntity {
       if (settings.selfPickup)
         fd.deliverStatus.value = DeliveryStatus.SelfPickup;
 
-      '\nsettings.basketType: ' + settings.basketType, 
       console.log("families.addDelivery: \nfamilyID = " + familyId, 
       '\nsettings.distCenter: ' + settings.distCenter, 
       '\nsettings.basketType: ' + settings.basketType, 
