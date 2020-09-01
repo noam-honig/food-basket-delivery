@@ -113,7 +113,8 @@ export class SelectHelperComponent implements OnInit {
             h.assignedDeliveries = 1;
           else
             h.assignedDeliveries++;
-          check(h, { lat: d.lat, lng: d.lng }, getLang(context).delivery + ": " + d.address);
+          if (!getSettings(context).isSytemForMlt())
+            check(h, { lat: d.lat, lng: d.lng }, getLang(context).delivery + ": " + d.address);
         }
       }
 

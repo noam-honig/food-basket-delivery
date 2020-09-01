@@ -746,25 +746,30 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             }
 
             if (waitingFamilies.length > 0) {
-
-                if (locationReferenceFamilies.length == 0) {
+                let preferArea = helper.preferredDistributionAreaAddress.ok();
+                let preferEnd = helper.preferredFinishAddress.ok();
+                if (locationReferenceFamilies.length == 0 || (settings.isSytemForMlt() && (preferArea || preferEnd))) {
 
                     let distCenter = settings.address.location();
                     let lastFamiliy = waitingFamilies[0];
-                    if (helper.preferredDistributionAreaAddress.ok()) {
+
+                    if (preferArea || preferEnd) {
                         lastFamiliy = undefined;
                         var lastDist: number;
                         for (const f of waitingFamilies) {
-
-                            let dist = GetDistanceBetween(f, helper.preferredDistributionAreaAddress.location());
-                            if (!lastFamiliy || dist < lastDist) {
-                                lastFamiliy = f;
-                                lastDist = dist;
+                            if (preferArea) {
+                                let dist = GetDistanceBetween(f, helper.preferredDistributionAreaAddress.location());
+                                if (!lastFamiliy || dist < lastDist) {
+                                    lastFamiliy = f;
+                                    lastDist = dist;
+                                }
                             }
-                            dist = GetDistanceBetween(f, helper.preferredFinishAddress.location());
-                            if (!lastFamiliy || dist < lastDist) {
-                                lastFamiliy = f;
-                                lastDist = dist;
+                            if (preferEnd) {
+                                let dist = GetDistanceBetween(f, helper.preferredFinishAddress.location());
+                                if (!lastFamiliy || dist < lastDist) {
+                                    lastFamiliy = f;
+                                    lastDist = dist;
+                                }
                             }
                         }
 

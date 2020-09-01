@@ -31,7 +31,7 @@
                 </td>
                 <td>{{f.address}}</td>
                 <td style="white-space: nowrap;" *ngIf="!f.assignedHelper">
-                    <a (click)="togglerShowHelper(f)" matTooltip="הצג מנתדבים רלוונטיים" style="width:40px"
+                    <a (click)="togglerShowHelper(f)" matTooltip="הצג מנתדבים רלוונטיים" style="width:40px;margin-left:20px"
                         *ngIf="!f.assignedHelper">{{f.relevantHelpers.length}}</a>
                     <button mat-icon-button matTooltip="חפש מתנדבים נוספים" (click)="searchHelper(f)">
                         <mat-icon>person_search</mat-icon>
