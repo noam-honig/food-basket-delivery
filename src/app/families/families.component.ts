@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn, Filter, ServerFunction, unpackWhere, packWhere, Column, dataAreaSettings, IDataAreaSettings, DataArealColumnSetting, GridButton, Allowed, EntityWhere } from '@remult/core';
+import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn, Filter, ServerFunction, unpackWhere, packWhere, Column, dataAreaSettings, IDataAreaSettings, DataArealColumnSetting, GridButton, Allowed, EntityWhere, SqlDatabase } from '@remult/core';
 
 import { Families, AreaColumn } from './families';
 
@@ -19,7 +19,7 @@ import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
 
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
-import { PhoneColumn } from '../model-shared/types';
+import { PhoneColumn, SqlBuilder } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
 import { Route } from '@angular/router';
 
@@ -54,6 +54,24 @@ import { getLang } from '../sites/sites';
     styleUrls: ['./families.component.scss']
 })
 export class FamiliesComponent implements OnInit {
+    @ServerFunction({ allowed: Roles.admin })
+    static async getCities(context?: Context, db?: SqlDatabase): Promise<{ city: string, count: number }[]> {
+        var sql = new SqlBuilder();
+        let f = context.for(Families).create();
+        let r = await db.execute(sql.query({
+            from: f,
+            select: () => [f.city, 'count (*) as count'],
+            where: () => [f.status.isEqualTo(FamilyStatus.Active)],
+            groupBy: () => [f.city],
+            orderBy: [{ column: f.city, descending: false }]
+
+        }));
+        return r.rows.map(x => ({
+            city: x.city,
+            count: x.count
+        }));
+    }
+
 
     limit = 25;
 
@@ -483,6 +501,21 @@ export class FamiliesComponent implements OnInit {
                     (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.fixedCourier.isDifferentFrom(g.id)));
             }
         },
+        {
+            rule: f => f.status.isEqualTo(FamilyStatus.Active),
+            showTotal: false,
+            name: this.settings.lang.city,
+            stats: [],
+            moreStats: [],
+            refreshStats: async x => {
+                let areas = await FamiliesComponent.getCities();
+                this.prepComplexStats(areas.map(g => ({ name: g.city, count: g.count })),
+                    x,
+                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.city.isEqualTo(g.name)),
+                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.city.isDifferentFrom(g.name)));
+            }
+        },
+
         {
             rule: f => f.status.isEqualTo(FamilyStatus.Active),
             showTotal: false,
