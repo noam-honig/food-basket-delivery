@@ -777,4 +777,6 @@ export class soldier implements Language {
   isDefinedAsLeadVolunteerOf = 'מוגדר המתנדב מוביל של';
   volunteerPreferences = 'העדפות מתנדב';
   eventInfo = 'פרטי ארוע';
+  volunteerStatus = 'מצב מתנדב';
+  newVolunteer = 'מתנדב חדש';
 }

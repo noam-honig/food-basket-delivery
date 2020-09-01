@@ -777,4 +777,6 @@ export class es implements Language {
   isDefinedAsLeadVolunteerOf = 'Definido como el voluntario líder de';
   volunteerPreferences = 'Preferencias de los voluntarios';
   eventInfo = 'Detalles del evento';
+  volunteerStatus = 'Estado de voluntario';
+  newVolunteer = 'Nuevo voluntario';
 }

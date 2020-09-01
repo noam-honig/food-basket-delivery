@@ -121,7 +121,7 @@
   },
   "addVolunteer": {
     "google": "Agregar un voluntario / gerente",
-    "valueInCode": "הוסף מתנדב/מנהל",
+    "valueInCode": "הוסף מתנדב",
     "valueInEnglish": "Add a volunteer / manager"
   },
   "admin": {
@@ -2270,6 +2270,11 @@
     "valueInCode": "מצריך טיפול",
     "valueInEnglish": "Requires Followup"
   },
+  "newVolunteer": {
+    "google": "Nuevo voluntario",
+    "valueInCode": "מתנדב חדש",
+    "valueInEnglish": "New volunteer"
+  },
   "newVolunteers": {
     "google": "Nuevos voluntarios",
     "valueInCode": "מתנדבים חדשים",
@@ -2622,7 +2627,7 @@
   },
   "prioritizeRepeatFamilies": {
     "google": "Prefiero familias pasadas",
-    "valueInCode": "עדיפות למשפחות שהמנדב היה אצלהן",
+    "valueInCode": "עדיפות למשפחות שהמתנדב היה אצלהן",
     "valueInEnglish": "Prefer past families"
   },
   "problem": {
@@ -3835,6 +3840,11 @@
     "google": "Voluntarios",
     "valueInCode": "מתנדבים",
     "valueInEnglish": "Volunteers"
+  },
+  "volunteerStatus": {
+    "google": "Estado de voluntario",
+    "valueInCode": "מצב מתנדב",
+    "valueInEnglish": "Volunteer status"
   },
   "volunteerTexts": {
     "google": "Mensajes voluntarios",

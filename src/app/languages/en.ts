@@ -777,4 +777,6 @@ export class en implements Language {
   isDefinedAsLeadVolunteerOf = 'Defined as the Leading Volunteer of';
   volunteerPreferences = 'Volunteer preferences';
   eventInfo = 'Event details';
+  volunteerStatus = 'Volunteer status';
+  newVolunteer = 'New volunteer';
 }

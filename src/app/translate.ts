@@ -900,6 +900,9 @@ export class Language {
   isDefinedAsLeadVolunteerOf = "מוגדר המתנדב מוביל";
   volunteerPreferences="העדפות מתנדב";
   eventInfo="פרטי ארוע";
+  volunteerStatus = "מצב מתנדב";
+  newVolunteer = "מתנדב חדש";
+  
 }
 
 const defaultLang = new Language();

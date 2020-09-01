@@ -777,4 +777,6 @@ export class italy implements Language {
   isDefinedAsLeadVolunteerOf = 'Definito come il principale volontario di';
   volunteerPreferences = 'Preferenze dei volontari';
   eventInfo = "Dettagli dell'evento";
+  volunteerStatus = 'Status di volontario';
+  newVolunteer = 'Nuovo volontario';
 }

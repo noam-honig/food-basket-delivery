@@ -109,7 +109,7 @@
   },
   "addVolunteer": {
     "google": "Add a volunteer / manager",
-    "valueInCode": "הוסף מתנדב/מנהל"
+    "valueInCode": "הוסף מתנדב"
   },
   "admin": {
     "google": "System Rule Manager",
@@ -2009,6 +2009,10 @@
     "valueInCode": "מצריך טיפול",
     "custom": "Requires Followup"
   },
+  "newVolunteer": {
+    "google": "New volunteer",
+    "valueInCode": "מתנדב חדש"
+  },
   "newVolunteers": {
     "google": "New volunteers",
     "valueInCode": "מתנדבים חדשים"
@@ -2302,7 +2306,7 @@
   },
   "prioritizeRepeatFamilies": {
     "google": "Priority for returning families",
-    "valueInCode": "עדיפות למשפחות שהמנדב היה אצלהן",
+    "valueInCode": "עדיפות למשפחות שהמתנדב היה אצלהן",
     "custom": "Prefer past families"
   },
   "problem": {
@@ -3350,6 +3354,10 @@
   "volunteers": {
     "google": "Volunteers",
     "valueInCode": "מתנדבים"
+  },
+  "volunteerStatus": {
+    "google": "Volunteer status",
+    "valueInCode": "מצב מתנדב"
   },
   "volunteerTexts": {
     "google": "Volunteer messages",
