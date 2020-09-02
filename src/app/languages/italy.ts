@@ -782,4 +782,5 @@ export class italy implements Language {
   showArchive = 'Visualizza archivio';
   duplicateEvents = 'Duplica un evento';
   archiveCurrentEvent = "Stasera c'è un evento per l'archivio?";
+  basedNoAssignmentOrder = 'In ordine di associazione';
 }

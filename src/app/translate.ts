@@ -905,6 +905,7 @@ export class Language {
   showArchive = "הצג ארכיב" ;
   duplicateEvents = "שכפל ארוע";
   archiveCurrentEvent = "העבר ארוע קיים לארכיב?";
+  basedNoAssignmentOrder = "לפי סדר שיוך";
 }
 
 const defaultLang = new Language();

@@ -11,21 +11,24 @@ import { getLang } from "../sites/sites";
 
 
 export class routeStrategy {
-    static endOnIsolated = new routeStrategy(0,!use?"": use.language.startAtDistributionCenterAndEndOnRemoteFamily, {
+    static endOnIsolated = new routeStrategy(0, !use ? "" : use.language.startAtDistributionCenterAndEndOnRemoteFamily, {
         getRouteEnd: (start, addresses) => addresses[addresses.length - 1].location
     });
-    static endOnFar = new routeStrategy(1, !use?"":use.language.endOnFar, {
+    static endOnFar = new routeStrategy(1, !use ? "" : use.language.endOnFar, {
         getRouteEnd: (dist, addresses) => getFarthest(dist, addresses)
     });
-    static circular = new routeStrategy(2, !use?"":use.language.circularRoute, {
+    static circular = new routeStrategy(2, !use ? "" : use.language.circularRoute, {
         getRouteEnd: x => x,
         legsForDistance: x => { x.splice(x.length - 1, 1); return x; }
     });
-    static endsOnDistributionCenter = new routeStrategy(3, !use?"":use.language.endsOnDistributionCenter, {
+    static endsOnDistributionCenter = new routeStrategy(3, !use ? "" : use.language.endsOnDistributionCenter, {
 
         getRouteStart: (distCenter, addresses, volunteerLocation) => volunteerLocation ? volunteerLocation : getFarthest(distCenter, addresses),
         getRouteEnd: x => x,
         endOnDistributionCenter: true
+    });
+    static basedOnAssignOrder = new routeStrategy(5, use.language.basedNoAssignmentOrder, {
+        getRouteEnd: x => x
     });
     constructor(public id: number, public caption: string, public args: {
         getRouteStart?: (distributionCenterLocation: Location, addresses: familiesInRoute[], volunteerLocation: Location) => Location;
@@ -123,6 +126,19 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
     } as optimizeRouteResult;
     if (families.length < 1)
         return result;
+    if (strategy == routeStrategy.basedOnAssignOrder) {
+        result.families = families;
+        result.families.sort((a, b) => a.courierAssingTime.value.valueOf() - b.courierAssingTime.value.valueOf());
+        let i = 0;
+        for (const f of result.families) {
+            i++;
+            f.routeOrder.value = i;
+            if (f.wasChanged())
+                await f.save();
+        }
+        result.ok = true;
+        return result;
+    }
     var addresses: familiesInRoute[] = [];
     {
         var map = new Map<string, familiesInRoute>();
@@ -183,7 +199,7 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
 
 
     let destination = strategy.args.getRouteEnd(distCenterLocation, addresses);
-    if (!(await import ("../manage/ApplicationSettings")).getSettings(context).isSytemForMlt()&&helper.preferredFinishAddress.ok()){
+    if (!(await import("../manage/ApplicationSettings")).getSettings(context).isSytemForMlt() && helper.preferredFinishAddress.ok()) {
         destination = helper.preferredFinishAddress.location();
     }
 

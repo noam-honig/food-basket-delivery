@@ -251,7 +251,7 @@
   },
   "archiveCurrentEvent": {
     "google": "¿Esta noche hay un evento para el archivo?",
-    "valueInCode": "הערב ארוע קיים לארכיב?",
+    "valueInCode": "העבר ארוע קיים לארכיב?",
     "valueInEnglish": "Tonight there is an event for the archive?"
   },
   "archiveDeliveries": {
@@ -418,6 +418,11 @@
     "google": "Tenga en cuenta, dirección inexacta",
     "valueInCode": "שים לב, כתובת לא מדוייקת",
     "valueInEnglish": "Please note, inaccurate address"
+  },
+  "basedNoAssignmentOrder": {
+    "google": "En orden de asociación",
+    "valueInCode": "לפי סדר שיוך",
+    "valueInEnglish": "In order of association"
   },
   "basket": {
     "google": "Paquete o empaquetar",

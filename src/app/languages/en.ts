@@ -782,4 +782,5 @@ export class en implements Language {
   showArchive = 'View archive';
   duplicateEvents = 'Duplicate an event';
   archiveCurrentEvent = 'Tonight there is an event for the archive?';
+  basedNoAssignmentOrder = 'In order of association';
 }

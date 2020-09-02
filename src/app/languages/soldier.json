@@ -201,7 +201,7 @@
   },
   "archiveCurrentEvent": {
     "google": "הערב ארוע קיים לארכיב?",
-    "valueInCode": "הערב ארוע קיים לארכיב?"
+    "valueInCode": "העבר ארוע קיים לארכיב?"
   },
   "archiveDeliveries": {
     "google": "העברה לארכיב",
@@ -334,6 +334,10 @@
   "badAddressTitle": {
     "google": "שים לב, כתובת לא מדוייקת",
     "valueInCode": "שים לב, כתובת לא מדוייקת"
+  },
+  "basedNoAssignmentOrder": {
+    "google": "לפי סדר שיוך",
+    "valueInCode": "לפי סדר שיוך"
   },
   "basket": {
     "google": "סל",

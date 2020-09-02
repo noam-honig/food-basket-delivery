@@ -782,4 +782,5 @@ export class es implements Language {
   showArchive = 'Ver archivo';
   duplicateEvents = 'Duplicar un evento';
   archiveCurrentEvent = '¿Esta noche hay un evento para el archivo?';
+  basedNoAssignmentOrder = 'En orden de asociación';
 }

@@ -782,4 +782,5 @@ export class soldier implements Language {
   showArchive = 'הצג ארכיב';
   duplicateEvents = 'שכפל ארוע';
   archiveCurrentEvent = 'הערב ארוע קיים לארכיב?';
+  basedNoAssignmentOrder = 'לפי סדר שיוך';
 }

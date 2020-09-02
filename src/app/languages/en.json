@@ -226,7 +226,7 @@
   },
   "archiveCurrentEvent": {
     "google": "Tonight there is an event for the archive?",
-    "valueInCode": "הערב ארוע קיים לארכיב?"
+    "valueInCode": "העבר ארוע קיים לארכיב?"
   },
   "archiveDeliveries": {
     "google": "Archive transfer",
@@ -383,6 +383,10 @@
   "badAddressTitle": {
     "google": "Please note, inaccurate address",
     "valueInCode": "שים לב, כתובת לא מדוייקת"
+  },
+  "basedNoAssignmentOrder": {
+    "google": "In order of association",
+    "valueInCode": "לפי סדר שיוך"
   },
   "basket": {
     "google": "basket",
