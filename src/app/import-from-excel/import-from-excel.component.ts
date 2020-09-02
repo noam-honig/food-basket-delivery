@@ -1470,7 +1470,7 @@ async function compareValuesWithRow(context: Context, info: excelRowInfo, withFa
     let fd = await context.for(ActiveFamilyDeliveries).lookupAsync(fd => {
         let r = fd.family.isEqualTo(ef.id).and(fd.distributionCenter.isEqualTo(info.distCenter).and(fd.deliverStatus.isNotAResultStatus()));
         if (compareBasketType)
-            return fd.basketType.isEqualTo(info.basketType);
+            return r.and(fd.basketType.isEqualTo(info.basketType));
         return r;
     });
     for (const columnMemberName of columnsInCompareMemeberName) {
