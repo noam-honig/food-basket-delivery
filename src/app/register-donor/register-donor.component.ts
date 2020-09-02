@@ -129,8 +129,8 @@ class donorForm {
     }
   });
 
-  computer = new NumberColumn("מספר מחשבים ניידים");
-  laptop = new NumberColumn("מספר מחשבים נייחים");
+  computer = new NumberColumn("מספר מחשבים נייחים");
+  laptop = new NumberColumn("מספר לפטופים");
   screen = new NumberColumn("מספר מסכים");
 
   docref = new StringColumn();
