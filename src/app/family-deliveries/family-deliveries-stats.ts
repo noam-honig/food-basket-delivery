@@ -56,7 +56,7 @@ export class FamilyDeliveryStats {
                 smsNotSent:number,
                 
                 selfPickup:number,
-            }[], cities: [], groups: [] as groupStats[]
+            }[], cities: []
         };
         let stats = new FamilyDeliveryStats(context);
         let pendingStats = [];
@@ -129,22 +129,7 @@ export class FamilyDeliveryStats {
                     });
                 })
             );
-        await context.for(Groups).find({
-            limit: 1000,
-            orderBy: f => [{ column: f.name }]
-        }).then(groups => {
-            for (const g of groups) {
-                let x: groupStats = {
-                    name: g.name.value,
-                    totalReady: 0
-                };
-                result.groups.push(x);
-                pendingStats.push(context.for(FamilyDeliveries).count(f => f.readyAndSelfPickup().and(
-                    f.groups.isContains(x.name).and(
-                        f.filterDistCenterAndAllowed(distCenter)))).then(r => x.totalReady = r));
-
-            }
-        });
+      
 
 
         await Promise.all(pendingStats);
@@ -172,7 +157,7 @@ export class FamilyDeliveresStatistics {
         this.value = data[this.name];
     }
 }
-interface groupStats {
+export interface groupStats {
     name: string,
     totalReady: number
 
