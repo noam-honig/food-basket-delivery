@@ -249,6 +249,11 @@
     "valueInCode": "העבר משלוח נוכחי לארכיב?",
     "valueInEnglish": "Archive current delivery"
   },
+  "archiveCurrentEvent": {
+    "google": "¿Esta noche hay un evento para el archivo?",
+    "valueInCode": "הערב ארוע קיים לארכיב?",
+    "valueInEnglish": "Tonight there is an event for the archive?"
+  },
   "archiveDeliveries": {
     "google": "Archivo de entregas",
     "valueInCode": "העברה לארכיב",
@@ -1169,6 +1174,11 @@
     "google": "Haga clic en el mapa en varios puntos para resaltar el área que desea y haga doble clic para finalizar",
     "valueInCode": "אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום",
     "valueInEnglish": "Please click on the map at several points to highlight the area you want, and double-click to finish"
+  },
+  "duplicateEvents": {
+    "google": "Duplicar un evento",
+    "valueInCode": "שכפל ארוע",
+    "valueInEnglish": "Duplicate an event"
   },
   "DuplicateFamiliesComponent": {
     "google": "Posibles duplicados",
@@ -3210,6 +3220,11 @@
     "google": "Ver todas las familias",
     "valueInCode": "הצג את כל המשפחות",
     "valueInEnglish": "View all families"
+  },
+  "showArchive": {
+    "google": "Ver archivo",
+    "valueInCode": "הצג ארכיב",
+    "valueInEnglish": "View archive"
   },
   "showAsignDeliveryFor": {
     "google": "Mostrar entregas para",

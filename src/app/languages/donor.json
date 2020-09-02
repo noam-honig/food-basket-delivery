@@ -199,6 +199,10 @@
     "google": "העבר משלוח נוכחי לארכיב?",
     "valueInCode": "העבר משלוח נוכחי לארכיב?"
   },
+  "archiveCurrentEvent": {
+    "google": "הערב ארוע קיים לארכיב?",
+    "valueInCode": "הערב ארוע קיים לארכיב?"
+  },
   "archiveDeliveries": {
     "google": "העברה לארכיב",
     "valueInCode": "העברה לארכיב"
@@ -936,6 +940,10 @@
   "drawingHelpText": {
     "google": "אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום",
     "valueInCode": "אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום"
+  },
+  "duplicateEvents": {
+    "google": "שכפל ארוע",
+    "valueInCode": "שכפל ארוע"
   },
   "DuplicateFamiliesComponent": {
     "google": "חיפוש תורמים כפולים",
@@ -2574,6 +2582,10 @@
   "showAllFamilies": {
     "google": "הצג את כל התורמים",
     "valueInCode": "הצג את כל המשפחות"
+  },
+  "showArchive": {
+    "google": "הצג ארכיב",
+    "valueInCode": "הצג ארכיב"
   },
   "showAsignDeliveryFor": {
     "google": "הצג שיוך משלוחים ל",

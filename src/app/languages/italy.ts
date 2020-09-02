@@ -779,4 +779,7 @@ export class italy implements Language {
   eventInfo = "Dettagli dell'evento";
   volunteerStatus = 'Status di volontario';
   newVolunteer = 'Nuovo volontario';
+  showArchive = 'Visualizza archivio';
+  duplicateEvents = 'Duplica un evento';
+  archiveCurrentEvent = "Stasera c'è un evento per l'archivio?";
 }

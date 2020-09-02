@@ -779,4 +779,7 @@ export class soldier implements Language {
   eventInfo = 'פרטי ארוע';
   volunteerStatus = 'מצב מתנדב';
   newVolunteer = 'מתנדב חדש';
+  showArchive = 'הצג ארכיב';
+  duplicateEvents = 'שכפל ארוע';
+  archiveCurrentEvent = 'הערב ארוע קיים לארכיב?';
 }

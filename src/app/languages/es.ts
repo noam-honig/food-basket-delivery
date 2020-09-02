@@ -779,4 +779,7 @@ export class es implements Language {
   eventInfo = 'Detalles del evento';
   volunteerStatus = 'Estado de voluntario';
   newVolunteer = 'Nuevo voluntario';
+  showArchive = 'Ver archivo';
+  duplicateEvents = 'Duplicar un evento';
+  archiveCurrentEvent = '¿Esta noche hay un evento para el archivo?';
 }

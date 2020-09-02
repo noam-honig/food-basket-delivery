@@ -902,7 +902,9 @@ export class Language {
   eventInfo="פרטי ארוע";
   volunteerStatus = "מצב מתנדב";
   newVolunteer = "מתנדב חדש";
-  
+  showArchive = "הצג ארכיב" ;
+  duplicateEvents = "שכפל ארוע";
+  archiveCurrentEvent = "העבר ארוע קיים לארכיב?";
 }
 
 const defaultLang = new Language();

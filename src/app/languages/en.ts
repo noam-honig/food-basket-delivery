@@ -779,4 +779,7 @@ export class en implements Language {
   eventInfo = 'Event details';
   volunteerStatus = 'Volunteer status';
   newVolunteer = 'New volunteer';
+  showArchive = 'View archive';
+  duplicateEvents = 'Duplicate an event';
+  archiveCurrentEvent = 'Tonight there is an event for the archive?';
 }
