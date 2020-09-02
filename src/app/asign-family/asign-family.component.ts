@@ -883,13 +883,13 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         let c = await f.courier.getTheName();
                         this.dialog.YesNoQuestion(this.settings.lang.theFamily + ' ' +
                             f.name.value + this.settings.lang.isAlreadyAsignedTo + ' ' + c + ' ' + this.settings.lang.onStatus + ' ' +
-                            f.deliverStatus.displayValue + '. ' + this.settings.lang.shouldAssignTo + ' ' + this.helper.name.value + '?', () => {
-                                ok();
+                            f.deliverStatus.displayValue + '. ' + this.settings.lang.shouldAssignTo + ' ' + this.helper.name.value + '?', async () => {
+                                await ok();
                             });
 
                     }
                     else
-                        ok();
+                        await ok();
                 }
 
 

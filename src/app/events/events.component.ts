@@ -57,6 +57,7 @@ export class EventsComponent implements OnInit {
                     await current.save();
                   }
                 }
+                this.events.getRecords();
               });
             }
           });
