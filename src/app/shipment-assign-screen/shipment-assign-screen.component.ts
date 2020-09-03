@@ -278,11 +278,12 @@ export class ShipmentAssignScreenComponent implements OnInit {
       address2: h.preferredFinishAddress.value,
       location2: h.preferredFinishAddress.ok() ? h.preferredFinishAddress.location() : undefined,
       families: [],
-      problemFamilies: {}
+      problemFamilies: {},
+      relevantFamilies:[]
     };
   }
 }
-interface familyInfo {
+export interface familyInfo {
   id: string,
   name: string,
   address: string,
@@ -293,7 +294,7 @@ interface familyInfo {
   relevantHelpers: relevantHelper[];
   assignedHelper?: helperInfo;
 }
-interface helperInfo {
+export interface helperInfo {
   id: string,
   name: string,
   location1: Location,
@@ -302,23 +303,29 @@ interface helperInfo {
   address2: string,
   families: familyInfo[],
   problemFamilies: { [id: string]: boolean },
-  newHelper?: boolean
+  newHelper?: boolean,
+  relevantFamilies:relevantFamily[];
 
 }
-interface relevantHelper {
+export interface relevantHelper {
   helper: helperInfo;
   distance: number;
   referencePoint: string;
 }
+export interface relevantFamily {
+  family: familyInfo;
+  distance: number;
+  referencePoint: string;
+}
 
-interface deliveryInfo {
+export interface deliveryInfo {
   id: string,
   basketTypeId: string,
   basketTypeName: string,
   quantity: number
 }
 
-interface data {
+export interface data {
   helpers: { [id: string]: helperInfo },
   unAssignedFamilies: { [id: string]: familyInfo }
 }

@@ -46,6 +46,7 @@ import { RegisterHelperComponent } from './register-helper/register-helper.compo
 import { Sites } from './sites/sites';
 import { InRouteFollowUpComponent } from './in-route-follow-up/in-route-follow-up.component';
 import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment-assign-screen.component';
+import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/volunteer-cross-assign.component';
 
 
 
@@ -91,7 +92,8 @@ export const routes: Routes = [
   SelfPickupComponent.route,
   FamilyDeliveriesComponent.route,
   { path: 'in-route-helpers', component: InRouteFollowUpComponent, canActivate: [MltAdminGuard],data: { name: 'מתנדבים בדרך' } },
-  { path: 'cross-assign', component: ShipmentAssignScreenComponent, canActivate: [MltAdminGuard],data: { name: 'טיפול בטרם שוייכו' } },
+  { path: 'cross-assign', component: ShipmentAssignScreenComponent, canActivate: [MltAdminGuard],data: { name: 'תורמים שטרם שויכו' } },
+  { path: 'volunteer-cross-assign', component: VolunteerCrossAssignComponent, canActivate: [MltAdminGuard],data: { name: 'מתנדבים שטרם שויכו' } },
   FamiliesComponent.route,
   DeliveryFollowUpComponent.route,
   
