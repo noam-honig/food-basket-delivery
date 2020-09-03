@@ -590,8 +590,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           deliveries.quantity,
           deliveries.createDate,
           deliveries.courier,
-          deliveries.internalDeliveryComment,
-          deliveries.messageStatus,
+//          deliveries.internalDeliveryComment,
+//          deliveries.messageStatus,
           deliveries.courierComments
         );
       } else {
