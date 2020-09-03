@@ -201,7 +201,27 @@ export class ShipmentAssignScreenComponent implements OnInit {
         h.problemFamilies[p.family.value] = true;
       }
     }
+    //highlight new Helpers
+    {
+      let sql = new SqlBuilder();
+      let h = context.for(Helpers).create();
+      let fd = context.for(FamilyDeliveries).create();
+      for (let helper of (await db.execute(sql.query({
+        select: () => [h.id],
+        from: h,
+        where: () => [sql.build( h.id, ' not in (', sql.query({
+          select: () => [fd.courier],
+          from: fd,
+          where: () => [fd.deliverStatus.isSuccess()]
+        }),')')]
 
+      }))).rows) {
+        let x = result.helpers[helper.id];
+        if (x) {
+          x.newHelper = true;
+        }
+      }
+    }
     //collect ready deliveries
     for await (let d of context.for(ActiveFamilyDeliveries).iterate({ where: h => h.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery), orderBy: h => h.createDate })) {
 
@@ -281,7 +301,8 @@ interface helperInfo {
   location2: Location,
   address2: string,
   families: familyInfo[],
-  problemFamilies: { [id: string]: boolean }
+  problemFamilies: { [id: string]: boolean },
+  newHelper?: boolean
 
 }
 interface relevantHelper {
