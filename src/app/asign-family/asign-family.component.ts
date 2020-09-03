@@ -38,9 +38,11 @@ import { CitiesStatsPerDistCenter } from '../family-deliveries/family-deliveries
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Families } from '../families/families';
 
-import { HelperFamiliesComponent } from '../helper-families/helper-families.component';
+import { HelperFamiliesComponent, DeliveryInList } from '../helper-families/helper-families.component';
 import { familiesInRoute, optimizeRoute, routeStats, routeStrategyColumn } from './route-strategy';
 import { moveDeliveriesHelper } from '../helper-families/move-deliveries-helper';
+import { SelectListComponent } from '../select-list/select-list.component';
+import { use } from '../translate';
 
 
 
@@ -587,6 +589,34 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     findCompany() {
         this.context.openDialog(SelectCompanyComponent, s => s.argOnSelect = x => this.helper.company.value = x);
     }
+    async assignClosestDeliveries() {
+        
+        let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(this.familyLists.helper.preferredDistributionAreaAddress.location()));
+    
+        await this.context.openDialog(SelectListComponent, x => {
+          x.args = {
+            title: use.language.closestDeliveries + ' (' + use.language.mergeFamilies + ')',
+            multiSelect: true,
+            onSelect: async (selectedItems) => {
+              if (selectedItems.length > 0)
+                this.busy.doWhileShowingBusy(async () => {
+                  let ids: string[] = [];
+                  for (const selectedItem of selectedItems) {
+                    let d: DeliveryInList = selectedItem.item;
+                    ids.push(...d.ids);
+                  }
+                  await HelperFamiliesComponent.assignFamilyDeliveryToIndie(ids);
+                  
+                  await this.familyLists.reload();
+                  this.doRefreshRoute();
+                });
+            },
+            options: afdList
+          }
+        });
+    
+    
+      }
     @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async AddBox(info: AddBoxInfo, context?: Context, db?: SqlDatabase) {
         let result: AddBoxResponse = {

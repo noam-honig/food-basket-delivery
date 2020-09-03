@@ -623,7 +623,7 @@ export class HelperFamiliesComponent implements OnInit {
 
 }
 
-interface DeliveryInList {
+export interface DeliveryInList {
   ids: string[],
   familyId: string,
   city: string,
