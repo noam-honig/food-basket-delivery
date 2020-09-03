@@ -30,7 +30,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
 
     knowTotalRows: true,
     get: {
-      limit: 25,
+      limit: 100,
       where: f =>
         f.id.isIn(this.deliveriesForPhone)
       , orderBy: f => f.name
@@ -88,7 +88,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
               d.distributionCenter.value = user.distributionCenter;
               d.deliverStatus.value = DeliveryStatus.Success;
               await d.save();
-              this.refreshFamilyGrid();
+              await this.refreshFamilyGrid();
             }
           }
         }
@@ -109,7 +109,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
     ]
   });
 
-  phone = new StringColumn({caption:"טלפון",dataControlSettings:()=>({inputType:'tel'}) });
+  phone = new StringColumn({caption:"טלפון של תורם או מתנדב",dataControlSettings:()=>({inputType:'tel'}) });
   
   constructor(
     private context: Context,
@@ -162,7 +162,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
 
   async search() {
     try {
-      this.deliveriesForPhone = await FamilyDeliveriesComponent.getDeliveriesByPhone(this.phone.value);
+      this.deliveriesForPhone = (await FamilyDeliveriesComponent.getDeliveriesByPhone(this.phone.value)).map(x=>x.id);
       this.showData = (this.deliveriesForPhone.length > 0);
     } catch (err) {
 
