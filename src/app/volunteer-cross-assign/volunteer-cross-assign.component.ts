@@ -102,7 +102,7 @@ export class VolunteerCrossAssignComponent implements OnInit {
           if (Object.prototype.hasOwnProperty.call(this.data.unAssignedFamilies, famKey)) {
             const family = this.data.unAssignedFamilies[famKey];
 
-            if (helper.families.length < 4 && !helper.problemFamilies[family.id]) {
+            if ( !helper.problemFamilies[family.id]) {
               let d = 99999999;
               let referencePoint = '';
               let checkDistance = (loc: Location, refPoint: string) => {
