@@ -906,6 +906,7 @@ export class Language {
   duplicateEvents = "שכפל ארוע";
   archiveCurrentEvent = "העבר ארוע קיים לארכיב?";
   basedNoAssignmentOrder = "לפי סדר שיוך";
+  volunteerComment = "הערת מתנדב";
 }
 
 const defaultLang = new Language();

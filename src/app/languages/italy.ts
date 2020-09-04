@@ -783,4 +783,5 @@ export class italy implements Language {
   duplicateEvents = 'Duplica un evento';
   archiveCurrentEvent = "Stasera c'è un evento per l'archivio?";
   basedNoAssignmentOrder = 'In ordine di associazione';
+  volunteerComment = 'Nota di volontariato';
 }

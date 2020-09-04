@@ -3811,6 +3811,11 @@
     "valueInCode": "מתנדב יכול לעדכן אזור חלוקה מועדף",
     "valueInEnglish": "A volunteer can update a preferred division area"
   },
+  "volunteerComment": {
+    "google": "Nota di volontariato",
+    "valueInCode": "הערת מתנדב",
+    "valueInEnglish": "Volunteer note"
+  },
   "volunteerFeedbackVideo": {
     "google": "Per un tutorial sul feedback dei volontari clicca qui",
     "valueInCode": "לסרטון הדרכה על משוב המתנדבים לחץ כאן",

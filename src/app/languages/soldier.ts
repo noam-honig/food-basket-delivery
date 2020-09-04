@@ -783,4 +783,5 @@ export class soldier implements Language {
   duplicateEvents = 'שכפל ארוע';
   archiveCurrentEvent = 'הערב ארוע קיים לארכיב?';
   basedNoAssignmentOrder = 'לפי סדר שיוך';
+  volunteerComment = 'הערת מתנדב';
 }

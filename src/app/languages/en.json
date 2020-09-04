@@ -3331,6 +3331,10 @@
     "google": "A volunteer can update a preferred division area",
     "valueInCode": "מתנדב יכול לעדכן אזור חלוקה מועדף"
   },
+  "volunteerComment": {
+    "google": "Volunteer note",
+    "valueInCode": "הערת מתנדב"
+  },
   "volunteerFeedbackVideo": {
     "google": "For a tutorial on volunteer feedback click here",
     "valueInCode": "לסרטון הדרכה על משוב המתנדבים לחץ כאן"

@@ -2,10 +2,11 @@
   <div *ngIf="showStatus()">
     <h4>{{f.deliverStatus.displayValue}}</h4>
     {{f.deliveryStatusDate.displayValue}}
-    <div *ngIf="f.courierComments.value">
-      <h5 style="display:inline">{{settings.lang.notice}}</h5> - {{f.courierComments.value}}
+    
+  </div>
+  <div *ngIf="f.courierComments.value">
+    <h4 style="display:inline">{{settings.lang.volunteerComment}}</h4> - {{f.courierComments.value}} ({{f.courierCommentsDate.relativeDateName(context)}})
 
-    </div>
   </div>
   <div>
     <button mat-raised-button class="cancelAssignButton" color="accent" *ngIf="showFamilyPickedUp(f)"

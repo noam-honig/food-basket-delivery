@@ -783,4 +783,5 @@ export class es implements Language {
   duplicateEvents = 'Duplicar un evento';
   archiveCurrentEvent = '¿Esta noche hay un evento para el archivo?';
   basedNoAssignmentOrder = 'En orden de asociación';
+  volunteerComment = 'Nota de voluntario';
 }

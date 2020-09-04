@@ -3047,6 +3047,10 @@
     "google": "מתנדב יכול לעדכן אזור חלוקה מועדף",
     "valueInCode": "מתנדב יכול לעדכן אזור חלוקה מועדף"
   },
+  "volunteerComment": {
+    "google": "הערת מתנדב",
+    "valueInCode": "הערת מתנדב"
+  },
   "volunteerFeedbackVideo": {
     "google": "לסרטון הדרכה על משוב המתנדבים לחץ כאן",
     "valueInCode": "לסרטון הדרכה על משוב המתנדבים לחץ כאן"

@@ -8,6 +8,7 @@
       <mat-icon color="accent" *ngIf="f.deliveryComments.value"> comment</mat-icon>
       <mat-icon color="accent" *ngIf="!f.addressOk.value">warning</mat-icon>
       <mat-icon color="green" *ngIf="f.courierBeenHereBefore.value">repeat</mat-icon>
+      <mat-icon  *ngIf="f.courierComments.value"> comment</mat-icon>
     </div>
     <div>
       <span *ngIf="f.quantity.value>1">{{f.quantity.value}} x </span> {{f.basketType.displayValue}}
