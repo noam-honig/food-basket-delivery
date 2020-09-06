@@ -1595,6 +1595,8 @@ export function processPhone(input: string): phoneResult[] {
             let prev = temp2.pop();
             if (prev) {
                 let next = temp.pop();
+                if(next===undefined)
+                    next = '';
                 let p = onlyDigits(prev);
                 let n = onlyDigits(next);
                 if (c == ' ' && prev == "-") {
