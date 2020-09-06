@@ -52,6 +52,13 @@ export class OverviewOrAdminGuard extends SignedInGuard {
         return c => c.isAllowed(Roles.admin) || c.isAllowed(Roles.overview);
     }
 }
+@Injectable()
+export class SignedInAndNotOverviewGuard extends SignedInGuard {
+
+    isAllowed() {
+        return (c: Context) => c.isSignedIn() && !c.isAllowed(Roles.overview)
+    }
+}
 
 @Injectable()
 export class IndieGuard extends SignedInGuard {
