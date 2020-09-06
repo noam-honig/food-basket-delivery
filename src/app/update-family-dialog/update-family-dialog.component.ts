@@ -146,11 +146,27 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       title: 'פרטי עדכונים עבור ' + f.name.value,
       ok: () => { },
       settings: {
-        columnSettings: () => [
-          [f.createDate, f.createUser],
-          [f.lastUpdateDate, f.lastUpdateUser],
-          [f.statusDate, f.statusUser]
-        ]
+        columnSettings: () => {
+          let r =
+            [
+              f.createDate, f.createUser,
+              f.lastUpdateDate, f.lastUpdateUser,
+              f.statusDate, f.statusUser
+            ];
+            if (this.args.familyDelivery)
+            {
+              let fd = this.args.familyDelivery;
+              r.push(
+                fd.deliveryStatusDate,
+                fd.deliveryStatusUser,
+                fd.courierAssingTime,
+                fd.courierAssignUser,
+                fd.createDate,
+                fd.createUser
+                )
+            }
+          return r;
+        }
       }
     });
   }
@@ -339,7 +355,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
 
     }
     if (!this.families.currentRow.isNew())
-      this.familyDeliveries =await  this.args.family.deliveriesGridSettings({
+      this.familyDeliveries = await this.args.family.deliveriesGridSettings({
         settings: this.settings,
         dialog: this.dialog
       });

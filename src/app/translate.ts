@@ -403,7 +403,7 @@ export class Language {
   quantity = 'כמות';
   volunteer = "מתנדב";
   commentsWritteByVolunteer = 'הערות שכתב המתנדב כשמסר';
-  deliveryStatusDate = 'מתי';
+  deliveryStatusDate = 'סטטוס משלוח: מועד עדכון';
   courierAsignUser = 'מי שייכה למתנדב';
   courierAsignDate = 'מועד שיוך למתנדב';
   deliveryCreateDate = 'מועד הקצאה';
