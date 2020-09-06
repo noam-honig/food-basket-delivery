@@ -333,7 +333,7 @@ export class FamilyDeliveries extends IdEntity {
                         );
                     if (!this.isNew() && wasChanged(this.courierComments) && this.courierComments.value.length > 0)
                         this.courierCommentsDate.value = new Date();
-                        else console.log('123');
+                        
                     logChanged(context, this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => {
                         if (!this._disableMessageToUsers) {
                             Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName(), this.context), this.context, this.distributionCenter.value);

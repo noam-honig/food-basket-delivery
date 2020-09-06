@@ -170,7 +170,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
     let h = context.for(Helpers).create();
     var sql = new SqlBuilder();
     sql.addEntity(fd,'fd');
-    let r = await db.execute(sql.build(sql.query({
+    let r = await db.execute(log(sql.build(sql.query({
       from: fd,
       outerJoin: () => [{ to: h, on: () => [sql.eq(fd.courier, h.id)] }],
       select: () => [
@@ -188,7 +188,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
       ],
       where: () => [ sql.eq(fd.archive,false),fd.courier.isDifferentFrom('').and(fd.distributionCenter.filter(distCenter))],
 
-    }).replace(/distributionCenter/g, 'e1.distributionCenter'), ' group by ', [fd.courier, h.name, h.phone, h.smsDate, h.eventComment,h.lastSignInDate], ' order by ', sql.func('max', fd.courierAssingTime),' desc'));
+    }).replace(/distributionCenter/g, 'fd.distributionCenter'), ' group by ', [fd.courier, h.name, h.phone, h.smsDate, h.eventComment,h.lastSignInDate], ' order by ', sql.func('max', fd.courierAssingTime),' desc')));
     return r.rows.map(r => {
       let smsDate = r['smsdate'];
       let maxAsign = r['maxasign'];
@@ -257,4 +257,8 @@ export interface helperFollowupInfo {
   smsDateName: string,
   viewedSms: boolean
 
+}
+function log(what:string){
+  //console.log(what);
+  return what;
 }
