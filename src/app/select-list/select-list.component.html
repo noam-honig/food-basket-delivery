@@ -8,6 +8,7 @@
                 <mat-checkbox *ngIf="args.multiSelect" [(ngModel)]="h.selected">
                     {{h.name}}
                 </mat-checkbox>
+                <span *ngIf="!args.multiSelect">{{h.name}}</span>
 
             </span>
 
