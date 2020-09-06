@@ -1,6 +1,6 @@
 /// <reference types="@types/googlemaps" />
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { StringColumn } from '@remult/core';
+import { StringColumn, RouteHelperService } from '@remult/core';
 import { Helpers } from '../../helpers/helpers';
 import { DialogService } from '../../select-popup/dialog';
 import { AuthService } from '../../auth/auth-service';
@@ -21,7 +21,8 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
   constructor(private dialog: DialogService,
     private auth: AuthService,
     private context: Context,
-    public settings: ApplicationSettings) {
+    public settings: ApplicationSettings,
+    private helper: RouteHelperService) {
 
 
   }
@@ -72,7 +73,9 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
         await this.helpers.items[0].save();
         this.dialog.Info(this.settings.lang.updateSaved);
         this.confirmPassword.value = this.helpers.currentRow.password.value ? Helpers.emptyPassword : '';
-        
+        this.helper.navigateToComponent( (await import('../../my-families/my-families.component')).MyFamiliesComponent);
+
+
       }
     }
     catch (err) {
