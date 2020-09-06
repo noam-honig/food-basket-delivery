@@ -19,7 +19,7 @@ import { Sites, getLang, setLangForSite } from '../sites/sites';
 
 export async function initSchema(pool1: PostgresPool, org: string) {
 
-    
+
     var dataSource = new SqlDatabase(new PostgresDataProvider(pool1));
     let context = new ServerContext();
     context.setDataProvider(dataSource);
@@ -392,8 +392,21 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         settings.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery.value = true;
         await settings.save();
     });
-    await version(26,async()=>{
-            settings.successMessageText.value = "שלום !משפחה!, אחד המתנדבים שלנו מסר לכם סל. בברכה !ארגון!";
+    await version(26, async () => {
+        settings.successMessageText.value = "שלום !משפחה!, אחד המתנדבים שלנו מסר לכם סל. בברכה !ארגון!";
+        await settings.save();
+
+    });
+    await version(27, async () => {
+        settings.successMessageText.value = "שלום !משפחה!, אחד המתנדבים שלנו מסר לכם סל. בברכה !ארגון!";
+        await settings.save();
+
+    });
+    await version(28, async () => {
+        await dataSource.execute(sql.update(fd, {
+            set: () => [[fd.needsWork, false]],
+            where: () => [fd.archive.isEqualTo(true).and(fd.needsWork.isEqualTo(true))]
+        }))
 
     });
 
