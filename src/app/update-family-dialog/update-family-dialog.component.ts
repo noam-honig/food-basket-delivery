@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, AfterViewIn
 import { MatDialogRef, MatDialogActions } from '@angular/material/dialog';
 import { Families, duplicateFamilyInfo, displayDupInfo } from '../families/families';
 
-import { Context, DialogConfig, DataControlSettings, DataAreaSettings, GridSettings, StringColumn, ServerFunction, ServerContext } from '@remult/core';
+import { Context, DialogConfig, DataControlSettings, DataAreaSettings, GridSettings, StringColumn, ServerFunction, ServerContext, DataArealColumnSetting } from '@remult/core';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyDeliveryStats } from '../family-deliveries/family-deliveries-stats';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -147,7 +147,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       ok: () => { },
       settings: {
         columnSettings: () => {
-          let r =
+          let r:DataArealColumnSetting<any>[] =
             [
               f.createDate, f.createUser,
               f.lastUpdateDate, f.lastUpdateUser,
@@ -157,6 +157,9 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
             {
               let fd = this.args.familyDelivery;
               r.push(
+                {
+                  getValue:()=>'עדכונים למשלוח'
+                },
                 fd.deliveryStatusDate,
                 fd.deliveryStatusUser,
                 fd.courierAssingTime,
