@@ -126,7 +126,11 @@ export class AuthService {
         if (loginResponse.authToken) {
             this.setToken(loginResponse.authToken, remember);
             this.dialog.analytics('login ' + (this.context.isAllowed(Roles.admin) ? 'delivery admin' : ''));
-            if (this.context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
+            if (this.failedSmsSignInPhone){
+                this.failedSmsSignInPhone = null;
+                this.routeHelper.navigateToComponent((await import("../my-families/my-families.component")).MyFamiliesComponent);
+            }
+            else if (this.context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
                 this.routeHelper.navigateToComponent((await import("../asign-family/asign-family.component")).AsignFamilyComponent);
             else if (this.context.isAllowed(Roles.lab))
                 this.routeHelper.navigateToComponent(DeliveryReceptionComponent)
