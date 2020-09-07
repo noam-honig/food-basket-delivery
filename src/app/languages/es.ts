@@ -784,4 +784,6 @@ export class es implements Language {
   archiveCurrentEvent = '¿Esta noche hay un evento para el archivo?';
   basedNoAssignmentOrder = 'En orden de asociación';
   volunteerComment = 'Nota de voluntario';
+  archiveDate = 'Archivo: fecha de actualización';
+  archiveUser = 'Archivo: actualizaciones de usuario';
 }

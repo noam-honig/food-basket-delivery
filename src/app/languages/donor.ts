@@ -784,4 +784,6 @@ export class donor implements Language {
   archiveCurrentEvent = 'הערב ארוע קיים לארכיב?';
   basedNoAssignmentOrder = 'לפי סדר שיוך';
   volunteerComment = 'הערת מתנדב';
+  archiveDate = 'ארכיב: מועד עדכון';
+  archiveUser = 'ארכיב: משתמש מעדכן';
 }

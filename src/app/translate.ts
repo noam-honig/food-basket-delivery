@@ -907,6 +907,8 @@ export class Language {
   archiveCurrentEvent = "העבר ארוע קיים לארכיב?";
   basedNoAssignmentOrder = "לפי סדר שיוך";
   volunteerComment = "הערת מתנדב";
+  archiveDate = "ארכיב: מועד עדכון";
+  archiveUser = "ארכיב: משתמש מעדכן";
 }
 
 const defaultLang = new Language();

@@ -784,4 +784,6 @@ export class italy implements Language {
   archiveCurrentEvent = "Stasera c'è un evento per l'archivio?";
   basedNoAssignmentOrder = 'In ordine di associazione';
   volunteerComment = 'Nota di volontariato';
+  archiveDate = 'Archivio: data di aggiornamento';
+  archiveUser = 'Archivio: aggiornamenti utente';
 }

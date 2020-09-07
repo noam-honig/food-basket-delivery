@@ -250,6 +250,8 @@ export class FamilyDeliveries extends IdEntity {
     });
 
     archive = new BoolColumn({ allowApiUpdate: [Roles.admin, Roles.lab] });
+    archiveDate = new changeDate({ includeInApi: Roles.admin, caption: getLang(this.context).archiveDate });
+    archiveUser = new HelperIdReadonly(this.context, { includeInApi: Roles.admin, caption: getLang(this.context).archiveUser });
 
     visibleToCourier = new BoolColumn({
         sqlExpression: () => {
@@ -333,13 +335,14 @@ export class FamilyDeliveries extends IdEntity {
                         );
                     if (!this.isNew() && wasChanged(this.courierComments) && this.courierComments.value.length > 0)
                         this.courierCommentsDate.value = new Date();
-                        
+
                     logChanged(context, this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => {
                         if (!this._disableMessageToUsers) {
                             Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName(), this.context), this.context, this.distributionCenter.value);
                         }
                     });
                     logChanged(context, this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => { });
+                    logChanged(context, this.archive, this.archiveDate, this.archiveUser, async () => { });
                 }
                 if (context.onServer && this.isNew() && !this._disableMessageToUsers) {
                     Families.SendMessageToBrowsers(getLang(this.context).newDelivery, this.context, this.distributionCenter.value)

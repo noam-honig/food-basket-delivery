@@ -784,4 +784,6 @@ export class en implements Language {
   archiveCurrentEvent = 'Tonight there is an event for the archive?';
   basedNoAssignmentOrder = 'In order of association';
   volunteerComment = 'Volunteer note';
+  archiveDate = 'Archive: Date of update';
+  archiveUser = 'Archive: User updates';
 }

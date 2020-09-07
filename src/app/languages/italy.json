@@ -254,6 +254,11 @@
     "valueInCode": "העבר ארוע קיים לארכיב?",
     "valueInEnglish": "Tonight there is an event for the archive?"
   },
+  "archiveDate": {
+    "google": "Archivio: data di aggiornamento",
+    "valueInCode": "ארכיב: מועד עדכון",
+    "valueInEnglish": "Archive: Date of update"
+  },
   "archiveDeliveries": {
     "google": "Consegne in archivio",
     "valueInCode": "העברה לארכיב",
@@ -283,6 +288,11 @@
     "google": "Elimina volontario",
     "valueInCode": "מחק מתנדב",
     "valueInEnglish": "Delete Volunteer"
+  },
+  "archiveUser": {
+    "google": "Archivio: aggiornamenti utente",
+    "valueInCode": "ארכיב: משתמש מעדכן",
+    "valueInEnglish": "Archive: User updates"
   },
   "areYouSureYouWantToCancelAssignmentTo": {
     "google": "Sei sicuro di voler annullare l'assegnazione a",
@@ -1067,7 +1077,7 @@
   },
   "deliveryStatusDate": {
     "google": "quando",
-    "valueInCode": "מתי",
+    "valueInCode": "סטטוס משלוח: מועד עדכון",
     "valueInEnglish": "When"
   },
   "deliverySummary": {

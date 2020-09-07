@@ -203,6 +203,10 @@
     "google": "הערב ארוע קיים לארכיב?",
     "valueInCode": "העבר ארוע קיים לארכיב?"
   },
+  "archiveDate": {
+    "google": "ארכיב: מועד עדכון",
+    "valueInCode": "ארכיב: מועד עדכון"
+  },
   "archiveDeliveries": {
     "google": "העברה לארכיב",
     "valueInCode": "העברה לארכיב"
@@ -226,6 +230,10 @@
   "archiveHelper": {
     "google": "מחק מתנדב",
     "valueInCode": "מחק מתנדב"
+  },
+  "archiveUser": {
+    "google": "ארכיב: משתמש מעדכן",
+    "valueInCode": "ארכיב: משתמש מעדכן"
   },
   "areYouSureYouWantToCancelAssignmentTo": {
     "google": "האם אתה בטוח שאתה רוצה לבטל שיוך ל",
@@ -853,7 +861,7 @@
   },
   "deliveryStatusDate": {
     "google": "מתי",
-    "valueInCode": "מתי"
+    "valueInCode": "סטטוס משלוח: מועד עדכון"
   },
   "deliverySummary": {
     "google": "סיכום משלוח",

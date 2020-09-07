@@ -228,6 +228,10 @@
     "google": "Tonight there is an event for the archive?",
     "valueInCode": "העבר ארוע קיים לארכיב?"
   },
+  "archiveDate": {
+    "google": "Archive: Date of update",
+    "valueInCode": "ארכיב: מועד עדכון"
+  },
   "archiveDeliveries": {
     "google": "Archive transfer",
     "valueInCode": "העברה לארכיב",
@@ -254,6 +258,10 @@
   "archiveHelper": {
     "google": "Delete Volunteer",
     "valueInCode": "מחק מתנדב"
+  },
+  "archiveUser": {
+    "google": "Archive: User updates",
+    "valueInCode": "ארכיב: משתמש מעדכן"
   },
   "areYouSureYouWantToCancelAssignmentTo": {
     "google": "Are you sure you want to unpair",
@@ -989,7 +997,7 @@
   },
   "deliveryStatusDate": {
     "google": "When",
-    "valueInCode": "מתי"
+    "valueInCode": "סטטוס משלוח: מועד עדכון"
   },
   "deliverySummary": {
     "google": "Shipping Summary",
