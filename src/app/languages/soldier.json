@@ -97,7 +97,7 @@
   },
   "addVolunteer": {
     "google": "הוסף מתנדב/מנהל",
-    "valueInCode": "הוסף מתנדב/מנהל"
+    "valueInCode": "הוסף מתנדב"
   },
   "admin": {
     "google": "מנהל כלל המערכת",
@@ -199,6 +199,14 @@
     "google": "העבר משלוח נוכחי לארכיב?",
     "valueInCode": "העבר משלוח נוכחי לארכיב?"
   },
+  "archiveCurrentEvent": {
+    "google": "הערב ארוע קיים לארכיב?",
+    "valueInCode": "העבר ארוע קיים לארכיב?"
+  },
+  "archiveDate": {
+    "google": "ארכיב: מועד עדכון",
+    "valueInCode": "ארכיב: מועד עדכון"
+  },
   "archiveDeliveries": {
     "google": "העברה לארכיב",
     "valueInCode": "העברה לארכיב"
@@ -222,6 +230,10 @@
   "archiveHelper": {
     "google": "מחק מתנדב",
     "valueInCode": "מחק מתנדב"
+  },
+  "archiveUser": {
+    "google": "ארכיב: משתמש מעדכן",
+    "valueInCode": "ארכיב: משתמש מעדכן"
   },
   "areYouSureYouWantToCancelAssignmentTo": {
     "google": "האם אתה בטוח שאתה רוצה לבטל שיוך ל",
@@ -330,6 +342,10 @@
   "badAddressTitle": {
     "google": "שים לב, כתובת לא מדוייקת",
     "valueInCode": "שים לב, כתובת לא מדוייקת"
+  },
+  "basedNoAssignmentOrder": {
+    "google": "לפי סדר שיוך",
+    "valueInCode": "לפי סדר שיוך"
   },
   "basket": {
     "google": "סל",
@@ -845,7 +861,7 @@
   },
   "deliveryStatusDate": {
     "google": "מתי",
-    "valueInCode": "מתי"
+    "valueInCode": "סטטוס משלוח: מועד עדכון"
   },
   "deliverySummary": {
     "google": "סיכום משלוח",
@@ -934,6 +950,10 @@
   "drawingHelpText": {
     "google": "אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום",
     "valueInCode": "אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום"
+  },
+  "duplicateEvents": {
+    "google": "שכפל ארוע",
+    "valueInCode": "שכפל ארוע"
   },
   "DuplicateFamiliesComponent": {
     "google": "חיפוש חיילים כפולים",
@@ -1815,6 +1835,10 @@
     "google": "מצריך טיפול",
     "valueInCode": "מצריך טיפול"
   },
+  "newVolunteer": {
+    "google": "מתנדב חדש",
+    "valueInCode": "מתנדב חדש"
+  },
   "newVolunteers": {
     "google": "מתנדבים חדשים",
     "valueInCode": "מתנדבים חדשים"
@@ -2097,7 +2121,7 @@
   },
   "prioritizeRepeatFamilies": {
     "google": "עדיפות לחיילים חוזרים",
-    "valueInCode": "עדיפות למשפחות שהמנדב היה אצלהן"
+    "valueInCode": "עדיפות למשפחות שהמתנדב היה אצלהן"
   },
   "problem": {
     "google": "בעייה",
@@ -2563,6 +2587,10 @@
     "google": "הצג את כל החיילים",
     "valueInCode": "הצג את כל המשפחות"
   },
+  "showArchive": {
+    "google": "הצג ארכיב",
+    "valueInCode": "הצג ארכיב"
+  },
   "showAsignDeliveryFor": {
     "google": "הצג שיוך משלוחים ל",
     "valueInCode": "הצג שיוך משלוחים ל"
@@ -3027,6 +3055,10 @@
     "google": "מתנדב יכול לעדכן אזור חלוקה מועדף",
     "valueInCode": "מתנדב יכול לעדכן אזור חלוקה מועדף"
   },
+  "volunteerComment": {
+    "google": "הערת מתנדב",
+    "valueInCode": "הערת מתנדב"
+  },
   "volunteerFeedbackVideo": {
     "google": "לסרטון הדרכה על משוב המתנדבים לחץ כאן",
     "valueInCode": "לסרטון הדרכה על משוב המתנדבים לחץ כאן"
@@ -3066,6 +3098,10 @@
   "volunteers": {
     "google": "מתנדבים",
     "valueInCode": "מתנדבים"
+  },
+  "volunteerStatus": {
+    "google": "מצב מתנדב",
+    "valueInCode": "מצב מתנדב"
   },
   "volunteerTexts": {
     "google": "הודעות למתנדב",

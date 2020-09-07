@@ -38,9 +38,11 @@ import { CitiesStatsPerDistCenter } from '../family-deliveries/family-deliveries
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Families } from '../families/families';
 
-import { HelperFamiliesComponent } from '../helper-families/helper-families.component';
+import { HelperFamiliesComponent, DeliveryInList } from '../helper-families/helper-families.component';
 import { familiesInRoute, optimizeRoute, routeStats, routeStrategyColumn } from './route-strategy';
 import { moveDeliveriesHelper } from '../helper-families/move-deliveries-helper';
+import { SelectListComponent } from '../select-list/select-list.component';
+import { use } from '../translate';
 
 
 
@@ -587,6 +589,34 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     findCompany() {
         this.context.openDialog(SelectCompanyComponent, s => s.argOnSelect = x => this.helper.company.value = x);
     }
+    async assignClosestDeliveries() {
+        
+        let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(this.familyLists.helper.preferredDistributionAreaAddress.location()));
+    
+        await this.context.openDialog(SelectListComponent, x => {
+          x.args = {
+            title: use.language.closestDeliveries + ' (' + use.language.mergeFamilies + ')',
+            multiSelect: true,
+            onSelect: async (selectedItems) => {
+              if (selectedItems.length > 0)
+                this.busy.doWhileShowingBusy(async () => {
+                  let ids: string[] = [];
+                  for (const selectedItem of selectedItems) {
+                    let d: DeliveryInList = selectedItem.item;
+                    ids.push(...d.ids);
+                  }
+                  await HelperFamiliesComponent.assignFamilyDeliveryToIndie(ids);
+                  
+                  await this.familyLists.reload();
+                  this.doRefreshRoute();
+                });
+            },
+            options: afdList
+          }
+        });
+    
+    
+      }
     @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async AddBox(info: AddBoxInfo, context?: Context, db?: SqlDatabase) {
         let result: AddBoxResponse = {
@@ -746,25 +776,30 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             }
 
             if (waitingFamilies.length > 0) {
-
-                if (locationReferenceFamilies.length == 0) {
+                let preferArea = helper.preferredDistributionAreaAddress.ok();
+                let preferEnd = helper.preferredFinishAddress.ok();
+                if (locationReferenceFamilies.length == 0 || (settings.isSytemForMlt() && (preferArea || preferEnd))) {
 
                     let distCenter = settings.address.location();
                     let lastFamiliy = waitingFamilies[0];
-                    if (helper.preferredDistributionAreaAddress.ok()) {
+
+                    if (preferArea || preferEnd) {
                         lastFamiliy = undefined;
                         var lastDist: number;
                         for (const f of waitingFamilies) {
-
-                            let dist = GetDistanceBetween(f, helper.preferredDistributionAreaAddress.location());
-                            if (!lastFamiliy || dist < lastDist) {
-                                lastFamiliy = f;
-                                lastDist = dist;
+                            if (preferArea) {
+                                let dist = GetDistanceBetween(f, helper.preferredDistributionAreaAddress.location());
+                                if (!lastFamiliy || dist < lastDist) {
+                                    lastFamiliy = f;
+                                    lastDist = dist;
+                                }
                             }
-                            dist = GetDistanceBetween(f, helper.preferredFinishAddress.location());
-                            if (!lastFamiliy || dist < lastDist) {
-                                lastFamiliy = f;
-                                lastDist = dist;
+                            if (preferEnd) {
+                                let dist = GetDistanceBetween(f, helper.preferredFinishAddress.location());
+                                if (!lastFamiliy || dist < lastDist) {
+                                    lastFamiliy = f;
+                                    lastDist = dist;
+                                }
                             }
                         }
 
@@ -878,13 +913,13 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         let c = await f.courier.getTheName();
                         this.dialog.YesNoQuestion(this.settings.lang.theFamily + ' ' +
                             f.name.value + this.settings.lang.isAlreadyAsignedTo + ' ' + c + ' ' + this.settings.lang.onStatus + ' ' +
-                            f.deliverStatus.displayValue + '. ' + this.settings.lang.shouldAssignTo + ' ' + this.helper.name.value + '?', () => {
-                                ok();
+                            f.deliverStatus.displayValue + '. ' + this.settings.lang.shouldAssignTo + ' ' + this.helper.name.value + '?', async () => {
+                                await ok();
                             });
 
                     }
                     else
-                        ok();
+                        await ok();
                 }
 
 

@@ -9,7 +9,7 @@ import { SqlBuilder } from '../model-shared/types';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { BasketType } from '../families/BasketType';
-import { getSettings } from '../manage/ApplicationSettings';
+import { getSettings, ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-shipment-assign-screen',
@@ -24,7 +24,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
     this.sortList();
   }
   matchesFilter(f: familyInfo) {
-    if (!this.filterBasket.value||this.filterBasket.value.length==0)
+    if (!this.filterBasket.value || this.filterBasket.value.length == 0)
       return true;
     return f.deliveries.find(b => b.basketTypeName.includes(this.filterBasket.value));
 
@@ -33,11 +33,11 @@ export class ShipmentAssignScreenComponent implements OnInit {
   private sortList() {
     this.families.sort((a, b) => {
       let res = 0;
-      let itemsDiff =  b.totalItems - a.totalItems;
+      let itemsDiff = b.totalItems - a.totalItems;
       let alen = a.relevantHelpers.length;
       let blen = b.relevantHelpers.length;
 
-      if (alen == 0 && blen==0)
+      if (alen == 0 && blen == 0)
         return itemsDiff;
 
       if (alen == 0) return 1;
@@ -47,7 +47,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
       if (res == 0)
         res = itemsDiff;
 
-      return res; 
+      return res;
     });
   }
 
@@ -107,7 +107,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
   togglerShowHelper(forFamily: familyInfo) {
     this.openFamilies.set(forFamily, !this.openFamilies.get(forFamily));
   }
-  constructor(private context: Context, private busy: BusyService) { }
+  constructor(private context: Context, private busy: BusyService, private settings: ApplicationSettings) { }
   data: data;
   families: familyInfo[] = [];
   async ngOnInit() {
@@ -142,9 +142,10 @@ export class ShipmentAssignScreenComponent implements OnInit {
               };
               checkDistance(helper.location1, 'העדפת מתנדב: ' + helper.address1);
               checkDistance(helper.location2, 'העדפת מתנדב: ' + helper.address2);
-              for (const exF of helper.families) {
-                checkDistance(exF.location, 'משלוח: ' + exF.address);
-              }
+              if (!this.settings.isSytemForMlt())
+                for (const exF of helper.families) {
+                  checkDistance(exF.location, 'משלוח: ' + exF.address);
+                }
               if (d < 5) {
                 family.relevantHelpers.push({
                   helper: helper,
@@ -153,7 +154,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
                 });
                 family.relevantHelpers.sort((a, b) => {
                   let res = a.helper.families.length - b.helper.families.length;
-                  if (res==0) res = a.distance - b.distance
+                  if (res == 0) res = a.distance - b.distance
                   return res;
                 });
               }
@@ -180,7 +181,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
       let fd = context.for(FamilyDeliveries).create();
       let sql = new SqlBuilder();
       let busyLimitdate = new Date();
-      busyLimitdate.setDate(busyLimitdate.getDate() -  getSettings(context).BusyHelperAllowedFreq_denom.value);
+      busyLimitdate.setDate(busyLimitdate.getDate() - getSettings(context).BusyHelperAllowedFreq_denom.value);
 
 
       for (let busy of (await db.execute(sql.query({
@@ -188,7 +189,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
         from: fd,
         where: () => [fd.deliverStatus.isAResultStatus().and(fd.deliveryStatusDate.isGreaterThan(busyLimitdate))],
         groupBy: () => [fd.courier],
-        having: () => [sql.build('count(distinct ', fd.family, ' )>',   getSettings(context).BusyHelperAllowedFreq_nom.value)]
+        having: () => [sql.build('count(distinct ', fd.family, ' )>', getSettings(context).BusyHelperAllowedFreq_nom.value)]
       }))).rows) {
         result.helpers[busy.courier] = undefined;
       }
@@ -200,7 +201,27 @@ export class ShipmentAssignScreenComponent implements OnInit {
         h.problemFamilies[p.family.value] = true;
       }
     }
+    //highlight new Helpers
+    {
+      let sql = new SqlBuilder();
+      let h = context.for(Helpers).create();
+      let fd = context.for(FamilyDeliveries).create();
+      for (let helper of (await db.execute(sql.query({
+        select: () => [h.id],
+        from: h,
+        where: () => [sql.build( h.id, ' not in (', sql.query({
+          select: () => [fd.courier],
+          from: fd,
+          where: () => [fd.deliverStatus.isSuccess()]
+        }),')')]
 
+      }))).rows) {
+        let x = result.helpers[helper.id];
+        if (x) {
+          x.newHelper = true;
+        }
+      }
+    }
     //collect ready deliveries
     for await (let d of context.for(ActiveFamilyDeliveries).iterate({ where: h => h.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery), orderBy: h => h.createDate })) {
 
@@ -257,11 +278,12 @@ export class ShipmentAssignScreenComponent implements OnInit {
       address2: h.preferredFinishAddress.value,
       location2: h.preferredFinishAddress.ok() ? h.preferredFinishAddress.location() : undefined,
       families: [],
-      problemFamilies: {}
+      problemFamilies: {},
+      relevantFamilies:[]
     };
   }
 }
-interface familyInfo {
+export interface familyInfo {
   id: string,
   name: string,
   address: string,
@@ -272,7 +294,7 @@ interface familyInfo {
   relevantHelpers: relevantHelper[];
   assignedHelper?: helperInfo;
 }
-interface helperInfo {
+export interface helperInfo {
   id: string,
   name: string,
   location1: Location,
@@ -280,23 +302,30 @@ interface helperInfo {
   location2: Location,
   address2: string,
   families: familyInfo[],
-  problemFamilies: { [id: string]: boolean }
+  problemFamilies: { [id: string]: boolean },
+  newHelper?: boolean,
+  relevantFamilies:relevantFamily[];
 
 }
-interface relevantHelper {
+export interface relevantHelper {
   helper: helperInfo;
   distance: number;
   referencePoint: string;
 }
+export interface relevantFamily {
+  family: familyInfo;
+  distance: number;
+  referencePoint: string;
+}
 
-interface deliveryInfo {
+export interface deliveryInfo {
   id: string,
   basketTypeId: string,
   basketTypeName: string,
   quantity: number
 }
 
-interface data {
+export interface data {
   helpers: { [id: string]: helperInfo },
   unAssignedFamilies: { [id: string]: familyInfo }
 }

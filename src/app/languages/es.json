@@ -121,7 +121,7 @@
   },
   "addVolunteer": {
     "google": "Agregar un voluntario / gerente",
-    "valueInCode": "הוסף מתנדב/מנהל",
+    "valueInCode": "הוסף מתנדב",
     "valueInEnglish": "Add a volunteer / manager"
   },
   "admin": {
@@ -249,6 +249,16 @@
     "valueInCode": "העבר משלוח נוכחי לארכיב?",
     "valueInEnglish": "Archive current delivery"
   },
+  "archiveCurrentEvent": {
+    "google": "¿Esta noche hay un evento para el archivo?",
+    "valueInCode": "העבר ארוע קיים לארכיב?",
+    "valueInEnglish": "Tonight there is an event for the archive?"
+  },
+  "archiveDate": {
+    "google": "Archivo: fecha de actualización",
+    "valueInCode": "ארכיב: מועד עדכון",
+    "valueInEnglish": "Archive: Date of update"
+  },
   "archiveDeliveries": {
     "google": "Archivo de entregas",
     "valueInCode": "העברה לארכיב",
@@ -278,6 +288,11 @@
     "google": "Eliminar voluntario",
     "valueInCode": "מחק מתנדב",
     "valueInEnglish": "Delete Volunteer"
+  },
+  "archiveUser": {
+    "google": "Archivo: actualizaciones de usuario",
+    "valueInCode": "ארכיב: משתמש מעדכן",
+    "valueInEnglish": "Archive: User updates"
   },
   "areYouSureYouWantToCancelAssignmentTo": {
     "google": "¿Estás seguro de que deseas cancelar la asignación a",
@@ -413,6 +428,11 @@
     "google": "Tenga en cuenta, dirección inexacta",
     "valueInCode": "שים לב, כתובת לא מדוייקת",
     "valueInEnglish": "Please note, inaccurate address"
+  },
+  "basedNoAssignmentOrder": {
+    "google": "En orden de asociación",
+    "valueInCode": "לפי סדר שיוך",
+    "valueInEnglish": "In order of association"
   },
   "basket": {
     "google": "Paquete o empaquetar",
@@ -1057,7 +1077,7 @@
   },
   "deliveryStatusDate": {
     "google": "Cuando",
-    "valueInCode": "מתי",
+    "valueInCode": "סטטוס משלוח: מועד עדכון",
     "valueInEnglish": "When"
   },
   "deliverySummary": {
@@ -1169,6 +1189,11 @@
     "google": "Haga clic en el mapa en varios puntos para resaltar el área que desea y haga doble clic para finalizar",
     "valueInCode": "אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום",
     "valueInEnglish": "Please click on the map at several points to highlight the area you want, and double-click to finish"
+  },
+  "duplicateEvents": {
+    "google": "Duplicar un evento",
+    "valueInCode": "שכפל ארוע",
+    "valueInEnglish": "Duplicate an event"
   },
   "DuplicateFamiliesComponent": {
     "google": "Posibles duplicados",
@@ -2270,6 +2295,11 @@
     "valueInCode": "מצריך טיפול",
     "valueInEnglish": "Requires Followup"
   },
+  "newVolunteer": {
+    "google": "Nuevo voluntario",
+    "valueInCode": "מתנדב חדש",
+    "valueInEnglish": "New volunteer"
+  },
   "newVolunteers": {
     "google": "Nuevos voluntarios",
     "valueInCode": "מתנדבים חדשים",
@@ -2622,7 +2652,7 @@
   },
   "prioritizeRepeatFamilies": {
     "google": "Prefiero familias pasadas",
-    "valueInCode": "עדיפות למשפחות שהמנדב היה אצלהן",
+    "valueInCode": "עדיפות למשפחות שהמתנדב היה אצלהן",
     "valueInEnglish": "Prefer past families"
   },
   "problem": {
@@ -3206,6 +3236,11 @@
     "valueInCode": "הצג את כל המשפחות",
     "valueInEnglish": "View all families"
   },
+  "showArchive": {
+    "google": "Ver archivo",
+    "valueInCode": "הצג ארכיב",
+    "valueInEnglish": "View archive"
+  },
   "showAsignDeliveryFor": {
     "google": "Mostrar entregas para",
     "valueInCode": "הצג שיוך משלוחים ל",
@@ -3786,6 +3821,11 @@
     "valueInCode": "מתנדב יכול לעדכן אזור חלוקה מועדף",
     "valueInEnglish": "A volunteer can update a preferred division area"
   },
+  "volunteerComment": {
+    "google": "Nota de voluntario",
+    "valueInCode": "הערת מתנדב",
+    "valueInEnglish": "Volunteer note"
+  },
   "volunteerFeedbackVideo": {
     "google": "Para un tutorial sobre comentarios voluntarios, haga clic aquí",
     "valueInCode": "לסרטון הדרכה על משוב המתנדבים לחץ כאן",
@@ -3835,6 +3875,11 @@
     "google": "Voluntarios",
     "valueInCode": "מתנדבים",
     "valueInEnglish": "Volunteers"
+  },
+  "volunteerStatus": {
+    "google": "Estado de voluntario",
+    "valueInCode": "מצב מתנדב",
+    "valueInEnglish": "Volunteer status"
   },
   "volunteerTexts": {
     "google": "Mensajes voluntarios",

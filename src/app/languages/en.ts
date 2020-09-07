@@ -777,4 +777,13 @@ export class en implements Language {
   isDefinedAsLeadVolunteerOf = 'Defined as the Leading Volunteer of';
   volunteerPreferences = 'Volunteer preferences';
   eventInfo = 'Event details';
+  volunteerStatus = 'Volunteer status';
+  newVolunteer = 'New volunteer';
+  showArchive = 'View archive';
+  duplicateEvents = 'Duplicate an event';
+  archiveCurrentEvent = 'Tonight there is an event for the archive?';
+  basedNoAssignmentOrder = 'In order of association';
+  volunteerComment = 'Volunteer note';
+  archiveDate = 'Archive: Date of update';
+  archiveUser = 'Archive: User updates';
 }

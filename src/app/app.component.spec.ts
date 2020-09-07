@@ -246,6 +246,7 @@ describe('AppComponent', () => {
   testPhone("7322575 – 057", [{ phone: '057-7322575', comment: '' }]);
   testPhone("050-7330590 | 050-7953019", [{ phone: '050-7330590', comment: '' }, { phone: '050-7953019', comment: '' }]);
   testPhone("0532777561 // 0532777561", [{ phone: '0532777561', comment: '' }, { phone: '0532777561', comment: '' }]);
+  testPhone("-6733059", [{ phone: '-6733059', comment: '' }]);
 
   //testPhone("0507330590 / 1", [{ phone: '0507330590', comment: '' }, { phone: '0507330591', comment: '' }]);
   //testPhone("0507330590 / 81", [{ phone: '0507330590', comment: '' }, { phone: '0507330581', comment: '' }]);

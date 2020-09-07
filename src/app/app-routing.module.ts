@@ -24,9 +24,9 @@ import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 
-import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, Roles } from './auth/roles';
+import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, Roles,SignedInAndNotOverviewGuard } from './auth/roles';
 
-import { SignedInGuard, Context } from '@remult/core';
+import {  Context, SignedInGuard } from '@remult/core';
 
 import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';
 import { PlaybackComponent } from './playback/playback.component';
@@ -46,6 +46,7 @@ import { RegisterHelperComponent } from './register-helper/register-helper.compo
 import { Sites } from './sites/sites';
 import { InRouteFollowUpComponent } from './in-route-follow-up/in-route-follow-up.component';
 import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment-assign-screen.component';
+import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/volunteer-cross-assign.component';
 
 
 
@@ -91,7 +92,8 @@ export const routes: Routes = [
   SelfPickupComponent.route,
   FamilyDeliveriesComponent.route,
   { path: 'in-route-helpers', component: InRouteFollowUpComponent, canActivate: [MltAdminGuard],data: { name: 'מתנדבים בדרך' } },
-  { path: 'cross-assign', component: ShipmentAssignScreenComponent, canActivate: [MltAdminGuard],data: { name: 'טיפול בטרם שוייכו' } },
+  { path: 'cross-assign', component: ShipmentAssignScreenComponent, canActivate: [MltAdminGuard],data: { name: 'תורמים שטרם שויכו' } },
+  { path: 'volunteer-cross-assign', component: VolunteerCrossAssignComponent, canActivate: [MltAdminGuard],data: { name: 'מתנדבים שטרם שויכו' } },
   FamiliesComponent.route,
   DeliveryFollowUpComponent.route,
   
@@ -141,7 +143,7 @@ export const routes: Routes = [
   declarations: [],
   exports: [RouterModule],
   providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard,LabGuard,distCenterOrLabGuard,MltOnlyGuard,
-    MltAdminGuard]
+    MltAdminGuard,SignedInAndNotOverviewGuard]
 
 })
 

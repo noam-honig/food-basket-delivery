@@ -129,12 +129,18 @@ class donorForm {
     }
   });
 
-  computer = new NumberColumn("מספר מחשבים ניידים");
-  laptop = new NumberColumn("מספר מחשבים נייחים");
+  computer = new NumberColumn("מספר מחשבים נייחים");
+  laptop = new NumberColumn("מספר לפטופים");
   screen = new NumberColumn("מספר מסכים");
+  donationType = new StringColumn("סוג תרומה", {
+    dataControlSettings: () => ({
+      valueList: [{ id: 'ac52f4b0-6896-4ae3-8cc0-18ed17136e38', caption: 'תרומה פרטית' },
+      { id: '0b9e0645-206a-457c-8785-97163073366d', caption: 'תרומת בית עסק' }]
+    })
+  })
 
   docref = new StringColumn();
-  columns = [this.name, this.selfDeliver, this.computer, this.laptop, this.screen, this.address, this.phone, this.email, this.docref];
+  columns = [this.name, this.selfDeliver, this.computer, this.laptop, this.screen, this.donationType, this.address, this.phone, this.email, this.docref];
 
   async doWork(context: Context) {
     let f = context.for(Families).create();
@@ -145,6 +151,7 @@ class donorForm {
     f.phone1.value = this.phone.value;
     f.email.value = this.email.value;
     f.custom1.value = this.docref.value;
+    f.familySource.value = this.donationType.value;
 
     await f.save();
     var quantity = 0;

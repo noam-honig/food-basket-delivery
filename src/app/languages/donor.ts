@@ -777,4 +777,13 @@ export class donor implements Language {
   isDefinedAsLeadVolunteerOf = 'מוגדר המתנדב מוביל של';
   volunteerPreferences = 'העדפות מתנדב';
   eventInfo = 'פרטי ארוע';
+  volunteerStatus = 'מצב מתנדב';
+  newVolunteer = 'מתנדב חדש';
+  showArchive = 'הצג ארכיב';
+  duplicateEvents = 'שכפל ארוע';
+  archiveCurrentEvent = 'הערב ארוע קיים לארכיב?';
+  basedNoAssignmentOrder = 'לפי סדר שיוך';
+  volunteerComment = 'הערת מתנדב';
+  archiveDate = 'ארכיב: מועד עדכון';
+  archiveUser = 'ארכיב: משתמש מעדכן';
 }

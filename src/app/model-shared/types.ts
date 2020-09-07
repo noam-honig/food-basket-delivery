@@ -318,6 +318,16 @@ export class SqlBuilder {
       where: query.where
     });
   }
+  columnCountWithAs(rootEntity: Entity, query: FromAndWhere, colName:string) {
+    return this.columnDbName(rootEntity, {
+      select: () => [this.build("count(*) ",colName)],
+      from: query.from,
+      innerJoin: query.innerJoin,
+      outerJoin: query.outerJoin,
+      crossJoin: query.crossJoin,
+      where: query.where
+    });
+  }
   columnInnerSelect(rootEntity: Entity, query: QueryBuilder) {
     this.addEntity(rootEntity, rootEntity.defs.dbName);
     return '(' + this.query(query) + ' limit 1)';

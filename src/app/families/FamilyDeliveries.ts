@@ -18,6 +18,7 @@ import { use } from "../translate";
 import { includePhoneInApi, getSettings } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
 import { FamilyDeliveresStatistics } from "../family-deliveries/family-deliveries-stats";
+import { connectableObservableDescriptor } from "rxjs/internal/observable/ConnectableObservable";
 
 
 @EntityClass
@@ -105,6 +106,7 @@ export class FamilyDeliveries extends IdEntity {
         familyId: () => this.family.value
     });
     courierComments = new StringColumn(getLang(this.context).commentsWritteByVolunteer);
+    courierCommentsDate = new changeDate();
     internalDeliveryComment = new StringColumn({ caption: getLang(this.context).internalDeliveryComment, includeInApi: Roles.admin });
     routeOrder = new NumberColumn({
         allowApiUpdate: Roles.distCenterAdmin
@@ -248,6 +250,8 @@ export class FamilyDeliveries extends IdEntity {
     });
 
     archive = new BoolColumn({ allowApiUpdate: [Roles.admin, Roles.lab] });
+    archiveDate = new changeDate({ includeInApi: Roles.admin, caption: getLang(this.context).archiveDate });
+    archiveUser = new HelperIdReadonly(this.context, { includeInApi: Roles.admin, caption: getLang(this.context).archiveUser });
 
     visibleToCourier = new BoolColumn({
         sqlExpression: () => {
@@ -329,12 +333,16 @@ export class FamilyDeliveries extends IdEntity {
                             }
                         }
                         );
+                    if (!this.isNew() && wasChanged(this.courierComments) && this.courierComments.value.length > 0)
+                        this.courierCommentsDate.value = new Date();
+
                     logChanged(context, this.deliverStatus, this.deliveryStatusDate, this.deliveryStatusUser, async () => {
                         if (!this._disableMessageToUsers) {
                             Families.SendMessageToBrowsers(Families.GetUpdateMessage(this, 1, await this.courier.getTheName(), this.context), this.context, this.distributionCenter.value);
                         }
                     });
                     logChanged(context, this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => { });
+                    logChanged(context, this.archive, this.archiveDate, this.archiveUser, async () => { });
                 }
                 if (context.onServer && this.isNew() && !this._disableMessageToUsers) {
                     Families.SendMessageToBrowsers(getLang(this.context).newDelivery, this.context, this.distributionCenter.value)
@@ -460,7 +468,7 @@ export class FamilyDeliveries extends IdEntity {
     }
     openWaze() {
         //window.open('https://waze.com/ul?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + 'export &navigate=yes', '_blank');
-        window.open('waze://?ll=' + toLongLat(this.getDrivingLocation()) + "&q=" + encodeURI(this.address.value) + '&navigate=yes');
+        location.href = 'waze://?ll=' + toLongLat(this.getDrivingLocation()) + "&q=" + encodeURI(this.address.value) + '&navigate=yes';
     }
     openGoogleMaps() {
         window.open('https://www.google.com/maps/search/?api=1&hl=' + getLang(this.context).languageCode + '&query=' + this.addressByGoogle.value, '_blank');
@@ -485,7 +493,7 @@ export class FamilyDeliveries extends IdEntity {
         return this.distributionCenter.checkAllowedForUser();
     }
     checkNeedsWork() {
-        if (this.courierComments.value)
+        if (this.courierComments.value && this.deliverStatus.value != DeliveryStatus.ReadyForDelivery)
             this.needsWork.value = true;
         switch (this.deliverStatus.value) {
             case DeliveryStatus.FailedBadAddress:

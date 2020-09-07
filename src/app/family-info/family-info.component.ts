@@ -25,7 +25,7 @@ import { PhoneColumn } from '../model-shared/types';
 })
 export class FamilyInfoComponent implements OnInit {
 
-  constructor(private dialog: DialogService, private context: Context, public settings: ApplicationSettings, private zone: NgZone) {
+  constructor(private dialog: DialogService,public context: Context, public settings: ApplicationSettings, private zone: NgZone) {
 
   }
   @Input() f: ActiveFamilyDeliveries;

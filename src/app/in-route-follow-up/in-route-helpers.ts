@@ -87,6 +87,7 @@ export class InRouteHelpers extends IdEntity {
     lastSignInDate = new myDateTime(this.context, 'כניסה אחרונה למערכת');
     deliveriesInProgress = new NumberColumn({ caption: getLang(this.context).delveriesInProgress, dataControlSettings: () => ({ width: '100' }) });
     maxAssignDate = new myDateTime(this.context, " שיוך אחרון");
+    lastCompletedDelivery = new myDateTime(this.context, 'תאריך איסוף מוצלח אחרון');
     completedDeliveries = new NumberColumn({ caption: "איסופים מוצלחים", dataControlSettings: () => ({ width: '100' }) });
     seenFirstAssign = new BoolColumn('ראה את השיוך הראשון');
     constructor(private context: Context) {
@@ -124,6 +125,7 @@ export class InRouteHelpers extends IdEntity {
                         sql.countDistinctInnerSelect(f.family, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress)
                             , sql.minInnerSelect(f.courierAssingTime, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.minAssignDate)
                             , sql.maxInnerSelect(f.courierAssingTime, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.maxAssignDate)
+                            , sql.maxInnerSelect(f.deliveryStatusDate, helperFamilies(() => [f.deliverStatus.isSuccess()]), this.lastCompletedDelivery)
                             , comInnerSelect(com.createDate, this.lastCommunicationDate)
                             , comInnerSelect(com.comment, this.lastComment)
                             , sql.countDistinctInnerSelect(history.family, { from: history, where: () => [sql.eq(history.courier, h.id), history.deliverStatus.isSuccess()] }, this.completedDeliveries)

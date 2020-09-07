@@ -72,6 +72,8 @@
                 <br />
                 <button mat-raised-button class="myButton badButton"
                   (click)="couldntDeliverToFamily(f)">{{settings.lang.ranIntoAProblem}}</button>
+                  <button mat-raised-button class="myButton" *ngIf="settings.isSytemForMlt()"
+              (click)="updateComment(f)">{{settings.lang.updateComment}}</button>
 
 
               </app-family-info>
@@ -210,6 +212,7 @@
       <button mat-menu-item (click)="customSms()">{{settings.lang.customSmsMessage}}</button>
     </mat-menu>
   </div>
+  
   <div class="sendSmsButtonLine no-print">
     <button mat-raised-button class="contact-helper-button no-print" *ngIf="partOfReview&&familyLists.helper"
       (click)="callHelper()">

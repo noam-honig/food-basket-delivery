@@ -777,4 +777,13 @@ export class es implements Language {
   isDefinedAsLeadVolunteerOf = 'Definido como el voluntario líder de';
   volunteerPreferences = 'Preferencias de los voluntarios';
   eventInfo = 'Detalles del evento';
+  volunteerStatus = 'Estado de voluntario';
+  newVolunteer = 'Nuevo voluntario';
+  showArchive = 'Ver archivo';
+  duplicateEvents = 'Duplicar un evento';
+  archiveCurrentEvent = '¿Esta noche hay un evento para el archivo?';
+  basedNoAssignmentOrder = 'En orden de asociación';
+  volunteerComment = 'Nota de voluntario';
+  archiveDate = 'Archivo: fecha de actualización';
+  archiveUser = 'Archivo: actualizaciones de usuario';
 }

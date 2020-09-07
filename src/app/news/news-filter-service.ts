@@ -12,7 +12,9 @@ export class NewsFilterService {
         this.currentFilter = this.filters[2];
     }
     filters: NewsFilter[] = [{
-        name: this.settings.lang.allNew
+        name: this.settings.lang.allNew,
+        where:f=>f.archive.isEqualTo(false)
+
     },
     {
         name: this.settings.lang.problemsThatRequireFollowup,
@@ -23,10 +25,10 @@ export class NewsFilterService {
         where: f => f.needsWork.isEqualTo(true)
     }, {
         name: this.settings.lang.problems,
-        where: f => f.deliverStatus.isProblem()
+        where: f => f.deliverStatus.isProblem().and(f.archive.isEqualTo(false))
     }, {
         name: this.settings.lang.commentsWrittenByVolunteers,
-        where: f => f.courierComments.isDifferentFrom('').and(f.deliverStatus.isAResultStatus())
+        where: f => f.courierComments.isDifferentFrom('').and(f.deliverStatus.isAResultStatus()).and(f.archive.isEqualTo(false))
     }];
     currentFilter: NewsFilter = this.filters[0];
     currentFamilySource: string = undefined;

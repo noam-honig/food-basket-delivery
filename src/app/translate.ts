@@ -403,7 +403,7 @@ export class Language {
   quantity = 'כמות';
   volunteer = "מתנדב";
   commentsWritteByVolunteer = 'הערות שכתב המתנדב כשמסר';
-  deliveryStatusDate = 'מתי';
+  deliveryStatusDate = 'סטטוס משלוח: מועד עדכון';
   courierAsignUser = 'מי שייכה למתנדב';
   courierAsignDate = 'מועד שיוך למתנדב';
   deliveryCreateDate = 'מועד הקצאה';
@@ -900,6 +900,15 @@ export class Language {
   isDefinedAsLeadVolunteerOf = "מוגדר המתנדב מוביל";
   volunteerPreferences="העדפות מתנדב";
   eventInfo="פרטי ארוע";
+  volunteerStatus = "מצב מתנדב";
+  newVolunteer = "מתנדב חדש";
+  showArchive = "הצג ארכיב" ;
+  duplicateEvents = "שכפל ארוע";
+  archiveCurrentEvent = "העבר ארוע קיים לארכיב?";
+  basedNoAssignmentOrder = "לפי סדר שיוך";
+  volunteerComment = "הערת מתנדב";
+  archiveDate = "ארכיב: מועד עדכון";
+  archiveUser = "ארכיב: משתמש מעדכן";
 }
 
 const defaultLang = new Language();

@@ -34,6 +34,7 @@ import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { PromiseThrottle } from '../shared/utils';
 import { moveDeliveriesHelper } from './move-deliveries-helper';
+import { UpdateArea } from '../families/familyActions';
 
 
 @Component({
@@ -569,11 +570,11 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
   updateComment(f: ActiveFamilyDeliveries) {
-    this.context.openDialog(GetVolunteerFeedback, x => x.args = {
-      family: f,
-      comment: f.courierComments.value,
-      helpText: s => s.commentForSuccessDelivery,
-      ok: async comment => {
+    this.context.openDialog(EditCommentDialogComponent, x => x.args = {
+      comment:f.courierComments.value,
+      
+      
+      save: async comment => {
         if (f.isNew())
           return;
         f.courierComments.value = comment;
@@ -581,8 +582,8 @@ export class HelperFamiliesComponent implements OnInit {
         await f.save();
         this.dialog.analytics('Update Comment');
       }
-      ,
-      cancel: () => { }
+      ,title:use.language.updateComment
+      
     });
   }
   routeStart = this.settings.address.getGeocodeInformation();
@@ -623,7 +624,7 @@ export class HelperFamiliesComponent implements OnInit {
 
 }
 
-interface DeliveryInList {
+export interface DeliveryInList {
   ids: string[],
   familyId: string,
   city: string,

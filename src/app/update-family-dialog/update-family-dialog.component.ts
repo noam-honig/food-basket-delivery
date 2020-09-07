@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, AfterViewIn
 import { MatDialogRef, MatDialogActions } from '@angular/material/dialog';
 import { Families, duplicateFamilyInfo, displayDupInfo } from '../families/families';
 
-import { Context, DialogConfig, DataControlSettings, DataAreaSettings, GridSettings, StringColumn, ServerFunction, ServerContext } from '@remult/core';
+import { Context, DialogConfig, DataControlSettings, DataAreaSettings, GridSettings, StringColumn, ServerFunction, ServerContext, DataArealColumnSetting } from '@remult/core';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyDeliveryStats } from '../family-deliveries/family-deliveries-stats';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -146,11 +146,30 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       title: 'פרטי עדכונים עבור ' + f.name.value,
       ok: () => { },
       settings: {
-        columnSettings: () => [
-          [f.createDate, f.createUser],
-          [f.lastUpdateDate, f.lastUpdateUser],
-          [f.statusDate, f.statusUser]
-        ]
+        columnSettings: () => {
+          let r:DataArealColumnSetting<any>[] =
+            [
+              f.createDate, f.createUser,
+              f.lastUpdateDate, f.lastUpdateUser,
+              f.statusDate, f.statusUser
+            ];
+            if (this.args.familyDelivery)
+            {
+              let fd = this.args.familyDelivery;
+              r.push(
+                {
+                  getValue:()=>'עדכונים למשלוח'
+                },
+                fd.deliveryStatusDate,
+                fd.deliveryStatusUser,
+                fd.courierAssingTime,
+                fd.courierAssignUser,
+                fd.createDate,
+                fd.createUser
+                )
+            }
+          return r;
+        }
       }
     });
   }
@@ -339,7 +358,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
 
     }
     if (!this.families.currentRow.isNew())
-      this.familyDeliveries =await  this.args.family.deliveriesGridSettings({
+      this.familyDeliveries = await this.args.family.deliveriesGridSettings({
         settings: this.settings,
         dialog: this.dialog
       });

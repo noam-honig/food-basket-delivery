@@ -3,7 +3,7 @@ import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
 import { Context, DataControlSettings, FilterBase, AndFilter, BusyService, packWhere, ServerFunction, unpackWhere, EntityWhere, GridButton, RowButton, GridSettings, DataControlInfo, SqlDatabase } from '@remult/core';
 
-import { FamilyDeliveresStatistics, FamilyDeliveryStats } from './family-deliveries-stats';
+import { FamilyDeliveresStatistics, FamilyDeliveryStats, groupStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
@@ -27,6 +27,7 @@ import { Helpers } from '../helpers/helpers';
 import { sortColumns } from '../shared/utils';
 import { getLang } from '../sites/sites';
 import { SqlBuilder } from '../model-shared/types';
+import { Groups } from '../manage/groups';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -139,16 +140,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     moreStats: [],
     fourthColumn: () => this.statusColumn
   };
-  groupsReady: statsOnTab = {
-    name: getLang(this.context).remainingByGroups,
-    rule: f => f.readyFilter(),
-    stats: [
-      this.stats.ready,
-      this.stats.special
-    ],
-    moreStats: [],
-    fourthColumn: () => this.groupsColumn
-  };
+
   statTabs: statsOnTab[] = [
     {
       name: getLang(this.context).deliveries,
@@ -173,7 +165,40 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     this.assignedButNotOutBaskets,
     this.selfPickupBaskets,
     this.basketsDelivered,
-    this.groupsReady,
+    {
+      name: getLang(this.context).remainingByGroups,
+      rule: f => f.readyFilter(),
+      stats: [
+        this.stats.ready,
+        this.stats.special
+      ],
+      moreStats: [],
+      fourthColumn: () => this.groupsColumn,
+      refreshStats: async x => {
+        let areas = await FamilyDeliveriesComponent.getGroups(this.dialog.distCenter.value,true);
+        this.prepComplexStats(areas.map(g => ({ name: g.name, count: g.totalReady })),
+          x,
+          (f, g) => f.groups.isContains(g).and(f.readyFilter()),
+          (f, g) => f.groups.isDifferentFrom(g).and(f.groups.isDifferentFrom('')).and(f.readyFilter()));
+      }
+    },
+    {
+      name: getLang(this.context).byGroups,
+      rule: f => undefined,
+      stats: [
+        this.stats.ready,
+        this.stats.special
+      ],
+      moreStats: [],
+      fourthColumn: () => this.groupsColumn,
+      refreshStats: async x => {
+        let areas = await FamilyDeliveriesComponent.getGroups(this.dialog.distCenter.value);
+        this.prepComplexStats(areas.map(g => ({ name: g.name, count: g.totalReady })),
+          x,
+          (f, g) => f.groups.isContains(g),
+          (f, g) => f.groups.isDifferentFrom(g).and(f.groups.isDifferentFrom('')));
+      }
+    },
     this.cityStats,
     {
       name: getLang(this.context).requireFollowUp,
@@ -244,12 +269,14 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     }];
 
   public pieChartType: string = 'pie';
-  updateChart() {
+  async updateChart() {
+    this.currentTabStats = this.statTabs[this.myTab.selectedIndex];
+    if (this.currentTabStats.refreshStats)
+      await this.currentTabStats.refreshStats(this.currentTabStats);
     this.pieChartData = [];
     this.pieChartStatObjects = [];
     this.pieChartLabels.splice(0);
     this.colors[0].backgroundColor.splice(0);
-    this.currentTabStats = this.statTabs[this.myTab.selectedIndex];
     let stats = this.currentTabStats.stats;
 
     stats.forEach(s => {
@@ -302,7 +329,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       this.basketStats.stats.splice(0);
       this.cityStats.stats.splice(0);
       this.cityStats.moreStats.splice(0);
-      this.groupsReady.stats.splice(0);
+
 
 
       this.basketStatsCalc(st.baskets, this.basketStats, b => b.unassignedDeliveries, (f, id) =>
@@ -318,10 +345,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       this.prepComplexStats(st.cities, this.cityStats,
         (f, c) => f.readyFilter().and(f.city.isEqualTo(c)),
         (f, c) => f.readyFilter().and(f.city.isDifferentFrom(c)));
-      this.prepComplexStats(st.groups.map(g => ({ name: g.name, count: g.totalReady })),
-        this.groupsReady,
-        (f, g) => f.readyFilter(undefined, g),
-        (f, g) => f.readyFilter().and(f.groups.isDifferentFrom(g)).and(f.groups.isDifferentFrom('')));
+
       this.updateChart();
     }));
   }
@@ -566,8 +590,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           deliveries.quantity,
           deliveries.createDate,
           deliveries.courier,
-          deliveries.internalDeliveryComment,
-          deliveries.messageStatus,
+//          deliveries.internalDeliveryComment,
+//          deliveries.messageStatus,
           deliveries.courierComments
         );
       } else {
@@ -662,24 +686,49 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       where: where
     };
   }
+  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  static async getGroups(distCenter: string, readyOnly = false, context?: Context) {
+    let pendingStats = [];
+    let result: groupStats[] = [];
+    await context.for(Groups).find({
+      limit: 1000,
+      orderBy: f => [{ column: f.name }]
+    }).then(groups => {
+      for (const g of groups) {
+        let x: groupStats = {
+          name: g.name.value,
+          totalReady: 0
+        };
+        result.push(x);
+        pendingStats.push(context.for(ActiveFamilyDeliveries).count(f => {
+          let r = f.groups.isContains(x.name).and(
+            f.filterDistCenterAndAllowed(distCenter));
+          if (readyOnly)
+            return r.and(f.readyFilter());
+          return r;
+        }).then(r => x.totalReady = r));
 
-  
+      }
+    });
+    await Promise.all(pendingStats);
+    return result;
+  }
   @ServerFunction({ allowed: Roles.lab })
   static async getDeliveriesByPhone(phoneNum: string, context?: Context, db?: SqlDatabase) {
     let sql1 = new SqlBuilder();
     let fd = context.for(FamilyDeliveries).create();
-    let result : string[] = [];
+    let result: string[] = [];
     let courier = await (await context.for(Helpers).findFirst(i => i.phone.isEqualTo(phoneNum)));
 
     for (const d of (await db.execute(sql1.query({
       from: fd,
       where: () => [
         (courier != undefined ? fd.courier.isEqualTo(courier.id).and(fd.active()) :
-        sql1.or(
-          fd.phone1.isEqualTo(phoneNum).and(fd.active()),
-          fd.phone2.isEqualTo(phoneNum).and(fd.active()),
-          fd.phone3.isEqualTo(phoneNum).and(fd.active()),
-          fd.phone4.isEqualTo(phoneNum).and(fd.active()))
+          sql1.or(
+            fd.phone1.isEqualTo(phoneNum).and(fd.active()),
+            fd.phone2.isEqualTo(phoneNum).and(fd.active()),
+            fd.phone3.isEqualTo(phoneNum).and(fd.active()),
+            fd.phone4.isEqualTo(phoneNum).and(fd.active()))
         )
       ],
       select: () => [
@@ -689,7 +738,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       result.push(d.id)
     }
 
-    return result;
+    return await context.for(FamilyDeliveries).toPojoArray(  await context.for(FamilyDeliveries).find({where:fd=>fd.id.isIn(result)}))
   }
 
   @ServerFunction({ allowed: Roles.distCenterAdmin })
@@ -732,7 +781,8 @@ interface statsOnTab {
   moreStats: FamilyDeliveresStatistics[],
   showTotal?: boolean,
   rule: (f: ActiveFamilyDeliveries) => FilterBase,
-  fourthColumn: () => DataControlSettings
+  fourthColumn: () => DataControlSettings,
+  refreshStats?: (stats: statsOnTab) => Promise<void>
 }
 
 export interface deliveryButtonsHelper {
@@ -757,13 +807,13 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
             for (const otherFailedDelivery of await args.context.for(ActiveFamilyDeliveries).find({
               where: fd => fd.family.isEqualTo(newDelivery.family).and(fd.deliverStatus.isProblem())
             })) {
-              await Families.addDelivery(otherFailedDelivery.family.value,{
-                basketType:otherFailedDelivery.basketType.value,
-                quantity:otherFailedDelivery.quantity.value,
-                courier:newDelivery.courier.value,
-                distCenter:newDelivery.distributionCenter.value,
-                selfPickup:false,
-                comment:otherFailedDelivery.deliveryComments.value
+              await Families.addDelivery(otherFailedDelivery.family.value, {
+                basketType: otherFailedDelivery.basketType.value,
+                quantity: otherFailedDelivery.quantity.value,
+                courier: newDelivery.courier.value,
+                distCenter: newDelivery.distributionCenter.value,
+                selfPickup: false,
+                comment: otherFailedDelivery.deliveryComments.value
               });
               otherFailedDelivery.archive.value = true;
               await otherFailedDelivery.save();
@@ -844,8 +894,8 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
     },
     {
       textInMenu: () => getLang(args.context).volunteerInfo,
-      
-      
+
+
       click: async d => {
         let h = await args.context.for(Helpers).findId(d.courier);
         h.displayEditDialog();

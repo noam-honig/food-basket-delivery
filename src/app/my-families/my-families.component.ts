@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { UserFamiliesList } from './user-families';
 import { Route } from '@angular/router';
 
-import { Context, SignedInGuard, RouteHelperService } from '@remult/core';
+import { Context,  RouteHelperService } from '@remult/core';
 
 import { Helpers, HelperUserInfo } from '../helpers/helpers';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -13,6 +13,7 @@ import { AuthService } from '../auth/auth-service';
 import { Event, eventStatus, volunteersInEvent } from '../events/events';
 import { QRCodeModule } from 'angular2-qrcode';
 import { PhoneNumberContext } from 'twilio/lib/rest/lookups/v1/phoneNumber';
+import { SignedInAndNotOverviewGuard } from '../auth/roles';
 
 
 
@@ -24,7 +25,7 @@ import { PhoneNumberContext } from 'twilio/lib/rest/lookups/v1/phoneNumber';
 export class MyFamiliesComponent implements OnInit {
 
   static route: Route = {
-    path: 'my-families', component: MyFamiliesComponent, canActivate: [SignedInGuard], data: { name: 'משפחות שלי' }
+    path: 'my-families', component: MyFamiliesComponent, canActivate: [SignedInAndNotOverviewGuard], data: { name: 'משפחות שלי' }
   };
   familyLists = new UserFamiliesList(this.context, this.settings);
   user: HelperUserInfo;

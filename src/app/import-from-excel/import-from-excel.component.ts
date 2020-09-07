@@ -16,12 +16,12 @@ import { BusyService } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { MatStepper } from '@angular/material';
 
-import { ApplicationSettings, RemovedFromListExcelImportStrategy } from '../manage/ApplicationSettings';
+import { ApplicationSettings, RemovedFromListExcelImportStrategy, getSettings } from '../manage/ApplicationSettings';
 import { use } from '../translate';
 import { getLang } from '../sites/sites';
 
 import { Groups } from '../manage/groups';
-import { DistributionCenters, DistributionCenterId, allCentersToken } from '../manage/distribution-centers';
+import { DistributionCenters, DistributionCenterId, allCentersToken, findClosestDistCenter } from '../manage/distribution-centers';
 import { jsonToXlsx } from '../shared/saveToExcel';
 import { Sites } from '../sites/sites';
 import { FamilyStatus } from '../families/FamilyStatus';
@@ -168,6 +168,9 @@ export class ImportFromExcelComponent implements OnInit {
                 if (createDelivery) {
                     fd._disableMessageToUsers = true;
                     f.updateDelivery(fd);
+                    if (getSettings(context).isSytemForMlt()){
+                        fd.distributionCenter.value = await findClosestDistCenter(f.address.location(), context);
+                    }
                     await fd.save();
                 }
             };
@@ -218,7 +221,7 @@ export class ImportFromExcelComponent implements OnInit {
     @ServerFunction({ allowed: Roles.admin })
     static async updateColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, addDelivery: boolean, compareBasketType: boolean, context?: Context) {
         for (const r of rowsToUpdate) {
-            await ImportFromExcelComponent.actualUpdateCol(r, columnMemberName, addDelivery, compareBasketType, context);
+            await ImportFromExcelComponent.actualUpdateCol(r, columnMemberName, addDelivery, compareBasketType, context, getSettings(context));
         }
         return rowsToUpdate;
     }
@@ -227,7 +230,7 @@ export class ImportFromExcelComponent implements OnInit {
         let r = await ImportFromExcelComponent.updateColsOnServer([i], keyFromColumnInCompare(col), this.addDelivery.value, this.compareBasketType.value);
         i.values = r[0].values;
     }
-    static async actualUpdateCol(i: excelRowInfo, entityAndColumnName: string, addDelivery: boolean, compareBasketType: boolean, context: Context) {
+    static async actualUpdateCol(i: excelRowInfo, entityAndColumnName: string, addDelivery: boolean, compareBasketType: boolean, context: Context, settings: ApplicationSettings) {
         let c = ImportFromExcelComponent.actualGetColInfo(i, entityAndColumnName);
         if (c.existingDisplayValue == c.newDisplayValue)
             return;
@@ -255,6 +258,9 @@ export class ImportFromExcelComponent implements OnInit {
             for (const c of fd.columns) {
                 if (c == col) {
                     fd._disableMessageToUsers = true;
+                    if (settings.isSytemForMlt()) {
+                        fd.distributionCenter.value = await findClosestDistCenter(f.address.location(), context);
+                    }
                     await fd.save();
                     break;
                 }
@@ -1470,7 +1476,7 @@ async function compareValuesWithRow(context: Context, info: excelRowInfo, withFa
     let fd = await context.for(ActiveFamilyDeliveries).lookupAsync(fd => {
         let r = fd.family.isEqualTo(ef.id).and(fd.distributionCenter.isEqualTo(info.distCenter).and(fd.deliverStatus.isNotAResultStatus()));
         if (compareBasketType)
-            return fd.basketType.isEqualTo(info.basketType);
+            return r.and(fd.basketType.isEqualTo(info.basketType));
         return r;
     });
     for (const columnMemberName of columnsInCompareMemeberName) {
@@ -1589,6 +1595,8 @@ export function processPhone(input: string): phoneResult[] {
             let prev = temp2.pop();
             if (prev) {
                 let next = temp.pop();
+                if(next===undefined)
+                    next = '';
                 let p = onlyDigits(prev);
                 let n = onlyDigits(next);
                 if (c == ' ' && prev == "-") {

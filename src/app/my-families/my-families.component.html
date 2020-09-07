@@ -1,16 +1,9 @@
-<div style="display:flex;justify-content: space-evenly;">
+<div style="display:flex;justify-content: space-between;">
     <div>
         <h3 class="no-print">{{settings.lang.hello}} {{user.name}}</h3>
         <H4 *ngIf="user.escortedHelperName">{{settings.lang.escoring}} {{user.escortedHelperName}}</H4>
     </div>
-    <button *ngIf="settings.isSytemForMlt() && !this.showQRCode" mat-raised-button (click)="this.showQRCode=true"
-        style="height: 35px;" color="primary">
-        {{settings.lang.showQRCode}}
-    </button>
-    <button *ngIf="settings.isSytemForMlt() && this.showQRCode" mat-raised-button (click)="this.showQRCode=false"
-        style="height: 35px;" color="primary">
-        {{settings.lang.removeQRCode}}
-    </button>
+  
     <button mat-mini-fab style="margin-bottom:5px" (click)="ngOnInit(); this.showQRCode=false" color="primary">
         <mat-icon>refresh</mat-icon>
     </button>
@@ -70,3 +63,11 @@
     </mat-accordion>
 
 </mat-card>
+<button *ngIf="settings.isSytemForMlt() && !this.showQRCode" mat-raised-button (click)="this.showQRCode=true"
+style="height: 35px;" color="primary">
+{{settings.lang.showQRCode}}
+</button>
+<button *ngIf="settings.isSytemForMlt() && this.showQRCode" mat-raised-button (click)="this.showQRCode=false"
+style="height: 35px;" color="primary">
+{{settings.lang.removeQRCode}}
+</button>

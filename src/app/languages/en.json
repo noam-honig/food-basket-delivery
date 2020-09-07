@@ -109,7 +109,7 @@
   },
   "addVolunteer": {
     "google": "Add a volunteer / manager",
-    "valueInCode": "הוסף מתנדב/מנהל"
+    "valueInCode": "הוסף מתנדב"
   },
   "admin": {
     "google": "System Rule Manager",
@@ -224,6 +224,14 @@
     "valueInCode": "העבר משלוח נוכחי לארכיב?",
     "custom": "Archive current delivery"
   },
+  "archiveCurrentEvent": {
+    "google": "Tonight there is an event for the archive?",
+    "valueInCode": "העבר ארוע קיים לארכיב?"
+  },
+  "archiveDate": {
+    "google": "Archive: Date of update",
+    "valueInCode": "ארכיב: מועד עדכון"
+  },
   "archiveDeliveries": {
     "google": "Archive transfer",
     "valueInCode": "העברה לארכיב",
@@ -250,6 +258,10 @@
   "archiveHelper": {
     "google": "Delete Volunteer",
     "valueInCode": "מחק מתנדב"
+  },
+  "archiveUser": {
+    "google": "Archive: User updates",
+    "valueInCode": "ארכיב: משתמש מעדכן"
   },
   "areYouSureYouWantToCancelAssignmentTo": {
     "google": "Are you sure you want to unpair",
@@ -379,6 +391,10 @@
   "badAddressTitle": {
     "google": "Please note, inaccurate address",
     "valueInCode": "שים לב, כתובת לא מדוייקת"
+  },
+  "basedNoAssignmentOrder": {
+    "google": "In order of association",
+    "valueInCode": "לפי סדר שיוך"
   },
   "basket": {
     "google": "basket",
@@ -981,7 +997,7 @@
   },
   "deliveryStatusDate": {
     "google": "When",
-    "valueInCode": "מתי"
+    "valueInCode": "סטטוס משלוח: מועד עדכון"
   },
   "deliverySummary": {
     "google": "Shipping Summary",
@@ -1073,6 +1089,10 @@
   "drawingHelpText": {
     "google": "Please click on the map at several points to highlight the area you want, and double-click to finish",
     "valueInCode": "אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום"
+  },
+  "duplicateEvents": {
+    "google": "Duplicate an event",
+    "valueInCode": "שכפל ארוע"
   },
   "DuplicateFamiliesComponent": {
     "google": "Search for duplicate families",
@@ -2009,6 +2029,10 @@
     "valueInCode": "מצריך טיפול",
     "custom": "Requires Followup"
   },
+  "newVolunteer": {
+    "google": "New volunteer",
+    "valueInCode": "מתנדב חדש"
+  },
   "newVolunteers": {
     "google": "New volunteers",
     "valueInCode": "מתנדבים חדשים"
@@ -2302,7 +2326,7 @@
   },
   "prioritizeRepeatFamilies": {
     "google": "Priority for returning families",
-    "valueInCode": "עדיפות למשפחות שהמנדב היה אצלהן",
+    "valueInCode": "עדיפות למשפחות שהמתנדב היה אצלהן",
     "custom": "Prefer past families"
   },
   "problem": {
@@ -2810,6 +2834,10 @@
     "google": "View all families",
     "valueInCode": "הצג את כל המשפחות"
   },
+  "showArchive": {
+    "google": "View archive",
+    "valueInCode": "הצג ארכיב"
+  },
   "showAsignDeliveryFor": {
     "google": "Show shipping association to",
     "valueInCode": "הצג שיוך משלוחים ל",
@@ -3311,6 +3339,10 @@
     "google": "A volunteer can update a preferred division area",
     "valueInCode": "מתנדב יכול לעדכן אזור חלוקה מועדף"
   },
+  "volunteerComment": {
+    "google": "Volunteer note",
+    "valueInCode": "הערת מתנדב"
+  },
   "volunteerFeedbackVideo": {
     "google": "For a tutorial on volunteer feedback click here",
     "valueInCode": "לסרטון הדרכה על משוב המתנדבים לחץ כאן"
@@ -3350,6 +3382,10 @@
   "volunteers": {
     "google": "Volunteers",
     "valueInCode": "מתנדבים"
+  },
+  "volunteerStatus": {
+    "google": "Volunteer status",
+    "valueInCode": "מצב מתנדב"
   },
   "volunteerTexts": {
     "google": "Volunteer messages",

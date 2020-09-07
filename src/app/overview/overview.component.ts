@@ -187,7 +187,7 @@ export class OverviewComponent implements OnInit {
           if (await this.dialog.YesNoPromise('המזהה כלל תוים לא חוקיים שהוסרו, האם להמשיך עם המזהה "' + x + '"')) {
             id.value = x;
           } else
-            return;
+            throw "שם לא חוקי";
         }
         id.value = validSchemaName(id.value);
         let r = await OverviewComponent.validateNewSchema(id.value);
