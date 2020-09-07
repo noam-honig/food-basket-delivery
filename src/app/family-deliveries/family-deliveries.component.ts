@@ -700,7 +700,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           totalReady: 0
         };
         result.push(x);
-        pendingStats.push(context.for(FamilyDeliveries).count(f => {
+        pendingStats.push(context.for(ActiveFamilyDeliveries).count(f => {
           let r = f.groups.isContains(x.name).and(
             f.filterDistCenterAndAllowed(distCenter));
           if (readyOnly)
