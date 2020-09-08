@@ -343,7 +343,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.destroyHelper.destroy();
     }
-    constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public settings: ApplicationSettings) {
+    constructor(public dialog: DialogService, private context: Context, public busy: BusyService, public settings: ApplicationSettings) {
         this.dialog.onDistCenterChange(() => this.refreshBaskets(), this.destroyHelper);
 
     }

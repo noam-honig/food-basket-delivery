@@ -8,7 +8,7 @@
 
           <mat-menu #appMenu77>
             <button mat-menu-item *ngIf="familyLists.helper"
-              (click)="familyLists.helper.displayEditDialog()"><mat-icon>edit</mat-icon> {{settings.lang.volunteerInfo}}</button>
+              (click)="familyLists.helper.displayEditDialog(dialog,busy)"><mat-icon>edit</mat-icon> {{settings.lang.volunteerInfo}}</button>
             <button mat-menu-item (click)="findHelper()"><mat-icon>person_search</mat-icon> {{settings.lang.findHelperByName}}</button>
             <button mat-menu-item (click)="clearHelperInfo()"><mat-icon>clear</mat-icon>{{settings.lang.clearHelperInfo}}</button>
             <button mat-menu-item (click)="saveHelper()"
