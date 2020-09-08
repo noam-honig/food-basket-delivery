@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, AfterViewIn
 import { MatDialogRef, MatDialogActions } from '@angular/material/dialog';
 import { Families, duplicateFamilyInfo, displayDupInfo } from '../families/families';
 
-import { Context, DialogConfig, DataControlSettings, DataAreaSettings, GridSettings, StringColumn, ServerFunction, ServerContext, DataArealColumnSetting } from '@remult/core';
+import { Context, DialogConfig, DataControlSettings, DataAreaSettings, GridSettings, StringColumn, ServerFunction, ServerContext, DataArealColumnSetting, BusyService } from '@remult/core';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyDeliveryStats } from '../family-deliveries/family-deliveries-stats';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -54,7 +54,8 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     public settings: ApplicationSettings,
     public dialog: DialogService,
     private cd: ChangeDetectorRef,
-    private zone: NgZone
+    private zone: NgZone,
+    private busy:BusyService
 
   ) {
     dialogRef.afterClosed().toPromise().then(() => {
@@ -199,7 +200,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   async newDelivery() {
     if (this.delivery && this.delivery.wasChanged())
       this.delivery.save();
-    await this.args.family.showNewDeliveryDialog(this.dialog, this.settings, {
+    await this.args.family.showNewDeliveryDialog(this.dialog, this.settings,this.busy, {
       copyFrom: this.delivery,
       aDeliveryWasAdded: async (id) => {
         if (this.delivery)
@@ -360,7 +361,8 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     if (!this.families.currentRow.isNew())
       this.familyDeliveries = await this.args.family.deliveriesGridSettings({
         settings: this.settings,
-        dialog: this.dialog
+        dialog: this.dialog,
+        busy:this.busy
       });
 
   }

@@ -63,7 +63,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     f.name.value = this.searchString;
     f.showFamilyDialog({
       onSave: async () => {
-        await f.showNewDeliveryDialog(this.dialog, this.settings);
+        await f.showNewDeliveryDialog(this.dialog, this.settings,this.busy);
         this.refresh();
       }
     });
@@ -654,7 +654,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries: () => this.deliveries,
         dialog: this.dialog,
         refresh: () => this.refresh(),
-        settings: this.settings
+        settings: this.settings,
+        busy:this.busy
       }),
       {
         name: getLang(this.context).archiveDelivery,
@@ -788,6 +789,7 @@ interface statsOnTab {
 export interface deliveryButtonsHelper {
   context: Context,
   dialog: DialogService,
+  busy:BusyService,
   settings: ApplicationSettings,
   refresh: () => void,
   deliveries: () => GridSettings<FamilyDeliveries>
@@ -799,7 +801,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
 
 
 
-    await f.showNewDeliveryDialog(args.dialog, args.settings, {
+    await f.showNewDeliveryDialog(args.dialog, args.settings, args.busy,{
       copyFrom: d, aDeliveryWasAdded: async (newDeliveryId) => {
         if (args.settings.isSytemForMlt()) {
           if (d.deliverStatus.value.isProblem) {
@@ -898,7 +900,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
 
       click: async d => {
         let h = await args.context.for(Helpers).findId(d.courier);
-        h.displayEditDialog(this.dialog,this.busy);
+        h.displayEditDialog(args.dialog,args.busy);
 
 
 
@@ -925,7 +927,8 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
         let f = await args.context.for(Families).findId(fd.family);
         f.showDeliveryHistoryDialog({
           settings: args.settings,
-          dialog: args.dialog
+          dialog: args.dialog,
+          busy:args.busy
         });
       }
       , visible: f => !f.isNew()

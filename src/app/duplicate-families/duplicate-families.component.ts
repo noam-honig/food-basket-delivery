@@ -112,7 +112,7 @@ export class DuplicateFamiliesComponent implements OnInit {
           },
           {
             name: this.settings.lang.deliveries,
-            click: f => f.showDeliveryHistoryDialog({ settings: this.settings, dialog: this.dialog })
+            click: f => f.showDeliveryHistoryDialog({ settings: this.settings, dialog: this.dialog ,busy:this.busy})
           }
         ],
         get: {

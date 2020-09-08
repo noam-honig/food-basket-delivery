@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Families } from '../families/families';
-import { Context, Column, GridSettings, ServerFunction } from '@remult/core';
+import { Context, Column, GridSettings, ServerFunction, BusyService } from '@remult/core';
 import { MatDialogRef } from '@angular/material';
 import { Roles } from '../auth/roles';
 import { DialogService, extractError } from '../select-popup/dialog';
@@ -16,7 +16,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 })
 export class MergeFamiliesComponent implements OnInit {
 
-  constructor(public context: Context, private dialogRef: MatDialogRef<any>, public dialog: DialogService, public settings: ApplicationSettings) { }
+  constructor(public context: Context, private dialogRef: MatDialogRef<any>, public dialog: DialogService, public settings: ApplicationSettings,private busy:BusyService) { }
   families: Families[] = [];
   family: Families;
   async ngOnInit() {
@@ -147,7 +147,8 @@ export class MergeFamiliesComponent implements OnInit {
         if (await this.dialog.YesNoPromise("יש " + deliveries + " משלוחים פעילים למשפחה - להציג אותם?"))
           await this.family.showDeliveryHistoryDialog({
             settings: this.settings,
-            dialog: this.dialog
+            dialog: this.dialog,
+            busy:this.busy
           });
       }
     }

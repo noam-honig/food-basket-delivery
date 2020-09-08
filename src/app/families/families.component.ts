@@ -109,7 +109,7 @@ export class FamiliesComponent implements OnInit {
         this.families.currentRow.name.value = this.searchString;
         this.families.currentRow.showFamilyDialog({
             onSave: async () => {
-                await this.families.currentRow.showNewDeliveryDialog(this.dialog, this.settings);
+                await this.families.currentRow.showNewDeliveryDialog(this.dialog, this.settings,this.busy);
                 this.refreshStats();
             }
         });
@@ -413,7 +413,7 @@ export class FamiliesComponent implements OnInit {
                 name: this.settings.lang.newDelivery,
                 icon: 'add_shopping_cart',
                 click: async f => {
-                    await f.showNewDeliveryDialog(this.dialog, this.settings);
+                    await f.showNewDeliveryDialog(this.dialog, this.settings,this.busy);
                 }
                 , visible: f => !f.isNew()
 
@@ -422,7 +422,7 @@ export class FamiliesComponent implements OnInit {
             {
                 name: this.settings.lang.familyDeliveries,
                 click: async f => {
-                    f.showDeliveryHistoryDialog({ settings: this.settings, dialog: this.dialog });
+                    f.showDeliveryHistoryDialog({ settings: this.settings, dialog: this.dialog,busy:this.busy });
                 }
                 , visible: f => !f.isNew()
             }

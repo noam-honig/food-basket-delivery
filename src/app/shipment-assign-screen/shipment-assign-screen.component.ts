@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Roles } from '../auth/roles';
-import { ServerFunction, Context, SqlDatabase, BusyService, StringColumn } from '@remult/core';
+import { ServerFunction, Context, SqlDatabase, BusyService, StringColumn, Column } from '@remult/core';
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -222,49 +222,71 @@ export class ShipmentAssignScreenComponent implements OnInit {
         }
       }
     }
-    //collect ready deliveries
-    for await (let d of context.for(ActiveFamilyDeliveries).iterate({ where: h => h.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery), orderBy: h => h.createDate })) {
+    {
+      let sql = new SqlBuilder();
+      let fd = context.for(ActiveFamilyDeliveries).create();
 
-      let f: familyInfo = {
-        id: d.family.value,
-        name: d.name.value,
-        address: d.address.value,
-        createDateString: d.createDate.relativeDateName(context),
-        location: d.getDrivingLocation(),
-        deliveries: [{
-          basketTypeId: d.basketType.value,
-          quantity: d.quantity.value,
-          basketTypeName: await d.basketType.getTheValue(),
-          id: d.id.value
+      let sqlResult = await db.execute(
+        sql.query({
+          select: () => [
+            fd.family,
+            fd.name,
+            fd.address,
+            fd.createDate,
+            fd.addressLatitude,
+            fd.addressLongitude,
+            fd.basketType,
+            fd.quantity,
+            fd.id,
+            fd.courier
+          ],
+          from: fd,
+          where: () => [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]
+        }));
+        
+      //collect ready deliveries
+      for await (let d of context.for(ActiveFamilyDeliveries).iterate({ where: h => h.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery), orderBy: h => h.createDate })) {
 
-        }],
-        totalItems: d.quantity.value,
-        relevantHelpers: []
-      }
+        let f: familyInfo = {
+          id: d.family.value,
+          name: d.name.value,
+          address: d.address.value,
+          createDateString: d.createDate.relativeDateName(context),
+          location: d.getDrivingLocation(),
+          deliveries: [{
+            basketTypeId: d.basketType.value,
+            quantity: d.quantity.value,
+            basketTypeName: await d.basketType.getTheValue(),
+            id: d.id.value
 
-      if (d.courier.value) {
-        let h = result.helpers[d.courier.value];
-        if (h) {
-          let fh = h.families.find(x => x.id == f.id);
-          if (fh) {
-            fh.deliveries.push(...f.deliveries);
-            fh.totalItems += f.totalItems;
+          }],
+          totalItems: d.quantity.value,
+          relevantHelpers: []
+        }
+
+        if (d.courier.value) {
+          let h = result.helpers[d.courier.value];
+          if (h) {
+            let fh = h.families.find(x => x.id == f.id);
+            if (fh) {
+              fh.deliveries.push(...f.deliveries);
+              fh.totalItems += f.totalItems;
+            }
+            else
+              h.families.push(f);
+          }
+        }
+        else {
+          let ef = result.unAssignedFamilies[f.id];
+          if (ef) {
+            ef.deliveries.push(...f.deliveries);
+            ef.totalItems += f.totalItems;
           }
           else
-            h.families.push(f);
+            result.unAssignedFamilies[f.id] = f;
         }
-      }
-      else {
-        let ef = result.unAssignedFamilies[f.id];
-        if (ef) {
-          ef.deliveries.push(...f.deliveries);
-          ef.totalItems += f.totalItems;
-        }
-        else
-          result.unAssignedFamilies[f.id] = f;
       }
     }
-
     return result;
   }
 
@@ -328,4 +350,9 @@ export interface deliveryInfo {
 export interface data {
   helpers: { [id: string]: helperInfo },
   unAssignedFamilies: { [id: string]: familyInfo }
+}
+function getValueFromResult(r:any,col:Column){
+  let result = r[col.defs.dbName.toLowerCase()];
+  if (result===undefined)
+    console.error("couldn't find")
 }

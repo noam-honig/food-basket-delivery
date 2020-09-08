@@ -4,7 +4,7 @@ import { YesNoColumn } from "./YesNo";
 import { FamilySourceId } from "./FamilySources";
 import { BasketId, QuantityColumn } from "./BasketType";
 import { SqlBuilder, PhoneColumn, EmailColumn, delayWhileTyping, wasChanged, changeDate } from "../model-shared/types";
-import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, FilterBase, ColumnOptions, SpecificEntityHelper, Entity, DataArealColumnSetting, InMemoryDataProvider, ServerContext, SelectValueDialogComponent } from '@remult/core';
+import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, FilterBase, ColumnOptions, SpecificEntityHelper, Entity, DataArealColumnSetting, InMemoryDataProvider, ServerContext, SelectValueDialogComponent, BusyService } from '@remult/core';
 import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress, AddressColumn } from "../shared/googleApiHelpers";
@@ -78,7 +78,7 @@ export class Families extends IdEntity {
       }
     });
   }
-  async showDeliveryHistoryDialog(args: { dialog: DialogService, settings: ApplicationSettings }) {
+  async showDeliveryHistoryDialog(args: { dialog: DialogService, settings: ApplicationSettings,busy:BusyService }) {
     let gridDialogSettings = await this.deliveriesGridSettings(args);
     this.context.openDialog(GridDialogComponent, x => x.args = {
       title: getLang(this.context).deliveriesFor + ' ' + this.name.value,
@@ -86,11 +86,11 @@ export class Families extends IdEntity {
       buttons: [{
         text: use.language.newDelivery,
 
-        click: () => this.showNewDeliveryDialog(args.dialog, args.settings, { doNotCheckIfHasExistingDeliveries: true })
+        click: () => this.showNewDeliveryDialog(args.dialog, args.settings,args.busy, { doNotCheckIfHasExistingDeliveries: true })
       }]
     });
   }
-  public async deliveriesGridSettings(args: { dialog: DialogService, settings: ApplicationSettings }) {
+  public async deliveriesGridSettings(args: { dialog: DialogService, settings: ApplicationSettings ,busy:BusyService}) {
     let result = this.context.for(FamilyDeliveries).gridSettings({
       numOfColumnsInGrid: 7,
 
@@ -98,7 +98,7 @@ export class Families extends IdEntity {
       gridButtons: [{
         name: use.language.newDelivery,
         icon: 'add_shopping_cart',
-        click: () => this.showNewDeliveryDialog(args.dialog, args.settings, { doNotCheckIfHasExistingDeliveries: true })
+        click: () => this.showNewDeliveryDialog(args.dialog, args.settings,args.busy, { doNotCheckIfHasExistingDeliveries: true })
       }],
       rowButtons: [
         {
@@ -113,7 +113,8 @@ export class Families extends IdEntity {
           refresh: () => result.getRecords(),
           deliveries: () => result,
           dialog: args.dialog,
-          settings: args.settings
+          settings: args.settings,
+          busy:args.busy
 
         })
       ],
@@ -141,7 +142,7 @@ export class Families extends IdEntity {
     return result;
   }
 
-  async showNewDeliveryDialog(dialog: DialogService, settings: ApplicationSettings, args?: {
+  async showNewDeliveryDialog(dialog: DialogService, settings: ApplicationSettings,busy:BusyService, args?: {
     copyFrom?: import("./FamilyDeliveries").FamilyDeliveries,
     aDeliveryWasAdded?: (newDeliveryId: string) => Promise<void>,
     doNotCheckIfHasExistingDeliveries?: boolean
@@ -152,7 +153,7 @@ export class Families extends IdEntity {
       let hasExisting = await this.context.for(ActiveFamilyDeliveries).count(d => d.family.isEqualTo(this.id).and(d.deliverStatus.isNotAResultStatus()));
       if (hasExisting > 0) {
         if (await dialog.YesNoPromise(settings.lang.familyHasExistingDeliveriesDoYouWantToViewThem)) {
-          this.showDeliveryHistoryDialog({ dialog, settings });
+          this.showDeliveryHistoryDialog({ dialog, settings ,busy});
           return;
         }
       }
