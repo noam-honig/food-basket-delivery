@@ -35,6 +35,7 @@ import { HelperAssignmentComponent } from '../helper-assignment/helper-assignmen
 import { PromiseThrottle } from '../shared/utils';
 import { moveDeliveriesHelper } from './move-deliveries-helper';
 import { UpdateArea } from '../families/familyActions';
+import { calcAffectiveDistance } from '../volunteer-cross-assign/volunteer-cross-assign.component';
 
 
 @Component({
@@ -134,6 +135,7 @@ export class HelperFamiliesComponent implements OnInit {
       let existing = r.find(x => x.item.familyId == d.family.value);
       if (existing) {
         existing.name += ", " + d.quantity.value + " X " + await (d.basketType.getTheValue());
+        existing.item.totalItems+=d.quantity.value;
         existing.item.ids.push(d.id.value);
 
       }
@@ -148,7 +150,8 @@ export class HelperFamiliesComponent implements OnInit {
           ids: [d.id.value],
           familyId: d.family.value,
           location: loc,
-          distance: dist
+          distance: dist,
+          totalItems:d.quantity.value
         };
         let itemString: string =
           myItem.distance.toFixed(1) + use.language.km +
@@ -165,16 +168,7 @@ export class HelperFamiliesComponent implements OnInit {
       }
     }
     r.sort((a, b) => {
-      if (a.item.familyId == b.item.familyId)
-        return 0;
-
-      if (a.item.distance == b.item.distance)
-        if (a.item.familyId <= b.item.familyId)
-          return (-1)
-        else
-          return 1;
-
-      return (a.item.distance - b.item.distance);
+     return calcAffectiveDistance(a.item.distance,a.item.totalItems) - calcAffectiveDistance( b.item.distance,b.item.totalItems);
     });
     r.splice(15);
     return r;
@@ -630,7 +624,8 @@ export interface DeliveryInList {
   city: string,
   floor: string,
   location: Location,
-  distance: number
+  distance: number,
+  totalItems:number
 }
 
 class limitList {

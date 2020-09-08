@@ -898,7 +898,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
 
       click: async d => {
         let h = await args.context.for(Helpers).findId(d.courier);
-        h.displayEditDialog();
+        h.displayEditDialog(this.dialog,this.busy);
 
 
 

@@ -11,6 +11,8 @@ import { SelectHelperComponent } from '../select-helper/select-helper.component'
 import { BasketType } from '../families/BasketType';
 import { getSettings, ApplicationSettings } from '../manage/ApplicationSettings';
 import { relevantHelper, helperInfo, familyInfo, ShipmentAssignScreenComponent, data } from '../shipment-assign-screen/shipment-assign-screen.component';
+import { DialogService } from '../select-popup/dialog';
+import { DeliveryFollowUpComponent } from '../delivery-follow-up/delivery-follow-up.component';
 
 @Component({
   selector: 'app-volunteer-cross-assign',
@@ -42,6 +44,12 @@ export class VolunteerCrossAssignComponent implements OnInit {
     let h = await this.context.for(Helpers).findId(rh.id);
     this.context.openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
   }
+  async helperDetails(rh: helperInfo) {
+    let h = await this.context.for(Helpers).findId(rh.id);
+    h.displayEditDialog(this.dialog, this.busy);
+
+  }
+
   async assignHelper(h: helperInfo, f: familyInfo) {
     await this.busy.doWhileShowingBusy(async () => {
       for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
@@ -54,7 +62,7 @@ export class VolunteerCrossAssignComponent implements OnInit {
     f.assignedHelper = h;
     h.families.push(f);
 
-    
+
 
   }
   async cancelAssignHelper(f: familyInfo) {
@@ -80,7 +88,13 @@ export class VolunteerCrossAssignComponent implements OnInit {
   togglerShowHelper(forHelper: helperInfo) {
     this.openHelpers.set(forHelper, !this.openHelpers.get(forHelper));
   }
-  constructor(private context: Context, private busy: BusyService, private settings: ApplicationSettings) { }
+  async sendSmsToAll() {
+    var x = new DeliveryFollowUpComponent(this.busy, this.context, this.dialog, this.settings);
+    await x.refreshStats();
+    x.sendSmsToAll();
+
+  }
+  constructor(private context: Context, private busy: BusyService, private settings: ApplicationSettings, private dialog: DialogService) { }
   data: data;
   helpers: helperInfo[] = [];
   async ngOnInit() {
@@ -102,7 +116,7 @@ export class VolunteerCrossAssignComponent implements OnInit {
           if (Object.prototype.hasOwnProperty.call(this.data.unAssignedFamilies, famKey)) {
             const family = this.data.unAssignedFamilies[famKey];
 
-            if ( !helper.problemFamilies[family.id]) {
+            if (!helper.problemFamilies[family.id]) {
               let d = 99999999;
               let referencePoint = '';
               let checkDistance = (loc: Location, refPoint: string) => {
@@ -128,7 +142,7 @@ export class VolunteerCrossAssignComponent implements OnInit {
                 });
                 helper.relevantFamilies.sort((a, b) => {
 
-                  return a.distance - b.distance
+                  return calcAffectiveDistance(a.distance, a.family.totalItems) - calcAffectiveDistance(b.distance, b.family.totalItems)
 
                 });
               }
@@ -139,5 +153,14 @@ export class VolunteerCrossAssignComponent implements OnInit {
     }
     this.sortList();
   }
+
+}
+export function calcAffectiveDistance(distance: number, items: number) {
+
+  if (items > 3)
+    items = 3;
+  if (items < 1)
+    items = 1;
+  return distance / items;
 
 }

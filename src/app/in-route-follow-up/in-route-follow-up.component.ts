@@ -11,6 +11,7 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { saveToExcel } from '../shared/saveToExcel';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { DialogService } from '../select-popup/dialog';
 
 @Component({
   selector: 'app-in-route-follow-up',
@@ -19,7 +20,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 })
 export class InRouteFollowUpComponent implements OnInit {
 
-  constructor(private context: Context, private settings: ApplicationSettings, private busy: BusyService) { }
+  constructor(private context: Context, private settings: ApplicationSettings, private busy: BusyService,private dialog:DialogService) { }
   helpers = this.context.for(InRouteHelpers).gridSettings({
     get: {
       limit: 25,
@@ -110,7 +111,7 @@ export class InRouteFollowUpComponent implements OnInit {
       name: use.language.volunteerInfo,
       click: async s => {
         let h = await this.context.for(Helpers).findId(s.id);
-        h.displayEditDialog();
+        h.displayEditDialog(this.dialog,this.busy);
       }
     }]
   });

@@ -209,11 +209,11 @@ export class ShipmentAssignScreenComponent implements OnInit {
       for (let helper of (await db.execute(sql.query({
         select: () => [h.id],
         from: h,
-        where: () => [sql.build( h.id, ' not in (', sql.query({
+        where: () => [sql.build(h.id, ' not in (', sql.query({
           select: () => [fd.courier],
           from: fd,
           where: () => [fd.deliverStatus.isSuccess()]
-        }),')')]
+        }), ')')]
 
       }))).rows) {
         let x = result.helpers[helper.id];
@@ -279,7 +279,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
       location2: h.preferredFinishAddress.ok() ? h.preferredFinishAddress.location() : undefined,
       families: [],
       problemFamilies: {},
-      relevantFamilies:[]
+      relevantFamilies: []
     };
   }
 }
@@ -304,7 +304,7 @@ export interface helperInfo {
   families: familyInfo[],
   problemFamilies: { [id: string]: boolean },
   newHelper?: boolean,
-  relevantFamilies:relevantFamily[];
+  relevantFamilies: relevantFamily[];
 
 }
 export interface relevantHelper {

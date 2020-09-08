@@ -1,7 +1,10 @@
-<button mat-mini-fab style="margin-bottom:5px" (click)="ngOnInit()" color="primary">
-    <mat-icon>refresh</mat-icon>
+<div style="display:flex;justify-content: space-between; flex-direction: row;">
+    <button mat-mini-fab style="margin-bottom:5px" (click)="ngOnInit()" color="primary">
+        <mat-icon>refresh</mat-icon>
 
-</button>
+    </button>
+    <button mat-raised-button color="accent" (click)="sendSmsToAll()">שלח SMS למי שטרם קיבל</button>
+</div>
 
 <table>
     <thead>
@@ -9,7 +12,7 @@
             <th>מתנדב</th>
             <th> אפשרים</th>
             <th>משוייכים</th>
-
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -27,9 +30,12 @@
                     <!-- <td>{{h.distance.toFixed(1)}} ק"מ מ{{h.referencePoint}}</td> -->
                     <!-- <td><a (click)="showAssignment(h)" matTooltip="הצג שייוכים למתנדב">
                     {{h.helper.families.length}} </a></td> -->
+                    <button mat-icon-button matTooltip="פרטי מתנדב" (click)="helperDetails(h)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
                 </tr>
                 <tr *ngIf="shouldShowHelper(h)">
-                    <td colspan="3">
+                    <td colspan="4">
                         <table>
                             <thead>
                                 <tr>

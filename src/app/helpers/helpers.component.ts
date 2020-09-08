@@ -42,7 +42,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   quickAdd() {
     this.helpers.addNewRow();
 
-    this.helpers.currentRow.displayEditDialog();
+    this.helpers.currentRow.displayEditDialog(this.dialog,this.busy);
 
   }
   destroyHelper = new DestroyHelper();
@@ -120,7 +120,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
         showInLine: true,
         textInMenu: () => use.language.volunteerInfo,
         click: async f => {
-          f.displayEditDialog();
+          f.displayEditDialog(this.dialog,this.busy);
         }
       },
       {

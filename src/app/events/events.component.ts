@@ -8,6 +8,7 @@ import { Helpers } from '../helpers/helpers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { visitAll } from '@angular/compiler';
 import { Events } from 'pg';
+import { DialogService } from '../select-popup/dialog';
 
 @Component({
   selector: 'app-events',
@@ -16,7 +17,7 @@ import { Events } from 'pg';
 })
 export class EventsComponent implements OnInit {
   showArchive = false;
-  constructor(private context: Context, private settings: ApplicationSettings, private busy: BusyService) { }
+  constructor(private context: Context, private settings: ApplicationSettings, private busy: BusyService,private dialog:DialogService) { }
   events = this.context.for(Event).gridSettings({
     allowUpdate: true,
     allowInsert: true,
@@ -89,7 +90,7 @@ export class EventsComponent implements OnInit {
             buttons: [
               {
                 text: this.settings.lang.volunteers,
-                click: () => e.showVolunteers()
+                click: () => e.showVolunteers(this.dialog,this.busy)
               }
             ]
           });
@@ -98,7 +99,7 @@ export class EventsComponent implements OnInit {
       {
         name: this.settings.lang.volunteers,
         click: async e => {
-          e.showVolunteers()
+          e.showVolunteers(this.dialog,this.busy)
         }
       }
     ]

@@ -122,7 +122,7 @@ export abstract class HelpersBase extends IdEntity {
 
 @EntityClass
 export class Helpers extends HelpersBase {
-    async displayEditDialog() {
+    async displayEditDialog(dialog: DialogService, busy: BusyService) {
         let settings = getSettings(this.context);
         this.context.openDialog(InputAreaComponent, x => x.args = {
             title: this.isNew() ? settings.lang.newVolunteers : this.name.value,
@@ -134,7 +134,12 @@ export class Helpers extends HelpersBase {
             },
             settings: {
                 columnSettings: () => this.selectColumns()
-            }
+            },
+            buttons: [{
+                text: settings.lang.deliveries,
+                click: () => this.showDeliveryHistory(dialog, busy)
+            }]
+
         });
     }
     selectColumns() {

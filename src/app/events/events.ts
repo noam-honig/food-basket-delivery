@@ -1,4 +1,4 @@
-import { IdEntity, StringColumn, Context, DateColumn, NumberColumn, IdColumn, ValueListColumn, EntityClass } from "@remult/core";
+import { IdEntity, StringColumn, Context, DateColumn, NumberColumn, IdColumn, ValueListColumn, EntityClass, BusyService } from "@remult/core";
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
 import { Roles } from "../auth/roles";
@@ -9,10 +9,11 @@ import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { HelperAssignmentComponent } from "../helper-assignment/helper-assignment.component";
 import { settings } from "cluster";
 import { SelectHelperComponent } from "../select-helper/select-helper.component";
+import { DialogService } from "../select-popup/dialog";
 
 @EntityClass
 export class Event extends IdEntity {
-    showVolunteers(): void {
+    showVolunteers(dialog: DialogService, busy: BusyService): void {
         this.context.openDialog(GridDialogComponent, x => x.args = {
             title: this.name.value,
 
@@ -73,7 +74,7 @@ export class Event extends IdEntity {
                         icon: 'edit',
                         click: async (ev) => {
                             let h = await this.context.for(Helpers).findId(ev.helper);
-                            await h.displayEditDialog()
+                            await h.displayEditDialog(dialog, busy)
                         }
                     },
                     {
