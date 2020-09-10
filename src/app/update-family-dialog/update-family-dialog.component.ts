@@ -55,7 +55,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     public dialog: DialogService,
     private cd: ChangeDetectorRef,
     private zone: NgZone,
-    private busy:BusyService
+    public busy:BusyService
 
   ) {
     dialogRef.afterClosed().toPromise().then(() => {
