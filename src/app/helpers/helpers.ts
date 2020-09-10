@@ -242,7 +242,7 @@ export class Helpers extends HelpersBase {
         this.context.openDialog(GridDialogComponent, x => x.args = {
             title: getLang(this.context).deliveriesFor + ' ' + this.name.value,
             settings: ctx.gridSettings({
-                numOfColumnsInGrid: 6,
+                numOfColumnsInGrid: 7,
                 knowTotalRows: true,
                 allowSelection: true,
                 rowButtons: [{
@@ -278,8 +278,8 @@ export class Helpers extends HelpersBase {
                         fd.quantity,
                         fd.name,
                         fd.address,
-                        fd.distributionCenter,
-                        fd.courierComments
+                        fd.courierComments,
+                        fd.distributionCenter
                     ]
                     r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
                     return r;
