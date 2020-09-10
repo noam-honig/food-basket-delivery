@@ -109,7 +109,7 @@ export class UserFamiliesList {
     highlightNewFamilies = false;
     lastHelperId = undefined;
     async reload() {
-        if (this.helper.id) {
+        if (!this.helper.isNew()) {
             this.allFamilies = await this.context.for(ActiveFamilyDeliveries).find({
                 where: f => {
                     let r = f.courier.isEqualTo(this.helper.id).and(f.deliverStatus.isActiveDelivery());

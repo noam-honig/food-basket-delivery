@@ -252,7 +252,7 @@ export class FamiliesComponent implements OnInit {
 
 
         columnSettings: families => {
-            let r = [
+            let r:DataControlInfo<Families>[] = [
 
                 {
                     column: families.name,
@@ -298,7 +298,7 @@ export class FamiliesComponent implements OnInit {
                 families.addressByGoogle,
                 {
                     caption: this.settings.lang.googleApiProblem,
-                    getValue: f => f.getGeocodeInformation().whyProblem()
+                    getValue: f => f.address.getGeocodeInformation().whyProblem()
                 },
                 families.phone1Description,
                 families.phone2,

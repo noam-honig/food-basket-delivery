@@ -63,7 +63,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     f.name.value = this.searchString;
     f.showFamilyDialog({
       onSave: async () => {
-        await f.showNewDeliveryDialog(this.dialog, this.settings,this.busy);
+        await f.showNewDeliveryDialog(this.dialog, this.settings, this.busy);
         this.refresh();
       }
     });
@@ -175,7 +175,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       moreStats: [],
       fourthColumn: () => this.groupsColumn,
       refreshStats: async x => {
-        let areas = await FamilyDeliveriesComponent.getGroups(this.dialog.distCenter.value,true);
+        let areas = await FamilyDeliveriesComponent.getGroups(this.dialog.distCenter.value, true);
         this.prepComplexStats(areas.map(g => ({ name: g.name, count: g.totalReady })),
           x,
           (f, g) => f.groups.isContains(g).and(f.readyFilter()),
@@ -316,6 +316,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     this.suspend = true;
   }
   refresh() {
+    if (this.suspend)
+      return;
     this.refreshFamilyGrid();
     this.refreshStats();
   }
@@ -590,8 +592,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           deliveries.quantity,
           deliveries.createDate,
           deliveries.courier,
-//          deliveries.internalDeliveryComment,
-//          deliveries.messageStatus,
+          //          deliveries.internalDeliveryComment,
+          //          deliveries.messageStatus,
           deliveries.courierComments
         );
       } else {
@@ -655,7 +657,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         dialog: this.dialog,
         refresh: () => this.refresh(),
         settings: this.settings,
-        busy:this.busy
+        busy: this.busy
       }),
       {
         name: getLang(this.context).archiveDelivery,
@@ -739,7 +741,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       result.push(d.id)
     }
 
-    return await context.for(FamilyDeliveries).toPojoArray(  await context.for(FamilyDeliveries).find({where:fd=>fd.id.isIn(result)}))
+    return await context.for(FamilyDeliveries).toPojoArray(await context.for(FamilyDeliveries).find({ where: fd => fd.id.isIn(result) }))
   }
 
   @ServerFunction({ allowed: Roles.distCenterAdmin })
@@ -789,7 +791,7 @@ interface statsOnTab {
 export interface deliveryButtonsHelper {
   context: Context,
   dialog: DialogService,
-  busy:BusyService,
+  busy: BusyService,
   settings: ApplicationSettings,
   refresh: () => void,
   deliveries: () => GridSettings<FamilyDeliveries>
@@ -801,7 +803,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
 
 
 
-    await f.showNewDeliveryDialog(args.dialog, args.settings, args.busy,{
+    await f.showNewDeliveryDialog(args.dialog, args.settings, args.busy, {
       copyFrom: d, aDeliveryWasAdded: async (newDeliveryId) => {
         if (args.settings.isSytemForMlt()) {
           if (d.deliverStatus.value.isProblem) {
@@ -900,7 +902,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
 
       click: async d => {
         let h = await args.context.for(Helpers).findId(d.courier);
-        h.displayEditDialog(args.dialog,args.busy);
+        h.displayEditDialog(args.dialog, args.busy);
 
 
 
@@ -928,7 +930,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
         f.showDeliveryHistoryDialog({
           settings: args.settings,
           dialog: args.dialog,
-          busy:args.busy
+          busy: args.busy
         });
       }
       , visible: f => !f.isNew()
