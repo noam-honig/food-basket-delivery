@@ -690,3 +690,9 @@ export function required(col: StringColumn, message?: string) {
     col.validationError = message;
   }
 }
+export function getValueFromResult(r: any, col: Column) {
+  let result = r[col.defs.dbName.toLowerCase()];
+  if (result === undefined)
+    console.error("couldn't find "+col.defs.key,r);
+  return result;
+}

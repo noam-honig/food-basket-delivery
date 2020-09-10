@@ -5,7 +5,7 @@ import { Helpers, HelpersBase } from '../helpers/helpers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Location, GetDistanceBetween } from '../shared/googleApiHelpers';
-import { SqlBuilder } from '../model-shared/types';
+import { SqlBuilder, relativeDateName, getValueFromResult } from '../model-shared/types';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { BasketType } from '../families/BasketType';
@@ -172,10 +172,14 @@ export class ShipmentAssignScreenComponent implements OnInit {
       helpers: {},
       unAssignedFamilies: {}
     };
+    
+    let i=0;
     //collect helpers
-    for await (let h of context.for(Helpers).iterate({ where: h => h.active() })) {
+    for  (let h of await context.for(Helpers).find({ where: h => h.active().and(h.preferredDistributionAreaAddress.isDifferentFrom('')),limit:1000 })) {
       result.helpers[h.id.value] = ShipmentAssignScreenComponent.helperInfoFromHelper(h);
+      i++;
     }
+    
     //remove busy helpers
     {
       let fd = context.for(FamilyDeliveries).create();
@@ -194,13 +198,24 @@ export class ShipmentAssignScreenComponent implements OnInit {
         result.helpers[busy.courier] = undefined;
       }
     }
-    //highlight problem helpers
-    for await (let p of context.for(FamilyDeliveries).iterate({ where: p => p.deliverStatus.isProblem().and(p.courier.isDifferentFrom('')) })) {
-      let h = result.helpers[p.courier.value];
-      if (h) {
-        h.problemFamilies[p.family.value] = true;
+    
+    {
+      let sql = new SqlBuilder();
+      let fd = context.for(FamilyDeliveries).create();
+      for (let r of (await db.execute(sql.query({
+        select: () => [sql.build("distinct " , fd.courier), fd.family],
+        from: fd,
+        where: () => [fd.deliverStatus.isProblem().and(fd.courier.isDifferentFrom(''))]
+
+      }))).rows) {
+        let x = result.helpers[getValueFromResult(r, fd.courier)];
+        if (x) {
+          x.problemFamilies[getValueFromResult(r,fd.family)] = true;
+        }
       }
     }
+   
+    
     //highlight new Helpers
     {
       let sql = new SqlBuilder();
@@ -225,7 +240,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
     {
       let sql = new SqlBuilder();
       let fd = context.for(ActiveFamilyDeliveries).create();
-
+      
       let sqlResult = await db.execute(
         sql.query({
           select: () => [
@@ -243,29 +258,33 @@ export class ShipmentAssignScreenComponent implements OnInit {
           from: fd,
           where: () => [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]
         }));
-        
+
       //collect ready deliveries
-      for await (let d of context.for(ActiveFamilyDeliveries).iterate({ where: h => h.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery), orderBy: h => h.createDate })) {
+      for (let r of sqlResult.rows) {
+
 
         let f: familyInfo = {
-          id: d.family.value,
-          name: d.name.value,
-          address: d.address.value,
-          createDateString: d.createDate.relativeDateName(context),
-          location: d.getDrivingLocation(),
+          id: getValueFromResult(r, fd.family),
+          name: getValueFromResult(r, fd.name),
+          address: getValueFromResult(r, fd.address),
+          createDateString: relativeDateName(context, { d: getValueFromResult(r, fd.createDate) }),
+          location: {
+            lat: +getValueFromResult(r, fd.addressLatitude),
+            lng: +getValueFromResult(r, fd.addressLongitude)
+          },
           deliveries: [{
-            basketTypeId: d.basketType.value,
-            quantity: d.quantity.value,
-            basketTypeName: await d.basketType.getTheValue(),
-            id: d.id.value
+            basketTypeId: getValueFromResult(r, fd.basketType),
+            quantity: getValueFromResult(r, fd.quantity),
+            basketTypeName: (await context.for(BasketType).lookupAsync(x=>x.id.isEqualTo( getValueFromResult(r, fd.basketType)))).name.value,
+            id: getValueFromResult(r, fd.id)
 
           }],
-          totalItems: d.quantity.value,
+          totalItems: getValueFromResult(r, fd.quantity),
           relevantHelpers: []
         }
 
-        if (d.courier.value) {
-          let h = result.helpers[d.courier.value];
+        if (getValueFromResult(r, fd.courier)) {
+          let h = result.helpers[getValueFromResult(r, fd.courier)];
           if (h) {
             let fh = h.families.find(x => x.id == f.id);
             if (fh) {
@@ -287,6 +306,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
         }
       }
     }
+    
     return result;
   }
 
@@ -345,14 +365,10 @@ export interface deliveryInfo {
   basketTypeId: string,
   basketTypeName: string,
   quantity: number
+
 }
 
 export interface data {
   helpers: { [id: string]: helperInfo },
   unAssignedFamilies: { [id: string]: familyInfo }
-}
-function getValueFromResult(r:any,col:Column){
-  let result = r[col.defs.dbName.toLowerCase()];
-  if (result===undefined)
-    console.error("couldn't find")
 }

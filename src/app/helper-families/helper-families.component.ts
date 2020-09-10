@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
-import { BusyService, ServerFunction, StringColumn, GridButton, BoolColumn, ServerContext } from '@remult/core';
+import { BusyService, ServerFunction, StringColumn, GridButton, BoolColumn, ServerContext, SqlDatabase } from '@remult/core';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';
@@ -24,7 +24,7 @@ import { Families } from '../families/families';
 import { MatTabGroup } from '@angular/material';
 import { routeStrategyColumn } from '../asign-family/route-strategy';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import { PhoneColumn } from '../model-shared/types';
+import { PhoneColumn, SqlBuilder, getValueFromResult } from '../model-shared/types';
 import { Sites, getLang } from '../sites/sites';
 import { SelectListComponent, selectListItem } from '../select-list/select-list.component';
 import { lang } from 'moment';
@@ -36,6 +36,7 @@ import { PromiseThrottle } from '../shared/utils';
 import { moveDeliveriesHelper } from './move-deliveries-helper';
 import { UpdateArea } from '../families/familyActions';
 import { calcAffectiveDistance } from '../volunteer-cross-assign/volunteer-cross-assign.component';
+import { BasketType } from '../families/BasketType';
 
 
 @Component({
@@ -126,52 +127,71 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
   @ServerFunction({ allowed: Roles.indie })
-  static async getDeliveriesByLocation(pivotLocation: Location, context?: Context) {
+  static async getDeliveriesByLocation(pivotLocation: Location, context?: Context, db?: SqlDatabase) {
     if (!getSettings(context).isSytemForMlt())
       throw "not allowed";
-    let r: selectListItem<DeliveryInList>[] = [];
+    let result: selectListItem<DeliveryInList>[] = [];
+    let fd = context.for(ActiveFamilyDeliveries).create();
+    let sql = new SqlBuilder();
 
-    for await (const d of context.for(ActiveFamilyDeliveries).iterate({ where: f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(f.courier.isEqualTo('')) })) {
-      let existing = r.find(x => x.item.familyId == d.family.value);
+
+    for (const r of (await db.execute(sql.query({
+      select: () => [
+        fd.addressLatitude,
+        fd.addressLongitude,
+        fd.quantity,
+        fd.basketType,
+        fd.id,
+        fd.family,
+        fd.floor,
+        fd.city],
+      from: fd,
+      where: () => [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo(''))]
+    }))).rows) {
+      let existing = result.find(x => x.item.familyId == getValueFromResult(r, fd.family));
+      let basketName = (await context.for(BasketType).lookupAsync(x => x.id.isEqualTo(getValueFromResult(r, fd.basketType)))).name.value;
       if (existing) {
-        existing.name += ", " + d.quantity.value + " X " + await (d.basketType.getTheValue());
-        existing.item.totalItems+=d.quantity.value;
-        existing.item.ids.push(d.id.value);
+        existing.name += ", " + getValueFromResult(r, fd.quantity) + " X " + basketName;
+        existing.item.totalItems += getValueFromResult(r, fd.quantity);
+        existing.item.ids.push(getValueFromResult(r, fd.id));
 
       }
       else {
-        let loc = d.getDrivingLocation();
+        let loc: Location = {
+          lat: +getValueFromResult(r, fd.addressLatitude),
+          lng: +getValueFromResult(r, fd.addressLongitude)
+        };
         let dist = GetDistanceBetween(pivotLocation, loc);
         let myItem: DeliveryInList = {
 
-          city: d.city.value,
-          floor: d.floor.value,
+          city: getValueFromResult(r, fd.city),
+          floor: getValueFromResult(r, fd.floor),
 
-          ids: [d.id.value],
-          familyId: d.family.value,
+          ids: [getValueFromResult(r, fd.id)],
+          familyId: getValueFromResult(r, fd.family),
           location: loc,
           distance: dist,
-          totalItems:d.quantity.value
+          totalItems: getValueFromResult(r, fd.quantity)
         };
         let itemString: string =
           myItem.distance.toFixed(1) + use.language.km +
           (myItem.city ? ' (' + myItem.city + ')' : '') +
           (myItem.floor ? ' [' + use.language.floor + ' ' + myItem.floor + ']' : '') +
           ' : ' +
-          d.quantity.value + ' x ' + await (d.basketType.getTheValue());
+          getValueFromResult(r, fd.quantity) + ' x ' + basketName;
 
-        r.push({
+        result.push({
           selected: false,
           item: myItem,
           name: itemString
         });
       }
     }
-    r.sort((a, b) => {
-     return calcAffectiveDistance(a.item.distance,a.item.totalItems) - calcAffectiveDistance( b.item.distance,b.item.totalItems);
+    result.sort((a, b) => {
+      return calcAffectiveDistance(a.item.distance, a.item.totalItems) - calcAffectiveDistance(b.item.distance, b.item.totalItems);
     });
-    r.splice(15);
-    return r;
+    result.splice(15);
+    return result;
   };
 
 
@@ -565,9 +585,9 @@ export class HelperFamiliesComponent implements OnInit {
 
   updateComment(f: ActiveFamilyDeliveries) {
     this.context.openDialog(EditCommentDialogComponent, x => x.args = {
-      comment:f.courierComments.value,
-      
-      
+      comment: f.courierComments.value,
+
+
       save: async comment => {
         if (f.isNew())
           return;
@@ -576,8 +596,8 @@ export class HelperFamiliesComponent implements OnInit {
         await f.save();
         this.dialog.analytics('Update Comment');
       }
-      ,title:use.language.updateComment
-      
+      , title: use.language.updateComment
+
     });
   }
   routeStart = this.settings.address.getGeocodeInformation();
@@ -625,7 +645,7 @@ export interface DeliveryInList {
   floor: string,
   location: Location,
   distance: number,
-  totalItems:number
+  totalItems: number
 }
 
 class limitList {
