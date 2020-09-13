@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   });
 
   nameArea = new DataAreaSettings({
-    columnSettings: () => [this.name, this.preferredDistributionArea]
+    columnSettings: () => [this.name]
   });
   setPasswordArea = new DataAreaSettings({
     columnSettings: () => [
