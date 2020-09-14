@@ -1,12 +1,12 @@
 <div class="full-page">
   <div>
-    <a [style.visibility]="selectedStatus?'visible':'hidden'"
-      (click)="selectedStatus = undefined;refreshDeliveries()">{{settings.lang.showAll}}</a>
-    <div style="display: block;width:350px;">
+   
+    <div style="display: block;width:350px;" *ngIf="showChart">
       <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType" [options]="options"
         [colors]="colors" (chartClick)="chartClicked($event)"></canvas>
     </div>
-    <h4>{{selectedStatus? selectedStatus.name:settings.lang.deliveries}} </h4>
+    <h4 style="display:inline">{{selectedStatus? selectedStatus.name:settings.lang.deliveries}} </h4> <a [style.visibility]="selectedStatus?'visible':'hidden'"
+    (click)="selectedStatus = undefined;refreshDeliveries()" style="display:inline">{{settings.lang.showAll}}</a>
     <div style="display:flex;justify-content: space-between;margin-bottom: 5px;height:37px;width:100%;">
       <div>
         <button mat-raised-button (click)="selectDeliveries()" *ngIf="!drawing">{{settings.lang.selectDeliveriesOnMap}}
@@ -43,14 +43,18 @@
 
   <div #gmap class="grow-item"></div>
   <div>
-    <button mat-mini-fab style="margin-bottom:5px" (click)="refreshDeliveries()">
+    <button mat-mini-fab style="margin-bottom:5px" (click)="refreshDeliveries()" color="primary">
       <mat-icon>refresh</mat-icon>
+    </button>
+    <button mat-mini-fab style="margin-bottom:5px" (click)="showChart = !showChart" color="primary">
+      <mat-icon *ngIf="showChart">unfold_less</mat-icon>
+      <mat-icon *ngIf="!showChart">unfold_more</mat-icon>
     </button>
     <mat-checkbox (change)="refreshDeliveries()" [(ngModel)]="showHelper" style="margin-right: 10px;"
       *ngIf="!overviewMap">
       {{settings.lang.showVolunteers}}</mat-checkbox>
     <data-control [column]="filterCourier" style="display: inline-block;
-width: 200px;
+width: 100px;
 margin-right: 10px;"></data-control>
   </div>
 </div>

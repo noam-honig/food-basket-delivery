@@ -7,6 +7,8 @@ EmailSvc.sendMail = async (subject: string, message: string, email: string, cont
     let settings = await ApplicationSettings.getAsync(context);
     if (!settings.isSytemForMlt())
         return;
+    if (!email || !email.includes('@'))
+        return;
     var nodemailer = await import('nodemailer');
     var transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -25,7 +27,7 @@ EmailSvc.sendMail = async (subject: string, message: string, email: string, cont
         subject: subject,
         html: message
     };
-    return await new Promise((res, rej) => {
+    new Promise((res, rej) => {
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
                 rej(error);
@@ -35,5 +37,6 @@ EmailSvc.sendMail = async (subject: string, message: string, email: string, cont
             }
         });
     });
+    return true;
 
 }

@@ -41,6 +41,7 @@ import { FamilyDeliveriesComponent } from '../family-deliveries/family-deliverie
   styleUrls: ['./distribution-map.component.scss']
 })
 export class DistributionMap implements OnInit, OnDestroy {
+  showChart=true;
   constructor(private context: Context, private dialog: DialogService, busy: BusyService, public settings: ApplicationSettings) {
 
     dialog.onStatusChange(() => {
