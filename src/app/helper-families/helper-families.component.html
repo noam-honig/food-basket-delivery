@@ -28,7 +28,8 @@
 
 
 
-      <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="familyLists.toDeliver.length>0"  (click)="refreshDependentVolunteers()">
+      <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="familyLists.toDeliver.length>0"
+        (click)="refreshDependentVolunteers()">
         <mat-icon>more_vert</mat-icon>
       </button>
 
@@ -72,8 +73,8 @@
                 <br />
                 <button mat-raised-button class="myButton badButton"
                   (click)="couldntDeliverToFamily(f)">{{settings.lang.ranIntoAProblem}}</button>
-                  <button mat-raised-button class="myButton" *ngIf="settings.isSytemForMlt()"
-              (click)="updateComment(f)">{{settings.lang.updateComment}}</button>
+                <button mat-raised-button class="myButton" *ngIf="settings.isSytemForMlt()"
+                  (click)="updateComment(f)">{{settings.lang.updateComment}}</button>
 
 
               </app-family-info>
@@ -212,7 +213,7 @@
       <button mat-menu-item (click)="customSms()">{{settings.lang.customSmsMessage}}</button>
     </mat-menu>
   </div>
-  
+
   <div class="sendSmsButtonLine no-print">
     <button mat-raised-button class="contact-helper-button no-print" *ngIf="partOfReview&&familyLists.helper"
       (click)="callHelper()">
@@ -234,11 +235,13 @@
   </div>
 
   <div class="print-only">
-    <h4 *ngIf="familyLists.helper">{{settings.lang.hello}}
-      {{familyLists.helper.name.value +(familyLists.helper.eventComment.value?' ('+familyLists.helper.eventComment.value+')':'')}},
-      {{settings.lang.phone}} {{familyLists.getHelperPhone() }}, {{settings.lang.thereAre}}
-      {{familyLists.getLeftFamiliesDescription()}} </h4>
-    {{getHelpText()}}
+    <div *ngIf="familyLists.helper&&!familyLists.helper.isNew()">
+      <h4>{{settings.lang.hello}}
+        {{familyLists.helper.name.value +(familyLists.helper.eventComment.value?' ('+familyLists.helper.eventComment.value+')':'')}},
+        {{settings.lang.phone}} {{familyLists.getHelperPhone() }}, {{settings.lang.thereAre}}
+        {{familyLists.getLeftFamiliesDescription()}} </h4>
+      {{getHelpText()}}
+    </div>
     <table class="printTable">
       <tr>
         <th>{{settings.lang.family}}</th>
