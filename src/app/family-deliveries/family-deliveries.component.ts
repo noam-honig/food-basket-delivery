@@ -21,7 +21,7 @@ import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, pag
 
 import { saveToExcel } from '../shared/saveToExcel';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { TranslationOptions } from '../translate'
+import { TranslationOptions, use } from '../translate'
 import { Helpers } from '../helpers/helpers';
 
 import { sortColumns } from '../shared/utils';
@@ -629,8 +629,56 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         name: getLang(this.context).exportToExcel,
         click: async () => {
           await saveToExcel(this.settings, this.context.for(ActiveFamilyDeliveries), this.deliveries, getLang(this.context).deliveries, this.busy, (d: ActiveFamilyDeliveries, c) => c == d.id || c == d.family, undefined,
-            async (f, addColumn) => {
-              await f.basketType.addBasketTypes(f.quantity, addColumn);
+            async (fd, addColumn) => {
+              await fd.basketType.addBasketTypes(fd.quantity, addColumn);
+              var f = await this.context.for(Families).findId(fd.family);
+              if (f) {
+                let x = f.address.getGeocodeInformation();
+                let street = f.address.value;
+                let house = '';
+                let lastName = '';
+                let firstName = '';
+                if (f.name.value != undefined)
+                  lastName = f.name.value.trim();
+                let i = lastName.lastIndexOf(' ');
+                if (i >= 0) {
+                  firstName = lastName.substring(i, lastName.length).trim();
+                  lastName = lastName.substring(0, i).trim();
+                }
+                {
+                  try {
+                    for (const addressComponent of x.info.results[0].address_components) {
+                      switch (addressComponent.types[0]) {
+                        case "route":
+                          street = addressComponent.short_name;
+                          break;
+                        case "street_number":
+                          house = addressComponent.short_name;
+                          break;
+                      }
+                    }
+                  }
+                  catch { }
+                }
+                addColumn(use.language.email, f.email.value, 's');
+                for (const x of [[this.settings.familyCustom1Caption, f.custom1]
+                  , [this.settings.familyCustom2Caption, f.custom2]
+                  , [this.settings.familyCustom3Caption, f.custom3]
+                  , [this.settings.familyCustom4Caption, f.custom4]
+                ]
+                ) {
+                  if (x[0].value) {
+                    addColumn(x[0].value, x[1].value, 's');
+                  }
+                }
+                
+                addColumn("X" + use.language.lastName, lastName, 's');
+                addColumn("X" + use.language.firstName, firstName, 's');
+                addColumn("X" + use.language.streetName, street, 's');
+                addColumn("X" + use.language.houseNumber, house, 's');
+
+              }
+
             });
         }
         , visible: () => this.context.isAllowed(Roles.admin)
