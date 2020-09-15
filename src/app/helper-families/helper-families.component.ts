@@ -53,16 +53,6 @@ import { trigger, transition, style, animate } from '@angular/animations';
       transition("* => void",[
         animate('500ms ease-out',style({transform:'translateX(300%) scale(0) rotate(360deg)'}))
       ])
-    ]),
-    trigger("noam", [
-      // transition("void => *", [
-      //   style({ transform: 'scale(0)', height: '0' }),
-      //   animate('500ms ease-in')
-      // ]),
-      transition("* => void", [
-
-        animate('500ms ease-in', style({ transform: 'scale(0)', height: '0' }))
-      ])
     ])
   ]
 })
