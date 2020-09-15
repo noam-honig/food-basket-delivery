@@ -37,16 +37,50 @@ import { moveDeliveriesHelper } from './move-deliveries-helper';
 import { UpdateArea } from '../families/familyActions';
 import { calcAffectiveDistance } from '../volunteer-cross-assign/volunteer-cross-assign.component';
 import { BasketType } from '../families/BasketType';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 
 @Component({
   selector: 'app-helper-families',
   templateUrl: './helper-families.component.html',
-  styleUrls: ['./helper-families.component.scss']
+  styleUrls: ['./helper-families.component.scss'],
+  animations: [
+    trigger("message", [
+      transition("void => *", [
+        style({ transform: 'scale(0)', height: '0' }),
+        animate('400ms ease-in')
+      ]),
+      transition("* => void",[
+        animate('500ms ease-out',style({transform:'translateX(300%) scale(0) rotate(360deg)'}))
+      ])
+    ]),
+    trigger("noam", [
+      // transition("void => *", [
+      //   style({ transform: 'scale(0)', height: '0' }),
+      //   animate('500ms ease-in')
+      // ]),
+      transition("* => void", [
+
+        animate('500ms ease-in', style({ transform: 'scale(0)', height: '0' }))
+      ])
+    ])
+  ]
 })
 export class HelperFamiliesComponent implements OnInit {
   switchToMap() {
     this.tab.selectedIndex = 1;
+  }
+  trackBy(i: number, f: ActiveFamilyDeliveries) {
+    return f.id.value;
+  }
+  signs = ["🙂","👌","😉","😍","🤩","💖","👍"];
+  visibleSigns: string[] = [];
+  cool() {
+    let x = Math.trunc( Math.random() * this.signs.length);
+    this.visibleSigns.push(this.signs[x]);
+    setTimeout(() => {
+      this.visibleSigns.pop();
+    }, 1000);
   }
 
   constructor(public auth: AuthService, private dialog: DialogService, public context: Context, private busy: BusyService, public settings: ApplicationSettings) { }
@@ -418,6 +452,7 @@ export class HelperFamiliesComponent implements OnInit {
           f.checkNeedsWork();
           try {
             await f.save();
+            this.cool();
             this.dialog.analytics('delivered');
             this.initFamilies();
             if (this.familyLists.toDeliver.length == 0) {
