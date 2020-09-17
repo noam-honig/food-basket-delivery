@@ -38,6 +38,7 @@ import { UpdateArea } from '../families/familyActions';
 import { calcAffectiveDistance } from '../volunteer-cross-assign/volunteer-cross-assign.component';
 import { BasketType } from '../families/BasketType';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { DistributionCenters } from '../manage/distribution-centers';
 
 
 @Component({
@@ -50,8 +51,8 @@ import { trigger, transition, style, animate } from '@angular/animations';
         style({ transform: 'scale(0)', height: '0' }),
         animate('400ms ease-in')
       ]),
-      transition("* => void",[
-        animate('500ms ease-out',style({transform:'translateX(300%) scale(0) rotate(360deg)'}))
+      transition("* => void", [
+        animate('500ms ease-out', style({ transform: 'translateX(300%) scale(0) rotate(360deg)' }))
       ])
     ])
   ]
@@ -63,10 +64,10 @@ export class HelperFamiliesComponent implements OnInit {
   trackBy(i: number, f: ActiveFamilyDeliveries) {
     return f.id.value;
   }
-  signs = ["🙂","👌","😉","😍","🤩","💖","👍","🙏"];
+  signs = ["🙂", "👌", "😉", "😍", "🤩", "💖", "👍", "🙏"];
   visibleSigns: string[] = [];
   cool() {
-    let x = Math.trunc( Math.random() * this.signs.length);
+    let x = Math.trunc(Math.random() * this.signs.length);
     this.visibleSigns.push(this.signs[x]);
     setTimeout(() => {
       this.visibleSigns.pop();
@@ -221,6 +222,48 @@ export class HelperFamiliesComponent implements OnInit {
 
   showCloseDeliveries() {
     return (this.context.user.roles.includes(Roles.indie) && this.settings.isSytemForMlt());
+  }
+  async selectDistCenter() {
+    let distCenters = await this.context.for(DistributionCenters).find({ where: x => x.isFrozen.isEqualTo(false) });
+    distCenters = distCenters.filter(x => x.address.ok());
+    try {
+      await this.updateCurrentLocation(true);
+    }
+    catch{
+      if (this.familyLists.allFamilies.length > 0)
+        this.volunteerLocation = this.familyLists.allFamilies[0].getDrivingLocation();
+    }
+    if (this.volunteerLocation) {
+      distCenters.sort((a, b) => GetDistanceBetween(a.address.location(), this.volunteerLocation) - GetDistanceBetween(b.address.location(), this.volunteerLocation));
+
+
+      await this.context.openDialog(SelectListComponent, x => x.args = {
+        title: 'בחרו יעד למסירת הציוד',
+        options: distCenters.map(y => ({
+          name: GetDistanceBetween(y.address.location(), this.volunteerLocation).toFixed(1) + " ק\"מ" + ", " + y.name.value + " " + y.address.value,
+          item: y
+        })),
+        onSelect: async (x) => {
+          try {
+            await HelperFamiliesComponent.changeDestination(x[0].item.id.value);
+            this.familyLists.reload();
+          }
+          catch (err) {
+            this.dialog.exception("החלפת יעד", err);
+          }
+        }
+      });
+    }
+  }
+  @ServerFunction({ allowed: c => c.isSignedIn() })
+  static async changeDestination(newDestinationId: string, context?: Context) {
+    let s = getSettings(context);
+    if (!s.isSytemForMlt())
+      throw "not allowed";
+    for (const fd of await context.for(ActiveFamilyDeliveries).find({ where: fd => fd.courier.isEqualTo(context.user.id) })) {
+      fd.distributionCenter.value = newDestinationId;
+      await fd.save();
+    }
   }
 
 

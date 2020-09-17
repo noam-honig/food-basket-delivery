@@ -153,7 +153,8 @@
       </div>
     </mat-expansion-panel>
   </mat-accordion>
-  <a href="https://www.mitchashvim.org.il/labs">ניתן להביא את התרומה לנקודת מסירת ציוד אחרת - לחץ כאן לרשימת הנקודות</a>
+  <button mat-raised-button color="primary" (click)="selectDistCenter()" *ngIf="!partOfAssign&&settings.isSytemForMlt()">
+    החלף יעד למסירת הציוד</button>
 </div>
 
 <div style="display:flex;flex-direction: column;">
