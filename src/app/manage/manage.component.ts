@@ -76,7 +76,7 @@ export class ManageComponent implements OnInit {
   constructor(private dialog: DialogService, private context: Context, private sanitization: DomSanitizer, public settings: ApplicationSettings, private busy: BusyService) { }
 
   basketType = this.context.for(BasketType).gridSettings({
-
+    showFilter:true,
     columnSettings: x => [
       x.name,
       {
@@ -175,7 +175,7 @@ export class ManageComponent implements OnInit {
     }, 1000);
   }
   sources = this.context.for(FamilySources).gridSettings({
-
+    showFilter:true,
     columnSettings: s => [
       s.name,
       s.phone,
@@ -190,6 +190,7 @@ export class ManageComponent implements OnInit {
     confirmDelete: (h) => this.dialog.confirmDelete(h.name.value)
   });
   groups = this.context.for(Groups).gridSettings({
+    showFilter:true,
     saving: () => this.refreshEnvironmentAfterSave(),
 
     columnSettings: s => [
@@ -333,6 +334,7 @@ export class ManageComponent implements OnInit {
     return SendSmsAction.getSuccessMessage(this.settings.successMessageText.value, this.settings.organisationName.value, 'ישראל ישראלי');
   }
   images = this.context.for(ApplicationImages).gridSettings({
+    showFilter:true,
     numOfColumnsInGrid: 0,
     allowUpdate: true,
     columnSettings: i => [
