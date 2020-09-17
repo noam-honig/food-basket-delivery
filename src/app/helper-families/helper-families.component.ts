@@ -63,7 +63,7 @@ export class HelperFamiliesComponent implements OnInit {
   trackBy(i: number, f: ActiveFamilyDeliveries) {
     return f.id.value;
   }
-  signs = ["🙂","👌","😉","😍","🤩","💖","👍"];
+  signs = ["🙂","👌","😉","😍","🤩","💖","👍","🙏"];
   visibleSigns: string[] = [];
   cool() {
     let x = Math.trunc( Math.random() * this.signs.length);

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Column, Entity, ServerFunction, IdColumn } from '@remult/core';
 import { Context } from '@remult/core';
 
-import { HasAsyncGetTheValue } from '../model-shared/types';
+import { HasAsyncGetTheValue, PhoneColumn } from '../model-shared/types';
 
 
 
@@ -64,32 +64,37 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     this.dialog.YesNoQuestion("האם להוסיף " + count + " מתנדבים?", () => {
       this.busy.doWhileShowingBusy(async () => {
         let rowsToInsert: excelRowInfo[] = [];
+        try {
+          let lastDate = new Date().valueOf();
+          for (const i of this.newRows) {
 
-        let lastDate = new Date().valueOf();
-        for (const i of this.newRows) {
-
-          rowsToInsert.push(i);
+            rowsToInsert.push(i);
 
 
-          if (rowsToInsert.length == 35) {
-            await ImportHelpersFromExcelComponent.insertHelperRows(rowsToInsert);
-            if (new Date().valueOf() - lastDate > 1000) {
-              this.dialog.Info(i.rowInExcel + ' ' + (i.name));
+            if (rowsToInsert.length == 35) {
+              await ImportHelpersFromExcelComponent.insertHelperRows(rowsToInsert);
+              if (new Date().valueOf() - lastDate > 1000) {
+                this.dialog.Info(i.rowInExcel + ' ' + (i.name));
+              }
+              this.identicalRows.push(...rowsToInsert);
+              rowsToInsert = [];
             }
-            this.identicalRows.push(...rowsToInsert);
-            rowsToInsert = [];
+
+
+
           }
-
-
-
+          if (rowsToInsert.length > 0) {
+            await ImportHelpersFromExcelComponent.insertHelperRows(rowsToInsert);
+            this.identicalRows.push(...rowsToInsert);
+          }
+          this.newRows = [];
+          this.identicalRows.sort((a, b) => a.rowInExcel - b.rowInExcel);
         }
-        if (rowsToInsert.length > 0) {
-          await ImportHelpersFromExcelComponent.insertHelperRows(rowsToInsert);
-          this.identicalRows.push(...rowsToInsert);
+        catch (err) {
+          this.dialog.exception("קליטת מתנדבים", err);
         }
-        this.newRows = [];
-        this.identicalRows.sort((a, b) => a.rowInExcel - b.rowInExcel);
       });
+
     });
   }
   @ServerFunction({ allowed: Roles.admin })
@@ -284,7 +289,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
       s.what();
     }
 
-
+    f.phone.value = PhoneColumn.fixPhoneInput(this.phone.value);
 
 
     let info: excelRowInfo = {
@@ -325,9 +330,9 @@ export class ImportHelpersFromExcelComponent implements OnInit {
   errorRowsPage: number;
   helper: Helpers;
   @ViewChild("stepper", { static: true }) stepper: MatStepper;
-  
+
   async ngOnInit() {
-    
+
 
 
 
