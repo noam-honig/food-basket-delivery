@@ -1,6 +1,6 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import { PhoneColumn, required, isPhoneValidForIsrael } from '../model-shared/types';
-import { StringColumn, NumberColumn, BoolColumn, DataAreaSettings, ServerFunction, Context, Column } from '@remult/core';
+import { StringColumn, NumberColumn, BoolColumn, DataAreaSettings, ServerFunction, Context, Column, ValueListColumn, ColumnOptions } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { Sites } from '../sites/sites';
 import { Families } from '../families/families';
@@ -97,6 +97,22 @@ export class RegisterDonorComponent implements OnInit {
   }
 }
 
+export class EquipmentAge {
+  static OldEq = new EquipmentAge(1, '5 שנים או יותר');
+  static NewEq = new EquipmentAge(0, 'פחות מ 5 שנים');
+  constructor(public id: number, public caption: string) {
+  }
+
+}
+export class EquipmentAgeColumn extends ValueListColumn<EquipmentAge>{
+  constructor(caption: ColumnOptions<EquipmentAge>) {
+    super(EquipmentAge, Column.consolidateOptions({
+      dataControlSettings: () => ({
+        width: '100'
+      })
+    }, caption));
+  }
+}
 class donorForm {
   constructor(private context: Context) {
 
@@ -130,7 +146,9 @@ class donorForm {
   });
 
   computer = new NumberColumn("מספר מחשבים נייחים");
+  computerAge = new EquipmentAgeColumn("גיל המחשב החדש ביותר");
   laptop = new NumberColumn("מספר לפטופים");
+  laptopAge = new EquipmentAgeColumn("גיל הלפטופ החדש ביותר");
   screen = new NumberColumn("מספר מסכים");
   donationType = new StringColumn("סוג תרומה", {
     dataControlSettings: () => ({
@@ -140,7 +158,12 @@ class donorForm {
   })
 
   docref = new StringColumn();
-  columns = [this.name, this.selfDeliver, this.computer, this.laptop, this.screen, this.donationType, this.address, this.phone, this.email, this.docref];
+  columns = [
+    this.name, this.selfDeliver, 
+    this.computer, this.computerAge,
+    this.laptop, this.laptopAge,
+    this.screen, this.donationType, this.address, this.phone, this.email, this.docref
+  ];
 
   async doWork(context: Context) {
     let f = context.for(Families).create();
@@ -168,8 +191,15 @@ class donorForm {
         }, context);
       }
     }
-    await addDelivery('מחשב', this.computer.value, this.selfDeliver.value);
-    await addDelivery('לפטופ', this.laptop.value, this.selfDeliver.value);
+    if (this.computerAge.value.id == 0) 
+      await addDelivery('מחשב', this.computer.value, this.selfDeliver.value)
+    else await addDelivery('מחשב_ישן', this.computer.value, this.selfDeliver.value);
+
+    if (this.laptopAge.value.id == 0) 
+      await addDelivery('לפטופ', this.laptop.value, this.selfDeliver.value)
+    else
+      await addDelivery('לפטופ_ישן', this.laptop.value, this.selfDeliver.value);
+
     await addDelivery('מסך', this.screen.value, this.selfDeliver.value);
 
     if (quantity == 0) {
