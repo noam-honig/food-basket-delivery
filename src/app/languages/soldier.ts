@@ -359,6 +359,9 @@ export class soldier implements Language {
   selectedDeliveries = 'משלוחים סומנו';
   showVolunteers = 'הצג מתנדבים';
   addressesWithMoreThanOneFamily = 'כתובות עם יותר מחייל אחד';
+  possibleDuplicateFamilies = 'חיילים כפולים';
+  comparePhoneNumber = 'השווה מספרי טלפון';
+  compareFamilyName = 'השווה שם חייל';
   showFamilies = 'הצג חיילים';
   recentlyAssigned = 'שוייכו עכשיו';
   addVolunteer = 'הוסף מתנדב/מנהל';

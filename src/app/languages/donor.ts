@@ -359,6 +359,9 @@ export class donor implements Language {
   selectedDeliveries = 'משלוחים סומנו';
   showVolunteers = 'הצג מתנדבים';
   addressesWithMoreThanOneFamily = 'כתובות עם יותר מתורם אחד';
+  possibleDuplicateFamilies = 'תורמים כפולים';
+  comparePhoneNumber = 'השווה מספרי טלפון';
+  compareFamilyName = 'השווה שם תורם';
   showFamilies = 'הצג תורמים';
   recentlyAssigned = 'שוייכו עכשיו';
   addVolunteer = 'הוסף מתנדב/מנהל';

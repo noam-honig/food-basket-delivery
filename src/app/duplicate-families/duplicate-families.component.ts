@@ -11,7 +11,6 @@ import { FamiliesComponent, saveFamiliesToExcel } from '../families/families.com
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
 import { Roles } from '../auth/roles';
-
 @Component({
   selector: 'app-duplicate-families',
   templateUrl: './duplicate-families.component.html',
@@ -21,9 +20,17 @@ export class DuplicateFamiliesComponent implements OnInit {
 
   constructor(private context: Context, private dialog: DialogService, public settings: ApplicationSettings, private busy: BusyService) { }
   duplicateFamilies: duplicateFamilies[] = [];
-  async ngOnInit() {
+
+  byPhone = true;
+  byName = false;
+
+async ngOnInit() {
+  this.refresh();
+}
+
+async refresh() {
     try {
-      this.duplicateFamilies = await DuplicateFamiliesComponent.familiesInSameAddress();
+      this.duplicateFamilies = await DuplicateFamiliesComponent.familiesInSameAddress(this.byPhone, this.byName);
       this.post();
     }
     catch (err) {
@@ -35,13 +42,17 @@ export class DuplicateFamiliesComponent implements OnInit {
     this.duplicateFamilies.sort((a, b) => a.address.localeCompare(b.address));
     this.post = () => this.sortByAddress();
   }
+  sortByName() {
+    this.duplicateFamilies.sort((a, b) => (a.name > b.name ? 1 : -1));
+    this.post = () => this.sortByName();
+  }
   sortByCount() {
     this.duplicateFamilies.sort((a, b) => b.count - a.count);
     this.post = () => this.sortByCount();
   }
   async showFamilies(d: duplicateFamilies) {
     await this.context.openDialog(GridDialogComponent, x => x.args = {
-      title: this.settings.lang.familiesAt + d.address,
+      title: d.name + '; ' + d.address + ' [' + d.phone + ']',
       buttons: [{
         text: this.settings.lang.mergeFamilies,
         click: async () => { await this.mergeFamilies(x); }
@@ -117,7 +128,7 @@ export class DuplicateFamiliesComponent implements OnInit {
         ],
         get: {
           limit: 25,
-          where: f => f.status.isDifferentFrom(FamilyStatus.ToDelete).and(f.addressLatitude.isEqualTo(d.lat).and(f.addressLongitude.isEqualTo(d.lng))),
+          where: f => this.myWhere(f, d),
           orderBy: f => f.name
         }
 
@@ -127,6 +138,21 @@ export class DuplicateFamiliesComponent implements OnInit {
     this.ngOnInit();
   }
 
+
+  myWhere(f: Families, d: duplicateFamilies): AndFilter 
+  {
+    let r = f.status.isDifferentFrom(FamilyStatus.ToDelete)
+    .and(f.addressLatitude.isEqualTo(d.lat).and(f.addressLongitude.isEqualTo(d.lng))); 
+
+    if (this.byPhone) {
+      r = r.and(f.phone1.isEqualTo(d.phone));
+    }
+
+    return r;
+  }
+
+
+  
   private async mergeFamilies(x: GridDialogComponent) {
     let items = x.args.settings.selectedRows.length > 0 ? [...x.args.settings.selectedRows] : [...x.args.settings.items];
     if (items.length == 0) {
@@ -148,23 +174,33 @@ export class DuplicateFamiliesComponent implements OnInit {
   }
 
   @ServerFunction({ allowed: true })
-  static async familiesInSameAddress(context?: Context, db?: SqlDatabase) {
+  static async familiesInSameAddress(byPhone: boolean, byName: boolean, context?: Context, db?: SqlDatabase) {
     let sql = new SqlBuilder();
     let f = context.for(Families).create();
+  
     return (await db.execute(sql.query({
       select: () => [
         sql.max(f.createDate),
         sql.columnWithAlias(f.addressLatitude, 'lat'),
         sql.columnWithAlias(f.addressLongitude, 'lng'),
+        sql.columnWithAlias(sql.max(f.name), 'name1'),
         sql.columnWithAlias(sql.max(f.address), 'address'),
+        sql.columnWithAlias(sql.max(f.phone1), 'phone'),
         sql.columnWithAlias(sql.count(), 'c')],
       from: f,
       where: () => [f.status.isDifferentFrom(FamilyStatus.ToDelete)],
-      groupBy: () => [f.addressLatitude, f.addressLongitude],
+      groupBy: () => {
+        let r: any[] = [f.addressLatitude, f.addressLongitude];
+        if (byPhone)
+          r.push(f.phone1);
+        return r;
+      },
       having: () => [sql.gt(sql.count(), 1)]
 
     }))).rows.map(x => ({
+      name: x['name1'],
       address: x['address'],
+      phone: x['phone'],
       lat: +x['lat'],
       lng: +x['lng'],
       count: +x['c']
@@ -173,7 +209,9 @@ export class DuplicateFamiliesComponent implements OnInit {
 
 }
 export interface duplicateFamilies {
+  name: string,
   address: string,
+  phone: string,
   lat: number,
   lng: number,
   count: number

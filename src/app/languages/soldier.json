@@ -551,6 +551,14 @@
     "google": "חברה",
     "valueInCode": "חברה"
   },
+  "compareFamilyName": {
+    "google": "השווה שם חייל",
+    "valueInCode": "השווה שם משפחה"
+  },
+  "comparePhoneNumber": {
+    "google": "השווה מספרי טלפון",
+    "valueInCode": "השווה מספרי טלפון"
+  },
   "compareTo": {
     "google": "מול",
     "valueInCode": "מול"
@@ -2082,6 +2090,10 @@
   "pleaseWaitVerifyingDetails": {
     "google": "אנא המתן - מוודא פרטים",
     "valueInCode": "אנא המתן - מוודא פרטים"
+  },
+  "possibleDuplicateFamilies": {
+    "google": "חיילים כפולים",
+    "valueInCode": "משפחות כפולות"
   },
   "postalCode": {
     "google": "מיקוד",

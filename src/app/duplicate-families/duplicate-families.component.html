@@ -1,17 +1,28 @@
-<h3>{{settings.lang.addressesWithMoreThanOneFamily}}</h3>
+<div style="justify-content: space-evenly;">
+    <mat-checkbox mat-raised-button [(ngModel)]="this.byPhone">{{settings.lang.comparePhoneNumber}}</mat-checkbox>
+<!--    <mat-checkbox mat-raised-button [(ngModel)]="this.byName">{{settings.lang.compareFamilyName}}</mat-checkbox> -->
+    <button mat-mini-fab style="margin-bottom:5px" (click)="refresh()" color="primary">
+        <mat-icon>refresh</mat-icon>
+    </button>
+
+</div>
+<h3>{{settings.lang.possibleDuplicateFamilies}}</h3>
 <table class="table table-bordered">
     <tr>
         <th></th>
+        <th (click)="sortByName()">{{settings.lang.familyName}}</th>
         <th (click)="sortByAddress()">{{settings.lang.address}}</th>
+        <th>{{settings.lang.phone}}</th>
         <th (click)="sortByCount()">{{settings.lang.families}}</th>
         <th>{{settings.lang.total}} {{duplicateFamilies.length}}</th>
         
     </tr>
     <tr *ngFor="let d of duplicateFamilies; let i=index">
         <td>{{i+1}}</td>
-        <td> {{d.address}}</td>
+        <td>{{d.name}}</td>
+        <td>{{d.address}}</td>
+        <td>{{d.phone}}</td>
         <td>{{d.count}}</td>
         <td><a (click)="showFamilies(d)">{{settings.lang.showFamilies}}</a></td>
-        
     </tr>
 </table>

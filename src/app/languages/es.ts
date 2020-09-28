@@ -359,6 +359,9 @@ export class es implements Language {
   selectedDeliveries = 'mercado de entregas';
   showVolunteers = 'Mostrar voluntarios';
   addressesWithMoreThanOneFamily = 'Direcciones con más de una familia';
+  possibleDuplicateFamilies = 'Familias dobles';
+  comparePhoneNumber = 'Comparar números de teléfono';
+  compareFamilyName = 'Comparar apellido';
   showFamilies = 'Ver familias';
   recentlyAssigned = 'Asignado ahora';
   addVolunteer = 'Agregar un voluntario / gerente';

@@ -634,6 +634,14 @@
     "valueInCode": "חברה",
     "custom": "Company"
   },
+  "compareFamilyName": {
+    "google": "Compare last name",
+    "valueInCode": "השווה שם משפחה"
+  },
+  "comparePhoneNumber": {
+    "google": "Compare phone numbers",
+    "valueInCode": "השווה מספרי טלפון"
+  },
   "compareTo": {
     "google": "Opposite",
     "valueInCode": "מול",
@@ -2286,6 +2294,10 @@
   "pleaseWaitVerifyingDetails": {
     "google": "Please wait - verify details",
     "valueInCode": "אנא המתן - מוודא פרטים"
+  },
+  "possibleDuplicateFamilies": {
+    "google": "Double families",
+    "valueInCode": "משפחות כפולות"
   },
   "postalCode": {
     "google": "Postal Code",

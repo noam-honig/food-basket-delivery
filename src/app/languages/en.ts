@@ -359,6 +359,9 @@ export class en implements Language {
   selectedDeliveries = 'deliveries marked';
   showVolunteers = 'Show volunteers';
   addressesWithMoreThanOneFamily = 'Addresses with more than one family';
+  possibleDuplicateFamilies = 'Double families';
+  comparePhoneNumber = 'Compare phone numbers';
+  compareFamilyName = 'Compare last name';
   showFamilies = 'View families';
   recentlyAssigned = 'Assigned now';
   addVolunteer = 'Add a volunteer / manager';

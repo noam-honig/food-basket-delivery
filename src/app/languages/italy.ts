@@ -359,6 +359,9 @@ export class italy implements Language {
   selectedDeliveries = 'mercato delle consegne';
   showVolunteers = 'Mostra volontari';
   addressesWithMoreThanOneFamily = 'Indirizzi con più di una famiglia';
+  possibleDuplicateFamilies = 'Doppie famiglie';
+  comparePhoneNumber = 'Confronta i numeri di telefono';
+  compareFamilyName = 'Confronta il cognome';
   showFamilies = 'Visualizza le famiglie';
   recentlyAssigned = 'Assegnato ora';
   addVolunteer = 'Aggiungi un volontario / manager';

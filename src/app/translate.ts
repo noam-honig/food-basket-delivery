@@ -473,6 +473,9 @@ export class Language {
   selectedDeliveries = 'משלוחים סומנו';
   showVolunteers = 'הצג מתנדבים';
   addressesWithMoreThanOneFamily = 'כתובות עם יותר ממשפחה אחת';
+  possibleDuplicateFamilies= 'משפחות כפולות';
+  comparePhoneNumber = 'השווה מספרי טלפון';
+  compareFamilyName = 'השווה שם משפחה';
   showFamilies = 'הצג משפחות';
   recentlyAssigned = 'שוייכו עכשיו';
   addVolunteer = 'הוסף מתנדב';
