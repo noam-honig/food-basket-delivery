@@ -5,19 +5,10 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Roles } from '../auth/roles';
 import { AsignFamilyComponent } from './asign-family.component';
 import { Helpers } from '../helpers/helpers';
+import { itAsync } from '../shared/test-helper';
 
 
-export function itAsync(name: string, what: () => Promise<void>) {
-    it("testing basics", async done => {
-        try {
-            await what();
-            done();
-        }
-        catch (err) {
-            done.fail(err);
-        }
-    });
-}
+
 
 describe('assign item', () => {
     let x = new WebSqlDataProvider("test");
