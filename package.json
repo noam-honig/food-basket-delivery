@@ -29,7 +29,8 @@
     "build:stats": "ng build  --stats-json",
     "bundle-report": "webpack-bundle-analyzer dist/stats.json",
     "docs": "vuepress dev docs",
-    "build-docs": "vuepress build docs"
+    "build-docs": "vuepress build docs",
+    "release-docs": "deploy-docs.sh"
   },
   "private": true,
   "dependencies": {

@@ -2,6 +2,7 @@ const { description } = require('../../package')
 //const apiSideBar = require('./api-sidebar.json');
 module.exports = {
   theme: 'default-rtl',
+  base:'/hagai-docs/',
   /**
    * Ref：https://v1.vuepress.vuejs.org/config/#title
    */
@@ -30,6 +31,7 @@ module.exports = {
   themeConfig: {
     repo: '',
     editLinks: false,
+    logo:'https://salmaz.herokuapp.com/assets/apple-touch-icon.png',
     docsDir: '',
     editLinkText: '',
     lastUpdated: false,
