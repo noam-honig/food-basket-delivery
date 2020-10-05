@@ -50,3 +50,5 @@
 
 אם תשנו את השאלה, ייתכן ותשפיעו על סוג ההערות שכותבים לכם
 :::
+
+[מצאתם טעות? עזרו לנו לתקן](https://github.com/noam-honig/food-basket-delivery/tree/master/docs/guide/requires-care.md)
