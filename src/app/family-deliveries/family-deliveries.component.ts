@@ -1022,7 +1022,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
             args.deliveries().items.splice(args.deliveries().items.indexOf(d), 1);
           }
         }
-      }, visible: d => DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)
+      }, visible: d => !d.archive.value && DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)
 
     }
   ] as RowButton<FamilyDeliveries>[]
