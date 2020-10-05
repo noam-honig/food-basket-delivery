@@ -93,4 +93,4 @@
 ![](./2020-10-05_06h40_45.png)
 
 
-[מצאתם טעות? עזרו לנו לתקן](https://github.com/noam-honig/food-basket-delivery/tree/master/docs/guilde/README.md)
+[מצאתם טעות? עזרו לנו לתקן](https://github.com/noam-honig/food-basket-delivery/tree/master/docs/guide/README.md)
