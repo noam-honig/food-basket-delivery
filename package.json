@@ -6,6 +6,7 @@
     "gc": "ng generate component --spec false",
     "ng-serve": "ng serve",
     "node-serve": "./node_modules/.bin/tsc-watch -p tsconfig.server.json --onSuccess \"npm run server:dev-run",
+    "server-test": "./node_modules/.bin/tsc-watch -p src/tsconfig.server-spec.json --onSuccess \"node node_modules/jasmine/bin/jasmine out-tsc/**/*.server-test.js",
     "ng-serve-noam-ip-10.0.0.6": "ng serve --host 10.0.0.6",
     "start": "npm run server:execute",
     "server:dev-run": "node --inspect dist-server/app/server/server.js",
@@ -26,7 +27,10 @@
     "server:execute": "node dist-server/app/server/server.js",
     "build-languages": "node dist-server/app/server/buildLanguages.js",
     "build:stats": "ng build  --stats-json",
-    "bundle-report": "webpack-bundle-analyzer dist/stats.json"
+    "bundle-report": "webpack-bundle-analyzer dist/stats.json",
+    "docs": "vuepress dev docs",
+    "build-docs": "vuepress build docs",
+    "release-docs": "deploy-docs.sh"
   },
   "private": true,
   "dependencies": {
@@ -98,6 +102,8 @@
     "@types/password-hash": "^1.2.20",
     "@types/pg": "^7.14.4",
     "@types/xlsx": "0.0.36",
+    "@vuepress/plugin-back-to-top": "1.5.2",
+    "@vuepress/plugin-medium-zoom": "1.5.2",
     "codelyzer": "^5.0.1",
     "concurrently": "^4.1.2",
     "install": "^0.13.0",
@@ -113,6 +119,8 @@
     "tsc-watch": "^4.2.9",
     "tslint": "~5.11.0",
     "typescript": "~3.5.3",
+    "vuepress": "1.5.2",
+    "vuepress-theme-default-rtl": "^1.0.1",
     "webpack-bundle-analyzer": "^3.6.0"
   }
 }
