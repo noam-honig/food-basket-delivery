@@ -569,7 +569,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         { column: deliveries.courierAssingTime, width: '150' },
         { column: deliveries.deliveryStatusUser, width: '100' },
         deliveries.deliveryStatusDate,
-        { column: deliveries.courierComments, width: '400' },
+        { column: deliveries.courierComments, width: '300' },
         { column: deliveries.internalDeliveryComment, width: '400' },
         deliveries.needsWork,
         deliveries.needsWorkDate,
@@ -594,7 +594,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           deliveries.courier,
           //          deliveries.internalDeliveryComment,
           //          deliveries.messageStatus,
-          deliveries.courierComments
+          deliveries.courierComments,
+          //deliveries.receptionComments
         );
       } else {
         this.normalColumns.push(
@@ -603,10 +604,6 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           deliveries.quantity,
           this.deliverySummary
         );
-      }
-
-      if (this.settings.isSytemForMlt()) {
-        this.normalColumns.push(deliveries.receptionComments);
       }
 
       return r;
@@ -705,22 +702,9 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         dialog: this.dialog,
         refresh: () => this.refresh(),
         settings: this.settings,
-        busy: this.busy
-      }),
-      {
-        name: getLang(this.context).archiveDelivery,
-        click: async d => {
-          if (await this.dialog.YesNoPromise(getLang(this.context).shouldArchiveDelivery)) {
-            {
-              let fd = await this.context.for(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
-              fd.archive.value = true;
-              await fd.save();
-              this.deliveries.items.splice(this.deliveries.items.indexOf(d), 1);
-            }
-          }
-        }, visible: () => this.context.isAllowed(Roles.admin)
-
-      }
+        busy: this.busy,
+        showAllBeforeNew: this.settings.isSytemForMlt()
+      })
     ]
   });
   private async buildWhereForAction(actionWhere) {
@@ -842,14 +826,21 @@ export interface deliveryButtonsHelper {
   busy: BusyService,
   settings: ApplicationSettings,
   refresh: () => void,
-  deliveries: () => GridSettings<FamilyDeliveries>
+  deliveries: () => GridSettings<FamilyDeliveries>,
+  showAllBeforeNew?: boolean
 }
 export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
   let newDelivery: (d: FamilyDeliveries) => void = async d => {
     let f = await args.context.for(Families).findId(d.family);
 
-
-
+    if (args.showAllBeforeNew) {
+      f.showDeliveryHistoryDialog({
+        settings: args.settings,
+        dialog: args.dialog,
+        busy: args.busy
+      });
+      return;
+    }
 
     await f.showNewDeliveryDialog(args.dialog, args.settings, args.busy, {
       copyFrom: d, aDeliveryWasAdded: async (newDeliveryId) => {
@@ -1017,6 +1008,22 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
         }
       },
       visible: d => !DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)
+    },
+    {
+      textInMenu: () => getLang(args.context).archiveDelivery,
+      showInLine: true,
+      icon: 'archive',
+      click: async d => {
+        if (await args.dialog.YesNoPromise(getLang(args.context).shouldArchiveDelivery)) {
+          {
+            let fd = await args.context.for(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
+            fd.archive.value = true;
+            await fd.save();
+            args.deliveries().items.splice(args.deliveries().items.indexOf(d), 1);
+          }
+        }
+      }, visible: d => DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)
+
     }
   ] as RowButton<FamilyDeliveries>[]
 
