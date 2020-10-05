@@ -55,8 +55,16 @@ module.exports = {
           title: 'מדריך למנהל',
           collapsable: false,
           children: [
-            ''
-           
+            '',
+            'delivery-followup',
+            'requires-care',
+            'distribution-map',
+            'use-table',
+            'active-deliveries',
+            'families',
+            'volunteers',
+            'import-from-excel'
+            
           
           ]
         }
