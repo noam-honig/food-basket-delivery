@@ -58,11 +58,12 @@ module.exports = {
             '',
             'delivery-followup',
             'requires-care',
-            'distribution-map',
+            'family-info',
             'use-table',
             'active-deliveries',
             'families',
             'volunteers',
+            'distribution-map',
             'import-from-excel'
             
           
