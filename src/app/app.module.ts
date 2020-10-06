@@ -88,6 +88,7 @@ import { EditCommentDialogComponent  } from './edit-comment-dialog/edit-comment-
 import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment-assign-screen.component';
 import { QRCodeModule } from 'angular2-qrcode';
 import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/volunteer-cross-assign.component';
+import { WeeklyReportMltComponent } from './weekly-report-mlt/weekly-report-mlt.component';
 
 
 
@@ -177,7 +178,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     InRouteFollowUpComponent,
     EditCommentDialogComponent,
     ShipmentAssignScreenComponent,
-    VolunteerCrossAssignComponent
+    VolunteerCrossAssignComponent,
+    WeeklyReportMltComponent
 
 
   ],
@@ -285,6 +287,8 @@ export function initApp(session: JwtSessionManager, settings: SettingsService) {
       routeMap.set(LoginComponent, l.LoginComponent);
 
       routeMap.set(EventsComponent, l.eventsComponent);
+
+      routeMap.set(WeeklyReportMltComponent, l.weeklyReportMltComponent);
 
 
 

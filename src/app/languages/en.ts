@@ -681,6 +681,7 @@ export class en implements Language {
   attendingVolunteers = 'Number of volunteers signed up';
   eventStatus = 'status';
   eventsComponent = 'Events';
+  weeklyReportMltComponent = 'Considerable weekly report';
   pleaseRegisterToTheFollowingEvents = 'Please sign up for upcoming events';
   illBeThere = 'Sign me up for this event';
   registeredToEvent = 'You are registered for this event';

@@ -3906,6 +3906,11 @@
     "valueInCode": "עודכנה ל",
     "valueInEnglish": "Updated to"
   },
+  "weeklyReportMltComponent": {
+    "google": "Notevole rapporto settimanale",
+    "valueInCode": "דוח שבועי מתחשבים",
+    "valueInEnglish": "Considerable weekly report"
+  },
   "welcomeTo": {
     "google": "Benvenuti nell'ambiente di",
     "valueInCode": "ברוך הבא לסביבה של",

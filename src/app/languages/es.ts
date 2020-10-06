@@ -681,6 +681,7 @@ export class es implements Language {
   attendingVolunteers = 'Número de voluntarios inscritos';
   eventStatus = 'estado';
   eventsComponent = 'Eventos';
+  weeklyReportMltComponent = 'Informe semanal considerable';
   pleaseRegisterToTheFollowingEvents = 'Por favor regístrese para los próximos eventos';
   illBeThere = 'Inscríbeme para este evento';
   registeredToEvent = 'Estás registrado para este evento';

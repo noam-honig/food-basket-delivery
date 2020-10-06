@@ -3408,6 +3408,10 @@
     "google": "Updated to",
     "valueInCode": "עודכנה ל"
   },
+  "weeklyReportMltComponent": {
+    "google": "Considerable weekly report",
+    "valueInCode": "דוח שבועי מתחשבים"
+  },
   "welcomeTo": {
     "google": "Welcome to the environment of",
     "valueInCode": "ברוך הבא לסביבה של"
