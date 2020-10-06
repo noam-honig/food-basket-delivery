@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
+import { distCenterAdminGuard } from '../auth/roles';
 
 @Component({
   selector: 'app-weekly-report-mlt',
@@ -7,7 +8,7 @@ import { Route } from '@angular/router';
   styleUrls: ['./weekly-report-mlt.component.scss']
 })
 export class WeeklyReportMltComponent implements OnInit {
-  static route: Route;
+  static route: Route = {path: 'weekly-report-mlt', component: WeeklyReportMltComponent, canActivate: [distCenterAdminGuard]};
 
   constructor() { }
 

@@ -129,12 +129,12 @@ export const routes: Routes = [
   MyFamiliesComponent.route,
   UpdateInfoComponent.route,
   LoginComponent.route,
+  WeeklyReportMltComponent.route,
   
 
   { path: '', redirectTo: '/assign-families', pathMatch: 'full' },
-  { path: '**', redirectTo: '/assign-families', pathMatch: 'full' },
+  { path: '**', redirectTo: '/assign-families', pathMatch: 'full' }
 
-  WeeklyReportMltComponent.route
 ];
 
 @NgModule({
