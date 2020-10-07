@@ -37,3 +37,6 @@
 ![](./2020-10-07_15h26_51.png)
 
 ![](./2020-10-07_15h26_54.png)
+
+
+[מצאתם טעות? עזרו לנו לתקן](https://github.com/noam-honig/food-basket-delivery/tree/master/docs/guide/add-to-home-screen.md)

@@ -52,3 +52,5 @@
 במסך שנפתח יוצגו המתנדבים שנרשמו לארוע.
 
 ממסך זה אפשר לשייך משלוחים לכל מתנדב, ולהוסיף מתנדבים נוספים אם רוצים.
+
+[מצאתם טעות? עזרו לנו לתקן](https://github.com/noam-honig/food-basket-delivery/tree/master/docs/guide/events.md)
