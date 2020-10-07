@@ -84,6 +84,9 @@
 <iframe width="560" height="315" src="https://www.youtube.com/embed/TUk5cvwcStQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ### סטטוס (סטטוס משפחה)
+
+![](./2020-10-07_13h32_32.png)
+
 1. **פעיל**
 2. **מוקפא** - נועד עבור הקפאת משפחה באופן זמני, למשל במקרה שהם נסעו לקרובים בעיר אחרת לשבוע וכו - או שצריך לברר עבורם משהו
 3. **הוצא מהרשימות** - נועד עבור משפחות שעברו דירה לעיר אחרת, או שחס וחלילה נפתרו.

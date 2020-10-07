@@ -62,9 +62,14 @@ module.exports = {
             'use-table',
             'active-deliveries',
             'families',
+            'add-family',
             'volunteers',
+            'new-delivery-day',
             'distribution-map',
-            'import-from-excel'
+            'import-from-excel',
+            'add-to-home-screen',
+            'events',
+            'no-addresses'
             
           
           ]
