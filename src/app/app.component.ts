@@ -29,6 +29,9 @@ import { CreateNewEvent } from './create-new-event/create-new-event';
 
 })
 export class AppComponent {
+  isAdmin() {
+    return this.context.isAllowed(Roles.admin);
+  }
   lang: Language;
   isEdge = /msie\s|trident\/|edge\//i.test(window.navigator.userAgent);
   constructor(
@@ -39,8 +42,8 @@ export class AppComponent {
     private helper: RouteHelperService,
     public context: Context,
     public settings: ApplicationSettings,
-    private busy:BusyService
-    ) {
+    private busy: BusyService
+  ) {
     this.lang = settings.lang;
     this.toolbarColor = 'primary';
 
@@ -55,7 +58,7 @@ export class AppComponent {
     return this.context.isAllowed(Roles.admin) && !this.settings.isSytemForMlt();
   }
   createNewEvent() {
-    new CreateNewEvent(this.context).show(this.dialog, this.settings, this.helper,this.busy);
+    new CreateNewEvent(this.context).show(this.dialog, this.settings, this.helper, this.busy);
   }
 
 
