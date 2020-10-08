@@ -17,6 +17,7 @@ import { HelperUserInfo, Helpers } from '../helpers/helpers';
 import { getLang, Sites } from '../sites/sites';
 import { Roles } from '../auth/roles';
 import { PhoneColumn } from '../model-shared/types';
+import { Families } from '../families/families';
 
 @Component({
   selector: 'app-family-info',
@@ -25,7 +26,7 @@ import { PhoneColumn } from '../model-shared/types';
 })
 export class FamilyInfoComponent implements OnInit {
 
-  constructor(private dialog: DialogService,public context: Context, public settings: ApplicationSettings, private zone: NgZone) {
+  constructor(private dialog: DialogService, public context: Context, public settings: ApplicationSettings, private zone: NgZone) {
 
   }
   @Input() f: ActiveFamilyDeliveries;
@@ -34,6 +35,25 @@ export class FamilyInfoComponent implements OnInit {
   }
   actuallyShowHelp() {
     return this.showHelp && this.f.deliverStatus.value != DeliveryStatus.ReadyForDelivery;
+  }
+  async showTz() {
+    this.dialog.messageDialog(await FamilyInfoComponent.ShowFamilyTz(this.f.id.value));
+  }
+  @ServerFunction({ allowed: c => c.isSignedIn() })
+  static async ShowFamilyTz(deliveryId: string, context?: Context) {
+    let s = await ApplicationSettings.getAsync(context);
+    if (!s.showTzToVolunteer.value)
+      return "";
+    var d = await context.for(ActiveFamilyDeliveries).findId(deliveryId);
+    if (!d)
+      return;
+    if (d.courier.value != context.user.id && !context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
+      return "";
+    var f = await context.for(Families).findId(d.family);
+    if (!f)
+      return "";
+    return f.name.value + ":" + f.tz.value;
+
   }
   @Input() partOfAssign: Boolean;
   @Output() assignmentCanceled = new EventEmitter<void>();
@@ -100,12 +120,12 @@ export class FamilyInfoComponent implements OnInit {
     }
 
   }
-  callPhone(col:PhoneColumn) {
-    this.dialog.analytics("Call "+col.defs.key);
+  callPhone(col: PhoneColumn) {
+    this.dialog.analytics("Call " + col.defs.key);
     window.location.href = "tel:" + col.value;
   }
-  async sendWhatsapp(phone:string) {
-    PhoneColumn.sendWhatsappToPhone(phone, 
+  async sendWhatsapp(phone: string) {
+    PhoneColumn.sendWhatsappToPhone(phone,
       this.settings.lang.hello + ' ' + this.f.name.value + ',', this.context);
   }
   static createPhoneProxyOnServer: (phone1: string, phone2: string) => Promise<{ phone: string, session: string }>;

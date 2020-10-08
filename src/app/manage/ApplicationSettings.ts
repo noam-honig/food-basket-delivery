@@ -170,6 +170,7 @@ export class ApplicationSettings extends Entity<number>  {
   static serverHasPhoneProxy = false;
   usePhoneProxy = new BoolColumn({ allowApiUpdate: false });
   showOnlyLastNamePartToVolunteer = new BoolColumn(this.lang.showOnlyLastNamePartToVolunteer);
+  showTzToVolunteer = new BoolColumn(this.lang.showTzToVolunteer);
   allowSendSuccessMessageOption = new BoolColumn({ caption: this.lang.allowSendSuccessMessageOption, allowApiUpdate: false });
   sendSuccessMessageToFamily = new BoolColumn(this.lang.sendSuccessMessageToFamily);
   successMessageText = new StringColumn(this.lang.successMessageText);

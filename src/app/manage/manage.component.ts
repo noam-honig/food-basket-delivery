@@ -292,6 +292,7 @@ export class ManageComponent implements OnInit {
         this.settings.showLeftThereButton,
         this.settings.hideFamilyPhoneFromVolunteer,
         this.settings.showOnlyLastNamePartToVolunteer,
+        this.settings.showTzToVolunteer,
         this.settings.boxes1Name,
         this.settings.boxes2Name,
         this.settings.showCompanies,

@@ -2908,6 +2908,10 @@
     "valueInCode": "להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים",
     "custom": "Display free text 2 only when the volunteer has finished all parcels"
   },
+  "showTzToVolunteer": {
+    "google": "Show ID number to volunteer",
+    "valueInCode": "הצג מספר זהות למתנדב"
+  },
   "showVolunteerCompany": {
     "google": "Save on behalf of which company the volunteer came from",
     "valueInCode": "שמור מטעם איזה חברה הגיע המתנדב"

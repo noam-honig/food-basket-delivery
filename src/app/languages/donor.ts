@@ -786,4 +786,5 @@ export class donor implements Language {
   volunteerComment = 'הערת מתנדב';
   archiveDate = 'ארכיב: מועד עדכון';
   archiveUser = 'ארכיב: משתמש מעדכן';
+  showTzToVolunteer = 'הצג מספר זהות למתנדב';
 }

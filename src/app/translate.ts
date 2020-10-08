@@ -909,6 +909,7 @@ export class Language {
   volunteerComment = "הערת מתנדב";
   archiveDate = "ארכיב: מועד עדכון";
   archiveUser = "ארכיב: משתמש מעדכן";
+  showTzToVolunteer = "הצג מספר זהות למתנדב";
 }
 
 const defaultLang = new Language();

@@ -3321,6 +3321,11 @@
     "valueInCode": "להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים",
     "valueInEnglish": "Display free text 2 only when the volunteer has finished all parcels"
   },
+  "showTzToVolunteer": {
+    "google": "Mostrar número de identificación para ser voluntario",
+    "valueInCode": "הצג מספר זהות למתנדב",
+    "valueInEnglish": "Show ID number to volunteer"
+  },
   "showVolunteerCompany": {
     "google": "Ahorre en nombre de qué compañía vino el voluntario",
     "valueInCode": "שמור מטעם איזה חברה הגיע המתנדב",

@@ -786,4 +786,5 @@ export class en implements Language {
   volunteerComment = 'Volunteer note';
   archiveDate = 'Archive: Date of update';
   archiveUser = 'Archive: User updates';
+  showTzToVolunteer = 'Show ID number to volunteer';
 }

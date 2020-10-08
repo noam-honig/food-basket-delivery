@@ -786,4 +786,5 @@ export class italy implements Language {
   volunteerComment = 'Nota di volontariato';
   archiveDate = 'Archivio: data di aggiornamento';
   archiveUser = 'Archivio: aggiornamenti utente';
+  showTzToVolunteer = 'Mostra il numero ID al volontario';
 }

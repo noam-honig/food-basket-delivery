@@ -786,4 +786,5 @@ export class es implements Language {
   volunteerComment = 'Nota de voluntario';
   archiveDate = 'Archivo: fecha de actualización';
   archiveUser = 'Archivo: actualizaciones de usuario';
+  showTzToVolunteer = 'Mostrar número de identificación para ser voluntario';
 }
