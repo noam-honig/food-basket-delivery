@@ -112,7 +112,8 @@ export class CreateNewEvent {
     async show(dialog: DialogService, settings: ApplicationSettings, routeHelper: RouteHelperService, busy: BusyService) {
         
             let notDoneDeliveries = await this.context.for(ActiveFamilyDeliveries).count(x => x.readyFilter());
-            if (notDoneDeliveries > 0 && !await dialog.YesNoPromise(getLang(this.context).thereAre + " " + notDoneDeliveries + " " + getLang(this.context).notDoneDeliveriesShouldArchiveThem)) {
+            if (notDoneDeliveries > 0 ) {
+                await dialog.messageDialog(getLang(this.context).thereAre + " " + notDoneDeliveries + " " + getLang(this.context).notDoneDeliveriesShouldArchiveThem);
                 routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
                 return;
             }

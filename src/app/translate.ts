@@ -876,7 +876,7 @@ export class Language {
   thisVolunteerIsSetAsTheDefaultFor = "מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד";
   familiesDotCancelTheseAssignments = "משפחות. האם לבטל אותו כברירת מחדל למשפחות אלו?";
   editComment = "ערוך הערה";
-  createNewEvent = "פתיחת ארוע חדש";
+  createNewEvent = "פתיחת חלוקה חדשה";
   createNewEventHelp = `פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשרת יצירת משלוח חדש למשפחות`;
   createNewDeliveryForAllFamilies = "צור משלוח חדש למשפחות";
   selectSomeOfTheFamilies = "בחר משפחות לפי קבוצות";
@@ -887,7 +887,7 @@ export class Language {
   actionCanceled = "פעולה בוטלה";
   deliveriesCreated = "משלוחים נוצרו";
   doneDotGotoDeliveries = "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?";
-  notDoneDeliveriesShouldArchiveThem = "משלוחים פעילים שטרם שוייכו, האם להמשיך בפתיחת ארוע חדש?";
+  notDoneDeliveriesShouldArchiveThem = "משלוחים פעילים שטרם שוייכו, יש למחוק אותם לפני פתיחת חלוקה חדשה כדי שלא ישמרו סתם בארכיון?";
   deliveresOnTheWayAssignedInTheLast3Hours = "משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך בפתיחת ארוע חדש?";
   leadHelper = "מתנדב מוביל";
   movedFrom = "הועברו מ";

@@ -407,12 +407,12 @@ class HelperStrategyColumn extends ValueListColumn<HelperStrategy>{
 export const delvieryActions = () => [
     NewDelivery,
     ArchiveDeliveries,
+    DeleteDeliveries,
     UpdateDeliveriesStatus,
     UpdateBasketType,
     UpdateQuantity,
     UpdateDistributionCenter,
     UpdateCourier,
     UpdateFamilyDefaults,
-    DeleteDeliveries,
     bridge(updateGroup), bridge(UpdateArea), bridge(UpdateStatus)
 ];
