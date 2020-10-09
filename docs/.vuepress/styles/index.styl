@@ -3,18 +3,28 @@
  *
  * ref：https://v1.vuepress.vuejs.org/config/#index-styl
  */
-
+body
+  direction: rtl
 .home .hero img
   max-width 450px!important
 .theme-default-content img 
   border solid 2px 
   border-radius 8px
   border-color lightgray
-@media (max-width: 719px)
-   .sidebar
-     transform: translate(100%) !important
-
+// @media (max-width: 719px)
+//    .sidebar
+//      transform: translate(100%) !important
+ @media (min-width: 720px)
+   .navbar .links
+     left 1.5 rem
+     right:auto !important
+     flex-direction: row-reverse
 @media (max-width: 719px)
    iframe
      max-width:300px !important
      max-height: 168px !important 
+.sidebar .sidebar-sub-headers
+  padding-left:auto
+  padding-right:1rem
+.sidbar-group a.sidebar-link
+  padding-left:auto
