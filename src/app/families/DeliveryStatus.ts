@@ -85,6 +85,10 @@ export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
   isProblem() {
     return this.isGreaterOrEqualTo(DeliveryStatus.FailedBadAddress).and(this.isLessOrEqualTo(DeliveryStatus.FailedOther));
   }
+  isNotProblem() {
+    return this.isLessOrEqualTo(DeliveryStatus.SuccessLeftThere).and(this.isDifferentFrom(DeliveryStatus.Frozen));
+  }
+  
   getCss() {
     switch (this.value) {
       case DeliveryStatus.Success:

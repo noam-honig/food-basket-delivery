@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { DateColumn, DataAreaSettings, BoolColumn } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 var fullDayValue = 24 * 60 * 60 * 1000;
@@ -8,6 +8,8 @@ var fullDayValue = 24 * 60 * 60 * 1000;
   styleUrls: ['./date-range.component.scss']
 })
 export class DateRangeComponent implements OnInit {
+
+  @Input() rangeWeekly: boolean = false;
   @Output() dateChanged = new EventEmitter<void>();
   fromDate = new DateColumn({
     caption: this.settings.lang.fromDate,
@@ -20,12 +22,9 @@ export class DateRangeComponent implements OnInit {
     }
   });
   toDate = new DateColumn(this.settings.lang.toDate);
-  onlyDone = new BoolColumn({ caption: this.settings.lang.showOnlyCompletedDeliveries, defaultValue: true })
-  onlyArchived = new BoolColumn({ caption: this.settings.lang.showOnlyArchivedDeliveries, defaultValue: this.settings.isSytemForMlt() })
   
   rangeArea = new DataAreaSettings({
-    columnSettings: () => [[this.fromDate, this.toDate],this.onlyDone, this.onlyArchived],
-    
+    columnSettings: () => [[this.fromDate, this.toDate]],
   });
   private getEndOfMonth(): Date {
     return new Date(this.fromDate.value.getFullYear(), this.fromDate.value.getMonth() + 1, 0);
@@ -63,13 +62,19 @@ export class DateRangeComponent implements OnInit {
   constructor(public settings: ApplicationSettings) {
     let today = new Date();
 
-    this.fromDate.value = new Date(today.getFullYear(), today.getMonth(), 1);
-    this.toDate.value = this.getEndOfMonth();
+    if (this.rangeWeekly) {
+      let lastWeek = new Date(); lastWeek.setDate(today.getDate() - 7);
+      this.fromDate.value = lastWeek;
+      this.toDate.value = today;
+    }
+    else  {
+      this.fromDate.value = new Date(today.getFullYear(), today.getMonth(), 1);
+      this.toDate.value = this.getEndOfMonth();
+    } 
+
   }
 
   ngOnInit() {
-    if (!this.settings.isSytemForMlt())
-      this.onlyArchived.value = false;
   }
 
 }

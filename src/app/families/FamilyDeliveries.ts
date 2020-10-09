@@ -289,6 +289,9 @@ export class FamilyDeliveries extends IdEntity {
     active() {
         return this.archive.isEqualTo(false);
     }
+    notActive() {
+        return this.archive.isEqualTo(true);
+    }
     disableChangeLogging = false;
     _disableMessageToUsers = false;
     constructor(protected context: Context, private onlyActive = false, apiEndPoing = 'FamilyDeliveries') {
