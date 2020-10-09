@@ -673,6 +673,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
                 addColumn("X" + use.language.firstName, firstName, 's');
                 addColumn("X" + use.language.streetName, street, 's');
                 addColumn("X" + use.language.houseNumber, house, 's');
+                addColumn("X" + f.tz.defs.caption, f.tz.value, 's');
 
               }
 
