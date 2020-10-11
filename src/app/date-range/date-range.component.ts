@@ -60,8 +60,10 @@ export class DateRangeComponent implements OnInit {
     this.dateChanged.emit();
   }
   constructor(public settings: ApplicationSettings) {
-    let today = new Date();
+  }
 
+  ngOnInit() {
+    let today = new Date();
     if (this.rangeWeekly) {
       let lastWeek = new Date(); lastWeek.setDate(today.getDate() - 7);
       this.fromDate.value = lastWeek;
@@ -71,10 +73,6 @@ export class DateRangeComponent implements OnInit {
       this.fromDate.value = new Date(today.getFullYear(), today.getMonth(), 1);
       this.toDate.value = this.getEndOfMonth();
     } 
-
-  }
-
-  ngOnInit() {
   }
 
 }
