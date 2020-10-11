@@ -48,6 +48,7 @@ export class es implements Language {
   showAllDeliveries = 'Ver todas las entregas para distribución';
   sendSmsWithLink = 'Enviar un SMS con un enlace';
   sendLinkOnWhatsapp = 'Enviar en WhatsApp';
+  sendWhatsAppToFamily = 'Envía WhatsApp a la familia';
   copyMessageWithLink = 'Copiar mensaje con enlace';
   copyLink = 'Copiar link';
   sendSmsFromDevice = 'Envía un enlace de SMS desde tu teléfono';

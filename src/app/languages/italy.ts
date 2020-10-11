@@ -48,6 +48,7 @@ export class italy implements Language {
   showAllDeliveries = 'Visualizza tutte le consegne per la distribuzione';
   sendSmsWithLink = 'Invia un SMS con un link';
   sendLinkOnWhatsapp = 'Invia su WhatsApp';
+  sendWhatsAppToFamily = 'Invia WhatsApp alla famiglia';
   copyMessageWithLink = 'Copia il messaggio con il link';
   copyLink = 'Copia link';
   sendSmsFromDevice = 'Invia un collegamento SMS dal tuo telefono';

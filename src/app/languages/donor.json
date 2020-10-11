@@ -614,7 +614,7 @@
   },
   "createNewEvent": {
     "google": "פתיחת ארוע חדש",
-    "valueInCode": "פתיחת ארוע חדש"
+    "valueInCode": "פתיחת חלוקה חדשה"
   },
   "createNewEventHelp": {
     "google": "פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשר פתיחת משלוח חדש לתורמים",
@@ -1914,7 +1914,7 @@
   },
   "notDoneDeliveriesShouldArchiveThem": {
     "google": "משלוחים שטרם שוייכו, האם להעביר אותם לארכיב?",
-    "valueInCode": "משלוחים פעילים שטרם שוייכו, האם להמשיך בפתיחת ארוע חדש?"
+    "valueInCode": "משלוחים פעילים שטרם שוייכו, יש למחוק אותם לפני פתיחת חלוקה חדשה כדי שלא ישמרו סתם בארכיון?"
   },
   "notice": {
     "google": "שים לב!",
@@ -2538,6 +2538,10 @@
   "sendSuccessMessageToFamily": {
     "google": "שלח הודעה לתורם כאשר הסל נמסר",
     "valueInCode": "שלח הודעה למשפחה כאשר הסל נמסר"
+  },
+  "sendWhatsAppToFamily": {
+    "google": "שלח ווטסאפ לתורם",
+    "valueInCode": "שלח ווטסאפ למשפחה"
   },
   "sessionExpiredPleaseRelogin": {
     "google": "פג תוקף החיבור לשרת, יש לבצע כניסה מחדש",

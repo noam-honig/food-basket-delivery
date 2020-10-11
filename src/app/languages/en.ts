@@ -48,6 +48,7 @@ export class en implements Language {
   showAllDeliveries = 'View all deliveries for distribution';
   sendSmsWithLink = 'Send an SMS with a link';
   sendLinkOnWhatsapp = 'Send on WhatsApp';
+  sendWhatsAppToFamily = 'Send WhatsApp to family';
   copyMessageWithLink = 'Copy message with link';
   copyLink = 'Copy link';
   sendSmsFromDevice = 'Send an SMS link from your phone';
