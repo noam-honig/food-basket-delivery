@@ -25,7 +25,7 @@
     <tr>
         <th>מתנדבים</th>
         <td>{{totalVolunteers}}</td>
-        <td>{{addedVolunteers}}</td>
+        <td>{{addedVolunteers}} (ממוצע משפחות למתנדב: {{avgFamiliesPerVolunteer}})</td>
     </tr>
     <tr>
         <th>תורמים</th>
@@ -35,11 +35,11 @@
     <tr>
         <th>תרומות </th>
         <td>{{totalDonations}}</td>
-        <td>{{addedDonations}}</td>
+        <td>{{addedDonations}}  (נאספו: {{addedCollected}} נקלטו: {{addedReceived}})</td>
     </tr>
     <tr *ngFor="let b of totalPerBasket">
       <td>{{b.basketType}}</td>
       <td>{{b.total}}</td>
-      <td>{{b.added}}</td>
+      <td>{{b.added}} (נאספו: {{b.collected}} נקלטו: {{b.received}})</td>
     </tr>
 </table>
