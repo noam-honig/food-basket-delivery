@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { ServerFunction, Context, SqlDatabase, EntityWhere, AndFilter, packWhere, BusyService, Column } from '@remult/core';
-import { SqlBuilder } from '../model-shared/types';
+import { ServerFunction, Context, SqlDatabase, EntityWhere, AndFilter, packWhere, BusyService, Column, BoolColumn, DataAreaSettings } from '@remult/core';
+import { PhoneColumn, SqlBuilder } from '../model-shared/types';
 import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { DialogService } from '../select-popup/dialog';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { buildGridButtonFromActions } from '../families/familyActionsWiring';
-import { familyActions, UpdateStatus,  updateGroup } from '../families/familyActions';
+import { familyActions, UpdateStatus, updateGroup } from '../families/familyActions';
 import { FamiliesComponent, saveFamiliesToExcel } from '../families/families.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
@@ -19,11 +19,29 @@ import { Roles } from '../auth/roles';
 })
 export class DuplicateFamiliesComponent implements OnInit {
 
-  constructor(private context: Context, private dialog: DialogService, public settings: ApplicationSettings, private busy: BusyService) { }
+  address = new BoolColumn({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.address });
+  name = new BoolColumn({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.familyName });
+  phone = new BoolColumn({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.phone });
+  tz = new BoolColumn({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.socialSecurityNumber });
+  area = new DataAreaSettings({ columnSettings: () => [[this.address, this.name, this.phone, this.tz]] });
+  constructor(private context: Context, private dialog: DialogService, public settings: ApplicationSettings, private busy: BusyService) {
+    
+  }
   duplicateFamilies: duplicateFamilies[] = [];
+  viewdFamilies = new Map<string, boolean>();
   async ngOnInit() {
+    this.duplicateFamilies = [];
+    if (!this.address.value && !this.name.value && !this.phone.value && !this.tz.value) {
+      //      this.dialog.Error("אנא בחרו לפי מה לחפש משפחות כפולות");
+      return;
+    }
     try {
-      this.duplicateFamilies = await DuplicateFamiliesComponent.familiesInSameAddress();
+      this.duplicateFamilies = await DuplicateFamiliesComponent.familiesInSameAddress({
+        address: this.address.value,
+        name: this.name.value,
+        phone: this.phone.value,
+        tz: this.tz.value
+      });
       this.post();
     }
     catch (err) {
@@ -71,7 +89,7 @@ export class DuplicateFamiliesComponent implements OnInit {
           return r;
         },
         numOfColumnsInGrid: 6,
-        
+
         gridButtons: [
           ...buildGridButtonFromActions([UpdateStatus, updateGroup], this.context,
             {
@@ -85,7 +103,7 @@ export class DuplicateFamiliesComponent implements OnInit {
                 };
                 return {
                   count: await this.context.for(Families).count(where),
-                   where
+                  where
                 };
               }, settings: this.settings,
               groupName: this.settings.lang.families
@@ -112,19 +130,19 @@ export class DuplicateFamiliesComponent implements OnInit {
           },
           {
             name: this.settings.lang.deliveries,
-            click: f => f.showDeliveryHistoryDialog({ settings: this.settings, dialog: this.dialog ,busy:this.busy})
+            click: f => f.showDeliveryHistoryDialog({ settings: this.settings, dialog: this.dialog, busy: this.busy })
           }
         ],
         get: {
           limit: 25,
-          where: f => f.status.isDifferentFrom(FamilyStatus.ToDelete).and(f.addressLatitude.isEqualTo(d.lat).and(f.addressLongitude.isEqualTo(d.lng))),
+          where: f => f.status.isDifferentFrom(FamilyStatus.ToDelete).and(f.id.isIn(d.ids.split(','))),
           orderBy: f => f.name
         }
 
       })
 
     });
-    this.ngOnInit();
+    this.viewdFamilies.set(d.ids, true);
   }
 
   private async mergeFamilies(x: GridDialogComponent) {
@@ -148,33 +166,83 @@ export class DuplicateFamiliesComponent implements OnInit {
   }
 
   @ServerFunction({ allowed: true })
-  static async familiesInSameAddress(context?: Context, db?: SqlDatabase) {
+  static async familiesInSameAddress(compare: { address: boolean, name: boolean, phone: boolean, tz: boolean }, context?: Context, db?: SqlDatabase) {
+    if (!compare.address && !compare.name && !compare.phone && !compare.tz)
+      throw "some column needs to be selected for compare";
     let sql = new SqlBuilder();
     let f = context.for(Families).create();
-    return (await db.execute(sql.query({
-      select: () => [
-        sql.max(f.createDate),
-        sql.columnWithAlias(f.addressLatitude, 'lat'),
-        sql.columnWithAlias(f.addressLongitude, 'lng'),
-        sql.columnWithAlias(sql.max(f.address), 'address'),
-        sql.columnWithAlias(sql.count(), 'c')],
-      from: f,
-      where: () => [f.status.isDifferentFrom(FamilyStatus.ToDelete)],
-      groupBy: () => [f.addressLatitude, f.addressLongitude],
-      having: () => [sql.gt(sql.count(), 1)]
+    let q = '';
+    for (const tz of [f.tz, f.tz2]) {
+      for (const phone of [f.phone1, f.phone2, f.phone3, f.phone4]) {
+        if (q.length > 0) {
+          q += '\r\n union all \r\n';
 
-    }))).rows.map(x => ({
+        }
+        q += sql.query({
+          select: () => [
+            sql.columnWithAlias(f.addressLatitude, 'lat'),
+            sql.columnWithAlias(f.addressLongitude, 'lng'),
+            sql.columnWithAlias(f.address, 'address'),
+            f.name,
+            sql.columnWithAlias(f.id, 'id'),
+            sql.columnWithAlias(sql.extractNumber(tz), 'tz'),
+            sql.columnWithAlias(sql.extractNumber(phone), 'phone')
+          ],
+          from: f,
+          where: () => [f.status.isDifferentFrom(FamilyStatus.ToDelete)],
+        });
+      }
+
+    }
+
+    let where = [];
+    let groupBy = [];
+    if (compare.address) {
+      groupBy.push('lat');
+      groupBy.push('lng');
+    }
+    if (compare.phone) {
+      groupBy.push('phone');
+      where.push('phone<>0');
+    }
+    if (compare.tz) {
+      groupBy.push('tz');
+      where.push('tz<>0');
+    }
+    if (compare.name) {
+      groupBy.push('name');
+    }
+    q = sql.build('select ', [
+      sql.columnWithAlias(sql.max('address'), 'address'),
+      sql.columnWithAlias(sql.max('name'), '"name"'),
+      sql.columnWithAlias(sql.max('tz'), 'tz'),
+      sql.columnWithAlias(sql.max('phone'), 'phone'), 'count (distinct id) c', "string_agg(id::text, ',') ids"], ' from ('
+      , q, ') as result');
+    if (where.length > 0)
+      q += ' where ' + sql.and(...where);
+    q += ' group by ' + sql.build([groupBy]);
+    q += ' having count(distinct id)>1';
+
+
+
+
+
+    return (await db.execute(q)).rows.map(x => ({
       address: x['address'],
-      lat: +x['lat'],
-      lng: +x['lng'],
-      count: +x['c']
+      name: x['name'],
+      phone: PhoneColumn.formatPhone(x['phone']),
+      tz: x['tz'],
+      count: +x['c'],
+      ids: x['ids']
     } as duplicateFamilies));
   }
 
 }
 export interface duplicateFamilies {
   address: string,
-  lat: number,
-  lng: number,
-  count: number
+  name: string,
+  tz: number,
+  phone: string,
+  count: number,
+  ids: string
 }

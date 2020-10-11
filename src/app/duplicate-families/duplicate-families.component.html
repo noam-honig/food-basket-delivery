@@ -1,17 +1,25 @@
-<h3>{{settings.lang.addressesWithMoreThanOneFamily}}</h3>
-<table class="table table-bordered">
+<h3>{{settings.lang.DuplicateFamiliesComponent}}</h3>
+<data-area [settings]="area"></data-area>
+<button mat-raised-button color="primary" (click)="ngOnInit()">{{settings.lang.search}}</button>
+<table class="table table-bordered" *ngIf="duplicateFamilies&&duplicateFamilies.length>0">
     <tr>
         <th></th>
-        <th (click)="sortByAddress()">{{settings.lang.address}}</th>
+        <th *ngIf="name.value">{{settings.lang.familyName}}</th>
+        <th *ngIf="tz.value">{{settings.lang.socialSecurityNumber}}</th>
+        <th *ngIf="address.value" (click)="sortByAddress()">{{settings.lang.address}}</th>
+        <th *ngIf="phone.value">{{settings.lang.phone}}</th>
         <th (click)="sortByCount()">{{settings.lang.families}}</th>
         <th>{{settings.lang.total}} {{duplicateFamilies.length}}</th>
-        
+
     </tr>
-    <tr *ngFor="let d of duplicateFamilies; let i=index">
+    <tr *ngFor="let d of duplicateFamilies; let i=index" [class.deliveredOk]="viewdFamilies.get(d.ids)">
         <td>{{i+1}}</td>
-        <td> {{d.address}}</td>
+        <td *ngIf="name.value">{{d.name}}</td>
+        <td *ngIf="tz.value">{{d.tz}}</td>
+        <td *ngIf="address.value"> {{d.address}}</td>
+        <td *ngIf="phone.value">{{d.phone}}</td>
         <td>{{d.count}}</td>
         <td><a (click)="showFamilies(d)">{{settings.lang.showFamilies}}</a></td>
-        
+
     </tr>
 </table>

@@ -16,7 +16,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 })
 export class MergeFamiliesComponent implements OnInit {
 
-  constructor(public context: Context, private dialogRef: MatDialogRef<any>, public dialog: DialogService, public settings: ApplicationSettings,private busy:BusyService) { }
+  constructor(public context: Context, private dialogRef: MatDialogRef<any>, public dialog: DialogService, public settings: ApplicationSettings, private busy: BusyService) { }
   families: Families[] = [];
   family: Families;
   async ngOnInit() {
@@ -143,13 +143,13 @@ export class MergeFamiliesComponent implements OnInit {
       this.merged = true;
       this.dialogRef.close();
       let deliveries = await this.context.for(ActiveFamilyDeliveries).count(fd => fd.family.isEqualTo(this.family.id).and(fd.deliverStatus.isNotAResultStatus()))
-      if (deliveries > 1) {
-        if (await this.dialog.YesNoPromise("יש " + deliveries + " משלוחים פעילים למשפחה - להציג אותם?"))
-          await this.family.showDeliveryHistoryDialog({
-            settings: this.settings,
-            dialog: this.dialog,
-            busy:this.busy
-          });
+      if (deliveries > 0) {
+
+        await this.family.showDeliveryHistoryDialog({
+          settings: this.settings,
+          dialog: this.dialog,
+          busy: this.busy
+        });
       }
     }
     catch (err) {
