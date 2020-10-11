@@ -25,7 +25,7 @@ export class DuplicateFamiliesComponent implements OnInit {
   tz = new BoolColumn({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.socialSecurityNumber });
   area = new DataAreaSettings({ columnSettings: () => [[this.address, this.name, this.phone, this.tz]] });
   constructor(private context: Context, private dialog: DialogService, public settings: ApplicationSettings, private busy: BusyService) {
-    
+
   }
   duplicateFamilies: duplicateFamilies[] = [];
   viewdFamilies = new Map<string, boolean>();
@@ -233,7 +233,7 @@ export class DuplicateFamiliesComponent implements OnInit {
       phone: PhoneColumn.formatPhone(x['phone']),
       tz: x['tz'],
       count: +x['c'],
-      ids: x['ids']
+      ids: x['ids'].split(',').filter((val, index, self) => self.indexOf(val) == index).join(',')
     } as duplicateFamilies));
   }
 
