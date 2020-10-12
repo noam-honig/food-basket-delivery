@@ -48,6 +48,7 @@ export class soldier implements Language {
   showAllDeliveries = 'הצג את כל המשלוחים לחלוקה';
   sendSmsWithLink = 'שלח הודעת SMS עם קישור';
   sendLinkOnWhatsapp = 'שלח קישור ב whatsapp';
+  sendWhatsAppToFamily = 'שלח ווטסאפ לחייל';
   copyMessageWithLink = 'העתק הודעה עם קישור';
   copyLink = 'העתק קישור';
   sendSmsFromDevice = 'שלח קישור בSMS מהטלפון';

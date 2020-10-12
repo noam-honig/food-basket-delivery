@@ -26,7 +26,7 @@ import { Helpers } from '../helpers/helpers';
 
 import { sortColumns } from '../shared/utils';
 import { getLang } from '../sites/sites';
-import { SqlBuilder } from '../model-shared/types';
+import { PhoneColumn, SqlBuilder } from '../model-shared/types';
 import { Groups } from '../manage/groups';
 
 @Component({
@@ -1025,7 +1025,20 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
         }
       }, visible: d => !d.archive.value && DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)
 
+    },
+    {
+      textInMenu: () => getLang(args.context).sendWhatsAppToFamily,
+      click: async d => {
+        PhoneColumn.sendWhatsappToPhone(d.phone1.value, 
+          getLang(args.context).hello + ' ' + d.name.value + ',', args.context);
+      }, 
+      visible: d => d.phone1 && args.context.isAllowed(Roles.distCenterAdmin) && args.settings.isSytemForMlt()
     }
+
+
+
+
+
   ] as RowButton<FamilyDeliveries>[]
 
 }

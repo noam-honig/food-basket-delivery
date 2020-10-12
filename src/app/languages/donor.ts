@@ -48,6 +48,7 @@ export class donor implements Language {
   showAllDeliveries = 'הצג את כל התרומות לאיסוף';
   sendSmsWithLink = 'שלח הודעת SMS עם קישור';
   sendLinkOnWhatsapp = 'שלח קישור ב whatsapp';
+  sendWhatsAppToFamily = 'שלח ווטסאפ לתורם';
   copyMessageWithLink = 'העתק הודעה עם קישור';
   copyLink = 'העתק קישור';
   sendSmsFromDevice = 'שלח קישור בSMS מהטלפון';

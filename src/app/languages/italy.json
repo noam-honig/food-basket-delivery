@@ -766,7 +766,7 @@
   },
   "createNewEvent": {
     "google": "Crea un nuovo evento",
-    "valueInCode": "פתיחת ארוע חדש",
+    "valueInCode": "פתיחת חלוקה חדשה",
     "valueInEnglish": "Create a new event"
   },
   "createNewEventHelp": {
@@ -2387,7 +2387,7 @@
   },
   "notDoneDeliveriesShouldArchiveThem": {
     "google": "Consegne non assegnate, procedere con la creazione di un nuovo evento?",
-    "valueInCode": "משלוחים פעילים שטרם שוייכו, האם להמשיך בפתיחת ארוע חדש?",
+    "valueInCode": "משלוחים פעילים שטרם שוייכו, יש למחוק אותם לפני פתיחת חלוקה חדשה כדי שלא ישמרו סתם בארכיון?",
     "valueInEnglish": "Unassigned deliveries, proceed with creating a new event?"
   },
   "notice": {
@@ -3165,6 +3165,11 @@
     "google": "Invia SMS alla famiglia alla consegna",
     "valueInCode": "שלח הודעה למשפחה כאשר הסל נמסר",
     "valueInEnglish": "Send SMS to Family on delivery"
+  },
+  "sendWhatsAppToFamily": {
+    "google": "Invia WhatsApp alla famiglia",
+    "valueInCode": "שלח ווטסאפ למשפחה",
+    "valueInEnglish": "Send WhatsApp to family"
   },
   "sessionExpiredPleaseRelogin": {
     "google": "La connessione al server è scaduta, accedi di nuovo",

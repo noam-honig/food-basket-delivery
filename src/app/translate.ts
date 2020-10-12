@@ -162,6 +162,7 @@ export class Language {
   showAllDeliveries = 'הצג את כל המשלוחים לחלוקה';
   sendSmsWithLink = 'שלח הודעת SMS עם קישור';
   sendLinkOnWhatsapp = 'שלח קישור ב whatsapp';
+  sendWhatsAppToFamily = 'שלח ווטסאפ למשפחה';
   copyMessageWithLink = 'העתק הודעה עם קישור';
   copyLink = 'העתק קישור';
   sendSmsFromDevice = 'שלח קישור בSMS מהטלפון';
