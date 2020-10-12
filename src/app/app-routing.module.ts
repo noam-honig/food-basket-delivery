@@ -47,6 +47,7 @@ import { Sites } from './sites/sites';
 import { InRouteFollowUpComponent } from './in-route-follow-up/in-route-follow-up.component';
 import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment-assign-screen.component';
 import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/volunteer-cross-assign.component';
+import { WeeklyReportMltComponent } from './weekly-report-mlt/weekly-report-mlt.component';
 
 
 
@@ -128,10 +129,12 @@ export const routes: Routes = [
   MyFamiliesComponent.route,
   UpdateInfoComponent.route,
   LoginComponent.route,
+  WeeklyReportMltComponent.route,
   
 
   { path: '', redirectTo: '/assign-families', pathMatch: 'full' },
   { path: '**', redirectTo: '/assign-families', pathMatch: 'full' }
+
 ];
 
 @NgModule({

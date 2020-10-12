@@ -1,5 +1,7 @@
 <mat-card>
   <app-date-range (dateChanged)="refresh()"></app-date-range>
+  <data-area [settings]="rangeArea"></data-area>
+
   <br>
   <h4> {{settings.lang.deliveries}} {{deliveries.totalRows}}</h4>
   <data-grid [settings]="deliveries" [height]="400"></data-grid>

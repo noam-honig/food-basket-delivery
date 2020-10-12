@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { EntityClass, Context, StringColumn, IdColumn, SpecificEntityHelper, SqlDatabase, Column, DataControlInfo } from '@remult/core';
+import { EntityClass, Context, StringColumn, IdColumn, SpecificEntityHelper, SqlDatabase, Column, DataControlInfo, BoolColumn } from '@remult/core';
 import { FamilyId } from '../families/families';
 import { SqlBuilder, PhoneColumn } from '../model-shared/types';
 import { BasketId } from '../families/BasketType';
@@ -37,6 +37,12 @@ export class DeliveryHistoryComponent implements OnInit {
 
 
   @ViewChild(DateRangeComponent, { static: true }) dateRange;
+
+  onlyDone = new BoolColumn({ caption: this.settings.lang.showOnlyCompletedDeliveries, defaultValue: true })
+  onlyArchived = new BoolColumn({ caption: this.settings.lang.showOnlyArchivedDeliveries, defaultValue: this.settings.isSytemForMlt() })
+  rangeArea = new DataAreaSettings({
+    columnSettings: () => [this.onlyDone, this.onlyArchived],
+  });
 
   async refresh() {
     this.deliveries.getRecords();
@@ -112,7 +118,7 @@ export class DeliveryHistoryComponent implements OnInit {
   }
   private async refreshHelpers() {
 
-    var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue, this.dialog.distCenter.value, this.dateRange.onlyDone.value, this.dateRange.onlyArchived.value);
+    var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue, this.dialog.distCenter.value, this.onlyDone.value, this.onlyArchived.value);
     let rows: any[] = this.helperStorage.rows[this.context.for(helperHistoryInfo).create().defs.dbName];
     x = x.map(x => {
       x.deliveries = +x.deliveries;
@@ -187,9 +193,9 @@ export class DeliveryHistoryComponent implements OnInit {
         var toDate = this.dateRange.toDate.value;
         toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
         let r = d.deliveryStatusDate.isGreaterOrEqualTo(this.dateRange.fromDate.value).and(d.deliveryStatusDate.isLessThan(toDate)).and(d.distributionCenter.filter(this.dialog.distCenter.value))
-        if (this.dateRange.onlyDone.value)
+        if (this.onlyDone.value)
           r = r.and(d.deliverStatus.isAResultStatus());
-        if (this.dateRange.onlyArchived.value)
+        if (this.onlyArchived.value)
           r = r.and(d.archive.isEqualTo(true));
         return r;
       }
@@ -222,6 +228,9 @@ export class DeliveryHistoryComponent implements OnInit {
     ]
   });
   async ngOnInit() {
+    if (!this.settings.isSytemForMlt())
+      this.onlyArchived.value = false;
+
     if (this.mltColumns.length > 0)
       sortColumns(this.deliveries, this.mltColumns);
     this.refreshHelpers();

@@ -1,0 +1,45 @@
+<app-date-range (dateChanged)="refresh()" [rangeWeekly]="true"></app-date-range>
+<style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 70%;
+    }
+    
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: right;
+      padding: 8px;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+</style>
+<table>
+    <tr>
+        <th></th>
+        <th>סה"כ</th>
+        <th>נוספו בתקופה נוכחית</th>
+    </tr>
+    <tr>
+        <th>מתנדבים</th>
+        <td>{{totalVolunteers}}</td>
+        <td>{{addedVolunteers}} (ממוצע משפחות למתנדב: {{avgFamiliesPerVolunteer}})</td>
+    </tr>
+    <tr>
+        <th>תורמים</th>
+        <td>{{totalDonors}}</td>
+        <td>{{addedDonors}}</td>
+    </tr>
+    <tr>
+        <th>תרומות </th>
+        <td>{{totalDonations}}</td>
+        <td>{{addedDonations}}  (נאספו: {{addedCollected}} נקלטו: {{addedReceived}})</td>
+    </tr>
+    <tr *ngFor="let b of totalPerBasket">
+      <td>{{b.basketType}}</td>
+      <td>{{b.total}}</td>
+      <td>{{b.added}} (נאספו: {{b.collected}} נקלטו: {{b.received}})</td>
+    </tr>
+</table>

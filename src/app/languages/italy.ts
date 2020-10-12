@@ -681,6 +681,7 @@ export class italy implements Language {
   attendingVolunteers = 'Numero di volontari iscritti';
   eventStatus = 'stato';
   eventsComponent = 'eventi';
+  weeklyReportMltComponent = 'Notevole rapporto settimanale';
   pleaseRegisterToTheFollowingEvents = 'Si prega di iscriversi per i prossimi eventi';
   illBeThere = 'Registrami per questo evento';
   registeredToEvent = 'Sei registrato per questo evento';

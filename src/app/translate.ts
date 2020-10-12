@@ -801,6 +801,7 @@ export class Language {
   attendingVolunteers = "מספר מתנדבים שנרשמו";
   eventStatus = "סטטוס";
   eventsComponent = "ארועים";
+  weeklyReportMltComponent = "דוח שבועי מתחשבים";
   pleaseRegisterToTheFollowingEvents = "אנא הרשמו לאירועים הקרובים";
   illBeThere = "רשום אותי לארוע זה";
   registeredToEvent = "הנך רשום לארוע זה";
