@@ -157,7 +157,7 @@ export class SelectHelperComponent implements OnInit {
           sql.columnWithAlias(afd.address, 'address')]
       }))).rows) {
         let h = helpers.get(d.courier);
-        {
+        if (h) {
           if (!h.fixedFamilies)
             h.fixedFamilies = 1;
           else

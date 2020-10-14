@@ -70,4 +70,4 @@
 מתנדב מחוק יופיע עם רקע אדום - ולחיצה נוספת על **מחיקת מתנדב** תבטל את מחיקתו
 
 
-[מצאתם טעות? עזרו לנו לתקן](https://github.com/noam-honig/food-basket-delivery/tree/master/docs/guide/vounteers.md)
+[מצאתם טעות? עזרו לנו לתקן](https://github.com/noam-honig/food-basket-delivery/blob/master/docs/guide/volunteers.md)

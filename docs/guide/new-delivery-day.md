@@ -44,4 +44,4 @@
 ![](./2020-10-07_14h30_11.png)
 
 
-[מצאתם טעות? עזרו לנו לתקן](https://github.com/noam-honig/food-basket-delivery/tree/master/docs/guide/new-deivery-day.md)
+[מצאתם טעות? עזרו לנו לתקן](https://github.com/noam-honig/food-basket-delivery/tree/master/docs/guide/new-delivery-day.md)
