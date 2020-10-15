@@ -439,7 +439,8 @@ export class FamiliesComponent implements OnInit {
                     actionWhere: h.actionWhere,
                     forEach: async f => {
                         await h.forEach(f);
-                        await f.save();
+                        if (f.wasChanged())
+                            await f.save();
                     }
                 },
                 info

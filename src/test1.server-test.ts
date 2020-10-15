@@ -1,14 +1,21 @@
 import { actionInfo, myServerAction, ServerContext, ServerFunction, SqlDatabase } from "@remult/core";
+import { settings } from "cluster";
 import "jasmine";
 import { AsignFamilyComponent } from "./app/asign-family/asign-family.component";
 import { Roles } from "./app/auth/roles";
+import { DeliveryStatus } from "./app/families/DeliveryStatus";
 import { Families } from "./app/families/families";
-import { ActiveFamilyDeliveries } from "./app/families/FamilyDeliveries";
+import { FamiliesComponent } from "./app/families/families.component";
+import { bridge, bridgeFamilyDeliveriesToFamilies, UpdateArea, UpdateStatus } from "./app/families/familyActions";
+import { ActiveFamilyDeliveries, FamilyDeliveries } from "./app/families/FamilyDeliveries";
+import { FamilyStatus } from "./app/families/FamilyStatus";
+import { UpdateDeliveriesStatus } from "./app/family-deliveries/family-deliveries-actions";
+import { FamilyDeliveriesComponent } from "./app/family-deliveries/family-deliveries.component";
 import { Helpers } from "./app/helpers/helpers";
 import { ApplicationSettings } from "./app/manage/ApplicationSettings";
 import { serverInit } from "./app/server/serverInit";
 import { GeocodeInformation } from "./app/shared/googleApiHelpers";
-import { itAsync } from "./app/shared/test-helper";
+import { fitAsync, itAsync } from "./app/shared/test-helper";
 import { Sites } from "./app/sites/sites";
 
 async function init() {
@@ -16,7 +23,7 @@ async function init() {
     context._setUser({
         id: 'admin',
         name: 'admin',
-        roles: [Roles.admin]
+        roles: [Roles.admin,Roles.distCenterAdmin]
     });
     actionInfo.runningOnServer = true;
     let sql: SqlDatabase;
@@ -66,7 +73,7 @@ async function init() {
             }
             let h = context.for(Helpers).create();
             h.name.value = 'a';
-            h._disableOnSavingRow =true;
+            h._disableOnSavingRow = true;
             await h.save();
             helperId = h.id.value;
             done();
@@ -111,6 +118,147 @@ async function init() {
             expect(r.families.length).toBe(2);
             expect(r.families.some(d => d.name == '6')).toBeTruthy();;
             expect(r.families.some(d => d.name == '5')).toBeTruthy();
+        });
+    });
+    describe("test update family status", () => {
+
+        beforeEach(async (done) => {
+            for (const d of await context.for(ActiveFamilyDeliveries).find()) {
+                await d.delete();
+            }
+            for (const f of await context.for(Families).find()) {
+                await f.delete();
+            }
+            done();
+        });
+        itAsync("update status, updatesStatus and deletes delivery", async () => {
+            let f = await context.for(Families).create();
+            f.name.value = "test";
+            await f.save();
+            
+            let fd = f.createDelivery('');
+            fd.deliverStatus.value = DeliveryStatus.FailedBadAddress;
+            await fd.save();
+            
+            let fd2 = f.createDelivery('');
+            fd2.deliverStatus.value = DeliveryStatus.FailedBadAddress;
+            await fd2.save();
+            
+            expect(+await context.for(ActiveFamilyDeliveries).count(x => x.family.isEqualTo(f.id))).toBe(2);
+            let u = new UpdateStatus(context);
+            let b = new bridgeFamilyDeliveriesToFamilies(context, u);
+            u.status.value = FamilyStatus.Frozen;
+            u.archiveFinshedDeliveries.value = true;
+
+            await b.internalForTestingCallTheServer({
+                afterAction: async () => { },
+                groupName: '',
+                buildActionInfo: async actionWhere => {
+                    return { where: actionWhere, count: 1 }
+                },
+                settings: await ApplicationSettings.getAsync(context),
+                dialog: undefined,
+                callServer: (info, actions, columns) => FamilyDeliveriesComponent.DeliveriesActionOnServer(info, actions, columns, context)
+
+            }, {
+                count: 1,
+                where: x => x.id.isEqualTo(fd.id)
+            });
+
+            let fd_after = await context.for(FamilyDeliveries).findId(fd.id);
+            expect(fd_after.archive.value).toBe(true, "fd");
+            let fd2_after = await context.for(FamilyDeliveries).findId(fd2.id);
+            expect(fd2_after.archive.value).toBe(true, "fd2");
+        });
+        itAsync("update status for delivery", async () => {
+            let f = await context.for(Families).create();
+            f.name.value = "test";
+            await f.save();
+            let fd = f.createDelivery('');
+            await fd.save();
+
+            expect(+await context.for(ActiveFamilyDeliveries).count(x => x.id.isEqualTo(fd.id))).toBe(1);
+            let u = new UpdateDeliveriesStatus(context);
+
+            u.status.value = DeliveryStatus.Frozen;
+            
+            await u.internalForTestingCallTheServer({
+                afterAction: async () => { },
+                groupName: '',
+                buildActionInfo: async actionWhere => {
+                    return { where: actionWhere, count: 1 }
+                },
+                settings: await ApplicationSettings.getAsync(context),
+                dialog: undefined,
+                callServer: async (info, actions, columns) => {
+                    let r= await FamilyDeliveriesComponent.DeliveriesActionOnServer(info, actions, columns, context);
+                    return r;
+                }
+
+            }, {
+                count: 1,
+                where: x => x.id.isEqualTo(fd.id)
+            });
+            let fd_after = await context.for(ActiveFamilyDeliveries).findId(fd.id);
+            expect(fd_after.deliverStatus.value).toBe(DeliveryStatus.Frozen, "fd");
+
+        });
+        itAsync("update area for family", async () => {
+            let f = await context.for(Families).create();
+            f.name.value = "test";
+            await f.save();
+
+            let u = new UpdateArea(context);
+
+            u.area.value = "north";
+
+            await u.internalForTestingCallTheServer({
+                afterAction: async () => { },
+                groupName: '',
+                buildActionInfo: async actionWhere => {
+                    return { where: actionWhere, count: 1 }
+                },
+                settings: await ApplicationSettings.getAsync(context),
+                dialog: undefined,
+                callServer: (info, actions, columns) => FamiliesComponent.FamilyActionOnServer(info, actions, columns, context)
+
+            }, {
+                count: 1,
+                where: x => x.id.isEqualTo(f.id)
+            });
+            let fd_after = await context.for(Families).findId(f.id);
+            expect(fd_after.area.value).toBe("north");
+
+        });
+        itAsync("update area", async () => {
+            let f = await context.for(Families).create();
+            f.name.value = "test";
+            await f.save();
+            let fd = f.createDelivery('');
+            await fd.save();
+            let u = new UpdateArea(context);
+            let b = new bridgeFamilyDeliveriesToFamilies(context, u);
+            u.area.value = 'north';
+
+
+            await b.internalForTestingCallTheServer({
+                afterAction: async () => { },
+                groupName: '',
+                buildActionInfo: async actionWhere => {
+                    return { where: actionWhere, count: 1 }
+                },
+                settings: await ApplicationSettings.getAsync(context),
+                dialog: undefined,
+                callServer: (info, actions, columns) => FamilyDeliveriesComponent.DeliveriesActionOnServer(info, actions, columns, context)
+
+            }, {
+                count: 1,
+                where: x => x.id.isEqualTo(fd.id)
+            });
+
+            let fd_after = await context.for(FamilyDeliveries).findId(fd.id);
+            expect(fd_after.area.value).toBe("north", "fd");
+
         });
     });
 }

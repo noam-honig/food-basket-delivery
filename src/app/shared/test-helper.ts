@@ -1,5 +1,16 @@
 export function itAsync(name: string, what: () => Promise<void>) {
-    it("testing basics", async done => {
+    it(name, async done => {
+        try {
+            await what();
+            done();
+        }
+        catch (err) {
+            done.fail(err);
+        }
+    });
+}
+export function fitAsync(name: string, what: () => Promise<void>) {
+    fit(name, async done => {
         try {
             await what();
             done();

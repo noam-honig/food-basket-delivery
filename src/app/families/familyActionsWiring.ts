@@ -108,15 +108,7 @@ export class ActionOnRows<T extends IdEntity> {
                             try {
                                 let info = await component.buildActionInfo(this.args.additionalWhere);
                                 if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + " " + use.language.for + " " + info.count + ' ' + component.groupName + '?')) {
-                                    let args = [];
-                                    for (const c of this.args.columns()) {
-                                        args.push(c.rawValue);
-                                    }
-
-                                    let r = await component.callServer({
-                                        count: info.count,
-                                        packedWhere: packWhere(this.context.for(this.entity).create(), info.where)
-                                    }, this.args.title, args);
+                                    let r = await this.internalForTestingCallTheServer(component, info);
                                     component.dialog.Info(r);
 
 
@@ -136,6 +128,19 @@ export class ActionOnRows<T extends IdEntity> {
 
             }
         } as GridButton;
+    }
+
+     async internalForTestingCallTheServer(component: actionDialogNeeds<T>, info: serverUpdateInfo<T>) {
+        let args = [];
+        for (const c of this.args.columns()) {
+            args.push(c.rawValue);
+        }
+
+        let r = await component.callServer({
+            count: info.count,
+            packedWhere: packWhere(this.context.for(this.entity).create(), info.where)
+        }, this.args.title, args);
+        return r;
     }
 }
 

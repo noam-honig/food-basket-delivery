@@ -788,7 +788,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           forEach: async fd => {
             fd._disableMessageToUsers = true;
             await h.forEach(fd);
-            await fd.save();
+            if (fd.wasChanged())
+              await fd.save();
           }
         },
         info,

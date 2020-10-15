@@ -372,7 +372,6 @@ export class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<ActiveFamilyD
                 if (f) {
                     await orig.args.forEach(f);
                     await f.save();
-                    f.updateDelivery(fd);
                 }
             },
             title: orig.args.title,
