@@ -484,6 +484,7 @@ export class en implements Language {
   dates = 'Dates';
   selfPickup = 'Come and take';
   delveriesSuccesfull = 'Delivered';
+  selfAssigned = 'Assigned independently';
   familiesAt = 'Families b';
   noFamiliesSelected = 'No families were selected';
   cantMergeOneFamily = 'Cannot merge only one family';
@@ -789,4 +790,5 @@ export class en implements Language {
   archiveDate = 'Archive: Date of update';
   archiveUser = 'Archive: User updates';
   showTzToVolunteer = 'Show ID number to volunteer';
+  myGiftsURL = 'My benefits';
 }

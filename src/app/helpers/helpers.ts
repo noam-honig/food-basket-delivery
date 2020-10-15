@@ -73,6 +73,11 @@ export abstract class HelpersBase extends IdEntity {
         , allowApiUpdate: Roles.admin
     });
 
+    myGiftsURL = new StringColumn({
+        allowApiUpdate: Roles.admin,
+        includeInApi: Roles.admin,
+        caption: getLang(this.context).myGiftsURL
+    });
 
     archive = new BoolColumn({
         allowApiUpdate: Roles.admin,

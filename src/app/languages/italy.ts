@@ -484,6 +484,7 @@ export class italy implements Language {
   dates = 'Date';
   selfPickup = 'Vieni e prendi';
   delveriesSuccesfull = 'consegnato';
+  selfAssigned = 'Assegnato indipendentemente';
   familiesAt = 'Famiglie b';
   noFamiliesSelected = 'Nessuna famiglia selezionata';
   cantMergeOneFamily = 'Impossibile unire solo una famiglia';
@@ -789,4 +790,5 @@ export class italy implements Language {
   archiveDate = 'Archivio: data di aggiornamento';
   archiveUser = 'Archivio: aggiornamenti utente';
   showTzToVolunteer = 'Mostra il numero ID al volontario';
+  myGiftsURL = 'I miei vantaggi';
 }

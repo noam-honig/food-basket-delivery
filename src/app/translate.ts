@@ -203,8 +203,8 @@ export class Language {
   findHelperByName = 'חפש מתנדב לפי שם';
   clearHelperInfo = 'נקה פרטי מתנדב';
   saveHelperInfoAndMoveToNextHelper = 'שמור פרטי מתנדב ועבור למתנדב הבא';
-  showHelperCompany = 'הצג חברה למתנדב';
-  hideHelperCompany = 'הסתר חברה למתנדב';
+  showHelperCompany = 'הצג ארגון למתנדב';
+  hideHelperCompany = 'הסתר ארגון למתנדב';
   volunteerPhoneNumber = 'מספר הטלפון של המתנדב';
   assignHelpText = 'אנא הזיני את הטלפון של המתנדב ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים לשייך';
   asignVideoHelp = 'לסרטון הדרכה על שיוך משלוחים ויום האירוע לחצו כאן';
@@ -260,7 +260,7 @@ export class Language {
   indie = 'מתנדב עצמאי';
   responsibleForAssign = 'משייך מתנדבים לרשימת חלוקה';
   notAllowedToUpdateVolunteer = 'אינך רשאי לעדכן עבור מתנדב זה';
-  company = "חברה";
+  company = "ארגון";
   updateInfo = "עדכון פרטים";
   organizationName = 'שם הארגון';
   smsMessageContentCaption = 'תוכן הודעת SMS';
@@ -285,7 +285,7 @@ export class Language {
   showText2OnlyWhenDone = 'להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים';
   enableSelfPickupModule = 'ישנן משפחות שבאות לקחת ממרכז החלוקה';
   enableLabReception = 'משלוח מסתיים אחרי קליטה במעבדה';
-  showVolunteerCompany = 'שמור מטעם איזה חברה הגיע המתנדב';
+  showVolunteerCompany = 'שמור מטעם איזה ארגון הגיע המתנדב';
   activateEscort = 'הפעל ניהול מלווים לנהגים';
   showHelperComment = 'הצג הערה בשיוך למתנדב';
   filterFamilyGroups = 'סינון קבוצת משפחה';
@@ -598,6 +598,7 @@ export class Language {
   dates = 'תאריכים';
   selfPickup = 'באים לקחת';
   delveriesSuccesfull = 'נמסרו';
+  selfAssigned = 'שויכו עצמאית';
   familiesAt = 'משפחות ב';
   noFamiliesSelected = 'לא נבחרו משפחות';
   cantMergeOneFamily = 'אין מה למזג משפחה אחת';
@@ -757,7 +758,7 @@ export class Language {
   thankYou = 'תודה';
   thankYouForDonation = 'תודה על תרומתך';
   thankYouForHelp = 'תודה על עזרתך';
-  searchCompanyName = 'חיפוש שם חברה';
+  searchCompanyName = 'חיפוש שם ארגון';
   confirmDeleteOf = "אישור מחיקה עבור ";
   originalAddress = 'כתובת מקורית';
   addGroupAssignmentVerb = 'להוסיף שיוך לקבוצה';
@@ -912,6 +913,8 @@ export class Language {
   archiveDate = "ארכיב: מועד עדכון";
   archiveUser = "ארכיב: משתמש מעדכן";
   showTzToVolunteer = "הצג מספר זהות למתנדב";
+  myGiftsURL = "ההטבות שלי";
+
 }
 
 const defaultLang = new Language();

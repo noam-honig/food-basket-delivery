@@ -563,7 +563,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.phone3Description,
         deliveries.phone4,
         deliveries.phone4Description,
-        { column: deliveries.courier, width: '100' },
+        { column: deliveries.courier, width: (this.settings.isSytemForMlt() ? '300' : '100') },
 
         deliveries.courierAssignUser,
         { column: deliveries.courierAssingTime, width: '150' },
@@ -586,8 +586,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       if (this.settings.isSytemForMlt()) {
         this.normalColumns.push(
           deliveries.city,
-          deliveries.distributionCenter,
-          deliveries.basketType,
+          //deliveries.distributionCenter,
+          //deliveries.basketType,
           deliveries.deliverStatus,
           deliveries.quantity,
           deliveries.createDate,
