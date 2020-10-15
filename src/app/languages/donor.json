@@ -1041,6 +1041,10 @@
     "google": "פרטי ארוע",
     "valueInCode": "פרטי ארוע"
   },
+  "eventIsFull": {
+    "google": "ארוע זה מלא, נשמח אם תרשמו לאחר",
+    "valueInCode": "ארוע זה מלא, נשמח אם תרשמו לאחר"
+  },
   "eventName": {
     "google": "שם ארוע",
     "valueInCode": "שם ארוע"

@@ -3,6 +3,7 @@ import { settings } from "cluster";
 import "jasmine";
 import { AsignFamilyComponent } from "./app/asign-family/asign-family.component";
 import { Roles } from "./app/auth/roles";
+import { HelpersAndStats } from "./app/delivery-follow-up/HelpersAndStats";
 import { DeliveryStatus } from "./app/families/DeliveryStatus";
 import { Families } from "./app/families/families";
 import { FamiliesComponent } from "./app/families/families.component";
@@ -39,6 +40,13 @@ async function init() {
             });
         });
 
+        describe("helpers",()=>{
+            itAsync('helpers and stats work',async()=>{
+
+                let h = await  context.for(HelpersAndStats).find();
+            })
+            ;
+        });
     describe("the test", () => {
         let helperId: string;
         beforeEach(async done => {
@@ -261,5 +269,5 @@ async function init() {
 
         });
     });
-}
+} 
 init();

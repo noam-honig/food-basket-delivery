@@ -791,4 +791,5 @@ export class en implements Language {
   archiveUser = 'Archive: User updates';
   showTzToVolunteer = 'Show ID number to volunteer';
   myGiftsURL = 'My benefits';
+  eventIsFull = "This event is full, we'll be happy if you sign up after";
 }

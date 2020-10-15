@@ -1300,6 +1300,11 @@
     "valueInCode": "פרטי ארוע",
     "valueInEnglish": "Event details"
   },
+  "eventIsFull": {
+    "google": "Este evento está lleno, estaremos felices si te registras después",
+    "valueInCode": "ארוע זה מלא, נשמח אם תרשמו לאחר",
+    "valueInEnglish": "This event is full, we'll be happy if you sign up after"
+  },
   "eventName": {
     "google": "Nombre del evento",
     "valueInCode": "שם ארוע",

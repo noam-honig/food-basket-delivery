@@ -3,7 +3,7 @@
         <h3 class="no-print">{{settings.lang.hello}} {{user.name}}</h3>
         <H4 *ngIf="user.escortedHelperName">{{settings.lang.escoring}} {{user.escortedHelperName}}</H4>
     </div>
-  
+
     <button mat-mini-fab style="margin-bottom:5px" (click)="ngOnInit(); this.showQRCode=false" color="primary">
         <mat-icon>refresh</mat-icon>
     </button>
@@ -51,9 +51,14 @@
                 {{e.description.value}}
             </div>
             <div>{{settings.lang.volunteers}}: {{e.registeredVolunteers.value}}/{{e.requiredVolunteers.value}}</div>
-            <button mat-raised-button color="primary" *ngIf="volunteerInEvent(e).isNew()"
+            <button mat-raised-button color="primary"
+                *ngIf="volunteerInEvent(e).isNew() && e.registeredVolunteers.value<e.requiredVolunteers.value"
                 (click)="registerToEvent(e)">{{settings.lang.illBeThere}}
             </button>
+            <span mat-raised-button color="primary"
+                *ngIf="volunteerInEvent(e).isNew() && e.registeredVolunteers.value>=e.requiredVolunteers.value"
+            >{{settings.lang.eventIsFull}}
+        </span>
             <span *ngIf="!volunteerInEvent(e).isNew()">
                 {{settings.lang.registeredToEvent}} <a (click)="cancelEvent(e)">{{settings.lang.iCantMakeIt}}</a>
             </span>
@@ -64,10 +69,10 @@
 
 </mat-card>
 <button *ngIf="settings.isSytemForMlt() && !this.showQRCode" mat-raised-button (click)="this.showQRCode=true"
-style="height: 35px;" color="primary">
-{{settings.lang.showQRCode}}
+    style="height: 35px;" color="primary">
+    {{settings.lang.showQRCode}}
 </button>
 <button *ngIf="settings.isSytemForMlt() && this.showQRCode" mat-raised-button (click)="this.showQRCode=false"
-style="height: 35px;" color="primary">
-{{settings.lang.removeQRCode}}
+    style="height: 35px;" color="primary">
+    {{settings.lang.removeQRCode}}
 </button>

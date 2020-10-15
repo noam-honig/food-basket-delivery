@@ -129,7 +129,7 @@ export const routes: Routes = [
   MyFamiliesComponent.route,
   UpdateInfoComponent.route,
   LoginComponent.route,
-  WeeklyReportMltComponent.route,
+  {path: 'weekly-report-mlt', component: WeeklyReportMltComponent, canActivate: [MltOnlyGuard]},
   
 
   { path: '', redirectTo: '/assign-families', pathMatch: 'full' },

@@ -791,4 +791,5 @@ export class es implements Language {
   archiveUser = 'Archivo: actualizaciones de usuario';
   showTzToVolunteer = 'Mostrar número de identificación para ser voluntario';
   myGiftsURL = 'Mis beneficios';
+  eventIsFull = 'Este evento está lleno, estaremos felices si te registras después';
 }

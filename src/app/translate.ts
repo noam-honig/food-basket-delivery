@@ -914,6 +914,7 @@ export class Language {
   archiveUser = "ארכיב: משתמש מעדכן";
   showTzToVolunteer = "הצג מספר זהות למתנדב";
   myGiftsURL = "ההטבות שלי";
+  eventIsFull = "ארוע זה מלא, נשמח אם תרשמו לאחר"
 
 }
 

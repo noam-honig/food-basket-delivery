@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Route } from '@angular/router';
 import { Context, DateColumn, ServerFunction, SqlDatabase } from '@remult/core';
 import { toInt } from 'ngx-bootstrap/chronos/utils/type-checks';
+
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { DateRangeComponent } from '../date-range/date-range.component';
 import { BasketType } from '../families/BasketType';
@@ -20,7 +21,7 @@ import { SqlBuilder } from '../model-shared/types';
 export class WeeklyReportMltComponent implements OnInit {
   @ViewChild(DateRangeComponent, { static: true }) dateRange;
 
-  static route: Route = {path: 'weekly-report-mlt', component: WeeklyReportMltComponent, canActivate: [distCenterAdminGuard]};
+  
 
   constructor(public context: Context) { }
 

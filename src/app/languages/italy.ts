@@ -791,4 +791,5 @@ export class italy implements Language {
   archiveUser = 'Archivio: aggiornamenti utente';
   showTzToVolunteer = 'Mostra il numero ID al volontario';
   myGiftsURL = 'I miei vantaggi';
+  eventIsFull = 'Questo evento è pieno, saremo felici se ti iscrivi dopo';
 }
