@@ -631,7 +631,7 @@
   },
   "company": {
     "google": "Society",
-    "valueInCode": "חברה",
+    "valueInCode": "ארגון",
     "custom": "Company"
   },
   "compareTo": {
@@ -1617,7 +1617,7 @@
   },
   "hideHelperCompany": {
     "google": "Hide a volunteer company",
-    "valueInCode": "הסתר חברה למתנדב"
+    "valueInCode": "הסתר ארגון למתנדב"
   },
   "hours": {
     "google": "Hours",
@@ -1978,6 +1978,10 @@
   "MyFamiliesComponent": {
     "google": "My families",
     "valueInCode": "משלוחים שלי"
+  },
+  "myGiftsURL": {
+    "google": "My benefits",
+    "valueInCode": "ההטבות שלי"
   },
   "nameIsTooShort": {
     "google": "The name is too short",
@@ -2640,7 +2644,7 @@
   },
   "searchCompanyName": {
     "google": "Search for a company name",
-    "valueInCode": "חיפוש שם חברה"
+    "valueInCode": "חיפוש שם ארגון"
   },
   "searchFamily": {
     "google": "Family Search",
@@ -2694,6 +2698,10 @@
   "selectVolunteer": {
     "google": "Choose a volunteer",
     "valueInCode": "בחר מתנדב"
+  },
+  "selfAssigned": {
+    "google": "Assigned independently",
+    "valueInCode": "שויכו עצמאית"
   },
   "selfPickup": {
     "google": "Come and take",
@@ -2865,7 +2873,7 @@
   },
   "showHelperCompany": {
     "google": "View a volunteer company",
-    "valueInCode": "הצג חברה למתנדב",
+    "valueInCode": "הצג ארגון למתנדב",
     "custom": "Display Volunteer Company"
   },
   "showLeftByHouseButton": {
@@ -2918,7 +2926,7 @@
   },
   "showVolunteerCompany": {
     "google": "Save on behalf of which company the volunteer came from",
-    "valueInCode": "שמור מטעם איזה חברה הגיע המתנדב"
+    "valueInCode": "שמור מטעם איזה ארגון הגיע המתנדב"
   },
   "showVolunteers": {
     "google": "Show volunteers",

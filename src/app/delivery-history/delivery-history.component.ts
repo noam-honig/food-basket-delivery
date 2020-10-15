@@ -65,7 +65,7 @@ export class DeliveryHistoryComponent implements OnInit {
     this.helperInfo = context.for(helperHistoryInfo, this.helperStorage).gridSettings({
       showFilter: true,
 
-      numOfColumnsInGrid: 6,
+      numOfColumnsInGrid: (this.settings.isSytemForMlt() ? 8 : 7),
       gridButtons: [{
         name: this.settings.lang.exportToExcel,
         visible: () => this.context.isAllowed(Roles.admin),
@@ -98,6 +98,10 @@ export class DeliveryHistoryComponent implements OnInit {
           width: '75'
         },
         {
+          column: h.succesful,
+          width: '75'
+        },
+        {
           column: h.families,
 
           width: '75'
@@ -105,7 +109,11 @@ export class DeliveryHistoryComponent implements OnInit {
         {
           column: h.dates,
           width: '75'
-        }
+        },
+        {
+          column: h.selfassigned,
+          width: '75'
+        },
       ],
       get: {
         limit: 100,
@@ -124,6 +132,8 @@ export class DeliveryHistoryComponent implements OnInit {
       x.deliveries = +x.deliveries;
       x.dates = +x.dates;
       x.families = +x.families;
+      x.succesful = +x.succesful;
+      x.selfassigned = +x.selfassigned;
       return x;
     });
     rows.splice(0, rows.length, ...x);
@@ -253,7 +263,7 @@ export class DeliveryHistoryComponent implements OnInit {
       r = r.and(fd.archive.isEqualTo(true));
 
 
-    return (await db.execute(
+    let queryText =   
       sql.build("select ", [
         fd.courier.defs.dbName,
         sql.columnInnerSelect(fd, {
@@ -271,16 +281,20 @@ export class DeliveryHistoryComponent implements OnInit {
           from: h,
           where: () => [sql.build(h.id, "=", fd.courier.defs.dbName)]
         })
-        , "deliveries", "dates", "families"], " from (",
+        , "deliveries", "dates", "families", "succesful", "selfassigned"], " from (",
         sql.build("select ", [
           fd.courier.defs.dbName,
           "count(*) deliveries",
           sql.build("count (distinct date (", fd.courierAssingTime.defs.dbName, ")) dates"),
-          sql.build("count (distinct ", fd.family.defs.dbName, ") families")],
+          sql.build("count (distinct ", fd.family.defs.dbName, ") families"),
+          sql.build('sum (case when ', sql.eq(fd.courierAssignUser, fd.courier), ' and ', sql.and(fd.deliverStatus.isSuccess()), ' then 1 else 0 end) selfassigned'),
+          sql.build('sum (', sql.case([{ when: [fd.deliverStatus.isSuccess()], then: 1 }], 0), ') succesful')],
           ' from ', fd.defs.dbName,
           ' where ', sql.and(r))
 
-        + sql.build(' group by ', fd.courier.defs.dbName), ") x"))).rows;
+        + sql.build(' group by ', fd.courier.defs.dbName), ") x");
+        
+        return (await db.execute(queryText)).rows;
 
   }
 
@@ -293,6 +307,8 @@ export class helperHistoryInfo extends Entity<string>{
   phone = new PhoneColumn(getLang(this.context).phone);
   company = new CompanyColumn(this.context);
   deliveries = new NumberColumn(getLang(this.context).deliveries);
+  succesful = new NumberColumn(getLang(this.context).delveriesSuccesfull);
+  selfassigned = new NumberColumn(getLang(this.context).selfAssigned);
   families = new NumberColumn(getLang(this.context).families);
   dates = new NumberColumn(getLang(this.context).dates);
   constructor(private context: Context) {

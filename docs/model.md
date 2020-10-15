@@ -124,7 +124,7 @@
 | name | שם | String |  |
 | phone | טלפון | Phone |  |
 | smsDate | מועד משלוח SMS | DateTime |  |
-| company | חברה | Company |  |
+| company | ארגון | Company |  |
 | totalKm | Total Km | Number |  |
 | totalTime | Total Time | Number |  |
 | shortUrlKey | Short Url Key | String |  |
@@ -199,7 +199,7 @@
 | forWho | המערכת היא עבור | TranslationOptions |  |
 | _old_for_soliders | _old_for_soliders | Bool |  |
 | usingSelfPickupModule | ישנן משפחות שבאות לקחת ממרכז החלוקה | Bool |  |
-| showCompanies | שמור מטעם איזה חברה הגיע המתנדב | Bool |  |
+| showCompanies | שמור מטעם איזה ארגון הגיע המתנדב | Bool |  |
 | manageEscorts | הפעל ניהול מלווים לנהגים | Bool |  |
 | showHelperComment | הצג הערה בשיוך למתנדב | Bool |  |
 | showGroupsOnAssing | סינון קבוצת משפחה | Bool |  |
@@ -382,7 +382,7 @@
 | name | שם | String |  |
 | phone | טלפון | Phone |  |
 | smsDate | מועד משלוח SMS | DateTime |  |
-| company | חברה | Company |  |
+| company | ארגון | Company |  |
 | totalKm | Total Km | Number |  |
 | totalTime | Total Time | Number |  |
 | shortUrlKey | Short Url Key | String |  |
@@ -401,7 +401,7 @@
 | courier | Courier | String |  |
 | name | שם | String |  |
 | phone | טלפון | Phone |  |
-| company | חברה | Company |  |
+| company | ארגון | Company |  |
 | deliveries | משלוחים | Number |  |
 | families | משפחות | Number |  |
 | dates | תאריכים | Number |  |

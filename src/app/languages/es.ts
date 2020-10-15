@@ -484,6 +484,7 @@ export class es implements Language {
   dates = 'fechas';
   selfPickup = 'Venir y tomar';
   delveriesSuccesfull = 'Entregado';
+  selfAssigned = 'Asignado independientemente';
   familiesAt = 'Familias b';
   noFamiliesSelected = 'No se seleccionaron familias';
   cantMergeOneFamily = 'No se puede fusionar solo una familia';
@@ -789,4 +790,5 @@ export class es implements Language {
   archiveDate = 'Archivo: fecha de actualización';
   archiveUser = 'Archivo: actualizaciones de usuario';
   showTzToVolunteer = 'Mostrar número de identificación para ser voluntario';
+  myGiftsURL = 'Mis beneficios';
 }

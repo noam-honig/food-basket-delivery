@@ -548,8 +548,8 @@
     "valueInCode": "הערות שכתבו מתנדבים"
   },
   "company": {
-    "google": "חברה",
-    "valueInCode": "חברה"
+    "google": "ארגון",
+    "valueInCode": "ארגון"
   },
   "compareTo": {
     "google": "מול",
@@ -1444,8 +1444,8 @@
     "valueInCode": "אל תציג את הטלפון של המשפחה למתנדב"
   },
   "hideHelperCompany": {
-    "google": "הסתר חברה למתנדב",
-    "valueInCode": "הסתר חברה למתנדב"
+    "google": "הסתר ארגון למתנדב",
+    "valueInCode": "הסתר ארגון למתנדב"
   },
   "hours": {
     "google": "שעות",
@@ -1790,6 +1790,10 @@
   "MyFamiliesComponent": {
     "google": "משלוחים שלי",
     "valueInCode": "משלוחים שלי"
+  },
+  "myGiftsURL": {
+    "google": "ההטבות שלי",
+    "valueInCode": "ההטבות שלי"
   },
   "nameIsTooShort": {
     "google": "השם קצר מידי",
@@ -2408,8 +2412,8 @@
     "valueInCode": "חיפוש"
   },
   "searchCompanyName": {
-    "google": "חיפוש שם חברה",
-    "valueInCode": "חיפוש שם חברה"
+    "google": "חיפוש שם ארגון",
+    "valueInCode": "חיפוש שם ארגון"
   },
   "searchFamily": {
     "google": "חיפוש חייל",
@@ -2458,6 +2462,10 @@
   "selectVolunteer": {
     "google": "בחר מתנדב",
     "valueInCode": "בחר מתנדב"
+  },
+  "selfAssigned": {
+    "google": "שויכו עצמאית",
+    "valueInCode": "שויכו עצמאית"
   },
   "selfPickup": {
     "google": "באים לקחת",
@@ -2616,8 +2624,8 @@
     "valueInCode": "הצג הערה בשיוך למתנדב"
   },
   "showHelperCompany": {
-    "google": "הצג חברה למתנדב",
-    "valueInCode": "הצג חברה למתנדב"
+    "google": "הצג ארגון למתנדב",
+    "valueInCode": "הצג ארגון למתנדב"
   },
   "showLeftByHouseButton": {
     "google": "הצג למתנדב כפתור השארתי ליד הבית",
@@ -2664,8 +2672,8 @@
     "valueInCode": "הצג מספר זהות למתנדב"
   },
   "showVolunteerCompany": {
-    "google": "שמור מטעם איזה חברה הגיע המתנדב",
-    "valueInCode": "שמור מטעם איזה חברה הגיע המתנדב"
+    "google": "שמור מטעם איזה ארגון הגיע המתנדב",
+    "valueInCode": "שמור מטעם איזה ארגון הגיע המתנדב"
   },
   "showVolunteers": {
     "google": "הצג מתנדבים",
