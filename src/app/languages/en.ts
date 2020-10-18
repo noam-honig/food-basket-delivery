@@ -801,4 +801,5 @@ export class en implements Language {
   distributionCenterNotFound = 'No distribution list found';
   confirmArchive = 'Do move to archive';
   markOnMap = 'Mark on the map';
+  familyHistory = 'Family history';
 }

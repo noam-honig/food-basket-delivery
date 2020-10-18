@@ -1261,6 +1261,10 @@
     "google": "עו\"ס טלפון 2",
     "valueInCode": "עו\"ס טלפון 2"
   },
+  "familyHistory": {
+    "google": "היסטורית תורם",
+    "valueInCode": "היסטורית משפחה"
+  },
   "familyIdInHagaiApp": {
     "google": "id של התורם באפליקצית חגי",
     "valueInCode": "id של המשפחה באפליקצית חגי"

@@ -801,4 +801,5 @@ export class es implements Language {
   distributionCenterNotFound = 'No se encontró ninguna lista de distribución';
   confirmArchive = 'Mover al archivo';
   markOnMap = 'Marcar en el mapa';
+  familyHistory = 'Historia familiar';
 }

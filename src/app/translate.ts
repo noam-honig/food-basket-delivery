@@ -924,6 +924,7 @@ export class Language {
   distributionCenterNotFound = "רשימת חלוקה לא נמצאה";
   confirmArchive = "האם להעביר לארכיון ";
   markOnMap= "סמן על המפה";
+  familyHistory = "היסטורית משפחה";
 }
 
 const defaultLang = new Language();

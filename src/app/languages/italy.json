@@ -1575,6 +1575,11 @@
     "valueInCode": "עו\"ס טלפון 2",
     "valueInEnglish": "Clarification phone 2"
   },
+  "familyHistory": {
+    "google": "Storia famigliare",
+    "valueInCode": "היסטורית משפחה",
+    "valueInEnglish": "Family history"
+  },
   "familyIdInHagaiApp": {
     "google": "ID famiglia nell'app per le vacanze",
     "valueInCode": "id של המשפחה באפליקצית חגי",

@@ -1417,6 +1417,10 @@
     "valueInCode": "עו\"ס טלפון 2",
     "custom": "Clarification phone 2"
   },
+  "familyHistory": {
+    "google": "Family history",
+    "valueInCode": "היסטורית משפחה"
+  },
   "familyIdInHagaiApp": {
     "google": "family id in the holiday app",
     "valueInCode": "id של המשפחה באפליקצית חגי"

@@ -801,4 +801,5 @@ export class soldier implements Language {
   distributionCenterNotFound = 'רשימת חלוקה לא נמצאה';
   confirmArchive = 'האם להעביר לארכיון ';
   markOnMap = 'סמן על המפה';
+  familyHistory = 'היסטורית חייל';
 }

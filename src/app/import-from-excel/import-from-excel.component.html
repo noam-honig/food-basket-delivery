@@ -169,6 +169,8 @@
                                         <mat-menu #updatedRowOptions="matMenu">
                                             <button mat-menu-item
                                                 (click)="openFamilyInfo(i)">{{settings.lang.familyDetails}}</button>
+                                                <button mat-menu-item
+                                                (click)="familyHistory(i)">{{settings.lang.familyHistory}}</button>
                                             <button mat-menu-item
                                                 (click)="updateRows.splice(updateRows.indexOf(i),1)">{{settings.lang.removeFromFamiliesToUpdate}}</button>
                                             <button mat-menu-item

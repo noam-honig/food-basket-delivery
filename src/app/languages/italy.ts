@@ -801,4 +801,5 @@ export class italy implements Language {
   distributionCenterNotFound = 'Nessuna lista di distribuzione trovata';
   confirmArchive = 'Sposta in archivio';
   markOnMap = 'Segna sulla mappa';
+  familyHistory = 'Storia famigliare';
 }

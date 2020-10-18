@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Column, Entity, ServerFunction, IdColumn, SqlDatabase, StringColumn, DataAreaSettings, BoolColumn, DataArealColumnSetting, EntityWhere, AndFilter, RouteHelperService } from '@remult/core';
+import { Column, Entity, ServerFunction, IdColumn, SqlDatabase, StringColumn, DataAreaSettings, BoolColumn, DataArealColumnSetting, EntityWhere, AndFilter, RouteHelperService, DataControlInfo } from '@remult/core';
 import { Context } from '@remult/core';
 import { Helpers, HelperUserInfo } from '../helpers/helpers';
 import { HasAsyncGetTheValue, PhoneColumn, wasChanged } from '../model-shared/types';
@@ -25,10 +25,11 @@ import { DistributionCenters, DistributionCenterId, allCentersToken, findClosest
 import { jsonToXlsx } from '../shared/saveToExcel';
 import { Sites } from '../sites/sites';
 import { FamilyStatus } from '../families/FamilyStatus';
-import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { leaveOnlyNumericChars } from '../shared/googleApiHelpers';
 import { SelectListComponent, selectListItem } from '../select-list/select-list.component';
 import { PromiseThrottle } from '../shared/utils';
+import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 
 
 
@@ -168,7 +169,7 @@ export class ImportFromExcelComponent implements OnInit {
                 if (createDelivery) {
                     fd._disableMessageToUsers = true;
                     f.updateDelivery(fd);
-                    if (getSettings(context).isSytemForMlt()){
+                    if (getSettings(context).isSytemForMlt()) {
                         fd.distributionCenter.value = await findClosestDistCenter(f.address.location(), context);
                     }
                     await fd.save();
@@ -522,7 +523,7 @@ export class ImportFromExcelComponent implements OnInit {
         this.defaultBasketType.value = '';
         this.distributionCenter.value = this.dialog.distCenter.value;
         if (this.distributionCenter.value == allCentersToken)
-            this.distributionCenter.value =  (await this.context.for(DistributionCenters).findFirst(x=>x.isActive())).id.value;
+            this.distributionCenter.value = (await this.context.for(DistributionCenters).findFirst(x => x.isActive())).id.value;
 
 
 
@@ -1240,6 +1241,47 @@ export class ImportFromExcelComponent implements OnInit {
         let f = await this.context.for(Families).findId(r.duplicateFamilyInfo[0].id);
         await f.showFamilyDialog();
     }
+    async familyHistory(r: excelRowInfo) {
+        let f = await this.context.for(Families).findId(r.duplicateFamilyInfo[0].id);
+        let result = this.context.for(FamilyDeliveries).gridSettings({
+            numOfColumnsInGrid: 7,
+
+            rowCssClass: fd => fd.deliverStatus.getCss(),
+
+
+            columnSettings: fd => {
+                let r: DataControlInfo<FamilyDeliveries>[] = [
+                    fd.deliverStatus,
+                    fd.deliveryStatusDate,
+                    fd.courierComments,
+                    {
+                        column: fd.address,
+                        caption: 'כתובת כפי שידענו אז'
+                    },
+                    fd.floor,
+                    fd.appartment,
+                    fd.entrance,
+                    fd.addressComment,
+                    fd.internalDeliveryComment,
+                    fd.distributionCenter
+                ];
+                r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
+                return r;
+            },
+            get: {
+                where: fd => fd.family.isEqualTo(f.id),
+                orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
+                limit: 25
+            }
+        });
+
+
+        this.context.openDialog(GridDialogComponent, x => x.args = {
+            title: getLang(this.context).familyHistory + ' ' + f.name.value,
+            settings: result,
+
+        });
+    }
     async moveFromErrorToProcess(r: excelRowInfo) {
         let name = r.name;
         if (!name) {
@@ -1595,7 +1637,7 @@ export function processPhone(input: string): phoneResult[] {
             let prev = temp2.pop();
             if (prev) {
                 let next = temp.pop();
-                if(next===undefined)
+                if (next === undefined)
                     next = '';
                 let p = onlyDigits(prev);
                 let n = onlyDigits(next);
