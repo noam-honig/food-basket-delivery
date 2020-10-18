@@ -202,7 +202,7 @@ export class Helpers extends HelpersBase {
         });
         r.push(this.createDate);
 
-        if (this.context.isAllowed(Roles.admin)) {
+        if (this.context.isAllowed(Roles.admin)&&settings.isSytemForMlt()) {
             r.push({
                 column: this.frozenTill, width: '120'
             });

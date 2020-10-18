@@ -162,7 +162,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       },
       {
         name: use.language.freezeHelper,
-        visible: () => this.context.isAllowed(Roles.admin),
+        visible: () => this.context.isAllowed(Roles.admin)&&this.settings.isSytemForMlt(),
         click: async h => this.editFreezeDate(h)
       },
       {
