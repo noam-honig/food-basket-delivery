@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { Location, GeocodeInformation, toLongLat, GetDistanceBetween } from '../shared/googleApiHelpers';
-import { UrlBuilder, FilterBase, ServerFunction, StringColumn, DataAreaSettings, BoolColumn, SqlDatabase, AndFilter, FilterConsumerBridgeToSqlRequest, ValueListColumn } from '@remult/core';
+import { UrlBuilder, FilterBase, ServerFunction, StringColumn, DataAreaSettings, BoolColumn, SqlDatabase, AndFilter, FilterConsumerBridgeToSqlRequest, ValueListColumn, NumberColumn } from '@remult/core';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
@@ -221,7 +221,13 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             }
             else
                 groups = this.context.for(GroupsStatsPerDistributionCenter).find({ where: f => f.familiesCount.isGreaterThan(0).and(f.distCenter.filter(this.dialog.distCenter.value)), limit: 1000 });
-            groups.then(g => this.groups = g);
+            groups.then(g => {
+                this.groups = g;
+                if (this.filterGroup != '' && !this.groups.find(x => x.name.value == this.filterGroup)) {
+
+                    this.groups.push({ name: new StringColumn({ defaultValue: this.filterGroup }),familiesCount: new NumberColumn({ defaultValue: 0 }) });
+                }
+            });
             let r = (await AsignFamilyComponent.getBasketStatus({
                 filterGroup: this.filterGroup,
                 filterCity: this.filterCity,
@@ -249,6 +255,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
                 this.cities.push({ name: this.filterCity, unassignedFamilies: 0 });
             }
+
             this.areas = r.areas;
             if (this.filterArea != '' && !this.areas.find(x => x.name == this.filterArea)) {
 
@@ -590,33 +597,33 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.context.openDialog(SelectCompanyComponent, s => s.argOnSelect = x => this.helper.company.value = x);
     }
     async assignClosestDeliveries() {
-        
+
         let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(this.familyLists.helper.preferredDistributionAreaAddress.location()));
-    
+
         await this.context.openDialog(SelectListComponent, x => {
-          x.args = {
-            title: use.language.closestDeliveries + ' (' + use.language.mergeFamilies + ')',
-            multiSelect: true,
-            onSelect: async (selectedItems) => {
-              if (selectedItems.length > 0)
-                this.busy.doWhileShowingBusy(async () => {
-                  let ids: string[] = [];
-                  for (const selectedItem of selectedItems) {
-                    let d: DeliveryInList = selectedItem.item;
-                    ids.push(...d.ids);
-                  }
-                  await HelperFamiliesComponent.assignFamilyDeliveryToIndie(ids);
-                  
-                  await this.familyLists.reload();
-                  this.doRefreshRoute();
-                });
-            },
-            options: afdList
-          }
+            x.args = {
+                title: use.language.closestDeliveries + ' (' + use.language.mergeFamilies + ')',
+                multiSelect: true,
+                onSelect: async (selectedItems) => {
+                    if (selectedItems.length > 0)
+                        this.busy.doWhileShowingBusy(async () => {
+                            let ids: string[] = [];
+                            for (const selectedItem of selectedItems) {
+                                let d: DeliveryInList = selectedItem.item;
+                                ids.push(...d.ids);
+                            }
+                            await HelperFamiliesComponent.assignFamilyDeliveryToIndie(ids);
+
+                            await this.familyLists.reload();
+                            this.doRefreshRoute();
+                        });
+                },
+                options: afdList
+            }
         });
-    
-    
-      }
+
+
+    }
     @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async AddBox(info: AddBoxInfo, context?: Context, db?: SqlDatabase) {
         let result: AddBoxResponse = {
