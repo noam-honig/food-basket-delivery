@@ -792,4 +792,10 @@ export class en implements Language {
   showTzToVolunteer = 'Show ID number to volunteer';
   myGiftsURL = 'My benefits';
   eventIsFull = "This event is full, we'll be happy if you sign up after";
+  freezeDistributionCenter = 'Freeze distribution list';
+  deleteDistributionCenter = 'Delete a slip list';
+  showDeletedDistributionCenters = 'View deleted distribution lists';
+  unDeleteDistributionCenter = 'Undelete';
+  unDeleteHelper = 'Undelete';
+  mustHaveAtLeastOneActiveDistributionList = 'There must be at least one distribution list';
 }

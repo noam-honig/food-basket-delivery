@@ -792,4 +792,10 @@ export class es implements Language {
   showTzToVolunteer = 'Mostrar número de identificación para ser voluntario';
   myGiftsURL = 'Mis beneficios';
   eventIsFull = 'Este evento está lleno, estaremos felices si te registras después';
+  freezeDistributionCenter = 'Congelar lista de distribución';
+  deleteDistributionCenter = 'Eliminar una lista de deslizamiento';
+  showDeletedDistributionCenters = 'Ver listas de distribución eliminadas';
+  unDeleteDistributionCenter = 'Recuperar';
+  unDeleteHelper = 'Recuperar';
+  mustHaveAtLeastOneActiveDistributionList = 'Debe haber al menos una lista de distribución';
 }

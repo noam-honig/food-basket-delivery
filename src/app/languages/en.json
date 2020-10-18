@@ -820,6 +820,10 @@
     "valueInCode": "מחק משלוח",
     "custom": "Delete delivery"
   },
+  "deleteDistributionCenter": {
+    "google": "Delete a slip list",
+    "valueInCode": "מחק רשימת חלוקה"
+  },
   "deleteExcelSettings": {
     "google": "Delete settings",
     "valueInCode": "מחק הגדרות"
@@ -1536,6 +1540,10 @@
     "valueInCode": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל",
     "custom": "\"Frozen\" delivery is a delivery that will not be assigned with any volunteer until the \"delivery\" is dispatched. Freezing is used to temporarily stop certain deliveries until they can be thawed and shipped. Do freeze delivery to"
   },
+  "freezeDistributionCenter": {
+    "google": "Freeze distribution list",
+    "valueInCode": "הקפא רשימת חלוקה"
+  },
   "freezeHelper": {
     "google": "Freeze Volunteer",
     "valueInCode": "עדכן נתוני הקפאת מתנדב"
@@ -1970,6 +1978,10 @@
   "mustConfirmEula": {
     "google": "The application cannot be used without consent to the terms of use",
     "valueInCode": "לא ניתן להשתמש באפליקציה ללא הסכמה לתנאי השימוש"
+  },
+  "mustHaveAtLeastOneActiveDistributionList": {
+    "google": "There must be at least one distribution list",
+    "valueInCode": "חובה שתהייה רשימת חלוקה אחת לפחות. לא ניתן להשלים את המחיקה."
   },
   "mustIncludeUrlKeyError": {
     "google": " Must contain!",
@@ -2859,6 +2871,10 @@
     "valueInCode": "הצג שיוך משלוחים ל",
     "custom": "Show deliveries for"
   },
+  "showDeletedDistributionCenters": {
+    "google": "View deleted distribution lists",
+    "valueInCode": "הצג רשימות חלוקה מחוקות"
+  },
   "showDeletedHelpers": {
     "google": "View deleted volunteers",
     "valueInCode": "הצג מתנדבים מחוקים"
@@ -3144,6 +3160,14 @@
     "google": "Not yet associated",
     "valueInCode": "טרם שוייכו",
     "custom": "Unassigned"
+  },
+  "unDeleteDistributionCenter": {
+    "google": "Undelete",
+    "valueInCode": "בטל מחיקה"
+  },
+  "unDeleteHelper": {
+    "google": "Undelete",
+    "valueInCode": "בטל מחיקה"
   },
   "unfitForInvite": {
     "google": "Not suitable for order",

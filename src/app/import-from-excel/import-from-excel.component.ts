@@ -522,7 +522,7 @@ export class ImportFromExcelComponent implements OnInit {
         this.defaultBasketType.value = '';
         this.distributionCenter.value = this.dialog.distCenter.value;
         if (this.distributionCenter.value == allCentersToken)
-            this.distributionCenter.value = (<HelperUserInfo>this.context.user).distributionCenter;
+            this.distributionCenter.value =  (await this.context.for(DistributionCenters).findFirst(x=>x.isActive())).id.value;
 
 
 

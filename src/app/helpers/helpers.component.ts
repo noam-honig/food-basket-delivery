@@ -42,7 +42,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   quickAdd() {
     this.helpers.addNewRow();
 
-    this.helpers.currentRow.displayEditDialog(this.dialog,this.busy);
+    this.helpers.currentRow.displayEditDialog(this.dialog, this.busy);
 
   }
   destroyHelper = new DestroyHelper();
@@ -120,7 +120,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
         showInLine: true,
         textInMenu: () => use.language.volunteerInfo,
         click: async f => {
-          f.displayEditDialog(this.dialog,this.busy);
+          f.displayEditDialog(this.dialog, this.busy);
         }
       },
       {
@@ -166,7 +166,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
         click: async h => this.editFreezeDate(h)
       },
       {
-        name: use.language.archiveHelper,
+        textInMenu: h => h.archive.value ? use.language.unDeleteHelper : use.language.archiveHelper,
         visible: () => this.context.isAllowed(Roles.admin),
         click: async h => {
           if (h.archive.value)
@@ -239,7 +239,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   }
 
 
- 
+
 
   async doSearch() {
     if (this.helpers.currentRow && this.helpers.currentRow.wasChanged())

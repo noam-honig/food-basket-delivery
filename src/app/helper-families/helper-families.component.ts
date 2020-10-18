@@ -224,7 +224,7 @@ export class HelperFamiliesComponent implements OnInit {
     return (this.context.user.roles.includes(Roles.indie) && this.settings.isSytemForMlt());
   }
   async selectDistCenter() {
-    let distCenters = await this.context.for(DistributionCenters).find({ where: x => x.isFrozen.isEqualTo(false) });
+    let distCenters = await this.context.for(DistributionCenters).find({ where: x => x.isActive() });
     distCenters = distCenters.filter(x => x.address.ok());
     try {
       await this.updateCurrentLocation(true);

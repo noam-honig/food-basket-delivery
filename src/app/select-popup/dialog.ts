@@ -88,7 +88,7 @@ export class DialogService {
             cat = '';
         gtag('event', action, {
             'event_category': 'delivery',
-            'event_label': action+"/"+cat
+            'event_label': action + "/" + cat
         });
 
 
@@ -131,8 +131,10 @@ export class DialogService {
         if (this.context.isAllowed(Roles.distCenterAdmin) && !this.context.isAllowed(Roles.admin))
             this.context.for(DistributionCenters).lookupAsync(x => x.id.isEqualTo((<HelperUserInfo>this.context.user).distributionCenter)).then(x => this.dc = x);
         if (this.context.isAllowed(Roles.admin)) {
-            this.hasManyCenters = await this.context.for(DistributionCenters).count() > 1;
+            this.hasManyCenters = await this.context.for(DistributionCenters).count(c => c.archive.isEqualTo(false)) > 1;
             this.distCenterArea = new DataAreaSettings({ columnSettings: () => [this.distCenter] });
+            if (!this.hasManyCenters)
+                this.distCenter.value = allCentersToken;
         }
     }
 

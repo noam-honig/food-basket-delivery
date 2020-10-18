@@ -15,13 +15,17 @@ export class DistributionCenters extends IdEntity {
   name = new StringColumn({ caption: getLang(this.context).distributionCenterName });
   semel = new StringColumn({ caption: getLang(this.context).distributionCenterUniqueId });
   addressApiResult = new StringColumn();
-  address = new AddressColumn(this.context,this.addressApiResult,getLang(this.context).deliveryCenterAddress);
+  address = new AddressColumn(this.context, this.addressApiResult, getLang(this.context).deliveryCenterAddress);
   comments = new StringColumn(getLang(this.context).distributionCenterComment);
   phone1 = new PhoneColumn(getLang(this.context).phone1);
   phone1Description = new StringColumn(getLang(this.context).phone1Description);
   phone2 = new PhoneColumn(getLang(this.context).phone2);
   phone2Description = new StringColumn(getLang(this.context).phone2Description);
   isFrozen = new BoolColumn(getLang(this.context).frozen);
+  archive = new BoolColumn();
+  isActive() {
+    return this.isFrozen.isEqualTo(false).and(this.archive.isEqualTo(false));
+  }
 
 
   openWaze() {
@@ -85,6 +89,7 @@ export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValu
       dataControlSettings: () =>
         ({
           valueList: this.context.for(DistributionCenters).getValueList({
+            where: c => c.archive.isEqualTo(false),
             orderBy: (f: DistributionCenters) => {
               return [{ column: f.name }];
             }
@@ -115,7 +120,7 @@ export async function findClosestDistCenter(loc: Location, context: Context, cen
   let result: string;
   let dist: number;
   if (!centers)
-    centers = await context.for(DistributionCenters).find({ where: c => c.isFrozen.isEqualTo(false) });
+    centers = await context.for(DistributionCenters).find({ where: c => c.isActive() });
   for (const c of centers) {
     let myDist = GetDistanceBetween(c.address.location(), loc);
     if (result === undefined || myDist < dist) {

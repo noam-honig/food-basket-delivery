@@ -76,7 +76,7 @@ export class ManageComponent implements OnInit {
   constructor(private dialog: DialogService, private context: Context, private sanitization: DomSanitizer, public settings: ApplicationSettings, private busy: BusyService) { }
 
   basketType = this.context.for(BasketType).gridSettings({
-    showFilter:true,
+    showFilter: true,
     columnSettings: x => [
       x.name,
       {
@@ -99,8 +99,17 @@ export class ManageComponent implements OnInit {
     allowDelete: true,
     confirmDelete: (h) => this.dialog.confirmDelete(h.name.value)
   });
+  showArchivedDistributionCenters = false;
   distributionCenters = this.context.for(DistributionCenters).gridSettings({
     gridButtons: [
+      {
+        name: this.settings.lang.showDeletedDistributionCenters,
+        click: () => {
+          this.showArchivedDistributionCenters = !this.showArchivedDistributionCenters;
+          this.distributionCenters.getRecords();
+        }
+      }
+      ,
       {
         name: this.settings.lang.exportToExcel,
         click: async () => {
@@ -109,6 +118,7 @@ export class ManageComponent implements OnInit {
         , visible: () => this.context.isAllowed(Roles.admin)
       },
     ],
+    rowCssClass: c => c.archive.value ? 'deliveredProblem' : c.isFrozen.value ? 'forzen' : '',
     rowButtons: [{
       name: this.settings.lang.distributionCenterDetails,
       click: async d => {
@@ -131,6 +141,19 @@ export class ManageComponent implements OnInit {
             ]
           }
         });
+      }
+    },
+    {
+      textInMenu: c => c.archive.value ? this.settings.lang.unDeleteDistributionCenter : this.settings.lang.deleteDistributionCenter,
+      icon:'delete',
+      click: async c => {
+        if (!c.archive.value && (await this.context.for(DistributionCenters).count(x => x.isActive().and(x.id.isDifferentFrom(c.id)))) == 0) {
+          this.dialog.Error(this.settings.lang.mustHaveAtLeastOneActiveDistributionList);
+          return;
+        }
+        c.archive.value = !c.archive.value;
+        await c.save();
+        this.refreshEnvironmentAfterSave();
       }
     }
     ],
@@ -157,7 +180,12 @@ export class ManageComponent implements OnInit {
     ],
     get: {
       limit: 25,
-      orderBy: f => [f.name]
+      where: d => {
+        if (!this.showArchivedDistributionCenters)
+          return d.archive.isEqualTo(false);
+      },
+      orderBy: f => [f.name],
+
     }, saving: f => {
       this.refreshEnvironmentAfterSave();
 
@@ -175,7 +203,7 @@ export class ManageComponent implements OnInit {
     }, 1000);
   }
   sources = this.context.for(FamilySources).gridSettings({
-    showFilter:true,
+    showFilter: true,
     columnSettings: s => [
       s.name,
       s.phone,
@@ -190,7 +218,7 @@ export class ManageComponent implements OnInit {
     confirmDelete: (h) => this.dialog.confirmDelete(h.name.value)
   });
   groups = this.context.for(Groups).gridSettings({
-    showFilter:true,
+    showFilter: true,
     saving: () => this.refreshEnvironmentAfterSave(),
 
     columnSettings: s => [
@@ -310,7 +338,7 @@ export class ManageComponent implements OnInit {
         [this.settings.familyCustom4Caption, this.settings.familyCustom4Values]
       ];
 
-      if (this.settings.isSytemForMlt()) 
+      if (this.settings.isSytemForMlt())
         r.push(this.settings.BusyHelperAllowedFreq_nom, this.settings.BusyHelperAllowedFreq_denom);
       return r;
     }
@@ -335,7 +363,7 @@ export class ManageComponent implements OnInit {
     return SendSmsAction.getSuccessMessage(this.settings.successMessageText.value, this.settings.organisationName.value, 'ישראל ישראלי');
   }
   images = this.context.for(ApplicationImages).gridSettings({
-    showFilter:true,
+    showFilter: true,
     numOfColumnsInGrid: 0,
     allowUpdate: true,
     columnSettings: i => [

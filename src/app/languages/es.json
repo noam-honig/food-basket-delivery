@@ -890,6 +890,11 @@
     "valueInCode": "מחק משלוח",
     "valueInEnglish": "Delete delivery"
   },
+  "deleteDistributionCenter": {
+    "google": "Eliminar una lista de deslizamiento",
+    "valueInCode": "מחק רשימת חלוקה",
+    "valueInEnglish": "Delete a slip list"
+  },
   "deleteExcelSettings": {
     "google": "Eliminar configuración",
     "valueInCode": "מחק הגדרות",
@@ -1710,6 +1715,11 @@
     "valueInCode": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל",
     "valueInEnglish": "\"Frozen\" delivery is a delivery that will not be assigned with any volunteer until the \"delivery\" is dispatched. Freezing is used to temporarily stop certain deliveries until they can be thawed and shipped. Do freeze delivery to"
   },
+  "freezeDistributionCenter": {
+    "google": "Congelar lista de distribución",
+    "valueInCode": "הקפא רשימת חלוקה",
+    "valueInEnglish": "Freeze distribution list"
+  },
   "freezeHelper": {
     "google": "Freeze Volunteer",
     "valueInCode": "עדכן נתוני הקפאת מתנדב",
@@ -2229,6 +2239,11 @@
     "google": "La aplicación no se puede usar sin el consentimiento de los términos de uso.",
     "valueInCode": "לא ניתן להשתמש באפליקציה ללא הסכמה לתנאי השימוש",
     "valueInEnglish": "The application cannot be used without consent to the terms of use"
+  },
+  "mustHaveAtLeastOneActiveDistributionList": {
+    "google": "Debe haber al menos una lista de distribución",
+    "valueInCode": "חובה שתהייה רשימת חלוקה אחת לפחות. לא ניתן להשלים את המחיקה.",
+    "valueInEnglish": "There must be at least one distribution list"
   },
   "mustIncludeUrlKeyError": {
     "google": " ¡Debe contener!",
@@ -3266,6 +3281,11 @@
     "valueInCode": "הצג שיוך משלוחים ל",
     "valueInEnglish": "Show deliveries for"
   },
+  "showDeletedDistributionCenters": {
+    "google": "Ver listas de distribución eliminadas",
+    "valueInCode": "הצג רשימות חלוקה מחוקות",
+    "valueInEnglish": "View deleted distribution lists"
+  },
   "showDeletedHelpers": {
     "google": "Ver voluntarios eliminados",
     "valueInCode": "הצג מתנדבים מחוקים",
@@ -3605,6 +3625,16 @@
     "google": "No asignado",
     "valueInCode": "טרם שוייכו",
     "valueInEnglish": "Unassigned"
+  },
+  "unDeleteDistributionCenter": {
+    "google": "Recuperar",
+    "valueInCode": "בטל מחיקה",
+    "valueInEnglish": "Undelete"
+  },
+  "unDeleteHelper": {
+    "google": "Recuperar",
+    "valueInCode": "בטל מחיקה",
+    "valueInEnglish": "Undelete"
   },
   "unfitForInvite": {
     "google": "No apto para pedido",

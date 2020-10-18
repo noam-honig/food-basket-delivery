@@ -914,8 +914,13 @@ export class Language {
   archiveUser = "ארכיב: משתמש מעדכן";
   showTzToVolunteer = "הצג מספר זהות למתנדב";
   myGiftsURL = "ההטבות שלי";
-  eventIsFull = "ארוע זה מלא, נשמח אם תרשמו לאחר"
-
+  eventIsFull = "ארוע זה מלא, נשמח אם תרשמו לאחר";
+  freezeDistributionCenter = "הקפא רשימת חלוקה";
+  deleteDistributionCenter = "מחק רשימת חלוקה";
+  showDeletedDistributionCenters = "הצג רשימות חלוקה מחוקות";
+  unDeleteDistributionCenter = "בטל מחיקה";
+  unDeleteHelper = "בטל מחיקה";
+  mustHaveAtLeastOneActiveDistributionList = "חובה שתהייה רשימת חלוקה אחת לפחות. לא ניתן להשלים את המחיקה.";
 }
 
 const defaultLang = new Language();
@@ -923,10 +928,15 @@ export var use = { language: defaultLang };
 
 
 const langMap = new Map<string, Language>();
+//@ts-ignore
 langMap.set('en', new en());
+//@ts-ignore
 langMap.set('es', new es());
+//@ts-ignore
 langMap.set('italy', new italy());
+//@ts-ignore
 langMap.set('donor', new donor());
+//@ts-ignore
 langMap.set('soldier', new soldier());
 export function langByCode(lang: string) {
   let r = langMap.get(lang);

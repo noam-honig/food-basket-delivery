@@ -711,6 +711,10 @@
     "google": "מחק משלוח",
     "valueInCode": "מחק משלוח"
   },
+  "deleteDistributionCenter": {
+    "google": "מחק רשימת חלויקה",
+    "valueInCode": "מחק רשימת חלוקה"
+  },
   "deleteExcelSettings": {
     "google": "מחק הגדרות",
     "valueInCode": "מחק הגדרות"
@@ -1367,6 +1371,10 @@
     "google": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל",
     "valueInCode": "משלוח \"קפוא\" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח \"יופשר\". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח. האם להקפיא את המשלוח ל"
   },
+  "freezeDistributionCenter": {
+    "google": "הקפא רשימת חלוקה",
+    "valueInCode": "הקפא רשימת חלוקה"
+  },
   "freezeHelper": {
     "google": "הקפא מתנדב",
     "valueInCode": "עדכן נתוני הקפאת מתנדב"
@@ -1782,6 +1790,10 @@
   "mustConfirmEula": {
     "google": "לא ניתן להשתמש באפליקציה ללא הסכמה לתנאי השימוש",
     "valueInCode": "לא ניתן להשתמש באפליקציה ללא הסכמה לתנאי השימוש"
+  },
+  "mustHaveAtLeastOneActiveDistributionList": {
+    "google": "חובה שתהייה רשימת חלוקה אחת לפחות",
+    "valueInCode": "חובה שתהייה רשימת חלוקה אחת לפחות. לא ניתן להשלים את המחיקה."
   },
   "mustIncludeUrlKeyError": {
     "google": " חייב להכיל את המלל !אתר!, אחרת לא ישלח קישור",
@@ -2611,6 +2623,10 @@
     "google": "הצג שיוך משלוחים ל",
     "valueInCode": "הצג שיוך משלוחים ל"
   },
+  "showDeletedDistributionCenters": {
+    "google": "הצג רשימות חלוקה מחוקות",
+    "valueInCode": "הצג רשימות חלוקה מחוקות"
+  },
   "showDeletedHelpers": {
     "google": "הצג מתנדבים מחוקים",
     "valueInCode": "הצג מתנדבים מחוקים"
@@ -2882,6 +2898,14 @@
   "unAsigned": {
     "google": "טרם שוייכו",
     "valueInCode": "טרם שוייכו"
+  },
+  "unDeleteDistributionCenter": {
+    "google": "בטל מחיקה",
+    "valueInCode": "בטל מחיקה"
+  },
+  "unDeleteHelper": {
+    "google": "בטל מחיקה",
+    "valueInCode": "בטל מחיקה"
   },
   "unfitForInvite": {
     "google": "לא מתאים להזמנה",

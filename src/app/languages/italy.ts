@@ -792,4 +792,10 @@ export class italy implements Language {
   showTzToVolunteer = 'Mostra il numero ID al volontario';
   myGiftsURL = 'I miei vantaggi';
   eventIsFull = 'Questo evento è pieno, saremo felici se ti iscrivi dopo';
+  freezeDistributionCenter = 'Congela la lista di distribuzione';
+  deleteDistributionCenter = 'Elimina un elenco di documenti';
+  showDeletedDistributionCenters = 'Visualizza le liste di distribuzione eliminate';
+  unDeleteDistributionCenter = 'Annulla eliminazione';
+  unDeleteHelper = 'Annulla eliminazione';
+  mustHaveAtLeastOneActiveDistributionList = 'Deve essere presente almeno una lista di distribuzione';
 }
