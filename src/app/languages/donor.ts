@@ -800,4 +800,5 @@ export class donor implements Language {
   mustHaveAtLeastOneActiveDistributionList = 'חובה שתהייה רשימת חלוקה אחת לפחות';
   distributionCenterNotFound = 'רשימת חלוקה לא נמצאה';
   confirmArchive = 'האם להעביר לארכיון ';
+  markOnMap = 'סמן על המפה';
 }

@@ -923,6 +923,7 @@ export class Language {
   mustHaveAtLeastOneActiveDistributionList = "חובה שתהייה רשימת חלוקה אחת לפחות. לא ניתן להשלים את המחיקה.";
   distributionCenterNotFound = "רשימת חלוקה לא נמצאה";
   confirmArchive = "האם להעביר לארכיון ";
+  markOnMap= "סמן על המפה";
 }
 
 const defaultLang = new Language();

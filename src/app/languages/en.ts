@@ -800,4 +800,5 @@ export class en implements Language {
   mustHaveAtLeastOneActiveDistributionList = 'There must be at least one distribution list';
   distributionCenterNotFound = 'No distribution list found';
   confirmArchive = 'Do move to archive';
+  markOnMap = 'Mark on the map';
 }

@@ -7,7 +7,7 @@ import { SqlBuilder, PhoneColumn, EmailColumn, delayWhileTyping, wasChanged, cha
 import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, FilterBase, ColumnOptions, SpecificEntityHelper, Entity, DataArealColumnSetting, InMemoryDataProvider, ServerContext, SelectValueDialogComponent, BusyService } from '@remult/core';
 import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
 
-import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress, AddressColumn } from "../shared/googleApiHelpers";
+import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress, AddressColumn, GeocodeResult } from "../shared/googleApiHelpers";
 import { ApplicationSettings, CustomColumn } from "../manage/ApplicationSettings";
 
 import * as fetch from 'node-fetch';
@@ -24,6 +24,7 @@ import { InputAreaComponent } from "../select-popup/input-area/input-area.compon
 import { YesNoQuestionComponent } from "../select-popup/yes-no-question/yes-no-question.component";
 import { allCentersToken, findClosestDistCenter } from "../manage/distribution-centers";
 import { getLang } from "../sites/sites";
+
 
 
 var FamilyDeliveries: factoryFor<import("./FamilyDeliveries").FamilyDeliveries>;
@@ -69,17 +70,17 @@ export class Families extends IdEntity {
     }
     return result;
   }
-  async showFamilyDialog(tools?: { onSave?: () => Promise<void>,focusOnAddress?:boolean }) {
+  async showFamilyDialog(tools?: { onSave?: () => Promise<void>, focusOnAddress?: boolean }) {
     this.context.openDialog((await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent, x => x.args = {
       family: this,
-      focusOnAddress:tools&&tools.focusOnAddress,
+      focusOnAddress: tools && tools.focusOnAddress,
       onSave: async () => {
-        if (tools&&tools.onSave)
+        if (tools && tools.onSave)
           await tools.onSave();
       }
     });
   }
-  async showDeliveryHistoryDialog(args: { dialog: DialogService, settings: ApplicationSettings,busy:BusyService }) {
+  async showDeliveryHistoryDialog(args: { dialog: DialogService, settings: ApplicationSettings, busy: BusyService }) {
     let gridDialogSettings = await this.deliveriesGridSettings(args);
     this.context.openDialog(GridDialogComponent, x => x.args = {
       title: getLang(this.context).deliveriesFor + ' ' + this.name.value,
@@ -87,11 +88,11 @@ export class Families extends IdEntity {
       buttons: [{
         text: use.language.newDelivery,
 
-        click: () => this.showNewDeliveryDialog(args.dialog, args.settings,args.busy, { doNotCheckIfHasExistingDeliveries: true })
+        click: () => this.showNewDeliveryDialog(args.dialog, args.settings, args.busy, { doNotCheckIfHasExistingDeliveries: true })
       }]
     });
   }
-  public async deliveriesGridSettings(args: { dialog: DialogService, settings: ApplicationSettings ,busy:BusyService}) {
+  public async deliveriesGridSettings(args: { dialog: DialogService, settings: ApplicationSettings, busy: BusyService }) {
     let result = this.context.for(FamilyDeliveries).gridSettings({
       numOfColumnsInGrid: 7,
 
@@ -99,7 +100,7 @@ export class Families extends IdEntity {
       gridButtons: [{
         name: use.language.newDelivery,
         icon: 'add_shopping_cart',
-        click: () => this.showNewDeliveryDialog(args.dialog, args.settings,args.busy, { doNotCheckIfHasExistingDeliveries: true })
+        click: () => this.showNewDeliveryDialog(args.dialog, args.settings, args.busy, { doNotCheckIfHasExistingDeliveries: true })
       }],
       rowButtons: [
         {
@@ -115,7 +116,7 @@ export class Families extends IdEntity {
           deliveries: () => result,
           dialog: args.dialog,
           settings: args.settings,
-          busy:args.busy
+          busy: args.busy
 
         })
       ],
@@ -143,7 +144,7 @@ export class Families extends IdEntity {
     return result;
   }
 
-  async showNewDeliveryDialog(dialog: DialogService, settings: ApplicationSettings,busy:BusyService, args?: {
+  async showNewDeliveryDialog(dialog: DialogService, settings: ApplicationSettings, busy: BusyService, args?: {
     copyFrom?: import("./FamilyDeliveries").FamilyDeliveries,
     aDeliveryWasAdded?: (newDeliveryId: string) => Promise<void>,
     doNotCheckIfHasExistingDeliveries?: boolean
@@ -154,7 +155,7 @@ export class Families extends IdEntity {
       let hasExisting = await this.context.for(ActiveFamilyDeliveries).count(d => d.family.isEqualTo(this.id).and(d.deliverStatus.isNotAResultStatus()));
       if (hasExisting > 0) {
         if (await dialog.YesNoPromise(settings.lang.familyHasExistingDeliveriesDoYouWantToViewThem)) {
-          this.showDeliveryHistoryDialog({ dialog, settings ,busy});
+          this.showDeliveryHistoryDialog({ dialog, settings, busy });
           return;
         }
       }
@@ -345,7 +346,7 @@ export class Families extends IdEntity {
               this.quantity.value = 1;
 
 
-            if (this.address.value != this.address.originalValue || !this.address.ok()) {
+            if (this.address.value != this.address.originalValue || !this.address.ok()||this.autoCompleteResult.value) {
               await this.reloadGeoCoding();
             }
             if (this.isNew()) {
@@ -506,9 +507,18 @@ export class Families extends IdEntity {
 
   async reloadGeoCoding() {
 
-    let geo = new GeocodeInformation();
-    if (!this.__disableGeocoding)
+    let geo: GeocodeInformation;
+
+    if (this.autoCompleteResult.value) {
+      let result: autocompleteResult = JSON.parse(this.autoCompleteResult.value);
+      if (result.address == this.address.value)
+        geo = new GeocodeInformation(result.result);
+    }
+    if (geo == undefined && !this.__disableGeocoding)
       geo = await GetGeoInformation(this.address.value, this.context);
+    if (geo == undefined) {
+      geo = new GeocodeInformation();
+    }
     this.addressApiResult.value = geo.saveToString();
     this.city.value = '';
     if (geo.ok()) {
@@ -610,6 +620,7 @@ export class Families extends IdEntity {
   drivingLongitude = new NumberColumn({ decimalDigits: 8 });
   drivingLatitude = new NumberColumn({ decimalDigits: 8 });
   addressByGoogle = new StringColumn({ caption: getLang(this.context).addressByGoogle, allowApiUpdate: false });
+  autoCompleteResult = new StringColumn({ serverExpression: () => '' });
   addressOk = new BoolColumn({ caption: getLang(this.context).addressOk });
 
   private dbNameFromLastDelivery(col: (fd: import("./FamilyDeliveries").FamilyDeliveries) => Column, alias: string) {
@@ -1071,4 +1082,9 @@ export function displayDupInfo(info: duplicateFamilyInfo, context: Context) {
     r.push(getLang(context).similarName);
   }
   return info.address + ": " + r.join(', ');
+}
+
+export interface autocompleteResult {
+  address: string,
+  result: GeocodeResult
 }

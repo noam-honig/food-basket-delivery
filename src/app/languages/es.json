@@ -2135,6 +2135,11 @@
     "valueInCode": "בטל שיוך כל המשלוחים למתנדב",
     "valueInEnglish": "Unassign all deliveries"
   },
+  "markOnMap": {
+    "google": "Marcar en el mapa",
+    "valueInCode": "סמן על המפה",
+    "valueInEnglish": "Mark on the map"
+  },
   "maxDeliveriesBeforeBusy": {
     "google": "Número de entregas para definir un voluntario ocupado",
     "valueInCode": "מספר משלוחים להגדרת מתנדב עסוק",
@@ -2422,7 +2427,7 @@
   },
   "notDoneDeliveriesShouldArchiveThem": {
     "google": "Entregas no asignadas, ¿continuar con la creación de un nuevo evento?",
-    "valueInCode": "משלוחים פעילים שטרם שוייכו, יש למחוק אותם לפני פתיחת חלוקה חדשה כדי שלא ישמרו סתם בארכיון?",
+    "valueInCode": "משלוחים פעילים שטרם שוייכו, יש למחוק אותם לפני פתיחת חלוקה חדשה כדי שלא ישמרו סתם בארכיון.",
     "valueInEnglish": "Unassigned deliveries, proceed with creating a new event?"
   },
   "notice": {

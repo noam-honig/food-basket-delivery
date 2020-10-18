@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, AfterViewInit, NgZone, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { MatDialogRef, MatDialogActions } from '@angular/material/dialog';
-import { Families, duplicateFamilyInfo, displayDupInfo } from '../families/families';
+import { Families, duplicateFamilyInfo, displayDupInfo, autocompleteResult as autoCompleteResult } from '../families/families';
 
 import { Context, DialogConfig, DataControlSettings, DataAreaSettings, GridSettings, StringColumn, ServerFunction, ServerContext, DataArealColumnSetting, BusyService } from '@remult/core';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -20,7 +20,7 @@ import { Sites } from '../sites/sites';
 import { async } from '@angular/core/testing';
 import { MatExpansionPanel } from '@angular/material';
 import { ShowOnMapComponent } from '../show-on-map/show-on-map.component';
-import { Location } from '../shared/googleApiHelpers';
+import { isGpsAddress, Location } from '../shared/googleApiHelpers';
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { LatLng } from 'spherical-geometry-js';
@@ -97,6 +97,10 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       this.families.currentRow.addressByGoogle.value = x.addressByGoogle;
       this.families.currentRow.city.value = x.city;
       this.families.currentRow.addressOk.value = true;
+      this.families.currentRow.autoCompleteResult.value = JSON.stringify({
+        address: this.families.currentRow.address.value,
+        result: x.autoCompleteResult
+      } as autoCompleteResult);
     });
 
   }
@@ -237,7 +241,14 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     if (!this.onMapLocation)
       this.onMapLocation = this.families.currentRow.address.location();
     this.context.openDialog(ShowOnMapComponent, x => x.args = {
-      location: this.onMapLocation
+      location: this.onMapLocation,
+      save: s => {
+        if (!isGpsAddress(this.args.family.address.value))
+          this.args.family.addressComment.value = (this.args.family.address.value + " " + this.args.family.addressComment.value).trim()
+        this.args.family.address.value = s.lat.toFixed(6) + "," + s.lng.toFixed(6);
+        this.onMapLocation = s
+        this.args.family.addressByGoogle.value = "יתעדכן בשמירה";
+      }
     });
   }
   async ngOnInit() {

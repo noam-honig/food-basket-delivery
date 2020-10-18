@@ -800,4 +800,5 @@ export class italy implements Language {
   mustHaveAtLeastOneActiveDistributionList = 'Deve essere presente almeno una lista di distribuzione';
   distributionCenterNotFound = 'Nessuna lista di distribuzione trovata';
   confirmArchive = 'Sposta in archivio';
+  markOnMap = 'Segna sulla mappa';
 }

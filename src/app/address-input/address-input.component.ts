@@ -2,14 +2,14 @@ import { Component, OnInit, Input, ElementRef, ViewChild, NgZone, AfterViewInit 
 
 import { Column } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { getAddress, Location, getCity } from '../shared/googleApiHelpers';
+import { getAddress, Location, getCity, GeocodeInformation, GeocodeResult } from '../shared/googleApiHelpers';
 
 @Component({
   selector: 'app-address-input',
   templateUrl: './address-input.component.html',
   styleUrls: ['./address-input.component.scss']
 })
-export class AddressInputComponent implements AfterViewInit{
+export class AddressInputComponent implements AfterViewInit {
 
   @Input() column: Column;
   @Input() autoInit: boolean = false;
@@ -20,7 +20,8 @@ export class AddressInputComponent implements AfterViewInit{
   initAddress(consumer: (x: {
     addressByGoogle: string,
     location: Location,
-    city: string
+    city: string,
+    autoCompleteResult: GeocodeResult
   }) => void) {
     if (this.initAddressAutoComplete)
       return;
@@ -34,7 +35,7 @@ export class AddressInputComponent implements AfterViewInit{
         return;
       const place = autocomplete.getPlaces()[0];
 
-
+      
       this.zone.run(() => {
         this.column.value = this.addressInput.nativeElement.value;
         this.column.value = getAddress({
@@ -42,6 +43,24 @@ export class AddressInputComponent implements AfterViewInit{
           address_components: place.address_components
         });
         consumer({
+          autoCompleteResult: {
+            results: [{
+              address_components: place.address_components,
+              formatted_address: place.formatted_address,
+              partial_match: false,
+              geometry: {
+                location_type: '',
+                location: toLocation(place.geometry.location),
+                viewport: {
+                  northeast: toLocation(place.geometry.viewport.getNorthEast()),
+                  southwest: toLocation(place.geometry.viewport.getSouthWest())
+                }
+              },
+              place_id: place.place_id,
+              types: place.types
+            }],
+            status: "OK"
+          },
           location: {
             lat: place.geometry.location.lat(),
             lng: place.geometry.location.lng()
@@ -66,4 +85,11 @@ export class AddressInputComponent implements AfterViewInit{
 
   }
 
+}
+
+function toLocation(l: google.maps.LatLng): Location {
+  return {
+    lat: l.lat(),
+    lng: l.lng()
+  }
 }

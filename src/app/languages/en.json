@@ -1894,6 +1894,10 @@
     "valueInCode": "בטל שיוך כל המשלוחים למתנדב",
     "custom": "Unassign all deliveries"
   },
+  "markOnMap": {
+    "google": "Mark on the map",
+    "valueInCode": "סמן על המפה"
+  },
   "maxDeliveriesBeforeBusy": {
     "google": "Number of deliveries to define a busy volunteer",
     "valueInCode": "מספר משלוחים להגדרת מתנדב עסוק"
@@ -2133,7 +2137,7 @@
   },
   "notDoneDeliveriesShouldArchiveThem": {
     "google": "Deliveries that have not yet been associated, should they be archived?",
-    "valueInCode": "משלוחים פעילים שטרם שוייכו, יש למחוק אותם לפני פתיחת חלוקה חדשה כדי שלא ישמרו סתם בארכיון?",
+    "valueInCode": "משלוחים פעילים שטרם שוייכו, יש למחוק אותם לפני פתיחת חלוקה חדשה כדי שלא ישמרו סתם בארכיון.",
     "custom": "Unassigned deliveries, proceed with creating a new event?"
   },
   "notice": {
