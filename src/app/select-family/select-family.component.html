@@ -6,7 +6,7 @@
       <input matInput [(ngModel)]="searchString" (input)="doFilter()"
         placeholder="{{settings.lang.search}} {{args.selectStreet?settings.lang.address:settings.lang.familyName}}"
         #search [ngModelOptions]="{standalone: true}">
-      <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
+      <mat-icon matSuffix (click)="searchString=''">clear</mat-icon>
     </mat-form-field>
   </form>
 </div>
@@ -15,15 +15,16 @@
 
 
 
-    <button mat-raised-button color="accent" *ngIf="countSelected()>0"
-      (click)="doSelection()">{{settings.lang.assign}} {{countSelected()}}
+    <button mat-raised-button color="accent" *ngIf="countSelected()>0" (click)="doSelection()">{{settings.lang.assign}}
+      {{countSelected()}}
       {{settings.lang.deliveries}}</button>
     <button mat-raised-button color="accent"
       *ngIf="args.selectStreet&&families.totalRows>1&&searchString&&countSelected()==0"
       (click)="doSelection()">{{settings.lang.assign}} {{families.totalRows}}
       {{settings.lang.familesOnStreet}}: {{searchString}}</button>
     <div>
-      <div *ngFor="let f of families.items" (click)="getSelected(f).selectState.selected=!getSelected(f).selectState.selected">
+      <div *ngFor="let f of families.items"
+        (click)="getSelected(f).selectState.selected=!getSelected(f).selectState.selected">
         <div>
           <h4>
             <mat-checkbox [(ngModel)]="getSelected(f).selectState.selected" (click)="false">
@@ -51,3 +52,6 @@
     </button>
   </div>
 </mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button [mat-dialog-close]>{{settings.lang.close}}</button>
+</mat-dialog-actions>
