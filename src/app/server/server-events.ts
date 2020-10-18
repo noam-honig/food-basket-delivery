@@ -32,52 +32,45 @@ export class ServerEvents {
     sites = new Map<string, userInSite[]>();
 
     constructor(private app: Express) {
-
-    }
-    registerPath(path: string) {
-        let p = path + '/stream';
-        console.log(p);
-        this.app.get(p, (req, res) => {
-            //@ts-ignore
-            let r = new ExpressRequestBridgeToDataApiRequest(req);
-            let context = new ServerContext();
-            if (context.isAllowed(Roles.distCenterAdmin))
-                throw  "not allowed";
-            context.setReq(r);
-            let org = Sites.getOrganizationFromContext(context);
-            res.writeHead(200, {
-                "Access-Control-Allow-Origin": req.header('origin') ? req.header('origin') : '',
-                "Access-Control-Allow-Credentials": "true",
-                'Content-Type': 'text/event-stream',
-                'Cache-Control': 'no-cache',
-                'Connection': 'keep-alive'
-            });
-            let key = new Date().toISOString();
-
-            tempConnections[key] = (context: Context) => {
-                let x = this.sites.get(org);
-                if (!x) {
-                    x = [];
-                    this.sites.set(org, x);
-                }
-                x.push(new userInSite((<HelperUserInfo>context.user).distributionCenter, res,context.isAllowed(Roles.admin)));
-                tempConnections[key] = undefined;
-
-            };
-            res.write("event:authenticate\ndata:" + key + "\n\n");
-
-            req.on("close", () => {
-                tempConnections[key] = undefined;
-                let x = this.sites.get(org);
-                if (x) {
-                    let i = x.findIndex(x=>x.response== res);
-                    if (i >= 0)
-                        x.splice(i, 1);
-                }
-            });
-
+        this.app.get('/*/api/stream',(req,res)=>{
+             //@ts-ignore
+             let r = new ExpressRequestBridgeToDataApiRequest(req);
+             let context = new ServerContext();
+             context.setReq(r);
+             let org = Sites.getOrganizationFromContext(context);
+             res.writeHead(200, {
+                 "Access-Control-Allow-Origin": req.header('origin') ? req.header('origin') : '',
+                 "Access-Control-Allow-Credentials": "true",
+                 'Content-Type': 'text/event-stream',
+                 'Cache-Control': 'no-cache',
+                 'Connection': 'keep-alive'
+             });
+             let key = new Date().toISOString();
+ 
+             tempConnections[key] = (context: Context) => {
+                 let x = this.sites.get(org);
+                 if (!x) {
+                     x = [];
+                     this.sites.set(org, x);
+                 }
+                 x.push(new userInSite((<HelperUserInfo>context.user).distributionCenter, res,context.isAllowed(Roles.admin)));
+                 tempConnections[key] = undefined;
+ 
+             };
+             res.write("event:authenticate\ndata:" + key + "\n\n");
+ 
+             req.on("close", () => {
+                 tempConnections[key] = undefined;
+                 let x = this.sites.get(org);
+                 if (x) {
+                     let i = x.findIndex(x=>x.response== res);
+                     if (i >= 0)
+                         x.splice(i, 1);
+                 }
+             });
         });
     }
+   
     SendMessage (x: string, context: Context,distributionCenter:string)  {
         let z = this;
         setTimeout(() => {

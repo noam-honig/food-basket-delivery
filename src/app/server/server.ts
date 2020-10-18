@@ -142,18 +142,10 @@ s.parentNode.insertBefore(b, s);})();
 
 
 
-    let addServerEvent = x => { };
+    
     if (!process.env.DISABLE_SERVER_EVENTS) {
         let serverEvents = new ServerEvents(app);
-        addServerEvent = async (s) => serverEvents.registerPath('/' + s + '/api');;
-        if (Sites.multipleSites) {
-            for (const s of Sites.schemas) {
-                addServerEvent(s);
-            }
-        }
-        else {
-            serverEvents.registerPath('/api');
-        }
+        
 
         let lastMessage = new Date();
         Families.SendMessageToBrowsers = (x, c, distCenter) => {
@@ -201,7 +193,7 @@ s.parentNode.insertBefore(b, s);})();
         OverviewComponent.createSchemaApi = async schema => {
             let stack: [] = app._router.stack;
             stack.splice(stack.length - 1, 1);
-            addServerEvent(schema);
+            
             createSchemaApi(schema);
             app.use('/*', async (req, res) => {
                 await sendIndex(res, req);
