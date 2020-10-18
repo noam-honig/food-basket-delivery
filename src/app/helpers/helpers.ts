@@ -129,10 +129,10 @@ export abstract class HelpersBase extends IdEntity {
 export class Helpers extends HelpersBase {
     async displayEditDialog(dialog: DialogService, busy: BusyService) {
         let settings = getSettings(this.context);
-        this.context.openDialog(InputAreaComponent, x => x.args = {
+        await this.context.openDialog(InputAreaComponent, x => x.args = {
             title: this.isNew() ? settings.lang.newVolunteers : this.name.value,
-            ok: () => {
-                this.save();
+            ok: async () => {
+                await this.save();
             },
             cancel: () => {
                 this.undoChanges();

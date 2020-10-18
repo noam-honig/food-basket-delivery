@@ -88,7 +88,12 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             return this.settings.lang.volunteerPreferences + ": " + r;
         }
     }
-
+    async editHelper() {
+        await this.familyLists.helper.displayEditDialog(this.dialog, this.busy);
+        if (this.phone != this.familyLists.helper.phone.value)
+            this.phone = this.familyLists.helper.phone.value;
+        
+    }
     async searchPhone() {
         this.clearHelperInfo(false);
         let cleanPhone = PhoneColumn.fixPhoneInput(this.phone);
@@ -225,7 +230,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 this.groups = g;
                 if (this.filterGroup != '' && !this.groups.find(x => x.name.value == this.filterGroup)) {
 
-                    this.groups.push({ name: new StringColumn({ defaultValue: this.filterGroup }),familiesCount: new NumberColumn({ defaultValue: 0 }) });
+                    this.groups.push({ name: new StringColumn({ defaultValue: this.filterGroup }), familiesCount: new NumberColumn({ defaultValue: 0 }) });
                 }
             });
             let r = (await AsignFamilyComponent.getBasketStatus({
