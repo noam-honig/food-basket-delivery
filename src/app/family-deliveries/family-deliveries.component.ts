@@ -691,8 +691,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         click: async fd => {
           fd.showDetailsDialog({
             refreshDeliveryStats: () => this.refreshStats(),
-            dialog: this.dialog,
-            focusOnDelivery: true
+            dialog: this.dialog
           });
         }
         , textInMenu: () => getLang(this.context).deliveryDetails

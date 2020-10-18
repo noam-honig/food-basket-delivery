@@ -217,8 +217,7 @@ export class DeliveryHistoryComponent implements OnInit {
         showInLine: true,
         click: async fd => {
           fd.showDetailsDialog({
-            dialog: this.dialog,
-            focusOnDelivery: true
+            dialog: this.dialog
           });
         }
         , textInMenu: () => getLang(this.context).deliveryDetails

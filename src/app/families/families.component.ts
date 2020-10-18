@@ -108,8 +108,9 @@ export class FamiliesComponent implements OnInit {
         this.families.addNewRow();
         this.families.currentRow.name.value = this.searchString;
         this.families.currentRow.showFamilyDialog({
+            focusOnAddress: true,
             onSave: async () => {
-                await this.families.currentRow.showNewDeliveryDialog(this.dialog, this.settings,this.busy);
+                await this.families.currentRow.showNewDeliveryDialog(this.dialog, this.settings, this.busy);
                 this.refreshStats();
             }
         });
@@ -252,7 +253,7 @@ export class FamiliesComponent implements OnInit {
 
 
         columnSettings: families => {
-            let r:DataControlInfo<Families>[] = [
+            let r: DataControlInfo<Families>[] = [
 
                 {
                     column: families.name,
@@ -261,6 +262,10 @@ export class FamiliesComponent implements OnInit {
                 {
                     column: families.address,
                     width: '250',
+                    clickIcon:'edit',
+                    click: (f) => {
+                        f.showFamilyDialog({ focusOnAddress: true });
+                    },
                     cssClass: f => {
                         if (!f.addressOk.value)
                             return 'addressProblem';
@@ -413,7 +418,7 @@ export class FamiliesComponent implements OnInit {
                 name: this.settings.lang.newDelivery,
                 icon: 'add_shopping_cart',
                 click: async f => {
-                    await f.showNewDeliveryDialog(this.dialog, this.settings,this.busy);
+                    await f.showNewDeliveryDialog(this.dialog, this.settings, this.busy);
                 }
                 , visible: f => !f.isNew()
 
@@ -422,7 +427,7 @@ export class FamiliesComponent implements OnInit {
             {
                 name: this.settings.lang.familyDeliveries,
                 click: async f => {
-                    f.showDeliveryHistoryDialog({ settings: this.settings, dialog: this.dialog,busy:this.busy });
+                    f.showDeliveryHistoryDialog({ settings: this.settings, dialog: this.dialog, busy: this.busy });
                 }
                 , visible: f => !f.isNew()
             }

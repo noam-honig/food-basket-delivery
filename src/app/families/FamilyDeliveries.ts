@@ -510,7 +510,7 @@ export class FamilyDeliveries extends IdEntity {
     async showDetailsDialog(callerHelper: {
         refreshDeliveryStats?: () => void,
         onSave?: () => Promise<void>,
-        focusOnDelivery?: boolean,
+        focusOnAddress?:boolean,
         dialog: DialogService
     }) {
 
@@ -522,7 +522,7 @@ export class FamilyDeliveries extends IdEntity {
 
                 this.context.openDialog((await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent, x => x.args = {
                     familyDelivery: this,
-                    focusOnDelivery: callerHelper.focusOnDelivery,
+                    focusOnAddress: callerHelper.focusOnAddress,
                     onSave: async () => {
                         if (callerHelper && callerHelper.onSave)
                             await callerHelper.onSave();

@@ -69,11 +69,12 @@ export class Families extends IdEntity {
     }
     return result;
   }
-  async showFamilyDialog(tools?: { onSave: () => Promise<void> }) {
+  async showFamilyDialog(tools?: { onSave?: () => Promise<void>,focusOnAddress?:boolean }) {
     this.context.openDialog((await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent, x => x.args = {
       family: this,
+      focusOnAddress:tools&&tools.focusOnAddress,
       onSave: async () => {
-        if (tools)
+        if (tools&&tools.onSave)
           await tools.onSave();
       }
     });

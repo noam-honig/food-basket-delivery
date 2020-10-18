@@ -258,8 +258,7 @@ export class Helpers extends HelpersBase {
                     click: async fd => {
                         fd.showDetailsDialog({
 
-                            dialog: dialog,
-                            focusOnDelivery: true
+                            dialog: dialog
                         });
                     }
                     , textInMenu: () => getLang(this.context).deliveryDetails

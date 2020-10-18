@@ -41,7 +41,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     familyDelivery?: FamilyDeliveries,
     familyId?: string,
     deliveryId?: string,
-    focusOnDelivery?: boolean,
+    focusOnAddress?: boolean,
     message?: string,
     disableSave?: boolean,
     userCanUpdateButDontSave?: boolean,
@@ -55,7 +55,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     public dialog: DialogService,
     private cd: ChangeDetectorRef,
     private zone: NgZone,
-    public busy:BusyService
+    public busy: BusyService
 
   ) {
     dialogRef.afterClosed().toPromise().then(() => {
@@ -77,10 +77,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
 
   ngAfterViewChecked(): void {
     if (!this.init && this.addressPanel) {
-      if (this.delivery && this.args.focusOnDelivery) {
-        this.deliveryPanel.open();
-      }
-      else
+      if (this.args.focusOnAddress)
         this.addressPanel.open();
       this.init = true;
       this.cd.detectChanges();
@@ -148,27 +145,26 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       ok: () => { },
       settings: {
         columnSettings: () => {
-          let r:DataArealColumnSetting<any>[] =
+          let r: DataArealColumnSetting<any>[] =
             [
               f.createDate, f.createUser,
               f.lastUpdateDate, f.lastUpdateUser,
               f.statusDate, f.statusUser
             ];
-            if (this.args.familyDelivery)
-            {
-              let fd = this.args.familyDelivery;
-              r.push(
-                {
-                  getValue:()=>'עדכונים למשלוח'
-                },
-                fd.deliveryStatusDate,
-                fd.deliveryStatusUser,
-                fd.courierAssingTime,
-                fd.courierAssignUser,
-                fd.createDate,
-                fd.createUser
-                )
-            }
+          if (this.args.familyDelivery) {
+            let fd = this.args.familyDelivery;
+            r.push(
+              {
+                getValue: () => 'עדכונים למשלוח'
+              },
+              fd.deliveryStatusDate,
+              fd.deliveryStatusUser,
+              fd.courierAssingTime,
+              fd.courierAssignUser,
+              fd.createDate,
+              fd.createUser
+            )
+          }
           return r;
         }
       }
@@ -200,7 +196,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   async newDelivery() {
     if (this.delivery && this.delivery.wasChanged())
       this.delivery.save();
-    await this.args.family.showNewDeliveryDialog(this.dialog, this.settings,this.busy, {
+    await this.args.family.showNewDeliveryDialog(this.dialog, this.settings, this.busy, {
       copyFrom: this.delivery,
       aDeliveryWasAdded: async (id) => {
         if (this.delivery)
@@ -322,11 +318,8 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
         ],
         families.addressComment,
         families.addressByGoogle,
-        [families.city, families.area],
-        families.addressOk,
-        families.postalCode
-
-
+        [families.addressOk, families.city],
+        [families.area, families.postalCode]
       ]
     });
 
@@ -362,7 +355,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       this.familyDeliveries = await this.args.family.deliveriesGridSettings({
         settings: this.settings,
         dialog: this.dialog,
-        busy:this.busy
+        busy: this.busy
       });
 
   }
