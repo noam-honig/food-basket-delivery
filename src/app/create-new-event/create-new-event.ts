@@ -4,7 +4,7 @@ import { StringColumn, NumberColumn, DataAreaSettings, ServerFunction, Context, 
 import { DialogService } from '../select-popup/dialog';
 import { Sites, getLang } from '../sites/sites';
 
-import { allCentersToken } from '../manage/distribution-centers';
+import { allCentersToken, DistributionCenterId, DistributionCenters } from '../manage/distribution-centers';
 import { executeOnServer, pack } from '../server/mlt';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { RequiredValidator } from '@angular/forms';
@@ -31,6 +31,7 @@ function visible(when: () => boolean, caption?: string) {
 export class CreateNewEvent {
     archiveHelper = new ArchiveHelper(this.context);
     createNewDelivery = new BoolColumn(getLang(this.context).createNewDeliveryForAllFamilies);
+    distributionCenter = new DistributionCenterId(this.context, { dataControlSettings: () => ({ visible: () => false }) });
     moreOptions = new BoolColumn(visible(() => this.createNewDelivery.value, getLang(this.context).moreOptions));
     includeGroups = new GroupsColumn(this.context, visible(() => this.moreOptions.value, getLang(this.context).includeGroups));
     excludeGroups = new GroupsColumn(this.context, visible(() => this.moreOptions.value, getLang(this.context).excludeGroups));
@@ -43,6 +44,7 @@ export class CreateNewEvent {
 
     columns = [...this.archiveHelper.getColumns(),
     this.createNewDelivery,
+    this.distributionCenter,
     this.moreOptions,
     this.includeGroups,
     this.excludeGroups,
@@ -51,7 +53,7 @@ export class CreateNewEvent {
 
     async createNewEvent() {
         let pt = new PromiseThrottle(10);
-        for await (const fd of this.context.for(ActiveFamilyDeliveries).iterate()) {
+        for await (const fd of this.context.for(ActiveFamilyDeliveries).iterate({ where: fd => fd.distributionCenter.filter(this.distributionCenter.value) })) {
             this.archiveHelper.forEach(fd);
             fd.archive.value = true;
             await pt.push(fd.save());
@@ -60,7 +62,7 @@ export class CreateNewEvent {
         let r = 0;
         if (this.createNewDelivery.value) {
             r = await this.iterateFamilies(async f => {
-                let fd = await f.createDelivery('');
+                let fd = await f.createDelivery(this.distributionCenter.value);
                 fd._disableMessageToUsers = true;
                 if (this.moreOptions.value) {
                     if (!this.useFamilyBasket.value)
@@ -110,58 +112,74 @@ export class CreateNewEvent {
     }
 
     async show(dialog: DialogService, settings: ApplicationSettings, routeHelper: RouteHelperService, busy: BusyService) {
+        this.distributionCenter.value = dialog.distCenter.value;
         
-            let notDoneDeliveries = await this.context.for(ActiveFamilyDeliveries).count(x => x.readyFilter());
-            if (notDoneDeliveries > 0 ) {
-                await dialog.messageDialog(getLang(this.context).thereAre + " " + notDoneDeliveries + " " + getLang(this.context).notDoneDeliveriesShouldArchiveThem);
-                routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
+        if (this.distributionCenter.value == allCentersToken) {
+            let centers = await this.context.for(DistributionCenters).find({ where: x => x.isActive() });
+            if (centers.length == 1)
+                this.distributionCenter.value = centers[0].id.value;
+            else {
+                await dialog.Error(getLang(this.context).pleaseSelectDistributionList);
                 return;
             }
-            let threeHoursAgo = new Date();
-            threeHoursAgo.setHours(threeHoursAgo.getHours() - 3);
-            let recentOnTheWay = await this.context.for(ActiveFamilyDeliveries).count(x => x.onTheWayFilter().and(x.courierAssingTime.isGreaterOrEqualTo(threeHoursAgo)));
-            if (recentOnTheWay > 0 && !await dialog.YesNoPromise(getLang(this.context).thereAre + " " + recentOnTheWay + " " + getLang(this.context).deliveresOnTheWayAssignedInTheLast3Hours)) {
-                routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
-                return;
-            }
-            this.useFamilyBasket.value = true;
+        }
 
-            await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(x => undefined, settings.usingSelfPickupModule.value);
+        let notDoneDeliveries = await this.context.for(ActiveFamilyDeliveries).count(x => x.readyFilter().and(x.distributionCenter.filter(this.distributionCenter.value)));
+        if (notDoneDeliveries > 0) {
+            await dialog.messageDialog(getLang(this.context).thereAre + " " + notDoneDeliveries + " " + getLang(this.context).notDoneDeliveriesShouldArchiveThem);
+            routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
+            return;
+        }
+        let threeHoursAgo = new Date();
+        threeHoursAgo.setHours(threeHoursAgo.getHours() - 3);
+        let recentOnTheWay = await this.context.for(ActiveFamilyDeliveries).count(x => x.onTheWayFilter().and(x.courierAssingTime.isGreaterOrEqualTo(threeHoursAgo)).and(x.distributionCenter.filter(this.distributionCenter.value)));
+        if (recentOnTheWay > 0 && !await dialog.YesNoPromise(getLang(this.context).thereAre + " " + recentOnTheWay + " " + getLang(this.context).deliveresOnTheWayAssignedInTheLast3Hours)) {
+            routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
+            return;
+        }
+        this.useFamilyBasket.value = true;
+
+        await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(x => x.distributionCenter.filter(this.distributionCenter.value), settings.usingSelfPickupModule.value);
 
 
-            this.context.openDialog(InputAreaComponent, x => x.args = {
-                title: settings.lang.createNewEvent,
-                helpText: settings.lang.createNewEventHelp,
-                settings: {
-                    columnSettings: () => this.columns
-                },
-                ok: async () => {
-                    try {
-                        let deliveriesCreated = await CreateNewEvent.createNewEvent(pack(this));
-                        dialog.distCenter.value = dialog.distCenter.value;
-                        if (await dialog.YesNoPromise(settings.lang.doneDotGotoDeliveries)) {
-                            routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
-
-                        }
-
+        this.context.openDialog(InputAreaComponent, x => x.args = {
+            title: settings.lang.createNewEvent,
+            helpText: settings.lang.createNewEventHelp,
+            settings: {
+                columnSettings: () => this.columns
+            },
+            ok: async () => {
+                try {
+                    let deliveriesCreated = await CreateNewEvent.createNewEvent(pack(this));
+                    dialog.distCenter.value = dialog.distCenter.value;
+                    if (await dialog.YesNoPromise(settings.lang.doneDotGotoDeliveries)) {
+                        routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
 
                     }
-                    catch (err) {
-                        dialog.exception("Create new event", err);
-                    }
-                },
-                cancel: () => { },
-                validate: async () => {
 
 
-                    if (this.createNewDelivery.value && !await dialog.YesNoPromise(getLang(this.context).create + " " + await CreateNewEvent.countNewDeliveries(pack(this)) + " " + getLang(this.context).newDeliveriesQM))
+                }
+                catch (err) {
+                    dialog.exception("Create new event", err);
+                }
+            },
+            cancel: () => { },
+            validate: async () => {
+
+                
+                let count = await this.context.for(ActiveFamilyDeliveries).count(x => x.distributionCenter.filter(this.distributionCenter.value));
+                if (count > 0) {
+                    if (!await dialog.YesNoPromise(getLang(this.context).confirmArchive + " " + count + " " + getLang(this.context).deliveries))
                         throw getLang(this.context).actionCanceled;
                 }
+                if (this.createNewDelivery.value && !await dialog.YesNoPromise(getLang(this.context).create + " " + await CreateNewEvent.countNewDeliveries(pack(this)) + " " + getLang(this.context).newDeliveriesQM))
+                    throw getLang(this.context).actionCanceled;
+            }
 
 
 
-            });
-        
+        });
+
     }
     @ServerFunction({ allowed: Roles.admin })
     static async createNewEvent(args: any[], context?: Context) {

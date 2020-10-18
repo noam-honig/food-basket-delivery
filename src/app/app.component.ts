@@ -55,7 +55,7 @@ export class AppComponent {
 
   }
   showCreateNewEvent() {
-    return this.context.isAllowed(Roles.admin) && !this.dialog.hasManyCenters;
+    return this.context.isAllowed(Roles.admin) ;
   }
   createNewEvent() {
     new CreateNewEvent(this.context).show(this.dialog, this.settings, this.helper, this.busy);

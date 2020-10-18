@@ -704,6 +704,11 @@
     "valueInCode": "אשר",
     "valueInEnglish": "Confirm"
   },
+  "confirmArchive": {
+    "google": "Mover al archivo",
+    "valueInCode": "האם להעביר לארכיון ",
+    "valueInEnglish": "Do move to archive"
+  },
   "confirmDeleteOf": {
     "google": "Certificado de borrado para",
     "valueInCode": "אישור מחיקה עבור ",
@@ -1134,6 +1139,11 @@
     "google": "Nombre",
     "valueInCode": "שם",
     "valueInEnglish": "Name"
+  },
+  "distributionCenterNotFound": {
+    "google": "No se encontró ninguna lista de distribución",
+    "valueInCode": "רשימת חלוקה לא נמצאה",
+    "valueInEnglish": "No distribution list found"
   },
   "distributionCenterUniqueId": {
     "google": "símbolo",

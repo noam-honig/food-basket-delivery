@@ -798,4 +798,6 @@ export class es implements Language {
   unDeleteDistributionCenter = 'Recuperar';
   unDeleteHelper = 'Recuperar';
   mustHaveAtLeastOneActiveDistributionList = 'Debe haber al menos una lista de distribución';
+  distributionCenterNotFound = 'No se encontró ninguna lista de distribución';
+  confirmArchive = 'Mover al archivo';
 }

@@ -798,4 +798,6 @@ export class italy implements Language {
   unDeleteDistributionCenter = 'Annulla eliminazione';
   unDeleteHelper = 'Annulla eliminazione';
   mustHaveAtLeastOneActiveDistributionList = 'Deve essere presente almeno una lista di distribuzione';
+  distributionCenterNotFound = 'Nessuna lista di distribuzione trovata';
+  confirmArchive = 'Sposta in archivio';
 }

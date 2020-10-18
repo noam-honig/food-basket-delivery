@@ -648,6 +648,10 @@
     "custom": "Confirm",
     "valueInCode": "אשר"
   },
+  "confirmArchive": {
+    "google": "Do move to archive",
+    "valueInCode": "האם להעביר לארכיון "
+  },
   "confirmDeleteOf": {
     "google": "Deletion certificate for",
     "valueInCode": "אישור מחיקה עבור "
@@ -1044,6 +1048,10 @@
   "distributionCenterName": {
     "google": "Name",
     "valueInCode": "שם"
+  },
+  "distributionCenterNotFound": {
+    "google": "No distribution list found",
+    "valueInCode": "רשימת חלוקה לא נמצאה"
   },
   "distributionCenterUniqueId": {
     "google": "symbol",

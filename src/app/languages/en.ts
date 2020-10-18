@@ -798,4 +798,6 @@ export class en implements Language {
   unDeleteDistributionCenter = 'Undelete';
   unDeleteHelper = 'Undelete';
   mustHaveAtLeastOneActiveDistributionList = 'There must be at least one distribution list';
+  distributionCenterNotFound = 'No distribution list found';
+  confirmArchive = 'Do move to archive';
 }

@@ -798,4 +798,6 @@ export class donor implements Language {
   unDeleteDistributionCenter = 'בטל מחיקה';
   unDeleteHelper = 'בטל מחיקה';
   mustHaveAtLeastOneActiveDistributionList = 'חובה שתהייה רשימת חלוקה אחת לפחות';
+  distributionCenterNotFound = 'רשימת חלוקה לא נמצאה';
+  confirmArchive = 'האם להעביר לארכיון ';
 }

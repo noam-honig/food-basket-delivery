@@ -890,7 +890,7 @@ export class Language {
   actionCanceled = "פעולה בוטלה";
   deliveriesCreated = "משלוחים נוצרו";
   doneDotGotoDeliveries = "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?";
-  notDoneDeliveriesShouldArchiveThem = "משלוחים פעילים שטרם שוייכו, יש למחוק אותם לפני פתיחת חלוקה חדשה כדי שלא ישמרו סתם בארכיון?";
+  notDoneDeliveriesShouldArchiveThem = "משלוחים פעילים שטרם שוייכו, יש למחוק אותם לפני פתיחת חלוקה חדשה כדי שלא ישמרו סתם בארכיון.";
   deliveresOnTheWayAssignedInTheLast3Hours = "משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך בפתיחת ארוע חדש?";
   leadHelper = "מתנדב מוביל";
   movedFrom = "הועברו מ";
@@ -921,6 +921,8 @@ export class Language {
   unDeleteDistributionCenter = "בטל מחיקה";
   unDeleteHelper = "בטל מחיקה";
   mustHaveAtLeastOneActiveDistributionList = "חובה שתהייה רשימת חלוקה אחת לפחות. לא ניתן להשלים את המחיקה.";
+  distributionCenterNotFound = "רשימת חלוקה לא נמצאה";
+  confirmArchive = "האם להעביר לארכיון ";
 }
 
 const defaultLang = new Language();

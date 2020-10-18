@@ -564,6 +564,10 @@
     "google": "אשר",
     "valueInCode": "אשר"
   },
+  "confirmArchive": {
+    "google": "האם להעביר לארכיון ",
+    "valueInCode": "האם להעביר לארכיון "
+  },
   "confirmDeleteOf": {
     "google": "אישור מחיקה עבור ",
     "valueInCode": "אישור מחיקה עבור "
@@ -908,6 +912,10 @@
   "distributionCenterName": {
     "google": "שם",
     "valueInCode": "שם"
+  },
+  "distributionCenterNotFound": {
+    "google": "רשימת חלוקה לא נמצאה",
+    "valueInCode": "רשימת חלוקה לא נמצאה"
   },
   "distributionCenterUniqueId": {
     "google": "סמל",
