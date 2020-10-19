@@ -11,6 +11,7 @@ import { Families } from "../families/families";
 import { BasketId, QuantityColumn } from "../families/BasketType";
 import { FamilyStatus, FamilyStatusColumn } from "../families/FamilyStatus";
 import { SelfPickupStrategyColumn, updateGroup, UpdateArea, UpdateStatus, bridge } from "../families/familyActions";
+import { getSettings } from "../manage/ApplicationSettings";
 
 
 
@@ -141,7 +142,7 @@ export class UpdateDeliveriesStatus extends ActionOnRows<ActiveFamilyDeliveries>
             allowed: Roles.distCenterAdmin,
             columns: () => [this.status, this.comment, this.deleteExistingComment],
             title: getLang(context).updateDeliveriesStatus,
-            help: () => getLang(this.context).updateDeliveriesStatusHelp,
+            help: () => getSettings(context).isSytemForMlt() ? '' : getLang(this.context).updateDeliveriesStatusHelp,
             validate: async () => {
                 if (this.status.value == undefined)
                     throw getLang(this.context).statusNotSelected;
@@ -159,7 +160,7 @@ export class UpdateDeliveriesStatus extends ActionOnRows<ActiveFamilyDeliveries>
                 }
             },
             forEach: async f => {
-                if (!(this.status.value == DeliveryStatus.Frozen && f.deliverStatus.value != DeliveryStatus.ReadyForDelivery)) {
+                if (getSettings(context).isSytemForMlt() ||  !(this.status.value == DeliveryStatus.Frozen && f.deliverStatus.value != DeliveryStatus.ReadyForDelivery)) {
                     f.deliverStatus.value = this.status.value;
                     if (this.deleteExistingComment) {
                         f.internalDeliveryComment.value = '';
