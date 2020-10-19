@@ -175,21 +175,24 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     });
   }
   refreshDeliveryStatistics = false;
+  reloadDeliveries = false;
   cancel() {
 
     this.dialogRef.close();
   }
   confirmed = false;
   async confirm() {
-    this.confirmed = true;
-    this.refreshDeliveryStatistics = wasChanged(this.families.currentRow.status);
-    await this.families.currentRow.save();
     if (this.delivery) {
       let d = this.delivery;
       if (d.changeRequireStatsRefresh())
         this.refreshDeliveryStatistics = true;
       await this.delivery.save();
     }
+    this.confirmed = true;
+    this.reloadDeliveries = wasChanged(this.families.currentRow.status);
+    if(!this.refreshDeliveryStatistics)
+      this.refreshDeliveryStatistics = this.reloadDeliveries;
+    await this.families.currentRow.save();
 
 
     this.dialogRef.close();

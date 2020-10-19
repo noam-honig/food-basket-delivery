@@ -312,7 +312,7 @@ export class FamilyDeliveries extends IdEntity {
 
             },
 
-            saving: () => {
+            saving:async () => {
 
                 if (this.isNew()) {
                     this.createDate.value = new Date();
@@ -323,7 +323,7 @@ export class FamilyDeliveries extends IdEntity {
                 if (this.quantity.value < 1)
                     this.quantity.value = 1;
                 if (this.distributionCenter.value == allCentersToken)
-                    this.distributionCenter.value = '';
+                    this.distributionCenter.value = (await this.context.for(DistributionCenters).findFirst(x => x.archive.isEqualTo(false))).id.value;
                 if (wasChanged(this.courier))
                     this.routeOrder.value = 0;
 
@@ -346,6 +346,14 @@ export class FamilyDeliveries extends IdEntity {
                     });
                     logChanged(context, this.needsWork, this.needsWorkDate, this.needsWorkUser, async () => { });
                     logChanged(context, this.archive, this.archiveDate, this.archiveUser, async () => { });
+                }
+                if (context.onServer &&
+                    !DeliveryStatus.IsAResultStatus(this.deliverStatus.value)
+                    && DeliveryStatus.IsAResultStatus(this.deliverStatus.originalValue)) {
+                    let f = await this.context.for(Families).findId(this.family);
+                    if (f)
+                        f.updateDelivery(this);
+
                 }
                 if (context.onServer && this.isNew() && !this._disableMessageToUsers) {
                     Families.SendMessageToBrowsers(getLang(this.context).newDelivery, this.context, this.distributionCenter.value)
@@ -509,8 +517,9 @@ export class FamilyDeliveries extends IdEntity {
     }
     async showDetailsDialog(callerHelper: {
         refreshDeliveryStats?: () => void,
+        reloadDeliveries?:()=>void,
         onSave?: () => Promise<void>,
-        focusOnAddress?:boolean,
+        focusOnAddress?: boolean,
         dialog: DialogService
     }) {
 
@@ -531,6 +540,9 @@ export class FamilyDeliveries extends IdEntity {
                     if (y.refreshDeliveryStatistics)
                         if (callerHelper && callerHelper.refreshDeliveryStats)
                             callerHelper.refreshDeliveryStats();
+                    if (y.reloadDeliveries)
+                        if (callerHelper&&callerHelper.reloadDeliveries)
+                            callerHelper.reloadDeliveries();
 
                 });
             }
