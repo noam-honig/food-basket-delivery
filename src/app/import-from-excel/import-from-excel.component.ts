@@ -402,7 +402,7 @@ export class ImportFromExcelComponent implements OnInit {
             }
             catch (err) {
                 this.fileInput.nativeElement.value = '';
-                this.dialog.exception("Excel Import Error " + this.filename + ": ", err);
+                
                 throw err;
             }
             this.fileInput.nativeElement.value = '';

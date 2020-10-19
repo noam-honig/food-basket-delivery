@@ -114,13 +114,8 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     await this.context.openDialog(GetVolunteerFeedback, x => x.args = {
       helpText: () => new StringColumn(),
       ok: async (comment) => {
-        try {
           await UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.args.familyDelivery.courier.value, comment);
           this.dialog.Info("הודעה נשלחה");
-        }
-        catch (err) {
-          this.dialog.exception("שליחת הודעה למתנדב ", err);
-        }
       },
       cancel: () => { },
       hideLocation: true,

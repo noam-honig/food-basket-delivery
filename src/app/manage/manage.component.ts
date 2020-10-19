@@ -145,7 +145,7 @@ export class ManageComponent implements OnInit {
     },
     {
       textInMenu: c => c.archive.value ? this.settings.lang.unDeleteDistributionCenter : this.settings.lang.deleteDistributionCenter,
-      icon:'delete',
+      icon: 'delete',
       click: async c => {
         if (!c.archive.value && (await this.context.for(DistributionCenters).count(x => x.isActive().and(x.id.isDifferentFrom(c.id)))) == 0) {
           this.dialog.Error(this.settings.lang.mustHaveAtLeastOneActiveDistributionList);
@@ -287,17 +287,12 @@ export class ManageComponent implements OnInit {
       },
       title: 'בדיקת מייל',
       ok: async () => {
-        try {
-          let x = await ManageComponent.TestSendEmail(sc.value, this.testEmailDonor());
-          if (x) {
-            this.dialog.Info('נשלח בהצלחה');
-          }
-          else
-            throw 'לא נשלח';
+        let x = await ManageComponent.TestSendEmail(sc.value, this.testEmailDonor());
+        if (x) {
+          this.dialog.Info('נשלח בהצלחה');
         }
-        catch (err) {
-          this.dialog.exception("test email", err);
-        }
+        else
+          throw 'לא נשלח';
 
       }
     });

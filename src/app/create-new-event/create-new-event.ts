@@ -113,7 +113,7 @@ export class CreateNewEvent {
 
     async show(dialog: DialogService, settings: ApplicationSettings, routeHelper: RouteHelperService, busy: BusyService) {
         this.distributionCenter.value = dialog.distCenter.value;
-        
+
         if (this.distributionCenter.value == allCentersToken) {
             let centers = await this.context.for(DistributionCenters).find({ where: x => x.isActive() });
             if (centers.length == 1)
@@ -149,24 +149,17 @@ export class CreateNewEvent {
                 columnSettings: () => this.columns
             },
             ok: async () => {
-                try {
-                    let deliveriesCreated = await CreateNewEvent.createNewEvent(pack(this));
-                    dialog.distCenter.value = dialog.distCenter.value;
-                    if (await dialog.YesNoPromise(settings.lang.doneDotGotoDeliveries)) {
-                        routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
+                let deliveriesCreated = await CreateNewEvent.createNewEvent(pack(this));
+                dialog.distCenter.value = dialog.distCenter.value;
+                if (await dialog.YesNoPromise(settings.lang.doneDotGotoDeliveries)) {
+                    routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
 
-                    }
-
-
-                }
-                catch (err) {
-                    dialog.exception("Create new event", err);
                 }
             },
             cancel: () => { },
             validate: async () => {
 
-                
+
                 let count = await this.context.for(ActiveFamilyDeliveries).count(x => x.distributionCenter.filter(this.distributionCenter.value));
                 if (count > 0) {
                     if (!await dialog.YesNoPromise(getLang(this.context).confirmArchive + " " + count + " " + getLang(this.context).deliveries))

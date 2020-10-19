@@ -103,21 +103,16 @@ export class FamilyInfoComponent implements OnInit {
     }
   }
   async privateCall() {
-    try {
-      this.dialog.analytics("Private Call");
-      let r = await FamilyInfoComponent.privateCall(this.f.id.value);
-      if (r.error)
-        this.dialog.Error(r.error);
-      else
-        this.zone.run(() => {
+    this.dialog.analytics("Private Call");
+    let r = await FamilyInfoComponent.privateCall(this.f.id.value);
+    if (r.error)
+      this.dialog.Error(r.error);
+    else
+      this.zone.run(() => {
 
-          window.location.href = "tel:" + r.phone;
-        });
+        window.location.href = "tel:" + r.phone;
+      });
 
-    }
-    catch (err) {
-      this.dialog.exception("private call", err);
-    }
 
   }
   callPhone(col: PhoneColumn) {

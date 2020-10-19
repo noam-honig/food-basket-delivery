@@ -3,7 +3,7 @@ import { InputAreaComponent } from "../select-popup/input-area/input-area.compon
 import { DialogService, extractError } from "../select-popup/dialog";
 
 import { ApplicationSettings } from "../manage/ApplicationSettings";
-import {  use } from "../translate";
+import { use } from "../translate";
 import { getLang } from '../sites/sites';
 import { PromiseThrottle } from "../shared/utils";
 
@@ -105,20 +105,13 @@ export class ActionOnRows<T extends IdEntity> {
 
                         },
                         ok: async () => {
-                            try {
-                                let info = await component.buildActionInfo(this.args.additionalWhere);
-                                if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + " " + use.language.for + " " + info.count + ' ' + component.groupName + '?')) {
-                                    let r = await this.internalForTestingCallTheServer(component, info);
-                                    component.dialog.Info(r);
+                            let info = await component.buildActionInfo(this.args.additionalWhere);
+                            if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + " " + use.language.for + " " + info.count + ' ' + component.groupName + '?')) {
+                                let r = await this.internalForTestingCallTheServer(component, info);
+                                component.dialog.Info(r);
 
 
-                                    component.afterAction();
-                                }
-                            }
-                            catch (err) {
-                                console.log(err);
-                                component.dialog.exception(this.args.title, err);
-
+                                component.afterAction();
                             }
                         }
                         , cancel: () => { }
@@ -130,7 +123,7 @@ export class ActionOnRows<T extends IdEntity> {
         } as GridButton;
     }
 
-     async internalForTestingCallTheServer(component: actionDialogNeeds<T>, info: serverUpdateInfo<T>) {
+    async internalForTestingCallTheServer(component: actionDialogNeeds<T>, info: serverUpdateInfo<T>) {
         let args = [];
         for (const c of this.args.columns()) {
             args.push(c.rawValue);
@@ -204,12 +197,12 @@ export async function pagedRowsIterator<T extends IdEntity>(context: SpecificEnt
 
     where: (f: T) => FilterBase,
     forEachRow: (f: T) => Promise<void>,
-    orderBy?:EntityOrderBy<T>,
+    orderBy?: EntityOrderBy<T>,
     count?: number
 }) {
     let updated = 0;
     let pt = new PromiseThrottle(10);
-    for await (const f of context.iterate({ where: args.where,orderBy:args.orderBy })) {
+    for await (const f of context.iterate({ where: args.where, orderBy: args.orderBy })) {
         await pt.push(args.forEachRow(f));
         updated++;
     }
@@ -235,7 +228,7 @@ export async function iterateRowsActionOnServer<T extends IdEntity>(
     }
     return await pagedRowsIterator<T>(args.context, {
         where,
-        orderBy:args.h.orderBy,
+        orderBy: args.h.orderBy,
         forEachRow: async (f) => await args.h.forEach(f),
         count,
 

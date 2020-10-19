@@ -19,6 +19,7 @@ import { Location, GetDistanceBetween } from "../shared/googleApiHelpers";
 import { Sites } from "../sites/sites";
 
 
+
 declare var gtag;
 
 @Injectable()
@@ -205,12 +206,15 @@ export class DialogService {
     }
 }
 export function extractError(err: any) {
+
     if (isString(err))
         return err;
-    if (err.error)
-        return extractError(err.error);
+    if (err.rejection)
+        return extractError(err.rejection);//for promise failed errors and http errors
     if (err.message)
         return extractError(err.message);
+    if (err.error)
+        return extractError(err.error);
 
     return JSON.stringify(err);
 }
@@ -231,10 +235,17 @@ export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
     constructor(private dialog: DialogService, private zone: NgZone, private context: Context) {
         super();
     }
+    lastErrorString: '';
+    lastErrorTime: number;
+
     async handleError(error) {
         super.handleError(error);
         if (error.message.startsWith("ExpressionChangedAfterItHasBeenCheckedError"))
             return;
+        if (this.lastErrorString == error.toString() && new Date().valueOf() - this.lastErrorTime < 100)
+            return;
+        this.lastErrorString = error.toString();
+        this.lastErrorTime = new Date().valueOf();
         try {
             var s = await this.context.for((await import('../manage/ApplicationSettings')).ApplicationSettings).findId(1);
             if (s && this.context.user && !s.currentUserIsValidForAppLoadTest.value) {
@@ -248,11 +259,12 @@ export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
         catch (err) {
 
         }
-        // if (this.context.isSignedIn())
-        //     this.zone.run(() => {
-        //         this.dialog.log("Exception:" + extractError(error));
-        //         this.dialog.Error(extractError(error));
-        //     });
+        if (this.context.isSignedIn())
+            this.zone.run(async () => {
+                let err = extractError(error);
+                this.dialog.log("Exception:" + err).catch(x => { });
+                this.dialog.Error(err);
+            });
 
     }
 }

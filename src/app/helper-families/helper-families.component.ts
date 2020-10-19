@@ -102,7 +102,7 @@ export class HelperFamiliesComponent implements OnInit {
 
         }, error => {
           this.dialog.exception("שליפת מיקום נכשלה", error);
-          rej(error);
+          //   rej(error);
         });
       });
 
@@ -229,7 +229,7 @@ export class HelperFamiliesComponent implements OnInit {
     try {
       await this.updateCurrentLocation(true);
     }
-    catch{
+    catch {
       if (this.familyLists.allFamilies.length > 0)
         this.volunteerLocation = this.familyLists.allFamilies[0].getDrivingLocation();
     }
@@ -244,13 +244,8 @@ export class HelperFamiliesComponent implements OnInit {
           item: y
         })),
         onSelect: async (x) => {
-          try {
-            await HelperFamiliesComponent.changeDestination(x[0].item.id.value);
-            this.familyLists.reload();
-          }
-          catch (err) {
-            this.dialog.exception("החלפת יעד", err);
-          }
+          await HelperFamiliesComponent.changeDestination(x[0].item.id.value);
+          this.familyLists.reload();
         }
       });
     }
@@ -339,12 +334,7 @@ export class HelperFamiliesComponent implements OnInit {
       await this.busy.doWhileShowingBusy(async () => {
 
         this.dialog.analytics('cancel all');
-        try {
-          await HelperFamiliesComponent.cancelAssignAllForHelperOnServer(this.familyLists.helper.id.value);
-        }
-        catch (err) {
-          await this.dialog.exception(use.language.cancelAssignmentForHelperFamilies, err);
-        }
+        await HelperFamiliesComponent.cancelAssignAllForHelperOnServer(this.familyLists.helper.id.value);
         this.familyLists.reload();
         this.assignmentCanceled.emit();
       });
@@ -403,12 +393,7 @@ export class HelperFamiliesComponent implements OnInit {
       await this.busy.doWhileShowingBusy(async () => {
 
         this.dialog.analytics('ok all');
-        try {
-          await HelperFamiliesComponent.okAllForHelperOnServer(this.familyLists.helper.id.value);
-        }
-        catch (err) {
-          await this.dialog.exception(use.language.markDeliveredToAllHelprFamilies, err);
-        }
+        await HelperFamiliesComponent.okAllForHelperOnServer(this.familyLists.helper.id.value);
         this.familyLists.reload();
       });
     });
@@ -578,13 +563,8 @@ export class HelperFamiliesComponent implements OnInit {
     await this.context.openDialog(GetVolunteerFeedback, x => x.args = {
       helpText: () => new StringColumn(),
       ok: async (comment) => {
-        try {
-          await (await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.familyLists.helper.id.value, comment);
-          this.dialog.Info("הודעה נשלחה");
-        }
-        catch (err) {
-          this.dialog.exception("שליחת הודעה למתנדב ", err);
-        }
+        await (await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.familyLists.helper.id.value, comment);
+        this.dialog.Info("הודעה נשלחה");
       },
       cancel: () => { },
       hideLocation: true,
