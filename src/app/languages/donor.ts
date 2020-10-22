@@ -802,4 +802,5 @@ export class donor implements Language {
   confirmArchive = 'האם להעביר לארכיון ';
   markOnMap = 'סמן על המפה';
   familyHistory = 'היסטורית תורם';
+  updated = 'עודכנו';
 }

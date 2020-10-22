@@ -802,4 +802,5 @@ export class en implements Language {
   confirmArchive = 'Do move to archive';
   markOnMap = 'Mark on the map';
   familyHistory = 'Family history';
+  updated = 'Updated';
 }

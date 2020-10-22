@@ -3711,6 +3711,11 @@
     "valueInCode": "עדכן הערה",
     "valueInEnglish": "Update Comment"
   },
+  "updated": {
+    "google": "Aggiornato",
+    "valueInCode": "עודכנו",
+    "valueInEnglish": "Updated"
+  },
   "updatedBy": {
     "google": "Aggiornato da",
     "valueInCode": "עודכן על ידי",

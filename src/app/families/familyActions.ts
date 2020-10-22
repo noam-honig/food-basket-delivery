@@ -7,14 +7,20 @@ import { HelperId } from "../helpers/helpers";
 import { Groups } from "../manage/groups";
 import { FamilyStatusColumn, FamilyStatus } from "./FamilyStatus";
 import { FamilySourceId } from "./FamilySources";
-import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer, serverUpdateInfo, pagedRowsIterator } from "./familyActionsWiring";
+import { ActionOnRows, packetServerUpdateInfo } from "./familyActionsWiring";
 import { DeliveryStatus } from "./DeliveryStatus";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "./FamilyDeliveries";
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
+import { ServerController } from "../dev/server-method";
 
 
-class NewDelivery extends ActionOnRows<Families> {
+
+@ServerController({
+    allowed: Roles.admin,
+    key: 'NewDelivery'
+})
+export class NewDelivery extends ActionOnRows<Families> {
     useFamilyBasket = new BoolColumn({ caption: getLang(this.context).useFamilyDefaultBasketType, defaultValue: true });
     basketType = new BasketId(this.context);
     useFamilyQuantity = new BoolColumn({ caption: getLang(this.context).useFamilyQuantity, defaultValue: true });
@@ -31,19 +37,6 @@ class NewDelivery extends ActionOnRows<Families> {
     })
     constructor(context: Context) {
         super(context, Families, {
-            allowed: Roles.admin,
-            columns: () => [
-                this.useFamilyBasket,
-                this.basketType,
-                this.useFamilyQuantity,
-                this.useFamilyMembersAsQuantity,
-                this.quantity,
-                this.distributionCenter,
-                this.useDefaultVolunteer,
-                this.courier,
-                this.selfPickup,
-                this.excludeGroups
-            ],
             validate: async () => {
                 let x = await context.for(DistributionCenters).findId(this.distributionCenter);
                 if (!x && false) {
@@ -74,7 +67,7 @@ class NewDelivery extends ActionOnRows<Families> {
 
 
             title: getLang(context).newDelivery,
-            icon:'add_shopping_cart',
+            icon: 'add_shopping_cart',
             forEach: async f => {
                 if (this.excludeGroups.value) {
                     for (let g of this.excludeGroups.listGroups()) {
@@ -109,6 +102,10 @@ class NewDelivery extends ActionOnRows<Families> {
         });
     }
 }
+@ServerController({
+    allowed: Roles.admin,
+    key: 'updateGroup'
+})
 export class updateGroup extends ActionOnRows<Families> {
 
     group = new StringColumn({
@@ -120,10 +117,8 @@ export class updateGroup extends ActionOnRows<Families> {
     action = new UpdateGroupStrategyColumn();
     constructor(context: Context) {
         super(context, Families, {
-            columns: () => [this.group, this.action],
             confirmQuestion: () => this.action.value.caption + ' "' + this.group.value + '"',
             title: getLang(context).assignAFamilyGroup,
-            allowed: Roles.admin,
             forEach: async f => {
                 this.action.value.whatToDo(f.groups, this.group.value);
             }
@@ -132,7 +127,8 @@ export class updateGroup extends ActionOnRows<Families> {
         this.group.value = '';
     }
 }
-class UpdateGroupStrategy {
+
+export class UpdateGroupStrategy {
     static add = new UpdateGroupStrategy(0, use.language.addGroupAssignmentVerb, (col, val) => {
         if (!col.selected(val))
             col.addGroup(val);
@@ -149,7 +145,8 @@ class UpdateGroupStrategy {
 
     }
 }
-class UpdateGroupStrategyColumn extends ValueListColumn<UpdateGroupStrategy>
+
+export class UpdateGroupStrategyColumn extends ValueListColumn<UpdateGroupStrategy>
 {
     constructor() {
         super(UpdateGroupStrategy, {
@@ -161,16 +158,20 @@ class UpdateGroupStrategyColumn extends ValueListColumn<UpdateGroupStrategy>
 }
 
 
+
+@ServerController({
+    allowed: Roles.admin,
+    key: 'UpdateFamilyStatus'
+})
 export class UpdateStatus extends ActionOnRows<Families> {
     status = new FamilyStatusColumn(this.context);
     archiveFinshedDeliveries = new BoolColumn({ caption: getLang(this.context).archiveFinishedDeliveries, defaultValue: true });
     deletePendingDeliveries = new BoolColumn({ caption: getLang(this.context).deletePendingDeliveries, defaultValue: true });
     comment = new StringColumn(getLang(this.context).internalComment);
     deleteExistingComment = new BoolColumn(getLang(this.context).deleteExistingComment);
+
     constructor(context: Context) {
         super(context, Families, {
-            allowed: Roles.admin,
-            columns: () => [this.status, this.archiveFinshedDeliveries, this.deletePendingDeliveries, this.comment, this.deletePendingDeliveries],
             help: () => getLang(this.context).updateStatusHelp,
             dialogColumns: async () => {
                 if (!this.status.value)
@@ -215,26 +216,31 @@ export class UpdateStatus extends ActionOnRows<Families> {
         });
     }
 }
-class UpdateBasketType extends ActionOnRows<Families> {
+@ServerController({
+    allowed: Roles.admin,
+    key: 'UpdateFamilyBasketType'
+})
+export class UpdateBasketType extends ActionOnRows<Families> {
     basket = new BasketId(this.context);
     constructor(context: Context) {
         super(context, Families, {
-            allowed: Roles.admin,
-            columns: () => [this.basket],
             title: getLang(context).updateDefaultBasket,
             forEach: async f => { f.basketType.value = this.basket.value },
         });
     }
 }
 
-class UpdateSelfPickup extends ActionOnRows<Families> {
+@ServerController({
+    allowed: Roles.admin,
+    key: 'UpdateSelfPickup'
+})
+export class UpdateSelfPickup extends ActionOnRows<Families> {
     selfPickup = new BoolColumn(getLang(this.context).selfPickup);
     updateExistingDeliveries = new BoolColumn(getLang(this.context).updateExistingDeliveries);
+
     constructor(context: Context) {
         super(context, Families, {
-            allowed: Roles.admin,
             visible: c => c.settings.usingSelfPickupModule.value,
-            columns: () => [this.selfPickup, this.updateExistingDeliveries],
             title: getLang(context).updateDefaultSelfPickup,
             forEach: async f => {
                 {
@@ -259,49 +265,54 @@ class UpdateSelfPickup extends ActionOnRows<Families> {
         this.updateExistingDeliveries.value = true;
     }
 }
-
+@ServerController({
+    allowed: Roles.admin,
+    key: 'UpdateArea'
+})
 export class UpdateArea extends ActionOnRows<Families> {
     area = new StringColumn(getLang(this.context).region);
     constructor(context: Context) {
         super(context, Families, {
-            allowed: Roles.admin,
-            columns: () => [this.area],
             title: getLang(context).updateArea,
             forEach: async f => { f.area.value = this.area.value.trim() },
         });
     }
 }
-
-class UpdateQuantity extends ActionOnRows<Families> {
+@ServerController({
+    allowed: Roles.admin,
+    key: 'UpdateDefaultQuantity'
+})
+export class UpdateQuantity extends ActionOnRows<Families> {
     quantity = new QuantityColumn(this.context);
     constructor(context: Context) {
         super(context, Families, {
-            allowed: Roles.admin,
-            columns: () => [this.quantity],
             title: getLang(context).updateDefaultQuantity,
             forEach: async f => { f.quantity.value = this.quantity.value },
         });
     }
 }
-class UpdateFamilySource extends ActionOnRows<Families> {
+@ServerController({
+    allowed: Roles.admin,
+    key: 'UpdateFamilySource'
+})
+export class UpdateFamilySource extends ActionOnRows<Families> {
     familySource = new FamilySourceId(this.context);
     constructor(context: Context) {
         super(context, Families, {
-            allowed: Roles.admin,
-            columns: () => [this.familySource],
             title: getLang(context).updateFamilySource,
             forEach: async f => { f.familySource.value = this.familySource.value }
         });
     }
 }
+@ServerController({
+    allowed: Roles.admin,
+    key: 'UpdateDefaultVolunteer'
+})
 export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
     clearVoulenteer = new BoolColumn(getLang(this.context).clearVolunteer);
     courier = new HelperId(this.context, getLang(this.context).volunteer);
     constructor(context: Context) {
         super(context, Families, {
-            allowed: Roles.admin,
-
-            columns: () => [this.clearVoulenteer, this.courier],
             dialogColumns: async () => [
                 this.clearVoulenteer,
                 { column: this.courier, visible: () => !this.clearVoulenteer.value }
@@ -321,7 +332,6 @@ export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
         this.courier.value = '';
     }
 }
-
 export class SelfPickupStrategy {
     static familyDefault = new SelfPickupStrategy(0, use.language.selfPickupStrategy_familyDefault, x => {
         x.newDelivery.deliverStatus.value = x.family.defaultSelfPickup.value ? DeliveryStatus.SelfPickup : DeliveryStatus.ReadyForDelivery;
@@ -358,12 +368,12 @@ export class SelfPickupStrategyColumn extends ValueListColumn<SelfPickupStrategy
 }
 
 
-export class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<ActiveFamilyDeliveries>{
+
+export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<ActiveFamilyDeliveries>{
     processedFamilies = new Map<string, boolean>();
-    constructor(context: Context, orig: ActionOnRows<Families>) {
+
+    constructor(context: Context, public orig: ActionOnRows<Families>) {
         super(context, FamilyDeliveries, {
-            allowed: orig.args.allowed,
-            columns: orig.args.columns,
             forEach: async fd => {
                 if (this.processedFamilies.get(fd.family.value))
                     return;
@@ -378,10 +388,8 @@ export class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<ActiveFamilyD
             confirmQuestion: orig.args.confirmQuestion,
             dialogColumns: x => orig.args.dialogColumns({
                 afterAction: x.afterAction,
-                buildActionInfo: () => { throw 'err' },
-                callServer: () => { throw 'err' },
+                userWhere: () => { throw 'err' },
                 dialog: x.dialog,
-                groupName: x.groupName,
                 settings: x.settings
             }),
             help: orig.args.help,
@@ -390,26 +398,38 @@ export class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<ActiveFamilyD
             additionalWhere: undefined,
             validateInComponent: x => orig.args.validateInComponent({
                 afterAction: x.afterAction,
-                buildActionInfo: () => { throw 'err' },
-                callServer: () => { throw 'err' },
+                userWhere: () => { throw 'err' },
                 dialog: x.dialog,
-                groupName: x.groupName,
                 settings: x.settings
             })
         });
     }
 }
-export function bridge(what: {
-    new(context: Context): ActionOnRows<Families>;
-}) {
-    return class extends bridgeFamilyDeliveriesToFamilies {
-        constructor(context: Context) {
-            super(context, new what(context));
-        }
+@ServerController({
+    allowed: Roles.admin,
+    key: 'updateGroupForDeliveries'
+})
+export class updateGroupForDeliveries extends bridgeFamilyDeliveriesToFamilies {
+    constructor(context: Context) {
+        super(context, new updateGroup(context))
     }
-
+}
+@ServerController({
+    allowed: Roles.admin,
+    key: 'UpdateAreaForDeliveries'
+})
+export class UpdateAreaForDeliveries extends bridgeFamilyDeliveriesToFamilies {
+    constructor(context: Context) {
+        super(context, new UpdateArea(context))
+    }
+}
+@ServerController({
+    allowed: Roles.admin,
+    key: 'UpdateStatusForDeliveries'
+})
+export class UpdateStatusForDeliveries extends bridgeFamilyDeliveriesToFamilies {
+    constructor(context: Context) {
+        super(context, new UpdateStatus(context))
+    }
 }
 
-
-
-export const familyActions = () => [NewDelivery, updateGroup, UpdateArea, UpdateStatus, UpdateSelfPickup, UpdateDefaultVolunteer, UpdateBasketType, UpdateQuantity, UpdateFamilySource];

@@ -802,4 +802,5 @@ export class es implements Language {
   confirmArchive = 'Mover al archivo';
   markOnMap = 'Marcar en el mapa';
   familyHistory = 'Historia familiar';
+  updated = 'Actualizado';
 }

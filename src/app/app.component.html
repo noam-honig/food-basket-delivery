@@ -18,8 +18,8 @@
     <h4 *ngIf="context.user">{{lang.hello}} {{context.user.name}}</h4>
     <a href="https://noam-honig.github.io/hagai-docs/" style="padding-right:15px" *ngIf="isAdmin()" target="_blank">מדריך למנהל</a>
     <mat-nav-list role="list">
-      <mat-list-item  *ngIf="showCreateNewEvent()" >
-        <a  matLine (click)="createNewEvent()" >
+      <mat-list-item  *ngIf="createNewEventAction.isAllowed()" >
+        <a  matLine (click)="createNewEventAction.show(dialog,settings,helper)" >
         {{settings.lang.createNewEvent}}
       </a>
       </mat-list-item>

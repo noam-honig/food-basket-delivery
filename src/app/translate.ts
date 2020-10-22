@@ -925,6 +925,7 @@ export class Language {
   confirmArchive = "האם להעביר לארכיון ";
   markOnMap= "סמן על המפה";
   familyHistory = "היסטורית משפחה";
+  updated = "עודכנו";
 }
 
 const defaultLang = new Language();

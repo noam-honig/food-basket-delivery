@@ -39,7 +39,7 @@ export class AppComponent {
     public router: Router,
     public activeRoute: ActivatedRoute,
     public dialog: DialogService,
-    private helper: RouteHelperService,
+    public helper: RouteHelperService,
     public context: Context,
     public settings: ApplicationSettings,
     private busy: BusyService
@@ -54,12 +54,9 @@ export class AppComponent {
 
 
   }
-  showCreateNewEvent() {
-    return this.context.isAllowed(Roles.admin) ;
-  }
-  createNewEvent() {
-    new CreateNewEvent(this.context).show(this.dialog, this.settings, this.helper, this.busy);
-  }
+
+  createNewEventAction = new CreateNewEvent(this.context);
+
 
 
 

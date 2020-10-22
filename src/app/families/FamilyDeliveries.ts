@@ -298,6 +298,7 @@ export class FamilyDeliveries extends IdEntity {
         super({
             name: apiEndPoing,
             dbName: 'FamilyDeliveries',
+            caption: getLang(context).deliveries,
             allowApiRead: context.isSignedIn(),
             allowApiInsert: false,
             allowApiUpdate: context.isSignedIn(),
@@ -312,7 +313,7 @@ export class FamilyDeliveries extends IdEntity {
 
             },
 
-            saving:async () => {
+            saving: async () => {
 
                 if (this.isNew()) {
                     this.createDate.value = new Date();
@@ -517,7 +518,7 @@ export class FamilyDeliveries extends IdEntity {
     }
     async showDetailsDialog(callerHelper: {
         refreshDeliveryStats?: () => void,
-        reloadDeliveries?:()=>void,
+        reloadDeliveries?: () => void,
         onSave?: () => Promise<void>,
         focusOnAddress?: boolean,
         dialog: DialogService
@@ -541,7 +542,7 @@ export class FamilyDeliveries extends IdEntity {
                         if (callerHelper && callerHelper.refreshDeliveryStats)
                             callerHelper.refreshDeliveryStats();
                     if (y.reloadDeliveries)
-                        if (callerHelper&&callerHelper.reloadDeliveries)
+                        if (callerHelper && callerHelper.reloadDeliveries)
                             callerHelper.reloadDeliveries();
 
                 });

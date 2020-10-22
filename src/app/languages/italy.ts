@@ -802,4 +802,5 @@ export class italy implements Language {
   confirmArchive = 'Sposta in archivio';
   markOnMap = 'Segna sulla mappa';
   familyHistory = 'Storia famigliare';
+  updated = 'Aggiornato';
 }

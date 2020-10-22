@@ -16,8 +16,8 @@ import { BasketType } from '../families/BasketType';
 import { FamilyDeliveries, ActiveFamilyDeliveries, MessageStatus } from '../families/FamilyDeliveries';
 import { Families } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { delvieryActions } from './family-deliveries-actions';
-import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, pagedRowsIterator, iterateRowsActionOnServer, packetServerUpdateInfo } from '../families/familyActionsWiring';
+import { ArchiveDeliveries, DeleteDeliveries,  NewDelivery, UpdateBasketType, UpdateCourier, UpdateDeliveriesStatus, UpdateDistributionCenter, UpdateFamilyDefaults, UpdateQuantity } from './family-deliveries-actions';
+
 
 import { saveToExcel } from '../shared/saveToExcel';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -28,6 +28,7 @@ import { sortColumns } from '../shared/utils';
 import { getLang } from '../sites/sites';
 import { PhoneColumn, SqlBuilder } from '../model-shared/types';
 import { Groups } from '../manage/groups';
+import { UpdateAreaForDeliveries, updateGroupForDeliveries, UpdateStatusForDeliveries } from '../families/familyActions';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -610,17 +611,25 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     },
     allowSelection: true,
     gridButtons: [
-      ...buildGridButtonFromActions(delvieryActions(), this.context,
-        {
-          afterAction: async () => await this.refresh(),
-          dialog: this.dialog,
-          callServer: async (info, action, args) => await FamilyDeliveriesComponent.DeliveriesActionOnServer(info, action, args),
-          buildActionInfo: async actionWhere => {
-            return await this.buildWhereForAction(actionWhere);
-          },
-          settings: this.settings,
-          groupName: getLang(this.context).deliveries
-        }),
+      ...[
+        new NewDelivery(this.context),
+        new ArchiveDeliveries(this.context),
+        new DeleteDeliveries(this.context),
+        new UpdateDeliveriesStatus(this.context),
+        new UpdateBasketType(this.context),
+        new UpdateQuantity(this.context),
+        new UpdateDistributionCenter(this.context),
+        new UpdateCourier(this.context),
+        new UpdateFamilyDefaults(this.context),
+        new updateGroupForDeliveries(this.context),
+        new UpdateAreaForDeliveries(this.context),
+        new UpdateStatusForDeliveries(this.context)
+      ].map(a => a.gridButton({
+        afterAction: async () => await this.refresh(),
+        dialog: this.dialog,
+        userWhere: f => this.deliveries.getFilterWithSelectedRows().where(f),
+        settings: this.settings
+      })),
 
       {
         name: getLang(this.context).exportToExcel,
@@ -668,7 +677,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
                     addColumn(x[0].value, x[1].value, 's');
                   }
                 }
-                
+
                 addColumn("X" + use.language.lastName, lastName, 's');
                 addColumn("X" + use.language.firstName, firstName, 's');
                 addColumn("X" + use.language.streetName, street, 's');
@@ -691,7 +700,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         click: async fd => {
           fd.showDetailsDialog({
             refreshDeliveryStats: () => this.refreshStats(),
-            reloadDeliveries:()=>this.deliveries.getRecords(),
+            reloadDeliveries: () => this.deliveries.getRecords(),
             dialog: this.dialog
           });
         }
@@ -708,20 +717,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       })
     ]
   });
-  private async buildWhereForAction(actionWhere) {
-    let where: EntityWhere<ActiveFamilyDeliveries> = f => {
-      let r = this.deliveries.getFilterWithSelectedRows().where(f);
-      if (actionWhere) {
-        r = new AndFilter(actionWhere(f), r);
-      }
-      return r;
 
-    };
-    return {
-      count: await this.context.for(ActiveFamilyDeliveries).count(where),
-      where: where
-    };
-  }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async getGroups(distCenter: string, readyOnly = false, context?: Context) {
     let pendingStats = [];
@@ -777,29 +773,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     return await context.for(FamilyDeliveries).toPojoArray(await context.for(FamilyDeliveries).find({ where: fd => fd.id.isIn(result) }))
   }
 
-  @ServerFunction({ allowed: Roles.distCenterAdmin })
-  static async DeliveriesActionOnServer(info: packetServerUpdateInfo, action: string, args: any[], context?: Context) {
-    let r = await filterActionOnServer(delvieryActions(), context, async (h) => {
-      return await iterateRowsActionOnServer({
-        context: context.for(ActiveFamilyDeliveries),
-        h: {
-          actionWhere: x => h.actionWhere(x),
-          orderBy: x => [{ column: x.createDate, descending: true }],
-          forEach: async fd => {
-            fd._disableMessageToUsers = true;
-            await h.forEach(fd);
-            if (fd.wasChanged())
-              await fd.save();
-          }
-        },
-        info,
-        additionalWhere:
-          fd => fd.isAllowedForUser(),
-      });
-    }, action, args);
-    Families.SendMessageToBrowsers(getLang(context).deliveriesUpdated, context, '');
-    return r + getLang(context).deliveriesUpdated;
-  }
+
 
   ngOnInit() {
     this.refreshStats();
@@ -1030,9 +1004,9 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
     {
       textInMenu: () => getLang(args.context).sendWhatsAppToFamily,
       click: async d => {
-        PhoneColumn.sendWhatsappToPhone(d.phone1.value, 
+        PhoneColumn.sendWhatsappToPhone(d.phone1.value,
           getLang(args.context).hello + ' ' + d.name.value + ',', args.context);
-      }, 
+      },
       visible: d => d.phone1 && args.context.isAllowed(Roles.distCenterAdmin) && args.settings.isSytemForMlt()
     }
 

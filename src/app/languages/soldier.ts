@@ -802,4 +802,5 @@ export class soldier implements Language {
   confirmArchive = 'האם להעביר לארכיון ';
   markOnMap = 'סמן על המפה';
   familyHistory = 'היסטורית חייל';
+  updated = 'עודכנו';
 }
