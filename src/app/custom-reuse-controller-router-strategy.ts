@@ -91,7 +91,8 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
         for (const key in this.handlers) {
             if (this.handlers.hasOwnProperty(key)) {
                 const element = this.handlers[key];
-                element[recycleComponent] = true;
+                if (element)
+                    element[recycleComponent] = true;
             }
         }
     }

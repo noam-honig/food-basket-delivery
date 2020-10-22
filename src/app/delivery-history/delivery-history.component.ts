@@ -242,6 +242,7 @@ export class DeliveryHistoryComponent implements OnInit {
 
     if (this.mltColumns.length > 0)
       sortColumns(this.deliveries, this.mltColumns);
+      this.dateRange.ngOnInit();
     this.refreshHelpers();
 
   }
