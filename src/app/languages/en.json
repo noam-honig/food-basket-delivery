@@ -1793,6 +1793,10 @@
     "google": "Updating user",
     "valueInCode": "משתמש מעדכן"
   },
+  "latestAssigned": {
+    "google": "Last associated",
+    "valueInCode": "שוייך אחרון"
+  },
   "leadHelper": {
     "google": "Leading volunteer",
     "valueInCode": "מתנדב מוביל"

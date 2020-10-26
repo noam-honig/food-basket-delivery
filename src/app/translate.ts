@@ -475,7 +475,7 @@ export class Language {
   showVolunteers = 'הצג מתנדבים';
   addressesWithMoreThanOneFamily = 'כתובות עם יותר ממשפחה אחת';
   showFamilies = 'הצג משפחות';
-  recentlyAssigned = 'שוייכו עכשיו';
+  recentlyAssigned = 'שיוך חדש';
   addVolunteer = 'הוסף מתנדב';
   selectExcelFile = 'בחר קובץ אקסל';
   excelImportVideo = 'לסרטון הדרכה על קליטה מאקסל לחץ כאן';
@@ -926,6 +926,7 @@ export class Language {
   markOnMap= "סמן על המפה";
   familyHistory = "היסטורית משפחה";
   includeFamilyInfoInExcelFile = "האם לכלול מידע נוסף מפרטי המשפחה כגון מספר זהות ונתונים נוספים ביצוא לאקסל? (אם כן זה יקח יותר זמן:)";
+  latestAssigned = "שיוך אחרון";
 }
 
 const defaultLang = new Language();

@@ -20,7 +20,8 @@
     <div style="white-space: nowrap;">
       {{getAddressDescription() }}
     </div>
-    <div *ngIf="newAssign" style="font-size: 11px;">({{settings.lang.recentlyAssigned}})</div>
+    <div *ngIf="latestAssign" style="font-size: 11px;">({{settings.lang.latestAssigned}})</div>
+    <div *ngIf="newAssign&&!latestAssign" style="font-size: 11px;">({{settings.lang.recentlyAssigned}})</div>
 
   </mat-panel-description>
 </div>

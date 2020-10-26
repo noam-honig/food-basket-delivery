@@ -18,6 +18,7 @@ export class FamilyInListComponent implements OnInit {
   @Input() f: ActiveFamilyDeliveries;
   @Input() i: number;
   @Input() newAssign: boolean;
+  @Input() latestAssign:boolean;
   @Input() distanceFromPreviousLocation: number;
   @Output() delivered = new EventEmitter<void>();
   ngOnInit() {

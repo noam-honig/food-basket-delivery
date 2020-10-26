@@ -1615,6 +1615,10 @@
     "google": "משתמש מעדכן",
     "valueInCode": "משתמש מעדכן"
   },
+  "latestAssigned": {
+    "google": "שוייך אחרון",
+    "valueInCode": "שוייך אחרון"
+  },
   "leadHelper": {
     "google": "מתנדב מוביל",
     "valueInCode": "מתנדב מוביל"

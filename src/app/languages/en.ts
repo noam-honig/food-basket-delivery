@@ -803,4 +803,5 @@ export class en implements Language {
   markOnMap = 'Mark on the map';
   familyHistory = 'Family history';
   includeFamilyInfoInExcelFile = 'Should include additional family information such as ID number and additional export data to Excel? (If so it will take longer :)';
+  latestAssigned = 'Last associated';
 }

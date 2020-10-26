@@ -138,7 +138,6 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         }
         else {
             Helpers.addToRecent(helper);
-            this.familyLists.routeStats = helper.getRouteStats();
             await this.refreshList();
             if (helper.leadHelper.value && this.familyLists.toDeliver.length == 0) {
                 let from = await this.context.for(Helpers).lookupAsync(helper.leadHelper);
@@ -153,7 +152,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.area = undefined;
         if (clearPhone)
             this.phone = '';
-        this.familyLists.routeStats = undefined;
+        this.familyLists.setRouteStats( undefined);
         this.preferRepeatFamilies = true;
         this.showRepeatFamilies = false;
         this.clearList();

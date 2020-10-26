@@ -43,7 +43,7 @@
     class="no-print">
     {{settings.lang.estimatedTravelTime}} <span *ngIf="familyLists.routeStats"> {{familyLists.routeStats.totalTime}}
       {{settings.lang.minutes}},
-      {{familyLists.routeStats.totalKm}} {{settings.lang.km}}</span>
+      {{familyLists.routeStats.totalKm}} {{settings.lang.km}} <span style="direction: ltr;">{{familyLists.getKmDiffString()}}</span> </span> 
   </div>
   <mat-tab-group (selectedTabChange)="mapTabClicked()" #theTab>
     <mat-tab>
@@ -57,8 +57,11 @@
             <mat-expansion-panel-header>
               <app-family-in-list [f]="f" [i]="i+1" style="width:100%"
                 [distanceFromPreviousLocation]="distanceFromPreviousLocation(f,i)" (delivered)="deliveredToFamily(f)"
+                [latestAssign]="partOfAssign&&f.courierAssingTime.value.valueOf()==familyLists.maxAssignTime"
                 [newAssign]="familyLists.highlightNewFamilies&&!familyLists.familiesAlreadyAssigned.get(f.id.value)">
               </app-family-in-list>
+              
+
             </mat-expansion-panel-header>
             <ng-template matExpansionPanelContent>
 

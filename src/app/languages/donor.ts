@@ -803,4 +803,5 @@ export class donor implements Language {
   markOnMap = 'סמן על המפה';
   familyHistory = 'היסטורית תורם';
   includeFamilyInfoInExcelFile = 'האם לכלול מידע נוסף מפרטי התורם כגון מספר זהות ונתונים נוספים ביצוא לאקסל? (אם כן זה יקח יותר זמן:)';
+  latestAssigned = 'שוייך אחרון';
 }
