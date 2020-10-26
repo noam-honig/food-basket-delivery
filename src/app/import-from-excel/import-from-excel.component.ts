@@ -147,7 +147,7 @@ export class ImportFromExcelComponent implements OnInit {
                 }
                 this.createImportReport();
                 if (await this.dialog.YesNoPromise(use.language.gotoDeliveriesScreen))
-                    this.routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
+                    this.routeHelper.navigateToComponent((await import('../families/families.component')).FamiliesComponent);
 
             });
         }
