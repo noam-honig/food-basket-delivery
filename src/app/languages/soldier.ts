@@ -802,4 +802,5 @@ export class soldier implements Language {
   confirmArchive = 'האם להעביר לארכיון ';
   markOnMap = 'סמן על המפה';
   familyHistory = 'היסטורית חייל';
+  includeFamilyInfoInExcelFile = 'האם לכלול מידע נוסף מפרטי החייל כגון מספר זהות ונתונים נוספים ביצוא לאקסל? (אם כן זה יקח יותר זמן:)';
 }

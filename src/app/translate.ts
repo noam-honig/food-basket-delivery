@@ -925,6 +925,7 @@ export class Language {
   confirmArchive = "האם להעביר לארכיון ";
   markOnMap= "סמן על המפה";
   familyHistory = "היסטורית משפחה";
+  includeFamilyInfoInExcelFile = "האם לכלול מידע נוסף מפרטי המשפחה כגון מספר זהות ונתונים נוספים ביצוא לאקסל? (אם כן זה יקח יותר זמן:)";
 }
 
 const defaultLang = new Language();

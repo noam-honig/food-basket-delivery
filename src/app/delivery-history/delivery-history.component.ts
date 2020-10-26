@@ -147,10 +147,14 @@ export class DeliveryHistoryComponent implements OnInit {
     gridButtons: [{
       name: this.settings.lang.exportToExcel,
       click: async () => {
+        let includeFamilyInfo = await this.dialog.YesNoPromise(this.settings.lang.includeFamilyInfoInExcelFile);
         await saveToExcel(this.settings, this.context.for(FamilyDeliveries), this.deliveries, this.settings.lang.deliveries, this.busy, (d: FamilyDeliveries, c) => c == d.id || c == d.family, undefined,
           async (f, addColumn) => {
             await f.basketType.addBasketTypes(f.quantity, addColumn);
             f.addStatusExcelColumn(addColumn);
+            if (includeFamilyInfo)
+              await f.addFamilyInfoToExcelFile(addColumn);
+
           });
       }, visible: () => this.context.isAllowed(Roles.admin)
     }],

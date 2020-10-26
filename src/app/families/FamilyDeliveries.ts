@@ -15,7 +15,7 @@ import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService } from "../select-popup/dialog";
 import { use } from "../translate";
-import { includePhoneInApi, getSettings } from "../manage/ApplicationSettings";
+import { includePhoneInApi, getSettings, ApplicationSettings } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
 import { FamilyDeliveresStatistics } from "../family-deliveries/family-deliveries-stats";
 import { connectableObservableDescriptor } from "rxjs/internal/observable/ConnectableObservable";
@@ -363,6 +363,57 @@ export class FamilyDeliveries extends IdEntity {
         });
     }
 
+    async addFamilyInfoToExcelFile( addColumn) {
+        var f = await this.context.for(Families).findId(this.family);
+        let settings = await ApplicationSettings.getAsync(this.context);
+        if (f) {
+          let x = f.address.getGeocodeInformation();
+          let street = f.address.value;
+          let house = '';
+          let lastName = '';
+          let firstName = '';
+          if (f.name.value != undefined)
+            lastName = f.name.value.trim();
+          let i = lastName.lastIndexOf(' ');
+          if (i >= 0) {
+            firstName = lastName.substring(i, lastName.length).trim();
+            lastName = lastName.substring(0, i).trim();
+          }
+          {
+            try {
+              for (const addressComponent of x.info.results[0].address_components) {
+                switch (addressComponent.types[0]) {
+                  case "route":
+                    street = addressComponent.short_name;
+                    break;
+                  case "street_number":
+                    house = addressComponent.short_name;
+                    break;
+                }
+              }
+            }
+            catch { }
+          }
+          addColumn(use.language.email, f.email.value, 's');
+          for (const x of [[settings.familyCustom1Caption, f.custom1],
+          [settings.familyCustom2Caption, f.custom2],
+          [settings.familyCustom3Caption, f.custom3],
+          [settings.familyCustom4Caption, f.custom4]
+          ]) {
+            if (x[0].value) {
+              addColumn(x[0].value, x[1].value, 's');
+            }
+          }
+    
+          addColumn("X" + use.language.lastName, lastName, 's');
+          addColumn("X" + use.language.firstName, firstName, 's');
+          addColumn("X" + use.language.streetName, street, 's');
+          addColumn("X" + use.language.houseNumber, house, 's');
+          addColumn("X" + f.tz.defs.caption, f.tz.value, 's');
+          addColumn("X" + f.tz2.defs.caption, f.tz2.value, 's');
+    
+        }
+      }
     isAllowedForUser() {
         if (!this.context.isSignedIn())
             return this.id.isEqualTo('no rows');

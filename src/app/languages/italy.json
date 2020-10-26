@@ -1910,6 +1910,11 @@
     "valueInCode": "שימו לב, כתובת לא מדוייקת!",
     "valueInEnglish": "Notice, Inaccurate Address!"
   },
+  "includeFamilyInfoInExcelFile": {
+    "google": "Dovrebbe includere ulteriori informazioni sulla famiglia come il numero ID e ulteriori dati di esportazione in Excel? (Se è così, ci vorrà più tempo :)",
+    "valueInCode": "האם לכלול מידע נוסף מפרטי המשפחה כגון מספר זהות ונתונים נוספים ביצוא לאקסל? (אם כן זה יקח יותר זמן:)",
+    "valueInEnglish": "Should include additional family information such as ID number and additional export data to Excel? (If so it will take longer :)"
+  },
   "includeGroups": {
     "google": "Solo per famiglie in questi gruppi",
     "valueInCode": "רק עבור משפחות בקבוצות אלו",

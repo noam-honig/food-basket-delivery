@@ -1703,6 +1703,10 @@
     "google": "Notice, Inaccurate Address!",
     "valueInCode": "שימו לב, כתובת לא מדוייקת!"
   },
+  "includeFamilyInfoInExcelFile": {
+    "google": "Should include additional family information such as ID number and additional export data to Excel? (If so it will take longer :)",
+    "valueInCode": "האם לכלול מידע נוסף מפרטי המשפחה כגון מספר זהות ונתונים נוספים ביצוא לאקסל? (אם כן זה יקח יותר זמן:)"
+  },
   "includeGroups": {
     "google": "Only for families in these groups",
     "valueInCode": "רק עבור משפחות בקבוצות אלו"

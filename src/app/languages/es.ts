@@ -802,4 +802,5 @@ export class es implements Language {
   confirmArchive = 'Mover al archivo';
   markOnMap = 'Marcar en el mapa';
   familyHistory = 'Historia familiar';
+  includeFamilyInfoInExcelFile = '¿Debería incluir información familiar adicional como el número de identificación y datos de exportación adicionales a Excel? (Si es así, tardará más :)';
 }

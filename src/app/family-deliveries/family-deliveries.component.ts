@@ -625,57 +625,14 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       {
         name: getLang(this.context).exportToExcel,
         click: async () => {
+
+          let includeFamilyInfo = await this.dialog.YesNoPromise(this.settings.lang.includeFamilyInfoInExcelFile);
           await saveToExcel(this.settings, this.context.for(ActiveFamilyDeliveries), this.deliveries, getLang(this.context).deliveries, this.busy, (d: ActiveFamilyDeliveries, c) => c == d.id || c == d.family, undefined,
             async (fd, addColumn) => {
               await fd.basketType.addBasketTypes(fd.quantity, addColumn);
-              var f = await this.context.for(Families).findId(fd.family);
-              if (f) {
-                let x = f.address.getGeocodeInformation();
-                let street = f.address.value;
-                let house = '';
-                let lastName = '';
-                let firstName = '';
-                if (f.name.value != undefined)
-                  lastName = f.name.value.trim();
-                let i = lastName.lastIndexOf(' ');
-                if (i >= 0) {
-                  firstName = lastName.substring(i, lastName.length).trim();
-                  lastName = lastName.substring(0, i).trim();
-                }
-                {
-                  try {
-                    for (const addressComponent of x.info.results[0].address_components) {
-                      switch (addressComponent.types[0]) {
-                        case "route":
-                          street = addressComponent.short_name;
-                          break;
-                        case "street_number":
-                          house = addressComponent.short_name;
-                          break;
-                      }
-                    }
-                  }
-                  catch { }
-                }
-                addColumn(use.language.email, f.email.value, 's');
-                for (const x of [[this.settings.familyCustom1Caption, f.custom1]
-                  , [this.settings.familyCustom2Caption, f.custom2]
-                  , [this.settings.familyCustom3Caption, f.custom3]
-                  , [this.settings.familyCustom4Caption, f.custom4]
-                ]
-                ) {
-                  if (x[0].value) {
-                    addColumn(x[0].value, x[1].value, 's');
-                  }
-                }
-                
-                addColumn("X" + use.language.lastName, lastName, 's');
-                addColumn("X" + use.language.firstName, firstName, 's');
-                addColumn("X" + use.language.streetName, street, 's');
-                addColumn("X" + use.language.houseNumber, house, 's');
-                addColumn("X" + f.tz.defs.caption, f.tz.value, 's');
-
-              }
+              fd.addStatusExcelColumn(addColumn);
+              if (includeFamilyInfo)
+                await fd.addFamilyInfoToExcelFile(addColumn);
 
             });
         }
@@ -691,7 +648,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         click: async fd => {
           fd.showDetailsDialog({
             refreshDeliveryStats: () => this.refreshStats(),
-            reloadDeliveries:()=>this.deliveries.getRecords(),
+            reloadDeliveries: () => this.deliveries.getRecords(),
             dialog: this.dialog
           });
         }
@@ -708,6 +665,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       })
     ]
   });
+
+
   private async buildWhereForAction(actionWhere) {
     let where: EntityWhere<ActiveFamilyDeliveries> = f => {
       let r = this.deliveries.getFilterWithSelectedRows().where(f);
@@ -1030,9 +989,9 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
     {
       textInMenu: () => getLang(args.context).sendWhatsAppToFamily,
       click: async d => {
-        PhoneColumn.sendWhatsappToPhone(d.phone1.value, 
+        PhoneColumn.sendWhatsappToPhone(d.phone1.value,
           getLang(args.context).hello + ' ' + d.name.value + ',', args.context);
-      }, 
+      },
       visible: d => d.phone1 && args.context.isAllowed(Roles.distCenterAdmin) && args.settings.isSytemForMlt()
     }
 

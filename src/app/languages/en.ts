@@ -802,4 +802,5 @@ export class en implements Language {
   confirmArchive = 'Do move to archive';
   markOnMap = 'Mark on the map';
   familyHistory = 'Family history';
+  includeFamilyInfoInExcelFile = 'Should include additional family information such as ID number and additional export data to Excel? (If so it will take longer :)';
 }

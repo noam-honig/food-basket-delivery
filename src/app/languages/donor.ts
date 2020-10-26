@@ -802,4 +802,5 @@ export class donor implements Language {
   confirmArchive = 'האם להעביר לארכיון ';
   markOnMap = 'סמן על המפה';
   familyHistory = 'היסטורית תורם';
+  includeFamilyInfoInExcelFile = 'האם לכלול מידע נוסף מפרטי התורם כגון מספר זהות ונתונים נוספים ביצוא לאקסל? (אם כן זה יקח יותר זמן:)';
 }
