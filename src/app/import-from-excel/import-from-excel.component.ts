@@ -1052,6 +1052,7 @@ export class ImportFromExcelComponent implements OnInit {
 
     private buildUpdatedColumns() {
         let updatedColumns = new Map<Column, boolean>();
+        this.additionalColumns = this.additionalColumns.filter(x=>x.column);
         //updatedColumns.set(this.f.status, true);
         for (const cu of [...this.excelColumns.map(f => f.column), ...this.additionalColumns.map(f => f.column)]) {
             if (cu)
