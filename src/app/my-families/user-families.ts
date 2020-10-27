@@ -181,7 +181,7 @@ export class UserFamiliesList {
             this.prevRouteStats = undefined;
         this.maxAssignTime = undefined;
         for (const f of this.toDeliver) {
-            if (this.maxAssignTime == undefined || this.maxAssignTime < f.courierAssingTime.value.valueOf())
+            if (f.courierAssingTime.value&&( this.maxAssignTime == undefined || this.maxAssignTime < f.courierAssingTime.value.valueOf()))
                 this.maxAssignTime = f.courierAssingTime.value.valueOf();
         }
         this.delivered = this.allFamilies.filter(f => f.deliverStatus.value == DeliveryStatus.Success || f.deliverStatus.value == DeliveryStatus.SuccessLeftThere);

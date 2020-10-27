@@ -33,7 +33,7 @@ export class MapComponent implements OnInit, OnDestroy {
                 this.bounds.extend(marker.getPosition());
             });
             // console.timeEnd('load families to map');
-            if (!this.hasFamilies) {
+            if (!this.hasFamilies && this.helper) {
                 if (this.helper.preferredDistributionAreaAddress.ok())
                     this.map.setCenter(this.helper.preferredDistributionAreaAddress.location())
                 else if (this.helper.preferredFinishAddress.ok())
