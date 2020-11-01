@@ -159,14 +159,12 @@ body {
 .addressProblem {
   background-color: #fac090 !important;
 }
-.newVolunteer{
-  background-color:lightyellow;
+.newVolunteer {
+  background-color: lightyellow;
 }
 
-
-
 .largeDelivery {
-  background-color: #84C5F1 !important;
+  background-color: #84c5f1 !important;
 }
 
 .busyVolunteer {
@@ -392,10 +390,17 @@ textarea {
   flex-shrink: 0;
   overflow-y: auto;
 }
-.dataGridFooterArea{//fix bug wtih grid footer
+.dataGridFooterArea {
+  //fix bug wtih grid footer
   box-sizing: border-box;
 }
-.mat-checkbox-label{
+.mat-checkbox-label {
   white-space: normal;
 }
 
+.hidden {
+  display: none!important;
+  * {
+    display: none !important;
+  }
+}
