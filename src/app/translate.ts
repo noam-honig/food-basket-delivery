@@ -927,6 +927,7 @@ export class Language {
   familyHistory = "היסטורית משפחה";
   includeFamilyInfoInExcelFile = "האם לכלול מידע נוסף מפרטי המשפחה כגון מספר זהות ונתונים נוספים ביצוא לאקסל? (אם כן זה יקח יותר זמן:)";
   latestAssigned = "שיוך אחרון";
+  duplicateForNextEvent = "העתק לאירוע הבא";
 }
 
 const defaultLang = new Language();

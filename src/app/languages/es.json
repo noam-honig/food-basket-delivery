@@ -1215,6 +1215,11 @@
     "valueInCode": "חיפוש משפחות כפולות",
     "valueInEnglish": "Possible Duplicates"
   },
+  "duplicateForNextEvent": {
+    "google": "Una copia para el próximo evento",
+    "valueInCode": "העתק לאירוע הבא",
+    "valueInEnglish": "A copy for the next event"
+  },
   "editComment": {
     "google": "Haz una nota",
     "valueInCode": "ערוך הערה",
@@ -2022,7 +2027,7 @@
   },
   "latestAssigned": {
     "google": "Último asociado",
-    "valueInCode": "שוייך אחרון",
+    "valueInCode": "שיוך אחרון",
     "valueInEnglish": "Last associated"
   },
   "leadHelper": {
@@ -2772,7 +2777,7 @@
   },
   "recentlyAssigned": {
     "google": "Asignado ahora",
-    "valueInCode": "שוייכו עכשיו",
+    "valueInCode": "שיוך חדש",
     "valueInEnglish": "Assigned now"
   },
   "recentVolunteers": {

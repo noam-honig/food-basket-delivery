@@ -17,7 +17,7 @@ import { DialogService } from '../select-popup/dialog';
 })
 export class EventsComponent implements OnInit {
   showArchive = false;
-  constructor(private context: Context, private settings: ApplicationSettings, private busy: BusyService,private dialog:DialogService) { }
+  constructor(private context: Context, private settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) { }
   events = this.context.for(Event).gridSettings({
     allowUpdate: true,
     allowInsert: true,
@@ -52,7 +52,18 @@ export class EventsComponent implements OnInit {
                   e.startTime.value = current.startTime.value;
                   e.endTime.value = current.endTime.value;
                   e.eventDate.value = date.value;
+                  e.address.value = current.address.value;
+                  e.phone1.value = current.phone1.value;
+                  e.phone1Description.value = current.phone1Description.value;
                   await e.save();
+                  for (const c of await this.context.for(volunteersInEvent).find({ where: x => x.duplicateToNextEvent.isEqualTo(true).and(x.eventId.isEqualTo(current.id.value)) })) {
+                    let v = this.context.for(volunteersInEvent).create();
+                    v.eventId.value = e.id.value;
+                    v.helper.value = c.helper.value;
+                    v.duplicateToNextEvent.value = true;
+                    await v.save();
+
+                  }
                   if (archiveCurrentEvent.value) {
                     current.eventStatus.value = eventStatus.archive;
                     await current.save();
@@ -90,7 +101,7 @@ export class EventsComponent implements OnInit {
             buttons: [
               {
                 text: this.settings.lang.volunteers,
-                click: () => e.showVolunteers(this.dialog,this.busy)
+                click: () => e.showVolunteers(this.dialog, this.busy)
               }
             ]
           });
@@ -99,7 +110,7 @@ export class EventsComponent implements OnInit {
       {
         name: this.settings.lang.volunteers,
         click: async e => {
-          e.showVolunteers(this.dialog,this.busy)
+          e.showVolunteers(this.dialog, this.busy)
         }
       }
     ]
@@ -107,13 +118,16 @@ export class EventsComponent implements OnInit {
   private eventDisplayColumns(e: Event) {
     return [
       e.name,
-      e.registeredVolunteers,
-      e.requiredVolunteers,
-      e.eventDate,
+      {width:'100',column:e.registeredVolunteers},
+      {width:'100',column:e.requiredVolunteers},
+      {width:'150',column:e.eventDate},
       e.startTime,
       e.endTime,
-      e.eventStatus,
-      e.description
+      {width:'150',column:e.eventStatus},
+      e.description,
+      e.address,
+      e.phone1,
+      e.phone1Description
     ];
   }
 

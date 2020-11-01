@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { UserFamiliesList } from './user-families';
 import { Route } from '@angular/router';
 
-import { Context,  RouteHelperService } from '@remult/core';
+import { Context, RouteHelperService } from '@remult/core';
 
 import { Helpers, HelperUserInfo } from '../helpers/helpers';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -14,6 +14,7 @@ import { Event, eventStatus, volunteersInEvent } from '../events/events';
 import { QRCodeModule } from 'angular2-qrcode';
 import { PhoneNumberContext } from 'twilio/lib/rest/lookups/v1/phoneNumber';
 import { SignedInAndNotOverviewGuard } from '../auth/roles';
+import { MatExpansionPanel } from '@angular/material';
 
 
 
@@ -33,9 +34,9 @@ export class MyFamiliesComponent implements OnInit {
   showQRCode: boolean = false;
 
   myQRCode() {
-    return window.location.hostname +  '/mlt/reception/?phone=' + this.myPhoneNumber;
+    return window.location.hostname + '/mlt/reception/?phone=' + this.myPhoneNumber;
   }
-  
+
 
   constructor(public context: Context, public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService) {
     this.user = context.user as HelperUserInfo;
@@ -67,13 +68,14 @@ export class MyFamiliesComponent implements OnInit {
         info += " user: " + this.context.user.name;
       else
         info += " NO USER ";
-      this.dialog.exception("My Families: " + this.settings.lang.smsLoginFailed+info,   err);
+      this.dialog.exception("My Families: " + this.settings.lang.smsLoginFailed + info, err);
       this.sessionManager.signout();
       this.helper.navigateToComponent(LoginComponent);
 
     }
     this.context.for(Event).find({ orderBy: e => [e.eventDate, e.startTime], where: e => e.eventStatus.isEqualTo(eventStatus.active) }).then(x => this.events = x);
   }
+  @ViewChildren(MatExpansionPanel) lines: QueryList<MatExpansionPanel>;
 
   volunteerEvents = new Map<string, volunteersInEvent>();
   volunteerInEvent(e: Event) {
@@ -81,8 +83,16 @@ export class MyFamiliesComponent implements OnInit {
     if (!r) {
       this.volunteerEvents.set(e.id.value, r = this.context.for(volunteersInEvent).create());
       this.context.for(volunteersInEvent).findFirst(ve => ve.eventId.isEqualTo(e.id).and(ve.helper.isEqualTo(this.familyLists.helper.id))).then(ev => {
-        if (ev)
-          this.volunteerEvents.set(e.id.value, ev)
+        if (ev) {
+          this.volunteerEvents.set(e.id.value, ev);
+          let index = this.events.indexOf(e);
+          if (index >= 0) {
+            this.lines.forEach((x, i) => {
+              if (i == index)
+                x.open();
+            })
+          }
+        }
       });
     }
     return r;

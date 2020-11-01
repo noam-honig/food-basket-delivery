@@ -1,4 +1,4 @@
-import { IdEntity, StringColumn, Context, DateColumn, NumberColumn, IdColumn, ValueListColumn, EntityClass, BusyService } from "@remult/core";
+import { IdEntity, StringColumn, Context, DateColumn, NumberColumn, IdColumn, ValueListColumn, EntityClass, BusyService, BoolColumn } from "@remult/core";
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
 import { Roles } from "../auth/roles";
@@ -12,6 +12,7 @@ import { SelectHelperComponent } from "../select-helper/select-helper.component"
 import { DialogService } from "../select-popup/dialog";
 import { saveToExcel } from '../shared/saveToExcel';
 import { getSettings } from "../manage/ApplicationSettings";
+import { AddressColumn } from "../shared/googleApiHelpers";
 
 @EntityClass
 export class Event extends IdEntity {
@@ -38,8 +39,9 @@ export class Event extends IdEntity {
                     where: ve => ve.eventId.isEqualTo(this.id)
                 },
                 knowTotalRows: true,
+                numOfColumnsInGrid: 10,
                 columnSettings: ev => [
-                    ev.helperName,
+                    { width: '100', column: ev.helperName },
                     {
                         caption: getLang(this.context).volunteerStatus,
                         getValue: v => {
@@ -48,11 +50,16 @@ export class Event extends IdEntity {
                             else if (v.succesfulDeliveries.value == 0)
                                 return getLang(this.context).newVolunteer
                             else getLang(this.context).unAsigned
-                        }
+                        },
+                        width: '100'
                     },
-                    ev.helperPhone,
-                    ev.assignedDeliveries,
-                    ev.succesfulDeliveries
+                    { width: '100', column: ev.assignedDeliveries },
+                    { width: '100', column: ev.succesfulDeliveries },
+                    { width: '150', column: ev.helperPhone },
+                    ev.helperEmail,
+                    { width: '100', column: ev.duplicateToNextEvent },
+                    ev.createDate,
+                    ev.createUser
                 ],
                 rowCssClass: v => {
                     if (v.assignedDeliveries.value > 0)
@@ -65,7 +72,7 @@ export class Event extends IdEntity {
                     {
                         name: getLang(this.context).exportToExcel,
                         click: async () => {
-                            saveToExcel(getSettings(this.context),this.context.for(volunteersInEvent),x.args.settings,"מתנדבים שנרשמו ל"+this.name.value,busy)
+                            saveToExcel(getSettings(this.context), this.context.for(volunteersInEvent), x.args.settings, "מתנדבים שנרשמו ל" + this.name.value, busy)
                         }
                     }
                 ],
@@ -105,6 +112,12 @@ export class Event extends IdEntity {
     startTime = new StringColumn({ dataControlSettings: () => ({ inputType: 'time', width: '110' }), caption: getLang(this.context).eventTime });
     endTime = new StringColumn({ dataControlSettings: () => ({ inputType: 'time', width: '110' }), caption: getLang(this.context).eventEndTime });
     requiredVolunteers = new NumberColumn(getLang(this.context).requiredVolunteers);
+    addressApiResult = new StringColumn();
+    address = new AddressColumn(this.context, this.addressApiResult, getLang(this.context).address);
+
+    phone1 = new PhoneColumn(getLang(this.context).phone1);
+    phone1Description = new StringColumn(getLang(this.context).phone1Description);
+
     registeredVolunteers = new NumberColumn({
         caption: getLang(this.context).attendingVolunteers,
         sqlExpression: () => {
@@ -122,6 +135,11 @@ export class Event extends IdEntity {
             name: 'events',
             allowApiCRUD: Roles.admin,
             allowApiRead: c => c.isSignedIn(),
+            saving: async () => {
+                if (context.onServer) {
+                    await this.address.updateApiResultIfChanged();
+                }
+            },
 
             apiDataFilter: () => {
                 if (context.isAllowed(Roles.admin))
@@ -174,6 +192,18 @@ export class volunteersInEvent extends IdEntity {
             return sql.columnCountWithAs(this, { from: d, where: () => [sql.eq(this.helper, d.courier), d.deliverStatus.isSuccess()] }, 'succesfulDeliveries')
         }
     })
+    helperEmail = new StringColumn({
+        caption: getLang(this.context).email, sqlExpression: () => {
+            let sql = new SqlBuilder();
+            let h = this.context.for(Helpers).create();
+            return sql.columnInnerSelect(this, {
+                from: h,
+                select: () => [h.email],
+                where: () => [sql.eq(h.id, this.helper)]
+            });
+        }
+    })
+    duplicateToNextEvent = new BoolColumn(getLang(this.context).duplicateForNextEvent);
     createDate = new changeDate({ caption: getLang(this.context).createDate });
     createUser = new HelperIdReadonly(this.context, { caption: getLang(this.context).createUser });
 

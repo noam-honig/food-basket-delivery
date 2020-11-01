@@ -366,6 +366,9 @@ export class AddressColumn extends StringColumn {
     }
     private _lastString: string;
     private _lastGeo: GeocodeInformation;
+    openWaze() {
+        window.open('waze://?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.value) + '&navigate=yes');
+      }
 
     getGeocodeInformation() {
         if (this._lastString == this.apiResultColumn.value)

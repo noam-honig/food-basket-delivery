@@ -1,3 +1,16 @@
 agm-map {
-    height: 300px;
+  height: 300px;
+}
+
+.registered {
+  background-color:lightgreen !important
+}
+
+.phone-container {
+  display: flex;
+  padding-bottom: 10px;
+  > div {
+    padding: 0 5px;
+    align-self: center;
   }
+}

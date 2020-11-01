@@ -804,4 +804,5 @@ export class es implements Language {
   familyHistory = 'Historia familiar';
   includeFamilyInfoInExcelFile = '¿Debería incluir información familiar adicional como el número de identificación y datos de exportación adicionales a Excel? (Si es así, tardará más :)';
   latestAssigned = 'Último asociado';
+  duplicateForNextEvent = 'Una copia para el próximo evento';
 }

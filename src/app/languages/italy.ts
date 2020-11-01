@@ -804,4 +804,5 @@ export class italy implements Language {
   familyHistory = 'Storia famigliare';
   includeFamilyInfoInExcelFile = 'Dovrebbe includere ulteriori informazioni sulla famiglia come il numero ID e ulteriori dati di esportazione in Excel? (Se è così, ci vorrà più tempo :)';
   latestAssigned = 'Ultimo associato';
+  duplicateForNextEvent = 'Una copia per il prossimo evento';
 }

@@ -804,4 +804,5 @@ export class soldier implements Language {
   familyHistory = 'היסטורית חייל';
   includeFamilyInfoInExcelFile = 'האם לכלול מידע נוסף מפרטי החייל כגון מספר זהות ונתונים נוספים ביצוא לאקסל? (אם כן זה יקח יותר זמן:)';
   latestAssigned = 'שוייך אחרון';
+  duplicateForNextEvent = 'העתק לאירוע הבא';
 }

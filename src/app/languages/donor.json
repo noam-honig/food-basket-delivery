@@ -973,6 +973,10 @@
     "google": "חיפוש תורמים כפולים",
     "valueInCode": "חיפוש משפחות כפולות"
   },
+  "duplicateForNextEvent": {
+    "google": "העתק לאירוע הבא",
+    "valueInCode": "העתק לאירוע הבא"
+  },
   "editComment": {
     "google": "ערוך הערה",
     "valueInCode": "ערוך הערה"
@@ -1619,7 +1623,7 @@
   },
   "latestAssigned": {
     "google": "שוייך אחרון",
-    "valueInCode": "שוייך אחרון"
+    "valueInCode": "שיוך אחרון"
   },
   "leadHelper": {
     "google": "מתנדב מוביל",
@@ -2225,7 +2229,7 @@
   },
   "recentlyAssigned": {
     "google": "שוייכו עכשיו",
-    "valueInCode": "שוייכו עכשיו"
+    "valueInCode": "שיוך חדש"
   },
   "recentVolunteers": {
     "google": "מתנדבים אחרונים",

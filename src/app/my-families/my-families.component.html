@@ -32,11 +32,13 @@
 <app-helper-families *ngIf="!settings.isSytemForMlt() || !this.showQRCode" [familyLists]="familyLists">
 </app-helper-families>
 
+
 <mat-card *ngIf="this.events&&this.events.length>0">
     <h3>{{settings.lang.pleaseRegisterToTheFollowingEvents}}</h3>
-    <mat-accordion>
-        <mat-expansion-panel *ngFor="let e of events">
-            <mat-expansion-panel-header>
+    <mat-accordion multi>
+        <mat-expansion-panel *ngFor="let e of events" [class.registered]="!volunteerInEvent(e).isNew()"
+            [attr.myId]="e.id.value">
+            <mat-expansion-panel-header [class.registered]="!volunteerInEvent(e).isNew()">
                 <div style="display:flex;flex-direction: column;">
                     <mat-panel-title> {{e.name.value}} <mat-icon *ngIf="!volunteerInEvent(e).isNew()"
                             style="color:green">done</mat-icon>
@@ -50,15 +52,41 @@
             <div>
                 {{e.description.value}}
             </div>
+            <div>
+                <div class="phone-container" *ngIf="e.address.ok()">
+                    <span (click)="e.address.openWaze()">
+                        <img src="assets/waze.png">
+
+                    </span>
+                    <div>
+                        <a (click)="e.address.openWaze()">
+                            <span style="display:block"> {{e.address.value}} </span>
+                        </a>
+                    </div>
+                </div>
+
+
+                <div class="phone-container" *ngIf="e.phone1.value">
+                    <a href="tel:{{e.phone1.value}}">
+                        <button mat-mini-fab style="vertical-align: middle" color="primary">
+                            <mat-icon>call</mat-icon>
+                        </button>
+                    </a>
+                    <div>
+                        <a href="tel:{{e.phone1.value}}">{{e.phone1.displayValue}}</a>,
+                        {{e.phone1Description.value}}
+                    </div>
+                </div>
+
+            </div>
             <div>{{settings.lang.volunteers}}: {{e.registeredVolunteers.value}}/{{e.requiredVolunteers.value}}</div>
             <button mat-raised-button color="primary"
                 *ngIf="volunteerInEvent(e).isNew() && e.registeredVolunteers.value<e.requiredVolunteers.value"
                 (click)="registerToEvent(e)">{{settings.lang.illBeThere}}
             </button>
             <span mat-raised-button color="primary"
-                *ngIf="volunteerInEvent(e).isNew() && e.registeredVolunteers.value>=e.requiredVolunteers.value"
-            >{{settings.lang.eventIsFull}}
-        </span>
+                *ngIf="volunteerInEvent(e).isNew() && e.registeredVolunteers.value>=e.requiredVolunteers.value">{{settings.lang.eventIsFull}}
+            </span>
             <span *ngIf="!volunteerInEvent(e).isNew()">
                 {{settings.lang.registeredToEvent}} <a (click)="cancelEvent(e)">{{settings.lang.iCantMakeIt}}</a>
             </span>

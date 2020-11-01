@@ -804,4 +804,5 @@ export class donor implements Language {
   familyHistory = 'היסטורית תורם';
   includeFamilyInfoInExcelFile = 'האם לכלול מידע נוסף מפרטי התורם כגון מספר זהות ונתונים נוספים ביצוא לאקסל? (אם כן זה יקח יותר זמן:)';
   latestAssigned = 'שוייך אחרון';
+  duplicateForNextEvent = 'העתק לאירוע הבא';
 }
