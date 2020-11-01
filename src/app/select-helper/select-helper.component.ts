@@ -71,8 +71,7 @@ export class SelectHelperComponent implements OnInit {
         h.distanceFrom = from;
       }
     }
-
-    await (await context.for(Helpers).find({ where: h => h.active() })).forEach(async h => {
+    for await (const h of context.for(Helpers).iterate({ where: h => h.active() })) {
       helpers.set(h.id.value, {
         helperId: h.id.value,
         name: h.name.value,
@@ -87,7 +86,7 @@ export class SelectHelperComponent implements OnInit {
         let theH = helpers.get(h.id.value);
         check(theH, h.preferredFinishAddress.location(), getLang(context).preferredDistributionArea + ": " + h.preferredFinishAddress.value);
       }
-    });
+    }
 
     let sql = new SqlBuilder();
     if (!selectDefaultVolunteer) {
