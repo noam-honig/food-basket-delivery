@@ -2,14 +2,16 @@ import { IdEntity, StringColumn, Context, DateColumn, NumberColumn, IdColumn, Va
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
 import { Roles } from "../auth/roles";
-import { HelperId, Helpers } from "../helpers/helpers";
-import { SqlBuilder, PhoneColumn } from "../model-shared/types";
+import { HelperId, HelperIdReadonly, Helpers } from "../helpers/helpers";
+import { SqlBuilder, PhoneColumn, changeDate } from "../model-shared/types";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { HelperAssignmentComponent } from "../helper-assignment/helper-assignment.component";
 import { settings } from "cluster";
 import { SelectHelperComponent } from "../select-helper/select-helper.component";
 import { DialogService } from "../select-popup/dialog";
+import { saveToExcel } from '../shared/saveToExcel';
+import { getSettings } from "../manage/ApplicationSettings";
 
 @EntityClass
 export class Event extends IdEntity {
@@ -59,6 +61,14 @@ export class Event extends IdEntity {
                         return 'newVolunteer'
                     return '';
                 },
+                gridButtons: [
+                    {
+                        name: getLang(this.context).exportToExcel,
+                        click: async () => {
+                            saveToExcel(getSettings(this.context),this.context.for(volunteersInEvent),x.args.settings,"מתנדבים שנרשמו ל"+this.name.value,busy)
+                        }
+                    }
+                ],
                 rowButtons: [
                     {
                         name: getLang(this.context).assignDeliveryMenu,
@@ -164,6 +174,9 @@ export class volunteersInEvent extends IdEntity {
             return sql.columnCountWithAs(this, { from: d, where: () => [sql.eq(this.helper, d.courier), d.deliverStatus.isSuccess()] }, 'succesfulDeliveries')
         }
     })
+    createDate = new changeDate({ caption: getLang(this.context).createDate });
+    createUser = new HelperIdReadonly(this.context, { caption: getLang(this.context).createUser });
+
     constructor(private context: Context) {
         super({
             name: 'volunteersInEvent',
@@ -172,6 +185,13 @@ export class volunteersInEvent extends IdEntity {
                 if (context.isAllowed(Roles.admin))
                     return undefined;
                 return this.helper.isEqualTo(context.user.id);
+            }
+            ,
+            saving: () => {
+                if (this.isNew() && context.onServer) {
+                    this.createDate.value = new Date();
+                    this.createUser.value = context.user.id;
+                }
             }
         });
     }
