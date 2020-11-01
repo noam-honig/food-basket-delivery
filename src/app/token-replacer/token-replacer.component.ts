@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./token-replacer.component.scss']
 })
 export class TokenReplacerComponent implements OnInit {
-  listOfSchemas: string = 'test1,test2,test3';
+  listOfSchemas: string = 'test,test1,test2,test3';
 
   token: string = 'test1';
   sql: string = 'select city from test1.families';
