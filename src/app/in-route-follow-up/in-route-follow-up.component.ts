@@ -34,7 +34,7 @@ export class InRouteFollowUpComponent implements OnInit {
       click: () => saveToExcel(this.settings, this.context.for(InRouteHelpers), this.helpers, "מתנדבים בדרך", this.busy)
     }],
     rowCssClass: x => {
-      if ((x.minAssignDate.value < daysAgo(7)) && (!x.lastCommunicationDate.value || x.lastCommunicationDate.value < daysAgo(7)))
+      if ((x.minAssignDate.value < daysAgo(5)) && (!x.lastCommunicationDate.value || x.lastCommunicationDate.value < daysAgo(5)))
         return 'addressProblem';
       else
         return '';
