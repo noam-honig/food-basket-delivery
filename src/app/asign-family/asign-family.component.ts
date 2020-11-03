@@ -396,7 +396,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         await this.busy.donotWait(async () => {
             let f = await this.context.for(ActiveFamilyDeliveries).findId(familyId);
             if (f && f.deliverStatus.value == DeliveryStatus.ReadyForDelivery && f.courier.value == "") {
-                this.performSepcificFamilyAssignment(f, 'assign based on map');
+                this.performSpecificFamilyAssignment(f, 'assign based on map');
             }
         });
     }
@@ -915,7 +915,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 for (const f of selectedDeliveries) {
 
                     let ok = async () => {
-                        await this.performSepcificFamilyAssignment(f, analyticsName);
+                        await this.performSpecificFamilyAssignment(f, analyticsName);
                     };
 
                     if (f.courier.value) {
@@ -937,13 +937,13 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             }
         })
     }
-    private async performSepcificFamilyAssignment(f: ActiveFamilyDeliveries, analyticsName: string) {
+    private async performSpecificFamilyAssignment(f: ActiveFamilyDeliveries, analyticsName: string) {
         await this.verifyHelperExistance();
         f.courier.value = this.helper.id.value;
         f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
         this.dialog.analytics(analyticsName);
-        this.familyLists.addFamily(f);
         await f.save();
+        this.familyLists.addFamily(f);
         setTimeout(() => {
             this.refreshBaskets();
         }, 300);

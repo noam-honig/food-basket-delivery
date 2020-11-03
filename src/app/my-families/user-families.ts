@@ -61,11 +61,12 @@ export class UserFamiliesList {
     }
     userClickedOnFamilyOnMap: (familyId: string[]) => void = x => { };
     async initForHelper(helper: Helpers) {
-
-        this.initHelper(helper);
-        if (helper) {
-            this.routeStats = helper.getRouteStats();
-            this.prevRouteStats = undefined;
+        if (helper != this.helper) {
+            this.initHelper(helper);
+            if (helper) {
+                this.routeStats = helper.getRouteStats();
+                this.prevRouteStats = undefined;
+            }
         }
         await this.reload();
 
@@ -174,14 +175,14 @@ export class UserFamiliesList {
             this.distCenter = undefined;
         }
         this.toDeliver = this.allFamilies.filter(f => f.deliverStatus.value == DeliveryStatus.ReadyForDelivery);
-        if (this.toDeliver.find(f => f.routeOrder.value == 0) && this.toDeliver.length > 1) {
+        if (this.toDeliver.find(f => f.routeOrder.value == 0) && this.toDeliver.length > 0) {
             this.refreshRoute({});
         }
-        if (this.toDeliver.length==0)
+        if (this.toDeliver.length == 0)
             this.prevRouteStats = undefined;
         this.maxAssignTime = undefined;
         for (const f of this.toDeliver) {
-            if (f.courierAssingTime.value&&( this.maxAssignTime == undefined || this.maxAssignTime < f.courierAssingTime.value.valueOf()))
+            if (f.courierAssingTime.value && (this.maxAssignTime == undefined || this.maxAssignTime < f.courierAssingTime.value.valueOf()))
                 this.maxAssignTime = f.courierAssingTime.value.valueOf();
         }
         this.delivered = this.allFamilies.filter(f => f.deliverStatus.value == DeliveryStatus.Success || f.deliverStatus.value == DeliveryStatus.SuccessLeftThere);
