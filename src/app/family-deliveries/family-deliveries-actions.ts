@@ -32,7 +32,7 @@ export class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
             title: getLang(context).deleteDeliveries,
             help: () => getLang(this.context).deleteDeliveriesHelp,
             forEach: async fd => {
-                fd.delete();
+                await fd.delete();
                 if (this.updateFamilyStatus.value) {
                     let f = await this.context.for(Families).findId(fd.family);
                     f.status.value = this.status.value;

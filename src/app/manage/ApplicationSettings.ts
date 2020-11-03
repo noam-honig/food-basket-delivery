@@ -202,6 +202,11 @@ export class ApplicationSettings extends Entity<number>  {
   familyCustom4Values = new StringColumn({ caption: this.lang.customColumn + " 4 " + this.lang.optionalValues, includeInApi: Roles.admin });
   currentUserIsValidForAppLoadTest = new BoolColumn({ serverExpression: () => this.context.isSignedIn() });
 
+  createBasketsForAllFamiliesInCreateEvent = new BoolColumn({ includeInApi: Roles.admin });
+  includeGroupsInCreateEvent = new StringColumn({ includeInApi: Roles.admin });
+  excludeGroupsInCreateEvent = new StringColumn({ includeInApi: Roles.admin });
+
+
 
   constructor(private context: Context) {
     super({
@@ -223,7 +228,7 @@ export class ApplicationSettings extends Entity<number>  {
           if (this.forWho.value)
             setLangForSite(Sites.getValidSchemaFromContext(context), this.forWho.value);
           setSettingsForSite(Sites.getValidSchemaFromContext(context), this);
-          logChanges(this, context, { excludeColumns:[ this.currentUserIsValidForAppLoadTest ]});
+          logChanges(this, context, { excludeColumns: [this.currentUserIsValidForAppLoadTest] });
         }
       }
     })
@@ -321,7 +326,7 @@ export class SettingsService {
   async init() {
 
     this.instance = await ApplicationSettings.getAsync(this.context);
-    setSettingsForSite(Sites.getValidSchemaFromContext(this.context),this.instance);
+    setSettingsForSite(Sites.getValidSchemaFromContext(this.context), this.instance);
 
     translationConfig.forWho = this.instance.forWho.value;
     DeliveryStatus.usingSelfPickupModule = this.instance.usingSelfPickupModule.value;

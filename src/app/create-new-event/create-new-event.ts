@@ -10,7 +10,7 @@ import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-q
 import { RequiredValidator } from '@angular/forms';
 import { Roles } from '../auth/roles';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { GroupsColumn, Families } from '../families/families';
@@ -52,6 +52,15 @@ export class CreateNewEvent {
     this.basketType];
 
     async createNewEvent() {
+        let settings = await ApplicationSettings.getAsync(this.context);
+        for (const x of [
+            [this.createNewDelivery, settings.createBasketsForAllFamiliesInCreateEvent],
+            [this.includeGroups, settings.includeGroupsInCreateEvent],
+            [this.excludeGroups, settings.excludeGroupsInCreateEvent]]) {
+            x[1].value = x[0].value;
+        }
+        await settings.save();
+
         let pt = new PromiseThrottle(10);
         for await (const fd of this.context.for(ActiveFamilyDeliveries).iterate({ where: fd => fd.distributionCenter.filter(this.distributionCenter.value) })) {
             this.archiveHelper.forEach(fd);
@@ -112,6 +121,16 @@ export class CreateNewEvent {
     }
 
     async show(dialog: DialogService, settings: ApplicationSettings, routeHelper: RouteHelperService, busy: BusyService) {
+        await settings.reload();
+        for (const x of [
+            [this.createNewDelivery, settings.createBasketsForAllFamiliesInCreateEvent],
+            [this.includeGroups, settings.includeGroupsInCreateEvent],
+            [this.excludeGroups, settings.excludeGroupsInCreateEvent]]) {
+            x[0].value = x[1].value;
+        }
+        if (this.includeGroups.value) {
+            this.moreOptions.value = true;
+        }
         this.distributionCenter.value = dialog.distCenter.value;
 
         if (this.distributionCenter.value == allCentersToken) {
