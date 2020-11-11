@@ -61,12 +61,11 @@ export class PhoneColumn extends radweb.StringColumn {
     if (phone.startsWith('0')) {
       phone = getSettings(context).getInternationalPhonePrefix() + phone.substr(1);
     }
+
     if (phone.startsWith('+'))
       phone = phone.substr(1);
-    if (isDesktop())
-      window.open('https://web.whatsapp.com/send?phone=+' + phone + '&text=' + encodeURI(smsMessage), '_whatsapp');
-    else
-      window.open('https://wa.me/' + phone + '?text=' + encodeURI(smsMessage), '_blank');
+
+    window.open('https://wa.me/' + phone + '?text=' + encodeURI(smsMessage), '_blank');
   }
   
   static formatPhone(s: string) {
