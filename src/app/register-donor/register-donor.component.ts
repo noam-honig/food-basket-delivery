@@ -11,6 +11,7 @@ import { RequiredValidator } from '@angular/forms';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { EmailSvc } from '../shared/utils';
 import { SendSmsAction } from '../asign-family/send-sms-action';
+import { ActivatedRoute } from '@angular/router';
 
 declare var gtag;
 @Component({
@@ -19,7 +20,14 @@ declare var gtag;
   styleUrls: ['./register-donor.component.scss']
 })
 export class RegisterDonorComponent implements OnInit {
-  constructor(private dialog: DialogService, private context: Context, private settings: ApplicationSettings) { }
+  constructor(private dialog: DialogService, private context: Context, private settings: ApplicationSettings, public activeRoute: ActivatedRoute) { } 
+
+  showCCMessage() : boolean {
+    if (this.activeRoute.routeConfig.data && this.activeRoute.routeConfig.data.isCC)
+      return true
+    else return false;
+  }
+
   donor = new donorForm(this.context);
   area = new DataAreaSettings({
     columnSettings: () => 

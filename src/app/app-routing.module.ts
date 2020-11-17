@@ -114,6 +114,7 @@ export const routes: Routes = [
   { path: 'geocode', component: GeocodeComponent, canActivate: [AdminGuard], data: { name: 'geocode', hide: true } },
   { path: 'testmap', component: TestMapComponent, canActivate: [AdminGuard], data: { hide: true } },
   { path: 'register-donor', component: RegisterDonorComponent,canActivate:[MltOnlyGuard] , data: { hide: true } },
+  { path: 'register-donor-cc', component: RegisterDonorComponent,canActivate:[MltOnlyGuard] , data: { hide: true, isCC: true } },
   { path: 'register-helper', component: RegisterHelperComponent,canActivate:[MltOnlyGuard] , data: { hide: true } },
   
   
