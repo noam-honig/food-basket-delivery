@@ -110,6 +110,8 @@ export class MapComponent implements OnInit, OnDestroy {
     fitBounds() {
         if (this.disableMapBoundsRefrest)
             return;
+        if (!this.map)
+            return;
         let x = JSON.stringify(this.bounds.toJSON());
         if (x == this.lastBounds)
             return;
