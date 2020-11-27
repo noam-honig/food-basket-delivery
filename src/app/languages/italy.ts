@@ -791,6 +791,7 @@ export class italy implements Language {
   archiveUser = 'Archivio: aggiornamenti utente';
   showTzToVolunteer = 'Mostra il numero ID al volontario';
   myGiftsURL = 'I miei vantaggi';
+  dateGranted = 'Data di concessione';
   eventIsFull = 'Questo evento è pieno, saremo felici se ti iscrivi dopo';
   freezeDistributionCenter = 'Congela la lista di distribuzione';
   deleteDistributionCenter = 'Elimina un elenco di documenti';

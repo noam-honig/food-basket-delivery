@@ -636,6 +636,10 @@
     "google": "הודעת SMS מותאמת",
     "valueInCode": "הודעת SMS מותאמת"
   },
+  "dateAssigned": {
+    "google": "תאריך הענקה",
+    "valueInCode": "תאריך הענקה"
+  },
   "dates": {
     "google": "תאריכים",
     "valueInCode": "תאריכים"

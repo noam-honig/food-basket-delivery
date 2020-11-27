@@ -729,6 +729,10 @@
     "google": "Personalized SMS",
     "valueInCode": "הודעת SMS מותאמת"
   },
+  "dateAssigned": {
+    "google": "Grant date",
+    "valueInCode": "תאריך הענקה"
+  },
   "dates": {
     "google": "Dates",
     "valueInCode": "תאריכים"

@@ -791,6 +791,7 @@ export class soldier implements Language {
   archiveUser = 'ארכיב: משתמש מעדכן';
   showTzToVolunteer = 'הצג מספר זהות למתנדב';
   myGiftsURL = 'ההטבות שלי';
+  dateGranted = 'תאריך הענקה';
   eventIsFull = 'ארוע זה מלא, נשמח אם תרשמו לאחר';
   freezeDistributionCenter = 'הקפא רשימת חלוקה';
   deleteDistributionCenter = 'מחק רשימת חלויקה';

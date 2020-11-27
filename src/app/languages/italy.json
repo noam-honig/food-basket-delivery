@@ -794,6 +794,11 @@
     "valueInCode": "הודעת SMS מותאמת",
     "valueInEnglish": "Personalized SMS"
   },
+  "dateAssigned": {
+    "google": "Data di concessione",
+    "valueInCode": "תאריך הענקה",
+    "valueInEnglish": "Grant date"
+  },
   "dates": {
     "google": "Date",
     "valueInCode": "תאריכים",

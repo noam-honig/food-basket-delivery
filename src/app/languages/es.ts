@@ -791,6 +791,7 @@ export class es implements Language {
   archiveUser = 'Archivo: actualizaciones de usuario';
   showTzToVolunteer = 'Mostrar número de identificación para ser voluntario';
   myGiftsURL = 'Mis beneficios';
+  dateGranted = 'Fecha de concesión';
   eventIsFull = 'Este evento está lleno, estaremos felices si te registras después';
   freezeDistributionCenter = 'Congelar lista de distribución';
   deleteDistributionCenter = 'Eliminar una lista de deslizamiento';
