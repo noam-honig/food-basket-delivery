@@ -264,6 +264,7 @@ export class en implements Language {
   addressOk = 'Correct Address';
   previousDeliverySummary = 'Previous delivery summary';
   createUser = 'Creating user';
+  assignUser = 'User associates';
   lastUpdateDate = 'Deadline';
   lastUpdateUser = 'Updating user';
   within = 'within';
@@ -684,6 +685,7 @@ export class en implements Language {
   eventStatus = 'status';
   eventsComponent = 'Events';
   weeklyReportMltComponent = 'Considerable weekly report';
+  HelperGiftsComponent = 'The Well of Wishes';
   pleaseRegisterToTheFollowingEvents = 'Please sign up for upcoming events';
   illBeThere = 'Sign me up for this event';
   registeredToEvent = 'You are registered for this event';

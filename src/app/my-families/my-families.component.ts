@@ -2,7 +2,7 @@ import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/
 import { UserFamiliesList } from './user-families';
 import { Route } from '@angular/router';
 
-import { Context, RouteHelperService } from '@remult/core';
+import { BusyService, Context, RouteHelperService } from '@remult/core';
 
 import { Helpers, HelperUserInfo } from '../helpers/helpers';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -13,8 +13,10 @@ import { AuthService } from '../auth/auth-service';
 import { Event, eventStatus, volunteersInEvent } from '../events/events';
 import { QRCodeModule } from 'angular2-qrcode';
 import { PhoneNumberContext } from 'twilio/lib/rest/lookups/v1/phoneNumber';
-import { SignedInAndNotOverviewGuard } from '../auth/roles';
+import { Roles, SignedInAndNotOverviewGuard } from '../auth/roles';
 import { MatExpansionPanel } from '@angular/material';
+import { HelperGifts, showHelperGifts } from '../helper-gifts/HelperGifts';
+import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 
 
 
@@ -32,13 +34,14 @@ export class MyFamiliesComponent implements OnInit {
   user: HelperUserInfo;
   myPhoneNumber: string = '';
   showQRCode: boolean = false;
-
+  
   myQRCode() {
     return window.location.hostname + '/mlt/reception/?phone=' + this.myPhoneNumber;
   }
 
 
-  constructor(public context: Context, public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService) {
+  constructor(public context: Context, public settings: ApplicationSettings, private dialog: DialogService, 
+    private helper: RouteHelperService, public sessionManager: AuthService, private busy: BusyService) {
     this.user = context.user as HelperUserInfo;
   }
   async ngOnInit() {
@@ -116,7 +119,13 @@ export class MyFamiliesComponent implements OnInit {
   }
   events: Event[] = [];
 
-
+  async showMyGifts() {
+    let myGifts = await HelperGifts.getMyPendingGiftsCount(this.context.user.id);
+    if (myGifts==1) {
+      let URL = await HelperGifts.getMyFirstGiftURL(this.context.user.id);
+      window.open(URL);
+    } else showHelperGifts(this.context.user.id, this.context, this.settings, this.dialog, this.busy);
+  }
 }
 
 

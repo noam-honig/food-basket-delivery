@@ -378,6 +378,7 @@ export class Language {
   addressOk = 'כתובת תקינה';
   previousDeliverySummary = 'סיכום משלוח קודם';
   createUser = 'משתמש מוסיף';
+  assignUser = 'משתמש משייך';
   lastUpdateDate = 'מועד עדכון אחרון';
   lastUpdateUser = 'משתמש מעדכן';
   within = 'תוך';
@@ -804,6 +805,7 @@ export class Language {
   eventStatus = "סטטוס";
   eventsComponent = "ארועים";
   weeklyReportMltComponent = "דוח שבועי מתחשבים";
+  HelperGiftsComponent = "באר המשאלות";
   pleaseRegisterToTheFollowingEvents = "אנא הרשמו לאירועים הקרובים";
   illBeThere = "רשום אותי לארוע זה";
   registeredToEvent = "הנך רשום לארוע זה";
