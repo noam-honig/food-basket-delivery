@@ -1,4 +1,4 @@
-<div>
+<div *ngIf="!familiesNewPage">
   <div *ngIf="showStatus()">
     <h4>{{f.deliverStatus.displayValue}}</h4>
     {{f.deliveryStatusDate.displayValue}}
@@ -18,7 +18,7 @@
       (click)=" udpateInfo(f)">{{settings.lang.deliveryDetails}}</button>
   </div>
   <a *ngIf="settings.showTzToVolunteer.value" (click)="showTz()" style="display:block">הצג מספר זהות</a>
-  <h4 style="display:inline">{{settings.lang.basket}}</h4> - {{f.basketType.displayValue}}
+  <!-- <h4 style="display:inline">{{settings.lang.basket}}</h4> - {{f.basketType.displayValue}} -->
 
   <div *ngIf="f.deliveryComments.value">
     <mat-icon color="accent" style="vertical-align: middle">comment</mat-icon>
@@ -118,6 +118,11 @@
     </div>
   </ng-container>
 </div>
+
+<div *ngIf="familiesNewPage">
+  
+</div>
+
 <div class="button-area">
   <ng-content></ng-content>
 </div>

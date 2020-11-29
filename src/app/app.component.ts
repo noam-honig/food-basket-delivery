@@ -29,6 +29,9 @@ import { CreateNewEvent } from './create-new-event/create-new-event';
 
 })
 export class AppComponent {
+  @ViewChild('c',{
+    static:false
+  }) helperfamCom;
   isAdmin() {
     return this.context.isAllowed(Roles.admin);
   }

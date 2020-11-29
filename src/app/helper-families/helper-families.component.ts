@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef, AfterViewInit } from '@angular/core';
 import { BusyService, ServerFunction, StringColumn, GridButton, BoolColumn, ServerContext, SqlDatabase } from '@remult/core';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
@@ -82,10 +82,18 @@ export class HelperFamiliesComponent implements OnInit {
   @Output() assignmentCanceled = new EventEmitter<void>();
   @Output() assignSmsSent = new EventEmitter<void>();
   @Input() preview = false;
+  @Input() numberOfDeliveries = 0;
   @ViewChild("theTab", { static: false }) tab: MatTabGroup;
+
+  @Input() familiesNewPage = false;
+  familyInfoCurrent = null;
+  justFamiliesList: any[] = [];
   ngOnInit() {
 
+  }
 
+  showFamilyInfo(f) {
+    this.familyInfoCurrent = f;
   }
   volunteerLocation: Location = undefined;
   async updateCurrentLocation(useCurrentLocation: boolean) {
@@ -435,6 +443,17 @@ export class HelperFamiliesComponent implements OnInit {
   async leftThere(f: ActiveFamilyDeliveries) {
     this.deliveredToFamilyOk(f, DeliveryStatus.SuccessLeftThere, s => s.commentForSuccessLeft);
   }
+  // async notReady(f: ActiveFamilyDeliveries) {
+  //   this.deliveredToFamilyOk(f, DeliveryStatus.notReady, s => s.commentForSuccessLeft);
+  // }
+  // async noAnswer(f: ActiveFamilyDeliveries) {
+  //   this.deliveredToFamilyOk(f, DeliveryStatus.noAnswer, s => s.commentForSuccessLeft);
+  // }
+  // async alreadyPickedUp(f: ActiveFamilyDeliveries) {
+  //   this.deliveredToFamilyOk(f, DeliveryStatus.alreadyPickedUp, s => s.commentForSuccessLeft);
+  // }
+
+
   @ServerFunction({ allowed: c => c.isSignedIn() })
   static async sendSuccessMessageToFamily(deliveryId: string, context?: ServerContext) {
     var settings = getSettings(context);
@@ -464,26 +483,54 @@ export class HelperFamiliesComponent implements OnInit {
       comment: f.courierComments.value,
       helpText,
       ok: async (comment) => {
-        if (!f.isNew()) {
-          f.deliverStatus.value = status;
-          f.courierComments.value = comment;
-          f.checkNeedsWork();
-          try {
-            await f.save();
-            this.cool();
-            this.dialog.analytics('delivered');
-            this.initFamilies();
-            if (this.familyLists.toDeliver.length == 0) {
-              this.dialog.messageDialog(this.allDoneMessage());
-            }
-            if (this.settings.allowSendSuccessMessageOption.value && this.settings.sendSuccessMessageToFamily.value)
-              HelperFamiliesComponent.sendSuccessMessageToFamily(f.id.value);
+        if(!this.settings.isSytemForMlt()){
+          let i=f;
+          if (!i.isNew()) {
+            i.deliverStatus.value = status;
+            i.courierComments.value = comment;
+            i.checkNeedsWork();
+            try {
+              await i.save();
+              this.cool();
+              this.dialog.analytics('delivered');
+              this.initFamilies();
+              if (this.familyLists.toDeliver.length == 0) {
+                this.dialog.messageDialog(this.allDoneMessage());
+              }
+              if (this.settings.allowSendSuccessMessageOption.value && this.settings.sendSuccessMessageToFamily.value)
+                HelperFamiliesComponent.sendSuccessMessageToFamily(i.id.value);
 
-          }
-          catch (err) {
-            this.dialog.Error(err);
+            }
+            catch (err) {
+              this.dialog.Error(err);
+            }
+        }else{
+        this.familyLists.toDeliver.forEach(async i => {
+          if (i.family.value == f.family.value) {
+            if (!i.isNew()) {
+              i.deliverStatus.value = status;
+              i.courierComments.value = comment;
+              i.checkNeedsWork();
+              try {
+                await i.save();
+                this.cool();
+                this.dialog.analytics('delivered');
+                this.initFamilies();
+                if (this.familyLists.toDeliver.length == 0) {
+                  this.dialog.messageDialog(this.allDoneMessage());
+                }
+                if (this.settings.allowSendSuccessMessageOption.value && this.settings.sendSuccessMessageToFamily.value)
+                  HelperFamiliesComponent.sendSuccessMessageToFamily(i.id.value);
+
+              }
+              catch (err) {
+                this.dialog.Error(err);
+              }
+              
           }
         }
+        })
+        }}
       },
       cancel: () => { }
     });
@@ -498,7 +545,17 @@ export class HelperFamiliesComponent implements OnInit {
   showLeftFamilies() {
     return this.partOfAssign || this.partOfReview || this.familyLists.toDeliver.length > 0;
   }
-  async couldntDeliverToFamily(f: ActiveFamilyDeliveries) {
+
+  async frozen(f) {
+    let currentUser = await (await this.context.for(Helpers).findFirst(i => i.id.isEqualTo(this.context.user.id)));
+    let date = new Date();
+    date.setDate(date.getDate() + 14)
+    currentUser.frozenTill.value = date;
+    await currentUser.save()
+    this.familyInfoCurrent = null;
+  }
+
+  async couldntDeliverToFamily(f: ActiveFamilyDeliveries, status) {
     let showUpdateFail = false;
     let q = this.settings.getQuestions();
     if (!q || q.length == 0) {
@@ -511,24 +568,47 @@ export class HelperFamiliesComponent implements OnInit {
         family: f,
         comment: f.courierComments.value,
         showFailStatus: true,
-
+        status: status,
         helpText: s => s.commentForProblem,
 
         ok: async (comment, status) => {
-          if (f.isNew())
-            return;
-          f.deliverStatus.value = status;
-          f.courierComments.value = comment;
-          f.checkNeedsWork();
-          try {
-            await f.save();
-            this.dialog.analytics('Problem');
-            this.initFamilies();
+          if(!this.settings.isSytemForMlt()){
+            if (f.isNew())
+                return;
+              f.deliverStatus.value = status;
+              f.courierComments.value = comment;
+              f.checkNeedsWork();
+              try {
+                await f.save();
+                this.dialog.analytics('Problem');
+                this.initFamilies();
 
 
+              }
+              catch (err) {
+                this.dialog.Error(err);
+              }
           }
-          catch (err) {
-            this.dialog.Error(err);
+          else{
+            this.familyLists.toDeliver.forEach(async i => {
+              if (i.family.value == f.family.value) {
+                if (i.isNew())
+                  return;
+                i.deliverStatus.value = status;
+                i.courierComments.value = comment;
+                i.checkNeedsWork();
+                try {
+                  await i.save();
+                  this.dialog.analytics('Problem');
+                  this.initFamilies();
+  
+  
+                }
+                catch (err) {
+                  this.dialog.Error(err);
+                }
+              }
+            });
           }
         },
         cancel: () => { },

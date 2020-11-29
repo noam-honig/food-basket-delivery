@@ -1,9 +1,56 @@
+<ng-container *ngIf="familyInfoCurrent" >
+  <div style="display: flex;    align-items: center;flex-direction:column;">
+  <h3 class="main-title">{{familyInfoCurrent.name.value}} - {{familyInfoCurrent.address.value}}</h3>
+  <h3 class="main-title" style="margin-bottom: 28px">{{familyInfoCurrent?.baskets?.join(' - ')}}</h3>
+</div>
+
+  <app-family-info [f]="familyInfoCurrent" [showHelp]="true" [partOfAssign]="partOfAssign"  [familiesNewPage]="settings.isSytemForMlt()"
+    (assignmentCanceled)="cancelAssign(familyInfoCurrent)" (refreshList)="familyLists.reload()">
+<div style="display: flex;flex-wrap:wrap;    justify-content: space-evenly;">
+    <button mat-raised-button style="background-color: #4b94a0f0;width:337px" class="myButton" color="accent" *ngIf="settings.isSytemForMlt()"
+      (click)="deliveredToFamily(familyInfoCurrent)">אספתי בהצלחה</button>
+      <button mat-raised-button style="background-color: yellow" class="myButton" color="accent" *ngIf="settings.isSytemForMlt()"
+      (click)="couldntDeliverToFamily(familyInfoCurrent,'notReady')">    <span class="material-icons"> 
+        report_problem
+        </span>התרומה עוד לא מוכנה לאיסוף</button>
+      <button mat-raised-button style="background-color: yellow" class="myButton" color="accent" *ngIf="settings.isSytemForMlt()"
+      (click)="couldntDeliverToFamily(familyInfoCurrent,'FailedBadAddress')"><span class="material-icons">
+        report_problem
+        </span>פרטי התורם שגויים</button>
+      <button mat-raised-button style="background-color: yellow" class="myButton" color="accent" *ngIf="settings.isSytemForMlt()"
+      (click)="couldntDeliverToFamily(familyInfoCurrent,'noAnswer')"><span class="material-icons">
+        report_problem
+        </span>לא ענו לי (לאחר מספר נסיונות)</button>
+      <button mat-raised-button style="background-color: yellow" class="myButton" color="accent" *ngIf="settings.isSytemForMlt()"
+      (click)="couldntDeliverToFamily(familyInfoCurrent,'alreadyPickedUp')"><span class="material-icons">
+        report_problem
+        </span>התרומה כבר נמסרה</button>
+      <button mat-raised-button style="background-color: yellow;width:337px" class="myButton" color="accent" *ngIf="settings.isSytemForMlt()"
+      (click)="frozen(familyInfoCurrent)">וואלה עמוס לי - תנו לי הפסקה של שבועיים</button>
+      <button mat-raised-button class="myButton"  style="background-color: yellow;width:337px" *ngIf="settings.isSytemForMlt()"
+      (click)="updateComment(familyInfoCurrent)">{{settings.lang.updateComment}}</button>
+    <!-- <br *ngIf="settings.showLeftThereButton.value" />
+    <button *ngIf="settings.showLeftThereButton.value" mat-raised-button class="myButton"
+      (click)="leftThere(familyInfoCurrent)">{{settings.lang.leftDeliveryNextToHouse}}
+    </button>
+    <br />
+    <button mat-raised-button class="myButton badButton"
+      (click)="couldntDeliverToFamily(familyInfoCurrent)">{{settings.lang.ranIntoAProblem}}</button>-->
+    </div> 
+
+
+  </app-family-info>
+</ng-container>
+<ng-container *ngIf="!familyInfoCurrent">
 <div class="success-div" *ngFor="let s of visibleSigns; let i=index" @message>
   {{s}}
 </div>
-<button mat-raised-button color="primary" (click)="assignNewDelivery()" *ngIf="showCloseDeliveries()&&!partOfAssign">
+<h3 class="main-title" *ngIf="!familyInfoCurrent">עד היום אספתי {{numberOfDeliveries}} תרומות</h3>
+
+<button mat-raised-button style="background-color: #4d4df6;    width: 278px;
+margin: 37px;margin-top:0px" (click)="assignNewDelivery()" *ngIf="showCloseDeliveries()&&!partOfAssign">
   {{settings.lang.assignCloseDeliveries}}</button>
-<mat-card class="no-print" *ngIf="familyLists.toDeliver.length>0||familyLists.forceShowMap">
+<mat-card [style.background-color]="familiesNewPage ? 'rgba(248, 244, 11, 0.664)' : ''"class="no-print" *ngIf="familyLists.toDeliver.length>0||familyLists.forceShowMap">
   <mat-card-title>
     {{familyLists.getLeftFamiliesDescription()}}
     <div>
@@ -51,43 +98,34 @@
         <mat-icon class="example-tab-icon">toc</mat-icon>
         {{settings.lang.list}}
       </ng-template>
-      <mat-accordion class="no-print">
+      <mat-accordion *ngIf="!familiesNewPage" class="no-print">
         <ng-container *ngFor="let f of familyLists.toDeliver;let i=index;trackBy:trackBy" >
-          <mat-expansion-panel #myPanel *ngIf="limitReady.shouldShow(i)" >
-            <mat-expansion-panel-header>
+          <mat-expansion-panel [style.background-color]="familiesNewPage ? 'rgba(248, 244, 11, 0.664)' : ''" #myPanel *ngIf="limitReady.shouldShow(i)" >
+            <mat-expansion-panel-header (click)="familiesNewPage &&showFamilyInfo(f)">
               <app-family-in-list [f]="f" [i]="i+1" style="width:100%"
                 [distanceFromPreviousLocation]="distanceFromPreviousLocation(f,i)" (delivered)="deliveredToFamily(f)"
                 [latestAssign]="partOfAssign&&f.courierAssingTime.value?.valueOf()==familyLists.maxAssignTime"
                 [newAssign]="familyLists.highlightNewFamilies&&!familyLists.familiesAlreadyAssigned.get(f.id.value)">
               </app-family-in-list>
-              
-
             </mat-expansion-panel-header>
-            <ng-template matExpansionPanelContent>
-
-
-              <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign"
-                (assignmentCanceled)="cancelAssign(f)" (refreshList)="familyLists.reload()">
-
-
-                <button mat-raised-button class="myButton" color="accent"
-                  (click)="deliveredToFamily(f)">{{settings.deliveredButtonText.value}}</button>
-                <br *ngIf="settings.showLeftThereButton.value" />
-                <button *ngIf="settings.showLeftThereButton.value" mat-raised-button class="myButton"
-                  (click)="leftThere(f)">{{settings.lang.leftDeliveryNextToHouse}}
-                </button>
-                <br />
-                <button mat-raised-button class="myButton badButton"
-                  (click)="couldntDeliverToFamily(f)">{{settings.lang.ranIntoAProblem}}</button>
-                <button mat-raised-button class="myButton" *ngIf="settings.isSytemForMlt()"
-                  (click)="updateComment(f)">{{settings.lang.updateComment}}</button>
-
-
-              </app-family-info>
-            </ng-template>
+            
           </mat-expansion-panel>
         </ng-container>
       </mat-accordion>
+      <mat-accordion  *ngIf="familiesNewPage" class="no-print">
+      <ng-container *ngFor="let f of familyLists.justFamiliesList;let i=index;trackBy:trackBy" >
+        <mat-expansion-panel [style.background-color]="familiesNewPage ? 'rgba(248, 244, 11, 0.664)' : ''" #myPanel *ngIf="limitReady.shouldShow(i)" >
+          <mat-expansion-panel-header (click)="showFamilyInfo(f)">
+            <app-family-in-list [f]="f" [i]="i+1" style="width:100%"
+              [distanceFromPreviousLocation]="distanceFromPreviousLocation(f,i)" (delivered)="deliveredToFamily(f)"
+              [latestAssign]="partOfAssign&&f.courierAssingTime.value?.valueOf()==familyLists.maxAssignTime"
+              [newAssign]="familyLists.highlightNewFamilies&&!familyLists.familiesAlreadyAssigned.get(f.id.value)">
+            </app-family-in-list>
+          </mat-expansion-panel-header>
+          
+        </mat-expansion-panel>
+      </ng-container>
+    </mat-accordion>
       <button mat-raised-button (click)="limitReady.showAll()" *ngIf="limitReady.showButton()"
         style="margin-top: 10px;">{{settings.lang.showAllDeliveries}}</button>
     </mat-tab>
@@ -156,8 +194,12 @@
       </div>
     </mat-expansion-panel>
   </mat-accordion>
-  <button mat-raised-button color="primary" (click)="selectDistCenter()" *ngIf="!partOfAssign&&settings.isSytemForMlt()">
+  <div style="display: flex;
+  place-content: center;
+  margin-top: 9px;">
+  <button style="background-color:lightgreen;color:black;" mat-raised-button color="primary" (click)="selectDistCenter()" *ngIf="!partOfAssign&&settings.isSytemForMlt()">
     החלף יעד למסירת הציוד</button>
+  </div>
 </div>
 
 <div style="display:flex;flex-direction: column;">
@@ -213,7 +255,7 @@
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #appMenuSmsReminder="matMenu">
-      <button mat-menu-item (click)="sendWhatsapp()">{{settings.lang.sendLinkOnWhatsapp}}</button>
+      <button mat-menu-item (click)="sendWhatsapp()">{{settings.lang.sendLinkOnWhatsapp}}</button>z
       <button mat-menu-item (click)="copyMessage()">{{settings.lang.copyMessageWithLink}}</button>
       <button mat-menu-item (click)="copyLink()">{{settings.lang.copyLink}}</button>
       <button mat-menu-item (click)="sendPhoneSms()">{{settings.lang.sendSmsFromDevice}}</button>
@@ -305,7 +347,7 @@
     </table>
   </div>
 
-  <mat-card *ngIf="familyLists.problem.length>0" class="no-print">
+  <mat-card *ngIf="familyLists.problem.length>0" class="no-print" style="    background-color: rgba(248, 244, 11, 0.663);">
     <mat-card-title>{{settings.lang.failedDeliveries}} - {{familyLists.problem.length}}
     </mat-card-title>
     <mat-accordion>
@@ -326,14 +368,14 @@
       </mat-expansion-panel>
     </mat-accordion>
   </mat-card>
-  <mat-card *ngIf="familyLists.delivered.length>0" class="no-print">
+  <!-- <mat-card *ngIf="familyLists.delivered.length>0" class="no-print" style="    background-color: rgba(248, 244, 11, 0.663);">
     <mat-card-title>
       {{settings.lang.deliveriesDoneInTheLastTwoDays}} - {{familyLists.delivered.length}}
     </mat-card-title>
     <mat-accordion>
       <ng-container *ngFor="let f of familyLists.delivered;let i=index">
-        <mat-expansion-panel #myPanel *ngIf="limitDelivered.shouldShow(i)">
-          <mat-expansion-panel-header>
+        <mat-expansion-panel #myPanel *ngIf="limitDelivered.shouldShow(i)"  style="    background-color: rgba(248, 244, 11, 0.663);">
+          <mat-expansion-panel-header style="    background-color: rgba(248, 244, 11, 0.663);">
             <app-family-in-list [f]="f" style="width:100%"></app-family-in-list>
           </mat-expansion-panel-header>
           <ng-template matExpansionPanelContent>
@@ -350,7 +392,8 @@
     </mat-accordion>
     <button mat-raised-button (click)="limitDelivered.showAll()" *ngIf="limitDelivered.showButton()"
       style="margin-top: 10px;">{{settings.lang.showAllCompletedDeliveries}}</button>
-  </mat-card>
+  </mat-card> -->
 
 
 </div>
+</ng-container>

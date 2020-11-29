@@ -13,9 +13,10 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
   templateUrl: './update-comment.component.html',
   styleUrls: ['./update-comment.component.scss']
 })
-export class GetVolunteerFeedback implements OnInit { 
+export class GetVolunteerFeedback implements OnInit {
   public args: {
     family: ActiveFamilyDeliveries,
+    status?:any,
     showFailStatus?: boolean,
     helpText: (s: ApplicationSettings) => Column
     hideLocation?: boolean,
@@ -46,11 +47,15 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
       });
     }
   }
+  status;
   failOptions: DeliveryStatus[] = [
     DeliveryStatus.FailedBadAddress,
     DeliveryStatus.FailedNotHome,
     DeliveryStatus.FailedDoNotWant,
-    DeliveryStatus.FailedOther
+    DeliveryStatus.FailedOther,
+    DeliveryStatus.notReady,
+    DeliveryStatus.noAnswer,
+    DeliveryStatus.alreadyPickedUp,
   ];
   defaultFailStatus = DeliveryStatus.FailedBadAddress;
   getStatusName(s: DeliveryStatus) {
@@ -69,6 +74,10 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
       this.phoneOptions = await ApplicationSettings.getPhoneOptions(this.args.family.id.value);
 
     }
+    if(this.args.status){
+      console.log(DeliveryStatus[this.args.status])
+      this.defaultFailStatus=DeliveryStatus[this.args.status];
+    }   
   }
   phoneOptions: phoneOption[] = [];
   cancel() {

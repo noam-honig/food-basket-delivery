@@ -2,7 +2,7 @@ import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/
 import { UserFamiliesList } from './user-families';
 import { Route } from '@angular/router';
 
-import { Context, RouteHelperService } from '@remult/core';
+import { BusyService, Column, Context, RouteHelperService } from '@remult/core';
 
 import { Helpers, HelperUserInfo } from '../helpers/helpers';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -15,6 +15,12 @@ import { QRCodeModule } from 'angular2-qrcode';
 import { PhoneNumberContext } from 'twilio/lib/rest/lookups/v1/phoneNumber';
 import { SignedInAndNotOverviewGuard } from '../auth/roles';
 import { MatExpansionPanel } from '@angular/material';
+import { helperHistoryInfo } from '../delivery-history/delivery-history.component';
+import { UpdateInfoComponent } from '../users/update-info/update-info.component';
+import { HelperFamiliesComponent } from '../helper-families/helper-families.component';
+import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
+import { getLang } from '../sites/sites';
+import { DeliveryStatus } from '../families/DeliveryStatus';
 
 
 
@@ -24,7 +30,10 @@ import { MatExpansionPanel } from '@angular/material';
   styleUrls: ['./my-families.component.scss']
 })
 export class MyFamiliesComponent implements OnInit {
-
+  @ViewChild(HelperFamiliesComponent,{
+    static:false
+  }) helperfamCom;
+  currentUser:Helpers
   static route: Route = {
     path: 'my-families', component: MyFamiliesComponent, canActivate: [SignedInAndNotOverviewGuard], data: { name: 'משפחות שלי' }
   };
@@ -32,18 +41,25 @@ export class MyFamiliesComponent implements OnInit {
   user: HelperUserInfo;
   myPhoneNumber: string = '';
   showQRCode: boolean = false;
+  goesToHelperPage = false
+
+  helperHistory: helperHistoryInfo
+  numberOfDeliveries=0;
 
   myQRCode() {
     return window.location.hostname + '/mlt/reception/?phone=' + this.myPhoneNumber;
   }
 
 
-  constructor(public context: Context, public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService) {
+  constructor(public context: Context, public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService,public busy:BusyService) {
     this.user = context.user as HelperUserInfo;
   }
   async ngOnInit() {
+    
+    this.currentUser = await (await this.context.for(Helpers).findFirst(i => i.id.isEqualTo(this.context.user.id)));
+    this.numberOfDeliveries=await this.showDeliveryHistory(this.dialog,this.busy,false)
+    let h=this.currentUser;
 
-    let h = await (await this.context.for(Helpers).findFirst(i => i.id.isEqualTo(this.context.user.id)));
 
     this.myPhoneNumber = h.phone.value;
 
@@ -114,7 +130,80 @@ export class MyFamiliesComponent implements OnInit {
       this.volunteerEvents.set(e.id.value, undefined);
     }
   }
+
+  homePage() {
+    if(this.helperfamCom.familyInfoCurrent)
+    {
+      this.helperfamCom.familyInfoCurrent=null;
+    }
+  }
+  myProfile() {
+    this.settings.reload()
+    this.helper.navigateToComponent(UpdateInfoComponent);
+
+  }
+  async myGifts() {
+    
+
+  }
+  myDeliversDone() {
+    this.showDeliveryHistory(this.dialog,this.busy)
+  }
   events: Event[] = [];
+  
+  async showDeliveryHistory(dialog: DialogService, busy: BusyService,open=true) {
+    let ctx = this.context.for((await import('../families/FamilyDeliveries')).FamilyDeliveries);
+    let settings={
+      numOfColumnsInGrid: 7,
+      knowTotalRows: true,
+      allowSelection: true,
+      rowButtons: [{
+
+          name: '',
+          icon: 'edit',
+          showInLine: true,
+          click: async fd => {
+              fd.showDetailsDialog({
+
+                  dialog: dialog
+              });
+          }
+          , textInMenu: () => getLang(this.context).deliveryDetails
+      }
+      ],
+     
+      rowCssClass: fd => fd.deliverStatus.getCss(),
+      columnSettings: fd => {
+          let r: Column[] = [
+              fd.deliverStatus,
+              fd.deliveryStatusDate,
+              fd.basketType,
+              fd.quantity,
+              fd.name,
+              fd.address,
+              fd.courierComments,
+              fd.distributionCenter
+          ]
+          r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
+          return r;
+      },
+      get: {
+          where: fd => fd.courier.isEqualTo(this.context.user.id),
+          orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
+          limit: 25
+      }
+  }
+  if(!open){
+    return     (await ctx.gridSettings(settings).getRecords()).items.filter(i=>i.deliverStatus.value==DeliveryStatus.Success).length
+  }
+  if(open)
+    this.context.openDialog(GridDialogComponent, x => x.args = {
+        title: getLang(this.context).deliveriesFor + ' ' + this.context.user.name,
+        settings:ctx.gridSettings(settings)
+    });
+    
+}
+
 
 
 }
