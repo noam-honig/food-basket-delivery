@@ -33,6 +33,7 @@ export class UserFamiliesList {
     forceShowMap = false;
 
     constructor(private context: Context, private settings: ApplicationSettings) { }
+    justFamiliesList=[];
     toDeliver: ActiveFamilyDeliveries[] = [];
     delivered: ActiveFamilyDeliveries[] = [];
     problem: ActiveFamilyDeliveries[] = [];
@@ -166,7 +167,7 @@ export class UserFamiliesList {
         });
     }
 
-    initFamilies() {
+    async initFamilies() {
 
         if (this.allFamilies.length > 0 && this.settings.showDistCenterAsEndAddressForVolunteer.value) {
             this.context.for(DistributionCenters).lookupAsync(this.allFamilies[0].distributionCenter).then(x => this.distCenter = x);
@@ -197,6 +198,18 @@ export class UserFamiliesList {
             return false;
 
         });
+        this.justFamiliesList=[];
+        this.toDeliver.forEach(element => {
+          let i=this.justFamiliesList.find(o=> o.family.value==element.family.value);
+          if(i){
+            i.baskets.push(element.basketType.value)
+          }else
+          {
+            (<any>element).baskets=[element.basketType.value];
+            this.justFamiliesList.push(element)
+          }
+        });
+
         if (this.map)
             this.map.test(this.allFamilies, this.helper);
         let hash: any = {};

@@ -14,3 +14,33 @@ agm-map {
     align-self: center;
   }
 }
+
+.page{
+  height: 118%;
+    border-radius: 24px;
+}
+
+.main-title{
+  border: 1px solid black;
+  padding: 6px;
+  background-color: #1414a9;
+  color: white;
+  font-family: auto;
+  border-radius: 7px;
+  text-align: center;
+}
+
+.controls-self{
+  display: flex;
+  justify-content: center;
+}
+.controls-self button{
+  height: 68px;
+  width: 64px;
+  border-radius: 68px;
+  border: yellow;
+  margin: 12px;
+  color: white;
+  background-color: #4d4df6;
+
+}

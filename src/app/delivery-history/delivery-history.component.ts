@@ -316,7 +316,7 @@ export class helperHistoryInfo extends Entity<string>{
   families = new NumberColumn(getLang(this.context).families);
   dates = new NumberColumn(getLang(this.context).dates);
   constructor(private context: Context) {
-    super({ name: 'helperHistoryInfo', allowApiRead: false, allowApiCRUD: false });
+    super({ name: 'helperHistoryInfo', allowApiRead: true, allowApiCRUD: false });
 
   }
 }

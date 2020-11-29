@@ -30,6 +30,9 @@ export class DeliveryStatus {
   static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, !use ? '' : use.language.notDeliveredNotHome, true);
   static FailedDoNotWant: DeliveryStatus = new DeliveryStatus(24, !use ? '' : use.language.notDeliveredDontWant, true);
   static FailedOther: DeliveryStatus = new DeliveryStatus(25, !use ? '' : use.language.notDeliveredOther, true);
+  static notReady: DeliveryStatus = new DeliveryStatus(26, !use ? '' : "התרומה עוד לא מוכנה לאיסוף", true);
+  static noAnswer: DeliveryStatus = new DeliveryStatus(27, !use ? '' : "לא ענו לי (לאחר מספר נסיונות)", true);
+  static alreadyPickedUp: DeliveryStatus = new DeliveryStatus(28, !use ? '' : "התרומה כבר נמסרה", true);
 
 
 

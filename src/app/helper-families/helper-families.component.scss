@@ -1,3 +1,13 @@
+.myButton{
+  color:black;
+  width: 155px;
+  height: 50px;
+  white-space: normal;
+  line-height: inherit;
+  margin-right: 0px!important;
+
+
+}
 .total-title {
   margin-bottom: 3px;
 }
@@ -75,4 +85,16 @@ h3 {
 }
 .cool {
   transform: translate(0, 0);
+}
+
+.main-title{
+  background-color: #1414a9;
+  color: white;
+  width: 248px;
+  font-size: 14px;
+  font-weight: normal;
+  border-radius: 10px;
+  height: 23px;
+  padding: 7px;
+  text-align: center;
 }
