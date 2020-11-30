@@ -5,10 +5,10 @@
   </div>
 
   <mat-dialog-actions>
-
-    <button mat-raised-button *ngFor="let b of args.buttons" (click)="buttonClick(b,$event)">
-      {{b.text}}
-    </button>
+    <ng-container *ngFor="let b of args.buttons">
+      <button mat-raised-button *ngIf="isVisible(b)" (click)="buttonClick(b,$event)">
+        {{b.text}}
+      </button></ng-container>
     <button type="button" mat-raised-button color="warning" (click)="this.dialogRef.close()" *ngIf="this.args.cancel">
       {{settings.lang.cancel}}
     </button>

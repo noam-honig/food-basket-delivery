@@ -94,11 +94,11 @@ export async function showHelperGifts(helperId: string, context: Context, settin
             text: 'הענק משאלה',
             click: async x => {
               if (context.isAllowed(Roles.admin))
-                await HelperGifts.assignGift(helperId, context);
+                await HelperGifts.assignGift(helperId);
               //this.refresh();
             },
         }],
-        settings: this.context.for(HelperGifts).gridSettings({
+        settings: context.for(HelperGifts).gridSettings({
             allowUpdate: true, 
             get: {
                 limit: 50,
