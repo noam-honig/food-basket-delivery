@@ -558,7 +558,7 @@ export class HelperFamiliesComponent implements OnInit {
     this.familyInfoCurrent = null;
   }
 
-  async couldntDeliverToFamily(f: ActiveFamilyDeliveries, status) {
+  async couldntDeliverToFamily(f: ActiveFamilyDeliveries, status?) {
     let showUpdateFail = false;
     let q = this.settings.getQuestions();
     if (!q || q.length == 0) {
