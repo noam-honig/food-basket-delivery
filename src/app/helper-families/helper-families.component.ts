@@ -114,11 +114,11 @@ export class HelperFamiliesComponent implements OnInit {
           
           if (this.platform.ANDROID)
             this.dialog.exception(`
-          - יש לאפשר גישה למיקום
+          יש לאפשר גישה למיקום -
           <a href="https://support.google.com/android/answer/3467281?hl=iw">לינק הדרכה</a>`, error);
           else if (this.platform.IOS)
             this.dialog.exception(`
-          - יש לאפשר גישה למיקום
+          יש לאפשר גישה למיקום -
           <a href="https://support.apple.com/he-il/HT203033">לינק הדרכה</a>`, error);
           else
             this.dialog.exception("שליפת מיקום נכשלה", error);
