@@ -6,7 +6,7 @@
 
   <app-family-info [f]="familyInfoCurrent" [showHelp]="true" [partOfAssign]="partOfAssign"  [familiesNewPage]="settings.isSytemForMlt()"
     (assignmentCanceled)="cancelAssign(familyInfoCurrent)" (refreshList)="familyLists.reload()">
-<div style="display: flex;flex-wrap:wrap;    justify-content: space-evenly;"> *ngIf="settings.isSytemForMlt()"
+<div style="display: flex;flex-wrap:wrap;    justify-content: space-evenly;" *ngIf="settings.isSytemForMlt()"> 
     <button mat-raised-button style="background-color: #4b94a0f0;width:337px" class="myButton" color="accent" 
       (click)="deliveredToFamily(familyInfoCurrent)">אספתי בהצלחה</button>
       <button mat-raised-button style="background-color: yellow" class="myButton" color="accent" 
