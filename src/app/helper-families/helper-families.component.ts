@@ -40,6 +40,7 @@ import { BasketType } from '../families/BasketType';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { MyFamiliesComponent } from '../my-families/my-families.component';
+import { Platform } from '@angular/cdk/platform';
 
 
 @Component({
@@ -75,7 +76,7 @@ export class HelperFamiliesComponent implements OnInit {
     }, 1000);
   }
 
-  constructor(public auth: AuthService, private dialog: DialogService, public context: Context, private busy: BusyService, public settings: ApplicationSettings,    private helper: RouteHelperService,    ) { }
+  constructor(public auth: AuthService, private dialog: DialogService, public context: Context, private busy: BusyService, public settings: ApplicationSettings, private helper: RouteHelperService, private platform: Platform) { }
   @Input() familyLists: UserFamiliesList;
   @Input() partOfAssign = false;
   @Input() partOfReview = false;
@@ -110,7 +111,18 @@ export class HelperFamiliesComponent implements OnInit {
           res();
 
         }, error => {
-          this.dialog.exception("שליפת מיקום נכשלה", error);
+          
+          if (this.platform.ANDROID)
+            this.dialog.exception(`
+          - יש לאפשר גישה למיקום
+          <a href="https://support.google.com/android/answer/3467281?hl=iw">לינק הדרכה</a>`, error);
+          else if (this.platform.IOS)
+            this.dialog.exception(`
+          - יש לאפשר גישה למיקום
+          <a href="https://support.apple.com/he-il/HT203033">לינק הדרכה</a>`, error);
+          else
+            this.dialog.exception("שליפת מיקום נכשלה", error);
+
           //   rej(error);
         });
       });
@@ -484,8 +496,8 @@ export class HelperFamiliesComponent implements OnInit {
       comment: f.courierComments.value,
       helpText,
       ok: async (comment) => {
-        if(!this.settings.isSytemForMlt()){
-          let i=f;
+        if (!this.settings.isSytemForMlt()) {
+          let i = f;
           if (!i.isNew()) {
             i.deliverStatus.value = status;
             i.courierComments.value = comment;
@@ -506,33 +518,33 @@ export class HelperFamiliesComponent implements OnInit {
               this.dialog.Error(err);
             }
           }
-        }else{
-        this.familyLists.toDeliver.forEach(async i => {
-          if (i.family.value == f.family.value) {
-            if (!i.isNew()) {
-              i.deliverStatus.value = status;
-              i.courierComments.value = comment;
-              i.checkNeedsWork();
-              try {
-                await i.save();
-                this.cool();
-                this.dialog.analytics('delivered');
-                this.initFamilies();
-                if (this.familyLists.toDeliver.length == 0) {
-                  this.dialog.messageDialog(this.allDoneMessage());
+        } else {
+          this.familyLists.toDeliver.forEach(async i => {
+            if (i.family.value == f.family.value) {
+              if (!i.isNew()) {
+                i.deliverStatus.value = status;
+                i.courierComments.value = comment;
+                i.checkNeedsWork();
+                try {
+                  await i.save();
+                  this.cool();
+                  this.dialog.analytics('delivered');
+                  this.initFamilies();
+                  if (this.familyLists.toDeliver.length == 0) {
+                    this.dialog.messageDialog(this.allDoneMessage());
+                  }
+                  if (this.settings.allowSendSuccessMessageOption.value && this.settings.sendSuccessMessageToFamily.value)
+                    HelperFamiliesComponent.sendSuccessMessageToFamily(i.id.value);
+
                 }
-                if (this.settings.allowSendSuccessMessageOption.value && this.settings.sendSuccessMessageToFamily.value)
-                  HelperFamiliesComponent.sendSuccessMessageToFamily(i.id.value);
+                catch (err) {
+                  this.dialog.Error(err);
+                }
 
               }
-              catch (err) {
-                this.dialog.Error(err);
-              }
-              
-          }
-        }
-        })
-        this.helper.navigateToComponent(MyFamiliesComponent);
+            }
+          })
+          this.helper.navigateToComponent(MyFamiliesComponent);
         }
       },
       cancel: () => { }
@@ -575,24 +587,24 @@ export class HelperFamiliesComponent implements OnInit {
         helpText: s => s.commentForProblem,
 
         ok: async (comment, status) => {
-          if(!this.settings.isSytemForMlt()){
+          if (!this.settings.isSytemForMlt()) {
             if (f.isNew())
-                return;
-              f.deliverStatus.value = status;
-              f.courierComments.value = comment;
-              f.checkNeedsWork();
-              try {
-                await f.save();
-                this.dialog.analytics('Problem');
-                this.initFamilies();
+              return;
+            f.deliverStatus.value = status;
+            f.courierComments.value = comment;
+            f.checkNeedsWork();
+            try {
+              await f.save();
+              this.dialog.analytics('Problem');
+              this.initFamilies();
 
 
-              }
-              catch (err) {
-                this.dialog.Error(err);
-              }
+            }
+            catch (err) {
+              this.dialog.Error(err);
+            }
           }
-          else{
+          else {
             this.familyLists.toDeliver.forEach(async i => {
               if (i.family.value == f.family.value) {
                 if (i.isNew())
@@ -604,8 +616,8 @@ export class HelperFamiliesComponent implements OnInit {
                   await i.save();
                   this.dialog.analytics('Problem');
                   this.initFamilies();
-  
-  
+
+
                 }
                 catch (err) {
                   this.dialog.Error(err);
