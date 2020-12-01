@@ -655,7 +655,7 @@ export class FamilyDeliveries extends IdEntity {
 
 @EntityClass
 export class ActiveFamilyDeliveries extends FamilyDeliveries {
-    baskets:string;
+    baskets?:string[];
 
 
 
