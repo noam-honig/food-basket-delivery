@@ -10,13 +10,10 @@
       <mat-icon color="green" *ngIf="f.courierBeenHereBefore.value">repeat</mat-icon>
       <mat-icon  *ngIf="f.courierComments.value"> comment</mat-icon>
     </div>
-    <!-- <div *ngIf="f?.baskets" >
-      <span *ngFor="let c of f?.baskets">{{c}} ,</span> 
-    </div> -->
-    <!-- <div *ngIf="f?.baskets" >
-      <span >{{ f?.baskets.length}} x פריטים<span> 
-    </div> -->
-    <div >
+    <div *ngIf="!settings.isSytemForMlt()">
+      <span *ngIf="f.quantity.value>1">{{f.quantity.value}} x </span> {{f.basketType.displayValue}}
+    </div>
+    <div *ngIf="settings.isSytemForMlt()">
       <span >{{f?.baskets?.length}} x </span>
     </div>
   </mat-panel-title>
