@@ -92,9 +92,9 @@ export async function showHelperGifts(helperId: string, context: Context, settin
 
         buttons: [{
             text: 'הענק משאלה',
+            visible: () => context.isAllowed(Roles.admin),
             click: async x => {
-              if (context.isAllowed(Roles.admin))
-                await HelperGifts.assignGift(helperId);
+              await HelperGifts.assignGift(helperId);
               //this.refresh();
             },
         }],
