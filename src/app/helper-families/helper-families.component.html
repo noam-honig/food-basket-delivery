@@ -45,7 +45,7 @@
 <div class="success-div" *ngFor="let s of visibleSigns; let i=index" @message>
   {{s}}
 </div>
-<h3 class="main-title" *ngIf="settings.isSytemForMlt()&&!familyInfoCurrent">עד היום אספתי {{numberOfDeliveries}} תרומות</h3>
+<h3 class="main-title" *ngIf="familiesNewPage&&settings.isSytemForMlt()&&!familyInfoCurrent">עד היום אספתי {{numberOfDeliveries}} תרומות</h3>
 
 
 <button mat-raised-button style="background-color: #4d4df6;    width: 278px;

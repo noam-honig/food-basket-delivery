@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef, AfterViewInit } from '@angular/core';
-import { BusyService, ServerFunction, StringColumn, GridButton, BoolColumn, ServerContext, SqlDatabase } from '@remult/core';
+import { BusyService, ServerFunction, StringColumn, GridButton, BoolColumn, ServerContext, SqlDatabase, RouteHelperService } from '@remult/core';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';
@@ -39,6 +39,7 @@ import { calcAffectiveDistance } from '../volunteer-cross-assign/volunteer-cross
 import { BasketType } from '../families/BasketType';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { DistributionCenters } from '../manage/distribution-centers';
+import { MyFamiliesComponent } from '../my-families/my-families.component';
 
 
 @Component({
@@ -74,7 +75,7 @@ export class HelperFamiliesComponent implements OnInit {
     }, 1000);
   }
 
-  constructor(public auth: AuthService, private dialog: DialogService, public context: Context, private busy: BusyService, public settings: ApplicationSettings) { }
+  constructor(public auth: AuthService, private dialog: DialogService, public context: Context, private busy: BusyService, public settings: ApplicationSettings,    private helper: RouteHelperService,    ) { }
   @Input() familyLists: UserFamiliesList;
   @Input() partOfAssign = false;
   @Input() partOfReview = false;
@@ -504,6 +505,7 @@ export class HelperFamiliesComponent implements OnInit {
             catch (err) {
               this.dialog.Error(err);
             }
+          }
         }else{
         this.familyLists.toDeliver.forEach(async i => {
           if (i.family.value == f.family.value) {
@@ -530,7 +532,8 @@ export class HelperFamiliesComponent implements OnInit {
           }
         }
         })
-        }}
+        this.helper.navigateToComponent(MyFamiliesComponent);
+        }
       },
       cancel: () => { }
     });
@@ -609,6 +612,7 @@ export class HelperFamiliesComponent implements OnInit {
                 }
               }
             });
+            this.helper.navigateToComponent(MyFamiliesComponent);
           }
         },
         cancel: () => { },
