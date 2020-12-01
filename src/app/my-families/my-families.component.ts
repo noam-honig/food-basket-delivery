@@ -30,8 +30,9 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
   styleUrls: ['./my-families.component.scss']
 })
 export class MyFamiliesComponent implements OnInit {
-  @ViewChild(HelperFamiliesComponent, {
-    static: false
+  @ViewChild('c', {
+    static: false,
+
   }) helperfamCom;
   currentUser: Helpers
   static route: Route = {
@@ -140,7 +141,6 @@ export class MyFamiliesComponent implements OnInit {
   myProfile() {
     this.settings.reload()
     this.helper.navigateToComponent(UpdateInfoComponent);
-
   }
   async myGifts() {
 
