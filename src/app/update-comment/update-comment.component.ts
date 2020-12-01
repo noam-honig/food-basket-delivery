@@ -74,8 +74,7 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
       this.phoneOptions = await ApplicationSettings.getPhoneOptions(this.args.family.id.value);
 
     }
-    if(this.args.status){
-      console.log(DeliveryStatus[this.args.status])
+    if(this.args.status && this.settings.isSytemForMlt()){
       this.defaultFailStatus=DeliveryStatus[this.args.status];
     }   
   }

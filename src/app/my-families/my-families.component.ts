@@ -30,10 +30,10 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
   styleUrls: ['./my-families.component.scss']
 })
 export class MyFamiliesComponent implements OnInit {
-  @ViewChild(HelperFamiliesComponent,{
-    static:false
+  @ViewChild(HelperFamiliesComponent, {
+    static: false
   }) helperfamCom;
-  currentUser:Helpers
+  currentUser: Helpers
   static route: Route = {
     path: 'my-families', component: MyFamiliesComponent, canActivate: [SignedInAndNotOverviewGuard], data: { name: 'משפחות שלי' }
   };
@@ -44,21 +44,22 @@ export class MyFamiliesComponent implements OnInit {
   goesToHelperPage = false
 
   helperHistory: helperHistoryInfo
-  numberOfDeliveries=0;
+  numberOfDeliveries = 0;
 
   myQRCode() {
     return window.location.hostname + '/mlt/reception/?phone=' + this.myPhoneNumber;
   }
 
 
-  constructor(public context: Context, public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService,public busy:BusyService) {
+  constructor(public context: Context, public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService, public busy: BusyService) {
     this.user = context.user as HelperUserInfo;
   }
   async ngOnInit() {
-    
+
     this.currentUser = await (await this.context.for(Helpers).findFirst(i => i.id.isEqualTo(this.context.user.id)));
-    this.numberOfDeliveries=await this.showDeliveryHistory(this.dialog,this.busy,false)
-    let h=this.currentUser;
+    if (this.settings.isSytemForMlt())
+      this.numberOfDeliveries = await this.showDeliveryHistory(this.dialog, this.busy, false)
+    let h = this.currentUser;
 
 
     this.myPhoneNumber = h.phone.value;
@@ -132,9 +133,8 @@ export class MyFamiliesComponent implements OnInit {
   }
 
   homePage() {
-    if(this.helperfamCom.familyInfoCurrent)
-    {
-      this.helperfamCom.familyInfoCurrent=null;
+    if (this.helperfamCom.familyInfoCurrent) {
+      this.helperfamCom.familyInfoCurrent = null;
     }
   }
   myProfile() {
@@ -143,66 +143,66 @@ export class MyFamiliesComponent implements OnInit {
 
   }
   async myGifts() {
-    
+
 
   }
   myDeliversDone() {
-    this.showDeliveryHistory(this.dialog,this.busy)
+    this.showDeliveryHistory(this.dialog, this.busy)
   }
   events: Event[] = [];
-  
-  async showDeliveryHistory(dialog: DialogService, busy: BusyService,open=true) {
+
+  async showDeliveryHistory(dialog: DialogService, busy: BusyService, open = true) {
     let ctx = this.context.for((await import('../families/FamilyDeliveries')).FamilyDeliveries);
-    let settings={
+    let settings = {
       numOfColumnsInGrid: 7,
       knowTotalRows: true,
       allowSelection: true,
       rowButtons: [{
 
-          name: '',
-          icon: 'edit',
-          showInLine: true,
-          click: async fd => {
-              fd.showDetailsDialog({
+        name: '',
+        icon: 'edit',
+        showInLine: true,
+        click: async fd => {
+          fd.showDetailsDialog({
 
-                  dialog: dialog
-              });
-          }
-          , textInMenu: () => getLang(this.context).deliveryDetails
+            dialog: dialog
+          });
+        }
+        , textInMenu: () => getLang(this.context).deliveryDetails
       }
       ],
-     
+
       rowCssClass: fd => fd.deliverStatus.getCss(),
       columnSettings: fd => {
-          let r: Column[] = [
-              fd.deliverStatus,
-              fd.deliveryStatusDate,
-              fd.basketType,
-              fd.quantity,
-              fd.name,
-              fd.address,
-              fd.courierComments,
-              fd.distributionCenter
-          ]
-          r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
-          return r;
+        let r: Column[] = [
+          fd.deliverStatus,
+          fd.deliveryStatusDate,
+          fd.basketType,
+          fd.quantity,
+          fd.name,
+          fd.address,
+          fd.courierComments,
+          fd.distributionCenter
+        ]
+        r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
+        return r;
       },
       get: {
-          where: fd => fd.courier.isEqualTo(this.context.user.id),
-          orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
-          limit: 25
+        where: fd => fd.courier.isEqualTo(this.context.user.id),
+        orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
+        limit: 25
       }
-  }
-  if(!open){
-    return     (await ctx.gridSettings(settings).getRecords()).items.filter(i=>i.deliverStatus.value==DeliveryStatus.Success).length
-  }
-  if(open)
-    this.context.openDialog(GridDialogComponent, x => x.args = {
+    }
+    if (!open) {
+      return (await ctx.gridSettings(settings).getRecords()).items.filter(i => i.deliverStatus.value == DeliveryStatus.Success).length
+    }
+    if (open)
+      this.context.openDialog(GridDialogComponent, x => x.args = {
         title: getLang(this.context).deliveriesFor + ' ' + this.context.user.name,
-        settings:ctx.gridSettings(settings)
-    });
-    
-}
+        settings: ctx.gridSettings(settings)
+      });
+
+  }
 
 
 

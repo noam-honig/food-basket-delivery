@@ -198,6 +198,7 @@ export class UserFamiliesList {
             return false;
 
         });
+        if(this.settings.isSytemForMlt()){
         this.justFamiliesList=[];
         this.toDeliver.forEach(element => {
           let i=this.justFamiliesList.find(o=> o.family.value==element.family.value);
@@ -209,6 +210,7 @@ export class UserFamiliesList {
             this.justFamiliesList.push(element)
           }
         });
+    }
 
         if (this.map)
             this.map.test(this.allFamilies, this.helper);

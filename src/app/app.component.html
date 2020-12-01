@@ -62,7 +62,7 @@
 
     </mat-toolbar>
 
-    <div class="app-sidenav-content " [style.background-color]="helperfamCom?.familyInfoCurrent ? 'yellow' : ''" style="justify-content: space-between;">
+    <div class="app-sidenav-content " [style.background-color]="settings.isSytemForMlt()&&helperfamCom?.familyInfoCurrent ? 'yellow' : ''" style="justify-content: space-between;">
 
 
       <div class="wrapper" [class.edge-fix]="isEdge">
