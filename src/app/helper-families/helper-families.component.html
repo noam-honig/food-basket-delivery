@@ -155,7 +155,7 @@ margin: 37px;margin-top:0px" (click)="assignNewDelivery()" *ngIf="showCloseDeliv
               </button>
               <br />
               <button mat-raised-button class="myButton badButton"
-                (click)="couldntDeliverToFamily(f)">{{settings.lang.ranIntoAProblem}}</button>
+                (click)="couldntDeliverToFamily(f,'FailedOther')">{{settings.lang.ranIntoAProblem}}</button>
               <button mat-raised-button class="myButton" *ngIf="settings.isSytemForMlt()"
                 (click)="updateComment(f)">{{settings.lang.updateComment}}</button>
 
