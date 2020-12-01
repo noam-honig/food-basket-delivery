@@ -89,6 +89,7 @@ import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment
 import { QRCodeModule } from 'angular2-qrcode';
 import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/volunteer-cross-assign.component';
 import { WeeklyReportMltComponent } from './weekly-report-mlt/weekly-report-mlt.component';
+import { PlatformModule } from '@angular/cdk/platform';
 
 
 
@@ -193,7 +194,9 @@ export class MyHammerConfig extends HammerGestureConfig {
     AppRoutingModule,
     ChartsModule,
     ScrollDispatchModule,
-    QRCodeModule
+    QRCodeModule,
+    PlatformModule
+
 
   ],
   providers: [
