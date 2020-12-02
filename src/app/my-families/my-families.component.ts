@@ -188,13 +188,13 @@ export class MyFamiliesComponent implements OnInit {
         return r;
       },
       get: {
-        where: fd => fd.courier.isEqualTo(this.context.user.id),
+        where: fd => (fd.courier.isEqualTo(this.context.user.id).and(fd.deliverStatus.isEqualTo(DeliveryStatus.Success))),
         orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
         limit: 25
       }
     }
     if (!open) {
-      return (await ctx.gridSettings(settings).getRecords()).items.filter(i => i.deliverStatus.value == DeliveryStatus.Success).length
+      return (await ctx.gridSettings(settings).getRecords()).items.length
     }
     if (open)
       this.context.openDialog(GridDialogComponent, x => x.args = {
