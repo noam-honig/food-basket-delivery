@@ -14,10 +14,10 @@
     </mat-radio-group>
   </div>
 
-  <mat-dialog-content>
+  <mat-dialog-content >
     {{helpText()}}
-    <textarea class="form-control" rows="3" [(ngModel)]="args.comment" class="comment-text-area"></textarea>
-    <a (click)="addLocationToComment()" style="display:block" *ngIf="!args.hideLocation">{{settings.lang.addCurrentLocationToNote}}</a>
+    <textarea *ngIf="!settings.isSytemForMlt()" class="form-control" rows="3" [(ngModel)]="args.comment" class="comment-text-area"></textarea>
+    <a  *ngIf="!settings.isSytemForMlt()&&!args.hideLocation" (click)="addLocationToComment()" style="display:block" >{{settings.lang.addCurrentLocationToNote}}</a>
   </mat-dialog-content>
 
   <mat-dialog-actions>

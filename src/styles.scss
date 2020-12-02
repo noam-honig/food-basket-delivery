@@ -395,7 +395,7 @@ textarea {
   box-sizing: border-box;
 }
 .mat-checkbox-label {
-  white-space: normal;
+  white-space: pre!important;
 }
 
 .hidden {
@@ -404,3 +404,4 @@ textarea {
     display: none !important;
   }
 }
+

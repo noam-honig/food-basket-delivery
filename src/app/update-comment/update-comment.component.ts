@@ -95,8 +95,13 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
   }
 
   helpText() {
+    if(!this.settings.isSytemForMlt())
+    {
     let s = ApplicationSettings.get(this.context);
     return this.args.helpText(s).value;
+  }else{
+    return "עשית זאת. איו עליך! תודה. עכשיו רק נשאר להעביר את הציוד למעבדה."
+  }
   }
 }
 

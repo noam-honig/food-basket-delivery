@@ -544,7 +544,8 @@ export class HelperFamiliesComponent implements OnInit {
               }
             }
           })
-          this.helper.navigateToComponent(MyFamiliesComponent);
+          this.dialog.Info("ההודעה שלך נקלטה! תודה רבה!")
+          this.familyInfoCurrent=null;
         }
       },
       cancel: () => { }
@@ -579,57 +580,60 @@ export class HelperFamiliesComponent implements OnInit {
       showUpdateFail = await this.context.openDialog(CommonQuestionsComponent, x => x.init(this.familyLists.allFamilies[0]), x => x.updateFailedDelivery);
     }
     if (showUpdateFail)
-      this.context.openDialog(GetVolunteerFeedback, x => x.args = {
-        family: f,
-        comment: f.courierComments.value,
-        showFailStatus: true,
-        status: status,
-        helpText: s => s.commentForProblem,
-
-        ok: async (comment, status) => {
-          if (!this.settings.isSytemForMlt()) {
-            if (f.isNew())
+    {
+      if(!this.settings.isSytemForMlt())
+      {
+        this.context.openDialog(GetVolunteerFeedback, x => x.args = {
+          family: f,
+          comment: f.courierComments.value,
+          showFailStatus: true,
+          status: status,
+          helpText: s => s.commentForProblem,
+  
+          ok: async (comment, status) => {
+              if (f.isNew())
+                return;
+              f.deliverStatus.value = status;
+              f.courierComments.value = comment;
+              f.checkNeedsWork();
+              try {
+                await f.save();
+                this.dialog.analytics('Problem');
+                this.initFamilies();
+  
+  
+              }
+              catch (err) {
+                this.dialog.Error(err);
+              }
+          },
+          cancel: () => { },
+  
+        });
+      }else{
+        this.familyLists.toDeliver.forEach(async i => {
+          if (i.family.value == f.family.value) {
+            if (i.isNew())
               return;
-            f.deliverStatus.value = status;
-            f.courierComments.value = comment;
-            f.checkNeedsWork();
+            i.deliverStatus.value = status;
+            i.courierComments.value = f.courierComments.value;
+            i.checkNeedsWork();
             try {
-              await f.save();
+              await i.save();
               this.dialog.analytics('Problem');
               this.initFamilies();
-
-
             }
             catch (err) {
               this.dialog.Error(err);
             }
           }
-          else {
-            this.familyLists.toDeliver.forEach(async i => {
-              if (i.family.value == f.family.value) {
-                if (i.isNew())
-                  return;
-                i.deliverStatus.value = status;
-                i.courierComments.value = comment;
-                i.checkNeedsWork();
-                try {
-                  await i.save();
-                  this.dialog.analytics('Problem');
-                  this.initFamilies();
-
-
-                }
-                catch (err) {
-                  this.dialog.Error(err);
-                }
-              }
-            });
-            this.helper.navigateToComponent(MyFamiliesComponent);
-          }
-        },
-        cancel: () => { },
-
-      });
+        });
+        this.dialog.Info("ההודעה שלך נקלטה! תודה רבה!")
+        this.settings.reload()
+        this.familyInfoCurrent=null
+      }
+      }
+      
   }
   async sendSms(reminder: Boolean) {
     this.helperGotSms = true;
