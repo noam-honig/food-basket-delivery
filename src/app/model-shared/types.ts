@@ -328,6 +328,16 @@ export class SqlBuilder {
       where: query.where
     });
   }
+  columnMaxWithAs(rootEntity: Entity,column:Column, query: FromAndWhere, colName:string) {
+    return this.columnDbName(rootEntity, {
+      select: () => [this.build("max(",column,") ",colName)],
+      from: query.from,
+      innerJoin: query.innerJoin,
+      outerJoin: query.outerJoin,
+      crossJoin: query.crossJoin,
+      where: query.where
+    });
+  }
   columnInnerSelect(rootEntity: Entity, query: QueryBuilder) {
     this.addEntity(rootEntity, rootEntity.defs.dbName);
     return '(' + this.query(query) + ' limit 1)';

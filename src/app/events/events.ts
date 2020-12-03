@@ -3,7 +3,7 @@ import { use } from "../translate";
 import { getLang } from '../sites/sites';
 import { Roles } from "../auth/roles";
 import { HelperId, HelperIdReadonly, Helpers } from "../helpers/helpers";
-import { SqlBuilder, PhoneColumn, changeDate } from "../model-shared/types";
+import { SqlBuilder, PhoneColumn, changeDate, DateTimeColumn } from "../model-shared/types";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { HelperAssignmentComponent } from "../helper-assignment/helper-assignment.component";
@@ -46,7 +46,10 @@ export class Event extends IdEntity {
                         caption: getLang(this.context).volunteerStatus,
                         getValue: v => {
                             if (v.assignedDeliveries.value > 0)
-                                return getLang(this.context).assigned;
+                                if (v.lastAssignTime.value < v.lastSmsTime.value)
+                                    return getLang(this.context).smsSent;
+                                else
+                                    return getLang(this.context).assigned;
                             else if (v.succesfulDeliveries.value == 0)
                                 return getLang(this.context).newVolunteer
                             else getLang(this.context).unAsigned
@@ -63,7 +66,10 @@ export class Event extends IdEntity {
                 ],
                 rowCssClass: v => {
                     if (v.assignedDeliveries.value > 0)
-                        return 'deliveredOk';
+                        if (v.lastAssignTime.value < v.lastSmsTime.value)
+                            return 'deliveredOk';
+                        else
+                            return 'largeDelivery';
                     else if (v.succesfulDeliveries.value == 0)
                         return 'newVolunteer'
                     return '';
@@ -201,6 +207,25 @@ export class volunteersInEvent extends IdEntity {
                 select: () => [h.email],
                 where: () => [sql.eq(h.id, this.helper)]
             });
+        }
+    })
+    lastSmsTime = new DateTimeColumn({
+        sqlExpression: () => {
+            let sql = new SqlBuilder();
+            let h = this.context.for(Helpers).create();
+            return sql.columnInnerSelect(this, {
+                from: h,
+                select: () => [h.smsDate],
+                where: () => [sql.eq(h.id, this.helper)]
+            });
+        }
+    })
+    lastAssignTime = new DateTimeColumn({
+
+        sqlExpression: () => {
+            let sql = new SqlBuilder();
+            let d = this.context.for(FamilyDeliveries).create();
+            return sql.columnMaxWithAs(this, d.courierAssingTime, { from: d, where: () => [sql.eq(this.helper, d.courier)] }, 'lastAssignTime')
         }
     })
     duplicateToNextEvent = new BoolColumn(getLang(this.context).duplicateForNextEvent);
