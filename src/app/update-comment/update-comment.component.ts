@@ -23,7 +23,8 @@ export class GetVolunteerFeedback implements OnInit {
     title?: string,
     comment: string,
     ok: (comment: string, failStatusId: DeliveryStatus) => void,
-    cancel: () => void
+    cancel: () => void,
+    newHelperFamily?:boolean
   };
   constructor(
     public dialogRef: MatDialogRef<any>,
