@@ -16,8 +16,8 @@
 
   <mat-dialog-content >
     {{helpText()}}
-    <textarea *ngIf="!settings.isSytemForMlt()" class="form-control" rows="3" [(ngModel)]="args.comment" class="comment-text-area"></textarea>
-    <a  *ngIf="!settings.isSytemForMlt()&&!args.hideLocation" (click)="addLocationToComment()" style="display:block" >{{settings.lang.addCurrentLocationToNote}}</a>
+    <textarea *ngIf="!settings.isSytemForMlt() || !args.newHelperFamily" class="form-control" rows="3" [(ngModel)]="args.comment" class="comment-text-area"></textarea>
+    <a  *ngIf="(!settings.isSytemForMlt()&&!args.hideLocation) || (!settings.isSytemForMlt()||!args.newHelperFamily)" (click)="addLocationToComment()" style="display:block" >{{settings.lang.addCurrentLocationToNote}}</a>
   </mat-dialog-content>
 
   <mat-dialog-actions>

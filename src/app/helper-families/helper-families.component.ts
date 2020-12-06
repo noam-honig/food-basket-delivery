@@ -111,7 +111,7 @@ export class HelperFamiliesComponent implements OnInit {
           res();
 
         }, error => {
-          
+
           if (this.platform.ANDROID)
             this.dialog.exception(`
           יש לאפשר גישה למיקום -
@@ -519,33 +519,57 @@ export class HelperFamiliesComponent implements OnInit {
             }
           }
         } else {
-          this.familyLists.toDeliver.forEach(async i => {
-            if (i.family.value == f.family.value) {
-              if (!i.isNew()) {
-                i.deliverStatus.value = status;
-                i.courierComments.value = comment;
-                i.checkNeedsWork();
-                try {
-                  await i.save();
-                  this.cool();
-                  this.dialog.analytics('delivered');
-                  this.initFamilies();
-                  if (this.familyLists.toDeliver.length == 0) {
-                    this.dialog.messageDialog(this.allDoneMessage());
+          if (this.familyInfoCurrent) {
+            this.familyLists.toDeliver.forEach(async i => {
+              if (i.family.value == f.family.value) {
+                if (!i.isNew()) {
+                  i.deliverStatus.value = status;
+                  i.courierComments.value = comment;
+                  i.checkNeedsWork();
+                  try {
+                    await i.save();
+                    this.cool();
+                    this.dialog.analytics('delivered');
+                    this.initFamilies();
+                    if (this.familyLists.toDeliver.length == 0) {
+                      this.dialog.messageDialog(this.allDoneMessage());
+                    }
+                    if (this.settings.allowSendSuccessMessageOption.value && this.settings.sendSuccessMessageToFamily.value)
+                      HelperFamiliesComponent.sendSuccessMessageToFamily(i.id.value);
+
                   }
-                  if (this.settings.allowSendSuccessMessageOption.value && this.settings.sendSuccessMessageToFamily.value)
-                    HelperFamiliesComponent.sendSuccessMessageToFamily(i.id.value);
+                  catch (err) {
+                    this.dialog.Error(err);
+                  }
 
                 }
-                catch (err) {
-                  this.dialog.Error(err);
+              }
+            })
+          } else {
+            let i = f;
+            if (!i.isNew()) {
+              i.deliverStatus.value = status;
+              i.courierComments.value = comment;
+              i.checkNeedsWork();
+              try {
+                await i.save();
+                this.cool();
+                this.dialog.analytics('delivered');
+                this.initFamilies();
+                if (this.familyLists.toDeliver.length == 0) {
+                  this.dialog.messageDialog(this.allDoneMessage());
                 }
+                if (this.settings.allowSendSuccessMessageOption.value && this.settings.sendSuccessMessageToFamily.value)
+                  HelperFamiliesComponent.sendSuccessMessageToFamily(i.id.value);
 
               }
+              catch (err) {
+                this.dialog.Error(err);
+              }
             }
-          })
+          }
           this.dialog.Info("ההודעה שלך נקלטה! תודה רבה!")
-          this.familyInfoCurrent=null;
+          this.familyInfoCurrent = null;
         }
       },
       cancel: () => { }
@@ -579,61 +603,62 @@ export class HelperFamiliesComponent implements OnInit {
     } else {
       showUpdateFail = await this.context.openDialog(CommonQuestionsComponent, x => x.init(this.familyLists.allFamilies[0]), x => x.updateFailedDelivery);
     }
-    if (showUpdateFail)
-    {
-      if(!this.settings.isSytemForMlt())
-      {
+    if (showUpdateFail) {
+      if (!this.settings.isSytemForMlt() || !this.familyInfoCurrent) {
         this.context.openDialog(GetVolunteerFeedback, x => x.args = {
           family: f,
           comment: f.courierComments.value,
           showFailStatus: true,
           status: status,
           helpText: s => s.commentForProblem,
-  
+          newHelperFamily:this.familyInfoCurrent?true:false,
+
           ok: async (comment, status) => {
-              if (f.isNew())
-                return;
-              f.deliverStatus.value = status;
-              f.courierComments.value = comment;
-              f.checkNeedsWork();
-              try {
-                await f.save();
-                this.dialog.analytics('Problem');
-                this.initFamilies();
-  
-  
-              }
-              catch (err) {
-                this.dialog.Error(err);
-              }
-          },
-          cancel: () => { },
-  
-        });
-      }else{
-        this.familyLists.toDeliver.forEach(async i => {
-          if (i.family.value == f.family.value) {
-            if (i.isNew())
+            if (f.isNew())
               return;
-            i.deliverStatus.value = status;
-            i.courierComments.value = f.courierComments.value;
-            i.checkNeedsWork();
+            f.deliverStatus.value = status;
+            f.courierComments.value = comment;
+            f.checkNeedsWork();
             try {
-              await i.save();
+              await f.save();
               this.dialog.analytics('Problem');
               this.initFamilies();
+
+
             }
             catch (err) {
               this.dialog.Error(err);
             }
-          }
+          },
+          cancel: () => { },
+
         });
+      } else {
+        if(this.familyInfoCurrent){
+          this.familyLists.toDeliver.forEach(async i => {
+            if (i.family.value == f.family.value) {
+              if (i.isNew())
+                return;
+              i.deliverStatus.value = status;
+              i.courierComments.value = f.courierComments.value;
+              i.checkNeedsWork();
+              try {
+                await i.save();
+                this.dialog.analytics('Problem');
+                this.initFamilies();
+              }
+              catch (err) {
+                this.dialog.Error(err);
+              }
+            }
+          });
+        }
         this.dialog.Info("ההודעה שלך נקלטה! תודה רבה!")
         this.settings.reload()
-        this.familyInfoCurrent=null
+        this.familyInfoCurrent = null
       }
-      }
-      
+    }
+
   }
   async sendSms(reminder: Boolean) {
     this.helperGotSms = true;
