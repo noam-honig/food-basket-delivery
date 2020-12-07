@@ -303,7 +303,7 @@ export class Language {
   defaultStatusType = 'סטטוס משלוח ברירת מחדל למשפחות חדשות';
   boxes1NameCaption = "שם כמות 1 בסוגי סלים";
   boxes2NameCaption = "שם כמות 2 בסוגי סלים";
-  assignerOrOrg = "הטלפון ממנו יצא הSMS";
+  assignerOrOrg = "טלפון עזרה ברירת מחדל";
   familyHelpPhone = "איש קשר לבירור כפי שמוגדר למשפחה";
   familySourcePhone = "טלפון גורם מפנה";
   otherPhone = "טלפון אחר";
@@ -312,8 +312,8 @@ export class Language {
   RemovedFromListExcelImportStrategy_ignore = 'התעלם והוסף משפחה חדשה';
   existsInRemovedFromListStrategy = 'מה לעשות אם נמצאה משפחה תואמת המסומנת כהוצא מהרשימות';
   organizationInfo = 'פרטי הארגון';
-  defaultHelpPhone = 'הטלפון ממנו יצא הSMS';
-  defaulyHelpPhoneExplanation = 'כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את המשפחות ולחץ על הכפתור שלח SMS. ניתן להגדיר כאן שם חלופי וטלפון חלופי';
+  defaultHelpPhone = 'טלפון לעזרה למתנדב';
+  defaulyHelpPhoneExplanation = 'כאשר המתנדב נתקל בבעיה, מוצגת לו האפשרות להתקשר לעזרה. כברירת מחדל הטלפון לעזרה הוא זה של המשתמש ששייך למתנדב את המשפחה. ניתן להגדיר שם וטלפון חלופיים לעזרה:';
   smsTextHelpTitle = 'הודעה זו תשלח למתנדב ממסך שיוך משלוחים - עם הקישור למשפחות להן הוא מתבקש לחלק.';
   replacedByVolunteerName = 'יוחלף בשם המתנדב';
   replacedByFamilyName = 'יוחלף בשם המשפחה';

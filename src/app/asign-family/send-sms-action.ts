@@ -139,7 +139,7 @@ export class SendSmsUtils {
             '<accid>' + this.accid + '</accid>' +
             '<sysPW>' + 'itnewslettrSMS' + '</sysPW>' +
             '<t>' + date + '</t>' +
-            '<txtUserCellular>' + from + '</txtUserCellular>' +
+            '<txtUserCellular>Hagai</txtUserCellular>' +
             '<destination>' + phone + '</destination>' +
             '<txtSMSmessage>' + text + '</txtSMSmessage>' +
             '<dteToDeliver></dteToDeliver>' +
