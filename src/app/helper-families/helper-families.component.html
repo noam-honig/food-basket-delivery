@@ -43,7 +43,8 @@
     class="no-print">
     {{settings.lang.estimatedTravelTime}} <span *ngIf="familyLists.routeStats"> {{familyLists.routeStats.totalTime}}
       {{settings.lang.minutes}},
-      {{familyLists.routeStats.totalKm}} {{settings.lang.km}} <span style="direction: ltr;">{{familyLists.getKmDiffString()}}</span> </span> 
+      {{familyLists.routeStats.totalKm}} {{settings.lang.km}} <span
+        style="direction: ltr;">{{familyLists.getKmDiffString()}}</span> </span>
   </div>
   <mat-tab-group (selectedTabChange)="mapTabClicked()" #theTab>
     <mat-tab>
@@ -52,15 +53,15 @@
         {{settings.lang.list}}
       </ng-template>
       <mat-accordion class="no-print">
-        <ng-container *ngFor="let f of familyLists.toDeliver;let i=index;trackBy:trackBy" >
-          <mat-expansion-panel #myPanel *ngIf="limitReady.shouldShow(i)" >
+        <ng-container *ngFor="let f of familyLists.toDeliver;let i=index;trackBy:trackBy">
+          <mat-expansion-panel #myPanel *ngIf="limitReady.shouldShow(i)">
             <mat-expansion-panel-header>
               <app-family-in-list [f]="f" [i]="i+1" style="width:100%"
                 [distanceFromPreviousLocation]="distanceFromPreviousLocation(f,i)" (delivered)="deliveredToFamily(f)"
                 [latestAssign]="partOfAssign&&f.courierAssingTime.value?.valueOf()==familyLists.maxAssignTime"
                 [newAssign]="familyLists.highlightNewFamilies&&!familyLists.familiesAlreadyAssigned.get(f.id.value)">
               </app-family-in-list>
-              
+
 
             </mat-expansion-panel-header>
             <ng-template matExpansionPanelContent>
@@ -156,7 +157,8 @@
       </div>
     </mat-expansion-panel>
   </mat-accordion>
-  <button mat-raised-button color="primary" (click)="selectDistCenter()" *ngIf="!partOfAssign&&settings.isSytemForMlt()">
+  <button mat-raised-button color="primary" (click)="selectDistCenter()"
+    *ngIf="!partOfAssign&&settings.isSytemForMlt()">
     החלף יעד למסירת הציוד</button>
 </div>
 
@@ -267,6 +269,10 @@
 
         <td>
           {{f.address.value}}
+          <ng-container *ngIf="f.area.value">
+            <br />
+            {{f.area.defs.caption}}: {{f.area.value}}
+          </ng-container>
           <ng-container *ngIf="f.floor.value||f.appartment.value">
             <br />
           </ng-container>
