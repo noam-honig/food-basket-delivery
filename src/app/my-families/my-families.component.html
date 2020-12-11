@@ -85,8 +85,9 @@
     <button (click)="myProfile()" >
       הפרופיל שלי
     </button>
-    <button [disabled]="!currentUser?.myGiftsURL" >
-      <a [href]="currentUser?.myGiftsURL">המשאלות שלי</a>
+    <button *ngIf="settings.isSytemForMlt() && !this.showQRCode" mat-raised-button (click)="this.showMyGifts()"
+    style="height: 35px;" color="primary">
+    "המשאלות שלי"
     </button>
     <button (click)="myDeliversDone()" >
       תרומות שאספתי

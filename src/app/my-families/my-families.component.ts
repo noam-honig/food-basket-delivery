@@ -13,15 +13,14 @@ import { AuthService } from '../auth/auth-service';
 import { Event, eventStatus, volunteersInEvent } from '../events/events';
 import { QRCodeModule } from 'angular2-qrcode';
 import { PhoneNumberContext } from 'twilio/lib/rest/lookups/v1/phoneNumber';
-import { SignedInAndNotOverviewGuard } from '../auth/roles';
+import { Roles, SignedInAndNotOverviewGuard } from '../auth/roles';
 import { MatExpansionPanel } from '@angular/material';
 import { helperHistoryInfo } from '../delivery-history/delivery-history.component';
 import { UpdateInfoComponent } from '../users/update-info/update-info.component';
-import { HelperFamiliesComponent } from '../helper-families/helper-families.component';
-import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { getLang } from '../sites/sites';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-
+import { HelperGifts, showHelperGifts } from '../helper-gifts/HelperGifts';
+import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 
 
 @Component({
@@ -206,6 +205,13 @@ export class MyFamiliesComponent implements OnInit {
 
 
 
+  async showMyGifts() {
+    let myGifts = await HelperGifts.getMyPendingGiftsCount(this.context.user.id);
+    if (myGifts==1) {
+      let URL = await HelperGifts.getMyFirstGiftURL(this.context.user.id);
+      window.open(URL);
+    } else showHelperGifts(this.context.user.id, this.context, this.settings, this.dialog, this.busy);
+  }
 }
 
 
