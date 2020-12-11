@@ -186,7 +186,7 @@ export class Language {
   deliveriesDoneInTheLastTwoDays = 'משלוחים שחולקו ביומיים האחרונים';
   showAllCompletedDeliveries = 'הצג את כל המשלוחים שחולקו';
   showRouteOnGoogleMaps = 'הצג מסלול ב Google Maps';
-  assignCloseDeliveries = 'תורמים חדשים בקרבתי';
+  assignCloseDeliveries = 'מצאו לי עוד תורמים בסביבתי';
   closestDeliveries = 'תרומות באיזור הקרוב';
   selfPuckupSuccess = 'אספו את החבילה';
   packageWasPickedUp = 'אספו את החבילה';

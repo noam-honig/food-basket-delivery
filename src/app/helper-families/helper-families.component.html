@@ -49,7 +49,7 @@
 
   <button mat-raised-button style="background-color: #4d4df6; width: 278px; margin: 37px;margin-top:0px" (click)="assignNewDelivery()" *ngIf="showCloseDeliveries()&&!partOfAssign">
     {{settings.lang.assignCloseDeliveries}}</button>
-  <mat-card [style.background-color]="familiesNewPage ? 'rgba(248, 244, 11, 0.664)' : ''"class="no-print" *ngIf="familyLists.toDeliver.length>0||familyLists.forceShowMap">
+  <mat-card [style.background-color]="familiesNewPage ? 'rgba(240, 230, 180, 1)' : ''"class="no-print" *ngIf="familyLists.toDeliver.length>0||familyLists.forceShowMap">
       <mat-card-title>
         {{familyLists.getLeftFamiliesDescription()}}
         <div>
@@ -99,7 +99,7 @@
           </ng-template>
       <mat-accordion *ngIf="!familiesNewPage" class="no-print">
         <ng-container *ngFor="let f of familyLists.toDeliver;let i=index;trackBy:trackBy" >
-          <mat-expansion-panel [style.background-color]="familiesNewPage ? 'rgba(248, 244, 11, 0.664)' : ''" #myPanel *ngIf="limitReady.shouldShow(i)" >
+          <mat-expansion-panel [style.background-color]="familiesNewPage ? 'rgba(240, 230, 180, 1)' : ''" #myPanel *ngIf="limitReady.shouldShow(i)" >
             <mat-expansion-panel-header (click)="familiesNewPage &&showFamilyInfo(f)">
               <app-family-in-list [f]="f" [i]="i+1" style="width:100%"
                 [distanceFromPreviousLocation]="distanceFromPreviousLocation(f,i)" (delivered)="deliveredToFamily(f)"
@@ -113,7 +113,7 @@
       </mat-accordion>
       <mat-accordion  *ngIf="settings.isSytemForMlt()&& familiesNewPage" class="no-print">
       <ng-container *ngFor="let f of familyLists.justFamiliesList;let i=index;trackBy:trackBy" >
-        <mat-expansion-panel [style.background-color]="familiesNewPage ? 'rgba(248, 244, 11, 0.664)' : ''" #myPanel *ngIf="limitReady.shouldShow(i)" >
+        <mat-expansion-panel [style.background-color]="familiesNewPage ? 'rgba(240, 230, 180, 1)' : ''" #myPanel *ngIf="limitReady.shouldShow(i)" >
           <mat-expansion-panel-header (click)="showFamilyInfo(f)">
             <app-family-in-list [f]="f" [i]="i+1" style="width:100%"
               [distanceFromPreviousLocation]="distanceFromPreviousLocation(f,i)" (delivered)="deliveredToFamily(f)"
@@ -390,7 +390,7 @@
     </table>
   </div>
 
-  <mat-card *ngIf="settings.isSytemForMlt()&&familyLists.problem.length>0" class="no-print" [style.backgroundColor]="settings.isSytemForMlt() ?  'rgba(248, 244, 11, 0.663)' : ''">
+  <mat-card *ngIf="settings.isSytemForMlt()&&familyLists.problem.length>0" class="no-print" [style.backgroundColor]="settings.isSytemForMlt() ?  'rgba(240, 230, 180, 1)' : ''">
     <mat-card-title>{{settings.lang.failedDeliveries}} - {{familyLists.problem.length}}
     </mat-card-title>
     <mat-accordion>

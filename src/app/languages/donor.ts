@@ -72,7 +72,7 @@ export class donor implements Language {
   deliveriesDoneInTheLastTwoDays = 'משלוחים שנאספו ביומיים האחרונים';
   showAllCompletedDeliveries = 'הצג את כל המשלוחים שחולקו';
   showRouteOnGoogleMaps = 'הצג מסלול ב Google Maps';
-  assignCloseDeliveries = 'הצג תרומות בסביבתי';
+  assignCloseDeliveries = 'מצאו לי עוד תורמים בסביבתי';
   closestDeliveries = 'תרומות באיזור הקרוב';
   selfPuckupSuccess = 'הפריטים נקלטו';
   packageWasPickedUp = 'הפריטים נקלטו';
