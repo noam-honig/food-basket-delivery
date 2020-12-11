@@ -234,8 +234,6 @@ margin: 37px;margin-top:0px" (click)="assignNewDelivery()" *ngIf="showCloseDeliv
       </div>
     </mat-expansion-panel>
   </mat-accordion>
-  <div style="display: flex; place-content: center; margin-top: 9px;">
-    <button style="background-color:lightgreen;color:black;" mat-raised-button color="primary" (click)="selectDistCenter()" *ngIf="!partOfAssign&&settings.isSytemForMlt()">
   <button mat-raised-button color="primary" (click)="selectDistCenter()" *ngIf="!partOfAssign&&!settings.isSytemForMlt()">
     החלף יעד למסירת הציוד</button>
   <div style="display: flex;
