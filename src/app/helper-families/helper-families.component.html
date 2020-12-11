@@ -1,12 +1,12 @@
 <ng-container *ngIf="familyInfoCurrent" >
   <div style="display: flex;    align-items: center;flex-direction:column;">
-  <h3 class="main-title">{{familyInfoCurrent.name.value}} - {{familyInfoCurrent.address.value}}</h3>
-  <h3 class="main-title" style="margin-bottom: 28px">{{familyInfoCurrent?.baskets?.join(' - ')}}</h3>
-</div>
+    <h3 class="main-title">{{familyInfoCurrent.name.value}} - {{familyInfoCurrent.address.value}}</h3>
+    <h3 class="main-title" style="margin-bottom: 28px">{{familyInfoCurrent?.baskets?.join(' - ')}}</h3>
+  </div>
 
   <app-family-info [f]="familyInfoCurrent" [showHelp]="true" [partOfAssign]="partOfAssign"  [familiesNewPage]="settings.isSytemForMlt()"
     (assignmentCanceled)="cancelAssign(familyInfoCurrent)" (refreshList)="familyLists.reload()">
-<div style="display: flex;flex-wrap:wrap;    justify-content: space-evenly;" *ngIf="settings.isSytemForMlt()"> 
+    <div style="display: flex;flex-wrap:wrap;    justify-content: space-evenly;" *ngIf="settings.isSytemForMlt()"> 
     <button mat-raised-button style="background-color: #4b94a0f0;width:337px" class="myButton" color="accent" 
       (click)="deliveredToFamily(familyInfoCurrent)">אספתי בהצלחה</button>
       <button mat-raised-button style="background-color: yellow" class="myButton" color="accent" 
@@ -38,68 +38,65 @@
       (click)="couldntDeliverToFamily(familyInfoCurrent)">{{settings.lang.ranIntoAProblem}}</button>-->
     </div> 
 
-
   </app-family-info>
 </ng-container>
 <ng-container *ngIf="!familyInfoCurrent">
-<div class="success-div" *ngFor="let s of visibleSigns; let i=index" @message>
-  {{s}}
-</div>
-<h3 class="main-title" *ngIf="familiesNewPage&&settings.isSytemForMlt()&&!familyInfoCurrent">עד היום אספתי {{numberOfDeliveries}} תרומות</h3>
-
-
-<button mat-raised-button style="background-color: #4d4df6;    width: 278px;
-margin: 37px;margin-top:0px" (click)="assignNewDelivery()" *ngIf="showCloseDeliveries()&&!partOfAssign">
-  {{settings.lang.assignCloseDeliveries}}</button>
-<mat-card [style.background-color]="familiesNewPage ? 'rgba(248, 244, 11, 0.664)' : ''"class="no-print" *ngIf="familyLists.toDeliver.length>0||familyLists.forceShowMap">
-  <mat-card-title>
-    {{familyLists.getLeftFamiliesDescription()}}
-    <div>
-      <mat-menu #appMenu="matMenu">
-        <button mat-menu-item (click)="cancelAll()" *ngIf="partOfAssign"
-          style="color:red;">{{settings.lang.cancelAllAssignments}}</button>
-        <button mat-menu-item (click)="moveBasketsToOtherVolunteer()"
-          *ngIf="partOfAssign">{{settings.lang.moveDeliveriesToAnotherVolunteer}}</button>
-        <ng-container *ngFor="let h of otherDependentVolunteers">
-          <button mat-menu-item (click)="moveBasketsTo(h)" *ngIf="partOfAssign">{{settings.lang.moveDeliveriesTo}}
-            {{h.name.value}}</button>
-        </ng-container>
-        <button mat-menu-item (click)="okAll()" *ngIf="partOfAssign"
-          class="primary-menu">{{settings.lang.markAllDeliveriesAsSuccesfull}}</button>
-
-        <button mat-menu-item (click)="familyLists.showBasketSummary()"
-          *ngIf="notMLT()">{{settings.lang.parcelSummary}}</button>
-        <button mat-menu-item (click)="refreshRoute()">{{settings.lang.replanRoute}}</button>
-        <button mat-menu-item (click)="showRouteOnGoogleMaps()">
-          {{settings.lang.showRouteOnGoogleMaps}}</button>
-        <button mat-menu-item (click)="setDefaultCourier()"
-          *ngIf="partOfAssign">{{settings.lang.setAsDefaultVolunteerForTheseFamilies}}</button>
-
-      </mat-menu>
-
-
-
-      <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="familyLists.toDeliver.length>0"
-        (click)="refreshDependentVolunteers()">
-        <mat-icon>more_vert</mat-icon>
-      </button>
-
-    </div>
-  </mat-card-title>
-  <div
-    [class.not-visible]="!(familyLists.toDeliver.length>=1&&familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies())"
-    class="no-print">
-    {{settings.lang.estimatedTravelTime}} <span *ngIf="familyLists.routeStats"> {{familyLists.routeStats.totalTime}}
-      {{settings.lang.minutes}},
-      {{familyLists.routeStats.totalKm}} {{settings.lang.km}} <span
-        style="direction: ltr;">{{familyLists.getKmDiffString()}}</span> </span>
+  <div class="success-div" *ngFor="let s of visibleSigns; let i=index" @message>
+    {{s}}
   </div>
-  <mat-tab-group (selectedTabChange)="mapTabClicked()" #theTab>
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <mat-icon class="example-tab-icon">toc</mat-icon>
-        {{settings.lang.list}}
-      </ng-template>
+  <h3 class="main-title" *ngIf="familiesNewPage&&settings.isSytemForMlt()&&!familyInfoCurrent">עד היום אספתי {{numberOfDeliveries}} תרומות</h3>
+
+
+  <button mat-raised-button style="background-color: #4d4df6; width: 278px; margin: 37px;margin-top:0px" (click)="assignNewDelivery()" *ngIf="showCloseDeliveries()&&!partOfAssign">
+    {{settings.lang.assignCloseDeliveries}}</button>
+  <mat-card [style.background-color]="familiesNewPage ? 'rgba(248, 244, 11, 0.664)' : ''"class="no-print" *ngIf="familyLists.toDeliver.length>0||familyLists.forceShowMap">
+      <mat-card-title>
+        {{familyLists.getLeftFamiliesDescription()}}
+        <div>
+          <mat-menu #appMenu="matMenu">
+          <button mat-menu-item (click)="cancelAll()" *ngIf="partOfAssign"
+            style="color:red;">{{settings.lang.cancelAllAssignments}}</button>
+          <button mat-menu-item (click)="moveBasketsToOtherVolunteer()"
+            *ngIf="partOfAssign">{{settings.lang.moveDeliveriesToAnotherVolunteer}}</button>
+          <ng-container *ngFor="let h of otherDependentVolunteers">
+            <button mat-menu-item (click)="moveBasketsTo(h)" *ngIf="partOfAssign">{{settings.lang.moveDeliveriesTo}}
+              {{h.name.value}}</button>
+          </ng-container>
+          <button mat-menu-item (click)="okAll()" *ngIf="partOfAssign"
+            class="primary-menu">{{settings.lang.markAllDeliveriesAsSuccesfull}}</button>
+
+          <button mat-menu-item (click)="familyLists.showBasketSummary()"
+            *ngIf="notMLT()">{{settings.lang.parcelSummary}}</button>
+          <button mat-menu-item (click)="refreshRoute()">{{settings.lang.replanRoute}}</button>
+          <button mat-menu-item (click)="showRouteOnGoogleMaps()">
+            {{settings.lang.showRouteOnGoogleMaps}}</button>
+          <button mat-menu-item (click)="setDefaultCourier()"
+            *ngIf="partOfAssign">{{settings.lang.setAsDefaultVolunteerForTheseFamilies}}</button>
+
+        </mat-menu>
+
+
+
+        <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="familyLists.toDeliver.length>0"
+          (click)="refreshDependentVolunteers()">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+
+        </div>
+      </mat-card-title>
+      <div [class.not-visible]="!(familyLists.toDeliver.length>=1&&familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies())"
+        class="no-print">
+        {{settings.lang.estimatedTravelTime}} <span *ngIf="familyLists.routeStats"> {{familyLists.routeStats.totalTime}}
+        {{settings.lang.minutes}},
+        {{familyLists.routeStats.totalKm}} {{settings.lang.km}} <span
+        style="direction: ltr;">{{familyLists.getKmDiffString()}}</span> </span>
+      </div>
+      <mat-tab-group (selectedTabChange)="mapTabClicked()" #theTab>
+        <mat-tab>
+          <ng-template mat-tab-label>
+          <mat-icon class="example-tab-icon">toc</mat-icon>
+            {{settings.lang.list}}
+          </ng-template>
       <mat-accordion *ngIf="!familiesNewPage" class="no-print">
         <ng-container *ngFor="let f of familyLists.toDeliver;let i=index;trackBy:trackBy" >
           <mat-expansion-panel [style.background-color]="familiesNewPage ? 'rgba(248, 244, 11, 0.664)' : ''" #myPanel *ngIf="limitReady.shouldShow(i)" >
