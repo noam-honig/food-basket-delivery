@@ -52,8 +52,6 @@ export class FamilyInfoComponent implements OnInit {
         i++;
       }
     });
-    console.log(this.f.baskets)
-    console.log(this.baskets)
   }
   actuallyShowHelp() {
     return this.showHelp && this.f.deliverStatus.value != DeliveryStatus.ReadyForDelivery;

@@ -99,6 +99,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
   showFamilyInfo(f) {
+    this.section=1;
     this.familyInfoCurrent = f;
     this.baskets=[];
     if(this.familyInfoCurrent){
@@ -473,7 +474,11 @@ export class HelperFamiliesComponent implements OnInit {
   otherDependentVolunteers: Helpers[] = [];
 
   allDoneMessage() { return ApplicationSettings.get(this.context).messageForDoneDelivery.value; };
-  async deliveredToFamily(f: ActiveFamilyDeliveries) {
+  async deliveredToFamily(f: ActiveFamilyDeliveries,status?) {
+    if(status){
+      this.deliveredToFamilyOk(f, DeliveryStatus.successButNotSameItems, s => s.commentForSuccessDelivery);
+      return;
+    }
     this.deliveredToFamilyOk(f, DeliveryStatus.Success, s => s.commentForSuccessDelivery);
   }
   async leftThere(f: ActiveFamilyDeliveries) {

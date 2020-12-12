@@ -34,6 +34,7 @@ export class DeliveryStatus {
   static noAnswer: DeliveryStatus = new DeliveryStatus(27, !use ? '' : "לא ענו לי (לאחר מספר נסיונות)", true);
   static alreadyPickedUp: DeliveryStatus = new DeliveryStatus(28, !use ? '' : "התרומה כבר נמסרה", true);
   static farAway: DeliveryStatus = new DeliveryStatus(28, !use ? '' : "רחוק לי", true);
+  static successButNotSameItems: DeliveryStatus = new DeliveryStatus(28, !use ? '' : "אספתי ציוד שונה ממה שכתוב", true);
 
 
 

@@ -12,7 +12,9 @@
     (assignmentCanceled)="cancelAssign(familyInfoCurrent)" (refreshList)="familyLists.reload()" [section]="section">
     <div style="display: flex;flex-wrap:wrap;    justify-content: space-evenly;" *ngIf="settings.isSytemForMlt() && section==2"> 
     <button mat-raised-button style="background-color: #4b94a0f0;width:337px" class="myButton" color="accent" 
-      (click)="deliveredToFamily(familyInfoCurrent)">אספתי בהצלחה</button>
+      (click)="deliveredToFamily(familyInfoCurrent,'אספתי ציוד שונה ממה שכתוב')"><span class="material-icons">
+        thumb_up_alt
+        </span>אספתי ציוד שונה ממה שכתוב</button>
       <button mat-raised-button style="background-color: yellow" class="myButton" color="accent" 
       (click)="couldntDeliverToFamily(familyInfoCurrent,'notReady')">    <span class="material-icons"> 
         report_problem
