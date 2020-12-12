@@ -1,4 +1,4 @@
-<div >
+<div *ngIf="section!=2">
   <div *ngIf="showStatus()">
     <h4>{{f.deliverStatus.displayValue}}</h4>
     {{f.deliveryStatusDate.displayValue}}
@@ -18,8 +18,7 @@
       (click)=" udpateInfo(f)">{{settings.lang.deliveryDetails}}</button>
   </div>
   <a *ngIf="settings.showTzToVolunteer.value" (click)="showTz()" style="display:block">הצג מספר זהות</a>
-  <h4 style="display:inline" *ngIf="!settings.isSytemForMlt()">{{settings.lang.basket}}</h4> - {{f.basketType.displayValue}}
-
+  
   <div *ngIf="f.deliveryComments.value">
     <mat-icon color="accent" style="vertical-align: middle">comment</mat-icon>
     <div class="emphesize-comment">
@@ -45,9 +44,9 @@
         <br />
       </ng-container>
       <a (click)="openWaze(f)">
-
-
-
+        
+        
+        
         <span style="display:block"> {{f.getAddressDescription()}} </span>
         <ng-container *ngIf="f.floor.value||f.appartment.value">
 
@@ -61,10 +60,10 @@
         <ng-container *ngIf="f.entrance.value">
           {{f.entrance.defs.caption}} {{f.entrance.value}}
         </ng-container>
+        
+        
 
-
-
-
+        
       </a>
       <ng-container *ngIf="f.addressComment.value">
         <div class="emphesize-comment">
@@ -72,25 +71,26 @@
         </div>
       </ng-container>
     </div>
-
+    
     <div class="address-links">
       <a (click)="f.openGoogleMaps()" *ngIf="useWaze()">google map</a>
-
+      
       <a (click)="f.showOnGovMap()" *ngIf="useWaze()">govmap</a>
-
+      
       <a (click)="copyAddress(f)">{{settings.lang.copyAddress}}</a>
     </div>
-
+    
   </div>
-
+  
+  
   <ng-container *ngIf="!settings.hideFamilyPhoneFromVolunteer.value">
     <h4 *ngIf="f.phone1.value || f.phone2.value||f.phone3.value||f.phone4.value">{{settings.lang.phones}}:</h4>
     <ng-container *ngFor="let phone of [f.phone1, f.phone2, f.phone3, f.phone4]">
       <div *ngIf="phone.value" class="phone-container">
         <span mat-mini-fab style="vertical-align: middle; cursor: pointer;" color="primary" (click)="sendWhatsapp(phone.value)"
-          *ngIf="phone.value.startsWith('05')">
-          <img src="assets/whatsapp.png">
-        </span>
+        *ngIf="phone.value.startsWith('05')">
+        <img src="assets/whatsapp.png">
+      </span>
         <button mat-mini-fab style="vertical-align: middle" color="primary" (click)="callPhone(phone)">
           <mat-icon>call</mat-icon>
         </button>
@@ -117,6 +117,10 @@
       </div>
     </div>
   </ng-container>
+</div>
+<h4 style="display:inline" *ngIf="!settings.isSytemForMlt() && section!=2">{{settings.lang.basket}}</h4>
+<div style="display: flex;flex-direction: column;" *ngIf="settings.isSytemForMlt() && section!=2">
+  <span *ngFor="let b of baskets"> - {{b.count}} X {{b.type}}</span>
 </div>
 
 

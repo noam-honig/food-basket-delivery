@@ -32,7 +32,28 @@ export class FamilyInfoComponent implements OnInit {
   @Input() f: ActiveFamilyDeliveries;
   @Input() familiesNewPage = false;
   @Input() showHelp = false;
+  @Input() section = 1;
+  baskets=[]
   ngOnInit() {
+    this.baskets=[];
+    let i=0;
+    this.f.baskets.forEach(element => {
+      if(!this.baskets.find(i=>i.type==element))
+      {
+        this.baskets.push({
+          type:element,
+          count:0
+        })
+        this.f.baskets.forEach(element2 => {
+          if(element==element2){
+            this.baskets[i].count++;
+          }
+        });
+        i++;
+      }
+    });
+    console.log(this.f.baskets)
+    console.log(this.baskets)
   }
   actuallyShowHelp() {
     return this.showHelp && this.f.deliverStatus.value != DeliveryStatus.ReadyForDelivery;

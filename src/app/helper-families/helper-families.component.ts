@@ -87,15 +87,38 @@ export class HelperFamiliesComponent implements OnInit {
   @Input() numberOfDeliveries = 0;
   @ViewChild("theTab", { static: false }) tab: MatTabGroup;
 
+
   @Input() familiesNewPage = false;
   familyInfoCurrent = null;
   justFamiliesList: any[] = [];
+  section=1;
+  baskets=[]
   ngOnInit() {
+   
 
   }
 
   showFamilyInfo(f) {
     this.familyInfoCurrent = f;
+    this.baskets=[];
+    if(this.familyInfoCurrent){
+      let i=0;
+      this.familyInfoCurrent.baskets.forEach(element => {
+        if(!this.baskets.find(i=>i.type==element))
+        {
+          this.baskets.push({
+            type:element,
+            count:0
+          })
+          this.familyInfoCurrent.baskets.forEach(element2 => {
+            if(element==element2){
+              this.baskets[i].count++;
+            }
+          });
+          i++;
+        }
+      });
+    }
   }
   volunteerLocation: Location = undefined;
   async updateCurrentLocation(useCurrentLocation: boolean) {
@@ -623,8 +646,6 @@ export class HelperFamiliesComponent implements OnInit {
               await f.save();
               this.dialog.analytics('Problem');
               this.initFamilies();
-
-
             }
             catch (err) {
               this.dialog.Error(err);
@@ -634,12 +655,13 @@ export class HelperFamiliesComponent implements OnInit {
 
         });
       } else {
+        
         if(this.familyInfoCurrent){
           this.familyLists.toDeliver.forEach(async i => {
             if (i.family.value == f.family.value) {
               if (i.isNew())
                 return;
-              i.deliverStatus.value = status;
+              i.deliverStatus.value = DeliveryStatus[status];
               i.courierComments.value = f.courierComments.value;
               i.checkNeedsWork();
               try {

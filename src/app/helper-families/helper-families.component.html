@@ -1,12 +1,16 @@
 <ng-container *ngIf="familyInfoCurrent" >
-  <div style="display: flex;    align-items: center;flex-direction:column;">
-    <h3 class="main-title">{{familyInfoCurrent.name.value}} - {{familyInfoCurrent.address.value}}</h3>
-    <h3 class="main-title" style="margin-bottom: 28px">{{familyInfoCurrent?.baskets?.join(' - ')}}</h3>
+  <div *ngIf="section==1" style="display: flex;    align-items: center;flex-direction:column;color:blue">
+    <h3 >{{familyInfoCurrent.name.value}} מחכה ליצירת קשר ממך
+      לתיאום איסוף התרומה </h3>
+  </div>
+  <div *ngIf="section==2" style="display: flex;    align-items: center;flex-direction:column">
+    <h3 >{{familyInfoCurrent.name.value}} - {{familyInfoCurrent.address.value}}</h3>
+    <span *ngFor="let b of baskets"> - {{b.count}} X {{b.type}}</span>
   </div>
 
   <app-family-info [f]="familyInfoCurrent" [showHelp]="true" [partOfAssign]="partOfAssign"  [familiesNewPage]="settings.isSytemForMlt()"
-    (assignmentCanceled)="cancelAssign(familyInfoCurrent)" (refreshList)="familyLists.reload()">
-    <div style="display: flex;flex-wrap:wrap;    justify-content: space-evenly;" *ngIf="settings.isSytemForMlt()"> 
+    (assignmentCanceled)="cancelAssign(familyInfoCurrent)" (refreshList)="familyLists.reload()" [section]="section">
+    <div style="display: flex;flex-wrap:wrap;    justify-content: space-evenly;" *ngIf="settings.isSytemForMlt() && section==2"> 
     <button mat-raised-button style="background-color: #4b94a0f0;width:337px" class="myButton" color="accent" 
       (click)="deliveredToFamily(familyInfoCurrent)">אספתי בהצלחה</button>
       <button mat-raised-button style="background-color: yellow" class="myButton" color="accent" 
@@ -25,7 +29,10 @@
       (click)="couldntDeliverToFamily(familyInfoCurrent,'alreadyPickedUp')"><span class="material-icons">
         report_problem
         </span>התרומה כבר נמסרה</button>
-      <button mat-raised-button style="background-color: yellow;width:337px" class="myButton" color="accent" 
+        <button mat-raised-button style="background-color: #00c9ff96;height:120px" class="myButton" color="accent" 
+      (click)="couldntDeliverToFamily(familyInfoCurrent,'farAway')">
+      רוחק לי</button>
+      <button mat-raised-button style="background-color: #00c9ff96;height:120px" class="myButton" color="accent" 
       (click)="frozen(familyInfoCurrent)">וואלה עמוס לי - תנו לי הפסקה של שבועיים</button>
       <button mat-raised-button class="myButton"  style="background-color: yellow;width:337px" 
       (click)="updateComment(familyInfoCurrent)">{{settings.lang.updateComment}}</button>
@@ -38,19 +45,41 @@
       (click)="couldntDeliverToFamily(familyInfoCurrent)">{{settings.lang.ranIntoAProblem}}</button>-->
     </div> 
 
+    <div style="display: flex;flex-wrap:wrap;    justify-content: space-evenly;" *ngIf="settings.isSytemForMlt() && section==1"> 
+      <button mat-raised-button style="background-color: #00c9ff96;width:337px" class="myButton" color="accent" 
+        (click)="deliveredToFamily(familyInfoCurrent)">אספתי בהצלחה</button>
+        <button mat-raised-button style="background-color: #00c9ff96;width:337px" class="myButton" color="accent" 
+      (click)="section=2">יש לי בעיה</button>
+    </div>
+
   </app-family-info>
 </ng-container>
 <ng-container *ngIf="!familyInfoCurrent">
+  <div style="display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 45px;
+  font-weight: bold;">
+  <span>כיף שבאת! תודה שבחרת להתחשב,</span>
+  <span>יאללה מתחילים</span>
+</div>
   <div class="success-div" *ngFor="let s of visibleSigns; let i=index" @message>
     {{s}}
   </div>
   <h3 class="main-title" *ngIf="familiesNewPage&&settings.isSytemForMlt()&&!familyInfoCurrent">עד היום אספתי {{numberOfDeliveries}} תרומות</h3>
 
-
-  <button mat-raised-button style="background-color: #4d4df6; width: 278px; margin: 37px;margin-top:0px" (click)="assignNewDelivery()" *ngIf="showCloseDeliveries()&&!partOfAssign">
+  <div style="display: flex;
+  align-items: center;
+  flex-direction: column;">
+  <button mat-raised-button style="background-color: #4d4df6; width: 278px;" (click)="assignNewDelivery()" *ngIf="showCloseDeliveries()&&!partOfAssign">
     {{settings.lang.assignCloseDeliveries}}</button>
+    <span style="    margin-top: 5px;
+    margin-bottom: 10px;
+    color: blue;
+    font-weight: bold;" (click)="updateCurrentLocation(true)">* אופס! יש בעיה בכפתור</span>
+  </div>
   <mat-card [style.background-color]="familiesNewPage ? 'rgba(240, 230, 180, 1)' : ''"class="no-print" *ngIf="familyLists.toDeliver.length>0||familyLists.forceShowMap">
-      <mat-card-title>
+      <mat-card-title >
         {{familyLists.getLeftFamiliesDescription()}}
         <div>
           <mat-menu #appMenu="matMenu">
@@ -84,7 +113,7 @@
 
         </div>
       </mat-card-title>
-      <div [class.not-visible]="!(familyLists.toDeliver.length>=1&&familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies())"
+      <div [class.not-visible]="!(familyLists.toDeliver.length>=1&&familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies())&&!familiesNewPage"
         class="no-print">
         {{settings.lang.estimatedTravelTime}} <span *ngIf="familyLists.routeStats"> {{familyLists.routeStats.totalTime}}
         {{settings.lang.minutes}},
@@ -177,6 +206,7 @@
   </mat-tab-group>
 
 </mat-card>
+
 <div *ngIf="familyLists.distCenter&&!partOfAssign&&!partOfReview">
   <mat-accordion>
     <mat-expansion-panel style="background-color:lightgreen">
@@ -237,7 +267,7 @@
   place-content: center;
   margin-top: 9px;">
   <button style="background-color:lightgreen;color:black;" mat-raised-button color="primary" (click)="selectDistCenter()" *ngIf="!partOfAssign&&settings.isSytemForMlt()">
-    החלף יעד למסירת הציוד</button>
+    החלף</button>
   </div>
 </div>
 

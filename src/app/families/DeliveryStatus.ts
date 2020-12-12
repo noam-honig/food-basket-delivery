@@ -33,6 +33,7 @@ export class DeliveryStatus {
   static notReady: DeliveryStatus = new DeliveryStatus(26, !use ? '' : "התרומה עוד לא מוכנה לאיסוף", true);
   static noAnswer: DeliveryStatus = new DeliveryStatus(27, !use ? '' : "לא ענו לי (לאחר מספר נסיונות)", true);
   static alreadyPickedUp: DeliveryStatus = new DeliveryStatus(28, !use ? '' : "התרומה כבר נמסרה", true);
+  static farAway: DeliveryStatus = new DeliveryStatus(28, !use ? '' : "רחוק לי", true);
 
 
 

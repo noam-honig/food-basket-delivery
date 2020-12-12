@@ -99,8 +99,14 @@ export class UserFamiliesList {
             r = this.settings.lang.oneDeliveryToDistribute;
         }
         else
+        {
+            if(!this.settings.isSytemForMlt())
             r = this.toDeliver.length + ' ' + this.settings.lang.deliveriesToDistribute;
-
+            else
+            r = this.toDeliver.length + ' ' + "תורמים שמחכים לך";
+        }
+        if(this.settings.isSytemForMlt())
+    {
         let boxesText = '';
         if (boxes != this.toDeliver.length || boxes2 != 0)
             boxesText += + boxes + ' ' + BasketType.boxes1Name;
@@ -109,6 +115,7 @@ export class UserFamiliesList {
         }
         if (boxesText != '')
             r += ' (' + boxesText + ')';
+        }
         return r;
 
     }
