@@ -8,7 +8,7 @@
     <span *ngFor="let b of baskets"> - {{b.count}} X {{b.type}}</span>
   </div>
 
-  <app-family-info [f]="familyInfoCurrent" [showHelp]="true" [partOfAssign]="partOfAssign"  [familiesNewPage]="settings.isSytemForMlt()"
+  <app-family-info #familyInfo [f]="familyInfoCurrent" [showHelp]="true" [partOfAssign]="partOfAssign"  [familiesNewPage]="settings.isSytemForMlt()"
     (assignmentCanceled)="cancelAssign(familyInfoCurrent)" (refreshList)="familyLists.reload()" [section]="section">
     <div style="display: flex;flex-wrap:wrap;    justify-content: space-evenly;" *ngIf="settings.isSytemForMlt() && section==2"> 
     <button mat-raised-button style="background-color: #4b94a0f0;width:337px" class="myButton" color="accent" 
@@ -73,7 +73,8 @@
   <div style="display: flex;
   align-items: center;
   flex-direction: column;">
-  <button mat-raised-button style="background-color: #4d4df6; width: 278px;" (click)="assignNewDelivery()" *ngIf="showCloseDeliveries()&&!partOfAssign">
+  <button mat-raised-button style="background-color: #4d4df6; width: 278px;    font-weight: bold;
+  font-size: 17px;" (click)="assignNewDelivery()" *ngIf="showCloseDeliveries()&&!partOfAssign">
     {{settings.lang.assignCloseDeliveries}}</button>
     <span style="    margin-top: 5px;
     margin-bottom: 10px;

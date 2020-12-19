@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef, AfterViewInit,HostListener } from '@angular/core';
 import { BusyService, ServerFunction, StringColumn, GridButton, BoolColumn, ServerContext, SqlDatabase, RouteHelperService } from '@remult/core';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
@@ -86,7 +86,10 @@ export class HelperFamiliesComponent implements OnInit {
   @Input() preview = false;
   @Input() numberOfDeliveries = 0;
   @ViewChild("theTab", { static: false }) tab: MatTabGroup;
+  @ViewChild('familyInfo', {
+    static: false,
 
+  }) familyInfoComp;
 
   @Input() familiesNewPage = false;
   familyInfoCurrent = null;
@@ -835,6 +838,21 @@ export class HelperFamiliesComponent implements OnInit {
     }
   }
   @ViewChild("map", { static: false }) map: MapComponent;
+
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event) {
+    event.stopPropagation();
+    if(this.familyInfoComp && this.familiesNewPage&& this.familyInfoCurrent)
+    {
+      if(this.section==2)
+      {
+        this.section=1;
+      }else if(this.section==1){
+        this.familyInfoCurrent=null;
+      }
+      window.history.forward()
+    }
+  }
 
 }
 

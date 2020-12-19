@@ -29,6 +29,7 @@ export class FamilyInfoComponent implements OnInit {
   constructor(private dialog: DialogService, public context: Context, public settings: ApplicationSettings, private zone: NgZone) {
 
   }
+  
   @Input() f: ActiveFamilyDeliveries;
   @Input() familiesNewPage = false;
   @Input() showHelp = false;
@@ -229,4 +230,5 @@ export class FamilyInfoComponent implements OnInit {
   showStatus() {
     return this.f.deliverStatus.value != DeliveryStatus.ReadyForDelivery && this.f.deliverStatus.value != DeliveryStatus.SelfPickup;
   }
+
 }
