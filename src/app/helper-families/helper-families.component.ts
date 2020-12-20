@@ -84,7 +84,6 @@ export class HelperFamiliesComponent implements OnInit {
   @Output() assignmentCanceled = new EventEmitter<void>();
   @Output() assignSmsSent = new EventEmitter<void>();
   @Input() preview = false;
-  @Input() numberOfDeliveries = 0;
   @ViewChild("theTab", { static: false }) tab: MatTabGroup;
 
 
@@ -138,7 +137,7 @@ export class HelperFamiliesComponent implements OnInit {
 
           if (this.platform.ANDROID)
             this.dialog.exception(`
-          יש לאפשר גישה למיקום -
+          יש לאפשר גישה למיקום -',
           <a href="https://support.google.com/android/answer/3467281?hl=iw">לינק הדרכה</a>`, error);
           else if (this.platform.IOS)
             this.dialog.exception(`

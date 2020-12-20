@@ -40,7 +40,7 @@ export class DeliveryHistoryComponent implements OnInit {
   @ViewChild(DateRangeComponent, { static: true }) dateRange;
 
   onlyDone = new BoolColumn({ caption: this.settings.lang.showOnlyCompletedDeliveries, defaultValue: true })
-  onlyArchived = new BoolColumn({ caption: this.settings.lang.showOnlyArchivedDeliveries, defaultValue: this.settings.isSytemForMlt() })
+  onlyArchived = new BoolColumn({ caption: this.settings.lang.showOnlyArchivedDeliveries, defaultValue: false })//this.settings.isSytemForMlt() })
   rangeArea = new DataAreaSettings({
     columnSettings: () => [this.onlyDone, this.onlyArchived],
   });
