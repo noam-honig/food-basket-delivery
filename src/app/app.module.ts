@@ -92,6 +92,7 @@ import { WeeklyReportMltComponent } from './weekly-report-mlt/weekly-report-mlt.
 import { PlatformModule } from '@angular/cdk/platform';
 import { HelperGiftsComponent } from './helper-gifts/helper-gifts.component';
 import { GeneralImportFromExcelComponent } from './import-gifts/import-from-excel.component';
+import { MyGiftsDialogComponent } from './helper-gifts/my-gifts-dialog.component';
 
 
 
@@ -184,7 +185,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     VolunteerCrossAssignComponent,
     WeeklyReportMltComponent,
     HelperGiftsComponent,
-    GeneralImportFromExcelComponent
+    GeneralImportFromExcelComponent,
+    MyGiftsDialogComponent
 
 
   ],
@@ -257,7 +259,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     UpdateGroupDialogComponent,
     BasketSummaryComponent,
     EditCommentDialogComponent,
-    GeneralImportFromExcelComponent
+    GeneralImportFromExcelComponent,
+    MyGiftsDialogComponent
   ]
 })
 export class AppModule { }

@@ -19,7 +19,7 @@ import { helperHistoryInfo } from '../delivery-history/delivery-history.componen
 import { UpdateInfoComponent } from '../users/update-info/update-info.component';
 import { getLang } from '../sites/sites';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { HelperGifts, showHelperGifts } from '../helper-gifts/HelperGifts';
+import { HelperGifts, showHelperGifts, showMyGifts } from '../helper-gifts/HelperGifts';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 
 
@@ -45,6 +45,7 @@ export class MyFamiliesComponent implements OnInit {
 
   helperHistory: helperHistoryInfo
   numberOfDeliveries = 0;
+  giftCount = 0;
 
   myQRCode() {
     return window.location.hostname + '/mlt/reception/?phone=' + this.myPhoneNumber;
@@ -54,14 +55,18 @@ export class MyFamiliesComponent implements OnInit {
   constructor(public context: Context, public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService, public busy: BusyService) {
     this.user = context.user as HelperUserInfo;
   }
+
+
   async ngOnInit() {
 
     this.currentUser = await (await this.context.for(Helpers).findFirst(i => i.id.isEqualTo(this.context.user.id)));
-    if (this.settings.isSytemForMlt())
+    
+    if (this.settings.isSytemForMlt()) {
       this.numberOfDeliveries = await this.showDeliveryHistory(this.dialog, this.busy, false)
+      this.giftCount = await HelperGifts.getMyPendingGiftsCount(this.context.user.id);
+    }
+
     let h = this.currentUser;
-
-
     this.myPhoneNumber = h.phone.value;
 
     let done = ''
@@ -141,10 +146,7 @@ export class MyFamiliesComponent implements OnInit {
     this.settings.reload()
     this.helper.navigateToComponent(UpdateInfoComponent);
   }
-  async myGifts() {
-
-
-  }
+  
   myDeliversDone() {
     this.showDeliveryHistory(this.dialog, this.busy)
   }
@@ -189,7 +191,7 @@ export class MyFamiliesComponent implements OnInit {
       get: {
         where: fd => (fd.courier.isEqualTo(this.context.user.id).and(fd.deliverStatus.isEqualTo(DeliveryStatus.Success))),
         orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
-        limit: 25
+        limit: (open ? 50 : 9999)
       }
     }
     if (!open) {
@@ -204,13 +206,8 @@ export class MyFamiliesComponent implements OnInit {
   }
 
 
-
   async showMyGifts() {
-    let myGifts = await HelperGifts.getMyPendingGiftsCount(this.context.user.id);
-    if (myGifts==1) {
-      let URL = await HelperGifts.getMyFirstGiftURL(this.context.user.id);
-      window.open(URL);
-    } else showHelperGifts(this.context.user.id, this.context, this.settings, this.dialog, this.busy);
+      showMyGifts(this.context.user.id, this.context, this.settings, this.dialog, this.busy);
   }
 }
 

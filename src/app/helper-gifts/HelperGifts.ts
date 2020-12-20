@@ -6,6 +6,7 @@ import { HelperId, HelperIdReadonly, Helpers } from "../helpers/helpers";
 import { DialogService } from "../select-popup/dialog";
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
+import { MyGiftsDialogComponent } from "./my-gifts-dialog.component";
 
 @EntityClass
 export class HelperGifts extends IdEntity {
@@ -84,6 +85,16 @@ export class HelperGifts extends IdEntity {
         return gifts[0].giftURL.value;
     }
 };
+
+
+
+
+
+export async function showMyGifts(helperId: string, context: Context, settings: ApplicationSettings, dialog: DialogService, busy: BusyService): Promise<void> {
+    context.openDialog(MyGiftsDialogComponent, x => x.args = {
+        helperId: helperId
+    });
+}
 
 export async function showHelperGifts(helperId: string, context: Context, settings: ApplicationSettings, dialog: DialogService, busy: BusyService): Promise<void> {
     let helperName = await (await context.for(Helpers).findFirst(h=>h.id.isEqualTo(helperId))).name.value;

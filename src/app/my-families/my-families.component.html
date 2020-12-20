@@ -8,6 +8,7 @@
   </div>
 
   <app-helper-families #c *ngIf="!settings.isSytemForMlt() || !this.showQRCode" 
+    [numberOfDeliveries]="numberOfDeliveries"
     [familyLists]="familyLists" 
     [familiesNewPage]="settings.isSytemForMlt()">
   </app-helper-families>
