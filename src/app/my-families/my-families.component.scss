@@ -35,12 +35,12 @@ agm-map {
   justify-content: center;
 }
 .controls-self button{
-  height: 68px;
-  width: 64px;
-  border-radius: 68px;
-  border: yellow;
-  margin: 12px;
+  height: 85px;
+  width: 85px;
+  border-radius: 85px;
+  box-shadow: 3px 3px rgba(120, 115, 90, 0.5), 2px 2px rgba(120, 115, 90, 0.5), 1px 1px rgba(120, 115, 90, 0.5);
+  border: 2px solid rgb(221, 209, 187);
+  margin: 6px;
   color: white;
   background-color: #1414a9;
-
 }

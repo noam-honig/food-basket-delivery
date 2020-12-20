@@ -334,8 +334,6 @@ export class FamiliesComponent implements OnInit {
                 families.fixedCourier,
                 families.special,
                 families.numOfActiveReadyDeliveries
-
-
             ];
             for (const c of [families.custom1, families.custom2, families.custom3, families.custom4]) {
                 if (c.visible) {

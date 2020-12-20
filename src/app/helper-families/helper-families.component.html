@@ -57,62 +57,48 @@
   </app-family-info>
 </ng-container>
 <ng-container *ngIf="!familyInfoCurrent">
-  <div style="display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 45px;
-  font-weight: bold;">
-  <span>כיף שבאת! תודה שבחרת להתחשב,</span>
-  <span>יאללה מתחילים</span>
-</div>
-  <div class="success-div" *ngFor="let s of visibleSigns; let i=index" @message>
-    {{s}}
+  <div style="display: flex; flex-direction: column;  align-items: center; margin-bottom: 45px; font-weight: bold;">
+    <span>כיף שבאת! תודה שבחרת להתחשב,</span>
+    <span>יאללה מתחילים</span>
+    <div class="success-div" *ngFor="let s of visibleSigns; let i=index" @message>
+      {{s}}
+    </div>
   </div>
-  <h3 class="main-title" *ngIf="familiesNewPage&&settings.isSytemForMlt()&&!familyInfoCurrent">עד היום אספתי {{numberOfDeliveries}} תרומות</h3>
 
-  <div style="display: flex;
-  align-items: center;
-  flex-direction: column;">
-  <button mat-raised-button style="background-color: #4d4df6; width: 278px;    font-weight: bold;
-  font-size: 17px;" (click)="assignNewDelivery()" *ngIf="showCloseDeliveries()&&!partOfAssign">
-    {{settings.lang.assignCloseDeliveries}}</button>
-    <span style="    margin-top: 5px;
-    margin-bottom: 10px;
-    color: blue;
-    font-weight: bold;" (click)="updateCurrentLocation(true)">* אופס! יש בעיה בכפתור</span>
+  <div style="display: flex;  align-items: center;  flex-direction: column;">
+    <button mat-raised-button style="background-color: #4d4df6; width: 278px;" (click)="assignNewDelivery()" *ngIf="showCloseDeliveries()&&!partOfAssign">
+      {{settings.lang.assignCloseDeliveries}}
+    </button>
   </div>
   <mat-card [style.background-color]="familiesNewPage ? 'rgba(240, 230, 180, 1)' : ''"class="no-print" *ngIf="familyLists.toDeliver.length>0||familyLists.forceShowMap">
       <mat-card-title >
         {{familyLists.getLeftFamiliesDescription()}}
         <div>
           <mat-menu #appMenu="matMenu">
-          <button mat-menu-item (click)="cancelAll()" *ngIf="partOfAssign"
-            style="color:red;">{{settings.lang.cancelAllAssignments}}</button>
-          <button mat-menu-item (click)="moveBasketsToOtherVolunteer()"
-            *ngIf="partOfAssign">{{settings.lang.moveDeliveriesToAnotherVolunteer}}</button>
-          <ng-container *ngFor="let h of otherDependentVolunteers">
-            <button mat-menu-item (click)="moveBasketsTo(h)" *ngIf="partOfAssign">{{settings.lang.moveDeliveriesTo}}
-              {{h.name.value}}</button>
-          </ng-container>
-          <button mat-menu-item (click)="okAll()" *ngIf="partOfAssign"
-            class="primary-menu">{{settings.lang.markAllDeliveriesAsSuccesfull}}</button>
+            <button mat-menu-item (click)="cancelAll()" *ngIf="partOfAssign"
+              style="color:red;">{{settings.lang.cancelAllAssignments}}</button>
+            <button mat-menu-item (click)="moveBasketsToOtherVolunteer()"
+              *ngIf="partOfAssign">{{settings.lang.moveDeliveriesToAnotherVolunteer}}</button>
+            <ng-container *ngFor="let h of otherDependentVolunteers">
+              <button mat-menu-item (click)="moveBasketsTo(h)" *ngIf="partOfAssign">{{settings.lang.moveDeliveriesTo}}
+                {{h.name.value}}</button>
+            </ng-container>
+            <button mat-menu-item (click)="okAll()" *ngIf="partOfAssign"
+              class="primary-menu">{{settings.lang.markAllDeliveriesAsSuccesfull}}</button>
 
-          <button mat-menu-item (click)="familyLists.showBasketSummary()"
-            *ngIf="notMLT()">{{settings.lang.parcelSummary}}</button>
-          <button mat-menu-item (click)="refreshRoute()">{{settings.lang.replanRoute}}</button>
-          <button mat-menu-item (click)="showRouteOnGoogleMaps()">
-            {{settings.lang.showRouteOnGoogleMaps}}</button>
-          <button mat-menu-item (click)="setDefaultCourier()"
-            *ngIf="partOfAssign">{{settings.lang.setAsDefaultVolunteerForTheseFamilies}}</button>
+            <button mat-menu-item (click)="familyLists.showBasketSummary()"
+              *ngIf="notMLT()">{{settings.lang.parcelSummary}}</button>
+            <button mat-menu-item (click)="refreshRoute()">{{settings.lang.replanRoute}}</button>
+            <button mat-menu-item (click)="showRouteOnGoogleMaps()">
+              {{settings.lang.showRouteOnGoogleMaps}}</button>
+            <button mat-menu-item (click)="setDefaultCourier()"
+              *ngIf="partOfAssign">{{settings.lang.setAsDefaultVolunteerForTheseFamilies}}</button>
+          </mat-menu>
 
-        </mat-menu>
-
-
-
-        <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="familyLists.toDeliver.length>0"
-          (click)="refreshDependentVolunteers()">
-          <mat-icon>more_vert</mat-icon>
-        </button>
+          <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="familyLists.toDeliver.length>0"
+            (click)="refreshDependentVolunteers()">
+            <mat-icon>more_vert</mat-icon>
+          </button>
 
         </div>
       </mat-card-title>
@@ -264,13 +250,9 @@
       </div>
     </mat-expansion-panel>
   </mat-accordion>
-  <button mat-raised-button color="primary" (click)="selectDistCenter()" *ngIf="!partOfAssign&&!settings.isSytemForMlt()">
+  <div style="display: flex; place-content: center; margin-top: 9px;">
+    <button style="background-color:lightgreen;color:black;" mat-raised-button color="primary" (click)="selectDistCenter()" *ngIf="!partOfAssign && settings.isSytemForMlt()">
     החלף יעד למסירת הציוד</button>
-  <div style="display: flex;
-  place-content: center;
-  margin-top: 9px;">
-  <button style="background-color:lightgreen;color:black;" mat-raised-button color="primary" (click)="selectDistCenter()" *ngIf="!partOfAssign&&settings.isSytemForMlt()">
-    החלף</button>
   </div>
 </div>
 

@@ -1,7 +1,5 @@
 <div class="page" [style.background-color]="!helperfamCom?.familyInfoCurrent && settings.isSytemForMlt()  ? 'rgba(240, 230, 180, 1)' : ''">
   
-
-
   <div *ngIf="settings.isSytemForMlt()" style="display:flex;justify-content: center;">
     <div>
       <qr-code *ngIf="this.showQRCode" [value]="this.myQRCode()" [size]="300" (click)="this.showQRCode=false">
@@ -9,10 +7,10 @@
     </div>
   </div>
 
-  <app-helper-families #c *ngIf="!settings.isSytemForMlt() || !this.showQRCode" [familyLists]="familyLists" [numberOfDeliveries]="numberOfDeliveries"
+  <app-helper-families #c *ngIf="!settings.isSytemForMlt() || !this.showQRCode" 
+    [familyLists]="familyLists" 
     [familiesNewPage]="settings.isSytemForMlt()">
   </app-helper-families>
-
 
   <mat-card *ngIf="this.events&&this.events.length>0">
     <h3>{{settings.lang.pleaseRegisterToTheFollowingEvents}}</h3>
@@ -75,21 +73,20 @@
 
       </mat-expansion-panel>
     </mat-accordion>
-
   </mat-card>
   
   <div class="controls-self" *ngIf="settings.isSytemForMlt()">
     <button (click)="homePage()" >
-      המדריך
-למתחשב
+      חזרה לרשימה
     </button>
     <button (click)="myProfile()" >
       הפרופיל שלי
     </button>
     <button *ngIf="settings.isSytemForMlt() && !this.showQRCode" (click)="this.showMyGifts()">
-      המשאלות שלי
+      <img src="assets/gift.png" height="50px"> 
     </button>
     <button (click)="myDeliversDone()" >
+      {{numberOfDeliveries}}
       תרומות שאספתי
     </button>
   </div>
