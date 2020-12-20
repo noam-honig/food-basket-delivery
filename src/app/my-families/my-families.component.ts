@@ -191,7 +191,7 @@ export class MyFamiliesComponent implements OnInit {
       get: {
         where: fd => (fd.courier.isEqualTo(this.context.user.id).and(fd.deliverStatus.isEqualTo(DeliveryStatus.Success))),
         orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
-        limit: 25
+        limit: (open ? 50 : 9999)
       }
     }
     if (!open) {
