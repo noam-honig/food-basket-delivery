@@ -1,0 +1,18 @@
+<h1 mat-dialog-title>המשאלות שלי</h1>
+<div mat-dialog-content>
+    <table>
+        <tr *ngFor="let g of theGifts">
+            <td>
+                <a href="{{g.giftUrl}}">מתנה שהוענקה</a>
+            </td>
+            <td>
+                {{g.dateGranted}}
+            </td>
+            <td>
+                {{g.wasConsumed}}
+            </td>
+        </tr>
+    </table>
+</div>
+<mat-dialog-actions>
+</mat-dialog-actions>
