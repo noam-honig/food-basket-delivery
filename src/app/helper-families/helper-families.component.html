@@ -1,4 +1,4 @@
-<div style="height:70%"*ngIf="familyInfoCurrent" >
+<div *ngIf="familyInfoCurrent" >
   <div *ngIf="section==1" style="display: flex;    align-items: center;flex-direction:column;color:blue">
     <h3 >{{familyInfoCurrent.name.value}} מחכה ליצירת קשר ממך
       לתיאום איסוף התרומה </h3>
@@ -56,7 +56,7 @@
 
   </app-family-info>
 </div>
-<div style="height:70%" *ngIf="!familyInfoCurrent">
+<div *ngIf="!familyInfoCurrent">
   <div style="display: flex; flex-direction: column;  align-items: center; margin-bottom: 45px; font-weight: bold;">
     <span>כיף שבאת! תודה שבחרת להתחשב,</span>
     <span>יאללה מתחילים</span>
