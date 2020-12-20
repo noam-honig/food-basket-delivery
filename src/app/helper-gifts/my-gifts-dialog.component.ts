@@ -12,6 +12,8 @@ import { HelperGifts } from './HelperGifts';
 export class MyGiftsDialogComponent implements OnInit {
 
   theGifts: any[] = [];
+  giftsUsed = 0;
+  giftsAvailable = 0;
   args: {
     helperId: string; 
   };
@@ -22,11 +24,18 @@ export class MyGiftsDialogComponent implements OnInit {
     ) { }
 
   async ngOnInit() {
-    this.theGifts = 
+      this.giftsUsed = 0;
+      this.giftsAvailable = 0;
+      this.theGifts = 
       await this.context.for(HelperGifts).find({ where: g => g.assignedToHelper.isEqualTo(this.args.helperId)}).then(
         gifts => {
           return gifts.map(x=> {
+            if (x.wasConsumed.value)
+              this.giftsUsed += 1
+            else 
+              this.giftsAvailable += 1;
             return {
+              giftID: x.id,
               giftUrl: x.giftURL.value,
               dateGranted: x.dateGranted.relativeDateName(this.context),
               wasConsumed: x.wasConsumed.value
@@ -34,7 +43,15 @@ export class MyGiftsDialogComponent implements OnInit {
           })
         }
       );
-    console.log(this.theGifts)
   }
 
+  async giftUsed(gitfID) {
+    await this.context.for(HelperGifts).findFirst({ where: g => g.id.isEqualTo(gitfID)}).then(
+      async gift => {
+        gift.wasConsumed.value = true;
+        await gift.save();
+      }
+    )
+    this.ngOnInit();
+  }
 }

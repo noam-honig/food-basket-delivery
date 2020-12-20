@@ -207,11 +207,7 @@ export class MyFamiliesComponent implements OnInit {
 
 
   async showMyGifts() {
-    this.giftCount = await HelperGifts.getMyPendingGiftsCount(this.context.user.id);
-    if (this.giftCount==1) {
-      let URL = await HelperGifts.getMyFirstGiftURL(this.context.user.id);
-      window.open(URL);
-    } else showMyGifts(this.context.user.id, this.context, this.settings, this.dialog, this.busy);
+      showMyGifts(this.context.user.id, this.context, this.settings, this.dialog, this.busy);
   }
 }
 
