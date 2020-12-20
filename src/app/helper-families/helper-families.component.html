@@ -33,9 +33,12 @@
         </span>התרומה כבר נמסרה</button>
         <button mat-raised-button style="background-color: #00c9ff96;height:120px" class="myButton" color="accent" 
       (click)="couldntDeliverToFamily(familyInfoCurrent,'farAway')">
-      רוחק לי</button>
+      רחוק לי</button>
       <button mat-raised-button style="background-color: #00c9ff96;height:120px" class="myButton" color="accent" 
-      (click)="frozen(familyInfoCurrent)">וואלה עמוס לי - תנו לי הפסקה של שבועיים</button>
+      (click)="frozen(familyInfoCurrent)">
+      וואלה עמוס לי,
+      תנו לי הפסקה של שבועיים
+    </button>
       <button mat-raised-button class="myButton"  style="background-color: yellow;width:337px" 
       (click)="updateComment(familyInfoCurrent)">{{settings.lang.updateComment}}</button>
     <!-- <br *ngIf="settings.showLeftThereButton.value" />
@@ -57,16 +60,22 @@
   </app-family-info>
 </div>
 <div style="height:70%" *ngIf="!familyInfoCurrent">
-  <div style="display: flex; flex-direction: column;  align-items: center; margin-bottom: 45px; font-weight: bold;">
-    <span>כיף שבאת! תודה שבחרת להתחשב,</span>
-    <span>יאללה מתחילים</span>
+  <div style="display: flex; align-items: center; justify-content: center; align-content: center; text-align:center;  margin-bottom: 45px; font-weight: bold;">
+    <div *ngIf="numberOfDeliveries==0">
+      <div>כיף שבאת! תודה שבחרת להתחשב,</div>
+      <div>יאללה מתחילים</div>
+    </div>
+    <div *ngIf="numberOfDeliveries>0">
+      <div>תודה שהתחשבת ואספת {{numberOfDeliveries}} משלוחים</div>
+      <div>יאללה ממשיכים</div>
+    </div>
     <div class="success-div" *ngFor="let s of visibleSigns; let i=index" @message>
       {{s}}
     </div>
   </div>
 
   <div style="display: flex;  align-items: center;  flex-direction: column;">
-    <button mat-raised-button style="background-color: #4d4df6; width: 278px;" (click)="assignNewDelivery()" *ngIf="showCloseDeliveries()&&!partOfAssign">
+    <button mat-raised-button style="background-color: #1414a9; width: 278px; color: whitesmoke" (click)="assignNewDelivery()" *ngIf="showCloseDeliveries()&&!partOfAssign">
       {{settings.lang.assignCloseDeliveries}}
     </button>
   </div>

@@ -81,6 +81,7 @@ export class HelperFamiliesComponent implements OnInit {
   @Input() partOfAssign = false;
   @Input() partOfReview = false;
   @Input() helperGotSms = false;
+  @Input() numberOfDeliveries = 0;
   @Output() assignmentCanceled = new EventEmitter<void>();
   @Output() assignSmsSent = new EventEmitter<void>();
   @Input() preview = false;
