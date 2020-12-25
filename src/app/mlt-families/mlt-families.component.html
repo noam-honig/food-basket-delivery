@@ -1,0 +1,113 @@
+<div class="full-page mat-tipogrophy">
+    <div class="grow-item" *ngIf="display==deliveryList">
+        <span class="mat-card-title" style="text-align: center;"> {{comp.context.user.name}}, כיף שבאת! תודה שבחרת
+            להתחשב, יאללה מתחילים</span>
+        <div style="    width: 100%;margin:15px;
+        text-align: center;">
+            <button mat-raised-button color="primary" *ngIf="canSelectDonors()" (click)="assignNewDelivery()">מצאו לי עוד תורמים בסביבתי </button>
+        </div>
+        <span class="mat-card-title"> {{getFamilies().length}} תורמים מחכים לך</span>
+        <mat-nav-list role="list">
+            <mat-list-item *ngFor="let f of getFamilies();let i=index" (click)="selectFamily(f)">
+
+                <div>
+                    <mat-panel-title style="justify-content: space-between">
+                        <div class="familyLine">
+                            <span *ngIf="i+1">{{i+1}}.&nbsp;</span>{{f.name.value}}
+                            <mat-icon color="accent" *ngIf="f.deliveryComments.value"> comment</mat-icon>
+                            <mat-icon color="accent" *ngIf="!f.addressOk.value">warning</mat-icon>
+                            <mat-icon color="green" *ngIf="f.courierBeenHereBefore.value">repeat</mat-icon>
+                            <mat-icon *ngIf="f.courierComments.value"> comment</mat-icon>
+                        </div>
+
+                    </mat-panel-title>
+
+                    <mat-panel-description style="justify-content: space-between">
+
+                        <div style="white-space: nowrap;">
+                            {{f.getAddressDescription() }}
+                        </div>
+
+
+                    </mat-panel-description>
+                </div>
+                <mat-divider></mat-divider>
+            </mat-list-item>
+        </mat-nav-list>
+        <div *ngIf="familyLists.distCenter">
+            <mat-accordion>
+                <mat-expansion-panel style="background-color:lightgreen">
+                    <mat-expansion-panel-header style="background-color:lightgreen">
+                        <div>
+                            <mat-panel-title> <strong>{{settings.lang.thisIsTheDestination}}</strong> :
+                                {{familyLists.distCenter.name.value}}</mat-panel-title>
+                            <mat-panel-description>{{familyLists.distCenter.address.value}}</mat-panel-description>
+                        </div>
+                    </mat-expansion-panel-header>
+                    <div *ngIf="familyLists.distCenter.comments.value">
+                        <mat-icon color="accent" style="vertical-align: middle">comment</mat-icon>
+                        <strong style="color:red">{{settings.lang.notice}} </strong>
+                        {{familyLists.distCenter.comments.value}}
+                    </div>
+                    <h4>{{settings.lang.address}}</h4>
+                    <div style="display:flex">
+                        <span (click)="familyLists.distCenter.openWaze()">
+                            <img src="assets/waze.png">
+
+                        </span>
+                        <div style="flex-grow:1;padding:0 5px;">
+                            <a (click)="familyLists.distCenter.openWaze()">
+                                <span style="display:block"> {{familyLists.distCenter.address.value}} </span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <h4 *ngIf="familyLists.distCenter.phone1.value || familyLists.distCenter.phone2.value">
+                        {{settings.lang.phones}}:
+                    </h4>
+                    <div *ngIf="familyLists.distCenter.phone1.value" class="phone-container">
+                        <a href="tel:{{familyLists.distCenter.phone1.value}}">
+                            <button mat-mini-fab style="vertical-align: middle" color="primary">
+                                <mat-icon>call</mat-icon>
+                            </button>
+                        </a>
+                        <div>
+                            <a
+                                href="tel:{{familyLists.distCenter.phone1.value}}">{{familyLists.distCenter.phone1.displayValue}}</a>,
+                            {{familyLists.distCenter.phone1Description.value?familyLists.distCenter.phone1Description.value:familyLists.distCenter.name.value}}
+                        </div>
+                    </div>
+
+                    <div *ngIf="familyLists.distCenter.phone2.value" class="phone-container">
+                        <a href="tel:{{familyLists.distCenter.phone2.value}}">
+                            <button mat-mini-fab style="vertical-align: middle" color="primary">
+                                <mat-icon>call</mat-icon>
+                            </button>
+                        </a>
+                        <div>
+                            <a
+                                href="tel:{{familyLists.distCenter.phone2.value}}">{{familyLists.distCenter.phone2.displayValue}}</a>,
+                            {{familyLists.distCenter.phone2Description.value?familyLists.distCenter.phone2Description.value:familyLists.distCenter.name.value}}
+                        </div>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+            <div style="    width: 100%;margin:15px;
+            text-align: center;">
+                <button mat-raised-button style="background-color:lightgreen; " (click)="selectDistCenter()">
+                    החלף יעד למסירת הציוד</button>
+            </div>
+        </div>
+
+    </div>
+    <div class="grow-item" *ngIf="display==deliveryInfo">
+        <span class="mat-card-title" > {{selectedFamily.name.value}} מחכה ליצירת קשר ממך לתיאום איסוף התרומה</span>
+        <app-family-info [f]="selectedFamily" [hideSal]="true"></app-family-info>
+    </div>
+    <div class="button-div">
+        <button mat-raised-button color="primary" (click)="display= deliveryList">חזרה לרשימה</button>
+        <button mat-raised-button color="primary">הפרופיל שלי</button>
+        <button mat-raised-button color="primary"><img height="40px" src="/assets/gift.png" /></button>
+        <button mat-raised-button color="primary">תרומות שאספתי</button>
+    </div>
+</div>

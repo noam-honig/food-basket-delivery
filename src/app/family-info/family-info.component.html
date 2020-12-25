@@ -18,7 +18,9 @@
       (click)=" udpateInfo(f)">{{settings.lang.deliveryDetails}}</button>
   </div>
   <a *ngIf="settings.showTzToVolunteer.value" (click)="showTz()" style="display:block">הצג מספר זהות</a>
-  <h4 style="display:inline">{{settings.lang.basket}}</h4> - {{f.basketType.displayValue}}
+  <ng-container *ngIf="!hideSal">
+    <h4 style="display:inline">{{settings.lang.basket}}</h4> - {{f.basketType.displayValue}}
+  </ng-container>
 
   <div *ngIf="f.deliveryComments.value">
     <mat-icon color="accent" style="vertical-align: middle">comment</mat-icon>
@@ -87,8 +89,8 @@
     <h4 *ngIf="f.phone1.value || f.phone2.value||f.phone3.value||f.phone4.value">{{settings.lang.phones}}:</h4>
     <ng-container *ngFor="let phone of [f.phone1, f.phone2, f.phone3, f.phone4]">
       <div *ngIf="phone.value" class="phone-container">
-        <span mat-mini-fab style="vertical-align: middle; cursor: pointer;" color="primary" (click)="sendWhatsapp(phone.value)"
-          *ngIf="phone.value.startsWith('05')">
+        <span mat-mini-fab style="vertical-align: middle; cursor: pointer;" color="primary"
+          (click)="sendWhatsapp(phone.value)" *ngIf="phone.value.startsWith('05')">
           <img src="assets/whatsapp.png">
         </span>
         <button mat-mini-fab style="vertical-align: middle" color="primary" (click)="callPhone(phone)">

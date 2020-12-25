@@ -1,106 +1,109 @@
-<div style="display:flex;justify-content: space-between;">
+<app-mlt-families *ngIf="settings.isSytemForMlt()" [comp]="this"></app-mlt-families>
+<ng-container *ngIf="!settings.isSytemForMlt()">
+    <div style="display:flex;justify-content: space-between;">
+        <div>
+            <h3 class="no-print">{{settings.lang.hello}} {{user.name}}</h3>
+            <H4 *ngIf="user.escortedHelperName">{{settings.lang.escoring}} {{user.escortedHelperName}}</H4>
+        </div>
+
+        <button mat-mini-fab style="margin-bottom:5px" (click)="ngOnInit(); this.showQRCode=false" color="primary">
+            <mat-icon>refresh</mat-icon>
+        </button>
+    </div>
     <div>
-        <h3 class="no-print">{{settings.lang.hello}} {{user.name}}</h3>
-        <H4 *ngIf="user.escortedHelperName">{{settings.lang.escoring}} {{user.escortedHelperName}}</H4>
+        <a href="https://youtu.be/PHwTzaQN87g" target="_blank" class="no-print"
+            *ngIf="familyLists.toDeliver.length&&settings.showVideo()">{{settings.lang.clickForTutorialVideo}}</a>
+        <a href="{{settings.message1Link.value}}" target="_blank" class="no-print" style="display: block"
+            *ngIf="!settings.message1OnlyWhenDone.value || familyLists.toDeliver.length==0">{{settings.message1Text.value}}</a>
+        <ng-container *ngIf="!settings.message2OnlyWhenDone.value || familyLists.toDeliver.length==0">
+            <a href="{{settings.message2Link.value}}" target="_blank" class="no-print"
+                *ngIf="settings.message2Link.value" style="display: block">{{settings.message2Text.value}}</a>
+            <span *ngIf="!settings.message2Link.value">
+                {{settings.message2Text.value}}
+            </span>
+        </ng-container>
     </div>
 
-    <button mat-mini-fab style="margin-bottom:5px" (click)="ngOnInit(); this.showQRCode=false" color="primary">
-        <mat-icon>refresh</mat-icon>
-    </button>
-</div>
-<div>
-    <a href="https://youtu.be/PHwTzaQN87g" target="_blank" class="no-print"
-        *ngIf="familyLists.toDeliver.length&&settings.showVideo()">{{settings.lang.clickForTutorialVideo}}</a>
-    <a href="{{settings.message1Link.value}}" target="_blank" class="no-print" style="display: block"
-        *ngIf="!settings.message1OnlyWhenDone.value || familyLists.toDeliver.length==0">{{settings.message1Text.value}}</a>
-    <ng-container *ngIf="!settings.message2OnlyWhenDone.value || familyLists.toDeliver.length==0">
-        <a href="{{settings.message2Link.value}}" target="_blank" class="no-print" *ngIf="settings.message2Link.value"
-            style="display: block">{{settings.message2Text.value}}</a>
-        <span *ngIf="!settings.message2Link.value">
-            {{settings.message2Text.value}}
-        </span>
-    </ng-container>
-</div>
-
-<div *ngIf="settings.isSytemForMlt()" style="display:flex;justify-content: center;">
-    <div>
-        <qr-code *ngIf="this.showQRCode" [value]="this.myQRCode()" [size]="300" (click)="this.showQRCode=false">
-        </qr-code>
+    <div *ngIf="settings.isSytemForMlt()" style="display:flex;justify-content: center;">
+        <div>
+            <qr-code *ngIf="this.showQRCode" [value]="this.myQRCode()" [size]="300" (click)="this.showQRCode=false">
+            </qr-code>
+        </div>
     </div>
-</div>
 
-<app-helper-families *ngIf="!settings.isSytemForMlt() || !this.showQRCode" [familyLists]="familyLists">
-</app-helper-families>
+    <app-helper-families *ngIf="!settings.isSytemForMlt() || !this.showQRCode" [familyLists]="familyLists">
+    </app-helper-families>
 
 
-<mat-card *ngIf="this.events&&this.events.length>0">
-    <h3>{{settings.lang.pleaseRegisterToTheFollowingEvents}}</h3>
-    <mat-accordion multi>
-        <mat-expansion-panel *ngFor="let e of events" [class.registered]="!volunteerInEvent(e).isNew()"
-            [attr.myId]="e.id.value">
-            <mat-expansion-panel-header [class.registered]="!volunteerInEvent(e).isNew()">
-                <div style="display:flex;flex-direction: column;">
-                    <mat-panel-title> {{e.name.value}} <mat-icon *ngIf="!volunteerInEvent(e).isNew()"
-                            style="color:green">done</mat-icon>
-                    </mat-panel-title>
-                    <mat-panel-description>
-                        {{e.eventDate.displayValue}}, {{e.startTime.value}} - {{e.endTime.value}}
-                    </mat-panel-description>
+    <mat-card *ngIf="this.events&&this.events.length>0">
+        <h3>{{settings.lang.pleaseRegisterToTheFollowingEvents}}</h3>
+        <mat-accordion multi>
+            <mat-expansion-panel *ngFor="let e of events" [class.registered]="!volunteerInEvent(e).isNew()"
+                [attr.myId]="e.id.value">
+                <mat-expansion-panel-header [class.registered]="!volunteerInEvent(e).isNew()">
+                    <div style="display:flex;flex-direction: column;">
+                        <mat-panel-title> {{e.name.value}} <mat-icon *ngIf="!volunteerInEvent(e).isNew()"
+                                style="color:green">done</mat-icon>
+                        </mat-panel-title>
+                        <mat-panel-description>
+                            {{e.eventDate.displayValue}}, {{e.startTime.value}} - {{e.endTime.value}}
+                        </mat-panel-description>
 
+                    </div>
+                </mat-expansion-panel-header>
+                <div>
+                    {{e.description.value}}
                 </div>
-            </mat-expansion-panel-header>
-            <div>
-                {{e.description.value}}
-            </div>
-            <div>
-                <div class="phone-container" *ngIf="e.address.ok()">
-                    <span (click)="e.address.openWaze()">
-                        <img src="assets/waze.png">
+                <div>
+                    <div class="phone-container" *ngIf="e.address.ok()">
+                        <span (click)="e.address.openWaze()">
+                            <img src="assets/waze.png">
 
-                    </span>
-                    <div>
-                        <a (click)="e.address.openWaze()">
-                            <span style="display:block"> {{e.address.value}} </span>
+                        </span>
+                        <div>
+                            <a (click)="e.address.openWaze()">
+                                <span style="display:block"> {{e.address.value}} </span>
+                            </a>
+                        </div>
+                    </div>
+
+
+                    <div class="phone-container" *ngIf="e.phone1.value">
+                        <a href="tel:{{e.phone1.value}}">
+                            <button mat-mini-fab style="vertical-align: middle" color="primary">
+                                <mat-icon>call</mat-icon>
+                            </button>
                         </a>
+                        <div>
+                            <a href="tel:{{e.phone1.value}}">{{e.phone1.displayValue}}</a>,
+                            {{e.phone1Description.value}}
+                        </div>
                     </div>
+
                 </div>
+                <div>{{settings.lang.volunteers}}: {{e.registeredVolunteers.value}}/{{e.requiredVolunteers.value}}</div>
+                <button mat-raised-button color="primary"
+                    *ngIf="volunteerInEvent(e).isNew() && e.registeredVolunteers.value<e.requiredVolunteers.value"
+                    (click)="registerToEvent(e)">{{settings.lang.illBeThere}}
+                </button>
+                <span mat-raised-button color="primary"
+                    *ngIf="volunteerInEvent(e).isNew() && e.registeredVolunteers.value>=e.requiredVolunteers.value">{{settings.lang.eventIsFull}}
+                </span>
+                <span *ngIf="!volunteerInEvent(e).isNew()">
+                    {{settings.lang.registeredToEvent}} <a (click)="cancelEvent(e)">{{settings.lang.iCantMakeIt}}</a>
+                </span>
 
 
-                <div class="phone-container" *ngIf="e.phone1.value">
-                    <a href="tel:{{e.phone1.value}}">
-                        <button mat-mini-fab style="vertical-align: middle" color="primary">
-                            <mat-icon>call</mat-icon>
-                        </button>
-                    </a>
-                    <div>
-                        <a href="tel:{{e.phone1.value}}">{{e.phone1.displayValue}}</a>,
-                        {{e.phone1Description.value}}
-                    </div>
-                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
 
-            </div>
-            <div>{{settings.lang.volunteers}}: {{e.registeredVolunteers.value}}/{{e.requiredVolunteers.value}}</div>
-            <button mat-raised-button color="primary"
-                *ngIf="volunteerInEvent(e).isNew() && e.registeredVolunteers.value<e.requiredVolunteers.value"
-                (click)="registerToEvent(e)">{{settings.lang.illBeThere}}
-            </button>
-            <span mat-raised-button color="primary"
-                *ngIf="volunteerInEvent(e).isNew() && e.registeredVolunteers.value>=e.requiredVolunteers.value">{{settings.lang.eventIsFull}}
-            </span>
-            <span *ngIf="!volunteerInEvent(e).isNew()">
-                {{settings.lang.registeredToEvent}} <a (click)="cancelEvent(e)">{{settings.lang.iCantMakeIt}}</a>
-            </span>
-
-
-        </mat-expansion-panel>
-    </mat-accordion>
-
-</mat-card>
-<button *ngIf="settings.isSytemForMlt() && !this.showQRCode" mat-raised-button (click)="this.showQRCode=true"
-    style="height: 35px;" color="primary">
-    {{settings.lang.showQRCode}}
-</button>
-<button *ngIf="settings.isSytemForMlt() && this.showQRCode" mat-raised-button (click)="this.showQRCode=false"
-    style="height: 35px;" color="primary">
-    {{settings.lang.removeQRCode}}
-</button>
+    </mat-card>
+    <button *ngIf="settings.isSytemForMlt() && !this.showQRCode" mat-raised-button (click)="this.showQRCode=true"
+        style="height: 35px;" color="primary">
+        {{settings.lang.showQRCode}}
+    </button>
+    <button *ngIf="settings.isSytemForMlt() && this.showQRCode" mat-raised-button (click)="this.showQRCode=false"
+        style="height: 35px;" color="primary">
+        {{settings.lang.removeQRCode}}
+    </button>
+</ng-container>

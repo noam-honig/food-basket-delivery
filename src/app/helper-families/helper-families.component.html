@@ -1,8 +1,7 @@
 <div class="success-div" *ngFor="let s of visibleSigns; let i=index" @message>
   {{s}}
 </div>
-<button mat-raised-button color="primary" (click)="assignNewDelivery()" *ngIf="showCloseDeliveries()&&!partOfAssign">
-  {{settings.lang.assignCloseDeliveries}}</button>
+
 <mat-card class="no-print" *ngIf="familyLists.toDeliver.length>0||familyLists.forceShowMap">
   <mat-card-title>
     {{familyLists.getLeftFamiliesDescription()}}
@@ -103,64 +102,7 @@
   </mat-tab-group>
 
 </mat-card>
-<div *ngIf="familyLists.distCenter&&!partOfAssign&&!partOfReview">
-  <mat-accordion>
-    <mat-expansion-panel style="background-color:lightgreen">
-      <mat-expansion-panel-header style="background-color:lightgreen">
-        <div>
-          <mat-panel-title> <strong>{{settings.lang.thisIsTheDestination}}</strong> :
-            {{familyLists.distCenter.name.value}}</mat-panel-title>
-          <mat-panel-description>{{familyLists.distCenter.address.value}}</mat-panel-description>
-        </div>
-      </mat-expansion-panel-header>
-      <div *ngIf="familyLists.distCenter.comments.value">
-        <mat-icon color="accent" style="vertical-align: middle">comment</mat-icon>
-        <strong style="color:red">{{settings.lang.notice}} </strong> {{familyLists.distCenter.comments.value}}
-      </div>
-      <h4>{{settings.lang.address}}</h4>
-      <div style="display:flex">
-        <span (click)="familyLists.distCenter.openWaze()">
-          <img src="assets/waze.png">
 
-        </span>
-        <div style="flex-grow:1;padding:0 5px;">
-          <a (click)="familyLists.distCenter.openWaze()">
-            <span style="display:block"> {{familyLists.distCenter.address.value}} </span>
-          </a>
-        </div>
-      </div>
-
-      <h4 *ngIf="familyLists.distCenter.phone1.value || familyLists.distCenter.phone2.value">{{settings.lang.phones}}:
-      </h4>
-      <div *ngIf="familyLists.distCenter.phone1.value" class="phone-container">
-        <a href="tel:{{familyLists.distCenter.phone1.value}}">
-          <button mat-mini-fab style="vertical-align: middle" color="primary">
-            <mat-icon>call</mat-icon>
-          </button>
-        </a>
-        <div>
-          <a href="tel:{{familyLists.distCenter.phone1.value}}">{{familyLists.distCenter.phone1.displayValue}}</a>,
-          {{familyLists.distCenter.phone1Description.value?familyLists.distCenter.phone1Description.value:familyLists.distCenter.name.value}}
-        </div>
-      </div>
-
-      <div *ngIf="familyLists.distCenter.phone2.value" class="phone-container">
-        <a href="tel:{{familyLists.distCenter.phone2.value}}">
-          <button mat-mini-fab style="vertical-align: middle" color="primary">
-            <mat-icon>call</mat-icon>
-          </button>
-        </a>
-        <div>
-          <a href="tel:{{familyLists.distCenter.phone2.value}}">{{familyLists.distCenter.phone2.displayValue}}</a>,
-          {{familyLists.distCenter.phone2Description.value?familyLists.distCenter.phone2Description.value:familyLists.distCenter.name.value}}
-        </div>
-      </div>
-    </mat-expansion-panel>
-  </mat-accordion>
-  <button mat-raised-button color="primary" (click)="selectDistCenter()"
-    *ngIf="!partOfAssign&&settings.isSytemForMlt()">
-    החלף יעד למסירת הציוד</button>
-</div>
 
 <div style="display:flex;flex-direction: column;">
   <h4 *ngIf="!showLeftFamilies()">

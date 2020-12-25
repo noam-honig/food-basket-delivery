@@ -6,6 +6,7 @@ import { UrlBuilder, EntityClass, StringColumn, Entity, DateTimeColumn, Context,
 
 import * as geometry from 'spherical-geometry-js';
 import { wasChanged } from '../model-shared/types';
+import { DialogService } from '../select-popup/dialog';
 
 
 
@@ -383,4 +384,24 @@ export class AddressColumn extends StringColumn {
         return this.getGeocodeInformation().location();
     }
 }
+export async function getCurrentLocation(useCurrentLocation: boolean,dialog:DialogService) {
+    let result:Location= undefined;
+    if (useCurrentLocation) {
+      await new Promise((res, rej) => {
+        navigator.geolocation.getCurrentPosition(x => {
+          result = {
+            lat: x.coords.latitude,
+            lng: x.coords.longitude
+          };
+          res();
+  
+        }, error => {
+          dialog.exception("שליפת מיקום נכשלה", error);
+        });
+      });
+  
+    }
+    return result;
+  }
+  
 

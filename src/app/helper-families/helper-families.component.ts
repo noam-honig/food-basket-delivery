@@ -17,7 +17,7 @@ import { Helpers, HelperId, HelpersBase } from '../helpers/helpers';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { isGpsAddress, Location, toLongLat, GetDistanceBetween } from '../shared/googleApiHelpers';
+import { isGpsAddress, Location, toLongLat, GetDistanceBetween, getCurrentLocation } from '../shared/googleApiHelpers';
 import { Roles } from '../auth/roles';
 import { pagedRowsIterator } from '../families/familyActionsWiring';
 import { Families } from '../families/families';
@@ -90,23 +90,8 @@ export class HelperFamiliesComponent implements OnInit {
   volunteerLocation: Location = undefined;
   async updateCurrentLocation(useCurrentLocation: boolean) {
 
-    this.volunteerLocation = undefined;
-    if (useCurrentLocation) {
-      await new Promise((res, rej) => {
-        navigator.geolocation.getCurrentPosition(x => {
-          this.volunteerLocation = {
-            lat: x.coords.latitude,
-            lng: x.coords.longitude
-          };
-          res();
-
-        }, error => {
-          this.dialog.exception("שליפת מיקום נכשלה", error);
-          //   rej(error);
-        });
-      });
-
-    }
+    this.volunteerLocation = await getCurrentLocation(useCurrentLocation,this.dialog);
+    
   }
 
   async refreshRoute() {
@@ -220,36 +205,6 @@ export class HelperFamiliesComponent implements OnInit {
   };
 
 
-  showCloseDeliveries() {
-    return (this.context.user.roles.includes(Roles.indie) && this.settings.isSytemForMlt());
-  }
-  async selectDistCenter() {
-    let distCenters = await this.context.for(DistributionCenters).find({ where: x => x.isActive() });
-    distCenters = distCenters.filter(x => x.address.ok());
-    try {
-      await this.updateCurrentLocation(true);
-    }
-    catch {
-      if (this.familyLists.allFamilies.length > 0)
-        this.volunteerLocation = this.familyLists.allFamilies[0].getDrivingLocation();
-    }
-    if (this.volunteerLocation) {
-      distCenters.sort((a, b) => GetDistanceBetween(a.address.location(), this.volunteerLocation) - GetDistanceBetween(b.address.location(), this.volunteerLocation));
-
-
-      await this.context.openDialog(SelectListComponent, x => x.args = {
-        title: 'בחרו יעד למסירת הציוד',
-        options: distCenters.map(y => ({
-          name: GetDistanceBetween(y.address.location(), this.volunteerLocation).toFixed(1) + " ק\"מ" + ", " + y.name.value + " " + y.address.value,
-          item: y
-        })),
-        onSelect: async (x) => {
-          await HelperFamiliesComponent.changeDestination(x[0].item.id.value);
-          this.familyLists.reload();
-        }
-      });
-    }
-  }
   @ServerFunction({ allowed: c => c.isSignedIn() })
   static async changeDestination(newDestinationId: string, context?: Context) {
     let s = getSettings(context);
@@ -263,36 +218,7 @@ export class HelperFamiliesComponent implements OnInit {
 
 
 
-  async assignNewDelivery() {
-    await this.updateCurrentLocation(true);
-    let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(this.volunteerLocation));
-
-    await this.context.openDialog(SelectListComponent, x => {
-      x.args = {
-        title: use.language.closestDeliveries + ' (' + use.language.mergeFamilies + ')',
-        multiSelect: true,
-        onSelect: async (selectedItems) => {
-          if (selectedItems.length > 0)
-            this.busy.doWhileShowingBusy(async () => {
-              let ids: string[] = [];
-              for (const selectedItem of selectedItems) {
-                let d: DeliveryInList = selectedItem.item;
-                ids.push(...d.ids);
-              }
-              await HelperFamiliesComponent.assignFamilyDeliveryToIndie(ids);
-              await this.familyLists.refreshRoute({
-                strategyId: this.settings.routeStrategy.value.id,
-                volunteerLocation: this.volunteerLocation
-              });
-              await this.familyLists.reload();
-            });
-        },
-        options: afdList
-      }
-    });
-
-
-  }
+  
 
   getHelpText() {
     var r = this.settings.lang.ifYouNeedAnyHelpPleaseCall;
@@ -711,4 +637,5 @@ class limitList {
     return this._showAll || i < this.limit;
   }
 }
+
 
