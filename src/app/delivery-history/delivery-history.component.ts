@@ -22,6 +22,7 @@ import { DistributionCenterId } from '../manage/distribution-centers';
 import { getLang } from '../sites/sites';
 import { DateRangeComponent } from '../date-range/date-range.component';
 import { DestroyHelper, DialogService } from '../select-popup/dialog';
+import { HelperGifts } from '../helper-gifts/HelperGifts';
 
 
 
@@ -39,7 +40,7 @@ export class DeliveryHistoryComponent implements OnInit {
   @ViewChild(DateRangeComponent, { static: true }) dateRange;
 
   onlyDone = new BoolColumn({ caption: this.settings.lang.showOnlyCompletedDeliveries, defaultValue: true })
-  onlyArchived = new BoolColumn({ caption: this.settings.lang.showOnlyArchivedDeliveries, defaultValue: this.settings.isSytemForMlt() })
+  onlyArchived = new BoolColumn({ caption: this.settings.lang.showOnlyArchivedDeliveries, defaultValue: false })//this.settings.isSytemForMlt() })
   rangeArea = new DataAreaSettings({
     columnSettings: () => [this.onlyDone, this.onlyArchived],
   });
@@ -65,7 +66,7 @@ export class DeliveryHistoryComponent implements OnInit {
     this.helperInfo = context.for(helperHistoryInfo, this.helperStorage).gridSettings({
       showFilter: true,
 
-      numOfColumnsInGrid: (this.settings.isSytemForMlt() ? 8 : 7),
+      numOfColumnsInGrid: (this.settings.isSytemForMlt() ? 10 : 7),
       gridButtons: [{
         name: this.settings.lang.exportToExcel,
         visible: () => this.context.isAllowed(Roles.admin),
@@ -73,13 +74,23 @@ export class DeliveryHistoryComponent implements OnInit {
           await saveToExcel(this.settings, this.context.for(helperHistoryInfo, this.helperStorage), this.helperInfo, this.settings.lang.volunteers, this.busy, (d: helperHistoryInfo, c) => c == d.courier);
         }
       }],
-      rowButtons: [{
-        name: this.settings.lang.deliveries,
-        click: async x => {
-          let h = await this.context.for(Helpers).findId(x.courier);
-          h.showDeliveryHistory(this.dialog,this.busy);
+      rowButtons: [
+        {
+          name: this.settings.lang.deliveries,
+          click: async x => {
+            let h = await this.context.for(Helpers).findId(x.courier);
+            h.showDeliveryHistory(this.dialog,this.busy);
+          },
         },
-      }],
+        {
+          name: 'הענק מתנה',
+          visible: () => this.context.isAllowed(Roles.admin),
+          click: async x => {
+            await HelperGifts.assignGift(x.courier.value);
+            this.refresh();
+          },
+        }
+      ],
       columnSettings: h => [
         {
           column: h.name,
@@ -114,6 +125,14 @@ export class DeliveryHistoryComponent implements OnInit {
           column: h.selfassigned,
           width: '75'
         },
+        {
+          column: h.giftsConsumed,
+          width: '75'
+        },
+        {
+          column: h.giftsPending,
+          width: '75'
+        },
       ],
       get: {
         limit: 100,
@@ -134,6 +153,8 @@ export class DeliveryHistoryComponent implements OnInit {
       x.families = +x.families;
       x.succesful = +x.succesful;
       x.selfassigned = +x.selfassigned;
+      x.giftsConsumed = +x.consumed;
+      x.giftsPending = +x.pending;
       return x;
     });
     rows.splice(0, rows.length, ...x);
@@ -258,9 +279,11 @@ export class DeliveryHistoryComponent implements OnInit {
     var sql = new SqlBuilder();
     var fd = context.for(FamilyDeliveries).create();
     var h = context.for(Helpers).create();
+    var hg = context.for(HelperGifts).create();
 
-    let r = fd.deliveryStatusDate.isGreaterOrEqualTo(fromDateDate).and(
-      fd.deliveryStatusDate.isLessThan(toDateDate)).and(fd.distributionCenter.filter(distCenter));
+
+    let r = fd.courier.isDifferentFrom('').and(fd.deliveryStatusDate.isGreaterOrEqualTo(fromDateDate).and(
+      fd.deliveryStatusDate.isLessThan(toDateDate)).and(fd.distributionCenter.filter(distCenter)));
     if (onlyDone)
       r = r.and(fd.deliverStatus.isAResultStatus());
     if (onlyArchived)
@@ -284,6 +307,16 @@ export class DeliveryHistoryComponent implements OnInit {
           select: () => [h.phone],
           from: h,
           where: () => [sql.build(h.id, "=", fd.courier.defs.dbName)]
+        }),
+        sql.columnInnerSelect(hg, {
+          select: () => [sql.build('sum (case when ', sql.eq(hg.wasConsumed, true), ' then 1 else 0 end) consumed')],
+          from: hg,
+          where: () => [sql.build(hg.assignedToHelper, "=", fd.courier.defs.dbName)]
+        }),
+        sql.columnInnerSelect(hg, {
+          select: () => [sql.build('sum (case when ', sql.eq(hg.wasConsumed, false), ' then 1 else 0 end) pending')],
+          from: hg,
+          where: () => [sql.build(hg.assignedToHelper, "=", fd.courier.defs.dbName)]
         })
         , "deliveries", "dates", "families", "succesful", "selfassigned"], " from (",
         sql.build("select ", [
@@ -315,8 +348,10 @@ export class helperHistoryInfo extends Entity<string>{
   selfassigned = new NumberColumn(getLang(this.context).selfAssigned);
   families = new NumberColumn(getLang(this.context).families);
   dates = new NumberColumn(getLang(this.context).dates);
+  giftsConsumed = new NumberColumn('מתנות שמומשו');
+  giftsPending = new NumberColumn('מתנות זמינות');
   constructor(private context: Context) {
-    super({ name: 'helperHistoryInfo', allowApiRead: false, allowApiCRUD: false });
+    super({ name: 'helperHistoryInfo', allowApiRead: true, allowApiCRUD: false });
 
   }
 }

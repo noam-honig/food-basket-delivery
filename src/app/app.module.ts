@@ -89,6 +89,10 @@ import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment
 import { QRCodeModule } from 'angular2-qrcode';
 import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/volunteer-cross-assign.component';
 import { WeeklyReportMltComponent } from './weekly-report-mlt/weekly-report-mlt.component';
+import { PlatformModule } from '@angular/cdk/platform';
+import { HelperGiftsComponent } from './helper-gifts/helper-gifts.component';
+import { GeneralImportFromExcelComponent } from './import-gifts/import-from-excel.component';
+import { MyGiftsDialogComponent } from './helper-gifts/my-gifts-dialog.component';
 import { MltFamiliesComponent } from './mlt-families/mlt-families.component';
 
 
@@ -181,6 +185,9 @@ export class MyHammerConfig extends HammerGestureConfig {
     ShipmentAssignScreenComponent,
     VolunteerCrossAssignComponent,
     WeeklyReportMltComponent,
+    HelperGiftsComponent,
+    GeneralImportFromExcelComponent,
+    MyGiftsDialogComponent,
     MltFamiliesComponent
 
 
@@ -195,7 +202,9 @@ export class MyHammerConfig extends HammerGestureConfig {
     AppRoutingModule,
     ChartsModule,
     ScrollDispatchModule,
-    QRCodeModule
+    QRCodeModule,
+    PlatformModule
+
 
   ],
   providers: [
@@ -251,7 +260,9 @@ export class MyHammerConfig extends HammerGestureConfig {
     GetVolunteerFeedback,
     UpdateGroupDialogComponent,
     BasketSummaryComponent,
-    EditCommentDialogComponent]
+    EditCommentDialogComponent,
+    GeneralImportFromExcelComponent,
+    MyGiftsDialogComponent]
 })
 export class AppModule { }
 
@@ -292,6 +303,7 @@ export function initApp(session: JwtSessionManager, settings: SettingsService) {
 
       routeMap.set(WeeklyReportMltComponent, l.weeklyReportMltComponent);
 
+      routeMap.set(HelperGiftsComponent, l.HelperGiftsComponent);
 
 
 

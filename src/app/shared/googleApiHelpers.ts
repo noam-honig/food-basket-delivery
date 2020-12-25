@@ -396,7 +396,16 @@ export async function getCurrentLocation(useCurrentLocation: boolean,dialog:Dial
           res();
   
         }, error => {
-          dialog.exception("שליפת מיקום נכשלה", error);
+	  if (this.platform.ANDROID)
+            	dialog.exception(`
+		          יש לאפשר גישה למיקום -',
+		          <a href="https://support.google.com/android/answer/3467281?hl=iw">לינק הדרכה</a>`, error);
+          else if (this.platform.IOS)
+            	dialog.exception(`
+		          יש לאפשר גישה למיקום -
+		          <a href="https://support.apple.com/he-il/HT203033">לינק הדרכה</a>`, error);
+          else
+          	dialog.exception("שליפת מיקום נכשלה", error);
         });
       });
   

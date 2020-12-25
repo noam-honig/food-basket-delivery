@@ -105,9 +105,9 @@
         <app-family-info [f]="selectedFamily" [hideSal]="true"></app-family-info>
     </div>
     <div class="button-div">
-        <button mat-raised-button color="primary" (click)="display= deliveryList">חזרה לרשימה</button>
+        <button mat-raised-button color="primary" (click)="display=deliveryList">חזרה לרשימה</button>
         <button mat-raised-button color="primary">הפרופיל שלי</button>
-        <button mat-raised-button color="primary"><img height="40px" src="/assets/gift.png" /></button>
-        <button mat-raised-button color="primary">תרומות שאספתי</button>
+        <button mat-raised-button color="primary" (click)="showMyGifts()"><img height="40px" src="/assets/gift.png" /></button>
+        <button mat-raised-button color="primary" (click)="showDeliveryHistory()">{{numberOfDeliveries}}  תרומות שאספתי</button>
     </div>
 </div>

@@ -1,14 +1,18 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { BusyService, Context } from '@remult/core';
+import { BusyService, Column, Context } from '@remult/core';
 import { Roles } from '../auth/roles';
-import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { DeliveryStatus } from '../families/DeliveryStatus';
+import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
+import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { DeliveryInList, HelperFamiliesComponent } from '../helper-families/helper-families.component';
+import { HelperGifts, showUsersGifts } from '../helper-gifts/HelperGifts';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { MyFamiliesComponent } from '../my-families/my-families.component';
 import { SelectListComponent } from '../select-list/select-list.component';
 import { DialogService } from '../select-popup/dialog';
 import { getCurrentLocation, GetDistanceBetween, Location } from '../shared/googleApiHelpers';
+import { getLang } from '../sites/sites';
 import { use } from '../translate';
 
 
@@ -21,6 +25,10 @@ export class MltFamiliesComponent implements OnInit {
   deliveryList = 'deliveryList';
   deliveryInfo = 'deliveryInfo';
   display = this.deliveryList;
+
+  numberOfDeliveries = 0;
+  giftCount = 0;
+
   canSelectDonors() {
     return this.context.isAllowed(Roles.indie);
   }
@@ -30,8 +38,11 @@ export class MltFamiliesComponent implements OnInit {
   get familyLists() {
     return this.comp.familyLists;
   }
-  ngOnInit() {
+  async ngOnInit() {
+    this.numberOfDeliveries = await this.showDeliveryHistory(this.dialog, this.busy, false)
+    this.giftCount = await HelperGifts.getMyPendingGiftsCount(this.context.user.id);
   }
+
   getFamilies() {
     let consumed: string[] = []
     let result: ActiveFamilyDeliveries[] = [];
@@ -42,8 +53,67 @@ export class MltFamiliesComponent implements OnInit {
       }
     }
     return result;
+  }
+
+
+  /* TODO: replace with two fucntions - one to get total delivery count and another to open a dialog with list of recent (-3 days) deliveries */
+  async showDeliveryHistory(dialog: DialogService, busy: BusyService, open = true) {
+    let ctx = this.context.for(FamilyDeliveries);
+    let settings = {
+      numOfColumnsInGrid: 7,
+      knowTotalRows: true,
+      allowSelection: true,
+      rowButtons: [{
+
+        name: '',
+        icon: 'edit',
+        showInLine: true,
+        click: async fd => {
+          fd.showDetailsDialog({
+
+            dialog: dialog
+          });
+        }
+        , textInMenu: () => getLang(this.context).deliveryDetails
+      }
+      ],
+
+      rowCssClass: fd => fd.deliverStatus.getCss(),
+      columnSettings: fd => {
+        let r: Column[] = [
+          fd.deliverStatus,
+          fd.deliveryStatusDate,
+          fd.basketType,
+          fd.quantity,
+          fd.name,
+          fd.address,
+          fd.courierComments,
+          fd.distributionCenter
+        ]
+        r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
+        return r;
+      },
+      get: {
+        where: fd => (fd.courier.isEqualTo(this.context.user.id).and(fd.deliverStatus.isEqualTo(DeliveryStatus.Success))),
+        orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
+        limit: (open ? 5 : 9999)
+      }
+    }
+    if (!open) {
+      return (await ctx.gridSettings(settings).getRecords()).items.length
+    }
+    if (open)
+      this.context.openDialog(GridDialogComponent, x => x.args = {
+        title: getLang(this.context).deliveriesFor + ' ' + this.context.user.name,
+        settings: ctx.gridSettings(settings)
+      });
 
   }
+
+  async showMyGifts() {
+      showUsersGifts(this.context.user.id, this.context, this.settings, this.dialog, this.busy);
+  }
+  
   async assignNewDelivery() {
     var volunteerLocation = await getCurrentLocation(true, this.dialog);
     

@@ -354,6 +354,10 @@
     "valueInCode": "לא ניתן לשייך מתנדבים מכיוון שלא נבחרה רשימת חלוקה. אנא בחרו רשימת חלוקה (למעלה מצד שמאל איפה שכתוב \"כל הרשימות\")",
     "custom": "Please select a distribution list (from the selection box at the top right corner) before assigning deliveries."
   },
+  "assignUser": {
+    "google": "User associates",
+    "valueInCode": "משתמש משייך"
+  },
   "assignVolunteer": {
     "google": "Belongs to a volunteer",
     "valueInCode": "שייך מתנדב",
@@ -728,6 +732,10 @@
   "customSmsMessage": {
     "google": "Personalized SMS",
     "valueInCode": "הודעת SMS מותאמת"
+  },
+  "dateGranted": {
+    "google": "Grant date",
+    "valueInCode": "תאריך הענקה"
   },
   "dates": {
     "google": "Dates",
@@ -1622,6 +1630,10 @@
   "helperComment": {
     "google": "Note",
     "valueInCode": "הערה"
+  },
+  "HelperGiftsComponent": {
+    "google": "The Well of Wishes",
+    "valueInCode": "באר המשאלות"
   },
   "helperInternalComment": {
     "google": "Internal comment about a volunteer",
