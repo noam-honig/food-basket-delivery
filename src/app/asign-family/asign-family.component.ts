@@ -43,6 +43,7 @@ import { familiesInRoute, optimizeRoute, routeStats, routeStrategyColumn } from 
 import { moveDeliveriesHelper } from '../helper-families/move-deliveries-helper';
 import { SelectListComponent } from '../select-list/select-list.component';
 import { use } from '../translate';
+import { MltFamiliesComponent } from '../mlt-families/mlt-families.component';
 
 
 
@@ -616,7 +617,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                                 let d: DeliveryInList = selectedItem.item;
                                 ids.push(...d.ids);
                             }
-                            await HelperFamiliesComponent.assignFamilyDeliveryToIndie(ids);
+                            await MltFamiliesComponent.assignFamilyDeliveryToIndie(ids);
 
                             await this.familyLists.reload();
                             this.doRefreshRoute();

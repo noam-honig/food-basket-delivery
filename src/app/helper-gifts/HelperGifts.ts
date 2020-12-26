@@ -18,6 +18,7 @@ export class HelperGifts extends IdEntity {
     dateGranted = new changeDate({ caption: getLang(this.context).dateGranted });
     assignedByUser = new HelperIdReadonly(this.context, { caption: getLang(this.context).assignUser });
     wasConsumed = new BoolColumn('מתנה מומשה');
+    wasClicked = new BoolColumn();
 
     constructor(private context: Context) {
         super({
@@ -47,6 +48,11 @@ export class HelperGifts extends IdEntity {
                     if (wasChanged(this.assignedToHelper)&& this.assignedToHelper.value != '') {
                         this.dateGranted.value = new Date();
                         this.assignedByUser.value = this.context.user.id;
+                        this.wasConsumed.value = false;
+                        this.wasClicked.value = false;
+                    }
+                    if (wasChanged(this.wasConsumed)) {
+                        this.wasClicked.value = this.wasConsumed.value;
                     }
                 }
             }
@@ -56,6 +62,8 @@ export class HelperGifts extends IdEntity {
     static async  assignGift(helperId:string,context?:Context){
         let g = await context.for(HelperGifts).findFirst(g=>g.assignedToHelper.isEqualTo(''));
         g.assignedToHelper.value = helperId;
+        g.wasConsumed.value = false;
+        g.wasClicked.value = false;
         await g.save();
 
     }

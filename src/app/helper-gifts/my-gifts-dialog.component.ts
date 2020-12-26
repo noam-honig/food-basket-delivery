@@ -20,29 +20,30 @@ export class MyGiftsDialogComponent implements OnInit {
 
   constructor(
     private context: Context,
-    public settings:ApplicationSettings
+    public settings: ApplicationSettings
     ) { }
 
   async ngOnInit() {
       this.giftsUsed = 0;
       this.giftsAvailable = 0;
       this.theGifts = 
-      await this.context.for(HelperGifts).find({ where: g => g.assignedToHelper.isEqualTo(this.args.helperId)}).then(
-        gifts => {
-          return gifts.map(x=> {
-            if (x.wasConsumed.value)
-              this.giftsUsed += 1
-            else 
-              this.giftsAvailable += 1;
-            return {
-              giftID: x.id,
-              giftUrl: x.giftURL.value,
-              dateGranted: x.dateGranted.relativeDateName(this.context),
-              wasConsumed: x.wasConsumed.value
-            }
-          })
-        }
-      );
+        await this.context.for(HelperGifts).find({ where: g => g.assignedToHelper.isEqualTo(this.args.helperId)}).then(
+          gifts => {
+            return gifts.map(x=> {
+              if (x.wasConsumed.value)
+                this.giftsUsed += 1
+              else 
+                this.giftsAvailable += 1;
+              return {
+                giftID: x.id,
+                giftUrl: x.giftURL.value,
+                dateGranted: x.dateGranted.relativeDateName(this.context),
+                wasConsumed: x.wasConsumed.value,
+                wasClicked: x.wasClicked.value
+              }
+            })
+          }
+        );
   }
 
   async giftUsed(gitfID) {
@@ -50,6 +51,17 @@ export class MyGiftsDialogComponent implements OnInit {
       async gift => {
         gift.wasConsumed.value = true;
         await gift.save();
+      }
+    )
+    this.ngOnInit();
+  }
+
+  async useTheGift(gitfID) {
+    await this.context.for(HelperGifts).findFirst({ where: g => g.id.isEqualTo(gitfID)}).then(
+      async gift => {
+        gift.wasClicked.value = true;
+        await gift.save();
+        window.open(gift.giftURL.value);
       }
     )
     this.ngOnInit();

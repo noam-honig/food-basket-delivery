@@ -1,16 +1,18 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { BusyService, Column, Context } from '@remult/core';
+import { BusyService, Column, Context, ServerFunction } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { DeliveryInList, HelperFamiliesComponent } from '../helper-families/helper-families.component';
 import { HelperGifts, showUsersGifts } from '../helper-gifts/HelperGifts';
-import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { Helpers } from '../helpers/helpers';
+import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { MyFamiliesComponent } from '../my-families/my-families.component';
 import { SelectListComponent } from '../select-list/select-list.component';
 import { DialogService } from '../select-popup/dialog';
+import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { getCurrentLocation, GetDistanceBetween, Location } from '../shared/googleApiHelpers';
 import { getLang } from '../sites/sites';
 import { use } from '../translate';
@@ -113,7 +115,7 @@ export class MltFamiliesComponent implements OnInit {
   async showMyGifts() {
       showUsersGifts(this.context.user.id, this.context, this.settings, this.dialog, this.busy);
   }
-  
+    
   async assignNewDelivery() {
     var volunteerLocation = await getCurrentLocation(true, this.dialog);
     
@@ -131,7 +133,7 @@ export class MltFamiliesComponent implements OnInit {
                 let d: DeliveryInList = selectedItem.item;
                 ids.push(...d.ids);
               }
-              await HelperFamiliesComponent.assignFamilyDeliveryToIndie(ids);
+              await MltFamiliesComponent.assignFamilyDeliveryToIndie(ids);
               await this.familyLists.refreshRoute({
                 strategyId: this.settings.routeStrategy.value.id,
                 volunteerLocation: volunteerLocation
@@ -145,6 +147,19 @@ export class MltFamiliesComponent implements OnInit {
 
 
   }
+
+  @ServerFunction({ allowed: Roles.indie })
+  static async assignFamilyDeliveryToIndie(deliveryIds: string[], context?: Context) {
+    for (const id of deliveryIds) {
+
+      let fd = await context.for(ActiveFamilyDeliveries).findId(id);
+      if (fd.courier.value == "" && fd.deliverStatus.value == DeliveryStatus.ReadyForDelivery) {//in case the delivery was already assigned to someone else
+        fd.courier.value = context.user.id;
+        await fd.save();
+      }
+    }
+  }
+
   selectedFamily: ActiveFamilyDeliveries;
   selectFamily(f: ActiveFamilyDeliveries) {
     this.selectedFamily = f;
@@ -179,4 +194,28 @@ export class MltFamiliesComponent implements OnInit {
     }
   }
 
+  async deliveredToFamily(f: ActiveFamilyDeliveries) {
+    //this.deliveredToFamilyOk(f, DeliveryStatus.Success, s => s.commentForSuccessDelivery);
+  }
+
+  async frozen(f) {
+    let currentUser = await (await this.context.for(Helpers).findFirst(i => i.id.isEqualTo(this.context.user.id)));
+
+    if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
+      question: "קצת מנוחה לא תזיק, נעביר את המשלוחים למישהו אחר וניתן לך הפסקה של שבועיים?",
+      yesButtonText: this.settings.lang.confirm
+    }, y => y.yes)) {
+      let date = new Date();
+      date.setDate(date.getDate() + 14)
+      currentUser.frozenTill.value = date;
+      await currentUser.save()
+
+      for (const f of this.comp.familyLists.toDeliver) {
+        f.deliverStatus.value = DeliveryStatus.FailedOther;
+        f.courierComments.value = 'המתנדב ביקש הקפאה זמנית';
+        await f.save();
+      }
+      this.familyLists.reload();
+    }
+  }
 }
