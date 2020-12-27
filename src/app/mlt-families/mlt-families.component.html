@@ -8,10 +8,17 @@
         </span>
         <div style="display: flex; flex-flow: column; margin:15px; text-align: center;">
             <button mat-raised-button color="primary" *ngIf="canSelectDonors()" (click)="assignNewDelivery()">מצאו לי
-                עוד תורמים בסביבתי </button>
-            <button mat-raised-button color="accent" (click)="frozen(selectedFamily)">
+                עוד תורמים בסביבתי 
+            </button>
+            <button *ngIf="!showFrozen()" mat-raised-button color="accent" (click)="freezeUser()">
                 וואלה עמוס לי,
                 תנו לי הפסקה של שבועיים
+            </button>
+            <span *ngIf="showFrozen()">
+                לבקשתך, לא נחבר לך תרומות לאיסוף עד {{userFrozenTill}} 
+            </span>
+            <button *ngIf="showFrozen()" mat-raised-button color="primary" (click)="unFreezeUser()">
+                התפניתי, אפשר להמשיך לחבר לי תורמים            
             </button>
         </div>
         <span class="mat-card-title"> {{getFamilies().length}} תורמים מחכים לך</span>
@@ -119,26 +126,20 @@
                 <div>
                     <mat-panel-title style="justify-content: space-between">
                         <div class="familyLine">
-                            <span *ngIf="i+1">{{i+1}}.&nbsp;</span>{{f.name.value}}
-                            <mat-icon color="accent" *ngIf="f.deliveryComments.value"> comment</mat-icon>
-                            <mat-icon color="accent" *ngIf="!f.addressOk.value">warning</mat-icon>
-                            <mat-icon color="green" *ngIf="f.courierBeenHereBefore.value">repeat</mat-icon>
+                            {{getBasketsDescription(f, true)}}
                             <mat-icon *ngIf="f.courierComments.value"> comment</mat-icon>
                         </div>
 
                     </mat-panel-title>
 
                     <mat-panel-description style="justify-content: space-evenly; align-items: stretch;">
-
                         <div style="white-space: nowrap;">
-                            {{f.getAddressDescription() }}
+                            {{f.name.value}}
                         </div>
 
                         <div style="white-space: nowrap;">
-                            {{getBasketsDescription(f, true)}}
+                            ({{f.getAddressDescription() }})
                         </div>
-
-
                     </mat-panel-description>
                 </div>
                 <mat-divider></mat-divider>

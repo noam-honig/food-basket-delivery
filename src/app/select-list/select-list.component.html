@@ -2,16 +2,16 @@
 
 <mat-dialog-content>
     <mat-nav-list role="list">
-        <mat-list-item *ngFor="let h of args.options" (click)="select(h)">
+        <mat-list-item *ngFor="let h of args.options" (click)="select(h)" style="height:max-content">
 
-            <span style="min-width:100px;">
-                <mat-checkbox *ngIf="args.multiSelect" [(ngModel)]="h.selected">
+            <mat-panel-description style="min-width:100px;" *ngIf="args.multiSelect" style="height:max-content">
+                <mat-checkbox  [(ngModel)]="h.selected">
                     {{h.name}}
                 </mat-checkbox>
-                <span *ngIf="!args.multiSelect">{{h.name}}</span>
-
-            </span>
-
+            </mat-panel-description>
+            <mat-panel-description style="min-width:100px;" *ngIf="!args.multiSelect" style="height:max-content">
+                    {{h.name}}
+            </mat-panel-description>
             <mat-divider></mat-divider>
         </mat-list-item>
     </mat-nav-list>

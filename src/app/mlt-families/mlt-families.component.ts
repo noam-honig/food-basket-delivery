@@ -35,6 +35,18 @@ export class MltFamiliesComponent implements OnInit {
 
   numberOfDeliveries = 0;
   giftCount = 0;
+  thisHelper;
+  today = new Date();
+  userFrozenTill = this.today;
+  
+  showFrozen() {
+    if (this.thisHelper) {
+      let frozenTill = this.thisHelper.frozenTill;
+      this.userFrozenTill = frozenTill.displayValue;
+      return (frozenTill.value > this.today);
+    }
+    return false;
+  }
 
   canSelectDonors() {
     return this.context.isAllowed(Roles.indie);
@@ -48,6 +60,8 @@ export class MltFamiliesComponent implements OnInit {
   async ngOnInit() {
     this.numberOfDeliveries = await this.showDeliveryHistory(false)
     this.giftCount = await HelperGifts.getMyPendingGiftsCount(this.context.user.id);
+    this.thisHelper = await this.context.for(Helpers).findFirst(h=>h.id.isEqualTo(this.context.user.id));
+    this.userFrozenTill = this.thisHelper.frozenTill.displayValue;
   }
 
   getBasketsDescription(family: ActiveFamilyDeliveries, delivered = false) {
@@ -55,7 +69,7 @@ export class MltFamiliesComponent implements OnInit {
     for (const f of (delivered? this.comp.familyLists.delivered : this.comp.familyLists.toDeliver)) {
       //.filter(x=>x.family == family))
 
-      if (f.family==family.family) {
+      if (f.family.value==family.family.value) {
         let s = f.quantity.displayValue + ' X ' + f.basketType.displayValue;
         if (result == '') 
           result = s
@@ -290,8 +304,11 @@ export class MltFamiliesComponent implements OnInit {
     });
   }
 
-  async frozen(f) {
-    let currentUser = await (await this.context.for(Helpers).findFirst(i => i.id.isEqualTo(this.context.user.id)));
+  async freezeUser() {
+    if (!this.thisHelper) 
+      return;
+      
+    let currentUser = this.thisHelper;
 
     if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
       question: "קצת מנוחה לא תזיק, נעביר את המשלוחים למישהו אחר וניתן לך הפסקה של שבועיים?",
@@ -309,5 +326,15 @@ export class MltFamiliesComponent implements OnInit {
       }
       this.familyLists.reload();
     }
+  }
+
+  async unFreezeUser() {
+    if (!this.thisHelper) 
+      return;
+      
+      this.today = new Date();
+      this.thisHelper.frozenTill.value = this.today;
+      await this.thisHelper.save()
+
   }
 }
