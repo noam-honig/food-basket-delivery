@@ -1,22 +1,25 @@
 <h1 mat-dialog-title *ngIf="theGifts.length>0">המשאלות שלי</h1>
-<h1 mat-dialog-title *ngIf="theGifts.length==0">צוברים מתנות באיסוף משלוחים</h1>
+<h1 mat-dialog-title *ngIf="theGifts.length==0">אוספים תרומות וצוברים מתנות</h1>
 <div mat-dialog-content>
         <div *ngFor="let g of theGifts">
             <div *ngIf="!g.wasConsumed" style="display:flex; align-items: center; justify-content: right;flex-direction: row;"> 
                 <span>
-                    <button mat-button (click)="useTheGift(g.giftID)"> 
+                    <button mat-raised-button color="primary" (click)="useTheGift(g.giftID)"> 
                         <img src="assets/gift.png" height="65px"> 
                     </button>
                 </span>
                 <span>
-                    <button mat-button (click)="giftUsed(g.giftID)" *ngIf="g.wasClicked">
+                    <button mat-raised-button color="primary" (click)="giftUsed(g.giftID)" *ngIf="g.wasClicked">
                         השתמשתי, תודה<br>
                         אפשר להסיר מהרשימה
                     </button>
                 </span>
             </div>
         </div>
-        <div *ngIf="giftsUsed>0">
+        <div *ngIf="giftsUsed==1">
+            הספקת לנצל כבר מתנה אחת - מקווים שנהנית!
+        </div>
+        <div *ngIf="giftsUsed>1">
             ניצלת כבר {{giftsUsed}} מתנות. מקווים שאהבת! 
         </div>
 </div>

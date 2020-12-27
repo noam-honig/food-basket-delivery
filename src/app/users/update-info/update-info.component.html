@@ -1,9 +1,17 @@
 <mat-card>
   <data-area [settings]="helpers"></data-area>
 
-  <button mat-raised-button color="accent" (click)="register()">
-    {{settings.lang.updateInfo}}
-  </button>
+  <div style="display:flex; justify-content: space-between;">
+
+    <button mat-raised-button color="accent" (click)="register()">
+      {{settings.lang.updateInfo}}
+    </button>
+
+    <button *ngIf="settings.isSytemForMlt()" mat-raised-button color="accent" (click)="signout()">
+      {{settings.lang.exit}}
+    </button>
+    </div>
+
 </mat-card>
 
 <!-- <input #address>  -->
