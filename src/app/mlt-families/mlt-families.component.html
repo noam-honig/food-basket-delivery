@@ -134,7 +134,7 @@
 
 
         <div *ngIf="display==problemInfo"> 
-            <button mat-raised-button class="myButton" color="accent" (click)="deliveredToFamily(selectedFamily,'אספתי ציוד שונה ממה שכתוב')">
+            <button mat-raised-button class="myButton" color="accent" (click)="deliveredToFamily('אספתי ציוד שונה ממה שכתוב')">
                 אספתי ציוד שונה ממה שכתוב
             </button>
             <button mat-raised-button class="myButton" color="accent" (click)="couldntDeliverToFamily(selectedFamily,'FailedNotReady')">    

@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AndFilter, BusyService, Column, Context, FilterBase, ServerFunction } from '@remult/core';
 import { Roles } from '../auth/roles';
+import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
@@ -43,7 +44,7 @@ export class MltFamiliesComponent implements OnInit {
     return this.comp.familyLists;
   }
   async ngOnInit() {
-    this.numberOfDeliveries = await this.showDeliveryHistory(this.dialog, this.busy, false)
+    this.numberOfDeliveries = await this.showDeliveryHistory(false)
     this.giftCount = await HelperGifts.getMyPendingGiftsCount(this.context.user.id);
   }
 
@@ -61,7 +62,7 @@ export class MltFamiliesComponent implements OnInit {
 
 
   /* TODO: replace with two fucntions - one to get total delivery count and another to open a dialog with list of recent (-3 days) deliveries */
-  async showDeliveryHistory(dialog: DialogService, busy: BusyService, open = true) {
+  async showDeliveryHistory(open = true) {
     let ctx = this.context.for(FamilyDeliveries);
     let settings = {
       numOfColumnsInGrid: 7,
@@ -75,7 +76,7 @@ export class MltFamiliesComponent implements OnInit {
         click: async fd => {
           fd.showDetailsDialog({
 
-            dialog: dialog
+            dialog: this.dialog
           });
         }
         , textInMenu: () => getLang(this.context).deliveryDetails
@@ -227,11 +228,11 @@ export class MltFamiliesComponent implements OnInit {
     this.selectedFamily = null
   }
 
-  async deliveredToFamily() {
+  async deliveredToFamily(newComment?) {
     let f = this.selectedFamily;
     this.context.openDialog(GetVolunteerFeedback, x => x.args = {
       family: f,
-      comment: f.courierComments.value,
+      comment: (newComment ? newComment : f.courierComments.value),
       helpText: s => s.commentForSuccessDelivery,
       ok: async (comment) => {
         await this.updateDeliveryStatus(comment, DeliveryStatus.Success);
@@ -249,7 +250,25 @@ export class MltFamiliesComponent implements OnInit {
     }
     this.familyLists.initFamilies();
     this.display = this.deliveryList;
-    this.showDeliveryHistory(this.dialog, this.busy, false);
+    this.showDeliveryHistory(false);
+  }
+
+  updateComment(f: ActiveFamilyDeliveries) {
+    this.context.openDialog(EditCommentDialogComponent, x => x.args = {
+      comment: f.courierComments.value,
+
+
+      save: async comment => {
+        if (f.isNew())
+          return;
+        f.courierComments.value = comment;
+        f.checkNeedsWork();
+        await f.save();
+        this.dialog.analytics('Update Comment');
+      }
+      , title: use.language.updateComment
+
+    });
   }
 
   async frozen(f) {
