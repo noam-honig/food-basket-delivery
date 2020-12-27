@@ -1,7 +1,11 @@
 <div class="full-page mat-tipogrophy">
     <div class="grow-item" *ngIf="display==deliveryList">
-        <span class="mat-card-title" style="text-align: center;"> {{comp.context.user.name}}, כיף שבאת! תודה שבחרת
-            להתחשב, יאללה מתחילים</span>
+        <span *ngIf="numberOfDeliveries==0" class="mat-card-title" style="text-align: center;"> 
+            {{comp.context.user.name}} כיף שבאת, תודה שבחרת להתחשב - יאללה מתחילים! 
+        </span>
+        <span *ngIf="numberOfDeliveries>0" class="mat-card-title" style="text-align: center;"> 
+            {{comp.context.user.name}} תודה על {{numberOfDeliveries}} משלוחים שאספת! - יאללה ממשיכים!
+        </span>
         <div style="display: flex; flex-flow: column; margin:15px; text-align: center;">
             <button mat-raised-button color="primary" *ngIf="canSelectDonors()" (click)="assignNewDelivery()">מצאו לי עוד תורמים בסביבתי </button>
             <button mat-raised-button color="accent" (click)="frozen(selectedFamily)">
@@ -128,19 +132,19 @@
             <button mat-raised-button class="myButton" color="accent" (click)="deliveredToFamily(selectedFamily,'אספתי ציוד שונה ממה שכתוב')">
                 אספתי ציוד שונה ממה שכתוב
             </button>
-            <button mat-raised-button class="myButton" color="accent" (click)="couldntDeliverToFamily(selectedFamily,'notReady')">    
+            <button mat-raised-button class="myButton" color="accent" (click)="couldntDeliverToFamily(selectedFamily,'FailedNotReady')">    
                 התרומה עוד לא מוכנה לאיסוף
             </button>
             <button mat-raised-button class="myButton" color="accent" (click)="couldntDeliverToFamily(selectedFamily,'FailedBadAddress')">
                 פרטי התורם שגויים
             </button>
-            <button mat-raised-button class="myButton" color="accent" (click)="couldntDeliverToFamily(selectedFamily,'noAnswer')">
+            <button mat-raised-button class="myButton" color="accent" (click)="couldntDeliverToFamily(selectedFamily,'FailedNotHome')">
                 לא ענו לי (לאחר מספר נסיונות)
             </button>
-            <button mat-raised-button class="myButton" color="accent" (click)="couldntDeliverToFamily(selectedFamily,'alreadyPickedUp')">
+            <button mat-raised-button class="myButton" color="accent" (click)="couldntDeliverToFamily(selectedFamily,'FailedAlreadyPickedUp')">
                 התרומה כבר נמסרה
             </button>
-            <button mat-raised-button class="myButton" color="accent" (click)="couldntDeliverToFamily(selectedFamily,'farAway')">
+            <button mat-raised-button class="myButton" color="accent" (click)="couldntDeliverToFamily(selectedFamily,'FailedTooFar')">
                 רחוק לי
             </button>
         </div> 

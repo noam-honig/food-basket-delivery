@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { BusyService, Column, Context, ServerFunction } from '@remult/core';
+import { AndFilter, BusyService, Column, Context, FilterBase, ServerFunction } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -84,19 +84,19 @@ export class MltFamiliesComponent implements OnInit {
       columnSettings: fd => {
         let r: Column[] = [
           fd.deliverStatus,
-          fd.deliveryStatusDate,
           fd.basketType,
           fd.quantity,
-          fd.name,
-          fd.address,
           fd.courierComments,
+          fd.deliveryStatusDate,
+          fd.address,
+          fd.name,
           fd.distributionCenter
         ]
         r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
         return r;
       },
       get: {
-        where: fd => (fd.courier.isEqualTo(this.context.user.id).and(fd.deliverStatus.isEqualTo(DeliveryStatus.Success))),
+        where: fd => (fd.courier.isEqualTo(this.context.user.id).and(fd.deliverStatus.isSuccess())),
         orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
         limit: (open ? 5 : 9999)
       }
@@ -192,6 +192,25 @@ export class MltFamiliesComponent implements OnInit {
         }
       });
     }
+  }
+
+  async couldntDeliverToFamily(f: ActiveFamilyDeliveries, status?) {
+    let family = f.family.value;
+    for (const fd of this.comp.familyLists.toDeliver.filter(x=>x.family.value==family)) {
+      fd.deliverStatus.value = DeliveryStatus[status];
+      fd.checkNeedsWork();
+      try {
+        await fd.save();
+        this.dialog.analytics('Problem');
+        //this.initFamilies();
+      }
+      catch (err) {
+        this.dialog.Error(err);
+      }
+    }
+    this.dialog.Info("ההודעה שלך נקלטה! תודה רבה!")
+    this.settings.reload()
+    this.selectedFamily = null
   }
 
   async deliveredToFamily(f: ActiveFamilyDeliveries) {
