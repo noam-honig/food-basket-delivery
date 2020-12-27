@@ -8,24 +8,25 @@
         </span>
         <div style="display: flex; flex-flow: column; margin:15px; text-align: center;">
             <button mat-raised-button color="primary" *ngIf="canSelectDonors()" (click)="assignNewDelivery()">מצאו לי
-                עוד תורמים בסביבתי 
+                עוד תורמים בסביבתי
             </button>
             <button *ngIf="!showFrozen()" mat-raised-button color="accent" (click)="freezeUser()">
                 וואלה עמוס לי,
                 תנו לי הפסקה של שבועיים
             </button>
             <span *ngIf="showFrozen()">
-                לבקשתך, לא נחבר לך תרומות לאיסוף עד {{userFrozenTill}} 
+                לבקשתך, לא נחבר לך תרומות לאיסוף עד {{userFrozenTill}}
             </span>
             <button *ngIf="showFrozen()" mat-raised-button color="primary" (click)="unFreezeUser()">
-                התפניתי, אפשר להמשיך לחבר לי תורמים            
+                התפניתי, אפשר להמשיך לחבר לי תורמים
             </button>
         </div>
         <span class="mat-card-title"> {{getFamilies().length}} תורמים מחכים לך</span>
 
 
         <mat-nav-list role="list">
-            <mat-list-item *ngFor="let f of getFamilies();let i=index" (click)="selectFamily(f)" style="height:max-content">
+            <mat-list-item *ngFor="let f of getFamilies();let i=index" (click)="selectFamily(f)"
+                style="height:max-content">
 
                 <div>
                     <mat-panel-title style="justify-content: space-between">
@@ -171,8 +172,9 @@
         <app-family-info [f]="selectedFamily" [hideSal]="true"></app-family-info>
 
 
-        <div *ngIf="display==problemInfo"> 
-            <button mat-raised-button class="myButton" color="accent" (click)="deliveredToFamily('אספתי ציוד שונה ממה שכתוב')">
+        <div *ngIf="display==problemInfo">
+            <button mat-raised-button class="myButton" color="accent"
+                (click)="deliveredToFamily('אספתי ציוד שונה ממה שכתוב')">
                 אספתי ציוד שונה ממה שכתוב
             </button>
             <button mat-raised-button class="myButton" color="accent"
@@ -200,17 +202,22 @@
     <div class="grow-item" *ngIf="display==myProfile">
         <app-update-info></app-update-info>
     </div>
-    <div class="button-div">
-        <button mat-raised-button color="primary" (click)="startPage()">חזרה לרשימה</button>
-        <button mat-raised-button color="primary" (click)="display=myProfile">הפרופיל שלי</button>
-        <button mat-raised-button color="primary" (click)="showMyGifts()"><img height="40px"
-                src="/assets/gift.png" /></button>
-        <button mat-raised-button color="primary" (click)="display=reception">
-           מסירת ציוד מ- {{getFamilies(true).length}} תורמים
-        </button>
-        <button *ngIf="openMessage1Link(false)" mat-raised-button color="accent" (click)="openMessage1Link(true)">
-            {{showMessage1Text()}}
-        </button>
+    <div >
+        <div class="button-div">
+            <button *ngIf="openMessage1Link(false)" mat-raised-button color="accent" (click)="openMessage1Link(true)">
+                {{showMessage1Text()}}
+            </button>
+        </div>
+        <div class="button-div">
+            <button mat-raised-button color="primary" (click)="startPage()">חזרה לרשימה</button>
+            <button mat-raised-button color="primary" (click)="display=myProfile">הפרופיל שלי</button>
+            <button mat-raised-button color="primary" (click)="showMyGifts()"><img height="40px"
+                    src="/assets/gift.png" /></button>
+            <button mat-raised-button color="primary" (click)="display=reception">
+                מסירת ציוד מ- {{getFamilies(true).length}} תורמים
+            </button>
+        </div>
+
 
     </div>
 </div>
