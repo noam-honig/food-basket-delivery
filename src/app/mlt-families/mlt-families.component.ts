@@ -16,6 +16,7 @@ import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-q
 import { getCurrentLocation, GetDistanceBetween, Location } from '../shared/googleApiHelpers';
 import { getLang } from '../sites/sites';
 import { use } from '../translate';
+import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
 
 
 @Component({
@@ -26,6 +27,7 @@ import { use } from '../translate';
 export class MltFamiliesComponent implements OnInit {
   deliveryList = 'deliveryList';
   deliveryInfo = 'deliveryInfo';
+  problemInfo = 'problemInfo';
   display = this.deliveryList;
 
   numberOfDeliveries = 0;
@@ -35,7 +37,7 @@ export class MltFamiliesComponent implements OnInit {
     return this.context.isAllowed(Roles.indie);
   }
 
-  constructor(public settings: ApplicationSettings, private dialog: DialogService, private context: Context,private busy:BusyService) { }
+  constructor(public settings: ApplicationSettings, private dialog: DialogService, private context: Context, private busy: BusyService) { }
   @Input() comp: MyFamiliesComponent;
   get familyLists() {
     return this.comp.familyLists;
@@ -113,12 +115,12 @@ export class MltFamiliesComponent implements OnInit {
   }
 
   async showMyGifts() {
-      showUsersGifts(this.context.user.id, this.context, this.settings, this.dialog, this.busy);
+    showUsersGifts(this.context.user.id, this.context, this.settings, this.dialog, this.busy);
   }
-    
+
   async assignNewDelivery() {
     var volunteerLocation = await getCurrentLocation(true, this.dialog);
-    
+
     let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(volunteerLocation));
 
     await this.context.openDialog(SelectListComponent, x => {
@@ -161,9 +163,11 @@ export class MltFamiliesComponent implements OnInit {
   }
 
   selectedFamily: ActiveFamilyDeliveries;
+  deliveriesForFamily: ActiveFamilyDeliveries[] = [];
   selectFamily(f: ActiveFamilyDeliveries) {
     this.selectedFamily = f;
     this.display = this.deliveryInfo;
+    this.deliveriesForFamily = this.familyLists.toDeliver.filter(x => x.family.value == f.family.value);
   }
   async selectDistCenter() {
     let distCenters = await this.context.for(DistributionCenters).find({ where: x => x.isActive() });
@@ -187,10 +191,20 @@ export class MltFamiliesComponent implements OnInit {
           item: y
         })),
         onSelect: async (x) => {
-          await HelperFamiliesComponent.changeDestination(x[0].item.id.value);
+          await MltFamiliesComponent.changeDestination(x[0].item.id.value);
           this.familyLists.reload();
         }
       });
+    }
+  }
+  @ServerFunction({ allowed: c => c.isSignedIn() })
+  static async changeDestination(newDestinationId: string, context?: Context) {
+    let s = getSettings(context);
+    if (!s.isSytemForMlt())
+      throw "not allowed";
+    for (const fd of await context.for(ActiveFamilyDeliveries).find({ where: fd => fd.courier.isEqualTo(context.user.id) })) {
+      fd.distributionCenter.value = newDestinationId;
+      await fd.save();
     }
   }
 
@@ -213,8 +227,29 @@ export class MltFamiliesComponent implements OnInit {
     this.selectedFamily = null
   }
 
-  async deliveredToFamily(f: ActiveFamilyDeliveries) {
-    //this.deliveredToFamilyOk(f, DeliveryStatus.Success, s => s.commentForSuccessDelivery);
+  async deliveredToFamily() {
+    let f = this.selectedFamily;
+    this.context.openDialog(GetVolunteerFeedback, x => x.args = {
+      family: f,
+      comment: f.courierComments.value,
+      helpText: s => s.commentForSuccessDelivery,
+      ok: async (comment) => {
+        await this.updateDeliveryStatus(comment, DeliveryStatus.Success);
+      },
+      cancel: () => { }
+    });
+  }
+
+  private async updateDeliveryStatus(comment: string, s: DeliveryStatus) {
+    for (const f of this.deliveriesForFamily) {
+      f.deliverStatus.value = s;
+      f.courierComments.value = comment;
+      f.checkNeedsWork();
+      await f.save();
+    }
+    this.familyLists.initFamilies();
+    this.display = this.deliveryList;
+    this.showDeliveryHistory(this.dialog, this.busy, false);
   }
 
   async frozen(f) {

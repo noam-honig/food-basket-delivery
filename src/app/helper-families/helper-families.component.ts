@@ -122,19 +122,7 @@ export class HelperFamiliesComponent implements OnInit {
 
   }
 
-  @ServerFunction({ allowed: Roles.indie })
-  static async assignFamilyDeliveryToIndie(deliveryIds: string[], context?: Context) {
-    if (!getSettings(context).isSytemForMlt())
-      throw "not allowed";
-    for (const id of deliveryIds) {
 
-      let fd = await context.for(ActiveFamilyDeliveries).findId(id);
-      if (fd.courier.value == "" && fd.deliverStatus.value == DeliveryStatus.ReadyForDelivery) {//in case the delivery was already assigned to someone else
-        fd.courier.value = context.user.id;
-        await fd.save();
-      }
-    }
-  }
 
   @ServerFunction({ allowed: Roles.indie })
   static async getDeliveriesByLocation(pivotLocation: Location, context?: Context, db?: SqlDatabase) {
@@ -205,16 +193,7 @@ export class HelperFamiliesComponent implements OnInit {
   };
 
 
-  @ServerFunction({ allowed: c => c.isSignedIn() })
-  static async changeDestination(newDestinationId: string, context?: Context) {
-    let s = getSettings(context);
-    if (!s.isSytemForMlt())
-      throw "not allowed";
-    for (const fd of await context.for(ActiveFamilyDeliveries).find({ where: fd => fd.courier.isEqualTo(context.user.id) })) {
-      fd.distributionCenter.value = newDestinationId;
-      await fd.save();
-    }
-  }
+  
 
 
 

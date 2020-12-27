@@ -112,7 +112,12 @@
     <div class="grow-item" *ngIf="display==deliveryInfo">
         <span class="mat-card-title" > {{selectedFamily.name.value}} מחכה ליצירת קשר ממך לתיאום איסוף התרומה</span>
         <app-family-info [f]="selectedFamily" [hideSal]="true"></app-family-info>
-        <button mat-raised-button class="myButton" color="accent" (click)="deliveredToFamily(selectedFamily)">
+        <ul>
+            <li *ngFor="let i of deliveriesForFamily">
+                {{i.quantity.value}} X {{i.basketType.displayValue}} 
+            </li>
+        </ul>
+        <button mat-raised-button class="myButton" color="accent" (click)="deliveredToFamily()">
             אספתי בהצלחה
         </button>
         <button mat-raised-button class="myButton" color="accent" (click)="display=problemInfo">
