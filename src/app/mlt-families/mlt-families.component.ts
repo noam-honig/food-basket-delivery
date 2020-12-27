@@ -3,6 +3,7 @@ import { AndFilter, BusyService, Column, Context, FilterBase, ServerFunction } f
 import { Roles } from '../auth/roles';
 import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
+import { FamilyId } from '../families/families';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { DeliveryInList, HelperFamiliesComponent } from '../helper-families/helper-families.component';
@@ -49,10 +50,27 @@ export class MltFamiliesComponent implements OnInit {
     this.giftCount = await HelperGifts.getMyPendingGiftsCount(this.context.user.id);
   }
 
-  getFamilies() {
+  getBasketsDescription(family: ActiveFamilyDeliveries, delivered = false) {
+    let result: string = '';
+    for (const f of (delivered? this.comp.familyLists.delivered : this.comp.familyLists.toDeliver)) {
+      //.filter(x=>x.family == family))
+
+      if (f.family==family.family) {
+        let s = f.quantity.displayValue + ' X ' + f.basketType.displayValue;
+        if (result == '') 
+          result = s
+        else
+          result += '; ' + s;
+      }
+    }
+
+    return result;
+  }
+
+  getFamilies(delivered = false) {
     let consumed: string[] = []
     let result: ActiveFamilyDeliveries[] = [];
-    for (const f of this.comp.familyLists.toDeliver) {
+    for (const f of (delivered? this.comp.familyLists.delivered : this.comp.familyLists.toDeliver)) {
       if (!consumed.includes(f.family.value)) {
         consumed.push(f.family.value)
         result.push(f);

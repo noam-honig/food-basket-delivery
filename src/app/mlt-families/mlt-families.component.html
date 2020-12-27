@@ -110,6 +110,42 @@
         </div>
 
     </div>
+
+    <div class="grow-item" *ngIf="display==reception">
+        <span class="mat-card-title">בידך ציוד שנאסף מ {{getFamilies(true).length}} תורמים</span>
+        <mat-nav-list role="list">
+            <mat-list-item *ngFor="let f of getFamilies(true);let i=index">
+
+                <div>
+                    <mat-panel-title style="justify-content: space-between">
+                        <div class="familyLine">
+                            <span *ngIf="i+1">{{i+1}}.&nbsp;</span>{{f.name.value}}
+                            <mat-icon color="accent" *ngIf="f.deliveryComments.value"> comment</mat-icon>
+                            <mat-icon color="accent" *ngIf="!f.addressOk.value">warning</mat-icon>
+                            <mat-icon color="green" *ngIf="f.courierBeenHereBefore.value">repeat</mat-icon>
+                            <mat-icon *ngIf="f.courierComments.value"> comment</mat-icon>
+                        </div>
+
+                    </mat-panel-title>
+
+                    <mat-panel-description style="justify-content: space-evenly; align-items: stretch;">
+
+                        <div style="white-space: nowrap;">
+                            {{f.getAddressDescription() }}
+                        </div>
+
+                        <div style="white-space: nowrap;">
+                            {{getBasketsDescription(f, true)}}
+                        </div>
+
+
+                    </mat-panel-description>
+                </div>
+                <mat-divider></mat-divider>
+            </mat-list-item>
+        </mat-nav-list>
+    </div>
+
     <div class="grow-item" *ngIf="display==deliveryInfo">
         <span class="mat-card-title"> {{selectedFamily.name.value}} מחכה ליצירת קשר ממך לתיאום איסוף התרומה</span>
         <app-family-info [f]="selectedFamily" [hideSal]="true"></app-family-info>
@@ -168,7 +204,8 @@
         <button mat-raised-button color="primary" (click)="display=myProfile">הפרופיל שלי</button>
         <button mat-raised-button color="primary" (click)="showMyGifts()"><img height="40px"
                 src="/assets/gift.png" /></button>
-        <button mat-raised-button color="primary" (click)="showDeliveryHistory()">{{numberOfDeliveries}} תרומות
-            שאספתי</button>
+        <button mat-raised-button color="primary" (click)="display=reception">
+           מסירת ציוד מ- {{getFamilies(true).length}} תורמים
+        </button>
     </div>
 </div>
