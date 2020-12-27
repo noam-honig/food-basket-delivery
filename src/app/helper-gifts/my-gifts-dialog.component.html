@@ -14,11 +14,11 @@
         </div>
         <mat-divider></mat-divider>
         <div *ngIf="giftsUsed==1" style="padding-top: 5px;">
-            <span *ngIf="theGifts.length>1"> בנוסף </span>
+            <span *ngIf="theGifts.length>giftsUsed"> בנוסף </span>
             הספקת לנצל כבר משאלה אחת - מקווים שנהנית!
         </div>
         <div *ngIf="giftsUsed>1" style="padding-top: 5px;"> 
-            <span *ngIf="theGifts.length>2"> בנוסף </span>
+            <span *ngIf="theGifts.length>giftsUsed"> בנוסף </span>
             ניצלת כבר {{giftsUsed}} משאלות. מקווים שאהבת! 
         </div>
 </div>
