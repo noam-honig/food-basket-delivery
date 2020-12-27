@@ -1,13 +1,14 @@
 <div class="full-page mat-tipogrophy">
     <div class="grow-item" *ngIf="display==deliveryList">
-        <span *ngIf="numberOfDeliveries==0" class="mat-card-title" style="text-align: center;"> 
-            {{comp.context.user.name}} כיף שבאת, תודה שבחרת להתחשב - יאללה מתחילים! 
+        <span *ngIf="numberOfDeliveries==0" class="mat-card-title" style="text-align: center;">
+            {{comp.context.user.name}} כיף שבאת, תודה שבחרת להתחשב - יאללה מתחילים!
         </span>
-        <span *ngIf="numberOfDeliveries>0" class="mat-card-title" style="text-align: center;"> 
+        <span *ngIf="numberOfDeliveries>0" class="mat-card-title" style="text-align: center;">
             {{comp.context.user.name}} תודה על {{numberOfDeliveries}} משלוחים שאספת! - יאללה ממשיכים!
         </span>
         <div style="display: flex; flex-flow: column; margin:15px; text-align: center;">
-            <button mat-raised-button color="primary" *ngIf="canSelectDonors()" (click)="assignNewDelivery()">מצאו לי עוד תורמים בסביבתי </button>
+            <button mat-raised-button color="primary" *ngIf="canSelectDonors()" (click)="assignNewDelivery()">מצאו לי
+                עוד תורמים בסביבתי </button>
             <button mat-raised-button color="accent" (click)="frozen(selectedFamily)">
                 וואלה עמוס לי,
                 תנו לי הפסקה של שבועיים
@@ -110,11 +111,11 @@
 
     </div>
     <div class="grow-item" *ngIf="display==deliveryInfo">
-        <span class="mat-card-title" > {{selectedFamily.name.value}} מחכה ליצירת קשר ממך לתיאום איסוף התרומה</span>
+        <span class="mat-card-title"> {{selectedFamily.name.value}} מחכה ליצירת קשר ממך לתיאום איסוף התרומה</span>
         <app-family-info [f]="selectedFamily" [hideSal]="true"></app-family-info>
         <ul>
             <li *ngFor="let i of deliveriesForFamily">
-                {{i.quantity.value}} X {{i.basketType.displayValue}} 
+                {{i.quantity.value}} X {{i.basketType.displayValue}}
             </li>
         </ul>
         <button mat-raised-button class="myButton" color="accent" (click)="deliveredToFamily()">
@@ -129,35 +130,46 @@
         </button>
     </div>
     <div class="grow-item" *ngIf="display==problemInfo">
-        <span class="mat-card-title" > מה היתה הבעייה באיסוף מ{{selectedFamily.name.value}}</span>
+        <span class="mat-card-title"> מה היתה הבעייה באיסוף מ{{selectedFamily.name.value}}</span>
         <app-family-info [f]="selectedFamily" [hideSal]="true"></app-family-info>
 
 
-        <div *ngIf="display==problemInfo"> 
-            <button mat-raised-button class="myButton" color="accent" (click)="deliveredToFamily(selectedFamily,'אספתי ציוד שונה ממה שכתוב')">
+        <div *ngIf="display==problemInfo">
+            <button mat-raised-button class="myButton" color="accent"
+                (click)="deliveredToFamily(selectedFamily,'אספתי ציוד שונה ממה שכתוב')">
                 אספתי ציוד שונה ממה שכתוב
             </button>
-            <button mat-raised-button class="myButton" color="accent" (click)="couldntDeliverToFamily(selectedFamily,'FailedNotReady')">    
+            <button mat-raised-button class="myButton" color="accent"
+                (click)="couldntDeliverToFamily(selectedFamily,'FailedNotReady')">
                 התרומה עוד לא מוכנה לאיסוף
             </button>
-            <button mat-raised-button class="myButton" color="accent" (click)="couldntDeliverToFamily(selectedFamily,'FailedBadAddress')">
+            <button mat-raised-button class="myButton" color="accent"
+                (click)="couldntDeliverToFamily(selectedFamily,'FailedBadAddress')">
                 פרטי התורם שגויים
             </button>
-            <button mat-raised-button class="myButton" color="accent" (click)="couldntDeliverToFamily(selectedFamily,'FailedNotHome')">
+            <button mat-raised-button class="myButton" color="accent"
+                (click)="couldntDeliverToFamily(selectedFamily,'FailedNotHome')">
                 לא ענו לי (לאחר מספר נסיונות)
             </button>
-            <button mat-raised-button class="myButton" color="accent" (click)="couldntDeliverToFamily(selectedFamily,'FailedAlreadyPickedUp')">
+            <button mat-raised-button class="myButton" color="accent"
+                (click)="couldntDeliverToFamily(selectedFamily,'FailedAlreadyPickedUp')">
                 התרומה כבר נמסרה
             </button>
-            <button mat-raised-button class="myButton" color="accent" (click)="couldntDeliverToFamily(selectedFamily,'FailedTooFar')">
+            <button mat-raised-button class="myButton" color="accent"
+                (click)="couldntDeliverToFamily(selectedFamily,'FailedTooFar')">
                 רחוק לי
             </button>
-        </div> 
+        </div>
+    </div>
+    <div class="grow-item" *ngIf="display==myProfile">
+        <app-update-info></app-update-info>
     </div>
     <div class="button-div">
         <button mat-raised-button color="primary" (click)="display=deliveryList">חזרה לרשימה</button>
-        <button mat-raised-button color="primary">הפרופיל שלי</button>
-        <button mat-raised-button color="primary" (click)="showMyGifts()"><img height="40px" src="/assets/gift.png" /></button>
-        <button mat-raised-button color="primary" (click)="showDeliveryHistory()">{{numberOfDeliveries}}  תרומות שאספתי</button>
+        <button mat-raised-button color="primary" (click)="display=myProfile">הפרופיל שלי</button>
+        <button mat-raised-button color="primary" (click)="showMyGifts()"><img height="40px"
+                src="/assets/gift.png" /></button>
+        <button mat-raised-button color="primary" (click)="showDeliveryHistory()">{{numberOfDeliveries}} תרומות
+            שאספתי</button>
     </div>
 </div>
