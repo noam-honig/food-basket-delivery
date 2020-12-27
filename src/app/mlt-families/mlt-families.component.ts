@@ -31,6 +31,7 @@ export class MltFamiliesComponent implements OnInit {
   deliveryInfo = 'deliveryInfo';
   problemInfo = 'problemInfo';
   myProfile = 'myProfile';
+  recepetion = 'reception';
   display = this.deliveryList;
 
   numberOfDeliveries = 0;
