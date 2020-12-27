@@ -203,7 +203,7 @@
         <app-update-info></app-update-info>
     </div>
     <div >
-        <div class="button-div">
+        <div class="button-div" *ngIf="display==deliveryList">
             <button *ngIf="openMessage1Link(false)" mat-raised-button color="accent" (click)="openMessage1Link(true)">
                 {{showMessage1Text()}}
             </button>
