@@ -340,4 +340,16 @@ export class MltFamiliesComponent implements OnInit {
       this.thisHelper.frozenTill.value = this.today;
       await this.thisHelper.save()
   }
+
+  openMessage1Link(open:boolean) {
+    if (!this.settings.message1Link || !this.settings.message1Link.value || this.settings.message1Link.value == '')
+      return false;
+    if (open)
+      window.open(this.settings.message1Link.value, '_blank');
+    return true;
+  }
+
+  showMessage1Text() {
+    return this.settings.message1Text.displayValue;
+  }
 }

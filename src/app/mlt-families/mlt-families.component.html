@@ -4,7 +4,7 @@
             {{comp.context.user.name}} כיף שבאת, תודה שבחרת להתחשב - יאללה מתחילים!
         </span>
         <span *ngIf="numberOfDeliveries>0" class="mat-card-title" style="text-align: center;">
-            {{comp.context.user.name}} תודה על {{numberOfDeliveries}} משלוחים שאספת! - יאללה ממשיכים!
+            {{comp.context.user.name}} תודה על {{getFamilies(true).length}} תרומות שאספת! - יאללה ממשיכים!
         </span>
         <div style="display: flex; flex-flow: column; margin:15px; text-align: center;">
             <button mat-raised-button color="primary" *ngIf="canSelectDonors()" (click)="assignNewDelivery()">מצאו לי
@@ -208,5 +208,9 @@
         <button mat-raised-button color="primary" (click)="display=reception">
            מסירת ציוד מ- {{getFamilies(true).length}} תורמים
         </button>
+        <button *ngIf="openMessage1Link(false)" mat-raised-button color="accent" (click)="openMessage1Link(true)">
+            {{showMessage1Text()}}
+        </button>
+
     </div>
 </div>
