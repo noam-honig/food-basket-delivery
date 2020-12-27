@@ -25,7 +25,7 @@
 
 
         <mat-nav-list role="list">
-            <mat-list-item *ngFor="let f of getFamilies();let i=index" (click)="selectFamily(f)">
+            <mat-list-item *ngFor="let f of getFamilies();let i=index" (click)="selectFamily(f)" style="height:max-content">
 
                 <div>
                     <mat-panel-title style="justify-content: space-between">
@@ -121,7 +121,7 @@
     <div class="grow-item" *ngIf="display==reception">
         <span class="mat-card-title">בידך ציוד שנאסף מ {{getFamilies(true).length}} תורמים</span>
         <mat-nav-list role="list">
-            <mat-list-item *ngFor="let f of getFamilies(true);let i=index">
+            <mat-list-item *ngFor="let f of getFamilies(true);let i=index" style="height:max-content">
 
                 <div>
                     <mat-panel-title style="justify-content: space-between">
@@ -201,7 +201,7 @@
         <app-update-info></app-update-info>
     </div>
     <div class="button-div">
-        <button mat-raised-button color="primary" (click)="display=deliveryList">חזרה לרשימה</button>
+        <button mat-raised-button color="primary" (click)="startPage()">חזרה לרשימה</button>
         <button mat-raised-button color="primary" (click)="display=myProfile">הפרופיל שלי</button>
         <button mat-raised-button color="primary" (click)="showMyGifts()"><img height="40px"
                 src="/assets/gift.png" /></button>

@@ -204,6 +204,14 @@ export class MltFamiliesComponent implements OnInit {
     this.display = this.deliveryInfo;
     this.deliveriesForFamily = this.familyLists.toDeliver.filter(x => x.family.value == f.family.value);
   }
+
+  startPage() {
+    this.display = this.deliveryList;
+    this.selectedFamily = null
+    this.familyLists.initFamilies();
+    this.showDeliveryHistory(false);
+  }
+
   async selectDistCenter() {
     let distCenters = await this.context.for(DistributionCenters).find({ where: x => x.isActive() });
     distCenters = distCenters.filter(x => x.address.ok());
@@ -251,15 +259,13 @@ export class MltFamiliesComponent implements OnInit {
       try {
         await fd.save();
         this.dialog.analytics('Problem');
-        //this.initFamilies();
       }
       catch (err) {
         this.dialog.Error(err);
       }
     }
     this.dialog.Info("ההודעה שלך נקלטה! תודה רבה!")
-    this.settings.reload()
-    this.selectedFamily = null
+    this.startPage();
   }
 
   async deliveredToFamily(newComment?) {
@@ -282,15 +288,12 @@ export class MltFamiliesComponent implements OnInit {
       f.checkNeedsWork();
       await f.save();
     }
-    this.familyLists.initFamilies();
-    this.display = this.deliveryList;
-    this.showDeliveryHistory(false);
+    this.startPage()
   }
 
   updateComment(f: ActiveFamilyDeliveries) {
     this.context.openDialog(EditCommentDialogComponent, x => x.args = {
       comment: f.courierComments.value,
-
 
       save: async comment => {
         if (f.isNew())
@@ -336,6 +339,5 @@ export class MltFamiliesComponent implements OnInit {
       this.today = new Date();
       this.thisHelper.frozenTill.value = this.today;
       await this.thisHelper.save()
-
   }
 }
