@@ -17,7 +17,7 @@ export class en implements Language {
   ActiveDeliveries = 'Active deliveries';
   FamiliesComponent = 'Families';
   DeliveryFollowUpComponent = 'Volunteer Tracking';
-  NewsComponent = 'Requires Followup';
+  NewsComponent = 'Followup';
   DistributionMapComponent = 'Distribution map';
   OverviewComponent = 'Overview';
   HelpersComponent = 'Volunteers';
@@ -81,7 +81,7 @@ export class en implements Language {
   repeatFamilyNotice = "You've been to this family before too";
   inacurateAddress = 'Notice, Inaccurate Address!';
   copyAddress = 'Copy address';
-  SelfPickupComponent = 'Come and take';
+  SelfPickupComponent = 'Self Pickup';
   oneDeliveryToDistribute = 'One delivery for distribution';
   deliveriesToDistribute = 'Assigned Deliveries';
   volunteerInfo = 'Volunteer details';
@@ -295,9 +295,9 @@ export class en implements Language {
   courierAsignDate = 'Volunteer assignment date';
   deliveryCreateDate = 'Assignment date';
   deliveryCreateUser = 'End User';
-  requireFollowUp = 'Requires Followup';
-  requireFollowUpUpdateUser = 'Requires Followup Update User';
-  requireFollowUpUpdateDate = 'Requires Followup Update Date';
+  requireFollowUp = 'Followup';
+  requireFollowUpUpdateUser = 'Followup Update User';
+  requireFollowUpUpdateDate = 'Followup Update Date';
   deliveryDetailsFor = 'delivery details for';
   remainingByBaskets = 'UnAssigned by parcels';
   byBaskets = 'By parcels';
@@ -482,7 +482,7 @@ export class en implements Language {
   problems = 'Problems';
   delveriesInProgress = 'Families are waiting';
   dates = 'Dates';
-  selfPickup = 'Come and take';
+  selfPickup = 'Self Pickup';
   delveriesSuccesfull = 'Delivered';
   selfAssigned = 'Assigned independently';
   familiesAt = 'Families b';
@@ -654,7 +654,7 @@ export class en implements Language {
   customSmsMessage = 'Personalized SMS';
   assignedToVolunteer = 'Associated with a volunteer';
   languageCodeHe = 'en';
-  removeFollowUpFor = 'Remove "Requires Followup" for ';
+  removeFollowUpFor = 'Remove "Followup" for ';
   allFamilySources = 'All Family Sources';
   allNew = 'All the news';
   problemsThatRequireFollowup = 'Problems Followup';
