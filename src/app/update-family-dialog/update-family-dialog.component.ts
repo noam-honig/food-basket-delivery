@@ -114,8 +114,8 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     await this.context.openDialog(GetVolunteerFeedback, x => x.args = {
       helpText: () => new StringColumn(),
       ok: async (comment) => {
-        await UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.args.familyDelivery.courier.value, comment);
-        this.dialog.Info("הודעה נשלחה");
+          await UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.args.familyDelivery.courier.value, comment);
+          this.dialog.Info("הודעה נשלחה");
       },
       cancel: () => { },
       hideLocation: true,
@@ -184,14 +184,12 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       await this.delivery.save();
     }
     this.confirmed = true;
-    this.reloadDeliveries = wasChanged(this.families.currentRow.status,
-      this.families.currentRow.fixedCourier,
-      this.families.currentRow.defaultSelfPickup,
-      this.families.currentRow.deliveryComments);
-    if (!this.refreshDeliveryStatistics)
+    this.reloadDeliveries = wasChanged(this.families.currentRow.status);
+    if(!this.refreshDeliveryStatistics)
       this.refreshDeliveryStatistics = this.reloadDeliveries;
     await this.families.currentRow.save();
-
+    if (this.delivery)
+      this.delivery.reload();
 
 
     this.dialogRef.close();

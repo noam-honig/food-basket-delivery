@@ -18,6 +18,7 @@ import { getLang, Sites } from '../sites/sites';
 import { Roles } from '../auth/roles';
 import { PhoneColumn } from '../model-shared/types';
 import { Families } from '../families/families';
+import { UserFamiliesList } from '../my-families/user-families';
 
 @Component({
   selector: 'app-family-info',
@@ -57,7 +58,8 @@ export class FamilyInfoComponent implements OnInit {
   }
   @Input() partOfAssign: Boolean;
   @Output() assignmentCanceled = new EventEmitter<void>();
-  @Output() refreshList = new EventEmitter<void>();
+  
+  @Input() userFamilies :UserFamiliesList;
   useWaze() {
     return this.settings.lang.languageCode == 'iw';
   }
@@ -199,11 +201,11 @@ export class FamilyInfoComponent implements OnInit {
       dialog: this.dialog,
       refreshDeliveryStats: () => {
         x = f.courier.value;
-        this.refreshList.emit();
+        this.userFamilies.reload();
       }
     });
     if (x!=f.courier.value)
-      this.refreshList.emit();
+    this.userFamilies.reload();
 
   }
   copyAddress(f: ActiveFamilyDeliveries) {
