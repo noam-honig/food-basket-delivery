@@ -2,6 +2,8 @@ import { ColumnOptions, ValueListColumn, NumberColumn, FilterBase, Column, Decor
 import { HelperId } from '../helpers/helpers';
 import { use } from '../translate';
 import { getLang } from '../sites/sites';
+import { settings } from 'cluster';
+import { getSettings } from '../manage/ApplicationSettings';
 
 
 export class DeliveryStatus {
@@ -13,7 +15,11 @@ export class DeliveryStatus {
       case this.SuccessLeftThere:
       case this.FailedBadAddress:
       case this.FailedNotHome:
-        case this.FailedDoNotWant:
+      case this.FailedDoNotWant:
+      case this.FailedNotReady: 
+      case this.FailedAlreadyPickedUp: 
+      case this.FailedTooFar: 
+      
       case this.FailedOther:
         return true;
     }
@@ -29,11 +35,12 @@ export class DeliveryStatus {
   static FailedBadAddress: DeliveryStatus = new DeliveryStatus(21, !use ? '' : use.language.notDeliveredBadAddress, true);
   static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, !use ? '' : use.language.notDeliveredNotHome, true);
   static FailedDoNotWant: DeliveryStatus = new DeliveryStatus(24, !use ? '' : use.language.notDeliveredDontWant, true);
-  static FailedOther: DeliveryStatus = new DeliveryStatus(25, !use ? '' : use.language.notDeliveredOther, true);
+
   static FailedNotReady: DeliveryStatus = new DeliveryStatus(26, !use ? '' : "התרומה עוד לא מוכנה לאיסוף", true);
-  static FailedAlreadyPickedUp: DeliveryStatus = new DeliveryStatus(28, !use ? '' : "התרומה כבר נמסרה", true);
+  static FailedAlreadyPickedUp: DeliveryStatus = new DeliveryStatus(27, !use ? '' : "התרומה כבר נמסרה", true);
   static FailedTooFar: DeliveryStatus = new DeliveryStatus(28, !use ? '' : "רחוק לי", true);
-//  static successButNotSameItems: DeliveryStatus = new DeliveryStatus(28, !use ? '' : "אספתי ציוד שונה ממה שכתוב", true);
+
+  static FailedOther: DeliveryStatus = new DeliveryStatus(29, !use ? '' : use.language.notDeliveredOther, true);
 
 
 
@@ -72,6 +79,13 @@ export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
         if (!DeliveryStatus.usingSelfPickupModule) {
           op = op.filter(x => x.id != DeliveryStatus.SelfPickup.id && x.id != DeliveryStatus.SuccessPickedUp.id);
         }
+        if (!getSettings(context).isSytemForMlt()) {
+          op = op.filter(x => 
+            x.id != DeliveryStatus.FailedNotReady.id && 
+            x.id != DeliveryStatus.FailedAlreadyPickedUp.id &&
+            x.id != DeliveryStatus.FailedTooFar.id
+          );
+        }
         return {
           valueList: op,
           width: '150'
@@ -101,7 +115,10 @@ export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
         return 'deliveredOk';
       case DeliveryStatus.FailedBadAddress:
       case DeliveryStatus.FailedNotHome:
-        case DeliveryStatus.FailedDoNotWant:
+      case DeliveryStatus.FailedDoNotWant:
+      case DeliveryStatus.FailedNotReady: 
+      case DeliveryStatus.FailedAlreadyPickedUp: 
+      case DeliveryStatus.FailedTooFar: 
       case DeliveryStatus.FailedOther:
         return 'deliveredProblem';
       case DeliveryStatus.Frozen:

@@ -121,6 +121,23 @@
 
     <div class="grow-item" *ngIf="display==reception">
         <span class="mat-card-title">בידך ציוד שנאסף מ {{getFamilies(true).length}} תורמים</span>
+
+        <!--  TODO (Motti): Currently not using QR Code - remove when final decision on reception
+        <button *ngIf="!this.showQRCode" mat-raised-button (click)="this.showQRCode=true"
+            style="height: 35px;" color="primary">
+            {{settings.lang.showQRCode}}
+        </button>
+        <button *ngIf="this.showQRCode" mat-raised-button (click)="this.showQRCode=false"
+            style="height: 35px;" color="primary">
+            {{settings.lang.removeQRCode}}
+        </button>
+
+        <div style="display:flex;justify-content: center;">
+            <qr-code *ngIf="this.showQRCode" [value]="this.myQRCode()" [size]="300" (click)="this.showQRCode=false">
+            </qr-code>
+        </div>
+        -->
+
         <mat-nav-list role="list">
             <mat-list-item *ngFor="let f of getFamilies(true);let i=index" style="height:max-content">
 
