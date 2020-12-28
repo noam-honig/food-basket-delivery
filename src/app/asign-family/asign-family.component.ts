@@ -67,7 +67,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             this.helperFamilies.switchToMap();
 
             setTimeout(() => {
-                this.familyLists.startAssignByMap(this.filterCity, this.filterGroup, this.dialog.distCenter.value, this.filterArea, this.familyLists.helper);
+                this.familyLists.startAssignByMap(this.filterCity, this.filterGroup, this.dialog.distCenter.value, this.filterArea,this.basketType.id);
             }, 50);
         }, 50);
 
@@ -236,6 +236,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 filterGroup: this.filterGroup,
                 filterCity: this.filterCity,
                 filterArea: this.filterArea,
+                filterBasket:this.basketType.id,
                 helperId: this.helper ? this.helper.id.value : '',
                 distCenter: this.dialog.distCenter.value
             }));
@@ -492,7 +493,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         let countFamilies = (additionalWhere?: (f: ActiveFamilyDeliveries) => FilterBase) => {
             return context.for(ActiveFamilyDeliveries).count(f => {
-                let where = f.readyFilter(info.filterCity, info.filterGroup, info.filterArea).and(f.filterDistCenterAndAllowed(info.distCenter));
+                let where = f.readyFilter(info.filterCity, info.filterGroup, info.filterArea,info.filterBasket).and(f.filterDistCenterAndAllowed(info.distCenter));
                 if (additionalWhere) {
                     where = where.and(additionalWhere(f));
                 }
@@ -508,8 +509,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         let f = context.for(ActiveFamilyDeliveries).create();
         let fd = context.for(FamilyDeliveries).create();
         if (info.helperId) {
-            let r = await db.execute(sql.build('select ', f.id, ' from ', f, ' where ', f.active().and(f.filterDistCenterAndAllowed(info.distCenter)).and(f.readyFilter(info.filterCity, info.filterGroup, info.filterArea).and(f.special.isEqualTo(YesNo.No))), ' and ',
-                filterRepeatFamilies(sql, f, fd, info.helperId), ' limit 30'));
+            let r = await db.execute(log(sql.build('select ', f.id, ' from ', f, ' where ', f.active().and(f.filterDistCenterAndAllowed(info.distCenter)).and(f.readyFilter(info.filterCity, info.filterGroup, info.filterArea,info.filterBasket).and(f.special.isEqualTo(YesNo.No))), ' and ',
+                filterRepeatFamilies(sql, f, fd, info.helperId), ' limit 30')));
             result.repeatFamilies = r.rows.map(x => x[r.getColumnKeyInResultForIndexInSelect(0)]);
         }
 
@@ -537,7 +538,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 sql.columnWithAlias(sql.func('count ', '*'), 'c')
             ],
             from: f,
-            where: () => [f.filterDistCenterAndAllowed(info.distCenter), f.readyFilter(info.filterCity, info.filterGroup)]
+            where: () => [f.filterDistCenterAndAllowed(info.distCenter), f.readyFilter(info.filterCity, info.filterGroup,undefined,info.filterBasket)]
         }), ' group by ', f.area, ' order by ', f.area)));
         result.areas = groupBy.rows.map(x => {
             let r: CityInfo = {
@@ -972,10 +973,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.addFamily(f => f.id.isIn(this.repeatFamilies), 'repeat-families')
     }
     addSpecific() {
-        this.addFamily(f => undefined, 'specific');
+        this.addFamily(f => f.readyFilter(this.filterCity, this.filterGroup, this.filterArea,this.basketType.id), 'specific');
     }
     addStreet() {
-        this.addFamily(f => f.readyFilter(this.filterCity, this.filterGroup, this.filterArea), 'street', true);
+        this.addFamily(f => f.readyFilter(this.filterCity, this.filterGroup, this.filterArea,this.basketType.id), 'street', true);
     }
 }
 
@@ -1023,6 +1024,7 @@ export interface GetBasketStatusActionInfo {
     filterGroup: string;
     filterCity: string;
     filterArea: string;
+    filterBasket:string;
     helperId: string;
     distCenter: string;
 }
@@ -1054,4 +1056,8 @@ export interface refreshRouteArgs {
     doNotUseGoogle?: boolean,
     strategyId?: number,
     volunteerLocation?: Location
+}
+function log(s:string){
+    console.log(s);
+    return s;
 }

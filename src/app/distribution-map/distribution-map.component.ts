@@ -323,7 +323,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.updateChart();
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
-  static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: string, area?: string, context?: Context, db?: SqlDatabase) {
+  static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: string, area?: string,basket?:string, context?: Context, db?: SqlDatabase) {
     if (!distCenter)
       distCenter = '';
     let f = context.for(ActiveFamilyDeliveries).create();
@@ -346,7 +346,7 @@ export class DistributionMap implements OnInit, OnDestroy {
           where.push(f.filterDistCenterAndAllowed(distCenter));
 
         if (onlyPotentialAsignment) {
-          where.push(f.readyFilter(city, group, area).and(f.special.isEqualTo(YesNo.No)));
+          where.push(f.readyFilter(city, group, area,basket).and(f.special.isEqualTo(YesNo.No)));
         }
         return where;
       },

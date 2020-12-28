@@ -23,9 +23,9 @@ export class UserFamiliesList {
         if (this.allFamilies)
             this.map.test(this.allFamilies, this.helper);
     }
-    startAssignByMap(city: string, group: string, distCenter: string, area: string, helper: Helpers) {
+    startAssignByMap(city: string, group: string, distCenter: string, area: string, basketType: string) {
 
-        this.map.loadPotentialAsigment(city, group, distCenter, area);
+        this.map.loadPotentialAsigment(city, group, distCenter, area,basketType);
         setTimeout(() => {
             this.map.gmapElement.nativeElement.scrollIntoView();
         }, 100);
