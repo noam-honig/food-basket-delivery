@@ -284,7 +284,8 @@ export class HelperFamiliesComponent implements OnInit {
                 strategyId: this.settings.routeStrategy.value.id,
                 volunteerLocation: this.volunteerLocation
               });
-              await this.familyLists.reload();
+              if (this.familyLists)
+                await this.familyLists.reload();
             });
         },
         options: afdList

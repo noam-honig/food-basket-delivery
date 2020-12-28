@@ -9,15 +9,16 @@
       <mat-icon matSuffix (click)="searchString=''">clear</mat-icon>
     </mat-form-field>
   </form>
+  <button mat-raised-button color="accent" *ngIf="countSelected()>0" (click)="doSelection()">{{settings.lang.assign}}
+    {{countSelected()}}
+    {{settings.lang.deliveries}}</button>
 </div>
 <mat-dialog-content>
   <div>
 
 
 
-    <button mat-raised-button color="accent" *ngIf="countSelected()>0" (click)="doSelection()">{{settings.lang.assign}}
-      {{countSelected()}}
-      {{settings.lang.deliveries}}</button>
+    
     <button mat-raised-button color="accent"
       *ngIf="args.selectStreet&&families.totalRows>1&&searchString&&countSelected()==0"
       (click)="doSelection()">{{settings.lang.assign}} {{families.totalRows}}
