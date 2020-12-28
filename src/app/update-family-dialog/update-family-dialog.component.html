@@ -84,7 +84,7 @@
 
 
                         <app-address-input [column]="families.currentRow.address" #addressInput></app-address-input>
-                        
+
                         <a (click)="showOnMap()">{{settings.lang.showOnGoogleMap}}</a>
 
 
@@ -130,6 +130,12 @@
                     </mat-expansion-panel-header>
                     <ng-template matExpansionPanelContent>
                         <data-area [settings]="extraFamilyInfo"></data-area>
+                        <mat-form-field appearance="outline" style="width:100%">
+                            <mat-label>{{families.currentRow.internalComment.defs.caption}}</mat-label>
+                            <textarea matInput  [(ngModel)]="families.currentRow.internalComment.value"
+                                ></textarea>
+                        </mat-form-field>
+                        <data-area [settings]="extraFamilyInfo2"></data-area>
                     </ng-template>
                 </mat-expansion-panel>
 

@@ -234,6 +234,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   callInfo = new DataAreaSettings<Families>();
   deliverInfo = new DataAreaSettings();
   extraFamilyInfo = new DataAreaSettings<Families>();
+  extraFamilyInfo2 = new DataAreaSettings<Families>();
   deliveryDefaults = new DataAreaSettings<Families>();
   familyDeliveries: GridSettings<FamilyDeliveries>;
   onMapLocation: Location;
@@ -283,8 +284,12 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     this.extraFamilyInfo = this.families.addArea({
       columnSettings: families => [
         families.groups,
-        [families.status, families.familyMembers],
-        families.internalComment,
+        [families.status, families.familyMembers]
+      
+      ]
+    });
+    this.extraFamilyInfo2 = this.families.addArea({
+      columnSettings: families => [
         families.email,
         [
           families.tz,
