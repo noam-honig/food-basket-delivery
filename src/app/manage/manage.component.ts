@@ -4,7 +4,7 @@ import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
 
 import { SendSmsAction } from '../asign-family/send-sms-action';
-import { ApplicationSettings, PhoneItem, PhoneOption, qaItem } from './ApplicationSettings';
+import { ApplicationSettings, PhoneItem, PhoneOption, qaItem, SettingsService } from './ApplicationSettings';
 
 
 import { Context, IdEntity, IdColumn, StringColumn, EntityClass, Entity, NumberColumn, RouteHelperService, DataAreaSettings, ServerFunction, BusyService, DataControlInfo } from '@remult/core';
@@ -54,8 +54,10 @@ export class ManageComponent implements OnInit {
     this.settings.commonQuestions.value = this.serializeQa();
     try {
       await this.settings.save();
+      
       this.context.clearAllCache();
       this.dialog.refreshFamiliesAndDistributionCenters();
+      this.settingService.init();
     } catch (err) {
       let x = "שגיאה בשמירה: ";
       for (const c of this.settings.columns) {
@@ -73,7 +75,7 @@ export class ManageComponent implements OnInit {
     this.helpPhones = this.settings.getPhoneStrategy();
     this.qaItems = this.settings.getQuestions();
   }
-  constructor(private dialog: DialogService, private context: Context, private sanitization: DomSanitizer, public settings: ApplicationSettings, private busy: BusyService) { }
+  constructor(private dialog: DialogService, private context: Context, private sanitization: DomSanitizer, public settings: ApplicationSettings, private busy: BusyService,private settingService:SettingsService) { }
 
   basketType = this.context.for(BasketType).gridSettings({
     showFilter: true,

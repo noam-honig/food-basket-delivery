@@ -9,7 +9,7 @@ import { GeocodeInformation, GetGeoInformation, polygonContains, polygonGetBound
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
 
-import { Context, SqlDatabase, DataAreaSettings, GridButton, AndFilter } from '@remult/core';
+import { Context, SqlDatabase, DataAreaSettings, GridButton, AndFilter, StringColumn } from '@remult/core';
 import { ServerFunction } from '@remult/core';
 import { SqlBuilder } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -30,10 +30,11 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { delvieryActions, UpdateDistributionCenter, NewDelivery, UpdateDeliveriesStatus, UpdateCourier, DeleteDeliveries } from '../family-deliveries/family-deliveries-actions';
 import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, actionDialogNeeds } from '../families/familyActionsWiring';
 import { UpdateArea, updateGroup, bridge } from '../families/familyActions';
-import { Families } from '../families/families';
+import { AreaColumn, Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FamilyDeliveriesComponent } from '../family-deliveries/family-deliveries.component';
+import { use } from '../translate';
 
 @Component({
   selector: 'app-distribution-map',
@@ -41,7 +42,7 @@ import { FamilyDeliveriesComponent } from '../family-deliveries/family-deliverie
   styleUrls: ['./distribution-map.component.scss']
 })
 export class DistributionMap implements OnInit, OnDestroy {
-  showChart=true;
+  showChart = true;
   constructor(private context: Context, private dialog: DialogService, busy: BusyService, public settings: ApplicationSettings) {
 
     dialog.onStatusChange(() => {
@@ -116,6 +117,18 @@ export class DistributionMap implements OnInit, OnDestroy {
   gridView = true;
   drawing = false;
   selectedDeliveries: infoOnMap[] = [];
+  calcSelectedDeliveries() {
+    this.selectedDeliveries = [];
+    if (!this.activePolygon)
+      return;
+    for (const f of this.dict.values()) {
+      if (f.marker.getVisible() && f.marker.getMap()) {
+        if (polygonContains(this.activePolygon, f.marker.getPosition())) {
+          this.selectedDeliveries.push(f);
+        }
+      }
+    };
+  }
   selectDeliveries() {
     this.drawing = true;
     if (this.activePolygon) {
@@ -130,6 +143,7 @@ export class DistributionMap implements OnInit, OnDestroy {
       }
     });
 
+
     google.maps.event.addListener(dm, 'polygoncomplete', (polygon: google.maps.Polygon) => {
       this.activePolygon = polygon;
       // let bounds = polygonGetBounds(polygon);
@@ -138,20 +152,10 @@ export class DistributionMap implements OnInit, OnDestroy {
 
 
       this.drawing = false;
-      let calcDeliveries = () => {
 
-        this.selectedDeliveries = [];
-        for (const f of this.dict.values()) {
-          if (f.marker.getVisible() && f.marker.getMap()) {
-            if (polygonContains(polygon, f.marker.getPosition())) {
-              this.selectedDeliveries.push(f);
-            }
-          }
-        };
-      }
-      calcDeliveries();
+      this.calcSelectedDeliveries();
       polygon.addListener('mouseup', () => {
-        calcDeliveries();
+        this.calcSelectedDeliveries();
       })
 
       dm.setDrawingMode(null);
@@ -209,7 +213,17 @@ export class DistributionMap implements OnInit, OnDestroy {
     valueChange: () => this.refreshDeliveries()
   }, { filter: h => h.allDeliveires.isGreaterThan(0) });
 
+  filterArea = new StringColumn({
+    caption: 'סינון אזור',
+    defaultValue: use.language.allRegions,
+    valueChange: () => this.refreshDeliveries(),
+    dataControlSettings: () => ({
+      valueList: async () => await AreaColumn.getAreas().then(areas => [{ caption: use.language.allRegions, id: use.language.allRegions }, ...areas.map(x => ({ caption: x.area, id: x.area }))])
+    })
+  });
+  area = new DataAreaSettings();
   overviewMap = false;
+
   async refreshDeliveries() {
     let allInAlll = false;
     let deliveries: deliveryOnMap[];
@@ -219,10 +233,11 @@ export class DistributionMap implements OnInit, OnDestroy {
       allInAlll = true;
     }
     else
-      deliveries = await DistributionMap.GetDeliveriesLocation(false, undefined, undefined, this.dialog.distCenter.value);
+      deliveries = await DistributionMap.GetDeliveriesLocation(false, undefined, undefined, this.dialog.distCenter.value, this.filterArea.value != use.language.allRegions ? this.filterArea.value : undefined);
     this.statuses.statuses.forEach(element => {
       element.value = 0;
     });
+    this.area = new DataAreaSettings({ columnSettings: () => [[this.filterCourier, this.filterArea]] });
     let markers: google.maps.Marker[] = []
     let newIds = new Map<string, boolean>();
     deliveries.forEach(f => {
@@ -257,9 +272,9 @@ export class DistributionMap implements OnInit, OnDestroy {
           });
       }
       else {
-          familyOnMap.marker.setPosition({ lat: f.lat, lng: f.lng });
+        familyOnMap.marker.setPosition({ lat: f.lat, lng: f.lng });
       }
-      
+
       let status: statusClass = this.statuses.getBy(f.status, f.courier);
 
       if (status)
@@ -321,9 +336,10 @@ export class DistributionMap implements OnInit, OnDestroy {
       }
     }
     this.updateChart();
+    this.calcSelectedDeliveries();
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
-  static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: string, area?: string, context?: Context, db?: SqlDatabase) {
+  static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: string, area?: string, basket?: string, context?: Context, db?: SqlDatabase) {
     if (!distCenter)
       distCenter = '';
     let f = context.for(ActiveFamilyDeliveries).create();
@@ -344,9 +360,12 @@ export class DistributionMap implements OnInit, OnDestroy {
         let where: any[] = [f.deliverStatus.isActiveDelivery().and(f.distributionCenter.isAllowedForUser())];
         if (distCenter !== undefined)
           where.push(f.filterDistCenterAndAllowed(distCenter));
+        if (area != undefined) {
+          where.push(f.area.isEqualTo(area));
+        }
 
         if (onlyPotentialAsignment) {
-          where.push(f.readyFilter(city, group, area).and(f.special.isEqualTo(YesNo.No)));
+          where.push(f.readyFilter(city, group, area, basket).and(f.special.isEqualTo(YesNo.No)));
         }
         return where;
       },
@@ -492,7 +511,7 @@ export class Statuses {
         break;
       case DeliveryStatus.FailedBadAddress.id:
       case DeliveryStatus.FailedNotHome.id:
-        case DeliveryStatus.FailedDoNotWant.id:
+      case DeliveryStatus.FailedDoNotWant.id:
       case DeliveryStatus.FailedOther.id:
       case DeliveryStatus.Frozen.id:
         return this.problem;

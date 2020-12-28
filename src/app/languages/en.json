@@ -331,7 +331,7 @@
   },
   "assignerOrOrg": {
     "google": "The phone from which the SMS came out",
-    "valueInCode": "הטלפון ממנו יצא הSMS",
+    "valueInCode": "טלפון עזרה ברירת מחדל",
     "custom": "Help phone"
   },
   "AssignEscortComponent": {
@@ -348,6 +348,11 @@
     "google": "Family affiliation was abolished",
     "valueInCode": "בוטל השיוך למשפחת",
     "custom": "Assignment cancelled for"
+  },
+  "assignRepeatFamily": {
+    "google": "Belongs to a family whose volunteer was with them",
+    "valueInCode": "שייך משפחה שהמתנדב היה אצלה",
+    "custom": "Assign a repeat family"
   },
   "assignRequiresADistributionList": {
     "google": "Volunteers cannot be associated because a distribution list is not selected. Please select a distribution list (top left where \"All Lists\" is written)",
@@ -771,7 +776,7 @@
   },
   "defaultHelpPhone": {
     "google": "The phone from which the SMS came out",
-    "valueInCode": "הטלפון ממנו יצא הSMS",
+    "valueInCode": "טלפון לעזרה למתנדב",
     "custom": "Help Phone Name"
   },
   "defaultOrgName": {
@@ -809,7 +814,7 @@
   },
   "defaulyHelpPhoneExplanation": {
     "google": "When a text message is sent to a volunteer, it appears as if it came out of the phone of the family member and clicked the Send SMS button. You can set up an alternate name and phone here",
-    "valueInCode": "כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את המשפחות ולחץ על הכפתור שלח SMS. ניתן להגדיר כאן שם חלופי וטלפון חלופי",
+    "valueInCode": "כאשר המתנדב נתקל בבעיה, מוצגת לו האפשרות להתקשר לעזרה. כברירת מחדל הטלפון לעזרה הוא זה של המשתמש ששייך למתנדב את המשפחה. ניתן להגדיר שם וטלפון חלופיים לעזרה:",
     "custom": "By default, the person who assigned the delivery, will be the person that the volunteer can call for help. Specify a different value here, if you prefer another help phone number"
   },
   "defineDeliveriesForFamiliesInExcel": {
@@ -1096,6 +1101,11 @@
   "doLabReception": {
     "google": "Perform absorption in the laboratory",
     "valueInCode": "בצע קליטה במעבדה"
+  },
+  "done": {
+    "google": "Taken care of",
+    "valueInCode": "טופל",
+    "custom": "Done"
   },
   "doneDotGotoDeliveries": {
     "google": "The process ended successfully, move to the Shipping screen?",

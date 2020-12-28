@@ -346,7 +346,7 @@ export class Families extends IdEntity {
               this.quantity.value = 1;
 
 
-            if (this.address.value != this.address.originalValue || !this.address.ok()||this.autoCompleteResult.value) {
+            if (this.address.value != this.address.originalValue || !this.address.ok() || this.autoCompleteResult.value) {
               await this.reloadGeoCoding();
             }
             if (this.isNew()) {
@@ -379,8 +379,10 @@ export class Families extends IdEntity {
                   fd.basketType.value = this.basketType.value;
                 if (wasChanged(this.quantity) && fd.quantity.value == this.quantity.originalValue)
                   fd.quantity.value = this.quantity.value;
-                if (wasChanged(this.deliveryComments) || fd.deliveryComments.value == this.deliveryComments.originalValue)
+                if (wasChanged(this.deliveryComments) && fd.deliveryComments.value == this.deliveryComments.originalValue)
                   fd.deliveryComments.value = this.deliveryComments.value;
+                if (wasChanged(this.fixedCourier) && fd.courier.value == this.fixedCourier.originalValue)
+                  fd.courier.value = this.fixedCourier.value;
                 if (wasChanged(this.defaultSelfPickup))
                   if (this.defaultSelfPickup.value)
                     if (fd.deliverStatus.value == DeliveryStatus.ReadyForDelivery)

@@ -24,7 +24,7 @@ async function init() {
     context._setUser({
         id: 'admin',
         name: 'admin',
-        roles: [Roles.admin,Roles.distCenterAdmin]
+        roles: [Roles.admin, Roles.distCenterAdmin]
     });
     actionInfo.runningOnServer = true;
     let sql: SqlDatabase;
@@ -40,13 +40,13 @@ async function init() {
             });
         });
 
-        describe("helpers",()=>{
-            itAsync('helpers and stats work',async()=>{
+    describe("helpers", () => {
+        itAsync('helpers and stats work', async () => {
 
-                let h = await  context.for(HelpersAndStats).find();
-            })
+            let h = await context.for(HelpersAndStats).find();
+        })
             ;
-        });
+    });
     describe("the test", () => {
         let helperId: string;
         beforeEach(async done => {
@@ -103,6 +103,7 @@ async function init() {
             let d = context.for(ActiveFamilyDeliveries).create();
             d.name.value = distanceFromRoot.toString();
             d.addressLatitude.value = distanceFromRoot;
+            d.family.value = distanceFromRoot.toString();
             await d.save();
             return d;
         }
@@ -110,7 +111,6 @@ async function init() {
         itAsync("Starts with farthest delivery", async () => {
             await createDelivery(10);
             await createDelivery(5);
-            let d = await createDelivery(6);
             let r = await callAddBox();
             expect(r.families.length).toBe(1);
             expect(r.families[0].name).toBe("10");
@@ -126,6 +126,87 @@ async function init() {
             expect(r.families.length).toBe(2);
             expect(r.families.some(d => d.name == '6')).toBeTruthy();;
             expect(r.families.some(d => d.name == '5')).toBeTruthy();
+        });
+        itAsync("chooses closest to helper", async () => {
+
+            await createDelivery(10);
+            await createDelivery(5);
+            let h = await context.for(Helpers).findId(helperId);
+            h.addressApiResult.value = new GeocodeInformation({
+
+                status: "OK",
+                results: [{
+                    address_components: [],
+                    formatted_address: '',
+                    partial_match: false,
+                    place_id: '123',
+                    types: [],
+                    geometry: {
+                        location: { lat: 6, lng: 0 },
+                        location_type: '',
+                        viewport: {
+                            northeast: { lat: 0, lng: 0 },
+                            southwest: { lat: 0, lng: 0 }
+
+                        }
+                    }
+                }]
+            }).saveToString();
+            await h.save();
+
+            let r = await callAddBox();
+            expect(r.families.length).toBe(1);
+
+            expect(r.families[0].name).toBe('5');
+        });
+        itAsync("prefer repeat family", async () => {
+            await createDelivery(10);
+
+            let d = await createDelivery(5);
+            d.deliverStatus.value = DeliveryStatus.Success;
+            d.courier.value = helperId;
+            await d.save();
+            await createDelivery(5);
+            let r = await callAddBox();
+            expect(r.families.length).toBe(1);
+            expect(r.families[0].name).toBe("5");
+        });
+        itAsync("prefer repeat family over helper preference", async () => {
+            await createDelivery(10);
+
+            let d = await createDelivery(5);
+            d.deliverStatus.value = DeliveryStatus.Success;
+            d.courier.value = helperId;
+            await d.save();
+            await createDelivery(5);
+
+            let h = await context.for(Helpers).findId(helperId);
+            h.addressApiResult.value = new GeocodeInformation({
+
+                status: "OK",
+                results: [{
+                    address_components: [],
+                    formatted_address: '',
+                    partial_match: false,
+                    place_id: '123',
+                    types: [],
+                    geometry: {
+                        location: { lat: 9, lng: 0 },
+                        location_type: '',
+                        viewport: {
+                            northeast: { lat: 0, lng: 0 },
+                            southwest: { lat: 0, lng: 0 }
+
+                        }
+                    }
+                }]
+            }).saveToString();
+            await h.save();
+
+
+            let r = await callAddBox();
+            expect(r.families.length).toBe(1);
+            expect(r.families[0].name).toBe("5");
         });
     });
     describe("test update family status", () => {
@@ -143,15 +224,15 @@ async function init() {
             let f = await context.for(Families).create();
             f.name.value = "test";
             await f.save();
-            
+
             let fd = f.createDelivery('');
             fd.deliverStatus.value = DeliveryStatus.FailedBadAddress;
             await fd.save();
-            
+
             let fd2 = f.createDelivery('');
             fd2.deliverStatus.value = DeliveryStatus.FailedBadAddress;
             await fd2.save();
-            
+
             expect(+await context.for(ActiveFamilyDeliveries).count(x => x.family.isEqualTo(f.id))).toBe(2);
             let u = new UpdateStatus(context);
             let b = new bridgeFamilyDeliveriesToFamilies(context, u);
@@ -189,7 +270,7 @@ async function init() {
             let u = new UpdateDeliveriesStatus(context);
 
             u.status.value = DeliveryStatus.Frozen;
-            
+
             await u.internalForTestingCallTheServer({
                 afterAction: async () => { },
                 groupName: '',
@@ -199,7 +280,7 @@ async function init() {
                 settings: await ApplicationSettings.getAsync(context),
                 dialog: undefined,
                 callServer: async (info, actions, columns) => {
-                    let r= await FamilyDeliveriesComponent.DeliveriesActionOnServer(info, actions, columns, context);
+                    let r = await FamilyDeliveriesComponent.DeliveriesActionOnServer(info, actions, columns, context);
                     return r;
                 }
 
@@ -269,5 +350,5 @@ async function init() {
 
         });
     });
-} 
+}
 init();

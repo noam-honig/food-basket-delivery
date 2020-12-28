@@ -808,4 +808,6 @@ export class soldier implements Language {
   includeFamilyInfoInExcelFile = 'האם לכלול מידע נוסף מפרטי החייל כגון מספר זהות ונתונים נוספים ביצוא לאקסל? (אם כן זה יקח יותר זמן:)';
   latestAssigned = 'שוייך אחרון';
   duplicateForNextEvent = 'העתק לאירוע הבא';
+  assignRepeatFamily = 'שייך חייל שהמתנדב היה אצלה';
+  done = 'טופל';
 }

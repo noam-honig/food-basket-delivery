@@ -51,10 +51,7 @@
       <mat-icon *ngIf="!showChart">unfold_more</mat-icon>
     </button>
     <mat-checkbox (change)="refreshDeliveries()" [(ngModel)]="showHelper" style="margin-right: 10px;"
-      *ngIf="!overviewMap">
-      {{settings.lang.showVolunteers}}</mat-checkbox>
-    <data-control [column]="filterCourier" style="display: inline-block;
-width: 100px;
-margin-right: 10px;"></data-control>
+      *ngIf="!overviewMap"></mat-checkbox>
+    <data-area [settings]="area" style="display:inline-block"></data-area>
   </div>
 </div>

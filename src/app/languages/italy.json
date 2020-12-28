@@ -366,7 +366,7 @@
   },
   "assignerOrOrg": {
     "google": "Aiuta il telefono",
-    "valueInCode": "הטלפון ממנו יצא הSMS",
+    "valueInCode": "טלפון עזרה ברירת מחדל",
     "valueInEnglish": "Help phone"
   },
   "AssignEscortComponent": {
@@ -383,6 +383,11 @@
     "google": "Cessione annullata per",
     "valueInCode": "בוטל השיוך למשפחת",
     "valueInEnglish": "Assignment cancelled for"
+  },
+  "assignRepeatFamily": {
+    "google": "Assegna una famiglia ripetuta",
+    "valueInCode": "שייך משפחה שהמתנדב היה אצלה",
+    "valueInEnglish": "Assign a repeat family"
   },
   "assignRequiresADistributionList": {
     "google": "Seleziona una lista di distribuzione (dalla casella di selezione nell'angolo in alto a destra) prima di assegnare le consegne.",
@@ -841,7 +846,7 @@
   },
   "defaultHelpPhone": {
     "google": "Aiuto Nome del telefono",
-    "valueInCode": "הטלפון ממנו יצא הSMS",
+    "valueInCode": "טלפון לעזרה למתנדב",
     "valueInEnglish": "Help Phone Name"
   },
   "defaultOrgName": {
@@ -882,7 +887,7 @@
   },
   "defaulyHelpPhoneExplanation": {
     "google": "Per impostazione predefinita, la persona che ha assegnato la consegna sarà la persona che il volontario può richiedere aiuto. Specificare qui un valore diverso se si preferisce un altro numero di telefono della guida",
-    "valueInCode": "כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את המשפחות ולחץ על הכפתור שלח SMS. ניתן להגדיר כאן שם חלופי וטלפון חלופי",
+    "valueInCode": "כאשר המתנדב נתקל בבעיה, מוצגת לו האפשרות להתקשר לעזרה. כברירת מחדל הטלפון לעזרה הוא זה של המשתמש ששייך למתנדב את המשפחה. ניתן להגדיר שם וטלפון חלופיים לעזרה:",
     "valueInEnglish": "By default, the person who assigned the delivery, will be the person that the volunteer can call for help. Specify a different value here, if you prefer another help phone number"
   },
   "defineDeliveriesForFamiliesInExcel": {
@@ -1199,6 +1204,11 @@
     "google": "Eseguire l'assorbimento in laboratorio",
     "valueInCode": "בצע קליטה במעבדה",
     "valueInEnglish": "Perform absorption in the laboratory"
+  },
+  "done": {
+    "google": "Fatto",
+    "valueInCode": "טופל",
+    "valueInEnglish": "Done"
   },
   "doneDotGotoDeliveries": {
     "google": "Fatto, passare alle consegne attive?",

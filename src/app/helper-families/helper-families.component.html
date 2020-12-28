@@ -67,7 +67,7 @@
 
 
               <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign"
-                (assignmentCanceled)="cancelAssign(f)" (refreshList)="familyLists.reload()">
+                (assignmentCanceled)="cancelAssign(f)" [userFamilies]="familyLists">
 
 
                 <button mat-raised-button class="myButton" color="accent"

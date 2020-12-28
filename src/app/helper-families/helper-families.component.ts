@@ -195,9 +195,40 @@ export class HelperFamiliesComponent implements OnInit {
 
   
 
+  async assignNewDelivery() {
+    await this.updateCurrentLocation(true);
+    let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(this.volunteerLocation));
+
+    await this.context.openDialog(SelectListComponent, x => {
+      x.args = {
+        title: use.language.closestDeliveries + ' (' + use.language.mergeFamilies + ')',
+        multiSelect: true,
+        onSelect: async (selectedItems) => {
+          if (selectedItems.length > 0)
+            this.busy.doWhileShowingBusy(async () => {
+              let ids: string[] = [];
+              for (const selectedItem of selectedItems) {
+                let d: DeliveryInList = selectedItem.item;
+                ids.push(...d.ids);
+              }
+              await HelperFamiliesComponent.assignFamilyDeliveryToIndie(ids);
+              await this.familyLists.refreshRoute({
+                strategyId: this.settings.routeStrategy.value.id,
+                volunteerLocation: this.volunteerLocation
+              });
+              if (this.familyLists)
+                await this.familyLists.reload();
+            });
+        },
+        options: afdList
+      }
+    });
 
 
-  
+  }
+  reloadList(){
+    this.familyLists.reload();
+  }
 
   getHelpText() {
     var r = this.settings.lang.ifYouNeedAnyHelpPleaseCall;

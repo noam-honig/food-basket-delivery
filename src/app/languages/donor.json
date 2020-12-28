@@ -293,7 +293,7 @@
   },
   "assignerOrOrg": {
     "google": "הטלפון ממנו יצא הSMS",
-    "valueInCode": "הטלפון ממנו יצא הSMS"
+    "valueInCode": "טלפון עזרה ברירת מחדל"
   },
   "AssignEscortComponent": {
     "google": "שיוך מלווים",
@@ -306,6 +306,10 @@
   "assignmentCanceledFor": {
     "google": "בוטל השיוך למשפחת",
     "valueInCode": "בוטל השיוך למשפחת"
+  },
+  "assignRepeatFamily": {
+    "google": "שייך תורם שהמתנדב היה אצלה",
+    "valueInCode": "שייך משפחה שהמתנדב היה אצלה"
   },
   "assignRequiresADistributionList": {
     "google": "לא ניתן לשייך מתנדבים מכיוון שלא נבחרה מעבדה. אנא בחרו מעבדה (למעלה מצד שמאל איפה שכתוב \"כל הרשימות\")",
@@ -674,7 +678,7 @@
   },
   "defaultHelpPhone": {
     "google": "הטלפון ממנו יצא הSMS",
-    "valueInCode": "הטלפון ממנו יצא הSMS"
+    "valueInCode": "טלפון לעזרה למתנדב"
   },
   "defaultOrgName": {
     "google": "שם הארגון שלי",
@@ -706,7 +710,7 @@
   },
   "defaulyHelpPhoneExplanation": {
     "google": "כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את התורמים ולחץ על הכפתור שלח SMS. ניתן להגדיר כאן שם חלופי וטלפון חלופי",
-    "valueInCode": "כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את המשפחות ולחץ על הכפתור שלח SMS. ניתן להגדיר כאן שם חלופי וטלפון חלופי"
+    "valueInCode": "כאשר המתנדב נתקל בבעיה, מוצגת לו האפשרות להתקשר לעזרה. כברירת מחדל הטלפון לעזרה הוא זה של המשתמש ששייך למתנדב את המשפחה. ניתן להגדיר שם וטלפון חלופיים לעזרה:"
   },
   "defineDeliveriesForFamiliesInExcel": {
     "google": "הגדר משלוחים לכל התורמים מהאקסל",
@@ -960,6 +964,10 @@
   "doLabReception": {
     "google": "בצע קליטה במעבדה",
     "valueInCode": "בצע קליטה במעבדה"
+  },
+  "done": {
+    "google": "טופל",
+    "valueInCode": "טופל"
   },
   "doneDotGotoDeliveries": {
     "google": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?",

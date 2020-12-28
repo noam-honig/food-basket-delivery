@@ -93,7 +93,7 @@
           <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
             *ngIf="settings.showBasketOnAssing.value">
             <mat-label>{{settings.lang.basketType}}</mat-label>
-            <select matNativeControl class="form-control" #lang [(ngModel)]="basketType">
+            <select matNativeControl class="form-control" #lang   (change)="refreshBaskets()"[(ngModel)]="basketType">
               <option *ngFor="let b of baskets" [ngValue]="b">{{b.name}} <span *ngIf="b!=allBaskets">-
                   {{b.unassignedFamilies}}</span></option>
             </select>
@@ -126,7 +126,7 @@
           <button mat-raised-button color="primary" (click)="assignItem()"
             [disabled]="basketType.unassignedFamilies==0 || assigning"
             style="border-top-left-radius: 0px;border-bottom-left-radius:0px;">
-            {{assigning?settings.lang.inProgress: basketType.unassignedFamilies==0?settings.lang.noDeliveriesLeft: helper.preferredDistributionAreaAddress.value||helper.preferredFinishAddress.value|| familyLists.allFamilies.length>0?settings.lang.asignClosestDelivery:settings.lang.asignAnyDelivery}}
+            {{assigning?settings.lang.inProgress: basketType.unassignedFamilies==0?settings.lang.noDeliveriesLeft:  familyLists.allFamilies.length>0? settings.lang.asignClosestDelivery:repeatFamilies.length>0&&preferRepeatFamilies&&repeatFamilies.length>0?settings.lang.assignRepeatFamily:helper.preferredDistributionAreaAddress.value||helper.preferredFinishAddress.value?settings.lang.asignClosestDelivery:settings.lang.asignAnyDelivery}}
             -
             {{getBasketsToClick()}}</button>
           <button mat-button [matMenuTriggerFor]="basketMenu" mat-raised-button color="primary" style="border-top-right-radius: 0;

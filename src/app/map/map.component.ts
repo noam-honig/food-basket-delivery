@@ -21,14 +21,25 @@ import { Location } from '../shared/googleApiHelpers';
     styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit, OnDestroy {
-    async loadPotentialAsigment(city: string, group: string, distCenter: string, area: string) {
-        await this.initMap();
-        let families = await DistributionMap.GetDeliveriesLocation(true, city, group, distCenter, area);
+    loadedPotentialFamilies: string[] = [];
+    async loadPotentialAsigment(city: string, group: string, distCenter: string, area: string, basketType: string) {
 
+        await this.initMap();
+
+        let families = await DistributionMap.GetDeliveriesLocation(true, city, group, distCenter, area, basketType);
+        for (const f of this.loadedPotentialFamilies) {
+            let fi = this.dict.get(f);
+            if (fi && fi.getIcon().toString().includes('yellow-dot.png')) {
+                fi.setMap(null);
+            }
+
+        }
+        this.loadedPotentialFamilies = [];
         let closeBusy = this.busy.showBusy();
         try {
             // console.time('load families to map');
             families.forEach(f => {
+                this.loadedPotentialFamilies.push(f.id);
                 let marker = this.setFamilyOnMap(f.id, f.lat, f.lng);
                 this.bounds.extend(marker.getPosition());
             });
@@ -61,12 +72,14 @@ export class MapComponent implements OnInit, OnDestroy {
                 let families = [];
 
                 this.dict.forEach((m, id) => {
-                    let p1 = m.getPosition();
-                    let p2 = marker.getPosition();
+                    if (m.getMap() != null) {
+                        let p1 = m.getPosition();
+                        let p2 = marker.getPosition();
 
-                    if (p1.lng() == p2.lng() && p1.lat() == p2.lat()) {
-                        families.push(id);
+                        if (p1.lng() == p2.lng() && p1.lat() == p2.lat()) {
+                            families.push(id);
 
+                        }
                     }
 
                 });

@@ -808,4 +808,6 @@ export class donor implements Language {
   includeFamilyInfoInExcelFile = 'האם לכלול מידע נוסף מפרטי התורם כגון מספר זהות ונתונים נוספים ביצוא לאקסל? (אם כן זה יקח יותר זמן:)';
   latestAssigned = 'שוייך אחרון';
   duplicateForNextEvent = 'העתק לאירוע הבא';
+  assignRepeatFamily = 'שייך תורם שהמתנדב היה אצלה';
+  done = 'טופל';
 }
