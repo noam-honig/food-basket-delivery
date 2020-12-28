@@ -293,6 +293,9 @@ export class HelperFamiliesComponent implements OnInit {
 
 
   }
+  reloadList(){
+    this.familyLists.reload();
+  }
 
   getHelpText() {
     var r = this.settings.lang.ifYouNeedAnyHelpPleaseCall;

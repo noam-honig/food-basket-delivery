@@ -193,13 +193,17 @@ export class FamilyInfoComponent implements OnInit {
 
 
   }
-  udpateInfo(f: ActiveFamilyDeliveries) {
-    f.showDetailsDialog({
+  async udpateInfo(f: ActiveFamilyDeliveries) {
+    let x = f.courier.value;
+    await f.showDetailsDialog({
       dialog: this.dialog,
       refreshDeliveryStats: () => {
+        x = f.courier.value;
         this.refreshList.emit();
       }
     });
+    if (x!=f.courier.value)
+      this.refreshList.emit();
 
   }
   copyAddress(f: ActiveFamilyDeliveries) {
