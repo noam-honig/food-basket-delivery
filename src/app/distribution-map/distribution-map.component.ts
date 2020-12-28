@@ -218,7 +218,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     defaultValue: use.language.allRegions,
     valueChange: () => this.refreshDeliveries(),
     dataControlSettings: () => ({
-      valueList: async () => await AreaColumn.getAreas().then(areas => [{ caption: use.language.allRegions, id: use.language.allRegions }, ...areas.map(x => ({ caption: x.area+' - '+x.count , id: x.area }))])
+      valueList: async () => await AreaColumn.getAreas().then(areas => [{ caption: use.language.allRegions, id: use.language.allRegions }, ...areas.map(x => ({ caption: x.area + ' - ' + x.count, id: x.area }))])
     })
   });
   area = new DataAreaSettings();
