@@ -168,6 +168,9 @@ export class UserFamiliesList {
 
     initFamilies() {
 
+
+        this.allFamilies = this.allFamilies.filter(f=>f.archive.value == false);
+        
         if (this.allFamilies.length > 0 && this.settings.showDistCenterAsEndAddressForVolunteer.value) {
             this.context.for(DistributionCenters).lookupAsync(this.allFamilies[0].distributionCenter).then(x => this.distCenter = x);
         }

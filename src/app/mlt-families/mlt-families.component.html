@@ -4,7 +4,7 @@
             {{comp.context.user.name}} כיף שבאת, תודה שבחרת להתחשב - יאללה מתחילים!
         </span>
         <span *ngIf="numberOfDeliveries>0" class="mat-card-title" style="text-align: center;">
-            {{comp.context.user.name}} תודה על {{getFamilies(true).length}} תרומות שאספת! - יאללה ממשיכים!
+            {{comp.context.user.name}} תודה על {{getFamilies('delivered').length}} תרומות שאספת! - יאללה ממשיכים!
         </span>
         <div style="display: flex; flex-flow: column; margin:15px; text-align: center;">
             <button mat-raised-button color="primary" *ngIf="canSelectDonors()" (click)="assignNewDelivery()">מצאו לי
@@ -21,12 +21,11 @@
                 התפניתי, אפשר להמשיך לחבר לי תורמים
             </button>
         </div>
-        <span class="mat-card-title"> {{getFamilies().length}} תורמים מחכים לך</span>
+        <span class="mat-card-title"> {{getFamilies('toDeliver').length}} תורמים מחכים לך</span>
 
 
         <mat-nav-list role="list">
-            <mat-list-item *ngFor="let f of getFamilies();let i=index" (click)="selectFamily(f)"
-                style="height:max-content">
+            <mat-list-item *ngFor="let f of getFamilies('toDeliver');let i=index" (click)="selectFamily(f, deliveryInfo)" style="height:max-content">
 
                 <div>
                     <mat-panel-title style="justify-content: space-between">
@@ -108,43 +107,54 @@
                             {{familyLists.distCenter.phone2Description.value?familyLists.distCenter.phone2Description.value:familyLists.distCenter.name.value}}
                         </div>
                     </div>
+
+                    <button mat-raised-button color="primary" (click)="selectDistCenter()">
+                        החלף יעד למסירת הציוד
+                    </button>
+    
                 </mat-expansion-panel>
             </mat-accordion>
-            <div style="    width: 100%;margin:15px; text-align: center;">
-                <button mat-raised-button style="background-color:lightgreen; " (click)="selectDistCenter()">
-                    החלף יעד למסירת הציוד
-                </button>
+            <mat-divider></mat-divider>
+            <span class="mat-card-title"> {{getFamilies('delivered').length}} תרומות למסירה בנקודת איסוף</span>
+            <mat-nav-list role="list">
+                <mat-list-item *ngFor="let f of getFamilies('delivered');let i=index" (click)="selectFamily(f, markReception)" style="height:max-content">
+    
+                    <div>
+                        <mat-panel-title style="justify-content: space-between">
+                            <div class="familyLine">
+                                {{getBasketsDescription(f, 'delivered')}}
+                                <mat-icon *ngIf="f.courierComments.value"> comment</mat-icon>
+                            </div>
+    
+                        </mat-panel-title>
+    
+                        <mat-panel-description style="justify-content: space-evenly; align-items: stretch;">
+                            <div style="white-space: nowrap;">
+                                {{f.name.value}}
+                            </div>
+    
+                            <div style="white-space: nowrap;">
+                                ({{f.getAddressDescription() }})
+                            </div>
+                        </mat-panel-description>
+                    </div>
+                    <mat-divider></mat-divider>
+                </mat-list-item>
+            </mat-nav-list>
             </div>
-        </div>
 
     </div>
 
     <div class="grow-item" *ngIf="display==reception">
-        <span class="mat-card-title">בידך ציוד שנאסף מ {{getFamilies(true).length}} תורמים</span>
-
-        <!--  TODO (Motti): Currently not using QR Code - remove when final decision on reception
-        <button *ngIf="!this.showQRCode" mat-raised-button (click)="this.showQRCode=true"
-            style="height: 35px;" color="primary">
-            {{settings.lang.showQRCode}}
-        </button>
-        <button *ngIf="this.showQRCode" mat-raised-button (click)="this.showQRCode=false"
-            style="height: 35px;" color="primary">
-            {{settings.lang.removeQRCode}}
-        </button>
-
-        <div style="display:flex;justify-content: center;">
-            <qr-code *ngIf="this.showQRCode" [value]="this.myQRCode()" [size]="300" (click)="this.showQRCode=false">
-            </qr-code>
-        </div>
-        -->
+        <span class="mat-card-title">ציינת בעייה עבור {{getFamilies('problem').length}} תורמים</span>
 
         <mat-nav-list role="list">
-            <mat-list-item *ngFor="let f of getFamilies(true);let i=index" style="height:max-content">
-
+            <mat-list-item *ngFor="let f of getFamilies('problem');let i=index" style="height:max-content" (click)="familyNotProblem(f)">
                 <div>
                     <mat-panel-title style="justify-content: space-between">
                         <div class="familyLine">
-                            {{getBasketsDescription(f, true)}}
+                            {{getBasketsDescription(f, 'problem')}} מהתורם {{f.name.value}}
+                            ({{f.getAddressDescription() }})
                             <mat-icon *ngIf="f.courierComments.value"> comment</mat-icon>
                         </div>
 
@@ -152,17 +162,36 @@
 
                     <mat-panel-description style="justify-content: space-evenly; align-items: stretch;">
                         <div style="white-space: nowrap;">
-                            {{f.name.value}}
+                            {{f.deliverStatus.displayValue}}
                         </div>
 
-                        <div style="white-space: nowrap;">
-                            ({{f.getAddressDescription() }})
+                        <div *ngIf="f.courierComments.value" style="white-space: nowrap;">
+                            ({{f.courierComments.displayValue}})
                         </div>
                     </mat-panel-description>
                 </div>
                 <mat-divider></mat-divider>
             </mat-list-item>
         </mat-nav-list>
+    </div>
+
+    <div class="grow-item" *ngIf="display==markReception">
+        <span class="mat-card-title"> {{selectedFamily.name.value}} יש לעדכן לאחר מסירה בנקודת מסירה </span>
+<!--        <app-family-info [f]="selectedFamily" [hideSal]="true"></app-family-info>   -->
+        <ul>
+            <li *ngFor="let i of deliveriesForFamily">
+                {{i.quantity.value}} X {{i.basketType.displayValue}}
+            </li>
+        </ul>
+        <button mat-raised-button class="myButton" color="accent" (click)="undoDeliveredToFamily()">
+            רגע - בכלל לא אספתי את זה
+        </button>
+        <span>מסרתי בנקודת האיסוף:</span>
+        <div>
+            <button *ngFor="let b of distCentersButtons" mat-raised-button class="myButton" color="primary" (click)="setDistCenterForFamily(b.item)">
+            {{b.caption}}
+            </button>
+        </div>
     </div>
 
     <div class="grow-item" *ngIf="display==deliveryInfo">
@@ -231,7 +260,7 @@
             <button mat-raised-button color="primary" (click)="showMyGifts()"><img height="40px"
                     src="/assets/gift.png" /></button>
             <button mat-raised-button color="primary" (click)="display=reception">
-                התורמים מהם אספתי
+                אופס! טעיתי...
             </button>
         </div>
 

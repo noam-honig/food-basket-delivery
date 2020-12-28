@@ -10,7 +10,7 @@ import { DeliveryInList, HelperFamiliesComponent } from '../helper-families/help
 import { HelperGifts, showUsersGifts } from '../helper-gifts/HelperGifts';
 import { Helpers } from '../helpers/helpers';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
-import { DistributionCenters } from '../manage/distribution-centers';
+import { DistributionCenterId, DistributionCenters } from '../manage/distribution-centers';
 import { MyFamiliesComponent } from '../my-families/my-families.component';
 import { SelectListComponent } from '../select-list/select-list.component';
 import { DialogService } from '../select-popup/dialog';
@@ -33,7 +33,9 @@ export class MltFamiliesComponent implements OnInit {
   problemInfo = 'problemInfo';
   myProfile = 'myProfile';
   reception = 'reception';
+  markReception = 'markReception';
   display = this.deliveryList;
+  distCentersButtons = [];
 
   showQRCode: boolean = false;
 
@@ -73,13 +75,12 @@ export class MltFamiliesComponent implements OnInit {
     this.thisHelper = await this.context.for(Helpers).findFirst(h=>h.id.isEqualTo(this.context.user.id));
     this.myPhoneNumber = this.thisHelper.phone.value;
     this.userFrozenTill = this.thisHelper.frozenTill.displayValue;
+    this.distCentersButtons = [];
   }
 
-  getBasketsDescription(family: ActiveFamilyDeliveries, delivered = false) {
+  getBasketsDescription(family: ActiveFamilyDeliveries, listType: string) {
     let result: string = '';
-    for (const f of (delivered? this.comp.familyLists.delivered : this.comp.familyLists.toDeliver)) {
-      //.filter(x=>x.family == family))
-
+    for (const f of this.getDeliveriesList(listType)) {
       if (f.family.value==family.family.value) {
         let s = f.quantity.displayValue + ' X ' + f.basketType.displayValue;
         if (result == '') 
@@ -92,10 +93,21 @@ export class MltFamiliesComponent implements OnInit {
     return result;
   }
 
-  getFamilies(delivered = false) {
+  getDeliveriesList(listType: string) {
+    switch (listType) {
+      case 'delivered': return this.comp.familyLists.delivered; 
+      case 'toDeliver': return this.comp.familyLists.toDeliver; 
+      case 'problem': return this.comp.familyLists.problem; 
+    }
+
+    return [];
+  }
+
+  getFamilies(listType: string) {
     let consumed: string[] = []
     let result: ActiveFamilyDeliveries[] = [];
-    for (const f of (delivered? this.comp.familyLists.delivered : this.comp.familyLists.toDeliver)) {
+
+    for (const f of this.getDeliveriesList(listType)) {
       if (!consumed.includes(f.family.value)) {
         consumed.push(f.family.value)
         result.push(f);
@@ -209,10 +221,25 @@ export class MltFamiliesComponent implements OnInit {
 
   selectedFamily: ActiveFamilyDeliveries;
   deliveriesForFamily: ActiveFamilyDeliveries[] = [];
-  selectFamily(f: ActiveFamilyDeliveries) {
+  async selectFamily(f: ActiveFamilyDeliveries, nextDisplay) {
     this.selectedFamily = f;
-    this.display = this.deliveryInfo;
-    this.deliveriesForFamily = this.familyLists.toDeliver.filter(x => x.family.value == f.family.value);
+    this.display = nextDisplay;
+    if (nextDisplay == this.deliveryInfo) 
+      this.deliveriesForFamily = this.familyLists.toDeliver.filter(x => x.family.value == f.family.value);
+    else if (nextDisplay == this.markReception) {
+      this.deliveriesForFamily = this.familyLists.delivered.filter(x => x.family.value == f.family.value);
+      this.distCentersButtons = await this.getDistCenterButtons();
+    }
+    
+  }
+
+  async getDistCenterButtons() {
+    let {volunteerLocation, distCenters} = await this.getClosestDistCenters();
+    let result = distCenters.map(y=> ({
+      caption: y.name.value + " " + y.address.value,
+      item: y
+    }));
+    return result;
   }
 
   startPage() {
@@ -222,7 +249,7 @@ export class MltFamiliesComponent implements OnInit {
     this.showDeliveryHistory(false);
   }
 
-  async selectDistCenter() {
+  async getClosestDistCenters() {
     let distCenters = await this.context.for(DistributionCenters).find({ where: x => x.isActive() });
     distCenters = distCenters.filter(x => x.address.ok());
     let volunteerLocation: Location = undefined;
@@ -233,23 +260,40 @@ export class MltFamiliesComponent implements OnInit {
       if (this.familyLists.allFamilies.length > 0)
         volunteerLocation = this.familyLists.allFamilies[0].getDrivingLocation();
     }
-    if (volunteerLocation) {
+    if (volunteerLocation)
       distCenters.sort((a, b) => GetDistanceBetween(a.address.location(), volunteerLocation) - GetDistanceBetween(b.address.location(), volunteerLocation));
 
-
-      await this.context.openDialog(SelectListComponent, x => x.args = {
-        title: 'בחרו יעד למסירת הציוד',
-        options: distCenters.map(y => ({
-          name: GetDistanceBetween(y.address.location(), volunteerLocation).toFixed(1) + " ק\"מ" + ", " + y.name.value + " " + y.address.value,
-          item: y
-        })),
-        onSelect: async (x) => {
-          await MltFamiliesComponent.changeDestination(x[0].item.id.value);
-          this.familyLists.reload();
-        }
-      });
-    }
+      return {volunteerLocation, distCenters};
   }
+
+
+
+  async setDistCenterForFamily(dc: DistributionCenters) {
+    for (const f of this.deliveriesForFamily) {
+      f.deliverStatus.value = DeliveryStatus.Success;
+      f.distributionCenter.value = dc.id.value;
+      f.archive.value = true;
+      await f.save();
+    }
+    this.startPage();
+  }
+
+  async selectDistCenter() {
+    let {volunteerLocation, distCenters} = await this.getClosestDistCenters();
+
+    await this.context.openDialog(SelectListComponent, x => x.args = {
+      title: 'בחרו יעד למסירת הציוד',
+      options: distCenters.map(y => ({
+        name: GetDistanceBetween(y.address.location(), volunteerLocation).toFixed(1) + " ק\"מ" + ", " + y.name.value + " " + y.address.value,
+        item: y
+      })),
+      onSelect: async (x) => {
+        await MltFamiliesComponent.changeDestination(x[0].item.id.value);
+        this.familyLists.reload();
+      }
+    });
+  }
+
   @ServerFunction({ allowed: c => c.isSignedIn() })
   static async changeDestination(newDestinationId: string, context?: Context) {
     let s = getSettings(context);
@@ -285,16 +329,41 @@ export class MltFamiliesComponent implements OnInit {
       comment: (newComment ? newComment : f.courierComments.value),
       helpText: s => s.commentForSuccessDelivery,
       ok: async (comment) => {
-        await this.updateDeliveryStatus(comment, DeliveryStatus.Success);
+        await this.updateDeliveryStatus(DeliveryStatus.Success, comment);
       },
       cancel: () => { }
     });
   }
 
-  private async updateDeliveryStatus(comment: string, s: DeliveryStatus) {
+  
+  async familyNotProblem(f: ActiveFamilyDeliveries) {
+    if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
+      question: "להחזיר את התורם " + f.name.displayValue +  " ?לרשימת הממתינים לך ",
+      yesButtonText: this.settings.lang.confirm
+    }, y => y.yes)) {
+      f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
+      f.checkNeedsWork();
+      await f.save();
+    }
+    this.startPage()
+  }
+  
+  async undoDeliveredToFamily(newComment?) {
+    let f = this.selectedFamily;
+
+    if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
+      question: "להחזיר את המשפחה לרשימת הממתינים לך?",
+      yesButtonText: this.settings.lang.confirm
+    }, y => y.yes)) {
+        await this.updateDeliveryStatus(DeliveryStatus.ReadyForDelivery);
+    };
+
+  }
+
+  private async updateDeliveryStatus(s: DeliveryStatus, comment?: string) {
     for (const f of this.deliveriesForFamily) {
       f.deliverStatus.value = s;
-      f.courierComments.value = comment;
+      if (comment) f.courierComments.value = comment;
       f.checkNeedsWork();
       await f.save();
     }
