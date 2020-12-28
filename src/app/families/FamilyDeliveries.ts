@@ -46,6 +46,11 @@ export class FamilyDeliveries extends IdEntity {
             case DeliveryStatus.FailedBadAddress:
             case DeliveryStatus.FailedNotHome:
             case DeliveryStatus.FailedDoNotWant:
+
+            case DeliveryStatus.FailedNotReady: 
+            case DeliveryStatus.FailedAlreadyPickedUp: 
+            case DeliveryStatus.FailedTooFar: 
+              
             case DeliveryStatus.FailedOther:
                 status = getLang(this.context).problem;
                 break;
@@ -667,7 +672,7 @@ export class ActiveFamilyDeliveries extends FamilyDeliveries {
 
 }
 
-iniFamilyDeliveriesInFamiliesCode(FamilyDeliveries, ActiveFamilyDeliveries);
+iniFamilyDeliveriesInFamiliesCode(2, ActiveFamilyDeliveries);
 
 function logChanged(context: Context, col: Column, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) {
     if (col.value != col.originalValue) {

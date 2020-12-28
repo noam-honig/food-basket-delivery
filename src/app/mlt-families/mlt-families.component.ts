@@ -36,10 +36,10 @@ export class MltFamiliesComponent implements OnInit {
   markReception = 'markReception';
   display = this.deliveryList;
   distCentersButtons = [];
+  deliveredSinceEver = 0;
 
   showQRCode: boolean = false;
 
-  numberOfDeliveries = 0;
   giftCount = 0;
   thisHelper;
   myPhoneNumber: string = '';
@@ -70,12 +70,12 @@ export class MltFamiliesComponent implements OnInit {
     return this.comp.familyLists;
   }
   async ngOnInit() {
-    this.numberOfDeliveries = await this.showDeliveryHistory(false)
     this.giftCount = await HelperGifts.getMyPendingGiftsCount(this.context.user.id);
     this.thisHelper = await this.context.for(Helpers).findFirst(h=>h.id.isEqualTo(this.context.user.id));
     this.myPhoneNumber = this.thisHelper.phone.value;
     this.userFrozenTill = this.thisHelper.frozenTill.displayValue;
     this.distCentersButtons = [];
+    this.countFamilies();
   }
 
   getBasketsDescription(family: ActiveFamilyDeliveries, listType: string) {
@@ -103,6 +103,20 @@ export class MltFamiliesComponent implements OnInit {
     return [];
   }
 
+  async countFamilies() {
+    let consumed: string[] = []
+    let list: FamilyDeliveries[] = await this.context.for(FamilyDeliveries).find(
+      { where: fd => fd.courier.isEqualTo(this.context.user.id).and(fd.deliverStatus.isSuccess()) })
+    let result = 0;
+    for (const f of list) {
+      if (!consumed.includes(f.family.value)) {
+        consumed.push(f.family.value)
+        result++;
+      }
+    }
+    this.deliveredSinceEver = result;
+  }
+
   getFamilies(listType: string) {
     let consumed: string[] = []
     let result: ActiveFamilyDeliveries[] = [];
@@ -114,61 +128,6 @@ export class MltFamiliesComponent implements OnInit {
       }
     }
     return result;
-  }
-
-
-  /* TODO: replace with two fucntions - one to get total delivery count and another to open a dialog with list of recent (-3 days) deliveries */
-  async showDeliveryHistory(open = true) {
-    let ctx = this.context.for(FamilyDeliveries);
-    let settings = {
-      numOfColumnsInGrid: 7,
-      knowTotalRows: true,
-      allowSelection: true,
-      rowButtons: [{
-
-        name: '',
-        icon: 'edit',
-        showInLine: true,
-        click: async fd => {
-          fd.showDetailsDialog({
-
-            dialog: this.dialog
-          });
-        }
-        , textInMenu: () => getLang(this.context).deliveryDetails
-      }
-      ],
-
-      rowCssClass: fd => fd.deliverStatus.getCss(),
-      columnSettings: fd => {
-        let r: Column[] = [
-          fd.deliverStatus,
-          fd.basketType,
-          fd.quantity,
-          fd.courierComments,
-          fd.deliveryStatusDate,
-          fd.address,
-          fd.name,
-          fd.distributionCenter
-        ]
-        r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
-        return r;
-      },
-      get: {
-        where: fd => (fd.courier.isEqualTo(this.context.user.id).and(fd.deliverStatus.isSuccess())),
-        orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
-        limit: (open ? 5 : 9999)
-      }
-    }
-    if (!open) {
-      return (await ctx.gridSettings(settings).getRecords()).items.length
-    }
-    if (open)
-      this.context.openDialog(GridDialogComponent, x => x.args = {
-        title: getLang(this.context).deliveriesFor + ' ' + this.context.user.name,
-        settings: ctx.gridSettings(settings)
-      });
-
   }
 
   async showMyGifts() {
@@ -240,13 +199,13 @@ export class MltFamiliesComponent implements OnInit {
       item: y
     }));
     return result;
-  }
+  }                                                                                   
 
   startPage() {
     this.display = this.deliveryList;
     this.selectedFamily = null
     this.familyLists.initFamilies();
-    this.showDeliveryHistory(false);
+    this.countFamilies();
   }
 
   async getClosestDistCenters() {
@@ -294,6 +253,7 @@ export class MltFamiliesComponent implements OnInit {
     });
   }
 
+
   @ServerFunction({ allowed: c => c.isSignedIn() })
   static async changeDestination(newDestinationId: string, context?: Context) {
     let s = getSettings(context);
@@ -324,21 +284,17 @@ export class MltFamiliesComponent implements OnInit {
 
   async deliveredToFamily(newComment?) {
     let f = this.selectedFamily;
-    this.context.openDialog(GetVolunteerFeedback, x => x.args = {
-      family: f,
-      comment: (newComment ? newComment : f.courierComments.value),
-      helpText: s => s.commentForSuccessDelivery,
-      ok: async (comment) => {
-        await this.updateDeliveryStatus(DeliveryStatus.Success, comment);
-      },
-      cancel: () => { }
-    });
+    if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
+      question: this.settings.commentForSuccessDelivery.value,
+      yesButtonText: this.settings.lang.confirm
+    }, y => y.yes)) {
+      await this.updateDeliveryStatus(DeliveryStatus.Success);
+    }
   }
-
   
   async familyNotProblem(f: ActiveFamilyDeliveries) {
     if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
-      question: "להחזיר את התורם " + f.name.displayValue +  " ?לרשימת הממתינים לך ",
+      question: "להחזיר את התורם " + f.name.displayValue +  " לרשימת הממתינים לך? ",
       yesButtonText: this.settings.lang.confirm
     }, y => y.yes)) {
       f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
@@ -352,7 +308,7 @@ export class MltFamiliesComponent implements OnInit {
     let f = this.selectedFamily;
 
     if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
-      question: "להחזיר את המשפחה לרשימת הממתינים לך?",
+      question: "להחזיר את התורם " + f.name.displayValue +  " לרשימת הממתינים לך? ",
       yesButtonText: this.settings.lang.confirm
     }, y => y.yes)) {
         await this.updateDeliveryStatus(DeliveryStatus.ReadyForDelivery);

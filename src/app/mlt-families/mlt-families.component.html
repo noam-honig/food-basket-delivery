@@ -1,10 +1,10 @@
 <div class="full-page mat-tipogrophy">
     <div class="grow-item" *ngIf="display==deliveryList">
-        <span *ngIf="numberOfDeliveries==0" class="mat-card-title" style="text-align: center;">
+        <span *ngIf="deliveredSinceEver==0" class="mat-card-title" style="text-align: center;">
             {{comp.context.user.name}} כיף שבאת, תודה שבחרת להתחשב - יאללה מתחילים!
         </span>
-        <span *ngIf="numberOfDeliveries>0" class="mat-card-title" style="text-align: center;">
-            {{comp.context.user.name}} תודה על {{getFamilies('delivered').length}} תרומות שאספת! - יאללה ממשיכים!
+        <span *ngIf="deliveredSinceEver>0" class="mat-card-title" style="text-align: center;">
+            {{comp.context.user.name}} תודה על {{deliveredSinceEver}} תרומות שאספת! - יאללה ממשיכים!
         </span>
         <div style="display: flex; flex-flow: column; margin:15px; text-align: center;">
             <button mat-raised-button color="primary" *ngIf="canSelectDonors()" (click)="assignNewDelivery()">מצאו לי
@@ -115,7 +115,7 @@
                 </mat-expansion-panel>
             </mat-accordion>
             <mat-divider></mat-divider>
-            <span class="mat-card-title"> {{getFamilies('delivered').length}} תרומות למסירה בנקודת איסוף</span>
+            <span class="mat-card-title" *ngIf="getFamilies('delivered').length>0"> {{getFamilies('delivered').length}} תרומות למסירה בנקודת איסוף</span>
             <mat-nav-list role="list">
                 <mat-list-item *ngFor="let f of getFamilies('delivered');let i=index" (click)="selectFamily(f, markReception)" style="height:max-content">
     
@@ -176,13 +176,11 @@
     </div>
 
     <div class="grow-item" *ngIf="display==markReception">
-        <span class="mat-card-title"> {{selectedFamily.name.value}} יש לעדכן לאחר מסירה בנקודת מסירה </span>
-<!--        <app-family-info [f]="selectedFamily" [hideSal]="true"></app-family-info>   -->
-        <ul>
-            <li *ngFor="let i of deliveriesForFamily">
-                {{i.quantity.value}} X {{i.basketType.displayValue}}
-            </li>
-        </ul>
+        <span class="mat-card-title">
+                יש לעדכן לאחר מסירה בנקודת איסוף<br>
+                התרומה: {{getBasketsDescription(selectedFamily, 'delivered')}}<br>
+                מהתרום: {{selectedFamily.name.value}}
+        </span>
         <button mat-raised-button class="myButton" color="accent" (click)="undoDeliveredToFamily()">
             רגע - בכלל לא אספתי את זה
         </button>
