@@ -39,6 +39,7 @@ import { calcAffectiveDistance } from '../volunteer-cross-assign/volunteer-cross
 import { BasketType } from '../families/BasketType';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { DistributionCenters } from '../manage/distribution-centers';
+import { MltFamiliesComponent } from '../mlt-families/mlt-families.component';
 
 
 @Component({
@@ -211,7 +212,7 @@ export class HelperFamiliesComponent implements OnInit {
                 let d: DeliveryInList = selectedItem.item;
                 ids.push(...d.ids);
               }
-              await HelperFamiliesComponent.assignFamilyDeliveryToIndie(ids);
+              await MltFamiliesComponent.assignFamilyDeliveryToIndie(ids);
               await this.familyLists.refreshRoute({
                 strategyId: this.settings.routeStrategy.value.id,
                 volunteerLocation: this.volunteerLocation
