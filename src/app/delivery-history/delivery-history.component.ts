@@ -84,7 +84,7 @@ export class DeliveryHistoryComponent implements OnInit {
         },
         {
           name: 'הענק מתנה',
-          visible: () => this.context.isAllowed(Roles.admin),
+          visible: () => this.settings.isSytemForMlt() && this.context.isAllowed(Roles.admin),
           click: async x => {
             await HelperGifts.assignGift(x.courier.value);
             this.refresh();

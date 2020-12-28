@@ -19,6 +19,7 @@ import { getCurrentLocation, GetDistanceBetween, Location } from '../shared/goog
 import { getLang } from '../sites/sites';
 import { use } from '../translate';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
+import { QRCodeModule } from 'angular2-qrcode';
 
 
 @Component({
@@ -34,9 +35,12 @@ export class MltFamiliesComponent implements OnInit {
   reception = 'reception';
   display = this.deliveryList;
 
+  showQRCode: boolean = false;
+
   numberOfDeliveries = 0;
   giftCount = 0;
   thisHelper;
+  myPhoneNumber: string = '';
   today = new Date();
   userFrozenTill = this.today;
   
@@ -53,6 +57,11 @@ export class MltFamiliesComponent implements OnInit {
     return this.context.isAllowed(Roles.indie);
   }
 
+  myQRCode() {
+    return window.location.hostname + '/mlt/reception/?phone=' + this.myPhoneNumber;
+  }
+
+
   constructor(public settings: ApplicationSettings, private dialog: DialogService, private context: Context, private busy: BusyService) { }
   @Input() comp: MyFamiliesComponent;
   get familyLists() {
@@ -62,6 +71,7 @@ export class MltFamiliesComponent implements OnInit {
     this.numberOfDeliveries = await this.showDeliveryHistory(false)
     this.giftCount = await HelperGifts.getMyPendingGiftsCount(this.context.user.id);
     this.thisHelper = await this.context.for(Helpers).findFirst(h=>h.id.isEqualTo(this.context.user.id));
+    this.myPhoneNumber = this.thisHelper.phone.value;
     this.userFrozenTill = this.thisHelper.frozenTill.displayValue;
   }
 
