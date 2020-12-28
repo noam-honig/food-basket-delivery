@@ -188,6 +188,8 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     if(!this.refreshDeliveryStatistics)
       this.refreshDeliveryStatistics = this.reloadDeliveries;
     await this.families.currentRow.save();
+    if (this.delivery)
+      await this.delivery.reload();
 
 
     this.dialogRef.close();

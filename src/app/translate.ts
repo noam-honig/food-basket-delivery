@@ -928,6 +928,7 @@ export class Language {
   includeFamilyInfoInExcelFile = "האם לכלול מידע נוסף מפרטי המשפחה כגון מספר זהות ונתונים נוספים ביצוא לאקסל? (אם כן זה יקח יותר זמן:)";
   latestAssigned = "שיוך אחרון";
   duplicateForNextEvent = "העתק לאירוע הבא";
+  assignRepeatFamily = 'שייך משפחה שהמתנדב היה אצלה';
 }
 
 const defaultLang = new Language();

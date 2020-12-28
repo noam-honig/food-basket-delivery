@@ -805,4 +805,5 @@ export class en implements Language {
   includeFamilyInfoInExcelFile = 'Should include additional family information such as ID number and additional export data to Excel? (If so it will take longer :)';
   latestAssigned = 'Last associated';
   duplicateForNextEvent = 'A copy for the next event';
+  assignRepeatFamily = 'Assign a repeat family';
 }
