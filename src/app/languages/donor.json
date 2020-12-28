@@ -957,6 +957,10 @@
     "google": "בצע קליטה במעבדה",
     "valueInCode": "בצע קליטה במעבדה"
   },
+  "done": {
+    "google": "טופל",
+    "valueInCode": "טופל"
+  },
   "doneDotGotoDeliveries": {
     "google": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?",
     "valueInCode": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?"

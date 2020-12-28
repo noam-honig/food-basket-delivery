@@ -929,6 +929,7 @@ export class Language {
   latestAssigned = "שיוך אחרון";
   duplicateForNextEvent = "העתק לאירוע הבא";
   assignRepeatFamily = 'שייך משפחה שהמתנדב היה אצלה';
+  done = 'טופל';
 }
 
 const defaultLang = new Language();

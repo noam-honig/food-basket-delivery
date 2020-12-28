@@ -1195,6 +1195,11 @@
     "valueInCode": "בצע קליטה במעבדה",
     "valueInEnglish": "Perform absorption in the laboratory"
   },
+  "done": {
+    "google": "Fatto",
+    "valueInCode": "טופל",
+    "valueInEnglish": "Done"
+  },
   "doneDotGotoDeliveries": {
     "google": "Fatto, passare alle consegne attive?",
     "valueInCode": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?",

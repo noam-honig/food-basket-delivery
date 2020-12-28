@@ -1094,6 +1094,11 @@
     "google": "Perform absorption in the laboratory",
     "valueInCode": "בצע קליטה במעבדה"
   },
+  "done": {
+    "google": "Taken care of",
+    "valueInCode": "טופל",
+    "custom": "Done"
+  },
   "doneDotGotoDeliveries": {
     "google": "The process ended successfully, move to the Shipping screen?",
     "valueInCode": "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?",

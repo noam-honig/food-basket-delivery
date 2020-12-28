@@ -806,4 +806,5 @@ export class soldier implements Language {
   latestAssigned = 'שוייך אחרון';
   duplicateForNextEvent = 'העתק לאירוע הבא';
   assignRepeatFamily = 'שייך חייל שהמתנדב היה אצלה';
+  done = 'טופל';
 }

@@ -806,4 +806,5 @@ export class donor implements Language {
   latestAssigned = 'שוייך אחרון';
   duplicateForNextEvent = 'העתק לאירוע הבא';
   assignRepeatFamily = 'שייך תורם שהמתנדב היה אצלה';
+  done = 'טופל';
 }

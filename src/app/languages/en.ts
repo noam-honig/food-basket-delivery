@@ -806,4 +806,5 @@ export class en implements Language {
   latestAssigned = 'Last associated';
   duplicateForNextEvent = 'A copy for the next event';
   assignRepeatFamily = 'Assign a repeat family';
+  done = 'Done';
 }

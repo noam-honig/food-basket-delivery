@@ -806,4 +806,5 @@ export class es implements Language {
   latestAssigned = 'Último asociado';
   duplicateForNextEvent = 'Una copia para el próximo evento';
   assignRepeatFamily = 'Asignar una familia repetida';
+  done = 'Hecho';
 }

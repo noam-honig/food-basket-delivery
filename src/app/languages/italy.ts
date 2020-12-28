@@ -806,4 +806,5 @@ export class italy implements Language {
   latestAssigned = 'Ultimo associato';
   duplicateForNextEvent = 'Una copia per il prossimo evento';
   assignRepeatFamily = 'Assegna una famiglia ripetuta';
+  done = 'Fatto';
 }
