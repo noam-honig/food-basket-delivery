@@ -672,7 +672,7 @@ export class ActiveFamilyDeliveries extends FamilyDeliveries {
 
 }
 
-iniFamilyDeliveriesInFamiliesCode(2, ActiveFamilyDeliveries);
+iniFamilyDeliveriesInFamiliesCode(FamilyDeliveries, ActiveFamilyDeliveries);
 
 function logChanged(context: Context, col: Column, dateCol: DateTimeColumn, user: HelperId, wasChanged: (() => void)) {
     if (col.value != col.originalValue) {
