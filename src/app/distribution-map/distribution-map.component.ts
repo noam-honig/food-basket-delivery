@@ -541,7 +541,3 @@ function mapSqlResult(r) {
   }) as deliveryOnMap[];
 }
 
-function log(s:string){
-  console.log(s);
-  return s;
-}
