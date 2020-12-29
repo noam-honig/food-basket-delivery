@@ -360,7 +360,7 @@ export class DistributionMap implements OnInit, OnDestroy {
         let where: any[] = [f.deliverStatus.isActiveDelivery().and(f.distributionCenter.isAllowedForUser())];
         if (distCenter !== undefined)
           where.push(f.filterDistCenterAndAllowed(distCenter));
-        if (area!==undefined &&area!=getLang( context).allRegions) {
+        if (area!==undefined&&area!==null &&area!=getLang( context).allRegions) {
           where.push(f.area.isEqualTo(area));
         }
 
