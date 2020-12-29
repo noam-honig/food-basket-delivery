@@ -906,7 +906,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 let where = filter(f);
                 if (this.filterCity)
                     where = new AndFilter(f.city.isEqualTo(this.filterCity), where);
-                if (this.filterArea)
+                if (this.filterArea!=use.language.allRegions)
                     where = new AndFilter(f.area.isEqualTo(this.filterArea), where);
                 return where;
             },
