@@ -346,7 +346,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     let h = context.for(Helpers).create();
     let sql = new SqlBuilder();
     sql.addEntity(f, "FamilyDeliveries");
-    let r = (await db.execute(log(sql.query({
+    let r = (await db.execute(sql.query({
       select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier,
       sql.columnInnerSelect(f, {
         from: h,
@@ -370,7 +370,7 @@ export class DistributionMap implements OnInit, OnDestroy {
         return where;
       },
       orderBy: [f.addressLatitude, f.addressLongitude]
-    }))));
+    })));
 
     return r.rows.map(x => {
       return {
