@@ -344,6 +344,9 @@ export class Families extends IdEntity {
           if (this.context.onServer) {
             if (!this.quantity.value || this.quantity.value < 1)
               this.quantity.value = 1;
+            if (wasChanged(this.area) && this.area.value)
+              this.area.value = this.area.value.trim();
+
 
 
             if (this.address.value != this.address.originalValue || !this.address.ok() || this.autoCompleteResult.value) {

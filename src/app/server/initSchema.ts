@@ -409,6 +409,18 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         }))
 
     });
+    await version(29, async () => {
+        await dataSource.execute(sql.update(fd, {
+            set: () => [[fd.area, sql.func('trim', fd.area)]]
+        }))
+
+    });
+    await version(30, async () => {
+        await dataSource.execute(sql.update(f, {
+            set: () => [[f.area, sql.func('trim', f.area)]]
+        }))
+
+    });
 
 
 
@@ -422,12 +434,12 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 delete from haderamoadonit.families
 ;
 UPDATE haderamoadonit.familydeliveries
-	SET couriercomments='', archivefamilysource='', archivegroups='', archive_address='', archive_floor='', archive_appartment='', archive_entrance='', archive_postalcode=0
-	, archive_city='', archive_addresscomment='', archive_deliverycomments='', phone='', archive_phone1description='', archive_phone2='', archive_phone2description='',
-	familyname='', archive_phone4='', archive_phone3description='', archive_phone3='', archive_phone4description='', distributioncenter='', name='', address='', groups='',
-	deliverycomments='', familysource='', floor='', appartment='', city='', entrance='',  area='', phone2='',  phone2description='', addresscomment='',
-	addressbygoogle='', phone1description='', phone4='', phone3='', phone4description='', archive=true, phone3description='', fixedcourier='', familymembers=0,
-	internaldeliverycomment='';
+    SET couriercomments='', archivefamilysource='', archivegroups='', archive_address='', archive_floor='', archive_appartment='', archive_entrance='', archive_postalcode=0
+    , archive_city='', archive_addresscomment='', archive_deliverycomments='', phone='', archive_phone1description='', archive_phone2='', archive_phone2description='',
+    familyname='', archive_phone4='', archive_phone3description='', archive_phone3='', archive_phone4description='', distributioncenter='', name='', address='', groups='',
+    deliverycomments='', familysource='', floor='', appartment='', city='', entrance='',  area='', phone2='',  phone2description='', addresscomment='',
+    addressbygoogle='', phone1description='', phone4='', phone3='', phone4description='', archive=true, phone3description='', fixedcourier='', familymembers=0,
+    internaldeliverycomment='';
 update haderamoadonit.helpers set name='מתנדב', phone='0501234567' where isadmin=false;
 
 ;
