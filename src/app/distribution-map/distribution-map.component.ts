@@ -23,7 +23,7 @@ import { Roles, AdminGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, O
 import { Helpers, HelperId } from '../helpers/helpers';
 import MarkerClusterer, { ClusterIconInfo } from "@google/markerclustererplus";
 import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { Sites } from '../sites/sites';
+import { getLang, Sites } from '../sites/sites';
 import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser } from '../manage/distribution-centers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
@@ -346,7 +346,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     let h = context.for(Helpers).create();
     let sql = new SqlBuilder();
     sql.addEntity(f, "FamilyDeliveries");
-    let r = (await db.execute(sql.query({
+    let r = (await db.execute(log(sql.query({
       select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier,
       sql.columnInnerSelect(f, {
         from: h,
@@ -360,7 +360,7 @@ export class DistributionMap implements OnInit, OnDestroy {
         let where: any[] = [f.deliverStatus.isActiveDelivery().and(f.distributionCenter.isAllowedForUser())];
         if (distCenter !== undefined)
           where.push(f.filterDistCenterAndAllowed(distCenter));
-        if (area != undefined) {
+        if (area!==undefined &&area!=getLang( context).allRegions) {
           where.push(f.area.isEqualTo(area));
         }
 
@@ -370,7 +370,7 @@ export class DistributionMap implements OnInit, OnDestroy {
         return where;
       },
       orderBy: [f.addressLatitude, f.addressLongitude]
-    })));
+    }))));
 
     return r.rows.map(x => {
       return {
@@ -539,4 +539,9 @@ function mapSqlResult(r) {
       courierName: ''
     } as deliveryOnMap;
   }) as deliveryOnMap[];
+}
+
+function log(s:string){
+  console.log(s);
+  return s;
 }

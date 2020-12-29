@@ -86,7 +86,7 @@
             *ngIf="settings.showAreaOnAssing.value">
             <mat-label>{{settings.lang.region}}</mat-label>
             <select matNativeControl class="form-control" #city (change)="selectCity()" [(ngModel)]="filterArea">
-              <option value="">{{settings.lang.allRegions}}</option>
+              <option [value]="settings.lang.allRegions">{{settings.lang.allRegions}}</option>
               <option *ngFor="let c of areas" value="{{c.name}}">{{c.name}} - {{c.unassignedFamilies}}</option>
             </select>
           </mat-form-field>

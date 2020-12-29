@@ -43,6 +43,7 @@ import { familiesInRoute, optimizeRoute, routeStats, routeStrategyColumn } from 
 import { moveDeliveriesHelper } from '../helper-families/move-deliveries-helper';
 import { SelectListComponent } from '../select-list/select-list.component';
 import { use } from '../translate';
+import { getLang } from '../sites/sites';
 
 
 
@@ -164,7 +165,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
 
     filterCity = '';
-    filterArea = '';
+    filterArea = use.language.allRegions;
     allBaskets: BasketInfo = { id: 'undefined', name: this.settings.lang.allBaskets, unassignedFamilies: 0 };
     basketType: BasketInfo = this.allBaskets;
     selectCity() {
@@ -262,7 +263,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             }
 
             this.areas = r.areas;
-            if (this.filterArea != '' && !this.areas.find(x => x.name == this.filterArea)) {
+            if (this.filterArea != getLang( this.context).allRegions && !this.areas.find(x => x.name == this.filterArea)) {
 
                 this.areas.push({ name: this.filterArea, unassignedFamilies: 0 });
             }
@@ -509,8 +510,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         let f = context.for(ActiveFamilyDeliveries).create();
         let fd = context.for(FamilyDeliveries).create();
         if (info.helperId) {
-            let r = await db.execute(log(sql.build('select ', f.id, ' from ', f, ' where ', f.active().and(f.filterDistCenterAndAllowed(info.distCenter)).and(f.readyFilter(info.filterCity, info.filterGroup, info.filterArea,info.filterBasket).and(f.special.isEqualTo(YesNo.No))), ' and ',
-                filterRepeatFamilies(sql, f, fd, info.helperId), ' limit 30')));
+            let r = await db.execute(sql.build('select ', f.id, ' from ', f, ' where ', f.active().and(f.filterDistCenterAndAllowed(info.distCenter)).and(f.readyFilter(info.filterCity, info.filterGroup, info.filterArea,info.filterBasket).and(f.special.isEqualTo(YesNo.No))), ' and ',
+                filterRepeatFamilies(sql, f, fd, info.helperId), ' limit 30'));
             result.repeatFamilies = r.rows.map(x => x[r.getColumnKeyInResultForIndexInSelect(0)]);
         }
 
@@ -1056,8 +1057,4 @@ export interface refreshRouteArgs {
     doNotUseGoogle?: boolean,
     strategyId?: number,
     volunteerLocation?: Location
-}
-function log(s:string){
-    console.log(s);
-    return s;
 }

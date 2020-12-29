@@ -115,7 +115,7 @@ export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
                 }
                 else {
                     fd.courier.value = this.courier.value;
-                    if (this.updateAlsoAsFixed.value) {
+                   if (this.updateAlsoAsFixed.value) {
                         let f = await this.context.for(Families).findId(fd.family);
                         if (f) {
                             f.fixedCourier.value = this.courier.value;
